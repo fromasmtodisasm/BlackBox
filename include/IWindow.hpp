@@ -11,4 +11,4 @@ struct IWindow {
  virtual HWND get() = 0;
 };
 
-EXPORT IWindow *CreateIWindow();
+IWindow* EXPORT CreateIWindow();

@@ -12,11 +12,13 @@ bool CGame::init() {
 bool CGame::update() {
   while (win->update()) {
 
-  } 
+  }
+  return true;
 }
 
 bool CGame::run() {
   update();
+  return true;
 }
 
 
