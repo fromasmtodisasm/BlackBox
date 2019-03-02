@@ -10,6 +10,7 @@ endif()
 set(SOURCES
   src/Main.cpp
   src/CWindow.cpp
+  src/CGame.cpp
     )
 
 set(HEADERS

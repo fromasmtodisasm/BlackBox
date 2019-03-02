@@ -5,13 +5,19 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-class Window : public IWindow {
+class CWindow : public IWindow {
 private:
   GLFWwindow* m_handle; 
+  bool m_bClose;
 public: 
-  Window();
-  ~Window();
+  CWindow();
+  ~CWindow();
   bool create();
   bool init();
-  void run();
+  bool update();
+  bool shouldCose();
+  HWND get();
+
+private:
+  static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 };

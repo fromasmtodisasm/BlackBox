@@ -1,18 +1,15 @@
 #include "CWindow.hpp"
 #include <iostream>
 
-Window::Window()
-{
-    
+CWindow::CWindow() : m_bClose(false) {
+
 }
 
-Window::~Window()
-{
+CWindow::~CWindow() {
     glfwTerminate();
 }
 
-bool Window::init()
-{
+bool CWindow::init() {
   //Инициализация GLFW
 	if (glfwInit())
   {
@@ -26,13 +23,13 @@ bool Window::init()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //Выключение возможности изменения размера окна
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
     return true;
   }
   return false;
 }
 
-bool Window::create()
-{
+bool CWindow::create() {
   m_handle = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
 
   if (m_handle == nullptr)
@@ -40,28 +37,45 @@ bool Window::create()
     std::cout << "Failed to create GLFW window" << std::endl;
     return false;
   }
+
+  glfwSetWindowUserPointer(m_handle, static_cast<void*>(this));
+  glfwSetKeyCallback(m_handle, CWindow::keyCallback);
   return true;
 }
-void Window::run()
-{
+
+bool CWindow::update() {
   glfwMakeContextCurrent(m_handle);
 
   int width, height;
   glfwGetFramebufferSize(m_handle, &width, &height);
 
   glViewport(0, 0, width, height);
-  glClearColor(0,0,0,1);
+  glClearColor(1,0,1,1);
 
-  while(!glfwWindowShouldClose(m_handle))
-  {
-      glClear(GL_COLOR_BUFFER_BIT);
-      glfwPollEvents();
-      glfwSwapBuffers(m_handle);
-  }
+  glClear(GL_COLOR_BUFFER_BIT);
+  glfwPollEvents();
+  glfwSwapBuffers(m_handle);
 
+  return m_bClose == false;
 }
 
-IWindow *CreateWindow() {
-  Window *win = new Window();
+bool CWindow::shouldCose() {
+  return m_bClose == true;
+}
+
+void CWindow::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
+  // Когда пользователь нажимает ESC, мы устанавливаем свойство CWindowShouldClose в true, 
+  // и приложение после этого закроется
+  CWindow *win = reinterpret_cast<CWindow*>(glfwGetWindowUserPointer(window));
+  if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    win->m_bClose = true;
+}
+
+HWND CWindow::get() {
+  return static_cast<void*>(m_handle);
+}
+
+IWindow *CreateIWindow() {
+  CWindow *win = new CWindow();
   return (win);
 }
