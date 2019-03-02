@@ -11,6 +11,7 @@ set(SOURCES
   src/Main.cpp
   src/CWindow.cpp
   src/CGame.cpp
+  src/CShader.cpp
     )
 
 set(HEADERS
