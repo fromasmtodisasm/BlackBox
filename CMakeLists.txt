@@ -1,51 +1,54 @@
 cmake_minimum_required(VERSION 3.0)
 project(BlackBox CXX)
 
-if (CYGWIN)
-  #FOR GLFW COMPILATION
-  set (WIN32 1)
-  find_library(GDI32_LIBRARY gdi32)
-endif()
-
-set(SOURCES
-  src/Main.cpp
-  src/CWindow.cpp
-  src/CGame.cpp
-  src/CShader.cpp
+file(
+  GLOB
+  SOURCES
+  src/*.cpp
     )
-
-set(HEADERS
-  include/CWindow.hpp
-  include/IWindow.hpp
-    )
+file(
+  GLOB 
+  HEADERS 
+  include/*.hpp
+)
 
 set(CMAKE_MODULE_PATH ./cmake/modules)
-
+###################################################
 #GLFW
-
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-set(BUILD_SHARED_LIBS ON)
-set(CMAKE_TOOLCHAIN_FILE=CMake/x86_64-w64-mingw32.cmake)
+#--------------------------------------------------
 add_subdirectory(submodules/glfw)
 find_package(OpenGL REQUIRED)
-#==============================================
-
+#--------------------------------------------------
+if (WIN32)
+  find_library(GDI32_LIBRARY gdi32)
+  if(GDI32_LIBRARY_FOUND)
+    message(FATAL "gdi32 notfound")
+  else()
+    message("gdi32 founded")
+    link_libraries(${GDI32_LIBRARY})
+  endif()
+endif()
+#--------------------------------------------------
+find_package(GLEW REQUIRED)
+if (GLEW_FOUND)
+  include_directories(${GLEW_INCLUDE_DIRS})
+  link_libraries(${GLEW_LIBRARIES})
+else()
+  message(FATAL "glew not found")
+endif()
+#--------------------------------------------------
 include_directories(
-        ${OPENGL_INCLUDE_DIR}
-        ${GLFW_INCLUDE_DIRS}
-        "${PROJECT_SOURCE_DIR}/include"
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_INCLUDE_DIRS}
+  ${GLEW_INCLUDE_DIRS}
+  "${PROJECT_SOURCE_DIR}/include"
 )
-
-#add_definitions(-DGLFW_DLL)
+#--------------------------------------------------
+###################################################
 add_executable(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
-
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
-target_link_libraries(${PROJECT_NAME} ${OPENGL_glu_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-if (WIN32)
-  target_link_libraries(${PROJECT_NAME} ${GDI32_LIBRARY})
-endif()
