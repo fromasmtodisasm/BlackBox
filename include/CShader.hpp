@@ -1,19 +1,20 @@
 #pragma once
-#include <GL/gl.h>
+#include <GL/glew.h>
+#include <string>
 
 class CShader 
 {
 private:
-  GLuint shader;
-  char *path;
-  char *text;
+  GLuint m_shader;
+  std::string path;
+  std::string text;
 public:
   enum type{
     E_VERTEX,
     E_FRAGMENT
   };
-  CShader(char *text, CShader::type type);
-  static CShader *load(char *path, CShader::type type);
+  CShader(std::string text, CShader::type type);
+  static CShader *load(std::string path, CShader::type type);
   bool create();
   bool compile();
   bool bind();
