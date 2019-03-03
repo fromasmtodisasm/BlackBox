@@ -12,7 +12,7 @@ file(
   include/*.hpp
 )
 
-set(CMAKE_MODULE_PATH ./cmake/modules)
+set(CMAKE_MODULE_PATH Cmake/modules)
 ###################################################
 #GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -40,10 +40,14 @@ else()
   message(FATAL "glew not found")
 endif()
 #--------------------------------------------------
+find_package(GLM REQUIRED)
+if (GLM_FOUND)
+  include_directories(${GLM_INCLUDE_DIRS})
+  link_libraries(${GLM_LIBRARIES})
+  message("glm founded")
+endif()
+#--------------------------------------------------
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIRS}
-  ${GLEW_INCLUDE_DIRS}
   "${PROJECT_SOURCE_DIR}/include"
 )
 #--------------------------------------------------
