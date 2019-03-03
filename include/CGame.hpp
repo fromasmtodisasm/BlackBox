@@ -11,9 +11,9 @@ using string = std::string;
 
 class CGame : public IGame {
 private:
-	 IWindow *win;
-	 std::map<string, UniType> props;
-	 string title;
+	IWindow *win;
+	std::map<string, UniType> props;
+	string title;
 public:
 	bool setConfig(std::map<string,UniType>);
 	bool readConfig();

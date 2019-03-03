@@ -2,11 +2,11 @@
 #include <iostream>
 
 CWindow::CWindow() : m_bClose(false) {
-
+	
 }
 
 CWindow::~CWindow() {
-    glfwTerminate();
+	glfwTerminate();
 }
 
 bool CWindow::init() {
@@ -54,7 +54,7 @@ bool CWindow::update() {
 
   glClear(GL_COLOR_BUFFER_BIT);
   glfwPollEvents();
-  glfwSwapBuffers(m_handle);
+	glfwSwapBuffers(m_handle);
 
   return m_bClose == false;
 }
@@ -82,6 +82,6 @@ HWND CWindow::get() {
 }
 
 IWindow *CreateIWindow() {
-  CWindow *win = new CWindow();
-  return (win);
+	CWindow *win = new CWindow();
+	return (win);
 }

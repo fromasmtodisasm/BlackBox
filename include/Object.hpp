@@ -12,6 +12,4 @@ private:
 public:
 //	bool Load(string path); // Load("")
 	static Object* Load(string path);
-
-
 };

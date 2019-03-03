@@ -23,16 +23,16 @@ private:
   GLFWwindow* m_handle; 
   bool m_bClose;
 public: 
-  CWindow();
-  ~CWindow();
-  bool create();
-  bool init();
-  bool update();
-  bool shouldCose();
+	CWindow();
+	~CWindow();
+	bool create();
+	bool init();
+	bool update();
+	bool shouldCose();
 	bool setCallback(int key,kcbfunc);
-  HWND get();
+	HWND get();
 
 private:
 	std::map<int, kcbfunc> kcbfuncs;
-  static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
+	static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 };
