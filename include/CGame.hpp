@@ -2,11 +2,22 @@
 #include "IGame.hpp"
 #include "IWindow.hpp"
 
+#include <common.h>
+#include <map>
+#include <string>
+#include <vector>
+
+using string = std::string;
+
 class CGame : public IGame {
 private:
-  IWindow *win;
+	 IWindow *win;
+	 std::map<string, UniType> props;
+	 string title;
 public:
-  bool init();
-  bool update();
-  bool run();
+	bool setConfig(std::map<string,UniType>);
+	bool readConfig();
+	bool init();
+	bool update();
+	bool run();
 };

@@ -22,7 +22,7 @@ bool CWindow::init() {
     //Установка профайла для которого создается контекст
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //Выключение возможности изменения размера окна
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
     return true;
   }
@@ -61,6 +61,12 @@ bool CWindow::update() {
 
 bool CWindow::shouldCose() {
   return m_bClose == true;
+}
+
+bool CWindow::setCallback(int key, kcbfunc f)
+{
+	this->kcbfuncs[key] = f;
+	return false;
 }
 
 void CWindow::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
