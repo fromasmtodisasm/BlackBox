@@ -11,13 +11,11 @@ using string = std::string;
 
 class CGame : public IGame {
 private:
-	IWindow *win;
-	std::map<string, UniType> props;
-	string title;
+  IWindow *m_Window;
+  char *m_Title;
 public:
-	bool setConfig(std::map<string,UniType>);
-	bool readConfig();
-	bool init();
-	bool update();
-	bool run();
+  CGame(char *);
+  bool init();
+  bool update();
+  bool run();
 };

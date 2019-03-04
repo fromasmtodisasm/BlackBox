@@ -8,4 +8,4 @@ struct IGame {
 	virtual bool run() = 0;
 };
 
-IGame* EXPORT CreateIGame();
+EXPORT IGame *CreateIGame(char *title);

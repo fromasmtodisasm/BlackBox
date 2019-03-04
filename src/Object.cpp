@@ -63,13 +63,13 @@ static struct OBJNode {
 
 struct Loader : public IGeometry{
 private:
-	string vert("v");
-	string poly("f");
-	string normal("vn");
-	string group("g");
-	string mtres("mtllib");
-	string obj("o");
-	string tcoord("vt");
+//	string vert("v");
+//	string poly("f");
+//	string normal("vn");
+//	string group("g");
+//	string mtres("mtllib");
+//	string obj("o");
+//	string tcoord("vt");
 public:
 	Loader(string filename) {	
 		Load(filename);
@@ -204,7 +204,7 @@ public:
 		while (!file.eof()) {
 			string str;
 			file.getline(str);
-			exec(str);
+			Parse(str);
 		}
 
 	}

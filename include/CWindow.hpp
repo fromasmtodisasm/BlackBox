@@ -20,17 +20,28 @@ typedef std::function<void(GLFWwindow *window, int key, int scancode, int action
 
 class CWindow : public IWindow {
 private:
-  GLFWwindow* m_handle; 
+  static constexpr int DEFAULT_WIDTH = 1024;
+  static constexpr int DEFAULT_HEIGHT = 768;
+  static constexpr char *DEFAULT_TITLE = "GLFW Window";
+
+  GLFWwindow* m_Window; 
   bool m_bClose;
-public: 
-	CWindow();
-	~CWindow();
-	bool create();
-	bool init();
-	bool update();
-	bool shouldCose();
-	bool setCallback(int key,kcbfunc);
-	HWND get();
+  int m_Width;
+  int m_Height;
+  char *m_Title;
+  GLfloat m_BackColor[4] = { 0.5, 0.3, 0.8, 1.0 };
+
+public:
+  CWindow(char*, int, int);
+  ~CWindow();
+  bool create();
+  bool init();
+  void update();
+  void clear();
+  bool closed();
+  void swap();
+  void setTitle(char*);
+  void show();
 
 private:
 	std::map<int, kcbfunc> kcbfuncs;

@@ -12,9 +12,7 @@
 using namespace std;
 
 int main() {
-  cout << "Main started" << endl;
-
-  IGame *game = CreateIGame();
+  IGame *game = CreateIGame("MyGame");
   game->init();
   game->run();  
 

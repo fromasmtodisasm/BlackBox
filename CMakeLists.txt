@@ -12,7 +12,7 @@ file(
   include/*.hpp
 )
 
-set(CMAKE_MODULE_PATH ./cmake/modules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
 ###################################################
 #GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -27,7 +27,7 @@ if (WIN32)
   if(GDI32_LIBRARY_FOUND)
     message(FATAL "gdi32 notfound")
   else()
-    message("gdi32 founded")
+    message(STATUS "GDI32 founded")
     link_libraries(${GDI32_LIBRARY})
   endif()
 endif()
@@ -40,15 +40,31 @@ else()
   message(FATAL "glew not found")
 endif()
 #--------------------------------------------------
+find_package(GLM REQUIRED)
+if (GLM_FOUND)
+  include_directories(${GLM_INCLUDE_DIRS})
+  link_libraries(${GLM_LIBRARIES})
+  message(STATUS "GLM founded")
+endif()
+#--------------------------------------------------
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIRS}
-  ${GLEW_INCLUDE_DIRS}
   "${PROJECT_SOURCE_DIR}/include"
 )
 #--------------------------------------------------
 ###################################################
-add_executable(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
+add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
+
+add_executable(${PROJECT_NAME}_test  ../tests/Main.cpp ${SOURCES} ${HEADERS})
+target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+
+install(
+  TARGETS ${PROJECT_NAME}_test ${PROJECT_NAME}  
+  RUNTIME DESTINATION ${PROJECT_NAME}/bin
+  LIBRARY DESTINATION ${PROJECT_NAME}/lib
+  ARCHIVE DESTINATION ${PROJECT_NAME}/lib/static
+)
+
+
