@@ -12,7 +12,7 @@ file(
   include/*.hpp
 )
 
-set(CMAKE_MODULE_PATH Cmake/modules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
 ###################################################
 #GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
