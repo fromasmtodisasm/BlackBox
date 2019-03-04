@@ -80,12 +80,6 @@ void CWindow::swap() {
   glfwSwapBuffers(m_Window);
 }
 
-bool CWindow::setCallback(int key, kcbfunc f)
-{
-	this->kcbfuncs[key] = f;
-	return false;
-}
-
 void CWindow::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
   // Когда пользователь нажимает ESC, мы устанавливаем свойство m_bClose в true, 
   // и приложение после этого закроется

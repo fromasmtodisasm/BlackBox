@@ -20,7 +20,8 @@ bool CGame::update() {
     /* Rendering code here */
 
     m_Window->swap();
-  } 
+  }
+	return true;
 }
 
 bool CGame::run() {

@@ -5,16 +5,16 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#ifdef __cplusplus >= 2001103L
-
+// #if __cplusplus >= 2001103L
+//
 #include "common.h"
 #include <map>
 
-#else
+// #else
 
-#error "not corrected c++ standart ( c++11 )"
+// #error "not corrected c++ standart ( c++11 )"
 
-#endif
+// #endif
 
 typedef std::function<void(GLFWwindow *window, int key, int scancode, int action, int mode)> kcbfunc;
 

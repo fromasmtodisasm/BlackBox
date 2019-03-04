@@ -85,32 +85,32 @@ public:
 
 			if (it == ' ' || it == '\t' || it == '\n') { 
 				
-				if (isnum) { 
-					OBJNode n;
-					UniType v;
-					// v.dval = curnum.stof
-					v.dval = std::stod(curnum);
-					v.t = TDVAL;
-					n.val = v;
-					n.type = OBJNode::TARG;
-
-					out.push_back(n); 
-					curnum = "";
-					isnum = false;
-				}
-				else {
-					if (curf != "") {
+					if (isnum) { 
 						OBJNode n;
 						UniType v;
-						n.val.sval = curf.c_str();
-						n.type = OBJNode::TFUN;
-						n.val.t = TSTR;
-						out.push_back(n);
-						curf = "";
+						// v.dval = curnum.stof
+						v.dval = std::stod(curnum);
+						v.t = TDVAL;
+						n.val = v;
+						n.type = OBJNode::TARG;
+
+						out.push_back(n); 
+						curnum = "";
+						isnum = false;
 					}
+					else {
+						if (curf != "") {
+							OBJNode n;
+							UniType v;
+							n.val.sval = const_cast<char*>( curf.c_str() );
+							n.type = OBJNode::TFUN;
+							n.val.t = TSTR;
+							out.push_back(n);
+							curf = "";
+						}
+					}
+					continue; 
 				}
-				continue; 
-			}
 			if (isalpha(it)) { // vp 0000.0000
 					isnum = false;
 					switch (it) {
@@ -124,7 +124,7 @@ public:
 							OBJNode n;
 							UniType v;
 							curf = it;
-							n.val.sval = curf.c_str();
+							n.val.sval = const_cast<char*>(curf.c_str());
 							n.type = OBJNode::TFUN;
 							n.val.t = TSTR;
 							out.push_back(n);
@@ -137,26 +137,24 @@ public:
 					//}
 					//else {
 					//}
-				}
-				else {
-					if (curf != "") {
-						OBJNode n;
-						UniType v;
-						n.val.sval = curf.c_str();
-						n.type = OBJNode::TFUN;
-						n.val.t = TSTR;
-						out.push_back(n);
-						curf = "";
-					}
-					curnum += it;
-				}
-
-
 			}
+			else {
+				if (curf != "") {
+					OBJNode n;
+					UniType v;
+					n.val.sval = const_cast<char*>(curf.c_str());;
+					n.type = OBJNode::TFUN;
+					n.val.t = TSTR;
+					out.push_back(n);
+					curf = "";
+				}
+				curnum += it;
+			}
+			
 			i++;
 		}
 	}
-	virtual bool Parse(string str) {
+	bool Parse(string str) {
 		/*if (std::regex_match(str, r, poly)) {
 
 		}
@@ -182,7 +180,7 @@ public:
 		vector<OBJNode> obj = Lex(str);
 
 		for (auto it : obj) {
-			switch (it.Type) {
+			switch (it.type) {
 			case OBJNode::TFUN:
 				break;
 			case OBJNode::TARG:
@@ -203,7 +201,7 @@ public:
 
 		while (!file.eof()) {
 			string str;
-			file.getline(str);
+			std::getline(file,str);
 			Parse(str);
 		}
 
