@@ -1,5 +1,6 @@
 #include "Object.hpp"
 #include <fstream>
+#include <cctype>
 
 using std::fstream;
 using std::ifstream;
@@ -43,22 +44,121 @@ std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << std::endl;
 
 #if _LOAD_OBJ_ == 1
 
+
+
+static struct OBJNode {
+	UniType val;
+	
+	enum {
+//		TVERT,
+//		TPOLY,
+//		TCOORD,
+//		TNORMAL,
+		TFUN,
+		TARG
+		// ...,
+	}type;
+
+};
+
 struct Loader : public IGeometry{
 private:
-	regex vert("^v");
-	regex poly("^f");
-	regex normal("^vn");
-	regex group("^g");
-	regex mtres("^mtllib");
-	regex obj("^o");
-	regex tcoord("^vt");
+	string vert("v");
+	string poly("f");
+	string normal("vn");
+	string group("g");
+	string mtres("mtllib");
+	string obj("o");
+	string tcoord("vt");
 public:
 	Loader(string filename) {	
 		Load(filename);
 	}
-	virtual bool Exec(string str) {
-		if (std::regex_match(str, r, poly)) {
-			
+	virtual const vector<OBJNode> Lex(string str) {
+		size_t i = 0;
+		bool isnum = false;
+		string curnum = "";
+		string curf = "";
+		vector<OBJNode> out;
+		for (auto it : str) {
+			if (!isnum) { curnum = ""; }
+
+			if (it == ' ' || it == '\t' || it == '\n') { 
+				
+				if (isnum) { 
+					OBJNode n;
+					UniType v;
+					// v.dval = curnum.stof
+					v.dval = std::stod(curnum);
+					v.t = TDVAL;
+					n.val = v;
+					n.type = OBJNode::TARG;
+
+					out.push_back(n); 
+					curnum = "";
+					isnum = false;
+				}
+				else {
+					if (curf != "") {
+						OBJNode n;
+						UniType v;
+						n.val.sval = curf.c_str();
+						n.type = OBJNode::TFUN;
+						n.val.t = TSTR;
+						out.push_back(n);
+						curf = "";
+					}
+				}
+				continue; 
+			}
+			if (isalpha(it)) { // vp 0000.0000
+					isnum = false;
+					switch (it) {
+					case 'v':
+						curf += it;
+						break;
+					case 'm':
+						curf += it;
+						break;
+					case 'o': case 'g': case 'f': {
+							OBJNode n;
+							UniType v;
+							curf = it;
+							n.val.sval = curf.c_str();
+							n.type = OBJNode::TFUN;
+							n.val.t = TSTR;
+							out.push_back(n);
+							curf = "";
+							break;
+						}
+					}
+					//if (isnum) {
+
+					//}
+					//else {
+					//}
+				}
+				else {
+					if (curf != "") {
+						OBJNode n;
+						UniType v;
+						n.val.sval = curf.c_str();
+						n.type = OBJNode::TFUN;
+						n.val.t = TSTR;
+						out.push_back(n);
+						curf = "";
+					}
+					curnum += it;
+				}
+
+
+			}
+			i++;
+		}
+	}
+	virtual bool Parse(string str) {
+		/*if (std::regex_match(str, r, poly)) {
+
 		}
 		else if (std::regex_match(str, r, normal)) {
 
@@ -77,6 +177,19 @@ public:
 		}
 		else if (std::regex_match(str, r, vert)) {
 
+		}*/
+
+		vector<OBJNode> obj = Lex(str);
+
+		for (auto it : obj) {
+			switch (it.Type) {
+			case OBJNode::TFUN:
+				break;
+			case OBJNode::TARG:
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	virtual bool Load(string filename) {
