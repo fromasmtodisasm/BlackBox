@@ -25,6 +25,7 @@ bool CGame::update() {
 
 bool CGame::run() {
   update();
+  return true;
 }
 
 

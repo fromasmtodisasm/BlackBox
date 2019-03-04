@@ -13,4 +13,4 @@ struct IWindow {
  virtual void show() = 0;
 };
 
-EXPORT IWindow *CreateIWindow();
+IWindow* EXPORT CreateIWindow();
