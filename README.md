@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# BlackBox
-OpenGL GameEngine
-=======
 # GEngine
 opengl (GLFW) game engine
 
@@ -16,4 +12,3 @@ For get glfw submodule two commands need to be executed:
   **```git submodule init```** to initialize your local configuration file and 
   **```git submodule update```** to get all the data from the submodule
 
->>>>>>> 557833aef8178b987c33abffc0af1b06c17898b0
