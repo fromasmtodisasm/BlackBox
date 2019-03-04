@@ -52,7 +52,19 @@ include_directories(
 )
 #--------------------------------------------------
 ###################################################
-add_executable(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
+add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
+
+add_executable(${PROJECT_NAME}_test  ../tests/Main.cpp ${SOURCES} ${HEADERS})
+target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+
+install(
+  TARGETS ${PROJECT_NAME} ${PROJECT_NAME}  
+  RUNTIME DESTINATION ${PROJECT_NAME}/bin
+  LIBRARY DESTINATION ${PROJECT_NAME}/lib
+  ARCHIVE DESTINATION ${PROJECT_NAME}/lib/static
+)
+
+
