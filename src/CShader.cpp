@@ -38,3 +38,37 @@ CShader *CShader::load(string path, CShader::type type) {
 
   return shader;
 }
+
+bool CShader::compile() {
+  glShaderSource(m_shader, 1, reinterpret_cast<const GLchar* const*>(text.c_str()), nullptr);
+  glCompileShader(m_shader);
+  return true;
+}
+
+GLuint CShader::get() {
+  return m_shader;
+}
+
+CShaderProgram::CShaderProgram() {
+
+}
+
+CShaderProgram::~CShaderProgram() {
+
+}
+
+bool CShaderProgram::create() {
+  m_program = glCreateProgram();
+}
+
+bool CShaderProgram::attach(CShader &shader) {
+  glAttachShader(m_program, shader.get());
+}
+
+bool CShaderProgram::link() {
+  glLinkProgram(m_program);
+}
+
+bool CShaderProgram::status(CShader &shader) {
+  //glGetShaderiv(shader.get(), GL_COMPILE_STATUS, &m_status);
+}

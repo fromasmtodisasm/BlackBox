@@ -1,14 +1,15 @@
 #pragma once
 
 #define EXPORT _cdecl
-typedef void * HWND;
 struct IWindow {
-
  virtual bool create() = 0;
  virtual bool init() = 0;
- virtual bool update() = 0;
- virtual bool shouldCose() = 0;
- virtual HWND get() = 0;
+ virtual void update() = 0;
+ virtual void clear() = 0;
+ virtual bool closed() = 0;
+ virtual void swap() = 0;
+ virtual void setTitle(char *) = 0;
+ virtual void show() = 0;
 };
 
 IWindow* EXPORT CreateIWindow();
