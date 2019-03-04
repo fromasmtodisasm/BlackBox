@@ -1,7 +1,10 @@
 #include "CWindow.hpp"
 #include <iostream>
 
-CWindow::CWindow() : m_bClose(false) {
+CWindow::CWindow(
+    char *title=DEFAULT_TITLE, int width=DEFAULT_WIDTH, int height=DEFAULT_HEIGHT 
+  ) : 
+  m_Width(width), m_Height(height), m_Title(title), m_bClose(false) {
 
 }
 
@@ -22,7 +25,15 @@ bool CWindow::init() {
     //Установка профайла для которого создается контекст
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //Выключение возможности изменения размера окна
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    //glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    //Выключение возможности двойной буфферизации
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+
+    //glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+
+    glfwWindowHint(GLFW_FOCUSED , GL_TRUE);
+
+    //glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
     return true;
   }
@@ -30,49 +41,61 @@ bool CWindow::init() {
 }
 
 bool CWindow::create() {
-  m_handle = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+  m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, nullptr, nullptr);
 
-  if (m_handle == nullptr)
+  if (m_Window == nullptr)
   {
     std::cout << "Failed to create GLFW window" << std::endl;
     return false;
   }
 
-  glfwSetWindowUserPointer(m_handle, static_cast<void*>(this));
-  glfwSetKeyCallback(m_handle, CWindow::keyCallback);
+  glfwSetWindowUserPointer(m_Window, static_cast<void*>(this));
+  glfwSetKeyCallback(m_Window, CWindow::keyCallback);
   return true;
 }
 
-bool CWindow::update() {
-  glfwMakeContextCurrent(m_handle);
-
-  int width, height;
-  glfwGetFramebufferSize(m_handle, &width, &height);
-
-  glViewport(0, 0, width, height);
-  glClearColor(1,0,1,1);
-
-  glClear(GL_COLOR_BUFFER_BIT);
+void CWindow::update() {
+  glfwMakeContextCurrent(m_Window);
+  glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
   glfwPollEvents();
-  glfwSwapBuffers(m_handle);
 
-  return m_bClose == false;
+  glViewport(0, 0, m_Width, m_Height);
+  glClearColor(
+      m_BackColor[0],
+      m_BackColor[1],
+      m_BackColor[2],
+      m_BackColor[3]
+  );
 }
 
-bool CWindow::shouldCose() {
-  return m_bClose == true;
+void CWindow::clear() {
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+
+bool CWindow::closed() {
+  return glfwWindowShouldClose(m_Window);;
+}
+
+void CWindow::swap() {
+  glfwSwapBuffers(m_Window);
 }
 
 void CWindow::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-  // Когда пользователь нажимает ESC, мы устанавливаем свойство CWindowShouldClose в true, 
+  // Когда пользователь нажимает ESC, мы устанавливаем свойство m_bClose в true, 
   // и приложение после этого закроется
   CWindow *win = reinterpret_cast<CWindow*>(glfwGetWindowUserPointer(window));
   if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    win->m_bClose = true;
+    glfwSetWindowShouldClose(win->m_Window, win->m_bClose = true);
+  if(key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    win->show();
 }
 
-HWND CWindow::get() {
-  return static_cast<void*>(m_handle);
+void CWindow::setTitle(char *title) {
+  glfwSetWindowTitle(m_Window, title);
+}
+
+void CWindow::show() {
+  glfwShowWindow(m_Window);
 }
 
 IWindow *CreateIWindow() {

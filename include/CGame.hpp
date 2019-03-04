@@ -4,8 +4,10 @@
 
 class CGame : public IGame {
 private:
-  IWindow *win;
+  IWindow *m_Window;
+  char *m_Title;
 public:
+  CGame(char *);
   bool init();
   bool update();
   bool run();

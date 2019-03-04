@@ -1,17 +1,25 @@
 #include "CGame.hpp"
 
+CGame::CGame(char *title) : m_Title(title) {
+
+}
+
 bool CGame::init() {
-  win = CreateIWindow(); 
-  if (win != nullptr) {
-    win->init();
-    return win->create(); 
+  m_Window = CreateIWindow(); 
+  if (m_Window != nullptr) {
+    m_Window->init();
+    return m_Window->create(); 
   }
   return false;
 }
 
 bool CGame::update() {
-  while (win->update()) {
+  while (!m_Window->closed()) {
+    m_Window->clear();
+    m_Window->update();
+    /* Rendering code here */
 
+    m_Window->swap();
   } 
 }
 
@@ -20,7 +28,7 @@ bool CGame::run() {
 }
 
 
-IGame *CreateIGame() {
-  CGame *game = new CGame();
+IGame *CreateIGame(char *title) {
+  CGame *game = new CGame(title);
   return (game);
 }
