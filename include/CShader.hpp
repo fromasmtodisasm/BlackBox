@@ -5,9 +5,9 @@
 class CShader 
 {
 private:
-  GLuint m_shader;
-  std::string path;
-  std::string text;
+	GLuint m_shader;
+	std::string path;
+	std::string text;
 public:
   enum type{
     E_VERTEX,

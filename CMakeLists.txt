@@ -57,7 +57,7 @@ target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-add_executable(${PROJECT_NAME}_test  ../tests/Main.cpp ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME}_test  tests/Main.cpp ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 
 install(

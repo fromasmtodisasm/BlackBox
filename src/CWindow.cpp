@@ -9,7 +9,7 @@ CWindow::CWindow(
 }
 
 CWindow::~CWindow() {
-    glfwTerminate();
+	glfwTerminate();
 }
 
 bool CWindow::init() {
@@ -99,6 +99,6 @@ void CWindow::show() {
 }
 
 IWindow *CreateIWindow() {
-  CWindow *win = new CWindow();
-  return (win);
+	CWindow *win = new CWindow();
+	return (win);
 }

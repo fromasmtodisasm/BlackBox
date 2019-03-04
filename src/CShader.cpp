@@ -59,16 +59,20 @@ CShaderProgram::~CShaderProgram() {
 
 bool CShaderProgram::create() {
   m_program = glCreateProgram();
+	return true;
 }
 
 bool CShaderProgram::attach(CShader &shader) {
   glAttachShader(m_program, shader.get());
+	return true;
 }
 
 bool CShaderProgram::link() {
   glLinkProgram(m_program);
+	return true;
 }
 
 bool CShaderProgram::status(CShader &shader) {
   //glGetShaderiv(shader.get(), GL_COMPILE_STATUS, &m_status);
+	return true;
 }
