@@ -46,7 +46,7 @@ std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << std::endl;
 
 
 
-static struct OBJNode {
+struct OBJNode {
 	UniType val;
 	
 	enum {
