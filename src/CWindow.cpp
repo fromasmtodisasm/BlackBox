@@ -1,6 +1,8 @@
 #include "CWindow.hpp"
 #include <iostream>
 
+using namespace std;
+
 CWindow::CWindow(
     char *title=DEFAULT_TITLE, int width=DEFAULT_WIDTH, int height=DEFAULT_HEIGHT 
   ) : 
@@ -51,11 +53,9 @@ bool CWindow::create() {
 
   glfwMakeContextCurrent(m_Window);
 
-  glewExperimental = GL_TRUE;
-  if (glewInit() != GLEW_OK)
-  {
-      std::cout << "Failed to initialize GLEW" << std::endl;
-      return false;
+  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+      std::cout << "Failed to initialize OpenGL context" << std::endl;
+      return -1;
   }
 
   glfwSetWindowUserPointer(m_Window, static_cast<void*>(this));

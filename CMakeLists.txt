@@ -20,6 +20,7 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 #--------------------------------------------------
 add_subdirectory(submodules/glfw)
+add_subdirectory(submodules/glad)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -30,14 +31,6 @@ if (WIN32)
     message(STATUS "GDI32 founded")
     link_libraries(${GDI32_LIBRARY})
   endif()
-endif()
-#--------------------------------------------------
-find_package(GLEW REQUIRED)
-if (GLEW_FOUND)
-  include_directories(${GLEW_INCLUDE_DIRS})
-  link_libraries(${GLEW_LIBRARIES})
-else()
-  message(FATAL "glew not found")
 endif()
 #--------------------------------------------------
 find_package(GLM REQUIRED)
@@ -54,6 +47,7 @@ include_directories(
 ###################################################
 add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
@@ -67,4 +61,7 @@ install(
   ARCHIVE DESTINATION ${PROJECT_NAME}/lib/static
 )
 
+install(
+  DIRECTORY res DESTINATION  ${PROJECT_NAME}
+)
 
