@@ -2,7 +2,7 @@
 
 #include "IWindow.hpp"
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 // #if __cplusplus >= 2001103L

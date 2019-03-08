@@ -1,6 +1,8 @@
 #include "CWindow.hpp"
 #include <iostream>
 
+using namespace std;
+
 CWindow::CWindow(
     char *title=DEFAULT_TITLE, int width=DEFAULT_WIDTH, int height=DEFAULT_HEIGHT 
   ) : 
@@ -49,13 +51,19 @@ bool CWindow::create() {
     return false;
   }
 
+  glfwMakeContextCurrent(m_Window);
+
+  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+      std::cout << "Failed to initialize OpenGL context" << std::endl;
+      return -1;
+  }
+
   glfwSetWindowUserPointer(m_Window, static_cast<void*>(this));
   glfwSetKeyCallback(m_Window, CWindow::keyCallback);
   return true;
 }
 
 void CWindow::update() {
-  glfwMakeContextCurrent(m_Window);
   glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
   glfwPollEvents();
 
