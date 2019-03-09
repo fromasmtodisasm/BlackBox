@@ -65,6 +65,6 @@ install(
 )
 
 install(
-  DIRECTORY res DESTINATION . 
+  DIRECTORY res DESTINATION ${CMAKE_INSTALL_PREFIX}
 )
 

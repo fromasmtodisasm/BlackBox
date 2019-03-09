@@ -13,13 +13,12 @@ CGame::CGame(char *title) :
 bool CGame::init() {
   m_Window = new CWindow(m_Title); 
   if (m_Window != nullptr ) {
-    bool res;
     if (!m_Window->init() || !m_Window->create())
       return false;
     m_ShaderProgram = new CShaderProgram("../res/vertex.glsl", "../res/fragment.glsl");
     if (m_ShaderProgram == nullptr) return false;
     return true;
-  }
+  } 
   return false;
 }
 
@@ -28,7 +27,7 @@ bool CGame::update() {
     m_Window->clear();
     m_Window->update();
     /* Rendering code here */
-      m_ShaderProgram->use();
+    m_ShaderProgram->use();
     m_Window->swap();
   }
 	return true;

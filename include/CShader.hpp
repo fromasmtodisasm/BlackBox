@@ -12,7 +12,7 @@ struct ShaderStatus
  CShader *m_Shader;
 
  ShaderStatus(CShader *shader);
- bool get();
+ bool get(int statusType);
 };
 
 struct ShaderProgramStatus
@@ -22,7 +22,7 @@ struct ShaderProgramStatus
  CShaderProgram *m_Program;
 
  ShaderProgramStatus(CShaderProgram *program);
- bool get();
+ bool get(int statusType);
 };
 
 class CShader 
