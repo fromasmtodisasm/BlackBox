@@ -16,7 +16,7 @@ bool ShaderStatus::get(int statusType) {
   if(m_Status != GL_TRUE)
   {
     glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog);
-    std::cout << "ERROR::SHADER::" << m_Shader->getName() <<"\n" << infoLog << std::endl;
+    std::cout << "ERROR: shader" << m_Shader->getName() <<"\n" << infoLog << std::endl;
     return false;
   }
   return true;

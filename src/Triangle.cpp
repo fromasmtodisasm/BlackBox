@@ -11,11 +11,11 @@ Triangle::Triangle(CShaderProgram *program) :
       -0.5f, -0.5f, 0.0f,
        0.5f, -0.5f, 0.0f,
        0.0f,  0.5f, 0.0f
-    };  
+    };
 
   VertexBuffer *vb = new VertexBuffer(m_Vertices.data(),m_Vertices.size()*sizeof(GLfloat));
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(0);
 
   m_Geom = new Geometry(vb, nullptr);
 }

@@ -4,3 +4,4 @@ build/*
 *.swo
 /.vs
 *.swo
+*.lnk

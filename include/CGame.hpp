@@ -19,7 +19,7 @@ private:
   std::vector<Object*> m_Objects;
 public:
   CGame(char *);
-  bool init();
+  bool init(bool debug);
   bool update();
   bool run();
 };

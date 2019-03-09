@@ -10,7 +10,10 @@ CGame::CGame(char *title) :
 
 }
 
-bool CGame::init() {
+bool CGame::init(bool debug) {
+#ifdef _DEBUG
+  if ( debug ) _asm { int 0x3 }
+#endif
   m_Window = new CWindow(m_Title); 
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())

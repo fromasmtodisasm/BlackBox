@@ -14,11 +14,18 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
   string path;
-  chdir((path = getBasePath(string(argv[0]))).c_str());
+  bool debug = false;
+  if (argc > 1) {
+    if (string(argv[1]) == "-debug")
+      debug = true;
+  }
+
+  // chdir((path = getBasePath(string(argv[0]))).c_str());
   cout << argv[0] << endl;
   cout << path << endl;
+
   IGame *game = CreateIGame("MyGame");
-  game->init();
+  game->init(debug);
   game->run();  
 
   return 0;
