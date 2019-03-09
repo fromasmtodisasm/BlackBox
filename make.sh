@@ -6,5 +6,6 @@ case "$1" in
 
   *)
     cmake --build $BB_BUILD_DIR --target $1 
+  ;;
 
 esac
