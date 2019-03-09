@@ -63,7 +63,7 @@ public:
   ~CShaderProgram();
 
   bool create();
-  bool attach(CShader &shader);
+  bool attach(CShader *shader);
   bool link();
   void use();
   GLuint get();

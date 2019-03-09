@@ -73,7 +73,7 @@ CShader *CShader::load(string path, CShader::type type) {
   CShader *shader = new CShader(text, type);
   shader->create();
   shader->compile();
-
+  shader->print();
   return shader;
 }
 
@@ -120,14 +120,14 @@ CShaderProgram::~CShaderProgram() {
 
 bool CShaderProgram::create() {
   m_Program = glCreateProgram();
-  attach(*m_Vertex);
-  attach(*m_Fragment);
+  attach(m_Vertex);
+  attach(m_Fragment);
   link();
 	return m_Status.get(GL_LINK_STATUS);
 }
 
-bool CShaderProgram::attach(CShader &shader) {
-  glAttachShader(m_Program, shader.get());
+bool CShaderProgram::attach(CShader *shader) {
+  glAttachShader(m_Program, shader->get());
 	return m_Status.get(GL_VALIDATE_STATUS);
 }
 
