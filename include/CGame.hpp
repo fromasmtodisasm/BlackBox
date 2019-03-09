@@ -2,6 +2,7 @@
 #include "IGame.hpp"
 #include "IWindow.hpp"
 #include "CShader.hpp"
+#include "Triangle.hpp"
 
 #include <common.h>
 #include <map>
@@ -15,6 +16,7 @@ private:
   IWindow *m_Window;
   char *m_Title;
   CShaderProgram *m_ShaderProgram; 
+  std::vector<Object*> m_Objects;
 public:
   CGame(char *);
   bool init();

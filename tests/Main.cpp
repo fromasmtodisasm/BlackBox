@@ -13,7 +13,10 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  chdir(getBasePath(string(argv[0])).c_str());
+  string path;
+  chdir((path = getBasePath(string(argv[0]))).c_str());
+  cout << argv[0] << endl;
+  cout << path << endl;
   IGame *game = CreateIGame("MyGame");
   game->init();
   game->run();  

@@ -123,7 +123,7 @@ bool CShaderProgram::create() {
   attach(*m_Vertex);
   attach(*m_Fragment);
   link();
-	return true;
+	return m_Status.get(GL_LINK_STATUS);
 }
 
 bool CShaderProgram::attach(CShader &shader) {

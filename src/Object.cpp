@@ -2,74 +2,23 @@
 #include <fstream>
 #include <cctype>
 
-using std::fstream;
-using std::ifstream;
-using std::ofstream;
-using std::regex;
-using std::cmatch;
+using namespace std;
 
-
-/*
-
-std::ifstream in;
-
-in.open(filename, std::ifstream::in);
-if (in.fail()) return;
-std::string line;
-while (!in.eof()) {
-	std::getline(in, line);
-	std::istringstream iss(line.c_str());
-	char trash;
-	if (!line.compare(0, 2, "v ")) {
-		iss >> trash;
-		Vec3f v;
-		for (int i = 0; i < 3; i++) iss >> v.raw[i];
-		verts_.push_back(v);
-	}
-	else if (!line.compare(0, 2, "f ")) {
-		std::vector<int> f;
-		int itrash, idx;
-		iss >> trash;
-		while (iss >> idx >> trash >> itrash >> trash >> itrash) {
-			idx--; // in wavefront obj all indices start at 1, not zero
-			f.push_back(idx);
-		}
-		faces_.push_back(f);
-	}
-}
-std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << std::endl;
-
-
-*/
-
-#if _LOAD_OBJ_ == 1
-
-
+#if 0
 
 struct OBJNode {
 	UniType val;
 	
 	enum {
-//		TVERT,
-//		TPOLY,
-//		TCOORD,
-//		TNORMAL,
 		TFUN,
 		TARG
-		// ...,
 	}type;
 
 };
 
 struct Loader : public IGeometry{
 private:
-//	string vert("v");
-//	string poly("f");
-//	string normal("vn");
-//	string group("g");
-//	string mtres("mtllib");
-//	string obj("o");
-//	string tcoord("vt");
+
 public:
 	Loader(string filename) {	
 		Load(filename);
@@ -192,9 +141,6 @@ public:
 	}
 	virtual bool Load(string filename) {
 		
-		// cmatch res;
-		// regex r;
-
 		ifstream file(filename);
 
 		if (!file.is_open()) { return false; }
@@ -209,6 +155,17 @@ public:
 };
 
 #endif
+
+Object::Object() 
+{
+
+}
+
+void Object::draw() {}
+
+void Object::move() {}
+
+void Object::rotate() {}
 
 Object * Object::Load(string path)
 {

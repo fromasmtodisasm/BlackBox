@@ -17,7 +17,10 @@ bool CGame::init() {
       return false;
     m_ShaderProgram = new CShaderProgram("../res/vertex.glsl", "../res/fragment.glsl");
     if (m_ShaderProgram == nullptr) return false;
-    return true;
+    else {
+      m_Objects.push_back(new Triangle(m_ShaderProgram));
+      return true;
+    }
   } 
   return false;
 }
@@ -27,7 +30,7 @@ bool CGame::update() {
     m_Window->clear();
     m_Window->update();
     /* Rendering code here */
-    m_ShaderProgram->use();
+    m_Objects[0]->draw();
     m_Window->swap();
   }
 	return true;

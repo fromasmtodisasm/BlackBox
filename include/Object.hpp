@@ -1,15 +1,16 @@
+#include <IObject.hpp>
 #include <IGeometry.hpp>
-#include <regex>
+#include <glm/glm.hpp>
 
-#ifndef _LOAD_OBJ_
-#define _LOAD_OBJ_ 1
-#endif
-
-class Object : public IGeometry {
-private:
-	glm::vec3 pos;
-	glm::vec3 size;
+class Object : public IObject {
+protected:
+	glm::vec3 m_Pos;
+  Geometry *m_Geom;
+  Object();
 public:
-//	bool Load(string path); // Load("")
 	static Object* Load(string path);
+  virtual void move();
+  virtual void rotate();
+  virtual void draw();
+
 };
