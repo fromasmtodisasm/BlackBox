@@ -1,4 +1,5 @@
 #include "CGame.hpp"
+#include "CWindow.hpp"
 #include <iostream>
 
 using namespace std;
@@ -10,13 +11,13 @@ CGame::CGame(char *title) :
 }
 
 bool CGame::init() {
-  m_Window = CreateIWindow(); 
+  m_Window = new CWindow(m_Title); 
   if (m_Window != nullptr ) {
     bool res;
     if (!m_Window->init() || !m_Window->create())
       return false;
     m_ShaderProgram = new CShaderProgram("../res/vertex.glsl", "../res/fragment.glsl");
-    if (!res) return false;
+    if (m_ShaderProgram == nullptr) return false;
     return true;
   }
   return false;
