@@ -51,8 +51,6 @@ CShader::~CShader() {
 }
 
 bool CShader::create() {
-  cout << __func__ << endl;
-  cout << glCreateShader << endl;
   m_Shader = glCreateShader(m_Type);
   if (m_Shader != 0) { return true; }
   else { return false; }
@@ -80,7 +78,6 @@ CShader *CShader::load(string path, CShader::type type) {
 }
 
 bool CShader::compile() {
-  cout << __func__ << endl;
   cout  << "shader: " << m_Shader << endl;
   const char *text = m_Text.c_str();
   glShaderSource(m_Shader, 1, &text, nullptr);
