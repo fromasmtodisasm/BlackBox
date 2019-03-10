@@ -4,14 +4,15 @@
 class IndexBuffer
 {
 private:
-  GLuint m_RendererID;
-  size_t m_Count;
+  GLuint VBO;
+  GLuint VAO;
+  const void *m_Data;
+  size_t m_Size;
 public:
-  IndexBuffer(const void *data, size_t count);
+  IndexBuffer(const void *data, size_t size);
   ~IndexBuffer();
 
   void bind();
-  void unbinnd();
-
-  inline size_t getCount() { return m_Count; }
+  void unbind();
+  void draw();
 };
