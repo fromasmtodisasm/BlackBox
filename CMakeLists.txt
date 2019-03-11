@@ -41,7 +41,12 @@ include_directories(
 #--------------------------------------------------
 ###################################################
 if(WIN32)
-  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
+  if (MSVC)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
+  endif()
+  if (MINGW)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--subsystem,windows")
+  endif()
 endif(WIN32)
 
 add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
