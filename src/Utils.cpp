@@ -2,14 +2,13 @@
 #ifdef WIN32
   #define WIN32_LEAN_AND_MEAN
   #include <windows.h>
+#define DS "\\" //dir separator
+#else
+#define DS "/" //dir separator
 #endif
 
-#include <iostream>
-
-using namespace std;
-
 std::string getBasePath(std::string fullpath) {
-  size_t pos = fullpath.find_last_of("\\");
+  size_t pos = fullpath.find_last_of(DS);
   return fullpath.substr(0, pos);
 }
 
@@ -32,9 +31,7 @@ std::string getBasePath(std::string fullpath) {
         BOOLEAN  in_SPACE;
 
         PCHAR szFileName = new CHAR[MAX_PATH + 1];
-
         GetModuleFileName(NULL, szFileName, MAX_PATH + 1);
-        cout << szFileName << endl;
 
         len = strlen(CmdLine) + strlen(szFileName);
         i = ((len+2)/2)*sizeof(PVOID) + sizeof(PVOID);
@@ -101,7 +98,6 @@ std::string getBasePath(std::string fullpath) {
         argv[argc] = NULL;
 
         (*_argc) = argc;
-        cout << argv[0];
         return argv;
     }
 #endif
