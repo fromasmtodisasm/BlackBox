@@ -33,24 +33,26 @@ if (WIN32)
   endif()
 endif()
 #--------------------------------------------------
-find_package(GLM)
-if (GLM_FOUND)
-  include_directories(${GLM_INCLUDE_DIRS})
-  link_libraries(${GLM_LIBRARIES})
-  message(STATUS "GLM founded")
-else()
-  add_subdirectory(submodules/glm)
-endif()
+add_subdirectory(submodules/glm)
 #--------------------------------------------------
 include_directories(
   "${PROJECT_SOURCE_DIR}/include"
 )
 #--------------------------------------------------
 ###################################################
+if(WIN32)
+  if (MSVC)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
+  endif()
+  if (MINGW)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--subsystem,windows")
+  endif()
+endif(WIN32)
+
 add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
-target_link_libraries(${PROJECT_NAME} ${GLM_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
@@ -59,12 +61,12 @@ target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 
 install(
   TARGETS ${PROJECT_NAME}_test ${PROJECT_NAME}  
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static
+  RUNTIME DESTINATION ${PROJECT_NAME}/bin
+  LIBRARY DESTINATION ${PROJECT_NAME}/lib
+  ARCHIVE DESTINATION ${PROJECT_NAME}/lib/static
 )
 
 install(
-  DIRECTORY res DESTINATION . 
+  DIRECTORY res DESTINATION ${PROJECT_NAME}
 )
 

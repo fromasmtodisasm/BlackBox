@@ -5,16 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-// #if __cplusplus >= 2001103L
-//
 #include "common.h"
 #include <map>
-
-// #else
-
-// #error "not corrected c++ standart ( c++11 )"
-
-// #endif
 
 typedef std::function<void(GLFWwindow *window, int key, int scancode, int action, int mode)> kcbfunc;
 
@@ -32,7 +24,7 @@ private:
   GLfloat m_BackColor[4] = { 0.5, 0.3, 0.8, 1.0 };
 
 public:
-  CWindow(char*, int, int);
+  CWindow(char *title=DEFAULT_TITLE, int width=DEFAULT_WIDTH, int height=DEFAULT_HEIGHT);
   ~CWindow();
   bool create();
   bool init();

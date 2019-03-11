@@ -4,9 +4,10 @@
 using namespace std;
 
 CWindow::CWindow(
-    char *title=DEFAULT_TITLE, int width=DEFAULT_WIDTH, int height=DEFAULT_HEIGHT 
+    char *title, int width, int height 
   ) : 
-  m_Width(width), m_Height(height), m_Title(title), m_bClose(false) {
+  m_Width(width), m_Height(height), m_Title(title), m_bClose(false) 
+{
 
 }
 

@@ -11,12 +11,12 @@ ShaderStatus::ShaderStatus(CShader *shader) :
 
 }
 
-bool ShaderStatus::get() {
-  glGetShaderiv(m_Shader->get(), GL_COMPILE_STATUS, &m_Status);
+bool ShaderStatus::get(int statusType) {
+  glGetShaderiv(m_Shader->get(), statusType, &m_Status);
   if(m_Status != GL_TRUE)
   {
     glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog);
-    std::cout << "ERROR::SHADER::" << m_Shader->getName() <<"\n" << infoLog << std::endl;
+    std::cout << "ERROR: shader" << m_Shader->getName() <<"\n" << infoLog << std::endl;
     return false;
   }
   return true;
@@ -29,12 +29,12 @@ ShaderProgramStatus::ShaderProgramStatus(CShaderProgram *program) :
 
 }
 
-bool ShaderProgramStatus::get() {
-  glGetShaderiv(m_Program->get(), GL_LINK_STATUS, &m_Status);
+bool ShaderProgramStatus::get(int statusType) {
+  glGetShaderiv(m_Program->get(), statusType, &m_Status);
   if(m_Status != GL_TRUE)
   {
     glGetShaderInfoLog(m_Program->get(), 512, NULL, infoLog);
-    std::cout << "ERROR::SHADER::PROGRAM " <<"\n" << infoLog << std::endl;
+    std::cout << "ERROR: shader::programm: \n" << infoLog << std::endl;
     return false;
   }
   return true;
@@ -51,10 +51,10 @@ CShader::~CShader() {
 }
 
 bool CShader::create() {
-  cout << __func__ << endl;
-  cout << glCreateShader << endl;
   m_Shader = glCreateShader(m_Type);
-  return m_Status.get();
+  if (m_Shader != 0) { return true; }
+  else { return false; }
+  // return m_Status.get(GL_VALIDATE_STATUS);
 }
 
 
@@ -73,18 +73,17 @@ CShader *CShader::load(string path, CShader::type type) {
   CShader *shader = new CShader(text, type);
   shader->create();
   shader->compile();
-
+  shader->print();
   return shader;
 }
 
 bool CShader::compile() {
-  cout << __func__ << endl;
   cout  << "shader: " << m_Shader << endl;
   const char *text = m_Text.c_str();
   glShaderSource(m_Shader, 1, &text, nullptr);
   cout << "test" << endl;
   glCompileShader(m_Shader);
-  return m_Status.get();
+  return m_Status.get(GL_COMPILE_STATUS);
 }
 
 bool CShader::bind() {
@@ -121,22 +120,22 @@ CShaderProgram::~CShaderProgram() {
 
 bool CShaderProgram::create() {
   m_Program = glCreateProgram();
-  attach(*m_Vertex);
-  attach(*m_Fragment);
+  attach(m_Vertex);
+  attach(m_Fragment);
   link();
-	return true;
+	return m_Status.get(GL_LINK_STATUS);
 }
 
-bool CShaderProgram::attach(CShader &shader) {
-  glAttachShader(m_Program, shader.get());
-	return m_Status.get();
+bool CShaderProgram::attach(CShader *shader) {
+  glAttachShader(m_Program, shader->get());
+	return m_Status.get(GL_VALIDATE_STATUS);
 }
 
 bool CShaderProgram::link() {
   glLinkProgram(m_Program);
   delete m_Vertex;
   delete m_Fragment;
-	return m_Status.get();
+	return m_Status.get(GL_LINK_STATUS);
 }
 
 void CShaderProgram::use() {
