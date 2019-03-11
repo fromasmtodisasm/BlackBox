@@ -40,6 +40,10 @@ include_directories(
 )
 #--------------------------------------------------
 ###################################################
+if(WIN32)
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
+endif(WIN32)
+
 add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
