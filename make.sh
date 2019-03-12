@@ -6,7 +6,10 @@ case "$1" in
 
   *)
     if [ ! -f ${BB_BUILD_DIR}/CMakeCache.txt ]; then
-      cd $BB_BUILD_DIR && cmake -DCMAKE_TOOLCHAIN_FILE=CMake/x86_64-w64-mingw32.cmake -DBUILD_SHARED_LIBS=OFF -DGLM_TEST_ENABLE=OFF ${BB_SOURCE_DIR} 
+      if [ ! -f ${BB_BUILD_DIR} ]; then
+        mkdir -p ${BB_BUILD_DIR} 
+      fi
+      cd $BB_BUILD_DIR && cmake -DCMAKE_TOOLCHAIN_FILE=CMake/x86_64-w64-mingw32.cmake -DBUILD_SHARED_LIBS=OFF -DGLM_TEST_ENABLE=OFF -DBUILD_SHARED_LIBS=ON -DGLAD_INSTALL=ON ${BB_SOURCE_DIR} 
       cd -
     fi
     cmake --build $BB_BUILD_DIR --target $1 -- -j8  
