@@ -23,7 +23,7 @@ add_subdirectory(submodules/glfw)
 add_subdirectory(submodules/glad)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
-if (NOT MSVC)
+if (WIN32)
   find_library(GDI32_LIBRARY gdi32)
   if(GDI32_LIBRARY_FOUND)
     message(FATAL "gdi32 notfound")
