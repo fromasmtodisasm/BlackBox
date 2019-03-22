@@ -69,12 +69,7 @@ void CWindow::update() {
   glfwPollEvents();
 
   glViewport(0, 0, m_Width, m_Height);
-  glClearColor(
-      m_BackColor[0],
-      m_BackColor[1],
-      m_BackColor[2],
-      m_BackColor[3]
-  );
+  glClearBufferfv(GL_COLOR, 0, m_BackColor);
 }
 
 void CWindow::clear() {
