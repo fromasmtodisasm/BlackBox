@@ -1,4 +1,5 @@
 #pragma once
+#include <glm/fwd.hpp>
 
 enum OBJType {
   TCAM,
@@ -8,8 +9,9 @@ enum OBJType {
 
 struct IObject
 {
-  virtual void move() = 0;
-  virtual void rotate() = 0;
+  virtual void move(glm::vec3 v) = 0;
+  virtual void rotate(float angle, glm::vec3 v) = 0;
+  virtual void scale(glm::vec3 v) = 0;
   virtual void draw() = 0;
   virtual OBJType getType() = 0;
 };

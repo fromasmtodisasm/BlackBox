@@ -1,17 +1,17 @@
 #include "IGeometry.hpp"
 
-Geometry::Geometry(VertexBuffer *verts, IndexBuffer *indxs) :
+Mesh::Mesh(VertexBuffer *verts, IndexBuffer *indxs) :
    m_Verts(verts), m_Indexes(indxs) 
 {
   
 }
 
-VertexBuffer *Geometry::getVertexBuffer()
+VertexBuffer *Mesh::getVertexBuffer()
 {
   return m_Verts;
 }
 
-IndexBuffer *Geometry::getIndexBuffer()
+IndexBuffer *Mesh::getIndexBuffer()
 {
   return m_Indexes;
 }

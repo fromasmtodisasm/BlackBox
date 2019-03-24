@@ -1,5 +1,6 @@
 #pragma once
 #include <glad/glad.h>
+#include <glm/fwd.hpp>
 #include <string>
 
 class CShader; 
@@ -49,6 +50,13 @@ public:
   GLuint get();
 };
 
+template<class T>
+class UniformValue {
+private:
+  GLint m_location;
+  T m_value;
+};
+
 class CShaderProgram {
 private:
   CShader *m_Vertex;
@@ -66,5 +74,13 @@ public:
   bool attach(CShader *shader);
   bool link();
   void use();
+  void setUniformValue(const char *name, float value);
+  void setUniformValue(const char *name, glm::vec1 value);
+  void setUniformValue(const char *name, glm::vec2 value);
+  void setUniformValue(const char *name, glm::vec3 value);
+  void setUniformValue(const char *name, glm::vec4 value);
+  void setUniformValue(const char *name, glm::mat2 value);
+  void setUniformValue(const char *name, glm::mat3 value);
+  void setUniformValue(const char *name, glm::mat4 value);
   GLuint get();
 };

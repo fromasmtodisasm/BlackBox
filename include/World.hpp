@@ -17,7 +17,7 @@ private:
 public:
 
   void draw() {
-    for (const auto object : m_Objs) {
+    for (const auto &object : m_Objs) {
       object.second->draw();
     }
     // Camera ...

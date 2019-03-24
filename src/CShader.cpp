@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 using namespace std;
 
 ShaderStatus::ShaderStatus(CShader *shader) :
@@ -139,7 +142,71 @@ bool CShaderProgram::link() {
 }
 
 void CShaderProgram::use() {
-  glUseProgram(m_Program);
+    glUseProgram(m_Program);
+}
+
+void CShaderProgram::setUniformValue(const char *name, float value)
+{
+    GLint loc = glGetUniformLocation(m_Program, name);
+    if (loc != -1){
+        glUniform1f(loc, value);
+    }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::vec1 value)
+{
+    GLint loc = glGetUniformLocation(m_Program, name);
+    if (loc != -1){
+        glUniform1f(loc, value[0]);
+    }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::vec2 value)
+{
+    GLint loc = glGetUniformLocation(m_Program, name);
+    if (loc != -1){
+        glUniform2fv(loc, 2, glm::value_ptr(value));
+    }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::vec3 value)
+{
+    GLint loc = glGetUniformLocation(m_Program, name);
+    if (loc != -1){
+        glUniform3fv(loc, 3, glm::value_ptr(value));
+    }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::vec4 value)
+{
+    GLint loc = glGetUniformLocation(m_Program, name);
+    if (loc != -1){
+        glUniform4fv(loc, 4, glm::value_ptr(value));
+    }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::mat2 value)
+{
+  GLint loc = glGetUniformLocation(m_Program, name);
+  if (loc != -1){
+    glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+  }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::mat3 value)
+{
+  GLint loc = glGetUniformLocation(m_Program, name);
+  if (loc != -1){
+    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+  }
+}
+
+void CShaderProgram::setUniformValue(const char *name, glm::mat4 value)
+{
+  GLint loc = glGetUniformLocation(m_Program, name);
+  if (loc != -1){
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+  }
 }
 
 GLuint CShaderProgram::get() {

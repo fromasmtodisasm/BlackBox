@@ -1,15 +1,22 @@
 #pragma once
 #include <common.h>
+#include <cassert>
+#include "VertexArrayObject.hpp"
 
 class VertexBuffer;
 class IndexBuffer;
 
-struct Geometry {
+struct Vertex
+{
+  float x,y,z;
+};
+
+struct Mesh {
 protected:
   VertexBuffer *m_Verts;  
   IndexBuffer *m_Indexes;
 public:
-  Geometry(VertexBuffer *verts, IndexBuffer *indxs);
+  Mesh(VertexBuffer *verts, IndexBuffer *indxs);
 
   VertexBuffer *getVertexBuffer();
   IndexBuffer *getIndexBuffer();

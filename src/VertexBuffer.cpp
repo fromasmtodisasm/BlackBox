@@ -1,10 +1,11 @@
 #include "VertexBuffer.hpp"
+#include "IGeometry.hpp"
 #include <iostream>
 
 using namespace std;
 
-VertexBuffer::VertexBuffer(const void *data, size_t size) :
-  m_Data(data), m_Size(size)
+VertexBuffer::VertexBuffer(const void *data, GLint count) :
+  m_Data(data), m_Count(count)
 {
   glGenVertexArrays(1, &VAO);
 
@@ -12,7 +13,7 @@ VertexBuffer::VertexBuffer(const void *data, size_t size) :
     glGenBuffers(1, &VBO);  
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, count*sizeof(Vertex), data, GL_STATIC_DRAW);
     // 3. Устанавливаем указатели на вершинные атрибуты
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
@@ -37,6 +38,6 @@ void VertexBuffer::unbind()
 void VertexBuffer::draw()
 {
   glBindVertexArray(VAO); 
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, m_Count);
   glBindVertexArray(0);
 }

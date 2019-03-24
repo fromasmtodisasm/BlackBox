@@ -7,9 +7,9 @@ private:
   GLuint VBO;
   GLuint VAO;
   const void *m_Data;
-  size_t m_Size;
+  GLint m_Count;
 public:
-  VertexBuffer(const void *data, size_t size);
+  VertexBuffer(const void *data, GLint size);
   ~VertexBuffer();
 
   void bind();
