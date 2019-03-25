@@ -12,7 +12,7 @@
 
 using namespace std;
 
-#if 0//#ifdef WIN32
+#ifdef _MSC_VER
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 int WINAPI WinMain(
