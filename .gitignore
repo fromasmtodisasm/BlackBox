@@ -5,3 +5,4 @@ build/*
 /.vs
 *.swo
 *.lnk
+CMakeLists.txt.user*

@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
       debug = true;
   }
 
-  chdir((path = getBasePath(string(argv[0]))).c_str());
+  //chdir((path = getBasePath(string(argv[0]))).c_str());
   cout << path << endl;
 
   IGame *game = CreateIGame("MyGame");

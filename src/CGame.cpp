@@ -16,7 +16,7 @@ bool CGame::init(bool debug) {
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())
       return false;
-    m_ShaderProgram = new CShaderProgram("../res/vertex.glsl", "../res/fragment.glsl");
+    m_ShaderProgram = new CShaderProgram("res/vertex.glsl", "res/fragment.glsl");
     if (m_ShaderProgram == nullptr) return false;
     else {
       m_ShaderProgram->create();
