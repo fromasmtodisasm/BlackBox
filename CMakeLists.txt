@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(BlackBox CXX)
 
+enable_testing()
+
 file(
   GLOB
   SOURCES
@@ -26,10 +28,10 @@ find_package(OpenGL REQUIRED)
 if (WIN32)
   find_library(GDI32_LIBRARY gdi32)
   if(GDI32_LIBRARY_FOUND)
-	message(STATUS "gdi32 found")
+    message(STATUS "gdi32 found")
     link_libraries(${GDI32_LIBRARY})
   else()
-	message(FATAL "GDI32 notfound")
+    message(FAILED "GDI32 notfound")
   endif()
 endif()
 #--------------------------------------------------
@@ -40,14 +42,6 @@ include_directories(
 )
 #--------------------------------------------------
 ###################################################
-if(WIN32)
-  if (MSVC)
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
-  endif()
-  if (MINGW)
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--subsystem,windows")
-  endif()
-endif(WIN32)
 
 add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
@@ -58,6 +52,18 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 add_executable(${PROJECT_NAME}_test  tests/Main.cpp)
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+if(WIN32)
+  if (MSVC)
+    #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
+    set_target_properties(${PROJECT_NAME}_test PROPERTIES CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows)
+  endif()
+  if (MINGW)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--subsystem,windows")
+  endif()
+endif(WIN32)
+
+
+add_test(NAME mytest COMMAND ${PROJECT_NAME}_test WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 install(
   TARGETS ${PROJECT_NAME}_test ${PROJECT_NAME}  
