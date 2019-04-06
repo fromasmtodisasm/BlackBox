@@ -11,7 +11,7 @@ using namespace std;
 Triangle::Triangle(CShaderProgram *program) :
   Object(), m_Shader(program)
 {
-  ty = OBJType::TPRIMITIVE;
+  m_type = OBJType::TPRIMITIVE;
   m_Vertices = {
     {-0.5f, -0.5f, -0.5f},
     {-0.5f,  0.5f, -0.5f},
@@ -46,7 +46,9 @@ void Triangle::draw() {
   m_Shader->use();
   float time = static_cast<float>(glfwGetTime()/4);
   //rotate = glm::rotate(rotate, time, glm::vec3(0.0f, 1.0f, 0.0f));
-  rotate = glm::rotate(rotate, time, glm::normalize(glm::vec3(0.0f, 4.0f, 3.0f)));
+  rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+  rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+  rotate = glm::rotate(rotate, angle.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
   m_Shader->setUniformValue("rotate", rotate);
   vb->draw();
 }
@@ -58,7 +60,9 @@ void Triangle::move(glm::vec3 v)
 
 void Triangle::rotate(float angle, glm::vec3 v)
 {
-
+  if (v.x) this->angle.x+=angle;
+  if (v.y) this->angle.y+=angle;
+  if (v.z) this->angle.z+=angle;
 }
 
 void Triangle::scale(glm::vec3 v)

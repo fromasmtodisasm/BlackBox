@@ -1,9 +1,9 @@
-#include "CWindow.hpp"
+#include "CGLFWWindow.hpp"
 #include <iostream>
 
 using namespace std;
 
-CWindow::CWindow(
+CGLFWWindow::CGLFWWindow(
     char *title, int width, int height 
   ) : 
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false) 
@@ -11,11 +11,11 @@ CWindow::CWindow(
 
 }
 
-CWindow::~CWindow() {
+CGLFWWindow::~CGLFWWindow() {
 	glfwTerminate();
 }
 
-bool CWindow::init() {
+bool CGLFWWindow::init() {
   //Инициализация GLFW
 	if (glfwInit())
   {
@@ -43,7 +43,7 @@ bool CWindow::init() {
   return false;
 }
 
-bool CWindow::create() {
+bool CGLFWWindow::create() {
   m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, nullptr, nullptr);
 
   if (m_Window == nullptr)
@@ -60,11 +60,11 @@ bool CWindow::create() {
   }
 
   glfwSetWindowUserPointer(m_Window, static_cast<void*>(this));
-  glfwSetKeyCallback(m_Window, CWindow::keyCallback);
+  glfwSetKeyCallback(m_Window, CGLFWWindow::keyCallback);
   return true;
 }
 
-void CWindow::update() {
+void CGLFWWindow::update() {
   glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
   glfwPollEvents();
 
@@ -72,37 +72,37 @@ void CWindow::update() {
   glClearBufferfv(GL_COLOR, 0, m_BackColor);
 }
 
-void CWindow::clear() {
+void CGLFWWindow::clear() {
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
-bool CWindow::closed() {
+bool CGLFWWindow::closed() {
   return glfwWindowShouldClose(m_Window);;
 }
 
-void CWindow::swap() {
+void CGLFWWindow::swap() {
   glfwSwapBuffers(m_Window);
 }
 
-void CWindow::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
+void CGLFWWindow::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
   // Когда пользователь нажимает ESC, мы устанавливаем свойство m_bClose в true, 
   // и приложение после этого закроется
-  CWindow *win = reinterpret_cast<CWindow*>(glfwGetWindowUserPointer(window));
+  CGLFWWindow *win = reinterpret_cast<CGLFWWindow*>(glfwGetWindowUserPointer(window));
   if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     glfwSetWindowShouldClose(win->m_Window, win->m_bClose = true);
   if(key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     win->show();
 }
 
-void CWindow::setTitle(char *title) {
+void CGLFWWindow::setTitle(char *title) {
   glfwSetWindowTitle(m_Window, title);
 }
 
-void CWindow::show() {
+void CGLFWWindow::show() {
   glfwShowWindow(m_Window);
 }
 
 IWindow *CreateIWindow() {
-	CWindow *win = new CWindow();
+	CGLFWWindow *win = new CGLFWWindow();
 	return (win);
 }

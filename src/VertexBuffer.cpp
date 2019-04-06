@@ -1,6 +1,7 @@
 #include "VertexBuffer.hpp"
 #include "IGeometry.hpp"
 #include <iostream>
+#include <glm/glm.hpp>
 
 using namespace std;
 

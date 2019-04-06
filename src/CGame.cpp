@@ -1,9 +1,19 @@
 #include "CGame.hpp"
+#include "GameObject.hpp"
 #include "CWindow.hpp"
 #include <iostream>
+#include <vector>
 #include <glm/ext/matrix_transform.hpp>
 
 using namespace std;
+
+//////////////////////////////////////////////////////////////////////
+// Pointer to Global ISystem.
+static ISystem* gISystem = 0;
+ISystem* GetISystem()
+{
+  return gISystem;
+}
 
 CGame::CGame(char *title) : 
   m_Title(title)
@@ -11,20 +21,16 @@ CGame::CGame(char *title) :
 
 }
 
-bool CGame::init(bool debug) {
+bool CGame::init(ISystem *pSystem)  {
+  m_pSystem = pSystem;
   m_Window = new CWindow(m_Title); 
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())
       return false;
-    m_ShaderProgram = new CShaderProgram("res/vertex.glsl", "res/fragment.glsl");
-    if (m_ShaderProgram == nullptr) return false;
-    else {
-      m_ShaderProgram->create();
-      world.add("triangle", new Triangle(m_ShaderProgram));
-      return true;
-    }
+  if (!init_opbject())
+    return false;
   } 
-  return false;
+  return true;
 }
 
 bool CGame::update() {
@@ -43,8 +49,34 @@ bool CGame::run() {
   return true;
 }
 
+void CGame::input()
+{
+  ICommand *cmd;
+  //std::vector<ICommand*> qcmd;  
+  //while ((cmd = inputHandler->handleInput()) != nullptr)
+  //  ;//cmd->execute();
+}
+
+bool CGame::init_opbject()
+{
+    if (m_ShaderProgram == nullptr) return false;
+    else {
+      //world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
+      world.add("cube", Primitive::create(Primitive::CUBE, m_ShaderProgram));
+      /*
+      world.add("triangle", new Triangle(m_ShaderProgram));
+      world.add("triangle", new Triangle(m_ShaderProgram));
+      */
+      return true;
+    }
+}
 
 IGame *CreateIGame(char *title) {
   CGame *game = new CGame(title);
   return (game);
+}
+
+bool CGame::EventListener::OnInputEvent(sf::Event & event)
+{
+  return false;
 }

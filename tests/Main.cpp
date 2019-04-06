@@ -1,5 +1,6 @@
 #include <iostream>
 #include "IGame.hpp"
+#include "ISystem.hpp"
 #include "Utils.hpp"
 
 /*##############################################*/
@@ -12,7 +13,7 @@
 
 using namespace std;
 
-#ifdef _MSC_VER
+#if 0//#ifdef _MSC_VER
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 int WINAPI WinMain(
@@ -37,9 +38,10 @@ int main(int argc, char *argv[]) {
   //chdir((path = getBasePath(string(argv[0]))).c_str());
   cout << path << endl;
 
+  ISystem*pSystem = CreateISystem(nullptr);
   IGame *game = CreateIGame("MyGame");
-  game->init(debug);
-  game->run();  
+  if (game->init(pSystem))
+    game->run();  
 
   return 0;
 }

@@ -1,9 +1,10 @@
 #pragma once
 
 #define EXPORT _cdecl
+struct ISystem;
 
 struct IGame {
-	virtual bool init(bool debug) = 0;
+	virtual bool init(ISystem *pSystem) = 0;
 	virtual bool update() = 0;
 	virtual bool run() = 0;
 };

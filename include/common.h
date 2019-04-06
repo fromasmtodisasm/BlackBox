@@ -25,3 +25,5 @@ struct UniType {
 	};
 	short int t;
 };
+
+#define SFML_WINDOW

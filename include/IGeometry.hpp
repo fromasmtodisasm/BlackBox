@@ -2,14 +2,12 @@
 #include <common.h>
 #include <cassert>
 #include "VertexArrayObject.hpp"
+#include <glm/glm.hpp>
 
 class VertexBuffer;
 class IndexBuffer;
 
-struct Vertex
-{
-  float x,y,z;
-};
+typedef glm::vec3 Vertex;
 
 struct Mesh {
 protected:
