@@ -103,6 +103,6 @@ void CGLFWWindow::show() {
 }
 
 IWindow *CreateIWindow() {
-	CGLFWWindow *win = new CGLFWWindow();
+  CGLFWWindow *win;// = new CGLFWWindow();
 	return (win);
 }

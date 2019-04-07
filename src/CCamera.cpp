@@ -45,6 +45,9 @@ glm::mat4 CCamera::getProjectionMatrix()
 
 bool CCamera::OnInputEvent(sf::Event & event)
 {
-  m_pos.x += 0.5f;
+  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+  {
+    m_pos.x += 0.5f;
+  }
   return false;
 }

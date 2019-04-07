@@ -1,11 +1,13 @@
 #pragma once
 #include "IWindow.hpp"
+#include "InputHandler.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <Opengl.hpp>
 
 class CSFMLWindow :
-  public IWindow
+  public IWindow,
+  public IInputEventListener
 {
   static constexpr int DEFAULT_WIDTH = 1024;
   static constexpr int DEFAULT_HEIGHT = 768;
@@ -33,5 +35,9 @@ public:
   // IWindow interface
 public:
   virtual void *getHandle() override;
+
+  // IInputEventListener interface
+public:
+  virtual bool OnInputEvent(sf::Event &event) override;
 };
 

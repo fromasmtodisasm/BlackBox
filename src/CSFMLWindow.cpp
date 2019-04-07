@@ -36,32 +36,7 @@ bool CSFMLWindow::init()
 
 void CSFMLWindow::update()
 {
-  // Process events
-  sf::Event event;
-  while (m_window->pollEvent(event))
-  {
-    // Close window: exit
-    if (event.type == sf::Event::Closed)
-      m_bClose = true;      
 
-    // Escape key: exit
-    if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
-    { 
-      m_window->close();
-      m_bClose = true; 
-    }
-    if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up))
-      ;//key_up->execute();
-    if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down))
-      ;//key_down->execute();
-    if ((event.type == sf::Event::JoystickButtonPressed))
-      ;//key_down->execute();
-    // Resize event: adjust the viewport
-    if (event.type == sf::Event::Resized)
-    {
-      glViewport(0, 0, event.size.width, event.size.height);
-    }
-  }
 }
 
 void CSFMLWindow::clear()
@@ -91,4 +66,30 @@ void CSFMLWindow::show()
 void *CSFMLWindow::getHandle()
 {
   return m_window;
+}
+
+bool CSFMLWindow::OnInputEvent(sf::Event &event)
+{
+  // Close window: exit
+  if (event.type == sf::Event::Closed)
+    m_bClose = true;
+
+  // Escape key: exit
+  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+  {
+    m_window->close();
+    m_bClose = true;
+  }
+  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up))
+    ;//key_up->execute();
+  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down))
+    ;//key_down->execute();
+  if ((event.type == sf::Event::JoystickButtonPressed))
+    ;//key_down->execute();
+  // Resize event: adjust the viewport
+  if (event.type == sf::Event::Resized)
+  {
+    glViewport(0, 0, event.size.width, event.size.height);
+  }
+  return true;
 }

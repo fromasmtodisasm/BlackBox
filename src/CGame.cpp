@@ -40,6 +40,7 @@ bool CGame::init(ISystem *pSystem)  {
     return false;
   CCamera *camera = new CCamera();
   inputHandler->AddEventListener(camera);
+  inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
   m_World->setCamera(camera);
   return true;
 }
@@ -48,7 +49,7 @@ bool CGame::update() {
   while (!m_Window->closed()) {
     input();
     m_Window->clear();
-    m_Window->update();
+    //m_Window->update();
     /* Rendering code here */
     m_World->draw();
     m_Window->swap();
