@@ -10,6 +10,7 @@ struct IWindow {
  virtual void swap() = 0;
  virtual void setTitle(char *) = 0;
  virtual void show() = 0;
+ virtual void *getHandle() = 0;
 };
 
 IWindow* EXPORT CreateIWindow();

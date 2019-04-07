@@ -9,9 +9,9 @@ class CInputHandler : public IInputHandler
   sf::Window *m_Window;
   std::list<IInputEventListener*> listeners; 
 public:
-  CInputHandler(CWindow *window);
+  CInputHandler(IWindow *window);
   virtual ICommand *handleInput() override;
 
-  // Унаследовано через IInputHandler
+  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ IInputHandler
   virtual void AddEventListener(IInputEventListener * pListener) override;
 };

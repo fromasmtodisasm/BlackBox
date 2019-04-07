@@ -2,7 +2,7 @@
 #include <InputHandler.hpp>
 #include <glm/glm.hpp>
 
-class CCamera //: public IInputEventListener
+class CCamera : public IInputEventListener
 {
 private:
   glm::vec3 m_pos; 
@@ -14,6 +14,7 @@ public:
   CCamera();
   ~CCamera();
 
+  void update();
   void move(glm::vec3 pos);
   void rotate(float angle, glm::vec3 axis);
   glm::mat4 getViewMatrix();

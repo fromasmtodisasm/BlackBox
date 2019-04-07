@@ -21,7 +21,6 @@ public:
   CSFMLWindow(char *title = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSFMLWindow();
 
-  // Унаследовано через IWindow
   virtual bool create() override;
   virtual bool init() override;
   virtual void update() override;
@@ -30,5 +29,9 @@ public:
   virtual void swap() override;
   virtual void setTitle(char *) override;
   virtual void show() override;
+
+  // IWindow interface
+public:
+  virtual void *getHandle() override;
 };
 

@@ -18,4 +18,5 @@ struct IObject
   virtual void setType(OBJType) = 0;
 
   virtual CShaderProgram *getShaderProgram() = 0;
+  virtual glm::mat4 getTransform() = 0;
 };

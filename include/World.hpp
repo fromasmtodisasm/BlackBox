@@ -20,6 +20,7 @@ public:
   World();
   void draw();
 
+  void setCamera(CCamera *camera);
   void add(string name, Object* o);
   inline void del(string name) { m_Objs.erase(name); }
   inline void delCam(string name) { m_Cams.erase(name); }

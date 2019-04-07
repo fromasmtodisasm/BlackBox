@@ -66,26 +66,6 @@ void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram
 
 void Object::draw() {
   VertexBuffer *vb = m_Mesh->getVertexBuffer();
-  glm::mat4x4 model(1.0f);
-  glm::mat4x4 view(1.0f);
-  glm::mat4x4 projection(1.0f);
-  m_Shader->use();
-  glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
-
-  translate = glm::translate(translate, m_Pos);
-  rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
-  rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-  rotate = glm::rotate(rotate, angle.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
-  model = translate * rotate * scale;
-  view = glm::lookAt(
-    glm::vec3(0,5, -5 ), 
-    glm::vec3( 0,0,0 ), 
-    glm::vec3(0,1,0 )
-  );
-  projection = glm::perspective(45.0f, 16/9.0f, 0.1f, 100.0f);
-  m_Shader->setUniformValue("Model", model);
-  m_Shader->setUniformValue("View", view);
-  m_Shader->setUniformValue("Projection", projection);
   vb->draw();
 }
 
@@ -97,6 +77,16 @@ void Object::setType(OBJType type)
 CShaderProgram * Object::getShaderProgram()
 {
   return m_Shader;
+}
+
+glm::mat4 Object::getTransform()
+{
+  glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
+  translate = glm::translate(translate, m_Pos);
+  rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+  rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+  rotate = glm::rotate(rotate, angle.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
+  return translate * rotate * scale;
 }
 
 void Object::move(glm::vec3 v) {

@@ -27,9 +27,13 @@ public:
   virtual void draw() override;
   virtual OBJType getType() override { return m_type; }
 
-  // Унаследовано через IObject
+  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ IObject
   virtual void setType(OBJType) override;
 
-  // Унаследовано через IObject
+  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ IObject
   virtual CShaderProgram * getShaderProgram() override;
+
+  // IObject interface
+public:
+  virtual glm::mat4 getTransform() override;
 };

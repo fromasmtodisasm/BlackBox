@@ -87,3 +87,8 @@ void CSFMLWindow::setTitle(char *title)
 void CSFMLWindow::show()
 {
 }
+
+void *CSFMLWindow::getHandle()
+{
+  return m_window;
+}

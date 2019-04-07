@@ -1,6 +1,5 @@
-#include "..\include\CCamera.hpp"
-#include "..\include\CCamera.hpp"
 #include <CCamera.hpp>
+#include <Opengl.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 CCamera::CCamera(glm::vec3 pos)
@@ -8,12 +7,18 @@ CCamera::CCamera(glm::vec3 pos)
 
 }
 
-CCamera::CCamera()
+CCamera::CCamera() : m_pos(0,5,-5), m_target(0,0,0), m_up(0,1,0)
 {
+
 }
 
 CCamera::~CCamera()
 {
+}
+
+void CCamera::update()
+{
+
 }
 
 void CCamera::move(glm::vec3 pos)
@@ -27,9 +32,9 @@ void CCamera::rotate(float angle, glm::vec3 axis)
 glm::mat4 CCamera::getViewMatrix()
 {
   return glm::lookAt(
-    glm::vec3(0,5, -5 ), 
-    glm::vec3( 0,0,0 ), 
-    glm::vec3(0,1,0 )
+    glm::vec3(m_pos),
+    glm::vec3(m_target),
+    glm::vec3(m_up)
   );
 }
 
@@ -40,5 +45,6 @@ glm::mat4 CCamera::getProjectionMatrix()
 
 bool CCamera::OnInputEvent(sf::Event & event)
 {
+  m_pos.x += 0.5f;
   return false;
 }

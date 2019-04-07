@@ -2,7 +2,7 @@
 #include "IGame.hpp"
 #include "ISystem.hpp"
 #include "IWindow.hpp"
-#include "InputHandler.hpp"
+#include "CInputHandler.hpp"
 #include "CShader.hpp"
 #include "Triangle.hpp"
 #include "World.hpp"
@@ -18,15 +18,19 @@ using string = std::string;
 class EventListener; 
 
 class CGame : public IGame {
+  class GameState;
+  class EventListener;
 private:
   ISystem *m_pSystem;
   IWindow *m_Window;
-  char *m_Title;
   IInputHandler *inputHandler;
   World *m_World;
 
-  class EventListener;
+  char *m_Title;
+  bool m_running = true;
+  EventListener *listener;
   class GameState; 
+  class GameState;
   enum State
   {
     INIT,
@@ -50,6 +54,8 @@ public:
 
 class CGame::EventListener : public IInputEventListener 
 {
+  CGame *m_Game;
+  EventListener(CGame *game);
   virtual bool OnInputEvent(sf::Event &event);
 };
 

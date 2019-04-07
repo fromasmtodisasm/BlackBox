@@ -36,11 +36,17 @@ bool CGame::init(ISystem *pSystem)  {
 		}
 		cout << "Objects inited" << endl;
   } 
+  if ((inputHandler = new CInputHandler(m_Window)) == nullptr)
+    return false;
+  CCamera *camera = new CCamera();
+  inputHandler->AddEventListener(camera);
+  m_World->setCamera(camera);
   return true;
 }
 
 bool CGame::update() {
   while (!m_Window->closed()) {
+    input();
     m_Window->clear();
     m_Window->update();
     /* Rendering code here */
@@ -60,13 +66,14 @@ void CGame::input()
 {
   ICommand *cmd;
   //std::vector<ICommand*> qcmd;  
-  //while ((cmd = inputHandler->handleInput()) != nullptr)
-  //  ;//cmd->execute();
+  while ((cmd = inputHandler->handleInput()) != nullptr)
+    ;//cmd->execute();
 }
 
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
   Object *obj;
+  /*
   for (int i = 0; i < 10; i++)
   {
     char n[5];
@@ -78,9 +85,10 @@ bool CGame::init_opbject() {
       });
     m_World->add("cube" + char(i + '0'), obj);
   }
-	/*
-	world.add("triangle", new Triangle(m_ShaderProgram));
-	world.add("triangle", new Triangle(m_ShaderProgram));
+  */
+  m_World->add("cube", Primitive::create(Primitive::CUBE));
+  /*
+  world.add("triangle", new Triangle(m_ShaderProgram));
 	*/
 	return true;
 }
@@ -88,6 +96,11 @@ bool CGame::init_opbject() {
 IGame *CreateIGame(char *title) {
   CGame *game = new CGame(title);
   return (game);
+}
+
+CGame::EventListener::EventListener(CGame *game) : m_Game(game)
+{
+
 }
 
 bool CGame::EventListener::OnInputEvent(sf::Event & event)
