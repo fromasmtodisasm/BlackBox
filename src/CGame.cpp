@@ -18,7 +18,7 @@ ISystem* GetISystem()
 }
 
 CGame::CGame(char *title) : 
-  m_Title(title)
+  m_Title(title), m_World(new World())
 {
   srand(time(0));
 }
@@ -44,7 +44,7 @@ bool CGame::update() {
     m_Window->clear();
     m_Window->update();
     /* Rendering code here */
-    world.draw();
+    m_World->draw();
     m_Window->swap();
   }
 	return true;
@@ -76,7 +76,7 @@ bool CGame::init_opbject() {
       rand()% 5 - 1,
       rand()% 5 - 1
       });
-    world.add("cube" + char(i + '0'), obj);
+    m_World->add("cube" + char(i + '0'), obj);
   }
 	/*
 	world.add("triangle", new Triangle(m_ShaderProgram));

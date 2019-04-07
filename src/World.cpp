@@ -1,6 +1,11 @@
 #include "World.hpp"
 
 
+World::World()
+{
+  m_Camera = new CCamera();
+}
+
 void World::draw() {
   for (const auto &object : m_Objs) {
     object.second->rotate(0.001f, {0,1,0});

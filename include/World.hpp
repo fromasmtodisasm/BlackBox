@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "CCamera.hpp"
 #include "Object.hpp"
 #include <MatrixTranform.hpp>
 #include "VertexBuffer.hpp"
@@ -14,8 +15,9 @@ class World {
 private:
   std::map<string,Object*> m_Objs;
   std::map<string, Object*> m_Cams;
+  CCamera *m_Camera;
 public:
-
+  World();
   void draw();
 
   void add(string name, Object* o);

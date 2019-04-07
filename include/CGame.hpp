@@ -23,7 +23,7 @@ private:
   IWindow *m_Window;
   char *m_Title;
   IInputHandler *inputHandler;
-  World world;
+  World *m_World;
 
   class EventListener;
   class GameState; 
