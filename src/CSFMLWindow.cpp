@@ -28,6 +28,8 @@ bool CSFMLWindow::init()
   m_window->setActive();
   if (!gladLoadGL())
     return false;
+  glEnable(GL_DEPTH);
+  glEnable(GL_SMOOTH);
 
   return true;
 }

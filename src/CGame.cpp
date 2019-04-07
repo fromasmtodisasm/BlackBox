@@ -3,7 +3,9 @@
 #include "CWindow.hpp"
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <glm/ext/matrix_transform.hpp>
+#include <ctime>
 
 using namespace std;
 
@@ -18,7 +20,7 @@ ISystem* GetISystem()
 CGame::CGame(char *title) : 
   m_Title(title)
 {
-
+  srand(time(0));
 }
 
 bool CGame::init(ISystem *pSystem)  {
@@ -64,7 +66,18 @@ void CGame::input()
 
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
-	world.add("cube", Primitive::create(Primitive::CUBE, m_ShaderProgram));
+  Object *obj;
+  for (int i = 0; i < 10; i++)
+  {
+    char n[5];
+    obj = Primitive::create(Primitive::CUBE, m_ShaderProgram);
+    obj->move({
+      rand() % 3 -1,
+      rand()% 3 - 1,
+      rand()% 3 - 1
+      });
+    world.add("cube" + char(i + '0'), obj);
+  }
 	/*
 	world.add("triangle", new Triangle(m_ShaderProgram));
 	world.add("triangle", new Triangle(m_ShaderProgram));
