@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include <Opengl.hpp>
 
 using namespace std;
 
@@ -44,8 +44,6 @@ void Triangle::draw() {
   VertexBuffer *vb = m_Mesh->getVertexBuffer();
   glm::mat4x4 rotate(1.0f);
   m_Shader->use();
-  float time = static_cast<float>(glfwGetTime()/4);
-  //rotate = glm::rotate(rotate, time, glm::vec3(0.0f, 1.0f, 0.0f));
   rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
   rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
   rotate = glm::rotate(rotate, angle.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));

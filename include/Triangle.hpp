@@ -1,6 +1,6 @@
 #pragma once
 #include "Object.hpp"
-#include <glad/glad.h>
+#include <Opengl.hpp>
 #include "CShader.hpp"
 #include <glm/fwd.hpp>
 #include <glm/gtc/matrix_transform.hpp>

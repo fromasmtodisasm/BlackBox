@@ -3,7 +3,7 @@
 
 void World::draw() {
   for (const auto &object : m_Objs) {
-    object.second->rotate(0.01f, {0,1,0});
+    object.second->rotate(0.001f, {0,1,0});
     //object.second->getShaderProgram()->use();
     //object.second->getShaderProgram()->setUniformValue("rotate", 0.001f);
     object.second->draw();

@@ -23,8 +23,6 @@ private:
   IWindow *m_Window;
   char *m_Title;
   IInputHandler *inputHandler;
-  CShaderProgram *m_ShaderProgram; 
-  std::vector<Object*> m_Objects;
   World world;
 
   class EventListener;

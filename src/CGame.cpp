@@ -70,11 +70,11 @@ bool CGame::init_opbject() {
   for (int i = 0; i < 10; i++)
   {
     char n[5];
-    obj = Primitive::create(Primitive::CUBE, m_ShaderProgram);
+    obj = Primitive::create(Primitive::CUBE);
     obj->move({
-      rand() % 3 -1,
-      rand()% 3 - 1,
-      rand()% 3 - 1
+      rand() % 5 -1,
+      rand()% 5 - 1,
+      rand()% 5 - 1
       });
     world.add("cube" + char(i + '0'), obj);
   }

@@ -2,7 +2,7 @@
 #include "IWindow.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
-#include <glad/glad.h>
+#include <Opengl.hpp>
 
 class CSFMLWindow :
   public IWindow

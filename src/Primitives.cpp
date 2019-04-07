@@ -1,6 +1,6 @@
 #include "Primitives.hpp"
 
-Object * Primitive::create(Type type, CShaderProgram *shader)
+Object * Primitive::create(Type type)
 {
   Object *obj;
   switch (type)

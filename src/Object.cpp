@@ -5,7 +5,7 @@
 #include <cctype>
 #include <cstdio>
 #include <sstream>
-#include <glad/glad.h>
+#include <Opengl.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
