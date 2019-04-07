@@ -27,8 +27,12 @@ bool CGame::init(ISystem *pSystem)  {
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())
       return false;
-  if (!init_opbject())
-    return false;
+		cout << "Window susbsystem inited" << endl;
+		if (!init_opbject()) {
+			cout << "Failed init objects" << endl;
+			return false;
+		}
+		cout << "Objects inited" << endl;
   } 
   return true;
 }
@@ -45,6 +49,7 @@ bool CGame::update() {
 }
 
 bool CGame::run() {
+	cout << "Game started" << endl;
   update();
   return true;
 }
@@ -57,18 +62,14 @@ void CGame::input()
   //  ;//cmd->execute();
 }
 
-bool CGame::init_opbject()
-{
-    if (m_ShaderProgram == nullptr) return false;
-    else {
-      //world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
-      world.add("cube", Primitive::create(Primitive::CUBE, m_ShaderProgram));
-      /*
-      world.add("triangle", new Triangle(m_ShaderProgram));
-      world.add("triangle", new Triangle(m_ShaderProgram));
-      */
-      return true;
-    }
+bool CGame::init_opbject() {
+	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
+	world.add("cube", Primitive::create(Primitive::CUBE, m_ShaderProgram));
+	/*
+	world.add("triangle", new Triangle(m_ShaderProgram));
+	world.add("triangle", new Triangle(m_ShaderProgram));
+	*/
+	return true;
 }
 
 IGame *CreateIGame(char *title) {

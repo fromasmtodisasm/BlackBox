@@ -40,8 +40,11 @@ int main(int argc, char *argv[]) {
 
   ISystem*pSystem = CreateISystem(nullptr);
   IGame *game = CreateIGame("MyGame");
-  if (game->init(pSystem))
+	cout << "ISystem created" << endl;
+  if (game->init(pSystem)) {
+		cout << "IGame created" << endl;
     game->run();  
+	}
 
   return 0;
 }

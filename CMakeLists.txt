@@ -23,6 +23,8 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 #--------------------------------------------------
 add_subdirectory(submodules/glfw)
 add_subdirectory(submodules/glad)
+add_subdirectory(submodules/glm)
+add_subdirectory(submodules/SFML)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -35,9 +37,8 @@ if (WIN32)
   endif()
 endif()
 #--------------------------------------------------
-add_subdirectory(submodules/glm)
-#--------------------------------------------------
 include_directories(
+	"${SFML_SOURCE_DIR}/include"
   "${PROJECT_SOURCE_DIR}/include"
 )
 #--------------------------------------------------
@@ -47,6 +48,7 @@ add_library(${PROJECT_NAME}  ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} glm)
+target_link_libraries(${PROJECT_NAME} sfml-graphics)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
