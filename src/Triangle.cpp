@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Triangle::Triangle(CShaderProgram *program) :
+Plane::Plane(CShaderProgram *program) :
   Object(), m_Shader(program)
 {
   m_type = OBJType::TPRIMITIVE;
@@ -35,36 +35,7 @@ Triangle::Triangle(CShaderProgram *program) :
   m_Mesh = new Mesh(vb, nullptr);
 }
 
-Triangle::~Triangle() 
+Plane::~Plane() 
 {
   
 }
-
-void Triangle::draw() {
-  VertexBuffer *vb = m_Mesh->getVertexBuffer();
-  glm::mat4x4 rotate(1.0f);
-  m_Shader->use();
-  rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
-  rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-  rotate = glm::rotate(rotate, angle.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
-  m_Shader->setUniformValue("rotate", rotate);
-  vb->draw();
-}
-
-void Triangle::move(glm::vec3 v)
-{
-
-}
-
-void Triangle::rotate(float angle, glm::vec3 v)
-{
-  if (v.x) this->angle.x+=angle;
-  if (v.y) this->angle.y+=angle;
-  if (v.z) this->angle.z+=angle;
-}
-
-void Triangle::scale(glm::vec3 v)
-{
-
-}
-

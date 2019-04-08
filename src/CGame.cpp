@@ -87,7 +87,8 @@ bool CGame::init_opbject() {
     m_World->add("cube" + char(i + '0'), obj);
   }
   */
-  m_World->add("cube", Primitive::create(Primitive::CUBE));
+  m_World->add("cube", Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl"));
+  //m_World->add("plane", Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl"));
   /*
   world.add("triangle", new Triangle(m_ShaderProgram));
 	*/

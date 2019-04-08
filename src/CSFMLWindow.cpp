@@ -41,7 +41,8 @@ void CSFMLWindow::update()
 
 void CSFMLWindow::clear()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClearBufferfv(GL_COLOR, 0, m_BackColor);
+  //glClear(GL_COLOR_BUFFER_BIT);
 }
 
 bool CSFMLWindow::closed()

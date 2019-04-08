@@ -21,7 +21,7 @@ private:
   int m_Width;
   int m_Height;
   char *m_Title;
-  GLfloat m_BackColor[4] = { 0.5, 0.3, 0.8, 1.0 };
+  GLfloat m_BackColor[4] = { 0.5, 0.5, 0.5, 1.0 };
 
 public:
   CGLFWWindow(char *title=DEFAULT_TITLE, int width=DEFAULT_WIDTH, int height=DEFAULT_HEIGHT);

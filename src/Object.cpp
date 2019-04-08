@@ -89,6 +89,11 @@ glm::mat4 Object::getTransform()
   return translate * rotate * scale;
 }
 
+void Object::setShaderProgram(CShaderProgram* shader)
+{
+
+}
+
 void Object::move(glm::vec3 v) {
   m_Pos += v;
 }

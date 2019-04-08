@@ -8,18 +8,13 @@
 
 
 
-class Triangle : public Object
+class Plane : public Object
 {
 private:
   CShaderProgram *m_Shader;  
   std::vector<Vertex> m_Vertices;
   std::vector<int> m_Indeces;
 public:
-  Triangle(CShaderProgram *program);
-  ~Triangle();
-  virtual void draw() override;
-  virtual void move(glm::vec3 v) override;
-  virtual void rotate(float angle, glm::vec3 v) override;
-  virtual void scale(glm::vec3 v) override;
-
-};
+  Plane(CShaderProgram *program);
+  ~Plane();
+ };

@@ -145,6 +145,11 @@ void CShaderProgram::use() {
     glUseProgram(m_Program);
 }
 
+void CShaderProgram::unuse()
+{
+    glUseProgram(0);
+}
+
 void CShaderProgram::setUniformValue(const char *name, float value)
 {
     GLint loc = glGetUniformLocation(m_Program, name);

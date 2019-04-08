@@ -18,7 +18,7 @@ class CSFMLWindow :
   int m_Width;
   int m_Height;
   char *m_Title;
-  GLfloat m_BackColor[4] = { 0.5, 0.3, 0.8, 1.0 };
+  GLfloat m_BackColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 public:
   CSFMLWindow(char *title = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSFMLWindow();

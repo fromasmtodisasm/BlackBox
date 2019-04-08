@@ -1,7 +1,9 @@
 #version 330 core
-out vec4 color;
-in vec3 pos;
+uniform vec3 color;
+out vec4 u_color;
+
 void main()
 {
-    color = vec4(pos, 1.0f);;
+    u_color = vec4(color,1.0f);//vec4(1,0,0,1);
+    //color = vertexColor;
 } 
