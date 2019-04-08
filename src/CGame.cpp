@@ -38,7 +38,7 @@ bool CGame::init(ISystem *pSystem)  {
 		}
 		cout << "Objects inited" << endl;
   } 
-  CCamera *camera = new CCamera();
+  HackCamera *camera = new HackCamera();
   inputHandler->AddEventListener(camera);
   inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
   m_World->setCamera(camera);
@@ -88,11 +88,11 @@ bool CGame::init_opbject() {
   }
   */
 	GameObject *go = GameObject::create(Primitive::CUBE);
-  //Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+  Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
   //go->setShaderProgram(cube->getShaderProgram());
 	inputHandler->AddEventListener(go);
   m_World->add("listener", reinterpret_cast<Object*>(go));
-  //m_World->add("cube", cube);
+  m_World->add("cube", cube);
   //m_World->add("plane", Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl"));
   /*
   world.add("triangle", new Triangle(m_ShaderProgram));

@@ -19,7 +19,7 @@ void World::draw() {
   // Camera ...
 }
 
-void World::setCamera(CCamera *camera)
+void World::setCamera(HackCamera *camera)
 {
   m_Camera = camera;
 }

@@ -1,39 +1,39 @@
-#include <CCamera.hpp>
+#include <HackCamera.hpp>
 #include <Opengl.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-CCamera::CCamera(glm::vec3 pos)
+HackCamera::HackCamera(glm::vec3 pos)
 {
 
 }
 
-CCamera::CCamera() : 
+HackCamera::HackCamera() : 
   m_pos(0,0,3), m_target(-glm::normalize(m_pos - glm::vec3(0,0,0))), m_right(1,0,0), m_up(0,1,0),
   m_angles(0,0,0)
 {
 
 }
 
-CCamera::~CCamera()
+HackCamera::~HackCamera()
 {
 }
 
-void CCamera::update()
+void HackCamera::update()
 {
 
 }
 
-void CCamera::move(glm::vec3 pos)
+void HackCamera::move(glm::vec3 pos)
 {
   m_pos = m_pos + pos;
 }
 
-void CCamera::strafe(glm::vec3 pos)
+void HackCamera::strafe(glm::vec3 pos)
 {
 
 }
 
-void CCamera::rotateY(float angle)
+void HackCamera::rotateY(float angle)
 {
   m_angles.y += angle;
 
@@ -47,7 +47,7 @@ void CCamera::rotateY(float angle)
   m_right = glm::cross(m_target, m_up);
 }
 
-void CCamera::rotateX(float angle)
+void HackCamera::rotateX(float angle)
 {
   m_angles.y += angle;
   //Rotate viewdir around the up vector:
@@ -59,7 +59,7 @@ void CCamera::rotateX(float angle)
   m_right = -glm::cross(m_target, m_up);
 }
 
-void CCamera::rotateZ(float angle)
+void HackCamera::rotateZ(float angle)
 {
   m_angles.y += angle;
   //Rotate viewdir around the up vector:
@@ -71,7 +71,7 @@ void CCamera::rotateZ(float angle)
   m_up = -glm::cross(m_target, m_right);
 }
 
-glm::mat4 CCamera::getViewMatrix()
+glm::mat4 HackCamera::getViewMatrix()
 {
   return glm::lookAt(
     glm::vec3(m_pos),
@@ -80,12 +80,12 @@ glm::mat4 CCamera::getViewMatrix()
   );
 }
 
-glm::mat4 CCamera::getProjectionMatrix()
+glm::mat4 HackCamera::getProjectionMatrix()
 {
   return glm::perspective(45.0f, 16/9.0f, 0.1f, 100.0f);
 }
 
-bool CCamera::OnInputEvent(sf::Event & event)
+bool HackCamera::OnInputEvent(sf::Event & event)
 {
   switch (event.type)
   {

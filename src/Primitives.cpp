@@ -16,7 +16,7 @@ Object * Primitive::create(Type type, std::string vsh, std::string fsh)
     obj = Object::load("cube.obj");
     obj->setType(OBJType::TPRIMITIVE);
     obj->getShaderProgram()->use();
-    obj->getShaderProgram()->setUniformValue("color", {1.0f, 0.0f,0.0f});
+    obj->getShaderProgram()->setUniformValue("color", 1.0f);
     break;
   case Primitive::TETRAHEDRON:
     break;
