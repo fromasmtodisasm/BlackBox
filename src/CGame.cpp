@@ -87,6 +87,8 @@ bool CGame::init_opbject() {
     m_World->add("cube" + char(i + '0'), obj);
   }
   */
+	GameObject *go = GameObject::create(Primitive::CUBE);
+	inputHandler->AddEventListener(go);
   m_World->add("cube", Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl"));
   //m_World->add("plane", Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl"));
   /*
