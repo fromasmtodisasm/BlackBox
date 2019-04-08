@@ -8,7 +8,7 @@ CCamera::CCamera(glm::vec3 pos)
 }
 
 CCamera::CCamera() : 
-  m_pos(0,0,3), m_target(0,0,-1), m_right(1,0,0), m_up(0,1,0),
+  m_pos(0,0,3), m_target(-glm::normalize(m_pos - glm::vec3(0,0,0))), m_right(1,0,0), m_up(0,1,0),
   m_angles(0,0,0)
 {
 

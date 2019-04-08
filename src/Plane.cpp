@@ -1,4 +1,4 @@
-#include "..\include\Plane.hpp"
+#include "Plane.hpp"
 
 Plane::Plane()
 {

@@ -30,6 +30,12 @@ bool GameObject::OnInputEvent(sf::Event &event)
     case sf::Keyboard::L:
       move(glm::vec3(1,0,0)*(MOVE_SPEED));
       return true;
+    case sf::Keyboard::U:
+      move(glm::vec3(0,0,1)*(-MOVE_SPEED));
+      return true;
+    case sf::Keyboard::I:
+      move(glm::vec3(0,0,1)*(MOVE_SPEED));
+      return true;
     }
     break;
   case sf::Event::MouseLeft:
