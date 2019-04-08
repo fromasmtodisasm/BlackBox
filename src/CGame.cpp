@@ -30,14 +30,14 @@ bool CGame::init(ISystem *pSystem)  {
     if (!m_Window->init() || !m_Window->create())
       return false;
 		cout << "Window susbsystem inited" << endl;
+    if ((inputHandler = new CInputHandler(m_Window)) == nullptr)
+      return false;
 		if (!init_opbject()) {
 			cout << "Failed init objects" << endl;
 			return false;
 		}
 		cout << "Objects inited" << endl;
   } 
-  if ((inputHandler = new CInputHandler(m_Window)) == nullptr)
-    return false;
   CCamera *camera = new CCamera();
   inputHandler->AddEventListener(camera);
   inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
@@ -88,8 +88,11 @@ bool CGame::init_opbject() {
   }
   */
 	GameObject *go = GameObject::create(Primitive::CUBE);
+  //Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+  //go->setShaderProgram(cube->getShaderProgram());
 	inputHandler->AddEventListener(go);
-  m_World->add("cube", Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl"));
+  m_World->add("listener", reinterpret_cast<Object*>(go));
+  //m_World->add("cube", cube);
   //m_World->add("plane", Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl"));
   /*
   world.add("triangle", new Triangle(m_ShaderProgram));

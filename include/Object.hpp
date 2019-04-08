@@ -17,6 +17,7 @@ protected:
   CShaderProgram *m_Shader;
   OBJType m_type;
   Object();
+  Object(const Object &obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
 public:
 

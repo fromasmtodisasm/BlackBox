@@ -16,6 +16,14 @@ Object::Object() : angle(0.0f), m_Pos(0.0f)
 
 }
 
+Object::Object(const Object & obj):
+  m_Pos(obj.m_Pos), angle(obj.angle), m_Mesh(obj.m_Mesh), m_Shader(obj.m_Shader),
+  m_type(obj.m_type)
+{
+}
+
+
+
 void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader)
 {
   std::ifstream in;
@@ -95,7 +103,7 @@ void Object::setShaderProgram(CShaderProgram* shader)
 }
 
 void Object::move(glm::vec3 v) {
-  m_Pos += v;
+  m_Pos = m_Pos + v;
 }
 
 void Object::rotate(float angle, glm::vec3 v) {
