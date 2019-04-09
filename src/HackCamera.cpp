@@ -72,10 +72,10 @@ void HackCamera::update(float deltatime)
       rotateY(180.0f);
       break;
     case sf::Keyboard::Num2:
-      m_fov += 2.0f;
+      m_fov += 0.5f;
       break;
     case sf::Keyboard::Num3:
-      m_fov -= 2.0f;
+      m_fov -= 0.5f;
       break;
     }
   }
