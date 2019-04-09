@@ -13,7 +13,9 @@ void World::draw(float dt) {
     object.second->getShaderProgram()->setUniformValue("Model", object.second->getTransform());
     object.second->getShaderProgram()->setUniformValue("View", m_Camera->getViewMatrix());
     object.second->getShaderProgram()->setUniformValue("Projection", m_Camera->getProjectionMatrix());
-    object.second->getShaderProgram()->setUniformValue("color", { 1.0f, 1,0 });
+    object.second->getShaderProgram()->setUniformValue("lightPos", glm::vec3(4,4,-4));
+    object.second->getShaderProgram()->setUniformValue("lightColor", glm::vec3(1,1,1.0));
+    //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 
     object.second->draw();
   }

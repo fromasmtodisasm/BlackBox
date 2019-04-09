@@ -43,8 +43,10 @@ bool CGame::init(ISystem *pSystem)  {
   } 
   HackCamera *camera = new HackCamera();
   camera->setView(m_Window->getWidth(), m_Window->getHeight());
+  m_listener = new GameListener();
   inputHandler->AddEventListener(camera);
   inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
+  inputHandler->AddEventListener(reinterpret_cast<GameListener*>(m_listener));
   m_World->setCamera(camera);
   return true;
 }
@@ -80,9 +82,21 @@ void CGame::input()
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
   Object *obj;
-  for (int i = 0; i < 50; i++)
+  glm::vec3 light_pos(4,4,-4);
+  Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+  CShaderProgram *shader = new CShaderProgram("res/" "vertex.glsl", "res/""fragment.glsl");
+  Object *light =  Primitive::create(Primitive::CUBE,"vertex.glsl", "basecolor.frag");
+  light->move(light_pos);
+  light->scale(glm::vec3(0.3f));
+
+  m_World->add("light", light);
+  shader->create();
+  for (int i = 0; i < 20; i++)
   {
     obj = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+    //obj = Object::load("monkey.obj");
+    obj->setShaderProgram(shader);
+    obj->setType(OBJType::TPRIMITIVE);
     obj->move({
       rand() % 15 - 7,
       rand()% 15 - 7,
@@ -98,7 +112,7 @@ bool CGame::init_opbject() {
     m_World->add("cube" + std::to_string(i), obj);
   }
 	//GameObject *go = GameObject::create(Primitive::CUBE);
-  Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+  //Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
   //go->setShaderProgram(cube->getShaderProgram());
 	//inputHandler->AddEventListener(go);
   //m_World->add("listener", reinterpret_cast<Object*>(go));

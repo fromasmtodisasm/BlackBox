@@ -17,6 +17,28 @@
 using string = std::string;
 class EventListener; 
 
+
+class GameListener : public IInputEventListener
+{
+
+  // IInputEventListener interface
+public:
+  bool OnInputEvent(sf::Event &event)
+  {
+    switch (event.type)
+    {
+    case sf::Event::KeyPressed:
+      switch(event.key.code)
+      {
+      case sf::Keyboard::P:
+       glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+       return true;
+      }
+    }
+    return false;
+  }
+};
+
 class CGame : public IGame {
   class GameState;
   class EventListener;
@@ -25,6 +47,7 @@ private:
   IWindow *m_Window;
   IInputHandler *inputHandler;
   World *m_World;
+  GameListener *m_listener;
 
   char *m_Title;
   bool m_running = true;

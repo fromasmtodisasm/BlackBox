@@ -10,6 +10,7 @@ class Object : public IObject, public IDrawable {
 protected:
 	glm::vec3 m_Pos;
   glm::vec3 angle;
+  glm::vec3 m_scale;
   //glm::mat4 mv;
   Mesh *m_Mesh;
   CShaderProgram *m_Shader;

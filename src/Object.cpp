@@ -12,14 +12,14 @@
 
 using namespace std;
 
-Object::Object() : angle(0.0f), m_Pos(0.0f)
+Object::Object() : angle(0.0f), m_Pos(0.0f), m_scale(1.0)
 {
 
 }
 
 Object::Object(const Object & obj):
   m_Pos(obj.m_Pos), angle(obj.angle), m_Mesh(obj.m_Mesh), m_Shader(obj.m_Shader),
-  m_type(obj.m_type)
+  m_type(obj.m_type),m_scale(1.0)
 {
 }
 
@@ -48,6 +48,7 @@ CShaderProgram * Object::getShaderProgram()
 glm::mat4 Object::getTransform()
 {
   glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
+  scale = glm::scale(scale, m_scale);
   translate = glm::translate(translate, m_Pos);
   rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
   rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -70,7 +71,7 @@ void Object::rotate(float angle, glm::vec3 v) {
   if (v.z) this->angle.z += angle;
 }
 
-void Object::scale(glm::vec3 v) {}
+void Object::scale(glm::vec3 v) {m_scale = v;}
 
 Object * Object::load(string path)
 {

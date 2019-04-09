@@ -31,7 +31,7 @@ bool CSFMLWindow::init()
   m_window->setActive();
   if (!OpenGLLoader())
     return false;
-  glEnable(GL_DEPTH);
+  glEnable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
 
   return true;
