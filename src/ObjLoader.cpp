@@ -9,6 +9,8 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
   std::vector< glm::vec2 > temp_uvs;
   std::vector< glm::vec3 > temp_normals;
   bool has_uv = false;
+  int f_cnt = 0;
+  int v_cnt = 0;
 
   FILE * file = fopen(path, "r");
   if (file == NULL) {
@@ -49,17 +51,17 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
         "%d//%d %d//%d %d//%d\n",
       };
       if (has_uv) cnt = 9;
-      int matches; 
+      int matches;
       if (has_uv)
-        matches = fscanf(file, pattern[0], 
-          &vertexIndex[0], &uvIndex[0], &normalIndex[0], 
-          &vertexIndex[1], &uvIndex[1], &normalIndex[1], 
+        matches = fscanf(file, pattern[0],
+          &vertexIndex[0], &uvIndex[0], &normalIndex[0],
+          &vertexIndex[1], &uvIndex[1], &normalIndex[1],
           &vertexIndex[2], &uvIndex[2], &normalIndex[2]
         );
       else
-        matches = fscanf(file, pattern[1], 
-          &vertexIndex[0], &normalIndex[0], 
-          &vertexIndex[1], &normalIndex[1], 
+        matches = fscanf(file, pattern[1],
+          &vertexIndex[0], &normalIndex[0],
+          &vertexIndex[1], &normalIndex[1],
           &vertexIndex[2], &normalIndex[2]
         );
 
@@ -82,27 +84,24 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
 
       // For each vertex of each triangle
       Vertex _vertex;
-      for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+      for (unsigned int i = 0; i < 3 /*vertexIndices.size()*/; i++) {
         unsigned int vertexIndex = vertexIndices[i];
+        unsigned int normalIndex = normalIndices[i];
 
         glm::vec3 vertex = temp_vertices[vertexIndex - 1];
         _vertex.pos = vertex;
-      }
-      if (has_uv) {
-        for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-          unsigned int uvIndex = uvIndices[i];
 
+        if (has_uv)
+        {
+          unsigned int uvIndex = uvIndices[i];
           glm::vec2 uv = temp_uvs[uvIndex - 1];
           _vertex.uv = uv;
         }
-      }
-      for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-        unsigned int normalIndex = normalIndices[i];
 
         glm::vec3 normal = temp_normals[normalIndex - 1];
         _vertex.n = normal;
+        out_vertices.push_back(_vertex);
       }
-      out_vertices.push_back(_vertex);
     }
   }
 
