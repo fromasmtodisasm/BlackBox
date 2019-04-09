@@ -3,7 +3,7 @@
 Object * Primitive::create(Type type, std::string vsh, std::string fsh)
 {
   Object *obj;
-  CShaderProgram *shader = new CShaderProgram("res\\" + vsh, "res\\" + fsh);
+  CShaderProgram *shader = new CShaderProgram("res/" + vsh, "res/" + fsh);
   shader->create();
   switch (type)
   {

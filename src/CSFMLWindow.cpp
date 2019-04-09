@@ -84,13 +84,6 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
     m_window->close();
     m_bClose = true;
   }
-  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up))
-    ;//key_up->execute();
-  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down))
-    ;//key_down->execute();
-  if ((event.type == sf::Event::JoystickButtonPressed))
-    ;//key_down->execute();
-  // Resize event: adjust the viewport
   if (event.type == sf::Event::Resized)
   {
     glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);

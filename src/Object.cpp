@@ -80,7 +80,7 @@ Object * Object::load(string path)
   CShaderProgram *shader;
   std::vector<Vertex> p;
 
-  if (!loadOBJ(("res\\" + path).c_str(), p))
+  if (!loadOBJ(("res/" + path).c_str(), p))
     return nullptr;
   
   vb = new VertexBuffer(p.data(), static_cast<GLint>(p.size()));
