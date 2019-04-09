@@ -6,8 +6,6 @@
 #include <CShader.hpp>
 #include <glm/glm.hpp>
 
-typedef glm::vec3 Vertex;
-
 class Object : public IObject, public IDrawable {
 protected:
 	glm::vec3 m_Pos;

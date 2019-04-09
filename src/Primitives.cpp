@@ -3,10 +3,11 @@
 Object * Primitive::create(Type type, std::string vsh, std::string fsh)
 {
   Object *obj;
+  CShaderProgram *shader = new CShaderProgram("res\\" + vsh, "res\\" + fsh);
+  shader->create();
   switch (type)
   {
   case Primitive::PLANE: {
-    CShaderProgram *shader = new CShaderProgram("res\\" + vsh, "res\\" + fsh);
     shader->create();
     obj = new Plane(shader);
     obj->setShaderProgram(shader);
@@ -15,8 +16,9 @@ Object * Primitive::create(Type type, std::string vsh, std::string fsh)
   case Primitive::CUBE:
     obj = Object::load("cube.obj");
     obj->setType(OBJType::TPRIMITIVE);
+    obj->setShaderProgram(shader);
     obj->getShaderProgram()->use();
-    obj->getShaderProgram()->setUniformValue("color", 1.0f);
+    obj->getShaderProgram()->setUniformValue("vColor", glm::vec3(1.0f, 0.0f, 0.0f));
     break;
   case Primitive::TETRAHEDRON:
     break;

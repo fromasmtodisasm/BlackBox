@@ -15,7 +15,7 @@ private:
   HackCamera *m_Camera;
 public:
   World();
-  void draw();
+  void draw(float dt);
 
   void setCamera(HackCamera *camera);
   void add(string name, Object* o);

@@ -180,6 +180,7 @@ void CShaderProgram::setUniformValue(const char *name, glm::vec3 value)
     if (loc != -1){
         glUniform3fv(loc, 3, glm::value_ptr(value));
     }
+    int er = glGetError();
 }
 
 void CShaderProgram::setUniformValue(const char *name, glm::vec4 value)

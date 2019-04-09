@@ -1,4 +1,5 @@
 #include "Object.hpp"
+#include "ObjLoader.hpp"
 #include "VertexBuffer.hpp"
 #include <fstream>
 #include <iostream>
@@ -26,50 +27,7 @@ Object::Object(const Object & obj):
 
 void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader)
 {
-  std::ifstream in;
-  std::string line;
-  std::string vsh;
-  std::string fsh;
-  std::vector<glm::vec3> *faces_;
-
-  faces_ = new vector<glm::vec3>;
-
-  in.open("res\\" + filename, std::ifstream::in);
-  if (in.fail()) return;
-  while (!in.eof()) {
-    std::getline(in, line);
-    std::istringstream iss(line.c_str());
-    char trash;
-    if (!line.compare(0, 2, "v ")) {
-      iss >> trash;
-      Vertex v;
-      for (int i = 0; i < 3; i++) iss >> v[i];
-      vs.push_back(v);
-    }
-    if (!line.compare(0, 5, "vsh: ")) {
-      size_t pos = line.find(" ");
-      if (pos != std::string::npos)
-        vsh = string(line.substr(pos + 1));
-    }
-    if (!line.compare(0, 5, "fsh: ")) {
-      size_t pos = line.find(" ");
-      if (pos != std::string::npos)
-        fsh = string(line.substr(pos + 1));
-    }
-    /*
-    else if (!line.compare(0, 2, "f ")) {
-      std::vector<Vec3i> f;
-      Vec3i tmp;
-      iss >> trash;
-      while (iss >> tmp[0] >> trash >> tmp[1] >> trash >> tmp[2]) {
-        for (int i = 0; i < 3; i++) tmp[i]--; // in wavefront obj all indices start at 1, not zero
-        f.push_back(tmp);
-      }
-      faces_.push_back(f);
-    }
-    */
-  }
-  *shader = new CShaderProgram("res\\" + vsh, "res\\" + fsh);
+ 
 }
 
 void Object::draw() {
@@ -120,15 +78,16 @@ Object * Object::load(string path)
   Mesh *mesh;
   VertexBuffer *vb;
   CShaderProgram *shader;
-  std::vector<Vertex> v;
-  parse(path, v, &shader);
-  float *data = reinterpret_cast<float*>(reinterpret_cast<Vertex*>(v.data()));
+  std::vector<Vertex> p;
+
+  if (!loadOBJ(("res\\" + path).c_str(), p))
+    return false;
   
-  vb = new VertexBuffer(v.data(), static_cast<GLint>(v.size()));
+  vb = new VertexBuffer(p.data(), static_cast<GLint>(p.size()));
   mesh = new Mesh(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;
-  obj->m_Shader = shader;
-  obj->m_Shader->create();
+  //obj->m_Shader = shader;
+  //obj->m_Shader->create();
 	return obj;
 }

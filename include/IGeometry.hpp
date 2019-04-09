@@ -7,7 +7,13 @@
 class VertexBuffer;
 class IndexBuffer;
 
-typedef glm::vec3 Vertex;
+//typedef glm::vec3 Vertex;
+struct Vertex
+{
+  glm::vec3 pos;
+  glm::vec2 uv;
+  glm::vec3 n;
+};
 
 struct Mesh {
 protected:

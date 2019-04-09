@@ -71,6 +71,12 @@ void HackCamera::update(float deltatime)
     case sf::Keyboard::Num1:
       rotateY(180.0f);
       break;
+    case sf::Keyboard::Num2:
+      m_fov += 2.0f;
+      break;
+    case sf::Keyboard::Num3:
+      m_fov -= 2.0f;
+      break;
     }
   }
 }
@@ -148,7 +154,7 @@ glm::mat4 HackCamera::getViewMatrix()
 
 glm::mat4 HackCamera::getProjectionMatrix()
 {
-  return glm::perspective(45.0f, 16/9.0f, 0.1f, 100.0f);
+  return glm::perspective(m_fov, m_ratio, 0.1f, 100.0f);
 }
 
 void HackCamera::reset()
@@ -157,6 +163,11 @@ void HackCamera::reset()
   m_target = {-glm::normalize(m_pos - glm::vec3(0,0,0))}, 
   m_right = {1,0,0}, 
   m_up = {0,1,0}; 
+}
+
+void HackCamera::setView(int w, int h)
+{
+  m_ratio = (float)w/h;
 }
 
 bool HackCamera::OnInputEvent(sf::Event & event)
@@ -168,6 +179,12 @@ bool HackCamera::OnInputEvent(sf::Event & event)
     return true;
   case sf::Event::KeyReleased:
     m_keys.erase(event.key.code);
+    return true;
+  case sf::Event::Resized:
+    {
+      //glViewport(0, 0, event.size.width, event.size.height);
+      setView(event.size.width, event.size.height);
+    }
     return true;
   }
   return false;

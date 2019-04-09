@@ -4,6 +4,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <Opengl.hpp>
+#include <glm/glm.hpp>
 
 class CSFMLWindow :
   public IWindow,
@@ -18,7 +19,7 @@ class CSFMLWindow :
   int m_Width;
   int m_Height;
   char *m_Title;
-  GLfloat m_BackColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+  glm::vec4 m_BackColor = { 0.5f, 0.5f, 0.5f, 1.0f };
 public:
   CSFMLWindow(char *title = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSFMLWindow();
@@ -39,5 +40,9 @@ public:
   // IInputEventListener interface
 public:
   virtual bool OnInputEvent(sf::Event &event) override;
+
+  // Inherited via IWindow
+  virtual int getWidth() override;
+  virtual int getHeight() override;
 };
 

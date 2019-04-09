@@ -10,6 +10,8 @@ struct IWindow {
  virtual void swap() = 0;
  virtual void setTitle(char *) = 0;
  virtual void show() = 0;
+ virtual int getWidth() = 0;
+ virtual int getHeight() = 0;
  virtual void *getHandle() = 0;
 };
 

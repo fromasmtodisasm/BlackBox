@@ -15,6 +15,8 @@ private:
   glm::vec3 m_up;
   glm::vec3 m_angles;
   glm::mat4 m_view;
+  float m_ratio = 1.0f;
+  float m_fov = 45.0f;
   float m_rotAngle = 0.9;
   std::set<sf::Keyboard::Key> m_keys;
 
@@ -33,6 +35,7 @@ public:
   glm::mat4 getViewMatrix();
   glm::mat4 getProjectionMatrix();
   void reset();
+  void setView(int w, int h);
 
   bool OnInputEvent(sf::Event &event);
 

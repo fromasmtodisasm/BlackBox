@@ -42,6 +42,7 @@ bool CGame::init(ISystem *pSystem)  {
 		cout << "Objects inited" << endl;
   } 
   HackCamera *camera = new HackCamera();
+  camera->setView(m_Window->getWidth(), m_Window->getHeight());
   inputHandler->AddEventListener(camera);
   inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
   m_World->setCamera(camera);
@@ -55,7 +56,7 @@ bool CGame::update() {
     m_Window->clear();
     m_World->update(deltaTime.asMicroseconds());
     /* Rendering code here */
-    m_World->draw();
+    m_World->draw(deltaTime.asMicroseconds());
     m_Window->swap();
   }
 	return true;
@@ -79,21 +80,28 @@ void CGame::input()
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
   Object *obj;
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 50; i++)
   {
-    obj = Primitive::create(Primitive::CUBE);
+    obj = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
     obj->move({
-      rand() % 5 -1,
-      rand()% 5 - 1,
-      rand()% 5 - 1
+      rand() % 15 - 7,
+      rand()% 15 - 7,
+      rand()% 15 - 7
+      });
+    obj->rotate(
+      rand() % 360,
+      {
+      rand() % 15 - 7,
+      rand()% 15 - 7,
+      rand()% 15 - 7
       });
     m_World->add("cube" + std::to_string(i), obj);
   }
-	GameObject *go = GameObject::create(Primitive::CUBE);
+	//GameObject *go = GameObject::create(Primitive::CUBE);
   Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
   //go->setShaderProgram(cube->getShaderProgram());
-	inputHandler->AddEventListener(go);
-  m_World->add("listener", reinterpret_cast<Object*>(go));
+	//inputHandler->AddEventListener(go);
+  //m_World->add("listener", reinterpret_cast<Object*>(go));
   m_World->add("cube", cube);
   //m_World->add("plane", Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl"));
   /*
