@@ -3,7 +3,6 @@
 #include "IndexBuffer.hpp"
 #include <iostream>
 
-#include <GLFW/glfw3.h>
 #include <Opengl.hpp>
 
 using namespace std;
