@@ -81,7 +81,7 @@ Object * Object::load(string path)
   std::vector<Vertex> p;
 
   if (!loadOBJ(("res\\" + path).c_str(), p))
-    return false;
+    return nullptr;
   
   vb = new VertexBuffer(p.data(), static_cast<GLint>(p.size()));
   mesh = new Mesh(vb, nullptr);

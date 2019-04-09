@@ -1,5 +1,6 @@
 #include "ObjLoader.hpp"
 #include "IGeometry.hpp"
+#include <cstring>
 
 
 bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
