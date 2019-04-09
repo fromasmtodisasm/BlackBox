@@ -57,7 +57,7 @@ glm::mat4 Object::getTransform()
 
 void Object::setShaderProgram(CShaderProgram* shader)
 {
-
+  m_Shader = shader;
 }
 
 void Object::move(glm::vec3 v) {
