@@ -3,6 +3,7 @@
 #include "CWindow.hpp"
 #include <iostream>
 #include <vector>
+#include <string>
 #include <cstdlib>
 #include <glm/ext/matrix_transform.hpp>
 #include <ctime>
@@ -21,6 +22,8 @@ CGame::CGame(char *title) :
   m_Title(title), m_World(new World())
 {
   srand(time(0));
+  m_deltaTime = 0.0f;
+  m_lastTime = 0.0f;
 }
 
 bool CGame::init(ISystem *pSystem)  {
@@ -46,10 +49,11 @@ bool CGame::init(ISystem *pSystem)  {
 }
 
 bool CGame::update() {
+  sf::Time deltaTime = deltaClock.restart();
   while (!m_Window->closed()) {
     input();
     m_Window->clear();
-    //m_Window->update();
+    m_World->update(deltaTime.asMicroseconds());
     /* Rendering code here */
     m_World->draw();
     m_Window->swap();
@@ -59,6 +63,7 @@ bool CGame::update() {
 
 bool CGame::run() {
 	cout << "Game started" << endl;
+  deltaClock.restart();
   update();
   return true;
 }
@@ -74,19 +79,16 @@ void CGame::input()
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
   Object *obj;
-  /*
   for (int i = 0; i < 10; i++)
   {
-    char n[5];
     obj = Primitive::create(Primitive::CUBE);
     obj->move({
       rand() % 5 -1,
       rand()% 5 - 1,
       rand()% 5 - 1
       });
-    m_World->add("cube" + char(i + '0'), obj);
+    m_World->add("cube" + std::to_string(i), obj);
   }
-  */
 	GameObject *go = GameObject::create(Primitive::CUBE);
   Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
   //go->setShaderProgram(cube->getShaderProgram());

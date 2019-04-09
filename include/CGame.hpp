@@ -28,6 +28,9 @@ private:
 
   char *m_Title;
   bool m_running = true;
+  float m_deltaTime;
+  float m_lastTime;
+  sf::Clock deltaClock;
   EventListener *listener;
   class GameState; 
   class GameState;

@@ -8,7 +8,7 @@ World::World()
 
 void World::draw() {
   for (const auto &object : m_Objs) {
-    object.second->rotate(0.01f/3, {0,1,0});
+    //object.second->rotate(0.01f/3, {0,1,0});
     object.second->getShaderProgram()->use();
     object.second->getShaderProgram()->setUniformValue("Model", object.second->getTransform());
     object.second->getShaderProgram()->setUniformValue("View", m_Camera->getViewMatrix());
@@ -29,4 +29,9 @@ void World::add(string name, Object * o) {
     m_Cams[name] = o;
   else if (o->getType() == OBJType::TPRIMITIVE)
     m_Objs[name] = o;
+}
+
+void World::update(float deltatime)
+{
+  m_Camera->update(deltatime);
 }
