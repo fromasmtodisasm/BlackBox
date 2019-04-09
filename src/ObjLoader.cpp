@@ -84,7 +84,7 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
 
       // For each vertex of each triangle
       Vertex _vertex;
-      for (unsigned int i = 0; i < 3 /*vertexIndices.size()*/; i++) {
+      for (unsigned int i = 0; i < vertexIndices.size(); i++) {
         unsigned int vertexIndex = vertexIndices[i];
         unsigned int normalIndex = normalIndices[i];
 
@@ -102,6 +102,11 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
         _vertex.n = normal;
         out_vertices.push_back(_vertex);
       }
+    }
+    else {
+      // Probably a comment, eat up the rest of the line
+      char stupidBuffer[1000];
+      fgets(stupidBuffer, 1000, file);
     }
   }
 
