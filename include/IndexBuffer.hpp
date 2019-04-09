@@ -7,9 +7,9 @@ private:
   GLuint VBO;
   GLuint VAO;
   const void *m_Data;
-  size_t m_Size;
+  std::size_t m_Size;
 public:
-  IndexBuffer(const void *data, size_t size);
+  IndexBuffer(const void *data, std::size_t size);
   ~IndexBuffer();
 
   void bind();

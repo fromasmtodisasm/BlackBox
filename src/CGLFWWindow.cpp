@@ -54,7 +54,7 @@ bool CGLFWWindow::create() {
 
   glfwMakeContextCurrent(m_Window);
 
-  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+  if (!OpenGLLoader()) {
       std::cout << "Failed to initialize OpenGL context" << std::endl;
       return -1;
   }

@@ -29,7 +29,7 @@ bool CSFMLWindow::init()
   //m_window->
   // Make it the active window for OpenGL calls
   m_window->setActive();
-  if (!gladLoadGL())
+  if (!OpenGLLoader())
     return false;
   glEnable(GL_DEPTH);
   glEnable(GL_SMOOTH);
