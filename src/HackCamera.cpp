@@ -154,7 +154,7 @@ glm::mat4 HackCamera::getViewMatrix()
 
 glm::mat4 HackCamera::getProjectionMatrix()
 {
-  return glm::perspective(m_fov, m_ratio, 0.1f, 100.0f);
+  return glm::perspective(glm::radians(m_fov), m_ratio, 0.1f, 100.0f);
 }
 
 void HackCamera::reset()
