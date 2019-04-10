@@ -165,9 +165,10 @@ void HackCamera::reset()
   m_up = {0,1,0}; 
 }
 
-void HackCamera::setView(int w, int h)
+void HackCamera::setView(int x, int y, int w, int h)
 {
   m_ratio = (float)w/h;
+  glViewport(x,y,w,h);
 }
 
 bool HackCamera::OnInputEvent(sf::Event & event)
@@ -183,7 +184,7 @@ bool HackCamera::OnInputEvent(sf::Event & event)
   case sf::Event::Resized:
     {
       //glViewport(0, 0, event.size.width, event.size.height);
-      setView(event.size.width, event.size.height);
+      //setView(event.size.width, event.size.height);
     }
     return true;
   }

@@ -6,6 +6,7 @@
 #include "CShader.hpp"
 #include "Triangle.hpp"
 #include "World.hpp"
+#include "CPlayer.h"
 
 #include <common.h>
 #include <map>
@@ -17,29 +18,7 @@
 using string = std::string;
 class EventListener; 
 
-
-class GameListener : public IInputEventListener
-{
-
-  // IInputEventListener interface
-public:
-  bool OnInputEvent(sf::Event &event)
-  {
-    switch (event.type)
-    {
-    case sf::Event::KeyPressed:
-      switch(event.key.code)
-      {
-      case sf::Keyboard::P:
-       glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-       return true;
-      }
-    }
-    return false;
-  }
-};
-
-class CGame : public IGame {
+class CGame : public IGame, public IInputEventListener{
   class GameState;
   class EventListener;
 private:
@@ -47,7 +26,9 @@ private:
   IWindow *m_Window;
   IInputHandler *inputHandler;
   World *m_World;
-  GameListener *m_listener;
+  HackCamera *m_camera1, *m_camera2, *m_active_camera;
+  CPlayer *m_player;
+  bool isWireFrame = false;
 
   char *m_Title;
   bool m_running = true;
@@ -75,15 +56,14 @@ public:
   void input();
 
   bool init_opbject();
-};
+  void setRenderState();
+  void render();
 
-
-class CGame::EventListener : public IInputEventListener 
-{
-  CGame *m_Game;
-  EventListener(CGame *game);
+  // IInputEventListener interface
+public:
   virtual bool OnInputEvent(sf::Event &event);
 };
+
 
 class CGame::GameState
 {

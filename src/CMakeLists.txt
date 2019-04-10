@@ -70,6 +70,7 @@ target_sources(
   PRIVATE ${CMAKE_SOURCE_DIR}/src/VertexArrayObject.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/VertexBuffer.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/World.cpp
+  PRIVATE ${CMAKE_SOURCE_DIR}/src/CPlayer.cpp
 )
 target_sources(${PROJECT_NAME}
   PRIVATE ${CMAKE_SOURCE_DIR}/include/CCamera.hpp

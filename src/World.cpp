@@ -36,5 +36,5 @@ void World::add(string name, Object * o) {
 
 void World::update(float deltatime)
 {
-  m_Camera->update(deltatime);
+  //m_Camera->update(deltatime);
 }
