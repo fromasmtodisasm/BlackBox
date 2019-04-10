@@ -12,14 +12,14 @@
 
 using namespace std;
 
-Object::Object() : angle(0.0f), m_Pos(0.0f), m_scale(1.0)
+Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f))
 {
-
 }
 
 Object::Object(const Object & obj):
-  m_Pos(obj.m_Pos), angle(obj.angle), m_Mesh(obj.m_Mesh), m_Shader(obj.m_Shader),
-  m_type(obj.m_type),m_scale(1.0)
+  m_transform(obj.m_transform.position, obj.m_transform.rotation, obj.m_transform.scale),
+  m_Mesh(obj.m_Mesh), m_Shader(obj.m_Shader),
+  m_type(obj.m_type)
 {
 }
 
@@ -48,11 +48,11 @@ CShaderProgram * Object::getShaderProgram()
 glm::mat4 Object::getTransform()
 {
   glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
-  scale = glm::scale(scale, m_scale);
-  translate = glm::translate(translate, m_Pos);
-  rotate = glm::rotate(rotate, angle.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
-  rotate = glm::rotate(rotate, angle.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-  rotate = glm::rotate(rotate, angle.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
+  scale = glm::scale(scale, m_transform.scale);
+  translate = glm::translate(translate, m_transform.position);
+  rotate = glm::rotate(rotate, m_transform.rotation.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+  rotate = glm::rotate(rotate, m_transform.rotation.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+  rotate = glm::rotate(rotate, m_transform.rotation.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
   return translate * rotate * scale;
 }
 
@@ -61,17 +61,25 @@ void Object::setShaderProgram(CShaderProgram* shader)
   m_Shader = shader;
 }
 
+void Object::update(float deltatime)
+{
+
+}
+
 void Object::move(glm::vec3 v) {
-  m_Pos = m_Pos + v;
+  m_transform.position += v;
 }
 
 void Object::rotate(float angle, glm::vec3 v) {
-  if (v.x) this->angle.x += angle;
-  if (v.y) this->angle.y += angle;
-  if (v.z) this->angle.z += angle;
+  if (v.x) m_transform.rotation.x += angle;
+  if (v.y) m_transform.rotation.y += angle;
+  if (v.z) m_transform.rotation.z += angle;
 }
 
-void Object::scale(glm::vec3 v) {m_scale = v;}
+void Object::scale(glm::vec3 v)
+{
+  m_transform.scale = v;
+}
 
 Object * Object::load(string path)
 {

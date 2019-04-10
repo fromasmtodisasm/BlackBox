@@ -6,12 +6,19 @@
 #include <CShader.hpp>
 #include <glm/glm.hpp>
 
+struct Transform
+{
+  glm::vec3 position;
+  glm::vec3 rotation;
+  glm::vec3 scale;
+
+  Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
+    position(position), rotation(rotation), scale(scale){}
+};
+
 class Object : public IObject, public IDrawable {
 protected:
-	glm::vec3 m_Pos;
-  glm::vec3 angle;
-  glm::vec3 m_scale;
-  //glm::mat4 mv;
+  Transform m_transform;
   Mesh *m_Mesh;
   CShaderProgram *m_Shader;
   OBJType m_type;
@@ -32,4 +39,8 @@ public:
 
   // Унаследовано через IObject
   virtual void setShaderProgram(CShaderProgram* shader) override;
+
+  // IObject interface
+public:
+  virtual void update(float deltatime) override;
 };

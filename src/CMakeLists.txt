@@ -58,7 +58,7 @@ target_sources(
   PRIVATE ${CMAKE_SOURCE_DIR}/src/CSystem.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/GameObject.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/Geometry.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/HackCamera.cpp
+  PRIVATE ${CMAKE_SOURCE_DIR}/src/CCamera.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/IndexBuffer.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/MatrixTransform.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/Object.cpp
@@ -82,7 +82,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${CMAKE_SOURCE_DIR}/include/Cube.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/CWindow.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/GameObject.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/HackCamera.hpp
+  PRIVATE ${CMAKE_SOURCE_DIR}/include/CCamera.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/ICommand.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/IDrawable.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/IGame.hpp

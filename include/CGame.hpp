@@ -26,7 +26,7 @@ private:
   IWindow *m_Window;
   IInputHandler *inputHandler;
   World *m_World;
-  HackCamera *m_camera1, *m_camera2, *m_active_camera;
+  CCamera *m_camera1, *m_camera2, *m_active_camera;
   CPlayer *m_player;
   bool isWireFrame = false;
 

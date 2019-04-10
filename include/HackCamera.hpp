@@ -5,7 +5,7 @@
 #define PI 3.1415926535897932384626433832795
 #define PIdiv180 (PI/180.0)
 
-class HackCamera : public IInputEventListener
+class CCamera : public IInputEventListener
 {
 private:
   const float MOVE_SPEED = 0.07f;
@@ -22,13 +22,22 @@ private:
   std::set<sf::Keyboard::Key> m_keys;
 
 public:
-  HackCamera(glm::vec3 pos);
-  HackCamera();
-  ~HackCamera();
+  CCamera();
+  CCamera(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
+  ~CCamera();
 
   void update(float deltatime);
+  void setPos(glm::vec3 pos);
+  void setTarget(glm::vec3 pos);
   void move(glm::vec3 pos);
-  void strafe(glm::vec3 pos);
+  void moveForward(float speed);
+  void moveLeft(float speed);
+  void moveRight(float speed);
+  void moveBackward(float speed);
+  void moveUp(float speed);
+  void moveDown(float speed);
+  void strafeLeft(float speed);
+  void strafeRight(float speed);
   void rotateY(float angle);
   void rotateX(float angle);
   void rotateZ(float angle);

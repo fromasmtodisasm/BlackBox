@@ -41,10 +41,14 @@ bool CGame::init(ISystem *pSystem)  {
 		}
 		cout << "Objects inited" << endl;
   } 
-  m_camera1 = new HackCamera();
-  m_camera2 = new HackCamera();
-  //m_camera1->setView(m_Window->getWidth(), m_Window->getHeight());
-  //m_camera2->setView(m_Window->getWidth(), m_Window->getHeight());
+  m_camera1 = new CCamera();
+  glm::vec3 pos = glm::vec3(0, 0, 3);
+  m_camera2 = new CCamera(
+    pos,
+    glm::vec3(0,0,-1),
+    glm::vec3(0,1,0)
+  );
+  m_player->attachCamera(m_camera1);
   inputHandler->AddEventListener(m_camera1);
   inputHandler->AddEventListener(m_camera2);
   inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
@@ -98,7 +102,6 @@ bool CGame::init_opbject() {
   shader->create();
   for (int i = 0; i < 0; i++)
   {
-    //obj = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
     obj = Object::load("monkey.obj");
     obj->setShaderProgram(shader);
     obj->setType(OBJType::TPRIMITIVE);
@@ -140,9 +143,6 @@ void CGame::render()
 {
   m_Window->clear();
   /* Rendering code here */
-  glViewport(0,0,
-         m_Window->getWidth()/2,m_Window->getHeight()
-         );
   m_active_camera->update(m_deltaTime);
   m_camera1->setView(0,0,
          m_Window->getWidth()/2,m_Window->getHeight()

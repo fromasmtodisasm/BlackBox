@@ -18,3 +18,14 @@ void CPlayer::draw()
 {
   Object::draw();
 }
+
+void CPlayer::attachCamera(CCamera *camera)
+{
+  m_Camera = camera;
+  GameObject::m_Camera = camera;
+}
+
+glm::vec3 CPlayer::getPos()
+{
+  return m_transform.position;
+}

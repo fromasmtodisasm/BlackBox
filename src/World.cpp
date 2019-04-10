@@ -22,7 +22,7 @@ void World::draw(float dt) {
   // Camera ...
 }
 
-void World::setCamera(HackCamera *camera)
+void World::setCamera(CCamera *camera)
 {
   m_Camera = camera;
 }
@@ -36,5 +36,7 @@ void World::add(string name, Object * o) {
 
 void World::update(float deltatime)
 {
-  //m_Camera->update(deltatime);
+  for (const auto &object : m_Objs) {
+    object.second->update(deltatime);
+  }
 }

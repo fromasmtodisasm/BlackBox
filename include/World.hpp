@@ -12,12 +12,12 @@ class World {
 private:
   std::map<string,Object*> m_Objs;
   std::map<string, Object*> m_Cams;
-  HackCamera *m_Camera;
+  CCamera *m_Camera;
 public:
   World();
   void draw(float dt);
 
-  void setCamera(HackCamera *camera);
+  void setCamera(CCamera *camera);
   void add(string name, Object* o);
   inline void del(string name) { m_Objs.erase(name); }
   inline void delCam(string name) { m_Cams.erase(name); }
