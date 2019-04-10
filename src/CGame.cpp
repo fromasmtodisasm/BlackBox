@@ -98,8 +98,8 @@ bool CGame::init_opbject() {
   shader->create();
   for (int i = 0; i < 0; i++)
   {
-    obj = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
-    //obj = Object::load("monkey.obj");
+    //obj = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+    obj = Object::load("monkey.obj");
     obj->setShaderProgram(shader);
     obj->setType(OBJType::TPRIMITIVE);
     obj->move({

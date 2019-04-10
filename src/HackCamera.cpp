@@ -188,6 +188,12 @@ bool HackCamera::OnInputEvent(sf::Event & event)
     }
     return true;
   }
+  case sf::Event::MouseMoved:
+  {
+    m_fov += event.mouseWheel.delta * 0.1;
+    return true;
+  }
+  }
   return false;
 
 }
