@@ -181,11 +181,21 @@ bool HackCamera::OnInputEvent(sf::Event & event)
     m_keys.erase(event.key.code);
     return true;
   case sf::Event::Resized:
-    {
-      //glViewport(0, 0, event.size.width, event.size.height);
-      setView(event.size.width, event.size.height);
-    }
+  {
+    //glViewport(0, 0, event.size.width, event.size.height);
+    setView(event.size.width, event.size.height);
     return true;
+  }
+  case sf::Event::MouseWheelMoved:
+  {
+    m_fov += event.mouseWheel.delta * 0.1;
+    return true;
+  }
+  case sf::Event::MouseMoved:
+  {
+    m_fov += event.mouseWheel.delta * 0.1;
+    return true;
+  }
   }
   return false;
 
