@@ -1,6 +1,6 @@
 #include "CSFMLWindow.hpp"
 
-CSFMLWindow::CSFMLWindow(char * title, int width, int height) :
+CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false)
 {
   

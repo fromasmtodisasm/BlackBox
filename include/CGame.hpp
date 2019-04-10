@@ -30,7 +30,7 @@ private:
   CPlayer *m_player;
   bool isWireFrame = false;
 
-  char *m_Title;
+  std::string m_Title;
   bool m_running = true;
   float m_deltaTime;
   float m_lastTime;
@@ -48,7 +48,7 @@ private:
   std::stack<GameState*> states;
 
 public:
-  CGame(char *);
+  CGame(std::string title);
   ~CGame() = default;
   bool init(ISystem *pSystem);
   bool update();

@@ -12,16 +12,16 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
-static ISystem* gISystem = 0;
+static ISystem* gISystem = nullptr;
 ISystem* GetISystem()
 {
   return gISystem;
 }
 
-CGame::CGame(char *title) : 
-  m_Title(title), m_World(new World())
+CGame::CGame(std::string title) :
+  m_World(new World()),m_Title(title)
 {
-  srand(time(0));
+  srand(time(nullptr));
   m_deltaTime = 0.0f;
   m_lastTime = 0.0f;
 }
@@ -106,16 +106,16 @@ bool CGame::init_opbject() {
     obj->setShaderProgram(shader);
     obj->setType(OBJType::TPRIMITIVE);
     obj->move({
-      rand() % 15 - 7,
-      rand()% 15 - 7,
-      rand()% 15 - 7
+      static_cast<float>(rand() % 15 - 7),
+      static_cast<float>(rand() % 15 - 7),
+      static_cast<float>(rand() % 15 - 7)
       });
     obj->rotate(
-      rand() % 360,
+      static_cast<float>(rand() % 360),
       {
-      rand() % 15 - 7,
-      rand()% 15 - 7,
-      rand()% 15 - 7
+      static_cast<float>(rand() % 15 - 7),
+      static_cast<float>(rand() % 15 - 7),
+      static_cast<float>(rand() % 15 - 7)
       });
     m_World->add("cube" + std::to_string(i), obj);
   }
@@ -158,7 +158,7 @@ void CGame::render()
   m_Window->swap();
 }
 
-IGame *CreateIGame(char *title) {
+extern "C" IGame *CreateIGame(const char *title) {
   CGame *game = new CGame(title);
   return (game);
 }

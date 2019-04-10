@@ -18,10 +18,10 @@ class CSFMLWindow :
   bool m_bClose;
   int m_Width;
   int m_Height;
-  char *m_Title;
+  std::string m_Title;
   glm::vec4 m_BackColor = { 0.5f, 0.5f, 0.5f, 1.0f };
 public:
-  CSFMLWindow(char *title = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
+  CSFMLWindow(std::string = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSFMLWindow();
 
   virtual bool create() override;

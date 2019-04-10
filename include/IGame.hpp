@@ -1,6 +1,5 @@
 #pragma once
 
-#define EXPORT _cdecl
 struct ISystem;
 
 struct IGame {
@@ -10,5 +9,5 @@ struct IGame {
 };
 
 extern "C" {
-  IGame* CreateIGame(char *title);
+  IGame* CreateIGame(const char *title);
 }
