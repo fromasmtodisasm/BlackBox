@@ -117,11 +117,10 @@ bool CGame::init_opbject() {
     m_World->add("cube" + std::to_string(i), obj);
   }
   GameObject *go = GameObject::create(Primitive::CUBE);
-  //Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
   go->setShaderProgram(cube->getShaderProgram());
   inputHandler->AddEventListener(go);
   inputHandler->AddEventListener(m_player);
-  m_World->add("listener", reinterpret_cast<Object*>(go));
+  //m_World->add("listener", reinterpret_cast<Object*>(go));
   /*
   world.add("triangle", new Triangle(m_ShaderProgram));
 	*/
