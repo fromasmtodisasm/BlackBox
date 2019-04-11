@@ -15,6 +15,7 @@ elseif(GLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
+#add_subdirectory(imgui)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -109,6 +110,22 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${CMAKE_SOURCE_DIR}/include/VertexBuffer.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/World.hpp
 )
+#--------------------------------------------------
+#IMGUI
+set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
+set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
+
+include_directories(
+  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
+)
+target_sources(
+  ${PROJECT_NAME}
+  PRIVATE ${IMGUI_DIR}/imgui.cpp
+  PRIVATE ${IMGUI_DIR}/imgui_draw.cpp
+  PRIVATE ${IMGUI-SFML_DIR}/imgui-SFML.cpp
+  PRIVATE ${IMGUI_DIR}/imgui_demo.cpp
+  )
+#--------------------------------------------------
 if (GLEW_LOADER)
   target_sources(${PROJECT_NAME}
     PRIVATE ${CMAKE_SOURCE_DIR}/src/GlewLoader.cpp
