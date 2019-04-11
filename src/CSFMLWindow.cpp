@@ -1,4 +1,6 @@
 #include "CSFMLWindow.hpp"
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false)
@@ -8,6 +10,7 @@ CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
 
 CSFMLWindow::~CSFMLWindow()
 {
+  ImGui::SFML::Shutdown();
   m_window->close();
 }
 
@@ -18,14 +21,18 @@ bool CSFMLWindow::create()
 
 bool CSFMLWindow::init()
 {
+  /*
   // Request a 24-bits depth buffer when creating the window
   sf::ContextSettings contextSettings;
   contextSettings.depthBits = 24;
+  */
 
   // Create the main window
-  m_window = new sf::Window(sf::VideoMode(m_Width, m_Height), m_Title, sf::Style::Default, contextSettings);
-  
-  m_window->setMouseCursorVisible(false);
+  m_window = new sf::RenderWindow(sf::VideoMode(m_Width, m_Height), sf::String(m_Title));
+  m_window->setFramerateLimit(60);
+
+  ImGui::SFML::Init(*m_window);
+  //m_window->setMouseCursorVisible(false);
   //m_window->
   // Make it the active window for OpenGL calls
   m_window->setActive();
@@ -39,7 +46,15 @@ bool CSFMLWindow::init()
 
 void CSFMLWindow::update()
 {
+  ImGui::SFML::Update(*m_window, deltaClock.restart());
+  ImGui::ShowTestWindow();
 
+  ImGui::Begin("Hello, world!");
+  if (ImGui::Button("Look at this pretty button"))
+  {
+    m_bClose = true;
+  }
+  ImGui::End();
 }
 
 void CSFMLWindow::clear()
@@ -55,6 +70,8 @@ bool CSFMLWindow::closed()
 
 void CSFMLWindow::swap()
 {
+
+  ImGui::SFML::Render(*m_window);
   m_window->display();
 }
 
@@ -74,6 +91,7 @@ void *CSFMLWindow::getHandle()
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
 {
+  ImGui::SFML::ProcessEvent(event);
   // Close window: exit
   if (event.type == sf::Event::Closed)
     m_bClose = true;

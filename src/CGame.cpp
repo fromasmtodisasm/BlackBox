@@ -63,6 +63,7 @@ bool CGame::update() {
   sf::Time deltaTime = deltaClock.restart();
   while (!m_Window->closed()) {
     m_deltaTime = deltaTime.asMicroseconds();
+    m_Window->update();
     input();
     m_World->update(m_deltaTime);
     setRenderState();
@@ -145,16 +146,18 @@ void CGame::render()
   /* Rendering code here */
   m_active_camera->update(m_deltaTime);
   m_camera1->setView(0,0,
-         m_Window->getWidth()/2,m_Window->getHeight()
+         m_Window->getWidth(),m_Window->getHeight()
          );
   m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
+  /*
   m_camera2->setView(
          m_Window->getWidth()/2,0,
          m_Window->getWidth(),m_Window->getHeight()
          );
   m_World->setCamera(m_camera2);
   m_World->draw(m_deltaTime);
+  */
   m_Window->swap();
 }
 

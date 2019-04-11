@@ -15,6 +15,7 @@ elseif(GLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/imgui-sfml imgui-sfml)
 #add_subdirectory(imgui)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
@@ -112,18 +113,23 @@ target_sources(${PROJECT_NAME}
 )
 #--------------------------------------------------
 #IMGUI
+add_library(ImGui STATIC)
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
 set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 
-include_directories(
-  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
+target_include_directories(
+  ImGui PUBLIC ${IMGUI_DIR}
+)
+target_include_directories(
+  ImGui PUBLIC ${IMGUI-SFML_DIR}
 )
 target_sources(
-  ${PROJECT_NAME}
-  PRIVATE ${IMGUI_DIR}/imgui.cpp
-  PRIVATE ${IMGUI_DIR}/imgui_draw.cpp
-  PRIVATE ${IMGUI-SFML_DIR}/imgui-SFML.cpp
-  PRIVATE ${IMGUI_DIR}/imgui_demo.cpp
+  ImGui
+  PUBLIC ${IMGUI_DIR}/imgui.cpp
+  PUBLIC ${IMGUI_DIR}/imgui_widgets.cpp
+  PUBLIC ${IMGUI_DIR}/imgui_draw.cpp
+  PUBLIC ${IMGUI-SFML_DIR}/imgui-SFML.cpp
+  PUBLIC ${IMGUI_DIR}/imgui_demo.cpp
   )
 #--------------------------------------------------
 if (GLEW_LOADER)
@@ -147,6 +153,7 @@ elseif(GLEW_LOADER)
   target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARY})
 endif()
 target_link_libraries(${PROJECT_NAME} glm)
+target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
