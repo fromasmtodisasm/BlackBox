@@ -28,7 +28,9 @@ bool CSFMLWindow::init()
   */
 
   // Create the main window
-  m_window = new sf::RenderWindow(sf::VideoMode(m_Width, m_Height), sf::String(m_Title));
+  //sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
+  auto fullscreen = 	sf::VideoMode::getFullscreenModes();
+  m_window = new sf::RenderWindow(fullscreen[0], sf::String(m_Title), sf::Style::Fullscreen);
   m_window->setFramerateLimit(60);
 
   ImGui::SFML::Init(*m_window);
@@ -50,7 +52,7 @@ void CSFMLWindow::update()
   ImGui::ShowTestWindow();
 
   ImGui::Begin("Hello, world!");
-  if (ImGui::Button("Look at this pretty button"))
+  if (ImGui::Button("Exit"))
   {
     m_bClose = true;
   }

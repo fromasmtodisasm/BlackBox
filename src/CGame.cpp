@@ -145,9 +145,11 @@ void CGame::render()
   m_Window->clear();
   /* Rendering code here */
   m_active_camera->update(m_deltaTime);
+  /*
   m_camera1->setView(0,0,
          m_Window->getWidth(),m_Window->getHeight()
          );
+         */
   m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
   /*
