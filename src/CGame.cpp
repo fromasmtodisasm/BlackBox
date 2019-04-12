@@ -69,9 +69,9 @@ bool CGame::update() {
   sf::Time deltaTime = deltaClock.restart();
   while (!m_Window->closed()) {
     m_deltaTime = deltaTime.asMicroseconds()*0.001;
+    input();
     m_Window->update();
 		guiControls();
-    input();
     m_World->update(m_deltaTime);
     setRenderState();
     render();
