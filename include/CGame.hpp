@@ -7,6 +7,7 @@
 #include "Triangle.hpp"
 #include "World.hpp"
 #include "CPlayer.h"
+#include <MusicList.hpp>
 
 #include <common.h>
 #include <map>
@@ -14,6 +15,7 @@
 #include <vector>
 #include <memory>
 #include <stack>
+
 
 using string = std::string;
 class EventListener; 
@@ -29,6 +31,9 @@ private:
   CCamera *m_camera1, *m_camera2, *m_active_camera;
   CPlayer *m_player;
   bool isWireFrame = false;
+
+  MusicList m_PlayList;
+  bool m_isMusicPlaying = false;
 
   std::string m_Title;
   bool m_running = true;

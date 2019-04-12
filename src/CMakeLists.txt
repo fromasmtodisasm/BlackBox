@@ -34,6 +34,9 @@ include_directories(
   " ${CMAKE_SOURCE_DIR}/include"
 )
 #--------------------------------------------------
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+#...
+#--------------------------------------------------
 ###################################################
 add_library(${PROJECT_NAME})
 if (USE_SFML)
@@ -97,6 +100,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${CMAKE_SOURCE_DIR}/include/ISystem.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/IWindow.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/MatrixTranform.hpp
+  PRIVATE ${CMAKE_SOURCE_DIR}/include/MusicList.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/Object.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/ObjLoader.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/Opengl.hpp
@@ -144,6 +148,7 @@ endif()
 
 if (USE_SFML)
   target_link_libraries(${PROJECT_NAME} sfml-graphics)
+  target_link_libraries(${PROJECT_NAME} sfml-audio)
 else()
   target_link_libraries(${PROJECT_NAME} glfw)
 endif()
@@ -156,7 +161,10 @@ target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-
+target_link_libraries(${PROJECT_NAME}
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+)
 
 add_test(NAME mytest COMMAND ${PROJECT_NAME}_test WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 

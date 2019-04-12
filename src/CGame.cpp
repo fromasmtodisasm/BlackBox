@@ -24,6 +24,9 @@ CGame::CGame(std::string title) :
   srand(time(nullptr));
   m_deltaTime = 0.0f;
   m_lastTime = 0.0f;
+  m_PlayList.setRootPath("res/music/");
+  m_PlayList.addTrack("background.ogg");
+  m_PlayList.addTrack("japan.ogg");
 }
 
 bool CGame::init(ISystem *pSystem)  {
@@ -75,6 +78,9 @@ bool CGame::update() {
 bool CGame::run() {
 	cout << "Game started" << endl;
   deltaClock.restart();
+  m_PlayList.setVolume(10.f);
+  m_PlayList.play();
+  m_isMusicPlaying = true;
   update();
   return true;
 }
@@ -173,6 +179,13 @@ bool CGame::OnInputEvent(sf::Event &event)
   switch (event.type)
     {
     case sf::Event::KeyPressed:
+    if (event.key.control) {
+      switch (event.key.code) {
+      case sf::Keyboard::Right:
+        m_PlayList.next();
+      }
+    }
+    else {
       switch(event.key.code)
       {
       case sf::Keyboard::P:
@@ -184,7 +197,17 @@ bool CGame::OnInputEvent(sf::Event &event)
       case sf::Keyboard::Num0:
         m_active_camera = m_camera2;
         return true;
+      case sf::Keyboard::Space:
+        if (!m_isMusicPlaying){
+          m_PlayList.play();
+        }
+        else {
+          m_PlayList.pause();
+        }
+        m_isMusicPlaying = !m_isMusicPlaying;
+        return true;
       }
     }
+  }
   return false;
 }
