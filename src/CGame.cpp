@@ -8,6 +8,9 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <ctime>
 
+#include <imgui-SFML.h>
+#include <imgui.h>
+
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////
@@ -65,8 +68,9 @@ bool CGame::init(ISystem *pSystem)  {
 bool CGame::update() {
   sf::Time deltaTime = deltaClock.restart();
   while (!m_Window->closed()) {
-    m_deltaTime = deltaTime.asMicroseconds();
+    m_deltaTime = deltaTime.asMicroseconds()*0.001;
     m_Window->update();
+		guiControls();
     input();
     m_World->update(m_deltaTime);
     setRenderState();
@@ -167,6 +171,50 @@ void CGame::render()
   m_World->draw(m_deltaTime);
   */
   m_Window->swap();
+}
+
+
+void CGame::guiControls()
+{
+	static bool show_player=1, show_camera=1;
+
+	ImGui::Begin("Control panel");
+		ImGui::Checkbox("Show Plyer", &show_player);
+		ImGui::Checkbox("Show Camera", &show_camera);
+	ImGui::End();
+	if (show_player) {
+		ImGui::Begin("Music Player");
+		if (ImGui::Button("Pause"))
+		{
+			m_PlayList.pause();
+		}
+		if (ImGui::Button("Play"))
+		{
+			m_PlayList.play();
+		}
+		if (ImGui::Button("Next"))
+		{
+			m_PlayList.next();
+		}
+		if (ImGui::Button("Previos"))
+		{
+			m_PlayList.play();
+		}
+		if (ImGui::Button("Stop"))
+		{
+			m_PlayList.stop();
+		}
+		ImGui::End();
+	}
+
+	if (show_camera) {
+		ImGui::Begin("Camera");
+			if (ImGui::Button("Reset"))
+			{
+				m_active_camera->reset();	
+			}
+		ImGui::End();
+	}
 }
 
 extern "C" IGame *CreateIGame(const char *title) {

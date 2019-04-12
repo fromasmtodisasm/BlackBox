@@ -11,7 +11,7 @@ GameObject *GameObject::create(Primitive::Type type)
 void GameObject::update(float deltatime)
 {
   float speed = deltatime*MOVE_SPEED;
-  float rotSpeed = deltatime*0.7;//m_rotAngle;
+  float rotSpeed = deltatime*5.f;//m_rotAngle;
   for (const auto &key : m_keys)
   {
     switch (key)

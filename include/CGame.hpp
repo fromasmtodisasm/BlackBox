@@ -63,6 +63,7 @@ public:
   bool init_opbject();
   void setRenderState();
   void render();
+	void guiControls();
 
   // IInputEventListener interface
 public:
