@@ -184,6 +184,18 @@ bool CGame::OnInputEvent(sf::Event &event)
       case sf::Keyboard::Right:
         m_PlayList.next();
       }
+      switch (event.key.code) {
+      case sf::Keyboard::Left:
+        m_PlayList.prev();
+      }
+      switch (event.key.code) {
+      case sf::Keyboard::Up:
+        m_PlayList.setVolume(m_PlayList.getVolume() + 2.f);
+      }
+      switch (event.key.code) {
+      case sf::Keyboard::Down:
+        m_PlayList.setVolume(m_PlayList.getVolume() - 2.f);
+      }
     }
     else {
       switch(event.key.code)
