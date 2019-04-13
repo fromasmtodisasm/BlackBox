@@ -36,7 +36,7 @@ bool CSFMLWindow::init()
   m_window->setVerticalSyncEnabled(true);
   //m_window->setFramerateLimit(60);
 
-  ImGui::SFML::Init(*m_window);
+  //ImGui::SFML::Init(*m_window);
   //m_window->setMouseCursorVisible(false);
   //m_window->
   // Make it the active window for OpenGL calls
@@ -50,6 +50,7 @@ bool CSFMLWindow::init()
 
 void CSFMLWindow::update()
 {
+  /*
   ImGui::SFML::Update(*m_window, deltaClock.restart());
   ImGui::ShowTestWindow();
 
@@ -59,6 +60,7 @@ void CSFMLWindow::update()
     m_bClose = true;
   }
   ImGui::End();
+  */
 }
 
 void CSFMLWindow::clear()
@@ -75,7 +77,7 @@ bool CSFMLWindow::closed()
 void CSFMLWindow::swap()
 {
 
-  ImGui::SFML::Render(*m_window);
+  //ImGui::SFML::Render(*m_window);
   m_window->display();
 }
 
@@ -95,7 +97,7 @@ void *CSFMLWindow::getHandle()
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
 {
-  ImGui::SFML::ProcessEvent(event);
+  //ImGui::SFML::ProcessEvent(event);
   // Close window: exit
   if (event.type == sf::Event::Closed)
     m_bClose = true;
@@ -128,4 +130,6 @@ void CSFMLWindow::glInit()
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
   glEnable(GL_TEXTURE_2D);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
 }

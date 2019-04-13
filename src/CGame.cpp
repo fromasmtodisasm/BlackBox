@@ -76,7 +76,7 @@ bool CGame::update() {
     m_deltaTime = deltaTime.asMicroseconds()*0.001;
     input();
     m_Window->update();
-		guiControls();
+    //guiControls();
     m_World->update(m_deltaTime);
     setRenderState();
     render();
@@ -125,7 +125,7 @@ bool CGame::init_opbject() {
   m_World->add("light", light);
   m_World->add("plane", plane);
   shader->create();
-  for (int i = 0; i < 0; i++)
+  for (int i = 0; i < 1; i++)
   {
     obj = Object::load("monkey.obj");
     obj->setShaderProgram(shader);
@@ -161,6 +161,9 @@ void CGame::setRenderState()
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
 
 }
 
