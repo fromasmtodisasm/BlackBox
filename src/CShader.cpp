@@ -33,10 +33,11 @@ ShaderProgramStatus::ShaderProgramStatus(CShaderProgram *program) :
 }
 
 bool ShaderProgramStatus::get(int statusType) {
-  glGetShaderiv(m_Program->get(), statusType, &m_Status);
+  GLsizei size;
+  glGetProgramiv(m_Program->get(), statusType, &m_Status);
   if(m_Status != GL_TRUE)
   {
-    glGetShaderInfoLog(m_Program->get(), 512, NULL, infoLog);
+    glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog);
     std::cout << "ERROR: shader::programm: \n" << infoLog << std::endl;
     return false;
   }
