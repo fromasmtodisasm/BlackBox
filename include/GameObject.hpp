@@ -7,7 +7,7 @@
 class GameObject : public Object, public IInputEventListener
 {
 protected:
-  const float MOVE_SPEED = 0.050f;
+  const float MOVE_SPEED = 0.5f;
   CCamera *m_Camera;
   std::set<sf::Keyboard::Key> m_keys;
   GameObject(const Object &obj);

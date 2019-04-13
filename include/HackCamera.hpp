@@ -8,7 +8,7 @@
 class CCamera : public IInputEventListener
 {
 private:
-  const float MOVE_SPEED = 0.07f;
+  const float MOVE_SPEED = 0.9f;
   glm::vec3 m_pos; 
   glm::vec3 m_target;
   glm::vec3 m_right;
@@ -17,7 +17,7 @@ private:
   glm::mat4 m_view;
   float m_ratio = 1.0f;
   float m_fov = 45.0f;
-  float m_rotAngle = 0.9;
+  float m_rotAngle = 10.f;
   bool isActive = true;
   std::set<sf::Keyboard::Key> m_keys;
 
