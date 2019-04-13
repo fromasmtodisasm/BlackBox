@@ -12,6 +12,7 @@
 
 #include <imgui-SFML.h>
 #include <imgui.h>
+#include <sstream>
 
 using namespace std;
 
@@ -50,11 +51,11 @@ bool CGame::init(ISystem *pSystem)  {
 		cout << "Objects inited" << endl;
   } 
   glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
-  glm::vec3 pos = glm::vec3(0,3,0);//0, player_pos.y + 3, 0);
+  glm::vec3 pos = glm::vec3(0,10,10);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
   m_camera1 = new CCamera(
     pos,
-    -player_pos,
+    glm::normalize(player_pos - pos),
     glm::vec3(0,1,0)
   );
   m_camera1->setView(0,0,m_Window->getWidth(),m_Window->getHeight());
@@ -78,6 +79,17 @@ bool CGame::update() {
     m_Window->update();
     //guiControls();
     m_World->update(m_deltaTime);
+
+    static float prev_time;
+    static std::stringstream ss;
+    prev_time += m_deltaTime;
+    glm::vec3 pos = m_active_camera->m_pos;
+    if (prev_time >= 1.0)
+      ss << "cam.x = " << pos.x <<endl <<
+           "cam.y = " << pos.y <<endl <<
+           "cam.z = " << pos.z << endl;
+    m_Window->setTitle(ss.str().c_str());
+    ss.str("");
     setRenderState();
     render();
   }
@@ -105,6 +117,7 @@ void CGame::input()
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
   Texture *text = new Texture("container.jpg");
+  Texture *plane_texture = new Texture("check.jpg");
   Object *obj;
   glm::vec3 light_pos(4,4,-4);
   Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
@@ -120,16 +133,18 @@ bool CGame::init_opbject() {
   plane->moveTo(glm::vec3(0,0,0));
   //plane->rotate(90, glm::vec3(1,0,0));
   plane->scale(glm::vec3(50,50,50));
-  plane->setTexture(text);
+  plane->setTexture(plane_texture);
   plane->move(glm::vec3(0,-3,0));
-  m_player->setTexture(text);
+  //m_player->setTexture(text);
+  m_player->setShaderProgram(shader);
+  m_player->scale({0.3,0.3,0.3});
 
   BB->scale(glm::vec3(70,70,70));
   m_World->add("light", light);
   m_World->add("plane", plane);
   m_World->add("BB", BB);
   shader->create();
-  for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 1; i++)
   {
     obj = Object::load("cube.obj");
     obj->setShaderProgram(shader);
@@ -157,6 +172,7 @@ bool CGame::init_opbject() {
     m_World->add("cube" + std::to_string(i), obj);
   }
   GameObject *go = GameObject::create(Primitive::CUBE);
+  go->setTexture(text);
   go->setShaderProgram(cube->getShaderProgram());
   inputHandler->AddEventListener(go);
   inputHandler->AddEventListener(m_player);
@@ -174,7 +190,7 @@ void CGame::setRenderState()
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
   glEnable(GL_DEPTH_TEST);
-  //glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
 
 }

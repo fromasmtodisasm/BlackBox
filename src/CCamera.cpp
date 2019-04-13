@@ -1,6 +1,9 @@
 #include <CCamera.hpp>
 #include <Opengl.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+#include <sstream>
+using namespace  std;
 
 CCamera::CCamera() :
   m_pos(0,0,3), m_target(0,0,-1), m_right(1,0,0), m_up(0,1,0),
@@ -21,6 +24,17 @@ CCamera::~CCamera()
 
 void CCamera::update(float deltatime)
 {
+  /*
+  static float prev_time;
+  static stringstream ss;
+  prev_time += deltatime;
+  if (prev_time >= 1.0)
+    cout << "cam.x = " << m_pos.x <<endl <<
+         "cam.y = " << m_pos.y <<endl <<
+         "cam.z = " << m_pos.z << endl;
+  */
+
+
 }
 
 void CCamera::move(glm::vec3 pos)

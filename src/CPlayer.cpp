@@ -1,10 +1,10 @@
 #include "CPlayer.h"
 #include "Primitives.hpp"
 
-CPlayer::CPlayer() : GameObject(*Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl"))
+CPlayer::CPlayer() : GameObject(*Object::load("human.obj"))
 {
   m_type = OBJType::TPRIMITIVE;
-  getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
+  //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
   move({0,0,0});
 }
 

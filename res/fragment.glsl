@@ -20,6 +20,6 @@ void main() {
 
   vec3 result = (0.3 + diffuse) * vec3(0.8, 0, 0.4);
   //color = vec4(result, 1.0f);
-  color = texture(ourTexture, TextCoord);
+  color = texture(ourTexture, TextCoord);//*vec4(0.7, 0.3, 0.9, 1);
 
 }

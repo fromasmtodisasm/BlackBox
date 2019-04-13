@@ -8,7 +8,7 @@ World::World()
 
 void World::draw(float dt) {
   for (const auto &object : m_Objs) {
-    object.second->rotate(dt*0.01f, {0,1,0});
+    //object.second->rotate(dt*0.01f, {0,1,0});
     object.second->getShaderProgram()->use();
     object.second->getShaderProgram()->setUniformValue("Model", object.second->getTransform());
     object.second->getShaderProgram()->setUniformValue("View", m_Camera->getViewMatrix());
