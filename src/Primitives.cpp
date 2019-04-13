@@ -10,7 +10,7 @@ Object * Primitive::create(Type type, std::string vsh, std::string fsh)
   case Primitive::CUBE:
   case Primitive::PLANE:
     if (type == Primitive::CUBE) obj = Object::load("cube.obj");
-    if (type == Primitive::PLANE) obj = Object::load("plane.obj");
+    if (type == Primitive::PLANE) obj = Object::load("grid.obj");
     obj->setType(OBJType::TPRIMITIVE);
     obj->setShaderProgram(shader);
     obj->getShaderProgram()->use();

@@ -115,8 +115,8 @@ bool CGame::init_opbject() {
   Object *light =  Primitive::create(Primitive::CUBE,"vertex.glsl", "basecolor.frag");
   light->move(light_pos);
   light->scale(glm::vec3(0.3f));
+  //plane->moveTo(glm::vec3(0,0,0));
   plane->moveTo(glm::vec3(0,0,0));
-  plane->moveTo(glm::vec3(0,-3,0));
   //plane->rotate(90, glm::vec3(1,0,0));
   plane->scale(glm::vec3(50,50,50));
   plane->setTexture(text);
@@ -162,7 +162,7 @@ void CGame::setRenderState()
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_CULL_FACE);
+  //glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
 
 }

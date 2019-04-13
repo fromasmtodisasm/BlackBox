@@ -65,8 +65,10 @@ void CSFMLWindow::update()
 
 void CSFMLWindow::clear()
 {
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  float depth = 0.f;
+  glClearBufferfv(GL_COLOR, 0, &m_BackColor[0]);
+  glClearBufferfv(GL_DEPTH, 0, &depth);
+  //glClearBufferfv(GL_DEPTH, 0 );
 }
 
 bool CSFMLWindow::closed()
@@ -130,6 +132,6 @@ void CSFMLWindow::glInit()
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
   glEnable(GL_TEXTURE_2D);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_FRONT);
 }
