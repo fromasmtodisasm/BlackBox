@@ -7,7 +7,8 @@
 
 class CCamera : public IInputEventListener
 {
-private:
+//private:
+public:
   const float MOVE_SPEED = 0.9f;
   glm::vec3 m_pos; 
   glm::vec3 m_target;

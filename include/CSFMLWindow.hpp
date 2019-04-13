@@ -46,5 +46,7 @@ public:
   // Inherited via IWindow
   virtual int getWidth() override;
   virtual int getHeight() override;
+private:
+  void glInit();
 };
 

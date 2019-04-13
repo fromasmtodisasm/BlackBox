@@ -14,7 +14,7 @@ ShaderStatus::ShaderStatus(CShader *shader) :
 
 }
 
-bool ShaderStatus::get(int statusType) {
+bool ShaderStatus::get(GLenum statusType) {
   glGetShaderiv(m_Shader->get(), statusType, &m_Status);
   if(m_Status != GL_TRUE)
   {
@@ -32,7 +32,7 @@ ShaderProgramStatus::ShaderProgramStatus(CShaderProgram *program) :
 
 }
 
-bool ShaderProgramStatus::get(int statusType) {
+bool ShaderProgramStatus::get(GLenum statusType) {
   GLsizei size;
   glGetProgramiv(m_Program->get(), statusType, &m_Status);
   if(m_Status != GL_TRUE)
@@ -130,9 +130,8 @@ bool CShaderProgram::create() {
 	return m_Status.get(GL_LINK_STATUS);
 }
 
-bool CShaderProgram::attach(CShader *shader) {
+void CShaderProgram::attach(CShader *shader) {
   glAttachShader(m_Program, shader->get());
-	return m_Status.get(GL_VALIDATE_STATUS);
 }
 
 bool CShaderProgram::link() {

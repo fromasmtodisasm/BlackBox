@@ -21,17 +21,18 @@ bool CSFMLWindow::create()
 
 bool CSFMLWindow::init()
 {
-  /*
-  // Request a 24-bits depth buffer when creating the window
-  sf::ContextSettings contextSettings;
-  contextSettings.depthBits = 24;
-  */
+  sf::ContextSettings settings;
+  settings.depthBits = 24;
+  settings.stencilBits = 8;
+  settings.antialiasingLevel = 4;
+  settings.majorVersion = 3;
+  settings.minorVersion = 3;
 
   // Create the main window
   sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
   //auto fullscreen = 	sf::VideoMode::getFullscreenModes();
   sf::VideoMode mode = desktop;
-  m_window = new sf::RenderWindow(mode, sf::String(m_Title));//, sf::Style::Fullscreen);
+  m_window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
   m_window->setVerticalSyncEnabled(true);
   //m_window->setFramerateLimit(60);
 
@@ -42,8 +43,6 @@ bool CSFMLWindow::init()
   m_window->setActive();
   if (!OpenGLLoader())
     return false;
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_SMOOTH);
 
   return true;
 }
@@ -121,4 +120,11 @@ int CSFMLWindow::getWidth()
 int CSFMLWindow::getHeight()
 {
   return m_Height;
+}
+
+void CSFMLWindow::glInit()
+{
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_SMOOTH);
+  glEnable(GL_TEXTURE_2D);
 }

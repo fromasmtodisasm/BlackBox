@@ -10,7 +10,8 @@ CCamera::CCamera() :
 }
 
 CCamera::CCamera(glm::vec3 pos, glm::vec3 target, glm::vec3 up) :
-  m_pos(pos), m_target(target), m_up(up)
+  m_pos(pos), m_target(target), m_up(up),
+  m_view(1.0f),m_angles(0,0,0), m_right(1,0,0)
 {
 }
 
@@ -130,7 +131,7 @@ glm::mat4 CCamera::getViewMatrix()
 
 glm::mat4 CCamera::getProjectionMatrix()
 {
-  return glm::perspective(glm::radians(m_fov), m_ratio, 0.1f, 100.0f);
+  return glm::perspective(glm::radians(m_fov), m_ratio, 0.1f, 1000.0f);
 }
 
 void CCamera::reset()
@@ -149,6 +150,10 @@ void CCamera::setView(int x, int y, int w, int h)
 
 bool CCamera::OnInputEvent(sf::Event & event)
 {
+  if (event.type == sf::Event::Resized)
+  {
+    setView(0,0,event.size.width, event.size.height);
+  }
   return false;
 
 }

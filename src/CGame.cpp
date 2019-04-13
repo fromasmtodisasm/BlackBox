@@ -1,6 +1,8 @@
 #include "CGame.hpp"
 #include "GameObject.hpp"
 #include "CWindow.hpp"
+#include "Triangle.hpp"
+#include "Texture.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -47,13 +49,16 @@ bool CGame::init(ISystem *pSystem)  {
 		}
 		cout << "Objects inited" << endl;
   } 
-  m_camera1 = new CCamera();
-  glm::vec3 pos = glm::vec3(0, 0, 3);
-  m_camera2 = new CCamera(
+  glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
+  glm::vec3 pos = glm::vec3(0,3,0);//0, player_pos.y + 3, 0);
+  // create an camera looking at the light
+  m_camera1 = new CCamera(
     pos,
-    glm::vec3(0,0,-1),
+    -player_pos,
     glm::vec3(0,1,0)
   );
+  m_camera1->setView(0,0,m_Window->getWidth(),m_Window->getHeight());
+  m_camera2 = new CCamera();
   m_player->attachCamera(m_camera1);
   inputHandler->AddEventListener(m_camera1);
   inputHandler->AddEventListener(m_camera2);
@@ -99,17 +104,26 @@ void CGame::input()
 
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
+  Texture *text = new Texture("container.jpg");
   Object *obj;
   glm::vec3 light_pos(4,4,-4);
   Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+  Object *plane = Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl");
   m_player = new CPlayer();
   m_World->add("MyPlayer", m_player);
   CShaderProgram *shader = new CShaderProgram("res/" "vertex.glsl", "res/""fragment.glsl");
   Object *light =  Primitive::create(Primitive::CUBE,"vertex.glsl", "basecolor.frag");
   light->move(light_pos);
   light->scale(glm::vec3(0.3f));
+  plane->moveTo(glm::vec3(0,0,0));
+  plane->moveTo(glm::vec3(0,-3,0));
+  //plane->rotate(90, glm::vec3(1,0,0));
+  plane->scale(glm::vec3(50,50,50));
+  plane->setTexture(text);
+  m_player->setTexture(text);
 
   m_World->add("light", light);
+  m_World->add("plane", plane);
   shader->create();
   for (int i = 0; i < 0; i++)
   {

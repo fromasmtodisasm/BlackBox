@@ -22,6 +22,10 @@ public:
 public:
   void attachCamera(CCamera *camera);
   glm::vec3 getPos();
+
+  // IObject interface
+public:
+  virtual void update(float deltatime) override;
 };
 
 #endif // CPLAYER_H
