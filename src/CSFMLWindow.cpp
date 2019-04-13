@@ -43,6 +43,7 @@ bool CSFMLWindow::init()
   m_window->setActive();
   if (!OpenGLLoader())
     return false;
+  glInit();
 
   return true;
 }
