@@ -108,6 +108,7 @@ bool CGame::init_opbject() {
   Object *obj;
   glm::vec3 light_pos(4,4,-4);
   Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
+  Object *BB = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
   Object *plane = Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl");
   m_player = new CPlayer();
   m_World->add("MyPlayer", m_player);
@@ -120,28 +121,39 @@ bool CGame::init_opbject() {
   //plane->rotate(90, glm::vec3(1,0,0));
   plane->scale(glm::vec3(50,50,50));
   plane->setTexture(text);
+  plane->move(glm::vec3(0,-3,0));
   m_player->setTexture(text);
 
+  BB->scale(glm::vec3(70,70,70));
   m_World->add("light", light);
   m_World->add("plane", plane);
+  m_World->add("BB", BB);
   shader->create();
-  for (int i = 0; i < 1; i++)
+  for (int i = 0; i < 20; i++)
   {
-    obj = Object::load("monkey.obj");
+    obj = Object::load("cube.obj");
     obj->setShaderProgram(shader);
     obj->setType(OBJType::TPRIMITIVE);
-    obj->move({
-      static_cast<float>(rand() % 15 - 7),
-      static_cast<float>(rand() % 15 - 7),
-      static_cast<float>(rand() % 15 - 7)
+    obj->moveTo({
+     (glm::vec3(0,0,0))
+    /*
+      static_cast<float>(rand() % 45 - 7),
+      static_cast<float>(rand() % 45 - 7),
+      static_cast<float>(rand() % 45 - 7)
       });
+                    */
+                });
+    obj->scale(glm::vec3(i*20));
+
+  /*
     obj->rotate(
       static_cast<float>(rand() % 360),
       {
-      static_cast<float>(rand() % 15 - 7),
-      static_cast<float>(rand() % 15 - 7),
-      static_cast<float>(rand() % 15 - 7)
+      static_cast<float>(rand() % 65 - 7),
+      static_cast<float>(rand() % 65 - 7),
+      static_cast<float>(rand() % 65 - 7)
       });
+      */
     m_World->add("cube" + std::to_string(i), obj);
   }
   GameObject *go = GameObject::create(Primitive::CUBE);

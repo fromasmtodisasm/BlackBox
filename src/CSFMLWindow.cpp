@@ -65,7 +65,7 @@ void CSFMLWindow::update()
 
 void CSFMLWindow::clear()
 {
-  float depth = 0.f;
+  float depth = 1.0f;
   glClearBufferfv(GL_COLOR, 0, &m_BackColor[0]);
   glClearBufferfv(GL_DEPTH, 0, &depth);
   //glClearBufferfv(GL_DEPTH, 0 );

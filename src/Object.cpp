@@ -86,9 +86,9 @@ void Object::moveTo(glm::vec3 v)
 }
 
 void Object::rotate(float angle, glm::vec3 v) {
-  m_transform.rotation.x = angle;
-  m_transform.rotation.y = angle;
-  m_transform.rotation.z = angle;
+  m_transform.rotation.x += angle;
+  m_transform.rotation.y += angle;
+  m_transform.rotation.z += angle;
 }
 
 void Object::scale(glm::vec3 v)
