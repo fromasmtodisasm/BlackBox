@@ -8,16 +8,18 @@
 using namespace std;
 
 Plane::Plane(CShaderProgram *program) :
-  Object(), m_Shader(program)
+  Object()
 {
+  m_Shader = program;
   m_type = OBJType::TPRIMITIVE;
   m_Vertices = {
-    {{-0.5f, -0.5f, -0.5f}},
-    {{-0.5f,  0.5f, -0.5f}},
-    {{0.5f, -0.5f, -0.5f}},
-    {{0.5f, -0.5f, -0.5f}},
-    {{-0.5f,  0.5f, -0.5f}},
-    {{0.5f,  0.5f, -0.5f}}
+    {{-1.f,0,  1.f},   {0, 0},{0,1,0 }},
+    {{-1.f,0, -1.f},   {0, 0},{0,1,0 }},
+    {{1.f, 0, -1.f},   {0, 0},{0,1,0 }},
+    {{1.f, 0, -1.f},   {0, 0},{0,1,0 }},
+    {{1.f,0,   1.f},   {0, 0},{0,1,0 }},
+    {{-1.f,0,  1.f},   {0, 0},{0,1,0 }}
+
   };
 
   m_Indeces = {

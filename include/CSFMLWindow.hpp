@@ -32,7 +32,7 @@ public:
   virtual void clear() override;
   virtual bool closed() override;
   virtual void swap() override;
-  virtual void setTitle(char *) override;
+  virtual void setTitle(const char *) override;
   virtual void show() override;
 
   // IWindow interface
@@ -46,5 +46,7 @@ public:
   // Inherited via IWindow
   virtual int getWidth() override;
   virtual int getHeight() override;
+private:
+  void glInit();
 };
 

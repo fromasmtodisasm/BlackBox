@@ -86,6 +86,6 @@ bool GameObject::OnInputEvent(sf::Event &event)
   case sf::Event::KeyReleased:
     m_keys.erase(event.key.code);
     return true;
-  case sf::Event::Resized:    return true;
   }
+  return false;
 }

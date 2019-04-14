@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/fwd.hpp>
+#include <Texture.hpp>
 
 class CShaderProgram;
 
@@ -20,5 +21,6 @@ struct IObject
 
   virtual CShaderProgram *getShaderProgram() = 0;
   virtual void setShaderProgram(CShaderProgram* shader) = 0;
+  virtual void setTexture(Texture* texture) = 0;
   virtual glm::mat4 getTransform() = 0;
 };

@@ -12,6 +12,7 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
   bool has_uv = false;
   int f_cnt = 0;
   int v_cnt = 0;
+  unsigned int current_face = 0;
 
   FILE * file = fopen(path, "r");
   if (file == NULL) {
@@ -85,16 +86,17 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
 
       // For each vertex of each triangle
       Vertex _vertex;
-      for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-        unsigned int vertexIndex = vertexIndices[i];
-        unsigned int normalIndex = normalIndices[i];
+      //for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+      for (; current_face < vertexIndices.size(); current_face++) {
+        unsigned int vertexIndex = vertexIndices[current_face];
+        unsigned int normalIndex = normalIndices[current_face];
 
         glm::vec3 vertex = temp_vertices[vertexIndex - 1];
         _vertex.pos = vertex;
 
         if (has_uv)
         {
-          unsigned int uvIndex = uvIndices[i];
+          unsigned int uvIndex = uvIndices[current_face];
           glm::vec2 uv = temp_uvs[uvIndex - 1];
           _vertex.uv = uv;
         }

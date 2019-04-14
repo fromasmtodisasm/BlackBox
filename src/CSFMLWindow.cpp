@@ -24,17 +24,18 @@ bool CSFMLWindow::create()
 
 bool CSFMLWindow::init()
 {
-  /*
-  // Request a 24-bits depth buffer when creating the window
-  sf::ContextSettings contextSettings;
-  contextSettings.depthBits = 24;
-  */
+  sf::ContextSettings settings;
+  settings.depthBits = 24;
+  settings.stencilBits = 8;
+  settings.antialiasingLevel = 4;
+  settings.majorVersion = 3;
+  settings.minorVersion = 3;
 
   // Create the main window
   sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
   //auto fullscreen = 	sf::VideoMode::getFullscreenModes();
   sf::VideoMode mode = desktop;
-  m_window = new sf::RenderWindow(mode, sf::String(m_Title));//, sf::Style::Fullscreen);
+  m_window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
   m_window->setVerticalSyncEnabled(true);
   m_window->setFramerateLimit(60);
 	m_window->setMouseCursorGrabbed(true);
@@ -46,16 +47,16 @@ bool CSFMLWindow::init()
   m_window->setActive();
   if (!OpenGLLoader())
     return false;
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_SMOOTH);
+  glInit();
 
   return true;
 }
 
 void CSFMLWindow::update()
 {
-  ImGui::SFML::Update(*m_window, deltaClock.restart());
-  ImGui::ShowTestWindow();
+  /*
+  //ImGui::SFML::Update(*m_window, deltaClock.restart());
+  //ImGui::ShowTestWindow();
 
   ImGui::Begin("Hello, world!");
   if (ImGui::Button("Exit"))
@@ -63,12 +64,15 @@ void CSFMLWindow::update()
     m_bClose = true;
   }
   ImGui::End();
+  */
 }
 
 void CSFMLWindow::clear()
 {
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  float depth = 1.0f;
+  glClearBufferfv(GL_COLOR, 0, &m_BackColor[0]);
+  glClearBufferfv(GL_DEPTH, 0, &depth);
+  //glClearBufferfv(GL_DEPTH, 0 );
 }
 
 bool CSFMLWindow::closed()
@@ -79,11 +83,11 @@ bool CSFMLWindow::closed()
 void CSFMLWindow::swap()
 {
 
-  ImGui::SFML::Render(*m_window);
+  //ImGui::SFML::Render(*m_window);
   m_window->display();
 }
 
-void CSFMLWindow::setTitle(char *title)
+void CSFMLWindow::setTitle(const char *title)
 {
   m_window->setTitle(title);
 }
@@ -99,7 +103,7 @@ void *CSFMLWindow::getHandle()
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
 {
-  ImGui::SFML::ProcessEvent(event);
+  //ImGui::SFML::ProcessEvent(event);
   // Close window: exit
   if (event.type == sf::Event::Closed)
     m_bClose = true;
@@ -139,4 +143,13 @@ int CSFMLWindow::getWidth()
 int CSFMLWindow::getHeight()
 {
   return m_Height;
+}
+
+void CSFMLWindow::glInit()
+{
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_SMOOTH);
+  glEnable(GL_TEXTURE_2D);
+  //glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
 }

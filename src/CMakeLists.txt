@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(BlackBox CXX)
+project(BlackBox)
 
 enable_testing()
 
@@ -15,6 +15,7 @@ elseif(GLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
+add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/soil soil)
 #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/imgui-sfml imgui-sfml)
 #add_subdirectory(imgui)
 find_package(OpenGL REQUIRED)
@@ -76,9 +77,11 @@ target_sources(
   PRIVATE ${CMAKE_SOURCE_DIR}/src/VertexBuffer.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/World.cpp
   PRIVATE ${CMAKE_SOURCE_DIR}/src/CPlayer.cpp
+  PRIVATE ${CMAKE_SOURCE_DIR}/src/Texture.cpp
 )
 target_sources(${PROJECT_NAME}
   PRIVATE ${CMAKE_SOURCE_DIR}/include/CCamera.hpp
+  PRIVATE ${CMAKE_SOURCE_DIR}/include/Texture.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/CGame.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/CInputHandler.hpp
   PRIVATE ${CMAKE_SOURCE_DIR}/include/common.h

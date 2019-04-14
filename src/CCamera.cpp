@@ -1,6 +1,9 @@
 #include <CCamera.hpp>
 #include <Opengl.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+#include <sstream>
+using namespace  std;
 
 CCamera::CCamera() :
   m_pos(0,0,3), m_target(0,0,-1), m_right(1,0,0), m_up(0,1,0),
@@ -10,7 +13,8 @@ CCamera::CCamera() :
 }
 
 CCamera::CCamera(glm::vec3 pos, glm::vec3 target, glm::vec3 up) :
-  m_pos(pos), m_target(target), m_up(up)
+  m_pos(pos), m_target(target), m_up(up),
+  m_view(1.0f),m_angles(0,0,0), m_right(1,0,0)
 {
 }
 
@@ -20,6 +24,17 @@ CCamera::~CCamera()
 
 void CCamera::update(float deltatime)
 {
+  /*
+  static float prev_time;
+  static stringstream ss;
+  prev_time += deltatime;
+  if (prev_time >= 1.0)
+    cout << "cam.x = " << m_pos.x <<endl <<
+         "cam.y = " << m_pos.y <<endl <<
+         "cam.z = " << m_pos.z << endl;
+  */
+
+
 }
 
 void CCamera::move(glm::vec3 pos)
@@ -130,7 +145,7 @@ glm::mat4 CCamera::getViewMatrix()
 
 glm::mat4 CCamera::getProjectionMatrix()
 {
-  return glm::perspective(glm::radians(m_fov), m_ratio, 0.1f, 100.0f);
+  return glm::perspective(glm::radians(m_fov), m_ratio, 0.1f, 1000.0f);
 }
 
 void CCamera::reset()
@@ -149,6 +164,10 @@ void CCamera::setView(int x, int y, int w, int h)
 
 bool CCamera::OnInputEvent(sf::Event & event)
 {
+  if (event.type == sf::Event::Resized)
+  {
+    setView(0,0,event.size.width, event.size.height);
+  }
   return false;
 
 }

@@ -13,7 +13,7 @@ struct ShaderStatus
  CShader *m_Shader;
 
  ShaderStatus(CShader *shader);
- bool get(int statusType);
+ bool get(GLenum statusType);
 };
 
 struct ShaderProgramStatus
@@ -23,7 +23,7 @@ struct ShaderProgramStatus
  CShaderProgram *m_Program;
 
  ShaderProgramStatus(CShaderProgram *program);
- bool get(int statusType);
+ bool get(GLenum statusType);
 };
 
 class CShader 
@@ -71,7 +71,7 @@ public:
   ~CShaderProgram();
 
   bool create();
-  bool attach(CShader *shader);
+  void attach(CShader *shader);
   bool link();
   void use();
   void unuse();
