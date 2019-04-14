@@ -132,6 +132,6 @@ void CSFMLWindow::glInit()
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
   glEnable(GL_TEXTURE_2D);
-  glEnable(GL_CULL_FACE);
+  //glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
 }

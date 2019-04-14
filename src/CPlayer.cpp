@@ -1,7 +1,7 @@
 #include "CPlayer.h"
 #include "Primitives.hpp"
 
-CPlayer::CPlayer() : GameObject(*Object::load("human.obj"))
+CPlayer::CPlayer() : GameObject(*Object::load("pengium.obj"))
 {
   m_type = OBJType::TPRIMITIVE;
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
@@ -10,8 +10,29 @@ CPlayer::CPlayer() : GameObject(*Object::load("human.obj"))
 
 bool CPlayer::OnInputEvent(sf::Event &event)
 {
-  GameObject::OnInputEvent(event);
-  return true;
+  switch (event.type) {
+  case sf::Event::MouseWheelScrolled:
+    if (event.mouseWheelScroll.delta > 0)
+    {
+      m_Camera->moveForward(SCROLL_SPEED);
+    }
+    else {
+      m_Camera->moveBackward(SCROLL_SPEED);
+    }
+    switch(event.mouseWheelScroll.wheel){
+    case sf::Mouse::VerticalWheel:
+    case sf::Mouse::HorizontalWheel:
+      m_Camera->rotateX(p_gIGame->getInputHandler()->getDeltaMouse().y);
+      m_Camera->rotateX(p_gIGame->getInputHandler()->getDeltaMouse().x);
+    }
+    return true;
+  case sf::Event::MouseMoved:
+      m_Camera->rotateX(p_gIGame->getInputHandler()->getDeltaMouse().y*MOUSE_SPEED);
+      m_Camera->rotateY(-p_gIGame->getInputHandler()->getDeltaMouse().x*MOUSE_SPEED);
+      return true;
+  default:
+    return GameObject::OnInputEvent(event);
+  }
 }
 
 void CPlayer::draw()

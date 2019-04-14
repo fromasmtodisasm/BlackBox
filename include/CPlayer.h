@@ -3,11 +3,14 @@
 
 #include "GameObject.hpp"
 #include "HackCamera.hpp"
+#include "IGame.hpp"
 
 
 class CPlayer : public GameObject
 {
   CCamera *m_Camera;
+  const float SCROLL_SPEED = 2.0f;
+  const float MOUSE_SPEED = 0.1f;
 public:
   CPlayer();
 
