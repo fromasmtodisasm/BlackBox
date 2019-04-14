@@ -13,6 +13,8 @@ class CInputHandler : public IInputHandler
   {
     sf::Vector2i prev_pos;
     sf::Vector2i curr_pos;
+		bool x_wraped;
+		bool y_wraped;
   }Mouse;
 
 public:

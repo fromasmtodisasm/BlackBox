@@ -122,6 +122,7 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
   }
   if (event.type == sf::Event::MouseMoved)
   {
+    /*
 		cout <<  "Mouse.x = " << event.mouseMove.x << endl;
 		if (event.mouseMove.x >= m_Width - 1)
 			sf::Mouse::setPosition(sf::Vector2i(0,event.mouseMove.y), *m_window);
@@ -131,6 +132,7 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
 			sf::Mouse::setPosition(sf::Vector2i(event.mouseMove.x,0), *m_window);
 		else if (event.mouseMove.y <= 0)
 			sf::Mouse::setPosition(sf::Vector2i(event.mouseMove.x,m_Height - 1));
+     */
   }
   return true;
 }

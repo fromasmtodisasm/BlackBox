@@ -10,7 +10,7 @@ class CPlayer : public GameObject
 {
   CCamera *m_Camera;
   const float SCROLL_SPEED = 2.0f;
-  const float MOUSE_SPEED = 0.1f;
+  const float MOUSE_SPEED = 0.5f;
 public:
   CPlayer();
 
