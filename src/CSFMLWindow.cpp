@@ -1,6 +1,9 @@
 #include "CSFMLWindow.hpp"
 #include <imgui-SFML.h>
 #include <imgui.h>
+#include <SFML/System/Vector2.hpp>
+#include <iostream>
+using namespace std;
 
 CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false)
@@ -33,7 +36,8 @@ bool CSFMLWindow::init()
   sf::VideoMode mode = desktop;
   m_window = new sf::RenderWindow(mode, sf::String(m_Title));//, sf::Style::Fullscreen);
   m_window->setVerticalSyncEnabled(true);
-  //m_window->setFramerateLimit(60);
+  m_window->setFramerateLimit(60);
+	m_window->setMouseCursorGrabbed(true);
 
   ImGui::SFML::Init(*m_window);
   //m_window->setMouseCursorVisible(false);
@@ -108,7 +112,21 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
   }
   if (event.type == sf::Event::Resized)
   {
+		m_Width = event.size.width;
+		m_Height = event.size.height;
     glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);
+  }
+  if (event.type == sf::Event::MouseMoved)
+  {
+		cout <<  "Mouse.x = " << event.mouseMove.x << endl;
+		if (event.mouseMove.x >= m_Width - 1)
+			sf::Mouse::setPosition(sf::Vector2i(0,event.mouseMove.y), *m_window);
+		else if (event.mouseMove.x <= 0)
+			sf::Mouse::setPosition(sf::Vector2i(m_Width - 1, event.mouseMove.y));
+		if (event.mouseMove.y >= m_Height - 1)
+			sf::Mouse::setPosition(sf::Vector2i(event.mouseMove.x,0), *m_window);
+		else if (event.mouseMove.y <= 0)
+			sf::Mouse::setPosition(sf::Vector2i(event.mouseMove.x,m_Height - 1));
   }
   return true;
 }
