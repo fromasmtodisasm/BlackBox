@@ -1,9 +1,10 @@
 #pragma once
-#include "IWindow.hpp"
-#include "InputHandler.hpp"
+#include <BlackBox/IWindow.hpp>
+#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/Opengl.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <Opengl.hpp>
+
 #include <glm/glm.hpp>
 #include <imgui-SFML.h>
 

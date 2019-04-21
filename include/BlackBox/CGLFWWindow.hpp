@@ -1,11 +1,10 @@
 #pragma once
 
-#include "IWindow.hpp"
+#include <BlackBox/IWindow.hpp>
+#include <BlackBox/Opengl.hpp>
 
-#include <Opengl.hpp>
 #include <GLFW/glfw3.h>
 
-#include "common.h"
 #include <map>
 
 typedef std::function<void(GLFWwindow *window, int key, int scancode, int action, int mode)> kcbfunc;

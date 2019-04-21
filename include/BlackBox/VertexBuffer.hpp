@@ -1,16 +1,16 @@
 #pragma once
-#include "Renderer.hpp"
+#include <BlackBox/Renderer.hpp>
 
-class IndexBuffer
+class VertexBuffer
 {
 private:
   GLuint VBO;
   GLuint VAO;
   const void *m_Data;
-  std::size_t m_Size;
+  GLint m_Count;
 public:
-  IndexBuffer(const void *data, std::size_t size);
-  ~IndexBuffer();
+  VertexBuffer(const void *data, GLint size);
+  ~VertexBuffer();
 
   void bind();
   void unbind();

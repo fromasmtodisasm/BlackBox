@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/fwd.hpp>
-#include <Texture.hpp>
+#include <BlackBox/Texture.hpp>
 
 class CShaderProgram;
 

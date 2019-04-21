@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ISystem.hpp>
+#include <BlackBox/IEngine.hpp>
 
-class CSystem : public ISystem
+class CEngine : public IEngine
 {
   // Унаследовано через ISystem
   virtual void Init() override;

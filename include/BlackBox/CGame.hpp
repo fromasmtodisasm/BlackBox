@@ -1,16 +1,16 @@
 #pragma once
 #include "IGame.hpp"
-#include "ISystem.hpp"
-#include "IWindow.hpp"
-#include "CInputHandler.hpp"
-#include "CShader.hpp"
-#include "Triangle.hpp"
-#include "World.hpp"
-#include "CPlayer.h"
-#include "CameraController.hpp"
-#include <MusicList.hpp>
+#include "IEngine.hpp"
+#include <BlackBox/IWindow.hpp>
+#include <BlackBox/CInputHandler.hpp>
+#include <BlackBox/CShader.hpp>
+#include <BlackBox/Triangle.hpp>
+#include <BlackBox/World.hpp>
+#include <BlackBox/CPlayer.h>
+#include <BlackBox/CameraController.hpp>
+#include <BlackBox/MusicList.hpp>
+#include <BlackBox/common.h>
 
-#include <common.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -25,7 +25,7 @@ class CGame : public IGame, public IInputEventListener{
   class GameState;
   class EventListener;
 private:
-  ISystem *m_pSystem;
+  IEngine *m_pSystem;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
@@ -61,7 +61,7 @@ private:
 public:
   CGame(std::string title);
   ~CGame() = default;
-  bool init(ISystem *pSystem);
+  bool init(IEngine *pSystem);
   bool update();
   bool run();
   void input();

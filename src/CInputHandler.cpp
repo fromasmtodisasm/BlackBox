@@ -1,4 +1,4 @@
-#include "CInputHandler.hpp"
+#include <BlackBox/CInputHandler.hpp>
 #include <iostream>
 
 using namespace std;

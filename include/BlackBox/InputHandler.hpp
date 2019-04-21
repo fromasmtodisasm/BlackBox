@@ -1,5 +1,5 @@
 #pragma once
-#include "ICommand.hpp"
+#include <BlackBox/ICommand.hpp>
 #include <SFML/Window/Event.hpp>
 
 struct IInputEventListener

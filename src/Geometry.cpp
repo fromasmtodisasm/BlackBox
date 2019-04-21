@@ -1,4 +1,4 @@
-#include "IGeometry.hpp"
+#include <BlackBox/IGeometry.hpp>
 
 Mesh::Mesh(VertexBuffer *verts, IndexBuffer *indxs) :
    m_Verts(verts), m_Indexes(indxs) 

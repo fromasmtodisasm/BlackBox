@@ -6,7 +6,7 @@ struct IGame;
 struct IShaderManager;
 struct IRender;
 
-struct ISystem
+struct IEngine
 {
   virtual void Init() = 0;
   virtual void Start() = 0;
@@ -17,10 +17,10 @@ struct ISystem
 };
 
 // Get the system interface (must be defined locally in each module)
-extern ISystem *GetISystem();
+extern IEngine *GetIEngine();
 
 // interface of the DLL
 extern "C"
 {
-  SYSTEM_API ISystem* CreateISystem(void *);
+  SYSTEM_API IEngine* CreateIEngine(void *);
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "CShader.hpp"
+#include <BlackBox/CShader.hpp>
 #include <string>
 
 struct IShaderManager

@@ -1,5 +1,5 @@
 #pragma once
-#include <InputHandler.hpp>
+#include <BlackBox/InputHandler.hpp>
 #include <glm/glm.hpp>
 #include <set>
 #define PI 3.1415926535897932384626433832795

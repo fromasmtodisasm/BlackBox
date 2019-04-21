@@ -1,6 +1,8 @@
-#include "ObjLoader.hpp"
-#include "IGeometry.hpp"
+#include <BlackBox/ObjLoader.hpp>
+#include <BlackBox/IGeometry.hpp>
 #include <cstring>
+#include <cstdio>
+#include <string>
 
 
 bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)

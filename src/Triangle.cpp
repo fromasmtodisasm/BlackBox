@@ -1,9 +1,8 @@
-#include "Triangle.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
+#include <BlackBox/Triangle.hpp>
+#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/IndexBuffer.hpp>
+#include <BlackBox/Opengl.hpp>
 #include <iostream>
-
-#include <Opengl.hpp>
 
 using namespace std;
 

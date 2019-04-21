@@ -1,4 +1,4 @@
-#include "GameObject.hpp"
+#include <BlackBox/GameObject.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 
 GameObject *GameObject::create(Primitive::Type type)

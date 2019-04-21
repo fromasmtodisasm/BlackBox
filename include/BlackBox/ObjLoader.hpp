@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
-#include "IGeometry.hpp"
+#include <BlackBox/IGeometry.hpp>
 
 bool loadOBJ(
   const char * path,

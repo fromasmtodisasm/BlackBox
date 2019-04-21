@@ -1,7 +1,8 @@
-#include "VertexBuffer.hpp"
-#include "IGeometry.hpp"
-#include <iostream>
+#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/IGeometry.hpp>
+
 #include <glm/glm.hpp>
+#include <iostream>
 
 using namespace std;
 

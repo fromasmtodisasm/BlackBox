@@ -1,4 +1,4 @@
-#include "Primitives.hpp"
+#include <BlackBox/Primitives.hpp>
 
 Object * Primitive::create(Type type, std::string vsh, std::string fsh)
 {

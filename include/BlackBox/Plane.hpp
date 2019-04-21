@@ -1,4 +1,4 @@
-#include "Object.hpp"
+#include <BlackBox/Object.hpp>
 
 class Plane : public Object
 {

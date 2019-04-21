@@ -1,5 +1,4 @@
 #pragma once
-#include "common.h"
 #ifdef SFML_WINDOW
 #include "CSFMLWindow.hpp"
 typedef CSFMLWindow CWindow;

@@ -1,9 +1,10 @@
 #pragma once
-#include "InputHandler.hpp"
-#include "CWindow.hpp"
+#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/CWindow.hpp>
+#include <SFML/System.hpp>
+
 #include <map>
 #include <list>
-#include <SFML/System.hpp>
 
 class CInputHandler : public IInputHandler
 {

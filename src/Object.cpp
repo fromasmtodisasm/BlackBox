@@ -1,12 +1,13 @@
-#include "Object.hpp"
-#include "ObjLoader.hpp"
-#include "VertexBuffer.hpp"
+#include <BlackBox/Object.hpp>
+#include <BlackBox/ObjLoader.hpp>
+#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/Opengl.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <cctype>
 #include <cstdio>
 #include <sstream>
-#include <Opengl.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <IObject.hpp>
-#include <IGeometry.hpp>
-#include <IDrawable.hpp>
-#include <CShader.hpp>
-#include <Texture.hpp>
+#include <BlackBox/IObject.hpp>
+#include <BlackBox/IGeometry.hpp>
+#include <BlackBox/IDrawable.hpp>
+#include <BlackBox/CShader.hpp>
+#include <BlackBox/Texture.hpp>
 #include <glm/glm.hpp>
 
 struct Transform
@@ -29,7 +29,7 @@ protected:
 public:
   Transform m_transform;
 
-	static Object* load(string path);
+  static Object* load(std::string path);
   virtual void move(glm::vec3 v) override;
   virtual void moveTo(glm::vec3 v);
   virtual void rotate(float angle, glm::vec3 v) override;

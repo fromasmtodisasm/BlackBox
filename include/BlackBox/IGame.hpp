@@ -1,11 +1,11 @@
 #pragma once
 
-struct ISystem;
+struct IEngine;
 struct IInputHandler;
 
 
 struct IGame {
-	virtual bool init(ISystem *pSystem) = 0;
+	virtual bool init(IEngine *pSystem) = 0;
 	virtual bool update() = 0;
 	virtual bool run() = 0;
 

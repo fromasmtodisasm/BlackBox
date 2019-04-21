@@ -4,6 +4,9 @@ project(BlackBox)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
+set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
 ###################################################
 #add_subdirectory(submodules/glfw)
 if (GLAD_LOADER)
@@ -15,8 +18,6 @@ elseif(GLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
-#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/imgui-sfml imgui-sfml)
-#add_subdirectory(imgui)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -43,79 +44,82 @@ if (USE_SFML)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${CMAKE_SOURCE_DIR}/src/CSFMLWindow.cpp
-    PRIVATE ${CMAKE_SOURCE_DIR}/include/CSFMLWindow.hpp
+    PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CSFMLWindow.hpp
     )
+    add_definitions(-DSFML_WINDOW)
 else()
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${CMAKE_SOURCE_DIR}/src/CGLFWWindow.cpp
-    PRIVATE ${CMAKE_SOURCE_DIR}/include/CGLFWWindow.hpp
+    PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGLFWWindow.hpp
     )
+    add_definitions(-DGLFW_WINDOW)
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif()
 target_sources(
   ${PROJECT_NAME}
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/CGame.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/CInputHandler.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/CShader.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/CSystem.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/GameObject.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Geometry.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/CCamera.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/IndexBuffer.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/MatrixTransform.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Object.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/ObjLoader.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Plane.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Primitives.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Triangle.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Utils.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/VertexArrayObject.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/VertexBuffer.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/World.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/CPlayer.cpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/Texture.cpp
+  PRIVATE ${SOURCE_DIR}/CGame.cpp
+  PRIVATE ${SOURCE_DIR}/CInputHandler.cpp
+  PRIVATE ${SOURCE_DIR}/CShader.cpp
+  PRIVATE ${SOURCE_DIR}/CEngine.cpp
+  PRIVATE ${SOURCE_DIR}/GameObject.cpp
+  PRIVATE ${SOURCE_DIR}/Geometry.cpp
+  PRIVATE ${SOURCE_DIR}/GUI.cpp
+  PRIVATE ${SOURCE_DIR}/CCamera.cpp
+  PRIVATE ${SOURCE_DIR}/IndexBuffer.cpp
+  PRIVATE ${SOURCE_DIR}/MatrixTransform.cpp
+  PRIVATE ${SOURCE_DIR}/Object.cpp
+  PRIVATE ${SOURCE_DIR}/ObjLoader.cpp
+  PRIVATE ${SOURCE_DIR}/Plane.cpp
+  PRIVATE ${SOURCE_DIR}/Primitives.cpp
+  PRIVATE ${SOURCE_DIR}/Triangle.cpp
+  PRIVATE ${SOURCE_DIR}/Utils.cpp
+  PRIVATE ${SOURCE_DIR}/VertexArrayObject.cpp
+  PRIVATE ${SOURCE_DIR}/VertexBuffer.cpp
+  PRIVATE ${SOURCE_DIR}/World.cpp
+  PRIVATE ${SOURCE_DIR}/CPlayer.cpp
+  PRIVATE ${SOURCE_DIR}/Texture.cpp
 )
 target_sources(${PROJECT_NAME}
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CCamera.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Texture.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CGame.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CInputHandler.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/common.h
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CShader.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CSystem.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Cube.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CWindow.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/GameObject.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/CCamera.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/ICommand.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IDrawable.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IGame.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IGeometry.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IInput.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IndexBuffer.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/InputHandler.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IObject.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IShaderManager.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/ISystem.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/IWindow.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/MatrixTranform.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/MusicList.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Object.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/ObjLoader.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Opengl.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/pch.h
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Plane.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Primitives.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Renderer.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Tetrahedron.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Triangle.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/Utils.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/VertexArrayObject.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/VertexBuffer.hpp
-  PRIVATE ${CMAKE_SOURCE_DIR}/include/World.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CCamera.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Texture.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGame.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CInputHandler.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/common.h
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CShader.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CEngine.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Cube.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CWindow.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/GameObject.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/GUI.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ICommand.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IDrawable.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IGame.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IGeometry.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IInput.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IndexBuffer.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/InputHandler.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IObject.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IShaderManager.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IEngine.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IWindow.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MatrixTranform.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MusicList.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Object.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjLoader.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Opengl.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/pch.h
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Plane.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Primitives.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Renderer.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Tetrahedron.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Triangle.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Utils.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/VertexArrayObject.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/VertexBuffer.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/World.hpp
 )
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)

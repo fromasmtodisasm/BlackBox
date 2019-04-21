@@ -1,8 +1,11 @@
-#include "CGame.hpp"
-#include "GameObject.hpp"
-#include "CWindow.hpp"
-#include "Triangle.hpp"
-#include "Texture.hpp"
+#include <BlackBox/CGame.hpp>
+#include <BlackBox/GameObject.hpp>
+#include <BlackBox/CWindow.hpp>
+#include <BlackBox/Triangle.hpp>
+#include <BlackBox/Texture.hpp>
+
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 #include <iostream>
 #include <vector>
@@ -11,8 +14,6 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <ctime>
 
-#include <imgui-SFML.h>
-#include <imgui.h>
 #include <sstream>
 
 using namespace std;
@@ -21,8 +22,8 @@ IGame *p_gIGame;
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
-static ISystem* gISystem = nullptr;
-ISystem* GetISystem()
+static IEngine* gISystem = nullptr;
+IEngine* GetIEngine()
 {
   return gISystem;
 }
@@ -38,9 +39,9 @@ CGame::CGame(std::string title) :
   m_PlayList.addTrack("japan.ogg");
 }
 
-bool CGame::init(ISystem *pSystem)  {
+bool CGame::init(IEngine *pSystem)  {
   m_pSystem = pSystem;
-  p_gIGame = this;
+  p_gIGame = reinterpret_cast<IGame*>(this);
   m_Window = new CWindow(m_Title); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {

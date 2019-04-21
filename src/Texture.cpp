@@ -1,4 +1,4 @@
-#include "Texture.hpp"
+#include <BlackBox/Texture.hpp>
 
 Texture::Texture()
 {

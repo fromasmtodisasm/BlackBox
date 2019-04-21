@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Triangle.hpp"
-#include "Cube.hpp"
-#include "Tetrahedron.hpp"
+#include <BlackBox/Triangle.hpp>
+#include <BlackBox/Cube.hpp>
+#include <BlackBox/Tetrahedron.hpp>
 #include <string>
 
 class Primitive

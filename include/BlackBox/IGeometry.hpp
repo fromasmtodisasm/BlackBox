@@ -1,7 +1,7 @@
 #pragma once
-#include <common.h>
+#include <BlackBox/common.h>
+#include <BlackBox/VertexArrayObject.hpp>
 #include <cassert>
-#include "VertexArrayObject.hpp"
 #include <glm/glm.hpp>
 
 class VertexBuffer;

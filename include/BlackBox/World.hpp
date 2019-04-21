@@ -1,8 +1,8 @@
 #pragma once
-#include "CCamera.hpp"
-#include "Object.hpp"
-#include <MatrixTranform.hpp>
-#include "VertexBuffer.hpp"
+#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Object.hpp>
+#include <BlackBox/VertexBuffer.hpp>
+
 #include <map>
 #include <string>
 

@@ -1,5 +1,5 @@
-#include "CPlayer.h"
-#include "Primitives.hpp"
+#include <BlackBox/CPlayer.h>
+#include <BlackBox/Primitives.hpp>
 
 CPlayer::CPlayer() : GameObject(*Object::load("pengium.obj"))
 {

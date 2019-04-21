@@ -1,4 +1,4 @@
-#include "CSFMLWindow.hpp"
+#include <BlackBox/CSFMLWindow.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>
 #include <SFML/System/Vector2.hpp>
