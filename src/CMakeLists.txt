@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 project(BlackBox)
 
-enable_testing()
-
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
 ###################################################
 #add_subdirectory(submodules/glfw)
@@ -15,7 +15,6 @@ elseif(GLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
-add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/soil soil)
 #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/imgui-sfml imgui-sfml)
 #add_subdirectory(imgui)
 find_package(OpenGL REQUIRED)
@@ -35,7 +34,7 @@ include_directories(
   " ${CMAKE_SOURCE_DIR}/include"
 )
 #--------------------------------------------------
-find_package(Boost COMPONENTS system filesystem REQUIRED)
+#find_package(Boost COMPONENTS system filesystem REQUIRED)
 #...
 #--------------------------------------------------
 ###################################################
@@ -119,6 +118,10 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${CMAKE_SOURCE_DIR}/include/World.hpp
 )
 #--------------------------------------------------
+if (LINUX OR UNIX OR APPLE)
+	target_link_libraries(BlackBox ${CMAKE_DL_LIBS})
+endif()
+#--------------------------------------------------
 #IMGUI
 add_library(ImGui STATIC)
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
@@ -164,12 +167,11 @@ target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_link_libraries(${PROJECT_NAME}
-  ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_SYSTEM_LIBRARY}
-)
 
-add_test(NAME mytest COMMAND ${PROJECT_NAME}_test WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+#target_link_libraries(${PROJECT_NAME}
+#  ${Boost_FILESYSTEM_LIBRARY}
+#  ${Boost_SYSTEM_LIBRARY}
+#)
 
 install(
   TARGETS  ${PROJECT_NAME}

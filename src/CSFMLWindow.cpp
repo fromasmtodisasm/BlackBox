@@ -54,17 +54,10 @@ bool CSFMLWindow::init()
 
 void CSFMLWindow::update()
 {
-  /*
-  //ImGui::SFML::Update(*m_window, deltaClock.restart());
-  //ImGui::ShowTestWindow();
-
-  ImGui::Begin("Hello, world!");
-  if (ImGui::Button("Exit"))
-  {
-    m_bClose = true;
-  }
-  ImGui::End();
-  */
+	if (m_flags == DRAW_GUI)
+	{
+		ImGui::SFML::Update(*m_window, deltaClock.restart());
+	}
 }
 
 void CSFMLWindow::clear()
@@ -83,7 +76,7 @@ bool CSFMLWindow::closed()
 void CSFMLWindow::swap()
 {
 
-  //ImGui::SFML::Render(*m_window);
+  ImGui::SFML::Render(*m_window);
   m_window->display();
 }
 
@@ -103,7 +96,7 @@ void *CSFMLWindow::getHandle()
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
 {
-  //ImGui::SFML::ProcessEvent(event);
+  ImGui::SFML::ProcessEvent(event);
   // Close window: exit
   if (event.type == sf::Event::Closed)
     m_bClose = true;
@@ -122,17 +115,7 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
   }
   if (event.type == sf::Event::MouseMoved)
   {
-    /*
-		cout <<  "Mouse.x = " << event.mouseMove.x << endl;
-		if (event.mouseMove.x >= m_Width - 1)
-			sf::Mouse::setPosition(sf::Vector2i(0,event.mouseMove.y), *m_window);
-		else if (event.mouseMove.x <= 0)
-			sf::Mouse::setPosition(sf::Vector2i(m_Width - 1, event.mouseMove.y));
-		if (event.mouseMove.y >= m_Height - 1)
-			sf::Mouse::setPosition(sf::Vector2i(event.mouseMove.x,0), *m_window);
-		else if (event.mouseMove.y <= 0)
-			sf::Mouse::setPosition(sf::Vector2i(event.mouseMove.x,m_Height - 1));
-     */
+
   }
   return true;
 }
@@ -145,6 +128,11 @@ int CSFMLWindow::getWidth()
 int CSFMLWindow::getHeight()
 {
   return m_Height;
+}
+
+void CSFMLWindow::setFlags(int flags)
+{
+	m_flags = flags;
 }
 
 void CSFMLWindow::glInit()

@@ -1,7 +1,7 @@
 #include <CCamera.hpp>
 #include <Opengl.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/rotate_vector.hpp> 
 #include <iostream>
 #include <sstream>
 using namespace  std;
@@ -88,17 +88,10 @@ void CCamera::rotateY(float angle)
   m_angles.y += angle;
 
   //Rotate viewdir around the up vector:
-	/*
   m_target = glm::normalize(
     m_target*(float)cos(angle*PIdiv180)
     - m_right * (float)sin(angle*PIdiv180)
   );
-	*/
-	//m_target.y = sin(glm::radians(m_angles.y));
-	m_target.x = cos(glm::radians(m_angles.y));
-	m_target.z = sin(glm::radians(m_angles.y));
-	m_target = glm::normalize(m_target);
-	//m_target = glm::rotate(m_target, glm::radians(angle), m_up);
 
   //now compute the new RightVector (by cross product)
   m_right = glm::cross(m_target, m_up);

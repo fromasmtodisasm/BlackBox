@@ -14,6 +14,7 @@ struct IWindow {
  virtual int getWidth() = 0;
  virtual int getHeight() = 0;
  virtual void *getHandle() = 0;
+ virtual void setFlags(int flags) = 0;
 };
 
 EXPORT IWindow* CreateIWindow();

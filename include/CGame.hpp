@@ -7,6 +7,7 @@
 #include "Triangle.hpp"
 #include "World.hpp"
 #include "CPlayer.h"
+#include "CameraController.hpp"
 #include <MusicList.hpp>
 
 #include <common.h>
@@ -30,10 +31,14 @@ private:
   World *m_World;
   CCamera *m_camera1, *m_camera2, *m_active_camera;
   CPlayer *m_player;
+	CameraController *camControl;
   bool isWireFrame = false;
 
   MusicList m_PlayList;
   bool m_isMusicPlaying = false;
+	bool m_isPaused = false;
+	bool m_InMenu = false;
+	bool m_InGame = false;
 
   std::string m_Title;
   bool m_running = true;
@@ -41,6 +46,7 @@ private:
   float m_lastTime;
   sf::Clock deltaClock;
   EventListener *listener;
+	bool isDrawingGui = false;
   class GameState; 
   class GameState;
   enum State
@@ -72,6 +78,9 @@ public:
   // IGame interface
 public:
   virtual IInputHandler *getInputHandler() override;
+private:
+	void gotoMenu();
+	void gotoGame();
 };
 
 

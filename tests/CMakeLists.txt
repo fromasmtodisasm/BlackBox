@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(BlackBox_test CXX)
 
+enable_testing()
+
 add_executable(${PROJECT_NAME} Main.cpp)
 target_link_libraries(BlackBox_test BlackBox)
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -23,3 +25,8 @@ install(
   TARGETS ${PROJECT_NAME} 
   RUNTIME DESTINATION BlackBox/bin
 )
+
+add_custom_target(
+	run ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	)

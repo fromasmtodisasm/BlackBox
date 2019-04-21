@@ -22,7 +22,12 @@ class CSFMLWindow :
   std::string m_Title;
   glm::vec4 m_BackColor = { 0.5f, 0.5f, 0.5f, 1.0f };
   sf::Clock deltaClock;
+	int m_flags = 0;
 public:
+	enum FLAGS
+	{
+		DRAW_GUI
+	};
   CSFMLWindow(std::string = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSFMLWindow();
 
@@ -46,6 +51,7 @@ public:
   // Inherited via IWindow
   virtual int getWidth() override;
   virtual int getHeight() override;
+	virtual void setFlags(int flags) override;
 private:
   void glInit();
 };
