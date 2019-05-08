@@ -79,6 +79,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/ObjectManager.cpp
   PRIVATE ${SOURCE_DIR}/Plane.cpp
   PRIVATE ${SOURCE_DIR}/Primitives.cpp
+  PRIVATE ${SOURCE_DIR}/Scene.cpp
+  PRIVATE ${SOURCE_DIR}/SceneManager.cpp
   PRIVATE ${SOURCE_DIR}/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Triangle.cpp
@@ -117,6 +119,8 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Plane.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Primitives.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Renderer.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Scene.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/SceneManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ShaderManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Tetrahedron.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Texture.hpp
