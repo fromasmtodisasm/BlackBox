@@ -60,27 +60,29 @@ else()
 endif()
 target_sources(
   ${PROJECT_NAME}
+  PRIVATE ${SOURCE_DIR}/CCamera.cpp
+  PRIVATE ${SOURCE_DIR}/CEngine.cpp
   PRIVATE ${SOURCE_DIR}/CGame.cpp
   PRIVATE ${SOURCE_DIR}/CInputHandler.cpp
+  PRIVATE ${SOURCE_DIR}/CPlayer.cpp
   PRIVATE ${SOURCE_DIR}/CShader.cpp
-  PRIVATE ${SOURCE_DIR}/CEngine.cpp
+  PRIVATE ${SOURCE_DIR}/GUI.cpp
+  PRIVATE ${SOURCE_DIR}/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Geometry.cpp
-  PRIVATE ${SOURCE_DIR}/GUI.cpp
-  PRIVATE ${SOURCE_DIR}/CCamera.cpp
   PRIVATE ${SOURCE_DIR}/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/MatrixTransform.cpp
-  PRIVATE ${SOURCE_DIR}/Object.cpp
+  PRIVATE ${SOURCE_DIR}/MusicList.cpp
   PRIVATE ${SOURCE_DIR}/ObjLoader.cpp
+  PRIVATE ${SOURCE_DIR}/Object.cpp
   PRIVATE ${SOURCE_DIR}/Plane.cpp
   PRIVATE ${SOURCE_DIR}/Primitives.cpp
+  PRIVATE ${SOURCE_DIR}/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Triangle.cpp
   PRIVATE ${SOURCE_DIR}/Utils.cpp
   PRIVATE ${SOURCE_DIR}/VertexArrayObject.cpp
   PRIVATE ${SOURCE_DIR}/VertexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/World.cpp
-  PRIVATE ${SOURCE_DIR}/CPlayer.cpp
-  PRIVATE ${SOURCE_DIR}/Texture.cpp
 )
 target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CCamera.hpp

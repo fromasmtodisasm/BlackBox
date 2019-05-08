@@ -7,13 +7,14 @@ World::World()
 }
 
 void World::draw(float dt) {
+  World *world = this;
   for (const auto &object : m_Objs) {
     //object.second->rotate(dt*0.01f, {0,1,0});
     object.second->getShaderProgram()->use();
     object.second->getShaderProgram()->setUniformValue("Model", object.second->getTransform());
     object.second->getShaderProgram()->setUniformValue("View", m_Camera->getViewMatrix());
     object.second->getShaderProgram()->setUniformValue("Projection", m_Camera->getProjectionMatrix());
-    object.second->getShaderProgram()->setUniformValue("lightPos", glm::vec3(4,4,-4));
+    object.second->getShaderProgram()->setUniformValue("lightPos", world->operator[]("light")->m_transform.position);
     object.second->getShaderProgram()->setUniformValue("lightColor", glm::vec3(1,1,1.0));
     //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 
@@ -37,6 +38,7 @@ void World::add(string name, Object * o) {
 void World::update(float deltatime)
 {
   for (const auto &object : m_Objs) {
+    object.second->velocity.y -= gravity;
     object.second->update(deltatime);
   }
 }

@@ -9,10 +9,12 @@
 using std::string;
 
 class World {
+  friend class GameGUI;
 private:
   std::map<string,Object*> m_Objs;
   std::map<string, Object*> m_Cams;
   CCamera *m_Camera;
+  float gravity = 0;
 public:
   World();
   void draw(float dt);

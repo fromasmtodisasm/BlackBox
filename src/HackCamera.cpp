@@ -1,4 +1,4 @@
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/HackCamera.hpp>
 #include <BlackBox/Opengl.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -7,7 +7,6 @@
 #include <sstream>
 using namespace  std;
 
-#if 0
 CCamera::CCamera() :
   m_pos(0,0,3), m_target(0,0,-1), m_right(1,0,0), m_up(0,1,0),
   m_angles(0,0,0), m_view(1.0f)
@@ -27,16 +26,6 @@ CCamera::~CCamera()
 
 void CCamera::update(float deltatime)
 {
-  /*
-  static float prev_time;
-  static stringstream ss;
-  prev_time += deltatime;
-  if (prev_time >= 1.0)
-    cout << "cam.x = " << m_pos.x <<endl <<
-         "cam.y = " << m_pos.y <<endl <<
-         "cam.z = " << m_pos.z << endl;
-  */
-
 
 }
 
@@ -153,10 +142,10 @@ glm::mat4 CCamera::getProjectionMatrix()
 
 void CCamera::reset()
 {
-  m_pos = {0,0,3},
-  m_target = {-glm::normalize(m_pos - glm::vec3(0,0,0))},
-  m_right = {1,0,0},
-  m_up = {0,1,0};
+  m_pos = {0,0,3};
+  m_target = {-glm::normalize(m_pos - glm::vec3(0,0,0))};
+  m_right = {1,0,0};
+  m_up = {0,1,0}; 
 }
 
 void CCamera::setView(int x, int y, int w, int h)
@@ -174,4 +163,3 @@ bool CCamera::OnInputEvent(sf::Event & event)
   return false;
 
 }
-#endif

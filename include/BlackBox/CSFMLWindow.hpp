@@ -8,15 +8,19 @@
 #include <glm/glm.hpp>
 #include <imgui-SFML.h>
 
+#include <map>
+#include <list>
+
 class CSFMLWindow :
   public IWindow,
-  public IInputEventListener
+  public IInputHandler
 {
+  friend class GameGUI;
   static constexpr int DEFAULT_WIDTH = 1024;
   static constexpr int DEFAULT_HEIGHT = 768;
   static constexpr char *DEFAULT_TITLE = "SFML Window";
 
-  sf::RenderWindow* m_window;
+  sf::RenderWindow* m_Window;
   bool m_bClose;
   int m_Width;
   int m_Height;
@@ -24,7 +28,20 @@ class CSFMLWindow :
   glm::vec4 m_BackColor = { 0.5f, 0.5f, 0.5f, 1.0f };
   sf::Clock deltaClock;
 	int m_flags = 0;
+  // For input handling
+  std::list<IInputEventListener*> listeners;
+  struct
+  {
+    sf::Vector2i prev_pos;
+    sf::Vector2i curr_pos;
+    bool x_wraped;
+    bool y_wraped;
+    bool locked;
+    sf::Vector2i lockedPos;
+  }Mouse;
+
 public:
+  sf::Rect<int> viewPort;
 	enum FLAGS
 	{
 		DRAW_GUI
@@ -47,7 +64,7 @@ public:
 
   // IInputEventListener interface
 public:
-  virtual bool OnInputEvent(sf::Event &event) override;
+  bool OnInputEvent(sf::Event &event);
 
   // Inherited via IWindow
   virtual int getWidth() override;
@@ -55,5 +72,13 @@ public:
 	virtual void setFlags(int flags) override;
 private:
   void glInit();
+
+  // IInputHandler interface
+public:
+  virtual ICommand *handleInput() override;
+  virtual void AddEventListener(IInputEventListener *pListener) override;
+  virtual sf::Vector2i getDeltaMouse() override;
+  virtual void mouseLock(sf::Vector2i pos) override;
+  virtual void mouseUnlock() override;
 };
 

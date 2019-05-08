@@ -23,10 +23,14 @@ protected:
   CShaderProgram *m_Shader;
   OBJType m_type;
   Texture *m_texture = nullptr;
+
   Object();
   Object(const Object &obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
 public:
+  float friction = 0.99;
+  glm::vec3 velocity;
+
   Transform m_transform;
 
   static Object* load(std::string path);

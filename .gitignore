@@ -8,3 +8,4 @@ build/*
 CMakeLists.txt.user*
 /CMakeSettings.json
 res/tmp/*
+res/geom/tmp/

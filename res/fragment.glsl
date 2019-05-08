@@ -18,8 +18,8 @@ void main() {
   float diff = max(dot(norm, lightDir), 0.0);
   vec3 diffuse = diff * lightColor;
 
-  vec3 result = (0.3 + diffuse) * vec3(0.8, 0, 0.4);
+  vec4 result = vec4((0.3 + diffuse) * lightColor, 1.0);
   //color = vec4(result, 1.0f);
-  color = texture(ourTexture, TextCoord);//*vec4(0.7, 0.3, 0.9, 1);
+  color = texture2D(ourTexture, TextCoord)*result;//*vec4(0.7, 0.3, 0.9, 1);
 
 }

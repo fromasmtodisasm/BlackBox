@@ -16,53 +16,12 @@ void GameObject::update(float deltatime)
   {
     switch (key)
     {
-    case sf::Keyboard::W:
-      m_Camera->moveForward(speed);
-      break;
-    case sf::Keyboard::S:
-      m_Camera->moveBackward(speed);
-      break;
-    case sf::Keyboard::A:
-      m_Camera->strafeRight(speed);
-      break;
-    case sf::Keyboard::D:
-      m_Camera->strafeLeft(speed);
-      break;
-    case sf::Keyboard::Up:
-      m_Camera->moveUp(speed);
-      break;
-    case sf::Keyboard::Down:
-      m_Camera->moveDown(speed);
-      break;
-    case sf::Keyboard::Left:
-      m_Camera->rotateY(rotSpeed);
-      break;
-    case sf::Keyboard::Right:
-      m_Camera->rotateY(-rotSpeed);
-      break;
-    case sf::Keyboard::N:
-      m_Camera->rotateZ(rotSpeed);
-      break;
-    case sf::Keyboard::M:
-      m_Camera->rotateZ(-rotSpeed);
-      break;
-    case sf::Keyboard::F:
-      m_Camera->rotateX(rotSpeed);
-      break;
-    case sf::Keyboard::G:
-      m_Camera->rotateX(-rotSpeed);
-      break;
-    case sf::Keyboard::R:
-      m_Camera->reset();
-      break;
-    case sf::Keyboard::T:
-      m_Camera->rotateAroundTarget(rotSpeed);
-      break;
-    case sf::Keyboard::Num1:
-      m_Camera->rotateY(180.0f);
-      break;
+      ;
     }
   }
+  if (m_transform.position.y < 0)
+    velocity.y = - velocity.y*friction;
+  m_transform.position += velocity * deltatime;
 }
 
 /*

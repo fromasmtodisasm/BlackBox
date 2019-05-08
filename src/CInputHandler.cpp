@@ -1,15 +1,9 @@
-#include <BlackBox/CInputHandler.hpp>
+#include <BlackBox/CSFMLWindow.hpp>
 #include <iostream>
 
 using namespace std;
 
-CInputHandler::CInputHandler(IWindow * window) : m_Window(reinterpret_cast<sf::Window*>(window->getHandle()))
-{
-  Mouse.curr_pos = Mouse.curr_pos = sf::Mouse::getPosition(*m_Window);
-  Mouse.x_wraped = Mouse.y_wraped = false;
-}
-
-ICommand * CInputHandler::handleInput()
+ICommand * CSFMLWindow::handleInput()
 {
 	int offset = 5;
   sf::Event event;
@@ -17,30 +11,43 @@ ICommand * CInputHandler::handleInput()
   {
     if (event.type == sf::Event::MouseMoved)
     {
-			
-
       Mouse.prev_pos = Mouse.curr_pos;
       Mouse.curr_pos = sf::Vector2i(event.mouseMove.x,event.mouseMove.y);
     }
-    for (const auto &listener : listeners)
-    {
-      listener->OnInputEvent(event);
+    this->OnInputEvent(event);
+    if (viewPort.contains(sf::Mouse::getPosition(*m_Window)))
+      for (const auto &listener : listeners)
+      {
+        listener->OnInputEvent(event);
+      }
+    else {
+      continue;
     }
   }
   return nullptr;
 }
 
-void CInputHandler::AddEventListener(IInputEventListener * pListener)
+void CSFMLWindow::AddEventListener(IInputEventListener * pListener)
 {
   listeners.push_back(pListener);
 }
 
-sf::Vector2i CInputHandler::getDeltaMouse()
+sf::Vector2i CSFMLWindow::getDeltaMouse()
 {
-	sf::Vector2i windowCenter(m_Window->getSize() / 2u);
-	sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_Window);
-	sf::Vector2i delta = windowCenter - mousePosition;
-	sf::Mouse::setPosition(windowCenter, *m_Window);	
+  //sf::Vector2i windowCenter(m_Window->getSize() / 2u);
+  sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_Window);
+  sf::Vector2i delta = mousePosition - Mouse.lockedPos;
+  sf::Mouse::setPosition(Mouse.lockedPos, *m_Window);
+  return delta;
+}
 
-	return delta;
+void CSFMLWindow::mouseLock(sf::Vector2i pos)
+{
+  Mouse.locked = true;
+  Mouse.lockedPos = pos;
+}
+
+void CSFMLWindow::mouseUnlock()
+{
+  Mouse.locked = false;
 }

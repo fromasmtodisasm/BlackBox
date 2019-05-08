@@ -13,14 +13,14 @@
 
 using namespace std;
 
-Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f))
+Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)),velocity(glm::vec3(0))
 {
 }
 
 Object::Object(const Object & obj):
   m_transform(obj.m_transform.position, obj.m_transform.rotation, obj.m_transform.scale),
   m_Mesh(obj.m_Mesh), m_Shader(obj.m_Shader),
-  m_type(obj.m_type)
+  m_type(obj.m_type),velocity(glm::vec3(0))
 {
 }
 
@@ -69,7 +69,9 @@ void Object::setShaderProgram(CShaderProgram* shader)
 
 void Object::update(float deltatime)
 {
-
+  if (m_transform.position.y < 0)
+    velocity.y = - velocity.y*friction;
+  m_transform.position += velocity * deltatime;
 }
 
 void Object::setTexture(Texture *texture)

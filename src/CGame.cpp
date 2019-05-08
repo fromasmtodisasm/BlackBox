@@ -3,6 +3,7 @@
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/Texture.hpp>
+#include <BlackBox/GUI.hpp>
 
 #include <imgui-SFML.h>
 #include <imgui.h>
@@ -49,7 +50,7 @@ bool CGame::init(IEngine *pSystem)  {
       return false;
 		cout << "Window susbsystem inited" << endl;
 
-    if ((m_inputHandler = new CInputHandler(m_Window)) == nullptr)
+    if ((m_inputHandler = m_Window) == nullptr)
       return false;
 		if (!init_opbject()) {
 			cout << "Failed init objects" << endl;
@@ -57,46 +58,51 @@ bool CGame::init(IEngine *pSystem)  {
 		}
 		cout << "Objects inited" << endl;
   } 
+  gui = new GameGUI();
+  gui->game = this;
+
   glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
   glm::vec3 pos = glm::vec3(0,10,10);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
   m_camera1 = new CCamera(
-    pos,
-    glm::normalize(player_pos - pos),
-    glm::vec3(0,1,0)
+    pos
   );
 	camControl = new CameraController(m_camera1);
-  m_camera1->setView(0,0,m_Window->getWidth(),m_Window->getHeight());
+  //m_camera1->setView(0,0,m_Window->getWidth(),m_Window->getHeight());
   m_camera2 = new CCamera();
   m_player->attachCamera(m_camera1);
-  m_inputHandler->AddEventListener(m_camera1);
-  m_inputHandler->AddEventListener(m_camera2);
-  m_inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
+  //m_inputHandler->AddEventListener(m_camera1);
+  //m_inputHandler->AddEventListener(m_camera2);
+  //m_inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
   m_inputHandler->AddEventListener(reinterpret_cast<CGame*>(this));
   m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
+  m_player->setGame(this);
   //m_World->setCamera(camera2);
   return true;
 }
 
 bool CGame::update() {
-  sf::Time deltaTime = deltaClock.restart();
   while (!m_Window->closed() &&  m_running) {
-    m_deltaTime = deltaTime.asMicroseconds()*0.001;
+    sf::Time deltaTime = deltaClock.restart();
+    m_deltaTime = deltaTime.asSeconds();
     input();
     m_Window->update();
-		if (!m_isPaused)
-		{
-			gotoGame();
-			m_World->update(m_deltaTime);
-			setRenderState();
-		}
-		else gotoMenu();
+    gotoGame();
+    m_World->update(m_deltaTime);
+    setRenderState();
 
+    //cp_size = ImVec2(300, m_Window->getHeight());
+
+    glViewport(
+          m_Window->viewPort.left,
+          0,
+          m_Window->viewPort.width,
+          m_Window->viewPort.height);
     render();
-		if (m_isPaused)
-			guiControls();
-		m_Window->swap();
+    gui->Update();
+
+    m_Window->swap();
   }
 	return true;
 }
@@ -142,6 +148,8 @@ bool CGame::init_opbject() {
   plane->scale(glm::vec3(50,50,50));
   plane->setTexture(plane_texture);
   plane->move(glm::vec3(0,-3,0));
+
+  BB->setTexture(text);
   //m_player->setTexture(text);
   m_player->setShaderProgram(shader);
   m_player->scale({10,10,10});
@@ -152,7 +160,7 @@ bool CGame::init_opbject() {
   m_World->add("plane", plane);
   m_World->add("BB", BB);
   shader->create();
-  for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 1; i++)
   {
     obj = Object::load("cube.obj");
     obj->setShaderProgram(shader);
@@ -206,78 +214,25 @@ void CGame::setRenderState()
 
 void CGame::render()
 {
+  /*
+  ImGui::Text("Player.x = %f;Player.y = %f;Player.z = %f;Player.velocity(%f,%f,%f)",
+              m_player->m_transform.position.x,
+              m_player->m_transform.position.y,
+              m_player->m_transform.position.z,
+              m_player->velocity.x,
+              m_player->velocity.y,
+              m_player->velocity.z
+              );
+  */
   m_Window->clear();
   /* Rendering code here */
-  m_active_camera->update(m_deltaTime);
-  /*
-  m_camera1->setView(0,0,
-         m_Window->getWidth(),m_Window->getHeight()
-         );
-         */
+  int w = m_Window->viewPort.width;
+  int h = m_Window->viewPort.height;
+  //glViewport(300,0, w-300, h);
+  m_camera1->Ratio = ((float)w - 300)/ h;
+
   m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
-  /*
-  m_camera2->setView(
-         m_Window->getWidth()/2,0,
-         m_Window->getWidth(),m_Window->getHeight()
-         );
-  m_World->setCamera(m_camera2);
-  m_World->draw(m_deltaTime);
-  */
-  //m_Window->swap();
-}
-
-
-void CGame::guiControls()
-{
-	static bool show_player=1, show_camera=1, show_demo=0;
-	
-	ImGui::Begin("Control panel");
-		ImGui::Checkbox("Show Plyer", &show_player);
-		ImGui::Checkbox("Show Camera", &show_camera);
-		ImGui::Checkbox("Show Demo", &show_demo);
-	ImGui::End();
-	if (show_player) {
-		ImGui::Begin("Music Player");
-		if (ImGui::Button("Pause"))
-		{
-			m_PlayList.pause();
-		}
-		if (ImGui::Button("Play"))
-		{
-			m_PlayList.play();
-		}
-		if (ImGui::Button("Next"))
-		{
-			m_PlayList.next();
-		}
-		if (ImGui::Button("Previos"))
-		{
-			m_PlayList.play();
-		}
-		if (ImGui::Button("Stop"))
-		{
-			m_PlayList.stop();
-		}
-		ImGui::End();
-	}
-
-	if (show_camera) {
-		ImGui::Begin("Camera");
-			if (ImGui::Button("Reset"))
-			{
-				m_active_camera->reset();	
-			}
-		ImGui::End();
-	}
-	if (show_demo)
-	{
-		ImGui::ShowDemoWindow();
-	}
-	if (ImGui::Button("Exit"))
-	{
-		m_running = false;	
-	}
 }
 
 extern "C" IGame *CreateIGame(const char *title) {
@@ -348,8 +303,21 @@ void CGame::gotoGame()
 	if (!m_InGame)
 	{
 		m_InGame = true;
-		reinterpret_cast<sf::RenderWindow*>(m_Window->getHandle())->setMouseCursorVisible(false);
-	}
+    //m_inputHandler->mouseLock(true);
+    //reinterpret_cast<sf::RenderWindow*>(m_Window->getHandle())->setMouseCursorVisible(false);
+  }
+}
+
+void CGame::showMenu()
+{
+
+}
+
+
+
+float CGame::getDeltaTime()
+{
+  return m_deltaTime;
 }
 
 void CGame::gotoMenu()
@@ -357,6 +325,7 @@ void CGame::gotoMenu()
 	if (m_InGame)
 	{
 		m_InGame = false;
-		reinterpret_cast<sf::RenderWindow*>(m_Window->getHandle())->setMouseCursorVisible(true);
+    //m_inputHandler->mouseLock(false);
+    //reinterpret_cast<sf::RenderWindow*>(m_Window->getHandle())->setMouseCursorVisible(true);
 	}
 }

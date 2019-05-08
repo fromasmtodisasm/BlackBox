@@ -6,15 +6,16 @@
 using namespace std;
 
 CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
-  m_Width(width), m_Height(height), m_Title(title), m_bClose(false)
+  m_Width(width), m_Height(height), m_Title(title), m_bClose(false),
+  viewPort(300,0, width - 300, height)
 {
-  
+  ;
 }
 
 CSFMLWindow::~CSFMLWindow()
 {
   ImGui::SFML::Shutdown();
-  m_window->close();
+  m_Window->close();
 }
 
 bool CSFMLWindow::create()
@@ -35,19 +36,24 @@ bool CSFMLWindow::init()
   sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
   //auto fullscreen = 	sf::VideoMode::getFullscreenModes();
   sf::VideoMode mode = desktop;
-  m_window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
-  m_window->setVerticalSyncEnabled(true);
-  m_window->setFramerateLimit(60);
-	m_window->setMouseCursorGrabbed(true);
+  m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
+  m_Window->setVerticalSyncEnabled(true);
+  m_Window->setFramerateLimit(60);
+  m_Window->setMouseCursorGrabbed(true);
 
-  ImGui::SFML::Init(*m_window);
+  ImGui::SFML::Init(*m_Window);
   //m_window->setMouseCursorVisible(false);
   //m_window->
   // Make it the active window for OpenGL calls
-  m_window->setActive();
+  m_Window->setActive();
   if (!OpenGLLoader())
     return false;
   glInit();
+
+  // Input handling specific
+  Mouse.curr_pos = Mouse.curr_pos = sf::Mouse::getPosition(*m_Window);
+  Mouse.x_wraped = Mouse.y_wraped = false;
+  Mouse.locked = false;
 
   return true;
 }
@@ -56,7 +62,7 @@ void CSFMLWindow::update()
 {
 	if (m_flags == DRAW_GUI)
 	{
-		ImGui::SFML::Update(*m_window, deltaClock.restart());
+    ImGui::SFML::Update(*m_Window, deltaClock.restart());
 	}
 }
 
@@ -76,13 +82,13 @@ bool CSFMLWindow::closed()
 void CSFMLWindow::swap()
 {
 
-  ImGui::SFML::Render(*m_window);
-  m_window->display();
+  ImGui::SFML::Render(*m_Window);
+  m_Window->display();
 }
 
 void CSFMLWindow::setTitle(const char *title)
 {
-  m_window->setTitle(title);
+  m_Window->setTitle(title);
 }
 
 void CSFMLWindow::show()
@@ -91,7 +97,7 @@ void CSFMLWindow::show()
 
 void *CSFMLWindow::getHandle()
 {
-  return m_window;
+  return m_Window;
 }
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
@@ -104,14 +110,16 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
   // Escape key: exit
   if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
   {
-    m_window->close();
+    m_Window->close();
     m_bClose = true;
   }
   if (event.type == sf::Event::Resized)
   {
 		m_Width = event.size.width;
 		m_Height = event.size.height;
-    glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);
+    viewPort.width = m_Width - viewPort.left;
+    viewPort.height = m_Height;
+    //glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);
   }
   if (event.type == sf::Event::MouseMoved)
   {
@@ -122,12 +130,13 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
 
 int CSFMLWindow::getWidth()
 {
-  return m_Width;
+  return m_Window->getSize().x;
 }
 
 int CSFMLWindow::getHeight()
 {
-  return m_Height;
+  //return m_Height;
+  m_Window->getSize().y;
 }
 
 void CSFMLWindow::setFlags(int flags)

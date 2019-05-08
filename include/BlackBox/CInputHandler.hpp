@@ -1,4 +1,5 @@
 #pragma once
+#if 0
 #include <BlackBox/InputHandler.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <SFML/System.hpp>
@@ -16,6 +17,7 @@ class CInputHandler : public IInputHandler
     sf::Vector2i curr_pos;
 		bool x_wraped;
 		bool y_wraped;
+    bool locked;
   }Mouse;
 
 public:
@@ -27,4 +29,7 @@ public:
   // IInputHandler interface
 public:
   virtual sf::Vector2i getDeltaMouse() override;
+  virtual sf::Vector2i mouseLock(bool lock) override;
 };
+
+#endif

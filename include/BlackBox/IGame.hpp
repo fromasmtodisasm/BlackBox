@@ -8,6 +8,7 @@ struct IGame {
 	virtual bool init(IEngine *pSystem) = 0;
 	virtual bool update() = 0;
 	virtual bool run() = 0;
+  virtual float getDeltaTime() = 0;
 
   virtual IInputHandler *getInputHandler() = 0;
 };

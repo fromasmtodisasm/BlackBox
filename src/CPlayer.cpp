@@ -1,37 +1,41 @@
 #include <BlackBox/CPlayer.h>
 #include <BlackBox/Primitives.hpp>
+#include <BlackBox/CGame.hpp>
 
 CPlayer::CPlayer() : GameObject(*Object::load("pengium.obj"))
 {
   m_type = OBJType::TPRIMITIVE;
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
+  mouseState = FREE;
   move({0,0,0});
 }
 
 bool CPlayer::OnInputEvent(sf::Event &event)
 {
+  float dt = Game->getDeltaTime();
   switch (event.type) {
-  case sf::Event::MouseWheelScrolled:
-    if (event.mouseWheelScroll.delta > 0)
-    {
-      m_Camera->moveForward(SCROLL_SPEED);
-    }
-    else {
-      m_Camera->moveBackward(SCROLL_SPEED);
-    }
-    switch(event.mouseWheelScroll.wheel){
-    case sf::Mouse::VerticalWheel:
-    case sf::Mouse::HorizontalWheel:
-      m_Camera->rotateX(p_gIGame->getInputHandler()->getDeltaMouse().y);
-      m_Camera->rotateX(p_gIGame->getInputHandler()->getDeltaMouse().x);
-    }
+  case sf::Event::MouseButtonPressed:
+  {
+    if (event.mouseButton.button == sf::Mouse::Left && mouseState != LOCKED)
+      Game->m_Window->mouseLock(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)), mouseState = LOCKED;
     return true;
+  }
+  case sf::Event::MouseButtonReleased:
+  {
+    if (event.mouseButton.button == sf::Mouse::Left && mouseState == LOCKED)
+      Game->m_Window->mouseUnlock(), mouseState = FREE;
+
+    return true;
+  }
   case sf::Event::MouseMoved:
 	{
-		sf::Vector2i delta = p_gIGame->getInputHandler()->getDeltaMouse();
-		m_Camera->rotateX(-delta.y*MOUSE_SENSIVITY);
-		m_Camera->rotateY(delta.x*MOUSE_SENSIVITY);
-		return true;
+    if (mouseState == LOCKED)
+    {
+      sf::Vector2i delta = p_gIGame->getInputHandler()->getDeltaMouse();
+      m_Camera->ProcessMouseMovement(delta.x, -delta.y);
+      return true;
+    }
+    return false;
 	}
   default:
     return GameObject::OnInputEvent(event);
@@ -54,24 +58,47 @@ glm::vec3 CPlayer::getPos()
   return m_transform.position;
 }
 
+void CPlayer::setGame(CGame *game)
+{
+  Game = game;
+}
+
 void CPlayer::update(float deltatime)
 {
 
+  //ImGui
   float speed = deltatime*MOVE_SPEED;
   float rotSpeed = deltatime*5.f;//m_rotAngle;
+
+  glm::vec3 impulse(0,9.0,0);
   for (const auto &key : m_keys)
   {
     switch (key)
     {
     case sf::Keyboard::J:
-      move(glm::vec3(0,1,0)*speed);
+      velocity += impulse;
       break;
     case sf::Keyboard::K:
-      move(glm::vec3(0,1,0)*-speed);
+      velocity -= impulse;
+      break;
+    case sf::Keyboard::W:
+      m_Camera->ProcessKeyboard(Camera_Movement::FORWARD, deltatime);
+      break;
+    case sf::Keyboard::S:
+      m_Camera->ProcessKeyboard(Camera_Movement::BACKWARD, deltatime);
+      break;
+    case sf::Keyboard::A:
+      m_Camera->ProcessKeyboard(Camera_Movement::LEFT, deltatime);
+      break;
+    case sf::Keyboard::D:
+      m_Camera->ProcessKeyboard(Camera_Movement::RIGHT, deltatime);
       break;
     default:
-      GameObject::update(deltatime);
+      ;//GameObject::update(deltatime);
     }
   }
+  if (m_transform.position.y < 0)
+    velocity.y = - velocity.y*friction;
+  m_transform.position += velocity * deltatime;
   //m_Camera->m_target = m_transform.position;
 }

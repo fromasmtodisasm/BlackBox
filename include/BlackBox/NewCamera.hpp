@@ -1,7 +1,5 @@
 #pragma once
-
-#pragma once
-
+#define NEW_CAMERA
 // Std. Includes
 #include <vector>
 
@@ -9,6 +7,8 @@
 #include <BlackBox/Opengl.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+typedef class CCamera CCamera;
 
 
 
@@ -45,11 +45,16 @@ public:
     GLfloat MovementSpeed;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
-    GLfloat FOV = 45;
-    GLfloat Ratio = 16.0/9;
 
     // Constructor with vectors
-    CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+    CCamera(
+        glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+        GLfloat yaw = YAW, GLfloat pitch = PITCH) :
+      Front(glm::vec3(0.0f, 0.0f, -1.0f)),
+      MovementSpeed(SPEED),
+      MouseSensitivity(SENSITIVTY),
+      Zoom(ZOOM)
     {
         this->Position = position;
         this->WorldUp = up;
@@ -68,14 +73,9 @@ public:
     }
 
     // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-    glm::mat4 getViewMatrix()
+    glm::mat4 GetViewMatrix()
     {
         return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
-    }
-
-    glm::mat4 getProjectionMatrix()
-    {
-      return glm::perspective(glm::radians(FOV), Ratio, 0.1f, 1000.0f);
     }
 
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

@@ -1,7 +1,8 @@
 #pragma once
-#include "IGame.hpp"
-#include "IEngine.hpp"
-#include <BlackBox/IWindow.hpp>
+#include <BlackBox/IGame.hpp>
+#include <BlackBox/IEngine.hpp>
+//#include <BlackBox/IWindow.hpp>
+#include <BlackBox/CWindow.hpp>
 #include <BlackBox/CInputHandler.hpp>
 #include <BlackBox/CShader.hpp>
 #include <BlackBox/Triangle.hpp>
@@ -10,6 +11,7 @@
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/common.h>
+
 
 #include <map>
 #include <string>
@@ -20,13 +22,16 @@
 
 using string = std::string;
 class EventListener; 
+class GameGUI;
 
 class CGame : public IGame, public IInputEventListener{
   class GameState;
   class EventListener;
+  friend class GameGUI;
+  friend class CPlayer;
 private:
   IEngine *m_pSystem;
-  IWindow *m_Window;
+  CWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
   CCamera *m_camera1, *m_camera2, *m_active_camera;
@@ -42,13 +47,16 @@ private:
 
   std::string m_Title;
   bool m_running = true;
-  float m_deltaTime;
   float m_lastTime;
   sf::Clock deltaClock;
   EventListener *listener;
 	bool isDrawingGui = false;
   class GameState; 
-  class GameState;
+  //GUI
+  ImVec2 cp_size; //Control panel size
+  GameGUI *gui;
+
+
   enum State
   {
     INIT,
@@ -58,6 +66,8 @@ private:
   };
   std::stack<GameState*> states;
 
+public:
+  float m_deltaTime;
 public:
   CGame(std::string title);
   ~CGame() = default;
@@ -69,7 +79,6 @@ public:
   bool init_opbject();
   void setRenderState();
   void render();
-	void guiControls();
 
   // IInputEventListener interface
 public:
@@ -81,7 +90,13 @@ public:
 private:
 	void gotoMenu();
 	void gotoGame();
+  void showMenu();
+
+  // IGame interface
+public:
+  virtual float getDeltaTime() override;
 };
+
 
 
 class CGame::GameState
