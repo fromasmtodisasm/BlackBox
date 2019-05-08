@@ -12,7 +12,6 @@ using std::string;
 class World {
   friend class GameGUI;
 private:
-  std::map<string, Scene*> m_Scenes;
   Scene *activeScene;
   float gravity = 0;
 public:
@@ -20,7 +19,7 @@ public:
   void draw(float dt);
 
   void setCamera(CCamera *camera);
-  void addScene(string name, Scene* scene);
+  void setScene(Scene* scene);
   void update(float deltatime);
 
 };

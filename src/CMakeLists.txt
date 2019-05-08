@@ -72,6 +72,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/IndexBuffer.cpp
+  PRIVATE ${SOURCE_DIR}/Material.cpp
+  PRIVATE ${SOURCE_DIR}/MaterialManager.cpp
   PRIVATE ${SOURCE_DIR}/MatrixTransform.cpp
   PRIVATE ${SOURCE_DIR}/MusicList.cpp
   PRIVATE ${SOURCE_DIR}/ObjLoader.cpp
@@ -83,6 +85,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/SceneManager.cpp
   PRIVATE ${SOURCE_DIR}/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Texture.cpp
+  PRIVATE ${SOURCE_DIR}/TextureManager.cpp
   PRIVATE ${SOURCE_DIR}/Triangle.cpp
   PRIVATE ${SOURCE_DIR}/Utils.cpp
   PRIVATE ${SOURCE_DIR}/VertexArrayObject.cpp
@@ -110,6 +113,8 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IWindow.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IndexBuffer.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/InputHandler.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Material.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MaterialManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MatrixTranform.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MusicList.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjLoader.hpp
@@ -124,6 +129,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ShaderManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Tetrahedron.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Texture.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/TextureManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Triangle.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Utils.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/VertexArrayObject.hpp

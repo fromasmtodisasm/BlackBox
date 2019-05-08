@@ -4,7 +4,7 @@
 GameObject *GameObject::create(Primitive::Type type)
 {
   Object *obj =  Primitive::create(type, ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl"));
-	GameObject *go = new GameObject(*obj);
+  GameObject *go = new GameObject(obj);
   return go;
 }
 
@@ -31,7 +31,7 @@ glm::mat4 GameObject::getTransform()
 }
 */
 
-GameObject::GameObject(const Object &obj) : Object(obj)
+GameObject::GameObject(const Object *obj) : Object(obj)
 {
 }
 

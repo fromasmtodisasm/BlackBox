@@ -1,0 +1,17 @@
+<scene>
+    <object name="BB">
+        <mesh name="res/geom/cube.obj"/>
+    </object>
+    <object name="MyPlayer">
+        <mesh name="res/geom/pengium.obj"/>
+    </object>
+    <object name="cube0">
+        <mesh name="res/geom/cube.obj"/>
+    </object>
+    <object name="light">
+        <mesh name="res/geom/cube.obj"/>
+    </object>
+    <object name="plane">
+        <mesh name="res/geom/plane.obj"/>
+    </object>
+</scene>

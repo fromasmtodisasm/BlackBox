@@ -4,6 +4,9 @@
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/Texture.hpp>
 #include <BlackBox/GUI.hpp>
+#include <BlackBox/Scene.hpp>
+#include <BlackBox/SceneManager.hpp>
+
 
 
 #include <imgui-SFML.h>
@@ -53,7 +56,7 @@ bool CGame::init(IEngine *pSystem)  {
 
     if ((m_inputHandler = m_Window) == nullptr)
       return false;
-		if (!init_opbject()) {
+    if (!loadScene()) {
 			cout << "Failed init objects" << endl;
 			return false;
 		}
@@ -62,23 +65,21 @@ bool CGame::init(IEngine *pSystem)  {
   gui = new GameGUI();
   gui->game = this;
 
-  glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
+  //glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
   glm::vec3 pos = glm::vec3(0,10,10);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
   m_camera1 = new CCamera(
     pos
   );
 	camControl = new CameraController(m_camera1);
-  //m_camera1->setView(0,0,m_Window->getWidth(),m_Window->getHeight());
-  m_camera2 = new CCamera();
-  m_player->attachCamera(m_camera1);
-  //m_inputHandler->AddEventListener(m_camera1);
-  //m_inputHandler->AddEventListener(m_camera2);
-  //m_inputHandler->AddEventListener(reinterpret_cast<CWindow*>(m_Window));
+
   m_inputHandler->AddEventListener(reinterpret_cast<CGame*>(this));
+
+  // Set scene before camera, camera setted to active scene in world
+  m_World->setScene(m_scene);
   m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
-  m_player->setGame(this);
+
   //m_World->setCamera(camera2);
   return true;
 }
@@ -127,26 +128,37 @@ void CGame::input()
     ;//cmd->execute();
 }
 
-bool CGame::init_opbject() {
-	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
-  shaderManager = ShaderManager::instance();
+bool CGame::loadScene() {
+  if ((m_scene = new Scene("default")) == nullptr)
+    return false;
+  ;
+  if (!ShaderManager::init() && (shaderManager = ShaderManager::instance()) == nullptr)
+    return false;
+
+  m_scene->load("default.xml");
+
+  //m_player = m_scene->getObject("MyPlayer");
+  //m_inputHandler->AddEventListener(m_player);
+  /*
   Texture *text = new Texture("container.jpg");
   Texture *plane_texture = new Texture("check.jpg");
   Texture *player_texture = new Texture("pengium.png");
+
   Object *obj;
   glm::vec3 light_pos(4,4,-4);
+  //Creating objects
   Object *cube = Primitive::create(Primitive::CUBE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
   Object *BB = Primitive::create(Primitive::CUBE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
   Object *plane = Primitive::create(Primitive::PLANE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
+
   m_player = new CPlayer();
-  m_World->add("MyPlayer", m_player);
+  m_scene->addObject("MyPlayer", m_player);
+
   CShaderProgram *shader = shaderManager->getProgram("vertex.glsl", "fragment.glsl");
   Object *light =  Primitive::create(Primitive::CUBE,shaderManager->getProgram("vertex.glsl", "basecolor.frag"));
   light->move(light_pos);
   light->scale(glm::vec3(0.3f));
-  //plane->moveTo(glm::vec3(0,0,0));
   plane->moveTo(glm::vec3(0,0,0));
-  //plane->rotate(90, glm::vec3(1,0,0));
   plane->scale(glm::vec3(50,50,50));
   plane->setTexture(plane_texture);
   plane->move(glm::vec3(0,-3,0));
@@ -158,47 +170,27 @@ bool CGame::init_opbject() {
   m_player->setTexture(player_texture);
 
   BB->scale(glm::vec3(70,70,70));
-  m_World->add("light", light);
-  m_World->add("plane", plane);
-  m_World->add("BB", BB);
+  m_scene->addObject("light", light);
+  m_scene->addObject("plane", plane);
+  m_scene->addObject("BB", BB);
   shader->create();
   for (int i = 0; i < 1; i++)
   {
     obj = ObjectManager::instance()->getObject("cube.obj");
     obj->setShaderProgram(shader);
     obj->setType(OBJType::TPRIMITIVE);
-    obj->moveTo({
-     (glm::vec3(0,0,0))
-    /*
-      static_cast<float>(rand() % 45 - 7),
-      static_cast<float>(rand() % 45 - 7),
-      static_cast<float>(rand() % 45 - 7)
-      });
-                    */
-                });
+    obj->moveTo(glm::vec3(0,0,0));
     obj->scale(glm::vec3(i*20));
 
-  /*
-    obj->rotate(
-      static_cast<float>(rand() % 360),
-      {
-      static_cast<float>(rand() % 65 - 7),
-      static_cast<float>(rand() % 65 - 7),
-      static_cast<float>(rand() % 65 - 7)
-      });
-      */
     obj->setTexture(plane_texture);
-    m_World->add("cube" + std::to_string(i), obj);
+    m_scene->addObject("cube" + std::to_string(i), obj);
   }
   GameObject *go = GameObject::create(Primitive::CUBE);
   go->setTexture(text);
   go->setShaderProgram(cube->getShaderProgram());
   m_inputHandler->AddEventListener(go);
   m_inputHandler->AddEventListener(m_player);
-  //m_World->add("listener", reinterpret_cast<Object*>(go));
-  /*
-  world.add("triangle", new Triangle(m_ShaderProgram));
-	*/
+  */
   return true;
 }
 
@@ -313,6 +305,12 @@ void CGame::gotoGame()
 void CGame::showMenu()
 {
 
+}
+
+bool CGame::initPlayer()
+{
+  m_player->attachCamera(m_camera1);
+  m_player->setGame(this);
 }
 
 

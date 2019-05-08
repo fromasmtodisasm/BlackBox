@@ -17,10 +17,11 @@ Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)
 {
 }
 
-Object::Object(const Object & obj):
-  m_transform(obj.m_transform.position, obj.m_transform.rotation, obj.m_transform.scale),
-  m_Mesh(obj.m_Mesh), m_Shader(obj.m_Shader),
-  m_type(obj.m_type),velocity(glm::vec3(0))
+Object::Object(const Object *obj):
+  m_transform(obj->m_transform.position, obj->m_transform.rotation, obj->m_transform.scale),
+  m_Mesh(obj->m_Mesh), m_Shader(obj->m_Shader),
+  m_type(obj->m_type),velocity(glm::vec3(0)),
+  m_path(obj->m_path)
 {
 }
 
@@ -118,7 +119,7 @@ void Object::scale(glm::vec3 v)
 Object * Object::load(string path)
 {
   Object *obj = nullptr;
-  Mesh *mesh;
+  std::shared_ptr<Mesh> mesh;
   VertexBuffer *vb;
   std::vector<Vertex> p;
 
@@ -126,8 +127,9 @@ Object * Object::load(string path)
     return nullptr;
   
   vb = new VertexBuffer(p.data(), static_cast<GLint>(p.size()));
-  mesh = new Mesh(vb, nullptr);
+  mesh = std::make_shared<Mesh>(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;
+  obj->m_path = std::make_shared<std::string>(path);
 	return obj;
 }

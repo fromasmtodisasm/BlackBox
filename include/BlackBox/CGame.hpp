@@ -23,6 +23,8 @@
 using string = std::string;
 class EventListener; 
 class GameGUI;
+class Scene;
+class SceneManager;
 
 class CGame : public IGame, public IInputEventListener{
   class GameState;
@@ -37,6 +39,8 @@ private:
   CCamera *m_camera1, *m_camera2, *m_active_camera;
   CPlayer *m_player;
 	CameraController *camControl;
+  Scene *m_scene;
+  SceneManager *m_sceneManager;
   bool isWireFrame = false;
 
   MusicList m_PlayList;
@@ -79,7 +83,7 @@ public:
   bool run();
   void input();
 
-  bool init_opbject();
+  bool loadScene();
   void setRenderState();
   void render();
 
@@ -95,6 +99,7 @@ private:
 	void gotoGame();
   void showMenu();
 
+  bool initPlayer();
   // IGame interface
 public:
   virtual float getDeltaTime() override;

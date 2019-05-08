@@ -42,8 +42,21 @@ void GameGUI::Draw()
     {
       if (ImGui::TreeNode("Object Inspector"))
       {
+        char path[260] = "";
+        if (ImGui::InputText("Object path", path, sizeof(path)) && path[0] != '\0')
+        {
+          game->m_scene->load(path);
+        }
+        if (ImGui::Button("Load Objects"))
+        {
+          game->m_scene->load(path);
+        }
+        if (ImGui::Button("Save Objects"))
+        {
+          game->m_scene->save();
+        }
         ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
-        for (auto &obj : game->m_World->m_Objs)
+        for (auto &obj : game->m_scene->m_Objs)
           objectInfo(obj.second, obj.first);
        ImGui::TreePop();
       }

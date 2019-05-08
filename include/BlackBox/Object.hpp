@@ -7,6 +7,8 @@
 #include <BlackBox/Texture.hpp>
 #include <glm/glm.hpp>
 
+#include <memory>
+
 struct Transform
 {
   glm::vec3 position;
@@ -20,15 +22,16 @@ struct Transform
 class Object : public IObject, public IDrawable {
   friend class ObjectManager;
 protected:
-  Mesh *m_Mesh;
+  std::shared_ptr<Mesh> m_Mesh;
   CShaderProgram *m_Shader;
   OBJType m_type;
   Texture *m_texture = nullptr;
 
   Object();
-  Object(const Object &obj);
+  Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
 public:
+  std::shared_ptr<std::string> m_path;
   float friction = 0.99;
   glm::vec3 velocity;
 

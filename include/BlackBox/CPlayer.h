@@ -9,7 +9,7 @@
 class CGame;
 
 
-class CPlayer : public GameObject
+class CPlayer : protected GameObject
 {
   friend class GameGUI;
   CCamera *m_Camera;
@@ -43,6 +43,7 @@ public:
   // IObject interface
 public:
   virtual void update(float deltatime) override;
+  CPlayer *operator=(Object *obj);
 };
 
 #endif // CPLAYER_H

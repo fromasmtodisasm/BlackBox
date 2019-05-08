@@ -1,0 +1,28 @@
+<materials>
+  <material name="wood box">
+    <textures>
+      <diffuse name="container.jpg">
+      <specular name="container.jpg">
+    </textures>
+    <shaders>
+      <shader type="vertex" name="vertex.glsl">
+      <shader type="fragment" name="fragment.glsl">
+    </shaders>
+  </material>
+  <material name="base color">
+    <color red="255" green="0" blue="0"/>
+    <shaders>
+      <shader type="vertex" name="vertex.glsl">
+      <shader type="fragment" name="basecolor.glsl">
+    </shaders>
+  </material>
+  <material name="player">
+    <textures>
+      <diffuse name="pengium.png">
+    </textures>
+    <shaders>
+      <shader type="vertex" name="vertex.glsl">
+      <shader type="fragment" name="fragment.glsl">
+    </shaders>
+  </material>
+</materials>

@@ -6,6 +6,8 @@
 class CShader; 
 class CShaderProgram; 
 
+extern CShaderProgram *defaultProgram;
+
 struct ShaderStatus
 {
  GLchar infoLog[512]; 

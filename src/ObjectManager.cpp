@@ -18,9 +18,17 @@ ObjectManager *ObjectManager::instance()
 
 Object *ObjectManager::getObject(std::string object)
 {
+  std::string prefix = "res/geom/";
+  bool usPrefix = true;
+  if (object.find("/") != object.npos)
+    usPrefix = false;
+
   Object *obj;
   {
-    auto oPath = "res/geom/" + object;
+    std::string oPath;
+    if (usPrefix)
+      oPath = prefix + object;
+    else oPath = object;
     const auto v = cache.find(oPath);
     if (v != cache.end())
     {
@@ -41,5 +49,17 @@ Object *ObjectManager::getObject(std::string object)
     }
   }
   return obj;
+}
+
+string ObjectManager::getPathByPointer(Object *object)
+{
+  for (auto &obj : cache)
+  {
+    if (obj.second == object)
+      return obj.first;
+  }
+
+  //TODO: handle missing pointer
+  return string("");
 }
 

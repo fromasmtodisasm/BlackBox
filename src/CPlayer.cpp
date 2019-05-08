@@ -3,7 +3,7 @@
 #include <BlackBox/CGame.hpp>
 #include <BlackBox/ObjectManager.hpp>
 
-CPlayer::CPlayer() : GameObject(*ObjectManager::instance()->getObject("pengium.obj"))
+CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.obj"))
 {
   m_type = OBJType::TPRIMITIVE;
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
@@ -102,4 +102,8 @@ void CPlayer::update(float deltatime)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
   //m_Camera->m_target = m_transform.position;
+}
+
+CPlayer *CPlayer::operator=(Object *obj)
+{
 }

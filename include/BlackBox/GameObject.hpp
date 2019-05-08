@@ -4,13 +4,13 @@
 #include <BlackBox/CCamera.hpp>
 #include <set>
 
-class GameObject : public Object, public IInputEventListener
+class GameObject : protected Object, public IInputEventListener
 {
 protected:
   const float MOVE_SPEED = 0.5f;
   CCamera *m_Camera;
   std::set<sf::Keyboard::Key> m_keys;
-  GameObject(const Object &obj);
+  GameObject(const Object *obj);
   GameObject(Primitive::Type type);
 public:
 	virtual bool OnInputEvent(sf::Event &event) override;

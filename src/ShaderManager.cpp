@@ -4,6 +4,7 @@
 using	namespace std;
 
 ShaderManager *ShaderManager::manager = nullptr;
+CShaderProgram *defaultProgram;
 
 ShaderManager *ShaderManager::instance()
 {
@@ -52,4 +53,10 @@ CShaderProgram *ShaderManager::getProgram(std::string vShader, std::string fShad
     cout << "Shaders loaded" << endl;
     return p = new CShaderProgram(vs, fs);
   }
+}
+
+bool ShaderManager::init()
+{
+  defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
+  defaultProgram->create();
 }
