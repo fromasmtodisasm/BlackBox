@@ -120,7 +120,6 @@ Object * Object::load(string path)
   Object *obj = nullptr;
   Mesh *mesh;
   VertexBuffer *vb;
-  CShaderProgram *shader;
   std::vector<Vertex> p;
 
   if (!loadOBJ(path.c_str(), p))
@@ -130,7 +129,5 @@ Object * Object::load(string path)
   mesh = new Mesh(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;
-  //obj->m_Shader = shader;
-  //obj->m_Shader->create();
 	return obj;
 }

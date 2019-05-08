@@ -21,10 +21,11 @@ Object *ObjectManager::getObject(std::string object)
   Object *obj;
   {
     auto oPath = "res/geom/" + object;
-    auto v = cache.find(oPath);
+    const auto v = cache.find(oPath);
     if (v != cache.end())
     {
-      obj = v->second->clone();
+      //obj = v->second->clone();
+      obj = new Object(*v->second);
     }
     else {
       obj = Object::load(oPath);

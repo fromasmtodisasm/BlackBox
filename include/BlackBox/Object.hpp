@@ -18,6 +18,7 @@ struct Transform
 };
 
 class Object : public IObject, public IDrawable {
+  friend class ObjectManager;
 protected:
   Mesh *m_Mesh;
   CShaderProgram *m_Shader;
