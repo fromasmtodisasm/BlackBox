@@ -5,6 +5,7 @@
 #include <BlackBox/Texture.hpp>
 #include <BlackBox/GUI.hpp>
 
+
 #include <imgui-SFML.h>
 #include <imgui.h>
 
@@ -128,18 +129,19 @@ void CGame::input()
 
 bool CGame::init_opbject() {
 	//world.add("triangle", Primitive::create(Primitive::TRIANGLE, m_ShaderProgram));
+  shaderManager = ShaderManager::instance();
   Texture *text = new Texture("container.jpg");
   Texture *plane_texture = new Texture("check.jpg");
   Texture *player_texture = new Texture("pengium.png");
   Object *obj;
   glm::vec3 light_pos(4,4,-4);
-  Object *cube = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
-  Object *BB = Primitive::create(Primitive::CUBE, "vertex.glsl", "fragment.glsl");
-  Object *plane = Primitive::create(Primitive::PLANE, "vertex.glsl", "fragment.glsl");
+  Object *cube = Primitive::create(Primitive::CUBE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
+  Object *BB = Primitive::create(Primitive::CUBE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
+  Object *plane = Primitive::create(Primitive::PLANE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
   m_player = new CPlayer();
   m_World->add("MyPlayer", m_player);
-  CShaderProgram *shader = new CShaderProgram("res/" "vertex.glsl", "res/""fragment.glsl");
-  Object *light =  Primitive::create(Primitive::CUBE,"vertex.glsl", "basecolor.frag");
+  CShaderProgram *shader = shaderManager->getProgram("vertex.glsl", "fragment.glsl");
+  Object *light =  Primitive::create(Primitive::CUBE,shaderManager->getProgram("vertex.glsl", "basecolor.frag"));
   light->move(light_pos);
   light->scale(glm::vec3(0.3f));
   //plane->moveTo(glm::vec3(0,0,0));

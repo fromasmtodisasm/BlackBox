@@ -3,7 +3,7 @@
 
 GameObject *GameObject::create(Primitive::Type type)
 {
-  Object *obj =  Primitive::create(type, "vertex.glsl", "fragment.glsl");
+  Object *obj =  Primitive::create(type, ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl"));
 	GameObject *go = new GameObject(*obj);
   return go;
 }

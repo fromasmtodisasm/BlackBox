@@ -67,7 +67,7 @@ private:
 
   bool status();
 public:
-  CShaderProgram(std::string vertex, std::string fragment);
+  CShaderProgram(CShader *vertex, CShader *fragment);
   ~CShaderProgram();
 
   bool create();

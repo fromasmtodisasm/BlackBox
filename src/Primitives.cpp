@@ -1,10 +1,9 @@
 #include <BlackBox/Primitives.hpp>
 
-Object * Primitive::create(Type type, std::string vsh, std::string fsh)
+Object * Primitive::create(Type type, CShaderProgram *program)
 {
   Object *obj;
-  CShaderProgram *shader = new CShaderProgram("res/" + vsh, "res/" + fsh);
-  shader->create();
+  program->create();
   switch (type)
   {
   case Primitive::CUBE:
@@ -12,7 +11,7 @@ Object * Primitive::create(Type type, std::string vsh, std::string fsh)
     if (type == Primitive::CUBE) obj = Object::load("cube.obj");
     if (type == Primitive::PLANE) obj = Object::load("plane.obj");
     obj->setType(OBJType::TPRIMITIVE);
-    obj->setShaderProgram(shader);
+    obj->setShaderProgram(program);
     obj->getShaderProgram()->use();
     obj->getShaderProgram()->setUniformValue("vColor", glm::vec3(1.0f, 0.0f, 0.0f));
     break;

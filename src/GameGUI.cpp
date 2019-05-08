@@ -166,6 +166,7 @@ void GameGUI::objectInfo(Object *obj, std::string name)
             ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.rotation.y, inputs_step ? &f32_one : NULL);
             ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.rotation.z, inputs_step ? &f32_one : NULL);
             ImGui::TreePop();
+            //obj->m_transform.rotation = glm::radians(obj->m_transform.rotation);
           }
           if (ImGui::TreeNode("Scale"))
           {

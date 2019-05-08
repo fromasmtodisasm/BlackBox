@@ -107,15 +107,11 @@ GLuint CShader::get() {
 }
 
 CShaderProgram::CShaderProgram(
-  string vertex, string fragment) :
+  CShader *vertex, CShader *fragment) :
   m_Status(this)
 {
-  m_Vertex = CShader::load(vertex, CShader::E_VERTEX);
-  m_Fragment = CShader::load(fragment, CShader::E_FRAGMENT);
-  if (m_Vertex == nullptr || m_Fragment == nullptr)
-    cout << "Error of load shader" << endl;
-  else
-    cout << "Shaders loaded" << endl;
+  m_Vertex = vertex;
+  m_Fragment = fragment;
 }
 
 CShaderProgram::~CShaderProgram() {
@@ -136,8 +132,8 @@ void CShaderProgram::attach(CShader *shader) {
 
 bool CShaderProgram::link() {
   glLinkProgram(m_Program);
-  delete m_Vertex;
-  delete m_Fragment;
+  //delete m_Vertex;
+  //delete m_Fragment;
 	return m_Status.get(GL_LINK_STATUS);
 }
 

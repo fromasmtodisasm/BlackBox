@@ -1,7 +1,6 @@
 #pragma once
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Opengl.hpp>
-#include <BlackBox/CShader.hpp>
 #include <glm/fwd.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>

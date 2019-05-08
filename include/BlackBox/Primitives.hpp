@@ -18,6 +18,6 @@ public:
 private:
   Primitive(Type type);
 public:
-  static Object *create(Type type, std::string vsh = "", std::string fsh = "");
+  static Object *create(Type type, CShaderProgram *program);
   ~Primitive();
 };

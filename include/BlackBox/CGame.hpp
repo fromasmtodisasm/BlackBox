@@ -4,7 +4,7 @@
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/CInputHandler.hpp>
-#include <BlackBox/CShader.hpp>
+#include <BlackBox/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
 #include <BlackBox/CPlayer.h>
@@ -55,6 +55,9 @@ private:
   //GUI
   ImVec2 cp_size; //Control panel size
   GameGUI *gui;
+
+  //
+  ShaderManager *shaderManager;
 
 
   enum State
