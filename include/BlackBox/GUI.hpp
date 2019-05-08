@@ -9,7 +9,7 @@ public:
   GameGUI();
   ~GameGUI();
 
-  void Update();
+  void Draw();
   void objectInfo(Object *obj, std::string);
   void musiListController();
   void cameraController();

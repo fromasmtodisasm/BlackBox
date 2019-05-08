@@ -79,6 +79,22 @@ void Object::setTexture(Texture *texture)
   m_texture = texture;
 }
 
+Object Object::operator=(Object &that)
+{
+  Object obj;
+  obj.m_Mesh = that.m_Mesh;
+  obj.m_type = that.m_type;
+
+}
+
+Object *Object::clone()
+{
+  Object *obj = new Object;
+  obj->m_Mesh = this->m_Mesh;
+  obj->m_type = this->m_type;
+  return obj;
+}
+
 void Object::move(glm::vec3 v) {
   m_transform.position += v;
 }
@@ -107,7 +123,7 @@ Object * Object::load(string path)
   CShaderProgram *shader;
   std::vector<Vertex> p;
 
-  if (!loadOBJ(("res/geom/" + path).c_str(), p))
+  if (!loadOBJ(path.c_str(), p))
     return nullptr;
   
   vb = new VertexBuffer(p.data(), static_cast<GLint>(p.size()));

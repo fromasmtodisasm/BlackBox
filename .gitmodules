@@ -19,3 +19,6 @@
 [submodule "submodules/soil"]
 	path = submodules/soil
 	url = git@github.com:fromasmtodisasm/soil.git
+[submodule "submodules/tinyxml2"]
+	path = submodules/tinyxml2
+	url = https://github.com/leethomason/tinyxml2

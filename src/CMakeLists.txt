@@ -18,6 +18,7 @@ elseif(GLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
+add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -75,6 +76,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/MusicList.cpp
   PRIVATE ${SOURCE_DIR}/ObjLoader.cpp
   PRIVATE ${SOURCE_DIR}/Object.cpp
+  PRIVATE ${SOURCE_DIR}/ObjectManager.cpp
   PRIVATE ${SOURCE_DIR}/Plane.cpp
   PRIVATE ${SOURCE_DIR}/Primitives.cpp
   PRIVATE ${SOURCE_DIR}/ShaderManager.cpp
@@ -110,6 +112,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MusicList.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjLoader.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Object.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjectManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Opengl.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Plane.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Primitives.hpp
@@ -172,6 +175,7 @@ elseif(GLEW_LOADER)
   target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARY})
 endif()
 target_link_libraries(${PROJECT_NAME} glm)
+target_link_libraries(${PROJECT_NAME} tinyxml2)
 target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)

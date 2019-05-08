@@ -11,7 +11,7 @@ GameGUI::~GameGUI()
 
 }
 
-void GameGUI::Update()
+void GameGUI::Draw()
 {
   static bool
       show_player=1,
@@ -20,14 +20,17 @@ void GameGUI::Update()
       edit_player = 1;
   bool open = true;
   ImGuiWindowFlags window_flags = 0;
-  window_flags |= ImGuiWindowFlags_NoMove;
+  //window_flags |= ImGuiWindowFlags_NoMove;
   window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
   //window_flags |= ImGuiWindowFlags_NoCollapse;
   //window_flags |= ImGuiWindowFlags_MenuBar;
   // We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-  ImGui::SetNextWindowPos(ImVec2(0, 0));
+  //ImGui::SetNextWindowPos(ImVec2(0, 0));
   //ImGui::SetNextWindowSize(game->cp_size);
-  ImGui::Begin("Control panel");
+  auto font = ImGui::GetFont();
+  font->Scale = 1.5;
+  ImGui::PushFont(font);
+  ImGui::Begin("Control panel", &open);//, &open, window_flags);
   ImVec2 size = ImGui::GetWindowSize();
     game->m_Window->viewPort.left = size.x;
     game->m_Window->viewPort.width = game->m_Window->m_Width - size.x;
@@ -39,6 +42,7 @@ void GameGUI::Update()
     {
       if (ImGui::TreeNode("Object Inspector"))
       {
+        ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
         for (auto &obj : game->m_World->m_Objs)
           objectInfo(obj.second, obj.first);
        ImGui::TreePop();
@@ -49,6 +53,10 @@ void GameGUI::Update()
     ImGui::InputScalar("MovementSpeed",   ImGuiDataType_Float,  &game->m_camera1->MovementSpeed);
     if (show_player)
       musiListController();
+    if (show_demo)
+    {
+      ImGui::ShowDemoWindow();
+    }
 
     // Exit
     if (ImGui::Button("Exit"))
@@ -56,14 +64,11 @@ void GameGUI::Update()
       game->m_running = false;
     }
   ImGui::End();
+  ImGui::PopFont();
 
 
   if (show_camera) {
 
-  }
-  if (show_demo)
-  {
-    ImGui::ShowDemoWindow();
   }
 }
 
@@ -141,12 +146,15 @@ void GameGUI::objectInfo(Object *obj, std::string name)
         static bool inputs_step = true;
       if (ImGui::TreeNode(name.c_str())) {
         if (ImGui::TreeNode("Physics")) {
-          ImGui::Checkbox("Show step buttons", &inputs_step);
-          //ImGui::InputScalar("Player gravity",   ImGuiDataType_Float,  &player->gravity, inputs_step ? &f32_one : NULL);
+
           ImGui::InputScalar("Friction",   ImGuiDataType_Float,  &obj->friction, inputs_step ? &f32_one : NULL);
-          ImGui::InputScalar("velocity.x",   ImGuiDataType_Float,  &obj->velocity.x, inputs_step ? &f32_one : NULL);
-          ImGui::InputScalar("velocity.y",   ImGuiDataType_Float,  &obj->velocity.y, inputs_step ? &f32_one : NULL);
-          ImGui::InputScalar("velocity.z",   ImGuiDataType_Float,  &obj->velocity.z, inputs_step ? &f32_one : NULL);
+
+          if (ImGui::TreeNode("Veolcity")) {
+            ImGui::InputScalar("Veolcity.X",   ImGuiDataType_Float,  &obj->velocity.x, inputs_step ? &f32_one : NULL);
+            ImGui::InputScalar("Veolcity.Y",   ImGuiDataType_Float,  &obj->velocity.y, inputs_step ? &f32_one : NULL);
+            ImGui::InputScalar("Veolcity.Z",   ImGuiDataType_Float,  &obj->velocity.z, inputs_step ? &f32_one : NULL);
+            ImGui::TreePop();
+          }
 
           ImGui::TreePop();
         }

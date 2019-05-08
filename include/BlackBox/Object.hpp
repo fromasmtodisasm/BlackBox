@@ -54,4 +54,7 @@ public:
   // IObject interface
 public:
   virtual void setTexture(Texture *texture) override;
+
+  Object operator=(Object &that);
+  Object *clone();
 };

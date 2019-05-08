@@ -1,8 +1,9 @@
 #include <BlackBox/CPlayer.h>
 #include <BlackBox/Primitives.hpp>
 #include <BlackBox/CGame.hpp>
+#include <BlackBox/ObjectManager.hpp>
 
-CPlayer::CPlayer() : GameObject(*Object::load("pengium.obj"))
+CPlayer::CPlayer() : GameObject(*ObjectManager::instance()->getObject("pengium.obj"))
 {
   m_type = OBJType::TPRIMITIVE;
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));

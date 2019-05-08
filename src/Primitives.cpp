@@ -2,14 +2,15 @@
 
 Object * Primitive::create(Type type, CShaderProgram *program)
 {
-  Object *obj;
+  Object *obj = nullptr;
+  ObjectManager *manager = ObjectManager::instance();
   program->create();
   switch (type)
   {
   case Primitive::CUBE:
   case Primitive::PLANE:
-    if (type == Primitive::CUBE) obj = Object::load("cube.obj");
-    if (type == Primitive::PLANE) obj = Object::load("plane.obj");
+    if (type == Primitive::CUBE) obj = manager->getObject("cube.obj");
+    if (type == Primitive::PLANE) obj = manager->getObject("plane.obj");
     obj->setType(OBJType::TPRIMITIVE);
     obj->setShaderProgram(program);
     obj->getShaderProgram()->use();

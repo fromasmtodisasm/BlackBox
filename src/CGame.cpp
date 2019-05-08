@@ -101,7 +101,7 @@ bool CGame::update() {
           m_Window->viewPort.width,
           m_Window->viewPort.height);
     render();
-    gui->Update();
+    gui->Draw();
 
     m_Window->swap();
   }
@@ -164,7 +164,7 @@ bool CGame::init_opbject() {
   shader->create();
   for (int i = 0; i < 1; i++)
   {
-    obj = Object::load("cube.obj");
+    obj = ObjectManager::instance()->getObject("cube.obj");
     obj->setShaderProgram(shader);
     obj->setType(OBJType::TPRIMITIVE);
     obj->moveTo({
