@@ -4,7 +4,7 @@
 #include <string>
 
 class CShader; 
-class CShaderProgram; 
+class CShaderProgram;
 
 extern CShaderProgram *defaultProgram;
 
@@ -35,11 +35,12 @@ private:
 	std::string m_Path;
 	std::string m_Text;
   ShaderStatus m_Status;
-  int m_Type; 
 public:
+  int m_Type;
   enum type : int{
     E_VERTEX = GL_VERTEX_SHADER,
-    E_FRAGMENT = GL_FRAGMENT_SHADER
+    E_FRAGMENT = GL_FRAGMENT_SHADER,
+    E_UNKNOWN = -1
   };
   CShader(std::string text, CShader::type type);
   ~CShader();
@@ -61,14 +62,17 @@ private:
 
 class CShaderProgram {
 private:
-  CShader *m_Vertex;
-  CShader *m_Fragment;
+  CShader *m_Vertex = nullptr;
+  CShader *m_Fragment = nullptr;
   GLuint m_Program;
   GLchar infoLog[512];
   ShaderProgramStatus m_Status;
+  bool attached = false;
+  bool created = false;
 
   bool status();
 public:
+  CShaderProgram();
   CShaderProgram(CShader *vertex, CShader *fragment);
   ~CShaderProgram();
 

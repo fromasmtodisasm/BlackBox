@@ -2,6 +2,7 @@
 #include <BlackBox/Object.hpp>
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/ObjectManager.hpp>
+#include <BlackBox/MaterialManager.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -15,9 +16,13 @@ using namespace tinyxml2;
 void Scene::loadObject(XMLElement *object)
 {
   Object *obj;
+  Material *material;
+  MaterialManager *materialManager = MaterialManager::instance();
   const char *objectName = nullptr;
   const char *meshPath = nullptr;
+  const char *materialName = nullptr;
   XMLElement * mesh = nullptr;
+  XMLElement * materialElement = nullptr;
 
   objectName = object->Attribute("name");
   if (objectName == nullptr)
@@ -31,8 +36,28 @@ void Scene::loadObject(XMLElement *object)
   obj = ObjectManager::instance()->getObject(meshPath);
   if (obj == nullptr)
     return;
+  materialElement = object->FirstChildElement("material");
+  if (materialElement == nullptr)
+    material = defaultMaterial;
+  else {
+    materialName = materialElement->Attribute("name");
+    if (materialName == nullptr)
+      material = defaultMaterial;
+    else {
+      material = materialManager->getMaterial(materialName);
+      if (material == nullptr)
+        material = defaultMaterial;
+    }
+
+  }
   obj->setShaderProgram(defaultProgram);
+  obj->setMaterial(material);
   m_Objs[objectName] = obj;
+
+}
+
+void Scene::loadMesh(XMLElement *mesh)
+{
 
 }
 
@@ -45,15 +70,9 @@ void Scene::draw(float dt)
 {
  for (const auto &object : m_Objs) {
     //object.second->rotate(dt*0.01f, {0,1,0});
-    object.second->getShaderProgram()->use();
-    object.second->getShaderProgram()->setUniformValue("Model", object.second->getTransform());
-    object.second->getShaderProgram()->setUniformValue("View", m_Camera->getViewMatrix());
-    object.second->getShaderProgram()->setUniformValue("Projection", m_Camera->getProjectionMatrix());
-    object.second->getShaderProgram()->setUniformValue("lightPos", m_Objs["light"]->m_transform.position);
-    object.second->getShaderProgram()->setUniformValue("lightColor", glm::vec3(1,1,1.0));
     //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 
-    object.second->draw();
+    object.second->draw(m_Camera);
  }
 }
 
@@ -116,7 +135,6 @@ bool Scene::save()
 bool Scene::load(std::string name = "default.xml")
 {
   XMLDocument xmlDoc;
-  ShaderManager *shaderManager = ShaderManager::instance();
 
   XMLError eResult = xmlDoc.LoadFile(("res/scenes/" + name).c_str());
   XMLCheckResult(eResult);

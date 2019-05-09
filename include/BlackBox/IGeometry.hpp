@@ -4,7 +4,7 @@
 #include <cassert>
 #include <glm/glm.hpp>
 
-class VertexBuffer;
+class VertexArrayObject;
 class IndexBuffer;
 
 //typedef glm::vec3 Vertex;
@@ -17,12 +17,12 @@ struct Vertex
 
 struct Mesh {
 protected:
-  VertexBuffer *m_Verts;  
+  VertexArrayObject *m_Verts;  
   IndexBuffer *m_Indexes;
 public:
-  Mesh(VertexBuffer *verts, IndexBuffer *indxs);
+  Mesh(VertexArrayObject *verts, IndexBuffer *indxs);
 
-  VertexBuffer *getVertexBuffer();
+  VertexArrayObject *getVertexBuffer();
   IndexBuffer *getIndexBuffer();
 };
 

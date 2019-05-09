@@ -9,7 +9,7 @@
 class CGame;
 
 
-class CPlayer : protected GameObject
+class CPlayer : public GameObject
 {
   friend class GameGUI;
   CCamera *m_Camera;
@@ -33,7 +33,7 @@ public:
 
   // IDrawable interface
 public:
-  virtual void draw() override;
+  virtual void draw(CCamera *camera) override;
 
 public:
   void attachCamera(CCamera *camera);

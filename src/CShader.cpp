@@ -75,7 +75,8 @@ CShader *CShader::load(string path, CShader::type type) {
   }
 
   CShader *shader = new CShader(text, type);
-  shader->create();
+  if (!shader->create())
+    return nullptr;
   shader->compile();
   shader->print();
   return shader;
@@ -106,6 +107,12 @@ GLuint CShader::get() {
   return m_Shader;
 }
 
+CShaderProgram::CShaderProgram() : m_Status(this)
+{
+  m_Program = glCreateProgram();
+  created = true;
+}
+
 CShaderProgram::CShaderProgram(
   CShader *vertex, CShader *fragment) :
   m_Status(this)
@@ -119,15 +126,29 @@ CShaderProgram::~CShaderProgram() {
 }
 
 bool CShaderProgram::create() {
-  m_Program = glCreateProgram();
-  attach(m_Vertex);
-  attach(m_Fragment);
+  if (!created) m_Program = glCreateProgram();
+  if (!attached)
+  {
+    attach(m_Vertex);
+    attach(m_Fragment);
+  }
   link();
 	return m_Status.get(GL_LINK_STATUS);
 }
 
 void CShaderProgram::attach(CShader *shader) {
+  switch (shader->m_Type) {
+  case CShader::type::E_VERTEX:
+    if (m_Vertex == nullptr)
+      m_Vertex = shader;
+    break;
+  case CShader::type::E_FRAGMENT:
+    if (m_Fragment == nullptr)
+      m_Fragment = shader;
+    break;
+  }
   glAttachShader(m_Program, shader->get());
+  attached = true;
 }
 
 bool CShaderProgram::link() {

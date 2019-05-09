@@ -1,17 +1,18 @@
 #include <BlackBox/VertexBuffer.hpp>
 #include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Renderer.hpp>
 
 #include <glm/glm.hpp>
 #include <iostream>
 
 using namespace std;
 
-VertexBuffer::VertexBuffer(const void *data, GLint count) :
-  m_Data(data), m_Count(count)
+VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type) :
+  m_Data(data), m_Count(count), m_Type(type)
 {
-  glGenVertexArrays(1, &VAO);
+  glGenVertexArrays(1, &id);
 
-  glBindVertexArray(VAO); 
+  glBindVertexArray(id);
     glGenBuffers(1, &VBO);  
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -28,24 +29,14 @@ VertexBuffer::VertexBuffer(const void *data, GLint count) :
   glBindVertexArray(0);
 }
 
-VertexBuffer::~VertexBuffer()
+VertexArrayObject::~VertexArrayObject()
 {
   glDeleteBuffers(1, &VBO);
 }
 
-void VertexBuffer::bind()
+void VertexArrayObject::draw()
 {
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-}
-
-void VertexBuffer::unbind()
-{
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void VertexBuffer::draw()
-{
-  glBindVertexArray(VAO); 
-  glDrawArrays(GL_TRIANGLES, 0, m_Count);
+  glBindVertexArray(id);
+  glDrawArrays(m_Type, 0, m_Count);
   glBindVertexArray(0);
 }

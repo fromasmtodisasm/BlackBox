@@ -25,7 +25,7 @@ Plane::Plane(CShaderProgram *program) :
     0,1,2
   };
 
-  VertexBuffer *vb = new VertexBuffer(m_Vertices.data(),static_cast<GLint>(m_Vertices.size()));
+  VertexArrayObject *vb = new VertexArrayObject(m_Vertices.data(),static_cast<GLint>(m_Vertices.size()), GL_TRIANGLES);
   IndexBuffer *ib;// = new IndexBuffer(m_Indeces.data(),m_Indeces.size());
   m_Mesh = std::make_shared<Mesh>(vb, nullptr);
 }

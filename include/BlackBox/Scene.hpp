@@ -18,6 +18,7 @@ private:
   CCamera *m_Camera;
 private:
   void loadObject(tinyxml2::XMLElement *object);
+  void loadMesh(tinyxml2::XMLElement *mesh);
 
 public:
   Scene(std::string name);

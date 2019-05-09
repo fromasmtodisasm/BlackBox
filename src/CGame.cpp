@@ -6,6 +6,7 @@
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/SceneManager.hpp>
+#include <BlackBox/MaterialManager.hpp>
 
 
 
@@ -133,6 +134,8 @@ bool CGame::loadScene() {
     return false;
   ;
   if (!ShaderManager::init() && (shaderManager = ShaderManager::instance()) == nullptr)
+    return false;
+  if (!MaterialManager::init("default.xml"))
     return false;
 
   m_scene->load("default.xml");

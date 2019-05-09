@@ -1,17 +1,22 @@
 <scene>
     <object name="BB">
         <mesh name="res/geom/cube.obj"/>
+        <material name="wood_box"/>
     </object>
     <object name="MyPlayer">
         <mesh name="res/geom/pengium.obj"/>
+        <material name="player"/>
     </object>
     <object name="cube0">
         <mesh name="res/geom/cube.obj"/>
+        <material name="wood_box"/>
     </object>
     <object name="light">
         <mesh name="res/geom/cube.obj"/>
+        <material name="base_color"/>
     </object>
     <object name="plane">
         <mesh name="res/geom/plane.obj"/>
+        <material name="chess_floor"/>
     </object>
 </scene>

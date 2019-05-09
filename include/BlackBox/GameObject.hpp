@@ -4,7 +4,7 @@
 #include <BlackBox/CCamera.hpp>
 #include <set>
 
-class GameObject : protected Object, public IInputEventListener
+class GameObject : public Object, public IInputEventListener
 {
 protected:
   const float MOVE_SPEED = 0.5f;

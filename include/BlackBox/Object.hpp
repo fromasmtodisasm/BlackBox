@@ -4,7 +4,8 @@
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/IDrawable.hpp>
 #include <BlackBox/ShaderManager.hpp>
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Material.hpp>
+
 #include <glm/glm.hpp>
 
 #include <memory>
@@ -25,8 +26,7 @@ protected:
   std::shared_ptr<Mesh> m_Mesh;
   CShaderProgram *m_Shader;
   OBJType m_type;
-  Texture *m_texture = nullptr;
-
+  Material *m_Material = nullptr;
   Object();
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
@@ -42,7 +42,7 @@ public:
   virtual void moveTo(glm::vec3 v);
   virtual void rotate(float angle, glm::vec3 v) override;
   virtual void scale(glm::vec3 v) override;
-  virtual void draw() override;
+  virtual void draw(CCamera *camera) override;
   virtual OBJType getType() override { return m_type; }
   virtual void setType(OBJType) override;
   virtual CShaderProgram * getShaderProgram() override;
@@ -57,8 +57,13 @@ public:
 
   // IObject interface
 public:
-  virtual void setTexture(Texture *texture) override;
+  virtual void setTexture(Texture *texture, const char *type) override;
 
   Object operator=(Object &that);
   Object *clone();
+
+  // IObject interface
+public:
+  virtual Material *getMaterial() override;
+  virtual void setMaterial(Material *material) override;
 };

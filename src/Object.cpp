@@ -1,6 +1,7 @@
 #include <BlackBox/Object.hpp>
 #include <BlackBox/ObjLoader.hpp>
 #include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/Renderer.hpp>
 #include <BlackBox/Opengl.hpp>
 
 #include <fstream>
@@ -32,13 +33,9 @@ void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram
  
 }
 
-void Object::draw() {
-  if (m_texture != nullptr)
-  {
-    int id = m_texture->id;
-    glBindTexture(GL_TEXTURE_2D, m_texture->id);
-  }
-  VertexBuffer *vb = m_Mesh->getVertexBuffer();
+void Object::draw(CCamera *camera) {
+  m_Material->apply(this, camera);
+  VertexArrayObject *vb = m_Mesh->getVertexBuffer();
   vb->draw();
 }
 
@@ -75,9 +72,9 @@ void Object::update(float deltatime)
   m_transform.position += velocity * deltatime;
 }
 
-void Object::setTexture(Texture *texture)
+void Object::setTexture(Texture *texture, const char *type)
 {
-  m_texture = texture;
+  m_Material->setTexture(texture, type);
 }
 
 Object Object::operator=(Object &that)
@@ -94,6 +91,18 @@ Object *Object::clone()
   obj->m_Mesh = this->m_Mesh;
   obj->m_type = this->m_type;
   return obj;
+}
+
+Material *Object::getMaterial()
+{
+  return m_Material;
+}
+
+void Object::setMaterial(Material *material)
+{
+  if (m_Material != nullptr)
+      ;//delete m_Material;
+  m_Material = material;
 }
 
 void Object::move(glm::vec3 v) {
@@ -120,13 +129,13 @@ Object * Object::load(string path)
 {
   Object *obj = nullptr;
   std::shared_ptr<Mesh> mesh;
-  VertexBuffer *vb;
+  VertexArrayObject *vb;
   std::vector<Vertex> p;
 
   if (!loadOBJ(path.c_str(), p))
     return nullptr;
   
-  vb = new VertexBuffer(p.data(), static_cast<GLint>(p.size()));
+  vb = new VertexArrayObject(p.data(), static_cast<GLint>(p.size()), GL_TRIANGLES);
   mesh = std::make_shared<Mesh>(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;

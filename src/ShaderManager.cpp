@@ -19,30 +19,8 @@ CShaderProgram *ShaderManager::getProgram(std::string vShader, std::string fShad
 {
   CShader *vs, *fs;
   CShaderProgram *p;
-  {
-    auto vPath = "res/shaders/" + vShader;
-    auto v = cache.find(vPath);
-    if (v != cache.end())
-    {
-      vs = v->second;
-    }
-    else {
-      vs = CShader::load(vPath, CShader::E_VERTEX);
-      cache[vPath] = vs;
-    }
-  }
-  {
-    auto fPath = "res/shaders/" + fShader;
-    auto f = cache.find(fPath);
-    if (f != cache.end())
-    {
-      fs = f->second;
-    }
-    else {
-      fs = CShader::load(fPath, CShader::E_FRAGMENT);
-      cache[fPath] = fs;
-    }
-  }
+  vs = getShader(vShader, "vertex");
+  fs = getShader(fShader, "fragment");
   if (vs == nullptr || fs == nullptr)
   {
     cout << "Error of load shader" << endl;
@@ -55,8 +33,36 @@ CShaderProgram *ShaderManager::getProgram(std::string vShader, std::string fShad
   }
 }
 
+CShader *ShaderManager::getShader(string name, string type)
+{
+  CShader *result = nullptr;
+  auto Path = "res/shaders/" + name;
+  auto shader = cache.find(Path);
+  if (shader != cache.end())
+  {
+    result = shader->second;
+  }
+  else {
+    result = CShader::load(Path, str2typ(type));
+    if (result == nullptr)
+      return result;
+    cache[Path] = result;
+  }
+  return result;
+}
+
 bool ShaderManager::init()
 {
   defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
   defaultProgram->create();
+}
+
+CShader::type ShaderManager::str2typ(string type)
+{
+  if (type == "vertex")
+    return CShader::type::E_VERTEX;
+  else if (type == "fragment")
+    return CShader::type::E_FRAGMENT;
+  else
+    return CShader::type::E_UNKNOWN;
 }

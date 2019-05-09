@@ -3,6 +3,7 @@
 #include <BlackBox/Texture.hpp>
 
 class CShaderProgram;
+class Material;
 
 enum OBJType {
   TCAM,
@@ -21,6 +22,9 @@ struct IObject
 
   virtual CShaderProgram *getShaderProgram() = 0;
   virtual void setShaderProgram(CShaderProgram* shader) = 0;
-  virtual void setTexture(Texture* texture) = 0;
+  virtual Material *getMaterial() = 0;
+  virtual void setMaterial(Material *material) = 0;
+
+  virtual void setTexture(Texture* texture, const char *type) = 0;
   virtual glm::mat4 getTransform() = 0;
 };

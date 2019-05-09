@@ -1,6 +1,6 @@
 #pragma once
-
+class CCamera;
 struct IDrawable
 {
-  virtual void draw() = 0;
+  virtual void draw(CCamera *camera) = 0;
 };

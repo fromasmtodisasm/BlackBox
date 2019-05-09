@@ -43,9 +43,9 @@ bool CPlayer::OnInputEvent(sf::Event &event)
   }
 }
 
-void CPlayer::draw()
+void CPlayer::draw(CCamera *camera)
 {
-  Object::draw();
+  Object::draw(camera);
 }
 
 void CPlayer::attachCamera(CCamera *camera)

@@ -27,3 +27,21 @@ Texture::Texture(std::string name)
   glGenerateMipmap(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void Texture::setType(const char *type)
+{
+  std::string t(type);
+
+  if (t == "diffuse")
+    this->type = DIFFUSE;
+  else if (t == "specular")
+    this->type = SPECULAR;
+  else if (t == "bump")
+    this->type = BUMP;
+  else if (t == "normal")
+    this->type = NORMAL;
+  else if (t == "mask")
+    this->type = MASK;
+  else
+    this->type = UNKNOWN;
+}

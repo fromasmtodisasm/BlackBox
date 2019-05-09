@@ -1,12 +1,12 @@
 #include <BlackBox/IGeometry.hpp>
 
-Mesh::Mesh(VertexBuffer *verts, IndexBuffer *indxs) :
+Mesh::Mesh(VertexArrayObject *verts, IndexBuffer *indxs) :
    m_Verts(verts), m_Indexes(indxs) 
 {
   
 }
 
-VertexBuffer *Mesh::getVertexBuffer()
+VertexArrayObject *Mesh::getVertexBuffer()
 {
   return m_Verts;
 }

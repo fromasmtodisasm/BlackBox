@@ -6,11 +6,12 @@ in vec2 TextCoord;
 
 uniform vec3 lightPos;
 uniform vec3 lightColor;
-uniform sampler2D ourTexture;
+uniform sampler2D diffuseTexture;
+uniform sampler2D specularTexture;
+uniform sampler2D bumpTexture;
 
 out vec4 color;
 
-layout( location = 0 ) out vec4 FragColor;
 void main() {
   vec3 norm = normalize(Normal);
   vec3 lightDir = normalize(lightPos - FragPos);
@@ -19,6 +20,6 @@ void main() {
   vec3 diffuse = diff * lightColor;
 
   vec4 result = vec4((diffuse) * lightColor, 1.0);
-  color = texture2D(ourTexture, TextCoord)*result;//*vec4(0.7, 0.3, 0.9, 1);
+  color = texture2D(diffuseTexture, TextCoord)*result;
 
 }

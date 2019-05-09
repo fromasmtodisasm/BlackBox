@@ -1,18 +1,17 @@
 #pragma once
 #include <BlackBox/Renderer.hpp>
 
-class VertexBuffer
+class VertexArrayObject
 {
 private:
   GLuint VBO;
-  GLuint VAO;
+  GLuint id;
   const void *m_Data;
   GLint m_Count;
+  GLenum m_Type;
 public:
-  VertexBuffer(const void *data, GLint size);
-  ~VertexBuffer();
+  VertexArrayObject(const void *data, GLint size, GLenum type);
+  ~VertexArrayObject();
 
-  void bind();
-  void unbind();
   void draw();
 };
