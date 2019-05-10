@@ -27,15 +27,19 @@ Material *MaterialManager::getMaterial(std::string name)
 {
   Material *material = nullptr;
 
+  /*
   std::string prefix = "res/materials/";
   bool usPrefix = true;
   if (name.find("/") != name.npos)
     usPrefix = false;
+  */
   {
-    std::string fullName;
+    std::string fullName = name;
+    /*
     if (usPrefix)
       fullName = prefix + name;
     else fullName = name;
+    */
 
     auto matItor = cache.find(fullName);
     if (matItor != cache.end())
@@ -146,7 +150,6 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   result->program = program;
   cache[materialName] = result;
   return true;
-
 }
 
 Texture *MaterialManager::loadTexture(XMLElement *texture)

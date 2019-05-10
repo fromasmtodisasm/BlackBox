@@ -76,10 +76,12 @@ bool CGame::init(IEngine *pSystem)  {
 
   m_inputHandler->AddEventListener(reinterpret_cast<CGame*>(this));
 
+
   // Set scene before camera, camera setted to active scene in world
   m_World->setScene(m_scene);
   m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
+  initPlayer();
 
   //m_World->setCamera(camera2);
   return true;
@@ -114,7 +116,7 @@ bool CGame::run() {
 	cout << "Game started" << endl;
   deltaClock.restart();
   m_PlayList.setVolume(10.f);
-  m_PlayList.play();
+  //m_PlayList.play();
   m_isMusicPlaying = true;
 	gotoGame();
   update();
@@ -312,8 +314,10 @@ void CGame::showMenu()
 
 bool CGame::initPlayer()
 {
+  m_player = new CPlayer();
   m_player->attachCamera(m_camera1);
   m_player->setGame(this);
+  m_inputHandler->AddEventListener(m_player);
 }
 
 

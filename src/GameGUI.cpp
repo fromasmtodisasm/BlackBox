@@ -127,85 +127,72 @@ void GameGUI::cameraController()
 
 void GameGUI::objectInfo(Object *obj, std::string name)
 {
+    const ImS32   s32_zero = 0,   s32_one = 1,   s32_fifty = 50, s32_min = INT_MIN/2,   s32_max = INT_MAX/2,    s32_hi_a = INT_MAX/2 - 100,    s32_hi_b = INT_MAX/2;
+    const ImU32   u32_zero = 0,   u32_one = 1,   u32_fifty = 50, u32_min = 0,           u32_max = UINT_MAX/2,   u32_hi_a = UINT_MAX/2 - 100,   u32_hi_b = UINT_MAX/2;
+    const ImS64   s64_zero = 0,   s64_one = 1,   s64_fifty = 50, s64_min = LLONG_MIN/2, s64_max = LLONG_MAX/2,  s64_hi_a = LLONG_MAX/2 - 100,  s64_hi_b = LLONG_MAX/2;
+    const ImU64   u64_zero = 0,   u64_one = 1,   u64_fifty = 50, u64_min = 0,           u64_max = ULLONG_MAX/2, u64_hi_a = ULLONG_MAX/2 - 100, u64_hi_b = ULLONG_MAX/2;
+    const float   f32_zero = 0.f, f32_one = 1.f, f32_lo_a = -10000000000.0f, f32_hi_a = +10000000000.0f;
+    const double  f64_zero = 0.,  f64_one = 1.,  f64_lo_a = -1000000000000000.0, f64_hi_a = +1000000000000000.0;
 
-        // The DragScalar/InputScalar/SliderScalar functions allow various data types: signed/unsigned int/long long and float/double
-        // To avoid polluting the public API with all possible combinations, we use the ImGuiDataType enum to pass the type,
-        // and passing all arguments by address.
-        // This is the reason the test code below creates local variables to hold "zero" "one" etc. for each types.
-        // In practice, if you frequently use a given type that is not covered by the normal API entry points, you can wrap it
-        // yourself inside a 1 line function which can take typed argument as value instead of void*, and then pass their address
-        // to the generic function. For example:
-        //   bool MySliderU64(const char *label, u64* value, u64 min = 0, u64 max = 0, const char* format = "%lld")
-        //   {
-        //      return SliderScalar(label, ImGuiDataType_U64, value, &min, &max, format);
-        //   }
+    // State
 
-        // Limits (as helper variables that we can take the address of)
-        // Note that the SliderScalar function has a maximum usable range of half the natural type maximum, hence the /2 below.
-        #ifndef LLONG_MIN
-        ImS64 LLONG_MIN = -9223372036854775807LL - 1;
-        ImS64 LLONG_MAX = 9223372036854775807LL;
-        ImU64 ULLONG_MAX = (2ULL * 9223372036854775807LL + 1);
-        #endif
-        const ImS32   s32_zero = 0,   s32_one = 1,   s32_fifty = 50, s32_min = INT_MIN/2,   s32_max = INT_MAX/2,    s32_hi_a = INT_MAX/2 - 100,    s32_hi_b = INT_MAX/2;
-        const ImU32   u32_zero = 0,   u32_one = 1,   u32_fifty = 50, u32_min = 0,           u32_max = UINT_MAX/2,   u32_hi_a = UINT_MAX/2 - 100,   u32_hi_b = UINT_MAX/2;
-        const ImS64   s64_zero = 0,   s64_one = 1,   s64_fifty = 50, s64_min = LLONG_MIN/2, s64_max = LLONG_MAX/2,  s64_hi_a = LLONG_MAX/2 - 100,  s64_hi_b = LLONG_MAX/2;
-        const ImU64   u64_zero = 0,   u64_one = 1,   u64_fifty = 50, u64_min = 0,           u64_max = ULLONG_MAX/2, u64_hi_a = ULLONG_MAX/2 - 100, u64_hi_b = ULLONG_MAX/2;
-        const float   f32_zero = 0.f, f32_one = 1.f, f32_lo_a = -10000000000.0f, f32_hi_a = +10000000000.0f;
-        const double  f64_zero = 0.,  f64_one = 1.,  f64_lo_a = -1000000000000000.0, f64_hi_a = +1000000000000000.0;
+    static bool inputs_step = true;
+  if (ImGui::TreeNode(name.c_str())) {
+    if (ImGui::TreeNode("Physics")) {
 
-        // State
+      ImGui::InputScalar("Friction",   ImGuiDataType_Float,  &obj->friction, inputs_step ? &f32_one : NULL);
 
-        static bool inputs_step = true;
-      if (ImGui::TreeNode(name.c_str())) {
-        if (ImGui::TreeNode("Physics")) {
-
-          ImGui::InputScalar("Friction",   ImGuiDataType_Float,  &obj->friction, inputs_step ? &f32_one : NULL);
-
-          if (ImGui::TreeNode("Veolcity")) {
-            ImGui::InputScalar("Veolcity.X",   ImGuiDataType_Float,  &obj->velocity.x, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Veolcity.Y",   ImGuiDataType_Float,  &obj->velocity.y, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Veolcity.Z",   ImGuiDataType_Float,  &obj->velocity.z, inputs_step ? &f32_one : NULL);
-            ImGui::TreePop();
-          }
-
-          ImGui::TreePop();
-        }
-
-        if (ImGui::TreeNode("Transform"))
-        {
-          if (ImGui::TreeNode("Position"))
-          {
-            ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.position.x, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.position.y, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.position.z, inputs_step ? &f32_one : NULL);
-            ImGui::TreePop();
-          }
-          if (ImGui::TreeNode("Rotation"))
-          {
-            ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.rotation.x, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.rotation.y, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.rotation.z, inputs_step ? &f32_one : NULL);
-            ImGui::TreePop();
-            //obj->m_transform.rotation = glm::radians(obj->m_transform.rotation);
-          }
-          if (ImGui::TreeNode("Scale"))
-          {
-            ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.scale.x, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.scale.y, inputs_step ? &f32_one : NULL);
-            ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.scale.z, inputs_step ? &f32_one : NULL);
-            ImGui::TreePop();
-          }
-          ImGui::TreePop();
-        }
-
-        if (ImGui::Button("Reset"))
-        {
-          obj->m_transform.position = glm::vec3(0.0);
-          obj->velocity = glm::vec3(0.0);
-        }
-
+      if (ImGui::TreeNode("Veolcity")) {
+        ImGui::InputScalar("Veolcity.X",   ImGuiDataType_Float,  &obj->velocity.x, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Veolcity.Y",   ImGuiDataType_Float,  &obj->velocity.y, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Veolcity.Z",   ImGuiDataType_Float,  &obj->velocity.z, inputs_step ? &f32_one : NULL);
         ImGui::TreePop();
       }
+
+      ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Transform"))
+    {
+      if (ImGui::TreeNode("Position"))
+      {
+        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.position.x, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.position.y, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.position.z, inputs_step ? &f32_one : NULL);
+        ImGui::TreePop();
+      }
+      if (ImGui::TreeNode("Rotation"))
+      {
+        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.rotation.x, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.rotation.y, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.rotation.z, inputs_step ? &f32_one : NULL);
+        ImGui::TreePop();
+        //obj->m_transform.rotation = glm::radians(obj->m_transform.rotation);
+      }
+      if (ImGui::TreeNode("Scale"))
+      {
+        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.scale.x, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.scale.y, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.scale.z, inputs_step ? &f32_one : NULL);
+        ImGui::TreePop();
+      }
+      ImGui::TreePop();
+    }
+
+    if (ImGui::Button("Clone"))
+    {
+      char buff[10];
+      Object *object = new Object(*game->m_scene->getObject(name));
+      sprintf(buff, "%s_%0d", name.c_str(), object->refs);
+      game->m_scene->addObject(buff, object);
+    }
+    if (ImGui::Button("Reset"))
+    {
+      obj->m_transform.position = glm::vec3(0.0);
+      obj->velocity = glm::vec3(0.0);
+    }
+
+    ImGui::TreePop();
+  }
 }
 

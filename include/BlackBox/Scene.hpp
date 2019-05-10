@@ -1,6 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include <tinyxml2.h>
+#include <BlackBox/Object.hpp>
 
 #include <map>
 
@@ -28,6 +29,8 @@ public:
   void setCamera(CCamera *camera);
   void update(float dt);
   bool save();
+  tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);
+  Transform loadTransform(tinyxml2::XMLElement &object);
   bool load(std::string name);
 };
 

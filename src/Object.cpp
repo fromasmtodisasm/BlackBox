@@ -13,6 +13,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
+int Object::refs = 0;
 
 Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)),velocity(glm::vec3(0))
 {
@@ -24,6 +25,7 @@ Object::Object(const Object *obj):
   m_type(obj->m_type),velocity(glm::vec3(0)),
   m_path(obj->m_path)
 {
+  refs++;
 }
 
 
@@ -141,4 +143,9 @@ Object * Object::load(string path)
   obj->m_Mesh = mesh;
   obj->m_path = std::make_shared<std::string>(path);
 	return obj;
+}
+
+Transform::Transform()
+{
+
 }

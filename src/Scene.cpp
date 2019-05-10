@@ -7,6 +7,7 @@
 #include <tinyxml2.h>
 #include <sstream>
 
+
 using namespace tinyxml2;
 
 #ifndef XMLCheckResult
@@ -23,6 +24,7 @@ void Scene::loadObject(XMLElement *object)
   const char *materialName = nullptr;
   XMLElement * mesh = nullptr;
   XMLElement * materialElement = nullptr;
+  Transform transform;
 
   objectName = object->Attribute("name");
   if (objectName == nullptr)
@@ -50,6 +52,9 @@ void Scene::loadObject(XMLElement *object)
     }
 
   }
+
+  transform = loadTransform(*object);
+  obj->m_transform = transform;
   obj->setShaderProgram(defaultProgram);
   obj->setMaterial(material);
   m_Objs[objectName] = obj;
@@ -78,6 +83,8 @@ void Scene::draw(float dt)
 
 void Scene::addObject(std::string name, Object *object)
 {
+  //if (m_Objs.find(name) != m_Objs.end())
+
   m_Objs[name] = object;
 }
 
@@ -112,11 +119,19 @@ bool Scene::save()
     {
       XMLElement * object = xmlDoc.NewElement("object");
       XMLElement * mesh = xmlDoc.NewElement("mesh");
+      XMLElement * transform;
+
       //XMLElement * texture = xmlDoc.NewElement("texture");
       std::string objectName = objectManager->getPathByPointer(obj.second);
       object->SetAttribute("name", obj.first.c_str());
       mesh->SetAttribute("name", obj.second->m_path->c_str());
+      //transform->SetAttribute("name", obj.second->m_path->c_str());
+      //position->SetText(1.23);
+
+
+      transform = saveTransform(xmlDoc, obj.second);
       object->InsertEndChild(mesh);
+      object->InsertEndChild(transform);
       pScene->InsertEndChild(object);
       //object->InsertEndChild(mesh);
     }
@@ -129,6 +144,100 @@ bool Scene::save()
   XMLCheckResult(eResult);
 
 
+
+}
+
+XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
+{
+  XMLElement * transform = xmlDoc.NewElement("transform");
+
+  XMLElement * position = xmlDoc.NewElement("position");
+  XMLElement * rotation = xmlDoc.NewElement("rotation");
+  XMLElement * scale = xmlDoc.NewElement("scale");
+
+  //SET POSITION
+  {
+    XMLElement * X = xmlDoc.NewElement("X");
+    XMLElement * Y = xmlDoc.NewElement("Y");
+    XMLElement * Z = xmlDoc.NewElement("Z");
+    X->SetText(object->m_transform.position.x);
+    Y->SetText(object->m_transform.position.y);
+    Z->SetText(object->m_transform.position.z);
+    position->InsertEndChild(X);
+    position->InsertEndChild(Y);
+    position->InsertEndChild(Z);
+  }
+  //SET ROTATION
+  {
+    XMLElement * X = xmlDoc.NewElement("X");
+    XMLElement * Y = xmlDoc.NewElement("Y");
+    XMLElement * Z = xmlDoc.NewElement("Z");
+    X->SetText(object->m_transform.rotation.x);
+    Y->SetText(object->m_transform.rotation.y);
+    Z->SetText(object->m_transform.rotation.z);
+    rotation->InsertEndChild(X);
+    rotation->InsertEndChild(Y);
+    rotation->InsertEndChild(Z);
+  }
+  //SET SCALE
+  {
+    XMLElement * X = xmlDoc.NewElement("X");
+    XMLElement * Y = xmlDoc.NewElement("Y");
+    XMLElement * Z = xmlDoc.NewElement("Z");
+    X->SetText(object->m_transform.scale.x);
+    Y->SetText(object->m_transform.scale.y);
+    Z->SetText(object->m_transform.scale.z);
+    scale->InsertEndChild(X);
+    scale->InsertEndChild(Y);
+    scale->InsertEndChild(Z);
+  }
+
+  transform->InsertEndChild(position);
+  transform->InsertEndChild(rotation);
+  transform->InsertEndChild(scale);
+
+  return transform;
+}
+
+Transform Scene::loadTransform(XMLElement &object)
+{
+  Transform result;
+  XMLElement * transform = object.FirstChildElement("transform");
+
+  //GET POSITION
+  {
+    XMLElement * position = transform->FirstChildElement("position");
+    XMLElement * X = position->FirstChildElement("X");
+    XMLElement * Y = position->FirstChildElement("Y");
+    XMLElement * Z = position->FirstChildElement("Z");
+    result.position.x = X->FloatText();
+    result.position.y = Y->FloatText();
+    result.position.z = Z->FloatText();
+  }
+  //GET ROTATION
+  {
+    XMLElement * rotation = transform->FirstChildElement("rotation");
+    XMLElement * X = rotation->FirstChildElement("X");
+    XMLElement * Y = rotation->FirstChildElement("Y");
+    XMLElement * Z = rotation->FirstChildElement("Z");
+    result.rotation.x = X->FloatText();
+    result.rotation.y = Y->FloatText();
+    result.rotation.z = Z->FloatText();
+
+  }
+  //GET SCALE
+  {
+    XMLElement * scale = transform->FirstChildElement("scale");
+    XMLElement * X = scale->FirstChildElement("X");
+    XMLElement * Y = scale->FirstChildElement("Y");
+    XMLElement * Z = scale->FirstChildElement("Z");
+    result.scale.x = X->FloatText();
+    result.scale.y = Y->FloatText();
+    result.scale.z = Z->FloatText();
+
+  }
+
+  return result;
 
 }
 

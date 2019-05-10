@@ -16,6 +16,7 @@ struct Transform
   glm::vec3 rotation;
   glm::vec3 scale;
 
+  Transform();
   Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
     position(position), rotation(rotation), scale(scale){}
 };
@@ -31,6 +32,7 @@ protected:
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
 public:
+  static int refs;
   std::shared_ptr<std::string> m_path;
   float friction = 0.99;
   glm::vec3 velocity;

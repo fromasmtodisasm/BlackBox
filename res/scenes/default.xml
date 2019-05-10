@@ -1,22 +1,162 @@
 <scene>
     <object name="BB">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>50</X>
+                <Y>50</Y>
+                <Z>50</Z>
+            </scale>
+        </transform>
         <mesh name="res/geom/cube.obj"/>
-        <material name="wood_box"/>
     </object>
     <object name="MyPlayer">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
         <mesh name="res/geom/pengium.obj"/>
-        <material name="player"/>
+    </object>
+    <object name="MyPlayer_0000">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0</X>
+                <Y>4.5916347e-041</Y>
+                <Z>0</Z>
+            </scale>
+        </transform>
+        <mesh name="res/geom/pengium.obj"/>
+    </object>
+    <object name="MyPlayer_0000_0000">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0</X>
+                <Y>4.5916347e-041</Y>
+                <Z>0</Z>
+            </scale>
+        </transform>
+        <mesh name="res/geom/pengium.obj"/>
     </object>
     <object name="cube0">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0</X>
+                <Y>4.5916347e-041</Y>
+                <Z>0</Z>
+            </scale>
+        </transform>
         <mesh name="res/geom/cube.obj"/>
-        <material name="wood_box"/>
     </object>
     <object name="light">
+        <transform>
+            <position>
+                <X>4</X>
+                <Y>4</Y>
+                <Z>-4</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
         <mesh name="res/geom/cube.obj"/>
-        <material name="base_color"/>
     </object>
     <object name="plane">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>50</X>
+                <Y>50</Y>
+                <Z>50</Z>
+            </scale>
+        </transform>
         <mesh name="res/geom/plane.obj"/>
-        <material name="chess_floor"/>
+    </object>
+    <object name="test">
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0</X>
+                <Y>4.5916347e-041</Y>
+                <Z>0</Z>
+            </scale>
+        </transform>
+        <mesh name="res/geom/pengium.obj"/>
     </object>
 </scene>
