@@ -1,6 +1,7 @@
 #include <BlackBox/ObjectManager.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Primitives.hpp>
+#include <BlackBox/CPlayer.h>
 
 #include <iostream>
 using	namespace std;
@@ -16,7 +17,7 @@ ObjectManager *ObjectManager::instance()
   return manager;
 }
 
-Object *ObjectManager::getObject(std::string object)
+Object *ObjectManager::getObject(std::string object, std::string type)
 {
   std::string prefix = "res/geom/";
   bool usPrefix = true;
@@ -36,7 +37,7 @@ Object *ObjectManager::getObject(std::string object)
       obj = new Object(*v->second);
     }
     else {
-      obj = Object::load(oPath);
+      obj = objectFactory(Object::load(oPath), type);
       cache[oPath] = obj;
     }
     if (obj == nullptr)
@@ -61,5 +62,12 @@ string ObjectManager::getPathByPointer(Object *object)
 
   //TODO: handle missing pointer
   return string("");
+}
+
+Object *ObjectManager::objectFactory(Object *object, string type)
+{
+  if (type == "player")
+    return new CPlayer(object);
+  return object;
 }
 

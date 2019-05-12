@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <BlackBox/Texture.hpp>
+#include <glm/glm.hpp>
 
 class CShader;
 class CShaderProgram;
@@ -15,8 +16,11 @@ struct Material
   *bump,
   *normal,
   *mask;
+  glm::vec3 diffuseColor;
 
   CShaderProgram *program;
+  std::shared_ptr<std::string> name;
+  bool hasTexture = false;
   Material() : diffuse(nullptr), specular(nullptr), bump(nullptr), normal(nullptr), mask(nullptr)
   {
 

@@ -3,6 +3,7 @@
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/ObjectManager.hpp>
 #include <BlackBox/MaterialManager.hpp>
+#include <BlackBox/World.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -20,6 +21,7 @@ void Scene::loadObject(XMLElement *object)
   Material *material;
   MaterialManager *materialManager = MaterialManager::instance();
   const char *objectName = nullptr;
+  const char *objectType = nullptr;
   const char *meshPath = nullptr;
   const char *materialName = nullptr;
   XMLElement * mesh = nullptr;
@@ -29,13 +31,16 @@ void Scene::loadObject(XMLElement *object)
   objectName = object->Attribute("name");
   if (objectName == nullptr)
     return;
+  objectType = object->Attribute("type");
+  if (objectType == nullptr)
+    objectType = "object";
   mesh = object->FirstChildElement("mesh");
   if (mesh == nullptr)
     return;
   meshPath = mesh->Attribute("name");
   if (meshPath == nullptr)
     return;
-  obj = ObjectManager::instance()->getObject(meshPath);
+  obj = ObjectManager::instance()->getObject(meshPath, objectType);
   if (obj == nullptr)
     return;
   materialElement = object->FirstChildElement("material");
@@ -76,9 +81,12 @@ void Scene::draw(float dt)
  for (const auto &object : m_Objs) {
     //object.second->rotate(dt*0.01f, {0,1,0});
     //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
+    CShaderProgram *program = object.second->m_Material->program;
+    program->use();
+    program->setUniformValue("lightPos", m_Objs["light"]->m_transform.position);
 
     object.second->draw(m_Camera);
- }
+  }
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -103,6 +111,7 @@ void Scene::update(float dt)
   for (auto &obj : m_Objs)
   {
     obj.second->update(dt);
+    obj.second->velocity.y -= World::gravity;
   }
 }
 
@@ -119,19 +128,23 @@ bool Scene::save()
     {
       XMLElement * object = xmlDoc.NewElement("object");
       XMLElement * mesh = xmlDoc.NewElement("mesh");
+      XMLElement * material = xmlDoc.NewElement("material");;
       XMLElement * transform;
 
       //XMLElement * texture = xmlDoc.NewElement("texture");
       std::string objectName = objectManager->getPathByPointer(obj.second);
       object->SetAttribute("name", obj.first.c_str());
       mesh->SetAttribute("name", obj.second->m_path->c_str());
+      material->SetAttribute("name", obj.second->m_Material->name->c_str());
       //transform->SetAttribute("name", obj.second->m_path->c_str());
       //position->SetText(1.23);
 
 
       transform = saveTransform(xmlDoc, obj.second);
+      transform = saveTransform(xmlDoc, obj.second);
       object->InsertEndChild(mesh);
       object->InsertEndChild(transform);
+      object->InsertEndChild(material);
       pScene->InsertEndChild(object);
       //object->InsertEndChild(mesh);
     }
@@ -197,6 +210,14 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
   transform->InsertEndChild(scale);
 
   return transform;
+}
+
+XMLElement *Scene::saveMaterial(XMLDocument &xmlDoc, Object *object)
+{
+  XMLElement * material = xmlDoc.NewElement("material");
+
+  //material->InsertEndChild(MaterialManager::instance()->saveShader(xmlDoc, object->m_Material->program->))
+
 }
 
 Transform Scene::loadTransform(XMLElement &object)

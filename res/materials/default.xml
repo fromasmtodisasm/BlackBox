@@ -9,11 +9,20 @@
       <shader type="fragment" name="fragment.glsl"/>
     </shaders>
   </material>
-  <material name="base_color">
-    <color red="255" green="0" blue="0"/>
+  <material name="light">
+    <color red="1.0" green="1.0" blue="1.0"/>
     <shaders>
       <shader type="vertex" name="vertex.glsl"/>
-      <shader type="fragment" name="basecolor.glsl"/>
+      <shader type="fragment" name="basecolor.frag"/>
+    </shaders>
+  </material>
+  <material name="coral">
+    <textures>
+      <texture type="diffuse" name="coral.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="vertex.glsl"/>
+      <shader type="fragment" name="fragment.glsl"/>
     </shaders>
   </material>
   <material name="player">
@@ -29,6 +38,16 @@
     <textures>
       <texture type="diffuse" name="check.jpg"/>
     </textures>
+    <shaders>
+      <shader type="vertex" name="vertex.glsl"/>
+      <shader type="fragment" name="fragment.glsl"/>
+    </shaders>
+  </material>
+  <material name="default">
+    <textures>
+      <texture type="diffuse" name="check.jpg"/>
+    </textures>
+    
     <shaders>
       <shader type="vertex" name="vertex.glsl"/>
       <shader type="fragment" name="fragment.glsl"/>

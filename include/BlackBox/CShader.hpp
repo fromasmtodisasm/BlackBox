@@ -2,6 +2,7 @@
 #include <BlackBox/Opengl.hpp>
 #include <glm/fwd.hpp>
 #include <string>
+#include <memory>
 
 class CShader; 
 class CShaderProgram;
@@ -36,6 +37,7 @@ private:
 	std::string m_Text;
   ShaderStatus m_Status;
 public:
+  std::shared_ptr<std::string> m_path;
   int m_Type;
   enum type : int{
     E_VERTEX = GL_VERTEX_SHADER,
@@ -49,6 +51,7 @@ public:
   bool compile();
   bool bind();
   void print();
+  std::string typeToStr();
   std::string getName();
   GLuint get();
 };

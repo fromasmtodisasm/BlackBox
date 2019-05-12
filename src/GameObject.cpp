@@ -12,6 +12,7 @@ void GameObject::update(float deltatime)
 {
   float speed = deltatime*MOVE_SPEED;
   float rotSpeed = deltatime*5.f;//m_rotAngle;
+  /*
   for (const auto &key : m_keys)
   {
     switch (key)
@@ -22,6 +23,7 @@ void GameObject::update(float deltatime)
   if (m_transform.position.y < 0)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
+  */
 }
 
 /*
@@ -39,12 +41,14 @@ bool GameObject::OnInputEvent(sf::Event &event)
 {
   switch (event.type)
   {
+  /*
   case sf::Event::KeyPressed:
     m_keys.insert(event.key.code);
     return true;
   case sf::Event::KeyReleased:
     m_keys.erase(event.key.code);
     return true;
+  */
   }
   return false;
 }

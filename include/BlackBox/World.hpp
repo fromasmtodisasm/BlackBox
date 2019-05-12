@@ -13,8 +13,8 @@ class World {
   friend class GameGUI;
 private:
   Scene *activeScene;
-  float gravity = 0;
 public:
+  static float gravity;
   World();
   void draw(float dt);
 

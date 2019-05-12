@@ -13,6 +13,9 @@ struct Vertex
   glm::vec3 pos;
   glm::vec2 uv;
   glm::vec3 n;
+  Vertex() = default;
+  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), n(n)
+  {}
 };
 
 struct Mesh {

@@ -1,6 +1,7 @@
 #include <BlackBox/MaterialManager.hpp>
 #include <BlackBox/TextureManager.hpp>
 #include <BlackBox/ShaderManager.hpp>
+#include <glm/glm.hpp>
 
 #include <tinyxml2.h>
 #ifndef XMLCheckResult
@@ -56,10 +57,19 @@ Material *MaterialManager::getMaterial(std::string name)
 
 bool MaterialManager::init(std::string materialLib)
 {
-  defaultMaterial = new Material();
-  defaultMaterial->diffuse = TextureManager::instance()->getTexture("check.jpg");
-  defaultMaterial->program = defaultProgram;
-  return MaterialManager::instance()->loadLib(materialLib);
+  bool status = false;
+  status = MaterialManager::instance()->loadLib(materialLib);
+  if (status)
+  {
+    /*
+    defaultMaterial = new Material();
+    defaultMaterial->diffuse = TextureManager::instance()->getTexture("check.jpg");
+    defaultMaterial->program = defaultProgram;
+    */
+    defaultMaterial = MaterialManager::instance()->getMaterial("default");
+    //defaultMaterial->name = std::make_shared<std::string>("default");
+  }
+  return status;
 }
 
 bool MaterialManager::loadLib(std::string name)
@@ -98,37 +108,52 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   materialName = material->Attribute("name");
   if (materialName == nullptr)
     return false;
+  result->name = std::make_shared<std::string>(materialName);
   //============ TEXTURES LOADING =======================//
   XMLElement *textures = material->FirstChildElement("textures");
-  if (textures == nullptr) return false;
-  XMLElement *image = textures->FirstChildElement("texture");
-  if (image == nullptr) return false;
-  while (image != nullptr)
+  XMLElement *colorElement = material->FirstChildElement("color");
+  result->diffuseColor = glm::vec3(1.0, 0.5, 0.31);
+  if (colorElement != nullptr)
   {
-    Texture *t = loadTexture(image);
-    switch(t->type)
+    result->diffuseColor.r = colorElement->FloatAttribute("red");
+    result->diffuseColor.g = colorElement->FloatAttribute("green");
+    result->diffuseColor.b = colorElement->FloatAttribute("blue");
+  }
+  if (textures != nullptr)
+  {
+    result->hasTexture = true;
+    XMLElement *image = textures->FirstChildElement("texture");
+    if (image == nullptr) return false;
+    while (image != nullptr)
     {
-    case TextureType::DIFFUSE:
-      result->diffuse = t;
-      break;
-    case TextureType::SPECULAR:
-      result->specular = t;
-      break;
-    case TextureType::BUMP:
-      result->bump = t;
-      break;
-    case TextureType::NORMAL:
-      result->normal = t;
-      break;
-    case TextureType::MASK:
-      result->mask = t;
-      break;
-    default:
-    {
-      cout << "Error: unknown texture type" << endl;
+      Texture *t = loadTexture(image);
+      switch(t->type)
+      {
+      case TextureType::DIFFUSE:
+        result->diffuse = t;
+        break;
+      case TextureType::SPECULAR:
+        result->specular = t;
+        break;
+      case TextureType::BUMP:
+        result->bump = t;
+        break;
+      case TextureType::NORMAL:
+        result->normal = t;
+        break;
+      case TextureType::MASK:
+        result->mask = t;
+        break;
+      default:
+      {
+        cout << "Error: unknown texture type" << endl;
+      }
+      }
+      image = image->NextSiblingElement("texture");
     }
-    }
-    image = image->NextSiblingElement("texture");
+  }
+  else {
+    result->hasTexture = false;
   }
   //============ SHADERS LOADING =======================//
   XMLElement *shaders = material->FirstChildElement("shaders");
@@ -149,6 +174,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
     return false;
   result->program = program;
   cache[materialName] = result;
+  cout << "Created material: " << materialName << endl;
   return true;
 }
 
@@ -169,6 +195,17 @@ Texture *MaterialManager::loadTexture(XMLElement *texture)
   return result;
 }
 
+XMLElement *MaterialManager::saveTexture(XMLDocument &xmlDoc, Texture *texture)
+{
+  XMLElement *textureElement = xmlDoc.NewElement("shader");
+
+  textureElement->SetAttribute("type", texture->typeToStr().c_str());
+  textureElement->Attribute("name", texture->path->c_str());
+
+  return textureElement;
+
+}
+
 CShader *MaterialManager::loadShader(XMLElement *shader)
 {
   ShaderManager *shaderManager = ShaderManager::instance();
@@ -179,4 +216,14 @@ CShader *MaterialManager::loadShader(XMLElement *shader)
   name = shader->Attribute("name");
 
   return shaderManager->getShader(name, type);
+}
+
+XMLElement *MaterialManager::saveShader(XMLDocument &xmlDoc, CShader *shader)
+{
+  XMLElement *shaderElement = xmlDoc.NewElement("shader");
+
+  shaderElement->SetAttribute("type", shader->typeToStr().c_str());
+  shaderElement->Attribute("name", shader->m_path->c_str());
+
+  return shaderElement;
 }

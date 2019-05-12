@@ -1,4 +1,7 @@
 #include <BlackBox/Texture.hpp>
+#include <iostream>
+
+using namespace std;
 
 Texture::Texture()
 {
@@ -44,4 +47,27 @@ void Texture::setType(const char *type)
     this->type = MASK;
   else
     this->type = UNKNOWN;
+}
+
+std::string Texture::typeToStr()
+{
+  std::string result;
+  switch(type)
+    {
+    case TextureType::DIFFUSE:
+      return "diffuse";
+    case TextureType::SPECULAR:
+      return "specular";
+    case TextureType::BUMP:
+      return "bump";
+    case TextureType::NORMAL:
+      return "normal";
+    case TextureType::MASK:
+      return "mask";
+    default:
+    {
+      cout << "Error: unknown texture type" << endl;
+      return "";
+    }
+    }
 }

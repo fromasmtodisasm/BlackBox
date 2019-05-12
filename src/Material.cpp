@@ -7,32 +7,40 @@
 void Material::apply(Object *object, CCamera *camera)
 {
   GLenum block = GL_TEXTURE0;
-  program->use();
+  //program->use();
   program->setUniformValue("Model", object->getTransform());
   program->setUniformValue("View", camera->getViewMatrix());
   program->setUniformValue("Projection", camera->getProjectionMatrix());
-  program->setUniformValue("lightPos", glm::vec3(4,4,4));//m_Objs["light"]->m_transform.position);
+  //program->setUniformValue("lightPos", glm::vec3(0,0,0));//m_Objs["light"]->m_transform.position);
   program->setUniformValue("lightColor", glm::vec3(1,1,1.0));
 
-  if (diffuse != nullptr)
+  if (hasTexture)
   {
-    activeTexture(block, "diffuseTexture", diffuse);
-    block++;
+    program->setUniformValue("diffuseColor", glm::vec3(1.0));
+    if (diffuse != nullptr)
+    {
+      activeTexture(block, "diffuseTexture", diffuse);
+      block++;
+    }
+    if (specular != nullptr)
+    {
+      activeTexture(block, "specularTexture", specular);
+      block++;
+    }
+    if (bump != nullptr)
+    {
+      activeTexture(block, "bumpTexture", bump);
+      block++;
+    }
   }
-  if (specular != nullptr)
-  {
-    activeTexture(block, "specularTexture", specular);
-    block++;
-  }
-  if (bump != nullptr)
-  {
-    activeTexture(block, "bumpTexture", bump);
-    block++;
+  else {
+    program->setUniformValue("diffuseColor", diffuseColor);
   }
 }
 
 void Material::setTexture(Texture *texture, const char *type)
 {
+  hasTexture = true;
   texture->setType(type);
   switch(texture->type)
     {
@@ -54,6 +62,7 @@ void Material::setTexture(Texture *texture, const char *type)
     default:
     {
       // TODO: LOG IT
+      //if (!hasTexture) hasTexture = false;
     }
     }
 }

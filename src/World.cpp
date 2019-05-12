@@ -1,5 +1,6 @@
 #include <BlackBox/World.hpp>
 
+float World::gravity = 1;
 
 World::World()
 {

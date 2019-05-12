@@ -13,6 +13,11 @@ CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.ob
   move({0,0,0});
 }
 
+CPlayer::CPlayer(Object *obj) : GameObject(obj)
+{
+
+}
+
 bool CPlayer::OnInputEvent(sf::Event &event)
 {
   float dt = Game->getDeltaTime();
@@ -39,7 +44,13 @@ bool CPlayer::OnInputEvent(sf::Event &event)
       return true;
     }
     return false;
-	}
+  }
+  case sf::Event::KeyPressed:
+    m_keys.insert(event.key.code);
+    return true;
+  case sf::Event::KeyReleased:
+    m_keys.erase(event.key.code);
+    return true;
   default:
     return GameObject::OnInputEvent(event);
   }

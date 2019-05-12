@@ -35,6 +35,7 @@ Texture *TextureManager::getTexture(std::string name)
     }
     else {
       texture = new Texture(name);
+      texture->path = std::make_shared<std::string>(Path);
       cache[Path] = texture;
     }
     if (texture == nullptr)

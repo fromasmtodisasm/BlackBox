@@ -314,7 +314,7 @@ void CGame::showMenu()
 
 bool CGame::initPlayer()
 {
-  m_player = new CPlayer();
+  m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer")) ;
   m_player->attachCamera(m_camera1);
   m_player->setGame(this);
   m_inputHandler->AddEventListener(m_player);

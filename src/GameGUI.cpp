@@ -17,7 +17,8 @@ void GameGUI::Draw()
       show_player=1,
       show_camera=1,
       show_demo=0,
-      edit_player = 1;
+      edit_player = 1,
+      lighting = 0;
   bool open = true;
   ImGuiWindowFlags window_flags = 0;
   //window_flags |= ImGuiWindowFlags_NoMove;
@@ -38,6 +39,10 @@ void GameGUI::Draw()
     ImGui::Checkbox("Show Camera", &show_camera);
     ImGui::Checkbox("Show Demo", &show_demo);
     ImGui::Checkbox("Edit player", &edit_player);
+    if (ImGui::Checkbox("Light", &lighting))
+    {
+      game->m_scene->lighting = true;
+    }
     if (edit_player)
     {
       if (ImGui::TreeNode("Object Inspector"))
@@ -176,6 +181,8 @@ void GameGUI::objectInfo(Object *obj, std::string name)
         ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.scale.z, inputs_step ? &f32_one : NULL);
         ImGui::TreePop();
       }
+      char materialName[64];
+      ImGui::InputText("Material", (char*)obj->m_Material->name->data(), obj->m_Material->name->size(),ImGuiInputTextFlags_ReadOnly);
       ImGui::TreePop();
     }
 

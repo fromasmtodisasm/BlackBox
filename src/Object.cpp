@@ -69,9 +69,11 @@ void Object::setShaderProgram(CShaderProgram* shader)
 
 void Object::update(float deltatime)
 {
+  /*
   if (m_transform.position.y < 0)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
+  */
 }
 
 void Object::setTexture(Texture *texture, const char *type)
@@ -134,7 +136,17 @@ Object * Object::load(string path)
   VertexArrayObject *vb;
   std::vector<Vertex> p;
 
-  if (!loadOBJ(path.c_str(), p))
+  if (path == "res/geom/plane.obj")
+  {
+    p.resize(6);
+    p[0] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
+    p[1] = Vertex({-1,0,-1},	{0,1}, {0,1,0});
+    p[2] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
+    p[3] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
+    p[4] = Vertex({1,0,1}, 		{0,1}, {0,1,0});
+    p[5] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
+  }
+  else if (!loadOBJ(path.c_str(), p))
     return nullptr;
   
   vb = new VertexArrayObject(p.data(), static_cast<GLint>(p.size()), GL_TRIANGLES);

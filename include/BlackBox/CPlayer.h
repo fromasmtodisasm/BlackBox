@@ -17,6 +17,7 @@ class CPlayer : public GameObject
   const float MOUSE_SPEED = 1.5f;
   const float MOUSE_SENSIVITY = 0.05f;
   CGame *Game;
+  std::set<sf::Keyboard::Key> m_keys;
   friend class CGame;
   enum MouseState
   {
@@ -26,6 +27,7 @@ class CPlayer : public GameObject
 
 public:
   CPlayer();
+  CPlayer(Object *obj);
 
   // IInputEventListener interface
 public:

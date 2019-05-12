@@ -27,11 +27,11 @@ protected:
   std::shared_ptr<Mesh> m_Mesh;
   CShaderProgram *m_Shader;
   OBJType m_type;
-  Material *m_Material = nullptr;
   Object();
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
 public:
+  Material *m_Material = nullptr;
   static int refs;
   std::shared_ptr<std::string> m_path;
   float friction = 0.99;

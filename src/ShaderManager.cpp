@@ -44,6 +44,7 @@ CShader *ShaderManager::getShader(string name, string type)
   }
   else {
     result = CShader::load(Path, str2typ(type));
+    result->m_path = std::make_shared<std::string>(Path);
     if (result == nullptr)
       return result;
     cache[Path] = result;

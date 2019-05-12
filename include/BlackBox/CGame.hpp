@@ -78,9 +78,9 @@ public:
 public:
   CGame(std::string title);
   ~CGame() = default;
-  bool init(IEngine *pSystem);
-  bool update();
-  bool run();
+  bool init(IEngine *pSystem) override;
+  bool update() override;
+  bool run() override;
   void input();
 
   bool loadScene();
@@ -89,7 +89,7 @@ public:
 
   // IInputEventListener interface
 public:
-  virtual bool OnInputEvent(sf::Event &event);
+  virtual bool OnInputEvent(sf::Event &event) override;
 
   // IGame interface
 public:

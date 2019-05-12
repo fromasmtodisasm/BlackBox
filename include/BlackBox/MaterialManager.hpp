@@ -24,5 +24,7 @@ private:
   bool loadLib(std::string name);
   bool loadMaterial(tinyxml2::XMLElement *material);
   Texture *loadTexture(tinyxml2::XMLElement *texture);
+  tinyxml2::XMLElement *saveTexture(tinyxml2::XMLDocument &xmlDoc, Texture *texture);
   CShader *loadShader(tinyxml2::XMLElement *shader);
+  tinyxml2::XMLElement *saveShader(tinyxml2::XMLDocument &xmlDoc, CShader *shader);
 };

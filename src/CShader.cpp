@@ -96,7 +96,17 @@ bool CShader::bind() {
 }
 
 void CShader::print() {
-  cout << m_Text << endl; 
+  cout << m_Text << endl;
+}
+
+string CShader::typeToStr()
+{
+  switch (m_Type) {
+  case E_VERTEX:
+    return "vertex";
+  case E_FRAGMENT:
+    return "fragment";
+  }
 }
 
 string CShader::getName() {

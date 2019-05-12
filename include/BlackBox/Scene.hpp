@@ -17,6 +17,7 @@ private:
   World *world;
   std::map<std::string,Object*> m_Objs;
   CCamera *m_Camera;
+  bool lighting;
 private:
   void loadObject(tinyxml2::XMLElement *object);
   void loadMesh(tinyxml2::XMLElement *mesh);
@@ -30,6 +31,7 @@ public:
   void update(float dt);
   bool save();
   tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);
+  tinyxml2::XMLElement *saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object);
   Transform loadTransform(tinyxml2::XMLElement &object);
   bool load(std::string name);
 };
