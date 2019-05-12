@@ -86,7 +86,7 @@ Object Object::operator=(Object &that)
   Object obj;
   obj.m_Mesh = that.m_Mesh;
   obj.m_type = that.m_type;
-
+  return obj;
 }
 
 Object *Object::clone()

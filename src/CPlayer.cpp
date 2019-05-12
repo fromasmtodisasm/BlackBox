@@ -119,4 +119,5 @@ void CPlayer::update(float deltatime)
 
 CPlayer *CPlayer::operator=(Object *obj)
 {
+  return nullptr;
 }

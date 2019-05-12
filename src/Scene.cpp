@@ -157,7 +157,7 @@ bool Scene::save()
   XMLCheckResult(eResult);
 
 
-
+  return true;
 }
 
 XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
@@ -217,7 +217,7 @@ XMLElement *Scene::saveMaterial(XMLDocument &xmlDoc, Object *object)
   XMLElement * material = xmlDoc.NewElement("material");
 
   //material->InsertEndChild(MaterialManager::instance()->saveShader(xmlDoc, object->m_Material->program->))
-
+  return material;
 }
 
 Transform Scene::loadTransform(XMLElement &object)
