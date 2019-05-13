@@ -140,63 +140,8 @@ bool CGame::loadScene() {
   if (!MaterialManager::init("default.xml"))
     return false;
 
-  m_scene->load("default.xml");
 
-  //m_player = m_scene->getObject("MyPlayer");
-  //m_inputHandler->AddEventListener(m_player);
-  /*
-  Texture *text = new Texture("container.jpg");
-  Texture *plane_texture = new Texture("check.jpg");
-  Texture *player_texture = new Texture("pengium.png");
-
-  Object *obj;
-  glm::vec3 light_pos(4,4,-4);
-  //Creating objects
-  Object *cube = Primitive::create(Primitive::CUBE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
-  Object *BB = Primitive::create(Primitive::CUBE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
-  Object *plane = Primitive::create(Primitive::PLANE, shaderManager->getProgram("vertex.glsl", "fragment.glsl"));
-
-  m_player = new CPlayer();
-  m_scene->addObject("MyPlayer", m_player);
-
-  CShaderProgram *shader = shaderManager->getProgram("vertex.glsl", "fragment.glsl");
-  Object *light =  Primitive::create(Primitive::CUBE,shaderManager->getProgram("vertex.glsl", "basecolor.frag"));
-  light->move(light_pos);
-  light->scale(glm::vec3(0.3f));
-  plane->moveTo(glm::vec3(0,0,0));
-  plane->scale(glm::vec3(50,50,50));
-  plane->setTexture(plane_texture);
-  plane->move(glm::vec3(0,-3,0));
-
-  BB->setTexture(text);
-  //m_player->setTexture(text);
-  m_player->setShaderProgram(shader);
-  m_player->scale({10,10,10});
-  m_player->setTexture(player_texture);
-
-  BB->scale(glm::vec3(70,70,70));
-  m_scene->addObject("light", light);
-  m_scene->addObject("plane", plane);
-  m_scene->addObject("BB", BB);
-  shader->create();
-  for (int i = 0; i < 1; i++)
-  {
-    obj = ObjectManager::instance()->getObject("cube.obj");
-    obj->setShaderProgram(shader);
-    obj->setType(OBJType::TPRIMITIVE);
-    obj->moveTo(glm::vec3(0,0,0));
-    obj->scale(glm::vec3(i*20));
-
-    obj->setTexture(plane_texture);
-    m_scene->addObject("cube" + std::to_string(i), obj);
-  }
-  GameObject *go = GameObject::create(Primitive::CUBE);
-  go->setTexture(text);
-  go->setShaderProgram(cube->getShaderProgram());
-  m_inputHandler->AddEventListener(go);
-  m_inputHandler->AddEventListener(m_player);
-  */
-  return true;
+  return m_scene->load("default.xml");
 }
 
 void CGame::setRenderState()
