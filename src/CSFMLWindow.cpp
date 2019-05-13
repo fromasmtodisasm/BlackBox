@@ -136,7 +136,7 @@ int CSFMLWindow::getWidth()
 int CSFMLWindow::getHeight()
 {
   //return m_Height;
-  m_Window->getSize().y;
+  return m_Window->getSize().y;
 }
 
 void CSFMLWindow::setFlags(int flags)

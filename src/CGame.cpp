@@ -318,6 +318,7 @@ bool CGame::initPlayer()
   m_player->attachCamera(m_camera1);
   m_player->setGame(this);
   m_inputHandler->AddEventListener(m_player);
+  return true;
 }
 
 

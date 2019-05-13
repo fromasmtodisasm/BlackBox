@@ -56,6 +56,7 @@ bool ShaderManager::init()
 {
   defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
   defaultProgram->create();
+  return true;
 }
 
 CShader::type ShaderManager::str2typ(string type)

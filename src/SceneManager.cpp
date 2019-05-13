@@ -7,5 +7,5 @@ SceneManager *SceneManager::manager = nullptr;
 
 SceneManager *SceneManager::instance()
 {
-
+  return nullptr;
 }
