@@ -81,6 +81,9 @@ void GameGUI::Draw()
     {
       game->m_running = false;
     }
+    ImGuiIO &igio = ImGui::GetIO();
+    
+    ImGui::Text("x = %f, y = %f",igio.MousePos.x,igio.MousePos.y);
   ImGui::End();
   ImGui::PopFont();
 

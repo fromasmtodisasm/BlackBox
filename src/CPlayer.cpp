@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <BlackBox/CPlayer.h>
 #include <BlackBox/Primitives.hpp>
 #include <BlackBox/CGame.hpp>
@@ -24,6 +26,10 @@ bool CPlayer::OnInputEvent(sf::Event &event)
   switch (event.type) {
   case sf::Event::MouseButtonPressed:
   {
+    /*if(mouseState == LOCKED) {
+      Game->m_Window->mouseUnlock();
+      mouseState = FREE;
+    }*/
     if (event.mouseButton.button == sf::Mouse::Left && mouseState != LOCKED)
       Game->m_Window->mouseLock(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)), mouseState = LOCKED;
     return true;
@@ -37,10 +43,14 @@ bool CPlayer::OnInputEvent(sf::Event &event)
   }
   case sf::Event::MouseMoved:
 	{
+    std::cout << "mouse moved ( " << event.mouseMove.x << ", " << event.mouseMove.y << " )" << std::endl;
     if (mouseState == LOCKED)
     {
+      std::cout << "move game mouse" << std::endl;
       sf::Vector2i delta = p_gIGame->getInputHandler()->getDeltaMouse();
       m_Camera->ProcessMouseMovement(delta.x, -delta.y);
+/*      sf::Vector2i pos = sf::Mouse::getPosition();
+      sf::Mouse::setPosition(pos + delta);*/
       return true;
     }
     return false;

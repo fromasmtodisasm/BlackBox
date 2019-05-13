@@ -61,7 +61,6 @@ public:
   // IWindow interface
 public:
   virtual void *getHandle() override;
-
   // IInputEventListener interface
 public:
   bool OnInputEvent(sf::Event &event);
