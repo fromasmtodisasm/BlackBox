@@ -12,6 +12,7 @@ void Material::apply(Object *object, CCamera *camera)
   program->setUniformValue("View", camera->getViewMatrix());
   program->setUniformValue("Projection", camera->getProjectionMatrix());
   //program->setUniformValue("lightPos", glm::vec3(0,0,0));//m_Objs["light"]->m_transform.position);
+  program->setUniformValue("viewPos", camera->Position);
   program->setUniformValue("lightColor", glm::vec3(1,1,1.0));
 
   if (hasTexture)
@@ -35,6 +36,12 @@ void Material::apply(Object *object, CCamera *camera)
   }
   else {
     program->setUniformValue("diffuseColor", diffuseColor);
+    /*
+    program->setUniformValue("material.ambient",  glm::vec3(1.0f, 0.5f, 0.31f));
+    program->setUniformValue("material.diffuse",  glm::vec3(1.0f, 0.5f, 0.31f));
+    program->setUniformValue("material.specular", glm::vec3(0.5f, 0.5f, 0.5f ));
+    program->setUniformValue("material.shininess", 32.0f);
+    */
   }
 }
 

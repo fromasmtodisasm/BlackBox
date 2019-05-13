@@ -5,14 +5,14 @@
       <texture type="specular" name="container.jpg"/>
     </textures>
     <shaders>
-      <shader type="vertex" name="vertex.glsl"/>
-      <shader type="fragment" name="fragment.glsl"/>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
   <material name="light">
     <color red="1.0" green="1.0" blue="1.0"/>
     <shaders>
-      <shader type="vertex" name="vertex.glsl"/>
+      <shader type="vertex" name="texturedphong.vs"/>
       <shader type="fragment" name="basecolor.frag"/>
     </shaders>
   </material>
@@ -21,8 +21,17 @@
       <texture type="diffuse" name="coral.png"/>
     </textures>
     <shaders>
-      <shader type="vertex" name="vertex.glsl"/>
-      <shader type="fragment" name="fragment.glsl"/>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="red">
+    <textures>
+      <texture type="diffuse" name="red.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
   <material name="player">
@@ -30,8 +39,8 @@
       <texture type="diffuse" name="pengium.png"/>
     </textures>
     <shaders>
-      <shader type="vertex" name="vertex.glsl"/>
-      <shader type="fragment" name="fragment.glsl"/>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
   <material name="chess_floor">
@@ -39,8 +48,8 @@
       <texture type="diffuse" name="check.jpg"/>
     </textures>
     <shaders>
-      <shader type="vertex" name="vertex.glsl"/>
-      <shader type="fragment" name="fragment.glsl"/>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
   <material name="default">
@@ -49,8 +58,8 @@
     </textures>
     
     <shaders>
-      <shader type="vertex" name="vertex.glsl"/>
-      <shader type="fragment" name="fragment.glsl"/>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
 </materials>

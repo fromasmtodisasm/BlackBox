@@ -144,7 +144,13 @@ if (LINUX OR UNIX OR APPLE)
 endif()
 #--------------------------------------------------
 #IMGUI
-add_library(ImGui STATIC)
+if (BUILD_SHARED_LIBS)
+  add_library(ImGui SHARED)
+  message(STATUS "build shared libs!")
+else()
+  add_library(ImGui STATIC)
+  message(STATUS "build static libs!")
+endif()
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
 set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 

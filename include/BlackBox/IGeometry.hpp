@@ -3,7 +3,9 @@
 #include <BlackBox/VertexArrayObject.hpp>
 #include <cassert>
 #include <glm/glm.hpp>
+
 #include <memory>
+#include <string>
 
 class VertexArrayObject;
 class IndexBuffer;
