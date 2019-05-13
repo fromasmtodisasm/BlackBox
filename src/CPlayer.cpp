@@ -23,6 +23,7 @@ CPlayer::CPlayer(Object *obj) : GameObject(obj)
 bool CPlayer::OnInputEvent(sf::Event &event)
 {
   float dt = Game->getDeltaTime();
+  //delta = {0,0};
   switch (event.type) {
   case sf::Event::MouseButtonPressed:
   {
@@ -47,7 +48,7 @@ bool CPlayer::OnInputEvent(sf::Event &event)
     if (mouseState == LOCKED)
     {
       std::cout << "move game mouse" << std::endl;
-      sf::Vector2i delta = p_gIGame->getInputHandler()->getDeltaMouse();
+      delta = p_gIGame->getInputHandler()->getDeltaMouse();
       m_Camera->ProcessMouseMovement(delta.x, -delta.y);
 /*      sf::Vector2i pos = sf::Mouse::getPosition();
       sf::Mouse::setPosition(pos + delta);*/

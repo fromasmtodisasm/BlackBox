@@ -83,7 +83,7 @@ void GameGUI::Draw()
     }
     ImGuiIO &igio = ImGui::GetIO();
     
-    ImGui::Text("x = %f, y = %f",igio.MousePos.x,igio.MousePos.y);
+    ImGui::Text("delta.x = %d, delta.y = %d",game->m_player->delta.x, game->m_player->delta.x);//,igio.MousePos.x,igio.MousePos.y);
   ImGui::End();
   ImGui::PopFont();
 

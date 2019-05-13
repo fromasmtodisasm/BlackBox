@@ -24,6 +24,7 @@ class CPlayer : public GameObject
     LOCKED,
     FREE
   }mouseState;
+  sf::Vector2i delta;
 
 public:
   CPlayer();
