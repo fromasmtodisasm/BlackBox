@@ -168,9 +168,9 @@ void GameGUI::objectInfo(Object *obj, std::string name)
       }
       if (ImGui::TreeNode("Rotation"))
       {
-        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.rotation.x, inputs_step ? &f32_one : NULL);
-        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.rotation.y, inputs_step ? &f32_one : NULL);
-        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.rotation.z, inputs_step ? &f32_one : NULL);
+        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.rotation.x, inputs_step ? &f32_one : nullptr);
+        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.rotation.y, inputs_step ? &f32_one : nullptr);
+        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.rotation.z, inputs_step ? &f32_one : nullptr);
         ImGui::TreePop();
         //obj->m_transform.rotation = glm::radians(obj->m_transform.rotation);
       }

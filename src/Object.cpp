@@ -61,9 +61,9 @@ glm::mat4 Object::getTransform()
   glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
   scale = glm::scale(scale, m_transform.scale);
   translate = glm::translate(translate, m_transform.position);
-  rotate = glm::rotate(rotate, m_transform.rotation.x, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
-  rotate = glm::rotate(rotate, m_transform.rotation.y, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-  rotate = glm::rotate(rotate, m_transform.rotation.z, glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
+  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.x), glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.y), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.z), glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
   return translate * rotate * scale;
 }
 
@@ -158,7 +158,7 @@ Object * Object::load(string path)
   mesh = std::make_shared<Mesh>(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;
-  obj->m_path = std::make_shared<std::string>(path);
+  obj->m_Mesh->m_Path = std::make_shared<std::string>(path);
 	return obj;
 }
 

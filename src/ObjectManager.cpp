@@ -71,4 +71,3 @@ Object *ObjectManager::objectFactory(Object *object, string type)
     return new GameObject(object);
   else return object;
 }
-

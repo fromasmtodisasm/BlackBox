@@ -16,6 +16,7 @@ void main()
 {
     gl_Position = Projection * View * Model * vec4(Position, 1.0f);
     FragPos = vec3(Model * vec4(Position, 1.0f));
-    Normal = VertexNormal;
+    //Normal = VertexNormal;
+    Normal = mat3(transpose(inverse(Model)))*VertexNormal;
     TextCoord = UV;
 }

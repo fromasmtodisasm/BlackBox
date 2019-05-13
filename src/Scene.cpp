@@ -134,7 +134,7 @@ bool Scene::save()
       //XMLElement * texture = xmlDoc.NewElement("texture");
       std::string objectName = objectManager->getPathByPointer(obj.second);
       object->SetAttribute("name", obj.first.c_str());
-      mesh->SetAttribute("name", obj.second->m_path->c_str());
+      mesh->SetAttribute("name", obj.second->m_Mesh->m_Path->c_str());
       material->SetAttribute("name", obj.second->m_Material->name->c_str());
       //transform->SetAttribute("name", obj.second->m_path->c_str());
       //position->SetText(1.23);

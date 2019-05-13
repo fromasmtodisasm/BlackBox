@@ -45,9 +45,11 @@ void CSFMLWindow::mouseLock(sf::Vector2i pos)
 {
   Mouse.locked = true;
   Mouse.lockedPos = pos;
+  m_Window->setMouseCursorVisible(false);
 }
 
 void CSFMLWindow::mouseUnlock()
 {
   Mouse.locked = false;
+  m_Window->setMouseCursorVisible(true);
 }

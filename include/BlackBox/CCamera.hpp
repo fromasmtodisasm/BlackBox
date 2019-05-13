@@ -45,8 +45,10 @@ public:
     GLfloat MovementSpeed;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
-    GLfloat FOV = 45;
-    GLfloat Ratio = 16.0/9;
+    GLfloat FOV = 45.0f;
+    GLfloat Ratio = 16.0f/9;
+    GLfloat zNear = 0.1f;
+    GLfloat zFar = 5000.f;
 
     // Constructor with vectors
     CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
@@ -75,7 +77,7 @@ public:
 
     glm::mat4 getProjectionMatrix()
     {
-      return glm::perspective(glm::radians(FOV), Ratio, 0.1f, 1000.0f);
+      return glm::perspective(glm::radians(FOV), Ratio, zNear, zFar);
     }
 
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

@@ -3,6 +3,7 @@
 #include <BlackBox/VertexArrayObject.hpp>
 #include <cassert>
 #include <glm/glm.hpp>
+#include <memory>
 
 class VertexArrayObject;
 class IndexBuffer;
@@ -23,6 +24,7 @@ protected:
   VertexArrayObject *m_Verts;  
   IndexBuffer *m_Indexes;
 public:
+  std::shared_ptr<std::string> m_Path;
   Mesh(VertexArrayObject *verts, IndexBuffer *indxs);
 
   VertexArrayObject *getVertexBuffer();
