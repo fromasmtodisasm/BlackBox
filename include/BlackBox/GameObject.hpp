@@ -10,10 +10,10 @@ protected:
   const float MOVE_SPEED = 0.5f;
   CCamera *m_Camera;
 
-  GameObject(const Object *obj);
   GameObject(Primitive::Type type);
 public:
-	virtual bool OnInputEvent(sf::Event &event) override;
+  GameObject(const Object *obj);
+  virtual bool OnInputEvent(sf::Event &event) override;
 	static GameObject *create(Primitive::Type type);
 
   // IObject interface

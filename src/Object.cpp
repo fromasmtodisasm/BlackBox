@@ -19,6 +19,11 @@ Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)
 {
 }
 
+Object::Object(Mesh *mesh) : m_Mesh(mesh)
+{
+
+}
+
 Object::Object(const Object *obj):
   m_transform(obj->m_transform.position, obj->m_transform.rotation, obj->m_transform.scale),
   m_Mesh(obj->m_Mesh), m_Shader(obj->m_Shader),

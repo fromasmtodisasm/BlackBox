@@ -1,14 +1,16 @@
 #pragma once
 
 class Object;
+class Mesh;
 
 #include <map>
 #include <string>
+#include <memory>
 
 class ObjectManager
 {
   static ObjectManager *manager;
-  std::map<std::string, Object*> cache;
+  std::map<std::string, std::shared_ptr<Mesh>> cache;
   //ObjectManager();
 public:
   static ObjectManager *instance();

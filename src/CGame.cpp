@@ -140,7 +140,6 @@ bool CGame::loadScene() {
   if (!MaterialManager::init("default.xml"))
     return false;
 
-
   return m_scene->load("default.xml");
 }
 

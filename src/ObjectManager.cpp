@@ -33,12 +33,11 @@ Object *ObjectManager::getObject(std::string object, std::string type)
     const auto v = cache.find(oPath);
     if (v != cache.end())
     {
-      //obj = v->second->clone();
-      obj = new Object(*v->second);
+      obj = objectFactory(new Object(v->second.get()), type);
     }
     else {
       obj = objectFactory(Object::load(oPath), type);
-      cache[oPath] = obj;
+      cache[oPath] = obj->m_Mesh;
     }
     if (obj == nullptr)
     {
@@ -56,7 +55,7 @@ string ObjectManager::getPathByPointer(Object *object)
 {
   for (auto &obj : cache)
   {
-    if (obj.second == object)
+    if (obj.second == object->m_Mesh)
       return obj.first;
   }
 
@@ -68,6 +67,8 @@ Object *ObjectManager::objectFactory(Object *object, string type)
 {
   if (type == "player")
     return new CPlayer(object);
-  return object;
+  else if (type == "gameobject")
+    return new GameObject(object);
+  else return object;
 }
 

@@ -62,7 +62,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="cube0">
+    <object name="cube0" type="gameobject">
         <mesh name="res/geom/cube.obj"/>
         <transform>
             <position>

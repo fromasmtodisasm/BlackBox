@@ -20,10 +20,10 @@ void GameObject::update(float deltatime)
       ;
     }
   }
+  */
   if (m_transform.position.y < 0)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
-  */
 }
 
 /*
