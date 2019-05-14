@@ -20,6 +20,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 find_package(OpenGL REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
 #--------------------------------------------------
 if (WIN32)
   find_library(GDI32_LIBRARY gdi32)
@@ -66,6 +67,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/CGame.cpp
   PRIVATE ${SOURCE_DIR}/CInputHandler.cpp
   PRIVATE ${SOURCE_DIR}/CPlayer.cpp
+  PRIVATE ${SOURCE_DIR}/CSDLWindow.cpp
   PRIVATE ${SOURCE_DIR}/CShader.cpp
   PRIVATE ${SOURCE_DIR}/GUI.cpp
   PRIVATE ${SOURCE_DIR}/GameGUI.cpp
@@ -97,6 +99,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CEngine.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGame.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CInputHandler.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CSDLWindow.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CShader.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CWindow.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Cube.hpp
@@ -193,6 +196,7 @@ endif()
 target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} tinyxml2)
 target_link_libraries(${PROJECT_NAME} ImGui)
+target_link_libraries(${PROJECT_NAME} SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
