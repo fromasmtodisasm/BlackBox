@@ -71,6 +71,9 @@ void GameGUI::Draw()
               ImGui::DragFloat("position.x", &light.second->position.x);
               ImGui::DragFloat("position.y", &light.second->position.y);
               ImGui::DragFloat("position.z", &light.second->position.z);
+              ImGui::ColorEdit4("ambient", (float*)& light.second->ambient, ImGuiColorEditFlags_NoAlpha );
+              ImGui::ColorEdit4("diffuse", (float*)& light.second->diffuse, ImGuiColorEditFlags_NoAlpha );
+              ImGui::ColorEdit4("specular", (float*)& light.second->specular, ImGuiColorEditFlags_NoAlpha );
 
               ImGui::TreePop();
             }
