@@ -12,11 +12,10 @@ void Material::apply(Object *object, CCamera *camera)
   program->setUniformValue( camera->getViewMatrix(),"View");
   program->setUniformValue( camera->getProjectionMatrix(),"Projection");
   program->setUniformValue( camera->Position,"viewPos");
+  program->setUniformValue( 32.0f,"material.shininess");
 
   if (hasTexture)
   {
-
-    program->setUniformValue( 128.0f,"material.shininess");
     if (diffuse != nullptr)
     {
       activeTexture(GL_TEXTURE0, "material.diffuse", diffuse);

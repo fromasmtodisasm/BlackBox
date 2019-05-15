@@ -151,10 +151,18 @@ void GameGUI::showLights(BaseLight* light, const char *name)
 
   if (ImGui::TreeNode(name)) {
     //ImGui::InputScalar("position", ImGuiDataType_Float, &game->m_World->gravity);
-    if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
+    if (light->BaseLight::type == BaseLight::DIRECTIONAL)
+    {
+      DirectionLight* _light = reinterpret_cast<DirectionLight*>(light);
+      ImGui::Text("direction");
+      ImGui::DragFloat("x", &_light->direction.x);
+      ImGui::DragFloat("y", &_light->direction.y);
+      ImGui::DragFloat("z", &_light->direction.z);
+    }
+    else if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
     {
       PointLight* _light = reinterpret_cast<PointLight*>(light);
-      ImGui::Text("Position");
+      ImGui::Text("position");
       ImGui::DragFloat("x", &_light->position.x);
       ImGui::DragFloat("y", &_light->position.y);
       ImGui::DragFloat("z", &_light->position.z);
@@ -164,14 +172,16 @@ void GameGUI::showLights(BaseLight* light, const char *name)
       ImGui::DragFloat("quadratic", &_light->quadratic, 0.001f);
       if (light->BaseLight::type == BaseLight::SPOT)
       {
-
+        SpotLight* _light = reinterpret_cast<SpotLight*>(light);
+        ImGui::DragFloat("cutOff", &_light->cutOff, 0.01f);
+        ImGui::DragFloat("outerCutOff", &_light->outerCutOff, 0.001f);
       }
     }
 
-    ImGui::ColorEdit4("ambient", (float*)& light->ambient, ImGuiColorEditFlags_NoAlpha );
-    ImGui::ColorEdit4("diffuse", (float*)& light->diffuse, ImGuiColorEditFlags_NoAlpha );
-    ImGui::ColorEdit4("specular", (float*)& light->specular, ImGuiColorEditFlags_NoAlpha );
-    ImGui::Checkbox("Directional", &light->isDirectional);
+    ImGui::ColorEdit3("ambient", (float*)& light->ambient);
+    ImGui::ColorEdit3("diffuse", (float*)& light->diffuse);
+    ImGui::ColorEdit3("specular", (float*)& light->specular);
+    ImGui::Checkbox("enabled", &light->enabled);
     /*
     ImGui::RadioButton("Point", (int*)&light.second->type, BaseLight::POINT); ImGui::SameLine();
     ImGui::RadioButton("Directional", (int*)&light.second->type, BaseLight::DIRECTIONAL); ImGui::SameLine();

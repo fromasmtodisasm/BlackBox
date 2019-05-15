@@ -201,26 +201,32 @@ void Scene::setupLights(Object* object)
 {
   CShaderProgram* program = object->m_Material->program;
   int currentLight = 0;
+  int nr_point_lights = 0;
   auto sun = m_DirectionLight.find("sun");
   if (sun != m_DirectionLight.end())
   {
-    program->setUniformValue({ -0.2f, -1.0f, -0.3f }, "dirLight.direction");
-    program->setUniformValue({ 0.05f, 0.05f, 0.05f }, "dirLight.ambient");
-    program->setUniformValue({ 0.4f, 0.4f, 0.4f }, "dirLight.diffuse");
-    program->setUniformValue({ 0.5f, 0.5f, 0.5f }, "dirLight.specular");
+    program->setUniformValue(sun->second->direction, "dirLight.direction");
+    program->setUniformValue(sun->second->ambient, "dirLight.ambient");
+    program->setUniformValue(sun->second->diffuse, "dirLight.diffuse");
+    program->setUniformValue(sun->second->specular, "dirLight.specular");
   }
-  // point light 1
+  // point lights
   for (const auto& light : m_PointLights)
   {
-    program->setUniformValue( light.second->position,"pointLights[%d].position", currentLight);
-    program->setUniformValue( light.second->ambient,"pointLights[%d].ambient", currentLight);
-    program->setUniformValue( light.second->diffuse,"pointLights[%d].diffuse", currentLight);
-    program->setUniformValue( light.second->specular,"pointLights[%d].specular", currentLight);
-    program->setUniformValue( 1.0f,"pointLights[%d].constant", currentLight);
-    program->setUniformValue( 0.09f,"pointLights[%d].linear", currentLight);
-    program->setUniformValue( 0.032f,"pointLights[%d].quadratic", currentLight);
-    ++currentLight;
+    if (light.second->enabled)
+    {
+      program->setUniformValue(light.second->position, "pointLights[%d].position", currentLight);
+      program->setUniformValue(light.second->ambient, "pointLights[%d].ambient", currentLight);
+      program->setUniformValue(light.second->diffuse, "pointLights[%d].diffuse", currentLight);
+      program->setUniformValue(light.second->specular, "pointLights[%d].specular", currentLight);
+      program->setUniformValue(light.second->constant, "pointLights[%d].constant", currentLight);
+      program->setUniformValue(light.second->linear, "pointLights[%d].linear", currentLight);
+      program->setUniformValue(light.second->quadratic, "pointLights[%d].quadratic", currentLight);
+      nr_point_lights++;
+      ++currentLight;
+    }
   }
+  program->setUniformValue(nr_point_lights, "countOfPointLights");
   // spotLight
   program->setUniformValue( m_Camera->Position,"spotLight.position");
   program->setUniformValue( m_Camera->Front,"spotLight.direction");

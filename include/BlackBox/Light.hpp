@@ -9,7 +9,7 @@ struct BaseLight
   glm::vec3 ambient;
   glm::vec3 diffuse;
   glm::vec3 specular;
-  bool isDirectional;
+  bool enabled;
   enum Type
   {
     DIRECTIONAL,
