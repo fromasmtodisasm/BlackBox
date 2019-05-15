@@ -34,9 +34,11 @@ Object *ObjectManager::getObject(std::string object, std::string type)
     if (v != cache.end())
     {
       obj = objectFactory(new Object(v->second.get()), type);
+      obj->type = type;
     }
     else {
       obj = objectFactory(Object::load(oPath), type);
+      obj->type = type;
       cache[oPath] = obj->m_Mesh;
     }
     if (obj == nullptr)

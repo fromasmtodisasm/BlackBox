@@ -32,6 +32,7 @@ protected:
   static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
 public:
   std::shared_ptr<Mesh> m_Mesh;
+  std::string type;
   Material *m_Material = nullptr;
   static int refs;
   std::shared_ptr<std::string> m_path;

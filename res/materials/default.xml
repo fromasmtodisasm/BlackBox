@@ -1,8 +1,18 @@
 <materials>
+  <material name="specular_box">
+    <textures>
+      <texture type="diffuse" name="container2.png"/>
+      <texture type="specular" name="container2_specular.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+      <!--<shininess/>-->
+  </material>
   <material name="wood_box">
     <textures>
       <texture type="diffuse" name="container.jpg"/>
-      <texture type="specular" name="container.jpg"/>
     </textures>
     <shaders>
       <shader type="vertex" name="texturedphong.vs"/>
@@ -19,6 +29,7 @@
   <material name="coral">
     <textures>
       <texture type="diffuse" name="coral.png"/>
+      <texture type="specular" name="gray.png"/>
     </textures>
     <shaders>
       <shader type="vertex" name="texturedphong.vs"/>

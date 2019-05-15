@@ -1,5 +1,6 @@
 #include <BlackBox/GUI.hpp>
 #include <imgui.h>
+#include <BlackBox/Light.hpp>
 
 GameGUI::GameGUI()
 {
@@ -61,7 +62,23 @@ void GameGUI::Draw()
           game->m_scene->save();
         }
         ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
-        for (auto &obj : game->m_scene->m_Objs)
+        if (ImGui::TreeNode("Lights"))
+        {
+          for (const auto& light : game->m_scene->m_PointLights)
+          {
+            showLights(light.second, light.first.c_str());
+          }
+          for (const auto& light : game->m_scene->m_DirectionLight)
+          {
+            showLights(light.second, light.first.c_str());
+          }
+          for (const auto& light : game->m_scene->m_SpotLights)
+          {
+            showLights(light.second, light.first.c_str());
+          }
+          ImGui::TreePop();
+        }
+        for (auto &obj : game->m_scene->m_Objects)
           objectInfo(obj.second, obj.first);
        ImGui::TreePop();
       }
@@ -133,6 +150,47 @@ void GameGUI::cameraController()
   }
 }
 
+void GameGUI::showLights(BaseLight* light, const char *name)
+{
+
+  if (ImGui::TreeNode(name)) {
+    //ImGui::InputScalar("position", ImGuiDataType_Float, &game->m_World->gravity);
+    if (light->BaseLight::type == BaseLight::DIRECTIONAL)
+    {
+      DirectionLight* _light = reinterpret_cast<DirectionLight*>(light);
+      ImGui::Text("direction");
+      ImGui::DragFloat("x", &_light->direction.x);
+      ImGui::DragFloat("y", &_light->direction.y);
+      ImGui::DragFloat("z", &_light->direction.z);
+    }
+    else if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
+    {
+      PointLight* _light = reinterpret_cast<PointLight*>(light);
+      ImGui::Text("position");
+      ImGui::DragFloat("x", &_light->position.x);
+      ImGui::DragFloat("y", &_light->position.y);
+      ImGui::DragFloat("z", &_light->position.z);
+
+      ImGui::DragFloat("constant", &_light->constant, 0.01f);
+      ImGui::DragFloat("linear", &_light->linear, 0.01f);
+      ImGui::DragFloat("quadratic", &_light->quadratic, 0.001f);
+      if (light->BaseLight::type == BaseLight::SPOT)
+      {
+        SpotLight* _light = reinterpret_cast<SpotLight*>(light);
+        ImGui::DragFloat("cutOff", &_light->cutOff, 0.01f);
+        ImGui::DragFloat("outerCutOff", &_light->outerCutOff, 0.001f);
+      }
+    }
+
+    ImGui::ColorEdit3("ambient", (float*)& light->ambient);
+    ImGui::ColorEdit3("diffuse", (float*)& light->diffuse);
+    ImGui::ColorEdit3("specular", (float*)& light->specular);
+    ImGui::Checkbox("enabled", &light->enabled);
+
+    ImGui::TreePop();
+  }
+}
+
 void GameGUI::objectInfo(Object *obj, std::string name)
 {
     const ImS32   s32_zero = 0,   s32_one = 1,   s32_fifty = 50, s32_min = INT_MIN/2,   s32_max = INT_MAX/2,    s32_hi_a = INT_MAX/2 - 100,    s32_hi_b = INT_MAX/2;
@@ -188,7 +246,7 @@ void GameGUI::objectInfo(Object *obj, std::string name)
       ImGui::InputText("Material", (char*)obj->m_Material->name->data(), obj->m_Material->name->size(),ImGuiInputTextFlags_ReadOnly);
       ImGui::TreePop();
     }
-
+    ImGui::Text("Type: %s", obj->type.c_str());
     if (ImGui::Button("Clone"))
     {
       char buff[10];

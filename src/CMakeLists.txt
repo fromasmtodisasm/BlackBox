@@ -72,6 +72,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/IndexBuffer.cpp
+  PRIVATE ${SOURCE_DIR}/Light.cpp
   PRIVATE ${SOURCE_DIR}/Material.cpp
   PRIVATE ${SOURCE_DIR}/MaterialManager.cpp
   PRIVATE ${SOURCE_DIR}/MatrixTransform.cpp
@@ -113,6 +114,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IWindow.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IndexBuffer.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/InputHandler.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Light.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Material.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MaterialManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MatrixTranform.hpp
