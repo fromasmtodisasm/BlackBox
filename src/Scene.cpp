@@ -172,7 +172,7 @@ const char *lightName = nullptr;
   baseLight->ambient = loadColorAttribute(light->FirstChildElement("ambient"));
   baseLight->diffuse = loadColorAttribute(light->FirstChildElement("diffuse"));
   baseLight->specular = loadColorAttribute(light->FirstChildElement("specular"));
-
+  baseLight->enabled = light->BoolAttribute("enabled");
 
   switch (baseLight->type)
   {

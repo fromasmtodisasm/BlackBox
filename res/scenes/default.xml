@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>26.224926</Y>
+                <Y>2.5129776</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -317,8 +317,8 @@
     <light name="flashLight" type="spot" enabled="true">
         <direction x="-4.3160208e+08" y="-4.3160208e+08" z="-4.3160208e+08"/>
         <cutOff>15</cutOff>
-        <outerCutOff>15</outerCutOff>
-        <position x="-0.2" y="-1" z="-0.30000001"/>
+        <outerCutOff>24</outerCutOff>
+        <position x="-4.3160208e+08" y="-4.3160208e+08" z="-4.3160208e+08"/>
         <constant>1</constant>
         <linear>0.090000004</linear>
         <quadratic>0.032000002</quadratic>
