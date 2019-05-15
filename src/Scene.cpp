@@ -147,14 +147,19 @@ const char *lightName = nullptr;
       result.s->constant = light->FirstChildElement("constant")->FloatText();
       result.s->linear = light->FirstChildElement("linear")->FloatText();
       result.s->quadratic = light->FirstChildElement("quadratic")->FloatText();
+      result.s->cutOff = light->FirstChildElement("cutOff")->FloatText();
+      result.s->outerCutOff = light->FirstChildElement("outerCutOff")->FloatText();
 
-      result.s->position.x = position->FirstChildElement("X")->FloatText();
-      result.s->position.y = position->FirstChildElement("Y")->FloatText();
-      result.s->position.z = position->FirstChildElement("Z")->FloatText();
-      result.s->direction.x = direction->FirstChildElement("X")->FloatText();
-      result.s->direction.y = direction->FirstChildElement("Y")->FloatText();
-      result.s->direction.z = direction->FirstChildElement("Z")->FloatText();
+      result.p->position.x = position->FloatAttribute("x");
+      result.p->position.y = position->FloatAttribute("y");
+      result.p->position.z = position->FloatAttribute("z");
 
+      if (!direction)
+        return;
+
+      result.d->direction.x = direction->FloatAttribute("x");
+      result.d->direction.y = direction->FloatAttribute("y");
+      result.d->direction.z = direction->FloatAttribute("z");
     }
     else
     {
@@ -228,16 +233,20 @@ void Scene::setupLights(Object* object)
   }
   program->setUniformValue(nr_point_lights, "countOfPointLights");
   // spotLight
-  program->setUniformValue( m_Camera->Position,"spotLight.position");
-  program->setUniformValue( m_Camera->Front,"spotLight.direction");
-  program->setUniformValue({ 0.0f, 0.0f, 0.0f }, "spotLight.ambient");
-  program->setUniformValue({ 1.0f, 1.0f, 1.0f }, "spotLight.diffuse");
-  program->setUniformValue({ 1.0f, 1.0f, 1.0f }, "spotLight.specular");
-  program->setUniformValue( 1.0f,"spotLight.constant");
-  program->setUniformValue( 0.09f,"spotLight.linear");
-  program->setUniformValue( 0.032f,"spotLight.quadratic");
-  program->setUniformValue( glm::cos(glm::radians(12.5f)),"spotLight.cutOff");
-  program->setUniformValue( glm::cos(glm::radians(15.0f)),"spotLight.outerCutOff");
+  auto flashLight = m_SpotLights.find("flashLight");
+  if (flashLight != m_SpotLights.end())
+  {
+    program->setUniformValue(m_Camera->Position, "spotLight.position");
+    program->setUniformValue(m_Camera->Front, "spotLight.direction");
+    program->setUniformValue(flashLight->second->ambient, "spotLight.ambient");
+    program->setUniformValue(flashLight->second->diffuse, "spotLight.diffuse");
+    program->setUniformValue(flashLight->second->diffuse, "spotLight.specular");
+    program->setUniformValue(flashLight->second->constant, "spotLight.constant");
+    program->setUniformValue(flashLight->second->linear, "spotLight.linear");
+    program->setUniformValue(flashLight->second->quadratic, "spotLight.quadratic");
+    program->setUniformValue(glm::cos(glm::radians(flashLight->second->cutOff)), "spotLight.cutOff");
+    program->setUniformValue(glm::cos(glm::radians(flashLight->second->outerCutOff)), "spotLight.outerCutOff");
+  }
 }
 
 Scene::Scene(std::string name) : name(name)
@@ -345,6 +354,20 @@ bool Scene::save()
     }
   }
   for (auto& light : m_DirectionLight)
+  {
+    {
+      XMLElement * lightElement = saveLight(xmlDoc, light.second);
+
+      //XMLElement * texture = xmlDoc.NewElement("texture");
+      lightElement->SetAttribute("name", light.first.c_str());
+      lightElement->SetAttribute("type", light.second->toStr);
+
+
+      pScene->InsertEndChild(lightElement);
+      //object->InsertEndChild(mesh);
+    }
+  }
+  for (auto& light : m_SpotLights)
   {
     {
       XMLElement * lightElement = saveLight(xmlDoc, light.second);

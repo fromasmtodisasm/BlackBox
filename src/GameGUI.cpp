@@ -72,6 +72,10 @@ void GameGUI::Draw()
           {
             showLights(light.second, light.first.c_str());
           }
+          for (const auto& light : game->m_scene->m_SpotLights)
+          {
+            showLights(light.second, light.first.c_str());
+          }
           ImGui::TreePop();
         }
         for (auto &obj : game->m_scene->m_Objects)
@@ -182,11 +186,6 @@ void GameGUI::showLights(BaseLight* light, const char *name)
     ImGui::ColorEdit3("diffuse", (float*)& light->diffuse);
     ImGui::ColorEdit3("specular", (float*)& light->specular);
     ImGui::Checkbox("enabled", &light->enabled);
-    /*
-    ImGui::RadioButton("Point", (int*)&light.second->type, BaseLight::POINT); ImGui::SameLine();
-    ImGui::RadioButton("Directional", (int*)&light.second->type, BaseLight::DIRECTIONAL); ImGui::SameLine();
-    ImGui::RadioButton("Spot", (int*)& light.second->type, BaseLight::SPOT); ImGui::SameLine();
-    */
 
     ImGui::TreePop();
   }
