@@ -3,7 +3,7 @@
 #include <BlackBox/Texture.hpp>
 
 class CShaderProgram;
-class Material;
+struct Material;
 
 enum OBJType {
   TCAM,

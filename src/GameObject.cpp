@@ -49,6 +49,8 @@ bool GameObject::OnInputEvent(sf::Event &event)
     m_keys.erase(event.key.code);
     return true;
   */
+  default:
+    break;
   }
   return false;
 }

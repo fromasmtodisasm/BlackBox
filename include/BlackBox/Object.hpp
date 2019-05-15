@@ -36,7 +36,7 @@ public:
   Material *m_Material = nullptr;
   static int refs;
   std::shared_ptr<std::string> m_path;
-  float friction = 0.99;
+  float friction = 0.99f;
   glm::vec3 velocity;
 
   Transform m_transform;

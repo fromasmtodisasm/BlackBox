@@ -1,7 +1,7 @@
 #pragma once
 
 class Object;
-class Mesh;
+struct Mesh;
 
 #include <map>
 #include <string>

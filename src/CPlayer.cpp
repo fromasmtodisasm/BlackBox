@@ -47,7 +47,7 @@ bool CPlayer::OnInputEvent(sf::Event &event)
     if (mouseState == LOCKED)
     {
       delta = p_gIGame->getInputHandler()->getDeltaMouse();
-      m_Camera->ProcessMouseMovement(delta.x, -delta.y);
+      m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
       return true;
     }
     return false;
