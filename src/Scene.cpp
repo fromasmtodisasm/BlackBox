@@ -201,10 +201,14 @@ void Scene::setupLights(Object* object)
 {
   CShaderProgram* program = object->m_Material->program;
   int currentLight = 0;
-  program->setUniformValue({ -0.2f, -1.0f, -0.3f }, "dirLight.direction");
-  program->setUniformValue({ 0.05f, 0.05f, 0.05f }, "dirLight.ambient");
-  program->setUniformValue({ 0.4f, 0.4f, 0.4f }, "dirLight.diffuse");
-  program->setUniformValue({ 0.5f, 0.5f, 0.5f }, "dirLight.specular");
+  auto sun = m_DirectionLight.find("sun");
+  if (sun != m_DirectionLight.end())
+  {
+    program->setUniformValue({ -0.2f, -1.0f, -0.3f }, "dirLight.direction");
+    program->setUniformValue({ 0.05f, 0.05f, 0.05f }, "dirLight.ambient");
+    program->setUniformValue({ 0.4f, 0.4f, 0.4f }, "dirLight.diffuse");
+    program->setUniformValue({ 0.5f, 0.5f, 0.5f }, "dirLight.specular");
+  }
   // point light 1
   for (const auto& light : m_PointLights)
   {
@@ -334,6 +338,20 @@ bool Scene::save()
       //object->InsertEndChild(mesh);
     }
   }
+  for (auto& light : m_DirectionLight)
+  {
+    {
+      XMLElement * lightElement = saveLight(xmlDoc, light.second);
+
+      //XMLElement * texture = xmlDoc.NewElement("texture");
+      lightElement->SetAttribute("name", light.first.c_str());
+      lightElement->SetAttribute("type", light.second->toStr);
+
+
+      pScene->InsertEndChild(lightElement);
+      //object->InsertEndChild(mesh);
+    }
+  }
   xmlDoc.InsertFirstChild(pScene);
 
   sceneName << "res/scenes/" << name <<  ".xml";
@@ -399,7 +417,12 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
 tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight * light)
 {
   XMLElement* result = xmlDoc.NewElement("light");
-  if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
+  if (light->BaseLight::type == BaseLight::DIRECTIONAL)
+  {
+      XMLElement *direction = saveVec3(xmlDoc, reinterpret_cast<DirectionLight*>(light)->direction, "direction");
+      result->InsertEndChild(direction);
+  }
+  else if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
   {
     PointLight* _light = reinterpret_cast<PointLight*>(light);
     XMLElement* position = saveVec3(xmlDoc, _light->position, "position");

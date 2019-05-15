@@ -244,7 +244,7 @@ void CShaderProgram::setUniformValue(glm::vec2 value, const char * format, ...)
 void CShaderProgram::setUniformValue(glm::vec3 value, const char * format, ...)
 {
   va_list ptr;
-  va_start(ptr, value);
+  va_start(ptr, format);
 
   char name[128];
   vsprintf(name, format, ptr);
