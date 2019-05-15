@@ -67,7 +67,7 @@ bool CGame::init(IEngine *pSystem)  {
   gui->game = this;
 
   //glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
-  glm::vec3 pos = glm::vec3(0,10,10);//0, player_pos.y + 3, 0);
+  glm::vec3 pos = glm::vec3(0,17,10);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
   m_camera1 = new CCamera(
     pos

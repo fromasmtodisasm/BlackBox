@@ -137,6 +137,11 @@ void Scene::draw(float dt)
     program->setUniformValue("light.ambient", sun->ambient);
     program->setUniformValue("light.diffuse", sun->diffuse);
     program->setUniformValue("light.specular", sun->specular);
+
+    program->setUniformValue("light.constant", sun->constant);
+    program->setUniformValue("light.linear", sun->linear);
+    program->setUniformValue("light.quadratic", sun->quadratic);
+
     program->setUniformValue("light.shin", sun->specular);
 
     object.second->draw(m_Camera);
@@ -305,9 +310,9 @@ tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, Light* lig
     position->InsertEndChild(Y);
     position->InsertEndChild(Z);
   }
-  XMLElement* ambient = saveColorAttribute(xmlDoc, light->diffuse, "ambient");
+  XMLElement* ambient = saveColorAttribute(xmlDoc, light->ambient, "ambient");
   XMLElement* diffuse = saveColorAttribute(xmlDoc, light->diffuse, "diffuse");
-  XMLElement* specular = saveColorAttribute(xmlDoc, light->diffuse, "specular");
+  XMLElement* specular = saveColorAttribute(xmlDoc, light->specular, "specular");
 
   result->InsertEndChild(position);
   result->InsertEndChild(ambient);

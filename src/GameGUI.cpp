@@ -71,6 +71,11 @@ void GameGUI::Draw()
               ImGui::DragFloat("position.x", &light.second->position.x);
               ImGui::DragFloat("position.y", &light.second->position.y);
               ImGui::DragFloat("position.z", &light.second->position.z);
+
+              ImGui::DragFloat("constant", &light.second->constant, 0.01f);
+              ImGui::DragFloat("linear", &light.second->linear, 0.01f);
+              ImGui::DragFloat("quadratic", &light.second->quadratic, 0.001f);
+
               ImGui::ColorEdit4("ambient", (float*)& light.second->ambient, ImGuiColorEditFlags_NoAlpha );
               ImGui::ColorEdit4("diffuse", (float*)& light.second->diffuse, ImGuiColorEditFlags_NoAlpha );
               ImGui::ColorEdit4("specular", (float*)& light.second->specular, ImGuiColorEditFlags_NoAlpha );
