@@ -46,7 +46,7 @@ void Object::draw(CCamera *camera) {
   m_Material->apply(this, camera);
 
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
-  m_Material->program->setUniformValue("NormalMatrix", NormalMatrix);
+  m_Material->program->setUniformValue( NormalMatrix,"NormalMatrix");
 
   VertexArrayObject *vb = m_Mesh->getVertexBuffer();
   vb->draw();

@@ -14,7 +14,7 @@ Object * Primitive::create(Type type, CShaderProgram *program)
     obj->setType(OBJType::TPRIMITIVE);
     obj->setShaderProgram(program);
     obj->getShaderProgram()->use();
-    obj->getShaderProgram()->setUniformValue("vColor", glm::vec3(1.0f, 0.0f, 0.0f));
+    obj->getShaderProgram()->setUniformValue(glm::vec3(1.0f, 0.0f, 0.0f), "vColor");
     break;
   case Primitive::TETRAHEDRON:
     break;

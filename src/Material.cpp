@@ -8,36 +8,33 @@ void Material::apply(Object *object, CCamera *camera)
 {
   GLenum block = GL_TEXTURE0;
   //program->use();
-  program->setUniformValue("Model", object->getTransform());
-  program->setUniformValue("View", camera->getViewMatrix());
-  program->setUniformValue("Projection", camera->getProjectionMatrix());
-  //program->setUniformValue("lightPos", glm::vec3(0,0,0));//m_Objs["light"]->m_transform.position);
-  program->setUniformValue("viewPos", camera->Position);
-  program->setUniformValue("lightColor", glm::vec3(1,1,1.0));
+  program->setUniformValue( object->getTransform(),"Model");
+  program->setUniformValue( camera->getViewMatrix(),"View");
+  program->setUniformValue( camera->getProjectionMatrix(),"Projection");
+  program->setUniformValue( camera->Position,"viewPos");
 
   if (hasTexture)
   {
 
-    program->setUniformValue("material.shininess", shininess);
-    program->setUniformValue("diffuseColor", glm::vec3(1.0));
+    program->setUniformValue( 128.0f,"material.shininess");
     if (diffuse != nullptr)
     {
-      activeTexture(block, "material.diffuse", diffuse);
+      activeTexture(GL_TEXTURE0, "material.diffuse", diffuse);
       block++;
     }
     if (specular != nullptr)
     {
-      activeTexture(block, "material.specular", specular);
+      activeTexture(GL_TEXTURE1, "material.specular", specular);
       block++;
     }
     if (bump != nullptr)
     {
-      activeTexture(block, "material.bump", bump);
+      activeTexture(GL_TEXTURE2, "material.bump", bump);
       block++;
     }
   }
   else {
-    program->setUniformValue("diffuseColor", diffuseColor);
+    program->setUniformValue( diffuseColor,"diffuseColor");
     /*
     program->setUniformValue("material.ambient",  glm::vec3(1.0f, 0.5f, 0.31f));
     program->setUniformValue("material.diffuse",  glm::vec3(1.0f, 0.5f, 0.31f));
@@ -78,7 +75,8 @@ void Material::setTexture(Texture *texture, const char *type)
 
 void Material::activeTexture(uint32_t block, const char *uniform, Texture* texture)
 {
+  int test;
   glActiveTexture(block);
   glBindTexture(GL_TEXTURE_2D, texture->id);
-  glUniform1i(glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block));
+  glUniform1i(test = glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block));
 }

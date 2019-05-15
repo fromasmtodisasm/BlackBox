@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>40.301861</Y>
+                <Y>-161.8606</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -210,7 +210,7 @@
         <material name="default"/>
     </object>
     <object name="specular_box" type="object">
-        <mesh name="res/geom/box.obj"/>
+        <mesh name="res/geom/cube.obj"/>
         <transform>
             <position>
                 <X>2</X>
@@ -272,14 +272,19 @@
         </transform>
         <material name="red"/>
     </object>
-    <light name="sun" type="">
-        <position>
-            <X>62</X>
-            <Y>30</Y>
-            <Z>0</Z>
-        </position>
-        <ambient r="0.50196081" g="0.54901963" b="0.83137256"/>
-        <diffuse r="0.50196081" g="0.54901963" b="0"/>
-        <specular r="0.50196081" g="0.54901963" b="0"/>
+	<light name="sun" type="direction">
+        <direction x="62" y="30" z="0"/>
+        <ambient x="0.50196081" y="0.54901963" z="0.15294118"/>
+        <diffuse x="0.50196081" y="0.54901963" z="0.33333334"/>
+        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
+    </light>
+    <light name="lamp" type="point">
+        <position x="62" y="30" z="0"/>
+        <constant>1</constant>
+        <linear>0.022</linear>
+        <quadratic>0.0019</quadratic>
+        <ambient x="0.50196081" y="0.54901963" z="0.15294118"/>
+        <diffuse x="0.50196081" y="0.54901963" z="0.33333334"/>
+        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
     </light>
 </scene>

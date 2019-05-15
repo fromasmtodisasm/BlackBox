@@ -8,6 +8,7 @@
 
 #include <tinyxml2.h>
 #include <sstream>
+#include <variant>
 
 
 using namespace tinyxml2;
@@ -74,11 +75,17 @@ void Scene::loadMesh(XMLElement *mesh)
 
 void Scene::loadLight(tinyxml2::XMLElement* light)
 {
-  Light *result;
-  const char *lightName = nullptr;
+  struct Light {
+    union {
+      DirectionLight *d;
+      PointLight *p;
+      SpotLight *s;
+    };
+    BaseLight::Type type;
+ } result;
+const char *lightName = nullptr;
   const char *lightType = nullptr;
 
-  XMLElement * position = nullptr;
   XMLElement * ambient = nullptr;
   XMLElement * diffuse = nullptr;
   XMLElement * specular = nullptr;
@@ -91,21 +98,91 @@ void Scene::loadLight(tinyxml2::XMLElement* light)
   if (lightType == nullptr)
     //TODO: hanlde this
     return;
+  /*
   position = light->FirstChildElement("position");
   if (position == nullptr)
     //TODO: hanlde this
     return;
+  */
 
-  result = new Light();
-  result->type = lightType;
-  result->position.x = position->FirstChildElement("X")->FloatText();
-  result->position.y = position->FirstChildElement("Y")->FloatText();
-  result->position.z = position->FirstChildElement("Z")->FloatText();
+  BaseLight* baseLight;
+  {
+    std::string tmp(lightType);
+    if (tmp == "direction")
+    {
+      result.d = new DirectionLight;
+      baseLight = result.d;
+      baseLight->type = BaseLight::DIRECTIONAL;
+      XMLElement* direction = light->FirstChildElement("direction");
+      if (!direction)
+        return;
 
-  result->ambient = loadColorAttribute(light->FirstChildElement("ambient"));
-  result->diffuse = loadColorAttribute(light->FirstChildElement("diffuse"));
-  result->specular = loadColorAttribute(light->FirstChildElement("specular"));
-  m_Lights[lightName] = result;
+      result.d->direction.x = direction->FloatAttribute("x");
+      result.d->direction.y = direction->FloatAttribute("y");
+      result.d->direction.z = direction->FloatAttribute("z");
+    }
+    else if (tmp == "point")
+    {
+      result.p = new PointLight;
+      baseLight = result.p;
+      baseLight->type = BaseLight::POINT;
+      XMLElement* position = light->FirstChildElement("position");
+
+      result.s->constant = light->FirstChildElement("constant")->FloatText();
+      result.s->linear = light->FirstChildElement("linear")->FloatText();
+      result.s->quadratic = light->FirstChildElement("quadratic")->FloatText();
+
+      result.p->position.x = position->FloatAttribute("x");
+      result.p->position.y = position->FloatAttribute("y");
+      result.p->position.z = position->FloatAttribute("z");
+    }
+    else if (tmp == "spot")
+    {
+      result.s = new SpotLight;
+      baseLight = result.s;
+      baseLight->type = BaseLight::SPOT;
+      XMLElement* direction = light->FirstChildElement("direction");
+      XMLElement* position = light->FirstChildElement("position");
+
+      result.s->constant = light->FirstChildElement("constant")->FloatText();
+      result.s->linear = light->FirstChildElement("linear")->FloatText();
+      result.s->quadratic = light->FirstChildElement("quadratic")->FloatText();
+
+      result.s->position.x = position->FirstChildElement("X")->FloatText();
+      result.s->position.y = position->FirstChildElement("Y")->FloatText();
+      result.s->position.z = position->FirstChildElement("Z")->FloatText();
+      result.s->direction.x = direction->FirstChildElement("X")->FloatText();
+      result.s->direction.y = direction->FirstChildElement("Y")->FloatText();
+      result.s->direction.z = direction->FirstChildElement("Z")->FloatText();
+
+    }
+    else
+    {
+      return;
+    }
+    baseLight->toStr = strdup(tmp.c_str());
+    
+  }
+
+  baseLight->ambient = loadColorAttribute(light->FirstChildElement("ambient"));
+  baseLight->diffuse = loadColorAttribute(light->FirstChildElement("diffuse"));
+  baseLight->specular = loadColorAttribute(light->FirstChildElement("specular"));
+
+
+  switch (baseLight->type)
+  {
+  case BaseLight::DIRECTIONAL:
+    m_DirectionLight[lightName] = result.d;
+    break;
+  case BaseLight::POINT:
+    m_PointLights[lightName] = result.p;
+    break;
+  case BaseLight::SPOT:
+    m_SpotLights[lightName] = result.s;
+    break;
+  default:
+    break;
+  }
 }
 
 glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
@@ -114,10 +191,43 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
   if (element == nullptr)
   //TODO: handle this
     return glm::vec3();
-  color.r = element->FloatAttribute("r");
-  color.g = element->FloatAttribute("g");
-  color.b = element->FloatAttribute("b");
+  color.r = element->FloatAttribute("x");
+  color.g = element->FloatAttribute("y");
+  color.b = element->FloatAttribute("z");
   return color;
+}
+
+void Scene::setupLights(Object* object)
+{
+  CShaderProgram* program = object->m_Material->program;
+  int currentLight = 0;
+  program->setUniformValue({ -0.2f, -1.0f, -0.3f }, "dirLight.direction");
+  program->setUniformValue({ 0.05f, 0.05f, 0.05f }, "dirLight.ambient");
+  program->setUniformValue({ 0.4f, 0.4f, 0.4f }, "dirLight.diffuse");
+  program->setUniformValue({ 0.5f, 0.5f, 0.5f }, "dirLight.specular");
+  // point light 1
+  for (const auto& light : m_PointLights)
+  {
+    program->setUniformValue( light.second->position,"pointLights[%d].position", currentLight);
+    program->setUniformValue( light.second->ambient,"pointLights[%d].ambient", currentLight);
+    program->setUniformValue( light.second->diffuse,"pointLights[%d].diffuse", currentLight);
+    program->setUniformValue( light.second->specular,"pointLights[%d].specular", currentLight);
+    program->setUniformValue( 1.0f,"pointLights[%d].constant", currentLight);
+    program->setUniformValue( 0.09f,"pointLights[%d].linear", currentLight);
+    program->setUniformValue( 0.032f,"pointLights[%d].quadratic", currentLight);
+    ++currentLight;
+  }
+  // spotLight
+  program->setUniformValue( m_Camera->Position,"spotLight.position");
+  program->setUniformValue( m_Camera->Front,"spotLight.direction");
+  program->setUniformValue({ 0.0f, 0.0f, 0.0f }, "spotLight.ambient");
+  program->setUniformValue({ 1.0f, 1.0f, 1.0f }, "spotLight.diffuse");
+  program->setUniformValue({ 1.0f, 1.0f, 1.0f }, "spotLight.specular");
+  program->setUniformValue( 1.0f,"spotLight.constant");
+  program->setUniformValue( 0.09f,"spotLight.linear");
+  program->setUniformValue( 0.032f,"spotLight.quadratic");
+  program->setUniformValue( glm::cos(glm::radians(12.5f)),"spotLight.cutOff");
+  program->setUniformValue( glm::cos(glm::radians(15.0f)),"spotLight.outerCutOff");
 }
 
 Scene::Scene(std::string name) : name(name)
@@ -127,28 +237,19 @@ Scene::Scene(std::string name) : name(name)
 
 void Scene::draw(float dt)
 {
-  auto sun = m_Lights["sun"];
  for (const auto &object : m_Objects) {
     //object.second->rotate(dt*0.01f, {0,1,0});
     //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
     CShaderProgram *program = object.second->m_Material->program;
     program->use();
-    program->setUniformValue("light.position", sun->position);
-    program->setUniformValue("light.ambient", sun->ambient);
-    program->setUniformValue("light.diffuse", sun->diffuse);
-    program->setUniformValue("light.specular", sun->specular);
-
-    program->setUniformValue("light.constant", sun->constant);
-    program->setUniformValue("light.linear", sun->linear);
-    program->setUniformValue("light.quadratic", sun->quadratic);
-
-    program->setUniformValue("light.shin", sun->specular);
-
+    setupLights(object.second);
+    
+    program->setUniformValue( m_Camera->Position,"viewPos");
     object.second->draw(m_Camera);
   }
   Object *lightObject = m_Objects["light"];
   CShaderProgram *program = lightObject->m_Material->program;
-  for (const auto& light : m_Lights) {
+  for (const auto& light : m_PointLights) {
     program->use();
     lightObject->moveTo(light.second->position);
     lightObject->draw(m_Camera);
@@ -219,14 +320,14 @@ bool Scene::save()
     }
   }
 
-  for (auto& light : m_Lights)
+  for (auto& light : m_PointLights)
   {
     {
       XMLElement * lightElement = saveLight(xmlDoc, light.second);
 
       //XMLElement * texture = xmlDoc.NewElement("texture");
       lightElement->SetAttribute("name", light.first.c_str());
-      lightElement->SetAttribute("type", light.second->type);
+      lightElement->SetAttribute("type", light.second->toStr);
 
 
       pScene->InsertEndChild(lightElement);
@@ -295,38 +396,57 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
   return transform;
 }
 
-tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, Light* light)
+tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight * light)
 {
   XMLElement* result = xmlDoc.NewElement("light");
-  XMLElement *position = xmlDoc.NewElement("position");
+  if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
   {
-    XMLElement* X = xmlDoc.NewElement("X");
-    XMLElement* Y = xmlDoc.NewElement("Y");
-    XMLElement* Z = xmlDoc.NewElement("Z");
-    X->SetText(light->position.x);
-    Y->SetText(light->position.y);
-    Z->SetText(light->position.z);
-    position->InsertEndChild(X);
-    position->InsertEndChild(Y);
-    position->InsertEndChild(Z);
-  }
-  XMLElement* ambient = saveColorAttribute(xmlDoc, light->ambient, "ambient");
-  XMLElement* diffuse = saveColorAttribute(xmlDoc, light->diffuse, "diffuse");
-  XMLElement* specular = saveColorAttribute(xmlDoc, light->specular, "specular");
+    PointLight* _light = reinterpret_cast<PointLight*>(light);
+    XMLElement* position = saveVec3(xmlDoc, _light->position, "position");
+    XMLElement* constant = saveFloat(xmlDoc, _light->constant, "constant");
+    XMLElement* linear = saveFloat(xmlDoc, _light->linear, "linear");
+    XMLElement* quadratic = saveFloat(xmlDoc, _light->quadratic, "quadratic");
+    if (light->BaseLight::type == BaseLight::SPOT)
+    {
+      SpotLight* _light = reinterpret_cast<SpotLight*>(light);
+      XMLElement *direction = saveVec3(xmlDoc, _light->direction, "direction");
 
-  result->InsertEndChild(position);
+      XMLElement *cutOff = saveFloat(xmlDoc, _light->cutOff, "cutOff");
+      XMLElement *outerCutOff = saveFloat(xmlDoc, _light->cutOff, "outerCutOff");
+
+      result->InsertEndChild(direction);
+      result->InsertEndChild(cutOff);
+      result->InsertEndChild(outerCutOff);
+    }
+    result->InsertEndChild(position);
+    result->InsertEndChild(constant);
+    result->InsertEndChild(linear);
+    result->InsertEndChild(quadratic);
+  }
+  XMLElement* ambient = saveVec3(xmlDoc, light->ambient, "ambient");
+  XMLElement* diffuse = saveVec3(xmlDoc, light->diffuse, "diffuse");
+  XMLElement* specular = saveVec3(xmlDoc, light->specular, "specular");
+
+  
   result->InsertEndChild(ambient);
   result->InsertEndChild(diffuse);
   result->InsertEndChild(specular);
   return result;
 }
 
-tinyxml2::XMLElement* Scene::saveColorAttribute(tinyxml2::XMLDocument& xmlDoc, glm::vec3& color, const char* name)
+tinyxml2::XMLElement* Scene::saveVec3(tinyxml2::XMLDocument& xmlDoc, glm::vec3& color, const char* name)
 {
   XMLElement* result = xmlDoc.NewElement(name);
-  result->SetAttribute("r", color.r);
-  result->SetAttribute("g", color.g);
-  result->SetAttribute("b", color.b);
+  result->SetAttribute("x", color.r);
+  result->SetAttribute("y", color.g);
+  result->SetAttribute("z", color.b);
+  return result;
+}
+
+tinyxml2::XMLElement* Scene::saveFloat(tinyxml2::XMLDocument& xmlDoc, float value, const char* name)
+{
+  XMLElement* result = xmlDoc.NewElement(name);
+  result->SetText(value);
   return result;
 }
 

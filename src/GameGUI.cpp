@@ -64,24 +64,13 @@ void GameGUI::Draw()
         ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
         if (ImGui::TreeNode("Lights"))
         {
-          for (const auto& light : game->m_scene->m_Lights)
+          for (const auto& light : game->m_scene->m_PointLights)
           {
-            if (ImGui::TreeNode(light.first.c_str())) {
-              //ImGui::InputScalar("position", ImGuiDataType_Float, &game->m_World->gravity);
-              ImGui::DragFloat("position.x", &light.second->position.x);
-              ImGui::DragFloat("position.y", &light.second->position.y);
-              ImGui::DragFloat("position.z", &light.second->position.z);
-
-              ImGui::DragFloat("constant", &light.second->constant, 0.01f);
-              ImGui::DragFloat("linear", &light.second->linear, 0.01f);
-              ImGui::DragFloat("quadratic", &light.second->quadratic, 0.001f);
-
-              ImGui::ColorEdit4("ambient", (float*)& light.second->ambient, ImGuiColorEditFlags_NoAlpha );
-              ImGui::ColorEdit4("diffuse", (float*)& light.second->diffuse, ImGuiColorEditFlags_NoAlpha );
-              ImGui::ColorEdit4("specular", (float*)& light.second->specular, ImGuiColorEditFlags_NoAlpha );
-
-              ImGui::TreePop();
-            }
+            showLights(light.second, light.first.c_str());
+          }
+          for (const auto& light : game->m_scene->m_DirectionLight)
+          {
+            showLights(light.second, light.first.c_str());
           }
           ImGui::TreePop();
         }
@@ -153,6 +142,42 @@ void GameGUI::cameraController()
     {
       //m_active_camera->reset();
     }
+    ImGui::TreePop();
+  }
+}
+
+void GameGUI::showLights(BaseLight* light, const char *name)
+{
+
+  if (ImGui::TreeNode(name)) {
+    //ImGui::InputScalar("position", ImGuiDataType_Float, &game->m_World->gravity);
+    if (light->BaseLight::type == BaseLight::POINT || light->BaseLight::type == BaseLight::SPOT)
+    {
+      PointLight* _light = reinterpret_cast<PointLight*>(light);
+      ImGui::Text("Position");
+      ImGui::DragFloat("x", &_light->position.x);
+      ImGui::DragFloat("y", &_light->position.y);
+      ImGui::DragFloat("z", &_light->position.z);
+
+      ImGui::DragFloat("constant", &_light->constant, 0.01f);
+      ImGui::DragFloat("linear", &_light->linear, 0.01f);
+      ImGui::DragFloat("quadratic", &_light->quadratic, 0.001f);
+      if (light->BaseLight::type == BaseLight::SPOT)
+      {
+
+      }
+    }
+
+    ImGui::ColorEdit4("ambient", (float*)& light->ambient, ImGuiColorEditFlags_NoAlpha );
+    ImGui::ColorEdit4("diffuse", (float*)& light->diffuse, ImGuiColorEditFlags_NoAlpha );
+    ImGui::ColorEdit4("specular", (float*)& light->specular, ImGuiColorEditFlags_NoAlpha );
+    ImGui::Checkbox("Directional", &light->isDirectional);
+    /*
+    ImGui::RadioButton("Point", (int*)&light.second->type, BaseLight::POINT); ImGui::SameLine();
+    ImGui::RadioButton("Directional", (int*)&light.second->type, BaseLight::DIRECTIONAL); ImGui::SameLine();
+    ImGui::RadioButton("Spot", (int*)& light.second->type, BaseLight::SPOT); ImGui::SameLine();
+    */
+
     ImGui::TreePop();
   }
 }

@@ -8,7 +8,7 @@
       <shader type="vertex" name="texturedphong.vs"/>
       <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
-    <shininess/>
+      <!--<shininess/>-->
   </material>
   <material name="wood_box">
     <textures>
@@ -29,6 +29,7 @@
   <material name="coral">
     <textures>
       <texture type="diffuse" name="coral.png"/>
+      <texture type="specular" name="gray.png"/>
     </textures>
     <shaders>
       <shader type="vertex" name="texturedphong.vs"/>
