@@ -44,14 +44,9 @@ bool CPlayer::OnInputEvent(sf::Event &event)
   }
   case sf::Event::MouseMoved:
 	{
-    std::cout << "mouse moved ( " << event.mouseMove.x << ", " << event.mouseMove.y << " )" << std::endl;
-    if (mouseState == LOCKED)
     {
-      std::cout << "move game mouse" << std::endl;
       delta = p_gIGame->getInputHandler()->getDeltaMouse();
       m_Camera->ProcessMouseMovement(delta.x, -delta.y);
-/*      sf::Vector2i pos = sf::Mouse::getPosition();
-      sf::Mouse::setPosition(pos + delta);*/
       return true;
     }
     return false;
