@@ -16,12 +16,22 @@ struct Material
   *bump,
   *normal,
   *mask;
+  float shininess;
   glm::vec3 diffuseColor;
 
   CShaderProgram *program;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;
-  Material() : diffuse(nullptr), specular(nullptr), bump(nullptr), normal(nullptr), mask(nullptr)
+
+  Material() : 
+  diffuse(nullptr),
+  specular(nullptr),
+  bump(nullptr),
+  normal(nullptr),
+  mask(nullptr),
+  diffuseColor({0,0,0}),
+  shininess(64.0f),
+  program(nullptr)
   {
 
   }

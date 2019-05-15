@@ -1,5 +1,5 @@
 <scene>
-    <object name="BB">
+    <object name="BB" type="object">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -20,7 +20,7 @@
         </transform>
         <material name="wood_box"/>
     </object>
-    <object name="BMW">
+    <object name="BMW" type="object">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -41,7 +41,7 @@
         </transform>
         <material name="red"/>
     </object>
-    <object name="BMW_2">
+    <object name="BMW_2" type="object">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -62,7 +62,7 @@
         </transform>
         <material name="coral"/>
     </object>
-    <object name="BMW_2_2">
+    <object name="BMW_2_2" type="object">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>20.663408</Y>
+                <Y>54.728302</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -104,7 +104,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="MyPlayer_0000">
+    <object name="MyPlayer_0000" type="object">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
             <position>
@@ -119,13 +119,13 @@
             </rotation>
             <scale>
                 <X>0</X>
-                <Y>4.5916347e-041</Y>
+                <Y>4.5916347e-41</Y>
                 <Z>0</Z>
             </scale>
         </transform>
         <material name="player"/>
     </object>
-    <object name="cube0">
+    <object name="cube0" type="object">
         <mesh name="res/geom/cube.obj"/>
         <transform>
             <position>
@@ -146,12 +146,12 @@
         </transform>
         <material name="coral"/>
     </object>
-    <object name="light">
+    <object name="light" type="object">
         <mesh name="res/geom/cube.obj"/>
         <transform>
             <position>
-                <X>10</X>
-                <Y>100</Y>
+                <X>29</X>
+                <Y>30</Y>
                 <Z>0</Z>
             </position>
             <rotation>
@@ -160,14 +160,14 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>0.5</X>
-                <Y>0.5</Y>
-                <Z>0.5</Z>
+                <X>2</X>
+                <Y>2</Y>
+                <Z>2</Z>
             </scale>
         </transform>
         <material name="light"/>
     </object>
-    <object name="monkey">
+    <object name="monkey" type="object">
         <mesh name="res/geom/monkey.obj"/>
         <transform>
             <position>
@@ -188,7 +188,7 @@
         </transform>
         <material name="coral"/>
     </object>
-    <object name="plane">
+    <object name="plane" type="object">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -209,28 +209,28 @@
         </transform>
         <material name="default"/>
     </object>
-    <object name="test">
-        <mesh name="res/geom/pengium.obj"/>
+    <object name="specular_box" type="object">
+        <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
-                <X>9</X>
-                <Y>0</Y>
-                <Z>0</Z>
+                <X>2</X>
+                <Y>30</Y>
+                <Z>12</Z>
             </position>
             <rotation>
                 <X>0</X>
-                <Y>-90</Y>
+                <Y>0</Y>
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>8</X>
-                <Y>8</Y>
-                <Z>8</Z>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
             </scale>
         </transform>
-        <material name="red"/>
+        <material name="specular_box"/>
     </object>
-    <object name="sphere">
+    <object name="sphere" type="object">
         <mesh name="res/geom/sphere.obj"/>
         <transform>
             <position>
@@ -251,4 +251,35 @@
         </transform>
         <material name="red"/>
     </object>
+    <object name="test" type="object">
+        <mesh name="res/geom/pengium.obj"/>
+        <transform>
+            <position>
+                <X>9</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>-90</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>8</X>
+                <Y>8</Y>
+                <Z>8</Z>
+            </scale>
+        </transform>
+        <material name="red"/>
+    </object>
+    <light name="sun" type="нннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннннh)nн">
+        <position>
+            <X>29</X>
+            <Y>30</Y>
+            <Z>0</Z>
+        </position>
+        <ambient r="0.5" g="0.5" b="0.5"/>
+        <diffuse r="0.5" g="0.5" b="0.5"/>
+        <specular r="0.5" g="0.5" b="0.5"/>
+    </light>
 </scene>

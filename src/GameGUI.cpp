@@ -1,5 +1,6 @@
 #include <BlackBox/GUI.hpp>
 #include <imgui.h>
+#include <BlackBox/Light.hpp>
 
 GameGUI::GameGUI()
 {
@@ -61,7 +62,22 @@ void GameGUI::Draw()
           game->m_scene->save();
         }
         ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
-        for (auto &obj : game->m_scene->m_Objs)
+        if (ImGui::TreeNode("Lights"))
+        {
+          for (const auto& light : game->m_scene->m_Lights)
+          {
+            if (ImGui::TreeNode(light.first.c_str())) {
+              //ImGui::InputScalar("position", ImGuiDataType_Float, &game->m_World->gravity);
+              ImGui::DragFloat("position.x", &light.second->position.x);
+              ImGui::DragFloat("position.y", &light.second->position.y);
+              ImGui::DragFloat("position.z", &light.second->position.z);
+
+              ImGui::TreePop();
+            }
+          }
+          ImGui::TreePop();
+        }
+        for (auto &obj : game->m_scene->m_Objects)
           objectInfo(obj.second, obj.first);
        ImGui::TreePop();
       }
@@ -188,7 +204,7 @@ void GameGUI::objectInfo(Object *obj, std::string name)
       ImGui::InputText("Material", (char*)obj->m_Material->name->data(), obj->m_Material->name->size(),ImGuiInputTextFlags_ReadOnly);
       ImGui::TreePop();
     }
-
+    ImGui::Text("Type: %s", obj->type.c_str());
     if (ImGui::Button("Clone"))
     {
       char buff[10];

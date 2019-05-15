@@ -17,20 +17,22 @@ void Material::apply(Object *object, CCamera *camera)
 
   if (hasTexture)
   {
+
+    program->setUniformValue("material.shininess", shininess);
     program->setUniformValue("diffuseColor", glm::vec3(1.0));
     if (diffuse != nullptr)
     {
-      activeTexture(block, "diffuseTexture", diffuse);
+      activeTexture(block, "material.diffuse", diffuse);
       block++;
     }
     if (specular != nullptr)
     {
-      activeTexture(block, "specularTexture", specular);
+      activeTexture(block, "material.specular", specular);
       block++;
     }
     if (bump != nullptr)
     {
-      activeTexture(block, "bumpTexture", bump);
+      activeTexture(block, "material.bump", bump);
       block++;
     }
   }
