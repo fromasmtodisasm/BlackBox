@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>13.620769</Y>
+                <Y>26.224926</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -272,7 +272,7 @@
         </transform>
         <material name="red"/>
     </object>
-    <light name="lamp_1" type="point">
+    <light name="lamp_1" type="point" enabled="false">
         <position x="62" y="27" z="0"/>
         <constant>1</constant>
         <linear>0.090000004</linear>
@@ -281,7 +281,7 @@
         <diffuse x="0.50196081" y="0.54901963" z="0.50588238"/>
         <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
     </light>
-    <light name="lamp_2" type="point">
+    <light name="lamp_2" type="point" enabled="false">
         <position x="62" y="16" z="0"/>
         <constant>1</constant>
         <linear>0.090000004</linear>
@@ -290,7 +290,7 @@
         <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
         <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
     </light>
-    <light name="lamp_3" type="point">
+    <light name="lamp_3" type="point" enabled="false">
         <position x="62" y="16" z="0"/>
         <constant>1</constant>
         <linear>0.090000004</linear>
@@ -299,7 +299,7 @@
         <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
         <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
     </light>
-    <light name="lamp_4" type="point">
+    <light name="lamp_4" type="point" enabled="false">
         <position x="62" y="16" z="0"/>
         <constant>1</constant>
         <linear>0.090000004</linear>
@@ -308,22 +308,22 @@
         <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
         <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
     </light>
-	<light name="flashLight" type="spot">
-        <position x="62" y="16" z="0"/>
-		<direction x="-0.2" y="-1" z="-0.30000001"/>
-		<cutOff>15.0</cutOff>
-		<outerCutOff>24.0</outerCutOff>
-        <constant>1</constant>
-        <linear>0.090000004</linear>
-        <quadratic>0.032000002</quadratic>
-        <ambient x="0.50196081" y="0.54901963" z="0.15294118"/>
-        <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
-        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
-    </light>
-    <light name="sun" type="direction">
+    <light name="sun" type="direction" enabled="true">
         <direction x="-0.2" y="-1" z="-0.30000001"/>
         <ambient x="0.015686275" y="0" z="0"/>
         <diffuse x="0.0078431377" y="0" z="0"/>
         <specular x="0.50196081" y="1" z="0.50196081"/>
+    </light>
+    <light name="flashLight" type="spot" enabled="true">
+        <direction x="-4.3160208e+08" y="-4.3160208e+08" z="-4.3160208e+08"/>
+        <cutOff>15</cutOff>
+        <outerCutOff>15</outerCutOff>
+        <position x="-0.2" y="-1" z="-0.30000001"/>
+        <constant>1</constant>
+        <linear>0.090000004</linear>
+        <quadratic>0.032000002</quadratic>
+        <ambient x="0.50196081" y="0.54901963" z="0.15294118"/>
+        <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
+        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
     </light>
 </scene>

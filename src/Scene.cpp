@@ -343,42 +343,30 @@ bool Scene::save()
   {
     {
       XMLElement * lightElement = saveLight(xmlDoc, light.second);
-
-      //XMLElement * texture = xmlDoc.NewElement("texture");
       lightElement->SetAttribute("name", light.first.c_str());
       lightElement->SetAttribute("type", light.second->toStr);
-
-
+      lightElement->SetAttribute("enabled", light.second->enabled);
       pScene->InsertEndChild(lightElement);
-      //object->InsertEndChild(mesh);
     }
   }
   for (auto& light : m_DirectionLight)
   {
     {
       XMLElement * lightElement = saveLight(xmlDoc, light.second);
-
-      //XMLElement * texture = xmlDoc.NewElement("texture");
       lightElement->SetAttribute("name", light.first.c_str());
       lightElement->SetAttribute("type", light.second->toStr);
-
-
+      lightElement->SetAttribute("enabled", light.second->enabled);
       pScene->InsertEndChild(lightElement);
-      //object->InsertEndChild(mesh);
     }
   }
   for (auto& light : m_SpotLights)
   {
     {
       XMLElement * lightElement = saveLight(xmlDoc, light.second);
-
-      //XMLElement * texture = xmlDoc.NewElement("texture");
       lightElement->SetAttribute("name", light.first.c_str());
       lightElement->SetAttribute("type", light.second->toStr);
-
-
+      lightElement->SetAttribute("enabled", light.second->enabled);
       pScene->InsertEndChild(lightElement);
-      //object->InsertEndChild(mesh);
     }
   }
   xmlDoc.InsertFirstChild(pScene);
@@ -464,7 +452,7 @@ tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight 
       XMLElement *direction = saveVec3(xmlDoc, _light->direction, "direction");
 
       XMLElement *cutOff = saveFloat(xmlDoc, _light->cutOff, "cutOff");
-      XMLElement *outerCutOff = saveFloat(xmlDoc, _light->cutOff, "outerCutOff");
+      XMLElement *outerCutOff = saveFloat(xmlDoc, _light->outerCutOff, "outerCutOff");
 
       result->InsertEndChild(direction);
       result->InsertEndChild(cutOff);
