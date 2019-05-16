@@ -15,52 +15,43 @@ CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.ob
   move({0,0,0});
 }
 
-CPlayer::CPlayer(Object *obj) : GameObject(obj)
+CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
 
 }
 
 bool CPlayer::OnInputEvent(sf::Event &event)
 {
-  float dt = Game->getDeltaTime();
-  //delta = {0,0};
   switch (event.type) {
   case sf::Event::MouseButtonPressed:
   {
-    /*if(mouseState == LOCKED) {
-      Game->m_Window->mouseUnlock();
-      mouseState = FREE;
-    }*/
-    if (event.mouseButton.button == sf::Mouse::Left && mouseState != LOCKED)
-      Game->m_Window->mouseLock(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)), mouseState = LOCKED;
-    return true;
-  }
-  case sf::Event::MouseButtonReleased:
-  {
-    if (event.mouseButton.button == sf::Mouse::Left && mouseState == LOCKED)
-      Game->m_Window->mouseUnlock(), mouseState = FREE;
-
-    return true;
+    return false;
   }
   case sf::Event::MouseMoved:
 	{
-    if (mouseState == LOCKED)
-    {
-      delta = p_gIGame->getInputHandler()->getDeltaMouse();
-      m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
-      return true;
-    }
-    return false;
+    delta = p_gIGame->getInputHandler()->getDeltaMouse();
+    m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
+    return true;
   }
   case sf::Event::KeyPressed:
-    m_keys.insert(event.key.code);
-    return true;
+    return OnKeyPress(event);
   case sf::Event::KeyReleased:
-    m_keys.erase(event.key.code);
-    return true;
+    return OnKeyReleas(event);
   default:
     return GameObject::OnInputEvent(event);
   }
+}
+
+bool CPlayer::OnKeyPress(sf::Event& event)
+{
+  m_keys.insert(event.key.code);
+  return true;
+}
+
+bool CPlayer::OnKeyReleas(sf::Event& event)
+{
+  m_keys.erase(event.key.code);
+  return false;
 }
 
 void CPlayer::draw(CCamera *camera)
@@ -74,6 +65,11 @@ void CPlayer::attachCamera(CCamera *camera)
   GameObject::m_Camera = camera;
 }
 
+CCamera* CPlayer::getCamera()
+{
+  return m_Camera;
+}
+
 glm::vec3 CPlayer::getPos()
 {
   return m_transform.position;
@@ -84,15 +80,17 @@ void CPlayer::setGame(CGame *game)
   Game = game;
 }
 
+CGame* CPlayer::getGame()
+{
+  return Game;
+}
+
 void CPlayer::update(float deltatime)
 {
-
   //ImGui
   float speed = deltatime*MOVE_SPEED;
   float rotSpeed = deltatime*5.f;//m_rotAngle;
-
-  glm::vec3 impulse(0,9.0,0);
-  for (const auto &key : m_keys)
+  for (auto& key : m_keys)
   {
     switch (key)
     {

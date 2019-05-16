@@ -34,20 +34,27 @@ void CSFMLWindow::AddEventListener(IInputEventListener * pListener)
 
 sf::Vector2i CSFMLWindow::getDeltaMouse()
 {
-  sf::Vector2i delta = Mouse.curr_pos - Mouse.lockedPos;
-  sf::Mouse::setPosition(Mouse.lockedPos, *m_Window);
+  sf::Vector2i center = (sf::Vector2i)m_Window->getSize() / 2;
+  sf::Vector2i delta = Mouse.curr_pos - center;
+  sf::Mouse::setPosition(center, *m_Window);
   return delta;
 }
 
 void CSFMLWindow::mouseLock(sf::Vector2i pos)
 {
+  sf::Vector2i center = (sf::Vector2i)m_Window->getSize() / 2;
   Mouse.locked = true;
-  Mouse.lockedPos = pos;
+  Mouse.prev_pos = center;
+  Mouse.curr_pos = center;
+
+  sf::Mouse::setPosition(center, *m_Window);
+  m_Window->setMouseCursorGrabbed(true);
   m_Window->setMouseCursorVisible(false);
 }
 
 void CSFMLWindow::mouseUnlock()
 {
   Mouse.locked = false;
+  m_Window->setMouseCursorGrabbed(false);
   m_Window->setMouseCursorVisible(true);
 }

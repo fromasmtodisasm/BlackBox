@@ -82,6 +82,7 @@ bool CGame::init(IEngine *pSystem)  {
   m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
   initPlayer();
+  m_Window->mouseLock(sf::Vector2i(m_Window->getWidth(), m_Window->getWidth()) / 2);
 
   //m_World->setCamera(camera2);
   return true;
@@ -187,53 +188,16 @@ extern "C" IGame *CreateIGame(const char *title) {
 
 bool CGame::OnInputEvent(sf::Event &event)
 {
-  switch (event.type)
-    {
-    case sf::Event::KeyPressed:
-    if (event.key.control) {
-      switch (event.key.code) {
-      case sf::Keyboard::Right:
-        m_PlayList.next();
-      }
-      switch (event.key.code) {
-      case sf::Keyboard::Left:
-        m_PlayList.prev();
-      }
-      switch (event.key.code) {
-      case sf::Keyboard::Up:
-        m_PlayList.setVolume(m_PlayList.getVolume() + 2.f);
-      }
-      switch (event.key.code) {
-      case sf::Keyboard::Down:
-        m_PlayList.setVolume(m_PlayList.getVolume() - 2.f);
-      }
-    }
-    else {
-      switch(event.key.code)
-      {
-      case sf::Keyboard::P:
-        isWireFrame = !isWireFrame;
-        return true;
-      case sf::Keyboard::Num9:
-        m_active_camera = m_camera1;
-        return true;
-      case sf::Keyboard::Num0:
-        m_active_camera = m_camera2;
-        return true;
-      case sf::Keyboard::Space:
-        if (!m_isMusicPlaying){
-          m_PlayList.play();
-        }
-        else {
-          m_PlayList.pause();
-        }
-        m_isMusicPlaying = !m_isMusicPlaying;
-        return true;
-      case sf::Keyboard::Backspace:
-				m_isPaused = !m_isPaused;
-        return true;
-      }
-    }
+  switch (m_Mode)
+  {
+  case CGame::FPS:
+    return FpsInputEvent(event);
+  case CGame::MENU:
+    return MenuInputEvent(event);
+  case CGame::FLY:
+    return FlyInputEvent(event);
+  default:
+    break;
   }
   return false;
 }
@@ -248,8 +212,6 @@ void CGame::gotoGame()
 	if (!m_InGame)
 	{
 		m_InGame = true;
-    //m_inputHandler->mouseLock(true);
-    //reinterpret_cast<sf::RenderWindow*>(m_Window->getHandle())->setMouseCursorVisible(false);
   }
 }
 
@@ -263,8 +225,87 @@ bool CGame::initPlayer()
   m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer")) ;
   m_player->attachCamera(m_camera1);
   m_player->setGame(this);
-  m_inputHandler->AddEventListener(m_player);
   return true;
+}
+
+bool CGame::FpsInputEvent(sf::Event& event)
+{
+  switch (event.type)
+  {
+  case sf::Event::KeyPressed:
+    switch(event.key.code)
+    {
+    case sf::Keyboard::P:
+      isWireFrame = !isWireFrame;
+      return true;
+    case sf::Keyboard::Backspace:
+      return true;
+    case sf::Keyboard::Space:
+      m_active_camera->mode = CCamera::Mode::FLY;
+      m_Mode = Mode::FLY;
+      return true;
+    case sf::Keyboard::Escape:
+      m_Window->mouseUnlock();
+      m_Mode = Mode::MENU;
+      return true;
+    }
+  default:
+    m_player->OnInputEvent(event);
+  }
+  return false;
+}
+
+bool CGame::FlyInputEvent(sf::Event& event)
+{
+ switch (event.type)
+  {
+  case sf::Event::KeyPressed:
+    switch(event.key.code)
+    {
+    case sf::Keyboard::P:
+      isWireFrame = !isWireFrame;
+      return true;
+    case sf::Keyboard::Backspace:
+      return true;
+    case sf::Keyboard::Space:
+      m_active_camera->mode = CCamera::Mode::FPS;
+      m_Mode = Mode::FPS;
+      return true;
+    case sf::Keyboard::Escape:
+      m_Window->mouseUnlock();
+      m_Mode = Mode::MENU;
+      return true;
+    }
+  default:
+    m_player->OnInputEvent(event);
+  }
+  return false;
+}
+
+bool CGame::MenuInputEvent(sf::Event& event)
+{
+  switch (event.type)
+  {
+  case sf::Event::MouseButtonPressed:
+  {
+    m_Window->mouseLock(sf::Vector2i(m_Window->getWidth(), m_Window->getWidth()) / 2);
+    m_Mode = Mode::FPS;
+    return true;
+  }
+  case sf::Event::KeyPressed:
+    switch (event.key.code)
+    {
+    case sf::Keyboard::Escape:
+      m_Window->mouseUnlock();
+      m_Mode = Mode::MENU;
+      m_running = false;
+      return true;
+    }
+
+  
+  }
+  return false;
+
 }
 
 

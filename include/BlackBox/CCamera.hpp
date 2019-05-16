@@ -50,6 +50,12 @@ public:
     GLfloat zNear = 0.1f;
     GLfloat zFar = 5000.f;
 
+    enum Mode
+    {
+      FPS,
+      FLY
+    }mode = FPS;
+
     // Constructor with vectors
     CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
     {
@@ -85,9 +91,9 @@ public:
     {
         GLfloat velocity = this->MovementSpeed * deltaTime;
         if (direction == FORWARD)
-            this->Position += glm::vec3(this->Front.x, 0, this->Front.z)* velocity;
+            this->Position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
         if (direction == BACKWARD)
-            this->Position -= glm::vec3(this->Front.x, 0, this->Front.z) * velocity;
+            this->Position -= glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
         if (direction == LEFT)
             this->Position -= this->Right * velocity;
         if (direction == RIGHT)

@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>2.5129776</Y>
+                <Y>9.0686283</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -310,7 +310,7 @@
     </light>
     <light name="sun" type="direction" enabled="true">
         <direction x="-0.2" y="-1" z="-0.30000001"/>
-        <ambient x="0.015686275" y="0" z="0"/>
+        <ambient x="0.2" y="0.20392157" z="0.17647059"/>
         <diffuse x="0.0078431377" y="0" z="0"/>
         <specular x="0.50196081" y="1" z="0.50196081"/>
     </light>

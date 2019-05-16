@@ -3,10 +3,16 @@
 
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/GameObject.hpp>
+#include <BlackBox/ICommand.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <map>
+#include <queue>
+
 class CGame;
+typedef std::map<sf::Keyboard::Key, ICommand*> KeyBindings;
+typedef std::queue<ICommand*> CommandQueue;
 
 
 class CPlayer : public GameObject
@@ -17,6 +23,8 @@ class CPlayer : public GameObject
   const float MOUSE_SPEED = 1.5f;
   const float MOUSE_SENSIVITY = 0.05f;
   CGame *Game;
+  KeyBindings m_keyBindings;
+  CommandQueue m_commandQueue;
   std::set<sf::Keyboard::Key> m_keys;
   friend class CGame;
   enum MouseState
@@ -25,6 +33,7 @@ class CPlayer : public GameObject
     FREE
   }mouseState;
   sf::Vector2i delta;
+  glm::vec3 impulse;
 
 public:
   CPlayer();
@@ -33,6 +42,8 @@ public:
   // IInputEventListener interface
 public:
   virtual bool OnInputEvent(sf::Event &event) override;
+  bool OnKeyPress(sf::Event& event);
+  bool OnKeyReleas(sf::Event& event);
 
   // IDrawable interface
 public:
@@ -40,8 +51,10 @@ public:
 
 public:
   void attachCamera(CCamera *camera);
+  CCamera *getCamera();
   glm::vec3 getPos();
   void setGame(CGame *game);
+  CGame *getGame();
 
   // IObject interface
 public:

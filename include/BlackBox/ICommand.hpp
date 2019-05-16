@@ -1,7 +1,7 @@
 #pragma once
-#include <SFML/Window/Event.hpp>
+//#include <SFML/Window/Event.hpp>
 
 struct ICommand
 {
-  virtual void execute(sf::Event &event) = 0;
+  virtual void execute() = 0;
 };

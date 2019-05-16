@@ -81,6 +81,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Object.cpp
   PRIVATE ${SOURCE_DIR}/ObjectManager.cpp
   PRIVATE ${SOURCE_DIR}/Plane.cpp
+  PRIVATE ${SOURCE_DIR}/PlayerCommands.cpp
   PRIVATE ${SOURCE_DIR}/Primitives.cpp
   PRIVATE ${SOURCE_DIR}/Scene.cpp
   PRIVATE ${SOURCE_DIR}/SceneManager.cpp
@@ -124,6 +125,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjectManager.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Opengl.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Plane.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/PlayerCommands.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Primitives.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Renderer.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Scene.hpp

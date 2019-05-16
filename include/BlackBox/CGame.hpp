@@ -63,14 +63,13 @@ private:
   //
   ShaderManager *shaderManager;
 
-
-  enum State
+  enum Mode
   {
-    INIT,
+    FPS,
     MENU,
-    RUN,
-    RELASE
-  };
+    FLY
+    
+  }m_Mode = FPS;
   std::stack<GameState*> states;
 
 public:
@@ -100,6 +99,10 @@ private:
   void showMenu();
 
   bool initPlayer();
+
+  bool FpsInputEvent(sf::Event& event);
+  bool FlyInputEvent(sf::Event& event);
+  bool MenuInputEvent(sf::Event& event);
   // IGame interface
 public:
   virtual float getDeltaTime() override;
