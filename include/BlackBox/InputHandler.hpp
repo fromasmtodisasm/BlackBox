@@ -13,6 +13,5 @@ struct IInputHandler
   virtual void AddEventListener(IInputEventListener *pListener) = 0;
 
   virtual sf::Vector2i getDeltaMouse() = 0;
-  virtual void mouseLock(sf::Vector2i pos) = 0;
-  virtual void mouseUnlock() = 0;
+  virtual void mouseLock(bool lock) = 0;
 };

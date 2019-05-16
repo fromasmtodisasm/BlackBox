@@ -38,6 +38,7 @@ class CSFMLWindow :
     bool y_wraped;
     bool locked;
     sf::Vector2i lockedPos;
+    int limit = 4;
   }Mouse;
 
 public:
@@ -70,6 +71,8 @@ public:
   virtual int getHeight() override;
 	virtual void setFlags(int flags) override;
 private:
+  sf::Vector2i nextMousePos(sf::Vector2i &position);
+  void setMouseWrap(bool wrap);
   void glInit();
 
   // IInputHandler interface
@@ -77,7 +80,6 @@ public:
   virtual ICommand *handleInput() override;
   virtual void AddEventListener(IInputEventListener *pListener) override;
   virtual sf::Vector2i getDeltaMouse() override;
-  virtual void mouseLock(sf::Vector2i pos) override;
-  virtual void mouseUnlock() override;
+  virtual void mouseLock(bool lock) override;
 };
 

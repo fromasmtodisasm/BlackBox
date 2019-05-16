@@ -11,8 +11,13 @@ ICommand * CSFMLWindow::handleInput()
   {
     if (event.type == sf::Event::MouseMoved)
     {
+      if (Mouse.x_wraped || Mouse.y_wraped)
+      {
+        Mouse.x_wraped = Mouse.y_wraped = false;
+        continue;
+      }
       Mouse.prev_pos = Mouse.curr_pos;
-      Mouse.curr_pos = sf::Vector2i(event.mouseMove.x,event.mouseMove.y);
+      Mouse.curr_pos = nextMousePos(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
     }
     this->OnInputEvent(event);
     if (viewPort.contains(sf::Mouse::getPosition(*m_Window)))
@@ -34,28 +39,18 @@ void CSFMLWindow::AddEventListener(IInputEventListener * pListener)
 
 sf::Vector2i CSFMLWindow::getDeltaMouse()
 {
-  sf::Vector2i center = (sf::Vector2i)m_Window->getSize() / 2;
-  sf::Vector2i delta = Mouse.curr_pos - center;
-  if (delta.x != 0 && delta.y != 0)
-    sf::Mouse::setPosition(center, *m_Window);
+  sf::Vector2i delta = Mouse.curr_pos - Mouse.prev_pos;
   return delta;
 }
 
-void CSFMLWindow::mouseLock(sf::Vector2i pos)
+void CSFMLWindow::mouseLock(bool lock)
 {
   sf::Vector2i center = (sf::Vector2i)m_Window->getSize() / 2;
-  Mouse.locked = true;
+  Mouse.locked = lock;
   Mouse.prev_pos = center;
   Mouse.curr_pos = center;
 
   sf::Mouse::setPosition(center, *m_Window);
-  m_Window->setMouseCursorGrabbed(true);
-  m_Window->setMouseCursorVisible(false);
-}
-
-void CSFMLWindow::mouseUnlock()
-{
-  Mouse.locked = false;
-  m_Window->setMouseCursorGrabbed(false);
-  m_Window->setMouseCursorVisible(true);
+  m_Window->setMouseCursorGrabbed(lock);
+  m_Window->setMouseCursorVisible(!lock);
 }

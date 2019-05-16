@@ -82,7 +82,7 @@ bool CGame::init(IEngine *pSystem)  {
   m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
   initPlayer();
-  m_Window->mouseLock(sf::Vector2i(m_Window->getWidth(), m_Window->getWidth()) / 2);
+  m_Window->mouseLock(true);
 
   //m_World->setCamera(camera2);
   return true;
@@ -245,7 +245,7 @@ bool CGame::FpsInputEvent(sf::Event& event)
       m_Mode = Mode::FLY;
       return true;
     case sf::Keyboard::Escape:
-      m_Window->mouseUnlock();
+      m_Window->mouseLock(false);
       m_Mode = Mode::MENU;
       return true;
     }
@@ -272,7 +272,7 @@ bool CGame::FlyInputEvent(sf::Event& event)
       m_Mode = Mode::FPS;
       return true;
     case sf::Keyboard::Escape:
-      m_Window->mouseUnlock();
+      m_Window->mouseLock(false);
       m_Mode = Mode::MENU;
       return true;
     }
@@ -288,7 +288,7 @@ bool CGame::MenuInputEvent(sf::Event& event)
   {
   case sf::Event::MouseButtonPressed:
   {
-    m_Window->mouseLock(sf::Vector2i(m_Window->getWidth(), m_Window->getWidth()) / 2);
+    m_Window->mouseLock(true);
     m_Mode = Mode::FPS;
     return true;
   }
@@ -296,7 +296,7 @@ bool CGame::MenuInputEvent(sf::Event& event)
     switch (event.key.code)
     {
     case sf::Keyboard::Escape:
-      m_Window->mouseUnlock();
+      m_Window->mouseLock(false);
       m_Mode = Mode::MENU;
       m_running = false;
       return true;

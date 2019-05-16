@@ -146,6 +146,47 @@ void CSFMLWindow::setFlags(int flags)
 	m_flags = flags;
 }
 
+sf::Vector2i CSFMLWindow::nextMousePos(sf::Vector2i &position)
+{
+  sf::Vector2i nextPos = position;
+  if (Mouse.locked)
+  {
+    if (position.x < viewPort.left + Mouse.limit)
+    {
+      nextPos.x = m_Window->getSize().x - Mouse.limit - 3;
+      Mouse.curr_pos = Mouse.prev_pos = nextPos;
+      Mouse.x_wraped = true;
+      sf::Mouse::setPosition(sf::Vector2i(nextPos.x, nextPos.y), *m_Window);
+    }
+    else if (position.x > viewPort.left + viewPort.width - Mouse.limit)
+    {
+      nextPos.x = getDeltaMouse().x + viewPort.left + 3;
+      Mouse.curr_pos = Mouse.prev_pos = nextPos;
+      Mouse.x_wraped = true;
+      sf::Mouse::setPosition(sf::Vector2i(nextPos.x, nextPos.y), *m_Window);
+    }
+    if (position.y < viewPort.top + Mouse.limit)
+    {
+      nextPos.y = m_Window->getSize().y - Mouse.limit - 3;
+      Mouse.curr_pos = Mouse.prev_pos = nextPos;
+      Mouse.y_wraped = true;
+      sf::Mouse::setPosition(sf::Vector2i(nextPos.x, nextPos.y), *m_Window);
+    }
+    else if (position.y > viewPort.top + viewPort.height - Mouse.limit)
+    {
+      nextPos.y = getDeltaMouse().y + viewPort.top + 3;
+      Mouse.curr_pos = Mouse.prev_pos = nextPos;
+      Mouse.y_wraped = true;
+      sf::Mouse::setPosition(sf::Vector2i(nextPos.x, nextPos.y), *m_Window);
+    }
+  }
+  return nextPos;
+}
+
+void CSFMLWindow::setMouseWrap(bool wrap)
+{
+}
+
 void CSFMLWindow::glInit()
 {
   glEnable(GL_DEPTH_TEST);
