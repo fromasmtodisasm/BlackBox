@@ -36,7 +36,7 @@ bool CSFMLWindow::init()
   sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
   //auto fullscreen = 	sf::VideoMode::getFullscreenModes();
   sf::VideoMode mode = desktop;
-  m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
+  m_Window = new sf::RenderWindow(sf::VideoMode(1024, 768), sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
   m_Window->setVerticalSyncEnabled(true);
   m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);

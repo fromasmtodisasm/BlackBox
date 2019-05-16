@@ -36,7 +36,8 @@ sf::Vector2i CSFMLWindow::getDeltaMouse()
 {
   sf::Vector2i center = (sf::Vector2i)m_Window->getSize() / 2;
   sf::Vector2i delta = Mouse.curr_pos - center;
-  sf::Mouse::setPosition(center, *m_Window);
+  if (delta.x != 0 && delta.y != 0)
+    sf::Mouse::setPosition(center, *m_Window);
   return delta;
 }
 
