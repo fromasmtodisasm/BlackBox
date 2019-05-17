@@ -1,12 +1,14 @@
 #pragma once
 #include <BlackBox/CGame.hpp>
+#include <BlackBox/InputHandler.hpp>
 
 struct BaseLight;
 
-class GameGUI
+class GameGUI : public IInputEventListener
 {
   friend class CGame;
   CGame *game;
+  bool editing = false;
 public:
   GameGUI();
   ~GameGUI();
@@ -16,4 +18,7 @@ public:
   void musiListController();
   void cameraController();
   void showLights(BaseLight* light, const char *name);
+
+  // Унаследовано через IInputEventListener
+  virtual bool OnInputEvent(sf::Event& event) override;
 };

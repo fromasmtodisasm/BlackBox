@@ -94,7 +94,6 @@ bool CGame::update() {
     m_deltaTime = deltaTime.asSeconds();
     input();
     m_Window->update();
-    gotoGame();
     m_World->update(m_deltaTime);
     setRenderState();
 
@@ -211,7 +210,9 @@ void CGame::gotoGame()
 {
 	if (!m_InGame)
 	{
-		m_InGame = true;
+    m_active_camera->mode = CCamera::Mode::FPS;
+    m_Mode = FPS;
+    m_inputHandler->mouseLock(true);
   }
 }
 
@@ -245,8 +246,7 @@ bool CGame::FpsInputEvent(sf::Event& event)
       m_Mode = Mode::FLY;
       return true;
     case sf::Keyboard::Escape:
-      m_Window->mouseLock(false);
-      m_Mode = Mode::MENU;
+      gotoMenu();
       return true;
     }
   default:
@@ -268,8 +268,7 @@ bool CGame::FlyInputEvent(sf::Event& event)
     case sf::Keyboard::Backspace:
       return true;
     case sf::Keyboard::Space:
-      m_active_camera->mode = CCamera::Mode::FPS;
-      m_Mode = Mode::FPS;
+      gotoGame();
       return true;
     case sf::Keyboard::Escape:
       m_Window->mouseLock(false);
@@ -286,12 +285,6 @@ bool CGame::MenuInputEvent(sf::Event& event)
 {
   switch (event.type)
   {
-  case sf::Event::MouseButtonPressed:
-  {
-    m_Window->mouseLock(true);
-    m_Mode = Mode::FPS;
-    return true;
-  }
   case sf::Event::KeyPressed:
     switch (event.key.code)
     {
@@ -300,15 +293,15 @@ bool CGame::MenuInputEvent(sf::Event& event)
       m_Mode = Mode::MENU;
       m_running = false;
       return true;
+    default:
+      return gui->OnInputEvent(event);
     }
-
-  
+  default:
+    return gui->OnInputEvent(event);
   }
   return false;
 
 }
-
-
 
 float CGame::getDeltaTime()
 {
@@ -317,10 +310,6 @@ float CGame::getDeltaTime()
 
 void CGame::gotoMenu()
 {
-	if (m_InGame)
-	{
-		m_InGame = false;
-    //m_inputHandler->mouseLock(false);
-    //reinterpret_cast<sf::RenderWindow*>(m_Window->getHandle())->setMouseCursorVisible(true);
-	}
+  m_Mode = MENU;
+  m_inputHandler->mouseLock(false);
 }

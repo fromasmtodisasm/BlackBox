@@ -173,7 +173,7 @@ void GameGUI::showLights(BaseLight* light, const char *name)
 
       ImGui::DragFloat("constant", &_light->constant, 0.01f);
       ImGui::DragFloat("linear", &_light->linear, 0.01f);
-      ImGui::DragFloat("quadratic", &_light->quadratic, 0.001f);
+      ImGui::DragFloat("quadratic", &_light->quadratic, 0.0001f);
       if (light->BaseLight::type == BaseLight::SPOT)
       {
         SpotLight* _light = reinterpret_cast<SpotLight*>(light);
@@ -182,13 +182,47 @@ void GameGUI::showLights(BaseLight* light, const char *name)
       }
     }
 
-    ImGui::ColorEdit3("ambient", (float*)& light->ambient);
-    ImGui::ColorEdit3("diffuse", (float*)& light->diffuse);
-    ImGui::ColorEdit3("specular", (float*)& light->specular);
+    editing = false;
+    if (ImGui::ColorEdit3("ambient", (float*) &light->ambient))
+      editing = true;
+    if (ImGui::ColorEdit3("diffuse", (float*) &light->diffuse)) 
+      editing = true;
+    if (ImGui::ColorEdit3("specular", (float*) &light->specular)) 
+      editing = true;
+
     ImGui::Checkbox("enabled", &light->enabled);
 
     ImGui::TreePop();
   }
+}
+
+bool GameGUI::OnInputEvent(sf::Event& event)
+{
+  
+  switch (event.type)
+  {
+  case sf::Event::KeyPressed:
+    switch(event.key.code)
+    {
+    case sf::Keyboard::P:
+      //isWireFrame = !isWireFrame;
+      return true;
+    }
+  case sf::Event::MouseButtonPressed:
+  {
+    if (event.mouseButton.button == sf::Mouse::Button::Left)
+    {
+      if (!editing)
+        game->gotoGame();
+    }
+  }
+  default:
+  {
+
+  }
+  }
+  return false;
+
 }
 
 void GameGUI::objectInfo(Object *obj, std::string name)
