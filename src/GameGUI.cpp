@@ -65,110 +65,26 @@ GameGUI::~GameGUI()
 
 void GameGUI::Draw()
 {
-  static bool
-      show_player=1,
-      show_camera=1,
-      show_demo=0,
-      edit_player = 1,
-      lighting = 0;
-  bool open = true;
-  ImGuiWindowFlags window_flags = 0;
   mainMenu.execute();
-  //window_flags |= ImGuiWindowFlags_NoMove;
-  window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-  //window_flags |= ImGuiWindowFlags_NoCollapse;
-  //window_flags |= ImGuiWindowFlags_MenuBar;
-  // We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
   ImGuiIO& io = ImGui::GetIO();
   ImGui::SetNextWindowPos(ImVec2(0, mainMenu.size.y));
   ImGui::SetNextWindowSizeConstraints(ImVec2(150, 0), ImVec2(350, io.DisplaySize.y - 20));
+  ImGui::Begin("Navigator");
+  if (ImGui::BeginTabBar("TestBar"))
+  {
+    if (ImGui::BeginTabItem("Control Panel"))
+    {
+      controlPanel();
+      ImGui::EndTabItem();
+    }
+    ImGui::EndTabBar();
+  }
+  ImGui::End();
+  
   //ImGui::SetNextWindowSize(game->cp_size);
   auto font = ImGui::GetFont();
   font->Scale = 1.5;
   ImGui::PushFont(font);
-  ImGui::Begin("Control panel", &open);//, &open, window_flags);
-  ImVec2 size = ImGui::GetWindowSize();
-    game->m_Window->viewPort.left = size.x;
-    game->m_Window->viewPort.width = game->m_Window->m_Width - size.x;
-    ImGui::Checkbox("Show Plyer", &show_player);
-    ImGui::Checkbox("Show Camera", &show_camera);
-    ImGui::Checkbox("Show Demo", &show_demo);
-    ImGui::Checkbox("Edit player", &edit_player);
-    if (ImGui::Checkbox("Light", &lighting))
-    {
-      game->m_scene->lighting = true;
-    }
-    if (edit_player)
-    {
-      ImGui::Separator();
-      if (ImGui::TreeNode("Object Inspector"))
-      {
-        char path[260] = "";
-        if (ImGui::InputText("Object path", path, sizeof(path)) && path[0] != '\0')
-        {
-          game->m_scene->load(path);
-        }
-        if (ImGui::Button("Load Objects"))
-        {
-          game->m_scene->load(path);
-        }
-        if (ImGui::Button("Save Objects"))
-        {
-          game->m_scene->save();
-        }
-        ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
-        if (ImGui::TreeNode("Lights"))
-        {
-          for (const auto& light : game->m_scene->m_PointLights)
-          {
-            showLights(light.second, light.first.c_str());
-          }
-          for (const auto& light : game->m_scene->m_DirectionLight)
-          {
-            showLights(light.second, light.first.c_str());
-          }
-          for (const auto& light : game->m_scene->m_SpotLights)
-          {
-            showLights(light.second, light.first.c_str());
-          }
-          ImGui::TreePop();
-        }
-        ImGui::Separator();
-        for (auto &obj : game->m_scene->m_Objects)
-          objectInfo(obj.second, obj.first);
-       ImGui::TreePop();
-      }
-    }
-    ImGui::Separator();
-    ImGui::Text("Input");
-    ImGui::SliderFloat("Mouse sensivity", &game->m_camera1->MouseSensitivity, 0.0, 1.0);
-    ImGui::SliderFloat("MovementSpeed", &game->m_camera1->MovementSpeed, 1.0, 1000.0);
-    if (show_player)
-      musiListController();
-    if (show_demo)
-    {
-      ImGui::ShowDemoWindow();
-    }
-
-    // Exit
-    if (ImGui::Button("Exit"))
-    {
-      game->m_running = false;
-    }
-    ImGuiIO &igio = ImGui::GetIO();
-    
-  ImGui::Separator();
-  if (ImGui::TreeNode("Camera"))
-  {
-    if (ImGui::SliderFloat("Pitch", &game->m_scene->m_Camera->Pitch, -89.0, 89.0))
-      game->m_scene->m_Camera->updateCameraVectors();
-    if (ImGui::SliderFloat("Yaw", &game->m_scene->m_Camera->Yaw, 0.0f, 360.0f))
-      game->m_scene->m_Camera->updateCameraVectors();
-    ImGui::Text("Position");
-    ImGui::DragFloat3("##pos", &game->m_scene->m_Camera->Position[0], 0.1);
-    ImGui::TreePop();
-  }
-  ImGui::End();
   ImGui::PopFont();
 
 
@@ -261,6 +177,94 @@ void GameGUI::showLights(BaseLight* light, const char *name)
 
     ImGui::TreePop();
   }
+}
+
+void GameGUI::controlPanel()
+{
+  window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+  //ImGui::Begin("Control panel", &open);//, &open, window_flags);
+  ImVec2 size = ImGui::GetWindowSize();
+    game->m_Window->viewPort.left = size.x;
+    game->m_Window->viewPort.width = game->m_Window->m_Width - size.x;
+    ImGui::Checkbox("Show Plyer", &show_player);
+    ImGui::Checkbox("Show Camera", &show_camera);
+    ImGui::Checkbox("Show Demo", &show_demo);
+    ImGui::Checkbox("Edit player", &edit_player);
+    if (ImGui::Checkbox("Light", &lighting))
+    {
+      game->m_scene->lighting = true;
+    }
+    if (edit_player)
+    {
+      ImGui::Separator();
+      if (ImGui::TreeNode("Object Inspector"))
+      {
+        char path[260] = "";
+        if (ImGui::InputText("Object path", path, sizeof(path)) && path[0] != '\0')
+        {
+          game->m_scene->load(path);
+        }
+        if (ImGui::Button("Load Objects"))
+        {
+          game->m_scene->load(path);
+        }
+        if (ImGui::Button("Save Objects"))
+        {
+          game->m_scene->save();
+        }
+        ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
+        if (ImGui::TreeNode("Lights"))
+        {
+          for (const auto& light : game->m_scene->m_PointLights)
+          {
+            showLights(light.second, light.first.c_str());
+          }
+          for (const auto& light : game->m_scene->m_DirectionLight)
+          {
+            showLights(light.second, light.first.c_str());
+          }
+          for (const auto& light : game->m_scene->m_SpotLights)
+          {
+            showLights(light.second, light.first.c_str());
+          }
+          ImGui::TreePop();
+        }
+        ImGui::Separator();
+        for (auto &obj : game->m_scene->m_Objects)
+          objectInfo(obj.second, obj.first);
+       ImGui::TreePop();
+      }
+    }
+    ImGui::Separator();
+    ImGui::Text("Input");
+    ImGui::SliderFloat("Mouse sensivity", &game->m_camera1->MouseSensitivity, 0.0, 1.0);
+    ImGui::SliderFloat("MovementSpeed", &game->m_camera1->MovementSpeed, 1.0, 1000.0);
+    if (show_player)
+      musiListController();
+    if (show_demo)
+    {
+      ImGui::ShowDemoWindow();
+    }
+
+    // Exit
+    if (ImGui::Button("Exit"))
+    {
+      game->m_running = false;
+    }
+    ImGuiIO &igio = ImGui::GetIO();
+    
+  ImGui::Separator();
+  if (ImGui::TreeNode("Camera"))
+  {
+    if (ImGui::SliderFloat("Pitch", &game->m_scene->m_Camera->Pitch, -89.0, 89.0))
+      game->m_scene->m_Camera->updateCameraVectors();
+    if (ImGui::SliderFloat("Yaw", &game->m_scene->m_Camera->Yaw, 0.0f, 360.0f))
+      game->m_scene->m_Camera->updateCameraVectors();
+    ImGui::Text("Position");
+    ImGui::DragFloat3("##pos", &game->m_scene->m_Camera->Position[0], 0.1);
+    ImGui::TreePop();
+  }
+  //ImGui::End();
 }
 
 bool GameGUI::OnInputEvent(sf::Event& event)

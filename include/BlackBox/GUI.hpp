@@ -54,6 +54,16 @@ class GameGUI : public IInputEventListener
   float MainMenuHeight;
   MainMenu mainMenu;
 
+  // Control panel
+
+  bool
+      show_player=1,
+      show_camera=1,
+      show_demo=0,
+      edit_player = 1,
+      lighting = 0;
+  bool open = true;
+  ImGuiWindowFlags window_flags = 0;
 public:
   GameGUI();
   ~GameGUI();
@@ -63,6 +73,7 @@ public:
   void musiListController();
   void cameraController();
   void showLights(BaseLight* light, const char *name);
+  void controlPanel();
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;
