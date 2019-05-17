@@ -1,4 +1,4 @@
-# GEngine
+# BlackBox 
 [![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=experiment)](https://travis-ci.org/fromasmtodisasm/BlackBox)
 opengl (GLFW) game engine
 
