@@ -1,16 +1,15 @@
 # BlackBox 
 [![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=experiment)](https://travis-ci.org/fromasmtodisasm/BlackBox)
 
-opengl (GLFW) game engine
+OpenGL based game engine
 
-to build project, make build directory in repository root
-and type this command:
+To build project, make build directory in repository root
+and type this commands:
 
-```cmake -DCMAKE_TOOLCHAIN_FILE=CMake/x86_64-w64-mingw32.cmake -DBUILD_SHARED_LIBS=ON ..```
+```bash
+git clone --recurse-submodules https://github.com/fromasmtodisasm/BlackBox
+```
 
-if your platform is Windows then add to flags ```-DWIN32=ON```
-
-For get glfw submodule two commands need to be executed:
-  **```git submodule init```** to initialize your local configuration file and 
-  **```git submodule update```** to get all the data from the submodule
-
+```cmake
+cmake -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -D GLM_TEST_ENABLE=OFF ${CMAKE_SOURCE_DIR}
+```
