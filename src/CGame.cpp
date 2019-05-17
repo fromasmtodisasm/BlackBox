@@ -303,6 +303,11 @@ bool CGame::MenuInputEvent(sf::Event& event)
 
 }
 
+void CGame::Stop()
+{
+  m_running = false;
+}
+
 float CGame::getDeltaTime()
 {
   return m_deltaTime;

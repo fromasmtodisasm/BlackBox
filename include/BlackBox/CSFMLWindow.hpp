@@ -25,7 +25,7 @@ class CSFMLWindow :
   int m_Width;
   int m_Height;
   std::string m_Title;
-  glm::vec4 m_BackColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+  glm::vec4 m_BackColor = { 0.2f, 0.2f, 0.2f, 1.0f };
   sf::Clock deltaClock;
 	int m_flags = 0;
   // For input handling

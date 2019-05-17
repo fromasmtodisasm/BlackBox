@@ -7,171 +7,75 @@
 #include <sstream>
 using namespace  std;
 
-#if 0
-CCamera::CCamera() :
-  m_pos(0,0,3), m_target(0,0,-1), m_right(1,0,0), m_up(0,1,0),
-  m_angles(0,0,0), m_view(1.0f)
-{
 
-}
-
-CCamera::CCamera(glm::vec3 pos, glm::vec3 target, glm::vec3 up) :
-  m_pos(pos), m_target(target), m_up(up),
-  m_view(1.0f),m_angles(0,0,0), m_right(1,0,0)
-{
-}
-
-CCamera::~CCamera()
-{
-}
-
-void CCamera::update(float deltatime)
-{
-  /*
-  static float prev_time;
-  static stringstream ss;
-  prev_time += deltatime;
-  if (prev_time >= 1.0)
-    cout << "cam.x = " << m_pos.x <<endl <<
-         "cam.y = " << m_pos.y <<endl <<
-         "cam.z = " << m_pos.z << endl;
-  */
-
-
-}
-
-void CCamera::move(glm::vec3 pos)
-{
-  m_pos = m_pos + pos;
-}
-
-void CCamera::moveForward(float speed)
-{
-  move(m_target*(speed));
-}
-
-void CCamera::moveLeft(float speed)
-{
-  move(glm::normalize(m_right)*(-speed));
-}
-
-void CCamera::moveRight(float speed)
-{
-  move(glm::normalize(m_right)*(speed));
-}
-
-void CCamera::moveBackward(float speed)
-{
-  move(m_target*(-speed));
-}
-
-void CCamera::moveUp(float speed)
-{
-  move(m_up*(speed));
-}
-
-void CCamera::moveDown(float speed)
-{
-  move(m_up*(-speed));
-}
-
-void CCamera::strafeLeft(float speed)
-{
-  move(glm::normalize(m_right)*speed);
-}
-
-void CCamera::strafeRight(float speed)
-{
-  move(glm::normalize(m_right)*(-speed));
-}
-
-void CCamera::rotateY(float angle)
-{
-  m_angles.y += angle;
-
-  //Rotate viewdir around the up vector:
-  m_target = glm::normalize(
-    m_target*(float)cos(angle*PIdiv180)
-    - m_right * (float)sin(angle*PIdiv180)
-  );
-
-  //now compute the new RightVector (by cross product)
-  m_right = glm::cross(m_target, m_up);
-}
-
-void CCamera::rotateX(float angle)
-{
-  m_angles.y += angle;
-  //Rotate viewdir around the up vector:
-  m_up = glm::normalize(
-    m_up*(float)cos(angle*PIdiv180)
-    + m_target * (float)sin(angle*PIdiv180)
-  );
-  //now compute the new RightVector (by cross product)
-  m_target = -glm::cross(m_right, m_up);
-}
-
-void CCamera::rotateZ(float angle)
-{
-  m_angles.y += angle;
-  //Rotate viewdir around the up vector:
-  m_right = glm::normalize(
-    m_right*(float)cos(angle*PIdiv180)
-    + m_up * (float)sin(angle*PIdiv180)
-  );
-  //now compute the new RightVector (by cross product)
-  m_up = -glm::cross(m_target, m_right);
-}
-
-void CCamera::rotateAroundTarget(float angle)
-{
-  this->m_angles.y += angle;
-  //m_pos.x = (float)sin(m_angles.y)*10;
-  //m_pos.z = (float)cos(m_angles.y)*10;
-
-  m_pos.x = m_pos.x*(float)cos(angle*PIdiv180)
-  - m_pos.z * (float)sin(angle*PIdiv180);
-  m_pos.z = m_pos.x*(float)sin(angle*PIdiv180)
-  + m_pos.z * (float)cos(angle*PIdiv180);
-  //m_target = { 0,0,0 };
-
-}
-
+// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 glm::mat4 CCamera::getViewMatrix()
 {
-  return glm::lookAt(
-    glm::vec3(m_pos),
-    glm::vec3(m_pos + m_target),
-    glm::vec3(m_up)
-  );
+    return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 }
 
 glm::mat4 CCamera::getProjectionMatrix()
 {
-  return glm::perspective(glm::radians(m_fov), m_ratio, 0.1f, 1000.0f);
+  return glm::perspective(glm::radians(FOV), Ratio, zNear, zFar);
 }
 
-void CCamera::reset()
+// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
+void CCamera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
 {
-  m_pos = {0,0,3},
-  m_target = {-glm::normalize(m_pos - glm::vec3(0,0,0))},
-  m_right = {1,0,0},
-  m_up = {0,1,0};
+    GLfloat velocity = this->MovementSpeed * deltaTime;
+    if (direction == FORWARD)
+        this->Position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
+    if (direction == BACKWARD)
+        this->Position -= glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
+    if (direction == LEFT)
+        this->Position -= this->Right * velocity;
+    if (direction == RIGHT)
+        this->Position += this->Right * velocity;
 }
 
-void CCamera::setView(int x, int y, int w, int h)
+// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+void CCamera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch)
 {
-  m_ratio = (float)w/h;
-  glViewport(x,y,w,h);
+    xoffset *= this->MouseSensitivity;
+    yoffset *= this->MouseSensitivity;
+
+    this->Yaw   += xoffset;
+    this->Pitch += yoffset;
+
+    // Make sure that when pitch is out of bounds, screen doesn't get flipped
+    if (constrainPitch)
+    {
+        if (this->Pitch > 89.0f)
+            this->Pitch = 89.0f;
+        if (this->Pitch < -89.0f)
+            this->Pitch = -89.0f;
+    }
+
+    // Update Front, Right and Up Vectors using the updated Eular angles
+    this->updateCameraVectors();
 }
 
-bool CCamera::OnInputEvent(sf::Event & event)
+// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
+void CCamera::ProcessMouseScroll(GLfloat yoffset)
 {
-  if (event.type == sf::Event::Resized)
-  {
-    setView(0,0,event.size.width, event.size.height);
-  }
-  return false;
-
+    if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
+        this->Zoom -= yoffset;
+    if (this->Zoom <= 1.0f)
+        this->Zoom = 1.0f;
+    if (this->Zoom >= 45.0f)
+        this->Zoom = 45.0f;
 }
-#endif
+
+// Calculates the front vector from the Camera's (updated) Eular Angles
+void CCamera::updateCameraVectors()
+{
+    // Calculate the new Front vector
+    glm::vec3 front;
+    front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+    front.y = sin(glm::radians(this->Pitch));
+    front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+    this->Front = glm::normalize(front);
+    // Also re-calculate the Right and Up vector
+    this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+    this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
+}

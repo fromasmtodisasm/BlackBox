@@ -93,6 +93,7 @@ public:
   // IGame interface
 public:
   virtual IInputHandler *getInputHandler() override;
+  void Stop();
 private:
 	void gotoMenu();
 	void gotoGame();
@@ -103,6 +104,7 @@ private:
   bool FpsInputEvent(sf::Event& event);
   bool FlyInputEvent(sf::Event& event);
   bool MenuInputEvent(sf::Event& event);
+
   // IGame interface
 public:
   virtual float getDeltaTime() override;

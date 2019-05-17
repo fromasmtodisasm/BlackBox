@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>87.149658</Y>
+                <Y>20.378424</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -321,7 +321,7 @@
         <position x="-4.3160208e+08" y="-4.3160208e+08" z="-4.3160208e+08"/>
         <constant>1</constant>
         <linear>0.029999999</linear>
-        <quadratic>0.001</quadratic>
+        <quadratic>9.9999997e-05</quadratic>
         <ambient x="0.59215689" y="0.23529412" z="0.74117649"/>
         <diffuse x="0" y="0.15294118" z="0"/>
         <specular x="1" y="1" z="1"/>

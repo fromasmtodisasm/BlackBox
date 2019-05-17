@@ -2,9 +2,60 @@
 #include <imgui.h>
 #include <BlackBox/Light.hpp>
 
-GameGUI::GameGUI()
+struct FileClose : MenuItem
 {
+  CGame **game;
+  FileClose(CGame **game) : game(game)
+  {
+    this->name = "Close";
+  }
+  virtual void execute() override
+  {
+    if (game != nullptr && *game != nullptr)
+      (*game)->Stop();
+  }
+};
+struct FileOpen : MenuItem
+{
+  CGame **game;
+  FileOpen(CGame **game) : game(game)
+  {
+    this->name = "Open";
+  }
+  virtual void execute() override
+  {
+    if (game != nullptr && *game != nullptr)
+    {
+      // Execute 
+    }
+  }
+};
 
+struct FileMenu : public Menu
+{
+  CGame **game;
+  FileMenu(CGame **game) : game(game)
+  {
+    this->name = "File";
+  }
+  virtual void execute() override
+  {
+    for (auto& item : items)
+    {
+      if (ImGui::MenuItem(item->name))
+      {
+        item->execute();
+      }
+    }
+  }
+};
+
+GameGUI::GameGUI() : mainMenu(MainMenu())
+{
+  FileMenu *fileMenu = new FileMenu(&game);
+  fileMenu->items.push_back(new FileOpen(&game));
+  fileMenu->items.push_back(new FileClose(&game));
+  mainMenu.menus.push_back(fileMenu);
 }
 
 GameGUI::~GameGUI()
@@ -22,12 +73,15 @@ void GameGUI::Draw()
       lighting = 0;
   bool open = true;
   ImGuiWindowFlags window_flags = 0;
+  mainMenu.execute();
   //window_flags |= ImGuiWindowFlags_NoMove;
   window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
   //window_flags |= ImGuiWindowFlags_NoCollapse;
   //window_flags |= ImGuiWindowFlags_MenuBar;
   // We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-  //ImGui::SetNextWindowPos(ImVec2(0, 0));
+  ImGuiIO& io = ImGui::GetIO();
+  ImGui::SetNextWindowPos(ImVec2(0, mainMenu.size.y));
+  ImGui::SetNextWindowSizeConstraints(ImVec2(150, 0), ImVec2(350, io.DisplaySize.y - 20));
   //ImGui::SetNextWindowSize(game->cp_size);
   auto font = ImGui::GetFont();
   font->Scale = 1.5;
@@ -46,6 +100,7 @@ void GameGUI::Draw()
     }
     if (edit_player)
     {
+      ImGui::Separator();
       if (ImGui::TreeNode("Object Inspector"))
       {
         char path[260] = "";
@@ -78,14 +133,16 @@ void GameGUI::Draw()
           }
           ImGui::TreePop();
         }
+        ImGui::Separator();
         for (auto &obj : game->m_scene->m_Objects)
           objectInfo(obj.second, obj.first);
        ImGui::TreePop();
       }
     }
+    ImGui::Separator();
     ImGui::Text("Input");
-    ImGui::InputScalar("Mouse sensivity",   ImGuiDataType_Float,  &game->m_camera1->MouseSensitivity);
-    ImGui::InputScalar("MovementSpeed",   ImGuiDataType_Float,  &game->m_camera1->MovementSpeed);
+    ImGui::SliderFloat("Mouse sensivity", &game->m_camera1->MouseSensitivity, 0.0, 1.0);
+    ImGui::SliderFloat("MovementSpeed", &game->m_camera1->MovementSpeed, 1.0, 1000.0);
     if (show_player)
       musiListController();
     if (show_demo)
@@ -100,7 +157,17 @@ void GameGUI::Draw()
     }
     ImGuiIO &igio = ImGui::GetIO();
     
-    ImGui::Text("delta.x = %d, delta.y = %d",game->m_player->delta.x, game->m_player->delta.x);//,igio.MousePos.x,igio.MousePos.y);
+  ImGui::Separator();
+  if (ImGui::TreeNode("Camera"))
+  {
+    if (ImGui::SliderFloat("Pitch", &game->m_scene->m_Camera->Pitch, -89.0, 89.0))
+      game->m_scene->m_Camera->updateCameraVectors();
+    if (ImGui::SliderFloat("Yaw", &game->m_scene->m_Camera->Yaw, 0.0f, 360.0f))
+      game->m_scene->m_Camera->updateCameraVectors();
+    ImGui::Text("Position");
+    ImGui::DragFloat3("##pos", &game->m_scene->m_Camera->Position[0], 0.1);
+    ImGui::TreePop();
+  }
   ImGui::End();
   ImGui::PopFont();
 
@@ -173,7 +240,7 @@ void GameGUI::showLights(BaseLight* light, const char *name)
 
       ImGui::DragFloat("constant", &_light->constant, 0.01f);
       ImGui::DragFloat("linear", &_light->linear, 0.01f);
-      ImGui::DragFloat("quadratic", &_light->quadratic, 0.0001f);
+      ImGui::DragFloat("quadratic", &_light->quadratic, 0.0001f, 0.0f, 1.0f, "%.4f");
       if (light->BaseLight::type == BaseLight::SPOT)
       {
         SpotLight* _light = reinterpret_cast<SpotLight*>(light);
@@ -254,28 +321,12 @@ void GameGUI::objectInfo(Object *obj, std::string name)
 
     if (ImGui::TreeNode("Transform"))
     {
-      if (ImGui::TreeNode("Position"))
-      {
-        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.position.x, inputs_step ? &f32_one : NULL);
-        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.position.y, inputs_step ? &f32_one : NULL);
-        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.position.z, inputs_step ? &f32_one : NULL);
-        ImGui::TreePop();
-      }
-      if (ImGui::TreeNode("Rotation"))
-      {
-        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.rotation.x, inputs_step ? &f32_one : nullptr);
-        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.rotation.y, inputs_step ? &f32_one : nullptr);
-        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.rotation.z, inputs_step ? &f32_one : nullptr);
-        ImGui::TreePop();
-        //obj->m_transform.rotation = glm::radians(obj->m_transform.rotation);
-      }
-      if (ImGui::TreeNode("Scale"))
-      {
-        ImGui::InputScalar("X",   ImGuiDataType_Float,  &obj->m_transform.scale.x, inputs_step ? &f32_one : NULL);
-        ImGui::InputScalar("Y",   ImGuiDataType_Float,  &obj->m_transform.scale.y, inputs_step ? &f32_one : NULL);
-        ImGui::InputScalar("Z",   ImGuiDataType_Float,  &obj->m_transform.scale.z, inputs_step ? &f32_one : NULL);
-        ImGui::TreePop();
-      }
+      ImGui::Text("Position");
+      ImGui::DragFloat3("##pos", &obj->m_transform.position[0], 0.1, f32_lo_a, f32_hi_a, "%.3f");
+      ImGui::Text("Rotation");
+      ImGui::DragFloat3("##rot", &obj->m_transform.rotation[0], 0.1, f32_lo_a, f32_hi_a, "%.3f");
+      ImGui::Text("Scale");
+      ImGui::DragFloat3("##scale", &obj->m_transform.scale[0], 0.1, f32_lo_a, f32_hi_a, "%.3f");
       char materialName[64];
       ImGui::InputText("Material", (char*)obj->m_Material->name->data(), obj->m_Material->name->size(),ImGuiInputTextFlags_ReadOnly);
       ImGui::TreePop();
