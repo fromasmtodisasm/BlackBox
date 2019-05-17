@@ -1,4 +1,5 @@
 # GEngine
+[![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=experiment)](https://travis-ci.org/fromasmtodisasm/BlackBox)
 opengl (GLFW) game engine
 
 to build project, make build directory in repository root

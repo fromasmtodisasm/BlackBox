@@ -1,0 +1,39 @@
+language: generic 
+before_install:
+  - sudo apt-get update -q
+#compiler: gcc g++
+sudo: true
+# install:
+#  - libxrandr
+#  - libwrandr
+os: linux 
+env: 
+  - COMPILER_NAME=gcc CXX=g++-7 CC=gcc-7
+after_success:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_DISCORD
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_DISCORD
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libxrandr-dev
+      - libopenal-dev
+      - libudev-dev
+      - libflac-dev
+      - libvorbis-dev
+      - libogg-dev
+      - g++-7
+    sources: &sources
+      - llvm-toolchain-precise-3.8
+      - ubuntu-toolchain-r-test
+script:
+  - mkdir build
+  - cd build
+  - cmake -DBUILD_SHARED_LIBS=ON -DGLM_TEST_ENABLE=OFF -DGLAD_INSTALL=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON .. 
+  - cmake --build .
