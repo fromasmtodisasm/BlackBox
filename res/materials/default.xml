@@ -1,0 +1,76 @@
+<materials>
+  <material name="specular_box">
+    <textures>
+      <texture type="diffuse" name="container2.png"/>
+      <texture type="specular" name="container2_specular.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+      <!--<shininess/>-->
+  </material>
+  <material name="wood_box">
+    <textures>
+      <texture type="diffuse" name="container.jpg"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="light">
+    <color red="1.0" green="1.0" blue="1.0"/>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="basecolor.frag"/>
+    </shaders>
+  </material>
+  <material name="coral">
+    <textures>
+      <texture type="diffuse" name="coral.png"/>
+      <texture type="specular" name="gray.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="red">
+    <textures>
+      <texture type="diffuse" name="red.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="player">
+    <textures>
+      <texture type="diffuse" name="pengium.png"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="chess_floor">
+    <textures>
+      <texture type="diffuse" name="check.jpg"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="default">
+    <textures>
+      <texture type="diffuse" name="check.jpg"/>
+    </textures>
+    
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+</materials>

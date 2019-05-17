@@ -1,222 +1,174 @@
-#include "Object.hpp"
+#include <BlackBox/Object.hpp>
+#include <BlackBox/ObjLoader.hpp>
+#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/Renderer.hpp>
+#include <BlackBox/Opengl.hpp>
+
 #include <fstream>
+#include <iostream>
 #include <cctype>
+#include <cstdio>
+#include <sstream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-using std::fstream;
-using std::ifstream;
-using std::ofstream;
-using std::regex;
-using std::cmatch;
+using namespace std;
+int Object::refs = 0;
 
-
-/*
-
-std::ifstream in;
-
-in.open(filename, std::ifstream::in);
-if (in.fail()) return;
-std::string line;
-while (!in.eof()) {
-	std::getline(in, line);
-	std::istringstream iss(line.c_str());
-	char trash;
-	if (!line.compare(0, 2, "v ")) {
-		iss >> trash;
-		Vec3f v;
-		for (int i = 0; i < 3; i++) iss >> v.raw[i];
-		verts_.push_back(v);
-	}
-	else if (!line.compare(0, 2, "f ")) {
-		std::vector<int> f;
-		int itrash, idx;
-		iss >> trash;
-		while (iss >> idx >> trash >> itrash >> trash >> itrash) {
-			idx--; // in wavefront obj all indices start at 1, not zero
-			f.push_back(idx);
-		}
-		faces_.push_back(f);
-	}
-}
-std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << std::endl;
-
-
-*/
-
-#if _LOAD_OBJ_ == 1
-
-
-
-static struct OBJNode {
-	UniType val;
-	
-	enum {
-//		TVERT,
-//		TPOLY,
-//		TCOORD,
-//		TNORMAL,
-		TFUN,
-		TARG
-		// ...,
-	}type;
-
-};
-
-struct Loader : public IGeometry{
-private:
-//	string vert("v");
-//	string poly("f");
-//	string normal("vn");
-//	string group("g");
-//	string mtres("mtllib");
-//	string obj("o");
-//	string tcoord("vt");
-public:
-	Loader(string filename) {	
-		Load(filename);
-	}
-	virtual const vector<OBJNode> Lex(string str) {
-		size_t i = 0;
-		bool isnum = false;
-		string curnum = "";
-		string curf = "";
-		vector<OBJNode> out;
-		for (auto it : str) {
-			if (!isnum) { curnum = ""; }
-
-			if (it == ' ' || it == '\t' || it == '\n') { 
-				
-				if (isnum) { 
-					OBJNode n;
-					UniType v;
-					// v.dval = curnum.stof
-					v.dval = std::stod(curnum);
-					v.t = TDVAL;
-					n.val = v;
-					n.type = OBJNode::TARG;
-
-					out.push_back(n); 
-					curnum = "";
-					isnum = false;
-				}
-				else {
-					if (curf != "") {
-						OBJNode n;
-						UniType v;
-						n.val.sval = curf.c_str();
-						n.type = OBJNode::TFUN;
-						n.val.t = TSTR;
-						out.push_back(n);
-						curf = "";
-					}
-				}
-				continue; 
-			}
-			if (isalpha(it)) { // vp 0000.0000
-					isnum = false;
-					switch (it) {
-					case 'v':
-						curf += it;
-						break;
-					case 'm':
-						curf += it;
-						break;
-					case 'o': case 'g': case 'f': {
-							OBJNode n;
-							UniType v;
-							curf = it;
-							n.val.sval = curf.c_str();
-							n.type = OBJNode::TFUN;
-							n.val.t = TSTR;
-							out.push_back(n);
-							curf = "";
-							break;
-						}
-					}
-					//if (isnum) {
-
-					//}
-					//else {
-					//}
-				}
-				else {
-					if (curf != "") {
-						OBJNode n;
-						UniType v;
-						n.val.sval = curf.c_str();
-						n.type = OBJNode::TFUN;
-						n.val.t = TSTR;
-						out.push_back(n);
-						curf = "";
-					}
-					curnum += it;
-				}
-
-
-			}
-			i++;
-		}
-	}
-	virtual bool Parse(string str) {
-		/*if (std::regex_match(str, r, poly)) {
-
-		}
-		else if (std::regex_match(str, r, normal)) {
-
-		}
-		else if (std::regex_match(str, r, group)) {
-
-		}
-		else if (std::regex_match(str, r, mtres)) {
-
-		}
-		else if (std::regex_match(str, r, obj)) {
-
-		}
-		else if (std::regex_match(str, r, tcoord)) {
-
-		}
-		else if (std::regex_match(str, r, vert)) {
-
-		}*/
-
-		vector<OBJNode> obj = Lex(str);
-
-		for (auto it : obj) {
-			switch (it.Type) {
-			case OBJNode::TFUN:
-				break;
-			case OBJNode::TARG:
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	virtual bool Load(string filename) {
-		
-		// cmatch res;
-		// regex r;
-
-		ifstream file(filename);
-
-		if (!file.is_open()) { return false; }
-
-		while (!file.eof()) {
-			string str;
-			file.getline(str);
-			Parse(str);
-		}
-
-	}
-};
-
-#endif
-
-Object * Object::Load(string path)
+Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)),velocity(glm::vec3(0))
 {
-	Object *obj;
-	
+}
 
-	
+Object::Object(Mesh *mesh) : m_Mesh(mesh)
+{
+
+}
+
+Object::Object(const Object *obj):
+  m_transform(obj->m_transform.position, obj->m_transform.rotation, obj->m_transform.scale),
+  m_Mesh(obj->m_Mesh), m_Shader(obj->m_Shader),
+  m_type(obj->m_type),velocity(glm::vec3(0)),
+  m_path(obj->m_path),
+  type(obj->type)
+{
+  refs++;
+}
+
+
+
+void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader)
+{
+ 
+}
+
+void Object::draw(CCamera *camera) {
+  glm::mat3 NormalMatrix(1.0);
+  m_Material->apply(this, camera);
+
+  NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
+  m_Material->program->setUniformValue( NormalMatrix,"NormalMatrix");
+
+  VertexArrayObject *vb = m_Mesh->getVertexBuffer();
+  vb->draw();
+}
+
+void Object::setType(OBJType type)
+{
+  m_type = type;
+}
+
+CShaderProgram * Object::getShaderProgram()
+{
+  return m_Shader;
+}
+
+glm::mat4 Object::getTransform()
+{
+  glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
+  scale = glm::scale(scale, m_transform.scale);
+  translate = glm::translate(translate, m_transform.position);
+  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.x), glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.y), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.z), glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
+  return translate * rotate * scale;
+}
+
+void Object::setShaderProgram(CShaderProgram* shader)
+{
+  m_Shader = shader;
+}
+
+void Object::update(float deltatime)
+{
+  /*
+  if (m_transform.position.y < 0)
+    velocity.y = - velocity.y*friction;
+  m_transform.position += velocity * deltatime;
+  */
+}
+
+void Object::setTexture(Texture *texture, const char *type)
+{
+  m_Material->setTexture(texture, type);
+}
+
+Object Object::operator=(Object &that)
+{
+  Object obj;
+  obj.m_Mesh = that.m_Mesh;
+  obj.m_type = that.m_type;
+  return obj;
+}
+
+Object *Object::clone()
+{
+  Object *obj = new Object;
+  obj->m_Mesh = this->m_Mesh;
+  obj->m_type = this->m_type;
+  return obj;
+}
+
+Material *Object::getMaterial()
+{
+  return m_Material;
+}
+
+void Object::setMaterial(Material *material)
+{
+  if (m_Material != nullptr)
+      ;//delete m_Material;
+  m_Material = material;
+}
+
+void Object::move(glm::vec3 v) {
+  m_transform.position += v;
+}
+
+void Object::moveTo(glm::vec3 v)
+{
+  m_transform.position = v;
+}
+
+void Object::rotate(float angle, glm::vec3 v) {
+  m_transform.rotation.x += angle;
+  m_transform.rotation.y += angle;
+  m_transform.rotation.z += angle;
+}
+
+void Object::scale(glm::vec3 v)
+{
+  m_transform.scale = v;
+}
+
+Object * Object::load(string path)
+{
+  Object *obj = nullptr;
+  std::shared_ptr<Mesh> mesh;
+  VertexArrayObject *vb;
+  std::vector<Vertex> p;
+
+  if (path == "res/geom/plane.obj")
+  {
+    p.resize(6);
+    p[0] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
+    p[1] = Vertex({-1,0,-1},	{0,1}, {0,1,0});
+    p[2] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
+    p[3] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
+    p[4] = Vertex({1,0,1}, 		{0,1}, {0,1,0});
+    p[5] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
+  }
+  else if (!loadOBJ(path.c_str(), p))
+    return nullptr;
+  
+  vb = new VertexArrayObject(p.data(), static_cast<GLint>(p.size()), GL_TRIANGLES);
+  mesh = std::make_shared<Mesh>(vb, nullptr);
+  obj = new Object();
+  obj->m_Mesh = mesh;
+  obj->m_Mesh->m_Path = std::make_shared<std::string>(path);
 	return obj;
+}
+
+Transform::Transform()
+{
+
 }

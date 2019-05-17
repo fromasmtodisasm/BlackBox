@@ -1,8 +1,11 @@
 build/*
 *.swp
 *.bak
-<<<<<<< HEAD
-/.vs
-=======
 *.swo
->>>>>>> 557833aef8178b987c33abffc0af1b06c17898b0
+/.vs
+*.swo
+*.lnk
+CMakeLists.txt.user*
+/CMakeSettings.json
+res/tmp/*
+res/geom/tmp/
