@@ -96,7 +96,7 @@ bool CShader::bind() {
 }
 
 void CShader::print() {
-  cout << m_Text << endl;
+  //cout << m_Text << endl;
 }
 
 string CShader::typeToStr()

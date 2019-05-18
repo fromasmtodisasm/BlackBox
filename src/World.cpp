@@ -8,7 +8,9 @@ World::World()
 }
 
 void World::draw(float dt) {
+  activeScene->begin();
   activeScene->draw(dt);
+  activeScene->end();
   // Camera ...
 }
 

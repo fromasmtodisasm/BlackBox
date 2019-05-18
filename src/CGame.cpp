@@ -7,6 +7,7 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/SceneManager.hpp>
 #include <BlackBox/MaterialManager.hpp>
+#include <BlackBox/FrameBufferObject.hpp>
 
 
 
@@ -48,7 +49,7 @@ CGame::CGame(std::string title) :
 bool CGame::init(IEngine *pSystem)  {
   m_pSystem = pSystem;
   p_gIGame = reinterpret_cast<IGame*>(this);
-  m_Window = new CWindow(m_Title); 
+  m_Window = new CWindow(m_Title, 1600, 900); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())
@@ -61,6 +62,9 @@ bool CGame::init(IEngine *pSystem)  {
 			cout << "Failed init objects" << endl;
 			return false;
 		}
+    FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
+    sceneBuffer->create();
+    m_scene->setRenderTarget(sceneBuffer);
 		cout << "Objects inited" << endl;
   } 
   gui = new GameGUI();
@@ -99,11 +103,13 @@ bool CGame::update() {
 
     //cp_size = ImVec2(300, m_Window->getHeight());
 
+    /*
     glViewport(
-          m_Window->viewPort.left,
+          0,
           0,
           m_Window->viewPort.width,
           m_Window->viewPort.height);
+          */
     render();
     gui->Draw();
 
@@ -159,21 +165,10 @@ void CGame::setRenderState()
 
 void CGame::render()
 {
-  /*
-  ImGui::Text("Player.x = %f;Player.y = %f;Player.z = %f;Player.velocity(%f,%f,%f)",
-              m_player->m_transform.position.x,
-              m_player->m_transform.position.y,
-              m_player->m_transform.position.z,
-              m_player->velocity.x,
-              m_player->velocity.y,
-              m_player->velocity.z
-              );
-  */
   m_Window->clear();
   /* Rendering code here */
   int w = m_Window->viewPort.width;
   int h = m_Window->viewPort.height;
-  //glViewport(300,0, w-300, h);
   m_camera1->Ratio = ((float)w - 300)/ h;
 
   m_World->setCamera(m_camera1);

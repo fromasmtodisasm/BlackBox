@@ -1,6 +1,7 @@
 #include <BlackBox/GUI.hpp>
 #include <imgui.h>
 #include <BlackBox/Light.hpp>
+#include <BlackBox/FrameBufferObject.hpp>
 
 struct FileClose : MenuItem
 {
@@ -50,12 +51,17 @@ struct FileMenu : public Menu
   }
 };
 
+
+
 GameGUI::GameGUI() : mainMenu(MainMenu())
 {
   FileMenu *fileMenu = new FileMenu(&game);
   fileMenu->items.push_back(new FileOpen(&game));
   fileMenu->items.push_back(new FileClose(&game));
   mainMenu.menus.push_back(fileMenu);
+  assetsWindow.size.x = 0;
+  assetsWindow.size.y = 300;
+  
 }
 
 GameGUI::~GameGUI()
@@ -65,29 +71,58 @@ GameGUI::~GameGUI()
 
 void GameGUI::Draw()
 {
+  switch (style)
+  {
+  case LIGHT:  ImGui::StyleColorsLight(); break;
+  case DARK: ImGui::StyleColorsDark(); break;
+  }
   mainMenu.execute();
   ImGuiIO& io = ImGui::GetIO();
+  ImVec2 viewportSize;
   ImGui::SetNextWindowPos(ImVec2(0, mainMenu.size.y));
-  ImGui::SetNextWindowSizeConstraints(ImVec2(150, 0), ImVec2(350, io.DisplaySize.y - 20));
-  ImGui::Begin("Navigator");
-  if (ImGui::BeginTabBar("TestBar"))
-  {
-    if (ImGui::BeginTabItem("Control Panel"))
+  ImGui::SetNextWindowSizeConstraints(ImVec2(150, io.DisplaySize.y - 20), ImVec2(500, io.DisplaySize.y - 20));
+
+  ImGui::Begin("Navigator", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
+  ImGui::SetWindowSize(ImVec2(ImGui::GetWindowSize().x, io.DisplaySize.y));
+  leftPanel.size = ImGui::GetWindowSize();
+    if (ImGui::BeginTabBar("TestBar"))
     {
-      controlPanel();
+      if (ImGui::BeginTabItem("Control Panel"))
+      {
+        controlPanel();
+        ImGui::EndTabItem();
+      }
+      if (ImGui::BeginTabItem("Styles"))
+      {
+        ImGui::RadioButton("Dark", (int*)&style, DARK);
+        ImGui::RadioButton("Light", (int*)&style, LIGHT);
+        ImGui::EndTabItem();
+      }
+      ImGui::EndTabBar();
+    }
+  ImGui::End();
+  //Rendering ViewPort
+  ImGui::SetNextWindowPos(ImVec2(leftPanel.size.x, mainMenu.size.y));
+  viewport.size = ImVec2(io.DisplaySize.x - leftPanel.size.x, io.DisplaySize.y - 20 - assetsWindow.size.y);
+  //ImVec2 viewPortSize = ImVec2(ImGui::GetContentRegionAvail());
+  ImGui::SetNextWindowSize(viewport.size);
+  ImGui::Begin("View",(bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
+  ImGui::SameLine();
+  if (ImGui::BeginTabBar("Scene"))
+  {
+    if (ImGui::BeginTabItem("ViewPort"))
+    {
+      game->m_Window->viewPort.left = ImGui::GetCursorPosX() + leftPanel.size.x;
+      game->m_Window->viewPort.top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y + mainMenu.size.y;
+      ImGui::Image((void*)game->m_scene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
   }
   ImGui::End();
-  
-  //ImGui::SetNextWindowSize(game->cp_size);
-  auto font = ImGui::GetFont();
-  font->Scale = 1.5;
-  ImGui::PushFont(font);
-  ImGui::PopFont();
-
-
+  assets();
+  game->m_Window->viewPort.width = viewport.size.x;
+  game->m_Window->viewPort.height = viewport.size.y;
   if (show_camera) {
 
   }
@@ -267,9 +302,29 @@ void GameGUI::controlPanel()
   //ImGui::End();
 }
 
+void GameGUI::assets()
+{
+  ImGuiIO &io = ImGui::GetIO();
+  ImGui::SetNextWindowPos(ImVec2(leftPanel.size.x, io.DisplaySize.y - assetsWindow.size.y));
+  //ImVec2 viewPortSize = ImVec2(ImGui::GetContentRegionAvail());
+  ImGui::SetNextWindowSize(viewport.size);
+  ImGui::Begin("##View",(bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
+  if (ImGui::BeginTabBar("Assets"))
+  {
+    if (ImGui::BeginTabItem("Textures"))
+    {
+      if (selectedObject != nullptr)
+        ImGui::Image((void*)selectedObject->m_Material->diffuse->id, ImVec2(100,100), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::EndTabItem();
+    }
+    ImGui::EndTabBar();
+  }
+  ImGui::End();
+}
+
 bool GameGUI::OnInputEvent(sf::Event& event)
 {
-  
+  ImGuiIO &io = ImGui::GetIO();
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -284,7 +339,13 @@ bool GameGUI::OnInputEvent(sf::Event& event)
     if (event.mouseButton.button == sf::Mouse::Button::Left)
     {
       if (!editing)
+      {
         game->gotoGame();
+      }
+      else
+      {
+
+      }
     }
   }
   default:
@@ -305,10 +366,9 @@ void GameGUI::objectInfo(Object *obj, std::string name)
     const float   f32_zero = 0.f, f32_one = 1.f, f32_lo_a = -10000000000.0f, f32_hi_a = +10000000000.0f;
     const double  f64_zero = 0.,  f64_one = 1.,  f64_lo_a = -1000000000000000.0, f64_hi_a = +1000000000000000.0;
 
-    // State
-
     static bool inputs_step = true;
   if (ImGui::TreeNode(name.c_str())) {
+    selectedObject = obj;
     if (ImGui::TreeNode("Physics")) {
 
       ImGui::InputScalar("Friction",   ImGuiDataType_Float,  &obj->friction, inputs_step ? &f32_one : NULL);

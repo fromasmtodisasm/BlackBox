@@ -5,6 +5,7 @@
 #include <BlackBox/MaterialManager.hpp>
 #include <BlackBox/World.hpp>
 #include <BlackBox/Light.hpp>
+#include <BlackBox/FrameBufferObject.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -568,3 +569,21 @@ bool Scene::load(std::string name = "default.xml")
 
   return true;
 }
+
+void Scene::setRenderTarget(FrameBufferObject *renderedScene)
+{
+  m_RenderedScene = renderedScene;
+}
+
+void Scene::begin()
+{
+  m_RenderedScene->bind();
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // буфер трафарета не используется
+}
+
+void Scene::end()
+{
+  m_RenderedScene->unbind();
+}
+
