@@ -139,16 +139,15 @@ void CGame::input()
 }
 
 bool CGame::loadScene() {
-  if ((m_scene = new Scene("default")) == nullptr)
-    return false;
-  ;
   if (!ShaderManager::init() && (shaderManager = ShaderManager::instance()) == nullptr)
     return false;
   if (!MaterialManager::init("default.xml"))
     return false;
+  if (!SceneManager::init())
+    return false;
 
-  //return m_scene->load("default.xml");
-  return true;// m_scene->load("default.xml");
+  m_scene = defaultScene;
+  return m_scene != nullptr;
 }
 
 void CGame::setRenderState()
@@ -171,9 +170,9 @@ void CGame::render()
   /* Rendering code here */
   int w = m_Window->viewPort.width;
   int h = m_Window->viewPort.height;
-  m_camera1->Ratio = ((float)w - 300)/ h;
+  m_camera1->Ratio = ((float)w - m_Window->viewPort.left)/ h;
 
-  m_World->setCamera(m_camera1);
+  //m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
 }
 

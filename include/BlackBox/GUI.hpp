@@ -93,6 +93,7 @@ public:
   void controlPanel();
   void assets();
   void setStyle();
+  void showScene(Scene *scene);
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;

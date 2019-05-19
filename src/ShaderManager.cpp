@@ -3,7 +3,7 @@
 #include <BlackBox/ILog.hpp>
 
 ShaderManager *ShaderManager::manager = nullptr;
-CShaderProgram *defaultProgram;
+CShaderProgram *defaultProgram = nullptr;
 
 ShaderManager *ShaderManager::instance()
 {

@@ -3,6 +3,7 @@
 #include <BlackBox/Light.hpp>
 #include <BlackBox/FrameBufferObject.hpp>
 #include <BlackBox/CConsole.hpp>
+#include <BlackBox/SceneManager.hpp>
 
 #include <imgui.h>
 
@@ -113,7 +114,7 @@ void GameGUI::Draw()
     {
       game->m_Window->viewPort.left = ImGui::GetCursorPosX() + leftPanel.size.x;
       game->m_Window->viewPort.top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y + mainMenu.size.y;
-      ImGui::Image((void*)game->m_scene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -228,10 +229,24 @@ void GameGUI::controlPanel()
       ImGui::InputText("Scene name", path, sizeof(path)) && path[0] != '\0';
       if (ImGui::Button("Load Scene"))
       {
-        if (game->m_scene->load(path));
+        Scene *scene;
+        if ((scene = SceneManager::instance()->getScene(path)) != nullptr)
         {
+          /*
           if (game->initPlayer())
             game->gotoGame();
+          */
+          FrameBufferObject *sceneBuffer = new FrameBufferObject(game->m_Window->getWidth(), game->m_Window->getHeight());
+          sceneBuffer->create();
+          scene->setRenderTarget(sceneBuffer);
+          scene->setCamera(new CCamera());
+          CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
+          player->attachCamera(scene->m_Camera);
+          player->setGame(game);
+          game->m_Log->AddLog("[OK] Scene %s loaded\n", path);
+        }
+        else {
+          game->m_Log->AddLog("[FAILED] Scene %s not founded\n", path);
         }
       }
       ImGui::SameLine();
@@ -239,32 +254,17 @@ void GameGUI::controlPanel()
       {
         game->m_scene->save(path);
       }
-      ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
-      int lightCount = 0;
-      lightCount += game->m_scene->m_PointLights.size();
-      lightCount += game->m_scene->m_DirectionLight.size();
-      lightCount += game->m_scene->m_SpotLights.size();
-      if (lightCount > 0)
-      if (ImGui::TreeNode("Lights"))
-      {
-        for (const auto& light : game->m_scene->m_PointLights)
+      for (auto &scene : SceneManager::instance()->cache) {
+        if (ImGui::TreeNode(scene.first.c_str()))
         {
-          showLights(light.second, light.first.c_str());
+          game->m_World->setScene(scene.second);
+          game->m_active_camera = scene.second->m_Camera;
+          game->m_player = (CPlayer*)scene.second->getObject("MyPlayer");
+          showScene(scene.second);
+          ImGui::TreePop();
         }
-        for (const auto& light : game->m_scene->m_DirectionLight)
-        {
-          showLights(light.second, light.first.c_str());
-        }
-        for (const auto& light : game->m_scene->m_SpotLights)
-        {
-          showLights(light.second, light.first.c_str());
-        }
-        ImGui::TreePop();
       }
-      ImGui::Separator();
-      selectedObject = nullptr;
-      for (auto &obj : game->m_scene->m_Objects)
-        objectInfo(obj.second, obj.first);
+
      ImGui::TreePop();
     }
 
@@ -353,6 +353,37 @@ void GameGUI::setStyle()
   case DARK: ImGui::StyleColorsDark(); break;
   }
 
+}
+
+void GameGUI::showScene(Scene *scene)
+{
+
+  ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
+  int lightCount = 0;
+  lightCount += scene->m_PointLights.size();
+  lightCount += scene->m_DirectionLight.size();
+  lightCount += scene->m_SpotLights.size();
+  if (lightCount > 0)
+  if (ImGui::TreeNode("Lights"))
+  {
+    for (const auto& light : scene->m_PointLights)
+    {
+      showLights(light.second, light.first.c_str());
+    }
+    for (const auto& light : scene->m_DirectionLight)
+    {
+      showLights(light.second, light.first.c_str());
+    }
+    for (const auto& light : scene->m_SpotLights)
+    {
+      showLights(light.second, light.first.c_str());
+    }
+    ImGui::TreePop();
+  }
+  ImGui::Separator();
+  selectedObject = nullptr;
+  for (auto &obj : scene->m_Objects)
+    objectInfo(obj.second, obj.first);
 }
 
 bool GameGUI::OnInputEvent(sf::Event& event)

@@ -11,6 +11,9 @@ class World;
 class CCamera;
 class Object;
 class FrameBufferObject;
+class Scene;
+
+extern Scene *defaultScene;
 
 class Scene
 {

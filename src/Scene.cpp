@@ -15,7 +15,7 @@
 using namespace tinyxml2;
 
 #ifndef XMLCheckResult
-  #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult; }
+  #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
 #endif
 
 void Scene::loadObject(XMLElement *object)
@@ -555,7 +555,7 @@ bool Scene::load(std::string name = "default.xml")
 {
   XMLDocument xmlDoc;
 
-  XMLError eResult = xmlDoc.LoadFile(("res/scenes/" + name).c_str());
+  XMLError eResult = xmlDoc.LoadFile(name.c_str());
   XMLCheckResult(eResult);
 
   XMLNode * pScene = xmlDoc.FirstChild();
