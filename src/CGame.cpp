@@ -323,6 +323,11 @@ float CGame::getDeltaTime()
   return m_deltaTime;
 }
 
+void CGame::PostRender()
+{
+  
+}
+
 void CGame::gotoMenu()
 {
   m_Mode = MENU;

@@ -15,6 +15,7 @@ class FrameBufferObject;
 class Scene
 {
   friend class GameGUI;
+  friend class CGame;
 private:
   std::string name;
   World *world;
@@ -39,7 +40,7 @@ public:
   Object *getObject(std::string name);
   void setCamera(CCamera *camera);
   void update(float dt);
-  bool save();
+  bool save(std::string as ="");
   tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);
   //tinyxml2::XMLElement *saveVec3(tinyxml2::XMLDocument &xmlDoc, glm::vec3 &);
   tinyxml2::XMLElement *saveLight(tinyxml2::XMLDocument &xmlDoc, BaseLight * light);

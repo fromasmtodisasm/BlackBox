@@ -64,7 +64,7 @@ GameGUI::GameGUI() : mainMenu(MainMenu())
   mainMenu.menus.push_back(fileMenu);
   assetsWindow.size.x = 0;
   assetsWindow.size.y = 300;
-  
+  setStyle();
 }
 
 GameGUI::~GameGUI()
@@ -74,11 +74,6 @@ GameGUI::~GameGUI()
 
 void GameGUI::Draw()
 {
-  switch (style)
-  {
-  case LIGHT:  ImGui::StyleColorsLight(); break;
-  case DARK: ImGui::StyleColorsDark(); break;
-  }
   mainMenu.execute();
   ImGuiIO& io = ImGui::GetIO();
   ImVec2 viewportSize;
@@ -99,6 +94,7 @@ void GameGUI::Draw()
       {
         ImGui::RadioButton("Dark", (int*)&style, DARK);
         ImGui::RadioButton("Light", (int*)&style, LIGHT);
+        setStyle();
         ImGui::EndTabItem();
       }
       ImGui::EndTabBar();
@@ -220,61 +216,58 @@ void GameGUI::showLights(BaseLight* light, const char *name)
 void GameGUI::controlPanel()
 {
   window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-  //ImGui::Begin("Control panel", &open);//, &open, window_flags);
   ImVec2 size = ImGui::GetWindowSize();
     game->m_Window->viewPort.left = size.x;
     game->m_Window->viewPort.width = game->m_Window->m_Width - size.x;
     ImGui::Checkbox("Show Plyer", &show_player);
-    ImGui::Checkbox("Show Camera", &show_camera);
     ImGui::Checkbox("Show Demo", &show_demo);
-    ImGui::Checkbox("Edit player", &edit_player);
-    if (ImGui::Checkbox("Light", &lighting))
+    ImGui::Separator();
+    if (ImGui::TreeNode("Scene manager"))
     {
-      game->m_scene->lighting = true;
-    }
-    if (edit_player)
-    {
-      ImGui::Separator();
-      if (ImGui::TreeNode("Object Inspector"))
+      static char path[260] = "";
+      ImGui::InputText("Scene name", path, sizeof(path)) && path[0] != '\0';
+      if (ImGui::Button("Load Scene"))
       {
-        static char path[260] = "";
-        ImGui::InputText("Object path", path, sizeof(path)) && path[0] != '\0';
-        if (ImGui::Button("Load Objects"))
+        if (game->m_scene->load(path));
         {
-          if (game->m_scene->load(path));
-          {
-            if (game->initPlayer())
-              game->gotoGame();
-          }
+          if (game->initPlayer())
+            game->gotoGame();
         }
-        if (ImGui::Button("Save Objects"))
-        {
-          game->m_scene->save();
-        }
-        ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
-        if (ImGui::TreeNode("Lights"))
-        {
-          for (const auto& light : game->m_scene->m_PointLights)
-          {
-            showLights(light.second, light.first.c_str());
-          }
-          for (const auto& light : game->m_scene->m_DirectionLight)
-          {
-            showLights(light.second, light.first.c_str());
-          }
-          for (const auto& light : game->m_scene->m_SpotLights)
-          {
-            showLights(light.second, light.first.c_str());
-          }
-          ImGui::TreePop();
-        }
-        ImGui::Separator();
-        selectedObject = nullptr;
-        for (auto &obj : game->m_scene->m_Objects)
-          objectInfo(obj.second, obj.first);
-       ImGui::TreePop();
       }
+      ImGui::SameLine();
+      if (ImGui::Button("Save scene"))
+      {
+        game->m_scene->save(path);
+      }
+      ImGui::InputScalar("World gravity",   ImGuiDataType_Float,  &game->m_World->gravity);
+      int lightCount = 0;
+      lightCount += game->m_scene->m_PointLights.size();
+      lightCount += game->m_scene->m_DirectionLight.size();
+      lightCount += game->m_scene->m_SpotLights.size();
+      if (lightCount > 0)
+      if (ImGui::TreeNode("Lights"))
+      {
+        for (const auto& light : game->m_scene->m_PointLights)
+        {
+          showLights(light.second, light.first.c_str());
+        }
+        for (const auto& light : game->m_scene->m_DirectionLight)
+        {
+          showLights(light.second, light.first.c_str());
+        }
+        for (const auto& light : game->m_scene->m_SpotLights)
+        {
+          showLights(light.second, light.first.c_str());
+        }
+        ImGui::TreePop();
+      }
+      ImGui::Separator();
+      selectedObject = nullptr;
+      for (auto &obj : game->m_scene->m_Objects)
+        objectInfo(obj.second, obj.first);
+     ImGui::TreePop();
     }
+
     ImGui::Separator();
     ImGui::Text("Input");
     ImGui::SliderFloat("Mouse sensivity", &game->m_camera1->MouseSensitivity, 0.0, 1.0);
@@ -289,7 +282,7 @@ void GameGUI::controlPanel()
     // Exit
     if (ImGui::Button("Exit"))
     {
-      game->m_running = false;
+      game->Stop();
     }
     ImGuiIO &igio = ImGui::GetIO();
     
@@ -304,7 +297,6 @@ void GameGUI::controlPanel()
     ImGui::DragFloat3("##pos", &game->m_scene->m_Camera->Position[0], 0.1);
     ImGui::TreePop();
   }
-  //ImGui::End();
 }
 
 void GameGUI::assets()
@@ -312,11 +304,8 @@ void GameGUI::assets()
 #define out_texture(m,t) \
 if (m != nullptr && m->t != nullptr) \
 {\
-  ImGui::BeginChild(m->t->id);\
   ImGui::SameLine();\
   ImGui::Image((void*)m->t->id, ImVec2(100,100), ImVec2(0, 1), ImVec2(1, 0));\
-  ImGui::Text(#t);\
-  ImGui::EndChild();\
 }
 
   ImGuiIO &io = ImGui::GetIO();
@@ -341,16 +330,29 @@ if (m != nullptr && m->t != nullptr) \
     {
       if (selectedObject != nullptr)
       {
+        ImGui::NewLine();
         out_texture(selectedObject->m_Material, diffuse);
         out_texture(selectedObject->m_Material, specular);
         out_texture(selectedObject->m_Material, bump);
         out_texture(selectedObject->m_Material, normal);
+        ImGui::Checkbox("Enable normal", &selectedObject->m_Material->enabledNormal);
       }
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
   }
   ImGui::End();
+}
+
+void GameGUI::setStyle()
+{
+  
+  switch (style)
+  {
+  case LIGHT:  ImGui::StyleColorsLight(); break;
+  case DARK: ImGui::StyleColorsDark(); break;
+  }
+
 }
 
 bool GameGUI::OnInputEvent(sf::Event& event)

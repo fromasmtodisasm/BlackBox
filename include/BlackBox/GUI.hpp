@@ -92,6 +92,7 @@ public:
   void showLights(BaseLight* light, const char *name);
   void controlPanel();
   void assets();
+  void setStyle();
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;

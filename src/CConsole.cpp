@@ -1,4 +1,6 @@
-#include <BlackBox\CConsole.hpp>
+#include <BlackBox/CConsole.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/IGame.hpp>
 
 #include <cstdlib>
 #include <cstring>
@@ -17,6 +19,7 @@
   Commands.push_back("HISTORY");
   Commands.push_back("CLEAR");
   Commands.push_back("CLASSIFY");  // "classify" is only here to provide an example of "C"+[tab] completing to "CL" and displaying matches.
+  Commands.push_back("QUIT");
   AutoScroll = true;
   ScrollToBottom = true;
   AddLog("Welcome to Dear ImGui!");
@@ -196,6 +199,10 @@
     int first = History.Size - 10;
     for (int i = first > 0 ? first : 0; i < History.Size; i++)
       AddLog("%3d: %s\n", i, History[i]);
+  }
+  else if (Stricmp(command_line, "QUIT") == 0)
+  {
+    GetIEngine()->getIGame()->Stop();
   }
   else
   {

@@ -26,10 +26,11 @@ int main(int argc, char *argv[]) {
   //chdir((path = getBasePath(string(argv[0]))).c_str());
   path = getBasePath(string(argv[0]));
   IEngine*pSystem = CreateIEngine(nullptr);
-  pSystem->Init();
-  IGame *game = CreateIGame("MyGame");
+  if (!pSystem->Init())
+    return EXIT_FAILURE;
 	pSystem->getILog()->AddLog("[OK] ISystem created\n");
 	pSystem->getILog()->AddLog("[INFO] Current working directory: %s\n", path.c_str());
+  IGame *game = pSystem->CreateGame(nullptr);
   if (game->init(pSystem)) {
     pSystem->getILog()->AddLog("[OK] IGame created\n");
     game->run();  

@@ -28,7 +28,8 @@ class GameGUI;
 class Scene;
 class SceneManager;
 
-class CGame : public IGame, public IInputEventListener{
+class CGame : public IGame, public IInputEventListener, public IPostRenderCallback 
+{
   class GameState;
   class EventListener;
   friend class GameGUI;
@@ -112,6 +113,9 @@ private:
   // IGame interface
 public:
   virtual float getDeltaTime() override;
+
+  // Унаследовано через IPostRenderCallback
+  virtual void PostRender() override;
 };
 
 

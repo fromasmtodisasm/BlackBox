@@ -310,7 +310,7 @@ void Scene::update(float dt)
   }
 }
 
-bool Scene::save()
+bool Scene::save(std::string as)
 {
   std::stringstream sceneName;
   XMLDocument xmlDoc;
@@ -379,7 +379,10 @@ bool Scene::save()
   }
   xmlDoc.InsertFirstChild(pScene);
 
-  sceneName << "res/scenes/" << name <<  ".xml";
+  if (as == "")
+    sceneName << "res/scenes/" << name << ".xml";
+  else
+    sceneName << "res/scenes/" << as;
   XMLError eResult = xmlDoc.SaveFile(sceneName.str().c_str());
   XMLCheckResult(eResult);
 
