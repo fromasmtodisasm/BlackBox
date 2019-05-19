@@ -1,10 +1,12 @@
 #include <BlackBox/CEngine.hpp>
 #include <BlackBox/CLog.hpp>
+#include <BlackBox/CConsole.hpp>
 #pragma once
 
 void CEngine::Init()
 {
   m_pLog = new CLog();
+  m_pConsole = new CConsole();
 }
 
 void CEngine::Start()
@@ -28,6 +30,11 @@ IRender * CEngine::getIRender()
 ILog* CEngine::getILog()
 {
   return m_pLog;
+}
+
+IConsole* CEngine::getIConsole()
+{
+  return m_pConsole;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

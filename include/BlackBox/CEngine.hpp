@@ -4,8 +4,10 @@
 
 class CEngine : public IEngine
 {
-public:
+private:
   ILog *m_pLog;
+  IConsole *m_pConsole;
+public:
   // Унаследовано через ISystem
   virtual void Init() override;
   virtual void Start() override;
@@ -15,4 +17,7 @@ public:
 
   // Унаследовано через IEngine
   virtual ILog* getILog() override;
+
+  // Унаследовано через IEngine
+  virtual IConsole* getIConsole() override;
 };

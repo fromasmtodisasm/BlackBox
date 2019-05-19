@@ -1,8 +1,10 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/GUI.hpp>
-#include <imgui.h>
 #include <BlackBox/Light.hpp>
 #include <BlackBox/FrameBufferObject.hpp>
+#include <BlackBox/CConsole.hpp>
+
+#include <imgui.h>
 
 struct FileClose : MenuItem
 {
@@ -328,6 +330,11 @@ if (m != nullptr && m->t != nullptr) \
     if (ImGui::BeginTabItem("Log"))
     {
       GetIEngine()->getILog()->Draw("MyLog", (bool*)true);
+      ImGui::EndTabItem();
+    }
+    if (ImGui::BeginTabItem("Console"))
+    {
+      GetIEngine()->getIConsole()->Draw("MyConsole", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Textures"))

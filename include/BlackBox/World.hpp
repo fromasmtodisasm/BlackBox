@@ -9,10 +9,16 @@
 
 using std::string;
 
+struct IPostRenderCallback
+{
+  virtual void PostRender() = 0;
+};
+
 class World {
   friend class GameGUI;
 private:
   Scene *activeScene;
+  IPostRenderCallback* m_PostRender = nullptr;
 public:
   static float gravity;
   World();
@@ -21,5 +27,5 @@ public:
   void setCamera(CCamera *camera);
   void setScene(Scene* scene);
   void update(float deltatime);
-
+  void setPostRenderCallback(IPostRenderCallback* postRender);
 };

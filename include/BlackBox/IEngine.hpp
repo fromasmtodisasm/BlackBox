@@ -6,6 +6,7 @@ struct IGame;
 struct IShaderManager;
 struct IRender;
 struct ILog;
+struct IConsole;
 
 struct IEngine
 {
@@ -16,6 +17,7 @@ struct IEngine
   virtual IShaderManager *getShaderManager() = 0;
   virtual IRender *getIRender() = 0;
   virtual ILog *getILog() = 0;
+  virtual IConsole *getIConsole() = 0;
 };
 
 // Get the system interface (must be defined locally in each module)
