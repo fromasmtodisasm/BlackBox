@@ -1,6 +1,7 @@
 #include <BlackBox/CShader.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ILog.hpp>
 #include <fstream>
-#include <iostream>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -19,7 +20,7 @@ bool ShaderStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog);
-    std::cout << "ERROR: shader" << m_Shader->getName() <<"\n" << infoLog << std::endl;
+    GetIEngine()->getILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
     return false;
   }
   return true;
@@ -38,7 +39,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog);
-    std::cout << "ERROR: shader::programm: \n" << infoLog << std::endl;
+    GetIEngine()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
     return false;
   }
   return true;
@@ -83,10 +84,8 @@ CShader *CShader::load(string path, CShader::type type) {
 }
 
 bool CShader::compile() {
-  cout  << "shader: " << m_Shader << endl;
   const char *text = m_Text.c_str();
   glShaderSource(m_Shader, 1, &text, nullptr);
-  cout << "test" << endl;
   glCompileShader(m_Shader);
   return m_Status.get(GL_COMPILE_STATUS);
 }

@@ -14,7 +14,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-#include <iostream>
+//#include <iostream>
 #include <vector>
 #include <string>
 #include <cstdlib>
@@ -23,7 +23,7 @@
 
 #include <sstream>
 
-using namespace std;
+//using namespace std;
 
 IGame *p_gIGame;
 
@@ -47,25 +47,26 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(IEngine *pSystem)  {
-  m_pSystem = pSystem;
+  m_pSystem = gISystem = pSystem;
+  m_Log = m_pSystem->getILog();
   p_gIGame = reinterpret_cast<IGame*>(this);
   m_Window = new CWindow(m_Title, 1600, 900); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())
       return false;
-		cout << "Window susbsystem inited" << endl;
+		m_Log->AddLog("[OK] Window susbsystem inited\n");
 
     if ((m_inputHandler = m_Window) == nullptr)
       return false;
     if (!loadScene()) {
-			cout << "Failed init objects" << endl;
+			m_Log->AddLog("[FAILED] Failed init objects\n");
 			return false;
 		}
+		m_Log->AddLog("[OK] Objects inited\n");
     FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
     sceneBuffer->create();
     m_scene->setRenderTarget(sceneBuffer);
-		cout << "Objects inited" << endl;
   } 
   gui = new GameGUI();
   gui->game = this;
@@ -119,7 +120,7 @@ bool CGame::update() {
 }
 
 bool CGame::run() {
-	cout << "Game started" << endl;
+	m_Log->AddLog("[OK] Game started\n");
   deltaClock.restart();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();

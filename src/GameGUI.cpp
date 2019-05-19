@@ -1,3 +1,4 @@
+#include <BlackBox/IEngine.hpp>
 #include <BlackBox/GUI.hpp>
 #include <imgui.h>
 #include <BlackBox/Light.hpp>
@@ -324,6 +325,11 @@ if (m != nullptr && m->t != nullptr) \
   ImGui::Begin("##View",(bool*)true, ImGuiWindowFlags_NoDecoration);
   if (ImGui::BeginTabBar("Assets"))
   {
+    if (ImGui::BeginTabItem("Log"))
+    {
+      GetIEngine()->getILog()->Draw("MyLog", (bool*)true);
+      ImGui::EndTabItem();
+    }
     if (ImGui::BeginTabItem("Textures"))
     {
       if (selectedObject != nullptr)
@@ -333,10 +339,6 @@ if (m != nullptr && m->t != nullptr) \
         out_texture(selectedObject->m_Material, bump);
         out_texture(selectedObject->m_Material, normal);
       }
-      ImGui::EndTabItem();
-    }
-    if (ImGui::BeginTabItem("Log"))
-    {
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();

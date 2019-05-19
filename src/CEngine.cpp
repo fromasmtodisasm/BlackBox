@@ -1,8 +1,10 @@
 #include <BlackBox/CEngine.hpp>
+#include <BlackBox/CLog.hpp>
 #pragma once
 
 void CEngine::Init()
 {
+  m_pLog = new CLog();
 }
 
 void CEngine::Start()
@@ -21,6 +23,11 @@ IShaderManager * CEngine::getShaderManager()
 IRender * CEngine::getIRender()
 {
   return nullptr;
+}
+
+ILog* CEngine::getILog()
+{
+  return m_pLog;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

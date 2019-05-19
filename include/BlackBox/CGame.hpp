@@ -10,6 +10,8 @@
 #include <BlackBox/CPlayer.h>
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
+#include <BlackBox/ILog.hpp>
+
 #include <BlackBox/common.h>
 
 
@@ -41,6 +43,7 @@ private:
 	CameraController *camControl;
   Scene *m_scene;
   SceneManager *m_sceneManager;
+  ILog *m_Log;
   bool isWireFrame = false;
 
   MusicList m_PlayList;

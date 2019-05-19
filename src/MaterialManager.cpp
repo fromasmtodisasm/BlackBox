@@ -8,7 +8,6 @@
   #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult; }
 #endif
 
-#include <iostream>
 using	namespace std;
 using namespace tinyxml2;
 
@@ -48,7 +47,7 @@ Material *MaterialManager::getMaterial(std::string name)
       material = matItor->second;
     }
     else {
-      cout << "Error of load material" << endl;
+      m_pLog->AddLog("[ERROR] Load material\n");
     }
   }
 
@@ -72,6 +71,10 @@ bool MaterialManager::init(std::string materialLib)
   return status;
 }
 
+MaterialManager::MaterialManager() : m_pLog(GetIEngine()->getILog())
+{
+}
+
 bool MaterialManager::loadLib(std::string name)
 {
   XMLDocument xmlDoc;
@@ -91,7 +94,7 @@ bool MaterialManager::loadLib(std::string name)
     if (!loadMaterial(material))
     {
       //TODO: handle this case
-      cout << "Failed load material" << endl;
+      m_pLog->AddLog("[ERROR] Failed load material\n");
     }
     material = material->NextSiblingElement("material");
   }
@@ -146,7 +149,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
         break;
       default:
       {
-        cout << "Error: unknown texture type" << endl;
+        m_pLog->AddLog("[ERROR] Unknown texture type\n");
       }
       }
       image = image->NextSiblingElement("texture");
@@ -174,7 +177,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
     return false;
   result->program = program;
   cache[materialName] = result;
-  cout << "Created material: " << materialName << endl;
+  m_pLog->AddLog("[INFO] Created material: %s\n", materialName);
   return true;
 }
 
