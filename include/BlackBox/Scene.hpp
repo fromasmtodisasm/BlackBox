@@ -10,6 +10,7 @@
 class World;
 class CCamera;
 class Object;
+class FrameBufferObject;
 
 class Scene
 {
@@ -17,6 +18,7 @@ class Scene
 private:
   std::string name;
   World *world;
+  FrameBufferObject* m_RenderedScene;
   std::map<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
   std::map<std::string, PointLight*> m_PointLights;
@@ -46,6 +48,9 @@ public:
   tinyxml2::XMLElement *saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object);
   Transform loadTransform(tinyxml2::XMLElement &object);
   bool load(std::string name);
+  void setRenderTarget(FrameBufferObject *renderedScene);
+  void begin();
+  void end();
 };
 
 #endif // SCENE_H

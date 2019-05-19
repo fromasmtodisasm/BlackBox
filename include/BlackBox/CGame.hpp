@@ -10,6 +10,8 @@
 #include <BlackBox/CPlayer.h>
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
+#include <BlackBox/ILog.hpp>
+
 #include <BlackBox/common.h>
 
 
@@ -37,10 +39,11 @@ private:
   IInputHandler *m_inputHandler;
   World *m_World;
   CCamera *m_camera1, *m_camera2, *m_active_camera;
-  CPlayer *m_player;
+  CPlayer *m_player = nullptr;
 	CameraController *camControl;
   Scene *m_scene;
   SceneManager *m_sceneManager;
+  ILog *m_Log;
   bool isWireFrame = false;
 
   MusicList m_PlayList;
@@ -85,6 +88,7 @@ public:
   bool loadScene();
   void setRenderState();
   void render();
+  void setPlayer(CPlayer *player);
 
   // IInputEventListener interface
 public:

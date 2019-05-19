@@ -1,6 +1,8 @@
 #pragma once
 
 #include <BlackBox/Material.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ILog.hpp>
 
 #include <map>
 #include <string>
@@ -12,15 +14,15 @@ class MaterialManager
 {
   static MaterialManager *manager;
   std::map<std::string, Material*> cache;
-  //MaterialManager();
+  ILog *m_pLog;
 public:
   static MaterialManager *instance();
   Material *getProgram(std::string vMaterial, std::string fMaterial);
-  static bool init();
   Material *getMaterial(std::string name);
   static bool init(std::string materialLib);
 
 private:
+  MaterialManager();
   bool loadLib(std::string name);
   bool loadMaterial(tinyxml2::XMLElement *material);
   Texture *loadTexture(tinyxml2::XMLElement *texture);

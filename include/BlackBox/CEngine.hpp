@@ -4,10 +4,15 @@
 
 class CEngine : public IEngine
 {
+public:
+  ILog *m_pLog;
   // Унаследовано через ISystem
   virtual void Init() override;
   virtual void Start() override;
   virtual void Release() override;
   virtual IShaderManager * getShaderManager() override;
   virtual IRender * getIRender() override;
+
+  // Унаследовано через IEngine
+  virtual ILog* getILog() override;
 };

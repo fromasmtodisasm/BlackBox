@@ -5,6 +5,7 @@
 #include <BlackBox/MaterialManager.hpp>
 #include <BlackBox/World.hpp>
 #include <BlackBox/Light.hpp>
+#include <BlackBox/FrameBufferObject.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -255,25 +256,27 @@ Scene::Scene(std::string name) : name(name)
 }
 
 void Scene::draw(float dt)
-{
- for (const auto &object : m_Objects) {
-    //object.second->rotate(dt*0.01f, {0,1,0});
-    //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
-    CShaderProgram *program = object.second->m_Material->program;
-    program->use();
-    setupLights(object.second);
-    
-    program->setUniformValue( m_Camera->Position,"viewPos");
-    object.second->draw(m_Camera);
+{ 
+  if (m_Objects.size() > 0)
+  {
+    for (const auto& object : m_Objects) {
+      //object.second->rotate(dt*0.01f, {0,1,0});
+      //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
+      CShaderProgram* program = object.second->m_Material->program;
+      program->use();
+      setupLights(object.second);
+
+      program->setUniformValue(m_Camera->Position, "viewPos");
+      object.second->draw(m_Camera);
+    }
+    Object* lightObject = m_Objects["light"];
+    CShaderProgram* program = lightObject->m_Material->program;
+    for (const auto& light : m_PointLights) {
+      program->use();
+      lightObject->moveTo(light.second->position);
+      lightObject->draw(m_Camera);
+    }
   }
-  Object *lightObject = m_Objects["light"];
-  CShaderProgram *program = lightObject->m_Material->program;
-  for (const auto& light : m_PointLights) {
-    program->use();
-    lightObject->moveTo(light.second->position);
-    lightObject->draw(m_Camera);
-  }
- 
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -285,7 +288,12 @@ void Scene::addObject(std::string name, Object *object)
 
 Object *Scene::getObject(std::string name)
 {
-  return m_Objects[name];
+  auto objectIt = m_Objects.find(name);
+  if (objectIt != m_Objects.end())
+  {
+    return  objectIt->second;
+  }
+  return nullptr;
 }
 
 void Scene::setCamera(CCamera *camera)
@@ -568,3 +576,21 @@ bool Scene::load(std::string name = "default.xml")
 
   return true;
 }
+
+void Scene::setRenderTarget(FrameBufferObject *renderedScene)
+{
+  m_RenderedScene = renderedScene;
+}
+
+void Scene::begin()
+{
+  m_RenderedScene->bind();
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // буфер трафарета не используется
+}
+
+void Scene::end()
+{
+  m_RenderedScene->unbind();
+}
+

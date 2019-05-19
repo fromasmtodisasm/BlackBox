@@ -6,6 +6,7 @@
 #include <vector>
 
 struct BaseLight;
+class Object;
 
 struct IGuiElement
 {
@@ -45,6 +46,13 @@ struct MainMenu : public GuiElement
   virtual void execute() override;
 };
 
+struct MyWindow
+{
+  ImVec2 size;
+  ImVec2 pos;
+
+};
+
 class GameGUI : public IInputEventListener
 {
   friend class CGame;
@@ -53,9 +61,14 @@ class GameGUI : public IInputEventListener
   //Menu
   float MainMenuHeight;
   MainMenu mainMenu;
+  //ViewPort
 
   // Control panel
-
+  enum Style : int
+  {
+    DARK,
+    LIGHT
+  }style = DARK;
   bool
       show_player=1,
       show_camera=1,
@@ -63,6 +76,10 @@ class GameGUI : public IInputEventListener
       edit_player = 1,
       lighting = 0;
   bool open = true;
+  MyWindow leftPanel;
+  MyWindow assetsWindow;
+  MyWindow viewport;
+  Object* selectedObject = nullptr;
   ImGuiWindowFlags window_flags = 0;
 public:
   GameGUI();
@@ -74,6 +91,7 @@ public:
   void cameraController();
   void showLights(BaseLight* light, const char *name);
   void controlPanel();
+  void assets();
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;
