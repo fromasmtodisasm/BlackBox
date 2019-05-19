@@ -234,14 +234,15 @@ void GameGUI::controlPanel()
       ImGui::Separator();
       if (ImGui::TreeNode("Object Inspector"))
       {
-        char path[260] = "";
-        if (ImGui::InputText("Object path", path, sizeof(path)) && path[0] != '\0')
-        {
-          game->m_scene->load(path);
-        }
+        static char path[260] = "";
+        ImGui::InputText("Object path", path, sizeof(path)) && path[0] != '\0';
         if (ImGui::Button("Load Objects"))
         {
-          game->m_scene->load(path);
+          if (game->m_scene->load(path));
+          {
+            if (game->initPlayer())
+              game->gotoGame();
+          }
         }
         if (ImGui::Button("Save Objects"))
         {
@@ -265,6 +266,7 @@ void GameGUI::controlPanel()
           ImGui::TreePop();
         }
         ImGui::Separator();
+        selectedObject = nullptr;
         for (auto &obj : game->m_scene->m_Objects)
           objectInfo(obj.second, obj.first);
        ImGui::TreePop();
@@ -304,17 +306,37 @@ void GameGUI::controlPanel()
 
 void GameGUI::assets()
 {
+#define out_texture(m,t) \
+if (m != nullptr && m->t != nullptr) \
+{\
+  ImGui::BeginChild(m->t->id);\
+  ImGui::SameLine();\
+  ImGui::Image((void*)m->t->id, ImVec2(100,100), ImVec2(0, 1), ImVec2(1, 0));\
+  ImGui::Text(#t);\
+  ImGui::EndChild();\
+}
+
   ImGuiIO &io = ImGui::GetIO();
   ImGui::SetNextWindowPos(ImVec2(leftPanel.size.x, io.DisplaySize.y - assetsWindow.size.y));
   //ImVec2 viewPortSize = ImVec2(ImGui::GetContentRegionAvail());
-  ImGui::SetNextWindowSize(viewport.size);
-  ImGui::Begin("##View",(bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
+  assetsWindow.size.x = viewport.size.x;
+  ImGui::SetNextWindowSize(assetsWindow.size);
+  ImGui::Begin("##View",(bool*)true, ImGuiWindowFlags_NoDecoration);
   if (ImGui::BeginTabBar("Assets"))
   {
     if (ImGui::BeginTabItem("Textures"))
     {
       if (selectedObject != nullptr)
-        ImGui::Image((void*)selectedObject->m_Material->diffuse->id, ImVec2(100,100), ImVec2(0, 1), ImVec2(1, 0));
+      {
+        out_texture(selectedObject->m_Material, diffuse);
+        out_texture(selectedObject->m_Material, specular);
+        out_texture(selectedObject->m_Material, bump);
+        out_texture(selectedObject->m_Material, normal);
+      }
+      ImGui::EndTabItem();
+    }
+    if (ImGui::BeginTabItem("Log"))
+    {
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -367,6 +389,7 @@ void GameGUI::objectInfo(Object *obj, std::string name)
     const double  f64_zero = 0.,  f64_one = 1.,  f64_lo_a = -1000000000000000.0, f64_hi_a = +1000000000000000.0;
 
     static bool inputs_step = true;
+    
   if (ImGui::TreeNode(name.c_str())) {
     selectedObject = obj;
     if (ImGui::TreeNode("Physics")) {

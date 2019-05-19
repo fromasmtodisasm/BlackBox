@@ -124,7 +124,7 @@ bool CGame::run() {
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
   m_isMusicPlaying = true;
-	gotoGame();
+	gotoMenu();
   update();
   return true;
 }
@@ -146,7 +146,8 @@ bool CGame::loadScene() {
   if (!MaterialManager::init("default.xml"))
     return false;
 
-  return m_scene->load("default.xml");
+  //return m_scene->load("default.xml");
+  return true;// m_scene->load("default.xml");
 }
 
 void CGame::setRenderState()
@@ -175,6 +176,11 @@ void CGame::render()
   m_World->draw(m_deltaTime);
 }
 
+void CGame::setPlayer(CPlayer* player)
+{
+  m_player = player;
+}
+
 extern "C" IGame *CreateIGame(const char *title) {
   CGame *game = new CGame(title);
   return (game);
@@ -185,7 +191,8 @@ bool CGame::OnInputEvent(sf::Event &event)
   switch (m_Mode)
   {
   case CGame::FPS:
-    return FpsInputEvent(event);
+    if (m_player != nullptr) return FpsInputEvent(event);
+    else return false;
   case CGame::MENU:
     return MenuInputEvent(event);
   case CGame::FLY:
@@ -203,7 +210,7 @@ IInputHandler *CGame::getInputHandler()
 
 void CGame::gotoGame()
 {
-	if (!m_InGame)
+	if (!m_InGame && m_player != nullptr)
 	{
     m_active_camera->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
@@ -218,10 +225,17 @@ void CGame::showMenu()
 
 bool CGame::initPlayer()
 {
-  m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer")) ;
-  m_player->attachCamera(m_camera1);
-  m_player->setGame(this);
-  return true;
+  if (m_player != nullptr)
+  {
+    delete m_player;
+  }
+  if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
+  {
+    m_player->attachCamera(m_camera1);
+    m_player->setGame(this);
+    return true;
+  }
+  return false;
 }
 
 bool CGame::FpsInputEvent(sf::Event& event)
