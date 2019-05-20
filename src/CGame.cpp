@@ -35,8 +35,13 @@ IEngine* GetIEngine()
   return gISystem;
 }
 
+World *CGame::getWorld() const
+{
+    return m_World;
+}
+
 CGame::CGame(std::string title) :
-  m_World(new World()),m_Title(title)
+    m_World(new World()),m_Title(title)
 {
   srand(time(nullptr));
   m_deltaTime = 0.0f;

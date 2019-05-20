@@ -116,6 +116,7 @@ public:
 
   // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;
+  World *getWorld() const;
 };
 
 

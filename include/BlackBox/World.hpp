@@ -28,4 +28,5 @@ public:
   void setScene(Scene* scene);
   void update(float deltatime);
   void setPostRenderCallback(IPostRenderCallback* postRender);
+  Scene *getActiveScene() const;
 };

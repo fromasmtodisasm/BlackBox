@@ -31,7 +31,7 @@ bool CPlayer::OnInputEvent(sf::Event &event)
     go->setMaterial(defaultMaterial);
     go->m_transform.position = m_Camera->Position;// + glm::vec3(0,0,5);
     go->velocity = 48.0f*m_Camera->Front;
-    SceneManager::instance()->getScene("default")->addObject("bullet", go);
+    Game->getWorld()->getActiveScene()->addObject("bullet", go);
 
     return true;
   }
