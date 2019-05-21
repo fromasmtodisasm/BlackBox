@@ -31,6 +31,18 @@ void Material::apply(Object *object, CCamera *camera)
       activeTexture(GL_TEXTURE2, "material.bump", bump);
       block++;
     }
+    if (normal != nullptr && enabledNormal)
+    {
+      int loc;
+      activeTexture(GL_TEXTURE2, "material.normal", normal);
+      glUniform1i(loc = glGetUniformLocation(program->get(), "material.hasNormal"), static_cast<GLint>(true));
+      block++;
+    }
+    else
+    {
+      int loc;
+      glUniform1i(loc = glGetUniformLocation(program->get(), "material.hasNormal"), static_cast<GLint>(false));
+    }
   }
   else {
     program->setUniformValue( diffuseColor,"diffuseColor");

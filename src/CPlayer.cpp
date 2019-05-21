@@ -5,6 +5,7 @@
 #include <BlackBox/CGame.hpp>
 #include <BlackBox/ObjectManager.hpp>
 #include <BlackBox/MaterialManager.hpp>
+#include <BlackBox/SceneManager.hpp>
 
 CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.obj"))
 {
@@ -25,7 +26,14 @@ bool CPlayer::OnInputEvent(sf::Event &event)
   switch (event.type) {
   case sf::Event::MouseButtonPressed:
   {
-    return false;
+    Object *obj = SceneManager::instance()->getScene("default")->getObject("light");
+    GameObject *go = new GameObject(obj);
+    go->setMaterial(defaultMaterial);
+    go->m_transform.position = m_Camera->Position;// + glm::vec3(0,0,5);
+    go->velocity = 48.0f*m_Camera->Front;
+    Game->getWorld()->getActiveScene()->addObject("bullet", go);
+
+    return true;
   }
   case sf::Event::MouseMoved:
 	{

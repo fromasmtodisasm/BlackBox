@@ -19,6 +19,17 @@
       <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
+  <material name="brick_box">
+    <textures>
+      <texture type="diffuse" name="brickwall.jpg"/>
+      <texture type="specular" name="gray.png"/>
+      <texture type="normal" name="brickwall_normal.jpg"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
   <material name="light">
     <color red="1.0" green="1.0" blue="1.0"/>
     <shaders>

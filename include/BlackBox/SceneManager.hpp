@@ -7,12 +7,14 @@ class Scene;
 
 class SceneManager
 {
+  friend class GameGUI;
   static SceneManager *manager;
   std::map<std::string, Scene*> cache;
   //SceneManager();
 public:
   static SceneManager *instance();
-  Scene *getScene(std::string Scene);
+  static bool init();
+  Scene *getScene(std::string scene);
   //Scene *getPrimitive(Primitive::Type type, CShaderProgram *program);
 };
 

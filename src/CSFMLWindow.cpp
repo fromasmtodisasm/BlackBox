@@ -34,16 +34,15 @@ bool CSFMLWindow::init()
 
   // Create the main window
   sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
-  //auto fullscreen = 	sf::VideoMode::getFullscreenModes();
+  //auto mode = 	sf::VideoMode::getFullscreenModes()[0];
   sf::VideoMode mode = desktop;
-  m_Window = new sf::RenderWindow(sf::VideoMode(1024, 768), sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
+  //sf::VideoMode mode = sf::VideoMode(m_Width, m_Height);
+  m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
   m_Window->setVerticalSyncEnabled(true);
   m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);
 
   ImGui::SFML::Init(*m_Window);
-  //m_window->setMouseCursorVisible(false);
-  //m_window->
   // Make it the active window for OpenGL calls
   m_Window->setActive();
   if (!OpenGLLoader())
@@ -153,7 +152,7 @@ sf::Vector2i CSFMLWindow::nextMousePos(sf::Vector2i &position)
   {
     if (position.x < viewPort.left + Mouse.limit)
     {
-      nextPos.x = m_Window->getSize().x - Mouse.limit - 3;
+      nextPos.x = viewPort.left + viewPort.width - Mouse.limit - 3;
       Mouse.curr_pos = Mouse.prev_pos = nextPos;
       Mouse.x_wraped = true;
       sf::Mouse::setPosition(sf::Vector2i(nextPos.x, nextPos.y), *m_Window);
@@ -167,7 +166,7 @@ sf::Vector2i CSFMLWindow::nextMousePos(sf::Vector2i &position)
     }
     if (position.y < viewPort.top + Mouse.limit)
     {
-      nextPos.y = m_Window->getSize().y - Mouse.limit - 3;
+      nextPos.y = viewPort.top + viewPort.height - Mouse.limit - 3;
       Mouse.curr_pos = Mouse.prev_pos = nextPos;
       Mouse.y_wraped = true;
       sf::Mouse::setPosition(sf::Vector2i(nextPos.x, nextPos.y), *m_Window);

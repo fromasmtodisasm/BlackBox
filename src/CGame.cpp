@@ -7,13 +7,14 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/SceneManager.hpp>
 #include <BlackBox/MaterialManager.hpp>
+#include <BlackBox/FrameBufferObject.hpp>
 
 
 
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-#include <iostream>
+//#include <iostream>
 #include <vector>
 #include <string>
 #include <cstdlib>
@@ -22,7 +23,7 @@
 
 #include <sstream>
 
-using namespace std;
+//using namespace std;
 
 IGame *p_gIGame;
 
@@ -34,8 +35,13 @@ IEngine* GetIEngine()
   return gISystem;
 }
 
+World *CGame::getWorld() const
+{
+    return m_World;
+}
+
 CGame::CGame(std::string title) :
-  m_World(new World()),m_Title(title)
+    m_World(new World()),m_Title(title)
 {
   srand(time(nullptr));
   m_deltaTime = 0.0f;
@@ -46,22 +52,26 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(IEngine *pSystem)  {
-  m_pSystem = pSystem;
+  m_pSystem = gISystem = pSystem;
+  m_Log = m_pSystem->getILog();
   p_gIGame = reinterpret_cast<IGame*>(this);
-  m_Window = new CWindow(m_Title); 
+  m_Window = new CWindow(m_Title, 1600, 900); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
     if (!m_Window->init() || !m_Window->create())
       return false;
-		cout << "Window susbsystem inited" << endl;
+		m_Log->AddLog("[OK] Window susbsystem inited\n");
 
     if ((m_inputHandler = m_Window) == nullptr)
       return false;
     if (!loadScene()) {
-			cout << "Failed init objects" << endl;
+			m_Log->AddLog("[FAILED] Failed init objects\n");
 			return false;
 		}
-		cout << "Objects inited" << endl;
+		m_Log->AddLog("[OK] Objects inited\n");
+    FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
+    sceneBuffer->create();
+    m_scene->setRenderTarget(sceneBuffer);
   } 
   gui = new GameGUI();
   gui->game = this;
@@ -99,11 +109,13 @@ bool CGame::update() {
 
     //cp_size = ImVec2(300, m_Window->getHeight());
 
+    /*
     glViewport(
-          m_Window->viewPort.left,
+          0,
           0,
           m_Window->viewPort.width,
           m_Window->viewPort.height);
+          */
     render();
     gui->Draw();
 
@@ -113,12 +125,12 @@ bool CGame::update() {
 }
 
 bool CGame::run() {
-	cout << "Game started" << endl;
+	m_Log->AddLog("[OK] Game started\n");
   deltaClock.restart();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
   m_isMusicPlaying = true;
-	gotoGame();
+	gotoMenu();
   update();
   return true;
 }
@@ -132,15 +144,15 @@ void CGame::input()
 }
 
 bool CGame::loadScene() {
-  if ((m_scene = new Scene("default")) == nullptr)
-    return false;
-  ;
   if (!ShaderManager::init() && (shaderManager = ShaderManager::instance()) == nullptr)
     return false;
   if (!MaterialManager::init("default.xml"))
     return false;
+  if (!SceneManager::init())
+    return false;
 
-  return m_scene->load("default.xml");
+  m_scene = defaultScene;
+  return m_scene != nullptr;
 }
 
 void CGame::setRenderState()
@@ -159,25 +171,19 @@ void CGame::setRenderState()
 
 void CGame::render()
 {
-  /*
-  ImGui::Text("Player.x = %f;Player.y = %f;Player.z = %f;Player.velocity(%f,%f,%f)",
-              m_player->m_transform.position.x,
-              m_player->m_transform.position.y,
-              m_player->m_transform.position.z,
-              m_player->velocity.x,
-              m_player->velocity.y,
-              m_player->velocity.z
-              );
-  */
   m_Window->clear();
   /* Rendering code here */
   int w = m_Window->viewPort.width;
   int h = m_Window->viewPort.height;
-  //glViewport(300,0, w-300, h);
-  m_camera1->Ratio = ((float)w - 300)/ h;
+  m_camera1->Ratio = ((float)w - m_Window->viewPort.left)/ h;
 
-  m_World->setCamera(m_camera1);
+  //m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
+}
+
+void CGame::setPlayer(CPlayer* player)
+{
+  m_player = player;
 }
 
 extern "C" IGame *CreateIGame(const char *title) {
@@ -190,7 +196,8 @@ bool CGame::OnInputEvent(sf::Event &event)
   switch (m_Mode)
   {
   case CGame::FPS:
-    return FpsInputEvent(event);
+    if (m_player != nullptr) return FpsInputEvent(event);
+    else return false;
   case CGame::MENU:
     return MenuInputEvent(event);
   case CGame::FLY:
@@ -208,7 +215,7 @@ IInputHandler *CGame::getInputHandler()
 
 void CGame::gotoGame()
 {
-	if (!m_InGame)
+	if (!m_InGame && m_player != nullptr)
 	{
     m_active_camera->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
@@ -223,10 +230,17 @@ void CGame::showMenu()
 
 bool CGame::initPlayer()
 {
-  m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer")) ;
-  m_player->attachCamera(m_camera1);
-  m_player->setGame(this);
-  return true;
+  if (m_player != nullptr)
+  {
+    delete m_player;
+  }
+  if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
+  {
+    m_player->attachCamera(m_camera1);
+    m_player->setGame(this);
+    return true;
+  }
+  return false;
 }
 
 bool CGame::FpsInputEvent(sf::Event& event)
@@ -311,6 +325,11 @@ void CGame::Stop()
 float CGame::getDeltaTime()
 {
   return m_deltaTime;
+}
+
+void CGame::PostRender()
+{
+  
 }
 
 void CGame::gotoMenu()

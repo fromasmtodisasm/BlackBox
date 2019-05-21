@@ -1,10 +1,9 @@
 #include <BlackBox/ShaderManager.hpp>
-
-#include <iostream>
-using	namespace std;
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ILog.hpp>
 
 ShaderManager *ShaderManager::manager = nullptr;
-CShaderProgram *defaultProgram;
+CShaderProgram *defaultProgram = nullptr;
 
 ShaderManager *ShaderManager::instance()
 {
@@ -23,17 +22,17 @@ CShaderProgram *ShaderManager::getProgram(std::string vShader, std::string fShad
   fs = getShader(fShader, "fragment");
   if (vs == nullptr || fs == nullptr)
   {
-    cout << "Error of load shader" << endl;
+    GetIEngine()->getILog()->AddLog("Error of load shader");
     return nullptr;
   }
   else
   {
-    cout << "Shaders loaded" << endl;
+    GetIEngine()->getILog()->AddLog("[OK] Shaders loaded\n");
     return p = new CShaderProgram(vs, fs);
   }
 }
 
-CShader *ShaderManager::getShader(string name, string type)
+CShader *ShaderManager::getShader(std::string name, std::string type)
 {
   CShader *result = nullptr;
   auto Path = "res/shaders/" + name;
@@ -59,7 +58,7 @@ bool ShaderManager::init()
   return true;
 }
 
-CShader::type ShaderManager::str2typ(string type)
+CShader::type ShaderManager::str2typ(std::string type)
 {
   if (type == "vertex")
     return CShader::type::E_VERTEX;

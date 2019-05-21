@@ -1,6 +1,7 @@
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ILog.hpp>
 #include <BlackBox/TextureManager.hpp>
 
-#include <iostream>
 using	namespace std;
 
 TextureManager *TextureManager::manager = nullptr;
@@ -40,11 +41,11 @@ Texture *TextureManager::getTexture(std::string name)
     }
     if (texture == nullptr)
     {
-      cout << "Error of load texture: " << Path << endl;
+      GetIEngine()->getILog()->AddLog("[EROR] Error of load texture: %s\n", Path.c_str());
     }
     else
     {
-      cout << "Texture [" << Path <<"] loaded" << endl;
+      GetIEngine()->getILog()->AddLog("[INFO] Texture [%s] loaded\n",  Path.c_str());
     }
   }
   return texture;

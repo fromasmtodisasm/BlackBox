@@ -10,6 +10,8 @@
 #include <BlackBox/CPlayer.h>
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
+#include <BlackBox/ILog.hpp>
+
 #include <BlackBox/common.h>
 
 
@@ -26,7 +28,8 @@ class GameGUI;
 class Scene;
 class SceneManager;
 
-class CGame : public IGame, public IInputEventListener{
+class CGame : public IGame, public IInputEventListener, public IPostRenderCallback 
+{
   class GameState;
   class EventListener;
   friend class GameGUI;
@@ -37,10 +40,11 @@ private:
   IInputHandler *m_inputHandler;
   World *m_World;
   CCamera *m_camera1, *m_camera2, *m_active_camera;
-  CPlayer *m_player;
+  CPlayer *m_player = nullptr;
 	CameraController *camControl;
   Scene *m_scene;
   SceneManager *m_sceneManager;
+  ILog *m_Log;
   bool isWireFrame = false;
 
   MusicList m_PlayList;
@@ -85,6 +89,7 @@ public:
   bool loadScene();
   void setRenderState();
   void render();
+  void setPlayer(CPlayer *player);
 
   // IInputEventListener interface
 public:
@@ -108,6 +113,10 @@ private:
   // IGame interface
 public:
   virtual float getDeltaTime() override;
+
+  // Унаследовано через IPostRenderCallback
+  virtual void PostRender() override;
+  World *getWorld() const;
 };
 
 

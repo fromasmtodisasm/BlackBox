@@ -1,3 +1,5 @@
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ILog.hpp>
 #include <BlackBox/ObjectManager.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Primitives.hpp>
@@ -35,19 +37,20 @@ Object *ObjectManager::getObject(std::string object, std::string type)
     {
       obj = objectFactory(new Object(v->second.get()), type);
       obj->type = type;
+      GetIEngine()->getILog()->AddLog("[INFO] Object [%s] already cached\n", oPath.c_str());
     }
     else {
       obj = objectFactory(Object::load(oPath), type);
       obj->type = type;
       cache[oPath] = obj->m_Mesh;
+      GetIEngine()->getILog()->AddLog("[INFO] Object [%s] loaded\n", oPath.c_str());
     }
     if (obj == nullptr)
     {
-      cout << "Error of load object: " << oPath << endl;
+      GetIEngine()->getILog()->AddLog("[ERROR] Error or load object: %s\n",oPath.c_str());
     }
     else
     {
-      cout << "Object [" << oPath <<"] loaded" << endl;
     }
   }
   return obj;

@@ -22,6 +22,7 @@ struct Material
   CShaderProgram *program;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;
+  bool enabledNormal = true;
 
   Material() : 
   diffuse(nullptr),

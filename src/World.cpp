@@ -2,13 +2,22 @@
 
 float World::gravity = 1;
 
+Scene *World::getActiveScene() const
+{
+    return activeScene;
+}
+
 World::World()
 {
-
+    
 }
 
 void World::draw(float dt) {
+    activeScene->begin();
   activeScene->draw(dt);
+  if (m_PostRender != nullptr)
+    m_PostRender->PostRender();
+  activeScene->end();
   // Camera ...
 }
 
@@ -24,4 +33,9 @@ void World::setScene(Scene *scene) {
 void World::update(float deltatime)
 {
   activeScene->update(deltatime);
+}
+
+void World::setPostRenderCallback(IPostRenderCallback* postRender)
+{
+  m_PostRender = postRender;
 }

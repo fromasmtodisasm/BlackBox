@@ -10,13 +10,19 @@
 class World;
 class CCamera;
 class Object;
+class FrameBufferObject;
+class Scene;
+
+extern Scene *defaultScene;
 
 class Scene
 {
   friend class GameGUI;
+  friend class CGame;
 private:
   std::string name;
   World *world;
+  FrameBufferObject* m_RenderedScene;
   std::map<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
   std::map<std::string, PointLight*> m_PointLights;
@@ -37,7 +43,7 @@ public:
   Object *getObject(std::string name);
   void setCamera(CCamera *camera);
   void update(float dt);
-  bool save();
+  bool save(std::string as ="");
   tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);
   //tinyxml2::XMLElement *saveVec3(tinyxml2::XMLDocument &xmlDoc, glm::vec3 &);
   tinyxml2::XMLElement *saveLight(tinyxml2::XMLDocument &xmlDoc, BaseLight * light);
@@ -46,6 +52,9 @@ public:
   tinyxml2::XMLElement *saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object);
   Transform loadTransform(tinyxml2::XMLElement &object);
   bool load(std::string name);
+  void setRenderTarget(FrameBufferObject *renderedScene);
+  void begin();
+  void end();
 };
 
 #endif // SCENE_H

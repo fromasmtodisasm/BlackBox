@@ -5,6 +5,7 @@
 #include <BlackBox/MaterialManager.hpp>
 #include <BlackBox/World.hpp>
 #include <BlackBox/Light.hpp>
+#include <BlackBox/FrameBufferObject.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -14,7 +15,7 @@
 using namespace tinyxml2;
 
 #ifndef XMLCheckResult
-  #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult; }
+  #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
 #endif
 
 void Scene::loadObject(XMLElement *object)
@@ -255,25 +256,27 @@ Scene::Scene(std::string name) : name(name)
 }
 
 void Scene::draw(float dt)
-{
- for (const auto &object : m_Objects) {
-    //object.second->rotate(dt*0.01f, {0,1,0});
-    //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
-    CShaderProgram *program = object.second->m_Material->program;
-    program->use();
-    setupLights(object.second);
-    
-    program->setUniformValue( m_Camera->Position,"viewPos");
-    object.second->draw(m_Camera);
+{ 
+  if (m_Objects.size() > 0)
+  {
+    for (const auto& object : m_Objects) {
+      //object.second->rotate(dt*0.01f, {0,1,0});
+      //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
+      CShaderProgram* program = object.second->m_Material->program;
+      program->use();
+      setupLights(object.second);
+
+      program->setUniformValue(m_Camera->Position, "viewPos");
+      object.second->draw(m_Camera);
+    }
+    Object* lightObject = m_Objects["light"];
+    CShaderProgram* program = lightObject->m_Material->program;
+    for (const auto& light : m_PointLights) {
+      program->use();
+      lightObject->moveTo(light.second->position);
+      lightObject->draw(m_Camera);
+    }
   }
-  Object *lightObject = m_Objects["light"];
-  CShaderProgram *program = lightObject->m_Material->program;
-  for (const auto& light : m_PointLights) {
-    program->use();
-    lightObject->moveTo(light.second->position);
-    lightObject->draw(m_Camera);
-  }
- 
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -285,7 +288,12 @@ void Scene::addObject(std::string name, Object *object)
 
 Object *Scene::getObject(std::string name)
 {
-  return m_Objects[name];
+  auto objectIt = m_Objects.find(name);
+  if (objectIt != m_Objects.end())
+  {
+    return  objectIt->second;
+  }
+  return nullptr;
 }
 
 void Scene::setCamera(CCamera *camera)
@@ -302,7 +310,7 @@ void Scene::update(float dt)
   }
 }
 
-bool Scene::save()
+bool Scene::save(std::string as)
 {
   std::stringstream sceneName;
   XMLDocument xmlDoc;
@@ -371,7 +379,10 @@ bool Scene::save()
   }
   xmlDoc.InsertFirstChild(pScene);
 
-  sceneName << "res/scenes/" << name <<  ".xml";
+  if (as == "")
+    sceneName << "res/scenes/" << name << ".xml";
+  else
+    sceneName << "res/scenes/" << as;
   XMLError eResult = xmlDoc.SaveFile(sceneName.str().c_str());
   XMLCheckResult(eResult);
 
@@ -544,7 +555,7 @@ bool Scene::load(std::string name = "default.xml")
 {
   XMLDocument xmlDoc;
 
-  XMLError eResult = xmlDoc.LoadFile(("res/scenes/" + name).c_str());
+  XMLError eResult = xmlDoc.LoadFile(name.c_str());
   XMLCheckResult(eResult);
 
   XMLNode * pScene = xmlDoc.FirstChild();
@@ -568,3 +579,21 @@ bool Scene::load(std::string name = "default.xml")
 
   return true;
 }
+
+void Scene::setRenderTarget(FrameBufferObject *renderedScene)
+{
+  m_RenderedScene = renderedScene;
+}
+
+void Scene::begin()
+{
+  m_RenderedScene->bind();
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // буфер трафарета не используется
+}
+
+void Scene::end()
+{
+  m_RenderedScene->unbind();
+}
+
