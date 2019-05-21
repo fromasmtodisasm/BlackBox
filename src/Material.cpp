@@ -12,7 +12,7 @@ void Material::apply(Object *object, CCamera *camera)
   program->setUniformValue( camera->getViewMatrix(),"View");
   program->setUniformValue( camera->getProjectionMatrix(),"Projection");
   program->setUniformValue( camera->Position,"viewPos");
-  program->setUniformValue( 32.0f,"material.shininess");
+  program->setUniformValue( 128.0f,"material.shininess");
 
   if (hasTexture)
   {
