@@ -145,22 +145,23 @@ Object * Object::load(string path)
   Object *obj = nullptr;
   std::shared_ptr<Mesh> mesh;
   VertexArrayObject *vb;
-  std::vector<Vertex> p;
+  std::vector<Vertex> vertexData;
+  std::vector<int> indexData;
 
   if (path == "res/geom/plane.obj")
   {
-    p.resize(6);
-    p[0] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
-    p[1] = Vertex({-1,0,-1},	{0,1}, {0,1,0});
-    p[2] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
-    p[3] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
-    p[4] = Vertex({1,0,1}, 		{0,1}, {0,1,0});
-    p[5] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
+    vertexData.resize(6);
+    vertexData[0] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
+    vertexData[1] = Vertex({-1,0,-1},	{0,1}, {0,1,0});
+    vertexData[2] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
+    vertexData[3] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
+    vertexData[4] = Vertex({1,0,1}, 		{0,1}, {0,1,0});
+    vertexData[5] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
   }
-  else if (!loadOBJ(path.c_str(), p))
+  else if (!ObjLoader::load(path.c_str(), vertexData))
     return nullptr;
   
-  vb = new VertexArrayObject(p.data(), static_cast<GLint>(p.size()), GL_TRIANGLES);
+  vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES);
   mesh = std::make_shared<Mesh>(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;

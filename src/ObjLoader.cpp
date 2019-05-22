@@ -4,8 +4,12 @@
 #include <cstdio>
 #include <string>
 
+void calcTangentSpace()
+{
 
-bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
+}
+
+bool ObjLoader::load(const char* path, std::vector<Vertex>& out_vertices)
 {
   std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
   std::vector< glm::vec3 > temp_vertices;
@@ -88,22 +92,18 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
 
       // For each vertex of each triangle
       Vertex _vertex;
-      //for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-      for (; current_face < vertexIndices.size(); current_face++) {
-        unsigned int vertexIndex = vertexIndices[current_face];
-        unsigned int normalIndex = normalIndices[current_face];
-
-        glm::vec3 vertex = temp_vertices[vertexIndex - 1];
+      for (; current_face < vertexIndices.size(); current_face++) 
+      {
+        glm::vec3 vertex = temp_vertices[vertexIndices[current_face] - 1];
         _vertex.pos = vertex;
 
         if (has_uv)
         {
-          unsigned int uvIndex = uvIndices[current_face];
-          glm::vec2 uv = temp_uvs[uvIndex - 1];
+          glm::vec2 uv = temp_uvs[uvIndices[current_face] - 1];
           _vertex.uv = uv;
         }
 
-        glm::vec3 normal = temp_normals[normalIndex - 1];
+        glm::vec3 normal = temp_normals[normalIndices[current_face] - 1];
         _vertex.normal = normal;
         out_vertices.push_back(_vertex);
       }
