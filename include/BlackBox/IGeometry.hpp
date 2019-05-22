@@ -10,14 +10,15 @@
 class VertexArrayObject;
 class IndexBuffer;
 
-//typedef glm::vec3 Vertex;
 struct Vertex
 {
   glm::vec3 pos;
   glm::vec2 uv;
-  glm::vec3 n;
+  glm::vec3 normal;
+  glm::vec3 tangent;
+
   Vertex() = default;
-  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), n(n)
+  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)
   {}
 };
 

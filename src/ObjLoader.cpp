@@ -104,7 +104,7 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
         }
 
         glm::vec3 normal = temp_normals[normalIndex - 1];
-        _vertex.n = normal;
+        _vertex.normal = normal;
         out_vertices.push_back(_vertex);
       }
     }
