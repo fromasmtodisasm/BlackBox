@@ -10,7 +10,7 @@ using namespace std;
 VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type) :
   m_Data(data), m_Count(count), m_Type(type)
 {
-  GLint position = 0, uv = 1, normal = 2, tangent = 3, btangent = 4;
+  GLint position = 0, uv = 2, normal = 1, tangent = 3, btangent = 4;
   glGenVertexArrays(1, &id);
 
   glBindVertexArray(id);
