@@ -78,6 +78,11 @@ void GameGUI::Draw()
   mainMenu.execute();
   ImGuiIO& io = ImGui::GetIO();
   ImVec2 viewportSize;
+  if (game->isFullScreen)
+  {
+    drawFullScreenViewPort();
+    return;
+  }
   ImGui::SetNextWindowPos(ImVec2(0, mainMenu.size.y));
   ImGui::SetNextWindowSizeConstraints(ImVec2(150, io.DisplaySize.y - 20), ImVec2(500, io.DisplaySize.y - 20));
 
@@ -384,6 +389,18 @@ void GameGUI::showScene(Scene *scene)
   selectedObject = nullptr;
   for (auto &obj : scene->m_Objects)
     objectInfo(obj.second, obj.first);
+}
+
+void GameGUI::drawFullScreenViewPort()
+{
+  ImGuiIO& io = ImGui::GetIO();
+  ImGui::SetNextWindowPos(ImVec2(0, 0));
+  ImGui::SetNextWindowSize(io.DisplaySize);
+  game->m_Window->viewPort.left = ImGui::GetCursorPosX();
+  game->m_Window->viewPort.top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
+  ImGui::Begin("FullScreen", (bool*)true,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
+  ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+  ImGui::End();
 }
 
 bool GameGUI::OnInputEvent(sf::Event& event)

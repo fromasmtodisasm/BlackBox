@@ -94,6 +94,7 @@ public:
   void assets();
   void setStyle();
   void showScene(Scene *scene);
+  void drawFullScreenViewPort();
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;
