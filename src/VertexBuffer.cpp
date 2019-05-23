@@ -10,6 +10,7 @@ using namespace std;
 VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type) :
   m_Data(data), m_Count(count), m_Type(type)
 {
+  GLint position = 0, uv = 1, normal = 2, tangent = 3, btangent = 4;
   glGenVertexArrays(1, &id);
 
   glBindVertexArray(id);
@@ -18,14 +19,20 @@ VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, count*sizeof(Vertex), data, GL_STATIC_DRAW);
     // 3. Устанавливаем указатели на вершинные атрибуты
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, pos));
+    glEnableVertexAttribArray(position);
+    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, pos));
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(normal);
+    glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
 
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, uv));
+    glEnableVertexAttribArray(uv);
+    glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, uv));
+
+    glEnableVertexAttribArray(tangent);
+    glVertexAttribPointer(tangent, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, tangent));
+
+    glEnableVertexAttribArray(btangent);
+    glVertexAttribPointer(btangent, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, btangent));
   glBindVertexArray(0);
 }
 

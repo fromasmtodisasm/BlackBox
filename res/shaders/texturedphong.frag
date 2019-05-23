@@ -47,8 +47,8 @@ struct SpotLight {
 #define NR_POINT_LIGHTS 4
 
 in vec3 FragPos;
-in vec3 Normal;
 in vec2 TexCoords;
+in mat3 TBN;
 
 uniform vec3 viewPos;
 uniform DirLight dirLight;
@@ -69,16 +69,19 @@ void main()
     // properties
     if (material.hasNormal == true)
     {
-         // выборка вектора из карты нормалей с областью значений [0,1]
+      // выборка вектора из карты нормалей с областью значений [0,1]
       norm = texture(material.normal, TexCoords).rgb;
       // перевод вектора нормали в интервал [-1,1]
       norm = normalize(norm * 2.0 - 1.0);  
+
+      norm = normalize(TBN * norm); 
     }
     else
     {
-      norm = normalize(Normal);
+      norm = normalize(TBN[2]);
       viewDir = normalize(viewPos - FragPos);
     }
+    viewDir = normalize(viewPos - FragPos);
     
     // == =====================================================
     // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight

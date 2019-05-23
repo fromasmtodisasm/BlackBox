@@ -147,18 +147,9 @@ Object * Object::load(string path)
   VertexArrayObject *vb;
   std::vector<Vertex> vertexData;
   std::vector<int> indexData;
+  ObjLoader OBJ;
 
-  if (path == "res/geom/plane.obj")
-  {
-    vertexData.resize(6);
-    vertexData[0] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
-    vertexData[1] = Vertex({-1,0,-1},	{0,1}, {0,1,0});
-    vertexData[2] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
-    vertexData[3] = Vertex({1,0,-1}, 	{1,1}, {0,1,0});
-    vertexData[4] = Vertex({1,0,1}, 		{0,1}, {0,1,0});
-    vertexData[5] = Vertex({-1,0,1}, 	{0,0}, {0,1,0});
-  }
-  else if (!ObjLoader::load(path.c_str(), vertexData))
+  if (!OBJ.load(path.c_str(), vertexData, indexData))
     return nullptr;
   
   vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES);
