@@ -1,5 +1,5 @@
 # BlackBox 
-[![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=experiment)](https://travis-ci.org/fromasmtodisasm/BlackBox)
+[![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=master)](https://travis-ci.org/fromasmtodisasm/BlackBox)
 
 OpenGL based game engine
 
