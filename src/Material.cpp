@@ -18,7 +18,7 @@ void Material::apply(Object *object, CCamera *camera)
   {
     if (diffuse != nullptr)
     {
-      activeTexture(GL_TEXTURE0, "material.diffuse", diffuse);
+      activeTexture(GL_TEXTURE0, "diffuseMap", diffuse);
       block++;
     }
     if (specular != nullptr)
@@ -34,7 +34,7 @@ void Material::apply(Object *object, CCamera *camera)
     if (normal != nullptr && enabledNormal)
     {
       int loc;
-      activeTexture(GL_TEXTURE2, "material.normal", normal);
+      activeTexture(GL_TEXTURE2, "normalMap", normal);
       glUniform1i(loc = glGetUniformLocation(program->get(), "material.hasNormal"), static_cast<GLint>(true));
       block++;
     }

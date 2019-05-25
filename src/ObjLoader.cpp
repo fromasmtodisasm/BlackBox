@@ -1,20 +1,13 @@
 #include <BlackBox/ObjLoader.hpp>
 #include <BlackBox/IGeometry.hpp>
+#include <fstream>
 #include <cstring>
 #include <cstdio>
 #include <string>
 
-
-bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
+bool ObjLoader::load(const char* path, std::vector<Vertex>& vertex_data, std::vector<int>& indexData)
 {
-  std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
-  std::vector< glm::vec3 > temp_vertices;
-  std::vector< glm::vec2 > temp_uvs;
-  std::vector< glm::vec3 > temp_normals;
-  bool has_uv = false;
-  int f_cnt = 0;
-  int v_cnt = 0;
-  unsigned int current_face = 0;
+  std::vector<face> faces;
 
   FILE * file = fopen(path, "r");
   if (file == NULL) {
@@ -33,80 +26,41 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
     if (strcmp(lineHeader, "v") == 0) {
       glm::vec3 vertex;
       fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-      temp_vertices.push_back(vertex);
+      vertex_buffer.push_back(vertex);
     }
     else if (strcmp(lineHeader, "vt") == 0) {
       has_uv = true;
       glm::vec2 uv;
       fscanf(file, "%f %f\n", &uv.x, &uv.y);
-      temp_uvs.push_back(uv);
+      uv_buffer.push_back(uv);
     }
     else if (strcmp(lineHeader, "vn") == 0) {
       glm::vec3 normal;
       fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-      temp_normals.push_back(normal);
+      normal_buffer.push_back(normal);
     }
     else if (strcmp(lineHeader, "f") == 0) {
-      std::string vertex1, vertex2, vertex3;
-      unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-      int cnt = 6;
+      face current_face;
       char *pattern[2] = {
         "%d/%d/%d %d/%d/%d %d/%d/%d\n",
         "%d//%d %d//%d %d//%d\n",
       };
-      if (has_uv) cnt = 9;
       int matches;
       if (has_uv)
+      {
         matches = fscanf(file, pattern[0],
-          &vertexIndex[0], &uvIndex[0], &normalIndex[0],
-          &vertexIndex[1], &uvIndex[1], &normalIndex[1],
-          &vertexIndex[2], &uvIndex[2], &normalIndex[2]
+          &current_face.v[0].v, &current_face.v[0].vt, &current_face.v[0].n,
+          &current_face.v[1].v, &current_face.v[1].vt, &current_face.v[1].n,
+          &current_face.v[2].v, &current_face.v[2].vt, &current_face.v[2].n
         );
+      }
       else
         matches = fscanf(file, pattern[1],
-          &vertexIndex[0], &normalIndex[0],
-          &vertexIndex[1], &normalIndex[1],
-          &vertexIndex[2], &normalIndex[2]
+          &current_face.v[0].v, &current_face.v[0].n,
+          &current_face.v[1].v, &current_face.v[1].n,
+          &current_face.v[2].v, &current_face.v[2].n
         );
-
-      if (matches != cnt) {
-        printf("File can't be read by our simple parser : ( Try exporting with other options\n");
-        return false;
-      }
-      vertexIndices.push_back(vertexIndex[0]);
-      vertexIndices.push_back(vertexIndex[1]);
-      vertexIndices.push_back(vertexIndex[2]);
-      if (has_uv)
-      {
-        uvIndices.push_back(uvIndex[0]);
-        uvIndices.push_back(uvIndex[1]);
-        uvIndices.push_back(uvIndex[2]);
-      }
-      normalIndices.push_back(normalIndex[0]);
-      normalIndices.push_back(normalIndex[1]);
-      normalIndices.push_back(normalIndex[2]);
-
-      // For each vertex of each triangle
-      Vertex _vertex;
-      //for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-      for (; current_face < vertexIndices.size(); current_face++) {
-        unsigned int vertexIndex = vertexIndices[current_face];
-        unsigned int normalIndex = normalIndices[current_face];
-
-        glm::vec3 vertex = temp_vertices[vertexIndex - 1];
-        _vertex.pos = vertex;
-
-        if (has_uv)
-        {
-          unsigned int uvIndex = uvIndices[current_face];
-          glm::vec2 uv = temp_uvs[uvIndex - 1];
-          _vertex.uv = uv;
-        }
-
-        glm::vec3 normal = temp_normals[normalIndex - 1];
-        _vertex.n = normal;
-        out_vertices.push_back(_vertex);
-      }
+      faces.push_back(current_face);
     }
     else {
       // Probably a comment, eat up the rest of the line
@@ -114,6 +68,84 @@ bool loadOBJ(const char * path, std::vector <Vertex> & out_vertices)
       fgets(stupidBuffer, 1000, file);
     }
   }
+  buildVertexData(vertex_data, faces);
 
   return true;
+}
+
+bool ObjLoader::buildVertexData(std::vector<Vertex>& vertex_data, std::vector<face>& faces)
+{
+    // For each vertex of each triangle
+    for (unsigned int current_face = 0; current_face < faces.size(); current_face++) 
+    {
+      for (unsigned int current_vertex = 0; current_vertex < NUMBER_OF_VERTEX; current_vertex++)
+      {
+        std::vector<Vertex> face(3);
+        face[0].pos = vertex_buffer[faces[current_face].v[0].v - 1];
+        face[1].pos = vertex_buffer[faces[current_face].v[1].v - 1];
+        face[2].pos = vertex_buffer[faces[current_face].v[2].v - 1];
+        if (has_uv)
+        {
+          face[0].uv = uv_buffer[faces[current_face].v[0].vt - 1];
+          face[1].uv = uv_buffer[faces[current_face].v[1].vt - 1];
+          face[2].uv = uv_buffer[faces[current_face].v[2].vt - 1];
+        }
+        face[0].normal = normal_buffer[faces[current_face].v[0].n - 1];
+        face[1].normal = normal_buffer[faces[current_face].v[1].n - 1];
+        face[2].normal = normal_buffer[faces[current_face].v[2].n - 1];
+        
+        //calcNormal(face);
+        calcTangentSpace(face);
+        vertex_data.push_back(face[0]);
+        vertex_data.push_back(face[1]);
+        vertex_data.push_back(face[2]);
+      }
+    }
+  return false;
+}
+
+void ObjLoader::calcNormal(std::vector<Vertex>& face)
+{
+  glm::vec3 v1 = face[1].pos - face[0].pos;
+  glm::vec3 v2 = face[2].pos - face[0].pos;
+  glm::vec3 normal = glm::normalize(glm::cross(v1,v2));
+
+  face[0].normal = glm::normalize(normal);
+  face[1].normal = glm::normalize(normal);
+  face[2].normal = glm::normalize(normal);
+}
+
+void ObjLoader::calcTangentSpace(std::vector<Vertex>& face)
+{
+  Vertex& v0 = face[0];
+  Vertex& v1 = face[1];
+  Vertex& v2 = face[2];
+
+  glm::vec3 Edge1 = v1.pos - v0.pos;
+  glm::vec3 Edge2 = v2.pos - v0.pos;
+
+  float DeltaU1 = v1.uv.x - v0.uv.x;
+  float DeltaV1 = v1.uv.y - v0.uv.y;
+  float DeltaU2 = v2.uv.x - v0.uv.x;
+  float DeltaV2 = v2.uv.y - v0.uv.y;
+
+  float f = 1.0f / (DeltaU1 * DeltaV2 - DeltaU2 * DeltaV1);
+
+  glm::vec3 Tangent, Bitangent;
+
+  Tangent.x = f * (DeltaV2 * Edge1.x - DeltaV1 * Edge2.x);
+  Tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
+  Tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
+
+  Bitangent.x = f * (-DeltaU2 * Edge1.x - DeltaU1 * Edge2.x);
+  Bitangent.y = f * (-DeltaU2 * Edge1.y - DeltaU1 * Edge2.y);
+  Bitangent.z = f * (-DeltaU2 * Edge1.z - DeltaU1 * Edge2.z);
+
+  v0.tangent = glm::normalize(Tangent);
+  v1.tangent = glm::normalize(Tangent);
+  v2.tangent = glm::normalize(Tangent);
+
+  v0.btangent = glm::normalize(Bitangent);
+  v1.btangent = glm::normalize(Bitangent);
+  v2.btangent = glm::normalize(Bitangent);
 }

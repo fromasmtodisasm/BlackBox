@@ -46,6 +46,7 @@ private:
   SceneManager *m_sceneManager;
   ILog *m_Log;
   bool isWireFrame = false;
+  bool isFullScreen = false;
 
   MusicList m_PlayList;
   bool m_isMusicPlaying = false;
@@ -101,6 +102,7 @@ public:
   void Stop();
 private:
 	void gotoMenu();
+	void gotoFullscreen();
 	void gotoGame();
   void showMenu();
 

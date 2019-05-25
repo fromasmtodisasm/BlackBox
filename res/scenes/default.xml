@@ -88,7 +88,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>54.639694</Y>
+                <Y>-0.3603245</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -187,27 +187,6 @@
             </scale>
         </transform>
         <material name="light"/>
-    </object>
-    <object name="monkey" type="object">
-        <mesh name="res/geom/monkey.obj"/>
-        <transform>
-            <position>
-                <X>-37</X>
-                <Y>29</Y>
-                <Z>15</Z>
-            </position>
-            <rotation>
-                <X>0</X>
-                <Y>90</Y>
-                <Z>0</Z>
-            </rotation>
-            <scale>
-                <X>10</X>
-                <Y>10</Y>
-                <Z>10</Z>
-            </scale>
-        </transform>
-        <material name="coral"/>
     </object>
     <object name="plane" type="object">
         <mesh name="res/geom/plane.obj"/>
@@ -322,8 +301,8 @@
         <constant>1</constant>
         <linear>0.029999999</linear>
         <quadratic>9.9999997e-05</quadratic>
-        <ambient x="0" y="0" z="0"/>
-        <diffuse x="0" y="0" z="0"/>
+        <ambient x="1" y="1" z="1"/>
+        <diffuse x="1" y="1" z="1"/>
         <specular x="1" y="1" z="1"/>
     </light>
 </scene>

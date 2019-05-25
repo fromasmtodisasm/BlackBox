@@ -12,12 +12,18 @@ bool CEngine::Init()
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
-
+  if (CreateGame(nullptr) == nullptr)
+    return false;
+  if (!m_pGame->init(this)) {
+    return false;
+	}
+  m_pLog->AddLog("[OK] IGame created\n");
   return true;
 }
 
 void CEngine::Start()
 {
+  m_pGame->run();  
 }
 
 void CEngine::Release()
@@ -51,7 +57,8 @@ IGame* CEngine::getIGame()
 
 IGame* CEngine::CreateGame(IGame* game)
 {
-  return m_pGame = CreateIGame("MyGame");
+  m_pGame = CreateIGame("MyGame");
+  return m_pGame;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)
