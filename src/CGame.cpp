@@ -117,7 +117,7 @@ bool CGame::update() {
           m_Window->viewPort.height);
           */
     render();
-    gui->Draw();
+    //gui->Draw();
 
     m_Window->swap();
   }
@@ -162,6 +162,7 @@ void CGame::setRenderState()
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
   glEnable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
   /*
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);

@@ -230,6 +230,9 @@ void Scene::setupLights(Object* object)
       program->setUniformValue(light.second->quadratic, "pointLights[%d].quadratic", currentLight);
       nr_point_lights++;
       ++currentLight;
+
+      program->setUniformValue(light.second->position, "lightPos", currentLight);
+      break;
     }
   }
   program->setUniformValue(nr_point_lights, "countOfPointLights");

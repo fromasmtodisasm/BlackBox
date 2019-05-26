@@ -13,11 +13,11 @@ World::World()
 }
 
 void World::draw(float dt) {
-    activeScene->begin();
+  //activeScene->begin();
   activeScene->draw(dt);
   if (m_PostRender != nullptr)
     m_PostRender->PostRender();
-  activeScene->end();
+  //activeScene->end();
   // Camera ...
 }
 

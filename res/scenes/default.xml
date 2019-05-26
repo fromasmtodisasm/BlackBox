@@ -126,7 +126,7 @@
         <material name="player"/>
     </object>
     <object name="brick_normal_box" type="object">
-        <mesh name="res/geom/cube.obj"/>
+        <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
                 <X>2</X>

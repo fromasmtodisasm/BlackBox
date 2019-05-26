@@ -3,14 +3,15 @@
 #include <BlackBox/CShader.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/CCamera.hpp>
+#include <BlackBox/MaterialManager.hpp>
 
 void Material::apply(Object *object, CCamera *camera)
 {
   GLenum block = GL_TEXTURE0;
   //program->use();
-  program->setUniformValue( object->getTransform(),"Model");
-  program->setUniformValue( camera->getViewMatrix(),"View");
-  program->setUniformValue( camera->getProjectionMatrix(),"Projection");
+  program->setUniformValue( object->getTransform(),"model");
+  program->setUniformValue( camera->getViewMatrix(),"view");
+  program->setUniformValue( camera->getProjectionMatrix(),"projection");
   program->setUniformValue( camera->Position,"viewPos");
   program->setUniformValue( 128.0f,"material.shininess");
 
@@ -23,7 +24,8 @@ void Material::apply(Object *object, CCamera *camera)
     }
     if (specular != nullptr)
     {
-      activeTexture(GL_TEXTURE1, "material.specular", specular);
+      //activeTexture(GL_TEXTURE1, "material.specular", specular);
+
       block++;
     }
     if (bump != nullptr)
@@ -31,17 +33,14 @@ void Material::apply(Object *object, CCamera *camera)
       activeTexture(GL_TEXTURE2, "material.bump", bump);
       block++;
     }
-    if (normal != nullptr && enabledNormal)
+    if (normal != nullptr)
     {
-      int loc;
       activeTexture(GL_TEXTURE2, "normalMap", normal);
-      glUniform1i(loc = glGetUniformLocation(program->get(), "material.hasNormal"), static_cast<GLint>(true));
       block++;
     }
     else
     {
-      int loc;
-      glUniform1i(loc = glGetUniformLocation(program->get(), "material.hasNormal"), static_cast<GLint>(false));
+      activeTexture(GL_TEXTURE2, "normalMap", defaultMaterial->normal);
     }
   }
   else {
@@ -89,5 +88,5 @@ void Material::activeTexture(uint32_t block, const char *uniform, Texture* textu
   int test;
   glActiveTexture(block);
   glBindTexture(GL_TEXTURE_2D, texture->id);
-  glUniform1i(test = glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block));
+  glUniform1i(test = glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block - GL_TEXTURE0));
 }

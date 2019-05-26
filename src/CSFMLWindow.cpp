@@ -14,7 +14,7 @@ CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
 
 CSFMLWindow::~CSFMLWindow()
 {
-  ImGui::SFML::Shutdown();
+  //ImGui::SFML::Shutdown();
   m_Window->close();
 }
 
@@ -42,7 +42,7 @@ bool CSFMLWindow::init()
   m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);
 
-  ImGui::SFML::Init(*m_Window);
+  //ImGui::SFML::Init(*m_Window);
   // Make it the active window for OpenGL calls
   m_Window->setActive();
   if (!OpenGLLoader())
@@ -61,7 +61,7 @@ void CSFMLWindow::update()
 {
 	if (m_flags == DRAW_GUI)
 	{
-    ImGui::SFML::Update(*m_Window, deltaClock.restart());
+    //ImGui::SFML::Update(*m_Window, deltaClock.restart());
 	}
 }
 
@@ -81,7 +81,7 @@ bool CSFMLWindow::closed()
 void CSFMLWindow::swap()
 {
 
-  ImGui::SFML::Render(*m_Window);
+  //ImGui::SFML::Render(*m_Window);
   m_Window->display();
 }
 
@@ -101,7 +101,7 @@ void *CSFMLWindow::getHandle()
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
 {
-  ImGui::SFML::ProcessEvent(event);
+  //ImGui::SFML::ProcessEvent(event);
   // Close window: exit
   if (event.type == sf::Event::Closed)
     m_bClose = true;

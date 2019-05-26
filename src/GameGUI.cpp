@@ -59,6 +59,7 @@ struct FileMenu : public Menu
 
 GameGUI::GameGUI() : mainMenu(MainMenu())
 {
+  return;
   FileMenu *fileMenu = new FileMenu(&game);
   fileMenu->items.push_back(new FileOpen(&game));
   fileMenu->items.push_back(new FileClose(&game));
@@ -405,7 +406,7 @@ void GameGUI::drawFullScreenViewPort()
 
 bool GameGUI::OnInputEvent(sf::Event& event)
 {
-  ImGuiIO &io = ImGui::GetIO();
+  //ImGuiIO &io = ImGui::GetIO();
   switch (event.type)
   {
   case sf::Event::KeyPressed:

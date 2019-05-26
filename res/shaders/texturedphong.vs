@@ -13,19 +13,19 @@ out VS_OUT {
     vec3 TangentFragPos;
 } vs_out;
 
-uniform mat4 Projection;
-uniform mat4 View;
-uniform mat4 Model;
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
 
 uniform vec3 lightPos;
-uniform vec3 ViewPos;
+uniform vec3 viewPos;
 
 void main()
 {
-    vs_out.FragPos = vec3(Model * vec4(aPos, 1.0));   
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
     vs_out.TexCoords = aTexCoords;
     
-    mat3 normalMatrix = transpose(inverse(mat3(Model)));
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 T = normalize(normalMatrix * aTangent);
     vec3 N = normalize(normalMatrix * aNormal);
     T = normalize(T - dot(T, N) * N);
@@ -33,8 +33,8 @@ void main()
     
     mat3 TBN = transpose(mat3(T, B, N));    
     vs_out.TangentLightPos = TBN * lightPos;
-    vs_out.TangentViewPos  = TBN * ViewPos;
+    vs_out.TangentViewPos  = TBN * viewPos;
     vs_out.TangentFragPos  = TBN * vs_out.FragPos;
         
-    gl_Position = Projection * View * Model * vec4(aPos, 1.0);
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

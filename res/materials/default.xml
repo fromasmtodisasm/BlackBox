@@ -22,7 +22,6 @@
   <material name="brick_box">
     <textures>
       <texture type="diffuse" name="brickwall.jpg"/>
-      <texture type="specular" name="gray.png"/>
       <texture type="normal" name="brickwall_normal.jpg"/>
     </textures>
     <shaders>
@@ -77,6 +76,7 @@
   <material name="default">
     <textures>
       <texture type="diffuse" name="check.jpg"/>
+      <texture type="normal" name="normal_up.jpg"/>
     </textures>
     
     <shaders>
