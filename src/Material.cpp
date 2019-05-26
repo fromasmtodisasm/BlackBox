@@ -13,7 +13,7 @@ void Material::apply(Object *object, CCamera *camera)
   program->setUniformValue( camera->getViewMatrix(),"view");
   program->setUniformValue( camera->getProjectionMatrix(),"projection");
   program->setUniformValue( camera->Position,"viewPos");
-  program->setUniformValue( 128.0f,"material.shininess");
+  program->setUniformValue( 32.0f,"material.shininess");
 
   if (hasTexture)
   {
@@ -33,7 +33,7 @@ void Material::apply(Object *object, CCamera *camera)
       activeTexture(GL_TEXTURE2, "material.bump", bump);
       block++;
     }
-    if (normal != nullptr)
+    if (normal != nullptr && enabledNormal)
     {
       activeTexture(GL_TEXTURE2, "normalMap", normal);
       block++;

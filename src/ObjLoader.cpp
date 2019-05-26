@@ -141,11 +141,13 @@ void ObjLoader::calcTangentSpace(std::vector<Vertex>& face)
   Bitangent.y = f * (-DeltaU2 * Edge1.y - DeltaU1 * Edge2.y);
   Bitangent.z = f * (-DeltaU2 * Edge1.z - DeltaU1 * Edge2.z);
 
-  v0.tangent = glm::normalize(Tangent);
-  v1.tangent = glm::normalize(Tangent);
-  v2.tangent = glm::normalize(Tangent);
+  glm::normalize((v0.tangent += Tangent));
+  glm::normalize((v1.tangent += Tangent));
+  glm::normalize((v2.tangent += Tangent));
 
+  /*
   v0.btangent = glm::normalize(Bitangent);
   v1.btangent = glm::normalize(Bitangent);
   v2.btangent = glm::normalize(Bitangent);
+  */
 }

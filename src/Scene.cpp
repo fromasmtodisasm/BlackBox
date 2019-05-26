@@ -230,9 +230,6 @@ void Scene::setupLights(Object* object)
       program->setUniformValue(light.second->quadratic, "pointLights[%d].quadratic", currentLight);
       nr_point_lights++;
       ++currentLight;
-
-      program->setUniformValue(light.second->position, "lightPos", currentLight);
-      break;
     }
   }
   program->setUniformValue(nr_point_lights, "countOfPointLights");
@@ -265,7 +262,9 @@ void Scene::draw(float dt)
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
-      CShaderProgram* program = object.second->m_Material->program;
+      if (object.second->m_Material == nullptr)
+        continue;
+      CShaderProgram *program = object.second->m_Material->program;
       program->use();
       setupLights(object.second);
 
