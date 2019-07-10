@@ -59,7 +59,6 @@ struct FileMenu : public Menu
 
 GameGUI::GameGUI() : mainMenu(MainMenu())
 {
-  return;
   FileMenu *fileMenu = new FileMenu(&game);
   fileMenu->items.push_back(new FileOpen(&game));
   fileMenu->items.push_back(new FileClose(&game));
