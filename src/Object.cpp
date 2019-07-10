@@ -73,6 +73,16 @@ glm::mat4 Object::getTransform()
   return translate * rotate * scale;
 }
 
+bool Object::visible()
+{
+	return m_visible;
+}
+
+void Object::setVisibility(bool v)
+{
+	m_visible = v;
+}
+
 void Object::setShaderProgram(CShaderProgram* shader)
 {
   m_Shader = shader;

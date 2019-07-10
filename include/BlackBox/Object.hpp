@@ -38,6 +38,8 @@ public:
   std::shared_ptr<std::string> m_path;
   float friction = 0.99f;
   glm::vec3 velocity;
+	bool m_transparent = false;
+	bool m_visible = true;
 
   Transform m_transform;
 
@@ -51,6 +53,9 @@ public:
   virtual void setType(OBJType) override;
   virtual CShaderProgram * getShaderProgram() override;
   virtual glm::mat4 getTransform() override;
+
+	bool visible();
+	void setVisibility(bool v);
 
   // Унаследовано через IObject
   virtual void setShaderProgram(CShaderProgram* shader) override;

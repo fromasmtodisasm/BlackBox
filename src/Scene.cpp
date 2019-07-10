@@ -25,6 +25,8 @@ void Scene::loadObject(XMLElement *object)
   MaterialManager *materialManager = MaterialManager::instance();
   const char *objectName = nullptr;
   const char *objectType = nullptr;
+  bool objectTransparent = false;
+  bool objectVisible = false;
   const char *meshPath = nullptr;
   const char *materialName = nullptr;
   XMLElement * mesh = nullptr;
@@ -37,6 +39,10 @@ void Scene::loadObject(XMLElement *object)
   objectType = object->Attribute("type");
   if (objectType == nullptr)
     objectType = "object";
+	if (object->Attribute("transparent"))
+		objectTransparent = true;
+	if (object->Attribute("visible"))
+		objectVisible = true;
   mesh = object->FirstChildElement("mesh");
   if (mesh == nullptr)
     return;
@@ -63,6 +69,8 @@ void Scene::loadObject(XMLElement *object)
 
   transform = loadTransform(*object);
   obj->m_transform = transform;
+	obj->m_transparent = objectTransparent;
+	obj->m_visible = objectVisible;
   obj->setShaderProgram(defaultProgram);
   obj->setMaterial(material);
   m_Objects[objectName] = obj;
@@ -265,12 +273,28 @@ void Scene::draw(float dt)
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
-      CShaderProgram* program = object.second->m_Material->program;
-      program->use();
-      setupLights(object.second);
+			if (!object.second->m_transparent && (object.second->visible()))
+			{
+				CShaderProgram* program = object.second->m_Material->program;
+				program->use();
+				setupLights(object.second);
 
-      program->setUniformValue(m_Camera->Position, "viewPos");
-      object.second->draw(m_Camera);
+				program->setUniformValue(m_Camera->Position, "viewPos");
+				object.second->draw(m_Camera);
+			}
+    }
+    for (const auto& object : m_Objects) {
+      //object.second->rotate(dt*0.01f, {0,1,0});
+      //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
+			if (object.second->m_transparent && (object.second->visible()))
+			{
+				CShaderProgram* program = object.second->m_Material->program;
+				program->use();
+				setupLights(object.second);
+
+				program->setUniformValue(m_Camera->Position, "viewPos");
+				object.second->draw(m_Camera);
+			}
     }
     Object* lightObject = m_Objects["light"];
     CShaderProgram* program = lightObject->m_Material->program;

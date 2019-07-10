@@ -21,8 +21,9 @@
   </material>
   <material name="brick_box">
     <textures>
-      <texture type="diffuse" name="brickwall.jpg"/>
-      <texture type="normal" name="brickwall_normal.jpg"/>
+      <texture type="diffuse" name="LemonTreeLeaves_a.png"/>
+      <!--<texture type="diffuse" name="brickwall.jpg"/>-->
+      <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
     </textures>
     <shaders>
       <shader type="vertex" name="texturedphong.vs"/>

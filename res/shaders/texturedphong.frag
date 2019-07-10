@@ -20,13 +20,15 @@ void main()
     normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
    
     // get diffuse color
-    vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+    vec4 color = texture(diffuseMap, fs_in.TexCoords).rgba;
+	if (color.a < 0.5)
+		discard;
     // ambient
-    vec3 ambient = 0.08 * color;
+    vec3 ambient = 0.08 * color.rgb;
     // diffuse
     vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
     float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * color;
+    vec3 diffuse = diff * color.rgb;
     // specular
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
     vec3 reflectDir = reflect(-lightDir, normal);

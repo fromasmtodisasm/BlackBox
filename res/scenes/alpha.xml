@@ -1,3 +1,4 @@
+
 <scene>
     <object name="BB" type="object">
         <mesh name="res/geom/box.obj"/>
@@ -125,7 +126,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object" transparent="true" visible="true">
+    <object name="brick_normal_box" type="object" transparent="true">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -306,3 +307,4 @@
         <specular x="1" y="1" z="1"/>
     </light>
 </scene>
+

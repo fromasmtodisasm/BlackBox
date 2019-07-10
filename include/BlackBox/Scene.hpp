@@ -29,6 +29,7 @@ private:
   std::map<std::string, SpotLight*> m_SpotLights;
   CCamera *m_Camera;
   bool lighting;
+	bool inverse_visibility = true;
 private:
   void loadObject(tinyxml2::XMLElement *object);
   void loadMesh(tinyxml2::XMLElement *mesh);
