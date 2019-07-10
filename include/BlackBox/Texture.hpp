@@ -26,7 +26,7 @@ public:
   std::shared_ptr<std::string> path;
 
   Texture();
-  Texture(std::string name);
+  Texture(std::string name, bool alphaDistMips = true);
   void setType(const char* TextureType);
   std::string typeToStr();
 };

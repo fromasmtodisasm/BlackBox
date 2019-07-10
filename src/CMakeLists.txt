@@ -99,6 +99,7 @@ target_sources(
 )
 target_sources(${PROJECT_NAME}
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CCamera.hpp
+  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Utils/AlphaDistribution.h
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CConsole.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CEngine.hpp
   PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGame.hpp

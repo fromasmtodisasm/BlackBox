@@ -1,4 +1,5 @@
 #include <BlackBox/Texture.hpp>
+#include <BlackBox/Utils/AlphaDistribution.h>
 #include <iostream>
 
 using namespace std;
@@ -8,7 +9,7 @@ Texture::Texture()
 
 }
 
-Texture::Texture(std::string name)
+Texture::Texture(std::string name, bool alphaDistMips)
 {
   sf::Texture text;
   text.loadFromFile("res/images/" + name);
@@ -27,7 +28,16 @@ Texture::Texture(std::string name)
     0,
     GL_RGBA, GL_UNSIGNED_BYTE, img_data.getPixelsPtr()
   );
-  glGenerateMipmap(GL_TEXTURE_2D);
+	if (alphaDistMips)
+	{
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
+		return;
+	}
+	else
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
