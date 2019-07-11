@@ -1,4 +1,4 @@
-#include "Opengl.hpp"
+#include <BlackBox/Opengl.hpp>
 #include <iostream>
 using namespace std;
 

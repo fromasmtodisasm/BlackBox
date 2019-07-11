@@ -1,7 +1,9 @@
 #include <BlackBox/Texture.hpp>
 #include <BlackBox/Utils/AlphaDistribution.h>
 #include <iostream>
+#ifdef NVTT
 #include <nvtt/nvtt.h>
+#endif
 #include <ctime>
 
 using namespace std;
@@ -25,7 +27,8 @@ Texture::Texture(std::string name, bool alphaDistMips)
   sf::Texture text;
   text.loadFromFile(path);
   sf::Image img_data;
-	/*
+
+#ifndef NVTT
   if (!img_data.loadFromFile(path))
   {
 		cout << "rwer" << endl;
@@ -36,47 +39,45 @@ Texture::Texture(std::string name, bool alphaDistMips)
 		h = img_data.getSize().y;
 		pixels = img_data.getPixelsPtr();
 	}
-	*/
+#else
+	::srand(time(0));
+	nvtt::Surface surface;
+	if (!surface.load(path.c_str()))
+	{
+		// TODO: LOG IT
+		return;
+	}
+	w = surface.width();
+	h = surface.height();
+	surface.flipY();
+	float* pix = new float[w * h * sizeof(float)];// surface.data();
+	const float* r, * g, * b, * a;
+	r = surface.channel(0);
+	g = surface.channel(1);
+	b = surface.channel(2);
 
-	//if (name == "alpha_test/low_albedo.tga")
-	//{
-		::srand(time(0));
-		nvtt::Surface surface;
-		if (!surface.load(path.c_str()))
-		{
-			// TODO: LOG IT
-			return;
-		}
-		w = surface.width();
-		h = surface.height();
-		surface.flipY();
-		float* pix = new float[w * h * sizeof(float)];// surface.data();
-		const float* r, * g, * b, * a;
-		r = surface.channel(0);
-		g = surface.channel(1);
-		b = surface.channel(2);
+	int step = 3;
+	if (has_alpha)
+	{
+		a = surface.channel(3);
+		step = 4;
+		inputFormat = GL_RGBA;
+		internalFormat = GL_RGBA;
+	}
 
-		int step = 3;
+	for (int i = 0; i < w * h; i+=step)
+	{
+		pix[i]		 = r[i];
+		pix[i + 1] = g[i];
+		pix[i + 2] = b[i];
 		if (has_alpha)
-		{
-			a = surface.channel(3);
-			step = 4;
-			inputFormat = GL_RGBA;
-			internalFormat = GL_RGBA;
-		}
+			pix[i + 3] = a[i]; 
+	}
+	pixels = pix;
+	//inputFormat = GL_BGRA;
+	inputDataType = GL_FLOAT;
+#endif // !NVTT
 
-		for (int i = 0; i < w * h; i+=step)
-		{
-			pix[i]		 = r[i];
-			pix[i + 1] = g[i];
-			pix[i + 2] = b[i];
-			if (has_alpha)
-				pix[i + 3] = a[i]; 
-		}
-		pixels = pix;
-		//inputFormat = GL_BGRA;
-		inputDataType = GL_FLOAT;
-	//}
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
 
