@@ -15,5 +15,5 @@ public:
   static TextureManager *instance();
   Texture *getProgram(std::string vTexture, std::string fTexture);
   static bool init();
-  Texture *getTexture(std::string name);
+  Texture *getTexture(std::string name, bool alphaDist = false);
 };

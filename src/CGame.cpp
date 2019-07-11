@@ -95,6 +95,7 @@ bool CGame::init(IEngine *pSystem)  {
   m_Window->mouseLock(true);
 
   //m_World->setCamera(camera2);
+	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
   return true;
 }
 
@@ -163,9 +164,16 @@ void CGame::setRenderState()
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
   glEnable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
+	if (culling)
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
   /*
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
   */
 
 }
@@ -251,9 +259,11 @@ bool CGame::FpsInputEvent(sf::Event& event)
   case sf::Event::KeyPressed:
     switch(event.key.code)
     {
+		/*
     case sf::Keyboard::P:
       isWireFrame = !isWireFrame;
       return true;
+		*/
     case sf::Keyboard::Backspace:
       return true;
     case sf::Keyboard::Space:
@@ -263,6 +273,31 @@ bool CGame::FpsInputEvent(sf::Event& event)
     case sf::Keyboard::Escape:
       gotoMenu();
       return true;
+		case sf::Keyboard::P:
+			m_active_camera->MovementSpeed += 5;
+			return true;
+		case sf::Keyboard::M:
+			m_active_camera->MovementSpeed -= 5;
+			return true;
+		case sf::Keyboard::B:
+			culling = !culling;
+			return true;
+		case sf::Keyboard::V:
+			m_World->getActiveScene()->selectedObject()->setVisibility(!m_World->getActiveScene()->selectedObject()->visible());
+			return true;
+		case sf::Keyboard::Tab:
+			if (event.key.shift)
+			{
+				m_World->getActiveScene()->selectPrevObject();
+			}
+			else
+			{
+				m_World->getActiveScene()->selectNextObject();
+			}
+			return true;
+		case sf::Keyboard::F1:
+			m_World->getActiveScene()->selectedObject()->m_Material->nextDiffuse();
+			return true;
     case sf::Keyboard::Enter:
       if (event.key.alt == true)
         gotoFullscreen();

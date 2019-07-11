@@ -15,6 +15,7 @@ class MaterialManager
   static MaterialManager *manager;
   std::map<std::string, Material*> cache;
   ILog *m_pLog;
+	bool alpha_shakaled = false;
 public:
   static MaterialManager *instance();
   Material *getProgram(std::string vMaterial, std::string fMaterial);

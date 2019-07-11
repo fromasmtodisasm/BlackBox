@@ -21,7 +21,30 @@
   </material>
   <material name="brick_box">
     <textures>
-      <texture type="diffuse" name="LemonTreeLeaves_a.png"/>
+      <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
+      <texture type="diffuse" name="alpha_test/cross.png"/>
+      <texture type="diffuse" name="alpha_test/fence_a.png"/>
+      <texture type="diffuse" name="alpha_test/grass.png"/>
+      <texture type="diffuse" name="alpha_test/l_alpha.png"/>
+      <texture type="diffuse" name="alpha_test/leaves_alfa.png"/>
+      <texture type="diffuse" name="alpha_test/LemonTreeLeaves_a.png"/> 
+      <!--<texture type="diffuse" name="brickwall.jpg"/>-->
+      <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
+  <material name="brick_box_shakaled" shakaled="true">
+    <textures>
+      <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
+      <texture type="diffuse" name="alpha_test/cross.png"/>
+      <texture type="diffuse" name="alpha_test/fence_a.png"/>
+      <texture type="diffuse" name="alpha_test/grass.png"/>
+      <texture type="diffuse" name="alpha_test/l_alpha.png"/>
+      <texture type="diffuse" name="alpha_test/leaves_alfa.png"/>
+      <texture type="diffuse" name="alpha_test/LemonTreeLeaves_a.png"/> 
       <!--<texture type="diffuse" name="brickwall.jpg"/>-->
       <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
     </textures>

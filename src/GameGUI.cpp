@@ -337,7 +337,7 @@ if (m != nullptr && m->t != nullptr) \
       if (selectedObject != nullptr)
       {
         ImGui::NewLine();
-        out_texture(selectedObject->m_Material, diffuse);
+        out_texture(selectedObject->m_Material, diffuse[selectedObject->m_Material->current_diffuse]);
         out_texture(selectedObject->m_Material, specular);
         out_texture(selectedObject->m_Material, bump);
         out_texture(selectedObject->m_Material, normal);

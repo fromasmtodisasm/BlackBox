@@ -129,9 +129,9 @@
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
-                <X>2</X>
-                <Y>11.9</Y>
-                <Z>12</Z>
+                <X>0</X>
+                <Y>15</Y>
+                <Z>0</Z>
             </position>
             <rotation>
                 <X>0</X>
@@ -145,6 +145,27 @@
             </scale>
         </transform>
         <material name="brick_box"/>
+    </object>
+    <object name="brick_normal_box_2" type="object" transparent="true" visible="true">
+        <mesh name="res/geom/box.obj"/>
+        <transform>
+            <position>
+                <X>20</X>
+                <Y>15</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="brick_box_shakaled" alpha_shakal="true"/>
     </object>
     <object name="cube0" type="object">
         <mesh name="res/geom/cube.obj"/>

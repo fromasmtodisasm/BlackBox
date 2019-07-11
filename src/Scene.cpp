@@ -266,6 +266,48 @@ Scene::Scene(std::string name) : name(name)
 
 }
 
+void Scene::selectPrevObject()
+{
+	if (selected_object_it == m_Objects.begin())
+	{
+		selected_object_it = m_Objects.end();
+	}
+	else
+	{
+		selected_object_it--;
+	}
+}
+
+void Scene::selectNextObject()
+{
+	if (selected_object_it == m_Objects.end())
+	{
+		selected_object_it = m_Objects.begin();
+	}
+	else
+	{
+		selected_object_it++;
+	}
+	/*
+	for (decltype(selected_object_it) current_it = ++selected_object_it; current_it != m_Objects.end(); current_it++)
+	{
+		if (current_it->second->visible())
+		{
+			selected_object_it = current_it;
+			return;
+
+		}
+	}
+	*/
+}
+
+Object* Scene::selectedObject()
+{
+	if (selected_object_it == m_Objects.end())
+		return m_Objects.begin()->second;
+	return selected_object_it->second;
+}
+
 void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)
@@ -603,7 +645,7 @@ bool Scene::load(std::string name = "default.xml")
     loadLight(lights);
     lights = lights->NextSiblingElement("light");
   }
-
+	selected_object_it = m_Objects.begin();
   return true;
 }
 

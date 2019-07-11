@@ -28,11 +28,14 @@ Texture::Texture(std::string name, bool alphaDistMips)
     0,
     GL_RGBA, GL_UNSIGNED_BYTE, img_data.getPixelsPtr()
   );
+
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 	if (alphaDistMips)
 	{
 		//glBindTexture(GL_TEXTURE_2D, 0);
+		glGenerateMipmap(GL_TEXTURE_2D);
 		cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
-		return;
 	}
 	else
 	{

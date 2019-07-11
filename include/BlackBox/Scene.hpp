@@ -30,6 +30,7 @@ private:
   CCamera *m_Camera;
   bool lighting;
 	bool inverse_visibility = true;
+	decltype(m_Objects)::iterator selected_object_it;
 private:
   void loadObject(tinyxml2::XMLElement *object);
   void loadMesh(tinyxml2::XMLElement *mesh);
@@ -39,6 +40,9 @@ private:
 
 public:
   Scene(std::string name);
+	void selectPrevObject();
+	void selectNextObject();
+	Object* selectedObject();
   void draw(float dt);
   void addObject(std::string name, Object *object);
   Object *getObject(std::string name);

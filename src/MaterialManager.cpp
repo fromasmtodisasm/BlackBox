@@ -111,6 +111,11 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   materialName = material->Attribute("name");
   if (materialName == nullptr)
     return false;
+	if (material->Attribute("shakaled"))
+		alpha_shakaled = true;
+	else
+		alpha_shakaled = false;
+
   result->name = std::make_shared<std::string>(materialName);
   //============ TEXTURES LOADING =======================//
   XMLElement *textures = material->FirstChildElement("textures");
@@ -133,7 +138,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
       switch(t->type)
       {
       case TextureType::DIFFUSE:
-        result->diffuse = t;
+        result->diffuse.push_back(t);
         break;
       case TextureType::SPECULAR:
         result->specular = t;
@@ -158,6 +163,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   else {
     result->hasTexture = false;
   }
+	result->current_diffuse = 0;
   //============ SHADERS LOADING =======================//
   XMLElement *shaders = material->FirstChildElement("shaders");
   if (shaders == nullptr) return false;
@@ -191,7 +197,7 @@ Texture *MaterialManager::loadTexture(XMLElement *texture)
   type = texture->Attribute("type");
   name = texture->Attribute("name");
 
-  result = textureManager->getTexture(name);
+  result = textureManager->getTexture(name, alpha_shakaled);
   if (result == nullptr)
     return result;
   result->setType(type);

@@ -17,9 +17,9 @@ void Material::apply(Object *object, CCamera *camera)
 
   if (hasTexture)
   {
-    if (diffuse != nullptr)
+    if (diffuse[current_diffuse] != nullptr)
     {
-      activeTexture(GL_TEXTURE0, "diffuseMap", diffuse);
+      activeTexture(GL_TEXTURE0, "diffuseMap", diffuse[current_diffuse]);
       block++;
     }
     if (specular != nullptr)
@@ -61,7 +61,7 @@ void Material::setTexture(Texture *texture, const char *type)
   switch(texture->type)
     {
     case TextureType::DIFFUSE:
-      this->diffuse = texture;
+      this->diffuse.push_back(texture);
       break;
     case TextureType::SPECULAR:
       this->specular = texture;
@@ -81,6 +81,16 @@ void Material::setTexture(Texture *texture, const char *type)
       //if (!hasTexture) hasTexture = false;
     }
     }
+}
+
+void Material::nextDiffuse()
+{
+	current_diffuse = (current_diffuse + 1) % diffuse.size();
+}
+
+void Material::prevDiffuse()
+{
+	current_diffuse = (current_diffuse - 1) % diffuse.size();
 }
 
 void Material::activeTexture(uint32_t block, const char *uniform, Texture* texture)

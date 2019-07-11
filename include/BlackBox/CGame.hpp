@@ -65,6 +65,9 @@ private:
   ImVec2 cp_size; //Control panel size
   GameGUI *gui;
 
+	// Render states
+	bool culling = true;
+
   //
   ShaderManager *shaderManager;
 

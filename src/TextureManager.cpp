@@ -16,7 +16,7 @@ TextureManager *TextureManager::instance()
 
 }
 
-Texture *TextureManager::getTexture(std::string name)
+Texture *TextureManager::getTexture(std::string name, bool alphaDist)
 {
   std::string prefix = "res/images/";
   bool usPrefix = true;
@@ -30,14 +30,21 @@ Texture *TextureManager::getTexture(std::string name)
       Path = prefix + name;
     else Path = name;
     const auto t = cache.find(Path);
-    if (t != cache.end())
+    if (t != cache.end() && alphaDist == false)
     {
       texture = t->second;
     }
     else {
-      texture = new Texture(name);
+      texture = new Texture(name, alphaDist);
       texture->path = std::make_shared<std::string>(Path);
-      cache[Path] = texture;
+			if (t != cache.end())
+			{
+				cache[Path + "alphaDist"] = texture;
+			}
+			else
+			{
+				cache[Path] = texture;
+			}
     }
     if (texture == nullptr)
     {
