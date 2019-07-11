@@ -22,3 +22,6 @@
 [submodule "submodules/tinyxml2"]
 	path = submodules/tinyxml2
 	url = https://github.com/leethomason/tinyxml2
+[submodule "submodules/nvtt"]
+	path = submodules/nvtt
+	url = https://github.com/castano/nvidia-texture-tools

@@ -19,6 +19,7 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
+add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/nvtt nvtt)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -34,7 +35,13 @@ endif()
 include_directories(
   "${SFML_SOURCE_DIR}/include"
   " ${CMAKE_SOURCE_DIR}/include"
+  " ${NV_SOURCE_DIR}/src"
 )
+
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
 #--------------------------------------------------
 #find_package(Boost COMPONENTS system filesystem REQUIRED)
 #...
@@ -207,6 +214,7 @@ target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} tinyxml2)
 target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
+target_link_libraries(${PROJECT_NAME} nvtt)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 #target_link_libraries(${PROJECT_NAME}

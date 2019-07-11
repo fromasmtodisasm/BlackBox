@@ -1,6 +1,7 @@
 #include <BlackBox/Texture.hpp>
 #include <BlackBox/Utils/AlphaDistribution.h>
 #include <iostream>
+#include <nvtt/nvtt.h>
 
 using namespace std;
 
@@ -13,12 +14,12 @@ Texture::Texture(std::string name, bool alphaDistMips)
 {
   sf::Texture text;
   text.loadFromFile("res/images/" + name);
-  id = text.getNativeHandle();
   sf::Image img_data;
   if (!img_data.loadFromFile("res/images/" + name))
   {
       ;//return false;
   }
+	//img_data.
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
 
