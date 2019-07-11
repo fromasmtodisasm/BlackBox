@@ -1,4 +1,4 @@
-#include <BlackBox/IEngine.hpp>
+﻿#include <BlackBox/IEngine.hpp>
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Light.hpp>
 #include <BlackBox/FrameBufferObject.hpp>
@@ -336,6 +336,7 @@ if (m != nullptr && m->t != nullptr) \
       if (selectedObject != nullptr)
       {
         ImGui::NewLine();
+				// TODO: Здесь можем упасть, разобраться с этим и исправить
         out_texture(selectedObject->m_Material, diffuse[selectedObject->m_Material->current_diffuse]);
         out_texture(selectedObject->m_Material, specular);
         out_texture(selectedObject->m_Material, bump);
@@ -386,9 +387,13 @@ void GameGUI::showScene(Scene *scene)
     ImGui::TreePop();
   }
   ImGui::Separator();
-  selectedObject = nullptr;
+  selectedObject = scene->selected_object_it->second;
   for (auto &obj : scene->m_Objects)
     objectInfo(obj.second, obj.first);
+
+	ImGui::Separator();
+	ImGui::Text("Selected Object");
+	objectInfo(scene->selected_object_it->second, scene->selected_object_it->first);
 }
 
 void GameGUI::drawFullScreenViewPort()
