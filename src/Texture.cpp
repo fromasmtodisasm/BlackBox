@@ -2,6 +2,7 @@
 #include <BlackBox/Utils/AlphaDistribution.h>
 #include <iostream>
 #include <nvtt/nvtt.h>
+#include <ctime>
 
 using namespace std;
 
@@ -12,22 +13,78 @@ Texture::Texture()
 
 Texture::Texture(std::string name, bool alphaDistMips)
 {
+	std::string path = "res/images/" + name;
+	int w = 0;
+	int h = 0;
+	const void* pixels = 0;
+	bool has_alpha = false;
+	GLenum inputFormat = GL_RGB;
+	GLenum internalFormat = GL_RGB;
+	GLenum inputDataType = GL_UNSIGNED_BYTE;
+
   sf::Texture text;
-  text.loadFromFile("res/images/" + name);
+  text.loadFromFile(path);
   sf::Image img_data;
-  if (!img_data.loadFromFile("res/images/" + name))
+	/*
+  if (!img_data.loadFromFile(path))
   {
-      ;//return false;
+		cout << "rwer" << endl;
   }
-	//img_data.
+	else
+	{
+		w = img_data.getSize().x;
+		h = img_data.getSize().y;
+		pixels = img_data.getPixelsPtr();
+	}
+	*/
+
+	//if (name == "alpha_test/low_albedo.tga")
+	//{
+		::srand(time(0));
+		nvtt::Surface surface;
+		if (!surface.load(path.c_str()))
+		{
+			// TODO: LOG IT
+			return;
+		}
+		w = surface.width();
+		h = surface.height();
+		surface.flipY();
+		float* pix = new float[w * h * sizeof(float)];// surface.data();
+		const float* r, * g, * b, * a;
+		r = surface.channel(0);
+		g = surface.channel(1);
+		b = surface.channel(2);
+
+		int step = 3;
+		if (has_alpha)
+		{
+			a = surface.channel(3);
+			step = 4;
+			inputFormat = GL_RGBA;
+			internalFormat = GL_RGBA;
+		}
+
+		for (int i = 0; i < w * h; i+=step)
+		{
+			pix[i]		 = r[i];
+			pix[i + 1] = g[i];
+			pix[i + 2] = b[i];
+			if (has_alpha)
+				pix[i + 3] = a[i]; 
+		}
+		pixels = pix;
+		//inputFormat = GL_BGRA;
+		inputDataType = GL_FLOAT;
+	//}
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
 
   glTexImage2D(
-    GL_TEXTURE_2D, 0, GL_RGBA,
-    img_data.getSize().x, img_data.getSize().y,
+    GL_TEXTURE_2D, 0, internalFormat,
+    w, h,
     0,
-    GL_RGBA, GL_UNSIGNED_BYTE, img_data.getPixelsPtr()
+    inputFormat, inputDataType, pixels 
   );
 
   glGenerateMipmap(GL_TEXTURE_2D);

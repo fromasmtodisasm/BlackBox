@@ -29,6 +29,9 @@ public:
   Texture(std::string name, bool alphaDistMips = true);
   void setType(const char* TextureType);
   std::string typeToStr();
+
+private:
+	void buildMipMaps(bool alphaDist = false);
 };
 
 #endif // TEXTUREXTURE_HPP

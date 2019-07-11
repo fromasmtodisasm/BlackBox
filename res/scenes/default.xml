@@ -167,6 +167,27 @@
         </transform>
         <material name="brick_box_shakaled" alpha_shakal="true"/>
     </object>
+    <object name="garik" type="object" transparent="true" visible="true">
+        <mesh name="res/geom/1ltomarm2.obj"/>
+        <transform>
+            <position>
+                <X>20</X>
+                <Y>15</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0.5</X>
+                <Y>0.5</Y>
+                <Z>0.5</Z>
+            </scale>
+        </transform>
+        <material name="garik" alpha_shakal="true"/>
+    </object>
     <object name="cube0" type="object">
         <mesh name="res/geom/cube.obj"/>
         <transform>

@@ -19,6 +19,15 @@
       <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
+  <material name="garik">
+    <textures>
+      <texture type="diffuse" name="alpha_test/low_albedo.tga"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
   <material name="brick_box">
     <textures>
       <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
