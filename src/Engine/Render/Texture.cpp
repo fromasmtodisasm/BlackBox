@@ -1,4 +1,4 @@
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Utils/AlphaDistribution.h>
 #include <iostream>
 #ifdef NVTT
@@ -20,8 +20,8 @@ Texture::Texture(std::string name, bool alphaDistMips)
 	int h = 0;
 	const void* pixels = 0;
 	bool has_alpha = false;
-	GLenum inputFormat = GL_RGB;
-	GLenum internalFormat = GL_RGB;
+	GLenum inputFormat = GL_RGBA;
+	GLenum internalFormat = GL_RGBA;
 	GLenum inputDataType = GL_UNSIGNED_BYTE;
 
   sf::Texture text;
