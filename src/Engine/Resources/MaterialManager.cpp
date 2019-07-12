@@ -1,6 +1,6 @@
-#include <BlackBox/MaterialManager.hpp>
-#include <BlackBox/TextureManager.hpp>
-#include <BlackBox/ShaderManager.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
 #include <glm/glm.hpp>
 
 #include <tinyxml2.h>

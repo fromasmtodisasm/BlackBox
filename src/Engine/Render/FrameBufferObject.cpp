@@ -1,4 +1,4 @@
-#include <BlackBox/FrameBufferObject.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 
 #include <iostream>
 using namespace std;

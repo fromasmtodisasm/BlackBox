@@ -1,4 +1,4 @@
-#include <BlackBox/IndexBuffer.hpp>
+#include <BlackBox/Render/IndexBuffer.hpp>
 #include <iostream>
 
 using namespace std;

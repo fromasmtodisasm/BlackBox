@@ -1,4 +1,4 @@
-#include <BlackBox/CShader.hpp>
+#include <BlackBox/Render/CShader.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
 #include <fstream>

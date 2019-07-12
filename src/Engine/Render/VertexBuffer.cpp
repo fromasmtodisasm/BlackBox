@@ -1,6 +1,6 @@
-#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/IGeometry.hpp>
-#include <BlackBox/Renderer.hpp>
+#include <BlackBox/Render/Renderer.hpp>
 
 #include <glm/glm.hpp>
 #include <iostream>

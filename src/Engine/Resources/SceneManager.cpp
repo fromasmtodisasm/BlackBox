@@ -1,8 +1,8 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/SceneManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene.hpp>
-#include <BlackBox/ObjectManager.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Object.hpp>
 
 #include <iostream>
