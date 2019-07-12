@@ -2,7 +2,7 @@
 #define SCENE_H
 #include <tinyxml2.h>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/Light.hpp>
+#include <BlackBox/Render/Light.hpp>
 
 #include <map>
 #include <string>

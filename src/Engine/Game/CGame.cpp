@@ -1,13 +1,13 @@
-#include <BlackBox/CGame.hpp>
-#include <BlackBox/GameObject.hpp>
+#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Triangle.hpp>
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Scene.hpp>
-#include <BlackBox/SceneManager.hpp>
-#include <BlackBox/MaterialManager.hpp>
-#include <BlackBox/FrameBufferObject.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 
 
 

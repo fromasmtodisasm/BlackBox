@@ -1,9 +1,9 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/ObjectManager.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/CPlayer.h>
+#include <BlackBox/Game/CPlayer.h>
 
 #include <iostream>
 using	namespace std;

@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <glm/fwd.hpp>
 #include <string>
 #include <memory>

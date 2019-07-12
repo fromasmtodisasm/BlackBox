@@ -34,7 +34,13 @@ endif()
 #--------------------------------------------------
 include_directories(
   "${SFML_SOURCE_DIR}/include"
-  " ${CMAKE_SOURCE_DIR}/include"
+  " ${CMAKE_SOURCE_DIR}/include/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
 )
 
 #get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
@@ -106,60 +112,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
 )
 
-
-set(INCLUDE_FILES
-   ${BLACKBOX_INCLUDE_DIRS}/CCamera.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Utils/AlphaDistribution.h
-   ${BLACKBOX_INCLUDE_DIRS}/CConsole.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/CEngine.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/CGame.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/CInputHandler.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/CLog.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/CShader.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/CWindow.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Cube.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/FrameBufferObject.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/GUI.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/GameObject.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/ICommand.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IConsole.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IDrawable.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IEngine.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IGame.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IGeometry.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IInput.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/ILog.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IObject.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IShaderManager.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IWindow.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/IndexBuffer.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/InputHandler.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Light.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Material.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/MaterialManager.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/MatrixTranform.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/MusicList.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/ObjLoader.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Object.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/ObjectManager.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Opengl.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Plane.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/PlayerCommands.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Primitives.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Renderer.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Scene.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/SceneManager.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/ShaderManager.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Tetrahedron.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Texture.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/TextureManager.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/Utils.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/VertexArrayObject.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/VertexBuffer.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/World.hpp
-   ${BLACKBOX_INCLUDE_DIRS}/common.h
-   ${BLACKBOX_INCLUDE_DIRS}/pch.h
-)
+file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
+  
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox ${CMAKE_DL_LIBS})

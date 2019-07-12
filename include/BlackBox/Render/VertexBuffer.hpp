@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Renderer.hpp>
+#include <BlackBox/Render/Renderer.hpp>
 
 class VertexArrayObject
 {

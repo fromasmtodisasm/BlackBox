@@ -4,10 +4,10 @@
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/CInputHandler.hpp>
-#include <BlackBox/ShaderManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
-#include <BlackBox/CPlayer.h>
+#include <BlackBox/Game/CPlayer.h>
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>

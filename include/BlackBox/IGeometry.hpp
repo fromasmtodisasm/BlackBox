@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/common.h>
-#include <BlackBox/VertexArrayObject.hpp>
+#include <BlackBox/Render/VertexArrayObject.hpp>
 #include <cassert>
 #include <glm/glm.hpp>
 

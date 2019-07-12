@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <SFML/Graphics.hpp>
 
 enum TextureType

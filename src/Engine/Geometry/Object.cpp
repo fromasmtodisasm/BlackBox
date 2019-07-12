@@ -1,8 +1,8 @@
 #include <BlackBox/Object.hpp>
 #include <BlackBox/ObjLoader.hpp>
-#include <BlackBox/VertexBuffer.hpp>
-#include <BlackBox/Renderer.hpp>
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/VertexBuffer.hpp>
+#include <BlackBox/Render/Renderer.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 
 #include <fstream>
 #include <iostream>

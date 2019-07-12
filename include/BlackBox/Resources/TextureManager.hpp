@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
 
 #include <map>
 #include <string>

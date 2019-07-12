@@ -1,9 +1,9 @@
 ﻿#include <BlackBox/IEngine.hpp>
 #include <BlackBox/GUI.hpp>
-#include <BlackBox/Light.hpp>
-#include <BlackBox/FrameBufferObject.hpp>
+#include <BlackBox/Render/Light.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/CConsole.hpp>
-#include <BlackBox/SceneManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
 
 #include <imgui.h>
 

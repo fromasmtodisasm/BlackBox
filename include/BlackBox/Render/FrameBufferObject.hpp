@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 
 class Texture;
 

@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include <BlackBox/CPlayer.h>
+#include <BlackBox/Game/CPlayer.h>
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/CGame.hpp>
-#include <BlackBox/ObjectManager.hpp>
-#include <BlackBox/MaterialManager.hpp>
-#include <BlackBox/SceneManager.hpp>
+#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
 
 CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.obj"))
 {

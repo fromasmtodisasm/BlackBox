@@ -1,11 +1,11 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/CCamera.hpp>
-#include <BlackBox/ObjectManager.hpp>
-#include <BlackBox/MaterialManager.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/World.hpp>
-#include <BlackBox/Light.hpp>
-#include <BlackBox/FrameBufferObject.hpp>
+#include <BlackBox/Render/Light.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>

@@ -2,7 +2,7 @@
 #define CPLAYER_H
 
 #include <BlackBox/CCamera.hpp>
-#include <BlackBox/GameObject.hpp>
+#include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/ICommand.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>

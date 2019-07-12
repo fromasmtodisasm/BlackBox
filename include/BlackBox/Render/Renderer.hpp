@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/CCamera.hpp>
 
 #include <cstddef>

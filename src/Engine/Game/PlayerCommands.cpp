@@ -1,7 +1,7 @@
-#include <BlackBox/PlayerCommands.hpp>
-#include <BlackBox/CPlayer.h>
+#include <BlackBox/Game/PlayerCommands.hpp>
+#include <BlackBox/Game/CPlayer.h>
 #include <BlackBox/CCamera.hpp>
-#include <BlackBox/CGame.hpp>
+#include <BlackBox/Game/CGame.hpp>
 
 MoveForward::MoveForward(CPlayer* player) : player(player), camera(nullptr)
 {

@@ -1,9 +1,9 @@
 #include <BlackBox/Material.hpp>
-#include <BlackBox/Opengl.hpp>
-#include <BlackBox/CShader.hpp>
+#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/CShader.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/CCamera.hpp>
-#include <BlackBox/MaterialManager.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 void Material::apply(Object *object, CCamera *camera)
 {

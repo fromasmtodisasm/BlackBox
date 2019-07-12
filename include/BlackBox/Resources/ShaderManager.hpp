@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/CShader.hpp>
+#include <BlackBox/Render/CShader.hpp>
 
 #include <map>
 #include <string>

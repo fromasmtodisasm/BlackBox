@@ -1,5 +1,5 @@
-#include <BlackBox/GameObject.hpp>
-#include "glm/gtc/matrix_transform.hpp"
+#include <BlackBox/Game/GameObject.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 GameObject *GameObject::create(Primitive::Type type)
 {
