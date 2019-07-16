@@ -108,15 +108,6 @@ bool CGame::update() {
     m_World->update(m_deltaTime);
     setRenderState();
 
-    //cp_size = ImVec2(300, m_Window->getHeight());
-
-    /*
-    glViewport(
-          0,
-          0,
-          m_Window->viewPort.width,
-          m_Window->viewPort.height);
-          */
     render();
     //gui->Draw();
 		m_World->getActiveScene()->present();
