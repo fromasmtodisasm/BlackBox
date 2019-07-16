@@ -16,27 +16,31 @@ TextureManager *TextureManager::instance()
 
 }
 
-Texture *TextureManager::getTexture(std::string name, bool alphaDist)
+BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
 {
   std::string prefix = "res/images/";
   bool usPrefix = true;
   if (name.find("/") != name.npos)
     usPrefix = false;
 
-  Texture *texture;
+  BaseTexture *texture;
   {
     std::string Path;
     if (usPrefix)
       Path = prefix + name;
     else Path = name;
     const auto t = cache.find(Path);
-    if (t != cache.end() && alphaDist == false)
+    if (t != cache.end())
     {
       texture = t->second;
     }
     else {
-      texture = new Texture(name, alphaDist);
+			if (isSkyBox)
+				texture = new TextureCube(name);
+			else
+				texture = new Texture(name);
       texture->path = std::make_shared<std::string>(Path);
+			texture->load(name.c_str());
 			if (t != cache.end())
 			{
 				cache[Path + "alphaDist"] = texture;

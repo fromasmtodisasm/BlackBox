@@ -41,9 +41,9 @@ void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram
  
 }
 
-void Object::draw(CCamera *camera) {
+void Object::draw(void * camera) {
   glm::mat3 NormalMatrix(1.0);
-  m_Material->apply(this, camera);
+  m_Material->apply(this, reinterpret_cast<CCamera*>(camera));
 
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
   m_Material->program->setUniformValue( NormalMatrix,"NormalMatrix");

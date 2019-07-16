@@ -106,8 +106,10 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
   #Resources folder
   PRIVATE ${SOURCE_DIR}/Engine/Resources/MaterialManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ObjectManager.cpp

@@ -6,6 +6,7 @@
 #include <BlackBox/World.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Render/TextureCube.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -17,6 +18,12 @@ using namespace tinyxml2;
 #ifndef XMLCheckResult
   #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
 #endif
+
+class SkyBox : public IDrawable
+{
+	TextureCube* texture;
+	VertexArrayObject* vao;
+};
 
 void Scene::loadObject(XMLElement *object)
 {
@@ -335,6 +342,7 @@ Object* Scene::selectedObject()
 
 void Scene::draw(float dt)
 { 
+	
   if (m_Objects.size() > 0)
   {
     for (const auto& object : m_Objects) {

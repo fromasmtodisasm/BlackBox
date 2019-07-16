@@ -98,6 +98,15 @@
       <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
+  <material name="skybox">
+    <textures>
+      <texture type="diffuse" name="lake1"/>
+    </textures>
+    <shaders>
+      <shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>
+    </shaders>
+  </material>
   <material name="chess_floor">
     <textures>
       <texture type="diffuse" name="check.png"/>

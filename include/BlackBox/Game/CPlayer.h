@@ -47,7 +47,7 @@ public:
 
   // IDrawable interface
 public:
-  virtual void draw(CCamera *camera) override;
+  virtual void draw(void *camera) override;
 
 public:
   void attachCamera(CCamera *camera);

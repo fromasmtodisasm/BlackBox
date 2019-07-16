@@ -48,7 +48,7 @@ public:
   virtual void moveTo(glm::vec3 v);
   virtual void rotate(float angle, glm::vec3 v) override;
   virtual void scale(glm::vec3 v) override;
-  virtual void draw(CCamera *camera) override;
+  virtual void draw(void * camera) override;
   virtual OBJType getType() override { return m_type; }
   virtual void setType(OBJType) override;
   virtual CShaderProgram * getShaderProgram() override;

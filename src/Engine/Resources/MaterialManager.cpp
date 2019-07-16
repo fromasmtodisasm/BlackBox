@@ -107,10 +107,13 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   Material *result = new Material();
 
   const char *materialName = nullptr;
+	isSkyBox = false;
 
   materialName = material->Attribute("name");
   if (materialName == nullptr)
     return false;
+	if (material->Attribute("type", "skybox"))
+		isSkyBox = true;
 	if (material->Attribute("shakaled"))
 		alpha_shakaled = true;
 	else
@@ -134,7 +137,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
     if (image == nullptr) return false;
     while (image != nullptr)
     {
-      Texture *t = loadTexture(image);
+      BaseTexture *t = loadTexture(image);
       switch(t->type)
       {
       case TextureType::DIFFUSE:
@@ -187,9 +190,9 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   return true;
 }
 
-Texture *MaterialManager::loadTexture(XMLElement *texture)
+BaseTexture *MaterialManager::loadTexture(XMLElement *texture)
 {
-  Texture *result;
+  BaseTexture *result;
   TextureManager *textureManager = TextureManager::instance();
   const char *type = nullptr;
   const char *name = nullptr;
@@ -197,7 +200,7 @@ Texture *MaterialManager::loadTexture(XMLElement *texture)
   type = texture->Attribute("type");
   name = texture->Attribute("name");
 
-  result = textureManager->getTexture(name, alpha_shakaled);
+  result = textureManager->getTexture(name, isSkyBox);
   if (result == nullptr)
     return result;
   result->setType(type);

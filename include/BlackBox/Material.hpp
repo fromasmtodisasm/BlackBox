@@ -11,7 +11,7 @@ class CCamera;
 
 struct Material
 {
-  Texture
+  BaseTexture
   /**diffuse,*/
   *specular,
   *bump,
@@ -20,7 +20,7 @@ struct Material
   float shininess;
   glm::vec3 diffuseColor;
 	
-	std::vector<Texture*> diffuse;
+	std::vector<BaseTexture*> diffuse;
 
   CShaderProgram *program;
   std::shared_ptr<std::string> name;
@@ -45,5 +45,5 @@ struct Material
 	void nextDiffuse();
 	void prevDiffuse();
 private:
-  void activeTexture(uint32_t block, const char *uniform, Texture *texture);
+  void activeTexture(uint32_t block, const char *uniform, BaseTexture *texture);
 };

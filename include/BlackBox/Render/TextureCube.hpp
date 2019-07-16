@@ -1,6 +1,4 @@
-#ifndef TEXTUREXTURE_HPP
-#define TEXTUREXTURE_HPP
-
+#pragma once
 #include <string>
 #include <memory>
 #include <BlackBox/Render/Opengl.hpp>
@@ -10,11 +8,11 @@
 #include <nvtt/nvtt.h>
 #endif
 
-class Texture : public BaseTexture
+class TextureCube : public BaseTexture
 {
 public:
-  Texture();
-  Texture(std::string name);
+  TextureCube();
+  TextureCube(std::string name);
 #ifdef NVTT
 	void GetMipMapLevel(int level, nvtt::Surface &surface);
 	void SaveMipMaps();
@@ -25,5 +23,3 @@ public:
 	// Унаследовано через BaseTexture
 	virtual bool load(const char* name) override;
 };
-
-#endif // TEXTUREXTURE_HPP

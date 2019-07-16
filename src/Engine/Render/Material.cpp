@@ -93,7 +93,7 @@ void Material::prevDiffuse()
 	current_diffuse = (current_diffuse - 1) % diffuse.size();
 }
 
-void Material::activeTexture(uint32_t block, const char *uniform, Texture* texture)
+void Material::activeTexture(uint32_t block, const char *uniform, BaseTexture* texture)
 {
   int test;
   glActiveTexture(block);

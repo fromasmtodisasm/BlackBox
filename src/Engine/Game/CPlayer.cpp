@@ -62,7 +62,7 @@ bool CPlayer::OnKeyReleas(sf::Event& event)
   return false;
 }
 
-void CPlayer::draw(CCamera *camera)
+void CPlayer::draw(void *camera)
 {
   Object::draw(camera);
 }
