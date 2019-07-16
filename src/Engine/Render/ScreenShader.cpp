@@ -23,15 +23,16 @@ uniform sampler2D screenTexture;
 
 void main()
 { 
-    FragColor = texture(screenTexture, TexCoords);
+    //FragColor = texture(screenTexture, TexCoords);
+		FragColor = vec4(1.0, 0.f, 0.f, 1.f);
 }
 )";
 
 ScreenShader::ScreenShader()
 	:
-	CShaderProgram(new CShader(vs, CShader::E_VERTEX), new CShader(fs, CShader::E_FRAGMENT))
+	CShaderProgram(CShader::loadFromMemory(vs, CShader::E_VERTEX), CShader::loadFromMemory(fs, CShader::E_FRAGMENT))
 {
-
+	CShaderProgram::create();
 }
 
 ScreenShader::~ScreenShader()

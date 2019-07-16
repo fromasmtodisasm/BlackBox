@@ -261,9 +261,34 @@ void Scene::setupLights(Object* object)
   }
 }
 
-Scene::Scene(std::string name) : name(name)
+Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT)))
 {
+	float quadVertices[] = {
+		// positions   // texCoords
+				-1.0f,  1.0f,  0.0f, 1.0f,
+				-1.0f, -1.0f,  0.0f, 0.0f,
+				 1.0f, -1.0f,  1.0f, 0.0f,
 
+				-1.0f,  1.0f,  0.0f, 1.0f,
+				 1.0f, -1.0f,  1.0f, 0.0f,
+				 1.0f,  1.0f,  1.0f, 1.0f
+	};
+	// screen quad VAO
+	/*
+	unsigned int quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	*/
+
+	m_ScreenShader->create();
+	m_ScreenShader->setUniformValue(0,"screenTexture");
 }
 
 void Scene::selectPrevObject()
@@ -654,7 +679,7 @@ void Scene::setRenderTarget(FrameBufferObject *renderedScene)
   m_RenderedScene = renderedScene;
 }
 
-FrameBufferObject* Scene::setRenderTarget()
+FrameBufferObject* Scene::getRenderTarget()
 {
 	return m_RenderedScene;
 }
@@ -664,10 +689,36 @@ void Scene::begin()
   m_RenderedScene->bind();
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // буфер трафарета не используется
+	glEnable(GL_DEPTH_TEST);
 }
 
 void Scene::end()
 {
   m_RenderedScene->unbind();
+}
+
+void Scene::present()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT); 
+	m_ScreenShader->use();
+	glDisable(GL_DEPTH_TEST);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Objects["MyPlayer"]->m_Material->diffuse[0]->id);
+	//glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture);
+	m_ScreenQuad.draw();;
+
+	/*
+	auto object = m_Objects["BMW"];
+	object->m_visible = true;
+	//object->getMaterial()->diffuse[0]->id = 
+	CShaderProgram* program = object->m_Material->program;
+				program->use();
+				setupLights(object);
+
+				program->setUniformValue(m_Camera->Position, "viewPos");
+				object->draw(m_Camera);
+	*/
 }
 

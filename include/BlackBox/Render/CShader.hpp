@@ -47,6 +47,7 @@ public:
   CShader(std::string text, CShader::type type);
   ~CShader();
   static CShader *load(std::string path, CShader::type type);
+  static CShader *loadFromMemory(std::string text, CShader::type type);
   bool create();
   bool compile();
   bool bind();

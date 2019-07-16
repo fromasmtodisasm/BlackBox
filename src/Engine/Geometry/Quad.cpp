@@ -1,22 +1,48 @@
-#include <BlackBox/Quad.hpp>
+﻿#include <BlackBox/Quad.hpp>
 #include <BlackBox/IGeometry.hpp>
 
-Quad::Quad() : VertexArrayObject(m_vertecies.data(), m_vertecies.size(), GL_TRIANGLES)
+Quad::Quad() 
 {
+	float verts[] = {
+		// positions   // texCoords
+				-1.0f,  1.0f,  0.0f, 1.0f,
+				-1.0f, -1.0f,  0.0f, 0.0f,
+				 1.0f, -1.0f,  1.0f, 0.0f,
 
+				-1.0f,  1.0f,  0.0f, 1.0f,
+				 1.0f, -1.0f,  1.0f, 0.0f,
+				 1.0f,  1.0f,  1.0f, 1.0f
+	};
+ glGenVertexArrays(1, &id);
+
+  glBindVertexArray(id);
+    glGenBuffers(1, &VBO);  
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), &verts, GL_STATIC_DRAW);
+    // 3. Устанавливаем указатели на вершинные атрибуты
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), 0);
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2*sizeof(float)));
+
+  glBindVertexArray(0);
 }
 
 Quad::~Quad()
 {
+	glDeleteBuffers(1, &VBO);
 }
+
+void Quad::draw() { 
+  glBindVertexArray(id);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindVertexArray(0);
+ }
 
 bool Quad::init()
 {
-	m_attributes.insert(POSITION);
-	m_attributes.insert(UV);
-
-	m_vertecies.push_back(Vertex({-1.f, -1.f, 0.f}, { 0.f,0.f }));
-	m_vertecies.push_back(Vertex({-1.f,  1.f, 0.f}, { 0.f,1.f }));
-	m_vertecies.push_back(Vertex({ 1.f,  1.f, 0.f}, { 1.f,1.f }));
-	m_vertecies.push_back(Vertex({ 1.f, -1.f, 0.f}, { 1.f,0.f }));
+	return true;
 }
+

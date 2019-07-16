@@ -118,7 +118,8 @@ bool CGame::update() {
           m_Window->viewPort.height);
           */
     render();
-    gui->Draw();
+    //gui->Draw();
+		m_World->getActiveScene()->present();
 
     m_Window->swap();
   }

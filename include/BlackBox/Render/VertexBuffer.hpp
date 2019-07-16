@@ -14,10 +14,12 @@ public:
 		TANGENT,
 		BTANGENT
 	};
+	using Attributes = std::set<Attribute>;
 
-  VertexArrayObject(const void *data, GLint size, GLenum type);
+  VertexArrayObject(const void *data, GLint size, GLenum type/*, Attributes attributes*/);
   ~VertexArrayObject();
   void draw();
+	void setAttributes(Attributes &attributes);
 protected:
 	virtual bool init();
 protected:
@@ -26,7 +28,7 @@ protected:
   const void *m_Data;
   GLint m_Count;
   GLenum m_Type;
-	std::set<Attribute> m_attributes;
+	Attributes m_attributes;
 };
 
 

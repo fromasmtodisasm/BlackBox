@@ -83,6 +83,16 @@ CShader *CShader::load(string path, CShader::type type) {
   return shader;
 }
 
+CShader* CShader::loadFromMemory(std::string text, CShader::type type)
+{
+  CShader *shader = new CShader(text, type);
+  if (!shader->create())
+    return nullptr;
+  shader->compile();
+  shader->print();
+  return shader;
+}
+
 bool CShader::compile() {
   const char *text = m_Text.c_str();
   glShaderSource(m_Shader, 1, &text, nullptr);

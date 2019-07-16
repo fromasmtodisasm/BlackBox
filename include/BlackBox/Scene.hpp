@@ -4,6 +4,7 @@
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Quad.hpp>
+#include <BlackBox/Render/ScreenShader.hpp>
 
 #include <map>
 #include <string>
@@ -24,6 +25,8 @@ private:
   std::string name;
   World *world;
   FrameBufferObject* m_RenderedScene;
+	Quad m_ScreenQuad;
+	CShaderProgram *m_ScreenShader;
   std::map<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
   std::map<std::string, PointLight*> m_PointLights;
@@ -38,6 +41,7 @@ private:
   void loadLight(tinyxml2::XMLElement* light);
   glm::vec3 loadColorAttribute(tinyxml2::XMLElement* element);
   void setupLights(Object* object);
+	unsigned int quadVAO;
 
 public:
   Scene(std::string name);
@@ -59,8 +63,11 @@ public:
   Transform loadTransform(tinyxml2::XMLElement &object);
   bool load(std::string name);
   void setRenderTarget(FrameBufferObject *renderedScene);
+  FrameBufferObject *getRenderTarget();
+
   void begin();
   void end();
+	void present();
 };
 
 #endif // SCENE_H
