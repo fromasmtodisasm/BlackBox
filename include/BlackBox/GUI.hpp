@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/CGame.hpp>
+#include <BlackBox/Game/CGame.hpp>
 #include <BlackBox/InputHandler.hpp>
 
 // Std inc

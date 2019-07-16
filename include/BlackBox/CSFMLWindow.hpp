@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/InputHandler.hpp>
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 

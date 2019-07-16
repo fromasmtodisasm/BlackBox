@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
 #include <glm/glm.hpp>
 #include <vector>
 

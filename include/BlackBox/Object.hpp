@@ -3,7 +3,7 @@
 #include <BlackBox/IObject.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/IDrawable.hpp>
-#include <BlackBox/ShaderManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Material.hpp>
 
 #include <glm/glm.hpp>
