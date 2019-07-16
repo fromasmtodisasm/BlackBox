@@ -79,18 +79,23 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
-
+  #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/CGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/CPlayer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
+  #Geometry folder
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/ObjLoader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Object.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Plane.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Primitives.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
+
+  #Input folder
   PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
+  #Render folder
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
@@ -98,18 +103,19 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
+  #Resources folder
   PRIVATE ${SOURCE_DIR}/Engine/Resources/MaterialManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ObjectManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/SceneManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
+  #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/World.cpp
 )
 
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)

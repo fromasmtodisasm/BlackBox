@@ -654,6 +654,11 @@ void Scene::setRenderTarget(FrameBufferObject *renderedScene)
   m_RenderedScene = renderedScene;
 }
 
+FrameBufferObject* Scene::setRenderTarget()
+{
+	return m_RenderedScene;
+}
+
 void Scene::begin()
 {
   m_RenderedScene->bind();

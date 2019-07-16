@@ -64,7 +64,7 @@ private:
 };
 
 class CShaderProgram {
-private:
+protected:
   CShader *m_Vertex = nullptr;
   CShader *m_Fragment = nullptr;
   GLuint m_Program;

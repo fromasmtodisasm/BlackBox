@@ -47,3 +47,13 @@ void VertexArrayObject::draw()
   glDrawArrays(m_Type, 0, m_Count);
   glBindVertexArray(0);
 }
+
+bool VertexArrayObject::init()
+{
+	m_attributes.insert(POSITION);
+	m_attributes.insert(NORMAL);
+	m_attributes.insert(UV);
+	m_attributes.insert(TANGENT);
+	m_attributes.insert(BTANGENT);
+	return true;
+}
