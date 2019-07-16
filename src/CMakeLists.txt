@@ -103,6 +103,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp

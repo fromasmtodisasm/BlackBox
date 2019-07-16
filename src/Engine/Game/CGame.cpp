@@ -8,6 +8,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Render/PostProcessor.hpp>
 
 
 
@@ -96,6 +97,11 @@ bool CGame::init(IEngine *pSystem)  {
 
   //m_World->setCamera(camera2);
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
+	IPostProcessor* negativePostprocessing = new PostProcessor("negative");
+	IPostProcessor* grayscalePostprocessing = new PostProcessor("grayscale");
+	IPostProcessor* outlinePostprocessing = new PostProcessor("kernel.outline");
+	m_World->getActiveScene()->setPostProcessor(outlinePostprocessing);
+
   return true;
 }
 

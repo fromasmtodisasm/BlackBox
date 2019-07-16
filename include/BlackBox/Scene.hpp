@@ -5,6 +5,7 @@
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
+#include <BlackBox/IPostProcessor.hpp>
 
 #include <map>
 #include <string>
@@ -27,6 +28,7 @@ private:
   FrameBufferObject* m_RenderedScene;
 	Quad m_ScreenQuad;
 	CShaderProgram *m_ScreenShader;
+	IPostProcessor* postProcessor = nullptr;
   std::map<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
   std::map<std::string, PointLight*> m_PointLights;
@@ -68,6 +70,9 @@ public:
   void begin();
   void end();
 	void present();
+
+	void setPostProcessor(IPostProcessor* postProcessor);
+
 };
 
 #endif // SCENE_H

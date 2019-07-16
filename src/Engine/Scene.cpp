@@ -699,26 +699,26 @@ void Scene::end()
 
 void Scene::present()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT); 
-	m_ScreenShader->use();
-	glDisable(GL_DEPTH_TEST);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_Objects["MyPlayer"]->m_Material->diffuse[0]->id);
-	//glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture);
-	m_ScreenQuad.draw();;
+	if (postProcessor == nullptr)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		m_ScreenShader->use();
+		glDisable(GL_DEPTH_TEST);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_Objects["MyPlayer"]->m_Material->diffuse[0]->id);
+		//glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture);
+		m_ScreenQuad.draw();;
+	}
+	else
+	{
+		postProcessor->Do(m_RenderedScene->texture);
+	}
+}
 
-	/*
-	auto object = m_Objects["BMW"];
-	object->m_visible = true;
-	//object->getMaterial()->diffuse[0]->id = 
-	CShaderProgram* program = object->m_Material->program;
-				program->use();
-				setupLights(object);
-
-				program->setUniformValue(m_Camera->Position, "viewPos");
-				object->draw(m_Camera);
-	*/
+void Scene::setPostProcessor(IPostProcessor* postProcessor)
+{
+	this->postProcessor = postProcessor;
 }
 
