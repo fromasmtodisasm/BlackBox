@@ -3,7 +3,7 @@
 
 bool Image::load(const char* name, bool *hasAlpha)
 {
-	std::string path = "res/images/" + std::string(name);
+	std::string path = std::string(name);
 
 
 #ifndef NVTT

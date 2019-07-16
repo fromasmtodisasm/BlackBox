@@ -10,6 +10,7 @@
 
 class TextureCube : public BaseTexture
 {
+	std::string skybox_root;
 public:
   TextureCube();
   TextureCube(std::string name);

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-TextureCube::TextureCube()
+TextureCube::TextureCube() : skybox_root(texture_root + "skys/")
 {
 }
 
@@ -27,12 +27,12 @@ bool TextureCube::load(const char* name)
 
 	std::vector<std::string> faces = 
 	{
-		"_back.jpg"
+		"_back.jpg",
 		"_bottom.jpg",
 		"_front.jpg",
 		"_left.jpg",
 		"_right.jpg",
-		"_top.jpg",
+		"_top.jpg"
 	};
 
 	Image img;
@@ -41,10 +41,10 @@ bool TextureCube::load(const char* name)
 
 	for (unsigned int i = 0; i < faces.size(); i++)
 	{
-		if (!img.load((name + faces[i]).c_str(), nullptr))
+		if (!img.load((skybox_root + name + faces[i]).c_str(), nullptr))
 			return false;
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-			0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data
+			0, internalFormat, img.width, img.height, 0, inputFormat, GL_UNSIGNED_BYTE, img.data
 		);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

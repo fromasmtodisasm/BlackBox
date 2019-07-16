@@ -66,7 +66,7 @@ bool Texture::load(const char* name)
 	bool hasAlpha = false;
 
 	Image img;
-	if (!img.load(name, &hasAlpha))
+	if (!img.load((texture_root + name).c_str(), &hasAlpha))
 		return false;
 	if (hasAlpha)
 	{

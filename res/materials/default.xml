@@ -98,7 +98,7 @@
       <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
-  <material name="skybox">
+  <material name="skybox" type="skybox">
     <textures>
       <texture type="diffuse" name="lake1"/>
     </textures>

@@ -36,9 +36,9 @@ BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
     }
     else {
 			if (isSkyBox)
-				texture = new TextureCube(name);
+				texture = new TextureCube();
 			else
-				texture = new Texture(name);
+				texture = new Texture();
       texture->path = std::make_shared<std::string>(Path);
 			texture->load(name.c_str());
 			if (t != cache.end())

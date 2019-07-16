@@ -29,6 +29,7 @@ public:
   GLuint id;
   std::shared_ptr<std::string> path;
   std::string name;
+	std::string texture_root = "res/images/";
 
   BaseTexture()
 		:
