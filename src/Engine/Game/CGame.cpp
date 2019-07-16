@@ -181,8 +181,10 @@ void CGame::render()
 {
   m_Window->clear();
   /* Rendering code here */
-  int w = m_Window->viewPort.width - m_Window->viewPort.left;
-  int h = m_Window->viewPort.height - m_Window->viewPort.top;
+  //int w = m_Window->viewPort.width - m_Window->viewPort.left;
+  //int h = m_Window->viewPort.height - m_Window->viewPort.top;
+  int w = m_Window->getWidth();
+  int h = m_Window->getHeight();
   m_camera1->Ratio = ((float)w)/ h;
 
   //m_World->setCamera(m_camera1);

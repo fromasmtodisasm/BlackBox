@@ -73,7 +73,7 @@ void Scene::loadObject(XMLElement *object)
 	obj->m_visible = objectVisible;
   obj->setShaderProgram(defaultProgram);
   obj->setMaterial(material);
-  m_Objects[objectName] = obj;
+  m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
 
 }
 
@@ -340,7 +340,8 @@ void Scene::draw(float dt)
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
-			if (!object.second->m_transparent && (object.second->visible()))
+			if (!object.second->m_transparent && (object.second->visible()) && 
+				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar - 500.0f)
 			{
 				CShaderProgram* program = object.second->m_Material->program;
 				program->use();
@@ -363,7 +364,7 @@ void Scene::draw(float dt)
 				object.second->draw(m_Camera);
 			}
     }
-    Object* lightObject = m_Objects["light"];
+    Object* lightObject = m_Objects.find("light")->second;
     CShaderProgram* program = lightObject->m_Material->program;
     for (const auto& light : m_PointLights) {
       program->use();
@@ -377,7 +378,7 @@ void Scene::addObject(std::string name, Object *object)
 {
   //if (m_Objs.find(name) != m_Objs.end())
 
-  m_Objects[name] = object;
+  m_Objects.insert(std::make_pair(name, object));
 }
 
 Object *Scene::getObject(std::string name)

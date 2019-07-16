@@ -61,7 +61,7 @@ void CSFMLWindow::update()
 {
 	if (m_flags == DRAW_GUI)
 	{
-    ImGui::SFML::Update(*m_Window, deltaClock.restart());
+    //ImGui::SFML::Update(*m_Window, deltaClock.restart());
 	}
 }
 
@@ -81,7 +81,7 @@ bool CSFMLWindow::closed()
 void CSFMLWindow::swap()
 {
 
-  ImGui::SFML::Render(*m_Window);
+  //ImGui::SFML::Render(*m_Window);
   m_Window->display();
 }
 
@@ -101,7 +101,7 @@ void *CSFMLWindow::getHandle()
 
 bool CSFMLWindow::OnInputEvent(sf::Event &event)
 {
-  ImGui::SFML::ProcessEvent(event);
+  //ImGui::SFML::ProcessEvent(event);
   // Close window: exit
   if (event.type == sf::Event::Closed)
     m_bClose = true;
@@ -120,7 +120,7 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
 		m_Height = event.size.height;
     viewPort.width = m_Width - viewPort.left;
     viewPort.height = m_Height;
-    //glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);
+    glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);
   }
   if (event.type == sf::Event::MouseMoved)
   {

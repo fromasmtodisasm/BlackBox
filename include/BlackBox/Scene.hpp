@@ -29,7 +29,7 @@ private:
 	Quad m_ScreenQuad;
 	CShaderProgram *m_ScreenShader;
 	IPostProcessor* postProcessor = nullptr;
-  std::map<std::string, Object*> m_Objects;
+  std::multimap<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
   std::map<std::string, PointLight*> m_PointLights;
   std::map<std::string, SpotLight*> m_SpotLights;

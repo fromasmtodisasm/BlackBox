@@ -83,7 +83,7 @@
         </transform>
         <material name="coral"/>
     </object>
-    <object name="MyPlayer" type="player">
+    <object name="MyPlayer" type="player" visible="true">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
             <position>
