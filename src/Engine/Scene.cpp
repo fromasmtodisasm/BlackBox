@@ -707,8 +707,7 @@ void Scene::present()
 		m_ScreenShader->use();
 		glDisable(GL_DEPTH_TEST);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_Objects["MyPlayer"]->m_Material->diffuse[0]->id);
-		//glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture);
+		glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture);
 		m_ScreenQuad.draw();;
 	}
 	else

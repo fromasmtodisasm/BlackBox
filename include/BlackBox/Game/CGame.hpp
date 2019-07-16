@@ -11,6 +11,7 @@
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
+#include <BlackBox/Render/PostProcessor.hpp>
 
 #include <BlackBox/common.h>
 
@@ -70,6 +71,8 @@ private:
 
   //
   ShaderManager *shaderManager;
+	std::vector<IPostProcessor*> postProcessors;
+	int currPP = 0;
 
   enum Mode
   {

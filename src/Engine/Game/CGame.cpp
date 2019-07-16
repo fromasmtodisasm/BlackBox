@@ -8,7 +8,6 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Render/PostProcessor.hpp>
 
 
 
@@ -77,7 +76,6 @@ bool CGame::init(IEngine *pSystem)  {
   gui = new GameGUI();
   gui->game = this;
 
-  //glm::vec3 player_pos = m_World->operator[]("MyPlayer")->m_transform.position;
   glm::vec3 pos = glm::vec3(0,17,10);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
   m_camera1 = new CCamera(
@@ -97,10 +95,13 @@ bool CGame::init(IEngine *pSystem)  {
 
   //m_World->setCamera(camera2);
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
-	IPostProcessor* negativePostprocessing = new PostProcessor("negative");
-	IPostProcessor* grayscalePostprocessing = new PostProcessor("grayscale");
-	IPostProcessor* outlinePostprocessing = new PostProcessor("kernel.outline");
-	m_World->getActiveScene()->setPostProcessor(outlinePostprocessing);
+	
+	postProcessors.push_back(nullptr);
+	postProcessors.push_back(new PostProcessor("negative"));
+	postProcessors.push_back(new PostProcessor("grayscale"));
+	postProcessors.push_back(new PostProcessor("kernel.outline"));
+	postProcessors.push_back(new PostProcessor("kernel.blur"));
+	m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
 
   return true;
 }
@@ -295,6 +296,13 @@ bool CGame::FpsInputEvent(sf::Event& event)
 			return true;
 		case sf::Keyboard::F1:
 			m_World->getActiveScene()->selectedObject()->m_Material->nextDiffuse();
+			return true;
+		case sf::Keyboard::F9:
+			if (event.key.shift)
+				++currPP;
+			else
+				--currPP;
+			m_World->getActiveScene()->setPostProcessor(postProcessors[currPP % postProcessors.size()]);
 			return true;
     case sf::Keyboard::Enter:
       if (event.key.alt == true)
