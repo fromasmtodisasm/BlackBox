@@ -19,9 +19,9 @@
       <shader type="fragment" name="texturedphong.frag"/>
     </shaders>
   </material>
-  <material name="garik">
+  <material name="garik" transparent="true">
     <textures>
-      <texture type="diffuse" name="alpha_test/low_albedo.tga"/>
+      <texture type="diffuse" name="alpha_test/low_a.dds"/>
     </textures>
     <shaders>
       <shader type="vertex" name="texturedphong.vs"/>
@@ -31,6 +31,7 @@
   <material name="brick_box">
     <textures>
       <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
+      <texture type="diffuse" name="low2_a.png"/>
       <texture type="diffuse" name="alpha_test/cross.png"/>
       <texture type="diffuse" name="alpha_test/fence_a.png"/>
       <texture type="diffuse" name="alpha_test/grass.png"/>
@@ -47,7 +48,7 @@
   </material>
   <material name="brick_box_shakaled" shakaled="true">
     <textures>
-      <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
+      <texture type="diffuse" name="alpha_test/lemon_ad.dds"/>
       <texture type="diffuse" name="alpha_test/cross.png"/>
       <texture type="diffuse" name="alpha_test/fence_a.png"/>
       <texture type="diffuse" name="alpha_test/grass.png"/>
@@ -99,7 +100,7 @@
   </material>
   <material name="chess_floor">
     <textures>
-      <texture type="diffuse" name="check.jpg"/>
+      <texture type="diffuse" name="check.png"/>
     </textures>
     <shaders>
       <shader type="vertex" name="texturedphong.vs"/>
@@ -108,7 +109,7 @@
   </material>
   <material name="default">
     <textures>
-      <texture type="diffuse" name="check.jpg"/>
+      <texture type="diffuse" name="check.png"/>
       <texture type="normal" name="normal_up.jpg"/>
     </textures>
     

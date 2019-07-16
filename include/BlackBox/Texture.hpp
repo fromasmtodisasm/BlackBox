@@ -5,6 +5,7 @@
 #include <memory>
 #include <glad/glad.h>
 #include <SFML/Graphics.hpp>
+#include <nvtt/nvtt.h>
 
 enum TextureType
 {
@@ -27,6 +28,9 @@ public:
 
   Texture();
   Texture(std::string name, bool alphaDistMips = true);
+	void GetMipMapLevel(int level, nvtt::Surface &surface);
+	void SaveMipMaps();
+
   void setType(const char* TextureType);
   std::string typeToStr();
 
