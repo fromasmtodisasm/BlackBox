@@ -21,8 +21,89 @@ using namespace tinyxml2;
 
 class SkyBox : public IDrawable
 {
+public:
 	TextureCube* texture;
 	VertexArrayObject* vao;
+	CShaderProgram* shader;
+
+	SkyBox(TextureCube *t)
+		:
+		texture(t),
+		shader(new CShaderProgram(CShader::load("skybox.vs", CShader::E_VERTEX), CShader::load("skybox.frag", CShader::E_FRAGMENT)))
+	{
+		shader->create();
+		shader->setUniformValue(0, "skybox");
+		static float skyboxVertices[] = {
+			// positions          
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			-1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f
+		};
+		VertexArrayObject::Attributes attributes;
+		attributes.insert(VertexArrayObject::POSITION);
+		vao = new VertexArrayObject(skyboxVertices, sizeof(skyboxVertices), GL_TRIANGLES, attributes);
+	}
+	// Унаследовано через IDrawable
+	virtual void draw(void* data) override
+	{
+		CCamera* cam = reinterpret_cast<CCamera*>(data);
+		glDepthMask(GL_FALSE);
+		shader->use();
+		// ... задание видовой и проекционной матриц
+		shader->setUniformValue(cam->getViewMatrix(), "view");
+		shader->setUniformValue(cam->getProjectionMatrix(), "projection");
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id);
+		vao->draw();
+
+		glDepthMask(GL_TRUE);
+	}
+
+	void setTextureCube(TextureCube* t)
+	{
+		if (texture)
+			delete texture;
+		texture = t;
+	}
 };
 
 void Scene::loadObject(XMLElement *object)

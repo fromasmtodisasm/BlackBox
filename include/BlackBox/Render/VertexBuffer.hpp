@@ -16,7 +16,7 @@ public:
 	};
 	using Attributes = std::set<Attribute>;
 
-  VertexArrayObject(const void *data, GLint size, GLenum type/*, Attributes attributes*/);
+  VertexArrayObject(const void *data, GLint size, GLenum type, Attributes attributes);
   ~VertexArrayObject();
   void draw();
 	void setAttributes(Attributes &attributes);

@@ -15,6 +15,7 @@ class CCamera;
 class Object;
 class FrameBufferObject;
 class Scene;
+class SkyBox;
 
 extern Scene *defaultScene;
 
@@ -27,6 +28,7 @@ private:
   World *world;
   FrameBufferObject* m_RenderedScene;
 	Quad m_ScreenQuad;
+	SkyBox* skyBox;
 	CShaderProgram *m_ScreenShader;
 	IPostProcessor* postProcessor = nullptr;
   std::multimap<std::string, Object*> m_Objects;

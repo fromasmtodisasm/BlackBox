@@ -162,7 +162,7 @@ Object * Object::load(string path)
   if (!OBJ.load(path.c_str(), vertexData, indexData))
     return nullptr;
   
-  vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES);
+  vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
   mesh = std::make_shared<Mesh>(vb, nullptr);
   obj = new Object();
   obj->m_Mesh = mesh;

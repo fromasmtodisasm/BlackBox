@@ -7,11 +7,12 @@
 
 using namespace std;
 
-VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type/*, Attributes attributes*/) :
+VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type, Attributes attributes) :
   m_Data(data), m_Count(count), m_Type(type)
 {
   GLint position = 0, uv = 2, normal = 1, tangent = 3, btangent = 4;
-	init();
+	if (attributes.empty())
+		init();
 	//m_attributes = attributes;
   glGenVertexArrays(1, &id);
 
