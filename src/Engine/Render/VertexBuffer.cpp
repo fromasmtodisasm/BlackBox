@@ -13,6 +13,8 @@ VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type,
   GLint position = 0, uv = 2, normal = 1, tangent = 3, btangent = 4;
 	if (attributes.empty())
 		init();
+	else
+		m_attributes = attributes;
 	//m_attributes = attributes;
   glGenVertexArrays(1, &id);
 

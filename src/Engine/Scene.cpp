@@ -29,7 +29,7 @@ public:
 	SkyBox(TextureCube *t)
 		:
 		texture(t),
-		shader(new CShaderProgram(CShader::load("skybox.vs", CShader::E_VERTEX), CShader::load("skybox.frag", CShader::E_FRAGMENT)))
+		shader(new CShaderProgram(CShader::load("res/shaders/skybox.vs", CShader::E_VERTEX), CShader::load("res/shaders/skybox.frag", CShader::E_FRAGMENT)))
 	{
 		shader->create();
 		shader->setUniformValue(0, "skybox");
@@ -424,6 +424,8 @@ Object* Scene::selectedObject()
 void Scene::draw(float dt)
 { 
 	
+	if (skyBox != nullptr)
+		skyBox->draw(m_Camera);
   if (m_Objects.size() > 0)
   {
     for (const auto& object : m_Objects) {
@@ -761,6 +763,13 @@ bool Scene::load(std::string name = "default.xml")
     lights = lights->NextSiblingElement("light");
   }
 	selected_object_it = m_Objects.begin();
+
+	auto sbm = MaterialManager::instance()->getMaterial("skybox");
+	if (sbm != nullptr)
+	{
+		skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
+	}
+
   return true;
 }
 
