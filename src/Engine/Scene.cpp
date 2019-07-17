@@ -78,8 +78,9 @@ public:
 			 1.0f, -1.0f,  1.0f
 		};
 		VertexArrayObject::Attributes attributes;
-		attributes.insert(VertexArrayObject::POSITION);
-		vao = new VertexArrayObject(skyboxVertices, sizeof(skyboxVertices), GL_TRIANGLES, attributes);
+		attributes.stride = 0;// 3 * sizeof(float);
+		attributes.attributes[VertexArrayObject::POSITION] = 0;
+		vao = new VertexArrayObject(skyboxVertices, 36, GL_TRIANGLES, attributes);
 	}
 	// Унаследовано через IDrawable
 	virtual void draw(void* data) override
@@ -88,8 +89,8 @@ public:
 		glDepthMask(GL_FALSE);
 		shader->use();
 		// ... задание видовой и проекционной матриц
-		shader->setUniformValue(cam->getViewMatrix(), "view");
-		shader->setUniformValue(cam->getProjectionMatrix(), "projection");
+		shader->setUniformValue(cam->getViewMatrix(), "View");
+		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id);

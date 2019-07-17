@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Render/Renderer.hpp>
 
-#include <set>
+#include <map>
 
 class VertexArrayObject
 {
@@ -14,7 +14,11 @@ public:
 		TANGENT,
 		BTANGENT
 	};
-	using Attributes = std::set<Attribute>;
+	using Attributes =
+		struct {
+			int stride;
+			std::map<Attribute, int> attributes;
+		};
 
   VertexArrayObject(const void *data, GLint size, GLenum type, Attributes attributes);
   ~VertexArrayObject();
