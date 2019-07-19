@@ -11,3 +11,4 @@ res/tmp/*
 res/geom/tmp/
 imgui.ini
 /out/build/x64-Debug
+screen_shots/*
