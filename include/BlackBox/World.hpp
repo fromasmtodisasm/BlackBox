@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Scene.hpp>
 
 #include <map>

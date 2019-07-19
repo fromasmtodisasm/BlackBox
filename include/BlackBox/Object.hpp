@@ -3,7 +3,7 @@
 #include <BlackBox/IObject.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/IDrawable.hpp>
-#include <BlackBox/ShaderManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Material.hpp>
 
 #include <glm/glm.hpp>
@@ -38,6 +38,8 @@ public:
   std::shared_ptr<std::string> m_path;
   float friction = 0.99f;
   glm::vec3 velocity;
+	bool m_transparent = false;
+	bool m_visible = true;
 
   Transform m_transform;
 
@@ -46,11 +48,14 @@ public:
   virtual void moveTo(glm::vec3 v);
   virtual void rotate(float angle, glm::vec3 v) override;
   virtual void scale(glm::vec3 v) override;
-  virtual void draw(CCamera *camera) override;
+  virtual void draw(void * camera) override;
   virtual OBJType getType() override { return m_type; }
   virtual void setType(OBJType) override;
   virtual CShaderProgram * getShaderProgram() override;
   virtual glm::mat4 getTransform() override;
+
+	bool visible();
+	void setVisibility(bool v);
 
   // Унаследовано через IObject
   virtual void setShaderProgram(CShaderProgram* shader) override;

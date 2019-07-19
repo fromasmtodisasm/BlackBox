@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/common.h>
-#include <BlackBox/VertexArrayObject.hpp>
+#include <BlackBox/Render/VertexArrayObject.hpp>
 #include <cassert>
 #include <glm/glm.hpp>
 
@@ -10,16 +10,22 @@
 class VertexArrayObject;
 class IndexBuffer;
 
-//typedef glm::vec3 Vertex;
+
 struct Vertex
 {
   glm::vec3 pos;
   glm::vec2 uv;
-  glm::vec3 n;
+  glm::vec3 normal;
+  glm::vec3 tangent;
+  glm::vec3 btangent;
+
   Vertex() = default;
-  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), n(n)
+	Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv)
+	{}
+  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)
   {}
 };
+
 
 struct Mesh {
 protected:

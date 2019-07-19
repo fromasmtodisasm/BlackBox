@@ -5,7 +5,7 @@
 #include <iostream>
 
 // GL Includes
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -47,7 +47,7 @@ public:
     GLfloat FOV = 45.0f;
     GLfloat Ratio = 16.0f/9;
     GLfloat zNear = 0.1f;
-    GLfloat zFar = 5000.f;
+    GLfloat zFar = 1000.f;
 
     enum Mode
     {

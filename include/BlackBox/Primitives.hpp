@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/ObjectManager.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/Cube.hpp>
 #include <BlackBox/Tetrahedron.hpp>

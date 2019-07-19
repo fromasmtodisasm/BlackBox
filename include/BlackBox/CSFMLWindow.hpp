@@ -1,7 +1,8 @@
 #pragma once
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/InputHandler.hpp>
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -10,6 +11,8 @@
 
 #include <map>
 #include <list>
+
+
 
 class CSFMLWindow :
   public IWindow,
@@ -24,8 +27,17 @@ class CSFMLWindow :
   bool m_bClose;
   int m_Width;
   int m_Height;
+	const GLuint majorVersion = 4;
+	const GLuint minorVersion = 3;
+	OpenglDebug *glDebug;
+#ifdef _DEBUG
+	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
+#else
+	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
+#endif // DEBUG
+	//===============================================================================
   std::string m_Title;
-  glm::vec4 m_BackColor = { 0.2f, 0.2f, 0.2f, 1.0f };
+  glm::vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
   sf::Clock deltaClock;
 	int m_flags = 0;
   // For input handling
@@ -51,7 +63,7 @@ public:
   ~CSFMLWindow();
 
   virtual bool create() override;
-  virtual bool init() override;
+  virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) override;
   virtual void update() override;
   virtual void clear() override;
   virtual bool closed() override;
