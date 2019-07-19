@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/IEngine.hpp>
 #include <glm/fwd.hpp>
 #include <string>
 #include <memory>

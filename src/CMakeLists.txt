@@ -106,6 +106,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
