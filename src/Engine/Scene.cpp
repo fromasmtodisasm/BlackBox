@@ -90,6 +90,7 @@ public:
 	{
 		CCamera* cam = reinterpret_cast<CCamera*>(data);
 		glCheck(glDepthMask(GL_FALSE));
+		glCheck(glDepthFunc(GL_LEQUAL));
 		shader->use();
 		// ... задание видовой и проекционной матриц
 		shader->setUniformValue(glm::mat4(glm::mat3(cam->getViewMatrix())), "View");
@@ -99,6 +100,7 @@ public:
 		glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id));
 		vao->draw();
 
+		glCheck(glDepthFunc(GL_LESS));
 		glCheck(glDepthMask(GL_TRUE));
 	}
 
@@ -429,9 +431,6 @@ Object* Scene::selectedObject()
 
 void Scene::draw(float dt)
 { 
-	
-	if (skyBox != nullptr)
-		skyBox->draw(m_Camera);
   if (m_Objects.size() > 0)
   {
     for (const auto& object : m_Objects) {
@@ -469,6 +468,9 @@ void Scene::draw(float dt)
       lightObject->draw(m_Camera);
     }
   }
+	
+	if (skyBox != nullptr)
+		skyBox->draw(m_Camera);
 }
 
 void Scene::addObject(std::string name, Object *object)
