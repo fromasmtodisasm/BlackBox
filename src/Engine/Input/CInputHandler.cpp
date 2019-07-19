@@ -52,5 +52,5 @@ void CSFMLWindow::mouseLock(bool lock)
 
   sf::Mouse::setPosition(center, *m_Window);
   m_Window->setMouseCursorGrabbed(lock);
-  m_Window->setMouseCursorVisible(!lock);
+	m_Window->setMouseCursorVisible(!lock);
 }

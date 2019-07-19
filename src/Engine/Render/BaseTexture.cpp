@@ -9,13 +9,17 @@ bool Image::load(const char* name, bool *hasAlpha)
 #ifndef NVTT
 // Load the image and get a pointer to the pixels in memory
 	int channels = 0;
-	unsigned char* ptr = stbi_load(path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	unsigned char* ptr = stbi_load(path.c_str(), &width, &height, &channels, hasAlpha == nullptr ? STBI_rgb : STBI_rgb_alpha);
 
 	if (ptr)
 	{
 			// Assign the image properties
 			if (width && height)
 			{
+				if (hasAlpha != nullptr && channels == 4)
+					*hasAlpha = true;
+				else
+					channels = 3;
 					// Copy the loaded pixels to the pixel buffer
 				data = new unsigned char[width * height * channels];
 				memcpy(data, ptr, width * height * channels);
@@ -24,8 +28,6 @@ bool Image::load(const char* name, bool *hasAlpha)
 			// Free the loaded pixels (they are now in our own pixel buffer)
 			stbi_image_free(ptr);
 	}
-	if (hasAlpha != nullptr && channels == 4)
-		*hasAlpha = true;
 #else
 	::srand(time(0));
 	nvtt::Surface surface;

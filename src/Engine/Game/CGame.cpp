@@ -52,13 +52,14 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(IEngine *pSystem)  {
+	int width = 1366, height = 768;
   m_pSystem = gISystem = pSystem;
   m_Log = m_pSystem->getILog();
   p_gIGame = reinterpret_cast<IGame*>(this);
-  m_Window = new CWindow(m_Title, 1600, 900); 
+  m_Window = new CWindow(m_Title, width, height); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
-    if (!m_Window->init(0,0, 1366, 768, 32, 24, 8, false) || !m_Window->create())
+    if (!m_Window->init(0,0, width, height, 32, 24, 8, false) || !m_Window->create())
       return false;
 		m_Log->AddLog("[OK] Window susbsystem inited\n");
 
@@ -76,7 +77,7 @@ bool CGame::init(IEngine *pSystem)  {
   gui = new GameGUI();
   gui->game = this;
 
-  glm::vec3 pos = glm::vec3(0,17,10);//0, player_pos.y + 3, 0);
+  glm::vec3 pos = glm::vec3(0,0,0);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
   m_camera1 = new CCamera(
     pos

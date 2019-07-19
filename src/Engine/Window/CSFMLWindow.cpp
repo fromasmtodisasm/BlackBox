@@ -7,7 +7,7 @@ using namespace std;
 
 CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false),
-  viewPort(300,0, width - 300, height)
+  viewPort(0,0, width, height)
 {
   ;
 }
@@ -127,12 +127,9 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
     viewPort.width = m_Width - viewPort.left;
     viewPort.height = m_Height;
     glViewport(0, 0, m_Width = event.size.width, m_Height = event.size.height);
+		return true;
   }
-  if (event.type == sf::Event::MouseMoved)
-  {
-
-  }
-  return true;
+  return false;
 }
 
 int CSFMLWindow::getWidth()
