@@ -92,7 +92,7 @@ public:
 		glCheck(glDepthMask(GL_FALSE));
 		shader->use();
 		// ... задание видовой и проекционной матриц
-		shader->setUniformValue(cam->getViewMatrix(), "View");
+		shader->setUniformValue(glm::mat4(glm::mat3(cam->getViewMatrix())), "View");
 		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
 		
 		glCheck(glActiveTexture(GL_TEXTURE0));

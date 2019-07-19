@@ -28,12 +28,12 @@ bool TextureCube::load(const char* name)
 
 	std::vector<std::string> faces = 
 	{
-		"_back.jpg",
+		"_right.jpg",
+		"_left.jpg",
+		"_top.jpg",
 		"_bottom.jpg",
 		"_front.jpg",
-		"_left.jpg",
-		"_right.jpg",
-		"_top.jpg"
+		"_back.jpg"
 	};
 
 	Image img;
