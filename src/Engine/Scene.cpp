@@ -32,7 +32,9 @@ public:
 		shader(new CShaderProgram(CShader::load("res/shaders/skybox.vs", CShader::E_VERTEX), CShader::load("res/shaders/skybox.frag", CShader::E_FRAGMENT)))
 	{
 		shader->create();
+		shader->use();
 		shader->setUniformValue(0, "skybox");
+		shader->unuse();
 		static float skyboxVertices[] = {
 			// positions          
 			-1.0f,  1.0f, -1.0f,
@@ -377,7 +379,9 @@ Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(C
 	*/
 
 	m_ScreenShader->create();
+	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
+	m_ScreenShader->unuse();
 }
 
 void Scene::selectPrevObject()

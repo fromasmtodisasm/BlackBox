@@ -4,6 +4,7 @@
 #include <BlackBox/Object.hpp>
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
 
 void Material::apply(Object *object, CCamera *camera)
 {
@@ -96,7 +97,7 @@ void Material::prevDiffuse()
 void Material::activeTexture(uint32_t block, const char *uniform, BaseTexture* texture)
 {
   int test;
-  glActiveTexture(block);
-  glBindTexture(GL_TEXTURE_2D, texture->id);
-  glUniform1i(test = glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block - GL_TEXTURE0));
+  glCheck(glActiveTexture(block));
+  glCheck(glBindTexture(GL_TEXTURE_2D, texture->id));
+  glCheck(glUniform1i(test = glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block - GL_TEXTURE0)));
 }

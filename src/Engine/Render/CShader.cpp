@@ -1,6 +1,8 @@
 #include <BlackBox/Render/CShader.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
+
 #include <fstream>
 #include <string>
 
@@ -16,10 +18,10 @@ ShaderStatus::ShaderStatus(CShader *shader) :
 }
 
 bool ShaderStatus::get(GLenum statusType) {
-  glGetShaderiv(m_Shader->get(), statusType, &m_Status);
+  glCheck(glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status)));
   if(m_Status != GL_TRUE)
   {
-    glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog);
+    glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog));
     GetIEngine()->getILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
     return false;
   }
@@ -35,10 +37,10 @@ ShaderProgramStatus::ShaderProgramStatus(CShaderProgram *program) :
 
 bool ShaderProgramStatus::get(GLenum statusType) {
   GLsizei size;
-  glGetProgramiv(m_Program->get(), statusType, &m_Status);
+  glCheck(glGetProgramiv(m_Program->get(), statusType, &m_Status));
   if(m_Status != GL_TRUE)
   {
-    glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog);
+    glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
     GetIEngine()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
     return false;
   }
@@ -52,7 +54,7 @@ CShader::CShader(string text, CShader::type type) :
 }
 
 CShader::~CShader() {
-  glDeleteShader(m_Shader);
+  glCheck(glDeleteShader(m_Shader));
 }
 
 bool CShader::create() {
@@ -95,8 +97,8 @@ CShader* CShader::loadFromMemory(std::string text, CShader::type type)
 
 bool CShader::compile() {
   const char *text = m_Text.c_str();
-  glShaderSource(m_Shader, 1, &text, nullptr);
-  glCompileShader(m_Shader);
+  glCheck(glShaderSource(m_Shader, 1, &text, nullptr));
+  glCheck(glCompileShader(m_Shader));
   return m_Status.get(GL_COMPILE_STATUS);
 }
 
@@ -166,24 +168,24 @@ void CShaderProgram::attach(CShader *shader) {
       m_Fragment = shader;
     break;
   }
-  glAttachShader(m_Program, shader->get());
+  glCheck(glAttachShader(m_Program, shader->get()));
   attached = true;
 }
 
 bool CShaderProgram::link() {
-  glLinkProgram(m_Program);
+  glCheck(glLinkProgram(m_Program));
   //delete m_Vertex;
   //delete m_Fragment;
 	return m_Status.get(GL_LINK_STATUS);
 }
 
 void CShaderProgram::use() {
-    glUseProgram(m_Program);
+    glCheck(glUseProgram(m_Program));
 }
 
 void CShaderProgram::unuse()
 {
-    glUseProgram(0);
+    glCheck(glUseProgram(0));
 }
 
 void CShaderProgram::setUniformValue(int value, const char * format, ...)
@@ -196,7 +198,7 @@ void CShaderProgram::setUniformValue(int value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-      glUniform1i(loc, value);
+      glCheck(glUniform1i(loc, value));
   }
 
   va_end(ptr);
@@ -212,7 +214,7 @@ void CShaderProgram::setUniformValue(float value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-        glUniform1f(loc, value);
+        glCheck(glUniform1f(loc, value));
     }
 
   va_end(ptr);
@@ -228,7 +230,7 @@ void CShaderProgram::setUniformValue(glm::vec1 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-        glUniform1f(loc, value[0]);
+        glCheck(glUniform1f(loc, value[0]));
     }
 
   va_end(ptr);
@@ -244,7 +246,7 @@ void CShaderProgram::setUniformValue(glm::vec2 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-        glUniform2fv(loc, 1, glm::value_ptr(value));
+        glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
     }
 
   va_end(ptr);
@@ -260,9 +262,8 @@ void CShaderProgram::setUniformValue(glm::vec3 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-      glUniform3fv(loc, 1, glm::value_ptr(value));
+      glCheck(glUniform3fv(loc, 1, glm::value_ptr(value)));
   }
-  int er = glGetError();
 
   va_end(ptr);
 }
@@ -277,7 +278,7 @@ void CShaderProgram::setUniformValue(glm::vec4 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-        glUniform4fv(loc, 1, glm::value_ptr(value));
+        glCheck(glUniform4fv(loc, 1, glm::value_ptr(value)));
     }
 
   va_end(ptr);
@@ -293,7 +294,7 @@ void CShaderProgram::setUniformValue(glm::mat2 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-    glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+    glCheck(glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
 
   va_end(ptr);
@@ -309,7 +310,7 @@ void CShaderProgram::setUniformValue(glm::mat3 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+    glCheck(glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
 
   va_end(ptr);
@@ -325,7 +326,7 @@ void CShaderProgram::setUniformValue(glm::mat4 value, const char * format, ...)
 
   GLint loc = glGetUniformLocation(m_Program, name);
   if (loc != -1){
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+    glCheck(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
 
   va_end(ptr);

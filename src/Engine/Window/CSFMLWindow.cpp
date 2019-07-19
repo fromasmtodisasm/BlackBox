@@ -196,12 +196,12 @@ void CSFMLWindow::glInit()
 {
 	if (glContextType == sf::ContextSettings::Debug)
 	{
-		glEnable(GL_DEBUG_OUTPUT);
 		glDebug = new OpenglDebug("out/glDebug.txt");
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_SMOOTH);
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
+  glCheck(glEnable(GL_DEPTH_TEST));
+  glCheck(glEnable(GL_TEXTURE_2D));
+  glCheck(glEnable(GL_CULL_FACE));
+  glCheck(glCullFace(GL_BACK));
 }

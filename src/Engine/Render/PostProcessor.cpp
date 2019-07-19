@@ -5,7 +5,9 @@ PostProcessor::PostProcessor(const char *shader)
  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/" + std::string(shader) + ".frag", CShader::E_FRAGMENT)))
 {
 	m_ScreenShader->create();
+	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
+	m_ScreenShader->unuse();
 }
 
 PostProcessor::~PostProcessor()
