@@ -41,7 +41,7 @@ void OpenglDebug::callBack(GLenum source​, GLenum type​, GLuint id​, GLenu
 		isError = false;
 	std::stringstream ss;
 	ss << SOURCE_TO_STRING(source​) << std::endl << TYPE_TO_STRING(type​) << std::endl << SEVERITY_TO_STRING(severity​) << std::endl << "Message: " << std::string(message​, message​ + length​);
-	std::cerr << ss.str().c_str() << std::endl;
+	std::cerr << ss.str().c_str() << std::endl << std::endl;
 
 }
 

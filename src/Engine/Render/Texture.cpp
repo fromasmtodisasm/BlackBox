@@ -1,4 +1,5 @@
 #include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Utils/AlphaDistribution.h>
 #include <iostream>
 #include <ctime>
@@ -73,8 +74,8 @@ bool Texture::load(const char* name)
 		inputFormat = GL_RGBA;
 		internalFormat = GL_RGBA;
 	}
-  glGenTextures(1, &id);
-  glBindTexture(GL_TEXTURE_2D, id);
+  glCheck(glGenTextures(1, &id));
+  glCheck(glBindTexture(GL_TEXTURE_2D, id));
 
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
@@ -83,12 +84,12 @@ bool Texture::load(const char* name)
     inputFormat, inputDataType, img.data 
   );
 
-  glGenerateMipmap(GL_TEXTURE_2D);
+  glCheck(glGenerateMipmap(GL_TEXTURE_2D));
   if (true)
   {
 		;// cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
   }
-  glBindTexture(GL_TEXTURE_2D, 0);
+  glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 
@@ -97,13 +98,13 @@ bool Texture::load(const char* name)
 void Texture::GetMipMapLevel(int level, nvtt::Surface &surface)
 {
 	int width = 0, height = 0;
-	glBindTexture(GL_TEXTURE_2D, id);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height);
+	glCheck(glBindTexture(GL_TEXTURE_2D, id));
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width));
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height));
 	if (width * height == 0) return;
 
 	std::vector<unsigned char> image(width * height * 4);
-	glGetTexImage(GL_TEXTURE_2D, level, GL_BGRA, GL_UNSIGNED_BYTE, image.data());
+	glCheck(glGetTexImage(GL_TEXTURE_2D, level, GL_BGRA, GL_UNSIGNED_BYTE, image.data()));
 	std::vector<float> image_f(width * height * 4);
 	/*
 	for (int i = 0; i < image.size(); i++)
@@ -136,16 +137,16 @@ void Texture::SaveMipMaps()
 	compressor.outputHeader(surface, surface.countMipmaps(), compressorOptions, outputOptions);
 
 
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height);
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width));
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height));
 
 	while (width >= 1 && height >= 1) {
 		GetMipMapLevel(level, surface);
 		surface.flipY();
 		compressor.compress(surface, 0, level, compressorOptions, outputOptions);
 		level++;
-		glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width);
-		glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height);
+		glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width));
+		glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height));
 	}
 }
 

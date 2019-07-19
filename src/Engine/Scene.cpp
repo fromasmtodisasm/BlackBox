@@ -7,6 +7,7 @@
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -80,7 +81,7 @@ public:
 			 1.0f, -1.0f,  1.0f
 		};
 		VertexArrayObject::Attributes attributes;
-		attributes.stride = 0;// 3 * sizeof(float);
+		attributes.stride = 3 * sizeof(float);
 		attributes.attributes[VertexArrayObject::POSITION] = 0;
 		vao = new VertexArrayObject(skyboxVertices, 36, GL_TRIANGLES, attributes);
 	}
@@ -88,17 +89,17 @@ public:
 	virtual void draw(void* data) override
 	{
 		CCamera* cam = reinterpret_cast<CCamera*>(data);
-		glDepthMask(GL_FALSE);
+		glCheck(glDepthMask(GL_FALSE));
 		shader->use();
 		// ... задание видовой и проекционной матриц
 		shader->setUniformValue(cam->getViewMatrix(), "View");
 		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
 		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id);
+		glCheck(glActiveTexture(GL_TEXTURE0));
+		glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id));
 		vao->draw();
 
-		glDepthMask(GL_TRUE);
+		glCheck(glDepthMask(GL_TRUE));
 	}
 
 	void setTextureCube(TextureCube* t)
@@ -367,15 +368,15 @@ Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(C
 	// screen quad VAO
 	/*
 	unsigned int quadVBO;
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glCheck(glGenVertexArrays(1, &quadVAO));
+	glCheck(glGenBuffers(1, &quadVBO));
+	glCheck(glBindVertexArray(quadVAO));
+	glCheck(glBindBuffer(GL_ARRAY_BUFFER, quadVBO));
+	glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW));
+	glCheck(glEnableVertexAttribArray(0));
+	glCheck(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
+	glCheck(glEnableVertexAttribArray(1));
+	glCheck(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
 	*/
 
 	m_ScreenShader->create();
@@ -791,9 +792,9 @@ FrameBufferObject* Scene::getRenderTarget()
 void Scene::begin()
 {
   m_RenderedScene->bind();
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // буфер трафарета не используется
-	glEnable(GL_DEPTH_TEST);
+  glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+  glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); // буфер трафарета не используется
+	glCheck(glEnable(GL_DEPTH_TEST));
 }
 
 void Scene::end()
@@ -805,13 +806,13 @@ void Scene::present()
 {
 	if (postProcessor == nullptr)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+		glCheck(glClear(GL_COLOR_BUFFER_BIT));
 		m_ScreenShader->use();
-		glDisable(GL_DEPTH_TEST);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture);
+		glCheck(glDisable(GL_DEPTH_TEST));
+		glCheck(glActiveTexture(GL_TEXTURE0));
+		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture));
 		m_ScreenQuad.draw();;
 	}
 	else
