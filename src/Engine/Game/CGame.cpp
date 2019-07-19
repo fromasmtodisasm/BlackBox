@@ -58,7 +58,7 @@ bool CGame::init(IEngine *pSystem)  {
   m_Window = new CWindow(m_Title, 1600, 900); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
-    if (!m_Window->init() || !m_Window->create())
+    if (!m_Window->init(0,0, 1366, 768, 32, 24, 8, false) || !m_Window->create())
       return false;
 		m_Log->AddLog("[OK] Window susbsystem inited\n");
 

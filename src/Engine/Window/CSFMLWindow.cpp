@@ -23,21 +23,27 @@ bool CSFMLWindow::create()
   return true;
 }
 
-bool CSFMLWindow::init()
+bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen)
 {
-  sf::ContextSettings settings;
-  settings.depthBits = 24;
-  settings.stencilBits = 8;
-  settings.antialiasingLevel = 4;
-  settings.majorVersion = 3;
-  settings.minorVersion = 3;
+  sf::ContextSettings settings(zbpp, sbits, 0, majorVersion, minorVersion, glContextType);
 
   // Create the main window
-  sf::VideoMode desktop = 	sf::VideoMode::getDesktopMode();
-  //auto mode = 	sf::VideoMode::getFullscreenModes()[0];
-  sf::VideoMode mode = desktop;
-  //sf::VideoMode mode = sf::VideoMode(m_Width, m_Height);
-	m_Window = new sf::RenderWindow(sf::VideoMode(1366, 768, 32) , sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
+  sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+	sf::Vector2i position((desktop.width - width) / 2, (desktop.height - height) / 2);
+	decltype(desktop) mode;
+
+	if (fullscreen)
+	{
+		mode = sf::VideoMode::getFullscreenModes()[0];
+		position.x = 0;
+		position.y = 0;
+	}
+	else
+	{
+		mode = sf::VideoMode(m_Width = width, m_Height = height, cbpp);
+	}
+	m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
+	m_Window->setPosition(position);
   m_Window->setVerticalSyncEnabled(true);
   m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);
@@ -188,6 +194,11 @@ void CSFMLWindow::setMouseWrap(bool wrap)
 
 void CSFMLWindow::glInit()
 {
+	if (glContextType == sf::ContextSettings::Debug)
+	{
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebug = new OpenglDebug("out/glDebug.txt");
+	}
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
   glEnable(GL_TEXTURE_2D);

@@ -96,6 +96,7 @@ target_sources(
   #Input folder
   PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
   #Render folder
+  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
@@ -103,13 +104,14 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
+
   #Resources folder
   PRIVATE ${SOURCE_DIR}/Engine/Resources/MaterialManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ObjectManager.cpp
