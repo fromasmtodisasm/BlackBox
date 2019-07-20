@@ -1,7 +1,8 @@
 #pragma once
 #include <memory>
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
 #include <glm/glm.hpp>
+#include <vector>
 
 class CShader;
 class CShaderProgram;
@@ -10,22 +11,25 @@ class CCamera;
 
 struct Material
 {
-  Texture
-  *diffuse,
+  BaseTexture
+  /**diffuse,*/
   *specular,
   *bump,
   *normal,
   *mask;
   float shininess;
   glm::vec3 diffuseColor;
+	
+	std::vector<BaseTexture*> diffuse;
 
   CShaderProgram *program;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;
   bool enabledNormal = true;
+	int current_diffuse = 0;
 
   Material() : 
-  diffuse(nullptr),
+  //diffuse(nullptr),
   specular(nullptr),
   bump(nullptr),
   normal(nullptr),
@@ -38,6 +42,8 @@ struct Material
   }
   void apply(Object *object, CCamera *camera);
   void setTexture(Texture *texture, const char *type);
+	void nextDiffuse();
+	void prevDiffuse();
 private:
-  void activeTexture(uint32_t block, const char *uniform, Texture *texture);
+  void activeTexture(uint32_t block, const char *uniform, BaseTexture *texture);
 };

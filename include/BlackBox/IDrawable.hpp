@@ -2,5 +2,5 @@
 class CCamera;
 struct IDrawable
 {
-  virtual void draw(CCamera *camera) = 0;
+  virtual void draw(void *data) = 0;
 };

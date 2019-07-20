@@ -5,7 +5,7 @@
 #include <iostream>
 
 // GL Includes
-#include <BlackBox/Opengl.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -22,7 +22,7 @@ enum Camera_Movement {
 // Default camera values
 const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
-const GLfloat SPEED      =  33.0f;
+const GLfloat SPEED      =  0.1f;
 const GLfloat SENSITIVTY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
 
@@ -47,7 +47,7 @@ public:
     GLfloat FOV = 45.0f;
     GLfloat Ratio = 16.0f/9;
     GLfloat zNear = 0.1f;
-    GLfloat zFar = 5000.f;
+    GLfloat zFar = 1000.f;
 
     enum Mode
     {

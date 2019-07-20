@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/common.h>
-#include <BlackBox/VertexArrayObject.hpp>
+#include <BlackBox/Render/VertexArrayObject.hpp>
 #include <cassert>
 #include <glm/glm.hpp>
 
@@ -20,6 +20,8 @@ struct Vertex
   glm::vec3 btangent;
 
   Vertex() = default;
+	Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv)
+	{}
   Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)
   {}
 };

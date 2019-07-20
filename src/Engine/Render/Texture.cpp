@@ -1,0 +1,153 @@
+#include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Utils/AlphaDistribution.h>
+#include <iostream>
+#include <ctime>
+#include <memory>
+
+using namespace std;
+
+Texture::Texture()
+{
+
+}
+
+Texture::Texture(std::string name) 
+{
+	this->name = name;
+}
+
+void Texture::setType(const char *type)
+{
+  std::string t(type);
+
+  if (t == "diffuse")
+    this->type = DIFFUSE;
+  else if (t == "specular")
+    this->type = SPECULAR;
+  else if (t == "bump")
+    this->type = BUMP;
+  else if (t == "normal")
+    this->type = NORMAL;
+  else if (t == "mask")
+    this->type = MASK;
+  else
+    this->type = UNKNOWN;
+}
+
+std::string Texture::typeToStr()
+{
+  std::string result;
+  switch(type)
+    {
+    case TextureType::DIFFUSE:
+      return "diffuse";
+    case TextureType::SPECULAR:
+      return "specular";
+    case TextureType::BUMP:
+      return "bump";
+    case TextureType::NORMAL:
+      return "normal";
+    case TextureType::MASK:
+      return "mask";
+    default:
+    {
+      cout << "Error: unknown texture type" << endl;
+      return "";
+    }
+    }
+}
+
+bool Texture::load(const char* name)
+{
+	
+	GLenum inputFormat = GL_RGB;
+	GLenum internalFormat = GL_RGB;
+	GLenum inputDataType = GL_UNSIGNED_BYTE;
+	bool hasAlpha = false;
+
+	Image img;
+	if (!img.load((texture_root + name).c_str(), &hasAlpha))
+		return false;
+	if (hasAlpha)
+	{
+		inputFormat = GL_RGBA;
+		internalFormat = GL_RGBA;
+	}
+  glCheck(glGenTextures(1, &id));
+  glCheck(glBindTexture(GL_TEXTURE_2D, id));
+
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, internalFormat,
+    img.width, img.height,
+    0,
+    inputFormat, inputDataType, img.data 
+  );
+
+  glCheck(glGenerateMipmap(GL_TEXTURE_2D));
+  if (true)
+  {
+		;// cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
+  }
+  glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
+
+#ifdef NVTT
+
+void Texture::GetMipMapLevel(int level, nvtt::Surface &surface)
+{
+	int width = 0, height = 0;
+	glCheck(glBindTexture(GL_TEXTURE_2D, id));
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width));
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height));
+	if (width * height == 0) return;
+
+	std::vector<unsigned char> image(width * height * 4);
+	glCheck(glGetTexImage(GL_TEXTURE_2D, level, GL_BGRA, GL_UNSIGNED_BYTE, image.data()));
+	std::vector<float> image_f(width * height * 4);
+	/*
+	for (int i = 0; i < image.size(); i++)
+	{
+		image_f[i] = (float)image[i] / 255.0f;
+	}
+	*/
+	surface.setImage(nvtt::InputFormat::InputFormat_BGRA_8UB, width, height, 1, image.data());
+	//FixAlphaRGBA(method, image.data(), width, height, spp);
+	//glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+}
+
+//! Fixes the alpha values of all mipmap levels of an OpenGL texture, starting with the given level.
+//! If the texture does not contain semi-transparent regions, modifying the first level (level zero)
+//! is not advisable, since the original values might work better with magnification filtering.
+//! If the image will be used with alpha-to-coverage, the spp parameter
+//! should indicate the number of alpha samples; otherwise, it should be 1.
+void Texture::SaveMipMaps()
+{
+	int level = 0;
+	int width, height;
+	nvtt::Surface surface;
+	nvtt::OutputOptions outputOptions;
+	outputOptions.setFileName("nativeMips.dds");
+
+	nvtt::CompressionOptions compressorOptions;
+	compressorOptions.setFormat(nvtt::Format::Format_RGBA);
+	nvtt::Compressor compressor;
+	GetMipMapLevel(0, surface);
+	compressor.outputHeader(surface, surface.countMipmaps(), compressorOptions, outputOptions);
+
+
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width));
+	glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height));
+
+	while (width >= 1 && height >= 1) {
+		GetMipMapLevel(level, surface);
+		surface.flipY();
+		compressor.compress(surface, 0, level, compressorOptions, outputOptions);
+		level++;
+		glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &width));
+		glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &height));
+	}
+}
+
+#endif

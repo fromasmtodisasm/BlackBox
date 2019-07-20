@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/fwd.hpp>
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
 
 class CShaderProgram;
 struct Material;

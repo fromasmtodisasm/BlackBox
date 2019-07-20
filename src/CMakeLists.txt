@@ -19,6 +19,7 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/nvtt nvtt)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 if (WIN32)
@@ -33,8 +34,16 @@ endif()
 #--------------------------------------------------
 include_directories(
   "${SFML_SOURCE_DIR}/include"
-  " ${CMAKE_SOURCE_DIR}/include"
+  " ${CMAKE_SOURCE_DIR}/include/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
 )
+
+#get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 #--------------------------------------------------
 #find_package(Boost COMPONENTS system filesystem REQUIRED)
 #...
@@ -44,153 +53,149 @@ add_library(${PROJECT_NAME})
 if (USE_SFML)
   target_sources(
     ${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/src/CSFMLWindow.cpp
-    PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CSFMLWindow.hpp
+    PRIVATE ${SOURCE_DIR}/Engine/Window/CSFMLWindow.cpp
+    #PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CSFMLWindow.hpp
     )
     add_definitions(-DSFML_WINDOW)
 else()
   target_sources(
     ${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/src/CGLFWWindow.cpp
-    PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGLFWWindow.hpp
+    PRIVATE ${SOURCE_DIR}/Engine/Window/CGLFWWindow.cpp
+    #PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGLFWWindow.hpp
     )
     add_definitions(-DGLFW_WINDOW)
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif()
+
+
 target_sources(
   ${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/CCamera.cpp
-  PRIVATE ${SOURCE_DIR}/CConsole.cpp
-  PRIVATE ${SOURCE_DIR}/CEngine.cpp
-  PRIVATE ${SOURCE_DIR}/CGame.cpp
-  PRIVATE ${SOURCE_DIR}/CInputHandler.cpp
-  PRIVATE ${SOURCE_DIR}/CLog.cpp
-  PRIVATE ${SOURCE_DIR}/CPlayer.cpp
-  PRIVATE ${SOURCE_DIR}/CShader.cpp
-  PRIVATE ${SOURCE_DIR}/FrameBufferObject.cpp
-  PRIVATE ${SOURCE_DIR}/GUI.cpp
-  PRIVATE ${SOURCE_DIR}/GameGUI.cpp
-  PRIVATE ${SOURCE_DIR}/GameObject.cpp
-  PRIVATE ${SOURCE_DIR}/Geometry.cpp
-  PRIVATE ${SOURCE_DIR}/IndexBuffer.cpp
-  PRIVATE ${SOURCE_DIR}/Light.cpp
-  PRIVATE ${SOURCE_DIR}/Material.cpp
-  PRIVATE ${SOURCE_DIR}/MaterialManager.cpp
-  PRIVATE ${SOURCE_DIR}/MatrixTransform.cpp
-  PRIVATE ${SOURCE_DIR}/MusicList.cpp
-  PRIVATE ${SOURCE_DIR}/ObjLoader.cpp
-  PRIVATE ${SOURCE_DIR}/Object.cpp
-  PRIVATE ${SOURCE_DIR}/ObjectManager.cpp
-  PRIVATE ${SOURCE_DIR}/Plane.cpp
-  PRIVATE ${SOURCE_DIR}/PlayerCommands.cpp
-  PRIVATE ${SOURCE_DIR}/Primitives.cpp
-  PRIVATE ${SOURCE_DIR}/Scene.cpp
-  PRIVATE ${SOURCE_DIR}/SceneManager.cpp
-  PRIVATE ${SOURCE_DIR}/ShaderManager.cpp
-  PRIVATE ${SOURCE_DIR}/Texture.cpp
-  PRIVATE ${SOURCE_DIR}/TextureManager.cpp
-  PRIVATE ${SOURCE_DIR}/Triangle.cpp
-  PRIVATE ${SOURCE_DIR}/Utils.cpp
-  PRIVATE ${SOURCE_DIR}/VertexArrayObject.cpp
-  PRIVATE ${SOURCE_DIR}/VertexBuffer.cpp
-  PRIVATE ${SOURCE_DIR}/World.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/CConsole.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/CEngine.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/CLog.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/World.cpp
+  #Game folder
+  PRIVATE ${SOURCE_DIR}/Engine/Game/CGame.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/CPlayer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
+  #Geometry folder
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry/ObjLoader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Object.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Plane.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Primitives.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
+
+  #Input folder
+  PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
+  #Render folder
+  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
+
+  #Resources folder
+  PRIVATE ${SOURCE_DIR}/Engine/Resources/MaterialManager.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Resources/ObjectManager.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Resources/SceneManager.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
+  #Utils folder
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
 )
-target_sources(${PROJECT_NAME}
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CCamera.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CConsole.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CEngine.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGame.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CInputHandler.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CLog.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CShader.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CWindow.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Cube.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/FrameBufferObject.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/GUI.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/GameObject.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ICommand.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IConsole.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IDrawable.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IEngine.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IGame.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IGeometry.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IInput.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ILog.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IObject.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IShaderManager.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IWindow.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/IndexBuffer.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/InputHandler.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Light.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Material.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MaterialManager.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MatrixTranform.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/MusicList.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjLoader.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Object.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ObjectManager.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Opengl.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Plane.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/PlayerCommands.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Primitives.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Renderer.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Scene.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/SceneManager.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/ShaderManager.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Tetrahedron.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Texture.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/TextureManager.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Triangle.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/Utils.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/VertexArrayObject.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/VertexBuffer.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/World.hpp
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/common.h
-  PRIVATE ${BLACKBOX_INCLUDE_DIRS}/pch.h
-)
+
+file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
+  
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox ${CMAKE_DL_LIBS})
 endif()
 #--------------------------------------------------
 #IMGUI
-if (BUILD_SHARED_LIBS)
-  add_library(ImGui SHARED)
-  message(STATUS "build shared libs!")
-else()
-  add_library(ImGui STATIC)
-  message(STATUS "build static libs!")
-endif()
+#if (BUILD_SHARED_LIBS)
+#  add_library(ImGui SHARED)
+#  message(STATUS "build shared libs!")
+#else()
+#  add_library(ImGui STATIC)
+#  message(STATUS "build static libs!")
+#endif()
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
 set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 
 target_include_directories(
-  ImGui PUBLIC ${IMGUI_DIR}
+  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
 )
 target_include_directories(
-  ImGui PUBLIC ${IMGUI-SFML_DIR}
+  ${PROJECT_NAME} PUBLIC ${IMGUI-SFML_DIR}
 )
-target_sources(
-  ImGui
-  PUBLIC ${IMGUI_DIR}/imgui.cpp
-  PUBLIC ${IMGUI_DIR}/imgui_widgets.cpp
-  PUBLIC ${IMGUI_DIR}/imgui_draw.cpp
-  PUBLIC ${IMGUI-SFML_DIR}/imgui-SFML.cpp
-  PUBLIC ${IMGUI_DIR}/imgui_demo.cpp
+set(
+  IMGUI_SOURCES
+  ${IMGUI_DIR}/imgui.cpp
+  ${IMGUI_DIR}/imgui_widgets.cpp
+  ${IMGUI_DIR}/imgui_draw.cpp
+  ${IMGUI-SFML_DIR}/imgui-SFML.cpp
+  ${IMGUI_DIR}/imgui_demo.cpp
   )
 #--------------------------------------------------
 if (GLEW_LOADER)
   target_sources(${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/src/GlewLoader.cpp
+    PRIVATE ${CMAKE_SOURCE_DIR}/Engine/Render/GlewLoader.cpp
   )
 elseif(GLAD_LOADER)
   target_sources(${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/src/GladLoader.cpp
+    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
   )
 endif()
-
+#--------------------------------------------------
+get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
+source_group(
+  TREE ${SOURCE_DIR}
+  PREFIX BlackBox
+  FILES
+  ${SOURCE_FILES}
+  )
+target_sources(${PROJECT_NAME}
+  PRIVATE
+  ${INCLUDE_FILES}
+  )
+source_group(
+  TREE ${CMAKE_SOURCE_DIR}/include/BlackBox
+  PREFIX BlackBox\\Inc
+  FILES
+  ${INCLUDE_FILES}
+  )
+target_sources(${PROJECT_NAME}
+  PRIVATE
+  ${IMGUI_SOURCES}
+  )
+source_group(
+  BlackBox\\Engine\\Gui
+  #TREE ${CMAKE_SOURCE_DIR}/submodules
+  #PREFIX BlackBox\\Engine\\Gui
+  FILES
+  ${IMGUI_SOURCES}
+  )
+#--------------------------------------------------
 if (USE_SFML)
   target_link_libraries(${PROJECT_NAME} sfml-graphics)
   target_link_libraries(${PROJECT_NAME} sfml-audio)
@@ -204,8 +209,9 @@ elseif(GLEW_LOADER)
 endif()
 target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} tinyxml2)
-target_link_libraries(${PROJECT_NAME} ImGui)
+#target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
+#target_link_libraries(${PROJECT_NAME} nvtt)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 #target_link_libraries(${PROJECT_NAME}
