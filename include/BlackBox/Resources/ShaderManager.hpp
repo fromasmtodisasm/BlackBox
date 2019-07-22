@@ -11,7 +11,7 @@ class ShaderManager
   //ShaderManager();
 public:
   static ShaderManager *instance();
-  CShaderProgram *getProgram(std::string vShader, std::string fShader);
+  CBaseShaderProgram *getProgram(std::string vShader, std::string fShader);
   CShader *getShader(std::string name, std::string type);
   static bool init();
 private:

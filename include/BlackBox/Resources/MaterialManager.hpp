@@ -17,6 +17,7 @@ class MaterialManager
   ILog *m_pLog;
 	bool alpha_shakaled = false;
 	bool isSkyBox = false;
+	std::map<std::string, CBaseShaderProgram*> shaders_map;
 public:
   static MaterialManager *instance();
   Material *getProgram(std::string vMaterial, std::string fMaterial);

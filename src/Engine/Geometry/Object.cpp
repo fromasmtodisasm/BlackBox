@@ -36,7 +36,7 @@ Object::Object(const Object *obj):
 
 
 
-void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader)
+void Object::parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader)
 {
  
 }
@@ -57,7 +57,7 @@ void Object::setType(OBJType type)
   m_type = type;
 }
 
-CShaderProgram * Object::getShaderProgram()
+CBaseShaderProgram * Object::getShaderProgram()
 {
   return m_Shader;
 }
@@ -83,7 +83,7 @@ void Object::setVisibility(bool v)
 	m_visible = v;
 }
 
-void Object::setShaderProgram(CShaderProgram* shader)
+void Object::setShaderProgram(CBaseShaderProgram* shader)
 {
   m_Shader = shader;
 }

@@ -1,6 +1,6 @@
 #include <BlackBox/Primitives.hpp>
 
-Object * Primitive::create(Type type, CShaderProgram *program)
+Object * Primitive::create(Type type, CBaseShaderProgram *program)
 {
   Object *obj = nullptr;
   ObjectManager *manager = ObjectManager::instance();

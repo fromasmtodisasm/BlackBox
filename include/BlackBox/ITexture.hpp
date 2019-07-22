@@ -16,6 +16,8 @@ struct Image
 struct ITexture
 {
 	virtual bool load(const char* name) = 0;
+	virtual void bind() = 0;
+	virtual void setUnit(GLuint unit) = 0;
   virtual void setType(const char* TextureType) = 0;
   virtual std::string typeToStr() = 0;
 };

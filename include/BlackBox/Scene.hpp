@@ -29,7 +29,7 @@ private:
   FrameBufferObject* m_RenderedScene;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;
-	CShaderProgram *m_ScreenShader;
+	CBaseShaderProgram *m_ScreenShader;
 	IPostProcessor* postProcessor = nullptr;
   std::multimap<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;

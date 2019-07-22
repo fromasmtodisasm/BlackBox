@@ -19,6 +19,6 @@ public:
 private:
   Primitive(Type type);
 public:
-  static Object *create(Type type, CShaderProgram *program);
+  static Object *create(Type type, CBaseShaderProgram *program);
   ~Primitive();
 };

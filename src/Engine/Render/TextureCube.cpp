@@ -56,3 +56,15 @@ bool TextureCube::load(const char* name)
 
 	return true;
 }
+
+void TextureCube::bind()
+{
+	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
+	glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
+}
+
+void TextureCube::setUnit(GLuint unit)
+{
+	this->unit = unit;
+
+}

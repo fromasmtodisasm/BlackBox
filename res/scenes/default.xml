@@ -125,7 +125,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object" transparent="true" visible="true">
+    <object name="brick_normal_box" type="object" transparent="true" visible="false">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -146,7 +146,7 @@
         </transform>
         <material name="brick_box"/>
     </object>
-    <object name="brick_normal_box_2" type="object" transparent="true" visible="true">
+    <object name="brick_normal_box_2" type="object" transparent="true" visible="false">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -167,7 +167,7 @@
         </transform>
         <material name="brick_box_shakaled" alpha_shakal="true"/>
     </object>
-    <object name="garik" type="object" transparent="true" visible="true">
+    <object name="garik" type="object" transparent="true" visible="false">
         <mesh name="res/geom/1ltomarm2.obj"/>
         <transform>
             <position>

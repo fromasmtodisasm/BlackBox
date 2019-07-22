@@ -30,9 +30,9 @@ void main()
 
 ScreenShader::ScreenShader()
 	:
-	CShaderProgram(CShader::loadFromMemory(vs, CShader::E_VERTEX), CShader::loadFromMemory(fs, CShader::E_FRAGMENT))
+	CBaseShaderProgram(CShader::loadFromMemory(vs, CShader::E_VERTEX), CShader::loadFromMemory(fs, CShader::E_FRAGMENT))
 {
-	CShaderProgram::create();
+	CBaseShaderProgram::create();
 }
 
 ScreenShader::~ScreenShader()

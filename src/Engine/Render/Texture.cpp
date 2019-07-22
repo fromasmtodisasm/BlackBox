@@ -92,6 +92,17 @@ bool Texture::load(const char* name)
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
+void Texture::bind()
+{
+	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
+	glCheck(glBindTexture(GL_TEXTURE_2D, id));
+}
+
+void Texture::setUnit(GLuint unit)
+{
+	this->unit = unit;
+}
+
 
 #ifdef NVTT
 

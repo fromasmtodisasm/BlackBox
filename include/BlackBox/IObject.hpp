@@ -2,7 +2,7 @@
 #include <glm/fwd.hpp>
 #include <BlackBox/Render/Texture.hpp>
 
-class CShaderProgram;
+class CBaseShaderProgram;
 struct Material;
 
 enum OBJType {
@@ -20,8 +20,8 @@ struct IObject
   virtual OBJType getType() = 0;
   virtual void setType(OBJType) = 0;
 
-  virtual CShaderProgram *getShaderProgram() = 0;
-  virtual void setShaderProgram(CShaderProgram* shader) = 0;
+  virtual CBaseShaderProgram *getShaderProgram() = 0;
+  virtual void setShaderProgram(CBaseShaderProgram* shader) = 0;
   virtual Material *getMaterial() = 0;
   virtual void setMaterial(Material *material) = 0;
 

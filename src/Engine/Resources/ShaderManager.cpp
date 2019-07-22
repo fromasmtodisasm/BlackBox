@@ -3,7 +3,7 @@
 #include <BlackBox/ILog.hpp>
 
 ShaderManager *ShaderManager::manager = nullptr;
-CShaderProgram *defaultProgram = nullptr;
+CBaseShaderProgram *defaultProgram = nullptr;
 
 ShaderManager *ShaderManager::instance()
 {
@@ -14,10 +14,10 @@ ShaderManager *ShaderManager::instance()
   return manager;
 }
 
-CShaderProgram *ShaderManager::getProgram(std::string vShader, std::string fShader)
+CBaseShaderProgram *ShaderManager::getProgram(std::string vShader, std::string fShader)
 {
   CShader *vs, *fs;
-  CShaderProgram *p;
+  CBaseShaderProgram *p;
   vs = getShader(vShader, "vertex");
   fs = getShader(fShader, "fragment");
   if (vs == nullptr || fs == nullptr)

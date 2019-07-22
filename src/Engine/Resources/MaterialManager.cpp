@@ -1,6 +1,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Render/ReflectShader.hpp>
 #include <glm/glm.hpp>
 
 #include <tinyxml2.h>
@@ -57,6 +58,7 @@ Material *MaterialManager::getMaterial(std::string name)
 bool MaterialManager::init(std::string materialLib)
 {
   bool status = false;
+	MaterialManager::instance()->shaders_map["reflect_shader"] = new ReflectShader();
   status = MaterialManager::instance()->loadLib(materialLib);
   if (status)
   {
@@ -141,18 +143,23 @@ bool MaterialManager::loadMaterial(XMLElement *material)
       switch(t->type)
       {
       case TextureType::DIFFUSE:
+				t->setUnit(0);
         result->diffuse.push_back(t);
         break;
       case TextureType::SPECULAR:
+				t->setUnit(1);
         result->specular = t;
         break;
       case TextureType::BUMP:
+				t->setUnit(2);
         result->bump = t;
         break;
       case TextureType::NORMAL:
+				t->setUnit(3);
         result->normal = t;
         break;
       case TextureType::MASK:
+				t->setUnit(4);
         result->mask = t;
         break;
       default:
@@ -170,18 +177,32 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   //============ SHADERS LOADING =======================//
   XMLElement *shaders = material->FirstChildElement("shaders");
   if (shaders == nullptr) return false;
-  XMLElement *shader = shaders->FirstChildElement("shader");
-  if (shader == nullptr) return false;
-  CShaderProgram *program = new CShaderProgram();
-  while (shader != nullptr)
-  {
-    CShader *s = loadShader(shader);
-    if (s == nullptr)
-      //TODO: log it!!!
-      return false;
-    program->attach(s);
-    shader = shader->NextSiblingElement("shader");
-  }
+	const char * shader_class = nullptr;
+  CBaseShaderProgram *program = nullptr;
+	if ((shader_class = shaders->Attribute("class")) != nullptr)
+	{
+		auto class_it = shaders_map.find(shader_class);
+		if (class_it == shaders_map.end())
+			return false;
+		//program = class_it->second;
+		program = new CShaderProgram(CShader::load("res/shaders/reflect.vs", CShader::E_VERTEX), CShader::load("res/shaders/reflect.frag", CShader::E_FRAGMENT));
+
+	}
+	else
+	{
+		XMLElement *shader = shaders->FirstChildElement("shader");
+		if (shader == nullptr) return false;
+		program = new CShaderProgram();
+		while (shader != nullptr)
+		{
+			CShader *s = loadShader(shader);
+			if (s == nullptr)
+				//TODO: log it!!!
+				return false;
+			program->attach(s);
+			shader = shader->NextSiblingElement("shader");
+		}
+	}
   if (!program->create())
     return false;
   result->program = program;

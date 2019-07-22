@@ -5,7 +5,7 @@
 #include <vector>
 
 class CShader;
-class CShaderProgram;
+class CBaseShaderProgram;
 class Object;
 class CCamera;
 
@@ -22,7 +22,7 @@ struct Material
 	
 	std::vector<BaseTexture*> diffuse;
 
-  CShaderProgram *program;
+  CBaseShaderProgram *program;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;
   bool enabledNormal = true;

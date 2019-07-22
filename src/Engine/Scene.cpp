@@ -8,6 +8,7 @@
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -25,7 +26,7 @@ class SkyBox : public IDrawable
 public:
 	TextureCube* texture;
 	VertexArrayObject* vao;
-	CShaderProgram* shader;
+	CBaseShaderProgram* shader;
 
 	SkyBox(TextureCube *t)
 		:
@@ -96,8 +97,7 @@ public:
 		shader->setUniformValue(glm::mat4(glm::mat3(cam->getViewMatrix())), "View");
 		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
 		
-		glCheck(glActiveTexture(GL_TEXTURE0));
-		glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id));
+		texture->bind();
 		vao->draw();
 
 		glCheck(glDepthFunc(GL_LESS));
@@ -307,7 +307,7 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
 
 void Scene::setupLights(Object* object)
 {
-  CShaderProgram* program = object->m_Material->program;
+  CBaseShaderProgram* program = object->m_Material->program;
   int currentLight = 0;
   int nr_point_lights = 0;
   auto sun = m_DirectionLight.find("sun");
@@ -439,11 +439,10 @@ void Scene::draw(float dt)
 			if (!object.second->m_transparent && (object.second->visible()) && 
 				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar - 500.0f)
 			{
-				CShaderProgram* program = object.second->m_Material->program;
+				CBaseShaderProgram* program = object.second->m_Material->program;
 				program->use();
 				setupLights(object.second);
 
-				program->setUniformValue(m_Camera->Position, "viewPos");
 				object.second->draw(m_Camera);
 			}
     }
@@ -452,16 +451,15 @@ void Scene::draw(float dt)
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 			if (object.second->m_transparent && (object.second->visible()))
 			{
-				CShaderProgram* program = object.second->m_Material->program;
+				CBaseShaderProgram* program = object.second->m_Material->program;
 				program->use();
 				setupLights(object.second);
 
-				program->setUniformValue(m_Camera->Position, "viewPos");
 				object.second->draw(m_Camera);
 			}
     }
     Object* lightObject = m_Objects.find("light")->second;
-    CShaderProgram* program = lightObject->m_Material->program;
+    CBaseShaderProgram* program = lightObject->m_Material->program;
     for (const auto& light : m_PointLights) {
       program->use();
       lightObject->moveTo(light.second->position);
@@ -776,6 +774,7 @@ bool Scene::load(std::string name = "default.xml")
 	if (sbm != nullptr)
 	{
 		skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
+		Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
 	}
 
   return true;

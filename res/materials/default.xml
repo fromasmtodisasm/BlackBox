@@ -90,12 +90,7 @@
     </shaders>
   </material>
   <material name="player">
-    <textures>
-      <texture type="diffuse" name="pengium.png"/>
-    </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
+    <shaders class="reflect_shader">
     </shaders>
   </material>
   <material name="skybox" type="skybox">

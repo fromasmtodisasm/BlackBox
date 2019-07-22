@@ -24,12 +24,12 @@ struct Transform
 class Object : public IObject, public IDrawable {
   friend class ObjectManager;
 protected:
-  CShaderProgram *m_Shader;
+  CBaseShaderProgram *m_Shader;
   OBJType m_type;
   Object();
   Object(Mesh *mesh);
   Object(const Object *obj);
-  static void parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader);
+  static void parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader);
 public:
   std::shared_ptr<Mesh> m_Mesh;
   std::string type;
@@ -51,14 +51,14 @@ public:
   virtual void draw(void * camera) override;
   virtual OBJType getType() override { return m_type; }
   virtual void setType(OBJType) override;
-  virtual CShaderProgram * getShaderProgram() override;
+  virtual CBaseShaderProgram * getShaderProgram() override;
   virtual glm::mat4 getTransform() override;
 
 	bool visible();
 	void setVisibility(bool v);
 
   // Унаследовано через IObject
-  virtual void setShaderProgram(CShaderProgram* shader) override;
+  virtual void setShaderProgram(CBaseShaderProgram* shader) override;
 
   // IObject interface
 public:
