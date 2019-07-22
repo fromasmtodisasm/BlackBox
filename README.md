@@ -16,3 +16,4 @@ cmake -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -D GLM_TEST_ENABLE=
 
 reflecttion
 ![alt text](https://raw.githubusercontent.com/fromasmtodisasm/BlackBox/develop/screen_shots/reflect.png)
+![alt text](https://raw.githubusercontent.com/fromasmtodisasm/BlackBox/develop/screen_shots/texture_fix.png)
