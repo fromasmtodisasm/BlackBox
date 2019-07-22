@@ -58,7 +58,7 @@ Material *MaterialManager::getMaterial(std::string name)
 bool MaterialManager::init(std::string materialLib)
 {
   bool status = false;
-	MaterialManager::instance()->shaders_map["reflect_shader"] = new ReflectShader();
+	MaterialManager::instance()->shaders_map["reflect"] = new ReflectShader();
   status = MaterialManager::instance()->loadLib(materialLib);
   if (status)
   {
@@ -181,11 +181,15 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   CBaseShaderProgram *program = nullptr;
 	if ((shader_class = shaders->Attribute("class")) != nullptr)
 	{
+		std::string shader_base("res/shaders/");
 		auto class_it = shaders_map.find(shader_class);
 		if (class_it == shaders_map.end())
-			return false;
+			;// return false;
 		//program = class_it->second;
-		program = new CShaderProgram(CShader::load("res/shaders/reflect.vs", CShader::E_VERTEX), CShader::load("res/shaders/reflect.frag", CShader::E_FRAGMENT));
+		if (std::string(shader_class) == "reflect")
+			program = new CShaderProgram(CShader::load(shader_base + "reflect.vs", CShader::E_VERTEX), CShader::load(shader_base + "reflect.frag", CShader::E_FRAGMENT));
+		else if (std::string(shader_class) == "refract")
+			program = new CShaderProgram(CShader::load(shader_base + "reflect.vs", CShader::E_VERTEX), CShader::load(shader_base + "refract.frag", CShader::E_FRAGMENT));
 
 	}
 	else

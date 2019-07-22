@@ -90,7 +90,7 @@
     </shaders>
   </material>
   <material name="player">
-    <shaders class="reflect_shader">
+    <shaders class="refract">
     </shaders>
   </material>
   <material name="skybox" type="skybox">
