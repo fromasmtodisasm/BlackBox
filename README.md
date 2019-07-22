@@ -13,3 +13,6 @@ git clone --recurse-submodules https://github.com/fromasmtodisasm/BlackBox
 ```cmake
 cmake -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -D GLM_TEST_ENABLE=OFF ${CMAKE_SOURCE_DIR}
 ```
+
+reflecttion
+![alt text](https://raw.githubusercontent.com/fromasmtodisasm/BlackBox/develop/screen_shots/reflect.png)

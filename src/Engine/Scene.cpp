@@ -523,7 +523,7 @@ bool Scene::save(std::string as)
       object->SetAttribute("name", obj.first.c_str());
       const char* objType = nullptr;
       object->SetAttribute("type", obj.second->type.c_str());
-      mesh->SetAttribute("name", obj.second->m_Mesh->m_Path->c_str());
+      mesh->SetAttribute("name", obj.second->m_path->c_str());
       material->SetAttribute("name", obj.second->m_Material->name->c_str());
       //transform->SetAttribute("name", obj.second->m_path->c_str());
       //position->SetText(1.23);

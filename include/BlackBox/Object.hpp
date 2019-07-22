@@ -10,6 +10,8 @@
 
 #include <memory>
 
+using MeshList = std::shared_ptr<std::vector<Mesh>>;
+
 struct Transform
 {
   glm::vec3 position;
@@ -27,11 +29,11 @@ protected:
   CBaseShaderProgram *m_Shader;
   OBJType m_type;
   Object();
-  Object(Mesh *mesh);
+  Object(MeshList mesh);
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader);
 public:
-  std::shared_ptr<Mesh> m_Mesh;
+  MeshList m_Mesh;
   std::string type;
   Material *m_Material = nullptr;
   static int refs;

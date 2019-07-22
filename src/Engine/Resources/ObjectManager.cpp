@@ -35,7 +35,7 @@ Object *ObjectManager::getObject(std::string object, std::string type)
     const auto v = cache.find(oPath);
     if (v != cache.end())
     {
-      obj = objectFactory(new Object(v->second.get()), type);
+      obj = objectFactory(new Object(v->second), type);
       obj->type = type;
       GetIEngine()->getILog()->AddLog("[INFO] Object [%s] already cached\n", oPath.c_str());
     }

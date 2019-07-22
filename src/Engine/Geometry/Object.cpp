@@ -19,7 +19,7 @@ Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)
 {
 }
 
-Object::Object(Mesh *mesh) : m_Mesh(mesh)
+Object::Object(MeshList mesh) : m_Mesh(mesh)
 {
 
 }
@@ -48,8 +48,10 @@ void Object::draw(void * camera) {
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
   m_Material->program->setUniformValue( NormalMatrix,"NormalMatrix");
 
-  VertexArrayObject *vb = m_Mesh->getVertexBuffer();
-  vb->draw();
+	for (auto& mesh : *m_Mesh)
+	{
+		mesh.getVertexBuffer()->draw();
+	}
 }
 
 void Object::setType(OBJType type)
@@ -153,7 +155,7 @@ void Object::scale(glm::vec3 v)
 Object * Object::load(string path)
 {
   Object *obj = nullptr;
-  std::shared_ptr<Mesh> mesh;
+  MeshList mesh;
   VertexArrayObject *vb;
   std::vector<Vertex> vertexData;
   std::vector<int> indexData;
@@ -163,10 +165,13 @@ Object * Object::load(string path)
     return nullptr;
   
   vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
-  mesh = std::make_shared<Mesh>(vb, nullptr);
+	 //std::vector<Mesh> mesh;
+	mesh = std::make_shared<std::vector<Mesh>>();
+	Mesh _mesh(vb, nullptr);
+	mesh->push_back(_mesh);
   obj = new Object();
   obj->m_Mesh = mesh;
-  obj->m_Mesh->m_Path = std::make_shared<std::string>(path);
+  obj->m_path = std::make_shared<std::string>(path);
 	return obj;
 }
 

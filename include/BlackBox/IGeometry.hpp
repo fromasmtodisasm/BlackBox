@@ -34,6 +34,7 @@ protected:
 public:
   std::shared_ptr<std::string> m_Path;
   Mesh(VertexArrayObject *verts, IndexBuffer *indxs);
+	Mesh() = default;
 
   VertexArrayObject *getVertexBuffer();
   IndexBuffer *getIndexBuffer();
