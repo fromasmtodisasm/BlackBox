@@ -190,6 +190,8 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 			program = new CShaderProgram(CShader::load(shader_base + "reflect.vs", CShader::E_VERTEX), CShader::load(shader_base + "reflect.frag", CShader::E_FRAGMENT));
 		else if (std::string(shader_class) == "refract")
 			program = new CShaderProgram(CShader::load(shader_base + "reflect.vs", CShader::E_VERTEX), CShader::load(shader_base + "refract.frag", CShader::E_FRAGMENT));
+		else if (std::string(shader_class) == "bb")
+			program = new CShaderProgram(CShader::load(shader_base + "bb.vs", CShader::E_VERTEX), CShader::load(shader_base + "bb.frag", CShader::E_FRAGMENT));
 
 	}
 	else

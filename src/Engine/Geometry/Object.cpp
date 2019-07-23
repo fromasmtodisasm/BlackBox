@@ -3,6 +3,7 @@
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -51,6 +52,9 @@ void Object::draw(void * camera) {
 	for (auto& mesh : *m_Mesh)
 	{
 		mesh.getVertexBuffer()->draw();
+		Pipeline::instance()->bindProgram("bb");
+		Pipeline::instance()->object = this;
+		mesh.bb.draw();
 	}
 }
 
@@ -159,15 +163,17 @@ Object * Object::load(string path)
   VertexArrayObject *vb;
   std::vector<Vertex> vertexData;
   std::vector<int> indexData;
+	BoundingBox bb;
   ObjLoader OBJ;
 
-  if (!OBJ.load(path.c_str(), vertexData, indexData))
+  if (!OBJ.load(path.c_str(), vertexData, indexData, bb))
     return nullptr;
   
   vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
 	 //std::vector<Mesh> mesh;
 	mesh = std::make_shared<std::vector<Mesh>>();
 	Mesh _mesh(vb, nullptr);
+	_mesh.bb = bb;
 	mesh->push_back(_mesh);
   obj = new Object();
   obj->m_Mesh = mesh;

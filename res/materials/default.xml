@@ -93,6 +93,10 @@
     <shaders class="refract">
     </shaders>
   </material>
+  <material name="bb">
+    <shaders class="bb">
+    </shaders>
+  </material>
   <material name="skybox" type="skybox">
     <textures>
       <texture type="diffuse" name="lake1"/>

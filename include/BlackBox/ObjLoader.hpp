@@ -3,17 +3,6 @@
 #include <glm/glm.hpp>
 #include <BlackBox/IGeometry.hpp>
 
-struct indexed_vertex
-{
-  unsigned int v;
-  unsigned int vt;
-  unsigned int n;
-};
-
-struct face
-{
-  indexed_vertex v[3];
-};
 
 
 class ObjLoader
@@ -32,10 +21,11 @@ public:
   bool load(
     const char * path,
     std::vector <Vertex> & vertex_data, 
-    std::vector<int>& indexData
+    std::vector<int>& indexData,
+		BoundingBox &bb
   );
 private:
-  bool buildVertexData(
+  BoundingBox buildVertexData(
     std::vector <Vertex> & vertex_data, 
     std::vector<face> &faces 
   );

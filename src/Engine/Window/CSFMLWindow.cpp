@@ -197,6 +197,10 @@ void CSFMLWindow::glInit()
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1, 0);
+	glLineWidth(2);
+
 	glEnable(GL_FRAMEBUFFER_SRGB);
   glCheck(glEnable(GL_DEPTH_TEST));
   glCheck(glEnable(GL_TEXTURE_2D));

@@ -104,6 +104,27 @@
         </transform>
         <material name="player"/>
     </object>
+    <object name="sphere" visible="true">
+        <mesh name="res/geom/sphere.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>20</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>
     <object name="MyPlayer_0000" type="object">
         <mesh name="res/geom/pengium.obj"/>
         <transform>

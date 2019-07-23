@@ -41,6 +41,7 @@ Object *ObjectManager::getObject(std::string object, std::string type)
     }
     else {
       obj = objectFactory(Object::load(oPath), type);
+			if (obj == nullptr) return nullptr;
       obj->type = type;
       cache[oPath] = obj->m_Mesh;
       GetIEngine()->getILog()->AddLog("[INFO] Object [%s] loaded\n", oPath.c_str());

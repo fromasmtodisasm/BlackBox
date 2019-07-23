@@ -15,6 +15,7 @@ void Material::apply(Object *object, CCamera *camera)
   Pipeline::instance()->view = camera->getViewMatrix();
   Pipeline::instance()->projection = camera->getProjectionMatrix();
   Pipeline::instance()->view_pos = camera->Position;
+	Pipeline::instance()->shader = program;
 
   if (hasTexture)
   {
