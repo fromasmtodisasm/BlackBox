@@ -186,7 +186,7 @@ void CGame::render()
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;
   int w = m_Window->getWidth();
   int h = m_Window->getHeight();
-  m_camera1->Ratio = ((float)w)/ h;
+  m_World->getActiveScene()->m_Camera->Ratio = ((float)w)/ h;
 
   //m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
@@ -213,6 +213,8 @@ bool CGame::OnInputEvent(sf::Event &event)
     return MenuInputEvent(event);
   case CGame::FLY:
     return FlyInputEvent(event);
+  case CGame::EDIT:
+    return EditInputEvent(event);
   default:
     break;
   }
@@ -278,24 +280,15 @@ bool CGame::FpsInputEvent(sf::Event& event)
 		case sf::Keyboard::P:
 			m_active_camera->MovementSpeed += 5;
 			return true;
+		case sf::Keyboard::E:
+			m_inputHandler->mouseLock(false);
+			m_Mode = EDIT;
+			return true;
 		case sf::Keyboard::M:
 			m_active_camera->MovementSpeed -= 5;
 			return true;
 		case sf::Keyboard::B:
 			culling = !culling;
-			return true;
-		case sf::Keyboard::V:
-			m_World->getActiveScene()->selectedObject()->setVisibility(!m_World->getActiveScene()->selectedObject()->visible());
-			return true;
-		case sf::Keyboard::Tab:
-			if (event.key.shift)
-			{
-				m_World->getActiveScene()->selectPrevObject();
-			}
-			else
-			{
-				m_World->getActiveScene()->selectNextObject();
-			}
 			return true;
 		case sf::Keyboard::F1:
 			m_World->getActiveScene()->selectedObject()->m_Material->nextDiffuse();
@@ -364,6 +357,55 @@ bool CGame::MenuInputEvent(sf::Event& event)
   }
   return false;
 
+}
+
+bool CGame::DefaultInputEvent(sf::Event& event)
+{
+	return false;
+}
+
+bool CGame::EditInputEvent(sf::Event& event)
+{
+  switch (event.type)
+  {
+  case sf::Event::KeyPressed:
+    switch (event.key.code)
+    {
+    case sf::Keyboard::Escape:
+			gotoMenu();
+      return true;
+		case sf::Keyboard::I:
+			m_World->getActiveScene()->selectedObject()->move(Movement::FORWARD);
+			return true;
+		case sf::Keyboard::U:
+			m_World->getActiveScene()->selectedObject()->move(Movement::BACKWARD);
+			return true;
+		case sf::Keyboard::J:
+			m_World->getActiveScene()->selectedObject()->move(Movement::DOWN);
+			return true;
+		case sf::Keyboard::K:
+			m_World->getActiveScene()->selectedObject()->move(Movement::UP);
+			return true;
+		case sf::Keyboard::V:
+			m_World->getActiveScene()->selectedObject()->setVisibility(!m_World->getActiveScene()->selectedObject()->visible());
+			return true;
+		case sf::Keyboard::Tab:
+			if (event.key.shift)
+			{
+				m_World->getActiveScene()->selectPrevObject();
+			}
+			else
+			{
+				m_World->getActiveScene()->selectNextObject();
+			}
+			return true;
+    default:
+      return m_player->OnInputEvent(event);
+    }
+  default:
+    return m_player->OnInputEvent(event);
+  }
+  return false;
 }
 
 void CGame::Stop()

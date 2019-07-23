@@ -446,6 +446,14 @@ void Scene::draw(float dt)
 				object.second->draw(m_Camera);
 			}
     }
+
+		Pipeline::instance()->bindProgram("bb");
+		auto obj = selectedObject();
+		Pipeline::instance()->object = obj;
+		for (auto& mesh : *obj->m_Mesh)
+		{
+			mesh.bb.draw();
+		}
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));

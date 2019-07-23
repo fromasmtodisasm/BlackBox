@@ -33,6 +33,27 @@ protected:
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader);
 public:
+	//=============================
+	// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
+	// Default camera values
+	const GLfloat YAW        = -90.0f;
+	const GLfloat PITCH      =  0.0f;
+	const GLfloat SPEED      =  0.1f;
+	const GLfloat SENSITIVTY =  0.25f;
+	const GLfloat ZOOM       =  45.0f;
+	//*****************************
+    // Camera Attributes
+		glm::vec3 Front = glm::vec3(0.f, 0.f, -1.0f);
+    glm::vec3 Up = glm::vec3(0.f, 1.f, 0.0f);
+    glm::vec3 Right;
+    glm::vec3 WorldUp = glm::vec3(0.f, 1.f, 0.0f);
+    // Eular Angles
+    GLfloat Yaw = YAW;
+    GLfloat Pitch = PITCH;
+    // Camera options
+    GLfloat MovementSpeed = 2;
+	//=============================
+
   MeshList m_Mesh;
   std::string type;
   Material *m_Material = nullptr;
@@ -46,7 +67,7 @@ public:
   Transform m_transform;
 
   static Object* load(std::string path);
-  virtual void move(glm::vec3 v) override;
+  virtual void move(Movement direction) override;
   virtual void moveTo(glm::vec3 v);
   virtual void rotate(float angle, glm::vec3 v) override;
   virtual void scale(glm::vec3 v) override;
@@ -55,6 +76,7 @@ public:
   virtual void setType(OBJType) override;
   virtual CBaseShaderProgram * getShaderProgram() override;
   virtual glm::mat4 getTransform() override;
+	void updateVectors();
 
 	bool visible();
 	void setVisibility(bool v);

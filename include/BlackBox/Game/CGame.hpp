@@ -78,7 +78,8 @@ private:
   {
     FPS,
     MENU,
-    FLY
+    FLY,
+		EDIT
     
   }m_Mode = FPS;
   std::stack<GameState*> states;
@@ -117,6 +118,8 @@ private:
   bool FpsInputEvent(sf::Event& event);
   bool FlyInputEvent(sf::Event& event);
   bool MenuInputEvent(sf::Event& event);
+  bool DefaultInputEvent(sf::Event& event);
+  bool EditInputEvent(sf::Event& event);
 
   // IGame interface
 public:

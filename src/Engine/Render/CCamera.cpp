@@ -20,7 +20,7 @@ glm::mat4 CCamera::getProjectionMatrix()
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-void CCamera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
+void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
 {
     GLfloat velocity = this->MovementSpeed * deltaTime;
     if (direction == FORWARD)

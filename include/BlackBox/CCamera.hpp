@@ -8,16 +8,11 @@
 #include <BlackBox/Render/Opengl.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <BlackBox/IObject.hpp>
 
 
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
-enum Camera_Movement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
-};
 
 // Default camera values
 const GLfloat YAW        = -90.0f;
@@ -47,7 +42,7 @@ public:
     GLfloat FOV = 45.0f;
     GLfloat Ratio = 16.0f/9;
     GLfloat zNear = 0.1f;
-    GLfloat zFar = 1000.f;
+    GLfloat zFar = 5000.f;
 
     enum Mode
     {
@@ -79,7 +74,7 @@ public:
     glm::mat4 getProjectionMatrix();
 
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
+    void ProcessKeyboard(Movement direction, GLfloat deltaTime);
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);

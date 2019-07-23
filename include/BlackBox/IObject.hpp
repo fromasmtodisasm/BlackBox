@@ -11,9 +11,17 @@ enum OBJType {
   // ...
 };
 
+enum Movement {
+			FORWARD,
+			BACKWARD,
+			LEFT,
+			RIGHT,
+			DOWN,
+			UP
+	};
 struct IObject
 {
-  virtual void move(glm::vec3 v) = 0;
+  virtual void move(Movement direction) = 0;
   virtual void rotate(float angle, glm::vec3 v) = 0;
   virtual void scale(glm::vec3 v) = 0;
   virtual void update(float deltatime) = 0;

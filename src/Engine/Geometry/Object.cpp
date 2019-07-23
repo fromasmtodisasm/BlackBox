@@ -52,9 +52,11 @@ void Object::draw(void * camera) {
 	for (auto& mesh : *m_Mesh)
 	{
 		mesh.getVertexBuffer()->draw();
+		/*
 		Pipeline::instance()->bindProgram("bb");
 		Pipeline::instance()->object = this;
 		mesh.bb.draw();
+		*/
 	}
 }
 
@@ -79,6 +81,19 @@ glm::mat4 Object::getTransform()
   return translate * rotate * scale;
 }
 
+void Object::updateVectors()
+{
+	// Calculate the new Front vector
+	glm::vec3 front;
+	front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+	front.y = sin(glm::radians(this->Pitch));
+	front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+	this->Front = glm::normalize(front);
+	// Also re-calculate the Right and Up vector
+	this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+	this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
+}
+
 bool Object::visible()
 {
 	return m_visible;
@@ -101,6 +116,7 @@ void Object::update(float deltatime)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
   */
+	updateVectors();
 }
 
 void Object::setTexture(Texture *texture, const char *type)
@@ -136,8 +152,21 @@ void Object::setMaterial(Material *material)
   m_Material = material;
 }
 
-void Object::move(glm::vec3 v) {
-  m_transform.position += v;
+void Object::move(Movement direction) {
+	GLfloat velocity = this->MovementSpeed;
+	if (direction == FORWARD)
+			this->m_transform.position += glm::vec3(this->Front.x, this->Front.y, this->Front.z)* velocity;
+	if (direction == BACKWARD)
+			this->m_transform.position -= glm::vec3(this->Front.x, this->Front.y, this->Front.z)* velocity;
+	if (direction == LEFT)
+			this->m_transform.position -= this->Right * velocity;
+	if (direction == RIGHT)
+			this->m_transform.position += this->Right * velocity;
+	if (direction == UP)
+			this->m_transform.position += this->Up * velocity;
+	if (direction == DOWN)
+			this->m_transform.position -= this->Up * velocity;
+
 }
 
 void Object::moveTo(glm::vec3 v)
