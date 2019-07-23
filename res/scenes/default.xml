@@ -20,7 +20,7 @@
         </transform>
         <material name="wood_box"/>
     </object>
-    <object name="BMW" type="object">
+    <object name="BMW" type="object" visible="true">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -39,7 +39,7 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="red"/>
+        <material name="player"/>
     </object>
     <object name="BMW_2" type="object">
         <mesh name="res/geom/bmw.obj"/>
@@ -230,7 +230,7 @@
         </transform>
         <material name="light"/>
     </object>
-    <object name="plane" type="object">
+    <object name="plane" type="object" visible="true">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -249,7 +249,7 @@
                 <Z>200</Z>
             </scale>
         </transform>
-        <material name="default"/>
+        <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object">
         <mesh name="res/geom/sphere.obj"/>

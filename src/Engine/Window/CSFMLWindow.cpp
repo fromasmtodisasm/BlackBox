@@ -197,6 +197,7 @@ void CSFMLWindow::glInit()
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
+	glEnable(GL_FRAMEBUFFER_SRGB);
   glCheck(glEnable(GL_DEPTH_TEST));
   glCheck(glEnable(GL_TEXTURE_2D));
   glCheck(glEnable(GL_CULL_FACE));
