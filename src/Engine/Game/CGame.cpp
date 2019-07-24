@@ -1,4 +1,4 @@
-#include <BlackBox/Game/CGame.hpp>
+﻿#include <BlackBox/Game/CGame.hpp>
 #include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Triangle.hpp>
@@ -8,6 +8,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
 
 #include <imgui-SFML.h>
 #include <imgui.h>
@@ -72,6 +73,39 @@ bool CGame::handleCommand(std::wstring command)
 	if (cd.command == L"clear")
 	{
 		history.clear();
+	}
+	else if (cd.command == L"goto")
+	{
+		if (cd.args.size() == 1)
+		{
+			std::wstring mode = cd.args[0];
+			if (mode == L"MENU")
+				gotoMenu();
+			else if (mode == L"FLY")
+				m_Mode = FLY;
+			else if (mode == L"EDIT")
+				m_Mode = EDIT;
+			else if (mode == L"FPS")
+				gotoGame();
+			history.push_back(command);
+			return true;
+		}
+		return false;
+	}
+	else if (cd.command == L"vsync")
+	{
+		if (cd.args.size() == 1)
+		{
+			sf::RenderWindow *rw = reinterpret_cast<sf::RenderWindow *>(m_Window->getHandle());
+			std::wstring mode = cd.args[0];
+			if (mode == L"on")
+				rw->setVerticalSyncEnabled(true); 
+			else if (mode == L"off")
+				rw->setVerticalSyncEnabled(false); 
+			history.push_back(command);
+			return true;
+		}
+		return false;
 	}
 	else if (cd.command == L"stop")
 	{
@@ -255,6 +289,11 @@ bool CGame::init(IEngine *pSystem)  {
 	postProcessors.push_back(new PostProcessor("kernel.outline"));
 	postProcessors.push_back(new PostProcessor("kernel.blur"));
 	m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
+	m_ScreenShader = new CShaderProgram(
+	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
+	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
+	m_ScreenShader->create();
+	m_Font = new FreeTypeFont("arial.ttf", 16, 24);
 
   return true;
 }
@@ -263,18 +302,43 @@ bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
     sf::Time deltaTime = deltaClock.restart();
     m_deltaTime = deltaTime.asSeconds();
+		float fps =  1000.0f / deltaTime.asMilliseconds();
     input();
     m_Window->update();
     m_World->update(m_deltaTime);
     setRenderState();
 
     render();
-    //gui->Draw();
 		m_World->getActiveScene()->present();
-
+		drawHud(fps);
     m_Window->swap();
   }
 	return true;
+}
+
+void CGame::drawHud(float fps)
+{
+	int num_objects = m_World->getActiveScene()->numObjects();
+	std::string mode = m_Mode == MENU ? "MENU"
+		: m_Mode == FPS ? "FPS"
+		: m_Mode == FLY ? "FLY"
+		: "EDIT";
+
+	m_Font->RenderText(m_ScreenShader,
+		"FPS: " + std::to_string(fps),
+		0.f, m_Window->getHeight() - 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	m_Font->RenderText(m_ScreenShader,
+		"NUM OBJECTS: " + std::to_string(num_objects),
+		0.f, m_Window->getHeight() - 50.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	m_Font->RenderText(m_ScreenShader,
+		"Current mode: " + mode,
+		0.f, m_Window->getHeight() - 75.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	if (is_input)
+	{
+		m_Font->RenderText(m_ScreenShader,
+			(std::string(">") + command_text).c_str(),
+			0.f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	}
 }
 
 bool CGame::run() {
@@ -501,6 +565,9 @@ bool CGame::MenuInputEvent(sf::Event& event)
       m_Mode = Mode::MENU;
       m_running = false;
       return true;
+    case sf::Keyboard::Enter:
+			gotoGame();
+      return true;
     default:
       return gui->OnInputEvent(event);
     }
@@ -518,9 +585,6 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	static bool is_input = false;
-	static bool input_trigered = false;
-	static std::wstring command;
 	if (is_input)
 	{
 		m_World->getActiveScene()->setPostProcessor(postProcessors[2]);
@@ -543,8 +607,24 @@ bool CGame::EditInputEvent(sf::Event& event)
 				return false;
 			}
 		case sf::Event::TextEntered:
-			command += event.text.unicode;
+		{
+			if (event.text.unicode == 8)
+			{
+				if (command.size() > 0) command.pop_back();
+			}
+			else
+			{
+				command += event.text.unicode;
+			}
+			int pos = 0;
+			command_text.clear();
+			for (auto ch : command)
+			{
+				command_text.push_back(ch);
+			}
+			command_text.push_back('_');
 			return true;
+		}
 		default:
 			return false;
 		}
@@ -592,6 +672,18 @@ bool CGame::EditInputEvent(sf::Event& event)
 			default:
 				return m_player->OnInputEvent(event);
 			}
+		case sf::Event::MouseWheelScrolled:
+		{
+			float factor = event.mouseWheel.delta < 0 ? 0.9 : 1.1;
+			m_World->getActiveScene()->selectedObject()->m_transform.scale *= factor;
+			return true;
+		}
+		case sf::Event::TextEntered:
+		{
+			if (event.text.unicode == ':')
+				is_input = true;
+				input_trigered = true;
+		}
 		default:
 			return m_player->OnInputEvent(event);
 		}

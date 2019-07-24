@@ -12,6 +12,7 @@
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/PostProcessor.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
 
 #include <BlackBox/common.h>
 
@@ -71,6 +72,14 @@ private:
   //GUI
   ImVec2 cp_size; //Control panel size
   GameGUI *gui;
+	CShaderProgram *m_ScreenShader;
+	FreeTypeFont* m_Font;
+	//EDIT MODE
+	bool is_input = false;
+	bool input_trigered = false;
+	std::wstring command;
+	std::string command_text;
+	//==========
 
 	// Render states
 	bool culling = true;
@@ -97,6 +106,7 @@ public:
   ~CGame() = default;
   bool init(IEngine *pSystem) override;
   bool update() override;
+	void drawHud(float fps);
   bool run() override;
   void input();
 
@@ -137,6 +147,7 @@ public:
 
 	bool handleCommand(std::wstring command);
 	CommandDesc parseCommand(std::wstring& command);
+	void drawHud();
 };
 
 

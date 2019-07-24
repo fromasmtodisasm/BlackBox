@@ -9,6 +9,7 @@
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -385,6 +386,13 @@ Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(C
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
+
+	m_TextShader = new CShaderProgram(
+	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
+	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
+	m_TextShader->create();
+
+	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
 }
 
 void Scene::selectPrevObject()
@@ -486,6 +494,7 @@ void Scene::draw(float dt)
 	
 	if (skyBox != nullptr)
 		skyBox->draw(m_Camera);
+		//m_Font->RenderText(m_TextShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -503,6 +512,11 @@ Object *Scene::getObject(std::string name)
     return  objectIt->second;
   }
   return nullptr;
+}
+
+int Scene::numObjects()
+{
+	return m_Objects.size();
 }
 
 void Scene::setCamera(CCamera *camera)

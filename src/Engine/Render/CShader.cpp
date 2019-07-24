@@ -18,6 +18,12 @@ CShaderProgram::CShaderProgram(CShader* vs, CShader* fs) : CBaseShaderProgram(vs
 
 }
 
+CShaderProgram::CShaderProgram(std::string vs, std::string fs) 
+	:
+	CBaseShaderProgram(CShader::load(vs, CShader::E_VERTEX), CShader::load(fs, CShader::E_FRAGMENT))
+{
+}
+
 void CShaderProgram::setup()
 {
   setUniformValue( Pipeline::instance()->model,"model");

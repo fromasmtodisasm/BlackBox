@@ -6,6 +6,7 @@
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
 
 #include <map>
 #include <string>
@@ -24,12 +25,14 @@ class Scene
   friend class GameGUI;
   friend class CGame;
 private:
+	FreeTypeFont *m_Font;
   std::string name;
   World *world;
   FrameBufferObject* m_RenderedScene;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;
 	CBaseShaderProgram *m_ScreenShader;
+	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
   std::multimap<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
@@ -56,6 +59,7 @@ public:
   void draw(float dt);
   void addObject(std::string name, Object *object);
   Object *getObject(std::string name);
+  int numObjects();
   void setCamera(CCamera *camera);
   void update(float dt);
   bool save(std::string as ="");

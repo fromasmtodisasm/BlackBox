@@ -44,8 +44,8 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
 	}
 	m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
 	m_Window->setPosition(position);
-  m_Window->setVerticalSyncEnabled(true);
-  m_Window->setFramerateLimit(60);
+  //m_Window->setVerticalSyncEnabled(true);
+  //m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);
 
   ImGui::SFML::Init(*m_Window);
@@ -191,7 +191,7 @@ void CSFMLWindow::setMouseWrap(bool wrap)
 
 void CSFMLWindow::glInit()
 {
-	if (glContextType == sf::ContextSettings::Debug && false)
+	if (glContextType == sf::ContextSettings::Debug)
 	{
 		glDebug = new OpenglDebug("out/glDebug.txt");
 		glEnable(GL_DEBUG_OUTPUT);
@@ -200,10 +200,12 @@ void CSFMLWindow::glInit()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1, 0);
 	glLineWidth(2);
-
 	//glEnable(GL_FRAMEBUFFER_SRGB);
   glCheck(glEnable(GL_DEPTH_TEST));
   glCheck(glEnable(GL_TEXTURE_2D));
   glCheck(glEnable(GL_CULL_FACE));
   glCheck(glCullFace(GL_BACK));
+	// Blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
