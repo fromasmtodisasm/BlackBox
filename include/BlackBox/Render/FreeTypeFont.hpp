@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <ft2build.h>
 #include FT_FREETYPE_H  
 #include <iostream>
@@ -66,23 +66,35 @@ public:
 		FT_Done_Face(face);
 		FT_Done_FreeType(ft);
 
+		GLuint indices[] = {  // Note that we start from 0!
+			0, 1, 3,  // First Triangle
+			1, 2, 3   // Second Triangle
+		};
+
 		glCheck(glGenVertexArrays(1, &VAO));
 		glCheck(glGenBuffers(1, &VBO));
+		glCheck(glGenBuffers(1, &EBO));
 		glCheck(glBindVertexArray(VAO));
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW));
+		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4 * 4, NULL, GL_DYNAMIC_DRAW));
+
+		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
+		glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
+
 		glCheck(glEnableVertexAttribArray(0));
 		glCheck(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
+
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
 		glCheck(glBindVertexArray(0));
 	}
 	void RenderText(CShaderProgram *s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 	{
-		glm::mat4 projection = glm::ortho(0.0f, 1366.0f, 0.0f, 768.0f);
 		// Activate corresponding render state	
 		s->use();
-		glCheck(glUniform3f(glGetUniformLocation(s->get(), "textColor"), color.x, color.y, color.z));
+		glm::mat4 projection = glm::ortho(0.0f, 1366.0f, 0.0f, 768.0f);
 		s->setUniformValue(projection, "projection");
+		glCheck(glUniform3f(glGetUniformLocation(s->get(), "textColor"), color.x, color.y, color.z));
 		glCheck(glActiveTexture(GL_TEXTURE0));
 		glCheck(glBindVertexArray(VAO));
 		glEnable(GL_BLEND);
@@ -92,6 +104,7 @@ public:
 		std::string::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
 		{
+			glm::mat4 model(1.0);
 			Character ch = Characters[*c];
 
 			GLfloat xpos = x + ch.Bearing.x * scale;
@@ -100,23 +113,27 @@ public:
 			GLfloat w = ch.Size.x * scale;
 			GLfloat h = ch.Size.y * scale;
 			// Update VBO for each character
-			GLfloat vertices[6][4] = {
+			GLfloat vertices[4][4] = {
 					{ xpos,     ypos + h,   0.0, 0.0 },
 					{ xpos,     ypos,       0.0, 1.0 },
-					{ xpos + w, ypos,       1.0, 1.0 },
+					//{ xpos + w, ypos,       1.0, 1.0 },
 
-					{ xpos,     ypos + h,   0.0, 0.0 },
+					//{ xpos,     ypos + h,   0.0, 0.0 },
 					{ xpos + w, ypos,       1.0, 1.0 },
 					{ xpos + w, ypos + h,   1.0, 0.0 }
 			};
+			s->setUniformValue(model, "model");
 			// Render glyph texture over quad
 			glCheck(glBindTexture(GL_TEXTURE_2D, ch.TextureID));
 			// Update content of VBO memory
 			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO));
 			glCheck(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
+			//glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 			// Render quad
-			glCheck(glDrawArrays(GL_TRIANGLES, 0, 6));
+			//glCheck(glDrawArrays(GL_TRIANGLES, 0, 6));
+
+			glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
+			glCheck(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 			// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 			x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
@@ -129,6 +146,6 @@ private:
 	FT_Face face;
 	std::map<GLchar, Character> Characters;
 
-	GLuint VAO, VBO;
+	GLuint VAO, VBO, EBO;
 	
 };

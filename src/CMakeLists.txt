@@ -101,6 +101,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
