@@ -191,7 +191,7 @@ void CSFMLWindow::setMouseWrap(bool wrap)
 
 void CSFMLWindow::glInit()
 {
-	if (glContextType == sf::ContextSettings::Debug)
+	if (glContextType == sf::ContextSettings::Debug && false)
 	{
 		glDebug = new OpenglDebug("out/glDebug.txt");
 		glEnable(GL_DEBUG_OUTPUT);
@@ -201,7 +201,7 @@ void CSFMLWindow::glInit()
 	glPolygonOffset(1, 0);
 	glLineWidth(2);
 
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	//glEnable(GL_FRAMEBUFFER_SRGB);
   glCheck(glEnable(GL_DEPTH_TEST));
   glCheck(glEnable(GL_TEXTURE_2D));
   glCheck(glEnable(GL_CULL_FACE));

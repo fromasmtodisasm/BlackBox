@@ -28,7 +28,7 @@ class CSFMLWindow :
   int m_Width;
   int m_Height;
 	const GLuint majorVersion = 4;
-	const GLuint minorVersion = 4;
+	const GLuint minorVersion = 3;
 	OpenglDebug *glDebug;
 #ifdef _DEBUG
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;

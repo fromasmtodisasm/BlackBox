@@ -68,6 +68,7 @@ public:
 
   static Object* load(std::string path);
   virtual void move(Movement direction) override;
+  void move(glm::vec3 v);
   virtual void moveTo(glm::vec3 v);
   virtual void rotate(float angle, glm::vec3 v) override;
   virtual void scale(glm::vec3 v) override;

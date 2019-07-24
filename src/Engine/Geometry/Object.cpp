@@ -169,6 +169,11 @@ void Object::move(Movement direction) {
 
 }
 
+void Object::move(glm::vec3 v)
+{
+	this->m_transform.position += v;
+}
+
 void Object::moveTo(glm::vec3 v)
 {
   m_transform.position = v;

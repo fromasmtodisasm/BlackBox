@@ -52,6 +52,7 @@ public:
 	void selectPrevObject();
 	void selectNextObject();
 	Object* selectedObject();
+	bool selectObject(std::string name);
   void draw(float dt);
   void addObject(std::string name, Object *object);
   Object *getObject(std::string name);

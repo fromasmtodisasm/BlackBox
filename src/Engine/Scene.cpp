@@ -429,6 +429,15 @@ Object* Scene::selectedObject()
 	return selected_object_it->second;
 }
 
+bool Scene::selectObject(std::string name)
+{
+	auto it = m_Objects.find(name);
+	if (it == m_Objects.end())
+		return false;
+	selected_object_it = it;
+	return true;
+}
+
 void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)

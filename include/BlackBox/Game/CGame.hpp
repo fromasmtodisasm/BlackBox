@@ -29,6 +29,12 @@ class GameGUI;
 class Scene;
 class SceneManager;
 
+struct CommandDesc
+{
+	std::wstring command;
+	std::vector<std::wstring> args;
+};
+
 class CGame : public IGame, public IInputEventListener, public IPostRenderCallback 
 {
   class GameState;
@@ -128,6 +134,9 @@ public:
   // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;
   World *getWorld() const;
+
+	bool handleCommand(std::wstring command);
+	CommandDesc parseCommand(std::wstring& command);
 };
 
 

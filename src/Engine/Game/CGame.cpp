@@ -9,8 +9,6 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 
-
-
 #include <imgui-SFML.h>
 #include <imgui.h>
 
@@ -38,6 +36,160 @@ IEngine* GetIEngine()
 World *CGame::getWorld() const
 {
     return m_World;
+}
+
+bool CGame::handleCommand(std::wstring command)
+{
+	static std::vector<std::wstring> history;
+
+	auto cd = parseCommand(command);
+	auto unpack_vector = [&](std::vector<std::wstring>::iterator it)->glm::vec3
+	{
+			glm::vec3 pos;
+			pos[0] = _wtof(it->c_str()); it++;
+			pos[1] = _wtof(it->c_str()); it++;
+			pos[2] = _wtof(it->c_str());
+			return pos;
+	};
+	if (cd.command == L"last")
+	{
+		bool result = false;
+		if (history.size() == 0)
+			return false;
+		if (cd.args.size() == 1)
+		{
+			for (int i = history.size() - 1 - _wtoi(cd.args[0].c_str()); i < history.size();)
+			{
+				result = handleCommand(history.back());
+			}
+		}
+		else
+		{
+			result = handleCommand(history.back());
+		}
+		return result;
+	}
+	if (cd.command == L"clear")
+	{
+		history.clear();
+	}
+	else if (cd.command == L"stop")
+	{
+		m_running = false;
+		history.push_back(command);
+		command.clear();
+		return true;
+	}
+	else if (cd.command.substr(0,4) == L"move")
+	{
+		if (cd.args.size() == 3)
+		{
+			auto pos = unpack_vector(cd.args.begin()++);
+			if (cd.command == L"moveto")
+				m_World->getActiveScene()->selectedObject()->moveTo(pos);
+			else
+			{
+				std::wstring dir = cd.command.substr(4);
+				if (dir == L"")
+				{
+					m_World->getActiveScene()->selectedObject()->move(pos);
+				}
+			}
+			history.push_back(command);
+			command.clear();
+			return true;
+		}
+		return false;
+	}
+	else if (cd.command == L"rotate")
+	{
+		auto angle = unpack_vector(cd.args.begin()++);
+		if (cd.args.size() == 4)
+		{
+			m_World->getActiveScene()->selectedObject()->rotate(_wtof(cd.args[0].c_str()), angle);
+			history.push_back(command);
+			return true;
+		}
+		return false;
+	}
+	else if (cd.command == L"select")
+	{
+		std::string tmp;
+		tmp.resize(256);
+		int pos = 0;
+		int i = 0;
+		for (auto ch : cd.args[0])
+		{
+			pos += std::wctomb((char*)&tmp.data()[i], cd.args[0][i]);
+			i++;
+		}
+		std::string name(tmp.c_str());
+		m_World->getActiveScene()->selectObject(name);
+		history.push_back(command);
+	}
+
+	
+	return false;
+}
+
+CommandDesc CGame::parseCommand(std::wstring& command)
+{
+	enum {COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG} state1 = INSPACE, state2;
+	CommandDesc cd;
+	int begin_cmd = 0, end_cmd = 0;
+	int begin_args = 0, end_args = 0;
+	std::wstring current_arg;
+	
+	for (int i = begin_cmd; i < command.size(); i++)
+	{
+		switch (state1)
+		{
+		case COMMAND:
+			if (command[i] != L' ')
+				cd.command += command[i];
+			else
+			{
+				state1 = INARGSPACE;	
+			}
+			break;
+		case ARGS:
+			if (command[i] != L' ')
+				current_arg += command[i];
+			else
+			{
+				state1 = INARGSPACE;	
+				cd.args.push_back(current_arg);
+				current_arg.clear();
+			}
+			break;
+		case INCMD:
+			break;
+		case INSPACE:
+			if (command[i] != L' ')
+			{
+				state1 = COMMAND;
+				cd.command += command[i];
+			}
+			break;
+		case INARGSPACE:
+			if (command[i] != L' ')
+			{
+				state1 = ARGS;
+				current_arg += command[i];
+			}
+			break;
+		case INARG:
+			break;
+		default:
+			break;
+		}
+	}
+	if (state1 == ARGS)
+	{
+		cd.args.push_back(current_arg);
+	}
+
+	return cd;
 }
 
 CGame::CGame(std::string title) :
@@ -366,45 +518,86 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-  switch (event.type)
-  {
-  case sf::Event::KeyPressed:
-    switch (event.key.code)
-    {
-    case sf::Keyboard::Escape:
-			gotoMenu();
-      return true;
-		case sf::Keyboard::I:
-			m_World->getActiveScene()->selectedObject()->move(Movement::FORWARD);
+	static bool is_input = false;
+	static bool input_trigered = false;
+	static std::wstring command;
+	if (is_input)
+	{
+		m_World->getActiveScene()->setPostProcessor(postProcessors[2]);
+		if (input_trigered == true)
+		{
+			command.clear();
+			input_trigered = false;
 			return true;
-		case sf::Keyboard::U:
-			m_World->getActiveScene()->selectedObject()->move(Movement::BACKWARD);
-			return true;
-		case sf::Keyboard::J:
-			m_World->getActiveScene()->selectedObject()->move(Movement::DOWN);
-			return true;
-		case sf::Keyboard::K:
-			m_World->getActiveScene()->selectedObject()->move(Movement::UP);
-			return true;
-		case sf::Keyboard::V:
-			m_World->getActiveScene()->selectedObject()->setVisibility(!m_World->getActiveScene()->selectedObject()->visible());
-			return true;
-		case sf::Keyboard::Tab:
-			if (event.key.shift)
+		}
+		switch (event.type)
+		{
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
 			{
-				m_World->getActiveScene()->selectPrevObject();
+			case sf::Keyboard::Enter:
+				is_input = false;
+				m_World->getActiveScene()->setPostProcessor(nullptr);
+				return handleCommand(command);
+			default:
+				return false;
 			}
-			else
-			{
-				m_World->getActiveScene()->selectNextObject();
-			}
+		case sf::Event::TextEntered:
+			command += event.text.unicode;
 			return true;
-    default:
-      return m_player->OnInputEvent(event);
-    }
-  default:
-    return m_player->OnInputEvent(event);
-  }
+		default:
+			return false;
+		}
+
+	}
+	else
+	{
+		switch (event.type)
+		{
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Y:
+				is_input = true;
+				input_trigered = true;
+				return true;
+			case sf::Keyboard::Escape:
+				gotoMenu();
+				return true;
+			case sf::Keyboard::I:
+				m_World->getActiveScene()->selectedObject()->move(Movement::FORWARD);
+				return true;
+			case sf::Keyboard::U:
+				m_World->getActiveScene()->selectedObject()->move(Movement::BACKWARD);
+				return true;
+			case sf::Keyboard::J:
+				m_World->getActiveScene()->selectedObject()->move(Movement::DOWN);
+				return true;
+			case sf::Keyboard::K:
+				m_World->getActiveScene()->selectedObject()->move(Movement::UP);
+				return true;
+			case sf::Keyboard::V:
+				m_World->getActiveScene()->selectedObject()->setVisibility(!m_World->getActiveScene()->selectedObject()->visible());
+				return true;
+			case sf::Keyboard::Tab:
+				if (event.key.shift)
+				{
+					m_World->getActiveScene()->selectPrevObject();
+				}
+				else
+				{
+					m_World->getActiveScene()->selectNextObject();
+				}
+				return true;
+			default:
+				return m_player->OnInputEvent(event);
+			}
+		default:
+			return m_player->OnInputEvent(event);
+		}
+
+	}
+
   return false;
 }
 
