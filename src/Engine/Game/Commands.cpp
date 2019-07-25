@@ -1,4 +1,6 @@
 #include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Utils.hpp>
+#include <process.h>
 
 class BaseCommand : public IEditCommand
 {
@@ -228,16 +230,7 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		std::string tmp;
-		tmp.resize(256);
-		int pos = 0;
-		int i = 0;
-		for (auto ch : cd.args[0])
-		{
-			pos += std::wctomb((char*)&tmp.data()[i], cd.args[0][i]);
-			i++;
-		}
-		std::string name(tmp.c_str());
+		std::string name = wstr_to_str(cd.args[0]);
 		return m_World->getActiveScene()->selectObject(name);
 	}
 };
@@ -247,6 +240,51 @@ SelectCommand::SelectCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
+class WireframeCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	WireframeCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		int mode = m_World->getActiveScene()->selectedObject()->getRenderMode();
+		if (mode == GL_FILL) mode = GL_LINE;
+		else if (mode == GL_LINE) mode = GL_FILL;
+		m_World->getActiveScene()->selectedObject()->setRenderMode(mode);
+		return true;
+	}
+};
+
+WireframeCommand::WireframeCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
+//*******************************************************
+class ExecCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	ExecCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		if (cd.args.size() == 1)
+		{
+			std::string name = wstr_to_str(cd.args[0]);
+			auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
+			return true;
+		}
+		return false;
+	}
+};
+
+ExecCommand::ExecCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
 
 //*******************************************************
 
@@ -260,4 +298,6 @@ void CGame::initCommands()
 	m_Commands[L"move"] = new MoveCommand(this);
 	m_Commands[L"rotate"] = new RotateCommand(this);
 	m_Commands[L"select"] = new SelectCommand(this);
+	m_Commands[L"wire"] = new WireframeCommand(this);
+	m_Commands[L"exec"] = new ExecCommand(this);
 }
