@@ -51,6 +51,7 @@ void Object::draw(void * camera) {
 
 	for (auto& mesh : *m_Mesh)
 	{
+		glPolygonMode(GL_FRONT_AND_BACK, m_RenderMode);
 		mesh.getVertexBuffer()->draw();
 		/*
 		Pipeline::instance()->bindProgram("bb");
@@ -150,6 +151,16 @@ void Object::setMaterial(Material *material)
   if (m_Material != nullptr)
       ;//delete m_Material;
   m_Material = material;
+}
+
+void Object::setRenderMode(int mode)
+{
+	m_RenderMode = mode;
+}
+
+int Object::getRenderMode()
+{
+	return m_RenderMode;
 }
 
 void Object::move(Movement direction) {

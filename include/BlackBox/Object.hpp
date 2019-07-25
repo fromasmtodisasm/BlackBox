@@ -5,6 +5,7 @@
 #include <BlackBox/IDrawable.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Material.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 
 #include <glm/glm.hpp>
 
@@ -32,6 +33,7 @@ protected:
   Object(MeshList mesh);
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader);
+	int m_RenderMode = GL_FILL;
 public:
 	//=============================
 	// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
@@ -100,4 +102,7 @@ public:
 public:
   virtual Material *getMaterial() override;
   virtual void setMaterial(Material *material) override;
+
+	void setRenderMode(int mode);
+	int getRenderMode();
 };
