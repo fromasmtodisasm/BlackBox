@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <glm/ext/matrix_transform.hpp>
 #include <ctime>
+#include <cctype>
 
 #include <sstream>
 
@@ -111,6 +112,19 @@ CommandDesc CGame::parseCommand(std::wstring& command)
 	}
 
 	return cd;
+}
+
+std::vector<std::wstring> CGame::autocomplete(std::wstring cmd)
+{
+	std::vector<std::wstring> completion;
+	for (auto& curr_cmd : m_Commands)
+	{
+		if (curr_cmd.first.substr(0, cmd.size()) == cmd)
+		{
+			completion.push_back(curr_cmd.first);
+		}
+	}
+	return completion;
 }
 
 void CGame::PreRender()
@@ -238,8 +252,9 @@ void CGame::drawHud(float fps)
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		if (is_input)
 		{
+			std::string cmd_text = std::string(">") + command_text;
 			m_Font->RenderText(m_ScreenShader,
-				(std::string(">") + command_text).c_str(),
+				cmd_text,
 				0.f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		}
 	}
@@ -512,6 +527,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 {
 	if (is_input)
 	{
+		std::vector<std::wstring> completion;
 		m_World->getActiveScene()->setPostProcessor(postProcessors[2]);
 		if (input_trigered == true)
 		{
@@ -524,6 +540,18 @@ bool CGame::EditInputEvent(sf::Event& event)
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
+			case sf::Keyboard::Tab:
+				completion = autocomplete(command);
+				if (completion.size() > 1)
+				{
+
+				}
+				else if (completion.size() == 1)
+				{
+					command = completion[0];
+					fillCommandText();
+				}
+				return true;
 			case sf::Keyboard::Enter:
 				is_input = false;
 				m_World->getActiveScene()->setPostProcessor(nullptr);
@@ -533,21 +561,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 			}
 		case sf::Event::TextEntered:
 		{
-			if (event.text.unicode == 8)
-			{
-				if (command.size() > 0) command.pop_back();
-			}
-			else
-			{
-				command += event.text.unicode;
-			}
-			int pos = 0;
-			command_text.clear();
-			for (auto ch : command)
-			{
-				command_text.push_back(ch);
-			}
-			command_text.push_back('_');
+			handleCommandTextEnter(event.text.unicode);
 			return true;
 		}
 		default:
@@ -616,6 +630,31 @@ bool CGame::EditInputEvent(sf::Event& event)
 	}
 
   return false;
+}
+
+void CGame::handleCommandTextEnter(uint32_t ch)
+{
+	if (ch == 8)
+	{
+		if (command.size() > 0) command.pop_back();
+	}
+	else
+	{
+		if (iswgraph(ch) || (iswblank(ch) && ch != '\t'))
+			command += ch;
+	}
+	fillCommandText();
+}
+
+void CGame::fillCommandText()
+{
+	int pos = 0;
+	command_text.clear();
+	for (auto ch : command)
+	{
+		command_text.push_back(ch);
+	}
+	command_text.push_back('_');
 }
 
 void CGame::Stop()

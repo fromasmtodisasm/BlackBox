@@ -158,6 +158,8 @@ private:
   bool MenuInputEvent(sf::Event& event);
   bool DefaultInputEvent(sf::Event& event);
   bool EditInputEvent(sf::Event& event);
+	void handleCommandTextEnter(uint32_t ch);
+	void fillCommandText();
 	void initCommands();
 
   // IGame interface
@@ -170,6 +172,7 @@ public:
 
 	bool handleCommand(std::wstring command);
 	CommandDesc parseCommand(std::wstring& command);
+	std::vector<std::wstring> autocomplete(std::wstring cmd);
 	void drawHud();
 
 	// Inherited via IPreRenderCallback
