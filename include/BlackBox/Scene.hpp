@@ -27,7 +27,7 @@ class Scene
 private:
 	FreeTypeFont *m_Font;
   std::string name;
-  World *world;
+  World *m_World;
   FrameBufferObject* m_RenderedScene;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;

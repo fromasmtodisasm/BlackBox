@@ -82,6 +82,7 @@ target_sources(
   #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/CGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/CPlayer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp

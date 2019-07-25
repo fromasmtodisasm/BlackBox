@@ -42,144 +42,15 @@ World *CGame::getWorld() const
 bool CGame::handleCommand(std::wstring command)
 {
 	static std::vector<std::wstring> history;
-
 	auto cd = parseCommand(command);
-	auto unpack_vector = [&](std::vector<std::wstring>::iterator it, int size = 3)->glm::vec3
-	{
-			glm::vec3 pos;
-			pos[0] = _wtof(it->c_str());
-			it++;
-			pos[1] = _wtof(it->c_str());
-			if (size == 3)
-			{
-				it++;
-				pos[2] = _wtof(it->c_str());
-			}
-			return pos;
-	};
-	if (cd.command == L"last")
-	{
-		bool result = false;
-		if (history.size() == 0)
-			return false;
-		if (cd.args.size() == 1)
-		{
-			for (int i = history.size() - 1 - _wtoi(cd.args[0].c_str()); i < history.size();)
-			{
-				result = handleCommand(history.back());
-			}
-		}
-		else
-		{
-			result = handleCommand(history.back());
-		}
-		return result;
-	}
-	if (cd.command == L"clear")
-	{
-		history.clear();
-	}
-	else if (cd.command == L"goto")
-	{
-		if (cd.args.size() == 1)
-		{
-			std::wstring mode = cd.args[0];
-			if (mode == L"MENU")
-				gotoMenu();
-			else if (mode == L"FLY")
-				m_Mode = FLY;
-			else if (mode == L"EDIT")
-				m_Mode = EDIT;
-			else if (mode == L"FPS")
-				gotoGame();
-			history.push_back(command);
-			return true;
-		}
-		return false;
-	}
-	else if (cd.command == L"vsync")
-	{
-		if (cd.args.size() == 1)
-		{
-			sf::RenderWindow *rw = reinterpret_cast<sf::RenderWindow *>(m_Window->getHandle());
-			std::wstring mode = cd.args[0];
-			if (mode == L"on")
-				rw->setVerticalSyncEnabled(true); 
-			else if (mode == L"off")
-				rw->setVerticalSyncEnabled(false); 
-			history.push_back(command);
-			return true;
-		}
-		return false;
-	}
-	else if (cd.command == L"stop")
-	{
-		m_running = false;
-		history.push_back(command);
-		command.clear();
-		return true;
-	}
-	else if (cd.command.substr(0,4) == L"move")
-	{
-		if (cd.args.size() == 3)
-		{
-			auto pos = unpack_vector(cd.args.begin()++);
-			if (cd.command == L"moveto")
-				m_World->getActiveScene()->selectedObject()->moveTo(pos);
-			else
-			{
-				std::wstring dir = cd.command.substr(4);
-				if (dir == L"")
-				{
-					m_World->getActiveScene()->selectedObject()->move(pos);
-				}
-			}
-			history.push_back(command);
-			command.clear();
-			return true;
-		}
-		return false;
-	}
-	else if (cd.command.substr(0,4) == L"viewport")
-	{
-		if (cd.args.size() == 2)
-		{
-			viewPort = glm::vec2(unpack_vector(cd.args.begin()++));
-			history.push_back(command);
-			command.clear();
-			return true;
-		}
-		return false;
-	}
-	else if (cd.command == L"rotate")
-	{
-		auto angle = unpack_vector(cd.args.begin()++);
-		if (cd.args.size() == 4)
-		{
-			m_World->getActiveScene()->selectedObject()->rotate(_wtof(cd.args[0].c_str()), angle);
-			history.push_back(command);
-			return true;
-		}
-		return false;
-	}
-	else if (cd.command == L"select")
-	{
-		std::string tmp;
-		tmp.resize(256);
-		int pos = 0;
-		int i = 0;
-		for (auto ch : cd.args[0])
-		{
-			pos += std::wctomb((char*)&tmp.data()[i], cd.args[0][i]);
-			i++;
-		}
-		std::string name(tmp.c_str());
-		m_World->getActiveScene()->selectObject(name);
-		history.push_back(command);
-	}
+	cd.history = &history;
 
-	
-	return false;
+	auto cmd_it = m_Commands.find(cd.command);
+
+	if (cmd_it != m_Commands.end())
+		return cmd_it->second->execute(cd);
+	else
+		return false;
 }
 
 CommandDesc CGame::parseCommand(std::wstring& command)
@@ -316,6 +187,7 @@ bool CGame::init(IEngine *pSystem)  {
 	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
 	m_ScreenShader->create();
 	m_Font = new FreeTypeFont("arial.ttf", 16, 24);
+	initCommands();
 
   return true;
 }
@@ -350,23 +222,26 @@ void CGame::drawHud(float fps)
 		: "EDIT";
 
 	glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
-	m_Font->RenderText(m_ScreenShader,
-		"FPS: " + std::to_string(fps),
-		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-	m_Font->RenderText(m_ScreenShader,
-		"NUM OBJECTS: " + std::to_string(num_objects),
-		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-	m_Font->RenderText(m_ScreenShader,
-		"Current mode: " + mode,
-		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-	m_Font->RenderText(m_ScreenShader,
-		"Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()),
-		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-	if (is_input)
+	// Info
 	{
 		m_Font->RenderText(m_ScreenShader,
-			(std::string(">") + command_text).c_str(),
-			0.f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+			"FPS: " + std::to_string(fps),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"NUM OBJECTS: " + std::to_string(num_objects),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Current mode: " + mode,
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		if (is_input)
+		{
+			m_Font->RenderText(m_ScreenShader,
+				(std::string(">") + command_text).c_str(),
+				0.f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		}
 	}
 }
 
@@ -481,9 +356,30 @@ void CGame::gotoGame()
   }
 }
 
+void CGame::gotoFly()
+{
+	m_Mode = FLY;
+}
+
+void CGame::gotoEdit()
+{
+	m_Mode = EDIT;
+}
+
 void CGame::showMenu()
 {
 
+}
+
+bool CGame::registerCommand(std::wstring name, IEditCommand* cmd)
+{
+	m_Commands[name] = cmd;
+	return true;
+}
+
+CWindow* CGame::getWindow()
+{
+	return m_Window;
 }
 
 bool CGame::initPlayer()

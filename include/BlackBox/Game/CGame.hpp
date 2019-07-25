@@ -34,7 +34,23 @@ struct CommandDesc
 {
 	std::wstring command;
 	std::vector<std::wstring> args;
+	std::vector<std::wstring> *history;
+	CommandDesc(){}
+	CommandDesc(decltype(history) *history) : history(nullptr)
+	{
+
+	}
 };
+
+struct IEditCommand
+{
+	virtual bool execute(CommandDesc& cd) = 0;
+};
+
+using CommnadLambd = bool();
+
+IEditCommand* createCommand(IGame* game);
+
 
 class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
 {
@@ -79,6 +95,7 @@ private:
 	bool input_trigered = false;
 	std::wstring command;
 	std::string command_text;
+	std::map<std::wstring, IEditCommand*> m_Commands;
 	//==========
 
 	// Render states
@@ -124,11 +141,15 @@ public:
 public:
   virtual IInputHandler *getInputHandler() override;
   void Stop();
-private:
 	void gotoMenu();
 	void gotoFullscreen();
 	void gotoGame();
+	void gotoFly();
+	void gotoEdit();
   void showMenu();
+	bool registerCommand(std::wstring name, IEditCommand* cmd);
+	CWindow* getWindow();
+private:
 
   bool initPlayer();
 
@@ -137,6 +158,7 @@ private:
   bool MenuInputEvent(sf::Event& event);
   bool DefaultInputEvent(sf::Event& event);
   bool EditInputEvent(sf::Event& event);
+	void initCommands();
 
   // IGame interface
 public:
