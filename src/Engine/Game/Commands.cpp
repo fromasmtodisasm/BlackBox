@@ -152,11 +152,8 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		if (cd.args.size() == 1)
-		{
-			game->Stop();
-			return true;
-		}
+		game->Stop();
+		return true;
 	}
 };
 
@@ -249,6 +246,8 @@ SelectCommand::SelectCommand(CGame *game) : BaseCommand(game)
 {
 	m_World = game->getWorld();
 }
+//*******************************************************
+
 //*******************************************************
 
 void CGame::initCommands()

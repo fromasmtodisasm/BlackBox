@@ -544,7 +544,10 @@ bool CGame::EditInputEvent(sf::Event& event)
 				completion = autocomplete(command);
 				if (completion.size() > 1)
 				{
-
+					for (auto& cmd : completion)
+					{
+						command += cmd + L" ";
+					}
 				}
 				else if (completion.size() == 1)
 				{
