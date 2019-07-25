@@ -43,15 +43,16 @@ World *CGame::getWorld() const
 bool CGame::handleCommand(std::wstring command)
 {
 	static std::vector<std::wstring> history;
+	bool result = false;
 	auto cd = parseCommand(command);
 	cd.history = &history;
 
 	auto cmd_it = m_Commands.find(cd.command);
 
 	if (cmd_it != m_Commands.end())
-		return cmd_it->second->execute(cd);
-	else
-		return false;
+		result = cmd_it->second->execute(cd);
+	history.push_back(command);
+	return result;
 }
 
 CommandDesc CGame::parseCommand(std::wstring& command)
@@ -528,7 +529,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 	if (is_input)
 	{
 		std::vector<std::wstring> completion;
-		m_World->getActiveScene()->setPostProcessor(postProcessors[2]);
+		m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
 		if (input_trigered == true)
 		{
 			command.clear();
