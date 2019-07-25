@@ -101,3 +101,19 @@ std::string getBasePath(std::string fullpath) {
         return argv;
     }
 #endif
+
+
+std::string wstr_to_str(std::wstring& ws)
+{
+	std::string result;
+	result.resize(ws.length());
+	auto r_it = result.begin();
+	char tmp[6] = { 0 };
+	for (auto ch : ws)
+	{
+		std::wctomb(&r_it++[0], ch);
+		//result += tmp;
+		
+	}
+	return result;
+}
