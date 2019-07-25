@@ -20,13 +20,12 @@ private:
 public:
   bool load(
     const char * path,
-    std::vector <Vertex> & vertex_data, 
-    std::vector<int>& indexData,
+    VerteciesInfo &verteciesInfo,
 		BoundingBox &bb
   );
 private:
   BoundingBox buildVertexData(
-    std::vector <Vertex> & vertex_data, 
+    VertexData& vertex_data, 
     std::vector<face> &faces 
   );
   void calcNormal(std::vector<Vertex> &face);

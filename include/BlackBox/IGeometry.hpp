@@ -12,6 +12,20 @@
 
 class VertexArrayObject;
 class IndexBuffer;
+class Vertex;
+
+using VertexData = std::vector<Vertex>;
+using IndexData = std::vector<int>;
+
+enum VertexAtribute
+{
+	VA_POSITION,
+	VA_NORMAL,
+	VA_UV,
+	VA_TANGENT,
+	VA_BTANGENT,
+	VA_NUM
+};
 
 struct indexed_vertex
 {
@@ -38,6 +52,16 @@ struct Vertex
 	{}
   Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)
   {}
+};
+
+struct VerteciesInfo
+{
+	VertexData data;
+	bool attributes[VA_NUM];
+	bool indexed;
+	IndexData indecies;
+	VerteciesInfo() : attributes()
+	{}
 };
 
 class Mesh;

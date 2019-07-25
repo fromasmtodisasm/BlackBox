@@ -206,15 +206,14 @@ Object * Object::load(string path)
   Object *obj = nullptr;
   MeshList mesh;
   VertexArrayObject *vb;
-  std::vector<Vertex> vertexData;
-  std::vector<int> indexData;
+	VerteciesInfo vertecies;
 	BoundingBox bb;
   ObjLoader OBJ;
 
-  if (!OBJ.load(path.c_str(), vertexData, indexData, bb))
+  if (!OBJ.load(path.c_str(), vertecies, bb))
     return nullptr;
   
-  vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
+  vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
 	 //std::vector<Mesh> mesh;
 	mesh = std::make_shared<std::vector<Mesh>>();
 	Mesh _mesh(vb, nullptr);
