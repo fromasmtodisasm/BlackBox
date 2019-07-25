@@ -8,7 +8,8 @@ bool OpenglDebug::isError = false;
 
 OpenglDebug::OpenglDebug(const char *file) : debug_file(file)
 {
-	glDebugMessageCallback(callBack, &debug_file);
+	if (glDebugMessageCallback != nullptr)
+		glDebugMessageCallback(callBack, &debug_file);
 }
 
 OpenglDebug::~OpenglDebug()
