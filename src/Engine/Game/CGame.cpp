@@ -44,12 +44,17 @@ bool CGame::handleCommand(std::wstring command)
 	static std::vector<std::wstring> history;
 
 	auto cd = parseCommand(command);
-	auto unpack_vector = [&](std::vector<std::wstring>::iterator it)->glm::vec3
+	auto unpack_vector = [&](std::vector<std::wstring>::iterator it, int size = 3)->glm::vec3
 	{
 			glm::vec3 pos;
-			pos[0] = _wtof(it->c_str()); it++;
-			pos[1] = _wtof(it->c_str()); it++;
-			pos[2] = _wtof(it->c_str());
+			pos[0] = _wtof(it->c_str());
+			it++;
+			pos[1] = _wtof(it->c_str());
+			if (size == 3)
+			{
+				it++;
+				pos[2] = _wtof(it->c_str());
+			}
 			return pos;
 	};
 	if (cd.command == L"last")
@@ -129,6 +134,17 @@ bool CGame::handleCommand(std::wstring command)
 					m_World->getActiveScene()->selectedObject()->move(pos);
 				}
 			}
+			history.push_back(command);
+			command.clear();
+			return true;
+		}
+		return false;
+	}
+	else if (cd.command.substr(0,4) == L"viewport")
+	{
+		if (cd.args.size() == 2)
+		{
+			viewPort = glm::vec2(unpack_vector(cd.args.begin()++));
 			history.push_back(command);
 			command.clear();
 			return true;
@@ -226,6 +242,11 @@ CommandDesc CGame::parseCommand(std::wstring& command)
 	return cd;
 }
 
+void CGame::PreRender()
+{
+	glCheck(glViewport(0, 0, 1366, 768));
+}
+
 CGame::CGame(std::string title) :
     m_World(new World()),m_Title(title)
 {
@@ -238,14 +259,13 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(IEngine *pSystem)  {
-	int width = 1366, height = 768;
   m_pSystem = gISystem = pSystem;
   m_Log = m_pSystem->getILog();
   p_gIGame = reinterpret_cast<IGame*>(this);
-  m_Window = new CWindow(m_Title, width, height); 
+  m_Window = new CWindow(m_Title, viewPort.x, viewPort.y); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
-    if (!m_Window->init(0,0, width, height, 32, 24, 8, false) || !m_Window->create())
+    if (!m_Window->init(0,0, viewPort.x, viewPort.y, 32, 24, 8, false) || !m_Window->create())
       return false;
 		m_Log->AddLog("[OK] Window susbsystem inited\n");
 
@@ -270,7 +290,7 @@ bool CGame::init(IEngine *pSystem)  {
   );
 	camControl = new CameraController(m_camera1);
 
-  m_inputHandler->AddEventListener(reinterpret_cast<CGame*>(this));
+  m_inputHandler->AddEventListener(this);
 
 
   // Set scene before camera, camera setted to active scene in world
@@ -282,6 +302,8 @@ bool CGame::init(IEngine *pSystem)  {
 
   //m_World->setCamera(camera2);
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
+	m_World->setPretRenderCallback(this);
+	m_World->setPostRenderCallback(this);
 	
 	postProcessors.push_back(nullptr);
 	postProcessors.push_back(new PostProcessor("negative"));
@@ -309,7 +331,7 @@ bool CGame::update() {
     setRenderState();
 
     render();
-		m_World->getActiveScene()->present();
+		m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
 		drawHud(fps);
     m_Window->swap();
   }
@@ -319,20 +341,27 @@ bool CGame::update() {
 void CGame::drawHud(float fps)
 {
 	int num_objects = m_World->getActiveScene()->numObjects();
+	int line = m_Window->getHeight();
+	int step = 25;
+
 	std::string mode = m_Mode == MENU ? "MENU"
 		: m_Mode == FPS ? "FPS"
 		: m_Mode == FLY ? "FLY"
 		: "EDIT";
 
+	glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
 	m_Font->RenderText(m_ScreenShader,
 		"FPS: " + std::to_string(fps),
-		0.f, m_Window->getHeight() - 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	m_Font->RenderText(m_ScreenShader,
 		"NUM OBJECTS: " + std::to_string(num_objects),
-		0.f, m_Window->getHeight() - 50.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	m_Font->RenderText(m_ScreenShader,
 		"Current mode: " + mode,
-		0.f, m_Window->getHeight() - 75.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	m_Font->RenderText(m_ScreenShader,
+		"Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()),
+		0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	if (is_input)
 	{
 		m_Font->RenderText(m_ScreenShader,

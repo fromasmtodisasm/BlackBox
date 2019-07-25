@@ -834,11 +834,12 @@ void Scene::end()
   m_RenderedScene->unbind();
 }
 
-void Scene::present()
+void Scene::present(int width, int height)
 {
 	if (postProcessor == nullptr)
 	{
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		glCheck(glViewport(0,0, 1366,768));
 		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 		glCheck(glClear(GL_COLOR_BUFFER_BIT));
 		m_ScreenShader->use();

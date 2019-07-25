@@ -36,7 +36,7 @@ struct CommandDesc
 	std::vector<std::wstring> args;
 };
 
-class CGame : public IGame, public IInputEventListener, public IPostRenderCallback 
+class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
 {
   class GameState;
   class EventListener;
@@ -83,6 +83,7 @@ private:
 
 	// Render states
 	bool culling = true;
+	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
 
   //
   ShaderManager *shaderManager;
@@ -148,6 +149,9 @@ public:
 	bool handleCommand(std::wstring command);
 	CommandDesc parseCommand(std::wstring& command);
 	void drawHud();
+
+	// Inherited via IPreRenderCallback
+	virtual void PreRender() override;
 };
 
 

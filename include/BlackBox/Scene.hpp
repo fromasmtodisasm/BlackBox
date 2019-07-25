@@ -76,7 +76,7 @@ public:
 
   void begin();
   void end();
-	void present();
+	void present(int width, int height);
 
 	void setPostProcessor(IPostProcessor* postProcessor);
 
