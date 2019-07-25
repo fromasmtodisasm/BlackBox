@@ -1,5 +1,6 @@
 #include <BlackBox/Game/CGame.hpp>
 #include <BlackBox/Utils.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 #include <process.h>
 
 class BaseCommand : public IEditCommand
@@ -285,6 +286,33 @@ ExecCommand::ExecCommand(CGame *game) : BaseCommand(game)
 {
 	m_World = game->getWorld();
 }
+//*******************************************************
+class MaterialCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	MaterialCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		if (cd.args.size() == 1)
+		{
+			std::string name = wstr_to_str(cd.args[0]);
+			Material* m = MaterialManager::instance()->getMaterial(name);
+			if (!m)
+				return false;
+			game->getWorld()->getActiveScene()->selectedObject()->setMaterial(m);
+			return true;
+		}
+		return false;
+	}
+};
+
+MaterialCommand::MaterialCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
 
 //*******************************************************
 
@@ -300,4 +328,5 @@ void CGame::initCommands()
 	m_Commands[L"select"] = new SelectCommand(this);
 	m_Commands[L"wire"] = new WireframeCommand(this);
 	m_Commands[L"exec"] = new ExecCommand(this);
+	m_Commands[L"material"] = new MaterialCommand(this);
 }
