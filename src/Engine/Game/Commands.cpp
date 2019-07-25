@@ -313,6 +313,35 @@ MaterialCommand::MaterialCommand(CGame *game) : BaseCommand(game)
 {
 	m_World = game->getWorld();
 }
+//*******************************************************
+class ShaderCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	ShaderCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		if (cd.args.size() == 2)
+		{
+			std::string name = wstr_to_str(cd.args[0]);
+			std::string type = wstr_to_str(cd.args[0]);
+			
+			CShader* s = ShaderManager::instance()->getShader(name, type);
+			if (!s)
+				return false;
+			//game->getWorld()->getActiveScene()->selectedObject()->setShader(s);
+			return true;
+		}
+		return false;
+	}
+};
+
+ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
 
 //*******************************************************
 
