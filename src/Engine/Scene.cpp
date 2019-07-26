@@ -523,6 +523,11 @@ void Scene::setCamera(CCamera *camera)
   m_Camera = camera;
 }
 
+CCamera* Scene::getCamera()
+{
+	return m_Camera;
+}
+
 void Scene::update(float dt)
 {
   for (auto &obj : m_Objects)

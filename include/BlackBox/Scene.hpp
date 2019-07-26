@@ -61,6 +61,7 @@ public:
   Object *getObject(std::string name);
   int numObjects();
   void setCamera(CCamera *camera);
+  CCamera *getCamera();
   void update(float dt);
   bool save(std::string as ="");
   tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);

@@ -323,40 +323,109 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		switch (cd.args.size())
+		if (cd.args.size() > 0)
 		{
-		case 0:
-			return false;
-		case 1:
-		{
-			std::string arg = wstr_to_str(cd.args[0]);
-			if (arg == "reload")
-			{
-				if (MaterialManager::instance()->reloadShaders())
-					return true;
-				else 
-					return false;
-			}
+			if (cd.args[0] == L"reload")
+				return reload(cd);
+			if (cd.args[0] == L"set")
+				return move(cd);
 		}
-		default:
-		{
-			std::vector<std::string> shaders;
-			for (auto arg = cd.args.begin()++; arg != cd.args.end(); arg++)
-			{
-				shaders.push_back(wstr_to_str(*arg));
-			}
-			if (MaterialManager::instance()->reloadShaders(shaders))
-				return true;
-			else 
-				return false;
-		}
-		}
+		return false;
 	}
+	bool reload(CommandDesc& cd);
+	bool move(CommandDesc& cd);
 };
 
 ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
 {
 	m_World = game->getWorld();
+}
+
+bool ShaderCommand::reload(CommandDesc& cd)
+{
+	switch (cd.args.size())
+	{
+	case 1:
+	{
+		if (MaterialManager::instance()->reloadShaders())
+			return true;
+		else 
+			return false;
+	}
+	default:
+	{
+		std::vector<std::string> shaders;
+		for (auto arg = cd.args.begin()++; arg != cd.args.end(); arg++)
+		{
+			shaders.push_back(wstr_to_str(*arg));
+		}
+		if (MaterialManager::instance()->reloadShaders(shaders))
+			return true;
+		else 
+			return false;
+	}
+	}
+	return false;
+}
+
+bool ShaderCommand::move(CommandDesc& cd)
+{
+	if (cd.args.size() == 2)
+	{
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+		game->getWorld()->getActiveScene()->selectedObject()->getMaterial()->program = s;
+		return true;
+	}
+	return false;
+}
+//*******************************************************
+class CameraCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	CameraCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		if (cd.args.size() > 0)
+		{
+			if (cd.args[0] == L"move")
+				return move(cd);
+			if (cd.args[0] == L"lookat")
+				return lookat(cd);
+		}
+		return false;
+	}
+	bool lookat(CommandDesc& cd);
+	bool move(CommandDesc& cd);
+};
+
+CameraCommand::CameraCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
+
+bool CameraCommand::lookat(CommandDesc& cd)
+{
+	auto object = m_World->getActiveScene()->selectedObject();
+	auto camera = m_World->getActiveScene()->getCamera();
+
+	return false;
+}
+
+bool CameraCommand::move(CommandDesc& cd)
+{
+	
+	if (cd.args.size() == 4)
+	{
+		auto pos = unpack_vector((cd.args.begin()++)++);
+		auto camera = m_World->getActiveScene()->getCamera();
+		camera->Position = pos;
+		return true;
+	}
+	return false;
+
 }
 
 //*******************************************************
@@ -375,4 +444,5 @@ void CGame::initCommands()
 	m_Commands[L"exec"] = new ExecCommand(this);
 	m_Commands[L"material"] = new MaterialCommand(this);
 	m_Commands[L"shader"] = new ShaderCommand(this);
+	m_Commands[L"camera"] = new CameraCommand(this);
 }
