@@ -103,4 +103,9 @@ public:
 
 	void setRenderMode(int mode);
 	int getRenderMode();
+
+	// Inherited via IObject
+	virtual void rotateX(float angle) override;
+	virtual void rotateY(float angle) override;
+	virtual void rotateZ(float angle) override;
 };

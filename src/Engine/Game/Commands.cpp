@@ -208,10 +208,17 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		auto angle = unpack_vector(cd.args.begin()++);
+		auto vector = unpack_vector(++cd.args.begin());
+		glm::vec3 angles(_wtof(cd.args[0].c_str()));
 		if (cd.args.size() == 4)
 		{
-			m_World->getActiveScene()->selectedObject()->second->rotate(_wtof(cd.args[0].c_str()), angle);
+			auto obj = m_World->getActiveScene()->selectedObject();
+			if (vector[0] != 0.0f) angles[0] += obj->second->m_transform.rotation[0];
+			if (vector[1] != 0.0f) angles[1] += obj->second->m_transform.rotation[1];
+			if (vector[2] != 0.0f) angles[2] += obj->second->m_transform.rotation[2];
+			obj->second->rotateX(angles.x);
+			obj->second->rotateY(angles.y);
+			obj->second->rotateZ(angles.z);
 			return true;
 		}
 		return false;

@@ -209,15 +209,27 @@ bool CGame::init(IEngine *pSystem)  {
 
 	if (cfg.is_open() != false)
 	{
-		std::string line;
-		while (std::getline(cfg, line))
-		{
-			handleCommand(str_to_wstr(line));
-		}
+		doFile(cfg);
+	}
 
+	std::ifstream rotation("res/scripts/rotation.cmd");
+	if (rotation.is_open() != false)
+	{
+		scripts.push_back(std::move(rotation));
 	}
 
   return true;
+}
+
+void CGame::doFile(std::ifstream& cfg)
+{
+	std::string line;
+	while (std::getline(cfg, line))
+	{
+		handleCommand(str_to_wstr(line));
+	}
+	cfg.clear();
+	cfg.seekg(0, std::ios::beg);
 }
 
 bool CGame::update() {
@@ -226,6 +238,7 @@ bool CGame::update() {
     m_deltaTime = deltaTime.asSeconds();
 		float fps =  1000.0f / deltaTime.asMilliseconds();
     input();
+		execScripts();
     m_Window->update();
     m_World->update(m_deltaTime);
     setRenderState();
@@ -236,6 +249,14 @@ bool CGame::update() {
     m_Window->swap();
   }
 	return true;
+}
+
+void CGame::execScripts()
+{
+	for (auto& script : scripts)
+	{
+		doFile(script);
+	}
 }
 
 void CGame::drawHud(float fps)

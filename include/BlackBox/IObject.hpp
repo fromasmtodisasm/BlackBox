@@ -23,6 +23,9 @@ struct IObject
 {
   virtual void move(Movement direction) = 0;
   virtual void rotate(float angle, glm::vec3 v) = 0;
+  virtual void rotateX(float angle) = 0;
+  virtual void rotateY(float angle) = 0;
+  virtual void rotateZ(float angle) = 0;
   virtual void scale(glm::vec3 v) = 0;
   virtual void update(float deltatime) = 0;
   virtual OBJType getType() = 0;

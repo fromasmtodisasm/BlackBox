@@ -153,6 +153,21 @@ int Object::getRenderMode()
 	return m_RenderMode;
 }
 
+void Object::rotateX(float angle)
+{
+	m_transform.rotation.x = angle;
+}
+
+void Object::rotateY(float angle)
+{
+	m_transform.rotation.y = angle;
+}
+
+void Object::rotateZ(float angle)
+{
+	m_transform.rotation.z = angle;
+}
+
 void Object::move(Movement direction) {
 	GLfloat velocity = this->MovementSpeed;
 	if (direction == FORWARD)

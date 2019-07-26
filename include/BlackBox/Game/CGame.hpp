@@ -106,6 +106,8 @@ private:
   ShaderManager *shaderManager;
 	std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
+	//=======================
+	std::vector<std::ifstream> scripts;
 
   enum Mode
   {
@@ -123,7 +125,9 @@ public:
   CGame(std::string title);
   ~CGame() = default;
   bool init(IEngine *pSystem) override;
+	void doFile(std::ifstream& cfg);
   bool update() override;
+	void execScripts();
 	void drawHud(float fps);
   bool run() override;
   void input();
