@@ -67,16 +67,9 @@ bool CShader::create() {
 
 
 CShader *CShader::load(string path, CShader::type type) {
-  ifstream fin(path);
-  string buff;
   string text;
 
-  if (!fin.is_open()) return nullptr;
-  
-  while (getline(fin, buff)) {
-    text += buff;
-    text += '\n';
-  }
+	if (!loadInternal(path, text)) return nullptr;
 
   CShader *shader = new CShader(text, type);
   if (!shader->create())
@@ -84,6 +77,46 @@ CShader *CShader::load(string path, CShader::type type) {
   shader->compile();
   shader->print();
   return shader;
+}
+
+bool CShader::parseLine(std::ifstream &fin, std::string& buffer)
+{
+	if (!getline(fin, buffer))
+		return false;
+	size_t pos = 0;
+	if ((pos = buffer.find("#include")) != buffer.npos)
+	{
+		size_t begin, end;
+		if ((begin = buffer.find_first_of('<')) != buffer.npos)
+			end = buffer.find_first_of('>');
+		else if ((begin = buffer.find_first_of('"')) != buffer.npos)
+			end = buffer.find('"', begin + 1);
+		else
+			return false;
+
+		std::string file(buffer.substr(begin + 1, end - begin - 1));
+		std::string buff;
+		if (!loadInternal("res/shaders/" + file, buff)) return false;
+		buffer.clear();
+		buffer += buff;
+	}
+		
+	return true;
+}
+
+bool CShader::loadInternal(std::string &path, std::string& buffer)
+{
+  ifstream fin(path);
+  string buff;
+
+  if (!fin.is_open()) return false;
+  
+  while (parseLine(fin, buff)) {
+    buffer += buff;
+    buffer += '\n';
+  }
+	fin.close();
+	return true;
 }
 
 CShader* CShader::loadFromMemory(std::string text, CShader::type type)
@@ -108,7 +141,7 @@ bool CShader::bind() {
 }
 
 void CShader::print() {
-  //cout << m_Text << endl;
+  cout << m_Text << endl;
 }
 
 string CShader::typeToStr()

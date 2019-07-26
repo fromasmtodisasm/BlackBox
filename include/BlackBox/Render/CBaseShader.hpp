@@ -48,6 +48,8 @@ public:
   CShader(std::string text, CShader::type type);
   ~CShader();
   static CShader *load(std::string path, CShader::type type);
+  static bool parseLine(std::ifstream &fin, std::string &buffer);
+  static bool loadInternal(std::string &path, std::string& buffer);
   static CShader *loadFromMemory(std::string text, CShader::type type);
   bool create();
   bool compile();
