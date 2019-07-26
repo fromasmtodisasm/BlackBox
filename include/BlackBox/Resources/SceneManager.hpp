@@ -10,11 +10,14 @@ class SceneManager
   friend class GameGUI;
   static SceneManager *manager;
   std::map<std::string, Scene*> cache;
+	decltype(cache)::iterator current_scene_it;
   //SceneManager();
 public:
   static SceneManager *instance();
   static bool init();
   Scene *getScene(std::string scene);
-  //Scene *getPrimitive(Primitive::Type type, CShaderProgram *program);
+  Scene *currentScene();
+	void nextScene();
+	void prevScene();
 };
 

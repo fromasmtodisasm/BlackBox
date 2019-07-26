@@ -132,6 +132,7 @@ public:
   void setRenderState();
   void render();
   void setPlayer(CPlayer *player);
+  void setCamera(CCamera *camera);
 
   // IInputEventListener interface
 public:

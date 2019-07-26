@@ -9,6 +9,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/Utils.hpp>
 
 #include <imgui-SFML.h>
 #include <imgui.h>
@@ -201,8 +202,20 @@ bool CGame::init(IEngine *pSystem)  {
 	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
 	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
 	m_ScreenShader->create();
-	m_Font = new FreeTypeFont("arial.ttf", 16, 24);
+	m_Font = new FreeTypeFont("arial.ttf", 16, 18);
 	initCommands();
+
+	std::ifstream cfg("res/scripts/init.cfg");
+
+	if (cfg.is_open() != false)
+	{
+		std::string line;
+		while (std::getline(cfg, line))
+		{
+			handleCommand(str_to_wstr(line));
+		}
+
+	}
 
   return true;
 }
@@ -229,7 +242,7 @@ void CGame::drawHud(float fps)
 {
 	int num_objects = m_World->getActiveScene()->numObjects();
 	int line = m_Window->getHeight();
-	int step = 25;
+	int step = 18;
 
 	std::string mode = m_Mode == MENU ? "MENU"
 		: m_Mode == FPS ? "FPS"
@@ -251,6 +264,34 @@ void CGame::drawHud(float fps)
 		m_Font->RenderText(m_ScreenShader,
 			"Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Active scene: " + m_World->getActiveScene()->name,
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Selected Object: " + m_World->getActiveScene()->selectedObject()->first,
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Camera addres: " + std::to_string((int)(int*)m_active_camera),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Player Camera addres: " + std::to_string((int)(int*)m_player->getCamera()),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Camera speed: " + std::to_string(m_active_camera->MovementSpeed),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Player addres: " + std::to_string((int)(int*)m_player),
+			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		m_Font->RenderText(m_ScreenShader,
+			"Pos: " + 
+			std::to_string(m_active_camera->Position.x) + ", " +
+			std::to_string(m_active_camera->Position.y) + ", " +
+			std::to_string(m_active_camera->Position.z) + "; " +
+			"Yaw: " + 
+			std::to_string(m_active_camera->Yaw) + "; " +
+			"Pitch: " + 
+			std::to_string(m_active_camera->Pitch) + "; ",
+			0.f, line-=step, 1.0f, glm::vec3(1.5, 0.1f, 0.2f));
 		if (is_input)
 		{
 			std::string cmd_text = std::string(">") + command_text;
@@ -333,6 +374,12 @@ void CGame::setPlayer(CPlayer* player)
   m_player = player;
 }
 
+void CGame::setCamera(CCamera* camera)
+{
+	m_active_camera = camera;
+	m_World->setCamera(camera);
+}
+
 extern "C" IGame *CreateIGame(const char *title) {
   CGame *game = new CGame(title);
   return (game);
@@ -406,7 +453,7 @@ bool CGame::initPlayer()
   }
   if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
   {
-    m_player->attachCamera(m_camera1);
+    m_player->attachCamera(m_active_camera);
     m_player->setGame(this);
     return true;
   }
@@ -448,7 +495,7 @@ bool CGame::FpsInputEvent(sf::Event& event)
 			culling = !culling;
 			return true;
 		case sf::Keyboard::F1:
-			m_World->getActiveScene()->selectedObject()->m_Material->nextDiffuse();
+			m_World->getActiveScene()->selectedObject()->second->m_Material->nextDiffuse();
 			return true;
 		case sf::Keyboard::F9:
 			if (event.key.shift)
@@ -588,20 +635,40 @@ bool CGame::EditInputEvent(sf::Event& event)
 				gotoMenu();
 				return true;
 			case sf::Keyboard::I:
-				m_World->getActiveScene()->selectedObject()->move(Movement::FORWARD);
+				m_World->getActiveScene()->selectedObject()->second->move(Movement::FORWARD);
 				return true;
 			case sf::Keyboard::U:
-				m_World->getActiveScene()->selectedObject()->move(Movement::BACKWARD);
+				m_World->getActiveScene()->selectedObject()->second->move(Movement::BACKWARD);
 				return true;
 			case sf::Keyboard::J:
-				m_World->getActiveScene()->selectedObject()->move(Movement::DOWN);
+				m_World->getActiveScene()->selectedObject()->second->move(Movement::DOWN);
 				return true;
 			case sf::Keyboard::K:
-				m_World->getActiveScene()->selectedObject()->move(Movement::UP);
+				m_World->getActiveScene()->selectedObject()->second->move(Movement::UP);
 				return true;
 			case sf::Keyboard::V:
-				m_World->getActiveScene()->selectedObject()->setVisibility(!m_World->getActiveScene()->selectedObject()->visible());
+				m_World->getActiveScene()->selectedObject()->second->setVisibility(!m_World->getActiveScene()->selectedObject()->second->visible());
 				return true;
+			//===============================================================
+			/*
+			case sf::Keyboard::N:
+				if (event.key.control)
+				{
+					SceneManager::instance()->nextScene();
+					m_World->setScene(SceneManager::instance()->currentScene());
+					return true;
+				}
+				return false;
+			case sf::Keyboard::P:
+				if (event.key.control)
+				{
+					SceneManager::instance()->prevScene();
+					m_World->setScene(SceneManager::instance()->currentScene());
+					return true;
+				}
+				return false;
+			*/
+			//===============================================================
 			case sf::Keyboard::Tab:
 				if (event.key.shift)
 				{
@@ -618,7 +685,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 		case sf::Event::MouseWheelScrolled:
 		{
 			float factor = event.mouseWheel.delta < 0 ? 0.9 : 1.1;
-			m_World->getActiveScene()->selectedObject()->m_transform.scale *= factor;
+			m_World->getActiveScene()->selectedObject()->second->m_transform.scale *= factor;
 			return true;
 		}
 		case sf::Event::TextEntered:

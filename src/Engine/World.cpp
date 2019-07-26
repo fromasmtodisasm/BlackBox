@@ -1,4 +1,5 @@
 #include <BlackBox/World.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
 
 float World::gravity = 1;
 

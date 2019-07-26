@@ -416,24 +416,13 @@ void Scene::selectNextObject()
 	{
 		selected_object_it++;
 	}
-	/*
-	for (decltype(selected_object_it) current_it = ++selected_object_it; current_it != m_Objects.end(); current_it++)
-	{
-		if (current_it->second->visible())
-		{
-			selected_object_it = current_it;
-			return;
-
-		}
-	}
-	*/
 }
 
-Object* Scene::selectedObject()
+std::map<std::string,Object*>::iterator Scene::selectedObject()
 {
 	if (selected_object_it == m_Objects.end())
-		return m_Objects.begin()->second;
-	return selected_object_it->second;
+		return m_Objects.begin();
+	return selected_object_it;
 }
 
 bool Scene::selectObject(std::string name)
@@ -465,8 +454,8 @@ void Scene::draw(float dt)
 
 		Pipeline::instance()->bindProgram("bb");
 		auto obj = selectedObject();
-		Pipeline::instance()->object = obj;
-		for (auto& mesh : *obj->m_Mesh)
+		Pipeline::instance()->object = obj->second;
+		for (auto& mesh : *obj->second->m_Mesh)
 		{
 			mesh.bb.draw();
 		}

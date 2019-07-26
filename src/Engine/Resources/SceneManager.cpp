@@ -16,6 +16,7 @@ SceneManager *SceneManager::instance()
   if (manager == nullptr)
   {
     manager = new SceneManager();
+		manager->current_scene_it = manager->cache.begin();
   }
   return manager;
 }
@@ -61,4 +62,25 @@ Scene *SceneManager::getScene(string scene)
     }
   }
   return result;
+}
+
+Scene* SceneManager::currentScene()
+{
+	return current_scene_it->second;
+}
+
+void SceneManager::nextScene()
+{
+	if (++current_scene_it == cache.end())
+	{
+		current_scene_it = cache.begin();
+	}
+}
+
+void SceneManager::prevScene()
+{
+	if (--current_scene_it == cache.begin())
+	{
+		current_scene_it = cache.end();
+	}
 }

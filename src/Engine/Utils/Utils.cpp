@@ -117,3 +117,19 @@ std::string wstr_to_str(std::wstring& ws)
 	}
 	return result;
 }
+
+std::wstring str_to_wstr(std::string& str)
+{
+	std::wstring result;
+	result.resize(str.length());
+	auto r_it = result.begin();
+	char tmp[6] = { 0 };
+	//for (auto ch : str)
+	//{
+		std::mbstowcs(&r_it++[0], str.data(), str.length());
+		//result += tmp;
+		
+	//}
+	return result;
+
+}

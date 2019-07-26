@@ -1,6 +1,8 @@
 #include <BlackBox/Game/CGame.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 #include <process.h>
 
 class BaseCommand : public IEditCommand
@@ -177,13 +179,13 @@ private:
 		{
 			auto pos = unpack_vector(cd.args.begin()++);
 			if (cd.command == L"moveto")
-				m_World->getActiveScene()->selectedObject()->moveTo(pos);
+				m_World->getActiveScene()->selectedObject()->second->moveTo(pos);
 			else
 			{
 				std::wstring dir = cd.command.substr(4);
 				if (dir == L"")
 				{
-					m_World->getActiveScene()->selectedObject()->move(pos);
+					m_World->getActiveScene()->selectedObject()->second->move(pos);
 				}
 			}
 			return true;
@@ -209,7 +211,7 @@ private:
 		auto angle = unpack_vector(cd.args.begin()++);
 		if (cd.args.size() == 4)
 		{
-			m_World->getActiveScene()->selectedObject()->rotate(_wtof(cd.args[0].c_str()), angle);
+			m_World->getActiveScene()->selectedObject()->second->rotate(_wtof(cd.args[0].c_str()), angle);
 			return true;
 		}
 		return false;
@@ -250,10 +252,10 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		int mode = m_World->getActiveScene()->selectedObject()->getRenderMode();
+		int mode = m_World->getActiveScene()->selectedObject()->second->getRenderMode();
 		if (mode == GL_FILL) mode = GL_LINE;
 		else if (mode == GL_LINE) mode = GL_FILL;
-		m_World->getActiveScene()->selectedObject()->setRenderMode(mode);
+		m_World->getActiveScene()->selectedObject()->second->setRenderMode(mode);
 		return true;
 	}
 };
@@ -302,7 +304,7 @@ private:
 			Material* m = MaterialManager::instance()->getMaterial(name);
 			if (!m)
 				return false;
-			game->getWorld()->getActiveScene()->selectedObject()->setMaterial(m);
+			game->getWorld()->getActiveScene()->selectedObject()->second->setMaterial(m);
 			return true;
 		}
 		return false;
@@ -373,7 +375,7 @@ bool ShaderCommand::move(CommandDesc& cd)
 	if (cd.args.size() == 2)
 	{
 		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
-		game->getWorld()->getActiveScene()->selectedObject()->getMaterial()->program = s;
+		game->getWorld()->getActiveScene()->selectedObject()->second->getMaterial()->program = s;
 		return true;
 	}
 	return false;
@@ -427,6 +429,81 @@ bool CameraCommand::move(CommandDesc& cd)
 	return false;
 
 }
+//*******************************************************
+class SceneCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	SceneCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		if (cd.args.size() > 0)
+		{
+			if (cd.args[0] == L"load")
+				return load(cd);
+			if (cd.args[0] == L"save")
+				return save(cd);
+			if (cd.args[0] == L"active")
+				return activate(cd);
+		}
+		return false;
+	}
+	bool load(CommandDesc& cd);
+	bool save(CommandDesc& cd);
+	bool activate(CommandDesc& cd);
+
+};
+
+SceneCommand::SceneCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
+bool SceneCommand::load(CommandDesc& cd)
+{
+	//MessageBox(NULL, "Save scene", "scene name", MB_OKCANCEL);
+	Scene *scene;
+	std::string path = wstr_to_str(cd.args[1]);
+	if ((scene = SceneManager::instance()->getScene(path)) != nullptr)
+	{
+		/*
+		if (game->initPlayer())
+			game->gotoGame();
+		*/
+		FrameBufferObject *sceneBuffer = new FrameBufferObject(game->getWindow()->getWidth(), game->getWindow()->getHeight());
+		sceneBuffer->create();
+		scene->setRenderTarget(sceneBuffer);
+		scene->setCamera(new CCamera());
+		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
+		player->attachCamera(scene->getCamera());
+		player->setGame(game);
+	}
+	return false;
+}
+bool SceneCommand::save(CommandDesc& cd)
+{
+	return false;
+}
+bool SceneCommand::activate(CommandDesc& cd)
+{
+	Scene *scene;
+	std::string name = wstr_to_str(cd.args[1]);
+	if ((scene = SceneManager::instance()->getScene(name)) != nullptr)
+	{
+		//=====================
+		game->getWorld()->setScene(scene);
+		game->setCamera(scene->getCamera());
+		game->setPlayer((CPlayer*)scene->getObject("MyPlayer"));
+		//=====================
+		//m_World->setScene(scene);
+		//game->setCamera(scene->getCamera());
+		//m_World->setCamera(m_camera1);
+		//initPlayer();
+	}
+	return false;
+}
+//*******************************************************
 
 //*******************************************************
 
@@ -445,4 +522,5 @@ void CGame::initCommands()
 	m_Commands[L"material"] = new MaterialCommand(this);
 	m_Commands[L"shader"] = new ShaderCommand(this);
 	m_Commands[L"camera"] = new CameraCommand(this);
+	m_Commands[L"scene"] = new SceneCommand(this);
 }
