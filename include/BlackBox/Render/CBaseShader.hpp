@@ -7,8 +7,7 @@
 
 class CShader; 
 class CBaseShaderProgram;
-
-extern CBaseShaderProgram *defaultProgram;
+class CShader;
 
 struct ShaderStatus
 {
@@ -34,11 +33,10 @@ class CShader
 {
 private:
 	GLuint m_Shader;
-	std::string m_Path;
 	std::string m_Text;
   ShaderStatus m_Status;
 public:
-  std::shared_ptr<std::string> m_path;
+	std::string m_Path;
   int m_Type;
   enum type : int{
     E_VERTEX = GL_VERTEX_SHADER,
@@ -47,10 +45,10 @@ public:
   };
   CShader(std::string text, CShader::type type);
   ~CShader();
-  static CShader *load(std::string path, CShader::type type);
+  static std::shared_ptr<CShader> load(std::string path, CShader::type type);
   static bool parseLine(std::ifstream &fin, std::string &buffer);
   static bool loadInternal(std::string &path, std::string& buffer);
-  static CShader *loadFromMemory(std::string text, CShader::type type);
+  static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
   bool create();
   bool compile();
   bool bind();
@@ -69,8 +67,10 @@ private:
 
 class CBaseShaderProgram {
 public:
-  CShader *m_Vertex = nullptr;
-  CShader *m_Fragment = nullptr;
+  std::shared_ptr<CShader> m_Vertex = nullptr;
+	std::string vertex_name;
+  std::shared_ptr<CShader> m_Fragment = nullptr;
+	std::string fragment_name;
   GLuint m_Program;
   GLchar infoLog[512];
   ShaderProgramStatus m_Status;
@@ -80,11 +80,11 @@ public:
   bool status();
 public:
   CBaseShaderProgram();
-  CBaseShaderProgram(CShader *vertex, CShader *fragment);
+  CBaseShaderProgram(std::shared_ptr<CShader> vs, std::shared_ptr<CShader> fs);
   ~CBaseShaderProgram();
 
   bool create();
-  void attach(CShader *shader);
+  void attach(std::shared_ptr<CShader> shader);
   bool link();
   void use();
   void unuse();
@@ -100,3 +100,5 @@ public:
   GLuint get();
 	virtual void setup() = 0;
 };
+
+//typedef std::shared_ptr<CShader> std::shared_ptr<CShader>;

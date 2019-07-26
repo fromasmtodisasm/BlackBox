@@ -12,7 +12,7 @@ class CShaderProgram;
 class CShaderProgram : public CBaseShaderProgram{
 public:
 	CShaderProgram();
-	CShaderProgram(CShader* vs, CShader* fs);
+	CShaderProgram(std::shared_ptr<CShader> vs, std::shared_ptr<CShader> fs);
 	CShaderProgram(std::string vs, std::string fs);
 	~CShaderProgram();
 	virtual void setup() override;

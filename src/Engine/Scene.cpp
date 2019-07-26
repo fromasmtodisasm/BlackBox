@@ -166,7 +166,6 @@ void Scene::loadObject(XMLElement *object)
   obj->m_transform = transform;
 	obj->m_transparent = objectTransparent;
 	obj->m_visible = objectVisible;
-  obj->setShaderProgram(defaultProgram);
   obj->setMaterial(material);
   m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
 
@@ -308,7 +307,7 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
 
 void Scene::setupLights(Object* object)
 {
-  CBaseShaderProgram* program = object->m_Material->program;
+  auto program = object->m_Material->program;
   int currentLight = 0;
   int nr_point_lights = 0;
   auto sun = m_DirectionLight.find("sun");
@@ -456,7 +455,7 @@ void Scene::draw(float dt)
 			if (!object.second->m_transparent && (object.second->visible()) && 
 				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar - 500.0f)
 			{
-				CBaseShaderProgram* program = object.second->m_Material->program;
+				auto program = object.second->m_Material->program;
 				program->use();
 				setupLights(object.second);
 
@@ -476,7 +475,7 @@ void Scene::draw(float dt)
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 			if (object.second->m_transparent && (object.second->visible()))
 			{
-				CBaseShaderProgram* program = object.second->m_Material->program;
+				auto program = object.second->m_Material->program;
 				program->use();
 				setupLights(object.second);
 
@@ -484,7 +483,7 @@ void Scene::draw(float dt)
 			}
     }
     Object* lightObject = m_Objects.find("light")->second;
-    CBaseShaderProgram* program = lightObject->m_Material->program;
+    auto program = lightObject->m_Material->program;
     for (const auto& light : m_PointLights) {
       program->use();
       lightObject->moveTo(light.second->position);

@@ -1,13 +1,6 @@
 #include <BlackBox/Game/GameObject.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-GameObject *GameObject::create(Primitive::Type type)
-{
-  Object *obj =  Primitive::create(type, ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl"));
-  GameObject *go = new GameObject(obj);
-  return go;
-}
-
 void GameObject::update(float deltatime)
 {
   float speed = deltatime*MOVE_SPEED;

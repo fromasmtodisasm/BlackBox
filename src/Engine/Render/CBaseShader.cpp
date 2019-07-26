@@ -66,12 +66,12 @@ bool CShader::create() {
 }
 
 
-CShader *CShader::load(string path, CShader::type type) {
+std::shared_ptr<CShader> CShader::load(string path, CShader::type type) {
   string text;
 
 	if (!loadInternal(path, text)) return nullptr;
 
-  CShader *shader = new CShader(text, type);
+  auto shader = std::make_shared<CShader>(text, type);
   if (!shader->create())
     return nullptr;
   shader->compile();
@@ -119,9 +119,9 @@ bool CShader::loadInternal(std::string &path, std::string& buffer)
 	return true;
 }
 
-CShader* CShader::loadFromMemory(std::string text, CShader::type type)
+std::shared_ptr<CShader> CShader::loadFromMemory(std::string text, CShader::type type)
 {
-  CShader *shader = new CShader(text, type);
+  auto shader = std::make_shared<CShader>(text, type);
   if (!shader->create())
     return nullptr;
   shader->compile();
@@ -169,15 +169,14 @@ CBaseShaderProgram::CBaseShaderProgram() : m_Status(this)
 }
 
 CBaseShaderProgram::CBaseShaderProgram(
-  CShader *vertex, CShader *fragment) :
+  std::shared_ptr<CShader> vs, std::shared_ptr<CShader> fs) :
   m_Status(this)
 {
-  m_Vertex = vertex;
-  m_Fragment = fragment;
+  m_Vertex = vs;
+  m_Fragment = fs;
 }
 
 CBaseShaderProgram::~CBaseShaderProgram() {
-
 }
 
 bool CBaseShaderProgram::create() {
@@ -191,7 +190,7 @@ bool CBaseShaderProgram::create() {
 	return m_Status.get(GL_LINK_STATUS);
 }
 
-void CBaseShaderProgram::attach(CShader *shader) {
+void CBaseShaderProgram::attach(std::shared_ptr<CShader> shader) {
   switch (shader->m_Type) {
   case CShader::type::E_VERTEX:
     if (m_Vertex == nullptr)

@@ -66,11 +66,6 @@ void Object::setType(OBJType type)
   m_type = type;
 }
 
-CBaseShaderProgram * Object::getShaderProgram()
-{
-  return m_Shader;
-}
-
 glm::mat4 Object::getTransform()
 {
   glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
@@ -103,11 +98,6 @@ bool Object::visible()
 void Object::setVisibility(bool v)
 {
 	m_visible = v;
-}
-
-void Object::setShaderProgram(CBaseShaderProgram* shader)
-{
-  m_Shader = shader;
 }
 
 void Object::update(float deltatime)

@@ -14,7 +14,7 @@ Pipeline* Pipeline::instance()
   return m_instance;
 }
 
-void Pipeline::bindProgram(CBaseShaderProgram *program)
+void Pipeline::bindProgram(std::shared_ptr<CShaderProgram> program)
 {
 	shader = program;
 }
@@ -27,7 +27,7 @@ void Pipeline::bindProgram(const char* name)
 		if (mat->program != nullptr)
 			shader = mat->program;
 		else
-			shader = defaultProgram;
+			shader = ShaderManager::instance()->getDefaultProgram();
 	}
 	shader->use();
 }

@@ -24,6 +24,15 @@ MaterialManager *MaterialManager::instance()
   return manager;
 }
 
+std::shared_ptr<CShaderProgram> MaterialManager::getProgram(std::string name)
+{
+	auto p_it = shaders_map.find(name);
+	if (p_it == shaders_map.end())
+		return ShaderManager::instance()->getDefaultProgram();
+	else
+		return p_it->second;
+}
+
 Material *MaterialManager::getMaterial(std::string name)
 {
   Material *material = nullptr;
@@ -91,15 +100,28 @@ bool MaterialManager::loadLib(std::string name)
 
   if (material == nullptr || shaders == nullptr) return false;
 
-  XMLNode * shader = shaders->FirstChild();
-  while (shader != nullptr)
+  XMLNode * program = shaders->FirstChild();
+  while (program != nullptr)
   {
-    if (!loadProgram(shader))
-    {
-      //TODO: handle this case
-      m_pLog->AddLog("[ERROR] Failed load material\n");
-    }
-    shader = shader->NextSibling();
+		ProgramDesc pd;
+		pd.name = program->Value();
+
+		auto shader = program->FirstChildElement("shader");
+		if (shader != nullptr)
+		{
+			getShaderAttributes(shader, pd);
+			shader = shader->NextSiblingElement("shader");
+			if (shader != nullptr)
+			{
+				getShaderAttributes(shader, pd);
+				if (!loadProgram(pd, false))
+				{
+					//TODO: handle this case
+					m_pLog->AddLog("[ERROR] Failed load material\n");
+				}
+			}
+		}
+    program = program->NextSibling();
   }
 
   while (material != nullptr)
@@ -113,6 +135,20 @@ bool MaterialManager::loadLib(std::string name)
   }
   if (cache.size() != 0) return true;
   else return false;
+}
+
+void MaterialManager::getShaderAttributes(tinyxml2::XMLElement* shader, MaterialManager::ProgramDesc& pd)
+{
+	std::string type;
+	std::string name;
+
+	type = shader->Attribute("type");
+	name = shader->Attribute("name");
+
+	if (type == "vertex")
+		pd.vs = name;
+	else if (type == "fragment")
+		pd.fs = name;
 }
 
 bool MaterialManager::loadMaterial(XMLElement *material)
@@ -197,30 +233,49 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 	if (shader_it == shaders_map.end())
 		return false;
   result->program = shader_it->second;
+	result->program_name = shader_name;
   cache[materialName] = result;
   m_pLog->AddLog("[INFO] Created material: %s\n", materialName);
   return true;
 }
 
-bool MaterialManager::loadProgram(tinyxml2::XMLNode* program)
+bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 {
-	auto shader_it = shaders_map.find(program->Value());
-	if (shader_it != shaders_map.end())
+	auto shader_it = shaders_map.find(desc.name);
+	if (shader_it != shaders_map.end() && !isReload)
 		return true;
+	auto vs = loadShader(ShaderDesc("vertex", desc.vs), isReload);
+	if (vs == nullptr) return false;
 
-	auto shader = program->FirstChildElement("shader");
-	if (shader == nullptr) return false;
-	auto vs = loadShader(shader);
-	if (!vs) return false;
-	shader = shader->NextSiblingElement("shader");
-	if (shader == nullptr) return false;
-	auto fs = loadShader(shader);
-	if (!fs) return false;
-	
-	auto shaderProgram = new CShaderProgram(vs,fs);
+	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
+	if (fs == nullptr) return false;
+
+	auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
   if (!shaderProgram->create())
     return false;
-	shaders_map[program->Value()] = shaderProgram;
+	shaderProgram->vertex_name = desc.vs;
+	shaderProgram->fragment_name = desc.fs;
+	shaders_map[desc.name] = shaderProgram;
+	return true;
+}
+
+bool MaterialManager::reloadShaders()
+{
+	for (auto shader : shaders_map)
+	{
+		ProgramDesc pd;
+		pd.name = shader.first;
+		pd.vs = shader.second->vertex_name;
+		pd.fs = shader.second->fragment_name;
+		//delete shader.second;
+		loadProgram(pd, true);
+		for (auto& mat : cache)
+		{
+			if (mat.second->program_name == pd.name)
+				mat.second->program = shaders_map[pd.name];
+		}
+	}
+	
 	return true;
 }
 
@@ -252,16 +307,9 @@ XMLElement *MaterialManager::saveTexture(XMLDocument &xmlDoc, Texture *texture)
 
 }
 
-CShader *MaterialManager::loadShader(XMLElement *shader)
+std::shared_ptr<CShader> MaterialManager::loadShader(ShaderDesc &sd, bool isReload)
 {
-  ShaderManager *shaderManager = ShaderManager::instance();
-  const char *type = nullptr;
-  const char *name = nullptr;
-
-  type = shader->Attribute("type");
-  name = shader->Attribute("name");
-
-  return shaderManager->getShader(name, type);
+  return ShaderManager::instance()->getShader(sd.name, sd.type, isReload);
 }
 
 XMLElement *MaterialManager::saveShader(XMLDocument &xmlDoc, CShader *shader)
@@ -269,7 +317,7 @@ XMLElement *MaterialManager::saveShader(XMLDocument &xmlDoc, CShader *shader)
   XMLElement *shaderElement = xmlDoc.NewElement("shader");
 
   shaderElement->SetAttribute("type", shader->typeToStr().c_str());
-  shaderElement->Attribute("name", shader->m_path->c_str());
+  shaderElement->Attribute("name", shader->m_Path.c_str());
 
   return shaderElement;
 }

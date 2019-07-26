@@ -13,7 +13,7 @@ CShaderProgram::CShaderProgram() : CBaseShaderProgram()
 
 }
 
-CShaderProgram::CShaderProgram(CShader* vs, CShader* fs) : CBaseShaderProgram(vs, fs)
+CShaderProgram::CShaderProgram(std::shared_ptr<CShader> vs, std::shared_ptr<CShader> fs) : CBaseShaderProgram(vs, fs)
 {
 
 }
@@ -31,4 +31,9 @@ void CShaderProgram::setup()
   setUniformValue( Pipeline::instance()->projection,"projection");
   setUniformValue( Pipeline::instance()->view_pos,"viewPos");
   setUniformValue( 128.0f,"material.shininess");
+}
+
+CShaderProgram::~CShaderProgram()
+{
+	CBaseShaderProgram::~CBaseShaderProgram();
 }

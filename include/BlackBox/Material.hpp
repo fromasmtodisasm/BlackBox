@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Render/CShader.hpp>
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -22,7 +23,8 @@ struct Material
 	
 	std::vector<BaseTexture*> diffuse;
 
-  CBaseShaderProgram *program;
+  std::shared_ptr<CShaderProgram> program;
+	std::string program_name;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;
   bool enabledNormal = true;

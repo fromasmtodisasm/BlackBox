@@ -27,7 +27,7 @@ struct Transform
 class Object : public IObject, public IDrawable {
   friend class ObjectManager;
 protected:
-  CBaseShaderProgram *m_Shader;
+  std::shared_ptr<CShaderProgram> m_Shader;
   OBJType m_type;
   Object();
   Object(MeshList mesh);
@@ -77,7 +77,6 @@ public:
   virtual void draw(void * camera) override;
   virtual OBJType getType() override { return m_type; }
   virtual void setType(OBJType) override;
-  virtual CBaseShaderProgram * getShaderProgram() override;
   virtual glm::mat4 getTransform() override;
 	void updateVectors();
 
@@ -85,7 +84,6 @@ public:
 	void setVisibility(bool v);
 
   // Унаследовано через IObject
-  virtual void setShaderProgram(CBaseShaderProgram* shader) override;
 
   // IObject interface
 public:

@@ -323,18 +323,26 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		if (cd.args.size() == 2)
+		switch (cd.args.size())
 		{
-			std::string name = wstr_to_str(cd.args[0]);
-			std::string type = wstr_to_str(cd.args[0]);
-			
-			CShader* s = ShaderManager::instance()->getShader(name, type);
-			if (!s)
-				return false;
-			//game->getWorld()->getActiveScene()->selectedObject()->setShader(s);
-			return true;
+		case 1:
+		{
+			std::string arg = wstr_to_str(cd.args[0]);
+			if (arg == "reload")
+			{
+				if (MaterialManager::instance()->reloadShaders())
+					return true;
+				else 
+					return false;
+			}
 		}
-		return false;
+		case 2:
+		{
+			return false;
+		}
+		default:
+			return false;
+		}
 	}
 };
 
@@ -358,4 +366,5 @@ void CGame::initCommands()
 	m_Commands[L"wire"] = new WireframeCommand(this);
 	m_Commands[L"exec"] = new ExecCommand(this);
 	m_Commands[L"material"] = new MaterialCommand(this);
+	m_Commands[L"shader"] = new ShaderCommand(this);
 }
