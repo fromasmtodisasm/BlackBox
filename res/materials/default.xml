@@ -4,29 +4,19 @@
       <texture type="diffuse" name="container2.png"/>
       <texture type="specular" name="container2_specular.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
-      <!--<shininess/>-->
+    <shader name="phong"/>
   </material>
   <material name="wood_box">
     <textures>
       <texture type="diffuse" name="container.jpg"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="garik" transparent="true">
     <textures>
       <texture type="diffuse" name="alpha_test/low_a.dds"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="brick_box">
     <textures>
@@ -41,10 +31,7 @@
       <!--<texture type="diffuse" name="brickwall.jpg"/>-->
       <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="brick_box_shakaled" shakaled="true">
     <textures>
@@ -58,72 +45,66 @@
       <!--<texture type="diffuse" name="brickwall.jpg"/>-->
       <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="light">
     <color red="1.0" green="1.0" blue="1.0"/>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="basecolor.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="coral">
     <textures>
       <texture type="diffuse" name="coral.png"/>
       <texture type="specular" name="gray.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="red">
     <textures>
       <texture type="diffuse" name="red.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="player">
-    <shaders class="refract">
-    </shaders>
+    <shader name="reflect"/>
   </material>
   <material name="bb">
-    <shaders class="bb">
-    </shaders>
+    <shader name="bb"/>
   </material>
   <material name="skybox" type="skybox">
     <textures>
       <texture type="diffuse" name="lake1"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="chess_floor">
     <textures>
       <texture type="diffuse" name="check.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="default">
     <textures>
       <texture type="diffuse" name="check.png"/>
       <texture type="normal" name="normal_up.jpg"/>
     </textures>
-    
-    <shaders>
+    <shader name="phong"/>
+  </material>
+  <shaders>
+    <phong>
       <shader type="vertex" name="texturedphong.vs"/>
       <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
-  </material>
+    </phong>    
+    <refract>
+      <shader type="vertex" name="reflect.vs"/>
+      <shader type="fragment" name="refract.frag"/>
+    </refract>
+    <reflect>
+      <shader type="vertex" name="reflect.vs"/>
+      <shader type="fragment" name="reflect.frag"/>
+    </reflect>
+    <bb>
+      <shader type="vertex" name="bb.vs"/>
+      <shader type="fragment" name="bb.frag"/>
+    </bb>
+  </shaders>
 </materials>

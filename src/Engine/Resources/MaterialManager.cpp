@@ -58,7 +58,6 @@ Material *MaterialManager::getMaterial(std::string name)
 bool MaterialManager::init(std::string materialLib)
 {
   bool status = false;
-	MaterialManager::instance()->shaders_map["reflect"] = new ReflectShader();
   status = MaterialManager::instance()->loadLib(materialLib);
   if (status)
   {
@@ -88,8 +87,20 @@ bool MaterialManager::loadLib(std::string name)
   if (materials == nullptr) return false;
 
   XMLElement * material = materials->FirstChildElement("material");
+  XMLElement * shaders = materials->FirstChildElement("shaders");
 
-  if (material == nullptr) return false;
+  if (material == nullptr || shaders == nullptr) return false;
+
+  XMLNode * shader = shaders->FirstChild();
+  while (shader != nullptr)
+  {
+    if (!loadProgram(shader))
+    {
+      //TODO: handle this case
+      m_pLog->AddLog("[ERROR] Failed load material\n");
+    }
+    shader = shader->NextSibling();
+  }
 
   while (material != nullptr)
   {
@@ -175,46 +186,42 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   }
 	result->current_diffuse = 0;
   //============ SHADERS LOADING =======================//
-  XMLElement *shaders = material->FirstChildElement("shaders");
-  if (shaders == nullptr) return false;
-	const char * shader_class = nullptr;
-  CBaseShaderProgram *program = nullptr;
-	if ((shader_class = shaders->Attribute("class")) != nullptr)
-	{
-		std::string shader_base("res/shaders/");
-		auto class_it = shaders_map.find(shader_class);
-		if (class_it == shaders_map.end())
-			;// return false;
-		//program = class_it->second;
-		if (std::string(shader_class) == "reflect")
-			program = new CShaderProgram(CShader::load(shader_base + "reflect.vs", CShader::E_VERTEX), CShader::load(shader_base + "reflect.frag", CShader::E_FRAGMENT));
-		else if (std::string(shader_class) == "refract")
-			program = new CShaderProgram(CShader::load(shader_base + "reflect.vs", CShader::E_VERTEX), CShader::load(shader_base + "refract.frag", CShader::E_FRAGMENT));
-		else if (std::string(shader_class) == "bb")
-			program = new CShaderProgram(CShader::load(shader_base + "bb.vs", CShader::E_VERTEX), CShader::load(shader_base + "bb.frag", CShader::E_FRAGMENT));
-
-	}
-	else
-	{
-		XMLElement *shader = shaders->FirstChildElement("shader");
-		if (shader == nullptr) return false;
-		program = new CShaderProgram();
-		while (shader != nullptr)
-		{
-			CShader *s = loadShader(shader);
-			if (s == nullptr)
-				//TODO: log it!!!
-				return false;
-			program->attach(s);
-			shader = shader->NextSiblingElement("shader");
-		}
-	}
-  if (!program->create())
-    return false;
-  result->program = program;
+  XMLElement *shader = material->FirstChildElement("shader");
+  if (shader == nullptr) return false;
+	const char * shader_name = nullptr;
+	shader_name = shader->Attribute("name");
+	if (shader_name == nullptr)
+		return false;
+	
+	auto shader_it = shaders_map.find(shader_name);
+	if (shader_it == shaders_map.end())
+		return false;
+  result->program = shader_it->second;
   cache[materialName] = result;
   m_pLog->AddLog("[INFO] Created material: %s\n", materialName);
   return true;
+}
+
+bool MaterialManager::loadProgram(tinyxml2::XMLNode* program)
+{
+	auto shader_it = shaders_map.find(program->Value());
+	if (shader_it != shaders_map.end())
+		return true;
+
+	auto shader = program->FirstChildElement("shader");
+	if (shader == nullptr) return false;
+	auto vs = loadShader(shader);
+	if (!vs) return false;
+	shader = shader->NextSiblingElement("shader");
+	if (shader == nullptr) return false;
+	auto fs = loadShader(shader);
+	if (!fs) return false;
+	
+	auto shaderProgram = new CShaderProgram(vs,fs);
+  if (!shaderProgram->create())
+    return false;
+	shaders_map[program->Value()] = shaderProgram;
+	return true;
 }
 
 BaseTexture *MaterialManager::loadTexture(XMLElement *texture)

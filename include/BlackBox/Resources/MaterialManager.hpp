@@ -28,6 +28,7 @@ private:
   MaterialManager();
   bool loadLib(std::string name);
   bool loadMaterial(tinyxml2::XMLElement *material);
+  bool loadProgram(tinyxml2::XMLNode *program);
   BaseTexture *loadTexture(tinyxml2::XMLElement *texture);
   tinyxml2::XMLElement *saveTexture(tinyxml2::XMLDocument &xmlDoc, Texture *texture);
   CShader *loadShader(tinyxml2::XMLElement *shader);
