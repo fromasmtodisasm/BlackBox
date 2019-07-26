@@ -267,16 +267,37 @@ bool MaterialManager::reloadShaders()
 		pd.name = shader.first;
 		pd.vs = shader.second->vertex_name;
 		pd.fs = shader.second->fragment_name;
-		//delete shader.second;
-		loadProgram(pd, true);
-		for (auto& mat : cache)
-		{
-			if (mat.second->program_name == pd.name)
-				mat.second->program = shaders_map[pd.name];
-		}
+		reloadShader(pd);
 	}
-	
 	return true;
+}
+
+bool MaterialManager::reloadShaders(std::vector<std::string> names)
+{
+	for (auto shader : names)
+	{
+		ProgramDesc pd;
+		pd.name = shader;
+
+		auto s_it = shaders_map.find(shader);
+		if (s_it == shaders_map.end())
+			continue;
+		pd.vs = s_it->second->vertex_name;
+		pd.fs = s_it->second->fragment_name;
+		reloadShader(pd);
+	}
+	return true;
+}
+
+void MaterialManager::reloadShader(MaterialManager::ProgramDesc& pd)
+{
+	//delete shader.second;
+	loadProgram(pd, true);
+	for (auto& mat : cache)
+	{
+		if (mat.second->program_name == pd.name)
+			mat.second->program = shaders_map[pd.name];
+	}
 }
 
 BaseTexture *MaterialManager::loadTexture(XMLElement *texture)

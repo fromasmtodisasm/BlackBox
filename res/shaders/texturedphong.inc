@@ -1,2 +1,2 @@
-#define ambient_factor 0.1f
+#define ambient_factor 0.08f
 #define threshold 0.5f

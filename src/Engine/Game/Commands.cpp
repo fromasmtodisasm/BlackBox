@@ -325,6 +325,8 @@ private:
 	{
 		switch (cd.args.size())
 		{
+		case 0:
+			return false;
 		case 1:
 		{
 			std::string arg = wstr_to_str(cd.args[0]);
@@ -336,12 +338,18 @@ private:
 					return false;
 			}
 		}
-		case 2:
-		{
-			return false;
-		}
 		default:
-			return false;
+		{
+			std::vector<std::string> shaders;
+			for (auto arg = cd.args.begin()++; arg != cd.args.end(); arg++)
+			{
+				shaders.push_back(wstr_to_str(*arg));
+			}
+			if (MaterialManager::instance()->reloadShaders(shaders))
+				return true;
+			else 
+				return false;
+		}
 		}
 	}
 };

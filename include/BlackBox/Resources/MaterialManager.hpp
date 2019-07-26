@@ -38,6 +38,9 @@ public:
   Material *getMaterial(std::string name);
   static bool init(std::string materialLib);
 	bool reloadShaders();
+	bool reloadShaders(std::vector<std::string> names);
+
+	void reloadShader(MaterialManager::ProgramDesc& pd);
 
 private:
   MaterialManager();
