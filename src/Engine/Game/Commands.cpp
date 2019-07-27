@@ -175,19 +175,18 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		if (cd.args.size() == 3)
+		auto obj = m_World->getActiveScene()->selectedObject()->second;
+		glm::vec3 pos;
+		auto args_it = cd.args.begin();
+		if (cd.args.size() >= 3)
 		{
-			auto pos = unpack_vector(cd.args.begin()++);
-			if (cd.command == L"moveto")
-				m_World->getActiveScene()->selectedObject()->second->moveTo(pos);
-			else
+			if (cd.args.size() == 4)
 			{
-				std::wstring dir = cd.command.substr(4);
-				if (dir == L"")
-				{
-					m_World->getActiveScene()->selectedObject()->second->move(pos);
-				}
+				std::string name = wstr_to_str(*args_it++);
+				obj = m_World->getActiveScene()->getObject(name);
 			}
+			auto pos = unpack_vector(args_it);
+			obj->move(pos);
 			return true;
 		}
 		return false;
@@ -208,18 +207,26 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		auto vector = unpack_vector(++cd.args.begin());
-		glm::vec3 angles(_wtof(cd.args[0].c_str()));
-		if (cd.args.size() == 4)
+		if (cd.args.size() >= 4 && cd.args.size() <= 5)
 		{
-			auto obj = m_World->getActiveScene()->selectedObject();
-			if (vector[0] != 0.0f) angles[0] += obj->second->m_transform.rotation[0];
-			if (vector[1] != 0.0f) angles[1] += obj->second->m_transform.rotation[1];
-			if (vector[2] != 0.0f) angles[2] += obj->second->m_transform.rotation[2];
-			obj->second->rotateX(angles.x);
-			obj->second->rotateY(angles.y);
-			obj->second->rotateZ(angles.z);
-			return true;
+			auto args_it = cd.args.begin();
+			auto obj = m_World->getActiveScene()->selectedObject()->second;
+			if (cd.args.size() == 5) {
+				std::string name = wstr_to_str(*args_it++);
+				obj = m_World->getActiveScene()->getObject(name);
+			}
+			if (obj != nullptr)
+			{
+				glm::vec3 angles(_wtof((*args_it++).c_str()));
+				glm::vec3 vector = unpack_vector(args_it);
+				if (vector[0] != 0.0f) angles[0] += obj->m_transform.rotation[0];
+				if (vector[1] != 0.0f) angles[1] += obj->m_transform.rotation[1];
+				if (vector[2] != 0.0f) angles[2] += obj->m_transform.rotation[2];
+				obj->rotateX(angles.x);
+				obj->rotateY(angles.y);
+				obj->rotateZ(angles.z);
+				return true;
+			}
 		}
 		return false;
 

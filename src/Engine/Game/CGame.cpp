@@ -329,7 +329,6 @@ bool CGame::run() {
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
   m_isMusicPlaying = true;
-	gotoMenu();
   update();
   return true;
 }
