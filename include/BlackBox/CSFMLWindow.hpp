@@ -54,7 +54,7 @@ class CSFMLWindow :
   }Mouse;
 
 public:
-  sf::Rect<int> viewPort;
+  Rect viewPort;
 	enum FLAGS
 	{
 		DRAW_GUI
@@ -93,5 +93,8 @@ public:
   virtual void AddEventListener(IInputEventListener *pListener) override;
   virtual sf::Vector2i getDeltaMouse() override;
   virtual void mouseLock(bool lock) override;
+
+	// Унаследовано через IWindow
+	virtual Rect &getViewPort() override;
 };
 

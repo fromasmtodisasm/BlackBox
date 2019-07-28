@@ -39,6 +39,5 @@ public:
 	virtual IWindow* getIWindow() override;
 
 	// Унаследовано через IEngine
-	virtual IWindow* getIWindow() override;
 	virtual IInputHandler* getIInputHandler() override;
 };

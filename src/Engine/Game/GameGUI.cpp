@@ -117,8 +117,8 @@ void GameGUI::Draw()
   {
     if (ImGui::BeginTabItem("ViewPort"))
     {
-      game->m_Window->viewPort.left = ImGui::GetCursorPosX() + leftPanel.size.x;
-      game->m_Window->viewPort.top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y + mainMenu.size.y;
+      game->m_Window->getViewPort().left = ImGui::GetCursorPosX() + leftPanel.size.x;
+      game->m_Window->getViewPort().top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y + mainMenu.size.y;
       ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
       ImGui::EndTabItem();
     }
@@ -126,8 +126,8 @@ void GameGUI::Draw()
   }
   ImGui::End();
   assets();
-  game->m_Window->viewPort.width = viewport.size.x;
-  game->m_Window->viewPort.height = viewport.size.y;
+  game->m_Window->getViewPort().width = viewport.size.x;
+  game->m_Window->getViewPort().height = viewport.size.y;
   if (show_camera) {
 
   }
@@ -223,8 +223,8 @@ void GameGUI::controlPanel()
 {
   window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
   ImVec2 size = ImGui::GetWindowSize();
-    game->m_Window->viewPort.left = size.x;
-    game->m_Window->viewPort.width = game->m_Window->m_Width - size.x;
+    game->m_Window->getViewPort().left = size.x;
+    game->m_Window->getViewPort().width = game->m_Window->getWidth() - size.x;
     ImGui::Checkbox("Show Plyer", &show_player);
     ImGui::Checkbox("Show Demo", &show_demo);
     ImGui::Separator();
@@ -401,8 +401,8 @@ void GameGUI::drawFullScreenViewPort()
   ImGuiIO& io = ImGui::GetIO();
   ImGui::SetNextWindowPos(ImVec2(0, 0));
   ImGui::SetNextWindowSize(io.DisplaySize);
-  game->m_Window->viewPort.left = ImGui::GetCursorPosX();
-  game->m_Window->viewPort.top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
+  game->m_Window->getViewPort().left = ImGui::GetCursorPosX();
+  game->m_Window->getViewPort().top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
   ImGui::Begin("FullScreen", (bool*)true,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
   ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();

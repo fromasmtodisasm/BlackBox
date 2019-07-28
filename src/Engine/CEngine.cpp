@@ -90,11 +90,6 @@ IInputHandler* CEngine::getIInputHandler()
 	return m_InputHandler;
 }
 
-IWindow* CEngine::getIWindow()
-{
-	return nullptr;
-}
-
 SYSTEM_API IEngine * CreateIEngine(void *)
 {
   IEngine *system = new CEngine();

@@ -8,6 +8,8 @@ struct IRender;
 struct ILog;
 struct IConsole;
 struct IFont;
+struct IWindow;
+struct IInputHandler;
 
 struct IEngine
 {
