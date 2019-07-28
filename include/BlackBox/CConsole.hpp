@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/InputHandler.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
 
 #include <map>
 #include <vector>
@@ -23,6 +24,7 @@ struct CommandDesc
 class CConsole : public IConsole, public IInputEventListener
 {
 public:
+	CConsole();
 	// Унаследовано через IConsole
 	virtual void ShowConsole(bool show) override;
 	virtual void SetImage(ITexture* pTexture) override;
@@ -52,4 +54,5 @@ private:
 	std::wstring command;
 	std::string command_text;
 	IFont* m_Font;
+	bool isShow = false;
 };

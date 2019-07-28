@@ -18,6 +18,7 @@ void CConsole::Update()
 
 void CConsole::Draw()
 {
+	if (!isShow) return;
 	std::string cmd_text = std::string(">") + command_text;
 	m_Font->RenderText(
 		cmd_text,
@@ -35,49 +36,51 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(sf::Event& event)
 {
-		std::vector<std::wstring> completion;
-		//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
-		if (input_trigered == true)
+	if (!isShow)
+		return false;
+	std::vector<std::wstring> completion;
+	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
+	if (input_trigered == true)
+	{
+		command.clear();
+		input_trigered = false;
+		return true;
+	}
+	switch (event.type)
+	{
+	case sf::Event::KeyPressed:
+		switch (event.key.code)
 		{
-			command.clear();
-			input_trigered = false;
-			return true;
-		}
-		switch (event.type)
-		{
-		case sf::Event::KeyPressed:
-			switch (event.key.code)
+		case sf::Keyboard::Tab:
+			completion = autocomplete(command);
+			if (completion.size() > 1)
 			{
-			case sf::Keyboard::Tab:
-				completion = autocomplete(command);
-				if (completion.size() > 1)
+				for (auto& cmd : completion)
 				{
-					for (auto& cmd : completion)
-					{
-						command += cmd + L" ";
-					}
+					command += cmd + L" ";
 				}
-				else if (completion.size() == 1)
-				{
-					command = completion[0];
-					fillCommandText();
-				}
-				return true;
-			case sf::Keyboard::Enter:
-				is_input = false;
-				//m_World->getActiveScene()->setPostProcessor(nullptr);
-				return handleCommand(command);
-			default:
-				return false;
 			}
-		case sf::Event::TextEntered:
-		{
-			handleCommandTextEnter(event.text.unicode);
+			else if (completion.size() == 1)
+			{
+				command = completion[0];
+				fillCommandText();
+			}
 			return true;
-		}
+		case sf::Keyboard::Enter:
+			is_input = false;
+			//m_World->getActiveScene()->setPostProcessor(nullptr);
+			return handleCommand(command);
 		default:
 			return false;
 		}
+	case sf::Event::TextEntered:
+	{
+		handleCommandTextEnter(event.text.unicode);
+		return true;
+	}
+	default:
+		return false;
+	}
 
 }
 
@@ -108,6 +111,8 @@ bool CConsole::handleCommand(std::wstring command)
 
 	if (cmd_it != m_Commands.end())
 		result = cmd_it->second->execute(cd);
+	else if (cd.command == L"close")
+		isShow = false;
 	history.push_back(command);
 	return result;
 }
@@ -209,8 +214,17 @@ void CConsole::ExecuteFile(const char* file)
 	}
 }
 
+CConsole::CConsole()
+{
+	m_Font = new FreeTypeFont();
+	m_Font->Init("arial.ttf", 16, 18);
+}
+
 void CConsole::ShowConsole(bool show)
 {
+	isShow = show;
+	if (show)
+		input_trigered = true;
 }
 
 void CConsole::fillCommandText()

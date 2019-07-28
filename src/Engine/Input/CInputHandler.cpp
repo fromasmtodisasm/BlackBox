@@ -23,7 +23,8 @@ ICommand * CSFMLWindow::handleInput()
     //if (viewPort.contains(sf::Mouse::getPosition(*m_Window)))
       for (const auto &listener : listeners)
       {
-        listener->OnInputEvent(event);
+				if (listener->OnInputEvent(event))
+					break;
       }
     //else {
     //  continue;

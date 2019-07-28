@@ -18,7 +18,10 @@ public:
 		GLuint     Advance;    // Offset to advance to next glyph
 	};
 
-	FreeTypeFont() = default;
+	FreeTypeFont()
+	{
+
+	}
 	FreeTypeFont(const char* font, int w, int h)
 	{
 	}
@@ -32,7 +35,7 @@ private:
 	GLuint VAO, VBO, EBO;
 	CShaderProgram* shader;
 	
-
+public:
 	// Унаследовано через IFont
 	virtual bool Init(const char* font, int w, int h) override;
 

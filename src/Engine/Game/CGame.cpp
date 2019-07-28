@@ -66,20 +66,17 @@ bool CGame::init(IEngine *pSystem)  {
 	m_Window = m_pSystem->getIWindow();
 	m_inputHandler = m_pSystem->getIInputHandler();
 	m_Window->setFlags(CWindow::DRAW_GUI);
-  if (m_Window != nullptr ) {
-    if (!m_Window->init(0,0, viewPort.x, viewPort.y, 32, 24, 8, false) || !m_Window->create())
-      return false;
-		m_Log->AddLog("[OK] Window susbsystem inited\n");
+  
 
-    if (!loadScene()) {
-			m_Log->AddLog("[FAILED] Failed init objects\n");
-			return false;
-		}
-		m_Log->AddLog("[OK] Objects inited\n");
-    FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
-    sceneBuffer->create();
-    m_scene->setRenderTarget(sceneBuffer);
-  } 
+	if (!loadScene()) {
+		m_Log->AddLog("[FAILED] Failed init objects\n");
+		return false;
+	}
+	m_Log->AddLog("[OK] Objects inited\n");
+	FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
+	sceneBuffer->create();
+	m_scene->setRenderTarget(sceneBuffer);
+ 
   gui = new GameGUI();
   gui->game = this;
 
@@ -111,9 +108,10 @@ bool CGame::init(IEngine *pSystem)  {
 	postProcessors.push_back(new PostProcessor("kernel.outline"));
 	postProcessors.push_back(new PostProcessor("kernel.blur"));
 	m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
-	m_Font = new FreeTypeFont("arial.ttf", 16, 18);
+	m_Font = new FreeTypeFont();
+	m_Font->Init("arial.ttf", 16, 18);
 
-
+	initCommands();
 	m_Console->ExecuteFile("res/scripts/init.cfg");
   return true;
 }
@@ -473,7 +471,6 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	m_Console->ShowConsole(in_console);
 	
 	switch (event.type)
 	{
@@ -482,6 +479,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 		{
 		case sf::Keyboard::Y:
 			in_console = true;
+			m_Console->ShowConsole(in_console);
 			return true;
 		case sf::Keyboard::Escape:
 			gotoMenu();

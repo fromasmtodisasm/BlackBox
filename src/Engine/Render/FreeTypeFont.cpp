@@ -1,7 +1,7 @@
 #include <BlackBox\Render\FreeTypeFont.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-inline void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	// Activate corresponding render state	
 	shader->use();
@@ -138,5 +138,5 @@ bool FreeTypeFont::Init(const char* font, int w, int h)
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
 	glCheck(glBindVertexArray(0));
-
+	return true;
 }

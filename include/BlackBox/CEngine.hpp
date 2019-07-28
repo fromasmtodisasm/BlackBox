@@ -2,12 +2,13 @@
 
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/CWindow.hpp>
+class CConsole;
 
 class CEngine : public IEngine
 {
 private:
   ILog *m_pLog;
-  IConsole *m_pConsole;
+  CConsole *m_pConsole;
   IGame *m_pGame;
 	IFont* m_pFont;
 	IWindow* m_pWindow;
