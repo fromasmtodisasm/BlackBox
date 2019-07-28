@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BlackBox/IEngine.hpp>
+#include <BlackBox/CWindow.hpp>
 
 class CEngine : public IEngine
 {
@@ -9,6 +10,8 @@ private:
   IConsole *m_pConsole;
   IGame *m_pGame;
 	IFont* m_pFont;
+	IWindow* m_pWindow;
+	IInputHandler* m_InputHandler;
 public:
   // Унаследовано через ISystem
   virtual bool Init() override;
@@ -31,4 +34,11 @@ public:
 
 	// Унаследовано через IEngine
 	virtual IFont* getIFont() override;
+
+	// Унаследовано через IEngine
+	virtual IWindow* getIWindow() override;
+
+	// Унаследовано через IEngine
+	virtual IWindow* getIWindow() override;
+	virtual IInputHandler* getIInputHandler() override;
 };

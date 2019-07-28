@@ -22,6 +22,12 @@ bool CEngine::Init()
     return false;
   if (CreateGame(nullptr) == nullptr)
     return false;
+	CWindow* window = new CWindow("BlackBox", 1366, 768);
+	m_pWindow = window;
+	m_InputHandler = window;
+	if (window == nullptr)
+		return false;
+	
   if (!m_pGame->init(this)) {
     return false;
 	}
@@ -72,6 +78,21 @@ IGame* CEngine::CreateGame(IGame* game)
 IFont* CEngine::getIFont()
 {
 	return m_pFont;
+}
+
+IWindow* CEngine::getIWindow()
+{
+	return m_pWindow;
+}
+
+IInputHandler* CEngine::getIInputHandler()
+{
+	return m_InputHandler;
+}
+
+IWindow* CEngine::getIWindow()
+{
+	return nullptr;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

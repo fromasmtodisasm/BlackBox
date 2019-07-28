@@ -38,7 +38,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class CPlayer;
 private:
   IEngine *m_pSystem;
-  CWindow *m_Window;
+  IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
   CCamera *m_camera1, *m_camera2, *m_active_camera;
@@ -124,7 +124,7 @@ public:
 	void gotoFly();
 	void gotoEdit();
   void showMenu();
-	CWindow* getWindow();
+	IWindow* getWindow();
 private:
 
   bool initPlayer();

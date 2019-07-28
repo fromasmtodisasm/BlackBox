@@ -63,15 +63,14 @@ bool CGame::init(IEngine *pSystem)  {
   m_Log = m_pSystem->getILog();
 	m_Console = m_pSystem->getIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
-  m_Window = new CWindow(m_Title, viewPort.x, viewPort.y); 
+	m_Window = m_pSystem->getIWindow();
+	m_inputHandler = m_pSystem->getIInputHandler();
 	m_Window->setFlags(CWindow::DRAW_GUI);
   if (m_Window != nullptr ) {
     if (!m_Window->init(0,0, viewPort.x, viewPort.y, 32, 24, 8, false) || !m_Window->create())
       return false;
 		m_Log->AddLog("[OK] Window susbsystem inited\n");
 
-    if ((m_inputHandler = m_Window) == nullptr)
-      return false;
     if (!loadScene()) {
 			m_Log->AddLog("[FAILED] Failed init objects\n");
 			return false;
@@ -99,7 +98,7 @@ bool CGame::init(IEngine *pSystem)  {
   m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
   initPlayer();
-  m_Window->mouseLock(true);
+  m_inputHandler->mouseLock(true);
 
   //m_World->setCamera(camera2);
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
@@ -341,7 +340,7 @@ void CGame::showMenu()
 
 }
 
-CWindow* CGame::getWindow()
+IWindow* CGame::getWindow()
 {
 	return m_Window;
 }
@@ -432,7 +431,7 @@ bool CGame::FlyInputEvent(sf::Event& event)
       gotoGame();
       return true;
     case sf::Keyboard::Escape:
-      m_Window->mouseLock(false);
+      m_inputHandler->mouseLock(false);
       m_Mode = Mode::MENU;
       return true;
     }
@@ -450,7 +449,7 @@ bool CGame::MenuInputEvent(sf::Event& event)
     switch (event.key.code)
     {
     case sf::Keyboard::Escape:
-      m_Window->mouseLock(false);
+      m_inputHandler->mouseLock(false);
       m_Mode = Mode::MENU;
       m_running = false;
       return true;
@@ -475,66 +474,62 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 bool CGame::EditInputEvent(sf::Event& event)
 {
 	m_Console->ShowConsole(in_console);
-	if (!m_Console->OnInputEvent(event))
+	
+	switch (event.type)
 	{
-		switch (event.type)
+	case sf::Event::KeyPressed:
+		switch (event.key.code)
 		{
-		case sf::Event::KeyPressed:
-			switch (event.key.code)
-			{
-			case sf::Keyboard::Y:
-				in_console = true;
-				return true;
-			case sf::Keyboard::Escape:
-				gotoMenu();
-				return true;
-			case sf::Keyboard::I:
-				m_World->getActiveScene()->selectedObject()->second->move(Movement::FORWARD);
-				return true;
-			case sf::Keyboard::U:
-				m_World->getActiveScene()->selectedObject()->second->move(Movement::BACKWARD);
-				return true;
-			case sf::Keyboard::J:
-				m_World->getActiveScene()->selectedObject()->second->move(Movement::DOWN);
-				return true;
-			case sf::Keyboard::K:
-				m_World->getActiveScene()->selectedObject()->second->move(Movement::UP);
-				return true;
-			case sf::Keyboard::V:
-				m_World->getActiveScene()->selectedObject()->second->setVisibility(!m_World->getActiveScene()->selectedObject()->second->visible());
-				return true;
-			case sf::Keyboard::Tab:
-				if (event.key.shift)
-				{
-					m_World->getActiveScene()->selectPrevObject();
-				}
-				else
-				{
-					m_World->getActiveScene()->selectNextObject();
-				}
-				return true;
-			default:
-				return m_player->OnInputEvent(event);
-			}
-		case sf::Event::MouseWheelScrolled:
-		{
-			float factor = event.mouseWheel.delta < 0 ? 0.9 : 1.1;
-			m_World->getActiveScene()->selectedObject()->second->m_transform.scale *= factor;
+		case sf::Keyboard::Y:
+			in_console = true;
 			return true;
-		}
-		case sf::Event::TextEntered:
-		{
-			if (event.text.unicode == ':')
+		case sf::Keyboard::Escape:
+			gotoMenu();
+			return true;
+		case sf::Keyboard::I:
+			m_World->getActiveScene()->selectedObject()->second->move(Movement::FORWARD);
+			return true;
+		case sf::Keyboard::U:
+			m_World->getActiveScene()->selectedObject()->second->move(Movement::BACKWARD);
+			return true;
+		case sf::Keyboard::J:
+			m_World->getActiveScene()->selectedObject()->second->move(Movement::DOWN);
+			return true;
+		case sf::Keyboard::K:
+			m_World->getActiveScene()->selectedObject()->second->move(Movement::UP);
+			return true;
+		case sf::Keyboard::V:
+			m_World->getActiveScene()->selectedObject()->second->setVisibility(!m_World->getActiveScene()->selectedObject()->second->visible());
+			return true;
+		case sf::Keyboard::Tab:
+			if (event.key.shift)
 			{
-				in_console = true;
+				m_World->getActiveScene()->selectPrevObject();
 			}
-		}
+			else
+			{
+				m_World->getActiveScene()->selectNextObject();
+			}
+			return true;
 		default:
 			return m_player->OnInputEvent(event);
 		}
-
+	case sf::Event::MouseWheelScrolled:
+	{
+		float factor = event.mouseWheel.delta < 0 ? 0.9 : 1.1;
+		m_World->getActiveScene()->selectedObject()->second->m_transform.scale *= factor;
+		return true;
 	}
-
+	case sf::Event::TextEntered:
+	{
+		if (event.text.unicode == ':')
+		{
+			in_console = true;
+		}
+	}
+	default:
+		return m_player->OnInputEvent(event);
+	}
   return false;
 }
 
