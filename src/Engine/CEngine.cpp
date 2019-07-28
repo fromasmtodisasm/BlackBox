@@ -2,6 +2,9 @@
 #include <BlackBox/CLog.hpp>
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/IGame.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
+
+#include <cstdlib>
 #pragma once
 
 bool CEngine::Init()
@@ -9,6 +12,11 @@ bool CEngine::Init()
   m_pLog = new CLog();
   if (m_pLog == nullptr)
     return false;
+	//=============
+  m_pFont = new FreeTypeFont();
+  if (m_pFont == nullptr && !m_pFont->Init("arial.ttf", 16,18));
+    return false;
+	//=============
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
@@ -59,6 +67,11 @@ IGame* CEngine::CreateGame(IGame* game)
 {
   m_pGame = CreateIGame("MyGame");
   return m_pGame;
+}
+
+IFont* CEngine::getIFont()
+{
+	return m_pFont;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

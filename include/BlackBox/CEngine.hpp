@@ -8,6 +8,7 @@ private:
   ILog *m_pLog;
   IConsole *m_pConsole;
   IGame *m_pGame;
+	IFont* m_pFont;
 public:
   // Унаследовано через ISystem
   virtual bool Init() override;
@@ -27,4 +28,7 @@ public:
 
   // Унаследовано через IEngine
   virtual IGame* CreateGame(IGame* game) override;
+
+	// Унаследовано через IEngine
+	virtual IFont* getIFont() override;
 };

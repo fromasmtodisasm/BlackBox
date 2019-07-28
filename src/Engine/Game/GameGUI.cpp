@@ -328,7 +328,7 @@ if (m != nullptr && m->t != nullptr) \
     }
     if (ImGui::BeginTabItem("Console"))
     {
-      GetIEngine()->getIConsole()->Draw("MyConsole", (bool*)true);
+      //GetIEngine()->getIConsole()->Draw("MyConsole", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Textures"))

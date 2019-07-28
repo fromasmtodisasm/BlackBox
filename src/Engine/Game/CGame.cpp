@@ -41,93 +41,6 @@ World *CGame::getWorld() const
     return m_World;
 }
 
-bool CGame::handleCommand(std::wstring command)
-{
-	static std::vector<std::wstring> history;
-	bool result = false;
-	auto cd = parseCommand(command);
-	cd.history = &history;
-
-	auto cmd_it = m_Commands.find(cd.command);
-
-	if (cmd_it != m_Commands.end())
-		result = cmd_it->second->execute(cd);
-	history.push_back(command);
-	return result;
-}
-
-CommandDesc CGame::parseCommand(std::wstring& command)
-{
-	enum {COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG} state1 = INSPACE, state2;
-	CommandDesc cd;
-	int begin_cmd = 0, end_cmd = 0;
-	int begin_args = 0, end_args = 0;
-	std::wstring current_arg;
-	
-	for (int i = begin_cmd; i < command.size(); i++)
-	{
-		switch (state1)
-		{
-		case COMMAND:
-			if (command[i] != L' ')
-				cd.command += command[i];
-			else
-			{
-				state1 = INARGSPACE;	
-			}
-			break;
-		case ARGS:
-			if (command[i] != L' ')
-				current_arg += command[i];
-			else
-			{
-				state1 = INARGSPACE;	
-				cd.args.push_back(current_arg);
-				current_arg.clear();
-			}
-			break;
-		case INCMD:
-			break;
-		case INSPACE:
-			if (command[i] != L' ')
-			{
-				state1 = COMMAND;
-				cd.command += command[i];
-			}
-			break;
-		case INARGSPACE:
-			if (command[i] != L' ')
-			{
-				state1 = ARGS;
-				current_arg += command[i];
-			}
-			break;
-		case INARG:
-			break;
-		default:
-			break;
-		}
-	}
-	if (state1 == ARGS)
-	{
-		cd.args.push_back(current_arg);
-	}
-
-	return cd;
-}
-
-std::vector<std::wstring> CGame::autocomplete(std::wstring cmd)
-{
-	std::vector<std::wstring> completion;
-	for (auto& curr_cmd : m_Commands)
-	{
-		if (curr_cmd.first.substr(0, cmd.size()) == cmd)
-		{
-			completion.push_back(curr_cmd.first);
-		}
-	}
-	return completion;
-}
 
 void CGame::PreRender()
 {
@@ -148,6 +61,7 @@ CGame::CGame(std::string title) :
 bool CGame::init(IEngine *pSystem)  {
   m_pSystem = gISystem = pSystem;
   m_Log = m_pSystem->getILog();
+	m_Console = m_pSystem->getIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
   m_Window = new CWindow(m_Title, viewPort.x, viewPort.y); 
 	m_Window->setFlags(CWindow::DRAW_GUI);
@@ -198,38 +112,11 @@ bool CGame::init(IEngine *pSystem)  {
 	postProcessors.push_back(new PostProcessor("kernel.outline"));
 	postProcessors.push_back(new PostProcessor("kernel.blur"));
 	m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
-	m_ScreenShader = new CShaderProgram(
-	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
-	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
-	m_ScreenShader->create();
 	m_Font = new FreeTypeFont("arial.ttf", 16, 18);
-	initCommands();
 
-	std::ifstream cfg("res/scripts/init.cfg");
 
-	if (cfg.is_open() != false)
-	{
-		doFile(cfg);
-	}
-
-	std::ifstream rotation("res/scripts/rotation.cmd");
-	if (rotation.is_open() != false)
-	{
-		scripts.push_back(std::move(rotation));
-	}
-
+	m_Console->ExecuteFile("res/scripts/init.cfg");
   return true;
-}
-
-void CGame::doFile(std::ifstream& cfg)
-{
-	std::string line;
-	while (std::getline(cfg, line))
-	{
-		handleCommand(str_to_wstr(line));
-	}
-	cfg.clear();
-	cfg.seekg(0, std::ios::beg);
 }
 
 bool CGame::update() {
@@ -253,10 +140,12 @@ bool CGame::update() {
 
 void CGame::execScripts()
 {
+	/*
 	for (auto& script : scripts)
 	{
-		doFile(script);
+		//doFile(script);
 	}
+	*/
 }
 
 void CGame::drawHud(float fps)
@@ -273,37 +162,37 @@ void CGame::drawHud(float fps)
 	glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
 	// Info
 	{
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"FPS: " + std::to_string(fps),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"NUM OBJECTS: " + std::to_string(num_objects),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Current mode: " + mode,
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Active scene: " + m_World->getActiveScene()->name,
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Selected Object: " + m_World->getActiveScene()->selectedObject()->first,
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Camera addres: " + std::to_string((int)(int*)m_active_camera),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Player Camera addres: " + std::to_string((int)(int*)m_player->getCamera()),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Camera speed: " + std::to_string(m_active_camera->MovementSpeed),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Player addres: " + std::to_string((int)(int*)m_player),
 			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(m_ScreenShader,
+		m_Font->RenderText(
 			"Pos: " + 
 			std::to_string(m_active_camera->Position.x) + ", " +
 			std::to_string(m_active_camera->Position.y) + ", " +
@@ -313,12 +202,9 @@ void CGame::drawHud(float fps)
 			"Pitch: " + 
 			std::to_string(m_active_camera->Pitch) + "; ",
 			0.f, line-=step, 1.0f, glm::vec3(1.5, 0.1f, 0.2f));
-		if (is_input)
+		if (in_console)
 		{
-			std::string cmd_text = std::string(">") + command_text;
-			m_Font->RenderText(m_ScreenShader,
-				cmd_text,
-				0.f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+			m_Console->Draw();
 		}
 	}
 }
@@ -436,6 +322,7 @@ void CGame::gotoGame()
     m_active_camera->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
     m_inputHandler->mouseLock(true);
+		in_console = false;
   }
 }
 
@@ -452,12 +339,6 @@ void CGame::gotoEdit()
 void CGame::showMenu()
 {
 
-}
-
-bool CGame::registerCommand(std::wstring name, IEditCommand* cmd)
-{
-	m_Commands[name] = cmd;
-	return true;
 }
 
 CWindow* CGame::getWindow()
@@ -593,54 +474,8 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	if (is_input)
-	{
-		std::vector<std::wstring> completion;
-		m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
-		if (input_trigered == true)
-		{
-			command.clear();
-			input_trigered = false;
-			return true;
-		}
-		switch (event.type)
-		{
-		case sf::Event::KeyPressed:
-			switch (event.key.code)
-			{
-			case sf::Keyboard::Tab:
-				completion = autocomplete(command);
-				if (completion.size() > 1)
-				{
-					for (auto& cmd : completion)
-					{
-						command += cmd + L" ";
-					}
-				}
-				else if (completion.size() == 1)
-				{
-					command = completion[0];
-					fillCommandText();
-				}
-				return true;
-			case sf::Keyboard::Enter:
-				is_input = false;
-				m_World->getActiveScene()->setPostProcessor(nullptr);
-				return handleCommand(command);
-			default:
-				return false;
-			}
-		case sf::Event::TextEntered:
-		{
-			handleCommandTextEnter(event.text.unicode);
-			return true;
-		}
-		default:
-			return false;
-		}
-
-	}
-	else
+	m_Console->ShowConsole(in_console);
+	if (!m_Console->OnInputEvent(event))
 	{
 		switch (event.type)
 		{
@@ -648,8 +483,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Y:
-				is_input = true;
-				input_trigered = true;
+				in_console = true;
 				return true;
 			case sf::Keyboard::Escape:
 				gotoMenu();
@@ -669,26 +503,6 @@ bool CGame::EditInputEvent(sf::Event& event)
 			case sf::Keyboard::V:
 				m_World->getActiveScene()->selectedObject()->second->setVisibility(!m_World->getActiveScene()->selectedObject()->second->visible());
 				return true;
-			//===============================================================
-			/*
-			case sf::Keyboard::N:
-				if (event.key.control)
-				{
-					SceneManager::instance()->nextScene();
-					m_World->setScene(SceneManager::instance()->currentScene());
-					return true;
-				}
-				return false;
-			case sf::Keyboard::P:
-				if (event.key.control)
-				{
-					SceneManager::instance()->prevScene();
-					m_World->setScene(SceneManager::instance()->currentScene());
-					return true;
-				}
-				return false;
-			*/
-			//===============================================================
 			case sf::Keyboard::Tab:
 				if (event.key.shift)
 				{
@@ -711,8 +525,9 @@ bool CGame::EditInputEvent(sf::Event& event)
 		case sf::Event::TextEntered:
 		{
 			if (event.text.unicode == ':')
-				is_input = true;
-				input_trigered = true;
+			{
+				in_console = true;
+			}
 		}
 		default:
 			return m_player->OnInputEvent(event);
@@ -721,31 +536,6 @@ bool CGame::EditInputEvent(sf::Event& event)
 	}
 
   return false;
-}
-
-void CGame::handleCommandTextEnter(uint32_t ch)
-{
-	if (ch == 8)
-	{
-		if (command.size() > 0) command.pop_back();
-	}
-	else
-	{
-		if (iswgraph(ch) || (iswblank(ch) && ch != '\t'))
-			command += ch;
-	}
-	fillCommandText();
-}
-
-void CGame::fillCommandText()
-{
-	int pos = 0;
-	command_text.clear();
-	for (auto ch : command)
-	{
-		command_text.push_back(ch);
-	}
-	command_text.push_back('_');
 }
 
 void CGame::Stop()

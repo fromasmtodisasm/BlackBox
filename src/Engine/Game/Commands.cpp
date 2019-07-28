@@ -55,12 +55,14 @@ private:
 		{
 			for (int i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
 			{
-				result = game->handleCommand(cd.history->back());
+				result = true;
+				GetIEngine()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
 			}
 		}
 		else
 		{
-			result = game->handleCommand(cd.history->back());
+			result = true;
+			GetIEngine()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
 		}
 		return result;
 	}
@@ -523,18 +525,18 @@ bool SceneCommand::activate(CommandDesc& cd)
 
 void CGame::initCommands()
 {
-	m_Commands[L"last"] = new LastCommand(this);
-	m_Commands[L"clear"] = new ClearCommand(this);
-	m_Commands[L"goto"] = new GotoCommand(this);
-	m_Commands[L"vsync"] = new VsyncCommand(this);
-	m_Commands[L"quit"] = new QuitCommand(this);
-	m_Commands[L"move"] = new MoveCommand(this);
-	m_Commands[L"rotate"] = new RotateCommand(this);
-	m_Commands[L"select"] = new SelectCommand(this);
-	m_Commands[L"wire"] = new WireframeCommand(this);
-	m_Commands[L"exec"] = new ExecCommand(this);
-	m_Commands[L"material"] = new MaterialCommand(this);
-	m_Commands[L"shader"] = new ShaderCommand(this);
-	m_Commands[L"camera"] = new CameraCommand(this);
-	m_Commands[L"scene"] = new SceneCommand(this);
+	m_Console->AddCommand("last", new LastCommand(this));
+	m_Console->AddCommand("clear", new ClearCommand(this));
+	m_Console->AddCommand("goto", new GotoCommand(this));
+	m_Console->AddCommand("vsync", new VsyncCommand(this));
+	m_Console->AddCommand("quit", new QuitCommand(this));
+	m_Console->AddCommand("move", new MoveCommand(this));
+	m_Console->AddCommand("rotate", new RotateCommand(this));
+	m_Console->AddCommand("select", new SelectCommand(this));
+	m_Console->AddCommand("wire", new WireframeCommand(this));
+	m_Console->AddCommand("exec", new ExecCommand(this));
+	m_Console->AddCommand("material", new MaterialCommand(this));
+	m_Console->AddCommand("shader", new ShaderCommand(this));
+	m_Console->AddCommand("camera", new CameraCommand(this));
+	m_Console->AddCommand("scene", new SceneCommand(this));
 }

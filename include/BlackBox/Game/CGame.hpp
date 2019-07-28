@@ -13,6 +13,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/CConsole.hpp>
 
 #include <BlackBox/common.h>
 
@@ -23,34 +24,11 @@
 #include <memory>
 #include <stack>
 
-
 using string = std::string;
 class EventListener; 
 class GameGUI;
 class Scene;
 class SceneManager;
-
-struct CommandDesc
-{
-	std::wstring command;
-	std::vector<std::wstring> args;
-	std::vector<std::wstring> *history;
-	CommandDesc(){}
-	CommandDesc(decltype(history) *history) : history(nullptr)
-	{
-
-	}
-};
-
-struct IEditCommand
-{
-	virtual bool execute(CommandDesc& cd) = 0;
-};
-
-using CommnadLambd = bool();
-
-IEditCommand* createCommand(IGame* game);
-
 
 class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
 {
@@ -91,13 +69,9 @@ private:
 	CShaderProgram *m_ScreenShader;
 	FreeTypeFont* m_Font;
 	//EDIT MODE
-	bool is_input = false;
-	bool input_trigered = false;
-	std::wstring command;
-	std::string command_text;
-	std::map<std::wstring, IEditCommand*> m_Commands;
+	bool in_console;
 	//==========
-
+	IConsole* m_Console;
 	// Render states
 	bool culling = true;
 	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
@@ -107,7 +81,6 @@ private:
 	std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
 	//=======================
-	std::vector<std::ifstream> scripts;
 
   enum Mode
   {
@@ -125,7 +98,6 @@ public:
   CGame(std::string title);
   ~CGame() = default;
   bool init(IEngine *pSystem) override;
-	void doFile(std::ifstream& cfg);
   bool update() override;
 	void execScripts();
 	void drawHud(float fps);
@@ -152,7 +124,6 @@ public:
 	void gotoFly();
 	void gotoEdit();
   void showMenu();
-	bool registerCommand(std::wstring name, IEditCommand* cmd);
 	CWindow* getWindow();
 private:
 
@@ -163,9 +134,6 @@ private:
   bool MenuInputEvent(sf::Event& event);
   bool DefaultInputEvent(sf::Event& event);
   bool EditInputEvent(sf::Event& event);
-	void handleCommandTextEnter(uint32_t ch);
-	void fillCommandText();
-	void initCommands();
 
   // IGame interface
 public:
@@ -175,10 +143,8 @@ public:
   virtual void PostRender() override;
   World *getWorld() const;
 
-	bool handleCommand(std::wstring command);
-	CommandDesc parseCommand(std::wstring& command);
-	std::vector<std::wstring> autocomplete(std::wstring cmd);
 	void drawHud();
+	void initCommands();
 
 	// Inherited via IPreRenderCallback
 	virtual void PreRender() override;
