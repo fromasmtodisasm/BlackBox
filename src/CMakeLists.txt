@@ -101,6 +101,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CBaseShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/CRender.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
