@@ -2,6 +2,7 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/InputHandler.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/Render/Texture.hpp>
 
 #include <map>
 #include <vector>
@@ -25,6 +26,7 @@ class CConsole : public IConsole, public IInputEventListener
 {
 public:
 	CConsole();
+	~CConsole();
 	// Унаследовано через IConsole
 	virtual void ShowConsole(bool show) override;
 	virtual void SetImage(ITexture* pTexture) override;
@@ -56,4 +58,18 @@ private:
 	IFont* m_Font;
 	bool isShow = false;
 	bool cmd_is_compete = false;
+	IEngine* m_engine;
+	Texture* m_Texture;
+
+	// for animate console
+	bool animate = false;
+	float gravity = 1;
+	float speed = 90;
+	float curr_speed = 100;
+	float curr_height = 0;
+	//
+	int line_count = 0;
+	int line_height = 25;
+	std::vector<std::string> cmd_buffer;
+	std::vector<std::wstring> history;
 };

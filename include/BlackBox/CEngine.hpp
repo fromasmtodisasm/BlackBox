@@ -3,6 +3,7 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/CWindow.hpp>
 class CConsole;
+class CRender;
 
 class CEngine : public IEngine
 {
@@ -13,6 +14,7 @@ private:
 	IFont* m_pFont;
 	IWindow* m_pWindow;
 	IInputHandler* m_InputHandler;
+	CRender* m_Render;
 public:
   // Унаследовано через ISystem
   virtual bool Init() override;

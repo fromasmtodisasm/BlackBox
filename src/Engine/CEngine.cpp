@@ -4,6 +4,7 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
+#include <BlackBox/Render/CRender.hpp>
 
 #include <cstdlib>
 #pragma once
@@ -19,7 +20,10 @@ bool CEngine::Init()
 	m_InputHandler = window;
 	if (window == nullptr)
 		return false;
-	if (!m_pWindow->init(0,0, 1366, 768, 32, 24, 8, false) || !m_pWindow->create())
+	m_Render = new CRender();
+	if (m_Render == nullptr)
+		return false;
+	if (!(m_pWindow = m_Render->Init(0,0, 1366, 768, 32, 24, 8, false, m_pWindow)))
 		return false;
 	m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
@@ -60,7 +64,7 @@ IShaderManager * CEngine::getShaderManager()
 
 IRender * CEngine::getIRender()
 {
-  return nullptr;
+  return m_Render;
 }
 
 ILog* CEngine::getILog()

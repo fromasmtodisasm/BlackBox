@@ -1,5 +1,6 @@
 #pragma once
 
+struct IEngine;
 struct IWindow;
 struct IFont;
 struct Vec3;
@@ -31,7 +32,7 @@ struct SDrawTextInfo
 struct IRender
 {
 	//! Init the renderer, params are self-explanatory
-	virtual IWindow *Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) = 0;
+	virtual IWindow *Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow *window = nullptr) = 0;
 
 	//! Changes resolution of the window/device (doen't require to reload the level
 	virtual bool	ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) = 0;
@@ -67,6 +68,9 @@ struct IRender
 	//! Write a message on the screen with additional flags.
 	//! for flags @see 
 	virtual void	Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info) = 0;
+
+	//! Draw a image using the current matrix
+	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
 
 	//! Set the polygon mode (wireframe, solid)
 	virtual int	SetPolygonMode(int mode) = 0;

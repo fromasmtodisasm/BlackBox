@@ -76,7 +76,8 @@ bool Texture::load(const char* name)
 	}
   glCheck(glGenTextures(1, &id));
   glCheck(glBindTexture(GL_TEXTURE_2D, id));
-
+	width = img.width;
+	height = img.height;
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
     img.width, img.height,

@@ -1,5 +1,9 @@
 #pragma once
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/CWindow.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Quad.hpp>
 
 class CRender : public IRender
 {
@@ -7,10 +11,9 @@ public:
 	CRender();
 	~CRender();
 
-private:
-
+public:
 	// Inherited via IRender
-	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) override;
+	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow *window = nullptr) override;
 
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) override;
 
@@ -47,6 +50,35 @@ private:
 	virtual void ScreenShot(const char* filename = nullptr) override;
 
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) override;
+private:
+	void glInit();
 
+private:
+	IWindow* m_Window;
+	IEngine *m_Engine;
+
+	bool is_fullscreen = false;
+	Rect m_viewPort;
+	unsigned int cbpp;
+	int zbpp;
+	int sbits;
+
+	//============
+	const GLuint majorVersion = 4;
+	const GLuint minorVersion = 3;
+	OpenglDebug *glDebug;
+	//============
+	CCamera *m_Camera;
+	Quad *m_ScreenQuad;
+	// Shaders 
+	CBaseShaderProgram* m_ScreenShader;
+#ifdef _DEBUG
+	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
+#else
+	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
+#endif 
+	// Inherited via IRender
+	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
+	// DEBUG
 };
 

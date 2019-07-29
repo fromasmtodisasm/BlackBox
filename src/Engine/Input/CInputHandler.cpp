@@ -61,3 +61,10 @@ Rect &CSFMLWindow::getViewPort()
 	return viewPort;
 }
 
+bool CSFMLWindow::create(Params params)
+{
+	auto settings = reinterpret_cast<sf::ContextSettings*>(params);
+  m_contextSettings = sf::ContextSettings(settings->depthBits, settings->stencilBits, 0, settings->majorVersion, settings->minorVersion, settings->attributeFlags);
+	return true;
+}
+

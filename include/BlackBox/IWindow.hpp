@@ -11,8 +11,10 @@ struct Rect
 	Rect(int l, int t, int w, int h) : left(l), top(t), width(w), height(h) {}
 };
 
+typedef void* Params;
+
 struct IWindow {
- virtual bool create() = 0;
+ virtual bool create(Params params) = 0;
  virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) = 0;
  //virtual bool init() = 0;
  virtual void update() = 0;

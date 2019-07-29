@@ -10,6 +10,7 @@ bool Image::load(const char* name, bool *hasAlpha)
 // Load the image and get a pointer to the pixels in memory
 	int channels = 4;
 	int dc = STBI_rgb;
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char* ptr = stbi_load(path.c_str(), &width, &height, &channels, dc);
 	if (channels == 4 && dc != STBI_rgb_alpha)
 	{
@@ -19,20 +20,20 @@ bool Image::load(const char* name, bool *hasAlpha)
 
 	if (ptr)
 	{
-			// Assign the image properties
-			if (width && height)
-			{
-				if (hasAlpha != nullptr && channels == 4)
-					*hasAlpha = true;
-				if (dc == STBI_rgb_alpha)
-					channels == 4;
-				// Copy the loaded pixels to the pixel buffer
-				data = new unsigned char[width * height * channels];
-				memcpy(data, ptr, width * height * channels);
-			}
+		// Assign the image properties
+		if (width && height)
+		{
+			if (hasAlpha != nullptr && channels == 4)
+				*hasAlpha = true;
+			if (dc == STBI_rgb_alpha)
+				channels == 4;
+			// Copy the loaded pixels to the pixel buffer
+			data = new unsigned char[width * height * channels];
+			memcpy(data, ptr, width * height * channels);
+		}
 
-			// Free the loaded pixels (they are now in our own pixel buffer)
-			stbi_image_free(ptr);
+		// Free the loaded pixels (they are now in our own pixel buffer)
+		stbi_image_free(ptr);
 	}
 #else
 	::srand(time(0));

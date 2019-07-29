@@ -3,6 +3,7 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
+#include <BlackBox/Render/IRender.hpp>
 
 #include <string>
 #include <fstream>
@@ -19,10 +20,37 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isShow) return;
+	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
+	auto render = GetIEngine()->getIRender();
+	float height = render->GetHeight();
+	/*
+	if (animate)
+	{
+		curr_height += curr_speed * deltatime;
+		if (curr_height >= height)
+		{
+			height = render->GetHeight();
+			animate = false;
+			curr_speed = speed;
+			curr_height = 0.0f;
+		}
+		else
+		{
+			height = curr_height;
+			curr_speed -= gravity * deltatime;
+		}
+	}
+	*/
+	int begin, end;
+	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
 	std::string cmd_text = std::string(">") + command_text;
-	m_Font->RenderText(
-		cmd_text,
-		0.f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	int i = 0;
+	for (auto cmd : history)
+	{
+		m_Font->RenderText(
+			wstr_to_str(cmd),
+			0.f, height / 2 - i * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	}
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -64,6 +92,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			return true;
 		case sf::Keyboard::Enter:
 			cmd_is_compete = true;
+			line_count++;
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
 			return handleCommand(command);
 		default:
@@ -98,7 +127,6 @@ void CConsole::handleCommandTextEnter(uint32_t ch)
 
 bool CConsole::handleCommand(std::wstring command)
 {
-	static std::vector<std::wstring> history;
 	bool result = false;
 	auto cd = parseCommand(command);
 	cd.history = &history;
@@ -215,6 +243,13 @@ CConsole::CConsole()
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, 18);
 	m_engine = GetIEngine();
+	m_Texture = new Texture();
+	m_Texture->load("console_background.png");
+}
+CConsole::~CConsole()
+{
+	if (m_Font) delete m_Font;
+	if (m_Texture) delete m_Texture;
 }
 
 void CConsole::ShowConsole(bool show)
@@ -223,7 +258,10 @@ void CConsole::ShowConsole(bool show)
 	{
 		isShow = show;
 		if (show)
+		{
 			input_trigered = true;
+			animate = true;
+		}
 	}
 }
 
