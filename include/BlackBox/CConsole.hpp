@@ -88,4 +88,7 @@ private:
 
 	// Inherited via IConsole
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
+
+	// Inherited via IConsole
+	virtual void Clear() override;
 };

@@ -347,6 +347,11 @@ void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
 {
 }
 
+void CConsole::Clear()
+{
+	cmd_buffer.clear();
+}
+
 HelpCommand::HelpCommand()
 {
 }

@@ -59,4 +59,6 @@ struct IConsole
 	//! Add a argument completion for command
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) = 0;
 
+	virtual void Clear() = 0;
+
 };

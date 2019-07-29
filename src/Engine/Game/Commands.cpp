@@ -84,7 +84,7 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		cd.history->clear();
+		GetIEngine()->getIConsole()->Clear();
 		return true;
 	}
 };
