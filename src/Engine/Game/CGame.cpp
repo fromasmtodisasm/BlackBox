@@ -472,15 +472,19 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 bool CGame::EditInputEvent(sf::Event& event)
 {
 	
+	m_Console->ShowConsole(in_console);
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
 		switch (event.key.code)
 		{
-		case sf::Keyboard::Y:
-			in_console = true;
-			m_Console->ShowConsole(in_console);
-			return true;
+		case sf::Keyboard::Tilde:
+			if (event.key.control)
+			{
+				in_console = !in_console;
+				return true;
+			}
+			return false;
 		case sf::Keyboard::Escape:
 			gotoMenu();
 			return true;

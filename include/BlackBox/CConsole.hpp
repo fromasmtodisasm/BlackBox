@@ -55,4 +55,5 @@ private:
 	std::string command_text;
 	IFont* m_Font;
 	bool isShow = false;
+	bool cmd_is_compete = false;
 };

@@ -40,12 +40,12 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		return false;
 	std::vector<std::wstring> completion;
 	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
-	if (input_trigered == true)
-	{
-		command.clear();
+	
+		if (cmd_is_compete)
+			command.clear();
+		cmd_is_compete = false;
 		input_trigered = false;
-		return true;
-	}
+
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
@@ -55,6 +55,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			completion = autocomplete(command);
 			if (completion.size() > 1)
 			{
+				command.clear();
 				for (auto& cmd : completion)
 				{
 					command += cmd + L" ";
@@ -67,7 +68,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			}
 			return true;
 		case sf::Keyboard::Enter:
-			is_input = false;
+			cmd_is_compete = true;
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
 			return handleCommand(command);
 		default:
@@ -222,9 +223,12 @@ CConsole::CConsole()
 
 void CConsole::ShowConsole(bool show)
 {
-	isShow = show;
-	if (show)
-		input_trigered = true;
+	if (isShow != show)
+	{
+		isShow = show;
+		if (show)
+			input_trigered = true;
+	}
 }
 
 void CConsole::fillCommandText()
