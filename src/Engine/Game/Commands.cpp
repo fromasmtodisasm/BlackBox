@@ -526,17 +526,17 @@ bool SceneCommand::activate(CommandDesc& cd)
 void CGame::initCommands()
 {
 	m_Console->AddCommand("last", new LastCommand(this));
-	m_Console->AddCommand("clear", new ClearCommand(this));
-	m_Console->AddCommand("goto", new GotoCommand(this));
+	m_Console->AddCommand("clear", new ClearCommand(this), "Clear command buffer");
+	m_Console->AddCommand("goto", new GotoCommand(this), "Change mode [FPS/FLY/MENU/EDIT]");
 	m_Console->AddCommand("vsync", new VsyncCommand(this), "Enable/Disable vsync [on/off]");
 	m_Console->AddCommand("quit", new QuitCommand(this));
 	m_Console->AddCommand("move", new MoveCommand(this));
 	m_Console->AddCommand("rotate", new RotateCommand(this));
 	m_Console->AddCommand("select", new SelectCommand(this));
 	m_Console->AddCommand("wire", new WireframeCommand(this));
-	m_Console->AddCommand("exec", new ExecCommand(this));
+	m_Console->AddCommand("exec", new ExecCommand(this), "Exec external program");
 	m_Console->AddCommand("material", new MaterialCommand(this));
 	m_Console->AddCommand("shader", new ShaderCommand(this));
 	m_Console->AddCommand("camera", new CameraCommand(this));
-	m_Console->AddCommand("scene", new SceneCommand(this));
+	m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
 }

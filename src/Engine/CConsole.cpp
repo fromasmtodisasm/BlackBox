@@ -13,15 +13,18 @@
 
 #include <glm/glm.hpp>
 
-class HelpCommand : IEditCommand 
+class HelpCommand : public IEditCommand 
 {
 public:
-	HelpCommand();
-private:
+	HelpCommand()
+	{
+		
+	}
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		cd.history->clear();
+		for (auto &cmd : cd.args)
+			GetIEngine()->getIConsole()->Help(wstr_to_str(cmd).c_str());
 		return true;
 	}
 };
@@ -177,8 +180,6 @@ bool CConsole::handleCommand(std::wstring command)
 		result = cmd_it->second.Command->execute(cd);
 	else if (cd.command == L"close")
 		isShow = false;
-	else if (cd.command == L"help")
-		help(cd);
 	history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
 }
@@ -288,6 +289,8 @@ CConsole::CConsole()
 	m_Texture = new Texture();
 	m_Texture->load("console_background2.jpg");
 	//prompt = user + " #";
+	AddCommand("help", new HelpCommand());
+
 }
 CConsole::~CConsole()
 {
@@ -352,6 +355,11 @@ void CConsole::Clear()
 	cmd_buffer.clear();
 }
 
-HelpCommand::HelpCommand()
+void CConsole::Help(const char *cmd)
 {
+	auto it = m_Commands.find(str_to_wstr(std::string(cmd)));
+	if (it == m_Commands.end())
+		return;
+	//line_count++;
+	cmd_buffer.push_back(std::string(cmd) + ": " + it->second.help);
 }

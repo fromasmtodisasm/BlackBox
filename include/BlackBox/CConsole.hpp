@@ -91,4 +91,7 @@ private:
 
 	// Inherited via IConsole
 	virtual void Clear() override;
+
+	// Inherited via IConsole
+	virtual void Help(const char *cmd) override;
 };

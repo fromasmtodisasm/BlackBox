@@ -61,4 +61,6 @@ struct IConsole
 
 	virtual void Clear() = 0;
 
+	virtual void Help(const char *cmd) = 0;
+
 };
