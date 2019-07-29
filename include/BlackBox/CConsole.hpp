@@ -48,6 +48,7 @@ private:
 	void doFile(std::ifstream& cfg);
 	void fillCommandText();
 	void setFont(IFont* font);
+	std::string getPrompt();
 private:
 	std::map<std::wstring, IEditCommand*> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -69,7 +70,11 @@ private:
 	float curr_height = 0;
 	//
 	int line_count = 0;
+	int line_in_console = 0;
 	int line_height = 25;
 	std::vector<std::string> cmd_buffer;
 	std::vector<std::wstring> history;
+	std::string m_prompt;
+
+	std::string user = "root";
 };

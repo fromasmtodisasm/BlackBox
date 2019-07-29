@@ -7,6 +7,9 @@
 
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <chrono>
+
 #include <glm/glm.hpp>
 
 void CConsole::SetImage(ITexture* pTexture)
@@ -42,20 +45,32 @@ void CConsole::Draw()
 	}
 	*/
 	int begin, end;
-	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
-	std::string cmd_text = std::string(">") + command_text;
+	auto prompt = getPrompt();
+	render->DrawImage(0, 384, render->GetWidth(), 384, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
+	line_in_console = (int)(height / 2) / (int)line_height;
 	int i = 0;
-	for (auto cmd : history)
+	int size = cmd_buffer.size();
+	if (line_in_console > size)
+	{
+		i = 0;
+		line_count = size;
+		end = size;
+	}
+	else
+	{
+		i = size - line_in_console;
+		line_count = line_in_console - 1;
+		end = size - 1;
+	}
+	for (int line = 0; i < end; i++, line++)
 	{
 		m_Font->RenderText(
-			wstr_to_str(cmd),
-			0.f, height / 2 - i * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		++i;
+			cmd_buffer[i],
+			0.f, m_Texture->height - line * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	}
-		m_Font->RenderText(
-			cmd_text,
-			0.f, height / 2 - i * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		++i;
+	m_Font->RenderText(
+		prompt + command_text,
+		0.f, height / 2 - line_count * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -99,6 +114,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		case sf::Keyboard::Enter:
 			cmd_is_compete = true;
 			line_count++;
+			cmd_buffer.push_back(getPrompt() + wstr_to_str(command));
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
 			return handleCommand(command);
 		default:
@@ -143,7 +159,7 @@ bool CConsole::handleCommand(std::wstring command)
 		result = cmd_it->second->execute(cd);
 	else if (cd.command == L"close")
 		isShow = false;
-	history.push_back(command);
+	history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
 }
 
@@ -250,7 +266,8 @@ CConsole::CConsole()
 	m_Font->Init("arial.ttf", 16, 18);
 	m_engine = GetIEngine();
 	m_Texture = new Texture();
-	m_Texture->load("console_background.png");
+	m_Texture->load("console_background2.jpg");
+	//prompt = user + " #";
 }
 CConsole::~CConsole()
 {
@@ -285,4 +302,10 @@ void CConsole::fillCommandText()
 void CConsole::setFont(IFont* font)
 {
 	m_Font = font;
+}
+
+std::string CConsole::getPrompt()
+{
+	auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	return user + " " + std::string(std::ctime(&time)) + " # ";
 }

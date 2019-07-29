@@ -8,6 +8,6 @@ uniform mat3 uv_transform = mat3(1.0);
 
 void main()
 {
-    gl_Position = transform * vec4(aPos.x, aPos.y, 0.0, 1.0); 
+    gl_Position = transform * vec4(aPos.x, aPos.y, 1.0, 1.0); 
     TexCoords = (uv_transform * vec3(aTexCoords, 1.0)).xy;
 } 
