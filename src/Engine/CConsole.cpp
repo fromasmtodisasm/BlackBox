@@ -53,18 +53,13 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
 		case sf::Keyboard::Tab:
 			completion = autocomplete(command);
-			if (completion.size() > 1)
+			if (completion.size() > 0)
 			{
 				command.clear();
 				for (auto& cmd : completion)
 				{
 					command += cmd + L" ";
 				}
-			}
-			else if (completion.size() == 1)
-			{
-				command = completion[0];
-				fillCommandText();
 			}
 			return true;
 		case sf::Keyboard::Enter:
@@ -219,6 +214,7 @@ CConsole::CConsole()
 {
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, 18);
+	m_engine = GetIEngine();
 }
 
 void CConsole::ShowConsole(bool show)
