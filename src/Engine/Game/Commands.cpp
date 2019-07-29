@@ -528,7 +528,7 @@ void CGame::initCommands()
 	m_Console->AddCommand("last", new LastCommand(this));
 	m_Console->AddCommand("clear", new ClearCommand(this));
 	m_Console->AddCommand("goto", new GotoCommand(this));
-	m_Console->AddCommand("vsync", new VsyncCommand(this));
+	m_Console->AddCommand("vsync", new VsyncCommand(this), "Enable/Disable vsync [on/off]");
 	m_Console->AddCommand("quit", new QuitCommand(this));
 	m_Console->AddCommand("move", new MoveCommand(this));
 	m_Console->AddCommand("rotate", new RotateCommand(this));

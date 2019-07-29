@@ -4,6 +4,7 @@
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Game/CGame.hpp>
 
 #include <string>
 #include <fstream>
@@ -11,6 +12,20 @@
 #include <chrono>
 
 #include <glm/glm.hpp>
+
+class HelpCommand : IEditCommand 
+{
+public:
+	HelpCommand();
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		cd.history->clear();
+		return true;
+	}
+};
+
 
 void CConsole::SetImage(ITexture* pTexture)
 {
@@ -66,7 +81,7 @@ void CConsole::Draw()
 	{
 		m_Font->RenderText(
 			cmd_buffer[i],
-			0.f, m_Texture->height - line * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+			0.f, height / 2 - line * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	}
 	m_Font->RenderText(
 		prompt + command_text,
@@ -75,7 +90,10 @@ void CConsole::Draw()
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
 {
-	m_Commands[str_to_wstr(std::string(sName))] = command;
+	CommandInfo cmdInfo;
+	cmdInfo.Command = command;
+	if (help) cmdInfo.help = help;
+	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
 }
 
 void CConsole::ExecuteString(const char* command)
@@ -156,9 +174,11 @@ bool CConsole::handleCommand(std::wstring command)
 	auto cmd_it = m_Commands.find(cd.command);
 
 	if (cmd_it != m_Commands.end())
-		result = cmd_it->second->execute(cd);
+		result = cmd_it->second.Command->execute(cd);
 	else if (cd.command == L"close")
 		isShow = false;
+	else if (cd.command == L"help")
+		help(cd);
 	history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
 }
@@ -308,4 +328,25 @@ std::string CConsole::getPrompt()
 {
 	auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	return user + " " + std::string(std::ctime(&time)) + " # ";
+}
+
+void CConsole::help(CommandDesc& cd)
+{
+	if (cd.args.size() > 0)
+	{
+		auto it = m_Commands.find(cd.args[0]);
+		if (it == m_Commands.end())
+			return;
+		//line_count++;
+		cmd_buffer.push_back(wstr_to_str(cd.command) + ": " + it->second.help);
+
+	}
+}
+
+void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
+{
+}
+
+HelpCommand::HelpCommand()
+{
 }

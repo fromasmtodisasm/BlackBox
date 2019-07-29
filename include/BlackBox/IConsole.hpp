@@ -55,4 +55,8 @@ struct IConsole
 	//! Execute a file in the console
 	virtual void ExecuteFile(const char* file) = 0;
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//! Add a argument completion for command
+	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) = 0;
+
 };

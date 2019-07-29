@@ -10,6 +10,13 @@
 
 struct IFont;
 
+struct CommandInfo
+{
+	IEditCommand* Command;
+	std::multimap<int, std::string> argsCompletion;
+	std::string help;
+};
+
 struct CommandDesc
 {
 	std::wstring command;
@@ -49,8 +56,9 @@ private:
 	void fillCommandText();
 	void setFont(IFont* font);
 	std::string getPrompt();
+	void help(CommandDesc &cd);
 private:
-	std::map<std::wstring, IEditCommand*> m_Commands;
+	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
 	bool is_input = false;
 	bool input_trigered = false;
@@ -77,4 +85,7 @@ private:
 	std::string m_prompt;
 
 	std::string user = "root";
+
+	// Inherited via IConsole
+	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
 };
