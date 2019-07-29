@@ -113,6 +113,7 @@ bool CGame::init(IEngine *pSystem)  {
 
 	initCommands();
 	m_Console->ExecuteFile("res/scripts/init.cfg");
+	m_Console->ExecuteString("clear");
   return true;
 }
 

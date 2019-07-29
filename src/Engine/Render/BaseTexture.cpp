@@ -10,7 +10,6 @@ bool Image::load(const char* name, bool *hasAlpha)
 // Load the image and get a pointer to the pixels in memory
 	int channels = 4;
 	int dc = STBI_rgb;
-	stbi_set_flip_vertically_on_load(true);
 	unsigned char* ptr = stbi_load(path.c_str(), &width, &height, &channels, dc);
 	if (channels == 4 && dc != STBI_rgb_alpha)
 	{

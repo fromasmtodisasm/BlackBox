@@ -50,7 +50,12 @@ void CConsole::Draw()
 		m_Font->RenderText(
 			wstr_to_str(cmd),
 			0.f, height / 2 - i * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		++i;
 	}
+		m_Font->RenderText(
+			cmd_text,
+			0.f, height / 2 - i * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		++i;
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -60,6 +65,7 @@ void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* 
 
 void CConsole::ExecuteString(const char* command)
 {
+	handleCommand(str_to_wstr(std::string(command)));
 }
 
 bool CConsole::OnInputEvent(sf::Event& event)
