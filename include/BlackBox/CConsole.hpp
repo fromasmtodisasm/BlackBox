@@ -17,6 +17,22 @@ struct CommandInfo
 	std::string help;
 };
 
+struct Text
+{
+	std::string data;
+	glm::vec3 color;
+	float x, y;
+	float scale;
+	Text(std::string& data, glm::vec3& color, float scale)
+		:
+		data(data), color(color), scale(scale)
+	{
+
+	}
+};
+
+typedef std::vector<Text> CommandLine;
+
 struct CommandDesc
 {
 	std::wstring command;
@@ -55,8 +71,11 @@ private:
 	void doFile(std::ifstream& cfg);
 	void fillCommandText();
 	void setFont(IFont* font);
-	std::string getPrompt();
-	void help(CommandDesc &cd);
+	CommandLine getPrompt();
+	void printLine(int line);
+	void printLineInternal2(CommandLine::iterator& element, int line);
+	template<typename It>
+	void printLineInternal(It iterator);
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -70,6 +89,8 @@ private:
 	IEngine* m_engine;
 	Texture* m_Texture;
 
+	float height;
+
 	// for animate console
 	bool animate = false;
 	float gravity = 1;
@@ -80,11 +101,14 @@ private:
 	int line_count = 0;
 	int line_in_console = 0;
 	int line_height = 25;
-	std::vector<std::string> cmd_buffer;
+	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
 	std::string m_prompt;
 
 	std::string user = "root";
+	//
+	glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
+	glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
 
 	// Inherited via IConsole
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;

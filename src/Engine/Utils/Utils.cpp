@@ -103,7 +103,7 @@ std::string getBasePath(std::string fullpath) {
 #endif
 
 
-std::string wstr_to_str(std::wstring& ws)
+std::string wstr_to_str(const std::wstring& ws)
 {
 	std::string result;
 	result.resize(ws.length());

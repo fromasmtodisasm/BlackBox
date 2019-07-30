@@ -25,6 +25,8 @@ public:
 	{
 		for (auto &cmd : cd.args)
 			GetIEngine()->getIConsole()->Help(wstr_to_str(cmd).c_str());
+		if (cd.args.size() == 0)
+			GetIEngine()->getIConsole()->Help(nullptr);
 		return true;
 	}
 };
@@ -43,7 +45,7 @@ void CConsole::Draw()
 	if (!isShow) return;
 	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
 	auto render = GetIEngine()->getIRender();
-	float height = render->GetHeight();
+	height = render->GetHeight();
 	/*
 	if (animate)
 	{
@@ -82,13 +84,12 @@ void CConsole::Draw()
 	}
 	for (int line = 0; i < end; i++, line++)
 	{
-		m_Font->RenderText(
-			cmd_buffer[i],
-			0.f, height / 2 - line * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		printLine(line);
 	}
+	printLineInternal2(prompt.begin(), line_count);
 	m_Font->RenderText(
-		prompt + command_text,
-		0.f, height / 2 - line_count * line_height - line_height, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		command_text + "\n",
+		m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -133,11 +134,13 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			}
 			return true;
 		case sf::Keyboard::Enter:
+		{
 			cmd_is_compete = true;
-			line_count++;
-			cmd_buffer.push_back(getPrompt() + wstr_to_str(command));
+			auto promptText = getPrompt();
+			cmd_buffer.push_back(CommandLine { promptText[0], promptText[1], Text(wstr_to_str(command) + "\n", textColor, 1.0) });
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
 			return handleCommand(command);
+		}
 		default:
 			return false;
 		}
@@ -172,7 +175,7 @@ bool CConsole::handleCommand(std::wstring command)
 {
 	bool result = false;
 	auto cd = parseCommand(command);
-	cd.history = &history;
+	//cd.history = &history;
 
 	auto cmd_it = m_Commands.find(cd.command);
 
@@ -180,7 +183,7 @@ bool CConsole::handleCommand(std::wstring command)
 		result = cmd_it->second.Command->execute(cd);
 	else if (cd.command == L"close")
 		isShow = false;
-	history.push_back(str_to_wstr(getPrompt()) + command);
+	//history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
 }
 
@@ -327,23 +330,28 @@ void CConsole::setFont(IFont* font)
 	m_Font = font;
 }
 
-std::string CConsole::getPrompt()
+CommandLine CConsole::getPrompt()
 {
 	auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	return user + " " + std::string(std::ctime(&time)) + " # ";
+	std::string time_str = std::ctime(&time);
+	time_str[time_str.size() - 1] = 0;
+	return { Text("~" + user + " ", glm::vec3(1.0, 0.0, 0.0), 1.0) , Text(std::string(time_str + " # "), promptColor, 1.0) };
 }
 
-void CConsole::help(CommandDesc& cd)
+void CConsole::printLine(int line)
 {
-	if (cd.args.size() > 0)
+	int i = 0;
+	for (auto element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++)
 	{
-		auto it = m_Commands.find(cd.args[0]);
-		if (it == m_Commands.end())
-			return;
-		//line_count++;
-		cmd_buffer.push_back(wstr_to_str(cd.command) + ": " + it->second.help);
-
+		printLineInternal2(element, line);
 	}
+}
+
+void CConsole::printLineInternal2(CommandLine::iterator& element, int line)
+{
+	m_Font->RenderText(
+		element->data,
+		m_Font->GetXPos(), height / 2 - line * line_height - line_height, 1.0f, element->color);
 }
 
 void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
@@ -357,9 +365,19 @@ void CConsole::Clear()
 
 void CConsole::Help(const char *cmd)
 {
-	auto it = m_Commands.find(str_to_wstr(std::string(cmd)));
-	if (it == m_Commands.end())
-		return;
-	//line_count++;
-	cmd_buffer.push_back(std::string(cmd) + ": " + it->second.help);
+	if (cmd != nullptr)
+	{
+		auto it = m_Commands.find(str_to_wstr(std::string(cmd)));
+		if (it == m_Commands.end())
+			return;
+		cmd_buffer.push_back({ Text(std::string(cmd) + ": " + it->second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+	}
+	else
+	{
+		for (auto& cmd : m_Commands)
+		{
+			if (cmd.second.help.size() > 0)
+				cmd_buffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+		}
+	}
 }
