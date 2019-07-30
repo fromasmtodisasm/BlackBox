@@ -8,4 +8,6 @@ struct IFont
 	virtual void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color) = 0;
 	virtual float GetXPos() = 0;
 	virtual float GetYPos() = 0;
+	virtual void SetXPos(float x) = 0;
+	virtual void SetYPos(float y) = 0;
 };

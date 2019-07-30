@@ -62,6 +62,8 @@ public:
 	// Унаследовано через IInputEventListener
 	virtual bool OnInputEvent(sf::Event& event) override;
 
+	//void fillcmd
+
 private:
 private:
 	CommandDesc parseCommand(std::wstring& command);
@@ -73,9 +75,10 @@ private:
 	void setFont(IFont* font);
 	CommandLine getPrompt();
 	void printLine(int line);
-	void printLineInternal2(CommandLine::iterator& element, int line);
+	void printText(Text & element, int line);
 	template<typename It>
 	void printLineInternal(It iterator);
+	void addToCommandBuffer(std::vector<std::wstring>& completion);;
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -100,12 +103,17 @@ private:
 	//
 	int line_count = 0;
 	int line_in_console = 0;
-	int line_height = 25;
+	int line_height = 18;
+	int current_line = 0;
+	int on_line = 0;
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
 	std::string m_prompt;
 
 	std::string user = "root";
+	std::string pc = "HackMan";
+	std::string env = "BlackBox";
+	std::string cd = "~"; //current directory
 	//
 	glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
 	glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);

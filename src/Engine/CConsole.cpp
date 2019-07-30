@@ -67,29 +67,35 @@ void CConsole::Draw()
 	int begin, end;
 	auto prompt = getPrompt();
 	render->DrawImage(0, 384, render->GetWidth(), 384, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
-	line_in_console = (int)(height / 2) / (int)line_height;
-	int i = 0;
-	int size = cmd_buffer.size();
-	if (line_in_console > size)
+	line_in_console = (int)((height / 2) - 1) / (int)line_height;
+	int num_all_lines = cmd_buffer.size();
+	if (line_in_console > num_all_lines)
 	{
-		i = 0;
-		line_count = size;
-		end = size;
+		current_line = 0;
+		line_count = num_all_lines;
+		end = num_all_lines;
 	}
 	else
 	{
-		i = size - line_in_console;
+		current_line = num_all_lines - line_in_console;
 		line_count = line_in_console - 1;
-		end = size - 1;
+		end = num_all_lines - 1;
 	}
-	for (int line = 0; i < end; i++, line++)
+	m_Font->SetXPos(0);
+	m_Font->SetYPos(height / 2);
+	for (on_line = 0; current_line < end; current_line++, on_line++)
 	{
-		printLine(line);
+		printLine(current_line);
 	}
-	printLineInternal2(prompt.begin(), line_count);
-	m_Font->RenderText(
+	for (auto& element : prompt)
+	{
+		printText(element, line_count - 1);
+	}
+	printText(Text(std::string(command_text + "\n"), textColor, 1.0f), 0);
+	/*m_Font->RenderText(
 		command_text + "\n",
 		m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
+	*/
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -127,17 +133,19 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			if (completion.size() > 0)
 			{
 				command.clear();
-				for (auto& cmd : completion)
-				{
-					command += cmd + L" ";
-				}
+				addToCommandBuffer(completion);
 			}
 			return true;
 		case sf::Keyboard::Enter:
 		{
 			cmd_is_compete = true;
-			auto promptText = getPrompt();
-			cmd_buffer.push_back(CommandLine { promptText[0], promptText[1], Text(wstr_to_str(command) + "\n", textColor, 1.0) });
+			CommandLine cmd;
+			for (auto& element : getPrompt())
+			{
+				cmd.push_back(element);
+			}
+			cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
+			cmd_buffer.push_back(cmd);
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
 			return handleCommand(command);
 		}
@@ -153,6 +161,16 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		return false;
 	}
 
+}
+
+void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
+{
+	cmd_buffer.push_back(getPrompt());
+	cmd_buffer.push_back({ Text(std::string("\n"), textColor, 1.0f) });
+	for (auto& cmd : completion)
+	{
+		cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
+	}
 }
 
 
@@ -287,7 +305,7 @@ void CConsole::ExecuteFile(const char* file)
 CConsole::CConsole()
 {
 	m_Font = new FreeTypeFont();
-	m_Font->Init("arial.ttf", 16, 18);
+	m_Font->Init("arial.ttf", 16, line_height);
 	m_engine = GetIEngine();
 	m_Texture = new Texture();
 	m_Texture->load("console_background2.jpg");
@@ -335,23 +353,28 @@ CommandLine CConsole::getPrompt()
 	auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	std::string time_str = std::ctime(&time);
 	time_str[time_str.size() - 1] = 0;
-	return { Text("~" + user + " ", glm::vec3(1.0, 0.0, 0.0), 1.0) , Text(std::string(time_str + " # "), promptColor, 1.0) };
+	return { 
+		Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0) , 
+		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
+		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
+		Text(std::string(" " + time_str + "\n# "), promptColor, 1.0) 
+	};
 }
 
 void CConsole::printLine(int line)
 {
 	int i = 0;
-	for (auto element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++)
+	for (auto element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
 	{
-		printLineInternal2(element, line);
+		printText(*element, line);
 	}
 }
 
-void CConsole::printLineInternal2(CommandLine::iterator& element, int line)
+void CConsole::printText(Text & element, int line)
 {
 	m_Font->RenderText(
-		element->data,
-		m_Font->GetXPos(), height / 2 - line * line_height - line_height, 1.0f, element->color);
+		element.data,
+		m_Font->GetXPos(), m_Font->GetYPos() /*height / 2 - on_line * line_height - line_height*/, 1.0f, element.color);
 }
 
 void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)

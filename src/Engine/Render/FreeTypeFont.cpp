@@ -20,6 +20,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		if (*c == '\n')
 		{
 			posX = x = 0;
+			posY = y -= 18;
 			continue;
 		}
 		if (iscntrl(*c))
@@ -156,4 +157,14 @@ float FreeTypeFont::GetXPos()
 float FreeTypeFont::GetYPos()
 {
 	return posY;
+}
+
+void FreeTypeFont::SetXPos(float x)
+{
+	posX = x;
+}
+
+void FreeTypeFont::SetYPos(float y)
+{
+	posY = y;
 }

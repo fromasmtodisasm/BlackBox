@@ -46,4 +46,10 @@ public:
 
 	virtual float GetYPos() override;
 
+
+	// Унаследовано через IFont
+	virtual void SetXPos(float x) override;
+
+	virtual void SetYPos(float y) override;
+
 };
