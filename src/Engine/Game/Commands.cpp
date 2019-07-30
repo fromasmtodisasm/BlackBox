@@ -296,7 +296,8 @@ private:
 		if (cd.args.size() == 1)
 		{
 			std::string name = wstr_to_str(cd.args[0]);
-			auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
+			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
+			GetIEngine()->getIConsole()->ExecuteFile(name.c_str());
 
 			return true;
 		}
@@ -538,7 +539,7 @@ void CGame::initCommands()
 	m_Console->AddCommand("rotate", new RotateCommand(this));
 	m_Console->AddCommand("select", new SelectCommand(this));
 	m_Console->AddCommand("wire", new WireframeCommand(this));
-	m_Console->AddCommand("exec", new ExecCommand(this), "Exec external program");
+	m_Console->AddCommand("exec", new ExecCommand(this), "Load end execute scripts");
 	m_Console->AddCommand("material", new MaterialCommand(this));
 	m_Console->AddCommand("shader", new ShaderCommand(this));
 	m_Console->AddCommand("camera", new CameraCommand(this));
