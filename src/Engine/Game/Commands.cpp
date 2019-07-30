@@ -3,6 +3,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/IConsole.hpp>
 #include <process.h>
 
 class BaseCommand : public IEditCommand
@@ -271,7 +272,9 @@ private:
 		int mode = m_World->getActiveScene()->selectedObject()->second->getRenderMode();
 		if (mode == GL_FILL) mode = GL_LINE;
 		else if (mode == GL_LINE) mode = GL_FILL;
-		m_World->getActiveScene()->selectedObject()->second->setRenderMode(mode);
+		auto obj = m_World->getActiveScene()->selectedObject();
+		obj->second->setRenderMode(mode);
+		GetIEngine()->getIConsole()->PrintLine("Name of wired object %s\n", obj->first.c_str());
 		return true;
 	}
 };
@@ -294,6 +297,7 @@ private:
 		{
 			std::string name = wstr_to_str(cd.args[0]);
 			auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
+
 			return true;
 		}
 		return false;

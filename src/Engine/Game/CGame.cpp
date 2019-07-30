@@ -384,7 +384,7 @@ bool CGame::FpsInputEvent(sf::Event& event)
 			m_active_camera->MovementSpeed += 5;
 			return true;
 		case sf::Keyboard::E:
-			m_inputHandler->mouseLock(false);
+			//m_inputHandler->mouseLock(false);
 			m_Mode = EDIT;
 			return true;
 		case sf::Keyboard::M:

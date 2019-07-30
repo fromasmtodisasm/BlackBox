@@ -151,7 +151,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	uv_transform = glm::scale(uv_transform, glm::vec3(1, -1, 1));
 	model = glm::scale(model, glm::vec3(w, h / 2, 1));
 	transform = glm::ortho(xpos, w, ypos, h) * model;
-	m_ScreenShader->setUniformValue(transform, "transform");
+	//m_ScreenShader->setUniformValue(transform, "transform");
 	m_ScreenShader->setUniformValue(glm::mat3(uv_transform), "uv_transform");
 	glCheck(glDisable(GL_DEPTH_TEST));
 	glCheck(glActiveTexture(GL_TEXTURE0));

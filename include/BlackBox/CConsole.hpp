@@ -47,6 +47,7 @@ struct CommandDesc
 
 class CConsole : public IConsole, public IInputEventListener
 {
+	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
 public:
 	CConsole();
 	~CConsole();
@@ -78,7 +79,9 @@ private:
 	void printText(Text & element, int line);
 	template<typename It>
 	void printLineInternal(It iterator);
-	void addToCommandBuffer(std::vector<std::wstring>& completion);;
+	void addToCommandBuffer(std::vector<std::wstring>& completion);
+	void addText(std::wstring& cmd);
+	;
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -109,6 +112,7 @@ private:
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
 	std::string m_prompt;
+	std::string message_buffer;
 
 	std::string user = "root";
 	std::string pc = "HackMan";
@@ -126,4 +130,7 @@ private:
 
 	// Inherited via IConsole
 	virtual void Help(const char *cmd) override;
+
+	// Унаследовано через IConsole
+	virtual void PrintLine(const char* format, ...) override;
 };

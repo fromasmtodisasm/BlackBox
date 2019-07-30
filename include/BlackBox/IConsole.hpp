@@ -63,4 +63,10 @@ struct IConsole
 
 	virtual void Help(const char *cmd) = 0;
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Print a string in the console and go to the new line
+		@param s the string to print
+	*/
+	virtual void PrintLine(const char* s, ...) = 0;
+
 };

@@ -10,6 +10,7 @@
 #include <fstream>
 #include <ctime>
 #include <chrono>
+#include <cstdlib>
 
 #include <glm/glm.hpp>
 
@@ -169,11 +170,14 @@ void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
 	cmd_buffer.push_back({ Text(std::string("\n"), textColor, 1.0f) });
 	for (auto& cmd : completion)
 	{
-		cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
+		addText(cmd);
 	}
 }
 
-
+void CConsole::addText(std::wstring& cmd)
+{
+	cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
+}
 
 void CConsole::handleCommandTextEnter(uint32_t ch)
 {
@@ -311,7 +315,7 @@ CConsole::CConsole()
 	m_Texture->load("console_background2.jpg");
 	//prompt = user + " #";
 	AddCommand("help", new HelpCommand());
-
+	message_buffer.resize(MESSAGE_BUFFER_SIZE);
 }
 CConsole::~CConsole()
 {
@@ -403,4 +407,14 @@ void CConsole::Help(const char *cmd)
 				cmd_buffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
 		}
 	}
+}
+
+void CConsole::PrintLine(const char* format, ...)
+{
+  va_list ptr;
+  va_start(ptr, format);
+  vsnprintf(const_cast<char*>(message_buffer.data()), MESSAGE_BUFFER_SIZE, format, ptr);
+  va_end(ptr);
+
+	addText(str_to_wstr(message_buffer));
 }
