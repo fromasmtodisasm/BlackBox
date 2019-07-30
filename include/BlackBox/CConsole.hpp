@@ -59,11 +59,11 @@ public:
 	virtual void AddCommand(const char* sName, IEditCommand* command, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
-
-	// Унаследовано через IInputEventListener
 	virtual bool OnInputEvent(sf::Event& event) override;
-
-	//void fillcmd
+	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
+	virtual void Clear() override;
+	virtual void Help(const char *cmd) override;
+	virtual void PrintLine(const char* format, ...) override;
 
 private:
 private:
@@ -122,15 +122,4 @@ private:
 	glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
 	glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
 
-	// Inherited via IConsole
-	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
-
-	// Inherited via IConsole
-	virtual void Clear() override;
-
-	// Inherited via IConsole
-	virtual void Help(const char *cmd) override;
-
-	// Унаследовано через IConsole
-	virtual void PrintLine(const char* format, ...) override;
 };

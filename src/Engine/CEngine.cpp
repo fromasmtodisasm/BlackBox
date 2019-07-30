@@ -5,6 +5,7 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/Render/CRender.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #include <cstdlib>
 #pragma once
@@ -44,7 +45,7 @@ bool CEngine::Init()
   if (!m_pGame->init(this)) {
     return false;
 	}
-  m_pLog->AddLog("[OK] IGame created\n");
+  m_pConsole->PrintLine("[OK] IGame created\n");
   return true;
 }
 

@@ -72,7 +72,8 @@ bool CGame::init(IEngine *pSystem)  {
 		m_Log->AddLog("[FAILED] Failed init objects\n");
 		return false;
 	}
-	m_Log->AddLog("[OK] Objects inited\n");
+	//m_Log->AddLog("[OK] Objects inited\n");
+	m_Console->PrintLine("[OK] Objects inited\n");
 	FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
 	sceneBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);
@@ -113,7 +114,7 @@ bool CGame::init(IEngine *pSystem)  {
 
 	initCommands();
 	m_Console->ExecuteFile("res/scripts/init.cfg");
-	m_Console->ExecuteString("clear");
+	//m_Console->ExecuteString("clear");
   return true;
 }
 
