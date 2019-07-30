@@ -17,6 +17,7 @@ public:
 		glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
 		GLuint     Advance;    // Offset to advance to next glyph
 	};
+	float posX = 0, posY = 0;
 
 	FreeTypeFont()
 	{
@@ -38,5 +39,11 @@ private:
 public:
 	// Унаследовано через IFont
 	virtual bool Init(const char* font, int w, int h) override;
+
+
+	// Унаследовано через IFont
+	virtual float GetXPos() override;
+
+	virtual float GetYPos() override;
 
 };

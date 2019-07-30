@@ -6,4 +6,6 @@ struct IFont
 {
 	virtual bool Init(const char* font, int w, int h) = 0;
 	virtual void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color) = 0;
+	virtual float GetXPos() = 0;
+	virtual float GetYPos() = 0;
 };

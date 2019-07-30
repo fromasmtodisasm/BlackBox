@@ -17,6 +17,13 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
 	{
+		if (*c == '\n')
+		{
+			posX = x = 0;
+			continue;
+		}
+		if (iscntrl(*c))
+			continue;
 		glm::mat4 model(1.0);
 		Character ch = Characters[*c];
 
@@ -48,7 +55,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
 		glCheck(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	glCheck(glBindVertexArray(0));
 	glCheck(glBindTexture(GL_TEXTURE_2D, 0));
@@ -139,4 +146,14 @@ bool FreeTypeFont::Init(const char* font, int w, int h)
 
 	glCheck(glBindVertexArray(0));
 	return true;
+}
+
+float FreeTypeFont::GetXPos()
+{
+	return posX;
+}
+
+float FreeTypeFont::GetYPos()
+{
+	return posY;
 }
