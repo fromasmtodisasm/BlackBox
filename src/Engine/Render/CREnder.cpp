@@ -4,10 +4,8 @@
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/Render/IFont.hpp>
 
-CRender::CRender() : m_viewPort(0,0,0,0)
+CRender::CRender(IEngine *engine) : m_Engine(engine), m_viewPort(0,0,0,0)
 {
-	m_Engine = GetIEngine();
-
 
 }
 
@@ -38,6 +36,9 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
+	//=======================
+
+	translateImageY = m_Engine->getIConsole()->CreateVariable("timY", 3.0f, 0);
 	//=======================
 	return result;
 }
@@ -152,7 +153,9 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	auto uv_transform = glm::mat4(1.0);
 	uv_transform = glm::scale(uv_transform, glm::vec3(1.f, -1.f, 1.f));
 	model = glm::translate(model, glm::vec3(1.f, 1.f, 0.f));
-	model = glm::scale(model, glm::vec3(w, h, 1.f));
+	//model = glm::translate(model, glm::vec3(xpos, ypos, 0));
+	model = glm::scale(model, glm::vec3(w, 0.5*h, 1.f));
+	model = glm::translate(model, glm::vec3(xpos, translateImageY->GetFVal() * (ypos / GetHeight()), 0.f));
 	projection = glm::ortho(0.f, (float)GetWidth(), 0.f, (float)GetHeight());
 	m_ScreenShader->setUniformValue(projection, "projection");
 	m_ScreenShader->setUniformValue(model, "model");
@@ -170,4 +173,10 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 {
 	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
+}
+
+
+IRENDER_API IRender* CreateIRender(IEngine* pSystem)
+{
+	return new CRender(pSystem);
 }

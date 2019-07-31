@@ -4,11 +4,12 @@
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/CShader.hpp>
 #include <BlackBox/Quad.hpp>
+#include <BlackBox/IConsole.hpp>
 
 class CRender : public IRender
 {
 public:
-	CRender();
+	CRender(IEngine *engine);
 	~CRender();
 
 public:
@@ -77,6 +78,7 @@ private:
 #else
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
 #endif 
+	ICVar* translateImageY;
 	// Inherited via IRender
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 

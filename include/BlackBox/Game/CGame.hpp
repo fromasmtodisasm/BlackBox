@@ -134,6 +134,8 @@ private:
   bool DefaultInputEvent(sf::Event& event);
   bool EditInputEvent(sf::Event& event);
 
+	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
+
   // IGame interface
 public:
   virtual float getDeltaTime() override;

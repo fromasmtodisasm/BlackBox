@@ -21,12 +21,21 @@ bool CEngine::Init()
 	m_InputHandler = window;
 	if (window == nullptr)
 		return false;
-	m_Render = new CRender();
+	//=============
+  m_pConsole = new CConsole();
+  if (m_pConsole == nullptr)
+    return false;
+	//=============
+	m_Render = CreateIRender(this);
 	if (m_Render == nullptr)
 		return false;
+
 	if (!(m_pWindow = m_Render->Init(0,0, 1366, 768, 32, 24, 8, false, m_pWindow)))
 		return false;
 	m_pLog->AddLog("[OK] Window susbsystem inited\n");
+	//=============
+	if (!m_pConsole->Init())
+		return false;
 	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)
@@ -34,10 +43,6 @@ bool CEngine::Init()
 		if (m_pFont->Init("arial.ttf", 16,18) == false)
 			return false;
 	}
-	//=============
-  m_pConsole = new CConsole();
-  if (m_pConsole == nullptr)
-    return false;
 	m_InputHandler->AddEventListener(m_pConsole);
   if (CreateGame(nullptr) == nullptr)
     return false;

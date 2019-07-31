@@ -504,27 +504,12 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	switch (event.type)
 	{
-	case sf::Event::KeyPressed:
-		switch (event.key.code)
-		{
-		case sf::Keyboard::Tilde:
-			if (event.key.control)
-			{
-				if (m_Console->IsOpened())
-					m_Console->ShowConsole(false);
-				else
-					m_Console->ShowConsole(true);
-				return true;
-			}
-			return false;
-		}
+		bool retflag;
+		bool retval = ShouldHandleEvent(event, retflag);
+		if (retflag) return retval;
 	}
 
-	if (m_Console->IsOpened())
-		return false;
-	
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
@@ -578,6 +563,34 @@ bool CGame::EditInputEvent(sf::Event& event)
 		return m_player->OnInputEvent(event);
 	}
   return false;
+}
+
+bool CGame::ShouldHandleEvent(sf::Event& event, bool& retflag)
+{
+	retflag = true;
+	switch (event.type)
+	{
+	case sf::Event::KeyPressed:
+		switch (event.key.code)
+		{
+		case sf::Keyboard::Tilde:
+			if (event.key.control)
+			{
+				if (m_Console->IsOpened())
+					m_Console->ShowConsole(false);
+				else
+					m_Console->ShowConsole(true);
+				return true;
+			}
+			return false;
+		}
+	}
+
+	if (m_Console->IsOpened())
+		return false;
+
+	retflag = false;
+	return {};
 }
 
 void CGame::Stop()

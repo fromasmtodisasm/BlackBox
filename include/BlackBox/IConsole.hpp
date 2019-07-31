@@ -15,8 +15,9 @@ struct IConsole
 #endif // IMGUICONSOLE
 
 struct IEditCommand;
-class ITexture;
 struct CommandDesc;
+struct ICVar;
+class ITexture;
 
 
 struct IEditCommand
@@ -26,6 +27,20 @@ struct IEditCommand
 
 struct IConsole
 {
+	virtual bool Init() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Crate a new console variable
+		@param sName console variable name
+		@param sValue default value
+		@param nFlag user definded flag, this parameter is used by other subsystems
+			and doesn't affect the console varible (basically of user data)
+		@return a pointer to the interface ICVar
+		@see ICVar
+	*/
+	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") = 0;
+	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") = 0;
+	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") = 0;
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! show/hide the console
 		@param specifies if the window must be (true=show,false=hide)
@@ -74,4 +89,23 @@ struct IConsole
 	*/
 	virtual void PrintLine(const char* s, ...) = 0;
 
+};
+
+struct ICVar
+{
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Return the float value of the variable
+		@return the value
+	*/
+	virtual float GetFVal() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! set the float value of the variable
+		@param s float representation the value
+	*/
+	virtual void Set(float f) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! return the variable's name
+		@return the variable's name
+	*/
+	virtual const char* GetName() = 0;
 };

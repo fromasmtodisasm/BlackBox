@@ -1,5 +1,19 @@
 #pragma once
 
+#ifdef WIN32
+	#ifdef IRENDER_EXPORTS
+		#define IRENDER_API __declspec(dllexport)
+	#else
+	#ifdef DLL
+		#define IRENDER_API __declspec(dllimport)
+	#else
+		#define IRENDER_API
+	#endif
+	#endif
+#else
+	#define IRENDER_API
+#endif
+
 struct IEngine;
 struct IWindow;
 struct IFont;
@@ -89,3 +103,7 @@ struct IRender
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
 
 };
+
+extern "C" {
+	IRENDER_API IRender* CreateIRender(IEngine* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+}

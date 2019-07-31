@@ -31,6 +31,37 @@ public:
 		return true;
 	}
 };
+class SetCommand : public IEditCommand 
+{
+	CConsole* m_Console;
+public:
+	SetCommand(CConsole *console) : m_Console(console)
+	{
+		
+	}
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		m_Console->Set(cd);
+		return true;
+	}
+};
+
+class GetCommand : public IEditCommand 
+{
+	CConsole* m_Console;
+public:
+	GetCommand(CConsole *console) : m_Console(console)
+	{
+		
+	}
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		m_Console->Get(cd);
+		return true;
+	}
+};
 
 
 void CConsole::SetImage(ITexture* pTexture)
@@ -68,20 +99,7 @@ void CConsole::Draw()
 	int begin, end;
 	auto prompt = getPrompt();
 	render->DrawImage(0, 384, render->GetWidth(), 384, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
-	line_in_console = (int)((height / 2) - 1) / (int)line_height;
-	int num_all_lines = cmd_buffer.size();
-	if (line_in_console > num_all_lines)
-	{
-		current_line = 0;
-		line_count = num_all_lines;
-		end = num_all_lines;
-	}
-	else
-	{
-		current_line = num_all_lines - line_in_console;
-		line_count = line_in_console - 1;
-		end = num_all_lines - 1;
-	}
+	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(height / 2);
 	for (on_line = 0; current_line < end; current_line++, on_line++)
@@ -97,6 +115,24 @@ void CConsole::Draw()
 		command_text + "\n",
 		m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
 	*/
+}
+
+void CConsole::CalcMetrics(int& end)
+{
+	line_in_console = (int)((height / 2) - 1) / (int)line_height;
+	int num_all_lines = cmd_buffer.size();
+	if (line_in_console > num_all_lines)
+	{
+		current_line = 0;
+		line_count = num_all_lines;
+		end = num_all_lines;
+	}
+	else
+	{
+		current_line = num_all_lines - line_in_console;
+		line_count = line_in_console - 1;
+		end = num_all_lines - 1;
+	}
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -179,9 +215,76 @@ void CConsole::addText(std::wstring& cmd)
 	cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
 }
 
+void CConsole::Set(CommandDesc& cd)
+{
+	if (cd.args.size() == 2)
+	{
+		auto name = wstr_to_str(cd.args[0]);
+		auto value = wstr_to_str(cd.args[1]);
+		auto var = m_variables_map.find(name);
+		if (var != m_variables_map.end())
+		{
+			var->second->Set(std::atof(value.c_str()));
+		}
+		else
+		{
+			PrintLine("Variable [%s] not found", name.c_str());
+		}
+
+
+	}
+}
+
+void CConsole::Get(CommandDesc& cd)
+{
+	if (cd.args.size() == 1)
+	{
+		auto name = wstr_to_str(cd.args[0]);
+		auto var = m_variables_map.find(name);
+		if (var != m_variables_map.end())
+		{
+			auto value = var->second->GetFVal();
+			PrintLine("Variable = [%f]", value);
+		}
+		else
+		{
+			PrintLine("Variable [%s] not found", name.c_str());
+		}
+
+
+	}
+}
+
+bool CConsole::Init()
+{
+	m_Font = new FreeTypeFont();
+	m_Font->Init("arial.ttf", 16, line_height);
+	m_Texture = new Texture();
+	m_Texture->load("console_background2.jpg");
+	return true;
+}
+
 bool CConsole::IsOpened()
 {
 	return isOpened;
+}
+
+ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help)
+{
+	return nullptr;
+}
+
+ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const char* help)
+{
+	return nullptr;
+}
+
+ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, const char* help)
+{
+	ICVar* var = new CCVar(sName, fValue);
+	if (var == nullptr) return var;
+	m_variables_map[sName] = var;
+	return var;
 }
 
 void CConsole::handleCommandTextEnter(uint32_t ch)
@@ -313,13 +416,11 @@ void CConsole::ExecuteFile(const char* file)
 
 CConsole::CConsole()
 {
-	m_Font = new FreeTypeFont();
-	m_Font->Init("arial.ttf", 16, line_height);
 	m_engine = GetIEngine();
-	m_Texture = new Texture();
-	m_Texture->load("console_background2.jpg");
 	//prompt = user + " #";
 	AddCommand("help", new HelpCommand());
+	AddCommand("set", new SetCommand(this));
+	AddCommand("get", new GetCommand(this));
 	message_buffer.resize(MESSAGE_BUFFER_SIZE);
 }
 CConsole::~CConsole()
@@ -422,4 +523,19 @@ void CConsole::PrintLine(const char* format, ...)
   va_end(ptr);
 
 	addText(str_to_wstr(message_buffer));
+}
+
+float CCVar::GetFVal()
+{
+	return value;
+}
+
+void CCVar::Set(float f)
+{
+	value = f;
+}
+
+const char* CCVar::GetName()
+{
+	return name;
 }

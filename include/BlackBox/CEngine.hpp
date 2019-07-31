@@ -14,7 +14,7 @@ private:
 	IFont* m_pFont;
 	IWindow* m_pWindow;
 	IInputHandler* m_InputHandler;
-	CRender* m_Render;
+	IRender* m_Render;
 public:
   // Унаследовано через ISystem
   virtual bool Init() override;

@@ -10,6 +10,20 @@
 
 struct IFont;
 
+class CCVar : public ICVar
+{
+public:
+	CCVar(const char* name, float value) : name(name), value(value) {}
+	CCVar() : name(""), value(0.0f) {}
+	// Inherited via ICVar
+	virtual float GetFVal() override;
+	virtual void Set(float f) override;
+	virtual const char* GetName() override;
+private:
+	const char* name;
+	float value;
+};
+
 struct CommandInfo
 {
 	IEditCommand* Command;
@@ -47,15 +61,19 @@ struct CommandDesc
 
 class CConsole : public IConsole, public IInputEventListener
 {
+	friend class SetCommand;
+	friend class GetCommand;
 	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
 public:
 	CConsole();
 	~CConsole();
-	// Унаследовано через IConsole
+	// Inherited via IConsole
+	virtual bool Init() override;
 	virtual void ShowConsole(bool show) override;
 	virtual void SetImage(ITexture* pTexture) override;
 	virtual void Update() override;
 	virtual void Draw() override;
+	void CalcMetrics(int& end);
 	virtual void AddCommand(const char* sName, IEditCommand* command, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
@@ -64,6 +82,15 @@ public:
 	virtual void Clear() override;
 	virtual void Help(const char *cmd) override;
 	virtual void PrintLine(const char* format, ...) override;
+	virtual bool IsOpened() override;
+
+	// Inherited via IConsole
+	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") override;
+
+	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") override;
+
+	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") override;
+
 
 private:
 private:
@@ -80,6 +107,8 @@ private:
 	void addToCommandBuffer(std::vector<std::wstring>& completion);
 	void addText(std::wstring& cmd);
 	;
+	void Set(CommandDesc& cd);
+	void Get(CommandDesc& cd);
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -120,8 +149,8 @@ private:
 	glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
 	glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
 
+	std::map<std::string, ICVar*> m_variables_map;
 
-	// Inherited via IConsole
-	virtual bool IsOpened() override;
+
 
 };
