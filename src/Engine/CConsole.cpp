@@ -587,20 +587,38 @@ char* CCVar::GetString()
 
 void CCVar::Set(const char* s)
 {
+	if (type != CVAR_STRING)
+		return;
+	if (value.s != nullptr)
+		delete[] value.s;
 	value.s = const_cast<char*>(s);
 }
 
 void CCVar::ForceSet(const char* s)
 {
+	if (value.s != nullptr)
+		delete[] value.s;
+	type = CVAR_STRING;
+	value.s = const_cast<char*>(s);
 }
 
 void CCVar::Set(float f)
 {
+	if (type == CVAR_STRING)
+	{
+		delete[] value.s;
+	}
+	type = CVAR_FLOAT;
 	value.f = f;
 }
 
 void CCVar::Set(int i)
 {
+	if (type == CVAR_STRING)
+	{
+		delete[] value.s;
+	}
+	type = CVAR_INT;
 	value.i = i;
 }
 

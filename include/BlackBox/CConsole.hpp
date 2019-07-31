@@ -109,12 +109,13 @@ public:
 	virtual void PrintLine(const char* format, ...) override;
 	virtual bool IsOpened() override;
 
-	// Inherited via IConsole
 	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") override;
 
 	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") override;
 
 	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") override;
+
+	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
 
 
 private:
@@ -180,6 +181,5 @@ private:
 
 
 	// Inherited via IConsole
-	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
 
 };
