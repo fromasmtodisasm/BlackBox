@@ -387,6 +387,8 @@ bool CGame::initPlayer()
 
 bool CGame::FpsInputEvent(sf::Event& event)
 {
+	if (m_Console->IsOpened())
+		return false;
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -442,7 +444,9 @@ bool CGame::FpsInputEvent(sf::Event& event)
 
 bool CGame::FlyInputEvent(sf::Event& event)
 {
- switch (event.type)
+	if (m_Console->IsOpened())
+		return false;
+	switch (event.type)
   {
   case sf::Event::KeyPressed:
     switch(event.key.code)
@@ -468,6 +472,8 @@ bool CGame::FlyInputEvent(sf::Event& event)
 
 bool CGame::MenuInputEvent(sf::Event& event)
 {
+	if (m_Console->IsOpened())
+		return false;
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -498,7 +504,6 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
@@ -514,6 +519,17 @@ bool CGame::EditInputEvent(sf::Event& event)
 				return true;
 			}
 			return false;
+		}
+	}
+
+	if (m_Console->IsOpened())
+		return false;
+	
+	switch (event.type)
+	{
+	case sf::Event::KeyPressed:
+		switch (event.key.code)
+		{
 		case sf::Keyboard::Escape:
 			gotoMenu();
 			return true;

@@ -69,7 +69,6 @@ private:
 	CShaderProgram *m_ScreenShader;
 	FreeTypeFont* m_Font;
 	//EDIT MODE
-	bool in_console = false;
 	//==========
 	IConsole* m_Console;
 	// Render states
