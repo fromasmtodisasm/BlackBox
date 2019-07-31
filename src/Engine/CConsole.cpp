@@ -11,6 +11,7 @@
 #include <ctime>
 #include <chrono>
 #include <cstdlib>
+#include <cstring>
 
 #include <glm/glm.hpp>
 
@@ -63,6 +64,22 @@ public:
 	}
 };
 
+class DumpCommand : public IEditCommand 
+{
+	CConsole* m_Console;
+public:
+	DumpCommand(CConsole *console) : m_Console(console)
+	{
+		
+	}
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		m_Console->Dump();
+		return true;
+	}
+};
+
 
 void CConsole::SetImage(ITexture* pTexture)
 {
@@ -78,24 +95,7 @@ void CConsole::Draw()
 	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
 	auto render = GetIEngine()->getIRender();
 	height = render->GetHeight();
-	/*
-	if (animate)
-	{
-		curr_height += curr_speed * deltatime;
-		if (curr_height >= height)
-		{
-			height = render->GetHeight();
-			animate = false;
-			curr_speed = speed;
-			curr_height = 0.0f;
-		}
-		else
-		{
-			height = curr_height;
-			curr_speed -= gravity * deltatime;
-		}
-	}
-	*/
+	Animate(deltatime, render);
 	int begin, end;
 	auto prompt = getPrompt();
 	render->DrawImage(0, 384, render->GetWidth(), 384, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
@@ -115,6 +115,26 @@ void CConsole::Draw()
 		command_text + "\n",
 		m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
 	*/
+}
+
+void CConsole::Animate(float deltatime, IRender* render)
+{
+	if (animate = false)
+	{
+		curr_height += curr_speed * deltatime;
+		if (curr_height >= height)
+		{
+			height = render->GetHeight();
+			animate = false;
+			curr_speed = speed;
+			curr_height = 0.0f;
+		}
+		else
+		{
+			height = curr_height;
+			curr_speed -= gravity * deltatime;
+		}
+	}
 }
 
 void CConsole::CalcMetrics(int& end)
@@ -282,6 +302,43 @@ void CConsole::Get(CommandDesc& cd)
 	}
 }
 
+void CConsole::Dump()
+{
+	DumpCVars(this, 0);
+}
+
+void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
+{
+	for (auto& var : m_variables_map)
+	{
+		OnElementFound(var.second);
+	}
+}
+
+void CConsole::OnElementFound(ICVar* pCVar)
+{
+	
+	auto name = pCVar->GetName();
+	auto helpString = pCVar->GetHelp();
+	auto help = helpString[0] != '\0' ? ". Help: " + std::string(helpString) : "";
+	switch (pCVar->GetType())
+	{
+	case CVAR_INT:
+		PrintLine("%s = %d%s", name, pCVar->GetIVal(), help.c_str());
+		break;
+	case CVAR_FLOAT:
+		PrintLine("%s = %f%s", name, pCVar->GetFVal(), help.c_str());
+		break;
+	case CVAR_STRING:
+		PrintLine("%s = %s%s", name, pCVar->GetString(), help.c_str());
+		break;
+	default:
+		//PrintLine("Unknown type for [%s] variable", name.c_str());
+		break;
+	}
+
+}
+
 ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 {
 	std::string data = name;
@@ -315,11 +372,7 @@ bool CConsole::IsOpened()
 
 ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help)
 {
-	int len = strlen(sValue);
-	char* value = new char[len + 1];
-	memcpy(value, sValue, len);
-	value[len] = 0;
-	ICVar* var = new CCVar(sName, value, const_cast<char*>(help));
+	ICVar* var = new CCVar(strdup(sName), strdup(sValue), const_cast<char*>(help));
 	if (var == nullptr) return var;
 	m_variables_map[sName] = var;
 	return var;
@@ -327,7 +380,7 @@ ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlag
 
 ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const char* help)
 {
-	ICVar* var = new CCVar(sName, iValue, const_cast<char*>(help));
+	ICVar* var = new CCVar(strdup(sName), iValue, const_cast<char*>(help));
 	if (var == nullptr) return var;
 	m_variables_map[sName] = var;
 	return var;
@@ -336,7 +389,7 @@ ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const
 
 ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, const char* help)
 {
-	ICVar* var = new CCVar(sName, fValue, const_cast<char*>(help));
+	ICVar* var = new CCVar(strdup(sName), fValue, const_cast<char*>(help));
 	if (var == nullptr) return var;
 	m_variables_map[sName] = var;
 	return var;
@@ -476,6 +529,7 @@ CConsole::CConsole()
 	AddCommand("help", new HelpCommand());
 	AddCommand("set", new SetCommand(this));
 	AddCommand("get", new GetCommand(this));
+	AddCommand("dump", new DumpCommand(this));
 	message_buffer.resize(MESSAGE_BUFFER_SIZE);
 }
 CConsole::~CConsole()
@@ -529,7 +583,7 @@ CommandLine CConsole::getPrompt()
 void CConsole::printLine(int line)
 {
 	int i = 0;
-	for (auto element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
+	for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
 	{
 		printText(*element, line);
 	}

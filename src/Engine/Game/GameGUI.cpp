@@ -276,7 +276,7 @@ void GameGUI::controlPanel()
     ImGui::Separator();
     ImGui::Text("Input");
     ImGui::SliderFloat("Mouse sensivity", &game->m_camera1->MouseSensitivity, 0.0, 1.0);
-    ImGui::SliderFloat("MovementSpeed", &game->m_camera1->MovementSpeed, 1.0, 1000.0);
+    //ImGui::SliderFloat("MovementSpeed", &game->m_camera1->MovementSpeed, 1.0, 1000.0);
     if (show_player)
       musiListController();
     if (show_demo)

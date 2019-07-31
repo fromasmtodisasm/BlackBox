@@ -52,9 +52,6 @@ private:
 
   MusicList m_PlayList;
   bool m_isMusicPlaying = false;
-	bool m_isPaused = false;
-	bool m_InMenu = false;
-	bool m_InGame = false;
 
   std::string m_Title;
   bool m_running = true;

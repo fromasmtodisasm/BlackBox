@@ -9,8 +9,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <BlackBox/IObject.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/IConsole.hpp>
 
-
+struct ICVar;
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 
@@ -36,7 +38,7 @@ public:
     GLfloat Yaw;
     GLfloat Pitch;
     // Camera options
-    GLfloat MovementSpeed;
+		ICVar *MovementSpeed;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
     GLfloat FOV = 45.0f;
@@ -51,16 +53,17 @@ public:
     }mode = FPS;
 
     // Constructor with vectors
-    CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+    CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
     {
         this->Position = position;
         this->WorldUp = up;
         this->Yaw = yaw;
         this->Pitch = pitch;
         this->updateCameraVectors();
+				MovementSpeed = GetIEngine()->getIConsole()->CreateVariable("cam_speed", 5.0f, 0, "Speed of camera");
     }
     // Constructor with scalar values
-    CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+    CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
     {
         this->Position = glm::vec3(posX, posY, posZ);
         this->WorldUp = glm::vec3(upX, upY, upZ);
