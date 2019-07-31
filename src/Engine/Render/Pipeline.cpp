@@ -46,7 +46,10 @@ void BoundingBox::draw()
 		 0.5,  0.5,  0.5, 1.0,
 		-0.5,  0.5,  0.5, 1.0,
 	};
-	GLuint vbo_vertices;
+	GLuint vao_vertices, vbo_vertices;
+	glCheck(glGenVertexArrays(1, &vao_vertices));
+	glCheck(glBindVertexArray(vao_vertices));
+
 	glCheck(glGenBuffers(1, &vbo_vertices));
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices));
 	glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
@@ -94,4 +97,5 @@ void BoundingBox::draw()
 
 	glCheck(glDeleteBuffers(1, &vbo_vertices));
 	glCheck(glDeleteBuffers(1, &ibo_elements));
+	glCheck(glDeleteVertexArrays(1, &vao_vertices));
 }

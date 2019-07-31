@@ -80,6 +80,7 @@ private:
 #else
 
 // Else, we don't add any overhead
-#define glCheck(expr) (expr)
+#define glCheck(expr) do { expr; OpenglDebug::checkError(__FILE__, __LINE__, #expr); } while (false)
+//#define glCheck(expr) (expr)
 
 #endif
