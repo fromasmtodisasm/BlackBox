@@ -77,7 +77,6 @@ private:
 	CommandLine getPrompt();
 	void printLine(int line);
 	void printText(Text & element, int line);
-	template<typename It>
 	void addToCommandBuffer(std::vector<std::wstring>& completion);
 	void addText(std::wstring& cmd);
 	;
@@ -89,7 +88,7 @@ private:
 	std::wstring command;
 	std::string command_text;
 	IFont* m_Font;
-	bool isShow = false;
+	bool isOpened = false;
 	bool cmd_is_compete = false;
 	IEngine* m_engine;
 	Texture* m_Texture;
@@ -120,5 +119,9 @@ private:
 	//
 	glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
 	glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
+
+
+	// Inherited via IConsole
+	virtual bool IsOpened() override;
 
 };

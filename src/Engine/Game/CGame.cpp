@@ -226,7 +226,7 @@ void CGame::drawHud(float fps)
 
 		info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
 		render->PrintLine(pos.c_str(), info.getDTI());
-		if (in_console)
+		if (m_Console->IsOpened())
 		{
 			m_Console->Draw();
 		}

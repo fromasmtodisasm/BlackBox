@@ -43,7 +43,7 @@ void CConsole::Update()
 
 void CConsole::Draw()
 {
-	if (!isShow) return;
+	if (!isOpened) return;
 	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
 	auto render = GetIEngine()->getIRender();
 	height = render->GetHeight();
@@ -114,7 +114,7 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(sf::Event& event)
 {
-	if (!isShow)
+	if (!isOpened)
 		return false;
 	std::vector<std::wstring> completion;
 	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
@@ -179,6 +179,11 @@ void CConsole::addText(std::wstring& cmd)
 	cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
 }
 
+bool CConsole::IsOpened()
+{
+	return isOpened;
+}
+
 void CConsole::handleCommandTextEnter(uint32_t ch)
 {
 	if (ch == 8)
@@ -204,7 +209,7 @@ bool CConsole::handleCommand(std::wstring command)
 	if (cmd_it != m_Commands.end())
 		result = cmd_it->second.Command->execute(cd);
 	else if (cd.command == L"close")
-		isShow = false;
+		isOpened = false;
 	//history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
 }
@@ -325,9 +330,9 @@ CConsole::~CConsole()
 
 void CConsole::ShowConsole(bool show)
 {
-	if (isShow != show)
+	if (isOpened != show)
 	{
-		isShow = show;
+		isOpened = show;
 		if (show)
 		{
 			input_trigered = true;
