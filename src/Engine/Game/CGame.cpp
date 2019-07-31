@@ -9,6 +9,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Utils.hpp>
 
 #include <imgui-SFML.h>
@@ -19,6 +20,7 @@
 #include <string>
 #include <cstdlib>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <ctime>
 #include <cctype>
 
@@ -161,46 +163,62 @@ void CGame::drawHud(float fps)
 	glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
 	// Info
 	{
-		m_Font->RenderText(
-			"FPS: " + std::to_string(fps),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"NUM OBJECTS: " + std::to_string(num_objects),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Current mode: " + mode,
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Active scene: " + m_World->getActiveScene()->name,
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Selected Object: " + m_World->getActiveScene()->selectedObject()->first,
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Camera addres: " + std::to_string((int)(int*)m_active_camera),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Player Camera addres: " + std::to_string((int)(int*)m_player->getCamera()),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Camera speed: " + std::to_string(m_active_camera->MovementSpeed),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Player addres: " + std::to_string((int)(int*)m_player),
-			0.f, line-=step, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		m_Font->RenderText(
-			"Pos: " + 
+		struct TextRenderInfo
+		{
+			IFont* font;
+			std::vector<std::string> text;
+			glm::vec4 color;
+			TextRenderInfo(IFont *f, glm::vec4 c)
+				:
+				font(f), color(c)
+			{
+			}
+			void AddLine(std::string line)
+			{
+				text.push_back(line + '\n');
+			}
+
+		};
+		TextRenderInfo info(m_Font, glm::vec4(0.5, 0.8f, 0.2f, 1.0));
+		SDrawTextInfo dti;
+
+		m_Font->SetXPos(0);
+		m_Font->SetYPos(m_Window->getHeight());
+		auto& text = info.text;
+		auto& color = info.color;
+
+		info.AddLine("FPS: " + std::to_string(fps));
+		info.AddLine("NUM OBJECTS: " + std::to_string(num_objects));
+		info.AddLine("Current mode: " + mode);
+		info.AddLine("Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
+		info.AddLine("Active scene: " + m_World->getActiveScene()->name);
+		info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
+		info.AddLine("Camera addres: " + std::to_string((int)(int*)m_active_camera));
+		info.AddLine("Player Camera addres: " + std::to_string((int)(int*)m_player->getCamera()));
+		info.AddLine("Camera speed: " + std::to_string(m_active_camera->MovementSpeed));
+		info.AddLine("Player addres: " + std::to_string((int)(int*)m_player));
+		info.AddLine("Pos: " + 
 			std::to_string(m_active_camera->Position.x) + ", " +
 			std::to_string(m_active_camera->Position.y) + ", " +
 			std::to_string(m_active_camera->Position.z) + "; " +
 			"Yaw: " + 
 			std::to_string(m_active_camera->Yaw) + "; " +
 			"Pitch: " + 
-			std::to_string(m_active_camera->Pitch) + "; ",
-			0.f, line-=step, 1.0f, glm::vec3(1.5, 0.1f, 0.2f));
+			std::to_string(m_active_camera->Pitch) + "; "
+		);
+
+		auto render = m_pSystem->getIRender();
+		dti.color[0] = info.color[0];
+		dti.color[1] = info.color[1];
+		dti.color[2] = info.color[2];
+		dti.color[3] = info.color[3];
+		dti.font = info.font;
+
+		for (auto& text : info.text)
+		{
+			render->PrintLine(text.c_str(), dti);
+		}
+
 		if (in_console)
 		{
 			m_Console->Draw();

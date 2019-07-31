@@ -378,7 +378,7 @@ void CConsole::printText(Text & element, int line)
 {
 	m_Font->RenderText(
 		element.data,
-		m_Font->GetXPos(), m_Font->GetYPos() /*height / 2 - on_line * line_height - line_height*/, 1.0f, element.color);
+		m_Font->GetXPos(), m_Font->GetYPos(), 1.0f, &glm::vec4(element.color, 1.0)[0]);
 }
 
 void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)

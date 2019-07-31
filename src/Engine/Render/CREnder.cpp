@@ -2,6 +2,7 @@
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/CCamera.hpp>
+#include <BlackBox/Render/IFont.hpp>
 
 CRender::CRender() : m_viewPort(0,0,0,0)
 {
@@ -95,6 +96,7 @@ void CRender::ChangeViewport(unsigned int x, unsigned int y, unsigned int width,
 
 void CRender::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
 {
+	info.font->RenderText(szText,	posX, posY, 1.0, info.color);
 }
 
 int CRender::SetPolygonMode(int mode)
@@ -161,4 +163,9 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	m_ScreenQuad->draw();;
 	glCheck(glDisable(GL_BLEND));
 	m_ScreenShader->unuse();
+}
+
+void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
+{
+	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
 }

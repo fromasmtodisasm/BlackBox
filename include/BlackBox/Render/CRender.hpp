@@ -79,6 +79,9 @@ private:
 #endif 
 	// Inherited via IRender
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
+
+	// Inherited via IRender
+	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
 	// DEBUG
 };
 

@@ -26,7 +26,7 @@ public:
 	FreeTypeFont(const char* font, int w, int h)
 	{
 	}
-	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4]);
 
 private:
 	FT_Library ft;

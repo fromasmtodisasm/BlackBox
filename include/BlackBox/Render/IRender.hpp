@@ -86,4 +86,6 @@ struct IRender
 
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
 
+	virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
+
 };
