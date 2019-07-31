@@ -1,4 +1,5 @@
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/Object.hpp>
@@ -46,10 +47,10 @@ void BoundingBox::draw()
 		-0.5,  0.5,  0.5, 1.0,
 	};
 	GLuint vbo_vertices;
-	glGenBuffers(1, &vbo_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glCheck(glGenBuffers(1, &vbo_vertices));
+	glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices));
+	glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+	glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
 	GLushort elements[] = {
 		0, 1, 2, 3,
@@ -57,10 +58,10 @@ void BoundingBox::draw()
 		0, 4, 1, 5, 2, 6, 3, 7
 	};
 	GLuint ibo_elements;
-	glGenBuffers(1, &ibo_elements);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glCheck(glGenBuffers(1, &ibo_elements));
+	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements));
+	glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW));
+	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 	glm::vec3 size = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
 	glm::vec3 center = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
@@ -71,26 +72,26 @@ void BoundingBox::draw()
 	Pipeline::instance()->model = Pipeline::instance()->object->getTransform() * transform;
 	Pipeline::instance()->shader->setup();
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
+	glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices));
+	glCheck(glEnableVertexAttribArray(0));
+	glCheck(glVertexAttribPointer(
 		0,  // attribute
 		4,                  // number of elements per vertex, here (x,y,z,w)
 		GL_FLOAT,           // the type of each element
 		GL_FALSE,           // take our values as-is
 		0,                  // no extra data between each position
 		0                   // offset of first element
-	);
+	));
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort)));
-	glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort)));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements));
+	glCheck(glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0));
+	glCheck(glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort))));
+	glCheck(glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort))));
+	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-	glDisableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glCheck(glDisableVertexAttribArray(0));
+	glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-	glDeleteBuffers(1, &vbo_vertices);
-	glDeleteBuffers(1, &ibo_elements);
+	glCheck(glDeleteBuffers(1, &vbo_vertices));
+	glCheck(glDeleteBuffers(1, &ibo_elements));
 }
