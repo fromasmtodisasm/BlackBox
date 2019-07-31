@@ -66,6 +66,7 @@ void CRender::GetViewport(int* x, int* y, int* width, int* height)
 
 void CRender::SetViewport(int x, int y, int width, int height)
 {
+	glCheck(glViewport(x, y, width, height));
 }
 
 void CRender::SetScissor(int x, int y, int width, int height)

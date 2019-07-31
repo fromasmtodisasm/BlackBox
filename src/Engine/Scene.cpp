@@ -10,6 +10,7 @@
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/Render/IRender.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -831,11 +832,18 @@ void Scene::present(int width, int height)
 {
 	if (postProcessor == nullptr)
 	{
+		auto render = GetIEngine()->getIRender();
+		float
+			width = render->GetWidth(),
+			height = render->GetHeight();
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-		glCheck(glViewport(0,0, 1366,768));
+		render->SetViewport(0, 0, width, height);
 		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 		glCheck(glClear(GL_COLOR_BUFFER_BIT));
 		m_ScreenShader->use();
+		auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
+		auto transform = glm::scale(proj, glm::vec3(width, height, 1));
+		m_ScreenShader->setUniformValue(transform, "transform");
 		glCheck(glDisable(GL_DEPTH_TEST));
 		glCheck(glActiveTexture(GL_TEXTURE0));
 		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture));
