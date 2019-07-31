@@ -168,6 +168,7 @@ void CGame::drawHud(float fps)
 			IFont* font;
 			std::vector<std::string> text;
 			glm::vec4 color;
+			TextRenderInfo() : font(nullptr), color(glm::vec4(1.0)){}
 			TextRenderInfo(IFont *f, glm::vec4 c)
 				:
 				font(f), color(c)
@@ -177,10 +178,19 @@ void CGame::drawHud(float fps)
 			{
 				text.push_back(line + '\n');
 			}
-
+			SDrawTextInfo getDTI()
+			{
+				SDrawTextInfo dti;
+				dti.color[0] = color[0];
+				dti.color[1] = color[1];
+				dti.color[2] = color[2];
+				dti.color[3] = color[3];
+				dti.font = font;
+				return dti;
+			}
 		};
-		TextRenderInfo info(m_Font, glm::vec4(0.5, 0.8f, 0.2f, 1.0));
-		SDrawTextInfo dti;
+		TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
+		SDrawTextInfo dti = info.getDTI();
 
 		m_Font->SetXPos(0);
 		m_Font->SetYPos(m_Window->getHeight());
@@ -197,7 +207,7 @@ void CGame::drawHud(float fps)
 		info.AddLine("Player Camera addres: " + std::to_string((int)(int*)m_player->getCamera()));
 		info.AddLine("Camera speed: " + std::to_string(m_active_camera->MovementSpeed));
 		info.AddLine("Player addres: " + std::to_string((int)(int*)m_player));
-		info.AddLine("Pos: " + 
+		auto pos = "Pos: " + 
 			std::to_string(m_active_camera->Position.x) + ", " +
 			std::to_string(m_active_camera->Position.y) + ", " +
 			std::to_string(m_active_camera->Position.z) + "; " +
@@ -205,20 +215,17 @@ void CGame::drawHud(float fps)
 			std::to_string(m_active_camera->Yaw) + "; " +
 			"Pitch: " + 
 			std::to_string(m_active_camera->Pitch) + "; "
-		);
+		;
 
 		auto render = m_pSystem->getIRender();
-		dti.color[0] = info.color[0];
-		dti.color[1] = info.color[1];
-		dti.color[2] = info.color[2];
-		dti.color[3] = info.color[3];
-		dti.font = info.font;
 
 		for (auto& text : info.text)
 		{
 			render->PrintLine(text.c_str(), dti);
 		}
 
+		info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
+		render->PrintLine(pos.c_str(), info.getDTI());
 		if (in_console)
 		{
 			m_Console->Draw();
