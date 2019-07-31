@@ -637,8 +637,6 @@ void CConsole::PrintLine(const char* format, ...)
 char* CCVar::GetString()
 {
 	int res = 0;
-	char* buff = new char[25];
-	value.s = buff;
 	if (type == CVAR_INT)
 		value.s = strdup(std::to_string(value.i).c_str());
 	else if (type == CVAR_FLOAT)
