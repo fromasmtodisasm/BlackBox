@@ -78,7 +78,6 @@ private:
 	void printLine(int line);
 	void printText(Text & element, int line);
 	template<typename It>
-	void printLineInternal(It iterator);
 	void addToCommandBuffer(std::vector<std::wstring>& completion);
 	void addText(std::wstring& cmd);
 	;
