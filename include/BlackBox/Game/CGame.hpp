@@ -87,6 +87,7 @@ private:
     
   }m_Mode = FPS;
   std::stack<GameState*> states;
+	float fps = 0.0;
 
 public:
   float m_deltaTime;
@@ -136,6 +137,7 @@ private:
   // IGame interface
 public:
   virtual float getDeltaTime() override;
+  virtual float getFPS() override;
 
   // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;

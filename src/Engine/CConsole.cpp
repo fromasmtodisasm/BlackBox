@@ -576,7 +576,8 @@ CommandLine CConsole::getPrompt()
 		Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0) , 
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
-		Text(std::string(" " + time_str + "\n# "), promptColor, 1.0) 
+		Text(std::string(" " + time_str), promptColor, 1.0),
+		Text(" FPS: " + std::to_string(GetIEngine()->getIGame()->getFPS()) + "\n# ", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 

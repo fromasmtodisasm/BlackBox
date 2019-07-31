@@ -125,7 +125,7 @@ bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
     sf::Time deltaTime = deltaClock.restart();
     m_deltaTime = deltaTime.asSeconds();
-		float fps =  1000.0f / deltaTime.asMilliseconds();
+		fps =  1000.0f / deltaTime.asMilliseconds();
     input();
 		execScripts();
     m_Window->update();
@@ -600,6 +600,11 @@ void CGame::Stop()
 float CGame::getDeltaTime()
 {
   return m_deltaTime;
+}
+
+float CGame::getFPS()
+{
+	return fps;
 }
 
 void CGame::PostRender()
