@@ -28,7 +28,6 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	//=======================
 	translateImageY = m_Engine->getIConsole()->CreateVariable("timY", 3.0f, 0);
 	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
-	r_debug->Set(static_cast<int>(std::atoi(r_debug->GetString())));
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();

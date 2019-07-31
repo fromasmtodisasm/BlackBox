@@ -637,10 +637,12 @@ void CConsole::PrintLine(const char* format, ...)
 char* CCVar::GetString()
 {
 	int res = 0;
+	char* buff = new char[25];
+	value.s = buff;
 	if (type == CVAR_INT)
-		value.s = static_cast<char*>(itoa(value.i));
+		value.s = strdup(std::to_string(value.i).c_str());
 	else if (type == CVAR_FLOAT)
-		value.s = static_cast<char*>(std::ftoa(value.f));
+		value.s = strdup(std::to_string(value.f).c_str());
 	type = CVAR_STRING;
 	return value.s;
 }
