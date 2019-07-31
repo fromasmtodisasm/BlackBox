@@ -4,6 +4,7 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #include <map>
 #include <string>
@@ -31,6 +32,7 @@ class MaterialManager
   ILog *m_pLog;
 	bool alpha_shakaled = false;
 	bool isSkyBox = false;
+	ICVar* root_path = nullptr;
 	std::map<std::string, std::shared_ptr<CShaderProgram>> shaders_map;
 public:
   static MaterialManager *instance();

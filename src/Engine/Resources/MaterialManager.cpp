@@ -2,6 +2,7 @@
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Render/ReflectShader.hpp>
+#include <BlackBox/IConsole.hpp>
 #include <glm/glm.hpp>
 
 #include <tinyxml2.h>
@@ -83,13 +84,14 @@ bool MaterialManager::init(std::string materialLib)
 
 MaterialManager::MaterialManager() : m_pLog(GetIEngine()->getILog())
 {
+	root_path = GetIEngine()->getIConsole()->GetCVar("materials_path");
 }
 
 bool MaterialManager::loadLib(std::string name)
 {
   XMLDocument xmlDoc;
 
-  XMLError eResult = xmlDoc.LoadFile(("res/materials/" + name).c_str());
+  XMLError eResult = xmlDoc.LoadFile((root_path->GetString() + name).c_str());
   XMLCheckResult(eResult);
 
   XMLNode * materials = xmlDoc.FirstChild();

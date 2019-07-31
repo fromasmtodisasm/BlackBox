@@ -70,6 +70,9 @@ bool CGame::init(IEngine *pSystem)  {
 	m_Window->setFlags(CWindow::DRAW_GUI);
   
 
+	initCommands();
+	m_Console->ExecuteFile("res/scripts/init.cfg");
+
 	if (!loadScene()) {
 		m_Log->AddLog("[FAILED] Failed init objects\n");
 		return false;
@@ -114,8 +117,6 @@ bool CGame::init(IEngine *pSystem)  {
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, 18);
 
-	initCommands();
-	m_Console->ExecuteFile("res/scripts/init.cfg");
 	//m_Console->ExecuteString("clear");
   return true;
 }

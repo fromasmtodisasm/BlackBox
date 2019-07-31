@@ -13,15 +13,40 @@ struct IFont;
 class CCVar : public ICVar
 {
 public:
-	CCVar(const char* name, float value) : name(name), value(value) {}
-	CCVar() : name(""), value(0.0f) {}
+	CCVar(const char* name, int value, char *help) : name(name), value(value), type(CVAR_INT), help(help) {}
+	CCVar(const char* name, const char *value, char *help) : name(name), value(value), type(CVAR_STRING), help(help) {}
+	CCVar(const char* name, float value, char *help) : name(name), value(value), type(CVAR_FLOAT), help(help) {}
+	CCVar() : name(""), value(0.0f), type(CVAR_STRING), help(nullptr) {}
+
 	// Inherited via ICVar
+	virtual void Release() override;
+	virtual int GetIVal() override;
 	virtual float GetFVal() override;
+	virtual char* GetString() override;
+	virtual void Set(const char* s) override;
+	virtual void ForceSet(const char* s) override;
 	virtual void Set(float f) override;
+	virtual void Set(int i) override;
+	virtual void Refresh() override;
+	virtual void ClearFlags(int flags) override;
+	virtual int GetFlags() override;
+	virtual int SetFlags(int flags) override;
+	virtual int GetType() override;
 	virtual const char* GetName() override;
+	virtual const char* GetHelp() override;
+
 private:
 	const char* name;
-	float value;
+	union Value{
+		int i;
+		char* s;
+		float f;
+		Value(int i) : i(i) {}
+		Value(const char * s) : s(const_cast<char*>(s)) {}
+		Value(float f) : f(f) {}
+	}value;
+	int type;
+	char* help;
 };
 
 struct CommandInfo
@@ -152,5 +177,9 @@ private:
 	std::map<std::string, ICVar*> m_variables_map;
 
 
+
+
+	// Inherited via IConsole
+	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
 
 };

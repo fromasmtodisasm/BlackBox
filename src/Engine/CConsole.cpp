@@ -221,14 +221,28 @@ void CConsole::Set(CommandDesc& cd)
 	{
 		auto name = wstr_to_str(cd.args[0]);
 		auto value = wstr_to_str(cd.args[1]);
-		auto var = m_variables_map.find(name);
-		if (var != m_variables_map.end())
+		auto pVar = m_variables_map.find(name);
+		if (pVar != m_variables_map.end())
 		{
-			var->second->Set(std::atof(value.c_str()));
+			switch (pVar->second->GetType())
+			{
+			case CVAR_INT:
+				pVar->second->Set(static_cast<int>(std::atoi(value.c_str())));
+				break;
+			case CVAR_FLOAT:
+				pVar->second->Set(static_cast<float>(std::atof(value.c_str())));
+				break;
+			case CVAR_STRING:
+				pVar->second->Set(static_cast<const char*>(value.c_str()));
+				break;
+			default:
+				PrintLine("Unknown type for [%s] variable", name.c_str());
+			}
 		}
 		else
 		{
-			PrintLine("Variable [%s] not found", name.c_str());
+			PrintLine("Variable [%s] not found. Creating", name.c_str());
+			CreateVariable(name.c_str(), value.c_str(), 0);
 		}
 
 
@@ -243,8 +257,21 @@ void CConsole::Get(CommandDesc& cd)
 		auto var = m_variables_map.find(name);
 		if (var != m_variables_map.end())
 		{
-			auto value = var->second->GetFVal();
-			PrintLine("Variable = [%f]", value);
+			auto pVar = var->second;
+			switch (pVar->GetType())
+			{
+			case CVAR_INT:
+				PrintLine("Variable = [%d]", pVar->GetIVal());
+				break;
+			case CVAR_FLOAT:
+				PrintLine("Variable = [%f]", pVar->GetFVal());
+				break;
+			case CVAR_STRING:
+				PrintLine("Variable = [%s]", pVar->GetString());
+				break;
+			default:
+				PrintLine("Unknown type for [%s] variable", name.c_str());
+			}
 		}
 		else
 		{
@@ -253,6 +280,23 @@ void CConsole::Get(CommandDesc& cd)
 
 
 	}
+}
+
+ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
+{
+	std::string data = name;
+	ICVar* pVar = nullptr;
+	if (!bCaseSensitive)
+	{
+		std::transform(data.begin(), data.end(), data.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+	}
+	auto var = m_variables_map.find(name);
+	if (var != m_variables_map.end())
+	{
+		pVar = var->second;
+	}
+	return pVar;
 }
 
 bool CConsole::Init()
@@ -271,17 +315,28 @@ bool CConsole::IsOpened()
 
 ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help)
 {
-	return nullptr;
+	int len = strlen(sValue);
+	char* value = new char[len + 1];
+	memcpy(value, sValue, len);
+	value[len] = 0;
+	ICVar* var = new CCVar(sName, value, const_cast<char*>(help));
+	if (var == nullptr) return var;
+	m_variables_map[sName] = var;
+	return var;
 }
 
 ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const char* help)
 {
-	return nullptr;
+	ICVar* var = new CCVar(sName, iValue, const_cast<char*>(help));
+	if (var == nullptr) return var;
+	m_variables_map[sName] = var;
+	return var;
+
 }
 
 ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, const char* help)
 {
-	ICVar* var = new CCVar(sName, fValue);
+	ICVar* var = new CCVar(sName, fValue, const_cast<char*>(help));
 	if (var == nullptr) return var;
 	m_variables_map[sName] = var;
 	return var;
@@ -525,17 +580,74 @@ void CConsole::PrintLine(const char* format, ...)
 	addText(str_to_wstr(message_buffer));
 }
 
-float CCVar::GetFVal()
+char* CCVar::GetString()
 {
-	return value;
+	return value.s;
+}
+
+void CCVar::Set(const char* s)
+{
+	value.s = const_cast<char*>(s);
+}
+
+void CCVar::ForceSet(const char* s)
+{
 }
 
 void CCVar::Set(float f)
 {
-	value = f;
+	value.f = f;
+}
+
+void CCVar::Set(int i)
+{
+	value.i = i;
+}
+
+void CCVar::Refresh()
+{
+	value.i = 0;
+}
+
+void CCVar::ClearFlags(int flags)
+{
+}
+
+int CCVar::GetFlags()
+{
+	return 0;
+}
+
+int CCVar::SetFlags(int flags)
+{
+	return 0;
+}
+
+int CCVar::GetType()
+{
+	return type;
 }
 
 const char* CCVar::GetName()
 {
 	return name;
+}
+
+const char* CCVar::GetHelp()
+{
+	return help;
+}
+
+void CCVar::Release()
+{
+}
+
+int CCVar::GetIVal()
+{
+	return value.i;
+}
+
+float CCVar::GetFVal()
+{
+	return value.f;
 }

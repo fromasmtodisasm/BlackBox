@@ -19,10 +19,22 @@ struct CommandDesc;
 struct ICVar;
 class ITexture;
 
+#define     CVAR_INT    1
+#define     CVAR_FLOAT  2
+#define     CVAR_STRING 3
 
 struct IEditCommand
 {
 	virtual bool execute(CommandDesc& cd) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+//! Callback class to derive from when you want to recieve callbacks when console var changes.
+struct IConsoleVarSink
+{
+	//! Called by Console before changing console var value, to validate if var can be changed.
+	//! @return true if ok to change value, false if should not change value.
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) = 0;
 };
 
 struct IConsole
@@ -82,6 +94,14 @@ struct IConsole
 	virtual void Clear() = 0;
 
 	virtual void Help(const char *cmd) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Retrieve a console variable by name
+		@param sName variable name
+		@param bCaseSensitive true=faster, false=much slower but allowes names with wrong case (use only where performce doesn't matter)
+		@return a pointer to the ICVar interface, NULL if is not found
+		@see ICVar
+	*/
+	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) = 0;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Print a string in the console and go to the new line
@@ -91,21 +111,87 @@ struct IConsole
 
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//! this interface is the 1:1 "C++ representation"
+//! of a console variable.
+//! NOTE: a console variable is accessible in C++ trough
+//! this interface and in all scripts as global variable
+//! (with the same name of the variable in the console)
 struct ICVar
 {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*! Return the float value of the variable
-		@return the value
+	/*! delete the variable
+		NOTE: the variable will automatically unregister itself from the console
 	*/
+	virtual void Release() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! Return the integer value of the variable
+			@return the value
+		*/
+	virtual int GetIVal() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! Return the float value of the variable
+			@return the value
+		*/
 	virtual float GetFVal() = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*! set the float value of the variable
-		@param s float representation the value
+		/*! Return the string value of the variable
+			@return the value
+		*/
+	virtual char* GetString() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! set the string value of the variable
+			@param s string representation the value
+		*/
+	virtual void Set(const char* s) = 0;
+
+	/*! Force to set the string value of the variable - can be called
+			from inside code only
+		@param s string representation the value
 	*/
+	virtual void ForceSet(const char* s) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! set the float value of the variable
+			@param s float representation the value
+		*/
 	virtual void Set(float f) = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*! return the variable's name
-		@return the variable's name
-	*/
+		/*! set the float value of the variable
+			@param s integer representation the value
+		*/
+	virtual void Set(int i) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! refresh the values of the variable
+		*/
+	virtual void Refresh() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! clear the specified bits in the flag field
+		*/
+	virtual void ClearFlags(int flags) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! return the variable's flags
+			@return the variable's flags
+		*/
+	virtual int GetFlags() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! Set the variable's flags
+		*/
+	virtual int SetFlags(int flags) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! return the primary variable's type
+			@return the primary variable's type
+		*/
+	virtual int GetType() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! return the variable's name
+			@return the variable's name
+		*/
 	virtual const char* GetName() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! return the variable's name
+			@return the variable's name
+		*/
+	virtual const char* GetHelp() = 0;
+
 };
