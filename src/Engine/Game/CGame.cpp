@@ -346,7 +346,7 @@ void CGame::gotoGame()
     m_active_camera->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
     m_inputHandler->mouseLock(true);
-		in_console = false;
+		m_Console->ShowConsole(false);
   }
 }
 
@@ -499,7 +499,6 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 bool CGame::EditInputEvent(sf::Event& event)
 {
 	
-	m_Console->ShowConsole(in_console);
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
@@ -508,7 +507,10 @@ bool CGame::EditInputEvent(sf::Event& event)
 		case sf::Keyboard::Tilde:
 			if (event.key.control)
 			{
-				in_console = !in_console;
+				if (m_Console->IsOpened())
+					m_Console->ShowConsole(false);
+				else
+					m_Console->ShowConsole(true);
 				return true;
 			}
 			return false;
@@ -553,7 +555,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 	{
 		if (event.text.unicode == ':')
 		{
-			in_console = true;
+			m_Console->ShowConsole(true);
 		}
 	}
 	default:
