@@ -220,6 +220,7 @@ void CGame::drawHud(float fps)
 
 		auto render = m_pSystem->getIRender();
 
+		info.font->SetYPos(m_pSystem->getIRender()->GetHeight() - 18);
 		for (auto& text : info.text)
 		{
 			render->PrintLine(text.c_str(), dti);
