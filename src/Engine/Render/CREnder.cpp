@@ -147,13 +147,15 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 {
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	m_ScreenShader->use();
-	auto transform = glm::mat4(1.0);
+	auto projection = glm::mat4(1.0);
 	auto model = glm::mat4(1.0);
 	auto uv_transform = glm::mat4(1.0);
-	uv_transform = glm::scale(uv_transform, glm::vec3(1, -1, 1));
-	model = glm::scale(model, glm::vec3(w, h / 2, 1));
-	transform = glm::ortho(xpos, w, ypos, h) * model;
-	//m_ScreenShader->setUniformValue(transform, "transform");
+	uv_transform = glm::scale(uv_transform, glm::vec3(1.f, -1.f, 1.f));
+	model = glm::translate(model, glm::vec3(1.f, 1.f, 0.f));
+	model = glm::scale(model, glm::vec3(w, h, 1.f));
+	projection = glm::ortho(0.f, (float)GetWidth(), 0.f, (float)GetHeight());
+	m_ScreenShader->setUniformValue(projection, "projection");
+	m_ScreenShader->setUniformValue(model, "model");
 	m_ScreenShader->setUniformValue(glm::mat3(uv_transform), "uv_transform");
 	glCheck(glDisable(GL_DEPTH_TEST));
 	glCheck(glActiveTexture(GL_TEXTURE0));
