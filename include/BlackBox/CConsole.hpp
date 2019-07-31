@@ -84,10 +84,11 @@ struct CommandDesc
 	}
 };
 
-class CConsole : public IConsole, public IInputEventListener
+class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSink
 {
 	friend class SetCommand;
 	friend class GetCommand;
+	friend class DumpCommand;
 	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
 public:
 	CConsole();
@@ -98,6 +99,7 @@ public:
 	virtual void SetImage(ITexture* pTexture) override;
 	virtual void Update() override;
 	virtual void Draw() override;
+	void Animate(float deltatime, IRender* render);
 	void CalcMetrics(int& end);
 	virtual void AddCommand(const char* sName, IEditCommand* command, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
@@ -109,12 +111,13 @@ public:
 	virtual void PrintLine(const char* format, ...) override;
 	virtual bool IsOpened() override;
 
-	// Inherited via IConsole
 	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") override;
 
 	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") override;
 
 	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") override;
+
+	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
 
 
 private:
@@ -134,6 +137,7 @@ private:
 	;
 	void Set(CommandDesc& cd);
 	void Get(CommandDesc& cd);
+	void CConsole::Dump();
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -176,10 +180,17 @@ private:
 
 	std::map<std::string, ICVar*> m_variables_map;
 
-
+	ICVarDumpSink* m_pCVarDumpCallback = nullptr;
 
 
 	// Inherited via IConsole
-	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
+
+
+	// Inherited via IConsole
+	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) override;
+
+
+	// Inherited via ICVarDumpSink
+	virtual void OnElementFound(ICVar* pCVar) override;
 
 };

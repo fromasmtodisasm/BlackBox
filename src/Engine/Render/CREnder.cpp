@@ -25,6 +25,11 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		return false;
   if (!OpenGLLoader())
     return false;
+	//=======================
+	translateImageY = m_Engine->getIConsole()->CreateVariable("timY", 3.0f, 0);
+	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
+	r_debug->Set(static_cast<int>(std::atoi(r_debug->GetString())));
+	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
 	//=======================
@@ -36,10 +41,6 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
-	//=======================
-
-	translateImageY = m_Engine->getIConsole()->CreateVariable("timY", 3.0f, 0);
-	//=======================
 	return result;
 }
 
@@ -125,7 +126,7 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 
 void CRender::glInit()
 {
-	if (glContextType == sf::ContextSettings::Debug)
+	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
 	{
 		glDebug = new OpenglDebug("out/glDebug.txt");
 		glEnable(GL_DEBUG_OUTPUT);

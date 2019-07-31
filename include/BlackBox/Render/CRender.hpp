@@ -51,6 +51,10 @@ public:
 	virtual void ScreenShot(const char* filename = nullptr) override;
 
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) override;
+
+	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
+
+	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
 private:
 	void glInit();
 
@@ -73,17 +77,13 @@ private:
 	Quad *m_ScreenQuad;
 	// Shaders 
 	CBaseShaderProgram* m_ScreenShader;
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(GL_DEBUG)
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
 #else
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
 #endif 
-	ICVar* translateImageY;
-	// Inherited via IRender
-	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
-
-	// Inherited via IRender
-	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
 	// DEBUG
+	ICVar* translateImageY;
+	ICVar* r_debug;
 };
 

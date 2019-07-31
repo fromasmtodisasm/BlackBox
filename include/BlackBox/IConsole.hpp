@@ -29,6 +29,12 @@ struct IEditCommand
 };
 
 //////////////////////////////////////////////////////////////////////
+struct ICVarDumpSink
+{
+	virtual void OnElementFound(ICVar* pCVar) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
 //! Callback class to derive from when you want to recieve callbacks when console var changes.
 struct IConsoleVarSink
 {
@@ -52,6 +58,12 @@ struct IConsole
 	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") = 0;
 	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") = 0;
 	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") = 0;
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Dump all console-variables to a callback-interface
+		@param Callback callback-interface which needs to be called for each element
+	*/
+	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) = 0;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! show/hide the console

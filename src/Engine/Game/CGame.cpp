@@ -204,10 +204,7 @@ void CGame::drawHud(float fps)
 		info.AddLine("Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
 		info.AddLine("Active scene: " + m_World->getActiveScene()->name);
 		info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
-		info.AddLine("Camera addres: " + std::to_string((int)(int*)m_active_camera));
-		info.AddLine("Player Camera addres: " + std::to_string((int)(int*)m_player->getCamera()));
-		info.AddLine("Camera speed: " + std::to_string(m_active_camera->MovementSpeed));
-		info.AddLine("Player addres: " + std::to_string((int)(int*)m_player));
+		info.AddLine("Camera speed: " + std::to_string(m_active_camera->MovementSpeed->GetFVal()));
 		auto pos = "Pos: " + 
 			std::to_string(m_active_camera->Position.x) + ", " +
 			std::to_string(m_active_camera->Position.y) + ", " +
@@ -343,7 +340,7 @@ IInputHandler *CGame::getInputHandler()
 
 void CGame::gotoGame()
 {
-	if (!m_InGame && m_player != nullptr)
+	if (m_player != nullptr)
 	{
     m_active_camera->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
@@ -411,14 +408,14 @@ bool CGame::FpsInputEvent(sf::Event& event)
       gotoMenu();
       return true;
 		case sf::Keyboard::P:
-			m_active_camera->MovementSpeed += 5;
+			m_active_camera->MovementSpeed->Set(m_active_camera->MovementSpeed->GetFVal() + 5.0f);
 			return true;
 		case sf::Keyboard::E:
 			//m_inputHandler->mouseLock(false);
 			m_Mode = EDIT;
 			return true;
 		case sf::Keyboard::M:
-			m_active_camera->MovementSpeed -= 5;
+			m_active_camera->MovementSpeed->Set(m_active_camera->MovementSpeed->GetFVal() + 5.0f);
 			return true;
 		case sf::Keyboard::B:
 			culling = !culling;
