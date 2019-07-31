@@ -10,6 +10,21 @@
 #include <cstdlib>
 #pragma once
 
+CEngine::CEngine()
+	:
+	r_window_width(nullptr),
+	r_window_height(nullptr),
+	r_bpp(nullptr),
+	r_zbpp(nullptr),
+	r_sbpp(nullptr)
+{
+
+}
+
+CEngine::~CEngine()
+{
+}
+
 bool CEngine::Init()
 {
   m_pLog = new CLog();
@@ -30,7 +45,14 @@ bool CEngine::Init()
 	if (m_Render == nullptr)
 		return false;
 
-	if (!(m_pWindow = m_Render->Init(0,0, 1366, 768, 32, 24, 8, false, m_pWindow)))
+	if (!ConfigLoad("res/scripts/engine.cfg"))
+		return false;
+	if (!(m_pWindow = m_Render->Init(
+		0,0, 
+		r_window_width->GetIVal(), r_window_height->GetIVal(), 
+		r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(), 
+		false, m_pWindow))
+		)
 		return false;
 	m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
@@ -107,6 +129,35 @@ IWindow* CEngine::getIWindow()
 IInputHandler* CEngine::getIInputHandler()
 {
 	return m_InputHandler;
+}
+
+bool CEngine::ConfigLoad(const char* file)
+{
+	m_pConsole->ExecuteFile(file);
+
+	r_window_width = m_pConsole->GetCVar("r_window_width");
+	r_window_height = m_pConsole->GetCVar("r_window_height");
+	r_bpp = m_pConsole->GetCVar("r_bpp");
+	r_zbpp = m_pConsole->GetCVar("r_zbpp");
+	r_sbpp = m_pConsole->GetCVar("r_sbpp");
+
+	if (
+		r_window_width == nullptr ||
+		r_window_height == nullptr ||
+		r_bpp == nullptr ||
+		r_zbpp == nullptr ||
+		r_sbpp == nullptr
+		)
+		return false;
+
+	//r_window_height->Set(std::atoi(r_window_height->GetString()));
+	r_window_width->Set(std::atoi(r_window_width->GetString()));
+	r_window_height->Set(std::atoi(r_window_height->GetString()));
+	r_bpp->Set(std::atoi(r_bpp->GetString()));
+	r_zbpp->Set(std::atoi(r_zbpp->GetString()));
+	r_sbpp->Set(std::atoi(r_sbpp->GetString()));
+
+	return true;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

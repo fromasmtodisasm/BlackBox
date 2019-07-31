@@ -2,6 +2,8 @@
 
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/CWindow.hpp>
+#include <BlackBox/IConsole.hpp>
+
 class CConsole;
 class CRender;
 
@@ -16,6 +18,8 @@ private:
 	IInputHandler* m_InputHandler;
 	IRender* m_Render;
 public:
+	CEngine();
+	~CEngine();
   // Унаследовано через ISystem
   virtual bool Init() override;
   virtual void Start() override;
@@ -43,4 +47,13 @@ public:
 
 	// Унаследовано через IEngine
 	virtual IInputHandler* getIInputHandler() override;
+
+	bool ConfigLoad(const char* file);
+private:
+	ICVar* r_window_width;
+	ICVar* r_window_height;
+	ICVar* r_bpp;
+	ICVar* r_zbpp;
+	ICVar* r_sbpp;
+
 };
