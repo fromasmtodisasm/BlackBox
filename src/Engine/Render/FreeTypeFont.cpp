@@ -1,11 +1,13 @@
 #include <BlackBox\Render\FreeTypeFont.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4])
 {
 	// Activate corresponding render state	
 	shader->use();
-	glm::mat4 projection = glm::ortho(0.0f, 1366.0f, 0.0f, 768.0f);
+	auto render = GetIEngine()->getIRender();
+	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
 	shader->setUniformValue(projection, "projection");
 	glCheck(glUniform3f(glGetUniformLocation(shader->get(), "textColor"), color[0], color[1], color[2]));
 	glCheck(glActiveTexture(GL_TEXTURE0));
