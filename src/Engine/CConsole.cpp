@@ -582,12 +582,19 @@ void CConsole::PrintLine(const char* format, ...)
 
 char* CCVar::GetString()
 {
+	int res = 0;
+	if (type == CVAR_INT)
+		value.s = static_cast<char*>(itoa(value.i));
+	else if (type == CVAR_FLOAT)
+		value.s = static_cast<char*>(std::ftoa(value.f));
+	type = CVAR_STRING;
 	return value.s;
 }
 
 void CCVar::Set(const char* s)
 {
 	value.s = const_cast<char*>(s);
+	type = CVAR_STRING;
 }
 
 void CCVar::ForceSet(const char* s)
@@ -644,10 +651,22 @@ void CCVar::Release()
 
 int CCVar::GetIVal()
 {
+	int res = 0;
+	if (type == CVAR_FLOAT)
+		value.i = static_cast<int>(value.f);
+	else if (type == CVAR_STRING)
+		value.i = static_cast<int>(std::atoi(value.s));
+	type = CVAR_INT;
 	return value.i;
 }
 
 float CCVar::GetFVal()
 {
+	int res = 0;
+	if (type == CVAR_INT)
+		value.f = static_cast<float>(value.i);
+	else if (type == CVAR_STRING)
+		value.f = static_cast<float>(std::atof(value.s));
+	type = CVAR_FLOAT;
 	return value.f;
 }

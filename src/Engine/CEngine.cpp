@@ -10,6 +10,21 @@
 #include <cstdlib>
 #pragma once
 
+CEngine::CEngine()
+	:
+	r_window_width(nullptr),
+	r_window_height(nullptr),
+	r_bpp(nullptr),
+	r_zbpp(nullptr),
+	r_sbpp(nullptr)
+{
+
+}
+
+CEngine::~CEngine()
+{
+}
+
 bool CEngine::Init()
 {
   m_pLog = new CLog();
@@ -107,6 +122,22 @@ IWindow* CEngine::getIWindow()
 IInputHandler* CEngine::getIInputHandler()
 {
 	return m_InputHandler;
+}
+
+bool CEngine::ConfigLoad(const char* file)
+{
+	m_pConsole->ExecuteFile(file);
+
+	if (
+		r_window_width == nullptr ||
+		r_window_height == nullptr ||
+		r_bpp == nullptr ||
+		r_zbpp == nullptr ||
+		r_sbpp == nullptr
+		)
+		return false;
+
+	return false;
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)
