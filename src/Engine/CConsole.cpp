@@ -105,11 +105,11 @@ void CConsole::Draw()
 	m_Font->SetYPos(18);
 	for (on_line = 0; current_line < end; current_line++, on_line++)
 	{
-		;// printLine(current_line);
+		printLine(current_line);
 	}
 	for (auto& element : prompt)
 	{
-		;// printText(element, line_count - 1);
+		printText(element, line_count - 1);
 	}
 	printText(Text(std::string(command_text + "\n"), textColor, 1.0f), 0);
 	/*m_Font->RenderText(
@@ -120,7 +120,7 @@ void CConsole::Draw()
 
 void CConsole::Animate(float deltatime, IRender* render)
 {
-	if (animate)
+	if (animate = false)
 	{
 		curr_height += curr_speed * deltatime;
 		if (curr_height >= height)

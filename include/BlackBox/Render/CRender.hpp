@@ -94,5 +94,6 @@ private:
 
 	ICVar* r_debug;
 	ICVar* test_proj;
+	ICVar* render_via_viewport;
 };
 

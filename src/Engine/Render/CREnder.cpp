@@ -41,6 +41,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 
 	test_proj = m_Engine->getIConsole()->CreateVariable("test_proj", "test proj empty", 0);
 	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
+	render_via_viewport = m_Engine->getIConsole()->CreateVariable("rvv", 1, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -168,7 +169,6 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	glEnable(GL_BLEND);
 	glCheck(glDisable(GL_CULL_FACE));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	SetViewport(xpos, GetHeight() - h, xpos + w, GetHeight() - ypos - h);
 	m_ScreenShader->use();
 
 	glm::mat4 model(1.0);
@@ -188,11 +188,19 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 
 	if (needFlipY->GetIVal())
 		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f));
-	//uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(2.f, 2.f, 1.0f));
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
-	//m_ScreenShader->setUniformValue(projection, "projection");
-	//m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
-	//m_ScreenShader->setUniformValue(model, "model");
+	if (render_via_viewport->GetIVal() == 0)
+	{
+		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(2.f, 2.f, 1.0f));
+		m_ScreenShader->setUniformValue(projection, "projection");
+		m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
+		m_ScreenShader->setUniformValue(model, "model");
+
+	}
+	else
+	{
+		SetViewport(xpos, GetHeight() - h, xpos + w, GetHeight() - ypos - h);
+	}
 
 	glCheck(glDisable(GL_DEPTH_TEST));
 	glCheck(glActiveTexture(GL_TEXTURE0));
