@@ -7,12 +7,16 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	// Activate corresponding render state	
 	shader->use();
 	auto render = GetIEngine()->getIRender();
-	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
+	glm::mat4 uv_projection = glm::mat4(1.0);
+	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
+	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 	shader->setUniformValue(projection, "projection");
-	glCheck(glUniform3f(glGetUniformLocation(shader->get(), "textColor"), color[0], color[1], color[2]));
+	shader->setUniformValue(uv_projection, "uv_projection");
+	glCheck(glUniform3fv(glGetUniformLocation(shader->get(), "textColor"), 1, &color[0]));
 	glCheck(glActiveTexture(GL_TEXTURE0));
 	glCheck(glBindVertexArray(VAO));
 	glEnable(GL_BLEND);
+	glCheck(glDisable(GL_CULL_FACE));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Iterate through all characters
@@ -22,7 +26,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		if (*c == '\n')
 		{
 			posX = x = 0;
-			posY = y -= 18;
+			posY = y += 18;
 			continue;
 		}
 		if (iscntrl(*c))
@@ -31,19 +35,19 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		Character ch = Characters[*c];
 
 		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+		GLfloat ypos = y + (ch.Size.y - ch.Bearing.y) * scale;
 
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 		// Update VBO for each character
 		GLfloat vertices[4][4] = {
-			{ xpos,     ypos + h,   0.0, 0.0 },
+			{ xpos,     ypos - h,   0.0, 0.0 },
 		{ xpos,     ypos,       0.0, 1.0 },
 		//{ xpos + w, ypos,       1.0, 1.0 },
 
 		//{ xpos,     ypos + h,   0.0, 0.0 },
 		{ xpos + w, ypos,       1.0, 1.0 },
-		{ xpos + w, ypos + h,   1.0, 0.0 }
+		{ xpos + w, ypos - h,   1.0, 0.0 }
 		};
 		shader->setUniformValue(model, "model");
 		// Render glyph texture over quad
@@ -62,6 +66,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	}
 	glCheck(glBindVertexArray(0));
 	glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+	glCheck(glEnable(GL_CULL_FACE));
 }
 
 bool FreeTypeFont::Init(const char* font, int w, int h)

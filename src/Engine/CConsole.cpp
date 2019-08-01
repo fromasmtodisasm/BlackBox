@@ -101,7 +101,7 @@ void CConsole::Draw()
 	render->DrawImage(0, 384, render->GetWidth(), 384, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
-	m_Font->SetYPos(height / 2);
+	m_Font->SetYPos(0);
 	for (on_line = 0; current_line < end; current_line++, on_line++)
 	{
 		printLine(current_line);
