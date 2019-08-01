@@ -98,7 +98,8 @@ void CConsole::Draw()
 	Animate(deltatime, render);
 	int begin, end;
 	auto prompt = getPrompt();
-	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
+	time += GetIEngine()->getIGame()->getDeltaTime();
+	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, time * r_anim_speed->GetFVal(), 0, m_Texture->width, height, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -363,6 +364,8 @@ bool CConsole::Init()
 	m_Texture = new Texture();
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
+	r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
+
 	if (background != nullptr)
 		texture_path = background->GetString();
 	m_Texture->load(texture_path);

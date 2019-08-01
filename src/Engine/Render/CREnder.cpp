@@ -166,23 +166,24 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	m_ScreenShader->use();
 
 	glm::mat4 model(1.0);
-	auto uv_projection = glm::mat3(1.0);
+	auto uv_projection = glm::mat4(1.0);
 	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 
 	model = glm::scale(model, { w,h,1 });
 	if (flipY)
-		uv_projection = glm::mat3(glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f)));
-		//m_ScreenShader->setUniformValue(projection, "projection");
-		m_ScreenShader->setUniformValue(uv_projection, "uv_scale");
-		//m_ScreenShader->setUniformValue(model, "model");
+		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f));
+	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
+	//m_ScreenShader->setUniformValue(projection, "projection");
+	m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
+	//m_ScreenShader->setUniformValue(model, "model");
 
-		glCheck(glDisable(GL_DEPTH_TEST));
-		glCheck(glActiveTexture(GL_TEXTURE0));
-		glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
-		m_ScreenQuad->draw();;
+	glCheck(glDisable(GL_DEPTH_TEST));
+	glCheck(glActiveTexture(GL_TEXTURE0));
+	glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
+	m_ScreenQuad->draw();;
 
-		glCheck(glEnable(GL_CULL_FACE));
+	glCheck(glEnable(GL_CULL_FACE));
 
 }
 

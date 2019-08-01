@@ -181,6 +181,8 @@ private:
 	std::map<std::string, ICVar*> m_variables_map;
 
 	ICVarDumpSink* m_pCVarDumpCallback = nullptr;
+	ICVar* r_anim_speed;
+	float time = 0.0f;
 
 
 	// Inherited via IConsole
