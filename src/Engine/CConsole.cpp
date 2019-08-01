@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
+#include <locale>
 
 #include <glm/glm.hpp>
 
@@ -206,6 +207,23 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			cmd_buffer.push_back(cmd);
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
 			return handleCommand(command);
+		}
+		case sf::Keyboard::Insert:
+		{
+			if (event.key.shift == true)
+			{
+				std::wstring clipboard = sf::Clipboard::getString();
+				if (clipboard.size() != 0)
+				{
+					for (auto& ch : clipboard)
+					{
+						handleCommandTextEnter(ch);
+					}
+				}
+				return true;
+
+			}
+			return false;
 		}
 		default:
 			return false;
