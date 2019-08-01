@@ -199,8 +199,8 @@ bool CConsole::OnInputEvent(sf::Event& event)
 					for (auto& ch : completion[0])
 					{
 						handleCommandTextEnter(ch);
-						command += L" ";
 					}
+					command += L" ";
 				}
 				else
 				{
