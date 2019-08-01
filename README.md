@@ -19,7 +19,7 @@ reflecttion
 ![alt text](https://raw.githubusercontent.com/fromasmtodisasm/BlackBox/develop/screen_shots/texture_fix.png)
 
 builtin terminal emulator
-![alt text](https://yadi.sk/i/q7QA_ZSfyEIYDg)
+![alt text](https://raw.githubusercontent.com/fromasmtodisasm/BlackBox/develop/screen_shots/terminal.png)
 
 rotation script demo
 
