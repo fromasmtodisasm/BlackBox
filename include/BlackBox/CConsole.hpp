@@ -139,6 +139,7 @@ private:
 	void Get(CommandDesc& cd);
 	void CConsole::Dump();
 	void getBuffer();
+	bool needShowCursor();
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -184,6 +185,8 @@ private:
 	ICVarDumpSink* m_pCVarDumpCallback = nullptr;
 	ICVar* r_anim_speed;
 	float time = 0.0f;
+	float cursor_tick = 0.0, cursor_tack = 0.0;
+	bool cursor_tick_tack = true;
 	int history_line = 0;
 
 

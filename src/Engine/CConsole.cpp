@@ -112,6 +112,11 @@ void CConsole::Draw()
 	{
 		printText(element, line_count - 1);
 	}
+	char *cursor = needShowCursor() ? "*" : " ";
+	//command_text.replace(command_text.size() - 1, 1, 1, cursor);
+	//command_text[command.length()] = cursor;
+
+	printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
 	printText(Text(std::string(command_text + "\n"), textColor, 1.0f), 0);
 	/*m_Font->RenderText(
 		command_text + "\n",
@@ -402,6 +407,30 @@ void CConsole::getBuffer()
 	sf::Clipboard::setString(toClipBoard);
 }
 
+bool CConsole::needShowCursor()
+{
+	float dt = GetIEngine()->getIGame()->getDeltaTime();
+	if (cursor_tick_tack)
+		cursor_tick += dt;
+	else
+		cursor_tack += dt;
+	if (cursor_tick - cursor_tack >= 0.9f)
+	{
+		cursor_tack = cursor_tick;
+		cursor_tick_tack = false;
+	}
+	else
+	{
+		cursor_tick = cursor_tack;
+		cursor_tick_tack = true;
+	}
+		
+
+
+
+	return false;
+}
+
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 {
 	for (auto& var : m_variables_map)
@@ -655,12 +684,15 @@ void CConsole::ShowConsole(bool show)
 void CConsole::fillCommandText()
 {
 	int pos = 0;
+	char cursor = '_';
+	if (needShowCursor())
+		cursor = ' ';
 	command_text.clear();
 	for (auto ch : command)
 	{
 		command_text.push_back(ch);
 	}
-	command_text.push_back('_');
+	command_text.push_back(cursor);
 }
 
 void CConsole::setFont(IFont* font)
