@@ -193,8 +193,20 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			completion = autocomplete(command);
 			if (completion.size() > 0)
 			{
-				command.clear();
-				addToCommandBuffer(completion);
+				if (completion.size() == 1)
+				{
+					command.clear();
+					for (auto& ch : completion[0])
+					{
+						handleCommandTextEnter(ch);
+						command += L" ";
+					}
+				}
+				else
+				{
+					command.clear();
+					addToCommandBuffer(completion);
+				}
 			}
 			return true;
 		case sf::Keyboard::Enter:
