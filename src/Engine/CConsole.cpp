@@ -177,10 +177,12 @@ bool CConsole::OnInputEvent(sf::Event& event)
 	std::vector<std::wstring> completion;
 	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
 	
-		if (cmd_is_compete)
-			command.clear();
-		cmd_is_compete = false;
-		input_trigered = false;
+	if (cmd_is_compete)
+	{
+		command.clear();
+	}
+	cmd_is_compete = false;
+	input_trigered = false;
 
 	switch (event.type)
 	{
@@ -206,6 +208,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
 			cmd_buffer.push_back(cmd);
 			//m_World->getActiveScene()->setPostProcessor(nullptr);
+			history_line = cmd_buffer.size();
 			return handleCommand(command);
 		}
 		case sf::Keyboard::Insert:
@@ -221,7 +224,54 @@ bool CConsole::OnInputEvent(sf::Event& event)
 					}
 				}
 				return true;
+			}
+			else if (event.key.control == true)
+			{
+				getBuffer();
+			}
 
+			return false;
+		}
+		case sf::Keyboard::Escape:
+		{
+			command.clear();
+			return true;
+		}
+		case sf::Keyboard::P:
+		{
+			if (event.key.control)
+			{
+				if (--history_line < 0)
+					history_line = 0;
+				auto line_history = cmd_buffer[history_line];
+				command.clear();
+				for (auto& element : line_history)
+				{
+					for (auto& ch : element.data)
+					{
+						handleCommandTextEnter(ch);
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+		case sf::Keyboard::N:
+		{
+			if (event.key.control)
+			{
+				if (++history_line > cmd_buffer.size() - 1)
+					history_line = cmd_buffer.size() - 1;
+				auto line_history = cmd_buffer[history_line];
+				command.clear();
+				for (auto& element : line_history)
+				{
+					for (auto& ch : element.data)
+					{
+						handleCommandTextEnter(ch);
+					}
+				}
+				return true;
 			}
 			return false;
 		}
@@ -324,6 +374,20 @@ void CConsole::Get(CommandDesc& cd)
 void CConsole::Dump()
 {
 	DumpCVars(this, 0);
+}
+
+void CConsole::getBuffer()
+{
+	std::string toClipBoard = "";
+	for (auto& cmd_line : cmd_buffer)
+	{
+		for (auto& cmd : cmd_line)
+		{
+			toClipBoard += cmd.data;
+		}
+
+	}
+	sf::Clipboard::setString(toClipBoard);
 }
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)

@@ -138,6 +138,7 @@ private:
 	void Set(CommandDesc& cd);
 	void Get(CommandDesc& cd);
 	void CConsole::Dump();
+	void getBuffer();
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -183,6 +184,7 @@ private:
 	ICVarDumpSink* m_pCVarDumpCallback = nullptr;
 	ICVar* r_anim_speed;
 	float time = 0.0f;
+	int history_line = 0;
 
 
 	// Inherited via IConsole
