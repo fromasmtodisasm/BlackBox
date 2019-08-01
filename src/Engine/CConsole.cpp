@@ -94,11 +94,11 @@ void CConsole::Draw()
 	if (!isOpened) return;
 	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
 	auto render = GetIEngine()->getIRender();
-	height = render->GetHeight();
+	height = render->GetHeight() / 2;
 	Animate(deltatime, render);
 	int begin, end;
 	auto prompt = getPrompt();
-	render->DrawImage(0, 0, render->GetWidth(), height / 2, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
+	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -139,7 +139,7 @@ void CConsole::Animate(float deltatime, IRender* render)
 
 void CConsole::CalcMetrics(int& end)
 {
-	line_in_console = (int)((height / 2)) / (int)line_height;
+	line_in_console = (int)((height)) / (int)line_height;
 	int num_all_lines = cmd_buffer.size();
 	if (line_in_console > num_all_lines)
 	{
@@ -149,9 +149,9 @@ void CConsole::CalcMetrics(int& end)
 	}
 	else
 	{
-		current_line = num_all_lines - line_in_console;
-		line_count = line_in_console - 1;
-		end = num_all_lines - 1;
+		current_line = num_all_lines - line_in_console - 1;
+		line_count = line_in_console;
+		end = num_all_lines;
 	}
 }
 
@@ -592,9 +592,14 @@ void CConsole::printLine(int line)
 
 void CConsole::printText(Text & element, int line)
 {
+	int curr_y = m_Font->GetYPos();
 	m_Font->RenderText(
 		element.data,
-		m_Font->GetXPos(), m_Font->GetYPos(), 1.0f, &glm::vec4(element.color, 1.0)[0]);
+		m_Font->GetXPos(), curr_y, 1.0f, &glm::vec4(element.color, 1.0)[0]);
+	if (curr_y < m_Font->GetYPos())
+	{
+		// TODO: handle this
+	}
 }
 
 void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
