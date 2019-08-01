@@ -83,7 +83,16 @@ private:
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
 #endif 
 	// DEBUG
+	ICVar* translateImageX;
 	ICVar* translateImageY;
+
+	ICVar* scaleImageX;
+	ICVar* scaleImageY;
+
+	ICVar* needTranslate;
+	ICVar* needFlipY;
+
 	ICVar* r_debug;
+	ICVar* test_proj;
 };
 

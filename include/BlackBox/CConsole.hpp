@@ -156,8 +156,8 @@ private:
 	// for animate console
 	bool animate = false;
 	float gravity = 1;
-	float speed = 90;
-	float curr_speed = 100;
+	float speed = 400;
+	float curr_speed = 1300;
 	float curr_height = 0;
 	//
 	int line_count = 0;

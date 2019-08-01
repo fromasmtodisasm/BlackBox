@@ -30,7 +30,16 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
   if (!OpenGLLoader())
     return false;
 	//=======================
-	translateImageY = m_Engine->getIConsole()->CreateVariable("timY", 3.0f, 0);
+	translateImageY = m_Engine->getIConsole()->CreateVariable("ty", 0.0f, 0);
+	translateImageX = m_Engine->getIConsole()->CreateVariable("tx", 0.0f, 0);
+
+	scaleImageX = m_Engine->getIConsole()->CreateVariable("sx", GetWidth(), 0);
+	scaleImageY = m_Engine->getIConsole()->CreateVariable("sy", GetHeight(), 0);
+
+	needTranslate = m_Engine->getIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY = m_Engine->getIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
+
+	test_proj = m_Engine->getIConsole()->CreateVariable("test_proj", "test proj empty", 0);
 	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
 	//=======================
   glInit();
@@ -152,28 +161,37 @@ void CRender::glInit()
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
 	bool flipY = true;
-	auto render = GetIEngine()->getIRender();
 	float
-		width = render->GetWidth(),
-		height = render->GetHeight();
+		width = GetWidth(),
+		height = GetHeight();
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	glEnable(GL_BLEND);
 	glCheck(glDisable(GL_CULL_FACE));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	render->SetViewport(0, 0, width, height);
+	SetViewport(xpos, GetHeight() - h, xpos + w, GetHeight() - ypos - h);
 	m_ScreenShader->use();
 
 	glm::mat4 model(1.0);
 	auto uv_projection = glm::mat4(1.0);
-	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
-	glm::mat4 projection = glm::ortho(0.0f, 0.0f, (float)render->GetWidth(), (float)render->GetHeight());
+	glm::mat4 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f, -1.0f, 1000.0f);
 
-	model = glm::scale(model, { w,h,1 });
-	if (flipY)
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.f));
+	model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.f));
+	model = glm::scale(model, {GetWidth(),GetHeight(), 1.f });
+	if (needTranslate->GetIVal())
+		model = glm::translate(model, 
+			glm::vec3(
+			((translateImageX->GetFVal() + xpos) + (float)GetWidth()) / (float)GetWidth(), 
+			((translateImageY->GetFVal() + ypos) + (float)GetHeight()) / (float)GetHeight(), 
+			0.f)
+		); 
+
+	if (needFlipY->GetIVal())
 		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f));
+	//uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(2.f, 2.f, 1.0f));
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
 	//m_ScreenShader->setUniformValue(projection, "projection");
-	m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
+	//m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
 	//m_ScreenShader->setUniformValue(model, "model");
 
 	glCheck(glDisable(GL_DEPTH_TEST));
