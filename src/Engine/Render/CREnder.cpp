@@ -37,12 +37,12 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenQuad = new Quad();
 	//=======================
 	m_ScreenShader = new CShaderProgram(
-		CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
-		CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT))
+		CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
+		CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))
 		;
 	m_ScreenShader->create();
 	m_ScreenShader->use();
-	m_ScreenShader->setUniformValue(0,"text");
+	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
 	return result;
 }
@@ -151,29 +151,38 @@ void CRender::glInit()
 
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
-	
-		auto render = GetIEngine()->getIRender();
-		float
-			width = render->GetWidth(),
-			height = render->GetHeight();
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-		render->SetViewport(0, 0, width, height);
-		glCheck(glClearColor(0.01f, 0.01f, 0.01f, 0.5f));
-		glCheck(glClear(GL_COLOR_BUFFER_BIT));
-		m_ScreenShader->use();
-		
-		glm::mat4 model(1.0);
-		glm::mat4 uv_projection = glm::mat4(1.0);
-		//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
-		glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
-		m_ScreenShader->setUniformValue(projection, "projection");
-		m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
-		m_ScreenShader->setUniformValue(model, "model");
+	bool flipY = true;
+	auto render = GetIEngine()->getIRender();
+	float
+		width = render->GetWidth(),
+		height = render->GetHeight();
+	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	glEnable(GL_BLEND);
+	glCheck(glDisable(GL_CULL_FACE));
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glCheck(glClearColor(0.01f, 0.01f, 0.01f, 0.5f));
+	//glCheck(glClear(GL_COLOR_BUFFER_BIT));
+	render->SetViewport(0, 0, width, height);
+	m_ScreenShader->use();
+
+	glm::mat4 model(1.0);
+	auto uv_projection = glm::mat3(1.0);
+	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
+	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
+
+	model = glm::scale(model, { w,h,1 });
+	if (flipY)
+		uv_projection = glm::mat3(glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f)));
+		//m_ScreenShader->setUniformValue(projection, "projection");
+		m_ScreenShader->setUniformValue(uv_projection, "uv_scale");
+		//m_ScreenShader->setUniformValue(model, "model");
 
 		glCheck(glDisable(GL_DEPTH_TEST));
 		glCheck(glActiveTexture(GL_TEXTURE0));
 		glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
 		m_ScreenQuad->draw();;
+
+		glCheck(glEnable(GL_CULL_FACE));
 
 }
 

@@ -49,6 +49,11 @@ void CGame::PreRender()
 	glCheck(glViewport(0, 0, 1366, 768));
 }
 
+float CGame::getTime()
+{
+	return time(0);
+}
+
 CGame::CGame(std::string title) :
     m_World(new World()),m_Title(title)
 {

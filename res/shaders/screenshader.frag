@@ -4,7 +4,7 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D screenTexture;
-uniform float alpha = 0.8;
+uniform float alpha = 0.9;
 
 void main()
 { 

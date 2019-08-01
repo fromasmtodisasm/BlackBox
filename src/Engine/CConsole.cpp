@@ -361,7 +361,11 @@ bool CConsole::Init()
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, line_height);
 	m_Texture = new Texture();
-	m_Texture->load("console_background2.jpg");
+	const char* texture_path = "console_background2.jpg";
+	ICVar* background = GetCVar("console_background");
+	if (background != nullptr)
+		texture_path = background->GetString();
+	m_Texture->load(texture_path);
 	return true;
 }
 

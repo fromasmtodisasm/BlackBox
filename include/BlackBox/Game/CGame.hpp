@@ -148,6 +148,9 @@ public:
 
 	// Inherited via IPreRenderCallback
 	virtual void PreRender() override;
+
+	// Inherited via IGame
+	virtual float getTime() override;
 };
 
 

@@ -15,7 +15,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glCheck(glUniform3fv(glGetUniformLocation(shader->get(), "textColor"), 1, &color[0]));
 	glCheck(glActiveTexture(GL_TEXTURE0));
 	glCheck(glBindVertexArray(VAO));
-	glEnable(GL_BLEND);
+	glCheck(glEnable(GL_BLEND));
 	glCheck(glDisable(GL_CULL_FACE));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
