@@ -194,7 +194,7 @@ void CGame::drawHud(float fps)
 		SDrawTextInfo dti = info.getDTI();
 
 		m_Font->SetXPos(0);
-		m_Font->SetYPos(0);
+		m_Font->SetYPos(18);
 		auto& text = info.text;
 		auto& color = info.color;
 
@@ -217,7 +217,6 @@ void CGame::drawHud(float fps)
 
 		auto render = m_pSystem->getIRender();
 
-		info.font->SetYPos(0);
 		for (auto& text : info.text)
 		{
 			render->PrintLine(text.c_str(), dti);

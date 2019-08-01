@@ -98,10 +98,10 @@ void CConsole::Draw()
 	Animate(deltatime, render);
 	int begin, end;
 	auto prompt = getPrompt();
-	render->DrawImage(0, 384, render->GetWidth(), 384, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
+	render->DrawImage(0, 0, render->GetWidth(), height / 2, m_Texture->id, 0, 0, m_Texture->width, height, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
-	m_Font->SetYPos(0);
+	m_Font->SetYPos(18);
 	for (on_line = 0; current_line < end; current_line++, on_line++)
 	{
 		printLine(current_line);
@@ -139,7 +139,7 @@ void CConsole::Animate(float deltatime, IRender* render)
 
 void CConsole::CalcMetrics(int& end)
 {
-	line_in_console = (int)((height / 2) - 1) / (int)line_height;
+	line_in_console = (int)((height / 2)) / (int)line_height;
 	int num_all_lines = cmd_buffer.size();
 	if (line_in_console > num_all_lines)
 	{

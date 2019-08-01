@@ -3,6 +3,10 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/Render/IFont.hpp>
+#include <BlackBox/Render/IRender.hpp>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
 CRender::CRender(IEngine *engine) : m_Engine(engine), m_viewPort(0,0,0,0)
 {
@@ -33,12 +37,12 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenQuad = new Quad();
 	//=======================
 	m_ScreenShader = new CShaderProgram(
-		CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
-		CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))
+		CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
+		CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT))
 		;
 	m_ScreenShader->create();
 	m_ScreenShader->use();
-	m_ScreenShader->setUniformValue(0,"screenTexture");
+	m_ScreenShader->setUniformValue(0,"text");
 	m_ScreenShader->unuse();
 	return result;
 }
@@ -147,28 +151,30 @@ void CRender::glInit()
 
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
-	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	m_ScreenShader->use();
-	auto projection = glm::mat4(1.0);
-	auto model = glm::mat4(1.0);
-	auto uv_transform = glm::mat4(1.0);
-	uv_transform = glm::scale(uv_transform, glm::vec3(1.f, -1.f, 1.f));
-	model = glm::translate(model, glm::vec3(1.f, 1.f, 0.f));
-	//model = glm::translate(model, glm::vec3(xpos, ypos, 0));
-	model = glm::scale(model, glm::vec3(w, 0.5*h, 1.f));
-	model = glm::translate(model, glm::vec3(xpos, translateImageY->GetFVal() * (ypos / GetHeight()), 0.f));
-	projection = glm::ortho(0.f, (float)GetWidth(), 0.f, (float)GetHeight());
-	m_ScreenShader->setUniformValue(projection, "projection");
-	m_ScreenShader->setUniformValue(model, "model");
-	m_ScreenShader->setUniformValue(glm::mat3(uv_transform), "uv_transform");
-	glCheck(glDisable(GL_DEPTH_TEST));
-	glCheck(glActiveTexture(GL_TEXTURE0));
-	glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
-	glCheck(glEnable(GL_BLEND));
-	glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-	m_ScreenQuad->draw();;
-	glCheck(glDisable(GL_BLEND));
-	m_ScreenShader->unuse();
+	
+		auto render = GetIEngine()->getIRender();
+		float
+			width = render->GetWidth(),
+			height = render->GetHeight();
+		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		render->SetViewport(0, 0, width, height);
+		glCheck(glClearColor(0.01f, 0.01f, 0.01f, 0.5f));
+		glCheck(glClear(GL_COLOR_BUFFER_BIT));
+		m_ScreenShader->use();
+		
+		glm::mat4 model(1.0);
+		glm::mat4 uv_projection = glm::mat4(1.0);
+		//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
+		glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
+		m_ScreenShader->setUniformValue(projection, "projection");
+		m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
+		m_ScreenShader->setUniformValue(model, "model");
+
+		glCheck(glDisable(GL_DEPTH_TEST));
+		glCheck(glActiveTexture(GL_TEXTURE0));
+		glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
+		m_ScreenQuad->draw();;
+
 }
 
 void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
