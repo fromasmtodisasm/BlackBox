@@ -160,15 +160,13 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	glEnable(GL_BLEND);
 	glCheck(glDisable(GL_CULL_FACE));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glCheck(glClearColor(0.01f, 0.01f, 0.01f, 0.5f));
-	//glCheck(glClear(GL_COLOR_BUFFER_BIT));
 	render->SetViewport(0, 0, width, height);
 	m_ScreenShader->use();
 
 	glm::mat4 model(1.0);
 	auto uv_projection = glm::mat4(1.0);
 	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
-	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
+	glm::mat4 projection = glm::ortho(0.0f, 0.0f, (float)render->GetWidth(), (float)render->GetHeight());
 
 	model = glm::scale(model, { w,h,1 });
 	if (flipY)

@@ -108,7 +108,7 @@ BoundingBox ObjLoader::buildVertexData(VertexData& vertex_data, std::vector<face
 			face[2].normal = normal_buffer[faces[current_face].v[2].n - 1];
 			bb.currentFace(face);
 			
-			calcNormal(face);
+			//calcNormal(face);
 			calcTangentSpace(face);
 			vertex_data.push_back(face[0]);
 			vertex_data.push_back(face[1]);

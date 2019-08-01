@@ -51,7 +51,7 @@ void CGame::PreRender()
 
 float CGame::getTime()
 {
-	return time(0);
+	return m_time;
 }
 
 CGame::CGame(std::string title) :
@@ -130,6 +130,7 @@ bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
     sf::Time deltaTime = deltaClock.restart();
     m_deltaTime = deltaTime.asSeconds();
+		m_time += m_deltaTime;
 		fps =  1000.0f / deltaTime.asMilliseconds();
     input();
 		execScripts();
@@ -238,7 +239,7 @@ void CGame::drawHud(float fps)
 
 bool CGame::run() {
 	m_Log->AddLog("[OK] Game started\n");
-  deltaClock.restart();
+  m_time = deltaClock.restart().asSeconds();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
   m_isMusicPlaying = true;

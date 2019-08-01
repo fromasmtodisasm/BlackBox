@@ -56,6 +56,7 @@ private:
   std::string m_Title;
   bool m_running = true;
   float m_lastTime;
+	float m_time = 0.0f;
   sf::Clock deltaClock;
   EventListener *listener;
 	bool isDrawingGui = false;

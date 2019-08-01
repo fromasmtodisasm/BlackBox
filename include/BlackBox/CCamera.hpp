@@ -39,12 +39,14 @@ public:
     GLfloat Pitch;
     // Camera options
 		ICVar *MovementSpeed;
+		ICVar* FOV;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
-    GLfloat FOV = 45.0f;
+    //GLfloat FOV = 45.0f;
     GLfloat Ratio = 16.0f/9;
     GLfloat zNear = 0.1f;
-    GLfloat zFar = 5000.f;
+    //GLfloat zFar = 5000.f;
+    ICVar *zFar = nullptr;
 
     enum Mode
     {
@@ -61,6 +63,8 @@ public:
         this->Pitch = pitch;
         this->updateCameraVectors();
 				MovementSpeed = GetIEngine()->getIConsole()->CreateVariable("cam_speed", 5.0f, 0, "Speed of camera");
+				FOV = GetIEngine()->getIConsole()->CreateVariable("fov", 45.0f, 0, "Camera field of view");
+				zFar = GetIEngine()->getIConsole()->CreateVariable("zfar", 10000.f, 0, "Draw distance");
     }
     // Constructor with scalar values
     CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)

@@ -11,6 +11,7 @@
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/IGame.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -393,6 +394,7 @@ Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(C
 	m_TextShader->create();
 
 	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
+	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 }
 
 void Scene::selectPrevObject()
@@ -439,14 +441,16 @@ void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)
   {
+		auto time = GetIEngine()->getIGame()->getTime() * texture_speed->GetFVal();
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 			if (!object.second->m_transparent && (object.second->visible()) && 
-				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar - 500.0f)
+				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
 			{
 				auto program = object.second->m_Material->program;
 				program->use();
+				program->setUniformValue(time, "time");
 				setupLights(object.second);
 
 				object.second->draw(m_Camera);

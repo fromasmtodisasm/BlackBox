@@ -78,6 +78,8 @@ bool Texture::load(const char* name)
   glCheck(glBindTexture(GL_TEXTURE_2D, id));
 	width = img.width;
 	height = img.height;
+	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
     img.width, img.height,

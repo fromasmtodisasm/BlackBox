@@ -7,6 +7,8 @@
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #include <map>
 #include <string>
@@ -49,6 +51,7 @@ private:
   glm::vec3 loadColorAttribute(tinyxml2::XMLElement* element);
   void setupLights(Object* object);
 	unsigned int quadVAO;
+	ICVar* texture_speed = nullptr;
 
 public:
   Scene(std::string name);
