@@ -177,7 +177,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.f));
 	model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.f));
-	model = glm::scale(model, {GetWidth(),GetHeight(), 1.f });
+	model = glm::scale(model, {scaleImageX->GetFVal() * GetWidth(), scaleImageY->GetFVal() * GetHeight(), 1.f });
 	if (needTranslate->GetIVal())
 		model = glm::translate(model, 
 			glm::vec3(
