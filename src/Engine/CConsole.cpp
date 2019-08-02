@@ -215,18 +215,12 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			}
 			return true;
 		case sf::Keyboard::Enter:
+		case sf::Keyboard::M:
 		{
-			cmd_is_compete = true;
-			CommandLine cmd;
-			for (auto& element : getPrompt())
-			{
-				cmd.push_back(element);
-			}
-			cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
-			cmd_buffer.push_back(cmd);
-			//m_World->getActiveScene()->setPostProcessor(nullptr);
-			history_line = cmd_buffer.size();
-			return handleCommand(command);
+			if (event.key.code != sf::Keyboard::Enter && !event.key.control)
+				return false;
+			handleEnterText(); 
+			return true;
 		}
 		case sf::Keyboard::Insert:
 		{
@@ -304,6 +298,21 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		return false;
 	}
 
+}
+
+bool CConsole::handleEnterText()
+{
+	cmd_is_compete = true;
+	CommandLine cmd;
+	for (auto& element : getPrompt())
+	{
+		cmd.push_back(element);
+	}
+	cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
+	cmd_buffer.push_back(cmd);
+	//m_World->getActiveScene()->setPostProcessor(nullptr);
+	history_line = cmd_buffer.size();
+	return handleCommand(command);
 }
 
 void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
