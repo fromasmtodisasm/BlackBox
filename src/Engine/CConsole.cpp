@@ -200,12 +200,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			{
 				if (completion.size() == 1)
 				{
-					command.clear();
-					for (auto& ch : completion[0])
-					{
-						handleCommandTextEnter(ch);
-					}
-					command += L" ";
+					completeCommand(completion);
 				}
 				else
 				{
@@ -226,14 +221,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
 			if (event.key.shift == true)
 			{
-				std::wstring clipboard = sf::Clipboard::getString();
-				if (clipboard.size() != 0)
-				{
-					for (auto& ch : clipboard)
-					{
-						handleCommandTextEnter(ch);
-					}
-				}
+				setBuffer();
 				return true;
 			}
 			else if (event.key.control == true)
@@ -254,15 +242,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			{
 				if (--history_line < 0)
 					history_line = 0;
-				auto line_history = cmd_buffer[history_line];
-				command.clear();
-				for (auto& element : line_history)
-				{
-					for (auto& ch : element.data)
-					{
-						handleCommandTextEnter(ch);
-					}
-				}
+				getHistoryElement();
 				return true;
 			}
 			return false;
@@ -273,15 +253,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			{
 				if (++history_line > cmd_buffer.size() - 1)
 					history_line = cmd_buffer.size() - 1;
-				auto line_history = cmd_buffer[history_line];
-				command.clear();
-				for (auto& element : line_history)
-				{
-					for (auto& ch : element.data)
-					{
-						handleCommandTextEnter(ch);
-					}
-				}
+				getHistoryElement();
 				return true;
 			}
 			return false;
@@ -298,6 +270,41 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		return false;
 	}
 
+}
+
+void CConsole::getHistoryElement()
+{
+	auto line_history = cmd_buffer[history_line];
+	command.clear();
+	for (auto& element : line_history)
+	{
+		for (auto& ch : element.data)
+		{
+			handleCommandTextEnter(ch);
+		}
+	}
+}
+
+void CConsole::completeCommand(std::vector<std::wstring>& completion)
+{
+	command.clear();
+	for (auto& ch : completion[0])
+	{
+		handleCommandTextEnter(ch);
+	}
+	command += L" ";
+}
+
+void CConsole::setBuffer()
+{
+	std::wstring clipboard = sf::Clipboard::getString();
+	if (clipboard.size() != 0)
+	{
+		for (auto& ch : clipboard)
+		{
+			handleCommandTextEnter(ch);
+		}
+	}
 }
 
 bool CConsole::handleEnterText()

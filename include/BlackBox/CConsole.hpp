@@ -105,6 +105,9 @@ public:
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
 	virtual bool OnInputEvent(sf::Event& event) override;
+	void getHistoryElement();
+	void completeCommand(std::vector<std::wstring>& completion);
+	void setBuffer();
 	bool handleEnterText();
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
 	virtual void Clear() override;
