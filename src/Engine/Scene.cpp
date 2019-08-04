@@ -799,11 +799,12 @@ FrameBufferObject* Scene::getRenderTarget()
 
 void Scene::shadowMapPass(CCamera *camera)
 {
+  float divider = 16.0f;
   m_DepthBuffer->bind();
   glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
   glClear(GL_DEPTH_BUFFER_BIT);
   m_ShadowMapShader->use();
-  m_ShadowMapShader->setUniformValue(glm::ortho(-100.f,100.f,-100.f,100.f, -1.0f, 1000.f) * camera->getViewMatrix(), "lightSpaceMatrix");
+  m_ShadowMapShader->setUniformValue(glm::ortho(-1366/divider, 1366/divider, -768/divider, 768/divider,-1.0f, 1000.f) * camera->getViewMatrix(), "lightSpaceMatrix");
   for (const auto& object : m_Objects) {
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())

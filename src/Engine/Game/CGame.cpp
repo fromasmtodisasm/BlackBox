@@ -213,7 +213,7 @@ void CGame::drawHud(float fps)
     if (openShadowMap)
     {
       render->DrawImage(
-        render->GetWidth() / 2, 0, render->GetWidth(), render->GetHeight(),
+        render->GetWidth() / 2, render->GetHeight() / 2, render->GetWidth() / 2, render->GetHeight() / 2,
         depthBuffer->texture, 0, 0, 0, 0, 0, 0, 0, 1.0);
     }
     //===========
