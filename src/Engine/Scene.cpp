@@ -825,6 +825,7 @@ void Scene::mainPass(CCamera *camera)
   Pipeline::instance()->projection = camera->getProjectionMatrix();
   Pipeline::instance()->view_pos = camera->Position;
 
+  glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
   for (const auto& object : m_Objects) {
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())

@@ -245,6 +245,8 @@ void CGame::drawHud(float fps)
 			render->PrintLine(text.c_str(), dti);
 		}
 
+    render->PrintLine("To hide depth buffer press <;>\n", dti);
+
 		info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
 		render->PrintLine(pos.c_str(), info.getDTI());
 		if (m_Console->IsOpened())
@@ -338,8 +340,13 @@ extern "C" IGame *CreateIGame(const char *title) {
 
 bool CGame::OnInputEvent(sf::Event &event)
 {
-  bool result = OnInputEventProxy(event);
+	{
+		bool retflag;
+		bool retval = ShouldHandleEvent(event, retflag);
+		if (retflag) return retval;
+	}
 
+  bool result = OnInputEventProxy(event);
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -350,7 +357,6 @@ bool CGame::OnInputEvent(sf::Event &event)
   default:
     break;
   }
-
   return result;
 }
 
@@ -407,8 +413,10 @@ bool CGame::initPlayer()
 
 bool CGame::FpsInputEvent(sf::Event& event)
 {
+  /*
 	if (m_Console->IsOpened())
 		return false;
+  */
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -464,8 +472,10 @@ bool CGame::FpsInputEvent(sf::Event& event)
 
 bool CGame::FlyInputEvent(sf::Event& event)
 {
+  /*
 	if (m_Console->IsOpened())
 		return false;
+  */
 	switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -492,8 +502,10 @@ bool CGame::FlyInputEvent(sf::Event& event)
 
 bool CGame::MenuInputEvent(sf::Event& event)
 {
+  /*
 	if (m_Console->IsOpened())
 		return false;
+  */
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -524,12 +536,6 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	{
-		bool retflag;
-		bool retval = ShouldHandleEvent(event, retflag);
-		if (retflag) return retval;
-	}
-
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
