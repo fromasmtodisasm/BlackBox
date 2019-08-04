@@ -144,6 +144,7 @@ private:
 	void CConsole::Dump();
 	void getBuffer();
 	bool needShowCursor();
+  void pageUp(bool isPgUp);
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -172,6 +173,7 @@ private:
 	int line_height = 18;
 	int current_line = 0;
 	int on_line = 0;
+  int page_up = 0;
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
 	std::string m_prompt;

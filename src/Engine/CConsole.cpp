@@ -159,7 +159,7 @@ void CConsole::CalcMetrics(int& end)
 	}
 	else
 	{
-		current_line = num_all_lines - line_in_console - 1;
+		current_line = num_all_lines - line_in_console + page_up - 1;
 		line_count = line_in_console;
 		end = num_all_lines;
 	}
@@ -260,6 +260,12 @@ bool CConsole::OnInputEvent(sf::Event& event)
 				return true;
 			}
 			return false;
+		}
+		case sf::Keyboard::PageUp:
+		case sf::Keyboard::PageDown:
+		{
+      pageUp(event.key.code == sf::Keyboard::PageUp);
+      return true;
 		}
 		default:
 			return false;
@@ -448,6 +454,14 @@ bool CConsole::needShowCursor()
 
 
 	return false;
+}
+
+void CConsole::pageUp(bool isPgUp)
+{
+  if (isPgUp)
+    page_up--;
+  else
+    page_up++;
 }
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
