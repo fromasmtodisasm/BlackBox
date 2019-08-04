@@ -395,6 +395,9 @@ Scene::Scene(std::string name)
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
 
+
+	m_ShadowMapShader->create();
+
 	m_TextShader = new CShaderProgram(
 	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
 	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
@@ -448,7 +451,7 @@ void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)
   {
-    CCamera *camera = new CCamera();
+    CCamera* camera = m_Camera;// new CCamera();
     shadowMapPass(camera);
 
     m_RenderedScene->bind();

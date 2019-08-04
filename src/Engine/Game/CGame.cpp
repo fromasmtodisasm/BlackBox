@@ -89,6 +89,7 @@ bool CGame::init(IEngine *pSystem)  {
 	sceneBuffer->create();
 	depthBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);
+	m_scene->setRenderTarget(depthBuffer);
  
   gui = new GameGUI();
   gui->game = this;
@@ -112,8 +113,8 @@ bool CGame::init(IEngine *pSystem)  {
 
   //m_World->setCamera(camera2);
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
-	m_World->setPretRenderCallback(this);
-	m_World->setPostRenderCallback(this);
+	//m_World->setPretRenderCallback(this);
+	//m_World->setPostRenderCallback(this);
 	
 	postProcessors.push_back(nullptr);
 	postProcessors.push_back(new PostProcessor("negative"));
@@ -128,7 +129,7 @@ bool CGame::init(IEngine *pSystem)  {
   ITexture* consoleBackGround = new Texture();
   consoleBackGround->load("console/fc.jpg");
   //m_Console->SetImage(consoleBackGround);
-  m_Console->SetImage(new Texture(sceneBuffer->texture));
+  m_Console->SetImage(new Texture(depthBuffer->texture));
   return true;
 }
 
