@@ -84,6 +84,9 @@ public:
 
 void CConsole::SetImage(ITexture* pTexture)
 {
+  if (m_pBackGround != nullptr)
+    delete m_pBackGround;
+  m_pBackGround = pTexture;
 }
 
 void CConsole::Update()
@@ -100,7 +103,7 @@ void CConsole::Draw()
 	int begin, end;
 	auto prompt = getPrompt();
 	time += GetIEngine()->getIGame()->getDeltaTime();
-	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, time * r_anim_speed->GetFVal(), 0, m_Texture->width, height, 0, 0, 0, 1.0);
+	render->DrawImage(0, 0, render->GetWidth() / 2, height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -500,14 +503,14 @@ bool CConsole::Init()
 {
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, line_height);
-	m_Texture = new Texture();
+	m_pBackGround = new Texture();
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
 	r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
 
 	if (background != nullptr)
 		texture_path = background->GetString();
-	m_Texture->load(texture_path);
+	m_pBackGround->load(texture_path);
 	return true;
 }
 
@@ -681,7 +684,7 @@ CConsole::CConsole()
 CConsole::~CConsole()
 {
 	if (m_Font) delete m_Font;
-	if (m_Texture) delete m_Texture;
+	if (m_pBackGround) delete m_pBackGround;
 }
 
 void CConsole::ShowConsole(bool show)

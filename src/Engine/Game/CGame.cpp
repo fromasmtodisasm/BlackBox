@@ -84,7 +84,8 @@ bool CGame::init(IEngine *pSystem)  {
 	}
 	//m_Log->AddLog("[OK] Objects inited\n");
 	m_Console->PrintLine("[OK] Objects inited\n");
-	FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
+	FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, m_Window->getWidth(), m_Window->getHeight());
+	FrameBufferObject *depthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, m_Window->getWidth(), m_Window->getHeight());
 	sceneBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);
  
@@ -123,6 +124,10 @@ bool CGame::init(IEngine *pSystem)  {
 	m_Font->Init("arial.ttf", 16, 18);
 
 	//m_Console->ExecuteString("clear");
+  ITexture* consoleBackGround = new Texture();
+  consoleBackGround->load("console/fc.jpg");
+  //m_Console->SetImage(consoleBackGround);
+  m_Console->SetImage(new Texture(sceneBuffer->texture));
   return true;
 }
 

@@ -155,7 +155,8 @@ private:
 	bool isOpened = false;
 	bool cmd_is_compete = false;
 	IEngine* m_engine;
-	Texture* m_Texture;
+	ITexture* m_pBackGround;
+  //ITexture* m_pBackGround = nullptr;
 
 	float height;
 
@@ -192,6 +193,7 @@ private:
 	float cursor_tick = 0.0, cursor_tack = 0.0;
 	bool cursor_tick_tack = true;
 	int history_line = 0;
+  //
 
 
 	// Inherited via IConsole

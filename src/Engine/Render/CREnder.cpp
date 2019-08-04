@@ -33,15 +33,15 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	translateImageY = m_Engine->getIConsole()->CreateVariable("ty", 0.0f, 0);
 	translateImageX = m_Engine->getIConsole()->CreateVariable("tx", 0.0f, 0);
 
-	scaleImageX = m_Engine->getIConsole()->CreateVariable("sx", GetWidth(), 0);
-	scaleImageY = m_Engine->getIConsole()->CreateVariable("sy", GetHeight(), 0);
+	scaleImageX = m_Engine->getIConsole()->CreateVariable("sx", 1.0f, 0);
+	scaleImageY = m_Engine->getIConsole()->CreateVariable("sy", 1.0f, 0);
 
 	needTranslate = m_Engine->getIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
 	needFlipY = m_Engine->getIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
 
 	test_proj = m_Engine->getIConsole()->CreateVariable("test_proj", "test proj empty", 0);
 	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_Engine->getIConsole()->CreateVariable("rvv", 1, 0, "Rendering use view port, if 1 else with projection matrix");
+	render_via_viewport = m_Engine->getIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -176,22 +176,28 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	glm::mat4 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f, -1.0f, 1000.0f);
 
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.f));
-	model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.f));
-	model = glm::scale(model, {scaleImageX->GetFVal() * GetWidth(), scaleImageY->GetFVal() * GetHeight(), 1.f });
+	//model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.f));
+	model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.f));
+	model = glm::scale(model, {scaleImageX->GetFVal() * w, scaleImageY->GetFVal() * h, 1.f });
 	if (needTranslate->GetIVal())
 		model = glm::translate(model, 
 			glm::vec3(
-			((translateImageX->GetFVal() + xpos) + (float)GetWidth()) / (float)GetWidth(), 
-			((translateImageY->GetFVal() + ypos) + (float)GetHeight()) / (float)GetHeight(), 
+			((2 * translateImageX->GetFVal() + xpos) + (float)GetWidth()) / (float)GetWidth(), 
+			((2 * translateImageY->GetFVal() + ypos) + (float)GetHeight()) / (float)GetHeight(), 
 			0.f)
 		); 
 
-	if (needFlipY->GetIVal())
+  if (needFlipY->GetIVal() == 1)
+  {
 		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f));
+  }
+  else
+  {
+		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
+  }
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
 	if (render_via_viewport->GetIVal() == 0)
 	{
-		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(2.f, 2.f, 1.0f));
 		m_ScreenShader->setUniformValue(projection, "projection");
 		m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
 		m_ScreenShader->setUniformValue(model, "model");

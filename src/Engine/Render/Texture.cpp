@@ -12,6 +12,13 @@ Texture::Texture()
 
 }
 
+Texture::Texture(GLuint id) 
+{
+  BaseTexture::id = id;
+  glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width));
+  glCheck(glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &height));
+}
+
 Texture::Texture(std::string name) 
 {
 	this->name = name;
@@ -105,7 +112,6 @@ void Texture::setUnit(GLuint unit)
 {
 	this->unit = unit;
 }
-
 
 #ifdef NVTT
 
