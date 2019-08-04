@@ -77,6 +77,10 @@ public:
   bool load(std::string name);
   void setRenderTarget(FrameBufferObject *renderedScene);
   FrameBufferObject *getRenderTarget();
+  void shadowMapPass(float dt);
+  void mainPass(float dt);
+
+  Material* shadowMapMat;
 
   void begin();
   void end();

@@ -87,6 +87,7 @@ bool CGame::init(IEngine *pSystem)  {
 	FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, m_Window->getWidth(), m_Window->getHeight());
 	FrameBufferObject *depthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, m_Window->getWidth(), m_Window->getHeight());
 	sceneBuffer->create();
+	depthBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);
  
   gui = new GameGUI();

@@ -53,11 +53,6 @@ void Object::draw(void * camera) {
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, m_RenderMode);
 		mesh.getVertexBuffer()->draw();
-		/*
-		Pipeline::instance()->bindProgram("bb");
-		Pipeline::instance()->object = this;
-		mesh.bb.draw();
-		*/
 	}
 }
 
