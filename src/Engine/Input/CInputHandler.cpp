@@ -20,14 +20,15 @@ ICommand * CSFMLWindow::handleInput()
       Mouse.curr_pos = nextMousePos(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
     }
     this->OnInputEvent(event);
-    if (viewPort.contains(sf::Mouse::getPosition(*m_Window)))
+    //if (viewPort.contains(sf::Mouse::getPosition(*m_Window)))
       for (const auto &listener : listeners)
       {
-        listener->OnInputEvent(event);
+				if (listener->OnInputEvent(event))
+					break;
       }
-    else {
-      continue;
-    }
+    //else {
+    //  continue;
+    //}
   }
   return nullptr;
 }
@@ -54,3 +55,16 @@ void CSFMLWindow::mouseLock(bool lock)
   m_Window->setMouseCursorGrabbed(lock);
 	m_Window->setMouseCursorVisible(!lock);
 }
+
+Rect &CSFMLWindow::getViewPort()
+{
+	return viewPort;
+}
+
+bool CSFMLWindow::create(Params params)
+{
+	auto settings = reinterpret_cast<sf::ContextSettings*>(params);
+  m_contextSettings = sf::ContextSettings(settings->depthBits, settings->stencilBits, 0, settings->majorVersion, settings->minorVersion, settings->attributeFlags);
+	return true;
+}
+

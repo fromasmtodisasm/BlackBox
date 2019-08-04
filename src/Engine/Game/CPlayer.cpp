@@ -13,7 +13,6 @@ CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.ob
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);
-  move({0,0,0});
 }
 
 CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
@@ -109,16 +108,16 @@ void CPlayer::update(float deltatime)
       velocity -= impulse;
       break;
     case sf::Keyboard::W:
-      m_Camera->ProcessKeyboard(Camera_Movement::FORWARD, deltatime);
+      m_Camera->ProcessKeyboard(Movement::FORWARD, deltatime);
       break;
     case sf::Keyboard::S:
-      m_Camera->ProcessKeyboard(Camera_Movement::BACKWARD, deltatime);
+      m_Camera->ProcessKeyboard(Movement::BACKWARD, deltatime);
       break;
     case sf::Keyboard::A:
-      m_Camera->ProcessKeyboard(Camera_Movement::LEFT, deltatime);
+      m_Camera->ProcessKeyboard(Movement::LEFT, deltatime);
       break;
     case sf::Keyboard::D:
-      m_Camera->ProcessKeyboard(Camera_Movement::RIGHT, deltatime);
+      m_Camera->ProcessKeyboard(Movement::RIGHT, deltatime);
       break;
     default:
       ;//GameObject::update(deltatime);

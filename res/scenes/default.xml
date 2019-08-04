@@ -20,7 +20,7 @@
         </transform>
         <material name="wood_box"/>
     </object>
-    <object name="BMW" type="object">
+    <object name="BMW" type="object" visible="true">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -39,7 +39,7 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="red"/>
+        <material name="player"/>
     </object>
     <object name="BMW_2" type="object">
         <mesh name="res/geom/bmw.obj"/>
@@ -104,6 +104,27 @@
         </transform>
         <material name="player"/>
     </object>
+    <object name="sphere" visible="true">
+        <mesh name="res/geom/sphere.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>20</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>
     <object name="MyPlayer_0000" type="object">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
@@ -125,7 +146,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object" transparent="true" visible="true">
+    <object name="brick_normal_box" type="object" transparent="true" visible="false">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -146,7 +167,7 @@
         </transform>
         <material name="brick_box"/>
     </object>
-    <object name="brick_normal_box_2" type="object" transparent="true" visible="true">
+    <object name="brick_normal_box_2" type="object" transparent="true" visible="false">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -167,7 +188,7 @@
         </transform>
         <material name="brick_box_shakaled" alpha_shakal="true"/>
     </object>
-    <object name="garik" type="object" transparent="true" visible="true">
+    <object name="garik" type="object" transparent="true" visible="false">
         <mesh name="res/geom/1ltomarm2.obj"/>
         <transform>
             <position>
@@ -230,7 +251,7 @@
         </transform>
         <material name="light"/>
     </object>
-    <object name="plane" type="object">
+    <object name="plane" type="object" visible="true">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -244,12 +265,12 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>200</X>
-                <Y>200</Y>
-                <Z>200</Z>
+                <X>20000</X>
+                <Y>20000</Y>
+                <Z>20000</Z>
             </scale>
         </transform>
-        <material name="default"/>
+        <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object">
         <mesh name="res/geom/sphere.obj"/>

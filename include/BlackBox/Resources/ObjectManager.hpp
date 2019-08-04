@@ -6,11 +6,12 @@ struct Mesh;
 #include <map>
 #include <string>
 #include <memory>
+#include <vector>
 
 class ObjectManager
 {
   static ObjectManager *manager;
-  std::map<std::string, std::shared_ptr<Mesh>> cache;
+  std::map<std::string, std::shared_ptr<std::vector<Mesh>>> cache;
   //ObjectManager();
 public:
   static ObjectManager *instance();

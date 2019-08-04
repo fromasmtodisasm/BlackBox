@@ -8,7 +8,8 @@ bool OpenglDebug::isError = false;
 
 OpenglDebug::OpenglDebug(const char *file) : debug_file(file)
 {
-	glDebugMessageCallback(callBack, &debug_file);
+	if (glDebugMessageCallback != nullptr)
+		glDebugMessageCallback(callBack, &debug_file);
 }
 
 OpenglDebug::~OpenglDebug()
@@ -35,13 +36,15 @@ void OpenglDebug::callBack(GLenum source​, GLenum type​, GLuint id​, GLenu
 {
 	//std::fstream* df = const_cast< std::fstream* > (reinterpret_cast< const std::fstream*​ >(userParam​) );
 
-	if (severity​ != GL_DEBUG_SEVERITY_NOTIFICATION)
-		isError = true;
-	else
+	if (severity​ == GL_DEBUG_SEVERITY_NOTIFICATION)
 		isError = false;
-	std::stringstream ss;
-	ss << SOURCE_TO_STRING(source​) << std::endl << TYPE_TO_STRING(type​) << std::endl << SEVERITY_TO_STRING(severity​) << std::endl << "Message: " << std::string(message​, message​ + length​);
-	std::cerr << ss.str().c_str() << std::endl << std::endl;
+	else
+	{
+		isError = true;
+		std::stringstream ss;
+		ss << SOURCE_TO_STRING(source​) << std::endl << TYPE_TO_STRING(type​) << std::endl << SEVERITY_TO_STRING(severity​) << std::endl << "Message: " << std::string(message​, message​ + length​);
+		std::cerr << ss.str().c_str() << std::endl << std::endl;
+	}
 
 }
 

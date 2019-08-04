@@ -16,6 +16,8 @@ out VS_OUT {
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
+uniform mat4 uv_projection = mat4(80.0);
+uniform float time = 0.0;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -23,7 +25,7 @@ uniform vec3 viewPos;
 void main()
 {
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
-    vs_out.TexCoords = aTexCoords;
+    vs_out.TexCoords = (uv_projection * vec4(aTexCoords.x + time, aTexCoords.y + time, 0.0, 1.0)).xy;
     
     mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 T = normalize(normalMatrix * aTangent);

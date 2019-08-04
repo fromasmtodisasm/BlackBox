@@ -13,6 +13,6 @@ private:
   std::vector<Vertex> m_Vertices;
   std::vector<int> m_Indeces;
 public:
-  Plane(CShaderProgram *program);
+  Plane(CBaseShaderProgram *program);
   ~Plane();
  };

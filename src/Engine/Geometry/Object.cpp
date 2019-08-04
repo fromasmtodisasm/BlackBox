@@ -3,6 +3,7 @@
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -19,7 +20,7 @@ Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)
 {
 }
 
-Object::Object(Mesh *mesh) : m_Mesh(mesh)
+Object::Object(MeshList mesh) : m_Mesh(mesh)
 {
 
 }
@@ -36,7 +37,7 @@ Object::Object(const Object *obj):
 
 
 
-void Object::parse(std::string filename, std::vector<Vertex> &vs, CShaderProgram **shader)
+void Object::parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader)
 {
  
 }
@@ -48,18 +49,21 @@ void Object::draw(void * camera) {
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
   m_Material->program->setUniformValue( NormalMatrix,"NormalMatrix");
 
-  VertexArrayObject *vb = m_Mesh->getVertexBuffer();
-  vb->draw();
+	for (auto& mesh : *m_Mesh)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, m_RenderMode);
+		mesh.getVertexBuffer()->draw();
+		/*
+		Pipeline::instance()->bindProgram("bb");
+		Pipeline::instance()->object = this;
+		mesh.bb.draw();
+		*/
+	}
 }
 
 void Object::setType(OBJType type)
 {
   m_type = type;
-}
-
-CShaderProgram * Object::getShaderProgram()
-{
-  return m_Shader;
 }
 
 glm::mat4 Object::getTransform()
@@ -73,6 +77,19 @@ glm::mat4 Object::getTransform()
   return translate * rotate * scale;
 }
 
+void Object::updateVectors()
+{
+	// Calculate the new Front vector
+	glm::vec3 front;
+	front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+	front.y = sin(glm::radians(this->Pitch));
+	front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+	this->Front = glm::normalize(front);
+	// Also re-calculate the Right and Up vector
+	this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+	this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
+}
+
 bool Object::visible()
 {
 	return m_visible;
@@ -83,11 +100,6 @@ void Object::setVisibility(bool v)
 	m_visible = v;
 }
 
-void Object::setShaderProgram(CShaderProgram* shader)
-{
-  m_Shader = shader;
-}
-
 void Object::update(float deltatime)
 {
   /*
@@ -95,6 +107,7 @@ void Object::update(float deltatime)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
   */
+	updateVectors();
 }
 
 void Object::setTexture(Texture *texture, const char *type)
@@ -130,8 +143,51 @@ void Object::setMaterial(Material *material)
   m_Material = material;
 }
 
-void Object::move(glm::vec3 v) {
-  m_transform.position += v;
+void Object::setRenderMode(int mode)
+{
+	m_RenderMode = mode;
+}
+
+int Object::getRenderMode()
+{
+	return m_RenderMode;
+}
+
+void Object::rotateX(float angle)
+{
+	m_transform.rotation.x = angle;
+}
+
+void Object::rotateY(float angle)
+{
+	m_transform.rotation.y = angle;
+}
+
+void Object::rotateZ(float angle)
+{
+	m_transform.rotation.z = angle;
+}
+
+void Object::move(Movement direction) {
+	GLfloat velocity = this->MovementSpeed;
+	if (direction == FORWARD)
+			this->m_transform.position += glm::vec3(this->Front.x, this->Front.y, this->Front.z)* velocity;
+	if (direction == BACKWARD)
+			this->m_transform.position -= glm::vec3(this->Front.x, this->Front.y, this->Front.z)* velocity;
+	if (direction == LEFT)
+			this->m_transform.position -= this->Right * velocity;
+	if (direction == RIGHT)
+			this->m_transform.position += this->Right * velocity;
+	if (direction == UP)
+			this->m_transform.position += this->Up * velocity;
+	if (direction == DOWN)
+			this->m_transform.position -= this->Up * velocity;
+
+}
+
+void Object::move(glm::vec3 v)
+{
+	this->m_transform.position += v;
 }
 
 void Object::moveTo(glm::vec3 v)
@@ -153,20 +209,24 @@ void Object::scale(glm::vec3 v)
 Object * Object::load(string path)
 {
   Object *obj = nullptr;
-  std::shared_ptr<Mesh> mesh;
+  MeshList mesh;
   VertexArrayObject *vb;
-  std::vector<Vertex> vertexData;
-  std::vector<int> indexData;
+	VerteciesInfo vertecies;
+	BoundingBox bb;
   ObjLoader OBJ;
 
-  if (!OBJ.load(path.c_str(), vertexData, indexData))
+  if (!OBJ.load(path.c_str(), vertecies, bb))
     return nullptr;
   
-  vb = new VertexArrayObject(vertexData.data(), static_cast<GLint>(vertexData.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
-  mesh = std::make_shared<Mesh>(vb, nullptr);
+  vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
+	 //std::vector<Mesh> mesh;
+	mesh = std::make_shared<std::vector<Mesh>>();
+	Mesh _mesh(vb, nullptr);
+	_mesh.bb = bb;
+	mesh->push_back(_mesh);
   obj = new Object();
   obj->m_Mesh = mesh;
-  obj->m_Mesh->m_Path = std::make_shared<std::string>(path);
+  obj->m_path = std::make_shared<std::string>(path);
 	return obj;
 }
 

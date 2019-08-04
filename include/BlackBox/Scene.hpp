@@ -6,6 +6,9 @@
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #include <map>
 #include <string>
@@ -24,12 +27,14 @@ class Scene
   friend class GameGUI;
   friend class CGame;
 private:
+	FreeTypeFont *m_Font;
   std::string name;
-  World *world;
+  World *m_World;
   FrameBufferObject* m_RenderedScene;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;
-	CShaderProgram *m_ScreenShader;
+	CBaseShaderProgram *m_ScreenShader;
+	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
   std::multimap<std::string, Object*> m_Objects;
   std::map<std::string, DirectionLight*> m_DirectionLight;
@@ -46,16 +51,20 @@ private:
   glm::vec3 loadColorAttribute(tinyxml2::XMLElement* element);
   void setupLights(Object* object);
 	unsigned int quadVAO;
+	ICVar* texture_speed = nullptr;
 
 public:
   Scene(std::string name);
 	void selectPrevObject();
 	void selectNextObject();
-	Object* selectedObject();
+	std::map<std::string,Object*>::iterator selectedObject();
+	bool selectObject(std::string name);
   void draw(float dt);
   void addObject(std::string name, Object *object);
   Object *getObject(std::string name);
+  int numObjects();
   void setCamera(CCamera *camera);
+  CCamera *getCamera();
   void update(float dt);
   bool save(std::string as ="");
   tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);
@@ -71,7 +80,7 @@ public:
 
   void begin();
   void end();
-	void present();
+	void present(int width, int height);
 
 	void setPostProcessor(IPostProcessor* postProcessor);
 

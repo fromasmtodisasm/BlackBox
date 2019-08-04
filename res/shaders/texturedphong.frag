@@ -1,4 +1,6 @@
 #version 330 core
+#include "texturedphong.inc"
+
 out vec4 FragColor;
 
 in VS_OUT {
@@ -21,10 +23,10 @@ void main()
    
     // get diffuse color
     vec4 color = texture(diffuseMap, fs_in.TexCoords).rgba;
-	if (color.a < 0.5)
+	if (color.a < threshold)
 		discard;
     // ambient
-    vec3 ambient = 0.08 * color.rgb;
+    vec3 ambient = ambient_factor * color.rgb;
     // diffuse
     vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
     float diff = max(dot(lightDir, normal), 0.0);
@@ -37,7 +39,7 @@ void main()
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 256);
     float distance = length(fs_in.TangentLightPos - fs_in.TangentFragPos);
-    float attenuation = 1;// + 0.032*distance + 0.005*distance*distance;
+    float attenuation = 1;
 
     vec3 specular = vec3(1) * spec;
     FragColor = vec4(ambient + diffuse + specular, 1.0)/attenuation;

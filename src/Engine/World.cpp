@@ -1,4 +1,5 @@
 #include <BlackBox/World.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
 
 float World::gravity = 1;
 
@@ -14,6 +15,8 @@ World::World()
 
 void World::draw(float dt) {
   activeScene->begin();
+  if (m_PreRender != nullptr)
+    m_PreRender->PreRender();
   activeScene->draw(dt);
   if (m_PostRender != nullptr)
     m_PostRender->PostRender();
@@ -35,7 +38,12 @@ void World::update(float deltatime)
   activeScene->update(deltatime);
 }
 
-void World::setPostRenderCallback(IPostRenderCallback* postRender)
+void World::setPretRenderCallback(IPreRenderCallback* callBack)
 {
-  m_PostRender = postRender;
+  m_PreRender = callBack;
+}
+
+void World::setPostRenderCallback(IPostRenderCallback* callBack)
+{
+  m_PostRender = callBack;
 }

@@ -1,4 +1,5 @@
 #include <BlackBox/CSFMLWindow.hpp>
+#include <BlackBox/Render/Opengl.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>
 #include <SFML/System/Vector2.hpp>
@@ -18,15 +19,8 @@ CSFMLWindow::~CSFMLWindow()
   m_Window->close();
 }
 
-bool CSFMLWindow::create()
-{
-  return true;
-}
-
 bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen)
 {
-  sf::ContextSettings settings(zbpp, sbits, 0, majorVersion, minorVersion, glContextType);
-
   // Create the main window
   sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 	sf::Vector2i position((desktop.width - width) / 2, (desktop.height - height) / 2);
@@ -42,18 +36,15 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
 	{
 		mode = sf::VideoMode(m_Width = width, m_Height = height, cbpp);
 	}
-	m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, settings);//, sf::Style::Fullscreen);
+	m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, m_contextSettings);//, sf::Style::Fullscreen);
 	m_Window->setPosition(position);
-  m_Window->setVerticalSyncEnabled(true);
-  m_Window->setFramerateLimit(60);
+  //m_Window->setVerticalSyncEnabled(true);
+  //m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);
 
   ImGui::SFML::Init(*m_Window);
   // Make it the active window for OpenGL calls
   m_Window->setActive();
-  if (!OpenGLLoader())
-    return false;
-  glInit();
 
   // Input handling specific
   Mouse.curr_pos = Mouse.curr_pos = sf::Mouse::getPosition(*m_Window);
@@ -191,14 +182,4 @@ void CSFMLWindow::setMouseWrap(bool wrap)
 
 void CSFMLWindow::glInit()
 {
-	if (glContextType == sf::ContextSettings::Debug)
-	{
-		glDebug = new OpenglDebug("out/glDebug.txt");
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	}
-  glCheck(glEnable(GL_DEPTH_TEST));
-  glCheck(glEnable(GL_TEXTURE_2D));
-  glCheck(glEnable(GL_CULL_FACE));
-  glCheck(glCullFace(GL_BACK));
 }

@@ -14,7 +14,6 @@ protected:
 public:
   GameObject(const Object *obj);
   virtual bool OnInputEvent(sf::Event &event) override;
-	static GameObject *create(Primitive::Type type);
 
   // IObject interface
 public:

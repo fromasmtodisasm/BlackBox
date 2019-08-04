@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <string>
 
-bool ObjLoader::load(const char* path, std::vector<Vertex>& vertex_data, std::vector<int>& indexData)
+bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox &bb)
 {
   std::vector<face> faces;
 
@@ -14,9 +14,11 @@ bool ObjLoader::load(const char* path, std::vector<Vertex>& vertex_data, std::ve
     printf("Impossible to open the file !\n");
     return false;
   }
+
+	verteciesInfo.attributes[VA_POSITION] = true;
   while (1) {
 
-    char lineHeader[128];
+		char lineHeader[128] = { 0 };
     // read the first word of the line
     int res = fscanf(file, "%s", lineHeader);
     if (res == EOF)
@@ -30,11 +32,13 @@ bool ObjLoader::load(const char* path, std::vector<Vertex>& vertex_data, std::ve
     }
     else if (strcmp(lineHeader, "vt") == 0) {
       has_uv = true;
+			verteciesInfo.attributes[VA_UV] = true;
       glm::vec2 uv;
       fscanf(file, "%f %f\n", &uv.x, &uv.y);
       uv_buffer.push_back(uv);
     }
     else if (strcmp(lineHeader, "vn") == 0) {
+			verteciesInfo.attributes[VA_NORMAL] = true;
       glm::vec3 normal;
       fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
       normal_buffer.push_back(normal);
@@ -68,40 +72,50 @@ bool ObjLoader::load(const char* path, std::vector<Vertex>& vertex_data, std::ve
       fgets(stupidBuffer, 1000, file);
     }
   }
-  buildVertexData(vertex_data, faces);
+	if (faces.size() == 0)
+		return false;
+  bb = buildVertexData(verteciesInfo.data, faces);
 
   return true;
 }
 
-bool ObjLoader::buildVertexData(std::vector<Vertex>& vertex_data, std::vector<face>& faces)
+BoundingBox ObjLoader::buildVertexData(VertexData& vertex_data, std::vector<face>& faces)
 {
     // For each vertex of each triangle
-    for (unsigned int current_face = 0; current_face < faces.size(); current_face++) 
-    {
-      for (unsigned int current_vertex = 0; current_vertex < NUMBER_OF_VERTEX; current_vertex++)
-      {
-        std::vector<Vertex> face(3);
-        face[0].pos = vertex_buffer[faces[current_face].v[0].v - 1];
-        face[1].pos = vertex_buffer[faces[current_face].v[1].v - 1];
-        face[2].pos = vertex_buffer[faces[current_face].v[2].v - 1];
-        if (has_uv)
-        {
-          face[0].uv = uv_buffer[faces[current_face].v[0].vt - 1];
-          face[1].uv = uv_buffer[faces[current_face].v[1].vt - 1];
-          face[2].uv = uv_buffer[faces[current_face].v[2].vt - 1];
-        }
-        face[0].normal = normal_buffer[faces[current_face].v[0].n - 1];
-        face[1].normal = normal_buffer[faces[current_face].v[1].n - 1];
-        face[2].normal = normal_buffer[faces[current_face].v[2].n - 1];
-        
-        //calcNormal(face);
-        calcTangentSpace(face);
-        vertex_data.push_back(face[0]);
-        vertex_data.push_back(face[1]);
-        vertex_data.push_back(face[2]);
-      }
-    }
-  return false;
+	glm::vec3 min(
+		vertex_buffer[faces[0].v[0].v - 1]
+	);
+	glm::vec3 max(
+		vertex_buffer[faces[0].v[0].v - 1]
+	);
+	BoundingBox bb(min, max);
+	for (unsigned int current_face = 0; current_face < faces.size(); current_face++) 
+	{
+		for (unsigned int current_vertex = 0; current_vertex < NUMBER_OF_VERTEX; current_vertex++)
+		{
+			std::vector<Vertex> face(3);
+			face[0].pos = vertex_buffer[faces[current_face].v[0].v - 1];
+			face[1].pos = vertex_buffer[faces[current_face].v[1].v - 1];
+			face[2].pos = vertex_buffer[faces[current_face].v[2].v - 1];
+			if (has_uv)
+			{
+				face[0].uv = uv_buffer[faces[current_face].v[0].vt - 1];
+				face[1].uv = uv_buffer[faces[current_face].v[1].vt - 1];
+				face[2].uv = uv_buffer[faces[current_face].v[2].vt - 1];
+			}
+			face[0].normal = normal_buffer[faces[current_face].v[0].n - 1];
+			face[1].normal = normal_buffer[faces[current_face].v[1].n - 1];
+			face[2].normal = normal_buffer[faces[current_face].v[2].n - 1];
+			bb.currentFace(face);
+			
+			//calcNormal(face);
+			calcTangentSpace(face);
+			vertex_data.push_back(face[0]);
+			vertex_data.push_back(face[1]);
+			vertex_data.push_back(face[2]);
+		}
+	}
+  return bb;
 }
 
 void ObjLoader::calcNormal(std::vector<Vertex>& face)

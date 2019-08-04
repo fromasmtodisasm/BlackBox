@@ -1,8 +1,6 @@
 #pragma once
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/InputHandler.hpp>
-#include <BlackBox/Render/Opengl.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -27,14 +25,7 @@ class CSFMLWindow :
   bool m_bClose;
   int m_Width;
   int m_Height;
-	const GLuint majorVersion = 4;
-	const GLuint minorVersion = 4;
-	OpenglDebug *glDebug;
-#ifdef _DEBUG
-	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
-#else
-	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
-#endif // DEBUG
+	sf::ContextSettings m_contextSettings;
 	//===============================================================================
   std::string m_Title;
   glm::vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -54,7 +45,7 @@ class CSFMLWindow :
   }Mouse;
 
 public:
-  sf::Rect<int> viewPort;
+  Rect viewPort;
 	enum FLAGS
 	{
 		DRAW_GUI
@@ -62,7 +53,6 @@ public:
   CSFMLWindow(std::string = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSFMLWindow();
 
-  virtual bool create() override;
   virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) override;
   virtual void update() override;
   virtual void clear() override;
@@ -93,5 +83,11 @@ public:
   virtual void AddEventListener(IInputEventListener *pListener) override;
   virtual sf::Vector2i getDeltaMouse() override;
   virtual void mouseLock(bool lock) override;
+
+	// Унаследовано через IWindow
+	virtual Rect &getViewPort() override;
+
+	// Inherited via IWindow
+	virtual bool create(Params params) override;
 };
 

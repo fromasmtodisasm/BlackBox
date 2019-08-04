@@ -80,8 +80,10 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Game folder
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/CGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/CPlayer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
@@ -97,14 +99,18 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
   #Render folder
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/CBaseShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/CRender.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Pipeline.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp

@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Render/CShader.hpp>
 
-class ScreenShader : public CShaderProgram
+class ScreenShader : public CBaseShaderProgram
 {
 
 public:

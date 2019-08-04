@@ -76,7 +76,10 @@ bool Texture::load(const char* name)
 	}
   glCheck(glGenTextures(1, &id));
   glCheck(glBindTexture(GL_TEXTURE_2D, id));
-
+	width = img.width;
+	height = img.height;
+	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
     img.width, img.height,
@@ -90,6 +93,17 @@ bool Texture::load(const char* name)
 		;// cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
   }
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
+void Texture::bind()
+{
+	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
+	glCheck(glBindTexture(GL_TEXTURE_2D, id));
+}
+
+void Texture::setUnit(GLuint unit)
+{
+	this->unit = unit;
 }
 
 

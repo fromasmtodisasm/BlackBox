@@ -5,16 +5,17 @@
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
 
 void Material::apply(Object *object, CCamera *camera)
 {
   GLenum block = GL_TEXTURE0;
   //program->use();
-  program->setUniformValue( object->getTransform(),"model");
-  program->setUniformValue( camera->getViewMatrix(),"view");
-  program->setUniformValue( camera->getProjectionMatrix(),"projection");
-  program->setUniformValue( camera->Position,"viewPos");
-  program->setUniformValue( 128.0f,"material.shininess");
+  Pipeline::instance()->model = object->getTransform();
+  Pipeline::instance()->view = camera->getViewMatrix();
+  Pipeline::instance()->projection = camera->getProjectionMatrix();
+  Pipeline::instance()->view_pos = camera->Position;
+	Pipeline::instance()->shader = program;
 
   if (hasTexture)
   {
@@ -53,6 +54,7 @@ void Material::apply(Object *object, CCamera *camera)
     program->setUniformValue("material.shininess", 32.0f);
     */
   }
+	program->setup();
 }
 
 void Material::setTexture(Texture *texture, const char *type)
@@ -96,8 +98,6 @@ void Material::prevDiffuse()
 
 void Material::activeTexture(uint32_t block, const char *uniform, BaseTexture* texture)
 {
-  int test;
-  glCheck(glActiveTexture(block));
-  glCheck(glBindTexture(GL_TEXTURE_2D, texture->id));
-  glCheck(glUniform1i(test = glGetUniformLocation(program->get(), uniform), static_cast<GLint>(block - GL_TEXTURE0)));
+	texture->bind();
+  glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
 }

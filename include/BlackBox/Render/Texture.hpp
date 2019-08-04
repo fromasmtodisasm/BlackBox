@@ -24,6 +24,10 @@ public:
 
 	// Унаследовано через BaseTexture
 	virtual bool load(const char* name) override;
+
+	// Inherited via BaseTexture
+	virtual void bind() override;
+	virtual void setUnit(GLuint unit) override;
 };
 
 #endif // TEXTUREXTURE_HPP

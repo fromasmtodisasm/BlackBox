@@ -8,6 +8,10 @@
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/IGame.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -25,7 +29,7 @@ class SkyBox : public IDrawable
 public:
 	TextureCube* texture;
 	VertexArrayObject* vao;
-	CShaderProgram* shader;
+	CBaseShaderProgram* shader;
 
 	SkyBox(TextureCube *t)
 		:
@@ -96,8 +100,7 @@ public:
 		shader->setUniformValue(glm::mat4(glm::mat3(cam->getViewMatrix())), "View");
 		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
 		
-		glCheck(glActiveTexture(GL_TEXTURE0));
-		glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, texture->id));
+		texture->bind();
 		vao->draw();
 
 		glCheck(glDepthFunc(GL_LESS));
@@ -165,7 +168,6 @@ void Scene::loadObject(XMLElement *object)
   obj->m_transform = transform;
 	obj->m_transparent = objectTransparent;
 	obj->m_visible = objectVisible;
-  obj->setShaderProgram(defaultProgram);
   obj->setMaterial(material);
   m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
 
@@ -307,7 +309,7 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
 
 void Scene::setupLights(Object* object)
 {
-  CShaderProgram* program = object->m_Material->program;
+  auto program = object->m_Material->program;
   int currentLight = 0;
   int nr_point_lights = 0;
   auto sun = m_DirectionLight.find("sun");
@@ -385,6 +387,14 @@ Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(C
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
+
+	m_TextShader = new CShaderProgram(
+	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
+	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
+	m_TextShader->create();
+
+	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
+	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 }
 
 void Scene::selectPrevObject()
@@ -409,59 +419,65 @@ void Scene::selectNextObject()
 	{
 		selected_object_it++;
 	}
-	/*
-	for (decltype(selected_object_it) current_it = ++selected_object_it; current_it != m_Objects.end(); current_it++)
-	{
-		if (current_it->second->visible())
-		{
-			selected_object_it = current_it;
-			return;
-
-		}
-	}
-	*/
 }
 
-Object* Scene::selectedObject()
+std::map<std::string,Object*>::iterator Scene::selectedObject()
 {
 	if (selected_object_it == m_Objects.end())
-		return m_Objects.begin()->second;
-	return selected_object_it->second;
+		return m_Objects.begin();
+	return selected_object_it;
+}
+
+bool Scene::selectObject(std::string name)
+{
+	auto it = m_Objects.find(name);
+	if (it == m_Objects.end())
+		return false;
+	selected_object_it = it;
+	return true;
 }
 
 void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)
   {
+		auto time = GetIEngine()->getIGame()->getTime() * texture_speed->GetFVal();
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 			if (!object.second->m_transparent && (object.second->visible()) && 
-				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar - 500.0f)
+				glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
 			{
-				CShaderProgram* program = object.second->m_Material->program;
+				auto program = object.second->m_Material->program;
 				program->use();
+				program->setUniformValue(time, "time");
 				setupLights(object.second);
 
-				program->setUniformValue(m_Camera->Position, "viewPos");
 				object.second->draw(m_Camera);
 			}
     }
+
+		Pipeline::instance()->bindProgram("bb");
+		auto obj = selectedObject();
+		Pipeline::instance()->object = obj->second;
+		for (auto& mesh : *obj->second->m_Mesh)
+		{
+			mesh.bb.draw();
+		}
     for (const auto& object : m_Objects) {
       //object.second->rotate(dt*0.01f, {0,1,0});
       //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
 			if (object.second->m_transparent && (object.second->visible()))
 			{
-				CShaderProgram* program = object.second->m_Material->program;
+				auto program = object.second->m_Material->program;
 				program->use();
 				setupLights(object.second);
 
-				program->setUniformValue(m_Camera->Position, "viewPos");
 				object.second->draw(m_Camera);
 			}
     }
     Object* lightObject = m_Objects.find("light")->second;
-    CShaderProgram* program = lightObject->m_Material->program;
+    auto program = lightObject->m_Material->program;
     for (const auto& light : m_PointLights) {
       program->use();
       lightObject->moveTo(light.second->position);
@@ -471,6 +487,7 @@ void Scene::draw(float dt)
 	
 	if (skyBox != nullptr)
 		skyBox->draw(m_Camera);
+		//m_Font->RenderText(m_TextShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -490,9 +507,19 @@ Object *Scene::getObject(std::string name)
   return nullptr;
 }
 
+int Scene::numObjects()
+{
+	return m_Objects.size();
+}
+
 void Scene::setCamera(CCamera *camera)
 {
   m_Camera = camera;
+}
+
+CCamera* Scene::getCamera()
+{
+	return m_Camera;
 }
 
 void Scene::update(float dt)
@@ -525,7 +552,7 @@ bool Scene::save(std::string as)
       object->SetAttribute("name", obj.first.c_str());
       const char* objType = nullptr;
       object->SetAttribute("type", obj.second->type.c_str());
-      mesh->SetAttribute("name", obj.second->m_Mesh->m_Path->c_str());
+      mesh->SetAttribute("name", obj.second->m_path->c_str());
       material->SetAttribute("name", obj.second->m_Material->name->c_str());
       //transform->SetAttribute("name", obj.second->m_path->c_str());
       //position->SetText(1.23);
@@ -776,6 +803,7 @@ bool Scene::load(std::string name = "default.xml")
 	if (sbm != nullptr)
 	{
 		skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
+		Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
 	}
 
   return true;
@@ -804,14 +832,22 @@ void Scene::end()
   m_RenderedScene->unbind();
 }
 
-void Scene::present()
+void Scene::present(int width, int height)
 {
 	if (postProcessor == nullptr)
 	{
+		auto render = GetIEngine()->getIRender();
+		float
+			width = render->GetWidth(),
+			height = render->GetHeight();
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		render->SetViewport(0, 0, width, height);
 		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 		glCheck(glClear(GL_COLOR_BUFFER_BIT));
 		m_ScreenShader->use();
+		auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
+		auto transform = glm::scale(proj, glm::vec3(width, height, 1));
+		m_ScreenShader->setUniformValue(transform, "transform");
 		glCheck(glDisable(GL_DEPTH_TEST));
 		glCheck(glActiveTexture(GL_TEXTURE0));
 		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture));

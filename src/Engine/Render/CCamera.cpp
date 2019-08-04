@@ -3,6 +3,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp> 
+#include <BlackBox/IConsole.hpp>
 #include <iostream>
 #include <sstream>
 using namespace  std;
@@ -16,13 +17,13 @@ glm::mat4 CCamera::getViewMatrix()
 
 glm::mat4 CCamera::getProjectionMatrix()
 {
-  return glm::perspective(glm::radians(FOV), Ratio, zNear, zFar);
+  return glm::perspective(glm::radians(FOV->GetFVal()), Ratio, zNear, zFar->GetFVal());
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-void CCamera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
+void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
 {
-    GLfloat velocity = this->MovementSpeed * deltaTime;
+    GLfloat velocity = this->MovementSpeed->GetFVal() * deltaTime;
     if (direction == FORWARD)
         this->Position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
     if (direction == BACKWARD)

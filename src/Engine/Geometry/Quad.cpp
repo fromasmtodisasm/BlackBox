@@ -1,5 +1,6 @@
 ﻿#include <BlackBox/Quad.hpp>
 #include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Render/OpenglDebug.hpp>
 
 Quad::Quad() 
 {
@@ -36,9 +37,9 @@ Quad::~Quad()
 }
 
 void Quad::draw() { 
-  glBindVertexArray(id);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  glBindVertexArray(0);
+  glCheck(glBindVertexArray(id));
+  glCheck(glDrawArrays(GL_TRIANGLES, 0, 6));
+  glCheck(glBindVertexArray(0));
  }
 
 bool Quad::init()

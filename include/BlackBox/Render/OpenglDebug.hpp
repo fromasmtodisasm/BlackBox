@@ -71,7 +71,7 @@ private:
 	static bool isError;
 };
 
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(GL_DEBUG)
 
 // In debug mode, perform a test on every OpenGL call
 // The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
@@ -80,6 +80,7 @@ private:
 #else
 
 // Else, we don't add any overhead
-#define glCheck(expr) (expr)
+#define glCheck(expr) do { expr; OpenglDebug::checkError(__FILE__, __LINE__, #expr); } while (false)
+//#define glCheck(expr) (expr)
 
 #endif

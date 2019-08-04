@@ -11,5 +11,5 @@ MoveForward::MoveForward(CPlayer* player) : player(player), camera(nullptr)
 
 void MoveForward::execute()
 {
-  camera->ProcessKeyboard(Camera_Movement::BACKWARD, deltatime);
+  camera->ProcessKeyboard(Movement::BACKWARD, deltatime);
 }

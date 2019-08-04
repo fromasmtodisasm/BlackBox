@@ -12,6 +12,8 @@
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/PostProcessor.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/CConsole.hpp>
 
 #include <BlackBox/common.h>
 
@@ -22,14 +24,13 @@
 #include <memory>
 #include <stack>
 
-
 using string = std::string;
 class EventListener; 
 class GameGUI;
 class Scene;
 class SceneManager;
 
-class CGame : public IGame, public IInputEventListener, public IPostRenderCallback 
+class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
 {
   class GameState;
   class EventListener;
@@ -37,7 +38,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class CPlayer;
 private:
   IEngine *m_pSystem;
-  CWindow *m_Window;
+  IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
   CCamera *m_camera1, *m_camera2, *m_active_camera;
@@ -51,13 +52,11 @@ private:
 
   MusicList m_PlayList;
   bool m_isMusicPlaying = false;
-	bool m_isPaused = false;
-	bool m_InMenu = false;
-	bool m_InGame = false;
 
   std::string m_Title;
   bool m_running = true;
   float m_lastTime;
+	float m_time = 0.0f;
   sf::Clock deltaClock;
   EventListener *listener;
 	bool isDrawingGui = false;
@@ -65,23 +64,31 @@ private:
   //GUI
   ImVec2 cp_size; //Control panel size
   GameGUI *gui;
-
+	CShaderProgram *m_ScreenShader;
+	FreeTypeFont* m_Font;
+	//EDIT MODE
+	//==========
+	IConsole* m_Console;
 	// Render states
 	bool culling = true;
+	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
 
   //
   ShaderManager *shaderManager;
 	std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
+	//=======================
 
   enum Mode
   {
     FPS,
     MENU,
-    FLY
+    FLY,
+		EDIT
     
   }m_Mode = FPS;
   std::stack<GameState*> states;
+	float fps = 0.0;
 
 public:
   float m_deltaTime;
@@ -90,6 +97,8 @@ public:
   ~CGame() = default;
   bool init(IEngine *pSystem) override;
   bool update() override;
+	void execScripts();
+	void drawHud(float fps);
   bool run() override;
   void input();
 
@@ -97,6 +106,7 @@ public:
   void setRenderState();
   void render();
   void setPlayer(CPlayer *player);
+  void setCamera(CCamera *camera);
 
   // IInputEventListener interface
 public:
@@ -106,25 +116,42 @@ public:
 public:
   virtual IInputHandler *getInputHandler() override;
   void Stop();
-private:
 	void gotoMenu();
 	void gotoFullscreen();
 	void gotoGame();
+	void gotoFly();
+	void gotoEdit();
   void showMenu();
+	IWindow* getWindow();
+private:
 
   bool initPlayer();
 
   bool FpsInputEvent(sf::Event& event);
   bool FlyInputEvent(sf::Event& event);
   bool MenuInputEvent(sf::Event& event);
+  bool DefaultInputEvent(sf::Event& event);
+  bool EditInputEvent(sf::Event& event);
+
+	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
 
   // IGame interface
 public:
   virtual float getDeltaTime() override;
+  virtual float getFPS() override;
 
   // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;
   World *getWorld() const;
+
+	void drawHud();
+	void initCommands();
+
+	// Inherited via IPreRenderCallback
+	virtual void PreRender() override;
+
+	// Inherited via IGame
+	virtual float getTime() override;
 };
 
 
