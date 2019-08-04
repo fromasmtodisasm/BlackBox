@@ -84,8 +84,9 @@ bool CGame::init(IEngine *pSystem)  {
 	}
 	//m_Log->AddLog("[OK] Objects inited\n");
 	m_Console->PrintLine("[OK] Objects inited\n");
+  int w = 3840, h = 2160;
 	FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, m_Window->getWidth(), m_Window->getHeight());
-	FrameBufferObject *depthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, m_Window->getWidth(), m_Window->getHeight());
+	depthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, w*2, h*2);
 	sceneBuffer->create();
 	depthBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);
@@ -206,6 +207,17 @@ void CGame::drawHud(float fps)
 		TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
 		SDrawTextInfo dti = info.getDTI();
 
+    //
+    auto render = m_pSystem->getIRender();
+    
+    if (openShadowMap)
+    {
+      render->DrawImage(
+        render->GetWidth() / 2, 0, render->GetWidth(), render->GetHeight(),
+        depthBuffer->texture, 0, 0, 0, 0, 0, 0, 0, 1.0);
+    }
+    //===========
+
 		m_Font->SetXPos(0);
 		m_Font->SetYPos(18);
 		auto& text = info.text;
@@ -227,8 +239,6 @@ void CGame::drawHud(float fps)
 			"Pitch: " + 
 			std::to_string(m_active_camera->Pitch) + "; "
 		;
-
-		auto render = m_pSystem->getIRender();
 
 		for (auto& text : info.text)
 		{
@@ -328,21 +338,20 @@ extern "C" IGame *CreateIGame(const char *title) {
 
 bool CGame::OnInputEvent(sf::Event &event)
 {
-  switch (m_Mode)
+  bool result = OnInputEventProxy(event);
+
+  switch (event.type)
   {
-  case CGame::FPS:
-    if (m_player != nullptr) return FpsInputEvent(event);
-    else return false;
-  case CGame::MENU:
-    return MenuInputEvent(event);
-  case CGame::FLY:
-    return FlyInputEvent(event);
-  case CGame::EDIT:
-    return EditInputEvent(event);
+  case sf::Event::KeyPressed:
+  {
+    if (event.key.code == sf::Keyboard::SemiColon)
+      openShadowMap = !openShadowMap;
+  }
   default:
     break;
   }
-  return false;
+
+  return result;
 }
 
 IInputHandler *CGame::getInputHandler()
@@ -573,6 +582,25 @@ bool CGame::EditInputEvent(sf::Event& event)
 	default:
 		return m_player->OnInputEvent(event);
 	}
+  return false;
+}
+
+bool CGame::OnInputEventProxy(sf::Event& event)
+{
+  switch (m_Mode)
+  {
+  case CGame::FPS:
+    if (m_player != nullptr) return FpsInputEvent(event);
+    else return false;
+  case CGame::MENU:
+    return MenuInputEvent(event);
+  case CGame::FLY:
+    return FlyInputEvent(event);
+  case CGame::EDIT:
+    return EditInputEvent(event);
+  default:
+    break;
+  }
   return false;
 }
 
