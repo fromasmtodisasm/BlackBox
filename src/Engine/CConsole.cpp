@@ -159,10 +159,18 @@ void CConsole::CalcMetrics(int& end)
 	}
 	else
 	{
-		current_line = num_all_lines - line_in_console + page_up - 1;
+		current_line = num_all_lines - line_in_console;
+    if (page_up && current_line >= 1)
+      current_line--;
+    else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
+    {
+      current_line++;
+    }
 		line_count = line_in_console;
 		end = num_all_lines;
 	}
+  page_up = false;
+  page_dn = false;
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -459,9 +467,9 @@ bool CConsole::needShowCursor()
 void CConsole::pageUp(bool isPgUp)
 {
   if (isPgUp)
-    page_up--;
+    page_up = true;
   else
-    page_up++;
+    page_dn = true;
 }
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)

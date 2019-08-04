@@ -173,7 +173,8 @@ private:
 	int line_height = 18;
 	int current_line = 0;
 	int on_line = 0;
-  int page_up = 0;
+  bool page_up = false;
+  bool page_dn = false;
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
 	std::string m_prompt;
