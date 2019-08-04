@@ -358,7 +358,13 @@ void Scene::setupLights(Object* object)
   }
 }
 
-Scene::Scene(std::string name) : name(name), m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT)))
+Scene::Scene(std::string name) 
+  : 
+  name(name), 
+  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))),
+  m_ShadowMapShader(
+    new ShadowMapShader()
+  )
 {
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -442,8 +448,15 @@ void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)
   {
-    shadowMapPass(dt);
-    mainPass(dt);
+    CCamera *camera = new CCamera();
+    shadowMapPass(camera);
+
+    m_RenderedScene->bind();
+    glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    glCheck(glEnable(GL_DEPTH_TEST));
+
+    mainPass(m_Camera);
   }
 	
 	if (skyBox != nullptr)
@@ -453,8 +466,6 @@ void Scene::draw(float dt)
 
 void Scene::addObject(std::string name, Object *object)
 {
-  //if (m_Objs.find(name) != m_Objs.end())
-
   m_Objects.insert(std::make_pair(name, object));
 }
 
@@ -770,9 +781,12 @@ bool Scene::load(std::string name = "default.xml")
   return true;
 }
 
-void Scene::setRenderTarget(FrameBufferObject *renderedScene)
+void Scene::setRenderTarget(FrameBufferObject *target)
 {
-  m_RenderedScene = renderedScene;
+  if (target->type == FrameBufferObject::buffer_type::SCENE_BUFFER)
+    m_RenderedScene = target;
+  else if (target->type == FrameBufferObject::buffer_type::DEPTH_BUFFER)
+    m_DepthBuffer = target;
 }
 
 FrameBufferObject* Scene::getRenderTarget()
@@ -780,36 +794,46 @@ FrameBufferObject* Scene::getRenderTarget()
 	return m_RenderedScene;
 }
 
-void Scene::shadowMapPass(float dt)
+void Scene::shadowMapPass(CCamera *camera)
 {
+  m_DepthBuffer->bind();
+  glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
+  glClear(GL_DEPTH_BUFFER_BIT);
+  m_ShadowMapShader->use();
+  m_ShadowMapShader->setUniformValue(camera->getProjectionMatrix(), "lightSpaceMatrix");
   for (const auto& object : m_Objects) {
-    //object.second->rotate(dt*0.01f, {0,1,0});
-    //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
     {
-      //auto program = object.second->m_Material->program;
-      //program->use();
-
-      //object.second->draw(m_Camera);
+      m_ShadowMapShader->setUniformValue(object.second->getTransform(), "model");
+      m_ShadowMapShader->setup();
+      object.second->draw(nullptr);
     }
   }
+  m_ShadowMapShader->unuse();
+  m_DepthBuffer->unbind();
 }
 
-void Scene::mainPass(float dt)
+void Scene::mainPass(CCamera *camera)
 {
   auto time = GetIEngine()->getIGame()->getTime() * texture_speed->GetFVal();
+
+  Pipeline::instance()->view = camera->getViewMatrix();
+  Pipeline::instance()->projection = camera->getProjectionMatrix();
+  Pipeline::instance()->view_pos = camera->Position;
+
   for (const auto& object : m_Objects) {
-    //object.second->rotate(dt*0.01f, {0,1,0});
-    //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
     {
       auto program = object.second->m_Material->program;
       program->use();
       program->setUniformValue(time, "time");
-      setupLights(object.second);
+      Pipeline::instance()->shader = program;
+      Pipeline::instance()->model = object.second->getTransform();
 
+      setupLights(object.second);
+      object.second->m_Material->apply(object.second);
       object.second->draw(m_Camera);
     }
   }
@@ -822,8 +846,6 @@ void Scene::mainPass(float dt)
     mesh.bb.draw();
   }
   for (const auto& object : m_Objects) {
-    //object.second->rotate(dt*0.01f, {0,1,0});
-    //object.second->getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
     if (object.second->m_transparent && (object.second->visible()))
     {
       auto program = object.second->m_Material->program;
@@ -844,10 +866,12 @@ void Scene::mainPass(float dt)
 
 void Scene::begin()
 {
+  /*
   m_RenderedScene->bind();
   glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
   glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); // буфер трафарета не используется
 	glCheck(glEnable(GL_DEPTH_TEST));
+  */
 }
 
 void Scene::end()

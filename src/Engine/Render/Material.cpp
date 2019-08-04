@@ -7,15 +7,9 @@
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 
-void Material::apply(Object *object, CCamera *camera)
+void Material::apply(Object *object)
 {
   GLenum block = GL_TEXTURE0;
-  //program->use();
-  Pipeline::instance()->model = object->getTransform();
-  Pipeline::instance()->view = camera->getViewMatrix();
-  Pipeline::instance()->projection = camera->getProjectionMatrix();
-  Pipeline::instance()->view_pos = camera->Position;
-	Pipeline::instance()->shader = program;
 
   if (hasTexture)
   {
@@ -27,7 +21,6 @@ void Material::apply(Object *object, CCamera *camera)
     if (specular != nullptr)
     {
       //activeTexture(GL_TEXTURE1, "material.specular", specular);
-
       block++;
     }
     if (bump != nullptr)
