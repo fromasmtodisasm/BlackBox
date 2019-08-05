@@ -5,6 +5,7 @@
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
+#include <BlackBox/Render/ShadowMapShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/IEngine.hpp>
@@ -31,9 +32,11 @@ private:
   std::string name;
   World *m_World;
   FrameBufferObject* m_RenderedScene;
+  FrameBufferObject* m_DepthBuffer;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;
 	CBaseShaderProgram *m_ScreenShader;
+	CBaseShaderProgram *m_ShadowMapShader;
 	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
   std::multimap<std::string, Object*> m_Objects;
@@ -75,8 +78,12 @@ public:
   tinyxml2::XMLElement *saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object);
   Transform loadTransform(tinyxml2::XMLElement &object);
   bool load(std::string name);
-  void setRenderTarget(FrameBufferObject *renderedScene);
+  void setRenderTarget(FrameBufferObject *target);
   FrameBufferObject *getRenderTarget();
+  void shadowMapPass(CCamera *camera);
+  void mainPass(CCamera *camera);
+
+  Material* shadowMapMat;
 
   void begin();
   void end();

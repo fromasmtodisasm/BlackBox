@@ -42,7 +42,7 @@ struct Material
   {
 
   }
-  void apply(Object *object, CCamera *camera);
+  void apply(Object *object);
   void setTexture(Texture *texture, const char *type);
 	void nextDiffuse();
 	void prevDiffuse();

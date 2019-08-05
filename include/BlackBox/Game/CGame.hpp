@@ -72,6 +72,9 @@ private:
 	// Render states
 	bool culling = true;
 	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
+  FrameBufferObject* depthBuffer;
+  //
+  bool openShadowMap = true;
 
   //
   ShaderManager *shaderManager;
@@ -132,6 +135,7 @@ private:
   bool MenuInputEvent(sf::Event& event);
   bool DefaultInputEvent(sf::Event& event);
   bool EditInputEvent(sf::Event& event);
+  bool OnInputEventProxy(sf::Event& event);
 
 	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
 
@@ -152,6 +156,7 @@ public:
 
 	// Inherited via IGame
 	virtual float getTime() override;
+
 };
 
 

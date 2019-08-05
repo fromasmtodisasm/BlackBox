@@ -104,3 +104,18 @@ void Image::free()
 {
 	delete[] data;
 }
+
+int BaseTexture::getWidth()
+{
+  return width;
+}
+
+int BaseTexture::getHeight()
+{
+  return height;
+}
+
+int BaseTexture::getId()
+{
+  return id;
+}

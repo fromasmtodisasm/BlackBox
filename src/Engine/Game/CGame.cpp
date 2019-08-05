@@ -84,9 +84,13 @@ bool CGame::init(IEngine *pSystem)  {
 	}
 	//m_Log->AddLog("[OK] Objects inited\n");
 	m_Console->PrintLine("[OK] Objects inited\n");
-	FrameBufferObject *sceneBuffer = new FrameBufferObject(m_Window->getWidth(), m_Window->getHeight());
+  int w = 3840, h = 2160;
+	FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, m_Window->getWidth(), m_Window->getHeight());
+	depthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, w*2, h*2);
 	sceneBuffer->create();
+	depthBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);
+	m_scene->setRenderTarget(depthBuffer);
  
   gui = new GameGUI();
   gui->game = this;
@@ -110,8 +114,8 @@ bool CGame::init(IEngine *pSystem)  {
 
   //m_World->setCamera(camera2);
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
-	m_World->setPretRenderCallback(this);
-	m_World->setPostRenderCallback(this);
+	//m_World->setPretRenderCallback(this);
+	//m_World->setPostRenderCallback(this);
 	
 	postProcessors.push_back(nullptr);
 	postProcessors.push_back(new PostProcessor("negative"));
@@ -123,6 +127,10 @@ bool CGame::init(IEngine *pSystem)  {
 	m_Font->Init("arial.ttf", 16, 18);
 
 	//m_Console->ExecuteString("clear");
+  ITexture* consoleBackGround = new Texture();
+  consoleBackGround->load("console/fc.jpg");
+  //m_Console->SetImage(consoleBackGround);
+  m_Console->SetImage(new Texture(depthBuffer->texture));
   return true;
 }
 
@@ -199,6 +207,17 @@ void CGame::drawHud(float fps)
 		TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
 		SDrawTextInfo dti = info.getDTI();
 
+    //
+    auto render = m_pSystem->getIRender();
+    
+    if (openShadowMap)
+    {
+      render->DrawImage(
+        render->GetWidth() / 2, render->GetHeight() / 2, render->GetWidth() / 2, render->GetHeight() / 2,
+        depthBuffer->texture, 0, 0, 0, 0, 0, 0, 0, 1.0);
+    }
+    //===========
+
 		m_Font->SetXPos(0);
 		m_Font->SetYPos(18);
 		auto& text = info.text;
@@ -221,12 +240,12 @@ void CGame::drawHud(float fps)
 			std::to_string(m_active_camera->Pitch) + "; "
 		;
 
-		auto render = m_pSystem->getIRender();
-
 		for (auto& text : info.text)
 		{
 			render->PrintLine(text.c_str(), dti);
 		}
+
+    render->PrintLine("To hide depth buffer press <;>\n", dti);
 
 		info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
 		render->PrintLine(pos.c_str(), info.getDTI());
@@ -321,21 +340,24 @@ extern "C" IGame *CreateIGame(const char *title) {
 
 bool CGame::OnInputEvent(sf::Event &event)
 {
-  switch (m_Mode)
+	{
+		bool retflag;
+		bool retval = ShouldHandleEvent(event, retflag);
+		if (retflag) return retval;
+	}
+
+  bool result = OnInputEventProxy(event);
+  switch (event.type)
   {
-  case CGame::FPS:
-    if (m_player != nullptr) return FpsInputEvent(event);
-    else return false;
-  case CGame::MENU:
-    return MenuInputEvent(event);
-  case CGame::FLY:
-    return FlyInputEvent(event);
-  case CGame::EDIT:
-    return EditInputEvent(event);
+  case sf::Event::KeyPressed:
+  {
+    if (event.key.code == sf::Keyboard::SemiColon)
+      openShadowMap = !openShadowMap;
+  }
   default:
     break;
   }
-  return false;
+  return result;
 }
 
 IInputHandler *CGame::getInputHandler()
@@ -391,8 +413,10 @@ bool CGame::initPlayer()
 
 bool CGame::FpsInputEvent(sf::Event& event)
 {
+  /*
 	if (m_Console->IsOpened())
 		return false;
+  */
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -448,8 +472,10 @@ bool CGame::FpsInputEvent(sf::Event& event)
 
 bool CGame::FlyInputEvent(sf::Event& event)
 {
+  /*
 	if (m_Console->IsOpened())
 		return false;
+  */
 	switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -476,8 +502,10 @@ bool CGame::FlyInputEvent(sf::Event& event)
 
 bool CGame::MenuInputEvent(sf::Event& event)
 {
+  /*
 	if (m_Console->IsOpened())
 		return false;
+  */
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -508,12 +536,6 @@ bool CGame::DefaultInputEvent(sf::Event& event)
 
 bool CGame::EditInputEvent(sf::Event& event)
 {
-	{
-		bool retflag;
-		bool retval = ShouldHandleEvent(event, retflag);
-		if (retflag) return retval;
-	}
-
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
@@ -566,6 +588,25 @@ bool CGame::EditInputEvent(sf::Event& event)
 	default:
 		return m_player->OnInputEvent(event);
 	}
+  return false;
+}
+
+bool CGame::OnInputEventProxy(sf::Event& event)
+{
+  switch (m_Mode)
+  {
+  case CGame::FPS:
+    if (m_player != nullptr) return FpsInputEvent(event);
+    else return false;
+  case CGame::MENU:
+    return MenuInputEvent(event);
+  case CGame::FLY:
+    return FlyInputEvent(event);
+  case CGame::EDIT:
+    return EditInputEvent(event);
+  default:
+    break;
+  }
   return false;
 }
 

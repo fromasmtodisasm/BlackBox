@@ -23,7 +23,7 @@ enum TextureType
 class BaseTexture : public ITexture
 {
 public:
-  int width;
+  GLint width;
   int height;
   TextureType type;
   GLuint id;
@@ -45,6 +45,10 @@ public:
 	void GetMipMapLevel(int level, nvtt::Surface &surface);
 	void SaveMipMaps();
 #endif
+
+  virtual int getWidth() override;
+  virtual int getHeight() override;
+  virtual int getId() override;
 };
 
 #endif // BASETEXTUREXTURE_HPP

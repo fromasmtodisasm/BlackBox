@@ -14,6 +14,7 @@ class Texture : public BaseTexture
 {
 public:
   Texture();
+  Texture(GLuint id);
   Texture(std::string name);
 #ifdef NVTT
 	void GetMipMapLevel(int level, nvtt::Surface &surface);

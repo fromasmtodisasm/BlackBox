@@ -20,4 +20,7 @@ struct ITexture
 	virtual void setUnit(GLuint unit) = 0;
   virtual void setType(const char* TextureType) = 0;
   virtual std::string typeToStr() = 0;
+  virtual int getWidth() = 0;
+  virtual int getHeight() = 0;
+  virtual int getId() = 0;
 };

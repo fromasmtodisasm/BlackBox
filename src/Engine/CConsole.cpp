@@ -84,6 +84,9 @@ public:
 
 void CConsole::SetImage(ITexture* pTexture)
 {
+  if (m_pBackGround != nullptr)
+    delete m_pBackGround;
+  m_pBackGround = pTexture;
 }
 
 void CConsole::Update()
@@ -100,7 +103,7 @@ void CConsole::Draw()
 	int begin, end;
 	auto prompt = getPrompt();
 	time += GetIEngine()->getIGame()->getDeltaTime();
-	render->DrawImage(0, 0, render->GetWidth(), height, m_Texture->id, time * r_anim_speed->GetFVal(), 0, m_Texture->width, height, 0, 0, 0, 1.0);
+	render->DrawImage(0, 0, render->GetWidth() / 2, height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -156,10 +159,18 @@ void CConsole::CalcMetrics(int& end)
 	}
 	else
 	{
-		current_line = num_all_lines - line_in_console - 1;
+		current_line = num_all_lines - line_in_console;
+    if (page_up && current_line >= 1)
+      current_line--;
+    else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
+    {
+      current_line++;
+    }
 		line_count = line_in_console;
 		end = num_all_lines;
 	}
+  page_up = false;
+  page_dn = false;
 }
 
 void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
@@ -200,12 +211,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			{
 				if (completion.size() == 1)
 				{
-					command.clear();
-					for (auto& ch : completion[0])
-					{
-						handleCommandTextEnter(ch);
-					}
-					command += L" ";
+					completeCommand(completion);
 				}
 				else
 				{
@@ -215,31 +221,18 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			}
 			return true;
 		case sf::Keyboard::Enter:
+		case sf::Keyboard::M:
 		{
-			cmd_is_compete = true;
-			CommandLine cmd;
-			for (auto& element : getPrompt())
-			{
-				cmd.push_back(element);
-			}
-			cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
-			cmd_buffer.push_back(cmd);
-			//m_World->getActiveScene()->setPostProcessor(nullptr);
-			history_line = cmd_buffer.size();
-			return handleCommand(command);
+			if (event.key.code != sf::Keyboard::Enter && !event.key.control)
+				return false;
+			handleEnterText(); 
+			return true;
 		}
 		case sf::Keyboard::Insert:
 		{
 			if (event.key.shift == true)
 			{
-				std::wstring clipboard = sf::Clipboard::getString();
-				if (clipboard.size() != 0)
-				{
-					for (auto& ch : clipboard)
-					{
-						handleCommandTextEnter(ch);
-					}
-				}
+				setBuffer();
 				return true;
 			}
 			else if (event.key.control == true)
@@ -260,15 +253,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			{
 				if (--history_line < 0)
 					history_line = 0;
-				auto line_history = cmd_buffer[history_line];
-				command.clear();
-				for (auto& element : line_history)
-				{
-					for (auto& ch : element.data)
-					{
-						handleCommandTextEnter(ch);
-					}
-				}
+				getHistoryElement();
 				return true;
 			}
 			return false;
@@ -279,18 +264,16 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			{
 				if (++history_line > cmd_buffer.size() - 1)
 					history_line = cmd_buffer.size() - 1;
-				auto line_history = cmd_buffer[history_line];
-				command.clear();
-				for (auto& element : line_history)
-				{
-					for (auto& ch : element.data)
-					{
-						handleCommandTextEnter(ch);
-					}
-				}
+				getHistoryElement();
 				return true;
 			}
 			return false;
+		}
+		case sf::Keyboard::PageUp:
+		case sf::Keyboard::PageDown:
+		{
+      pageUp(event.key.code == sf::Keyboard::PageUp);
+      return true;
 		}
 		default:
 			return false;
@@ -304,6 +287,56 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		return false;
 	}
 
+}
+
+void CConsole::getHistoryElement()
+{
+	auto line_history = cmd_buffer[history_line];
+	command.clear();
+	for (auto& element : line_history)
+	{
+		for (auto& ch : element.data)
+		{
+			handleCommandTextEnter(ch);
+		}
+	}
+}
+
+void CConsole::completeCommand(std::vector<std::wstring>& completion)
+{
+	command.clear();
+	for (auto& ch : completion[0])
+	{
+		handleCommandTextEnter(ch);
+	}
+	command += L" ";
+}
+
+void CConsole::setBuffer()
+{
+	std::wstring clipboard = sf::Clipboard::getString();
+	if (clipboard.size() != 0)
+	{
+		for (auto& ch : clipboard)
+		{
+			handleCommandTextEnter(ch);
+		}
+	}
+}
+
+bool CConsole::handleEnterText()
+{
+	cmd_is_compete = true;
+	CommandLine cmd;
+	for (auto& element : getPrompt())
+	{
+		cmd.push_back(element);
+	}
+	cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
+	cmd_buffer.push_back(cmd);
+	//m_World->getActiveScene()->setPostProcessor(nullptr);
+	history_line = cmd_buffer.size();
+	return handleCommand(command);
 }
 
 void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
@@ -431,6 +464,14 @@ bool CConsole::needShowCursor()
 	return false;
 }
 
+void CConsole::pageUp(bool isPgUp)
+{
+  if (isPgUp)
+    page_up = true;
+  else
+    page_dn = true;
+}
+
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 {
 	for (auto& var : m_variables_map)
@@ -484,14 +525,14 @@ bool CConsole::Init()
 {
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, line_height);
-	m_Texture = new Texture();
+	m_pBackGround = new Texture();
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
 	r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
 
 	if (background != nullptr)
 		texture_path = background->GetString();
-	m_Texture->load(texture_path);
+	m_pBackGround->load(texture_path);
 	return true;
 }
 
@@ -665,7 +706,7 @@ CConsole::CConsole()
 CConsole::~CConsole()
 {
 	if (m_Font) delete m_Font;
-	if (m_Texture) delete m_Texture;
+	if (m_pBackGround) delete m_pBackGround;
 }
 
 void CConsole::ShowConsole(bool show)

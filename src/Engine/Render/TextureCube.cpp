@@ -68,3 +68,4 @@ void TextureCube::setUnit(GLuint unit)
 	this->unit = unit;
 
 }
+

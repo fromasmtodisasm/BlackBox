@@ -105,6 +105,10 @@ public:
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
 	virtual bool OnInputEvent(sf::Event& event) override;
+	void getHistoryElement();
+	void completeCommand(std::vector<std::wstring>& completion);
+	void setBuffer();
+	bool handleEnterText();
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
 	virtual void Clear() override;
 	virtual void Help(const char *cmd) override;
@@ -140,6 +144,7 @@ private:
 	void CConsole::Dump();
 	void getBuffer();
 	bool needShowCursor();
+  void pageUp(bool isPgUp);
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
@@ -151,7 +156,8 @@ private:
 	bool isOpened = false;
 	bool cmd_is_compete = false;
 	IEngine* m_engine;
-	Texture* m_Texture;
+	ITexture* m_pBackGround;
+  //ITexture* m_pBackGround = nullptr;
 
 	float height;
 
@@ -167,6 +173,8 @@ private:
 	int line_height = 18;
 	int current_line = 0;
 	int on_line = 0;
+  bool page_up = false;
+  bool page_dn = false;
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
 	std::string m_prompt;
@@ -188,6 +196,7 @@ private:
 	float cursor_tick = 0.0, cursor_tack = 0.0;
 	bool cursor_tick_tack = true;
 	int history_line = 0;
+  //
 
 
 	// Inherited via IConsole
