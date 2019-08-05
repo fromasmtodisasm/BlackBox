@@ -114,6 +114,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
