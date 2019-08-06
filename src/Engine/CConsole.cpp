@@ -27,7 +27,7 @@ public:
 	virtual bool execute(CommandDesc& cd) override
 	{
 		for (auto &cmd : cd.args)
-			GetIEngine()->getIConsole()->Help(wstr_to_str(cmd).c_str());
+			GetIEngine()->getIConsole()->Help(utils::wstr_to_str(cmd).c_str());
 		if (cd.args.size() == 0)
 			GetIEngine()->getIConsole()->Help(nullptr);
 		return true;
@@ -178,12 +178,12 @@ void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* 
 	CommandInfo cmdInfo;
 	cmdInfo.Command = command;
 	if (help) cmdInfo.help = help;
-	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
+	m_Commands[utils::str_to_wstr(std::string(sName))] = cmdInfo;
 }
 
 void CConsole::ExecuteString(const char* command)
 {
-	handleCommand(str_to_wstr(std::string(command)));
+	handleCommand(utils::str_to_wstr(std::string(command)));
 }
 
 bool CConsole::OnInputEvent(sf::Event& event)
@@ -332,7 +332,7 @@ bool CConsole::handleEnterText()
 	{
 		cmd.push_back(element);
 	}
-	cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
+	cmd.push_back(Text(utils::wstr_to_str(command) + "\n", textColor, 1.0));
 	cmd_buffer.push_back(cmd);
 	//m_World->getActiveScene()->setPostProcessor(nullptr);
 	history_line = cmd_buffer.size();
@@ -351,16 +351,17 @@ void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
 
 void CConsole::addText(std::wstring& cmd)
 {
-	cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
+	cmd_buffer.push_back({ Text(utils::wstr_to_str(cmd) + "\n", textColor, 1.0f) });
 }
 
 void CConsole::Set(CommandDesc& cd)
 {
 	if (cd.args.size() == 2)
 	{
-		auto name = wstr_to_str(cd.args[0]);
-		auto value = wstr_to_str(cd.args[1]);
-		auto pVar = m_variables_map.find(name);
+		auto name = utils::split(utils::wstr_to_str(cd.args[0]), ".");
+		auto value = utils::wstr_to_str(cd.args[1]);
+    auto name_it = name.begin();
+		auto pVar = m_variables_map.find(*name_it);
 		if (pVar != m_variables_map.end())
 		{
 			switch (pVar->second->GetType())
@@ -374,14 +375,18 @@ void CConsole::Set(CommandDesc& cd)
 			case CVAR_STRING:
 				pVar->second->Set(static_cast<const char*>(value.c_str()));
 				break;
+			case CVAR_OBJECT:
+        assert(0);
+				//pVar->second->Set(static_cast<const char*>(value.c_str()));
+				break;
 			default:
-				PrintLine("Unknown type for [%s] variable", name.c_str());
+				PrintLine("Unknown type for [%s] variable", name_it->c_str());
 			}
 		}
 		else
 		{
-			PrintLine("Variable [%s] not found. Creating", name.c_str());
-			CreateVariable(name.c_str(), value.c_str(), 0);
+			PrintLine("Variable [%s] not found. Creating", name_it->c_str());
+			CreateVariable(name_it->c_str(), value.c_str(), 0);
 		}
 
 
@@ -392,7 +397,7 @@ void CConsole::Get(CommandDesc& cd)
 {
 	if (cd.args.size() == 1)
 	{
-		auto name = wstr_to_str(cd.args[0]);
+		auto name = utils::wstr_to_str(cd.args[0]);
 		auto var = m_variables_map.find(name);
 		if (var != m_variables_map.end())
 		{
@@ -592,7 +597,7 @@ bool CConsole::handleCommand(std::wstring command)
 		result = cmd_it->second.Command->execute(cd);
 	else if (cd.command == L"close")
 		isOpened = false;
-	//history.push_back(str_to_wstr(getPrompt()) + command);
+	//history.push_back(utils::str_to_wstr(getPrompt()) + command);
 	return result;
 }
 
@@ -674,7 +679,7 @@ void CConsole::doFile(std::ifstream& cfg)
 	std::string line;
 	while (std::getline(cfg, line))
 	{
-		handleCommand(str_to_wstr(line));
+		handleCommand(utils::str_to_wstr(line));
 	}
 	cfg.clear();
 	cfg.seekg(0, std::ios::beg);
@@ -789,7 +794,7 @@ void CConsole::Help(const char *cmd)
 {
 	if (cmd != nullptr)
 	{
-		auto it = m_Commands.find(str_to_wstr(std::string(cmd)));
+		auto it = m_Commands.find(utils::str_to_wstr(std::string(cmd)));
 		if (it == m_Commands.end())
 			return;
 		cmd_buffer.push_back({ Text(std::string(cmd) + ": " + it->second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
@@ -799,7 +804,7 @@ void CConsole::Help(const char *cmd)
 		for (auto& cmd : m_Commands)
 		{
 			if (cmd.second.help.size() > 0)
-				cmd_buffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+				cmd_buffer.push_back({ Text(std::string(utils::wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
 		}
 	}
 }
@@ -811,7 +816,7 @@ void CConsole::PrintLine(const char* format, ...)
   vsnprintf(const_cast<char*>(message_buffer.data()), MESSAGE_BUFFER_SIZE, format, ptr);
   va_end(ptr);
 
-	addText(str_to_wstr(message_buffer));
+	addText(utils::str_to_wstr(message_buffer));
 }
 
 char* CCVar::GetString()

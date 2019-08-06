@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   }
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
-  path = getBasePath(string(argv[0]));
+  path = utils::getBasePath(string(argv[0]));
   IEngine*pSystem = CreateIEngine(nullptr);
   if (!pSystem->Init())
     return EXIT_FAILURE;

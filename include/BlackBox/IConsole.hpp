@@ -22,6 +22,7 @@ class ITexture;
 #define     CVAR_INT    1
 #define     CVAR_FLOAT  2
 #define     CVAR_STRING 3
+#define     CVAR_OBJECT 4
 
 struct IEditCommand
 {

@@ -57,13 +57,13 @@ private:
 			for (int i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
 			{
 				result = true;
-				GetIEngine()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
+				GetIEngine()->getIConsole()->ExecuteString(utils::wstr_to_str(cd.history->back()).c_str());
 			}
 		}
 		else
 		{
 			result = true;
-			GetIEngine()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
+			GetIEngine()->getIConsole()->ExecuteString(utils::wstr_to_str(cd.history->back()).c_str());
 		}
 		return result;
 	}
@@ -185,7 +185,7 @@ private:
 		{
 			if (cd.args.size() == 4)
 			{
-				std::string name = wstr_to_str(*args_it++);
+				std::string name = utils::wstr_to_str(*args_it++);
 				obj = m_World->getActiveScene()->getObject(name);
 			}
 			auto pos = unpack_vector(args_it);
@@ -215,7 +215,7 @@ private:
 			auto args_it = cd.args.begin();
 			auto obj = m_World->getActiveScene()->selectedObject()->second;
 			if (cd.args.size() == 5) {
-				std::string name = wstr_to_str(*args_it++);
+				std::string name = utils::wstr_to_str(*args_it++);
 				obj = m_World->getActiveScene()->getObject(name);
 			}
 			if (obj != nullptr)
@@ -250,7 +250,7 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		std::string name = wstr_to_str(cd.args[0]);
+		std::string name = utils::wstr_to_str(cd.args[0]);
 		return m_World->getActiveScene()->selectObject(name);
 	}
 };
@@ -295,7 +295,7 @@ private:
 	{
 		if (cd.args.size() == 1)
 		{
-			std::string name = wstr_to_str(cd.args[0]);
+			std::string name = utils::wstr_to_str(cd.args[0]);
 			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
 			GetIEngine()->getIConsole()->ExecuteFile(name.c_str());
 
@@ -321,7 +321,7 @@ private:
 	{
 		if (cd.args.size() == 1)
 		{
-			std::string name = wstr_to_str(cd.args[0]);
+			std::string name = utils::wstr_to_str(cd.args[0]);
 			Material* m = MaterialManager::instance()->getMaterial(name);
 			if (!m)
 				return false;
@@ -380,7 +380,7 @@ bool ShaderCommand::reload(CommandDesc& cd)
 		std::vector<std::string> shaders;
 		for (auto arg = cd.args.begin()++; arg != cd.args.end(); arg++)
 		{
-			shaders.push_back(wstr_to_str(*arg));
+			shaders.push_back(utils::wstr_to_str(*arg));
 		}
 		if (MaterialManager::instance()->reloadShaders(shaders))
 			return true;
@@ -395,7 +395,7 @@ bool ShaderCommand::move(CommandDesc& cd)
 {
 	if (cd.args.size() == 2)
 	{
-		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+		auto s = MaterialManager::instance()->getProgram(utils::wstr_to_str(cd.args[1]));
 		game->getWorld()->getActiveScene()->selectedObject()->second->getMaterial()->program = s;
 		return true;
 	}
@@ -485,7 +485,7 @@ bool SceneCommand::load(CommandDesc& cd)
 {
 	//MessageBox(NULL, "Save scene", "scene name", MB_OKCANCEL);
 	Scene *scene;
-	std::string path = wstr_to_str(cd.args[1]);
+	std::string path = utils::wstr_to_str(cd.args[1]);
 	if ((scene = SceneManager::instance()->getScene(path)) != nullptr)
 	{
 		/*
@@ -509,7 +509,7 @@ bool SceneCommand::save(CommandDesc& cd)
 bool SceneCommand::activate(CommandDesc& cd)
 {
 	Scene *scene;
-	std::string name = wstr_to_str(cd.args[1]);
+	std::string name = utils::wstr_to_str(cd.args[1]);
 	if ((scene = SceneManager::instance()->getScene(name)) != nullptr)
 	{
 		//=====================
