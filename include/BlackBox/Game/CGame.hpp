@@ -81,6 +81,7 @@ private:
 	std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
 	//=======================
+  ICVar* g_scene;
 
   enum Mode
   {

@@ -21,9 +21,9 @@ SceneManager *SceneManager::instance()
   return manager;
 }
 
-bool SceneManager::init()
+bool SceneManager::init(const char * scene)
 {
-  defaultScene = SceneManager::instance()->getScene("default");
+  defaultScene = SceneManager::instance()->getScene(scene == nullptr ? "default" : scene);
   return true;
 }
 

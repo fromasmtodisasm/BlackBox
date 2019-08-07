@@ -827,18 +827,32 @@ void Scene::mainPass(CCamera *camera)
   Pipeline::instance()->view_pos = camera->Position;
 
   glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
+
+  auto light = m_PointLights.begin();
+  glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 1000.f);
+  glm::mat4 lightView = glm::lookAt(glm::vec3(light->second->position),
+    glm::vec3(0.0f, 0.0f, 0.0f),
+    glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+  
   for (const auto& object : m_Objects) {
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
     {
       auto program = object.second->m_Material->program;
       program->use();
-      program->setUniformValue(time, "time");
+      program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
       Pipeline::instance()->shader = program;
       Pipeline::instance()->model = object.second->getTransform();
 
       setupLights(object.second);
       object.second->m_Material->apply(object.second);
+      //glActiveTexture(GL_TEXTURE0);
+      //glBindTexture(GL_TEXTURE_2D, woodTexture);
+      program->setUniformValue(1, "shadowMap");
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture);
+
       object.second->draw(m_Camera);
     }
   }

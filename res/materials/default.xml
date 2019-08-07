@@ -65,7 +65,7 @@
     <shader name="phong"/>
   </material>
   <material name="player">
-    <shader name="reflect"/>
+    <shader name="phong"/>
   </material>
   <material name="bb">
     <shader name="bb"/>
@@ -91,9 +91,15 @@
   </material>
   <shaders>
     <phong>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
+      <!--<shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>-->
+      <shader type="vertex" name="shadowmap.vs"/>
+      <shader type="fragment" name="shadowmap.frag"/>
     </phong>    
+    <shadow>
+      <shader type="vertex" name="shadowmap.vs"/>
+      <shader type="fragment" name="shadowmap.frag"/>
+    </shadow>    
     <refract>
       <shader type="vertex" name="reflect.vs"/>
       <shader type="fragment" name="refract.frag"/>

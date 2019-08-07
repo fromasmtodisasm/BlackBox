@@ -18,7 +18,7 @@
                 <Z>200</Z>
             </scale>
         </transform>
-        <material name="wood_box"/>
+        <material name="phong"/>
     </object>
     <object name="BMW" type="object" visible="true">
         <mesh name="res/geom/bmw.obj"/>
@@ -209,6 +209,15 @@
         </transform>
         <material name="red"/>
     </object>
+    <light name="lamp_1" type="point" enabled="true">
+        <position x="-1" y="15" z="-1"/>
+        <constant>1</constant>
+        <linear>0.25999999</linear>
+        <quadratic>0.0198</quadratic>
+        <ambient x="0" y="0" z="1"/>
+        <diffuse x="0" y="0" z="1"/>
+        <specular x="0" y="0" z="1"/>
+    </light>
     <light name="sun" type="direction" enabled="false">
         <direction x="-0.2" y="-2" z="26.700001"/>
         <ambient x="0" y="0" z="0"/>

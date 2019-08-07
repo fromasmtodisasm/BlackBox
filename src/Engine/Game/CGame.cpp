@@ -76,7 +76,19 @@ bool CGame::init(IEngine *pSystem)  {
   
 
 	initCommands();
-	m_Console->ExecuteFile("res/scripts/init.cfg");
+  auto init_cfg = m_Console->GetCVar("game_config");
+  if (init_cfg == nullptr)
+  {
+    //TODO: log: game config not specified
+    return false;
+  }
+	m_Console->ExecuteFile((std::string("res/scripts/") + init_cfg->GetString()).c_str());
+  auto is_complete = m_Console->GetCVar("g_init_complete");
+  if (is_complete == nullptr)
+  {
+    //TODO: log: error load init.cfg
+    return false;
+  }
 
 	if (!loadScene()) {
 		m_Log->AddLog("[FAILED] Failed init objects\n");
@@ -279,7 +291,7 @@ bool CGame::loadScene() {
     return false;
   if (!MaterialManager::init("default.xml"))
     return false;
-  if (!SceneManager::init())
+  if (!SceneManager::init(m_Console->GetCVar("g_scene")->GetString()))
     return false;
 
   m_scene = defaultScene;

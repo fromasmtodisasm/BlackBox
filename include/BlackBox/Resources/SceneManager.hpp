@@ -14,7 +14,7 @@ class SceneManager
   //SceneManager();
 public:
   static SceneManager *instance();
-  static bool init();
+  static bool init(const char *scene);
   Scene *getScene(std::string scene);
   Scene *currentScene();
 	void nextScene();
