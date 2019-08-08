@@ -409,7 +409,7 @@ Scene::Scene(std::string name)
 	lightPosX = GetIEngine()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
 	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
 	lightPosZ = GetIEngine()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
-	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 16.0f, 0, "ortho divider");
+	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
 }
 
 void Scene::selectPrevObject()
@@ -457,7 +457,9 @@ void Scene::draw(float dt)
   if (m_Objects.size() > 0)
   {
     CCamera* camera = m_Camera;// new CCamera();
+    glCullFace(GL_FRONT);
     shadowMapPass(camera);
+    glCullFace(GL_BACK);
 
     m_RenderedScene->bind();
     glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -810,7 +812,7 @@ void Scene::shadowMapPass(CCamera *camera)
   glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
   glClear(GL_DEPTH_BUFFER_BIT);
   m_ShadowMapShader->use();
-  lightSpaceMatrix = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 1000.f) *
+  lightSpaceMatrix = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 5000.f) *
     glm::lookAt(lightPos,
       glm::vec3(0.0f, 0.0f, 0.0f),
       glm::vec3(0.0f, 1.0f, 0.0f));

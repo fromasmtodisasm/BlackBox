@@ -1,5 +1,5 @@
 <scene>
-    <object name="BB" type="object">
+    <!--<object name="BB" type="object">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -19,7 +19,7 @@
             </scale>
         </transform>
         <material name="phong"/>
-    </object>
+    </object>-->
     <object name="BMW" type="object" visible="true">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
@@ -160,9 +160,9 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>200</X>
-                <Y>200</Y>
-                <Z>200</Z>
+                <X>20000</X>
+                <Y>20000</Y>
+                <Z>20000</Z>
             </scale>
         </transform>
         <material name="chess_floor"/>
