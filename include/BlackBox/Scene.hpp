@@ -55,6 +55,13 @@ private:
   void setupLights(Object* object);
 	unsigned int quadVAO;
 	ICVar* texture_speed = nullptr;
+	ICVar* lightPosX = nullptr;
+	ICVar* lightPosY = nullptr;
+	ICVar* lightPosZ = nullptr;
+	ICVar* s_divider = nullptr;
+
+  glm::mat4 lightSpaceMatrix;
+
 
 public:
   Scene(std::string name);

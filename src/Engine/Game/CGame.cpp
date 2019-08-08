@@ -358,6 +358,9 @@ bool CGame::OnInputEvent(sf::Event &event)
 		if (retflag) return retval;
 	}
 
+  auto lpx = m_Console->GetCVar("lpx");
+  auto lpy = m_Console->GetCVar("lpy");
+  auto lpz = m_Console->GetCVar("lpz");
   bool result = OnInputEventProxy(event);
   switch (event.type)
   {
@@ -365,6 +368,31 @@ bool CGame::OnInputEvent(sf::Event &event)
   {
     if (event.key.code == sf::Keyboard::SemiColon)
       openShadowMap = !openShadowMap;
+    switch (event.key.code)
+    {
+    case sf::Keyboard::Up:
+    {
+      lpy->Set(lpy->GetFVal() + 0.5f);
+      break;
+    }
+    case sf::Keyboard::Down:
+    {
+      lpy->Set(lpy->GetFVal() - 0.5f);
+      break;
+    }
+    case sf::Keyboard::Left:
+    {
+      lpx->Set(lpx->GetFVal() - 0.5f);
+      break;
+    }
+    case sf::Keyboard::Right:
+    {
+      lpx->Set(lpx->GetFVal() + 0.5f);
+      break;
+    }
+    default:
+      break;
+    }
   }
   default:
     break;

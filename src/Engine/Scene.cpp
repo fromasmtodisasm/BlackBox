@@ -336,7 +336,8 @@ void Scene::setupLights(Object* object)
       nr_point_lights++;
       ++currentLight;
 
-      program->setUniformValue(light.second->position, "lightPos", currentLight);
+      //program->setUniformValue(light.second->position, "lightPos", currentLight);
+      program->setUniformValue(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
       break;
     }
   }
@@ -405,6 +406,10 @@ Scene::Scene(std::string name)
 
 	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
 	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
+	lightPosX = GetIEngine()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
+	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
+	lightPosZ = GetIEngine()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
+	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 16.0f, 0, "ortho divider");
 }
 
 void Scene::selectPrevObject()
@@ -799,12 +804,17 @@ FrameBufferObject* Scene::getRenderTarget()
 
 void Scene::shadowMapPass(CCamera *camera)
 {
-  float divider = 16.0f;
+  float divider = s_divider->GetFVal();
+  auto lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
   glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
   glClear(GL_DEPTH_BUFFER_BIT);
   m_ShadowMapShader->use();
-  m_ShadowMapShader->setUniformValue(glm::ortho(-1366/divider, 1366/divider, -768/divider, 768/divider,-1.0f, 1000.f) * camera->getViewMatrix(), "lightSpaceMatrix");
+  lightSpaceMatrix = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 1000.f) *
+    glm::lookAt(lightPos,
+      glm::vec3(0.0f, 0.0f, 0.0f),
+      glm::vec3(0.0f, 1.0f, 0.0f));
+  m_ShadowMapShader->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
   for (const auto& object : m_Objects) {
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
@@ -828,13 +838,6 @@ void Scene::mainPass(CCamera *camera)
 
   glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
 
-  auto light = m_PointLights.begin();
-  glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 1000.f);
-  glm::mat4 lightView = glm::lookAt(glm::vec3(light->second->position),
-    glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-  
   for (const auto& object : m_Objects) {
     if (!object.second->m_transparent && (object.second->visible()) && 
       glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
