@@ -145,6 +145,8 @@ private:
 	void getBuffer();
 	bool needShowCursor();
   void pageUp(bool isPgUp);
+
+  void setInternal(std::vector<std::string>::iterator var, std::string val);
 private:
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;

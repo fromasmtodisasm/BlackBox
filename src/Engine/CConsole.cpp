@@ -361,34 +361,7 @@ void CConsole::Set(CommandDesc& cd)
 		auto name = utils::split(utils::wstr_to_str(cd.args[0]), ".");
 		auto value = utils::wstr_to_str(cd.args[1]);
     auto name_it = name.begin();
-		auto pVar = m_variables_map.find(*name_it);
-		if (pVar != m_variables_map.end())
-		{
-			switch (pVar->second->GetType())
-			{
-			case CVAR_INT:
-				pVar->second->Set(static_cast<int>(std::atoi(value.c_str())));
-				break;
-			case CVAR_FLOAT:
-				pVar->second->Set(static_cast<float>(std::atof(value.c_str())));
-				break;
-			case CVAR_STRING:
-				pVar->second->Set(static_cast<const char*>(value.c_str()));
-				break;
-			case CVAR_OBJECT:
-        assert(0);
-				//pVar->second->Set(static_cast<const char*>(value.c_str()));
-				break;
-			default:
-				PrintLine("Unknown type for [%s] variable", name_it->c_str());
-			}
-		}
-		else
-		{
-			PrintLine("Variable [%s] not found. Creating", name_it->c_str());
-			CreateVariable(name_it->c_str(), value.c_str(), 0);
-		}
-
+    setInternal(name_it, value);
 
 	}
 }
@@ -475,6 +448,38 @@ void CConsole::pageUp(bool isPgUp)
     page_up = true;
   else
     page_dn = true;
+}
+
+void CConsole::setInternal(std::vector<std::string>::iterator var, std::string val)
+{
+  auto pVar = m_variables_map.find(*var);
+  if (pVar != m_variables_map.end())
+  {
+    switch (pVar->second->GetType())
+    {
+    case CVAR_INT:
+      pVar->second->Set(static_cast<int>(std::atoi(val.c_str())));
+      break;
+    case CVAR_FLOAT:
+      pVar->second->Set(static_cast<float>(std::atof(val.c_str())));
+      break;
+    case CVAR_STRING:
+      pVar->second->Set(static_cast<const char*>(val.c_str()));
+      break;
+    case CVAR_OBJECT:
+      assert(0);
+      //pVar->second->Set(static_cast<const char*>(val.c_str()));
+      break;
+    default:
+      PrintLine("Unknown type for [%s] variable", var->c_str());
+    }
+  }
+  else
+  {
+    PrintLine("Variable [%s] not found. Creating", var->c_str());
+    CreateVariable(var->c_str(), val.c_str(), 0);
+  }
+
 }
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
