@@ -112,9 +112,12 @@ void ShadowMapping::RenderPass()
 
 void ShadowMapping::RenderDepth(Object* object)
 {
-  m_ShadowMapShader->setUniformValue(object->getTransform(), "model");
-  m_ShadowMapShader->setup();
-  object->draw(nullptr);
+  if (object->visible())
+  {
+    m_ShadowMapShader->setUniformValue(object->getTransform(), "model");
+    m_ShadowMapShader->setup();
+    object->draw(nullptr);
+  }
 }
 
 void ShadowMapping::RenderOpaque(Object* object)
