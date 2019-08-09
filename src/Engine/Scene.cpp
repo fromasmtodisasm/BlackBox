@@ -453,9 +453,6 @@ void Scene::draw(float dt)
   if (m_Objects.size() > 0)
   {
     CCamera* camera = m_Camera;// new CCamera();
-    glCullFace(GL_FRONT);
-    shadowMapPass(camera);
-    glCullFace(GL_BACK);
 
     m_RenderedScene->bind();
     glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -463,6 +460,8 @@ void Scene::draw(float dt)
     glCheck(glEnable(GL_DEPTH_TEST));
 
     mainPass(m_Camera);
+
+    for (int pass = 0; m_Technique->OnRenderPass(pass); pass++);
   }
 	
 	if (skyBox != nullptr)
@@ -787,54 +786,9 @@ bool Scene::load(std::string name = "default.xml")
   return true;
 }
 
-void Scene::setRenderTarget(FrameBufferObject *target)
-{
-  if (target->type == FrameBufferObject::buffer_type::SCENE_BUFFER)
-    m_RenderedScene = target;
-  else if (target->type == FrameBufferObject::buffer_type::DEPTH_BUFFER)
-    m_DepthBuffer = target;
-}
-
-FrameBufferObject* Scene::getRenderTarget()
+GLint Scene::getRenderTarget()
 {
 	return m_RenderedScene;
-}
-
-void Scene::shadowMapPass(CCamera *camera)
-{
-  float divider = s_divider->GetFVal();
-  bool perspective_light = this->perspective_light->GetIVal();
-  auto lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
-  m_DepthBuffer->bind();
-  glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
-  glClear(GL_DEPTH_BUFFER_BIT);
-  m_ShadowMapShader->use();
-  glm::mat4 proj;
-  if (perspective_light)
-    proj = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 5000.f);
-  else
-    proj = glm::perspective(45.0f, 1.0f, 0.1f, 1000.f);
-
-  lightSpaceMatrix = proj *
-    glm::lookAt(lightPos,
-      glm::vec3(0.0f, 0.0f, 0.0f),
-      glm::vec3(0.0f, 1.0f, 0.0f));
-  m_ShadowMapShader->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
-  for (const auto& object : m_Objects) {
-    if (!object.second->m_transparent && (object.second->visible()) && 
-      glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
-    {
-      m_ShadowMapShader->setUniformValue(object.second->getTransform(), "model");
-      m_ShadowMapShader->setup();
-      object.second->draw(nullptr);
-    }
-  }
-  m_ShadowMapShader->unuse();
-  m_DepthBuffer->unbind();
-}
-
-void Scene::mainPass(CCamera *camera)
-{
 }
 
 void Scene::begin()
@@ -891,5 +845,10 @@ void Scene::ForEachObject(ForEachObjectSink* callback)
       break;
   }
 
+}
+
+void Scene::setTechnique(Technique* technique)
+{
+  m_Technique = technique;
 }
 

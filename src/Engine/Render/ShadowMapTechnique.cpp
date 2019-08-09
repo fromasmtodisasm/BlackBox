@@ -38,7 +38,7 @@ bool ShadowMapping::OnRenderPass(int pass)
   switch (pass)
   {
   case RENDER_DEPTH:
-    DepthPass();
+    OnDepthPass();
     return true;
   case RENDER_SHADOWS:
     RenderPass();
@@ -140,6 +140,22 @@ void ShadowMapping::RenderTransparent(Object* object)
 
     object->draw(m_Scene->getCamera());
   }
+}
+
+void ShadowMapping::OnDepthPass()
+{
+  glCullFace(GL_FRONT);
+  DepthPass();
+  glCullFace(GL_BACK);
+}
+
+void ShadowMapping::OnRenderPass()
+{
+  m_RenderedScene->bind();
+  glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+  glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  glCheck(glEnable(GL_DEPTH_TEST));
+  RenderPass();
 }
 
 bool ShadowMapping::OnObjectFound(Object* object)

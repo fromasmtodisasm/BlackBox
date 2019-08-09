@@ -32,12 +32,16 @@ private:
   void RenderOpaque(Object* object);
   void RenderTransparent(Object* object);
 
+  void OnDepthPass();
+  void OnRenderPass();
+
   // Inherited via ForEachObjectSink
   virtual bool OnObjectFound(Object* object) override;
 
 private:
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
+  FrameBufferObject* m_RenderedScene;
   CBaseShaderProgram* m_ShadowMapShader;
   glm::mat4 lightSpaceMatrix;
   const int width = 1024;
