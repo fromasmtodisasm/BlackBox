@@ -59,6 +59,7 @@ private:
 	ICVar* lightPosY = nullptr;
 	ICVar* lightPosZ = nullptr;
 	ICVar* s_divider = nullptr;
+	ICVar* perspective_light = nullptr;
 
   glm::mat4 lightSpaceMatrix;
 

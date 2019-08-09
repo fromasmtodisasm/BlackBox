@@ -410,6 +410,7 @@ Scene::Scene(std::string name)
 	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
 	lightPosZ = GetIEngine()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
 	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
+	perspective_light = GetIEngine()->getIConsole()->CreateVariable("pl", 0, 0, "Perspective lighting [1/0]");
 }
 
 void Scene::selectPrevObject()
@@ -807,12 +808,19 @@ FrameBufferObject* Scene::getRenderTarget()
 void Scene::shadowMapPass(CCamera *camera)
 {
   float divider = s_divider->GetFVal();
+  bool perspective_light = this->perspective_light->GetIVal();
   auto lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
   glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
   glClear(GL_DEPTH_BUFFER_BIT);
   m_ShadowMapShader->use();
-  lightSpaceMatrix = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 5000.f) *
+  glm::mat4 proj;
+  if (perspective_light)
+    proj = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 5000.f);
+  else
+    proj = glm::perspective(45.0f, 1.0f, 0.1f, 1000.f);
+
+  lightSpaceMatrix = proj *
     glm::lookAt(lightPos,
       glm::vec3(0.0f, 0.0f, 0.0f),
       glm::vec3(0.0f, 1.0f, 0.0f));
