@@ -5,6 +5,7 @@
 #include <BlackBox/Quad.hpp>
 
 class FrameBufferObject;
+struct ICVar;
 
 class HdrTechnique : public ITechnique
 {
@@ -27,4 +28,8 @@ private:
   CBaseShaderProgram* m_ScreenShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
+  FrameBufferObject* hdrBuffer;
+  Scene* m_Scene;
+
+  ICVar* exposure;
 };

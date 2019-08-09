@@ -96,6 +96,7 @@ public:
   void begin();
   void end();
 	void present(int width, int height);
+  SkyBox* GetSkyBox();
 
 	void setPostProcessor(IPostProcessor* postProcessor);
   void ForEachObject(ForEachObjectSink* callback);

@@ -11,6 +11,7 @@
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IGame.hpp>
 
 #include <tinyxml2.h>
@@ -24,97 +25,6 @@ using namespace tinyxml2;
 #ifndef XMLCheckResult
   #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
 #endif
-
-class SkyBox : public IDrawable
-{
-public:
-	TextureCube* texture;
-	VertexArrayObject* vao;
-	CBaseShaderProgram* shader;
-
-	SkyBox(TextureCube *t)
-		:
-		texture(t),
-		shader(new CShaderProgram(CShader::load("res/shaders/skybox.vs", CShader::E_VERTEX), CShader::load("res/shaders/skybox.frag", CShader::E_FRAGMENT)))
-	{
-		shader->create();
-		shader->use();
-		shader->setUniformValue(0, "skybox");
-		shader->unuse();
-		static float skyboxVertices[] = {
-			// positions          
-			-1.0f,  1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-
-			-1.0f, -1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			-1.0f,  1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f
-		};
-		VertexArrayObject::Attributes attributes;
-		attributes.stride = 3 * sizeof(float);
-		attributes.attributes[VertexArrayObject::POSITION] = 0;
-		vao = new VertexArrayObject(skyboxVertices, 36, GL_TRIANGLES, attributes);
-	}
-	// Унаследовано через IDrawable
-	virtual void draw(void* data) override
-	{
-		CCamera* cam = reinterpret_cast<CCamera*>(data);
-		glCheck(glDepthMask(GL_FALSE));
-		glCheck(glDepthFunc(GL_LEQUAL));
-		shader->use();
-		// ... задание видовой и проекционной матриц
-		shader->setUniformValue(glm::mat4(glm::mat3(cam->getViewMatrix())), "View");
-		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
-		
-		texture->bind();
-		vao->draw();
-
-		glCheck(glDepthFunc(GL_LESS));
-		glCheck(glDepthMask(GL_TRUE));
-	}
-
-	void setTextureCube(TextureCube* t)
-	{
-		if (texture)
-			delete texture;
-		texture = t;
-	}
-};
 
 void Scene::loadObject(XMLElement *object)
 {
@@ -450,8 +360,10 @@ void Scene::draw(float dt)
   }
   m_RenderedScene = m_Technique->GetFrame();
 	
+  /*
 	if (skyBox != nullptr)
 		skyBox->draw(m_Camera);
+  */
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -795,6 +707,7 @@ void Scene::end()
 
 void Scene::present(int width, int height)
 {
+  return;
 	if (postProcessor == nullptr)
 	{
 		auto render = GetIEngine()->getIRender();
@@ -818,6 +731,11 @@ void Scene::present(int width, int height)
 	{
 		postProcessor->Do(m_RenderedScene);
 	}
+}
+
+SkyBox* Scene::GetSkyBox()
+{
+  return skyBox;
 }
 
 void Scene::setPostProcessor(IPostProcessor* postProcessor)
