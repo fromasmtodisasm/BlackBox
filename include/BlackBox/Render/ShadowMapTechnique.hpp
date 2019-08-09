@@ -45,6 +45,7 @@ private:
   FrameBufferObject* m_RenderedScene;
   CBaseShaderProgram* m_ShadowMapShader;
   glm::mat4 lightSpaceMatrix;
+  glm::vec3 lightPos;
   const int width = 1024;
   const int height = 1024;
   //====================

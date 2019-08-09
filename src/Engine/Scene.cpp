@@ -336,7 +336,7 @@ void Scene::setupLights(Object* object)
       nr_point_lights++;
       ++currentLight;
 
-      program->setUniformValue(light.second->position, "lightPos", currentLight);
+      //program->setUniformValue(light.second->position, "lightPos", currentLight);
       //program->setUniformValue(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
       break;
     }

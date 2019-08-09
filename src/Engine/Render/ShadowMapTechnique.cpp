@@ -63,7 +63,7 @@ bool ShadowMapping::OnRenderPass(int pass)
 void ShadowMapping::DepthPass()
 {
   float divider = s_divider->GetFVal();
-  auto lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
+  lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
   glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -104,7 +104,7 @@ void ShadowMapping::RenderPass()
     mesh.bb.draw();
   }
   
-  // Render opaque objects
+  // Render transparent objects
   renderStage = RENDER_TRANSPARENT;
   m_Scene->ForEachObject(this);
   
@@ -129,13 +129,12 @@ void ShadowMapping::RenderOpaque(Object* object)
     auto program = object->m_Material->program;
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
+    program->setUniformValue(lightPos, "lightPos");
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
 
     m_Scene->setupLights(object);
     object->m_Material->apply(object);
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, woodTexture);
     program->setUniformValue(1, "shadowMap");
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture);
@@ -151,6 +150,8 @@ void ShadowMapping::RenderTransparent(Object* object)
   {
     auto program = object->m_Material->program;
     program->use();
+    program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
+    program->setUniformValue(lightPos, "lightPos");
     m_Scene->setupLights(object);
 
     object->draw(m_Scene->getCamera());
