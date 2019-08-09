@@ -11,6 +11,7 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
+#include <BlackBox/Render/HdrTechnique.hpp>
 #include <BlackBox/Utils.hpp>
 
 #include <imgui-SFML.h>
@@ -124,8 +125,12 @@ bool CGame::init(IEngine *pSystem)  {
 	//m_World->setPretRenderCallback(this);
 	//m_World->setPostRenderCallback(this);
 
+  /*
   auto tech = new ShadowMapping();
-  tech->Init(m_World->getActiveScene());
+  tech->Init(m_World->getActiveScene(), nullptr);
+  */
+  auto tech = new HdrTechnique();
+  tech->Init(m_World->getActiveScene(), nullptr);
   m_World->getActiveScene()->setTechnique(tech);
 	
 	postProcessors.push_back(nullptr);

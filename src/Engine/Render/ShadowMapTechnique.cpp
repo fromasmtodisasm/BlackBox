@@ -18,17 +18,24 @@ ShadowMapping::~ShadowMapping()
 {
 }
 
-bool ShadowMapping::Init(Scene* scene)
+bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 {
   m_Scene = scene;
   //
-	m_DepthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, width, height);
+  m_DepthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, width, height);
   m_DepthBuffer->create();
 
-	m_RenderedScene = new FrameBufferObject(
-    FrameBufferObject::buffer_type::SCENE_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()
-  );
-  m_RenderedScene->create();
+  if (renderTarget == nullptr)
+  {
+    m_RenderedScene = new FrameBufferObject(
+      FrameBufferObject::buffer_type::SCENE_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()
+    );
+    m_RenderedScene->create();
+  }
+  else
+  {
+    m_RenderedScene = renderTarget;
+  }
 
   m_ShadowMapShader = new ShadowMapShader();
   m_ShadowMapShader->create();

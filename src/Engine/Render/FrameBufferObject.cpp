@@ -11,35 +11,56 @@ FrameBufferObject::FrameBufferObject(buffer_type type, int width, int height) : 
 bool FrameBufferObject::create()
 {
   bool status = true;
+  GLint internalFormat, Format;
+  GLint filterMin, filterMag;
+  GLint wrapS, wrapT;
+  GLint dataType;
+  GLint attachment;
 
   glCheck(glGenFramebuffers(1, &id));
 
   glCheck(glGenTextures(1, &texture));
   glCheck(glBindTexture(GL_TEXTURE_2D, texture));
-  if (type == SCENE_BUFFER)
+  switch (type)
   {
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+  case FrameBufferObject::DEPTH_BUFFER:
+    internalFormat = Format = GL_DEPTH_COMPONENT;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_CLAMP_TO_BORDER;
+    dataType = GL_FLOAT;
+    //attachment = 
+    break;
+  case FrameBufferObject::SCENE_BUFFER:
+    internalFormat = Format = GL_RGBA;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_REPEAT;
+    dataType = GL_UNSIGNED_BYTE;
+    break;
+  case FrameBufferObject::HDR_BUFFER:
+    internalFormat = GL_RGBA16F;
+    Format = GL_RGBA;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_REPEAT;
+    dataType = GL_FLOAT;
+    break;
+  default:
+    break;
   }
-  else if (type == DEPTH_BUFFER)
+
+  glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, Format, dataType, NULL));
+  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
+  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
+  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
+  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+  if (type == DEPTH_BUFFER)
   {
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
   }
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 
   glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
-  if (type == SCENE_BUFFER)
+  if (type == SCENE_BUFFER || type == HDR_BUFFER)
   {
     glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0));
     glCheck(glGenRenderbuffers(1, &rbo));

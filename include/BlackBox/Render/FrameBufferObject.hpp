@@ -10,7 +10,8 @@ public:
   enum buffer_type
   {
     DEPTH_BUFFER,
-    SCENE_BUFFER
+    SCENE_BUFFER,
+    HDR_BUFFER,
   }type = SCENE_BUFFER;
   GLuint id;
   GLuint texture;
