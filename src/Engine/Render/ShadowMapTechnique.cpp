@@ -1,5 +1,6 @@
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Render/ShadowMapShader.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IGame.hpp>
@@ -22,6 +23,16 @@ bool ShadowMapping::Init(Scene* scene)
   m_Scene = scene;
   //
 	m_DepthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, width, height);
+  m_DepthBuffer->create();
+
+	m_RenderedScene = new FrameBufferObject(
+    FrameBufferObject::buffer_type::SCENE_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()
+  );
+  m_RenderedScene->create();
+
+  m_ShadowMapShader = new ShadowMapShader();
+  m_ShadowMapShader->create();
+  
   //==============
 	lightPosX = GetIEngine()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
 	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
@@ -37,11 +48,11 @@ bool ShadowMapping::OnRenderPass(int pass)
   renderPass = static_cast<Pass>(pass);
   switch (pass)
   {
-  case RENDER_DEPTH:
+  case RENDER_DEPTHMAP:
     OnDepthPass();
     return true;
   case RENDER_SHADOWS:
-    RenderPass();
+    OnRenderPass();
     return true;
   default:
     return false;
@@ -65,6 +76,7 @@ void ShadowMapping::DepthPass()
       glm::vec3(0.0f, 1.0f, 0.0f));
   m_ShadowMapShader->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
 
+  renderStage = RENDER_DEPTH;
   m_Scene->ForEachObject(this);
   
   m_ShadowMapShader->unuse();
@@ -175,4 +187,9 @@ bool ShadowMapping::OnObjectFound(Object* object)
     return false;
   }
   return true;
+}
+
+int ShadowMapping::GetFrame()
+{
+  return m_RenderedScene->texture;
 }

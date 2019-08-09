@@ -10,6 +10,7 @@
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Utils.hpp>
 
 #include <imgui-SFML.h>
@@ -46,7 +47,7 @@ World *CGame::getWorld() const
 
 void CGame::PreRender()
 {
-	glCheck(glViewport(0, 0, 1366, 768));
+	//glCheck(glViewport(0, 0, 1366, 768));
 }
 
 float CGame::getTime()
@@ -97,11 +98,6 @@ bool CGame::init(IEngine *pSystem)  {
 	//m_Log->AddLog("[OK] Objects inited\n");
 	m_Console->PrintLine("[OK] Objects inited\n");
   int w = 3840, h = 2160;
-	FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, m_Window->getWidth(), m_Window->getHeight());
-	sceneBuffer->create();
-	depthBuffer->create();
-	m_scene->setRenderTarget(sceneBuffer);
-	m_scene->setRenderTarget(depthBuffer);
  
   gui = new GameGUI();
   gui->game = this;
@@ -127,6 +123,10 @@ bool CGame::init(IEngine *pSystem)  {
 	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
 	//m_World->setPretRenderCallback(this);
 	//m_World->setPostRenderCallback(this);
+
+  auto tech = new ShadowMapping();
+  tech->Init(m_World->getActiveScene());
+  m_World->getActiveScene()->setTechnique(tech);
 	
 	postProcessors.push_back(nullptr);
 	postProcessors.push_back(new PostProcessor("negative"));
@@ -140,8 +140,7 @@ bool CGame::init(IEngine *pSystem)  {
 	//m_Console->ExecuteString("clear");
   ITexture* consoleBackGround = new Texture();
   consoleBackGround->load("console/fc.jpg");
-  //m_Console->SetImage(consoleBackGround);
-  m_Console->SetImage(new Texture(depthBuffer->texture));
+  m_Console->SetImage(consoleBackGround);
   return true;
 }
 
@@ -223,9 +222,11 @@ void CGame::drawHud(float fps)
     
     if (openShadowMap)
     {
+      /*
       render->DrawImage(
         render->GetWidth() / 2, render->GetHeight() / 2, render->GetWidth() / 2, render->GetHeight() / 2,
         depthBuffer->texture, 0, 0, 0, 0, 0, 0, 0, 1.0);
+      */
     }
     //===========
 

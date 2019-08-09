@@ -368,4 +368,7 @@
         <diffuse x="1" y="1" z="1"/>
         <specular x="1" y="1" z="1"/>
     </light>
+  <technique name="shadowmapping">
+    
+  </technique>
 </scene>

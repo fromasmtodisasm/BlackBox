@@ -119,7 +119,7 @@ void GameGUI::Draw()
     {
       game->m_Window->getViewPort().left = ImGui::GetCursorPosX() + leftPanel.size.x;
       game->m_Window->getViewPort().top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y + mainMenu.size.y;
-      ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+      //ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -243,7 +243,7 @@ void GameGUI::controlPanel()
           */
           FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->m_Window->getWidth(), game->m_Window->getHeight());
           sceneBuffer->create();
-          scene->setRenderTarget(sceneBuffer);
+          //scene->setRenderTarget(sceneBuffer);
           scene->setCamera(new CCamera());
           CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
           player->attachCamera(scene->m_Camera);
@@ -404,7 +404,7 @@ void GameGUI::drawFullScreenViewPort()
   game->m_Window->getViewPort().left = ImGui::GetCursorPosX();
   game->m_Window->getViewPort().top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
   ImGui::Begin("FullScreen", (bool*)true,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
-  ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+  //ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
 }
 

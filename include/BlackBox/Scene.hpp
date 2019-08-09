@@ -5,7 +5,7 @@
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
-#include <BlackBox/Render/Technique.hpp>
+#include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/IEngine.hpp>
@@ -47,7 +47,7 @@ private:
 	CBaseShaderProgram *m_ScreenShader;
 	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
-  Technique* m_Technique;
+  ITechnique* m_Technique;
 
   ObjecstList m_Objects;
   DirectionLightList m_DirectionLight;
@@ -99,7 +99,7 @@ public:
 
 	void setPostProcessor(IPostProcessor* postProcessor);
   void ForEachObject(ForEachObjectSink* callback);
-  void setTechnique(Technique* technique);
+  void setTechnique(ITechnique* technique);
 
 };
 

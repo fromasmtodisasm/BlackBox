@@ -494,7 +494,7 @@ bool SceneCommand::load(CommandDesc& cd)
 		*/
 		FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
 		sceneBuffer->create();
-		scene->setRenderTarget(sceneBuffer);
+		//scene->setRenderTarget(sceneBuffer);
 		scene->setCamera(new CCamera());
 		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 		player->attachCamera(scene->getCamera());

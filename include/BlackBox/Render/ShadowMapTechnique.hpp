@@ -1,27 +1,28 @@
 #pragma once
 
-#include <BlackBox/Render/Technique.hpp>
+#include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/Scene.hpp>
 
 
-class ShadowMapping : public Technique, public ForEachObjectSink
+class ShadowMapping : public ITechnique, public ForEachObjectSink
 {
   enum Pass
   {
-    RENDER_DEPTH,
+    RENDER_DEPTHMAP,
     RENDER_SHADOWS
   };
   enum Stage
   {
     RENDER_DEPTH,
     RENDER_OPAQUE,
-    RENDER_TRANSPARENT
+    RENDER_TRANSPARENT,
+    RENDER_COMPLETE
   };
 public:
   ShadowMapping();
   ~ShadowMapping();
 
-  // Inherited via Technique
+  // Inherited via ITechnique
   virtual bool Init(Scene* scene) override;
   virtual bool OnRenderPass(int pass) override;
 
@@ -54,4 +55,7 @@ private:
 
   Pass renderPass;
   Stage renderStage;
+
+  // Inherited via ITechnique
+  virtual int GetFrame() override;
 };

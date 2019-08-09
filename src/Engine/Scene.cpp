@@ -336,8 +336,8 @@ void Scene::setupLights(Object* object)
       nr_point_lights++;
       ++currentLight;
 
-      //program->setUniformValue(light.second->position, "lightPos", currentLight);
-      program->setUniformValue(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
+      program->setUniformValue(light.second->position, "lightPos", currentLight);
+      //program->setUniformValue(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
       break;
     }
   }
@@ -362,10 +362,7 @@ void Scene::setupLights(Object* object)
 Scene::Scene(std::string name) 
   : 
   name(name), 
-  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))),
-  m_ShadowMapShader(
-    new ShadowMapShader()
-  )
+  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT)))
 {
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -395,9 +392,6 @@ Scene::Scene(std::string name)
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
-
-
-	m_ShadowMapShader->create();
 
 	m_TextShader = new CShaderProgram(
 	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
@@ -452,21 +446,12 @@ void Scene::draw(float dt)
 { 
   if (m_Objects.size() > 0)
   {
-    CCamera* camera = m_Camera;// new CCamera();
-
-    m_RenderedScene->bind();
-    glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    glCheck(glEnable(GL_DEPTH_TEST));
-
-    mainPass(m_Camera);
-
     for (int pass = 0; m_Technique->OnRenderPass(pass); pass++);
   }
+  m_RenderedScene = m_Technique->GetFrame();
 	
 	if (skyBox != nullptr)
 		skyBox->draw(m_Camera);
-		//m_Font->RenderText(m_TextShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -783,6 +768,8 @@ bool Scene::load(std::string name = "default.xml")
 		Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
 	}
 
+  //XMLElement* technique = pScene->FirstChildElement("technique");
+
   return true;
 }
 
@@ -803,7 +790,7 @@ void Scene::begin()
 
 void Scene::end()
 {
-  m_RenderedScene->unbind();
+  //m_RenderedScene->unbind();
 }
 
 void Scene::present(int width, int height)
@@ -824,12 +811,12 @@ void Scene::present(int width, int height)
 		m_ScreenShader->setUniformValue(transform, "transform");
 		glCheck(glDisable(GL_DEPTH_TEST));
 		glCheck(glActiveTexture(GL_TEXTURE0));
-		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture));
+		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene));
 		m_ScreenQuad.draw();;
 	}
 	else
 	{
-		postProcessor->Do(m_RenderedScene->texture);
+		postProcessor->Do(m_RenderedScene);
 	}
 }
 
@@ -847,7 +834,7 @@ void Scene::ForEachObject(ForEachObjectSink* callback)
 
 }
 
-void Scene::setTechnique(Technique* technique)
+void Scene::setTechnique(ITechnique* technique)
 {
   m_Technique = technique;
 }
