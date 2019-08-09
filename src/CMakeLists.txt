@@ -99,6 +99,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
   #Render folder
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CBaseShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CRender.cpp

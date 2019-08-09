@@ -406,11 +406,6 @@ Scene::Scene(std::string name)
 
 	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
 	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
-	lightPosX = GetIEngine()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
-	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
-	lightPosZ = GetIEngine()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
-	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
-	perspective_light = GetIEngine()->getIConsole()->CreateVariable("pl", 0, 0, "Perspective lighting [1/0]");
 }
 
 void Scene::selectPrevObject()
@@ -840,60 +835,6 @@ void Scene::shadowMapPass(CCamera *camera)
 
 void Scene::mainPass(CCamera *camera)
 {
-  auto time = GetIEngine()->getIGame()->getTime() * texture_speed->GetFVal();
-
-  Pipeline::instance()->view = camera->getViewMatrix();
-  Pipeline::instance()->projection = camera->getProjectionMatrix();
-  Pipeline::instance()->view_pos = camera->Position;
-
-  glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
-
-  for (const auto& object : m_Objects) {
-    if (!object.second->m_transparent && (object.second->visible()) && 
-      glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
-    {
-      auto program = object.second->m_Material->program;
-      program->use();
-      program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
-      Pipeline::instance()->shader = program;
-      Pipeline::instance()->model = object.second->getTransform();
-
-      setupLights(object.second);
-      object.second->m_Material->apply(object.second);
-      //glActiveTexture(GL_TEXTURE0);
-      //glBindTexture(GL_TEXTURE_2D, woodTexture);
-      program->setUniformValue(1, "shadowMap");
-      glActiveTexture(GL_TEXTURE1);
-      glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture);
-
-      object.second->draw(m_Camera);
-    }
-  }
-
-  Pipeline::instance()->bindProgram("bb");
-  auto obj = selectedObject();
-  Pipeline::instance()->object = obj->second;
-  for (auto& mesh : *obj->second->m_Mesh)
-  {
-    mesh.bb.draw();
-  }
-  for (const auto& object : m_Objects) {
-    if (object.second->m_transparent && (object.second->visible()))
-    {
-      auto program = object.second->m_Material->program;
-      program->use();
-      setupLights(object.second);
-
-      object.second->draw(m_Camera);
-    }
-  }
-  Object* lightObject = m_Objects.find("light")->second;
-  auto program = lightObject->m_Material->program;
-  for (const auto& light : m_PointLights) {
-    program->use();
-    lightObject->moveTo(light.second->position);
-    lightObject->draw(m_Camera);
-  }
 }
 
 void Scene::begin()
@@ -941,5 +882,14 @@ void Scene::present(int width, int height)
 void Scene::setPostProcessor(IPostProcessor* postProcessor)
 {
 	this->postProcessor = postProcessor;
+}
+
+void Scene::ForEachObject(ForEachObjectSink* callback)
+{
+  for (const auto& object : m_Objects) {
+    if (!callback->OnObjectFound(object.second))
+      break;
+  }
+
 }
 

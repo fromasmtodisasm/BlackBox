@@ -72,7 +72,6 @@ private:
 	// Render states
 	bool culling = true;
 	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
-  FrameBufferObject* depthBuffer;
   //
   bool openShadowMap = true;
 

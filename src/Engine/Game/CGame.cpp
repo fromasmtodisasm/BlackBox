@@ -98,7 +98,6 @@ bool CGame::init(IEngine *pSystem)  {
 	m_Console->PrintLine("[OK] Objects inited\n");
   int w = 3840, h = 2160;
 	FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, m_Window->getWidth(), m_Window->getHeight());
-	depthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, w*2, h*2);
 	sceneBuffer->create();
 	depthBuffer->create();
 	m_scene->setRenderTarget(sceneBuffer);

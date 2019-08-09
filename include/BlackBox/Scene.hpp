@@ -23,6 +23,16 @@ class SkyBox;
 
 extern Scene *defaultScene;
 
+using ObjecstList = std::multimap<std::string, Object*>;
+using DirectionLightList = std::map<std::string, DirectionLight*>;
+using PointLightList = std::map<std::string, PointLight*>;
+using SpotLightList = std::map<std::string, SpotLight*>;
+
+struct ForEachObjectSink
+{
+  virtual bool OnObjectFound(Object* object) = 0;
+};
+
 class Scene
 {
   friend class GameGUI;
@@ -39,10 +49,12 @@ private:
 	CBaseShaderProgram *m_ShadowMapShader;
 	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
-  std::multimap<std::string, Object*> m_Objects;
-  std::map<std::string, DirectionLight*> m_DirectionLight;
-  std::map<std::string, PointLight*> m_PointLights;
-  std::map<std::string, SpotLight*> m_SpotLights;
+
+  ObjecstList m_Objects;
+  DirectionLightList m_DirectionLight;
+  PointLightList m_PointLights;
+  SpotLightList m_SpotLights;
+
   CCamera *m_Camera;
   bool lighting;
 	bool inverse_visibility = true;
@@ -52,17 +64,8 @@ private:
   void loadMesh(tinyxml2::XMLElement *mesh);
   void loadLight(tinyxml2::XMLElement* light);
   glm::vec3 loadColorAttribute(tinyxml2::XMLElement* element);
-  void setupLights(Object* object);
 	unsigned int quadVAO;
 	ICVar* texture_speed = nullptr;
-	ICVar* lightPosX = nullptr;
-	ICVar* lightPosY = nullptr;
-	ICVar* lightPosZ = nullptr;
-	ICVar* s_divider = nullptr;
-	ICVar* perspective_light = nullptr;
-
-  glm::mat4 lightSpaceMatrix;
-
 
 public:
   Scene(std::string name);
@@ -88,8 +91,7 @@ public:
   bool load(std::string name);
   void setRenderTarget(FrameBufferObject *target);
   FrameBufferObject *getRenderTarget();
-  void shadowMapPass(CCamera *camera);
-  void mainPass(CCamera *camera);
+  void setupLights(Object* object);
 
   Material* shadowMapMat;
 
@@ -98,6 +100,8 @@ public:
 	void present(int width, int height);
 
 	void setPostProcessor(IPostProcessor* postProcessor);
+
+  void ForEachObject(ForEachObjectSink* callback);
 
 };
 
