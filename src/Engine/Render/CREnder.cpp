@@ -159,6 +159,25 @@ void CRender::glInit()
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+void CRender::DrawFullScreenImage(int texture_id)
+{
+  float
+    width = GetWidth(),
+    height = GetHeight();
+  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+  SetViewport(0, 0, width, height);
+  glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+  glCheck(glClear(GL_COLOR_BUFFER_BIT));
+  m_ScreenShader->use();
+  auto proj = glm::ortho(0.0f, (float)GetWidth(), 0.0f, (float)GetHeight());
+  auto transform = glm::scale(proj, glm::vec3(width, height, 1));
+  m_ScreenShader->setUniformValue(transform, "transform");
+  glCheck(glDisable(GL_DEPTH_TEST));
+  glCheck(glActiveTexture(GL_TEXTURE0));
+  glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
+  m_ScreenQuad->draw();
+}
+
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
 	bool flipY = true;

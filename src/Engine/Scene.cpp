@@ -707,7 +707,6 @@ void Scene::end()
 
 void Scene::present(int width, int height)
 {
-  return;
 	if (postProcessor == nullptr)
 	{
 		auto render = GetIEngine()->getIRender();

@@ -86,6 +86,8 @@ struct IRender
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
 
+  virtual void DrawFullScreenImage(int texture_id) = 0;
+
 	//! Set the polygon mode (wireframe, solid)
 	virtual int	SetPolygonMode(int mode) = 0;
 

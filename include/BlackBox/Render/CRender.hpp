@@ -95,5 +95,8 @@ private:
 	ICVar* r_debug;
 	ICVar* test_proj;
 	ICVar* render_via_viewport;
+
+  // Inherited via IRender
+  virtual void DrawFullScreenImage(int texture_id) override;
 };
 

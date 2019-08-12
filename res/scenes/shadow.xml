@@ -83,7 +83,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object" transparent="true" visible="false">
+    <object name="brick_normal_box" type="object" visible="true">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -102,10 +102,9 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="brick_box"/>
+        <material name="specular_box"/>
     </object>
-    <object name="brick_normal_box_2" type="object" transparent="true" visible="false">
-        <mesh name="res/geom/box.obj"/>
+    <object name="brick_normal_box_2" type="object" visible="true">
         <transform>
             <position>
                 <X>20</X>
@@ -123,7 +122,7 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="brick_box_shakaled" alpha_shakal="true"/>
+        <material name="specular_box"/>
     </object>
     <object name="light" type="object">
         <mesh name="res/geom/cube.obj"/>

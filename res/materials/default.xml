@@ -33,20 +33,6 @@
     </textures>
     <shader name="phong"/>
   </material>
-  <material name="brick_box_shakaled" shakaled="true">
-    <textures>
-      <texture type="diffuse" name="alpha_test/lemon_ad.dds"/>
-      <texture type="diffuse" name="alpha_test/cross.png"/>
-      <texture type="diffuse" name="alpha_test/fence_a.png"/>
-      <texture type="diffuse" name="alpha_test/grass.png"/>
-      <texture type="diffuse" name="alpha_test/l_alpha.png"/>
-      <texture type="diffuse" name="alpha_test/leaves_alfa.png"/>
-      <texture type="diffuse" name="alpha_test/LemonTreeLeaves_a.png"/> 
-      <!--<texture type="diffuse" name="brickwall.jpg"/>-->
-      <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
-    </textures>
-    <shader name="phong"/>
-  </material>
   <material name="light">
     <color red="1.0" green="1.0" blue="1.0"/>
     <shader name="phong"/>
@@ -65,6 +51,10 @@
     <shader name="phong"/>
   </material>
   <material name="player">
+    <textures>
+      <texture type="diffuse" name="coral.png"/>
+      <texture type="specular" name="gray.png"/>
+    </textures>
     <shader name="phong"/>
   </material>
   <material name="bb">

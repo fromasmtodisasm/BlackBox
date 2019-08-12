@@ -18,6 +18,7 @@ bool HdrTechnique::Init(Scene* scene, FrameBufferObject* renderTarget)
 {
   m_Scene = scene;
   exposure = GetIEngine()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
+  enabled = GetIEngine()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
   createShader();
   shadowMapping = new ShadowMapping();
   hdrBuffer = new FrameBufferObject(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
@@ -44,23 +45,11 @@ int HdrTechnique::GetFrame()
 
 bool HdrTechnique::HdrPass()
 {
-  auto render = GetIEngine()->getIRender();
-  float
-    width = render->GetWidth(),
-    height = render->GetHeight();
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-  render->SetViewport(0, 0, width, height);
-  glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-  glCheck(glClear(GL_COLOR_BUFFER_BIT));
-  m_ScreenShader->use();
-  m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
-  auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
-  auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-  m_ScreenShader->setUniformValue(transform, "transform");
-  glCheck(glDisable(GL_DEPTH_TEST));
-  glCheck(glActiveTexture(GL_TEXTURE0));
-  glCheck(glBindTexture(GL_TEXTURE_2D, shadowMapping->GetFrame()));
-  m_ScreenQuad.draw();
+  if (enabled->GetIVal())
+    m_Scene->setPostProcessor(this);
+  else
+    m_Scene->setPostProcessor(nullptr);
+
   return false;
 }
 
@@ -74,4 +63,17 @@ void HdrTechnique::createShader()
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
+}
+
+void HdrTechnique::Do(unsigned int texture)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	m_ScreenShader->use();
+  m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
+	glDisable(GL_DEPTH_TEST);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	m_ScreenQuad.draw();
 }

@@ -121,7 +121,7 @@ bool CGame::init(IEngine *pSystem)  {
   m_inputHandler->mouseLock(true);
 
   //m_World->setCamera(camera2);
-	m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
+	//m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
 	//m_World->setPretRenderCallback(this);
 	//m_World->setPostRenderCallback(this);
 
