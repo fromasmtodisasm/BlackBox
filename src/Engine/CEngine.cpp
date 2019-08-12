@@ -1,5 +1,5 @@
 #include <BlackBox/CEngine.hpp>
-#include <BlackBox/CLog.hpp>
+#include <BlackBox/NullLog.hpp>
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
@@ -16,22 +16,28 @@ CEngine::CEngine()
 	r_window_height(nullptr),
 	r_bpp(nullptr),
 	r_zbpp(nullptr),
-	r_sbpp(nullptr)
+	r_sbpp(nullptr),
+  m_InputHandler(nullptr),
+  m_Render(nullptr),
+  m_pConsole(nullptr),
+  m_pFont(nullptr),
+  m_pGame(nullptr),
+  m_pLog(nullptr),
+  m_pWindow(nullptr)
 {
 
 }
 
 CEngine::~CEngine()
 {
+
 }
 
 bool CEngine::Init()
 {
-#if 0
-  m_pLog = new CLog();
+  m_pLog = new NullLog();
   if (m_pLog == nullptr)
     return false;
-#endif
 	//=============
 	CWindow* window = new CWindow("BlackBox", 1366, 768);
 	m_pWindow = window;
@@ -56,7 +62,7 @@ bool CEngine::Init()
 		false, m_pWindow))
 		)
 		return false;
-	//m_pLog->AddLog("[OK] Window susbsystem inited\n");
+	m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
 	if (!m_pConsole->Init())
 		return false;

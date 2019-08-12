@@ -25,7 +25,7 @@ bool CPlayer::OnInputEvent(sf::Event &event)
   switch (event.type) {
   case sf::Event::MouseButtonPressed:
   {
-    Object *obj = SceneManager::instance()->getScene("default")->getObject("MyPlayer");
+    Object *obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
     GameObject *go = new GameObject(obj);
     go->setMaterial(obj->getMaterial());
     go->m_transform.position = m_Camera->getPosition();// + glm::vec3(0,0,5);

@@ -10,6 +10,7 @@ using	namespace std;
 
 SceneManager *SceneManager::manager = nullptr;
 Scene *defaultScene = nullptr;
+ICVar* SceneManager::scene_path = nullptr;
 
 SceneManager *SceneManager::instance()
 {
@@ -17,6 +18,7 @@ SceneManager *SceneManager::instance()
   {
     manager = new SceneManager();
 		manager->current_scene_it = manager->cache.begin();
+    scene_path = GetIEngine()->getIConsole()->GetCVar("scenes_path");
   }
   return manager;
 }
@@ -24,6 +26,10 @@ SceneManager *SceneManager::instance()
 bool SceneManager::init(const char * scene)
 {
   defaultScene = SceneManager::instance()->getScene(scene == nullptr ? "default" : scene);
+  SceneManager::instance()->current_scene_it = SceneManager::instance()->cache.find(scene == nullptr ? 
+    std::string(scene_path->GetString()) + "default" : 
+    std::string(scene_path->GetString()) + scene
+  );
   return true;
 }
 

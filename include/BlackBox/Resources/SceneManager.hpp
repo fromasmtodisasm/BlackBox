@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/IConsole.hpp>
 
 class Scene;
 
@@ -11,6 +12,7 @@ class SceneManager
   static SceneManager *manager;
   std::map<std::string, Scene*> cache;
 	decltype(cache)::iterator current_scene_it;
+  static ICVar* scene_path;
   //SceneManager();
 public:
   static SceneManager *instance();
