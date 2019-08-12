@@ -51,7 +51,7 @@ private:
 
 struct CommandInfo
 {
-	IEditCommand* Command;
+	IEditCommand* Command = nullptr;
 	std::multimap<int, std::string> argsCompletion;
 	std::string help;
 };
@@ -64,7 +64,7 @@ struct Text
 	float scale;
 	Text(std::string& data, glm::vec3& color, float scale)
 		:
-		data(data), color(color), scale(scale)
+		data(data), color(color), scale(scale), x(0), y(0)
 	{
 
 	}
@@ -77,7 +77,7 @@ struct CommandDesc
 	std::wstring command;
 	std::vector<std::wstring> args;
 	std::vector<std::wstring> *history;
-	CommandDesc(){}
+	CommandDesc() : history(nullptr) {}
 	CommandDesc(decltype(history) *history) : history(nullptr)
 	{
 
@@ -100,7 +100,7 @@ public:
 	virtual void Update() override;
 	virtual void Draw() override;
 	void Animate(float deltatime, IRender* render);
-	void CalcMetrics(int& end);
+	void CalcMetrics(size_t& end);
 	virtual void AddCommand(const char* sName, IEditCommand* command, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
@@ -134,8 +134,8 @@ private:
 	void fillCommandText();
 	void setFont(IFont* font);
 	CommandLine getPrompt();
-	void printLine(int line);
-	void printText(Text & element, int line);
+	void printLine(size_t line);
+	void printText(Text & element, size_t line);
 	void addToCommandBuffer(std::vector<std::wstring>& completion);
 	void addText(std::wstring& cmd);
 	;
@@ -168,11 +168,11 @@ private:
 	float curr_speed = 1300;
 	float curr_height = 0;
 	//
-	int line_count = 0;
-	int line_in_console = 0;
-	int line_height = 18;
-	int current_line = 0;
-	int on_line = 0;
+	size_t line_count = 0;
+	size_t line_in_console = 0;
+  size_t line_height = 18;
+	size_t current_line = 0;
+	size_t on_line = 0;
   bool page_up = false;
   bool page_dn = false;
 	std::vector<CommandLine> cmd_buffer;
@@ -195,7 +195,7 @@ private:
 	float time = 0.0f;
 	float cursor_tick = 0.0, cursor_tack = 0.0;
 	bool cursor_tick_tack = true;
-	int history_line = 0;
+	size_t history_line = 0;
   //
 
 

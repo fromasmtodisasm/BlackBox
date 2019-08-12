@@ -35,7 +35,7 @@ struct SDrawTextInfo
 	float yscale;
 	IFont* font;
 
-	SDrawTextInfo()
+	SDrawTextInfo() : xscale(1.0), yscale(1.0)
 	{
 		flags = 0;
 		color[0] = color[1] = color[2] = color[3] = 1;

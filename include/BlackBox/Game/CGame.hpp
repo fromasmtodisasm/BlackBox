@@ -62,8 +62,10 @@ private:
 	bool isDrawingGui = false;
   class GameState; 
   //GUI
-  ImVec2 cp_size; //Control panel size
+#ifdef GUI
   GameGUI *gui;
+#endif // GUI
+
 	CShaderProgram *m_ScreenShader;
 	FreeTypeFont* m_Font;
 	//EDIT MODE

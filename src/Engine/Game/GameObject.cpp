@@ -26,24 +26,11 @@ glm::mat4 GameObject::getTransform()
 }
 */
 
-GameObject::GameObject(const Object *obj) : Object(obj)
+GameObject::GameObject(const Object *obj) : Object(obj), m_Camera(nullptr)
 {
 }
 
 bool GameObject::OnInputEvent(sf::Event &event)
 {
-  switch (event.type)
-  {
-  /*
-  case sf::Event::KeyPressed:
-    m_keys.insert(event.key.code);
-    return true;
-  case sf::Event::KeyReleased:
-    m_keys.erase(event.key.code);
-    return true;
-  */
-  default:
-    break;
-  }
   return false;
 }

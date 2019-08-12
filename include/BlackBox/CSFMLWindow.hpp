@@ -4,9 +4,11 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include <glm/glm.hpp>
+#ifdef GUI
 #include <imgui-SFML.h>
+#endif
 
+#include <glm/glm.hpp>
 #include <map>
 #include <list>
 

@@ -7,6 +7,8 @@
 #include <iostream>
 
 using namespace std;
+#pragma warning(push)
+#pragma warning(disable : 4312)
 
 VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type, Attributes attributes) :
   m_Data(data), m_Count(count), m_Type(type)
@@ -29,31 +31,31 @@ VertexArrayObject::VertexArrayObject(const void *data, GLint count, GLenum type,
 		{
 			glCheck(glEnableVertexAttribArray(position));
 			//																										 stride
-			glCheck(glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, (GLvoid*)m_attributes.attributes[POSITION]));
+			glCheck(glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[POSITION])));
 		}
 
 		if (m_attributes.attributes.find(NORMAL) != m_attributes.attributes.end())
 		{
 			glCheck(glEnableVertexAttribArray(normal));
-			glCheck(glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, (GLvoid*)m_attributes.attributes[NORMAL]));
+			glCheck(glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[NORMAL])));
 		}
 
 		if (m_attributes.attributes.find(UV) != m_attributes.attributes.end())
 		{
 			glCheck(glEnableVertexAttribArray(uv));
-			glCheck(glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, m_attributes.stride, (GLvoid*)m_attributes.attributes[UV]));
+			glCheck(glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[UV])));
 		}
 
 		if (m_attributes.attributes.find(TANGENT) != m_attributes.attributes.end())
 		{
 			glCheck(glEnableVertexAttribArray(tangent));
-			glCheck(glVertexAttribPointer(tangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, (GLvoid*)m_attributes.attributes[TANGENT]));
+			glCheck(glVertexAttribPointer(tangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[TANGENT])));
 		}
 
 		if (m_attributes.attributes.find(BTANGENT) != m_attributes.attributes.end())
 		{
 			glCheck(glEnableVertexAttribArray(btangent));
-			glCheck(glVertexAttribPointer(btangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, (GLvoid*)m_attributes.attributes[BTANGENT]));
+			glCheck(glVertexAttribPointer(btangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[BTANGENT])));
 		}
   glCheck(glBindVertexArray(0));
 }
@@ -85,3 +87,5 @@ bool VertexArrayObject::init()
 	m_attributes.attributes[BTANGENT] = offsetof(Vertex, btangent);
 	return true;
 }
+
+#pragma warning(pop)

@@ -8,7 +8,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
-CRender::CRender(IEngine *engine) : m_Engine(engine), m_viewPort(0,0,0,0)
+#pragma warning(push)
+#pragma warning(disable : 4244)
+
+CRender::CRender(IEngine *engine) : 
+  m_Engine(engine), m_viewPort(0,0,0,0)
 {
 
 }
@@ -246,3 +250,5 @@ IRENDER_API IRender* CreateIRender(IEngine* pSystem)
 {
 	return new CRender(pSystem);
 }
+
+#pragma warning(push)

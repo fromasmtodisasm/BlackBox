@@ -14,13 +14,13 @@ protected:
 	glm::vec3 unpack_vector(std::vector<std::wstring>::iterator it, int size = 3)
 	{
 			glm::vec3 pos;
-			pos[0] = _wtof(it->c_str());
+			pos[0] = static_cast<float>(_wtof(it->c_str()));
 			it++;
-			pos[1] = _wtof(it->c_str());
+			pos[1] = static_cast<float>(_wtof(it->c_str()));
 			if (size == 3)
 			{
 				it++;
-				pos[2] = _wtof(it->c_str());
+				pos[2] =static_cast<float>(_wtof(it->c_str()));
 			}
 			return pos;
 	};
@@ -55,7 +55,7 @@ private:
 			return false;
 		if (cd.args.size() == 1)
 		{
-			for (int i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
+			for (auto i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
 			{
 				result = true;
 				GetIEngine()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
@@ -180,7 +180,6 @@ private:
 	virtual bool execute(CommandDesc& cd) override
 	{
 		auto obj = m_World->getActiveScene()->selectedObject()->second;
-		glm::vec3 pos;
 		auto args_it = cd.args.begin();
 		if (cd.args.size() >= 3)
 		{
@@ -221,7 +220,7 @@ private:
 			}
 			if (obj != nullptr)
 			{
-				glm::vec3 angles(_wtof((*args_it++).c_str()));
+				glm::vec3 angles(static_cast<float>(_wtof((*args_it++).c_str())));
 				glm::vec3 vector = unpack_vector(args_it);
 				if (vector[0] != 0.0f) angles[0] += obj->m_transform.rotation[0];
 				if (vector[1] != 0.0f) angles[1] += obj->m_transform.rotation[1];

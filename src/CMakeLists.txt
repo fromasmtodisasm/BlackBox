@@ -141,31 +141,33 @@ if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox ${CMAKE_DL_LIBS})
 endif()
 #--------------------------------------------------
-#IMGUI
-#if (BUILD_SHARED_LIBS)
-#  add_library(ImGui SHARED)
-#  message(STATUS "build shared libs!")
-#else()
-#  add_library(ImGui STATIC)
-#  message(STATUS "build static libs!")
-#endif()
-set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
-set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
+if (GUI)
+	#IMGUI
+	#if (BUILD_SHARED_LIBS)
+	#  add_library(ImGui SHARED)
+	#  message(STATUS "build shared libs!")
+	#else()
+	#  add_library(ImGui STATIC)
+	#  message(STATUS "build static libs!")
+	#endif()
+	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
+	set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 
-target_include_directories(
-  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
-)
-target_include_directories(
-  ${PROJECT_NAME} PUBLIC ${IMGUI-SFML_DIR}
-)
-set(
-  IMGUI_SOURCES
-  ${IMGUI_DIR}/imgui.cpp
-  ${IMGUI_DIR}/imgui_widgets.cpp
-  ${IMGUI_DIR}/imgui_draw.cpp
-  ${IMGUI-SFML_DIR}/imgui-SFML.cpp
-  ${IMGUI_DIR}/imgui_demo.cpp
-  )
+	target_include_directories(
+	  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
+	)
+	target_include_directories(
+	  ${PROJECT_NAME} PUBLIC ${IMGUI-SFML_DIR}
+	)
+	set(
+	  IMGUI_SOURCES
+	  ${IMGUI_DIR}/imgui.cpp
+	  ${IMGUI_DIR}/imgui_widgets.cpp
+	  ${IMGUI_DIR}/imgui_draw.cpp
+	  ${IMGUI-SFML_DIR}/imgui-SFML.cpp
+	  ${IMGUI_DIR}/imgui_demo.cpp
+	  )
+endif(GUI)
 #--------------------------------------------------
 if (GLEW_LOADER)
   target_sources(${PROJECT_NAME}

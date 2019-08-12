@@ -69,7 +69,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glCheck(glEnable(GL_CULL_FACE));
 }
 
-bool FreeTypeFont::Init(const char* font, int w, int h)
+bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	shader = new CShaderProgram(
 	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 

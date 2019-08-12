@@ -17,7 +17,7 @@ struct IConsole
 struct IEditCommand;
 struct CommandDesc;
 struct ICVar;
-class ITexture;
+struct ITexture;
 
 #define     CVAR_INT    1
 #define     CVAR_FLOAT  2

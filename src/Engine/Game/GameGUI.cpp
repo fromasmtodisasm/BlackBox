@@ -1,4 +1,5 @@
-﻿#include <BlackBox/IEngine.hpp>
+﻿#ifdef GUI
+#include <BlackBox/IEngine.hpp>
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
@@ -501,4 +502,5 @@ void GameGUI::objectInfo(Object *obj, std::string name)
     ImGui::TreePop();
   }
 }
+#endif
 

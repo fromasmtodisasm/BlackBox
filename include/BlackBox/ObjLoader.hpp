@@ -8,8 +8,8 @@
 class ObjLoader
 {
 private:
-  const int NUMBER_OF_VERTEX = 3;
-  const int NUMBER_OF_ATTRIBUTES = 3;
+  const unsigned int NUMBER_OF_VERTEX = 3;
+  const unsigned int NUMBER_OF_ATTRIBUTES = 3;
   
   std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
   std::vector<face> faces;

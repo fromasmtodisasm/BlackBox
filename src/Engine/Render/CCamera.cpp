@@ -92,7 +92,7 @@ void CCamera::updateCameraVectors()
 {
     // Calculate the new Front vector
     glm::vec3 front;
-    front.x = cos(glm::radians(this->transform.rotation.y) * cos(glm::radians(this->transform.rotation.x)));
+    front.x = cos(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
     front.y = sin(glm::radians(this->transform.rotation.x));
     front.z = sin(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
     this->Front = glm::normalize(front);

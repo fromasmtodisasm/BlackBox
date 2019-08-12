@@ -1,3 +1,6 @@
+#ifdef GUI
+
+
 #include "..\include\BlackBox\GUI.hpp"
 
 void MenuItem::execute()
@@ -32,3 +35,6 @@ void MainMenu::execute()
     ImGui::EndMainMenuBar();
   }
 }
+
+
+#endif // GUI

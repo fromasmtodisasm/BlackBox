@@ -16,6 +16,8 @@
 
 #include <glm/glm.hpp>
 
+#define strdup _strdup
+
 class HelpCommand : public IEditCommand 
 {
 public:
@@ -98,12 +100,12 @@ void CConsole::Draw()
 	if (!isOpened) return;
 	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
 	auto render = GetIEngine()->getIRender();
-	height = render->GetHeight() / 2;
+	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
-	int begin, end;
+	size_t end;
 	auto prompt = getPrompt();
 	time += GetIEngine()->getIGame()->getDeltaTime();
-	render->DrawImage(0, 0, render->GetWidth() / 2, height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, 1.0);
+	render->DrawImage(0, 0, (float)render->GetWidth() / 2, height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, 1.0);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -129,12 +131,13 @@ void CConsole::Draw()
 
 void CConsole::Animate(float deltatime, IRender* render)
 {
-	if (animate = false)
+  animate = false;
+	if (animate)
 	{
 		curr_height += curr_speed * deltatime;
 		if (curr_height >= height)
 		{
-			height = render->GetHeight();
+			height = static_cast<float>(render->GetHeight());
 			animate = false;
 			curr_speed = speed;
 			curr_height = 0.0f;
@@ -147,10 +150,10 @@ void CConsole::Animate(float deltatime, IRender* render)
 	}
 }
 
-void CConsole::CalcMetrics(int& end)
+void CConsole::CalcMetrics(size_t& end)
 {
 	line_in_console = (int)((height)) / (int)line_height;
-	int num_all_lines = cmd_buffer.size();
+	auto num_all_lines = cmd_buffer.size();
 	if (line_in_console > num_all_lines)
 	{
 		current_line = 0;
@@ -524,7 +527,7 @@ ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 bool CConsole::Init()
 {
 	m_Font = new FreeTypeFont();
-	m_Font->Init("arial.ttf", 16, line_height);
+	m_Font->Init("arial.ttf", 16, static_cast<unsigned int>(line_height));
 	m_pBackGround = new Texture();
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
@@ -598,7 +601,7 @@ bool CConsole::handleCommand(std::wstring command)
 
 CommandDesc CConsole::parseCommand(std::wstring& command)
 {
-	enum {COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG} state1 = INSPACE, state2;
+	enum {COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG} state1 = INSPACE;
 	CommandDesc cd;
 	int begin_cmd = 0, end_cmd = 0;
 	int begin_args = 0, end_args = 0;
@@ -731,7 +734,7 @@ void CConsole::fillCommandText()
 	command_text.clear();
 	for (auto ch : command)
 	{
-		command_text.push_back(ch);
+		command_text.push_back(static_cast<char>(ch));
 	}
 	command_text.push_back(cursor);
 }
@@ -755,7 +758,7 @@ CommandLine CConsole::getPrompt()
 	};
 }
 
-void CConsole::printLine(int line)
+void CConsole::printLine(size_t line)
 {
 	int i = 0;
 	for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
@@ -764,9 +767,9 @@ void CConsole::printLine(int line)
 	}
 }
 
-void CConsole::printText(Text & element, int line)
+void CConsole::printText(Text & element, size_t line)
 {
-	int curr_y = m_Font->GetYPos();
+	auto curr_y = m_Font->GetYPos();
 	m_Font->RenderText(
 		element.data,
 		m_Font->GetXPos(), curr_y, 1.0f, &glm::vec4(element.color, 1.0)[0]);

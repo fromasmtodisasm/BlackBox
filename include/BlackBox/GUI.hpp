@@ -1,4 +1,5 @@
 #pragma once
+#ifdef GUI
 #include <BlackBox/Game/CGame.hpp>
 #include <BlackBox/InputHandler.hpp>
 
@@ -99,3 +100,5 @@ public:
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;
 };
+
+#endif

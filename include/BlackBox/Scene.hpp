@@ -77,7 +77,7 @@ public:
   void draw(float dt);
   void addObject(std::string name, Object *object);
   Object *getObject(std::string name);
-  int numObjects();
+  size_t numObjects();
   void setCamera(std::string name, CCamera *camera);
   CCamera *getCurrentCamera();
   void update(float dt);

@@ -47,7 +47,7 @@ public:
     // Camera Attributes
 		glm::vec3 Front = glm::vec3(0.f, 0.f, -1.0f);
     glm::vec3 Up = glm::vec3(0.f, 1.f, 0.0f);
-    glm::vec3 Right;
+    glm::vec3 Right = glm::vec3(0.f, 0.f, 0.f);
     glm::vec3 WorldUp = glm::vec3(0.f, 1.f, 0.0f);
     // Eular Angles
     GLfloat Yaw = YAW;

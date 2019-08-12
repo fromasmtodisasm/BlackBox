@@ -27,9 +27,11 @@ CEngine::~CEngine()
 
 bool CEngine::Init()
 {
+#if 0
   m_pLog = new CLog();
   if (m_pLog == nullptr)
     return false;
+#endif
 	//=============
 	CWindow* window = new CWindow("BlackBox", 1366, 768);
 	m_pWindow = window;
@@ -54,7 +56,7 @@ bool CEngine::Init()
 		false, m_pWindow))
 		)
 		return false;
-	m_pLog->AddLog("[OK] Window susbsystem inited\n");
+	//m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
 	if (!m_pConsole->Init())
 		return false;

@@ -133,7 +133,7 @@ Material *Object::getMaterial()
 void Object::setMaterial(Material *material)
 {
   if (m_Material != nullptr)
-      ;//delete m_Material;
+      delete m_Material;
   m_Material = material;
 }
 

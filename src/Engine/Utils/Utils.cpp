@@ -13,6 +13,8 @@ std::string getBasePath(std::string fullpath) {
 }
 
 #ifdef WIN32
+#pragma warning(push)
+#pragma warning(disable : 4267)
    PCHAR*
     CommandLineToArgvA(
         PCHAR CmdLine,
@@ -35,9 +37,13 @@ std::string getBasePath(std::string fullpath) {
 
         len = strlen(CmdLine) + strlen(szFileName);
         i = ((len+2)/2)*sizeof(PVOID) + sizeof(PVOID);
-
+#pragma warning(push)
+#pragma warning(disable : 26451)
         argv = (PCHAR*)GlobalAlloc(GMEM_FIXED,
             i + (len+2)*sizeof(CHAR));
+#pragma warning(pop)
+        if (argv == nullptr)
+          return nullptr;
 
         _argv = (PCHAR)(((PUCHAR)argv)+i);
 
@@ -100,6 +106,7 @@ std::string getBasePath(std::string fullpath) {
         (*_argc) = argc;
         return argv;
     }
+#pragma warning(pop)
 #endif
 
 

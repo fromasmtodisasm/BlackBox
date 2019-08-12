@@ -1,4 +1,5 @@
 #pragma once
+#ifdef GUI
 #include <BlackBox/ILog.hpp>
 #include <imgui.h>
 
@@ -27,3 +28,5 @@ struct CLog : public ILog
 
     void    Draw(const char* title, bool* p_open = NULL);
 };
+#endif
+

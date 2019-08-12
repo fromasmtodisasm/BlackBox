@@ -3,7 +3,9 @@
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/Render/Texture.hpp>
+#ifdef GUI
 #include <BlackBox/GUI.hpp>
+#endif // GUI
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
@@ -15,8 +17,10 @@
 #include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/Utils.hpp>
 
+#ifdef GUI
 #include <imgui-SFML.h>
 #include <imgui.h>
+#endif
 
 //#include <iostream>
 #include <vector>
@@ -58,7 +62,27 @@ float CGame::getTime()
 }
 
 CGame::CGame(std::string title) :
-    m_World(new World()),m_Title(title)
+  camControl(nullptr),
+  g_scene(nullptr),
+#ifdef GUI
+  gui(nullptr),
+#endif // GUI
+  listener(nullptr),
+  m_Console(nullptr),
+  m_Font(nullptr),
+  m_Log(nullptr),
+  m_ScreenShader(nullptr),
+  m_Window(nullptr),
+  m_active_camera(nullptr),
+  m_camera1(nullptr),
+  m_camera2(nullptr),
+  m_inputHandler(nullptr),
+  m_player(nullptr),
+  m_pSystem(nullptr),
+  m_scene(nullptr),
+  m_sceneManager(nullptr),
+  shaderManager(nullptr),
+  m_World(new World()),m_Title(title)
 {
   srand(time(nullptr));
   m_deltaTime = 0.0f;
@@ -107,9 +131,10 @@ bool CGame::init(IEngine *pSystem)  {
 
   m_inputHandler->AddEventListener(this);
 
+#ifdef GUI
   gui = new GameGUI();
   gui->game = this;
-
+#endif // GUI
 
   //m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
@@ -178,9 +203,9 @@ void CGame::execScripts()
 
 void CGame::drawHud(float fps)
 {
-	int num_objects = m_World->getActiveScene()->numObjects();
-	int line = m_Window->getHeight();
-	int step = 18;
+	auto num_objects = m_World->getActiveScene()->numObjects();
+	auto line = m_Window->getHeight();
+	auto step = 18;
 
 	std::string mode = m_Mode == MENU ? "MENU"
 		: m_Mode == FPS ? "FPS"
@@ -566,10 +591,19 @@ bool CGame::MenuInputEvent(sf::Event& event)
 			gotoGame();
       return true;
     default:
+#ifdef GUI
       return gui->OnInputEvent(event);
+#else
+      return false;
+#endif // GUI
+
     }
   default:
-    return gui->OnInputEvent(event);
+#ifdef GUI
+      return gui->OnInputEvent(event);
+#else
+      return false;
+#endif // GUI
   }
   return false;
 
@@ -620,7 +654,7 @@ bool CGame::EditInputEvent(sf::Event& event)
 		}
 	case sf::Event::MouseWheelScrolled:
 	{
-		float factor = event.mouseWheel.delta < 0 ? 0.9 : 1.1;
+		float factor = event.mouseWheel.delta < 0 ? 0.9f : 1.1f;
 		m_World->getActiveScene()->selectedObject()->second->m_transform.scale *= factor;
 		return true;
 	}

@@ -15,15 +15,27 @@ public:
 		GLuint     TextureID;  // ID handle of the glyph texture
 		glm::ivec2 Size;       // Size of glyph
 		glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
-		GLuint     Advance;    // Offset to advance to next glyph
+		FT_Pos     Advance;    // Offset to advance to next glyph
 	};
 	float posX = 0, posY = 0;
 
-	FreeTypeFont()
+	FreeTypeFont():
+    EBO(-1),
+    VAO(-1),
+    VBO(-1),
+    face(nullptr),
+    ft(nullptr),
+    shader(nullptr)
 	{
 
 	}
-	FreeTypeFont(const char* font, int w, int h)
+	FreeTypeFont(const char* font, int w, int h):
+    EBO(-1),
+    VAO(-1),
+    VBO(-1),
+    face(nullptr),
+    ft(nullptr),
+    shader(nullptr)
 	{
 	}
 	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4]);
@@ -38,7 +50,7 @@ private:
 	
 public:
 	// Унаследовано через IFont
-	virtual bool Init(const char* font, int w, int h) override;
+	virtual bool Init(const char* font, unsigned int w, unsigned int h) override;
 
 
 	// Унаследовано через IFont

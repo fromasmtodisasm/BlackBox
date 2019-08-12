@@ -4,8 +4,10 @@
 #include <BlackBox/CCamera.hpp>
 #include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/ICommand.hpp>
+#ifdef GUI
 #include <imgui-SFML.h>
 #include <imgui.h>
+#endif
 
 #include <map>
 #include <queue>

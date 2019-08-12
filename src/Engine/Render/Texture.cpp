@@ -1,6 +1,8 @@
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
+#ifdef ALPHA_DIST
 #include <BlackBox/Utils/AlphaDistribution.h>
+#endif
 #include <iostream>
 #include <ctime>
 #include <memory>
@@ -95,11 +97,14 @@ bool Texture::load(const char* name)
   );
 
   glCheck(glGenerateMipmap(GL_TEXTURE_2D));
+#ifdef ALPHA_DIST
   if (true)
   {
-		;// cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
+		cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
   }
+#endif
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+  return true;
 }
 
 void Texture::bind()

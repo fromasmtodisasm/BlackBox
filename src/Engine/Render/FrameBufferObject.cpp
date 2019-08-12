@@ -15,7 +15,6 @@ bool FrameBufferObject::create()
   GLint filterMin, filterMag;
   GLint wrapS, wrapT;
   GLint dataType;
-  GLint attachment;
 
   glCheck(glGenFramebuffers(1, &id));
 

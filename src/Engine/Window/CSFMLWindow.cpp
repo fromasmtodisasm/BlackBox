@@ -1,21 +1,26 @@
 #include <BlackBox/CSFMLWindow.hpp>
 #include <BlackBox/Render/Opengl.hpp>
-#include <imgui-SFML.h>
-#include <imgui.h>
+#ifdef GUI
+  #include <imgui-SFML.h>
+  #include <imgui.h>
+#endif
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
 using namespace std;
 
 CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false),
-  viewPort(0,0, width, height)
+  viewPort(0,0, width, height),
+  m_Window(nullptr)
 {
   ;
 }
 
 CSFMLWindow::~CSFMLWindow()
 {
+#ifdef GUI
   ImGui::SFML::Shutdown();
+#endif // GUI
   m_Window->close();
 }
 
@@ -42,7 +47,10 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
   //m_Window->setFramerateLimit(60);
   m_Window->setMouseCursorGrabbed(true);
 
+#ifdef GUI
   ImGui::SFML::Init(*m_Window);
+#endif // GUI
+
   // Make it the active window for OpenGL calls
   m_Window->setActive();
 

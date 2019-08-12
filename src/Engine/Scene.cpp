@@ -21,6 +21,7 @@
 
 
 using namespace tinyxml2;
+#define strdup _strdup
 
 #ifndef XMLCheckResult
   #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
@@ -271,8 +272,15 @@ void Scene::setupLights(Object* object)
 
 Scene::Scene(std::string name) 
   : 
+  lighting(true),
   name(name), 
-  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT)))
+  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))),
+  m_RenderedScene(-1),
+  m_Technique(nullptr),
+  m_World(nullptr),
+  quadVAO(-1),
+  shadowMapMat(nullptr),
+  skyBox(nullptr)
 {
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -381,7 +389,7 @@ Object *Scene::getObject(std::string name)
   return nullptr;
 }
 
-int Scene::numObjects()
+size_t Scene::numObjects()
 {
 	return m_Objects.size();
 }
@@ -745,7 +753,7 @@ void Scene::present(int width, int height)
 	if (postProcessor == nullptr)
 	{
 		auto render = GetIEngine()->getIRender();
-		float
+	auto	
 			width = render->GetWidth(),
 			height = render->GetHeight();
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));

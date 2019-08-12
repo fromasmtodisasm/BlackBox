@@ -1,3 +1,6 @@
+#ifdef GUI
+
+
 #include <BlackBox/CLog.hpp>
 
 void CLog::Clear()
@@ -107,3 +110,6 @@ void CLog::AddLog(const char* fmt, ...)
   if (AutoScroll)
     ScrollToBottom = true;
 }
+
+
+#endif // GUI
