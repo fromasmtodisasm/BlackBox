@@ -20,33 +20,12 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="BMW_2" type="object">
-        <mesh name=""/>
-        <transform>
-            <position>
-                <X>39</X>
-                <Y>0</Y>
-                <Z>-20</Z>
-            </position>
-            <rotation>
-                <X>0</X>
-                <Y>0</Y>
-                <Z>0</Z>
-            </rotation>
-            <scale>
-                <X>10</X>
-                <Y>10</Y>
-                <Z>10</Z>
-            </scale>
-        </transform>
-        <material name="coral"/>
-    </object>
     <object name="MyPlayer" type="player">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
             <position>
                 <X>0</X>
-                <Y>9.0160465</Y>
+                <Y>95.229584</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -146,27 +125,6 @@
         </transform>
         <material name="red"/>
     </object>
-    <object name="test" type="object">
-        <mesh name=""/>
-        <transform>
-            <position>
-                <X>9</X>
-                <Y>0</Y>
-                <Z>0</Z>
-            </position>
-            <rotation>
-                <X>0</X>
-                <Y>-90</Y>
-                <Z>0</Z>
-            </rotation>
-            <scale>
-                <X>8</X>
-                <Y>8</Y>
-                <Z>8</Z>
-            </scale>
-        </transform>
-        <material name="red"/>
-    </object>
     <light name="lamp_1" type="point" enabled="true">
         <position x="-1" y="15" z="-1"/>
         <constant>1</constant>
@@ -185,13 +143,13 @@
     <camera name="main">
         <transform>
             <position>
-                <X>0</X>
-                <Y>0</Y>
-                <Z>0</Z>
+                <X>93.4543</X>
+                <Y>15</Y>
+                <Z>30.084194</Z>
             </position>
             <rotation>
-                <X>-29.75</X>
-                <Y>-169</Y>
+                <X>-9.5</X>
+                <Y>-146.5</Y>
                 <Z>-4.3160208e+08</Z>
             </rotation>
             <scale>
@@ -200,5 +158,6 @@
                 <Z>-4.3160208e+08</Z>
             </scale>
         </transform>
+        <speed>95.5</speed>
     </camera>
 </scene>

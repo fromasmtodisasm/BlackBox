@@ -13,6 +13,7 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IGame.hpp>
+#include <BlackBox/IEngine.hpp>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -598,7 +599,9 @@ tinyxml2::XMLElement* Scene::saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* 
 {
   XMLElement* result = xmlDoc.NewElement("camera");
   auto transform = saveTransform(xmlDoc, &camera->transform);
+  auto speed = saveFloat(xmlDoc, camera->MovementSpeed->GetFVal(), "speed");
   result->InsertEndChild(transform);
+  result->InsertEndChild(speed);
 
   return result;
 }
@@ -673,7 +676,15 @@ void Scene::loadCamera(tinyxml2::XMLElement* element)
   //GET ROTATION
   auto rotation = loadVec3(*transform, "rotation");
 
+  auto speed = element->FirstChildElement("speed");
+  float cam_speed = 0.5;
+
+  if (speed != nullptr)
+    cam_speed = speed->FloatText();
+
   result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
+
+  result->MovementSpeed = GetIEngine()->getIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
   
   m_Camera[name] = result;
 }

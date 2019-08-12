@@ -540,6 +540,7 @@ bool SceneCommand::activate(CommandDesc& cd)
 		//game->setCamera(scene->getCamera());
 		//m_World->setCamera(m_camera1);
 		//initPlayer();
+    return true;
 	}
 	return false;
 }
