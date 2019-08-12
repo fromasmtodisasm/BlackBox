@@ -223,4 +223,23 @@
         <diffuse x="0" y="0" z="0"/>
         <specular x="0" y="0" z="0"/>
     </light>
+  <camera name="main">
+    <transform> 
+            <position>
+                <X>20</X>
+                <Y>15</Y>
+                <Z>-10</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+    </transform>
+  </camera>
 </scene>

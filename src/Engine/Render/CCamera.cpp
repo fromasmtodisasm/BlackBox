@@ -12,7 +12,7 @@ using namespace  std;
 // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 glm::mat4 CCamera::getViewMatrix()
 {
-    return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
+    return glm::lookAt(this->transform.position, this->transform.position + this->Front, this->Up);
 }
 
 glm::mat4 CCamera::getProjectionMatrix()
@@ -25,13 +25,13 @@ void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
 {
     GLfloat velocity = this->MovementSpeed->GetFVal() * deltaTime;
     if (direction == FORWARD)
-        this->Position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
+        this->transform.position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
     if (direction == BACKWARD)
-        this->Position -= glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
+        this->transform.position -= glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z)* velocity;
     if (direction == LEFT)
-        this->Position -= this->Right * velocity;
+        this->transform.position -= this->Right * velocity;
     if (direction == RIGHT)
-        this->Position += this->Right * velocity;
+        this->transform.position += this->Right * velocity;
 }
 
 // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -40,16 +40,16 @@ void CCamera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean c
     xoffset *= this->MouseSensitivity;
     yoffset *= this->MouseSensitivity;
 
-    this->Yaw   += xoffset;
-    this->Pitch += yoffset;
+    this->transform.rotation.y += xoffset;
+    this->transform.rotation.x += yoffset;
 
     // Make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch)
     {
-        if (this->Pitch > 89.0f)
-            this->Pitch = 89.0f;
-        if (this->Pitch < -89.0f)
-            this->Pitch = -89.0f;
+        if (this->transform.rotation.x > 89.0f)
+            this->transform.rotation.x = 89.0f;
+        if (this->transform.rotation.x < -89.0f)
+            this->transform.rotation.x = -89.0f;
     }
 
     // Update Front, Right and Up Vectors using the updated Eular angles
@@ -72,9 +72,9 @@ void CCamera::updateCameraVectors()
 {
     // Calculate the new Front vector
     glm::vec3 front;
-    front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
-    front.y = sin(glm::radians(this->Pitch));
-    front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+    front.x = cos(glm::radians(this->transform.rotation.y) * cos(glm::radians(this->transform.rotation.x)));
+    front.y = sin(glm::radians(this->transform.rotation.x));
+    front.z = sin(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
     this->Front = glm::normalize(front);
     // Also re-calculate the Right and Up vector
     this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.

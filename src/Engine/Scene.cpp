@@ -610,40 +610,38 @@ Transform Scene::loadTransform(XMLElement &object)
   XMLElement * transform = object.FirstChildElement("transform");
 
   //GET POSITION
-  {
-    XMLElement * position = transform->FirstChildElement("position");
-    XMLElement * X = position->FirstChildElement("X");
-    XMLElement * Y = position->FirstChildElement("Y");
-    XMLElement * Z = position->FirstChildElement("Z");
-    result.position.x = X->FloatText();
-    result.position.y = Y->FloatText();
-    result.position.z = Z->FloatText();
-  }
+  result.position = loadVec3(*transform, "position");
   //GET ROTATION
-  {
-    XMLElement * rotation = transform->FirstChildElement("rotation");
-    XMLElement * X = rotation->FirstChildElement("X");
-    XMLElement * Y = rotation->FirstChildElement("Y");
-    XMLElement * Z = rotation->FirstChildElement("Z");
-    result.rotation.x = X->FloatText();
-    result.rotation.y = Y->FloatText();
-    result.rotation.z = Z->FloatText();
-
-  }
+  result.rotation = loadVec3(*transform, "rotation");
   //GET SCALE
-  {
-    XMLElement * scale = transform->FirstChildElement("scale");
-    XMLElement * X = scale->FirstChildElement("X");
-    XMLElement * Y = scale->FirstChildElement("Y");
-    XMLElement * Z = scale->FirstChildElement("Z");
-    result.scale.x = X->FloatText();
-    result.scale.y = Y->FloatText();
-    result.scale.z = Z->FloatText();
-
-  }
+  result.scale = loadVec3(*transform, "scale");
 
   return result;
+}
 
+glm::vec3 Scene::loadVec3(tinyxml2::XMLElement& element, const char* name)
+{
+  glm::vec3 result;
+
+  XMLElement * vector = element.FirstChildElement(name);
+  XMLElement * X = vector->FirstChildElement("X");
+  XMLElement * Y = vector->FirstChildElement("Y");
+  XMLElement * Z = vector->FirstChildElement("Z");
+  result.x = X->FloatText();
+  result.y = Y->FloatText();
+  result.z = Z->FloatText();
+
+  return result;
+}
+
+CCamera* Scene::loadCamera(tinyxml2::XMLElement& element)
+{
+  CCamera *result;
+  XMLElement * camera = element.FirstChildElement("camera");
+
+  //GET POSITION
+  result.position = loadVec3(*camera, "position");
+  return nullptr;
 }
 
 bool Scene::load(std::string name = "default.xml")

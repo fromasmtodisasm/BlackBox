@@ -87,6 +87,8 @@ public:
   tinyxml2::XMLElement* saveFloat(tinyxml2::XMLDocument& xmlDoc, float value, const char* name);;
   tinyxml2::XMLElement *saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object);
   Transform loadTransform(tinyxml2::XMLElement &object);
+  glm::vec3 loadVec3(tinyxml2::XMLElement &element, const char* name);
+  CCamera* loadCamera(tinyxml2::XMLElement& element);
   bool load(std::string name);
   GLint getRenderTarget();
   void setupLights(Object* object);
