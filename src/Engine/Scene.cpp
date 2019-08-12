@@ -256,7 +256,7 @@ void Scene::setupLights(Object* object)
   auto flashLight = m_SpotLights.find("flashLight");
   if (flashLight != m_SpotLights.end())
   {
-    program->setUniformValue(m_Camera->Position, "spotLight.position");
+    program->setUniformValue(m_Camera->getPosition(), "spotLight.position");
     program->setUniformValue(m_Camera->Front, "spotLight.direction");
     program->setUniformValue(flashLight->second->ambient, "spotLight.ambient");
     program->setUniformValue(flashLight->second->diffuse, "spotLight.diffuse");
@@ -640,7 +640,7 @@ CCamera* Scene::loadCamera(tinyxml2::XMLElement& element)
   XMLElement * camera = element.FirstChildElement("camera");
 
   //GET POSITION
-  result.position = loadVec3(*camera, "position");
+  result->transform.position = loadVec3(*camera, "position");
   return nullptr;
 }
 

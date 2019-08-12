@@ -444,7 +444,7 @@ bool CameraCommand::move(CommandDesc& cd)
 	{
 		auto pos = unpack_vector((cd.args.begin()++)++);
 		auto camera = m_World->getActiveScene()->getCamera();
-		camera->Position = pos;
+		camera->setPosition(pos);
 		return true;
 	}
 	return false;

@@ -96,7 +96,7 @@ void ShadowMapping::RenderPass()
 
   Pipeline::instance()->view = camera->getViewMatrix();
   Pipeline::instance()->projection = camera->getProjectionMatrix();
-  Pipeline::instance()->view_pos = camera->Position;
+  Pipeline::instance()->view_pos = camera->getPosition();
 
   glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
   // Render opaque objects
@@ -131,7 +131,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 {
   auto camera = m_Scene->getCamera();
   if (!object->m_transparent && (object->visible()) && 
-    glm::abs(glm::distance(camera->Position, object->m_transform.position)) < camera->zFar->GetFVal())
+    glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
   {
     auto program = object->m_Material->program;
     program->use();

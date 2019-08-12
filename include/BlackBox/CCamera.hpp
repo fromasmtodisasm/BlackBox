@@ -77,6 +77,12 @@ public:
   glm::mat4 getViewMatrix();
   glm::mat4 getProjectionMatrix();
 
+  glm::vec3 getPosition();
+  glm::vec3 getRotation();
+
+  void setPosition(glm::vec3 pos);
+  void setRotation(glm::vec3 ang);
+
   // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
   void ProcessKeyboard(Movement direction, GLfloat deltaTime);
 

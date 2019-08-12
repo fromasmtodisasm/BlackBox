@@ -294,12 +294,14 @@ void GameGUI::controlPanel()
   ImGui::Separator();
   if (ImGui::TreeNode("Camera"))
   {
+    /*
     if (ImGui::SliderFloat("Pitch", &game->m_scene->m_Camera->Pitch, -89.0, 89.0))
       game->m_scene->m_Camera->updateCameraVectors();
     if (ImGui::SliderFloat("Yaw", &game->m_scene->m_Camera->Yaw, 0.0f, 360.0f))
       game->m_scene->m_Camera->updateCameraVectors();
     ImGui::Text("Position");
     ImGui::DragFloat3("##pos", &game->m_scene->m_Camera->Position[0], 0.1);
+    */
     ImGui::TreePop();
   }
 }

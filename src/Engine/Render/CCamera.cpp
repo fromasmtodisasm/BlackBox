@@ -20,6 +20,26 @@ glm::mat4 CCamera::getProjectionMatrix()
   return glm::perspective(glm::radians(FOV->GetFVal()), Ratio, zNear, zFar->GetFVal());
 }
 
+glm::vec3 CCamera::getPosition()
+{
+  return transform.position;
+}
+
+glm::vec3 CCamera::getRotation()
+{
+  return transform.rotation;
+}
+
+void CCamera::setPosition(glm::vec3 pos)
+{
+  transform.position = pos;
+}
+
+void CCamera::setRotation(glm::vec3 ang)
+{
+  transform.rotation = ang;
+}
+
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
 {

@@ -247,14 +247,16 @@ void CGame::drawHud(float fps)
 		info.AddLine("Active scene: " + m_World->getActiveScene()->name);
 		info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
 		info.AddLine("Camera speed: " + std::to_string(m_active_camera->MovementSpeed->GetFVal()));
+    auto camPos = m_active_camera->getPosition();
+    auto camRot = m_active_camera->getRotation();
 		auto pos = "Pos: " + 
-			std::to_string(m_active_camera->Position.x) + ", " +
-			std::to_string(m_active_camera->Position.y) + ", " +
-			std::to_string(m_active_camera->Position.z) + "; " +
+			std::to_string(camPos.x) + ", " +
+			std::to_string(camPos.y) + ", " +
+			std::to_string(camPos.z) + "; " +
 			"Yaw: " + 
-			std::to_string(m_active_camera->Yaw) + "; " +
+			std::to_string(camRot.y) + "; " +
 			"Pitch: " + 
-			std::to_string(m_active_camera->Pitch) + "; "
+			std::to_string(camRot.x) + "; "
 		;
 
 		for (auto& text : info.text)
