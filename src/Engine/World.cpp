@@ -26,7 +26,7 @@ void World::draw(float dt) {
 
 void World::setCamera(CCamera *camera)
 {
-  activeScene->setCamera(camera);
+  //activeScene->setCamera(camera);
 }
 
 void World::setScene(Scene *scene) {

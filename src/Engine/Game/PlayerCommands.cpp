@@ -5,7 +5,7 @@
 
 MoveForward::MoveForward(CPlayer* player) : player(player), camera(nullptr)
 {
-  camera = player->getCamera();
+  camera = player->getCurrentCamera();
   deltatime = player->getGame()->getDeltaTime();
 }
 

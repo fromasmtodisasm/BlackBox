@@ -84,3 +84,8 @@ void SceneManager::prevScene()
 		current_scene_it = cache.end();
 	}
 }
+
+bool SceneManager::exist(std::string scene)
+{
+  return cache.find("res/scenes/" + scene) != cache.end();
+}

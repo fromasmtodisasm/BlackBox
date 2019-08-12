@@ -220,7 +220,7 @@ Object * Object::load(string path)
 	mesh->push_back(_mesh);
   obj = new Object();
   obj->m_Mesh = mesh;
-  obj->m_path = std::make_shared<std::string>(path);
+  obj->m_path = path;
 	return obj;
 }
 

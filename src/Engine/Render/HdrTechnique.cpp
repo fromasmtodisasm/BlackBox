@@ -32,7 +32,7 @@ bool HdrTechnique::OnRenderPass(int pass)
   if (!shadowMapping->OnRenderPass(pass))
   {
     if (m_Scene->GetSkyBox() != nullptr)
-      m_Scene->GetSkyBox()->draw(m_Scene->getCamera());
+      m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
     return HdrPass();
   }
   return true;

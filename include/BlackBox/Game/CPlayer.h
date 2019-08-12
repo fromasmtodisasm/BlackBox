@@ -51,7 +51,7 @@ public:
 
 public:
   void attachCamera(CCamera *camera);
-  CCamera *getCamera();
+  CCamera *getCurrentCamera();
   glm::vec3 getPos();
   void setGame(CGame *game);
   CGame *getGame();

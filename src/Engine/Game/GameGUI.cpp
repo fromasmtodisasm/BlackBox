@@ -244,9 +244,9 @@ void GameGUI::controlPanel()
           FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->m_Window->getWidth(), game->m_Window->getHeight());
           sceneBuffer->create();
           //scene->setRenderTarget(sceneBuffer);
-          scene->setCamera(new CCamera());
+          //scene->setCamera(new CCamera());
           CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
-          player->attachCamera(scene->m_Camera);
+          player->attachCamera(scene->getCurrentCamera());
           player->setGame(game);
           game->m_Log->AddLog("[OK] Scene %s loaded\n", path);
         }
@@ -263,7 +263,7 @@ void GameGUI::controlPanel()
         if (ImGui::TreeNode(scene.first.c_str()))
         {
           game->m_World->setScene(scene.second);
-          game->m_active_camera = scene.second->m_Camera;
+          //game->m_active_camera = scene.second->m_Camera;
           game->m_player = (CPlayer*)scene.second->getObject("MyPlayer");
           showScene(scene.second);
           ImGui::TreePop();

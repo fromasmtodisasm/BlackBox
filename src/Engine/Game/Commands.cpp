@@ -432,7 +432,7 @@ CameraCommand::CameraCommand(CGame *game) : BaseCommand(game)
 bool CameraCommand::lookat(CommandDesc& cd)
 {
 	auto object = m_World->getActiveScene()->selectedObject();
-	auto camera = m_World->getActiveScene()->getCamera();
+	auto camera = m_World->getActiveScene()->getCurrentCamera();
 
 	return false;
 }
@@ -443,7 +443,7 @@ bool CameraCommand::move(CommandDesc& cd)
 	if (cd.args.size() == 4)
 	{
 		auto pos = unpack_vector((cd.args.begin()++)++);
-		auto camera = m_World->getActiveScene()->getCamera();
+		auto camera = m_World->getActiveScene()->getCurrentCamera();
 		camera->setPosition(pos);
 		return true;
 	}
@@ -496,15 +496,27 @@ bool SceneCommand::load(CommandDesc& cd)
 		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::HDR_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
 		//sceneBuffer->create();
 		//scene->setRenderTarget(sceneBuffer);
-		scene->setCamera(new CCamera());
+		scene->setCamera("main", new CCamera());
 		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
-		player->attachCamera(scene->getCamera());
+		player->attachCamera(scene->getCurrentCamera());
 		player->setGame(game);
 	}
 	return false;
 }
 bool SceneCommand::save(CommandDesc& cd)
 {
+  if (cd.args.size() >= 2)
+  {
+    std::string path = wstr_to_str(cd.args[1]);
+    if (SceneManager::instance()->exist(path))
+    {
+      auto scene = SceneManager::instance()->getScene(path);
+      std::string as = "";
+      if (cd.args.size() == 3)
+        as = wstr_to_str(cd.args[2]);
+      return scene->save(as);
+    }
+  }
 	return false;
 }
 bool SceneCommand::activate(CommandDesc& cd)
@@ -515,7 +527,7 @@ bool SceneCommand::activate(CommandDesc& cd)
 	{
 		//=====================
 		game->getWorld()->setScene(scene);
-		game->setCamera(scene->getCamera());
+		game->setCamera(scene->getCurrentCamera());
 		game->setPlayer((CPlayer*)scene->getObject("MyPlayer"));
 		//=====================
 		//m_World->setScene(scene);

@@ -256,8 +256,8 @@ void Scene::setupLights(Object* object)
   auto flashLight = m_SpotLights.find("flashLight");
   if (flashLight != m_SpotLights.end())
   {
-    program->setUniformValue(m_Camera->getPosition(), "spotLight.position");
-    program->setUniformValue(m_Camera->Front, "spotLight.direction");
+    program->setUniformValue(getCurrentCamera()->getPosition(), "spotLight.position");
+    program->setUniformValue(getCurrentCamera()->Front, "spotLight.direction");
     program->setUniformValue(flashLight->second->ambient, "spotLight.ambient");
     program->setUniformValue(flashLight->second->diffuse, "spotLight.diffuse");
     program->setUniformValue(flashLight->second->diffuse, "spotLight.specular");
@@ -386,14 +386,15 @@ int Scene::numObjects()
 	return m_Objects.size();
 }
 
-void Scene::setCamera(CCamera *camera)
+void Scene::setCamera(std::string name, CCamera *camera)
 {
-  m_Camera = camera;
+  m_Camera[name] = camera;
+  m_CurrentCamera = m_Camera.find(name);
 }
 
-CCamera* Scene::getCamera()
+CCamera* Scene::getCurrentCamera()
 {
-	return m_Camera;
+	return m_CurrentCamera->second;
 }
 
 void Scene::update(float dt)
@@ -426,14 +427,13 @@ bool Scene::save(std::string as)
       object->SetAttribute("name", obj.first.c_str());
       const char* objType = nullptr;
       object->SetAttribute("type", obj.second->type.c_str());
-      mesh->SetAttribute("name", obj.second->m_path->c_str());
+      mesh->SetAttribute("name", obj.second->m_path.c_str());
       material->SetAttribute("name", obj.second->m_Material->name->c_str());
       //transform->SetAttribute("name", obj.second->m_path->c_str());
       //position->SetText(1.23);
 
 
-      transform = saveTransform(xmlDoc, obj.second);
-      transform = saveTransform(xmlDoc, obj.second);
+      transform = saveTransform(xmlDoc, &obj.second->m_transform);
       object->InsertEndChild(mesh);
       object->InsertEndChild(transform);
       object->InsertEndChild(material);
@@ -472,6 +472,12 @@ bool Scene::save(std::string as)
       pScene->InsertEndChild(lightElement);
     }
   }
+  for (auto& camera : m_Camera)
+  {
+    XMLElement * cameraElement = saveCamera(xmlDoc, camera.second);
+    cameraElement->SetAttribute("name", camera.first.c_str());
+    pScene->InsertEndChild(cameraElement);
+  }
   xmlDoc.InsertFirstChild(pScene);
 
   if (as == "")
@@ -485,9 +491,9 @@ bool Scene::save(std::string as)
   return true;
 }
 
-XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
+XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Transform *transform)
 {
-  XMLElement * transform = xmlDoc.NewElement("transform");
+  XMLElement * result = xmlDoc.NewElement("transform");
 
   XMLElement * position = xmlDoc.NewElement("position");
   XMLElement * rotation = xmlDoc.NewElement("rotation");
@@ -498,9 +504,9 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
     XMLElement * X = xmlDoc.NewElement("X");
     XMLElement * Y = xmlDoc.NewElement("Y");
     XMLElement * Z = xmlDoc.NewElement("Z");
-    X->SetText(object->m_transform.position.x);
-    Y->SetText(object->m_transform.position.y);
-    Z->SetText(object->m_transform.position.z);
+    X->SetText(transform->position.x);
+    Y->SetText(transform->position.y);
+    Z->SetText(transform->position.z);
     position->InsertEndChild(X);
     position->InsertEndChild(Y);
     position->InsertEndChild(Z);
@@ -510,9 +516,9 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
     XMLElement * X = xmlDoc.NewElement("X");
     XMLElement * Y = xmlDoc.NewElement("Y");
     XMLElement * Z = xmlDoc.NewElement("Z");
-    X->SetText(object->m_transform.rotation.x);
-    Y->SetText(object->m_transform.rotation.y);
-    Z->SetText(object->m_transform.rotation.z);
+    X->SetText(transform->rotation.x);
+    Y->SetText(transform->rotation.y);
+    Z->SetText(transform->rotation.z);
     rotation->InsertEndChild(X);
     rotation->InsertEndChild(Y);
     rotation->InsertEndChild(Z);
@@ -522,19 +528,19 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
     XMLElement * X = xmlDoc.NewElement("X");
     XMLElement * Y = xmlDoc.NewElement("Y");
     XMLElement * Z = xmlDoc.NewElement("Z");
-    X->SetText(object->m_transform.scale.x);
-    Y->SetText(object->m_transform.scale.y);
-    Z->SetText(object->m_transform.scale.z);
+    X->SetText(transform->scale.x);
+    Y->SetText(transform->scale.y);
+    Z->SetText(transform->scale.z);
     scale->InsertEndChild(X);
     scale->InsertEndChild(Y);
     scale->InsertEndChild(Z);
   }
 
-  transform->InsertEndChild(position);
-  transform->InsertEndChild(rotation);
-  transform->InsertEndChild(scale);
+  result->InsertEndChild(position);
+  result->InsertEndChild(rotation);
+  result->InsertEndChild(scale);
 
-  return transform;
+  return result;
 }
 
 tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight * light)
@@ -577,6 +583,15 @@ tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight 
   result->InsertEndChild(ambient);
   result->InsertEndChild(diffuse);
   result->InsertEndChild(specular);
+  return result;
+}
+
+tinyxml2::XMLElement* Scene::saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera)
+{
+  XMLElement* result = xmlDoc.NewElement("camera");
+  auto transform = saveTransform(xmlDoc, &camera->transform);
+  result->InsertEndChild(transform);
+
   return result;
 }
 
@@ -634,14 +649,25 @@ glm::vec3 Scene::loadVec3(tinyxml2::XMLElement& element, const char* name)
   return result;
 }
 
-CCamera* Scene::loadCamera(tinyxml2::XMLElement& element)
+void Scene::loadCamera(tinyxml2::XMLElement* element)
 {
   CCamera *result;
-  XMLElement * camera = element.FirstChildElement("camera");
+  const char* name = element->Attribute("name");
+  if (name == nullptr)
+  {
+    //log it
+    return;
+  }
+  XMLElement * transform = element->FirstChildElement("transform");
 
   //GET POSITION
-  result->transform.position = loadVec3(*camera, "position");
-  return nullptr;
+  auto position = loadVec3(*transform, "position");
+  //GET ROTATION
+  auto rotation = loadVec3(*transform, "rotation");
+
+  result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
+  
+  m_Camera[name] = result;
 }
 
 bool Scene::load(std::string name = "default.xml")
@@ -679,6 +705,17 @@ bool Scene::load(std::string name = "default.xml")
 	}
 
   //XMLElement* technique = pScene->FirstChildElement("technique");
+
+  XMLElement * cameras = pScene->FirstChildElement("camera");
+  if (cameras == nullptr) return false;
+  while (cameras != nullptr)
+  {
+    loadCamera(cameras);
+    cameras = cameras->NextSiblingElement("camera");
+  }
+
+  m_CurrentCamera = m_Camera.find("main");
+  assert(m_CurrentCamera != m_Camera.end());
 
   return true;
 }

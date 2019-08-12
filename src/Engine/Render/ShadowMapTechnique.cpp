@@ -92,7 +92,7 @@ void ShadowMapping::DepthPass()
 
 void ShadowMapping::RenderPass()
 {
-  auto camera = m_Scene->getCamera();
+  auto camera = m_Scene->getCurrentCamera();
 
   Pipeline::instance()->view = camera->getViewMatrix();
   Pipeline::instance()->projection = camera->getProjectionMatrix();
@@ -129,7 +129,7 @@ void ShadowMapping::RenderDepth(Object* object)
 
 void ShadowMapping::RenderOpaque(Object* object)
 {
-  auto camera = m_Scene->getCamera();
+  auto camera = m_Scene->getCurrentCamera();
   if (!object->m_transparent && (object->visible()) && 
     glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
   {
@@ -161,7 +161,7 @@ void ShadowMapping::RenderTransparent(Object* object)
     program->setUniformValue(lightPos, "lightPos");
     m_Scene->setupLights(object);
 
-    object->draw(m_Scene->getCamera());
+    object->draw(m_Scene->getCurrentCamera());
   }
 }
 

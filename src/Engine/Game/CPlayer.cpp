@@ -72,7 +72,7 @@ void CPlayer::attachCamera(CCamera *camera)
   GameObject::m_Camera = camera;
 }
 
-CCamera* CPlayer::getCamera()
+CCamera* CPlayer::getCurrentCamera()
 {
   return m_Camera;
 }

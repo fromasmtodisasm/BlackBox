@@ -27,7 +27,8 @@ using ObjecstList = std::multimap<std::string, Object*>;
 using DirectionLightList = std::map<std::string, DirectionLight*>;
 using PointLightList = std::map<std::string, PointLight*>;
 using SpotLightList = std::map<std::string, SpotLight*>;
-
+using CameraList = std::map<std::string, CCamera*>;
+using CameraListIt = std::map<std::string, CCamera*>::iterator;
 struct ForEachObjectSink
 {
   virtual bool OnObjectFound(Object* object) = 0;
@@ -54,7 +55,8 @@ private:
   PointLightList m_PointLights;
   SpotLightList m_SpotLights;
 
-  CCamera *m_Camera;
+  CameraList m_Camera;
+  CameraListIt m_CurrentCamera;
   bool lighting;
 	bool inverse_visibility = true;
 	decltype(m_Objects)::iterator selected_object_it;
@@ -76,19 +78,20 @@ public:
   void addObject(std::string name, Object *object);
   Object *getObject(std::string name);
   int numObjects();
-  void setCamera(CCamera *camera);
-  CCamera *getCamera();
+  void setCamera(std::string name, CCamera *camera);
+  CCamera *getCurrentCamera();
   void update(float dt);
   bool save(std::string as ="");
-  tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Object *object);
+  tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Transform *transform);
   //tinyxml2::XMLElement *saveVec3(tinyxml2::XMLDocument &xmlDoc, glm::vec3 &);
   tinyxml2::XMLElement *saveLight(tinyxml2::XMLDocument &xmlDoc, BaseLight * light);
+  tinyxml2::XMLElement *saveCamera(tinyxml2::XMLDocument &xmlDoc, CCamera * camera);
   tinyxml2::XMLElement* saveVec3(tinyxml2::XMLDocument& xmlDoc, glm::vec3& color, const char* name);;
   tinyxml2::XMLElement* saveFloat(tinyxml2::XMLDocument& xmlDoc, float value, const char* name);;
   tinyxml2::XMLElement *saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object);
   Transform loadTransform(tinyxml2::XMLElement &object);
   glm::vec3 loadVec3(tinyxml2::XMLElement &element, const char* name);
-  CCamera* loadCamera(tinyxml2::XMLElement& element);
+  void loadCamera(tinyxml2::XMLElement* element);
   bool load(std::string name);
   GLint getRenderTarget();
   void setupLights(Object* object);

@@ -96,26 +96,21 @@ bool CGame::init(IEngine *pSystem)  {
 		m_Log->AddLog("[FAILED] Failed init objects\n");
 		return false;
 	}
-	//m_Log->AddLog("[OK] Objects inited\n");
-	m_Console->PrintLine("[OK] Objects inited\n");
-  int w = 3840, h = 2160;
+  // Set scene before camera, camera setted to active scene in world
+  m_World->setScene(m_scene);
  
-  gui = new GameGUI();
-  gui->game = this;
-
   glm::vec3 pos = glm::vec3(0,0,0);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
-  m_camera1 = new CCamera(
-    pos
-  );
+  m_camera1 = m_World->getActiveScene()->getCurrentCamera();
 	camControl = new CameraController(m_camera1);
 
   m_inputHandler->AddEventListener(this);
 
+  gui = new GameGUI();
+  gui->game = this;
 
-  // Set scene before camera, camera setted to active scene in world
-  m_World->setScene(m_scene);
-  m_World->setCamera(m_camera1);
+
+  //m_World->setCamera(m_camera1);
   m_active_camera = m_camera1;
   initPlayer();
   m_inputHandler->mouseLock(true);
@@ -163,6 +158,7 @@ bool CGame::update() {
 
     render();
 		m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+    m_active_camera = m_World->getActiveScene()->getCurrentCamera();
 		drawHud(fps);
     m_Window->swap();
   }
@@ -335,7 +331,7 @@ void CGame::render()
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;
   int w = m_Window->getWidth();
   int h = m_Window->getHeight();
-  m_World->getActiveScene()->m_Camera->Ratio = ((float)w)/ h;
+  m_World->getActiveScene()->getCurrentCamera()->Ratio = ((float)w)/ h;
 
   //m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);

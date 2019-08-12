@@ -19,5 +19,6 @@ public:
   Scene *currentScene();
 	void nextScene();
 	void prevScene();
+  bool exist(std::string scene);
 };
 
