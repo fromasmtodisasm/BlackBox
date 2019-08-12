@@ -1,5 +1,5 @@
 <scene>
-    <object name="BMW" type="object">
+    <object name="BMW" type="object" visible="true" transparent="false">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -20,12 +20,12 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="MyPlayer" type="player">
+    <object name="MyPlayer" type="player" visible="true" transparent="false">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
             <position>
                 <X>0</X>
-                <Y>95.229584</Y>
+                <Y>74.798836</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -41,7 +41,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object">
+    <object name="brick_normal_box" type="object" visible="true" transparent="false">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -62,7 +62,7 @@
         </transform>
         <material name="specular_box"/>
     </object>
-    <object name="light" type="object">
+    <object name="light" type="object" visible="false" transparent="false">
         <mesh name="res/geom/cube.obj"/>
         <transform>
             <position>
@@ -83,7 +83,7 @@
         </transform>
         <material name="light"/>
     </object>
-    <object name="plane" type="object">
+    <object name="plane" type="object" visible="false" transparent="false">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -104,7 +104,7 @@
         </transform>
         <material name="chess_floor"/>
     </object>
-    <object name="sphere" type="object">
+    <object name="sphere" type="object" visible="false" transparent="false">
         <mesh name="res/geom/sphere.obj"/>
         <transform>
             <position>

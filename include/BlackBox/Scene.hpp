@@ -81,6 +81,7 @@ public:
   void setCamera(std::string name, CCamera *camera);
   CCamera *getCurrentCamera();
   void update(float dt);
+  void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene);
   bool save(std::string as ="");
   tinyxml2::XMLElement *saveTransform(tinyxml2::XMLDocument &xmlDoc, Transform *transform);
   //tinyxml2::XMLElement *saveVec3(tinyxml2::XMLDocument &xmlDoc, glm::vec3 &);

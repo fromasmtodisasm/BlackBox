@@ -415,6 +415,34 @@ void Scene::update(float dt)
   }
 }
 
+void Scene::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene)
+{
+  XMLElement* object = xmlDoc.NewElement("object");
+  XMLElement* mesh = xmlDoc.NewElement("mesh");
+  XMLElement* material = xmlDoc.NewElement("material");;
+  XMLElement* transform;
+
+  //XMLElement * texture = xmlDoc.NewElement("texture");
+  std::string objectName = objectManager->getPathByPointer(obj.second);
+  object->SetAttribute("name", obj.first.c_str());
+  const char* objType = nullptr;
+  object->SetAttribute("type", obj.second->type.c_str());
+  object->SetAttribute("visible", obj.second->visible());
+  object->SetAttribute("transparent", obj.second->m_transparent);
+  mesh->SetAttribute("name", obj.second->m_path.c_str());
+  material->SetAttribute("name", obj.second->m_Material->name->c_str());
+  //transform->SetAttribute("name", obj.second->m_path->c_str());
+  //position->SetText(1.23);
+
+
+  transform = saveTransform(xmlDoc, &obj.second->m_transform);
+  object->InsertEndChild(mesh);
+  object->InsertEndChild(transform);
+  object->InsertEndChild(material);
+  pScene->InsertEndChild(object);
+  //object->InsertEndChild(mesh);
+}
+
 bool Scene::save(std::string as)
 {
   std::stringstream sceneName;
@@ -425,30 +453,7 @@ bool Scene::save(std::string as)
 
   for (auto &obj : m_Objects)
   {
-    {
-      XMLElement * object = xmlDoc.NewElement("object");
-      XMLElement * mesh = xmlDoc.NewElement("mesh");
-      XMLElement * material = xmlDoc.NewElement("material");;
-      XMLElement * transform;
-
-      //XMLElement * texture = xmlDoc.NewElement("texture");
-      std::string objectName = objectManager->getPathByPointer(obj.second);
-      object->SetAttribute("name", obj.first.c_str());
-      const char* objType = nullptr;
-      object->SetAttribute("type", obj.second->type.c_str());
-      mesh->SetAttribute("name", obj.second->m_path.c_str());
-      material->SetAttribute("name", obj.second->m_Material->name->c_str());
-      //transform->SetAttribute("name", obj.second->m_path->c_str());
-      //position->SetText(1.23);
-
-
-      transform = saveTransform(xmlDoc, &obj.second->m_transform);
-      object->InsertEndChild(mesh);
-      object->InsertEndChild(transform);
-      object->InsertEndChild(material);
-      pScene->InsertEndChild(object);
-      //object->InsertEndChild(mesh);
-    }
+    saveObject(xmlDoc, objectManager, obj, pScene);
   }
 
   for (auto& light : m_PointLights)
