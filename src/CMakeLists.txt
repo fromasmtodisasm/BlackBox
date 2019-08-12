@@ -99,7 +99,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
   #Render folder
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CBaseShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CRender.cpp
@@ -107,6 +106,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/HdrTechnique.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
@@ -116,6 +116,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/TechniqueManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp

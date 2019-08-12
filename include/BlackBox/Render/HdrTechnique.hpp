@@ -35,6 +35,8 @@ private:
   ICVar* exposure;
   ICVar* enabled;
 
+  bool inited = false;
+
   // Inherited via IPostProcessor
   virtual void Do(unsigned int texture) override;
 };

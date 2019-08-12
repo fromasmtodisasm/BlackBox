@@ -3,6 +3,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <process.h>
 
@@ -496,10 +497,16 @@ bool SceneCommand::load(CommandDesc& cd)
 		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::HDR_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
 		//sceneBuffer->create();
 		//scene->setRenderTarget(sceneBuffer);
-		scene->setCamera("main", new CCamera());
+    auto tech = TechniqueManager::get("hdr");
+    tech->Init(m_World->getActiveScene(), nullptr);
+    scene->setTechnique(tech);
+
+		//scene->setCamera("main", new CCamera());
 		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 		player->attachCamera(scene->getCurrentCamera());
 		player->setGame(game);
+    game->setPlayer(player);
+    return true;
 	}
 	return false;
 }

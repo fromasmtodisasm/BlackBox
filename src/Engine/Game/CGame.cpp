@@ -12,6 +12,7 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/HdrTechnique.hpp>
+#include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/Utils.hpp>
 
 #include <imgui-SFML.h>
@@ -296,6 +297,8 @@ bool CGame::loadScene() {
     return false;
   if (!SceneManager::init(m_Console->GetCVar("g_scene")->GetString()))
     return false;
+
+  TechniqueManager::init();
 
   m_scene = defaultScene;
   return m_scene != nullptr;

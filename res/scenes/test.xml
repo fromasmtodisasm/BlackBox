@@ -185,9 +185,9 @@
     <camera name="main">
         <transform>
             <position>
-                <X>113.35958</X>
-                <Y>64.49044</Y>
-                <Z>-10.507963</Z>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
             </position>
             <rotation>
                 <X>-29.75</X>
