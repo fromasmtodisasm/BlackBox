@@ -70,6 +70,11 @@ Scene *SceneManager::getScene(string scene)
   return result;
 }
 
+void SceneManager::removeScene(std::string scene)
+{
+  cache.erase(scene_path->GetString() + scene);
+}
+
 Scene* SceneManager::currentScene()
 {
 	return current_scene_it->second;

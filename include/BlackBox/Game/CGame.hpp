@@ -41,7 +41,6 @@ private:
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
-  CCamera *m_camera1, *m_camera2, *m_active_camera;
   CPlayer *m_player = nullptr;
 	CameraController *camControl;
   Scene *m_scene;

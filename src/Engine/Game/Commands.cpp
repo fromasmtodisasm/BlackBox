@@ -486,6 +486,7 @@ bool SceneCommand::load(CommandDesc& cd)
 	//MessageBox(NULL, "Save scene", "scene name", MB_OKCANCEL);
 	Scene *scene;
 	std::string path = wstr_to_str(cd.args[1]);
+  SceneManager::instance()->removeScene(path);
 	if ((scene = SceneManager::instance()->getScene(path)) != nullptr)
 	{
 		/*
@@ -496,6 +497,7 @@ bool SceneCommand::load(CommandDesc& cd)
 		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::HDR_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
 		//sceneBuffer->create();
 		//scene->setRenderTarget(sceneBuffer);
+    m_World->setScene(scene);
     auto tech = TechniqueManager::get("hdr");
     tech->Init(m_World->getActiveScene(), nullptr);
     scene->setTechnique(tech);

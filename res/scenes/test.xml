@@ -25,7 +25,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>74.798836</Y>
+                <Y>9.6492796</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -83,7 +83,7 @@
         </transform>
         <material name="light"/>
     </object>
-    <object name="plane" type="object" visible="false" transparent="false">
+    <object name="plane" type="object" visible="true" transparent="false">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -143,13 +143,13 @@
     <camera name="main">
         <transform>
             <position>
-                <X>93.4543</X>
-                <Y>15</Y>
-                <Z>30.084194</Z>
+                <X>159.74715</X>
+                <Y>155.87123</Y>
+                <Z>-182.43317</Z>
             </position>
             <rotation>
-                <X>-9.5</X>
-                <Y>-146.5</Y>
+                <X>-28.5</X>
+                <Y>-582.25</Y>
                 <Z>-4.3160208e+08</Z>
             </rotation>
             <scale>

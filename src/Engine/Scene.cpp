@@ -49,9 +49,9 @@ void Scene::loadObject(XMLElement *object)
   objectType = object->Attribute("type");
   if (objectType == nullptr)
     objectType = "object";
-	if (object->Attribute("transparent"))
+	if (object->BoolAttribute("transparent"))
 		objectTransparent = true;
-	if (object->Attribute("visible"))
+	if (object->BoolAttribute("visible"))
 		objectVisible = true;
   mesh = object->FirstChildElement("mesh");
   if (mesh == nullptr)

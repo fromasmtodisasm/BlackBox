@@ -73,9 +73,6 @@ CGame::CGame(std::string title) :
   m_Log(nullptr),
   m_ScreenShader(nullptr),
   m_Window(nullptr),
-  m_active_camera(nullptr),
-  m_camera1(nullptr),
-  m_camera2(nullptr),
   m_inputHandler(nullptr),
   m_player(nullptr),
   m_pSystem(nullptr),
@@ -126,8 +123,6 @@ bool CGame::init(IEngine *pSystem)  {
  
   glm::vec3 pos = glm::vec3(0,0,0);//0, player_pos.y + 3, 0);
   // create an camera looking at the light
-  m_camera1 = m_World->getActiveScene()->getCurrentCamera();
-	camControl = new CameraController(m_camera1);
 
   m_inputHandler->AddEventListener(this);
 
@@ -137,7 +132,6 @@ bool CGame::init(IEngine *pSystem)  {
 #endif // GUI
 
   //m_World->setCamera(m_camera1);
-  m_active_camera = m_camera1;
   initPlayer();
   m_inputHandler->mouseLock(true);
 
@@ -184,7 +178,7 @@ bool CGame::update() {
 
     render();
 		m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
-    m_active_camera = m_World->getActiveScene()->getCurrentCamera();
+    //m_active_camera = m_World->getActiveScene()->getCurrentCamera();
 		drawHud(fps);
     m_Window->swap();
   }
@@ -261,16 +255,23 @@ void CGame::drawHud(float fps)
 		m_Font->SetYPos(18);
 		auto& text = info.text;
 		auto& color = info.color;
+    auto camera = m_World->getActiveScene()->getCurrentCamera();
 
+    auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
 		info.AddLine("FPS: " + std::to_string(fps));
 		info.AddLine("NUM OBJECTS: " + std::to_string(num_objects));
 		info.AddLine("Current mode: " + mode);
 		info.AddLine("Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
 		info.AddLine("Active scene: " + m_World->getActiveScene()->name);
 		info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
-		info.AddLine("Camera speed: " + std::to_string(m_active_camera->MovementSpeed->GetFVal()));
-    auto camPos = m_active_camera->getPosition();
-    auto camRot = m_active_camera->getRotation();
+		info.AddLine("    visible: " + std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
+    info.AddLine("    Pos: " +
+      std::to_string(objPos.x) + ", " +
+      std::to_string(objPos.y) + ", " +
+      std::to_string(objPos.z) + "; ");
+		info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
+    auto camPos = camera->getPosition();
+    auto camRot = camera->getRotation();
 		auto pos = "Pos: " + 
 			std::to_string(camPos.x) + ", " +
 			std::to_string(camPos.y) + ", " +
@@ -372,8 +373,8 @@ void CGame::setPlayer(CPlayer* player)
 
 void CGame::setCamera(CCamera* camera)
 {
-	m_active_camera = camera;
-	m_World->setCamera(camera);
+	//m_active_camera = camera;
+	//m_World->setCamera(camera);
 }
 
 extern "C" IGame *CreateIGame(const char *title) {
@@ -440,7 +441,7 @@ void CGame::gotoGame()
 {
 	if (m_player != nullptr)
 	{
-    m_active_camera->mode = CCamera::Mode::FPS;
+    m_World->getActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
     m_inputHandler->mouseLock(true);
 		m_Console->ShowConsole(false);
@@ -475,7 +476,7 @@ bool CGame::initPlayer()
   }
   if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
   {
-    m_player->attachCamera(m_active_camera);
+    m_player->attachCamera(m_World->getActiveScene()->getCurrentCamera());
     m_player->setGame(this);
     return true;
   }
@@ -488,6 +489,7 @@ bool CGame::FpsInputEvent(sf::Event& event)
 	if (m_Console->IsOpened())
 		return false;
   */
+  auto camera = m_World->getActiveScene()->getCurrentCamera();
   switch (event.type)
   {
   case sf::Event::KeyPressed:
@@ -501,21 +503,21 @@ bool CGame::FpsInputEvent(sf::Event& event)
     case sf::Keyboard::Backspace:
       return true;
     case sf::Keyboard::Space:
-      m_active_camera->mode = CCamera::Mode::FLY;
+      camera->mode = CCamera::Mode::FLY;
       m_Mode = Mode::FLY;
       return true;
     case sf::Keyboard::Escape:
       gotoMenu();
       return true;
 		case sf::Keyboard::P:
-			m_active_camera->MovementSpeed->Set(m_active_camera->MovementSpeed->GetFVal() + 5.0f);
+			camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
 			return true;
 		case sf::Keyboard::E:
 			//m_inputHandler->mouseLock(false);
 			m_Mode = EDIT;
 			return true;
 		case sf::Keyboard::M:
-			m_active_camera->MovementSpeed->Set(m_active_camera->MovementSpeed->GetFVal() + 5.0f);
+			camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
 			return true;
 		case sf::Keyboard::B:
 			culling = !culling;

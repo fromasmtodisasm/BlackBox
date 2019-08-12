@@ -18,6 +18,7 @@ public:
   static SceneManager *instance();
   static bool init(const char *scene);
   Scene *getScene(std::string scene);
+  void removeScene(std::string scene);
   Scene *currentScene();
 	void nextScene();
 	void prevScene();
