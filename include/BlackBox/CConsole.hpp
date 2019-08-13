@@ -82,6 +82,12 @@ struct CommandDesc
 	{
 
 	}
+  std::wstring get(int i)
+  {
+    if (i < args.size())
+      return args[i];
+    return std::wstring();
+  }
 };
 
 class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSink

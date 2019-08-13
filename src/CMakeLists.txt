@@ -16,8 +16,6 @@ elseif(GLEW_LOADER)
   find_package(GLEW REQUIRED)
   add_definitions(-DGLEW_LOADER)
 endif()
-add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
-add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/nvtt nvtt)
 find_package(OpenGL REQUIRED)
@@ -51,6 +49,7 @@ include_directories(
 ###################################################
 add_library(${PROJECT_NAME})
 if (USE_SFML)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/CSFMLWindow.cpp
@@ -67,6 +66,13 @@ else()
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+endif()
+
+if (USE_GLM)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
+  target_link_libraries(${PROJECT_NAME} glm)
+  add_definitions(-DUSE_GLM)
+
 endif()
 
 
@@ -86,6 +92,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/GameTagPoints.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
   #Geometry folder
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
@@ -219,7 +226,6 @@ if (GLAD_LOADER)
 elseif(GLEW_LOADER)
   target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARY})
 endif()
-target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} tinyxml2)
 #target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})

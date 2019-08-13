@@ -14,10 +14,11 @@
 	#define IRENDER_API
 #endif
 
+#include <BlackBox/MathHelper.hpp>
+
 struct IEngine;
 struct IWindow;
 struct IFont;
-struct Vec3;
 class CCamera;
 
 //////////////////////////////////////////////////////////////////////////

@@ -24,11 +24,16 @@
 #include <memory>
 #include <stack>
 
+//forward declarations
+//////////////////////////////////////////////////////////////////////
 using string = std::string;
 class EventListener; 
 class GameGUI;
 class Scene;
 class SceneManager;
+class CTagPoint;
+
+typedef std::multimap<string, CTagPoint*> TagPointMap;
 
 class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
 {
@@ -82,6 +87,8 @@ private:
 	int currPP = 0;
 	//=======================
   ICVar* g_scene;
+
+  TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 
   enum Mode
   {
@@ -157,6 +164,12 @@ public:
 
 	// Inherited via IGame
 	virtual float getTime() override;
+
+  // tagpoint management functions
+  ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
+  ITagPoint* GetTagPoint(const string& name);
+  void RemoveTagPoint(ITagPoint* pPoint);
+  bool RenameTagPoint(const string& oldname, const string& newname);
 
 };
 

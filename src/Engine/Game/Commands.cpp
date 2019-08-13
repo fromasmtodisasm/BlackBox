@@ -5,6 +5,7 @@
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/IMarkers.hpp>
 #include <process.h>
 
 class BaseCommand : public IEditCommand
@@ -547,6 +548,59 @@ bool SceneCommand::activate(CommandDesc& cd)
 	return false;
 }
 //*******************************************************
+class TagPointCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	TagPointCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		auto obj = m_World->getActiveScene()->selectedObject()->second;
+		auto args_it = cd.args.begin();
+		if (cd.args.size() == 2)
+		{
+      auto subcmd = wstr_to_str(cd.get(0));
+      if (subcmd == "create")
+      {
+        auto tag = wstr_to_str(cd.get(1));
+        if (tag.length() == 0) return false;
+        game->CreateTagPoint(tag, m_World->getActiveScene()->getCurrentCamera()->getPosition(), m_World->getActiveScene()->getCurrentCamera()->getRotation());
+        return true;
+      }
+      else if (subcmd == "goto")
+      {
+        auto tag = wstr_to_str(cd.get(1));
+        if (tag.length() == 0) return false;
+        ITagPoint *tag_point = game->GetTagPoint(tag);
+        if (tag_point == nullptr)
+        {
+          GetIEngine()->getIConsole()->PrintLine("Error, tagpoint [%s] not exist", tag.c_str());
+          return false;
+        }
+        Vec3 pos, ang;
+        tag_point->GetPos(pos);
+        tag_point->GetAngles(ang);
+        m_World->getActiveScene()->getCurrentCamera()->setPosition(pos);
+        m_World->getActiveScene()->getCurrentCamera()->setRotation(ang);
+        m_World->getActiveScene()->getCurrentCamera()->updateCameraVectors();
+        return true;
+      }
+			
+			auto pos = unpack_vector(args_it);
+			obj->move(pos);
+			return true;
+		}
+		return false;
+	}
+};
+
+TagPointCommand::TagPointCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
+//*******************************************************
 
 //*******************************************************
 
@@ -566,4 +620,5 @@ void CGame::initCommands()
 	m_Console->AddCommand("shader", new ShaderCommand(this));
 	m_Console->AddCommand("camera", new CameraCommand(this));
 	m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
+	m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
 }
