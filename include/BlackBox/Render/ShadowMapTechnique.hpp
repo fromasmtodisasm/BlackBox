@@ -4,7 +4,13 @@
 #include <BlackBox/Scene.hpp>
 
 
-class ShadowMapping : public ITechnique, public ForEachObjectSink
+class ShadowMapping 
+  :
+  public ITechnique, 
+  public ForEachObjectSink,
+  public ForEachDirectionLightSink,
+  public ForEachPointLightSink,
+  public ForEachSpotLightSink
 {
   enum Pass
   {
@@ -27,8 +33,17 @@ public:
   virtual bool PreRenderPass() override;
   virtual bool OnRenderPass(int pass) override;
   virtual void PostRenderPass() override;
+  virtual int GetFrame() override;
 
+  // Inherited via ForEachObjectSink
   virtual bool OnObjectFound(Object* object) override;
+
+  // Inherited via ForEachDirectionLightSink
+  virtual bool OnLightFound(DirectionLight* light) override;
+  // Inherited via ForEachPointLightSink
+  virtual bool OnLightFound(PointLight* light) override;
+  // Inherited via ForEachSpotLightSink
+  virtual bool OnLightFound(SpotLight* light) override;
 
 private:
   void DepthPass();
@@ -40,8 +55,9 @@ private:
   void OnDepthPass();
   void OnRenderPass();
   void SetupLights(Object *object);
-  void SetupDirectionLight();
-  void SetupPointLight();
+  inline void SetupDirectionLights();
+  inline void SetupPointLights();
+  inline void SetupSpotLights();
 private:
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
@@ -62,7 +78,6 @@ private:
 
   Pass renderPass;
   Stage renderStage;
-
-  // Inherited via ITechnique
-  virtual int GetFrame() override;
+  //////////////////////////
+  int currentLight = 0;
 };

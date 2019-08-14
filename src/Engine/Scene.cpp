@@ -776,6 +776,33 @@ void Scene::ForEachObject(ForEachObjectSink* callback)
 
 }
 
+void Scene::ForEachDirectionLight(ForEachDirectionLightSink* callback)
+{
+  for (const auto& light : m_DirectionLight)
+  {
+    if (!callback->OnLightFound(light.second))
+      break;
+  }
+}
+
+void Scene::ForEachPointLight(ForEachPointLightSink* callback)
+{
+  for (const auto& light : m_PointLights)
+  {
+    if (!callback->OnLightFound(light.second))
+      break;
+  }
+}
+
+void Scene::ForEachSpotLight(ForEachSpotLightSink* callback)
+{
+  for (const auto& light : m_SpotLights)
+  {
+    if (!callback->OnLightFound(light.second))
+      break;
+  }
+}
+
 void Scene::setTechnique(ITechnique* technique)
 {
   m_Technique = technique;

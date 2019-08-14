@@ -29,9 +29,25 @@ using PointLightList = std::map<std::string, PointLight*>;
 using SpotLightList = std::map<std::string, SpotLight*>;
 using CameraList = std::map<std::string, CCamera*>;
 using CameraListIt = std::map<std::string, CCamera*>::iterator;
+
 struct ForEachObjectSink
 {
   virtual bool OnObjectFound(Object* object) = 0;
+};
+
+struct ForEachDirectionLightSink
+{
+  virtual bool OnLightFound(DirectionLight* light) = 0;
+};
+
+struct ForEachPointLightSink
+{
+  virtual bool OnLightFound(PointLight* light) = 0;
+};
+
+struct ForEachSpotLightSink
+{
+  virtual bool OnLightFound(SpotLight* light) = 0;
 };
 
 class Scene
@@ -106,6 +122,9 @@ public:
 
 	void setPostProcessor(IPostProcessor* postProcessor);
   void ForEachObject(ForEachObjectSink* callback);
+  void ForEachDirectionLight(ForEachDirectionLightSink* callback);
+  void ForEachPointLight(ForEachPointLightSink* callback);
+  void ForEachSpotLight(ForEachSpotLightSink* callback);
   void setTechnique(ITechnique* technique);
 
 };
