@@ -694,6 +694,10 @@ void Scene::loadCamera(tinyxml2::XMLElement* element)
   m_Camera[name] = result;
 }
 
+void Scene::loadTagPoint(tinyxml2::XMLElement* element)
+{
+}
+
 bool Scene::load(std::string name = "default.xml")
 {
   XMLDocument xmlDoc;
@@ -729,6 +733,19 @@ bool Scene::load(std::string name = "default.xml")
 	}
 
   //XMLElement* technique = pScene->FirstChildElement("technique");
+#ifdef SAVE_LOAD_TAGPOINTS
+  XMLElement * tag_points = pScene->FirstChildElement("tag_points");
+  if (tag_points == nullptr) return false;
+  while (tag_points != nullptr)
+  {
+    loadTagPoint(tag_points);
+    tag_points = tag_points->NextSiblingElement("tagpoint");
+  }
+
+  //m_CurrentCamera = m_Camera.find("main");
+  //assert(m_CurrentCamera != m_Camera.end());
+
+#endif // SAVE_LOAD_TAGPOINTS
 
   XMLElement * cameras = pScene->FirstChildElement("camera");
   if (cameras == nullptr) return false;

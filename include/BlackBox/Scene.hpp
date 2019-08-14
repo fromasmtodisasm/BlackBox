@@ -93,6 +93,7 @@ public:
   Transform loadTransform(tinyxml2::XMLElement &object);
   glm::vec3 loadVec3(tinyxml2::XMLElement &element, const char* name);
   void loadCamera(tinyxml2::XMLElement* element);
+  void loadTagPoint(tinyxml2::XMLElement* element);
   bool load(std::string name);
   GLint getRenderTarget();
   void setupLights(Object* object);
