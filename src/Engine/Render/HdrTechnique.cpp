@@ -18,13 +18,13 @@ bool HdrTechnique::Init(Scene* scene, FrameBufferObject* renderTarget)
 {
   if (inited)
     return true;
+  render = GetIEngine()->getIRender();
   m_Scene = scene;
   exposure = GetIEngine()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
   enabled = GetIEngine()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
   createShader();
   shadowMapping = new ShadowMapping();
-  hdrBuffer = new FrameBufferObject(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
-  hdrBuffer->create();
+  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 0);
 
   inited = true;
   return shadowMapping->Init(scene, hdrBuffer);

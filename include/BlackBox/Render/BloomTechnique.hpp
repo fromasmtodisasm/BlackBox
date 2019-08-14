@@ -8,11 +8,11 @@
 class FrameBufferObject;
 struct ICVar;
 
-class HdrTechnique : public ITechnique, public IPostProcessor
+class BloomTechnique : public ITechnique, public IPostProcessor
 {
 public:
-  HdrTechnique();
-  ~HdrTechnique();
+  BloomTechnique();
+  ~BloomTechnique();
 
   // Inherited via ITechnique
   virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) override;
@@ -20,10 +20,8 @@ public:
   virtual bool OnRenderPass(int pass) override;
 
   virtual int GetFrame() override;
-
-  virtual void Do(unsigned int texture) override;
 private:
-  bool HdrPass();
+  bool BloomPass();
   void createShader();
 
 private:
@@ -39,5 +37,6 @@ private:
 
   bool inited = false;
 
-  IRender* render;
+  // Inherited via IPostProcessor
+  virtual void Do(unsigned int texture) override;
 };

@@ -4,11 +4,18 @@
 #include <iostream>
 using namespace std;
 
-FrameBufferObject::FrameBufferObject(buffer_type type, int width, int height) : type(type), width(width), height(height)
+FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int attachment) 
+  : 
+  type(type),
+  width(width), 
+  height(height),
+  id(-1),
+  rbo(-1),
+  texture(-1)
 {
 }
 
-bool FrameBufferObject::create()
+FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int attachment)
 {
   bool status = true;
   GLint internalFormat, Format;
@@ -16,10 +23,11 @@ bool FrameBufferObject::create()
   GLint wrapS, wrapT;
   GLint dataType;
 
-  glCheck(glGenFramebuffers(1, &id));
+  FrameBufferObject *fbo = new FrameBufferObject(type, width, height, attachment);
+  glCheck(glGenFramebuffers(1, &fbo->id));
 
-  glCheck(glGenTextures(1, &texture));
-  glCheck(glBindTexture(GL_TEXTURE_2D, texture));
+  glCheck(glGenTextures(1, &fbo->texture));
+  glCheck(glBindTexture(GL_TEXTURE_2D, fbo->texture));
   switch (type)
   {
   case FrameBufferObject::DEPTH_BUFFER:
@@ -58,19 +66,19 @@ bool FrameBufferObject::create()
   }
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
+  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fbo->id));
   if (type == SCENE_BUFFER || type == HDR_BUFFER)
   {
-    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0));
-    glCheck(glGenRenderbuffers(1, &rbo));
-    glCheck(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
+    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, fbo->texture, 0));
+    glCheck(glGenRenderbuffers(1, &fbo->rbo));
+    glCheck(glBindRenderbuffer(GL_RENDERBUFFER, fbo->rbo));
     glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
     glCheck(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-    glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
+    glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->rbo));
   }
   else if (type == DEPTH_BUFFER)
   {
-    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0));
+    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fbo->texture, 0));
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
   }
@@ -81,7 +89,7 @@ bool FrameBufferObject::create()
   }
   glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
-  return status;
+  return fbo;
 }
 
 void FrameBufferObject::bind()

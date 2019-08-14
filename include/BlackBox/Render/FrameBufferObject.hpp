@@ -7,25 +7,27 @@ class Texture;
 class FrameBufferObject
 {
 public:
-  enum buffer_type
+  enum BufferType
   {
     DEPTH_BUFFER,
     SCENE_BUFFER,
     HDR_BUFFER,
-  }type = SCENE_BUFFER;
+  };
+
+
+  static FrameBufferObject *create(BufferType type, int width, int height, int attachment);
+  void bind();
+  void unbind();
+  ITexture* getTexture();
+private:
+  FrameBufferObject(BufferType type, int width, int height, int attachment);
+  void createSceneBuffer();
+  void createDepthBuffer();
+public:
   GLuint id;
   GLuint texture;
   GLuint rbo;
   int width;
   int height;
-
-  FrameBufferObject(buffer_type type, int width, int height);
-
-  bool create();
-  void bind();
-  void unbind();
-  ITexture* getTexture();
-private:
-  void createSceneBuffer();
-  void createDepthBuffer();
+  BufferType type;
 };

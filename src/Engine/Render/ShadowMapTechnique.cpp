@@ -22,15 +22,13 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 {
   m_Scene = scene;
   //
-  m_DepthBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::DEPTH_BUFFER, width, height);
-  m_DepthBuffer->create();
+  m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 0);
 
   if (renderTarget == nullptr)
   {
-    m_RenderedScene = new FrameBufferObject(
-      FrameBufferObject::buffer_type::SCENE_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()
+    m_RenderedScene = FrameBufferObject::create(
+      FrameBufferObject::BufferType::SCENE_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 0
     );
-    m_RenderedScene->create();
   }
   else
   {
