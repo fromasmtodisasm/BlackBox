@@ -27,7 +27,10 @@ int main(int argc, char *argv[]) {
   path = getBasePath(string(argv[0]));
   IEngine*pSystem = CreateIEngine(nullptr);
   if (!pSystem->Init())
+  {
+    pSystem->Release();
     return EXIT_FAILURE;
+  }
 	pSystem->getILog()->AddLog("[OK] ISystem created\n");
 	pSystem->getILog()->AddLog("[INFO] Current working directory: %s\n", path.c_str());
   pSystem->Start();
