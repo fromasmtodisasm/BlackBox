@@ -87,6 +87,7 @@ private:
 	int currPP = 0;
 	//=======================
   ICVar* g_scene;
+  ICVar* r_displayinfo;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 
@@ -110,6 +111,7 @@ public:
   bool update() override;
 	void execScripts();
 	void drawHud(float fps);
+  void DisplayInfo(float fps);
   bool run() override;
   void input();
 
@@ -158,6 +160,7 @@ public:
 
 	void drawHud();
 	void initCommands();
+	void initVariables();
 
 	// Inherited via IPreRenderCallback
 	virtual void PreRender() override;

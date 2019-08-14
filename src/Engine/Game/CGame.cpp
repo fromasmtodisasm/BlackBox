@@ -37,6 +37,34 @@
 
 IGame *p_gIGame;
 
+
+struct TextRenderInfo
+{
+  IFont* font;
+  std::vector<std::string> text;
+  glm::vec4 color;
+  TextRenderInfo() : font(nullptr), color(glm::vec4(1.0)){}
+  TextRenderInfo(IFont *f, glm::vec4 c)
+    :
+    font(f), color(c)
+  {
+  }
+  void AddLine(std::string line)
+  {
+    text.push_back(line + '\n');
+  }
+  SDrawTextInfo getDTI()
+  {
+    SDrawTextInfo dti;
+    dti.color[0] = color[0];
+    dti.color[1] = color[1];
+    dti.color[2] = color[2];
+    dti.color[3] = color[3];
+    dti.font = font;
+    return dti;
+  }
+};
+
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
 static IEngine* gISystem = nullptr;
@@ -100,6 +128,7 @@ bool CGame::init(IEngine *pSystem)  {
   
 
 	initCommands();
+	initVariables();
   auto init_cfg = m_Console->GetCVar("game_config");
   if (init_cfg == nullptr)
   {
@@ -197,105 +226,78 @@ void CGame::execScripts()
 
 void CGame::drawHud(float fps)
 {
-	auto num_objects = m_World->getActiveScene()->numObjects();
-	auto line = m_Window->getHeight();
-	auto step = 18;
+  if (r_displayinfo->GetIVal() != 0)
+  {
+    DisplayInfo(fps);
+  }
+  if (m_Console->IsOpened())
+  {
+    m_Console->Draw();
+  }
+}
 
-	std::string mode = m_Mode == MENU ? "MENU"
-		: m_Mode == FPS ? "FPS"
-		: m_Mode == FLY ? "FLY"
-		: "EDIT";
+void CGame::DisplayInfo(float fps)
+{
+  auto num_objects = m_World->getActiveScene()->numObjects();
+  auto line = m_Window->getHeight();
+  auto step = 18;
 
-	glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
-	// Info
-	{
-		struct TextRenderInfo
-		{
-			IFont* font;
-			std::vector<std::string> text;
-			glm::vec4 color;
-			TextRenderInfo() : font(nullptr), color(glm::vec4(1.0)){}
-			TextRenderInfo(IFont *f, glm::vec4 c)
-				:
-				font(f), color(c)
-			{
-			}
-			void AddLine(std::string line)
-			{
-				text.push_back(line + '\n');
-			}
-			SDrawTextInfo getDTI()
-			{
-				SDrawTextInfo dti;
-				dti.color[0] = color[0];
-				dti.color[1] = color[1];
-				dti.color[2] = color[2];
-				dti.color[3] = color[3];
-				dti.font = font;
-				return dti;
-			}
-		};
-		TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
-		SDrawTextInfo dti = info.getDTI();
+  std::string mode = m_Mode == MENU ? "MENU"
+    : m_Mode == FPS ? "FPS"
+    : m_Mode == FLY ? "FLY"
+    : "EDIT";
 
-    //
-    auto render = m_pSystem->getIRender();
-    
-    if (openShadowMap)
-    {
-      /*
-      render->DrawImage(
-        render->GetWidth() / 2, render->GetHeight() / 2, render->GetWidth() / 2, render->GetHeight() / 2,
-        depthBuffer->texture, 0, 0, 0, 0, 0, 0, 0, 1.0);
-      */
-    }
-    //===========
+  glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
+  // Info
 
-		m_Font->SetXPos(0);
-		m_Font->SetYPos(18);
-		auto& text = info.text;
-		auto& color = info.color;
-    auto camera = m_World->getActiveScene()->getCurrentCamera();
+  TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
+  SDrawTextInfo dti = info.getDTI();
 
-    auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
-		info.AddLine("FPS: " + std::to_string(fps));
-		info.AddLine("NUM OBJECTS: " + std::to_string(num_objects));
-		info.AddLine("Current mode: " + mode);
-		info.AddLine("Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
-		info.AddLine("Active scene: " + m_World->getActiveScene()->name);
-		info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
-		info.AddLine("    visible: " + std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
-    info.AddLine("    Pos: " +
-      std::to_string(objPos.x) + ", " +
-      std::to_string(objPos.y) + ", " +
-      std::to_string(objPos.z) + "; ");
-		info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
-    auto camPos = camera->getPosition();
-    auto camRot = camera->getRotation();
-		auto pos = "Pos: " + 
-			std::to_string(camPos.x) + ", " +
-			std::to_string(camPos.y) + ", " +
-			std::to_string(camPos.z) + "; " +
-			"Yaw: " + 
-			std::to_string(camRot.y) + "; " +
-			"Pitch: " + 
-			std::to_string(camRot.x) + "; "
-		;
+  //
+  auto render = m_pSystem->getIRender();
 
-		for (auto& text : info.text)
-		{
-			render->PrintLine(text.c_str(), dti);
-		}
+  //===========
 
-    render->PrintLine("To hide depth buffer press <;>\n", dti);
+  m_Font->SetXPos(0);
+  m_Font->SetYPos(18);
+  auto& text = info.text;
+  auto& color = info.color;
+  auto camera = m_World->getActiveScene()->getCurrentCamera();
 
-		info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
-		render->PrintLine(pos.c_str(), info.getDTI());
-		if (m_Console->IsOpened())
-		{
-			m_Console->Draw();
-		}
-	}
+  auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
+  info.AddLine("FPS: " + std::to_string(fps));
+  info.AddLine("NUM OBJECTS: " + std::to_string(num_objects));
+  info.AddLine("Current mode: " + mode);
+  info.AddLine("Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
+  info.AddLine("Active scene: " + m_World->getActiveScene()->name);
+  info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
+  info.AddLine("    visible: " + std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
+  info.AddLine("    Pos: " +
+    std::to_string(objPos.x) + ", " +
+    std::to_string(objPos.y) + ", " +
+    std::to_string(objPos.z) + "; ");
+  info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
+  auto camPos = camera->getPosition();
+  auto camRot = camera->getRotation();
+  auto pos = "Pos: " +
+    std::to_string(camPos.x) + ", " +
+    std::to_string(camPos.y) + ", " +
+    std::to_string(camPos.z) + "; " +
+    "Yaw: " +
+    std::to_string(camRot.y) + "; " +
+    "Pitch: " +
+    std::to_string(camRot.x) + "; "
+    ;
+
+  for (auto& text : info.text)
+  {
+    render->PrintLine(text.c_str(), dti);
+  }
+
+  render->PrintLine("To hide depth buffer press <;>\n", dti);
+
+  info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
+  render->PrintLine(pos.c_str(), info.getDTI());
 }
 
 bool CGame::run() {

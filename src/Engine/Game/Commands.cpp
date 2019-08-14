@@ -622,3 +622,8 @@ void CGame::initCommands()
 	m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
 	m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
 }
+
+void CGame::initVariables()
+{
+  r_displayinfo = m_Console->CreateVariable("r_displayinfo", 1, 0, "Display info [1/0]");
+}
