@@ -4,6 +4,8 @@
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/IConsole.hpp>
 
+#define SAFE_RELEASE(o) if (o) o->Release();
+
 class CConsole;
 class CRender;
 
