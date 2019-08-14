@@ -71,7 +71,7 @@ bool Texture::load(const char* name)
 {
 	
 	GLenum inputFormat = GL_RGB;
-	GLenum internalFormat = GL_RGB;
+	GLenum internalFormat = GL_SRGB;
 	GLenum inputDataType = GL_UNSIGNED_BYTE;
 	bool hasAlpha = false;
 
@@ -81,7 +81,7 @@ bool Texture::load(const char* name)
 	if (hasAlpha)
 	{
 		inputFormat = GL_RGBA;
-		internalFormat = GL_RGBA;
+		internalFormat = GL_SRGB_ALPHA;
 	}
   glCheck(glGenTextures(1, &id));
   glCheck(glBindTexture(GL_TEXTURE_2D, id));
