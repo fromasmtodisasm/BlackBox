@@ -23,12 +23,22 @@ class SkyBox;
 
 extern Scene *defaultScene;
 
+//////////////////////////////////////////////////////////////////
 using ObjecstList = std::multimap<std::string, Object*>;
+using ObjecstListIt = ObjecstList::iterator;
+
 using DirectionLightList = std::map<std::string, DirectionLight*>;
+using DirectionLightListIt = DirectionLightList::iterator;
+
 using PointLightList = std::map<std::string, PointLight*>;
+using PointLightListIt = PointLightList::iterator;
+
 using SpotLightList = std::map<std::string, SpotLight*>;
+using SpotLightListIt = SpotLightList::iterator;
+
 using CameraList = std::map<std::string, CCamera*>;
 using CameraListIt = std::map<std::string, CCamera*>::iterator;
+//////////////////////////////////////////////////////////////////
 
 struct ForEachObjectSink
 {
@@ -126,6 +136,8 @@ public:
   void ForEachPointLight(ForEachPointLightSink* callback);
   void ForEachSpotLight(ForEachSpotLightSink* callback);
   void setTechnique(ITechnique* technique);
+
+  const PointLightList &GetPointLights();
 
 };
 

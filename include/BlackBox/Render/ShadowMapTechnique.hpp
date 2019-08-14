@@ -24,6 +24,28 @@ class ShadowMapping
     RENDER_TRANSPARENT,
     RENDER_COMPLETE
   };
+  struct BaseLightValues
+  {
+    UniformValue ambient;
+    UniformValue diffuse;
+    UniformValue specular;
+  };
+
+  struct PointLightValues : public BaseLightValues
+  {
+    UniformValue position;
+    UniformValue constant;
+    UniformValue linear;
+    UniformValue quadratic;
+  };
+
+  struct SpotLightValues : public PointLightValues 
+  {
+    UniformValue direction;
+    UniformValue cutOff;
+    UniformValue outerCutOff;
+  };
+
 public:
   ShadowMapping();
   ~ShadowMapping();
@@ -58,6 +80,7 @@ private:
   inline void SetupDirectionLights();
   inline void SetupPointLights();
   inline void SetupSpotLights();
+  void InitLights();
 private:
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
@@ -80,4 +103,8 @@ private:
   Stage renderStage;
   //////////////////////////
   int currentLight = 0;
+
+  UniformValue m_DirectionLight;
+  std::vector<PointLightValues> m_PointLights;
+  std::vector<SpotLightValues> m_SpotLights;
 };

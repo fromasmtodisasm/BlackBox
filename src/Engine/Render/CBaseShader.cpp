@@ -12,6 +12,8 @@
 
 using namespace std;
 
+char* CBaseShaderProgram::buffer = nullptr;
+
 ShaderStatus::ShaderStatus(CShader *shader) :
   m_Shader(shader)
 {
@@ -166,6 +168,7 @@ CBaseShaderProgram::CBaseShaderProgram() : m_Status(this)
 {
   m_Program = glCreateProgram();
   created = true;
+  buffer = new char[BUFFER_SIZE];
 }
 
 CBaseShaderProgram::CBaseShaderProgram(
@@ -174,9 +177,12 @@ CBaseShaderProgram::CBaseShaderProgram(
 {
   m_Vertex = vs;
   m_Fragment = fs;
+  buffer = new char[BUFFER_SIZE];
 }
 
 CBaseShaderProgram::~CBaseShaderProgram() {
+  if (buffer != nullptr)
+    delete[] buffer;
 }
 
 bool CBaseShaderProgram::create() {
@@ -235,6 +241,15 @@ GLint CBaseShaderProgram::getUniformLocation(const char* name)
 GLint CBaseShaderProgram::getUniformLocation(std::string& name)
 {
   return getUniformLocation(name.c_str());
+}
+
+UniformValue CBaseShaderProgram::getUniformValue(const char* name)
+{
+  UniformValue result;
+  auto location = getUniformLocation(name);
+
+  result.location = location;
+  return result;
 }
 
 void CBaseShaderProgram::setUniformValue(int value, const char * format, ...)
@@ -383,5 +398,11 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
 
 GLuint CBaseShaderProgram::get() {
   return m_Program;
+}
+
+const char* CBaseShaderProgram::buildName(const char* format, va_list args)
+{
+  vsprintf(buffer, format, args);
+  return buffer;
 }
 

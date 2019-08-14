@@ -136,6 +136,7 @@ void ShadowMapping::RenderOpaque(Object* object)
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
+    //program->setUniformValue(bLighting, "lightOn");
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
 
@@ -184,6 +185,8 @@ void ShadowMapping::OnRenderPass()
 
 void ShadowMapping::SetupLights(Object *object)
 {
+  if (!bLighting)
+    return;
   currentLight = 0;
   Pipeline::instance()->object = object;
   // direction lights
@@ -210,6 +213,26 @@ void ShadowMapping::SetupPointLights()
 void ShadowMapping::SetupSpotLights()
 {
   m_Scene->ForEachDirectionLight(this);
+}
+
+void ShadowMapping::InitLights()
+{
+  for (const auto& lightit : m_Scene->GetPointLights())
+  {
+    auto light = lightit.second;
+    auto program = m_ShadowMapShader;
+    PointLightValues plv;
+
+
+    //program->getUniformValue("pointLights[%d].position");
+    program->setUniformValue(light->position,   "pointLights[%d].position", currentLight);
+    program->setUniformValue(light->ambient,    "pointLights[%d].ambient", currentLight);
+    program->setUniformValue(light->diffuse,    "pointLights[%d].diffuse", currentLight);
+    program->setUniformValue(light->specular,   "pointLights[%d].specular", currentLight);
+    program->setUniformValue(light->constant,   "pointLights[%d].constant", currentLight);
+    program->setUniformValue(light->linear,     "pointLights[%d].linear", currentLight);
+    program->setUniformValue(light->quadratic,  "pointLights[%d].quadratic", currentLight);
+  }
 }
 
 bool ShadowMapping::OnObjectFound(Object* object)
@@ -268,6 +291,7 @@ bool ShadowMapping::OnLightFound(PointLight* light)
 
 bool ShadowMapping::OnLightFound(SpotLight* light)
 {
+  
   auto program = Pipeline::instance()->object->m_Material->program;
   program->setUniformValue(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");
   program->setUniformValue(m_Scene->getCurrentCamera()->Front, "spotLight.direction");

@@ -808,3 +808,8 @@ void Scene::setTechnique(ITechnique* technique)
   m_Technique = technique;
 }
 
+const PointLightList &Scene::GetPointLights()
+{
+  return m_PointLights;
+}
+
