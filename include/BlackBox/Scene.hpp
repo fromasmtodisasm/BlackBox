@@ -96,7 +96,6 @@ public:
   void loadTagPoint(tinyxml2::XMLElement* element);
   bool load(std::string name);
   GLint getRenderTarget();
-  void setupLights(Object* object);
 
   Material* shadowMapMat;
 

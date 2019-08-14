@@ -220,11 +220,6 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
   return color;
 }
 
-void Scene::setupLights(Object* object)
-{
-
-}
-
 Scene::Scene(std::string name) 
   : 
   lighting(true),
