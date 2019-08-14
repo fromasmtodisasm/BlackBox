@@ -227,14 +227,19 @@ void CBaseShaderProgram::unuse()
     glCheck(glUseProgram(0));
 }
 
-GLint CBaseShaderProgram::getUniformLocation(const char* name)
+GLint CBaseShaderProgram::getUniformLocation(const char* format, ...)
 {
+  va_list ptr;
+  va_start(ptr, format);
+  auto name = buildName(format, ptr);
+  va_end(ptr);
+
   GLint loc = -1;
-  auto it = m_Cache.find(name);
+  auto it = m_Cache.find(format);
   if (it != m_Cache.end())
     loc = it->second;
   else
-    loc = glGetUniformLocation(m_Program, name);
+    loc = glGetUniformLocation(m_Program, format);
   return loc;
 }
 

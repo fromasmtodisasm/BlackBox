@@ -61,45 +61,231 @@ public:
 };
 
 class UniformValue {
+  enum ValueType
+  {
+    INT_VAL,
+    FLOAT_VAL,
+    V1_VAL,
+    V2_VAL,
+    V3_VAL,
+    V4_VAL,
+    M1_VAL,
+    M2_VAL,
+    M3_VAL,
+    M4_VAL
+  };
 public:
   inline void Set(int value)
   {
+    dirty = true;
     glCheck(glUniform1i(location, value));
   }
   inline void Set(float value)
   {
+    dirty = true;
     glCheck(glUniform1f(location, value));
   }
   inline void Set(glm::vec1 value)
   {
+    dirty = true;
     glCheck(glUniform1fv(location, 1, glm::value_ptr(value)));
   }
   inline void Set(glm::vec2 value)
   {
+    dirty = true;
     glCheck(glUniform2fv(location, 1, glm::value_ptr(value)));
   }
   inline void Set(glm::vec3 value)
   {
+    dirty = true;
     glCheck(glUniform3fv(location, 1, glm::value_ptr(value)));
   }
   inline void Set(glm::vec4 value)
   {
+    dirty = true;
     glCheck(glUniform4fv(location, 1, glm::value_ptr(value)));
   }
   inline void Set(glm::mat2 value)
   {
+    dirty = true;
     glCheck(glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(value)));
   }
   inline void Set(glm::mat3 value)
   {
+    dirty = true;
     glCheck(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value)));
   }
   inline void Set(glm::mat4 value)
   {
+    dirty = true;
     glCheck(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value)));
+  }
+  
+
+  inline void* Get(ValueType type, void *res)
+  {
+    value val;
+    int len = 0;
+    switch (type)
+    {
+    case UniformValue::INT_VAL:
+      len = sizeof(int);
+      Get(val.i);
+      break;
+    case UniformValue::FLOAT_VAL:
+      len = sizeof(float);
+      Get(val.f);
+      break;
+    case UniformValue::V1_VAL:
+      len = sizeof(glm::vec1);
+      Get(val.v1);
+      break;
+    case UniformValue::V2_VAL:
+      len = sizeof(glm::vec2);
+      Get(val.v2);
+      break;
+    case UniformValue::V3_VAL:
+      len = sizeof(glm::vec3);
+      Get(val.v3);
+      break;
+    case UniformValue::V4_VAL:
+      len = sizeof(glm::vec4);
+      Get(val.v4);
+      break;
+    case UniformValue::M2_VAL:
+      len = sizeof(glm::mat2);
+      Get(val.m2);
+      break;
+    case UniformValue::M3_VAL:
+      len = sizeof(glm::mat3);
+      Get(val.m3);
+      break;
+    case UniformValue::M4_VAL:
+      len = sizeof(glm::mat4);
+      Get(val.m4);
+      break;
+    default:
+      break;
+    }
+    memcpy(res, &val, len);
+    return res;
+  }
+  inline void Get(int &value)
+  {
+    if (!dirty)
+    {
+      value = val.i;
+    }
+    else
+    {
+      glGetUniformiv(program, location, &value);
+    }
+  }
+  inline void Get(float &value)
+  {
+    if (!dirty)
+    {
+      value = val.f;
+    }
+    else
+    {
+      glGetUniformfv(program, location, &value);
+    }
+  }
+  inline void Get(glm::vec1 &value)
+  {
+    if (!dirty)
+    {
+      value = val.v1;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
+ }
+  inline void Get(glm::vec2 &value)
+  {
+    if (!dirty)
+    {
+      value = val.v2;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
+  }
+  inline void Get(glm::vec3 &value)
+  {
+    if (!dirty)
+    {
+      value = val.v3;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
+  }
+  inline void Get(glm::vec4 &value)
+  {
+    if (!dirty)
+    {
+      value = val.v4;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
+  }
+  inline void Get(glm::mat2 &value)
+  {
+    if (!dirty)
+    {
+      value = val.m2;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
+  }
+  inline void Get(glm::mat3 &value)
+  {
+    if (!dirty)
+    {
+      value = val.m3;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
+  }
+  inline void Get(glm::mat4 &value)
+  {
+    if (!dirty)
+    {
+      value = val.m4;
+    }
+    else
+    {
+      glCheck(glGetUniformfv(program, location, const_cast<float*>(glm::value_ptr(value))));
+    }
   }
 public:
   GLint location;
+  union value
+  {
+    int i;
+    float f;
+    glm::vec1 v1;
+    glm::vec2 v2;
+    glm::vec3 v3;
+    glm::vec4 v4;
+
+    glm::mat2 m2;
+    glm::mat3 m3;
+    glm::mat4 m4;
+  }val;
+  bool dirty;
+  GLint program;
 };
 
 class CBaseShaderProgram {
@@ -129,7 +315,7 @@ public:
   bool link();
   void use();
   void unuse();
-  GLint getUniformLocation(const char* name);
+  GLint getUniformLocation(const char* format, ...);
   GLint getUniformLocation(std::string &name);
   UniformValue getUniformValue(const char* name);
   void setUniformValue(int value, const char *format, ...);
