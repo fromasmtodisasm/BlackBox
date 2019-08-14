@@ -14,3 +14,4 @@ imgui.ini
 screen_shots/*
 out/build
 out/glDebug.txt
+/log.txt
