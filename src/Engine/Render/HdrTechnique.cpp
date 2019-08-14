@@ -68,6 +68,15 @@ void HdrTechnique::createShader()
 	m_ScreenShader->unuse();
 }
 
+bool HdrTechnique::PreRenderPass()
+{
+  return false;
+}
+
+void HdrTechnique::PostRenderPass()
+{
+}
+
 void HdrTechnique::Do(unsigned int texture)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

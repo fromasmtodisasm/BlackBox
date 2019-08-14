@@ -15,12 +15,17 @@ public:
   ~HdrTechnique();
 
   // Inherited via ITechnique
+  /////////////////////////////////////////////////
   virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) override;
 
   virtual bool OnRenderPass(int pass) override;
 
   virtual int GetFrame() override;
 
+  virtual bool PreRenderPass() override;
+
+  virtual void PostRenderPass() override;
+  /////////////////////////////////////////////////
   virtual void Do(unsigned int texture) override;
 private:
   bool HdrPass();

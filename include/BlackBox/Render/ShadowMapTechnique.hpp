@@ -24,7 +24,11 @@ public:
 
   // Inherited via ITechnique
   virtual bool Init(Scene* scene, FrameBufferObject *renderTarget) override;
+  virtual bool PreRenderPass() override;
   virtual bool OnRenderPass(int pass) override;
+  virtual void PostRenderPass() override;
+
+  virtual bool OnObjectFound(Object* object) override;
 
 private:
   void DepthPass();
@@ -35,10 +39,9 @@ private:
 
   void OnDepthPass();
   void OnRenderPass();
-
-  // Inherited via ForEachObjectSink
-  virtual bool OnObjectFound(Object* object) override;
-
+  void SetupLights(Object *object);
+  void SetupDirectionLight();
+  void SetupPointLight();
 private:
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
@@ -53,6 +56,9 @@ private:
 	ICVar* lightPosX = nullptr;
 	ICVar* lightPosY = nullptr;
 	ICVar* lightPosZ = nullptr;
+	ICVar* lighting = nullptr;
+
+  bool bLighting = true;
 
   Pass renderPass;
   Stage renderStage;

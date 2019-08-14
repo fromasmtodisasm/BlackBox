@@ -221,6 +221,22 @@ void CBaseShaderProgram::unuse()
     glCheck(glUseProgram(0));
 }
 
+GLint CBaseShaderProgram::getUniformLocation(const char* name)
+{
+  GLint loc = -1;
+  auto it = m_Cache.find(name);
+  if (it != m_Cache.end())
+    loc = it->second;
+  else
+    loc = glGetUniformLocation(m_Program, name);
+  return loc;
+}
+
+GLint CBaseShaderProgram::getUniformLocation(std::string& name)
+{
+  return getUniformLocation(name.c_str());
+}
+
 void CBaseShaderProgram::setUniformValue(int value, const char * format, ...)
 {
   va_list ptr;
@@ -229,7 +245,7 @@ void CBaseShaderProgram::setUniformValue(int value, const char * format, ...)
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
       glCheck(glUniform1i(loc, value));
   }
@@ -245,7 +261,7 @@ void CBaseShaderProgram::setUniformValue(float value, const char * format, ...)
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform1f(loc, value));
     }
@@ -261,7 +277,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec1 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform1f(loc, value[0]));
     }
@@ -277,7 +293,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec2 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
     }
@@ -293,7 +309,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec3 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
       glCheck(glUniform3fv(loc, 1, glm::value_ptr(value)));
   }
@@ -309,7 +325,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec4 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform4fv(loc, 1, glm::value_ptr(value)));
     }
@@ -325,7 +341,7 @@ void CBaseShaderProgram::setUniformValue(glm::mat2 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
     glCheck(glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
@@ -341,7 +357,7 @@ void CBaseShaderProgram::setUniformValue(glm::mat3 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
     glCheck(glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
@@ -357,7 +373,7 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
   char name[128];
   vsprintf(name, format, ptr);
 
-  GLint loc = glGetUniformLocation(m_Program, name);
+  GLint loc = getUniformLocation(name);
   if (loc != -1){
     glCheck(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }

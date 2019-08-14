@@ -42,6 +42,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 	lightPosX = GetIEngine()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
 	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
 	lightPosZ = GetIEngine()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
+	lighting =  GetIEngine()->getIConsole()->CreateVariable("lighting", bLighting, 0, "light pos z");
 	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
 
   //
@@ -138,7 +139,7 @@ void ShadowMapping::RenderOpaque(Object* object)
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
 
-    m_Scene->setupLights(object);
+    SetupLights(object);
     object->m_Material->apply(object);
     program->setUniformValue(1, "shadowMap");
     glActiveTexture(GL_TEXTURE1);
@@ -157,7 +158,9 @@ void ShadowMapping::RenderTransparent(Object* object)
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
-    m_Scene->setupLights(object);
+
+    SetupLights(object);
+    object->m_Material->apply(object);
 
     object->draw(m_Scene->getCurrentCamera());
   }
@@ -177,6 +180,67 @@ void ShadowMapping::OnRenderPass()
   glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();
+}
+
+void ShadowMapping::SetupLights(Object *object)
+{
+  /*
+  auto program = object->m_Material->program;
+  int currentLight = 0;
+  int nr_point_lights = 0;
+  auto sun = m_DirectionLight.find("sun");
+  if (sun != m_DirectionLight.end())
+  {
+    program->setUniformValue(sun->second->direction, "dirLight.direction");
+    program->setUniformValue(sun->second->ambient, "dirLight.ambient");
+    program->setUniformValue(sun->second->diffuse, "dirLight.diffuse");
+    program->setUniformValue(sun->second->specular, "dirLight.specular");
+  }
+  // point lights
+  for (const auto& light : m_PointLights)
+  {
+    if (light.second->enabled)
+    {
+      program->setUniformValue(light.second->position, "pointLights[%d].position", currentLight);
+      program->setUniformValue(light.second->ambient, "pointLights[%d].ambient", currentLight);
+      program->setUniformValue(light.second->diffuse, "pointLights[%d].diffuse", currentLight);
+      program->setUniformValue(light.second->specular, "pointLights[%d].specular", currentLight);
+      program->setUniformValue(light.second->constant, "pointLights[%d].constant", currentLight);
+      program->setUniformValue(light.second->linear, "pointLights[%d].linear", currentLight);
+      program->setUniformValue(light.second->quadratic, "pointLights[%d].quadratic", currentLight);
+      nr_point_lights++;
+      ++currentLight;
+
+      //program->setUniformValue(light.second->position, "lightPos", currentLight);
+      //program->setUniformValue(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
+      break;
+    }
+  }
+  program->setUniformValue(nr_point_lights, "countOfPointLights");
+  // spotLight
+  auto flashLight = m_SpotLights.find("flashLight");
+  if (flashLight != m_SpotLights.end())
+  {
+    program->setUniformValue(getCurrentCamera()->getPosition(), "spotLight.position");
+    program->setUniformValue(getCurrentCamera()->Front, "spotLight.direction");
+    program->setUniformValue(flashLight->second->ambient, "spotLight.ambient");
+    program->setUniformValue(flashLight->second->diffuse, "spotLight.diffuse");
+    program->setUniformValue(flashLight->second->diffuse, "spotLight.specular");
+    program->setUniformValue(flashLight->second->constant, "spotLight.constant");
+    program->setUniformValue(flashLight->second->linear, "spotLight.linear");
+    program->setUniformValue(flashLight->second->quadratic, "spotLight.quadratic");
+    program->setUniformValue(glm::cos(glm::radians(flashLight->second->cutOff)), "spotLight.cutOff");
+    program->setUniformValue(glm::cos(glm::radians(flashLight->second->outerCutOff)), "spotLight.outerCutOff");
+  }
+  */
+}
+
+void ShadowMapping::SetupDirectionLight()
+{
+}
+
+void ShadowMapping::SetupPointLight()
+{
 }
 
 bool ShadowMapping::OnObjectFound(Object* object)
@@ -201,4 +265,14 @@ bool ShadowMapping::OnObjectFound(Object* object)
 int ShadowMapping::GetFrame()
 {
   return m_RenderedScene->texture;
+}
+
+bool ShadowMapping::PreRenderPass()
+{
+  bLighting = static_cast<bool>(lighting->GetIVal());
+  return true;
+}
+
+void ShadowMapping::PostRenderPass()
+{
 }

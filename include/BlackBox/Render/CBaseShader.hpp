@@ -3,6 +3,7 @@
 #include <BlackBox/IEngine.hpp>
 #include <glm/fwd.hpp>
 #include <string>
+#include <map>
 #include <memory>
 
 class CShader; 
@@ -76,6 +77,7 @@ public:
   ShaderProgramStatus m_Status;
   bool attached = false;
   bool created = false;
+  std::map<std::string, GLint> m_Cache;
 
   bool status();
 public:
@@ -88,6 +90,8 @@ public:
   bool link();
   void use();
   void unuse();
+  GLint getUniformLocation(const char* name);
+  GLint getUniformLocation(std::string &name);
   void setUniformValue(int value, const char *format, ...);
   void setUniformValue(float value, const char *format, ...);
   void setUniformValue(glm::vec1 value, const char *format, ...);
