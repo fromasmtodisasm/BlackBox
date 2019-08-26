@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <string>
+#include <cstdarg>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -135,6 +136,7 @@ bool CShader::compile() {
   const char *text = m_Text.c_str();
   glCheck(glShaderSource(m_Shader, 1, &text, nullptr));
   glCheck(glCompileShader(m_Shader));
+  //glCompileShaderIncludeARB(m_Shader, )
   return m_Status.get(GL_COMPILE_STATUS);
 }
 
