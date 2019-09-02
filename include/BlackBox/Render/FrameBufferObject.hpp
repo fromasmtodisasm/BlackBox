@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Render/Opengl.hpp>
+#include <vector>
 
 struct ITexture;
 class Texture;
@@ -15,17 +16,17 @@ public:
   };
 
 
-  static FrameBufferObject *create(BufferType type, int width, int height, int attachment);
+  static FrameBufferObject *create(BufferType type, int width, int height, int nColors);
   void bind();
   void unbind();
   ITexture* getTexture();
 private:
-  FrameBufferObject(BufferType type, int width, int height, int attachment);
+  FrameBufferObject(BufferType type, int width, int height, int nColors);
   void createSceneBuffer();
   void createDepthBuffer();
 public:
   GLuint id;
-  GLuint texture;
+  std::vector<GLuint> texture;
   GLuint rbo;
   int width;
   int height;

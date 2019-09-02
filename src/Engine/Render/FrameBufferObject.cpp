@@ -2,20 +2,20 @@
 #include <BlackBox/Render/OpenglDebug.hpp>
 
 #include <iostream>
+#include <cassert>
 using namespace std;
 
-FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int attachment) 
+FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors) 
   : 
   type(type),
   width(width), 
   height(height),
   id(-1),
-  rbo(-1),
-  texture(-1)
+  rbo(-1)
 {
 }
 
-FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int attachment)
+FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int nColors)
 {
   bool status = true;
   GLint internalFormat, Format;
@@ -23,11 +23,17 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   GLint wrapS, wrapT;
   GLint dataType;
 
-  FrameBufferObject *fbo = new FrameBufferObject(type, width, height, attachment);
+	int texCnt = 1;
+
+  FrameBufferObject *fbo = new FrameBufferObject(type, width, height, nColors);
   glCheck(glGenFramebuffers(1, &fbo->id));
 
-  glCheck(glGenTextures(1, &fbo->texture));
-  glCheck(glBindTexture(GL_TEXTURE_2D, fbo->texture));
+	if (type != DEPTH_BUFFER)
+	{
+		texCnt = nColors;
+	}
+	fbo->texture.resize(texCnt);
+  glCheck(glGenTextures(nColors, &fbo->texture[0]));
   switch (type)
   {
   case FrameBufferObject::DEPTH_BUFFER:
@@ -47,18 +53,30 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     internalFormat = GL_RGBA16F;
     Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_REPEAT;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
     dataType = GL_FLOAT;
     break;
   default:
     break;
   }
 
-  glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, Format, dataType, NULL));
-  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
-  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
-  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
-  glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fbo->id));
+	
+	{
+		for (int i = 0; i < texCnt; i++)
+		{
+			glBindTexture(GL_TEXTURE_2D, fbo->texture[i]);
+			glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, Format, dataType, NULL));
+			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
+			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
+			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
+			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+
+			if (type != DEPTH_BUFFER)
+				glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
+		}
+
+	}
   if (type == DEPTH_BUFFER)
   {
     float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -66,10 +84,8 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   }
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fbo->id));
   if (type == SCENE_BUFFER || type == HDR_BUFFER)
   {
-    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, fbo->texture, 0));
     glCheck(glGenRenderbuffers(1, &fbo->rbo));
     glCheck(glBindRenderbuffer(GL_RENDERBUFFER, fbo->rbo));
     glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
@@ -78,13 +94,24 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   }
   else if (type == DEPTH_BUFFER)
   {
-    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fbo->texture, 0));
+    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fbo->texture[0], 0));
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
   }
 
+  if (texCnt > 1 && type != DEPTH_BUFFER)
+	{
+		// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+		std::vector<unsigned int> attachments;
+		for (int i = 0; i < texCnt; i++)
+		{
+			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+		}
+		glDrawBuffers(texCnt, &attachments[0]);
+	}
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		assert(0);
     status = false;
   }
   glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));

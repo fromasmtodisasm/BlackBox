@@ -29,18 +29,22 @@ public:
   virtual void Do(unsigned int texture) override;
 private:
   bool HdrPass();
+	void BloomPass();
   void createShader();
 
 private:
   ITechnique *shadowMapping;
   CBaseShaderProgram* m_ScreenShader;
+  CBaseShaderProgram* m_BlurShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;
+  FrameBufferObject* pingPongBuffer[2];
   Scene* m_Scene;
 
   ICVar* exposure;
   ICVar* enabled;
+	ICVar* bloom;
 
   bool inited = false;
 

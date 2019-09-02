@@ -22,7 +22,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 {
   m_Scene = scene;
   //
-  m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 0);
+  m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 1);
 
   if (renderTarget == nullptr)
   {
@@ -144,7 +144,7 @@ void ShadowMapping::RenderOpaque(Object* object)
     object->m_Material->apply(object);
     program->setUniformValue(1, "shadowMap");
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture);
+    glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture[0]);
 
     object->draw(camera);
   }
@@ -177,7 +177,7 @@ void ShadowMapping::OnDepthPass()
 void ShadowMapping::OnRenderPass()
 {
   m_RenderedScene->bind();
-  glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+  glCheck(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
   glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();
@@ -256,7 +256,7 @@ bool ShadowMapping::OnObjectFound(Object* object)
 
 int ShadowMapping::GetFrame()
 {
-  return m_RenderedScene->texture;
+  return m_RenderedScene->texture[0];
 }
 
 bool ShadowMapping::OnLightFound(DirectionLight* light)

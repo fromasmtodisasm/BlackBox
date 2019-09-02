@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in VS_OUT {
     vec3 FragPos;
@@ -18,6 +19,7 @@ uniform bool has_emissive = false;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform bool lightOn = true;
+uniform bool bloomOn = true;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -55,9 +57,6 @@ void main()
 	if (has_emissive)
 	{
 		emissive = texture(emissiveMap, fs_in.TexCoords).rgb;
-
-//		FragColor = vec4(emissive,1.f);
-//		return;
 	}
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightColor = vec3(1.0);
@@ -81,7 +80,17 @@ void main()
     vec3 specular = spec * lightColor;
     // calculate shadow
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
+
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color + emissive * emissive_factor;
+
+	vec3 result = lighting;
+    // check whether result is higher than some threshold, if so, output as bloom threshold color
+    float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+        BrightColor = vec4(result, 1.0);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+    FragColor = vec4(result, 1.0);
 
     FragColor = vec4(lighting, 1.0);
 }
