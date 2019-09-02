@@ -17,6 +17,7 @@ enum TextureType
     BUMP,
     NORMAL,
     MASK,
+		EMISSIVE,
     UNKNOWN
 };
 
@@ -27,7 +28,7 @@ public:
   int height;
   TextureType type;
   GLuint id;
-	GLuint unit = 0;
+	GLint unit = 0;
   std::shared_ptr<std::string> path;
   std::string name;
 	std::string texture_root = "res/images/";

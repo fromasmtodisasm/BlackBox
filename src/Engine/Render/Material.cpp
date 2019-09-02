@@ -15,7 +15,7 @@ void Material::apply(Object *object)
   {
     if (diffuse[current_diffuse] != nullptr)
     {
-      activeTexture(GL_TEXTURE0, "diffuseMap", diffuse[current_diffuse]);
+      activeTexture("diffuseMap", diffuse[current_diffuse]);
       block++;
     }
     if (specular != nullptr)
@@ -25,27 +25,31 @@ void Material::apply(Object *object)
     }
     if (bump != nullptr)
     {
-      activeTexture(GL_TEXTURE2, "material.bump", bump);
+      activeTexture("material.bump", bump);
       block++;
     }
     if (normal != nullptr)
     {
-      activeTexture(GL_TEXTURE2, "normalMap", normal);
+      activeTexture("normalMap", normal);
       block++;
     }
     else
     {
-      activeTexture(GL_TEXTURE2, "normalMap", defaultMaterial->normal);
+      activeTexture("normalMap", defaultMaterial->normal);
     }
+		if (emissive != nullptr)
+		{
+			activeTexture("emissiveMap", emissive);
+			program->setUniformValue(true, "has_emissive");
+			program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("ef")->GetFVal(), "emissive_factor");
+		}
+		else
+		{
+			program->setUniformValue(false, "has_emissive");
+		}
   }
   else {
     program->setUniformValue( diffuseColor,"diffuseColor");
-    /*
-    program->setUniformValue("material.ambient",  glm::vec3(1.0f, 0.5f, 0.31f));
-    program->setUniformValue("material.diffuse",  glm::vec3(1.0f, 0.5f, 0.31f));
-    program->setUniformValue("material.specular", glm::vec3(0.5f, 0.5f, 0.5f ));
-    program->setUniformValue("material.shininess", 32.0f);
-    */
   }
 	program->setup();
 }
@@ -89,8 +93,9 @@ void Material::prevDiffuse()
 	current_diffuse = (current_diffuse - 1) % diffuse.size();
 }
 
-void Material::activeTexture(uint32_t block, const char *uniform, BaseTexture* texture)
+void Material::activeTexture(const char *uniform, BaseTexture* texture)
 {
 	texture->bind();
-  glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
+  //glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
+	program->setUniformValue(texture->unit, uniform);
 }

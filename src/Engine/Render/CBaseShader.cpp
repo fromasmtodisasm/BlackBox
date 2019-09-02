@@ -272,6 +272,19 @@ void CBaseShaderProgram::setUniformValue(int value, const char * format, ...)
   }
 }
 
+void CBaseShaderProgram::setUniformValue(unsigned int value, const char* format, ...)
+{
+  va_list ptr;
+  va_start(ptr, format);
+  auto name = buildName(format, ptr);
+  va_end(ptr);
+
+  GLint loc = getUniformLocation(name);
+  if (loc != -1){
+      glCheck(glUniform1ui(loc, value));
+  }
+}
+
 void CBaseShaderProgram::setUniformValue(float value, const char * format, ...)
 {
   va_list ptr;

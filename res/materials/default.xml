@@ -2,6 +2,7 @@
   <material name="specular_box">
     <textures>
       <texture type="diffuse" name="container2.png"/>
+      <texture type="emissive" name="emissive.png"/>
       <texture type="specular" name="container2_specular.png"/>
     </textures>
     <shader name="phong"/>
@@ -9,6 +10,7 @@
   <material name="wood_box">
     <textures>
       <texture type="diffuse" name="container.jpg"/>
+      <texture type="emissive" name="emissive.png"/>
     </textures>
     <shader name="phong"/>
   </material>

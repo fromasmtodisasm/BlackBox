@@ -9,7 +9,11 @@ in VS_OUT {
 } fs_in;
 
 uniform sampler2D diffuseMap;
+uniform sampler2D emissiveMap;
 uniform sampler2D shadowMap;
+
+uniform float emissive_factor = 20.0f;
+uniform bool has_emissive = false;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -47,6 +51,14 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
     vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+	vec3 emissive = vec3(0.0f);
+	if (has_emissive)
+	{
+		emissive = texture(emissiveMap, fs_in.TexCoords).rgb;
+
+//		FragColor = vec4(emissive,1.f);
+//		return;
+	}
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightColor = vec3(1.0);
 	if (!lightOn)
@@ -56,7 +68,7 @@ void main()
 	}
 
     // ambient
-    vec3 ambient = 0.15 * color; 
+    vec3 ambient = 0.05 * color; 
     // diffuse
     vec3 lightDir = normalize(lightPos - fs_in.FragPos);
     float diff = max(dot(lightDir, normal), 0.0);
@@ -69,7 +81,7 @@ void main()
     vec3 specular = spec * lightColor;
     // calculate shadow
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color + emissive * emissive_factor;
 
     FragColor = vec4(lighting, 1.0);
 }

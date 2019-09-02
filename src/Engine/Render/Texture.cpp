@@ -40,6 +40,8 @@ void Texture::setType(const char *type)
     this->type = NORMAL;
   else if (t == "mask")
     this->type = MASK;
+  else if (t == "emissive")
+    this->type = EMISSIVE;
   else
     this->type = UNKNOWN;
 }

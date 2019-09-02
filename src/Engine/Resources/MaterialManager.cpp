@@ -85,6 +85,7 @@ bool MaterialManager::init(std::string materialLib)
 MaterialManager::MaterialManager() : m_pLog(GetIEngine()->getILog())
 {
 	root_path = GetIEngine()->getIConsole()->GetCVar("materials_path");
+	GetIEngine()->getIConsole()->CreateVariable("ef", 40.f, 0, "emissive factor");
 }
 
 bool MaterialManager::loadLib(std::string name)
@@ -170,6 +171,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 	else
 		alpha_shakaled = false;
 
+	result->emissive_factor = material->FloatAttribute("emmisive_factor", 1.0f);
   result->name = std::make_shared<std::string>(materialName);
   //============ TEXTURES LOADING =======================//
   XMLElement *textures = material->FirstChildElement("textures");
@@ -210,6 +212,10 @@ bool MaterialManager::loadMaterial(XMLElement *material)
       case TextureType::MASK:
 				t->setUnit(4);
         result->mask = t;
+        break;
+      case TextureType::EMISSIVE:
+				t->setUnit(5);
+        result->emissive = t;
         break;
       default:
       {

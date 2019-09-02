@@ -319,6 +319,7 @@ public:
   GLint getUniformLocation(std::string &name);
   UniformValue getUniformValue(const char* name);
   void setUniformValue(int value, const char *format, ...);
+  void setUniformValue(unsigned int value, const char *format, ...);
   void setUniformValue(float value, const char *format, ...);
   void setUniformValue(glm::vec1 value, const char *format, ...);
   void setUniformValue(glm::vec2 value, const char *format, ...);

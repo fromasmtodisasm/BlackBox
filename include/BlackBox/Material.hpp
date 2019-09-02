@@ -2,6 +2,7 @@
 #include <memory>
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/IConsole.hpp>
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -15,10 +16,12 @@ struct Material
   BaseTexture
   /**diffuse,*/
   *specular,
+	*emissive,
   *bump,
   *normal,
   *mask;
   float shininess;
+	float emissive_factor = 1.0f;
   glm::vec3 diffuseColor;
 	
 	std::vector<BaseTexture*> diffuse;
@@ -36,16 +39,17 @@ struct Material
   bump(nullptr),
   normal(nullptr),
   mask(nullptr),
+	emissive(nullptr),
+	emissive_factor(1.0f),
   diffuseColor({0,0,0}),
   shininess(64.0f),
   program(nullptr)
   {
-
   }
   void apply(Object *object);
   void setTexture(Texture *texture, const char *type);
 	void nextDiffuse();
 	void prevDiffuse();
 private:
-  void activeTexture(uint32_t block, const char *uniform, BaseTexture *texture);
+  void activeTexture(const char *uniform, BaseTexture *texture);
 };
