@@ -183,8 +183,6 @@ CBaseShaderProgram::CBaseShaderProgram(
 }
 
 CBaseShaderProgram::~CBaseShaderProgram() {
-  if (buffer != nullptr)
-    delete[] buffer;
 }
 
 bool CBaseShaderProgram::create() {

@@ -35,5 +35,4 @@ void CShaderProgram::setup()
 
 CShaderProgram::~CShaderProgram()
 {
-	CBaseShaderProgram::~CBaseShaderProgram();
 }
