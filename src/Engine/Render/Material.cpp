@@ -20,9 +20,14 @@ void Material::apply(Object *object)
     }
     if (specular != nullptr)
     {
-      //activeTexture(GL_TEXTURE1, "material.specular", specular);
+      activeTexture("specularMap", specular);
+			program->setUniformValue(true, "has_specular");
       block++;
     }
+		else
+		{
+			program->setUniformValue(false, "has_specular");
+		}
     if (bump != nullptr)
     {
       activeTexture("material.bump", bump);
@@ -51,6 +56,7 @@ void Material::apply(Object *object)
   else {
     program->setUniformValue( diffuseColor,"diffuseColor");
   }
+	program->setUniformValue(object->uvMatrix, "uvMatrix");
 	program->setup();
 }
 
@@ -95,6 +101,7 @@ void Material::prevDiffuse()
 
 void Material::activeTexture(const char *uniform, BaseTexture* texture)
 {
+	glCheck(glActiveTexture(GL_TEXTURE0 + texture->unit));
 	texture->bind();
   //glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
 	program->setUniformValue(texture->unit, uniform);

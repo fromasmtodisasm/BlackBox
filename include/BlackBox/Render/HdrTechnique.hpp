@@ -45,8 +45,10 @@ private:
   ICVar* exposure;
   ICVar* enabled;
 	ICVar* bloom;
+	ICVar* bloomThreshold;
 
   bool inited = false;
+	bool pingpong = false;
 
   IRender* render;
 };

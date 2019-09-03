@@ -21,7 +21,7 @@
         <material name="phong"/>
     </object>-->
     <object name="BMW" type="object" visible="true">
-        <mesh name="res/geom/bmw.obj"/>
+        <mesh name="res/geom/sphere.obj"/>
         <transform>
             <position>
                 <X>-6.6999998</X>
@@ -102,7 +102,7 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="specular_box"/>
+        <material name="wood_box"/>
     </object>
     <object name="brick_normal_box_2" type="object" visible="true">
         <transform>
@@ -164,6 +164,8 @@
                 <Z>20000</Z>
             </scale>
         </transform>
+        <texture scaleX="40" scaleY="40"></texture>
+
         <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object">

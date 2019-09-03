@@ -136,6 +136,7 @@ void ShadowMapping::RenderOpaque(Object* object)
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
+		program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
     //program->setUniformValue(bLighting, "lightOn");
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
@@ -159,6 +160,7 @@ void ShadowMapping::RenderTransparent(Object* object)
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
+		program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
 
     SetupLights(object);
     object->m_Material->apply(object);

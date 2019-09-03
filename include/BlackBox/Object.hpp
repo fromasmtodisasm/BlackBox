@@ -68,6 +68,8 @@ public:
 
   Transform m_transform;
 
+	glm::mat4 uvMatrix;// = glm::mat4(1.0);
+
   static Object* load(std::string path);
   virtual void move(Movement direction) override;
   void move(glm::vec3 v);

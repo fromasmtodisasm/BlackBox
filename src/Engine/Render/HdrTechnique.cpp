@@ -23,6 +23,7 @@ bool HdrTechnique::Init(Scene* scene, FrameBufferObject* renderTarget)
   exposure = GetIEngine()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
   enabled = GetIEngine()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
   bloom = GetIEngine()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
+  bloomThreshold = GetIEngine()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
   createShader();
   shadowMapping = new ShadowMapping();
   hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 2);
@@ -69,18 +70,21 @@ void HdrTechnique::BloomPass()
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = 10;
 	m_BlurShader->use();
+	glCheck(glDisable(GL_DEPTH_TEST));
 	glActiveTexture(GL_TEXTURE0);
 	for (unsigned int i = 0; i < amount; i++)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, pingPongBuffer[0]->id);
+		glBindFramebuffer(GL_FRAMEBUFFER, pingPongBuffer[horizontal]->id);
 		m_BlurShader->setUniformValue(horizontal, "horizontal");
-		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[0] : pingPongBuffer[!horizontal]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
+		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[1] : pingPongBuffer[!horizontal]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
 		//renderQuad();
 		m_ScreenQuad.draw();
-		//horizontal = !horizontal;
+		horizontal = !horizontal;
 		if (first_iteration)
 			first_iteration = false;
 	}
+	pingpong = !horizontal;
+	glCheck(glEnable(GL_DEPTH_TEST));
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -129,7 +133,7 @@ void HdrTechnique::Do(unsigned int texture)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, hdrBuffer->texture[0]);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, pingPongBuffer[0]->texture[0]);
+	glBindTexture(GL_TEXTURE_2D, pingPongBuffer[pingpong]->texture[0]);
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 	//shaderBloomFinal.setFloat("exposure", exposure);
 

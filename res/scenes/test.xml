@@ -102,6 +102,7 @@
                 <Z>20000</Z>
             </scale>
         </transform>
+        <uv scaleX="40" scaleY="40"/>
         <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object" visible="false" transparent="false">

@@ -77,6 +77,18 @@ void Scene::loadObject(XMLElement *object)
 
   }
 
+	auto uv = object->FirstChildElement("uv");
+	if (uv != nullptr)
+	{
+		auto scaleX = uv->FloatAttribute("scaleX", 1.0);
+		auto scaleY = uv->FloatAttribute("scaleY", 1.0);
+		obj->uvMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX, scaleY, 1.0f));
+	}
+	else
+	{
+		obj->uvMatrix = glm::mat4(1.0f);
+	}
+
   transform = loadTransform(*object);
   obj->m_transform = transform;
 	obj->m_transparent = objectTransparent;

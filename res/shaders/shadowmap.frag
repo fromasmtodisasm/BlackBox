@@ -10,16 +10,19 @@ in VS_OUT {
 } fs_in;
 
 uniform sampler2D diffuseMap;
+uniform sampler2D specularMap;
 uniform sampler2D emissiveMap;
 uniform sampler2D shadowMap;
 
 uniform float emissive_factor = 20.0f;
 uniform bool has_emissive = false;
+uniform bool has_specular = false;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform bool lightOn = true;
 uniform bool bloomOn = true;
+uniform float bloomThreshold = 2.0;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -75,9 +78,20 @@ void main()
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
     float spec = 0.0;
+
     vec3 halfwayDir = normalize(lightDir + viewDir);
     spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
     vec3 specular = spec * lightColor;
+	if (has_specular)
+	{
+
+
+		specular *= vec3(texture(specularMap, fs_in.TexCoords));
+		//FragColor = vec4(10, 0, 0, 1.0);
+		//specular *= vec3(10, 0, 0);
+
+	}
+	specular + vec3(10, 0, 0);
     // calculate shadow
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
 
@@ -86,11 +100,9 @@ void main()
 	vec3 result = lighting;
     // check whether result is higher than some threshold, if so, output as bloom threshold color
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
-    if(brightness > 1.0)
+    if(brightness > bloomThreshold)
         BrightColor = vec4(result, 1.0);
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
     FragColor = vec4(result, 1.0);
-
-    FragColor = vec4(lighting, 1.0);
 }
