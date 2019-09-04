@@ -7,6 +7,14 @@
     </textures>
     <shader name="phong"/>
   </material>
+  <material name="terrain">
+    <textures>
+      <texture type="diffuse" name="ground.jpg"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
+      <!--<texture type="specular" name="container2_specular.png"/>-->
+    </textures>
+    <shader name="phong"/>
+  </material>
   <material name="wood_box">
     <textures>
       <texture type="diffuse" name="container.jpg"/>

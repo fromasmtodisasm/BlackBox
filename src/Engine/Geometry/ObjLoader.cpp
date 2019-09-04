@@ -16,6 +16,7 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
   }
 
 	bool n_resized = false;
+	bool t_resized = false;
 
 	verteciesInfo.attributes[VA_POSITION] = true;
   while (1) {
@@ -48,16 +49,23 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
     }
     else if (strcmp(lineHeader, "f") == 0) {
       face current_face;
-      char *pattern[3] = {
+      char *pattern[4] = {
         "%d/%d/%d %d/%d/%d %d/%d/%d\n",
         "%d//%d %d//%d %d//%d\n",
         "%d %d %d\n",
+        "%d/%d %d/%d %d/%d\n"
       };
       int matches;
 			if (!has_uv && !has_normal)
 			{
+				
+				verteciesInfo.attributes[VA_NORMAL] = true;
+				verteciesInfo.attributes[VA_UV] = true;
 				if (!n_resized)
+				{
 					normal_buffer.resize(vertex_buffer.size());
+					n_resized = true;
+				}
         matches = fscanf(file, pattern[2],
           &current_face.v[0].v,
           &current_face.v[1].v,
@@ -73,6 +81,29 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
 				normal_buffer[current_face.v[2].v - 1] += normal;
 				
 			}
+      else if (has_uv && !has_normal)
+      {
+				verteciesInfo.attributes[VA_NORMAL] = true;
+				verteciesInfo.attributes[VA_UV] = true;
+				if (!n_resized)
+				{
+					normal_buffer.resize(vertex_buffer.size());
+					n_resized = true;
+				}
+        matches = fscanf(file, pattern[3],
+          &current_face.v[0].v, &current_face.v[0].vt,
+          &current_face.v[1].v, &current_face.v[1].vt,
+          &current_face.v[2].v, &current_face.v[2].vt
+        );
+
+				glm::vec3 v1 = vertex_buffer[current_face.v[1].v - 1] - vertex_buffer[current_face.v[0].v - 1];
+				glm::vec3 v2 = vertex_buffer[current_face.v[2].v - 1] - vertex_buffer[current_face.v[0].v - 1];
+				glm::vec3 normal = glm::cross(v1, v2);
+
+				normal_buffer[current_face.v[0].v - 1] += normal;
+				normal_buffer[current_face.v[1].v - 1] += normal;
+				normal_buffer[current_face.v[2].v - 1] += normal;
+      }
       else if (has_uv)
       {
         matches = fscanf(file, pattern[0],

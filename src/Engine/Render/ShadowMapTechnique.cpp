@@ -147,6 +147,10 @@ void ShadowMapping::RenderOpaque(Object* object)
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture[0]);
 
+		if (object->m_path.find("terrain") != object->m_path.npos)
+			program->setUniformValue(true, "isTerrain");
+		else
+			program->setUniformValue(false, "isTerrain");
     object->draw(camera);
   }
 

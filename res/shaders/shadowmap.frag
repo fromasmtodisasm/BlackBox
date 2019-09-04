@@ -7,6 +7,7 @@ in VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec4 FragPosLightSpace;
+	vec3 oNormal;
 } fs_in;
 
 uniform sampler2D diffuseMap;
@@ -23,6 +24,7 @@ uniform vec3 viewPos;
 uniform bool lightOn = true;
 uniform bool bloomOn = true;
 uniform float bloomThreshold = 2.0;
+uniform bool isTerrain = false;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -70,7 +72,7 @@ void main()
 	}
 
     // ambient
-    vec3 ambient = 0.05 * color; 
+    vec3 ambient = 0.15 * color; 
     // diffuse
     vec3 lightDir = normalize(lightPos - fs_in.FragPos);
     float diff = max(dot(lightDir, normal), 0.0);
@@ -104,5 +106,12 @@ void main()
         BrightColor = vec4(result, 1.0);
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+	if (isTerrain)
+	{
+		//result = (vec3(fs_in.Normal) + 1) * 0.5;
+		//result = mix(;
+		//result = mix(fs_in.Normal, result, 0.9);
+
+	}
     FragColor = vec4(result, 1.0);
 }

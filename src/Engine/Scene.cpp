@@ -765,10 +765,6 @@ bool Scene::load(std::string name = "default.xml")
   m_CurrentCamera = m_Camera.find("main");
   assert(m_CurrentCamera != m_Camera.end());
 
-	auto t = m_Objects.find("terrain");
-	auto bb = m_Objects.find("brick_normal_box")->second;
-	t->second->m_Material = bb->m_Material;
-	t->second->m_visible = true;
 
   return true;
 }

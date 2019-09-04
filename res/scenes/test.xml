@@ -39,7 +39,8 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="player"/>
+        <material name="terrain"/>
+        <uv scaleX="100" scaleY="100"/>
     </object>
     <object name="MyPlayer" type="player" visible="true" transparent="false">
         <mesh name="res/geom/pengium.obj"/>
