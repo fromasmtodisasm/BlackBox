@@ -28,6 +28,46 @@ using namespace tinyxml2;
   #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
 #endif
 
+void Scene::loadTerrain(tinyxml2::XMLElement* terrain)
+{
+	Object* obj;
+  Material *material;
+  MaterialManager *materialManager = MaterialManager::instance();
+  const char *terrainName = nullptr;
+  const char *materialName = nullptr;
+  const char *heightmapName = nullptr;
+  XMLElement * heightmap = nullptr;
+  XMLElement * materialElement = nullptr;
+  Transform transform;
+
+
+  terrainName = terrain->Attribute("name");
+  if (terrainName == nullptr)
+    return;
+  heightmap = terrain->FirstChildElement("heightmap");
+  if (heightmap == nullptr)
+    return;
+  heightmapName = heightmap->Attribute("name");
+  if (heightmapName == nullptr)
+    return;
+
+  materialElement = terrain->FirstChildElement("material");
+  if (materialElement == nullptr)
+    material = defaultMaterial;
+  else {
+    materialName = materialElement->Attribute("name");
+    if (materialName == nullptr)
+      material = defaultMaterial;
+    else {
+      material = materialManager->getMaterial(materialName);
+      if (material == nullptr)
+        material = defaultMaterial;
+    }
+  }
+
+	//m_Objects.insert({ "terrain", this->terrain.load(terrainName)});
+}
+
 void Scene::loadObject(XMLElement *object)
 {
   Object *obj;
@@ -678,6 +718,12 @@ bool Scene::load(std::string name = "default.xml")
     objects = objects->NextSiblingElement("object");
   }
 
+  XMLElement * terrain = pScene->FirstChildElement("terrain");
+	if (terrain != nullptr)
+	{
+		loadTerrain(terrain);
+	}
+
   XMLElement * lights = pScene->FirstChildElement("light");
   while (lights != nullptr)
   {
@@ -719,6 +765,11 @@ bool Scene::load(std::string name = "default.xml")
   m_CurrentCamera = m_Camera.find("main");
   assert(m_CurrentCamera != m_Camera.end());
 
+	auto t = m_Objects.find("terrain");
+	auto bb = m_Objects.find("brick_normal_box")->second;
+	t->second->m_Material = bb->m_Material;
+	t->second->m_visible = true;
+
   return true;
 }
 
@@ -744,6 +795,7 @@ void Scene::end()
 
 void Scene::present(int width, int height)
 {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (postProcessor == nullptr)
 	{
 		auto render = GetIEngine()->getIRender();
@@ -823,5 +875,10 @@ void Scene::setTechnique(ITechnique* technique)
 const PointLightList &Scene::GetPointLights()
 {
   return m_PointLights;
+}
+
+Terrain *Scene::getTerrain()
+{
+	return &terrain;
 }
 

@@ -68,13 +68,13 @@ bool ShadowMapping::OnRenderPass(int pass)
 
 void ShadowMapping::DepthPass()
 {
-  float divider = s_divider->GetFVal();
+  float m = s_divider->GetFVal();
   lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
   glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
   glClear(GL_DEPTH_BUFFER_BIT);
   m_ShadowMapShader->use();
-  glm::mat4 proj = glm::ortho(-1366 / divider, 1366 / divider, -768 / divider, 768 / divider, -1.0f, 5000.f);
+  glm::mat4 proj = glm::ortho(-1366.f * m, 1366.f * m, -768.f * m, 768.f * m, -1.0f, 5000.f);
 
   lightSpaceMatrix = proj *
     glm::lookAt(lightPos,
@@ -179,7 +179,7 @@ void ShadowMapping::OnDepthPass()
 void ShadowMapping::OnRenderPass()
 {
   m_RenderedScene->bind();
-  glCheck(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+  glCheck(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
   glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();

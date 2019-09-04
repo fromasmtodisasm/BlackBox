@@ -155,7 +155,7 @@ void CRender::glInit()
 	glLineWidth(2);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
   glCheck(glEnable(GL_DEPTH_TEST));
-  glCheck(glEnable(GL_TEXTURE_2D));
+  //glCheck(glEnable(GL_TEXTURE_2D));
   glCheck(glEnable(GL_CULL_FACE));
   glCheck(glCullFace(GL_BACK));
 	// Blending

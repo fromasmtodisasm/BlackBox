@@ -17,6 +17,7 @@ private:
   std::vector< glm::vec2 > uv_buffer;
   std::vector< glm::vec3 > normal_buffer;
   bool has_uv = false;
+  bool has_normal = false;
 public:
   bool load(
     const char * path,

@@ -15,6 +15,8 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
     return false;
   }
 
+	bool n_resized = false;
+
 	verteciesInfo.attributes[VA_POSITION] = true;
   while (1) {
 
@@ -40,17 +42,38 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
     else if (strcmp(lineHeader, "vn") == 0) {
 			verteciesInfo.attributes[VA_NORMAL] = true;
       glm::vec3 normal;
+			has_normal = true;
       fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
       normal_buffer.push_back(normal);
     }
     else if (strcmp(lineHeader, "f") == 0) {
       face current_face;
-      char *pattern[2] = {
+      char *pattern[3] = {
         "%d/%d/%d %d/%d/%d %d/%d/%d\n",
         "%d//%d %d//%d %d//%d\n",
+        "%d %d %d\n",
       };
       int matches;
-      if (has_uv)
+			if (!has_uv && !has_normal)
+			{
+				if (!n_resized)
+					normal_buffer.resize(vertex_buffer.size());
+        matches = fscanf(file, pattern[2],
+          &current_face.v[0].v,
+          &current_face.v[1].v,
+          &current_face.v[2].v
+        );
+
+				glm::vec3 v1 = vertex_buffer[current_face.v[1].v - 1] - vertex_buffer[current_face.v[0].v - 1];
+				glm::vec3 v2 = vertex_buffer[current_face.v[2].v - 1] - vertex_buffer[current_face.v[0].v - 1];
+				glm::vec3 normal = glm::cross(v1, v2);
+
+				normal_buffer[current_face.v[0].v - 1] += normal;
+				normal_buffer[current_face.v[1].v - 1] += normal;
+				normal_buffer[current_face.v[2].v - 1] += normal;
+				
+			}
+      else if (has_uv)
       {
         matches = fscanf(file, pattern[0],
           &current_face.v[0].v, &current_face.v[0].vt, &current_face.v[0].n,
@@ -103,17 +126,30 @@ BoundingBox ObjLoader::buildVertexData(VertexData& vertex_data, std::vector<face
 				face[1].uv = uv_buffer[faces[current_face].v[1].vt - 1];
 				face[2].uv = uv_buffer[faces[current_face].v[2].vt - 1];
 			}
-			face[0].normal = normal_buffer[faces[current_face].v[0].n - 1];
-			face[1].normal = normal_buffer[faces[current_face].v[1].n - 1];
-			face[2].normal = normal_buffer[faces[current_face].v[2].n - 1];
+			if (has_normal)
+			{
+				face[0].normal = normal_buffer[faces[current_face].v[0].n - 1];
+				face[1].normal = normal_buffer[faces[current_face].v[1].n - 1];
+				face[2].normal = normal_buffer[faces[current_face].v[2].n - 1];
+			}
+			else
+			{
+				face[0].normal = normal_buffer[faces[current_face].v[0].v - 1];
+				face[1].normal = normal_buffer[faces[current_face].v[1].v - 1];
+				face[2].normal = normal_buffer[faces[current_face].v[2].v - 1];
+				//calcNormal(face);
+			}
 			bb.currentFace(face);
 			
-			//calcNormal(face);
 			calcTangentSpace(face);
 			vertex_data.push_back(face[0]);
 			vertex_data.push_back(face[1]);
 			vertex_data.push_back(face[2]);
 		}
+	}
+	for (int i = 0; i < vertex_data.size(); i++)
+	{
+		vertex_data[i].normal = glm::normalize(vertex_data[i].normal);
 	}
   return bb;
 }
@@ -122,11 +158,11 @@ void ObjLoader::calcNormal(std::vector<Vertex>& face)
 {
   glm::vec3 v1 = face[1].pos - face[0].pos;
   glm::vec3 v2 = face[2].pos - face[0].pos;
-  glm::vec3 normal = glm::normalize(glm::cross(v1,v2));
+  glm::vec3 normal = glm::cross(v1,v2);
 
-  face[0].normal = glm::normalize(normal);
-  face[1].normal = glm::normalize(normal);
-  face[2].normal = glm::normalize(normal);
+  face[0].normal += normal;
+  face[1].normal += normal;
+  face[2].normal += normal;
 }
 
 void ObjLoader::calcTangentSpace(std::vector<Vertex>& face)

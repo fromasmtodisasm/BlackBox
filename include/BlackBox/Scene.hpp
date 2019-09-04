@@ -10,6 +10,7 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/Terrain.hpp>
 
 #include <map>
 #include <string>
@@ -81,12 +82,15 @@ private:
   PointLightList m_PointLights;
   SpotLightList m_SpotLights;
 
+	Terrain terrain;
+
   CameraList m_Camera;
   CameraListIt m_CurrentCamera;
   bool lighting;
 	bool inverse_visibility = true;
 	decltype(m_Objects)::iterator selected_object_it;
 private:
+  void loadTerrain(tinyxml2::XMLElement *terrain);
   void loadObject(tinyxml2::XMLElement *object);
   void loadMesh(tinyxml2::XMLElement *mesh);
   void loadLight(tinyxml2::XMLElement* light);
@@ -138,6 +142,8 @@ public:
   void setTechnique(ITechnique* technique);
 
   const PointLightList &GetPointLights();
+
+	Terrain *getTerrain();
 
 };
 

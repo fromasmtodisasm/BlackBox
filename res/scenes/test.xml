@@ -1,11 +1,32 @@
 <scene>
-    <object name="BMW" type="object" visible="true" transparent="false">
+    <!--<object name="BMW" type="object" visible="true" transparent="false">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
                 <X>-6.6999998</X>
                 <Y>0.56300002</Y>
                 <Z>-71.900002</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>-->
+    <object name="terrain" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/terrain.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
             </position>
             <rotation>
                 <X>0</X>
@@ -102,7 +123,7 @@
                 <Z>20000</Z>
             </scale>
         </transform>
-        <uv scaleX="40" scaleY="40"/>
+        <uv scaleX="0.1" scaleY="0.1"/>
         <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object" visible="false" transparent="false">

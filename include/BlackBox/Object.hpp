@@ -33,8 +33,11 @@ protected:
   Object(MeshList mesh);
   Object(const Object *obj);
   static void parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderProgram **shader);
-	int m_RenderMode = GL_FILL;
 public:
+	static Object* getEmpty()
+	{
+		return new Object();
+	}
 	//=============================
 	// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 	// Default camera values
@@ -56,6 +59,7 @@ public:
     GLfloat MovementSpeed = 2;
 	//=============================
 
+	int m_RenderMode = GL_FILL;
   MeshList m_Mesh;
   std::string type;
   Material *m_Material = nullptr;
