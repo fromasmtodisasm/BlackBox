@@ -97,7 +97,7 @@ void ShadowMapping::RenderPass()
   Pipeline::instance()->projection = camera->getProjectionMatrix();
   Pipeline::instance()->view_pos = camera->getPosition();
 
-  glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
+  glViewport(0, 0, m_RenderedScene->width, m_RenderedScene->height);
   // Render opaque objects
   renderStage = RENDER_OPAQUE;
   m_Scene->ForEachObject(this);
@@ -183,7 +183,12 @@ void ShadowMapping::OnDepthPass()
 void ShadowMapping::OnRenderPass()
 {
   m_RenderedScene->bind();
-  glCheck(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
+	glm::vec3 fog = glm::vec3(
+		GetIEngine()->getIConsole()->GetCVar("fogR")->GetFVal(),
+		GetIEngine()->getIConsole()->GetCVar("fogG")->GetFVal(),
+		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal());
+  //glCheck(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
+	glClearColor(fog.r, fog.g, fog.b, 1.0f);
   glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();

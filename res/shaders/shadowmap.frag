@@ -10,6 +10,13 @@ in VS_OUT {
 	vec3 oNormal;
 } fs_in;
 
+struct FogInfo {
+	float maxDist;
+	float minDist;
+	vec3 color;
+};
+uniform FogInfo Fog;
+
 uniform sampler2D diffuseMap;
 uniform sampler2D specularMap;
 uniform sampler2D emissiveMap;

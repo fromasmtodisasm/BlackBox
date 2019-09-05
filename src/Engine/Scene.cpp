@@ -809,6 +809,7 @@ void Scene::present(int width, int height)
 		glCheck(glDisable(GL_DEPTH_TEST));
 		glCheck(glActiveTexture(GL_TEXTURE0));
 		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene));
+		glCheck(glViewport(0, 0, width, height));
 		m_ScreenQuad.draw();;
 	}
 	else

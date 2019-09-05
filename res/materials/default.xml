@@ -82,6 +82,12 @@
     </textures>
     <shader name="phong"/>
   </material>
+  <material name="water">
+    <textures>
+      <texture type="diffuse" name="water.jpg"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
   <material name="default">
     <textures>
       <texture type="diffuse" name="check.png"/>

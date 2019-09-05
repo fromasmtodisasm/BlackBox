@@ -41,6 +41,9 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
 	{
 		mode = sf::VideoMode(m_Width = width, m_Height = height, cbpp);
 	}
+#if 1
+	m_contextSettings.antialiasingLevel = 8;
+#endif
 	m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, m_contextSettings);//, sf::Style::Fullscreen);
 	m_Window->setPosition(position);
   //m_Window->setVerticalSyncEnabled(true);

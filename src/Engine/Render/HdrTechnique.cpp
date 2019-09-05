@@ -123,8 +123,12 @@ void HdrTechnique::PostRenderPass()
 
 void HdrTechnique::Do(unsigned int texture)
 {
+	glm::vec3 fog = glm::vec3(
+		GetIEngine()->getIConsole()->GetCVar("fogR")->GetFVal(),
+		GetIEngine()->getIConsole()->GetCVar("fogG")->GetFVal(),
+		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(fog.r, fog.g, fog.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	m_ScreenShader->use();
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
@@ -137,5 +141,6 @@ void HdrTechnique::Do(unsigned int texture)
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 	//shaderBloomFinal.setFloat("exposure", exposure);
 
+	glCheck(glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()));
 	m_ScreenQuad.draw();
 }
