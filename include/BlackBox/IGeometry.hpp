@@ -39,6 +39,11 @@ struct face
   indexed_vertex v[3];
 };
 
+struct Point
+{
+	glm::vec3 pos;
+};
+
 struct Vertex
 {
   glm::vec3 pos;

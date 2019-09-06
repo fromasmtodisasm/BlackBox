@@ -109,6 +109,17 @@ void ShadowMapping::RenderPass()
   {
     mesh.bb.draw();
   }
+
+	auto points = m_Scene->getPoints();
+	points->shader->use();
+	points->shader->setUniformValue(
+		Pipeline::instance()->projection *
+		Pipeline::instance()->view *
+		Pipeline::instance()->model,
+		"MVP"
+	);
+	points->draw();
+	points->shader->unuse();
   
   // Render transparent objects
   renderStage = RENDER_TRANSPARENT;

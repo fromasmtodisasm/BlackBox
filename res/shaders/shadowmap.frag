@@ -104,20 +104,30 @@ void main()
     // calculate shadow
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
 
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color + emissive * emissive_factor;
+    vec3 lighting =(ambient + (1.0 - shadow) * (diffuse + specular)) * color + emissive * emissive_factor;
 
 	vec3 result = lighting;
     // check whether result is higher than some threshold, if so, output as bloom threshold color
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
-    if(brightness > bloomThreshold)
+	if (brightness > 0.5 && brightness < 0.9 || brightness > bloomThreshold)
+
+    //if(brightness > bloomThreshold)
         BrightColor = vec4(result, 1.0);
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 	if (isTerrain)
 	{
-		//result = (vec3(fs_in.Normal) + 1) * 0.5;
+		//result = vec3(abs(fs_in.Normal.x),0,0);
+		float n = abs(fs_in.Normal.y);
+		if (n <= 0.10)
+			result = mix(vec3(0,1,0), vec3(1,0,0), 0.1 / n);
+		else if(n > 0.10 && n < 0.15)
+			result = mix(vec3(1,0,0), vec3(0,1,0), 0.15 / n);
+		result *= (diff + 0.15 + specular);
+			//result = vec3(0,1,0);
 		//result = mix(;
-		//result = mix(fs_in.Normal, result, 0.9);
+		//result = mix(vec3(1,0,0), result, abs(fs_in.Normal.y));
+
 
 	}
     FragColor = vec4(result, 1.0);

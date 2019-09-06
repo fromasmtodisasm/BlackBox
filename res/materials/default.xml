@@ -1,8 +1,24 @@
 <materials>
+  <material name="point">
+    <colors>
+      <ambient r="0.15" g="0.15" b="0.15"/>
+      <diffuse r="0.15" g="0.15" b="0.15"/>
+      <emissive r="10" g="9" b="8"/>
+    </colors>
+    <shader name="phong"/>
+  </material>
+  <material name="sprite2">
+    <textures>
+      <texture type="diffuse" name="container2.png"/>
+      <texture type="emissive" name="emissive.png"/>
+      <texture type="specular" name="container2_specular.png"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
   <material name="specular_box">
     <textures>
       <texture type="diffuse" name="container2.png"/>
-      <!--<texture type="emissive" name="emissive.png"/>-->
+      <texture type="emissive" name="emissive.png"/>
       <texture type="specular" name="container2_specular.png"/>
     </textures>
     <shader name="phong"/>

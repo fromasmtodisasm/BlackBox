@@ -61,6 +61,20 @@ struct ForEachSpotLightSink
   virtual bool OnLightFound(SpotLight* light) = 0;
 };
 
+struct PointObject
+{
+public:
+	PointObject();
+	~PointObject();
+
+	void draw();
+
+public:
+	GLuint VAO;
+	size_t point_cnt = 0;
+	std::shared_ptr<CBaseShaderProgram> shader;
+};
+
 class Scene
 {
   friend class GameGUI;
@@ -81,6 +95,7 @@ private:
   DirectionLightList m_DirectionLight;
   PointLightList m_PointLights;
   SpotLightList m_SpotLights;
+	PointObject* m_Points;
 
 	Terrain terrain;
 
@@ -144,6 +159,9 @@ public:
   const PointLightList &GetPointLights();
 
 	Terrain *getTerrain();
+
+	PointObject* createPointObject(tinyxml2::XMLElement* object);
+	PointObject* getPoints();
 
 };
 

@@ -89,17 +89,25 @@ void Scene::loadObject(XMLElement *object)
   objectType = object->Attribute("type");
   if (objectType == nullptr)
     objectType = "object";
-	if (object->BoolAttribute("transparent"))
-		objectTransparent = true;
-	if (object->BoolAttribute("visible"))
-		objectVisible = true;
-  mesh = object->FirstChildElement("mesh");
-  if (mesh == nullptr)
-    return;
-  meshPath = mesh->Attribute("name");
-  if (meshPath == nullptr)
-    return;
-  obj = ObjectManager::instance()->getObject(meshPath, objectType);
+	if (objectType == std::string("points"))
+	{
+		m_Points = createPointObject(object);
+		return;
+	}
+	else
+	{
+		if (object->BoolAttribute("transparent"))
+			objectTransparent = true;
+		if (object->BoolAttribute("visible"))
+			objectVisible = true;
+		mesh = object->FirstChildElement("mesh");
+		if (mesh == nullptr)
+			return;
+		meshPath = mesh->Attribute("name");
+		if (meshPath == nullptr)
+			return;
+		obj = ObjectManager::instance()->getObject(meshPath, objectType);
+	}
   if (obj == nullptr)
     return;
   materialElement = object->FirstChildElement("material");
@@ -266,9 +274,9 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
   if (element == nullptr)
   //TODO: handle this
     return glm::vec3();
-  color.r = element->FloatAttribute("x");
-  color.g = element->FloatAttribute("y");
-  color.b = element->FloatAttribute("z");
+  color.r = element->FloatAttribute("r");
+  color.g = element->FloatAttribute("g");
+  color.b = element->FloatAttribute("b");
   return color;
 }
 
@@ -879,3 +887,71 @@ Terrain *Scene::getTerrain()
 	return &terrain;
 }
 
+PointObject* Scene::createPointObject(XMLElement* object)
+{
+	auto positions = object->FirstChildElement("positions");
+	if (positions)
+	{
+		auto filename = positions->Attribute("file");
+		if (filename)
+		{
+			FILE* file = fopen(filename, "r");
+			if (file == nullptr) return nullptr;
+			std::vector<Point> points;
+			char line[128];
+			while (!feof(file))
+			{
+				Point point;
+				auto m = fscanf(file, "v\t%f %f %f\n", &point.pos.x, &point.pos.y, &point.pos.z);
+				if (m != 3)
+				{
+					fgets(line, 128, file);
+					continue;
+				}
+				
+				points.push_back(point);
+			}
+			if (points.size() > 0)
+			{
+				PointObject* po = new PointObject();
+				GLuint VBO;
+
+				po->point_cnt = points.size();
+				glGenVertexArrays(1, &po->VAO);
+				glBindVertexArray(po->VAO);
+					glGenBuffers(1, &VBO);
+					glBindBuffer(GL_ARRAY_BUFFER, VBO);
+					glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(Point), points.data(), GL_STATIC_DRAW);
+
+					glEnableVertexAttribArray(0);
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+				glBindVertexArray(0);
+				return po;
+			}
+		}
+	}
+	return nullptr;
+}
+
+PointObject* Scene::getPoints()
+{
+	return m_Points;
+}
+
+PointObject::PointObject()
+{
+	shader = ShaderManager::instance()->getProgram("points.vert", "points.frag");
+	shader->create();
+}
+
+PointObject::~PointObject()
+{
+}
+
+void PointObject::draw()
+{
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_POINTS, 0, point_cnt);
+	glBindVertexArray(0);
+}
