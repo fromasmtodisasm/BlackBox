@@ -20,8 +20,10 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Iterate through all characters
-	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
+	//std::string::const_iterator c;
+	const char *c;
+	const char* end = text.data() + text.size();
+	for (c = text.data(); c != end; c++)
 	{
 		if (*c == '\n')
 		{
