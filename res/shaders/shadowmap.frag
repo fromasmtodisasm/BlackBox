@@ -109,7 +109,7 @@ void main()
 	vec3 result = lighting;
     // check whether result is higher than some threshold, if so, output as bloom threshold color
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
-	if (brightness > 0.5 && brightness < 0.9 || brightness > bloomThreshold)
+	if (brightness > bloomThreshold)
 
     //if(brightness > bloomThreshold)
         BrightColor = vec4(result, 1.0);

@@ -123,9 +123,11 @@ void CPlayer::update(float deltatime)
       ;//GameObject::update(deltatime);
     }
   }
+#if 0
   if (m_transform.position.y < 0)
     velocity.y = - velocity.y*friction;
   m_transform.position += velocity * deltatime;
+#endif
   //m_Camera->m_target = m_transform.position;
 }
 
