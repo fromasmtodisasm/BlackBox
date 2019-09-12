@@ -40,12 +40,14 @@ private:
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;
   FrameBufferObject* pingPongBuffer[2];
+	FrameBufferObject* callOfDutySample;
   Scene* m_Scene;
 
   ICVar* exposure;
   ICVar* enabled;
 	ICVar* bloom;
 	ICVar* bloomThreshold;
+	ICVar* useBoxFilter;
 
   bool inited = false;
 	bool pingpong = false;

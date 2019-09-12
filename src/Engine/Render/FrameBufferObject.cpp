@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 using namespace std;
 
 FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors) 
@@ -15,7 +16,7 @@ FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int
 {
 }
 
-FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int nColors)
+FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int nColors, bool createMipChain)
 {
   bool status = true;
   GLint internalFormat, Format;
@@ -24,6 +25,14 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   GLint dataType;
 
 	int texCnt = 1;
+	int mip_cnt = 1;
+	if (createMipChain)
+	{
+		if (nColors > 1)
+			return nullptr;
+		mip_cnt = std::log2(std::max(width, height));
+	}
+
 
   FrameBufferObject *fbo = new FrameBufferObject(type, width, height, nColors);
   glCheck(glGenFramebuffers(1, &fbo->id));
@@ -65,15 +74,24 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 	{
 		for (int i = 0; i < texCnt; i++)
 		{
-			glBindTexture(GL_TEXTURE_2D, fbo->texture[i]);
-			glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, Format, dataType, NULL));
-			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
-			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
-			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
-			glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+			for (int j = 0, mw = width, mh = height; j < mip_cnt; j++)
+			{
+				glBindTexture(GL_TEXTURE_2D, fbo->texture[i]);
+				glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mw, mh, 0, Format, dataType, NULL));
+				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
+				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
+				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
+				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+				if (createMipChain)
+				{
+					mw /= 2;
+					mh /= 2;
+				}
 
-			if (type != DEPTH_BUFFER)
-				glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
+				if (type != DEPTH_BUFFER)
+					glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
+
+			}
 		}
 
 	}

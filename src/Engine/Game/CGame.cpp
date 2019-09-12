@@ -395,6 +395,7 @@ bool CGame::OnInputEvent(sf::Event &event)
   auto lpx = m_Console->GetCVar("lpx");
   auto lpy = m_Console->GetCVar("lpy");
   auto lpz = m_Console->GetCVar("lpz");
+  auto useBoxFilter = m_Console->GetCVar("bf");
   bool result = OnInputEventProxy(event);
   switch (event.type)
   {
@@ -422,6 +423,12 @@ bool CGame::OnInputEvent(sf::Event &event)
     case sf::Keyboard::Right:
     {
       lpx->Set(lpx->GetFVal() + 0.5f);
+      break;
+    }
+    case sf::Keyboard::Insert:
+    {
+			bool ubf = useBoxFilter->GetIVal();
+			useBoxFilter->Set(!ubf);
       break;
     }
     default:

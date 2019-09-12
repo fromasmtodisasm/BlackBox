@@ -16,7 +16,7 @@ public:
   };
 
 
-  static FrameBufferObject *create(BufferType type, int width, int height, int nColors);
+  static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
   void bind();
   void unbind();
   ITexture* getTexture();

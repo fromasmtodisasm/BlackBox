@@ -6,6 +6,8 @@
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IConsole.hpp>
 
+#define NBLOOM
+
 HdrTechnique::HdrTechnique()
 {
 }
@@ -24,11 +26,15 @@ bool HdrTechnique::Init(Scene* scene, FrameBufferObject* renderTarget)
   enabled = GetIEngine()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
   bloom = GetIEngine()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
   bloomThreshold = GetIEngine()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
+  useBoxFilter = GetIEngine()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
   createShader();
   shadowMapping = new ShadowMapping();
-  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 2);
-  pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 2);
-  pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 2);
+	float m = 1;
+	glm::vec2 size_m2 = glm::vec2(GetIEngine()->getIRender()->GetWidth()*m, GetIEngine()->getIRender()->GetHeight()*m);
+  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 2, false);
+  pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
+  pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
+  callOfDutySample =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, true);
 
   inited = true;
   return shadowMapping->Init(scene, hdrBuffer);
@@ -70,8 +76,11 @@ void HdrTechnique::BloomPass()
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = 10;
 	m_BlurShader->use();
+  m_BlurShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
 	glCheck(glDisable(GL_DEPTH_TEST));
 	glActiveTexture(GL_TEXTURE0);
+	if (useBoxFilter->GetIVal())
+		amount = 1;
 	for (unsigned int i = 0; i < amount; i++)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, pingPongBuffer[horizontal]->id);
@@ -102,13 +111,16 @@ void HdrTechnique::createShader()
 
   m_BlurShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
+#ifdef NBLOOM
+    CShader::load("res/shaders/box_filter.frag", CShader::E_FRAGMENT)
+#else
     CShader::load("res/shaders/blur.frag", CShader::E_FRAGMENT)
+#endif
   );
 	m_BlurShader->create();
 	m_BlurShader->use();
 	m_BlurShader->setUniformValue(0,"image");
 	m_BlurShader->unuse();
-
 
 }
 
@@ -137,7 +149,11 @@ void HdrTechnique::Do(unsigned int texture)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, hdrBuffer->texture[0]);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, pingPongBuffer[pingpong]->texture[0]);
+	if (useBoxFilter->GetIVal())
+		glBindTexture(GL_TEXTURE_2D, pingPongBuffer[true]->texture[0]);
+	else
+		glBindTexture(GL_TEXTURE_2D, pingPongBuffer[pingpong]->texture[0]);
+
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 	//shaderBloomFinal.setFloat("exposure", exposure);
 

@@ -30,11 +30,14 @@ uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform bool lightOn = true;
 uniform bool bloomOn = true;
-uniform float bloomThreshold = 2.0;
+uniform float bloomThreshold = 0.0f;
 uniform bool isTerrain = false;
+uniform bool shadowOn = false;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
+	if (!shadowOn)
+		return 0.f;	
    // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
@@ -108,6 +111,7 @@ void main()
 
 	vec3 result = lighting;
     // check whether result is higher than some threshold, if so, output as bloom threshold color
+	#ifdef THRESHOLDED
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
 	if (brightness > bloomThreshold)
 
@@ -115,6 +119,9 @@ void main()
         BrightColor = vec4(result, 1.0);
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+	#endif
+
+	//BrightColor = vec4(result, 1.0);
 	if (isTerrain)
 	{
 		//result = vec3(abs(fs_in.Normal.x),0,0);
