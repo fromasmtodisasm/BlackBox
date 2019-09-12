@@ -51,9 +51,9 @@ vec4 SampleBox(vec2 uv)
 	*/
 	if (use_box_filter) {
 		result += Sample(uv + vec2(0.0, 0.0)).rgb;
-		result += Sample(uv + vec2(2 * tex_offset.x, 0.0)).rgb;
-		result += Sample(uv + vec2(0.0, 2 * tex_offset.y)).rgb;
-		result += Sample(uv + vec2(2 * tex_offset.x, 2 * tex_offset.y)).rgb;
+		result += Sample(uv + vec2(tex_offset.x, 0.0)).rgb;
+		result += Sample(uv + vec2(0.0, tex_offset.y)).rgb;
+		result += Sample(uv + vec2(tex_offset.x, tex_offset.y)).rgb;
 		result *= 0.25;
 	}
 	else {
