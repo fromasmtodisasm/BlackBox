@@ -11,6 +11,15 @@ uniform sampler2D image;
 uniform bool horizontal;
 uniform float weight[5] = float[](0.125f, 0.125f, 0.5, 0.125f, 0.125f);
 
+// Todo: specify calculation of offset for box filter
+vec2 offsets[5] = vec2[](
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0)
+);
+
 vec4 Sample(vec2 uv) {
 	return texture2D(image, uv);
 }
@@ -25,6 +34,7 @@ vec4 SampleBox(vec2 uv)
 		Sample(uv + o.xy) + Sample(uv + o.zy) +
 		Sample(uv + o.xw) + Sample(uv + o.zw);
 	*/
+	// Todo: specify calculation of offset for box filter
 	result += Sample(uv + vec2(0.0, 0.0)).rgb;
 	result += Sample(uv + vec2(tex_offset.x, 0.0)).rgb;
 	result += Sample(uv + vec2(0.0, tex_offset.y)).rgb;
@@ -36,12 +46,12 @@ vec4 SampleBox(vec2 uv)
 void main()
 {             
 	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+	vec4 result = vec4(0);
 
-	vec4 result = SampleBox(TexCoords);
-	result = SampleBox(TexCoords + OFFSET);
-	result = SampleBox(TexCoords + OFFSET);
-	result = SampleBox(TexCoords + OFFSET);
-	result = SampleBox(TexCoords + OFFSET);
+	for (int i = 0; i < 5; i++)
+	{
+		result += SampleBox(TexCoords + offsets[i]) * weight[i];
+	}
 
 
 
