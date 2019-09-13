@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/MathHelper.hpp>
 #include <vector>
 
 struct ITexture;
@@ -17,6 +18,7 @@ public:
 
 
   static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
+	void clear();
   void bind();
   void unbind();
   ITexture* getTexture();
@@ -28,7 +30,6 @@ public:
   GLuint id;
   std::vector<GLuint> texture;
   GLuint rbo;
-  int width;
-  int height;
   BufferType type;
+	glm::vec4 viewPort;
 };

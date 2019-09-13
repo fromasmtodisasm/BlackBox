@@ -6,6 +6,7 @@ in vec2 TexCoords;
 uniform sampler2D image;
 uniform vec2 texelSize;
 uniform bool use_box_filter = true;
+uniform bool default_filter = true;
 
 uniform bool horizontal;
 uniform float weight[5] = float[] (0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162);
@@ -49,7 +50,11 @@ vec4 SampleBox(vec2 uv)
 		Sample(uv + o.xy) + Sample(uv + o.zy) +
 		Sample(uv + o.xw) + Sample(uv + o.zw);
 	*/
-	if (use_box_filter) {
+	if (default_filter)
+	{
+		result = Sample(uv).rgb;
+	}
+	else if (use_box_filter) {
 		result += Sample(uv + vec2(0.0, 0.0)).rgb;
 		result += Sample(uv + vec2(tex_offset.x, 0.0)).rgb;
 		result += Sample(uv + vec2(0.0, tex_offset.y)).rgb;

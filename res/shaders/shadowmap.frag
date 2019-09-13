@@ -125,12 +125,12 @@ void main()
 	if (isTerrain)
 	{
 		//result = vec3(abs(fs_in.Normal.x),0,0);
-		float n = abs(fs_in.Normal.y);
-		if (n <= 0.10)
-			result = mix(vec3(0,1,0), vec3(1,0,0), 0.1 / n);
-		else if(n > 0.10 && n < 0.15)
-			result = mix(vec3(1,0,0), vec3(0,1,0), 0.15 / n);
-		result *= (diff + 0.15 + specular);
+//		float n = abs(fs_in.Normal.y);
+//		if (n <= 0.10)
+//			result = mix(vec3(0,1,0), vec3(1,0,0), 0.1 / n);
+//		else if(n > 0.10 && n < 0.15)
+//			result = mix(vec3(1,0,0), vec3(0,1,0), 0.15 / n);
+//		result *= (diff + 0.15 + specular);
 			//result = vec3(0,1,0);
 		//result = mix(;
 		//result = mix(vec3(1,0,0), result, abs(fs_in.Normal.y));

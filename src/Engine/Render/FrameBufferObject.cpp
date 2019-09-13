@@ -9,10 +9,9 @@ using namespace std;
 FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors) 
   : 
   type(type),
-  width(width), 
-  height(height),
   id(-1),
-  rbo(-1)
+  rbo(-1),
+	viewPort(glm::vec4(0))
 {
 }
 
@@ -36,6 +35,9 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 
   FrameBufferObject *fbo = new FrameBufferObject(type, width, height, nColors);
   glCheck(glGenFramebuffers(1, &fbo->id));
+
+	fbo->viewPort.z = (float)width;
+	fbo->viewPort.w = (float)height;
 
 	if (type != DEPTH_BUFFER)
 	{
@@ -125,7 +127,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 		{
 			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
-		glDrawBuffers(texCnt, &attachments[0]);
+		glCheck(glDrawBuffers(texCnt, &attachments[0]));
 	}
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -137,9 +139,17 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   return fbo;
 }
 
+void FrameBufferObject::clear()
+{
+	glCheck(glClearColor(0.f, 0.f, 0.f, 1.0f));
+	glCheck(glClearDepthf(1.f));
+	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
 void FrameBufferObject::bind()
 {
   glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
+	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
 }
 
 void FrameBufferObject::unbind()

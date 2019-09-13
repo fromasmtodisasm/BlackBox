@@ -33,13 +33,16 @@ private:
   void createShader();
 
 private:
+	static const int PASSES = 4;
   ITechnique *shadowMapping;
   CBaseShaderProgram* m_ScreenShader;
   CBaseShaderProgram* m_BlurShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;
-  FrameBufferObject* pingPongBuffer[2];
+	FrameBufferObject* scene;
+	FrameBufferObject* pass0[PASSES];
+	FrameBufferObject* pass1[PASSES];
 	FrameBufferObject* callOfDutySample;
   Scene* m_Scene;
 
@@ -48,6 +51,7 @@ private:
 	ICVar* bloom;
 	ICVar* bloomThreshold;
 	ICVar* useBoxFilter;
+	ICVar* defaultFilter;
 
   bool inited = false;
 	bool pingpong = false;

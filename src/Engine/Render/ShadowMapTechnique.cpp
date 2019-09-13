@@ -71,8 +71,7 @@ void ShadowMapping::DepthPass()
   float m = s_divider->GetFVal();
   lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
-  glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
-  glClear(GL_DEPTH_BUFFER_BIT);
+	m_DepthBuffer->clear();
   m_ShadowMapShader->use();
   glm::mat4 proj = glm::ortho(-1366.f * m, 1366.f * m, -768.f * m, 768.f * m, -1.0f, 5000.f);
 
@@ -97,7 +96,6 @@ void ShadowMapping::RenderPass()
   Pipeline::instance()->projection = camera->getProjectionMatrix();
   Pipeline::instance()->view_pos = camera->getPosition();
 
-  glViewport(0, 0, m_RenderedScene->width, m_RenderedScene->height);
   // Render opaque objects
   renderStage = RENDER_OPAQUE;
   m_Scene->ForEachObject(this);
@@ -199,8 +197,7 @@ void ShadowMapping::OnRenderPass()
 		GetIEngine()->getIConsole()->GetCVar("fogG")->GetFVal(),
 		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal());
   //glCheck(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
-	glClearColor(fog.r, fog.g, fog.b, 1.0f);
-  glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	m_RenderedScene->clear();
   glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();
 }
