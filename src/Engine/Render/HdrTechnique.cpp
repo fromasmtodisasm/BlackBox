@@ -31,7 +31,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   createShader();
   shadowMapping = new ShadowMapping();
 	float m = 1;
-	glm::vec2 size_m2 = glm::vec2(GetIEngine()->getIRender()->GetWidth()*m, GetIEngine()->getIRender()->GetHeight()*m);
+	glm::vec2 size_m2 = glm::vec2(GetIEngine()->getIRender()->GetWidth()*m, GetIEngine()->getIRender()->GetHeight()*m) / 2.f;
   hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 2, false);
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);

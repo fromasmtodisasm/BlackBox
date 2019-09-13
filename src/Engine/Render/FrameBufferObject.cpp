@@ -141,7 +141,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 
 void FrameBufferObject::clear()
 {
-	glCheck(glClearColor(0.f, 0.f, 0.f, 1.0f));
+	glCheck(glClearColor(0.f, 0.5f, 0.5f, 1.0f));
 	glCheck(glClearDepthf(1.f));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
