@@ -9,7 +9,7 @@
 class CConsole;
 class CRender;
 
-class CEngine : public IEngine
+class CEngine : public ISystem
 {
 private:
   ILog *m_pLog;
@@ -29,25 +29,25 @@ public:
   virtual IShaderManager * getShaderManager() override;
   virtual IRender * getIRender() override;
 
-  // Унаследовано через IEngine
+  // Унаследовано через ISystem
   virtual ILog* getILog() override;
 
-  // Унаследовано через IEngine
+  // Унаследовано через ISystem
   virtual IConsole* getIConsole() override;
 
-  // Унаследовано через IEngine
+  // Унаследовано через ISystem
   virtual IGame* getIGame() override;
 
-  // Унаследовано через IEngine
+  // Унаследовано через ISystem
   virtual IGame* CreateGame(IGame* game) override;
 
-	// Унаследовано через IEngine
+	// Унаследовано через ISystem
 	virtual IFont* getIFont() override;
 
-	// Унаследовано через IEngine
+	// Унаследовано через ISystem
 	virtual IWindow* getIWindow() override;
 
-	// Унаследовано через IEngine
+	// Унаследовано через ISystem
 	virtual IInputHandler* getIInputHandler() override;
 
 	bool ConfigLoad(const char* file);

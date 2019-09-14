@@ -16,7 +16,7 @@
 
 #include <BlackBox/MathHelper.hpp>
 
-struct IEngine;
+struct ISystem;
 struct IWindow;
 struct IFont;
 class CCamera;
@@ -108,5 +108,5 @@ struct IRender
 };
 
 extern "C" {
-	IRENDER_API IRender* CreateIRender(IEngine* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+	IRENDER_API IRender* CreateIRender(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
 }

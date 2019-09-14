@@ -42,7 +42,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class GameGUI;
   friend class CPlayer;
 private:
-  IEngine *m_pEngine;
+  ISystem *m_pEngine;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
@@ -107,7 +107,7 @@ public:
 public:
   CGame(std::string title);
   ~CGame() = default;
-  bool init(IEngine *pSystem) override;
+  bool init(ISystem *pSystem) override;
   bool update() override;
 	void execScripts();
 	void drawHud(float fps);

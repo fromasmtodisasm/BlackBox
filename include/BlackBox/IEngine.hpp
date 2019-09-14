@@ -11,7 +11,7 @@ struct IFont;
 struct IWindow;
 struct IInputHandler;
 
-struct IEngine
+struct ISystem
 {
   virtual bool Init() = 0;
   virtual void Start() = 0;
@@ -29,10 +29,10 @@ struct IEngine
 };
 
 // Get the system interface (must be defined locally in each module)
-extern IEngine *GetIEngine();
+extern ISystem *GetISystem();
 
 // interface of the DLL
 extern "C"
 {
-  SYSTEM_API IEngine* CreateIEngine(void *);
+  SYSTEM_API ISystem* CreateISystem(void *);
 }

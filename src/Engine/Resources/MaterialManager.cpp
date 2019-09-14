@@ -82,10 +82,10 @@ bool MaterialManager::init(std::string materialLib)
   return status;
 }
 
-MaterialManager::MaterialManager() : m_pLog(GetIEngine()->getILog())
+MaterialManager::MaterialManager() : m_pLog(GetISystem()->getILog())
 {
-	root_path = GetIEngine()->getIConsole()->GetCVar("materials_path");
-	GetIEngine()->getIConsole()->CreateVariable("ef", 40.f, 0, "emissive factor");
+	root_path = GetISystem()->getIConsole()->GetCVar("materials_path");
+	GetISystem()->getIConsole()->CreateVariable("ef", 40.f, 0, "emissive factor");
 }
 
 bool MaterialManager::loadLib(std::string name)

@@ -46,7 +46,7 @@ void Material::apply(Object *object)
 		{
 			activeTexture("emissiveMap", emissive);
 			program->setUniformValue(true, "has_emissive");
-			program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("ef")->GetFVal(), "emissive_factor");
+			program->setUniformValue(GetISystem()->getIConsole()->GetCVar("ef")->GetFVal(), "emissive_factor");
 		}
 		else
 		{

@@ -26,7 +26,7 @@ bool ShaderStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog));
-    GetIEngine()->getILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
+    GetISystem()->getILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
     return false;
   }
   return true;
@@ -45,7 +45,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
-    GetIEngine()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
+    GetISystem()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
     return false;
   }
   return true;

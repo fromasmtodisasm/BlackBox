@@ -161,7 +161,7 @@ private:
 	IFont* m_Font;
 	bool isOpened = false;
 	bool cmd_is_compete = false;
-	IEngine* m_engine;
+	ISystem* m_engine;
 	ITexture* m_pBackGround;
   //ITexture* m_pBackGround = nullptr;
 

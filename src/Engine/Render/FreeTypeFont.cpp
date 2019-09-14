@@ -6,7 +6,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 {
 	// Activate corresponding render state	
 	shader->use();
-	auto render = GetIEngine()->getIRender();
+	auto render = GetISystem()->getIRender();
 	glm::mat4 uv_projection = glm::mat4(1.0);
 	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);

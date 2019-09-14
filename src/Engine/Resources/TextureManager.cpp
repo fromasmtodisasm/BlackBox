@@ -52,11 +52,11 @@ BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
     }
     if (texture == nullptr)
     {
-      GetIEngine()->getILog()->AddLog("[EROR] Error of load texture: %s\n", Path.c_str());
+      GetISystem()->getILog()->AddLog("[EROR] Error of load texture: %s\n", Path.c_str());
     }
     else
     {
-      GetIEngine()->getILog()->AddLog("[INFO] Texture [%s] loaded\n",  Path.c_str());
+      GetISystem()->getILog()->AddLog("[INFO] Texture [%s] loaded\n",  Path.c_str());
     }
   }
   return texture;

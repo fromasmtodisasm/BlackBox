@@ -18,7 +18,7 @@ SceneManager *SceneManager::instance()
   {
     manager = new SceneManager();
 		manager->current_scene_it = manager->cache.begin();
-    scene_path = GetIEngine()->getIConsole()->GetCVar("scenes_path");
+    scene_path = GetISystem()->getIConsole()->GetCVar("scenes_path");
   }
   return manager;
 }
@@ -50,20 +50,20 @@ Scene *SceneManager::getScene(string scene)
     if (v != cache.end())
     {
       result = v->second;
-      GetIEngine()->getILog()->AddLog("[INFO] Scene [%s] already cached\n", scenePath.c_str());
+      GetISystem()->getILog()->AddLog("[INFO] Scene [%s] already cached\n", scenePath.c_str());
     }
     else {
       result = new Scene(scene);
       if (!result->load(scenePath + ".xml"))
       {
-        GetIEngine()->getILog()->AddLog("[ERROR] Error or load scene: %s\n",scenePath.c_str());
+        GetISystem()->getILog()->AddLog("[ERROR] Error or load scene: %s\n",scenePath.c_str());
         delete result;
         return nullptr;
       }
       else
       {
         cache[scenePath] = result;
-        GetIEngine()->getILog()->AddLog("[INFO] Scene [%s] loaded\n", scenePath.c_str());
+        GetISystem()->getILog()->AddLog("[INFO] Scene [%s] loaded\n", scenePath.c_str());
       }
     }
   }

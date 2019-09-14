@@ -23,12 +23,12 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
   fs = getShader(fShader, "fragment", false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetIEngine()->getILog()->AddLog("Error of load shader");
+    GetISystem()->getILog()->AddLog("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetIEngine()->getILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->getILog()->AddLog("[OK] Shaders loaded\n");
     return p = std::make_shared<CShaderProgram>(vs, fs);
   }
 }

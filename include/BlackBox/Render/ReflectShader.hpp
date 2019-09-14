@@ -11,7 +11,7 @@ public:
 
 
 private:
-	IEngine* m_Engine;
+	ISystem* m_Engine;
 
 	// Inherited via CBaseShaderProgram
 	virtual void setup() override;

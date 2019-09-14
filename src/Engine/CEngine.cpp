@@ -177,8 +177,8 @@ bool CEngine::ConfigLoad(const char* file)
 	return true;
 }
 
-SYSTEM_API IEngine * CreateIEngine(void *)
+SYSTEM_API ISystem * CreateISystem(void *)
 {
-  IEngine *system = new CEngine();
+  ISystem *system = new CEngine();
   return system;
 }

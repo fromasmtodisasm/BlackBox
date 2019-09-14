@@ -11,7 +11,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
-CRender::CRender(IEngine *engine) : 
+CRender::CRender(ISystem *engine) : 
   m_Engine(engine), m_viewPort(0,0,0,0)
 {
 
@@ -246,7 +246,7 @@ void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 }
 
 
-IRENDER_API IRender* CreateIRender(IEngine* pSystem)
+IRENDER_API IRender* CreateIRender(ISystem* pSystem)
 {
 	return new CRender(pSystem);
 }

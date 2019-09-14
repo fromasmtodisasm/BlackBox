@@ -327,7 +327,7 @@ Scene::Scene(std::string name)
 	m_TextShader->create();
 
 	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
-	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
+	texture_speed = GetISystem()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 }
 
 void Scene::selectPrevObject()
@@ -698,7 +698,7 @@ void Scene::loadCamera(tinyxml2::XMLElement* element)
 
   result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
 
-  result->MovementSpeed = GetIEngine()->getIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
+  result->MovementSpeed = GetISystem()->getIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
   
   m_Camera[name] = result;
 }
@@ -802,7 +802,7 @@ void Scene::present(int width, int height)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (postProcessor == nullptr)
 	{
-		auto render = GetIEngine()->getIRender();
+		auto render = GetISystem()->getIRender();
 	auto	
 			width = render->GetWidth(),
 			height = render->GetHeight();

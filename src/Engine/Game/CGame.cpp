@@ -67,8 +67,8 @@ struct TextRenderInfo
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
-static IEngine* gIEngine = nullptr;
-IEngine* GetIEngine()
+static ISystem* gIEngine = nullptr;
+ISystem* GetISystem()
 {
   return gIEngine;
 }
@@ -117,7 +117,7 @@ CGame::CGame(std::string title) :
   m_PlayList.addTrack("japan.ogg");
 }
 
-bool CGame::init(IEngine *pEngine)  {
+bool CGame::init(ISystem *pEngine)  {
   m_pEngine = gIEngine = pEngine;
   m_Log = m_pEngine->getILog();
 	m_Console = m_pEngine->getIConsole();

@@ -23,7 +23,7 @@ void main()
 )";
 
 ShadowMapShader::ShadowMapShader() :
-  m_Engine(GetIEngine()), 
+  m_Engine(GetISystem()), 
 	CBaseShaderProgram(CShader::loadFromMemory(vs, CShader::E_VERTEX), CShader::loadFromMemory(fs, CShader::E_FRAGMENT))
 {
 	

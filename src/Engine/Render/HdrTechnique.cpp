@@ -20,18 +20,18 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 {
   if (inited)
     return true;
-  render = GetIEngine()->getIRender();
+  render = GetISystem()->getIRender();
   m_Scene = pScene;
-  exposure = GetIEngine()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
-  enabled = GetIEngine()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
-  bloom = GetIEngine()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
-  bloomThreshold = GetIEngine()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
-  useBoxFilter = GetIEngine()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
-  defaultFilter = GetIEngine()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
+  exposure = GetISystem()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
+  enabled = GetISystem()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
+  bloom = GetISystem()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
+  bloomThreshold = GetISystem()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
+  useBoxFilter = GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
+  defaultFilter = GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
   createShader();
   shadowMapping = new ShadowMapping();
 	float m = 1;
-	glm::vec2 size_m2 = glm::vec2(GetIEngine()->getIRender()->GetWidth()*m, GetIEngine()->getIRender()->GetHeight()*m) / 1.f;
+	glm::vec2 size_m2 = glm::vec2(GetISystem()->getIRender()->GetWidth()*m, GetISystem()->getIRender()->GetHeight()*m) / 1.f;
   hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 2, false);
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
@@ -151,9 +151,9 @@ void HdrTechnique::PostRenderPass()
 void HdrTechnique::Do(unsigned int texture)
 {
 	glm::vec3 fog = glm::vec3(
-		GetIEngine()->getIConsole()->GetCVar("fogR")->GetFVal(),
-		GetIEngine()->getIConsole()->GetCVar("fogG")->GetFVal(),
-		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal());
+		GetISystem()->getIConsole()->GetCVar("fogR")->GetFVal(),
+		GetISystem()->getIConsole()->GetCVar("fogG")->GetFVal(),
+		GetISystem()->getIConsole()->GetCVar("fogB")->GetFVal());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(fog.r, fog.g, fog.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -175,6 +175,6 @@ void HdrTechnique::Do(unsigned int texture)
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 	//shaderBloomFinal.setFloat("exposure", exposure);
 
-	glCheck(glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()));
+	glCheck(glViewport(0, 0, GetISystem()->getIRender()->GetWidth(), GetISystem()->getIRender()->GetHeight()));
 	m_ScreenQuad.draw();
 }

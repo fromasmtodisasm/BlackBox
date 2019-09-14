@@ -9,7 +9,7 @@
 class CRender : public IRender
 {
 public:
-	CRender(IEngine *engine);
+	CRender(ISystem *engine);
 	~CRender();
 
 public:
@@ -60,7 +60,7 @@ private:
 
 private:
 	IWindow* m_Window;
-	IEngine *m_Engine;
+	ISystem *m_Engine;
 
 	bool is_fullscreen = false;
 	Rect m_viewPort;
