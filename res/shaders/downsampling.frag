@@ -26,14 +26,9 @@ vec4 Sample(vec2 uv) {
 
 vec4 SampleBox(vec2 uv) 
 {
-	//vec4 o = (1.0 / textureSize(image, 0)).xyxy * vec2(-1, 1).xxyy;
 	vec2 tex_offset = (1.0 / textureSize(image, 0));
 	vec3 result;
-	/*
-	vec4 s =
-		Sample(uv + o.xy) + Sample(uv + o.zy) +
-		Sample(uv + o.xw) + Sample(uv + o.zw);
-	*/
+	
 	// Todo: specify calculation of offset for box filter
 	result += Sample(uv + vec2(0.0, 0.0)).rgb;
 	result += Sample(uv + vec2(tex_offset.x, 0.0)).rgb;
@@ -52,9 +47,5 @@ void main()
 	{
 		result += SampleBox(TexCoords + offsets[i]) * weight[i];
 	}
-
-
-
-
 	FragColor = vec4(result);
 }
