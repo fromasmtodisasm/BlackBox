@@ -52,6 +52,9 @@
 	#define PROFILER_DRAW()									profiler.draw()
 	#define PROFILER_SYNC_FRAME()							profiler.synchronizeFrame()
 
+	#define PROFILER_FROZE_FRAME()					profiler.froze()
+	#define PROFILER_UNFROZE_FRAME()					profiler.unfroze()
+
 class Profiler
 {
 private:
@@ -184,6 +187,9 @@ public:
 	bool	isVisible() const			{return m_visible;}
 
 	bool	isFrozen() const			{return m_freeze_state == FROZEN || m_freeze_state == WAITING_FOR_UNFREEZE;}
+
+	void froze() { m_freeze_state = FROZEN; }
+	void unfroze() { m_freeze_state = UNFROZEN; }
 
 	// Input handling
 	void	onMousePos(int x, int y)	{m_mouse_x=x;	m_mouse_y=y;}

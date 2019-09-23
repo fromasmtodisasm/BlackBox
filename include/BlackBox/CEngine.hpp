@@ -9,7 +9,7 @@
 class CConsole;
 class CRender;
 
-class CEngine : public IEngine, public IInputEventListener
+class CEngine : public IEngine, public IInputEventListener, public IConsoleVarSink
 {
 private:
   ILog *m_pLog;
@@ -42,6 +42,8 @@ public:
 	virtual IInputHandler* getIInputHandler() override;
 
 	virtual bool OnInputEvent(sf::Event& event) override;
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 	bool ConfigLoad(const char* file);
 private:
@@ -50,6 +52,8 @@ private:
 	ICVar* r_bpp;
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
+
+
 
 
 

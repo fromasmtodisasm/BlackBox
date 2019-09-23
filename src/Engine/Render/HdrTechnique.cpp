@@ -5,6 +5,7 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/Profiler/Profiler.h>
 
 #define NBLOOM
 
@@ -74,7 +75,9 @@ bool HdrTechnique::HdrPass()
 	if (enabled->GetIVal())
 	{
     m_Scene->setPostProcessor(this);
+		PROFILER_PUSH_GPU_MARKER("BLOOM PASS", Utils::COLOR_DARK_GREEN);
 		BloomPass();
+		PROFILER_POP_GPU_MARKER();
 	}
   else
     m_Scene->setPostProcessor(nullptr);

@@ -192,12 +192,12 @@ void ShadowMapping::OnDepthPass()
 void ShadowMapping::OnRenderPass()
 {
   m_RenderedScene->bind();
-	glm::vec3 fog = glm::vec3(
+	glm::vec4 fog = glm::vec4(
 		GetIEngine()->getIConsole()->GetCVar("fogR")->GetFVal(),
 		GetIEngine()->getIConsole()->GetCVar("fogG")->GetFVal(),
-		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal());
-  //glCheck(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
-	m_RenderedScene->clear();
+		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal(),
+		1.f);
+	m_RenderedScene->clear(fog);
   glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();
 }

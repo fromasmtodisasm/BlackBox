@@ -3,8 +3,12 @@
 #include <BlackBox/MathHelper.hpp>
 #include <vector>
 
+#define EXTRACT_COLOR(c) c.r, c.g, c.b, c.a
+
 struct ITexture;
 class Texture;
+
+typedef Vec4 Color;
 
 class FrameBufferObject
 {
@@ -18,6 +22,7 @@ public:
 
 
   static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
+	void clear(Color &color);
 	void clear();
   void bind();
   void unbind();
@@ -32,4 +37,5 @@ public:
   GLuint rbo;
   BufferType type;
 	glm::vec4 viewPort;
+	glm::vec4 defaultColor = glm::vec4(glm::vec3(0.f), 1.f);
 };

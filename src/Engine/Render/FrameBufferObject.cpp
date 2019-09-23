@@ -139,11 +139,16 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   return fbo;
 }
 
-void FrameBufferObject::clear()
+void FrameBufferObject::clear(Color &color)
 {
-	glCheck(glClearColor(0.f, 0.5f, 0.5f, 1.0f));
+	glCheck(glClearColor(EXTRACT_COLOR(color)));
 	glCheck(glClearDepthf(1.f));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void FrameBufferObject::clear()
+{
+	clear(defaultColor);
 }
 
 void FrameBufferObject::bind()

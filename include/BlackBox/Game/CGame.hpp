@@ -88,6 +88,8 @@ private:
 	//=======================
   ICVar* g_scene;
   ICVar* r_displayinfo;
+	ICVar* r_profile;
+	ICVar* r_cap_profile;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 

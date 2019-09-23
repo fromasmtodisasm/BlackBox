@@ -84,12 +84,15 @@ bool CEngine::Init()
 	if (!m_pConsole->Init())
 		return false;
 	//=============
+	m_pConsole->AddConsoleVarSink(this);
+	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)
 	{
 		if (m_pFont->Init("arial.ttf", 16,18) == false)
 			return false;
 	}
+	m_InputHandler->AddEventListener(this);
 	m_InputHandler->AddEventListener(m_pConsole);
   if (CreateGame(nullptr) == nullptr)
     return false;
@@ -194,8 +197,28 @@ bool CEngine::ConfigLoad(const char* file)
 	return true;
 }
 
+bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
+{
+	if (!strcmp(pVar->GetName(),"r_cap_profile"))
+	{
+		switch (std::atoi(sNewValue))
+		{
+		case 0:
+			PROFILER_UNFROZE_FRAME();
+			return true;
+		case 1:
+			PROFILER_FROZE_FRAME();
+			return true;
+		default:
+			return false;
+		}
+	}
+	return false;
+}
+
 void CEngine::BeginFrame()
 {
+	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 }
 
@@ -207,6 +230,7 @@ void CEngine::EndFrame()
 
 bool CEngine::OnInputEvent(sf::Event& event)
 {
+	bool result = false;
 	switch (event.type)
 	{
 	case sf::Event::MouseButtonPressed:
@@ -214,30 +238,47 @@ bool CEngine::OnInputEvent(sf::Event& event)
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
 			PROFILER_ON_LEFT_CLICK();
-			return true;
 		}
-		return false;
+		break;
 	}
 	case sf::Event::MouseMoved:
 	{
 		PROFILER_ON_MOUSE_POS(event.mouseMove.x, event.mouseMove.y);
-		return true;
+		break;
 	}
 	case sf::Event::Resized:
 	{
 		PROFILER_ON_RESIZE(event.size.width, event.size.height);
-		return true;
+		break;
+	}
+
+	case sf::Event::KeyPressed:
+	{
+		if (event.key.alt && event.key.shift)
+		{
+			if (event.key.code == sf::Keyboard::P)
+			{
+				if (profiler.isFrozen())
+				{
+					PROFILER_UNFROZE_FRAME();
+				}
+				else
+				{
+					PROFILER_FROZE_FRAME();
+				}
+			}
+		}
 	}
 
 	default:
 		break;
 	}
-	return false;
+	return result;
 }
 
 void CEngine::Update()
 {
-	PROFILER_SYNC_FRAME();
+	//PROFILER_SYNC_FRAME();
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

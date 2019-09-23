@@ -12,7 +12,15 @@ uniform bool horizontal;
 uniform float weight[5] = float[](0.125f, 0.125f, 0.5, 0.125f, 0.125f);
 
 // Todo: specify calculation of offset for box filter
-vec2 offsets[5] = vec2[](
+vec2 offsets[13] = vec2[](
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0),
+	vec2(0),
 	vec2(0),
 	vec2(0),
 	vec2(0),
@@ -21,19 +29,13 @@ vec2 offsets[5] = vec2[](
 );
 
 vec4 Sample(vec2 uv) {
-	return texture2D(image, uv);
+	return texture(image, uv);
 }
 
 vec4 SampleBox(vec2 uv) 
 {
-	//vec4 o = (1.0 / textureSize(image, 0)).xyxy * vec2(-1, 1).xxyy;
 	vec2 tex_offset = (1.0 / textureSize(image, 0));
 	vec3 result;
-	/*
-	vec4 s =
-		Sample(uv + o.xy) + Sample(uv + o.zy) +
-		Sample(uv + o.xw) + Sample(uv + o.zw);
-	*/
 	// Todo: specify calculation of offset for box filter
 	result += Sample(uv + vec2(0.0, 0.0)).rgb;
 	result += Sample(uv + vec2(tex_offset.x, 0.0)).rgb;

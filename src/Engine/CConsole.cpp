@@ -366,6 +366,13 @@ void CConsole::Set(CommandDesc& cd)
 		auto pVar = m_variables_map.find(name);
 		if (pVar != m_variables_map.end())
 		{
+			for (auto onChanger : varSinks)
+			{
+				if (!onChanger->OnBeforeVarChange(pVar->second, value.c_str()))
+				{
+					return;
+				}
+			}
 			switch (pVar->second->GetType())
 			{
 			case CVAR_INT:
@@ -386,8 +393,6 @@ void CConsole::Set(CommandDesc& cd)
 			PrintLine("Variable [%s] not found. Creating", name.c_str());
 			CreateVariable(name.c_str(), value.c_str(), 0);
 		}
-
-
 	}
 }
 
@@ -505,6 +510,27 @@ void CConsole::OnElementFound(ICVar* pCVar)
 		break;
 	}
 
+}
+
+void CConsole::AddConsoleVarSink(IConsoleVarSink* pSink)
+{
+	varSinks.push_back(pSink);
+}
+
+void CConsole::RemoveConsoleVarSink(IConsoleVarSink* pSink)
+{
+	auto var = varSinks.begin();
+	for (; var != varSinks.end(); var++)
+	{
+		if (*var == pSink)
+		{
+			break;
+		}
+	}
+	if (var != varSinks.end())
+	{
+		varSinks.erase(var);
+	}
 }
 
 ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)

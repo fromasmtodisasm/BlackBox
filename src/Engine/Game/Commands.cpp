@@ -626,4 +626,6 @@ void CGame::initCommands()
 void CGame::initVariables()
 {
   r_displayinfo = m_Console->CreateVariable("r_displayinfo", 1, 0, "Display info [1/0]");
+  r_profile = m_Console->CreateVariable("r_profile", 1, 0, "Profile [1/0]");
+  r_cap_profile = m_Console->CreateVariable("r_cap_profile", 1, 0, "Capture frame [1/0]");
 }

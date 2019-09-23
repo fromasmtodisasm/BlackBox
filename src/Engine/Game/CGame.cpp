@@ -16,6 +16,8 @@
 #include <BlackBox/Render/HdrTechnique.hpp>
 #include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/Utils.hpp>
+#include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Profiler/Utils.h>
 
 #ifdef GUI
 #include <imgui-SFML.h>
@@ -201,16 +203,28 @@ bool CGame::update() {
 			m_deltaTime = deltaTime.asSeconds();
 			m_time += m_deltaTime;
 			fps =  1000.0f / deltaTime.asMilliseconds();
+			PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
 			input();
+			PROFILER_POP_CPU_MARKER();
 			execScripts();
 			m_Window->update();
 			m_World->update(m_deltaTime);
 			setRenderState();
 
-			render();
-			m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+			//PROFILER_PUSH_GPU_MARKER("Render Scene", Utils::COLOR_DARK_RED);
+				//PROFILER_PUSH_GPU_MARKER("Render Objects", Utils::COLOR_BLUE);
+				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+					render();
+				PROFILER_POP_CPU_MARKER();
+				//PROFILER_POP_GPU_MARKER();
+				//PROFILER_PUSH_GPU_MARKER("Present FBO", Utils::COLOR_DARK_GREEN);
+					m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+				//PROFILER_POP_GPU_MARKER();
+			//PROFILER_POP_GPU_MARKER();
 			//m_active_camera = m_World->getActiveScene()->getCurrentCamera();
+			PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			drawHud(fps);
+			PROFILER_POP_CPU_MARKER();
 
 		m_pSystem->EndFrame();
     m_Window->swap();
