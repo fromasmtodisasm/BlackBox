@@ -6,9 +6,15 @@
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/Render/CRender.hpp>
 #include <BlackBox/IConsole.hpp>
+//
+#include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Profiler/HP_Timer.h>
+#include <BlackBox/Profiler/Drawer2D.h>
 
 #include <cstdlib>
 #pragma once
+
+using namespace Utils;
 
 CEngine::CEngine()
 	:
@@ -35,6 +41,7 @@ CEngine::~CEngine()
 
 bool CEngine::Init()
 {
+	initTimer();
   m_pLog = new NullLog();
   if (m_pLog == nullptr)
     return false;
@@ -52,7 +59,7 @@ bool CEngine::Init()
 	m_Render = CreateIRender(this);
 	if (m_Render == nullptr)
 		return false;
-
+	//=============
 	if (!ConfigLoad("res/scripts/engine.cfg"))
 		return false;
 	if (!(m_pWindow = m_Render->Init(
@@ -62,6 +69,16 @@ bool CEngine::Init()
 		false, m_pWindow))
 		)
 		return false;
+	//=============
+	// Initialize the 2D drawer
+	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
+	{
+		fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
+		return EXIT_FAILURE;
+	}
+	//=============
+	PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
+	//=============
 	m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
 	if (!m_pConsole->Init())
@@ -175,6 +192,52 @@ bool CEngine::ConfigLoad(const char* file)
 	//r_sbpp->Set(std::atoi(r_sbpp->GetString()));
 
 	return true;
+}
+
+void CEngine::BeginFrame()
+{
+	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
+}
+
+void CEngine::EndFrame()
+{
+	PROFILER_POP_CPU_MARKER();
+	PROFILER_DRAW();
+}
+
+bool CEngine::OnInputEvent(sf::Event& event)
+{
+	switch (event.type)
+	{
+	case sf::Event::MouseButtonPressed:
+	{
+		if (event.mouseButton.button == sf::Mouse::Left)
+		{
+			PROFILER_ON_LEFT_CLICK();
+			return true;
+		}
+		return false;
+	}
+	case sf::Event::MouseMoved:
+	{
+		PROFILER_ON_MOUSE_POS(event.mouseMove.x, event.mouseMove.y);
+		return true;
+	}
+	case sf::Event::Resized:
+	{
+		PROFILER_ON_RESIZE(event.size.width, event.size.height);
+		return true;
+	}
+
+	default:
+		break;
+	}
+	return false;
+}
+
+void CEngine::Update()
+{
+	PROFILER_SYNC_FRAME();
 }
 
 SYSTEM_API IEngine * CreateIEngine(void *)

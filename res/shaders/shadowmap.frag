@@ -2,6 +2,21 @@
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 
+
+interface vs_out 
+{
+	vec3 get_color();	
+};
+
+struct vs_out_impl : vs_out 
+{
+	vec3 get_color()
+	{
+
+		return vec3(1, 0,0);
+	}
+};
+
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -67,7 +82,8 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+    //vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+	vec3 color = vs_out_impl::get_color(); // Intresting possibility
 	vec3 emissive = vec3(0.0f);
 	if (has_emissive)
 	{

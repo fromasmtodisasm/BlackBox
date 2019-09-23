@@ -9,7 +9,7 @@
 class CConsole;
 class CRender;
 
-class CEngine : public IEngine
+class CEngine : public IEngine, public IInputEventListener
 {
 private:
   ILog *m_pLog;
@@ -22,33 +22,26 @@ private:
 public:
 	CEngine();
 	~CEngine();
-  // Унаследовано через ISystem
+  
+	// Inherited via IEngine
   virtual bool Init() override;
   virtual void Start() override;
+	virtual void Update() override;
+	virtual void BeginFrame() override;
+	virtual void EndFrame() override;
   virtual void Release() override;
+
   virtual IShaderManager * getShaderManager() override;
   virtual IRender * getIRender() override;
-
-  // Унаследовано через IEngine
   virtual ILog* getILog() override;
-
-  // Унаследовано через IEngine
   virtual IConsole* getIConsole() override;
-
-  // Унаследовано через IEngine
   virtual IGame* getIGame() override;
-
-  // Унаследовано через IEngine
   virtual IGame* CreateGame(IGame* game) override;
-
-	// Унаследовано через IEngine
 	virtual IFont* getIFont() override;
-
-	// Унаследовано через IEngine
 	virtual IWindow* getIWindow() override;
-
-	// Унаследовано через IEngine
 	virtual IInputHandler* getIInputHandler() override;
+
+	virtual bool OnInputEvent(sf::Event& event) override;
 
 	bool ConfigLoad(const char* file);
 private:
@@ -57,5 +50,7 @@ private:
 	ICVar* r_bpp;
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
+
+
 
 };

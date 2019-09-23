@@ -195,20 +195,24 @@ bool CGame::init(IEngine *pSystem)  {
 
 bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
-    sf::Time deltaTime = deltaClock.restart();
-    m_deltaTime = deltaTime.asSeconds();
-		m_time += m_deltaTime;
-		fps =  1000.0f / deltaTime.asMilliseconds();
-    input();
-		execScripts();
-    m_Window->update();
-    m_World->update(m_deltaTime);
-    setRenderState();
+		m_pSystem->BeginFrame();
 
-    render();
-		m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
-    //m_active_camera = m_World->getActiveScene()->getCurrentCamera();
-		drawHud(fps);
+			sf::Time deltaTime = deltaClock.restart();
+			m_deltaTime = deltaTime.asSeconds();
+			m_time += m_deltaTime;
+			fps =  1000.0f / deltaTime.asMilliseconds();
+			input();
+			execScripts();
+			m_Window->update();
+			m_World->update(m_deltaTime);
+			setRenderState();
+
+			render();
+			m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+			//m_active_camera = m_World->getActiveScene()->getCurrentCamera();
+			drawHud(fps);
+
+		m_pSystem->EndFrame();
     m_Window->swap();
   }
 	return true;

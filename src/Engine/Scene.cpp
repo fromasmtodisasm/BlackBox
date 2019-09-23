@@ -889,6 +889,11 @@ Terrain *Scene::getTerrain()
 
 PointObject* Scene::createPointObject(XMLElement* object)
 {
+	struct Point
+	{
+		glm::vec3 pos;
+	};
+
 	auto positions = object->FirstChildElement("positions");
 	if (positions)
 	{

@@ -105,6 +105,14 @@ target_sources(
 
   #Input folder
   PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
+  #Profiler folder
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Profiler.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Thread.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Tgaloader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
+
   #Render folder
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/CBaseShader.cpp

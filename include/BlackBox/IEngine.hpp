@@ -15,6 +15,9 @@ struct IEngine
 {
   virtual bool Init() = 0;
   virtual void Start() = 0;
+  virtual void Update() = 0;
+  virtual void BeginFrame() = 0;
+  virtual void EndFrame() = 0;
   virtual void Release() = 0;
   virtual IGame *CreateGame(IGame* game) = 0;
 
