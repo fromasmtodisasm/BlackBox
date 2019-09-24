@@ -151,7 +151,9 @@ private:
 	void addText(std::wstring& cmd);
 	;
 	void Set(CommandDesc& cd);
+	void SetInternal(ICVar* pVar, std::string& value, std::string& name);
 	void Get(CommandDesc& cd);
+	void GetInternal(ICVar* pVar, std::string& name);
 	void CConsole::Dump();
 	void getBuffer();
 	bool needShowCursor();

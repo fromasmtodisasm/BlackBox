@@ -125,7 +125,7 @@ std::string wstr_to_str(const std::wstring& ws)
 	return result;
 }
 
-std::wstring str_to_wstr(std::string& str)
+std::wstring str_to_wstr(const std::string& str)
 {
 	std::wstring result;
 	if (str.length() == 0)

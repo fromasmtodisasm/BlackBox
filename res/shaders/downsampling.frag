@@ -37,14 +37,20 @@ vec4 Sample(vec2 uv) {
 	return texture(image, uv);
 }
 
-void main()
-{             
-	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+vec4 downsample()
+{
 	vec4 result = vec4(0);
+	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
 
+	return Sample(TexCoords);
 	for (int i = 0; i < 13; i++)
 	{
 		result += Sample(TexCoords + offsets[i].xy*tex_offset) * offsets[i].z;
 	}
-	FragColor = vec4(result);
+	return result;
+}
+
+void main()
+{             
+	FragColor = downsample();
 }

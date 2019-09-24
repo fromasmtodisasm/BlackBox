@@ -190,7 +190,7 @@ bool CGame::init(IEngine *pSystem)  {
 
 	//m_Console->ExecuteString("clear");
   ITexture* consoleBackGround = new Texture();
-  consoleBackGround->load("console/fc.jpg");
+  //consoleBackGround->load("console/fc.jpg");
   m_Console->SetImage(consoleBackGround);
   return true;
 }

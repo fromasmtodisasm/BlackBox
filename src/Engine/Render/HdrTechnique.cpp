@@ -161,11 +161,11 @@ void HdrTechnique::downsampling()
 		amount = 1;
 	else
 		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
-	for (unsigned int i = 0; i < amount; i++)
+	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		pass0[i]->bind();
+		pass0[i + 1]->bind();
 		//m_DownsampleShader->setUniformValue(horizontal, "horizontal");
-		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[1] : pass0[i - 1]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
+		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
 		//renderQuad();
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
@@ -185,10 +185,8 @@ void HdrTechnique::upsampling()
 	uint32_t amount;
 	bool first_iteration = true;
 	glCheck(glDisable(GL_DEPTH_TEST));
-	if (useBoxFilter->GetIVal())
-		amount = 1;
-	else
-		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
+
+	amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
 		pass1[i - 1]->bind();

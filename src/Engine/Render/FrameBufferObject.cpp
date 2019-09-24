@@ -64,7 +64,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     internalFormat = GL_RGBA16F;
     Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_CLAMP_TO_EDGE;
+    wrapS = wrapT = GL_CLAMP_TO_BORDER;
     dataType = GL_FLOAT;
     break;
   default:
@@ -84,6 +84,8 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
 				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
 				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+				float b[] = { 0,0,0,1 };
+				glCheck(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, b));
 				if (createMipChain)
 				{
 					mw /= 2;
