@@ -27,7 +27,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
   if (renderTarget == nullptr)
   {
     m_RenderedScene = FrameBufferObject::create(
-      FrameBufferObject::BufferType::SCENE_BUFFER, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight(), 0, false
+      FrameBufferObject::BufferType::SCENE_BUFFER, GetISystem()->getIRender()->GetWidth(), GetISystem()->getIRender()->GetHeight(), 0, false
     );
   }
   else
@@ -39,11 +39,11 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
   m_ShadowMapShader->create();
   
   //==============
-	lightPosX = GetIEngine()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
-	lightPosY = GetIEngine()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
-	lightPosZ = GetIEngine()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
-	lighting =  GetIEngine()->getIConsole()->CreateVariable("lighting", bLighting, 0, "light pos z");
-	s_divider = GetIEngine()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
+	lightPosX = GetISystem()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
+	lightPosY = GetISystem()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
+	lightPosZ = GetISystem()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
+	lighting =  GetISystem()->getIConsole()->CreateVariable("lighting", bLighting, 0, "light pos z");
+	s_divider = GetISystem()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
 
   //
   return true;
@@ -176,7 +176,7 @@ void ShadowMapping::RenderTransparent(Object* object)
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
     program->setUniformValue(object->m_Material->alpha, "alpha");
-		program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
+		program->setUniformValue(GetISystem()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
 
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
@@ -200,9 +200,9 @@ void ShadowMapping::OnRenderPass()
 {
   m_RenderedScene->bind();
 	glm::vec4 fog = glm::vec4(
-		GetIEngine()->getIConsole()->GetCVar("fogR")->GetFVal(),
-		GetIEngine()->getIConsole()->GetCVar("fogG")->GetFVal(),
-		GetIEngine()->getIConsole()->GetCVar("fogB")->GetFVal(),
+		GetISystem()->getIConsole()->GetCVar("fogR")->GetFVal(),
+		GetISystem()->getIConsole()->GetCVar("fogG")->GetFVal(),
+		GetISystem()->getIConsole()->GetCVar("fogB")->GetFVal(),
 		1.f);
 	m_RenderedScene->clear(fog);
   glCheck(glEnable(GL_DEPTH_TEST));

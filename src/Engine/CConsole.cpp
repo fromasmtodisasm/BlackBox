@@ -29,9 +29,9 @@ public:
 	virtual bool execute(CommandDesc& cd) override
 	{
 		for (auto &cmd : cd.args)
-			GetIEngine()->getIConsole()->Help(wstr_to_str(cmd).c_str());
+			GetISystem()->getIConsole()->Help(wstr_to_str(cmd).c_str());
 		if (cd.args.size() == 0)
-			GetIEngine()->getIConsole()->Help(nullptr);
+			GetISystem()->getIConsole()->Help(nullptr);
 		return true;
 	}
 };
@@ -98,13 +98,13 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isOpened) return;
-	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
-	auto render = GetIEngine()->getIRender();
+	auto deltatime = GetISystem()->getIGame()->getDeltaTime();
+	auto render = GetISystem()->getIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
 	auto prompt = getPrompt();
-	time += GetIEngine()->getIGame()->getDeltaTime();
+	time += GetISystem()->getIGame()->getDeltaTime();
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
@@ -459,7 +459,7 @@ void CConsole::getBuffer()
 
 bool CConsole::needShowCursor()
 {
-	float dt = GetIEngine()->getIGame()->getDeltaTime();
+	float dt = GetISystem()->getIGame()->getDeltaTime();
 	if (cursor_tick_tack)
 		cursor_tick += dt;
 	else
@@ -758,7 +758,7 @@ void CConsole::ExecuteFile(const char* file)
 
 CConsole::CConsole()
 {
-	m_engine = GetIEngine();
+	m_engine = GetISystem();
 	//prompt = user + " #";
 	AddCommand("help", new HelpCommand());
 	AddCommand("set", new SetCommand(this));
@@ -814,7 +814,7 @@ CommandLine CConsole::getPrompt()
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
 		Text(std::string(" " + time_str), promptColor, 1.0),
-		Text(" FPS: " + std::to_string(GetIEngine()->getIGame()->getFPS()) + "\n# ", glm::vec3(1.0, 0.3, 0.5), 1.0),
+		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n# ", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 

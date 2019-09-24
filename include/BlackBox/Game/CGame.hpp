@@ -42,7 +42,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class GameGUI;
   friend class CPlayer;
 private:
-  ISystem *m_pEngine;
+  ISystem *m_pSystem;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;

@@ -105,7 +105,7 @@ CGame::CGame(std::string title) :
   m_Window(nullptr),
   m_inputHandler(nullptr),
   m_player(nullptr),
-  m_pEngine(nullptr),
+  m_pSystem(nullptr),
   m_scene(nullptr),
   m_sceneManager(nullptr),
   shaderManager(nullptr),
@@ -120,12 +120,12 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(ISystem *pEngine)  {
-  m_pEngine = gIEngine = pEngine;
-  m_Log = m_pEngine->getILog();
-	m_Console = m_pEngine->getIConsole();
+  m_pSystem = gIEngine = pEngine;
+  m_Log = m_pSystem->getILog();
+	m_Console = m_pSystem->getIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
-	m_Window = m_pEngine->getIWindow();
-	m_inputHandler = m_pEngine->getIInputHandler();
+	m_Window = m_pSystem->getIWindow();
+	m_inputHandler = m_pSystem->getIInputHandler();
 	m_Window->setFlags(CWindow::DRAW_GUI);
   
 
@@ -272,7 +272,7 @@ void CGame::DisplayInfo(float fps)
   SDrawTextInfo dti = info.getDTI();
 
   //
-  auto render = m_pEngine->getIRender();
+  auto render = m_pSystem->getIRender();
 
   //===========
 

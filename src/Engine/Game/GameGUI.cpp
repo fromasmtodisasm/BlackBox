@@ -326,7 +326,7 @@ if (m != nullptr && m->t != nullptr) \
   {
     if (ImGui::BeginTabItem("Log"))
     {
-      GetIEngine()->getILog()->Draw("MyLog", (bool*)true);
+      GetISystem()->getILog()->Draw("MyLog", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Console"))

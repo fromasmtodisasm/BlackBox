@@ -9,7 +9,7 @@
 class CConsole;
 class CRender;
 
-class CEngine : public IEngine, public IInputEventListener, public IConsoleVarSink
+class CEngine : public ISystem, public IInputEventListener, public IConsoleVarSink
 {
 private:
   ILog *m_pLog;
@@ -23,7 +23,7 @@ public:
 	CEngine();
 	~CEngine();
   
-	// Inherited via IEngine
+	// Inherited via ISystem
   virtual bool Init() override;
   virtual void Start() override;
 	virtual void Update() override;
