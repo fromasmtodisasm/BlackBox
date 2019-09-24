@@ -164,6 +164,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   materialName = material->Attribute("name");
   if (materialName == nullptr)
     return false;
+	result->alpha = material->FloatAttribute("alpha", 1.f);
 	if (material->Attribute("type", "skybox"))
 		isSkyBox = true;
 	if (material->Attribute("shakaled"))

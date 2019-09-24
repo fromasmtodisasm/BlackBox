@@ -14,11 +14,14 @@
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/IEngine.hpp>
+#include <BlackBox/Profiler/Profiler.h>
 
 #include <tinyxml2.h>
 #include <sstream>
 #include <variant>
 #include <algorithm>
+
+
 
 
 using namespace tinyxml2;
@@ -327,7 +330,7 @@ Scene::Scene(std::string name)
 	m_TextShader->create();
 
 	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
-	texture_speed = GetISystem()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
+	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 }
 
 void Scene::selectPrevObject()
@@ -455,7 +458,7 @@ void Scene::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManag
 bool Scene::save(std::string as)
 {
   std::stringstream sceneName;
-  XMLDocument xmlDoc;
+  tinyxml2::XMLDocument xmlDoc;
   XMLNode * pScene = xmlDoc.NewElement("scene");
   ObjectManager *objectManager = ObjectManager::instance();
 
@@ -514,7 +517,7 @@ bool Scene::save(std::string as)
   return true;
 }
 
-XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Transform *transform)
+XMLElement *Scene::saveTransform(tinyxml2::XMLDocument &xmlDoc, Transform *transform)
 {
   XMLElement * result = xmlDoc.NewElement("transform");
 
@@ -636,7 +639,7 @@ tinyxml2::XMLElement* Scene::saveFloat(tinyxml2::XMLDocument& xmlDoc, float valu
   return result;
 }
 
-XMLElement *Scene::saveMaterial(XMLDocument &xmlDoc, Object *object)
+XMLElement *Scene::saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object)
 {
   XMLElement * material = xmlDoc.NewElement("material");
 
@@ -698,7 +701,7 @@ void Scene::loadCamera(tinyxml2::XMLElement* element)
 
   result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
 
-  result->MovementSpeed = GetISystem()->getIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
+  result->MovementSpeed = GetIEngine()->getIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
   
   m_Camera[name] = result;
 }
@@ -709,7 +712,7 @@ void Scene::loadTagPoint(tinyxml2::XMLElement* element)
 
 bool Scene::load(std::string name = "default.xml")
 {
-  XMLDocument xmlDoc;
+  tinyxml2::XMLDocument xmlDoc;
 
   XMLError eResult = xmlDoc.LoadFile(name.c_str());
   XMLCheckResult(eResult);
@@ -802,10 +805,11 @@ void Scene::present(int width, int height)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (postProcessor == nullptr)
 	{
-		auto render = GetISystem()->getIRender();
-	auto	
+		auto render = GetIEngine()->getIRender();
+		auto	
 			width = render->GetWidth(),
 			height = render->GetHeight();
+		//PROFILER_PUSH_GPU_MARKER("Present", Utils::COLOR_GREEN);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		render->SetViewport(0, 0, width, height);
 		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -822,8 +826,10 @@ void Scene::present(int width, int height)
 	}
 	else
 	{
+		//PROFILER_PUSH_GPU_MARKER("Postprocessing", Utils::COLOR_GREEN);
 		postProcessor->Do(m_RenderedScene);
 	}
+	//PROFILER_POP_GPU_MARKER();
 }
 
 SkyBox* Scene::GetSkyBox()
@@ -889,6 +895,11 @@ Terrain *Scene::getTerrain()
 
 PointObject* Scene::createPointObject(XMLElement* object)
 {
+	struct Point
+	{
+		glm::vec3 pos;
+	};
+
 	auto positions = object->FirstChildElement("positions");
 	if (positions)
 	{

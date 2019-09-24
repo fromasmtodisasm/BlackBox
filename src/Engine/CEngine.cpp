@@ -6,9 +6,15 @@
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/Render/CRender.hpp>
 #include <BlackBox/IConsole.hpp>
+//
+#include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Profiler/HP_Timer.h>
+#include <BlackBox/Profiler/Drawer2D.h>
 
 #include <cstdlib>
 #pragma once
+
+using namespace Utils;
 
 CEngine::CEngine()
 	:
@@ -35,6 +41,7 @@ CEngine::~CEngine()
 
 bool CEngine::Init()
 {
+	initTimer();
   m_pLog = new NullLog();
   if (m_pLog == nullptr)
     return false;
@@ -52,7 +59,7 @@ bool CEngine::Init()
 	m_Render = CreateIRender(this);
 	if (m_Render == nullptr)
 		return false;
-
+	//=============
 	if (!ConfigLoad("res/scripts/engine.cfg"))
 		return false;
 	if (!(m_pWindow = m_Render->Init(
@@ -62,10 +69,22 @@ bool CEngine::Init()
 		false, m_pWindow))
 		)
 		return false;
+	//=============
+	// Initialize the 2D drawer
+	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
+	{
+		fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
+		return EXIT_FAILURE;
+	}
+	//=============
+	PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
+	//=============
 	m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
 	if (!m_pConsole->Init())
 		return false;
+	//=============
+	m_pConsole->AddConsoleVarSink(this);
 	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)
@@ -73,6 +92,7 @@ bool CEngine::Init()
 		if (m_pFont->Init("arial.ttf", 16,18) == false)
 			return false;
 	}
+	m_InputHandler->AddEventListener(this);
 	m_InputHandler->AddEventListener(m_pConsole);
   if (CreateGame(nullptr) == nullptr)
     return false;
@@ -177,8 +197,92 @@ bool CEngine::ConfigLoad(const char* file)
 	return true;
 }
 
-SYSTEM_API ISystem * CreateISystem(void *)
+bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
-  ISystem *system = new CEngine();
+	if (!strcmp(pVar->GetName(),"r_cap_profile"))
+	{
+		switch (std::atoi(sNewValue))
+		{
+		case 0:
+			PROFILER_UNFROZE_FRAME();
+			return true;
+		case 1:
+			PROFILER_FROZE_FRAME();
+			return true;
+		default:
+			return false;
+		}
+	}
+	return false;
+}
+
+void CEngine::BeginFrame()
+{
+	PROFILER_SYNC_FRAME();
+	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
+}
+
+void CEngine::EndFrame()
+{
+	PROFILER_POP_CPU_MARKER();
+	PROFILER_DRAW();
+}
+
+bool CEngine::OnInputEvent(sf::Event& event)
+{
+	bool result = false;
+	switch (event.type)
+	{
+	case sf::Event::MouseButtonPressed:
+	{
+		if (event.mouseButton.button == sf::Mouse::Left)
+		{
+			PROFILER_ON_LEFT_CLICK();
+		}
+		break;
+	}
+	case sf::Event::MouseMoved:
+	{
+		PROFILER_ON_MOUSE_POS(event.mouseMove.x, event.mouseMove.y);
+		break;
+	}
+	case sf::Event::Resized:
+	{
+		PROFILER_ON_RESIZE(event.size.width, event.size.height);
+		break;
+	}
+
+	case sf::Event::KeyPressed:
+	{
+		if (event.key.alt && event.key.shift)
+		{
+			if (event.key.code == sf::Keyboard::P)
+			{
+				if (profiler.isFrozen())
+				{
+					PROFILER_UNFROZE_FRAME();
+				}
+				else
+				{
+					PROFILER_FROZE_FRAME();
+				}
+			}
+		}
+	}
+
+	default:
+		break;
+	}
+	return result;
+}
+
+void CEngine::Update()
+{
+	//PROFILER_SYNC_FRAME();
+}
+
+SYSTEM_API IEngine * CreateIEngine(void *)
+{
+  IEngine *system = new CEngine();
   return system;
 }

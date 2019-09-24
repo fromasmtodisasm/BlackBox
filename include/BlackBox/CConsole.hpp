@@ -129,6 +129,11 @@ public:
 
 	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
 
+	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) override;
+	virtual void OnElementFound(ICVar* pCVar) override;
+	virtual void AddConsoleVarSink(IConsoleVarSink* pSink) override;
+	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) override;
+
 
 private:
 private:
@@ -146,12 +151,15 @@ private:
 	void addText(std::wstring& cmd);
 	;
 	void Set(CommandDesc& cd);
+	void SetInternal(ICVar* pVar, std::string& value, std::string& name);
 	void Get(CommandDesc& cd);
+	void GetInternal(ICVar* pVar, std::string& name);
 	void CConsole::Dump();
 	void getBuffer();
 	bool needShowCursor();
   void pageUp(bool isPgUp);
 private:
+	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;
 	std::map<std::string, std::ifstream> scripts;
 	bool is_input = false;
@@ -203,16 +211,8 @@ private:
 	bool cursor_tick_tack = true;
 	size_t history_line = 0;
   //
+	float transparency = 0.5f;
 
 
-	// Inherited via IConsole
-
-
-	// Inherited via IConsole
-	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) override;
-
-
-	// Inherited via ICVarDumpSink
-	virtual void OnElementFound(ICVar* pCVar) override;
 
 };

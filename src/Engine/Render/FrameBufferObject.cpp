@@ -64,7 +64,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     internalFormat = GL_RGBA16F;
     Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_CLAMP_TO_EDGE;
+    wrapS = wrapT = GL_CLAMP_TO_BORDER;
     dataType = GL_FLOAT;
     break;
   default:
@@ -84,6 +84,8 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
 				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
 				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+				float b[] = { 0,0,0,1 };
+				glCheck(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, b));
 				if (createMipChain)
 				{
 					mw /= 2;
@@ -139,11 +141,16 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   return fbo;
 }
 
-void FrameBufferObject::clear()
+void FrameBufferObject::clear(Color &color)
 {
-	glCheck(glClearColor(0.f, 0.5f, 0.5f, 1.0f));
+	glCheck(glClearColor(EXTRACT_COLOR(color)));
 	glCheck(glClearDepthf(1.f));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void FrameBufferObject::clear()
+{
+	clear(defaultColor);
 }
 
 void FrameBufferObject::bind()

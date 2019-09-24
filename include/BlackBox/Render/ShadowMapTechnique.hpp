@@ -67,12 +67,12 @@ public:
   // Inherited via ForEachSpotLightSink
   virtual bool OnLightFound(SpotLight* light) override;
 
+  void RenderOpaque(Object* object);
+  void RenderTransparent(Object* object);
 private:
   void DepthPass();
   void RenderPass();
   void RenderDepth(Object* object);
-  void RenderOpaque(Object* object);
-  void RenderTransparent(Object* object);
 
   void OnDepthPass();
   void OnRenderPass();

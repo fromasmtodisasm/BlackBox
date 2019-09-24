@@ -12,6 +12,22 @@
 #include <map>
 #include <list>
 
+struct Point
+{
+	Point()
+		:
+		x(0),
+		y(0)
+	{}
+	Point(int x, int y)
+		:
+		x(x),
+		y(y)
+	{}
+	int x;
+	int y;
+};
+
 
 
 class CSFMLWindow :
@@ -91,5 +107,8 @@ public:
 
 	// Inherited via IWindow
 	virtual bool create(Params params) override;
+
+	Point getCursorPos();
+	
 };
 

@@ -11,7 +11,7 @@ using namespace std;
 
 Texture::Texture()
 {
-
+	id = 0;
 }
 
 Texture::Texture(GLuint id) 

@@ -68,3 +68,7 @@ bool CSFMLWindow::create(Params params)
 	return true;
 }
 
+Point CSFMLWindow::getCursorPos()
+{
+	return Point(sf::Mouse::getPosition().x,sf::Mouse::getPosition().y);
+}

@@ -387,6 +387,13 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
   }
 }
 
+void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* sampler)
+{
+	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
+	glCheck(glBindTexture(GL_TEXTURE_2D, texture));
+	setUniformValue(unit, sampler);
+}
+
 GLuint CBaseShaderProgram::get() {
   return m_Program;
 }

@@ -23,6 +23,7 @@ struct Material
   float shininess;
 	float emissive_factor = 1.0f;
   glm::vec3 diffuseColor;
+  float alpha;
 	
 	std::vector<BaseTexture*> diffuse;
 

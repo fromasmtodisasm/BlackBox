@@ -29,9 +29,9 @@ public:
 	virtual bool execute(CommandDesc& cd) override
 	{
 		for (auto &cmd : cd.args)
-			GetISystem()->getIConsole()->Help(wstr_to_str(cmd).c_str());
+			GetIEngine()->getIConsole()->Help(wstr_to_str(cmd).c_str());
 		if (cd.args.size() == 0)
-			GetISystem()->getIConsole()->Help(nullptr);
+			GetIEngine()->getIConsole()->Help(nullptr);
 		return true;
 	}
 };
@@ -98,14 +98,14 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isOpened) return;
-	auto deltatime = GetISystem()->getIGame()->getDeltaTime();
-	auto render = GetISystem()->getIRender();
+	auto deltatime = GetIEngine()->getIGame()->getDeltaTime();
+	auto render = GetIEngine()->getIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
 	auto prompt = getPrompt();
-	time += GetISystem()->getIGame()->getDeltaTime();
-	render->DrawImage(0, 0, (float)render->GetWidth() / 2, height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, 1.0);
+	time += GetIEngine()->getIGame()->getDeltaTime();
+	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -363,31 +363,41 @@ void CConsole::Set(CommandDesc& cd)
 	{
 		auto name = wstr_to_str(cd.args[0]);
 		auto value = wstr_to_str(cd.args[1]);
-		auto pVar = m_variables_map.find(name);
-		if (pVar != m_variables_map.end())
+		auto var = m_variables_map.find(name);
+		if (var != m_variables_map.end())
 		{
-			switch (pVar->second->GetType())
+			for (auto onChanger : varSinks)
 			{
-			case CVAR_INT:
-				pVar->second->Set(static_cast<int>(std::atoi(value.c_str())));
-				break;
-			case CVAR_FLOAT:
-				pVar->second->Set(static_cast<float>(std::atof(value.c_str())));
-				break;
-			case CVAR_STRING:
-				pVar->second->Set(static_cast<const char*>(value.c_str()));
-				break;
-			default:
-				PrintLine("Unknown type for [%s] variable", name.c_str());
+				if (onChanger->OnBeforeVarChange(var->second, value.c_str()))
+				{
+					return;
+				}
 			}
+			SetInternal(var->second, value, name);
 		}
 		else
 		{
 			PrintLine("Variable [%s] not found. Creating", name.c_str());
 			CreateVariable(name.c_str(), value.c_str(), 0);
 		}
+	}
+}
 
-
+void CConsole::SetInternal(ICVar* pVar, std::string& value, std::string& name)
+{
+	switch (pVar->GetType())
+	{
+	case CVAR_INT:
+		pVar->Set(static_cast<int>(std::atoi(value.c_str())));
+		break;
+	case CVAR_FLOAT:
+		pVar->Set(static_cast<float>(std::atof(value.c_str())));
+		break;
+	case CVAR_STRING:
+		pVar->Set(static_cast<const char*>(value.c_str()));
+		break;
+	default:
+		PrintLine("Unknown type for [%s] variable", name.c_str());
 	}
 }
 
@@ -399,21 +409,7 @@ void CConsole::Get(CommandDesc& cd)
 		auto var = m_variables_map.find(name);
 		if (var != m_variables_map.end())
 		{
-			auto pVar = var->second;
-			switch (pVar->GetType())
-			{
-			case CVAR_INT:
-				PrintLine("Variable = [%d]", pVar->GetIVal());
-				break;
-			case CVAR_FLOAT:
-				PrintLine("Variable = [%f]", pVar->GetFVal());
-				break;
-			case CVAR_STRING:
-				PrintLine("Variable = [%s]", pVar->GetString());
-				break;
-			default:
-				PrintLine("Unknown type for [%s] variable", name.c_str());
-			}
+			GetInternal(var->second, name);
 		}
 		else
 		{
@@ -421,6 +417,24 @@ void CConsole::Get(CommandDesc& cd)
 		}
 
 
+	}
+}
+
+void CConsole::GetInternal(ICVar* pVar, std::string& name)
+{
+	switch (pVar->GetType())
+	{
+	case CVAR_INT:
+		PrintLine("Variable = [%d]", pVar->GetIVal());
+		break;
+	case CVAR_FLOAT:
+		PrintLine("Variable = [%f]", pVar->GetFVal());
+		break;
+	case CVAR_STRING:
+		PrintLine("Variable = [%s]", pVar->GetString());
+		break;
+	default:
+		PrintLine("Unknown type for [%s] variable", name.c_str());
 	}
 }
 
@@ -445,7 +459,7 @@ void CConsole::getBuffer()
 
 bool CConsole::needShowCursor()
 {
-	float dt = GetISystem()->getIGame()->getDeltaTime();
+	float dt = GetIEngine()->getIGame()->getDeltaTime();
 	if (cursor_tick_tack)
 		cursor_tick += dt;
 	else
@@ -505,6 +519,27 @@ void CConsole::OnElementFound(ICVar* pCVar)
 		break;
 	}
 
+}
+
+void CConsole::AddConsoleVarSink(IConsoleVarSink* pSink)
+{
+	varSinks.push_back(pSink);
+}
+
+void CConsole::RemoveConsoleVarSink(IConsoleVarSink* pSink)
+{
+	auto var = varSinks.begin();
+	for (; var != varSinks.end(); var++)
+	{
+		if (*var == pSink)
+		{
+			break;
+		}
+	}
+	if (var != varSinks.end())
+	{
+		varSinks.erase(var);
+	}
 }
 
 ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
@@ -593,8 +628,26 @@ bool CConsole::handleCommand(std::wstring command)
 
 	if (cmd_it != m_Commands.end())
 		result = cmd_it->second.Command->execute(cd);
-	else if (cd.command == L"close")
-		isOpened = false;
+	else
+	{
+		auto var_it = m_variables_map.find(wstr_to_str(cd.command));
+		if (var_it != m_variables_map.end())
+		{
+			CommandDesc desc;
+			desc.args.push_back(cd.command);
+			if (cd.args.size() == 0)
+			{
+				Get(desc);
+			}
+			else if (cd.args.size() == 1)
+			{
+				desc.args.push_back(cd.args[0]);
+				Set(desc);
+			}
+		}
+		else if (cd.command == L"close")
+			isOpened = false;
+	}
 	//history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
 }
@@ -669,6 +722,13 @@ std::vector<std::wstring> CConsole::autocomplete(std::wstring cmd)
 			completion.push_back(curr_cmd.first);
 		}
 	}
+	for (auto& cur_var : m_variables_map)
+	{
+		if (cur_var.first.substr(0, cmd.size()) == wstr_to_str(cmd))
+		{
+			completion.push_back(str_to_wstr(cur_var.first));
+		}
+	}
 	return completion;
 }
 
@@ -698,7 +758,7 @@ void CConsole::ExecuteFile(const char* file)
 
 CConsole::CConsole()
 {
-	m_engine = GetISystem();
+	m_engine = GetIEngine();
 	//prompt = user + " #";
 	AddCommand("help", new HelpCommand());
 	AddCommand("set", new SetCommand(this));
@@ -754,7 +814,7 @@ CommandLine CConsole::getPrompt()
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
 		Text(std::string(" " + time_str), promptColor, 1.0),
-		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n# ", glm::vec3(1.0, 0.3, 0.5), 1.0),
+		Text(" FPS: " + std::to_string(GetIEngine()->getIGame()->getFPS()) + "\n# ", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 
@@ -792,10 +852,23 @@ void CConsole::Help(const char *cmd)
 {
 	if (cmd != nullptr)
 	{
-		auto it = m_Commands.find(str_to_wstr(std::string(cmd)));
-		if (it == m_Commands.end())
-			return;
-		cmd_buffer.push_back({ Text(std::string(cmd) + ": " + it->second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+		auto name = str_to_wstr(std::string(cmd));
+		auto it = m_Commands.find(name);
+		const char* help = nullptr;
+		if (it != m_Commands.end())
+		{
+			help = it->second.help.c_str();
+		}
+		else
+		{
+			auto it = m_variables_map.find(cmd);
+			if (it != m_variables_map.end())
+				help = it->second->GetHelp();
+			else
+				return;
+		}
+
+		cmd_buffer.push_back({ Text(std::string(cmd) + ": " + help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
 	}
 	else
 	{
@@ -803,6 +876,10 @@ void CConsole::Help(const char *cmd)
 		{
 			if (cmd.second.help.size() > 0)
 				cmd_buffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+		}
+		for (auto& var : m_variables_map)
+		{
+			cmd_buffer.push_back({ Text(var.first + ": " + var.second->GetHelp() + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
 		}
 	}
 }

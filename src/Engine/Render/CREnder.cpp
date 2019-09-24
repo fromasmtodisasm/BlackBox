@@ -152,7 +152,7 @@ void CRender::glInit()
 	}
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1, 0);
-	glLineWidth(2);
+	glLineWidth(1);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
   glCheck(glEnable(GL_DEPTH_TEST));
   //glCheck(glEnable(GL_TEXTURE_2D));
@@ -193,6 +193,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	glCheck(glDisable(GL_CULL_FACE));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_ScreenShader->use();
+	m_ScreenShader->setUniformValue(a, "alpha");
 
 	glm::mat4 model(1.0);
 	auto uv_projection = glm::mat4(1.0);

@@ -4,6 +4,7 @@
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Quad.hpp>
+#include <vector>
 
 class FrameBufferObject;
 struct ICVar;
@@ -25,6 +26,9 @@ public:
   virtual bool PreRenderPass() override;
 
   virtual void PostRenderPass() override;
+
+	void downsampling();
+	void upsampling();
   /////////////////////////////////////////////////
   virtual void Do(unsigned int texture) override;
 private:
@@ -36,13 +40,14 @@ private:
 	static const int PASSES = 4;
   ITechnique *shadowMapping;
   CBaseShaderProgram* m_ScreenShader;
-  CBaseShaderProgram* m_BlurShader;
+  CBaseShaderProgram* m_DownsampleShader;
+  CBaseShaderProgram* m_UpsampleShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;
 	FrameBufferObject* scene;
-	FrameBufferObject* pass0[PASSES];
-	FrameBufferObject* pass1[PASSES];
+	std::vector<FrameBufferObject*> pass0;
+	std::vector<FrameBufferObject*> pass1;
 	FrameBufferObject* callOfDutySample;
   Scene* m_Scene;
 
@@ -50,8 +55,11 @@ private:
   ICVar* enabled;
 	ICVar* bloom;
 	ICVar* bloomThreshold;
+	ICVar* blurOn;
 	ICVar* useBoxFilter;
 	ICVar* defaultFilter;
+	ICVar* bloom_exposure;
+	ICVar* offset;
 
   bool inited = false;
 	bool pingpong = false;
