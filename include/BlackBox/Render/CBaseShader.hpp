@@ -328,6 +328,8 @@ public:
   void setUniformValue(glm::mat2 value, const char *format, ...);
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
+
+	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
   GLuint get();
 	virtual void setup() = 0;
 private:

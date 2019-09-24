@@ -9,40 +9,32 @@ in vec2 TexCoords;
 uniform sampler2D image;
 
 uniform bool horizontal;
-uniform float weight[5] = float[](0.125f, 0.125f, 0.5, 0.125f, 0.125f);
+uniform float weight[2] = float[](0.125, 0.5);
 
 // Todo: specify calculation of offset for box filter
-vec2 offsets[13] = vec2[](
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0),
-	vec2(0)
+vec3 offsets[13] = vec3[](
+	vec3(1,1, weight[0]),
+	vec3(3,1, weight[0]),
+	vec3(5,1, weight[0]),
+
+	vec3(2,2, weight[1]),
+	vec3(4,2, weight[1]),
+	
+	vec3(1,3, weight[0]),
+	vec3(3,3, weight[0]),
+	vec3(5,3, weight[0]),
+	
+	vec3(2,4, weight[1]),
+	vec3(4,4, weight[1]),
+
+	vec3(1,5, weight[0]),
+	vec3(3,5, weight[0]),
+	vec3(5,5, weight[0])
+
 );
 
 vec4 Sample(vec2 uv) {
 	return texture(image, uv);
-}
-
-vec4 SampleBox(vec2 uv) 
-{
-	vec2 tex_offset = (1.0 / textureSize(image, 0));
-	vec3 result;
-	// Todo: specify calculation of offset for box filter
-	result += Sample(uv + vec2(0.0, 0.0)).rgb;
-	result += Sample(uv + vec2(tex_offset.x, 0.0)).rgb;
-	result += Sample(uv + vec2(0.0, tex_offset.y)).rgb;
-	result += Sample(uv + vec2(tex_offset.x, tex_offset.y)).rgb;
-	result *= 0.25;
-	return vec4(result,1);
 }
 
 void main()
@@ -50,13 +42,9 @@ void main()
 	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
 	vec4 result = vec4(0);
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 13; i++)
 	{
-		result += SampleBox(TexCoords + offsets[i]) * weight[i];
+		result += Sample(TexCoords + offsets[i].xy*tex_offset) * offsets[i].z;
 	}
-
-
-
-
 	FragColor = vec4(result);
 }

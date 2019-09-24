@@ -8,6 +8,8 @@
 #include <BlackBox/Profiler/Profiler.h>
 
 #define NBLOOM
+#define PREVIOS 0
+#define CURRENT 1
 
 HdrTechnique::HdrTechnique()
 {
@@ -37,17 +39,28 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	for (int i = 0, width = size_m2.x, height = size_m2.y; i < PASSES; i++)
+	int mip_cnt = std::log2(std::max(size_m2.x, size_m2.y));
+	pass0.resize(mip_cnt);
+	pass1.resize(mip_cnt);
+	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
 	{
 		pass0[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 		width >>= 1;
+		if (width <= 0) 
+			width = 1;
 		height >>= 1;
+		if (height <= 0) 
+			height = 1;
 	}
-	for (int i = 0, width = size_m2.x, height = size_m2.y; i < PASSES; i++)
+	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
 	{
 		pass1[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 		width >>= 1;
+		if (width <= 0) 
+			width = 1;
 		height >>= 1;
+		if (height <= 0) 
+			height = 1;
 	}
 
   inited = true;
@@ -87,32 +100,12 @@ bool HdrTechnique::HdrPass()
 
 void HdrTechnique::BloomPass()
 {
-	// 2. blur bright fragments with two-pass Gaussian Blur 
-				 // --------------------------------------------------
-	bool horizontal = true, first_iteration = true;
-	unsigned int amount = PASSES;
-	m_BlurShader->use();
-  m_BlurShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
-  m_BlurShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
-	glCheck(glDisable(GL_DEPTH_TEST));
-	glActiveTexture(GL_TEXTURE0);
-	if (useBoxFilter->GetIVal())
-		amount = 1;
-	for (unsigned int i = 0; i < amount; i++)
-	{
-		//glBindFramebuffer(GL_FRAMEBUFFER, pingPongBuffer[horizontal]->id);
-		pass0[i]->bind();
-		m_BlurShader->setUniformValue(horizontal, "horizontal");
-		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
-		//renderQuad();
-		m_ScreenQuad.draw();
-		horizontal = !horizontal;
-		if (first_iteration)
-			first_iteration = false;
-	}
-	pingpong = !horizontal;
-	glCheck(glEnable(GL_DEPTH_TEST));
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	PROFILER_PUSH_CPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
+	downsampling();
+	PROFILER_POP_CPU_MARKER();
+	PROFILER_PUSH_CPU_MARKER("UPSAMPLING", Utils::COLOR_RED);
+	upsampling();
+	PROFILER_POP_CPU_MARKER();
 }
 
 void HdrTechnique::createShader()
@@ -127,18 +120,20 @@ void HdrTechnique::createShader()
 	m_ScreenShader->setUniformValue(1,"bloomBlur");
 	m_ScreenShader->unuse();
 
-  m_BlurShader =new CShaderProgram(
+  m_DownsampleShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
-#ifdef NBLOOM
-    CShader::load("res/shaders/box_filter.frag", CShader::E_FRAGMENT)
-#else
-    CShader::load("res/shaders/blur.frag", CShader::E_FRAGMENT)
-#endif
+    CShader::load("res/shaders/downsampling.frag", CShader::E_FRAGMENT)
   );
-	m_BlurShader->create();
-	m_BlurShader->use();
-	m_BlurShader->setUniformValue(0,"image");
-	m_BlurShader->unuse();
+	m_DownsampleShader->create();
+	m_DownsampleShader->use();
+	m_DownsampleShader->setUniformValue(0,"image");
+	m_DownsampleShader->unuse();
+
+  m_UpsampleShader =new CShaderProgram(
+    CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
+    CShader::load("res/shaders/upsampling.frag", CShader::E_FRAGMENT)
+  );
+	m_UpsampleShader->create();
 
 }
 
@@ -149,6 +144,61 @@ bool HdrTechnique::PreRenderPass()
 
 void HdrTechnique::PostRenderPass()
 {
+}
+
+void HdrTechnique::downsampling()
+{
+	// 2. blur bright fragments with two-pass Gaussian Blur 
+				 // --------------------------------------------------
+	bool horizontal = true, first_iteration = true;
+	unsigned int amount = PASSES;
+	m_DownsampleShader->use();
+  m_DownsampleShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
+  m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
+	glCheck(glDisable(GL_DEPTH_TEST));
+	glActiveTexture(GL_TEXTURE0);
+	if (useBoxFilter->GetIVal())
+		amount = 1;
+	else
+		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		pass0[i]->bind();
+		//m_DownsampleShader->setUniformValue(horizontal, "horizontal");
+		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[1] : pass0[i - 1]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
+		//renderQuad();
+		m_ScreenQuad.draw();
+		horizontal = !horizontal;
+		if (first_iteration)
+			first_iteration = false;
+	}
+	pingpong = !horizontal;
+	glCheck(glEnable(GL_DEPTH_TEST));
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void HdrTechnique::upsampling()
+{
+	m_UpsampleShader->use();
+
+	
+	uint32_t amount;
+	bool first_iteration = true;
+	glCheck(glDisable(GL_DEPTH_TEST));
+	if (useBoxFilter->GetIVal())
+		amount = 1;
+	else
+		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
+	for (unsigned int i = amount - 1; i > 0; i--)
+	{
+		pass1[i - 1]->bind();
+		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 1]->texture[0] : pass1[i]->texture[0], PREVIOS, "previos");
+		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 1]->texture[0] : pass0[i - 1]->texture[0], CURRENT, "current");
+		m_ScreenQuad.draw();
+		if (first_iteration)
+			first_iteration = false;
+	}
+
 }
 
 void HdrTechnique::Do(unsigned int texture)
@@ -164,19 +214,9 @@ void HdrTechnique::Do(unsigned int texture)
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
 	glDisable(GL_DEPTH_TEST);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, hdrBuffer->texture[0]);
-	glActiveTexture(GL_TEXTURE1);
-	/*
-	if (useBoxFilter->GetIVal())
-		glBindTexture(GL_TEXTURE_2D, pingPongBuffer[true]->texture[0]);
-	else
-		glBindTexture(GL_TEXTURE_2D, pingPongBuffer[pingpong]->texture[0]);
-	*/
-	glBindTexture(GL_TEXTURE_2D, hdrBuffer->texture[0]);
-
+	m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");
+	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
-	//shaderBloomFinal.setFloat("exposure", exposure);
 
 	glCheck(glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight()));
 	m_ScreenQuad.draw();
