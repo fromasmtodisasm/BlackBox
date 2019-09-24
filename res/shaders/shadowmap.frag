@@ -48,6 +48,7 @@ uniform bool bloomOn = true;
 uniform float bloomThreshold = 0.0f;
 uniform bool isTerrain = false;
 uniform bool shadowOn = false;
+uniform float alpha = 1.0;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -90,7 +91,7 @@ void main()
 		emissive = texture(emissiveMap, fs_in.TexCoords).rgb;
 	}
     vec3 normal = normalize(fs_in.Normal);
-    vec3 lightColor = vec3(1.0);
+    vec3 lightColor = vec3(1);
 	if (!lightOn)
 	{
 		FragColor = vec4(color, 1.0f);
@@ -126,32 +127,5 @@ void main()
     vec3 lighting =(ambient + (1.0 - shadow) * (diffuse + specular)) * color + emissive * emissive_factor;
 
 	vec3 result = lighting;
-    // check whether result is higher than some threshold, if so, output as bloom threshold color
-	#ifdef THRESHOLDED
-    float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
-	if (brightness > bloomThreshold)
-
-    //if(brightness > bloomThreshold)
-        BrightColor = vec4(result, 1.0);
-    else
-        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
-	#endif
-
-	//BrightColor = vec4(result, 1.0);
-	if (isTerrain)
-	{
-		//result = vec3(abs(fs_in.Normal.x),0,0);
-//		float n = abs(fs_in.Normal.y);
-//		if (n <= 0.10)
-//			result = mix(vec3(0,1,0), vec3(1,0,0), 0.1 / n);
-//		else if(n > 0.10 && n < 0.15)
-//			result = mix(vec3(1,0,0), vec3(0,1,0), 0.15 / n);
-//		result *= (diff + 0.15 + specular);
-			//result = vec3(0,1,0);
-		//result = mix(;
-		//result = mix(vec3(1,0,0), result, abs(fs_in.Normal.y));
-
-
-	}
-    FragColor = vec4(result, 1.0);
+	FragColor = vec4(result, alpha);
 }

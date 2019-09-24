@@ -145,7 +145,7 @@ void ShadowMapping::RenderOpaque(Object* object)
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
-		program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
+    program->setUniformValue(object->m_Material->alpha, "alpha");
     //program->setUniformValue(bLighting, "lightOn");
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
@@ -167,19 +167,26 @@ void ShadowMapping::RenderOpaque(Object* object)
 
 void ShadowMapping::RenderTransparent(Object* object)
 {
+	glCheck(glEnable(GL_BLEND));
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (object->m_transparent && (object->visible()))
   {
     auto program = object->m_Material->program;
     program->use();
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
+    program->setUniformValue(object->m_Material->alpha, "alpha");
 		program->setUniformValue(GetIEngine()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
+
+    Pipeline::instance()->shader = program;
+    Pipeline::instance()->model = object->getTransform();
 
     SetupLights(object);
     object->m_Material->apply(object);
 
     object->draw(m_Scene->getCurrentCamera());
   }
+	glCheck(glDisable(GL_BLEND));
 }
 
 void ShadowMapping::OnDepthPass()

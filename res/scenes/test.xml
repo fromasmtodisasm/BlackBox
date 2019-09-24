@@ -110,7 +110,7 @@
         </transform>
         <material name="light"/>
     </object>
-    <object name="plane" type="object" visible="true" transparent="false">
+    <object name="water" type="object" visible="true" transparent="true">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>

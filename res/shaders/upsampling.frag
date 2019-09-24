@@ -5,6 +5,7 @@ in vec2 TexCoords;
 
 uniform sampler2D current;
 uniform sampler2D previos;
+uniform bool blurOn = true;
 
 float weight[9] = float[](
 	1,2,1,	
@@ -15,11 +16,12 @@ float weight[9] = float[](
 vec4 blur(vec2 uv)
 {
 	vec4 result = vec4(0);
-	for (int i = 0; i < 3; i++)
+	vec2 tex_offset = 1.0 / textureSize(previos, 0); // gets size of single texel
+	for (int i = -1; i <= 1; i++)
 	{
-		for (int j = 0, index = i*j + j; j < 3; j++)
+		for (int j = -1, index = (i+1)*(j+1) + j + 1; j <= 1; j++)
 		{
-			result += vec4(texture(previos, uv + vec2(j, i)).rgb * weight[index], 1);  
+			result += vec4(texture(previos, uv + vec2(j, i)*tex_offset).rgb * weight[index], 1);  
 		}
 	}
 	return result / 16.0;
@@ -27,8 +29,5 @@ vec4 blur(vec2 uv)
 
 void main()
 {             
-	vec2 tex_offset = 1.0 / textureSize(previos, 0); // gets size of single texel
-	vec4 result = vec4(0);
-
-	FragColor = texture(current, TexCoords) + blur(TexCoords);
+	FragColor = texture(current, TexCoords) + (blurOn ? blur(TexCoords) : vec4(0));
 }

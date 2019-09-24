@@ -211,6 +211,7 @@ private:
 	bool cursor_tick_tack = true;
 	size_t history_line = 0;
   //
+	float transparency = 0.5f;
 
 
 

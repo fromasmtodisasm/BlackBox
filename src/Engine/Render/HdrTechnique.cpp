@@ -29,6 +29,9 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   enabled = GetIEngine()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
   bloom = GetIEngine()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
   bloomThreshold = GetIEngine()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
+  blurOn = GetIEngine()->getIConsole()->CreateVariable("blur", 1, 0, "Enable/disable blur for bloom");
+  bloom_exposure = GetIEngine()->getIConsole()->CreateVariable("bexp", 0.007f, 0, "Enable/disable blur for bloom");
+  offset = GetIEngine()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
   useBoxFilter = GetIEngine()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
   defaultFilter = GetIEngine()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
   createShader();
@@ -39,7 +42,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	int mip_cnt = std::log2(std::max(size_m2.x, size_m2.y));
+	int mip_cnt = std::log2(std::max(size_m2.x, size_m2.y)) + 1;
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
 	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
@@ -73,6 +76,15 @@ bool HdrTechnique::OnRenderPass(int pass)
   {
 		if (m_Scene->GetSkyBox() != nullptr)
 			;// m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
+		{
+			Object *water;
+			if ((water = m_Scene->getObject("water")) != nullptr)
+			{
+				water->m_transparent = true;
+				reinterpret_cast<ShadowMapping*>(shadowMapping)->RenderTransparent(water);
+
+			}
+		}
     return HdrPass();
   }
   return true;
@@ -155,12 +167,13 @@ void HdrTechnique::downsampling()
 	m_DownsampleShader->use();
   m_DownsampleShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
   m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
+  m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
 	glCheck(glDisable(GL_DEPTH_TEST));
 	glActiveTexture(GL_TEXTURE0);
 	if (useBoxFilter->GetIVal())
 		amount = 1;
 	else
-		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
+		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind();
@@ -180,13 +193,13 @@ void HdrTechnique::downsampling()
 void HdrTechnique::upsampling()
 {
 	m_UpsampleShader->use();
-
+	m_UpsampleShader->setUniformValue(blurOn->GetIVal(), "blurOn");
 	
 	uint32_t amount;
 	bool first_iteration = true;
 	glCheck(glDisable(GL_DEPTH_TEST));
 
-	amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w));
+	amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
 		pass1[i - 1]->bind();
@@ -210,6 +223,7 @@ void HdrTechnique::Do(unsigned int texture)
 	glClear(GL_COLOR_BUFFER_BIT);
 	m_ScreenShader->use();
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
+  m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");
 	glDisable(GL_DEPTH_TEST);
 
 	m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");

@@ -55,8 +55,11 @@ private:
   ICVar* enabled;
 	ICVar* bloom;
 	ICVar* bloomThreshold;
+	ICVar* blurOn;
 	ICVar* useBoxFilter;
 	ICVar* defaultFilter;
+	ICVar* bloom_exposure;
+	ICVar* offset;
 
   bool inited = false;
 	bool pingpong = false;

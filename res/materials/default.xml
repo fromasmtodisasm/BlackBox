@@ -3,7 +3,7 @@
     <colors>
       <ambient r="0.15" g="0.15" b="0.15"/>
       <diffuse r="0.15" g="0.15" b="0.15"/>
-      <emissive r="10" g="9" b="8"/>
+      <emissive r="122" g="122" b="122"/>
     </colors>
     <shader name="phong"/>
   </material>
@@ -98,7 +98,7 @@
     </textures>
     <shader name="phong"/>
   </material>
-  <material name="water">
+  <material name="water" alpha="0.7">
     <textures>
       <texture type="diffuse" name="water.jpg"/>
     </textures>
