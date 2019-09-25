@@ -71,6 +71,30 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glCheck(glEnable(GL_CULL_FACE));
 }
 
+float FreeTypeFont::TextWidth(const std::string& text)
+{
+	const char *c;
+	const char* end = text.data() + text.size();
+	float w = 0.f;
+	for (c = text.data(); c != end; c++)
+	{
+		GLfloat x = 0;
+		//GLfloat xpos =
+		w += CharWidth(*c);
+	}
+	return w + 5;
+}
+
+float FreeTypeFont::CharWidth(char symbol)
+{
+	float scale = 1.0;
+	Character ch = Characters[symbol];
+
+	GLfloat w = (/*ch.Bearing.x + ch.Size.x + */(ch.Advance >> 6)) * scale;
+	//GLfloat h = (ch.Size.y - ch.Bearing.y + ch.Size.y) * scale;
+	return w;
+}
+
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	shader = new CShaderProgram(

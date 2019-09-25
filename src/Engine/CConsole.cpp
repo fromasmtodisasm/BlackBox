@@ -121,8 +121,9 @@ void CConsole::Draw()
 	//command_text.replace(command_text.size() - 1, 1, 1, cursor);
 	//command_text[command.length()] = cursor;
 
-	printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-	printText(Text(std::string(command_text + "\n"), textColor, 1.0f), 0);
+	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
+	printText(Text(std::string(command_text), textColor, 1.0f), 0);
+	drawCursor();
 	/*m_Font->RenderText(
 		command_text + "\n",
 		m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
@@ -229,6 +230,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 			if (event.key.code != sf::Keyboard::Enter && !event.key.control)
 				return false;
 			handleEnterText(); 
+			cursor.x = 0;
 			return true;
 		}
 		case sf::Keyboard::Insert:
@@ -248,6 +250,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		case sf::Keyboard::Escape:
 		{
 			command.clear();
+			cursor.x = 0;
 			return true;
 		}
 		case sf::Keyboard::P:
@@ -277,6 +280,19 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
       pageUp(event.key.code == sf::Keyboard::PageUp);
       return true;
+		}
+		case sf::Keyboard::Left:
+		case sf::Keyboard::Right:
+		{
+			moveCursor(event.key.code == sf::Keyboard::Left);
+			return true;
+		}
+		case sf::Keyboard::Delete:
+		{
+			//TODO: rewrite erasing
+			command.erase((int)cursor.x, 1);
+			fillCommandText();
+			return true;
 		}
 		default:
 			return false;
@@ -308,6 +324,7 @@ void CConsole::getHistoryElement()
 void CConsole::completeCommand(std::vector<std::wstring>& completion)
 {
 	command.clear();
+	cursor.x = 0;
 	for (auto& ch : completion[0])
 	{
 		handleCommandTextEnter(ch);
@@ -460,6 +477,7 @@ void CConsole::getBuffer()
 bool CConsole::needShowCursor()
 {
 	float dt = GetISystem()->getIGame()->getDeltaTime();
+	/*
 	if (cursor_tick_tack)
 		cursor_tick += dt;
 	else
@@ -474,11 +492,16 @@ bool CConsole::needShowCursor()
 		cursor_tick = cursor_tack;
 		cursor_tick_tack = true;
 	}
-		
+	*/	
 
+	blinking += dt;
 
-
-	return false;
+	if (blinking >= blinkTime->GetFVal())
+	{
+		blinking = 0.0f;
+		needDrawCursor = !needDrawCursor;
+	}
+	return needDrawCursor;
 }
 
 void CConsole::pageUp(bool isPgUp)
@@ -487,6 +510,28 @@ void CConsole::pageUp(bool isPgUp)
     page_up = true;
   else
     page_dn = true;
+}
+
+void CConsole::drawCursor()
+{
+	if (!needShowCursor())
+		return;
+	auto curr_y = m_Font->GetYPos();
+	m_Font->RenderText(
+		cursor.data,
+		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,cursor.x)), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
+}
+
+void CConsole::moveCursor(bool left)
+{
+	if (left)
+	{
+		cursor.x = std::max(0, (int)cursor.x - 1);
+	}
+	else
+	{
+		cursor.x = std::min((int)command.size(), (int)cursor.x + 1);
+	}
 }
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
@@ -567,6 +612,7 @@ bool CConsole::Init()
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
 	r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
+	blinkTime = CreateVariable("btime", 1.0f, (const char)"Time of cursor blinking");
 
 	if (background != nullptr)
 		texture_path = background->GetString();
@@ -608,12 +654,20 @@ void CConsole::handleCommandTextEnter(uint32_t ch)
 {
 	if (ch == 8)
 	{
-		if (command.size() > 0) command.pop_back();
+		if (command.size() > 0 && (int)cursor.x > 0)
+		{
+			//command.pop_back();
+			command.erase(std::max(0, (int)cursor.x - 1), 1);
+			moveCursor(true);
+		}
 	}
 	else
 	{
 		if (iswgraph(ch) || (iswblank(ch) && ch != '\t'))
-			command += ch;
+		{
+			command.insert((int)cursor.x, 1, ch);// += ch;
+			moveCursor(false);
+		}
 	}
 	fillCommandText();
 }
@@ -787,16 +841,12 @@ void CConsole::ShowConsole(bool show)
 
 void CConsole::fillCommandText()
 {
-	int pos = 0;
-	char cursor = '_';
-	if (needShowCursor())
-		cursor = ' ';
 	command_text.clear();
 	for (auto ch : command)
 	{
 		command_text.push_back(static_cast<char>(ch));
 	}
-	command_text.push_back(cursor);
+	//command_text.push_back(cursor);
 }
 
 void CConsole::setFont(IFont* font)

@@ -70,6 +70,12 @@ struct Text
 	}
 };
 
+struct Cursor : Text
+{
+	Cursor() : Text(std::string("_"), glm::vec3(1, 0, 0), 1.f) {}
+
+};
+
 typedef std::vector<Text> CommandLine;
 
 struct CommandDesc
@@ -158,6 +164,8 @@ private:
 	void getBuffer();
 	bool needShowCursor();
   void pageUp(bool isPgUp);
+	void drawCursor();
+	void moveCursor(bool left);
 private:
 	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;
@@ -212,7 +220,10 @@ private:
 	size_t history_line = 0;
   //
 	float transparency = 0.5f;
-
-
+	Cursor cursor;
+	bool needDrawCursor = true;
+	float blinking = 0.0f;
+	//float blinkTime = 1.0;
+	ICVar* blinkTime;
 
 };

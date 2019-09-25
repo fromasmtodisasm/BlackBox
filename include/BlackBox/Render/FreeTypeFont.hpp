@@ -39,6 +39,8 @@ public:
 	{
 	}
 	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4]);
+	virtual float TextWidth(const std::string& text) override;
+	virtual float CharWidth(char ch) override;
 
 private:
 	FT_Library ft;

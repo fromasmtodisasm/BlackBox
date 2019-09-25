@@ -10,4 +10,7 @@ struct IFont
 	virtual float GetYPos() = 0;
 	virtual void SetXPos(float x) = 0;
 	virtual void SetYPos(float y) = 0;
+
+	virtual float TextWidth(const std::string& text) = 0;
+	virtual float CharWidth(char ch) = 0;
 };
