@@ -82,7 +82,7 @@ float FreeTypeFont::TextWidth(const std::string& text)
 		//GLfloat xpos =
 		w += CharWidth(*c);
 	}
-	return w + 5;
+	return w;
 }
 
 float FreeTypeFont::CharWidth(char symbol)

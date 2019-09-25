@@ -122,6 +122,7 @@ void CConsole::Draw()
 	//command_text[command.length()] = cursor;
 
 	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
+	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
 	printText(Text(std::string(command_text), textColor, 1.0f), 0);
 	drawCursor();
 	/*m_Font->RenderText(
@@ -220,6 +221,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 				else
 				{
 					command.clear();
+					cursor.x = 0;
 					addToCommandBuffer(completion);
 				}
 			}
@@ -864,7 +866,7 @@ CommandLine CConsole::getPrompt()
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
 		Text(std::string(" " + time_str), promptColor, 1.0),
-		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n# ", glm::vec3(1.0, 0.3, 0.5), 1.0),
+		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 

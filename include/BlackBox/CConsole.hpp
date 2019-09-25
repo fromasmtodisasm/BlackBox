@@ -226,4 +226,6 @@ private:
 	//float blinkTime = 1.0;
 	ICVar* blinkTime;
 
+	int lines = 0;
+
 };
