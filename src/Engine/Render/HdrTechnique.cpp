@@ -31,6 +31,9 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   bloomThreshold = GetISystem()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
   blurOn = GetISystem()->getIConsole()->CreateVariable("blur", 1, 0, "Enable/disable blur for bloom");
   bloom_exposure = GetISystem()->getIConsole()->CreateVariable("bexp", 0.007f, 0, "Enable/disable blur for bloom");
+  bloomTime = GetISystem()->getIConsole()->CreateVariable("bloomtime", 0.f, 0, "Time of bloom");
+  upsampleTime = GetISystem()->getIConsole()->CreateVariable("uptime", 0.f, 0, "Time of bloom");
+  downsampleTime = GetISystem()->getIConsole()->CreateVariable("dtime", 0.f, 0, "Time of bloom");
   offset = GetISystem()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
   useBoxFilter = GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
   defaultFilter = GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
@@ -65,6 +68,9 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 		if (height <= 0) 
 			height = 1;
 	}
+
+	// generate three query objects
+	glGenQueries(3, timer_queries);
 
   inited = true;
   return shadowMapping->Init(pScene, hdrBuffer);
@@ -112,12 +118,28 @@ bool HdrTechnique::HdrPass()
 
 void HdrTechnique::BloomPass()
 {
+	GLuint64 time_0, time_1, time_2;
+
 	PROFILER_PUSH_CPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
+	//PROFILER_PUSH_GPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
+	//glQueryCounter(timer_queries[0], GL_TIMESTAMP);
 	downsampling();
+	//glQueryCounter(timer_queries[1], GL_TIMESTAMP);
+	//PROFILER_POP_GPU_MARKER();
 	PROFILER_POP_CPU_MARKER();
 	PROFILER_PUSH_CPU_MARKER("UPSAMPLING", Utils::COLOR_RED);
 	upsampling();
+	//glQueryCounter(timer_queries[2], GL_TIMESTAMP);
 	PROFILER_POP_CPU_MARKER();
+
+#if 0
+	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
+	glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
+	glGetQueryObjectui64v(timer_queries[2], GL_QUERY_RESULT, &time_2);
+
+	upsampleTime->Set(float((time_1 - time_0) / 1e06));
+	downsampleTime->Set(float((time_2 - time_1) / 1e06));
+#endif
 }
 
 void HdrTechnique::createShader()
@@ -233,3 +255,25 @@ void HdrTechnique::Do(unsigned int texture)
 	glCheck(glViewport(0, 0, GetISystem()->getIRender()->GetWidth(), GetISystem()->getIRender()->GetHeight()));
 	m_ScreenQuad.draw();
 }
+
+
+#if 0
+GLuint timer_queries[3];
+// generate three query objects
+glGenQueries(3, &timer_queries);
+[...]
+// query time stamps around all draw routines
+glQueryCounter(timer_queries[0], GL_TIMESTAMP);
+draw_world();
+glQueryCounter(timer_queries[1], GL_TIMESTAMP);
+draw_models();
+glQueryCounter(timer_queries[2], GL_TIMESTAMP);
+[...]
+// later in the program retrieve the query results
+GLuint64 time_0, time_1, time_2;
+glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
+glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
+glGetQueryObjectui64v(timer_queries[2], GL_QUERY_RESULT, &time_2);
+printf(" world draw time : %f ms \n", double(time_1 - time_0) / 1 e06);
+printf(" models draw time: %f ms \n", double(time_2 - time_1) / 1 e06);
+#endif

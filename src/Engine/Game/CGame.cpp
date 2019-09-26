@@ -313,6 +313,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
+  render->PrintLine((std::string("downsample time = ") + std::to_string(GetISystem()->getIConsole()->GetCVar("dtime")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("upwnsample time = ") + std::to_string(GetISystem()->getIConsole()->GetCVar("uptime")->GetFVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
