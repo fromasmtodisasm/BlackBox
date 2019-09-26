@@ -3,6 +3,7 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/IScriptSystem.hpp>
 
 #define SAFE_RELEASE(o) if (o) o->Release();
 
@@ -19,6 +20,7 @@ private:
 	IWindow* m_pWindow;
 	IInputHandler* m_InputHandler;
 	IRender* m_Render;
+	IScriptSystem* m_ScriptSystem;
 public:
 	CEngine();
 	~CEngine();
@@ -52,9 +54,5 @@ private:
 	ICVar* r_bpp;
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
-
-
-
-
 
 };

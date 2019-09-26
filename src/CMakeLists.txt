@@ -145,6 +145,9 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Resources/SceneManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
+  #ScriptSystem folder
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
+
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp

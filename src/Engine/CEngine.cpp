@@ -6,6 +6,7 @@
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/Render/CRender.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 //
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/HP_Timer.h>
@@ -85,6 +86,15 @@ bool CEngine::Init()
 		return false;
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
+	//=============
+	m_ScriptSystem = new CScriptSystem(this);
+	m_ScriptSystem->ExecuteBuffer("print(\"Hello World\")", 0);
+	m_ScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
+	int a_cpp;
+	if (m_ScriptSystem->GetGlobalValue("a", a_cpp))
+		m_pConsole->PrintLine("a = %d", a_cpp);
+	else
+		m_pConsole->PrintLine("Cant get global value");
 	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)
