@@ -35,6 +35,7 @@ private:
   bool HdrPass();
 	void BloomPass();
   void createShader();
+	void initConsoleVariables();
 
 private:
 	static const int PASSES = 4;

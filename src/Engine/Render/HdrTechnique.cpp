@@ -25,18 +25,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
     return true;
   render = GetISystem()->getIRender();
   m_Scene = pScene;
-  exposure = GetISystem()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
-  enabled = GetISystem()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
-  bloom = GetISystem()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
-  bloomThreshold = GetISystem()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
-  blurOn = GetISystem()->getIConsole()->CreateVariable("blur", 1, 0, "Enable/disable blur for bloom");
-  bloom_exposure = GetISystem()->getIConsole()->CreateVariable("bexp", 0.007f, 0, "Enable/disable blur for bloom");
-  bloomTime = GetISystem()->getIConsole()->CreateVariable("bloomtime", 0.f, 0, "Time of bloom");
-  upsampleTime = GetISystem()->getIConsole()->CreateVariable("uptime", 0.f, 0, "Time of bloom");
-  downsampleTime = GetISystem()->getIConsole()->CreateVariable("dtime", 0.f, 0, "Time of bloom");
-  offset = GetISystem()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
-  useBoxFilter = GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
-  defaultFilter = GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
+	initConsoleVariables();
   createShader();
   shadowMapping = new ShadowMapping();
 	float m = 1;
@@ -169,6 +158,22 @@ void HdrTechnique::createShader()
   );
 	m_UpsampleShader->create();
 
+}
+
+void HdrTechnique::initConsoleVariables()
+{
+  exposure =				GetISystem()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
+  enabled =					GetISystem()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
+  bloom =						GetISystem()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
+  bloomThreshold =	GetISystem()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
+  blurOn =					GetISystem()->getIConsole()->CreateVariable("blur", 1, 0, "Enable/disable blur for bloom");
+  bloom_exposure =	GetISystem()->getIConsole()->CreateVariable("bexp", 0.007f, 0, "Enable/disable blur for bloom");
+  bloomTime =				GetISystem()->getIConsole()->CreateVariable("bloomtime", 0.f, 0, "Time of bloom");
+  upsampleTime =		GetISystem()->getIConsole()->CreateVariable("uptime", 0.f, 0, "Time of bloom");
+  downsampleTime =	GetISystem()->getIConsole()->CreateVariable("dtime", 0.f, 0, "Time of bloom");
+  offset =					GetISystem()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
+  useBoxFilter =		GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
+  defaultFilter =		GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
 }
 
 bool HdrTechnique::PreRenderPass()
