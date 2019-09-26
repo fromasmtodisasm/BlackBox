@@ -60,9 +60,14 @@ private:
 	ICVar* defaultFilter;
 	ICVar* bloom_exposure;
 	ICVar* offset;
+	ICVar* bloomTime;
+	ICVar* upsampleTime;
+	ICVar* downsampleTime;
 
   bool inited = false;
 	bool pingpong = false;
+
+	GLuint timer_queries[3];
 
   IRender* render;
 };
