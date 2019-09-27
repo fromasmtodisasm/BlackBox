@@ -10,6 +10,7 @@ struct IConsole;
 struct IFont;
 struct IWindow;
 struct IInputHandler;
+struct IScriptSystem;
 
 struct ISystem
 {
@@ -29,6 +30,7 @@ struct ISystem
   virtual IFont *getIFont() = 0;
   virtual IWindow *getIWindow() = 0;
   virtual IInputHandler *getIInputHandler() = 0;
+	virtual IScriptSystem* getIIScriptSystem() = 0;
 };
 
 // Get the system interface (must be defined locally in each module)

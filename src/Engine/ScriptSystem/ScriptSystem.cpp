@@ -5,6 +5,12 @@
 #include <string>
 #include <iostream>
 
+static int print(lua_State* L) {
+	auto system = GetISystem();
+	auto str = lua_tostring(L, 1);  /* get argument */
+	system->getIConsole()->PrintLine(str);
+	return 0;  /* number of results */
+}
 
 CScriptSystem::CScriptSystem(ISystem *system)
 	:
@@ -12,6 +18,8 @@ CScriptSystem::CScriptSystem(ISystem *system)
 {
 	L = luaL_newstate();
 	luaL_openlibs(L);
+	lua_pushcfunction(L, print);
+	lua_setglobal(L, "console_printline");
 }
 
 CScriptSystem::~CScriptSystem()

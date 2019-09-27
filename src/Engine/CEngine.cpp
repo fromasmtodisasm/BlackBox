@@ -207,6 +207,11 @@ bool CEngine::ConfigLoad(const char* file)
 	return true;
 }
 
+IScriptSystem* CEngine::getIIScriptSystem()
+{
+	return m_ScriptSystem;
+}
+
 bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 	if (!strcmp(pVar->GetName(),"r_cap_profile"))

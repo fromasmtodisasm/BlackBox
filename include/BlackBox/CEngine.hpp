@@ -42,6 +42,7 @@ public:
 	virtual IFont* getIFont() override;
 	virtual IWindow* getIWindow() override;
 	virtual IInputHandler* getIInputHandler() override;
+	virtual IScriptSystem* getIIScriptSystem() override;
 
 	virtual bool OnInputEvent(sf::Event& event) override;
 	// Inherited via IConsoleVarSink

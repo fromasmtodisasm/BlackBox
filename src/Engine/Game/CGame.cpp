@@ -18,6 +18,7 @@
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/Utils.h>
+#include <BlackBox/IScriptSystem.hpp>
 
 #ifdef GUI
 #include <imgui-SFML.h>
@@ -196,6 +197,7 @@ bool CGame::init(ISystem *pEngine)  {
 }
 
 bool CGame::update() {
+	m_pSystem->getIIScriptSystem()->ExecuteBuffer("console_printline(\"Begin game update\")", 0);
   while (!m_Window->closed() &&  m_running) {
 		m_pSystem->BeginFrame();
 
