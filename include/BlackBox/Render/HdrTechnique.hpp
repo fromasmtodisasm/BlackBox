@@ -36,6 +36,7 @@ private:
 	void BloomPass();
   void createShader();
 	void initConsoleVariables();
+	void initTest();
 
 private:
 	static const int PASSES = 4;
@@ -64,6 +65,7 @@ private:
 	ICVar* bloomTime;
 	ICVar* upsampleTime;
 	ICVar* downsampleTime;
+	ICVar* averageBloomTime;
 
   bool inited = false;
 	bool pingpong = false;
@@ -71,4 +73,7 @@ private:
 	GLuint timer_queries[3];
 
   IRender* render;
+
+	std::vector<glm::vec2> bloomTest;
+	int testid;
 };

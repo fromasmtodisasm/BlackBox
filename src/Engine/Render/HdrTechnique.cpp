@@ -26,18 +26,22 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   render = GetISystem()->getIRender();
   m_Scene = pScene;
 	initConsoleVariables();
+	initTest();
   createShader();
   shadowMapping = new ShadowMapping();
 	float m = 1;
-	glm::vec2 size_m2 = glm::vec2(GetISystem()->getIRender()->GetWidth()*m, GetISystem()->getIRender()->GetHeight()*m) / 1.f;
-  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 2, false);
+	//glm::vec2 size_m2 = glm::vec2(GetISystem()->getIRender()->GetWidth()*m, GetISystem()->getIRender()->GetHeight()*m) / 1.f;
+	auto console = GetISystem()->getIConsole();
+
+	glm::vec2 resolution = glm::vec2(bloomTest[testid]);
+  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	int mip_cnt = std::log2(std::max(size_m2.x, size_m2.y)) + 1;
+	int mip_cnt = std::log2(std::max(resolution.x, resolution.y)) + 1;
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
-	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
+	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 	{
 		pass0[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 		width >>= 1;
@@ -47,7 +51,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 		if (height <= 0) 
 			height = 1;
 	}
-	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
+	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 	{
 		pass1[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 		width >>= 1;
@@ -111,17 +115,17 @@ void HdrTechnique::BloomPass()
 
 	PROFILER_PUSH_CPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
 	//PROFILER_PUSH_GPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
-	glQueryCounter(timer_queries[0], GL_TIMESTAMP);
+	//glQueryCounter(timer_queries[0], GL_TIMESTAMP);
 	downsampling();
-	glQueryCounter(timer_queries[1], GL_TIMESTAMP);
+	//glQueryCounter(timer_queries[1], GL_TIMESTAMP);
 	//PROFILER_POP_GPU_MARKER();
 	PROFILER_POP_CPU_MARKER();
 	PROFILER_PUSH_CPU_MARKER("UPSAMPLING", Utils::COLOR_RED);
 	upsampling();
-	glQueryCounter(timer_queries[2], GL_TIMESTAMP);
+	//glQueryCounter(timer_queries[2], GL_TIMESTAMP);
 	PROFILER_POP_CPU_MARKER();
 
-#if 1
+#if 0
 	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
 	glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
 	glGetQueryObjectui64v(timer_queries[2], GL_QUERY_RESULT, &time_2);
@@ -174,6 +178,22 @@ void HdrTechnique::initConsoleVariables()
   offset =					GetISystem()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
   useBoxFilter =		GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
   defaultFilter =		GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
+}
+
+void HdrTechnique::initTest()
+{
+	bloomTest.push_back({ 640, 480 });
+	bloomTest.push_back({ 800, 600 });
+	bloomTest.push_back({ 1024, 768 });
+	bloomTest.push_back({ 1366, 768 });
+	bloomTest.push_back({ 1400, 900 });
+	bloomTest.push_back({ 1600, 900 });
+	bloomTest.push_back({ 1920, 1080 });
+	bloomTest.push_back({ 2560, 1440 });
+	bloomTest.push_back({ 2560, 1600 });
+	testid = std::min(GetISystem()->getIConsole()->GetCVar("testid")->GetIVal(), (int)bloomTest.size());
+
+
 }
 
 bool HdrTechnique::PreRenderPass()

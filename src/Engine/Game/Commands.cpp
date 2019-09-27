@@ -601,7 +601,42 @@ TagPointCommand::TagPointCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
+class ObjDumpCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	ObjDumpCommand(CGame *game);
+private:
+	// Inherited via IEditCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		/*
+		if (cd.args.size() > 0)
+		{
+			if (cd.args[0] == L"reload")
+				return reload(cd);
+			if (cd.args[0] == L"set")
+				return move(cd);
+		}
+		*/
+		FILE* fp;
 
+		auto obj = m_World->getActiveScene()->selectedObject()->second;
+		auto path = obj->m_path;
+		auto pos = path.find_last_of('.');
+		if (pos == path.npos)
+			return false;
+
+		path = path.replace(pos, path.size(), ".bin");
+		fp = fopen(path.c_str(), "wb");
+		fprintf(fp, "bbg");
+		//obj->m_Mesh
+
+
+		fclose(fp);
+		return false;
+	}
+};
 //*******************************************************
 
 void CGame::initCommands()
@@ -621,6 +656,7 @@ void CGame::initCommands()
 	m_Console->AddCommand("camera", new CameraCommand(this));
 	m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
 	m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
+	m_Console->AddCommand("objdump", new ObjDumpCommand(this), "Dump model to disk in binary");
 }
 
 void CGame::initVariables()
@@ -628,4 +664,9 @@ void CGame::initVariables()
   r_displayinfo = m_Console->CreateVariable("r_displayinfo", 1, 0, "Display info [1/0]");
   r_profile = m_Console->CreateVariable("r_profile", 1, 0, "Profile [1/0]");
   r_cap_profile = m_Console->CreateVariable("r_cap_profile", 1, 0, "Capture frame [1/0]");
+}
+
+ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
 }

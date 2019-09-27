@@ -24,6 +24,11 @@ public:
     VerteciesInfo &verteciesInfo,
 		BoundingBox &bb
   );
+	bool loadBin(
+    const char * path,
+    VerteciesInfo &verteciesInfo,
+		BoundingBox &bb
+  );
 private:
   BoundingBox buildVertexData(
     VertexData& vertex_data, 

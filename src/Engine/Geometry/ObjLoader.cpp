@@ -9,6 +9,12 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
 {
   std::vector<face> faces;
 
+	auto spath = std::string(path);
+	if (spath.substr(spath.size() - 4, spath.size()) == ".bin")
+	{
+		return loadBin(path, verteciesInfo, bb);
+	}
+
   FILE * file = fopen(path, "r");
   if (file == NULL) {
     printf("Impossible to open the file !\n");
@@ -131,6 +137,11 @@ bool ObjLoader::load(const char* path, VerteciesInfo &verteciesInfo,	BoundingBox
   bb = buildVertexData(verteciesInfo.data, faces);
 
   return true;
+}
+
+bool ObjLoader::loadBin(const char* path, VerteciesInfo& verteciesInfo, BoundingBox& bb)
+{
+	return false;
 }
 
 BoundingBox ObjLoader::buildVertexData(VertexData& vertex_data, std::vector<face>& faces)

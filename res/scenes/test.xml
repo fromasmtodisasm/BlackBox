@@ -48,7 +48,7 @@
         <uv scaleX="100" scaleY="100"/>
     </object>
     <object name="babe" type="object" visible="true" transparent="false">
-        <mesh name="res/geom/babe.OBJ"/>
+        <mesh name="res/geom/test.bin"/>
         <transform>
             <position>
                 <X>0</X>
