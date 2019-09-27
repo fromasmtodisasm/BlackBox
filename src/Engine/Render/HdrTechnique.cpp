@@ -111,17 +111,17 @@ void HdrTechnique::BloomPass()
 
 	PROFILER_PUSH_CPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
 	//PROFILER_PUSH_GPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
-	//glQueryCounter(timer_queries[0], GL_TIMESTAMP);
+	glQueryCounter(timer_queries[0], GL_TIMESTAMP);
 	downsampling();
-	//glQueryCounter(timer_queries[1], GL_TIMESTAMP);
+	glQueryCounter(timer_queries[1], GL_TIMESTAMP);
 	//PROFILER_POP_GPU_MARKER();
 	PROFILER_POP_CPU_MARKER();
 	PROFILER_PUSH_CPU_MARKER("UPSAMPLING", Utils::COLOR_RED);
 	upsampling();
-	//glQueryCounter(timer_queries[2], GL_TIMESTAMP);
+	glQueryCounter(timer_queries[2], GL_TIMESTAMP);
 	PROFILER_POP_CPU_MARKER();
 
-#if 0
+#if 1
 	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
 	glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
 	glGetQueryObjectui64v(timer_queries[2], GL_QUERY_RESULT, &time_2);
