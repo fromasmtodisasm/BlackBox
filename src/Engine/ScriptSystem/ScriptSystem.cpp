@@ -1,9 +1,11 @@
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
+#include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/IConsole.hpp>
 
 #include <string>
 #include <iostream>
+#include <functional>
 
 static int print(lua_State* L) {
 	auto system = GetISystem();
@@ -20,6 +22,7 @@ CScriptSystem::CScriptSystem(ISystem *system)
 	luaL_openlibs(L);
 	lua_pushcfunction(L, print);
 	lua_setglobal(L, "console_printline");
+
 }
 
 CScriptSystem::~CScriptSystem()

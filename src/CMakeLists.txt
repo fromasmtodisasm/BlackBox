@@ -109,8 +109,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Profiler.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Thread.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Tgaloader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Thread.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
 
   #Render folder
@@ -146,6 +146,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
   #ScriptSystem folder
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
 
   #Utils folder

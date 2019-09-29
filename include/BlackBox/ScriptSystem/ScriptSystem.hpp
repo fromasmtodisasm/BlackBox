@@ -1,9 +1,14 @@
 #pragma once
 #include <BlackBox/IScriptSystem.hpp>
-#include <BlackBox/IEngine.hpp>
-#include <luaconf.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif // Win32
+
+
 #include <lua.hpp>
 #include <lualib.h>
+
 
 class CScriptSystem : public IScriptSystem
 {
@@ -23,3 +28,4 @@ private:
 	ISystem* m_System;
 	lua_State* L;
 };
+
