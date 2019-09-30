@@ -258,6 +258,9 @@ install(
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION ${PROJECT_NAME}
 )
+install(
+  DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION ${PROJECT_NAME}
+)
 
 #install(FILES
 # BlackBoxExport.h
