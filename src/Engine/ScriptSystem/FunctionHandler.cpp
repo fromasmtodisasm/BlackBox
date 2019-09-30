@@ -32,27 +32,32 @@ int CFunctionHandler::GetFunctionID()
 
 int CFunctionHandler::GetParamCount()
 {
-	return 0;
+	return lua_gettop(L);
 }
 
 bool CFunctionHandler::GetParam(int nIdx, int& n)
 {
-	return false;
+	n = lua_tointeger(L, nIdx);
+	return true;
+
 }
 
 bool CFunctionHandler::GetParam(int nIdx, float& f)
 {
-	return false;
+	f = lua_tonumber(L, nIdx);
+	return true;
 }
 
 bool CFunctionHandler::GetParam(int nIdx, const char*& s)
 {
-	return false;
+	s = lua_tostring(L, nIdx);
+	return true;
 }
 
 bool CFunctionHandler::GetParam(int nIdx, bool& b)
 {
-	return false;
+	b = lua_toboolean(L, nIdx);
+	return true;
 }
 
 bool CFunctionHandler::GetParam(int nIdx, IScriptObject* pObj)
@@ -62,6 +67,7 @@ bool CFunctionHandler::GetParam(int nIdx, IScriptObject* pObj)
 
 bool CFunctionHandler::GetParam(int nIdx, HSCRIPTFUNCTION& hFunc, int nReference/* = 0*/)
 {
+	//hFunc = lua_tocfunction(L, nIdx);
 	return false;
 }
 
