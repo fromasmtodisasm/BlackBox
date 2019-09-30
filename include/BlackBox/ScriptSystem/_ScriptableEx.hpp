@@ -97,14 +97,14 @@ public:
 		m_pScriptSystem = pScriptSystem;
 		_ScriptableEx<T>::m_pFunctionHandler = m_pScriptSystem->GetFunctionHandler();
 		if (!_ScriptableEx<T>::m_pFunctionHandler)
-			CryError("Scriptable EX:FUNCTION HANDLER NULL");
+			return;// CryError("Scriptable EX:FUNCTION HANDLER NULL");
 		m_pScriptThis = pScriptSystem->CreateGlobalObject(sName);
 		m_pScriptThis->SetNativeData(pParent);
 		if (_ScriptableEx<T>::m_pTemplateTable)
 			m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);
 
 		if (m_pScriptThis->GetNativeData() != pParent)
-			CryError("Scriptable EX:Init Global");
+			return;// CryError("Scriptable EX:Init Global");
 	}
 
 	static void InitializeTemplate(IScriptSystem * pSS)
@@ -136,7 +136,7 @@ public:
 		m_pPropertiesTable = NULL;
 	}
 
-	static void RegisterFunction(IScriptSystem * pSS, const char* sName, MemberFunc mfunc)
+	static void RegisterFunction(IScriptSystem * pSS, const char* sName, MemberFunc mfunc, void *this_ptr)
 	{
 		if (m_pTemplateTable == NULL)
 		{
@@ -145,7 +145,7 @@ public:
 
 		int nIdx = (int)m_vFuncs.size();
 		m_vFuncs.push_back(mfunc);
-		m_pTemplateTable->AddFunction(sName, _ScriptableEx<T>::FuncThunk, nIdx);
+		m_pTemplateTable->AddFunction(sName, _ScriptableEx<T>::FuncThunk, this_ptr, nIdx);
 	}
 
 	bool EnablePropertiesMapping(void* pBase)
@@ -212,7 +212,7 @@ protected:
 			::OutputDebugString("Null Self\n");
 			return 0;
 		}
-		//int i=m_pFunctionHandler->GetFunctionID();
+		int i=m_pFunctionHandler->GetFunctionID();
 		return (pThis->*(pThis->m_vFuncs[m_pFunctionHandler->GetFunctionID()]))(m_pFunctionHandler);
 	}
 
@@ -382,7 +382,7 @@ protected:
 	} 
 #endif
 
-#define REG_FUNC(_class,_func) _class::RegisterFunction(pSS,#_func,&_class::_func);
+#define REG_FUNC(_class,_func, this_ptr) _class::RegisterFunction(pSS,#_func,&_class::_func, this_ptr);
 #define REG_DERIVED_FUNC(_class,_func) RegisterFunction(pSS,#_func,&_class::_func);
 #define SCRIPT_REG_CONST_SS(_pSS, _const) _pSS->SetGlobalValue(#_const, _const);
 #define SCRIPT_REG_CONST(_const) SCRIPT_REG_CONST_SS(m_pScriptSystem,_const)

@@ -3,10 +3,13 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/ScriptSystem/FunctionHandler.hpp>
 
 #include <string>
 #include <iostream>
 #include <functional>
+
+CFunctionHandler* CScriptSystem::m_pH = nullptr;
 
 static int print(lua_State* L) {
 	auto system = GetISystem();
@@ -15,14 +18,10 @@ static int print(lua_State* L) {
 	return 0;  /* number of results */
 }
 
-CScriptSystem::CScriptSystem(ISystem *system)
+CScriptSystem::CScriptSystem()
 	:
-	m_System(system)
+	m_System(nullptr)
 {
-	L = luaL_newstate();
-	luaL_openlibs(L);
-	lua_pushcfunction(L, print);
-	lua_setglobal(L, "console_printline");
 
 }
 
@@ -31,9 +30,29 @@ CScriptSystem::~CScriptSystem()
 	lua_close(L);
 }
 
+bool CScriptSystem::Init(ISystem* pSystem)
+{
+	L = luaL_newstate();
+	luaL_openlibs(L);
+	lua_pushcfunction(L, print);
+	lua_setglobal(L, "console_printline");
+
+	CScriptObject::L = L; // Set lua state for script table class.
+	CScriptObject::m_pSS = this;
+	m_pH = new CFunctionHandler(this, L);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Execute common lua file.
+	//////////////////////////////////////////////////////////////////////////
+	//ExecuteFile("scripts/common.lua", true, false);
+
+	return L ? true : false;
+}
+
 bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError/* = true*/, bool bForceReload/* = false*/)
 {
-	return false;
+	std::string path("res/" + std::string(sFileName));
+	return luaL_dofile(L, path.c_str()) == LUA_OK;
 }
 
 bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
@@ -91,7 +110,7 @@ bool CScriptSystem::GetGlobalValue(const char* sKey, const char*& sVal)
 
 IFunctionHandler* CScriptSystem::GetFunctionHandler()
 {
-	return nullptr;
+	return m_pH;
 }
 
 HSCRIPT CScriptSystem::GetScriptHandle()
@@ -139,7 +158,7 @@ IScriptObject* CScriptSystem::CreateObject()
 
 IScriptObject* CScriptSystem::CreateGlobalObject(const char* sName)
 {
-	return nullptr;
+	return new CScriptObject;
 }
 
 int CScriptSystem::BeginCall(HSCRIPTFUNCTION hFunc)

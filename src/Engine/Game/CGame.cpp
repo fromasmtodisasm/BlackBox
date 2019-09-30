@@ -194,8 +194,9 @@ bool CGame::init(ISystem *pEngine)  {
   m_Console->SetImage(consoleBackGround);
 
 	m_ScriptObjectConsole = new CScriptObjectConsole();
-	CScriptObjectConsole::InitializeTemplate(m_pSystem->getIIScriptSystem());
-	//m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
+	m_ScriptObjectConsole->InitializeTemplate(m_pSystem->getIIScriptSystem());
+	m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
+	m_pSystem->getIIScriptSystem()->ExecuteFile("scripts/common.lua", true, false);
 
   return true;
 }

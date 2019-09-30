@@ -1,6 +1,11 @@
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 
-CScriptObject::CScriptObject()
+lua_State* CScriptObject::L = nullptr;
+IScriptSystem* CScriptObject::m_pSS = nullptr;
+
+CScriptObject::CScriptObject() 
+	:
+	m_pNativeData(nullptr)
 {
 }
 
@@ -337,16 +342,51 @@ int CScriptObject::Count()
 
 bool CScriptObject::Clone(IScriptObject* pObj)
 {
-	return false;
+	//CHECK_STACK(L);
+	/*
+	int top = lua_gettop(L);
+	lua_pushnil(L);  // first key
+	while (lua_next(L, srcTable) != 0)
+	{
+		// `key' is at index -2 and `value' at index -1
+		lua_pushvalue(L, -2); // Push again index.
+		lua_pushvalue(L, -2); // Push value.
+		lua_rawset(L, trgTable);
+		lua_pop(L, 1); // pop value, leave index.
+	}
+	lua_settop(L, top); // Restore stack.
+	*/
+	return true;
 }
 
 void CScriptObject::Dump(IScriptObjectDumpSink* p)
 {
 }
 
-bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int nFuncID)
+bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void *this_ptr, int nFuncID)
 {
-	return false;
+	//PushRef();
+	//lua_pushstring(L, sName);
+
+	//int8 nParamIdOffset = fd.nParamIdOffset;
+	if (pThunk)
+	{
+		// Store functor in first upvalue.
+		size_t tp = sizeof(this_ptr);
+		size_t i = sizeof(nFuncID);
+		member_ptr* pBuffer = (member_ptr*)lua_newuserdata(L, sizeof(member_ptr));
+		pBuffer->fID = nFuncID;
+		pBuffer->this_ptr = this_ptr;
+		//memcpy(pBuffer, &nFuncID, sizeof(nFuncID));
+		//memcpy(pBuffer + sizeof(nFuncID), this_ptr, sizeof(this_ptr));
+		//memcpy(pBuffer + sizeof(fd.pFunctor) + 1, sFuncSignature, strlen(sFuncSignature) + 1);
+		lua_pushcclosure(L, reinterpret_cast<lua_CFunction>(pThunk), 1);
+		lua_setglobal(L, sName);
+	}
+
+	//lua_rawset(L, -3);
+	//lua_pop(L, 1); // pop table.
+	return true;
 }
 
 bool CScriptObject::AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION pGetThunk)

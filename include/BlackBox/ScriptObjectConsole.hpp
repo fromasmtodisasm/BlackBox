@@ -10,13 +10,12 @@ public _ScriptableEx<CScriptObjectConsole>
 public:
 	CScriptObjectConsole();
 	~CScriptObjectConsole();
-	static void InitializeTemplate(IScriptSystem* pSS);
+	void InitializeTemplate(IScriptSystem* pSS);
 
-	void Init(IScriptSystem* pScriptSystem, IConsole* pConsole);
+	void Init(IScriptSystem *pScriptSystem, IConsole* pConsole);
 
-	int CreateVariable(IFunctionHandler* pH);
+	int PrintLine(IFunctionHandler* pH);
 
 private:
-	IScriptSystem* m_ScriptSystem;
 	IConsole* m_Console;
 };

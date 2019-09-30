@@ -87,8 +87,12 @@ bool CEngine::Init()
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
 	//=============
-	m_ScriptSystem = new CScriptSystem(this);
-	m_ScriptSystem->ExecuteBuffer("print(\"Hello World\")", 0);
+	m_ScriptSystem = new CScriptSystem();
+	if (!static_cast<CScriptSystem*>(m_ScriptSystem)->Init(this))
+	{
+		return false;
+	}
+	m_ScriptSystem->ExecuteBuffer("print(\"Lua!!!\")", 0);
 	m_ScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
 	int a_cpp;
 	if (m_ScriptSystem->GetGlobalValue("a", a_cpp))
@@ -290,7 +294,7 @@ void CEngine::Update()
 
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
 {
-	MessageBox(NULL, "TEST", "Message", MB_OK);
+	//MessageBox(NULL, "TEST", "Message", MB_OK);
   ISystem *system = new CEngine();
   return system;
 }

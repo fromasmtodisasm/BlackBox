@@ -1,12 +1,10 @@
 #pragma once
-#include <BlackBox/IScriptSystem.hpp>
-
-#include <lua.hpp>
+#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 
 class CFunctionHandler : public IFunctionHandler
 {
 public:
-	CFunctionHandler();
+	CFunctionHandler(CScriptSystem *pSS, lua_State *L);
 	~CFunctionHandler();
 
 	// Унаследовано через IFunctionHandler
@@ -54,8 +52,18 @@ public:
 
 	virtual void Unref(HSCRIPTFUNCTION hFunc) override;
 
+	virtual bool GetParam(int nIdx, USER_DATA& ud) override;
+
+	virtual bool GetParamUDVal(int nIdx, USER_DATA& val, int& cookie) override;
+
+	virtual int EndFunction(USER_DATA ud) override;
+
+
 private:
-	lua_State* L;
-	THIS_PTR m_ThisPtr;
+	lua_State*			L;
+	THIS_PTR				m_ThisPtr;
+	CScriptSystem*	m_pSS;
+	const char*			m_sFuncName;
+	int							m_paramIdOffset;
 
 };

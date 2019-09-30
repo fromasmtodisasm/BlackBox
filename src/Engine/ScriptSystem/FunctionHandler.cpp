@@ -1,6 +1,10 @@
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
+#include <BlackBox/ScriptSystem/ScriptObject.hpp>
 
-CFunctionHandler::CFunctionHandler()
+CFunctionHandler::CFunctionHandler(CScriptSystem *pSS, lua_State *L)
+	:
+	m_pSS(pSS),
+	L(L)
 {
 }
 
@@ -10,16 +14,20 @@ CFunctionHandler::~CFunctionHandler()
 
 void CFunctionHandler::__Attach(HSCRIPT hScript)
 {
+	L = static_cast<lua_State*>(hScript);
 }
 
 THIS_PTR CFunctionHandler::GetThis()
 {
-	return m_ThisPtr;
+	CScriptObject::member_ptr* pBuffer = (CScriptObject::member_ptr*)lua_touserdata(L, lua_upvalueindex(1));
+	return pBuffer->this_ptr;
 }
 
 int CFunctionHandler::GetFunctionID()
 {
-	return 0;
+	unsigned char* pBuffer = (unsigned char*)lua_touserdata(L, lua_upvalueindex(1));
+	int fID = (int)(*pBuffer);
+	return fID;
 }
 
 int CFunctionHandler::GetParamCount()
@@ -114,4 +122,19 @@ int CFunctionHandler::EndFunction(float fRetVal1, float fRetVal2)
 
 void CFunctionHandler::Unref(HSCRIPTFUNCTION hFunc)
 {
+}
+
+bool CFunctionHandler::GetParam(int nIdx, USER_DATA& ud)
+{
+	return false;
+}
+
+bool CFunctionHandler::GetParamUDVal(int nIdx, USER_DATA& val, int& cookie)
+{
+	return false;
+}
+
+int CFunctionHandler::EndFunction(USER_DATA ud)
+{
+	return 0;
 }

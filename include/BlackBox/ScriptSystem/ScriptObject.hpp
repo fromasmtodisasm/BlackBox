@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/IScriptSystem.hpp>
+#include <lua.hpp>
 
 class CScriptObject : public IScriptObject 
 {
@@ -156,7 +157,7 @@ public:
 
 	virtual void Dump(IScriptObjectDumpSink* p) override;
 
-	virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int nFuncID) override;
+	virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void *this_ptr, int nFuncID) override;
 
 	virtual bool AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION pGetThunk) override;
 
@@ -168,6 +169,17 @@ public:
 
 	virtual bool GetValueRecursive(const char* szPath, IScriptObject* pObj) override;
 
-private:
+public:
+	// Lua state, set by CScriptSystem::Init
+	static lua_State* L;
+	// Pointer to ScriptSystem, set by CScriptSystem::Init
+	static IScriptSystem* m_pSS;
+
+	void* m_pNativeData;
+	struct member_ptr
+	{
+		int fID;
+		void* this_ptr;
+	}m_member_ptr;
 
 };

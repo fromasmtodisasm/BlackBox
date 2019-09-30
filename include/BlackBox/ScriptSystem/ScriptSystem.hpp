@@ -9,12 +9,16 @@
 #include <lua.hpp>
 #include <lualib.h>
 
+class CFunctionHandler;
+
 
 class CScriptSystem : public IScriptSystem
 {
 public:
-	CScriptSystem(ISystem *system);
+	CScriptSystem();
 	~CScriptSystem();
+
+	bool Init(ISystem* pSystem);
 
 	virtual bool ExecuteFile(const char* sFileName, bool bRaiseError = true, bool bForceReload = false) override;
 	virtual bool ExecuteBuffer(const char* sBuffer, size_t nSize) override;
@@ -82,6 +86,7 @@ public:
 private:
 	ISystem* m_System;
 	lua_State* L;
+	static CFunctionHandler *m_pH;
 
 };
 
