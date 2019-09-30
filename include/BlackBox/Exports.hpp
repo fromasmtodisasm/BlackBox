@@ -9,10 +9,10 @@
 #  ifndef BLACKBOX_EXPORT
 #    ifdef BlackBox_EXPORTS
         /* We are building this library */
-#      define BLACKBOX_EXPORT __declspec(dllexport)
+#      define BLACKBOX_EXPORT 
 #    else
         /* We are using this library */
-#      define BLACKBOX_EXPORT __declspec(dllimport)
+#      define BLACKBOX_EXPORT 
 #    endif
 #  endif
 

@@ -107,3 +107,10 @@ extern "C"
   BLACKBOX_EXPORT ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
 
+#define FatalError(...)
+#define CryFatalError(...) FatalError(__VA_ARGS__)
+
+
+#define Wraning(...)
+#define CryWraning(...) Wraning(__VA_ARGS__)
+#define ScriptWarning(...) Wraning(__VA_ARGS__)

@@ -1,13 +1,11 @@
 #pragma once
 #include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/LuaCommon.hpp> 
 
 #ifdef _WIN32
 #include <windows.h>
 #endif // Win32
 
-
-#include <lua.hpp>
-#include <lualib.h>
 
 class CFunctionHandler;
 

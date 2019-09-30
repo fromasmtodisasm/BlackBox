@@ -43,9 +43,9 @@ include_directories(
 #--------------------------------------------------
 ###################################################
 add_library(${PROJECT_NAME})
-#generate_export_header(${PROJECT_NAME}
-#	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
-#)
+generate_export_header(${PROJECT_NAME}
+	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
+)
 if (USE_SFML)
   add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
   target_sources(

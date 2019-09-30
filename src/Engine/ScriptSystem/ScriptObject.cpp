@@ -1,13 +1,12 @@
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
+#include <BlackBox/ScriptSystem/StackGuard.hpp>
+
+#include <BlackBox/IEngine.hpp>
+
+#include <cassert>
 
 lua_State* CScriptObject::L = nullptr;
 IScriptSystem* CScriptObject::m_pSS = nullptr;
-
-CScriptObject::CScriptObject() 
-	:
-	m_pNativeData(nullptr)
-{
-}
 
 CScriptObject::~CScriptObject()
 {
@@ -20,10 +19,15 @@ int CScriptObject::GetRef()
 
 void CScriptObject::Attach()
 {
+	if (m_nRef != NULL_REF)
+		lua_unref(L, m_nRef);
+	m_nRef = lua_ref(L, 1);
 }
 
 void CScriptObject::Attach(IScriptObject* so)
 {
+	PushRef(so);
+	Attach();
 }
 
 void CScriptObject::Delegate(IScriptObject* pObj)
@@ -342,20 +346,33 @@ int CScriptObject::Count()
 
 bool CScriptObject::Clone(IScriptObject* pObj)
 {
-	//CHECK_STACK(L);
-	/*
 	int top = lua_gettop(L);
-	lua_pushnil(L);  // first key
-	while (lua_next(L, srcTable) != 0)
+	bool bDeepCopy = true;
+	bool bCopyByReference = false;
+
+	PushRef(pObj);
+	PushRef();
+
+	int srcTable = top + 1;
+	int trgTable = top + 2;
+
+	if (bDeepCopy)
 	{
-		// `key' is at index -2 and `value' at index -1
-		lua_pushvalue(L, -2); // Push again index.
-		lua_pushvalue(L, -2); // Push value.
-		lua_rawset(L, trgTable);
-		lua_pop(L, 1); // pop value, leave index.
+		if (bCopyByReference)
+		{
+			ReferenceTable_r(srcTable, trgTable);
+		}
+		else
+		{
+			CloneTable_r(srcTable, trgTable);
+		}
+	}
+	else
+	{
+		CloneTable(srcTable, trgTable);
 	}
 	lua_settop(L, top); // Restore stack.
-	*/
+
 	return true;
 }
 
@@ -409,4 +426,76 @@ void CScriptObject::Release()
 bool CScriptObject::GetValueRecursive(const char* szPath, IScriptObject* pObj)
 {
 	return false;
+}
+
+void CScriptObject::SetMetatable(IScriptObject* pMetatable)
+{
+}
+
+void CScriptObject::PushRef()
+{
+	if (m_nRef != DELETED_REF && m_nRef != NULL_REF)
+		lua_getref(L, m_nRef);
+	else
+	{
+		lua_pushnil(L);
+		if (m_nRef == DELETED_REF)
+		{
+			assert(0 && "Access to deleted script object");
+			CryFatalError("Access to deleted script object %x", (unsigned int)(UINT_PTR)this);
+		}
+		else
+		{
+			assert(0 && "Pushing Nil table reference");
+			ScriptWarning("Pushing Nil table reference");
+		}
+	}
+}
+
+void CScriptObject::PushRef(IScriptObject* pObj)
+{
+	int nRef = ((CScriptObject*)pObj)->m_nRef;
+	if (nRef != DELETED_REF)
+		lua_getref(L, nRef);
+	else
+		CryFatalError("Access to deleted script object");
+
+}
+
+void CScriptObject::CloneTable(int srcTable, int trgTable)
+{
+}
+
+void CScriptObject::CloneTable_r(int srcTable, int trgTable)
+{
+	CHECK_STACK(L);
+	int top = lua_gettop(L);
+	lua_pushnil(L);  // first key
+	while (lua_next(L, srcTable) != 0)
+	{
+		if (lua_type(L, -1) == LUA_TTABLE)
+		{
+			int srct = lua_gettop(L);
+
+			lua_pushvalue(L, -2); // Push again index.
+			lua_newtable(L);      // Make value.
+			int trgt = lua_gettop(L);
+			CloneTable_r(srct, trgt);
+			lua_rawset(L, trgTable); // Set new table to trgtable.
+		}
+		else
+		{
+			// `key' is at index -2 and `value' at index -1
+			lua_pushvalue(L, -2); // Push again index.
+			lua_pushvalue(L, -2); // Push value.
+			lua_rawset(L, trgTable);
+		}
+		lua_pop(L, 1); // pop value, leave index.
+	}
+	lua_settop(L, top); // Restore stack.
+}
+
+void CScriptObject::ReferenceTable_r(int scrTable, int trgTable)
+{
+	assert(0 && __FUNCTION__" not implemented");
 }
