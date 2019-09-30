@@ -85,6 +85,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
@@ -149,7 +150,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
-
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp

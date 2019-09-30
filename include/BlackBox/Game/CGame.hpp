@@ -14,6 +14,7 @@
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
+#include <BlackBox/ScriptObjectConsole.hpp>
 
 #include <BlackBox/common.h>
 
@@ -92,6 +93,7 @@ private:
 	ICVar* r_cap_profile;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
+	CScriptObjectConsole* m_ScriptObjectConsole;
 
   enum Mode
   {

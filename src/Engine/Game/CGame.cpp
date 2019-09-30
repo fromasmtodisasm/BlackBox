@@ -18,7 +18,6 @@
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/Utils.h>
-#include <BlackBox/IScriptSystem.hpp>
 
 #ifdef GUI
 #include <imgui-SFML.h>
@@ -193,6 +192,11 @@ bool CGame::init(ISystem *pEngine)  {
   ITexture* consoleBackGround = new Texture();
   //consoleBackGround->load("console/fc.jpg");
   m_Console->SetImage(consoleBackGround);
+
+	m_ScriptObjectConsole = new CScriptObjectConsole();
+	CScriptObjectConsole::InitializeTemplate(m_pSystem->getIIScriptSystem());
+	//m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
+
   return true;
 }
 
