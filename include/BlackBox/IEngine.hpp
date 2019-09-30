@@ -1,6 +1,5 @@
 #pragma once
-
-#define SYSTEM_API
+#include <BlackBox/Exports.hpp>
 
 struct IGame;
 struct IShaderManager;
@@ -39,5 +38,5 @@ extern ISystem *GetISystem();
 // interface of the DLL
 extern "C"
 {
-  SYSTEM_API ISystem* CreateISystem(void *);
+  BLACKBOX_EXPORT ISystem* CreateISystem(void *);
 }

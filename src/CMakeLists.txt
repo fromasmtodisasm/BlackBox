@@ -1,18 +1,22 @@
 cmake_minimum_required(VERSION 3.3)
 project(BlackBox)
 
+include(GenerateExportHeader)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
+
 ###################################################
 #add_subdirectory(submodules/glfw)
 if (GLAD_LOADER)
   #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glad glad)
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib lib)
   add_definitions(-DGLAD_LOADER)
+  add_definitions(-DGLAD_GLAPI_EXPORT_BUILD)
 elseif(GLEW_LOADER)
   find_package(GLEW REQUIRED)
   add_definitions(-DGLEW_LOADER)
@@ -20,16 +24,6 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/nvtt nvtt)
 find_package(OpenGL REQUIRED)
-#--------------------------------------------------
-if (WIN32)
-  find_library(GDI32_LIBRARY gdi32)
-  if(GDI32_LIBRARY_FOUND)
-    message(STATUS "gdi32 found")
-    link_libraries(${GDI32_LIBRARY})
-  else()
-    message(FAILED "GDI32 notfound")
-  endif()
-endif()
 #--------------------------------------------------
 include_directories(
   "${SFML_SOURCE_DIR}/include"
@@ -49,6 +43,9 @@ include_directories(
 #--------------------------------------------------
 ###################################################
 add_library(${PROJECT_NAME})
+#generate_export_header(${PROJECT_NAME}
+#	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
+#)
 if (USE_SFML)
   add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
   target_sources(
@@ -253,11 +250,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 install(
   TARGETS  ${PROJECT_NAME}
-  RUNTIME DESTINATION ${PROJECT_NAME}/bin
-  LIBRARY DESTINATION ${PROJECT_NAME}/lib
-  ARCHIVE DESTINATION ${PROJECT_NAME}/lib/static
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  #ARCHIVE DESTINATION lib/static
 )
 
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION ${PROJECT_NAME}
 )
+
+#install(FILES
+# BlackBoxExport.h
+# ${PROJECT_BINARY_DIR}/blackbox_export.h DESTINATION ${BLACKBOX_INCLUDE_DIRS}
+#)

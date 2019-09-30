@@ -296,8 +296,9 @@ void CEngine::Update()
 	//PROFILER_SYNC_FRAME();
 }
 
-SYSTEM_API ISystem * CreateISystem(void *)
+BLACKBOX_EXPORT ISystem * CreateISystem(void *)
 {
+	MessageBox(NULL, "TEST", "Message", MB_OK);
   ISystem *system = new CEngine();
   return system;
 }

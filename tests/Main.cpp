@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   }
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
-  path = getBasePath(string(argv[0]));
+  //path = getBasePath(string(argv[0]));
   ISystem*pSystem = CreateISystem(nullptr);
   if (!pSystem->Init())
   {
