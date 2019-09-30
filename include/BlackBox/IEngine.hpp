@@ -1,6 +1,7 @@
 #pragma once
 #include "Exports.hpp"
 #include "Platform.hpp"
+#include <cstdarg>
 
 struct ISystem;
 struct IGame;
@@ -103,5 +104,6 @@ extern ISystem *GetISystem();
 // interface of the DLL
 extern "C"
 {
-  BLACKBOX_EXPORT ISystem* CreateISystem(void *);
+  BLACKBOX_EXPORT ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
+

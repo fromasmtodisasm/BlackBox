@@ -196,14 +196,6 @@ bool CEngine::ConfigLoad(const char* file)
 		r_sbpp == nullptr
 		)
 		return false;
-
-	//r_window_height->Set(std::atoi(r_window_height->GetString()));
-	//r_window_width->Set(std::atoi(r_window_width->GetString()));
-	//r_window_height->Set(std::atoi(r_window_height->GetString()));
-	//r_bpp->Set(std::atoi(r_bpp->GetString()));
-	//r_zbpp->Set(std::atoi(r_zbpp->GetString()));
-	//r_sbpp->Set(std::atoi(r_sbpp->GetString()));
-
 	return true;
 }
 
@@ -296,7 +288,7 @@ void CEngine::Update()
 	//PROFILER_SYNC_FRAME();
 }
 
-BLACKBOX_EXPORT ISystem * CreateISystem(void *)
+BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
 {
 	MessageBox(NULL, "TEST", "Message", MB_OK);
   ISystem *system = new CEngine();
