@@ -2,7 +2,6 @@
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
 
 #include <string>
@@ -20,7 +19,7 @@ static int print(lua_State* L) {
 
 CScriptSystem::CScriptSystem()
 	:
-	m_System(nullptr)
+	m_pSystem(nullptr)
 {
 
 }
@@ -66,7 +65,7 @@ bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
 	else
 	{
 		std::string errormsg = lua_tostring(L, -1);
-		m_System->getIConsole()->PrintLine("LUA ERROR: %s", errormsg.c_str());
+		m_pSystem->getIConsole()->PrintLine("LUA ERROR: %s", errormsg.c_str());
 	}
 
 	return result == LUA_OK;
@@ -173,7 +172,30 @@ int CScriptSystem::BeginCall(const char* sFuncName)
 
 int CScriptSystem::BeginCall(const char* sTableName, const char* sFuncName)
 {
-	return 0;
+	lua_getglobal(L, sTableName);
+
+	if (!lua_istable(L, -1))
+	{
+		ScriptWarning("[CScriptSystem::BeginCall] Tried to call %s:%s(), Table %s not found (check for syntax errors or if the file wasn't loaded)", sTableName, sFuncName, sTableName);
+		m_nTempArg = -1;
+		lua_pop(L, 1);
+		return 0;
+	}
+
+	lua_pushstring(L, sFuncName);
+	lua_gettable(L, -2);
+	lua_remove(L, -2);  // Remove table global.
+	m_nTempArg = 0;
+
+	if (!lua_isfunction(L, -1))
+	{
+		ScriptWarning("[CScriptSystem::BeginCall] Function %s:%s not found(check for syntax errors or if the file wasn't loaded)", sTableName, sFuncName);
+		m_nTempArg = -1;
+		lua_pop(L, 1);
+		return 0;
+	}
+
+	return 1;
 }
 
 void CScriptSystem::EndCall()

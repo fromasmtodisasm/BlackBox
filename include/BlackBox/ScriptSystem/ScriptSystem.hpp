@@ -1,11 +1,20 @@
 #pragma once
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp> 
+#include <BlackBox/Utils.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
 #endif // Win32
 
+#include <vector>
+#include <set>
+#include <string>
+#include <stack>
+
+typedef std::set<std::string, stl::less_stricmp<std::string>> ScriptFileList;
+typedef ScriptFileList::iterator															ScriptFileListItor;
 
 class CFunctionHandler;
 
@@ -82,8 +91,36 @@ public:
 	virtual void GetScriptHash(const char* sPath, const char* szKey, unsigned int& dwHash) override;
 	virtual void PostInit() override;
 private:
-	ISystem* m_System;
+	static CScriptSystem* s_mpScriptSystem;
 	lua_State* L;
+	ICVar* m_cvar_script_debugger; // Stores current debugging mode
+	ICVar* m_cvar_script_coverage;
+	int                   m_nTempArg;
+	int                   m_nTempTop;
+
+	IScriptObject* m_pUserDataMetatable;
+	IScriptObject* m_pPreCacheBufferTable;
+	std::vector<std::string>   m_vecPreCached;
+
+	HSCRIPTFUNCTION       m_pErrorHandlerFunc;
+
+	ScriptFileList        m_dqLoadedFiles;
+
+	//CScriptBindings       m_stdScriptBinds;
+	ISystem* m_pSystem;
+
+	float                 m_fGCFreq;      //!< relative time in seconds
+	float                 m_lastGCTime;   //!< absolute time in seconds
+	int                   m_nLastGCCount; //!<
+	int                   m_forceReloadCount;
+
+	//CScriptTimerMgr* m_pScriptTimerMgr;
+
+	// Store a simple callstack that can be inspected in C++ debugger
+	const static int			MAX_CALLDEPTH = 32;
+	int										m_nCallDepth;
+	std::stack<std::string>     m_sCallDescriptions[MAX_CALLDEPTH];
+private:
 	static CFunctionHandler *m_pH;
 
 };

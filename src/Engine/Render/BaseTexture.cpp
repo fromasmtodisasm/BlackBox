@@ -1,5 +1,5 @@
 #include <BlackBox/Render/BaseTexture.hpp>
-//#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 bool Image::load(const char* name, bool *hasAlpha)
