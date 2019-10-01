@@ -203,6 +203,11 @@ bool CEngine::ConfigLoad(const char* file)
 	return true;
 }
 
+void CEngine::ShowMessage(const char* message, const char* caption, MessageType messageType)
+{
+	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
+}
+
 IScriptSystem* CEngine::getIIScriptSystem()
 {
 	return m_ScriptSystem;

@@ -47,6 +47,8 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
 	render_via_viewport = m_Engine->getIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
+	m_Engine->getIConsole()->AddConsoleVarSink(this);
+	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
 	//=======================
@@ -180,6 +182,21 @@ void CRender::DrawFullScreenImage(int texture_id)
   glCheck(glActiveTexture(GL_TEXTURE0));
   glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
   m_ScreenQuad->draw();
+}
+
+bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
+{
+	m_Engine->ShowMessage(pVar->GetName(), "Show name", ISystem::M_WARNING);
+	if (!strcmp(pVar->GetName(),"r_Width"))
+	{
+		m_Window->changeSize(pVar->GetFVal(), 0);
+	}
+	else if (!strcmp(pVar->GetName(),"r_Height"))
+	{
+		m_Window->changeSize(0, pVar->GetFVal());
+	}
+	return false;
+
 }
 
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)

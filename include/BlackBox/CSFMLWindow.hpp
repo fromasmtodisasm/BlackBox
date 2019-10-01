@@ -110,5 +110,9 @@ public:
 
 	Point getCursorPos();
 	
+
+	// Inherited via IWindow
+	virtual void changeSize(int w, int h) override;
+
 };
 

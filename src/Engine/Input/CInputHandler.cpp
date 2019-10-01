@@ -72,3 +72,8 @@ Point CSFMLWindow::getCursorPos()
 {
 	return Point(sf::Mouse::getPosition().x,sf::Mouse::getPosition().y);
 }
+
+void CSFMLWindow::changeSize(int w, int h)
+{
+	m_Window->setSize(sf::Vector2u(std::max(0, w),std::max(0, h)));
+}

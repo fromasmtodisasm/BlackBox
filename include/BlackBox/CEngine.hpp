@@ -56,4 +56,7 @@ private:
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
 
+
+	// Inherited via ISystem
+	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
 };

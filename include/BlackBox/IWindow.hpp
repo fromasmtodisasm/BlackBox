@@ -28,6 +28,7 @@ struct IWindow {
  virtual void *getHandle() = 0;
  virtual void setFlags(int flags) = 0;
  virtual Rect &getViewPort() = 0;
+ virtual void changeSize(int w, int h) = 0;
 };
 
 EXPORT IWindow* CreateIWindow();

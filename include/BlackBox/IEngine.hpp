@@ -15,6 +15,7 @@ struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
 
+
 //////////////////////////////////////////////////////////////////////////
 // User defined callback, which can be passed to ISystem.
 struct ISystemUserCallback
@@ -79,6 +80,11 @@ struct SSystemInitParams
 
 struct ISystem
 {
+	enum MessageType {
+		M_ERROR,
+		M_WARNING
+	};
+
   virtual bool Init() = 0;
   virtual void Start() = 0;
   virtual void Update() = 0;
@@ -96,6 +102,8 @@ struct ISystem
   virtual IWindow *getIWindow() = 0;
   virtual IInputHandler *getIInputHandler() = 0;
 	virtual IScriptSystem* getIIScriptSystem() = 0;
+
+	virtual void ShowMessage(const char *message, const char *caption, MessageType messageType) = 0;
 };
 
 // Get the system interface (must be defined locally in each module)

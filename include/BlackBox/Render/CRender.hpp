@@ -6,7 +6,9 @@
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/IConsole.hpp>
 
-class CRender : public IRender
+class CRender : 
+	public IRender,
+	public IConsoleVarSink
 {
 public:
 	CRender(ISystem *engine);
@@ -98,5 +100,8 @@ private:
 
   // Inherited via IRender
   virtual void DrawFullScreenImage(int texture_id) override;
+
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 };
 
