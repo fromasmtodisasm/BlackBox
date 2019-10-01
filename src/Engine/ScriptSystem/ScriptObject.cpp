@@ -14,7 +14,7 @@ CScriptObject::~CScriptObject()
 
 int CScriptObject::GetRef()
 {
-	return 0;
+	return m_nRef;
 }
 
 void CScriptObject::Attach()
@@ -382,8 +382,8 @@ void CScriptObject::Dump(IScriptObjectDumpSink* p)
 
 bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void *this_ptr, int nFuncID)
 {
-	//PushRef();
-	//lua_pushstring(L, sName);
+	PushRef();
+	lua_pushstring(L, sName);
 
 	//int8 nParamIdOffset = fd.nParamIdOffset;
 	if (pThunk)
@@ -398,11 +398,11 @@ bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void 
 		//memcpy(pBuffer + sizeof(nFuncID), this_ptr, sizeof(this_ptr));
 		//memcpy(pBuffer + sizeof(fd.pFunctor) + 1, sFuncSignature, strlen(sFuncSignature) + 1);
 		lua_pushcclosure(L, reinterpret_cast<lua_CFunction>(pThunk), 1);
-		lua_setglobal(L, sName);
+		//lua_setglobal(L, sName);
 	}
 
-	//lua_rawset(L, -3);
-	//lua_pop(L, 1); // pop table.
+	lua_rawset(L, -3);
+	lua_pop(L, 1); // pop table.
 	return true;
 }
 
@@ -426,6 +426,12 @@ void CScriptObject::Release()
 bool CScriptObject::GetValueRecursive(const char* szPath, IScriptObject* pObj)
 {
 	return false;
+}
+
+void CScriptObject::CreateNew()
+{
+	lua_newtable(L);
+	Attach();
 }
 
 void CScriptObject::SetMetatable(IScriptObject* pMetatable)

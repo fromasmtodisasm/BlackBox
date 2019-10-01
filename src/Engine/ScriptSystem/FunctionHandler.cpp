@@ -1,5 +1,9 @@
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
+#include <cassert>
+
+	
+#define NOT_IMPL() assert(0 && __FUNCTION__" not implemented") 
 
 CFunctionHandler::CFunctionHandler(CScriptSystem *pSS, lua_State *L)
 	:
@@ -83,32 +87,39 @@ int CFunctionHandler::EndFunctionNull()
 
 int CFunctionHandler::EndFunction(int nRetVal)
 {
-	return 0;
+	m_pSS->PushFuncParam(nRetVal);
+	return 1;
 }
 
 int CFunctionHandler::EndFunction(float fRetVal)
 {
-	return 0;
+	m_pSS->PushFuncParam(fRetVal);
+	return 1;
 }
 
-int CFunctionHandler::EndFunction(const char* fRetVal)
+int CFunctionHandler::EndFunction(const char* cRetVal)
 {
-	return 0;
+	m_pSS->PushFuncParam(cRetVal);
+	return 1;
 }
 
 int CFunctionHandler::EndFunction(bool bRetVal)
 {
-	return 0;
+	m_pSS->PushFuncParam(bRetVal);
+	return 1;
 }
 
 int CFunctionHandler::EndFunction(IScriptObject* pObj)
 {
-	return 0;
+	m_pSS->PushFuncParam(pObj);
+	return 1;
 }
 
 int CFunctionHandler::EndFunction(HSCRIPTFUNCTION hFunc)
 {
-	return 0;
+	//m_pSS->PushFuncParam(hFunc);
+	NOT_IMPL();
+	return 1;
 }
 
 int CFunctionHandler::EndFunction()
@@ -118,7 +129,7 @@ int CFunctionHandler::EndFunction()
 
 int CFunctionHandler::EndFunction(int nRetVal1, int nRetVal2)
 {
-	return 0;
+	return 2;
 }
 
 int CFunctionHandler::EndFunction(float fRetVal1, float fRetVal2)

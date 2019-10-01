@@ -39,10 +39,12 @@ public:
 	virtual bool ReloadScript(const char* sFileName, bool bRaiseError = true) override;
 	virtual bool ReloadScripts() override;
 	virtual void DumpLoadedScripts() override;
+	//
 	virtual IScriptObject* GetGlobalObject() override;
 	virtual IScriptObject* CreateEmptyObject() override;
 	virtual IScriptObject* CreateObject() override;
 	virtual IScriptObject* CreateGlobalObject(const char* sName) override;
+	//
 	virtual int BeginCall(HSCRIPTFUNCTION hFunc) override;
 	virtual int BeginCall(const char* sFuncName) override;
 	virtual int BeginCall(const char* sTableName, const char* sFuncName) override;
@@ -60,17 +62,20 @@ public:
 	virtual void PushFuncParam(const char* sVal) override;
 	virtual void PushFuncParam(bool bVal) override;
 	virtual void PushFuncParam(IScriptObject* pVal) override;
+	//
 	virtual void SetGlobalValue(const char* sKey, int nVal) override;
 	virtual void SetGlobalValue(const char* sKey, float fVal) override;
 	virtual void SetGlobalValue(const char* sKey, const char* sVal) override;
 	virtual void SetGlobalValue(const char* sKey, IScriptObject* pObj) override;
 	virtual bool GetGlobalValue(const char* sKey, IScriptObject* pObj) override;
 	virtual void SetGlobalToNull(const char* sKey) override;
+	//
 	virtual HTAG CreateTaggedValue(const char* sKey, int* pVal) override;
 	virtual HTAG CreateTaggedValue(const char* sKey, float* pVal) override;
 	virtual HTAG CreateTaggedValue(const char* sKey, char* pVal) override;
 	virtual USER_DATA CreateUserData(INT_PTR nVal, int nCookie) override;
 	virtual void RemoveTaggedValue(HTAG tag) override;
+	//
 	virtual void RaiseError(const char* sErr, ...) override;
 	virtual void ForceGarbageCollection() override;
 	virtual int GetCGCount() override;
@@ -90,6 +95,8 @@ public:
 	virtual void GetMemoryStatistics(ICrySizer* pSizer) override;
 	virtual void GetScriptHash(const char* sPath, const char* szKey, unsigned int& dwHash) override;
 	virtual void PostInit() override;
+
+	void PushObject(IScriptObject* pObj);
 private:
 	static CScriptSystem* s_mpScriptSystem;
 	lua_State* L;

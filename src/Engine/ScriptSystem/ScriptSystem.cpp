@@ -3,10 +3,12 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
+#include <BlackBox/ScriptSystem/StackGuard.hpp>
 
 #include <string>
 #include <iostream>
 #include <functional>
+
 
 CFunctionHandler* CScriptSystem::m_pH = nullptr;
 
@@ -147,17 +149,21 @@ IScriptObject* CScriptSystem::GetGlobalObject()
 
 IScriptObject* CScriptSystem::CreateEmptyObject()
 {
-	return nullptr;
+	return new CScriptObject;
 }
 
 IScriptObject* CScriptSystem::CreateObject()
 {
-	return new CScriptObject;
+	CScriptObject* result = new CScriptObject;
+	result->CreateNew();
+	return result;
 }
 
 IScriptObject* CScriptSystem::CreateGlobalObject(const char* sName)
 {
-	return new CScriptObject;
+	IScriptObject *pObj = CreateObject();
+	SetGlobalValue(sName, pObj);
+	return pObj;
 }
 
 int CScriptSystem::BeginCall(HSCRIPTFUNCTION hFunc)
@@ -238,38 +244,55 @@ void CScriptSystem::ReleaseFunc(HSCRIPTFUNCTION f)
 
 void CScriptSystem::PushFuncParam(int nVal)
 {
+	lua_pushinteger(L, nVal);
 }
 
 void CScriptSystem::PushFuncParam(float fVal)
 {
+	lua_pushnumber(L, fVal);
 }
 
 void CScriptSystem::PushFuncParam(const char* sVal)
 {
+	lua_pushstring(L, sVal);
 }
 
 void CScriptSystem::PushFuncParam(bool bVal)
 {
+	lua_pushboolean(L, bVal);
 }
 
 void CScriptSystem::PushFuncParam(IScriptObject* pVal)
 {
+	PushObject(pVal);
 }
 
 void CScriptSystem::SetGlobalValue(const char* sKey, int nVal)
 {
+	CHECK_STACK(L);
+	lua_pushinteger(L, nVal);
+	lua_setglobal(L, sKey);
 }
 
 void CScriptSystem::SetGlobalValue(const char* sKey, float fVal)
 {
+	CHECK_STACK(L);
+	lua_pushnumber(L, fVal);
+	lua_setglobal(L, sKey);
 }
 
 void CScriptSystem::SetGlobalValue(const char* sKey, const char* sVal)
 {
+	CHECK_STACK(L);
+	lua_pushstring(L, sVal);
+	lua_setglobal(L, sKey);
 }
 
 void CScriptSystem::SetGlobalValue(const char* sKey, IScriptObject* pObj)
 {
+	CHECK_STACK(L);
+	PushObject(pObj);
+	lua_setglobal(L, sKey);
 }
 
 bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
@@ -385,4 +408,9 @@ void CScriptSystem::GetScriptHash(const char* sPath, const char* szKey, unsigned
 
 void CScriptSystem::PostInit()
 {
+}
+
+void CScriptSystem::PushObject(IScriptObject* pObj)
+{
+	((CScriptObject*)pObj)->PushRef();
 }

@@ -9,6 +9,8 @@ class ICrySizer;
 struct IWeakScriptObject;
 struct IScriptObject;
 struct ISystem;
+struct IScriptObject;
+struct IScriptSystem;
 
 #define HSCRIPT void*
 #define HSCRIPTFUNCTION unsigned int
@@ -649,8 +651,6 @@ struct IScriptDebugSink {
 //Utility classes
 /////////////////////////////////////////////////////////////////////////////
 
-#if 0
-//#define USE_WEAK_OBJS
 class _SmartScriptObject
 {
 	_SmartScriptObject(const _SmartScriptObject&)
@@ -674,7 +674,7 @@ public:
 		m_pSO = pSS->CreateEmptyObject();
 		m_pSO->Attach(p);
 	}
-	explicit _SmartScriptObject(IScriptSystem* pSS, bool bCreateEmpty = false)
+	_SmartScriptObject(IScriptSystem* pSS, bool bCreateEmpty = false)
 	{
 		if (!bCreateEmpty)
 		{
@@ -744,6 +744,7 @@ public:
 
 protected:
 	IScriptObject* m_pSO;
+
 };
 
 class _HScriptFunction
@@ -767,6 +768,8 @@ private:
 	HSCRIPTFUNCTION m_hFunc;
 	IScriptSystem* m_pScriptSystem;
 };
+
+#if 0
 
 extern "C" {
 	CRYSCRIPTSYSTEM_API IScriptSystem* CreateScriptSystem(ISystem* pSystem, IScriptSystemSink* pSink, IScriptDebugSink* pDebugSink, bool bStdLibs);

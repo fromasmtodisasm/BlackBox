@@ -103,7 +103,9 @@ public:
 	virtual void Detach() override; 
 	virtual void Release() override; 
 	virtual bool GetValueRecursive(const char* szPath, IScriptObject* pObj) override; 
-private:
+public:
+	// --------------------------------------------------------------------------
+	void CreateNew();
 	// Create object from pool.
 	void Recreate() { m_nRef = NULL_REF; m_nRefCount = 1; };
 	// Assign a metatable to a table.

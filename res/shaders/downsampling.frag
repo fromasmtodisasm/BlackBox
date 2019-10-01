@@ -11,6 +11,7 @@ uniform sampler2D image;
 uniform bool horizontal;
 uniform float weight[2] = float[](0.125, 0.5);
 uniform float offset = -3.5;
+uniform vec4 viewPort = vec4(0, 1, 0, 1);
 
 // Todo: specify calculation of offset for box filter
 vec3 offsets[13] = vec3[](
