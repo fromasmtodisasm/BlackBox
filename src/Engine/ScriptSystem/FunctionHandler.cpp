@@ -71,7 +71,7 @@ THIS_PTR CFunctionHandler::GetThis()
 		lua_pushstring(L, "__this");
 		lua_rawget(L, 1);
 		if (lua_type(L, -1) == LUA_TLIGHTUSERDATA)
-			ptr = const_cast<void*>(lua_topointer(L, -1));
+			ptr = const_cast<THIS_PTR>(lua_topointer(L, -1));
 		lua_pop(L, 1); // pop result.
 	}
 	return ptr;
