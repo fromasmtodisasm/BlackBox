@@ -399,7 +399,6 @@ bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void 
 	PushRef();
 	lua_pushstring(L, sName);
 
-	//int8 nParamIdOffset = fd.nParamIdOffset;
 	if (pThunk)
 	{
 		// Store functor in first upvalue.
@@ -516,14 +515,6 @@ void CScriptObject::CloneTable_r(int srcTable, int trgTable)
 			// `key' is at index -2 and `value' at index -1
 			lua_pushvalue(L, -2); // Push again index.
 			lua_pushvalue(L, -2); // Push value.
-			if (lua_islightuserdata(L, -1))
-			{
-				GetISystem()->Log("LightUserdata");
-			}
-			else if (lua_islightuserdata(L, -2))
-			{
-				GetISystem()->Log("LightUserdata");
-			}
 			lua_rawset(L, trgTable);
 		}
 		lua_pop(L, 1); // pop value, leave index.
