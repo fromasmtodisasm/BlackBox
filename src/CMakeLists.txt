@@ -83,6 +83,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp

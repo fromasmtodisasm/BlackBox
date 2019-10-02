@@ -15,6 +15,7 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
 #include <BlackBox/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptObjectGame.hpp>
 
 #include <BlackBox/common.h>
 
@@ -94,6 +95,7 @@ private:
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 	CScriptObjectConsole* m_ScriptObjectConsole;
+	CScriptObjectGame* m_ScriptObjectGame;
 
   enum Mode
   {
@@ -110,6 +112,7 @@ public:
   float m_deltaTime;
 public:
   CGame(std::string title);
+  CGame() = default;
   ~CGame() = default;
   bool init(ISystem *pSystem) override;
   bool update() override;

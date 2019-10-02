@@ -195,15 +195,20 @@ bool CGame::init(ISystem *pEngine)  {
 
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	m_ScriptObjectConsole->InitializeTemplate(m_pSystem->getIIScriptSystem());
+	m_ScriptObjectGame = new CScriptObjectGame();
+	m_ScriptObjectGame->InitializeTemplate(m_pSystem->getIIScriptSystem());
+
 	m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
+	m_ScriptObjectGame->Init(m_pSystem->getIIScriptSystem(), this);
+
 	m_pSystem->getIIScriptSystem()->ExecuteFile("scripts/common.lua", true, false);
 
   return true;
 }
 
 bool CGame::update() {
-	m_pSystem->getIIScriptSystem()->ExecuteBuffer("Console:PrintLine(\"Begin game update\")", 0);
-	m_pSystem->getIIScriptSystem()->ExecuteBuffer("Console:Show(true)", 0);
+	fps = 35.f;
+	m_pSystem->getIIScriptSystem()->ExecuteFile("scripts/game.lua");
   while (!m_Window->closed() &&  m_running) {
 		m_pSystem->BeginFrame();
 
