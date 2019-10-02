@@ -99,7 +99,16 @@ bool CScriptObject::GetValue(const char* sKey, bool& bVal)
 
 bool CScriptObject::GetValue(const char* sKey, const char*& sVal)
 {
-	return false;
+	CHECK_STACK(L);
+	int top = lua_gettop(L);
+	//if (!bChain)
+	PushRef();
+	lua_pushstring(L, sKey);
+	lua_gettable(L, -2);
+	sVal =	lua_tostring(L, -1);
+	lua_pop(L, 1);
+	lua_settop(L, top);
+	return true;
 }
 
 bool CScriptObject::GetValue(const char* sKey, IScriptObject* pObj)

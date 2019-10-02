@@ -45,6 +45,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class CPlayer;
 private:
   ISystem *m_pSystem;
+  IScriptSystem *m_pScriptSystem;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
@@ -96,6 +97,7 @@ private:
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 	CScriptObjectConsole* m_ScriptObjectConsole;
 	CScriptObjectGame* m_ScriptObjectGame;
+	IScriptObject* m_playerObject;
 
   enum Mode
   {

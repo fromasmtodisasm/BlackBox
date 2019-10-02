@@ -121,6 +121,7 @@ CGame::CGame(std::string title) :
 
 bool CGame::init(ISystem *pEngine)  {
   m_pSystem = gISystem = pEngine;
+  m_pScriptSystem = m_pSystem->getIIScriptSystem();
   m_Log = m_pSystem->getILog();
 	m_Console = m_pSystem->getIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
@@ -194,21 +195,33 @@ bool CGame::init(ISystem *pEngine)  {
   m_Console->SetImage(consoleBackGround);
 
 	m_ScriptObjectConsole = new CScriptObjectConsole();
-	m_ScriptObjectConsole->InitializeTemplate(m_pSystem->getIIScriptSystem());
+	m_ScriptObjectConsole->InitializeTemplate(m_pScriptSystem);
 	m_ScriptObjectGame = new CScriptObjectGame();
-	m_ScriptObjectGame->InitializeTemplate(m_pSystem->getIIScriptSystem());
+	m_ScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
 	m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
 	m_ScriptObjectGame->Init(m_pSystem->getIIScriptSystem(), this);
 
-	m_pSystem->getIIScriptSystem()->ExecuteFile("scripts/common.lua", true, false);
+	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
 
   return true;
 }
 
 bool CGame::update() {
 	fps = 35.f;
-	m_pSystem->getIIScriptSystem()->ExecuteFile("scripts/game.lua");
+	m_pScriptSystem->ExecuteFile("scripts/game.lua");
+
+	m_playerObject = m_pScriptSystem->CreateEmptyObject();
+	if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
+	{
+		delete m_playerObject;
+		m_pSystem->Log("\002 ERROR: can't find user table ");
+		return false;
+	}
+	const char *name;
+	m_playerObject->GetValue("name", name);
+	m_Console->PrintLine("Player name: %s", name);
+
   while (!m_Window->closed() &&  m_running) {
 		m_pSystem->BeginFrame();
 

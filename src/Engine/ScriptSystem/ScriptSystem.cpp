@@ -302,7 +302,18 @@ void CScriptSystem::SetGlobalValue(const char* sKey, IScriptObject* pObj)
 
 bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
 {
-	return false;
+	lua_getglobal(L, sKey);
+
+	if (lua_istable(L, -1))
+	{
+		//pObj = CreateEmptyObject();
+		//pObj->AddRef();
+	}
+	lua_pushvalue(L, -1);
+	pObj->Attach();
+	//AttachTable(pObj);
+
+	return true;
 }
 
 void CScriptSystem::SetGlobalToNull(const char* sKey)
