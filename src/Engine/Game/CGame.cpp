@@ -215,7 +215,7 @@ bool CGame::update() {
 	if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
 	{
 		delete m_playerObject;
-		m_pSystem->Log("\002 ERROR: can't find user table ");
+		m_pSystem->Log("\002 ERROR: can't find player table ");
 		return false;
 	}
 	const char *name;

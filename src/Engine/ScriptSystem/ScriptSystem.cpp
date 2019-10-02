@@ -304,8 +304,9 @@ bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
 {
 	lua_getglobal(L, sKey);
 
-	if (lua_istable(L, -1))
+	if (!lua_istable(L, -1))
 	{
+		return false;
 		//pObj = CreateEmptyObject();
 		//pObj->AddRef();
 	}
