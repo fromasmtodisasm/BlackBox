@@ -23,14 +23,23 @@ enum {
 };
 #define THIS_PTR void*
 #define HTAG int
-#define USER_DATA ULONG_PTR			//## AMD Port
+#define USER_DATA void*			//## AMD Port
 
 typedef int(*SCRIPT_FUNCTION)(HSCRIPT hScript);
 typedef int HBREAKPOINT;
 
-enum BreakState {
+enum ELuaDebugMode
+{
+	eLDM_NoDebug = 0,
+	eLDM_FullDebug = 1,
+	eLDM_OnlyErrors = 2
+};
+
+enum BreakState
+{
 	bsStepNext,
 	bsStepInto,
+	bsStepOut,
 	bsContinue,
 	bsNoBreak
 };
@@ -212,6 +221,8 @@ struct IScriptSystem
 	/*! push a parameter during a function call
 		@param val value that must be pushed
 	*/
+	virtual void ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason) = 0;
+	virtual void LogStackTrace() = 0;
 	//##@{
 	virtual void PushFuncParam(int nVal) = 0;
 	virtual void PushFuncParam(float fVal) = 0;
@@ -253,7 +264,7 @@ struct IScriptSystem
 	virtual HTAG CreateTaggedValue(const char* sKey, char* pVal) = 0;
 	//##@}
 
-	virtual USER_DATA CreateUserData(INT_PTR nVal, int nCookie) = 0;
+	virtual USER_DATA CreateUserData(void *ptr, int size) = 0;
 	/*! remove a tagged value
 		@param tag handle to a tagged value
 	*/

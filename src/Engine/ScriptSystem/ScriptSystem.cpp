@@ -9,15 +9,15 @@
 #include <iostream>
 #include <functional>
 
+#include <cstdarg>
+#include <cstring>
+
+extern "C" {
+
+#define DumpCallStack(L) printf("DumpCallStack() not implemented")
+}
 
 CFunctionHandler* CScriptSystem::m_pH = nullptr;
-
-static int print(lua_State* L) {
-	auto system = GetISystem();
-	auto str = lua_tostring(L, 1);  /* get argument */
-	system->getIConsole()->PrintLine(str);
-	return 0;  /* number of results */
-}
 
 CScriptSystem::CScriptSystem()
 	:
@@ -33,11 +33,9 @@ CScriptSystem::~CScriptSystem()
 
 bool CScriptSystem::Init(ISystem* pSystem)
 {
+	m_pSystem = pSystem;
 	L = luaL_newstate();
 	luaL_openlibs(L);
-	lua_pushcfunction(L, print);
-	lua_setglobal(L, "console_printline");
-
 	CScriptObject::L = L; // Set lua state for script table class.
 	CScriptObject::m_pSS = this;
 	m_pH = new CFunctionHandler(this, L);
@@ -46,6 +44,13 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	// Execute common lua file.
 	//////////////////////////////////////////////////////////////////////////
 	//ExecuteFile("scripts/common.lua", true, false);
+
+	m_cvar_script_debugger = pSystem->getIConsole()->CreateVariable(
+		"lua_debugger", 0, VF_CHEAT,
+		"Enables the script debugger.\n"
+		"1 to trigger on breakpoints and errors\n"
+		"2 to only trigger on errors\n"
+		"Usage: lua_debugger [0/1/2]");
 
 	return L ? true : false;
 }
@@ -319,17 +324,36 @@ HTAG CScriptSystem::CreateTaggedValue(const char* sKey, char* pVal)
 	return HTAG();
 }
 
-USER_DATA CScriptSystem::CreateUserData(INT_PTR nVal, int nCookie)
+USER_DATA CScriptSystem::CreateUserData(void* ptr, int size)
 {
-	return USER_DATA();
+	CHECK_STACK(L);
+
+	void* nptr = lua_newuserdata(L, size);
+	memcpy(nptr, ptr, size);
+	CScriptObject* pNewTbl = new CScriptObject();
+	pNewTbl->Attach();
+
+	return pNewTbl;
 }
 
 void CScriptSystem::RemoveTaggedValue(HTAG tag)
 {
 }
 
-void CScriptSystem::RaiseError(const char* sErr, ...)
+void CScriptSystem::RaiseError(const char* format, ...)
 {
+	va_list arglist;
+	char sBuf[2048];
+	int nCurrentLine = 0;
+	const char* sSourceFile = "undefined";
+
+	va_start(arglist, format);
+	vsprintf(sBuf, format, arglist);
+	va_end(arglist);
+
+	ScriptWarning("[Lua Error] %s", sBuf);
+
+	TraceScriptError(sSourceFile, nCurrentLine, sBuf);
 }
 
 void CScriptSystem::ForceGarbageCollection()
@@ -410,7 +434,46 @@ void CScriptSystem::PostInit()
 {
 }
 
+void CScriptSystem::TraceScriptError(const char* file, int line, const char* errorStr)
+{
+	lua_Debug ar;
+
+	// If in debug mode, try to enable debugger.
+	if ((ELuaDebugMode)m_cvar_script_debugger->GetIVal() != eLDM_NoDebug)
+	{
+		if (lua_getstack(L, 1, &ar))
+		{
+			if (lua_getinfo(L, "lnS", &ar))
+			{
+#if LUA_REMOTE_DEBUG_ENABLED
+				if (g_pLuaRemoteDebug && g_pLuaRemoteDebug->IsClientConnected())
+				{
+					g_pLuaRemoteDebug->OnScriptError(L, &ar, errorStr);
+				}
+				else
+#endif
+				{
+					ShowDebugger(file, line, errorStr);
+				}
+			}
+		}
+	}
+	else
+	{
+		LogStackTrace();
+	}
+}
+
 void CScriptSystem::PushObject(IScriptObject* pObj)
 {
 	((CScriptObject*)pObj)->PushRef();
+}
+
+void CScriptSystem::LogStackTrace()
+{
+	::DumpCallStack(L);
+}
+
+void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
+{
 }

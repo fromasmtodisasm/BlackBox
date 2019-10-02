@@ -73,7 +73,7 @@ public:
 	virtual HTAG CreateTaggedValue(const char* sKey, int* pVal) override;
 	virtual HTAG CreateTaggedValue(const char* sKey, float* pVal) override;
 	virtual HTAG CreateTaggedValue(const char* sKey, char* pVal) override;
-	virtual USER_DATA CreateUserData(INT_PTR nVal, int nCookie) override;
+	virtual USER_DATA CreateUserData(void *ptr, int size) override;
 	virtual void RemoveTaggedValue(HTAG tag) override;
 	//
 	virtual void RaiseError(const char* sErr, ...) override;
@@ -96,7 +96,11 @@ public:
 	virtual void GetScriptHash(const char* sPath, const char* szKey, unsigned int& dwHash) override;
 	virtual void PostInit() override;
 
+	void TraceScriptError(const char* file, int line, const char* errorStr);
+
 	void PushObject(IScriptObject* pObj);
+
+	virtual void LogStackTrace();
 private:
 	static CScriptSystem* s_mpScriptSystem;
 	lua_State* L;
@@ -129,6 +133,10 @@ private:
 	std::stack<std::string>     m_sCallDescriptions[MAX_CALLDEPTH];
 private:
 	static CFunctionHandler *m_pH;
+
+
+	// Inherited via IScriptSystem
+	virtual void ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason) override;
 
 };
 

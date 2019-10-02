@@ -202,7 +202,7 @@ bool CGame::init(ISystem *pEngine)  {
 }
 
 bool CGame::update() {
-	m_pSystem->getIIScriptSystem()->ExecuteBuffer("console_printline(\"Begin game update\")", 0);
+	m_pSystem->getIIScriptSystem()->ExecuteBuffer("Console:PrintLine(\"Begin game update\")", 0);
   while (!m_Window->closed() &&  m_running) {
 		m_pSystem->BeginFrame();
 
