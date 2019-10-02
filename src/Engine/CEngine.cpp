@@ -208,6 +208,12 @@ void CEngine::ShowMessage(const char* message, const char* caption, MessageType 
 	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
 }
 
+void CEngine::Log(const char* message)
+{
+	std::cout << "Log:" << std::endl;
+	std::cout << message << std::endl;
+}
+
 IScriptSystem* CEngine::getIIScriptSystem()
 {
 	return m_ScriptSystem;

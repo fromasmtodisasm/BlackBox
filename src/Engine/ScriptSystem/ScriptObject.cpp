@@ -326,13 +326,27 @@ void CScriptObject::EndIteration()
 {
 }
 
-void CScriptObject::SetNativeData(void*)
+void CScriptObject::SetNativeData(void* data)
 {
+	PushRef();
+	lua_pushstring(L, "__this");
+	lua_pushlightuserdata(L, data);
+	lua_rawset(L, -3);
+	lua_pop(L, 1);
 }
 
 void* CScriptObject::GetNativeData()
 {
-	return nullptr;
+	void* result = nullptr;
+	PushRef();
+	lua_pushstring(L, "__this");
+	lua_rawget(L, -2);
+	if (lua_islightuserdata(L, -1))
+	{
+		result = lua_touserdata(L, -1);
+	}
+	lua_pop(L, 1);
+	return result;
 }
 
 void CScriptObject::Clear()
@@ -350,8 +364,8 @@ bool CScriptObject::Clone(IScriptObject* pObj)
 	bool bDeepCopy = true;
 	bool bCopyByReference = false;
 
-	PushRef(pObj);
-	PushRef();
+	PushRef(pObj);	// src object at top + 1
+	PushRef();			// target object at top + 2
 
 	int srcTable = top + 1;
 	int trgTable = top + 2;
@@ -393,12 +407,8 @@ bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void 
 		size_t i = sizeof(nFuncID);
 		member_ptr* pBuffer = (member_ptr*)lua_newuserdata(L, sizeof(member_ptr));
 		pBuffer->fID = nFuncID;
-		pBuffer->this_ptr = this_ptr;
-		//memcpy(pBuffer, &nFuncID, sizeof(nFuncID));
-		//memcpy(pBuffer + sizeof(nFuncID), this_ptr, sizeof(this_ptr));
-		//memcpy(pBuffer + sizeof(fd.pFunctor) + 1, sFuncSignature, strlen(sFuncSignature) + 1);
+		pBuffer->ref = GetRef();
 		lua_pushcclosure(L, reinterpret_cast<lua_CFunction>(pThunk), 1);
-		//lua_setglobal(L, sName);
 	}
 
 	lua_rawset(L, -3);
@@ -470,6 +480,18 @@ void CScriptObject::PushRef(IScriptObject* pObj)
 
 void CScriptObject::CloneTable(int srcTable, int trgTable)
 {
+	CHECK_STACK(L);
+	int top = lua_gettop(L);
+	lua_pushnil(L);  // first key
+	while (lua_next(L, srcTable) != 0)
+	{
+		// `key' is at index -2 and `value' at index -1
+		lua_pushvalue(L, -2); // Push again index.
+		lua_pushvalue(L, -2); // Push value.
+		lua_rawset(L, trgTable);
+		lua_pop(L, 1); // pop value, leave index.
+	}
+	lua_settop(L, top); // Restore stack.
 }
 
 void CScriptObject::CloneTable_r(int srcTable, int trgTable)
@@ -494,6 +516,14 @@ void CScriptObject::CloneTable_r(int srcTable, int trgTable)
 			// `key' is at index -2 and `value' at index -1
 			lua_pushvalue(L, -2); // Push again index.
 			lua_pushvalue(L, -2); // Push value.
+			if (lua_islightuserdata(L, -1))
+			{
+				GetISystem()->Log("LightUserdata");
+			}
+			else if (lua_islightuserdata(L, -2))
+			{
+				GetISystem()->Log("LightUserdata");
+			}
 			lua_rawset(L, trgTable);
 		}
 		lua_pop(L, 1); // pop value, leave index.
@@ -501,7 +531,30 @@ void CScriptObject::CloneTable_r(int srcTable, int trgTable)
 	lua_settop(L, top); // Restore stack.
 }
 
-void CScriptObject::ReferenceTable_r(int scrTable, int trgTable)
+void CScriptObject::ReferenceTable_r(int srcTable, int trgTable)
 {
-	assert(0 && __FUNCTION__" not implemented");
+	CHECK_STACK(L);
+	int top = lua_gettop(L);
+
+	lua_newtable(L);                                  // push new meta table
+	lua_pushlstring(L, "__index", strlen("__index")); // push __index
+	lua_pushvalue(L, srcTable);                       // push src table
+	lua_rawset(L, -3);                                // meta.__index==src table
+	lua_setmetatable(L, trgTable);                    // set meta table
+
+	lua_pushnil(L);  // first key
+	while (lua_next(L, srcTable) != 0)
+	{
+		if (lua_type(L, -1) == LUA_TTABLE)
+		{
+			int srct = lua_gettop(L);
+			lua_pushvalue(L, -2); // Push again index.
+			lua_newtable(L);      // Make value.
+			int trgt = lua_gettop(L);
+			ReferenceTable_r(srct, trgt);
+			lua_rawset(L, trgTable); // Set new table to trgtable.
+		}
+		lua_pop(L, 1); // pop value, leave index.
+	}
+	lua_settop(L, top); // Restore stack.
 }

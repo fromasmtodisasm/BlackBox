@@ -334,8 +334,10 @@ enum ScriptVarType
 	svtNull = 0,
 	svtString,
 	svtNumber,
+	svtBool,
 	svtFunction,
 	svtObject,
+	svtPointer,
 	svtUserData,
 };
 

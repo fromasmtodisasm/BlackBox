@@ -103,6 +103,8 @@ struct ISystem
   virtual IInputHandler *getIInputHandler() = 0;
 	virtual IScriptSystem* getIIScriptSystem() = 0;
 
+	virtual void Log(const char* message) = 0;
+
 	virtual void ShowMessage(const char *message, const char *caption, MessageType messageType) = 0;
 };
 

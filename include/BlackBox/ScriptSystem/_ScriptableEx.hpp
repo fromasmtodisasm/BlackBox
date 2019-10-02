@@ -99,7 +99,8 @@ public:
 		if (!_ScriptableEx<T>::m_pFunctionHandler)
 			return;// CryError("Scriptable EX:FUNCTION HANDLER NULL");
 		m_pScriptThis = pScriptSystem->CreateGlobalObject(sName);
-		m_pScriptThis->SetNativeData(pParent);
+		//m_pScriptThis->SetNativeData(pParent);
+		_ScriptableEx<T>::m_pTemplateTable->SetNativeData(pParent);
 		if (_ScriptableEx<T>::m_pTemplateTable)
 			m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);
 

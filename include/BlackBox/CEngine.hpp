@@ -59,4 +59,7 @@ private:
 
 	// Inherited via ISystem
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
+
+	// Inherited via ISystem
+	virtual void Log(const char* message) override;
 };

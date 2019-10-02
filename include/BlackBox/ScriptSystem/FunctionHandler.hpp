@@ -64,6 +64,6 @@ private:
 	THIS_PTR				m_ThisPtr;
 	CScriptSystem*	m_pSS;
 	const char*			m_sFuncName;
-	int							m_paramIdOffset;
+	int							m_paramIdOffset = 1; // on first place __this
 
 };

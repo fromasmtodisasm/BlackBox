@@ -130,7 +130,7 @@ public:
 	struct member_ptr
 	{
 		int fID;
-		void* this_ptr;
+		int ref;
 	}m_member_ptr; 
 
 private:
