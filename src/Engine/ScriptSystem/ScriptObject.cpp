@@ -30,6 +30,12 @@ void ToAny(const char*& val, lua_State *L, int nIdx)
 	val = lua_tostring(L, nIdx);
 }
 
+void ToAny(HSCRIPTFUNCTION & val , lua_State *L, int nIdx)
+{
+	lua_pushvalue(L, nIdx);
+	val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+}
+
 void ToAny(IScriptObject *pObj, lua_State *L, int nIdx)
 {
 	if (lua_istable(L, -1))

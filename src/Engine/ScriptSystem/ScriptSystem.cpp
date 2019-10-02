@@ -173,11 +173,44 @@ IScriptObject* CScriptSystem::CreateGlobalObject(const char* sName)
 
 int CScriptSystem::BeginCall(HSCRIPTFUNCTION hFunc)
 {
-	return 0;
+	assert(hFunc != 0);
+	if (!hFunc)
+		return 0;
+
+	lua_getref(L, (int)(INT_PTR)hFunc);
+	if (!lua_isfunction(L, -1))
+	{
+#if defined(__GNUC__)
+		ScriptWarning("[CScriptSystem::BeginCall] Function Ptr:%d not found", (int)(INT_PTR)hFunc);
+#else
+		ScriptWarning("[CScriptSystem::BeginCall] Function Ptr:%d not found", hFunc);
+#endif
+		m_nTempArg = -1;
+		lua_pop(L, 1);
+		return 0;
+	}
+	m_nTempArg = 0;
+
+	return 1;
 }
 
 int CScriptSystem::BeginCall(const char* sFuncName)
 {
+	if (L)
+	{
+		lua_getglobal(L, sFuncName);
+		m_nTempArg = 0;
+
+		if (!lua_isfunction(L, -1))
+		{
+			ScriptWarning("[CScriptSystem::BeginCall] Function %s not found(check for syntax errors or if the file wasn't loaded)", sFuncName);
+			m_nTempArg = -1;
+			lua_pop(L, 1);
+			return 0;
+		}
+
+		return 1;
+	}
 	return 0;
 }
 
@@ -235,16 +268,54 @@ void CScriptSystem::EndCall(IScriptObject* pScriptObject)
 
 HSCRIPTFUNCTION CScriptSystem::GetFunctionPtr(const char* sFuncName)
 {
-	return HSCRIPTFUNCTION();
+	CHECK_STACK(L);
+	HSCRIPTFUNCTION func;
+	lua_getglobal(L, sFuncName);
+	if (lua_isnil(L, -1) || (!lua_isfunction(L, -1)))
+	{
+		lua_pop(L, 1);
+		return NULL;
+	}
+	func = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+
+	return func;
 }
 
 HSCRIPTFUNCTION CScriptSystem::GetFunctionPtr(const char* sTableName, const char* sFuncName)
 {
-	return HSCRIPTFUNCTION();
+	CHECK_STACK(L);
+	HSCRIPTFUNCTION func;
+	lua_getglobal(L, sTableName);
+	if (!lua_istable(L, -1))
+	{
+		lua_pop(L, 1);
+		return 0;
+	}
+	lua_pushstring(L, sFuncName);
+	lua_gettable(L, -2);
+	lua_remove(L, -2);  // Remove table global.
+	if (lua_isnil(L, -1) || (!lua_isfunction(L, -1)))
+	{
+		lua_pop(L, 1);
+		return FALSE;
+	}
+	func = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+	return func;
 }
 
 void CScriptSystem::ReleaseFunc(HSCRIPTFUNCTION f)
 {
+	CHECK_STACK(L);
+
+	if (f)
+	{
+#ifdef _DEBUG
+		lua_getref(L, (int)(INT_PTR)f);
+		assert(lua_type(L, -1) == LUA_TFUNCTION);
+		lua_pop(L, 1);
+#endif
+		lua_unref(L, (int)(INT_PTR)f);
+	}
 }
 
 void CScriptSystem::PushFuncParam(int nVal)
