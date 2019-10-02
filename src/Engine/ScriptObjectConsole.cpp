@@ -24,6 +24,8 @@ void CScriptObjectConsole::InitializeTemplate(IScriptSystem* pSS)
 {
 	_ScriptableEx<CScriptObjectConsole>::InitializeTemplate(pSS);
 	REG_FUNC(CScriptObjectConsole, PrintLine);
+	REG_FUNC(CScriptObjectConsole, Clear);
+	REG_FUNC(CScriptObjectConsole, Show);
 }
 
 void CScriptObjectConsole::Init(IScriptSystem *pScriptSystem, IConsole* pConsole)
@@ -38,4 +40,18 @@ int CScriptObjectConsole::PrintLine(IFunctionHandler* pH)
 	pH->GetParam(1, str);
 	m_Console->PrintLine("%s(%s);", __FUNCTION__, str);
 	return pH->EndFunction(25);
+}
+
+int CScriptObjectConsole::Clear(IFunctionHandler* pH)
+{
+	m_Console->Clear();
+	return pH->EndFunction();
+}
+
+int CScriptObjectConsole::Show(IFunctionHandler* pH)
+{
+	bool show = false;
+	pH->GetParam(1, show);
+	m_Console->ShowConsole(show);
+	return pH->EndFunction();
 }

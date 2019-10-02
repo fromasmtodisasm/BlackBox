@@ -15,6 +15,8 @@ public:
 	void Init(IScriptSystem *pScriptSystem, IConsole* pConsole);
 
 	int PrintLine(IFunctionHandler* pH);
+	int Clear(IFunctionHandler* pH);
+	int Show(IFunctionHandler* pH);
 
 private:
 	IConsole* m_Console;
