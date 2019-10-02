@@ -8,6 +8,63 @@
 lua_State* CScriptObject::L = nullptr;
 IScriptSystem* CScriptObject::m_pSS = nullptr;
 
+///////////////////////////////////////////////////////////////////
+
+void ToAny(bool & val, lua_State *L, int nIdx)
+{
+	val = lua_toboolean(L, nIdx);
+}
+
+void ToAny(int & val, lua_State *L, int nIdx)
+{
+	val = lua_tointeger(L, nIdx);
+}
+
+void ToAny(float & val, lua_State *L, int nIdx)
+{
+	val = lua_tonumber(L, nIdx);
+}
+
+void ToAny(const char*& val, lua_State *L, int nIdx)
+{
+	val = lua_tostring(L, nIdx);
+}
+
+void ToAny(IScriptObject *pObj, lua_State *L, int nIdx)
+{
+	if (lua_istable(L, -1))
+	{
+		//pObj = CreateEmptyObject();
+		//pObj->AddRef();
+	}
+	lua_pushvalue(L, -1);
+	pObj->Attach();
+}
+
+template<typename T>
+bool PopAny(T& val)
+{
+	/*bool res = */ToAny(val, CScriptObject::L, -1);
+	lua_pop(CScriptObject::L, 1);
+	return true;
+}
+///////////////////////////////////////////////////////////////////
+template<typename T>
+bool GetValueTemplate(CScriptObject* pSO, const char* sKey, T& Val)
+{
+	auto L = CScriptObject::L;
+	CHECK_STACK(L);
+	int top = lua_gettop(L);
+	//if (!bChain)
+	pSO->PushRef();
+	lua_pushstring(L, sKey);
+	lua_gettable(L, -2);
+	bool res = PopAny(Val);
+	lua_settop(L, top);
+	return true;
+}
+///////////////////////////////////////////////////////////////////
+
 CScriptObject::~CScriptObject()
 {
 }
@@ -84,36 +141,27 @@ void CScriptObject::SetToNull(const char* sKey)
 
 bool CScriptObject::GetValue(const char* sKey, int& nVal)
 {
-	return false;
+	return GetValueTemplate(this, sKey, nVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, float& fVal)
 {
-	return false;
+	return GetValueTemplate(this, sKey, fVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, bool& bVal)
 {
-	return false;
+	return GetValueTemplate(this, sKey, bVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, const char*& sVal)
 {
-	CHECK_STACK(L);
-	int top = lua_gettop(L);
-	//if (!bChain)
-	PushRef();
-	lua_pushstring(L, sKey);
-	lua_gettable(L, -2);
-	sVal =	lua_tostring(L, -1);
-	lua_pop(L, 1);
-	lua_settop(L, top);
-	return true;
+	return GetValueTemplate(this, sKey, sVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, IScriptObject* pObj)
 {
-	return false;
+	return GetValueTemplate(this, sKey, pObj);
 }
 
 bool CScriptObject::GetValue(const char* sKey, HSCRIPTFUNCTION& funcVal)
