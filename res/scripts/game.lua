@@ -1,11 +1,21 @@
 player = {
-	["name"] = "user",
+	["name"] = "PesBarbos",
 	["age"] = 47,
 }
 
+function player.OnInit( data )
+	Console:PrintLine("Player OnInit");
+	Console:PrintLine("Fps count = " .. Game:getFPS())
+	Console:PrintLine("Username: " .. player[name])
 
-Console:PrintLine("Begin game update");
-Console:Show(true)
-Game:gotoMenu(true)
-Console:PrintLine("Fps count = " .. Game:getFPS())
+	Console:Show(true)
+	Game:gotoMenu(true)
+end
+
+function test(  )
+	player.OnInit(123)
+end
+
+test()
+
 
