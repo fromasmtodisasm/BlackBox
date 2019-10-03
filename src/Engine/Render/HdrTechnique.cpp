@@ -39,7 +39,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	int mip_cnt = std::log2(std::max(resolution.x, resolution.y)) + 1;
+	int mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
 	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
@@ -230,6 +230,12 @@ void HdrTechnique::initTest()
 
 }
 
+int HdrTechnique::getMips(glm::vec2 resolution)
+{
+	//return std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+	return 6;
+}
+
 bool HdrTechnique::PreRenderPass()
 {
   return false;
@@ -254,7 +260,7 @@ void HdrTechnique::downsampling()
 	if (useBoxFilter->GetIVal())
 		amount = 1;
 	else
-		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+		amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind();
@@ -280,7 +286,7 @@ void HdrTechnique::upsampling()
 	bool first_iteration = true;
 	glCheck(glDisable(GL_DEPTH_TEST));
 
-	amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+	amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
 		pass1[i - 1]->bind();

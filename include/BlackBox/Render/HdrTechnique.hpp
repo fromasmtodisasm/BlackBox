@@ -37,6 +37,7 @@ private:
   void createShader();
 	void initConsoleVariables();
 	void initTest();
+	int getMips(glm::vec2 resolution);
 
 private:
 	static const int PASSES = 4;

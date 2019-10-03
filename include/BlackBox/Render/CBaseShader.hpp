@@ -303,8 +303,8 @@ public:
   GLuint m_Program;
   GLchar infoLog[512];
   ShaderProgramStatus m_Status;
-	bool fragment_attached;
-	bool vertex_attached;
+	bool fragment_attached = false;
+	bool vertex_attached = false;
   bool created = false;
   std::map<std::string, GLint> m_Cache;
   static char* buffer;
