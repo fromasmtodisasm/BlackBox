@@ -710,7 +710,7 @@ bool CConsole::handleCommand(std::wstring command)
 
 CommandDesc CConsole::parseCommand(std::wstring& command)
 {
-	enum {COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG} state1 = INSPACE;
+	enum {COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG, INSTRING} state1 = INSPACE;
 	CommandDesc cd;
 	int begin_cmd = 0, end_cmd = 0;
 	int begin_args = 0, end_args = 0;
@@ -722,15 +722,35 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 		{
 		case COMMAND:
 			if (command[i] != L' ')
+			{
+				if (command[i] == L'"')
+				{
+					state1 = INSTRING;
+					break;
+				}
 				cd.command += command[i];
+			}
 			else
 			{
 				state1 = INARGSPACE;	
 			}
 			break;
+		case INSTRING:
+		{
+			if (command[i] != L'"')
+				current_arg += command[i];
+			break;
+		}
 		case ARGS:
 			if (command[i] != L' ')
+			{
+				if (command[i] == L'"')
+				{
+					state1 = INSTRING;
+					break;
+				}
 				current_arg += command[i];
+			}
 			else
 			{
 				state1 = INARGSPACE;	

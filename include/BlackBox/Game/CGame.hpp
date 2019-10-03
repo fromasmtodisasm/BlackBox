@@ -183,6 +183,9 @@ public:
   void RemoveTagPoint(ITagPoint* pPoint);
   bool RenameTagPoint(const string& oldname, const string& newname);
 
+	//
+	bool InitScripts();
+
 };
 
 

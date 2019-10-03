@@ -189,39 +189,16 @@ bool CGame::init(ISystem *pEngine)  {
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, 18);
 
-	//m_Console->ExecuteString("clear");
   ITexture* consoleBackGround = new Texture();
   //consoleBackGround->load("console/fc.jpg");
   m_Console->SetImage(consoleBackGround);
 
-	m_ScriptObjectConsole = new CScriptObjectConsole();
-	m_ScriptObjectConsole->InitializeTemplate(m_pScriptSystem);
-	m_ScriptObjectGame = new CScriptObjectGame();
-	m_ScriptObjectGame->InitializeTemplate(m_pScriptSystem);
-
-	m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
-	m_ScriptObjectGame->Init(m_pSystem->getIIScriptSystem(), this);
-
-	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
+	InitScripts();
 
   return true;
 }
 
 bool CGame::update() {
-	fps = 35.f;
-	m_pScriptSystem->ExecuteFile("scripts/game.lua");
-
-	m_playerObject = m_pScriptSystem->CreateEmptyObject();
-	if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
-	{
-		delete m_playerObject;
-		m_pSystem->Log("\002 ERROR: can't find player table ");
-		return false;
-	}
-	const char *name;
-	m_playerObject->GetValue("name", name);
-	m_Console->PrintLine("Player name: %s", name);
-
   while (!m_Window->closed() &&  m_running) {
 		m_pSystem->BeginFrame();
 

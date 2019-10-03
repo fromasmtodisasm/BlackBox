@@ -302,6 +302,11 @@ private:
 
 			return true;
 		}
+		else if (cd.get(0) == L"os")
+		{
+			auto command = cd.get(1);
+			system(wstr_to_str(command).c_str());
+		}
 		return false;
 	}
 };
@@ -351,13 +356,20 @@ private:
 		{
 			if (cd.args[0] == L"reload")
 				return reload(cd);
-			if (cd.args[0] == L"set")
+			else if (cd.args[0] == L"set")
 				return move(cd);
+			if (cd.args[0] == L"dump")
+				return dump(cd);
+		}
+		else
+		{
+			GetISystem()->getIConsole()->PrintLine("help");
 		}
 		return false;
 	}
 	bool reload(CommandDesc& cd);
 	bool move(CommandDesc& cd);
+	bool dump(CommandDesc& cd);
 };
 
 ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
@@ -398,6 +410,19 @@ bool ShaderCommand::move(CommandDesc& cd)
 	{
 		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
 		game->getWorld()->getActiveScene()->selectedObject()->second->getMaterial()->program = s;
+		return true;
+	}
+	return false;
+}
+bool ShaderCommand::dump(CommandDesc& cd)
+{
+	if (cd.args.size() == 2)
+	{
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+		if (s == nullptr)
+			return false;
+		s->dump();
+		GetISystem()->getIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
 		return true;
 	}
 	return false;
@@ -617,7 +642,7 @@ void CGame::initCommands()
 	m_Console->AddCommand("wire", new WireframeCommand(this));
 	m_Console->AddCommand("exec", new ExecCommand(this), "Load end execute scripts");
 	m_Console->AddCommand("material", new MaterialCommand(this));
-	m_Console->AddCommand("shader", new ShaderCommand(this));
+	m_Console->AddCommand("shader", new ShaderCommand(this), "Set shader to object and reload shader");
 	m_Console->AddCommand("camera", new CameraCommand(this));
 	m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
 	m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
