@@ -9,7 +9,10 @@
 
 class CShader; 
 class CBaseShaderProgram;
-class CShader;
+class CShaderProgram;
+
+using BaseShadeProgramrRef = std::shared_ptr<CBaseShaderProgram>;
+using ShadeProgramrRef = std::shared_ptr<CShaderProgram>;
 
 struct ShaderStatus
 {
@@ -303,6 +306,7 @@ public:
   bool created = false;
   std::map<std::string, GLint> m_Cache;
   static char* buffer;
+	std::string name;
 
   bool status();
 public:
@@ -332,6 +336,7 @@ public:
 	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
   GLuint get();
 	virtual void setup() = 0;
+	void dump();
 private:
   const char* buildName(const char* format, va_list args);
 };

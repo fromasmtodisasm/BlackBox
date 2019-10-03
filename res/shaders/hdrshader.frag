@@ -32,11 +32,11 @@ void main()
     //result = pow(result, vec3(1.0 / gamma));
 	result = vec3(float_to_sRGB(result.x), float_to_sRGB(result.y), float_to_sRGB(result.z));
     FragColor = vec4(result, 1.0);
-	if (int(gl_FragCoord.x) == 0)
-	{
-		if (TexCoords.x > 0.0)
-		{
-			FragColor = vec4(99999);	
-		}
-	}
+//	if (int(gl_FragCoord.x) == 0)
+//	{
+//		if (TexCoords.x > 0.0)
+//		{
+//			FragColor = vec4(99999);	
+//		}
+//	}
 }

@@ -41,9 +41,9 @@ private:
 private:
 	static const int PASSES = 4;
   ITechnique *shadowMapping;
-  CBaseShaderProgram* m_ScreenShader;
-  CBaseShaderProgram* m_DownsampleShader;
-  CBaseShaderProgram* m_UpsampleShader;
+  ShadeProgramrRef m_ScreenShader;
+  ShadeProgramrRef m_DownsampleShader;
+  ShadeProgramrRef m_UpsampleShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;

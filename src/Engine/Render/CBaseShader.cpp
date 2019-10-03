@@ -46,6 +46,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   {
     glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
     GetISystem()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
+    GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
     return false;
   }
   return true;
@@ -79,6 +80,7 @@ std::shared_ptr<CShader> CShader::load(string path, CShader::type type) {
     return nullptr;
   shader->compile();
   shader->print();
+	glCheck(glObjectLabel(GL_SHADER, shader->get(), path.size(), path.c_str()));
   return shader;
 }
 
@@ -186,13 +188,17 @@ CBaseShaderProgram::~CBaseShaderProgram() {
 }
 
 bool CBaseShaderProgram::create() {
-  if (!created) m_Program = glCreateProgram();
+	if (!created) {
+		created = true;
+		m_Program = glCreateProgram();
+	}
   if (!attached)
   {
     attach(m_Vertex);
     attach(m_Fragment);
   }
   link();
+	//glObjectLabel(GL_TEXTURE, m_Program, strlen(name), name);
 	return m_Status.get(GL_LINK_STATUS);
 }
 
@@ -396,6 +402,26 @@ void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* s
 
 GLuint CBaseShaderProgram::get() {
   return m_Program;
+}
+
+void CBaseShaderProgram::dump()
+{
+	int len = 0;
+	GLenum bFormat;
+	glGetProgramiv(m_Program, GL_PROGRAM_BINARY_LENGTH, &len);
+
+	std::unique_ptr<uint8_t> binary(new uint8_t[len]);
+	glGetProgramBinary(m_Program, len, &len, &bFormat, binary.get());
+
+	FILE* shader = fopen("dump.bin", "wb");
+	if (!shader)
+	{
+		GetISystem()->Log("Cannot open file for dump");
+		return;
+	}
+
+	fwrite(binary.get(), 1, len, shader);
+	fclose(shader);
 }
 
 const char* CBaseShaderProgram::buildName(const char* format, va_list args)

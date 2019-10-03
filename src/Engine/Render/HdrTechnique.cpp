@@ -6,6 +6,7 @@
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 #define NBLOOM
 #define PREVIOS 0
@@ -80,7 +81,7 @@ bool HdrTechnique::OnRenderPass(int pass)
 			if ((water = m_Scene->getObject("water")) != nullptr)
 			{
 				water->m_transparent = true;
-				reinterpret_cast<ShadowMapping*>(shadowMapping)->RenderTransparent(water);
+				static_cast<ShadowMapping*>(shadowMapping)->RenderTransparent(water);
 
 			}
 		}
@@ -137,29 +138,62 @@ void HdrTechnique::BloomPass()
 
 void HdrTechnique::createShader()
 {
+	/*
   m_ScreenShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
     CShader::load("res/shaders/hdrshader.frag", CShader::E_FRAGMENT)
   );
+	*/
+
+	ProgramDesc desc[] = {
+		{
+			"hdr_shader",
+			"screenshader.vs",
+			"hdrshader.frag"
+		},
+		{
+			"downsampling",
+			"screenshader.vs",
+			"downsampling.frag"
+		},
+		{
+			"upsampling",
+			"screenshader.vs",
+			"upsampling.frag",
+		}
+
+	};
+
+	MaterialManager::instance()->loadProgram(desc[0],false);
+	MaterialManager::instance()->loadProgram(desc[1],false);
+	MaterialManager::instance()->loadProgram(desc[2],false);
+
+	m_ScreenShader = MaterialManager::instance()->getProgram("hdr_shader");
 	m_ScreenShader->create();
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"scene");
 	m_ScreenShader->setUniformValue(1,"bloomBlur");
 	m_ScreenShader->unuse();
 
+	/*
   m_DownsampleShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
     CShader::load("res/shaders/downsampling.frag", CShader::E_FRAGMENT)
   );
+	*/
+	m_DownsampleShader = MaterialManager::instance()->getProgram("downsampling");
 	m_DownsampleShader->create();
 	m_DownsampleShader->use();
 	m_DownsampleShader->setUniformValue(0,"image");
 	m_DownsampleShader->unuse();
 
+	/*
   m_UpsampleShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
     CShader::load("res/shaders/upsampling.frag", CShader::E_FRAGMENT)
   );
+	*/
+	m_UpsampleShader = MaterialManager::instance()->getProgram("upsampling");
 	m_UpsampleShader->create();
 
 }
