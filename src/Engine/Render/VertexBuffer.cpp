@@ -77,6 +77,12 @@ void VertexArrayObject::setAttributes(Attributes& attributes)
 	m_attributes = attributes;
 }
 
+VertexArrayObject::Attributes& VertexArrayObject::getAttributes()
+{
+	// TODO: insert return statement here
+	return m_attributes;
+}
+
 bool VertexArrayObject::init()
 {
 	m_attributes.stride = sizeof(Vertex);

@@ -47,6 +47,28 @@
         <material name="terrain"/>
         <uv scaleX="100" scaleY="100"/>
     </object>
+    <object name="babe" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/test.bin"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>6</X>
+                <Y>6</Y>
+                <Z>6</Z>
+            </scale>
+        </transform>
+        <material name="terrain"/>
+        <uv scaleX="100" scaleY="100"/>
+    </object>
     <object name="MyPlayer" type="player" visible="true" transparent="false">
         <mesh name="res/geom/pengium.obj"/>
         <transform>

@@ -35,12 +35,27 @@ vec3 offsets[13] = vec3[](
 
 );
 
-vec4 Sample(vec2 uv) {
-	return texture(image, uv);
-}
+//vec4 Sample(vec2 uv) {
+//	return texture(image, uv);
+//}
 
-vec4 downsample()
-{
+#define Sample(uv) texture(image, uv)
+
+//vec4 downsample()
+//{
+//	vec4 result = vec4(0);
+//	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+//
+//	//return Sample(TexCoords);
+//	for (int i = 0; i < 13; i++)
+//	{
+//		result += Sample(TexCoords + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
+//	}
+//	return result;
+//}
+
+void main()
+{    
 	vec4 result = vec4(0);
 	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
 
@@ -49,10 +64,6 @@ vec4 downsample()
 	{
 		result += Sample(TexCoords + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
 	}
-	return result;
-}
-
-void main()
-{             
-	FragColor = downsample();
+	//return result;         
+	FragColor = result;
 }

@@ -37,7 +37,22 @@ CEngine::CEngine()
 
 CEngine::~CEngine()
 {
+  SAFE_RELEASE(m_pLog);
+  /*
+  SAFE_RELEASE(m_pConsole);
+  SAFE_RELEASE(m_pGame);
+  SAFE_RELEASE(m_pFont);
+	SAFE_RELEASE(m_pWindow);
+	SAFE_RELEASE(m_InputHandler);
+  */
+	SAFE_RELEASE(m_Render);
+	FILE* bloomTime;
 
+	bloomTime = fopen("bloomtime.txt", "a");
+
+	fprintf(bloomTime, "===========================\n");
+
+	fclose(bloomTime);
 }
 
 bool CEngine::Init()
@@ -125,15 +140,7 @@ void CEngine::Start()
 
 void CEngine::Release()
 {
-  SAFE_RELEASE(m_pLog);
-  /*
-  SAFE_RELEASE(m_pConsole);
-  SAFE_RELEASE(m_pGame);
-  SAFE_RELEASE(m_pFont);
-	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_InputHandler);
-  */
-	SAFE_RELEASE(m_Render);
+	delete this;
 }
 
 IShaderManager * CEngine::getShaderManager()

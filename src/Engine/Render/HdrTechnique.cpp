@@ -6,6 +6,7 @@
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 #define NBLOOM
 #define PREVIOS 0
@@ -26,18 +27,22 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   render = GetISystem()->getIRender();
   m_Scene = pScene;
 	initConsoleVariables();
+	initTest();
   createShader();
   shadowMapping = new ShadowMapping();
 	float m = 1;
-	glm::vec2 size_m2 = glm::vec2(GetISystem()->getIRender()->GetWidth()*m, GetISystem()->getIRender()->GetHeight()*m) / 1.f;
-  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 2, false);
+	//glm::vec2 size_m2 = glm::vec2(GetISystem()->getIRender()->GetWidth()*m, GetISystem()->getIRender()->GetHeight()*m) / 1.f;
+	auto console = GetISystem()->getIConsole();
+
+	glm::vec2 resolution = glm::vec2(bloomTest[testid]);
+  hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	int mip_cnt = std::log2(std::max(size_m2.x, size_m2.y)) + 1;
+	int mip_cnt = std::log2(std::max(resolution.x, resolution.y)) + 1;
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
-	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
+	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 	{
 		pass0[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 		width >>= 1;
@@ -47,7 +52,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 		if (height <= 0) 
 			height = 1;
 	}
-	for (int i = 0, width = size_m2.x, height = size_m2.y; i < mip_cnt; i++)
+	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 	{
 		pass1[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 		width >>= 1;
@@ -76,7 +81,7 @@ bool HdrTechnique::OnRenderPass(int pass)
 			if ((water = m_Scene->getObject("water")) != nullptr)
 			{
 				water->m_transparent = true;
-				reinterpret_cast<ShadowMapping*>(shadowMapping)->RenderTransparent(water);
+				static_cast<ShadowMapping*>(shadowMapping)->RenderTransparent(water);
 
 			}
 		}
@@ -133,29 +138,62 @@ void HdrTechnique::BloomPass()
 
 void HdrTechnique::createShader()
 {
+	/*
   m_ScreenShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
     CShader::load("res/shaders/hdrshader.frag", CShader::E_FRAGMENT)
   );
+	*/
+
+	ProgramDesc desc[] = {
+		{
+			"hdr_shader",
+			"screenshader.vs",
+			"hdrshader.frag"
+		},
+		{
+			"downsampling",
+			"screenshader.vs",
+			"downsampling.frag"
+		},
+		{
+			"upsampling",
+			"screenshader.vs",
+			"upsampling.frag",
+		}
+
+	};
+
+	MaterialManager::instance()->loadProgram(desc[0],false);
+	MaterialManager::instance()->loadProgram(desc[1],false);
+	MaterialManager::instance()->loadProgram(desc[2],false);
+
+	m_ScreenShader = MaterialManager::instance()->getProgram("hdr_shader");
 	m_ScreenShader->create();
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"scene");
 	m_ScreenShader->setUniformValue(1,"bloomBlur");
 	m_ScreenShader->unuse();
 
+	/*
   m_DownsampleShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
     CShader::load("res/shaders/downsampling.frag", CShader::E_FRAGMENT)
   );
+	*/
+	m_DownsampleShader = MaterialManager::instance()->getProgram("downsampling");
 	m_DownsampleShader->create();
 	m_DownsampleShader->use();
 	m_DownsampleShader->setUniformValue(0,"image");
 	m_DownsampleShader->unuse();
 
+	/*
   m_UpsampleShader =new CShaderProgram(
     CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
     CShader::load("res/shaders/upsampling.frag", CShader::E_FRAGMENT)
   );
+	*/
+	m_UpsampleShader = MaterialManager::instance()->getProgram("upsampling");
 	m_UpsampleShader->create();
 
 }
@@ -174,6 +212,22 @@ void HdrTechnique::initConsoleVariables()
   offset =					GetISystem()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
   useBoxFilter =		GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
   defaultFilter =		GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
+}
+
+void HdrTechnique::initTest()
+{
+	bloomTest.push_back({ 640, 480 });
+	bloomTest.push_back({ 800, 600 });
+	bloomTest.push_back({ 1024, 768 });
+	bloomTest.push_back({ 1366, 768 });
+	bloomTest.push_back({ 1400, 900 });
+	bloomTest.push_back({ 1600, 900 });
+	bloomTest.push_back({ 1920, 1080 });
+	bloomTest.push_back({ 2560, 1440 });
+	bloomTest.push_back({ 2560, 1600 });
+	testid = std::min(GetISystem()->getIConsole()->GetCVar("testid")->GetIVal(), (int)bloomTest.size());
+
+
 }
 
 bool HdrTechnique::PreRenderPass()

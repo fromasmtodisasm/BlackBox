@@ -10,7 +10,7 @@ public:
 	~PostProcessor();
 
 private:
-	CBaseShaderProgram* m_ScreenShader;
+	ShadeProgramRef m_ScreenShader;
 	Quad m_ScreenQuad;
 
 	// Inherited via IPostProcessor

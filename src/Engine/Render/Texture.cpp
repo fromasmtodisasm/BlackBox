@@ -112,6 +112,7 @@ bool Texture::load(const char* name)
   }
 #endif
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+	glCheck(glObjectLabel(GL_TEXTURE, id, strlen(name), name));
   return true;
 }
 

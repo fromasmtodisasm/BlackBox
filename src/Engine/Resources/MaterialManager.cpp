@@ -122,6 +122,12 @@ bool MaterialManager::loadLib(std::string name)
 					//TODO: handle this case
 					m_pLog->AddLog("[ERROR] Failed load material\n");
 				}
+				else
+				{
+					auto p = this->shaders_map[pd.name];
+					glCheck(glObjectLabel(GL_PROGRAM, p->get(), pd.name.size(), pd.name.c_str()));
+
+				}
 			}
 		}
     program = program->NextSibling();
@@ -140,7 +146,7 @@ bool MaterialManager::loadLib(std::string name)
   else return false;
 }
 
-void MaterialManager::getShaderAttributes(tinyxml2::XMLElement* shader, MaterialManager::ProgramDesc& pd)
+void MaterialManager::getShaderAttributes(tinyxml2::XMLElement* shader, ProgramDesc& pd)
 {
 	std::string type;
 	std::string name;
@@ -259,12 +265,20 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
 	if (fs == nullptr) return false;
 
-	auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
-  if (!shaderProgram->create())
-    return false;
-	shaderProgram->vertex_name = desc.vs;
-	shaderProgram->fragment_name = desc.fs;
-	shaders_map[desc.name] = shaderProgram;
+	if (isReload)
+	{
+		shader_it->second->reload(vs, fs);
+	}
+	else
+	{
+		auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
+		if (!shaderProgram->create())
+			return false;
+		shaderProgram->vertex_name = desc.vs;
+		shaderProgram->fragment_name = desc.fs;
+		auto it = shaders_map.find(desc.name);
+		if (!isReload) shaders_map[desc.name] = shaderProgram;
+	}
 	return true;
 }
 
@@ -298,15 +312,15 @@ bool MaterialManager::reloadShaders(std::vector<std::string> names)
 	return true;
 }
 
-void MaterialManager::reloadShader(MaterialManager::ProgramDesc& pd)
+void MaterialManager::reloadShader(ProgramDesc& pd)
 {
 	//delete shader.second;
 	loadProgram(pd, true);
-	for (auto& mat : cache)
+	/*for (auto& mat : cache)
 	{
 		if (mat.second->program_name == pd.name)
 			mat.second->program = shaders_map[pd.name];
-	}
+	}*/
 }
 
 BaseTexture *MaterialManager::loadTexture(XMLElement *texture)

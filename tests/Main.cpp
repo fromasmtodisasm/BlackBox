@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 	pSystem->getILog()->AddLog("[OK] ISystem created\n");
 	pSystem->getILog()->AddLog("[INFO] Current working directory: %s\n", path.c_str());
   pSystem->Start();
+	pSystem->Release();
 
   return 0;
 }

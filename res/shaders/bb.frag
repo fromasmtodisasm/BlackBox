@@ -1,5 +1,5 @@
 #version 330 core
-#include <test.glsl>
+#include "test.glsl"
 out vec4 FragColor;
   
 void main()

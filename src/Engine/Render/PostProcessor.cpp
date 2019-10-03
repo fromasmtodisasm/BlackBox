@@ -1,10 +1,16 @@
 #include <BlackBox/Render/PostProcessor.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 PostProcessor::PostProcessor(const char *shader)
-	:
- m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/" + std::string(shader) + ".frag", CShader::E_FRAGMENT)))
 {
-	m_ScreenShader->create();
+	ProgramDesc desc = {
+		shader,
+		"screenshader.vs",
+		std::string(shader) + ".frag"
+	};
+
+	MaterialManager::instance()->loadProgram(desc, false);
+	m_ScreenShader = MaterialManager::instance()->getProgram(shader);
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();

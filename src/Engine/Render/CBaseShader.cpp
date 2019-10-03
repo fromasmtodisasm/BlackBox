@@ -46,6 +46,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   {
     glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
     GetISystem()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
+    //GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
     return false;
   }
   return true;
@@ -79,6 +80,7 @@ std::shared_ptr<CShader> CShader::load(string path, CShader::type type) {
     return nullptr;
   shader->compile();
   shader->print();
+	glCheck(glObjectLabel(GL_SHADER, shader->get(), path.size(), path.c_str()));
   return shader;
 }
 
@@ -183,16 +185,18 @@ CBaseShaderProgram::CBaseShaderProgram(
 }
 
 CBaseShaderProgram::~CBaseShaderProgram() {
+	glDeleteProgram(m_Program);
 }
 
 bool CBaseShaderProgram::create() {
-  if (!created) m_Program = glCreateProgram();
-  if (!attached)
-  {
-    attach(m_Vertex);
-    attach(m_Fragment);
-  }
+	if (!created) {
+		created = true;
+		m_Program = glCreateProgram();
+	}
+	attach(m_Vertex);
+	attach(m_Fragment);
   link();
+	//glObjectLabel(GL_TEXTURE, m_Program, strlen(name), name);
 	return m_Status.get(GL_LINK_STATUS);
 }
 
@@ -201,14 +205,36 @@ void CBaseShaderProgram::attach(std::shared_ptr<CShader> shader) {
   case CShader::type::E_VERTEX:
     if (m_Vertex == nullptr)
       m_Vertex = shader;
+		if (vertex_attached)
+			detach(shader);
+		vertex_attached = true;
     break;
   case CShader::type::E_FRAGMENT:
     if (m_Fragment == nullptr)
       m_Fragment = shader;
+		if (fragment_attached)
+			detach(shader);
+		fragment_attached = false;
     break;
   }
   glCheck(glAttachShader(m_Program, shader->get()));
-  attached = true;
+}
+
+void CBaseShaderProgram::detach(std::shared_ptr<CShader> shader)
+{
+  switch (shader->m_Type) {
+  case CShader::type::E_VERTEX:
+		if (!vertex_attached)
+			return;
+		vertex_attached = false;
+    break;
+  case CShader::type::E_FRAGMENT:
+		if (!fragment_attached)
+			return;
+		fragment_attached = false;
+    break;
+  }
+  glCheck(glDetachShader(m_Program, shader->get()));
 }
 
 bool CBaseShaderProgram::link() {
@@ -225,6 +251,12 @@ void CBaseShaderProgram::use() {
 void CBaseShaderProgram::unuse()
 {
     glCheck(glUseProgram(0));
+}
+
+void CBaseShaderProgram::deleteProgram()
+{
+	glDeleteProgram(m_Program);
+	created = false;
 }
 
 GLint CBaseShaderProgram::getUniformLocation(const char* format, ...)
@@ -387,6 +419,16 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
   }
 }
 
+void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f)
+{
+	detach(m_Vertex);
+	detach(m_Fragment);
+	deleteProgram();
+	m_Vertex = v;
+	m_Fragment = f;
+	create();
+}
+
 void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* sampler)
 {
 	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
@@ -396,6 +438,26 @@ void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* s
 
 GLuint CBaseShaderProgram::get() {
   return m_Program;
+}
+
+void CBaseShaderProgram::dump()
+{
+	int len = 0;
+	GLenum bFormat;
+	glGetProgramiv(m_Program, GL_PROGRAM_BINARY_LENGTH, &len);
+
+	std::unique_ptr<uint8_t> binary(new uint8_t[len]);
+	glGetProgramBinary(m_Program, len, &len, &bFormat, binary.get());
+
+	FILE* shader = fopen("dump.bin", "wb");
+	if (!shader)
+	{
+		//GetISystem()->Log("Cannot open file for dump");
+		return;
+	}
+
+	fwrite(binary.get(), 1, len, shader);
+	fclose(shader);
 }
 
 const char* CBaseShaderProgram::buildName(const char* format, va_list args)
