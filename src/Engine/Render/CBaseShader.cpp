@@ -46,7 +46,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   {
     glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
     GetISystem()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
-    GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
+    //GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
     return false;
   }
   return true;
@@ -416,7 +416,7 @@ void CBaseShaderProgram::dump()
 	FILE* shader = fopen("dump.bin", "wb");
 	if (!shader)
 	{
-		GetISystem()->Log("Cannot open file for dump");
+		//GetISystem()->Log("Cannot open file for dump");
 		return;
 	}
 
