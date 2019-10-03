@@ -13,6 +13,7 @@ class CShaderProgram;
 
 using BaseShadeProgramrRef = std::shared_ptr<CBaseShaderProgram>;
 using ShadeProgramRef = std::shared_ptr<CShaderProgram>;
+using ShaderRef = std::shared_ptr<CShader>;
 
 struct ShaderStatus
 {
@@ -302,7 +303,8 @@ public:
   GLuint m_Program;
   GLchar infoLog[512];
   ShaderProgramStatus m_Status;
-  bool attached = false;
+	bool fragment_attached;
+	bool vertex_attached;
   bool created = false;
   std::map<std::string, GLint> m_Cache;
   static char* buffer;
@@ -316,9 +318,11 @@ public:
 
   bool create();
   void attach(std::shared_ptr<CShader> shader);
+  void detach(std::shared_ptr<CShader> shader);
   bool link();
   void use();
   void unuse();
+	void deleteProgram();
   GLint getUniformLocation(const char* format, ...);
   GLint getUniformLocation(std::string &name);
   UniformValue getUniformValue(const char* name);
@@ -332,6 +336,8 @@ public:
   void setUniformValue(glm::mat2 value, const char *format, ...);
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
+
+	void reload(ShaderRef v, ShaderRef f);
 
 	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
   GLuint get();

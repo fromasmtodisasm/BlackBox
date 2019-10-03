@@ -20,6 +20,7 @@ struct ISystem;
 struct IWindow;
 struct IFont;
 class CCamera;
+class IShader;
 
 //////////////////////////////////////////////////////////////////////////
 //! This structure used in DrawText method of renderer.

@@ -265,17 +265,20 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
 	if (fs == nullptr) return false;
 
-	auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
-  if (!shaderProgram->create())
-    return false;
-	shaderProgram->vertex_name = desc.vs;
-	shaderProgram->fragment_name = desc.fs;
-	auto it = shaders_map.find(desc.name);
-	if (it != shaders_map.end())
+	if (isReload)
 	{
-		it->second;
+		shader_it->second->reload(vs, fs);
 	}
-	if (!isReload) shaders_map[desc.name] = shaderProgram;
+	else
+	{
+		auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
+		if (!shaderProgram->create())
+			return false;
+		shaderProgram->vertex_name = desc.vs;
+		shaderProgram->fragment_name = desc.fs;
+		auto it = shaders_map.find(desc.name);
+		if (!isReload) shaders_map[desc.name] = shaderProgram;
+	}
 	return true;
 }
 
