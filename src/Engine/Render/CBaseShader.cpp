@@ -310,6 +310,7 @@ UniformValue CBaseShaderProgram::getUniformValue(const char* name)
   auto location = getUniformLocation(name);
 
   result.location = location;
+	result.program = m_Program;
   return result;
 }
 
