@@ -34,10 +34,10 @@ class MaterialManager
 	bool alpha_shakaled = false;
 	bool isSkyBox = false;
 	ICVar* root_path = nullptr;
-	std::map<std::string, std::shared_ptr<CShaderProgram>> shaders_map;
+	std::map<std::string, BaseShadeProgramrRef> shaders_map;
 public:
   static MaterialManager *instance();
-  std::shared_ptr<CShaderProgram> getProgram(std::string name);
+  BaseShadeProgramrRef getProgram(std::string name);
   Material *getMaterial(std::string name);
   static bool init(std::string materialLib);
 	bool reloadShaders();
