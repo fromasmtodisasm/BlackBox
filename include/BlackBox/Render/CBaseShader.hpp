@@ -343,6 +343,8 @@ public:
   void attach(ShaderInfo& shader);
   ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
   void detach(ShaderInfo& shader);
+	bool dispatch(int x, int y, int z, GLbitfield barriers);
+	bool dispatchInderect();
   bool link();
   void use();
   void unuse();

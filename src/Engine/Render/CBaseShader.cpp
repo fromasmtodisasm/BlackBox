@@ -247,6 +247,22 @@ void CBaseShaderProgram::detach(ShaderInfo& info)
 		glCheck(glDetachShader(m_Program, info.shader->get()));
 }
 
+bool CBaseShaderProgram::dispatch(int x, int y, int z, GLbitfield barriers)
+{
+	if (m_Compute.attached)
+	{
+		glCheck(glDispatchCompute(x, y, z));
+		if (barriers) glMemoryBarrier(barriers);
+		return true;
+	}
+	return false;
+}
+
+bool CBaseShaderProgram::dispatchInderect()
+{
+	return false;
+}
+
 bool CBaseShaderProgram::link() {
   glCheck(glLinkProgram(m_Program));
 	return m_Status.get(GL_LINK_STATUS);
