@@ -10,7 +10,7 @@ public _ScriptableEx<CScriptObjectConsole>
 public:
 	CScriptObjectConsole();
 	~CScriptObjectConsole();
-	void InitializeTemplate(IScriptSystem* pSS);
+	static void InitializeTemplate(IScriptSystem* pSS);
 
 	void Init(IScriptSystem *pScriptSystem, IConsole* pConsole);
 

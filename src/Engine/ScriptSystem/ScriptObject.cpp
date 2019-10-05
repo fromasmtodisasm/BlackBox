@@ -457,16 +457,13 @@ void CScriptObject::Dump(IScriptObjectDumpSink* p)
 {
 }
 
-bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, void *this_ptr, int nFuncID)
+bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int nFuncID)
 {
 	PushRef();
 	lua_pushstring(L, sName);
 
 	if (pThunk)
 	{
-		// Store functor in first upvalue.
-		size_t tp = sizeof(this_ptr);
-		size_t i = sizeof(nFuncID);
 		member_ptr* pBuffer = (member_ptr*)lua_newuserdata(L, sizeof(member_ptr));
 		pBuffer->fID = nFuncID;
 		pBuffer->ref = GetRef();
