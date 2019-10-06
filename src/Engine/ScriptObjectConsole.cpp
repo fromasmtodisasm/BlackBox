@@ -39,7 +39,7 @@ int CScriptObjectConsole::PrintLine(IFunctionHandler* pH)
 	const char* str;
 	pH->GetParam(1, str);
 	m_Console->PrintLine("%s(%s);", __FUNCTION__, str);
-	return pH->EndFunction(25);
+	return pH->EndFunction(m_pScriptThis);
 }
 
 int CScriptObjectConsole::Clear(IFunctionHandler* pH)

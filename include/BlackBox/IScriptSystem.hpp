@@ -210,7 +210,7 @@ struct IScriptSystem
 	inline bool EndCall(char*& sRet) { EndCall((const char*&)sRet); }
 #endif
 	virtual bool EndCall(bool& bRet) = 0;
-	virtual bool EndCall(IScriptObject* pScriptObject) = 0;
+	virtual bool EndCall(IScriptObject*& pScriptObject) = 0;
 	//##@}
 
 	/*! function under development ingnore it*/

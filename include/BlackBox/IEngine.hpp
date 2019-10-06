@@ -126,3 +126,8 @@ extern "C"
 #define ScriptWarning(...) Wraning(__VA_ARGS__)
 
 #define CryError(...) ;
+
+//! Simple logs of data with low verbosity.
+//void        CryLog(const char*, ...) PRINTF_PARAMS(1, 2);
+#define CryLog(format, ...) GetISystem()->getIConsole()->PrintLine(format, __VA_ARGS__)
+

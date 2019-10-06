@@ -28,6 +28,9 @@ public:
 
 	bool Init(ISystem* pSystem);
 
+	void RegisterErrorHandler(void);
+
+
 	virtual bool ExecuteFile(const char* sFileName, bool bRaiseError = true, bool bForceReload = false) override;
 	virtual bool ExecuteBuffer(const char* sBuffer, size_t nSize) override;
 	virtual bool GetGlobalValue(const char* sKey, int& nVal) override;
@@ -63,7 +66,7 @@ public:
 	virtual bool EndCall(float& fRet) override;
 	virtual bool EndCall(const char*& sRet) override;
 	virtual bool EndCall(bool& bRet) override;
-	virtual bool EndCall(IScriptObject* pScriptObject) override;
+	virtual bool EndCall(IScriptObject*& pScriptObject) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Get function pointer.
@@ -143,11 +146,11 @@ public:
 		val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
 	}
 
-	inline void ToAny(IScriptObject* pObj, int nIdx)
+	inline void ToAny(IScriptObject*& pObj, int nIdx)
 	{
 		if (lua_istable(L, -1))
 		{
-			//pObj = CreateEmptyObject();
+			pObj = CreateEmptyObject();
 			//pObj->AddRef();
 		}
 		lua_pushvalue(L, -1);
@@ -201,6 +204,11 @@ private:
 	bool       EndCallAny(T& any);
 	template<typename T>
 	bool       EndCallAnyN(T*& any);
+	template<typename T>
+	void PushFuncParamAny(T val);
+
+	static int ErrorHandler(lua_State* L);
+
 
 private:
 	static CScriptSystem* s_mpScriptSystem;
@@ -214,7 +222,7 @@ private:
 	IScriptObject* m_pPreCacheBufferTable;
 	std::vector<std::string>   m_vecPreCached;
 
-	HSCRIPTFUNCTION       m_pErrorHandlerFunc;
+	HSCRIPTFUNCTION       m_pErrorHandlerFunc = 0;
 
 	ScriptFileList        m_dqLoadedFiles;
 
@@ -261,4 +269,13 @@ inline bool CScriptSystem::EndCallAnyN(T*& anys)
 			return false;
 	}
 	return true;
+}
+
+template<typename T>
+inline void CScriptSystem::PushFuncParamAny(T val)
+{
+	if (m_nTempArg == -1)
+		return;
+	PushAny(val);
+	m_nTempArg++;
 }

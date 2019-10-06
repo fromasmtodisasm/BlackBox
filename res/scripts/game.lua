@@ -13,8 +13,10 @@ function player.OnInit( data )
 end
 
 function player.TestChanges()
-	Console:PrintLine("TestChanges")
+	Console:PrintLine("TestChanges"):PrintLine("call chain")
 	Console:PrintLine("Username: " .. player.name)
+
+	return Console;
 end
 
 

@@ -106,6 +106,19 @@ bool CGame::InitScripts()
 	m_playerObject->SetValue("name", "Psina");
 	//m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
 	m_pScriptSystem->BeginCall(psina);
+
+	IScriptObject* console=nullptr;
+	m_pScriptSystem->EndCall(console);
+
+	HSCRIPTFUNCTION PrintLine = 0;
+	/*console->GetValue("PrintLine", PrintLine);
+	m_pScriptSystem->BeginCall(PrintLine);
+	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
+	m_pScriptSystem->EndCall();
+*/
+	int n;
+	m_pScriptSystem->BeginCall(m_ScriptObjectConsole->GetScriptObject(), "PrintLine");
+	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
 	m_pScriptSystem->EndCall();
 
 	m_playerObject->GetValue("name", name);

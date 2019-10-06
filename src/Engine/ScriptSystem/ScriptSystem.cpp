@@ -45,6 +45,9 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	//////////////////////////////////////////////////////////////////////////
 	//ExecuteFile("scripts/common.lua", true, false);
 
+	// Make the error handler available to LUA
+	RegisterErrorHandler();
+
 	m_cvar_script_debugger = pSystem->getIConsole()->CreateVariable(
 		"lua_debugger", 0, VF_CHEAT,
 		"Enables the script debugger.\n"
@@ -53,6 +56,36 @@ bool CScriptSystem::Init(ISystem* pSystem)
 		"Usage: lua_debugger [0/1/2]");
 
 	return L ? true : false;
+}
+
+void CScriptSystem::RegisterErrorHandler(void)
+{
+	// Legacy approach
+		/*
+			 if(bDebugger)
+			 {
+			 //lua_register(L, LUA_ERRORMESSAGE, CScriptSystem::ErrorHandler );
+			 //lua_setglobal(L, LUA_ERRORMESSAGE);
+			 }
+			 else
+			 {
+			 //lua_register(L, LUA_ERRORMESSAGE, CScriptSystem::ErrorHandler );
+
+			 //lua_newuserdatabox(L, this);
+			 //lua_pushcclosure(L, CScriptSystem::ErrorHandler, 1);
+			 //lua_setglobal(L, LUA_ALERT);
+			 //lua_pushcclosure(L, errorfb, 0);
+			 //lua_setglobal(L, LUA_ERRORMESSAGE);
+			 }
+		 */
+
+		 // Register global error handler.
+		 // This just makes it available - when we call LUA, we insert it so it will be called
+	if (!m_pErrorHandlerFunc)
+	{
+		lua_pushcfunction(L, CScriptSystem::ErrorHandler);
+		m_pErrorHandlerFunc = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+	}
 }
 
 bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError/* = true*/, bool bForceReload/* = false*/)
@@ -287,7 +320,7 @@ bool CScriptSystem::EndCall(bool& bRet)
 	return EndCallAny(bRet);
 }
 
-bool CScriptSystem::EndCall(IScriptObject* pScriptObject)
+bool CScriptSystem::EndCall(IScriptObject*& pScriptObject)
 {
 	return EndCallAny(pScriptObject);
 }
@@ -346,27 +379,27 @@ void CScriptSystem::ReleaseFunc(HSCRIPTFUNCTION f)
 
 void CScriptSystem::PushFuncParam(int nVal)
 {
-	lua_pushinteger(L, nVal);
+	PushFuncParamAny(nVal);
 }
 
 void CScriptSystem::PushFuncParam(float fVal)
 {
-	lua_pushnumber(L, fVal);
+	PushFuncParamAny(fVal);
 }
 
 void CScriptSystem::PushFuncParam(const char* sVal)
 {
-	lua_pushstring(L, sVal);
+	PushFuncParamAny(sVal);
 }
 
 void CScriptSystem::PushFuncParam(bool bVal)
 {
-	lua_pushboolean(L, bVal);
+	PushFuncParamAny(bVal);
 }
 
 void CScriptSystem::PushFuncParam(IScriptObject* pVal)
 {
-	PushObject(pVal);
+	PushFuncParamAny(pVal);
 }
 
 void CScriptSystem::SetGlobalValue(const char* sKey, int nVal)
@@ -598,6 +631,51 @@ bool CScriptSystem::EndCallN(int nReturns)
 	lua_remove(L, base);  // remove error handler function.
 
 	return status == 0;
+}
+
+int CScriptSystem::ErrorHandler(lua_State* L)
+{
+	//if (!lua_isstoredebuginfo(L))
+	//	return 0; // ignore script errors if engine is running without game
+
+	// Handle error
+	lua_Debug ar;
+	CScriptSystem* pThis = (CScriptSystem*)GetISystem()->getIIScriptSystem();
+
+	memset(&ar, 0, sizeof(lua_Debug));
+
+	const char* sErr = lua_tostring(L, 1);
+
+	if (sErr)
+	{
+		ScriptWarning("[Lua Error] %s", sErr);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Print error callstack.
+	//////////////////////////////////////////////////////////////////////////
+	int level = 1;
+	while (lua_getstack(L, level++, &ar))
+	{
+		lua_getinfo(L, "lnS", &ar);
+		if (ar.name)
+			CryLog("$6    > %s, (%s: %d)", ar.name, ar.short_src, ar.currentline);
+		else
+			CryLog("$6    > (null) (%s: %d)", ar.short_src, ar.currentline);
+	}
+
+	if (sErr)
+	{
+		ICVar* lua_StopOnError = GetISystem()->getIConsole()->GetCVar("lua_StopOnError");
+		if (lua_StopOnError && lua_StopOnError->GetIVal() != 0)
+		{
+			ScriptWarning("![Lua Error] %s", sErr);
+		}
+	}
+
+	pThis->TraceScriptError(ar.source, ar.currentline, sErr);
+
+	return 0;
 }
 
 void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
