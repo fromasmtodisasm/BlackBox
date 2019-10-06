@@ -92,20 +92,19 @@ public:
 			CryError("Scriptable EX:Properties map");
 	}
 
-	void InitGlobal(IScriptSystem * pScriptSystem, const char* sName, T * pParent)
+	void InitGlobal(IScriptSystem* pScriptSystem, const char* sName, T* pParent)
 	{
 		m_pScriptSystem = pScriptSystem;
 		_ScriptableEx<T>::m_pFunctionHandler = m_pScriptSystem->GetFunctionHandler();
 		if (!_ScriptableEx<T>::m_pFunctionHandler)
-			return;// CryError("Scriptable EX:FUNCTION HANDLER NULL");
+			CryError("Scriptable EX:FUNCTION HANDLER NULL");
 		m_pScriptThis = pScriptSystem->CreateGlobalObject(sName);
-		//m_pScriptThis->SetNativeData(pParent);
-		_ScriptableEx<T>::m_pTemplateTable->SetNativeData(pParent);
+		m_pScriptThis->SetNativeData(pParent);
 		if (_ScriptableEx<T>::m_pTemplateTable)
 			m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);
 
 		if (m_pScriptThis->GetNativeData() != pParent)
-			return;// CryError("Scriptable EX:Init Global");
+			CryError("Scriptable EX:Init Global");
 	}
 
 	static void InitializeTemplate(IScriptSystem * pSS)

@@ -24,45 +24,6 @@ void CFunctionHandler::__Attach(HSCRIPT hScript)
 
 THIS_PTR CFunctionHandler::GetThis()
 {
-#if 0
-	int top = lua_gettop(L);
-	auto cnt = GetParamCount();
-	auto type = lua_type(L, 1);
-	if (lua_isstring(L, 1))
-	{
-		auto str = lua_tostring(L, 1);
-		GetISystem()->Log(str);
-	}
-	if (lua_isstring(L, 2))
-	{
-		auto str = lua_tostring(L, 2);
-		GetISystem()->Log(str);
-	}
-	//CScriptObject::member_ptr* pBuffer = (CScriptObject::member_ptr*)lua_touserdata(L, lua_upvalueindex(1));
-	//return pBuffer->this_ptr;
-	CScriptObject::member_ptr *pBuffer = (CScriptObject::member_ptr*)lua_touserdata(L, lua_upvalueindex(1));
-	int fID = pBuffer->fID;
-	int ref = pBuffer->ref;
-	//lua_getref(L, ref);
-
-	void* ptr = NULL;
-	// Get implicit self table.
-	if (lua_type(L, 1) == LUA_TTABLE)
-	{
-		lua_pushvalue(L, 1);
-		// index "__this" member.
-		lua_pushstring(L, "__this");
-		lua_rawget(L, -2);
-		auto type = lua_type(L, -1);
-		if (lua_islightuserdata(L, -1))
-		{
-			ptr = lua_touserdata(L, -1);
-		}
-		lua_pop(L, 1); // pop result.
-	}
-	lua_settop(L, top);
-	return ptr;
-#endif
 	void* ptr = NULL;
 	// Get implicit self table.
 	if (m_paramIdOffset > 0 && lua_type(L, 1) == LUA_TTABLE)
