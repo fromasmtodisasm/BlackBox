@@ -100,8 +100,12 @@ bool CGame::InitScripts()
 	m_Console->PrintLine("Player name: %s", name);
 	m_Console->PrintLine("Player age: %d", age);
 
+	HSCRIPTFUNCTION psina;
+	m_playerObject->GetValue("TestChanges", psina);
+
 	m_playerObject->SetValue("name", "Psina");
-	m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+	//m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+	m_pScriptSystem->BeginCall(psina);
 	m_pScriptSystem->EndCall();
 
 	m_playerObject->GetValue("name", name);

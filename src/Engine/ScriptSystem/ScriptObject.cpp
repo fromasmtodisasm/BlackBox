@@ -211,7 +211,7 @@ bool CScriptObject::GetValue(const char* sKey, IScriptObject* pObj)
 
 bool CScriptObject::GetValue(const char* sKey, HSCRIPTFUNCTION& funcVal)
 {
-	return false;
+	return GetValueTemplate(this, sKey, funcVal);
 }
 
 bool CScriptObject::GetUDValue(const char* sKey, USER_DATA& nValue, int& nCookie)
