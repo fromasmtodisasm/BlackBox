@@ -2,6 +2,8 @@
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp> 
 
+class CScriptSystem;
+
 enum
 {
 	DELETED_REF = -1,
@@ -125,7 +127,7 @@ public:
 	// Lua state, set by CScriptSystem::Init
 	static lua_State* L;
 	// Pointer to ScriptSystem, set by CScriptSystem::Init
-	static IScriptSystem* m_pSS; 
+	static CScriptSystem* m_pSS; 
 	void* m_pNativeData;
 	struct member_ptr
 	{

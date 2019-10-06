@@ -1,75 +1,168 @@
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
+#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 
 #include <BlackBox/IEngine.hpp>
 
 #include <cassert>
 
 lua_State* CScriptObject::L = nullptr;
-IScriptSystem* CScriptObject::m_pSS = nullptr;
+CScriptSystem* CScriptObject::m_pSS = nullptr;
 
 ///////////////////////////////////////////////////////////////////
-
-void ToAny(bool & val, lua_State *L, int nIdx)
-{
-	val = lua_toboolean(L, nIdx);
-}
-
-void ToAny(int & val, lua_State *L, int nIdx)
-{
-	val = lua_tointeger(L, nIdx);
-}
-
-void ToAny(float & val, lua_State *L, int nIdx)
-{
-	val = lua_tonumber(L, nIdx);
-}
-
-void ToAny(const char*& val, lua_State *L, int nIdx)
-{
-	val = lua_tostring(L, nIdx);
-}
-
-void ToAny(HSCRIPTFUNCTION & val , lua_State *L, int nIdx)
-{
-	lua_pushvalue(L, nIdx);
-	val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
-}
-
-void ToAny(IScriptObject *pObj, lua_State *L, int nIdx)
-{
-	if (lua_istable(L, -1))
+namespace {
+	void ToAny(bool& val, lua_State* L, int nIdx)
 	{
-		//pObj = CreateEmptyObject();
-		//pObj->AddRef();
+		val = lua_toboolean(L, nIdx);
 	}
-	lua_pushvalue(L, -1);
-	pObj->Attach();
-}
 
-template<typename T>
-bool PopAny(T& val)
-{
-	/*bool res = */ToAny(val, CScriptObject::L, -1);
-	lua_pop(CScriptObject::L, 1);
-	return true;
+	void ToAny(int& val, lua_State* L, int nIdx)
+	{
+		val = lua_tointeger(L, nIdx);
+	}
+
+	void ToAny(float& val, lua_State* L, int nIdx)
+	{
+		val = lua_tonumber(L, nIdx);
+	}
+
+	void ToAny(const char*& val, lua_State* L, int nIdx)
+	{
+		val = lua_tostring(L, nIdx);
+	}
+
+	void ToAny(HSCRIPTFUNCTION& val, lua_State* L, int nIdx)
+	{
+		lua_pushvalue(L, nIdx);
+		val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+	}
+
+	void ToAny(IScriptObject* pObj, lua_State* L, int nIdx)
+	{
+		if (lua_istable(L, -1))
+		{
+			//pObj = CreateEmptyObject();
+			//pObj->AddRef();
+		}
+		lua_pushvalue(L, -1);
+		pObj->Attach();
+	}
+
+	template<typename T>
+	bool PopAny(T & val)
+	{
+		/*bool res = */ToAny(val, CScriptObject::L, -1);
+		lua_pop(CScriptObject::L, 1);
+		return true;
+	}
+	///////////////////////////////////////////////////////////////////
+	template<typename T>
+	bool GetValueTemplate(CScriptObject * pSO, const char* sKey, T & Val, bool bChain = false)
+	{
+		auto L = CScriptObject::L;
+		CHECK_STACK(L);
+		int top = lua_gettop(L);
+		if (!bChain)
+			pSO->PushRef();
+		lua_pushstring(L, sKey);
+		lua_gettable(L, -2);
+		bool res = PopAny(Val);
+		lua_settop(L, top);
+		return true;
+	}
+	///////////////////////////////////////////////////////////////////
+
+	void PushAny(bool& val, lua_State * L)
+	{
+		lua_pushboolean(L, val);
+	}
+
+	void PushAny(int& val, lua_State * L)
+	{
+		lua_pushinteger(L, val);
+	}
+
+	void PushAny(float& val, lua_State * L)
+	{
+		lua_pushnumber(L, val);
+	}
+
+	void PushAny(const char*& val, lua_State * L)
+	{
+		lua_pushstring(L, val);
+	}
+
+	void PushAny(HSCRIPTFUNCTION & val, lua_State * L)
+	{
+		lua_getref(L, val);
+		assert(lua_type(L, -1) == LUA_TFUNCTION);
+	}
+
+	void PushAny(IScriptObject * &val, lua_State * L)
+	{
+		CScriptObject::m_pSS->PushObject(val);
+	}
+
+	template<typename T>
+	bool PushAnyTemplate(T & val)
+	{
+		PushAny(val, CScriptObject::L);
+		lua_pop(CScriptObject::L, 1);
+		return true;
+	}
+	///////////////////////////////////////////////////////////////////
+	template<typename T>
+	void SetValueTemplate(CScriptObject * pSO, const char* sKey, T & Val, bool bChain = false)
+	{
+		auto L = CScriptObject::L;
+		CHECK_STACK(L);
+		int top = lua_gettop(L);
+
+		T oldValue;
+		if (top && lua_getmetatable(L, -1))     // if there is no metatable nothing is pushed
+		{
+			lua_pop(L, 1);    // pop the metatable - we only care that it exists, not about the value
+			if (GetValueTemplate(pSO, sKey, oldValue) && oldValue == Val)
+				return;
+		}
+
+		if (!bChain)
+			pSO->PushRef();
+
+		assert(sKey);
+		size_t len = strlen(sKey);
+		lua_pushlstring(L, sKey, len);
+		PushAnyTemplate(Val);
+		lua_settable(L, -3);
+		lua_settop(L, top);
+	}
+	///////////////////////////////////////////////////////////////////
+
+	template<typename T>
+	void SetAtAny(CScriptObject * pSO, int nIndex, T & any)
+	{
+		auto L = CScriptObject::L;
+		CHECK_STACK(L);
+		pSO->PushRef();
+		PushAny(any, L);
+		lua_rawseti(L, -2, nIndex);
+		lua_pop(L, 1); // Pop table.
+	}
+
+	template<typename T>
+	bool GetAtAny(CScriptObject * pSO, int nIndex, T & any)
+	{
+		auto L = CScriptObject::L;
+		CHECK_STACK(L);
+		pSO->PushRef();
+		lua_rawgeti(L, -1, nIndex);
+		bool res = PopAny(any);
+		lua_pop(L, 1); // Pop table.
+
+		return res;
+	}
+	///////////////////////////////////////////////////////////////////
 }
-///////////////////////////////////////////////////////////////////
-template<typename T>
-bool GetValueTemplate(CScriptObject* pSO, const char* sKey, T& Val)
-{
-	auto L = CScriptObject::L;
-	CHECK_STACK(L);
-	int top = lua_gettop(L);
-	//if (!bChain)
-	pSO->PushRef();
-	lua_pushstring(L, sKey);
-	lua_gettable(L, -2);
-	bool res = PopAny(Val);
-	lua_settop(L, top);
-	return true;
-}
-///////////////////////////////////////////////////////////////////
 
 CScriptObject::~CScriptObject()
 {
@@ -93,8 +186,21 @@ void CScriptObject::Attach(IScriptObject* so)
 	Attach();
 }
 
-void CScriptObject::Delegate(IScriptObject* pObj)
+void CScriptObject::Delegate(IScriptObject* pMetatable)
 {
+	if (!pMetatable)
+		return;
+
+	CHECK_STACK(L);
+
+	PushRef(pMetatable);
+	lua_pushstring(L, "__index"); // push key.
+	PushRef(pMetatable);
+	lua_rawset(L, -3); // sets metatable.__index = metatable
+	lua_pop(L, 1);     // pop metatable from stack.
+
+	SetMetatable(pMetatable);
+
 }
 
 void CScriptObject::PushBack(int nVal)
@@ -117,32 +223,40 @@ void CScriptObject::PushBack(IScriptObject* pObj)
 {
 }
 
-void CScriptObject::SetValue(const char* sKey, int nVal)
+void CScriptObject::SetValue(const char* sKey, int Val)
 {
+	SetValueTemplate(this, sKey, Val);
 }
 
-void CScriptObject::SetValue(const char* sKey, float fVal)
+void CScriptObject::SetValue(const char* sKey, float Val)
 {
+	SetValueTemplate(this, sKey, Val);
 }
 
-void CScriptObject::SetValue(const char* sKey, const char* sVal)
+void CScriptObject::SetValue(const char* sKey, const char* Val)
 {
+	SetValueTemplate(this, sKey, Val);
 }
 
-void CScriptObject::SetValue(const char* sKey, bool bVal)
+void CScriptObject::SetValue(const char* sKey, bool Val)
 {
+	SetValueTemplate(this, sKey, Val);
 }
 
-void CScriptObject::SetValue(const char* sKey, IScriptObject* pObj)
+void CScriptObject::SetValue(const char* sKey, IScriptObject* Val)
 {
+	SetValueTemplate(this, sKey, Val);
 }
 
 void CScriptObject::SetValue(const char* sKey, USER_DATA ud)
 {
+	assert(0 && __FUNCTION__" Not implemented");
+	//SetValueTemplate(this, sKey, ud);
 }
 
 void CScriptObject::SetToNull(const char* sKey)
 {
+	assert(0 && __FUNCTION__" Not implemented");
 }
 
 bool CScriptObject::GetValue(const char* sKey, int& nVal)
@@ -187,37 +301,38 @@ bool CScriptObject::GetFuncData(const char* sKey, unsigned int*& pCode, int& iSi
 
 bool CScriptObject::BeginSetGetChain()
 {
-	return false;
+	PushRef();
+	return true;
 }
 
-bool CScriptObject::GetValueChain(const char* sKey, int& nVal)
+bool CScriptObject::GetValueChain(const char* sKey, int& Val)
 {
-	return false;
+	return GetValueTemplate(this, sKey, Val, true);
 }
 
-bool CScriptObject::GetValueChain(const char* sKey, float& fVal)
+bool CScriptObject::GetValueChain(const char* sKey, float& Val)
 {
-	return false;
+	return GetValueTemplate(this, sKey, Val, true);
 }
 
-bool CScriptObject::GetValueChain(const char* sKey, bool& bVal)
+bool CScriptObject::GetValueChain(const char* sKey, bool& Val)
 {
-	return false;
+	return GetValueTemplate(this, sKey, Val, true);
 }
 
-bool CScriptObject::GetValueChain(const char* sKey, const char*& sVal)
+bool CScriptObject::GetValueChain(const char* sKey, const char*& Val)
 {
-	return false;
+	return GetValueTemplate(this, sKey, Val, true);
 }
 
-bool CScriptObject::GetValueChain(const char* sKey, IScriptObject* pObj)
+bool CScriptObject::GetValueChain(const char* sKey, IScriptObject* Val)
 {
-	return false;
+	return GetValueTemplate(this, sKey, Val, true);
 }
 
-bool CScriptObject::GetValueChain(const char* sKey, HSCRIPTFUNCTION& funcVal)
+bool CScriptObject::GetValueChain(const char* sKey, HSCRIPTFUNCTION& Val)
 {
-	return false;
+	return GetValueTemplate(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetUDValueChain(const char* sKey, USER_DATA& nValue, int& nCookie)
@@ -225,66 +340,151 @@ bool CScriptObject::GetUDValueChain(const char* sKey, USER_DATA& nValue, int& nC
 	return false;
 }
 
-void CScriptObject::SetValueChain(const char* sKey, int nVal)
+void CScriptObject::SetValueChain(const char* sKey, int Val)
 {
+	SetValueTemplate(this, sKey, Val, true);
 }
 
-void CScriptObject::SetValueChain(const char* sKey, float fVal)
+void CScriptObject::SetValueChain(const char* sKey, float Val)
 {
+	SetValueTemplate(this, sKey, Val, true);
 }
 
-void CScriptObject::SetValueChain(const char* sKey, const char* sVal)
+void CScriptObject::SetValueChain(const char* sKey, const char* Val)
 {
+	SetValueTemplate(this, sKey, Val, true);
 }
 
-void CScriptObject::SetValueChain(const char* sKey, bool bVal)
+void CScriptObject::SetValueChain(const char* sKey, bool Val)
 {
+	SetValueTemplate(this, sKey, Val, true);
 }
 
-void CScriptObject::SetValueChain(const char* sKey, IScriptObject* pObj)
+void CScriptObject::SetValueChain(const char* sKey, IScriptObject* Val)
 {
+	SetValueTemplate(this, sKey, Val, true);
 }
 
 void CScriptObject::SetValueChain(const char* sKey, USER_DATA ud)
 {
+	assert(0 && __FUNCTION__" Not implemented");
 }
 
 void CScriptObject::SetToNullChain(const char* sKey)
 {
+	assert(0 && __FUNCTION__" Not implemented");
 }
 
 void CScriptObject::EndSetGetChain()
 {
+	if (lua_istable(L, -1))
+		lua_pop(L, 1);
+	else
+	{
+		assert(0 && "Mismatch in Set/Get Chain");
+	}
 }
 
 ScriptVarType CScriptObject::GetValueType(const char* sKey)
 {
-	return ScriptVarType();
+	CHECK_STACK(L);
+	ScriptVarType type = svtNull;
+
+	PushRef();
+	lua_pushstring(L, sKey);
+	lua_gettable(L, -2);
+	int luatype = lua_type(L, -1);
+	switch (luatype)
+	{
+	case LUA_TNIL:
+		type = svtNull;
+		break;
+	case LUA_TBOOLEAN:
+		type = svtBool;
+		break;
+	case LUA_TNUMBER:
+		type = svtNumber;
+		break;
+	case LUA_TSTRING:
+		type = svtString;
+		break;
+	case LUA_TFUNCTION:
+		type = svtFunction;
+		break;
+	case LUA_TLIGHTUSERDATA:
+		type = svtPointer;
+		break;
+	case LUA_TTABLE:
+		type = svtObject;
+		break;
+	}
+	lua_pop(L, 2); // Pop value and table.
+	return type;
 }
 
 ScriptVarType CScriptObject::GetAtType(int nIdx)
 {
-	return ScriptVarType();
+	CHECK_STACK(L);
+	ScriptVarType svtRetVal = svtNull;
+	PushRef();
+
+	if (luaL_len(L, -1) < nIdx)
+	{
+		lua_pop(L, 1);
+		return svtNull;
+	}
+
+	lua_rawgeti(L, -1, nIdx);
+
+	switch (lua_type(L, -1))
+	{
+	case LUA_TNIL:
+		svtRetVal = svtNull;
+		break;
+	case LUA_TBOOLEAN:
+		svtRetVal = svtBool;
+		break;
+	case LUA_TNUMBER:
+		svtRetVal = svtNumber;
+		break;
+	case LUA_TSTRING:
+		svtRetVal = svtString;
+		break;
+	case LUA_TTABLE:
+		svtRetVal = svtObject;
+		break;
+	case LUA_TFUNCTION:
+		svtRetVal = svtFunction;
+		break;
+	}
+
+	lua_pop(L, 2);
+	return svtRetVal;
 }
 
-void CScriptObject::SetAt(int nIdx, int nVal)
+void CScriptObject::SetAt(int nIdx, int Val)
 {
+	SetAtAny(this, nIdx, Val);
 }
 
-void CScriptObject::SetAt(int nIdx, float fVal)
+void CScriptObject::SetAt(int nIdx, float Val)
 {
+	SetAtAny(this, nIdx, Val);
 }
 
-void CScriptObject::SetAt(int nIdx, bool bVal)
+void CScriptObject::SetAt(int nIdx, bool Val)
 {
+	SetAtAny(this, nIdx, Val);
 }
 
-void CScriptObject::SetAt(int nIdx, const char* sVal)
+void CScriptObject::SetAt(int nIdx, const char* Val)
 {
+	SetAtAny(this, nIdx, Val);
 }
 
-void CScriptObject::SetAt(int nIdx, IScriptObject* pObj)
+void CScriptObject::SetAt(int nIdx, IScriptObject* Val)
 {
+	SetAtAny(this, nIdx, Val);
 }
 
 void CScriptObject::SetAtUD(int nIdx, USER_DATA nValue)
@@ -295,29 +495,29 @@ void CScriptObject::SetNullAt(int nIdx)
 {
 }
 
-bool CScriptObject::GetAt(int nIdx, int& nVal)
+bool CScriptObject::GetAt(int nIdx, int& Val)
 {
-	return false;
+	return GetAtAny(this, nIdx, Val);
 }
 
-bool CScriptObject::GetAt(int nIdx, float& fVal)
+bool CScriptObject::GetAt(int nIdx, float& Val)
 {
-	return false;
+	return GetAtAny(this, nIdx, Val);
 }
 
-bool CScriptObject::GetAt(int nIdx, bool& bVal)
+bool CScriptObject::GetAt(int nIdx, bool& Val)
 {
-	return false;
+	return GetAtAny(this, nIdx, Val);
 }
 
-bool CScriptObject::GetAt(int nIdx, const char*& sVal)
+bool CScriptObject::GetAt(int nIdx, const char*& Val)
 {
-	return false;
+	return GetAtAny(this, nIdx, Val);
 }
 
-bool CScriptObject::GetAt(int nIdx, IScriptObject* pObj)
+bool CScriptObject::GetAt(int nIdx, IScriptObject* Val)
 {
-	return false;
+	return GetAtAny(this, nIdx, Val);
 }
 
 bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
@@ -414,11 +614,33 @@ void* CScriptObject::GetNativeData()
 
 void CScriptObject::Clear()
 {
+	CHECK_STACK(L);
+
+	PushRef();
+	int trgTable = lua_gettop(L);
+
+	lua_pushnil(L);  // first key
+	while (lua_next(L, trgTable) != 0)
+	{
+		lua_pop(L, 1);        // pop value, leave index.
+		lua_pushvalue(L, -1); // Push again index.
+		lua_pushnil(L);
+		lua_rawset(L, trgTable);
+	}
+	assert(lua_istable(L, -1));
+	lua_pop(L, 1);
+
 }
 
 int CScriptObject::Count()
 {
-	return 0;
+	CHECK_STACK(L);
+
+	PushRef();
+	int count = luaL_len(L, -1);
+	lua_pop(L, 1);
+
+	return count;
 }
 
 bool CScriptObject::Clone(IScriptObject* pObj)
@@ -453,8 +675,176 @@ bool CScriptObject::Clone(IScriptObject* pObj)
 	return true;
 }
 
+static void IterTable(lua_State* L, IScriptObjectDumpSink* p)
+{
+	lua_pushnil(L); // first key
+	while (lua_next(L, -2))
+	{
+		int keyType = lua_type(L, -2);
+		int valType = lua_type(L, -1);
+
+		if (keyType == LUA_TSTRING)
+		{
+			const char* key = lua_tostring(L, -2);
+			switch (valType)
+			{
+			case LUA_TNIL:
+				p->OnElementFound(key, svtNull);
+				break;
+			case LUA_TBOOLEAN:
+				p->OnElementFound(key, svtBool);
+				break;
+			case LUA_TLIGHTUSERDATA:
+				p->OnElementFound(key, svtPointer);
+				break;
+			case LUA_TNUMBER:
+				p->OnElementFound(key, svtNumber);
+				break;
+			case LUA_TSTRING:
+				p->OnElementFound(key, svtString);
+				break;
+			case LUA_TTABLE:
+				if (strcmp(key, "__index") != 0)
+					p->OnElementFound(key, svtObject);
+				break;
+			case LUA_TFUNCTION:
+				p->OnElementFound(key, svtFunction);
+				break;
+			case LUA_TUSERDATA:
+				p->OnElementFound(key, svtUserData);
+				break;
+			}
+		}
+		else
+		{
+			int idx = (int)lua_tonumber(L, -2);
+			switch (valType)
+			{
+			case LUA_TNIL:
+				p->OnElementFound(idx, svtNull);
+				break;
+			case LUA_TBOOLEAN:
+				p->OnElementFound(idx, svtBool);
+				break;
+			case LUA_TLIGHTUSERDATA:
+				p->OnElementFound(idx, svtPointer);
+				break;
+			case LUA_TNUMBER:
+				p->OnElementFound(idx, svtNumber);
+				break;
+			case LUA_TSTRING:
+				p->OnElementFound(idx, svtString);
+				break;
+			case LUA_TTABLE:
+				p->OnElementFound(idx, svtObject);
+				break;
+			case LUA_TFUNCTION:
+				p->OnElementFound(idx, svtFunction);
+				break;
+			case LUA_TUSERDATA:
+				p->OnElementFound(idx, svtUserData);
+				break;
+			}
+		}
+
+		lua_pop(L, 1);  // pop value, keep key
+	}
+}
+
+
 void CScriptObject::Dump(IScriptObjectDumpSink* p)
 {
+	if (!p) return;
+	CHECK_STACK(L);
+	int top = lua_gettop(L);
+
+	PushRef();
+
+	int trgTable = top + 1;
+
+	lua_pushnil(L);  // first key
+	int reftop = lua_gettop(L);
+	while (lua_next(L, trgTable) != 0)
+	{
+		// `key' is at index -2 and `value' at index -1
+		if (lua_type(L, -2) == LUA_TSTRING)
+		{
+			const char* sName = lua_tostring(L, -2); // again index
+			switch (lua_type(L, -1))
+			{
+			case LUA_TNIL:
+				p->OnElementFound(sName, svtNull);
+				break;
+			case LUA_TBOOLEAN:
+				p->OnElementFound(sName, svtBool);
+				break;
+			case LUA_TLIGHTUSERDATA:
+				p->OnElementFound(sName, svtPointer);
+				break;
+			case LUA_TNUMBER:
+				p->OnElementFound(sName, svtNumber);
+				break;
+			case LUA_TSTRING:
+				p->OnElementFound(sName, svtString);
+				break;
+			case LUA_TTABLE:
+				if (strcmp(sName, "__index") != 0)
+					p->OnElementFound(sName, svtObject);
+				break;
+			case LUA_TFUNCTION:
+				p->OnElementFound(sName, svtFunction);
+				break;
+			case LUA_TUSERDATA:
+				p->OnElementFound(sName, svtUserData);
+				break;
+			}
+			;
+		}
+		else
+		{
+			int nIdx = (int)lua_tonumber(L, -2);  // again index
+			switch (lua_type(L, -1))
+			{
+			case LUA_TNIL:
+				p->OnElementFound(nIdx, svtNull);
+				break;
+			case LUA_TBOOLEAN:
+				p->OnElementFound(nIdx, svtBool);
+				break;
+			case LUA_TLIGHTUSERDATA:
+				p->OnElementFound(nIdx, svtPointer);
+				break;
+			case LUA_TNUMBER:
+				p->OnElementFound(nIdx, svtNumber);
+				break;
+			case LUA_TSTRING:
+				p->OnElementFound(nIdx, svtString);
+				break;
+			case LUA_TTABLE:
+				p->OnElementFound(nIdx, svtObject);
+				break;
+			case LUA_TFUNCTION:
+				p->OnElementFound(nIdx, svtFunction);
+				break;
+			case LUA_TUSERDATA:
+				p->OnElementFound(nIdx, svtUserData);
+				break;
+			}
+			;
+		}
+		lua_settop(L, reftop); // pop value, leave index.
+	}
+
+	if (lua_getmetatable(L, -1))
+	{
+		lua_pushstring(L, "__index");
+		lua_rawget(L, -2);
+		if (lua_type(L, -1) == LUA_TTABLE)
+			IterTable(L, p);
+	}
+	lua_settop(L, trgTable);
+
+	lua_pop(L, 1); // pop table ref
 }
 
 bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int nFuncID)
@@ -505,6 +895,14 @@ void CScriptObject::CreateNew()
 
 void CScriptObject::SetMetatable(IScriptObject* pMetatable)
 {
+	CHECK_STACK(L);
+	//////////////////////////////////////////////////////////////////////////
+	// Set metatable for this script object.
+	//////////////////////////////////////////////////////////////////////////
+	PushRef();           // -2
+	PushRef(pMetatable); // -1
+	lua_setmetatable(L, -2);
+	lua_pop(L, 1); // pop table
 }
 
 void CScriptObject::PushRef()
