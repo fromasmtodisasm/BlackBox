@@ -12,6 +12,12 @@ function player.OnInit( data )
 	Game:gotoMenu(true)
 end
 
+function player.TestChanges()
+	Console:PrintLine("TestChanges")
+	Console:PrintLine("Username: " .. player.name)
+end
+
+
 function test(  )
 	player.OnInit(123)
 end

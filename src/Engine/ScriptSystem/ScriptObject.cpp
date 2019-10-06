@@ -11,51 +11,7 @@ CScriptSystem* CScriptObject::m_pSS = nullptr;
 
 ///////////////////////////////////////////////////////////////////
 namespace {
-	void ToAny(bool& val, lua_State* L, int nIdx)
-	{
-		val = lua_toboolean(L, nIdx);
-	}
-
-	void ToAny(int& val, lua_State* L, int nIdx)
-	{
-		val = lua_tointeger(L, nIdx);
-	}
-
-	void ToAny(float& val, lua_State* L, int nIdx)
-	{
-		val = lua_tonumber(L, nIdx);
-	}
-
-	void ToAny(const char*& val, lua_State* L, int nIdx)
-	{
-		val = lua_tostring(L, nIdx);
-	}
-
-	void ToAny(HSCRIPTFUNCTION& val, lua_State* L, int nIdx)
-	{
-		lua_pushvalue(L, nIdx);
-		val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
-	}
-
-	void ToAny(IScriptObject* pObj, lua_State* L, int nIdx)
-	{
-		if (lua_istable(L, -1))
-		{
-			//pObj = CreateEmptyObject();
-			//pObj->AddRef();
-		}
-		lua_pushvalue(L, -1);
-		pObj->Attach();
-	}
-
-	template<typename T>
-	bool PopAny(T & val)
-	{
-		/*bool res = */ToAny(val, CScriptObject::L, -1);
-		lua_pop(CScriptObject::L, 1);
-		return true;
-	}
-	///////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////
 	template<typename T>
 	bool GetValueTemplate(CScriptObject * pSO, const char* sKey, T & Val, bool bChain = false)
 	{
@@ -66,48 +22,17 @@ namespace {
 			pSO->PushRef();
 		lua_pushstring(L, sKey);
 		lua_gettable(L, -2);
-		bool res = PopAny(Val);
+		bool res = CScriptObject::m_pSS->PopAny(Val);
 		lua_settop(L, top);
 		return true;
 	}
 	///////////////////////////////////////////////////////////////////
 
-	void PushAny(bool& val, lua_State * L)
-	{
-		lua_pushboolean(L, val);
-	}
-
-	void PushAny(int& val, lua_State * L)
-	{
-		lua_pushinteger(L, val);
-	}
-
-	void PushAny(float& val, lua_State * L)
-	{
-		lua_pushnumber(L, val);
-	}
-
-	void PushAny(const char*& val, lua_State * L)
-	{
-		lua_pushstring(L, val);
-	}
-
-	void PushAny(HSCRIPTFUNCTION & val, lua_State * L)
-	{
-		lua_getref(L, val);
-		assert(lua_type(L, -1) == LUA_TFUNCTION);
-	}
-
-	void PushAny(IScriptObject * &val, lua_State * L)
-	{
-		CScriptObject::m_pSS->PushObject(val);
-	}
-
 	template<typename T>
 	bool PushAnyTemplate(T & val)
 	{
-		PushAny(val, CScriptObject::L);
-		lua_pop(CScriptObject::L, 1);
+		CScriptObject::m_pSS->PushAny(val);
+		//lua_pop(CScriptObject::L, 1);
 		return true;
 	}
 	///////////////////////////////////////////////////////////////////
@@ -144,7 +69,7 @@ namespace {
 		auto L = CScriptObject::L;
 		CHECK_STACK(L);
 		pSO->PushRef();
-		PushAny(any, L);
+		CScriptObject::m_pSS->PushAny(any);
 		lua_rawseti(L, -2, nIndex);
 		lua_pop(L, 1); // Pop table.
 	}
@@ -156,7 +81,7 @@ namespace {
 		CHECK_STACK(L);
 		pSO->PushRef();
 		lua_rawgeti(L, -1, nIndex);
-		bool res = PopAny(any);
+		bool res = CScriptObject::m_pSS->PopAny(any);
 		lua_pop(L, 1); // Pop table.
 
 		return res;

@@ -195,21 +195,22 @@ struct IScriptSystem
 	virtual int BeginCall(HSCRIPTFUNCTION hFunc) = 0;						 // Márcio: changed the return type 
 	virtual int BeginCall(const char* sFuncName) = 0;						 // from void to int for error checking
 	virtual int BeginCall(const char* sTableName, const char* sFuncName) = 0;//
+	virtual int BeginCall(IScriptObject* pTable, const char* sFuncName) = 0;
 	//##@}
 
 	/*! end a call to script function
 		@param ret reference to the variable that will store an eventual return value
 	*/
 	//##@{
-	virtual void EndCall() = 0;
-	virtual void EndCall(int& nRet) = 0;
-	virtual void EndCall(float& fRet) = 0;
-	virtual void EndCall(const char*& sRet) = 0;
+	virtual bool EndCall() = 0;
+	virtual bool EndCall(int& nRet) = 0;
+	virtual bool EndCall(float& fRet) = 0;
+	virtual bool EndCall(const char*& sRet) = 0;
 #if defined(WIN64) || defined(LINUX)
-	inline void EndCall(char*& sRet) { EndCall((const char*&)sRet); }
+	inline bool EndCall(char*& sRet) { EndCall((const char*&)sRet); }
 #endif
-	virtual void EndCall(bool& bRet) = 0;
-	virtual void EndCall(IScriptObject* pScriptObject) = 0;
+	virtual bool EndCall(bool& bRet) = 0;
+	virtual bool EndCall(IScriptObject* pScriptObject) = 0;
 	//##@}
 
 	/*! function under development ingnore it*/

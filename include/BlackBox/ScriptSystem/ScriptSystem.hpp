@@ -12,6 +12,7 @@
 #include <set>
 #include <string>
 #include <stack>
+#include <cassert>
 
 typedef std::set<std::string, stl::less_stricmp<std::string>> ScriptFileList;
 typedef ScriptFileList::iterator															ScriptFileListItor;
@@ -44,16 +45,29 @@ public:
 	virtual IScriptObject* CreateEmptyObject() override;
 	virtual IScriptObject* CreateObject() override;
 	virtual IScriptObject* CreateGlobalObject(const char* sName) override;
-	//
+	//////////////////////////////////////////////////////////////////////////
+	// Begin Call.
+	//////////////////////////////////////////////////////////////////////////
 	virtual int BeginCall(HSCRIPTFUNCTION hFunc) override;
 	virtual int BeginCall(const char* sFuncName) override;
 	virtual int BeginCall(const char* sTableName, const char* sFuncName) override;
-	virtual void EndCall() override;
-	virtual void EndCall(int& nRet) override;
-	virtual void EndCall(float& fRet) override;
-	virtual void EndCall(const char*& sRet) override;
-	virtual void EndCall(bool& bRet) override;
-	virtual void EndCall(IScriptObject* pScriptObject) override;
+	virtual int BeginCall(IScriptObject* pTable, const char* sFuncName) override;
+
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// End Call.
+	//////////////////////////////////////////////////////////////////////////
+	virtual bool EndCall() override;
+	virtual bool EndCall(int& nRet) override;
+	virtual bool EndCall(float& fRet) override;
+	virtual bool EndCall(const char*& sRet) override;
+	virtual bool EndCall(bool& bRet) override;
+	virtual bool EndCall(IScriptObject* pScriptObject) override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Get function pointer.
+	//////////////////////////////////////////////////////////////////////////
 	virtual HSCRIPTFUNCTION GetFunctionPtr(const char* sFuncName) override;
 	virtual HSCRIPTFUNCTION GetFunctionPtr(const char* sTableName, const char* sFuncName) override;
 	virtual void ReleaseFunc(HSCRIPTFUNCTION f) override;
@@ -101,6 +115,93 @@ public:
 	void PushObject(IScriptObject* pObj);
 
 	virtual void LogStackTrace();
+
+public:
+	inline void ToAny(bool& val, int nIdx)
+	{
+		val = lua_toboolean(L, nIdx);
+	}
+
+	inline void ToAny(int& val, int nIdx)
+	{
+		val = lua_tointeger(L, nIdx);
+	}
+
+	inline void ToAny(float& val, int nIdx)
+	{
+		val = lua_tonumber(L, nIdx);
+	}
+
+	inline void ToAny(const char*& val, int nIdx)
+	{
+		val = lua_tostring(L, nIdx);
+	}
+
+	inline void ToAny(HSCRIPTFUNCTION& val, int nIdx)
+	{
+		lua_pushvalue(L, nIdx);
+		val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+	}
+
+	inline void ToAny(IScriptObject* pObj, int nIdx)
+	{
+		if (lua_istable(L, -1))
+		{
+			//pObj = CreateEmptyObject();
+			//pObj->AddRef();
+		}
+		lua_pushvalue(L, -1);
+		pObj->Attach();
+	}
+	template<typename T> bool PopAny(T & val)
+	{
+		/*bool res = */ToAny(val, -1);
+		lua_pop(L, 1);
+		return true;
+	}
+	///////////////////////////////////////////////////////////////////
+
+	inline void PushAny(bool& val)
+	{
+		lua_pushboolean(L, val);
+	}
+
+	inline void PushAny(int& val)
+	{
+		lua_pushinteger(L, val);
+	}
+
+	inline void PushAny(float& val)
+	{
+		lua_pushnumber(L, val);
+	}
+
+	inline void PushAny(const char*& val)
+	{
+		lua_pushstring(L, val);
+	}
+
+	inline void PushAny(HSCRIPTFUNCTION & val)
+	{
+		lua_getref(L, val);
+		assert(lua_type(L, -1) == LUA_TFUNCTION);
+	}
+
+	inline void PushAny(IScriptObject * &val)
+	{
+		PushObject(val);
+	}
+
+
+
+
+private:
+	bool       EndCallN(int nReturns);
+	template<typename T>
+	bool       EndCallAny(T& any);
+	template<typename T>
+	bool       EndCallAnyN(T*& any);
+
 private:
 	static CScriptSystem* s_mpScriptSystem;
 	lua_State* L;
@@ -140,3 +241,24 @@ private:
 
 };
 
+template<typename T>
+inline bool CScriptSystem::EndCallAny(T& any)
+{
+	//CHECK_STACK(L);
+	if (!EndCallN(1))
+		return false;
+	return PopAny(any);
+}
+
+template<typename T>
+inline bool CScriptSystem::EndCallAnyN(T*& anys)
+{
+	if (!EndCallN(n))
+		return false;
+	for (int i = 0; i < n; i++)
+	{
+		if (!PopAny(anys[i]))
+			return false;
+	}
+	return true;
+}

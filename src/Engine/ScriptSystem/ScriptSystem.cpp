@@ -242,28 +242,54 @@ int CScriptSystem::BeginCall(const char* sTableName, const char* sFuncName)
 	return 1;
 }
 
-void CScriptSystem::EndCall()
+int CScriptSystem::BeginCall(IScriptObject* pTable, const char* sFuncName)
 {
+	PushObject(pTable);
+
+	lua_pushstring(L, sFuncName);
+	lua_gettable(L, -2);
+	lua_remove(L, -2);  // Remove table global.
+	m_nTempArg = 0;
+
+	if (!lua_isfunction(L, -1))
+	{
+		ScriptWarning("[CScriptSystem::BeginCall] Function %s not found in the table", sFuncName);
+		m_nTempArg = -1;
+		lua_pop(L, 1);
+		return 0;
+	}
+
+	return 1;
 }
 
-void CScriptSystem::EndCall(int& nRet)
+bool CScriptSystem::EndCall()
 {
+	return EndCallN(0);
 }
 
-void CScriptSystem::EndCall(float& fRet)
+bool CScriptSystem::EndCall(int& nRet)
 {
+	return EndCallAny(nRet);
 }
 
-void CScriptSystem::EndCall(const char*& sRet)
+bool CScriptSystem::EndCall(float& fRet)
 {
+	return EndCallAny(fRet);
 }
 
-void CScriptSystem::EndCall(bool& bRet)
+bool CScriptSystem::EndCall(const char*& sRet)
 {
+	return EndCallAny(sRet);
 }
 
-void CScriptSystem::EndCall(IScriptObject* pScriptObject)
+bool CScriptSystem::EndCall(bool& bRet)
 {
+	return EndCallAny(bRet);
+}
+
+bool CScriptSystem::EndCall(IScriptObject* pScriptObject)
+{
+	return EndCallAny(pScriptObject);
 }
 
 HSCRIPTFUNCTION CScriptSystem::GetFunctionPtr(const char* sFuncName)
@@ -555,6 +581,23 @@ void CScriptSystem::PushObject(IScriptObject* pObj)
 void CScriptSystem::LogStackTrace()
 {
 	::DumpCallStack(L);
+}
+
+bool CScriptSystem::EndCallN(int nReturns)
+{
+	if (m_nTempArg < 0 || !L)
+		return false;
+
+	int base = lua_gettop(L) - m_nTempArg;  // function index.
+	lua_getref(L, (int)(INT_PTR)m_pErrorHandlerFunc);
+	lua_insert(L, base);  // put it under chunk and args
+
+	//signal(SIGINT, cry_laction);
+	int status = lua_pcall(L, m_nTempArg, nReturns, base);
+	//signal(SIGINT, SIG_DFL);
+	lua_remove(L, base);  // remove error handler function.
+
+	return status == 0;
 }
 
 void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
