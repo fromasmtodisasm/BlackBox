@@ -46,13 +46,6 @@ CEngine::~CEngine()
 	SAFE_RELEASE(m_InputHandler);
   */
 	SAFE_RELEASE(m_Render);
-	FILE* bloomTime;
-
-	bloomTime = fopen("bloomtime.txt", "a");
-
-	fprintf(bloomTime, "===========================\n");
-
-	fclose(bloomTime);
 }
 
 bool CEngine::Init()
