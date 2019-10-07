@@ -131,38 +131,37 @@ int CFunctionHandler::EndFunctionNull()
 
 int CFunctionHandler::EndFunction(int nRetVal)
 {
-	m_pSS->PushFuncParam(nRetVal);
+	m_pSS->PushAny(nRetVal);
 	return 1;
 }
 
 int CFunctionHandler::EndFunction(float fRetVal)
 {
-	m_pSS->PushFuncParam(fRetVal);
+	m_pSS->PushAny(fRetVal);
 	return 1;
 }
 
 int CFunctionHandler::EndFunction(const char* cRetVal)
 {
-	m_pSS->PushFuncParam(cRetVal);
+	m_pSS->PushAny(cRetVal);
 	return 1;
 }
 
 int CFunctionHandler::EndFunction(bool bRetVal)
 {
-	m_pSS->PushFuncParam(bRetVal);
+	m_pSS->PushAny(bRetVal);
 	return 1;
 }
 
 int CFunctionHandler::EndFunction(IScriptObject* pObj)
 {
-	m_pSS->PushFuncParam(pObj);
+	m_pSS->PushAny(pObj);
 	return 1;
 }
 
 int CFunctionHandler::EndFunction(HSCRIPTFUNCTION hFunc)
 {
-	//m_pSS->PushFuncParam(hFunc);
-	NOT_IMPL();
+	m_pSS->PushAny(hFunc);
 	return 1;
 }
 
@@ -173,11 +172,15 @@ int CFunctionHandler::EndFunction()
 
 int CFunctionHandler::EndFunction(int nRetVal1, int nRetVal2)
 {
+	m_pSS->PushAny(nRetVal1);
+	m_pSS->PushAny(nRetVal2);
 	return 2;
 }
 
 int CFunctionHandler::EndFunction(float fRetVal1, float fRetVal2)
 {
+	m_pSS->PushAny(fRetVal1);
+	m_pSS->PushAny(fRetVal2);
 	return 0;
 }
 

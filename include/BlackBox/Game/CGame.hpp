@@ -186,6 +186,8 @@ public:
 	//
 	bool InitScripts();
 
+	bool TestScriptSystem(bool& retflag);
+
 };
 
 

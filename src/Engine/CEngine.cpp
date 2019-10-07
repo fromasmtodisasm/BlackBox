@@ -217,8 +217,7 @@ void CEngine::ShowMessage(const char* message, const char* caption, MessageType 
 
 void CEngine::Log(const char* message)
 {
-	std::cout << "Log:" << std::endl;
-	std::cout << message << std::endl;
+	std::cout << "-- "<< message << std::endl;
 }
 
 IScriptSystem* CEngine::getIIScriptSystem()

@@ -86,6 +86,15 @@ bool CGame::InitScripts()
 	fps = 35.f;
 	m_pScriptSystem->ExecuteFile("scripts/game.lua");
 
+	bool retflag;
+	bool retval = TestScriptSystem(retflag);
+	if (retflag) return retval;
+
+}
+
+bool CGame::TestScriptSystem(bool& retflag)
+{
+	retflag = true;
 	m_playerObject = m_pScriptSystem->CreateEmptyObject();
 	if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
 	{
@@ -93,7 +102,7 @@ bool CGame::InitScripts()
 		m_pSystem->Log("\002 ERROR: can't find player table ");
 		return false;
 	}
-	const char *name;
+	const char* name;
 	int age;
 	m_playerObject->GetValue("name", name);
 	m_playerObject->GetValue("age", age);
@@ -105,8 +114,9 @@ bool CGame::InitScripts()
 
 	m_playerObject->SetValue("name", "Psina");
 	//m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
-	IScriptObject* console=nullptr;
+	IScriptObject* console = nullptr;
 	m_pScriptSystem->BeginCall("Console", "PrintLine");
+	m_pScriptSystem->PushFuncParam(m_ScriptObjectConsole->GetScriptObject());
 	m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
 	m_pScriptSystem->EndCall(console);
 
@@ -114,7 +124,7 @@ bool CGame::InitScripts()
 	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
 	m_pScriptSystem->EndCall(console);
 
-	m_pScriptSystem->BeginCall("player", "TestChanges");
+	m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
 	m_pScriptSystem->PushFuncParam("Test lkjakldfj call!!!");
 	m_pScriptSystem->EndCall(console);
 
@@ -123,13 +133,15 @@ bool CGame::InitScripts()
 	m_pScriptSystem->BeginCall(PrintLine);
 	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
 	m_pScriptSystem->EndCall();
-*/
+	*/
 	int n;
 	m_pScriptSystem->BeginCall("Console", "PrintLine");
+	m_pScriptSystem->PushFuncParam(m_ScriptObjectConsole->GetScriptObject());
 	m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
 	m_pScriptSystem->EndCall(console);
 
 	m_playerObject->GetValue("name", name);
 	m_Console->PrintLine("Player name: %s", name);
-
+	retflag = false;
+	return {};
 }
