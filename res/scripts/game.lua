@@ -12,8 +12,8 @@ function player.OnInit( data )
 	Game:gotoMenu(true)
 end
 
-function player.TestChanges()
-	Console:PrintLine("TestChanges"):PrintLine("call chain")
+function player.TestChanges(string)
+	Console:PrintLine("TestChanges"):PrintLine("call chain"..string)
 	Console:PrintLine("Username: " .. player.name)
 
 	return Console;

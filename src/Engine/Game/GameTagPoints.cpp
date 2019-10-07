@@ -105,9 +105,17 @@ bool CGame::InitScripts()
 
 	m_playerObject->SetValue("name", "Psina");
 	//m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
-	m_pScriptSystem->BeginCall(psina);
-
 	IScriptObject* console=nullptr;
+	m_pScriptSystem->BeginCall("Console", "PrintLine");
+	m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
+	m_pScriptSystem->EndCall(console);
+
+	m_pScriptSystem->BeginCall("player", "TestChanges");
+	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
+	m_pScriptSystem->EndCall(console);
+
+	m_pScriptSystem->BeginCall("player", "TestChanges");
+	m_pScriptSystem->PushFuncParam("Test lkjakldfj call!!!");
 	m_pScriptSystem->EndCall(console);
 
 	HSCRIPTFUNCTION PrintLine = 0;
@@ -117,9 +125,9 @@ bool CGame::InitScripts()
 	m_pScriptSystem->EndCall();
 */
 	int n;
-	m_pScriptSystem->BeginCall(m_ScriptObjectConsole->GetScriptObject(), "PrintLine");
-	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
-	m_pScriptSystem->EndCall();
+	m_pScriptSystem->BeginCall("Console", "PrintLine");
+	m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
+	m_pScriptSystem->EndCall(console);
 
 	m_playerObject->GetValue("name", name);
 	m_Console->PrintLine("Player name: %s", name);
