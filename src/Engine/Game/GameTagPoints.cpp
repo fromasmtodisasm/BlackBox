@@ -135,9 +135,9 @@ bool CGame::TestScriptSystem(bool& retflag)
 	m_pScriptSystem->EndCall();
 	*/
 	int n;
-	m_pScriptSystem->BeginCall("Console", "PrintLine");
-	m_pScriptSystem->PushFuncParam(m_ScriptObjectConsole->GetScriptObject());
-	m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
+	m_pScriptSystem->BeginCall(console, "PrintLine");
+	m_pScriptSystem->PushFuncParam(console);
+	m_pScriptSystem->PushFuncParam("Call by table reference");
 	m_pScriptSystem->EndCall(console);
 
 	m_playerObject->GetValue("name", name);
