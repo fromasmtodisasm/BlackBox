@@ -31,20 +31,26 @@ CEngine::CEngine()
   m_pFont(nullptr),
   m_pGame(nullptr),
   m_pLog(nullptr),
-  m_pWindow(nullptr)
+  m_pWindow(nullptr),
+	m_pScriptSystem(nullptr)
 {
 
 }
 
 CEngine::~CEngine()
 {
+	SAFE_RELEASE(r_window_width);
+	SAFE_RELEASE(r_window_height);
+	SAFE_RELEASE(r_bpp);
+	SAFE_RELEASE(r_zbpp);
+	SAFE_RELEASE(r_sbpp);
+
   SAFE_RELEASE(m_pLog);
 	SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pGame);
   SAFE_RELEASE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_InputHandler);
 	SAFE_RELEASE(m_Render);
 }
 
@@ -95,15 +101,15 @@ bool CEngine::Init()
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
 	//=============
-	m_ScriptSystem = new CScriptSystem();
-	if (!static_cast<CScriptSystem*>(m_ScriptSystem)->Init(this))
+	m_pScriptSystem = new CScriptSystem();
+	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
 	{
 		return false;
 	}
-	m_ScriptSystem->ExecuteBuffer("print(\"Lua!!!\")", 0);
-	m_ScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
+	m_pScriptSystem->ExecuteBuffer("print(\"Lua!!!\")", 0);
+	m_pScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
 	int a_cpp;
-	if (m_ScriptSystem->GetGlobalValue("a", a_cpp))
+	if (m_pScriptSystem->GetGlobalValue("a", a_cpp))
 		m_pConsole->PrintLine("a = %d", a_cpp);
 	else
 		m_pConsole->PrintLine("Cant get global value");
@@ -215,7 +221,7 @@ void CEngine::Log(const char* message)
 
 IScriptSystem* CEngine::getIIScriptSystem()
 {
-	return m_ScriptSystem;
+	return m_pScriptSystem;
 }
 
 bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)

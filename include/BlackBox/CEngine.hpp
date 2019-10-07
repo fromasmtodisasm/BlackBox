@@ -7,7 +7,7 @@
 
 //#define SAFE_RELEASE(o) if (o) o->Release();
 template<typename T>
-inline auto SAFE_RELEASE(T const*& t) -> decltype((void)(t->Release()), void())
+inline auto SAFE_RELEASE(T const* t) -> decltype((void)(t->Release()), void())
 {
 	t->Release();
 }
@@ -27,15 +27,6 @@ class CRender;
 
 class CEngine : public ISystem, public IInputEventListener, public IConsoleVarSink
 {
-private:
-  ILog *m_pLog;
-  CConsole *m_pConsole;
-  IGame *m_pGame;
-	IFont* m_pFont;
-	IWindow* m_pWindow;
-	IInputHandler* m_InputHandler;
-	IRender* m_Render;
-	IScriptSystem* m_ScriptSystem;
 public:
 	CEngine();
 	~CEngine();
@@ -59,11 +50,23 @@ public:
 	virtual IInputHandler* getIInputHandler() override;
 	virtual IScriptSystem* getIIScriptSystem() override;
 
+	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
+	virtual void Log(const char* message) override;
+
 	virtual bool OnInputEvent(sf::Event& event) override;
 	// Inherited via IConsoleVarSink
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 	bool ConfigLoad(const char* file);
+private:
+  ILog *m_pLog;
+  CConsole *m_pConsole;
+  IGame *m_pGame;
+	IFont* m_pFont;
+	IWindow* m_pWindow;
+	IInputHandler* m_InputHandler;
+	IRender* m_Render;
+	IScriptSystem* m_pScriptSystem;
 private:
 	ICVar* r_window_width;
 	ICVar* r_window_height;
@@ -71,10 +74,4 @@ private:
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
 
-
-	// Inherited via ISystem
-	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
-
-	// Inherited via ISystem
-	virtual void Log(const char* message) override;
 };
