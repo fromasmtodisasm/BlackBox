@@ -6,6 +6,7 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Material.hpp>
 #include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/IScriptSystem.hpp>
 
 #include <glm/glm.hpp>
 
@@ -74,6 +75,8 @@ public:
 
 	glm::mat4 uvMatrix;// = glm::mat4(1.0);
 
+	IScriptObject* m_pScript = nullptr;
+
   static Object* load(std::string path);
   virtual void move(Movement direction) override;
   void move(glm::vec3 v);
@@ -114,4 +117,8 @@ public:
 	virtual void rotateX(float angle) override;
 	virtual void rotateY(float angle) override;
 	virtual void rotateZ(float angle) override;
+
+	// Унаследовано через IObject
+	virtual void SetScriptObject(IScriptObject* pObject) override;
+	virtual IScriptObject* GetScriptObject() override;
 };

@@ -132,6 +132,7 @@ bool CGame::init(ISystem *pEngine)  {
 
 	initCommands();
 	initVariables();
+	InitScripts();
   auto init_cfg = m_Console->GetCVar("game_config");
   if (init_cfg == nullptr)
   {
@@ -193,7 +194,6 @@ bool CGame::init(ISystem *pEngine)  {
   //consoleBackGround->load("console/fc.jpg");
   m_Console->SetImage(consoleBackGround);
 
-	InitScripts();
 
   return true;
 }

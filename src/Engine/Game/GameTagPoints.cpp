@@ -121,19 +121,22 @@ bool CGame::TestScriptSystem(bool& retflag)
 	m_pScriptSystem->EndCall(console);
 
 	m_pScriptSystem->BeginCall("player", "TestChanges");
+	m_pScriptSystem->PushFuncParam(m_playerObject);
 	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
 	m_pScriptSystem->EndCall(console);
 
 	m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+	m_pScriptSystem->PushFuncParam(m_playerObject);
 	m_pScriptSystem->PushFuncParam("Test lkjakldfj call!!!");
 	m_pScriptSystem->EndCall(console);
 
 	HSCRIPTFUNCTION PrintLine = 0;
-	/*console->GetValue("PrintLine", PrintLine);
+	console->GetValue("PrintLine", PrintLine);
 	m_pScriptSystem->BeginCall(PrintLine);
-	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
+	m_pScriptSystem->PushFuncParam(console);
+	m_pScriptSystem->PushFuncParam("=====================Test HSCRIPTFUNCTION call!!!");
 	m_pScriptSystem->EndCall();
-	*/
+	
 	int n;
 	m_pScriptSystem->BeginCall(console, "PrintLine");
 	m_pScriptSystem->PushFuncParam(console);

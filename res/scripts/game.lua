@@ -1,27 +1,35 @@
 player = {
 	name = "PesBarbos",
 	age = 47,
+	alltime = 0.0
 }
 
-function player.OnInit( data )
+function player:OnInit( data )
 	Console:PrintLine("Player OnInit");
 	Console:PrintLine("Fps count = " .. Game:getFPS())
-	Console:PrintLine("Username: " .. player.name)
+	Console:PrintLine("Username: " .. self.name)
 
 	Console:Show(true)
 	Game:gotoMenu(true)
 end
 
-function player.TestChanges(string)
+function player:TestChanges(string)
 	Console:PrintLine("TestChanges"):PrintLine("call chain"..string)
-	Console:PrintLine("Username: " .. player.name)
+	Console:PrintLine("Username: " .. self.name)
 
 	return Console;
 end
 
+function player:Update( dt )
+	Console:Clear()
+	self.alltime = self.alltime + dt;
+	Console:PrintLine("alltime: " .. self.alltime)
+end
+
+
 
 function test(  )
-	player.OnInit(123)
+	player:OnInit(123)
 end
 
 test()

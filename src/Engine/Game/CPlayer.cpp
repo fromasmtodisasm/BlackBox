@@ -13,11 +13,13 @@ CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.ob
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);
+	GetISystem()->getIIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
-
+	m_pScript = GetISystem()->getIIScriptSystem()->CreateEmptyObject();
+	GetISystem()->getIIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 bool CPlayer::OnInputEvent(sf::Event &event)
@@ -129,6 +131,10 @@ void CPlayer::update(float deltatime)
   m_transform.position += velocity * deltatime;
 #endif
   //m_Camera->m_target = m_transform.position;
+	GetISystem()->getIIScriptSystem()->BeginCall("player", "Update");
+	GetISystem()->getIIScriptSystem()->PushFuncParam(m_pScript);
+	GetISystem()->getIIScriptSystem()->PushFuncParam(deltatime);
+	GetISystem()->getIIScriptSystem()->EndCall();
 }
 
 CPlayer *CPlayer::operator=(Object *obj)

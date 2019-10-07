@@ -4,6 +4,7 @@
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/IGame.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -160,6 +161,16 @@ void Object::rotateY(float angle)
 void Object::rotateZ(float angle)
 {
 	m_transform.rotation.z = angle;
+}
+
+void Object::SetScriptObject(IScriptObject* pObject)
+{
+	m_pScript = pObject;
+}
+
+IScriptObject* Object::GetScriptObject()
+{
+	return m_pScript;
 }
 
 void Object::move(Movement direction) {
