@@ -17,6 +17,7 @@
 
 using namespace Utils;
 
+
 CEngine::CEngine()
 	:
 	r_window_width(nullptr),
@@ -38,13 +39,12 @@ CEngine::CEngine()
 CEngine::~CEngine()
 {
   SAFE_RELEASE(m_pLog);
-  /*
+	SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pGame);
   SAFE_RELEASE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_InputHandler);
-  */
 	SAFE_RELEASE(m_Render);
 }
 

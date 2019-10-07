@@ -5,7 +5,22 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 
-#define SAFE_RELEASE(o) if (o) o->Release();
+//#define SAFE_RELEASE(o) if (o) o->Release();
+template<typename T>
+inline auto SAFE_RELEASE(T const*& t) -> decltype((void)(t->Release()), void())
+{
+	t->Release();
+}
+
+template<typename T>
+inline auto SAFE_RELEASE(T *& t)
+{
+	if (t != nullptr)
+	{
+		delete t;
+		t = nullptr;
+	}
+}
 
 class CConsole;
 class CRender;
