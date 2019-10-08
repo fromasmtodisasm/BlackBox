@@ -72,6 +72,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 bool HdrTechnique::OnRenderPass(int pass)
 {
+	DEBUG_GROUP(__FUNCTION__);
   if (!shadowMapping->OnRenderPass(pass))
   {
 		if (m_Scene->GetSkyBox() != nullptr)
@@ -114,17 +115,21 @@ void HdrTechnique::BloomPass()
 {
 	GLuint64 time_0, time_1, time_2;
 
-	PROFILER_PUSH_CPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
-	//PROFILER_PUSH_GPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
-	//glQueryCounter(timer_queries[0], GL_TIMESTAMP);
-	downsampling();
-	//glQueryCounter(timer_queries[1], GL_TIMESTAMP);
-	//PROFILER_POP_GPU_MARKER();
-	PROFILER_POP_CPU_MARKER();
-	PROFILER_PUSH_CPU_MARKER("UPSAMPLING", Utils::COLOR_RED);
-	upsampling();
-	//glQueryCounter(timer_queries[2], GL_TIMESTAMP);
-	PROFILER_POP_CPU_MARKER();
+	{
+		const char section[] = "DOWNSAMPLING";
+		PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_BLACK);
+			DEBUG_GROUP(section);
+			downsampling();
+		PROFILER_POP_CPU_MARKER();
+	}
+	{
+		const char section[] = "UPSAMPLING";
+		PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_RED);
+			DEBUG_GROUP(section);
+			upsampling();
+		PROFILER_POP_CPU_MARKER();
+	}
+
 
 #if 0
 	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
@@ -306,8 +311,8 @@ void HdrTechnique::Do(unsigned int texture)
 		GetISystem()->getIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->getIConsole()->GetCVar("fogB")->GetFVal());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(fog.r, fog.g, fog.b, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glClearColor(fog.r, fog.g, fog.b, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
 	m_ScreenShader->use();
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
   m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");

@@ -43,6 +43,7 @@ void Object::parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderPro
 }
 
 void Object::draw(void * camera) {
+	DEBUG_GROUP(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
 
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));

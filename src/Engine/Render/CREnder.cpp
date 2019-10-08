@@ -148,7 +148,7 @@ void CRender::glInit()
 {
 	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
 	{
-		glDebug = new OpenglDebug("out/glDebug.txt");
+		glDebug = new OpenglDebuger("out/glDebug.txt");
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}

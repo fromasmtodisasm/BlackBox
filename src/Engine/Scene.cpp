@@ -375,8 +375,13 @@ bool Scene::selectObject(std::string name)
 
 void Scene::draw(float dt)
 { 
+	//auto tech_name = m_Technique->GetName();
+	char debug_label[256];
+	//sprintf(debug_label, "Technique: %s", tech_name);
+	DEBUG_GROUP("Render Loop");
   if (m_Objects.size() > 0)
   {
+		DEBUG_GROUP("PASS...");
     for (int pass = 0; m_Technique->OnRenderPass(pass); pass++);
   }
   m_RenderedScene = m_Technique->GetFrame();
@@ -802,6 +807,7 @@ void Scene::end()
 
 void Scene::present(int width, int height)
 {
+	DEBUG_GROUP(__FUNCTION__);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (postProcessor == nullptr)
 	{
@@ -812,8 +818,8 @@ void Scene::present(int width, int height)
 		//PROFILER_PUSH_GPU_MARKER("Present", Utils::COLOR_GREEN);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		render->SetViewport(0, 0, width, height);
-		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-		glCheck(glClear(GL_COLOR_BUFFER_BIT));
+		/*glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+		glCheck(glClear(GL_COLOR_BUFFER_BIT));*/
 		m_ScreenShader->use();
 		auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
 		auto transform = glm::scale(proj, glm::vec3(width, height, 1));

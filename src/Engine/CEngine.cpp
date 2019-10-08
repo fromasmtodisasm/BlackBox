@@ -251,7 +251,10 @@ void CEngine::BeginFrame()
 void CEngine::EndFrame()
 {
 	PROFILER_POP_CPU_MARKER();
-	PROFILER_DRAW();
+	{
+		DEBUG_GROUP("DRAW_PROFILE");
+		PROFILER_DRAW();
+	}
 }
 
 bool CEngine::OnInputEvent(sf::Event& event)

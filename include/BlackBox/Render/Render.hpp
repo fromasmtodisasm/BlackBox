@@ -73,7 +73,7 @@ private:
 	//============
 	const GLuint majorVersion = 4;
 	const GLuint minorVersion = 3;
-	OpenglDebug *glDebug;
+	OpenglDebuger *glDebug;
 	//============
 	CCamera *m_Camera;
 	Quad *m_ScreenQuad;

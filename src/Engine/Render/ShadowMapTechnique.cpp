@@ -51,6 +51,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 
 bool ShadowMapping::OnRenderPass(int pass)
 {
+	DEBUG_GROUP(__FUNCTION__);
   renderPass = static_cast<Pass>(pass);
   switch (pass)
   {
@@ -68,6 +69,7 @@ bool ShadowMapping::OnRenderPass(int pass)
 
 void ShadowMapping::DepthPass()
 {
+	DEBUG_GROUP(__FUNCTION__);
   float m = s_divider->GetFVal();
   lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
@@ -90,6 +92,7 @@ void ShadowMapping::DepthPass()
 
 void ShadowMapping::RenderPass()
 {
+	DEBUG_GROUP(__FUNCTION__);
   auto camera = m_Scene->getCurrentCamera();
 
   Pipeline::instance()->view = camera->getViewMatrix();
@@ -127,6 +130,7 @@ void ShadowMapping::RenderPass()
 
 void ShadowMapping::RenderDepth(Object* object)
 {
+	DEBUG_GROUP(__FUNCTION__);
   if (object->visible())
   {
     m_ShadowMapShader->setUniformValue(object->getTransform(), "model");
@@ -137,6 +141,7 @@ void ShadowMapping::RenderDepth(Object* object)
 
 void ShadowMapping::RenderOpaque(Object* object)
 {
+	DEBUG_GROUP(__FUNCTION__);
   auto camera = m_Scene->getCurrentCamera();
   if (!object->m_transparent && (object->visible()) && 
     glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
@@ -167,6 +172,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 
 void ShadowMapping::RenderTransparent(Object* object)
 {
+	DEBUG_GROUP(__FUNCTION__);
 	glCheck(glEnable(GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (object->m_transparent && (object->visible()))
@@ -191,6 +197,7 @@ void ShadowMapping::RenderTransparent(Object* object)
 
 void ShadowMapping::OnDepthPass()
 {
+	DEBUG_GROUP(__FUNCTION__);
   glCullFace(GL_FRONT);
   DepthPass();
   glCullFace(GL_BACK);
@@ -198,6 +205,7 @@ void ShadowMapping::OnDepthPass()
 
 void ShadowMapping::OnRenderPass()
 {
+	DEBUG_GROUP(__FUNCTION__);
   m_RenderedScene->bind();
 	glm::vec4 fog = glm::vec4(
 		GetISystem()->getIConsole()->GetCVar("fogR")->GetFVal(),
@@ -211,6 +219,7 @@ void ShadowMapping::OnRenderPass()
 
 void ShadowMapping::SetupLights(Object *object)
 {
+	DEBUG_GROUP(__FUNCTION__);
   if (!bLighting)
     return;
   currentLight = 0;
@@ -243,6 +252,7 @@ void ShadowMapping::SetupSpotLights()
 
 void ShadowMapping::InitLights()
 {
+	DEBUG_GROUP(__FUNCTION__);
   for (const auto& lightit : m_Scene->GetPointLights())
   {
     auto light = lightit.second;
@@ -263,6 +273,7 @@ void ShadowMapping::InitLights()
 
 bool ShadowMapping::OnObjectFound(Object* object)
 {
+	DEBUG_GROUP(__FUNCTION__);
   switch (renderStage)
   {
   case ShadowMapping::RENDER_DEPTH:
@@ -287,6 +298,7 @@ int ShadowMapping::GetFrame()
 
 bool ShadowMapping::OnLightFound(DirectionLight* light)
 {
+	DEBUG_GROUP(__FUNCTION__);
   auto program = Pipeline::instance()->object->m_Material->program;
   program->setUniformValue(light->direction, "dirLight.direction");
   program->setUniformValue(light->ambient, "dirLight.ambient");
@@ -297,6 +309,7 @@ bool ShadowMapping::OnLightFound(DirectionLight* light)
 
 bool ShadowMapping::OnLightFound(PointLight* light)
 {
+	DEBUG_GROUP(__FUNCTION__);
   if (light->enabled)
   {
     auto program = Pipeline::instance()->object->m_Material->program;
@@ -318,6 +331,7 @@ bool ShadowMapping::OnLightFound(PointLight* light)
 bool ShadowMapping::OnLightFound(SpotLight* light)
 {
   
+	DEBUG_GROUP(__FUNCTION__);
   auto program = Pipeline::instance()->object->m_Material->program;
   program->setUniformValue(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");
   program->setUniformValue(m_Scene->getCurrentCamera()->Front, "spotLight.direction");
