@@ -80,7 +80,7 @@ std::shared_ptr<CShader> CShader::load(string path, CShader::type type) {
     return nullptr;
   shader->compile();
   shader->print();
-	glCheck(glObjectLabel(GL_SHADER, shader->get(), path.size(), path.c_str()));
+	debuger::shader_label(shader->get(), path);
   return shader;
 }
 
@@ -196,7 +196,6 @@ bool CBaseShaderProgram::create() {
 	attach(m_Vertex);
 	attach(m_Fragment);
   link();
-	//glObjectLabel(GL_TEXTURE, m_Program, strlen(name), name);
 	return m_Status.get(GL_LINK_STATUS);
 }
 

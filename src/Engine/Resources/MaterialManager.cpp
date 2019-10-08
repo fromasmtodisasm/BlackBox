@@ -125,8 +125,7 @@ bool MaterialManager::loadLib(std::string name)
 				else
 				{
 					auto p = this->shaders_map[pd.name];
-					glCheck(glObjectLabel(GL_PROGRAM, p->get(), pd.name.size(), pd.name.c_str()));
-
+					debuger::program_label(p->get(), name);
 				}
 			}
 		}
