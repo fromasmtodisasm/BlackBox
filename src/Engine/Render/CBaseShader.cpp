@@ -1,4 +1,4 @@
-#include <BlackBox/Render/CBaseShader.hpp>
+#include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>

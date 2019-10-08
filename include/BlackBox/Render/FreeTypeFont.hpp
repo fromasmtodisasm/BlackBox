@@ -6,7 +6,7 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <map>
 #include <glm/glm.hpp>
-#include <CShader.hpp>
+#include <Shader.hpp>
 
 class FreeTypeFont : public IFont
 {

@@ -3,7 +3,7 @@
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/Game/CPlayer.h>
+#include <BlackBox/Game/Player.h>
 
 #include <iostream>
 using	namespace std;

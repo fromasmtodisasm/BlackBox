@@ -1,6 +1,6 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/World.hpp>

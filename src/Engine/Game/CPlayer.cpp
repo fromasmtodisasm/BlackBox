@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include <BlackBox/Game/CPlayer.h>
+#include <BlackBox/Game/Player.h>
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>

@@ -1,4 +1,4 @@
-﻿#include <BlackBox/Game/CGame.hpp>
+﻿#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Triangle.hpp>

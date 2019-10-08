@@ -1,5 +1,5 @@
 #include <BlackBox/ScriptObjectGame.hpp>
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

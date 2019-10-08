@@ -1,4 +1,4 @@
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
