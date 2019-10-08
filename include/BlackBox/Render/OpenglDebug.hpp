@@ -4,12 +4,11 @@
 #include <fstream>
 #include <cstring>
 
-class OpenglDebuger;
-
 #define TO_STR(v, m) case GL_##v: { return m"GL_"#v; }
 #define GET_SOURCE(v) TO_STR(v, "Source: ")
 #define GET_TYPE(v) TO_STR(v, "Type: ")
 #define GET_SEVERITY(v) TO_STR(v, "Severity: ")
+#define DEBUG_GROUP(message) CDebugSection debugSection(sizeof(message), message)
 
 #if defined(_DEBUG) || defined(GL_DEBUG)
 
@@ -24,10 +23,6 @@ class OpenglDebuger;
 //#define glCheck(expr) (expr)
 
 #endif
-
-#define DEBUG_GROUP(message) CDebugSection debugSection(sizeof(message), message)
-//#define OBJECT_LABEL(object, label)
-
 
 class OpenglDebuger
 {
