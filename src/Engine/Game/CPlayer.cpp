@@ -1,11 +1,12 @@
 #include <iostream>
 
-#include <BlackBox/Game/CPlayer.h>
+#include <BlackBox/Game/Player.h>
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Profiler/Profiler.h>
 
 CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.obj"))
 {
@@ -13,11 +14,13 @@ CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.ob
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);
+	GetISystem()->getIIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
-
+	m_pScript = GetISystem()->getIIScriptSystem()->CreateEmptyObject();
+	GetISystem()->getIIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 bool CPlayer::OnInputEvent(sf::Event &event)
@@ -129,6 +132,12 @@ void CPlayer::update(float deltatime)
   m_transform.position += velocity * deltatime;
 #endif
   //m_Camera->m_target = m_transform.position;
+	PROFILER_PUSH_CPU_MARKER("CALL SCRIPT", Utils::COLOR_DARK_GREEN);
+	GetISystem()->getIIScriptSystem()->BeginCall("player", "Update");
+	GetISystem()->getIIScriptSystem()->PushFuncParam(m_pScript);
+	GetISystem()->getIIScriptSystem()->PushFuncParam(deltatime);
+	GetISystem()->getIIScriptSystem()->EndCall();
+	PROFILER_POP_CPU_MARKER();
 }
 
 CPlayer *CPlayer::operator=(Object *obj)

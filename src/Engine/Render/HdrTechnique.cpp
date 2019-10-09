@@ -169,7 +169,7 @@ void HdrTechnique::createShader()
 	MaterialManager::instance()->loadProgram(desc[2],false);
 
 	m_ScreenShader = MaterialManager::instance()->getProgram("hdr_shader");
-	m_ScreenShader->create();
+	//m_ScreenShader->create();
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"scene");
 	m_ScreenShader->setUniformValue(1,"bloomBlur");
@@ -182,7 +182,7 @@ void HdrTechnique::createShader()
   );
 	*/
 	m_DownsampleShader = MaterialManager::instance()->getProgram("downsampling");
-	m_DownsampleShader->create();
+	//m_DownsampleShader->create();
 	m_DownsampleShader->use();
 	m_DownsampleShader->setUniformValue(0,"image");
 	m_DownsampleShader->unuse();
@@ -194,7 +194,7 @@ void HdrTechnique::createShader()
   );
 	*/
 	m_UpsampleShader = MaterialManager::instance()->getProgram("upsampling");
-	m_UpsampleShader->create();
+	//m_UpsampleShader->create();
 
 }
 

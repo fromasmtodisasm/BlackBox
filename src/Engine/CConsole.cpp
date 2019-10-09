@@ -812,7 +812,9 @@ void CConsole::ExecuteFile(const char* file)
 	}
 }
 
-CConsole::CConsole()
+CConsole::CConsole() 
+	:
+	m_pBackGround(nullptr)
 {
 	m_engine = GetISystem();
 	//prompt = user + " #";

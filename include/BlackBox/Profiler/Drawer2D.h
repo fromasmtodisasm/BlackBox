@@ -10,7 +10,11 @@
 class Drawer2D
 {
 private:
-	GLuint	m_id_vbo;	// General-purpose VBO
+	GLuint m_id_vao_rect;
+	GLuint m_id_vao_string;
+
+	GLuint	m_id_vbo_rect;
+	GLuint m_id_vbo_string;
 
 	// Unicolor shader
 	GLuint	m_id_vert_color;

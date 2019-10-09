@@ -9,7 +9,10 @@ bool OpenglDebug::isError = false;
 OpenglDebug::OpenglDebug(const char *file) : debug_file(file)
 {
 	if (glDebugMessageCallback != nullptr)
+	{
 		glDebugMessageCallback(callBack, &debug_file);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+	}
 }
 
 OpenglDebug::~OpenglDebug()
@@ -36,9 +39,9 @@ void OpenglDebug::callBack(GLenum source​, GLenum type​, GLuint id​, GLenu
 {
 	//std::fstream* df = const_cast< std::fstream* > (reinterpret_cast< const std::fstream*​ >(userParam​) );
 
-	if (severity​ == GL_DEBUG_SEVERITY_NOTIFICATION)
-		isError = false;
-	else
+	//if (severity​ == GL_DEBUG_SEVERITY_NOTIFICATION)
+	//	;// isError = false;
+	//else
 	{
 		isError = true;
 		std::stringstream ss;

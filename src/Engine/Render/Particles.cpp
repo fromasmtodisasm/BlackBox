@@ -1,5 +1,5 @@
 #include <BlackBox/Render/Particles.hpp>
-#include <BlackBox/Render/CBaseShader.hpp>
+#include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/MathHelper.hpp>
 
 #include <vector>
