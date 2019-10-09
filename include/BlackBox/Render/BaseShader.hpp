@@ -12,7 +12,7 @@ class CBaseShaderProgram;
 class CShaderProgram;
 
 using BaseShaderProgramRef = std::shared_ptr<CBaseShaderProgram>;
-using ShadeProgramRef = std::shared_ptr<CShaderProgram>;
+using ShaderProgramRef = std::shared_ptr<CShaderProgram>;
 using ShaderRef = std::shared_ptr<CShader>;
 
 struct ShaderStatus

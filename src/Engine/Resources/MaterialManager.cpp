@@ -299,7 +299,7 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 		ShaderInfo gi;
 		ShaderInfo ci;
 
-		ShadeProgramRef shaderProgram;
+		ShaderProgramRef shaderProgram;
 		if (load_cs && load_gs)
 		{
 			gi = ShaderInfo(gs, desc.gs);
