@@ -48,7 +48,7 @@ private:
 	std::map<GLchar, Character> Characters;
 
 	GLuint VAO, VBO, EBO;
-	BaseShadeProgramrRef shader;
+	BaseShaderProgramRef shader;
 	
 public:
 	// Унаследовано через IFont

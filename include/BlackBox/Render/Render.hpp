@@ -78,7 +78,7 @@ private:
 	CCamera *m_Camera;
 	Quad *m_ScreenQuad;
 	// Shaders 
-	BaseShadeProgramrRef m_ScreenShader;
+	BaseShaderProgramRef m_ScreenShader;
 #if defined(_DEBUG) || defined(GL_DEBUG)
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
 #else

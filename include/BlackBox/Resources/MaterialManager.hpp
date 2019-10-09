@@ -36,12 +36,12 @@ class MaterialManager
 	bool alpha_shakaled = false;
 	bool isSkyBox = false;
 	ICVar* root_path = nullptr;
-	std::map<std::string, BaseShadeProgramrRef> shaders_map;
+	std::map<std::string, BaseShaderProgramRef> shaders_map;
 	ISystem* m_pSystem;
 public:
   static MaterialManager *instance();
 	static bool init(ISystem *pSystem);
-  BaseShadeProgramrRef getProgram(std::string name);
+  BaseShaderProgramRef getProgram(std::string name);
   Material *getMaterial(std::string name);
   static bool init(std::string materialLib);
 	bool reloadShaders();

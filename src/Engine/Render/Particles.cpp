@@ -17,7 +17,7 @@ inline Vec3 randomVector(int min, int max)
 	return vec;
 }
 
-Particles::Particles(int cnt, float radius, float pos, float minV, float maxV, BaseShadeProgramrRef shader)
+Particles::Particles(int cnt, float radius, float pos, float minV, float maxV, BaseShaderProgramRef shader)
 {
 }
 

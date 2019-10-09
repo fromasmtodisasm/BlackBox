@@ -13,7 +13,7 @@ class SkyBox : public IDrawable
 public:
 	TextureCube* texture;
 	VertexArrayObject* vao;
-	BaseShadeProgramrRef shader;
+	BaseShaderProgramRef shader;
 
 	SkyBox(TextureCube *t)
 		:

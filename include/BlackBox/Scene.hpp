@@ -73,7 +73,7 @@ public:
 public:
 	GLuint VAO;
 	size_t point_cnt = 0;
-	std::shared_ptr<CBaseShaderProgram> shader;
+	BaseShaderProgramRef shader;
 };
 
 class Scene
@@ -87,7 +87,7 @@ private:
   GLint m_RenderedScene;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;
-	BaseShadeProgramrRef m_ScreenShader;
+	BaseShaderProgramRef m_ScreenShader;
 	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
   ITechnique* m_Technique;

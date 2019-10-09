@@ -6,7 +6,7 @@
 class Particles
 {
 public:
-	Particles(int cnt, float radius, float pos, float minV, float maxV, BaseShadeProgramrRef shader);
+	Particles(int cnt, float radius, float pos, float minV, float maxV, BaseShaderProgramRef shader);
 	~Particles();
 
 	bool Create();
@@ -16,7 +16,7 @@ public:
 
 
 private:
-	BaseShadeProgramrRef shader;
+	BaseShaderProgramRef shader;
 	GLuint positions;
 	GLuint velocities;
 	int posCnt;

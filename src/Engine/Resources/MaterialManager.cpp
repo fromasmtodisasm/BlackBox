@@ -33,7 +33,7 @@ bool MaterialManager::init(ISystem* pSystem)
 	return manager != nullptr;
 }
 
-BaseShadeProgramrRef MaterialManager::getProgram(std::string name)
+BaseShaderProgramRef MaterialManager::getProgram(std::string name)
 {
 	auto p_it = shaders_map.find(name);
 	if (p_it == shaders_map.end())
