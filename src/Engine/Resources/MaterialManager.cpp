@@ -25,7 +25,7 @@ MaterialManager *MaterialManager::instance()
   return manager;
 }
 
-std::shared_ptr<CShaderProgram> MaterialManager::getProgram(std::string name)
+BaseShadeProgramrRef MaterialManager::getProgram(std::string name)
 {
 	auto p_it = shaders_map.find(name);
 	if (p_it == shaders_map.end())
@@ -270,11 +270,11 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 	}
 	else
 	{
-		auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
+		CBaseShaderProgram::ShaderInfo vi(vs, desc.vs);
+		CBaseShaderProgram::ShaderInfo fi(fs, desc.fs);
+		auto shaderProgram = std::make_shared<CShaderProgram>(vi, fi);
 		if (!shaderProgram->create())
 			return false;
-		shaderProgram->vertex_name = desc.vs;
-		shaderProgram->fragment_name = desc.fs;
 		auto it = shaders_map.find(desc.name);
 		if (!isReload) shaders_map[desc.name] = shaderProgram;
 	}
@@ -287,8 +287,8 @@ bool MaterialManager::reloadShaders()
 	{
 		ProgramDesc pd;
 		pd.name = shader.first;
-		pd.vs = shader.second->vertex_name;
-		pd.fs = shader.second->fragment_name;
+		pd.vs = shader.second->m_Vertex.name;
+		pd.fs = shader.second->m_Fragment.name;
 		reloadShader(pd);
 	}
 	return true;
@@ -304,8 +304,8 @@ bool MaterialManager::reloadShaders(std::vector<std::string> names)
 		auto s_it = shaders_map.find(shader);
 		if (s_it == shaders_map.end())
 			continue;
-		pd.vs = s_it->second->vertex_name;
-		pd.fs = s_it->second->fragment_name;
+		pd.vs = s_it->second->m_Vertex.name;
+		pd.fs = s_it->second->m_Fragment.name;
 		reloadShader(pd);
 	}
 	return true;

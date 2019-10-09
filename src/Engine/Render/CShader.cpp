@@ -13,9 +13,13 @@ CShaderProgram::CShaderProgram() : CBaseShaderProgram()
 
 }
 
-CShaderProgram::CShaderProgram(std::shared_ptr<CShader> vs, std::shared_ptr<CShader> fs) : CBaseShaderProgram(vs, fs)
+CShaderProgram::CShaderProgram(ShaderRef vs, ShaderRef fs) : CBaseShaderProgram(vs, fs)
 {
 
+}
+
+CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs) : CBaseShaderProgram(vs, fs)
+{
 }
 
 CShaderProgram::CShaderProgram(std::string vs, std::string fs) 

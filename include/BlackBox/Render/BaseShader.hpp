@@ -47,6 +47,8 @@ public:
   enum type : int{
     E_VERTEX = GL_VERTEX_SHADER,
     E_FRAGMENT = GL_FRAGMENT_SHADER,
+    E_GEOMETRY = GL_GEOMETRY_SHADER,
+    E_COMPUTE = GL_COMPUTE_SHADER,
     E_UNKNOWN = -1
   };
   CShader(std::string text, CShader::type type);
@@ -295,16 +297,36 @@ public:
 class CBaseShaderProgram {
 public:
   const size_t BUFFER_SIZE = 1024;
+	struct ShaderInfo
+	{
+		ShaderInfo()
+			:
+			shader(nullptr),
+			attached(false)
+		{
+		}
+		ShaderInfo(ShaderRef shader, std::string &name)
+			:
+			shader(shader),
+			name(name),
+			attached(false)
+		{
+		}
 
-  std::shared_ptr<CShader> m_Vertex = nullptr;
-	std::string vertex_name;
-  std::shared_ptr<CShader> m_Fragment = nullptr;
-	std::string fragment_name;
+		ShaderRef shader;
+		std::string name;
+		bool attached;
+	};
+
+  ShaderInfo m_Vertex;
+  ShaderInfo m_Fragment;
+  ShaderInfo m_Geometry;
+  ShaderInfo m_Compute;
+
   GLuint m_Program;
   GLchar infoLog[512];
   ShaderProgramStatus m_Status;
-	bool fragment_attached = false;
-	bool vertex_attached = false;
+
   bool created = false;
   std::map<std::string, GLint> m_Cache;
   static char* buffer;
@@ -313,12 +335,16 @@ public:
   bool status();
 public:
   CBaseShaderProgram();
-  CBaseShaderProgram(std::shared_ptr<CShader> vs, std::shared_ptr<CShader> fs);
+  CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
+  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs);
   ~CBaseShaderProgram();
 
   bool create();
-  void attach(std::shared_ptr<CShader> shader);
-  void detach(std::shared_ptr<CShader> shader);
+  void attach(ShaderInfo& shader);
+  ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
+  void detach(ShaderInfo& shader);
+	bool dispatch(int x, int y, int z, GLbitfield barriers);
+	bool dispatchInderect();
   bool link();
   void use();
   void unuse();
