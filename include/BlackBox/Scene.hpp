@@ -11,6 +11,7 @@
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/Terrain.hpp>
+#include <BlackBox/Render/BaseShader.hpp>
 
 #include <map>
 #include <string>
@@ -86,7 +87,7 @@ private:
   GLint m_RenderedScene;
 	Quad m_ScreenQuad;
 	SkyBox* skyBox;
-	CBaseShaderProgram *m_ScreenShader;
+	BaseShadeProgramrRef m_ScreenShader;
 	CShaderProgram *m_TextShader;
 	IPostProcessor* postProcessor = nullptr;
   ITechnique* m_Technique;

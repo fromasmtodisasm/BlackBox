@@ -45,15 +45,18 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
-    GetISystem()->getILog()->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
-    //GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
+		/*auto log = GetISystem()->getILog();
+		if (log != nullptr)
+			log->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
+		else
+			GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());*/
     return false;
   }
   return true;
  
 }
 CShader::CShader(string text, CShader::type type) :
-  m_Text(text), m_Type(type), m_Status(this) 
+  m_Text(text), m_Type(type), m_Status(this), m_Empty(true)
 {
   
 }
@@ -80,6 +83,7 @@ std::shared_ptr<CShader> CShader::load(string path, CShader::type type) {
     return nullptr;
   shader->compile();
   shader->print();
+	shader->m_Empty = false;
 	debuger::shader_label(shader->get(), path);
   return shader;
 }
@@ -146,6 +150,11 @@ bool CShader::bind() {
  return true; 
 }
 
+bool CShader::empty()
+{
+	return m_Empty;
+}
+
 void CShader::print() {
   //cout << m_Text << endl;
 }
@@ -196,6 +205,25 @@ CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs)
 	m_Fragment = fs;
 }
 
+CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs)
+	:
+	CBaseShaderProgram()
+{
+	m_Vertex = vs;
+	m_Fragment = fs;
+	m_Geometry = gs;
+}
+
+CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs)
+	:
+	CBaseShaderProgram()
+{
+	m_Vertex = vs;
+	m_Fragment = fs;
+	m_Geometry = gs;
+	m_Compute = cs;
+}
+
 CBaseShaderProgram::~CBaseShaderProgram() {
 	glDeleteProgram(m_Program);
 }
@@ -207,12 +235,16 @@ bool CBaseShaderProgram::create() {
 	}
 	attach(m_Vertex);
 	attach(m_Fragment);
+	attach(m_Geometry);
+	attach(m_Compute);
   link();
 	return m_Status.get(GL_LINK_STATUS);
 }
 
 void CBaseShaderProgram::attach(ShaderInfo& info) {
 	ShaderInfo attached;
+	
+	if (!info.used) return;
   switch (info.shader->m_Type) {
   case CShader::type::E_VERTEX:
 		attached = attachInternal(info, m_Vertex);
@@ -443,13 +475,20 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f)
+void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c)
 {
 	detach(m_Vertex);
 	detach(m_Fragment);
+	detach(m_Geometry);
+	detach(m_Compute);
 	deleteProgram();
+
 	m_Vertex.shader = v;
 	m_Fragment.shader = f;
+	if (g != nullptr)
+		m_Geometry.shader = g;
+	if (nullptr)
+		m_Compute.shader = c;
 	create();
 }
 

@@ -572,7 +572,7 @@ void Profiler::drawHoveredMarkersText(const int *read_indices, const FrameInfo* 
 			uint64_t	marker_time_us = (m->end - m->start) / (uint64_t)(1000);
 			double	marker_time_ms = double(marker_time_us) / 1000.0;
 
-			sprintf(str, "[%2.1lfms] ", marker_time_ms);
+			sprintf(str, "[%2.2lfms] ", marker_time_ms);
 			size_t len=strlen(str);
 			for(size_t layer=0 ; layer < m->layer ; layer++)
 				str[len++] = '+';

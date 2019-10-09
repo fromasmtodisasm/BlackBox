@@ -41,6 +41,7 @@ private:
 	GLuint m_Shader;
 	std::string m_Text;
   ShaderStatus m_Status;
+	bool m_Empty;
 public:
 	std::string m_Path;
   int m_Type;
@@ -60,6 +61,7 @@ public:
   bool create();
   bool compile();
   bool bind();
+	bool empty();
   void print();
   std::string typeToStr();
   std::string getName();
@@ -302,20 +304,23 @@ public:
 		ShaderInfo()
 			:
 			shader(nullptr),
-			attached(false)
+			attached(false),
+			used(false)
 		{
 		}
 		ShaderInfo(ShaderRef shader, std::string &name)
 			:
 			shader(shader),
 			name(name),
-			attached(false)
+			attached(false),
+			used(true)
 		{
 		}
 
 		ShaderRef shader;
 		std::string name;
 		bool attached;
+		bool used;
 	};
 
   ShaderInfo m_Vertex;
@@ -337,6 +342,8 @@ public:
   CBaseShaderProgram();
   CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
   CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs);
+  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs);
+  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
   ~CBaseShaderProgram();
 
   bool create();
@@ -363,7 +370,7 @@ public:
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
 
-	void reload(ShaderRef v, ShaderRef f);
+	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c);
 
 	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
   GLuint get();

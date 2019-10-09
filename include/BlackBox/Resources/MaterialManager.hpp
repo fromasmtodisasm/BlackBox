@@ -24,6 +24,8 @@ struct ProgramDesc
 	std::string name;
 	std::string vs;
 	std::string fs;
+	std::string gs;
+	std::string cs;
 };
 
 class MaterialManager
@@ -35,8 +37,10 @@ class MaterialManager
 	bool isSkyBox = false;
 	ICVar* root_path = nullptr;
 	std::map<std::string, BaseShadeProgramrRef> shaders_map;
+	ISystem* m_pSystem;
 public:
   static MaterialManager *instance();
+	static bool init(ISystem *pSystem);
   BaseShadeProgramrRef getProgram(std::string name);
   Material *getMaterial(std::string name);
   static bool init(std::string materialLib);
@@ -47,7 +51,7 @@ public:
   bool loadProgram(ProgramDesc &desc, bool isReload);
 
 private:
-  MaterialManager();
+  MaterialManager(ISystem *pSystem);
   bool loadLib(std::string name);
 	void getShaderAttributes(tinyxml2::XMLElement* shader, ProgramDesc& pd);
   bool loadMaterial(tinyxml2::XMLElement *material);

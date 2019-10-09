@@ -13,6 +13,8 @@ class ShaderManager
 public:
   static ShaderManager *instance();
   std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader);
+  std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader);
+  std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader);
   std::shared_ptr<CShaderProgram> getDefaultProgram();
   std::shared_ptr<CShader> getShader(std::string name, std::string type, bool isReload);
   void removeShader(std::string name);

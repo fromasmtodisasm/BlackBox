@@ -33,6 +33,49 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
   }
 }
 
+std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
+{
+  std::shared_ptr<CShader> vs, fs, gs;
+  std::shared_ptr<CShaderProgram> p;
+  vs = getShader(vShader, "vertex", false);
+  fs = getShader(fShader, "fragment", false);
+  gs = getShader(fShader, "geometry", false);
+  if (vs == nullptr || fs == nullptr)
+  {
+    GetISystem()->getILog()->AddLog("Error of load shader");
+    return nullptr;
+  }
+  else
+  {
+    GetISystem()->getILog()->AddLog("[OK] Shaders loaded\n");
+		assert(0 && "Not implemented");
+    //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
+  }
+
+}
+
+std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
+{
+  std::shared_ptr<CShader> vs, fs, gs, cs;
+  std::shared_ptr<CShaderProgram> p;
+  vs = getShader(vShader, "vertex", false);
+  fs = getShader(fShader, "fragment", false);
+	if (gShader.size() > 0) gs = getShader(fShader, "geometry", false);
+  cs = getShader(fShader, "compute", false);
+  if (vs == nullptr || fs == nullptr)
+  {
+    GetISystem()->getILog()->AddLog("Error of load shader");
+    return nullptr;
+  }
+  else
+  {
+    GetISystem()->getILog()->AddLog("[OK] Shaders loaded\n");
+		assert(0 && "Not implemented");
+    //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);
+  }
+
+}
+
 std::shared_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
 {
 	return defaultProgram;
@@ -75,6 +118,10 @@ CShader::type ShaderManager::str2typ(std::string type)
     return CShader::type::E_VERTEX;
   else if (type == "fragment")
     return CShader::type::E_FRAGMENT;
+  else if (type == "geometry")
+    return CShader::type::E_GEOMETRY;
+  else if (type == "compute")
+    return CShader::type::E_COMPUTE;
   else
     return CShader::type::E_UNKNOWN;
 }

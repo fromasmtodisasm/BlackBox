@@ -2,6 +2,8 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <MaterialManager.hpp>
+
 void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4])
 {
 	// Activate corresponding render state	
@@ -97,11 +99,18 @@ float FreeTypeFont::CharWidth(char symbol)
 
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-	shader = new CShaderProgram(
-	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
-	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
-	if (!shader->create())
+	ProgramDesc pd = {
+		"sprite",
+		"sprite.vs",
+		"sprite.frag"
+	};
+
+	if (!MaterialManager::instance()->loadProgram(pd, false))
 		return false;
+	shader = MaterialManager::instance()->getProgram(pd.name);
+	if (shader == nullptr)
+		return false;
+
 	if (FT_Init_FreeType(&ft))
 	{
 		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;

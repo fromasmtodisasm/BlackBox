@@ -85,7 +85,7 @@ private:
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
   FrameBufferObject* m_RenderedScene;
-  CBaseShaderProgram* m_ShadowMapShader;
+  BaseShadeProgramrRef m_ShadowMapShader;
   glm::mat4 lightSpaceMatrix;
   glm::vec3 lightPos;
   const int width = 1024;

@@ -287,7 +287,6 @@ Scene::Scene(std::string name)
   : 
   lighting(true),
   name(name), 
-  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))),
   m_RenderedScene(-1),
   m_Technique(nullptr),
   m_World(nullptr),
@@ -305,31 +304,21 @@ Scene::Scene(std::string name)
 				 1.0f, -1.0f,  1.0f, 0.0f,
 				 1.0f,  1.0f,  1.0f, 1.0f
 	};
-	// screen quad VAO
-	/*
-	unsigned int quadVBO;
-	glCheck(glGenVertexArrays(1, &quadVAO));
-	glCheck(glGenBuffers(1, &quadVBO));
-	glCheck(glBindVertexArray(quadVAO));
-	glCheck(glBindBuffer(GL_ARRAY_BUFFER, quadVBO));
-	glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW));
-	glCheck(glEnableVertexAttribArray(0));
-	glCheck(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-	glCheck(glEnableVertexAttribArray(1));
-	glCheck(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
-	*/
 
-	m_ScreenShader->create();
+	ProgramDesc pd = {
+		"screen_shader",
+		"screenshader.vs",
+		"screenshader.frag"
+	};
+
+	MaterialManager::instance()->loadProgram(pd, false);
+	m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
+	
+	
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
 
-	m_TextShader = new CShaderProgram(
-	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
-	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
-	m_TextShader->create();
-
-	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
 	texture_speed = GetISystem()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 }
 
@@ -958,8 +947,14 @@ PointObject* Scene::getPoints()
 
 PointObject::PointObject()
 {
-	shader = ShaderManager::instance()->getProgram("points.vert", "points.frag");
-	shader->create();
+	ProgramDesc pd = {
+		"points",
+		"points.vert",
+		"skybox.frag"
+	};
+
+	MaterialManager::instance()->loadProgram(pd, false);
+	shader = MaterialManager::instance()->getProgram(pd.name);
 }
 
 PointObject::~PointObject()

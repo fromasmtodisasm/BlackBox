@@ -5,6 +5,7 @@
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Shader.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 
 class SkyBox : public IDrawable
@@ -12,17 +13,25 @@ class SkyBox : public IDrawable
 public:
 	TextureCube* texture;
 	VertexArrayObject* vao;
-	CBaseShaderProgram* shader;
+	BaseShadeProgramrRef shader;
 
 	SkyBox(TextureCube *t)
 		:
-		texture(t),
-		shader(new CShaderProgram(CShader::load("res/shaders/skybox.vs", CShader::E_VERTEX), CShader::load("res/shaders/skybox.frag", CShader::E_FRAGMENT)))
+		texture(t)
 	{
-		shader->create();
+		ProgramDesc pd = {
+			"screen_shader",
+			"skybox.vs",
+			"skybox.frag"
+		};
+
+		MaterialManager::instance()->loadProgram(pd, false);
+		shader = MaterialManager::instance()->getProgram(pd.name);
+
 		shader->use();
 		shader->setUniformValue(0, "skybox");
 		shader->unuse();
+
 		static float skyboxVertices[] = {
 			// positions          
 			-1.0f,  1.0f, -1.0f,

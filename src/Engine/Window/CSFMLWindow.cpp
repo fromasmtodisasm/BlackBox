@@ -72,7 +72,7 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
 		Image img;
 		if (img.load("res/images/icon.jpg", nullptr))
 		{
-			m_Window->setIcon(img.width, img.height, static_cast<sf::Uint8*>(img.data));
+			;// m_Window->setIcon(img.width, img.height, static_cast<sf::Uint8*>(img.data));
 		}
 	//}
 

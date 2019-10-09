@@ -4,6 +4,7 @@
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -52,11 +53,14 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
   glInit();
 	m_ScreenQuad = new Quad();
 	//=======================
-	m_ScreenShader = new CShaderProgram(
-		CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), 
-		CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))
-		;
-	m_ScreenShader->create();
+	ProgramDesc pd = {
+		"screen_quad",
+		"screenshader.vs",
+		"screenshader.frag"
+	};
+	MaterialManager::instance()->loadProgram(pd, false);
+	m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
+	//m_ScreenShader->create();
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();

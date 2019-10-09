@@ -28,6 +28,15 @@ CShaderProgram::CShaderProgram(std::string vs, std::string fs)
 {
 }
 
+CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs) : CBaseShaderProgram(vs, fs, gs)
+{
+}
+
+CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs) : CBaseShaderProgram(vs, fs, gs, cs)
+{
+
+}
+
 void CShaderProgram::setup()
 {
   setUniformValue( Pipeline::instance()->model,"model");

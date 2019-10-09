@@ -1,9 +1,9 @@
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Render/ShadowMapShader.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IGame.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
 
 #include <BlackBox/Scene.hpp>
 #include <glm/glm.hpp>
@@ -35,8 +35,15 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
     m_RenderedScene = renderTarget;
   }
 
-  m_ShadowMapShader = new ShadowMapShader();
-  m_ShadowMapShader->create();
+  //m_ShadowMapShader = new ShadowMapShader();
+	ProgramDesc pd = {
+		"shadowpass",
+		"shadowpass.vs",
+		"shadowpass.frag"
+	};
+
+	MaterialManager::instance()->loadProgram(pd, false);
+	m_ShadowMapShader = MaterialManager::instance()->getProgram(pd.name);
   
   //==============
 	lightPosX = GetISystem()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");

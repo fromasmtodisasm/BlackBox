@@ -7,6 +7,12 @@
 #include <BlackBox/Render/Render.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
+
+#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Resources/TextureManager.hpp>
 //
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/HP_Timer.h>
@@ -76,6 +82,11 @@ bool CEngine::Init()
 	//=============
 	if (!ConfigLoad("res/scripts/engine.cfg"))
 		return false;
+	if (!MaterialManager::init(this))
+	{
+		return false;
+	}
+	//=============
 	if (!(m_pWindow = m_Render->Init(
 		0,0, 
 		r_window_width->GetIVal(), r_window_height->GetIVal(), 

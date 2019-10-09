@@ -12,6 +12,7 @@
 
 using	namespace std;
 using namespace tinyxml2;
+using ShaderInfo = CBaseShaderProgram::ShaderInfo;
 
 MaterialManager *MaterialManager::manager = nullptr;
 Material *defaultMaterial;
@@ -20,9 +21,16 @@ MaterialManager *MaterialManager::instance()
 {
   if (manager == nullptr)
   {
-    manager = new MaterialManager();
+    manager = new MaterialManager(GetISystem());
   }
   return manager;
+}
+
+bool MaterialManager::init(ISystem* pSystem)
+{
+	if (manager == nullptr)
+		manager = new MaterialManager(pSystem);
+	return manager != nullptr;
 }
 
 BaseShadeProgramrRef MaterialManager::getProgram(std::string name)
@@ -82,10 +90,10 @@ bool MaterialManager::init(std::string materialLib)
   return status;
 }
 
-MaterialManager::MaterialManager() : m_pLog(GetISystem()->getILog())
+MaterialManager::MaterialManager(ISystem *pSystem) : m_pSystem(pSystem), m_pLog(pSystem->getILog())
 {
-	root_path = GetISystem()->getIConsole()->GetCVar("materials_path");
-	GetISystem()->getIConsole()->CreateVariable("ef", 40.f, 0, "emissive factor");
+	root_path = m_pSystem->getIConsole()->GetCVar("materials_path");
+	m_pSystem->getIConsole()->CreateVariable("ef", 40.f, 0, "emissive factor");
 }
 
 bool MaterialManager::loadLib(std::string name)
@@ -125,7 +133,6 @@ bool MaterialManager::loadLib(std::string name)
 				else
 				{
 					auto p = this->shaders_map[pd.name];
-					debuger::program_label(p->get(), name);
 				}
 			}
 		}
@@ -256,6 +263,9 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 {
 	auto shader_it = shaders_map.find(desc.name);
+	bool load_gs = desc.gs.length() > 0;
+	bool load_cs = desc.cs.length() > 0;
+
 	if (shader_it != shaders_map.end() && !isReload)
 		return true;
 	auto vs = loadShader(ShaderDesc("vertex", desc.vs), isReload);
@@ -264,19 +274,53 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
 	if (fs == nullptr) return false;
 
+	decltype(fs) gs;
+	decltype(fs) cs;
+
+	if (load_gs)
+	{
+		gs = loadShader(ShaderDesc("geometry", desc.gs), isReload);
+		if (gs == nullptr) return false;
+	}
+	if (load_cs)
+	{
+		cs = loadShader(ShaderDesc("compute", desc.cs), isReload);
+		if (gs == nullptr) return false;
+	}
+
 	if (isReload)
 	{
-		shader_it->second->reload(vs, fs);
+		shader_it->second->reload(vs, fs, gs, cs);
 	}
 	else
 	{
-		CBaseShaderProgram::ShaderInfo vi(vs, desc.vs);
-		CBaseShaderProgram::ShaderInfo fi(fs, desc.fs);
-		auto shaderProgram = std::make_shared<CShaderProgram>(vi, fi);
+		ShaderInfo vi(vs, desc.vs);
+		ShaderInfo fi(fs, desc.fs);
+		ShaderInfo gi;
+		ShaderInfo ci;
+
+		ShadeProgramRef shaderProgram;
+		if (load_cs && load_gs)
+		{
+			gi = ShaderInfo(gs, desc.gs);
+			ci = ShaderInfo(cs, desc.cs);
+		}
+		else if (load_cs && !load_gs)
+		{
+			ci = ShaderInfo(cs, desc.cs);
+		}
+		if (!load_cs && load_gs)
+		{
+			gi = ShaderInfo(gs, desc.gs);
+		}
+		shaderProgram  = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
+			
 		if (!shaderProgram->create())
 			return false;
 		auto it = shaders_map.find(desc.name);
-		if (!isReload) shaders_map[desc.name] = shaderProgram;
+		shaders_map[desc.name] = shaderProgram;
+		debuger::program_label(shaderProgram->get(), desc.name);
+ 
 	}
 	return true;
 }
