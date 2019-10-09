@@ -8,7 +8,7 @@ list(APPEND GLAD_SOURCES
 "${GLAD_INCLUDE_DIRS}/glad/glad.h"
 )
 
-add_library(glad ${GLAD_SOURCES})
+add_library(glad STATIC ${GLAD_SOURCES})
 
 target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

@@ -10,4 +10,5 @@ struct ITechnique
   virtual bool OnRenderPass(int pass) = 0;
   virtual void PostRenderPass() = 0;
   virtual int  GetFrame() = 0;
+	virtual const char* GetName() { return "Unnamed technique"; };
 };

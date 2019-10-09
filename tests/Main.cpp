@@ -24,8 +24,10 @@ int main(int argc, char *argv[]) {
   }
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
-  path = getBasePath(string(argv[0]));
-  ISystem*pSystem = CreateISystem(nullptr);
+  //path = getBasePath(string(argv[0]));
+	SSystemInitParams params;
+	params.sLogFileName = "log.txt";
+  ISystem*pSystem = CreateSystemInterface(params);
   if (!pSystem->Init())
   {
     pSystem->Release();

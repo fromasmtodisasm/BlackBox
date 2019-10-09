@@ -18,6 +18,11 @@ public:
 	CCVar(const char* name, float value, char *help) : name(name), value(value), type(CVAR_FLOAT), help(help) {}
 	CCVar() : name(""), value(0.0f), type(CVAR_STRING), help(nullptr) {}
 
+	~CCVar()
+	{
+
+	}
+
 	// Inherited via ICVar
 	virtual void Release() override;
 	virtual int GetIVal() override;

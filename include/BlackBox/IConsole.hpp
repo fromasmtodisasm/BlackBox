@@ -19,6 +19,38 @@ struct CommandDesc;
 struct ICVar;
 struct ITexture;
 
+//! Flags used by ICVar.
+enum EVarFlags : unsigned int 
+{
+	VF_NULL = 0x00000000,      //!< Just to have one recognizable spot where the flags are located in the Register call.
+	VF_CHEAT = 0x00000002,      //!< Stays in the default state when cheats are disabled.
+	VF_DEV_ONLY = 0x00000004,      //!< Cvar is only registered with the console in non release builds.
+	VF_DEDI_ONLY = 0x00000008,      //!< Cvar is only registered with the console in non release or dedicated server builds.
+	VF_NET_SYNCED = 0x00000080,      //!< Synchronised between server and client(s); server is authoritative.
+	VF_DUMPTODISK = 0x00000100,
+	VF_READONLY = 0x00000800,      //!< Can not be changed by the user.
+	VF_REQUIRE_LEVEL_RELOAD = 0x00001000,
+	VF_REQUIRE_APP_RESTART = 0x00002000,
+	VF_WARNING_NOTUSED = 0x00004000,      //!< Shows warning that this var was not used in config file.
+	VF_COPYNAME = 0x00008000,      //!< Otherwise the const char * to the name will be stored without copying the memory.
+	VF_MODIFIED = 0x00010000,      //!< Set when variable value modified.
+	VF_WASINCONFIG = 0x00020000,      //!< Set when variable was present in config file.
+	VF_BITFIELD = 0x00040000,      //!< Allow bitfield setting syntax.
+	VF_RESTRICTEDMODE = 0x00080000,      //!< Is visible and usable in restricted (normal user) console mode.
+	VF_INVISIBLE = 0x00100000,      //!< Invisible to the user in console.
+	VF_ALWAYSONCHANGE = 0x00200000,      //!< Always accept variable value and call on change callback even if variable value didnt change.
+	VF_BLOCKFRAME = 0x00400000,      //!< Blocks the execution of console commands for one frame.
+	VF_CONST_CVAR = 0x00800000,      //!< Set if it is a const cvar not to be set inside cfg-files.
+	VF_CHEAT_ALWAYS_CHECK = 0x01000000,      //!< This variable is critical to check in every hash, since it's extremely vulnerable.
+	VF_CHEAT_NOCHECK = 0x02000000,      //!< This variable is set as VF_CHEAT but doesn't have to be checked/hashed since it's harmless to hack.
+	VF_SYSSPEC_OVERWRITE = 0x04000000,      //!< This variable is specified by system.cfg with the intention to overwrite all subsequent settings.
+	VF_CVARGRP_IGNOREINREALVAL = 0x08000000,      //!< This variable will be ignored when cvar group's real val is checked (Needed for cvars which are in a group but change in various situations).
+	VF_LIVE_CREATE_SYNCED = 0x10000000,      //!< This variable will be synced with LiveCreate clients.
+	VF_RENDERER_CVAR = 0x20000000,      //!< The update of this variable will be done in render thread.
+	VF_DEPRECATED = 0x40000000,      //!< Deprecated cvars use default values which cannot be modified outside the code.
+	VF_EXPERIMENTAL = 0x80000000,      //!< This variable is used by WIP or experimental feature.
+};
+
 #define     CVAR_INT    1
 #define     CVAR_FLOAT  2
 #define     CVAR_STRING 3

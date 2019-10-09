@@ -3,17 +3,19 @@
 #include <BlackBox/IEngine.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/CWindow.hpp>
-#include <BlackBox/CInputHandler.hpp>
+#include <BlackBox/InputHandler.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
-#include <BlackBox/Game/CPlayer.h>
+#include <BlackBox/Game/Player.h>
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
+#include <BlackBox/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptObjectGame.hpp>
 
 #include <BlackBox/common.h>
 
@@ -43,6 +45,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class CPlayer;
 private:
   ISystem *m_pSystem;
+  IScriptSystem *m_pScriptSystem;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
@@ -92,6 +95,9 @@ private:
 	ICVar* r_cap_profile;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
+	CScriptObjectConsole* m_ScriptObjectConsole;
+	CScriptObjectGame* m_ScriptObjectGame;
+	IScriptObject* m_playerObject;
 
   enum Mode
   {
@@ -108,6 +114,7 @@ public:
   float m_deltaTime;
 public:
   CGame(std::string title);
+  CGame() = default;
   ~CGame() = default;
   bool init(ISystem *pSystem) override;
   bool update() override;
@@ -175,6 +182,11 @@ public:
   ITagPoint* GetTagPoint(const string& name);
   void RemoveTagPoint(ITagPoint* pPoint);
   bool RenameTagPoint(const string& oldname, const string& newname);
+
+	//
+	bool InitScripts();
+
+	bool TestScriptSystem(bool& retflag);
 
 };
 

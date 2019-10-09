@@ -39,7 +39,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
   //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	int mip_cnt = std::log2(std::max(resolution.x, resolution.y)) + 1;
+	int mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
 	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
@@ -72,6 +72,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 bool HdrTechnique::OnRenderPass(int pass)
 {
+	DEBUG_GROUP(__FUNCTION__);
   if (!shadowMapping->OnRenderPass(pass))
   {
 		if (m_Scene->GetSkyBox() != nullptr)
@@ -114,17 +115,21 @@ void HdrTechnique::BloomPass()
 {
 	GLuint64 time_0, time_1, time_2;
 
-	PROFILER_PUSH_CPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
-	//PROFILER_PUSH_GPU_MARKER("DOWNSAMPLING", Utils::COLOR_BLACK);
-	//glQueryCounter(timer_queries[0], GL_TIMESTAMP);
-	downsampling();
-	//glQueryCounter(timer_queries[1], GL_TIMESTAMP);
-	//PROFILER_POP_GPU_MARKER();
-	PROFILER_POP_CPU_MARKER();
-	PROFILER_PUSH_CPU_MARKER("UPSAMPLING", Utils::COLOR_RED);
-	upsampling();
-	//glQueryCounter(timer_queries[2], GL_TIMESTAMP);
-	PROFILER_POP_CPU_MARKER();
+	{
+		const char section[] = "DOWNSAMPLING";
+		PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_BLACK);
+			DEBUG_GROUP(section);
+			downsampling();
+		PROFILER_POP_CPU_MARKER();
+	}
+	{
+		const char section[] = "UPSAMPLING";
+		PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_RED);
+			DEBUG_GROUP(section);
+			upsampling();
+		PROFILER_POP_CPU_MARKER();
+	}
+
 
 #if 0
 	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
@@ -230,6 +235,12 @@ void HdrTechnique::initTest()
 
 }
 
+int HdrTechnique::getMips(glm::vec2 resolution)
+{
+	//return std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+	return 6;
+}
+
 bool HdrTechnique::PreRenderPass()
 {
   return false;
@@ -254,7 +265,7 @@ void HdrTechnique::downsampling()
 	if (useBoxFilter->GetIVal())
 		amount = 1;
 	else
-		amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+		amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind();
@@ -280,7 +291,7 @@ void HdrTechnique::upsampling()
 	bool first_iteration = true;
 	glCheck(glDisable(GL_DEPTH_TEST));
 
-	amount = std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+	amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
 		pass1[i - 1]->bind();
@@ -300,8 +311,8 @@ void HdrTechnique::Do(unsigned int texture)
 		GetISystem()->getIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->getIConsole()->GetCVar("fogB")->GetFVal());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(fog.r, fog.g, fog.b, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glClearColor(fog.r, fog.g, fog.b, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
 	m_ScreenShader->use();
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
   m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");

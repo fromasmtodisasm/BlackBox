@@ -4,7 +4,7 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
-#include <BlackBox/Render/CRender.hpp>
+#include <BlackBox/Render/Render.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 //
@@ -16,6 +16,7 @@
 #pragma once
 
 using namespace Utils;
+
 
 CEngine::CEngine()
 	:
@@ -30,29 +31,26 @@ CEngine::CEngine()
   m_pFont(nullptr),
   m_pGame(nullptr),
   m_pLog(nullptr),
-  m_pWindow(nullptr)
+  m_pWindow(nullptr),
+	m_pScriptSystem(nullptr)
 {
 
 }
 
 CEngine::~CEngine()
 {
+	SAFE_RELEASE(r_window_width);
+	SAFE_RELEASE(r_window_height);
+	SAFE_RELEASE(r_bpp);
+	SAFE_RELEASE(r_zbpp);
+	SAFE_RELEASE(r_sbpp);
+
   SAFE_RELEASE(m_pLog);
-  /*
-  SAFE_RELEASE(m_pConsole);
+	SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pGame);
   SAFE_RELEASE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_InputHandler);
-  */
 	SAFE_RELEASE(m_Render);
-	FILE* bloomTime;
-
-	bloomTime = fopen("bloomtime.txt", "a");
-
-	fprintf(bloomTime, "===========================\n");
-
-	fclose(bloomTime);
 }
 
 bool CEngine::Init()
@@ -102,11 +100,15 @@ bool CEngine::Init()
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
 	//=============
-	m_ScriptSystem = new CScriptSystem(this);
-	m_ScriptSystem->ExecuteBuffer("print(\"Hello World\")", 0);
-	m_ScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
+	m_pScriptSystem = new CScriptSystem();
+	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
+	{
+		return false;
+	}
+	m_pScriptSystem->ExecuteBuffer("print(\"Lua!!!\")", 0);
+	m_pScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
 	int a_cpp;
-	if (m_ScriptSystem->GetGlobalValue("a", a_cpp))
+	if (m_pScriptSystem->GetGlobalValue("a", a_cpp))
 		m_pConsole->PrintLine("a = %d", a_cpp);
 	else
 		m_pConsole->PrintLine("Cant get global value");
@@ -203,15 +205,22 @@ bool CEngine::ConfigLoad(const char* file)
 		r_sbpp == nullptr
 		)
 		return false;
-
-	//r_window_height->Set(std::atoi(r_window_height->GetString()));
-	//r_window_width->Set(std::atoi(r_window_width->GetString()));
-	//r_window_height->Set(std::atoi(r_window_height->GetString()));
-	//r_bpp->Set(std::atoi(r_bpp->GetString()));
-	//r_zbpp->Set(std::atoi(r_zbpp->GetString()));
-	//r_sbpp->Set(std::atoi(r_sbpp->GetString()));
-
 	return true;
+}
+
+void CEngine::ShowMessage(const char* message, const char* caption, MessageType messageType)
+{
+	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
+}
+
+void CEngine::Log(const char* message)
+{
+	std::cout << "-- "<< message << std::endl;
+}
+
+IScriptSystem* CEngine::getIIScriptSystem()
+{
+	return m_pScriptSystem;
 }
 
 bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
@@ -242,7 +251,10 @@ void CEngine::BeginFrame()
 void CEngine::EndFrame()
 {
 	PROFILER_POP_CPU_MARKER();
-	PROFILER_DRAW();
+	{
+		DEBUG_GROUP("DRAW_PROFILE");
+		PROFILER_DRAW();
+	}
 }
 
 bool CEngine::OnInputEvent(sf::Event& event)
@@ -298,8 +310,9 @@ void CEngine::Update()
 	//PROFILER_SYNC_FRAME();
 }
 
-SYSTEM_API ISystem * CreateISystem(void *)
+BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
 {
+	//MessageBox(NULL, "TEST", "Message", MB_OK);
   ISystem *system = new CEngine();
   return system;
 }

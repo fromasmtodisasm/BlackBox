@@ -1,4 +1,4 @@
-﻿#include <BlackBox/Game/CGame.hpp>
+﻿#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Triangle.hpp>
@@ -69,10 +69,10 @@ struct TextRenderInfo
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
-static ISystem* gIEngine = nullptr;
+static ISystem* gISystem = nullptr;
 ISystem* GetISystem()
 {
-  return gIEngine;
+  return gISystem;
 }
 
 World *CGame::getWorld() const
@@ -120,7 +120,8 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(ISystem *pEngine)  {
-  m_pSystem = gIEngine = pEngine;
+  m_pSystem = gISystem = pEngine;
+  m_pScriptSystem = m_pSystem->getIIScriptSystem();
   m_Log = m_pSystem->getILog();
 	m_Console = m_pSystem->getIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
@@ -131,6 +132,7 @@ bool CGame::init(ISystem *pEngine)  {
 
 	initCommands();
 	initVariables();
+	InitScripts();
   auto init_cfg = m_Console->GetCVar("game_config");
   if (init_cfg == nullptr)
   {
@@ -188,44 +190,41 @@ bool CGame::init(ISystem *pEngine)  {
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, 18);
 
-	//m_Console->ExecuteString("clear");
   ITexture* consoleBackGround = new Texture();
   //consoleBackGround->load("console/fc.jpg");
   m_Console->SetImage(consoleBackGround);
+
+
   return true;
 }
 
 bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
 		m_pSystem->BeginFrame();
-
+		{
 			sf::Time deltaTime = deltaClock.restart();
 			m_deltaTime = deltaTime.asSeconds();
 			m_time += m_deltaTime;
 			fps =  1000.0f / deltaTime.asMilliseconds();
 			PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
-			input();
+				input();
 			PROFILER_POP_CPU_MARKER();
 			execScripts();
 			m_Window->update();
 			m_World->update(m_deltaTime);
 			setRenderState();
 
-			//PROFILER_PUSH_GPU_MARKER("Render Scene", Utils::COLOR_DARK_RED);
-				//PROFILER_PUSH_GPU_MARKER("Render Objects", Utils::COLOR_BLUE);
-				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
-					render();
-				PROFILER_POP_CPU_MARKER();
-				//PROFILER_POP_GPU_MARKER();
-				//PROFILER_PUSH_GPU_MARKER("Present FBO", Utils::COLOR_DARK_GREEN);
-					m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
-				//PROFILER_POP_GPU_MARKER();
-			//PROFILER_POP_GPU_MARKER();
-			//m_active_camera = m_World->getActiveScene()->getCurrentCamera();
-			PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-			drawHud(fps);
-			PROFILER_POP_CPU_MARKER();
-
+			{
+				DEBUG_GROUP("ALL RENDERING");
+					PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+						render();
+					PROFILER_POP_CPU_MARKER();
+						m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+					PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+						drawHud(fps);
+					PROFILER_POP_CPU_MARKER();
+			}
+		}
 		m_pSystem->EndFrame();
     m_Window->swap();
   }

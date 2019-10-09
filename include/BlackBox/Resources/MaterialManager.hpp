@@ -3,7 +3,7 @@
 #include <BlackBox/Material.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/IConsole.hpp>
 
 #include <map>

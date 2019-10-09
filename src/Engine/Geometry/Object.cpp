@@ -4,6 +4,7 @@
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/IGame.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -43,6 +44,7 @@ void Object::parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderPro
 }
 
 void Object::draw(void * camera) {
+	DEBUG_GROUP(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
 
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
@@ -160,6 +162,16 @@ void Object::rotateY(float angle)
 void Object::rotateZ(float angle)
 {
 	m_transform.rotation.z = angle;
+}
+
+void Object::SetScriptObject(IScriptObject* pObject)
+{
+	m_pScript = pObject;
+}
+
+IScriptObject* Object::GetScriptObject()
+{
+	return m_pScript;
 }
 
 void Object::move(Movement direction) {

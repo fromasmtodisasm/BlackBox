@@ -1,4 +1,4 @@
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/TagPoint.hpp>
 
 //////////////////////////////////////////////////////////////////////
@@ -69,4 +69,82 @@ bool CGame::RenameTagPoint(const string& oldname, const string& newname)
   }
 
   return false;
+}
+
+bool CGame::InitScripts()
+{
+	m_ScriptObjectConsole = new CScriptObjectConsole();
+	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
+	m_ScriptObjectGame = new CScriptObjectGame();
+	m_ScriptObjectGame->InitializeTemplate(m_pScriptSystem);
+
+	m_ScriptObjectConsole->Init(m_pSystem->getIIScriptSystem(), m_Console);
+	m_ScriptObjectGame->Init(m_pSystem->getIIScriptSystem(), this);
+
+	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
+
+	fps = 35.f;
+	m_pScriptSystem->ExecuteFile("scripts/game.lua");
+
+	bool retflag;
+	bool retval = TestScriptSystem(retflag);
+	if (retflag) return retval;
+
+}
+
+bool CGame::TestScriptSystem(bool& retflag)
+{
+	retflag = true;
+	m_playerObject = m_pScriptSystem->CreateEmptyObject();
+	if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
+	{
+		delete m_playerObject;
+		m_pSystem->Log("\002 ERROR: can't find player table ");
+		return false;
+	}
+	const char* name;
+	int age;
+	m_playerObject->GetValue("name", name);
+	m_playerObject->GetValue("age", age);
+	m_Console->PrintLine("Player name: %s", name);
+	m_Console->PrintLine("Player age: %d", age);
+
+	HSCRIPTFUNCTION psina;
+	m_playerObject->GetValue("TestChanges", psina);
+
+	m_playerObject->SetValue("name", "Psina");
+	//m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+	IScriptObject* console = nullptr;
+	m_pScriptSystem->BeginCall("Console", "PrintLine");
+	m_pScriptSystem->PushFuncParam(m_ScriptObjectConsole->GetScriptObject());
+	m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
+	m_pScriptSystem->EndCall(console);
+
+	m_pScriptSystem->BeginCall("player", "TestChanges");
+	m_pScriptSystem->PushFuncParam(m_playerObject);
+	m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
+	m_pScriptSystem->EndCall(console);
+
+	m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+	m_pScriptSystem->PushFuncParam(m_playerObject);
+	m_pScriptSystem->PushFuncParam("Test lkjakldfj call!!!");
+	m_pScriptSystem->EndCall(console);
+
+	HSCRIPTFUNCTION PrintLine = 0;
+	console->GetValue("PrintLine", PrintLine);
+	m_pScriptSystem->BeginCall(PrintLine);
+	m_pScriptSystem->PushFuncParam(console);
+	m_pScriptSystem->PushFuncParam("=====================Test HSCRIPTFUNCTION call!!!");
+	m_pScriptSystem->EndCall();
+	
+	int n;
+	m_pScriptSystem->BeginCall(console, "PrintLine");
+	m_pScriptSystem->PushFuncParam(console);
+	m_pScriptSystem->PushFuncParam("Call by table reference");
+	m_pScriptSystem->EndCall(console);
+
+	m_playerObject->GetValue("name", name);
+	m_Console->PrintLine("Player name: %s", name);
+	retflag = false;
+	return {};
 }

@@ -2,11 +2,13 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/IConsole.hpp>
 
-class CRender : public IRender
+class CRender : 
+	public IRender,
+	public IConsoleVarSink
 {
 public:
 	CRender(ISystem *engine);
@@ -71,7 +73,7 @@ private:
 	//============
 	const GLuint majorVersion = 4;
 	const GLuint minorVersion = 3;
-	OpenglDebug *glDebug;
+	OpenglDebuger *glDebug;
 	//============
 	CCamera *m_Camera;
 	Quad *m_ScreenQuad;
@@ -98,5 +100,8 @@ private:
 
   // Inherited via IRender
   virtual void DrawFullScreenImage(int texture_id) override;
+
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 };
 
