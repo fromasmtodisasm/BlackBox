@@ -1,5 +1,8 @@
 #include <BlackBox/CSFMLWindow.hpp>
 #include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/ITexture.hpp>
+#include <BlackBox/IEngine.hpp>
+#include <BlackBox/IConsole.hpp>
 #ifdef GUI
   #include <imgui-SFML.h>
   #include <imgui.h>
@@ -61,6 +64,17 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
   Mouse.curr_pos = Mouse.curr_pos = sf::Mouse::getPosition(*m_Window);
   Mouse.x_wraped = Mouse.y_wraped = false;
   Mouse.locked = false;
+
+	//auto ip = GetISystem()->getIConsole()->GetCVar("image_path");
+	//if (ip)
+	//{
+		//std::string icon(ip->GetString());
+		Image img;
+		if (img.load("res/images/icon.jpg", nullptr))
+		{
+			m_Window->setIcon(img.width, img.height, static_cast<sf::Uint8*>(img.data));
+		}
+	//}
 
   return true;
 }
