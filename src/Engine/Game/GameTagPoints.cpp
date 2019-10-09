@@ -1,4 +1,4 @@
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/TagPoint.hpp>
 
 //////////////////////////////////////////////////////////////////////

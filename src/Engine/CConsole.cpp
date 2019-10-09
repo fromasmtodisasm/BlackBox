@@ -4,7 +4,7 @@
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 
 #include <string>
 #include <fstream>

@@ -4,20 +4,20 @@
 #include <vector>
 #include <sstream>
 
-bool OpenglDebug::isError = false;
+bool OpenglDebuger::isError = false;
 
-OpenglDebug::OpenglDebug(const char *file) : debug_file(file)
+OpenglDebuger::OpenglDebuger(const char *file) : debug_file(file)
 {
 	if (glDebugMessageCallback != nullptr)
 		glDebugMessageCallback(callBack, &debug_file);
 }
 
-OpenglDebug::~OpenglDebug()
+OpenglDebuger::~OpenglDebuger()
 {
 
 }
 
-void OpenglDebug::checkError(const char *file, int line, const char *expr)
+void OpenglDebuger::checkError(const char *file, int line, const char *expr)
 {
 	if (isError)
 	{
@@ -32,7 +32,7 @@ void OpenglDebug::checkError(const char *file, int line, const char *expr)
 	}
 }
 
-void OpenglDebug::callBack(GLenum source​, GLenum type​, GLuint id​, GLenum severity​, GLsizei length​, const GLchar* message​, const void* userParam​)
+void OpenglDebuger::callBack(GLenum source​, GLenum type​, GLuint id​, GLenum severity​, GLsizei length​, const GLchar* message​, const void* userParam​)
 {
 	//std::fstream* df = const_cast< std::fstream* > (reinterpret_cast< const std::fstream*​ >(userParam​) );
 

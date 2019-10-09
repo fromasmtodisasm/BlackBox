@@ -1,7 +1,7 @@
-#include <BlackBox/Render/CRender.hpp>
+#include <BlackBox/Render/Render.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/IEngine.hpp>
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 
@@ -148,7 +148,7 @@ void CRender::glInit()
 {
 	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
 	{
-		glDebug = new OpenglDebug("out/glDebug.txt");
+		glDebug = new OpenglDebuger("out/glDebug.txt");
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}

@@ -4,7 +4,7 @@
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 
 
 class SkyBox : public IDrawable

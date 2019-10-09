@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <BlackBox/Render/Texture.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <glm/glm.hpp>
 #include <vector>

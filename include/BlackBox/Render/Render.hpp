@@ -2,7 +2,7 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/CWindow.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/IConsole.hpp>
 
@@ -73,7 +73,7 @@ private:
 	//============
 	const GLuint majorVersion = 4;
 	const GLuint minorVersion = 3;
-	OpenglDebug *glDebug;
+	OpenglDebuger *glDebug;
 	//============
 	CCamera *m_Camera;
 	Quad *m_ScreenQuad;

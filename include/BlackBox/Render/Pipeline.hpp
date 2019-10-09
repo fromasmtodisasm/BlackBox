@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <BlackBox/Render/BaseTexture.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 
 class Object;
 

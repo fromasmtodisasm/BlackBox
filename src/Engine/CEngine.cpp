@@ -4,7 +4,7 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/CConsole.hpp>
-#include <BlackBox/Render/CRender.hpp>
+#include <BlackBox/Render/Render.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 //
@@ -47,7 +47,6 @@ CEngine::~CEngine()
 
   SAFE_RELEASE(m_pLog);
 	SAFE_RELEASE(m_pConsole);
-  SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pGame);
   SAFE_RELEASE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
@@ -252,7 +251,10 @@ void CEngine::BeginFrame()
 void CEngine::EndFrame()
 {
 	PROFILER_POP_CPU_MARKER();
-	PROFILER_DRAW();
+	{
+		DEBUG_GROUP("DRAW_PROFILE");
+		PROFILER_DRAW();
+	}
 }
 
 bool CEngine::OnInputEvent(sf::Event& event)

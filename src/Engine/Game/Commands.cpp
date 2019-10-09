@@ -1,4 +1,4 @@
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
