@@ -8,7 +8,8 @@
 
 class CRender : 
 	public IRender,
-	public IConsoleVarSink
+	public IConsoleVarSink,
+	public IInputEventListener 
 {
 public:
 	CRender(ISystem *engine);
@@ -57,6 +58,13 @@ public:
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
+  // Inherited via IRender
+  virtual void DrawFullScreenImage(int texture_id) override;
+
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
+	// Inherited via IInputEventListener
+	virtual bool OnInputEvent(sf::Event& event) override;
 private:
 	void glInit();
 
@@ -99,10 +107,5 @@ private:
 	ICVar* test_proj;
 	ICVar* render_via_viewport;
 
-  // Inherited via IRender
-  virtual void DrawFullScreenImage(int texture_id) override;
-
-	// Inherited via IConsoleVarSink
-	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 };
 

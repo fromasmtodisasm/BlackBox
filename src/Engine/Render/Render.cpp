@@ -97,10 +97,6 @@ void CRender::SetScissor(int x, int y, int width, int height)
 {
 }
 
-void CRender::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
-{
-}
-
 void CRender::SetCamera(const CCamera& cam)
 {
 }
@@ -203,6 +199,10 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 
 }
 
+void CRender::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
+{
+}
+
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
 	bool flipY = true;
@@ -265,6 +265,11 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 {
 	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
+}
+
+bool CRender::OnInputEvent(sf::Event& event)
+{
+	return false;
 }
 
 

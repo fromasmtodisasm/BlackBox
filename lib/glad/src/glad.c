@@ -629,7 +629,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <glad/glad.h>
 
 static void* get_proc(const char *namez);
 
@@ -637,7 +636,9 @@ static void* get_proc(const char *namez);
 #ifndef _WINDOWS_
 #undef APIENTRY
 #endif
+#undef APIENTRY
 #include <windows.h>
+#include <glad/glad.h>
 static HMODULE libGL;
 
 typedef void* (APIENTRYP PFNWGLGETPROCADDRESSPROC_PRIVATE)(const char*);
@@ -683,6 +684,7 @@ void close_gl(void) {
     }
 }
 #else
+#include <glad/glad.h>
 #include <dlfcn.h>
 static void* libGL;
 

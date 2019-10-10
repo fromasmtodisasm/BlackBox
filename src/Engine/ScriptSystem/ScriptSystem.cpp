@@ -640,7 +640,7 @@ int CScriptSystem::ErrorHandler(lua_State* L)
 
 	// Handle error
 	lua_Debug ar;
-	CScriptSystem* pThis = (CScriptSystem*)GetISystem()->GetIIScriptSystem();
+	CScriptSystem* pThis = (CScriptSystem*)GetISystem()->getIIScriptSystem();
 
 	memset(&ar, 0, sizeof(lua_Debug));
 

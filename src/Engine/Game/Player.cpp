@@ -14,13 +14,13 @@ CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.ob
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);
-	GetISystem()->GetIIScriptSystem()->GetGlobalValue("player", m_pScript);
+	GetISystem()->getIIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
-	m_pScript = GetISystem()->GetIIScriptSystem()->CreateEmptyObject();
-	GetISystem()->GetIIScriptSystem()->GetGlobalValue("player", m_pScript);
+	m_pScript = GetISystem()->getIIScriptSystem()->CreateEmptyObject();
+	GetISystem()->getIIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 bool CPlayer::OnInputEvent(sf::Event &event)
@@ -133,10 +133,10 @@ void CPlayer::update(float deltatime)
 #endif
   //m_Camera->m_target = m_transform.position;
 	PROFILER_PUSH_CPU_MARKER("CALL SCRIPT", Utils::COLOR_DARK_GREEN);
-	GetISystem()->GetIIScriptSystem()->BeginCall("player", "Update");
-	GetISystem()->GetIIScriptSystem()->PushFuncParam(m_pScript);
-	GetISystem()->GetIIScriptSystem()->PushFuncParam(deltatime);
-	GetISystem()->GetIIScriptSystem()->EndCall();
+	GetISystem()->getIIScriptSystem()->BeginCall("player", "Update");
+	GetISystem()->getIIScriptSystem()->PushFuncParam(m_pScript);
+	GetISystem()->getIIScriptSystem()->PushFuncParam(deltatime);
+	GetISystem()->getIIScriptSystem()->EndCall();
 	PROFILER_POP_CPU_MARKER();
 }
 

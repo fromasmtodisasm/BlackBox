@@ -98,13 +98,13 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isOpened) return;
-	auto deltatime = GetISystem()->GetIGame()->getDeltaTime();
+	auto deltatime = GetISystem()->getIGame()->getDeltaTime();
 	auto render = GetISystem()->GetIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
 	auto prompt = getPrompt();
-	time += GetISystem()->GetIGame()->getDeltaTime();
+	time += GetISystem()->getIGame()->getDeltaTime();
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
@@ -478,7 +478,7 @@ void CConsole::getBuffer()
 
 bool CConsole::needShowCursor()
 {
-	float dt = GetISystem()->GetIGame()->getDeltaTime();
+	float dt = GetISystem()->getIGame()->getDeltaTime();
 	/*
 	if (cursor_tick_tack)
 		cursor_tick += dt;
@@ -521,14 +521,14 @@ void CConsole::drawCursor()
 	auto curr_y = m_Font->GetYPos();
 	m_Font->RenderText(
 		cursor.data,
-		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,cursor.x)), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
+		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,static_cast<int>(cursor.x))), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
 }
 
 void CConsole::moveCursor(bool left)
 {
 	if (left)
 	{
-		cursor.x = std::max(0, (int)cursor.x - 1);
+		cursor.x = std::max(0.f, (int)cursor.x - 1.f);
 	}
 	else
 	{
@@ -888,7 +888,7 @@ CommandLine CConsole::getPrompt()
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
 		Text(std::string(" " + time_str), promptColor, 1.0),
-		Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
+		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 

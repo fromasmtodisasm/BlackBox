@@ -1,5 +1,6 @@
 #pragma once
 #ifdef GLAD_LOADER
+//#define _WINDOWS_
 #include <glad/glad.h>
 #else
 #ifdef GLEW_LOADER

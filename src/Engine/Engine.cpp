@@ -173,7 +173,7 @@ IConsole* CSystem::GetIConsole()
   return m_pConsole;
 }
 
-IGame* CSystem::GetIGame()
+IGame* CSystem::getIGame()
 {
   return m_pGame;
 }
@@ -184,17 +184,17 @@ IGame* CSystem::CreateGame(IGame* game)
   return m_pGame;
 }
 
-IFont* CSystem::GetIFont()
+IFont* CSystem::getIFont()
 {
 	return m_pFont;
 }
 
-IWindow* CSystem::GetIWindow()
+IWindow* CSystem::getIWindow()
 {
 	return m_pWindow;
 }
 
-IInputHandler* CSystem::GetIInputHandler()
+IInputHandler* CSystem::getIInputHandler()
 {
 	return m_InputHandler;
 }
@@ -232,7 +232,7 @@ void CSystem::Log(const char* message)
 	std::cout << "-- "<< message << std::endl;
 }
 
-IScriptSystem* CSystem::GetIIScriptSystem()
+IScriptSystem* CSystem::getIIScriptSystem()
 {
 	return m_pScriptSystem;
 }

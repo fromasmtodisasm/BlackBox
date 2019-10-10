@@ -38,6 +38,8 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
 	if (fullscreen)
 	{
 		mode = sf::VideoMode::getFullscreenModes()[0];
+		m_Width = mode.width;
+		m_Height = mode.height;
 		position.x = 0;
 		position.y = 0;
 		style = sf::Style::Fullscreen;

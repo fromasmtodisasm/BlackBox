@@ -30,16 +30,12 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 	initTest();
   createShader();
   shadowMapping = new ShadowMapping();
-	float m = 1;
-	//glm::vec2 size_m2 = glm::vec2(GetISystem()->GetIRender()->GetWidth()*m, GetISystem()->GetIRender()->GetHeight()*m) / 1.f;
 	auto console = GetISystem()->GetIConsole();
 
-	glm::vec2 resolution = glm::vec2(bloomTest[testid]);
+	glm::ivec2 resolution = glm::vec2(bloomTest[testid]);
   hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
-  //pingPongBuffer[0] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
-  //pingPongBuffer[1] =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, size_m2.x, size_m2.y, 1, false);
 
-	int mip_cnt = getMips(resolution);
+	auto mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
 	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
@@ -76,7 +72,7 @@ bool HdrTechnique::OnRenderPass(int pass)
   if (!shadowMapping->OnRenderPass(pass))
   {
 		if (m_Scene->GetSkyBox() != nullptr)
-			;// m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
+			void(0);// m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
 		{
 			Object *water;
 			if ((water = m_Scene->getObject("water")) != nullptr)
@@ -113,7 +109,9 @@ bool HdrTechnique::HdrPass()
 
 void HdrTechnique::BloomPass()
 {
+#if 0
 	GLuint64 time_0, time_1, time_2;
+#endif
 
 	{
 		const char section[] = "DOWNSAMPLING";
