@@ -165,7 +165,7 @@ void CConsole::CalcMetrics(size_t& end)
 	else
 	{
 		current_line = num_all_lines - line_in_console;
-    if (page_up && current_line >= 1)
+    if (page_up && current_line > 0)
       current_line--;
     else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
     {
@@ -259,8 +259,8 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
 			if (event.key.control)
 			{
-				if (--history_line < 0)
-					history_line = 0;
+				if (history_line > 0)
+					--history_line;
 				getHistoryElement();
 				return true;
 			}
@@ -314,6 +314,7 @@ void CConsole::getHistoryElement()
 {
 	auto line_history = cmd_buffer[history_line];
 	command.clear();
+	cursor.x = 0;
 	for (auto& element : line_history)
 	{
 		for (auto& ch : element.data)
@@ -894,7 +895,7 @@ CommandLine CConsole::getPrompt()
 
 void CConsole::printLine(size_t line)
 {
-	int i = 0;
+	int i = line;
 	for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
 	{
 		printText(*element, line);

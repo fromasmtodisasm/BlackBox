@@ -13,6 +13,27 @@
 #define CURRENT 1
 
 HdrTechnique::HdrTechnique()
+	:
+	shadowMapping(nullptr),
+
+  hdrBuffer(nullptr),
+	scene(nullptr),
+	callOfDutySample(nullptr),
+  m_Scene(nullptr),
+
+	exposure(nullptr),
+	enabled(nullptr),
+	bloom(nullptr),
+	bloomThreshold(nullptr),
+	blurOn(nullptr),
+	useBoxFilter(nullptr),
+	defaultFilter(nullptr),
+	bloom_exposure(nullptr),
+	offset(nullptr),
+	bloomTime(nullptr),
+	upsampleTime(nullptr),
+	downsampleTime(nullptr),
+	averageBloomTime(nullptr)
 {
 }
 

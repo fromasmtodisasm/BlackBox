@@ -69,14 +69,14 @@ private:
 	void glInit();
 
 private:
-	IWindow* m_Window;
-	ISystem *m_Engine;
+	IWindow* m_Window = nullptr;
+	ISystem *m_Engine = nullptr;
 
 	bool is_fullscreen = false;
 	Rect m_viewPort;
-	unsigned int cbpp;
-	int zbpp;
-	int sbits;
+	unsigned int cbpp = 0;
+	int zbpp = 0;
+	int sbits = 0;
 
 	//============
 	const GLuint majorVersion = 4;
@@ -84,8 +84,8 @@ private:
 	const int antialiassing = 8;
 	OpenglDebuger *glDebug;
 	//============
-	CCamera *m_Camera;
-	Quad *m_ScreenQuad;
+	CCamera *m_Camera = nullptr;
+	Quad *m_ScreenQuad = nullptr;
 	// Shaders 
 	BaseShaderProgramRef m_ScreenShader;
 #if defined(_DEBUG) || defined(GL_DEBUG)
@@ -94,18 +94,18 @@ private:
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
 #endif 
 	// DEBUG
-	ICVar* translateImageX;
-	ICVar* translateImageY;
+	ICVar* translateImageX = nullptr;
+	ICVar* translateImageY = nullptr;
 
-	ICVar* scaleImageX;
-	ICVar* scaleImageY;
+	ICVar* scaleImageX = nullptr;
+	ICVar* scaleImageY = nullptr;
 
-	ICVar* needTranslate;
-	ICVar* needFlipY;
+	ICVar* needTranslate = nullptr;
+	ICVar* needFlipY = nullptr;
 
-	ICVar* r_debug;
-	ICVar* test_proj;
-	ICVar* render_via_viewport;
+	ICVar* r_debug = nullptr;
+	ICVar* test_proj = nullptr;
+	ICVar* render_via_viewport = nullptr;
 
 };
 

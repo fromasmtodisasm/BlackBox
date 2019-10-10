@@ -341,16 +341,16 @@ struct IScriptObjectSink
 
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-enum ScriptVarType
+enum class ScriptVarType
 {
-	svtNull = 0,
-	svtString,
-	svtNumber,
-	svtBool,
-	svtFunction,
-	svtObject,
-	svtPointer,
-	svtUserData,
+	Null = 0,
+	String,
+	Number,
+	Bool,
+	Function,
+	Object,
+	Pointer,
+	UserData,
 };
 
 // Returns literal representation of the type value
@@ -358,12 +358,12 @@ inline const char* ScriptVarTypeAsCStr(ScriptVarType t)
 {
 	switch (t)
 	{
-	case svtNull: return "Null";
-	case svtString: return "String";
-	case svtNumber: return "Number";
-	case svtFunction: return "Function";
-	case svtObject: return "Object";
-	case svtUserData: return "UserData";
+	case ScriptVarType::Null: return "Null";
+	case ScriptVarType::String: return "String";
+	case ScriptVarType::Number: return "Number";
+	case ScriptVarType::Function: return "Function";
+	case ScriptVarType::Object: return "Object";
+	case ScriptVarType::UserData: return "UserData";
 	default: return "#Unknown";
 	}
 }
@@ -466,7 +466,7 @@ struct IScriptObject
 
 	/*!Get the vaue type of a table member
 		@param sKey variable name
-		@return the value type (svtNull if doesn't exist)
+		@return the value type (Null if doesn't exist)
 	*/
 	virtual ScriptVarType GetValueType(const char* sKey) = 0;
 	virtual ScriptVarType GetAtType(int nIdx) = 0;

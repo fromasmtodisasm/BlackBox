@@ -5,14 +5,15 @@
 #ifndef WIN32_LEAN_AND_MEAN
   #define WIN32_LEAN_AND_MEAN
 #endif
-  #include <windows.h>
-  #include <direct.h>
-  #define chdir _chdir
+  //#include <windows.h>
+  //#include <direct.h>
+  /*#define chdir _chdir
   PCHAR*
   CommandLineToArgvA(
       PCHAR CmdLine,
       int* _argc
       ); 
+	*/
 #else
   #include <unistd.h>
 #endif

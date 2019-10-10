@@ -65,7 +65,7 @@ struct Text
 {
 	std::string data;
 	glm::vec3 color;
-	float x, y;
+	int x, y;
 	float scale;
 	Text(std::string& data, glm::vec3& color, float scale)
 		:

@@ -117,7 +117,7 @@ extern "C"
   BLACKBOX_EXPORT ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
 
-#define FatalError(...)
+#define FatalError(...) void(0)
 #define CryFatalError(...) FatalError(__VA_ARGS__)
 
 
@@ -125,7 +125,7 @@ extern "C"
 #define CryWraning(...) Wraning(__VA_ARGS__)
 #define ScriptWarning(...) Wraning(__VA_ARGS__)
 
-#define CryError(...) ;
+#define CryError(...) void(0)
 
 //! Simple logs of data with low verbosity.
 //void        CryLog(const char*, ...) PRINTF_PARAMS(1, 2);

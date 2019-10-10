@@ -17,12 +17,12 @@ public:
 
 private:
 	BaseShaderProgramRef shader;
-	GLuint positions;
-	GLuint velocities;
-	int posCnt;
-	float radius;
-	float pos;
-	float minV, maxV;
+	GLuint positions = 0;
+	GLuint velocities = 0;
+	int posCnt = 0;
+	float radius = 0;
+	float pos = 0;
+	float minV = 0.f, maxV = 0.f;
 
 	/*
 	class Impl;

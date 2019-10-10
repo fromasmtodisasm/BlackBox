@@ -69,7 +69,7 @@ public:
 };
 
 class UniformValue {
-  enum ValueType
+  enum class Type
   {
     INT_VAL,
     FLOAT_VAL,
@@ -130,45 +130,45 @@ public:
   }
   
 
-  inline void* Get(ValueType type, void *res)
+  inline void* Get(UniformValue::Type type, void *res)
   {
     value val;
     int len = 0;
     switch (type)
     {
-    case UniformValue::INT_VAL:
+    case UniformValue::Type::INT_VAL:
       len = sizeof(int);
       Get(val.i);
       break;
-    case UniformValue::FLOAT_VAL:
+    case UniformValue::Type::FLOAT_VAL:
       len = sizeof(float);
       Get(val.f);
       break;
-    case UniformValue::V1_VAL:
+    case UniformValue::Type::V1_VAL:
       len = sizeof(glm::vec1);
       Get(val.v1);
       break;
-    case UniformValue::V2_VAL:
+    case UniformValue::Type::V2_VAL:
       len = sizeof(glm::vec2);
       Get(val.v2);
       break;
-    case UniformValue::V3_VAL:
+    case UniformValue::Type::V3_VAL:
       len = sizeof(glm::vec3);
       Get(val.v3);
       break;
-    case UniformValue::V4_VAL:
+    case UniformValue::Type::V4_VAL:
       len = sizeof(glm::vec4);
       Get(val.v4);
       break;
-    case UniformValue::M2_VAL:
+    case UniformValue::Type::M2_VAL:
       len = sizeof(glm::mat2);
       Get(val.m2);
       break;
-    case UniformValue::M3_VAL:
+    case UniformValue::Type::M3_VAL:
       len = sizeof(glm::mat3);
       Get(val.m3);
       break;
-    case UniformValue::M4_VAL:
+    case UniformValue::Type::M4_VAL:
       len = sizeof(glm::mat4);
       Get(val.m4);
       break;

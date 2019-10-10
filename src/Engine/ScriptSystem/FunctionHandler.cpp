@@ -95,30 +95,30 @@ bool CFunctionHandler::GetParam(int nIdx, HSCRIPTFUNCTION& hFunc, int nReference
 ScriptVarType CFunctionHandler::GetParamType(int nIdx)
 {
 	int nRealIdx = nIdx + m_paramIdOffset;
-	ScriptVarType type = svtNull;
+	ScriptVarType type = ScriptVarType::Null;
 	int luatype = lua_type(L, nRealIdx);
 	switch (luatype)
 	{
 	case LUA_TNIL:
-		type = svtNull;
+		type = ScriptVarType::Null;
 		break;
 	case LUA_TBOOLEAN:
-		type = svtBool;
+		type = ScriptVarType::Bool;
 		break;
 	case LUA_TNUMBER:
-		type = svtNumber;
+		type = ScriptVarType::Number;
 		break;
 	case LUA_TSTRING:
-		type = svtString;
+		type = ScriptVarType::String;
 		break;
 	case LUA_TFUNCTION:
-		type = svtFunction;
+		type = ScriptVarType::Function;
 		break;
 	case LUA_TLIGHTUSERDATA:
-		type = svtPointer;
+		type = ScriptVarType::Pointer;
 		break;
 	case LUA_TTABLE:
-		type = svtObject;
+		type = ScriptVarType::Object;
 		break;
 	}
 	return type;
