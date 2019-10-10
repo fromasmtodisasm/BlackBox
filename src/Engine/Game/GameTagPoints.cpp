@@ -109,6 +109,7 @@ bool CGame::TestScriptSystem(bool& retflag)
 	m_Console->PrintLine("Player name: %s", name);
 	m_Console->PrintLine("Player age: %d", age);
 
+#if 0
 	HSCRIPTFUNCTION psina;
 	m_playerObject->GetValue("TestChanges", psina);
 
@@ -145,6 +146,7 @@ bool CGame::TestScriptSystem(bool& retflag)
 
 	m_playerObject->GetValue("name", name);
 	m_Console->PrintLine("Player name: %s", name);
+#endif
 	retflag = false;
 	return {};
 }

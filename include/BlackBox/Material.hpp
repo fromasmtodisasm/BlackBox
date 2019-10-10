@@ -9,7 +9,6 @@
 class CShader;
 class CBaseShaderProgram;
 class Object;
-class CCamera;
 
 struct Material
 {

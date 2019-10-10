@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Window.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IScriptSystem.hpp>
@@ -25,11 +25,11 @@ inline auto SAFE_RELEASE(T *& t)
 class CConsole;
 class CRender;
 
-class CEngine : public ISystem, public IInputEventListener, public IConsoleVarSink
+class CSystem : public ISystem, public IInputEventListener, public IConsoleVarSink
 {
 public:
-	CEngine();
-	~CEngine();
+	CSystem();
+	~CSystem();
   
 	// Inherited via ISystem
   virtual bool Init() override;
@@ -39,16 +39,17 @@ public:
 	virtual void EndFrame() override;
   virtual void Release() override;
 
-  virtual IShaderManager * getShaderManager() override;
-  virtual IRender * getIRender() override;
-  virtual ILog* getILog() override;
-  virtual IConsole* getIConsole() override;
-  virtual IGame* getIGame() override;
-  virtual IGame* CreateGame(IGame* game) override;
-	virtual IFont* getIFont() override;
-	virtual IWindow* getIWindow() override;
-	virtual IInputHandler* getIInputHandler() override;
-	virtual IScriptSystem* getIIScriptSystem() override;
+  virtual IShaderManager*		GetShaderManager() override;
+  virtual IRender*					GetIRender() override;
+  virtual ILog*							GetILog() override;
+  virtual IConsole*					GetIConsole() override;
+  virtual IGame*						getIGame() override;
+	virtual IFont*						getIFont() override;
+	virtual IWindow*					getIWindow() override;
+	virtual IInputHandler*		getIInputHandler() override;
+	virtual IScriptSystem*		getIIScriptSystem() override;
+
+  virtual IGame*						CreateGame(IGame* game) override;
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
 	virtual void Log(const char* message) override;
@@ -67,11 +68,12 @@ private:
 	IInputHandler* m_InputHandler;
 	IRender* m_Render;
 	IScriptSystem* m_pScriptSystem;
+
 private:
 	ICVar* r_window_width;
 	ICVar* r_window_height;
 	ICVar* r_bpp;
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
-
+	ICVar* r_fullscreen;
 };

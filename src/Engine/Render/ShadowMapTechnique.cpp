@@ -1,6 +1,6 @@
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
@@ -27,7 +27,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
   if (renderTarget == nullptr)
   {
     m_RenderedScene = FrameBufferObject::create(
-      FrameBufferObject::BufferType::SCENE_BUFFER, GetISystem()->getIRender()->GetWidth(), GetISystem()->getIRender()->GetHeight(), 0, false
+      FrameBufferObject::BufferType::SCENE_BUFFER, GetISystem()->GetIRender()->GetWidth(), GetISystem()->GetIRender()->GetHeight(), 0, false
     );
   }
   else
@@ -46,11 +46,11 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 	m_ShadowMapShader = MaterialManager::instance()->getProgram(pd.name);
   
   //==============
-	lightPosX = GetISystem()->getIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
-	lightPosY = GetISystem()->getIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
-	lightPosZ = GetISystem()->getIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
-	lighting =  GetISystem()->getIConsole()->CreateVariable("lighting", bLighting, 0, "light pos z");
-	s_divider = GetISystem()->getIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
+	lightPosX = GetISystem()->GetIConsole()->CreateVariable("lpx", -1.f, 0, "light pos x");
+	lightPosY = GetISystem()->GetIConsole()->CreateVariable("lpy", 15.f, 0, "light pos y");
+	lightPosZ = GetISystem()->GetIConsole()->CreateVariable("lpz", -1.f, 0, "light pos z");
+	lighting =  GetISystem()->GetIConsole()->CreateVariable("lighting", bLighting, 0, "light pos z");
+	s_divider = GetISystem()->GetIConsole()->CreateVariable("sd", 10.0f, 0, "ortho divider");
 
   //
   return true;
@@ -189,7 +189,7 @@ void ShadowMapping::RenderTransparent(Object* object)
     program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
     program->setUniformValue(lightPos, "lightPos");
     program->setUniformValue(object->m_Material->alpha, "alpha");
-		program->setUniformValue(GetISystem()->getIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
+		program->setUniformValue(GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
 
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
@@ -215,9 +215,9 @@ void ShadowMapping::OnRenderPass()
 	DEBUG_GROUP(__FUNCTION__);
   m_RenderedScene->bind();
 	glm::vec4 fog = glm::vec4(
-		GetISystem()->getIConsole()->GetCVar("fogR")->GetFVal(),
-		GetISystem()->getIConsole()->GetCVar("fogG")->GetFVal(),
-		GetISystem()->getIConsole()->GetCVar("fogB")->GetFVal(),
+		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
+		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
+		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal(),
 		1.f);
 	m_RenderedScene->clear(fog);
   glCheck(glEnable(GL_DEPTH_TEST));

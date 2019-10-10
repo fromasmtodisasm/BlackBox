@@ -23,9 +23,13 @@ CScriptObjectConsole::~CScriptObjectConsole()
 void CScriptObjectConsole::InitializeTemplate(IScriptSystem* pSS)
 {
 	_ScriptableEx<CScriptObjectConsole>::InitializeTemplate(pSS);
-	REG_FUNC(CScriptObjectConsole, PrintLine);
-	REG_FUNC(CScriptObjectConsole, Clear);
-	REG_FUNC(CScriptObjectConsole, Show);
+
+#undef SCRIPT_REG_CLASSNAME
+#define SCRIPT_REG_CLASSNAME CScriptObjectConsole
+
+	SCRIPT_REG_FUNC(PrintLine);
+	SCRIPT_REG_FUNC(Clear);
+	SCRIPT_REG_FUNC(Show);
 }
 
 void CScriptObjectConsole::Init(IScriptSystem *pScriptSystem, IConsole* pConsole)

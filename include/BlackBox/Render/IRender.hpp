@@ -45,6 +45,15 @@ struct SDrawTextInfo
 	}
 };
 
+//////////////////////////////////////////////////////////////////////
+
+struct SDispFormat
+{
+	int m_Width;
+	int m_Height;
+	int m_BPP;
+};
+
 struct IRender
 {
 	//! Init the renderer, params are self-explanatory
@@ -105,6 +114,9 @@ struct IRender
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
+
+
+	virtual int	 EnumDisplayFormats(SDispFormat* formats) = 0;
 
 };
 

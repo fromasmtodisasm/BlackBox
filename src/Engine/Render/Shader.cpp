@@ -1,6 +1,6 @@
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 
 #include <glm/glm.hpp>

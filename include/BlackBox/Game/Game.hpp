@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IGame.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/Window.hpp>
 #include <BlackBox/InputHandler.hpp>

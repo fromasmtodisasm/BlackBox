@@ -1,6 +1,6 @@
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 
 ShaderManager *ShaderManager::manager = nullptr;
@@ -23,12 +23,12 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
   fs = getShader(fShader, "fragment", false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->getILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->AddLog("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->getILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
     return p = std::make_shared<CShaderProgram>(vs, fs);
   }
 }
@@ -42,12 +42,12 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   gs = getShader(fShader, "geometry", false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->getILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->AddLog("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->getILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
   }
@@ -64,12 +64,12 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   cs = getShader(fShader, "compute", false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->getILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->AddLog("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->getILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);
   }

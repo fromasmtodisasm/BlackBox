@@ -1,5 +1,5 @@
 #include <BlackBox/Console.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
@@ -29,9 +29,9 @@ public:
 	virtual bool execute(CommandDesc& cd) override
 	{
 		for (auto &cmd : cd.args)
-			GetISystem()->getIConsole()->Help(wstr_to_str(cmd).c_str());
+			GetISystem()->GetIConsole()->Help(wstr_to_str(cmd).c_str());
 		if (cd.args.size() == 0)
-			GetISystem()->getIConsole()->Help(nullptr);
+			GetISystem()->GetIConsole()->Help(nullptr);
 		return true;
 	}
 };
@@ -99,7 +99,7 @@ void CConsole::Draw()
 {
 	if (!isOpened) return;
 	auto deltatime = GetISystem()->getIGame()->getDeltaTime();
-	auto render = GetISystem()->getIRender();
+	auto render = GetISystem()->GetIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
@@ -165,7 +165,7 @@ void CConsole::CalcMetrics(size_t& end)
 	else
 	{
 		current_line = num_all_lines - line_in_console;
-    if (page_up && current_line >= 1)
+    if (page_up && current_line > 0)
       current_line--;
     else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
     {
@@ -259,8 +259,8 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
 			if (event.key.control)
 			{
-				if (--history_line < 0)
-					history_line = 0;
+				if (history_line > 0)
+					--history_line;
 				getHistoryElement();
 				return true;
 			}
@@ -314,6 +314,7 @@ void CConsole::getHistoryElement()
 {
 	auto line_history = cmd_buffer[history_line];
 	command.clear();
+	cursor.x = 0;
 	for (auto& element : line_history)
 	{
 		for (auto& ch : element.data)
@@ -521,14 +522,14 @@ void CConsole::drawCursor()
 	auto curr_y = m_Font->GetYPos();
 	m_Font->RenderText(
 		cursor.data,
-		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,cursor.x)), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
+		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,static_cast<int>(cursor.x))), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
 }
 
 void CConsole::moveCursor(bool left)
 {
 	if (left)
 	{
-		cursor.x = std::max(0, (int)cursor.x - 1);
+		cursor.x = std::max(0.f, (int)cursor.x - 1.f);
 	}
 	else
 	{
@@ -894,7 +895,7 @@ CommandLine CConsole::getPrompt()
 
 void CConsole::printLine(size_t line)
 {
-	int i = 0;
+	int i = line;
 	for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
 	{
 		printText(*element, line);

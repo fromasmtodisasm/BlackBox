@@ -1,5 +1,5 @@
 #include <BlackBox/Render/BaseShader.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
@@ -26,7 +26,7 @@ bool ShaderStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog));
-    GetISystem()->getILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
+    GetISystem()->GetILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
     return false;
   }
   return true;
@@ -45,7 +45,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
-		/*auto log = GetISystem()->getILog();
+		/*auto log = GetISystem()->GetILog();
 		if (log != nullptr)
 			log->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
 		else

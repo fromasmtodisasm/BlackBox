@@ -107,7 +107,7 @@ public:
 
 	__forceinline CDebugSection(size_t length, const char* message)
 	{
-		OpenglDebuger::PushGroup(0, length, message);
+		OpenglDebuger::PushGroup(0, static_cast<GLsizei>(length), message);
 	}
 	__forceinline ~CDebugSection()
 	{
@@ -119,11 +119,11 @@ namespace debuger
 {
 	inline void object_label(GLenum id, GLuint object, const char* label)
 	{
-		glCheck(glObjectLabel(id, object, std::strlen(label), label));
+		glCheck(glObjectLabel(id, object, static_cast<GLsizei>(std::strlen(label)), label));
 	}
 	inline void object_label(GLenum id, GLuint object, std::string const &label)
 	{
-		glCheck(glObjectLabel(id, object, label.size(), label.c_str()));
+		glCheck(glObjectLabel(id, object, static_cast<GLsizei>(label.size()), label.c_str()));
 	}
 
 	template<typename T> inline void buffer_label(GLuint object, T const& label)

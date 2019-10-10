@@ -2,7 +2,7 @@
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 
 #include <cassert>
 
@@ -313,7 +313,7 @@ void CScriptObject::EndSetGetChain()
 ScriptVarType CScriptObject::GetValueType(const char* sKey)
 {
 	CHECK_STACK(L);
-	ScriptVarType type = svtNull;
+	ScriptVarType type = ScriptVarType::Null;
 
 	PushRef();
 	lua_pushstring(L, sKey);
@@ -322,25 +322,25 @@ ScriptVarType CScriptObject::GetValueType(const char* sKey)
 	switch (luatype)
 	{
 	case LUA_TNIL:
-		type = svtNull;
+		type = ScriptVarType::Null;
 		break;
 	case LUA_TBOOLEAN:
-		type = svtBool;
+		type = ScriptVarType::Bool;
 		break;
 	case LUA_TNUMBER:
-		type = svtNumber;
+		type = ScriptVarType::Number;
 		break;
 	case LUA_TSTRING:
-		type = svtString;
+		type = ScriptVarType::String;
 		break;
 	case LUA_TFUNCTION:
-		type = svtFunction;
+		type = ScriptVarType::Function;
 		break;
 	case LUA_TLIGHTUSERDATA:
-		type = svtPointer;
+		type = ScriptVarType::Pointer;
 		break;
 	case LUA_TTABLE:
-		type = svtObject;
+		type = ScriptVarType::Object;
 		break;
 	}
 	lua_pop(L, 2); // Pop value and table.
@@ -350,13 +350,13 @@ ScriptVarType CScriptObject::GetValueType(const char* sKey)
 ScriptVarType CScriptObject::GetAtType(int nIdx)
 {
 	CHECK_STACK(L);
-	ScriptVarType svtRetVal = svtNull;
+	ScriptVarType svtRetVal = ScriptVarType::Null;
 	PushRef();
 
 	if (luaL_len(L, -1) < nIdx)
 	{
 		lua_pop(L, 1);
-		return svtNull;
+		return ScriptVarType::Null;
 	}
 
 	lua_rawgeti(L, -1, nIdx);
@@ -364,22 +364,22 @@ ScriptVarType CScriptObject::GetAtType(int nIdx)
 	switch (lua_type(L, -1))
 	{
 	case LUA_TNIL:
-		svtRetVal = svtNull;
+		svtRetVal = ScriptVarType::Null;
 		break;
 	case LUA_TBOOLEAN:
-		svtRetVal = svtBool;
+		svtRetVal = ScriptVarType::Bool;
 		break;
 	case LUA_TNUMBER:
-		svtRetVal = svtNumber;
+		svtRetVal = ScriptVarType::Number;
 		break;
 	case LUA_TSTRING:
-		svtRetVal = svtString;
+		svtRetVal = ScriptVarType::String;
 		break;
 	case LUA_TTABLE:
-		svtRetVal = svtObject;
+		svtRetVal = ScriptVarType::Object;
 		break;
 	case LUA_TFUNCTION:
-		svtRetVal = svtFunction;
+		svtRetVal = ScriptVarType::Function;
 		break;
 	}
 
@@ -614,29 +614,29 @@ static void IterTable(lua_State* L, IScriptObjectDumpSink* p)
 			switch (valType)
 			{
 			case LUA_TNIL:
-				p->OnElementFound(key, svtNull);
+				p->OnElementFound(key, ScriptVarType::Null);
 				break;
 			case LUA_TBOOLEAN:
-				p->OnElementFound(key, svtBool);
+				p->OnElementFound(key, ScriptVarType::Bool);
 				break;
 			case LUA_TLIGHTUSERDATA:
-				p->OnElementFound(key, svtPointer);
+				p->OnElementFound(key, ScriptVarType::Pointer);
 				break;
 			case LUA_TNUMBER:
-				p->OnElementFound(key, svtNumber);
+				p->OnElementFound(key, ScriptVarType::Number);
 				break;
 			case LUA_TSTRING:
-				p->OnElementFound(key, svtString);
+				p->OnElementFound(key, ScriptVarType::String);
 				break;
 			case LUA_TTABLE:
 				if (strcmp(key, "__index") != 0)
-					p->OnElementFound(key, svtObject);
+					p->OnElementFound(key, ScriptVarType::Object);
 				break;
 			case LUA_TFUNCTION:
-				p->OnElementFound(key, svtFunction);
+				p->OnElementFound(key, ScriptVarType::Function);
 				break;
 			case LUA_TUSERDATA:
-				p->OnElementFound(key, svtUserData);
+				p->OnElementFound(key, ScriptVarType::UserData);
 				break;
 			}
 		}
@@ -646,28 +646,28 @@ static void IterTable(lua_State* L, IScriptObjectDumpSink* p)
 			switch (valType)
 			{
 			case LUA_TNIL:
-				p->OnElementFound(idx, svtNull);
+				p->OnElementFound(idx, ScriptVarType::Null);
 				break;
 			case LUA_TBOOLEAN:
-				p->OnElementFound(idx, svtBool);
+				p->OnElementFound(idx, ScriptVarType::Bool);
 				break;
 			case LUA_TLIGHTUSERDATA:
-				p->OnElementFound(idx, svtPointer);
+				p->OnElementFound(idx, ScriptVarType::Pointer);
 				break;
 			case LUA_TNUMBER:
-				p->OnElementFound(idx, svtNumber);
+				p->OnElementFound(idx, ScriptVarType::Number);
 				break;
 			case LUA_TSTRING:
-				p->OnElementFound(idx, svtString);
+				p->OnElementFound(idx, ScriptVarType::String);
 				break;
 			case LUA_TTABLE:
-				p->OnElementFound(idx, svtObject);
+				p->OnElementFound(idx, ScriptVarType::Object);
 				break;
 			case LUA_TFUNCTION:
-				p->OnElementFound(idx, svtFunction);
+				p->OnElementFound(idx, ScriptVarType::Function);
 				break;
 			case LUA_TUSERDATA:
-				p->OnElementFound(idx, svtUserData);
+				p->OnElementFound(idx, ScriptVarType::UserData);
 				break;
 			}
 		}
@@ -698,29 +698,29 @@ void CScriptObject::Dump(IScriptObjectDumpSink* p)
 			switch (lua_type(L, -1))
 			{
 			case LUA_TNIL:
-				p->OnElementFound(sName, svtNull);
+				p->OnElementFound(sName, ScriptVarType::Null);
 				break;
 			case LUA_TBOOLEAN:
-				p->OnElementFound(sName, svtBool);
+				p->OnElementFound(sName, ScriptVarType::Bool);
 				break;
 			case LUA_TLIGHTUSERDATA:
-				p->OnElementFound(sName, svtPointer);
+				p->OnElementFound(sName, ScriptVarType::Pointer);
 				break;
 			case LUA_TNUMBER:
-				p->OnElementFound(sName, svtNumber);
+				p->OnElementFound(sName, ScriptVarType::Number);
 				break;
 			case LUA_TSTRING:
-				p->OnElementFound(sName, svtString);
+				p->OnElementFound(sName, ScriptVarType::String);
 				break;
 			case LUA_TTABLE:
 				if (strcmp(sName, "__index") != 0)
-					p->OnElementFound(sName, svtObject);
+					p->OnElementFound(sName, ScriptVarType::Object);
 				break;
 			case LUA_TFUNCTION:
-				p->OnElementFound(sName, svtFunction);
+				p->OnElementFound(sName, ScriptVarType::Function);
 				break;
 			case LUA_TUSERDATA:
-				p->OnElementFound(sName, svtUserData);
+				p->OnElementFound(sName, ScriptVarType::UserData);
 				break;
 			}
 			;
@@ -731,28 +731,28 @@ void CScriptObject::Dump(IScriptObjectDumpSink* p)
 			switch (lua_type(L, -1))
 			{
 			case LUA_TNIL:
-				p->OnElementFound(nIdx, svtNull);
+				p->OnElementFound(nIdx, ScriptVarType::Null);
 				break;
 			case LUA_TBOOLEAN:
-				p->OnElementFound(nIdx, svtBool);
+				p->OnElementFound(nIdx, ScriptVarType::Bool);
 				break;
 			case LUA_TLIGHTUSERDATA:
-				p->OnElementFound(nIdx, svtPointer);
+				p->OnElementFound(nIdx, ScriptVarType::Pointer);
 				break;
 			case LUA_TNUMBER:
-				p->OnElementFound(nIdx, svtNumber);
+				p->OnElementFound(nIdx, ScriptVarType::Number);
 				break;
 			case LUA_TSTRING:
-				p->OnElementFound(nIdx, svtString);
+				p->OnElementFound(nIdx, ScriptVarType::String);
 				break;
 			case LUA_TTABLE:
-				p->OnElementFound(nIdx, svtObject);
+				p->OnElementFound(nIdx, ScriptVarType::Object);
 				break;
 			case LUA_TFUNCTION:
-				p->OnElementFound(nIdx, svtFunction);
+				p->OnElementFound(nIdx, ScriptVarType::Function);
 				break;
 			case LUA_TUSERDATA:
-				p->OnElementFound(nIdx, svtUserData);
+				p->OnElementFound(nIdx, ScriptVarType::UserData);
 				break;
 			}
 			;

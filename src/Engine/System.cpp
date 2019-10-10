@@ -1,4 +1,4 @@
-#include <BlackBox/Engine.hpp>
+#include <BlackBox/System.hpp>
 #include <BlackBox/NullLog.hpp>
 #include <BlackBox/Console.hpp>
 #include <BlackBox/IGame.hpp>
@@ -23,13 +23,14 @@
 using namespace Utils;
 
 
-CEngine::CEngine()
+CSystem::CSystem()
 	:
 	r_window_width(nullptr),
 	r_window_height(nullptr),
 	r_bpp(nullptr),
 	r_zbpp(nullptr),
 	r_sbpp(nullptr),
+	r_fullscreen(nullptr),
   m_InputHandler(nullptr),
   m_Render(nullptr),
   m_pConsole(nullptr),
@@ -42,13 +43,14 @@ CEngine::CEngine()
 
 }
 
-CEngine::~CEngine()
+CSystem::~CSystem()
 {
 	SAFE_RELEASE(r_window_width);
 	SAFE_RELEASE(r_window_height);
 	SAFE_RELEASE(r_bpp);
 	SAFE_RELEASE(r_zbpp);
 	SAFE_RELEASE(r_sbpp);
+	SAFE_RELEASE(r_fullscreen);
 
   SAFE_RELEASE(m_pLog);
 	SAFE_RELEASE(m_pConsole);
@@ -58,7 +60,7 @@ CEngine::~CEngine()
 	SAFE_RELEASE(m_Render);
 }
 
-bool CEngine::Init()
+bool CSystem::Init()
 {
 	initTimer();
   m_pLog = new NullLog();
@@ -90,7 +92,7 @@ bool CEngine::Init()
 		0,0, 
 		r_window_width->GetIVal(), r_window_height->GetIVal(), 
 		r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(), 
-		false, m_pWindow))
+		r_fullscreen->GetIVal(), m_pWindow))
 		)
 		return false;
 	//=============
@@ -141,63 +143,63 @@ bool CEngine::Init()
   return true;
 }
 
-void CEngine::Start()
+void CSystem::Start()
 {
   m_pGame->run();  
 }
 
-void CEngine::Release()
+void CSystem::Release()
 {
 	delete this;
 }
 
-IShaderManager * CEngine::getShaderManager()
+IShaderManager * CSystem::GetShaderManager()
 {
   return nullptr;
 }
 
-IRender * CEngine::getIRender()
+IRender * CSystem::GetIRender()
 {
   return m_Render;
 }
 
-ILog* CEngine::getILog()
+ILog* CSystem::GetILog()
 {
   return m_pLog;
 }
 
-IConsole* CEngine::getIConsole()
+IConsole* CSystem::GetIConsole()
 {
   return m_pConsole;
 }
 
-IGame* CEngine::getIGame()
+IGame* CSystem::getIGame()
 {
   return m_pGame;
 }
 
-IGame* CEngine::CreateGame(IGame* game)
+IGame* CSystem::CreateGame(IGame* game)
 {
   m_pGame = CreateIGame("MyGame");
   return m_pGame;
 }
 
-IFont* CEngine::getIFont()
+IFont* CSystem::getIFont()
 {
 	return m_pFont;
 }
 
-IWindow* CEngine::getIWindow()
+IWindow* CSystem::getIWindow()
 {
 	return m_pWindow;
 }
 
-IInputHandler* CEngine::getIInputHandler()
+IInputHandler* CSystem::getIInputHandler()
 {
 	return m_InputHandler;
 }
 
-bool CEngine::ConfigLoad(const char* file)
+bool CSystem::ConfigLoad(const char* file)
 {
 	m_pConsole->ExecuteFile(file);
 
@@ -206,34 +208,36 @@ bool CEngine::ConfigLoad(const char* file)
 	r_bpp = m_pConsole->GetCVar("r_bpp");
 	r_zbpp = m_pConsole->GetCVar("r_zbpp");
 	r_sbpp = m_pConsole->GetCVar("r_sbpp");
+	r_fullscreen = m_pConsole->GetCVar("r_fullscreen");
 
 	if (
 		r_window_width == nullptr ||
 		r_window_height == nullptr ||
 		r_bpp == nullptr ||
 		r_zbpp == nullptr ||
-		r_sbpp == nullptr
+		r_sbpp == nullptr ||
+		r_fullscreen == nullptr
 		)
 		return false;
 	return true;
 }
 
-void CEngine::ShowMessage(const char* message, const char* caption, MessageType messageType)
+void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
 {
 	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
 }
 
-void CEngine::Log(const char* message)
+void CSystem::Log(const char* message)
 {
 	std::cout << "-- "<< message << std::endl;
 }
 
-IScriptSystem* CEngine::getIIScriptSystem()
+IScriptSystem* CSystem::getIIScriptSystem()
 {
 	return m_pScriptSystem;
 }
 
-bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
+bool CSystem::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 	if (!strcmp(pVar->GetName(),"r_cap_profile"))
 	{
@@ -252,13 +256,13 @@ bool CEngine::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	return false;
 }
 
-void CEngine::BeginFrame()
+void CSystem::BeginFrame()
 {
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 }
 
-void CEngine::EndFrame()
+void CSystem::EndFrame()
 {
 	PROFILER_POP_CPU_MARKER();
 	{
@@ -267,7 +271,7 @@ void CEngine::EndFrame()
 	}
 }
 
-bool CEngine::OnInputEvent(sf::Event& event)
+bool CSystem::OnInputEvent(sf::Event& event)
 {
 	bool result = false;
 	switch (event.type)
@@ -315,7 +319,7 @@ bool CEngine::OnInputEvent(sf::Event& event)
 	return result;
 }
 
-void CEngine::Update()
+void CSystem::Update()
 {
 	//PROFILER_SYNC_FRAME();
 }
@@ -323,6 +327,7 @@ void CEngine::Update()
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
 {
 	//MessageBox(NULL, "TEST", "Message", MB_OK);
-  ISystem *system = new CEngine();
+  ISystem *system = new CSystem();
   return system;
 }
+

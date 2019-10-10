@@ -11,9 +11,9 @@ using namespace std;
 inline Vec3 randomVector(int min, int max)
 {
 	Vec3 vec(0);
-	vec.x = (std::rand() + min) % (int)max;
-	vec.y = (std::rand() + min) % (int)max;
-	vec.z = (std::rand() + min) % (int)max;
+	vec.x = static_cast<float>((std::rand() + min) % (int)max);
+	vec.y = static_cast<float>((std::rand() + min) % (int)max);
+	vec.z = static_cast<float>((std::rand() + min) % (int)max);
 	return vec;
 }
 

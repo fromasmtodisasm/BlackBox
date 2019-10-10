@@ -8,7 +8,8 @@
 
 class CRender : 
 	public IRender,
-	public IConsoleVarSink
+	public IConsoleVarSink,
+	public IInputEventListener 
 {
 public:
 	CRender(ISystem *engine);
@@ -57,26 +58,34 @@ public:
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
+  // Inherited via IRender
+  virtual void DrawFullScreenImage(int texture_id) override;
+
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
+	// Inherited via IInputEventListener
+	virtual bool OnInputEvent(sf::Event& event) override;
 private:
 	void glInit();
 
 private:
-	IWindow* m_Window;
-	ISystem *m_Engine;
+	IWindow* m_Window = nullptr;
+	ISystem *m_Engine = nullptr;
 
 	bool is_fullscreen = false;
 	Rect m_viewPort;
-	unsigned int cbpp;
-	int zbpp;
-	int sbits;
+	unsigned int cbpp = 0;
+	int zbpp = 0;
+	int sbits = 0;
 
 	//============
 	const GLuint majorVersion = 4;
 	const GLuint minorVersion = 3;
+	const int antialiassing = 8;
 	OpenglDebuger *glDebug;
 	//============
-	CCamera *m_Camera;
-	Quad *m_ScreenQuad;
+	CCamera *m_Camera = nullptr;
+	Quad *m_ScreenQuad = nullptr;
 	// Shaders 
 	BaseShaderProgramRef m_ScreenShader;
 #if defined(_DEBUG) || defined(GL_DEBUG)
@@ -85,23 +94,22 @@ private:
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
 #endif 
 	// DEBUG
-	ICVar* translateImageX;
-	ICVar* translateImageY;
+	ICVar* translateImageX = nullptr;
+	ICVar* translateImageY = nullptr;
 
-	ICVar* scaleImageX;
-	ICVar* scaleImageY;
+	ICVar* scaleImageX = nullptr;
+	ICVar* scaleImageY = nullptr;
 
-	ICVar* needTranslate;
-	ICVar* needFlipY;
+	ICVar* needTranslate = nullptr;
+	ICVar* needFlipY = nullptr;
 
-	ICVar* r_debug;
-	ICVar* test_proj;
-	ICVar* render_via_viewport;
+	ICVar* r_debug = nullptr;
+	ICVar* test_proj = nullptr;
+	ICVar* render_via_viewport = nullptr;
 
-  // Inherited via IRender
-  virtual void DrawFullScreenImage(int texture_id) override;
 
-	// Inherited via IConsoleVarSink
-	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
-};
+	// Inherited via IRender
+	virtual int EnumDisplayFormats(SDispFormat* formats) override;
+
+	};
 

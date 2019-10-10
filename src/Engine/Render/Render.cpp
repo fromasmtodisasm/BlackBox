@@ -1,10 +1,14 @@
 #include <BlackBox/Render/Render.hpp>
 #include <BlackBox/Render/Opengl.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+
+//
+#include <SFML/Window.hpp>
+
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -27,7 +31,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	IWindow* result = m_Window = window;
 	if (window == nullptr)
 		return nullptr;
-  sf::ContextSettings settings(zbpp, sbits, 0, majorVersion, minorVersion, glContextType);
+  sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
 		return false;
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
@@ -35,20 +39,20 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
   if (!OpenGLLoader())
     return false;
 	//=======================
-	translateImageY = m_Engine->getIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_Engine->getIConsole()->CreateVariable("tx", 0.0f, 0);
+	translateImageY = m_Engine->GetIConsole()->CreateVariable("ty", 0.0f, 0);
+	translateImageX = m_Engine->GetIConsole()->CreateVariable("tx", 0.0f, 0);
 
-	scaleImageX = m_Engine->getIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_Engine->getIConsole()->CreateVariable("sy", 1.0f, 0);
+	scaleImageX = m_Engine->GetIConsole()->CreateVariable("sx", 1.0f, 0);
+	scaleImageY = m_Engine->GetIConsole()->CreateVariable("sy", 1.0f, 0);
 
-	needTranslate = m_Engine->getIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_Engine->getIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
+	needTranslate = m_Engine->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY = m_Engine->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
 
-	test_proj = m_Engine->getIConsole()->CreateVariable("test_proj", "test proj empty", 0);
-	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_Engine->getIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+	test_proj = m_Engine->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
+	r_debug = m_Engine->GetIConsole()->GetCVar("r_debug");
+	render_via_viewport = m_Engine->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
-	m_Engine->getIConsole()->AddConsoleVarSink(this);
+	m_Engine->GetIConsole()->AddConsoleVarSink(this);
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -94,10 +98,6 @@ void CRender::SetViewport(int x, int y, int width, int height)
 }
 
 void CRender::SetScissor(int x, int y, int width, int height)
-{
-}
-
-void CRender::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
 {
 }
 
@@ -169,6 +169,27 @@ void CRender::glInit()
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+int CRender::EnumDisplayFormats(SDispFormat* formats)
+{
+	int numModes = 0;
+	auto videoModes = sf::VideoMode::getFullscreenModes();
+
+	numModes = videoModes.size();
+	int i = 0;
+	if (formats != nullptr)
+	{
+		for (auto& mode : videoModes)
+		{
+			formats[i].m_BPP = mode.bitsPerPixel;
+			formats[i].m_Width = mode.width;
+			formats[i].m_Height = mode.height;
+			i++;
+		}
+	}
+
+	return numModes;
+}
+
 void CRender::DrawFullScreenImage(int texture_id)
 {
   float
@@ -201,6 +222,10 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	}
 	return false;
 
+}
+
+void CRender::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
+{
 }
 
 void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
@@ -265,6 +290,11 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 {
 	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
+}
+
+bool CRender::OnInputEvent(sf::Event& event)
+{
+	return false;
 }
 
 

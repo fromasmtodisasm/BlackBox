@@ -93,10 +93,10 @@ struct ISystem
   virtual void Release() = 0;
   virtual IGame *CreateGame(IGame* game) = 0;
 
-  virtual IShaderManager *getShaderManager() = 0;
-  virtual IRender *getIRender() = 0;
-  virtual ILog *getILog() = 0;
-  virtual IConsole *getIConsole() = 0;
+  virtual IShaderManager *GetShaderManager() = 0;
+  virtual IRender *GetIRender() = 0;
+  virtual ILog *GetILog() = 0;
+  virtual IConsole *GetIConsole() = 0;
   virtual IGame *getIGame() = 0;
   virtual IFont *getIFont() = 0;
   virtual IWindow *getIWindow() = 0;
@@ -117,7 +117,7 @@ extern "C"
   BLACKBOX_EXPORT ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
 
-#define FatalError(...)
+#define FatalError(...) void(0)
 #define CryFatalError(...) FatalError(__VA_ARGS__)
 
 
@@ -125,9 +125,9 @@ extern "C"
 #define CryWraning(...) Wraning(__VA_ARGS__)
 #define ScriptWarning(...) Wraning(__VA_ARGS__)
 
-#define CryError(...) ;
+#define CryError(...) void(0)
 
 //! Simple logs of data with low verbosity.
 //void        CryLog(const char*, ...) PRINTF_PARAMS(1, 2);
-#define CryLog(format, ...) GetISystem()->getIConsole()->PrintLine(format, __VA_ARGS__)
+#define CryLog(format, ...) GetISystem()->GetIConsole()->PrintLine(format, __VA_ARGS__)
 

@@ -64,7 +64,7 @@ public:
 			{
 				Vertex v;
 				v.pos.x = 4 * (float)j;// / (width - 1);
-				v.pos.y = 160 * data[k] / 255.0;
+				v.pos.y = 160.f * data[k] / 255.0f;
 				v.pos.z = 4 *(float)i;// / (height - 1);
 				vb.push_back(v);
 				k += 3;

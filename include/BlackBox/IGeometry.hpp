@@ -48,9 +48,9 @@ struct Vertex
   glm::vec3 btangent;
 
 	Vertex() : pos(0), uv(0), normal(0), tangent(0), btangent(0) {}
-	Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv)
+	Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv), normal(0), tangent(0), btangent(0)
 	{}
-  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)
+  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n), tangent(0), btangent(0)
   {}
 };
 

@@ -11,19 +11,23 @@ function player:OnInit( data )
 
 	Console:Show(true)
 	Game:gotoMenu(true)
+
+	local formats = System:EnumDisplayFormats()
+	for i=1, #formats do
+		Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+	end
 end
 
 function player:TestChanges(string)
 	Console:PrintLine("TestChanges"):PrintLine("call chain"..string)
 	Console:PrintLine("Username: " .. self.name)
+	
 
 	return Console;
 end
 
 function player:Update( dt )
-	--Console:Clear()
 	self.alltime = self.alltime + dt;
-	--Console:PrintLine("alltime: " .. self.alltime)
 end
 
 

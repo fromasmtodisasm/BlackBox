@@ -8,7 +8,7 @@
 #include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/Terrain.hpp>
 #include <BlackBox/Render/BaseShader.hpp>

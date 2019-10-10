@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp> 
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/IConsole.hpp>
@@ -226,7 +227,7 @@ private:
 
 	ScriptFileList        m_dqLoadedFiles;
 
-	//CScriptBindings       m_stdScriptBinds;
+	CScriptBindings       m_stdScriptBinds;
 	ISystem* m_pSystem;
 
 	float                 m_fGCFreq;      //!< relative time in seconds
