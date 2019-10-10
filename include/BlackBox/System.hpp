@@ -68,6 +68,7 @@ private:
 	IInputHandler* m_InputHandler;
 	IRender* m_Render;
 	IScriptSystem* m_pScriptSystem;
+
 private:
 	ICVar* r_window_width;
 	ICVar* r_window_height;

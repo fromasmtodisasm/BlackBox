@@ -1,4 +1,4 @@
-#include <BlackBox/Engine.hpp>
+#include <BlackBox/System.hpp>
 #include <BlackBox/NullLog.hpp>
 #include <BlackBox/Console.hpp>
 #include <BlackBox/IGame.hpp>
@@ -153,22 +153,22 @@ void CSystem::Release()
 	delete this;
 }
 
-IShaderManager * CSystem::getShaderManager()
+IShaderManager * CSystem::GetShaderManager()
 {
   return nullptr;
 }
 
-IRender * CSystem::getIRender()
+IRender * CSystem::GetIRender()
 {
   return m_Render;
 }
 
-ILog* CSystem::getILog()
+ILog* CSystem::GetILog()
 {
   return m_pLog;
 }
 
-IConsole* CSystem::getIConsole()
+IConsole* CSystem::GetIConsole()
 {
   return m_pConsole;
 }
@@ -330,3 +330,4 @@ BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
   ISystem *system = new CSystem();
   return system;
 }
+

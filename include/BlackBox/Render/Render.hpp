@@ -107,5 +107,9 @@ private:
 	ICVar* test_proj = nullptr;
 	ICVar* render_via_viewport = nullptr;
 
-};
+
+	// Inherited via IRender
+	virtual int EnumDisplayFormats(SDispFormat* formats) override;
+
+	};
 

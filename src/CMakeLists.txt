@@ -75,13 +75,14 @@ endif()
 target_sources(
   ${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Console.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Engine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Log.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
@@ -144,6 +145,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
   #ScriptSystem folder
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp

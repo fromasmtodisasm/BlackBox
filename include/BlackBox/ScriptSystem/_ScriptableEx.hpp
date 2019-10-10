@@ -19,9 +19,14 @@
 #endif
 #endif
 
+struct ScriptBase
+{
+	virtual ~ScriptBase() {};
+};
+
 //////////////////////////////////////////////////////////////////////
 template<class T>
-class _ScriptableEx
+class _ScriptableEx : public ScriptBase
 {
 public:
 	_ScriptableEx()
@@ -381,7 +386,8 @@ protected:
 		return pH->EndFunctionNull(); \
 	} 
 #endif
-
+#define SCRIPT_REG_CLASSNAME
+#define SCRIPT_REG_FUNC(_func)  SCRIPT_REG_CLASSNAME::RegisterFunction(pSS,# _func, &SCRIPT_REG_CLASSNAME::_func);
 #define REG_FUNC(_class,_func) _class::RegisterFunction(pSS,#_func,&_class::_func);
 #define REG_DERIVED_FUNC(_class,_func) RegisterFunction(pSS,#_func,&_class::_func);
 #define SCRIPT_REG_CONST_SS(_pSS, _const) _pSS->SetGlobalValue(#_const, _const);

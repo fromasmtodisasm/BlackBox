@@ -6,6 +6,10 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 
+//
+#include <SFML/Window.hpp>
+
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
@@ -163,6 +167,27 @@ void CRender::glInit()
 	// Blending
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+int CRender::EnumDisplayFormats(SDispFormat* formats)
+{
+	int numModes = 0;
+	auto videoModes = sf::VideoMode::getFullscreenModes();
+
+	numModes = videoModes.size();
+	int i = 0;
+	if (formats != nullptr)
+	{
+		for (auto& mode : videoModes)
+		{
+			formats[i].m_BPP = mode.bitsPerPixel;
+			formats[i].m_Width = mode.width;
+			formats[i].m_Height = mode.height;
+			i++;
+		}
+	}
+
+	return numModes;
 }
 
 void CRender::DrawFullScreenImage(int texture_id)
