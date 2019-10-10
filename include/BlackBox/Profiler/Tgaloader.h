@@ -21,7 +21,12 @@
 
 #ifdef TGA_OPENGL_SUPPORT
 	#ifdef WIN32
-	#include <windows.h>
+	
+#pragma warning(push)
+#pragma warning(disable : 4005)
+#include <Windows.h>
+#pragma warning(pop)
+
 	#endif
 #include <GL/gl.h>
 #include <GL/glu.h>

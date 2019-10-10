@@ -527,7 +527,7 @@ void CConsole::moveCursor(bool left)
 {
 	if (left)
 	{
-		cursor.x = std::max(0.f, (int)cursor.x - 1.f);
+		cursor.x = std::max(0, (int)cursor.x - 1);
 	}
 	else
 	{
@@ -636,7 +636,7 @@ bool CConsole::Init(ISystem* pSystem)
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
 	r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
-	blinkTime = CreateVariable("btime", 1.0f, (const char)"Time of cursor blinking");
+	blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
 
 	if (background != nullptr)
 		texture_path = background->GetString();
@@ -927,7 +927,7 @@ CommandLine CConsole::getPrompt()
 
 void CConsole::printLine(size_t line)
 {
-	int i = line;
+	auto i = line;
 	for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
 	{
 		printText(*element, line);

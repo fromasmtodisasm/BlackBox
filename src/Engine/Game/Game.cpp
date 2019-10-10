@@ -111,7 +111,10 @@ CGame::CGame(std::string title) :
   shaderManager(nullptr),
   m_World(new World()),m_Title(title)
 {
+#pragma warning(push)
+#pragma warning(disable : 4244)
   srand(time(nullptr));
+#pragma warning(push)
   m_deltaTime = 0.0f;
   m_lastTime = 0.0f;
   m_PlayList.setRootPath("res/music/");

@@ -6,7 +6,11 @@
 
 // Basic types: ThreadHandle, ThreadId, Mutex, Event
 #ifdef WIN32
-	#include <windows.h>
+	
+#pragma warning(push)
+#pragma warning(disable : 4005)
+#include <Windows.h>
+#pragma warning(pop)
 	typedef	HANDLE				ThreadHandle;
 	typedef	DWORD				ThreadId;
 	typedef	CRITICAL_SECTION	Mutex;

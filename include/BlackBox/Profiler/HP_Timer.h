@@ -9,8 +9,10 @@ void initTimer();
 void shutTimer();
 
 #ifdef _WIN32	// Windows 32 bits and 64 bits: use QueryPerformanceCounter()
-	#include <windows.h>
-
+#pragma warning(push)
+#pragma warning(disable : 4005)
+#include <Windows.h>
+#pragma warning(pop)
 	extern int64_t __freq;
 	extern int64_t __time_at_init;
 

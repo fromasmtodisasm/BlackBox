@@ -27,7 +27,10 @@ Particles::~Particles()
 
 bool Particles::Create()
 {
+#pragma warning(push)
+#pragma warning(disable : 4244)
 	std::srand(time(0));
+#pragma warning(pop)
 	initPos();
 	initVel();
 

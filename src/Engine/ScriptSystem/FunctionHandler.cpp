@@ -53,7 +53,7 @@ int CFunctionHandler::GetParamCount()
 bool CFunctionHandler::GetParam(int nIdx, int& n)
 {
 	int nRealIdx = nIdx + m_paramIdOffset;
-	n = lua_tointeger(L, nRealIdx);
+	n = static_cast<int>(lua_tointeger(L, nRealIdx));
 	return true;
 
 }
@@ -61,7 +61,7 @@ bool CFunctionHandler::GetParam(int nIdx, int& n)
 bool CFunctionHandler::GetParam(int nIdx, float& f)
 {
 	int nRealIdx = nIdx + m_paramIdOffset;
-	f = lua_tonumber(L, nRealIdx);
+	f = static_cast<float>(lua_tonumber(L, nRealIdx));
 	return true;
 }
 

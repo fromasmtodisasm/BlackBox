@@ -89,6 +89,7 @@ bool CGame::InitScripts()
 	bool retflag;
 	bool retval = TestScriptSystem(retflag);
 	if (retflag) return retval;
+	return true;
 
 }
 

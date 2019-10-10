@@ -128,12 +128,12 @@ public:
 
 	inline void ToAny(int& val, int nIdx)
 	{
-		val = lua_tointeger(L, nIdx);
+		val = static_cast<int>(lua_tointeger(L, nIdx));
 	}
 
 	inline void ToAny(float& val, int nIdx)
 	{
-		val = lua_tonumber(L, nIdx);
+		val = static_cast<float>(lua_tonumber(L, nIdx));
 	}
 
 	inline void ToAny(const char*& val, int nIdx)

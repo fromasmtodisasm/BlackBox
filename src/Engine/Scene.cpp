@@ -33,7 +33,7 @@ using namespace tinyxml2;
 
 void Scene::loadTerrain(tinyxml2::XMLElement* terrain)
 {
-	Object* obj;
+	//Object* obj;
   Material *material;
   MaterialManager *materialManager = MaterialManager::instance();
   const char *terrainName = nullptr;
@@ -365,7 +365,6 @@ bool Scene::selectObject(std::string name)
 void Scene::draw(float dt)
 { 
 	//auto tech_name = m_Technique->GetName();
-	char debug_label[256];
 	//sprintf(debug_label, "Technique: %s", tech_name);
 	DEBUG_GROUP("Render Loop");
   if (m_Objects.size() > 0)

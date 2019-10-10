@@ -174,7 +174,7 @@ int CRender::EnumDisplayFormats(SDispFormat* formats)
 	int numModes = 0;
 	auto videoModes = sf::VideoMode::getFullscreenModes();
 
-	numModes = videoModes.size();
+	numModes = static_cast<int>(videoModes.size());
 	int i = 0;
 	if (formats != nullptr)
 	{

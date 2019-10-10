@@ -1,8 +1,12 @@
 #pragma once
 
 #if defined(_WIN32) || defined(_WIN64)
+#pragma warning(push)
+#pragma warning(disable : 4005)
 #include <Windows.h>
+#pragma warning(pop)
 #endif // _WIN32
+#include <cassert>
 
 
 class ICrySizer;
@@ -665,30 +669,30 @@ struct IScriptDebugSink {
 //Utility classes
 /////////////////////////////////////////////////////////////////////////////
 
-class _SmartScriptObject
+class SmartScriptObject
 {
-	_SmartScriptObject(const _SmartScriptObject&)
+	SmartScriptObject(const SmartScriptObject&)
 	{
 	}
-	_SmartScriptObject& operator =(const _SmartScriptObject&)
+	SmartScriptObject& operator =(const SmartScriptObject&)
 	{
 		return *this;
 	}
-	_SmartScriptObject& operator =(IScriptObject*)
+	SmartScriptObject& operator =(IScriptObject*)
 	{
 		return *this;
 	}
 public:
-	_SmartScriptObject()
+	SmartScriptObject()
 	{
 		m_pSO = NULL;
 	}
-	_SmartScriptObject(IScriptSystem* pSS, IScriptObject* p)
+	SmartScriptObject(IScriptSystem* pSS, IScriptObject* p)
 	{
 		m_pSO = pSS->CreateEmptyObject();
 		m_pSO->Attach(p);
 	}
-	_SmartScriptObject(IScriptSystem* pSS, bool bCreateEmpty = false)
+	SmartScriptObject(IScriptSystem* pSS, bool bCreateEmpty = false)
 	{
 		if (!bCreateEmpty)
 		{
@@ -698,7 +702,7 @@ public:
 			m_pSO = pSS->CreateEmptyObject();
 		}
 	}
-	~_SmartScriptObject()
+	~SmartScriptObject()
 	{
 		if (m_pSO)
 			m_pSO->Release();
@@ -761,6 +765,7 @@ protected:
 
 };
 
+#if 0
 class _HScriptFunction
 {
 public:
@@ -782,6 +787,92 @@ private:
 	HSCRIPTFUNCTION m_hFunc;
 	IScriptSystem* m_pScriptSystem;
 };
+#else
+// Smart wrapper on top of script function handle.
+class SmartScriptFunction
+{
+public:
+	SmartScriptFunction()
+		: m_func(0)
+		, m_pSS(0)
+	{
+	};
+
+	SmartScriptFunction(IScriptSystem* pSS, HSCRIPTFUNCTION func)
+		: m_func(func)
+		, m_pSS(pSS)
+	{
+	}
+
+	SmartScriptFunction(const SmartScriptFunction& other)
+		: m_func(0)
+		, m_pSS(0)
+	{
+#if 0
+		if (other.m_func)
+		{
+			ScriptAnyValue func(
+				other.m_pSS->CloneAny(ScriptAnyValue((HSCRIPTFUNCTION)other.m_func)));
+			func.CopyTo(m_func);
+			m_pSS = other.m_pSS;
+		}
+#else
+		assert(0 && "Not implemented");
+#endif
+	}
+
+	~SmartScriptFunction()
+	{
+		if (m_func)
+			m_pSS->ReleaseFunc(m_func);
+
+		m_func = 0;
+		m_pSS = 0;
+	}
+
+	SmartScriptFunction& operator=(const SmartScriptFunction& other)
+	{
+		SmartScriptFunction(other).swap(*this);
+
+		return *this;
+	}
+
+	operator HSCRIPTFUNCTION() const
+	{
+		return m_func;
+	}
+
+	HSCRIPTFUNCTION get() const
+	{
+		return m_func;
+	}
+
+	void swap(SmartScriptFunction& other)
+	{
+		HSCRIPTFUNCTION otherFunc = other.m_func;
+		IScriptSystem* otherSS = other.m_pSS;
+		other.m_func = m_func;
+		other.m_pSS = m_pSS;
+		m_func = otherFunc;
+		m_pSS = otherSS;
+	}
+
+	void reset()
+	{
+		SmartScriptFunction().swap(*this);
+	}
+
+	void reset(IScriptSystem* pSS, HSCRIPTFUNCTION func)
+	{
+		SmartScriptFunction(pSS, func).swap(*this);
+	}
+
+private:
+	HSCRIPTFUNCTION m_func;
+	IScriptSystem* m_pSS;
+};
+
+#endif
 
 #if 0
 

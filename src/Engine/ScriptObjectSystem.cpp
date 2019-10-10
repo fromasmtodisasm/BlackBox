@@ -49,9 +49,8 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {
 	//SCRIPT_CHECK_PARAMETERS(0);
-#if 1
 	m_pConsole->PrintLine("Enumerating display settings...");
-	_SmartScriptObject pDispArray(m_pSS);
+	SmartScriptObject pDispArray(m_pSS);
 	SDispFormat* Formats = NULL;
 	unsigned int i;
 	unsigned int numFormats = m_pRenderer->EnumDisplayFormats(NULL);
@@ -64,7 +63,7 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 	for (i = 0; i < numFormats; i++)
 	{
 		SDispFormat* pForm = &Formats[i];
-		_SmartScriptObject pDisp(m_pSS);
+		SmartScriptObject pDisp(m_pSS);
 		pDisp->SetValue("width", pForm->m_Width);
 		pDisp->SetValue("height", pForm->m_Height);
 		pDisp->SetValue("bpp", pForm->m_BPP);
@@ -75,21 +74,21 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 	if (numFormats == 0)        // renderer is not doing his job
 	{
 		{
-			_SmartScriptObject pDisp(m_pSS);
+			SmartScriptObject pDisp(m_pSS);
 			pDisp->SetValue("width", 640);
 			pDisp->SetValue("height", 480);
 			pDisp->SetValue("bpp", 32);
 			pDispArray->SetAt(1, pDisp);
 		}
 		{
-			_SmartScriptObject pDisp(m_pSS);
+			SmartScriptObject pDisp(m_pSS);
 			pDisp->SetValue("width", 800);
 			pDisp->SetValue("height", 600);
 			pDisp->SetValue("bpp", 32);
 			pDispArray->SetAt(2, pDisp);
 		}
 		{
-			_SmartScriptObject pDisp(m_pSS);
+			SmartScriptObject pDisp(m_pSS);
 			pDisp->SetValue("width", 1024);
 			pDisp->SetValue("height", 768);
 			pDisp->SetValue("bpp", 32);
@@ -99,22 +98,5 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 
 	if (Formats)
 		delete[] Formats;
-#else
-	auto L = (lua_State*)this->m_pScriptSystem->GetScriptHandle();
-	//lua_newtable(L);
-
-	_SmartScriptObject pDispArray(m_pSS);
-	
-	lua_pushstring(L, "width");
-	lua_pushinteger(L, 640);
-	lua_settable(L, -3);
-
-	lua_pushstring(L, "height");
-	lua_pushinteger(L, 640);
-	lua_settable(L, -3);
-
-	return 1;
-#endif
-
 	return pH->EndFunction(pDispArray);
 }
