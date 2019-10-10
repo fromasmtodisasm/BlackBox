@@ -3,7 +3,7 @@
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/CConsole.hpp>
+#include <BlackBox/Console.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 
 #include <imgui.h>

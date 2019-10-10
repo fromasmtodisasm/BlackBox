@@ -2,7 +2,7 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/IEngine.hpp>
 //#include <BlackBox/IWindow.hpp>
-#include <BlackBox/CWindow.hpp>
+#include <BlackBox/Window.hpp>
 #include <BlackBox/InputHandler.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
@@ -13,7 +13,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/CConsole.hpp>
+#include <BlackBox/Console.hpp>
 #include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectGame.hpp>
 

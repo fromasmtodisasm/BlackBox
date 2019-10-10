@@ -50,15 +50,13 @@ if (USE_SFML)
   add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
   target_sources(
     ${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/Window/CSFMLWindow.cpp
-    #PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CSFMLWindow.hpp
+    PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
     )
     add_definitions(-DSFML_WINDOW)
 else()
   target_sources(
     ${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/Window/CGLFWWindow.cpp
-    #PRIVATE ${BLACKBOX_INCLUDE_DIRS}/CGLFWWindow.hpp
+    PRIVATE ${SOURCE_DIR}/Engine/Window/GLFWWindow.cpp
     )
     add_definitions(-DGLFW_WINDOW)
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -76,23 +74,23 @@ endif()
 
 target_sources(
   ${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/CConsole.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/CEngine.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/CLog.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Console.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Engine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Log.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/CGame.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/CPlayer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Game.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameTagPoints.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Player.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
   #Geometry folder
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
@@ -103,7 +101,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
 
   #Input folder
-  PRIVATE ${SOURCE_DIR}/Engine/Input/CInputHandler.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp
   #Profiler folder
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp
@@ -113,11 +111,9 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
 
   #Render folder
+  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/CBaseShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/CCamera.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/CRender.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/CShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Camera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
@@ -130,7 +126,9 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/Pipeline.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Render.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Shader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TechniqueManager.cpp

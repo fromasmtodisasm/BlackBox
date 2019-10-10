@@ -1,4 +1,4 @@
-#include <BlackBox/CConsole.hpp>
+#include <BlackBox/Console.hpp>
 #include <BlackBox/IEngine.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Utils.hpp>

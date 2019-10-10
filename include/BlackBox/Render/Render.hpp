@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/CWindow.hpp>
+#include <BlackBox/Window.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>

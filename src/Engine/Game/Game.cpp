@@ -1,6 +1,6 @@
 ﻿#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Game/GameObject.hpp>
-#include <BlackBox/CWindow.hpp>
+#include <BlackBox/Window.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/Render/Texture.hpp>
 #ifdef GUI

@@ -1,4 +1,4 @@
-#include <BlackBox/CSFMLWindow.hpp>
+#include <BlackBox/SFMLWindow.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/ITexture.hpp>
 #include <BlackBox/IEngine.hpp>

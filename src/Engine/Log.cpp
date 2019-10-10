@@ -1,7 +1,7 @@
 #ifdef GUI
 
 
-#include <BlackBox/CLog.hpp>
+#include <BlackBox/Log.hpp>
 
 void CLog::Clear()
 {

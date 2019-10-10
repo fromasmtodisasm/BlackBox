@@ -1,7 +1,7 @@
 #pragma once
 #if 0
 #include <BlackBox/InputHandler.hpp>
-#include <BlackBox/CWindow.hpp>
+#include <BlackBox/Window.hpp>
 #include <SFML/System.hpp>
 
 #include <map>

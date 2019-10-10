@@ -1,9 +1,9 @@
 #pragma once
 #ifdef SFML_WINDOW
-#include "CSFMLWindow.hpp"
+#include "SFMLWindow.hpp"
 typedef CSFMLWindow CWindow;
 #else
-#include "CGLFWWindow.hpp"
+#include "GLFWWindow.hpp"
 typedef CGLFWWindow CWindow;
 #endif // SFML_WINDOW
 

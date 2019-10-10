@@ -1,4 +1,4 @@
-#include <BlackBox/CSFMLWindow.hpp>
+#include <BlackBox/SFMLWindow.hpp>
 #include <iostream>
 
 using namespace std;
