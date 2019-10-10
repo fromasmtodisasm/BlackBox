@@ -10,31 +10,31 @@
 class Drawer2D
 {
 private:
-	GLuint m_id_vao_rect;
-	GLuint m_id_vao_string;
+	GLuint m_id_vao_rect = 0;
+	GLuint m_id_vao_string = 0;
 
-	GLuint	m_id_vbo_rect;
-	GLuint m_id_vbo_string;
+	GLuint	m_id_vbo_rect = 0;
+	GLuint m_id_vbo_string = 0;
 
 	// Unicolor shader
-	GLuint	m_id_vert_color;
-	GLuint	m_id_frag_color;
-	GLuint	m_id_prog_color;
+	GLuint	m_id_vert_color = 0;
+	GLuint	m_id_frag_color = 0;
+	GLuint	m_id_prog_color = 0;
 
-	GLint	m_id_uniform_color;
+	GLint	m_id_uniform_color = 0;
 
 	// Font
-	GLuint	m_id_tex_font;
-	GLint	m_id_uniform_tex_font;
-	GLint	m_id_uniform_font_color;
+	GLuint	m_id_tex_font = 0;
+	GLint	m_id_uniform_tex_font = 0;
+	GLint	m_id_uniform_font_color = 0;
 
-	GLuint	m_id_vert_font;
-	GLuint	m_id_frag_font;
-	GLuint	m_id_prog_font;
+	GLuint	m_id_vert_font = 0;
+	GLuint	m_id_frag_font = 0;
+	GLuint	m_id_prog_font = 0;
 
 	// Window size
-	int		m_win_w;
-	int		m_win_h;
+	int		m_win_w = 0;
+	int		m_win_h = 0;
 
 public:
 	Drawer2D() {}
