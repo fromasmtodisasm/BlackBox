@@ -1,7 +1,7 @@
 #include <BlackBox/SFMLWindow.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/ITexture.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
 #ifdef GUI
   #include <imgui-SFML.h>

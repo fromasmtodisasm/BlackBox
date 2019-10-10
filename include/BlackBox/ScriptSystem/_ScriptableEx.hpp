@@ -4,7 +4,7 @@
 #define _SCRIPTABLE_H_
 
 #include <BlackBox/IScriptSystem.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <vector>
 #include <string>
 //#define _NO_HASHMAP

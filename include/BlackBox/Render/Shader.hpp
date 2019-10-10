@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <glm/fwd.hpp>
 #include <string>
 #include <memory>

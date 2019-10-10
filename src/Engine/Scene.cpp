@@ -13,7 +13,7 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IGame.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 
 #include <tinyxml2.h>

@@ -2,7 +2,7 @@
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 
 #include <cassert>
 

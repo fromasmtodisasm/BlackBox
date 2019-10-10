@@ -1,5 +1,5 @@
 #include <BlackBox/IGame.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/ILog.hpp>
 

@@ -1,6 +1,6 @@
 #include <BlackBox/Render/Render.hpp>
 #include <BlackBox/Render/Opengl.hpp>
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>

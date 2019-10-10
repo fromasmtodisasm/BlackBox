@@ -1,4 +1,4 @@
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene.hpp>

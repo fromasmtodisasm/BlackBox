@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/Window.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IScriptSystem.hpp>
