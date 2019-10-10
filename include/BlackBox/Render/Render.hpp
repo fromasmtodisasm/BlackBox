@@ -73,6 +73,7 @@ private:
 	//============
 	const GLuint majorVersion = 4;
 	const GLuint minorVersion = 3;
+	const int antialiassing = 8;
 	OpenglDebuger *glDebug;
 	//============
 	CCamera *m_Camera;

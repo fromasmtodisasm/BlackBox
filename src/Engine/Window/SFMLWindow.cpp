@@ -14,7 +14,7 @@ using namespace std;
 CSFMLWindow::CSFMLWindow(std::string title, int width, int height) :
   m_Width(width), m_Height(height), m_Title(title), m_bClose(false),
   viewPort(0,0, width, height),
-  m_Window(nullptr)
+  m_Window(new sf::RenderWindow())
 {
   ;
 }
@@ -33,21 +33,25 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
   sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 	sf::Vector2i position((desktop.width - width) / 2, (desktop.height - height) / 2);
 	decltype(desktop) mode;
+	int style;
 
 	if (fullscreen)
 	{
 		mode = sf::VideoMode::getFullscreenModes()[0];
 		position.x = 0;
 		position.y = 0;
+		style = sf::Style::Fullscreen;
 	}
 	else
 	{
 		mode = sf::VideoMode(m_Width = width, m_Height = height, cbpp);
+		style = sf::Style::Default;
 	}
 #if 1
 	m_contextSettings.antialiasingLevel = 8;
 #endif
-	m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, m_contextSettings);//, sf::Style::Fullscreen);
+	//m_Window = new sf::RenderWindow(mode, sf::String(m_Title), sf::Style::Default, m_contextSettings);//, sf::Style::Fullscreen);
+	m_Window->create(mode, sf::String(m_Title), style, m_contextSettings);
 	m_Window->setPosition(position);
   //m_Window->setVerticalSyncEnabled(true);
   //m_Window->setFramerateLimit(60);

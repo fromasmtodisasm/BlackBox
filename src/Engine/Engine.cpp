@@ -30,6 +30,7 @@ CEngine::CEngine()
 	r_bpp(nullptr),
 	r_zbpp(nullptr),
 	r_sbpp(nullptr),
+	r_fullscreen(nullptr),
   m_InputHandler(nullptr),
   m_Render(nullptr),
   m_pConsole(nullptr),
@@ -49,6 +50,7 @@ CEngine::~CEngine()
 	SAFE_RELEASE(r_bpp);
 	SAFE_RELEASE(r_zbpp);
 	SAFE_RELEASE(r_sbpp);
+	SAFE_RELEASE(r_fullscreen);
 
   SAFE_RELEASE(m_pLog);
 	SAFE_RELEASE(m_pConsole);
@@ -90,7 +92,7 @@ bool CEngine::Init()
 		0,0, 
 		r_window_width->GetIVal(), r_window_height->GetIVal(), 
 		r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(), 
-		false, m_pWindow))
+		r_fullscreen->GetIVal(), m_pWindow))
 		)
 		return false;
 	//=============
@@ -206,13 +208,15 @@ bool CEngine::ConfigLoad(const char* file)
 	r_bpp = m_pConsole->GetCVar("r_bpp");
 	r_zbpp = m_pConsole->GetCVar("r_zbpp");
 	r_sbpp = m_pConsole->GetCVar("r_sbpp");
+	r_fullscreen = m_pConsole->GetCVar("r_fullscreen");
 
 	if (
 		r_window_width == nullptr ||
 		r_window_height == nullptr ||
 		r_bpp == nullptr ||
 		r_zbpp == nullptr ||
-		r_sbpp == nullptr
+		r_sbpp == nullptr ||
+		r_fullscreen == nullptr
 		)
 		return false;
 	return true;

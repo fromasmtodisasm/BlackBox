@@ -73,5 +73,5 @@ private:
 	ICVar* r_bpp;
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
-
+	ICVar* r_fullscreen;
 };

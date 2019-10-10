@@ -27,7 +27,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	IWindow* result = m_Window = window;
 	if (window == nullptr)
 		return nullptr;
-  sf::ContextSettings settings(zbpp, sbits, 0, majorVersion, minorVersion, glContextType);
+  sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
 		return false;
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
