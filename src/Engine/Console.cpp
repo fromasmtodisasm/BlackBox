@@ -221,7 +221,8 @@ bool CConsole::OnInputEvent(sf::Event& event)
 				}
 				else
 				{
-					SetInputLine("");
+					//SetInputLine("");
+					ClearInputLine();
 					addToCommandBuffer(completion);
 				}
 			}
