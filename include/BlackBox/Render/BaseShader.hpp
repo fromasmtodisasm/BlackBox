@@ -377,6 +377,7 @@ public:
 	virtual void setup() = 0;
 	void dump();
 private:
+	void reset(ShaderInfo src);
   const char* buildName(const char* format, va_list args);
 };
 

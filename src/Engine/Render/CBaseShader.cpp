@@ -478,9 +478,13 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
 void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c)
 {
 	detach(m_Vertex);
+	//reset(m_Vertex);
 	detach(m_Fragment);
+	//reset(m_Fragment);
 	detach(m_Geometry);
+	//reset(m_Geometry);
 	detach(m_Compute);
+	//reset(m_Compute);
 	deleteProgram();
 
 	m_Vertex.shader = v;
@@ -521,6 +525,12 @@ void CBaseShaderProgram::dump()
 
 	fwrite(binary.get(), 1, len, shader);
 	fclose(shader);
+}
+
+void CBaseShaderProgram::reset(ShaderInfo src)
+{
+	if (src.shader != nullptr)
+		src.shader.reset();
 }
 
 const char* CBaseShaderProgram::buildName(const char* format, va_list args)
