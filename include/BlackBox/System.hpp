@@ -25,11 +25,11 @@ inline auto SAFE_RELEASE(T *& t)
 class CConsole;
 class CRender;
 
-class CEngine : public ISystem, public IInputEventListener, public IConsoleVarSink
+class CSystem : public ISystem, public IInputEventListener, public IConsoleVarSink
 {
 public:
-	CEngine();
-	~CEngine();
+	CSystem();
+	~CSystem();
   
 	// Inherited via ISystem
   virtual bool Init() override;

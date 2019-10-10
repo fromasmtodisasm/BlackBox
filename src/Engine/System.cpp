@@ -1,4 +1,4 @@
-#include <BlackBox/System.hpp>
+#include <BlackBox/Engine.hpp>
 #include <BlackBox/NullLog.hpp>
 #include <BlackBox/Console.hpp>
 #include <BlackBox/IGame.hpp>
