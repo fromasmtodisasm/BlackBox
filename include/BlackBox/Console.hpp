@@ -58,7 +58,7 @@ struct CommandInfo
 {
 	union
 	{
-		IEditCommand* Command = nullptr;
+		IConsoleCommand* Command = nullptr;
 		const char* Script;
 	};
 	std::multimap<int, std::string> argsCompletion;
@@ -123,7 +123,7 @@ public:
 	virtual void Draw() override;
 	void Animate(float deltatime, IRender* render);
 	void CalcMetrics(size_t& end);
-	virtual void AddCommand(const char* sName, IEditCommand* command, const char* help = "") override;
+	virtual void AddCommand(const char* sName, IConsoleCommand* command, const char* help = "") override;
 	virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;

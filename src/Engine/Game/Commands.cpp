@@ -8,7 +8,7 @@
 #include <BlackBox/IMarkers.hpp>
 #include <process.h>
 
-class BaseCommand : public IEditCommand
+class BaseCommand : public IConsoleCommand
 {
 protected:
 	CGame* game;
@@ -47,7 +47,7 @@ public:
 	LastCommand(CGame *game);
 	~LastCommand();
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		
@@ -84,7 +84,7 @@ class ClearCommand : public BaseCommand
 public:
 	ClearCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		GetISystem()->GetIConsole()->Clear();
@@ -102,7 +102,7 @@ class GotoCommand : public BaseCommand
 public:
 	GotoCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
@@ -132,7 +132,7 @@ class VsyncCommand : public BaseCommand
 public:
 	VsyncCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
@@ -159,7 +159,7 @@ class QuitCommand : public BaseCommand
 public:
 	QuitCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		game->Stop();
@@ -177,7 +177,7 @@ class MoveCommand : public BaseCommand
 public:
 	MoveCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		auto obj = m_World->getActiveScene()->selectedObject()->second;
@@ -208,7 +208,7 @@ class RotateCommand : public BaseCommand
 public:
 	RotateCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() >= 4 && cd.args.size() <= 5)
@@ -248,7 +248,7 @@ class SelectCommand : public BaseCommand
 public:
 	SelectCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		std::string name = wstr_to_str(cd.args[0]);
@@ -267,7 +267,7 @@ class WireframeCommand : public BaseCommand
 public:
 	WireframeCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		int mode = m_World->getActiveScene()->selectedObject()->second->getRenderMode();
@@ -291,7 +291,7 @@ class ExecCommand : public BaseCommand
 public:
 	ExecCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
@@ -322,7 +322,7 @@ class MaterialCommand : public BaseCommand
 public:
 	MaterialCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
@@ -349,7 +349,7 @@ class ShaderCommand : public BaseCommand
 public:
 	ShaderCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() > 0)
@@ -434,7 +434,7 @@ class CameraCommand : public BaseCommand
 public:
 	CameraCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() > 0)
@@ -483,7 +483,7 @@ class SceneCommand : public BaseCommand
 public:
 	SceneCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() > 0)
@@ -579,7 +579,7 @@ class TagPointCommand : public BaseCommand
 public:
 	TagPointCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		auto obj = m_World->getActiveScene()->selectedObject()->second;
@@ -632,7 +632,7 @@ class ObjDumpCommand : public BaseCommand
 public:
 	ObjDumpCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		/*

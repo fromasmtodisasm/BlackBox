@@ -18,7 +18,7 @@
 
 #define strdup _strdup
 
-class HelpCommand : public IEditCommand 
+class HelpCommand : public IConsoleCommand 
 {
 public:
 	HelpCommand()
@@ -35,7 +35,7 @@ public:
 		return true;
 	}
 };
-class SetCommand : public IEditCommand 
+class SetCommand : public IConsoleCommand 
 {
 	CConsole* m_Console;
 public:
@@ -51,7 +51,7 @@ public:
 	}
 };
 
-class GetCommand : public IEditCommand 
+class GetCommand : public IConsoleCommand 
 {
 	CConsole* m_Console;
 public:
@@ -67,7 +67,7 @@ public:
 	}
 };
 
-class DumpCommand : public IEditCommand 
+class DumpCommand : public IConsoleCommand 
 {
 	CConsole* m_Console;
 public:
@@ -178,7 +178,7 @@ void CConsole::CalcMetrics(size_t& end)
   page_dn = false;
 }
 
-void CConsole::AddCommand(const char* sName, IEditCommand* command, const char* help)
+void CConsole::AddCommand(const char* sName, IConsoleCommand* command, const char* help)
 {
 	CommandInfo cmdInfo;
 	cmdInfo.Command = command;

@@ -16,7 +16,7 @@ struct IConsole
 };
 #endif // IMGUICONSOLE
 
-struct IEditCommand;
+struct IConsoleCommand;
 struct CommandDesc;
 struct ICVar;
 struct ITexture;
@@ -57,7 +57,7 @@ enum EVarFlags : unsigned int
 #define     CVAR_FLOAT  2
 #define     CVAR_STRING 3
 
-struct IEditCommand
+struct IConsoleCommand
 {
 	virtual bool execute(CommandDesc& cd) = 0;
 };
@@ -117,7 +117,7 @@ struct IConsole
 		*/
 	virtual void	Draw() = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual void AddCommand(const char* sName, IEditCommand *command, const char* help = "") = 0;
+	virtual void AddCommand(const char* sName, IConsoleCommand *command, const char* help = "") = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Add a Console command
 		@param sName name of the command (ex "connect")
