@@ -21,9 +21,9 @@ function player:TestChanges(string)
 end
 
 function player:Update( dt )
-	Console:Clear()
+	--Console:Clear()
 	self.alltime = self.alltime + dt;
-	Console:PrintLine("alltime: " .. self.alltime)
+	--Console:PrintLine("alltime: " .. self.alltime)
 end
 
 
