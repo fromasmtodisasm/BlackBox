@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #ifdef IMGUICONSOLE
 struct ImGuiInputTextCallbackData;
 
@@ -77,7 +79,6 @@ struct IConsoleVarSink
 
 struct IConsole
 {
-	virtual bool Init() = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Crate a new console variable
 		@param sName console variable name
@@ -117,6 +118,15 @@ struct IConsole
 	virtual void	Draw() = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual void AddCommand(const char* sName, IEditCommand *command, const char* help = "") = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Add a Console command
+		@param sName name of the command (ex "connect")
+		@param sScriptFunc script buffer the contain the command implementation
+			EG "Game.Connect(%1)" the symbol "%1" will be replaced with the command parameter 1
+			writing in the console "connect 127.0.0.1" will invoke Game.Connect("127.0.0.1")
+		@param indwFlags bitfield consist of VF_ flags (e.g. VF_CHEAT)
+	*/
+	virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Execute a string in the console
 		@param command console command
@@ -160,6 +170,8 @@ struct IConsole
 	virtual void AddConsoleVarSink(IConsoleVarSink* pSink) = 0;
 	//! Removes a console variables sink callback.
 	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) = 0;
+	//! \param szLine Must not be 0.
+	virtual void SetInputLine(const char* szLine) = 0;
 
 };
 

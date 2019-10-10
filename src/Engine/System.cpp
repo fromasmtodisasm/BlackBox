@@ -107,23 +107,15 @@ bool CSystem::Init()
 	//=============
 	m_pLog->AddLog("[OK] Window susbsystem inited\n");
 	//=============
-	if (!m_pConsole->Init())
-		return false;
-	//=============
-	m_pConsole->AddConsoleVarSink(this);
-	//=============
 	m_pScriptSystem = new CScriptSystem();
 	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
 	{
 		return false;
 	}
-	m_pScriptSystem->ExecuteBuffer("print(\"Lua!!!\")", 0);
-	m_pScriptSystem->ExecuteBuffer("a = 7 + 3", 0);
-	int a_cpp;
-	if (m_pScriptSystem->GetGlobalValue("a", a_cpp))
-		m_pConsole->PrintLine("a = %d", a_cpp);
-	else
-		m_pConsole->PrintLine("Cant get global value");
+	if (!m_pConsole->Init(this))
+		return false;
+	//=============
+	m_pConsole->AddConsoleVarSink(this);
 	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)

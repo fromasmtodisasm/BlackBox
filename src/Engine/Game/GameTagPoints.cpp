@@ -109,6 +109,18 @@ bool CGame::TestScriptSystem(bool& retflag)
 	m_Console->PrintLine("Player name: %s", name);
 	m_Console->PrintLine("Player age: %d", age);
 
+	m_Console->AddCommand(
+		"enumd",
+		R"(
+		local formats = System:EnumDisplayFormats()
+		for i=1, #formats do
+			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+		end
+		)",
+		0,
+		"Enum Display formats"
+	);
+
 #if 0
 	HSCRIPTFUNCTION psina;
 	m_playerObject->GetValue("TestChanges", psina);

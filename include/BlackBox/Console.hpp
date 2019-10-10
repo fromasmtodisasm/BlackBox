@@ -56,9 +56,14 @@ private:
 
 struct CommandInfo
 {
-	IEditCommand* Command = nullptr;
+	union
+	{
+		IEditCommand* Command = nullptr;
+		const char* Script;
+	};
 	std::multimap<int, std::string> argsCompletion;
 	std::string help;
+	bool isScript = false;
 };
 
 struct Text
@@ -111,7 +116,7 @@ public:
 	CConsole();
 	~CConsole();
 	// Inherited via IConsole
-	virtual bool Init() override;
+	bool Init(ISystem* pSystem);
 	virtual void ShowConsole(bool show) override;
 	virtual void SetImage(ITexture* pTexture) override;
 	virtual void Update() override;
@@ -119,6 +124,7 @@ public:
 	void Animate(float deltatime, IRender* render);
 	void CalcMetrics(size_t& end);
 	virtual void AddCommand(const char* sName, IEditCommand* command, const char* help = "") override;
+	virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
 	virtual bool OnInputEvent(sf::Event& event) override;
@@ -179,10 +185,11 @@ private:
 	bool input_trigered = false;
 	std::wstring command;
 	std::string command_text;
-	IFont* m_Font;
+	IFont* m_Font = nullptr;
 	bool isOpened = false;
 	bool cmd_is_compete = false;
-	ISystem* m_engine;
+	ISystem* m_pSystem = nullptr;
+	IScriptSystem* m_pScriptSystem = nullptr;
 	ITexture* m_pBackGround;
   //ITexture* m_pBackGround = nullptr;
 
@@ -232,5 +239,9 @@ private:
 	ICVar* blinkTime;
 
 	int lines = 0;
+
+
+	// Inherited via IConsole
+	virtual void SetInputLine(const char* szLine) override;
 
 };

@@ -200,7 +200,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 	
 	if (cmd_is_compete)
 	{
-		command.clear();
+		SetInputLine("");
 	}
 	cmd_is_compete = false;
 	input_trigered = false;
@@ -220,8 +220,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 				}
 				else
 				{
-					command.clear();
-					cursor.x = 0;
+					SetInputLine("");
 					addToCommandBuffer(completion);
 				}
 			}
@@ -251,8 +250,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		}
 		case sf::Keyboard::Escape:
 		{
-			command.clear();
-			cursor.x = 0;
+			SetInputLine("");
 			return true;
 		}
 		case sf::Keyboard::P:
@@ -270,8 +268,8 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
 			if (event.key.control)
 			{
-				if (++history_line > cmd_buffer.size() - 1)
-					history_line = cmd_buffer.size() - 1;
+				if (history_line < (cmd_buffer.size() - 1))
+					++history_line;
 				getHistoryElement();
 				return true;
 			}
@@ -313,8 +311,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 void CConsole::getHistoryElement()
 {
 	auto line_history = cmd_buffer[history_line];
-	command.clear();
-	cursor.x = 0;
+	SetInputLine("");
 	for (auto& element : line_history)
 	{
 		for (auto& ch : element.data)
@@ -326,8 +323,7 @@ void CConsole::getHistoryElement()
 
 void CConsole::completeCommand(std::vector<std::wstring>& completion)
 {
-	command.clear();
-	cursor.x = 0;
+	SetInputLine("");
 	for (auto& ch : completion[0])
 	{
 		handleCommandTextEnter(ch);
@@ -537,6 +533,21 @@ void CConsole::moveCursor(bool left)
 	}
 }
 
+void CConsole::SetInputLine(const char* szLine)
+{
+	command = str_to_wstr(szLine);
+	cursor.x = 0;
+}
+
+void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
+{
+	CommandInfo cmdInfo;
+	cmdInfo.Script = sScriptFunc;
+	if (help) cmdInfo.help = help;
+	cmdInfo.isScript = true;
+	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
+}
+
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 {
 	for (auto& var : m_variables_map)
@@ -607,8 +618,10 @@ ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 	return pVar;
 }
 
-bool CConsole::Init()
+bool CConsole::Init(ISystem* pSystem)
 {
+	m_pSystem = pSystem;
+	m_pScriptSystem = pSystem->getIIScriptSystem();
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, static_cast<unsigned int>(line_height));
 	m_pBackGround = new Texture();
@@ -684,7 +697,19 @@ bool CConsole::handleCommand(std::wstring command)
 	auto cmd_it = m_Commands.find(cd.command);
 
 	if (cmd_it != m_Commands.end())
-		result = cmd_it->second.Command->execute(cd);
+	{
+		if (!cmd_it->second.isScript)
+		{
+			result = cmd_it->second.Command->execute(cd);
+		}
+		else
+		{
+			auto str = cmd_it->second.Script;
+			auto len = std::strlen(str);
+			result = m_pScriptSystem->ExecuteBuffer(cmd_it->second.Script, len);
+		}
+
+	}
 	else
 	{
 		auto var_it = m_variables_map.find(wstr_to_str(cd.command));
@@ -837,7 +862,6 @@ CConsole::CConsole()
 	:
 	m_pBackGround(nullptr)
 {
-	m_engine = GetISystem();
 	//prompt = user + " #";
 	AddCommand("help", new HelpCommand());
 	AddCommand("set", new SetCommand(this));
@@ -921,6 +945,9 @@ void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
 void CConsole::Clear()
 {
 	cmd_buffer.clear();
+	cursor.x = 0;
+	cursor.y = 0;
+	history_line = 0;
 }
 
 void CConsole::Help(const char *cmd)
