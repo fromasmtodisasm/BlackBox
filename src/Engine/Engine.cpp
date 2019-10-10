@@ -153,27 +153,27 @@ void CSystem::Release()
 	delete this;
 }
 
-IShaderManager * CSystem::getShaderManager()
+IShaderManager * CSystem::GetShaderManager()
 {
   return nullptr;
 }
 
-IRender * CSystem::getIRender()
+IRender * CSystem::GetIRender()
 {
   return m_Render;
 }
 
-ILog* CSystem::getILog()
+ILog* CSystem::GetILog()
 {
   return m_pLog;
 }
 
-IConsole* CSystem::getIConsole()
+IConsole* CSystem::GetIConsole()
 {
   return m_pConsole;
 }
 
-IGame* CSystem::getIGame()
+IGame* CSystem::GetIGame()
 {
   return m_pGame;
 }
@@ -184,17 +184,17 @@ IGame* CSystem::CreateGame(IGame* game)
   return m_pGame;
 }
 
-IFont* CSystem::getIFont()
+IFont* CSystem::GetIFont()
 {
 	return m_pFont;
 }
 
-IWindow* CSystem::getIWindow()
+IWindow* CSystem::GetIWindow()
 {
 	return m_pWindow;
 }
 
-IInputHandler* CSystem::getIInputHandler()
+IInputHandler* CSystem::GetIInputHandler()
 {
 	return m_InputHandler;
 }
@@ -232,7 +232,7 @@ void CSystem::Log(const char* message)
 	std::cout << "-- "<< message << std::endl;
 }
 
-IScriptSystem* CSystem::getIIScriptSystem()
+IScriptSystem* CSystem::GetIIScriptSystem()
 {
 	return m_pScriptSystem;
 }

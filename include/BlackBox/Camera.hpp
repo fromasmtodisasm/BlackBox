@@ -59,9 +59,9 @@ public:
     this->transform.rotation.y = yaw;
     this->transform.rotation.x = pitch;
     this->updateCameraVectors();
-    MovementSpeed = GetISystem()->getIConsole()->CreateVariable("cam_speed", 5.0f, 0, "Speed of camera");
-    FOV = GetISystem()->getIConsole()->CreateVariable("fov", 45.0f, 0, "Camera field of view");
-    zFar = GetISystem()->getIConsole()->CreateVariable("zfar", 10000.f, 0, "Draw distance");
+    MovementSpeed = GetISystem()->GetIConsole()->CreateVariable("cam_speed", 5.0f, 0, "Speed of camera");
+    FOV = GetISystem()->GetIConsole()->CreateVariable("fov", 45.0f, 0, "Camera field of view");
+    zFar = GetISystem()->GetIConsole()->CreateVariable("zfar", 10000.f, 0, "Draw distance");
   }
   // Constructor with scalar values
   CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)

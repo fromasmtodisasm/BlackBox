@@ -69,7 +69,7 @@ bool CSFMLWindow::init(int x, int y, int width, int height, unsigned int cbpp, i
   Mouse.x_wraped = Mouse.y_wraped = false;
   Mouse.locked = false;
 
-	//auto ip = GetISystem()->getIConsole()->GetCVar("image_path");
+	//auto ip = GetISystem()->GetIConsole()->GetCVar("image_path");
 	//if (ip)
 	//{
 		//std::string icon(ip->GetString());

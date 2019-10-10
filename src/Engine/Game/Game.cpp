@@ -121,12 +121,12 @@ CGame::CGame(std::string title) :
 
 bool CGame::init(ISystem *pEngine)  {
   m_pSystem = gISystem = pEngine;
-  m_pScriptSystem = m_pSystem->getIIScriptSystem();
-  m_Log = m_pSystem->getILog();
-	m_Console = m_pSystem->getIConsole();
+  m_pScriptSystem = m_pSystem->GetIIScriptSystem();
+  m_Log = m_pSystem->GetILog();
+	m_Console = m_pSystem->GetIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
-	m_Window = m_pSystem->getIWindow();
-	m_inputHandler = m_pSystem->getIInputHandler();
+	m_Window = m_pSystem->GetIWindow();
+	m_inputHandler = m_pSystem->GetIInputHandler();
 	m_Window->setFlags(CWindow::DRAW_GUI);
   
 
@@ -271,7 +271,7 @@ void CGame::DisplayInfo(float fps)
   SDrawTextInfo dti = info.getDTI();
 
   //
-  auto render = m_pSystem->getIRender();
+  auto render = m_pSystem->GetIRender();
 
   //===========
 
@@ -312,8 +312,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("downsample time = ") + std::to_string(GetISystem()->getIConsole()->GetCVar("dtime")->GetFVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("upwnsample time = ") + std::to_string(GetISystem()->getIConsole()->GetCVar("uptime")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("downsample time = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("dtime")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("upwnsample time = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("uptime")->GetFVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());

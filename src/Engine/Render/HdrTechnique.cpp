@@ -24,15 +24,15 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 {
   if (inited)
     return true;
-  render = GetISystem()->getIRender();
+  render = GetISystem()->GetIRender();
   m_Scene = pScene;
 	initConsoleVariables();
 	initTest();
   createShader();
   shadowMapping = new ShadowMapping();
 	float m = 1;
-	//glm::vec2 size_m2 = glm::vec2(GetISystem()->getIRender()->GetWidth()*m, GetISystem()->getIRender()->GetHeight()*m) / 1.f;
-	auto console = GetISystem()->getIConsole();
+	//glm::vec2 size_m2 = glm::vec2(GetISystem()->GetIRender()->GetWidth()*m, GetISystem()->GetIRender()->GetHeight()*m) / 1.f;
+	auto console = GetISystem()->GetIConsole();
 
 	glm::vec2 resolution = glm::vec2(bloomTest[testid]);
   hdrBuffer =  FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
@@ -205,18 +205,18 @@ void HdrTechnique::createShader()
 
 void HdrTechnique::initConsoleVariables()
 {
-  exposure =				GetISystem()->getIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
-  enabled =					GetISystem()->getIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
-  bloom =						GetISystem()->getIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
-  bloomThreshold =	GetISystem()->getIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
-  blurOn =					GetISystem()->getIConsole()->CreateVariable("blur", 1, 0, "Enable/disable blur for bloom");
-  bloom_exposure =	GetISystem()->getIConsole()->CreateVariable("bexp", 0.007f, 0, "Enable/disable blur for bloom");
-  bloomTime =				GetISystem()->getIConsole()->CreateVariable("bloomtime", 0.f, 0, "Time of bloom");
-  upsampleTime =		GetISystem()->getIConsole()->CreateVariable("uptime", 0.f, 0, "Time of bloom");
-  downsampleTime =	GetISystem()->getIConsole()->CreateVariable("dtime", 0.f, 0, "Time of bloom");
-  offset =					GetISystem()->getIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
-  useBoxFilter =		GetISystem()->getIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
-  defaultFilter =		GetISystem()->getIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
+  exposure =				GetISystem()->GetIConsole()->CreateVariable("exp", 1.0f, 0, "exposure");
+  enabled =					GetISystem()->GetIConsole()->CreateVariable("hdr", 1, 0, "Enable/disable HDR");
+  bloom =						GetISystem()->GetIConsole()->CreateVariable("bloom", 1, 0, "Enable/disable HDR");
+  bloomThreshold =	GetISystem()->GetIConsole()->CreateVariable("bt", 2.0f, 0, "Bloom threshold");
+  blurOn =					GetISystem()->GetIConsole()->CreateVariable("blur", 1, 0, "Enable/disable blur for bloom");
+  bloom_exposure =	GetISystem()->GetIConsole()->CreateVariable("bexp", 0.007f, 0, "Enable/disable blur for bloom");
+  bloomTime =				GetISystem()->GetIConsole()->CreateVariable("bloomtime", 0.f, 0, "Time of bloom");
+  upsampleTime =		GetISystem()->GetIConsole()->CreateVariable("uptime", 0.f, 0, "Time of bloom");
+  downsampleTime =	GetISystem()->GetIConsole()->CreateVariable("dtime", 0.f, 0, "Time of bloom");
+  offset =					GetISystem()->GetIConsole()->CreateVariable("offset", -3.0f, 0, "Enable/disable blur for bloom");
+  useBoxFilter =		GetISystem()->GetIConsole()->CreateVariable("bf", 0, 0, "Enable/disable BoxFilter in bloom");
+  defaultFilter =		GetISystem()->GetIConsole()->CreateVariable("df", 1, 0, "Enable/disable default filtering in bloom");
 }
 
 void HdrTechnique::initTest()
@@ -230,7 +230,7 @@ void HdrTechnique::initTest()
 	bloomTest.push_back({ 1920, 1080 });
 	bloomTest.push_back({ 2560, 1440 });
 	bloomTest.push_back({ 2560, 1600 });
-	testid = std::min(GetISystem()->getIConsole()->GetCVar("testid")->GetIVal(), (int)bloomTest.size());
+	testid = std::min(GetISystem()->GetIConsole()->GetCVar("testid")->GetIVal(), (int)bloomTest.size());
 
 
 }
@@ -307,9 +307,9 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
 	glm::vec3 fog = glm::vec3(
-		GetISystem()->getIConsole()->GetCVar("fogR")->GetFVal(),
-		GetISystem()->getIConsole()->GetCVar("fogG")->GetFVal(),
-		GetISystem()->getIConsole()->GetCVar("fogB")->GetFVal());
+		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
+		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
+		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glClearColor(fog.r, fog.g, fog.b, 1.0f);
 	//glClear(GL_COLOR_BUFFER_BIT);
@@ -322,7 +322,7 @@ void HdrTechnique::Do(unsigned int texture)
 	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 
-	glCheck(glViewport(0, 0, GetISystem()->getIRender()->GetWidth(), GetISystem()->getIRender()->GetHeight()));
+	glCheck(glViewport(0, 0, GetISystem()->GetIRender()->GetWidth(), GetISystem()->GetIRender()->GetHeight()));
 	m_ScreenQuad.draw();
 }
 

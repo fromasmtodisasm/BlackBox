@@ -93,15 +93,15 @@ struct ISystem
   virtual void Release() = 0;
   virtual IGame *CreateGame(IGame* game) = 0;
 
-  virtual IShaderManager *getShaderManager() = 0;
-  virtual IRender *getIRender() = 0;
-  virtual ILog *getILog() = 0;
-  virtual IConsole *getIConsole() = 0;
-  virtual IGame *getIGame() = 0;
-  virtual IFont *getIFont() = 0;
-  virtual IWindow *getIWindow() = 0;
-  virtual IInputHandler *getIInputHandler() = 0;
-	virtual IScriptSystem* getIIScriptSystem() = 0;
+  virtual IShaderManager *GetShaderManager() = 0;
+  virtual IRender *GetIRender() = 0;
+  virtual ILog *GetILog() = 0;
+  virtual IConsole *GetIConsole() = 0;
+  virtual IGame *GetIGame() = 0;
+  virtual IFont *GetIFont() = 0;
+  virtual IWindow *GetIWindow() = 0;
+  virtual IInputHandler *GetIInputHandler() = 0;
+	virtual IScriptSystem* GetIIScriptSystem() = 0;
 
 	virtual void Log(const char* message) = 0;
 
@@ -129,5 +129,5 @@ extern "C"
 
 //! Simple logs of data with low verbosity.
 //void        CryLog(const char*, ...) PRINTF_PARAMS(1, 2);
-#define CryLog(format, ...) GetISystem()->getIConsole()->PrintLine(format, __VA_ARGS__)
+#define CryLog(format, ...) GetISystem()->GetIConsole()->PrintLine(format, __VA_ARGS__)
 

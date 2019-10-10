@@ -59,13 +59,13 @@ private:
 			for (auto i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
 			{
 				result = true;
-				GetISystem()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
+				GetISystem()->GetIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
 			}
 		}
 		else
 		{
 			result = true;
-			GetISystem()->getIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
+			GetISystem()->GetIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
 		}
 		return result;
 	}
@@ -87,7 +87,7 @@ private:
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		GetISystem()->getIConsole()->Clear();
+		GetISystem()->GetIConsole()->Clear();
 		return true;
 	}
 };
@@ -275,7 +275,7 @@ private:
 		else if (mode == GL_LINE) mode = GL_FILL;
 		auto obj = m_World->getActiveScene()->selectedObject();
 		obj->second->setRenderMode(mode);
-		GetISystem()->getIConsole()->PrintLine("Name of wired object %s\n", obj->first.c_str());
+		GetISystem()->GetIConsole()->PrintLine("Name of wired object %s\n", obj->first.c_str());
 		return true;
 	}
 };
@@ -298,7 +298,7 @@ private:
 		{
 			std::string name = wstr_to_str(cd.args[0]);
 			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
-			GetISystem()->getIConsole()->ExecuteFile(name.c_str());
+			GetISystem()->GetIConsole()->ExecuteFile(name.c_str());
 
 			return true;
 		}
@@ -363,7 +363,7 @@ private:
 		}
 		else
 		{
-			GetISystem()->getIConsole()->PrintLine("help");
+			GetISystem()->GetIConsole()->PrintLine("help");
 		}
 		return false;
 	}
@@ -422,7 +422,7 @@ bool ShaderCommand::dump(CommandDesc& cd)
 		if (s == nullptr)
 			return false;
 		s->dump();
-		GetISystem()->getIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
+		GetISystem()->GetIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
 		return true;
 	}
 	return false;
@@ -601,7 +601,7 @@ private:
         ITagPoint *tag_point = game->GetTagPoint(tag);
         if (tag_point == nullptr)
         {
-          GetISystem()->getIConsole()->PrintLine("Error, tagpoint [%s] not exist", tag.c_str());
+          GetISystem()->GetIConsole()->PrintLine("Error, tagpoint [%s] not exist", tag.c_str());
           return false;
         }
         Vec3 pos, ang;

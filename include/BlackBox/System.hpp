@@ -39,16 +39,17 @@ public:
 	virtual void EndFrame() override;
   virtual void Release() override;
 
-  virtual IShaderManager * getShaderManager() override;
-  virtual IRender * getIRender() override;
-  virtual ILog* getILog() override;
-  virtual IConsole* getIConsole() override;
-  virtual IGame* getIGame() override;
-  virtual IGame* CreateGame(IGame* game) override;
-	virtual IFont* getIFont() override;
-	virtual IWindow* getIWindow() override;
-	virtual IInputHandler* getIInputHandler() override;
-	virtual IScriptSystem* getIIScriptSystem() override;
+  virtual IShaderManager*		GetShaderManager() override;
+  virtual IRender*					GetIRender() override;
+  virtual ILog*							GetILog() override;
+  virtual IConsole*					GetIConsole() override;
+  virtual IGame*						GetIGame() override;
+	virtual IFont*						GetIFont() override;
+	virtual IWindow*					GetIWindow() override;
+	virtual IInputHandler*		GetIInputHandler() override;
+	virtual IScriptSystem*		GetIIScriptSystem() override;
+
+  virtual IGame*						CreateGame(IGame* game) override;
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
 	virtual void Log(const char* message) override;

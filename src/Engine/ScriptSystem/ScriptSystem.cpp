@@ -48,7 +48,7 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	// Make the error handler available to LUA
 	RegisterErrorHandler();
 
-	m_cvar_script_debugger = pSystem->getIConsole()->CreateVariable(
+	m_cvar_script_debugger = pSystem->GetIConsole()->CreateVariable(
 		"lua_debugger", 0, VF_CHEAT,
 		"Enables the script debugger.\n"
 		"1 to trigger on breakpoints and errors\n"
@@ -105,7 +105,7 @@ bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
 	else
 	{
 		std::string errormsg = lua_tostring(L, -1);
-		m_pSystem->getIConsole()->PrintLine("LUA ERROR: %s", errormsg.c_str());
+		m_pSystem->GetIConsole()->PrintLine("LUA ERROR: %s", errormsg.c_str());
 	}
 
 	return result == LUA_OK;
@@ -640,7 +640,7 @@ int CScriptSystem::ErrorHandler(lua_State* L)
 
 	// Handle error
 	lua_Debug ar;
-	CScriptSystem* pThis = (CScriptSystem*)GetISystem()->getIIScriptSystem();
+	CScriptSystem* pThis = (CScriptSystem*)GetISystem()->GetIIScriptSystem();
 
 	memset(&ar, 0, sizeof(lua_Debug));
 
@@ -666,7 +666,7 @@ int CScriptSystem::ErrorHandler(lua_State* L)
 
 	if (sErr)
 	{
-		ICVar* lua_StopOnError = GetISystem()->getIConsole()->GetCVar("lua_StopOnError");
+		ICVar* lua_StopOnError = GetISystem()->GetIConsole()->GetCVar("lua_StopOnError");
 		if (lua_StopOnError && lua_StopOnError->GetIVal() != 0)
 		{
 			ScriptWarning("![Lua Error] %s", sErr);

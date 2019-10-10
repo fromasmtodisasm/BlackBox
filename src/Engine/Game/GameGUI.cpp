@@ -326,12 +326,12 @@ if (m != nullptr && m->t != nullptr) \
   {
     if (ImGui::BeginTabItem("Log"))
     {
-      GetISystem()->getILog()->Draw("MyLog", (bool*)true);
+      GetISystem()->GetILog()->Draw("MyLog", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Console"))
     {
-      //GetISystem()->getIConsole()->Draw("MyConsole", (bool*)true);
+      //GetISystem()->GetIConsole()->Draw("MyConsole", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Textures"))

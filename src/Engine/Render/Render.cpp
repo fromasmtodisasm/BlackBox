@@ -35,20 +35,20 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
   if (!OpenGLLoader())
     return false;
 	//=======================
-	translateImageY = m_Engine->getIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_Engine->getIConsole()->CreateVariable("tx", 0.0f, 0);
+	translateImageY = m_Engine->GetIConsole()->CreateVariable("ty", 0.0f, 0);
+	translateImageX = m_Engine->GetIConsole()->CreateVariable("tx", 0.0f, 0);
 
-	scaleImageX = m_Engine->getIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_Engine->getIConsole()->CreateVariable("sy", 1.0f, 0);
+	scaleImageX = m_Engine->GetIConsole()->CreateVariable("sx", 1.0f, 0);
+	scaleImageY = m_Engine->GetIConsole()->CreateVariable("sy", 1.0f, 0);
 
-	needTranslate = m_Engine->getIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_Engine->getIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
+	needTranslate = m_Engine->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY = m_Engine->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
 
-	test_proj = m_Engine->getIConsole()->CreateVariable("test_proj", "test proj empty", 0);
-	r_debug = m_Engine->getIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_Engine->getIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+	test_proj = m_Engine->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
+	r_debug = m_Engine->GetIConsole()->GetCVar("r_debug");
+	render_via_viewport = m_Engine->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
-	m_Engine->getIConsole()->AddConsoleVarSink(this);
+	m_Engine->GetIConsole()->AddConsoleVarSink(this);
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();

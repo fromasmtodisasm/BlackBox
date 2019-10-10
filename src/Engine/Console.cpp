@@ -29,9 +29,9 @@ public:
 	virtual bool execute(CommandDesc& cd) override
 	{
 		for (auto &cmd : cd.args)
-			GetISystem()->getIConsole()->Help(wstr_to_str(cmd).c_str());
+			GetISystem()->GetIConsole()->Help(wstr_to_str(cmd).c_str());
 		if (cd.args.size() == 0)
-			GetISystem()->getIConsole()->Help(nullptr);
+			GetISystem()->GetIConsole()->Help(nullptr);
 		return true;
 	}
 };
@@ -98,13 +98,13 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isOpened) return;
-	auto deltatime = GetISystem()->getIGame()->getDeltaTime();
-	auto render = GetISystem()->getIRender();
+	auto deltatime = GetISystem()->GetIGame()->getDeltaTime();
+	auto render = GetISystem()->GetIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
 	auto prompt = getPrompt();
-	time += GetISystem()->getIGame()->getDeltaTime();
+	time += GetISystem()->GetIGame()->getDeltaTime();
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
@@ -478,7 +478,7 @@ void CConsole::getBuffer()
 
 bool CConsole::needShowCursor()
 {
-	float dt = GetISystem()->getIGame()->getDeltaTime();
+	float dt = GetISystem()->GetIGame()->getDeltaTime();
 	/*
 	if (cursor_tick_tack)
 		cursor_tick += dt;
@@ -888,7 +888,7 @@ CommandLine CConsole::getPrompt()
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
 		Text(std::string(" " + time_str), promptColor, 1.0),
-		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
+		Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 
