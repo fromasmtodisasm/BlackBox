@@ -200,7 +200,8 @@ bool CConsole::OnInputEvent(sf::Event& event)
 	
 	if (cmd_is_compete)
 	{
-		SetInputLine("");
+		//SetInputLine("");
+		ClearInputLine();
 	}
 	cmd_is_compete = false;
 	input_trigered = false;
@@ -536,6 +537,12 @@ void CConsole::moveCursor(bool left)
 void CConsole::SetInputLine(const char* szLine)
 {
 	command = str_to_wstr(szLine);
+	cursor.x = 0;
+}
+
+void CConsole::ClearInputLine()
+{
+	command.clear();
 	cursor.x = 0;
 }
 

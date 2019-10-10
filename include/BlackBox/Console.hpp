@@ -243,5 +243,6 @@ private:
 
 	// Inherited via IConsole
 	virtual void SetInputLine(const char* szLine) override;
+	void ClearInputLine();
 
 };
