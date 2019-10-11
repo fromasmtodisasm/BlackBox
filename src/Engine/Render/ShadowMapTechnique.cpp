@@ -206,6 +206,9 @@ void ShadowMapping::RenderTransparent(Object* object)
 void ShadowMapping::OnDepthPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
+	//glCullFace(GL_FRONT);
+	//DepthPass();
+	//glCullFace(GL_BACK);
 	m_pRender->SetCullMode(IRender::CullMode::FRONT);
   DepthPass();
 	m_pRender->SetCullMode(IRender::CullMode::BACK);

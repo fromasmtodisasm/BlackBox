@@ -185,7 +185,10 @@ void CRender::fillSates()
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
-	glCullFace(GL_FRONT - static_cast<unsigned int>(mode));
+	if (mode == CullMode::FRONT_AND_BACK)
+		glCullFace(GL_FRONT_AND_BACK);
+	else
+		glCullFace(GL_FRONT - static_cast<unsigned int>(mode));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
