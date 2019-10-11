@@ -213,6 +213,13 @@ void ShadowMapping::OnDepthPass()
 void ShadowMapping::OnRenderPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
+	auto& v = m_RenderedScene->viewPort;
+	/*
+	v.x = 0;
+	v.y = 0;
+	v.z = 500;
+	v.y = 500;
+	*/
   m_RenderedScene->bind();
 	glm::vec4 fog = glm::vec4(
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),

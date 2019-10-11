@@ -796,7 +796,6 @@ void Scene::end()
 void Scene::present(int width, int height)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (postProcessor == nullptr)
 	{
 		auto render = GetISystem()->GetIRender();
@@ -811,10 +810,8 @@ void Scene::present(int width, int height)
 		auto transform = glm::scale(proj, glm::vec3(width, height, 1));
 		m_ScreenShader->setUniformValue(transform, "transform");
 		glCheck(glDisable(GL_DEPTH_TEST));
-		glCheck(glActiveTexture(GL_TEXTURE0));
-		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene));
-		glCheck(glViewport(0, 0, width, height));
-		m_ScreenQuad.draw();;
+		m_ScreenShader->bindTextureUnit2D(m_RenderedScene, 0);
+		m_ScreenQuad.draw();
 	}
 	else
 	{

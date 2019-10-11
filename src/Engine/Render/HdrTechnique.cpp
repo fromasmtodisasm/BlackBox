@@ -9,6 +9,7 @@
 #include <BlackBox/ISystem.hpp>
 
 #define NBLOOM
+#define IMAGE 0
 #define PREVIOS 0
 #define CURRENT 1
 
@@ -332,7 +333,7 @@ void HdrTechnique::downsampling()
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind();
-		glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0]);  // bind texture of other framebuffer (or scene if first iteration)
+		m_DownsampleShader->bindTexture2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE, "image");
 		//renderQuad();
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;

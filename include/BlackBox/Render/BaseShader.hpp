@@ -373,6 +373,7 @@ public:
 	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c);
 
 	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
+	void bindTextureUnit2D(GLuint texture, GLint unit);
   GLuint get();
 	virtual void setup() = 0;
 	void dump();

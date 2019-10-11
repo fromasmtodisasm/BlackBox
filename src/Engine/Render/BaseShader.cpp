@@ -498,9 +498,14 @@ void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 
 void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* sampler)
 {
+	bindTextureUnit2D(texture, unit);
+	setUniformValue(unit, sampler);
+}
+
+void CBaseShaderProgram::bindTextureUnit2D(GLuint texture, GLint unit)
+{
 	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
 	glCheck(glBindTexture(GL_TEXTURE_2D, texture));
-	setUniformValue(unit, sampler);
 }
 
 GLuint CBaseShaderProgram::get() {
