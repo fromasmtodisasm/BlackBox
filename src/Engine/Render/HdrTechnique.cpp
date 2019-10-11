@@ -76,26 +76,22 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 	auto mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
-	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
-	{
-		pass0[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
-		width >>= 1;
-		if (width <= 0)
-			width = 1;
-		height >>= 1;
-		if (height <= 0)
-			height = 1;
-	}
-	for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
-	{
-		pass1[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
-		width >>= 1;
-		if (width <= 0)
-			width = 1;
-		height >>= 1;
-		if (height <= 0)
-			height = 1;
-	}
+
+	auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*> &chain) {
+		for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
+		{
+			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
+			width >>= 1;
+			if (width <= 0)
+				width = 1;
+			height >>= 1;
+			if (height <= 0)
+				height = 1;
+		}
+	};
+
+	create_mip_chain(pass0);
+	create_mip_chain(pass1);
 }
 
 void HdrTechnique::DeleteFrameBuffers()
@@ -333,7 +329,7 @@ void HdrTechnique::downsampling()
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind();
-		m_DownsampleShader->bindTexture2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE, "image");
+		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
 		//renderQuad();
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
