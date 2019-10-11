@@ -806,8 +806,6 @@ void Scene::present(int width, int height)
 		//PROFILER_PUSH_GPU_MARKER("Present", Utils::COLOR_GREEN);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		render->SetViewport(0, 0, width, height);
-		/*glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-		glCheck(glClear(GL_COLOR_BUFFER_BIT));*/
 		m_ScreenShader->use();
 		auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
 		auto transform = glm::scale(proj, glm::vec3(width, height, 1));

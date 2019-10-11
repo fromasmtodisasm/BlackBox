@@ -58,7 +58,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 
 bool ShadowMapping::OnRenderPass(int pass)
 {
-	DEBUG_GROUP(__FUNCTION__);
+  DEBUG_GROUP(__FUNCTION__);
   renderPass = static_cast<Pass>(pass);
   switch (pass)
   {
@@ -220,7 +220,6 @@ void ShadowMapping::OnRenderPass()
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal(),
 		1.f);
 	m_RenderedScene->clear(fog);
-  glCheck(glEnable(GL_DEPTH_TEST));
   RenderPass();
 }
 
@@ -277,6 +276,12 @@ void ShadowMapping::InitLights()
     program->setUniformValue(light->linear,     "pointLights[%d].linear", currentLight);
     program->setUniformValue(light->quadratic,  "pointLights[%d].quadratic", currentLight);
   }
+}
+
+int ShadowMapping::SetRenderTarget(FrameBufferObject* renderTarget)
+{
+	m_RenderedScene = renderTarget;
+	return 0;
 }
 
 bool ShadowMapping::OnObjectFound(Object* object)

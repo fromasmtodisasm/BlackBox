@@ -1,7 +1,6 @@
 #pragma once
 
 #include <BlackBox/Material.hpp>
-#include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/IConsole.hpp>
@@ -11,6 +10,7 @@
 #include <tinyxml2.h>
 
 extern Material *defaultMaterial;
+struct ISystem;
 
 struct ShaderDesc 
 {

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
+#include <vector>
 
 #ifdef IMGUICONSOLE
 struct ImGuiInputTextCallbackData;
@@ -62,6 +64,9 @@ struct IConsoleCommand
 	virtual bool execute(CommandDesc& cd) = 0;
 };
 
+//! This a definition of the console command function that can be added to console with AddCommand.
+typedef bool (*ConsoleCommandFunc)(CommandDesc&);
+
 //////////////////////////////////////////////////////////////////////
 struct ICVarDumpSink
 {
@@ -75,6 +80,29 @@ struct IConsoleVarSink
 	//! Called by Console before changing console var value, to validate if var can be changed.
 	//! @return true if ok to change value, false if should not change value.
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) = 0;
+};
+
+
+struct CommandDesc
+{
+	std::wstring command;
+	std::vector<std::wstring> args;
+	std::vector<std::wstring> *history;
+	CommandDesc() : history(nullptr) {}
+	CommandDesc(decltype(history) *history) : history(nullptr)
+	{
+
+	}
+	int argsCount()
+	{
+		return args.size();
+	}
+  std::wstring get(int i)
+  {
+    if (i < args.size())
+      return args[i];
+    return std::wstring();
+  }
 };
 
 struct IConsole
@@ -116,6 +144,13 @@ struct IConsole
 		/*! Draw the console
 		*/
 	virtual void	Draw() = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//! Register a new console command.
+	//! \param sCommand Command name.
+	//! \param func     Pointer to the console command function to be called when command is invoked.
+	//! \param nFlags   Bitfield consisting of VF_ flags (e.g. VF_CHEAT).
+	//! \param sHelp    Help string, will be displayed when typing in console "command ?".
+	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual void AddCommand(const char* sName, IConsoleCommand *command, const char* help = "") = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////

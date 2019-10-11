@@ -183,6 +183,7 @@ void CConsole::AddCommand(const char* sName, IConsoleCommand* command, const cha
 	CommandInfo cmdInfo;
 	cmdInfo.Command = command;
 	if (help) cmdInfo.help = help;
+	cmdInfo.type = CommandInfo::Type::INTERFACE;
 	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
 }
 
@@ -547,12 +548,21 @@ void CConsole::ClearInputLine()
 	cursor.x = 0;
 }
 
+void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)
+{
+	CommandInfo cmdInfo;
+	cmdInfo.Func = func;
+	if (help) cmdInfo.help = help;
+	cmdInfo.type = CommandInfo::Type::FUNC;
+	m_Commands[str_to_wstr(std::string(sCommand))] = cmdInfo;
+}
+
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
 {
 	CommandInfo cmdInfo;
 	cmdInfo.Script = sScriptFunc;
 	if (help) cmdInfo.help = help;
-	cmdInfo.isScript = true;
+	cmdInfo.type = CommandInfo::Type::SCRIPT;
 	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
 }
 
@@ -706,15 +716,19 @@ bool CConsole::handleCommand(std::wstring command)
 
 	if (cmd_it != m_Commands.end())
 	{
-		if (!cmd_it->second.isScript)
+		if (cmd_it->second.type == CommandInfo::Type::INTERFACE)
 		{
 			result = cmd_it->second.Command->execute(cd);
 		}
-		else
+		else if (cmd_it->second.type == CommandInfo::Type::SCRIPT)
 		{
 			auto str = cmd_it->second.Script;
 			auto len = std::strlen(str);
 			result = m_pScriptSystem->ExecuteBuffer(cmd_it->second.Script, len);
+		}
+		else if (cmd_it->second.type == CommandInfo::Type::FUNC)
+		{
+			result = cmd_it->second.Func(cd);
 		}
 
 	}

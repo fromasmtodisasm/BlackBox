@@ -107,4 +107,7 @@ private:
   UniformValue m_DirectionLight;
   std::vector<PointLightValues> m_PointLights;
   std::vector<SpotLightValues> m_SpotLights;
-};
+
+	// Inherited via ITechnique
+	virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;
+	};

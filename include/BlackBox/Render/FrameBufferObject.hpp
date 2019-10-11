@@ -19,7 +19,7 @@ public:
     SCENE_BUFFER,
     HDR_BUFFER,
   };
-
+	~FrameBufferObject();
 
   static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
 	void clear(Color &color);

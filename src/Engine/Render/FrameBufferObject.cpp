@@ -15,6 +15,11 @@ FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int
 {
 }
 
+FrameBufferObject::~FrameBufferObject()
+{
+	glDeleteFramebuffers(1, &id);
+}
+
 FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int nColors, bool createMipChain)
 {
   bool status = true;

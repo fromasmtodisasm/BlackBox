@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BlackBox/Render/ITechnique.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Quad.hpp>
@@ -19,6 +20,9 @@ public:
   /////////////////////////////////////////////////
   virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) override;
 
+	void CreateFrameBuffers(SDispFormat* format);
+	void DeleteFrameBuffers();
+
   virtual bool OnRenderPass(int pass) override;
 
   virtual int GetFrame() override;
@@ -31,6 +35,7 @@ public:
 	void upsampling();
   /////////////////////////////////////////////////
   virtual void Do(unsigned int texture) override;
+	void SetMode(int n);
 private:
   bool HdrPass();
 	void BloomPass();
@@ -38,6 +43,7 @@ private:
 	void initConsoleVariables();
 	void initTest();
 	int getMips(glm::vec2 resolution);
+	void CreateCommands();
 
 private:
 	static const int PASSES = 4;
@@ -48,10 +54,8 @@ private:
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;
-	FrameBufferObject* scene;
 	std::vector<FrameBufferObject*> pass0;
 	std::vector<FrameBufferObject*> pass1;
-	FrameBufferObject* callOfDutySample;
   Scene* m_Scene;
 
   ICVar* exposure;
@@ -77,4 +81,8 @@ private:
 
 	std::vector<glm::vec2> bloomTest;
 	int testid;
+	std::shared_ptr<SDispFormat> m_DispFormats;
+
+	// Inherited via ITechnique
+	virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;
 };

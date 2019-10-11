@@ -2,6 +2,7 @@
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Render/ReflectShader.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <glm/glm.hpp>
 

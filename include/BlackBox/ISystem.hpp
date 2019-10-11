@@ -15,6 +15,22 @@ struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
 
+template<typename T>
+inline auto SAFE_RELEASE(T const* t) -> decltype((void)(t->Release()), void())
+{
+	t->Release();
+}
+
+template<typename T>
+inline auto SAFE_RELEASE(T *& t)
+{
+	if (t != nullptr)
+	{
+		delete t;
+		t = nullptr;
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // User defined callback, which can be passed to ISystem.

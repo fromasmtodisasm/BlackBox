@@ -56,14 +56,22 @@ private:
 
 struct CommandInfo
 {
+	enum class Type
+	{
+		FUNC,
+		INTERFACE,
+		SCRIPT,
+		UNKNOWN
+	};
 	union
 	{
-		IConsoleCommand* Command = nullptr;
+		ConsoleCommandFunc Func = nullptr;
+		IConsoleCommand* Command;
 		const char* Script;
 	};
 	std::multimap<int, std::string> argsCompletion;
 	std::string help;
-	bool isScript = false;
+	Type type = Type::UNKNOWN;
 };
 
 struct Text
@@ -88,23 +96,6 @@ struct Cursor : Text
 
 typedef std::vector<Text> CommandLine;
 
-struct CommandDesc
-{
-	std::wstring command;
-	std::vector<std::wstring> args;
-	std::vector<std::wstring> *history;
-	CommandDesc() : history(nullptr) {}
-	CommandDesc(decltype(history) *history) : history(nullptr)
-	{
-
-	}
-  std::wstring get(int i)
-  {
-    if (i < args.size())
-      return args[i];
-    return std::wstring();
-  }
-};
 
 class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSink
 {
@@ -244,5 +235,9 @@ private:
 	// Inherited via IConsole
 	virtual void SetInputLine(const char* szLine) override;
 	void ClearInputLine();
+
+
+	// Inherited via IConsole
+	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
 
 };
