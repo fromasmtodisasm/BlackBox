@@ -25,6 +25,8 @@ public:
 	void clear(Color &color);
 	void clear();
   void bind();
+  void bind(glm::vec4 viewPort);
+  static void bindDefault(glm::vec4 viewPort);
   void unbind();
   ITexture* getTexture();
 private:

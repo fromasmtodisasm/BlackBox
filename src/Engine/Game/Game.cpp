@@ -124,12 +124,12 @@ CGame::CGame(std::string title) :
 
 bool CGame::init(ISystem *pEngine)  {
   m_pSystem = gISystem = pEngine;
-  m_pScriptSystem = m_pSystem->getIIScriptSystem();
+  m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_Log = m_pSystem->GetILog();
 	m_Console = m_pSystem->GetIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
-	m_Window = m_pSystem->getIWindow();
-	m_inputHandler = m_pSystem->getIInputHandler();
+	m_Window = m_pSystem->GetIWindow();
+	m_inputHandler = m_pSystem->GetIInputHandler();
   m_inputHandler->AddEventListener(this);
 	m_Window->setFlags(CWindow::DRAW_GUI);
   

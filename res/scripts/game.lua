@@ -9,7 +9,7 @@ function player:OnInit( data )
 	Console:PrintLine("Fps count = " .. Game:getFPS())
 	Console:PrintLine("Username: " .. self.name)
 
-	Console:Show(true)
+	--Console:Show(true)
 	Game:gotoMenu(true)
 
 	local formats = System:EnumDisplayFormats()

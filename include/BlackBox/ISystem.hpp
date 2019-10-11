@@ -113,15 +113,16 @@ struct ISystem
   virtual IRender *GetIRender() = 0;
   virtual ILog *GetILog() = 0;
   virtual IConsole *GetIConsole() = 0;
-  virtual IGame *getIGame() = 0;
-  virtual IFont *getIFont() = 0;
-  virtual IWindow *getIWindow() = 0;
-  virtual IInputHandler *getIInputHandler() = 0;
-	virtual IScriptSystem* getIIScriptSystem() = 0;
+  virtual IGame *GetIGame() = 0;
+  virtual IFont *GetIFont() = 0;
+  virtual IWindow *GetIWindow() = 0;
+  virtual IInputHandler *GetIInputHandler() = 0;
+	virtual IScriptSystem* GetIScriptSystem() = 0;
 
 	virtual void Log(const char* message) = 0;
 
 	virtual void ShowMessage(const char *message, const char *caption, MessageType messageType) = 0;
+	virtual bool IsDevMode() = 0;
 };
 
 // Get the system interface (must be defined locally in each module)

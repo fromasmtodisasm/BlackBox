@@ -58,6 +58,10 @@ public:
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
+
+	virtual int EnumDisplayFormats(SDispFormat* formats) override;
+
+	virtual void SetState(State state, bool enable) override;
   // Inherited via IRender
   virtual void DrawFullScreenImage(int texture_id) override;
 
@@ -67,10 +71,11 @@ public:
 	virtual bool OnInputEvent(sf::Event& event) override;
 private:
 	void glInit();
+	void fillSates();
 
 private:
 	IWindow* m_Window = nullptr;
-	ISystem *m_Engine = nullptr;
+	ISystem *m_pSystem = nullptr;
 
 	bool is_fullscreen = false;
 	Rect m_viewPort;
@@ -107,9 +112,13 @@ private:
 	ICVar* test_proj = nullptr;
 	ICVar* render_via_viewport = nullptr;
 
+	std::map<State, GLenum> stateMap;
+
+
+
 
 	// Inherited via IRender
-	virtual int EnumDisplayFormats(SDispFormat* formats) override;
+	virtual void SetCullMode(CullMode mode = CullMode::BACK) override;
 
-	};
+};
 

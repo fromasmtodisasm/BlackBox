@@ -57,6 +57,24 @@ struct SDispFormat
 
 struct IRender
 {
+	enum class State
+	{
+		DEPTH_TEST,
+		CULL_FACE,
+		BLEND,
+		DEBUG_OUTPUT,
+		FRAMEBUFFER_SRGB,
+		SCISSOR_TEST,
+		STENCIL_TEST,
+	};
+	
+	enum class CullMode
+	{
+		DISABLE,
+		NONE,
+		FRONT,
+		BACK,
+	};
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow *Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow *window = nullptr) = 0;
 
@@ -116,8 +134,10 @@ struct IRender
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
 
-
 	virtual int	 EnumDisplayFormats(SDispFormat* formats) = 0;
+
+	virtual void  SetState(State state, bool enable) = 0;
+	virtual void  SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
 };
 

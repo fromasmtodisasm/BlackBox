@@ -17,7 +17,7 @@
 #pragma warning(disable : 4244)
 
 CRender::CRender(ISystem *engine) : 
-  m_Engine(engine), m_viewPort(0,0,0,0)
+  m_pSystem(engine), m_viewPort(0,0,0,0)
 {
 
 }
@@ -39,20 +39,20 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
   if (!OpenGLLoader())
     return false;
 	//=======================
-	translateImageY = m_Engine->GetIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_Engine->GetIConsole()->CreateVariable("tx", 0.0f, 0);
+	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
+	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
 
-	scaleImageX = m_Engine->GetIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_Engine->GetIConsole()->CreateVariable("sy", 1.0f, 0);
+	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
+	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
 
-	needTranslate = m_Engine->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_Engine->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
+	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
 
-	test_proj = m_Engine->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
-	r_debug = m_Engine->GetIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_Engine->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
+	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
+	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
-	m_Engine->GetIConsole()->AddConsoleVarSink(this);
+	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -169,6 +169,23 @@ void CRender::glInit()
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+void CRender::fillSates()
+{
+#define STATEMAP(k,v) stateMap.insert(std::make_pair(k,v))
+		STATEMAP(State::DEPTH_TEST,				GL_DEPTH_TEST);
+		STATEMAP(State::CULL_FACE,				GL_CULL_FACE);
+		STATEMAP(State::BLEND,						GL_BLEND);
+		STATEMAP(State::DEBUG_OUTPUT,			GL_DEBUG_OUTPUT);
+		STATEMAP(State::FRAMEBUFFER_SRGB, GL_FRAMEBUFFER_SRGB);
+		STATEMAP(State::SCISSOR_TEST,			GL_SCISSOR_TEST);
+		STATEMAP(State::STENCIL_TEST,			GL_STENCIL_TEST);
+#undef STATEMAP
+}
+
+void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
+{
+}
+
 int CRender::EnumDisplayFormats(SDispFormat* formats)
 {
 	int numModes = 0;
@@ -190,6 +207,18 @@ int CRender::EnumDisplayFormats(SDispFormat* formats)
 	return numModes;
 }
 
+void CRender::SetState(State state, bool enable)
+{
+	auto it = stateMap.find(state);
+	if (it != stateMap.end())
+	{
+		if (enable)
+			glCheck(glEnable(it->second));
+		else
+			glCheck(glDisable(it->second));
+	}
+}
+
 void CRender::DrawFullScreenImage(int texture_id)
 {
 	auto
@@ -209,7 +238,7 @@ void CRender::DrawFullScreenImage(int texture_id)
 bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 #if 0
-	m_Engine->ShowMessage(pVar->GetName(), "Show name", ISystem::M_WARNING);
+	m_pSystem->ShowMessage(pVar->GetName(), "Show name", ISystem::M_WARNING);
 #endif
 	if (!strcmp(pVar->GetName(),"r_Width"))
 	{

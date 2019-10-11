@@ -26,11 +26,11 @@ public:
   virtual IRender*					GetIRender() override;
   virtual ILog*							GetILog() override;
   virtual IConsole*					GetIConsole() override;
-  virtual IGame*						getIGame() override;
-	virtual IFont*						getIFont() override;
-	virtual IWindow*					getIWindow() override;
-	virtual IInputHandler*		getIInputHandler() override;
-	virtual IScriptSystem*		getIIScriptSystem() override;
+  virtual IGame*						GetIGame() override;
+	virtual IFont*						GetIFont() override;
+	virtual IWindow*					GetIWindow() override;
+	virtual IInputHandler*		GetIInputHandler() override;
+	virtual IScriptSystem*		GetIScriptSystem() override;
 
   virtual IGame*						CreateGame(IGame* game) override;
 
@@ -59,4 +59,7 @@ private:
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
 	ICVar* r_fullscreen;
+
+	// Inherited via ISystem
+	virtual bool IsDevMode() override;
 };

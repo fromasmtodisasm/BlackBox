@@ -160,7 +160,18 @@ void FrameBufferObject::clear()
 
 void FrameBufferObject::bind()
 {
+	bind(viewPort);
+}
+
+void FrameBufferObject::bind(glm::vec4 viewPort)
+{
   glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
+	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
+}
+
+void FrameBufferObject::bindDefault(glm::vec4 viewPort)
+{
+  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
 }
 

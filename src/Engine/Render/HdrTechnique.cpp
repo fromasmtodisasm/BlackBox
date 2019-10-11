@@ -71,14 +71,14 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
 	glm::ivec2 resolution = glm::ivec2(format[testid].m_Width, format[testid].m_Height);
-	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
+	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, 2 * resolution.x, 2 * resolution.y, 2, false);
 
 	auto mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
 
 	auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*> &chain) {
-		for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
+		for (int i = 0, width = 2 * resolution.x, height = 2 * resolution.y; i < mip_cnt; i++)
 		{
 			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 			width >>= 1;
@@ -321,7 +321,6 @@ void HdrTechnique::downsampling()
   m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
 	glCheck(glDisable(GL_DEPTH_TEST));
-	glActiveTexture(GL_TEXTURE0);
 	if (useBoxFilter->GetIVal())
 		amount = 1;
 	else
@@ -329,6 +328,7 @@ void HdrTechnique::downsampling()
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind();
+		//pass0[i + 1]->bind(pass0[i + 1]->viewPort / 2.f);
 		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
 		//renderQuad();
 		m_ScreenQuad.draw();
@@ -338,7 +338,6 @@ void HdrTechnique::downsampling()
 	}
 	pingpong = !horizontal;
 	glCheck(glEnable(GL_DEPTH_TEST));
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void HdrTechnique::upsampling()
@@ -354,13 +353,13 @@ void HdrTechnique::upsampling()
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
 		pass1[i - 1]->bind();
+		//pass1[i - 1]->bind(pass1[i - 1]->viewPort / 2.f);
 		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 1]->texture[0] : pass1[i]->texture[0], PREVIOS, "previos");
 		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 1]->texture[0] : pass0[i - 1]->texture[0], CURRENT, "current");
 		m_ScreenQuad.draw();
 		if (first_iteration)
 			first_iteration = false;
 	}
-
 }
 
 void HdrTechnique::Do(unsigned int texture)

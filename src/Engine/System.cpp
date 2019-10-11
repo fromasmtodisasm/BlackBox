@@ -165,7 +165,7 @@ IConsole* CSystem::GetIConsole()
   return m_pConsole;
 }
 
-IGame* CSystem::getIGame()
+IGame* CSystem::GetIGame()
 {
   return m_pGame;
 }
@@ -176,17 +176,17 @@ IGame* CSystem::CreateGame(IGame* game)
   return m_pGame;
 }
 
-IFont* CSystem::getIFont()
+IFont* CSystem::GetIFont()
 {
 	return m_pFont;
 }
 
-IWindow* CSystem::getIWindow()
+IWindow* CSystem::GetIWindow()
 {
 	return m_pWindow;
 }
 
-IInputHandler* CSystem::getIInputHandler()
+IInputHandler* CSystem::GetIInputHandler()
 {
 	return m_InputHandler;
 }
@@ -214,6 +214,11 @@ bool CSystem::ConfigLoad(const char* file)
 	return true;
 }
 
+bool CSystem::IsDevMode()
+{
+	return true;
+}
+
 void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
 {
 	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
@@ -224,7 +229,7 @@ void CSystem::Log(const char* message)
 	std::cout << "-- "<< message << std::endl;
 }
 
-IScriptSystem* CSystem::getIIScriptSystem()
+IScriptSystem* CSystem::GetIScriptSystem()
 {
 	return m_pScriptSystem;
 }

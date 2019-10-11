@@ -98,13 +98,13 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isOpened) return;
-	auto deltatime = GetISystem()->getIGame()->getDeltaTime();
+	auto deltatime = GetISystem()->GetIGame()->getDeltaTime();
 	auto render = GetISystem()->GetIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
 	auto prompt = getPrompt();
-	time += GetISystem()->getIGame()->getDeltaTime();
+	time += GetISystem()->GetIGame()->getDeltaTime();
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
@@ -478,7 +478,7 @@ void CConsole::getBuffer()
 
 bool CConsole::needShowCursor()
 {
-	float dt = GetISystem()->getIGame()->getDeltaTime();
+	float dt = GetISystem()->GetIGame()->getDeltaTime();
 	/*
 	if (cursor_tick_tack)
 		cursor_tick += dt;
@@ -639,7 +639,7 @@ ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 bool CConsole::Init(ISystem* pSystem)
 {
 	m_pSystem = pSystem;
-	m_pScriptSystem = pSystem->getIIScriptSystem();
+	m_pScriptSystem = pSystem->GetIScriptSystem();
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, static_cast<unsigned int>(line_height));
 	m_pBackGround = new Texture();
@@ -708,6 +708,33 @@ void CConsole::handleCommandTextEnter(uint32_t ch)
 
 bool CConsole::handleCommand(std::wstring command)
 {
+
+#if !defined(RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)
+	///////////////////////////
+	//Execute as string
+	if (command[0] == '#' || command[0] == '@')
+	{
+		if (/*!con_restricted || */isOpened)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+		{
+			auto str = wstr_to_str(command).c_str();
+			PrintLine(str);
+
+			if (m_pSystem->IsDevMode())
+			{
+				if (m_pSystem->GetIScriptSystem())
+					m_pSystem->GetIScriptSystem()->ExecuteBuffer(str + 1, strlen(str) - 1);
+				//m_bDrawCursor = 0;
+			}
+			else
+			{
+				// Warning.
+				// No Cheat warnings. ConsoleWarning("Console execution is cheat protected");
+			}
+			return true;
+		}
+	}
+#endif
+
 	bool result = false;
 	auto cd = parseCommand(command);
 	//cd.history = &history;
@@ -935,7 +962,7 @@ CommandLine CConsole::getPrompt()
 		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
 		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
 		Text(std::string(" " + time_str), promptColor, 1.0),
-		Text(" FPS: " + std::to_string(GetISystem()->getIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
+		Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
 }
 
