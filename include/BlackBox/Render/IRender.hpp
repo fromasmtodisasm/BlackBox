@@ -63,17 +63,20 @@ struct IRender
 		CULL_FACE,
 		BLEND,
 		DEBUG_OUTPUT,
+		DEBUG_OUTPUT_SYNCHRONOUS,
 		FRAMEBUFFER_SRGB,
+		POLYGON_OFFSET_FILL,
 		SCISSOR_TEST,
 		STENCIL_TEST,
 	};
 	
-	enum class CullMode
+	enum class CullMode : unsigned int 
 	{
-		DISABLE,
-		NONE,
+		/*DISABLE,
+		NONE,*/
 		FRONT,
 		BACK,
+		FRONT_AND_BACK
 	};
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow *Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow *window = nullptr) = 0;

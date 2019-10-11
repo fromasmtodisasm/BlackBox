@@ -337,7 +337,7 @@ void HdrTechnique::downsampling()
 			first_iteration = false;
 	}
 	pingpong = !horizontal;
-	glCheck(glEnable(GL_DEPTH_TEST));
+	GetISystem()->GetIRender()->SetState(IRender::State::DEPTH_TEST, true);
 }
 
 void HdrTechnique::upsampling()

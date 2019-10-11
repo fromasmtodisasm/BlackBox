@@ -46,6 +46,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
 private:
   ISystem *m_pSystem;
   IScriptSystem *m_pScriptSystem;
+  IRender *m_pRender;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;

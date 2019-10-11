@@ -82,6 +82,7 @@ private:
   inline void SetupSpotLights();
   void InitLights();
 private:
+	IRender* m_pRender = nullptr;
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
   FrameBufferObject* m_RenderedScene;

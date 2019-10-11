@@ -20,6 +20,7 @@ ShadowMapping::~ShadowMapping()
 
 bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 {
+	m_pRender = GetISystem()->GetIRender();
   m_Scene = scene;
   //
   m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 1, false);
@@ -180,7 +181,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 void ShadowMapping::RenderTransparent(Object* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	glCheck(glEnable(GL_BLEND));
+	m_pRender->SetState(IRender::State::BLEND, true);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (object->m_transparent && (object->visible()))
   {
@@ -199,15 +200,15 @@ void ShadowMapping::RenderTransparent(Object* object)
 
     object->draw(m_Scene->getCurrentCamera());
   }
-	glCheck(glDisable(GL_BLEND));
+	m_pRender->SetState(IRender::State::BLEND, false);
 }
 
 void ShadowMapping::OnDepthPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
-  glCullFace(GL_FRONT);
+	m_pRender->SetCullMode(IRender::CullMode::FRONT);
   DepthPass();
-  glCullFace(GL_BACK);
+	m_pRender->SetCullMode(IRender::CullMode::BACK);
 }
 
 void ShadowMapping::OnRenderPass()

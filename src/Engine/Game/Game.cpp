@@ -124,6 +124,7 @@ CGame::CGame(std::string title) :
 
 bool CGame::init(ISystem *pEngine)  {
   m_pSystem = gISystem = pEngine;
+	m_pRender = m_pSystem->GetIRender();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_Log = m_pSystem->GetILog();
 	m_Console = m_pSystem->GetIConsole();
@@ -339,16 +340,17 @@ void CGame::setRenderState()
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-  glEnable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+	
+	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
+	m_pRender->SetState(IRender::State::BLEND, false);
 	if (culling)
 	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+		m_pRender->SetState(IRender::State::CULL_FACE, true);
+		m_pRender->SetCullMode(IRender::CullMode::BACK);
 	}
 	else
 	{
-		glDisable(GL_CULL_FACE);
+		m_pRender->SetState(IRender::State::CULL_FACE, false);
 	}
   /*
   */

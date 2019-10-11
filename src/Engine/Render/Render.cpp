@@ -150,40 +150,42 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 
 void CRender::glInit()
 {
+	fillSates();
 	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
 	{
 		glDebug = new OpenglDebuger("out/glDebug.txt");
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		SetState(State::DEBUG_OUTPUT, true);
+		SetState(State::DEBUG_OUTPUT_SYNCHRONOUS, true);
 	}
-	glEnable(GL_POLYGON_OFFSET_FILL);
+	SetState(State::POLYGON_OFFSET_FILL, true);
 	glPolygonOffset(1, 0);
 	glLineWidth(1);
-	//glEnable(GL_FRAMEBUFFER_SRGB);
-  glCheck(glEnable(GL_DEPTH_TEST));
+	SetState(State::DEPTH_TEST, true);
   //glCheck(glEnable(GL_TEXTURE_2D));
-  glCheck(glEnable(GL_CULL_FACE));
-  glCheck(glCullFace(GL_BACK));
-	// Blending
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	SetState(State::BLEND, true);
+	SetState(State::CULL_FACE, true);
+	SetCullMode(CullMode::BACK);
 }
 
 void CRender::fillSates()
 {
 #define STATEMAP(k,v) stateMap.insert(std::make_pair(k,v))
-		STATEMAP(State::DEPTH_TEST,				GL_DEPTH_TEST);
-		STATEMAP(State::CULL_FACE,				GL_CULL_FACE);
-		STATEMAP(State::BLEND,						GL_BLEND);
-		STATEMAP(State::DEBUG_OUTPUT,			GL_DEBUG_OUTPUT);
-		STATEMAP(State::FRAMEBUFFER_SRGB, GL_FRAMEBUFFER_SRGB);
-		STATEMAP(State::SCISSOR_TEST,			GL_SCISSOR_TEST);
-		STATEMAP(State::STENCIL_TEST,			GL_STENCIL_TEST);
+		STATEMAP(State::DEPTH_TEST,									GL_DEPTH_TEST);
+		STATEMAP(State::CULL_FACE,									GL_CULL_FACE);
+		STATEMAP(State::BLEND,											GL_BLEND);
+		STATEMAP(State::DEBUG_OUTPUT,								GL_DEBUG_OUTPUT);
+		STATEMAP(State::DEBUG_OUTPUT_SYNCHRONOUS,		GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		STATEMAP(State::POLYGON_OFFSET_FILL,				GL_POLYGON_OFFSET_FILL);
+		STATEMAP(State::FRAMEBUFFER_SRGB,						GL_FRAMEBUFFER_SRGB);
+		STATEMAP(State::SCISSOR_TEST,								GL_SCISSOR_TEST);
+		STATEMAP(State::STENCIL_TEST,								GL_STENCIL_TEST);
+
 #undef STATEMAP
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
+	glCullFace(GL_FRONT - static_cast<unsigned int>(mode));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
@@ -230,7 +232,7 @@ void CRender::DrawFullScreenImage(int texture_id)
 	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
 	auto transform = glm::scale(proj, glm::vec3(width, height, 1));
 	m_ScreenShader->setUniformValue(transform, "transform");
-	glCheck(glDisable(GL_DEPTH_TEST));
+	SetState(State::DEPTH_TEST, false);
 	m_ScreenShader->bindTextureUnit2D(texture_id, 0);
 	m_ScreenQuad->draw();
 }
@@ -263,8 +265,8 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 		width = GetWidth(),
 		height = GetHeight();
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	glEnable(GL_BLEND);
-	glCheck(glDisable(GL_CULL_FACE));
+	SetState(State::BLEND, true);
+	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(a, "alpha");
@@ -306,13 +308,10 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 		SetViewport(xpos, GetHeight() - h, xpos + w, GetHeight() - ypos - h);
 	}
 
-	glCheck(glDisable(GL_DEPTH_TEST));
-	glCheck(glActiveTexture(GL_TEXTURE0));
-	glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
+	SetState(State::DEPTH_TEST, false);
+	m_ScreenShader->bindTextureUnit2D(texture_id, 0);
 	m_ScreenQuad->draw();;
-
-	glCheck(glEnable(GL_CULL_FACE));
-
+	SetState(State::CULL_FACE, true);
 }
 
 void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
