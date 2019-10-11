@@ -130,9 +130,9 @@ bool CGame::init(ISystem *pEngine)  {
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->getIWindow();
 	m_inputHandler = m_pSystem->getIInputHandler();
+  m_inputHandler->AddEventListener(this);
 	m_Window->setFlags(CWindow::DRAW_GUI);
   
-
 	initCommands();
 	initVariables();
 	InitScripts();
@@ -156,30 +156,13 @@ bool CGame::init(ISystem *pEngine)  {
 	}
   // Set scene before camera, camera setted to active scene in world
   m_World->setScene(m_scene);
- 
-  glm::vec3 pos = glm::vec3(0,0,0);//0, player_pos.y + 3, 0);
-  // create an camera looking at the light
-
-  m_inputHandler->AddEventListener(this);
-
 #ifdef GUI
   gui = new GameGUI();
   gui->game = this;
 #endif // GUI
-
-  //m_World->setCamera(m_camera1);
   initPlayer();
   m_inputHandler->mouseLock(true);
 
-  //m_World->setCamera(camera2);
-	//m_World->getActiveScene()->getObject("brick_normal_box_2")->m_Material->nextDiffuse();
-	//m_World->setPretRenderCallback(this);
-	//m_World->setPostRenderCallback(this);
-
-  /*
-  auto tech = new ShadowMapping();
-  tech->Init(m_World->getActiveScene(), nullptr);
-  */
   auto tech = new HdrTechnique();
   tech->Init(m_World->getActiveScene(), nullptr);
   m_World->getActiveScene()->setTechnique(tech);
@@ -194,9 +177,10 @@ bool CGame::init(ISystem *pEngine)  {
 	m_Font->Init("arial.ttf", 16, 18);
 
   ITexture* consoleBackGround = new Texture();
-  //consoleBackGround->load("console/fc.jpg");
+#if 0 
+	consoleBackGround->load("console/fc.jpg"); 
+#endif
   m_Console->SetImage(consoleBackGround);
-
 
   return true;
 }
@@ -236,12 +220,7 @@ bool CGame::update() {
 
 void CGame::execScripts()
 {
-	/*
-	for (auto& script : scripts)
-	{
-		//doFile(script);
-	}
-	*/
+
 }
 
 void CGame::drawHud(float fps)

@@ -148,13 +148,13 @@ bool HdrTechnique::HdrPass()
 {
 	if (enabled->GetIVal())
 	{
-    m_Scene->setPostProcessor(this);
+		m_Scene->setPostProcessor(this);
 		PROFILER_PUSH_GPU_MARKER("BLOOM PASS", Utils::COLOR_DARK_GREEN);
 		BloomPass();
 		PROFILER_POP_GPU_MARKER();
 	}
-  else
-    m_Scene->setPostProcessor(nullptr);
+	else
+		;// m_Scene->setPostProcessor(nullptr);
 
   return false;
 }

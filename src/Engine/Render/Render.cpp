@@ -211,7 +211,9 @@ void CRender::DrawFullScreenImage(int texture_id)
 
 bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
+#if 0
 	m_Engine->ShowMessage(pVar->GetName(), "Show name", ISystem::M_WARNING);
+#endif
 	if (!strcmp(pVar->GetName(),"r_Width"))
 	{
 		m_Window->changeSize(pVar->GetFVal(), 0);

@@ -23,8 +23,6 @@ PostProcessor::~PostProcessor()
 void PostProcessor::Do(unsigned int texture)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
 	m_ScreenShader->use();
 	glDisable(GL_DEPTH_TEST);
 	glActiveTexture(GL_TEXTURE0);
