@@ -798,20 +798,7 @@ void Scene::present(int width, int height)
 	DEBUG_GROUP(__FUNCTION__);
 	if (postProcessor == nullptr)
 	{
-		auto render = GetISystem()->GetIRender();
-		auto	
-			width = render->GetWidth(),
-			height = render->GetHeight();
-		//PROFILER_PUSH_GPU_MARKER("Present", Utils::COLOR_GREEN);
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-		render->SetViewport(0, 0, width, height);
-		m_ScreenShader->use();
-		auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
-		auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-		m_ScreenShader->setUniformValue(transform, "transform");
-		glCheck(glDisable(GL_DEPTH_TEST));
-		m_ScreenShader->bindTextureUnit2D(m_RenderedScene, 0);
-		m_ScreenQuad.draw();
+		GetISystem()->GetIRender()->DrawFullScreenImage(m_RenderedScene);
 	}
 	else
 	{

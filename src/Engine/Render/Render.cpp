@@ -192,21 +192,18 @@ int CRender::EnumDisplayFormats(SDispFormat* formats)
 
 void CRender::DrawFullScreenImage(int texture_id)
 {
-  float
-    width = GetWidth(),
-    height = GetHeight();
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-  SetViewport(0, 0, width, height);
-  glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-  glCheck(glClear(GL_COLOR_BUFFER_BIT));
-  m_ScreenShader->use();
-  auto proj = glm::ortho(0.0f, (float)GetWidth(), 0.0f, (float)GetHeight());
-  auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-  m_ScreenShader->setUniformValue(transform, "transform");
-  glCheck(glDisable(GL_DEPTH_TEST));
-  glCheck(glActiveTexture(GL_TEXTURE0));
-  glCheck(glBindTexture(GL_TEXTURE_2D, texture_id));
-  m_ScreenQuad->draw();
+	auto
+		width = GetWidth(),
+		height = GetHeight();
+	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	SetViewport(0, 0, width, height);
+	m_ScreenShader->use();
+	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
+	auto transform = glm::scale(proj, glm::vec3(width, height, 1));
+	m_ScreenShader->setUniformValue(transform, "transform");
+	glCheck(glDisable(GL_DEPTH_TEST));
+	m_ScreenShader->bindTextureUnit2D(texture_id, 0);
+	m_ScreenQuad->draw();
 }
 
 bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
