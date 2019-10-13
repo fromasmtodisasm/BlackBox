@@ -195,6 +195,46 @@ void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 
 }
 
+
+bool CRender::DeleteContext(WIN_HWND hWnd)
+{
+	return false;
+}
+
+bool CRender::CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX/* = 1*/, int SSY/* = 1*/)
+{
+	return false;
+}
+
+bool CRender::SetCurrentContext(WIN_HWND hWnd)
+{
+	return false;
+}
+
+void CRender::MakeMainContextActive()
+{
+}
+
+WIN_HWND CRender::GetCurrentContextHWND()
+{
+	return m_HWND;
+}
+
+bool CRender::IsCurrentContextMainVP()
+{
+	return false;
+}
+
+int CRender::GetCurrentContextViewportHeight() const
+{
+	return 0;
+}
+
+int CRender::GetCurrentContextViewportWidth() const
+{
+	return 0;
+}
+
 int CRender::EnumDisplayFormats(SDispFormat* formats)
 {
 	int numModes = 0;

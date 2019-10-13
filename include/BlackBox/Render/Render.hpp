@@ -114,11 +114,30 @@ private:
 
 	std::map<State, GLenum> stateMap;
 
+	HWND m_HWND;
 
 
 
 	// Inherited via IRender
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) override;
+
+
+	// Унаследовано через IRender
+	virtual bool DeleteContext(WIN_HWND hWnd) override;
+
+	virtual bool CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) override;
+
+	virtual bool SetCurrentContext(WIN_HWND hWnd) override;
+
+	virtual void MakeMainContextActive() override;
+
+	virtual WIN_HWND GetCurrentContextHWND() override;
+
+	virtual bool IsCurrentContextMainVP() override;
+
+	virtual int GetCurrentContextViewportHeight() const override;
+
+	virtual int GetCurrentContextViewportWidth() const override;
 
 };
 

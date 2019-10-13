@@ -16,6 +16,14 @@
 
 #include <BlackBox/MathHelper.hpp>
 
+// Forward declarations.
+//////////////////////////////////////////////////////////////////////
+typedef void* WIN_HWND;
+typedef void* WIN_HINSTANCE;
+typedef void* WIN_HDC;
+typedef void* WIN_HGLRC;
+
+
 struct ISystem;
 struct IWindow;
 struct IFont;
@@ -141,6 +149,24 @@ struct IRender
 
 	virtual void  SetState(State state, bool enable) = 0;
 	virtual void  SetCullMode(CullMode mode = CullMode::BACK) = 0;
+
+	/////////////////////////////////////////////////////////////////////////////////
+// Render-context management
+/////////////////////////////////////////////////////////////////////////////////
+	virtual bool     DeleteContext(WIN_HWND hWnd) = 0;
+	virtual bool     CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) = 0;
+	virtual bool     SetCurrentContext(WIN_HWND hWnd) = 0;
+	virtual void     MakeMainContextActive() = 0;
+	virtual WIN_HWND GetCurrentContextHWND() = 0;
+	virtual bool     IsCurrentContextMainVP() = 0;
+
+	//! Gets height of the current viewport.
+	virtual int GetCurrentContextViewportHeight() const = 0;
+
+	//! Gets width of the current viewport.
+	virtual int GetCurrentContextViewportWidth() const = 0;
+	/////////////////////////////////////////////////////////////////////////////////
+
 
 };
 

@@ -44,6 +44,7 @@ inline auto SAFE_DELETE(T *& t)
 
 #define ASSERT(msg) assert(msg)
 #define FUNCTION_PROFILER() 
+#define LogAlways() void(0);
 
 // Include most commonly used STL headers.
 // They end up in precompiled header and make compilation faster.
