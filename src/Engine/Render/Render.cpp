@@ -5,6 +5,7 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 
 //
 #include <SFML/Window.hpp>
@@ -271,6 +272,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 		width = GetWidth(),
 		height = GetHeight();
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	FrameBufferObject::bindDefault(m_viewPort);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

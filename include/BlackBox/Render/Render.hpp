@@ -78,7 +78,7 @@ private:
 	ISystem *m_pSystem = nullptr;
 
 	bool is_fullscreen = false;
-	Rect m_viewPort;
+	Vec4 m_viewPort;
 	unsigned int cbpp = 0;
 	int zbpp = 0;
 	int sbits = 0;
