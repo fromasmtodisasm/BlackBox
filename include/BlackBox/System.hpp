@@ -31,8 +31,11 @@ public:
 	virtual IWindow*					GetIWindow() override;
 	virtual IInputHandler*		GetIInputHandler() override;
 	virtual IScriptSystem*		GetIScriptSystem() override;
+	ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
 
   virtual IGame*						CreateGame(IGame* game) override;
+
+	virtual void Quit() override;
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
 	virtual void Log(const char* message) override;
@@ -51,6 +54,8 @@ private:
 	IInputHandler* m_InputHandler;
 	IRender* m_Render;
 	IScriptSystem* m_pScriptSystem;
+	//! system event dispatcher
+	ISystemEventDispatcher* m_pSystemEventDispatcher;
 
 private:
 	ICVar* r_window_width;

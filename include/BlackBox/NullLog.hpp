@@ -15,6 +15,7 @@ public:
   // Inherited via ILog
   virtual void Clear() override;
   virtual void AddLog(const char* fmt, ...) override;
+  virtual void LogError(const char* fmt, ...) override;
   virtual void Draw(const char* title, bool* p_open) override;
 private:
   void Shutdown();
@@ -62,6 +63,19 @@ void NullLog::AddLog(const char* fmt, ...)
     log.push_back(strdup(buf));
     va_end(args);
   }
+}
+
+void NullLog::LogError(const char* fmt, ...)
+{
+	if (inited)
+	{
+		int old_size = log.size();
+		va_list args;
+		va_start(args, fmt);
+		vsprintf(buf, fmt, args);
+		log.push_back(strdup(buf));
+		va_end(args);
+	}
 }
 
 void NullLog::Draw(const char* title, bool* p_open)

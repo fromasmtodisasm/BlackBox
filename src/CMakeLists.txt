@@ -103,6 +103,10 @@ target_sources(
 
   #Input folder
   PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/BaseInput.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLInput.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
   #Profiler folder
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp

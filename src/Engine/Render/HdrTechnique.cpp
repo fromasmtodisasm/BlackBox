@@ -41,7 +41,7 @@ HdrTechnique::HdrTechnique()
 HdrTechnique::~HdrTechnique()
 {
 	DeleteFrameBuffers();
-	SAFE_RELEASE(shadowMapping);
+	SAFE_DELETE(shadowMapping);
 }
 
 bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
@@ -96,19 +96,19 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 
 void HdrTechnique::DeleteFrameBuffers()
 {
-	SAFE_RELEASE(hdrBuffer);
+	SAFE_DELETE(hdrBuffer);
 	if (pass0.size() > 0)
 	{
 		for (auto& buf : pass0)
 		{
-			SAFE_RELEASE(buf);
+			SAFE_DELETE(buf);
 		}
 	}
 	if (pass0.size() > 0)
 	{
 		for (auto& buf : pass0)
 		{
-			SAFE_RELEASE(buf);
+			SAFE_DELETE(buf);
 		}
 	}
 	pass0.erase(pass0.begin(), pass0.end());

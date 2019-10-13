@@ -99,7 +99,7 @@ MaterialManager::MaterialManager(ISystem *pSystem) : m_pSystem(pSystem), m_pLog(
 
 bool MaterialManager::loadLib(std::string name)
 {
-  XMLDocument xmlDoc;
+  tinyxml2::XMLDocument xmlDoc;
 
   XMLError eResult = xmlDoc.LoadFile((root_path->GetString() + name).c_str());
   XMLCheckResult(eResult);
@@ -384,7 +384,7 @@ BaseTexture *MaterialManager::loadTexture(XMLElement *texture)
   return result;
 }
 
-XMLElement *MaterialManager::saveTexture(XMLDocument &xmlDoc, Texture *texture)
+XMLElement *MaterialManager::saveTexture(tinyxml2::XMLDocument &xmlDoc, Texture *texture)
 {
   XMLElement *textureElement = xmlDoc.NewElement("shader");
 
@@ -400,7 +400,7 @@ std::shared_ptr<CShader> MaterialManager::loadShader(ShaderDesc &sd, bool isRelo
   return ShaderManager::instance()->getShader(sd.name, sd.type, isReload);
 }
 
-XMLElement *MaterialManager::saveShader(XMLDocument &xmlDoc, CShader *shader)
+XMLElement *MaterialManager::saveShader(tinyxml2::XMLDocument &xmlDoc, CShader *shader)
 {
   XMLElement *shaderElement = xmlDoc.NewElement("shader");
 

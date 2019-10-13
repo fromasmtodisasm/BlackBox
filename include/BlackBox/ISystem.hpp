@@ -15,22 +15,26 @@ struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
 
-template<typename T>
-inline auto SAFE_RELEASE(T const* t) -> decltype((void)(t->Release()), void())
-{
-	t->Release();
-}
 
-template<typename T>
-inline auto SAFE_RELEASE(T *& t)
+//! System wide events.
+enum ESystemEvent
 {
-	if (t != nullptr)
-	{
-		delete t;
-		t = nullptr;
-	}
-}
+	//! Resizes of the main window.
+	//! wparam=width, lparam=height.
+	ESYSTEM_EVENT_RESIZE = 12,
 
+	ESYSTEM_EVENT_CHANGE_FOCUS ,
+
+	ESYSTEM_EVENT_LEVEL_LOAD_START ,
+
+	ESYSTEM_EVENT_LEVEL_GAMEPLAY_START,
+
+	ESYSTEM_EVENT_LEVEL_POST_UNLOAD,
+
+	ESYSTEM_EVENT_LANGUAGE_CHANGE,
+
+
+};
 
 //////////////////////////////////////////////////////////////////////////
 // User defined callback, which can be passed to ISystem.
@@ -50,6 +54,31 @@ struct ISystemUserCallback
 			(For ex. Called when pressing ESC in game mode to go to Menu).
 	*/
 	virtual void OnProcessSwitch() = 0;
+};
+
+//! Interface used for getting notified when a system event occurs.
+struct ISystemEventListener
+{
+	// <interfuscator:shuffle>
+	virtual ~ISystemEventListener() {}
+	virtual void OnSystemEventAnyThread(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) {}
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) = 0;
+	// </interfuscator:shuffle>
+};
+
+//! Structure used for getting notified when a system event occurs.
+struct ISystemEventDispatcher
+{
+	// <interfuscator:shuffle>
+	virtual ~ISystemEventDispatcher() {}
+	virtual bool RegisterListener(ISystemEventListener* pListener, const char* szName) = 0;
+	virtual bool RemoveListener(ISystemEventListener* pListener) = 0;
+
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam, bool force_queue = false) = 0;
+	virtual void Update() = 0;
+
+	//virtual void OnLocaleChange() = 0;
+	// </interfuscator:shuffle>
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,6 +147,10 @@ struct ISystem
   virtual IWindow *GetIWindow() = 0;
   virtual IInputHandler *GetIInputHandler() = 0;
 	virtual IScriptSystem* GetIScriptSystem() = 0;
+	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
+
+	//! Quits the application.
+	virtual void Quit() = 0;
 
 	virtual void Log(const char* message) = 0;
 
