@@ -1,12 +1,14 @@
 #version 450 core
 
-layout (local_size_x = 6, local_size_y = 6, local_size_z = 1) in;
-uniform readonly	layout (rgba16f) image2D inputImg1;
+layout (local_size_x = 2, local_size_y = 2, local_size_z = 1) in;
+uniform sampler2D inputImg1;
+//uniform readonly	layout (rgba16f) image2D inputImg1;
 uniform writeonly	/*layout (rgba16f)*/ image2D inputImg2;
 
 uniform float weight[2] = float[](0.125, 0.5);
-uniform float offset = -3;
+uniform float offset = -3.5;
 uniform vec4 viewPort = vec4(0, 1, 0, 1);
+uniform int samplersCnt = 1;
 
 vec3 offsets[13] = vec3[](
 	vec3(1,1, weight[0]),
@@ -32,18 +34,18 @@ vec3 offsets[13] = vec3[](
 vec4 ProcessImage(ivec2 texel0)
 {
     vec4 result = vec4(0, 0, 0, 0);
- 
-    for (int i = 0; i < 13; i++)
-    {
-		ivec2 texel = texel0 + ivec2(offsets[i].xy + offset);
-		result = result + imageLoad(inputImg1, texel) * offsets[i].z;
-    }
+	for (int j = 0; j < samplersCnt; j++) 
+		for (int i = 0; i < 13; i++)
+		{
+			ivec2 texel = texel0*2 + ivec2(offsets[i].xy + offset);
+			result = result + texelFetch(inputImg1, texel, j) * offsets[i].z;
+		}
     return result;
 }
 
 void main()
 {
     ivec2 texel0 = ivec2(gl_GlobalInvocationID.xy);
-    vec4 color = vec4(gl_LocalInvocationID, 1);// = ProcessImage(texel0);
+    vec4 color = /*vec4(gl_WorkGroupID, 1);*/ ProcessImage(texel0);
     imageStore(inputImg2, texel0, color);
 }

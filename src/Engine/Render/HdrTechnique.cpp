@@ -78,7 +78,7 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 	pass1.resize(mip_cnt);
 
 	auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*> &chain) {
-		for (int i = 0, width = 2 * resolution.x, height = 2 * resolution.y; i < mip_cnt; i++)
+		for (int i = 0, mul = 1, width = mul * resolution.x, height = mul * resolution.y; i < mip_cnt; i++)
 		{
 			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 			width >>= 1;
@@ -320,18 +320,20 @@ void HdrTechnique::downsampling()
 	m_DownsampleShader->use();
 	{
 		unsigned int image_unit = 2;
-		glBindImageTexture(image_unit, hdrBuffer->texture[1], 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
-		m_DownsampleShader->setUniformValue(2, "inputImg1");
+		m_DownsampleShader->bindTexture2D(pass1[1]->texture[0], image_unit, "inputImg1");
+		/*glBindImageTexture(image_unit, hdrBuffer->texture[1], 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
+		m_DownsampleShader->setUniformValue(2, "inputImg1");*/
 	}
 
 	{
 		unsigned int image_unit = 3;
-		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		glBindImageTexture(image_unit, pass1[1]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		//m_DownsampleShader->bindTexture2D(pass1[1]->texture[0], image_unit, "inputImg2");
 		m_DownsampleShader->setUniformValue(3, "inputImg2");
 	}
 
 	auto render = GetISystem()->GetIRender();
-	m_DownsampleShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	m_DownsampleShader->dispatch(pass1[1]->viewPort.z / 2, pass1[1]->viewPort.w / 2, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 	return;
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
@@ -387,6 +389,7 @@ void HdrTechnique::Do(unsigned int texture)
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal());
+	FrameBufferObject::bindDefault(glm::vec4(0,0,render->GetWidth(), render->GetHeight()));
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glClearColor(fog.r, fog.g, fog.b, 1.0f);
 	//glClear(GL_COLOR_BUFFER_BIT);
@@ -395,8 +398,9 @@ void HdrTechnique::Do(unsigned int texture)
   m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");
 	glDisable(GL_DEPTH_TEST);
 
-	m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");
-	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
+	//m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");
+	m_ScreenShader->bindTexture2D(pass1[1]->texture[0], 0, "scene");
+	m_ScreenShader->bindTexture2D(pass1[1]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 
 	glCheck(glViewport(0, 0, GetISystem()->GetIRender()->GetWidth(), GetISystem()->GetIRender()->GetHeight()));
