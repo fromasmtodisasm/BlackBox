@@ -72,6 +72,7 @@ public:
 private:
 	void glInit();
 	void fillSates();
+	void initConsoleVariables();
 
 private:
 	IWindow* m_Window = nullptr;
@@ -93,6 +94,11 @@ private:
 	Quad *m_ScreenQuad = nullptr;
 	// Shaders 
 	BaseShaderProgramRef m_ScreenShader;
+#if defined(_DEBUG) || defined(GL_DEBUG)
+	bool isDebug = true;
+#else
+	bool isDebug = false;
+#endif 
 #if defined(_DEBUG) || defined(GL_DEBUG)
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
 #else

@@ -77,3 +77,8 @@ void CSFMLWindow::changeSize(int w, int h)
 {
 	m_Window->setSize(sf::Vector2u(std::max(0, w),std::max(0, h)));
 }
+
+void CSFMLWindow::ToogleFullScreen(int w, int h)
+{
+	Create(w, h, !m_bFullScreen, 32);
+}

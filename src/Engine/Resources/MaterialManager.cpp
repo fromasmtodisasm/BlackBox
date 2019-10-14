@@ -334,6 +334,8 @@ bool MaterialManager::reloadShaders()
 		pd.name = shader.first;
 		pd.vs = shader.second->m_Vertex.name;
 		pd.fs = shader.second->m_Fragment.name;
+		pd.gs = shader.second->m_Geometry.name;
+		pd.cs = shader.second->m_Compute.name;
 		reloadShader(pd);
 	}
 	return true;
@@ -351,6 +353,8 @@ bool MaterialManager::reloadShaders(std::vector<std::string> names)
 			continue;
 		pd.vs = s_it->second->m_Vertex.name;
 		pd.fs = s_it->second->m_Fragment.name;
+		pd.gs = s_it->second->m_Geometry.name;
+		pd.cs = s_it->second->m_Compute.name;
 		reloadShader(pd);
 	}
 	return true;
