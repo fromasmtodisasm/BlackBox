@@ -5,6 +5,7 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Render/FrameBufferObject.hpp>
 
 //
 #include <SFML/Window.hpp>
@@ -195,10 +196,12 @@ void CRender::initConsoleVariables()
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
+	GLenum _mode;
 	if (mode == CullMode::FRONT_AND_BACK)
-		glCullFace(GL_FRONT_AND_BACK);
+		_mode = GL_FRONT_AND_BACK;
 	else
-		glCullFace(GL_FRONT + static_cast<unsigned int>(mode));
+		_mode = GL_FRONT + static_cast<unsigned int>(mode);
+	glCheck(glCullFace(_mode));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
@@ -282,6 +285,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 		width = GetWidth(),
 		height = GetHeight();
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	FrameBufferObject::bindDefault(m_viewPort);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
