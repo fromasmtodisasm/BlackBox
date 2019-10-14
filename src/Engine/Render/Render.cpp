@@ -5,7 +5,6 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Render/FrameBufferObject.hpp>
 
 //
 #include <SFML/Window.hpp>
@@ -32,6 +31,13 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	IWindow* result = m_Window = window;
 	if (window == nullptr)
 		return nullptr;
+	//=======================
+	initConsoleVariables();
+	//=======================
+	if (isDebug && r_debug->GetIVal() == 1)
+		glContextType = sf::ContextSettings::Debug;
+	else
+		glContextType = sf::ContextSettings::Attribute::Core;
   sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
 		return false;
@@ -39,19 +45,6 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		return false;
   if (!OpenGLLoader())
     return false;
-	//=======================
-	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
-
-	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
-
-	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
-
-	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
-	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	//=======================
@@ -152,7 +145,7 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 void CRender::glInit()
 {
 	fillSates();
-	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
+	if (glContextType == sf::ContextSettings::Debug && r_debug->GetIVal() == 1)
 	{
 		glDebug = new OpenglDebuger("out/glDebug.txt");
 		SetState(State::DEBUG_OUTPUT, true);
@@ -184,15 +177,28 @@ void CRender::fillSates()
 #undef STATEMAP
 }
 
+void CRender::initConsoleVariables()
+{
+	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
+	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
+
+	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
+	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
+
+	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
+
+	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
+	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
+	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+}
+
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
-	GLenum _mode;
 	if (mode == CullMode::FRONT_AND_BACK)
-		_mode = GL_FRONT_AND_BACK;
+		glCullFace(GL_FRONT_AND_BACK);
 	else
-		_mode = GL_FRONT + static_cast<unsigned int>(mode);
-	glCheck(glCullFace(_mode));
-
+		glCullFace(GL_FRONT + static_cast<unsigned int>(mode));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
@@ -257,6 +263,10 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(0, pVar->GetFVal());
 	}
+	else if (!strcmp(pVar->GetName(),"r_debug"))
+	{
+		OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+	}
 	return false;
 
 }
@@ -272,7 +282,6 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 		width = GetWidth(),
 		height = GetHeight();
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	FrameBufferObject::bindDefault(m_viewPort);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

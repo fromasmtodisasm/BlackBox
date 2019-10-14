@@ -346,7 +346,7 @@ public:
   CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
   ~CBaseShaderProgram();
 
-  bool create();
+  bool create(const char *label);
   void attach(ShaderInfo& shader);
   ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
   void detach(ShaderInfo& shader);
@@ -370,7 +370,7 @@ public:
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
 
-	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c);
+	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
 
 	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
 	void bindTextureUnit2D(GLuint texture, GLint unit);

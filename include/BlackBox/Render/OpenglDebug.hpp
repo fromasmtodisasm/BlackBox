@@ -30,6 +30,10 @@ public:
 	OpenglDebuger(const char *file);
 	~OpenglDebuger();
 
+	static inline void SetIgnore(bool v)
+	{
+		ignore = v;
+	}
 	static void checkError(const char *file, int line, const char *expr);
 
 	static inline void PushGroup(GLuint id, GLsizei length, const char* message)
@@ -94,6 +98,7 @@ private:
 private:
 	std::ofstream debug_file;
 	static bool isError;
+	static bool ignore;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -173,6 +178,8 @@ namespace debuger
 	{
 		object_label(GL_FRAMEBUFFER, object, label);
 	}
+
+	inline void Ignore(bool v) { OpenglDebuger::SetIgnore(v); }
 
 	/*
 	template<class T> using va_label = decltype(vertex_array_label<T>);

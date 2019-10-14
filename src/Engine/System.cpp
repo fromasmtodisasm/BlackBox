@@ -22,6 +22,14 @@
 
 using namespace Utils;
 
+//////////////////////////////////////////////////////////////////////
+// Pointer to Global ISystem.
+static ISystem* gISystem = nullptr;
+ISystem* GetISystem()
+{
+  return gISystem;
+}
+
 
 CSystem::CSystem()
 	:
@@ -52,7 +60,8 @@ CSystem::~CSystem()
 	SAFE_RELEASE(r_sbpp);
 	SAFE_RELEASE(r_fullscreen);
 
-  SAFE_RELEASE(m_pLog);
+  //SAFE_RELEASE(m_pLog);
+	m_pLog->Release();
 	SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pGame);
   SAFE_RELEASE(m_pFont);
@@ -62,6 +71,7 @@ CSystem::~CSystem()
 
 bool CSystem::Init()
 {
+	gISystem = this;
 	initTimer();
   m_pLog = new NullLog();
   if (m_pLog == nullptr)
@@ -306,6 +316,13 @@ bool CSystem::OnInputEvent(sf::Event& event)
 				{
 					PROFILER_FROZE_FRAME();
 				}
+			}
+		}
+		else if (event.key.alt)
+		{
+			if (event.key.code == sf::Keyboard::Enter)
+			{
+				static_cast<CWindow*>(m_pWindow)->ToogleFullScreen(1366, 768);
 			}
 		}
 	}

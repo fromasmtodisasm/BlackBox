@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 
 #define OFFSET vec2(0,0)
 
@@ -41,18 +41,19 @@ vec3 offsets[13] = vec3[](
 
 #define Sample(uv) texture(image, uv)
 
-//vec4 downsample()
-//{
-//	vec4 result = vec4(0);
-//	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
-//
-//	//return Sample(TexCoords);
-//	for (int i = 0; i < 13; i++)
-//	{
-//		result += Sample(TexCoords + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
-//	}
-//	return result;
-//}
+vec4 downsample()
+{
+	vec4 result = vec4(0);
+	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+
+	//return Sample(TexCoords);
+	for (int i = 0; i < 13; i++)
+	{
+		vec2 texel = TexCoords + (offsets[i].xy + offset)*tex_offset;
+		result += Sample(texel) * offsets[i].z;
+	}
+	return result;
+}
 
 void main()
 {    
@@ -62,6 +63,7 @@ void main()
 	//return Sample(TexCoords);
 	for (int i = 0; i < 13; i++)
 	{
+		vec2 texel = TexCoords + (offsets[i].xy + offset)*tex_offset;
 		result += Sample(TexCoords + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
 	}
 	//return result;         

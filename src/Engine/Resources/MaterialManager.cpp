@@ -264,16 +264,20 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 {
 	auto shader_it = shaders_map.find(desc.name);
+	bool load_vs = desc.vs.length() > 0;
+	bool load_fs = desc.fs.length() > 0;
 	bool load_gs = desc.gs.length() > 0;
 	bool load_cs = desc.cs.length() > 0;
 
+	bool is_compute = load_cs && !load_vs && !load_fs & !load_gs;
+
 	if (shader_it != shaders_map.end() && !isReload)
 		return true;
-	auto vs = loadShader(ShaderDesc("vertex", desc.vs), isReload);
-	if (vs == nullptr) return false;
+	auto vs = !is_compute ? loadShader(ShaderDesc("vertex", desc.vs), isReload) : nullptr;
+	if (vs == nullptr && !is_compute) return false;
 
-	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
-	if (fs == nullptr) return false;
+	auto fs = !is_compute ? loadShader(ShaderDesc("fragment", desc.fs), isReload) : nullptr;
+	if (fs == nullptr && !is_compute) return false;
 
 	decltype(fs) gs;
 	decltype(fs) cs;
@@ -286,21 +290,26 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 	if (load_cs)
 	{
 		cs = loadShader(ShaderDesc("compute", desc.cs), isReload);
-		if (gs == nullptr) return false;
+		if (cs == nullptr) return false;
 	}
 
 	if (isReload)
 	{
-		shader_it->second->reload(vs, fs, gs, cs);
+		shader_it->second->reload(vs, fs, gs, cs, desc.name.c_str());
 	}
 	else
 	{
-		ShaderInfo vi(vs, desc.vs);
-		ShaderInfo fi(fs, desc.fs);
+		ShaderInfo vi;
+		ShaderInfo fi;
 		ShaderInfo gi;
 		ShaderInfo ci;
 
 		ShaderProgramRef shaderProgram;
+		if (!is_compute)
+		{
+			vi = ShaderInfo(vs, desc.vs);
+			fi = ShaderInfo(fs, desc.fs);
+		}
 		if (load_cs && load_gs)
 		{
 			gi = ShaderInfo(gs, desc.gs);
@@ -316,11 +325,11 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 		}
 		shaderProgram  = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
 			
-		if (!shaderProgram->create())
+		if (!shaderProgram->create(desc.name.c_str()))
 			return false;
 		auto it = shaders_map.find(desc.name);
 		shaders_map[desc.name] = shaderProgram;
-		debuger::program_label(shaderProgram->get(), desc.name);
+		//debuger::program_label(shaderProgram->get(), desc.name);
  
 	}
 	return true;
