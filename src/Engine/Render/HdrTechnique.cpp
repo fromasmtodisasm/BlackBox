@@ -198,8 +198,10 @@ void HdrTechnique::createShader()
 		},
 		{
 			"downsampling",
-			"screenshader.vs",
-			"downsampling.frag"
+			"",
+			"",
+			"",
+			"downsampling.comp"
 		},
 		{
 			"upsampling",
@@ -314,6 +316,25 @@ void HdrTechnique::downsampling()
 {
 	// 2. blur bright fragments with two-pass Gaussian Blur 
 	// --------------------------------------------------
+
+	{
+		unsigned int image_unit = 2;
+		glBindImageTexture(image_unit, hdrBuffer->texture[1], 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
+		auto location = glGetUniformLocation(m_DownsampleShader->get(), "inputImg1");
+		glProgramUniform1i(m_DownsampleShader->get(), location, image_unit);
+	}
+
+	{
+		unsigned int image_unit = 3;
+		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		auto location = glGetUniformLocation(m_DownsampleShader->get(), "inputImg2");
+		glProgramUniform1i(m_DownsampleShader->get(), location, image_unit);
+	}
+
+	auto render = GetISystem()->GetIRender();
+	m_DownsampleShader->use();
+	m_DownsampleShader->dispatch(render->GetWidth(), render->GetHeight(), 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	return;
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
 	m_DownsampleShader->use();

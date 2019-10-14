@@ -5,6 +5,7 @@
 #include <sstream>
 
 bool OpenglDebuger::isError = false;
+bool OpenglDebuger::ignore = false;
 
 OpenglDebuger::OpenglDebuger(const char *file) : debug_file(file)
 {
@@ -22,7 +23,7 @@ OpenglDebuger::~OpenglDebuger()
 
 void OpenglDebuger::checkError(const char *file, int line, const char *expr)
 {
-	if (isError)
+	if (isError && !ignore)
 	{
 		isError = false;
 
@@ -42,6 +43,7 @@ void OpenglDebuger::callBack(GLenum source​, GLenum type​, GLuint id​, GLe
 	//if (severity​ == GL_DEBUG_SEVERITY_NOTIFICATION)
 	//	;// isError = false;
 	//else
+	if (!ignore)
 	{
 		isError = true;
 		std::stringstream ss;

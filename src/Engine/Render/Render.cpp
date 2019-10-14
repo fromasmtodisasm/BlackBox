@@ -253,6 +253,10 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(0, pVar->GetFVal());
 	}
+	else if (!strcmp(pVar->GetName(),"r_debug"))
+	{
+		OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+	}
 	return false;
 
 }

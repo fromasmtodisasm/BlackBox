@@ -52,7 +52,8 @@ CSystem::~CSystem()
 	SAFE_RELEASE(r_sbpp);
 	SAFE_RELEASE(r_fullscreen);
 
-  SAFE_RELEASE(m_pLog);
+  //SAFE_RELEASE(m_pLog);
+	m_pLog->Release();
 	SAFE_RELEASE(m_pConsole);
   SAFE_RELEASE(m_pGame);
   SAFE_RELEASE(m_pFont);

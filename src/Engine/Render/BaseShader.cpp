@@ -42,14 +42,25 @@ ShaderProgramStatus::ShaderProgramStatus(CBaseShaderProgram *program) :
 bool ShaderProgramStatus::get(GLenum statusType) {
   GLsizei size;
   glCheck(glGetProgramiv(m_Program->get(), statusType, &m_Status));
-  if(m_Status != GL_TRUE)
-  {
-    glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
-		/*auto log = GetISystem()->GetILog();
+	if (m_Status != GL_TRUE)
+	{
+		glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
+		auto log = GetISystem()->GetILog();
 		if (log != nullptr)
+		{
 			log->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
+			std::vector<char> label(1);
+			GLsizei length = 0;
+			glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->get(), 1, &length, label.data()));
+			if (length > 0)
+			{
+				label.resize(length);
+				glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->get(), length, &length, label.data()));
+				log->AddLog("[INFO] Shader::programm label: %s\n", label.data());
+			}
+		}
 		else
-			GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());*/
+			GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
     return false;
   }
   return true;
@@ -228,21 +239,21 @@ CBaseShaderProgram::~CBaseShaderProgram() {
 	glDeleteProgram(m_Program);
 }
 
-bool CBaseShaderProgram::create() {
+bool CBaseShaderProgram::create(const char *label) {
 	if (!created) {
 		created = true;
 		m_Program = glCreateProgram();
 	}
+	debuger::program_label(m_Program, label);
 	attach(m_Vertex);
 	attach(m_Fragment);
 	attach(m_Geometry);
 	attach(m_Compute);
-  link();
-	return m_Status.get(GL_LINK_STATUS);
+	return link();
 }
 
 void CBaseShaderProgram::attach(ShaderInfo& info) {
-	ShaderInfo attached;
+	ShaderInfo &attached = info;
 	
 	if (!info.used) return;
   switch (info.shader->m_Type) {
@@ -283,7 +294,7 @@ bool CBaseShaderProgram::dispatch(int x, int y, int z, GLbitfield barriers)
 	if (m_Compute.attached)
 	{
 		glCheck(glDispatchCompute(x, y, z));
-		if (barriers) glMemoryBarrier(barriers);
+		if (barriers) glCheck(glMemoryBarrier(barriers));
 		return true;
 	}
 	return false;
@@ -475,7 +486,7 @@ void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c)
+void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label)
 {
 	detach(m_Vertex);
 	//reset(m_Vertex);
@@ -493,7 +504,7 @@ void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 		m_Geometry.shader = g;
 	if (nullptr)
 		m_Compute.shader = c;
-	create();
+	create(label);
 }
 
 void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* sampler)
