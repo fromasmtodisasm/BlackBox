@@ -31,6 +31,13 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	IWindow* result = m_Window = window;
 	if (window == nullptr)
 		return nullptr;
+	//=======================
+	initConsoleVariables();
+	//=======================
+	if (isDebug && r_debug->GetIVal() == 1)
+		glContextType = sf::ContextSettings::Debug;
+	else
+		glContextType = sf::ContextSettings::Attribute::Core;
   sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
 		return false;
@@ -38,19 +45,6 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		return false;
   if (!OpenGLLoader())
     return false;
-	//=======================
-	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
-
-	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
-
-	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
-
-	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
-	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	//=======================
@@ -151,7 +145,7 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 void CRender::glInit()
 {
 	fillSates();
-	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
+	if (glContextType == sf::ContextSettings::Debug && r_debug->GetIVal() == 1)
 	{
 		glDebug = new OpenglDebuger("out/glDebug.txt");
 		SetState(State::DEBUG_OUTPUT, true);
@@ -181,6 +175,22 @@ void CRender::fillSates()
 		STATEMAP(State::STENCIL_TEST,								GL_STENCIL_TEST);
 
 #undef STATEMAP
+}
+
+void CRender::initConsoleVariables()
+{
+	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
+	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
+
+	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
+	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
+
+	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
+
+	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
+	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
+	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)

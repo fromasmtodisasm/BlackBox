@@ -41,6 +41,7 @@ class CSFMLWindow :
 
   sf::RenderWindow* m_Window;
   bool m_bClose;
+	bool m_bFullScreen;
   int m_Width;
   int m_Height;
 	sf::ContextSettings m_contextSettings;
@@ -72,6 +73,7 @@ public:
   ~CSFMLWindow();
 
   virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) override;
+	void Create(int width, int height, bool fullscreen, unsigned int cbpp);
   virtual void update() override;
   virtual void clear() override;
   virtual bool closed() override;
@@ -113,6 +115,8 @@ public:
 
 	// Inherited via IWindow
 	virtual void changeSize(int w, int h) override;
+
+	void ToogleFullScreen(int w, int h);
 
 };
 

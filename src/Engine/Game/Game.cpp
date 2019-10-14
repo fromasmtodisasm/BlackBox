@@ -67,14 +67,6 @@ struct TextRenderInfo
   }
 };
 
-//////////////////////////////////////////////////////////////////////
-// Pointer to Global ISystem.
-static ISystem* gISystem = nullptr;
-ISystem* GetISystem()
-{
-  return gISystem;
-}
-
 World *CGame::getWorld() const
 {
     return m_World;
@@ -123,7 +115,7 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(ISystem *pEngine)  {
-  m_pSystem = gISystem = pEngine;
+  m_pSystem /*= gISystem */= pEngine;
 	m_pRender = m_pSystem->GetIRender();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_Log = m_pSystem->GetILog();
