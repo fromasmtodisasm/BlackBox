@@ -70,8 +70,8 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
-	glm::ivec2 resolution = glm::ivec2(format[testid].m_Width, format[testid].m_Height);
-	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, 2 * resolution.x, 2 * resolution.y, 2, false);
+	glm::ivec2 resolution = glm::ivec2(render->GetWidth(), render->GetHeight());
+	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
 
 	auto mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
@@ -173,7 +173,7 @@ void HdrTechnique::BloomPass()
 		const char section[] = "UPSAMPLING";
 		PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_RED);
 			DEBUG_GROUP(section);
-			upsampling();
+			//upsampling();
 		PROFILER_POP_CPU_MARKER();
 	}
 
@@ -317,23 +317,21 @@ void HdrTechnique::downsampling()
 	// 2. blur bright fragments with two-pass Gaussian Blur 
 	// --------------------------------------------------
 
+	m_DownsampleShader->use();
 	{
 		unsigned int image_unit = 2;
 		glBindImageTexture(image_unit, hdrBuffer->texture[1], 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
-		auto location = glGetUniformLocation(m_DownsampleShader->get(), "inputImg1");
-		glProgramUniform1i(m_DownsampleShader->get(), location, image_unit);
+		m_DownsampleShader->setUniformValue(2, "inputImg1");
 	}
 
 	{
 		unsigned int image_unit = 3;
 		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
-		auto location = glGetUniformLocation(m_DownsampleShader->get(), "inputImg2");
-		glProgramUniform1i(m_DownsampleShader->get(), location, image_unit);
+		m_DownsampleShader->setUniformValue(3, "inputImg2");
 	}
 
 	auto render = GetISystem()->GetIRender();
-	m_DownsampleShader->use();
-	m_DownsampleShader->dispatch(render->GetWidth(), render->GetHeight(), 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	m_DownsampleShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 	return;
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;

@@ -19,7 +19,7 @@
 #else
 
 // Else, we don't add any overhead
-#define glCheck(expr) do { expr; OpenglDebuger::checkError(__FILE__, __LINE__, #expr); } while (false)
+#define glCheck(expr) /*do { expr; OpenglDebuger::checkError(__FILE__, __LINE__, #expr); } while (false)*/
 //#define glCheck(expr) (expr)
 
 #endif

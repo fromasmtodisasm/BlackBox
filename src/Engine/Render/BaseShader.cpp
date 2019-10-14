@@ -502,7 +502,7 @@ void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 	m_Fragment.shader = f;
 	if (g != nullptr)
 		m_Geometry.shader = g;
-	if (nullptr)
+	if (c != nullptr)
 		m_Compute.shader = c;
 	create(label);
 }
