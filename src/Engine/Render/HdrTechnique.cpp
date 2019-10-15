@@ -368,6 +368,7 @@ void HdrTechnique::downsamplingStandard()
   m_DownsampleShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
   m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
+  m_DownsampleShader->setUniformValue(glm::vec4(0,0, cam_width->GetIVal()/hdrBuffer->viewPort.z, cam_height->GetIVal()/hdrBuffer->viewPort.w), "viewPort");
 	glCheck(glDisable(GL_DEPTH_TEST));
 	if (useBoxFilter->GetIVal())
 		amount = 1;
@@ -375,7 +376,7 @@ void HdrTechnique::downsamplingStandard()
 		amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		pass0[i + 1]->bind();
+		pass0[i + 1]->bind({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 		//pass0[i + 1]->bind(pass0[i + 1]->viewPort / 2.f);
 		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
 		//renderQuad();

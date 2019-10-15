@@ -214,7 +214,9 @@ void ShadowMapping::OnRenderPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
 	auto& v = m_RenderedScene->viewPort;
-  m_RenderedScene->bind();
+	auto cam_width = GetISystem()->GetIConsole()->GetCVar("r_cam_w");
+	auto cam_height = GetISystem()->GetIConsole()->GetCVar("r_cam_h");
+  m_RenderedScene->bind({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	glm::vec4 fog = glm::vec4(
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),

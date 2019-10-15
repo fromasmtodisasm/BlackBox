@@ -790,6 +790,18 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 	int begin_cmd = 0, end_cmd = 0;
 	int begin_args = 0, end_args = 0;
 	std::wstring current_arg;
+	std::wstring value;
+	bool get_value = false;
+
+	auto getVal = [this](std::wstring name) -> std::wstring {
+		auto str = wstr_to_str(name);
+
+		if (auto var = GetCVar(str.c_str()))
+		{
+			return str_to_wstr(var->GetString());
+		}
+		return std::wstring();
+	};
 	
 	for (int i = begin_cmd; i < command.size(); i++)
 	{
@@ -824,13 +836,25 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 					state1 = INSTRING;
 					break;
 				}
-				current_arg += command[i];
+				if (get_value)
+					value += command[i];
+				else
+					current_arg += command[i];
 			}
 			else
 			{
 				state1 = INARGSPACE;	
-				cd.args.push_back(current_arg);
-				current_arg.clear();
+				if (get_value)
+				{
+					cd.args.push_back(getVal(value));
+					value.clear();
+					get_value = false;
+				}
+				else
+				{
+					cd.args.push_back(current_arg);
+					current_arg.clear();
+				}
 			}
 			break;
 		case INCMD:
@@ -846,7 +870,14 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 			if (command[i] != L' ')
 			{
 				state1 = ARGS;
-				current_arg += command[i];
+				if (command[i] == L'@')
+				{
+					get_value = true;
+				}
+				else
+				{
+					current_arg += command[i];
+				}
 			}
 			break;
 		case INARG:
@@ -857,7 +888,10 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 	}
 	if (state1 == ARGS)
 	{
-		cd.args.push_back(current_arg);
+		if (get_value)
+			cd.args.push_back(getVal(value));
+		else
+			cd.args.push_back(current_arg);
 	}
 
 	return cd;
