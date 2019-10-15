@@ -63,11 +63,17 @@ struct CommandInfo
 		SCRIPT,
 		UNKNOWN
 	};
+	struct SScript
+	{
+		const char* code;
+		int arg_cnt;
+		int *args_pos;
+	};
 	union
 	{
 		ConsoleCommandFunc Func = nullptr;
 		IConsoleCommand* Command;
-		const char* Script;
+		SScript Script;
 	};
 	std::multimap<int, std::string> argsCompletion;
 	std::string help;
