@@ -359,6 +359,7 @@ public:
   GLint getUniformLocation(const char* format, ...);
   GLint getUniformLocation(std::string &name);
   UniformValue getUniformValue(const char* name);
+	void setUniformValue(bool value, const char* format, ...) { setUniformValue((int)value, format); }
   void setUniformValue(int value, const char *format, ...);
   void setUniformValue(unsigned int value, const char *format, ...);
   void setUniformValue(float value, const char *format, ...);
@@ -369,6 +370,9 @@ public:
   void setUniformValue(glm::mat2 value, const char *format, ...);
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
+
+	template<typename T>
+	void setUniformValue(T value, std::string name) { setUniformValue(value, name.c_str()); }
 
 	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
 
