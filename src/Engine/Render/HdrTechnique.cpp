@@ -191,39 +191,67 @@ void HdrTechnique::BloomPass()
 void HdrTechnique::createShader()
 {
 	ProgramDesc desc[] = {
+		//0
 		{
 			"hdr_shader",
 			"screenshader.vs",
 			"hdrshader.frag"
 		},
+		//1
 		{
 			"downsampling",
 			"screenshader.vs",
 			"downsampling.frag"
 		},
+		//2
+		{
+			"downsampling_compute",
+			"",
+			"",
+			"",
+			"downsampling.comp"
+		},
+		//3
 		{
 			"upsampling",
 			"screenshader.vs",
 			"upsampling.frag",
-		}
+		},
+		//4
+		{
+			"upsampling_compute",
+			"",
+			"",
+			"",
+			"upsampling.comp"
+		},
 	};
 
 	MaterialManager::instance()->loadProgram(desc[0],false);
 	MaterialManager::instance()->loadProgram(desc[1],false);
 	MaterialManager::instance()->loadProgram(desc[2],false);
+	MaterialManager::instance()->loadProgram(desc[3],false);
+	MaterialManager::instance()->loadProgram(desc[4],false);
 
-	m_ScreenShader = MaterialManager::instance()->getProgram("hdr_shader");
+	m_ScreenShader = MaterialManager::instance()->getProgram(desc[0].name);
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"scene");
 	m_ScreenShader->setUniformValue(1,"bloomBlur");
 	m_ScreenShader->unuse();
 
-	m_DownsampleShader = MaterialManager::instance()->getProgram("downsampling");
+	m_DownsampleShader = MaterialManager::instance()->getProgram(desc[1].name);
 	m_DownsampleShader->use();
 	m_DownsampleShader->setUniformValue(0,"image");
 	m_DownsampleShader->unuse();
 
-	m_UpsampleShader = MaterialManager::instance()->getProgram("upsampling");
+	m_DownsampleComputeShader = MaterialManager::instance()->getProgram(desc[2].name);
+	m_DownsampleComputeShader->use();
+	m_DownsampleComputeShader->setUniformValue(0,"image");
+	m_DownsampleComputeShader->unuse();
+
+	m_UpsampleShader = MaterialManager::instance()->getProgram(desc[3].name);
+
+	m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
 
 }
 
@@ -315,21 +343,20 @@ void HdrTechnique::downsampling()
 	// 2. blur bright fragments with two-pass Gaussian Blur 
 	// --------------------------------------------------
 
-	m_DownsampleShader->use();
+	m_DownsampleComputeShader->use();
 	{
 		unsigned int image_unit = 2;
-		glBindImageTexture(image_unit, hdrBuffer->texture[1], 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
-		m_DownsampleShader->setUniformValue(2, "inputImg1");
+		m_DownsampleComputeShader->bindTexture2D(hdrBuffer->texture[1], image_unit, "inputImg1");
 	}
 
 	{
 		unsigned int image_unit = 3;
 		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
-		m_DownsampleShader->setUniformValue(3, "inputImg2");
+		m_DownsampleComputeShader->setUniformValue(3, "inputImg2");
 	}
 
 	auto render = GetISystem()->GetIRender();
-	m_DownsampleShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	m_DownsampleComputeShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 	return;
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
@@ -385,19 +412,17 @@ void HdrTechnique::Do(unsigned int texture)
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal());
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glClearColor(fog.r, fog.g, fog.b, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT);
+	FrameBufferObject::bindDefault(hdrBuffer->viewPort);
 	m_ScreenShader->use();
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
   m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");
-	glDisable(GL_DEPTH_TEST);
+	render->SetState(IRender::State::DEPTH_TEST, false);
 
 	m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");
 	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 
-	glCheck(glViewport(0, 0, GetISystem()->GetIRender()->GetWidth(), GetISystem()->GetIRender()->GetHeight()));
+	render->SetViewport(0, 0, render->GetWidth(), render->GetHeight());
 	m_ScreenQuad.draw();
 }
 

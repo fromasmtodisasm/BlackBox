@@ -50,7 +50,9 @@ private:
   ITechnique *shadowMapping;
   BaseShaderProgramRef m_ScreenShader;
   BaseShaderProgramRef m_DownsampleShader;
+  BaseShaderProgramRef m_DownsampleComputeShader;
   BaseShaderProgramRef m_UpsampleShader;
+  BaseShaderProgramRef m_UpsampleShaderComputeShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
   FrameBufferObject* hdrBuffer;

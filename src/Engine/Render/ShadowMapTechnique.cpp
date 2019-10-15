@@ -28,7 +28,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
   if (renderTarget == nullptr)
   {
     m_RenderedScene = FrameBufferObject::create(
-      FrameBufferObject::BufferType::SCENE_BUFFER, GetISystem()->GetIRender()->GetWidth(), GetISystem()->GetIRender()->GetHeight(), 0, false
+      FrameBufferObject::BufferType::SCENE_BUFFER, m_pRender->GetWidth(), m_pRender->GetHeight(), 0, false
     );
   }
   else
@@ -36,7 +36,6 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
     m_RenderedScene = renderTarget;
   }
 
-  //m_ShadowMapShader = new ShadowMapShader();
 	ProgramDesc pd = {
 		"shadowpass",
 		"shadowpass.vs",
@@ -206,9 +205,6 @@ void ShadowMapping::RenderTransparent(Object* object)
 void ShadowMapping::OnDepthPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
-	//glCullFace(GL_FRONT);
-	//DepthPass();
-	//glCullFace(GL_BACK);
 	m_pRender->SetCullMode(IRender::CullMode::FRONT);
   DepthPass();
 	m_pRender->SetCullMode(IRender::CullMode::BACK);
@@ -218,12 +214,6 @@ void ShadowMapping::OnRenderPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
 	auto& v = m_RenderedScene->viewPort;
-	/*
-	v.x = 0;
-	v.y = 0;
-	v.z = 500;
-	v.y = 500;
-	*/
   m_RenderedScene->bind();
 	glm::vec4 fog = glm::vec4(
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),

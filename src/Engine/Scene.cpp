@@ -931,7 +931,7 @@ PointObject::PointObject()
 	ProgramDesc pd = {
 		"points",
 		"points.vert",
-		"skybox.frag"
+		"points.frag"
 	};
 
 	MaterialManager::instance()->loadProgram(pd, false);
