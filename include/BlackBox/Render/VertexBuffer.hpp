@@ -24,6 +24,7 @@ public:
   ~VertexArrayObject();
   void draw();
 	void setAttributes(Attributes &attributes);
+	Attributes& getAttributes();
 protected:
 	virtual bool init();
 protected:

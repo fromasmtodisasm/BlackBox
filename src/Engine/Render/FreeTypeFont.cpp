@@ -2,11 +2,13 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <MaterialManager.hpp>
+
 void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4])
 {
 	// Activate corresponding render state	
 	shader->use();
-	auto render = GetIEngine()->getIRender();
+	auto render = GetISystem()->GetIRender();
 	glm::mat4 uv_projection = glm::mat4(1.0);
 	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -15,13 +17,15 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glCheck(glUniform3fv(glGetUniformLocation(shader->get(), "textColor"), 1, &color[0]));
 	glCheck(glActiveTexture(GL_TEXTURE0));
 	glCheck(glBindVertexArray(VAO));
-	glCheck(glEnable(GL_BLEND));
-	glCheck(glDisable(GL_CULL_FACE));
+	render->SetState(IRender::State::BLEND, true);
+	render->SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Iterate through all characters
-	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
+	//std::string::const_iterator c;
+	const char *c;
+	const char* end = text.data() + text.size();
+	for (c = text.data(); c != end; c++)
 	{
 		if (*c == '\n')
 		{
@@ -69,13 +73,44 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glCheck(glEnable(GL_CULL_FACE));
 }
 
-bool FreeTypeFont::Init(const char* font, int w, int h)
+float FreeTypeFont::TextWidth(const std::string& text)
 {
-	shader = new CShaderProgram(
-	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
-	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
-	if (!shader->create())
+	const char *c;
+	const char* end = text.data() + text.size();
+	float w = 0.f;
+	for (c = text.data(); c != end; c++)
+	{
+		GLfloat x = 0;
+		//GLfloat xpos =
+		w += CharWidth(*c);
+	}
+	return w;
+}
+
+float FreeTypeFont::CharWidth(char symbol)
+{
+	float scale = 1.0;
+	Character ch = Characters[symbol];
+
+	GLfloat w = (/*ch.Bearing.x + ch.Size.x + */(ch.Advance >> 6)) * scale;
+	//GLfloat h = (ch.Size.y - ch.Bearing.y + ch.Size.y) * scale;
+	return w;
+}
+
+bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
+{
+	ProgramDesc pd = {
+		"sprite",
+		"sprite.vs",
+		"sprite.frag"
+	};
+
+	if (!MaterialManager::instance()->loadProgram(pd, false))
 		return false;
+	shader = MaterialManager::instance()->getProgram(pd.name);
+	if (shader == nullptr)
+		return false;
+
 	if (FT_Init_FreeType(&ft))
 	{
 		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;

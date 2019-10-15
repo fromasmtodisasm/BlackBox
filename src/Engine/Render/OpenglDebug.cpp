@@ -4,22 +4,26 @@
 #include <vector>
 #include <sstream>
 
-bool OpenglDebug::isError = false;
+bool OpenglDebuger::isError = false;
+bool OpenglDebuger::ignore = false;
 
-OpenglDebug::OpenglDebug(const char *file) : debug_file(file)
+OpenglDebuger::OpenglDebuger(const char *file) : debug_file(file)
 {
 	if (glDebugMessageCallback != nullptr)
+	{
 		glDebugMessageCallback(callBack, &debug_file);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+	}
 }
 
-OpenglDebug::~OpenglDebug()
+OpenglDebuger::~OpenglDebuger()
 {
 
 }
 
-void OpenglDebug::checkError(const char *file, int line, const char *expr)
+void OpenglDebuger::checkError(const char *file, int line, const char *expr)
 {
-	if (isError)
+	if (isError && !ignore)
 	{
 		isError = false;
 
@@ -32,13 +36,14 @@ void OpenglDebug::checkError(const char *file, int line, const char *expr)
 	}
 }
 
-void OpenglDebug::callBack(GLenum source​, GLenum type​, GLuint id​, GLenum severity​, GLsizei length​, const GLchar* message​, const void* userParam​)
+void OpenglDebuger::callBack(GLenum source​, GLenum type​, GLuint id​, GLenum severity​, GLsizei length​, const GLchar* message​, const void* userParam​)
 {
 	//std::fstream* df = const_cast< std::fstream* > (reinterpret_cast< const std::fstream*​ >(userParam​) );
 
-	if (severity​ == GL_DEBUG_SEVERITY_NOTIFICATION)
-		isError = false;
-	else
+	//if (severity​ == GL_DEBUG_SEVERITY_NOTIFICATION)
+	//	;// isError = false;
+	//else
+	if (!ignore)
 	{
 		isError = true;
 		std::stringstream ss;

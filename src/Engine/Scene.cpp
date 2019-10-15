@@ -1,6 +1,6 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/World.hpp>
@@ -11,7 +11,10 @@
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IGame.hpp>
+#include <BlackBox/ISystem.hpp>
+#include <BlackBox/Profiler/Profiler.h>
 
 #include <tinyxml2.h>
 #include <sstream>
@@ -19,102 +22,54 @@
 #include <algorithm>
 
 
+
+
 using namespace tinyxml2;
+#define strdup _strdup
 
 #ifndef XMLCheckResult
   #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
 #endif
 
-class SkyBox : public IDrawable
+void Scene::loadTerrain(tinyxml2::XMLElement* terrain)
 {
-public:
-	TextureCube* texture;
-	VertexArrayObject* vao;
-	CBaseShaderProgram* shader;
+	//Object* obj;
+  Material *material;
+  MaterialManager *materialManager = MaterialManager::instance();
+  const char *terrainName = nullptr;
+  const char *materialName = nullptr;
+  const char *heightmapName = nullptr;
+  XMLElement * heightmap = nullptr;
+  XMLElement * materialElement = nullptr;
+  Transform transform;
 
-	SkyBox(TextureCube *t)
-		:
-		texture(t),
-		shader(new CShaderProgram(CShader::load("res/shaders/skybox.vs", CShader::E_VERTEX), CShader::load("res/shaders/skybox.frag", CShader::E_FRAGMENT)))
-	{
-		shader->create();
-		shader->use();
-		shader->setUniformValue(0, "skybox");
-		shader->unuse();
-		static float skyboxVertices[] = {
-			// positions          
-			-1.0f,  1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
 
-			-1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
+  terrainName = terrain->Attribute("name");
+  if (terrainName == nullptr)
+    return;
+  heightmap = terrain->FirstChildElement("heightmap");
+  if (heightmap == nullptr)
+    return;
+  heightmapName = heightmap->Attribute("name");
+  if (heightmapName == nullptr)
+    return;
 
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
+  materialElement = terrain->FirstChildElement("material");
+  if (materialElement == nullptr)
+    material = defaultMaterial;
+  else {
+    materialName = materialElement->Attribute("name");
+    if (materialName == nullptr)
+      material = defaultMaterial;
+    else {
+      material = materialManager->getMaterial(materialName);
+      if (material == nullptr)
+        material = defaultMaterial;
+    }
+  }
 
-			-1.0f, -1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			-1.0f,  1.0f, -1.0f,
-			 1.0f,  1.0f, -1.0f,
-			 1.0f,  1.0f,  1.0f,
-			 1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f, -1.0f,
-			 1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			 1.0f, -1.0f,  1.0f
-		};
-		VertexArrayObject::Attributes attributes;
-		attributes.stride = 3 * sizeof(float);
-		attributes.attributes[VertexArrayObject::POSITION] = 0;
-		vao = new VertexArrayObject(skyboxVertices, 36, GL_TRIANGLES, attributes);
-	}
-	// Унаследовано через IDrawable
-	virtual void draw(void* data) override
-	{
-		CCamera* cam = reinterpret_cast<CCamera*>(data);
-		glCheck(glDepthMask(GL_FALSE));
-		glCheck(glDepthFunc(GL_LEQUAL));
-		shader->use();
-		// ... задание видовой и проекционной матриц
-		shader->setUniformValue(glm::mat4(glm::mat3(cam->getViewMatrix())), "View");
-		shader->setUniformValue(cam->getProjectionMatrix(), "Projection");
-		
-		texture->bind();
-		vao->draw();
-
-		glCheck(glDepthFunc(GL_LESS));
-		glCheck(glDepthMask(GL_TRUE));
-	}
-
-	void setTextureCube(TextureCube* t)
-	{
-		if (texture)
-			delete texture;
-		texture = t;
-	}
-};
+	//m_Objects.insert({ "terrain", this->terrain.load(terrainName)});
+}
 
 void Scene::loadObject(XMLElement *object)
 {
@@ -137,17 +92,25 @@ void Scene::loadObject(XMLElement *object)
   objectType = object->Attribute("type");
   if (objectType == nullptr)
     objectType = "object";
-	if (object->Attribute("transparent"))
-		objectTransparent = true;
-	if (object->Attribute("visible"))
-		objectVisible = true;
-  mesh = object->FirstChildElement("mesh");
-  if (mesh == nullptr)
-    return;
-  meshPath = mesh->Attribute("name");
-  if (meshPath == nullptr)
-    return;
-  obj = ObjectManager::instance()->getObject(meshPath, objectType);
+	if (objectType == std::string("points"))
+	{
+		m_Points = createPointObject(object);
+		return;
+	}
+	else
+	{
+		if (object->BoolAttribute("transparent"))
+			objectTransparent = true;
+		if (object->BoolAttribute("visible"))
+			objectVisible = true;
+		mesh = object->FirstChildElement("mesh");
+		if (mesh == nullptr)
+			return;
+		meshPath = mesh->Attribute("name");
+		if (meshPath == nullptr)
+			return;
+		obj = ObjectManager::instance()->getObject(meshPath, objectType);
+	}
   if (obj == nullptr)
     return;
   materialElement = object->FirstChildElement("material");
@@ -164,6 +127,18 @@ void Scene::loadObject(XMLElement *object)
     }
 
   }
+
+	auto uv = object->FirstChildElement("uv");
+	if (uv != nullptr)
+	{
+		auto scaleX = uv->FloatAttribute("scaleX", 1.0);
+		auto scaleY = uv->FloatAttribute("scaleY", 1.0);
+		obj->uvMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX, scaleY, 1.0f));
+	}
+	else
+	{
+		obj->uvMatrix = glm::mat4(1.0f);
+	}
 
   transform = loadTransform(*object);
   obj->m_transform = transform;
@@ -302,69 +277,22 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
   if (element == nullptr)
   //TODO: handle this
     return glm::vec3();
-  color.r = element->FloatAttribute("x");
-  color.g = element->FloatAttribute("y");
-  color.b = element->FloatAttribute("z");
+  color.r = element->FloatAttribute("r");
+  color.g = element->FloatAttribute("g");
+  color.b = element->FloatAttribute("b");
   return color;
-}
-
-void Scene::setupLights(Object* object)
-{
-  auto program = object->m_Material->program;
-  int currentLight = 0;
-  int nr_point_lights = 0;
-  auto sun = m_DirectionLight.find("sun");
-  if (sun != m_DirectionLight.end())
-  {
-    program->setUniformValue(sun->second->direction, "dirLight.direction");
-    program->setUniformValue(sun->second->ambient, "dirLight.ambient");
-    program->setUniformValue(sun->second->diffuse, "dirLight.diffuse");
-    program->setUniformValue(sun->second->specular, "dirLight.specular");
-  }
-  // point lights
-  for (const auto& light : m_PointLights)
-  {
-    if (light.second->enabled)
-    {
-      program->setUniformValue(light.second->position, "pointLights[%d].position", currentLight);
-      program->setUniformValue(light.second->ambient, "pointLights[%d].ambient", currentLight);
-      program->setUniformValue(light.second->diffuse, "pointLights[%d].diffuse", currentLight);
-      program->setUniformValue(light.second->specular, "pointLights[%d].specular", currentLight);
-      program->setUniformValue(light.second->constant, "pointLights[%d].constant", currentLight);
-      program->setUniformValue(light.second->linear, "pointLights[%d].linear", currentLight);
-      program->setUniformValue(light.second->quadratic, "pointLights[%d].quadratic", currentLight);
-      nr_point_lights++;
-      ++currentLight;
-
-      program->setUniformValue(light.second->position, "lightPos", currentLight);
-      break;
-    }
-  }
-  program->setUniformValue(nr_point_lights, "countOfPointLights");
-  // spotLight
-  auto flashLight = m_SpotLights.find("flashLight");
-  if (flashLight != m_SpotLights.end())
-  {
-    program->setUniformValue(m_Camera->Position, "spotLight.position");
-    program->setUniformValue(m_Camera->Front, "spotLight.direction");
-    program->setUniformValue(flashLight->second->ambient, "spotLight.ambient");
-    program->setUniformValue(flashLight->second->diffuse, "spotLight.diffuse");
-    program->setUniformValue(flashLight->second->diffuse, "spotLight.specular");
-    program->setUniformValue(flashLight->second->constant, "spotLight.constant");
-    program->setUniformValue(flashLight->second->linear, "spotLight.linear");
-    program->setUniformValue(flashLight->second->quadratic, "spotLight.quadratic");
-    program->setUniformValue(glm::cos(glm::radians(flashLight->second->cutOff)), "spotLight.cutOff");
-    program->setUniformValue(glm::cos(glm::radians(flashLight->second->outerCutOff)), "spotLight.outerCutOff");
-  }
 }
 
 Scene::Scene(std::string name) 
   : 
+  lighting(true),
   name(name), 
-  m_ScreenShader(new CShaderProgram(CShader::load("res/shaders/screenshader.vs", CShader::E_VERTEX), CShader::load("res/shaders/screenshader.frag", CShader::E_FRAGMENT))),
-  m_ShadowMapShader(
-    new ShadowMapShader()
-  )
+  m_RenderedScene(-1),
+  m_Technique(nullptr),
+  m_World(nullptr),
+  quadVAO(-1),
+  shadowMapMat(nullptr),
+  skyBox(nullptr)
 {
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -376,35 +304,22 @@ Scene::Scene(std::string name)
 				 1.0f, -1.0f,  1.0f, 0.0f,
 				 1.0f,  1.0f,  1.0f, 1.0f
 	};
-	// screen quad VAO
-	/*
-	unsigned int quadVBO;
-	glCheck(glGenVertexArrays(1, &quadVAO));
-	glCheck(glGenBuffers(1, &quadVBO));
-	glCheck(glBindVertexArray(quadVAO));
-	glCheck(glBindBuffer(GL_ARRAY_BUFFER, quadVBO));
-	glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW));
-	glCheck(glEnableVertexAttribArray(0));
-	glCheck(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-	glCheck(glEnableVertexAttribArray(1));
-	glCheck(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))));
-	*/
 
-	m_ScreenShader->create();
+	ProgramDesc pd = {
+		"screen_shader",
+		"screenshader.vs",
+		"screenshader.frag"
+	};
+
+	MaterialManager::instance()->loadProgram(pd, false);
+	m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
+	
+	
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
 
-
-	m_ShadowMapShader->create();
-
-	m_TextShader = new CShaderProgram(
-	 CShader::load("res/shaders/sprite.vs", CShader::E_VERTEX), 
-	 CShader::load("res/shaders/sprite.frag", CShader::E_FRAGMENT));
-	m_TextShader->create();
-
-	m_Font = new FreeTypeFont("arial.ttf", 0, 24);
-	texture_speed = GetIEngine()->getIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
+	texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 }
 
 void Scene::selectPrevObject()
@@ -449,22 +364,20 @@ bool Scene::selectObject(std::string name)
 
 void Scene::draw(float dt)
 { 
+	//auto tech_name = m_Technique->GetName();
+	//sprintf(debug_label, "Technique: %s", tech_name);
+	DEBUG_GROUP("Render Loop");
   if (m_Objects.size() > 0)
   {
-    CCamera* camera = m_Camera;// new CCamera();
-    shadowMapPass(camera);
-
-    m_RenderedScene->bind();
-    glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    glCheck(glEnable(GL_DEPTH_TEST));
-
-    mainPass(m_Camera);
+		DEBUG_GROUP("PASS...");
+    for (int pass = 0; m_Technique->OnRenderPass(pass); pass++);
   }
+  m_RenderedScene = m_Technique->GetFrame();
 	
+  /*
 	if (skyBox != nullptr)
 		skyBox->draw(m_Camera);
-		//m_Font->RenderText(m_TextShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+  */
 }
 
 void Scene::addObject(std::string name, Object *object)
@@ -482,19 +395,20 @@ Object *Scene::getObject(std::string name)
   return nullptr;
 }
 
-int Scene::numObjects()
+size_t Scene::numObjects()
 {
 	return m_Objects.size();
 }
 
-void Scene::setCamera(CCamera *camera)
+void Scene::setCamera(std::string name, CCamera *camera)
 {
-  m_Camera = camera;
+  m_Camera[name] = camera;
+  m_CurrentCamera = m_Camera.find(name);
 }
 
-CCamera* Scene::getCamera()
+CCamera* Scene::getCurrentCamera()
 {
-	return m_Camera;
+	return m_CurrentCamera->second;
 }
 
 void Scene::update(float dt)
@@ -506,41 +420,45 @@ void Scene::update(float dt)
   }
 }
 
+void Scene::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene)
+{
+  XMLElement* object = xmlDoc.NewElement("object");
+  XMLElement* mesh = xmlDoc.NewElement("mesh");
+  XMLElement* material = xmlDoc.NewElement("material");;
+  XMLElement* transform;
+
+  //XMLElement * texture = xmlDoc.NewElement("texture");
+  std::string objectName = objectManager->getPathByPointer(obj.second);
+  object->SetAttribute("name", obj.first.c_str());
+  const char* objType = nullptr;
+  object->SetAttribute("type", obj.second->type.c_str());
+  object->SetAttribute("visible", obj.second->visible());
+  object->SetAttribute("transparent", obj.second->m_transparent);
+  mesh->SetAttribute("name", obj.second->m_path.c_str());
+  material->SetAttribute("name", obj.second->m_Material->name->c_str());
+  //transform->SetAttribute("name", obj.second->m_path->c_str());
+  //position->SetText(1.23);
+
+
+  transform = saveTransform(xmlDoc, &obj.second->m_transform);
+  object->InsertEndChild(mesh);
+  object->InsertEndChild(transform);
+  object->InsertEndChild(material);
+  pScene->InsertEndChild(object);
+  //object->InsertEndChild(mesh);
+}
+
 bool Scene::save(std::string as)
 {
   std::stringstream sceneName;
-  XMLDocument xmlDoc;
+  tinyxml2::XMLDocument xmlDoc;
   XMLNode * pScene = xmlDoc.NewElement("scene");
   ObjectManager *objectManager = ObjectManager::instance();
 
 
   for (auto &obj : m_Objects)
   {
-    {
-      XMLElement * object = xmlDoc.NewElement("object");
-      XMLElement * mesh = xmlDoc.NewElement("mesh");
-      XMLElement * material = xmlDoc.NewElement("material");;
-      XMLElement * transform;
-
-      //XMLElement * texture = xmlDoc.NewElement("texture");
-      std::string objectName = objectManager->getPathByPointer(obj.second);
-      object->SetAttribute("name", obj.first.c_str());
-      const char* objType = nullptr;
-      object->SetAttribute("type", obj.second->type.c_str());
-      mesh->SetAttribute("name", obj.second->m_path->c_str());
-      material->SetAttribute("name", obj.second->m_Material->name->c_str());
-      //transform->SetAttribute("name", obj.second->m_path->c_str());
-      //position->SetText(1.23);
-
-
-      transform = saveTransform(xmlDoc, obj.second);
-      transform = saveTransform(xmlDoc, obj.second);
-      object->InsertEndChild(mesh);
-      object->InsertEndChild(transform);
-      object->InsertEndChild(material);
-      pScene->InsertEndChild(object);
-      //object->InsertEndChild(mesh);
-    }
+    saveObject(xmlDoc, objectManager, obj, pScene);
   }
 
   for (auto& light : m_PointLights)
@@ -573,6 +491,12 @@ bool Scene::save(std::string as)
       pScene->InsertEndChild(lightElement);
     }
   }
+  for (auto& camera : m_Camera)
+  {
+    XMLElement * cameraElement = saveCamera(xmlDoc, camera.second);
+    cameraElement->SetAttribute("name", camera.first.c_str());
+    pScene->InsertEndChild(cameraElement);
+  }
   xmlDoc.InsertFirstChild(pScene);
 
   if (as == "")
@@ -586,9 +510,9 @@ bool Scene::save(std::string as)
   return true;
 }
 
-XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
+XMLElement *Scene::saveTransform(tinyxml2::XMLDocument &xmlDoc, Transform *transform)
 {
-  XMLElement * transform = xmlDoc.NewElement("transform");
+  XMLElement * result = xmlDoc.NewElement("transform");
 
   XMLElement * position = xmlDoc.NewElement("position");
   XMLElement * rotation = xmlDoc.NewElement("rotation");
@@ -599,9 +523,9 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
     XMLElement * X = xmlDoc.NewElement("X");
     XMLElement * Y = xmlDoc.NewElement("Y");
     XMLElement * Z = xmlDoc.NewElement("Z");
-    X->SetText(object->m_transform.position.x);
-    Y->SetText(object->m_transform.position.y);
-    Z->SetText(object->m_transform.position.z);
+    X->SetText(transform->position.x);
+    Y->SetText(transform->position.y);
+    Z->SetText(transform->position.z);
     position->InsertEndChild(X);
     position->InsertEndChild(Y);
     position->InsertEndChild(Z);
@@ -611,9 +535,9 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
     XMLElement * X = xmlDoc.NewElement("X");
     XMLElement * Y = xmlDoc.NewElement("Y");
     XMLElement * Z = xmlDoc.NewElement("Z");
-    X->SetText(object->m_transform.rotation.x);
-    Y->SetText(object->m_transform.rotation.y);
-    Z->SetText(object->m_transform.rotation.z);
+    X->SetText(transform->rotation.x);
+    Y->SetText(transform->rotation.y);
+    Z->SetText(transform->rotation.z);
     rotation->InsertEndChild(X);
     rotation->InsertEndChild(Y);
     rotation->InsertEndChild(Z);
@@ -623,19 +547,19 @@ XMLElement *Scene::saveTransform(XMLDocument &xmlDoc, Object *object)
     XMLElement * X = xmlDoc.NewElement("X");
     XMLElement * Y = xmlDoc.NewElement("Y");
     XMLElement * Z = xmlDoc.NewElement("Z");
-    X->SetText(object->m_transform.scale.x);
-    Y->SetText(object->m_transform.scale.y);
-    Z->SetText(object->m_transform.scale.z);
+    X->SetText(transform->scale.x);
+    Y->SetText(transform->scale.y);
+    Z->SetText(transform->scale.z);
     scale->InsertEndChild(X);
     scale->InsertEndChild(Y);
     scale->InsertEndChild(Z);
   }
 
-  transform->InsertEndChild(position);
-  transform->InsertEndChild(rotation);
-  transform->InsertEndChild(scale);
+  result->InsertEndChild(position);
+  result->InsertEndChild(rotation);
+  result->InsertEndChild(scale);
 
-  return transform;
+  return result;
 }
 
 tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight * light)
@@ -681,6 +605,17 @@ tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight 
   return result;
 }
 
+tinyxml2::XMLElement* Scene::saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera)
+{
+  XMLElement* result = xmlDoc.NewElement("camera");
+  auto transform = saveTransform(xmlDoc, &camera->transform);
+  auto speed = saveFloat(xmlDoc, camera->MovementSpeed->GetFVal(), "speed");
+  result->InsertEndChild(transform);
+  result->InsertEndChild(speed);
+
+  return result;
+}
+
 tinyxml2::XMLElement* Scene::saveVec3(tinyxml2::XMLDocument& xmlDoc, glm::vec3& color, const char* name)
 {
   XMLElement* result = xmlDoc.NewElement(name);
@@ -697,7 +632,7 @@ tinyxml2::XMLElement* Scene::saveFloat(tinyxml2::XMLDocument& xmlDoc, float valu
   return result;
 }
 
-XMLElement *Scene::saveMaterial(XMLDocument &xmlDoc, Object *object)
+XMLElement *Scene::saveMaterial(tinyxml2::XMLDocument &xmlDoc, Object *object)
 {
   XMLElement * material = xmlDoc.NewElement("material");
 
@@ -711,45 +646,66 @@ Transform Scene::loadTransform(XMLElement &object)
   XMLElement * transform = object.FirstChildElement("transform");
 
   //GET POSITION
-  {
-    XMLElement * position = transform->FirstChildElement("position");
-    XMLElement * X = position->FirstChildElement("X");
-    XMLElement * Y = position->FirstChildElement("Y");
-    XMLElement * Z = position->FirstChildElement("Z");
-    result.position.x = X->FloatText();
-    result.position.y = Y->FloatText();
-    result.position.z = Z->FloatText();
-  }
+  result.position = loadVec3(*transform, "position");
   //GET ROTATION
-  {
-    XMLElement * rotation = transform->FirstChildElement("rotation");
-    XMLElement * X = rotation->FirstChildElement("X");
-    XMLElement * Y = rotation->FirstChildElement("Y");
-    XMLElement * Z = rotation->FirstChildElement("Z");
-    result.rotation.x = X->FloatText();
-    result.rotation.y = Y->FloatText();
-    result.rotation.z = Z->FloatText();
-
-  }
+  result.rotation = loadVec3(*transform, "rotation");
   //GET SCALE
-  {
-    XMLElement * scale = transform->FirstChildElement("scale");
-    XMLElement * X = scale->FirstChildElement("X");
-    XMLElement * Y = scale->FirstChildElement("Y");
-    XMLElement * Z = scale->FirstChildElement("Z");
-    result.scale.x = X->FloatText();
-    result.scale.y = Y->FloatText();
-    result.scale.z = Z->FloatText();
-
-  }
+  result.scale = loadVec3(*transform, "scale");
 
   return result;
+}
 
+glm::vec3 Scene::loadVec3(tinyxml2::XMLElement& element, const char* name)
+{
+  glm::vec3 result;
+
+  XMLElement * vector = element.FirstChildElement(name);
+  XMLElement * X = vector->FirstChildElement("X");
+  XMLElement * Y = vector->FirstChildElement("Y");
+  XMLElement * Z = vector->FirstChildElement("Z");
+  result.x = X->FloatText();
+  result.y = Y->FloatText();
+  result.z = Z->FloatText();
+
+  return result;
+}
+
+void Scene::loadCamera(tinyxml2::XMLElement* element)
+{
+  CCamera *result;
+  const char* name = element->Attribute("name");
+  if (name == nullptr)
+  {
+    //log it
+    return;
+  }
+  XMLElement * transform = element->FirstChildElement("transform");
+
+  //GET POSITION
+  auto position = loadVec3(*transform, "position");
+  //GET ROTATION
+  auto rotation = loadVec3(*transform, "rotation");
+
+  auto speed = element->FirstChildElement("speed");
+  float cam_speed = 0.5;
+
+  if (speed != nullptr)
+    cam_speed = speed->FloatText();
+
+  result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
+
+  result->MovementSpeed = GetISystem()->GetIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
+  
+  m_Camera[name] = result;
+}
+
+void Scene::loadTagPoint(tinyxml2::XMLElement* element)
+{
 }
 
 bool Scene::load(std::string name = "default.xml")
 {
-  XMLDocument xmlDoc;
+  tinyxml2::XMLDocument xmlDoc;
 
   XMLError eResult = xmlDoc.LoadFile(name.c_str());
   XMLCheckResult(eResult);
@@ -766,6 +722,12 @@ bool Scene::load(std::string name = "default.xml")
     objects = objects->NextSiblingElement("object");
   }
 
+  XMLElement * terrain = pScene->FirstChildElement("terrain");
+	if (terrain != nullptr)
+	{
+		loadTerrain(terrain);
+	}
+
   XMLElement * lights = pScene->FirstChildElement("light");
   while (lights != nullptr)
   {
@@ -781,92 +743,39 @@ bool Scene::load(std::string name = "default.xml")
 		Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
 	}
 
+  //XMLElement* technique = pScene->FirstChildElement("technique");
+#ifdef SAVE_LOAD_TAGPOINTS
+  XMLElement * tag_points = pScene->FirstChildElement("tag_points");
+  if (tag_points == nullptr) return false;
+  while (tag_points != nullptr)
+  {
+    loadTagPoint(tag_points);
+    tag_points = tag_points->NextSiblingElement("tagpoint");
+  }
+
+  //m_CurrentCamera = m_Camera.find("main");
+  //assert(m_CurrentCamera != m_Camera.end());
+
+#endif // SAVE_LOAD_TAGPOINTS
+
+  XMLElement * cameras = pScene->FirstChildElement("camera");
+  if (cameras == nullptr) return false;
+  while (cameras != nullptr)
+  {
+    loadCamera(cameras);
+    cameras = cameras->NextSiblingElement("camera");
+  }
+
+  m_CurrentCamera = m_Camera.find("main");
+  assert(m_CurrentCamera != m_Camera.end());
+
+
   return true;
 }
 
-void Scene::setRenderTarget(FrameBufferObject *target)
-{
-  if (target->type == FrameBufferObject::buffer_type::SCENE_BUFFER)
-    m_RenderedScene = target;
-  else if (target->type == FrameBufferObject::buffer_type::DEPTH_BUFFER)
-    m_DepthBuffer = target;
-}
-
-FrameBufferObject* Scene::getRenderTarget()
+GLint Scene::getRenderTarget()
 {
 	return m_RenderedScene;
-}
-
-void Scene::shadowMapPass(CCamera *camera)
-{
-  float divider = 16.0f;
-  m_DepthBuffer->bind();
-  glViewport(0, 0, m_DepthBuffer->width, m_DepthBuffer->height);
-  glClear(GL_DEPTH_BUFFER_BIT);
-  m_ShadowMapShader->use();
-  m_ShadowMapShader->setUniformValue(glm::ortho(-1366/divider, 1366/divider, -768/divider, 768/divider,-1.0f, 1000.f) * camera->getViewMatrix(), "lightSpaceMatrix");
-  for (const auto& object : m_Objects) {
-    if (!object.second->m_transparent && (object.second->visible()) && 
-      glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
-    {
-      m_ShadowMapShader->setUniformValue(object.second->getTransform(), "model");
-      m_ShadowMapShader->setup();
-      object.second->draw(nullptr);
-    }
-  }
-  m_ShadowMapShader->unuse();
-  m_DepthBuffer->unbind();
-}
-
-void Scene::mainPass(CCamera *camera)
-{
-  auto time = GetIEngine()->getIGame()->getTime() * texture_speed->GetFVal();
-
-  Pipeline::instance()->view = camera->getViewMatrix();
-  Pipeline::instance()->projection = camera->getProjectionMatrix();
-  Pipeline::instance()->view_pos = camera->Position;
-
-  glViewport(0, 0, GetIEngine()->getIRender()->GetWidth(), GetIEngine()->getIRender()->GetHeight());
-  for (const auto& object : m_Objects) {
-    if (!object.second->m_transparent && (object.second->visible()) && 
-      glm::abs(glm::distance(m_Camera->Position, object.second->m_transform.position)) < m_Camera->zFar->GetFVal())
-    {
-      auto program = object.second->m_Material->program;
-      program->use();
-      program->setUniformValue(time, "time");
-      Pipeline::instance()->shader = program;
-      Pipeline::instance()->model = object.second->getTransform();
-
-      setupLights(object.second);
-      object.second->m_Material->apply(object.second);
-      object.second->draw(m_Camera);
-    }
-  }
-
-  Pipeline::instance()->bindProgram("bb");
-  auto obj = selectedObject();
-  Pipeline::instance()->object = obj->second;
-  for (auto& mesh : *obj->second->m_Mesh)
-  {
-    mesh.bb.draw();
-  }
-  for (const auto& object : m_Objects) {
-    if (object.second->m_transparent && (object.second->visible()))
-    {
-      auto program = object.second->m_Material->program;
-      program->use();
-      setupLights(object.second);
-
-      object.second->draw(m_Camera);
-    }
-  }
-  Object* lightObject = m_Objects.find("light")->second;
-  auto program = lightObject->m_Material->program;
-  for (const auto& light : m_PointLights) {
-    program->use();
-    lightObject->moveTo(light.second->position);
-    lightObject->draw(m_Camera);
-  }
 }
 
 void Scene::begin()
@@ -881,34 +790,27 @@ void Scene::begin()
 
 void Scene::end()
 {
-  m_RenderedScene->unbind();
+  //m_RenderedScene->unbind();
 }
 
 void Scene::present(int width, int height)
 {
+	DEBUG_GROUP(__FUNCTION__);
 	if (postProcessor == nullptr)
 	{
-		auto render = GetIEngine()->getIRender();
-		float
-			width = render->GetWidth(),
-			height = render->GetHeight();
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-		render->SetViewport(0, 0, width, height);
-		glCheck(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-		glCheck(glClear(GL_COLOR_BUFFER_BIT));
-		m_ScreenShader->use();
-		auto proj = glm::ortho(0.0f, (float)render->GetWidth(), 0.0f, (float)render->GetHeight());
-		auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-		m_ScreenShader->setUniformValue(transform, "transform");
-		glCheck(glDisable(GL_DEPTH_TEST));
-		glCheck(glActiveTexture(GL_TEXTURE0));
-		glCheck(glBindTexture(GL_TEXTURE_2D, m_RenderedScene->texture));
-		m_ScreenQuad.draw();;
+		GetISystem()->GetIRender()->DrawFullScreenImage(m_RenderedScene);
 	}
 	else
 	{
-		postProcessor->Do(m_RenderedScene->texture);
+		//PROFILER_PUSH_GPU_MARKER("Postprocessing", Utils::COLOR_GREEN);
+		postProcessor->Do(m_RenderedScene);
 	}
+	//PROFILER_POP_GPU_MARKER();
+}
+
+SkyBox* Scene::GetSkyBox()
+{
+  return skyBox;
 }
 
 void Scene::setPostProcessor(IPostProcessor* postProcessor)
@@ -916,3 +818,133 @@ void Scene::setPostProcessor(IPostProcessor* postProcessor)
 	this->postProcessor = postProcessor;
 }
 
+void Scene::ForEachObject(ForEachObjectSink* callback)
+{
+  for (const auto& object : m_Objects) {
+    if (!callback->OnObjectFound(object.second))
+      break;
+  }
+
+}
+
+void Scene::ForEachDirectionLight(ForEachDirectionLightSink* callback)
+{
+  for (const auto& light : m_DirectionLight)
+  {
+    if (!callback->OnLightFound(light.second))
+      break;
+  }
+}
+
+void Scene::ForEachPointLight(ForEachPointLightSink* callback)
+{
+  for (const auto& light : m_PointLights)
+  {
+    if (!callback->OnLightFound(light.second))
+      break;
+  }
+}
+
+void Scene::ForEachSpotLight(ForEachSpotLightSink* callback)
+{
+  for (const auto& light : m_SpotLights)
+  {
+    if (!callback->OnLightFound(light.second))
+      break;
+  }
+}
+
+void Scene::setTechnique(ITechnique* technique)
+{
+  m_Technique = technique;
+}
+
+const PointLightList &Scene::GetPointLights()
+{
+  return m_PointLights;
+}
+
+Terrain *Scene::getTerrain()
+{
+	return &terrain;
+}
+
+PointObject* Scene::createPointObject(XMLElement* object)
+{
+	struct Point
+	{
+		glm::vec3 pos;
+	};
+
+	auto positions = object->FirstChildElement("positions");
+	if (positions)
+	{
+		auto filename = positions->Attribute("file");
+		if (filename)
+		{
+			FILE* file = fopen(filename, "r");
+			if (file == nullptr) return nullptr;
+			std::vector<Point> points;
+			char line[128];
+			while (!feof(file))
+			{
+				Point point;
+				auto m = fscanf(file, "v\t%f %f %f\n", &point.pos.x, &point.pos.y, &point.pos.z);
+				if (m != 3)
+				{
+					fgets(line, 128, file);
+					continue;
+				}
+				
+				points.push_back(point);
+			}
+			if (points.size() > 0)
+			{
+				PointObject* po = new PointObject();
+				GLuint VBO;
+
+				po->point_cnt = points.size();
+				glGenVertexArrays(1, &po->VAO);
+				glBindVertexArray(po->VAO);
+					glGenBuffers(1, &VBO);
+					glBindBuffer(GL_ARRAY_BUFFER, VBO);
+					glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(Point), points.data(), GL_STATIC_DRAW);
+
+					glEnableVertexAttribArray(0);
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+				glBindVertexArray(0);
+				return po;
+			}
+		}
+	}
+	return nullptr;
+}
+
+PointObject* Scene::getPoints()
+{
+	return m_Points;
+}
+
+PointObject::PointObject()
+{
+	ProgramDesc pd = {
+		"points",
+		"points.vert",
+		"points.frag"
+	};
+
+	MaterialManager::instance()->loadProgram(pd, false);
+	shader = MaterialManager::instance()->getProgram(pd.name);
+}
+
+PointObject::~PointObject()
+{
+}
+
+void PointObject::draw()
+{
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_POINTS, 0, point_cnt);
+	glBindVertexArray(0);
+}

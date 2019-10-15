@@ -1,4 +1,4 @@
-#include <BlackBox/IEngine.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 
@@ -52,11 +52,11 @@ BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
     }
     if (texture == nullptr)
     {
-      GetIEngine()->getILog()->AddLog("[EROR] Error of load texture: %s\n", Path.c_str());
+      GetISystem()->GetILog()->AddLog("[EROR] Error of load texture: %s\n", Path.c_str());
     }
     else
     {
-      GetIEngine()->getILog()->AddLog("[INFO] Texture [%s] loaded\n",  Path.c_str());
+      GetISystem()->GetILog()->AddLog("[INFO] Texture [%s] loaded\n",  Path.c_str());
     }
   }
   return texture;

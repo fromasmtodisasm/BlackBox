@@ -1,6 +1,6 @@
 #include <BlackBox/Render/ReflectShader.hpp>
 
-ReflectShader::ReflectShader() : m_Engine(GetIEngine()), CBaseShaderProgram(CShader::load("res/shaders/reflect.vs", CShader::E_VERTEX), CShader::load("res/shaders/reflect.frag", CShader::E_FRAGMENT))
+ReflectShader::ReflectShader() : m_Engine(GetISystem()), CBaseShaderProgram(CShader::load("res/shaders/reflect.vs", CShader::E_VERTEX), CShader::load("res/shaders/reflect.frag", CShader::E_FRAGMENT))
 {
 	
 }

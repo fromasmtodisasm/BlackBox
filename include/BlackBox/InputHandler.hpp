@@ -9,6 +9,7 @@ struct IInputEventListener
 
 struct IInputHandler
 {
+	virtual ~IInputHandler() {};
   virtual ICommand *handleInput() = 0;
   virtual void AddEventListener(IInputEventListener *pListener) = 0;
 

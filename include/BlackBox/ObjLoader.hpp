@@ -8,8 +8,8 @@
 class ObjLoader
 {
 private:
-  const int NUMBER_OF_VERTEX = 3;
-  const int NUMBER_OF_ATTRIBUTES = 3;
+  const unsigned int NUMBER_OF_VERTEX = 3;
+  const unsigned int NUMBER_OF_ATTRIBUTES = 3;
   
   std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
   std::vector<face> faces;
@@ -17,8 +17,14 @@ private:
   std::vector< glm::vec2 > uv_buffer;
   std::vector< glm::vec3 > normal_buffer;
   bool has_uv = false;
+  bool has_normal = false;
 public:
   bool load(
+    const char * path,
+    VerteciesInfo &verteciesInfo,
+		BoundingBox &bb
+  );
+	bool loadBin(
     const char * path,
     VerteciesInfo &verteciesInfo,
 		BoundingBox &bb

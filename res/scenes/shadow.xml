@@ -1,5 +1,5 @@
 <scene>
-    <object name="BB" type="object">
+    <!--<object name="BB" type="object">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -18,10 +18,10 @@
                 <Z>200</Z>
             </scale>
         </transform>
-        <material name="wood_box"/>
-    </object>
+        <material name="phong"/>
+    </object>-->
     <object name="BMW" type="object" visible="true">
-        <mesh name="res/geom/bmw.obj"/>
+        <mesh name="res/geom/sphere.obj"/>
         <transform>
             <position>
                 <X>-6.6999998</X>
@@ -83,7 +83,7 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object" transparent="true" visible="false">
+    <object name="brick_normal_box" type="object" visible="true">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
@@ -102,10 +102,9 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="brick_box"/>
+        <material name="wood_box"/>
     </object>
-    <object name="brick_normal_box_2" type="object" transparent="true" visible="false">
-        <mesh name="res/geom/box.obj"/>
+    <object name="brick_normal_box_2" type="object" visible="true">
         <transform>
             <position>
                 <X>20</X>
@@ -123,7 +122,7 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="brick_box_shakaled" alpha_shakal="true"/>
+        <material name="specular_box"/>
     </object>
     <object name="light" type="object">
         <mesh name="res/geom/cube.obj"/>
@@ -160,11 +159,13 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>200</X>
-                <Y>200</Y>
-                <Z>200</Z>
+                <X>20000</X>
+                <Y>20000</Y>
+                <Z>20000</Z>
             </scale>
         </transform>
+        <texture scaleX="40" scaleY="40"></texture>
+
         <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object">
@@ -209,10 +210,38 @@
         </transform>
         <material name="red"/>
     </object>
+    <light name="lamp_1" type="point" enabled="true">
+        <position x="-1" y="15" z="-1"/>
+        <constant>1</constant>
+        <linear>0.25999999</linear>
+        <quadratic>0.0198</quadratic>
+        <ambient x="0" y="0" z="1"/>
+        <diffuse x="0" y="0" z="1"/>
+        <specular x="0" y="0" z="1"/>
+    </light>
     <light name="sun" type="direction" enabled="false">
         <direction x="-0.2" y="-2" z="26.700001"/>
         <ambient x="0" y="0" z="0"/>
         <diffuse x="0" y="0" z="0"/>
         <specular x="0" y="0" z="0"/>
     </light>
+  <camera name="main">
+    <transform> 
+            <position>
+                <X>20</X>
+                <Y>15</Y>
+                <Z>-10</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+    </transform>
+  </camera>
 </scene>

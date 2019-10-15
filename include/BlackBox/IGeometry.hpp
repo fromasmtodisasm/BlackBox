@@ -12,7 +12,7 @@
 
 class VertexArrayObject;
 class IndexBuffer;
-class Vertex;
+struct Vertex;
 
 using VertexData = std::vector<Vertex>;
 using IndexData = std::vector<int>;
@@ -47,10 +47,10 @@ struct Vertex
   glm::vec3 tangent;
   glm::vec3 btangent;
 
-  Vertex() = default;
-	Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv)
+	Vertex() : pos(0), uv(0), normal(0), tangent(0), btangent(0) {}
+	Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv), normal(0), tangent(0), btangent(0)
 	{}
-  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)
+  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n), tangent(0), btangent(0)
   {}
 };
 
@@ -60,11 +60,11 @@ struct VerteciesInfo
 	bool attributes[VA_NUM];
 	bool indexed;
 	IndexData indecies;
-	VerteciesInfo() : attributes()
+	VerteciesInfo() : attributes(), indexed(false)
 	{}
 };
 
-class Mesh;
+struct Mesh;
 
 struct BoundingBox
 {
@@ -73,11 +73,11 @@ struct BoundingBox
 	Mesh* mesh;
 	BoundingBox(glm::vec3 min, glm::vec3 max)
 		:
-		min(min), max(max)
+		min(min), max(max), mesh(nullptr)
 	{
 
 	}
-	BoundingBox() : min(0.0f), max(1.0f)
+	BoundingBox() : min(0.0f), max(1.0f), mesh(nullptr)
 	{
 
 	}

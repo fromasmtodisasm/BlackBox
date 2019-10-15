@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <BlackBox/Render/BaseTexture.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 
 class Object;
 
@@ -20,7 +20,7 @@ public:
 	glm::mat4 transform;
 	glm::vec3 view_pos;
 	BaseTexture* skyBox;
-	std::shared_ptr<CShaderProgram> shader;
+	BaseShaderProgramRef shader;
 	Object* object;
 
 private:

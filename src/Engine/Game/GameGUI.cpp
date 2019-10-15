@@ -1,8 +1,9 @@
-﻿#include <BlackBox/IEngine.hpp>
+﻿#ifdef GUI
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/CConsole.hpp>
+#include <BlackBox/Console.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 
 #include <imgui.h>
@@ -119,7 +120,7 @@ void GameGUI::Draw()
     {
       game->m_Window->getViewPort().left = ImGui::GetCursorPosX() + leftPanel.size.x;
       game->m_Window->getViewPort().top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y + mainMenu.size.y;
-      ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+      //ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -243,10 +244,10 @@ void GameGUI::controlPanel()
           */
           FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->m_Window->getWidth(), game->m_Window->getHeight());
           sceneBuffer->create();
-          scene->setRenderTarget(sceneBuffer);
-          scene->setCamera(new CCamera());
+          //scene->setRenderTarget(sceneBuffer);
+          //scene->setCamera(new CCamera());
           CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
-          player->attachCamera(scene->m_Camera);
+          player->attachCamera(scene->getCurrentCamera());
           player->setGame(game);
           game->m_Log->AddLog("[OK] Scene %s loaded\n", path);
         }
@@ -263,7 +264,7 @@ void GameGUI::controlPanel()
         if (ImGui::TreeNode(scene.first.c_str()))
         {
           game->m_World->setScene(scene.second);
-          game->m_active_camera = scene.second->m_Camera;
+          //game->m_active_camera = scene.second->m_Camera;
           game->m_player = (CPlayer*)scene.second->getObject("MyPlayer");
           showScene(scene.second);
           ImGui::TreePop();
@@ -294,12 +295,14 @@ void GameGUI::controlPanel()
   ImGui::Separator();
   if (ImGui::TreeNode("Camera"))
   {
+    /*
     if (ImGui::SliderFloat("Pitch", &game->m_scene->m_Camera->Pitch, -89.0, 89.0))
       game->m_scene->m_Camera->updateCameraVectors();
     if (ImGui::SliderFloat("Yaw", &game->m_scene->m_Camera->Yaw, 0.0f, 360.0f))
       game->m_scene->m_Camera->updateCameraVectors();
     ImGui::Text("Position");
     ImGui::DragFloat3("##pos", &game->m_scene->m_Camera->Position[0], 0.1);
+    */
     ImGui::TreePop();
   }
 }
@@ -323,12 +326,12 @@ if (m != nullptr && m->t != nullptr) \
   {
     if (ImGui::BeginTabItem("Log"))
     {
-      GetIEngine()->getILog()->Draw("MyLog", (bool*)true);
+      GetISystem()->GetILog()->Draw("MyLog", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Console"))
     {
-      //GetIEngine()->getIConsole()->Draw("MyConsole", (bool*)true);
+      //GetISystem()->GetIConsole()->Draw("MyConsole", (bool*)true);
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Textures"))
@@ -404,7 +407,7 @@ void GameGUI::drawFullScreenViewPort()
   game->m_Window->getViewPort().left = ImGui::GetCursorPosX();
   game->m_Window->getViewPort().top = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
   ImGui::Begin("FullScreen", (bool*)true,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration);
-  ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+  //ImGui::Image((void*)game->m_World->activeScene->m_RenderedScene->texture, viewport.size = ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
 }
 
@@ -499,4 +502,5 @@ void GameGUI::objectInfo(Object *obj, std::string name)
     ImGui::TreePop();
   }
 }
+#endif
 

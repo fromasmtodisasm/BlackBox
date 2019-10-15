@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 
 class ScreenShader : public CBaseShaderProgram
 {

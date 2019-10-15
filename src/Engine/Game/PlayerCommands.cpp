@@ -1,11 +1,11 @@
 #include <BlackBox/Game/PlayerCommands.hpp>
-#include <BlackBox/Game/CPlayer.h>
-#include <BlackBox/CCamera.hpp>
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Player.h>
+#include <BlackBox/Camera.hpp>
+#include <BlackBox/Game/Game.hpp>
 
 MoveForward::MoveForward(CPlayer* player) : player(player), camera(nullptr)
 {
-  camera = player->getCamera();
+  camera = player->getCurrentCamera();
   deltatime = player->getGame()->getDeltaTime();
 }
 

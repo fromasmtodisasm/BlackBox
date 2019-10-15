@@ -14,11 +14,13 @@
 	#define IRENDER_API
 #endif
 
-struct IEngine;
+#include <BlackBox/MathHelper.hpp>
+
+struct ISystem;
 struct IWindow;
 struct IFont;
-struct Vec3;
 class CCamera;
+class IShader;
 
 //////////////////////////////////////////////////////////////////////////
 //! This structure used in DrawText method of renderer.
@@ -35,7 +37,7 @@ struct SDrawTextInfo
 	float yscale;
 	IFont* font;
 
-	SDrawTextInfo()
+	SDrawTextInfo() : xscale(1.0), yscale(1.0)
 	{
 		flags = 0;
 		color[0] = color[1] = color[2] = color[3] = 1;
@@ -43,8 +45,39 @@ struct SDrawTextInfo
 	}
 };
 
+//////////////////////////////////////////////////////////////////////
+
+struct SDispFormat
+{
+	int m_Width;
+	int m_Height;
+	int m_BPP;
+	SDispFormat() {}
+};
+
 struct IRender
 {
+	enum class State
+	{
+		DEPTH_TEST,
+		CULL_FACE,
+		BLEND,
+		DEBUG_OUTPUT,
+		DEBUG_OUTPUT_SYNCHRONOUS,
+		FRAMEBUFFER_SRGB,
+		POLYGON_OFFSET_FILL,
+		SCISSOR_TEST,
+		STENCIL_TEST,
+	};
+	
+	enum class CullMode : unsigned int 
+	{
+		/*DISABLE,
+		NONE,*/
+		FRONT,
+		BACK,
+		FRONT_AND_BACK
+	};
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow *Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow *window = nullptr) = 0;
 
@@ -86,6 +119,8 @@ struct IRender
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
 
+  virtual void DrawFullScreenImage(int texture_id) = 0;
+
 	//! Set the polygon mode (wireframe, solid)
 	virtual int	SetPolygonMode(int mode) = 0;
 
@@ -102,8 +137,13 @@ struct IRender
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
 
+	virtual int	 EnumDisplayFormats(SDispFormat* formats) = 0;
+
+	virtual void  SetState(State state, bool enable) = 0;
+	virtual void  SetCullMode(CullMode mode = CullMode::BACK) = 0;
+
 };
 
 extern "C" {
-	IRENDER_API IRender* CreateIRender(IEngine* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+	IRENDER_API IRender* CreateIRender(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
 }

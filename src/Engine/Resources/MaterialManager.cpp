@@ -2,6 +2,7 @@
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Render/ReflectShader.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <glm/glm.hpp>
 
@@ -12,6 +13,7 @@
 
 using	namespace std;
 using namespace tinyxml2;
+using ShaderInfo = CBaseShaderProgram::ShaderInfo;
 
 MaterialManager *MaterialManager::manager = nullptr;
 Material *defaultMaterial;
@@ -20,12 +22,19 @@ MaterialManager *MaterialManager::instance()
 {
   if (manager == nullptr)
   {
-    manager = new MaterialManager();
+    manager = new MaterialManager(GetISystem());
   }
   return manager;
 }
 
-std::shared_ptr<CShaderProgram> MaterialManager::getProgram(std::string name)
+bool MaterialManager::init(ISystem* pSystem)
+{
+	if (manager == nullptr)
+		manager = new MaterialManager(pSystem);
+	return manager != nullptr;
+}
+
+BaseShaderProgramRef MaterialManager::getProgram(std::string name)
 {
 	auto p_it = shaders_map.find(name);
 	if (p_it == shaders_map.end())
@@ -82,9 +91,10 @@ bool MaterialManager::init(std::string materialLib)
   return status;
 }
 
-MaterialManager::MaterialManager() : m_pLog(GetIEngine()->getILog())
+MaterialManager::MaterialManager(ISystem *pSystem) : m_pSystem(pSystem), m_pLog(pSystem->GetILog())
 {
-	root_path = GetIEngine()->getIConsole()->GetCVar("materials_path");
+	root_path = m_pSystem->GetIConsole()->GetCVar("materials_path");
+	m_pSystem->GetIConsole()->CreateVariable("ef", 40.f, 0, "emissive factor");
 }
 
 bool MaterialManager::loadLib(std::string name)
@@ -121,6 +131,10 @@ bool MaterialManager::loadLib(std::string name)
 					//TODO: handle this case
 					m_pLog->AddLog("[ERROR] Failed load material\n");
 				}
+				else
+				{
+					auto p = this->shaders_map[pd.name];
+				}
 			}
 		}
     program = program->NextSibling();
@@ -139,7 +153,7 @@ bool MaterialManager::loadLib(std::string name)
   else return false;
 }
 
-void MaterialManager::getShaderAttributes(tinyxml2::XMLElement* shader, MaterialManager::ProgramDesc& pd)
+void MaterialManager::getShaderAttributes(tinyxml2::XMLElement* shader, ProgramDesc& pd)
 {
 	std::string type;
 	std::string name;
@@ -163,6 +177,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   materialName = material->Attribute("name");
   if (materialName == nullptr)
     return false;
+	result->alpha = material->FloatAttribute("alpha", 1.f);
 	if (material->Attribute("type", "skybox"))
 		isSkyBox = true;
 	if (material->Attribute("shakaled"))
@@ -170,6 +185,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 	else
 		alpha_shakaled = false;
 
+	result->emissive_factor = material->FloatAttribute("emmisive_factor", 1.0f);
   result->name = std::make_shared<std::string>(materialName);
   //============ TEXTURES LOADING =======================//
   XMLElement *textures = material->FirstChildElement("textures");
@@ -211,6 +227,10 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 				t->setUnit(4);
         result->mask = t;
         break;
+      case TextureType::EMISSIVE:
+				t->setUnit(5);
+        result->emissive = t;
+        break;
       default:
       {
         m_pLog->AddLog("[ERROR] Unknown texture type\n");
@@ -244,20 +264,74 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 {
 	auto shader_it = shaders_map.find(desc.name);
+	bool load_vs = desc.vs.length() > 0;
+	bool load_fs = desc.fs.length() > 0;
+	bool load_gs = desc.gs.length() > 0;
+	bool load_cs = desc.cs.length() > 0;
+
+	bool is_compute = load_cs && !load_vs && !load_fs & !load_gs;
+
 	if (shader_it != shaders_map.end() && !isReload)
 		return true;
-	auto vs = loadShader(ShaderDesc("vertex", desc.vs), isReload);
-	if (vs == nullptr) return false;
+	auto vs = !is_compute ? loadShader(ShaderDesc("vertex", desc.vs), isReload) : nullptr;
+	if (vs == nullptr && !is_compute) return false;
 
-	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
-	if (fs == nullptr) return false;
+	auto fs = !is_compute ? loadShader(ShaderDesc("fragment", desc.fs), isReload) : nullptr;
+	if (fs == nullptr && !is_compute) return false;
 
-	auto shaderProgram = std::make_shared<CShaderProgram>(vs,fs);
-  if (!shaderProgram->create())
-    return false;
-	shaderProgram->vertex_name = desc.vs;
-	shaderProgram->fragment_name = desc.fs;
-	shaders_map[desc.name] = shaderProgram;
+	decltype(fs) gs;
+	decltype(fs) cs;
+
+	if (load_gs)
+	{
+		gs = loadShader(ShaderDesc("geometry", desc.gs), isReload);
+		if (gs == nullptr) return false;
+	}
+	if (load_cs)
+	{
+		cs = loadShader(ShaderDesc("compute", desc.cs), isReload);
+		if (cs == nullptr) return false;
+	}
+
+	if (isReload)
+	{
+		shader_it->second->reload(vs, fs, gs, cs, desc.name.c_str());
+	}
+	else
+	{
+		ShaderInfo vi;
+		ShaderInfo fi;
+		ShaderInfo gi;
+		ShaderInfo ci;
+
+		ShaderProgramRef shaderProgram;
+		if (!is_compute)
+		{
+			vi = ShaderInfo(vs, desc.vs);
+			fi = ShaderInfo(fs, desc.fs);
+		}
+		if (load_cs && load_gs)
+		{
+			gi = ShaderInfo(gs, desc.gs);
+			ci = ShaderInfo(cs, desc.cs);
+		}
+		else if (load_cs && !load_gs)
+		{
+			ci = ShaderInfo(cs, desc.cs);
+		}
+		if (!load_cs && load_gs)
+		{
+			gi = ShaderInfo(gs, desc.gs);
+		}
+		shaderProgram  = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
+			
+		if (!shaderProgram->create(desc.name.c_str()))
+			return false;
+		auto it = shaders_map.find(desc.name);
+		shaders_map[desc.name] = shaderProgram;
+		//debuger::program_label(shaderProgram->get(), desc.name);
+ 
+	}
 	return true;
 }
 
@@ -267,8 +341,10 @@ bool MaterialManager::reloadShaders()
 	{
 		ProgramDesc pd;
 		pd.name = shader.first;
-		pd.vs = shader.second->vertex_name;
-		pd.fs = shader.second->fragment_name;
+		pd.vs = shader.second->m_Vertex.name;
+		pd.fs = shader.second->m_Fragment.name;
+		pd.gs = shader.second->m_Geometry.name;
+		pd.cs = shader.second->m_Compute.name;
 		reloadShader(pd);
 	}
 	return true;
@@ -284,22 +360,24 @@ bool MaterialManager::reloadShaders(std::vector<std::string> names)
 		auto s_it = shaders_map.find(shader);
 		if (s_it == shaders_map.end())
 			continue;
-		pd.vs = s_it->second->vertex_name;
-		pd.fs = s_it->second->fragment_name;
+		pd.vs = s_it->second->m_Vertex.name;
+		pd.fs = s_it->second->m_Fragment.name;
+		pd.gs = s_it->second->m_Geometry.name;
+		pd.cs = s_it->second->m_Compute.name;
 		reloadShader(pd);
 	}
 	return true;
 }
 
-void MaterialManager::reloadShader(MaterialManager::ProgramDesc& pd)
+void MaterialManager::reloadShader(ProgramDesc& pd)
 {
 	//delete shader.second;
 	loadProgram(pd, true);
-	for (auto& mat : cache)
+	/*for (auto& mat : cache)
 	{
 		if (mat.second->program_name == pd.name)
 			mat.second->program = shaders_map[pd.name];
-	}
+	}*/
 }
 
 BaseTexture *MaterialManager::loadTexture(XMLElement *texture)

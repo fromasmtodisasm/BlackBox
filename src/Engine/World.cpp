@@ -1,5 +1,6 @@
 #include <BlackBox/World.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Profiler/Profiler.h>
 
 float World::gravity = 1;
 
@@ -26,7 +27,7 @@ void World::draw(float dt) {
 
 void World::setCamera(CCamera *camera)
 {
-  activeScene->setCamera(camera);
+  //activeScene->setCamera(camera);
 }
 
 void World::setScene(Scene *scene) {
@@ -35,7 +36,9 @@ void World::setScene(Scene *scene) {
 
 void World::update(float deltatime)
 {
+	PROFILER_PUSH_CPU_MARKER(__FUNCTION__, Utils::COLOR_DARK_RED);
   activeScene->update(deltatime);
+	PROFILER_POP_CPU_MARKER();
 }
 
 void World::setPretRenderCallback(IPreRenderCallback* callBack)

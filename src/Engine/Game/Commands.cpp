@@ -1,25 +1,27 @@
-#include <BlackBox/Game/CGame.hpp>
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/IMarkers.hpp>
 #include <process.h>
 
-class BaseCommand : public IEditCommand
+class BaseCommand : public IConsoleCommand
 {
 protected:
 	CGame* game;
 	glm::vec3 unpack_vector(std::vector<std::wstring>::iterator it, int size = 3)
 	{
 			glm::vec3 pos;
-			pos[0] = _wtof(it->c_str());
+			pos[0] = static_cast<float>(_wtof(it->c_str()));
 			it++;
-			pos[1] = _wtof(it->c_str());
+			pos[1] = static_cast<float>(_wtof(it->c_str()));
 			if (size == 3)
 			{
 				it++;
-				pos[2] = _wtof(it->c_str());
+				pos[2] =static_cast<float>(_wtof(it->c_str()));
 			}
 			return pos;
 	};
@@ -45,7 +47,7 @@ public:
 	LastCommand(CGame *game);
 	~LastCommand();
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		
@@ -54,16 +56,16 @@ private:
 			return false;
 		if (cd.args.size() == 1)
 		{
-			for (int i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
+			for (auto i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
 			{
 				result = true;
-				GetIEngine()->getIConsole()->ExecuteString(utils::wstr_to_str(cd.history->back()).c_str());
+				GetISystem()->GetIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
 			}
 		}
 		else
 		{
 			result = true;
-			GetIEngine()->getIConsole()->ExecuteString(utils::wstr_to_str(cd.history->back()).c_str());
+			GetISystem()->GetIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
 		}
 		return result;
 	}
@@ -82,10 +84,10 @@ class ClearCommand : public BaseCommand
 public:
 	ClearCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		GetIEngine()->getIConsole()->Clear();
+		GetISystem()->GetIConsole()->Clear();
 		return true;
 	}
 };
@@ -100,7 +102,7 @@ class GotoCommand : public BaseCommand
 public:
 	GotoCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
@@ -130,7 +132,7 @@ class VsyncCommand : public BaseCommand
 public:
 	VsyncCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
@@ -157,7 +159,7 @@ class QuitCommand : public BaseCommand
 public:
 	QuitCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		game->Stop();
@@ -175,17 +177,16 @@ class MoveCommand : public BaseCommand
 public:
 	MoveCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		auto obj = m_World->getActiveScene()->selectedObject()->second;
-		glm::vec3 pos;
 		auto args_it = cd.args.begin();
 		if (cd.args.size() >= 3)
 		{
 			if (cd.args.size() == 4)
 			{
-				std::string name = utils::wstr_to_str(*args_it++);
+				std::string name = wstr_to_str(*args_it++);
 				obj = m_World->getActiveScene()->getObject(name);
 			}
 			auto pos = unpack_vector(args_it);
@@ -207,7 +208,7 @@ class RotateCommand : public BaseCommand
 public:
 	RotateCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() >= 4 && cd.args.size() <= 5)
@@ -215,12 +216,12 @@ private:
 			auto args_it = cd.args.begin();
 			auto obj = m_World->getActiveScene()->selectedObject()->second;
 			if (cd.args.size() == 5) {
-				std::string name = utils::wstr_to_str(*args_it++);
+				std::string name = wstr_to_str(*args_it++);
 				obj = m_World->getActiveScene()->getObject(name);
 			}
 			if (obj != nullptr)
 			{
-				glm::vec3 angles(_wtof((*args_it++).c_str()));
+				glm::vec3 angles(static_cast<float>(_wtof((*args_it++).c_str())));
 				glm::vec3 vector = unpack_vector(args_it);
 				if (vector[0] != 0.0f) angles[0] += obj->m_transform.rotation[0];
 				if (vector[1] != 0.0f) angles[1] += obj->m_transform.rotation[1];
@@ -247,10 +248,10 @@ class SelectCommand : public BaseCommand
 public:
 	SelectCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		std::string name = utils::wstr_to_str(cd.args[0]);
+		std::string name = wstr_to_str(cd.args[0]);
 		return m_World->getActiveScene()->selectObject(name);
 	}
 };
@@ -266,7 +267,7 @@ class WireframeCommand : public BaseCommand
 public:
 	WireframeCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		int mode = m_World->getActiveScene()->selectedObject()->second->getRenderMode();
@@ -274,7 +275,7 @@ private:
 		else if (mode == GL_LINE) mode = GL_FILL;
 		auto obj = m_World->getActiveScene()->selectedObject();
 		obj->second->setRenderMode(mode);
-		GetIEngine()->getIConsole()->PrintLine("Name of wired object %s\n", obj->first.c_str());
+		GetISystem()->GetIConsole()->PrintLine("Name of wired object %s\n", obj->first.c_str());
 		return true;
 	}
 };
@@ -290,16 +291,21 @@ class ExecCommand : public BaseCommand
 public:
 	ExecCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
 		{
-			std::string name = utils::wstr_to_str(cd.args[0]);
+			std::string name = wstr_to_str(cd.args[0]);
 			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
-			GetIEngine()->getIConsole()->ExecuteFile(name.c_str());
+			GetISystem()->GetIConsole()->ExecuteFile(name.c_str());
 
 			return true;
+		}
+		else if (cd.get(0) == L"os")
+		{
+			auto command = cd.get(1);
+			system(wstr_to_str(command).c_str());
 		}
 		return false;
 	}
@@ -316,12 +322,12 @@ class MaterialCommand : public BaseCommand
 public:
 	MaterialCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() == 1)
 		{
-			std::string name = utils::wstr_to_str(cd.args[0]);
+			std::string name = wstr_to_str(cd.args[0]);
 			Material* m = MaterialManager::instance()->getMaterial(name);
 			if (!m)
 				return false;
@@ -343,20 +349,27 @@ class ShaderCommand : public BaseCommand
 public:
 	ShaderCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() > 0)
 		{
 			if (cd.args[0] == L"reload")
 				return reload(cd);
-			if (cd.args[0] == L"set")
+			else if (cd.args[0] == L"set")
 				return move(cd);
+			if (cd.args[0] == L"dump")
+				return dump(cd);
+		}
+		else
+		{
+			GetISystem()->GetIConsole()->PrintLine("help");
 		}
 		return false;
 	}
 	bool reload(CommandDesc& cd);
 	bool move(CommandDesc& cd);
+	bool dump(CommandDesc& cd);
 };
 
 ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
@@ -380,7 +393,7 @@ bool ShaderCommand::reload(CommandDesc& cd)
 		std::vector<std::string> shaders;
 		for (auto arg = cd.args.begin()++; arg != cd.args.end(); arg++)
 		{
-			shaders.push_back(utils::wstr_to_str(*arg));
+			shaders.push_back(wstr_to_str(*arg));
 		}
 		if (MaterialManager::instance()->reloadShaders(shaders))
 			return true;
@@ -395,8 +408,21 @@ bool ShaderCommand::move(CommandDesc& cd)
 {
 	if (cd.args.size() == 2)
 	{
-		auto s = MaterialManager::instance()->getProgram(utils::wstr_to_str(cd.args[1]));
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
 		game->getWorld()->getActiveScene()->selectedObject()->second->getMaterial()->program = s;
+		return true;
+	}
+	return false;
+}
+bool ShaderCommand::dump(CommandDesc& cd)
+{
+	if (cd.args.size() == 2)
+	{
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+		if (s == nullptr)
+			return false;
+		s->dump();
+		GetISystem()->GetIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
 		return true;
 	}
 	return false;
@@ -408,7 +434,7 @@ class CameraCommand : public BaseCommand
 public:
 	CameraCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() > 0)
@@ -432,7 +458,7 @@ CameraCommand::CameraCommand(CGame *game) : BaseCommand(game)
 bool CameraCommand::lookat(CommandDesc& cd)
 {
 	auto object = m_World->getActiveScene()->selectedObject();
-	auto camera = m_World->getActiveScene()->getCamera();
+	auto camera = m_World->getActiveScene()->getCurrentCamera();
 
 	return false;
 }
@@ -443,8 +469,8 @@ bool CameraCommand::move(CommandDesc& cd)
 	if (cd.args.size() == 4)
 	{
 		auto pos = unpack_vector((cd.args.begin()++)++);
-		auto camera = m_World->getActiveScene()->getCamera();
-		camera->Position = pos;
+		auto camera = m_World->getActiveScene()->getCurrentCamera();
+		camera->setPosition(pos);
 		return true;
 	}
 	return false;
@@ -457,7 +483,7 @@ class SceneCommand : public BaseCommand
 public:
 	SceneCommand(CGame *game);
 private:
-	// Inherited via IEditCommand
+	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
 		if (cd.args.size() > 0)
@@ -485,47 +511,157 @@ bool SceneCommand::load(CommandDesc& cd)
 {
 	//MessageBox(NULL, "Save scene", "scene name", MB_OKCANCEL);
 	Scene *scene;
-	std::string path = utils::wstr_to_str(cd.args[1]);
+	std::string path = wstr_to_str(cd.args[1]);
+  SceneManager::instance()->removeScene(path);
 	if ((scene = SceneManager::instance()->getScene(path)) != nullptr)
 	{
 		/*
 		if (game->initPlayer())
 			game->gotoGame();
 		*/
-		FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
-		sceneBuffer->create();
-		scene->setRenderTarget(sceneBuffer);
-		scene->setCamera(new CCamera());
+		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
+		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::HDR_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
+		//sceneBuffer->create();
+		//scene->setRenderTarget(sceneBuffer);
+    m_World->setScene(scene);
+    auto tech = TechniqueManager::get("hdr");
+    tech->Init(m_World->getActiveScene(), nullptr);
+    scene->setTechnique(tech);
+
+		//scene->setCamera("main", new CCamera());
 		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
-		player->attachCamera(scene->getCamera());
+		player->attachCamera(scene->getCurrentCamera());
 		player->setGame(game);
+    game->setPlayer(player);
+    return true;
 	}
 	return false;
 }
 bool SceneCommand::save(CommandDesc& cd)
 {
+  if (cd.args.size() >= 2)
+  {
+    std::string path = wstr_to_str(cd.args[1]);
+    if (SceneManager::instance()->exist(path))
+    {
+      auto scene = SceneManager::instance()->getScene(path);
+      std::string as = "";
+      if (cd.args.size() == 3)
+        as = wstr_to_str(cd.args[2]);
+      return scene->save(as);
+    }
+  }
 	return false;
 }
 bool SceneCommand::activate(CommandDesc& cd)
 {
 	Scene *scene;
-	std::string name = utils::wstr_to_str(cd.args[1]);
+	std::string name = wstr_to_str(cd.args[1]);
 	if ((scene = SceneManager::instance()->getScene(name)) != nullptr)
 	{
 		//=====================
 		game->getWorld()->setScene(scene);
-		game->setCamera(scene->getCamera());
+		game->setCamera(scene->getCurrentCamera());
 		game->setPlayer((CPlayer*)scene->getObject("MyPlayer"));
 		//=====================
 		//m_World->setScene(scene);
 		//game->setCamera(scene->getCamera());
 		//m_World->setCamera(m_camera1);
 		//initPlayer();
+    return true;
 	}
 	return false;
 }
 //*******************************************************
+class TagPointCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	TagPointCommand(CGame *game);
+private:
+	// Inherited via IConsoleCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		auto obj = m_World->getActiveScene()->selectedObject()->second;
+		auto args_it = cd.args.begin();
+		if (cd.args.size() == 2)
+		{
+      auto subcmd = wstr_to_str(cd.get(0));
+      if (subcmd == "create")
+      {
+        auto tag = wstr_to_str(cd.get(1));
+        if (tag.length() == 0) return false;
+        game->CreateTagPoint(tag, m_World->getActiveScene()->getCurrentCamera()->getPosition(), m_World->getActiveScene()->getCurrentCamera()->getRotation());
+        return true;
+      }
+      else if (subcmd == "goto")
+      {
+        auto tag = wstr_to_str(cd.get(1));
+        if (tag.length() == 0) return false;
+        ITagPoint *tag_point = game->GetTagPoint(tag);
+        if (tag_point == nullptr)
+        {
+          GetISystem()->GetIConsole()->PrintLine("Error, tagpoint [%s] not exist", tag.c_str());
+          return false;
+        }
+        Vec3 pos, ang;
+        tag_point->GetPos(pos);
+        tag_point->GetAngles(ang);
+        m_World->getActiveScene()->getCurrentCamera()->setPosition(pos);
+        m_World->getActiveScene()->getCurrentCamera()->setRotation(ang);
+        m_World->getActiveScene()->getCurrentCamera()->updateCameraVectors();
+        return true;
+      }
+			
+			auto pos = unpack_vector(args_it);
+			obj->move(pos);
+			return true;
+		}
+		return false;
+	}
+};
 
+TagPointCommand::TagPointCommand(CGame *game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
+}
+//*******************************************************
+class ObjDumpCommand : public BaseCommand 
+{
+	World* m_World;
+public:
+	ObjDumpCommand(CGame *game);
+private:
+	// Inherited via IConsoleCommand
+	virtual bool execute(CommandDesc& cd) override
+	{
+		/*
+		if (cd.args.size() > 0)
+		{
+			if (cd.args[0] == L"reload")
+				return reload(cd);
+			if (cd.args[0] == L"set")
+				return move(cd);
+		}
+		*/
+		FILE* fp;
+
+		auto obj = m_World->getActiveScene()->selectedObject()->second;
+		auto path = obj->m_path;
+		auto pos = path.find_last_of('.');
+		if (pos == path.npos)
+			return false;
+
+		path = path.replace(pos, path.size(), ".bin");
+		fp = fopen(path.c_str(), "wb");
+		fprintf(fp, "bbg");
+		//obj->m_Mesh
+
+
+		fclose(fp);
+		return false;
+	}
+};
 //*******************************************************
 
 void CGame::initCommands()
@@ -541,7 +677,21 @@ void CGame::initCommands()
 	m_Console->AddCommand("wire", new WireframeCommand(this));
 	m_Console->AddCommand("exec", new ExecCommand(this), "Load end execute scripts");
 	m_Console->AddCommand("material", new MaterialCommand(this));
-	m_Console->AddCommand("shader", new ShaderCommand(this));
+	m_Console->AddCommand("shader", new ShaderCommand(this), "Set shader to object and reload shader");
 	m_Console->AddCommand("camera", new CameraCommand(this));
 	m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
+	m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
+	m_Console->AddCommand("objdump", new ObjDumpCommand(this), "Dump model to disk in binary");
+}
+
+void CGame::initVariables()
+{
+  r_displayinfo = m_Console->CreateVariable("r_displayinfo", 1, 0, "Display info [1/0]");
+  r_profile = m_Console->CreateVariable("r_profile", 1, 0, "Profile [1/0]");
+  r_cap_profile = m_Console->CreateVariable("r_cap_profile", 1, 0, "Capture frame [1/0]");
+}
+
+ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseCommand(game)
+{
+	m_World = game->getWorld();
 }

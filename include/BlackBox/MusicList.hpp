@@ -8,7 +8,7 @@
 class MusicList
 {
   std::vector<std::unique_ptr<sf::Music>> m_Playlist;
-  int m_CurrentTrack;
+  size_t m_CurrentTrack;
   float m_Volume;
   std::string m_RootPath;
 

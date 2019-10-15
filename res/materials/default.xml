@@ -1,14 +1,40 @@
 <materials>
+  <material name="point">
+    <colors>
+      <ambient r="0.15" g="0.15" b="0.15"/>
+      <diffuse r="0.15" g="0.15" b="0.15"/>
+      <emissive r="1" g="20" b="3"/>
+    </colors>
+    <shader name="phong"/>
+  </material>
+  <material name="sprite2">
+    <textures>
+      <texture type="diffuse" name="container2.png"/>
+      <texture type="emissive" name="emissive.png"/>
+      <texture type="specular" name="container2_specular.png"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
   <material name="specular_box">
     <textures>
       <texture type="diffuse" name="container2.png"/>
+      <texture type="emissive" name="emissive.png"/>
       <texture type="specular" name="container2_specular.png"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
+  <material name="terrain">
+    <textures>
+      <texture type="diffuse" name="ground.jpg"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
+      <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>
     <shader name="phong"/>
   </material>
   <material name="wood_box">
     <textures>
       <texture type="diffuse" name="container.jpg"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
     </textures>
     <shader name="phong"/>
   </material>
@@ -22,20 +48,6 @@
     <textures>
       <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
       <texture type="diffuse" name="low2_a.png"/>
-      <texture type="diffuse" name="alpha_test/cross.png"/>
-      <texture type="diffuse" name="alpha_test/fence_a.png"/>
-      <texture type="diffuse" name="alpha_test/grass.png"/>
-      <texture type="diffuse" name="alpha_test/l_alpha.png"/>
-      <texture type="diffuse" name="alpha_test/leaves_alfa.png"/>
-      <texture type="diffuse" name="alpha_test/LemonTreeLeaves_a.png"/> 
-      <!--<texture type="diffuse" name="brickwall.jpg"/>-->
-      <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
-    </textures>
-    <shader name="phong"/>
-  </material>
-  <material name="brick_box_shakaled" shakaled="true">
-    <textures>
-      <texture type="diffuse" name="alpha_test/lemon_ad.dds"/>
       <texture type="diffuse" name="alpha_test/cross.png"/>
       <texture type="diffuse" name="alpha_test/fence_a.png"/>
       <texture type="diffuse" name="alpha_test/grass.png"/>
@@ -65,7 +77,11 @@
     <shader name="phong"/>
   </material>
   <material name="player">
-    <shader name="reflect"/>
+    <textures>
+      <texture type="diffuse" name="coral.png"/>
+      <texture type="specular" name="gray.png"/>
+    </textures>
+    <shader name="phong"/>
   </material>
   <material name="bb">
     <shader name="bb"/>
@@ -82,6 +98,12 @@
     </textures>
     <shader name="phong"/>
   </material>
+  <material name="water" alpha="0.7">
+    <textures>
+      <texture type="diffuse" name="water.jpg"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
   <material name="default">
     <textures>
       <texture type="diffuse" name="check.png"/>
@@ -91,9 +113,15 @@
   </material>
   <shaders>
     <phong>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
+      <!--<shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>-->
+      <shader type="vertex" name="shadowmap.vs"/>
+      <shader type="fragment" name="shadowmap.frag"/>
     </phong>    
+    <shadow>
+      <shader type="vertex" name="shadowmap.vs"/>
+      <shader type="fragment" name="shadowmap.frag"/>
+    </shadow>    
     <refract>
       <shader type="vertex" name="reflect.vs"/>
       <shader type="fragment" name="refract.frag"/>

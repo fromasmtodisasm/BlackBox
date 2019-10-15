@@ -1,6 +1,8 @@
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
+#ifdef ALPHA_DIST
 #include <BlackBox/Utils/AlphaDistribution.h>
+#endif
 #include <iostream>
 #include <ctime>
 #include <memory>
@@ -9,7 +11,7 @@ using namespace std;
 
 Texture::Texture()
 {
-
+	id = 0;
 }
 
 Texture::Texture(GLuint id) 
@@ -38,6 +40,8 @@ void Texture::setType(const char *type)
     this->type = NORMAL;
   else if (t == "mask")
     this->type = MASK;
+  else if (t == "emissive")
+    this->type = EMISSIVE;
   else
     this->type = UNKNOWN;
 }
@@ -69,7 +73,7 @@ bool Texture::load(const char* name)
 {
 	
 	GLenum inputFormat = GL_RGB;
-	GLenum internalFormat = GL_RGB;
+	GLenum internalFormat = GL_SRGB;
 	GLenum inputDataType = GL_UNSIGNED_BYTE;
 	bool hasAlpha = false;
 
@@ -79,12 +83,18 @@ bool Texture::load(const char* name)
 	if (hasAlpha)
 	{
 		inputFormat = GL_RGBA;
-		internalFormat = GL_RGBA;
+		internalFormat = GL_SRGB_ALPHA;
 	}
   glCheck(glGenTextures(1, &id));
   glCheck(glBindTexture(GL_TEXTURE_2D, id));
 	width = img.width;
 	height = img.height;
+	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
   glTexImage2D(
@@ -95,11 +105,15 @@ bool Texture::load(const char* name)
   );
 
   glCheck(glGenerateMipmap(GL_TEXTURE_2D));
+#ifdef ALPHA_DIST
   if (true)
   {
-		;// cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
+		cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
   }
+#endif
   glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+	debuger::texture_label(id, name);
+  return true;
 }
 
 void Texture::bind()

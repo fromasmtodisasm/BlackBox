@@ -4,6 +4,7 @@
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/IGame.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -43,6 +44,7 @@ void Object::parse(std::string filename, std::vector<Vertex> &vs, CBaseShaderPro
 }
 
 void Object::draw(void * camera) {
+	DEBUG_GROUP(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
 
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
@@ -133,7 +135,7 @@ Material *Object::getMaterial()
 void Object::setMaterial(Material *material)
 {
   if (m_Material != nullptr)
-      ;//delete m_Material;
+      delete m_Material;
   m_Material = material;
 }
 
@@ -160,6 +162,16 @@ void Object::rotateY(float angle)
 void Object::rotateZ(float angle)
 {
 	m_transform.rotation.z = angle;
+}
+
+void Object::SetScriptObject(IScriptObject* pObject)
+{
+	m_pScript = pObject;
+}
+
+IScriptObject* Object::GetScriptObject()
+{
+	return m_pScript;
 }
 
 void Object::move(Movement direction) {
@@ -220,7 +232,7 @@ Object * Object::load(string path)
 	mesh->push_back(_mesh);
   obj = new Object();
   obj->m_Mesh = mesh;
-  obj->m_path = std::make_shared<std::string>(path);
+  obj->m_path = path;
 	return obj;
 }
 

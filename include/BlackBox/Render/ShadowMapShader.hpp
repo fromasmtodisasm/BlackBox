@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 
@@ -14,7 +14,7 @@ public:
 
 
 private:
-	IEngine* m_Engine;
+	ISystem* m_Engine;
 
 	// Inherited via CBaseShaderProgram
 	virtual void setup() override;

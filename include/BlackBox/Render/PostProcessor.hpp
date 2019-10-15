@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IPostProcessor.hpp>
-#include <BlackBox/Render/CShader.hpp>
+#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 
 class PostProcessor : public IPostProcessor
@@ -10,7 +10,7 @@ public:
 	~PostProcessor();
 
 private:
-	CBaseShaderProgram* m_ScreenShader;
+	BaseShaderProgramRef m_ScreenShader;
 	Quad m_ScreenQuad;
 
 	// Inherited via IPostProcessor

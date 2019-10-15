@@ -25,7 +25,7 @@ bool Image::load(const char* name, bool *hasAlpha)
 			if (hasAlpha != nullptr && channels == 4)
 				*hasAlpha = true;
 			if (dc == STBI_rgb_alpha)
-				channels == 4;
+				channels = 4;
 			// Copy the loaded pixels to the pixel buffer
 			data = new unsigned char[width * height * channels];
 			memcpy(data, ptr, width * height * channels);
