@@ -118,6 +118,9 @@ private:
 	ICVar* test_proj = nullptr;
 	ICVar* render_via_viewport = nullptr;
 
+	ICVar* cam_width;
+	ICVar* cam_height;
+
 	std::map<State, GLenum> stateMap;
 
 

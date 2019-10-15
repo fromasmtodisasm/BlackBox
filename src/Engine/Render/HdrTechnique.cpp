@@ -13,8 +13,6 @@
 #define PREVIOS 0
 #define CURRENT 1
 
-#define CREATE_CONSOLE_VAR(name, value, flags, ...) GetISystem()->GetIConsole()->CreateVariable(name, value, flags, __VA_ARGS__)
-
 HdrTechnique::HdrTechnique()
 	:
 	shadowMapping(nullptr),
@@ -34,7 +32,8 @@ HdrTechnique::HdrTechnique()
 	bloomTime(nullptr),
 	upsampleTime(nullptr),
 	downsampleTime(nullptr),
-	averageBloomTime(nullptr)
+	averageBloomTime(nullptr),
+	downsampleType(nullptr)
 {
 }
 
@@ -70,7 +69,16 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
-	glm::ivec2 resolution = glm::ivec2(render->GetWidth(), render->GetHeight());
+	glm::ivec2 resolution;// = glm::ivec2(render->GetWidth(), render->GetHeight());
+	auto w = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_w");
+	auto h = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_h");
+	if (w == nullptr || h == nullptr)
+	{
+		resolution = glm::ivec2(render->GetWidth(), render->GetHeight());
+		GetISystem()->Log("Use window resulution");
+	}
+	else
+		resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
 	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
 
 	auto mip_cnt = getMips(resolution);
@@ -173,7 +181,7 @@ void HdrTechnique::BloomPass()
 		const char section[] = "UPSAMPLING";
 		PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_RED);
 			DEBUG_GROUP(section);
-			//upsampling();
+			upsampling();
 		PROFILER_POP_CPU_MARKER();
 	}
 
@@ -266,9 +274,13 @@ void HdrTechnique::initConsoleVariables()
   bloomTime =				CREATE_CONSOLE_VAR("bloomtime", 0.f, 0, "Time of bloom");
   upsampleTime =		CREATE_CONSOLE_VAR("uptime", 0.f, 0, "Time of bloom");
   downsampleTime =	CREATE_CONSOLE_VAR("dtime", 0.f, 0, "Time of bloom");
+  downsampleType =	CREATE_CONSOLE_VAR("dtype", 0, 0, "Type of bloom downsample [0-standard/1-compute]");
   offset =					CREATE_CONSOLE_VAR("offset", -3.0f, 0, "Enable/disable blur for bloom");
   useBoxFilter =		CREATE_CONSOLE_VAR("bf", 0, 0, "Enable/disable BoxFilter in bloom");
   defaultFilter =		CREATE_CONSOLE_VAR("df", 1, 0, "Enable/disable default filtering in bloom");
+
+	cam_width		= GetISystem()->GetIConsole()->GetCVar("r_cam_w");
+	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 }
 
 void HdrTechnique::initTest()
@@ -340,24 +352,16 @@ void HdrTechnique::PostRenderPass()
 
 void HdrTechnique::downsampling()
 {
+	if (downsampleType->GetIVal() == 0)
+		downsamplingStandard();
+	else
+		downsamplingCompute();
+}
+
+void HdrTechnique::downsamplingStandard()
+{
 	// 2. blur bright fragments with two-pass Gaussian Blur 
 	// --------------------------------------------------
-
-	m_DownsampleComputeShader->use();
-	{
-		unsigned int image_unit = 2;
-		m_DownsampleComputeShader->bindTexture2D(hdrBuffer->texture[1], image_unit, "inputImg1");
-	}
-
-	{
-		unsigned int image_unit = 3;
-		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
-		m_DownsampleComputeShader->setUniformValue(3, "inputImg2");
-	}
-
-	auto render = GetISystem()->GetIRender();
-	m_DownsampleComputeShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
-	return;
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
 	m_DownsampleShader->use();
@@ -382,6 +386,25 @@ void HdrTechnique::downsampling()
 	}
 	pingpong = !horizontal;
 	GetISystem()->GetIRender()->SetState(IRender::State::DEPTH_TEST, true);
+}
+
+void HdrTechnique::downsamplingCompute()
+{
+	m_DownsampleComputeShader->use();
+	{
+		unsigned int image_unit = 2;
+		m_DownsampleComputeShader->bindTexture2D(hdrBuffer->texture[1], image_unit, "inputImg1");
+	}
+
+	{
+		unsigned int image_unit = 3;
+		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		m_DownsampleComputeShader->setUniformValue(3, "inputImg2");
+	}
+
+	auto render = GetISystem()->GetIRender();
+	m_DownsampleComputeShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	return;
 }
 
 void HdrTechnique::upsampling()
@@ -422,7 +445,9 @@ void HdrTechnique::Do(unsigned int texture)
 	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 
-	render->SetViewport(0, 0, render->GetWidth(), render->GetHeight());
+	render->SetViewport(
+		0, 0, 
+		cam_width->GetIVal(), cam_height->GetIVal());
 	m_ScreenQuad.draw();
 }
 

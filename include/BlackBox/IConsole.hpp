@@ -294,3 +294,5 @@ struct ICVar
 	virtual const char* GetHelp() = 0;
 
 };
+
+#define CREATE_CONSOLE_VAR(name, value, flags, ...) GetISystem()->GetIConsole()->CreateVariable(name, value, flags, __VA_ARGS__)

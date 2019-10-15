@@ -2,7 +2,8 @@
 
 layout (local_size_x = 4, local_size_y = 4, local_size_z = 1) in;
 uniform								 sampler2D inputImg1;
-uniform writeonly	layout (rgba16f) image2D inputImg2;
+
+uniform writeonly	layout (rgba16f) image2D outputImg[8];
 
 uniform float weight[2] = float[](0.125, 0.5);
 uniform float offset = -3;
@@ -40,7 +41,7 @@ vec4 ProcessImage(ivec2 texel0)
 			ivec2 texel = texel0 + ivec2(offsets[i].xy + offset);
 			result = result + textureLod(inputImg1, texel / vec2(textureSize(inputImg1, j)), j) * offsets[i].z;
 		}
-		imageStore(inputImg2, texel0, result);
+		imageStore(outputImg[j], texel0, result);
 	}
     return result;
 }
@@ -50,5 +51,5 @@ void main()
     ivec2 texel0 = ivec2(gl_GlobalInvocationID.xy);
     //vec4 color = vec4(2.f, 0, 0, 1);// = ProcessImage(texel0);
     vec4 color = ProcessImage(texel0);
-    //imageStore(inputImg2, texel0, color);
+    //imageStore(outputImg1, texel0, color);
 }

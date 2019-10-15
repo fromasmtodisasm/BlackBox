@@ -32,6 +32,8 @@ public:
   virtual void PostRenderPass() override;
 
 	void downsampling();
+	void downsamplingStandard();
+	void downsamplingCompute();
 	void upsampling();
   /////////////////////////////////////////////////
   virtual void Do(unsigned int texture) override;
@@ -73,6 +75,9 @@ private:
 	ICVar* upsampleTime;
 	ICVar* downsampleTime;
 	ICVar* averageBloomTime;
+	ICVar* downsampleType;
+	ICVar* cam_width;
+	ICVar* cam_height;
 
   bool inited = false;
 	bool pingpong = false;

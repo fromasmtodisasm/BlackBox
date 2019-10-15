@@ -47,6 +47,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
     return false;
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
+	m_pSystem->GetIInputHandler()->AddEventListener(this);
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -62,6 +63,9 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
+
+	cam_width->Set(GetWidth());
+	cam_height->Set(GetHeight());
 	return result;
 }
 
@@ -179,18 +183,18 @@ void CRender::fillSates()
 
 void CRender::initConsoleVariables()
 {
-	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
+	translateImageY =			CREATE_CONSOLE_VAR("ty", 0.0f, 0);
+	translateImageX =			CREATE_CONSOLE_VAR("tx", 0.0f, 0);
+	scaleImageX =					CREATE_CONSOLE_VAR("sx", 1.0f, 0);
+	scaleImageY =					CREATE_CONSOLE_VAR("sy", 1.0f, 0);
+	needTranslate =				CREATE_CONSOLE_VAR("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY =						CREATE_CONSOLE_VAR("nfy", 1, 0, "Flip or not 2d background of console");
+	test_proj =						CREATE_CONSOLE_VAR("test_proj", "test proj empty", 0);
+	render_via_viewport = CREATE_CONSOLE_VAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 
-	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
-
-	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
-
-	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
 	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+	cam_width		= m_pSystem->GetIConsole()->GetCVar("r_cam_w");
+	cam_height	= m_pSystem->GetIConsole()->GetCVar("r_cam_h");
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
@@ -338,6 +342,17 @@ void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 
 bool CRender::OnInputEvent(sf::Event& event)
 {
+	switch (event.type)
+	{
+	case sf::Event::Resized:
+	{
+		this->cam_width->Set(static_cast<int>(event.size.width));
+		this->cam_height->Set(static_cast<int>(event.size.height));
+		break;
+	}
+	default:
+		break;
+	}
 	return false;
 }
 
