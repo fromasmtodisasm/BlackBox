@@ -348,7 +348,6 @@ private:
 			{
 				console->AddWorkerCommand(this);
 			}
-
 		}
 		return false;
 	}
