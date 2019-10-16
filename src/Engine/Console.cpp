@@ -13,10 +13,50 @@
 #include <cstdlib>
 #include <cstring>
 #include <locale>
+#include <functional>
 
 #include <glm/glm.hpp>
 
 #define strdup _strdup
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
+{
+	// Get the first occurrence
+	size_t pos = data.find(toSearch);
+
+	// Repeat till end is reached
+	while (pos != std::string::npos)
+	{
+		// Replace this occurrence of Sub String
+		data.replace(pos, toSearch.size(), replaceStr);
+		// Get the next occurrence from the current position
+		pos = data.find(toSearch, pos + replaceStr.size());
+	}
+}
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr)
+{
+	// Get the first occurrence
+	size_t pos = data.find(toSearch);
+
+	// Repeat till end is reached
+	int n = 0;
+	while (pos != std::string::npos)
+	{
+		// Replace this occurrence of Sub String
+		if ((pos + 1) < data.length() && std::isdigit(data[pos + 1]))
+		{
+			data.replace(pos, toSearch.size() + 1, replaceStr(data[pos + 1] - '0'));
+			n++;
+		}
+		else
+		{
+			data.replace(pos, toSearch.size(), "");
+		}
+		// Get the next occurrence from the current position
+		pos = data.find(toSearch, ++pos);
+	}
+}
 
 class HelpCommand : public IConsoleCommand 
 {
@@ -93,6 +133,18 @@ void CConsole::SetImage(ITexture* pTexture)
 
 void CConsole::Update()
 {
+	for (const auto& worker : m_workers)
+	{
+		worker->OnUpdate();
+	}
+
+
+	//=====================
+	for (auto& worker : m_worker_to_delete)
+	{
+		m_workers.erase(worker);
+	}
+	m_worker_to_delete.clear();
 }
 
 void CConsole::Draw()
@@ -557,10 +609,36 @@ void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFl
 	m_Commands[str_to_wstr(std::string(sCommand))] = cmdInfo;
 }
 
+void CConsole::AddWorkerCommand(IWorkerCommand* cmd)
+{
+	m_workers.insert(cmd);
+}
+
+void CConsole::RemoveWorkerCommand(IWorkerCommand* cmd)
+{
+	m_worker_to_delete.push_back(cmd);
+}
+
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
 {
 	CommandInfo cmdInfo;
-	cmdInfo.Script = sScriptFunc;
+	cmdInfo.Script.code = sScriptFunc;
+	/*
+	std::vector<int> positions;
+	for (const char* pos = sScriptFunc; (pos = std::strchr(sScriptFunc + (pos - sScriptFunc), '%')) != NULL; pos++)
+	{
+		positions.push_back(pos - sScriptFunc);
+	}
+	cmdInfo.Script.arg_cnt = positions.size();
+	if (cmdInfo.Script.arg_cnt > 0)
+	{
+		cmdInfo.Script.args_pos = new int[cmdInfo.Script.arg_cnt];
+		for (int i = 0; i < cmdInfo.Script.arg_cnt; i++)
+		{
+			cmdInfo.Script.args_pos[i] = positions[i];
+		}
+	}
+	*/
 	if (help) cmdInfo.help = help;
 	cmdInfo.type = CommandInfo::Type::SCRIPT;
 	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
@@ -749,9 +827,11 @@ bool CConsole::handleCommand(std::wstring command)
 		}
 		else if (cmd_it->second.type == CommandInfo::Type::SCRIPT)
 		{
-			auto str = cmd_it->second.Script;
-			auto len = std::strlen(str);
-			result = m_pScriptSystem->ExecuteBuffer(cmd_it->second.Script, len);
+			std::string code(cmd_it->second.Script.code);
+			findAndReplaceAll(code, "%", [&cd](int n) -> std::string {
+				return "\"" + wstr_to_str(cd.get(n - 1)) + "\"";
+			});
+			result = m_pScriptSystem->ExecuteBuffer(code.c_str(), code.length());
 		}
 		else if (cmd_it->second.type == CommandInfo::Type::FUNC)
 		{

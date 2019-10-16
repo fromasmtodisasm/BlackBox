@@ -8,6 +8,36 @@
 #include <BlackBox/IMarkers.hpp>
 #include <process.h>
 
+bool MyExec(char* FileName, LPSTR cmd, HANDLE *handle)
+{
+
+	DWORD res;
+	STARTUPINFO         si;
+	PROCESS_INFORMATION pi;
+	memset(&si, 0, sizeof(STARTUPINFO));
+	si.cb = sizeof(si);
+	//si.wShowWindow = true;
+	//si.dwFlags = STARTF_USESHOWWINDOW;
+	if (!CreateProcess(FileName,
+		cmd,
+		NULL,
+		NULL,
+		FALSE,
+		0,
+		NULL,
+		NULL,
+		&si,
+		&pi))
+	{
+		return false;
+	}
+	else
+	{
+		*handle = pi.hProcess;
+		return true;
+	}
+}
+
 class BaseCommand : public IConsoleCommand
 {
 protected:
@@ -285,9 +315,12 @@ WireframeCommand::WireframeCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class ExecCommand : public BaseCommand 
+class ExecCommand : public BaseCommand, public IWorkerCommand
 {
 	World* m_World;
+	IConsole* console;
+	int wait_cnt = 0;
+	HANDLE process;
 public:
 	ExecCommand(CGame *game);
 private:
@@ -297,16 +330,40 @@ private:
 		if (cd.args.size() == 1)
 		{
 			std::string name = wstr_to_str(cd.args[0]);
-			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
-			GetISystem()->GetIConsole()->ExecuteFile(name.c_str());
-
+			console->ExecuteFile(name.c_str());
 			return true;
 		}
 		else if (cd.get(0) == L"os")
 		{
 			auto command = cd.get(1);
-			system(wstr_to_str(command).c_str());
+			std::string args;
+			if (cd.args.size() > 2)
+			{
+				for (int i = 1; i < cd.args.size(); i++)
+				{
+					args += wstr_to_str(cd.get(i)) + " ";
+				}
+			}
+			if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &process))
+			{
+				console->AddWorkerCommand(this);
+			}
 		}
+		return false;
+	}
+
+	// Унаследовано через IWorkerCommand
+	virtual bool OnUpdate() override
+	{
+		auto res = WaitForSingleObject(process, 0);
+		if (res == WAIT_OBJECT_0)
+		{
+			console->PrintLine("Finish");
+			console->RemoveWorkerCommand(this);
+		}
+		if ((wait_cnt % 60) == 0)
+			console->PrintLine("wait");
+		wait_cnt++;
 		return false;
 	}
 };
@@ -314,6 +371,7 @@ private:
 ExecCommand::ExecCommand(CGame *game) : BaseCommand(game)
 {
 	m_World = game->getWorld();
+	console = GetISystem()->GetIConsole();
 }
 //*******************************************************
 class MaterialCommand : public BaseCommand 
@@ -422,7 +480,7 @@ bool ShaderCommand::dump(CommandDesc& cd)
 		if (s == nullptr)
 			return false;
 		s->dump();
-		GetISystem()->GetIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
+		GetISystem()->GetIConsole()->ExecuteString("exec os C:\\Windows\\System32\\notepad.exe dump.bin");
 		return true;
 	}
 	return false;

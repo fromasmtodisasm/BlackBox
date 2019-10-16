@@ -5,6 +5,9 @@
 #include <BlackBox/Render/Texture.hpp>
 
 #include <map>
+#include <set>
+#include <list>
+#include <queue>
 #include <vector>
 #include <string>
 
@@ -63,11 +66,17 @@ struct CommandInfo
 		SCRIPT,
 		UNKNOWN
 	};
+	struct SScript
+	{
+		const char* code;
+		int arg_cnt;
+		int *args_pos;
+	};
 	union
 	{
 		ConsoleCommandFunc Func = nullptr;
 		IConsoleCommand* Command;
-		const char* Script;
+		SScript Script;
 	};
 	std::multimap<int, std::string> argsCompletion;
 	std::string help;
@@ -229,6 +238,9 @@ private:
 	//float blinkTime = 1.0;
 	ICVar* blinkTime;
 
+	std::set<IWorkerCommand*> m_workers;
+	std::list<IWorkerCommand*> m_worker_to_delete;
+
 	int lines = 0;
 
 
@@ -239,5 +251,11 @@ private:
 
 	// Inherited via IConsole
 	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
+
+
+	// Унаследовано через IConsole
+	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
+
+	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
 
 };

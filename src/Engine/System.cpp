@@ -336,6 +336,7 @@ bool CSystem::OnInputEvent(sf::Event& event)
 void CSystem::Update()
 {
 	//PROFILER_SYNC_FRAME();
+	m_pConsole->Update();
 }
 
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
