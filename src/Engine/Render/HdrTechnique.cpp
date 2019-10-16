@@ -80,13 +80,14 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 	else
 		resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
 	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
+	debuger::frame_buffer_label(hdrBuffer->id, "hdrBuffer");
 
 	auto mip_cnt = getMips(resolution);
 	pass0.resize(mip_cnt);
 	pass1.resize(mip_cnt);
 
 	auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*> &chain) {
-		for (int i = 0, width = 2 * resolution.x, height = 2 * resolution.y; i < mip_cnt; i++)
+		for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 		{
 			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
 			width >>= 1;
@@ -100,6 +101,18 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 
 	create_mip_chain(pass0);
 	create_mip_chain(pass1);
+
+	auto label_buffer = [](std::vector<FrameBufferObject*>& fb, std::string base) {
+		int i = 0;
+		for (auto& pass : fb)
+		{
+			debuger::frame_buffer_label(pass->id, base + std::to_string(i));
+			i++;
+		}
+	};
+
+	label_buffer(pass0, "pass0_");
+	label_buffer(pass1, "pass1_");
 }
 
 void HdrTechnique::DeleteFrameBuffers()
@@ -376,7 +389,7 @@ void HdrTechnique::downsamplingStandard()
 		amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		pass0[i + 1]->bind({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
+		pass0[i + 1]->bind(/*{ 0,0, cam_width->GetIVal(), cam_height->GetIVal() }*/);
 		//pass0[i + 1]->bind(pass0[i + 1]->viewPort / 2.f);
 		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
 		//renderQuad();

@@ -225,7 +225,7 @@ Object * Object::load(string path)
     return nullptr;
   
   vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
-	 //std::vector<Mesh> mesh;
+	debuger::vertex_array_label(vb->getId(), ("model: " + path).c_str());
 	mesh = std::make_shared<std::vector<Mesh>>();
 	Mesh _mesh(vb, nullptr);
 	_mesh.bb = bb;

@@ -28,6 +28,7 @@ Quad::Quad()
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2*sizeof(float)));
 
+			debuger::vertex_array_label(id, "Quad");
   glBindVertexArray(0);
 }
 

@@ -914,6 +914,9 @@ PointObject* Scene::createPointObject(XMLElement* object)
 					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 				glBindVertexArray(0);
+
+				debuger::vertex_array_label(po->VAO, "point objects");
+				debuger::buffer_label(VBO, "point objects");
 				return po;
 			}
 		}

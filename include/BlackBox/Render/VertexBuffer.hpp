@@ -25,6 +25,7 @@ public:
   void draw();
 	void setAttributes(Attributes &attributes);
 	Attributes& getAttributes();
+	GLuint getId() { return id; }
 protected:
 	virtual bool init();
 protected:
