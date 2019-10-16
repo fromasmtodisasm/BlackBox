@@ -335,6 +335,15 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 	return true;
 }
 
+void MaterialManager::EnumShaders(IMaterialShaderSink* callback)
+{
+	for (auto shader : shaders_map)
+	{
+		callback->OnShaderFound(shader.first);
+	}
+
+}
+
 bool MaterialManager::reloadShaders()
 {
 	for (auto shader : shaders_map)

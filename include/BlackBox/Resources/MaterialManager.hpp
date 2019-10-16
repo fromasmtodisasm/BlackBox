@@ -28,6 +28,11 @@ struct ProgramDesc
 	std::string cs;
 };
 
+struct IMaterialShaderSink
+{
+	virtual void OnShaderFound(const std::string& name) = 0;
+};
+
 class MaterialManager
 {
   static MaterialManager *manager;
@@ -49,6 +54,7 @@ public:
 
 	void reloadShader(ProgramDesc& pd);
   bool loadProgram(ProgramDesc &desc, bool isReload);
+	void EnumShaders(IMaterialShaderSink* callback);
 
 private:
   MaterialManager(ISystem *pSystem);

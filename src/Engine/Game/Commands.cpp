@@ -401,7 +401,7 @@ MaterialCommand::MaterialCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class ShaderCommand : public BaseCommand 
+class ShaderCommand : public BaseCommand, public IMaterialShaderSink
 {
 	World* m_World;
 public:
@@ -420,6 +420,8 @@ private:
 				return dump(cd);
 			if (cd.args[0] == L"edit")
 				return edit(cd);
+			if (cd.args[0] == L"enum")
+				return enumerate(cd);
 		}
 		else
 		{
@@ -431,6 +433,13 @@ private:
 	bool move(CommandDesc& cd);
 	bool dump(CommandDesc& cd);
 	bool edit(CommandDesc& cd);
+	bool enumerate(CommandDesc& cd);
+
+	// Inherited via IMaterialShaderSink
+	virtual void OnShaderFound(const std::string& name) override
+	{
+		GetISystem()->GetIConsole()->PrintLine("Program: %s", name.c_str());
+	}
 };
 
 ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
@@ -490,15 +499,35 @@ bool ShaderCommand::dump(CommandDesc& cd)
 }
 bool ShaderCommand::edit(CommandDesc& cd)
 {
-	if (cd.args.size() == 2)
+	if (cd.args.size() == 3)
 	{
-		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[2]));
 		if (s == nullptr)
 			return false;
-		GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -multiInst -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + s->m_Fragment.name).c_str());
+		std::string shader_name;
+		std::string type = wstr_to_str(cd.get(1));
+		if (type == "vs")
+			shader_name = s->m_Vertex.name;
+		else if (type == "fs")
+			shader_name = s->m_Fragment.name;
+		else if (type == "gs")
+			shader_name = s->m_Geometry.name;
+		else if (type == "cs")
+			shader_name = s->m_Compute.name;
+		if (shader_name.length() > 0)
+			//GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -multiInst -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
+			GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
+		else
+			GetISystem()->GetIConsole()->PrintLine("Shader type[%s] not present", type);
+
 		return true;
 	}
 	return false;
+}
+bool ShaderCommand::enumerate(CommandDesc& cd)
+{
+	MaterialManager::instance()->EnumShaders(this);
+	return true;
 }
 //*******************************************************
 class CameraCommand : public BaseCommand 
