@@ -341,7 +341,7 @@ private:
 			{
 				for (int i = 1; i < cd.args.size(); i++)
 				{
-					args += wstr_to_str(cd.get(i)) + " ";
+					args += "\"" + wstr_to_str(cd.get(i)) + "\" ";
 				}
 			}
 			if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &process))
@@ -418,6 +418,8 @@ private:
 				return move(cd);
 			if (cd.args[0] == L"dump")
 				return dump(cd);
+			if (cd.args[0] == L"edit")
+				return edit(cd);
 		}
 		else
 		{
@@ -428,6 +430,7 @@ private:
 	bool reload(CommandDesc& cd);
 	bool move(CommandDesc& cd);
 	bool dump(CommandDesc& cd);
+	bool edit(CommandDesc& cd);
 };
 
 ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
@@ -480,7 +483,19 @@ bool ShaderCommand::dump(CommandDesc& cd)
 		if (s == nullptr)
 			return false;
 		s->dump();
-		GetISystem()->GetIConsole()->ExecuteString("exec os C:\\Windows\\System32\\notepad.exe dump.bin");
+		GetISystem()->GetIConsole()->ExecuteString("exec os @EDITOR dump.bin");
+		return true;
+	}
+	return false;
+}
+bool ShaderCommand::edit(CommandDesc& cd)
+{
+	if (cd.args.size() == 2)
+	{
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+		if (s == nullptr)
+			return false;
+		GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -multiInst -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + s->m_Fragment.name).c_str());
 		return true;
 	}
 	return false;

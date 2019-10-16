@@ -906,6 +906,8 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 		{
 			if (command[i] != L'"')
 				current_arg += command[i];
+			else
+				state1 = ARGS;
 			break;
 		}
 		case ARGS:
@@ -956,7 +958,12 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 				}
 				else
 				{
-					current_arg += command[i];
+					if (command[i] == L'"')
+					{
+						state1 = INSTRING;
+						break;
+					}
+					else current_arg += command[i];
 				}
 			}
 			break;
