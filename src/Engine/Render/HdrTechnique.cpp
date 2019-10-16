@@ -449,7 +449,9 @@ void HdrTechnique::Do(unsigned int texture)
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal());
-	FrameBufferObject::bindDefault(hdrBuffer->viewPort);
+	//FrameBufferObject::bindDefault(hdrBuffer->viewPort);
+	FrameBufferObject::bindDefault({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
+	
 	m_ScreenShader->use();
   m_ScreenShader->setUniformValue(exposure->GetFVal(), "exposure");
   m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");
@@ -458,6 +460,12 @@ void HdrTechnique::Do(unsigned int texture)
 	m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");
 	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
+	auto w = cam_width->GetIVal();
+	auto h = cam_height->GetIVal();
+	auto hdr_w = hdrBuffer->viewPort.z;
+	auto hdr_h = hdrBuffer->viewPort.w;
+	m_ScreenShader->setUniformValue(glm::ivec4(0,0, w, h), "viewPorti");
+	m_ScreenShader->setUniformValue(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
 
 	render->SetViewport(
 		0, 0, 

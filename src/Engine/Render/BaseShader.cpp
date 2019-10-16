@@ -450,6 +450,19 @@ void CBaseShaderProgram::setUniformValue(glm::vec4 value, const char * format, .
   }
 }
 
+void CBaseShaderProgram::setUniformValue(glm::ivec4 value, const char* format, ...)
+{
+  va_list ptr;
+  va_start(ptr, format);
+  auto name = buildName(format, ptr);
+  va_end(ptr);
+
+  GLint loc = getUniformLocation(name);
+  if (loc != -1){
+        glCheck(glUniform4iv(loc, 1, glm::value_ptr(value)));
+  }
+}
+
 void CBaseShaderProgram::setUniformValue(glm::mat2 value, const char * format, ...)
 {
   va_list ptr;

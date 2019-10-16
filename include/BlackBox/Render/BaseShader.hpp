@@ -367,6 +367,7 @@ public:
   void setUniformValue(glm::vec2 value, const char *format, ...);
   void setUniformValue(glm::vec3 value, const char *format, ...);
   void setUniformValue(glm::vec4 value, const char *format, ...);
+  void setUniformValue(glm::ivec4 value, const char *format, ...);
   void setUniformValue(glm::mat2 value, const char *format, ...);
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
