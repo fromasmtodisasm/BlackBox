@@ -320,7 +320,7 @@ class ExecCommand : public BaseCommand, public IWorkerCommand
 	World* m_World;
 	IConsole* console;
 	int wait_cnt = 0;
-	HANDLE notepad;
+	HANDLE process;
 public:
 	ExecCommand(CGame *game);
 private:
@@ -344,7 +344,7 @@ private:
 					args += wstr_to_str(cd.get(i)) + " ";
 				}
 			}
-			if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &notepad))
+			if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &process))
 			{
 				console->AddWorkerCommand(this);
 			}
@@ -355,7 +355,7 @@ private:
 	// Унаследовано через IWorkerCommand
 	virtual bool OnUpdate() override
 	{
-		auto res = WaitForSingleObject(notepad, 0);
+		auto res = WaitForSingleObject(process, 0);
 		if (res == WAIT_OBJECT_0)
 		{
 			console->PrintLine("Finish");
