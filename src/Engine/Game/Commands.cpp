@@ -16,6 +16,7 @@ bool MyExec(char* FileName, LPSTR cmd, HANDLE *handle)
 	PROCESS_INFORMATION pi;
 	memset(&si, 0, sizeof(STARTUPINFO));
 	si.cb = sizeof(si);
+	LPCH env = GetEnvironmentStrings();
 	//si.wShowWindow = true;
 	//si.dwFlags = STARTF_USESHOWWINDOW;
 	if (!CreateProcess(FileName,
@@ -24,11 +25,13 @@ bool MyExec(char* FileName, LPSTR cmd, HANDLE *handle)
 		NULL,
 		FALSE,
 		0,
-		NULL,
+		//NULL,
+		env,
 		NULL,
 		&si,
 		&pi))
 	{
+		auto er = GetLastError();
 		return false;
 	}
 	else
