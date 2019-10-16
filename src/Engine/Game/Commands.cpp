@@ -305,7 +305,18 @@ private:
 		else if (cd.get(0) == L"os")
 		{
 			auto command = cd.get(1);
-			system(wstr_to_str(command).c_str());
+			//system(wstr_to_str(command).c_str());
+			char ** args = nullptr; 
+			args = new char * [cd.args.size()];
+			if (cd.args.size() > 2)
+			{
+				for (int i = 1; i < cd.args.size(); i++)
+				{
+					args[i - 1] = strdup(wstr_to_str(cd.get(i)).c_str());
+				}
+				args[cd.args.size() - 1] = NULL;
+			}
+			_spawnvp(_P_NOWAIT, wstr_to_str(command).c_str(), (const char*const*)args);
 		}
 		return false;
 	}
@@ -422,7 +433,7 @@ bool ShaderCommand::dump(CommandDesc& cd)
 		if (s == nullptr)
 			return false;
 		s->dump();
-		GetISystem()->GetIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
+		GetISystem()->GetIConsole()->ExecuteString("exec os notepad.exe dump.bin");
 		return true;
 	}
 	return false;
