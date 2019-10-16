@@ -11,7 +11,7 @@ uniform sampler2D image;
 uniform bool horizontal;
 uniform float weight[2] = float[](0.125, 0.5);
 uniform float offset = -3.5;
-uniform vec4 viewPort = vec4(0, 1, 0, 1);
+uniform vec2 viewPort = vec2(1, 1);
 
 // Todo: specify calculation of offset for box filter
 vec3 offsets[13] = vec3[](
@@ -50,7 +50,7 @@ vec4 downsample()
 	for (int i = 0; i < 13; i++)
 	{
 		vec2 texel = TexCoords + (offsets[i].xy + offset)*tex_offset;
-		result += Sample(texel) * offsets[i].z;
+		result += Sample(texel * viewPort) * offsets[i].z;
 	}
 	return result;
 }
@@ -64,7 +64,7 @@ void main()
 	for (int i = 0; i < 13; i++)
 	{
 		vec2 texel = TexCoords + (offsets[i].xy + offset)*tex_offset;
-		result += Sample(TexCoords + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
+		result += Sample((TexCoords + (offsets[i].xy + offset)*tex_offset)*viewPort) * offsets[i].z;
 	}
 	//return result;         
 	FragColor = result;
