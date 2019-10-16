@@ -180,6 +180,7 @@ bool CGame::init(ISystem *pEngine)  {
 
 bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
+		m_pSystem->Update();
 		m_pSystem->BeginFrame();
 		{
 			sf::Time deltaTime = deltaClock.restart();

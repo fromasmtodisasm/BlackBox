@@ -60,6 +60,11 @@ enum EVarFlags : unsigned int
 #define     CVAR_STRING 3
 #define     CVAR_OBJECT 4
 
+struct IWorkerCommand
+{
+	virtual bool OnUpdate() = 0;
+};
+
 struct IConsoleCommand
 {
 	virtual bool execute(CommandDesc& cd) = 0;
@@ -208,6 +213,10 @@ struct IConsole
 	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) = 0;
 	//! \param szLine Must not be 0.
 	virtual void SetInputLine(const char* szLine) = 0;
+
+
+	virtual void AddWorkerCommand(IWorkerCommand* cmd) = 0;
+	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) = 0;
 
 };
 

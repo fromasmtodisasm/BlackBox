@@ -133,6 +133,18 @@ void CConsole::SetImage(ITexture* pTexture)
 
 void CConsole::Update()
 {
+	for (const auto& worker : m_workers)
+	{
+		worker->OnUpdate();
+	}
+
+
+	//=====================
+	for (auto& worker : m_worker_to_delete)
+	{
+		m_workers.erase(worker);
+	}
+	m_worker_to_delete.clear();
 }
 
 void CConsole::Draw()
@@ -595,6 +607,16 @@ void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFl
 	if (help) cmdInfo.help = help;
 	cmdInfo.type = CommandInfo::Type::FUNC;
 	m_Commands[str_to_wstr(std::string(sCommand))] = cmdInfo;
+}
+
+void CConsole::AddWorkerCommand(IWorkerCommand* cmd)
+{
+	m_workers.insert(cmd);
+}
+
+void CConsole::RemoveWorkerCommand(IWorkerCommand* cmd)
+{
+	m_worker_to_delete.push_back(cmd);
 }
 
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
