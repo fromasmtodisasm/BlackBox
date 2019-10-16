@@ -381,7 +381,7 @@ void HdrTechnique::downsamplingStandard()
   m_DownsampleShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
   m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
-  m_DownsampleShader->setUniformValue(glm::vec4(0,0, cam_width->GetIVal()/hdrBuffer->viewPort.z, cam_height->GetIVal()/hdrBuffer->viewPort.w), "viewPort");
+  m_DownsampleShader->setUniformValue(glm::vec2(cam_width->GetIVal()/hdrBuffer->viewPort.z, cam_height->GetIVal()/hdrBuffer->viewPort.w), "viewPort");
 
 	glCheck(glDisable(GL_DEPTH_TEST));
 	if (useBoxFilter->GetIVal())
