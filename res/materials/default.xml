@@ -1,87 +1,138 @@
 <materials>
+  <material name="point">
+    <colors>
+      <ambient r="0.15" g="0.15" b="0.15"/>
+      <diffuse r="0.15" g="0.15" b="0.15"/>
+      <emissive r="1" g="20" b="3"/>
+    </colors>
+    <shader name="phong"/>
+  </material>
+  <material name="sprite2">
+    <textures>
+      <texture type="diffuse" name="container2.png"/>
+      <texture type="emissive" name="emissive.png"/>
+      <texture type="specular" name="container2_specular.png"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
   <material name="specular_box">
     <textures>
       <texture type="diffuse" name="container2.png"/>
+      <texture type="emissive" name="emissive.png"/>
       <texture type="specular" name="container2_specular.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
-      <!--<shininess/>-->
+    <shader name="phong"/>
+  </material>
+  <material name="terrain">
+    <textures>
+      <texture type="diffuse" name="ground.jpg"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
+      <!--<texture type="specular" name="container2_specular.png"/>-->
+    </textures>
+    <shader name="phong"/>
   </material>
   <material name="wood_box">
     <textures>
       <texture type="diffuse" name="container.jpg"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
+  </material>
+  <material name="garik" transparent="true">
+    <textures>
+      <texture type="diffuse" name="alpha_test/low_a.dds"/>
+    </textures>
+    <shader name="phong"/>
   </material>
   <material name="brick_box">
     <textures>
-      <texture type="diffuse" name="brickwall.jpg"/>
-      <texture type="specular" name="gray.png"/>
-      <texture type="normal" name="brickwall_normal.jpg"/>
+      <texture type="diffuse" name="alpha_test/barb_wire_a.png"/>
+      <texture type="diffuse" name="low2_a.png"/>
+      <texture type="diffuse" name="alpha_test/cross.png"/>
+      <texture type="diffuse" name="alpha_test/fence_a.png"/>
+      <texture type="diffuse" name="alpha_test/grass.png"/>
+      <texture type="diffuse" name="alpha_test/l_alpha.png"/>
+      <texture type="diffuse" name="alpha_test/leaves_alfa.png"/>
+      <texture type="diffuse" name="alpha_test/LemonTreeLeaves_a.png"/> 
+      <!--<texture type="diffuse" name="brickwall.jpg"/>-->
+      <!--<texture type="normal" name="brickwall_normal.jpg"/>-->
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="light">
     <color red="1.0" green="1.0" blue="1.0"/>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="basecolor.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="coral">
     <textures>
       <texture type="diffuse" name="coral.png"/>
       <texture type="specular" name="gray.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="red">
     <textures>
       <texture type="diffuse" name="red.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
   <material name="player">
     <textures>
-      <texture type="diffuse" name="pengium.png"/>
+      <texture type="diffuse" name="coral.png"/>
+      <texture type="specular" name="gray.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
+  </material>
+  <material name="bb">
+    <shader name="bb"/>
+  </material>
+  <material name="skybox" type="skybox">
+    <textures>
+      <texture type="diffuse" name="lake1"/>
+    </textures>
+    <shader name="phong"/>
   </material>
   <material name="chess_floor">
     <textures>
-      <texture type="diffuse" name="check.jpg"/>
+      <texture type="diffuse" name="check.png"/>
     </textures>
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
+  </material>
+  <material name="water" alpha="0.7">
+    <textures>
+      <texture type="diffuse" name="water.jpg"/>
+    </textures>
+    <shader name="phong"/>
   </material>
   <material name="default">
     <textures>
-      <texture type="diffuse" name="check.jpg"/>
+      <texture type="diffuse" name="check.png"/>
+      <texture type="normal" name="normal_up.jpg"/>
     </textures>
-    
-    <shaders>
-      <shader type="vertex" name="texturedphong.vs"/>
-      <shader type="fragment" name="texturedphong.frag"/>
-    </shaders>
+    <shader name="phong"/>
   </material>
+  <shaders>
+    <phong>
+      <!--<shader type="vertex" name="texturedphong.vs"/>
+      <shader type="fragment" name="texturedphong.frag"/>-->
+      <shader type="vertex" name="shadowmap.vs"/>
+      <shader type="fragment" name="shadowmap.frag"/>
+    </phong>    
+    <shadow>
+      <shader type="vertex" name="shadowmap.vs"/>
+      <shader type="fragment" name="shadowmap.frag"/>
+    </shadow>    
+    <refract>
+      <shader type="vertex" name="reflect.vs"/>
+      <shader type="fragment" name="refract.frag"/>
+    </refract>
+    <reflect>
+      <shader type="vertex" name="reflect.vs"/>
+      <shader type="fragment" name="reflect.frag"/>
+    </reflect>
+    <bb>
+      <shader type="vertex" name="bb.vs"/>
+      <shader type="fragment" name="bb.frag"/>
+    </bb>
+  </shaders>
 </materials>

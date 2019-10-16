@@ -1,43 +1,55 @@
 #pragma once
 #include <memory>
-#include <BlackBox/Texture.hpp>
+#include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Render/Shader.hpp>
+#include <BlackBox/IConsole.hpp>
 #include <glm/glm.hpp>
+#include <vector>
 
 class CShader;
-class CShaderProgram;
+class CBaseShaderProgram;
 class Object;
-class CCamera;
 
 struct Material
 {
-  Texture
-  *diffuse,
+  BaseTexture
+  /**diffuse,*/
   *specular,
+	*emissive,
   *bump,
   *normal,
   *mask;
   float shininess;
+	float emissive_factor = 1.0f;
   glm::vec3 diffuseColor;
+  float alpha;
+	
+	std::vector<BaseTexture*> diffuse;
 
-  CShaderProgram *program;
+  BaseShaderProgramRef program;
+	std::string program_name;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;
   bool enabledNormal = true;
+	int current_diffuse = 0;
 
   Material() : 
-  diffuse(nullptr),
+  //diffuse(nullptr),
   specular(nullptr),
   bump(nullptr),
   normal(nullptr),
   mask(nullptr),
+	emissive(nullptr),
+	emissive_factor(1.0f),
   diffuseColor({0,0,0}),
   shininess(64.0f),
   program(nullptr)
   {
-
   }
-  void apply(Object *object, CCamera *camera);
+  void apply(Object *object);
   void setTexture(Texture *texture, const char *type);
+	void nextDiffuse();
+	void prevDiffuse();
 private:
-  void activeTexture(uint32_t block, const char *uniform, Texture *texture);
+  void activeTexture(const char *uniform, BaseTexture *texture);
 };

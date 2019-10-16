@@ -1,5 +1,6 @@
 #pragma once
-#include <BlackBox/CGame.hpp>
+#ifdef GUI
+#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/InputHandler.hpp>
 
 // Std inc
@@ -94,7 +95,10 @@ public:
   void assets();
   void setStyle();
   void showScene(Scene *scene);
+  void drawFullScreenViewPort();
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(sf::Event& event) override;
 };
+
+#endif

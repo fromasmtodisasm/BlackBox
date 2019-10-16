@@ -1,7 +1,7 @@
 #pragma once
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/VertexBuffer.hpp>
+#include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Scene.hpp>
 
 #include <map>
@@ -14,11 +14,17 @@ struct IPostRenderCallback
   virtual void PostRender() = 0;
 };
 
+struct IPreRenderCallback
+{
+  virtual void PreRender() = 0;
+};
+
 class World {
   friend class GameGUI;
 private:
   Scene *activeScene;
   IPostRenderCallback* m_PostRender = nullptr;
+  IPreRenderCallback* m_PreRender = nullptr;
 public:
   static float gravity;
   World();
@@ -27,6 +33,7 @@ public:
   void setCamera(CCamera *camera);
   void setScene(Scene* scene);
   void update(float deltatime);
-  void setPostRenderCallback(IPostRenderCallback* postRender);
+  void setPretRenderCallback(IPreRenderCallback* callBack);
+  void setPostRenderCallback(IPostRenderCallback* callBack);
   Scene *getActiveScene() const;
 };

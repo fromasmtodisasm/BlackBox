@@ -1,21 +1,42 @@
 #version 330 core
-layout (location = 0) in vec3 Position;
-layout (location = 1) in vec2 UV;
-layout (location = 2) in vec3 VertexNormal;
-out vec3 FragPos;
-out vec2 TexCoords;
-out vec3 Normal;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBitangent;
 
-uniform mat4 Model;
-uniform mat4 View;
-uniform mat3 NormalMatrix;
-uniform mat4 Projection;
-uniform mat4 MVP;
+out VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} vs_out;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+uniform mat4 uv_projection = mat4(80.0);
+uniform float time = 0.0;
+
+uniform vec3 lightPos;
+uniform vec3 viewPos;
 
 void main()
 {
-    gl_Position = Projection * View * Model * vec4(Position, 1.0f);
-    FragPos = vec3(Model * vec4(Position, 1.0f));
-    Normal = NormalMatrix * VertexNormal;
-    TexCoords = UV;
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
+    vs_out.TexCoords = (uv_projection * vec4(aTexCoords.x + time, aTexCoords.y + time, 0.0, 1.0)).xy;
+    
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    vec3 T = normalize(normalMatrix * aTangent);
+    vec3 N = normalize(normalMatrix * aNormal);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = cross(N, T);
+    
+    mat3 TBN = transpose(mat3(T, B, N));    
+    vs_out.TangentLightPos = TBN * lightPos;
+    vs_out.TangentViewPos  = TBN * viewPos;
+    vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+        
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

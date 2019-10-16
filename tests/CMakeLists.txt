@@ -23,7 +23,7 @@ add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DI
 
 install(
   TARGETS ${PROJECT_NAME} 
-  RUNTIME DESTINATION BlackBox/bin
+  RUNTIME DESTINATION bin
 )
 
 add_custom_target(

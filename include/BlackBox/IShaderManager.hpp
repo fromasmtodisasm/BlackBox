@@ -1,8 +1,8 @@
 #pragma once
-#include <BlackBox/CShader.hpp>
+#include <BlackBox/Shader.hpp>
 #include <string>
 
 struct IShaderManager
 {
-  virtual CShaderProgram *getShader(std::string name) = 0;
+  virtual CBaseShaderProgram *getShader(std::string name) = 0;
 };

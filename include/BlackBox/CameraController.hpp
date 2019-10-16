@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/CCamera.hpp>
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/InputHandler.hpp>
 
 

@@ -20,7 +20,7 @@
         </transform>
         <material name="wood_box"/>
     </object>
-    <object name="BMW" type="object">
+    <object name="BMW" type="object" visible="true">
         <mesh name="res/geom/bmw.obj"/>
         <transform>
             <position>
@@ -39,7 +39,7 @@
                 <Z>10</Z>
             </scale>
         </transform>
-        <material name="red"/>
+        <material name="player"/>
     </object>
     <object name="BMW_2" type="object">
         <mesh name="res/geom/bmw.obj"/>
@@ -83,12 +83,33 @@
         </transform>
         <material name="coral"/>
     </object>
-    <object name="MyPlayer" type="player">
+    <object name="MyPlayer" type="player" visible="true">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
             <position>
                 <X>0</X>
-                <Y>54.639694</Y>
+                <Y>-0.3603245</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>
+    <object name="sphere" visible="true">
+        <mesh name="res/geom/sphere.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>20</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -125,13 +146,13 @@
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object">
-        <mesh name="res/geom/cube.obj"/>
+    <object name="brick_normal_box" type="object" transparent="true" visible="false">
+        <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
-                <X>2</X>
-                <Y>11.9</Y>
-                <Z>12</Z>
+                <X>0</X>
+                <Y>15</Y>
+                <Z>0</Z>
             </position>
             <rotation>
                 <X>0</X>
@@ -145,6 +166,48 @@
             </scale>
         </transform>
         <material name="brick_box"/>
+    </object>
+    <object name="brick_normal_box_2" type="object" transparent="true" visible="false">
+        <mesh name="res/geom/box.obj"/>
+        <transform>
+            <position>
+                <X>20</X>
+                <Y>15</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="brick_box_shakaled" alpha_shakal="true"/>
+    </object>
+    <object name="garik" type="object" transparent="true" visible="false">
+        <mesh name="res/geom/1ltomarm2.obj"/>
+        <transform>
+            <position>
+                <X>20</X>
+                <Y>15</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0.5</X>
+                <Y>0.5</Y>
+                <Z>0.5</Z>
+            </scale>
+        </transform>
+        <material name="garik" alpha_shakal="true"/>
     </object>
     <object name="cube0" type="object">
         <mesh name="res/geom/cube.obj"/>
@@ -188,28 +251,7 @@
         </transform>
         <material name="light"/>
     </object>
-    <object name="monkey" type="object">
-        <mesh name="res/geom/monkey.obj"/>
-        <transform>
-            <position>
-                <X>-37</X>
-                <Y>29</Y>
-                <Z>15</Z>
-            </position>
-            <rotation>
-                <X>0</X>
-                <Y>90</Y>
-                <Z>0</Z>
-            </rotation>
-            <scale>
-                <X>10</X>
-                <Y>10</Y>
-                <Z>10</Z>
-            </scale>
-        </transform>
-        <material name="coral"/>
-    </object>
-    <object name="plane" type="object">
+    <object name="plane" type="object" visible="true">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -223,12 +265,12 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>200</X>
-                <Y>200</Y>
-                <Z>200</Z>
+                <X>20000</X>
+                <Y>20000</Y>
+                <Z>20000</Z>
             </scale>
         </transform>
-        <material name="default"/>
+        <material name="chess_floor"/>
     </object>
     <object name="sphere" type="object">
         <mesh name="res/geom/sphere.obj"/>
@@ -322,8 +364,11 @@
         <constant>1</constant>
         <linear>0.029999999</linear>
         <quadratic>9.9999997e-05</quadratic>
-        <ambient x="0" y="0" z="0"/>
-        <diffuse x="0" y="0" z="0"/>
+        <ambient x="1" y="1" z="1"/>
+        <diffuse x="1" y="1" z="1"/>
         <specular x="1" y="1" z="1"/>
     </light>
+  <technique name="shadowmapping">
+    
+  </technique>
 </scene>

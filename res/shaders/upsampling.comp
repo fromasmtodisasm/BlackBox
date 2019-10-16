@@ -1,0 +1,42 @@
+#version 450 core
+
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+uniform readonly layout (rgba8) image2D img1;
+uniform writeonly image2D img2;
+layout (location = 0) uniform uint UseKernel = 0;
+
+const float KernelIdentity[3][3] = { {0, 0, 0}, {0, 1, 0}, {0, 0, 0} };
+const float KernelEdgeDetection1[3][3] = { {1, 0, -1}, {0, 0, 0}, {-1, 0, 1} };
+const float KernelEdgeDetection2[3][3] = { {0, 1, 0}, {1, -4, 1}, {0, 1, 0} };
+const float KernelEdgeDetection3[3][3] = { {-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1} };
+const float KernelSharpen[3][3] = { {0, -1, 0}, {-1, 5, -1}, {0, -1, 0} };
+const float KernelBoxBlur[3][3] = { {0.111f, 0.111f, 0.111f}, {0.111f, 0.111f, 0.111f}, {0.111f, 0.111f, 0.111f} };
+const float KernelGaussianBlur[3][3] = { {0.0625f, 0.125f, 0.0625f}, {0.125f, 0.25f, 0.125f}, {0.0625f, 0.125f, 0.0625f} };
+
+vec4 ProcessImage(ivec2 texel0)
+{
+    vec4 result = vec4(0, 0, 0, 0);
+    float Kernel[3][3] = KernelIdentity; int kernelsize = 3;
+    if (UseKernel == 1) Kernel = KernelEdgeDetection1;
+    if (UseKernel == 2) Kernel = KernelEdgeDetection2;
+    if (UseKernel == 3) Kernel = KernelEdgeDetection3;
+    if (UseKernel == 4) Kernel = KernelSharpen;
+    if (UseKernel == 5) Kernel = KernelBoxBlur;
+    if (UseKernel == 6) Kernel = KernelGaussianBlur;
+    for (int x = 0; x < kernelsize; x++)
+    {
+        for (int y = 0; y < kernelsize; y++)
+        {
+            ivec2 texel = texel0 + ivec2(x - kernelsize / 2, y - kernelsize / 2);
+            result = result + imageLoad(img1, texel) * Kernel[x][y];
+        }
+    }
+    return result;
+}
+
+void main()
+{
+    ivec2 texel0 = ivec2(gl_GlobalInvocationID.xy);
+    vec4 color = ProcessImage(texel0);
+    imageStore(img2, texel0, color);
+}
