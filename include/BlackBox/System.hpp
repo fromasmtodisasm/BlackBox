@@ -62,4 +62,7 @@ private:
 
 	// Inherited via ISystem
 	virtual bool IsDevMode() override;
+
+	// Inherited via ISystem
+	virtual void Error(const char* message) override;
 };

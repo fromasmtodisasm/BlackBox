@@ -229,6 +229,10 @@ bool CSystem::IsDevMode()
 	return true;
 }
 
+void CSystem::Error(const char* message)
+{
+}
+
 void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
 {
 	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
