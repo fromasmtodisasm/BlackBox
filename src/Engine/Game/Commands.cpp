@@ -330,29 +330,20 @@ private:
 		if (cd.args.size() == 1)
 		{
 			std::string name = wstr_to_str(cd.args[0]);
-			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
 			console->ExecuteFile(name.c_str());
-
 			return true;
 		}
 		else if (cd.get(0) == L"os")
 		{
 			auto command = cd.get(1);
-			//system(wstr_to_str(command).c_str());
-			//char ** args = nullptr; 
 			std::string args;
-			//args = new char * [cd.args.size()];
 			if (cd.args.size() > 2)
 			{
 				for (int i = 1; i < cd.args.size(); i++)
 				{
-					//args[i - 1] = strdup(wstr_to_str(cd.get(i)).c_str());
 					args += wstr_to_str(cd.get(i)) + " ";
 				}
-				//args[cd.args.size() - 1] = NULL;
 			}
-			//notepad = _spawnvp(_P_NOWAIT, wstr_to_str(command).c_str(), (const char*const*)args);
-			//MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &notepad);
 			if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &notepad))
 			{
 				console->AddWorkerCommand(this);
