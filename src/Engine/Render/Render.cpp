@@ -40,11 +40,11 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		glContextType = sf::ContextSettings::Attribute::Core;
   sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
-		return false;
+		return nullptr;
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
-		return false;
+		return nullptr;
   if (!OpenGLLoader())
-    return false;
+    return nullptr;
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	m_pSystem->GetIInputHandler()->AddEventListener(this);
@@ -59,6 +59,11 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	};
 	MaterialManager::instance()->loadProgram(pd, false);
 	m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
+	if (m_ScreenShader == nullptr)
+	{
+		m_pSystem->Log("Error of creating screen shader");
+		return nullptr;
+	}
 	//m_ScreenShader->create();
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
