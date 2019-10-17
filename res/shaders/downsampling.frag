@@ -41,15 +41,22 @@ vec3 offsets[13] = vec3[](
 
 #define Sample(uv) texture(image, uv)
 
+/*
+	TexCoords - coordinates current pixel in out framebuffer
+	image - n + 1 mip level
+	texel_scale - step in relative units in input image -- key of sampling
+*/
 vec4 downsample()
 {
 	vec4 result = vec4(0);
-	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+	vec2 texel_scale = 1.0 / textureSize(image, 0); // gets size of single texel
 
 	//return Sample(TexCoords);
 	for (int i = 0; i < 13; i++)
 	{
-		vec2 texel = TexCoords + (offsets[i].xy + offset)*tex_offset;
+		
+		//vec2 texel = 
+		vec2 texel = TexCoords + (offsets[i].xy + offset)*texel_scale;
 		result += Sample(texel * viewPort) * offsets[i].z;
 	}
 	return result;
