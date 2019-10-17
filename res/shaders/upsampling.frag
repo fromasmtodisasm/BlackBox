@@ -22,7 +22,7 @@ vec4 blur(vec2 uv)
 	{
 		for (int j = -1, index = (i+1)*(j+1) + j + 1; j <= 1; j++)
 		{
-			result += vec4(texture(previos, (uv + vec2(j, i)*tex_offset)*viewPortf.xy).rgb * weight[index], 1);  
+			result += vec4(texture(previos, (uv*viewPortf.xy*0.5 + vec2(j, i)*tex_offset)).rgb * weight[index], 1);  
 		}
 	}
 	return result / 16.0;
@@ -30,5 +30,5 @@ vec4 blur(vec2 uv)
 
 void main()
 {             
-	FragColor = texture(current, TexCoords*viewPortf.xy) + (blurOn ? blur(TexCoords) : vec4(0));
+	FragColor = texture(current, TexCoords*viewPortf.xy*0.5) + (blurOn ? blur(TexCoords) : vec4(0));
 }

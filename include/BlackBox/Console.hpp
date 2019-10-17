@@ -177,6 +177,8 @@ private:
   void pageUp(bool isPgUp);
 	void drawCursor();
 	void moveCursor(bool left);
+
+	void initBind();
 private:
 	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;
@@ -211,6 +213,7 @@ private:
   bool page_dn = false;
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
+	std::wstring last_command;
 	std::string m_prompt;
 	std::string message_buffer;
 
@@ -237,6 +240,7 @@ private:
 	float blinking = 0.0f;
 	//float blinkTime = 1.0;
 	ICVar* blinkTime;
+	std::map<sf::Keyboard::Key, std::wstring> keyBind;
 
 	std::set<IWorkerCommand*> m_workers;
 	std::list<IWorkerCommand*> m_worker_to_delete;

@@ -388,7 +388,6 @@ void HdrTechnique::downsamplingStandard()
   m_DownsampleShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
   m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
-  m_DownsampleShader->setUniformValue(glm::vec2(cam_width->GetIVal()/hdrBuffer->viewPort.z, cam_height->GetIVal()/hdrBuffer->viewPort.w), "viewPort");
 
 	glCheck(glDisable(GL_DEPTH_TEST));
 	if (useBoxFilter->GetIVal())
@@ -405,6 +404,7 @@ void HdrTechnique::downsamplingStandard()
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		pass0[i + 1]->bind({ 0,0, (w / hdr_w) * pass0[i + 1]->viewPort.z, (h / hdr_h) * pass0[i + 1]->viewPort.w });
+		//pass0[i + 1]->bind({ 0,0, pass0[i + 1]->viewPort.z,pass0[i + 1]->viewPort.w });
 		//pass0[i + 1]->bind(pass0[i + 1]->viewPort / 2.f);
 		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
 		//renderQuad();
@@ -457,8 +457,8 @@ void HdrTechnique::upsampling()
 	bool first_iteration = true;
 	glCheck(glDisable(GL_DEPTH_TEST));
 
-		auto w = cam_width->GetIVal();
-		auto h = cam_height->GetIVal();
+		auto w = (float)cam_width->GetIVal();
+		auto h = (float)cam_height->GetIVal();
 		auto hdr_w = hdrBuffer->viewPort.z;
 		auto hdr_h = hdrBuffer->viewPort.w;
 	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
@@ -468,6 +468,7 @@ void HdrTechnique::upsampling()
 	{
 
 		pass1[i - 1]->bind(glm::vec4(0,0, (w / hdr_w) * pass1[i-1]->viewPort.z, (h / hdr_h) * pass1[i-1]->viewPort.w));
+		//pass1[i - 1]->bind(glm::vec4(0,0, pass1[i-1]->viewPort.z, pass1[i-1]->viewPort.w));
 		//pass1[i - 1]->bind(pass1[i - 1]->viewPort / 2.f);
 		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 1]->texture[0] : pass1[i]->texture[0],			PREVIOS, "previos");
 		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 2]->texture[0] : pass0[i - 1]->texture[0], CURRENT, "current");

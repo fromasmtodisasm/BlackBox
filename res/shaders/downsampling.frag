@@ -56,17 +56,18 @@ vec4 downsample()
 	{
 		
 		//vec2 texel = 
-		vec2 texel = (TexCoords + offsets[i].xy + offset);//*texel_scale;
-		result += Sample(texel * viewPort) * offsets[i].z;
+		vec2 texel = (TexCoords*viewPort*0.5 + (offsets[i].xy + offset)*texel_scale);
+		//vec2 texel = TexCoords;
+		result += Sample(texel) * offsets[i].z;
 	}
 	return result;
 }
 
 void main()
 {    
-#if 1
+#if 0
 	vec4 result = vec4(0);
-	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+	vec2 tex_offset = 1.0 / textureSize(image, 0) * 2; // gets size of single texel
 
 	//return Sample(TexCoords);
 	for (int i = 0; i < 13; i++)
@@ -75,8 +76,8 @@ void main()
 		result += Sample((TexCoords + (offsets[i].xy + offset)*tex_offset)*viewPort) * offsets[i].z;
 	}
 	//return result;         
-	FragColor =  result;         
+	FragColor =  result + 6.0;
 #else
-	FragColor = downsample() + vec4(10, 0, 0,1);
+	FragColor = downsample();
 #endif
 }

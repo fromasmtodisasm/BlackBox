@@ -246,8 +246,18 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(sf::Event& event)
 {
+	if (event.key.control)
+	{
+		auto it = keyBind.find(event.key.code);
+		if (it != keyBind.end())
+		{
+			return handleCommand(it->second);
+		}
+	}
 	if (!isOpened)
+	{
 		return false;
+	}
 	std::vector<std::wstring> completion;
 	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
 	
@@ -262,6 +272,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
+	{
 		switch (event.key.code)
 		{
 		case sf::Keyboard::Tab:
@@ -352,6 +363,9 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		default:
 			return false;
 		}
+
+	}
+		
 	case sf::Event::TextEntered:
 	{
 		handleCommandTextEnter(event.text.unicode);
@@ -588,6 +602,13 @@ void CConsole::moveCursor(bool left)
 	}
 }
 
+void CConsole::initBind()
+{
+	keyBind[sf::Keyboard::R] = L"shader reload downsampling";
+	keyBind[sf::Keyboard::D] = L"r_displayinfo 0";
+	keyBind[sf::Keyboard::Q] = L"#Game:Stop()";
+}
+
 void CConsole::SetInputLine(const char* szLine)
 {
 	command = str_to_wstr(szLine);
@@ -729,6 +750,7 @@ bool CConsole::Init(ISystem* pSystem)
 	if (background != nullptr)
 		texture_path = background->GetString();
 	m_pBackGround->load(texture_path);
+	initBind();
 	return true;
 }
 
@@ -792,7 +814,7 @@ bool CConsole::handleCommand(std::wstring command)
 	//Execute as string
 	if (command[0] == '#' || command[0] == '@')
 	{
-		if (/*!con_restricted || */isOpened)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+		if (/*!con_restricted || *//*isOpened*/true)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 		{
 			auto str = wstr_to_str(command).c_str();
 			PrintLine(str);
