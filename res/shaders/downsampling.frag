@@ -56,7 +56,7 @@ vec4 downsample()
 	{
 		
 		//vec2 texel = 
-		vec2 texel = TexCoords + (offsets[i].xy + offset)*texel_scale;
+		vec2 texel = (TexCoords + offsets[i].xy + offset);//*texel_scale;
 		result += Sample(texel * viewPort) * offsets[i].z;
 	}
 	return result;
@@ -64,6 +64,7 @@ vec4 downsample()
 
 void main()
 {    
+#if 1
 	vec4 result = vec4(0);
 	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
 
@@ -74,5 +75,8 @@ void main()
 		result += Sample((TexCoords + (offsets[i].xy + offset)*tex_offset)*viewPort) * offsets[i].z;
 	}
 	//return result;         
-	FragColor = result;
+	FragColor =  result;         
+#else
+	FragColor = downsample() + vec4(10, 0, 0,1);
+#endif
 }
