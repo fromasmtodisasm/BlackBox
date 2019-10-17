@@ -248,6 +248,8 @@ void HdrTechnique::createShader()
 		},
 	};
 
+	desc[1].vs.macro["STORE_TEXCOORDS"] = 1;
+
 	MaterialManager::instance()->loadProgram(desc[0],false);
 	MaterialManager::instance()->loadProgram(desc[1],false);
 	MaterialManager::instance()->loadProgram(desc[2],false);
@@ -273,6 +275,11 @@ void HdrTechnique::createShader()
 	m_UpsampleShader = MaterialManager::instance()->getProgram(desc[3].name);
 
 	m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
+
+	const int MAX_CORNERS = 4;
+	glGenBuffers(1, &quadCornersVBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, quadCornersVBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(glm::vec2),	NULL, GL_DYNAMIC_DRAW);
 
 }
 
@@ -408,6 +415,17 @@ void HdrTechnique::downsamplingStandard()
 	}
 	pingpong = !horizontal;
 	m_DownsampleShader->unuse();
+
+#if 0
+	glBindBufferBase(GL_ARRAY_BUFFER, 2, quadCornersVBO);
+	glm::vec2 *buf = static_cast<glm::vec2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
+
+	for (int i = 0; i < 4; i++)
+	{
+		std::cout << "Corner " << i << buf[i].x << ", " << buf[i].y;
+	}
+#endif
+
 	GetISystem()->GetIRender()->SetState(IRender::State::DEPTH_TEST, true);
 }
 

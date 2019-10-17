@@ -3,9 +3,9 @@ layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec2 aTexCoords;
 
 #ifdef STORE_TEXCOORDS
-layout(binding = 0, std430) buffer myBuffer
+layout(binding = 2, std430) buffer myBuffer
 {
-    float nodes [];
+    vec2 quadCorners[];
 };
 #endif
 
@@ -20,6 +20,6 @@ void main()
     //TexCoords = (uv_transform * vec3(aTexCoords, 1.0)).xy;
     TexCoords = (uv_projection * vec4(aTexCoords, 1.0, 1.0)).xy;
 	#ifdef STORE_TEXCOORDS
-	nodes[gl_VertexID] = TexCoords;
+	quadCorners[gl_VertexID] = TexCoords;
 	#endif
 } 

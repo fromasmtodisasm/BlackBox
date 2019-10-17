@@ -21,8 +21,8 @@ public:
 	{
 		ProgramDesc pd = {
 			"screen_shader",
-			"skybox.vs",
-			"skybox.frag"
+			ShaderDesc("skybox.vs"),
+			ShaderDesc("skybox.frag")
 		};
 
 		MaterialManager::instance()->loadProgram(pd, false);

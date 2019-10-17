@@ -16,7 +16,7 @@ public:
 	CShaderProgram(ShaderInfo &vs, ShaderInfo &fs);
 	CShaderProgram(ShaderInfo &vs, ShaderInfo &fs, ShaderInfo &gs);
 	CShaderProgram(ShaderInfo &vs, ShaderInfo &fs, ShaderInfo &gs, ShaderInfo &cs);
-	CShaderProgram(std::string vs, std::string fs);
+	//CShaderProgram(std::string vs, std::string fs);
 	~CShaderProgram();
 	virtual void setup() override;
 };

@@ -4,6 +4,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/Render/ShaderUtils.hpp>
 
 #include <map>
 #include <string>
@@ -11,22 +12,6 @@
 
 extern Material *defaultMaterial;
 struct ISystem;
-
-struct ShaderDesc 
-{
-	std::string type;
-	std::string name;
-	ShaderDesc() {}
-	ShaderDesc(std::string type, std::string name) : type(type), name(name){}
-};
-struct ProgramDesc
-{
-	std::string name;
-	std::string vs;
-	std::string fs;
-	std::string gs;
-	std::string cs;
-};
 
 struct IMaterialShaderSink
 {

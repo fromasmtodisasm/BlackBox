@@ -264,19 +264,19 @@ bool MaterialManager::loadMaterial(XMLElement *material)
 bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 {
 	auto shader_it = shaders_map.find(desc.name);
-	bool load_vs = desc.vs.length() > 0;
-	bool load_fs = desc.fs.length() > 0;
-	bool load_gs = desc.gs.length() > 0;
-	bool load_cs = desc.cs.length() > 0;
+	bool load_vs = desc.vs.name.length() > 0;
+	bool load_fs = desc.fs.name.length() > 0;
+	bool load_gs = desc.gs.name.length() > 0;
+	bool load_cs = desc.cs.name.length() > 0;
 
 	bool is_compute = load_cs && !load_vs && !load_fs & !load_gs;
 
 	if (shader_it != shaders_map.end() && !isReload)
 		return true;
-	auto vs = !is_compute ? loadShader(ShaderDesc("vertex", desc.vs), isReload) : nullptr;
+	auto vs = !is_compute ? desc.vs.type = "vertex", loadShader(desc.vs, isReload) : nullptr;
 	if (vs == nullptr && !is_compute) return false;
 
-	auto fs = !is_compute ? loadShader(ShaderDesc("fragment", desc.fs), isReload) : nullptr;
+	auto fs = !is_compute ? desc.fs.type = "fragment", loadShader(desc.fs, isReload) : nullptr;
 	if (fs == nullptr && !is_compute) return false;
 
 	decltype(fs) gs;
@@ -284,12 +284,14 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 
 	if (load_gs)
 	{
-		gs = loadShader(ShaderDesc("geometry", desc.gs), isReload);
+		desc.gs.type = "geometry";
+		gs = loadShader(desc.gs, isReload);
 		if (gs == nullptr) return false;
 	}
 	if (load_cs)
 	{
-		cs = loadShader(ShaderDesc("compute", desc.cs), isReload);
+		desc.cs.type = "compute";
+		cs = loadShader(desc.cs, isReload);
 		if (cs == nullptr) return false;
 	}
 
@@ -307,21 +309,21 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 		ShaderProgramRef shaderProgram;
 		if (!is_compute)
 		{
-			vi = ShaderInfo(vs, desc.vs);
-			fi = ShaderInfo(fs, desc.fs);
+			vi = ShaderInfo(vs, desc.vs.name);
+			fi = ShaderInfo(fs, desc.fs.name);
 		}
 		if (load_cs && load_gs)
 		{
-			gi = ShaderInfo(gs, desc.gs);
-			ci = ShaderInfo(cs, desc.cs);
+			gi = ShaderInfo(gs, desc.gs.name);
+			ci = ShaderInfo(cs, desc.cs.name);
 		}
 		else if (load_cs && !load_gs)
 		{
-			ci = ShaderInfo(cs, desc.cs);
+			ci = ShaderInfo(cs, desc.cs.name);
 		}
 		if (!load_cs && load_gs)
 		{
-			gi = ShaderInfo(gs, desc.gs);
+			gi = ShaderInfo(gs, desc.gs.name);
 		}
 		shaderProgram  = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
 			
@@ -419,7 +421,7 @@ XMLElement *MaterialManager::saveTexture(XMLDocument &xmlDoc, Texture *texture)
 
 std::shared_ptr<CShader> MaterialManager::loadShader(ShaderDesc &sd, bool isReload)
 {
-  return ShaderManager::instance()->getShader(sd.name, sd.type, isReload);
+  return ShaderManager::instance()->getShader(sd, isReload);
 }
 
 XMLElement *MaterialManager::saveShader(XMLDocument &xmlDoc, CShader *shader)

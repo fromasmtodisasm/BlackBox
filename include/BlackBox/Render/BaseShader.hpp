@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/Render/ShaderUtils.hpp>
 #include <BlackBox/Render/Opengl.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <glm/fwd.hpp>
@@ -24,6 +25,7 @@ struct ShaderStatus
  ShaderStatus(CShader *shader);
  bool get(GLenum statusType);
 };
+
 
 struct ShaderProgramStatus
 {
@@ -54,7 +56,7 @@ public:
   };
   CShader(std::string text, CShader::type type);
   ~CShader();
-  static std::shared_ptr<CShader> load(std::string path, CShader::type type);
+  static std::shared_ptr<CShader> load(ShaderDesc& desc);
   static bool parseLine(std::ifstream &fin, std::string &buffer);
   static bool loadInternal(std::string &path, std::string& buffer);
   static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
@@ -386,5 +388,7 @@ private:
 	void reset(ShaderInfo src);
   const char* buildName(const char* format, va_list args);
 };
+
+CShader::type str2typ(std::string type);
 
 //typedef std::shared_ptr<CShader> std::shared_ptr<CShader>;

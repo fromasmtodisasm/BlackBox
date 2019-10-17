@@ -90,6 +90,9 @@ private:
 	int testid;
 	std::shared_ptr<SDispFormat> m_DispFormats;
 
+	GLuint quadCornersVBO;
+	glm::vec2 quadCorners;
+
 	// Inherited via ITechnique
 	virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;
 };

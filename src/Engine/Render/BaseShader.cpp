@@ -15,6 +15,20 @@ using namespace std;
 
 char* CBaseShaderProgram::buffer = nullptr;
 
+CShader::type str2typ(std::string type)
+{
+  if (type == "vertex")
+    return CShader::type::E_VERTEX;
+  else if (type == "fragment")
+    return CShader::type::E_FRAGMENT;
+  else if (type == "geometry")
+    return CShader::type::E_GEOMETRY;
+  else if (type == "compute")
+    return CShader::type::E_COMPUTE;
+  else
+    return CShader::type::E_UNKNOWN;
+}
+
 ShaderStatus::ShaderStatus(CShader *shader) :
   m_Shader(shader)
 {
@@ -84,12 +98,29 @@ bool CShader::create() {
 }
 
 
-std::shared_ptr<CShader> CShader::load(string path, CShader::type type) {
+std::shared_ptr<CShader> CShader::load(ShaderDesc& desc) {
   string text;
 
+	auto path = ShaderDesc::root + desc.name;
 	if (!loadInternal(path, text)) return nullptr;
 
-  auto shader = std::make_shared<CShader>(text, type);
+	if (desc.macro.size() > 0)
+	{
+		auto pos = text.find("#version");
+		if (pos != std::string::npos)
+		{
+			auto end = text.find_first_of('\n', pos + 1);
+			std::string defines;
+			for (auto& define : desc.macro)
+			{
+				defines = "#define " + define.first + " " + define.second + "\n";
+			}
+			text.insert(end + 1, defines);
+			std::cout << text << endl;
+		}
+	}
+
+  auto shader = std::make_shared<CShader>(text, str2typ(desc.type));
   if (!shader->create())
     return nullptr;
   shader->compile();
