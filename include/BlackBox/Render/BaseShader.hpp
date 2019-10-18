@@ -11,6 +11,7 @@
 class CShader; 
 class CBaseShaderProgram;
 class CShaderProgram;
+struct ICVar;
 
 using BaseShaderProgramRef = std::shared_ptr<CBaseShaderProgram>;
 using ShaderProgramRef = std::shared_ptr<CShaderProgram>;
@@ -338,6 +339,7 @@ public:
   std::map<std::string, GLint> m_Cache;
   static char* buffer;
 	std::string name;
+	static ICVar* print_loc_name;
 
   bool status();
 public:

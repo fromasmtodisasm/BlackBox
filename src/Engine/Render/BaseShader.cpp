@@ -3,6 +3,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/OpenglDebug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #include <fstream>
 #include <string>
@@ -451,7 +452,9 @@ void CBaseShaderProgram::setUniformValue(glm::vec2 value, const char * format, .
 
   GLint loc = getUniformLocation(name);
   if (loc != -1){
-        glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
+		glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
+		if (print_loc_name->GetIVal())
+			std::cout << name << std::endl;
   }
 }
 

@@ -56,7 +56,7 @@ vec4 downsample()
 	{
 		
 		//vec2 texel = 
-		vec2 texel = (TexCoords*viewPort*0.5 + (offsets[i].xy + offset)*texel_scale);
+		vec2 texel = (TexCoords*viewPort + (offsets[i].xy + offset)*texel_scale);
 		//vec2 texel = TexCoords;
 		result += Sample(texel) * offsets[i].z;
 	}

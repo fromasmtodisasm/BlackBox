@@ -403,7 +403,9 @@ void HdrTechnique::downsamplingStandard()
 	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		pass0[i + 1]->bind({ 0,0, (w / hdr_w) * pass0[i + 1]->viewPort.z, (h / hdr_h) * pass0[i + 1]->viewPort.w });
+		//pass0[i + 1]->bind({ 0,0, (w / hdr_w) * pass0[i + 1]->viewPort.z, (h / hdr_h) * pass0[i + 1]->viewPort.w });
+		pass0[i + 1]->bind({ 0,0, w / (1 << (i + 1)), h / (1 << (i + 1)) });
+
 		//pass0[i + 1]->bind({ 0,0, pass0[i + 1]->viewPort.z,pass0[i + 1]->viewPort.w });
 		//pass0[i + 1]->bind(pass0[i + 1]->viewPort / 2.f);
 		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
