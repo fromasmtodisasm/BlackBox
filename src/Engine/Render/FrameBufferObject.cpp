@@ -34,7 +34,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 	{
 		if (nColors > 1)
 			return nullptr;
-		mip_cnt = std::log2(std::max(width, height));
+		mip_cnt = static_cast<int>(std::log2(std::max(width, height)));
 	}
 
 
