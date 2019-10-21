@@ -99,7 +99,7 @@ struct CommandDesc
 	{
 
 	}
-	int argsCount()
+	auto argsCount()
 	{
 		return args.size();
 	}
