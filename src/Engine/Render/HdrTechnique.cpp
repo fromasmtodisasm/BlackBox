@@ -385,8 +385,6 @@ void HdrTechnique::downsamplingStandard()
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
 	m_DownsampleShader->use();
-  m_DownsampleShader->setUniformValue(useBoxFilter->GetIVal(), "use_box_filter");
-  m_DownsampleShader->setUniformValue(defaultFilter->GetIVal(), "default_filter");
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
 
 	glCheck(glDisable(GL_DEPTH_TEST));
@@ -396,10 +394,11 @@ void HdrTechnique::downsamplingStandard()
 		amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
 
 		
-		auto w = cam_width->GetIVal();
-		auto h = cam_height->GetIVal();
-		auto hdr_w = hdrBuffer->viewPort.z;
-		auto hdr_h = hdrBuffer->viewPort.w;
+	auto w = cam_width->GetIVal();
+	auto h = cam_height->GetIVal();
+	auto hdr_w = hdrBuffer->viewPort.z;
+	auto hdr_h = hdrBuffer->viewPort.w;
+
 	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
