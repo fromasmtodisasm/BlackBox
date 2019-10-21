@@ -249,7 +249,7 @@ void CRender::DrawFullScreenImage(int texture_id)
 	auto
 		width = GetWidth(),
 		height = GetHeight();
-	gl::BindFrameBuffer(0);
+	gl::BindFramebuffer(0);
 	SetViewport(0, 0, width, height);
 	m_ScreenShader->use();
 	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -291,7 +291,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	float
 		width = GetWidth(),
 		height = GetHeight();
-	gl::BindFrameBuffer(0);
+	gl::BindFramebuffer(0);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -230,7 +230,7 @@ namespace gl {
 	}
 
 	// Framebuffer
-	inline void BindFrameBuffer(GLuint id)
+	inline void BindFramebuffer(GLuint id)
 	{
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
 	}
@@ -258,6 +258,11 @@ namespace gl {
 	inline void BindTexture2D(GLuint texture)
 	{
 		glBindTexture(GL_TEXTURE_2D, texture);
+	}
+
+	inline void ActiveTexture(GLenum texture)
+	{
+		glCheck(glActiveTexture(texture));
 	}
 
 	// VAO

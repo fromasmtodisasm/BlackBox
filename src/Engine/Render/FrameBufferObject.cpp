@@ -76,7 +76,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     break;
   }
 
-	gl::BindFrameBuffer(fbo->id);
+	gl::BindFramebuffer(fbo->id);
 	
 	{
 		for (int i = 0; i < texCnt; i++)
@@ -141,7 +141,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 		assert(0);
     status = false;
   }
-	gl::BindFrameBuffer(0);
+	gl::BindFramebuffer(0);
 
   return fbo;
 }
@@ -165,19 +165,19 @@ void FrameBufferObject::bind()
 
 void FrameBufferObject::bind(glm::vec4 viewPort)
 {
-  gl::BindFrameBuffer(id);
+  gl::BindFramebuffer(id);
 	gl::ViewPort(viewPort);
 }
 
 void FrameBufferObject::bindDefault(glm::vec4 viewPort)
 {
-  gl::BindFrameBuffer(0);
+  gl::BindFramebuffer(0);
 	gl::ViewPort(viewPort);
 }
 
 void FrameBufferObject::unbind()
 {
-  gl::BindFrameBuffer(0);
+  gl::BindFramebuffer(0);
 }
 
 ITexture* FrameBufferObject::getTexture()

@@ -17,7 +17,7 @@ HdrTechnique::HdrTechnique()
 	:
 	shadowMapping(nullptr),
 
-  hdrBuffer(nullptr),
+  m_HdrBuffer(nullptr),
   m_Scene(nullptr),
 
 	exposure(nullptr),
@@ -64,7 +64,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 	glGenQueries(3, timer_queries);
 
   inited = true;
-  return shadowMapping->Init(pScene, hdrBuffer);
+  return shadowMapping->Init(pScene, m_HdrBuffer);
 }
 
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
@@ -79,12 +79,12 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 	}
 	else
 		resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
-	hdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
-	debuger::frame_buffer_label(hdrBuffer->id, "hdrBuffer");
+	m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
+	debuger::frame_buffer_label(m_HdrBuffer->id, "hdrBuffer");
 
 	auto mip_cnt = getMips(resolution);
-	pass0.resize(mip_cnt);
-	pass1.resize(mip_cnt);
+	m_DownsampleBuffer.resize(mip_cnt);
+	m_UpsampleBuffer.resize(mip_cnt);
 
 	auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*> &chain) {
 		for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
@@ -99,8 +99,8 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 		}
 	};
 
-	create_mip_chain(pass0);
-	create_mip_chain(pass1);
+	create_mip_chain(m_DownsampleBuffer);
+	create_mip_chain(m_UpsampleBuffer);
 
 	auto label_buffer = [](std::vector<FrameBufferObject*>& fb, std::string base) {
 		int i = 0;
@@ -111,29 +111,29 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 		}
 	};
 
-	label_buffer(pass0, "pass0_");
-	label_buffer(pass1, "pass1_");
+	label_buffer(m_DownsampleBuffer, "pass0_");
+	label_buffer(m_UpsampleBuffer, "pass1_");
 }
 
 void HdrTechnique::DeleteFrameBuffers()
 {
-	SAFE_RELEASE(hdrBuffer);
-	if (pass0.size() > 0)
+	SAFE_RELEASE(m_HdrBuffer);
+	if (m_DownsampleBuffer.size() > 0)
 	{
-		for (auto& buf : pass0)
+		for (auto& buf : m_DownsampleBuffer)
 		{
 			SAFE_RELEASE(buf);
 		}
 	}
-	if (pass0.size() > 0)
+	if (m_DownsampleBuffer.size() > 0)
 	{
-		for (auto& buf : pass0)
+		for (auto& buf : m_DownsampleBuffer)
 		{
 			SAFE_RELEASE(buf);
 		}
 	}
-	pass0.erase(pass0.begin(), pass0.end());
-	pass1.erase(pass1.begin(), pass1.end());
+	m_DownsampleBuffer.erase(m_DownsampleBuffer.begin(), m_DownsampleBuffer.end());
+	m_UpsampleBuffer.erase(m_UpsampleBuffer.begin(), m_UpsampleBuffer.end());
 }
 
 bool HdrTechnique::OnRenderPass(int pass)
@@ -318,7 +318,7 @@ void HdrTechnique::initTest()
 
 int HdrTechnique::getMips(glm::vec2 resolution)
 {
-	//return std::log2(std::max(pass0[0]->viewPort.z, pass0[0]->viewPort.w)) + 1;
+	//return std::log2(std::max(m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w)) + 1;
 	return 6;
 }
 
@@ -358,7 +358,7 @@ void HdrTechnique::SetMode(int n)
 {
 	DeleteFrameBuffers();
 	CreateFrameBuffers(&m_DispFormats.get()[n]);
-	shadowMapping->SetRenderTarget(hdrBuffer);
+	shadowMapping->SetRenderTarget(m_HdrBuffer);
 }
 
 bool HdrTechnique::PreRenderPass()
@@ -388,23 +388,20 @@ void HdrTechnique::downsamplingStandard()
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
 
 	render->SetState(IRender::State::DEPTH_TEST, false);
-	if (useBoxFilter->GetIVal())
-		amount = 1;
-	else
-		amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
+	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
 		
 	auto w = cam_width->GetIVal();
 	auto h = cam_height->GetIVal();
-	auto hdr_w = hdrBuffer->viewPort.z;
-	auto hdr_h = hdrBuffer->viewPort.w;
+	auto hdr_w = m_HdrBuffer->viewPort.z;
+	auto hdr_h = m_HdrBuffer->viewPort.w;
 
 	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		pass0[i + 1]->bind({ 0,0, w / (1 << (i + 1)), h / (1 << (i + 1)) });
+		m_DownsampleBuffer[i + 1]->bind({ 0,0, w / (1 << (i + 1)), h / (1 << (i + 1)) });
 
-		m_DownsampleShader->bindTextureUnit2D(first_iteration ? hdrBuffer->texture[1] : pass0[i]->texture[0], IMAGE);
+		m_DownsampleShader->bindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
 		if (first_iteration)
@@ -431,12 +428,12 @@ void HdrTechnique::downsamplingCompute()
 	m_DownsampleComputeShader->use();
 	{
 		unsigned int image_unit = 2;
-		m_DownsampleComputeShader->bindTexture2D(hdrBuffer->texture[1], image_unit, "inputImg1");
+		m_DownsampleComputeShader->bindTexture2D(m_HdrBuffer->texture[1], image_unit, "inputImg1");
 	}
 
 	{
 		unsigned int image_unit = 3;
-		glBindImageTexture(image_unit, pass1[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		glBindImageTexture(image_unit, m_UpsampleBuffer[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
 		m_DownsampleComputeShader->setUniformValue(3, "inputImg2");
 	}
 
@@ -456,19 +453,16 @@ void HdrTechnique::upsampling()
 
 		auto w = (float)cam_width->GetIVal();
 		auto h = (float)cam_height->GetIVal();
-		auto hdr_w = hdrBuffer->viewPort.z;
-		auto hdr_h = hdrBuffer->viewPort.w;
+		auto hdr_w = m_HdrBuffer->viewPort.z;
+		auto hdr_h = m_HdrBuffer->viewPort.w;
 	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
 
-	amount = getMips({ pass0[0]->viewPort.z, pass0[0]->viewPort.w });
+	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-
-		pass1[i - 1]->bind(glm::vec4(0,0, (w / hdr_w) * pass1[i-1]->viewPort.z, (h / hdr_h) * pass1[i-1]->viewPort.w));
-		//pass1[i - 1]->bind(glm::vec4(0,0, pass1[i-1]->viewPort.z, pass1[i-1]->viewPort.w));
-		//pass1[i - 1]->bind(pass1[i - 1]->viewPort / 2.f);
-		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 1]->texture[0] : pass1[i]->texture[0],			PREVIOS, "previos");
-		m_UpsampleShader->bindTexture2D(first_iteration ? pass0[amount - 2]->texture[0] : pass0[i - 1]->texture[0], CURRENT, "current");
+		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z, (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w));
+		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
+		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
 		m_ScreenQuad.draw();
 		if (first_iteration)
 			first_iteration = false;
@@ -483,7 +477,7 @@ void HdrTechnique::Do(unsigned int texture)
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal());
-	//FrameBufferObject::bindDefault(hdrBuffer->viewPort);
+	//FrameBufferObject::bindDefault(m_HdrBuffer->viewPort);
 	FrameBufferObject::bindDefault({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	
 	m_ScreenShader->use();
@@ -491,13 +485,13 @@ void HdrTechnique::Do(unsigned int texture)
   m_ScreenShader->setUniformValue(bloom_exposure->GetFVal(), "bloom_exposure");
 	render->SetState(IRender::State::DEPTH_TEST, false);
 
-	m_ScreenShader->bindTexture2D(hdrBuffer->texture[0], 0, "scene");
-	m_ScreenShader->bindTexture2D(pass1[0]->texture[0], 1, "bloomBlur");
+	m_ScreenShader->bindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
+	m_ScreenShader->bindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->setUniformValue(bloom->GetIVal(), "bloom");
 	auto w = cam_width->GetIVal();
 	auto h = cam_height->GetIVal();
-	auto hdr_w = hdrBuffer->viewPort.z;
-	auto hdr_h = hdrBuffer->viewPort.w;
+	auto hdr_w = m_HdrBuffer->viewPort.z;
+	auto hdr_h = m_HdrBuffer->viewPort.w;
 	m_ScreenShader->setUniformValue(glm::ivec4(0,0, w, h), "viewPorti");
 	m_ScreenShader->setUniformValue(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
 

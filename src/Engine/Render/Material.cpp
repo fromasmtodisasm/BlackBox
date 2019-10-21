@@ -101,7 +101,7 @@ void Material::prevDiffuse()
 
 void Material::activeTexture(const char *uniform, BaseTexture* texture)
 {
-	glCheck(glActiveTexture(GL_TEXTURE0 + texture->unit));
+	gl::ActiveTexture(GL_TEXTURE0 + texture->unit);
 	texture->bind();
   //glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
 	program->setUniformValue(texture->unit, uniform);

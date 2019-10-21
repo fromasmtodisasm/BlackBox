@@ -123,7 +123,7 @@ void Drawer2D::drawString(const char* str, float x, float y, const Utils::Color&
 
 	glCheck(glUseProgram(m_id_prog_font));
 
-	glCheck(glActiveTexture(GL_TEXTURE0));
+	gl::ActiveTexture(GL_TEXTURE0);
 	gl::BindTexture2D(m_id_tex_font);
 
 	glCheck(glUniform1i(m_id_uniform_tex_font, 0));

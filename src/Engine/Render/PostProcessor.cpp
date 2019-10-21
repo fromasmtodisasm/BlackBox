@@ -22,10 +22,10 @@ PostProcessor::~PostProcessor()
 
 void PostProcessor::Do(unsigned int texture)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gl::BindFramebuffer(0);
 	m_ScreenShader->use();
-	glDisable(GL_DEPTH_TEST);
-	glActiveTexture(GL_TEXTURE0);
+	gl::Disable(GL_DEPTH_TEST);
+	gl::ActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	m_ScreenQuad.draw();;
 }
