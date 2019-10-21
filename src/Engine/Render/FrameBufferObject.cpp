@@ -98,7 +98,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 				}
 
 				if (type != DEPTH_BUFFER)
-					gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
+					gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0);
 
 			}
 		}
