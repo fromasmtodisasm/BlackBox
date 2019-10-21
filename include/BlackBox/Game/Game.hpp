@@ -107,7 +107,7 @@ private:
     FLY,
 		EDIT
     
-  }m_Mode = FPS;
+  }m_Mode = Mode::FPS;
   std::stack<GameState*> states;
 	float fps = 0.0;
 

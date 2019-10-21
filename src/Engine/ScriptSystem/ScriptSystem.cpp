@@ -120,7 +120,7 @@ bool CScriptSystem::GetGlobalValue(const char* sKey, int& nVal)
 	if (lua_isinteger(L, -1))
 	{
 		result = true;
-		nVal = lua_tointeger(L, -1);
+		nVal = static_cast<int>(lua_tointeger(L, -1));
 	}
 	return result;
 }
@@ -132,7 +132,7 @@ bool CScriptSystem::GetGlobalValue(const char* sKey, float& fVal)
 	if (lua_isnumber(L, -1))
 	{
 		result = true;
-		fVal = lua_tonumber(L, -1);
+		fVal = static_cast<float>(lua_tonumber(L, -1));
 	}
 	return result;
 }

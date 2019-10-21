@@ -948,6 +948,6 @@ PointObject::~PointObject()
 void PointObject::draw()
 {
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_POINTS, 0, point_cnt);
+	glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(point_cnt));
 	glBindVertexArray(0);
 }
