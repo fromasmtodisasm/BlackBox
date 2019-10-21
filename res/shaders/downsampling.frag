@@ -66,10 +66,10 @@ vec4 downsample(vec2 uv)
 	vec4 result = vec4(0);
 	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
 
-	//return Sample(TexCoords);
 	for (int i = 0; i < 13; i++)
 	{
-		result += Sample(vec2(vx,vy) * (uv + (offsets[i].xy + offset) * tex_offset)) * offsets[i].z;
+		vec2 texel = clamp((vec2(vx,vy) * (uv + (offsets[i].xy + offset) * tex_offset)), vec2(0), vec2(vx,vy));
+		result += Sample(texel) * offsets[i].z;
 	}
 	return result;
 }

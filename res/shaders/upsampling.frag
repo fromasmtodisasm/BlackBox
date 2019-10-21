@@ -26,11 +26,8 @@ vec4 blur(vec2 uv)
 	{
 		for (int j = -1, index = (i+1)*(j+1) + j + 1; j <= 1; j++)
 		{
-			//vec2 texel = vec2(vx,vy) * (0.5 * gl_FragCoord.xy + vec2(j, i)) / vec2(textureSize(previos, 0));
-			//vec2 texel = (gl_FragCoord.xy*0.5) / vec2(textureSize(previos, 0) + vec2(j, i)*tex_offset)*vec2(vx,vy);
-			//result += vec4(texture(previos, clamp((texel), vec2(0), vec2(1))).rgb * weight[index], 1);  
-			//result += vec4(texture(previos, clamp((texel), vec2(0), vec2(1))).rgb * weight[index], 1);  
-			result += vec4(texture(previos, uv + vec2(j, i)*tex_offset).rgb * weight[index], 1);  
+			vec2 texel = clamp((uv + vec2(j, i)*tex_offset), vec2(0), vec2(vx,vy));
+			result += vec4(texture(previos, texel).rgb * weight[index], 1);  
 		}
 	}
 	return result / 16.0;
@@ -46,6 +43,6 @@ void main()
 	else 
 	{
 		vec2 uv = 0.5 * vec2(vx,vy) * gl_FragCoord.xy / vec2(textureSize(previos, 0));
-		FragColor = texture(current, clamp(texel, vec2(0), vec2(1))) + (blurOn ? blur(uv) : vec4(0));
+		FragColor = texture(current, clamp(texel, vec2(0), vec2(vx,vy))) + (blurOn ? blur(uv) : vec4(0));
 	}
 }
