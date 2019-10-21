@@ -387,7 +387,7 @@ void HdrTechnique::downsamplingStandard()
 	m_DownsampleShader->use();
   m_DownsampleShader->setUniformValue(offset->GetFVal(), "offset");
 
-	glCheck(glDisable(GL_DEPTH_TEST));
+	render->SetState(IRender::State::DEPTH_TEST, false);
 	if (useBoxFilter->GetIVal())
 		amount = 1;
 	else

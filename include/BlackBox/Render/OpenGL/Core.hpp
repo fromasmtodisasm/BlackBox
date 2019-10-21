@@ -219,8 +219,12 @@ namespace gl {
 	{
 		glCheck(glDisable(cap));
 	}
+	inline void CullFace(GLenum mode)
+	{
+		glCheck(glCullFace(mode));
+	}
 
-	inline void ViewPort(Vec4 viewPort)
+	inline void ViewPort(Vec4 &viewPort)
 	{
 		glCheck(glViewport(static_cast<GLint>(viewPort.x), static_cast<GLint>(viewPort.y), static_cast<GLint>(viewPort.z), static_cast<GLint>(viewPort.w)));
 	}
