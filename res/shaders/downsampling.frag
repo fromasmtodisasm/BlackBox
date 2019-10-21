@@ -69,13 +69,13 @@ vec4 downsample(vec2 uv)
 	//return Sample(TexCoords);
 	for (int i = 0; i < 13; i++)
 	{
-		result += Sample(uv + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
+		result += Sample(vec2(vx,vy) * (uv + (offsets[i].xy + offset) * tex_offset)) * offsets[i].z;
 	}
 	return result;
 }
 
 void main()
 {    
-	vec2 uv = 2 * vec2(vx,vy) * gl_FragCoord.xy / vec2(textureSize(image, 0));
+	vec2 uv = 2 * gl_FragCoord.xy / vec2(textureSize(image, 0));
 	FragColor = downsample(uv);
 }
