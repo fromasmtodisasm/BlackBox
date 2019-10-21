@@ -1,7 +1,7 @@
 #pragma once
 #ifdef GUI
 #include <BlackBox/Game/Game.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 
 // Std inc
 #include <vector>

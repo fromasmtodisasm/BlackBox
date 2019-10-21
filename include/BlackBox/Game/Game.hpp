@@ -3,7 +3,7 @@
 #include <BlackBox/ISystem.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/Window.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
