@@ -290,6 +290,7 @@ void HdrTechnique::initConsoleVariables()
   bloom =						CREATE_CONSOLE_VAR("bloom", 1, 0, "Enable/disable HDR");
   bloomThreshold =	CREATE_CONSOLE_VAR("bt", 2.0f, 0, "Bloom threshold");
   blurOn =					CREATE_CONSOLE_VAR("blur", 1, 0, "Enable/disable blur for bloom");
+  blurOnly =				CREATE_CONSOLE_VAR("blur_only", 0, 0, "Enable/disable blur for bloom");
   bloom_exposure =	CREATE_CONSOLE_VAR("bexp", 0.007f, 0, "Enable/disable blur for bloom");
   bloomTime =				CREATE_CONSOLE_VAR("bloomtime", 0.f, 0, "Time of bloom");
   upsampleTime =		CREATE_CONSOLE_VAR("uptime", 0.f, 0, "Time of bloom");
@@ -318,8 +319,8 @@ void HdrTechnique::initTest()
 
 int HdrTechnique::getMips(glm::vec2 resolution)
 {
-	//return std::log2(std::max(m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w)) + 1;
-	return 6;
+	return std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1;
+	//return 6;
 }
 
 void HdrTechnique::CreateCommands()
@@ -446,6 +447,7 @@ void HdrTechnique::upsampling()
 {
 	m_UpsampleShader->use();
 	m_UpsampleShader->setUniformValue(blurOn->GetIVal(), "blurOn");
+	m_UpsampleShader->setUniformValue(blurOnly->GetIVal(), "blurOnly");
 	
 	uint32_t amount;
 	bool first_iteration = true;

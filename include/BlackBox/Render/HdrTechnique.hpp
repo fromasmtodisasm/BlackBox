@@ -66,6 +66,7 @@ private:
 	ICVar* bloom;
 	ICVar* bloomThreshold;
 	ICVar* blurOn;
+	ICVar* blurOnly;
 	ICVar* useBoxFilter;
 	ICVar* defaultFilter;
 	ICVar* bloom_exposure;

@@ -1,4 +1,5 @@
 #version 450 core
+//layout (pixel_center_integer) in vec4 gl_FragCoord;
 
 #define OFFSET vec2(0,0)
 
@@ -10,8 +11,8 @@ uniform sampler2D image;
 
 uniform bool horizontal;
 uniform float weight[2] = float[](0.125, 0.5);
-uniform float offset = -3.5;
-uniform vec2 viewPort = vec2(1, 1);
+uniform float offset = -3.0;
+uniform vec2 viewPort;
 
 // Todo: specify calculation of offset for box filter
 vec3 offsets[13] = vec3[](
@@ -56,7 +57,8 @@ vec4 downsample()
 	{
 		
 		//vec2 texel = 
-		vec2 texel = (TexCoords*viewPort + (offsets[i].xy + offset)*texel_scale);
+		//vec2 texel = ((gl_FragCoord.xy * 2 + offsets[i].xy + offset) / textureSize(image, 0)) * viewPort;
+		vec2 texel = (gl_FragCoord.xy + offsets[i].xy + offset)*2 / vec2(textureSize(image, 0));
 		//vec2 texel = TexCoords;
 		result += Sample(texel) * offsets[i].z;
 	}
