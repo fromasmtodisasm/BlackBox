@@ -3,7 +3,7 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Hole_array.h>
 #include <BlackBox/Profiler/thread.h>
 #include <BlackBox/Profiler/Utils.h>

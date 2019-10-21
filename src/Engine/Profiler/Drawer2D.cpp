@@ -1,6 +1,6 @@
 // drawer2D.cpp
 
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Utils.h>
 #include <BlackBox/Profiler/Tgaloader.h>

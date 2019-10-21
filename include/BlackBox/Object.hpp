@@ -5,7 +5,7 @@
 #include <BlackBox/IDrawable.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Material.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 
 #include <glm/glm.hpp>

@@ -2,7 +2,7 @@
 #include <BlackBox/ObjLoader.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Renderer.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/IGame.hpp>
 

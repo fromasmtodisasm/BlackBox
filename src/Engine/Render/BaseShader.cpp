@@ -1,7 +1,7 @@
 #include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/IConsole.hpp>
 

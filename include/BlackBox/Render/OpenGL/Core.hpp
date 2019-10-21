@@ -13,6 +13,6 @@
 #endif
 #endif
 
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 
 bool OpenGLLoader();

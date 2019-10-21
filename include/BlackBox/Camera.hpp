@@ -5,7 +5,7 @@
 #include <iostream>
 
 // GL Includes
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <BlackBox/Object.hpp>

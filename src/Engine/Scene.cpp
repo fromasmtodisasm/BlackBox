@@ -7,7 +7,7 @@
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
