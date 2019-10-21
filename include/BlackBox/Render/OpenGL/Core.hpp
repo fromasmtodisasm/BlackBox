@@ -246,4 +246,14 @@ namespace gl {
 		glBindTexture(GL_TEXTURE_2D, texture);
 	}
 
+	// VAO
+	inline void EnableVertexAttribArray(GLuint index)
+	{
+		glCheck(glEnableVertexAttribArray(index));
+	}
+	inline void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer)
+	{
+		glCheck(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
+	}
+
 }
