@@ -76,19 +76,19 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     break;
   }
 
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fbo->id));
+	gl::BindFrameBuffer(fbo->id);
 	
 	{
 		for (int i = 0; i < texCnt; i++)
 		{
 			for (int j = 0, mw = width, mh = height; j < mip_cnt; j++)
 			{
-				glBindTexture(GL_TEXTURE_2D, fbo->texture[i]);
+				gl::BindTexture2D(fbo->texture[i]);
 				glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mw, mh, 0, Format, dataType, NULL));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
+				gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
+				gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag);
+				gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+				gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
 				float b[] = { 0,0,0,1 };
 				glCheck(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, b));
 				if (createMipChain)
@@ -98,7 +98,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 				}
 
 				if (type != DEPTH_BUFFER)
-					glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
+					gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
 
 			}
 		}
@@ -141,16 +141,16 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 		assert(0);
     status = false;
   }
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	gl::BindFrameBuffer(0);
 
   return fbo;
 }
 
-void FrameBufferObject::clear(Color &color)
+void FrameBufferObject::clear(gl::Color &color)
 {
-	glCheck(glClearColor(EXTRACT_COLOR(color)));
+	gl::ClearColor(color);
 	glCheck(glClearDepthf(1.f));
-	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void FrameBufferObject::clear()
@@ -165,19 +165,19 @@ void FrameBufferObject::bind()
 
 void FrameBufferObject::bind(glm::vec4 viewPort)
 {
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
-	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
+  gl::BindFrameBuffer(id);
+	gl::ViewPort(viewPort);
 }
 
 void FrameBufferObject::bindDefault(glm::vec4 viewPort)
 {
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
+  gl::BindFrameBuffer(0);
+	gl::ViewPort(viewPort);
 }
 
 void FrameBufferObject::unbind()
 {
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+  gl::BindFrameBuffer(0);
 }
 
 ITexture* FrameBufferObject::getTexture()
