@@ -300,19 +300,10 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 
 	glm::mat4 model(1.0);
 	auto uv_projection = glm::mat4(1.0);
-	glm::mat4 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f, -1.0f, 1000.0f);
+	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1000.0f);
 
-	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.f));
-	//model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.f));
 	model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.f));
-	model = glm::scale(model, {scaleImageX->GetFVal() * w, scaleImageY->GetFVal() * h, 1.f });
-	if (needTranslate->GetIVal())
-		model = glm::translate(model, 
-			glm::vec3(
-			((2 * translateImageX->GetFVal() + xpos) + (float)GetWidth()) / (float)GetWidth(), 
-			((2 * translateImageY->GetFVal() + ypos) + (float)GetHeight()) / (float)GetHeight(), 
-			0.f)
-		); 
+	model = glm::scale(model, {w, h, 1.f });
 
   if (needFlipY->GetIVal() == 1)
   {

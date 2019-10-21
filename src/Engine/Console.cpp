@@ -157,7 +157,7 @@ void CConsole::Draw()
 	size_t end;
 	auto prompt = getPrompt();
 	time += GetISystem()->GetIGame()->getDeltaTime();
-	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
+	render->DrawImage(0.f, 0.f, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
@@ -259,7 +259,6 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		return false;
 	}
 	std::vector<std::wstring> completion;
-	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
 	
 	if (cmd_is_compete)
 	{
@@ -422,7 +421,6 @@ bool CConsole::handleEnterText()
 	}
 	cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
 	cmd_buffer.push_back(cmd);
-	//m_World->getActiveScene()->setPostProcessor(nullptr);
 	history_line = cmd_buffer.size();
 	return handleCommand(command);
 }
@@ -545,22 +543,6 @@ void CConsole::getBuffer()
 bool CConsole::needShowCursor()
 {
 	float dt = GetISystem()->GetIGame()->getDeltaTime();
-	/*
-	if (cursor_tick_tack)
-		cursor_tick += dt;
-	else
-		cursor_tack += dt;
-	if (cursor_tick - cursor_tack >= 0.9f)
-	{
-		cursor_tack = cursor_tick;
-		cursor_tick_tack = false;
-	}
-	else
-	{
-		cursor_tick = cursor_tack;
-		cursor_tick_tack = true;
-	}
-	*/	
 
 	blinking += dt;
 
@@ -644,22 +626,7 @@ void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint
 {
 	CommandInfo cmdInfo;
 	cmdInfo.Script.code = sScriptFunc;
-	/*
-	std::vector<int> positions;
-	for (const char* pos = sScriptFunc; (pos = std::strchr(sScriptFunc + (pos - sScriptFunc), '%')) != NULL; pos++)
-	{
-		positions.push_back(pos - sScriptFunc);
-	}
-	cmdInfo.Script.arg_cnt = positions.size();
-	if (cmdInfo.Script.arg_cnt > 0)
-	{
-		cmdInfo.Script.args_pos = new int[cmdInfo.Script.arg_cnt];
-		for (int i = 0; i < cmdInfo.Script.arg_cnt; i++)
-		{
-			cmdInfo.Script.args_pos[i] = positions[i];
-		}
-	}
-	*/
+	
 	if (help) cmdInfo.help = help;
 	cmdInfo.type = CommandInfo::Type::SCRIPT;
 	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
@@ -814,7 +781,7 @@ bool CConsole::handleCommand(std::wstring command)
 	//Execute as string
 	if (command[0] == '#' || command[0] == '@')
 	{
-		if (/*!con_restricted || *//*isOpened*/true)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+		if (!isOpened)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 		{
 			auto str = wstr_to_str(command).c_str();
 			PrintLine(str);
