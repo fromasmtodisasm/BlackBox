@@ -6,6 +6,8 @@
 #include <varargs.h>
 #include <Utils.hpp>
 
+#define strdup _strdup
+
 class NullLog : public ILog
 {
 public:
@@ -55,7 +57,7 @@ void NullLog::AddLog(const char* fmt, ...)
 {
   if (inited)
   {
-    int old_size = log.size();
+    auto old_size = log.size();
     va_list args;
     va_start(args, fmt);
     vsprintf(buf, fmt, args);

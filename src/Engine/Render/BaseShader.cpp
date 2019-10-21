@@ -213,6 +213,8 @@ string CShader::typeToStr()
     return "geometry";
   case E_COMPUTE:
     return "compute";
+	default:
+    return "unknown";
   }
 }
 

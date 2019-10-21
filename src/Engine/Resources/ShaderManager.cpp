@@ -56,6 +56,7 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   {
     GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
+    return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
   }
 
@@ -78,6 +79,7 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   {
     GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
+    return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);
   }
 

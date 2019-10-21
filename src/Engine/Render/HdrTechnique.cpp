@@ -320,7 +320,7 @@ void HdrTechnique::initTest()
 
 int HdrTechnique::getMips(glm::vec2 resolution)
 {
-	return std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1;
+	return static_cast<int>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1);
 	//return 6;
 }
 

@@ -11,7 +11,7 @@
 bool MyExec(char* FileName, LPSTR cmd, HANDLE *handle)
 {
 
-	DWORD res;
+	//DWORD res;
 	STARTUPINFO         si;
 	PROCESS_INFORMATION pi;
 	memset(&si, 0, sizeof(STARTUPINFO));
