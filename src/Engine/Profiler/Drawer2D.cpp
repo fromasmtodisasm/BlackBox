@@ -124,7 +124,7 @@ void Drawer2D::drawString(const char* str, float x, float y, const Utils::Color&
 	glCheck(glUseProgram(m_id_prog_font));
 
 	glCheck(glActiveTexture(GL_TEXTURE0));
-	glCheck(glBindTexture(GL_TEXTURE_2D, m_id_tex_font));
+	gl::BindTexture2D(m_id_tex_font);
 
 	glCheck(glUniform1i(m_id_uniform_tex_font, 0));
 	glCheck(glUniform3f(m_id_uniform_font_color,
@@ -177,8 +177,8 @@ void Drawer2D::drawString(const char* str, float x, float y, const Utils::Color&
 
 
 			glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), (const GLvoid*)vertices, GL_DYNAMIC_DRAW));
-			glCheck(glVertexAttribPointer(ATTRIB_VERTEX, 2, GL_FLOAT, GL_FALSE, 0, (void*)0 ));
-			glCheck(glVertexAttribPointer(ATTRIB_UV, 2, GL_FLOAT, GL_FALSE, 0, (void*)(6*2*sizeof(GLfloat)) ));
+			gl::VertexAttribPointer(ATTRIB_VERTEX, 2, GL_FLOAT, GL_FALSE, 0, (void*)0 );
+			gl::VertexAttribPointer(ATTRIB_UV, 2, GL_FLOAT, GL_FALSE, 0, (void*)(6*2*sizeof(GLfloat)) );
 
 			glCheck(glDrawArrays(GL_TRIANGLES, 0, 6));
 
@@ -211,10 +211,10 @@ bool Drawer2D::initFont()
 	glCheck(glGenTextures(1, &m_id_tex_font));
 	glCheck(glBindTexture(GL_TEXTURE_2D, m_id_tex_font));
 
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glCheck(glTexImage2D(
 			GL_TEXTURE_2D,

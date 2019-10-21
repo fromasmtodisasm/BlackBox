@@ -210,6 +210,16 @@ bool OpenGLLoader();
 namespace gl {
 	typedef Vec4 Color;
 
+	inline void Enable(GLenum cap)
+	{
+		glCheck(glEnable(cap));
+	}
+
+	inline void Disable(GLenum cap)
+	{
+		glCheck(glDisable(cap));
+	}
+
 	inline void ViewPort(Vec4 viewPort)
 	{
 		glCheck(glViewport(static_cast<GLint>(viewPort.x), static_cast<GLint>(viewPort.y), static_cast<GLint>(viewPort.z), static_cast<GLint>(viewPort.w)));
@@ -251,9 +261,59 @@ namespace gl {
 	{
 		glCheck(glEnableVertexAttribArray(index));
 	}
+
 	inline void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer)
 	{
 		glCheck(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
 	}
+
+	/*
+	inline void gl::UniformValue(GLint location, int value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, unsigned int value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, float value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec1 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec2 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec3 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec4 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::mat2 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::mat3 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::mat4 value)
+	{
+	}
+
+	// Shader
+	template<typename T>
+	inline void Uniform(GLint location, T& const value)
+	{
+		UniformValue(location, value);
+	}
+	*/
 
 }

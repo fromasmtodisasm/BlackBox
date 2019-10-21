@@ -86,17 +86,17 @@ bool Texture::load(const char* name)
 		internalFormat = GL_SRGB_ALPHA;
 	}
   glCheck(glGenTextures(1, &id));
-  glCheck(glBindTexture(GL_TEXTURE_2D, id));
+  gl::BindTexture2D(id);
 	width = img.width;
 	height = img.height;
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-	glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
     img.width, img.height,
@@ -111,7 +111,7 @@ bool Texture::load(const char* name)
 		cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
   }
 #endif
-  glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+  gl::BindTexture2D(0);
 	debuger::texture_label(id, name);
   return true;
 }
@@ -119,7 +119,7 @@ bool Texture::load(const char* name)
 void Texture::bind()
 {
 	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
-	glCheck(glBindTexture(GL_TEXTURE_2D, id));
+  gl::BindTexture2D(id);
 }
 
 void Texture::setUnit(GLuint unit)

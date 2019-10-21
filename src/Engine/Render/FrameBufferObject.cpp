@@ -109,7 +109,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
   }
-  glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+  gl::BindTexture2D(0);
 
   if (type == SCENE_BUFFER || type == HDR_BUFFER)
   {
