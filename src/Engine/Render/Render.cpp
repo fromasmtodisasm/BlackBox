@@ -154,6 +154,7 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 
 void CRender::glInit()
 {
+	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
 	if (glContextType == sf::ContextSettings::Debug && r_debug->GetIVal() == 1)
 	{

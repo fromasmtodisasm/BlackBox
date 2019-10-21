@@ -365,9 +365,17 @@ GLint CBaseShaderProgram::getUniformLocation(const char* format, ...)
   va_end(ptr);
 
   GLint loc = -1;
-  auto it = m_Cache.find(name);
-  if (it != m_Cache.end())
-    loc = it->second;
+	if (use_cache->GetIVal())
+	{
+		auto it = m_Cache.find(name);
+		if (it != m_Cache.end())
+			loc = it->second;
+		else
+		{
+			loc = glGetUniformLocation(m_Program, name);
+			m_Cache[name] = loc;
+		}
+	}
 	else
 	{
     loc = glGetUniformLocation(m_Program, name);

@@ -340,6 +340,7 @@ public:
   static char* buffer;
 	std::string name;
 	static ICVar* print_loc_name;
+	static ICVar* use_cache;
 
   bool status();
 public:

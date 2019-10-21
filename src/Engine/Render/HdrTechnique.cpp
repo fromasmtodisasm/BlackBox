@@ -81,6 +81,7 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 		resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
 	m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
 	debuger::frame_buffer_label(m_HdrBuffer->id, "hdrBuffer");
+	m_HdrBuffer->clear(gl::Color(1, 1, 1, 1));
 
 	auto mip_cnt = getMips(resolution);
 	m_DownsampleBuffer.resize(mip_cnt);
@@ -397,7 +398,9 @@ void HdrTechnique::downsamplingStandard()
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 
-	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
+	m_ScreenShader->setUniformValue(w/hdr_w, "vx");
+	m_ScreenShader->setUniformValue(h/hdr_h, "vy");
+	//m_ScreenShader->setUniformValue(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "view");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, w / (1 << (i + 1)), h / (1 << (i + 1)) });
@@ -457,7 +460,9 @@ void HdrTechnique::upsampling()
 		auto h = (float)cam_height->GetIVal();
 		auto hdr_w = m_HdrBuffer->viewPort.z;
 		auto hdr_h = m_HdrBuffer->viewPort.w;
-	m_ScreenShader->setUniformValue(glm::vec2(w, h) / glm::vec2(hdr_w,hdr_h), "viewPort");
+	//m_ScreenShader->setUniformValue(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
+	m_ScreenShader->setUniformValue(w/hdr_w, "vx");
+	m_ScreenShader->setUniformValue(h/hdr_h, "vy");
 
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
@@ -494,7 +499,6 @@ void HdrTechnique::Do(unsigned int texture)
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	m_ScreenShader->setUniformValue(glm::ivec4(0,0, w, h), "viewPorti");
 	m_ScreenShader->setUniformValue(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
 
 	render->SetViewport(

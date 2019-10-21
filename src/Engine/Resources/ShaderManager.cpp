@@ -10,6 +10,7 @@ static std::shared_ptr<CShaderProgram> defaultProgram = nullptr;
 std::string ShaderDesc::root = "res/shaders/";
 
 ICVar* CBaseShaderProgram::print_loc_name = nullptr;
+ICVar* CBaseShaderProgram::use_cache = nullptr;
 
 
 ShaderManager *ShaderManager::instance()
