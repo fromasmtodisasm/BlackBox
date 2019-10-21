@@ -48,8 +48,9 @@ vec3 offsets[13] = vec3[](
 	image - n + 1 mip level
 	texel_scale - step in relative units in input image -- key of sampling
 */
-vec4 downsample()
+vec4 downsample(vec2 uv)
 {
+#if 0
 	vec4 result = vec4(0);
 	vec2 texel_scale = 1.0 / textureSize(image, 0); // gets size of single texel
 
@@ -61,9 +62,20 @@ vec4 downsample()
 		result += Sample(texel) * offsets[i].z;
 	}
 	return result;
+#endif
+	vec4 result = vec4(0);
+	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+
+	//return Sample(TexCoords);
+	for (int i = 0; i < 13; i++)
+	{
+		result += Sample(uv + (offsets[i].xy + offset)*tex_offset) * offsets[i].z;
+	}
+	return result;
 }
 
 void main()
 {    
-	FragColor = downsample();
+	vec2 uv = 2 * vec2(vx,vy) * gl_FragCoord.xy / vec2(textureSize(image, 0));
+	FragColor = downsample(uv);
 }
