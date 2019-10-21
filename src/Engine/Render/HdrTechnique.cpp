@@ -452,7 +452,7 @@ void HdrTechnique::upsampling()
 	
 	uint32_t amount;
 	bool first_iteration = true;
-	glCheck(glDisable(GL_DEPTH_TEST));
+	render->SetState(IRender::State::DEPTH_TEST, false);
 
 		auto w = (float)cam_width->GetIVal();
 		auto h = (float)cam_height->GetIVal();
