@@ -82,3 +82,8 @@ void CSFMLWindow::ToogleFullScreen(int w, int h)
 {
 	Create(w, h, !m_bFullScreen, 32);
 }
+
+void CSFMLWindow::setCursor(Cursor* cursor)
+{
+	m_Window->setMouseCursor(*reinterpret_cast<sf::Cursor*>(cursor));
+}

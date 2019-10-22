@@ -182,6 +182,15 @@ bool CGame::init(ISystem *pEngine)  {
 #endif
   m_Console->SetImage(consoleBackGround);
 
+	// other
+	mousePrev = sf::Mouse::getPosition();
+	mouseDelta = sf::Vector2i(0,0);
+	cursor.loadFromSystem(sf::Cursor::Arrow);
+	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
+
+	m_Console->ExecuteString("r_cam_w 800");
+	m_Console->ExecuteString("r_cam_h 600");
+
   return true;
 }
 
@@ -300,6 +309,15 @@ void CGame::DisplayInfo(float fps)
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
+	if (canDragViewPortWidth)
+		render->PrintLine("CanDrag\n", info.getDTI());
+	if (mousePressed)
+		render->PrintLine("Mouse pressed\n", info.getDTI());
+	if (canDragViewPortWidth && mousePressed)
+		render->PrintLine(("delta.x" + std::to_string(mouseDelta.x)).c_str(), info.getDTI());
+
+
+
 }
 
 bool CGame::run() {
@@ -614,16 +632,45 @@ bool CGame::MenuInputEvent(sf::Event& event)
     }
 	case sf::Event::MouseMoved:
 	{
-		auto w = m_Console->GetCVar("r_cam_w")->GetIVal();
+		ICVar* w = m_Console->GetCVar("r_cam_w");
 		auto h = m_Console->GetCVar("r_cam_h")->GetIVal();
 
-		if (std::abs(event.mouseMove.x - w) <= 5)
-		{
-			sf::Cursor cursor;
-			cursor.loadFromSystem(sf::Cursor::SizeAll);
+		mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;
+		mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
 
-			//Cursor.set(window.getSystemHandle());
+		if (
+			std::abs(event.mouseMove.x - w->GetIVal()) <= 10 && !mousePressed
+			)
+		{
+			cursor.loadFromSystem(sf::Cursor::SizeAll);
+			canDragViewPortWidth = true;
+			//mouseDelta = sf::Vector2i(0,0);
 		}
+		else if (canDragViewPortWidth && !mousePressed)
+		{
+			cursor.loadFromSystem(sf::Cursor::Arrow);
+			canDragViewPortWidth = false;
+		}
+
+		m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
+		break;
+	}
+	case sf::Event::MouseButtonPressed:
+	{
+		if (event.mouseButton.button == sf::Mouse::Button::Left)
+		{
+			mousePressed = true;
+
+		}
+		break;
+	}
+	case sf::Event::MouseButtonReleased:
+	{
+		if (event.mouseButton.button == sf::Mouse::Button::Left)
+		{
+			mousePressed = false;
+		}
+		break;
 	}
   default:
 #ifdef GUI
@@ -632,6 +679,12 @@ bool CGame::MenuInputEvent(sf::Event& event)
       return false;
 #endif // GUI
   }
+
+	if (canDragViewPortWidth && mousePressed)
+	{
+		ICVar* w = m_Console->GetCVar("r_cam_w");
+		w->Set(w->GetIVal() + mouseDelta.x);
+	}
   return false;
 
 }

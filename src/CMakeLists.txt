@@ -158,6 +158,7 @@ target_sources(
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
 
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
