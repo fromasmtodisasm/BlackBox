@@ -562,7 +562,7 @@ int CScriptObject::Count()
 	CHECK_STACK(L);
 
 	PushRef();
-	int count = luaL_len(L, -1);
+	int count = static_cast<int>(luaL_len(L, -1));
 	lua_pop(L, 1);
 
 	return count;
