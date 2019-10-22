@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(BlackBox_test CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+
 enable_testing()
 
 add_executable(${PROJECT_NAME} Main.cpp)
@@ -20,6 +22,11 @@ endif(WIN32)
 
 add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
+		$<TARGET_FILE_DIR:BlackBox>/BlackBox.dll
+        $<TARGET_FILE_DIR:BlackBox_test>)      # <--this is in-file
 
 install(
   TARGETS ${PROJECT_NAME} 

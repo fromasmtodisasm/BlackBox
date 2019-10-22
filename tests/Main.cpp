@@ -1,9 +1,10 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/ISystem.hpp>
-#include <BlackBox/Utils.hpp>
+//#include <BlackBox/Utils.hpp>
 #include <BlackBox/ILog.hpp>
 
 #include <iostream>
+#include <filesystem>
 
 /*##############################################*/
 
@@ -22,6 +23,9 @@ int main(int argc, char *argv[]) {
     if (string(argv[1]) == "-debug")
       debug = true;
   }
+
+	std::filesystem::current_path("../../");
+	cout << "current path: " << std::filesystem::current_path() << endl;
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
   //path = getBasePath(string(argv[0]));

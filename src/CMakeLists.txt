@@ -29,6 +29,7 @@ find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 include_directories(
   #"${SFML_SOURCE_DIR}/include"
+  #" ${CMAKE_BINARY_DIR}"
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
@@ -50,11 +51,9 @@ generate_export_header(${PROJECT_NAME}
 )
 if (USE_SFML)
 
-  find_package(SFML 2 REQUIRED network audio graphics window system)
-  if(SFML_FOUND)
-    include_directories(${SFML_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} audio graphics window system)
-  endif()
+  find_package(SFML 2 REQUIRED audio graphics window system)
+  include_directories(${SFML_INCLUDE_DIR})
+  target_link_libraries(${PROJECT_NAME} sfml-audio sfml-graphics sfml-window sfml-system)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
@@ -235,12 +234,6 @@ source_group(
   ${IMGUI_SOURCES}
   )
 #--------------------------------------------------
-if (USE_SFML)
-  target_link_libraries(${PROJECT_NAME} sfml-graphics)
-  target_link_libraries(${PROJECT_NAME} sfml-audio)
-else()
-  target_link_libraries(${PROJECT_NAME} glfw)
-endif()
 if (GLAD_LOADER)
   target_link_libraries(${PROJECT_NAME} glad)
 elseif(GLEW_LOADER)
@@ -256,6 +249,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 #  ${Boost_FILESYSTEM_LIBRARY}
 #  ${Boost_SYSTEM_LIBRARY}
 #)
+
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:BlackBox>/dlls)
 
 install(
   TARGETS  ${PROJECT_NAME}
