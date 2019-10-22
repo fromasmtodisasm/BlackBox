@@ -118,5 +118,9 @@ public:
 
 	void ToogleFullScreen(int w, int h);
 
+
+	// Inherited via IWindow
+	virtual void setCursor(Cursor* cursor) override;
+
 };
 

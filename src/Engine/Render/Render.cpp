@@ -276,7 +276,8 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	}
 	else if (!strcmp(pVar->GetName(),"r_debug"))
 	{
-		OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+		//OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
 	}
 	return false;
 

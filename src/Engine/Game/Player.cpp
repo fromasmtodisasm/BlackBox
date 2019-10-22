@@ -10,7 +10,6 @@
 
 CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.obj"))
 {
-  m_type = OBJType::TPRIMITIVE;
   //getShaderProgram()->setUniformValue("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);

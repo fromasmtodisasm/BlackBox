@@ -6,12 +6,6 @@ class CBaseShaderProgram;
 struct Material;
 struct IScriptObject;
 
-enum OBJType {
-  TCAM,
-  TPRIMITIVE //, // triangle, circle
-  // ...
-};
-
 enum Movement {
 			FORWARD,
 			BACKWARD,
@@ -29,8 +23,6 @@ struct IObject
   virtual void rotateZ(float angle) = 0;
   virtual void scale(glm::vec3 v) = 0;
   virtual void update(float deltatime) = 0;
-  virtual OBJType getType() = 0;
-  virtual void setType(OBJType) = 0;
 
   virtual Material *getMaterial() = 0;
   virtual void setMaterial(Material *material) = 0;

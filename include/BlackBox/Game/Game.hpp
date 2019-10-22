@@ -100,6 +100,14 @@ private:
 	CScriptObjectGame* m_ScriptObjectGame;
 	IScriptObject* m_playerObject;
 
+	// other
+	bool canDragViewPortWidth = false;
+	bool canDragViewPortHeight = false;
+	bool mousePressed = false;
+	sf::Vector2i mouseDelta;
+	sf::Vector2i mousePrev;
+	sf::Cursor cursor;
+
   enum Mode
   {
     FPS,
