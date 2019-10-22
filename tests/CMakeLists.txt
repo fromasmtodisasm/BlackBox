@@ -9,6 +9,7 @@ add_executable(${PROJECT_NAME} Main.cpp)
 target_link_libraries(BlackBox_test BlackBox)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+
 if(WIN32)
   if (MSVC)
     #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
@@ -22,11 +23,12 @@ endif(WIN32)
 
 add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
-    COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-		$<TARGET_FILE_DIR:BlackBox>/BlackBox.dll
-        $<TARGET_FILE_DIR:BlackBox_test>)      # <--this is in-file
+if (BUILD_SHARED_LIBS)
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
+		COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
+			$<TARGET_FILE_DIR:BlackBox>/BlackBox.dll
+			$<TARGET_FILE_DIR:BlackBox_test>)      # <--this is in-file
+endif()
 
 install(
   TARGETS ${PROJECT_NAME} 

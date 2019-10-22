@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
       debug = true;
   }
 
-	std::filesystem::current_path("../../");
+	//std::filesystem::current_path("../../");
 	cout << "current path: " << std::filesystem::current_path() << endl;
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
