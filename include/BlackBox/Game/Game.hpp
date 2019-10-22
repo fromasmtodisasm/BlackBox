@@ -102,6 +102,7 @@ private:
 
 	// other
 	bool canDragViewPortWidth = false;
+	bool canDragViewPortHeight = false;
 	bool mousePressed = false;
 	sf::Vector2i mouseDelta;
 	sf::Vector2i mousePrev;

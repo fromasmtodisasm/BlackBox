@@ -633,26 +633,41 @@ bool CGame::MenuInputEvent(sf::Event& event)
 	case sf::Event::MouseMoved:
 	{
 		ICVar* w = m_Console->GetCVar("r_cam_w");
-		auto h = m_Console->GetCVar("r_cam_h")->GetIVal();
+		auto h = m_Console->GetCVar("r_cam_h");
+		auto window = m_pSystem->GetIWindow();
 
 		mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;
 		mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
 
 		if (
-			std::abs(event.mouseMove.x - w->GetIVal()) <= 10 && !mousePressed
+			std::abs(event.mouseMove.x - w->GetIVal()) <= 10 && !mousePressed 
+			&& event.mouseMove.y > (m_pRender->GetHeight() -  h->GetIVal())
 			)
 		{
 			cursor.loadFromSystem(sf::Cursor::SizeAll);
 			canDragViewPortWidth = true;
 			//mouseDelta = sf::Vector2i(0,0);
 		}
-		else if (canDragViewPortWidth && !mousePressed)
+		else if ((canDragViewPortWidth && !canDragViewPortHeight) && !mousePressed)
+		{
+			cursor.loadFromSystem(sf::Cursor::Arrow);
+			canDragViewPortWidth = false;
+		}
+		if (
+			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h->GetIVal())) <= 10
+			&& event.mouseMove.x < w->GetIVal() && !mousePressed
+			)
+		{
+			cursor.loadFromSystem(sf::Cursor::SizeAll);
+			canDragViewPortHeight = true;
+		}
+		else if ((canDragViewPortHeight && !canDragViewPortWidth) && !mousePressed)
 		{
 			cursor.loadFromSystem(sf::Cursor::Arrow);
 			canDragViewPortWidth = false;
 		}
 
-		m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
+		window->setCursor(reinterpret_cast<Cursor*>(&cursor));
 		break;
 	}
 	case sf::Event::MouseButtonPressed:
@@ -684,6 +699,11 @@ bool CGame::MenuInputEvent(sf::Event& event)
 	{
 		ICVar* w = m_Console->GetCVar("r_cam_w");
 		w->Set(w->GetIVal() + mouseDelta.x);
+	}
+	if (canDragViewPortHeight && mousePressed)
+	{
+		ICVar* h = m_Console->GetCVar("r_cam_h");
+		h->Set(h->GetIVal() - mouseDelta.y);
 	}
   return false;
 
