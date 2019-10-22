@@ -33,7 +33,11 @@ HdrTechnique::HdrTechnique()
 	upsampleTime(nullptr),
 	downsampleTime(nullptr),
 	averageBloomTime(nullptr),
-	downsampleType(nullptr)
+	downsampleType(nullptr),
+	blurOnly(nullptr),
+	cam_height(nullptr),
+	cam_width(nullptr),
+	render(nullptr)
 {
 }
 

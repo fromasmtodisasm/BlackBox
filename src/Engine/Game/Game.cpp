@@ -101,7 +101,14 @@ CGame::CGame(std::string title) :
   m_scene(nullptr),
   m_sceneManager(nullptr),
   shaderManager(nullptr),
-  m_World(new World()),m_Title(title)
+  m_World(new World()),m_Title(title),
+	m_ScriptObjectConsole(nullptr),
+	m_ScriptObjectGame(nullptr),
+	m_pRender(nullptr),
+	m_pScriptSystem(nullptr),
+	r_displayinfo(nullptr),
+	r_cap_profile(nullptr),
+	r_profile(nullptr)
 {
 #pragma warning(push)
 #pragma warning(disable : 4244)

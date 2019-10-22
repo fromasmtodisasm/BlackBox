@@ -29,7 +29,6 @@ class Object : public IObject, public IDrawable {
   friend class ObjectManager;
 protected:
   std::shared_ptr<CShaderProgram> m_Shader;
-  OBJType m_type;
   Object();
   Object(MeshList mesh);
   Object(const Object *obj);
@@ -84,8 +83,6 @@ public:
   virtual void rotate(float angle, glm::vec3 v) override;
   virtual void scale(glm::vec3 v) override;
   virtual void draw(void * camera) override;
-  virtual OBJType getType() override { return m_type; }
-  virtual void setType(OBJType) override;
   virtual glm::mat4 getTransform() override;
 	void updateVectors();
 

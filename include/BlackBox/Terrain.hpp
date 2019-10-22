@@ -18,7 +18,7 @@ public:
 	{
 
 	}
-	Face getFace(int v1, int v2, int v3)
+	Face getFace(size_t v1, size_t v2, size_t v3)
 	{
 		Face face;
 		face.v[0].pos = glm::vec3(vb[v1 - 1].pos);
