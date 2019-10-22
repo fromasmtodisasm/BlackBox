@@ -76,13 +76,20 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 	glm::ivec2 resolution;// = glm::ivec2(render->GetWidth(), render->GetHeight());
 	auto w = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_w");
 	auto h = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_h");
-	if (w == nullptr || h == nullptr)
+	if (format != nullptr)
+	{
+		resolution = glm::ivec2(format->m_Width, format->m_Height);
+	}
+	else if (w == nullptr || h == nullptr)
 	{
 		resolution = glm::ivec2(render->GetWidth(), render->GetHeight());
 		GetISystem()->Log("Use window resulution");
 	}
 	else
 		resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
+	cam_width->Set(resolution.x);
+	cam_height->Set(resolution.y);
+
 	m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
 	debuger::frame_buffer_label(m_HdrBuffer->id, "hdrBuffer");
 	m_HdrBuffer->clear(gl::Color(1, 1, 1, 1));

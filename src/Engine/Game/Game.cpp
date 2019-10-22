@@ -612,6 +612,19 @@ bool CGame::MenuInputEvent(sf::Event& event)
 #endif // GUI
 
     }
+	case sf::Event::MouseMoved:
+	{
+		auto w = m_Console->GetCVar("r_cam_w")->GetIVal();
+		auto h = m_Console->GetCVar("r_cam_h")->GetIVal();
+
+		if (std::abs(event.mouseMove.x - w) <= 5)
+		{
+			sf::Cursor cursor;
+			cursor.loadFromSystem(sf::Cursor::SizeAll);
+
+			//Cursor.set(window.getSystemHandle());
+		}
+	}
   default:
 #ifdef GUI
       return gui->OnInputEvent(event);
