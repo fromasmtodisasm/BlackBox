@@ -1,6 +1,6 @@
 ﻿#include <BlackBox/Quad.hpp>
 #include <BlackBox/IGeometry.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 
 Quad::Quad() 
 {

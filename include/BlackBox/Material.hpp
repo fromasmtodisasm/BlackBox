@@ -43,6 +43,7 @@ struct Material
 	emissive_factor(1.0f),
   diffuseColor({0,0,0}),
   shininess(64.0f),
+	alpha(1.0),
   program(nullptr)
   {
   }

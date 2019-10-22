@@ -1,5 +1,5 @@
 #include <BlackBox/SFMLWindow.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ITexture.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>

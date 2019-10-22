@@ -3,7 +3,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 
 namespace Utils {
 	void		msleep(int ms);

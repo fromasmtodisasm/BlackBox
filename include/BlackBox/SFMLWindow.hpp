@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IWindow.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -117,6 +117,10 @@ public:
 	virtual void changeSize(int w, int h) override;
 
 	void ToogleFullScreen(int w, int h);
+
+
+	// Inherited via IWindow
+	virtual void setCursor(Cursor* cursor) override;
 
 };
 

@@ -671,7 +671,7 @@ struct IScriptDebugSink {
 
 class SmartScriptObject
 {
-	SmartScriptObject(const SmartScriptObject&)
+	SmartScriptObject(const SmartScriptObject&) : m_pSO(nullptr)
 	{
 	}
 	SmartScriptObject& operator =(const SmartScriptObject&)

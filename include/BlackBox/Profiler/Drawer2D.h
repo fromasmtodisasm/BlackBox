@@ -3,7 +3,7 @@
 #ifndef __DRAWER2D_H__
 #define __DRAWER2D_H__
 
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Utils.h>
 
 // Simple class to draw strings in a [-1;1]x[-1;1] coordinates system

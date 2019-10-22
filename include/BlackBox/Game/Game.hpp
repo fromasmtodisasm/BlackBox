@@ -3,7 +3,7 @@
 #include <BlackBox/ISystem.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/Window.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
@@ -100,6 +100,14 @@ private:
 	CScriptObjectGame* m_ScriptObjectGame;
 	IScriptObject* m_playerObject;
 
+	// other
+	bool canDragViewPortWidth = false;
+	bool canDragViewPortHeight = false;
+	bool mousePressed = false;
+	sf::Vector2i mouseDelta;
+	sf::Vector2i mousePrev;
+	sf::Cursor cursor;
+
   enum Mode
   {
     FPS,
@@ -107,7 +115,7 @@ private:
     FLY,
 		EDIT
     
-  }m_Mode = FPS;
+  }m_Mode = Mode::FPS;
   std::stack<GameState*> states;
 	float fps = 0.0;
 

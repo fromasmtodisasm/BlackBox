@@ -2,11 +2,15 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
+#include <BlackBox/IConsole.hpp>
 
 ShaderManager *ShaderManager::manager = nullptr;
 static std::shared_ptr<CShaderProgram> defaultProgram = nullptr;
 
 std::string ShaderDesc::root = "res/shaders/";
+
+ICVar* CBaseShaderProgram::print_loc_name = nullptr;
+ICVar* CBaseShaderProgram::use_cache = nullptr;
 
 
 ShaderManager *ShaderManager::instance()
@@ -52,6 +56,7 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   {
     GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
+    return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
   }
 
@@ -74,6 +79,7 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   {
     GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
+    return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);
   }
 
@@ -113,5 +119,6 @@ bool ShaderManager::init()
   defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
   defaultProgram->create("default");
 	ShaderDesc::root = ShaderManager::instance()->root;
+	CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");
   return true;
 }

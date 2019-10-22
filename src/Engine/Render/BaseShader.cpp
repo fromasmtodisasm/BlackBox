@@ -1,8 +1,9 @@
 #include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/IConsole.hpp>
 
 #include <fstream>
 #include <string>
@@ -212,6 +213,8 @@ string CShader::typeToStr()
     return "geometry";
   case E_COMPUTE:
     return "compute";
+	default:
+    return "unknown";
   }
 }
 
@@ -364,9 +367,17 @@ GLint CBaseShaderProgram::getUniformLocation(const char* format, ...)
   va_end(ptr);
 
   GLint loc = -1;
-  auto it = m_Cache.find(name);
-  if (it != m_Cache.end())
-    loc = it->second;
+	if (use_cache->GetIVal())
+	{
+		auto it = m_Cache.find(name);
+		if (it != m_Cache.end())
+			loc = it->second;
+		else
+		{
+			loc = glGetUniformLocation(m_Program, name);
+			m_Cache[name] = loc;
+		}
+	}
 	else
 	{
     loc = glGetUniformLocation(m_Program, name);
@@ -451,7 +462,9 @@ void CBaseShaderProgram::setUniformValue(glm::vec2 value, const char * format, .
 
   GLint loc = getUniformLocation(name);
   if (loc != -1){
-        glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
+		glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
+		if (print_loc_name->GetIVal())
+			std::cout << name << std::endl;
   }
 }
 
@@ -562,8 +575,8 @@ void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* s
 
 void CBaseShaderProgram::bindTextureUnit2D(GLuint texture, GLint unit)
 {
-	glCheck(glActiveTexture(GL_TEXTURE0 + unit));
-	glCheck(glBindTexture(GL_TEXTURE_2D, texture));
+	gl::ActiveTexture(GL_TEXTURE0 + unit);
+	gl::BindTexture2D(texture);
 }
 
 GLuint CBaseShaderProgram::get() {

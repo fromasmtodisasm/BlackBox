@@ -15,7 +15,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	shader->setUniformValue(projection, "projection");
 	shader->setUniformValue(uv_projection, "uv_projection");
 	glCheck(glUniform3fv(glGetUniformLocation(shader->get(), "textColor"), 1, &color[0]));
-	glCheck(glActiveTexture(GL_TEXTURE0));
+	gl::ActiveTexture(GL_TEXTURE0);
 	glCheck(glBindVertexArray(VAO));
 	render->SetState(IRender::State::BLEND, true);
 	render->SetState(IRender::State::CULL_FACE, false);
@@ -55,7 +55,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		};
 		shader->setUniformValue(model, "model");
 		// Render glyph texture over quad
-		glCheck(glBindTexture(GL_TEXTURE_2D, ch.TextureID));
+		gl::BindTexture2D(ch.TextureID);
 		// Update content of VBO memory
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO));
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
@@ -69,7 +69,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	glCheck(glBindVertexArray(0));
-	glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+	gl::BindTexture2D(0);
 	glCheck(glEnable(GL_CULL_FACE));
 }
 

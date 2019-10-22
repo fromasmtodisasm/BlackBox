@@ -3,7 +3,7 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Hole_array.h>
 #include <BlackBox/Profiler/thread.h>
 #include <BlackBox/Profiler/Utils.h>
@@ -82,7 +82,7 @@ private:
 		char		name[MARKER_NAME_MAX_LENGTH];
 		Utils::Color		color;
 
-		Marker() : start(INVALID_TIME), end(INVALID_TIME), frame(-1) {}	// unused by default
+		Marker() : start(INVALID_TIME), end(INVALID_TIME), frame(-1), layer(0), name(""){}	// unused by default
 	};
 
 	// --- Device-specific markers ---

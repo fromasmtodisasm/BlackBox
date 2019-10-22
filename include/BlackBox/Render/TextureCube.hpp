@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/BaseTexture.hpp>
 #include <SFML/Graphics.hpp>
 #ifdef NVTT

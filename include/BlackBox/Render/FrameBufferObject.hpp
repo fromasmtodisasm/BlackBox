@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <vector>
 
@@ -8,7 +8,6 @@
 struct ITexture;
 class Texture;
 
-typedef Vec4 Color;
 
 class FrameBufferObject
 {
@@ -22,7 +21,7 @@ public:
 	~FrameBufferObject();
 
   static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
-	void clear(Color &color);
+	void clear(gl::Color &color);
 	void clear();
   void bind();
   void bind(glm::vec4 viewPort);

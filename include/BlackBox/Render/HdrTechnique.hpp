@@ -55,11 +55,10 @@ private:
   BaseShaderProgramRef m_DownsampleComputeShader;
   BaseShaderProgramRef m_UpsampleShader;
   BaseShaderProgramRef m_UpsampleShaderComputeShader;
-  //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
-  FrameBufferObject* hdrBuffer;
-	std::vector<FrameBufferObject*> pass0;
-	std::vector<FrameBufferObject*> pass1;
+  FrameBufferObject* m_HdrBuffer;
+	std::vector<FrameBufferObject*> m_DownsampleBuffer;
+	std::vector<FrameBufferObject*> m_UpsampleBuffer;
   Scene* m_Scene;
 
   ICVar* exposure;
@@ -67,6 +66,7 @@ private:
 	ICVar* bloom;
 	ICVar* bloomThreshold;
 	ICVar* blurOn;
+	ICVar* blurOnly;
 	ICVar* useBoxFilter;
 	ICVar* defaultFilter;
 	ICVar* bloom_exposure;

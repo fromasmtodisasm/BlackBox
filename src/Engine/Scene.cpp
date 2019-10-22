@@ -7,7 +7,7 @@
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
@@ -948,6 +948,6 @@ PointObject::~PointObject()
 void PointObject::draw()
 {
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_POINTS, 0, point_cnt);
+	glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(point_cnt));
 	glBindVertexArray(0);
 }

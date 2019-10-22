@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IDrawable.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>

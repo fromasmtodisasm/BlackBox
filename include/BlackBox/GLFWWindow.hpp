@@ -1,7 +1,7 @@
 #pragma once
 
 #include <BlackBox/IWindow.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 
 #include <GLFW/glfw3.h>
 

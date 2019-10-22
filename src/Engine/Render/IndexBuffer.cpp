@@ -1,5 +1,5 @@
 #include <BlackBox/Render/IndexBuffer.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <iostream>
 
 using namespace std;

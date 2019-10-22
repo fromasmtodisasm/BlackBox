@@ -1,5 +1,5 @@
 #include <BlackBox/Render/Render.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/IFont.hpp>
@@ -98,7 +98,7 @@ void CRender::GetViewport(int* x, int* y, int* width, int* height)
 
 void CRender::SetViewport(int x, int y, int width, int height)
 {
-	glCheck(glViewport(x, y, width, height));
+	gl::ViewPort(glm::vec4(x, y, width, height));
 }
 
 void CRender::SetScissor(int x, int y, int width, int height)
@@ -154,6 +154,7 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 
 void CRender::glInit()
 {
+	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
 	if (glContextType == sf::ContextSettings::Debug && r_debug->GetIVal() == 1)
 	{
@@ -206,9 +207,9 @@ void CRender::initConsoleVariables()
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
 	if (mode == CullMode::FRONT_AND_BACK)
-		glCullFace(GL_FRONT_AND_BACK);
+		gl::CullFace(GL_FRONT_AND_BACK);
 	else
-		glCullFace(GL_FRONT + static_cast<unsigned int>(mode));
+		gl::CullFace(GL_FRONT + static_cast<unsigned int>(mode));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
@@ -238,9 +239,9 @@ void CRender::SetState(State state, bool enable)
 	if (it != stateMap.end())
 	{
 		if (enable)
-			glCheck(glEnable(it->second));
+			gl::Enable(it->second);
 		else
-			glCheck(glDisable(it->second));
+			gl::Disable(it->second);
 	}
 }
 
@@ -249,7 +250,7 @@ void CRender::DrawFullScreenImage(int texture_id)
 	auto
 		width = GetWidth(),
 		height = GetHeight();
-	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	gl::BindFramebuffer(0);
 	SetViewport(0, 0, width, height);
 	m_ScreenShader->use();
 	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -275,7 +276,8 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	}
 	else if (!strcmp(pVar->GetName(),"r_debug"))
 	{
-		OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+		//OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
 	}
 	return false;
 
@@ -291,7 +293,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	float
 		width = GetWidth(),
 		height = GetHeight();
-	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	gl::BindFramebuffer(0);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

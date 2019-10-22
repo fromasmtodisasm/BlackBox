@@ -165,8 +165,8 @@ void ShadowMapping::RenderOpaque(Object* object)
     SetupLights(object);
     object->m_Material->apply(object);
     program->setUniformValue(1, "shadowMap");
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture[0]);
+    gl::ActiveTexture(GL_TEXTURE1);
+    gl::BindTexture2D(m_DepthBuffer->texture[0]);
 
 		if (object->m_path.find("terrain") != object->m_path.npos)
 			program->setUniformValue(true, "isTerrain");
@@ -222,7 +222,13 @@ void ShadowMapping::OnRenderPass()
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal(),
 		1.f);
-	m_RenderedScene->clear(fog);
+	auto pSystem = GetISystem();
+	auto w = pSystem->GetIConsole()->GetCVar("r_cam_w")->GetIVal();
+	auto h = pSystem->GetIConsole()->GetCVar("r_cam_h")->GetIVal();
+	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
+	pSystem->GetIRender()->SetScissor(0, 0, w, h);
+	m_RenderedScene->clear(gl::Color(0));
+	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
   RenderPass();
 }
 

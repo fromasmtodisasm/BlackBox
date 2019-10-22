@@ -9,7 +9,6 @@ uniform bool bloom = true;
 uniform float exposure;
 uniform float bloom_exposure = 0.8;
 uniform vec4 viewPortf = vec4(0,0,1,1);
-uniform ivec4 viewPorti = ivec4(0,0,1,1);
 
 float float_to_sRGB(float val)
 { 
