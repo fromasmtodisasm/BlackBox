@@ -235,6 +235,7 @@ void CGame::execScripts()
 
 void CGame::drawHud(float fps)
 {
+	m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
   if (r_displayinfo->GetIVal() != 0)
   {
     DisplayInfo(fps);
@@ -256,9 +257,7 @@ void CGame::DisplayInfo(float fps)
     : m_Mode == FLY ? "FLY"
     : "EDIT";
 
-  glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
   // Info
-
   TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
   SDrawTextInfo dti = info.getDTI();
 
@@ -640,31 +639,36 @@ bool CGame::MenuInputEvent(sf::Event& event)
 		mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
 
 		if (
-			std::abs(event.mouseMove.x - w->GetIVal()) <= 10 && !mousePressed 
+			std::abs(event.mouseMove.x - w->GetIVal()) <= 8 && !mousePressed 
 			&& event.mouseMove.y > (m_pRender->GetHeight() -  h->GetIVal())
 			)
 		{
-			cursor.loadFromSystem(sf::Cursor::SizeAll);
+			cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
 			canDragViewPortWidth = true;
-			//mouseDelta = sf::Vector2i(0,0);
 		}
-		else if ((canDragViewPortWidth && !canDragViewPortHeight) && !mousePressed)
+		else if (canDragViewPortWidth && !mousePressed)
 		{
-			cursor.loadFromSystem(sf::Cursor::Arrow);
 			canDragViewPortWidth = false;
 		}
 		if (
-			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h->GetIVal())) <= 10
+			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h->GetIVal())) <= 8 
 			&& event.mouseMove.x < w->GetIVal() && !mousePressed
 			)
 		{
-			cursor.loadFromSystem(sf::Cursor::SizeAll);
+			cursor.loadFromSystem(sf::Cursor::SizeVertical);
 			canDragViewPortHeight = true;
 		}
-		else if ((canDragViewPortHeight && !canDragViewPortWidth) && !mousePressed)
+		else if (canDragViewPortHeight && !mousePressed)
+		{
+			canDragViewPortHeight = false;
+		}
+		if (canDragViewPortHeight && canDragViewPortWidth)
+		{
+			cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
+		}
+		if (!canDragViewPortHeight && !canDragViewPortWidth && !mousePressed)
 		{
 			cursor.loadFromSystem(sf::Cursor::Arrow);
-			canDragViewPortWidth = false;
 		}
 
 		window->setCursor(reinterpret_cast<Cursor*>(&cursor));
