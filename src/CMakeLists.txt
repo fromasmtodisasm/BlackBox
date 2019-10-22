@@ -5,10 +5,12 @@ include(GenerateExportHeader)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
+
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/modules" ${CMAKE_MODULE_PATH})
 
 ###################################################
 #add_subdirectory(submodules/glfw)
@@ -26,7 +28,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 include_directories(
-  "${SFML_SOURCE_DIR}/include"
+  #"${SFML_SOURCE_DIR}/include"
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
@@ -47,7 +49,12 @@ generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
 )
 if (USE_SFML)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
+
+  find_package(SFML 2 REQUIRED network audio graphics window system)
+  if(SFML_FOUND)
+    include_directories(${SFML_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} audio graphics window system)
+  endif()
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp

@@ -13,9 +13,6 @@
 [submodule "submodules/imgui"]
 	path = submodules/imgui
 	url = https://github.com/fromasmtodisasm/imgui
-[submodule "submodules/imgui-sfml"]
-	path = submodules/imgui-sfml
-	url = https://github.com/fromasmtodisasm/imgui-sfml
 [submodule "submodules/soil"]
 	path = submodules/soil
 	url = git@github.com:fromasmtodisasm/soil.git
