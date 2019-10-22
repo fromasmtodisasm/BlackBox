@@ -188,8 +188,7 @@ bool CGame::init(ISystem *pEngine)  {
 	cursor.loadFromSystem(sf::Cursor::Arrow);
 	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
 
-	m_Console->ExecuteString("r_cam_w 800");
-	m_Console->ExecuteString("r_cam_h 600");
+	m_Console->ExecuteFile("res/scripts/postinit.cfg");
 
   return true;
 }
