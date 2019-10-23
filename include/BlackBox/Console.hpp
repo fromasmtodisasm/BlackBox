@@ -13,6 +13,12 @@
 
 struct IFont;
 
+struct cmpKeys {
+	bool operator()(const std::string& a, const std::string& b) const {
+		return stricmp(a.c_str(), b.c_str()) < 0;
+	}
+};
+
 class CCVar : public ICVar
 {
 public:
@@ -179,6 +185,7 @@ private:
 	void moveCursor(bool left);
 
 	void initBind();
+	void keyBind(const char* key, const char* cmd);
 private:
 	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;
@@ -240,7 +247,8 @@ private:
 	float blinking = 0.0f;
 	//float blinkTime = 1.0;
 	ICVar* blinkTime;
-	std::map<sf::Keyboard::Key, std::wstring> keyBind;
+	std::map<sf::Keyboard::Key, std::wstring> m_keyBind;
+	std::map<std::string, sf::Keyboard::Key, cmpKeys> m_str2key;
 
 	std::set<IWorkerCommand*> m_workers;
 	std::list<IWorkerCommand*> m_worker_to_delete;
@@ -261,5 +269,9 @@ private:
 	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
 
 	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
+
+
+	// Inherited via IConsole
+	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
 
 };

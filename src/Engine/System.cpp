@@ -115,7 +115,7 @@ bool CSystem::Init()
 	//=============
 	PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
 	//=============
-	m_pLog->AddLog("[OK] Window susbsystem inited\n");
+	m_pLog->Log("[OK] Window susbsystem inited\n");
 	//=============
 	m_pScriptSystem = new CScriptSystem();
 	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))

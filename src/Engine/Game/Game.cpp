@@ -84,31 +84,34 @@ float CGame::getTime()
 }
 
 CGame::CGame(std::string title) :
-  camControl(nullptr),
-  g_scene(nullptr),
+	camControl(nullptr),
+	g_scene(nullptr),
 #ifdef GUI
-  gui(nullptr),
+	gui(nullptr),
 #endif // GUI
-  listener(nullptr),
-  m_Console(nullptr),
-  m_Font(nullptr),
-  m_Log(nullptr),
-  m_ScreenShader(nullptr),
-  m_Window(nullptr),
-  m_inputHandler(nullptr),
-  m_player(nullptr),
-  m_pSystem(nullptr),
-  m_scene(nullptr),
-  m_sceneManager(nullptr),
-  shaderManager(nullptr),
-  m_World(new World()),m_Title(title),
+	listener(nullptr),
+	m_Console(nullptr),
+	m_Font(nullptr),
+	m_Log(nullptr),
+	m_ScreenShader(nullptr),
+	m_Window(nullptr),
+	m_inputHandler(nullptr),
+	m_player(nullptr),
+	m_pSystem(nullptr),
+	m_scene(nullptr),
+	m_sceneManager(nullptr),
+	shaderManager(nullptr),
+	m_World(new World()), m_Title(title),
 	m_ScriptObjectConsole(nullptr),
 	m_ScriptObjectGame(nullptr),
 	m_pRender(nullptr),
 	m_pScriptSystem(nullptr),
 	r_displayinfo(nullptr),
 	r_cap_profile(nullptr),
-	r_profile(nullptr)
+	r_profile(nullptr),
+	m_pCVarCheatMode(nullptr),
+
+	m_currentLevelFolder("tmp")
 {
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -151,7 +154,7 @@ bool CGame::init(ISystem *pEngine)  {
   }
 
 	if (!loadScene()) {
-		m_Log->AddLog("[FAILED] Failed init objects\n");
+		m_Log->Log("[FAILED] Failed init objects\n");
 		return false;
 	}
   // Set scene before camera, camera setted to active scene in world
@@ -221,6 +224,15 @@ bool CGame::update() {
 					PROFILER_POP_CPU_MARKER();
 			}
 		}
+		//////////////////////////////////////////////////////////////////////////
+		// Special update function for developers mode.
+		//////////////////////////////////////////////////////////////////////////
+		if (IsDevModeEnable() && false)
+			DevModeUpdate();
+		//////////////////////////////////////////////////////////////////////////
+
+		//////////////////////////////////////////////////////////////////////////
+
 		m_pSystem->EndFrame();
     m_Window->swap();
   }
@@ -319,7 +331,7 @@ void CGame::DisplayInfo(float fps)
 }
 
 bool CGame::run() {
-	m_Log->AddLog("[OK] Game started\n");
+	m_Log->Log("[OK] Game started\n");
   m_time = deltaClock.restart().asSeconds();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
@@ -410,54 +422,70 @@ bool CGame::OnInputEvent(sf::Event &event)
 		bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag) return retval;
 	}
-
-  auto lpx = m_Console->GetCVar("lpx");
-  auto lpy = m_Console->GetCVar("lpy");
-  auto lpz = m_Console->GetCVar("lpz");
-  auto useBoxFilter = m_Console->GetCVar("bf");
   bool result = OnInputEventProxy(event);
-  switch (event.type)
-  {
-  case sf::Event::KeyPressed:
-  {
-    if (event.key.code == sf::Keyboard::SemiColon)
-      openShadowMap = !openShadowMap;
-    switch (event.key.code)
-    {
-    case sf::Keyboard::Up:
-    {
-      lpy->Set(lpy->GetFVal() + 0.5f);
-      break;
-    }
-    case sf::Keyboard::Down:
-    {
-      lpy->Set(lpy->GetFVal() - 0.5f);
-      break;
-    }
-    case sf::Keyboard::Left:
-    {
-      lpx->Set(lpx->GetFVal() - 0.5f);
-      break;
-    }
-    case sf::Keyboard::Right:
-    {
-      lpx->Set(lpx->GetFVal() + 0.5f);
-      break;
-    }
-    case sf::Keyboard::Insert:
-    {
+	PersistentHandler(event);
+  return result;
+}
+
+void CGame::PersistentHandler(sf::Event& event)
+{
+	auto useBoxFilter = m_Console->GetCVar("bf");
+	auto lpx = m_Console->GetCVar("lpx");
+	auto lpy = m_Console->GetCVar("lpy");
+	auto lpz = m_Console->GetCVar("lpz");
+	switch (event.type)
+	{
+	case sf::Event::KeyPressed:
+	{
+		if (event.key.code == sf::Keyboard::SemiColon)
+			openShadowMap = !openShadowMap;
+		if (event.key.code >= sf::Keyboard::F1 && event.key.code <= sf::Keyboard::F12)
+		{
+			if (event.key.control)
+			{
+				DevMode_SavePlayerPos(event.key.code - sf::Keyboard::F1, "BloomTest");
+			}
+			else if (event.key.shift)
+			{
+				DevMode_LoadPlayerPos(event.key.code - sf::Keyboard::F1, "BloomTest");
+			}
+
+		}
+		switch (event.key.code)
+		{
+		case sf::Keyboard::Up:
+		{
+			lpy->Set(lpy->GetFVal() + 0.5f);
+			break;
+		}
+		case sf::Keyboard::Down:
+		{
+			lpy->Set(lpy->GetFVal() - 0.5f);
+			break;
+		}
+		case sf::Keyboard::Left:
+		{
+			lpx->Set(lpx->GetFVal() - 0.5f);
+			break;
+		}
+		case sf::Keyboard::Right:
+		{
+			lpx->Set(lpx->GetFVal() + 0.5f);
+			break;
+		}
+		case sf::Keyboard::Insert:
+		{
 			bool ubf = useBoxFilter->GetIVal();
 			useBoxFilter->Set(!ubf);
-      break;
-    }
-    default:
-      break;
-    }
-  }
-  default:
-    break;
-  }
-  return result;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	default:
+		break;
+	}
 }
 
 IInputHandler *CGame::getInputHandler()

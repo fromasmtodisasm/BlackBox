@@ -30,12 +30,12 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->GetILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
     return p = std::make_shared<CShaderProgram>(vs, fs);
   }
 }
@@ -49,12 +49,12 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   gs = getShader(ShaderDesc(fShader, "geometry"), false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->GetILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
     return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
@@ -72,12 +72,12 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   cs = getShader(ShaderDesc(fShader, "compute"), false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->GetILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
     return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);

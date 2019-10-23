@@ -16,6 +16,8 @@ function player:OnInit( data )
 	for i=1, #formats do
 		Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
 	end
+
+	Game:CreateVariable("game_inited", 1)
 end
 
 function player:TestChanges(string)

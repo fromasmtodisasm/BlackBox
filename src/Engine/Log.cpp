@@ -97,7 +97,7 @@ void CLog::Draw(const char* title, bool* p_open)
   //ImGui::End();
 }
 
-void CLog::AddLog(const char* fmt, ...)
+void CLog::Log(const char* fmt, ...)
 {
   int old_size = Buf.size();
   va_list args;

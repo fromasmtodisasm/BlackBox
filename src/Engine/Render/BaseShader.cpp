@@ -41,7 +41,7 @@ bool ShaderStatus::get(GLenum statusType) {
   if(m_Status != GL_TRUE)
   {
     glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog));
-    GetISystem()->GetILog()->AddLog("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
+    GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
     return false;
   }
   return true;
@@ -63,7 +63,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
 		auto log = GetISystem()->GetILog();
 		if (log != nullptr)
 		{
-			log->AddLog("[ERROR] Shader::programm: %s\n", infoLog);
+			log->Log("[ERROR] Shader::programm: %s\n", infoLog);
 			std::vector<char> label(1);
 			GLsizei length = 0;
 			glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->get(), 1, &length, label.data()));
@@ -71,7 +71,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
 			{
 				label.resize(length);
 				glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->get(), length, &length, label.data()));
-				log->AddLog("[INFO] Shader::programm label: %s\n", label.data());
+				log->Log("[INFO] Shader::programm label: %s\n", label.data());
 			}
 		}
 		else

@@ -16,7 +16,6 @@ public:
 
   // Inherited via ILog
   virtual void Clear() override;
-  virtual void AddLog(const char* fmt, ...) override;
   virtual void Draw(const char* title, bool* p_open) override;
 private:
   void Shutdown();
@@ -29,13 +28,14 @@ private:
 
   // Inherited via ILog
   virtual void Release() override;
+
+	// Inherited via ILog
+	virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override;
 };
 
 NullLog::NullLog()
 {
   output = fopen(filename, "w");
-  if (output != nullptr)
-    inited = true;
   ZeroMemory(buf, sizeof(buf));
 }
 
@@ -53,19 +53,6 @@ void NullLog::Clear()
   log.clear();
 }
 
-void NullLog::AddLog(const char* fmt, ...)
-{
-  if (inited)
-  {
-    auto old_size = log.size();
-    va_list args;
-    va_start(args, fmt);
-    vsprintf(buf, fmt, args);
-    log.push_back(strdup(buf));
-    va_end(args);
-  }
-}
-
 void NullLog::Draw(const char* title, bool* p_open)
 {
 }
@@ -81,4 +68,10 @@ inline void NullLog::Shutdown()
 void NullLog::Release()
 {
   delete this;
+}
+
+void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
+{    
+	vsprintf(buf, szFormat, args);
+	log.push_back(strdup(buf));
 }
