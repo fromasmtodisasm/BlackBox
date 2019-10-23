@@ -4,6 +4,24 @@
 
 using namespace std;
 
+bool CGame::IsDevModeEnable()
+{
+#if 0
+	// if there is already a server we stick to the same setting during creation
+	if (IsMultiplayer())
+	{
+		if (m_pSystem->GetForceNonDevMode())
+			return false;
+	}
+#endif
+
+	// otherwise with get the info from the console variable
+	if (!m_pCVarCheatMode || (strcmp(m_pCVarCheatMode->GetString(), "DEVMODE") != 0))
+		return false;
+
+	return true;
+}
+
 void CGame::DevModeInit()
 {
 }
@@ -119,17 +137,9 @@ void CGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* s
 	memset(tagAngles, 0, sizeof(tagAngles));
 	memset(tagLocations, 0, sizeof(tagLocations));
 
-#if 0
 	string filename = m_currentLevelFolder + "/tags.txt";
-#else
-	string filename = "tags.txt";
-#endif
 	if (sTagName)
-#if 0
 		filename = m_currentLevelFolder + "/" + sTagName + ".tagpoint";
-#else
-		filename = std::string(sTagName) + ".tagpoint";
-#endif
 
 	const char* desc = "";
 	if (sDescription)
@@ -223,17 +233,9 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 	memset(tagLocations, 0, sizeof(tagLocations));
 
 	char desc[1024];
-#if 0
 	string filename = m_currentLevelFolder + "/tags.txt";
-#else
-	string filename = "tags.txt";
-#endif
 	if (sTagName)
-#if 0
 		filename = m_currentLevelFolder + "/" + sTagName + ".tagpoint";
-#else
-		filename = std::string(sTagName) + ".tagpoint";
-#endif
 	// Load tag locations from file.
 	FILE* f = fopen(filename.c_str(), "rt");	// Dont change this to CryPak
 	if (f)

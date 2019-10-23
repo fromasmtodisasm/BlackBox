@@ -66,6 +66,8 @@ public:
 public:
   virtual bool OnInputEvent(sf::Event &event) override;
 
+	void PersistentHandler(sf::Event& event);
+
   // IGame interface
 public:
   virtual IInputHandler *getInputHandler() override;
@@ -189,6 +191,7 @@ private:
   ICVar* r_displayinfo;
 	ICVar* r_profile;
 	ICVar* r_cap_profile;
+	ICVar* m_pCVarCheatMode;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 	CScriptObjectConsole* m_ScriptObjectConsole;

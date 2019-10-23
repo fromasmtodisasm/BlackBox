@@ -165,8 +165,3 @@ bool CGame::TestScriptSystem(bool& retflag)
 	retflag = false;
 	return {};
 }
-
-bool CGame::IsDevModeEnable()
-{
-	return true;
-}
