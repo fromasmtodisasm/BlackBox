@@ -151,7 +151,7 @@ bool CGame::init(ISystem *pEngine)  {
   }
 
 	if (!loadScene()) {
-		m_Log->AddLog("[FAILED] Failed init objects\n");
+		m_Log->Log("[FAILED] Failed init objects\n");
 		return false;
 	}
   // Set scene before camera, camera setted to active scene in world
@@ -319,7 +319,7 @@ void CGame::DisplayInfo(float fps)
 }
 
 bool CGame::run() {
-	m_Log->AddLog("[OK] Game started\n");
+	m_Log->Log("[OK] Game started\n");
   m_time = deltaClock.restart().asSeconds();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();

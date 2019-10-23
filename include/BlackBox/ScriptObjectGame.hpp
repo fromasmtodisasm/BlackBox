@@ -25,7 +25,18 @@ public:
 	int showMenu(IFunctionHandler *pH);
 	int getFPS(IFunctionHandler *pH);
 
+	int GetTagPoint(IFunctionHandler* pH);
+	/////////////////////////////////////////////////////////////		
+
+	int CreateVariable(IFunctionHandler* pH);//str
+	int SetVariable(IFunctionHandler* pH);
+	int RemoveVariable(IFunctionHandler* pH);//str
+	int GetVariable(IFunctionHandler* pH);
+	/////////////////////////////////////////////////////////////
+
 private:
-	IConsole* m_Console;
-	CGame *m_pGame;
+	CGame *							m_pGame;
+	ISystem *						m_pSystem;
+	IConsole *					m_pConsole;
+	CScriptObjectVector	m_pGetTagPoint;
 };

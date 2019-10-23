@@ -197,6 +197,9 @@ public:
 
 	bool TestScriptSystem(bool& retflag);
 
+	ISystem* GetSystem() { return m_pSystem; }
+	bool	IsDevModeEnable();
+
 };
 
 

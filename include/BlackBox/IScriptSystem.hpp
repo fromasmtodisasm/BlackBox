@@ -357,6 +357,16 @@ enum class ScriptVarType
 	UserData,
 };
 
+//enum ScriptVarType
+//{
+//	svtNull = ScriptVarType::Null,
+//	svtString = ScriptVarType::String,
+//	svtNumber = ScriptVarType::Number,
+//	svtFunction = ScriptVarType::Function,
+//	svtObject = ScriptVarType::Object,
+//	svtUserData = ScriptVarType::UserData,
+//};
+
 // Returns literal representation of the type value
 inline const char* ScriptVarTypeAsCStr(ScriptVarType t)
 {
@@ -887,8 +897,8 @@ public:
 	~CScriptSetGetChain() { m_pObject->EndSetGetChain(); }
 
 	void                         SetToNull(const char* sKey) { m_pObject->SetToNull(sKey); }
-	template<class T> inline void SetValue(const char* sKey, const T& value) const { m_pTable->SetValueChain(sKey, value); }
-	template<class T> inline bool GetValue(const char* sKey, T& value) const { return m_pTable->GetValueChain(sKey, value); }
+	template<class T> inline void SetValue(const char* sKey, const T& value) const { m_pObject->SetValueChain(sKey, value); }
+	template<class T> inline bool GetValue(const char* sKey, T& value) const { return m_pObject->GetValueChain(sKey, value); }
 
 private:
 	IScriptObject* m_pObject;

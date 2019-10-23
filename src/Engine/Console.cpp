@@ -640,26 +640,15 @@ void CConsole::RemoveWorkerCommand(IWorkerCommand* cmd)
 	m_worker_to_delete.push_back(cmd);
 }
 
+void CConsole::UnregisterVariable(const char* sVarName, bool bDelete/* = false*/)
+{
+	//TODO: implement this
+}
+
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
 {
 	CommandInfo cmdInfo;
 	cmdInfo.Script.code = sScriptFunc;
-	/*
-	std::vector<int> positions;
-	for (const char* pos = sScriptFunc; (pos = std::strchr(sScriptFunc + (pos - sScriptFunc), '%')) != NULL; pos++)
-	{
-		positions.push_back(pos - sScriptFunc);
-	}
-	cmdInfo.Script.arg_cnt = positions.size();
-	if (cmdInfo.Script.arg_cnt > 0)
-	{
-		cmdInfo.Script.args_pos = new int[cmdInfo.Script.arg_cnt];
-		for (int i = 0; i < cmdInfo.Script.arg_cnt; i++)
-		{
-			cmdInfo.Script.args_pos[i] = positions[i];
-		}
-	}
-	*/
 	if (help) cmdInfo.help = help;
 	cmdInfo.type = CommandInfo::Type::SCRIPT;
 	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;

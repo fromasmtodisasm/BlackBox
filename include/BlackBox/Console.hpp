@@ -262,4 +262,8 @@ private:
 
 	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
 
+
+	// Inherited via IConsole
+	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
+
 };

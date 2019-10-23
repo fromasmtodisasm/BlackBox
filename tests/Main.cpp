@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
     pSystem->Release();
     return EXIT_FAILURE;
   }
-	pSystem->GetILog()->AddLog("[OK] ISystem created\n");
-	pSystem->GetILog()->AddLog("[INFO] Current working directory: %s\n", path.c_str());
+	pSystem->GetILog()->Log("[OK] ISystem created\n");
+	pSystem->GetILog()->Log("[INFO] Current working directory: %s\n", path.c_str());
   pSystem->Start();
 	pSystem->Release();
 

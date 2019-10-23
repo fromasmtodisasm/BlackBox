@@ -55,7 +55,6 @@ bool CFunctionHandler::GetParam(int nIdx, int& n)
 	int nRealIdx = nIdx + m_paramIdOffset;
 	n = static_cast<int>(lua_tointeger(L, nRealIdx));
 	return true;
-
 }
 
 bool CFunctionHandler::GetParam(int nIdx, float& f)

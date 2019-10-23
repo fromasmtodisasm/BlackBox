@@ -10,7 +10,7 @@ struct ImGuiInputTextCallbackData;
 struct IConsole
 {
   virtual void    ClearLog() = 0;
-  virtual void    AddLog(const char* fmt, ...) = 0;
+  virtual void    Log(const char* fmt, ...) = 0;
   virtual void    Draw(const char* title, bool* p_open) = 0;
   virtual void    ExecCommand(const char* command_line) = 0;
   //virtual static int TextEditCallbackStub(ImGuiInputTextCallbackData* data) = 0;
@@ -125,13 +125,18 @@ struct IConsole
 	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") = 0;
 	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") = 0;
 	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") = 0;
-
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Remove a variable from the console
+		@param sVarName console variable name
+		@param bDelete if true the variable is deleted
+		@see ICVar
+	*/
+	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Dump all console-variables to a callback-interface
 		@param Callback callback-interface which needs to be called for each element
 	*/
 	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) = 0;
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! show/hide the console
 		@param specifies if the window must be (true=show,false=hide)

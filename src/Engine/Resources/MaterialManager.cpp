@@ -67,7 +67,7 @@ Material *MaterialManager::getMaterial(std::string name)
       material = matItor->second;
     }
     else {
-      m_pLog->AddLog("[ERROR] Load material\n");
+      m_pLog->Log("[ERROR] Load material\n");
     }
   }
 
@@ -129,7 +129,7 @@ bool MaterialManager::loadLib(std::string name)
 				if (!loadProgram(pd, false))
 				{
 					//TODO: handle this case
-					m_pLog->AddLog("[ERROR] Failed load material\n");
+					m_pLog->Log("[ERROR] Failed load material\n");
 				}
 				else
 				{
@@ -145,7 +145,7 @@ bool MaterialManager::loadLib(std::string name)
     if (!loadMaterial(material))
     {
       //TODO: handle this case
-      m_pLog->AddLog("[ERROR] Failed load material\n");
+      m_pLog->Log("[ERROR] Failed load material\n");
     }
     material = material->NextSiblingElement("material");
   }
@@ -233,7 +233,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
         break;
       default:
       {
-        m_pLog->AddLog("[ERROR] Unknown texture type\n");
+        m_pLog->Log("[ERROR] Unknown texture type\n");
       }
       }
       image = image->NextSiblingElement("texture");
@@ -257,7 +257,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   result->program = shader_it->second;
 	result->program_name = shader_name;
   cache[materialName] = result;
-  m_pLog->AddLog("[INFO] Created material: %s\n", materialName);
+  m_pLog->Log("[INFO] Created material: %s\n", materialName);
   return true;
 }
 
