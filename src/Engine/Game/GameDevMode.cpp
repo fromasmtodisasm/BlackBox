@@ -266,16 +266,20 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 		m_pSystem->GetViewCamera().SetPos(p);
 		pPlayer->SetPos(p);
 	}
-#endif
-	//if (!a.IsZero())
-	//{
+#else
+	if (p != Vec3(0.f))
+	{
 		m_World->getActiveScene()->getCurrentCamera()->transform.position = p;
+	}
+#endif
+	if (a != Vec3(0.f))
+	{
 		m_World->getActiveScene()->getCurrentCamera()->transform.rotation = a;
 		//m_pSystem->GetViewCamera().SetAngle(a);
 		//SetViewAngles(a);
 		m_World->getActiveScene()->getCurrentCamera()->updateCameraVectors();
 
-	//}
+	}
 #endif
 
 }
