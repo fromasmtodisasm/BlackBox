@@ -10,6 +10,10 @@ struct ISystem;
 #include "MathHelper.hpp"
 #include "Platform.hpp"
 
+#ifndef stricmp
+#define stricmp _stricmp
+#endif // !stricmp
+
 enum EModifierMask
 {
 	eMM_None = 0,
