@@ -375,6 +375,7 @@ inline const char* ScriptVarTypeAsCStr(ScriptVarType t)
 	case ScriptVarType::Null: return "Null";
 	case ScriptVarType::String: return "String";
 	case ScriptVarType::Number: return "Number";
+	case ScriptVarType::Bool: return "Bool";
 	case ScriptVarType::Function: return "Function";
 	case ScriptVarType::Object: return "Object";
 	case ScriptVarType::UserData: return "UserData";

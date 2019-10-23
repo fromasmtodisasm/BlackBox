@@ -35,6 +35,9 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 	REG_FUNC(CScriptObjectGame, GetVariable);
 
 	REG_FUNC(CScriptObjectGame, AddCommand);
+
+	REG_FUNC(CScriptObjectGame, SavePlayerPos);
+	REG_FUNC(CScriptObjectGame, LoadPlayerPos);
 }
 
 void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
