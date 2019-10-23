@@ -122,8 +122,10 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
 
   #Input folder
-  PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/BaseInput.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/InputCVars.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/InputDevice.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLInput.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp

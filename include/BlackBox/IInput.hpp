@@ -510,9 +510,6 @@ struct IInput
 	//! Currently only used by durango metro launcher.
 	virtual void ProcessKey(uint32_t key, bool pressed, wchar_t unicode, bool repeat) = 0;
 
-	//! Sets a filter so that only one device can output force feedback.
-	virtual void ForceFeedbackSetDeviceIndex(int index) = 0;
-
 	//! Initializes input system.
 	//! \note Required params should be passed through constructor.
 	virtual bool Init() = 0;

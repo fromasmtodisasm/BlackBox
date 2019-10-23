@@ -52,7 +52,6 @@ public:
 	virtual bool                 IsEventPostingEnabled() const;
 	virtual void                 PostInputEvent(const SInputEvent& event, bool bForce = false);
 	virtual void                 PostUnicodeEvent(const SUnicodeEvent& event, bool bForce = false);
-	virtual void                 ForceFeedbackSetDeviceIndex(int index);
 	virtual void                 EnableDevice(EInputDeviceType deviceType, bool enable);
 	virtual void                 ProcessKey(uint32_t key, bool pressed, wchar_t unicode, bool repeat) {};
 	// ~IInput

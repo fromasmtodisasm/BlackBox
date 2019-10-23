@@ -311,3 +311,11 @@ struct ICVar
 };
 
 #define CREATE_CONSOLE_VAR(name, value, flags, ...) GetISystem()->GetIConsole()->CreateVariable(name, value, flags, __VA_ARGS__)
+
+//! Preferred way to register a CVar
+#if IMPLEMENTED_CVAR_REG
+#define REGISTER_CVAR(_var, _def_val, _flags, _comment) ConsoleRegistrationHelper::Register(( # _var), &(_var), (_def_val), (_flags), CVARHELP(_comment))
+#else
+#define REGISTER_CVAR(_var, _def_val, _flags, _comment)
+#endif
+

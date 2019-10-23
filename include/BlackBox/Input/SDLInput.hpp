@@ -11,7 +11,7 @@ class CSDLPadManager;
 class CSDLMouse;
 struct ILog;
 
-#if !CRY_PLATFORM_ANDROID && !CRY_PLATFORM_IOS
+#if !BB_PLATFORM_ANDROID && !BB_PLATFORM_IOS
 #define SDL_USE_HAPTIC_FEEDBACK
 #endif
 
