@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(BlackBox)
 
 include(GenerateExportHeader)
+include(FindLua)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -49,6 +50,14 @@ add_library(${PROJECT_NAME})
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
 )
+if (LUA_FOUND)
+	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
+	target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
+endif()
+
+find_package(Freetype REQUIRED)
+target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
+
 if (USE_SFML)
 
   find_package(SFML 2 REQUIRED audio graphics window system)
