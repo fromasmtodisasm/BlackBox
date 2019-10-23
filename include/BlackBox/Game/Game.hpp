@@ -167,6 +167,7 @@ private:
 
 	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
 
+
   // IGame interface
 public:
   virtual float getDeltaTime() override;
@@ -199,6 +200,14 @@ public:
 
 	ISystem* GetSystem() { return m_pSystem; }
 	bool	IsDevModeEnable();
+	//////////////////////////////////////////////////////////////////////////
+	// DevMode.
+	//////////////////////////////////////////////////////////////////////////
+	void DevModeInit();
+	void DevModeUpdate();
+	void DevMode_SavePlayerPos(int index, const char* sTagName = NULL, const char* sDescription = NULL);
+	void DevMode_LoadPlayerPos(int index, const char* sTagName = NULL);
+	//////////////////////////////////////////////////////////////////////////
 
 };
 

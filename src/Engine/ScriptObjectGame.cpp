@@ -33,6 +33,8 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 	REG_FUNC(CScriptObjectGame, SetVariable);
 	REG_FUNC(CScriptObjectGame, RemoveVariable);
 	REG_FUNC(CScriptObjectGame, GetVariable);
+
+	REG_FUNC(CScriptObjectGame, AddCommand);
 }
 
 void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
@@ -263,4 +265,53 @@ int CScriptObjectGame::GetVariable(IFunctionHandler* pH)
 	default:
 		return pH->EndFunctionNull();
 	}
+}
+
+int CScriptObjectGame::AddCommand(IFunctionHandler* pH)
+{
+	int nPCount = pH->GetParamCount();
+	const char* sName;
+	const char* sCommand;
+	const char* sHelp = NULL;
+	int iflags = 0;
+	pH->GetParam(1, sName);
+	if (nPCount > 1)
+	{
+		pH->GetParam(2, sCommand);
+		if (nPCount > 2)
+		{
+			if (!pH->GetParam(3, sHelp))
+				sHelp = NULL;
+		}
+		if (sHelp)
+			m_pConsole->AddCommand(sName, sCommand, 0, sHelp);
+		else
+			m_pConsole->AddCommand(sName, sCommand, 0/*VF_NOHELP*/, "");
+	}
+
+	return pH->EndFunction();
+}
+
+int CScriptObjectGame::SavePlayerPos(IFunctionHandler* pH)
+{
+	const char* sName = NULL;
+	const char* sDesc = NULL;
+	pH->GetParam(1, sName);
+	pH->GetParam(2, sDesc);
+
+	if (sName)
+		m_pGame->DevMode_SavePlayerPos(0, sName, sDesc);
+
+	return pH->EndFunction();
+}
+
+int CScriptObjectGame::LoadPlayerPos(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(1);
+	const char* sName;
+	if (pH->GetParam(1, sName))
+	{
+		m_pGame->DevMode_LoadPlayerPos(0, sName);
+	}
+	return pH->EndFunction();
 }

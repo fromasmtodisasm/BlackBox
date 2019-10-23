@@ -34,6 +34,14 @@ public:
 	int GetVariable(IFunctionHandler* pH);
 	/////////////////////////////////////////////////////////////
 
+	int AddCommand(IFunctionHandler* pH);
+
+	/////////////////////////////////////////////////////////////
+
+	int SavePlayerPos(IFunctionHandler* pH);
+	int LoadPlayerPos(IFunctionHandler* pH);
+	/////////////////////////////////////////////////////////////
+
 private:
 	CGame *							m_pGame;
 	ISystem *						m_pSystem;

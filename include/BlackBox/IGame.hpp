@@ -4,6 +4,8 @@
 
 #include <string>
 
+#define GameWarning() void(0)
+
 //////////////////////////////////////////////////////////////////////////
 struct ISystem;
 struct IInputHandler;
