@@ -43,84 +43,7 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   class EventListener;
   friend class GameGUI;
   friend class CPlayer;
-private:
-  ISystem *m_pSystem;
-  IScriptSystem *m_pScriptSystem;
-  IRender *m_pRender;
-  IWindow *m_Window;
-  IInputHandler *m_inputHandler;
-  World *m_World;
-  CPlayer *m_player = nullptr;
-	CameraController *camControl;
-  Scene *m_scene;
-  SceneManager *m_sceneManager;
-  ILog *m_Log;
-  bool isWireFrame = false;
-  bool isFullScreen = false;
 
-  MusicList m_PlayList;
-  bool m_isMusicPlaying = false;
-
-  std::string m_Title;
-  bool m_running = true;
-  float m_lastTime;
-	float m_time = 0.0f;
-  sf::Clock deltaClock;
-  EventListener *listener;
-	bool isDrawingGui = false;
-  class GameState; 
-  //GUI
-#ifdef GUI
-  GameGUI *gui;
-#endif // GUI
-
-	CShaderProgram *m_ScreenShader;
-	FreeTypeFont* m_Font;
-	//EDIT MODE
-	//==========
-	IConsole* m_Console;
-	// Render states
-	bool culling = true;
-	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
-  //
-  bool openShadowMap = true;
-
-  //
-  ShaderManager *shaderManager;
-	std::vector<IPostProcessor*> postProcessors;
-	int currPP = 0;
-	//=======================
-  ICVar* g_scene;
-  ICVar* r_displayinfo;
-	ICVar* r_profile;
-	ICVar* r_cap_profile;
-
-  TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
-	CScriptObjectConsole* m_ScriptObjectConsole;
-	CScriptObjectGame* m_ScriptObjectGame;
-	IScriptObject* m_playerObject;
-
-	// other
-	bool canDragViewPortWidth = false;
-	bool canDragViewPortHeight = false;
-	bool mousePressed = false;
-	sf::Vector2i mouseDelta;
-	sf::Vector2i mousePrev;
-	sf::Cursor cursor;
-
-  enum Mode
-  {
-    FPS,
-    MENU,
-    FLY,
-		EDIT
-    
-  }m_Mode = Mode::FPS;
-  std::stack<GameState*> states;
-	float fps = 0.0;
-
-public:
-  float m_deltaTime;
 public:
   CGame(std::string title);
   CGame() = default;
@@ -208,6 +131,88 @@ public:
 	void DevMode_SavePlayerPos(int index, const char* sTagName = NULL, const char* sDescription = NULL);
 	void DevMode_LoadPlayerPos(int index, const char* sTagName = NULL);
 	//////////////////////////////////////////////////////////////////////////
+public:
+  float m_deltaTime;
+public:
+		std::string										m_currentLevel;						//!< Name of current level.
+		std::string										m_currentMission;					//!< Name of current mission.
+		std::string										m_currentLevelFolder;			//!< Folder of the current level.
+
+private:
+  ISystem *m_pSystem;
+  IScriptSystem *m_pScriptSystem;
+  IRender *m_pRender;
+  IWindow *m_Window;
+  IInputHandler *m_inputHandler;
+  World *m_World;
+  CPlayer *m_player = nullptr;
+	CameraController *camControl;
+  Scene *m_scene;
+  SceneManager *m_sceneManager;
+  ILog *m_Log;
+  bool isWireFrame = false;
+  bool isFullScreen = false;
+
+  MusicList m_PlayList;
+  bool m_isMusicPlaying = false;
+
+  std::string m_Title;
+  bool m_running = true;
+  float m_lastTime;
+	float m_time = 0.0f;
+  sf::Clock deltaClock;
+  EventListener *listener;
+	bool isDrawingGui = false;
+  class GameState; 
+  //GUI
+#ifdef GUI
+  GameGUI *gui;
+#endif // GUI
+
+	CShaderProgram *m_ScreenShader;
+	FreeTypeFont* m_Font;
+	//EDIT MODE
+	//==========
+	IConsole* m_Console;
+	// Render states
+	bool culling = true;
+	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
+  //
+  bool openShadowMap = true;
+
+  //
+  ShaderManager *shaderManager;
+	std::vector<IPostProcessor*> postProcessors;
+	int currPP = 0;
+	//=======================
+  ICVar* g_scene;
+  ICVar* r_displayinfo;
+	ICVar* r_profile;
+	ICVar* r_cap_profile;
+
+  TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
+	CScriptObjectConsole* m_ScriptObjectConsole;
+	CScriptObjectGame* m_ScriptObjectGame;
+	IScriptObject* m_playerObject;
+
+	// other
+	bool canDragViewPortWidth = false;
+	bool canDragViewPortHeight = false;
+	bool mousePressed = false;
+	sf::Vector2i mouseDelta;
+	sf::Vector2i mousePrev;
+	sf::Cursor cursor;
+
+  enum Mode
+  {
+    FPS,
+    MENU,
+    FLY,
+		EDIT
+    
+  }m_Mode = Mode::FPS;
+  std::stack<GameState*> states;
+	float fps = 0.0;
 
 };
 
