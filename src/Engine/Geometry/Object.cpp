@@ -2,7 +2,7 @@
 #include <BlackBox/ObjLoader.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Renderer.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/IGame.hpp>
 
@@ -29,7 +29,7 @@ Object::Object(MeshList mesh) : m_Mesh(mesh)
 Object::Object(const Object *obj):
   m_transform(obj->m_transform.position, obj->m_transform.rotation, obj->m_transform.scale),
   m_Mesh(obj->m_Mesh), m_Shader(obj->m_Shader),
-  m_type(obj->m_type),velocity(glm::vec3(0)),
+  velocity(glm::vec3(0)),
   m_path(obj->m_path),
   type(obj->type)
 {
@@ -55,11 +55,6 @@ void Object::draw(void * camera) {
 		glPolygonMode(GL_FRONT_AND_BACK, m_RenderMode);
 		mesh.getVertexBuffer()->draw();
 	}
-}
-
-void Object::setType(OBJType type)
-{
-  m_type = type;
 }
 
 glm::mat4 Object::getTransform()
@@ -115,7 +110,6 @@ Object Object::operator=(Object &that)
 {
   Object obj;
   obj.m_Mesh = that.m_Mesh;
-  obj.m_type = that.m_type;
   return obj;
 }
 
@@ -123,7 +117,6 @@ Object *Object::clone()
 {
   Object *obj = new Object;
   obj->m_Mesh = this->m_Mesh;
-  obj->m_type = this->m_type;
   return obj;
 }
 
@@ -225,7 +218,7 @@ Object * Object::load(string path)
     return nullptr;
   
   vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
-	 //std::vector<Mesh> mesh;
+	debuger::vertex_array_label(vb->getId(), ("model: " + path).c_str());
 	mesh = std::make_shared<std::vector<Mesh>>();
 	Mesh _mesh(vb, nullptr);
 	_mesh.bb = bb;

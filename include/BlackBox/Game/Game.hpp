@@ -3,7 +3,7 @@
 #include <BlackBox/ISystem.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/Window.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
@@ -43,6 +43,103 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   class EventListener;
   friend class GameGUI;
   friend class CPlayer;
+
+public:
+  CGame(std::string title);
+  CGame() = default;
+  ~CGame() = default;
+  bool init(ISystem *pSystem) override;
+  bool update() override;
+	void execScripts();
+	void drawHud(float fps);
+  void DisplayInfo(float fps);
+  bool run() override;
+  void input();
+
+  bool loadScene();
+  void setRenderState();
+  void render();
+  void setPlayer(CPlayer *player);
+  void setCamera(CCamera *camera);
+
+  // IInputEventListener interface
+public:
+  virtual bool OnInputEvent(sf::Event &event) override;
+
+	void PersistentHandler(sf::Event& event);
+
+  // IGame interface
+public:
+  virtual IInputHandler *getInputHandler() override;
+  void Stop();
+	void gotoMenu();
+	void gotoFullscreen();
+	void gotoGame();
+	void gotoFly();
+	void gotoEdit();
+  void showMenu();
+	IWindow* getWindow();
+private:
+
+  bool initPlayer();
+
+  bool FpsInputEvent(sf::Event& event);
+  bool FlyInputEvent(sf::Event& event);
+  bool MenuInputEvent(sf::Event& event);
+  bool DefaultInputEvent(sf::Event& event);
+  bool EditInputEvent(sf::Event& event);
+  bool OnInputEventProxy(sf::Event& event);
+
+	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
+
+
+  // IGame interface
+public:
+  virtual float getDeltaTime() override;
+  virtual float getFPS() override;
+
+  // Унаследовано через IPostRenderCallback
+  virtual void PostRender() override;
+  World *getWorld() const;
+
+	void drawHud();
+	void initCommands();
+	void initVariables();
+
+	// Inherited via IPreRenderCallback
+	virtual void PreRender() override;
+
+	// Inherited via IGame
+	virtual float getTime() override;
+
+  // tagpoint management functions
+  ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
+  ITagPoint* GetTagPoint(const string& name);
+  void RemoveTagPoint(ITagPoint* pPoint);
+  bool RenameTagPoint(const string& oldname, const string& newname);
+
+	//
+	bool InitScripts();
+
+	bool TestScriptSystem(bool& retflag);
+
+	ISystem* GetSystem() { return m_pSystem; }
+	bool	IsDevModeEnable();
+	//////////////////////////////////////////////////////////////////////////
+	// DevMode.
+	//////////////////////////////////////////////////////////////////////////
+	void DevModeInit();
+	void DevModeUpdate();
+	void DevMode_SavePlayerPos(int index, const char* sTagName = NULL, const char* sDescription = NULL);
+	void DevMode_LoadPlayerPos(int index, const char* sTagName = NULL);
+	//////////////////////////////////////////////////////////////////////////
+public:
+  float m_deltaTime;
+public:
+		std::string										m_currentLevel;						//!< Name of current level.
+		std::string										m_currentMission;					//!< Name of current mission.
+		std::string										m_currentLevelFolder;			//!< Folder of the current level.
+
 private:
   ISystem *m_pSystem;
   IScriptSystem *m_pScriptSystem;
@@ -94,11 +191,20 @@ private:
   ICVar* r_displayinfo;
 	ICVar* r_profile;
 	ICVar* r_cap_profile;
+	ICVar* m_pCVarCheatMode;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 	CScriptObjectConsole* m_ScriptObjectConsole;
 	CScriptObjectGame* m_ScriptObjectGame;
 	IScriptObject* m_playerObject;
+
+	// other
+	bool canDragViewPortWidth = false;
+	bool canDragViewPortHeight = false;
+	bool mousePressed = false;
+	sf::Vector2i mouseDelta;
+	sf::Vector2i mousePrev;
+	sf::Cursor cursor;
 
   enum Mode
   {
@@ -107,87 +213,9 @@ private:
     FLY,
 		EDIT
     
-  }m_Mode = FPS;
+  }m_Mode = Mode::FPS;
   std::stack<GameState*> states;
 	float fps = 0.0;
-
-public:
-  float m_deltaTime;
-public:
-  CGame(std::string title);
-  CGame() = default;
-  ~CGame() = default;
-  bool init(ISystem *pSystem) override;
-  bool update() override;
-	void execScripts();
-	void drawHud(float fps);
-  void DisplayInfo(float fps);
-  bool run() override;
-  void input();
-
-  bool loadScene();
-  void setRenderState();
-  void render();
-  void setPlayer(CPlayer *player);
-  void setCamera(CCamera *camera);
-
-  // IInputEventListener interface
-public:
-  virtual bool OnInputEvent(sf::Event &event) override;
-
-  // IGame interface
-public:
-  virtual IInputHandler *getInputHandler() override;
-  void Stop();
-	void gotoMenu();
-	void gotoFullscreen();
-	void gotoGame();
-	void gotoFly();
-	void gotoEdit();
-  void showMenu();
-	IWindow* getWindow();
-private:
-
-  bool initPlayer();
-
-  bool FpsInputEvent(sf::Event& event);
-  bool FlyInputEvent(sf::Event& event);
-  bool MenuInputEvent(sf::Event& event);
-  bool DefaultInputEvent(sf::Event& event);
-  bool EditInputEvent(sf::Event& event);
-  bool OnInputEventProxy(sf::Event& event);
-
-	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
-
-  // IGame interface
-public:
-  virtual float getDeltaTime() override;
-  virtual float getFPS() override;
-
-  // Унаследовано через IPostRenderCallback
-  virtual void PostRender() override;
-  World *getWorld() const;
-
-	void drawHud();
-	void initCommands();
-	void initVariables();
-
-	// Inherited via IPreRenderCallback
-	virtual void PreRender() override;
-
-	// Inherited via IGame
-	virtual float getTime() override;
-
-  // tagpoint management functions
-  ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
-  ITagPoint* GetTagPoint(const string& name);
-  void RemoveTagPoint(ITagPoint* pPoint);
-  bool RenameTagPoint(const string& oldname, const string& newname);
-
-	//
-	bool InitScripts();
-
-	bool TestScriptSystem(bool& retflag);
 
 };
 

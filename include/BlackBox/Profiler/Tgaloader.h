@@ -12,7 +12,7 @@
 #define TGA_USE_LOG_IOSTREAM	// Define this to use std::cout/std::cerr for logging
 
 // ---------------------------------------------------------------------
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 
 #include <cstdlib>
 #include <iostream>

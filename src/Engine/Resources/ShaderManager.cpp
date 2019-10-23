@@ -2,9 +2,16 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
+#include <BlackBox/IConsole.hpp>
 
 ShaderManager *ShaderManager::manager = nullptr;
 static std::shared_ptr<CShaderProgram> defaultProgram = nullptr;
+
+std::string ShaderDesc::root = "res/shaders/";
+
+ICVar* CBaseShaderProgram::print_loc_name = nullptr;
+ICVar* CBaseShaderProgram::use_cache = nullptr;
+
 
 ShaderManager *ShaderManager::instance()
 {
@@ -19,16 +26,16 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
 {
   std::shared_ptr<CShader> vs, fs;
   std::shared_ptr<CShaderProgram> p;
-  vs = getShader(vShader, "vertex", false);
-  fs = getShader(fShader, "fragment", false);
+  vs = getShader(ShaderDesc(vShader, "vertex"), false);
+  fs = getShader(ShaderDesc(fShader, "fragment"), false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->GetILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
     return p = std::make_shared<CShaderProgram>(vs, fs);
   }
 }
@@ -37,18 +44,19 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
 {
   std::shared_ptr<CShader> vs, fs, gs;
   std::shared_ptr<CShaderProgram> p;
-  vs = getShader(vShader, "vertex", false);
-  fs = getShader(fShader, "fragment", false);
-  gs = getShader(fShader, "geometry", false);
+  vs = getShader(ShaderDesc(vShader, "vertex"), false);
+  fs = getShader(ShaderDesc(fShader, "fragment"), false);
+  gs = getShader(ShaderDesc(fShader, "geometry"), false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->GetILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
+    return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
   }
 
@@ -58,19 +66,20 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
 {
   std::shared_ptr<CShader> vs, fs, gs, cs;
   std::shared_ptr<CShaderProgram> p;
-  vs = getShader(vShader, "vertex", false);
-  fs = getShader(fShader, "fragment", false);
-	if (gShader.size() > 0) gs = getShader(fShader, "geometry", false);
-  cs = getShader(fShader, "compute", false);
+  vs = getShader(ShaderDesc(vShader, "vertex"), false);
+  fs = getShader(ShaderDesc(fShader, "fragment"), false);
+	if (gShader.size() > 0) gs = getShader(ShaderDesc(fShader, "geometry"), false);
+  cs = getShader(ShaderDesc(fShader, "compute"), false);
   if (vs == nullptr || fs == nullptr)
   {
-    GetISystem()->GetILog()->AddLog("Error of load shader");
+    GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
   }
   else
   {
-    GetISystem()->GetILog()->AddLog("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
 		assert(0 && "Not implemented");
+    return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);
   }
 
@@ -81,17 +90,17 @@ std::shared_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
 	return defaultProgram;
 }
 
-std::shared_ptr<CShader> ShaderManager::getShader(std::string name, std::string type, bool isReload)
+std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc& desc, bool isReload)
 {
   std::shared_ptr<CShader> result = nullptr;
-  auto Path = root + name;
+  auto Path = root + desc.name;
   auto shader = cache.find(Path);
   if (shader != cache.end() && !isReload)
   {
     result = shader->second;
   }
   else {
-    result = CShader::load(Path, str2typ(type));
+    result = CShader::load(desc);
     result->m_Path = Path;
     if (result == nullptr)
       return result;
@@ -108,20 +117,8 @@ void ShaderManager::removeShader(std::string name)
 bool ShaderManager::init()
 {
   defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
-  defaultProgram->create();
+  defaultProgram->create("default");
+	ShaderDesc::root = ShaderManager::instance()->root;
+	CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");
   return true;
-}
-
-CShader::type ShaderManager::str2typ(std::string type)
-{
-  if (type == "vertex")
-    return CShader::type::E_VERTEX;
-  else if (type == "fragment")
-    return CShader::type::E_FRAGMENT;
-  else if (type == "geometry")
-    return CShader::type::E_GEOMETRY;
-  else if (type == "compute")
-    return CShader::type::E_COMPUTE;
-  else
-    return CShader::type::E_UNKNOWN;
 }

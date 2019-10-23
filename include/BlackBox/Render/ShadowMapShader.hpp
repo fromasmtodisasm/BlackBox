@@ -1,7 +1,7 @@
 #pragma once
 
 #include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 
 class ShadowMapShader : public CBaseShaderProgram

@@ -4,6 +4,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/Render/ShaderUtils.hpp>
 
 #include <map>
 #include <string>
@@ -12,20 +13,9 @@
 extern Material *defaultMaterial;
 struct ISystem;
 
-struct ShaderDesc 
+struct IMaterialShaderSink
 {
-	std::string type;
-	std::string name;
-	ShaderDesc() {}
-	ShaderDesc(std::string type, std::string name) : type(type), name(name){}
-};
-struct ProgramDesc
-{
-	std::string name;
-	std::string vs;
-	std::string fs;
-	std::string gs;
-	std::string cs;
+	virtual void OnShaderFound(const std::string& name) = 0;
 };
 
 class MaterialManager
@@ -49,6 +39,7 @@ public:
 
 	void reloadShader(ProgramDesc& pd);
   bool loadProgram(ProgramDesc &desc, bool isReload);
+	void EnumShaders(IMaterialShaderSink* callback);
 
 private:
   MaterialManager(ISystem *pSystem);

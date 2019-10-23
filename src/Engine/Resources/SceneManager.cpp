@@ -50,20 +50,20 @@ Scene *SceneManager::getScene(string scene)
     if (v != cache.end())
     {
       result = v->second;
-      GetISystem()->GetILog()->AddLog("[INFO] Scene [%s] already cached\n", scenePath.c_str());
+      GetISystem()->GetILog()->Log("[INFO] Scene [%s] already cached\n", scenePath.c_str());
     }
     else {
       result = new Scene(scene);
       if (!result->load(scenePath + ".xml"))
       {
-        GetISystem()->GetILog()->AddLog("[ERROR] Error or load scene: %s\n",scenePath.c_str());
+        GetISystem()->GetILog()->Log("[ERROR] Error or load scene: %s\n",scenePath.c_str());
         delete result;
         return nullptr;
       }
       else
       {
         cache[scenePath] = result;
-        GetISystem()->GetILog()->AddLog("[INFO] Scene [%s] loaded\n", scenePath.c_str());
+        GetISystem()->GetILog()->Log("[INFO] Scene [%s] loaded\n", scenePath.c_str());
       }
     }
   }

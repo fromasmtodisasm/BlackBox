@@ -67,7 +67,7 @@ Material *MaterialManager::getMaterial(std::string name)
       material = matItor->second;
     }
     else {
-      m_pLog->AddLog("[ERROR] Load material\n");
+      m_pLog->Log("[ERROR] Load material\n");
     }
   }
 
@@ -129,7 +129,7 @@ bool MaterialManager::loadLib(std::string name)
 				if (!loadProgram(pd, false))
 				{
 					//TODO: handle this case
-					m_pLog->AddLog("[ERROR] Failed load material\n");
+					m_pLog->Log("[ERROR] Failed load material\n");
 				}
 				else
 				{
@@ -145,7 +145,7 @@ bool MaterialManager::loadLib(std::string name)
     if (!loadMaterial(material))
     {
       //TODO: handle this case
-      m_pLog->AddLog("[ERROR] Failed load material\n");
+      m_pLog->Log("[ERROR] Failed load material\n");
     }
     material = material->NextSiblingElement("material");
   }
@@ -233,7 +233,7 @@ bool MaterialManager::loadMaterial(XMLElement *material)
         break;
       default:
       {
-        m_pLog->AddLog("[ERROR] Unknown texture type\n");
+        m_pLog->Log("[ERROR] Unknown texture type\n");
       }
       }
       image = image->NextSiblingElement("texture");
@@ -257,73 +257,93 @@ bool MaterialManager::loadMaterial(XMLElement *material)
   result->program = shader_it->second;
 	result->program_name = shader_name;
   cache[materialName] = result;
-  m_pLog->AddLog("[INFO] Created material: %s\n", materialName);
+  m_pLog->Log("[INFO] Created material: %s\n", materialName);
   return true;
 }
 
 bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 {
 	auto shader_it = shaders_map.find(desc.name);
-	bool load_gs = desc.gs.length() > 0;
-	bool load_cs = desc.cs.length() > 0;
+	bool load_vs = desc.vs.name.length() > 0;
+	bool load_fs = desc.fs.name.length() > 0;
+	bool load_gs = desc.gs.name.length() > 0;
+	bool load_cs = desc.cs.name.length() > 0;
+
+	bool is_compute = load_cs && !load_vs && !load_fs & !load_gs;
 
 	if (shader_it != shaders_map.end() && !isReload)
 		return true;
-	auto vs = loadShader(ShaderDesc("vertex", desc.vs), isReload);
-	if (vs == nullptr) return false;
+	auto vs = !is_compute ? desc.vs.type = "vertex", loadShader(desc.vs, isReload) : nullptr;
+	if (vs == nullptr && !is_compute) return false;
 
-	auto fs = loadShader(ShaderDesc("fragment", desc.fs), isReload);
-	if (fs == nullptr) return false;
+	auto fs = !is_compute ? desc.fs.type = "fragment", loadShader(desc.fs, isReload) : nullptr;
+	if (fs == nullptr && !is_compute) return false;
 
 	decltype(fs) gs;
 	decltype(fs) cs;
 
 	if (load_gs)
 	{
-		gs = loadShader(ShaderDesc("geometry", desc.gs), isReload);
+		desc.gs.type = "geometry";
+		gs = loadShader(desc.gs, isReload);
 		if (gs == nullptr) return false;
 	}
 	if (load_cs)
 	{
-		cs = loadShader(ShaderDesc("compute", desc.cs), isReload);
-		if (gs == nullptr) return false;
+		desc.cs.type = "compute";
+		cs = loadShader(desc.cs, isReload);
+		if (cs == nullptr) return false;
 	}
 
 	if (isReload)
 	{
-		shader_it->second->reload(vs, fs, gs, cs);
+		shader_it->second->reload(vs, fs, gs, cs, desc.name.c_str());
 	}
 	else
 	{
-		ShaderInfo vi(vs, desc.vs);
-		ShaderInfo fi(fs, desc.fs);
+		ShaderInfo vi;
+		ShaderInfo fi;
 		ShaderInfo gi;
 		ShaderInfo ci;
 
 		ShaderProgramRef shaderProgram;
+		if (!is_compute)
+		{
+			vi = ShaderInfo(vs, desc.vs.name);
+			fi = ShaderInfo(fs, desc.fs.name);
+		}
 		if (load_cs && load_gs)
 		{
-			gi = ShaderInfo(gs, desc.gs);
-			ci = ShaderInfo(cs, desc.cs);
+			gi = ShaderInfo(gs, desc.gs.name);
+			ci = ShaderInfo(cs, desc.cs.name);
 		}
 		else if (load_cs && !load_gs)
 		{
-			ci = ShaderInfo(cs, desc.cs);
+			ci = ShaderInfo(cs, desc.cs.name);
 		}
 		if (!load_cs && load_gs)
 		{
-			gi = ShaderInfo(gs, desc.gs);
+			gi = ShaderInfo(gs, desc.gs.name);
 		}
 		shaderProgram  = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
 			
-		if (!shaderProgram->create())
+		if (!shaderProgram->create(desc.name.c_str()))
 			return false;
 		auto it = shaders_map.find(desc.name);
 		shaders_map[desc.name] = shaderProgram;
-		debuger::program_label(shaderProgram->get(), desc.name);
+		//debuger::program_label(shaderProgram->get(), desc.name);
  
 	}
 	return true;
+}
+
+void MaterialManager::EnumShaders(IMaterialShaderSink* callback)
+{
+	for (auto shader : shaders_map)
+	{
+		callback->OnShaderFound(shader.first);
+	}
+
 }
 
 bool MaterialManager::reloadShaders()
@@ -334,6 +354,8 @@ bool MaterialManager::reloadShaders()
 		pd.name = shader.first;
 		pd.vs = shader.second->m_Vertex.name;
 		pd.fs = shader.second->m_Fragment.name;
+		pd.gs = shader.second->m_Geometry.name;
+		pd.cs = shader.second->m_Compute.name;
 		reloadShader(pd);
 	}
 	return true;
@@ -351,6 +373,8 @@ bool MaterialManager::reloadShaders(std::vector<std::string> names)
 			continue;
 		pd.vs = s_it->second->m_Vertex.name;
 		pd.fs = s_it->second->m_Fragment.name;
+		pd.gs = s_it->second->m_Geometry.name;
+		pd.cs = s_it->second->m_Compute.name;
 		reloadShader(pd);
 	}
 	return true;
@@ -397,7 +421,7 @@ XMLElement *MaterialManager::saveTexture(tinyxml2::XMLDocument &xmlDoc, Texture 
 
 std::shared_ptr<CShader> MaterialManager::loadShader(ShaderDesc &sd, bool isReload)
 {
-  return ShaderManager::instance()->getShader(sd.name, sd.type, isReload);
+  return ShaderManager::instance()->getShader(sd, isReload);
 }
 
 XMLElement *MaterialManager::saveShader(tinyxml2::XMLDocument &xmlDoc, CShader *shader)

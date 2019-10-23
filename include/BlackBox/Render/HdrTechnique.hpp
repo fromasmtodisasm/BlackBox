@@ -32,6 +32,8 @@ public:
   virtual void PostRenderPass() override;
 
 	void downsampling();
+	void downsamplingStandard();
+	void downsamplingCompute();
 	void upsampling();
   /////////////////////////////////////////////////
   virtual void Do(unsigned int texture) override;
@@ -50,12 +52,13 @@ private:
   ITechnique *shadowMapping;
   BaseShaderProgramRef m_ScreenShader;
   BaseShaderProgramRef m_DownsampleShader;
+  BaseShaderProgramRef m_DownsampleComputeShader;
   BaseShaderProgramRef m_UpsampleShader;
-  //ScreenShader *m_ScreenShader;
+  BaseShaderProgramRef m_UpsampleShaderComputeShader;
 	Quad m_ScreenQuad;
-  FrameBufferObject* hdrBuffer;
-	std::vector<FrameBufferObject*> pass0;
-	std::vector<FrameBufferObject*> pass1;
+  FrameBufferObject* m_HdrBuffer;
+	std::vector<FrameBufferObject*> m_DownsampleBuffer;
+	std::vector<FrameBufferObject*> m_UpsampleBuffer;
   Scene* m_Scene;
 
   ICVar* exposure;
@@ -63,6 +66,7 @@ private:
 	ICVar* bloom;
 	ICVar* bloomThreshold;
 	ICVar* blurOn;
+	ICVar* blurOnly;
 	ICVar* useBoxFilter;
 	ICVar* defaultFilter;
 	ICVar* bloom_exposure;
@@ -71,6 +75,9 @@ private:
 	ICVar* upsampleTime;
 	ICVar* downsampleTime;
 	ICVar* averageBloomTime;
+	ICVar* downsampleType;
+	ICVar* cam_width;
+	ICVar* cam_height;
 
   bool inited = false;
 	bool pingpong = false;
@@ -82,6 +89,9 @@ private:
 	std::vector<glm::vec2> bloomTest;
 	int testid;
 	std::shared_ptr<SDispFormat> m_DispFormats;
+
+	GLuint quadCornersVBO;
+	glm::vec2 quadCorners;
 
 	// Inherited via ITechnique
 	virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;

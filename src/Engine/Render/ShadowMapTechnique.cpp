@@ -28,7 +28,7 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
   if (renderTarget == nullptr)
   {
     m_RenderedScene = FrameBufferObject::create(
-      FrameBufferObject::BufferType::SCENE_BUFFER, GetISystem()->GetIRender()->GetWidth(), GetISystem()->GetIRender()->GetHeight(), 0, false
+      FrameBufferObject::BufferType::SCENE_BUFFER, m_pRender->GetWidth(), m_pRender->GetHeight(), 0, false
     );
   }
   else
@@ -36,7 +36,6 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
     m_RenderedScene = renderTarget;
   }
 
-  //m_ShadowMapShader = new ShadowMapShader();
 	ProgramDesc pd = {
 		"shadowpass",
 		"shadowpass.vs",
@@ -166,8 +165,8 @@ void ShadowMapping::RenderOpaque(Object* object)
     SetupLights(object);
     object->m_Material->apply(object);
     program->setUniformValue(1, "shadowMap");
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_DepthBuffer->texture[0]);
+    gl::ActiveTexture(GL_TEXTURE1);
+    gl::BindTexture2D(m_DepthBuffer->texture[0]);
 
 		if (object->m_path.find("terrain") != object->m_path.npos)
 			program->setUniformValue(true, "isTerrain");
@@ -206,9 +205,6 @@ void ShadowMapping::RenderTransparent(Object* object)
 void ShadowMapping::OnDepthPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
-	//glCullFace(GL_FRONT);
-	//DepthPass();
-	//glCullFace(GL_BACK);
 	m_pRender->SetCullMode(IRender::CullMode::FRONT);
   DepthPass();
 	m_pRender->SetCullMode(IRender::CullMode::BACK);
@@ -218,19 +214,21 @@ void ShadowMapping::OnRenderPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
 	auto& v = m_RenderedScene->viewPort;
-	/*
-	v.x = 0;
-	v.y = 0;
-	v.z = 500;
-	v.y = 500;
-	*/
-  m_RenderedScene->bind();
+	auto cam_width = GetISystem()->GetIConsole()->GetCVar("r_cam_w");
+	auto cam_height = GetISystem()->GetIConsole()->GetCVar("r_cam_h");
+  m_RenderedScene->bind({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	glm::vec4 fog = glm::vec4(
 		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
 		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal(),
 		1.f);
-	m_RenderedScene->clear(fog);
+	auto pSystem = GetISystem();
+	auto w = pSystem->GetIConsole()->GetCVar("r_cam_w")->GetIVal();
+	auto h = pSystem->GetIConsole()->GetCVar("r_cam_h")->GetIVal();
+	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
+	pSystem->GetIRender()->SetScissor(0, 0, w, h);
+	m_RenderedScene->clear(gl::Color(0));
+	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
   RenderPass();
 }
 

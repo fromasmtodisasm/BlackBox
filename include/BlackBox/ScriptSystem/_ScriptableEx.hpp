@@ -5,6 +5,7 @@
 
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ISystem.hpp>
+#include <BlackBox/MathHelper.hpp>
 #include <vector>
 #include <string>
 //#define _NO_HASHMAP
@@ -392,6 +393,57 @@ protected:
 #define REG_DERIVED_FUNC(_class,_func) RegisterFunction(pSS,#_func,&_class::_func);
 #define SCRIPT_REG_CONST_SS(_pSS, _const) _pSS->SetGlobalValue(#_const, _const);
 #define SCRIPT_REG_CONST(_const) SCRIPT_REG_CONST_SS(m_pScriptSystem,_const)
+
+// Description:
+//		This class map an 3d vector to a LUA table with x,y,z members.
+class CScriptObjectVector : public SmartScriptObject
+{
+public:
+	CScriptObjectVector() {}
+	CScriptObjectVector(IScriptSystem* pSS, bool bCreateEmpty = false) : SmartScriptObject(pSS, bCreateEmpty) {}
+	void Set(const Vec3& v)
+	{
+		CScriptSetGetChain chain(*this);
+		chain.SetValue("x", v.x);
+		chain.SetValue("y", v.y);
+		chain.SetValue("z", v.z);
+	}
+	Vec3 Get()
+	{
+		Vec3 v(0, 0, 0);
+		CScriptSetGetChain chain(*this);
+		chain.GetValue("x", v.x);
+		chain.GetValue("y", v.y);
+		chain.GetValue("z", v.z);
+		return v;
+	}
+	CScriptObjectVector& operator=(const Vec3& v3) { Set(v3); return *this; }
+};
+
+//! This class map an "color" to a LUA table with indexed 3 numbers [1],[2],[3] members.
+class CScriptObjectColor : public SmartScriptObject
+{
+public:
+	CScriptObjectColor() {}
+	CScriptObjectColor(IScriptSystem* pSS, bool bCreateEmpty = false) : SmartScriptObject(pSS, bCreateEmpty) {}
+	void Set(const Vec3& v)
+	{
+		IScriptObject* pObject = *this;
+		pObject->SetAt(1, v.x);
+		pObject->SetAt(2, v.y);
+		pObject->SetAt(3, v.z);
+	}
+	Vec3 Get()
+	{
+		IScriptObject* pObject = *this;
+		Vec3 v(0, 0, 0);
+		pObject->GetAt(1, v.x);
+		pObject->GetAt(2, v.y);
+		pObject->GetAt(3, v.z);
+		return v;
+	}
+	CScriptObjectColor& operator=(const Vec3& v3) { Set(v3); return *this; }
+};
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -47,7 +47,10 @@ int CFunctionHandler::GetFunctionID()
 
 int CFunctionHandler::GetParamCount()
 {
-	return lua_gettop(L);
+	auto count = lua_gettop(L);
+	if (m_paramIdOffset > 0)
+		count -= m_paramIdOffset;
+	return count;
 }
 
 bool CFunctionHandler::GetParam(int nIdx, int& n)
@@ -55,7 +58,6 @@ bool CFunctionHandler::GetParam(int nIdx, int& n)
 	int nRealIdx = nIdx + m_paramIdOffset;
 	n = static_cast<int>(lua_tointeger(L, nRealIdx));
 	return true;
-
 }
 
 bool CFunctionHandler::GetParam(int nIdx, float& f)

@@ -1,6 +1,6 @@
 #pragma once
 /*
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 #include <glm/glm.hpp>
 #include <set>
 #define PI 3.1415926535897932384626433832795

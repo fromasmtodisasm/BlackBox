@@ -21,7 +21,7 @@ CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
 
 bool CLinuxInput::Init()
 {
-	m_pLog->AddLog("Initializing LinuxInput/SDL");
+	m_pLog->Log("Initializing LinuxInput/SDL");
 
 	uint32_t flags = SDL_INIT_EVENTS | SDL_INIT_JOYSTICK;
 #if defined(SDL_USE_HAPTIC_FEEDBACK)
@@ -30,13 +30,13 @@ bool CLinuxInput::Init()
 
 	if (SDL_InitSubSystem(flags) != 0)
 	{
-		m_pLog->AddLog("Error: Initializing SDL Subsystems:%s", SDL_GetError());
+		m_pLog->Log("Error: Initializing SDL Subsystems:%s", SDL_GetError());
 		return false;
 	}
 
 	if (!CBaseInput::Init())
 	{
-		m_pLog->AddLog("Error: CBaseInput::Init failed");
+		m_pLog->Log("Error: CBaseInput::Init failed");
 		return false;
 	}
 	CSDLMouse* pMouse = new CSDLMouse(*this);
@@ -46,7 +46,7 @@ bool CLinuxInput::Init()
 	}
 	else
 	{
-		m_pLog->AddLog("Error: Initializing SDL Mouse");
+		m_pLog->Log("Error: Initializing SDL Mouse");
 		delete pMouse;
 		return false;
 	}
@@ -54,7 +54,7 @@ bool CLinuxInput::Init()
 	if (!AddInputDevice(pKeyboard))
 	{
 		delete pKeyboard;
-		m_pLog->AddLog("Error: Initializing SDL Keyboard");
+		m_pLog->Log("Error: Initializing SDL Keyboard");
 		return false;
 	}
 
@@ -74,7 +74,7 @@ bool CLinuxInput::Init()
 void CLinuxInput::ShutDown()
 {
 
-	m_pLog->AddLog("LinuxInput/SDL Shutdown");
+	m_pLog->Log("LinuxInput/SDL Shutdown");
 	if (m_pPadManager) delete m_pPadManager;
 	CBaseInput::ShutDown();
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);

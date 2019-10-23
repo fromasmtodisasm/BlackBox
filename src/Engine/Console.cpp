@@ -13,10 +13,50 @@
 #include <cstdlib>
 #include <cstring>
 #include <locale>
+#include <functional>
 
 #include <glm/glm.hpp>
 
 #define strdup _strdup
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
+{
+	// Get the first occurrence
+	size_t pos = data.find(toSearch);
+
+	// Repeat till end is reached
+	while (pos != std::string::npos)
+	{
+		// Replace this occurrence of Sub String
+		data.replace(pos, toSearch.size(), replaceStr);
+		// Get the next occurrence from the current position
+		pos = data.find(toSearch, pos + replaceStr.size());
+	}
+}
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr)
+{
+	// Get the first occurrence
+	size_t pos = data.find(toSearch);
+
+	// Repeat till end is reached
+	int n = 0;
+	while (pos != std::string::npos)
+	{
+		// Replace this occurrence of Sub String
+		if ((pos + 1) < data.length() && std::isdigit(data[pos + 1]))
+		{
+			data.replace(pos, toSearch.size() + 1, replaceStr(data[pos + 1] - '0'));
+			n++;
+		}
+		else
+		{
+			data.replace(pos, toSearch.size(), "");
+		}
+		// Get the next occurrence from the current position
+		pos = data.find(toSearch, ++pos);
+	}
+}
 
 class HelpCommand : public IConsoleCommand 
 {
@@ -93,6 +133,18 @@ void CConsole::SetImage(ITexture* pTexture)
 
 void CConsole::Update()
 {
+	for (const auto& worker : m_workers)
+	{
+		worker->OnUpdate();
+	}
+
+
+	//=====================
+	for (auto& worker : m_worker_to_delete)
+	{
+		m_workers.erase(worker);
+	}
+	m_worker_to_delete.clear();
 }
 
 void CConsole::Draw()
@@ -194,8 +246,18 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(sf::Event& event)
 {
+	if (event.key.control)
+	{
+		auto it = m_keyBind.find(event.key.code);
+		if (it != m_keyBind.end())
+		{
+			return handleCommand(it->second);
+		}
+	}
 	if (!isOpened)
+	{
 		return false;
+	}
 	std::vector<std::wstring> completion;
 	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
 	
@@ -210,6 +272,7 @@ bool CConsole::OnInputEvent(sf::Event& event)
 	switch (event.type)
 	{
 	case sf::Event::KeyPressed:
+	{
 		switch (event.key.code)
 		{
 		case sf::Keyboard::Tab:
@@ -300,6 +363,9 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		default:
 			return false;
 		}
+
+	}
+		
 	case sf::Event::TextEntered:
 	{
 		handleCommandTextEnter(event.text.unicode);
@@ -536,6 +602,129 @@ void CConsole::moveCursor(bool left)
 	}
 }
 
+void CConsole::initBind()
+{
+	{
+		m_str2key[std::string("A")] = sf::Keyboard::A;
+		m_str2key[std::string("B")] = sf::Keyboard::B;
+		m_str2key[std::string("C")] = sf::Keyboard::C;
+		m_str2key[std::string("D")] = sf::Keyboard::D;
+		m_str2key[std::string("E")] = sf::Keyboard::E;
+		m_str2key[std::string("F")] = sf::Keyboard::F;
+		m_str2key[std::string("G")] = sf::Keyboard::G;
+		m_str2key[std::string("H")] = sf::Keyboard::H;
+		m_str2key[std::string("I")] = sf::Keyboard::I;
+		m_str2key[std::string("J")] = sf::Keyboard::J;
+		m_str2key[std::string("K")] = sf::Keyboard::K;
+		m_str2key[std::string("L")] = sf::Keyboard::L;
+		m_str2key[std::string("M")] = sf::Keyboard::M;
+		m_str2key[std::string("N")] = sf::Keyboard::N;
+		m_str2key[std::string("O")] = sf::Keyboard::O;
+		m_str2key[std::string("P")] = sf::Keyboard::P;
+		m_str2key[std::string("Q")] = sf::Keyboard::Q;
+		m_str2key[std::string("R")] = sf::Keyboard::R;
+		m_str2key[std::string("S")] = sf::Keyboard::S;
+		m_str2key[std::string("T")] = sf::Keyboard::T;
+		m_str2key[std::string("U")] = sf::Keyboard::U;
+		m_str2key[std::string("V")] = sf::Keyboard::V;
+		m_str2key[std::string("W")] = sf::Keyboard::W;
+		m_str2key[std::string("X")] = sf::Keyboard::X;
+		m_str2key[std::string("Y")] = sf::Keyboard::Y;
+		m_str2key[std::string("Z")] = sf::Keyboard::Z;
+		m_str2key[std::string("Num0")] = sf::Keyboard::Num0;
+		m_str2key[std::string("Num1")] = sf::Keyboard::Num1;
+		m_str2key[std::string("Num2")] = sf::Keyboard::Num2;
+		m_str2key[std::string("Num3")] = sf::Keyboard::Num3;
+		m_str2key[std::string("Num4")] = sf::Keyboard::Num4;
+		m_str2key[std::string("Num5")] = sf::Keyboard::Num5;
+		m_str2key[std::string("Num6")] = sf::Keyboard::Num6;
+		m_str2key[std::string("Num7")] = sf::Keyboard::Num7;
+		m_str2key[std::string("Num8")] = sf::Keyboard::Num8;
+		m_str2key[std::string("Num9")] = sf::Keyboard::Num9;
+		m_str2key[std::string("Escape")] = sf::Keyboard::Escape;
+		m_str2key[std::string("LControl")] = sf::Keyboard::LControl;
+		m_str2key[std::string("LShift")] = sf::Keyboard::LShift;
+		m_str2key[std::string("LAlt")] = sf::Keyboard::LAlt;
+		m_str2key[std::string("LSystem")] = sf::Keyboard::LSystem;
+		m_str2key[std::string("RControl")] = sf::Keyboard::RControl;
+		m_str2key[std::string("RShift")] = sf::Keyboard::RShift;
+		m_str2key[std::string("RAlt")] = sf::Keyboard::RAlt;
+		m_str2key[std::string("RSystem")] = sf::Keyboard::RSystem;
+		m_str2key[std::string("Menu")] = sf::Keyboard::Menu;
+		m_str2key[std::string("LBracket")] = sf::Keyboard::LBracket;
+		m_str2key[std::string("RBracket")] = sf::Keyboard::RBracket;
+		m_str2key[std::string("Semicolon")] = sf::Keyboard::Semicolon;
+		m_str2key[std::string("Comma")] = sf::Keyboard::Comma;
+		m_str2key[std::string("Period")] = sf::Keyboard::Period;
+		m_str2key[std::string("Quote")] = sf::Keyboard::Quote;
+		m_str2key[std::string("Slash")] = sf::Keyboard::Slash;
+		m_str2key[std::string("Backslash")] = sf::Keyboard::Backslash;
+		m_str2key[std::string("Tilde")] = sf::Keyboard::Tilde;
+		m_str2key[std::string("Equal")] = sf::Keyboard::Equal;
+		m_str2key[std::string("Hyphen")] = sf::Keyboard::Hyphen;
+		m_str2key[std::string("Space")] = sf::Keyboard::Space;
+		m_str2key[std::string("Enter")] = sf::Keyboard::Enter;
+		m_str2key[std::string("Backspace")] = sf::Keyboard::Backspace;
+		m_str2key[std::string("Tab")] = sf::Keyboard::Tab;
+		m_str2key[std::string("PageUp")] = sf::Keyboard::PageUp;
+		m_str2key[std::string("PageDown")] = sf::Keyboard::PageDown;
+		m_str2key[std::string("End")] = sf::Keyboard::End;
+		m_str2key[std::string("Home")] = sf::Keyboard::Home;
+		m_str2key[std::string("Insert")] = sf::Keyboard::Insert;
+		m_str2key[std::string("Delete")] = sf::Keyboard::Delete;
+		m_str2key[std::string("Add")] = sf::Keyboard::Add;
+		m_str2key[std::string("Subtract")] = sf::Keyboard::Subtract;
+		m_str2key[std::string("Multiply")] = sf::Keyboard::Multiply;
+		m_str2key[std::string("Divide")] = sf::Keyboard::Divide;
+		m_str2key[std::string("Left")] = sf::Keyboard::Left;
+		m_str2key[std::string("Right")] = sf::Keyboard::Right;
+		m_str2key[std::string("Up")] = sf::Keyboard::Up;
+		m_str2key[std::string("Down")] = sf::Keyboard::Down;
+		m_str2key[std::string("Numpad0")] = sf::Keyboard::Numpad0;
+		m_str2key[std::string("Numpad1")] = sf::Keyboard::Numpad1;
+		m_str2key[std::string("Numpad2")] = sf::Keyboard::Numpad2;
+		m_str2key[std::string("Numpad3")] = sf::Keyboard::Numpad3;
+		m_str2key[std::string("Numpad4")] = sf::Keyboard::Numpad4;
+		m_str2key[std::string("Numpad5")] = sf::Keyboard::Numpad5;
+		m_str2key[std::string("Numpad6")] = sf::Keyboard::Numpad6;
+		m_str2key[std::string("Numpad7")] = sf::Keyboard::Numpad7;
+		m_str2key[std::string("Numpad8")] = sf::Keyboard::Numpad8;
+		m_str2key[std::string("Numpad9")] = sf::Keyboard::Numpad9;
+		m_str2key[std::string("F1")] = sf::Keyboard::F1;
+		m_str2key[std::string("F2")] = sf::Keyboard::F2;
+		m_str2key[std::string("F3")] = sf::Keyboard::F3;
+		m_str2key[std::string("F4")] = sf::Keyboard::F4;
+		m_str2key[std::string("F5")] = sf::Keyboard::F5;
+		m_str2key[std::string("F6")] = sf::Keyboard::F6;
+		m_str2key[std::string("F7")] = sf::Keyboard::F7;
+		m_str2key[std::string("F8")] = sf::Keyboard::F8;
+		m_str2key[std::string("F9")] = sf::Keyboard::F9;
+		m_str2key[std::string("F10")] = sf::Keyboard::F10;
+		m_str2key[std::string("F11")] = sf::Keyboard::F11;
+		m_str2key[std::string("F12")] = sf::Keyboard::F12;
+		m_str2key[std::string("F13")] = sf::Keyboard::F13;
+		m_str2key[std::string("F14")] = sf::Keyboard::F14;
+		m_str2key[std::string("F15")] = sf::Keyboard::F15;
+		m_str2key[std::string("Pause")] = sf::Keyboard::Pause;
+	}
+	//m_keyBind[sf::Keyboard::R] = L"shader reload downsampling";
+	//m_keyBind[sf::Keyboard::D] = L"r_displayinfo 0";
+	//m_keyBind[sf::Keyboard::Q] = L"#Game:Stop()";
+
+	keyBind("r", "shader reload");
+	keyBind("d", "r_displayinfo 0");
+	keyBind("q", "#Game:Stop()");
+}
+
+void CConsole::keyBind(const char* key, const char* cmd)
+{
+	auto it = m_str2key.find(key);
+	if (it != m_str2key.end())
+	{
+		m_keyBind[it->second] = str_to_wstr(cmd);
+	}
+}
+
 void CConsole::SetInputLine(const char* szLine)
 {
 	command = str_to_wstr(szLine);
@@ -557,10 +746,25 @@ void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFl
 	m_Commands[str_to_wstr(std::string(sCommand))] = cmdInfo;
 }
 
+void CConsole::AddWorkerCommand(IWorkerCommand* cmd)
+{
+	m_workers.insert(cmd);
+}
+
+void CConsole::RemoveWorkerCommand(IWorkerCommand* cmd)
+{
+	m_worker_to_delete.push_back(cmd);
+}
+
+void CConsole::UnregisterVariable(const char* sVarName, bool bDelete/* = false*/)
+{
+	//TODO: implement this
+}
+
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
 {
 	CommandInfo cmdInfo;
-	cmdInfo.Script = sScriptFunc;
+	cmdInfo.Script.code = sScriptFunc;
 	if (help) cmdInfo.help = help;
 	cmdInfo.type = CommandInfo::Type::SCRIPT;
 	m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
@@ -651,6 +855,7 @@ bool CConsole::Init(ISystem* pSystem)
 	if (background != nullptr)
 		texture_path = background->GetString();
 	m_pBackGround->load(texture_path);
+	initBind();
 	return true;
 }
 
@@ -714,7 +919,7 @@ bool CConsole::handleCommand(std::wstring command)
 	//Execute as string
 	if (command[0] == '#' || command[0] == '@')
 	{
-		if (/*!con_restricted || */isOpened)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+		if (/*!con_restricted || *//*isOpened*/true)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 		{
 			auto str = wstr_to_str(command).c_str();
 			PrintLine(str);
@@ -749,9 +954,11 @@ bool CConsole::handleCommand(std::wstring command)
 		}
 		else if (cmd_it->second.type == CommandInfo::Type::SCRIPT)
 		{
-			auto str = cmd_it->second.Script;
-			auto len = std::strlen(str);
-			result = m_pScriptSystem->ExecuteBuffer(cmd_it->second.Script, len);
+			std::string code(cmd_it->second.Script.code);
+			findAndReplaceAll(code, "%", [&cd](int n) -> std::string {
+				return "\"" + wstr_to_str(cd.get(n - 1)) + "\"";
+			});
+			result = m_pScriptSystem->ExecuteBuffer(code.c_str(), code.length());
 		}
 		else if (cmd_it->second.type == CommandInfo::Type::FUNC)
 		{
@@ -790,6 +997,18 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 	int begin_cmd = 0, end_cmd = 0;
 	int begin_args = 0, end_args = 0;
 	std::wstring current_arg;
+	std::wstring value;
+	bool get_value = false;
+
+	auto getVal = [this](std::wstring name) -> std::wstring {
+		auto str = wstr_to_str(name);
+
+		if (auto var = GetCVar(str.c_str()))
+		{
+			return str_to_wstr(var->GetString());
+		}
+		return std::wstring();
+	};
 	
 	for (int i = begin_cmd; i < command.size(); i++)
 	{
@@ -814,6 +1033,8 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 		{
 			if (command[i] != L'"')
 				current_arg += command[i];
+			else
+				state1 = ARGS;
 			break;
 		}
 		case ARGS:
@@ -824,13 +1045,25 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 					state1 = INSTRING;
 					break;
 				}
-				current_arg += command[i];
+				if (get_value)
+					value += command[i];
+				else
+					current_arg += command[i];
 			}
 			else
 			{
 				state1 = INARGSPACE;	
-				cd.args.push_back(current_arg);
-				current_arg.clear();
+				if (get_value)
+				{
+					cd.args.push_back(getVal(value));
+					value.clear();
+					get_value = false;
+				}
+				else
+				{
+					cd.args.push_back(current_arg);
+					current_arg.clear();
+				}
 			}
 			break;
 		case INCMD:
@@ -846,7 +1079,19 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 			if (command[i] != L' ')
 			{
 				state1 = ARGS;
-				current_arg += command[i];
+				if (command[i] == L'@')
+				{
+					get_value = true;
+				}
+				else
+				{
+					if (command[i] == L'"')
+					{
+						state1 = INSTRING;
+						break;
+					}
+					else current_arg += command[i];
+				}
 			}
 			break;
 		case INARG:
@@ -857,7 +1102,10 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 	}
 	if (state1 == ARGS)
 	{
-		cd.args.push_back(current_arg);
+		if (get_value)
+			cd.args.push_back(getVal(value));
+		else
+			cd.args.push_back(current_arg);
 	}
 
 	return cd;

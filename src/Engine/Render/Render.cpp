@@ -1,11 +1,10 @@
 #include <BlackBox/Render/Render.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Render/FrameBufferObject.hpp>
 
 //
 #include <SFML/Window.hpp>
@@ -32,28 +31,23 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	IWindow* result = m_Window = window;
 	if (window == nullptr)
 		return nullptr;
+	//=======================
+	initConsoleVariables();
+	//=======================
+	if (isDebug && r_debug->GetIVal() == 1)
+		glContextType = sf::ContextSettings::Debug;
+	else
+		glContextType = sf::ContextSettings::Attribute::Core;
   sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
-		return false;
+		return nullptr;
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
-		return false;
+		return nullptr;
   if (!OpenGLLoader())
-    return false;
-	//=======================
-	translateImageY = m_pSystem->GetIConsole()->CreateVariable("ty", 0.0f, 0);
-	translateImageX = m_pSystem->GetIConsole()->CreateVariable("tx", 0.0f, 0);
-
-	scaleImageX = m_pSystem->GetIConsole()->CreateVariable("sx", 1.0f, 0);
-	scaleImageY = m_pSystem->GetIConsole()->CreateVariable("sy", 1.0f, 0);
-
-	needTranslate = m_pSystem->GetIConsole()->CreateVariable("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY = m_pSystem->GetIConsole()->CreateVariable("nfy", 1, 0, "Flip or not 2d background of console");
-
-	test_proj = m_pSystem->GetIConsole()->CreateVariable("test_proj", "test proj empty", 0);
-	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
-	render_via_viewport = m_pSystem->GetIConsole()->CreateVariable("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+    return nullptr;
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
+	m_pSystem->GetIInputHandler()->AddEventListener(this);
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -63,12 +57,21 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		"screenshader.vs",
 		"screenshader.frag"
 	};
+	pd.vs.macro["STORE_TEXCOORDS"] = "1";
 	MaterialManager::instance()->loadProgram(pd, false);
 	m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
+	if (m_ScreenShader == nullptr)
+	{
+		m_pSystem->Log("Error of creating screen shader");
+		return nullptr;
+	}
 	//m_ScreenShader->create();
 	m_ScreenShader->use();
 	m_ScreenShader->setUniformValue(0,"screenTexture");
 	m_ScreenShader->unuse();
+
+	cam_width->Set(GetWidth());
+	cam_height->Set(GetHeight());
 	return result;
 }
 
@@ -95,7 +98,7 @@ void CRender::GetViewport(int* x, int* y, int* width, int* height)
 
 void CRender::SetViewport(int x, int y, int width, int height)
 {
-	glCheck(glViewport(x, y, width, height));
+	gl::ViewPort(glm::vec4(x, y, width, height));
 }
 
 void CRender::SetScissor(int x, int y, int width, int height)
@@ -151,8 +154,9 @@ void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width
 
 void CRender::glInit()
 {
+	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
-	if (glContextType == sf::ContextSettings::Debug || r_debug->GetIVal() == 1)
+	if (glContextType == sf::ContextSettings::Debug && r_debug->GetIVal() == 1)
 	{
 		glDebug = new OpenglDebuger("out/glDebug.txt");
 		SetState(State::DEBUG_OUTPUT, true);
@@ -184,15 +188,28 @@ void CRender::fillSates()
 #undef STATEMAP
 }
 
+void CRender::initConsoleVariables()
+{
+	translateImageY =			CREATE_CONSOLE_VAR("ty", 0.0f, 0);
+	translateImageX =			CREATE_CONSOLE_VAR("tx", 0.0f, 0);
+	scaleImageX =					CREATE_CONSOLE_VAR("sx", 1.0f, 0);
+	scaleImageY =					CREATE_CONSOLE_VAR("sy", 1.0f, 0);
+	needTranslate =				CREATE_CONSOLE_VAR("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY =						CREATE_CONSOLE_VAR("nfy", 1, 0, "Flip or not 2d background of console");
+	test_proj =						CREATE_CONSOLE_VAR("test_proj", "test proj empty", 0);
+	render_via_viewport = CREATE_CONSOLE_VAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+
+	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
+	cam_width		= m_pSystem->GetIConsole()->GetCVar("r_cam_w");
+	cam_height	= m_pSystem->GetIConsole()->GetCVar("r_cam_h");
+}
+
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
-	GLenum _mode;
 	if (mode == CullMode::FRONT_AND_BACK)
-		_mode = GL_FRONT_AND_BACK;
+		gl::CullFace(GL_FRONT_AND_BACK);
 	else
-		_mode = GL_FRONT + static_cast<unsigned int>(mode);
-	glCheck(glCullFace(_mode));
-
+		gl::CullFace(GL_FRONT + static_cast<unsigned int>(mode));
 }
 
 
@@ -262,9 +279,9 @@ void CRender::SetState(State state, bool enable)
 	if (it != stateMap.end())
 	{
 		if (enable)
-			glCheck(glEnable(it->second));
+			gl::Enable(it->second);
 		else
-			glCheck(glDisable(it->second));
+			gl::Disable(it->second);
 	}
 }
 
@@ -273,7 +290,7 @@ void CRender::DrawFullScreenImage(int texture_id)
 	auto
 		width = GetWidth(),
 		height = GetHeight();
-	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	gl::BindFramebuffer(0);
 	SetViewport(0, 0, width, height);
 	m_ScreenShader->use();
 	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
@@ -297,6 +314,11 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(0, pVar->GetFVal());
 	}
+	else if (!strcmp(pVar->GetName(),"r_debug"))
+	{
+		//OpenglDebuger::SetIgnore(!r_debug->GetIVal());
+		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
+	}
 	return false;
 
 }
@@ -311,8 +333,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	float
 		width = GetWidth(),
 		height = GetHeight();
-	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	FrameBufferObject::bindDefault(m_viewPort);
+	gl::BindFramebuffer(0);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -321,19 +342,10 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 
 	glm::mat4 model(1.0);
 	auto uv_projection = glm::mat4(1.0);
-	glm::mat4 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f, -1.0f, 1000.0f);
+	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1000.0f);
 
-	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.f));
-	//model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.f));
 	model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.f));
-	model = glm::scale(model, {scaleImageX->GetFVal() * w, scaleImageY->GetFVal() * h, 1.f });
-	if (needTranslate->GetIVal())
-		model = glm::translate(model, 
-			glm::vec3(
-			((2 * translateImageX->GetFVal() + xpos) + (float)GetWidth()) / (float)GetWidth(), 
-			((2 * translateImageY->GetFVal() + ypos) + (float)GetHeight()) / (float)GetHeight(), 
-			0.f)
-		); 
+	model = glm::scale(model, {w, h, 1.f });
 
   if (needFlipY->GetIVal() == 1)
   {
@@ -369,6 +381,17 @@ void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 
 bool CRender::OnInputEvent(sf::Event& event)
 {
+	switch (event.type)
+	{
+	case sf::Event::Resized:
+	{
+		this->cam_width->Set(static_cast<int>(event.size.width));
+		this->cam_height->Set(static_cast<int>(event.size.height));
+		break;
+	}
+	default:
+		break;
+	}
 	return false;
 }
 

@@ -2,13 +2,16 @@ cmake_minimum_required(VERSION 3.3)
 project(BlackBox)
 
 include(GenerateExportHeader)
+include(FindLua)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
+
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/modules" ${CMAKE_MODULE_PATH})
 
 ###################################################
 #add_subdirectory(submodules/glfw)
@@ -26,7 +29,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 include_directories(
-  "${SFML_SOURCE_DIR}/include"
+  #"${SFML_SOURCE_DIR}/include"
+  #" ${CMAKE_BINARY_DIR}"
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
@@ -46,8 +50,23 @@ add_library(${PROJECT_NAME})
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
 )
+if (LUA_FOUND)
+	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
+	target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
+endif()
+
+find_package(Freetype REQUIRED)
+target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
+
+find_package(SDL2 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
+#target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
+
 if (USE_SFML)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/SFML SFML)
+
+  find_package(SFML 2 REQUIRED audio graphics window system)
+  include_directories(${SFML_INCLUDE_DIR})
+  target_link_libraries(${PROJECT_NAME} sfml-audio sfml-graphics sfml-window sfml-system)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
@@ -88,6 +107,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Game.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/GameDevMode.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameTagPoints.cpp
@@ -156,6 +176,7 @@ target_sources(
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
 
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
@@ -232,12 +253,6 @@ source_group(
   ${IMGUI_SOURCES}
   )
 #--------------------------------------------------
-if (USE_SFML)
-  target_link_libraries(${PROJECT_NAME} sfml-graphics)
-  target_link_libraries(${PROJECT_NAME} sfml-audio)
-else()
-  target_link_libraries(${PROJECT_NAME} glfw)
-endif()
 if (GLAD_LOADER)
   target_link_libraries(${PROJECT_NAME} glad)
 elseif(GLEW_LOADER)
@@ -253,6 +268,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 #  ${Boost_FILESYSTEM_LIBRARY}
 #  ${Boost_SYSTEM_LIBRARY}
 #)
+
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:BlackBox>/dlls)
 
 install(
   TARGETS  ${PROJECT_NAME}

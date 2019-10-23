@@ -29,7 +29,7 @@ private:
   CBaseShaderProgram* m_ScreenShader;
   //ScreenShader *m_ScreenShader;
 	Quad m_ScreenQuad;
-  FrameBufferObject* hdrBuffer;
+  FrameBufferObject* m_HdrBuffer;
   Scene* m_Scene;
 
   ICVar* exposure;

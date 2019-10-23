@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IDrawable.hpp>
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
@@ -21,8 +21,8 @@ public:
 	{
 		ProgramDesc pd = {
 			"screen_shader",
-			"skybox.vs",
-			"skybox.frag"
+			ShaderDesc("skybox.vs"),
+			ShaderDesc("skybox.frag")
 		};
 
 		MaterialManager::instance()->loadProgram(pd, false);

@@ -2,7 +2,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H  
 #include <iostream>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <map>
 #include <glm/glm.hpp>

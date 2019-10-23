@@ -1,5 +1,21 @@
 ﻿#pragma once
-#include <BlackBox/Render/Opengl.hpp>
+#ifdef GLAD_LOADER
+//#define _WINDOWS_
+#pragma warning(push)
+#pragma warning(disable : 4005)
+#include <glad/glad.h>
+#pragma warning(pop)
+#else
+#ifdef GLEW_LOADER
+#include <GL/glew.h>
+#else
+#error OPENGL LOADER NOT SETTED
+#endif
+#endif
+
+#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/MathHelper.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -19,7 +35,7 @@
 #else
 
 // Else, we don't add any overhead
-#define glCheck(expr) do { expr; OpenglDebuger::checkError(__FILE__, __LINE__, #expr); } while (false)
+#define glCheck(expr) /*do { expr; OpenglDebuger::checkError(__FILE__, __LINE__, #expr); } while (false)*/
 //#define glCheck(expr) (expr)
 
 #endif
@@ -30,6 +46,10 @@ public:
 	OpenglDebuger(const char *file);
 	~OpenglDebuger();
 
+	static inline void SetIgnore(bool v)
+	{
+		ignore = v;
+	}
 	static void checkError(const char *file, int line, const char *expr);
 
 	static inline void PushGroup(GLuint id, GLsizei length, const char* message)
@@ -94,6 +114,7 @@ private:
 private:
 	std::ofstream debug_file;
 	static bool isError;
+	static bool ignore;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -174,10 +195,134 @@ namespace debuger
 		object_label(GL_FRAMEBUFFER, object, label);
 	}
 
+	inline void Ignore(bool v) { OpenglDebuger::SetIgnore(v); }
+
 	/*
 	template<class T> using va_label = decltype(vertex_array_label<T>);
 	template<class T> using tf_label = decltype(transform_feedback_label<T>);
 	template<class T> using rb_label = decltype(render_buffer_label<T>);
 	template<class T> using fb_label = decltype(frame_buffer_label<T>);
 	*/
+}
+
+bool OpenGLLoader();
+
+namespace gl {
+	typedef Vec4 Color;
+
+	inline void Enable(GLenum cap)
+	{
+		glCheck(glEnable(cap));
+	}
+
+	inline void Disable(GLenum cap)
+	{
+		glCheck(glDisable(cap));
+	}
+	inline void CullFace(GLenum mode)
+	{
+		glCheck(glCullFace(mode));
+	}
+
+	inline void ViewPort(Vec4 &viewPort)
+	{
+		glCheck(glViewport(static_cast<GLint>(viewPort.x), static_cast<GLint>(viewPort.y), static_cast<GLint>(viewPort.z), static_cast<GLint>(viewPort.w)));
+	}
+
+	// Framebuffer
+	inline void BindFramebuffer(GLuint id)
+	{
+		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
+	}
+	inline void FramebufferTexture2D(GLenum attachment, GLenum textarget, GLuint texture, GLint level)
+	{
+		glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, level));
+	}
+
+	inline void ClearColor(Color &color)
+	{
+		glCheck(glClearColor(color.r, color.g, color.b, color.a));
+	}
+
+	inline void Clear(GLbitfield mask)
+	{
+		glCheck(glClear(mask));
+	}
+
+	// Texture
+	inline void TexParameteri(GLenum target, GLenum pname, GLint param)
+	{
+		glCheck(glTexParameteri(target, pname, param));
+	}
+
+	inline void BindTexture2D(GLuint texture)
+	{
+		glBindTexture(GL_TEXTURE_2D, texture);
+	}
+
+	inline void ActiveTexture(GLenum texture)
+	{
+		glCheck(glActiveTexture(texture));
+	}
+
+	// VAO
+	inline void EnableVertexAttribArray(GLuint index)
+	{
+		glCheck(glEnableVertexAttribArray(index));
+	}
+
+	inline void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer)
+	{
+		glCheck(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
+	}
+
+	/*
+	inline void gl::UniformValue(GLint location, int value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, unsigned int value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, float value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec1 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec2 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec3 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::vec4 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::mat2 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::mat3 value)
+	{
+	}
+
+	inline void gl::UniformValue(GLint location, glm::mat4 value)
+	{
+	}
+
+	// Shader
+	template<typename T>
+	inline void Uniform(GLint location, T& const value)
+	{
+		UniformValue(location, value);
+	}
+	*/
+
 }

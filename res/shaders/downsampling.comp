@@ -1,0 +1,55 @@
+#version 450 core
+
+layout (local_size_x = 4, local_size_y = 4, local_size_z = 1) in;
+uniform								 sampler2D inputImg1;
+
+uniform writeonly	layout (rgba16f) image2D outputImg[8];
+
+uniform float weight[2] = float[](0.125, 0.5);
+uniform float offset = -3;
+uniform vec4 viewPort = vec4(0, 1, 0, 1);
+uniform int mipCnt = 3;
+
+vec3 offsets[13] = vec3[](
+	vec3(1,1, weight[0]),
+	vec3(3,1, weight[0]),
+	vec3(5,1, weight[0]),
+
+	vec3(2,2, weight[1]),
+	vec3(4,2, weight[1]),
+	
+	vec3(1,3, weight[0]),
+	vec3(3,3, weight[0]),
+	vec3(5,3, weight[0]),
+	
+	vec3(2,4, weight[1]),
+	vec3(4,4, weight[1]),
+
+	vec3(1,5, weight[0]),
+	vec3(3,5, weight[0]),
+	vec3(5,5, weight[0])
+
+);
+
+vec4 ProcessImage(ivec2 texel0)
+{
+    vec4 result = vec4(0, 0, 0, 0);
+	for (int j = 0; j < mipCnt; j++)
+	{
+		for (int i = 0; i < 13; i++)
+		{
+			ivec2 texel = texel0 + ivec2(offsets[i].xy + offset);
+			result = result + textureLod(inputImg1, texel / vec2(textureSize(inputImg1, j)), j) * offsets[i].z;
+		}
+		imageStore(outputImg[j], texel0, result);
+	}
+    return result;
+}
+
+void main()
+{
+    ivec2 texel0 = ivec2(gl_GlobalInvocationID.xy);
+    //vec4 color = vec4(2.f, 0, 0, 1);// = ProcessImage(texel0);
+    vec4 color = ProcessImage(texel0);
+    //imageStore(outputImg1, texel0, color);
+}

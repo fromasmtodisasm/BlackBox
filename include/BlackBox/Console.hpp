@@ -1,14 +1,23 @@
 #pragma once
 #include <BlackBox/IConsole.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/Texture.hpp>
 
 #include <map>
+#include <set>
+#include <list>
+#include <queue>
 #include <vector>
 #include <string>
 
 struct IFont;
+
+struct cmpKeys {
+	bool operator()(const std::string& a, const std::string& b) const {
+		return stricmp(a.c_str(), b.c_str()) < 0;
+	}
+};
 
 class CCVar : public ICVar
 {
@@ -63,11 +72,17 @@ struct CommandInfo
 		SCRIPT,
 		UNKNOWN
 	};
+	struct SScript
+	{
+		const char* code;
+		int arg_cnt;
+		int *args_pos;
+	};
 	union
 	{
 		ConsoleCommandFunc Func = nullptr;
 		IConsoleCommand* Command;
-		const char* Script;
+		SScript Script;
 	};
 	std::multimap<int, std::string> argsCompletion;
 	std::string help;
@@ -168,6 +183,9 @@ private:
   void pageUp(bool isPgUp);
 	void drawCursor();
 	void moveCursor(bool left);
+
+	void initBind();
+	void keyBind(const char* key, const char* cmd);
 private:
 	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;
@@ -202,6 +220,7 @@ private:
   bool page_dn = false;
 	std::vector<CommandLine> cmd_buffer;
 	std::vector<std::wstring> history;
+	std::wstring last_command;
 	std::string m_prompt;
 	std::string message_buffer;
 
@@ -228,6 +247,11 @@ private:
 	float blinking = 0.0f;
 	//float blinkTime = 1.0;
 	ICVar* blinkTime;
+	std::map<sf::Keyboard::Key, std::wstring> m_keyBind;
+	std::map<std::string, sf::Keyboard::Key, cmpKeys> m_str2key;
+
+	std::set<IWorkerCommand*> m_workers;
+	std::list<IWorkerCommand*> m_worker_to_delete;
 
 	int lines = 0;
 
@@ -239,5 +263,15 @@ private:
 
 	// Inherited via IConsole
 	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
+
+
+	// Унаследовано через IConsole
+	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
+
+	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
+
+
+	// Inherited via IConsole
+	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
 
 };

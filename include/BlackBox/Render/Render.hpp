@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Window.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/IConsole.hpp>
@@ -72,6 +72,7 @@ public:
 private:
 	void glInit();
 	void fillSates();
+	void initConsoleVariables();
 
 private:
 	IWindow* m_Window = nullptr;
@@ -94,6 +95,11 @@ private:
 	// Shaders 
 	BaseShaderProgramRef m_ScreenShader;
 #if defined(_DEBUG) || defined(GL_DEBUG)
+	bool isDebug = true;
+#else
+	bool isDebug = false;
+#endif 
+#if defined(_DEBUG) || defined(GL_DEBUG)
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
 #else
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
@@ -111,6 +117,9 @@ private:
 	ICVar* r_debug = nullptr;
 	ICVar* test_proj = nullptr;
 	ICVar* render_via_viewport = nullptr;
+
+	ICVar* cam_width;
+	ICVar* cam_height;
 
 	std::map<State, GLenum> stateMap;
 

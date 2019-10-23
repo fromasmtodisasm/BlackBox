@@ -105,7 +105,7 @@ void CBaseInput::SetExclusiveMode(EInputDeviceType deviceType, bool exclusive, v
 {
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: SetExclusiveMode(%d, %s)", deviceType, exclusive ? "true" : "false");
+		GetISystem()->GetILog()->Log("InputDebug: SetExclusiveMode(%d, %s)", deviceType, exclusive ? "true" : "false");
 	}
 
 	if (deviceType < (int)m_inputDevices.size())
@@ -242,7 +242,7 @@ void CBaseInput::ClearKeyState()
 {
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ClearKeyState");
+		GetISystem()->GetILog()->Log("InputDebug: ClearKeyState");
 	}
 	m_modifiers = 0;
 	for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
@@ -254,7 +254,7 @@ void CBaseInput::ClearKeyState()
 	m_holdSymbols.clear();
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ~ClearKeyState");
+		GetISystem()->GetILog()->Log("InputDebug: ~ClearKeyState");
 	}
 }
 
@@ -262,7 +262,7 @@ void CBaseInput::ClearAnalogKeyState()
 {
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ClearAnalogKeyState");
+		GetISystem()->GetILog()->Log("InputDebug: ClearAnalogKeyState");
 	}
 
 	for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
@@ -280,7 +280,7 @@ void CBaseInput::ClearAnalogKeyState()
 
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ~ClearAnalogKeyState");
+		GetISystem()->GetILog()->Log("InputDebug: ~ClearAnalogKeyState");
 	}
 }
 
@@ -288,7 +288,7 @@ void CBaseInput::RetriggerKeyState()
 {
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: RetriggerKeyState");
+		GetISystem()->GetILog()->Log("InputDebug: RetriggerKeyState");
 	}
 
 	m_retriggering = true;
@@ -318,7 +318,7 @@ void CBaseInput::RetriggerKeyState()
 	m_retriggering = false;
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ~RetriggerKeyState");
+		GetISystem()->GetILog()->Log("InputDebug: ~RetriggerKeyState");
 	}
 }
 
@@ -388,7 +388,7 @@ void CBaseInput::EnableEventPosting(bool bEnable)
 	m_enableEventPosting = bEnable;
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: EnableEventPosting(%s)", bEnable ? "true" : "false");
+		GetISystem()->GetILog()->Log("InputDebug: EnableEventPosting(%s)", bEnable ? "true" : "false");
 	}
 }
 
@@ -416,9 +416,9 @@ void CBaseInput::PostInputEvent(const SInputEvent & event, bool bForce)
 	{
 		// log out key press and release events
 		if (event.state == eIS_Pressed || event.state == eIS_Released)
-			GetISystem()->GetILog()->AddLog("InputDebug: '%s' - %s", event.keyName.c_str(), event.state == eIS_Pressed ? "pressed" : "released");
+			GetISystem()->GetILog()->Log("InputDebug: '%s' - %s", event.keyName.c_str(), event.state == eIS_Pressed ? "pressed" : "released");
 		else if ((event.state == eIS_Changed) && (g_pInputCVars->i_debug == 2))
-			GetISystem()->GetILog()->AddLog("InputDebug (Changed): '%s' - %.4f", event.keyName.c_str(), event.value);
+			GetISystem()->GetILog()->Log("InputDebug (Changed): '%s' - %.4f", event.keyName.c_str(), event.value);
 	}
 
 	if (!SendEventToListeners(event))
@@ -437,7 +437,7 @@ void CBaseInput::PostInputEvent(const SInputEvent & event, bool bForce)
 void CBaseInput::PostUnicodeEvent(const SUnicodeEvent & event, bool bForce)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_INPUT);
-	assert(event.inputChar != 0 && Unicode::Validate(event.inputChar) && "Attempt to post invalid unicode event");
+	//assert(event.inputChar != 0 && Unicode::Validate(event.inputChar) && "Attempt to post invalid unicode event");
 
 	if (!bForce && !m_enableEventPosting)
 	{
@@ -449,7 +449,7 @@ void CBaseInput::PostUnicodeEvent(const SUnicodeEvent & event, bool bForce)
 		char utf8_buf[5];
 		//Unicode::Convert(utf8_buf, event.inputChar);
 		std::wctomb(utf8_buf, event.inputChar);
-		GetISystem()->GetILog()->AddLog("InputDebug: Unicode input codepoint (%u), %s", event.inputChar, utf8_buf);
+		GetISystem()->GetILog()->Log("InputDebug: Unicode input codepoint (%u), %s", event.inputChar, utf8_buf);
 	}
 
 	if (!SendEventToListeners(event))
@@ -551,7 +551,7 @@ void CBaseInput::AddEventToHoldSymbols(const SInputEvent & event)
 		{
 			if (g_pInputCVars->i_debug)
 			{
-				GetISystem()->GetILog()->AddLog("InputDebug: 0x%p AddEventToHoldSymbols Symbol %d %s, Event %s %s", this, event.pSymbol->keyId, event.pSymbol->name.c_str(), event.keyName.c_str(), event.state == eIS_Pressed ? "pressed" : "released");
+				GetISystem()->GetILog()->Log("InputDebug: 0x%p AddEventToHoldSymbols Symbol %d %s, Event %s %s", this, event.pSymbol->keyId, event.pSymbol->name.c_str(), event.keyName.c_str(), event.state == eIS_Pressed ? "pressed" : "released");
 			}
 			event.pSymbol->state = eIS_Down;
 			//cache device index in the hold symbol
@@ -585,7 +585,7 @@ void CBaseInput::RemoveDeviceHoldSymbols(EInputDeviceType deviceType, uint8_t de
 
 				if (g_pInputCVars->i_debug)
 				{
-					GetISystem()->GetILog()->AddLog("InputDebug: RemoveDeviceHoldSymbols Device %d %u, Symbol %s %d", deviceType, deviceIndex, releaseEvent.keyName.c_str(), releaseEvent.keyId);
+					GetISystem()->GetILog()->Log("InputDebug: RemoveDeviceHoldSymbols Device %d %u, Symbol %s %d", deviceType, deviceIndex, releaseEvent.keyName.c_str(), releaseEvent.keyId);
 				}
 
 				SendEventToListeners(releaseEvent);
@@ -680,7 +680,7 @@ void CBaseInput::PostHoldEvents()
 
 			if (g_pInputCVars->i_debug)
 			{
-				GetISystem()->GetILog()->AddLog("InputDebug: 0x%p PostHoldEvent Symbol %d %s", this, m_holdSymbols[i]->keyId, m_holdSymbols[i]->name.c_str());
+				GetISystem()->GetILog()->Log("InputDebug: 0x%p PostHoldEvent Symbol %d %s", this, m_holdSymbols[i]->keyId, m_holdSymbols[i]->name.c_str());
 			}
 
 			PostInputEvent(event);
@@ -707,7 +707,7 @@ void CBaseInput::ClearHoldEvent(SInputSymbol * pSymbol)
 
 		if (g_pInputCVars->i_debug)
 		{
-			GetISystem()->GetILog()->AddLog("InputDebug: 0x%p ClearHoldEvent Symbol %d %s", this, pSymbol->keyId, pSymbol->name.c_str());
+			GetISystem()->GetILog()->Log("InputDebug: 0x%p ClearHoldEvent Symbol %d %s", this, pSymbol->keyId, pSymbol->name.c_str());
 		}
 		// swap last and found symbol
 		m_holdSymbols[slot] = m_holdSymbols[last];
@@ -865,7 +865,7 @@ void CBaseInput::SetDeadZone(float fThreshold)
 {
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: SetDeadZone [%0.3f]", fThreshold);
+		GetISystem()->GetILog()->Log("InputDebug: SetDeadZone [%0.3f]", fThreshold);
 	}
 
 	for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
@@ -875,7 +875,7 @@ void CBaseInput::SetDeadZone(float fThreshold)
 
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ~SetDeadZone");
+		GetISystem()->GetILog()->Log("InputDebug: ~SetDeadZone");
 	}
 }
 
@@ -883,7 +883,7 @@ void CBaseInput::RestoreDefaultDeadZone()
 {
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: RestoreDefaultDeadZone");
+		GetISystem()->GetILog()->Log("InputDebug: RestoreDefaultDeadZone");
 	}
 
 	for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
@@ -893,7 +893,7 @@ void CBaseInput::RestoreDefaultDeadZone()
 
 	if (g_pInputCVars->i_debug)
 	{
-		GetISystem()->GetILog()->AddLog("InputDebug: ~RestoreDefaultDeadZone");
+		GetISystem()->GetILog()->Log("InputDebug: ~RestoreDefaultDeadZone");
 	}
 }
 

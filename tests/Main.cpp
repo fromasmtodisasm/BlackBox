@@ -1,9 +1,10 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/ISystem.hpp>
-#include <BlackBox/Utils.hpp>
+//#include <BlackBox/Utils.hpp>
 #include <BlackBox/ILog.hpp>
 
 #include <iostream>
+#include <filesystem>
 
 /*##############################################*/
 
@@ -23,6 +24,9 @@ int main(int argc, char *argv[]) {
       debug = true;
   }
 
+	//std::filesystem::current_path("../../");
+	cout << "current path: " << std::filesystem::current_path() << endl;
+
   //chdir((path = getBasePath(string(argv[0]))).c_str());
   //path = getBasePath(string(argv[0]));
 	SSystemInitParams params;
@@ -33,8 +37,8 @@ int main(int argc, char *argv[]) {
     pSystem->Release();
     return EXIT_FAILURE;
   }
-	pSystem->GetILog()->AddLog("[OK] ISystem created\n");
-	pSystem->GetILog()->AddLog("[INFO] Current working directory: %s\n", path.c_str());
+	pSystem->GetILog()->Log("[OK] ISystem created\n");
+	pSystem->GetILog()->Log("[INFO] Current working directory: %s\n", path.c_str());
   pSystem->Start();
 	pSystem->Release();
 

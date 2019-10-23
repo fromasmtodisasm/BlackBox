@@ -67,14 +67,6 @@ struct TextRenderInfo
   }
 };
 
-//////////////////////////////////////////////////////////////////////
-// Pointer to Global ISystem.
-static ISystem* gISystem = nullptr;
-ISystem* GetISystem()
-{
-  return gISystem;
-}
-
 World *CGame::getWorld() const
 {
     return m_World;
@@ -92,24 +84,34 @@ float CGame::getTime()
 }
 
 CGame::CGame(std::string title) :
-  camControl(nullptr),
-  g_scene(nullptr),
+	camControl(nullptr),
+	g_scene(nullptr),
 #ifdef GUI
-  gui(nullptr),
+	gui(nullptr),
 #endif // GUI
-  listener(nullptr),
-  m_Console(nullptr),
-  m_Font(nullptr),
-  m_Log(nullptr),
-  m_ScreenShader(nullptr),
-  m_Window(nullptr),
-  m_inputHandler(nullptr),
-  m_player(nullptr),
-  m_pSystem(nullptr),
-  m_scene(nullptr),
-  m_sceneManager(nullptr),
-  shaderManager(nullptr),
-  m_World(new World()),m_Title(title)
+	listener(nullptr),
+	m_Console(nullptr),
+	m_Font(nullptr),
+	m_Log(nullptr),
+	m_ScreenShader(nullptr),
+	m_Window(nullptr),
+	m_inputHandler(nullptr),
+	m_player(nullptr),
+	m_pSystem(nullptr),
+	m_scene(nullptr),
+	m_sceneManager(nullptr),
+	shaderManager(nullptr),
+	m_World(new World()), m_Title(title),
+	m_ScriptObjectConsole(nullptr),
+	m_ScriptObjectGame(nullptr),
+	m_pRender(nullptr),
+	m_pScriptSystem(nullptr),
+	r_displayinfo(nullptr),
+	r_cap_profile(nullptr),
+	r_profile(nullptr),
+	m_pCVarCheatMode(nullptr),
+
+	m_currentLevelFolder("tmp")
 {
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -123,7 +125,7 @@ CGame::CGame(std::string title) :
 }
 
 bool CGame::init(ISystem *pEngine)  {
-  m_pSystem = gISystem = pEngine;
+  m_pSystem /*= gISystem */= pEngine;
 	m_pRender = m_pSystem->GetIRender();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_Log = m_pSystem->GetILog();
@@ -152,7 +154,7 @@ bool CGame::init(ISystem *pEngine)  {
   }
 
 	if (!loadScene()) {
-		m_Log->AddLog("[FAILED] Failed init objects\n");
+		m_Log->Log("[FAILED] Failed init objects\n");
 		return false;
 	}
   // Set scene before camera, camera setted to active scene in world
@@ -183,11 +185,20 @@ bool CGame::init(ISystem *pEngine)  {
 #endif
   m_Console->SetImage(consoleBackGround);
 
+	// other
+	mousePrev = sf::Mouse::getPosition();
+	mouseDelta = sf::Vector2i(0,0);
+	cursor.loadFromSystem(sf::Cursor::Arrow);
+	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
+
+	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+
   return true;
 }
 
 bool CGame::update() {
   while (!m_Window->closed() &&  m_running) {
+		m_pSystem->Update();
 		m_pSystem->BeginFrame();
 		{
 			sf::Time deltaTime = deltaClock.restart();
@@ -213,6 +224,15 @@ bool CGame::update() {
 					PROFILER_POP_CPU_MARKER();
 			}
 		}
+		//////////////////////////////////////////////////////////////////////////
+		// Special update function for developers mode.
+		//////////////////////////////////////////////////////////////////////////
+		if (IsDevModeEnable() && false)
+			DevModeUpdate();
+		//////////////////////////////////////////////////////////////////////////
+
+		//////////////////////////////////////////////////////////////////////////
+
 		m_pSystem->EndFrame();
     m_Window->swap();
   }
@@ -226,6 +246,7 @@ void CGame::execScripts()
 
 void CGame::drawHud(float fps)
 {
+	m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
   if (r_displayinfo->GetIVal() != 0)
   {
     DisplayInfo(fps);
@@ -247,9 +268,7 @@ void CGame::DisplayInfo(float fps)
     : m_Mode == FLY ? "FLY"
     : "EDIT";
 
-  glViewport(0, 0, m_Window->getWidth(), m_Window->getHeight());
   // Info
-
   TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
   SDrawTextInfo dti = info.getDTI();
 
@@ -295,15 +314,24 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("downsample time = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("dtime")->GetFVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("upwnsample time = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("uptime")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera width = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera height = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
+	if (canDragViewPortWidth)
+		render->PrintLine("CanDrag\n", info.getDTI());
+	if (mousePressed)
+		render->PrintLine("Mouse pressed\n", info.getDTI());
+	if (canDragViewPortWidth && mousePressed)
+		render->PrintLine(("delta.x" + std::to_string(mouseDelta.x)).c_str(), info.getDTI());
+
+
+
 }
 
 bool CGame::run() {
-	m_Log->AddLog("[OK] Game started\n");
+	m_Log->Log("[OK] Game started\n");
   m_time = deltaClock.restart().asSeconds();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
@@ -394,54 +422,70 @@ bool CGame::OnInputEvent(sf::Event &event)
 		bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag) return retval;
 	}
-
-  auto lpx = m_Console->GetCVar("lpx");
-  auto lpy = m_Console->GetCVar("lpy");
-  auto lpz = m_Console->GetCVar("lpz");
-  auto useBoxFilter = m_Console->GetCVar("bf");
   bool result = OnInputEventProxy(event);
-  switch (event.type)
-  {
-  case sf::Event::KeyPressed:
-  {
-    if (event.key.code == sf::Keyboard::SemiColon)
-      openShadowMap = !openShadowMap;
-    switch (event.key.code)
-    {
-    case sf::Keyboard::Up:
-    {
-      lpy->Set(lpy->GetFVal() + 0.5f);
-      break;
-    }
-    case sf::Keyboard::Down:
-    {
-      lpy->Set(lpy->GetFVal() - 0.5f);
-      break;
-    }
-    case sf::Keyboard::Left:
-    {
-      lpx->Set(lpx->GetFVal() - 0.5f);
-      break;
-    }
-    case sf::Keyboard::Right:
-    {
-      lpx->Set(lpx->GetFVal() + 0.5f);
-      break;
-    }
-    case sf::Keyboard::Insert:
-    {
+	PersistentHandler(event);
+  return result;
+}
+
+void CGame::PersistentHandler(sf::Event& event)
+{
+	auto useBoxFilter = m_Console->GetCVar("bf");
+	auto lpx = m_Console->GetCVar("lpx");
+	auto lpy = m_Console->GetCVar("lpy");
+	auto lpz = m_Console->GetCVar("lpz");
+	switch (event.type)
+	{
+	case sf::Event::KeyPressed:
+	{
+		if (event.key.code == sf::Keyboard::SemiColon)
+			openShadowMap = !openShadowMap;
+		if (event.key.code >= sf::Keyboard::F1 && event.key.code <= sf::Keyboard::F12)
+		{
+			if (event.key.control)
+			{
+				DevMode_SavePlayerPos(event.key.code - sf::Keyboard::F1, "BloomTest");
+			}
+			else if (event.key.shift)
+			{
+				DevMode_LoadPlayerPos(event.key.code - sf::Keyboard::F1, "BloomTest");
+			}
+
+		}
+		switch (event.key.code)
+		{
+		case sf::Keyboard::Up:
+		{
+			lpy->Set(lpy->GetFVal() + 0.5f);
+			break;
+		}
+		case sf::Keyboard::Down:
+		{
+			lpy->Set(lpy->GetFVal() - 0.5f);
+			break;
+		}
+		case sf::Keyboard::Left:
+		{
+			lpx->Set(lpx->GetFVal() - 0.5f);
+			break;
+		}
+		case sf::Keyboard::Right:
+		{
+			lpx->Set(lpx->GetFVal() + 0.5f);
+			break;
+		}
+		case sf::Keyboard::Insert:
+		{
 			bool ubf = useBoxFilter->GetIVal();
 			useBoxFilter->Set(!ubf);
-      break;
-    }
-    default:
-      break;
-    }
-  }
-  default:
-    break;
-  }
-  return result;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	default:
+		break;
+	}
 }
 
 IInputHandler *CGame::getInputHandler()
@@ -612,6 +656,68 @@ bool CGame::MenuInputEvent(sf::Event& event)
 #endif // GUI
 
     }
+	case sf::Event::MouseMoved:
+	{
+		ICVar* w = m_Console->GetCVar("r_cam_w");
+		auto h = m_Console->GetCVar("r_cam_h");
+		auto window = m_pSystem->GetIWindow();
+
+		mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;
+		mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
+
+		if (
+			std::abs(event.mouseMove.x - w->GetIVal()) <= 8 && !mousePressed 
+			&& event.mouseMove.y > (m_pRender->GetHeight() -  h->GetIVal())
+			)
+		{
+			cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+			canDragViewPortWidth = true;
+		}
+		else if (canDragViewPortWidth && !mousePressed)
+		{
+			canDragViewPortWidth = false;
+		}
+		if (
+			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h->GetIVal())) <= 8 
+			&& event.mouseMove.x < w->GetIVal() && !mousePressed
+			)
+		{
+			cursor.loadFromSystem(sf::Cursor::SizeVertical);
+			canDragViewPortHeight = true;
+		}
+		else if (canDragViewPortHeight && !mousePressed)
+		{
+			canDragViewPortHeight = false;
+		}
+		if (canDragViewPortHeight && canDragViewPortWidth)
+		{
+			cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
+		}
+		if (!canDragViewPortHeight && !canDragViewPortWidth && !mousePressed)
+		{
+			cursor.loadFromSystem(sf::Cursor::Arrow);
+		}
+
+		window->setCursor(reinterpret_cast<Cursor*>(&cursor));
+		break;
+	}
+	case sf::Event::MouseButtonPressed:
+	{
+		if (event.mouseButton.button == sf::Mouse::Button::Left)
+		{
+			mousePressed = true;
+
+		}
+		break;
+	}
+	case sf::Event::MouseButtonReleased:
+	{
+		if (event.mouseButton.button == sf::Mouse::Button::Left)
+		{
+			mousePressed = false;
+		}
+		break;
+	}
   default:
 #ifdef GUI
       return gui->OnInputEvent(event);
@@ -619,6 +725,17 @@ bool CGame::MenuInputEvent(sf::Event& event)
       return false;
 #endif // GUI
   }
+
+	if (canDragViewPortWidth && mousePressed)
+	{
+		ICVar* w = m_Console->GetCVar("r_cam_w");
+		w->Set(w->GetIVal() + mouseDelta.x);
+	}
+	if (canDragViewPortHeight && mousePressed)
+	{
+		ICVar* h = m_Console->GetCVar("r_cam_h");
+		h->Set(h->GetIVal() - mouseDelta.y);
+	}
   return false;
 
 }

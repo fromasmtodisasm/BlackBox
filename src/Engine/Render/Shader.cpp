@@ -1,5 +1,5 @@
 #include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 
@@ -22,11 +22,13 @@ CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs) : CBaseShaderProg
 {
 }
 
+#if 0
 CShaderProgram::CShaderProgram(std::string vs, std::string fs) 
 	:
 	CBaseShaderProgram(CShader::load(vs, CShader::E_VERTEX), CShader::load(fs, CShader::E_FRAGMENT))
 {
 }
+#endif
 
 CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs) : CBaseShaderProgram(vs, fs, gs)
 {

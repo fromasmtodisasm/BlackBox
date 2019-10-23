@@ -1,7 +1,7 @@
 #pragma once
 
 #include <BlackBox/Camera.hpp>
-#include <BlackBox/InputHandler.hpp>
+#include <BlackBox/IInputHandler.hpp>
 
 
 class CameraController : public IInputEventListener

@@ -1,5 +1,6 @@
 #pragma once
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Render/ShaderUtils.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,6 +11,7 @@
 class CShader; 
 class CBaseShaderProgram;
 class CShaderProgram;
+struct ICVar;
 
 using BaseShaderProgramRef = std::shared_ptr<CBaseShaderProgram>;
 using ShaderProgramRef = std::shared_ptr<CShaderProgram>;
@@ -24,6 +26,7 @@ struct ShaderStatus
  ShaderStatus(CShader *shader);
  bool get(GLenum statusType);
 };
+
 
 struct ShaderProgramStatus
 {
@@ -54,7 +57,7 @@ public:
   };
   CShader(std::string text, CShader::type type);
   ~CShader();
-  static std::shared_ptr<CShader> load(std::string path, CShader::type type);
+  static std::shared_ptr<CShader> load(ShaderDesc& desc);
   static bool parseLine(std::ifstream &fin, std::string &buffer);
   static bool loadInternal(std::string &path, std::string& buffer);
   static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
@@ -336,6 +339,8 @@ public:
   std::map<std::string, GLint> m_Cache;
   static char* buffer;
 	std::string name;
+	static ICVar* print_loc_name;
+	static ICVar* use_cache;
 
   bool status();
 public:
@@ -346,7 +351,7 @@ public:
   CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
   ~CBaseShaderProgram();
 
-  bool create();
+  bool create(const char *label);
   void attach(ShaderInfo& shader);
   ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
   void detach(ShaderInfo& shader);
@@ -359,6 +364,7 @@ public:
   GLint getUniformLocation(const char* format, ...);
   GLint getUniformLocation(std::string &name);
   UniformValue getUniformValue(const char* name);
+	void setUniformValue(bool value, const char* format, ...) { setUniformValue((int)value, format); }
   void setUniformValue(int value, const char *format, ...);
   void setUniformValue(unsigned int value, const char *format, ...);
   void setUniformValue(float value, const char *format, ...);
@@ -366,11 +372,15 @@ public:
   void setUniformValue(glm::vec2 value, const char *format, ...);
   void setUniformValue(glm::vec3 value, const char *format, ...);
   void setUniformValue(glm::vec4 value, const char *format, ...);
+  void setUniformValue(glm::ivec4 value, const char *format, ...);
   void setUniformValue(glm::mat2 value, const char *format, ...);
   void setUniformValue(glm::mat3 value, const char *format, ...);
   void setUniformValue(glm::mat4 value, const char *format, ...);
 
-	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c);
+	template<typename T>
+	void setUniformValue(T value, std::string name) { setUniformValue(value, name.c_str()); }
+
+	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
 
 	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
 	void bindTextureUnit2D(GLuint texture, GLint unit);
@@ -381,5 +391,7 @@ private:
 	void reset(ShaderInfo src);
   const char* buildName(const char* format, va_list args);
 };
+
+CShader::type str2typ(std::string type);
 
 //typedef std::shared_ptr<CShader> std::shared_ptr<CShader>;

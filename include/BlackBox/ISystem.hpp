@@ -153,6 +153,7 @@ struct ISystem
 	virtual void Quit() = 0;
 
 	virtual void Log(const char* message) = 0;
+	virtual void Error(const char* message) = 0;
 
 	virtual void ShowMessage(const char *message, const char *caption, MessageType messageType) = 0;
 	virtual bool IsDevMode() = 0;

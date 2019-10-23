@@ -44,7 +44,7 @@ void CSDLKeyboard::Update(bool focus)
 	if (nEvents == -1)
 	{
 		//gEnv->pLog->LogError("SDL_GETEVENT error: %s", SDL_GetError());
-		GetISystem()->GetILog()->AddLog("SDL_GETEVENT error: %s", SDL_GetError());
+		GetISystem()->GetILog()->Log("SDL_GETEVENT error: %s", SDL_GetError());
 		return;
 	}
 	for (int i = 0; i < nEvents; ++i)

@@ -117,6 +117,8 @@ bool CGame::TestScriptSystem(bool& retflag)
 		for i=1, #formats do
 			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
 		end
+		Console:PrintLine(%2)
+		Console:PrintLine(%1)
 		)",
 		0,
 		"Enum Display formats"

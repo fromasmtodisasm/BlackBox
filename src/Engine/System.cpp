@@ -22,6 +22,14 @@
 
 using namespace Utils;
 
+//////////////////////////////////////////////////////////////////////
+// Pointer to Global ISystem.
+static ISystem* gISystem = nullptr;
+ISystem* GetISystem()
+{
+  return gISystem;
+}
+
 
 CSystem::CSystem()
 	:
@@ -62,6 +70,7 @@ CSystem::~CSystem()
 
 bool CSystem::Init()
 {
+	gISystem = this;
 	initTimer();
   m_pLog = new NullLog();
   if (m_pLog == nullptr)
@@ -105,7 +114,7 @@ bool CSystem::Init()
 	//=============
 	PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
 	//=============
-	m_pLog->AddLog("[OK] Window susbsystem inited\n");
+	m_pLog->Log("[OK] Window susbsystem inited\n");
 	//=============
 	m_pScriptSystem = new CScriptSystem();
 	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
@@ -223,6 +232,10 @@ bool CSystem::IsDevMode()
 	return true;
 }
 
+void CSystem::Error(const char* message)
+{
+}
+
 void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
 {
 	::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
@@ -312,6 +325,13 @@ bool CSystem::OnInputEvent(sf::Event& event)
 				}
 			}
 		}
+		else if (event.key.alt)
+		{
+			if (event.key.code == sf::Keyboard::Enter)
+			{
+				static_cast<CWindow*>(m_pWindow)->ToogleFullScreen(1366, 768);
+			}
+		}
 	}
 
 	default:
@@ -323,6 +343,7 @@ bool CSystem::OnInputEvent(sf::Event& event)
 void CSystem::Update()
 {
 	//PROFILER_SYNC_FRAME();
+	m_pConsole->Update();
 }
 
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)

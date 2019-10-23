@@ -357,6 +357,16 @@ enum class ScriptVarType
 	UserData,
 };
 
+//enum ScriptVarType
+//{
+//	svtNull = ScriptVarType::Null,
+//	svtString = ScriptVarType::String,
+//	svtNumber = ScriptVarType::Number,
+//	svtFunction = ScriptVarType::Function,
+//	svtObject = ScriptVarType::Object,
+//	svtUserData = ScriptVarType::UserData,
+//};
+
 // Returns literal representation of the type value
 inline const char* ScriptVarTypeAsCStr(ScriptVarType t)
 {
@@ -365,6 +375,7 @@ inline const char* ScriptVarTypeAsCStr(ScriptVarType t)
 	case ScriptVarType::Null: return "Null";
 	case ScriptVarType::String: return "String";
 	case ScriptVarType::Number: return "Number";
+	case ScriptVarType::Bool: return "Bool";
 	case ScriptVarType::Function: return "Function";
 	case ScriptVarType::Object: return "Object";
 	case ScriptVarType::UserData: return "UserData";
@@ -671,7 +682,7 @@ struct IScriptDebugSink {
 
 class SmartScriptObject
 {
-	SmartScriptObject(const SmartScriptObject&)
+	SmartScriptObject(const SmartScriptObject&) : m_pSO(nullptr)
 	{
 	}
 	SmartScriptObject& operator =(const SmartScriptObject&)
@@ -873,6 +884,26 @@ private:
 };
 
 #endif
+// Utility classes.
+
+//! Helper for faster Set/Gets on the table.
+class CScriptSetGetChain
+{
+public:
+	CScriptSetGetChain(IScriptObject* pObject)
+	{
+		m_pObject = pObject;
+		m_pObject->BeginSetGetChain();
+	}
+	~CScriptSetGetChain() { m_pObject->EndSetGetChain(); }
+
+	void                         SetToNull(const char* sKey) { m_pObject->SetToNull(sKey); }
+	template<class T> inline void SetValue(const char* sKey, const T& value) const { m_pObject->SetValueChain(sKey, value); }
+	template<class T> inline bool GetValue(const char* sKey, T& value) const { return m_pObject->GetValueChain(sKey, value); }
+
+private:
+	IScriptObject* m_pObject;
+};
 
 #if 0
 

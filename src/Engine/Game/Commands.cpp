@@ -8,6 +8,39 @@
 #include <BlackBox/IMarkers.hpp>
 #include <process.h>
 
+bool MyExec(char* FileName, LPSTR cmd, HANDLE *handle)
+{
+
+	//DWORD res;
+	STARTUPINFO         si;
+	PROCESS_INFORMATION pi;
+	memset(&si, 0, sizeof(STARTUPINFO));
+	si.cb = sizeof(si);
+	LPCH env = GetEnvironmentStrings();
+	//si.wShowWindow = true;
+	//si.dwFlags = STARTF_USESHOWWINDOW;
+	if (!CreateProcess(FileName,
+		cmd,
+		NULL,
+		NULL,
+		FALSE,
+		0,
+		//NULL,
+		env,
+		NULL,
+		&si,
+		&pi))
+	{
+		auto er = GetLastError();
+		return false;
+	}
+	else
+	{
+		*handle = pi.hProcess;
+		return true;
+	}
+}
+
 class BaseCommand : public IConsoleCommand
 {
 protected:
@@ -285,9 +318,12 @@ WireframeCommand::WireframeCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class ExecCommand : public BaseCommand 
+class ExecCommand : public BaseCommand, public IWorkerCommand
 {
 	World* m_World;
+	IConsole* console;
+	int wait_cnt = 0;
+	HANDLE process;
 public:
 	ExecCommand(CGame *game);
 private:
@@ -297,16 +333,40 @@ private:
 		if (cd.args.size() == 1)
 		{
 			std::string name = wstr_to_str(cd.args[0]);
-			//auto res = spawnl(P_NOWAIT, name.c_str(), name.c_str(), nullptr);
-			GetISystem()->GetIConsole()->ExecuteFile(name.c_str());
-
+			console->ExecuteFile(name.c_str());
 			return true;
 		}
 		else if (cd.get(0) == L"os")
 		{
 			auto command = cd.get(1);
-			system(wstr_to_str(command).c_str());
+			std::string args;
+			if (cd.args.size() > 2)
+			{
+				for (int i = 1; i < cd.args.size(); i++)
+				{
+					args += "\"" + wstr_to_str(cd.get(i)) + "\" ";
+				}
+			}
+			if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &process))
+			{
+				console->AddWorkerCommand(this);
+			}
 		}
+		return false;
+	}
+
+	// Унаследовано через IWorkerCommand
+	virtual bool OnUpdate() override
+	{
+		auto res = WaitForSingleObject(process, 0);
+		if (res == WAIT_OBJECT_0)
+		{
+			console->PrintLine("Finish");
+			console->RemoveWorkerCommand(this);
+		}
+		if ((wait_cnt % 60) == 0)
+			console->PrintLine("wait");
+		wait_cnt++;
 		return false;
 	}
 };
@@ -314,6 +374,7 @@ private:
 ExecCommand::ExecCommand(CGame *game) : BaseCommand(game)
 {
 	m_World = game->getWorld();
+	console = GetISystem()->GetIConsole();
 }
 //*******************************************************
 class MaterialCommand : public BaseCommand 
@@ -343,7 +404,7 @@ MaterialCommand::MaterialCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class ShaderCommand : public BaseCommand 
+class ShaderCommand : public BaseCommand, public IMaterialShaderSink
 {
 	World* m_World;
 public:
@@ -360,6 +421,10 @@ private:
 				return move(cd);
 			if (cd.args[0] == L"dump")
 				return dump(cd);
+			if (cd.args[0] == L"edit")
+				return edit(cd);
+			if (cd.args[0] == L"enum")
+				return enumerate(cd);
 		}
 		else
 		{
@@ -370,6 +435,14 @@ private:
 	bool reload(CommandDesc& cd);
 	bool move(CommandDesc& cd);
 	bool dump(CommandDesc& cd);
+	bool edit(CommandDesc& cd);
+	bool enumerate(CommandDesc& cd);
+
+	// Inherited via IMaterialShaderSink
+	virtual void OnShaderFound(const std::string& name) override
+	{
+		GetISystem()->GetIConsole()->PrintLine("Program: %s", name.c_str());
+	}
 };
 
 ShaderCommand::ShaderCommand(CGame *game) : BaseCommand(game)
@@ -422,10 +495,42 @@ bool ShaderCommand::dump(CommandDesc& cd)
 		if (s == nullptr)
 			return false;
 		s->dump();
-		GetISystem()->GetIConsole()->ExecuteString("exec os \"notepad.exe dump.bin\"");
+		GetISystem()->GetIConsole()->ExecuteString("exec os @EDITOR dump.bin");
 		return true;
 	}
 	return false;
+}
+bool ShaderCommand::edit(CommandDesc& cd)
+{
+	if (cd.args.size() == 3)
+	{
+		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[2]));
+		if (s == nullptr)
+			return false;
+		std::string shader_name;
+		std::string type = wstr_to_str(cd.get(1));
+		if (type == "vs")
+			shader_name = s->m_Vertex.name;
+		else if (type == "fs")
+			shader_name = s->m_Fragment.name;
+		else if (type == "gs")
+			shader_name = s->m_Geometry.name;
+		else if (type == "cs")
+			shader_name = s->m_Compute.name;
+		if (shader_name.length() > 0)
+			//GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -multiInst -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
+			GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
+		else
+			GetISystem()->GetIConsole()->PrintLine("Shader type[%s] not present", type);
+
+		return true;
+	}
+	return false;
+}
+bool ShaderCommand::enumerate(CommandDesc& cd)
+{
+	MaterialManager::instance()->EnumShaders(this);
+	return true;
 }
 //*******************************************************
 class CameraCommand : public BaseCommand 
@@ -689,6 +794,7 @@ void CGame::initVariables()
   r_displayinfo = m_Console->CreateVariable("r_displayinfo", 1, 0, "Display info [1/0]");
   r_profile = m_Console->CreateVariable("r_profile", 1, 0, "Profile [1/0]");
   r_cap_profile = m_Console->CreateVariable("r_cap_profile", 1, 0, "Capture frame [1/0]");
+	m_pCVarCheatMode = m_Console->CreateVariable("zz0x067MD4", "DEVMODE", VF_NET_SYNCED);
 }
 
 ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseCommand(game)
