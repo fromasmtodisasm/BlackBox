@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.3)
 project(BlackBox)
 
 include(GenerateExportHeader)
-include(FindLua)
+#include(FindLua)
+#include(FindFreetype)
+include(FindSDL)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -50,16 +52,19 @@ add_library(${PROJECT_NAME})
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
 )
+find_package(lua REQUIRED)
 if (LUA_FOUND)
 	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 	target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
 endif()
 
-find_package(Freetype REQUIRED)
-target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
+#find_package(Freetype REQUIRED)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${FREETYPE_LIBRARIES})
 
-find_package(SDL2 CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
+#find_package(SDL 2 CONFIG REQUIRED)
+#target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
 #target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
 if (USE_SFML)
