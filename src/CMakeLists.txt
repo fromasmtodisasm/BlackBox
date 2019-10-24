@@ -28,8 +28,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 include_directories(
-  #"${SFML_SOURCE_DIR}/include"
-  #" ${CMAKE_BINARY_DIR}"
+  " ${CMAKE_BINARY_DIR}"
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
@@ -47,7 +46,7 @@ include_directories(
 ###################################################
 add_library(${PROJECT_NAME})
 generate_export_header(${PROJECT_NAME}
-	EXPORT_FILE_NAME ${BLACKBOX_INCLUDE_DIRS}/Exports.hpp
+	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )
 if (USE_SFML)
 
@@ -77,6 +76,10 @@ if (USE_GLM)
 
 endif()
 
+set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+  $<INSTALL_INTERFACE:>  # <prefix>/include/mylib
+  )
 
 target_sources(
   ${PROJECT_NAME}
