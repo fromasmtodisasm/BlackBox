@@ -483,7 +483,13 @@ void HdrTechnique::upsampling()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z, (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w));
+		auto rx = (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z;
+		auto ry = (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w;
+		auto& up = m_UpsampleShader;
+		up->setUniformValue(rx, "rx");
+		up->setUniformValue(rx, "ry");
+
+		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, rx, ry));
 		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
 		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
 		m_ScreenQuad.draw();

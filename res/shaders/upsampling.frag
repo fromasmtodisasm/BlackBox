@@ -28,11 +28,11 @@ vec4 blur(vec2 uv)
 	{
 		for (int j = -1, index = (i+1)*(j+1) + j + 1; j <= 1; j++)
 		{
-			//if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + vec2(j, i)), vec2(rx - 2,ry - 2))))
-			//{
+			if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + vec2(j, i)), vec2(rx - 1,ry - 1))))
+			{
 				vec2 texel = clamp(vec2(vx,vy) * (uv + vec2(j, i) * tex_offset), vec2(0), vec2(vx,vy));
 				result += vec4(texture(previos, texel).rgb * weight[index], 1);  
-			//}
+			}
 		}
 	}
 	return result / 16.0;

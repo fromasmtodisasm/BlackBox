@@ -91,7 +91,7 @@ void main()
 		emissive = texture(emissiveMap, fs_in.TexCoords).rgb;
 	}
     vec3 normal = normalize(fs_in.Normal);
-    vec3 lightColor = vec3(1.1);
+    vec3 lightColor = vec3(0.01);
 	if (!lightOn)
 	{
 		FragColor = vec4(color, 1.0f);
