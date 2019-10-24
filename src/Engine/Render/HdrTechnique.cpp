@@ -404,8 +404,8 @@ void HdrTechnique::downsamplingStandard()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
 		
-	auto w = cam_width->GetIVal();
-	auto h = cam_height->GetIVal();
+	auto w = cam_width->GetFVal();
+	auto h = cam_height->GetFVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 
@@ -414,9 +414,14 @@ void HdrTechnique::downsamplingStandard()
 	//m_ScreenShader->setUniformValue(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "view");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		m_DownsampleBuffer[i + 1]->bind({ 0,0, w / (1 << (i + 1)), h / (1 << (i + 1)) });
+		auto rx = w / (1 << (i + 1));
+		auto ry = h / (1 << (i + 1));
+		auto& ds = m_DownsampleShader;
+		ds->setUniformValue(rx, "rx");
+		ds->setUniformValue(rx, "ry");
+		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
 
-		m_DownsampleShader->bindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
+		ds->bindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
 		if (first_iteration)
@@ -478,7 +483,13 @@ void HdrTechnique::upsampling()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z, (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w));
+		auto rx = (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z;
+		auto ry = (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w;
+		auto& up = m_UpsampleShader;
+		up->setUniformValue(rx, "rx");
+		up->setUniformValue(rx, "ry");
+
+		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, rx, ry));
 		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
 		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
 		m_ScreenQuad.draw();

@@ -921,13 +921,13 @@ bool CConsole::handleCommand(std::wstring command)
 	{
 		if (/*!con_restricted || *//*isOpened*/true)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 		{
-			auto str = wstr_to_str(command).c_str();
-			PrintLine(str);
+			std::string str = wstr_to_str(command);
+			//PrintLine(str.c_str());
 
 			if (m_pSystem->IsDevMode())
 			{
 				if (m_pSystem->GetIScriptSystem())
-					m_pSystem->GetIScriptSystem()->ExecuteBuffer(str + 1, strlen(str) - 1);
+					m_pSystem->GetIScriptSystem()->ExecuteBuffer(str.c_str() + 1, str.length() - 1);
 				//m_bDrawCursor = 0;
 			}
 			else
