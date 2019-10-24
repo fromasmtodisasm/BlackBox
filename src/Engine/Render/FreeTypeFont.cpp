@@ -33,7 +33,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 			posY = y += 18;
 			continue;
 		}
-		if (iscntrl(*c))
+		if ( *c >= 0 && *c <= 255 && iscntrl(*c))
 			continue;
 		glm::mat4 model(1.0);
 		Character ch = Characters[*c];

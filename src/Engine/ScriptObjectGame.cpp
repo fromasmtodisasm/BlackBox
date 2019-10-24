@@ -310,11 +310,15 @@ int CScriptObjectGame::SavePlayerPos(IFunctionHandler* pH)
 
 int CScriptObjectGame::LoadPlayerPos(IFunctionHandler* pH)
 {
-	CHECK_PARAMETERS(1);
+	CHECK_PARAMETERS(2);
 	const char* sName;
-	if (pH->GetParam(1, sName))
+	int index;
+	if (pH->GetParam(1, index))
 	{
-		m_pGame->DevMode_LoadPlayerPos(0, sName);
+		if (pH->GetParam(2, sName))
+		{
+			m_pGame->DevMode_LoadPlayerPos(index, sName);
+		}
 	}
 	return pH->EndFunction();
 }

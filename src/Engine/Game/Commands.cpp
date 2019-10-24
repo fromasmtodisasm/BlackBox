@@ -333,7 +333,14 @@ private:
 		if (cd.args.size() == 1)
 		{
 			std::string name = wstr_to_str(cd.args[0]);
-			console->ExecuteFile(name.c_str());
+			if (name.substr(name.length() - 4, name.length()) == ".lua")
+			{
+				GetISystem()->GetIScriptSystem()->ExecuteFile(name.c_str());
+			}
+			else
+			{
+				console->ExecuteFile(name.c_str());
+			}
 			return true;
 		}
 		else if (cd.get(0) == L"os")
