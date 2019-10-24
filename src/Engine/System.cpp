@@ -46,7 +46,8 @@ CSystem::CSystem()
   m_pGame(nullptr),
   m_pLog(nullptr),
   m_pWindow(nullptr),
-	m_pScriptSystem(nullptr)
+	m_pScriptSystem(nullptr),
+	m_ScriptObjectConsole(nullptr)
 {
 
 }
@@ -125,6 +126,11 @@ bool CSystem::Init()
 		return false;
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
+
+	m_ScriptObjectConsole = new CScriptObjectConsole();
+	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
+
+	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
 	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)

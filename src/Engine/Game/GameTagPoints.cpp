@@ -73,12 +73,9 @@ bool CGame::RenameTagPoint(const string& oldname, const string& newname)
 
 bool CGame::InitScripts()
 {
-	m_ScriptObjectConsole = new CScriptObjectConsole();
-	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
 	m_ScriptObjectGame = new CScriptObjectGame();
 	m_ScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
-	m_ScriptObjectConsole->Init(m_pSystem->GetIScriptSystem(), m_Console);
 	m_ScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
 
 	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);

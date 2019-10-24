@@ -102,7 +102,6 @@ CGame::CGame(std::string title) :
 	m_sceneManager(nullptr),
 	shaderManager(nullptr),
 	m_World(new World()), m_Title(title),
-	m_ScriptObjectConsole(nullptr),
 	m_ScriptObjectGame(nullptr),
 	m_pRender(nullptr),
 	m_pScriptSystem(nullptr),

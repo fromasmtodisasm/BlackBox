@@ -14,7 +14,6 @@
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Console.hpp>
-#include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectGame.hpp>
 
 #include <BlackBox/common.h>
@@ -194,7 +193,6 @@ private:
 	ICVar* m_pCVarCheatMode;
 
   TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
-	CScriptObjectConsole* m_ScriptObjectConsole;
 	CScriptObjectGame* m_ScriptObjectGame;
 	IScriptObject* m_playerObject;
 
