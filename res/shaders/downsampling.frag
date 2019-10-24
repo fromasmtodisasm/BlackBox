@@ -60,7 +60,7 @@ vec4 downsample(vec2 uv)
 	{
 		vec2 coord = (2 * gl_FragCoord.xy + (offsets[i].xy + offset));
 
-		if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + .5*(offsets[i].xy + offset)), vec2(rx -1,ry -1))))
+		if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + .5*(offsets[i].xy + offset)), vec2(rx -3,ry -3))))
 		{
 			vec2 texel = clamp((vec2(vx,vy) * coord * tex_offset), vec2(0), vec2(vx,vy));
 			result += Sample(texel) * offsets[i].z;
