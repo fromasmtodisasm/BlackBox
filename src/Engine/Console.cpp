@@ -462,7 +462,7 @@ void CConsole::Set(CommandDesc& cd)
 		}
 		else
 		{
-			PrintLine("Variable [%s] not found. Creating", name.c_str());
+			//PrintLine("Variable [%s] not found. Creating", name.c_str());
 			CreateVariable(name.c_str(), value.c_str(), 0);
 		}
 	}

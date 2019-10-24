@@ -13,9 +13,9 @@ function player:OnInit( data )
 	Game:gotoMenu(true)
 
 	local formats = System:EnumDisplayFormats()
-	for i=1, #formats do
-		Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
-	end
+	--for i=1, #formats do
+	--	Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+	--end
 
 	Game:CreateVariable("game_inited", 1)
 end

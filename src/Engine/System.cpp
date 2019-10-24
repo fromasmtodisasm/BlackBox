@@ -131,6 +131,8 @@ bool CSystem::Init()
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
 
 	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
+
+	m_pScriptSystem->ExecuteFile("scripts/engine.lua");
 	//=============
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)

@@ -11,9 +11,9 @@ config = {
 	r_cam_w = 0,
 	r_cam_h = 0,
 
-	fogR = 0.0
-	fogG = 0.01
-	fogB = 0.01
+	fogR = 0.0,
+	fogG = 0.01,
+	fogB = 0.01,
 
 	shader_path = "res/shaders/",
 	image_path = "res/images/",
@@ -31,5 +31,5 @@ config = {
 }
 
 for k,v in pairs(config) do
-	Console:PrintLine(k .. "=" v)
+	Console:PrintLine(k .. "\t=\t" .. v)
 end
