@@ -208,6 +208,15 @@ public:
 	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) override;
 
 	void CreateKeyBind(const char* key, const char* cmd);
+	virtual void SetInputLine(const char* szLine) override;
+	void ClearInputLine();
+	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
+	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
+	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
+	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
+	virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "")  override;
+	virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
+	virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
 
 
 private:
@@ -308,30 +317,5 @@ private:
 	int lines = 0;
 
 
-	// Inherited via IConsole
-	virtual void SetInputLine(const char* szLine) override;
-	void ClearInputLine();
-
-
-	// Inherited via IConsole
-	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
-
-
-	// Унаследовано через IConsole
-	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
-
-	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
-
-
-	// Inherited via IConsole
-	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
-
-
-	// Унаследовано через IConsole
-	virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "")  override;
-
-	virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
-
-	virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
 
 };
