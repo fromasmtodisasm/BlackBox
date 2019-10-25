@@ -11,6 +11,11 @@
 #include <vector>
 #include <string>
 
+#ifndef stricmp
+#define stricmp _stricmp
+#endif // !stricmp
+
+
 struct IFont;
 
 struct cmpKeys {

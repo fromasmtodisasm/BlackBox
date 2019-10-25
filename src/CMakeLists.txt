@@ -3,7 +3,7 @@ project(BlackBox)
 
 include(GenerateExportHeader)
 #include(FindLua)
-#include(FindFreetype)
+include(FindFreetype)
 include(FindSDL)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -51,7 +51,7 @@ add_library(${PROJECT_NAME})
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )
-find_package(lua REQUIRED)
+find_package(LUA REQUIRED)
 if (LUA_FOUND)
 	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 	target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
