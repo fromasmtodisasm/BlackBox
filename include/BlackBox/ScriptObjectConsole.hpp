@@ -17,6 +17,8 @@ public:
 	int PrintLine(IFunctionHandler* pH);
 	int Clear(IFunctionHandler* pH);
 	int Show(IFunctionHandler* pH);
+	int ExecuteString(IFunctionHandler* pH);
+	int CreateKeyBind(IFunctionHandler* pH);
 
 private:
 	IConsole* m_Console;

@@ -82,7 +82,6 @@ bool CGame::InitScripts()
 
 	fps = 35.f;
 	m_pScriptSystem->ExecuteFile("scripts/game.lua");
-
 	class toogle_viewport_drag : public IConsoleCommand 
 	{
 		CGame* game;
@@ -96,10 +95,8 @@ bool CGame::InitScripts()
 	};
 
 	m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
-	m_Console->CreateKeyBind("r", "shader reload");
-	m_Console->CreateKeyBind("d", "r_displayinfo 0");
-	m_Console->CreateKeyBind("q", "#Game:Stop()");
-	m_Console->CreateKeyBind("w", "toogle_viewport_drag");
+
+	m_pScriptSystem->ExecuteFile("scripts/utils.lua");
 
 
 	bool retflag;

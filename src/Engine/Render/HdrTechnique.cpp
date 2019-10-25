@@ -62,7 +62,9 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 	auto format = m_DispFormats.get();
 	
-	CreateFrameBuffers(format);
+	//CreateFrameBuffers(format);
+	CreateFrameBuffers(nullptr);
+	m_HdrBuffer->clear(gl::Color(1, 0, 0, 1));
 
 	// generate three query objects
 	glGenQueries(3, timer_queries);
@@ -92,7 +94,9 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 
 	m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
 	debuger::frame_buffer_label(m_HdrBuffer->id, "hdrBuffer");
+	m_HdrBuffer->bind();
 	m_HdrBuffer->clear(gl::Color(1, 1, 1, 1));
+	m_HdrBuffer->unbind();
 
 	auto mip_cnt = getMips(resolution);
 	m_DownsampleBuffer.resize(mip_cnt);

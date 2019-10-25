@@ -30,6 +30,8 @@ void CScriptObjectConsole::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_FUNC(PrintLine);
 	SCRIPT_REG_FUNC(Clear);
 	SCRIPT_REG_FUNC(Show);
+	SCRIPT_REG_FUNC(ExecuteString);
+	SCRIPT_REG_FUNC(CreateKeyBind);
 }
 
 void CScriptObjectConsole::Init(IScriptSystem *pScriptSystem, IConsole* pConsole)
@@ -58,4 +60,24 @@ int CScriptObjectConsole::Show(IFunctionHandler* pH)
 	pH->GetParam(1, show);
 	m_Console->ShowConsole(show);
 	return pH->EndFunction();
+}
+
+int CScriptObjectConsole::ExecuteString(IFunctionHandler* pH)
+{
+	const char* str;
+	pH->GetParam(1, str);
+	m_Console->ExecuteString(str);
+	return pH->EndFunction();
+}
+
+int CScriptObjectConsole::CreateKeyBind(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(2);
+	const char* key;
+	const char* cmd;
+	pH->GetParam(1, key);
+	pH->GetParam(2, cmd);
+	m_Console->CreateKeyBind(key, cmd);
+	return pH->EndFunction();
+	return 0;
 }

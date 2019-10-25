@@ -708,10 +708,6 @@ void CConsole::initBind()
 		m_str2key[std::string("F15")] = sf::Keyboard::F15;
 		m_str2key[std::string("Pause")] = sf::Keyboard::Pause;
 	}
-	//m_keyBind[sf::Keyboard::R] = L"shader reload downsampling";
-	//m_keyBind[sf::Keyboard::D] = L"r_displayinfo 0";
-	//m_keyBind[sf::Keyboard::Q] = L"#Game:Stop()";
-
 }
 
 void CConsole::CreateKeyBind(const char* key, const char* cmd)

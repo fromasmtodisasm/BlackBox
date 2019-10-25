@@ -228,7 +228,7 @@ void ShadowMapping::OnRenderPass()
 	auto h = pSystem->GetIConsole()->GetCVar("r_cam_h")->GetIVal();
 	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
 	pSystem->GetIRender()->SetScissor(0, 0, w, h);
-	m_RenderedScene->clear(gl::Color(0));
+	m_RenderedScene->clear(gl::Color(fog));
 	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
   RenderPass();
 }

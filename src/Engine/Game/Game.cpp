@@ -414,7 +414,8 @@ void CGame::render()
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;
   int w = m_Window->getWidth();
   int h = m_Window->getHeight();
-  m_World->getActiveScene()->getCurrentCamera()->Ratio = ((float)w)/ h;
+	auto r = ((float)w) / h;
+  m_World->getActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
   //m_World->setCamera(m_camera1);
   m_World->draw(m_deltaTime);
@@ -681,16 +682,22 @@ bool CGame::MenuInputEvent(sf::Event& event)
 	{
 		if (!can_drag_vp)
 			return true;
-		ICVar* w = m_Console->GetCVar("r_cam_w");
-		auto h = m_Console->GetCVar("r_cam_h");
+		auto w = GET_CONSOLE_VAR("r_cam_w")->GetIVal();
+		auto h = GET_CONSOLE_VAR("r_cam_h")->GetIVal();
 		auto window = m_pSystem->GetIWindow();
+
+		if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+		{
+			w *= w / GET_CONSOLE_VAR("r_backbuffer_w")->GetFVal();
+			h *= h / GET_CONSOLE_VAR("r_backbuffer_h")->GetFVal();
+		}
 
 		mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;
 		mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
 
 		if (
-			std::abs(event.mouseMove.x - w->GetIVal()) <= 8 && !mousePressed 
-			&& event.mouseMove.y > (m_pRender->GetHeight() -  h->GetIVal())
+			std::abs(event.mouseMove.x - w) <= 8 && !mousePressed 
+			&& event.mouseMove.y > (m_pRender->GetHeight() -  h)
 			)
 		{
 			cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
@@ -701,8 +708,8 @@ bool CGame::MenuInputEvent(sf::Event& event)
 			canDragViewPortWidth = false;
 		}
 		if (
-			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h->GetIVal())) <= 8 
-			&& event.mouseMove.x < w->GetIVal() && !mousePressed
+			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h)) <= 8 
+			&& event.mouseMove.x < w && !mousePressed
 			)
 		{
 			cursor.loadFromSystem(sf::Cursor::SizeVertical);
