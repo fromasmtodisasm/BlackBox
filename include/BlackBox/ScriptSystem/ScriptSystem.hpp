@@ -210,6 +210,10 @@ private:
 
 	static int ErrorHandler(lua_State* L);
 
+	// Loaded file tracking helpers
+	void AddFileToList(const char* sName);
+	void RemoveFileFromList(const ScriptFileListItor& itor);
+
 
 private:
 	static CScriptSystem* s_mpScriptSystem;

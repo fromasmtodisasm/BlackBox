@@ -5,6 +5,7 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptObjectScript.hpp>
 
 class CConsole;
 class CRender;
@@ -59,6 +60,7 @@ private:
 	ISystemEventDispatcher* m_pSystemEventDispatcher;
 
 	CScriptObjectConsole* m_ScriptObjectConsole;
+	CScriptObjectScript* m_ScriptObjectScript;
 
 private:
 	ICVar* r_window_width;

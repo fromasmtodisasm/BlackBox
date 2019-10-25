@@ -130,7 +130,11 @@ bool CSystem::Init()
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
 
+	m_ScriptObjectScript = new CScriptObjectScript();
+	CScriptObjectScript::InitializeTemplate(m_pScriptSystem);
+
 	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
+	m_ScriptObjectScript->Init(GetIScriptSystem());
 
 	m_pScriptSystem->ExecuteFile("scripts/engine.lua");
 	//=============

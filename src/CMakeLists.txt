@@ -108,6 +108,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectScript.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp

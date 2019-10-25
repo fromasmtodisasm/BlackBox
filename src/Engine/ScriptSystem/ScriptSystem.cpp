@@ -19,6 +19,20 @@ extern "C" {
 
 CFunctionHandler* CScriptSystem::m_pH = nullptr;
 
+//////////////////////////////////////////////////////////////////////////
+const char* FormatPath(char* const sLowerName, const char* sPath)
+{
+	strcpy(sLowerName, sPath);
+	int i = 0;
+	while (sLowerName[i] != 0)
+	{
+		if (sLowerName[i] == '\\')
+			sLowerName[i] = '/';
+		i++;
+	}
+	return sLowerName;
+}
+
 CScriptSystem::CScriptSystem()
 	:
 	m_pSystem(nullptr)
@@ -28,7 +42,14 @@ CScriptSystem::CScriptSystem()
 
 CScriptSystem::~CScriptSystem()
 {
-	lua_close(L);
+	m_stdScriptBinds.Done();
+
+	if (L)
+	{
+		lua_close(L);
+
+		L = NULL;
+	}
 }
 
 bool CScriptSystem::Init(ISystem* pSystem)
@@ -41,6 +62,9 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	m_pH = new CFunctionHandler(this, L);
 
 	m_stdScriptBinds.Init(pSystem, this);
+
+	// Ensure the debugger is in the correct mode
+	//EnableDebugger((ELuaDebugMode)m_cvar_script_debugger->GetIVal());
 
 	//////////////////////////////////////////////////////////////////////////
 	// Execute common lua file.
@@ -162,24 +186,50 @@ HSCRIPT CScriptSystem::GetScriptHandle()
 
 void CScriptSystem::UnloadScript(const char* sFileName)
 {
+	if (strlen(sFileName) <= 0)
+		return;
+
+	char lowerName[_MAX_PATH];
+	const char* sTemp = FormatPath(lowerName, sFileName);
+	//ScriptFileListItor itor = std::find(m_dqLoadedFiles.begin(), m_dqLoadedFiles.end(), sTemp.c_str());
+	ScriptFileListItor itor = m_dqLoadedFiles.find(/*CONST_TEMP_STRING(*/sTemp/*)*/);
+	if (itor != m_dqLoadedFiles.end())
+	{
+		RemoveFileFromList(itor);
+	}
 }
 
 void CScriptSystem::UnloadScripts()
 {
+	m_dqLoadedFiles.clear();
 }
 
 bool CScriptSystem::ReloadScript(const char* sFileName, bool bRaiseError/* = true*/)
 {
-	return false;
+	return ExecuteFile(sFileName, bRaiseError, GetISystem()->IsDevMode());
 }
 
 bool CScriptSystem::ReloadScripts()
 {
-	return false;
+	ScriptFileListItor itor;
+	itor = m_dqLoadedFiles.begin();
+	while (itor != m_dqLoadedFiles.end())
+	{
+		ReloadScript(itor->c_str(), true);
+		++itor;
+	}
+	return true;
 }
 
 void CScriptSystem::DumpLoadedScripts()
 {
+	ScriptFileListItor itor;
+	itor = m_dqLoadedFiles.begin();
+	while (itor != m_dqLoadedFiles.end())
+	{
+		LogAlways("%s", itor->c_str());
+		++itor;
+	}
 }
 
 IScriptObject* CScriptSystem::GetGlobalObject()
@@ -519,6 +569,7 @@ void CScriptSystem::UnbindUserdata()
 
 void CScriptSystem::Release()
 {
+	delete this;
 }
 
 void CScriptSystem::EnableDebugger(IScriptDebugSink* pDebugSink)
@@ -678,6 +729,16 @@ int CScriptSystem::ErrorHandler(lua_State* L)
 	pThis->TraceScriptError(ar.source, ar.currentline, sErr);
 
 	return 0;
+}
+
+void CScriptSystem::AddFileToList(const char* sName)
+{
+	m_dqLoadedFiles.insert(sName);
+}
+
+void CScriptSystem::RemoveFileFromList(const ScriptFileListItor& itor)
+{
+	m_dqLoadedFiles.erase(itor);
 }
 
 void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
