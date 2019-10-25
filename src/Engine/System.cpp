@@ -216,8 +216,8 @@ bool CSystem::ConfigLoad(const char* file)
 {
 	m_pConsole->ExecuteFile(file);
 
-	r_window_width = m_pConsole->GetCVar("r_window_width");
-	r_window_height = m_pConsole->GetCVar("r_window_height");
+	r_window_width = m_pConsole->GetCVar("r_Width");
+	r_window_height = m_pConsole->GetCVar("r_Height");
 	r_bpp = m_pConsole->GetCVar("r_bpp");
 	r_zbpp = m_pConsole->GetCVar("r_zbpp");
 	r_sbpp = m_pConsole->GetCVar("r_sbpp");

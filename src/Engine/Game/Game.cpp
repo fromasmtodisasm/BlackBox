@@ -39,6 +39,13 @@
 
 IGame *p_gIGame;
 
+namespace {
+	sf::RenderWindow& getWindow()
+	{
+		return *static_cast<sf::RenderWindow*>(GetISystem()->GetIWindow()->getHandle());
+	}
+}
+
 
 struct TextRenderInfo
 {
@@ -235,6 +242,15 @@ bool CGame::update() {
 		m_pSystem->EndFrame();
     m_Window->swap();
   }
+
+	if (m_running == false)
+	{
+		CREATE_CONSOLE_VAR("stpo_running", 1, 0);
+	}
+	else
+	{
+		CREATE_CONSOLE_VAR("window_closed", 1, 0);
+	}
 	return true;
 }
 
@@ -313,8 +329,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("Camera width = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("Camera height = ") + std::to_string(GetISystem()->GetIConsole()->GetCVar("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera width = ") +		std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera height = ") +	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
@@ -324,6 +340,12 @@ void CGame::DisplayInfo(float fps)
 		render->PrintLine("Mouse pressed\n", info.getDTI());
 	if (canDragViewPortWidth && mousePressed)
 		render->PrintLine(("delta.x" + std::to_string(mouseDelta.x)).c_str(), info.getDTI());
+
+	if (m_Mode == MENU)
+	{
+		auto c = sf::Mouse::getPosition(::getWindow());
+		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(c.y)).c_str(), info.getDTI());
+	}
 
 
 
@@ -642,7 +664,7 @@ bool CGame::MenuInputEvent(sf::Event& event)
     case sf::Keyboard::Escape:
       m_inputHandler->mouseLock(false);
       m_Mode = Mode::MENU;
-      m_running = false;
+			Stop();
       return true;
     case sf::Keyboard::Enter:
 			gotoGame();

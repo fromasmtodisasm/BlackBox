@@ -311,6 +311,7 @@ struct ICVar
 };
 
 #define CREATE_CONSOLE_VAR(name, value, flags, ...) GetISystem()->GetIConsole()->CreateVariable(name, value, flags, __VA_ARGS__)
+#define GET_CONSOLE_VAR(name) GetISystem()->GetIConsole()->GetCVar(name)
 
 //! Preferred way to register a CVar
 #if IMPLEMENTED_CVAR_REG

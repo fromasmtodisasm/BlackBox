@@ -199,9 +199,9 @@ void CRender::initConsoleVariables()
 	test_proj =						CREATE_CONSOLE_VAR("test_proj", "test proj empty", 0);
 	render_via_viewport = CREATE_CONSOLE_VAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 
-	r_debug = m_pSystem->GetIConsole()->GetCVar("r_debug");
-	cam_width		= m_pSystem->GetIConsole()->GetCVar("r_cam_w");
-	cam_height	= m_pSystem->GetIConsole()->GetCVar("r_cam_h");
+	r_debug =			GET_CONSOLE_VAR("r_debug");
+	cam_width	=		GET_CONSOLE_VAR("r_cam_w");
+	cam_height =	GET_CONSOLE_VAR("r_cam_h");
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
@@ -308,11 +308,15 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 #endif
 	if (!strcmp(pVar->GetName(),"r_Width"))
 	{
-		m_Window->changeSize(pVar->GetFVal(), 0);
+		m_Window->changeSize(pVar->GetFVal(), GetHeight());
 	}
 	else if (!strcmp(pVar->GetName(),"r_Height"))
 	{
-		m_Window->changeSize(0, pVar->GetFVal());
+		m_Window->changeSize(GetWidth(), pVar->GetFVal());
+	}
+	else if (!strcmp(pVar->GetName(), "r_cam_w"))
+	{
+		printf("");
 	}
 	else if (!strcmp(pVar->GetName(),"r_debug"))
 	{

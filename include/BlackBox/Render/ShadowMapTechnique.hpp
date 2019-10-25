@@ -98,6 +98,9 @@ private:
 	ICVar* lightPosZ = nullptr;
 	ICVar* lighting = nullptr;
 
+	ICVar* cam_width = nullptr;
+	ICVar* cam_height = nullptr;
+
   bool bLighting = true;
 
   Pass renderPass;

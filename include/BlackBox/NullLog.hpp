@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/ILog.hpp>
+#include <BlackBox/IConsole.hpp>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -63,6 +64,18 @@ inline void NullLog::Shutdown()
   {
     fputs(str.c_str(), output);
   }
+	if (GET_CONSOLE_VAR("stpo_running"))
+	{
+		fputs("\n\n*****Game stopped*****", output);
+	}
+	else if (GET_CONSOLE_VAR("window_closed"))
+	{
+		fputs("\n\n*****Window Closed*****", output);
+	}
+	else
+	{
+		fputs("\n\n*****Unknown stop cause*****", output);
+	}
 }
 
 void NullLog::Release()

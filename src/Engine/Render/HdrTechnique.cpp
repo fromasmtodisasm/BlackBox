@@ -87,8 +87,8 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 	}
 	else
 		resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
-	cam_width->Set(resolution.x);
-	cam_height->Set(resolution.y);
+	//cam_width->Set(resolution.x);
+	//cam_height->Set(resolution.y);
 
 	m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
 	debuger::frame_buffer_label(m_HdrBuffer->id, "hdrBuffer");
@@ -502,10 +502,6 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	glm::vec3 fog = glm::vec3(
-		GetISystem()->GetIConsole()->GetCVar("fogR")->GetFVal(),
-		GetISystem()->GetIConsole()->GetCVar("fogG")->GetFVal(),
-		GetISystem()->GetIConsole()->GetCVar("fogB")->GetFVal());
 	//FrameBufferObject::bindDefault(m_HdrBuffer->viewPort);
 	FrameBufferObject::bindDefault({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	
@@ -521,11 +517,11 @@ void HdrTechnique::Do(unsigned int texture)
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	m_ScreenShader->setUniformValue(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
+	m_ScreenShader->setUniformValue(glm::round(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h)), "viewPortf");
 
-	render->SetViewport(
+	/*render->SetViewport(
 		0, 0, 
-		cam_width->GetIVal(), cam_height->GetIVal());
+		cam_width->GetIVal(), cam_height->GetIVal());*/
 	m_ScreenQuad.draw();
 }
 
