@@ -246,14 +246,15 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(sf::Event& event)
 {
-	if (event.key.control)
-	{
-		auto it = m_keyBind.find(event.key.code);
-		if (it != m_keyBind.end())
+	if (event.type == sf::Event::KeyPressed)
+		if (event.key.control)
 		{
-			return handleCommand(it->second);
+			auto it = m_keyBind.find(event.key.code);
+			if (it != m_keyBind.end())
+			{
+				return handleCommand(it->second);
+			}
 		}
-	}
 	if (!isOpened)
 	{
 		return false;
@@ -711,12 +712,9 @@ void CConsole::initBind()
 	//m_keyBind[sf::Keyboard::D] = L"r_displayinfo 0";
 	//m_keyBind[sf::Keyboard::Q] = L"#Game:Stop()";
 
-	keyBind("r", "shader reload");
-	keyBind("d", "r_displayinfo 0");
-	keyBind("q", "#Game:Stop()");
 }
 
-void CConsole::keyBind(const char* key, const char* cmd)
+void CConsole::CreateKeyBind(const char* key, const char* cmd)
 {
 	auto it = m_str2key.find(key);
 	if (it != m_str2key.end())

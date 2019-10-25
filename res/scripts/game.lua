@@ -38,6 +38,18 @@ function test(  )
 	player:OnInit(123)
 end
 
+function retrigger_value( name )
+	Console:PrintLine("retrigger_value" .. name)
+	local var
+	if Game:GetVariable(name) == 1 then
+		var = 0
+	else
+		var = 1
+	end
+	Game:SetVariable(name, var)
+end
+
+
 test()
 
 

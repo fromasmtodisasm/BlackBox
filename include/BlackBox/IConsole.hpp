@@ -223,6 +223,8 @@ struct IConsole
 	virtual void AddWorkerCommand(IWorkerCommand* cmd) = 0;
 	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) = 0;
 
+	virtual void CreateKeyBind(const char* key, const char* cmd) = 0;
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

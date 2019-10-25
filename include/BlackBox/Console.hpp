@@ -162,6 +162,8 @@ public:
 	virtual void AddConsoleVarSink(IConsoleVarSink* pSink) override;
 	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) override;
 
+	void CreateKeyBind(const char* key, const char* cmd);
+
 
 private:
 private:
@@ -190,7 +192,6 @@ private:
 	void moveCursor(bool left);
 
 	void initBind();
-	void keyBind(const char* key, const char* cmd);
 private:
 	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;

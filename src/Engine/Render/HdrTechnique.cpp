@@ -314,6 +314,10 @@ void HdrTechnique::initConsoleVariables()
 
 	cam_width		= GetISystem()->GetIConsole()->GetCVar("r_cam_w");
 	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
+
+	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
+
+
 }
 
 void HdrTechnique::initTest()
@@ -409,8 +413,8 @@ void HdrTechnique::downsamplingStandard()
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 
-	m_ScreenShader->setUniformValue(w/hdr_w, "vx");
-	m_ScreenShader->setUniformValue(h/hdr_h, "vy");
+	m_ScreenShader->setUniformValue(glm::round(w/hdr_w), "vx");
+	m_ScreenShader->setUniformValue(glm::round(h/hdr_h), "vy");
 	//m_ScreenShader->setUniformValue(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "view");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
@@ -472,13 +476,13 @@ void HdrTechnique::upsampling()
 	bool first_iteration = true;
 	render->SetState(IRender::State::DEPTH_TEST, false);
 
-		auto w = (float)cam_width->GetIVal();
-		auto h = (float)cam_height->GetIVal();
+		auto w = (float)cam_width->GetFVal();
+		auto h = (float)cam_height->GetFVal();
 		auto hdr_w = m_HdrBuffer->viewPort.z;
 		auto hdr_h = m_HdrBuffer->viewPort.w;
 	//m_ScreenShader->setUniformValue(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
-	m_ScreenShader->setUniformValue(w/hdr_w, "vx");
-	m_ScreenShader->setUniformValue(h/hdr_h, "vy");
+	m_ScreenShader->setUniformValue(glm::round(w/hdr_w), "vx");
+	m_ScreenShader->setUniformValue(glm::round(h/hdr_h), "vy");
 
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
@@ -517,7 +521,10 @@ void HdrTechnique::Do(unsigned int texture)
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	m_ScreenShader->setUniformValue(glm::round(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h)), "viewPortf");
+	if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+		m_ScreenShader->setUniformValue(glm::vec4(0.f,0.f, 1.f, 1.f), "viewPortf");
+	else
+		m_ScreenShader->setUniformValue(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
 
 	/*render->SetViewport(
 		0, 0, 

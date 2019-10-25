@@ -215,6 +215,10 @@ private:
   std::stack<GameState*> states;
 	float fps = 0.0;
 
+
+	//other
+	bool can_drag_vp = true; // can drag view port ?
+
 };
 
 
