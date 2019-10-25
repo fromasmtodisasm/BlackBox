@@ -299,14 +299,14 @@ void CGame::DisplayInfo(float fps)
   auto camera = m_World->getActiveScene()->getCurrentCamera();
 
   auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
-  info.AddLine("FPS: " + std::to_string(fps));
-  info.AddLine("NUM OBJECTS: " + std::to_string(num_objects));
-  info.AddLine("Current mode: " + mode);
-  info.AddLine("Width = " + std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
-  info.AddLine("Active scene: " + m_World->getActiveScene()->name);
-  info.AddLine("Selected Object: " + m_World->getActiveScene()->selectedObject()->first);
-  info.AddLine("    visible: " + std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
-  info.AddLine("    Pos: " +
+  info.AddLine("FPS: "							+ std::to_string(fps));
+  info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
+  info.AddLine("Current mode: "			+ mode);
+  info.AddLine("Width = "						+ std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
+  info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
+  info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
+  info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
+  info.AddLine("  Pos: "						+
     std::to_string(objPos.x) + ", " +
     std::to_string(objPos.y) + ", " +
     std::to_string(objPos.z) + "; ");
@@ -329,8 +329,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("Camera width = ") +		std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("Camera height = ") +	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());

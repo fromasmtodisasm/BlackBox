@@ -449,8 +449,8 @@ void CConsole::Set(CommandDesc& cd)
 	{
 		auto name = wstr_to_str(cd.args[0]);
 		auto value = wstr_to_str(cd.args[1]);
-		auto var = m_variables_map.find(name);
-		if (var != m_variables_map.end())
+		auto var = m_mapVariables.find(name);
+		if (var != m_mapVariables.end())
 		{
 			for (auto onChanger : varSinks)
 			{
@@ -492,8 +492,8 @@ void CConsole::Get(CommandDesc& cd)
 	if (cd.args.size() == 1)
 	{
 		auto name = wstr_to_str(cd.args[0]);
-		auto var = m_variables_map.find(name);
-		if (var != m_variables_map.end())
+		auto var = m_mapVariables.find(name);
+		if (var != m_mapVariables.end())
 		{
 			GetInternal(var->second, name);
 		}
@@ -755,6 +755,72 @@ void CConsole::UnregisterVariable(const char* sVarName, bool bDelete/* = false*/
 	//TODO: implement this
 }
 
+char* CConsole::Register(const char* name, const char** src, const char* defaultvalue, int flags, const char* help/* = ""*/)
+{
+	ICVar* pCVar(nullptr);
+	auto it = m_mapVariables.find(name);
+	if (it != m_mapVariables.end())
+	{
+		GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+		return 0;
+	}
+	/*
+	if (!allowModify)
+		nFlags |= VF_CONST_CVAR;
+	*/
+	pCVar = new CCVarRef(name, src, help);
+	*src = defaultvalue;
+	RegisterVar(pCVar/*, pChangeFunc*/);
+	return 0;
+}
+
+float CConsole::Register(const char* name, float* src, float defaultvalue, int flags/* = 0*/, const char* help/* = ""*/)
+{
+	ICVar* pCVar(nullptr);
+	auto it = m_mapVariables.find(name);
+	if (it != m_mapVariables.end())
+	{
+		GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+		return 0;
+	}
+	/*
+	if (!allowModify)
+		nFlags |= VF_CONST_CVAR;
+	*/
+	pCVar = new CCVarRef(name, src, help);
+	*src = defaultvalue;
+	RegisterVar(pCVar/*, pChangeFunc*/);
+	return 0.0f;
+}
+
+int CConsole::Register(const char* name, int* src, int defaultvalue, int flags/* = 0*/, const char* help/* = ""*/)
+{
+	ICVar* pCVar(nullptr);
+	auto it = m_mapVariables.find(name);
+	if (it != m_mapVariables.end())
+	{
+		GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+		return 0;
+	}
+	/*
+	if (!allowModify)
+		nFlags |= VF_CONST_CVAR;
+	*/
+	pCVar = new CCVarRef(name, src, help);
+	*src = defaultvalue;
+	RegisterVar(pCVar/*, pChangeFunc*/);
+	return 0;
+}
+
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
 {
 	CommandInfo cmdInfo;
@@ -766,7 +832,7 @@ void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 {
-	for (auto& var : m_variables_map)
+	for (auto& var : m_mapVariables)
 	{
 		OnElementFound(var.second);
 	}
@@ -826,8 +892,8 @@ ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 		std::transform(data.begin(), data.end(), data.begin(),
 			[](unsigned char c) { return std::tolower(c); });
 	}
-	auto var = m_variables_map.find(name);
-	if (var != m_variables_map.end())
+	auto var = m_mapVariables.find(name);
+	if (var != m_mapVariables.end())
 	{
 		pVar = var->second;
 	}
@@ -862,7 +928,7 @@ ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlag
 {
 	ICVar* var = new CCVar(strdup(sName), strdup(sValue), const_cast<char*>(help));
 	if (var == nullptr) return var;
-	m_variables_map[sName] = var;
+	m_mapVariables[sName] = var;
 	return var;
 }
 
@@ -870,7 +936,7 @@ ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const
 {
 	ICVar* var = new CCVar(strdup(sName), iValue, const_cast<char*>(help));
 	if (var == nullptr) return var;
-	m_variables_map[sName] = var;
+	m_mapVariables[sName] = var;
 	return var;
 
 }
@@ -879,7 +945,7 @@ ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, con
 {
 	ICVar* var = new CCVar(strdup(sName), fValue, const_cast<char*>(help));
 	if (var == nullptr) return var;
-	m_variables_map[sName] = var;
+	m_mapVariables[sName] = var;
 	return var;
 }
 
@@ -962,8 +1028,8 @@ bool CConsole::handleCommand(std::wstring command)
 	}
 	else
 	{
-		auto var_it = m_variables_map.find(wstr_to_str(cd.command));
-		if (var_it != m_variables_map.end())
+		auto var_it = m_mapVariables.find(wstr_to_str(cd.command));
+		if (var_it != m_mapVariables.end())
 		{
 			CommandDesc desc;
 			desc.args.push_back(cd.command);
@@ -982,6 +1048,11 @@ bool CConsole::handleCommand(std::wstring command)
 	}
 	//history.push_back(str_to_wstr(getPrompt()) + command);
 	return result;
+}
+
+void CConsole::RegisterVar(ICVar* pCVar)
+{
+	m_mapVariables[pCVar->GetName()] = pCVar;
 }
 
 CommandDesc CConsole::parseCommand(std::wstring& command)
@@ -1115,7 +1186,7 @@ std::vector<std::wstring> CConsole::autocomplete(std::wstring cmd)
 			completion.push_back(curr_cmd.first);
 		}
 	}
-	for (auto& cur_var : m_variables_map)
+	for (auto& cur_var : m_mapVariables)
 	{
 		if (cur_var.first.substr(0, cmd.size()) == wstr_to_str(cmd))
 		{
@@ -1254,8 +1325,8 @@ void CConsole::Help(const char *cmd)
 		}
 		else
 		{
-			auto it = m_variables_map.find(cmd);
-			if (it != m_variables_map.end())
+			auto it = m_mapVariables.find(cmd);
+			if (it != m_mapVariables.end())
 				help = it->second->GetHelp();
 			else
 				return;
@@ -1270,7 +1341,7 @@ void CConsole::Help(const char *cmd)
 			if (cmd.second.help.size() > 0)
 				cmd_buffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
 		}
-		for (auto& var : m_variables_map)
+		for (auto& var : m_mapVariables)
 		{
 			cmd_buffer.push_back({ Text(var.first + ": " + var.second->GetHelp() + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
 		}
@@ -1394,4 +1465,114 @@ float CCVar::GetFVal()
 		value.f = static_cast<float>(std::atof(value.s));
 	type = CVAR_FLOAT;
 	return value.f;
+}
+
+void CCVarRef::Release()
+{
+}
+
+int CCVarRef::GetIVal()
+{
+	int res = 0;
+	if (type == CVAR_FLOAT)
+		*value.i = static_cast<int>(*value.f);
+	else if (type == CVAR_STRING)
+		*value.i = static_cast<int>(std::atoi(*value.s));
+	type = CVAR_INT;
+	return *value.i;
+}
+
+float CCVarRef::GetFVal()
+{
+	int res = 0;
+	if (type == CVAR_INT)
+		*value.f = static_cast<float>(*value.i);
+	else if (type == CVAR_STRING)
+		*value.f = static_cast<float>(std::atof(*value.s));
+	type = CVAR_FLOAT;
+	return *value.f;
+}
+
+char* CCVarRef::GetString()
+{
+	int res = 0;
+	if (type == CVAR_INT)
+		*value.s = strdup(std::to_string(*value.i).c_str());
+	else if (type == CVAR_FLOAT)
+		*value.s = strdup(std::to_string(*value.f).c_str());
+	type = CVAR_STRING;
+	return *value.s;
+}
+
+void CCVarRef::Set(const char* s)
+{
+	if (type != CVAR_STRING)
+		return;
+	if (*value.s != nullptr)
+		delete[] *value.s;
+	*value.s = strdup(s);
+	type = CVAR_STRING;
+}
+
+void CCVarRef::ForceSet(const char* s)
+{
+	if (value.s != nullptr)
+		delete[] *value.s;
+	type = CVAR_STRING;
+	*value.s = const_cast<char*>(s);
+}
+
+void CCVarRef::Set(float f)
+{
+	if (type == CVAR_STRING)
+	{
+		delete[] *value.s;
+	}
+	type = CVAR_FLOAT;
+	*value.f = f;
+}
+
+void CCVarRef::Set(int i)
+{
+	if (type == CVAR_STRING)
+	{
+		delete[] *value.s;
+	}
+	type = CVAR_INT;
+	*value.i = i;
+}
+
+
+void CCVarRef::Refresh()
+{
+	*value.i = 0;
+}
+
+void CCVarRef::ClearFlags(int flags)
+{
+}
+
+int CCVarRef::GetFlags()
+{
+	return 0;
+}
+
+int CCVarRef::SetFlags(int flags)
+{
+	return 0;
+}
+
+int CCVarRef::GetType()
+{
+	return type;
+}
+
+const char* CCVarRef::GetName()
+{
+	return name;
+}
+
+const char* CCVarRef::GetHelp()
+{
+	return help;
 }

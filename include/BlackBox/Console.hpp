@@ -68,6 +68,51 @@ private:
 	char* help;
 };
 
+class CCVarRef : public ICVar
+{
+public:
+	CCVarRef(const char* name, int* value, const char* help) : name(name), value(value), type(CVAR_INT), help(help) {}
+	CCVarRef(const char* name, const char** value, const char* help) : name(name), value(value), type(CVAR_STRING), help(help) {}
+	CCVarRef(const char* name, float* value, const char* help) : name(name), value(value), type(CVAR_FLOAT), help(help) {}
+	//CCVarRef() : name(""), value(nullptr), type(CVAR_STRING), help(nullptr) {}
+
+	~CCVarRef()
+	{
+
+	}
+
+	// Inherited via ICVar
+	virtual void Release() override;
+	virtual int GetIVal() override;
+	virtual float GetFVal() override;
+	virtual char* GetString() override;
+	virtual void Set(const char* s) override;
+	virtual void ForceSet(const char* s) override;
+	virtual void Set(float f) override;
+	virtual void Set(int i) override;
+	virtual void Refresh() override;
+	virtual void ClearFlags(int flags) override;
+	virtual int GetFlags() override;
+	virtual int SetFlags(int flags) override;
+	virtual int GetType() override;
+	virtual const char* GetName() override;
+	virtual const char* GetHelp() override;
+
+private:
+	const char* name;
+	union Value {
+		int *i;
+		char** s;
+		float* f;
+		Value(int *i) : i(i) {}
+		Value(const char** s) : s(const_cast<char**>(s)) {}
+		Value(float* f) : f(f) {}
+	}value;
+	int type;
+	const char* help;
+};
+
+
 struct CommandInfo
 {
 	enum class Type
@@ -166,6 +211,7 @@ public:
 
 
 private:
+	void RegisterVar(ICVar* pCVar/*, ConsoleVarFunc pChangeFunc = 0*/);
 private:
 	CommandDesc parseCommand(std::wstring& command);
 	bool handleCommand(std::wstring command);
@@ -238,7 +284,7 @@ private:
 	glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
 	glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
 
-	std::map<std::string, ICVar*> m_variables_map;
+	std::map<std::string, ICVar*> m_mapVariables;
 
 	ICVarDumpSink* m_pCVarDumpCallback = nullptr;
 	ICVar* r_anim_speed;
@@ -279,5 +325,13 @@ private:
 
 	// Inherited via IConsole
 	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
+
+
+	// Унаследовано через IConsole
+	virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "")  override;
+
+	virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
+
+	virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
 
 };

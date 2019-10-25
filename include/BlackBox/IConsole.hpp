@@ -143,6 +143,34 @@ struct IConsole
 	*/
 	virtual void	ShowConsole(bool show) = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Crate a new console variable that store the value in a user defined memory block
+		@param sName console variable name
+		@param src pointer to the memory that will store the value
+		@param value default value
+		@param type type of the value (can be CVAR_INT|CVAR_FLOAT)
+		@return the value
+		@see ICVar
+	*/
+	virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! Crate a new console variable that store the value in a user defined floating point
+			@param sName console variable name
+			@param src pointer to the memory that will store the value
+			@param value default value
+			@return the value
+			@see ICVar
+		*/
+	virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*! Crate a new console variable that store the value in a user defined integer
+			@param sName console variable name
+			@param src pointer to the memory that will store the value
+			@param value default value
+			@return the value
+			@see ICVar
+		*/
+	virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "") = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Sets the background-image
 		@param pImage background-image
 	*/

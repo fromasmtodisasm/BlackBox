@@ -320,7 +320,9 @@ void HdrTechnique::initConsoleVariables()
 	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
 	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
+	//GetISystem()->GetIConsole()->Register("show_all_frame_buffer", &showAllFrameBuffer, 1);
 
+	GetISystem()->GetIConsole()->Register("show_all_frame_buffer", &showAllFrameBuffer, 1);
 
 }
 
@@ -525,7 +527,8 @@ void HdrTechnique::Do(unsigned int texture)
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+	//if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+	if (showAllFrameBuffer)
 		m_ScreenShader->setUniformValue(glm::vec4(0.f,0.f, 1.f, 1.f), "viewPortf");
 	else
 		m_ScreenShader->setUniformValue(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
