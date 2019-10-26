@@ -117,7 +117,7 @@ void ShaderManager::removeShader(std::string name)
 bool ShaderManager::init()
 {
   defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
-  defaultProgram->create("default");
+  defaultProgram->Create("default");
 	ShaderDesc::root = ShaderManager::instance()->root;
 	CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");
   return true;

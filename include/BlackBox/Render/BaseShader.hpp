@@ -29,7 +29,7 @@ struct ShaderStatus
 
 struct ShaderProgramStatus
 {
-	GLchar infoLog[512]; 
+	GLchar m_InfoLog[512]; 
 	GLint m_Status;
 	CBaseShaderProgram *m_Program;
 
@@ -60,10 +60,10 @@ public:
   static bool parseLine(std::ifstream &fin, std::string &buffer);
   static bool loadInternal(std::string &path, std::string& buffer);
   static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
-  bool create();
-  bool compile();
-  bool bind();
-	bool empty();
+  bool Create();
+  bool Compile();
+  bool Bind();
+	bool Empty();
   void print();
   std::string typeToStr();
   std::string getName();
@@ -349,8 +349,8 @@ public:
   CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
   ~CBaseShaderProgram();
 
-  bool create(const char *label);
-  void attach(ShaderInfo& shader);
+  bool Create(const char *label);
+  void Attach(ShaderInfo& shader);
   ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
   void Detach(ShaderInfo& shader);
 	bool Dispatch(int x, int y, int z, GLbitfield barriers);
@@ -382,7 +382,7 @@ public:
 
 	void BindTexture2D(GLuint texture, GLint unit, const char* sampler);
 	void BindTextureUnit2D(GLuint texture, GLint unit);
-  GLuint get();
+  GLuint Get();
 	virtual void setup() = 0;
 	void Dump();
 private:

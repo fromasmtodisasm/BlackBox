@@ -88,7 +88,7 @@ nvtt::Surface surface;
 		if (has_alpha)
 			pix[i*step + 3] = a[i];
 	}
-	pixels = pix.get();
+	pixels = pix.Get();
 	//pixels = surface.data();
 	//inputFormat = GL_BGRA;
 	inputDataType = GL_FLOAT;

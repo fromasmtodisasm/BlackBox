@@ -65,7 +65,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		m_pSystem->Log("Error of creating screen shader");
 		return nullptr;
 	}
-	//m_ScreenShader->create();
+	//m_ScreenShader->Create();
 	m_ScreenShader->Use();
 	m_ScreenShader->Uniform(0,"screenTexture");
 	m_ScreenShader->Unuse();

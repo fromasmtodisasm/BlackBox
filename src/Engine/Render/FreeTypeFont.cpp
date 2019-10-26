@@ -14,7 +14,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 	shader->Uniform(projection, "projection");
 	shader->Uniform(uv_projection, "uv_projection");
-	glCheck(glUniform3fv(glGetUniformLocation(shader->get(), "textColor"), 1, &color[0]));
+	glCheck(glUniform3fv(glGetUniformLocation(shader->Get(), "textColor"), 1, &color[0]));
 	gl::ActiveTexture(GL_TEXTURE0);
 	glCheck(glBindVertexArray(VAO));
 	render->SetState(IRender::State::BLEND, true);

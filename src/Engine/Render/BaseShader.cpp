@@ -56,26 +56,26 @@ ShaderProgramStatus::ShaderProgramStatus(CBaseShaderProgram *program) :
 
 bool ShaderProgramStatus::get(GLenum statusType) {
   GLsizei size;
-  glCheck(glGetProgramiv(m_Program->get(), statusType, &m_Status));
+  glCheck(glGetProgramiv(m_Program->Get(), statusType, &m_Status));
 	if (m_Status != GL_TRUE)
 	{
-		glCheck(glGetProgramInfoLog(m_Program->get(), 512, &size, infoLog));
+		glCheck(glGetProgramInfoLog(m_Program->Get(), 512, &size, m_InfoLog));
 		auto log = GetISystem()->GetILog();
 		if (log != nullptr)
 		{
-			log->Log("[ERROR] Shader::programm: %s\n", infoLog);
+			log->Log("[ERROR] Shader::programm: %s\n", m_InfoLog);
 			std::vector<char> label(1);
 			GLsizei length = 0;
-			glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->get(), 1, &length, label.data()));
+			glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->Get(), 1, &length, label.data()));
 			if (length > 0)
 			{
 				label.resize(length);
-				glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->get(), length, &length, label.data()));
+				glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->Get(), length, &length, label.data()));
 				log->Log("[INFO] Shader::programm label: %s\n", label.data());
 			}
 		}
 		else
-			GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  infoLog).c_str());
+			GetISystem()->Log((std::string("[ERROR] Shader::programm: ") +  m_InfoLog).c_str());
     return false;
   }
   return true;
@@ -91,7 +91,7 @@ CShader::~CShader() {
   glCheck(glDeleteShader(m_Shader));
 }
 
-bool CShader::create() {
+bool CShader::Create() {
   m_Shader = glCreateShader(m_Type);
   if (m_Shader != 0) { return true; }
   else { return false; }
@@ -122,9 +122,9 @@ std::shared_ptr<CShader> CShader::load(ShaderDesc& desc) {
 	}
 
   auto shader = std::make_shared<CShader>(text, str2typ(desc.type));
-  if (!shader->create())
+  if (!shader->Create())
     return nullptr;
-  shader->compile();
+  shader->Compile();
   shader->print();
 	shader->m_Empty = false;
 	debuger::shader_label(shader->get(), path);
@@ -174,14 +174,14 @@ bool CShader::loadInternal(std::string &path, std::string& buffer)
 std::shared_ptr<CShader> CShader::loadFromMemory(std::string text, CShader::type type)
 {
   auto shader = std::make_shared<CShader>(text, type);
-  if (!shader->create())
+  if (!shader->Create())
     return nullptr;
-  shader->compile();
+  shader->Compile();
   shader->print();
   return shader;
 }
 
-bool CShader::compile() {
+bool CShader::Compile() {
   const char *text = m_Text.c_str();
   glCheck(glShaderSource(m_Shader, 1, &text, nullptr));
   glCheck(glCompileShader(m_Shader));
@@ -189,11 +189,11 @@ bool CShader::compile() {
   return m_Status.get(GL_COMPILE_STATUS);
 }
 
-bool CShader::bind() {
+bool CShader::Bind() {
  return true; 
 }
 
-bool CShader::empty()
+bool CShader::Empty()
 {
 	return m_Empty;
 }
@@ -273,20 +273,20 @@ CBaseShaderProgram::~CBaseShaderProgram() {
 	glDeleteProgram(m_Program);
 }
 
-bool CBaseShaderProgram::create(const char *label) {
+bool CBaseShaderProgram::Create(const char *label) {
 	if (!created) {
 		created = true;
 		m_Program = glCreateProgram();
 	}
 	debuger::program_label(m_Program, label);
-	attach(m_Vertex);
-	attach(m_Fragment);
-	attach(m_Geometry);
-	attach(m_Compute);
+	Attach(m_Vertex);
+	Attach(m_Fragment);
+	Attach(m_Geometry);
+	Attach(m_Compute);
 	return Link();
 }
 
-void CBaseShaderProgram::attach(ShaderInfo& info) {
+void CBaseShaderProgram::Attach(ShaderInfo& info) {
 	ShaderInfo &attached = info;
 	
 	if (!info.used) return;
@@ -564,7 +564,7 @@ void CBaseShaderProgram::Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 		m_Geometry.shader = g;
 	if (c != nullptr)
 		m_Compute.shader = c;
-	create(label);
+	Create(label);
 }
 
 void CBaseShaderProgram::BindTexture2D(GLuint texture, GLint unit, const char* sampler)
@@ -579,7 +579,7 @@ void CBaseShaderProgram::BindTextureUnit2D(GLuint texture, GLint unit)
 	gl::BindTexture2D(texture);
 }
 
-GLuint CBaseShaderProgram::get() {
+GLuint CBaseShaderProgram::Get() {
   return m_Program;
 }
 

@@ -243,7 +243,7 @@ void GameGUI::controlPanel()
             game->gotoGame();
           */
           FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->m_Window->getWidth(), game->m_Window->getHeight());
-          sceneBuffer->create();
+          sceneBuffer->Create();
           //scene->setRenderTarget(sceneBuffer);
           //scene->setCamera(new CCamera());
           CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));

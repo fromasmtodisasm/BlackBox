@@ -327,7 +327,7 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 		}
 		shaderProgram  = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
 			
-		if (!shaderProgram->create(desc.name.c_str()))
+		if (!shaderProgram->Create(desc.name.c_str()))
 			return false;
 		auto it = shaders_map.find(desc.name);
 		shaders_map[desc.name] = shaderProgram;
