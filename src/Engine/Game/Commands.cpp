@@ -501,7 +501,7 @@ bool ShaderCommand::dump(CommandDesc& cd)
 		auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
 		if (s == nullptr)
 			return false;
-		s->dump();
+		s->Dump();
 		GetISystem()->GetIConsole()->ExecuteString("exec os @EDITOR dump.bin");
 		return true;
 	}

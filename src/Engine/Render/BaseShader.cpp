@@ -283,7 +283,7 @@ bool CBaseShaderProgram::create(const char *label) {
 	attach(m_Fragment);
 	attach(m_Geometry);
 	attach(m_Compute);
-	return link();
+	return Link();
 }
 
 void CBaseShaderProgram::attach(ShaderInfo& info) {
@@ -313,17 +313,17 @@ CBaseShaderProgram::ShaderInfo& CBaseShaderProgram::attachInternal(ShaderInfo& s
 	if (dst.shader == nullptr)
 		dst.shader = src.shader;
 	if (dst.attached)
-		detach(src);
+		Detach(src);
 	return dst;
 }
 
-void CBaseShaderProgram::detach(ShaderInfo& info)
+void CBaseShaderProgram::Detach(ShaderInfo& info)
 {
   if (info.attached)
 		glCheck(glDetachShader(m_Program, info.shader->get()));
 }
 
-bool CBaseShaderProgram::dispatch(int x, int y, int z, GLbitfield barriers)
+bool CBaseShaderProgram::Dispatch(int x, int y, int z, GLbitfield barriers)
 {
 	if (m_Compute.attached)
 	{
@@ -334,32 +334,32 @@ bool CBaseShaderProgram::dispatch(int x, int y, int z, GLbitfield barriers)
 	return false;
 }
 
-bool CBaseShaderProgram::dispatchInderect()
+bool CBaseShaderProgram::DispatchInderect()
 {
 	return false;
 }
 
-bool CBaseShaderProgram::link() {
+bool CBaseShaderProgram::Link() {
   glCheck(glLinkProgram(m_Program));
 	return m_Status.get(GL_LINK_STATUS);
 }
 
-void CBaseShaderProgram::use() {
+void CBaseShaderProgram::Use() {
     glCheck(glUseProgram(m_Program));
 }
 
-void CBaseShaderProgram::unuse()
+void CBaseShaderProgram::Unuse()
 {
     glCheck(glUseProgram(0));
 }
 
-void CBaseShaderProgram::deleteProgram()
+void CBaseShaderProgram::DeleteProgram()
 {
 	glDeleteProgram(m_Program);
 	created = false;
 }
 
-GLint CBaseShaderProgram::getUniformLocation(const char* format, ...)
+GLint CBaseShaderProgram::GetUniformLocation(const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -386,15 +386,15 @@ GLint CBaseShaderProgram::getUniformLocation(const char* format, ...)
   return loc;
 }
 
-GLint CBaseShaderProgram::getUniformLocation(std::string& name)
+GLint CBaseShaderProgram::GetUniformLocation(std::string& name)
 {
-  return getUniformLocation(name.c_str());
+  return GetUniformLocation(name.c_str());
 }
 
-UniformValue CBaseShaderProgram::getUniformValue(const char* name)
+UniformValue CBaseShaderProgram::GetUniformValue(const char* name)
 {
   UniformValue result;
-  auto location = getUniformLocation(name);
+  auto location = GetUniformLocation(name);
 
   result.location = location;
 	result.program = m_Program;
@@ -408,7 +408,7 @@ void CBaseShaderProgram::Uniform(int value, const char * format, ...)
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
       glCheck(glUniform1i(loc, value));
   }
@@ -421,7 +421,7 @@ void CBaseShaderProgram::Uniform(unsigned int value, const char* format, ...)
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
       glCheck(glUniform1ui(loc, value));
   }
@@ -434,33 +434,33 @@ void CBaseShaderProgram::Uniform(float value, const char * format, ...)
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform1f(loc, value));
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::vec1 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Vec1 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform1f(loc, value[0]));
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::vec2 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Vec2 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
 		glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
 		if (print_loc_name->GetIVal())
@@ -468,27 +468,27 @@ void CBaseShaderProgram::Uniform(glm::vec2 value, const char * format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::vec3 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Vec3 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
       glCheck(glUniform3fv(loc, 1, glm::value_ptr(value)));
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::vec4 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Vec4 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform4fv(loc, 1, glm::value_ptr(value)));
   }
@@ -501,46 +501,46 @@ void CBaseShaderProgram::Uniform(glm::ivec4 value, const char* format, ...)
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
         glCheck(glUniform4iv(loc, 1, glm::value_ptr(value)));
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::mat2 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Mat2 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
     glCheck(glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::mat3 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Mat3 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
     glCheck(glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::mat4 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(Mat4 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
   auto name = buildName(format, ptr);
   va_end(ptr);
 
-  GLint loc = getUniformLocation(name);
+  GLint loc = GetUniformLocation(name);
   if (loc != -1){
     glCheck(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value)));
   }
@@ -548,15 +548,15 @@ void CBaseShaderProgram::Uniform(glm::mat4 value, const char * format, ...)
 
 void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label)
 {
-	detach(m_Vertex);
+	Detach(m_Vertex);
 	//reset(m_Vertex);
-	detach(m_Fragment);
+	Detach(m_Fragment);
 	//reset(m_Fragment);
-	detach(m_Geometry);
+	Detach(m_Geometry);
 	//reset(m_Geometry);
-	detach(m_Compute);
+	Detach(m_Compute);
 	//reset(m_Compute);
-	deleteProgram();
+	DeleteProgram();
 
 	m_Vertex.shader = v;
 	m_Fragment.shader = f;
@@ -567,13 +567,13 @@ void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 	create(label);
 }
 
-void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* sampler)
+void CBaseShaderProgram::BindTexture2D(GLuint texture, GLint unit, const char* sampler)
 {
-	bindTextureUnit2D(texture, unit);
+	BindTextureUnit2D(texture, unit);
 	Uniform(unit, sampler);
 }
 
-void CBaseShaderProgram::bindTextureUnit2D(GLuint texture, GLint unit)
+void CBaseShaderProgram::BindTextureUnit2D(GLuint texture, GLint unit)
 {
 	gl::ActiveTexture(GL_TEXTURE0 + unit);
 	gl::BindTexture2D(texture);
@@ -583,7 +583,7 @@ GLuint CBaseShaderProgram::get() {
   return m_Program;
 }
 
-void CBaseShaderProgram::dump()
+void CBaseShaderProgram::Dump()
 {
 	int len = 0;
 	GLenum bFormat;

@@ -28,9 +28,9 @@ public:
 		MaterialManager::instance()->loadProgram(pd, false);
 		shader = MaterialManager::instance()->getProgram(pd.name);
 
-		shader->use();
+		shader->Use();
 		shader->Uniform(0, "skybox");
-		shader->unuse();
+		shader->Unuse();
 
 		static float skyboxVertices[] = {
 			// positions          
@@ -88,7 +88,7 @@ public:
 		glm::mat4 Projection = Pipeline::instance()->projection;
 		glCheck(glDepthMask(GL_FALSE));
 		glCheck(glDepthFunc(GL_LEQUAL));
-		shader->use();
+		shader->Use();
 		// ... задание видовой и проекционной матриц
 		shader->Uniform(glm::mat4(glm::mat3(View)), "View");
 		shader->Uniform(Projection, "Projection");

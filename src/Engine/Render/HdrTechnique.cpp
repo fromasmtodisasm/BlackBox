@@ -273,20 +273,20 @@ void HdrTechnique::createShader()
 	MaterialManager::instance()->loadProgram(desc[4],false);
 
 	m_ScreenShader = MaterialManager::instance()->getProgram(desc[0].name);
-	m_ScreenShader->use();
+	m_ScreenShader->Use();
 	m_ScreenShader->Uniform(0,"scene");
 	m_ScreenShader->Uniform(1,"bloomBlur");
-	m_ScreenShader->unuse();
+	m_ScreenShader->Unuse();
 
 	m_DownsampleShader = MaterialManager::instance()->getProgram(desc[1].name);
-	m_DownsampleShader->use();
+	m_DownsampleShader->Use();
 	m_DownsampleShader->Uniform(0,"image");
-	m_DownsampleShader->unuse();
+	m_DownsampleShader->Unuse();
 
 	m_DownsampleComputeShader = MaterialManager::instance()->getProgram(desc[2].name);
-	m_DownsampleComputeShader->use();
+	m_DownsampleComputeShader->Use();
 	m_DownsampleComputeShader->Uniform(0,"image");
-	m_DownsampleComputeShader->unuse();
+	m_DownsampleComputeShader->Unuse();
 
 	m_UpsampleShader = MaterialManager::instance()->getProgram(desc[3].name);
 
@@ -407,7 +407,7 @@ void HdrTechnique::downsamplingStandard()
 	// --------------------------------------------------
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
-	m_DownsampleShader->use();
+	m_DownsampleShader->Use();
   m_DownsampleShader->Uniform(offset->GetFVal(), "offset");
 
 	render->SetState(IRender::State::DEPTH_TEST, false);
@@ -431,14 +431,14 @@ void HdrTechnique::downsamplingStandard()
 		ds->Uniform(rx, "ry");
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
 
-		ds->bindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
+		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
 		if (first_iteration)
 			first_iteration = false;
 	}
 	pingpong = !horizontal;
-	m_DownsampleShader->unuse();
+	m_DownsampleShader->Unuse();
 
 #if 0
 	glBindBufferBase(GL_ARRAY_BUFFER, 2, quadCornersVBO);
@@ -455,10 +455,10 @@ void HdrTechnique::downsamplingStandard()
 
 void HdrTechnique::downsamplingCompute()
 {
-	m_DownsampleComputeShader->use();
+	m_DownsampleComputeShader->Use();
 	{
 		unsigned int image_unit = 2;
-		m_DownsampleComputeShader->bindTexture2D(m_HdrBuffer->texture[1], image_unit, "inputImg1");
+		m_DownsampleComputeShader->BindTexture2D(m_HdrBuffer->texture[1], image_unit, "inputImg1");
 	}
 
 	{
@@ -468,13 +468,13 @@ void HdrTechnique::downsamplingCompute()
 	}
 
 	auto render = GetISystem()->GetIRender();
-	m_DownsampleComputeShader->dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	m_DownsampleComputeShader->Dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 	return;
 }
 
 void HdrTechnique::upsampling()
 {
-	m_UpsampleShader->use();
+	m_UpsampleShader->Use();
 	m_UpsampleShader->Uniform(blurOn->GetIVal(), "blurOn");
 	m_UpsampleShader->Uniform(blurOnly->GetIVal(), "blurOnly");
 	
@@ -500,13 +500,13 @@ void HdrTechnique::upsampling()
 		up->Uniform(rx, "ry");
 
 		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, rx, ry));
-		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
-		m_UpsampleShader->bindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
+		m_UpsampleShader->BindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
+		m_UpsampleShader->BindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
 		m_ScreenQuad.draw();
 		if (first_iteration)
 			first_iteration = false;
 	}
-	m_UpsampleShader->unuse();
+	m_UpsampleShader->Unuse();
 }
 
 void HdrTechnique::Do(unsigned int texture)
@@ -515,13 +515,13 @@ void HdrTechnique::Do(unsigned int texture)
 	//FrameBufferObject::bindDefault(m_HdrBuffer->viewPort);
 	FrameBufferObject::bindDefault({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	
-	m_ScreenShader->use();
+	m_ScreenShader->Use();
   m_ScreenShader->Uniform(exposure->GetFVal(), "exposure");
   m_ScreenShader->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");
 	render->SetState(IRender::State::DEPTH_TEST, false);
 
-	m_ScreenShader->bindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
-	m_ScreenShader->bindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
+	m_ScreenShader->BindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
+	m_ScreenShader->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
 	m_ScreenShader->Uniform(bloom->GetIVal(), "bloom");
 	auto w = cam_width->GetIVal();
 	auto h = cam_height->GetIVal();

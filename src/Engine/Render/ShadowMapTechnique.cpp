@@ -84,7 +84,7 @@ void ShadowMapping::DepthPass()
   lightPos = glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal());
   m_DepthBuffer->bind();
 	m_DepthBuffer->clear();
-  m_ShadowMapShader->use();
+  m_ShadowMapShader->Use();
   glm::mat4 proj = glm::ortho(-1366.f * m, 1366.f * m, -768.f * m, 768.f * m, -1.0f, 5000.f);
 
   lightSpaceMatrix = proj *
@@ -96,7 +96,7 @@ void ShadowMapping::DepthPass()
   renderStage = RENDER_DEPTH;
   m_Scene->ForEachObject(this);
   
-  m_ShadowMapShader->unuse();
+  m_ShadowMapShader->Unuse();
   m_DepthBuffer->unbind();
 }
 
@@ -122,7 +122,7 @@ void ShadowMapping::RenderPass()
   }
 
 	auto points = m_Scene->getPoints();
-	points->shader->use();
+	points->shader->Use();
 	points->shader->Uniform(
 		Pipeline::instance()->projection *
 		Pipeline::instance()->view *
@@ -130,7 +130,7 @@ void ShadowMapping::RenderPass()
 		"MVP"
 	);
 	points->draw();
-	points->shader->unuse();
+	points->shader->Unuse();
   
   // Render transparent objects
   renderStage = RENDER_TRANSPARENT;
@@ -157,7 +157,7 @@ void ShadowMapping::RenderOpaque(Object* object)
     glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
   {
     auto program = object->m_Material->program;
-    program->use();
+    program->Use();
     program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
     program->Uniform(lightPos, "lightPos");
     program->Uniform(object->m_Material->alpha, "alpha");
@@ -188,7 +188,7 @@ void ShadowMapping::RenderTransparent(Object* object)
   if (object->m_transparent && (object->visible()))
   {
     auto program = object->m_Material->program;
-    program->use();
+    program->Use();
     program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
     program->Uniform(lightPos, "lightPos");
     program->Uniform(object->m_Material->alpha, "alpha");

@@ -34,19 +34,19 @@ bool Particles::Create()
 	initPos();
 	initVel();
 
-	shader->use();
+	shader->Use();
 	shader->Uniform(randomVector(10, 40), "BlackHolePos1");
 	shader->Uniform(randomVector(10, 40), "BlackHolePos2");
-	shader->unuse();
+	shader->Unuse();
 	return true;
 }
 
 void Particles::Draw(float dt)
 {
-	shader->use();
+	shader->Use();
 	shader->Uniform(dt, "DeltaT");
 
-	shader->unuse();
+	shader->Unuse();
 }
 
 void Particles::initPos()

@@ -571,8 +571,8 @@ struct IScriptObject
 		NOTE: if the parent is registered the script object will notify when is deleted
 	*/
 	virtual void RegisterParent(IScriptObjectSink* pSink) = 0;
-	//! detach the IScriptObject from the "real" script object
-	//! used to detach from the C++ code quick objects like vectors or temporary structures
+	//! Detach the IScriptObject from the "real" script object
+	//! used to Detach from the C++ code quick objects like vectors or temporary structures
 	virtual void Detach() = 0;
 	//! delete the IScriptObject/
 	virtual void Release() = 0;

@@ -2,8 +2,7 @@
 #include <BlackBox/Render/ShaderUtils.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
-#include <glm/fwd.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <BlackBox/MathHelper.hpp>
 #include <string>
 #include <map>
 #include <memory>
@@ -354,44 +353,42 @@ public:
   bool create(const char *label);
   void attach(ShaderInfo& shader);
   ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
-  void detach(ShaderInfo& shader);
-	bool dispatch(int x, int y, int z, GLbitfield barriers);
-	bool dispatchInderect();
-  bool link();
-  void use();
-  void unuse();
-	void deleteProgram();
-  GLint getUniformLocation(const char* format, ...);
-  GLint getUniformLocation(std::string &name);
-  UniformValue getUniformValue(const char* name);
+  void Detach(ShaderInfo& shader);
+	bool Dispatch(int x, int y, int z, GLbitfield barriers);
+	bool DispatchInderect();
+  bool Link();
+  void Use();
+  void Unuse();
+	void DeleteProgram();
+  GLint GetUniformLocation(const char* format, ...);
+  GLint GetUniformLocation(std::string &name);
+  UniformValue GetUniformValue(const char* name);
 	void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
   void Uniform(int value, const char *format, ...);
   void Uniform(unsigned int value, const char *format, ...);
   void Uniform(float value, const char *format, ...);
-  void Uniform(glm::vec1 value, const char *format, ...);
-  void Uniform(glm::vec2 value, const char *format, ...);
-  void Uniform(glm::vec3 value, const char *format, ...);
-  void Uniform(glm::vec4 value, const char *format, ...);
+  void Uniform(Vec1 value, const char *format, ...);
+  void Uniform(Vec2 value, const char *format, ...);
+  void Uniform(Vec3 value, const char *format, ...);
+  void Uniform(Vec4 value, const char *format, ...);
+  void Uniform(Mat2 value, const char *format, ...);
+  void Uniform(Mat3 value, const char *format, ...);
+  void Uniform(Mat4 value, const char *format, ...);
   void Uniform(glm::ivec4 value, const char *format, ...);
-  void Uniform(glm::mat2 value, const char *format, ...);
-  void Uniform(glm::mat3 value, const char *format, ...);
-  void Uniform(glm::mat4 value, const char *format, ...);
 
 	template<typename T>
 	void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
 
 	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
 
-	void bindTexture2D(GLuint texture, GLint unit, const char* sampler);
-	void bindTextureUnit2D(GLuint texture, GLint unit);
+	void BindTexture2D(GLuint texture, GLint unit, const char* sampler);
+	void BindTextureUnit2D(GLuint texture, GLint unit);
   GLuint get();
 	virtual void setup() = 0;
-	void dump();
+	void Dump();
 private:
 	void reset(ShaderInfo src);
   const char* buildName(const char* format, va_list args);
 };
 
 CShader::type str2typ(std::string type);
-
-//typedef std::shared_ptr<CShader> std::shared_ptr<CShader>;

@@ -30,7 +30,7 @@ void Pipeline::bindProgram(const char* name)
 		else
 			shader = ShaderManager::instance()->getDefaultProgram();
 	}
-	shader->use();
+	shader->Use();
 }
 
 void BoundingBox::draw()

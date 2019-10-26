@@ -66,9 +66,9 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		return nullptr;
 	}
 	//m_ScreenShader->create();
-	m_ScreenShader->use();
+	m_ScreenShader->Use();
 	m_ScreenShader->Uniform(0,"screenTexture");
-	m_ScreenShader->unuse();
+	m_ScreenShader->Unuse();
 
 	cam_width->Set(GetWidth());
 	cam_height->Set(GetHeight());
@@ -292,12 +292,12 @@ void CRender::DrawFullScreenImage(int texture_id)
 		height = GetHeight();
 	gl::BindFramebuffer(0);
 	SetViewport(0, 0, width, height);
-	m_ScreenShader->use();
+	m_ScreenShader->Use();
 	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
 	auto transform = glm::scale(proj, glm::vec3(width, height, 1));
 	m_ScreenShader->Uniform(transform, "transform");
 	SetState(State::DEPTH_TEST, false);
-	m_ScreenShader->bindTextureUnit2D(texture_id, 0);
+	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 	m_ScreenQuad->draw();
 }
 
@@ -341,7 +341,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	m_ScreenShader->use();
+	m_ScreenShader->Use();
 	m_ScreenShader->Uniform(a, "alpha");
 
 	glm::mat4 model(1.0);
@@ -373,7 +373,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	}
 
 	SetState(State::DEPTH_TEST, false);
-	m_ScreenShader->bindTextureUnit2D(texture_id, 0);
+	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 	m_ScreenQuad->draw();;
 	SetState(State::CULL_FACE, true);
 }
