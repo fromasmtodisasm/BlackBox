@@ -40,8 +40,8 @@ bool ShaderStatus::get(GLenum statusType) {
   glCheck(glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status)));
   if(m_Status != GL_TRUE)
   {
-    glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, infoLog));
-    GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), infoLog);;
+    glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, m_InfoLog));
+    GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), m_InfoLog);;
     return false;
   }
   return true;
@@ -546,7 +546,7 @@ void CBaseShaderProgram::Uniform(Mat4 value, const char * format, ...)
   }
 }
 
-void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label)
+void CBaseShaderProgram::Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label)
 {
 	Detach(m_Vertex);
 	//reset(m_Vertex);

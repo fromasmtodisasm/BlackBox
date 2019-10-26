@@ -297,7 +297,7 @@ bool MaterialManager::loadProgram(ProgramDesc &desc, bool isReload)
 
 	if (isReload)
 	{
-		shader_it->second->reload(vs, fs, gs, cs, desc.name.c_str());
+		shader_it->second->Reload(vs, fs, gs, cs, desc.name.c_str());
 	}
 	else
 	{

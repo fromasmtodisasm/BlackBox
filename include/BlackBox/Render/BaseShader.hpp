@@ -12,29 +12,29 @@ class CBaseShaderProgram;
 class CShaderProgram;
 struct ICVar;
 
-using BaseShaderProgramRef = std::shared_ptr<CBaseShaderProgram>;
-using ShaderProgramRef = std::shared_ptr<CShaderProgram>;
-using ShaderRef = std::shared_ptr<CShader>;
+using BaseShaderProgramRef	= std::shared_ptr<CBaseShaderProgram>;
+using ShaderProgramRef			= std::shared_ptr<CShaderProgram>;
+using ShaderRef							= std::shared_ptr<CShader>;
 
 struct ShaderStatus
 {
- GLchar infoLog[512]; 
- GLint m_Status;
- CShader *m_Shader;
+	GLchar m_InfoLog[512]; 
+	GLint m_Status;
+	CShader *m_Shader;
 
- ShaderStatus(CShader *shader);
- bool get(GLenum statusType);
+	ShaderStatus(CShader *shader);
+	bool get(GLenum statusType);
 };
 
 
 struct ShaderProgramStatus
 {
- GLchar infoLog[512]; 
- GLint m_Status;
- CBaseShaderProgram *m_Program;
+	GLchar infoLog[512]; 
+	GLint m_Status;
+	CBaseShaderProgram *m_Program;
 
- ShaderProgramStatus(CBaseShaderProgram *program);
- bool get(GLenum statusType);
+	ShaderProgramStatus(CBaseShaderProgram *program);
+	bool get(GLenum statusType);
 };
 
 class CShader 
@@ -341,7 +341,6 @@ public:
 	static ICVar* print_loc_name;
 	static ICVar* use_cache;
 
-  bool status();
 public:
   CBaseShaderProgram();
   CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
@@ -379,7 +378,7 @@ public:
 	template<typename T>
 	void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
 
-	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
+	void Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
 
 	void BindTexture2D(GLuint texture, GLint unit, const char* sampler);
 	void BindTextureUnit2D(GLuint texture, GLint unit);
