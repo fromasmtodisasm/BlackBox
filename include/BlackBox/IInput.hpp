@@ -285,6 +285,156 @@ struct ITouchEventListener
 	virtual void OnTouchEvent(const STouchEvent& event) = 0;
 };
 
+//////////////////////////////////////////////////////////////////////
+
+typedef int XACTIONID;
+
+#define BEGIN_INPUTACTIONMAP() void OnAction(XACTIONID nActionID, float fValue,XActivationEvent ae) { switch(nActionID) {
+#define END_INPUTACTIONMAP() default: break; } }
+#define REGISTER_INPUTACTIONMAP(actionid, handler) case actionid: handler(fValue,ae); break;
+
+#ifdef _XBOX
+#define MAX_BINDS_PER_ACTION 3
+#else
+#define MAX_BINDS_PER_ACTION 2
+#endif
+
+//////////////////////////////////////////////////////////////////////
+enum XActionActivationMode
+{
+	aamOnPress,
+	aamOnDoublePress,
+	aamOnPressAndRelease,
+	aamOnRelease,
+	aamOnHold
+};
+
+//////////////////////////////////////////////////////////////////////
+enum XActivationEvent
+{
+	etPressing,
+	etHolding,
+	etReleasing,
+	etDoublePressing
+};
+
+//////////////////////////////////////////////////////////////////////
+struct XBind
+{
+	XBind()
+	{
+		nKey = eKI_Unknown;
+		nModifier = eKI_Unknown;
+	}
+	int nKey;
+	int nModifier;
+};
+
+//////////////////////////////////////////////////////////////////////
+struct IActionMapSink
+{
+	virtual void OnAction(XACTIONID nActionID, float fValue, XActivationEvent ae) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+struct IActionMap
+{
+	virtual void ResetAllBindings() = 0;
+	virtual void ResetBinding(XACTIONID nActionID) = 0;
+	virtual void RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam) = 0;
+	virtual void BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos = -1) = 0;//int nKey,int nModifier=XKEY_NULL) = 0;
+	virtual void BindAction(XACTIONID nActionID, int nKey, int nModifier = eKI_Unknown, int iKeyPos = -1) = 0;//, bool bConfigurable=false, bool bReplicate=false) = 0;
+	virtual void BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier = NULL, int iKeyPos = -1) = 0;
+	virtual void GetBinding(XACTIONID nActionID, int nKeyPos, XBind& Bind) = 0;
+	virtual void GetBinding(XACTIONID nActionID, int nKeyPos, int& nKey, int& nModifier) = 0;
+	virtual void GetBinding(XACTIONID nActionID, int nKeyPos, char* pszKey, char* pszModifier) = 0;
+	// compare this action map with the one passed and store the key differences in keys
+	virtual void GetBindDifferences(IActionMap* pActionMap, std::vector<int>& keys) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+struct IActionMapDumpSink
+{
+	virtual void OnElementFound(const char* pszActionMapName, IActionMap* pActionMap) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+struct IActionMapManager
+{
+	virtual void SetInvertedMouse(bool bEnable) = 0;
+	virtual bool GetInvertedMouse() = 0;;
+
+	virtual void RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam) = 0;
+
+	virtual void SetSink(IActionMapSink* pSink) = 0;
+	virtual void CreateAction(XACTIONID nActionID, const char* sActionName, XActionActivationMode aam = aamOnPress) = 0;
+
+	virtual IActionMap* CreateActionMap(const char* s) = 0;
+	virtual IActionMap* GetActionMap(const char* s) = 0;
+
+	virtual void ResetAllBindings() = 0;
+
+	virtual void GetActionMaps(IActionMapDumpSink* pCallback) = 0;
+
+	virtual void SetActionMap(const char* s) = 0;
+
+	virtual bool CheckActionMap(XACTIONID nActionID) = 0;
+	virtual bool CheckActionMap(const char* sActionName) = 0;
+	virtual void Reset() = 0;
+	virtual void Update(unsigned int nTimeMSec) = 0;
+	virtual void Release() = 0;
+
+	virtual void Enable() = 0;
+	virtual void Disable() = 0;
+	virtual bool IsEnabled() = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+typedef unsigned char INPUTACTIONID;
+
+//@{ Helper macros to implement the action triggers callback interface
+#define BEGIN_INPUTACTIONTRIGGERS() void OnAction(INPUTACTIONID nActionID, float fValue) { switch(nActionID) {
+#define END_INPUTACTIONTRIGGERS() default: break; } }
+#define REGISTER_INPUTACTIONTRIGGER(actionid, handler) case actionid: handler(fValue); break;
+//@}
+
+//////////////////////////////////////////////////////////////////////
+// Action triggers callback interface
+struct IInputActionTriggerSink
+{
+	virtual void OnAction(INPUTACTIONID nActionID, float fValue) = 0;
+};
+
+//! Action map interface
+struct IInputActionMap
+{
+	virtual void SetSink(IInputActionTriggerSink* pIActionTrigger) = 0;
+
+	virtual void Release() = 0;
+
+	//! Check all actions
+	virtual void Update() = 0;
+
+	// Call the action trigger
+	virtual void CallActionTrigger(INPUTACTIONID nActionID, float fValue) = 0;
+
+	//! Return the amount of pressing of the action input if the action is
+	//! currently done
+	virtual float CheckAction(const INPUTACTIONID nActionID) = 0;
+
+	/*! Set a new action
+	@param nActionID id that identity the action[eg. ACTION_JUMP]
+	@param bCheckPressed if true the action event is triggered only once when a button is pressed
+	else the action is send every frame until the button is released
+	@param szCodes key identifiers [eg. "MBT_1" mouse button]
+	@param szMods key modifier [eg. "SHIFT"]
+	@return true=succeded,false=failed*/
+
+	virtual bool SetAction(const INPUTACTIONID nActionID, bool bCheckPressed, const char* szCodes, const char* szMods = NULL) = 0;
+
+	virtual void ClearAction(const INPUTACTIONID nActionID) = 0;
+};
+
 struct SInputSymbol;
 
 //! InputEvents are generated by input system and dispatched to all event listeners.
