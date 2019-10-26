@@ -276,45 +276,54 @@ namespace gl {
 		glCheck(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
 	}
 
-	/*
-	inline void gl::UniformValue(GLint location, int value)
+	inline void UniformValue(GLint location, int value)
 	{
+    glCheck(glUniform1i(location, value));
 	}
 
-	inline void gl::UniformValue(GLint location, unsigned int value)
+	inline void UniformValue(GLint location, unsigned int value)
 	{
+    glCheck(glUniform1ui(location, value));
 	}
 
-	inline void gl::UniformValue(GLint location, float value)
+	inline void UniformValue(GLint location, float value)
 	{
+    glCheck(glUniform1f(location, value));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::vec1 value)
+	inline void UniformValue(GLint location, glm::vec1 &value)
 	{
+    glCheck(glUniform1fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::vec2 value)
+	inline void UniformValue(GLint location, glm::vec2 &value)
 	{
+    glCheck(glUniform2fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::vec3 value)
+	inline void UniformValue(GLint location, glm::vec3 &value)
 	{
+    glCheck(glUniform3fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::vec4 value)
+	inline void UniformValue(GLint location, glm::vec4 &value)
 	{
+    glCheck(glUniform4fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::mat2 value)
+	inline void UniformValue(GLint location, glm::mat2 &value)
 	{
+    glCheck(glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(value)));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::mat3 value)
+	inline void UniformValue(GLint location, glm::mat3 &value)
 	{
+    glCheck(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value)));
 	}
 
-	inline void gl::UniformValue(GLint location, glm::mat4 value)
+	inline void UniformValue(GLint location, glm::mat4 &value)
 	{
+    glCheck(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value)));
 	}
 
 	// Shader
@@ -323,6 +332,5 @@ namespace gl {
 	{
 		UniformValue(location, value);
 	}
-	*/
 
 }

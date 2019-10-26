@@ -88,47 +88,47 @@ public:
   inline void Set(int value)
   {
     dirty = true;
-    glCheck(glUniform1i(location, value));
+		gl::Uniform(location, value);
   }
   inline void Set(float value)
   {
     dirty = true;
-    glCheck(glUniform1f(location, value));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::vec1 value)
   {
     dirty = true;
-    glCheck(glUniform1fv(location, 1, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::vec2 value)
   {
     dirty = true;
-    glCheck(glUniform2fv(location, 1, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::vec3 value)
   {
     dirty = true;
-    glCheck(glUniform3fv(location, 1, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::vec4 value)
   {
     dirty = true;
-    glCheck(glUniform4fv(location, 1, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::mat2 value)
   {
     dirty = true;
-    glCheck(glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::mat3 value)
   {
     dirty = true;
-    glCheck(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   inline void Set(glm::mat4 value)
   {
     dirty = true;
-    glCheck(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value)));
+		gl::Uniform(location, value);
   }
   
 

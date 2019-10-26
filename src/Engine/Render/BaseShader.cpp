@@ -463,8 +463,6 @@ void CBaseShaderProgram::Uniform(Vec2 value, const char * format, ...)
   GLint loc = GetUniformLocation(name);
   if (loc != -1){
 		glCheck(glUniform2fv(loc, 1, glm::value_ptr(value)));
-		if (print_loc_name->GetIVal())
-			std::cout << name << std::endl;
   }
 }
 
