@@ -401,7 +401,7 @@ UniformValue CBaseShaderProgram::getUniformValue(const char* name)
   return result;
 }
 
-void CBaseShaderProgram::setUniformValue(int value, const char * format, ...)
+void CBaseShaderProgram::Uniform(int value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -414,7 +414,7 @@ void CBaseShaderProgram::setUniformValue(int value, const char * format, ...)
   }
 }
 
-void CBaseShaderProgram::setUniformValue(unsigned int value, const char* format, ...)
+void CBaseShaderProgram::Uniform(unsigned int value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -427,7 +427,7 @@ void CBaseShaderProgram::setUniformValue(unsigned int value, const char* format,
   }
 }
 
-void CBaseShaderProgram::setUniformValue(float value, const char * format, ...)
+void CBaseShaderProgram::Uniform(float value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -440,7 +440,7 @@ void CBaseShaderProgram::setUniformValue(float value, const char * format, ...)
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::vec1 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::vec1 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -453,7 +453,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec1 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::vec2 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::vec2 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -468,7 +468,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec2 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::vec3 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::vec3 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -481,7 +481,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec3 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::vec4 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::vec4 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -494,7 +494,7 @@ void CBaseShaderProgram::setUniformValue(glm::vec4 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::ivec4 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(glm::ivec4 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -507,7 +507,7 @@ void CBaseShaderProgram::setUniformValue(glm::ivec4 value, const char* format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::mat2 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::mat2 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -520,7 +520,7 @@ void CBaseShaderProgram::setUniformValue(glm::mat2 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::mat3 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::mat3 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -533,7 +533,7 @@ void CBaseShaderProgram::setUniformValue(glm::mat3 value, const char * format, .
   }
 }
 
-void CBaseShaderProgram::setUniformValue(glm::mat4 value, const char * format, ...)
+void CBaseShaderProgram::Uniform(glm::mat4 value, const char * format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -570,7 +570,7 @@ void CBaseShaderProgram::reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 void CBaseShaderProgram::bindTexture2D(GLuint texture, GLint unit, const char* sampler)
 {
 	bindTextureUnit2D(texture, unit);
-	setUniformValue(unit, sampler);
+	Uniform(unit, sampler);
 }
 
 void CBaseShaderProgram::bindTextureUnit2D(GLuint texture, GLint unit)

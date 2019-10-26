@@ -15,6 +15,6 @@ void ReflectShader::setup()
 		glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 		glCheck(glActiveTexture(GL_TEXTURE0));
 		glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, Pipeline::instance()->skyBox->id));
-		setUniformValue(0, "skybox");
+		Uniform(0, "skybox");
 }
 #endif

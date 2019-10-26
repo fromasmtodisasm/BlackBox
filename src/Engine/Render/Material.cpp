@@ -21,12 +21,12 @@ void Material::apply(Object *object)
     if (specular != nullptr)
     {
       activeTexture("specularMap", specular);
-			program->setUniformValue(true, "has_specular");
+			program->Uniform(true, "has_specular");
       block++;
     }
 		else
 		{
-			program->setUniformValue(false, "has_specular");
+			program->Uniform(false, "has_specular");
 		}
     if (bump != nullptr)
     {
@@ -45,18 +45,18 @@ void Material::apply(Object *object)
 		if (emissive != nullptr)
 		{
 			activeTexture("emissiveMap", emissive);
-			program->setUniformValue(true, "has_emissive");
-			program->setUniformValue(GetISystem()->GetIConsole()->GetCVar("ef")->GetFVal(), "emissive_factor");
+			program->Uniform(true, "has_emissive");
+			program->Uniform(GetISystem()->GetIConsole()->GetCVar("ef")->GetFVal(), "emissive_factor");
 		}
 		else
 		{
-			program->setUniformValue(false, "has_emissive");
+			program->Uniform(false, "has_emissive");
 		}
   }
   else {
-    program->setUniformValue( diffuseColor,"diffuseColor");
+    program->Uniform( diffuseColor,"diffuseColor");
   }
-	program->setUniformValue(object->uvMatrix, "uvMatrix");
+	program->Uniform(object->uvMatrix, "uvMatrix");
 	program->setup();
 }
 
@@ -104,5 +104,5 @@ void Material::activeTexture(const char *uniform, BaseTexture* texture)
 	gl::ActiveTexture(GL_TEXTURE0 + texture->unit);
 	texture->bind();
   //glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
-	program->setUniformValue(texture->unit, uniform);
+	program->Uniform(texture->unit, uniform);
 }

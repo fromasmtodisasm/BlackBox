@@ -91,7 +91,7 @@ void ShadowMapping::DepthPass()
     glm::lookAt(lightPos,
       glm::vec3(0.0f, 0.0f, 0.0f),
       glm::vec3(0.0f, 1.0f, 0.0f));
-  m_ShadowMapShader->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
+  m_ShadowMapShader->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
 
   renderStage = RENDER_DEPTH;
   m_Scene->ForEachObject(this);
@@ -123,7 +123,7 @@ void ShadowMapping::RenderPass()
 
 	auto points = m_Scene->getPoints();
 	points->shader->use();
-	points->shader->setUniformValue(
+	points->shader->Uniform(
 		Pipeline::instance()->projection *
 		Pipeline::instance()->view *
 		Pipeline::instance()->model,
@@ -143,7 +143,7 @@ void ShadowMapping::RenderDepth(Object* object)
 	DEBUG_GROUP(__FUNCTION__);
   if (object->visible())
   {
-    m_ShadowMapShader->setUniformValue(object->getTransform(), "model");
+    m_ShadowMapShader->Uniform(object->getTransform(), "model");
     m_ShadowMapShader->setup();
     object->draw(nullptr);
   }
@@ -158,23 +158,23 @@ void ShadowMapping::RenderOpaque(Object* object)
   {
     auto program = object->m_Material->program;
     program->use();
-    program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
-    program->setUniformValue(lightPos, "lightPos");
-    program->setUniformValue(object->m_Material->alpha, "alpha");
-    //program->setUniformValue(bLighting, "lightOn");
+    program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
+    program->Uniform(lightPos, "lightPos");
+    program->Uniform(object->m_Material->alpha, "alpha");
+    //program->Uniform(bLighting, "lightOn");
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
 
     SetupLights(object);
     object->m_Material->apply(object);
-    program->setUniformValue(1, "shadowMap");
+    program->Uniform(1, "shadowMap");
     gl::ActiveTexture(GL_TEXTURE1);
     gl::BindTexture2D(m_DepthBuffer->texture[0]);
 
 		if (object->m_path.find("terrain") != object->m_path.npos)
-			program->setUniformValue(true, "isTerrain");
+			program->Uniform(true, "isTerrain");
 		else
-			program->setUniformValue(false, "isTerrain");
+			program->Uniform(false, "isTerrain");
     object->draw(camera);
   }
 
@@ -189,10 +189,10 @@ void ShadowMapping::RenderTransparent(Object* object)
   {
     auto program = object->m_Material->program;
     program->use();
-    program->setUniformValue(lightSpaceMatrix, "lightSpaceMatrix");
-    program->setUniformValue(lightPos, "lightPos");
-    program->setUniformValue(object->m_Material->alpha, "alpha");
-		program->setUniformValue(GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
+    program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
+    program->Uniform(lightPos, "lightPos");
+    program->Uniform(object->m_Material->alpha, "alpha");
+		program->Uniform(GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
 
     Pipeline::instance()->shader = program;
     Pipeline::instance()->model = object->getTransform();
@@ -247,7 +247,7 @@ void ShadowMapping::SetupLights(Object *object)
   // spotLight
   SetupSpotLights();
 
-  object->m_Material->program->setUniformValue(currentLight + 1, "countOfPointLights");
+  object->m_Material->program->Uniform(currentLight + 1, "countOfPointLights");
  
 }
 
@@ -278,13 +278,13 @@ void ShadowMapping::InitLights()
 
 
     //program->getUniformValue("pointLights[%d].position");
-    program->setUniformValue(light->position,   "pointLights[%d].position", currentLight);
-    program->setUniformValue(light->ambient,    "pointLights[%d].ambient", currentLight);
-    program->setUniformValue(light->diffuse,    "pointLights[%d].diffuse", currentLight);
-    program->setUniformValue(light->specular,   "pointLights[%d].specular", currentLight);
-    program->setUniformValue(light->constant,   "pointLights[%d].constant", currentLight);
-    program->setUniformValue(light->linear,     "pointLights[%d].linear", currentLight);
-    program->setUniformValue(light->quadratic,  "pointLights[%d].quadratic", currentLight);
+    program->Uniform(light->position,   "pointLights[%d].position", currentLight);
+    program->Uniform(light->ambient,    "pointLights[%d].ambient", currentLight);
+    program->Uniform(light->diffuse,    "pointLights[%d].diffuse", currentLight);
+    program->Uniform(light->specular,   "pointLights[%d].specular", currentLight);
+    program->Uniform(light->constant,   "pointLights[%d].constant", currentLight);
+    program->Uniform(light->linear,     "pointLights[%d].linear", currentLight);
+    program->Uniform(light->quadratic,  "pointLights[%d].quadratic", currentLight);
   }
 }
 
@@ -323,10 +323,10 @@ bool ShadowMapping::OnLightFound(DirectionLight* light)
 {
 	DEBUG_GROUP(__FUNCTION__);
   auto program = Pipeline::instance()->object->m_Material->program;
-  program->setUniformValue(light->direction, "dirLight.direction");
-  program->setUniformValue(light->ambient, "dirLight.ambient");
-  program->setUniformValue(light->diffuse, "dirLight.diffuse");
-  program->setUniformValue(light->specular, "dirLight.specular");
+  program->Uniform(light->direction, "dirLight.direction");
+  program->Uniform(light->ambient, "dirLight.ambient");
+  program->Uniform(light->diffuse, "dirLight.diffuse");
+  program->Uniform(light->specular, "dirLight.specular");
   return true;
 }
 
@@ -336,17 +336,17 @@ bool ShadowMapping::OnLightFound(PointLight* light)
   if (light->enabled)
   {
     auto program = Pipeline::instance()->object->m_Material->program;
-    program->setUniformValue(light->position, "pointLights[%d].position", currentLight);
-    program->setUniformValue(light->ambient, "pointLights[%d].ambient", currentLight);
-    program->setUniformValue(light->diffuse, "pointLights[%d].diffuse", currentLight);
-    program->setUniformValue(light->specular, "pointLights[%d].specular", currentLight);
-    program->setUniformValue(light->constant, "pointLights[%d].constant", currentLight);
-    program->setUniformValue(light->linear, "pointLights[%d].linear", currentLight);
-    program->setUniformValue(light->quadratic, "pointLights[%d].quadratic", currentLight);
+    program->Uniform(light->position, "pointLights[%d].position", currentLight);
+    program->Uniform(light->ambient, "pointLights[%d].ambient", currentLight);
+    program->Uniform(light->diffuse, "pointLights[%d].diffuse", currentLight);
+    program->Uniform(light->specular, "pointLights[%d].specular", currentLight);
+    program->Uniform(light->constant, "pointLights[%d].constant", currentLight);
+    program->Uniform(light->linear, "pointLights[%d].linear", currentLight);
+    program->Uniform(light->quadratic, "pointLights[%d].quadratic", currentLight);
     ++currentLight;
 
-    //program->setUniformValue(light.second->position, "lightPos", currentLight);
-    //program->setUniformValue(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
+    //program->Uniform(light.second->position, "lightPos", currentLight);
+    //program->Uniform(glm::vec3(lightPosX->GetFVal(), lightPosY->GetFVal(), lightPosZ->GetFVal()), "lightPos", currentLight);
   }
   return true;
 }
@@ -356,16 +356,16 @@ bool ShadowMapping::OnLightFound(SpotLight* light)
   
 	DEBUG_GROUP(__FUNCTION__);
   auto program = Pipeline::instance()->object->m_Material->program;
-  program->setUniformValue(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");
-  program->setUniformValue(m_Scene->getCurrentCamera()->Front, "spotLight.direction");
-  program->setUniformValue(light->ambient, "spotLight.ambient");
-  program->setUniformValue(light->diffuse, "spotLight.diffuse");
-  program->setUniformValue(light->diffuse, "spotLight.specular");
-  program->setUniformValue(light->constant, "spotLight.constant");
-  program->setUniformValue(light->linear, "spotLight.linear");
-  program->setUniformValue(light->quadratic, "spotLight.quadratic");
-  program->setUniformValue(glm::cos(glm::radians(light->cutOff)), "spotLight.cutOff");
-  program->setUniformValue(glm::cos(glm::radians(light->outerCutOff)), "spotLight.outerCutOff");
+  program->Uniform(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");
+  program->Uniform(m_Scene->getCurrentCamera()->Front, "spotLight.direction");
+  program->Uniform(light->ambient, "spotLight.ambient");
+  program->Uniform(light->diffuse, "spotLight.diffuse");
+  program->Uniform(light->diffuse, "spotLight.specular");
+  program->Uniform(light->constant, "spotLight.constant");
+  program->Uniform(light->linear, "spotLight.linear");
+  program->Uniform(light->quadratic, "spotLight.quadratic");
+  program->Uniform(glm::cos(glm::radians(light->cutOff)), "spotLight.cutOff");
+  program->Uniform(glm::cos(glm::radians(light->outerCutOff)), "spotLight.outerCutOff");
   return true;
 }
 

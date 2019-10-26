@@ -12,8 +12,8 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 	glm::mat4 uv_projection = glm::mat4(1.0);
 	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
-	shader->setUniformValue(projection, "projection");
-	shader->setUniformValue(uv_projection, "uv_projection");
+	shader->Uniform(projection, "projection");
+	shader->Uniform(uv_projection, "uv_projection");
 	glCheck(glUniform3fv(glGetUniformLocation(shader->get(), "textColor"), 1, &color[0]));
 	gl::ActiveTexture(GL_TEXTURE0);
 	glCheck(glBindVertexArray(VAO));
@@ -53,7 +53,7 @@ void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sc
 		{ xpos + w, ypos,       1.0, 1.0 },
 		{ xpos + w, ypos - h,   1.0, 0.0 }
 		};
-		shader->setUniformValue(model, "model");
+		shader->Uniform(model, "model");
 		// Render glyph texture over quad
 		gl::BindTexture2D(ch.TextureID);
 		// Update content of VBO memory

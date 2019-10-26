@@ -41,11 +41,11 @@ CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, S
 
 void CShaderProgram::setup()
 {
-  setUniformValue( Pipeline::instance()->model,"model");
-  setUniformValue( Pipeline::instance()->view,"view");
-  setUniformValue( Pipeline::instance()->projection,"projection");
-  setUniformValue( Pipeline::instance()->view_pos,"viewPos");
-  setUniformValue( 128.0f,"material.shininess");
+  Uniform( Pipeline::instance()->model,"model");
+  Uniform( Pipeline::instance()->view,"view");
+  Uniform( Pipeline::instance()->projection,"projection");
+  Uniform( Pipeline::instance()->view_pos,"viewPos");
+  Uniform( 128.0f,"material.shininess");
 }
 
 CShaderProgram::~CShaderProgram()

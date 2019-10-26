@@ -48,7 +48,7 @@ void Object::draw(void * camera) {
   glm::mat3 NormalMatrix(1.0);
 
   NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
-  m_Material->program->setUniformValue( NormalMatrix,"NormalMatrix");
+  m_Material->program->Uniform( NormalMatrix,"NormalMatrix");
 
 	for (auto& mesh : *m_Mesh)
 	{

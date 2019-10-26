@@ -316,7 +316,7 @@ Scene::Scene(std::string name)
 	
 	
 	m_ScreenShader->use();
-	m_ScreenShader->setUniformValue(0,"screenTexture");
+	m_ScreenShader->Uniform(0,"screenTexture");
 	m_ScreenShader->unuse();
 
 	texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");

@@ -67,7 +67,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	}
 	//m_ScreenShader->create();
 	m_ScreenShader->use();
-	m_ScreenShader->setUniformValue(0,"screenTexture");
+	m_ScreenShader->Uniform(0,"screenTexture");
 	m_ScreenShader->unuse();
 
 	cam_width->Set(GetWidth());
@@ -295,7 +295,7 @@ void CRender::DrawFullScreenImage(int texture_id)
 	m_ScreenShader->use();
 	auto proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
 	auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-	m_ScreenShader->setUniformValue(transform, "transform");
+	m_ScreenShader->Uniform(transform, "transform");
 	SetState(State::DEPTH_TEST, false);
 	m_ScreenShader->bindTextureUnit2D(texture_id, 0);
 	m_ScreenQuad->draw();
@@ -342,7 +342,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_ScreenShader->use();
-	m_ScreenShader->setUniformValue(a, "alpha");
+	m_ScreenShader->Uniform(a, "alpha");
 
 	glm::mat4 model(1.0);
 	auto uv_projection = glm::mat4(1.0);
@@ -362,9 +362,9 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
 	if (render_via_viewport->GetIVal() == 0)
 	{
-		m_ScreenShader->setUniformValue(projection, "projection");
-		m_ScreenShader->setUniformValue(uv_projection, "uv_projection");
-		m_ScreenShader->setUniformValue(model, "model");
+		m_ScreenShader->Uniform(projection, "projection");
+		m_ScreenShader->Uniform(uv_projection, "uv_projection");
+		m_ScreenShader->Uniform(model, "model");
 
 	}
 	else

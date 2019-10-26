@@ -364,21 +364,21 @@ public:
   GLint getUniformLocation(const char* format, ...);
   GLint getUniformLocation(std::string &name);
   UniformValue getUniformValue(const char* name);
-	void setUniformValue(bool value, const char* format, ...) { setUniformValue((int)value, format); }
-  void setUniformValue(int value, const char *format, ...);
-  void setUniformValue(unsigned int value, const char *format, ...);
-  void setUniformValue(float value, const char *format, ...);
-  void setUniformValue(glm::vec1 value, const char *format, ...);
-  void setUniformValue(glm::vec2 value, const char *format, ...);
-  void setUniformValue(glm::vec3 value, const char *format, ...);
-  void setUniformValue(glm::vec4 value, const char *format, ...);
-  void setUniformValue(glm::ivec4 value, const char *format, ...);
-  void setUniformValue(glm::mat2 value, const char *format, ...);
-  void setUniformValue(glm::mat3 value, const char *format, ...);
-  void setUniformValue(glm::mat4 value, const char *format, ...);
+	void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
+  void Uniform(int value, const char *format, ...);
+  void Uniform(unsigned int value, const char *format, ...);
+  void Uniform(float value, const char *format, ...);
+  void Uniform(glm::vec1 value, const char *format, ...);
+  void Uniform(glm::vec2 value, const char *format, ...);
+  void Uniform(glm::vec3 value, const char *format, ...);
+  void Uniform(glm::vec4 value, const char *format, ...);
+  void Uniform(glm::ivec4 value, const char *format, ...);
+  void Uniform(glm::mat2 value, const char *format, ...);
+  void Uniform(glm::mat3 value, const char *format, ...);
+  void Uniform(glm::mat4 value, const char *format, ...);
 
 	template<typename T>
-	void setUniformValue(T value, std::string name) { setUniformValue(value, name.c_str()); }
+	void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
 
 	void reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
 

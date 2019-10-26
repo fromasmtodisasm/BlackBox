@@ -35,8 +35,8 @@ bool Particles::Create()
 	initVel();
 
 	shader->use();
-	shader->setUniformValue(randomVector(10, 40), "BlackHolePos1");
-	shader->setUniformValue(randomVector(10, 40), "BlackHolePos2");
+	shader->Uniform(randomVector(10, 40), "BlackHolePos1");
+	shader->Uniform(randomVector(10, 40), "BlackHolePos2");
 	shader->unuse();
 	return true;
 }
@@ -44,7 +44,7 @@ bool Particles::Create()
 void Particles::Draw(float dt)
 {
 	shader->use();
-	shader->setUniformValue(dt, "DeltaT");
+	shader->Uniform(dt, "DeltaT");
 
 	shader->unuse();
 }
