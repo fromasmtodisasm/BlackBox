@@ -34,6 +34,7 @@ include_directories(
   " ${CMAKE_BINARY_DIR}"
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
+  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
@@ -112,6 +113,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
   #Game folder
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
