@@ -43,7 +43,7 @@ public:
 
   // IInputEventListener interface
 public:
-  virtual bool OnInputEvent(sf::Event &event) override;
+  virtual bool OnInputEvent(const SInputEvent& event) override;
   bool OnKeyPress(sf::Event& event);
   bool OnKeyReleas(sf::Event& event);
 

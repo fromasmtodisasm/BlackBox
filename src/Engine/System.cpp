@@ -186,6 +186,11 @@ IConsole* CSystem::GetIConsole()
   return m_pConsole;
 }
 
+IInput* CSystem::GetIInput()
+{
+	return nullptr;
+}
+
 IGame* CSystem::GetIGame()
 {
   return m_pGame;
@@ -260,6 +265,7 @@ void CSystem::Log(const char* message)
 
 IScriptSystem* CSystem::GetIScriptSystem()
 {
+	//2841004695
 	return m_pScriptSystem;
 }
 
@@ -297,19 +303,56 @@ void CSystem::EndFrame()
 	}
 }
 
-bool CSystem::OnInputEvent(sf::Event& event)
+bool CSystem::OnInputEvent(const SInputEvent& event)
 {
 	bool result = false;
-	switch (event.type)
+	switch (event.deviceType)
 	{
-	case sf::Event::MouseButtonPressed:
+	case eIDT_Mouse:
 	{
-		if (event.mouseButton.button == sf::Mouse::Left)
+		if (event.state == eIS_Pressed)
 		{
-			PROFILER_ON_LEFT_CLICK();
+			if (event.keyId == eKI_Mouse1)
+			{
+				PROFILER_ON_LEFT_CLICK();
+			}
+			break;
 		}
+		if (event.state = eis_mo)
+	}
+	case eIDT_Keyboard:
+	{
+		if (event.state == eIS_Pressed)
+		{
+			if (event.modifiers == eMM_Alt && event.modifiers == eMM_Shift)
+			{
+				if (event.keyId == eKI_P)
+				{
+					if (profiler.isFrozen())
+					{
+						PROFILER_UNFROZE_FRAME();
+					}
+					else
+					{
+						PROFILER_FROZE_FRAME();
+					}
+				}
+			}
+			else if (event.modifiers == eMM_Alt)
+			{
+				if (event.keyId == eKI_Enter)
+				{
+					static_cast<CWindow*>(m_pWindow)->ToogleFullScreen(1366, 768);
+				}
+			}
+
+			}
+	}
+	default:
 		break;
 	}
+	switch (event.type)
+	{
 	case sf::Event::MouseMoved:
 	{
 		PROFILER_ON_MOUSE_POS(event.mouseMove.x, event.mouseMove.y);
@@ -323,27 +366,6 @@ bool CSystem::OnInputEvent(sf::Event& event)
 
 	case sf::Event::KeyPressed:
 	{
-		if (event.key.alt && event.key.shift)
-		{
-			if (event.key.code == sf::Keyboard::P)
-			{
-				if (profiler.isFrozen())
-				{
-					PROFILER_UNFROZE_FRAME();
-				}
-				else
-				{
-					PROFILER_FROZE_FRAME();
-				}
-			}
-		}
-		else if (event.key.alt)
-		{
-			if (event.key.code == sf::Keyboard::Enter)
-			{
-				static_cast<CWindow*>(m_pWindow)->ToogleFullScreen(1366, 768);
-			}
-		}
 	}
 
 	default:

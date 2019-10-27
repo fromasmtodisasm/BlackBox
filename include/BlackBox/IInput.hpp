@@ -447,9 +447,9 @@ struct SInputEvent
 	EKeyId           keyId;            //!< Device-specific id corresponding to the event.
 	int              modifiers;        //!< Key modifiers enabled at the time of this event.
 	float            value;            //!< Value associated with the event.
-	SInputSymbol* pSymbol;          //!< Input symbol the event originated from.
-	uint8_t            deviceIndex;      //!< Local index of this particular controller type.
-	uint8_t            deviceUniqueID;   //!< Process wide unique controller ID.
+	SInputSymbol*		 pSymbol;          //!< Input symbol the event originated from.
+	uint8_t          deviceIndex;      //!< Local index of this particular controller type.
+	uint8_t          deviceUniqueID;   //!< Process wide unique controller ID.
 
 	SInputEvent()
 		: deviceType(eIDT_Unknown)
@@ -773,6 +773,9 @@ struct IInput
 	//////////////////////////////////////////////////////////////////////////
 	// SDL
 	virtual bool GrabInput(bool bGrab) = 0;
+
+	//! action mapper
+	virtual struct IActionMapManager* CreateActionMapManager() = 0;
 
 	//! Allows for Sandbox to intercept and modify events prior to system wide sending.
 	//! \return True if the event is supposed to be broadcasted.

@@ -1,6 +1,7 @@
 #include <BlackBox/Game/Game.hpp>
 
 #include <string>
+#include "..\..\..\include\BlackBox\Game\Game.hpp"
 
 using namespace std;
 
@@ -283,3 +284,4 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 #endif
 
 }
+

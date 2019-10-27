@@ -119,6 +119,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Game.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/GameActionInput.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameDevMode.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp

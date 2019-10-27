@@ -3,6 +3,7 @@
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/Window.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/IInput.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectScript.hpp>
@@ -28,6 +29,7 @@ public:
   virtual IRender*					GetIRender() override;
   virtual ILog*							GetILog() override;
   virtual IConsole*					GetIConsole() override;
+  virtual IInput*						GetIInput() override;
   virtual IGame*						GetIGame() override;
 	virtual IFont*						GetIFont() override;
 	virtual IWindow*					GetIWindow() override;
@@ -42,7 +44,7 @@ public:
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) override;
 	virtual void Log(const char* message) override;
 
-	virtual bool OnInputEvent(sf::Event& event) override;
+	virtual bool OnInputEvent(const SInputEvent& event) override;
 	// Inherited via IConsoleVarSink
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
@@ -50,6 +52,7 @@ public:
 private:
   ILog *m_pLog;
   CConsole *m_pConsole;
+	IInput* m_pInput;
   IGame *m_pGame;
 	IFont* m_pFont;
 	IWindow* m_pWindow;

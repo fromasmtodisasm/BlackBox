@@ -15,6 +15,7 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Console.hpp>
 #include <BlackBox/ScriptObjectGame.hpp>
+#include <BlackBox/IInput.hpp>
 
 #include <BlackBox/common.h>
 
@@ -34,7 +35,28 @@ class Scene;
 class SceneManager;
 class CTagPoint;
 
+enum ActionType { ACTIONTYPE_MOVEMENT = 1, ACTIONTYPE_COMBAT, ACTIONTYPE_GAME, ACTIONTYPE_MULTIPLAYER, ACTIONTYPE_DEBUG };
+
 typedef std::multimap<string, CTagPoint*> TagPointMap;
+
+typedef std::vector<string> Vec2Str;
+typedef Vec2Str::iterator Vec2StrIt;
+typedef std::list<CPlayer*> ListOfPlayers;
+
+struct ActionInfo
+{
+	int nId;
+	string sDesc;
+	bool bConfigurable;
+	XActionActivationMode ActivationMode;
+	Vec2Str vecSetToActionMap;	// if it is configured via "BindActionMultipleMaps" it will set the key-bindings to all action-maps in this array and leaves the others untouched
+	int nType;
+};
+
+typedef std::map<string, ActionInfo> ActionsEnumMap;
+typedef ActionsEnumMap::iterator ActionsEnumMapItor;
+typedef std::multimap<string, CTagPoint*> TagPointMap;
+
 
 class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
 {
@@ -63,9 +85,9 @@ public:
 
   // IInputEventListener interface
 public:
-  virtual bool OnInputEvent(sf::Event &event) override;
+  virtual bool OnInputEvent(const SInputEvent& event) override;
 
-	void PersistentHandler(sf::Event& event);
+	void PersistentHandler(const SInputEvent& event);
 
   // IGame interface
 public:
@@ -82,14 +104,14 @@ private:
 
   bool initPlayer();
 
-  bool FpsInputEvent(sf::Event& event);
-  bool FlyInputEvent(sf::Event& event);
-  bool MenuInputEvent(sf::Event& event);
-  bool DefaultInputEvent(sf::Event& event);
-  bool EditInputEvent(sf::Event& event);
-  bool OnInputEventProxy(sf::Event& event);
+  bool FpsInputEvent(const SInputEvent& event);
+  bool FlyInputEvent(const SInputEvent& event);
+  bool MenuInputEvent(const SInputEvent& event);
+  bool DefaultInputEvent(const SInputEvent& event);
+  bool EditInputEvent(const SInputEvent& event);
+  bool OnInputEventProxy(const SInputEvent& event);
 
-	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
+	bool ShouldHandleEvent(const SInputEvent& event, bool& retflag);
 
 
   // IGame interface
@@ -132,6 +154,18 @@ public:
 	void DevMode_SavePlayerPos(int index, const char* sTagName = NULL, const char* sDescription = NULL);
 	void DevMode_LoadPlayerPos(int index, const char* sTagName = NULL);
 	//////////////////////////////////////////////////////////////////////////
+	void  ResetInputMap();
+	string GetLevelsFolder() const;
+
+protected:
+	void SetConfigToActionMap(const char* pszActionName, ...);
+	//bool LoadMaterials(string sFolder);
+	void	InitInputMap();
+	void	InitConsoleCommands();
+	void	InitConsoleVars();
+	//set the common key bindings for the specified action map.
+	//it reduces code redundancy and makes things more clear.
+	void SetCommonKeyBindings(IActionMap* pActionMap);
 public:
   float m_deltaTime;
 public:
@@ -214,6 +248,9 @@ private:
   }m_Mode = Mode::FPS;
   std::stack<GameState*> states;
 	float fps = 0.0;
+
+	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
+	struct IActionMapManager* m_pIActionMapManager;			//!<
 
 
 	//other

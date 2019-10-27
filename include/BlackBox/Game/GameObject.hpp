@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/IInputHandler.hpp>
+#include <BlackBox/IInput.hpp>
 #include <BlackBox/Camera.hpp>
 #include <set>
 
@@ -13,7 +13,7 @@ protected:
   GameObject(Primitive::Type type);
 public:
   GameObject(const Object *obj);
-  virtual bool OnInputEvent(sf::Event &event) override;
+  virtual bool OnInputEvent(const SInputEvent& event) override;
 
   // IObject interface
 public:

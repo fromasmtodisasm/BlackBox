@@ -9,6 +9,7 @@ struct IShaderManager;
 struct IRender;
 struct ILog;
 struct IConsole;
+struct IInput;
 struct IFont;
 struct IWindow;
 struct IInputHandler;
@@ -141,7 +142,8 @@ struct ISystem
   virtual IShaderManager *GetShaderManager() = 0;
   virtual IRender *GetIRender() = 0;
   virtual ILog *GetILog() = 0;
-  virtual IConsole *GetIConsole() = 0;
+  virtual IConsole* GetIConsole() = 0;
+  virtual IInput*		GetIInput() = 0;
   virtual IGame *GetIGame() = 0;
   virtual IFont *GetIFont() = 0;
   virtual IWindow *GetIWindow() = 0;

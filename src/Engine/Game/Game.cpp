@@ -138,8 +138,8 @@ bool CGame::init(ISystem *pEngine)  {
 	m_Console = m_pSystem->GetIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
-	m_inputHandler = m_pSystem->GetIInputHandler();
-  m_inputHandler->AddEventListener(this);
+	auto input = m_pSystem->GetIInput();
+  input->AddEventListener(this);
 	m_Window->setFlags(CWindow::DRAW_GUI);
   
 	initCommands();
@@ -437,7 +437,7 @@ extern "C" IGame *CreateIGame(const char *title) {
   return (game);
 }
 
-bool CGame::OnInputEvent(sf::Event &event)
+bool CGame::OnInputEvent(const SInputEvent& event)
 {
 	{
 		bool retflag;
@@ -449,7 +449,7 @@ bool CGame::OnInputEvent(sf::Event &event)
   return result;
 }
 
-void CGame::PersistentHandler(sf::Event& event)
+void CGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	auto lpx = m_Console->GetCVar("lpx");
@@ -561,7 +561,7 @@ bool CGame::initPlayer()
   return false;
 }
 
-bool CGame::FpsInputEvent(sf::Event& event)
+bool CGame::FpsInputEvent(const SInputEvent& event)
 {
   /*
 	if (m_Console->IsOpened())
@@ -621,7 +621,7 @@ bool CGame::FpsInputEvent(sf::Event& event)
   return false;
 }
 
-bool CGame::FlyInputEvent(sf::Event& event)
+bool CGame::FlyInputEvent(const SInputEvent& event)
 {
   /*
 	if (m_Console->IsOpened())
@@ -651,7 +651,7 @@ bool CGame::FlyInputEvent(sf::Event& event)
   return false;
 }
 
-bool CGame::MenuInputEvent(sf::Event& event)
+bool CGame::MenuInputEvent(const SInputEvent& event)
 {
   /*
 	if (m_Console->IsOpened())
@@ -770,12 +770,12 @@ bool CGame::MenuInputEvent(sf::Event& event)
 
 }
 
-bool CGame::DefaultInputEvent(sf::Event& event)
+bool CGame::DefaultInputEvent(const SInputEvent& event)
 {
 	return false;
 }
 
-bool CGame::EditInputEvent(sf::Event& event)
+bool CGame::EditInputEvent(const SInputEvent& event)
 {
 	switch (event.type)
 	{
@@ -832,7 +832,7 @@ bool CGame::EditInputEvent(sf::Event& event)
   return false;
 }
 
-bool CGame::OnInputEventProxy(sf::Event& event)
+bool CGame::OnInputEventProxy(const SInputEvent& event)
 {
   switch (m_Mode)
   {
@@ -851,7 +851,7 @@ bool CGame::OnInputEventProxy(sf::Event& event)
   return false;
 }
 
-bool CGame::ShouldHandleEvent(sf::Event& event, bool& retflag)
+bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
 	retflag = true;
 	switch (event.type)

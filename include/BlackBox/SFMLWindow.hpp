@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IWindow.hpp>
-#include <BlackBox/IInputHandler.hpp>
+#include <BlackBox/IInput.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 

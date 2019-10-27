@@ -2,6 +2,7 @@
 #include <BlackBox/ICommand.hpp>
 #include <SFML/Window/Event.hpp>
 
+#if 0
 struct IInputEventListener
 {
   virtual bool OnInputEvent(sf::Event &event) = 0;
@@ -16,3 +17,4 @@ struct IInputHandler
   virtual sf::Vector2i getDeltaMouse() = 0;
   virtual void mouseLock(bool lock) = 0;
 };
+#endif

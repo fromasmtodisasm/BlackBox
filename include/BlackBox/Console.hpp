@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IConsole.hpp>
-#include <BlackBox/IInputHandler.hpp>
+#include <BlackBox/IInput.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/Texture.hpp>
 
@@ -183,7 +183,7 @@ public:
 	virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
-	virtual bool OnInputEvent(sf::Event& event) override;
+	virtual bool OnInputEvent(const SInputEvent& event) override;
 	void getHistoryElement();
 	void completeCommand(std::vector<std::wstring>& completion);
 	void setBuffer();
@@ -308,8 +308,8 @@ private:
 	float blinking = 0.0f;
 	//float blinkTime = 1.0;
 	ICVar* blinkTime;
-	std::map<sf::Keyboard::Key, std::wstring> m_keyBind;
-	std::map<std::string, sf::Keyboard::Key, cmpKeys> m_str2key;
+	std::map<EKeyId, std::wstring> m_keyBind;
+	std::map<std::string, EKeyId, cmpKeys> m_str2key;
 
 	std::set<IWorkerCommand*> m_workers;
 	std::list<IWorkerCommand*> m_worker_to_delete;

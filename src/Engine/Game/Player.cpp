@@ -22,7 +22,7 @@ CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 	GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
-bool CPlayer::OnInputEvent(sf::Event &event)
+bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
   switch (event.type) {
   case sf::Event::MouseButtonPressed:
