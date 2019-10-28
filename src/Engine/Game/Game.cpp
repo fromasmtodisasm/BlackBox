@@ -684,7 +684,6 @@ bool CGame::MenuInputEvent(sf::Event& event)
     }
 	case sf::Event::MouseMoved:
 	{
-		return true;
 		if (!can_drag_vp)
 			return true;
 		auto w = GET_CONSOLE_VAR("r_cam_w")->GetIVal();

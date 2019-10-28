@@ -420,14 +420,14 @@ void HdrTechnique::downsamplingStandard()
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 
-	m_ScreenShader->Uniform(glm::round(w/hdr_w), "vx");
-	m_ScreenShader->Uniform(glm::round(h/hdr_h), "vy");
+	auto& ds = m_DownsampleShader;
+	ds->Uniform((w/hdr_w), "vx");
+	ds->Uniform((h/hdr_h), "vy");
 	//m_ScreenShader->Uniform(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "view");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		auto rx = w / (1 << (i + 1));
 		auto ry = h / (1 << (i + 1));
-		auto& ds = m_DownsampleShader;
 		ds->Uniform(rx, "rx");
 		ds->Uniform(rx, "ry");
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
@@ -488,8 +488,9 @@ void HdrTechnique::upsampling()
 		auto hdr_w = m_HdrBuffer->viewPort.z;
 		auto hdr_h = m_HdrBuffer->viewPort.w;
 	//m_ScreenShader->Uniform(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
-	m_ScreenShader->Uniform(glm::round(w/hdr_w), "vx");
-	m_ScreenShader->Uniform(glm::round(h/hdr_h), "vy");
+	auto& up = m_UpsampleShader;
+	up->Uniform((w/hdr_w), "vx");
+	up->Uniform((h/hdr_h), "vy");
 
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
@@ -501,7 +502,6 @@ void HdrTechnique::upsampling()
 		// Texture on which the blur is superimposed
 		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
-		auto& up = m_UpsampleShader;
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
 		up->Uniform(rx, "rx");
 		up->Uniform(rx, "ry");

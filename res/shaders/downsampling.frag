@@ -54,7 +54,7 @@ vec4 downsample(vec2 uv)
 {
 
 	vec4 result = vec4(0);
-	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+	vec2 tex_size = 1.0 / textureSize(image, 0); // gets size of single texel
 
 	for (int i = 0; i < 13; i++)
 	{
@@ -62,15 +62,16 @@ vec4 downsample(vec2 uv)
 
 		float dev = 1;
 
-		vec2 m = vec2(1) - tex_offset;
-		if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + 0.5*(offsets[i].xy + offset)), vec2(rx - dev,ry - dev))))
+		vec2 m = vec2(vx,vy) - tex_size;
+		if (all(lessThan((gl_FragCoord.xy + 0.5*(offsets[i].xy + offset)), vec2(rx - dev,ry - dev))))
 		{
-			vec2 texel = clamp((vec2(vx,vy) * coord * tex_offset), vec2(0.5)*tex_offset, m);
+			vec2 texel = clamp((coord * tex_size), vec2(0.5)*tex_size, m);
 			result += Sample(texel) * offsets[i].z;
 		}
 		else
 		{
-			vec2 texel = clamp((vec2(vx,vy) * (2 * gl_FragCoord.xy )* tex_offset), vec2(0.5)*tex_offset, m);
+			vec2 texel = clamp(((2 * gl_FragCoord.xy ) * tex_size), vec2(0.5)*tex_size, m);
+			//vec2 texel = vec2(vx,vy) * vec2(rx - 1,ry - 1) * tex_size;
 			result += Sample(texel) * offsets[i].z;
 		}
 	}
