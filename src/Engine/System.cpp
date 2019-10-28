@@ -31,8 +31,9 @@ ISystem* GetISystem()
 }
 
 
-CSystem::CSystem()
+CSystem::CSystem(SSystemInitParams& initParams)
 	:
+	initParams(initParams),
 	r_window_width(nullptr),
 	r_window_height(nullptr),
 	r_bpp(nullptr),
@@ -126,6 +127,7 @@ bool CSystem::Init()
 		return false;
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
+	ParseCMD();
 
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
@@ -237,6 +239,15 @@ bool CSystem::ConfigLoad(const char* file)
 		)
 		return false;
 	return true;
+}
+
+void CSystem::ParseCMD()
+{
+	std::string cmd = initParams.szSystemCmdLine;
+	if (cmd.find("-nsightDebug") != std::string::npos)
+	{
+		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
+	}
 }
 
 bool CSystem::IsDevMode()
@@ -361,7 +372,7 @@ void CSystem::Update()
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
 {
 	//MessageBox(NULL, "TEST", "Message", MB_OK);
-  ISystem *system = new CSystem();
+  ISystem *system = new CSystem(initParams);
   return system;
 }
 

@@ -347,6 +347,6 @@ struct ICVar
 #if IMPLEMENTED_CVAR_REG
 #define REGISTER_CVAR(_var, _def_val, _flags, _comment) ConsoleRegistrationHelper::Register(( # _var), &(_var), (_def_val), (_flags), CVARHELP(_comment))
 #else
-#define REGISTER_CVAR(_var, _def_val, _flags, _comment)
+#define REGISTER_CVAR(_name, _val, _def_val, _flags, _comment) GetISystem()->GetIConsole()->Register((_name), &(_val), (_def_val), (_flags), (_comment))
 #endif
 

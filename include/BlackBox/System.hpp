@@ -13,7 +13,7 @@ class CRender;
 class CSystem : public ISystem, public IInputEventListener, public IConsoleVarSink
 {
 public:
-	CSystem();
+	CSystem(SSystemInitParams& initParams);
 	~CSystem();
   
 	// Inherited via ISystem
@@ -47,6 +47,9 @@ public:
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 	bool ConfigLoad(const char* file);
+
+private:
+	void ParseCMD();
 private:
   ILog *m_pLog;
   CConsole *m_pConsole;
@@ -69,6 +72,8 @@ private:
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
 	ICVar* r_fullscreen;
+
+	SSystemInitParams& initParams;
 
 	// Inherited via ISystem
 	virtual bool IsDevMode() override;

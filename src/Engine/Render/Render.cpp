@@ -389,8 +389,8 @@ bool CRender::OnInputEvent(sf::Event& event)
 	{
 	case sf::Event::Resized:
 	{
-		this->cam_width->Set(static_cast<int>(event.size.width));
-		this->cam_height->Set(static_cast<int>(event.size.height));
+		//this->cam_width->Set(static_cast<int>(event.size.width));
+		//this->cam_height->Set(static_cast<int>(event.size.height));
 		break;
 	}
 	default:

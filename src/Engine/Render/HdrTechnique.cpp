@@ -106,6 +106,9 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 		for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 		{
 			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
+			chain[i]->bind();
+			chain[i]->clear(gl::Color(1, 0, 0, 1));
+			chain[i]->unbind();
 			width >>= 1;
 			if (width <= 0)
 				width = 1;
@@ -320,9 +323,7 @@ void HdrTechnique::initConsoleVariables()
 	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
 	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
-	//GetISystem()->GetIConsole()->Register("show_all_frame_buffer", &showAllFrameBuffer, 1);
-
-	GetISystem()->GetIConsole()->Register("show_all_frame_buffer", &showAllFrameBuffer, 1);
+	REGISTER_CVAR("show_all_frame_buffer", showAllFrameBuffer, 1, VF_NULL, "");
 
 }
 
@@ -414,8 +415,8 @@ void HdrTechnique::downsamplingStandard()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
 		
-	auto w = cam_width->GetFVal();
-	auto h = cam_height->GetFVal();
+	float w = cam_width->GetIVal();
+	float h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 
@@ -482,8 +483,8 @@ void HdrTechnique::upsampling()
 	bool first_iteration = true;
 	render->SetState(IRender::State::DEPTH_TEST, false);
 
-		auto w = (float)cam_width->GetFVal();
-		auto h = (float)cam_height->GetFVal();
+		float w = (float)cam_width->GetIVal();
+		float h = (float)cam_height->GetIVal();
 		auto hdr_w = m_HdrBuffer->viewPort.z;
 		auto hdr_h = m_HdrBuffer->viewPort.w;
 	//m_ScreenShader->Uniform(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
@@ -495,13 +496,19 @@ void HdrTechnique::upsampling()
 	{
 		auto rx = (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z;
 		auto ry = (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w;
+		// Texture that blured
+		auto& blured = first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0];
+		// Texture on which the blur is superimposed
+		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
+
 		auto& up = m_UpsampleShader;
+		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
 		up->Uniform(rx, "rx");
 		up->Uniform(rx, "ry");
 
-		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, rx, ry));
-		m_UpsampleShader->BindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
-		m_UpsampleShader->BindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
+		rt->bind(glm::vec4(0,0, rx, ry));
+		up->BindTexture2D(blured,					PREVIOS, "blured");
+		up->BindTexture2D(current_level,	CURRENT, "current");
 		m_ScreenQuad.draw();
 		if (first_iteration)
 			first_iteration = false;

@@ -4,7 +4,7 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D current;
-uniform sampler2D previos;
+uniform sampler2D blured;
 uniform bool blurOn = true;
 uniform bool blurOnly = true;
 // viewport
@@ -23,18 +23,29 @@ float weight[9] = float[](
 vec4 blur(vec2 uv)
 {
 	vec4 result = vec4(0);
-	vec2 tex_offset = 1.0 / textureSize(previos, 0);
+	vec2 tex_offset = 1.0 / textureSize(blured, 0);
+	int divisor = 0;
 	for (int i = -1; i <= 1; i++)
 	{
 		for (int j = -1, index = (i+1)*(j+1) + j + 1; j <= 1; j++)
 		{
-			if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + vec2(j, i)), vec2(rx - 2,ry - 2))))
+			float dev = 1;
+			if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + vec2(j, i)), vec2(rx - dev,ry - dev))))
 			{
+				//divisor += 1;
 				vec2 texel = clamp(vec2(vx,vy) * (uv + vec2(j, i) * tex_offset), vec2(0), vec2(vx,vy));
-				result += vec4(texture(previos, texel).rgb * weight[index], 1);  
+				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
 			}
+			//*
+			else
+			{
+				vec2 texel = clamp(vec2(vx,vy) * (uv), vec2(0), vec2(vx,vy));
+				result += vec4(texture(blured, texel).rgb/* * weight[index]*/, 1);  
+			}
+			//*/
 		}
 	}
+	//return result / (divisor == 0 ? 1 : divisor);
 	return result / 16.0;
 }
 
@@ -47,7 +58,7 @@ void main()
 	}
 	else 
 	{
-		vec2 uv = 0.5 * (gl_FragCoord.xy) / vec2(textureSize(previos, 0));
+		vec2 uv = 0.5 * (gl_FragCoord.xy) / vec2(textureSize(blured, 0));
 		FragColor = texture(current, clamp(texel, vec2(0), vec2(vx,vy))) + blur(uv);
 	}
 }

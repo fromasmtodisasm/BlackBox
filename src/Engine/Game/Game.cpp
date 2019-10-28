@@ -198,6 +198,10 @@ bool CGame::init(ISystem *pEngine)  {
 	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
 
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+	if (m_Console->GetCVar("nsightDebug"))
+	{
+		m_Console->ExecuteString("r_displayinfo 0");
+	}
 
   return true;
 }
@@ -329,8 +333,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
@@ -680,6 +684,7 @@ bool CGame::MenuInputEvent(sf::Event& event)
     }
 	case sf::Event::MouseMoved:
 	{
+		return true;
 		if (!can_drag_vp)
 			return true;
 		auto w = GET_CONSOLE_VAR("r_cam_w")->GetIVal();
