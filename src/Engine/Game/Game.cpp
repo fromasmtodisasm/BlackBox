@@ -249,11 +249,11 @@ bool CGame::update() {
 
 	if (m_running == false)
 	{
-		CREATE_CONSOLE_VAR("stpo_running", 1, 0);
+		CREATE_CVAR("stpo_running", 1, 0);
 	}
 	else
 	{
-		CREATE_CONSOLE_VAR("window_closed", 1, 0);
+		CREATE_CVAR("window_closed", 1, 0);
 	}
 	return true;
 }

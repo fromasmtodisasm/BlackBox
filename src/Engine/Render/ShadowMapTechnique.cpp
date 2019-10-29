@@ -46,11 +46,11 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 	m_ShadowMapShader = MaterialManager::instance()->getProgram(pd.name);
   
   //==============
-	lightPosX = CREATE_CONSOLE_VAR("lpx", -1.f, 0, "light pos x");
-	lightPosY = CREATE_CONSOLE_VAR("lpy", 15.f, 0, "light pos y");
-	lightPosZ = CREATE_CONSOLE_VAR("lpz", -1.f, 0, "light pos z");
-	lighting =  CREATE_CONSOLE_VAR("lighting", bLighting, 0, "light pos z");
-	s_divider = CREATE_CONSOLE_VAR("sd", 10.0f, 0, "ortho divider");
+	lightPosX = CREATE_CVAR("lpx", -1.f, 0, "light pos x");
+	lightPosY = CREATE_CVAR("lpy", 15.f, 0, "light pos y");
+	lightPosZ = CREATE_CVAR("lpz", -1.f, 0, "light pos z");
+	lighting =  CREATE_CVAR("lighting", bLighting, 0, "light pos z");
+	s_divider = CREATE_CVAR("sd", 10.0f, 0, "ortho divider");
 
 	cam_width =		GET_CVAR("r_cam_w");
 	cam_height =	GET_CVAR("r_cam_h");
