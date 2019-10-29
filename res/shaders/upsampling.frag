@@ -54,13 +54,13 @@ vec4 blur(vec2 uv)
 void main()
 {             
 	vec2 texel = gl_FragCoord.xy / vec2(textureSize(current, 0));
+	vec2 uv = 0.5 * (gl_FragCoord.xy) / vec2(textureSize(blured, 0));
 	if (blurOnly)
 	{
-		FragColor = blur(TexCoords);
+		FragColor = blur(uv);
 	}
 	else 
 	{
-		vec2 uv = 0.5 * (gl_FragCoord.xy) / vec2(textureSize(blured, 0));
 		FragColor = texture(current, clamp(texel, vec2(0), vec2(vx,vy))) + blur(uv);
 	}
 }
