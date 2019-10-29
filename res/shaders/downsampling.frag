@@ -47,16 +47,13 @@ vec3 offsets[13] = vec3[](
 */
 vec4 downsample(vec2 uv)
 {
-
 	vec4 result = vec4(0);
 	vec2 tex_size = 1.0 / textureSize(image, 0); // gets size of single texel
 
 	for (int i = 0; i < 13; i++)
 	{
 		vec2 coord = (2 * gl_FragCoord.xy + (offsets[i].xy + offset));
-
 		float dev = 1;
-
 		vec2 m = vec2(vx,vy) - tex_size;
 		if (all(lessThan((gl_FragCoord.xy + 0.5*(offsets[i].xy + offset)), vec2(rx - dev,ry - dev))))
 		{

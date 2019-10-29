@@ -9,9 +9,9 @@
 #include <BlackBox/ISystem.hpp>
 
 #define NBLOOM
-#define IMAGE 0
-#define PREVIOS 0
-#define CURRENT 1
+constexpr auto IMAGE = 0;
+constexpr auto PREVIOS = 0;
+constexpr auto CURRENT = 1;
 
 HdrTechnique::HdrTechnique()
 	:
@@ -80,7 +80,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
-	glm::ivec2 resolution;// = glm::ivec2(render->GetWidth(), render->GetHeight());
+	glm::ivec2 resolution;
 	auto w = GET_CVAR("r_backbuffer_w");
 	auto h = GET_CVAR("r_backbuffer_h");
 	if (format != nullptr)
@@ -222,7 +222,6 @@ void HdrTechnique::BloomPass()
 		PROFILER_POP_CPU_MARKER();
 	}
 
-
 #if 0
 	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
 	glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
@@ -301,9 +300,11 @@ void HdrTechnique::createShader()
 	m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
 
 	const int MAX_CORNERS = 4;
+#if COMPUTE_BLOOM
 	glGenBuffers(1, &quadCornersVBO);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, quadCornersVBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(glm::vec2),	NULL, GL_DYNAMIC_DRAW);
+#endif
 
 }
 
@@ -490,8 +491,8 @@ void HdrTechnique::upsampling()
 
 	float w = (float)cam_width->GetIVal();
 	float h = (float)cam_height->GetIVal();
-	auto hdr_w = m_HdrBuffer->viewPort.z;
-	auto hdr_h = m_HdrBuffer->viewPort.w;
+	auto &hdr_w = m_HdrBuffer->viewPort.z;
+	auto &hdr_h = m_HdrBuffer->viewPort.w;
 	up->Uniform((w/hdr_w), "vx");
 	up->Uniform((h/hdr_h), "vy");
 
