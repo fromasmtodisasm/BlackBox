@@ -25,17 +25,19 @@ public:
 	virtual void EndFrame() override;
   virtual void Release() override;
 
-  virtual IShaderManager*		GetShaderManager() override;
-  virtual IRender*					GetIRender() override;
-  virtual ILog*							GetILog() override;
-  virtual IConsole*					GetIConsole() override;
-  virtual IInput*						GetIInput() override;
-  virtual IGame*						GetIGame() override;
-	virtual IFont*						GetIFont() override;
-	virtual IWindow*					GetIWindow() override;
-	virtual IInputHandler*		GetIInputHandler() override;
-	virtual IScriptSystem*		GetIScriptSystem() override;
-	ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
+  virtual IShaderManager*						GetShaderManager() override;
+  virtual IRender*									GetIRender() override;
+  virtual ILog*											GetILog() override;
+  virtual IConsole*									GetIConsole() override;
+  virtual IInput*										GetIInput() override;
+  virtual IGame*										GetIGame() override;
+	virtual IFont*										GetIFont() override;
+	virtual IWindow*									GetIWindow() override;
+#if 0
+	virtual IInputHandler*						GetIInputHandler() override;
+#endif
+	virtual IScriptSystem*						GetIScriptSystem() override;
+	virtual ISystemEventDispatcher*		GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
 
   virtual IGame*						CreateGame(IGame* game) override;
 

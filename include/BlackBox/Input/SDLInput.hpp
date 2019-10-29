@@ -31,6 +31,12 @@ private:
 	ILog* m_pLog;
 	CSDLPadManager* m_pPadManager;
 	CSDLMouse* m_pMouse;
+
+	// Унаследовано через CBaseInput
+	virtual bool AddTouchEventListener(ITouchEventListener* pListener, const char* name) override;
+	virtual void RemoveTouchEventListener(ITouchEventListener* pListener) override;
+	virtual void PostTouchEvent(const STouchEvent& event, bool bForce = false) override;
+	virtual IActionMapManager* CreateActionMapManager() override;
 };
 
 class CLinuxInputDevice : public CInputDevice

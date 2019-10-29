@@ -216,10 +216,12 @@ IWindow* CSystem::GetIWindow()
 	return m_pWindow;
 }
 
+#if 0
 IInputHandler* CSystem::GetIInputHandler()
 {
 	return m_InputHandler;
 }
+#endif
 
 bool CSystem::ConfigLoad(const char* file)
 {
@@ -310,6 +312,7 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 	{
 	case eIDT_Mouse:
 	{
+		bool mouseMoved = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY || event.keyId == eKI_MouseZ;
 		if (event.state == eIS_Pressed)
 		{
 			if (event.keyId == eKI_Mouse1)
@@ -318,7 +321,10 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 			}
 			break;
 		}
-		if (event.state = eis_mo)
+		if (mouseMoved)
+		{
+
+		}
 	}
 	case eIDT_Keyboard:
 	{
@@ -364,10 +370,6 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 		break;
 	}
 
-	case sf::Event::KeyPressed:
-	{
-	}
-
 	default:
 		break;
 	}
@@ -386,4 +388,3 @@ BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
   ISystem *system = new CSystem();
   return system;
 }
-

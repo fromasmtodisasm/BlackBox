@@ -139,18 +139,20 @@ struct ISystem
   virtual void Release() = 0;
   virtual IGame *CreateGame(IGame* game) = 0;
 
-  virtual IShaderManager *GetShaderManager() = 0;
-  virtual IRender *GetIRender() = 0;
-  virtual ILog *GetILog() = 0;
-  virtual IConsole* GetIConsole() = 0;
-  virtual IInput*		GetIInput() = 0;
-  virtual IGame *GetIGame() = 0;
-  virtual IFont *GetIFont() = 0;
-  virtual IWindow *GetIWindow() = 0;
-  virtual IInputHandler *GetIInputHandler() = 0;
-	virtual IScriptSystem* GetIScriptSystem() = 0;
-	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
-
+  
+  virtual IShaderManager*						GetShaderManager() = 0;
+  virtual IRender*									GetIRender() = 0;
+  virtual ILog*											GetILog() = 0;
+  virtual IConsole*									GetIConsole() = 0;
+  virtual IInput*										GetIInput() = 0;
+  virtual IGame*										GetIGame() = 0;
+	virtual IFont*										GetIFont() = 0;
+	virtual IWindow*									GetIWindow() = 0;
+#if 0
+	virtual IInputHandler*						GetIInputHandler() = 0;
+#endif
+	virtual IScriptSystem*						GetIScriptSystem() = 0;
+	virtual ISystemEventDispatcher*		GetISystemEventDispatcher() = 0;
 	//! Quits the application.
 	virtual void Quit() = 0;
 
