@@ -199,9 +199,9 @@ void CRender::initConsoleVariables()
 	test_proj =						CREATE_CONSOLE_VAR("test_proj", "test proj empty", 0);
 	render_via_viewport = CREATE_CONSOLE_VAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 
-	r_debug =			GET_CONSOLE_VAR("r_debug");
-	cam_width	=		GET_CONSOLE_VAR("r_cam_w");
-	cam_height =	GET_CONSOLE_VAR("r_cam_h");
+	r_debug =			GET_CVAR("r_debug");
+	cam_width	=		GET_CVAR("r_cam_w");
+	cam_height =	GET_CVAR("r_cam_h");
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)

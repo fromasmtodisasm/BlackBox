@@ -76,8 +76,8 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
 	glm::ivec2 resolution;// = glm::ivec2(render->GetWidth(), render->GetHeight());
-	auto w = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_w");
-	auto h = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_h");
+	auto w = GET_CVAR("r_backbuffer_w");
+	auto h = GET_CVAR("r_backbuffer_h");
 	if (format != nullptr)
 	{
 		resolution = glm::ivec2(format->m_Width, format->m_Height);
@@ -534,7 +534,7 @@ void HdrTechnique::Do(unsigned int texture)
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	//if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+	//if (GET_CVAR("show_all_frame_buffer")->GetIVal())
 	if (showAllFrameBuffer)
 		m_ScreenShader->Uniform(glm::vec4(0.f,0.f, 1.f, 1.f), "viewPortf");
 	else

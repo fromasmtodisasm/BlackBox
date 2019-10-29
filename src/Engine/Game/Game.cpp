@@ -333,8 +333,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
@@ -686,14 +686,14 @@ bool CGame::MenuInputEvent(sf::Event& event)
 	{
 		if (!can_drag_vp)
 			return true;
-		auto w = GET_CONSOLE_VAR("r_cam_w")->GetIVal();
-		auto h = GET_CONSOLE_VAR("r_cam_h")->GetIVal();
+		auto w = GET_CVAR("r_cam_w")->GetIVal();
+		auto h = GET_CVAR("r_cam_h")->GetIVal();
 		auto window = m_pSystem->GetIWindow();
 
-		if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+		if (GET_CVAR("show_all_frame_buffer")->GetIVal())
 		{
-			w *= w / GET_CONSOLE_VAR("r_backbuffer_w")->GetFVal();
-			h *= h / GET_CONSOLE_VAR("r_backbuffer_h")->GetFVal();
+			w *= w / GET_CVAR("r_backbuffer_w")->GetFVal();
+			h *= h / GET_CVAR("r_backbuffer_h")->GetFVal();
 		}
 
 		mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;

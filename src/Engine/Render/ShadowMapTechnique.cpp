@@ -52,8 +52,8 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 	lighting =  CREATE_CONSOLE_VAR("lighting", bLighting, 0, "light pos z");
 	s_divider = CREATE_CONSOLE_VAR("sd", 10.0f, 0, "ortho divider");
 
-	cam_width =		GET_CONSOLE_VAR("r_cam_w");
-	cam_height =	GET_CONSOLE_VAR("r_cam_h");
+	cam_width =		GET_CVAR("r_cam_w");
+	cam_height =	GET_CVAR("r_cam_h");
 
   //
   return true;
@@ -219,9 +219,9 @@ void ShadowMapping::OnRenderPass()
 	auto& v = m_RenderedScene->viewPort;
   m_RenderedScene->bind({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	glm::vec4 fog = glm::vec4(
-		GET_CONSOLE_VAR("fogR")->GetFVal(),
-		GET_CONSOLE_VAR("fogG")->GetFVal(),
-		GET_CONSOLE_VAR("fogB")->GetFVal(),
+		GET_CVAR("fogR")->GetFVal(),
+		GET_CVAR("fogG")->GetFVal(),
+		GET_CVAR("fogB")->GetFVal(),
 		1.f);
 	auto pSystem = GetISystem();
 	auto w = pSystem->GetIConsole()->GetCVar("r_cam_w")->GetIVal();
