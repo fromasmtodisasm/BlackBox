@@ -1,14 +1,13 @@
 #version 450 core
 //layout (pixel_center_integer) in vec4 gl_FragCoord;
-
-#define OFFSET vec2(0,0)
-
+///////////////////////
 out vec4 FragColor;
 
+///////////////////////
 in vec2 TexCoords;
 
+///////////////////////
 uniform sampler2D image;
-
 uniform bool horizontal;
 uniform float weight[2] = float[](0.125, 0.5);
 uniform float offset = -3.0;
@@ -39,10 +38,6 @@ vec3 offsets[13] = vec3[](
 
 );
 
-//vec4 Sample(vec2 uv) {
-//	return texture(image, uv);
-//}
-
 #define Sample(uv) textureLod(image, uv, 0)
 
 /*
@@ -71,7 +66,6 @@ vec4 downsample(vec2 uv)
 		else
 		{
 			vec2 texel = clamp(((2 * gl_FragCoord.xy ) * tex_size), vec2(0.5)*tex_size, m);
-			//vec2 texel = vec2(vx,vy) * vec2(rx - 1,ry - 1) * tex_size;
 			result += Sample(texel) * offsets[i].z;
 		}
 	}

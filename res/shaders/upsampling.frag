@@ -1,8 +1,12 @@
 #version 330 core
+
+///////////////////////
 out vec4 FragColor;
 
+///////////////////////
 in vec2 TexCoords;
 
+///////////////////////
 uniform sampler2D current;
 uniform sampler2D blured;
 uniform bool blurOn = true;
@@ -41,7 +45,6 @@ vec4 blur(vec2 uv)
 			else
 			{
 				vec2 texel = clamp(vec2(uv), vec2(0.5)*tex_offset, m);
-				//vec2 texel = vec2(vx,vy) * vec2(rx - 1,ry - 1) * tex_offset;
 				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
 			}
 			//*/

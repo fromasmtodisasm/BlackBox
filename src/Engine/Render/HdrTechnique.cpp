@@ -37,7 +37,12 @@ HdrTechnique::HdrTechnique()
 	blurOnly(nullptr),
 	cam_height(nullptr),
 	cam_width(nullptr),
-	render(nullptr)
+	render(nullptr),
+
+	quadCorners{0},
+	quadCornersVBO{0},
+	testid(-1),
+	timer_queries{0}
 {
 }
 
