@@ -72,7 +72,8 @@ public:
 private:
 	void glInit();
 	void fillSates();
-	void initConsoleVariables();
+	void InitConsoleVariables();
+	void InitConsoleCommands();
 
 private:
 	IWindow* m_Window = nullptr;

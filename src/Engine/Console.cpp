@@ -19,6 +19,17 @@
 
 #define strdup _strdup
 
+bool isnumber(const char* s)
+{
+	auto p = s;
+	while (*p)
+	{
+		if (!isdigit(*p++))
+			return false;
+	}
+	return true;
+}
+
 void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
 {
 	// Get the first occurrence
@@ -1371,12 +1382,22 @@ char* CCVar::GetString()
 
 void CCVar::Set(const char* s)
 {
-	if (type != CVAR_STRING)
-		return;
-	if (value.s != nullptr)
-		delete[] value.s;
-	value.s = strdup(s);
-	type = CVAR_STRING;
+	// TODO: fix it, to check if <s> is number
+	if (type == CVAR_STRING)
+	{
+		if (value.s != nullptr)
+			delete[] value.s;
+	}
+	else if (isnumber(s))
+	{
+		value.i = std::atoi(s);
+		type = CVAR_INT;
+	}
+	else
+	{
+		value.s = strdup(s);
+		type = CVAR_STRING;
+	}
 }
 
 void CCVar::ForceSet(const char* s)

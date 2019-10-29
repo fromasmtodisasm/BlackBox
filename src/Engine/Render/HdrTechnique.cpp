@@ -58,7 +58,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
     return true;
   render = GetISystem()->GetIRender();
   m_Scene = pScene;
-	initConsoleVariables();
+	InitConsoleVariables();
 	initTest();
   createShader();
 	CreateCommands();
@@ -308,7 +308,7 @@ void HdrTechnique::createShader()
 
 }
 
-void HdrTechnique::initConsoleVariables()
+void HdrTechnique::InitConsoleVariables()
 {
   exposure =				CREATE_CVAR("exp", 1.0f, 0, "exposure");
   enabled =					CREATE_CVAR("hdr", 1, 0, "Enable/disable HDR");

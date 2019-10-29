@@ -32,7 +32,8 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	if (window == nullptr)
 		return nullptr;
 	//=======================
-	initConsoleVariables();
+	InitConsoleVariables();
+	InitConsoleCommands();
 	//=======================
 	if (isDebug && r_debug->GetIVal() == 1)
 		glContextType = sf::ContextSettings::Debug;
@@ -188,7 +189,7 @@ void CRender::fillSates()
 #undef STATEMAP
 }
 
-void CRender::initConsoleVariables()
+void CRender::InitConsoleVariables()
 {
 	translateImageY =			CREATE_CVAR("ty", 0.0f, 0);
 	translateImageX =			CREATE_CVAR("tx", 0.0f, 0);
@@ -202,6 +203,18 @@ void CRender::initConsoleVariables()
 	r_debug =			GET_CVAR("r_debug");
 	cam_width	=		GET_CVAR("r_cam_w");
 	cam_height =	GET_CVAR("r_cam_h");
+}
+
+void CRender::InitConsoleCommands()
+{
+	/*
+	REGISTER_COMMAND(
+		"set_ws",
+		R"(set2dvec("r_cam_w", "r_cam_h", %1, %2))",
+		VF_NULL,
+		"Set size of camera"
+	);
+	*/
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)

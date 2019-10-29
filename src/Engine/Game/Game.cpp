@@ -416,8 +416,10 @@ void CGame::render()
   /* Rendering code here */
   //int w = m_Window->viewPort.width - m_Window->viewPort.left;
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;
-  int w = m_Window->getWidth();
-  int h = m_Window->getHeight();
+  /*int w = m_Window->getWidth();
+  int h = m_Window->getHeight();*/
+	float w = GET_CVAR("r_cam_w")->GetIVal();
+	float h = GET_CVAR("r_cam_h")->GetIVal();
 	auto r = ((float)w) / h;
   m_World->getActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
