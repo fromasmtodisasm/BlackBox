@@ -52,10 +52,10 @@ vec4 downsample(vec2 uv)
 
 	for (int i = 0; i < 13; i++)
 	{
-		vec2 coord = (2 * gl_FragCoord.xy + (offsets[i].xy + offset));
-		float dev = 1;
+		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
+		float dev = 0;
 		vec2 m = vec2(vx,vy) - tex_size;
-		if (all(lessThan((gl_FragCoord.xy + 0.5*(offsets[i].xy + offset)), vec2(rx - dev,ry - dev))))
+		if (all(lessThan((gl_FragCoord.xy-1.5 + 0.5*(offsets[i].xy + offset)), vec2(floor(rx) - dev,floor(ry) - dev))))
 		{
 			vec2 texel = clamp((coord * tex_size), vec2(0.5)*tex_size, m);
 			result += Sample(texel) * offsets[i].z;
@@ -63,7 +63,7 @@ vec4 downsample(vec2 uv)
 		else
 		{
 			vec2 texel = clamp(((2 * gl_FragCoord.xy ) * tex_size), vec2(0.5)*tex_size, m);
-			result += Sample(texel) * offsets[i].z;
+			result += 0;//Sample(texel) * offsets[i].z*0.00000001;
 		}
 	}
 	return result;
@@ -74,4 +74,5 @@ void main()
 	vec2 uv = 2 * (gl_FragCoord.xy) / vec2(textureSize(image, 0));
 	FragColor = downsample(uv);
 }
+
 

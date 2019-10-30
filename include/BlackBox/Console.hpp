@@ -244,7 +244,7 @@ private:
 	bool needShowCursor();
   void pageUp(bool isPgUp);
 	void drawCursor();
-	void moveCursor(bool left);
+	void moveCursor(bool left, bool wholeWord = false);
 
 	void initBind();
 private:

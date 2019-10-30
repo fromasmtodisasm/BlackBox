@@ -29,29 +29,31 @@ vec4 blur(vec2 uv)
 	vec4 result = vec4(0);
 	vec2 tex_offset = 1.0 / textureSize(blured, 0);
 	int divisor = 0;
+	float w = 0;
 	for (int i = -1; i <= 1; i++)
 	{
 		for (int j = -1, index = (i+1)*(j+1) + j + 1; j <= 1; j++)
 		{
-			float dev = 2;
+			float dev = 0;
 			vec2 m = vec2(vx,vy) - 1*tex_offset;
-			if (all(lessThan((gl_FragCoord.xy + vec2(j, i)), vec2(rx - dev,ry - dev))))
+			if (all(lessThan((gl_FragCoord.xy -1.5 + vec2(j, i)), vec2(floor(rx) - dev,floor(ry) - dev))))
 			{
-				//divisor += 1;
+				w += weight[index];
 				vec2 texel = clamp((uv + vec2(j, i) * tex_offset), vec2(0.5)*tex_offset, m);
 				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
 			}
-			//*
-			else
-			{
-				vec2 texel = clamp(vec2(uv), vec2(0.5)*tex_offset, m);
-				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
-			}
-			//*/
+		//else
+		//{
+		//	vec2 texel = clamp(vec2(uv), vec2(0.5)*tex_offset, m);
+		//	float anti_overexposure = 0.05;
+		//	result += vec4(texture(blured, texel).rgb * weight[index], 1)*anti_overexposure;  
+		//}
+			
 		}
 	}
 	//return result / (divisor == 0 ? 1 : divisor);
 	return result / 16.0;
+	//return result / w;
 }
 
 void main()
@@ -67,4 +69,5 @@ void main()
 		FragColor = texture(current, clamp(texel, vec2(0), vec2(vx,vy))) + blur(uv);
 	}
 }
+
 

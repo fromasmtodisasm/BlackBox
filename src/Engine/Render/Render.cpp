@@ -71,8 +71,8 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenShader->Uniform(0,"screenTexture");
 	m_ScreenShader->Unuse();
 
-	cam_width->Set(GetWidth());
-	cam_height->Set(GetHeight());
+	//cam_width->Set(GetWidth());
+	//cam_height->Set(GetHeight());
 	return result;
 }
 
@@ -217,6 +217,12 @@ void CRender::InitConsoleCommands()
 	*/
 }
 
+void CRender::SetRenderTarget(int nHandle)
+{
+	if (m_CurrentTarget != nHandle)
+		gl::BindFramebuffer(nHandle);
+}
+
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
 	if (mode == CullMode::FRONT_AND_BACK)
@@ -263,6 +269,24 @@ int CRender::GetCurrentContextViewportHeight() const
 int CRender::GetCurrentContextViewportWidth() const
 {
 	return 0;
+}
+
+void CRender::SetClearColor(const Vec3& vColor)
+{
+	m_clearColor = vColor;
+}
+
+void CRender::ClearDepthBuffer()
+{
+  //glCheck(glClearBufferfv(GL_DEPTH, 0, &m_clearDepth));
+
+	glCheck(glClearDepthf(1.f));
+	gl::Clear(GL_DEPTH_BUFFER_BIT);
+}
+
+void CRender::ClearColorBuffer(const Vec3 vColor)
+{
+	glCheck(glClearBufferfv(GL_COLOR, 0, &glm::vec4(vColor,1)[0]));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
@@ -350,7 +374,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	float
 		width = GetWidth(),
 		height = GetHeight();
-	gl::BindFramebuffer(0);
+	//gl::BindFramebuffer(0);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

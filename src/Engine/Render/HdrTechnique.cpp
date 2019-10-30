@@ -499,16 +499,17 @@ void HdrTechnique::upsampling()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-		auto rx = (w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
-		auto ry = (h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
+
+		int rx = (w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
+		int ry = (h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
 		// Texture that blured
 		auto& blured = first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0];
 		// Texture on which the blur is superimposed
 		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
-		up->Uniform(rx, "rx");
-		up->Uniform(rx, "ry");
+		up->Uniform((float)rx, "rx");
+		up->Uniform((float)rx, "ry");
 
 		rt->bind(Vec4(0,0, rx, ry));
 		up->BindTexture2D(blured,					PREVIOS, "blured");
@@ -543,8 +544,8 @@ void HdrTechnique::Do(unsigned int texture)
 		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
 	ss->Uniform(scale, "viewPortf");
-	FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
-	//FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
+	//FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
+	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();
 }
 

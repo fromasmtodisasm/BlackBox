@@ -224,12 +224,15 @@ void ShadowMapping::OnRenderPass()
 		GET_CVAR("fogB")->GetFVal(),
 		1.f);
 	auto pSystem = GetISystem();
-	auto w = pSystem->GetIConsole()->GetCVar("r_cam_w")->GetIVal();
-	auto h = pSystem->GetIConsole()->GetCVar("r_cam_h")->GetIVal();
-	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
-	pSystem->GetIRender()->SetScissor(0, 0, w, h);
+	auto w = cam_width->GetIVal();
+	auto h = cam_height->GetIVal();
+	//pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
+	//pSystem->GetIRender()->SetScissor(0, 0, w, h);
+	auto render = GetISystem()->GetIRender();
+	render->DrawImage(0, 0, w, render->GetHeight() - h, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+	//render->ClearDepthBuffer();
 	m_RenderedScene->clear(gl::Color(fog));
-	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
+	//pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
   RenderPass();
 }
 

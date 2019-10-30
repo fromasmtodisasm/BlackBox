@@ -168,6 +168,7 @@ void CConsole::Draw()
 	size_t end;
 	auto prompt = getPrompt();
 	time += GetISystem()->GetIGame()->getDeltaTime();
+	render->SetRenderTarget(0);
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
@@ -381,6 +382,16 @@ bool CConsole::OnInputEvent(sf::Event& event)
 		{
 			moveCursor(event.key.code == sf::Keyboard::Left);
 			return true;
+		}
+		case sf::Keyboard::L:
+		case sf::Keyboard::B:
+		{
+			if (event.key.alt)
+			{
+				moveCursor(event.key.code == sf::Keyboard::B, true);
+				return true;
+			}
+			return false;
 		}
 		case sf::Keyboard::Delete:
 		{
@@ -620,15 +631,36 @@ void CConsole::drawCursor()
 		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,static_cast<int>(cursor.x))), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
 }
 
-void CConsole::moveCursor(bool left)
+void CConsole::moveCursor(bool left, bool wholeWord)
 {
 	if (left)
 	{
-		cursor.x = std::max(0, (int)cursor.x - 1);
+		if (wholeWord)
+		{
+			std::size_t found = command_text.rfind(" ", cursor.x - 1);
+			if (found != std::string::npos)
+				cursor.x = std::min((size_t)cursor.x, found - 1);
+		}
+		else
+		{
+			cursor.x = std::max(0, (int)cursor.x - 1);
+		}
 	}
 	else
 	{
-		cursor.x = std::min((int)command.size(), (int)cursor.x + 1);
+		if (wholeWord)
+		{
+			std::size_t found = command_text.find_first_of(" ", cursor.x);
+			if (found != std::string::npos)
+				cursor.x = std::min(command_text.size(), found + 1);
+			else
+				cursor.x = command_text.size();
+
+		}
+		else
+		{
+			cursor.x = std::min((int)command.size(), (int)cursor.x + 1);
+		}
 	}
 }
 

@@ -44,6 +44,11 @@ function set2dvec(nx,ny, x,y )
 	setvar(ny,y)
 end
 
+function execstr( str )
+	Console:ExecuteString(str)
+end
+
+
 function init()
 	Console:CreateKeyBind("r", "shader reload");
 	Console:CreateKeyBind("d", [[@retrigger_value("r_displayinfo")]]);
@@ -54,10 +59,15 @@ function init()
 	Console:CreateKeyBind("num2", "@load2()");
 
 	Console:CreateKeyBind("a", [[@retrigger_value("r_aspect")]]);
+	Console:CreateKeyBind("b", "@setFog(0,0,0)") 
+	Console:CreateKeyBind("g", "@setFog(0,0.01,0.01)")  
+
 
 	addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
 	addcommand("set_ws", [[set2dvec("r_Width", "r_Height", %1, %2)]], "Set size of window")
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
+
+	setFog(0,0,0)
 end
 
 init()

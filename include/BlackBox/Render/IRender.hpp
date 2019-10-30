@@ -167,6 +167,12 @@ struct IRender
 	virtual int GetCurrentContextViewportWidth() const = 0;
 	/////////////////////////////////////////////////////////////////////////////////
 
+	// 3d engine set this color to fog color
+	virtual void SetClearColor(const Vec3& vColor) = 0;
+	virtual void ClearDepthBuffer() = 0;
+	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
+
+	virtual void SetRenderTarget(int nHandle) = 0;
 
 };
 
