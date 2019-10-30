@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/IGame.hpp>
 #include <BlackBox/ISystem.hpp>
+#include <BlackBox/IGame.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/Window.hpp>
 #include <BlackBox/IInputHandler.hpp>
@@ -34,6 +34,8 @@ class Scene;
 class SceneManager;
 class CTagPoint;
 
+//////////////////////////////////////////////////////////////////////
+typedef std::queue<string> StringQueue;
 typedef std::multimap<string, CTagPoint*> TagPointMap;
 
 class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
@@ -47,12 +49,12 @@ public:
   CGame(std::string title);
   CGame() = default;
   ~CGame() = default;
-  bool init(ISystem *pSystem) override;
-  bool update() override;
+  bool Init(ISystem *pSystem) override;
+  bool Update() override;
 	void execScripts();
 	void drawHud(float fps);
   void DisplayInfo(float fps);
-  bool run() override;
+  bool Run(bool& bRelaunch) override;
   void input();
 
   bool loadScene();
@@ -77,6 +79,9 @@ public:
 	void gotoFly();
 	void gotoEdit();
   void showMenu();
+	virtual void SendMessage(const char* str) override {
+		m_qMessages.push(str);
+	}
 	IWindow* getWindow();
 private:
 
@@ -90,6 +95,7 @@ private:
   bool OnInputEventProxy(sf::Event& event);
 
 	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
+	void	ProcessPMessages(const char* szMsg);
 
 
   // IGame interface
@@ -151,6 +157,7 @@ private:
   Scene *m_scene;
   SceneManager *m_sceneManager;
   ILog *m_Log;
+	StringQueue							m_qMessages;
   bool isWireFrame = false;
   bool isFullScreen = false;
 
@@ -158,7 +165,8 @@ private:
   bool m_isMusicPlaying = false;
 
   std::string m_Title;
-  bool m_running = true;
+  bool m_bUpdateRet = true;
+  bool m_bRelaunch = true;
   float m_lastTime;
 	float m_time = 0.0f;
   sf::Clock deltaClock;
@@ -218,6 +226,13 @@ private:
 
 	//other
 	bool can_drag_vp = true; // can drag view port ?
+
+
+													 // Inherited via IGame
+
+
+													 // Inherited via IGame
+	virtual void Release() override;
 
 };
 

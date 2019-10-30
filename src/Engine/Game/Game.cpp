@@ -130,7 +130,7 @@ CGame::CGame(std::string title) :
   m_PlayList.addTrack("japan.ogg");
 }
 
-bool CGame::init(ISystem *pEngine)  {
+bool CGame::Init(ISystem *pEngine)  {
   m_pSystem /*= gISystem */= pEngine;
 	m_pRender = m_pSystem->GetIRender();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
@@ -155,7 +155,7 @@ bool CGame::init(ISystem *pEngine)  {
   auto is_complete = m_Console->GetCVar("g_init_complete");
   if (is_complete == nullptr)
   {
-    //TODO: log: error load init.cfg
+    //TODO: log: error load Init.cfg
     return false;
   }
 
@@ -206,56 +206,50 @@ bool CGame::init(ISystem *pEngine)  {
   return true;
 }
 
-bool CGame::update() {
-  while (!m_Window->closed() &&  m_running) {
-		m_pSystem->Update();
-		m_pSystem->BeginFrame();
+bool CGame::Update() {
+	m_pSystem->Update();
+	m_pSystem->BeginFrame();
+	{
+		sf::Time deltaTime = deltaClock.restart();
+		m_deltaTime = deltaTime.asSeconds();
+		m_time += m_deltaTime;
+		fps =  1000.0f / deltaTime.asMilliseconds();
+		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
+			input();
+		PROFILER_POP_CPU_MARKER();
+		execScripts();
+		m_Window->update();
+		m_World->update(m_deltaTime);
+		setRenderState();
+
 		{
-			sf::Time deltaTime = deltaClock.restart();
-			m_deltaTime = deltaTime.asSeconds();
-			m_time += m_deltaTime;
-			fps =  1000.0f / deltaTime.asMilliseconds();
-			PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
-				input();
-			PROFILER_POP_CPU_MARKER();
-			execScripts();
-			m_Window->update();
-			m_World->update(m_deltaTime);
-			setRenderState();
-
-			{
-				DEBUG_GROUP("ALL RENDERING");
-					PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
-						render();
-					PROFILER_POP_CPU_MARKER();
-						m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
-					PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-						drawHud(fps);
-					PROFILER_POP_CPU_MARKER();
-			}
+			DEBUG_GROUP("ALL RENDERING");
+				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+					render();
+				PROFILER_POP_CPU_MARKER();
+					m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+				PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+					drawHud(fps);
+				PROFILER_POP_CPU_MARKER();
 		}
-		//////////////////////////////////////////////////////////////////////////
-		// Special update function for developers mode.
-		//////////////////////////////////////////////////////////////////////////
-		if (IsDevModeEnable() && false)
-			DevModeUpdate();
-		//////////////////////////////////////////////////////////////////////////
-
-		//////////////////////////////////////////////////////////////////////////
-
-		m_pSystem->EndFrame();
-    m_Window->swap();
-  }
-
-	if (m_running == false)
-	{
-		CREATE_CVAR("stpo_running", 1, 0);
 	}
-	else
+	//////////////////////////////////////////////////////////////////////////
+	// Special update function for developers mode.
+	//////////////////////////////////////////////////////////////////////////
+	if (IsDevModeEnable() && false)
+		DevModeUpdate();
+	//////////////////////////////////////////////////////////////////////////
+	while (!m_qMessages.empty())
 	{
-		CREATE_CVAR("window_closed", 1, 0);
+		string smsg = m_qMessages.front();
+		m_qMessages.pop();
+		ProcessPMessages(smsg.c_str());
 	}
-	return true;
+	//////////////////////////////////////////////////////////////////////////
+
+	m_pSystem->EndFrame();
+
+	return m_bUpdateRet;
 }
 
 void CGame::execScripts()
@@ -355,13 +349,20 @@ void CGame::DisplayInfo(float fps)
 
 }
 
-bool CGame::run() {
+bool CGame::Run(bool& bRelaunch) {
 	m_Log->Log("[OK] Game started\n");
   m_time = deltaClock.restart().asSeconds();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
   m_isMusicPlaying = true;
-  update();
+	m_bRelaunch = false;
+	while (1)
+	{
+		if (!Update())
+			break;
+	}
+
+	bRelaunch = m_bRelaunch;
   return true;
 }
 
@@ -895,9 +896,25 @@ bool CGame::ShouldHandleEvent(sf::Event& event, bool& retflag)
 	return {};
 }
 
+void CGame::ProcessPMessages(const char* szMsg)
+{
+	if (stricmp(szMsg, "Quit") == 0)	// quit message
+	{
+		m_bUpdateRet = false;
+		return;
+	}
+	else
+	if (stricmp(szMsg, "Relaunch") == 0)	// relaunch message
+	{
+		m_bRelaunch = true;
+		m_bUpdateRet = false;
+		return;
+	}
+}
+
 void CGame::Stop()
 {
-  m_running = false;
+  m_bUpdateRet = false;
 }
 
 float CGame::getDeltaTime()

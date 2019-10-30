@@ -151,7 +151,7 @@ bool CSystem::Init()
   if (CreateGame(nullptr) == nullptr)
     return false;
 	
-  if (!m_pGame->init(this)) {
+  if (!m_pGame->Init(this)) {
     return false;
 	}
   m_pConsole->PrintLine("[OK] IGame created\n");
@@ -160,7 +160,19 @@ bool CSystem::Init()
 
 void CSystem::Start()
 {
-  m_pGame->run();  
+	bool bRelaunch = false;
+
+  m_pGame->Run(bRelaunch);  
+
+	while (bRelaunch)
+	{
+		m_pGame->Release();
+		m_pGame = CreateGame(nullptr);
+		if (!m_pGame->Init(this))
+			break;
+		m_pGame->Run(bRelaunch);
+	}
+		
 }
 
 void CSystem::Release()
@@ -306,6 +318,8 @@ void CSystem::EndFrame()
 		DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
+
+	m_pWindow->swap();
 }
 
 bool CSystem::OnInputEvent(sf::Event& event)
@@ -367,6 +381,10 @@ void CSystem::Update()
 {
 	//PROFILER_SYNC_FRAME();
 	m_pConsole->Update();
+	if (m_pWindow->closed())
+	{
+		m_pGame->SendMessage("Quit");
+	}
 }
 
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)

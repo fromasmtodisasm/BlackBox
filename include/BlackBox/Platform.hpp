@@ -60,3 +60,6 @@ inline auto SAFE_DELETE(T *& t)
 #include <algorithm>
 #include <functional>
 
+#ifdef SendMessage
+#undef SendMessage
+#endif

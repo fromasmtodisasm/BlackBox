@@ -283,3 +283,8 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 #endif
 
 }
+
+void CGame::Release()
+{
+	delete this;
+}
