@@ -219,7 +219,9 @@ bool CGame::Update() {
 		PROFILER_POP_CPU_MARKER();
 		execScripts();
 		m_Window->update();
-		m_World->update(m_deltaTime);
+		if (!IsInPause())
+			m_World->update(m_deltaTime);
+
 		setRenderState();
 
 		{
@@ -461,7 +463,9 @@ bool CGame::OnInputEvent(sf::Event &event)
 		bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag) return retval;
 	}
-  bool result = OnInputEventProxy(event);
+	bool result = false;
+	if (!IsInPause())
+		OnInputEventProxy(event);
 	PersistentHandler(event);
   return result;
 }
@@ -516,6 +520,11 @@ void CGame::PersistentHandler(sf::Event& event)
 		{
 			bool ubf = useBoxFilter->GetIVal();
 			useBoxFilter->Set(!ubf);
+			break;
+		}
+		case sf::Keyboard::Pause:
+		{
+			m_bInPause = !m_bInPause;
 			break;
 		}
 		default:
@@ -680,9 +689,9 @@ bool CGame::MenuInputEvent(sf::Event& event)
     switch (event.key.code)
     {
     case sf::Keyboard::Escape:
-      m_inputHandler->mouseLock(false);
-      m_Mode = Mode::MENU;
-			Stop();
+      //m_inputHandler->mouseLock(false);
+      //m_Mode = Mode::MENU;
+			//Stop();
       return true;
     case sf::Keyboard::Enter:
 			gotoGame();
@@ -910,6 +919,11 @@ void CGame::ProcessPMessages(const char* szMsg)
 		m_bUpdateRet = false;
 		return;
 	}
+}
+
+bool CGame::IsInPause()
+{
+	return m_bInPause;
 }
 
 void CGame::Stop()

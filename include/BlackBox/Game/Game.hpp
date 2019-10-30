@@ -96,6 +96,7 @@ private:
 
 	bool ShouldHandleEvent(sf::Event& event, bool& retflag);
 	void	ProcessPMessages(const char* szMsg);
+	bool	IsInPause();
 
 
   // IGame interface
@@ -222,6 +223,8 @@ private:
   }m_Mode = Mode::FPS;
   std::stack<GameState*> states;
 	float fps = 0.0;
+
+	bool m_bInPause = false;
 
 
 	//other
