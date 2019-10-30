@@ -31,9 +31,9 @@ ISystem* GetISystem()
 }
 
 
-CSystem::CSystem(SSystemInitParams& initParams)
+CSystem::CSystem(SSystemInitParams& m_startupParams)
 	:
-	initParams(initParams),
+	m_startupParams(m_startupParams),
 	r_window_width(nullptr),
 	r_window_height(nullptr),
 	r_bpp(nullptr),
@@ -73,6 +73,8 @@ CSystem::~CSystem()
 bool CSystem::Init()
 {
 	gISystem = this;
+	/////////////////////////////////////////////
+	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
 	initTimer();
   m_pLog = new NullLog();
   if (m_pLog == nullptr)
@@ -255,7 +257,7 @@ bool CSystem::ConfigLoad(const char* file)
 
 void CSystem::ParseCMD()
 {
-	std::string cmd = initParams.szSystemCmdLine;
+	std::string cmd = m_startupParams.szSystemCmdLine;
 	if (cmd.find("-nsightDebug") != std::string::npos)
 	{
 		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");

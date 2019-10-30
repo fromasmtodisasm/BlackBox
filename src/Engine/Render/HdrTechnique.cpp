@@ -543,8 +543,8 @@ void HdrTechnique::Do(unsigned int texture)
 		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
 	ss->Uniform(scale, "viewPortf");
-	//FrameBufferObject::bindDefault({ 0,0, scale.x * w ,scale.y * h });
-	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
+	FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
+	//FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();
 }
 

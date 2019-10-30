@@ -6,6 +6,7 @@
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectScript.hpp>
+#include <BlackBox/Common/CmdLine.hpp>
 
 class CConsole;
 class CRender;
@@ -73,7 +74,8 @@ private:
 	ICVar* r_sbpp;
 	ICVar* r_fullscreen;
 
-	SSystemInitParams& initParams;
+	SSystemInitParams& m_startupParams;
+	CCmdLine* m_pCmdLine;
 
 	// Inherited via ISystem
 	virtual bool IsDevMode() override;
