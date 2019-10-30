@@ -20,7 +20,7 @@ public:
 	// Inherited via ISystem
   virtual bool Init() override;
   virtual void Start() override;
-	virtual void Update() override;
+	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
 	virtual void BeginFrame() override;
 	virtual void EndFrame() override;
   virtual void Release() override;

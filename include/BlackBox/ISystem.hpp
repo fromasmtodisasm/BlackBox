@@ -132,7 +132,7 @@ struct ISystem
 
   virtual bool Init() = 0;
   virtual void Start() = 0;
-  virtual void Update() = 0;
+	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) = 0;
   virtual void BeginFrame() = 0;
   virtual void EndFrame() = 0;
   virtual void Release() = 0;

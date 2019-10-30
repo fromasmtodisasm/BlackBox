@@ -3,7 +3,7 @@
 
 using namespace std;
 
-ICommand * CSFMLWindow::handleInput()
+ICommand * CSFMLWindow::handleInput(bool bPause)
 {
 	int offset = 5;
   sf::Event event;

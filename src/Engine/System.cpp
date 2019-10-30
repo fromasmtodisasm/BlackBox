@@ -311,6 +311,7 @@ void CSystem::BeginFrame()
 {
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
+	m_Render->SetState(IRender::State::DEPTH_TEST, true);
 }
 
 void CSystem::EndFrame()
@@ -379,14 +380,23 @@ bool CSystem::OnInputEvent(sf::Event& event)
 	return result;
 }
 
-void CSystem::Update()
+bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 {
 	//PROFILER_SYNC_FRAME();
+	// Update input
+	{
+		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
+		ICommand *cmd;
+		while ((cmd = m_InputHandler->handleInput(nPauseMode)) != nullptr);
+		PROFILER_POP_CPU_MARKER();
+	}
+	m_pWindow->update();
 	m_pConsole->Update();
 	if (m_pWindow->closed())
 	{
 		m_pGame->SendMessage("Quit");
 	}
+	return true;
 }
 
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)

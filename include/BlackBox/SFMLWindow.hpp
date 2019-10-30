@@ -99,7 +99,7 @@ private:
 
   // IInputHandler interface
 public:
-  virtual ICommand *handleInput() override;
+  virtual ICommand *handleInput(bool bPause) override;
   virtual void AddEventListener(IInputEventListener *pListener) override;
   virtual sf::Vector2i getDeltaMouse() override;
   virtual void mouseLock(bool lock) override;

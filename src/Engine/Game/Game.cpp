@@ -207,18 +207,14 @@ bool CGame::Init(ISystem *pEngine)  {
 }
 
 bool CGame::Update() {
-	m_pSystem->Update();
+	m_pSystem->Update(0, IsInPause());
 	m_pSystem->BeginFrame();
 	{
 		sf::Time deltaTime = deltaClock.restart();
 		m_deltaTime = deltaTime.asSeconds();
 		m_time += m_deltaTime;
 		fps =  1000.0f / deltaTime.asMilliseconds();
-		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
-			input();
-		PROFILER_POP_CPU_MARKER();
 		execScripts();
-		m_Window->update();
 		if (!IsInPause())
 			m_World->update(m_deltaTime);
 
@@ -368,14 +364,6 @@ bool CGame::Run(bool& bRelaunch) {
   return true;
 }
 
-void CGame::input()
-{
-  ICommand *cmd;
-  //std::vector<ICommand*> qcmd;  
-  while ((cmd = m_inputHandler->handleInput()) != nullptr)
-    ;//cmd->execute();
-}
-
 bool CGame::loadScene() {
   if (!ShaderManager::init() && (shaderManager = ShaderManager::instance()) == nullptr)
     return false;
@@ -416,6 +404,7 @@ void CGame::setRenderState()
 void CGame::render()
 {
   m_Window->clear();
+	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
   /* Rendering code here */
   //int w = m_Window->viewPort.width - m_Window->viewPort.left;
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;

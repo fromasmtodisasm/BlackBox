@@ -55,7 +55,6 @@ public:
 	void drawHud(float fps);
   void DisplayInfo(float fps);
   bool Run(bool& bRelaunch) override;
-  void input();
 
   bool loadScene();
   void setRenderState();
