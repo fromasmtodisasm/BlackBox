@@ -171,7 +171,7 @@ void CConsole::Draw()
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
-	m_Font->SetYPos(18);
+	m_Font->SetYPos(16);
 	for (on_line = 0; current_line < end; current_line++, on_line++)
 	{
 		printLine(current_line);
@@ -185,7 +185,7 @@ void CConsole::Draw()
 	//command_text[command.length()] = cursor;
 
 	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
+	printText(Text(std::string("#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
 	printText(Text(std::string(command_text), textColor, 1.0f), 0);
 	drawCursor();
 	/*m_Font->RenderText(
@@ -217,6 +217,7 @@ void CConsole::Animate(float deltatime, IRender* render)
 
 void CConsole::CalcMetrics(size_t& end)
 {
+	constexpr int MAGIC = 1;
 	line_in_console = (int)((height)) / (int)line_height;
 	auto num_all_lines = cmd_buffer.size();
 	if (line_in_console > num_all_lines)
@@ -227,14 +228,14 @@ void CConsole::CalcMetrics(size_t& end)
 	}
 	else
 	{
-		current_line = num_all_lines - line_in_console;
+		current_line = num_all_lines - line_in_console + MAGIC;
     if (page_up && current_line > 0)
       current_line--;
     else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
     {
       current_line++;
     }
-		line_count = line_in_console;
+		line_count = line_in_console - MAGIC;
 		end = num_all_lines;
 	}
   page_up = false;
@@ -298,11 +299,27 @@ bool CConsole::OnInputEvent(sf::Event& event)
 				else
 				{
 					//SetInputLine("");
-					ClearInputLine();
+					//ClearInputLine();
 					addToCommandBuffer(completion);
 				}
 			}
 			return true;
+		case sf::Keyboard::Num6:
+		{
+			if (event.key.control)
+			{
+				cursor.x = 0;
+			}
+			return true;
+		}
+		case sf::Keyboard::Num4:
+		{
+			if (event.key.control)
+			{
+				cursor.x = command.size();
+			}
+			return true;
+		}
 		case sf::Keyboard::Enter:
 		case sf::Keyboard::M:
 		{
@@ -391,8 +408,10 @@ bool CConsole::OnInputEvent(sf::Event& event)
 
 void CConsole::getHistoryElement()
 {
-	auto line_history = cmd_buffer[history_line];
 	SetInputLine("");
+	if (cmd_buffer.size() < 1)
+		return;
+	auto line_history = cmd_buffer[history_line];
 	for (auto& element : line_history)
 	{
 		for (auto& ch : element.data)
@@ -428,13 +447,12 @@ bool CConsole::handleEnterText()
 {
 	cmd_is_compete = true;
 	CommandLine cmd;
-	for (auto& element : getPrompt())
+	/*for (auto& element : getPrompt())
 	{
 		cmd.push_back(element);
-	}
+	}*/
 	cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
 	cmd_buffer.push_back(cmd);
-	//m_World->getActiveScene()->setPostProcessor(nullptr);
 	history_line = cmd_buffer.size();
 	return handleCommand(command);
 }
