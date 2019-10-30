@@ -348,7 +348,7 @@ void CGame::DisplayInfo(float fps)
 	if (m_Mode == MENU)
 	{
 		auto c = sf::Mouse::getPosition(::getWindow());
-		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(c.y)).c_str(), info.getDTI());
+		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(m_pRender->GetHeight() - c.y)).c_str(), info.getDTI());
 	}
 
 
@@ -416,10 +416,20 @@ void CGame::render()
   /* Rendering code here */
   //int w = m_Window->viewPort.width - m_Window->viewPort.left;
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;
-  /*int w = m_Window->getWidth();
-  int h = m_Window->getHeight();*/
-	float w = GET_CVAR("r_cam_w")->GetIVal();
-	float h = GET_CVAR("r_cam_h")->GetIVal();
+	float w;
+	float h;
+	if (GET_CVAR("r_aspect")->GetIVal())
+	{
+		w = m_Window->getHeight();
+		h = m_Window->getWidth();
+	}
+	else
+	{
+		w = GET_CVAR("r_cam_w")->GetIVal();
+		h = GET_CVAR("r_cam_h")->GetIVal();
+	}
+	
+	
 	auto r = ((float)w) / h;
   m_World->getActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 

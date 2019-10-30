@@ -303,7 +303,7 @@ void HdrTechnique::createShader()
 #if COMPUTE_BLOOM
 	glGenBuffers(1, &quadCornersVBO);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, quadCornersVBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(glm::vec2),	NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(Vec2),	NULL, GL_DYNAMIC_DRAW);
 #endif
 
 }
@@ -346,7 +346,7 @@ void HdrTechnique::initTest()
 	testid = std::min(GetISystem()->GetIConsole()->GetCVar("testid")->GetIVal(), numFormats);
 }
 
-int HdrTechnique::getMips(glm::vec2 resolution)
+int HdrTechnique::getMips(Vec2 resolution)
 {
 	//return static_cast<int>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1);
 	return 6;
@@ -448,7 +448,7 @@ void HdrTechnique::downsamplingStandard()
 
 #if 0
 	glBindBufferBase(GL_ARRAY_BUFFER, 2, quadCornersVBO);
-	glm::vec2 *buf = static_cast<glm::vec2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
+	Vec2 *buf = static_cast<Vec2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -510,7 +510,7 @@ void HdrTechnique::upsampling()
 		up->Uniform(rx, "rx");
 		up->Uniform(rx, "ry");
 
-		rt->bind(glm::vec4(0,0, rx, ry));
+		rt->bind(Vec4(0,0, rx, ry));
 		up->BindTexture2D(blured,					PREVIOS, "blured");
 		up->BindTexture2D(current_level,	CURRENT, "current");
 		m_ScreenQuad.draw();
@@ -523,25 +523,28 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	FrameBufferObject::bindDefault({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
-	
-	m_ScreenShader->Use();
-  m_ScreenShader->Uniform(exposure->GetFVal(), "exposure");
-  m_ScreenShader->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");
-	render->SetState(IRender::State::DEPTH_TEST, false);
-
-	m_ScreenShader->BindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
-	m_ScreenShader->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
-	m_ScreenShader->Uniform(bloom->GetIVal(), "bloom");
 	auto w = cam_width->GetIVal();
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	if (showAllFrameBuffer)
-		m_ScreenShader->Uniform(glm::vec4(0.f,0.f, 1.f, 1.f), "viewPortf");
-	else
-		m_ScreenShader->Uniform(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
+	auto& ss = m_ScreenShader;
 
+	
+	ss->Use();
+  ss->Uniform(exposure->GetFVal(), "exposure");
+  ss->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");
+	render->SetState(IRender::State::DEPTH_TEST, false);
+
+	ss->BindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
+	ss->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
+	ss->Uniform(bloom->GetIVal(), "bloom");
+	Vec2 scale(1.f);
+	if (!showAllFrameBuffer)
+		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
+
+	ss->Uniform(scale, "viewPortf");
+	//FrameBufferObject::bindDefault({ 0,0, scale.x * w ,scale.y * h });
+	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();
 }
 

@@ -8,7 +8,7 @@ uniform sampler2D bloomBlur;
 uniform bool bloom = true;
 uniform float exposure;
 uniform float bloom_exposure = 0.8;
-uniform vec4 viewPortf = vec4(0,0,1,1);
+uniform vec2 viewPortf = vec2(1,1);
 
 float float_to_sRGB(float val)
 { 
@@ -22,8 +22,8 @@ float float_to_sRGB(float val)
 void main()
 {             
     const float gamma = 2.2;
-    vec3 hdrColor = texture(scene, TexCoords*viewPortf.zw).rgb;      
-    vec3 bloomColor = texture(bloomBlur, TexCoords*viewPortf.zw).rgb;
+    vec3 hdrColor = texture(scene, TexCoords*viewPortf).rgb;      
+    vec3 bloomColor = texture(bloomBlur, TexCoords*viewPortf).rgb;
     if(bloom)
         hdrColor += bloomColor * bloom_exposure; // additive blending
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
