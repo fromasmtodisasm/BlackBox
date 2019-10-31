@@ -12,6 +12,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/IWindow.hpp>
 //
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/HP_Timer.h>
@@ -79,9 +80,8 @@ bool CSystem::Init()
   if (m_pLog == nullptr)
     return false;
 	//=============
-	CWindow* window = new CWindow("BlackBox", 1366, 768);
-	m_pWindow = window;
-	if (window == nullptr)
+	m_pWindow= CreateIWindow(/*"BlackBox", 1366, 768*/);
+	if (m_pWindow == nullptr)
 		return false;
 	//=============
   m_pConsole = new CConsole();
@@ -114,7 +114,10 @@ bool CSystem::Init()
 		return EXIT_FAILURE;
 	}
 	//=============
+	//TODO: IMPLEMENT THIS
+#if 0
 	PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
+#endif
 	//=============
 	m_pLog->Log("[OK] Window susbsystem inited\n");
 	//=============
@@ -334,6 +337,9 @@ void CSystem::EndFrame()
 bool CSystem::OnInputEvent(const SInputEvent& event)
 {
 	bool result = false;
+	bool mouseMoved = false;
+	//TODO: handle resized
+	bool resized = false;
 	switch (event.deviceType)
 	{
 	case eIDT_Mouse:
@@ -349,7 +355,11 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 		}
 		if (mouseMoved)
 		{
-
+	//TODO: IMPLEMENT THIS
+#if 0
+			PROFILER_ON_MOUSE_POS(event.mouseMove.x, event.mouseMove.y);
+#endif
+			break;
 		}
 	}
 	case eIDT_Keyboard:
@@ -374,7 +384,10 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 			{
 				if (event.keyId == eKI_Enter)
 				{
+//TODO: IMPLEMENT THIS
+#if 0 
 					static_cast<CWindow*>(m_pWindow)->ToogleFullScreen(1366, 768);
+#endif
 				}
 			}
 
@@ -383,22 +396,14 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 	default:
 		break;
 	}
-	switch (event.type)
+	if (resized)
 	{
-	case sf::Event::MouseMoved:
-	{
-		PROFILER_ON_MOUSE_POS(event.mouseMove.x, event.mouseMove.y);
-		break;
-	}
-	case sf::Event::Resized:
-	{
+		assert(0 && "Not implemented");
+#if 0
 		PROFILER_ON_RESIZE(event.size.width, event.size.height);
-		break;
+#endif
 	}
 
-	default:
-		break;
-	}
 	return result;
 }
 
@@ -408,8 +413,8 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 	// Update input
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
-		ICommand *cmd;
-		while ((cmd = m_InputHandler->handleInput(nPauseMode)) != nullptr);
+		//FIXME: CHECK IT
+		m_pInput->Update(true);
 		PROFILER_POP_CPU_MARKER();
 	}
 	m_pWindow->update();
