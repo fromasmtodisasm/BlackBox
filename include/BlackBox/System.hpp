@@ -64,7 +64,6 @@ private:
 	IScriptSystem* m_pScriptSystem;
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher;
-	IWindow* m_pWindow;
 
 	CScriptObjectConsole* m_ScriptObjectConsole;
 	CScriptObjectScript* m_ScriptObjectScript;

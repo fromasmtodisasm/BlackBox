@@ -113,6 +113,7 @@ CGame::CGame(std::string title) :
 	m_World(new World()), m_Title(title),
 	m_ScriptObjectGame(nullptr),
 	m_pRender(nullptr),
+	m_pInput(nullptr),
 	m_pScriptSystem(nullptr),
 	r_displayinfo(nullptr),
 	r_cap_profile(nullptr),
@@ -137,13 +138,13 @@ CGame::CGame(std::string title) :
 bool CGame::Init(ISystem *pEngine)  {
   m_pSystem /*= gISystem */= pEngine;
 	m_pRender = m_pSystem->GetIRender();
+	m_pInput = m_pSystem->GetIInput();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_Log = m_pSystem->GetILog();
 	m_Console = m_pSystem->GetIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
-	auto input = m_pSystem->GetIInput();
-  input->AddEventListener(this);
+  m_pInput->AddEventListener(this);
   
 	initCommands();
 	initVariables();
@@ -173,7 +174,8 @@ bool CGame::Init(ISystem *pEngine)  {
   gui->game = this;
 #endif // GUI
   initPlayer();
-  m_inputHandler->mouseLock(true);
+  m_pInput->ShowCursor(false);
+	m_pInput->GrabInput(true);
 
   auto tech = new HdrTechnique();
   tech->Init(m_World->getActiveScene(), nullptr);
@@ -197,8 +199,10 @@ bool CGame::Init(ISystem *pEngine)  {
 	// other
 	mousePrev = sf::Mouse::getPosition();
 	mouseDelta = sf::Vector2i(0,0);
+#if CURSOR_FIXED
 	cursor.loadFromSystem(sf::Cursor::Arrow);
 	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
+#endif
 
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
 	if (m_Console->GetCVar("nsightDebug"))
@@ -213,10 +217,13 @@ bool CGame::Update() {
 	m_pSystem->Update(0, IsInPause());
 	m_pSystem->BeginFrame();
 	{
+		// TODO: FIX IT
+#if 0
 		sf::Time deltaTime = deltaClock.restart();
 		m_deltaTime = deltaTime.asSeconds();
 		m_time += m_deltaTime;
 		fps =  1000.0f / deltaTime.asMilliseconds();
+#endif
 		execScripts();
 		if (!IsInPause())
 			m_World->update(m_deltaTime);
@@ -342,8 +349,11 @@ void CGame::DisplayInfo(float fps)
 
 	if (m_Mode == MENU)
 	{
+		//TODO: FIX THIS
+#if 0
 		auto c = sf::Mouse::getPosition(::getWindow());
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(m_pRender->GetHeight() - c.y)).c_str(), info.getDTI());
+#endif
 	}
 
 
@@ -352,7 +362,8 @@ void CGame::DisplayInfo(float fps)
 
 bool CGame::Run(bool& bRelaunch) {
 	m_Log->Log("[OK] Game started\n");
-  m_time = deltaClock.restart().asSeconds();
+	//TODO: FIX THIS
+  //m_time = deltaClock.restart().asSeconds();
 #ifdef ENABLE_MUSIC_LIST
   m_PlayList.setVolume(10.f);
   m_PlayList.play();
@@ -470,53 +481,59 @@ void CGame::PersistentHandler(const SInputEvent& event)
 	auto lpx = m_Console->GetCVar("lpx");
 	auto lpy = m_Console->GetCVar("lpy");
 	auto lpz = m_Console->GetCVar("lpz");
-	switch (event.type)
+	////////////////////////
+	bool keyPressed = false;
+	////////////////////////
+	//TODO: INITIALIZE THIS
+	bool control = false;
+	bool shift = false;
+	bool alt = false;
+	////////////////////////
+	if (keyPressed)
 	{
-	case sf::Event::KeyPressed:
-	{
-		if (event.key.code == sf::Keyboard::SemiColon)
+		if (event.keyId == eKI_Semicolon)
 			openShadowMap = !openShadowMap;
-		if (event.key.code >= sf::Keyboard::F1 && event.key.code <= sf::Keyboard::F12)
+		if (event.keyId >= eKI_F1 && event.keyId <= eKI_F12)
 		{
-			if (event.key.control)
+			if (control)
 			{
-				DevMode_SavePlayerPos(event.key.code - sf::Keyboard::F1, "BloomTest");
+				DevMode_SavePlayerPos(event.keyId - eKI_F1, "BloomTest");
 			}
-			else if (event.key.shift)
+			else if (shift)
 			{
-				DevMode_LoadPlayerPos(event.key.code - sf::Keyboard::F1, "BloomTest");
+				DevMode_LoadPlayerPos(event.keyId - eKI_F1, "BloomTest");
 			}
 
 		}
-		switch (event.key.code)
+		switch (event.keyId)
 		{
-		case sf::Keyboard::Up:
+		case eKI_Up:
 		{
 			lpy->Set(lpy->GetFVal() + 0.5f);
 			break;
 		}
-		case sf::Keyboard::Down:
+		case eKI_Down:
 		{
 			lpy->Set(lpy->GetFVal() - 0.5f);
 			break;
 		}
-		case sf::Keyboard::Left:
+		case eKI_Left:
 		{
 			lpx->Set(lpx->GetFVal() - 0.5f);
 			break;
 		}
-		case sf::Keyboard::Right:
+		case eKI_Right:
 		{
 			lpx->Set(lpx->GetFVal() + 0.5f);
 			break;
 		}
-		case sf::Keyboard::Insert:
+		case eKI_Insert:
 		{
 			bool ubf = useBoxFilter->GetIVal();
 			useBoxFilter->Set(!ubf);
 			break;
 		}
-		case sf::Keyboard::Pause:
+		case eKI_Pause:
 		{
 			m_bInPause = !m_bInPause;
 			break;
@@ -524,9 +541,6 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		default:
 			break;
 		}
-	}
-	default:
-		break;
 	}
 }
 
@@ -541,7 +555,8 @@ void CGame::gotoGame()
 	{
     m_World->getActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
-    m_inputHandler->mouseLock(true);
+    m_pInput->ShowCursor(false);
+		m_pInput->GrabInput(true);
 		m_Console->ShowConsole(false);
   }
 }
@@ -587,107 +602,116 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 	if (m_Console->IsOpened())
 		return false;
   */
+	////////////////////////
+	bool keyPressed = false;
+	////////////////////////
+	//TODO: INITIALIZE THIS
+	bool control = false;
+	bool shift = false;
+	bool alt = false;
+	////////////////////////
   auto camera = m_World->getActiveScene()->getCurrentCamera();
-  switch (event.type)
-  {
-  case sf::Event::KeyPressed:
-    switch(event.key.code)
-    {
-		/*
-    case sf::Keyboard::P:
-      isWireFrame = !isWireFrame;
-      return true;
-		*/
-    case sf::Keyboard::Backspace:
-      return true;
-    case sf::Keyboard::Space:
-      camera->mode = CCamera::Mode::FLY;
-      m_Mode = Mode::FLY;
-      return true;
-    case sf::Keyboard::Escape:
-      gotoMenu();
-      return true;
-		case sf::Keyboard::P:
+	if (keyPressed)
+	{
+		switch (event.keyId)
+		{
+			/*
+			case eKI_P:
+				isWireFrame = !isWireFrame;
+				return true;
+			*/
+		case eKI_Backspace:
+			return true;
+		case eKI_Space:
+			camera->mode = CCamera::Mode::FLY;
+			m_Mode = Mode::FLY;
+			return true;
+		case eKI_Escape:
+			gotoMenu();
+			return true;
+		case eKI_P:
 			camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
 			return true;
-		case sf::Keyboard::E:
+		case eKI_E:
 			//m_inputHandler->mouseLock(false);
 			m_Mode = EDIT;
 			return true;
-		case sf::Keyboard::M:
+		case eKI_M:
 			camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
 			return true;
-		case sf::Keyboard::B:
+		case eKI_B:
 			culling = !culling;
 			return true;
-		case sf::Keyboard::F1:
+		case eKI_F1:
 			m_World->getActiveScene()->selectedObject()->second->m_Material->nextDiffuse();
 			return true;
-		case sf::Keyboard::F9:
-			if (event.key.shift)
+		case eKI_F9:
+			if (shift)
 				++currPP;
 			else
 				--currPP;
 			m_World->getActiveScene()->setPostProcessor(postProcessors[currPP % postProcessors.size()]);
 			return true;
-    case sf::Keyboard::Enter:
-      if (event.key.alt == true)
-        gotoFullscreen();
-      return true;
-    }
-  default:
-    m_player->OnInputEvent(event);
-  }
+		case eKI_Enter:
+			if (alt == true)
+				gotoFullscreen();
+			return true;
+		}
+	}
+	else
+	{
+		m_player->OnInputEvent(event);
+	}
   return false;
 }
 
 bool CGame::FlyInputEvent(const SInputEvent& event)
 {
-  /*
-	if (m_Console->IsOpened())
-		return false;
-  */
-	switch (event.type)
-  {
-  case sf::Event::KeyPressed:
-    switch(event.key.code)
+	////////////////////////
+	bool keyPressed = false;
+	////////////////////////
+  if (keyPressed)
+	{
+    switch(event.keyId)
     {
-    case sf::Keyboard::P:
+    case eKI_P:
       isWireFrame = !isWireFrame;
       return true;
-    case sf::Keyboard::Backspace:
+    case eKI_Backspace:
       return true;
-    case sf::Keyboard::Space:
+    case eKI_Space:
       gotoGame();
       return true;
-    case sf::Keyboard::Escape:
-      m_inputHandler->mouseLock(false);
+    case eKI_Escape:
+			//TODO: FIX IT
+      //m_inputHandler->mouseLock(false);
       m_Mode = Mode::MENU;
       return true;
     }
-  default:
+
+	}
+	else
+	{
     m_player->OnInputEvent(event);
-  }
+	}
   return false;
 }
 
 bool CGame::MenuInputEvent(const SInputEvent& event)
 {
-  /*
-	if (m_Console->IsOpened())
-		return false;
-  */
-  switch (event.type)
-  {
-  case sf::Event::KeyPressed:
-    switch (event.key.code)
+	////////////////////////
+	bool keyPressed = false;
+	////////////////////////
+  if (keyPressed)
+	{
+    switch (event.keyId)
     {
-    case sf::Keyboard::Escape:
+    case eKI_Escape:
       //m_inputHandler->mouseLock(false);
       //m_Mode = Mode::MENU;
 			//Stop();
       return true;
-    case sf::Keyboard::Enter:
+    case eKI_Enter:
 			gotoGame();
       return true;
     default:
@@ -696,8 +720,10 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 #else
       return false;
 #endif // GUI
-
     }
+	}
+		//TODO: FIXT IT
+#if NEED_USE_IT
 	case sf::Event::MouseMoved:
 	{
 		if (!can_drag_vp)
@@ -774,7 +800,7 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 #else
       return false;
 #endif // GUI
-  }
+#endif
 
 	if (canDragViewPortWidth && mousePressed)
 	{
@@ -797,31 +823,39 @@ bool CGame::DefaultInputEvent(const SInputEvent& event)
 
 bool CGame::EditInputEvent(const SInputEvent& event)
 {
-	switch (event.type)
+	////////////////////////
+	bool keyPressed = false;
+	////////////////////////
+	//TODO: INITIALIZE THIS
+	bool control = false;
+	bool shift = false;
+	bool alt = false;
+	////////////////////////
+	
+	if (keyPressed)
 	{
-	case sf::Event::KeyPressed:
-		switch (event.key.code)
+		switch (event.keyId)
 		{
-		case sf::Keyboard::Escape:
+		case eKI_Escape:
 			gotoMenu();
 			return true;
-		case sf::Keyboard::I:
+		case eKI_I:
 			m_World->getActiveScene()->selectedObject()->second->move(Movement::FORWARD);
 			return true;
-		case sf::Keyboard::U:
+		case eKI_U:
 			m_World->getActiveScene()->selectedObject()->second->move(Movement::BACKWARD);
 			return true;
-		case sf::Keyboard::J:
+		case eKI_J:
 			m_World->getActiveScene()->selectedObject()->second->move(Movement::DOWN);
 			return true;
-		case sf::Keyboard::K:
+		case eKI_K:
 			m_World->getActiveScene()->selectedObject()->second->move(Movement::UP);
 			return true;
-		case sf::Keyboard::V:
+		case eKI_V:
 			m_World->getActiveScene()->selectedObject()->second->setVisibility(!m_World->getActiveScene()->selectedObject()->second->visible());
 			return true;
-		case sf::Keyboard::Tab:
-			if (event.key.shift)
+		case eKI_Tab:
+			if (shift)
 			{
 				m_World->getActiveScene()->selectPrevObject();
 			}
@@ -833,22 +867,12 @@ bool CGame::EditInputEvent(const SInputEvent& event)
 		default:
 			return m_player->OnInputEvent(event);
 		}
-	case sf::Event::MouseWheelScrolled:
-	{
-		float factor = event.mouseWheel.delta < 0 ? 0.9f : 1.1f;
-		m_World->getActiveScene()->selectedObject()->second->m_transform.scale *= factor;
-		return true;
 	}
-	case sf::Event::TextEntered:
+	else
 	{
-		if (event.text.unicode == ':')
-		{
-			m_Console->ShowConsole(true);
-		}
-	}
-	default:
 		return m_player->OnInputEvent(event);
 	}
+
   return false;
 }
 
@@ -873,14 +897,21 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 
 bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
+	////////////////////////
+	bool keyPressed = false;
+	////////////////////////
+	//TODO: INITIALIZE THIS
+	bool control = false;
+	bool shift = false;
+	bool alt = false;
 	retflag = true;
-	switch (event.type)
+	
+	if (keyPressed)
 	{
-	case sf::Event::KeyPressed:
-		switch (event.key.code)
+		switch (event.keyId)
 		{
-		case sf::Keyboard::Tilde:
-			if (event.key.control)
+		case eKI_Tilde:
+			if (control)
 			{
 				if (m_Console->IsOpened())
 					m_Console->ShowConsole(false);
@@ -894,7 +925,6 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 
 	if (m_Console->IsOpened())
 		return false;
-
 	retflag = false;
 	return {};
 }
@@ -943,7 +973,8 @@ void CGame::PostRender()
 void CGame::gotoMenu()
 {
   m_Mode = MENU;
-  m_inputHandler->mouseLock(false);
+	m_pInput->ShowCursor(true);
+	m_pInput->GrabInput(true);
 }
 
 void CGame::gotoFullscreen()

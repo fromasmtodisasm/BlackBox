@@ -1,13 +1,15 @@
 #pragma once
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Window.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
 
+struct IWindow;
+
 typedef int glContextAttribute;
+
 
 enum AttributeType
 {

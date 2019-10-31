@@ -5,6 +5,8 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/IWindow.hpp>
+
 
 //
 #include <SFML/Window.hpp>
@@ -39,9 +41,12 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		glContextType = sf::ContextSettings::Debug;
 	else
 		glContextType = sf::ContextSettings::Attribute::Core;
+	//TODO: FIX THIS
+#if 0
   sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
 	if (!m_Window->create(reinterpret_cast<void*>(&settings)))
 		return nullptr;
+#endif
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
 		return nullptr;
   if (!OpenGLLoader())

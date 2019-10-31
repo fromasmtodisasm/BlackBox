@@ -179,6 +179,7 @@ private:
   ISystem *m_pSystem;
   IScriptSystem *m_pScriptSystem;
   IRender *m_pRender;
+	IInput* m_pInput;
   IWindow *m_Window;
   IInputHandler *m_inputHandler;
   World *m_World;
