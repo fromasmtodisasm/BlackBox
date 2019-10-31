@@ -437,7 +437,7 @@ void HdrTechnique::downsamplingStandard()
 		ds->Uniform(rx, "ry");
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
 
-		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
+		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
 		if (first_iteration)
