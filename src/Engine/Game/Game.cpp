@@ -197,8 +197,11 @@ bool CGame::Init(ISystem *pEngine)  {
   m_Console->SetImage(consoleBackGround);
 
 	// other
+	//TODO: FIX IT
+#if 0
 	mousePrev = sf::Mouse::getPosition();
 	mouseDelta = sf::Vector2i(0,0);
+#endif
 #if CURSOR_FIXED
 	cursor.loadFromSystem(sf::Cursor::Arrow);
 	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
