@@ -20,6 +20,7 @@ CScriptObjectGame::~CScriptObjectGame()
 void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 {
 	_ScriptableEx<CScriptObjectGame>::InitializeTemplate(pSS);
+	REG_FUNC(CScriptObjectGame, SendMessage);
 	REG_FUNC(CScriptObjectGame, Stop);
 	REG_FUNC(CScriptObjectGame, gotoMenu);
 	REG_FUNC(CScriptObjectGame, gotoGame);
@@ -46,6 +47,20 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
 	m_pSystem = pGame->GetSystem();
 	m_pConsole = m_pSystem->GetIConsole();
 	InitGlobal(pScriptSystem, "Game", this);
+}
+
+int CScriptObjectGame::SendMessage(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(1);
+	const char* pszMsg;
+	pH->GetParam(1, pszMsg);
+
+	if (pszMsg)
+		m_pGame->SendMessage(pszMsg);
+	else
+		m_pScriptSystem->RaiseError("SendMessage() parameter is nil");
+
+	return pH->EndFunction();
 }
 
 int CScriptObjectGame::Stop(IFunctionHandler* pH)

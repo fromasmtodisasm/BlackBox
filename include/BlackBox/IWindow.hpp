@@ -17,7 +17,7 @@ typedef struct Cursor Cursor;
 struct IWindow {
  virtual bool create(Params params) = 0;
  virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) = 0;
- //virtual bool init() = 0;
+ //virtual bool Init() = 0;
  virtual void update() = 0;
  virtual void clear() = 0;
  virtual bool closed() = 0;

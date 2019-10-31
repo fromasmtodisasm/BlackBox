@@ -7,6 +7,7 @@
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectScript.hpp>
+#include <BlackBox/Common/CmdLine.hpp>
 
 class CConsole;
 class CRender;
@@ -14,13 +15,13 @@ class CRender;
 class CSystem : public ISystem, public IInputEventListener, public IConsoleVarSink
 {
 public:
-	CSystem();
+	CSystem(SSystemInitParams& initParams);
 	~CSystem();
   
 	// Inherited via ISystem
   virtual bool Init() override;
   virtual void Start() override;
-	virtual void Update() override;
+	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
 	virtual void BeginFrame() override;
 	virtual void EndFrame() override;
   virtual void Release() override;
@@ -51,6 +52,9 @@ public:
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 	bool ConfigLoad(const char* file);
+
+private:
+	void ParseCMD();
 private:
   ILog *m_pLog;
   CConsole *m_pConsole;
@@ -74,6 +78,9 @@ private:
 	ICVar* r_zbpp;
 	ICVar* r_sbpp;
 	ICVar* r_fullscreen;
+
+	SSystemInitParams& m_startupParams;
+	CCmdLine* m_pCmdLine;
 
 	// Inherited via ISystem
 	virtual bool IsDevMode() override;

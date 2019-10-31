@@ -81,7 +81,8 @@ void CSFMLWindow::Create(int width, int height, bool fullscreen, unsigned int cb
 	else
 	{
 		mode = sf::VideoMode(m_Width = width, m_Height = height, cbpp);
-		style = sf::Style::Default;
+		//style = sf::Style::Default;
+		style = sf::Style::Titlebar | sf::Style::Close;
 	}
 #if 1
 	m_contextSettings.antialiasingLevel = 8;
@@ -140,14 +141,6 @@ bool CSFMLWindow::OnInputEvent(sf::Event &event)
   if (event.type == sf::Event::Closed)
     m_bClose = true;
 
-  /*
-  // Escape key: exit
-  if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
-  {
-    m_Window->close();
-    m_bClose = true;
-  }
-  */
   if (event.type == sf::Event::Resized)
   {
 		m_Width = event.size.width;

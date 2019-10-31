@@ -130,7 +130,7 @@ CGame::CGame(std::string title) :
   m_PlayList.addTrack("japan.ogg");
 }
 
-bool CGame::init(ISystem *pEngine)  {
+bool CGame::Init(ISystem *pEngine)  {
   m_pSystem /*= gISystem */= pEngine;
 	m_pRender = m_pSystem->GetIRender();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
@@ -155,7 +155,7 @@ bool CGame::init(ISystem *pEngine)  {
   auto is_complete = m_Console->GetCVar("g_init_complete");
   if (is_complete == nullptr)
   {
-    //TODO: log: error load init.cfg
+    //TODO: log: error load Init.cfg
     return false;
   }
 
@@ -198,60 +198,56 @@ bool CGame::init(ISystem *pEngine)  {
 	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
 
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+	if (m_Console->GetCVar("nsightDebug"))
+	{
+		m_Console->ExecuteString("r_displayinfo 0");
+	}
 
   return true;
 }
 
-bool CGame::update() {
-  while (!m_Window->closed() &&  m_running) {
-		m_pSystem->Update();
-		m_pSystem->BeginFrame();
-		{
-			sf::Time deltaTime = deltaClock.restart();
-			m_deltaTime = deltaTime.asSeconds();
-			m_time += m_deltaTime;
-			fps =  1000.0f / deltaTime.asMilliseconds();
-			PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
-				input();
-			PROFILER_POP_CPU_MARKER();
-			execScripts();
-			m_Window->update();
+bool CGame::Update() {
+	m_pSystem->Update(0, IsInPause());
+	m_pSystem->BeginFrame();
+	{
+		sf::Time deltaTime = deltaClock.restart();
+		m_deltaTime = deltaTime.asSeconds();
+		m_time += m_deltaTime;
+		fps =  1000.0f / deltaTime.asMilliseconds();
+		execScripts();
+		if (!IsInPause())
 			m_World->update(m_deltaTime);
-			setRenderState();
 
-			{
-				DEBUG_GROUP("ALL RENDERING");
-					PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
-						render();
-					PROFILER_POP_CPU_MARKER();
-						m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
-					PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-						drawHud(fps);
-					PROFILER_POP_CPU_MARKER();
-			}
+		setRenderState();
+
+		{
+			DEBUG_GROUP("ALL RENDERING");
+				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+					render();
+				PROFILER_POP_CPU_MARKER();
+					m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+				PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+					drawHud(fps);
+				PROFILER_POP_CPU_MARKER();
 		}
-		//////////////////////////////////////////////////////////////////////////
-		// Special update function for developers mode.
-		//////////////////////////////////////////////////////////////////////////
-		if (IsDevModeEnable() && false)
-			DevModeUpdate();
-		//////////////////////////////////////////////////////////////////////////
-
-		//////////////////////////////////////////////////////////////////////////
-
-		m_pSystem->EndFrame();
-    m_Window->swap();
-  }
-
-	if (m_running == false)
-	{
-		CREATE_CONSOLE_VAR("stpo_running", 1, 0);
 	}
-	else
+	//////////////////////////////////////////////////////////////////////////
+	// Special update function for developers mode.
+	//////////////////////////////////////////////////////////////////////////
+	if (IsDevModeEnable() && false)
+		DevModeUpdate();
+	//////////////////////////////////////////////////////////////////////////
+	while (!m_qMessages.empty())
 	{
-		CREATE_CONSOLE_VAR("window_closed", 1, 0);
+		string smsg = m_qMessages.front();
+		m_qMessages.pop();
+		ProcessPMessages(smsg.c_str());
 	}
-	return true;
+	//////////////////////////////////////////////////////////////////////////
+
+	m_pSystem->EndFrame();
+
+	return m_bUpdateRet;
 }
 
 void CGame::execScripts()
@@ -329,8 +325,8 @@ void CGame::DisplayInfo(float fps)
   }
 
   render->PrintLine("To hide depth buffer press <;>\n", dti);
-  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CONSOLE_VAR("r_cam_w")->GetFVal()) + "\n").c_str(), dti);
-  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CONSOLE_VAR("r_cam_h")->GetFVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
+  render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
   render->PrintLine(pos.c_str(), info.getDTI());
@@ -344,29 +340,28 @@ void CGame::DisplayInfo(float fps)
 	if (m_Mode == MENU)
 	{
 		auto c = sf::Mouse::getPosition(::getWindow());
-		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(c.y)).c_str(), info.getDTI());
+		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(m_pRender->GetHeight() - c.y)).c_str(), info.getDTI());
 	}
 
 
 
 }
 
-bool CGame::run() {
+bool CGame::Run(bool& bRelaunch) {
 	m_Log->Log("[OK] Game started\n");
   m_time = deltaClock.restart().asSeconds();
   m_PlayList.setVolume(10.f);
   //m_PlayList.play();
   m_isMusicPlaying = true;
-  update();
-  return true;
-}
+	m_bRelaunch = false;
+	while (1)
+	{
+		if (!Update())
+			break;
+	}
 
-void CGame::input()
-{
-  ICommand *cmd;
-  //std::vector<ICommand*> qcmd;  
-  while ((cmd = m_inputHandler->handleInput()) != nullptr)
-    ;//cmd->execute();
+	bRelaunch = m_bRelaunch;
+  return true;
 }
 
 bool CGame::loadScene() {
@@ -409,11 +404,24 @@ void CGame::setRenderState()
 void CGame::render()
 {
   m_Window->clear();
+	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
   /* Rendering code here */
   //int w = m_Window->viewPort.width - m_Window->viewPort.left;
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;
-  int w = m_Window->getWidth();
-  int h = m_Window->getHeight();
+	float w;
+	float h;
+	if (GET_CVAR("r_aspect")->GetIVal())
+	{
+		w = m_Window->getHeight();
+		h = m_Window->getWidth();
+	}
+	else
+	{
+		w = GET_CVAR("r_cam_w")->GetIVal();
+		h = GET_CVAR("r_cam_h")->GetIVal();
+	}
+	
+	
 	auto r = ((float)w) / h;
   m_World->getActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
@@ -444,7 +452,9 @@ bool CGame::OnInputEvent(const SInputEvent& event)
 		bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag) return retval;
 	}
-  bool result = OnInputEventProxy(event);
+	bool result = false;
+	if (!IsInPause())
+		OnInputEventProxy(event);
 	PersistentHandler(event);
   return result;
 }
@@ -499,6 +509,11 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		{
 			bool ubf = useBoxFilter->GetIVal();
 			useBoxFilter->Set(!ubf);
+			break;
+		}
+		case sf::Keyboard::Pause:
+		{
+			m_bInPause = !m_bInPause;
 			break;
 		}
 		default:
@@ -663,9 +678,9 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
     switch (event.key.code)
     {
     case sf::Keyboard::Escape:
-      m_inputHandler->mouseLock(false);
-      m_Mode = Mode::MENU;
-			Stop();
+      //m_inputHandler->mouseLock(false);
+      //m_Mode = Mode::MENU;
+			//Stop();
       return true;
     case sf::Keyboard::Enter:
 			gotoGame();
@@ -682,14 +697,14 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 	{
 		if (!can_drag_vp)
 			return true;
-		auto w = GET_CONSOLE_VAR("r_cam_w")->GetIVal();
-		auto h = GET_CONSOLE_VAR("r_cam_h")->GetIVal();
+		auto w = GET_CVAR("r_cam_w")->GetIVal();
+		auto h = GET_CVAR("r_cam_h")->GetIVal();
 		auto window = m_pSystem->GetIWindow();
 
-		if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
+		if (GET_CVAR("show_all_frame_buffer")->GetIVal())
 		{
-			w *= w / GET_CONSOLE_VAR("r_backbuffer_w")->GetFVal();
-			h *= h / GET_CONSOLE_VAR("r_backbuffer_h")->GetFVal();
+			w *= w / GET_CVAR("r_backbuffer_w")->GetFVal();
+			h *= h / GET_CVAR("r_backbuffer_h")->GetFVal();
 		}
 
 		mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;
@@ -879,9 +894,30 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 	return {};
 }
 
+void CGame::ProcessPMessages(const char* szMsg)
+{
+	if (stricmp(szMsg, "Quit") == 0)	// quit message
+	{
+		m_bUpdateRet = false;
+		return;
+	}
+	else
+	if (stricmp(szMsg, "Relaunch") == 0)	// relaunch message
+	{
+		m_bRelaunch = true;
+		m_bUpdateRet = false;
+		return;
+	}
+}
+
+bool CGame::IsInPause()
+{
+	return m_bInPause;
+}
+
 void CGame::Stop()
 {
-  m_running = false;
+  m_bUpdateRet = false;
 }
 
 float CGame::getDeltaTime()

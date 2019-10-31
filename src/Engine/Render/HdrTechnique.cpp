@@ -9,9 +9,9 @@
 #include <BlackBox/ISystem.hpp>
 
 #define NBLOOM
-#define IMAGE 0
-#define PREVIOS 0
-#define CURRENT 1
+constexpr auto IMAGE = 0;
+constexpr auto PREVIOS = 0;
+constexpr auto CURRENT = 1;
 
 HdrTechnique::HdrTechnique()
 	:
@@ -37,7 +37,12 @@ HdrTechnique::HdrTechnique()
 	blurOnly(nullptr),
 	cam_height(nullptr),
 	cam_width(nullptr),
-	render(nullptr)
+	render(nullptr),
+
+	quadCorners{0},
+	quadCornersVBO{0},
+	testid(-1),
+	timer_queries{0}
 {
 }
 
@@ -53,7 +58,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
     return true;
   render = GetISystem()->GetIRender();
   m_Scene = pScene;
-	initConsoleVariables();
+	InitConsoleVariables();
 	initTest();
   createShader();
 	CreateCommands();
@@ -75,9 +80,9 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
-	glm::ivec2 resolution;// = glm::ivec2(render->GetWidth(), render->GetHeight());
-	auto w = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_w");
-	auto h = GetISystem()->GetIConsole()->GetCVar("r_backbuffer_h");
+	glm::ivec2 resolution;
+	auto w = GET_CVAR("r_backbuffer_w");
+	auto h = GET_CVAR("r_backbuffer_h");
 	if (format != nullptr)
 	{
 		resolution = glm::ivec2(format->m_Width, format->m_Height);
@@ -106,6 +111,9 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 		for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
 		{
 			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
+			chain[i]->bind();
+			chain[i]->clear(gl::Color(1, 0, 0, 1));
+			chain[i]->unbind();
 			width >>= 1;
 			if (width <= 0)
 				width = 1;
@@ -214,7 +222,6 @@ void HdrTechnique::BloomPass()
 		PROFILER_POP_CPU_MARKER();
 	}
 
-
 #if 0
 	glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
 	glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
@@ -293,36 +300,36 @@ void HdrTechnique::createShader()
 	m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
 
 	const int MAX_CORNERS = 4;
+#if COMPUTE_BLOOM
 	glGenBuffers(1, &quadCornersVBO);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, quadCornersVBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(glm::vec2),	NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(Vec2),	NULL, GL_DYNAMIC_DRAW);
+#endif
 
 }
 
-void HdrTechnique::initConsoleVariables()
+void HdrTechnique::InitConsoleVariables()
 {
-  exposure =				CREATE_CONSOLE_VAR("exp", 1.0f, 0, "exposure");
-  enabled =					CREATE_CONSOLE_VAR("hdr", 1, 0, "Enable/disable HDR");
-  bloom =						CREATE_CONSOLE_VAR("bloom", 1, 0, "Enable/disable HDR");
-  bloomThreshold =	CREATE_CONSOLE_VAR("bt", 2.0f, 0, "Bloom threshold");
-  blurOn =					CREATE_CONSOLE_VAR("blur", 1, 0, "Enable/disable blur for bloom");
-  blurOnly =				CREATE_CONSOLE_VAR("blur_only", 0, 0, "Enable/disable blur for bloom");
-  bloom_exposure =	CREATE_CONSOLE_VAR("bexp", 0.007f, 0, "Enable/disable blur for bloom");
-  bloomTime =				CREATE_CONSOLE_VAR("bloomtime", 0.f, 0, "Time of bloom");
-  upsampleTime =		CREATE_CONSOLE_VAR("uptime", 0.f, 0, "Time of bloom");
-  downsampleTime =	CREATE_CONSOLE_VAR("dtime", 0.f, 0, "Time of bloom");
-  downsampleType =	CREATE_CONSOLE_VAR("dtype", 0, 0, "Type of bloom downsample [0-standard/1-compute]");
-  offset =					CREATE_CONSOLE_VAR("offset", -3.0f, 0, "Enable/disable blur for bloom");
-  useBoxFilter =		CREATE_CONSOLE_VAR("bf", 0, 0, "Enable/disable BoxFilter in bloom");
-  defaultFilter =		CREATE_CONSOLE_VAR("df", 1, 0, "Enable/disable default filtering in bloom");
+  exposure =				CREATE_CVAR("exp", 1.0f, 0, "exposure");
+  enabled =					CREATE_CVAR("hdr", 1, 0, "Enable/disable HDR");
+  bloom =						CREATE_CVAR("bloom", 1, 0, "Enable/disable HDR");
+  bloomThreshold =	CREATE_CVAR("bt", 2.0f, 0, "Bloom threshold");
+  blurOn =					CREATE_CVAR("blur", 1, 0, "Enable/disable blur for bloom");
+  blurOnly =				CREATE_CVAR("blur_only", 0, 0, "Enable/disable blur for bloom");
+  bloom_exposure =	CREATE_CVAR("bexp", 0.007f, 0, "Enable/disable blur for bloom");
+  bloomTime =				CREATE_CVAR("bloomtime", 0.f, 0, "Time of bloom");
+  upsampleTime =		CREATE_CVAR("uptime", 0.f, 0, "Time of bloom");
+  downsampleTime =	CREATE_CVAR("dtime", 0.f, 0, "Time of bloom");
+  downsampleType =	CREATE_CVAR("dtype", 0, 0, "Type of bloom downsample [0-standard/1-compute]");
+  offset =					CREATE_CVAR("offset", -3.0f, 0, "Enable/disable blur for bloom");
+  useBoxFilter =		CREATE_CVAR("bf", 0, 0, "Enable/disable BoxFilter in bloom");
+  defaultFilter =		CREATE_CVAR("df", 1, 0, "Enable/disable default filtering in bloom");
 
 	cam_width		= GetISystem()->GetIConsole()->GetCVar("r_cam_w");
 	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
 	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
-	//GetISystem()->GetIConsole()->Register("show_all_frame_buffer", &showAllFrameBuffer, 1);
-
-	GetISystem()->GetIConsole()->Register("show_all_frame_buffer", &showAllFrameBuffer, 1);
+	REGISTER_CVAR("show_all_frame_buffer", showAllFrameBuffer, 1, VF_NULL, "");
 
 }
 
@@ -339,7 +346,7 @@ void HdrTechnique::initTest()
 	testid = std::min(GetISystem()->GetIConsole()->GetCVar("testid")->GetIVal(), numFormats);
 }
 
-int HdrTechnique::getMips(glm::vec2 resolution)
+int HdrTechnique::getMips(Vec2 resolution)
 {
 	//return static_cast<int>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1);
 	return 6;
@@ -407,42 +414,41 @@ void HdrTechnique::downsamplingStandard()
 	// --------------------------------------------------
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
-	m_DownsampleShader->Use();
-  m_DownsampleShader->Uniform(offset->GetFVal(), "offset");
+	auto& ds = m_DownsampleShader;
+	ds->Use();
+	ds->Uniform(offset->GetFVal(), "offset");
 
 	render->SetState(IRender::State::DEPTH_TEST, false);
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
 		
-	auto w = cam_width->GetFVal();
-	auto h = cam_height->GetFVal();
+	float w = cam_width->GetIVal();
+	float h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 
-	m_ScreenShader->Uniform(glm::round(w/hdr_w), "vx");
-	m_ScreenShader->Uniform(glm::round(h/hdr_h), "vy");
-	//m_ScreenShader->Uniform(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "view");
+	ds->Uniform((w/hdr_w), "vx");
+	ds->Uniform((h/hdr_h), "vy");
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 		auto rx = w / (1 << (i + 1));
 		auto ry = h / (1 << (i + 1));
-		auto& ds = m_DownsampleShader;
 		ds->Uniform(rx, "rx");
-		ds->Uniform(rx, "ry");
+		ds->Uniform(ry, "ry");
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
 
-		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
+		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
 		if (first_iteration)
 			first_iteration = false;
 	}
 	pingpong = !horizontal;
-	m_DownsampleShader->Unuse();
+	ds->Unuse();
 
 #if 0
 	glBindBufferBase(GL_ARRAY_BUFFER, 2, quadCornersVBO);
-	glm::vec2 *buf = static_cast<glm::vec2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
+	Vec2 *buf = static_cast<Vec2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -474,89 +480,72 @@ void HdrTechnique::downsamplingCompute()
 
 void HdrTechnique::upsampling()
 {
-	m_UpsampleShader->Use();
-	m_UpsampleShader->Uniform(blurOn->GetIVal(), "blurOn");
-	m_UpsampleShader->Uniform(blurOnly->GetIVal(), "blurOnly");
+	auto& up = m_UpsampleShader;
+	up->Use();
+	up->Uniform(blurOn->GetIVal(), "blurOn");
+	up->Uniform(blurOnly->GetIVal(), "blurOnly");
 	
 	uint32_t amount;
 	bool first_iteration = true;
 	render->SetState(IRender::State::DEPTH_TEST, false);
 
-		auto w = (float)cam_width->GetFVal();
-		auto h = (float)cam_height->GetFVal();
-		auto hdr_w = m_HdrBuffer->viewPort.z;
-		auto hdr_h = m_HdrBuffer->viewPort.w;
-	//m_ScreenShader->Uniform(glm::vec4(0,0,w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
-	m_ScreenShader->Uniform(glm::round(w/hdr_w), "vx");
-	m_ScreenShader->Uniform(glm::round(h/hdr_h), "vy");
+	float w = (float)cam_width->GetIVal();
+	float h = (float)cam_height->GetIVal();
+	auto &hdr_w = m_HdrBuffer->viewPort.z;
+	auto &hdr_h = m_HdrBuffer->viewPort.w;
+	up->Uniform((w/hdr_w), "vx");
+	up->Uniform((h/hdr_h), "vy");
 
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-		auto rx = (w / hdr_w) * m_UpsampleBuffer[i-1]->viewPort.z;
-		auto ry = (h / hdr_h) * m_UpsampleBuffer[i-1]->viewPort.w;
-		auto& up = m_UpsampleShader;
-		up->Uniform(rx, "rx");
-		up->Uniform(rx, "ry");
 
-		m_UpsampleBuffer[i - 1]->bind(glm::vec4(0,0, rx, ry));
-		m_UpsampleShader->BindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0],			PREVIOS, "previos");
-		m_UpsampleShader->BindTexture2D(first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : m_DownsampleBuffer[i - 1]->texture[0], CURRENT, "current");
+		int rx = (w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
+		int ry = (h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
+		// Texture that blured
+		auto& blured = first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0];
+		// Texture on which the blur is superimposed
+		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
+
+		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
+		up->Uniform((float)rx, "rx");
+		up->Uniform((float)ry, "ry");
+
+		rt->bind(Vec4(0,0, rx, ry));
+		up->BindTexture2D(blured,					PREVIOS, "blured");
+		up->BindTexture2D(current_level,	CURRENT, "current");
 		m_ScreenQuad.draw();
 		if (first_iteration)
 			first_iteration = false;
 	}
-	m_UpsampleShader->Unuse();
+	up->Unuse();
 }
 
 void HdrTechnique::Do(unsigned int texture)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	//FrameBufferObject::bindDefault(m_HdrBuffer->viewPort);
-	FrameBufferObject::bindDefault({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
-	
-	m_ScreenShader->Use();
-  m_ScreenShader->Uniform(exposure->GetFVal(), "exposure");
-  m_ScreenShader->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");
-	render->SetState(IRender::State::DEPTH_TEST, false);
-
-	m_ScreenShader->BindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
-	m_ScreenShader->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
-	m_ScreenShader->Uniform(bloom->GetIVal(), "bloom");
 	auto w = cam_width->GetIVal();
 	auto h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
-	//if (GET_CONSOLE_VAR("show_all_frame_buffer")->GetIVal())
-	if (showAllFrameBuffer)
-		m_ScreenShader->Uniform(glm::vec4(0.f,0.f, 1.f, 1.f), "viewPortf");
-	else
-		m_ScreenShader->Uniform(glm::vec4(0,0, w, h) / glm::vec4(hdr_w,hdr_h,hdr_w,hdr_h), "viewPortf");
+	auto& ss = m_ScreenShader;
 
-	/*render->SetViewport(
-		0, 0, 
-		cam_width->GetIVal(), cam_height->GetIVal());*/
+	
+	ss->Use();
+  ss->Uniform(exposure->GetFVal(), "exposure");
+  ss->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");
+	render->SetState(IRender::State::DEPTH_TEST, false);
+
+	ss->BindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
+	ss->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
+	ss->Uniform(bloom->GetIVal(), "bloom");
+	Vec2 scale(1.f);
+	if (!showAllFrameBuffer)
+		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
+
+	ss->Uniform(scale, "viewPortf");
+	//FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
+	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();
 }
 
-
-#if 0
-GLuint timer_queries[3];
-// generate three query objects
-glGenQueries(3, &timer_queries);
-[...]
-// query time stamps around all draw routines
-glQueryCounter(timer_queries[0], GL_TIMESTAMP);
-draw_world();
-glQueryCounter(timer_queries[1], GL_TIMESTAMP);
-draw_models();
-glQueryCounter(timer_queries[2], GL_TIMESTAMP);
-[...]
-// later in the program retrieve the query results
-GLuint64 time_0, time_1, time_2;
-glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
-glGetQueryObjectui64v(timer_queries[1], GL_QUERY_RESULT, &time_1);
-glGetQueryObjectui64v(timer_queries[2], GL_QUERY_RESULT, &time_2);
-printf(" world draw time : %f ms \n", double(time_1 - time_0) / 1 e06);
-printf(" models draw time: %f ms \n", double(time_2 - time_1) / 1 e06);
-#endif

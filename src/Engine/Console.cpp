@@ -19,6 +19,17 @@
 
 #define strdup _strdup
 
+bool isnumber(const char* s)
+{
+	auto p = s;
+	while (*p)
+	{
+		if (!isdigit(*p++))
+			return false;
+	}
+	return true;
+}
+
 void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
 {
 	// Get the first occurrence
@@ -157,10 +168,11 @@ void CConsole::Draw()
 	size_t end;
 	auto prompt = getPrompt();
 	time += GetISystem()->GetIGame()->getDeltaTime();
+	render->SetRenderTarget(0);
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
-	m_Font->SetYPos(18);
+	m_Font->SetYPos(16);
 	for (on_line = 0; current_line < end; current_line++, on_line++)
 	{
 		printLine(current_line);
@@ -174,7 +186,7 @@ void CConsole::Draw()
 	//command_text[command.length()] = cursor;
 
 	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
+	printText(Text(std::string("#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
 	printText(Text(std::string(command_text), textColor, 1.0f), 0);
 	drawCursor();
 	/*m_Font->RenderText(
@@ -206,6 +218,7 @@ void CConsole::Animate(float deltatime, IRender* render)
 
 void CConsole::CalcMetrics(size_t& end)
 {
+	constexpr int MAGIC = 1;
 	line_in_console = (int)((height)) / (int)line_height;
 	auto num_all_lines = cmd_buffer.size();
 	if (line_in_console > num_all_lines)
@@ -216,14 +229,14 @@ void CConsole::CalcMetrics(size_t& end)
 	}
 	else
 	{
-		current_line = num_all_lines - line_in_console;
+		current_line = num_all_lines - line_in_console + MAGIC;
     if (page_up && current_line > 0)
       current_line--;
     else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
     {
       current_line++;
     }
-		line_count = line_in_console;
+		line_count = line_in_console - MAGIC;
 		end = num_all_lines;
 	}
   page_up = false;
@@ -288,11 +301,27 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				else
 				{
 					//SetInputLine("");
-					ClearInputLine();
+					//ClearInputLine();
 					addToCommandBuffer(completion);
 				}
 			}
 			return true;
+		case sf::Keyboard::Num6:
+		{
+			if (event.key.control)
+			{
+				cursor.x = 0;
+			}
+			return true;
+		}
+		case sf::Keyboard::Num4:
+		{
+			if (event.key.control)
+			{
+				cursor.x = command.size();
+			}
+			return true;
+		}
 		case sf::Keyboard::Enter:
 		case sf::Keyboard::M:
 		{
@@ -355,6 +384,16 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 			moveCursor(event.key.code == sf::Keyboard::Left);
 			return true;
 		}
+		case sf::Keyboard::L:
+		case sf::Keyboard::B:
+		{
+			if (event.key.alt)
+			{
+				moveCursor(event.key.code == sf::Keyboard::B, true);
+				return true;
+			}
+			return false;
+		}
 		case sf::Keyboard::Delete:
 		{
 			//TODO: rewrite erasing
@@ -381,8 +420,10 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 
 void CConsole::getHistoryElement()
 {
-	auto line_history = cmd_buffer[history_line];
 	SetInputLine("");
+	if (cmd_buffer.size() < 1)
+		return;
+	auto line_history = cmd_buffer[history_line];
 	for (auto& element : line_history)
 	{
 		for (auto& ch : element.data)
@@ -418,13 +459,12 @@ bool CConsole::handleEnterText()
 {
 	cmd_is_compete = true;
 	CommandLine cmd;
-	for (auto& element : getPrompt())
+	/*for (auto& element : getPrompt())
 	{
 		cmd.push_back(element);
-	}
+	}*/
 	cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
 	cmd_buffer.push_back(cmd);
-	//m_World->getActiveScene()->setPostProcessor(nullptr);
 	history_line = cmd_buffer.size();
 	return handleCommand(command);
 }
@@ -533,12 +573,12 @@ void CConsole::Dump()
 void CConsole::getBuffer()
 {
 	std::string toClipBoard = "";
-	for (auto& cmd_line : cmd_buffer)
+	for (auto& cmd_line : command_text)
 	{
-		for (auto& cmd : cmd_line)
-		{
-			toClipBoard += cmd.data;
-		}
+		//for (auto& cmd : cmd_line)
+		//{
+			toClipBoard += cmd_line;// .data;
+		//}
 
 	}
 	sf::Clipboard::setString(toClipBoard);
@@ -592,15 +632,36 @@ void CConsole::drawCursor()
 		m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0,static_cast<int>(cursor.x))), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
 }
 
-void CConsole::moveCursor(bool left)
+void CConsole::moveCursor(bool left, bool wholeWord)
 {
 	if (left)
 	{
-		cursor.x = std::max(0, (int)cursor.x - 1);
+		if (wholeWord)
+		{
+			std::size_t found = command_text.rfind(" ", cursor.x - 1);
+			if (found != std::string::npos)
+				cursor.x = std::min((size_t)cursor.x, found - 1);
+		}
+		else
+		{
+			cursor.x = std::max(0, (int)cursor.x - 1);
+		}
 	}
 	else
 	{
-		cursor.x = std::min((int)command.size(), (int)cursor.x + 1);
+		if (wholeWord)
+		{
+			std::size_t found = command_text.find_first_of(" ", cursor.x);
+			if (found != std::string::npos)
+				cursor.x = std::min(command_text.size(), found + 1);
+			else
+				cursor.x = command_text.size();
+
+		}
+		else
+		{
+			cursor.x = std::min((int)command.size(), (int)cursor.x + 1);
+		}
 	}
 }
 
@@ -1372,12 +1433,22 @@ char* CCVar::GetString()
 
 void CCVar::Set(const char* s)
 {
-	if (type != CVAR_STRING)
-		return;
-	if (value.s != nullptr)
-		delete[] value.s;
-	value.s = strdup(s);
-	type = CVAR_STRING;
+	// TODO: fix it, to check if <s> is number
+	if (type == CVAR_STRING)
+	{
+		if (value.s != nullptr)
+			delete[] value.s;
+	}
+	else if (isnumber(s))
+	{
+		value.i = std::atoi(s);
+		type = CVAR_INT;
+	}
+	else
+	{
+		value.s = strdup(s);
+		type = CVAR_STRING;
+	}
 }
 
 void CCVar::ForceSet(const char* s)

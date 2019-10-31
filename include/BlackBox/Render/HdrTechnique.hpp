@@ -42,7 +42,7 @@ private:
   bool HdrPass();
 	void BloomPass();
   void createShader();
-	void initConsoleVariables();
+	void InitConsoleVariables();
 	void initTest();
 	int getMips(glm::vec2 resolution);
 	void CreateCommands();

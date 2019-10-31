@@ -46,14 +46,14 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 	m_ShadowMapShader = MaterialManager::instance()->getProgram(pd.name);
   
   //==============
-	lightPosX = CREATE_CONSOLE_VAR("lpx", -1.f, 0, "light pos x");
-	lightPosY = CREATE_CONSOLE_VAR("lpy", 15.f, 0, "light pos y");
-	lightPosZ = CREATE_CONSOLE_VAR("lpz", -1.f, 0, "light pos z");
-	lighting =  CREATE_CONSOLE_VAR("lighting", bLighting, 0, "light pos z");
-	s_divider = CREATE_CONSOLE_VAR("sd", 10.0f, 0, "ortho divider");
+	lightPosX = CREATE_CVAR("lpx", -1.f, 0, "light pos x");
+	lightPosY = CREATE_CVAR("lpy", 15.f, 0, "light pos y");
+	lightPosZ = CREATE_CVAR("lpz", -1.f, 0, "light pos z");
+	lighting =  CREATE_CVAR("lighting", bLighting, 0, "light pos z");
+	s_divider = CREATE_CVAR("sd", 10.0f, 0, "ortho divider");
 
-	cam_width =		GET_CONSOLE_VAR("r_cam_w");
-	cam_height =	GET_CONSOLE_VAR("r_cam_h");
+	cam_width =		GET_CVAR("r_cam_w");
+	cam_height =	GET_CVAR("r_cam_h");
 
   //
   return true;
@@ -219,17 +219,19 @@ void ShadowMapping::OnRenderPass()
 	auto& v = m_RenderedScene->viewPort;
   m_RenderedScene->bind({ 0,0, cam_width->GetIVal(), cam_height->GetIVal() });
 	glm::vec4 fog = glm::vec4(
-		GET_CONSOLE_VAR("fogR")->GetFVal(),
-		GET_CONSOLE_VAR("fogG")->GetFVal(),
-		GET_CONSOLE_VAR("fogB")->GetFVal(),
+		GET_CVAR("fogR")->GetFVal(),
+		GET_CVAR("fogG")->GetFVal(),
+		GET_CVAR("fogB")->GetFVal(),
 		1.f);
 	auto pSystem = GetISystem();
-	auto w = pSystem->GetIConsole()->GetCVar("r_cam_w")->GetIVal();
-	auto h = pSystem->GetIConsole()->GetCVar("r_cam_h")->GetIVal();
-	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
-	pSystem->GetIRender()->SetScissor(0, 0, w, h);
+	auto w = cam_width->GetIVal();
+	auto h = cam_height->GetIVal();
+	//pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
+	//pSystem->GetIRender()->SetScissor(0, 0, w, h);
+	auto render = GetISystem()->GetIRender();
+	//render->ClearDepthBuffer();
 	m_RenderedScene->clear(gl::Color(fog));
-	pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
+	//pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
   RenderPass();
 }
 

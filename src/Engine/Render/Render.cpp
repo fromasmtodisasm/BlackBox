@@ -32,7 +32,8 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	if (window == nullptr)
 		return nullptr;
 	//=======================
-	initConsoleVariables();
+	InitConsoleVariables();
+	InitConsoleCommands();
 	//=======================
 	if (isDebug && r_debug->GetIVal() == 1)
 		glContextType = sf::ContextSettings::Debug;
@@ -70,8 +71,8 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	m_ScreenShader->Uniform(0,"screenTexture");
 	m_ScreenShader->Unuse();
 
-	cam_width->Set(GetWidth());
-	cam_height->Set(GetHeight());
+	//cam_width->Set(GetWidth());
+	//cam_height->Set(GetHeight());
 	return result;
 }
 
@@ -188,20 +189,38 @@ void CRender::fillSates()
 #undef STATEMAP
 }
 
-void CRender::initConsoleVariables()
+void CRender::InitConsoleVariables()
 {
-	translateImageY =			CREATE_CONSOLE_VAR("ty", 0.0f, 0);
-	translateImageX =			CREATE_CONSOLE_VAR("tx", 0.0f, 0);
-	scaleImageX =					CREATE_CONSOLE_VAR("sx", 1.0f, 0);
-	scaleImageY =					CREATE_CONSOLE_VAR("sy", 1.0f, 0);
-	needTranslate =				CREATE_CONSOLE_VAR("nt", 1, 0, "Translate or not 2d background of console");
-	needFlipY =						CREATE_CONSOLE_VAR("nfy", 1, 0, "Flip or not 2d background of console");
-	test_proj =						CREATE_CONSOLE_VAR("test_proj", "test proj empty", 0);
-	render_via_viewport = CREATE_CONSOLE_VAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+	translateImageY =			CREATE_CVAR("ty", 0.0f, 0);
+	translateImageX =			CREATE_CVAR("tx", 0.0f, 0);
+	scaleImageX =					CREATE_CVAR("sx", 1.0f, 0);
+	scaleImageY =					CREATE_CVAR("sy", 1.0f, 0);
+	needTranslate =				CREATE_CVAR("nt", 1, 0, "Translate or not 2d background of console");
+	needFlipY =						CREATE_CVAR("nfy", 1, 0, "Flip or not 2d background of console");
+	test_proj =						CREATE_CVAR("test_proj", "test proj empty", 0);
+	render_via_viewport = CREATE_CVAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 
-	r_debug =			GET_CONSOLE_VAR("r_debug");
-	cam_width	=		GET_CONSOLE_VAR("r_cam_w");
-	cam_height =	GET_CONSOLE_VAR("r_cam_h");
+	r_debug =			GET_CVAR("r_debug");
+	cam_width	=		GET_CVAR("r_cam_w");
+	cam_height =	GET_CVAR("r_cam_h");
+}
+
+void CRender::InitConsoleCommands()
+{
+	/*
+	REGISTER_COMMAND(
+		"set_ws",
+		R"(set2dvec("r_cam_w", "r_cam_h", %1, %2))",
+		VF_NULL,
+		"Set size of camera"
+	);
+	*/
+}
+
+void CRender::SetRenderTarget(int nHandle)
+{
+	if (m_CurrentTarget != nHandle)
+		gl::BindFramebuffer(nHandle);
 }
 
 void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
@@ -250,6 +269,24 @@ int CRender::GetCurrentContextViewportHeight() const
 int CRender::GetCurrentContextViewportWidth() const
 {
 	return 0;
+}
+
+void CRender::SetClearColor(const Vec3& vColor)
+{
+	m_clearColor = vColor;
+}
+
+void CRender::ClearDepthBuffer()
+{
+  //glCheck(glClearBufferfv(GL_DEPTH, 0, &m_clearDepth));
+
+	glCheck(glClearDepthf(1.f));
+	gl::Clear(GL_DEPTH_BUFFER_BIT);
+}
+
+void CRender::ClearColorBuffer(const Vec3 vColor)
+{
+	glCheck(glClearBufferfv(GL_COLOR, 0, &glm::vec4(vColor,1)[0]));
 }
 
 int CRender::EnumDisplayFormats(SDispFormat* formats)
@@ -337,7 +374,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
 	float
 		width = GetWidth(),
 		height = GetHeight();
-	gl::BindFramebuffer(0);
+	//gl::BindFramebuffer(0);
 	SetState(State::BLEND, true);
 	SetState(IRender::State::CULL_FACE, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -389,8 +426,8 @@ bool CRender::OnInputEvent(sf::Event& event)
 	{
 	case sf::Event::Resized:
 	{
-		this->cam_width->Set(static_cast<int>(event.size.width));
-		this->cam_height->Set(static_cast<int>(event.size.height));
+		//this->cam_width->Set(static_cast<int>(event.size.width));
+		//this->cam_height->Set(static_cast<int>(event.size.height));
 		break;
 	}
 	default:

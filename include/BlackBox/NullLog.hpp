@@ -64,11 +64,11 @@ inline void NullLog::Shutdown()
   {
     fputs(str.c_str(), output);
   }
-	if (GET_CONSOLE_VAR("stpo_running"))
+	if (GET_CVAR("stpo_running"))
 	{
 		fputs("\n\n*****Game stopped*****", output);
 	}
-	else if (GET_CONSOLE_VAR("window_closed"))
+	else if (GET_CVAR("window_closed"))
 	{
 		fputs("\n\n*****Window Closed*****", output);
 	}

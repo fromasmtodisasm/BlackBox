@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/IGame.hpp>
 #include <BlackBox/ISystem.hpp>
+#include <BlackBox/IGame.hpp>
 //#include <BlackBox/IWindow.hpp>
 #include <BlackBox/Window.hpp>
 #include <BlackBox/IInputHandler.hpp>
@@ -37,6 +37,8 @@ class CTagPoint;
 
 enum ActionType { ACTIONTYPE_MOVEMENT = 1, ACTIONTYPE_COMBAT, ACTIONTYPE_GAME, ACTIONTYPE_MULTIPLAYER, ACTIONTYPE_DEBUG };
 
+//////////////////////////////////////////////////////////////////////
+typedef std::queue<string> StringQueue;
 typedef std::multimap<string, CTagPoint*> TagPointMap;
 
 typedef std::vector<string> Vec2Str;
@@ -69,13 +71,12 @@ public:
   CGame(std::string title);
   CGame() = default;
   ~CGame() = default;
-  bool init(ISystem *pSystem) override;
-  bool update() override;
+  bool Init(ISystem *pSystem) override;
+  bool Update() override;
 	void execScripts();
 	void drawHud(float fps);
   void DisplayInfo(float fps);
-  bool run() override;
-  void input();
+  bool Run(bool& bRelaunch) override;
 
   bool loadScene();
   void setRenderState();
@@ -99,6 +100,9 @@ public:
 	void gotoFly();
 	void gotoEdit();
   void showMenu();
+	virtual void SendMessage(const char* str) override {
+		m_qMessages.push(str);
+	}
 	IWindow* getWindow();
 private:
 
@@ -112,6 +116,8 @@ private:
   bool OnInputEventProxy(const SInputEvent& event);
 
 	bool ShouldHandleEvent(const SInputEvent& event, bool& retflag);
+	void	ProcessPMessages(const char* szMsg);
+	bool	IsInPause();
 
 
   // IGame interface
@@ -185,6 +191,7 @@ private:
   Scene *m_scene;
   SceneManager *m_sceneManager;
   ILog *m_Log;
+	StringQueue							m_qMessages;
   bool isWireFrame = false;
   bool isFullScreen = false;
 
@@ -192,7 +199,8 @@ private:
   bool m_isMusicPlaying = false;
 
   std::string m_Title;
-  bool m_running = true;
+  bool m_bUpdateRet = true;
+  bool m_bRelaunch = true;
   float m_lastTime;
 	float m_time = 0.0f;
   sf::Clock deltaClock;
@@ -249,12 +257,25 @@ private:
   std::stack<GameState*> states;
 	float fps = 0.0;
 
+<<<<<<< HEAD
 	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
 	struct IActionMapManager* m_pIActionMapManager;			//!<
 
+||||||| merged common ancestors
+=======
+	bool m_bInPause = false;
+
+>>>>>>> bloom
 
 	//other
 	bool can_drag_vp = true; // can drag view port ?
+
+
+													 // Inherited via IGame
+
+
+													 // Inherited via IGame
+	virtual void Release() override;
 
 };
 

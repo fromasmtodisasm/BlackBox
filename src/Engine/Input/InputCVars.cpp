@@ -4,6 +4,8 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ISystem.hpp>
 
+#define REGISTER_CVAR(...)
+
 CInputCVars* g_pInputCVars = 0;
 
 CInputCVars::CInputCVars()

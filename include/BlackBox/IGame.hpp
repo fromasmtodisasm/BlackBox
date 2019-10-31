@@ -29,13 +29,16 @@ struct ITagPointManager
 
 
 struct IGame {
-	virtual bool init(ISystem *pSystem) = 0;
-	virtual bool update() = 0;
-	virtual bool run() = 0;
+	virtual bool Init(ISystem *pSystem) = 0;
+	virtual bool Update() = 0;
+	virtual bool Run(bool& bRelaunch) = 0;
   virtual float getDeltaTime() = 0;
   virtual float getTime() = 0;
   virtual float getFPS() = 0;
   virtual void Stop() = 0;
+	virtual void SendMessage(const char* s) = 0;
+	//Shutdown and destroy the module (delete this)
+	virtual void Release() = 0;
 
   virtual IInputHandler *getInputHandler() = 0;
 

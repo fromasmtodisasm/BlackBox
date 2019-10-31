@@ -11,7 +11,7 @@ struct IInputEventListener
 struct IInputHandler
 {
 	virtual ~IInputHandler() {};
-  virtual ICommand *handleInput() = 0;
+  virtual ICommand *handleInput(bool bPause) = 0;
   virtual void AddEventListener(IInputEventListener *pListener) = 0;
 
   virtual sf::Vector2i getDeltaMouse() = 0;

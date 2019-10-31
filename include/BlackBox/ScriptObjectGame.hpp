@@ -16,6 +16,8 @@ public:
 
 	void Init(IScriptSystem* pScriptSystem, CGame* pGame);
 
+	int SendMessage(IFunctionHandler* pH);
+
 	int Stop(IFunctionHandler *pH);
 	int gotoMenu(IFunctionHandler *pH);
 	int gotoFullscreen(IFunctionHandler *pH);

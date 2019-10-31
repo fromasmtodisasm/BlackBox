@@ -31,8 +31,9 @@ ISystem* GetISystem()
 }
 
 
-CSystem::CSystem()
+CSystem::CSystem(SSystemInitParams& m_startupParams)
 	:
+	m_startupParams(m_startupParams),
 	r_window_width(nullptr),
 	r_window_height(nullptr),
 	r_bpp(nullptr),
@@ -72,6 +73,8 @@ CSystem::~CSystem()
 bool CSystem::Init()
 {
 	gISystem = this;
+	/////////////////////////////////////////////
+	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
 	initTimer();
   m_pLog = new NullLog();
   if (m_pLog == nullptr)
@@ -126,6 +129,7 @@ bool CSystem::Init()
 		return false;
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
+	ParseCMD();
 
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
@@ -149,7 +153,7 @@ bool CSystem::Init()
   if (CreateGame(nullptr) == nullptr)
     return false;
 	
-  if (!m_pGame->init(this)) {
+  if (!m_pGame->Init(this)) {
     return false;
 	}
   m_pConsole->PrintLine("[OK] IGame created\n");
@@ -158,7 +162,19 @@ bool CSystem::Init()
 
 void CSystem::Start()
 {
-  m_pGame->run();  
+	bool bRelaunch = false;
+
+  m_pGame->Run(bRelaunch);  
+
+	while (bRelaunch)
+	{
+		m_pGame->Release();
+		m_pGame = CreateGame(nullptr);
+		if (!m_pGame->Init(this))
+			break;
+		m_pGame->Run(bRelaunch);
+	}
+		
 }
 
 void CSystem::Release()
@@ -246,6 +262,15 @@ bool CSystem::ConfigLoad(const char* file)
 	return true;
 }
 
+void CSystem::ParseCMD()
+{
+	std::string cmd = m_startupParams.szSystemCmdLine;
+	if (cmd.find("-nsightDebug") != std::string::npos)
+	{
+		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
+	}
+}
+
 bool CSystem::IsDevMode()
 {
 	return true;
@@ -294,6 +319,7 @@ void CSystem::BeginFrame()
 {
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
+	m_Render->SetState(IRender::State::DEPTH_TEST, true);
 }
 
 void CSystem::EndFrame()
@@ -303,6 +329,8 @@ void CSystem::EndFrame()
 		DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
+
+	m_pWindow->swap();
 }
 
 bool CSystem::OnInputEvent(const SInputEvent& event)
@@ -376,15 +404,28 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 	return result;
 }
 
-void CSystem::Update()
+bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 {
 	//PROFILER_SYNC_FRAME();
+	// Update input
+	{
+		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
+		ICommand *cmd;
+		while ((cmd = m_InputHandler->handleInput(nPauseMode)) != nullptr);
+		PROFILER_POP_CPU_MARKER();
+	}
+	m_pWindow->update();
 	m_pConsole->Update();
+	if (m_pWindow->closed())
+	{
+		m_pGame->SendMessage("Quit");
+	}
+	return true;
 }
 
 BLACKBOX_EXPORT ISystem * CreateSystemInterface(SSystemInitParams& initParams)
 {
 	//MessageBox(NULL, "TEST", "Message", MB_OK);
-  ISystem *system = new CSystem();
+  ISystem *system = new CSystem(initParams);
   return system;
 }

@@ -65,6 +65,30 @@ public:
   // Inherited via IRender
   virtual void DrawFullScreenImage(int texture_id) override;
 
+	virtual void SetCullMode(CullMode mode = CullMode::BACK) override;
+
+	virtual bool DeleteContext(WIN_HWND hWnd) override;
+
+	virtual bool CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) override;
+
+	virtual bool SetCurrentContext(WIN_HWND hWnd) override;
+
+	virtual void MakeMainContextActive() override;
+
+	virtual WIN_HWND GetCurrentContextHWND() override;
+
+	virtual bool IsCurrentContextMainVP() override;
+
+	virtual int GetCurrentContextViewportHeight() const override;
+
+	virtual int GetCurrentContextViewportWidth() const override;
+
+	virtual void SetClearColor(const Vec3& vColor) override;
+
+	virtual void ClearDepthBuffer() override;
+
+	virtual void ClearColorBuffer(const Vec3 vColor) override;
+
 	// Inherited via IConsoleVarSink
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 	// Inherited via IInputEventListener
@@ -72,7 +96,8 @@ public:
 private:
 	void glInit();
 	void fillSates();
-	void initConsoleVariables();
+	void InitConsoleVariables();
+	void InitConsoleCommands();
 
 private:
 	IWindow* m_Window = nullptr;
@@ -125,28 +150,15 @@ private:
 
 	HWND m_HWND;
 
+	Vec3 m_clearColor;
+	float m_clearDepth;
+
+	int m_CurrentTarget;
+
 
 
 	// Inherited via IRender
-	virtual void SetCullMode(CullMode mode = CullMode::BACK) override;
-
-
-	// Унаследовано через IRender
-	virtual bool DeleteContext(WIN_HWND hWnd) override;
-
-	virtual bool CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) override;
-
-	virtual bool SetCurrentContext(WIN_HWND hWnd) override;
-
-	virtual void MakeMainContextActive() override;
-
-	virtual WIN_HWND GetCurrentContextHWND() override;
-
-	virtual bool IsCurrentContextMainVP() override;
-
-	virtual int GetCurrentContextViewportHeight() const override;
-
-	virtual int GetCurrentContextViewportWidth() const override;
+	virtual void SetRenderTarget(int nHandle) override;
 
 };
 

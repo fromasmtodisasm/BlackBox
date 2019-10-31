@@ -1,14 +1,13 @@
 #version 450 core
 //layout (pixel_center_integer) in vec4 gl_FragCoord;
-
-#define OFFSET vec2(0,0)
-
+///////////////////////
 out vec4 FragColor;
 
+///////////////////////
 in vec2 TexCoords;
 
+///////////////////////
 uniform sampler2D image;
-
 uniform bool horizontal;
 uniform float weight[2] = float[](0.125, 0.5);
 uniform float offset = -3.0;
@@ -39,10 +38,6 @@ vec3 offsets[13] = vec3[](
 
 );
 
-//vec4 Sample(vec2 uv) {
-//	return texture(image, uv);
-//}
-
 #define Sample(uv) textureLod(image, uv, 0)
 
 /*
@@ -52,17 +47,25 @@ vec3 offsets[13] = vec3[](
 */
 vec4 downsample(vec2 uv)
 {
-
 	vec4 result = vec4(0);
-	vec2 tex_offset = 1.0 / textureSize(image, 0); // gets size of single texel
+	vec2 tex_size = 1.0 / textureSize(image, 0); // gets size of single texel
 
 	for (int i = 0; i < 13; i++)
 	{
-		vec2 coord = (2 * gl_FragCoord.xy + (offsets[i].xy + offset));
-
-		if (all(lessThan(vec2(vx,vy)*(gl_FragCoord.xy + 0.5*(offsets[i].xy + offset)), vec2(rx - 0,ry - 0))))
+		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
+		float dev = 0.5;
+		vec2 m = vec2(vx,vy) - tex_size;
+//		if (all(lessThan((2 * gl_FragCoord.xy + (offsets[i].xy + offset)), vec2(2*floor(rx) - dev,2*floor(ry) - dev))))
+//		{
+			//vec2 texel = clamp((coord * tex_size), vec2(0.5)*tex_size, m);
+			vec2 texel = round(clamp(coord, vec2(0.5), 2*floor(vec2(rx-1,ry-1)) - 1)) * tex_size;
+			if (all(greaterThan(coord, vec2(2*floor(rx-1)  -1,2*floor(ry-1) - 1))))
+				continue;
+			result += Sample(texel) * offsets[i].z;
+//		}
+		if (1==0)	
 		{
-			vec2 texel = clamp((vec2(vx,vy) * coord * tex_offset), vec2(0), vec2(vx,vy));
+			vec2 texel = clamp(((2 * gl_FragCoord.xy ) * tex_size), vec2(0.5)*tex_size, m);
 			result += Sample(texel) * offsets[i].z;
 		}
 	}

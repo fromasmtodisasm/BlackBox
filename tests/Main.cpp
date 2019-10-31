@@ -29,8 +29,20 @@ int main(int argc, char *argv[]) {
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
   //path = getBasePath(string(argv[0]));
+	std::string cmdline;
+	
+	if (argc > 1)
+	{
+		cmdline += argv[1];
+		for (int i = 2; i < argc; i++)
+		{
+			cmdline = cmdline + " " + argv[i];
+		}
+	}
+
 	SSystemInitParams params;
 	params.sLogFileName = "log.txt";
+	snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem*pSystem = CreateSystemInterface(params);
   if (!pSystem->Init())
   {
