@@ -58,8 +58,8 @@ vec4 downsample(vec2 uv)
 //		if (all(lessThan((2 * gl_FragCoord.xy + (offsets[i].xy + offset)), vec2(2*floor(rx) - dev,2*floor(ry) - dev))))
 //		{
 			//vec2 texel = clamp((coord * tex_size), vec2(0.5)*tex_size, m);
-			vec2 texel = round(clamp(coord, vec2(0), 2*round(vec2(rx,ry) - 1))) * tex_size;
-			if (all(greaterThan(coord, vec2(2*floor(rx) - dev,2*floor(ry) - dev))))
+			vec2 texel = round(clamp(coord, vec2(0.5), 2*floor(vec2(rx-1,ry-1)) - 1)) * tex_size;
+			if (all(greaterThan(coord, vec2(2*floor(rx-1)  -1,2*floor(ry-1) - 1))))
 				continue;
 			result += Sample(texel) * offsets[i].z;
 //		}
