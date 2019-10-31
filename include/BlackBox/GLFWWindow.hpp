@@ -1,4 +1,5 @@
 #pragma once
+#if USE_GLFW
 
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
@@ -38,3 +39,4 @@ private:
 	std::map<int, kcbfunc> kcbfuncs;
 	static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 };
+#endif

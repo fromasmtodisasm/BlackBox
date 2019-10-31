@@ -173,7 +173,7 @@ void CLinuxInput::RemoveTouchEventListener(ITouchEventListener* pListener)
 {
 }
 
-void CLinuxInput::PostTouchEvent(const STouchEvent& event, bool bForce = false)
+void CLinuxInput::PostTouchEvent(const STouchEvent& event, bool bForce/* = false*/)
 {
 }
 

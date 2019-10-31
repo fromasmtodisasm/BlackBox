@@ -1,3 +1,4 @@
+#if USE_SFML
 #include <BlackBox/SFMLWindow.hpp>
 #include <iostream>
 
@@ -87,3 +88,4 @@ void CSFMLWindow::setCursor(Cursor* cursor)
 {
 	m_Window->setMouseCursor(*reinterpret_cast<sf::Cursor*>(cursor));
 }
+#endif

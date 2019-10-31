@@ -420,7 +420,7 @@ void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
 }
 
-bool CRender::OnInputEvent(sf::Event& event)
+bool CRender::OnInputEvent(const SInputEvent& event)
 {
 	switch (event.type)
 	{

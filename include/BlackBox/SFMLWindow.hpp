@@ -1,4 +1,5 @@
 #pragma once
+#if USE_SFML
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/IInput.hpp>
 #include <SFML/System.hpp>
@@ -123,4 +124,4 @@ public:
 	virtual void setCursor(Cursor* cursor) override;
 
 };
-
+#endif

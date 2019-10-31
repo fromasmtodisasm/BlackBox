@@ -140,7 +140,6 @@ bool CGame::Init(ISystem *pEngine)  {
 	m_Window = m_pSystem->GetIWindow();
 	auto input = m_pSystem->GetIInput();
   input->AddEventListener(this);
-	m_Window->setFlags(CWindow::DRAW_GUI);
   
 	initCommands();
 	initVariables();

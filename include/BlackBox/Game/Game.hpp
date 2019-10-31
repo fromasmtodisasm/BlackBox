@@ -116,8 +116,8 @@ private:
   bool OnInputEventProxy(const SInputEvent& event);
 
 	bool ShouldHandleEvent(const SInputEvent& event, bool& retflag);
-	void	ProcessPMessages(const char* szMsg);
-	bool	IsInPause();
+	void ProcessPMessages(const char* szMsg);
+	bool IsInPause();
 
 
   // IGame interface
@@ -257,15 +257,9 @@ private:
   std::stack<GameState*> states;
 	float fps = 0.0;
 
-<<<<<<< HEAD
 	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
 	struct IActionMapManager* m_pIActionMapManager;			//!<
-
-||||||| merged common ancestors
-=======
 	bool m_bInPause = false;
-
->>>>>>> bloom
 
 	//other
 	bool can_drag_vp = true; // can drag view port ?

@@ -5,6 +5,7 @@
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/IInput.hpp>
 
 class CRender : 
 	public IRender,
@@ -92,7 +93,7 @@ public:
 	// Inherited via IConsoleVarSink
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 	// Inherited via IInputEventListener
-	virtual bool OnInputEvent(sf::Event& event) override;
+	virtual bool OnInputEvent(const SInputEvent& event) override;
 private:
 	void glInit();
 	void fillSates();

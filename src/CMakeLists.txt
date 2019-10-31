@@ -4,7 +4,6 @@ project(BlackBox)
 include(GenerateExportHeader)
 #include(FindLua)
 include(FindFreetype)
-include(FindSDL)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -58,13 +57,16 @@ if (LUA_FOUND)
 	target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
 endif()
 
-#find_package(Freetype REQUIRED)
+find_package(Freetype REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${FREETYPE_LIBRARIES})
 
 #find_package(SDL 2 CONFIG REQUIRED)
 #target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
-target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
+if (USE_SDL)
+	include(FindSDL)
+	target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
+endif()
 #target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
 if (USE_SFML)
@@ -77,7 +79,7 @@ if (USE_SFML)
     PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
     )
     add_definitions(-DSFML_WINDOW)
-else()
+elseif(USE_GLFW)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/GLFWWindow.cpp
