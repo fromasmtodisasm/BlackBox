@@ -42,12 +42,12 @@ vec4 blur(vec2 uv)
 				vec2 texel = clamp((uv + vec2(j, i) * tex_offset), vec2(0.5)*tex_offset, m);
 				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
 			}
-		else
-		{
-			vec2 texel = clamp(vec2(uv), vec2(0.5)*tex_offset, 0.5*(gl_FragCoord.xy - 2)/textureSize(blured,0));
-			float anti_overexposure = 1;
-			result += vec4(texture(blured, texel).rgb * weight[index], 1)*anti_overexposure;  
-		}
+			else
+			{
+				vec2 texel = clamp(vec2(uv), vec2(0.5)*tex_offset, 0.5*(gl_FragCoord.xy - 2)/textureSize(blured,0));
+				float anti_overexposure = 1;
+				result += vec4(texture(blured, texel).rgb * weight[index], 1)*anti_overexposure;  
+			}
 			
 		}
 	}

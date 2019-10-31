@@ -434,7 +434,7 @@ void HdrTechnique::downsamplingStandard()
 		auto rx = w / (1 << (i + 1));
 		auto ry = h / (1 << (i + 1));
 		ds->Uniform(rx, "rx");
-		ds->Uniform(rx, "ry");
+		ds->Uniform(ry, "ry");
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
 
 		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
@@ -509,7 +509,7 @@ void HdrTechnique::upsampling()
 
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
 		up->Uniform((float)rx, "rx");
-		up->Uniform((float)rx, "ry");
+		up->Uniform((float)ry, "ry");
 
 		rt->bind(Vec4(0,0, rx, ry));
 		up->BindTexture2D(blured,					PREVIOS, "blured");
