@@ -64,11 +64,12 @@ inline void NullLog::Shutdown()
   {
     fputs(str.c_str(), output);
   }
-	if (GET_CVAR("stpo_running"))
+	bool hasConsole = GetISystem()->GetIConsole() != nullptr;
+	if (hasConsole && GET_CVAR("stpo_running"))
 	{
 		fputs("\n\n*****Game stopped*****", output);
 	}
-	else if (GET_CVAR("window_closed"))
+	else if (hasConsole && GET_CVAR("window_closed"))
 	{
 		fputs("\n\n*****Window Closed*****", output);
 	}
