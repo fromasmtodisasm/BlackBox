@@ -297,6 +297,8 @@ void CRender::ClearColorBuffer(const Vec3 vColor)
 int CRender::EnumDisplayFormats(SDispFormat* formats)
 {
 	int numModes = 0;
+	//TODO: FIX IT
+#if 0
 	auto videoModes = sf::VideoMode::getFullscreenModes();
 
 	numModes = static_cast<int>(videoModes.size());
@@ -311,6 +313,7 @@ int CRender::EnumDisplayFormats(SDispFormat* formats)
 			i++;
 		}
 	}
+#endif
 
 	return numModes;
 }

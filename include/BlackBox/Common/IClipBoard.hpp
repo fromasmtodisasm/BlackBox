@@ -6,7 +6,13 @@ namespace bb {
 	class ClipBoard
 	{
 	public:
-		static std::wstring GetString();
-		static void SetString(std::wstring);
+		static std::wstring GetString()
+		{
+			return std::wstring();
+		}
+		static void SetString(std::wstring)
+		{
+
+		}
 	};
 }
