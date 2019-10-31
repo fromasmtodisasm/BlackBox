@@ -1,3 +1,4 @@
+#ifdef ENABLE_MUSIC_LIST
 #include <BlackBox/MusicList.hpp>
 
 void MusicList::setRootPath(const std::string &RootPath)
@@ -75,4 +76,4 @@ void MusicList::setVolume(float volume)
   m_Volume = volume;
   m_Playlist[m_CurrentTrack]->setVolume(volume);
 }
-
+#endif

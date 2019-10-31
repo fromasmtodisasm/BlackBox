@@ -24,8 +24,9 @@ CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 
 bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
-  switch (event.type) {
-  case sf::Event::MouseButtonPressed:
+	bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
+	bool mouseMoved = event.deviceType == eIDT_Mouse && (event.keyId == eKI_MouseX || event.keyId == eKI_MouseY);
+  if (mousePressed)
   {
     Object *obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
     GameObject *go = new GameObject(obj);
@@ -36,30 +37,33 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 
     return true;
   }
-  case sf::Event::MouseMoved:
+	else if (mouseMoved)
 	{
-    delta = p_gIGame->getInputHandler()->getDeltaMouse();
+		// TODO: GET DELTA  MOUSE
+    //delta = p_gIGame->getInputHandler()->getDeltaMouse();
     m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
     return true;
   }
-  case sf::Event::KeyPressed:
-    return OnKeyPress(event);
-  case sf::Event::KeyReleased:
-    return OnKeyReleas(event);
-  default:
+	else if (event.deviceType == eIDT_Keyboard)
+	{
+		if (event.state == eIS_Pressed)
+			return OnKeyPress(event.keyId);
+		else if (event.state == eIS_Released)
+			return OnKeyReleas(event.keyId);
+	}
+	else
     return GameObject::OnInputEvent(event);
-  }
 }
 
-bool CPlayer::OnKeyPress(sf::Event& event)
+bool CPlayer::OnKeyPress(EKeyId key)
 {
-  m_keys.insert(event.key.code);
+  m_keys.insert(key);
   return true;
 }
 
-bool CPlayer::OnKeyReleas(sf::Event& event)
+bool CPlayer::OnKeyReleas(EKeyId key)
 {
-  m_keys.erase(event.key.code);
+  m_keys.erase(key);
   return false;
 }
 

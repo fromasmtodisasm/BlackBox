@@ -40,7 +40,6 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	r_zbpp(nullptr),
 	r_sbpp(nullptr),
 	r_fullscreen(nullptr),
-  m_InputHandler(nullptr),
   m_Render(nullptr),
   m_pConsole(nullptr),
   m_pFont(nullptr),
@@ -82,7 +81,6 @@ bool CSystem::Init()
 	//=============
 	CWindow* window = new CWindow("BlackBox", 1366, 768);
 	m_pWindow = window;
-	m_InputHandler = window;
 	if (window == nullptr)
 		return false;
 	//=============
@@ -148,8 +146,8 @@ bool CSystem::Init()
 		if (m_pFont->Init("arial.ttf", 16,18) == false)
 			return false;
 	}
-	m_InputHandler->AddEventListener(this);
-	m_InputHandler->AddEventListener(m_pConsole);
+	m_pInput->AddEventListener(this);
+	m_pInput->AddEventListener(m_pConsole);
   if (CreateGame(nullptr) == nullptr)
     return false;
 	

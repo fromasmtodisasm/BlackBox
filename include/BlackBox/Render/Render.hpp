@@ -7,6 +7,14 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
 
+typedef int glContextAttribute;
+
+enum AttributeType
+{
+	DEBUG,
+	RELEASE
+};
+
 class CRender : 
 	public IRender,
 	public IConsoleVarSink,
@@ -126,7 +134,7 @@ private:
 	bool isDebug = false;
 #endif 
 #if defined(_DEBUG) || defined(GL_DEBUG)
-	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Debug;
+	glContextAttribute glContextType = AttributeType::DEBUG;
 #else
 	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
 #endif 

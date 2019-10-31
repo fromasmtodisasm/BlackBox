@@ -40,10 +40,12 @@
 IGame *p_gIGame;
 
 namespace {
+#if 0
 	sf::RenderWindow& getWindow()
 	{
 		return *static_cast<sf::RenderWindow*>(GetISystem()->GetIWindow()->getHandle());
 	}
+#endif
 }
 
 
@@ -125,9 +127,11 @@ CGame::CGame(std::string title) :
 #pragma warning(push)
   m_deltaTime = 0.0f;
   m_lastTime = 0.0f;
+#ifdef ENABLE_MUSIC_LIST
   m_PlayList.setRootPath("res/music/");
   m_PlayList.addTrack("background.ogg");
   m_PlayList.addTrack("japan.ogg");
+#endif
 }
 
 bool CGame::Init(ISystem *pEngine)  {
@@ -224,7 +228,7 @@ bool CGame::Update() {
 				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 					render();
 				PROFILER_POP_CPU_MARKER();
-					m_World->getActiveScene()->present(m_Window->getWidth(), m_Window->getHeight());
+					m_World->getActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
 				PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 					drawHud(fps);
 				PROFILER_POP_CPU_MARKER();
@@ -270,7 +274,7 @@ void CGame::drawHud(float fps)
 void CGame::DisplayInfo(float fps)
 {
   auto num_objects = m_World->getActiveScene()->numObjects();
-  auto line = m_Window->getHeight();
+  auto line = m_pRender->GetHeight();
   auto step = 18;
 
   std::string mode = m_Mode == MENU ? "MENU"
@@ -297,7 +301,7 @@ void CGame::DisplayInfo(float fps)
   info.AddLine("FPS: "							+ std::to_string(fps));
   info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
   info.AddLine("Current mode: "			+ mode);
-  info.AddLine("Width = "						+ std::to_string(m_Window->getWidth()) + "Height = " + std::to_string(m_Window->getHeight()));
+  info.AddLine("Width = "						+ std::to_string(m_pRender->GetWidth()) + "Height = " + std::to_string(m_pRender->GetHeight()));
   info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
   info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
   info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
@@ -349,9 +353,11 @@ void CGame::DisplayInfo(float fps)
 bool CGame::Run(bool& bRelaunch) {
 	m_Log->Log("[OK] Game started\n");
   m_time = deltaClock.restart().asSeconds();
+#ifdef ENABLE_MUSIC_LIST
   m_PlayList.setVolume(10.f);
-  //m_PlayList.play();
+  m_PlayList.play();
   m_isMusicPlaying = true;
+#endif
 	m_bRelaunch = false;
 	while (1)
 	{
@@ -402,7 +408,7 @@ void CGame::setRenderState()
 
 void CGame::render()
 {
-  m_Window->clear();
+  //m_Window->clear();
 	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
   /* Rendering code here */
   //int w = m_Window->viewPort.width - m_Window->viewPort.left;
@@ -411,8 +417,8 @@ void CGame::render()
 	float h;
 	if (GET_CVAR("r_aspect")->GetIVal())
 	{
-		w = m_Window->getHeight();
-		h = m_Window->getWidth();
+		w = m_pRender->GetHeight();
+		h = m_pRender->GetWidth();
 	}
 	else
 	{

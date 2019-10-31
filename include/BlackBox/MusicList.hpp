@@ -1,3 +1,4 @@
+#ifdef ENABLE_MUSIC_LIST
 #ifndef MUSICLIST_H
 #define MUSICLIST_H
 
@@ -27,4 +28,4 @@ public:
 
 #endif // MUSICLIST_H
 
-
+#endif

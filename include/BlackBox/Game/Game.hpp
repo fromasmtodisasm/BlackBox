@@ -1,11 +1,7 @@
 #pragma once
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IGame.hpp>
-//#include <BlackBox/IWindow.hpp>
-#include <BlackBox/Window.hpp>
-#include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/Triangle.hpp>
 #include <BlackBox/World.hpp>
 #include <BlackBox/Game/Player.h>
 #include <BlackBox/CameraController.hpp>
@@ -195,15 +191,22 @@ private:
   bool isWireFrame = false;
   bool isFullScreen = false;
 
+#ifdef ENABLE_MUSIC_LIST
   MusicList m_PlayList;
   bool m_isMusicPlaying = false;
+#endif // ENABLE_MUSIC_LIST
+
 
   std::string m_Title;
   bool m_bUpdateRet = true;
   bool m_bRelaunch = true;
   float m_lastTime;
 	float m_time = 0.0f;
+#ifdef CLOCK_FIXED
+	//TODO: FIX CLOCK
   sf::Clock deltaClock;
+#endif // CLOCK_FIXED
+
   EventListener *listener;
 	bool isDrawingGui = false;
   class GameState; 
@@ -244,7 +247,6 @@ private:
 	bool mousePressed = false;
 	sf::Vector2i mouseDelta;
 	sf::Vector2i mousePrev;
-	sf::Cursor cursor;
 
   enum Mode
   {

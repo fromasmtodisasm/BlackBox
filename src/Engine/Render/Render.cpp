@@ -48,7 +48,7 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
     return nullptr;
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
-	m_pSystem->GetIInputHandler()->AddEventListener(this);
+	m_pSystem->GetIInput()->AddEventListener(this);
 	//=======================
   glInit();
 	m_ScreenQuad = new Quad();
@@ -341,8 +341,6 @@ void CRender::DrawFullScreenImage(int texture_id)
 bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 #if 0
-	m_pSystem->ShowMessage(pVar->GetName(), "Show name", ISystem::M_WARNING);
-#endif
 	if (!strcmp(pVar->GetName(),"r_Width"))
 	{
 		m_Window->changeSize(pVar->GetFVal(), GetHeight());
@@ -351,7 +349,8 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(GetWidth(), pVar->GetFVal());
 	}
-	else if (!strcmp(pVar->GetName(), "r_cam_w"))
+#endif
+	if (!strcmp(pVar->GetName(), "r_cam_w"))
 	{
 		printf("");
 	}
@@ -422,7 +421,7 @@ void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
 
 bool CRender::OnInputEvent(const SInputEvent& event)
 {
-	switch (event.type)
+	switch (event.deviceType)
 	{
 	case sf::Event::Resized:
 	{

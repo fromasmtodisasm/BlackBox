@@ -4,6 +4,8 @@
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Game/GameObject.hpp>
 #include <BlackBox/ICommand.hpp>
+#include <BlackBox/IInput.hpp>
+#include <BlackBox/MathHelper.hpp>
 #ifdef GUI
 #include <imgui-SFML.h>
 #include <imgui.h>
@@ -13,7 +15,6 @@
 #include <queue>
 
 class CGame;
-typedef std::map<sf::Keyboard::Key, ICommand*> KeyBindings;
 typedef std::queue<ICommand*> CommandQueue;
 
 
@@ -25,17 +26,16 @@ class CPlayer : public GameObject
   const float MOUSE_SPEED = 1.5f;
   const float MOUSE_SENSIVITY = 0.05f;
   CGame *Game;
-  KeyBindings m_keyBindings;
   CommandQueue m_commandQueue;
-  std::set<sf::Keyboard::Key> m_keys;
+  std::set<EKeyId> m_keys;
   friend class CGame;
   enum MouseState
   {
     LOCKED,
     FREE
   }mouseState;
-  sf::Vector2i delta;
-  glm::vec3 impulse;
+  Vec2 delta;
+  Vec3 impulse;
 
 public:
   CPlayer();
@@ -44,8 +44,8 @@ public:
   // IInputEventListener interface
 public:
   virtual bool OnInputEvent(const SInputEvent& event) override;
-  bool OnKeyPress(sf::Event& event);
-  bool OnKeyReleas(sf::Event& event);
+  bool OnKeyPress(EKeyId key);
+  bool OnKeyReleas(EKeyId key);
 
   // IDrawable interface
 public:

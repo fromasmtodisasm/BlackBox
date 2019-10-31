@@ -5,6 +5,7 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Game/Game.hpp>
+#include <BlackBox/Common/IClipBoard.hpp>
 
 #include <string>
 #include <fstream>
@@ -260,8 +261,11 @@ void CConsole::ExecuteString(const char* command)
 bool CConsole::OnInputEvent(const SInputEvent& event)
 {
 	bool keyPressed = event.deviceType == eIDT_Keyboard;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	if (keyPressed)
-		if (event.modifiers == eMM_Ctrl)
+		if (control)
 		{
 			auto it = m_keyBind.find(event.keyId);
 			if (it != m_keyBind.end())
@@ -284,138 +288,137 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 	cmd_is_compete = false;
 	input_trigered = false;
 
-	switch (event.type)
 	{
-	case sf::Event::KeyPressed:
-	{
-		switch (event.key.code)
+		bool keyPressed = false;
+		bool textEntered = false;
+		if (keyPressed)
 		{
-		case sf::Keyboard::Tab:
-			completion = autocomplete(command);
-			if (completion.size() > 0)
+			switch (event.keyId)
 			{
-				if (completion.size() == 1)
+			case eKI_Tab:
+				completion = autocomplete(command);
+				if (completion.size() > 0)
 				{
-					completeCommand(completion);
+					if (completion.size() == 1)
+					{
+						completeCommand(completion);
+					}
+					else
+					{
+						//SetInputLine("");
+						//ClearInputLine();
+						addToCommandBuffer(completion);
+					}
 				}
-				else
+				return true;
+			case eKI_6:
+			{
+				if (control)
 				{
-					//SetInputLine("");
-					//ClearInputLine();
-					addToCommandBuffer(completion);
+					cursor.x = 0;
 				}
+				return true;
 			}
-			return true;
-		case sf::Keyboard::Num6:
-		{
-			if (event.key.control)
+			case eKI_4:
 			{
+				if (control)
+				{
+					cursor.x = command.size();
+				}
+				return true;
+			}
+			case eKI_Enter:
+			case eKI_M:
+			{
+				if (event.keyId != eKI_Enter && !control)
+					return false;
+				handleEnterText();
 				cursor.x = 0;
+				return true;
 			}
-			return true;
-		}
-		case sf::Keyboard::Num4:
-		{
-			if (event.key.control)
+			case eKI_Insert:
 			{
-				cursor.x = command.size();
-			}
-			return true;
-		}
-		case sf::Keyboard::Enter:
-		case sf::Keyboard::M:
-		{
-			if (event.key.code != sf::Keyboard::Enter && !event.key.control)
+				if (shift)
+				{
+					setBuffer();
+					return true;
+				}
+				else if (control)
+				{
+					getBuffer();
+				}
+
 				return false;
-			handleEnterText(); 
-			cursor.x = 0;
-			return true;
-		}
-		case sf::Keyboard::Insert:
-		{
-			if (event.key.shift == true)
+			}
+			case eKI_Escape:
 			{
-				setBuffer();
+				SetInputLine("");
 				return true;
 			}
-			else if (event.key.control == true)
+			case eKI_P:
 			{
-				getBuffer();
+				if (control)
+				{
+					if (history_line > 0)
+						--history_line;
+					getHistoryElement();
+					return true;
+				}
+				return false;
 			}
-
-			return false;
-		}
-		case sf::Keyboard::Escape:
-		{
-			SetInputLine("");
-			return true;
-		}
-		case sf::Keyboard::P:
-		{
-			if (event.key.control)
+			case eKI_N:
 			{
-				if (history_line > 0)
-					--history_line;
-				getHistoryElement();
+				if (control)
+				{
+					if (history_line < (cmd_buffer.size() - 1))
+						++history_line;
+					getHistoryElement();
+					return true;
+				}
+				return false;
+			}
+			case eKI_PgUp:
+			case eKI_PgDn:
+			{
+				pageUp(event.keyId == eKI_PgUp);
 				return true;
 			}
-			return false;
-		}
-		case sf::Keyboard::N:
-		{
-			if (event.key.control)
+			case eKI_Left:
+			case eKI_Right:
 			{
-				if (history_line < (cmd_buffer.size() - 1))
-					++history_line;
-				getHistoryElement();
+				moveCursor(event.keyId == eKI_Left);
 				return true;
 			}
-			return false;
-		}
-		case sf::Keyboard::PageUp:
-		case sf::Keyboard::PageDown:
-		{
-      pageUp(event.key.code == sf::Keyboard::PageUp);
-      return true;
-		}
-		case sf::Keyboard::Left:
-		case sf::Keyboard::Right:
-		{
-			moveCursor(event.key.code == sf::Keyboard::Left);
-			return true;
-		}
-		case sf::Keyboard::L:
-		case sf::Keyboard::B:
-		{
-			if (event.key.alt)
+			case eKI_B:
+			case eKI_L:
 			{
-				moveCursor(event.key.code == sf::Keyboard::B, true);
+				if (alt)
+				{
+					moveCursor(event.keyId == eKI_B, true);
+					return true;
+				}
+				return false;
+			}
+			case eKI_Delete:
+			{
+				//TODO: rewrite erasing
+				command.erase((int)cursor.x, 1);
+				fillCommandText();
 				return true;
 			}
-			return false;
+			default:
+				return false;
+			}
 		}
-		case sf::Keyboard::Delete:
+		else if (textEntered)
 		{
-			//TODO: rewrite erasing
-			command.erase((int)cursor.x, 1);
-			fillCommandText();
+#ifdef TEXT_ENTERED_IMPLEMENTED
+			handleCommandTextEnter(event.text.unicode);
+#endif // TEXT_ENTERED_IMPLEMENTED
 			return true;
 		}
-		default:
-			return false;
-		}
-
-	}
-		
-	case sf::Event::TextEntered:
-	{
-		handleCommandTextEnter(event.text.unicode);
-		return true;
-	}
-	default:
 		return false;
 	}
-
 }
 
 void CConsole::getHistoryElement()
@@ -445,7 +448,7 @@ void CConsole::completeCommand(std::vector<std::wstring>& completion)
 
 void CConsole::setBuffer()
 {
-	std::wstring clipboard = sf::Clipboard::getString();
+	std::wstring clipboard = bb::ClipBoard::GetString();
 	if (clipboard.size() != 0)
 	{
 		for (auto& ch : clipboard)
@@ -581,7 +584,7 @@ void CConsole::getBuffer()
 		//}
 
 	}
-	sf::Clipboard::setString(toClipBoard);
+	bb::ClipBoard::SetString(str_to_wstr(toClipBoard));
 }
 
 bool CConsole::needShowCursor()

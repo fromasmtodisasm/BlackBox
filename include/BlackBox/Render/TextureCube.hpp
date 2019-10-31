@@ -3,7 +3,6 @@
 #include <memory>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/BaseTexture.hpp>
-#include <SFML/Graphics.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif

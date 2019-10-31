@@ -34,9 +34,6 @@ public:
   virtual IGame*										GetIGame() override;
 	virtual IFont*										GetIFont() override;
 	virtual IWindow*									GetIWindow() override;
-#if 0
-	virtual IInputHandler*						GetIInputHandler() override;
-#endif
 	virtual IScriptSystem*						GetIScriptSystem() override;
 	virtual ISystemEventDispatcher*		GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
 
@@ -62,7 +59,6 @@ private:
   IGame *m_pGame;
 	IFont* m_pFont;
 	IWindow* m_pWindow;
-	IInputHandler* m_InputHandler;
 	IRender* m_Render;
 	IScriptSystem* m_pScriptSystem;
 	//! system event dispatcher
