@@ -130,7 +130,7 @@ bool CSystem::Init()
 	//=============
 	m_pConsole->AddConsoleVarSink(this);
 	ParseCMD();
-
+	//=============
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
 
