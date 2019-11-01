@@ -67,7 +67,7 @@ if (USE_SDL)
 	#include(FindSDL)
 	#target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
 	find_package(SDL2 CONFIG REQUIRED)
-	target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
+	target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
 endif()
 #target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
@@ -93,7 +93,8 @@ elseif(USE_GLFW)
 endif()
 
 if (USE_GLM)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
+  #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
+  find_package(glm REQUIRED)
   target_link_libraries(${PROJECT_NAME} glm)
   add_definitions(-DUSE_GLM)
 
