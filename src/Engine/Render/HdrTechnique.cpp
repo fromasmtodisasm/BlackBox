@@ -9,7 +9,6 @@
 #include <BlackBox/ISystem.hpp>
 
 #define NBLOOM
-#define TEST
 constexpr auto IMAGE = 0;
 constexpr auto PREVIOS = 0;
 constexpr auto CURRENT = 1;

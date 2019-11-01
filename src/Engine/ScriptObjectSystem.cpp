@@ -36,6 +36,7 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 #define SCRIPT_REG_CLASSNAME CScriptObjectSystem
 
 	SCRIPT_REG_FUNC(EnumDisplayFormats);
+	SCRIPT_REG_FUNC(ScreenShot);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
@@ -48,7 +49,7 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {
-	//SCRIPT_CHECK_PARAMETERS(0);
+	SCRIPT_CHECK_PARAMETERS(0);
 	m_pConsole->PrintLine("Enumerating display settings...");
 	SmartScriptObject pDispArray(m_pSS);
 	SDispFormat* Formats = NULL;
@@ -99,4 +100,14 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 	if (Formats)
 		delete[] Formats;
 	return pH->EndFunction(pDispArray);
+}
+
+int CScriptObjectSystem::ScreenShot(IFunctionHandler* pH)
+{
+	SCRIPT_CHECK_PARAMETERS(1);
+	const char* filename;
+
+	pH->GetParam(1, filename);
+	m_pRenderer->ScreenShot(filename);
+	return pH->EndFunction();
 }
