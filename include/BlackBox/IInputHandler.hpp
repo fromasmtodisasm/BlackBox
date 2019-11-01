@@ -1,8 +1,8 @@
 #pragma once
+#if 0
 #include <BlackBox/ICommand.hpp>
 #include <SFML/Window/Event.hpp>
 
-#if 0
 struct IInputEventListener
 {
   virtual bool OnInputEvent(sf::Event &event) = 0;

@@ -7,10 +7,4 @@ typedef CSFMLWindow CWindow;
 typedef CGLFWWindow CWindow;
 #endif // SFML_WINDOW
 
-extern "C" {
-	inline IWindow* CreateIWindow()
-	{
-		return nullptr;
-	}
-}
 

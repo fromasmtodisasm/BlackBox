@@ -72,6 +72,11 @@ if (USE_SDL)
 	#target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
 	find_package(SDL2 CONFIG REQUIRED)
 	target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
+	target_sources(
+  	  ${PROJECT_NAME}
+	  PRIVATE ${SOURCE_DIR}/Engine/Window/SDLWindow.cpp
+	)
+	add_definitions(-DSDL_WINDOW)
 endif()
 #target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
 

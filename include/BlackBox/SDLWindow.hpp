@@ -1,48 +1,44 @@
 #pragma once
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/IInputHandler.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-
-#ifdef GUI
-#include <imgui-SFML.h>
-#endif
+#include <BlackBox/MathHelper.hpp>
+#include <SDL2/SDL_video.h>
 
 #include <glm/glm.hpp>
 #include <map>
 #include <list>
+#include <string>
 
 
 
 class CSDLWindow :
-  public IWindow,
-  public IInputHandler
+  public IWindow
 {
   friend class GameGUI;
   static constexpr int DEFAULT_WIDTH = 1024;
   static constexpr int DEFAULT_HEIGHT = 768;
-  static constexpr char *DEFAULT_TITLE = "SFML Window";
+  static constexpr char *DEFAULT_TITLE = "SDL Window";
 
-  sf::RenderWindow* m_Window;
+  SDL_Window* m_Window;
   bool m_bClose;
   int m_Width;
   int m_Height;
-	sf::ContextSettings m_contextSettings;
+	//TODO: SDL CONTEXT SETTINGS
+	//sf::ContextSettings m_contextSettings;
 	//===============================================================================
   std::string m_Title;
   glm::vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-  sf::Clock deltaClock;
 	int m_flags = 0;
   // For input handling
-  std::list<IInputEventListener*> listeners;
+  //std::list<IInputEventListener*> listeners;
   struct
   {
-    sf::Vector2i prev_pos;
-    sf::Vector2i curr_pos;
+    Vec2 prev_pos;
+    Vec2 curr_pos;
     bool x_wraped = false;
     bool y_wraped = false;
     bool locked = false;
-    sf::Vector2i lockedPos;
+    Vec2 lockedPos;
     int limit = 4;
   }Mouse;
 
@@ -68,28 +64,26 @@ public:
   virtual void *getHandle() override;
   // IInputEventListener interface
 public:
-  bool OnInputEvent(sf::Event &event);
 
   // Inherited via IWindow
   virtual int getWidth() override;
   virtual int getHeight() override;
 	virtual void setFlags(int flags) override;
 private:
-  sf::Vector2i nextMousePos(sf::Vector2i &position);
+	bool Create(int width, int height, bool fullscreen);
+  Vec2 nextMousePos(Vec2 &position);
   void setMouseWrap(bool wrap);
   void glInit();
 
-  // IInputHandler interface
-public:
-  virtual ICommand *handleInput() override;
-  virtual void AddEventListener(IInputEventListener *pListener) override;
-  virtual sf::Vector2i getDeltaMouse() override;
-  virtual void mouseLock(bool lock) override;
 
 	// Унаследовано через IWindow
 	virtual Rect &getViewPort() override;
 
 	// Inherited via IWindow
 	virtual bool create(Params params) override;
+
+	// Inherited via IWindow
+	virtual void changeSize(int w, int h) override;
+	virtual void setCursor(Cursor* cursor) override;
 };
 

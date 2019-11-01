@@ -9,6 +9,7 @@ struct Rect
 	int width;
 	int height;
 	Rect(int l, int t, int w, int h) : left(l), top(t), width(w), height(h) {}
+	Rect() : left(0), top(0), width(0), height(0) {}
 };
 
 typedef void* Params;
