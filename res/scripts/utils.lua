@@ -73,5 +73,14 @@ function init()
 	setFog(0,0,0)
 end
 
+Test = {
+
+}
+
+function Test:OnInit( )
+	setFog(0, 0.01, 0.01)
+end
+
+
 init()
 

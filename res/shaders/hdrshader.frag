@@ -8,7 +8,7 @@ uniform sampler2D bloomBlur;
 uniform bool bloom = true;
 uniform float exposure;
 uniform float bloom_exposure = 0.8;
-uniform vec2 viewPortf = vec2(1,1);
+vec2 viewPortf = vec2(1,1);
 
 float float_to_sRGB(float val)
 { 

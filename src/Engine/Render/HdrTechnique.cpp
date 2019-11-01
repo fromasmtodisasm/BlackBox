@@ -443,13 +443,15 @@ void HdrTechnique::downsamplingStandard()
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
 	LOG("\tBegin %d iteration\n", i);
-		auto rx = w / (1 << (i + 1));
-		auto ry = h / (1 << (i + 1));
-		ds->Uniform(rx, "rx");
-		ds->Uniform(ry, "ry");
+		auto rx = w / (1 << (i/* + 1*/));
+		auto ry = h / (1 << (i/* + 1*/));
+		auto vpx = w / (1 << (i + 1));
+		auto vpy = h / (1 << (i + 1));
+		ds->Uniform((int)rx, "rx");
+		ds->Uniform((int)ry, "ry");
 	LOG("\t\trx = %f\n", rx);
 	LOG("\t\try = %f\n", ry);
-		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
+		m_DownsampleBuffer[i + 1]->bind({ 0,0, vpx, vpy });
 
 		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
@@ -560,7 +562,9 @@ void HdrTechnique::Do(unsigned int texture)
 	if (!showAllFrameBuffer)
 		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
-	ss->Uniform(scale, "viewPortf");
+	auto uv_projection = Mat4(1.f);
+	uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
+	ss->Uniform(uv_projection, "uv_projection");
 	//FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
 	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();

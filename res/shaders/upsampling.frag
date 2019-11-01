@@ -41,7 +41,7 @@ vec4 blur(vec2 uv)
 				w += weight[index];
 				//vec2 texel = clamp((uv + vec2(j, i) * tex_offset), vec2(0.5)*tex_offset, m);
 				vec2 coord = uv + vec2(j, i);
-				vec2 texel = round(clamp(coord, vec2(0.5),	0.5*floor(vec2(rx-1,ry-1))-1)) * tex_offset;
+				vec2 texel = round(clamp(coord, vec2(1),	0.5*floor(vec2(rx-1,ry-1))-1)) * tex_offset;
 				if (all(greaterThan(uv + vec2(j,i),			0.5*floor(vec2(rx-1,ry-1))-1)))
 					continue;
 				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
