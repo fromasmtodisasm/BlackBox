@@ -14,6 +14,7 @@ public:
 
 	void Init(IScriptSystem *pScriptSystem, ISystem* pSystem);
 	int EnumDisplayFormats(IFunctionHandler* pH);
+	int ScreenShot(IFunctionHandler* pH);
 private:
 	ISystem* m_pSystem;
 	ILog* m_pLog;

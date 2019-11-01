@@ -9,6 +9,7 @@
 
 class FrameBufferObject;
 struct ICVar;
+struct ILog;
 
 class HdrTechnique : public ITechnique, public IPostProcessor
 {
@@ -85,6 +86,7 @@ private:
 	GLuint timer_queries[3];
 
   IRender* render;
+	ILog* log;
 
 	std::vector<glm::vec2> bloomTest;
 	int testid;
