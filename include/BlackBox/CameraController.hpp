@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef CAMERA_CONTROLLER
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/IInputHandler.hpp>
 
@@ -27,3 +27,5 @@ public:
 		return false;
 	}
 };
+
+#endif // CAMERA_CONTROLLER

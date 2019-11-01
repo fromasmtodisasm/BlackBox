@@ -107,22 +107,22 @@ void CPlayer::update(float deltatime)
   {
     switch (key)
     {
-    case sf::Keyboard::J:
+    case eKI_J:
       velocity += impulse;
       break;
-    case sf::Keyboard::K:
+    case eKI_K:
       velocity -= impulse;
       break;
-    case sf::Keyboard::W:
+    case eKI_W:
       m_Camera->ProcessKeyboard(Movement::FORWARD, deltatime);
       break;
-    case sf::Keyboard::S:
+    case eKI_S:
       m_Camera->ProcessKeyboard(Movement::BACKWARD, deltatime);
       break;
-    case sf::Keyboard::A:
+    case eKI_A:
       m_Camera->ProcessKeyboard(Movement::LEFT, deltatime);
       break;
-    case sf::Keyboard::D:
+    case eKI_D:
       m_Camera->ProcessKeyboard(Movement::RIGHT, deltatime);
       break;
     default:

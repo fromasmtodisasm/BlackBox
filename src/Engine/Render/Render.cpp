@@ -7,11 +7,6 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/IWindow.hpp>
 
-
-//
-#include <SFML/Window.hpp>
-
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
@@ -38,9 +33,9 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	InitConsoleCommands();
 	//=======================
 	if (isDebug && r_debug->GetIVal() == 1)
-		glContextType = sf::ContextSettings::Debug;
+		glContextType = AttributeType::DEBUG;
 	else
-		glContextType = sf::ContextSettings::Attribute::Core;
+		glContextType = AttributeType::CORE;
 	//TODO: FIX THIS
 #if 0
   sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
@@ -162,7 +157,7 @@ void CRender::glInit()
 {
 	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
-	if (glContextType == sf::ContextSettings::Debug && r_debug->GetIVal() == 1)
+	if (glContextType == AttributeType::DEBUG && r_debug->GetIVal() == 1)
 	{
 		glDebug = new OpenglDebuger("out/glDebug.txt");
 		SetState(State::DEBUG_OUTPUT, true);
@@ -431,14 +426,7 @@ bool CRender::OnInputEvent(const SInputEvent& event)
 {
 	switch (event.deviceType)
 	{
-	case sf::Event::Resized:
-	{
-		//this->cam_width->Set(static_cast<int>(event.size.width));
-		//this->cam_height->Set(static_cast<int>(event.size.height));
-		break;
-	}
-	default:
-		break;
+
 	}
 	return false;
 }

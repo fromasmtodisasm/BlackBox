@@ -184,7 +184,7 @@ private:
   IInputHandler *m_inputHandler;
   World *m_World;
   CPlayer *m_player = nullptr;
-	CameraController *camControl;
+	//CameraController *camControl;
   Scene *m_scene;
   SceneManager *m_sceneManager;
   ILog *m_Log;
@@ -246,8 +246,8 @@ private:
 	bool canDragViewPortWidth = false;
 	bool canDragViewPortHeight = false;
 	bool mousePressed = false;
-	sf::Vector2i mouseDelta;
-	sf::Vector2i mousePrev;
+	//sf::Vector2i mouseDelta;
+	//sf::Vector2i mousePrev;
 
   enum Mode
   {

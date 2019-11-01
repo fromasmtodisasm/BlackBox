@@ -93,7 +93,7 @@ float CGame::getTime()
 }
 
 CGame::CGame(std::string title) :
-	camControl(nullptr),
+	//camControl(nullptr),
 	g_scene(nullptr),
 #ifdef GUI
 	gui(nullptr),
@@ -347,8 +347,6 @@ void CGame::DisplayInfo(float fps)
 		render->PrintLine("CanDrag\n", info.getDTI());
 	if (mousePressed)
 		render->PrintLine("Mouse pressed\n", info.getDTI());
-	if (canDragViewPortWidth && mousePressed)
-		render->PrintLine(("delta.x" + std::to_string(mouseDelta.x)).c_str(), info.getDTI());
 
 	if (m_Mode == MENU)
 	{
@@ -803,7 +801,6 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 #else
       return false;
 #endif // GUI
-#endif
 
 	if (canDragViewPortWidth && mousePressed)
 	{
@@ -815,6 +812,7 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 		ICVar* h = m_Console->GetCVar("r_cam_h");
 		h->Set(h->GetIVal() - mouseDelta.y);
 	}
+#endif
   return false;
 
 }

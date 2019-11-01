@@ -14,7 +14,8 @@ typedef int glContextAttribute;
 enum AttributeType
 {
 	DEBUG,
-	RELEASE
+	RELEASE,
+	CORE
 };
 
 class CRender : 

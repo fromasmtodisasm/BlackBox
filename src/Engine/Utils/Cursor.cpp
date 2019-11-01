@@ -1,3 +1,5 @@
+#ifdef USE_CURSOR
+
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <BlackBox/Utils/Cursor.hpp>
@@ -77,3 +79,5 @@ sf::StandardCursor::~StandardCursor()
 #else
 #error This OS is not yet supported by the cursor library.
 #endif
+
+#endif // USE_CURSOR
