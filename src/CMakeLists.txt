@@ -96,6 +96,8 @@ if (USE_GLM)
   #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
   find_package(glm REQUIRED)
   target_link_libraries(${PROJECT_NAME} glm)
+  include_directories(${GLM_INCLUDE_DIRS})
+  target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
   add_definitions(-DUSE_GLM)
 
 endif()
