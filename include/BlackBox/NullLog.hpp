@@ -12,7 +12,7 @@
 class NullLog : public ILog
 {
 public:
-  NullLog();
+  NullLog(const char *filename);
   ~NullLog();
 
   // Inherited via ILog
@@ -22,7 +22,7 @@ private:
   void Shutdown();
 private:
   FILE* output;
-  char *filename = "log.txt";
+  const char *filename = "log.txt";
   bool inited = false;
   std::vector<std::string> log;
   char buf[2048];
@@ -34,7 +34,7 @@ private:
 	virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override;
 };
 
-NullLog::NullLog()
+NullLog::NullLog(const char *filename) : filename(filename)
 {
   output = fopen(filename, "w");
   ZeroMemory(buf, sizeof(buf));

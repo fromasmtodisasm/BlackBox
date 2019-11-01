@@ -32,6 +32,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <ctime>
 #include <cctype>
+#include <ctime>
+#include <iomanip>
 
 #include <sstream>
 
@@ -358,6 +360,19 @@ bool CGame::Run(bool& bRelaunch) {
   //m_PlayList.play();
   m_isMusicPlaying = true;
 	m_bRelaunch = false;
+	{
+		auto p = GET_CVAR("single_pass");
+		if (p->GetIVal())
+		{
+			Update();
+			std::time_t t = std::time(nullptr);
+			std::stringstream ss;
+			ss << "screen_shots/tests/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".png";
+			m_Log->Log("Screenshot name: %s", ss.str().c_str());
+			m_pRender->ScreenShot(ss.str().c_str());
+			return true;
+		}
+	}
 	while (1)
 	{
 		if (!Update())

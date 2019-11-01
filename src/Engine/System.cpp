@@ -76,7 +76,7 @@ bool CSystem::Init()
 	/////////////////////////////////////////////
 	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
 	initTimer();
-  m_pLog = new NullLog();
+  m_pLog = new NullLog(m_startupParams.sLogFileName);
   if (m_pLog == nullptr)
     return false;
 	//=============

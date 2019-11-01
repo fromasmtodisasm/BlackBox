@@ -9,6 +9,7 @@
 #include <BlackBox/ISystem.hpp>
 
 #define NBLOOM
+#define TEST
 constexpr auto IMAGE = 0;
 constexpr auto PREVIOS = 0;
 constexpr auto CURRENT = 1;
@@ -38,6 +39,7 @@ HdrTechnique::HdrTechnique()
 	cam_height(nullptr),
 	cam_width(nullptr),
 	render(nullptr),
+	log(nullptr),
 
 	quadCorners{0},
 	quadCornersVBO{0},
@@ -57,6 +59,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   if (inited)
     return true;
   render = GetISystem()->GetIRender();
+	log = GetISystem()->GetILog();
   m_Scene = pScene;
 	InitConsoleVariables();
 	initTest();
@@ -402,6 +405,9 @@ void HdrTechnique::PostRenderPass()
 
 void HdrTechnique::downsampling()
 {
+#ifdef TEST
+	log->Log("Start downsampling\n");
+#endif // TEST
 	if (downsampleType->GetIVal() == 0)
 		downsamplingStandard();
 	else
@@ -429,12 +435,24 @@ void HdrTechnique::downsamplingStandard()
 
 	ds->Uniform((w/hdr_w), "vx");
 	ds->Uniform((h/hdr_h), "vy");
+#ifdef TEST
+	log->Log("\tvx = %f\n", (w / hdr_w));
+	log->Log("\tvy = %f\n", (h/hdr_h));
+#endif // TEST
+
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
+#ifdef TEST
+	log->Log("\tBegin %d iteration\n", i);
+#endif // TEST
 		auto rx = w / (1 << (i + 1));
 		auto ry = h / (1 << (i + 1));
 		ds->Uniform(rx, "rx");
 		ds->Uniform(ry, "ry");
+#ifdef TEST
+	log->Log("\t\trx = %f\n", rx);
+	log->Log("\t\try = %f\n", ry);
+#endif // TEST
 		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
 
 		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
@@ -480,6 +498,9 @@ void HdrTechnique::downsamplingCompute()
 
 void HdrTechnique::upsampling()
 {
+#ifdef TEST
+	log->Log("Start upsampling\n");
+#endif // TEST
 	auto& up = m_UpsampleShader;
 	up->Use();
 	up->Uniform(blurOn->GetIVal(), "blurOn");
@@ -499,7 +520,9 @@ void HdrTechnique::upsampling()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-
+#ifdef TEST
+	log->Log("\tBegin %d iteration\n", i);
+#endif // TEST
 		int rx = (w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
 		int ry = (h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
 		// Texture that blured
@@ -510,6 +533,10 @@ void HdrTechnique::upsampling()
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
 		up->Uniform((float)rx, "rx");
 		up->Uniform((float)ry, "ry");
+#ifdef TEST
+	log->Log("\t\trx = %d\n", rx);
+	log->Log("\t\try = %d\n", ry);
+#endif // TEST
 
 		rt->bind(Vec4(0,0, rx, ry));
 		up->BindTexture2D(blured,					PREVIOS, "blured");
