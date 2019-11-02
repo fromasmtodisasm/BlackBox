@@ -284,7 +284,7 @@ void CSDLMouse::GrabInput()
 
 	if (m_bGrabInput)
 		return;
-	SDL_Window* pWindow = *static_cast<SDL_Window * *>(m_pRenderer->GetCurrentContextHWND());
+	SDL_Window* pWindow = static_cast<SDL_Window * >(m_pRenderer->GetCurrentContextHWND());
 	if (!pWindow) return;
 	SDL_SetWindowGrab(pWindow, SDL_TRUE);
 

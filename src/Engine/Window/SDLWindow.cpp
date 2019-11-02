@@ -19,6 +19,7 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 	}
+
 	if (!Create(width, height, fullscreen))
 	{
 		return false;
@@ -108,6 +109,8 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	/* Request opengl 3.2 context.
 		 * SDL doesn't have the ability to choose which profile at this time of writing,
 		 * but it should default to the core profile */
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
@@ -125,7 +128,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	}
 	// Create an OpenGL context associated with the window.
 	SDL_GLContext glcontext = SDL_GL_CreateContext(m_Window);
-
+	SDL_GL_MakeCurrent(m_Window, glcontext);
 	return true;
 }
 
