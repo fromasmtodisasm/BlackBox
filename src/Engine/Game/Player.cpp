@@ -27,10 +27,11 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 	bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
 	bool mouseMoved = event.deviceType == eIDT_Mouse && (event.keyId == eKI_MouseX || event.keyId == eKI_MouseY);
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Down;
-	bool control = event.modifiers == eMM_Ctrl;
-	bool shift = event.modifiers == eMM_Shift;
-	bool alt = event.modifiers == eMM_Alt;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
+	bool control = event.modifiers & eMM_Ctrl;
+	bool shift = event.modifiers & eMM_Shift;
+	bool alt = event.modifiers & eMM_Alt;
 	////////////////////////
   if (mousePressed)
   {
@@ -52,11 +53,10 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
   }
 	else if (keyPressed)
 	{
-		if (event.state == eIS_Down)
-			return OnKeyPress(event.keyId);
-		else if (event.state == eIS_Released)
-			return OnKeyReleas(event.keyId);
+		return OnKeyPress(event.keyId);
 	}
+	else if (keyReleased)
+		return OnKeyReleas(event.keyId);
 	else
     return GameObject::OnInputEvent(event);
 }
@@ -107,6 +107,7 @@ CGame* CPlayer::getGame()
 void CPlayer::update(float deltatime)
 {
   //ImGui
+	deltatime = 0.5;
   float speed = deltatime*MOVE_SPEED;
   float rotSpeed = deltatime*5.f;//m_rotAngle;
   for (auto& key : m_keys)
