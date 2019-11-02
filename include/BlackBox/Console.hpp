@@ -261,6 +261,7 @@ private:
 	bool cmd_is_compete = false;
 	ISystem* m_pSystem = nullptr;
 	IScriptSystem* m_pScriptSystem = nullptr;
+	IInput* m_pInput = nullptr;
 	ITexture* m_pBackGround;
   //ITexture* m_pBackGround = nullptr;
 

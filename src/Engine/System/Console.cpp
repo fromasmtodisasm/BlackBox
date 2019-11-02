@@ -6,6 +6,7 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Common/IClipBoard.hpp>
+#include <BlackBox/IInput.hpp>
 
 #include <string>
 #include <fstream>
@@ -264,17 +265,19 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 	bool control = event.modifiers & eMM_Ctrl;
 	bool shift = event.modifiers & eMM_Shift;
 	bool alt = event.modifiers & eMM_Alt;
-	if (keyPressed)
-		if (control)
-		{
-			auto it = m_keyBind.find(event.keyId);
-			if (it != m_keyBind.end())
-			{
-				return handleCommand(it->second);
-			}
-		}
 	if (!isOpened)
 	{
+		if (keyPressed)
+		{
+			if (control)
+			{
+				auto it = m_keyBind.find(event.keyId);
+				if (it != m_keyBind.end())
+				{
+					return handleCommand(it->second);
+				}
+			}
+		}
 		return false;
 	}
 	std::vector<std::wstring> completion;
@@ -310,7 +313,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 					}
 				}
 				return true;
-			case eKI_6:
+			case eKI_A:
 			{
 				if (control)
 				{
@@ -318,7 +321,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				}
 				return true;
 			}
-			case eKI_4:
+			case eKI_E:
 			{
 				if (control)
 				{
@@ -402,6 +405,17 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 			{
 				//TODO: rewrite erasing
 				command.erase((int)cursor.x, 1);
+				fillCommandText();
+				return true;
+			}
+			case eKI_Backspace:
+			{
+				if (command.size() > 0 && (int)cursor.x > 0)
+				{
+					//command.pop_back();
+					command.erase(std::max(0, (int)cursor.x - 1), 1);
+					moveCursor(true);
+				}
 				fillCommandText();
 				return true;
 			}
@@ -968,6 +982,7 @@ bool CConsole::Init(ISystem* pSystem)
 {
 	m_pSystem = pSystem;
 	m_pScriptSystem = pSystem->GetIScriptSystem();
+	m_pInput = pSystem->GetIInput();
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, static_cast<unsigned int>(line_height));
 	m_pBackGround = new Texture();
@@ -1015,22 +1030,10 @@ ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, con
 
 void CConsole::AddInputChar(uint32_t ch)
 {
-	if (ch == 8)
+	if (iswgraph(ch) || (iswblank(ch) && ch != '\t'))
 	{
-		if (command.size() > 0 && (int)cursor.x > 0)
-		{
-			//command.pop_back();
-			command.erase(std::max(0, (int)cursor.x - 1), 1);
-			moveCursor(true);
-		}
-	}
-	else
-	{
-		if (iswgraph(ch) || (iswblank(ch) && ch != '\t'))
-		{
-			command.insert((int)cursor.x, 1, ch);// += ch;
-			moveCursor(false);
-		}
+		command.insert((int)cursor.x, 1, ch);// += ch;
+		moveCursor(false);
 	}
 	fillCommandText();
 }
