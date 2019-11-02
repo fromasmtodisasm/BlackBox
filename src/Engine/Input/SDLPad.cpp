@@ -445,7 +445,7 @@ CSDLPadManager::CSDLPadManager(CLinuxInput& input) :
 	m_rLinuxInput(input),
 	m_gamePads()
 {
-	m_gamePads.reserve(12);
+	m_gamePads.resize(12);
 	for (int i = 0; i < 12; ++i)
 	{
 		m_gamePads[i] = NULL;

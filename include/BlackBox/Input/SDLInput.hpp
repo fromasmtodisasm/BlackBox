@@ -27,10 +27,10 @@ public:
 	virtual int  ShowCursor(const bool bShow) override;
 
 private:
-	ISystem* m_pSystem;
-	ILog* m_pLog;
+	ISystem*				m_pSystem;
+	ILog*						m_pLog;
 	CSDLPadManager* m_pPadManager;
-	CSDLMouse* m_pMouse;
+	CSDLMouse*			m_pMouse;
 
 	// Унаследовано через CBaseInput
 	virtual bool AddTouchEventListener(ITouchEventListener* pListener, const char* name) override;

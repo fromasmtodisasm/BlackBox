@@ -62,6 +62,9 @@ function init()
 	Console:CreateKeyBind("b", "@setFog(0,0,0)") 
 	Console:CreateKeyBind("g", "@setFog(0,0.01,0.01)")  
 
+	Console:CreateKeyBind("xi_b", "quit")  
+	Console:CreateKeyBind("xi_start", "@Game:gotoMenu()")  
+
 
 	addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
 	addcommand("set_ws", [[set2dvec("r_Width", "r_Height", %1, %2)]], "Set size of window")

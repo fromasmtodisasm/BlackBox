@@ -94,11 +94,11 @@ bool CSystem::Init()
 	if (m_pWindow == nullptr)
 		return false;
 	//=============
-	m_pInput = CreateInput(this, m_pWindow->getHandle());
-	//=============
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
+	//=============
+	m_pInput = CreateInput(this, m_pWindow->getHandle());
 	//=============
 	m_Render = CreateIRender(this);
 	if (m_Render == nullptr)

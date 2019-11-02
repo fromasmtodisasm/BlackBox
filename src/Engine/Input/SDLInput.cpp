@@ -11,6 +11,7 @@
 
 #include <BlackBox/Input/SDLKeyboard.hpp>
 #include <BlackBox/Input/SDLMouse.hpp>
+#include <BlackBox/Input/SDLPad.hpp>
 //#include "SDLPad.h"
 
 CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
@@ -58,7 +59,6 @@ bool CLinuxInput::Init()
 		return false;
 	}
 
-	/*
 	m_pPadManager = new CSDLPadManager(*this);
 	if (!m_pPadManager->Init())
 	{
@@ -66,7 +66,6 @@ bool CLinuxInput::Init()
 		m_pLog->Log("Error: Initializing SDL GamePad Manager");
 		return false;
 	}
-	*/
 
 	return true;
 }
@@ -112,7 +111,7 @@ void CLinuxInput::Update(bool bFocus)
 {
 
 	SDL_PumpEvents();
-	//m_pPadManager->Update(bFocus);
+	m_pPadManager->Update(bFocus);
 	CBaseInput::Update(bFocus);
 	SDL_Event eventList[32];
 	int nEvents;

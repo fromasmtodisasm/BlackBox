@@ -261,7 +261,7 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(const SInputEvent& event)
 {
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	bool keyPressed = event.state == eIS_Pressed;
 	bool control = event.modifiers & eMM_Ctrl;
 	bool shift = event.modifiers & eMM_Shift;
 	bool alt = event.modifiers & eMM_Alt;
@@ -269,7 +269,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 	{
 		if (keyPressed)
 		{
-			if (control)
+			if (control || event.deviceType == eIDT_Gamepad)
 			{
 				auto it = m_keyBind.find(event.keyId);
 				if (it != m_keyBind.end())
@@ -785,6 +785,39 @@ void CConsole::initBind()
 		m_str2key[std::string("F14")] = eKI_F14;
 		m_str2key[std::string("F15")] = eKI_F15;
 		m_str2key[std::string("Pause")] = eKI_Pause;
+
+		m_str2key[std::string("xi_dpad_up")] = eKI_XI_DPadUp;
+		m_str2key[std::string("xi_dpad_down")] = eKI_XI_DPadDown;
+		m_str2key[std::string("xi_dpad_left")] = eKI_XI_DPadLeft;
+		m_str2key[std::string("xi_dpad_right")] = eKI_XI_DPadRight;
+		m_str2key[std::string("xi_start")] = eKI_XI_Start;
+		m_str2key[std::string("xi_back")] = eKI_XI_Back;
+		m_str2key[std::string("xi_thumbl")] = eKI_XI_ThumbL;
+		m_str2key[std::string("xi_thumbr")] = eKI_XI_ThumbR;
+		m_str2key[std::string("xi_shoulderl")] = eKI_XI_ShoulderL;
+		m_str2key[std::string("xi_shoulderr")] = eKI_XI_ShoulderR;
+		m_str2key[std::string("xi_a")] = eKI_XI_A;
+		m_str2key[std::string("xi_b")] = eKI_XI_B;
+		m_str2key[std::string("xi_x")] = eKI_XI_X;
+		m_str2key[std::string("xi_y")] = eKI_XI_Y;
+		m_str2key[std::string("xi_triggerl")] = eKI_XI_TriggerL;
+		m_str2key[std::string("xi_triggerr")] = eKI_XI_TriggerR;
+		m_str2key[std::string("xi_thumblx")] = eKI_XI_ThumbLX;
+		m_str2key[std::string("xi_thumbly")] = eKI_XI_ThumbLY;
+		// Map left thumb dpad button events to corresponing dpad hat events
+		/*m_str2key[std::string("xi_dpad_up")] = eKI_XI_DPadUp;
+			 m_str2key[std::string("xi_dpad_down")] = eKI_XI_DPadDown;
+			 m_str2key[std::string("xi_dpad_left")] = eKI_XI_DPadLeft;
+			 m_str2key[std::string("xi_dpad_right")] = eKI_XI_DPadRight;*/
+		m_str2key[std::string("xi_thumbrx")] = eKI_XI_ThumbRX;
+		m_str2key[std::string("xi_thumbry")] = eKI_XI_ThumbRY;
+		/*m_str2key[std::string("xi_thumbr_up")] = eKI_XI_ThumbRUp;
+			 m_str2key[std::string("xi_thumbr_down")] = eKI_XI_ThumbRDown;
+			 m_str2key[std::string("xi_thumbr_left")] = eKI_XI_ThumbRLeft;
+			 m_str2key[std::string("xi_thumbr_right")] = eKI_XI_ThumbRRight;*/
+		m_str2key[std::string("xi_triggerl_btn")] = eKI_XI_TriggerLBtn;
+		m_str2key[std::string("xi_triggerr_btn")] = eKI_XI_TriggerRBtn;
+
 	}
 }
 
