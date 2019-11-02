@@ -416,7 +416,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 bool CConsole::OnInputEventUI(const SUnicodeEvent& event)
 {
 	if (isOpened && event.inputChar >= 32 && event.inputChar != 96)
-		handleCommandTextEnter(event.inputChar);
+		AddInputChar(event.inputChar);
 	return false;
 }
 
@@ -430,7 +430,7 @@ void CConsole::getHistoryElement()
 	{
 		for (auto& ch : element.data)
 		{
-			handleCommandTextEnter(ch);
+			AddInputChar(ch);
 		}
 	}
 }
@@ -440,7 +440,7 @@ void CConsole::completeCommand(std::vector<std::wstring>& completion)
 	SetInputLine("");
 	for (auto& ch : completion[0])
 	{
-		handleCommandTextEnter(ch);
+		AddInputChar(ch);
 	}
 	command += L" ";
 }
@@ -452,7 +452,7 @@ void CConsole::setBuffer()
 	{
 		for (auto& ch : clipboard)
 		{
-			handleCommandTextEnter(ch);
+			AddInputChar(ch);
 		}
 	}
 }
@@ -1013,7 +1013,7 @@ ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, con
 	return var;
 }
 
-void CConsole::handleCommandTextEnter(uint32_t ch)
+void CConsole::AddInputChar(uint32_t ch)
 {
 	if (ch == 8)
 	{

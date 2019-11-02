@@ -225,7 +225,7 @@ private:
 private:
 	CommandDesc parseCommand(std::wstring& command);
 	bool handleCommand(std::wstring command);
-	void handleCommandTextEnter(uint32_t ch);
+	void AddInputChar(uint32_t ch);
 	std::vector<std::wstring> autocomplete(std::wstring cmd);
 	void doFile(std::ifstream& cfg);
 	void fillCommandText();
