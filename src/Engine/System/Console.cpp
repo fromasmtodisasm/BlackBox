@@ -1018,8 +1018,14 @@ bool CConsole::Init(ISystem* pSystem)
 	m_pScriptSystem = pSystem->GetIScriptSystem();
 	m_pInput = pSystem->GetIInput();
 	m_Font = new FreeTypeFont();
-	m_Font->Init("arial.ttf", 16, static_cast<unsigned int>(line_height));
-	m_pBackGround = new Texture();
+	{
+		auto font = "arial.ttf";
+		auto var = GET_CVAR("s_font");
+		if (var)
+			font = var->GetString();
+		if (!m_Font->Init(font, 16, static_cast<unsigned int>(line_height)))
+			return false;
+	}
 	const char* texture_path = "console_background2.jpg";
 	ICVar* background = GetCVar("console_background");
 	r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
@@ -1027,7 +1033,7 @@ bool CConsole::Init(ISystem* pSystem)
 
 	if (background != nullptr)
 		texture_path = background->GetString();
-	m_pBackGround->load(texture_path);
+	//m_pBackGround->load(texture_path);
 	initBind();
 	return true;
 }

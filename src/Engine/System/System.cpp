@@ -160,7 +160,11 @@ bool CSystem::Init()
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)
 	{
-		if (m_pFont->Init("arial.ttf", 16,18) == false)
+		auto font = "arial.ttf";
+		auto var = GET_CVAR("s_font");
+		if (var)
+			font = var->GetString();
+		if (m_pFont->Init(font, 16,18) == false)
 			return false;
 	}
 	m_pInput->AddEventListener(this);
