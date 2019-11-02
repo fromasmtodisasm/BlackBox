@@ -32,5 +32,7 @@ GameObject::GameObject(const Object *obj) : Object(obj), m_Camera(nullptr)
 
 bool GameObject::OnInputEvent(const SInputEvent& event)
 {
+	if (event.deviceType == eIDT_Keyboard)
+		this->getTransform();
   return false;
 }

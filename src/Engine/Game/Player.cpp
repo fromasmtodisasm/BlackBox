@@ -26,6 +26,12 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
 	bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
 	bool mouseMoved = event.deviceType == eIDT_Mouse && (event.keyId == eKI_MouseX || event.keyId == eKI_MouseY);
+	////////////////////////
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Down;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
+	////////////////////////
   if (mousePressed)
   {
     Object *obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
@@ -44,9 +50,9 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
     m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
     return true;
   }
-	else if (event.deviceType == eIDT_Keyboard)
+	else if (keyPressed)
 	{
-		if (event.state == eIS_Pressed)
+		if (event.state == eIS_Down)
 			return OnKeyPress(event.keyId);
 		else if (event.state == eIS_Released)
 			return OnKeyReleas(event.keyId);

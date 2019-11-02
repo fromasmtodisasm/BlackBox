@@ -7,12 +7,11 @@
 #include <BlackBox/Profiler/Hole_array.h>
 #include <BlackBox/Profiler/thread.h>
 #include <BlackBox/Profiler/Utils.h>
+#include "Config.h"
 
 #include <string.h>
 #include <assert.h>
 #include <stdint.h>
-
-#define ENABLE_PROFILER	// comment this to disable the profiler
 
 #define INVALID_TIME	((uint64_t)(-1))
 #define INVALID_QUERY	((GLuint)0)
@@ -33,6 +32,10 @@
 	#define PROFILER_DRAW()
 	#define PROFILER_SYNC_FRAME()
 
+	#define PROFILER_ISFROZEN()				(false)	
+	#define PROFILER_FROZE_FRAME()
+	#define PROFILER_UNFROZE_FRAME()
+
 #else
 	class Profiler;
 	extern Profiler profiler;
@@ -52,6 +55,7 @@
 	#define PROFILER_DRAW()									profiler.draw()
 	#define PROFILER_SYNC_FRAME()							profiler.synchronizeFrame()
 
+	#define PROFILER_ISFROZEN()					profiler.isFrozen()
 	#define PROFILER_FROZE_FRAME()					profiler.froze()
 	#define PROFILER_UNFROZE_FRAME()					profiler.unfroze()
 

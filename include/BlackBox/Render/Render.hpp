@@ -161,6 +161,7 @@ private:
 	std::map<State, GLenum> stateMap;
 
 	HWND m_HWND;
+	void* context;
 
 	Vec3 m_clearColor;
 	float m_clearDepth;

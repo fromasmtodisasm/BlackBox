@@ -176,9 +176,9 @@ extern "C"
 #define CryFatalError(...) FatalError(__VA_ARGS__)
 
 
-#define Wraning(...)
-#define CryWraning(...) Wraning(__VA_ARGS__)
-#define ScriptWarning(...) Wraning(__VA_ARGS__)
+#define Warning(...)
+#define CryWarning(...) Warning(__VA_ARGS__)
+#define ScriptWarning(...) Warning(__VA_ARGS__)
 
 #define CryError(...) void(0)
 

@@ -260,7 +260,7 @@ void CConsole::ExecuteString(const char* command)
 
 bool CConsole::OnInputEvent(const SInputEvent& event)
 {
-	bool keyPressed = event.deviceType == eIDT_Keyboard;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
 	bool control = event.modifiers == eMM_Ctrl;
 	bool shift = event.modifiers == eMM_Shift;
 	bool alt = event.modifiers == eMM_Alt;

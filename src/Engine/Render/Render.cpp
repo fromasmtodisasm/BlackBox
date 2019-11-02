@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
+#include <SDL2/SDL.h>
+
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
@@ -48,6 +50,12 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 		return nullptr;
   if (!OpenGLLoader())
     return nullptr;
+	context = SDL_GL_GetCurrentContext();
+	m_HWND = (HWND)window->getHandle();
+	// now you can make GL calls.
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	m_Window->swap();
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	m_pSystem->GetIInput()->AddEventListener(this);

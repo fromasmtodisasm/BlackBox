@@ -6,6 +6,7 @@
 #include <BlackBox/Render/Render.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
+#include <BlackBox/SystemEventDispatcher.hpp>
 
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
@@ -50,6 +51,11 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	m_pScriptSystem(nullptr),
 	m_ScriptObjectConsole(nullptr)
 {
+	m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
+	if (m_pSystemEventDispatcher)
+	{
+		m_pSystemEventDispatcher->RegisterListener(this, "CSystem");
+	}
 
 }
 
@@ -84,6 +90,8 @@ bool CSystem::Init()
 	if (m_pWindow == nullptr)
 		return false;
 	//=============
+	m_pInput = CreateInput(this, m_pWindow->getHandle());
+	//=============
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
@@ -106,6 +114,8 @@ bool CSystem::Init()
 		r_fullscreen->GetIVal(), m_pWindow))
 		)
 		return false;
+	//=============
+	m_pInput->Init();
 	//=============
 	// Initialize the 2D drawer
 	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
@@ -205,7 +215,7 @@ IConsole* CSystem::GetIConsole()
 
 IInput* CSystem::GetIInput()
 {
-	return nullptr;
+	return m_pInput;
 }
 
 IGame* CSystem::GetIGame()
@@ -278,6 +288,10 @@ bool CSystem::IsDevMode()
 }
 
 void CSystem::Error(const char* message)
+{
+}
+
+void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
 }
 
@@ -370,7 +384,7 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 			{
 				if (event.keyId == eKI_P)
 				{
-					if (profiler.isFrozen())
+					if (PROFILER_ISFROZEN())
 					{
 						PROFILER_UNFROZE_FRAME();
 					}
@@ -417,6 +431,7 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 		m_pInput->Update(true);
 		PROFILER_POP_CPU_MARKER();
 	}
+	m_pSystemEventDispatcher->Update();
 	m_pWindow->update();
 	m_pConsole->Update();
 	if (m_pWindow->closed())

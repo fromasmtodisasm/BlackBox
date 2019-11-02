@@ -69,6 +69,7 @@ bool CSDLWindow::closed()
 
 void CSDLWindow::swap()
 {
+	SDL_GL_SwapWindow(m_Window);
 }
 
 void CSDLWindow::setTitle(const char*)
@@ -81,17 +82,21 @@ void CSDLWindow::show()
 
 void* CSDLWindow::getHandle()
 {
-	return nullptr;
+	return m_Window;
 }
 
 int CSDLWindow::getWidth()
 {
-	return 0;
+	int w = 0;
+	SDL_GetWindowSize(m_Window, &w, nullptr);
+	return w;
 }
 
 int CSDLWindow::getHeight()
 {
-	return 0;
+	int h = 0;
+	SDL_GetWindowSize(m_Window, nullptr, &h);
+	return h;
 }
 
 void CSDLWindow::setFlags(int flags)
@@ -100,13 +105,27 @@ void CSDLWindow::setFlags(int flags)
 
 bool CSDLWindow::Create(int width, int height, bool fullscreen)
 {
+	/* Request opengl 3.2 context.
+		 * SDL doesn't have the ability to choose which profile at this time of writing,
+		 * but it should default to the core profile */
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+	/* Turn on double buffering with a 24bit Z buffer.
+	 * You may need to change this to 16 or 32 for your system */
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
 	// Create window
-	m_Window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_SHOWN);
+	m_Window = SDL_CreateWindow(m_Title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (m_Window == NULL)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
 	}
+	// Create an OpenGL context associated with the window.
+	SDL_GLContext glcontext = SDL_GL_CreateContext(m_Window);
+
 	return true;
 }
 

@@ -13,7 +13,11 @@ class CConsole;
 class CRender;
 struct IWindow;
 
-class CSystem : public ISystem, public IInputEventListener, public IConsoleVarSink
+class CSystem : 
+	public ISystem, 
+	public IInputEventListener, 
+	public IConsoleVarSink, 
+	public ISystemEventListener
 {
 public:
 	CSystem(SSystemInitParams& initParams);
@@ -84,4 +88,7 @@ private:
 
 	// Inherited via ISystem
 	virtual void Error(const char* message) override;
+
+	// Inherited via ISystemEventListener
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 };

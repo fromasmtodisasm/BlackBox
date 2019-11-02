@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.3)
 project(BlackBox)
 
 include(GenerateExportHeader)
-include(FindSDL2)
 include(FindFreetype)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -12,10 +11,9 @@ set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
 
-#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/modules" ${CMAKE_MODULE_PATH})
-
 ###################################################
-#add_subdirectory(submodules/glfw)
+configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in Config.h @ONLY)
+###################################################
 if (BB_TESET_ENABLE)
   add_definitions(-DTEST)
   add_definitions(-DSINGLE_PASS)
@@ -44,6 +42,7 @@ include_directories(
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
 )
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 #get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 #--------------------------------------------------
@@ -58,15 +57,17 @@ generate_export_header(${PROJECT_NAME}
 find_package(LUA REQUIRED)
 if (LUA_FOUND)
 	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
-	target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 endif()
 
 find_package(Freetype REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${FREETYPE_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIBRARIES})
 
 #find_package(SDL 2 CONFIG REQUIRED)
 #target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
+#target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
+
 if (USE_SDL)
 	#include(FindSDL)
 	#target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
@@ -75,20 +76,17 @@ if (USE_SDL)
 		message(STATUS "SDL2 FOUND")
 		message(STATUS SDL2::SDL2)
 	endif()
-	target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 	target_sources(
   	  ${PROJECT_NAME}
 	  PRIVATE ${SOURCE_DIR}/Engine/Window/SDLWindow.cpp
 	)
 	add_definitions(-DSDL_WINDOW)
-endif()
-#target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
-
-if (USE_SFML)
+elseif (USE_SFML)
 
   find_package(SFML 2 REQUIRED audio graphics window system)
   include_directories(${SFML_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} sfml-audio sfml-graphics sfml-window sfml-system)
+  target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-graphics sfml-window sfml-system)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
@@ -108,13 +106,16 @@ endif()
 if (USE_GLM)
   #find_package(glm REQUIRED)
   if (NOT GLM_FOUND)
-	message(status "GLM NOTFOUND")
+	message(STATUS "GLM NOTFOUND")
 	add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm)
   else()
-	  target_link_libraries(${PROJECT_NAME} glm)
+	  target_link_libraries(${PROJECT_NAME} PRIVATE glm)
 	  include_directories(${GLM_INCLUDE_DIRS})
 	  target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
   endif()
+  target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+  include_directories(${GLM_INCLUDE_DIRS})
+  target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
   add_definitions(-DUSE_GLM)
 
 endif()
@@ -126,16 +127,13 @@ set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIE
 
 target_sources(
   ${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/Console.cpp
   PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Log.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectScript.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
@@ -212,6 +210,12 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
+
+  #System folder
+  PRIVATE ${SOURCE_DIR}/Engine/System/Console.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/System/Log.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/System/System.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
@@ -293,13 +297,13 @@ source_group(
   )
 #--------------------------------------------------
 if (GLAD_LOADER)
-  target_link_libraries(${PROJECT_NAME} glad)
+  target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 elseif(GLEW_LOADER)
-  target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARY})
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${GLEW_LIBRARY})
 endif()
-target_link_libraries(${PROJECT_NAME} tinyxml2)
+target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2)
 #target_link_libraries(${PROJECT_NAME} ImGui)
-target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 #target_link_libraries(${PROJECT_NAME} nvtt)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 

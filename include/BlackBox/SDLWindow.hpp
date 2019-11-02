@@ -5,6 +5,7 @@
 #include <SDL2/SDL_video.h>
 
 #include <glm/glm.hpp>
+
 #include <map>
 #include <list>
 #include <string>

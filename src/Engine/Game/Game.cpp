@@ -508,12 +508,10 @@ void CGame::PersistentHandler(const SInputEvent& event)
 	auto lpy = m_Console->GetCVar("lpy");
 	auto lpz = m_Console->GetCVar("lpz");
 	////////////////////////
-	bool keyPressed = false;
-	////////////////////////
-	//TODO: INITIALIZE THIS
-	bool control = false;
-	bool shift = false;
-	bool alt = false;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	////////////////////////
 	if (keyPressed)
 	{
@@ -628,13 +626,12 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 	if (m_Console->IsOpened())
 		return false;
   */
+	
 	////////////////////////
-	bool keyPressed = false;
-	////////////////////////
-	//TODO: INITIALIZE THIS
-	bool control = false;
-	bool shift = false;
-	bool alt = false;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	////////////////////////
   auto camera = m_World->getActiveScene()->getCurrentCamera();
 	if (keyPressed)
@@ -694,7 +691,10 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 bool CGame::FlyInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = false;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	////////////////////////
   if (keyPressed)
 	{
@@ -726,7 +726,10 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 bool CGame::MenuInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = false;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	////////////////////////
   if (keyPressed)
 	{
@@ -850,14 +853,11 @@ bool CGame::DefaultInputEvent(const SInputEvent& event)
 bool CGame::EditInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = false;
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	////////////////////////
-	//TODO: INITIALIZE THIS
-	bool control = false;
-	bool shift = false;
-	bool alt = false;
-	////////////////////////
-	
 	if (keyPressed)
 	{
 		switch (event.keyId)
@@ -923,28 +923,26 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 
 bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
-	////////////////////////
-	bool keyPressed = false;
-	////////////////////////
-	//TODO: INITIALIZE THIS
-	bool control = false;
-	bool shift = false;
-	bool alt = false;
+	
+	bool keyPressed = event.deviceType == eIDT_Keyboard && eIS_Pressed;
+	bool control = event.modifiers == eMM_Ctrl;
+	bool shift = event.modifiers == eMM_Shift;
+	bool alt = event.modifiers == eMM_Alt;
 	retflag = true;
 	
 	if (keyPressed)
 	{
 		switch (event.keyId)
 		{
-		case eKI_Tilde:
-			if (control)
-			{
+		case eKI_CapsLock:
+			//if (control)
+			//{
 				if (m_Console->IsOpened())
 					m_Console->ShowConsole(false);
 				else
 					m_Console->ShowConsole(true);
 				return true;
-			}
+			//}
 			return false;
 		}
 	}
