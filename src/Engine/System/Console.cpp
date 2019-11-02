@@ -354,7 +354,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 			}
 			case eKI_Escape:
 			{
-				SetInputLine("");
+				ClearInputLine();
 				return true;
 			}
 			case eKI_P:
@@ -807,6 +807,7 @@ void CConsole::ClearInputLine()
 {
 	command.clear();
 	cursor.x = 0;
+	fillCommandText();
 }
 
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)

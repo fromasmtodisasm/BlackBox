@@ -923,15 +923,11 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 		switch (event.keyId)
 		{
 		case eKI_Tilde:
-			if (control)
-			{
-				if (m_Console->IsOpened())
-					m_Console->ShowConsole(false);
-				else
-					m_Console->ShowConsole(true);
-				return true;
-			}
-			return false;
+			if (m_Console->IsOpened())
+				m_Console->ShowConsole(false);
+			else
+				m_Console->ShowConsole(true);
+			return true;
 		}
 	}
 
