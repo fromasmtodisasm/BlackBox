@@ -14,7 +14,7 @@
 #undef min
 #undef max
 
-//#include <Win32specific.h>
+#include <BlackBox/WindowsSpecific.hpp>
 
 //#define RC_EXECUTABLE "rc.exe"
 #endif
@@ -47,6 +47,18 @@ inline auto SAFE_DELETE(T *& t)
 #define FUNCTION_PROFILER() 
 #define LogAlways() void(0);
 
+//! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
+//! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
+#if !defined(_DEBUG) && !defined(CRY_UBSAN)
+#define ILINE BB_FORCE_INLINE
+#else
+#define ILINE inline
+#endif
+#include <cstdint>
+
+int64_t    bbGetTicks();
+void       bbSleep(unsigned int dwMilliseconds);
+
 // Include most commonly used STL headers.
 // They end up in precompiled header and make compilation faster.
 #include <memory>
@@ -59,6 +71,8 @@ inline auto SAFE_DELETE(T *& t)
 #include <stack>
 #include <algorithm>
 #include <functional>
+#include <cassert>
+#include <cstdint>
 
 #ifdef SendMessage
 #undef SendMessage

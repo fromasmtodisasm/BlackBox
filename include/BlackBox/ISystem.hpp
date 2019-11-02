@@ -15,6 +15,7 @@ struct IWindow;
 struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
+struct ITimer;
 
 
 //! System wide events.
@@ -153,6 +154,9 @@ struct ISystem
 #endif
 	virtual IScriptSystem*						GetIScriptSystem() = 0;
 	virtual ISystemEventDispatcher*		GetISystemEventDispatcher() = 0;
+
+	virtual ITimer* GetITimer() = 0;
+
 	//! Quits the application.
 	virtual void Quit() = 0;
 

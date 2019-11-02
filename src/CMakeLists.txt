@@ -165,6 +165,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLInput.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
   #Profiler folder
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp
@@ -217,6 +218,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/System/Log.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/System/Timer.cpp
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp

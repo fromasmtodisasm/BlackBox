@@ -1,3 +1,4 @@
+#include <BlackBox/platform_impl.inl>
 #include <BlackBox/System.hpp>
 #include <BlackBox/NullLog.hpp>
 #include <BlackBox/Console.hpp>
@@ -22,6 +23,7 @@
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
+#include "..\..\..\include\BlackBox\System.hpp"
 #pragma once
 
 using namespace Utils;
@@ -292,6 +294,11 @@ void CSystem::ParseCMD()
 float CSystem::GetDeltaTime()
 {
 	return static_cast<float>(m_DeltaTime);
+}
+
+ITimer* CSystem::GetITimer()
+{
+	return &m_Time;
 }
 
 bool CSystem::IsDevMode()

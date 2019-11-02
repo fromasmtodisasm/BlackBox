@@ -8,6 +8,7 @@
 #include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectScript.hpp>
 #include <BlackBox/Common/CmdLine.hpp>
+#include <BlackBox/Timer.hpp>
 
 class CConsole;
 class CRender;
@@ -34,6 +35,7 @@ public:
   virtual IShaderManager*						GetShaderManager() override;
   virtual IRender*									GetIRender() override;
   virtual ILog*											GetILog() override;
+	virtual ITimer*										GetITimer() override;
   virtual IConsole*									GetIConsole() override;
   virtual IInput*										GetIInput() override;
   virtual IGame*										GetIGame() override;
@@ -63,14 +65,16 @@ public:
 private:
 	void ParseCMD();
 private:
-  ILog *m_pLog;
-  CConsole *m_pConsole;
-	IInput* m_pInput;
-  IGame *m_pGame;
-	IFont* m_pFont;
-	IWindow* m_pWindow;
-	IRender* m_Render;
-	IScriptSystem* m_pScriptSystem;
+	CTimer									m_Time;                  //!<
+
+  ILog*										m_pLog;
+  CConsole*								m_pConsole;
+	IInput*									m_pInput;
+  IGame*									m_pGame;
+	IFont*									m_pFont;
+	IWindow*								m_pWindow;
+	IRender*								m_Render;
+	IScriptSystem*					m_pScriptSystem;
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher;
 
