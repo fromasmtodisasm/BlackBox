@@ -161,6 +161,8 @@ struct ISystem
 
 	virtual void ShowMessage(const char *message, const char *caption, MessageType messageType) = 0;
 	virtual bool IsDevMode() = 0;
+
+	virtual float GetDeltaTime() = 0;
 };
 
 // Get the system interface (must be defined locally in each module)

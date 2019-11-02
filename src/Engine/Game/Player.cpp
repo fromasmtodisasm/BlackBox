@@ -47,7 +47,12 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 	else if (mouseMoved)
 	{
 		// TODO: GET DELTA  MOUSE
-    //delta = p_gIGame->getInputHandler()->getDeltaMouse();
+		delta = Vec2(0);
+		if (event.keyId == eKI_MouseX)
+			delta.x = event.value;
+		else
+			delta.y = event.value;
+
     m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
     return true;
   }
@@ -107,7 +112,6 @@ CGame* CPlayer::getGame()
 void CPlayer::update(float deltatime)
 {
   //ImGui
-	deltatime = 0.5;
   float speed = deltatime*MOVE_SPEED;
   float rotSpeed = deltatime*5.f;//m_rotAngle;
   for (auto& key : m_keys)

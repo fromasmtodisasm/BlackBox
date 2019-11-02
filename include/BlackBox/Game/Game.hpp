@@ -118,7 +118,6 @@ private:
 
   // IGame interface
 public:
-  virtual float getDeltaTime() override;
   virtual float getFPS() override;
 
   // Унаследовано через IPostRenderCallback

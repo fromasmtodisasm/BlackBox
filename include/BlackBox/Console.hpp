@@ -184,6 +184,7 @@ public:
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
 	virtual bool OnInputEvent(const SInputEvent& event) override;
+	virtual bool OnInputEventUI(const SUnicodeEvent& event);
 	void getHistoryElement();
 	void completeCommand(std::vector<std::wstring>& completion);
 	void setBuffer();

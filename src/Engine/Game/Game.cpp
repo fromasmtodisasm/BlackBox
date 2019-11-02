@@ -34,7 +34,6 @@
 #include <cctype>
 #include <ctime>
 #include <iomanip>
-
 #include <sstream>
 
 //using namespace std;
@@ -223,15 +222,12 @@ bool CGame::Update() {
 	m_pSystem->BeginFrame();
 	{
 		// TODO: FIX IT
-#if 0
-		sf::Time deltaTime = deltaClock.restart();
-		m_deltaTime = deltaTime.asSeconds();
+		m_deltaTime = m_pSystem->GetDeltaTime();
 		m_time += m_deltaTime;
-		fps =  1000.0f / deltaTime.asMilliseconds();
-#endif
+		fps =  1.0f / m_deltaTime;
 		execScripts();
 		if (!IsInPause())
-			m_World->update(m_deltaTime);
+			m_World->update(m_pSystem->GetDeltaTime());
 
 		setRenderState();
 
@@ -711,13 +707,8 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
       m_Mode = Mode::MENU;
       return true;
     }
-
 	}
-	else
-	{
-    m_player->OnInputEvent(event);
-	}
-  return false;
+	return m_player->OnInputEvent(event);
 }
 
 bool CGame::MenuInputEvent(const SInputEvent& event)
@@ -974,11 +965,6 @@ bool CGame::IsInPause()
 void CGame::Stop()
 {
   m_bUpdateRet = false;
-}
-
-float CGame::getDeltaTime()
-{
-  return m_deltaTime;
 }
 
 float CGame::getFPS()

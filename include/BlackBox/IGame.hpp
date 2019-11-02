@@ -32,7 +32,6 @@ struct IGame {
 	virtual bool Init(ISystem *pSystem) = 0;
 	virtual bool Update() = 0;
 	virtual bool Run(bool& bRelaunch) = 0;
-  virtual float getDeltaTime() = 0;
   virtual float getTime() = 0;
   virtual float getFPS() = 0;
   virtual void Stop() = 0;

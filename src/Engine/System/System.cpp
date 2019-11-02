@@ -19,6 +19,8 @@
 #include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/Profiler/Drawer2D.h>
 
+#include <SDL2/SDL.h>
+
 #include <cstdlib>
 #pragma once
 
@@ -177,6 +179,11 @@ void CSystem::Start()
 
   m_pGame->Run(bRelaunch);  
 
+	NOW = SDL_GetPerformanceCounter();
+	LAST = 0;
+
+	m_DeltaTime = 0.0;
+
 	while (bRelaunch)
 	{
 		m_pGame->Release();
@@ -280,6 +287,11 @@ void CSystem::ParseCMD()
 	{
 		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
 	}
+}
+
+float CSystem::GetDeltaTime()
+{
+	return static_cast<float>(m_DeltaTime);
 }
 
 bool CSystem::IsDevMode()
@@ -425,6 +437,10 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 {
 	//PROFILER_SYNC_FRAME();
 	// Update input
+	LAST = NOW;
+	NOW = SDL_GetPerformanceCounter();
+
+	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
 		//FIXME: CHECK IT

@@ -162,13 +162,13 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!isOpened) return;
-	auto deltatime = GetISystem()->GetIGame()->getDeltaTime();
+	auto deltatime = GetISystem()->GetDeltaTime();
 	auto render = GetISystem()->GetIRender();
 	height = (float)(render->GetHeight()) / 2;
 	Animate(deltatime, render);
 	size_t end;
 	auto prompt = getPrompt();
-	time += GetISystem()->GetIGame()->getDeltaTime();
+	time += GetISystem()->GetDeltaTime();
 	render->SetRenderTarget(0);
 	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
 	CalcMetrics(end);
@@ -289,7 +289,6 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 	input_trigered = false;
 
 	{
-		bool keyPressed = false;
 		bool textEntered = false;
 		if (keyPressed)
 		{
@@ -410,15 +409,15 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				return false;
 			}
 		}
-		else if (textEntered)
-		{
-#ifdef TEXT_ENTERED_IMPLEMENTED
-			handleCommandTextEnter(event.text.unicode);
-#endif // TEXT_ENTERED_IMPLEMENTED
-			return true;
-		}
 		return false;
 	}
+}
+
+bool CConsole::OnInputEventUI(const SUnicodeEvent& event)
+{
+	if (isOpened && event.inputChar >= 32 && event.inputChar != 96)
+		handleCommandTextEnter(event.inputChar);
+	return false;
 }
 
 void CConsole::getHistoryElement()
@@ -589,7 +588,7 @@ void CConsole::getBuffer()
 
 bool CConsole::needShowCursor()
 {
-	float dt = GetISystem()->GetIGame()->getDeltaTime();
+	float dt = GetISystem()->GetDeltaTime();
 	/*
 	if (cursor_tick_tack)
 		cursor_tick += dt;

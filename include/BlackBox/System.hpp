@@ -50,10 +50,15 @@ public:
 	virtual void Log(const char* message) override;
 
 	virtual bool OnInputEvent(const SInputEvent& event) override;
-	// Inherited via IConsoleVarSink
-	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 	bool ConfigLoad(const char* file);
+
+	virtual bool IsDevMode() override;
+	virtual void Error(const char* message) override;
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 private:
 	void ParseCMD();
@@ -83,12 +88,12 @@ private:
 	SSystemInitParams& m_startupParams;
 	CCmdLine* m_pCmdLine;
 
-	// Inherited via ISystem
-	virtual bool IsDevMode() override;
+	uint64_t NOW;
+	uint64_t LAST;
+	double m_DeltaTime = 0.0;
+
 
 	// Inherited via ISystem
-	virtual void Error(const char* message) override;
+	virtual float GetDeltaTime() override;
 
-	// Inherited via ISystemEventListener
-	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 };
