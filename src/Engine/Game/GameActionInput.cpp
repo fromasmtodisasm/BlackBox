@@ -53,6 +53,7 @@ void CGame::InitInputMap()
 	IInput* pInput = m_pSystem->GetIInput();
 
 	m_pIActionMapManager = pInput->CreateActionMapManager();
+	return;
 
 	ResetInputMap();
 }
@@ -61,33 +62,33 @@ void CGame::InitConsoleCommands()
 {
 	IConsole* pConsole = m_pSystem->GetIConsole();
 
-	pConsole->AddCommand("reload_script", "Script:ReloadScript(%1)", VF_CHEAT,
+	REGISTER_COMMAND("reload_script", "Script:ReloadScript(%1)", VF_CHEAT,
 		"\n"
 		"Usage: \n"
 		"");
-	pConsole->AddCommand("dump_scripts", "Script:DumpLoadedScripts()", VF_CHEAT,
+	REGISTER_COMMAND("dump_scripts", "Script:DumpLoadedScripts()", VF_CHEAT,
 		"Outputs a list of currently loaded scripts.\n"
 		"Usage: dump_scripts\n");
-	pConsole->AddCommand("quit", "Game:Quit()", 0,
+	REGISTER_COMMAND("quit", "Game:Quit()", 0,
 		"Quits the game.\n"
 		"Usage: quit\n");
-	pConsole->AddCommand("clear", "System:ClearConsole()", 0,
+	REGISTER_COMMAND("clear", "System:ClearConsole()", 0,
 		"Clears console text.\n"
 		"Usage: clear\n");
-	pConsole->AddCommand("fov", "Game:SetCameraFov(%1/180*3.14159)", VF_CHEAT,
+	REGISTER_COMMAND("fov", "Game:SetCameraFov(%1/180*3.14159)", VF_CHEAT,
 		"Sets the player's field of view.\n"
 		"Usage: fov 120\n"
 		"The field of vision is set in degrees between 1 and 180.");
-	pConsole->AddCommand("dumpcommandsvars", "System:DumpCommandsVars(%%)", 0,
+	REGISTER_COMMAND("dumpcommandsvars", "System:DumpCommandsVars(%%)", 0,
 		"Outputs a list of commands and variables.\n"
 		"Usage: dumpcommandsvars\n"
 		"Saves a list of all registered commands and variables\n"
 		"to a file called consolecommandsandvars.txt");
 
-	pConsole->AddCommand("savepos", "Game:SavePlayerPos(%%)", 0,
+	REGISTER_COMMAND("savepos", "Game:SavePlayerPos(%%)", 0,
 		"Saves current player position to the tagpoint file.\n"
 		"Usage: savepos pointname\n");
-	pConsole->AddCommand("loadpos", "Game:LoadPlayerPos(%%)", 0,
+	REGISTER_COMMAND("loadpos", "Game:LoadPlayerPos(%%)", 0,
 		"Loads player position from the tagpoint file.\n"
 		"Usage: loadpos pointname\n");
 }

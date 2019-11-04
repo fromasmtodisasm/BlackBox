@@ -6,8 +6,8 @@
 #include <algorithm>
 using namespace std;
 
-FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors) 
-  : 
+FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors)
+  :
   type(type),
   id(-1),
   rbo(-1),
@@ -57,7 +57,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     filterMin = filterMag = GL_LINEAR;
     wrapS = wrapT = GL_CLAMP_TO_BORDER;
     dataType = GL_FLOAT;
-    //attachment = 
+    //attachment =
     break;
   case FrameBufferObject::SCENE_BUFFER:
     internalFormat = Format = GL_RGBA;
@@ -77,7 +77,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   }
 
 	gl::BindFramebuffer(fbo->id);
-	
+
 	{
 		for (int i = 0; i < texCnt; i++)
 		{
@@ -128,7 +128,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
 
   if (texCnt > 1 && type != DEPTH_BUFFER)
 	{
-		// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+		// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
 		std::vector<unsigned int> attachments;
 		for (int i = 0; i < texCnt; i++)
 		{
@@ -146,7 +146,7 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   return fbo;
 }
 
-void FrameBufferObject::clear(gl::Color &color)
+void FrameBufferObject::clear(gl::Color const& color)
 {
 	gl::ClearColor(color);
 	glCheck(glClearDepthf(1.f));

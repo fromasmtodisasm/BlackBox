@@ -17,7 +17,7 @@ public:
   std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader);
   std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader);
   std::shared_ptr<CShaderProgram> getDefaultProgram();
-  std::shared_ptr<CShader> getShader(ShaderDesc& desc, bool isReload);
+  std::shared_ptr<CShader> getShader(ShaderDesc const& desc, bool isReload);
   void removeShader(std::string name);
   static bool init();
 private:

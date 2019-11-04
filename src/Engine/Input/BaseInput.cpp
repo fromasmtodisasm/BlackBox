@@ -6,6 +6,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Platform.hpp>
 #include <BlackBox/Utils.hpp>
+#include "..\..\..\include\BlackBox\Input\BaseInput.hpp"
 
 bool compareInputListener(const IInputEventListener* pListenerA, const IInputEventListener* pListenerB)
 {
@@ -342,6 +343,16 @@ void CBaseInput::RemoveEventListener(IInputEventListener * pListener)
 	}
 }
 
+bool CBaseInput::AddTouchEventListener(ITouchEventListener* pListener, const char* name)
+{
+	return m_touchListeners.insert(pListener).second;
+}
+
+void CBaseInput::RemoveTouchEventListener(ITouchEventListener* pListener)
+{
+	m_touchListeners.erase(pListener);
+}
+
 void CBaseInput::AddConsoleEventListener(IInputEventListener * pListener)
 {
 	if (std::find(m_consoleListeners.begin(), m_consoleListeners.end(), pListener) == m_consoleListeners.end())
@@ -434,6 +445,19 @@ void CBaseInput::PostInputEvent(const SInputEvent & event, bool bForce)
 	}
 }
 
+void CBaseInput::PostTouchEvent(const STouchEvent& event, bool bForce)
+{
+	if (!bForce && !m_enableEventPosting)
+		return;
+
+	if (g_pInputCVars->i_debug)
+		GetISystem()->GetILog()->Log("InputDebug [Touch]: x: %.4f - y: %.4f - id: %d", event.pos.x, event.pos.y, event.id);
+
+	for (auto &notifier : m_touchListeners)
+		notifier->OnTouchEvent(event);
+
+}
+
 void CBaseInput::PostUnicodeEvent(const SUnicodeEvent & event, bool bForce)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_INPUT);
@@ -454,6 +478,52 @@ void CBaseInput::PostUnicodeEvent(const SUnicodeEvent & event, bool bForce)
 
 	if (!SendEventToListeners(event))
 		return;
+}
+
+void CBaseInput::ForceFeedbackEvent(const SFFOutputEvent& event)
+{
+	if (g_pInputCVars->i_forcefeedback == 0 || m_hasFocus == false)
+		return;
+
+	for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
+	{
+		if ((*i)->GetDeviceType() == event.deviceType && (m_forceFeedbackDeviceIndex == (*i)->GetDeviceIndex()))
+		{
+			IFFParams params;
+			params.effectId = event.eventId;
+			params.timeInSeconds = event.timeInSeconds;
+			params.triggerData = event.triggerData;
+
+			switch (event.eventId)
+			{
+			case eFF_Rumble_Basic:
+				params.strengthA = event.amplifierS;
+				params.strengthB = event.amplifierA;
+				break;
+
+			case eFF_Rumble_Frame:
+				params.timeInSeconds = 0.0f;
+				params.strengthA = event.amplifierS;
+				params.strengthB = event.amplifierA;
+				break;
+			default:
+				break;
+			}
+
+			if ((*i)->SetForceFeedback(params))
+				break;
+		}
+	}
+}
+
+void CBaseInput::ForceFeedbackSetDeviceIndex(int index)
+{
+	if (m_forceFeedbackDeviceIndex != index)
+	{
+		// Disable rumble on current device before switching, otherwise it will stay on
+		ForceFeedbackEvent(SFFOutputEvent(eIDT_Gamepad, eFF_Rumble_Frame, SFFTriggerOutputData::Initial::ZeroIt, 0.0f, 0.0f, 0.0f));
+		m_forceFeedbackDeviceIndex = index;
+	}
 }
 
 bool CBaseInput::SendEventToListeners(const SInputEvent & event)

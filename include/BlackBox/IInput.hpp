@@ -560,6 +560,35 @@ private:
 
 };
 
+//! SFFOutputEvents are force feedback signals send to an input controller.
+struct SFFOutputEvent
+{
+	EInputDeviceType     deviceType;           //!< Which device will receive the event.
+	EFFEffectId          eventId;
+	float                amplifierS, amplifierA;
+	float                timeInSeconds;
+
+	SFFTriggerOutputData triggerData;
+
+	SFFOutputEvent() : triggerData(SFFTriggerOutputData::Initial::Default)
+	{
+		deviceType = eIDT_Unknown;
+		eventId = eFF_Rumble_Basic;
+		amplifierS = 1.0f;
+		amplifierA = 1.0f;
+		timeInSeconds = 0.3f;
+	}
+
+	SFFOutputEvent(EInputDeviceType id, EFFEffectId event, SFFTriggerOutputData::Initial::Value triggerInitValue, float time = 1.0f, float ampA = 1.0f, float ampB = 1.0f) :
+		deviceType(id), eventId(event), timeInSeconds(time), amplifierS(ampA), amplifierA(ampB),
+		triggerData(triggerInitValue)
+	{}
+
+	SFFOutputEvent(EInputDeviceType id, EFFEffectId event, const SFFTriggerOutputData& triggerData, float time = 1.0f, float ampA = 1.0f, float ampB = 1.0f) :
+		deviceType(id), eventId(event), timeInSeconds(time), amplifierS(ampA), amplifierA(ampB),
+		triggerData(triggerData)
+	{}
+};
 
 struct SInputSymbol
 {
@@ -700,6 +729,10 @@ struct IInputDevice
 
 	//! Update.
 	virtual void Update(bool bFocus) = 0;
+
+	//! Sets force feedback.
+	//! \return true if successful.
+	virtual bool SetForceFeedback(IFFParams params) = 0;
 
 	//! Checks for key pressed and held.
 	virtual bool InputState(const TKeyName& key, EInputState state) = 0;

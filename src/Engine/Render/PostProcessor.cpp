@@ -5,8 +5,8 @@ PostProcessor::PostProcessor(const char *shader)
 {
 	ProgramDesc desc = {
 		shader,
-		"screenshader.vs",
-		std::string(shader) + ".frag"
+		ShaderDesc("screenshader.vs"),
+		ShaderDesc(std::string(shader) + ".frag")
 	};
 
 	MaterialManager::instance()->loadProgram(desc, false);

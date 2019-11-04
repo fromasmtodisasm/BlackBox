@@ -17,7 +17,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
-CRender::CRender(ISystem *engine) : 
+CRender::CRender(ISystem *engine) :
   m_pSystem(engine), m_viewPort(0,0,0,0)
 {
 
@@ -65,8 +65,8 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
 	//=======================
 	ProgramDesc pd = {
 		"screen_quad",
-		"screenshader.vs",
-		"screenshader.frag"
+		ShaderDesc("screenshader.vs"),
+		ShaderDesc("screenshader.frag")
 	};
 	pd.vs.macro["STORE_TEXCOORDS"] = "1";
 	MaterialManager::instance()->loadProgram(pd, false);

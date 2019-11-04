@@ -65,7 +65,7 @@ struct TextRenderInfo
   {
     text.push_back(line + '\n');
   }
-  SDrawTextInfo getDTI()
+  SDrawTextInfo& getDTI()
   {
     SDrawTextInfo dti;
     dti.color[0] = color[0];
@@ -146,7 +146,7 @@ bool CGame::Init(ISystem *pEngine)  {
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
   m_pInput->AddEventListener(this);
-  
+
 	initCommands();
 	initVariables();
 	InitScripts();
@@ -163,6 +163,12 @@ bool CGame::Init(ISystem *pEngine)  {
     //TODO: log: error load Init.cfg
     return false;
   }
+
+	InitInputMap();
+	InitConsoleCommands();
+
+	m_pSystem->GetIConsole()->ShowConsole(0);
+	DevModeInit();
 
 	if (!loadScene()) {
 		m_Log->Log("[FAILED] Failed init objects\n");
@@ -181,7 +187,7 @@ bool CGame::Init(ISystem *pEngine)  {
   auto tech = new HdrTechnique();
   tech->Init(m_World->getActiveScene(), nullptr);
   m_World->getActiveScene()->setTechnique(tech);
-	
+
 	postProcessors.push_back(nullptr);
 	postProcessors.push_back(new PostProcessor("negative"));
 	postProcessors.push_back(new PostProcessor("grayscale"));
@@ -192,8 +198,8 @@ bool CGame::Init(ISystem *pEngine)  {
 	m_Font->Init("arial.ttf", 16, 18);
 
   ITexture* consoleBackGround = new Texture();
-#if 0 
-	consoleBackGround->load("console/fc.jpg"); 
+#if 0
+	consoleBackGround->load("console/fc.jpg");
 #endif
   m_Console->SetImage(consoleBackGround);
 
@@ -370,6 +376,7 @@ bool CGame::Run(bool& bRelaunch) {
 		auto p = GET_CVAR("single_pass");
 		if (p->GetIVal())
 		{
+		    #if 0
 			SmartScriptObject test(m_pScriptSystem);
 			if (!m_pScriptSystem->GetGlobalValue("Test", *test))
 			{
@@ -377,7 +384,7 @@ bool CGame::Run(bool& bRelaunch) {
 				m_pSystem->Log("\002 ERROR: can't find Test table ");
 				return false;
 			}
-			
+
 			m_pScriptSystem->BeginCall("Test", "OnInit");
 			m_pScriptSystem->PushFuncParam(*test);
 			m_pScriptSystem->EndCall();
@@ -388,6 +395,7 @@ bool CGame::Run(bool& bRelaunch) {
 			ss << "screen_shots/tests/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".png";
 			m_Log->Log("Screenshot name: %s", ss.str().c_str());
 			m_pRender->ScreenShot(ss.str().c_str());
+			#endif // 0
 
 			return true;
 		}
@@ -422,7 +430,7 @@ void CGame::setRenderState()
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-	
+
 	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
 	m_pRender->SetState(IRender::State::BLEND, false);
 	if (culling)
@@ -458,8 +466,8 @@ void CGame::render()
 		w = GET_CVAR("r_cam_w")->GetIVal();
 		h = GET_CVAR("r_cam_h")->GetIVal();
 	}
-	
-	
+
+
 	auto r = ((float)w) / h;
   m_World->getActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
@@ -622,7 +630,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 	if (m_Console->IsOpened())
 		return false;
   */
-	
+
 	////////////////////////
 	bool keyPressed = event.deviceType == eIDT_Keyboard &&  event.state == eIS_Pressed;
 	bool control = event.modifiers & eMM_Ctrl;
@@ -759,7 +767,7 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 		mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
 
 		if (
-			std::abs(event.mouseMove.x - w) <= 8 && !mousePressed 
+			std::abs(event.mouseMove.x - w) <= 8 && !mousePressed
 			&& event.mouseMove.y > (m_pRender->GetHeight() -  h)
 			)
 		{
@@ -771,7 +779,7 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 			canDragViewPortWidth = false;
 		}
 		if (
-			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h)) <= 8 
+			std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h)) <= 8
 			&& event.mouseMove.x < w && !mousePressed
 			)
 		{
@@ -911,13 +919,13 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 
 bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
-	
+
 	bool keyPressed = event.deviceType == eIDT_Keyboard &&  event.state == eIS_Pressed;
 	bool control = event.modifiers & eMM_Ctrl;
 	bool shift = event.modifiers & eMM_Shift;
 	bool alt = event.modifiers & eMM_Alt;
 	retflag = true;
-	
+
 	if (keyPressed)
 	{
 		switch (event.keyId)
@@ -970,7 +978,7 @@ float CGame::getFPS()
 
 void CGame::PostRender()
 {
-  
+
 }
 
 void CGame::gotoMenu()

@@ -24,7 +24,7 @@
 
 #include <cstdlib>
 #include "..\..\..\include\BlackBox\System.hpp"
-#pragma once
+
 
 using namespace Utils;
 
@@ -112,9 +112,9 @@ bool CSystem::Init()
 	}
 	//=============
 	if (!(m_pWindow = m_Render->Init(
-		0,0, 
-		r_window_width->GetIVal(), r_window_height->GetIVal(), 
-		r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(), 
+		0,0,
+		r_window_width->GetIVal(), r_window_height->GetIVal(),
+		r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(),
 		r_fullscreen->GetIVal(), m_pWindow))
 		)
 		return false;
@@ -171,7 +171,7 @@ bool CSystem::Init()
 	m_pInput->AddEventListener(m_pConsole);
   if (CreateGame(nullptr) == nullptr)
     return false;
-	
+
   if (!m_pGame->Init(this)) {
     return false;
 	}
@@ -183,7 +183,7 @@ void CSystem::Start()
 {
 	bool bRelaunch = false;
 
-  m_pGame->Run(bRelaunch);  
+  m_pGame->Run(bRelaunch);
 
 	NOW = SDL_GetPerformanceCounter();
 	LAST = 0;
@@ -198,7 +198,7 @@ void CSystem::Start()
 			break;
 		m_pGame->Run(bRelaunch);
 	}
-		
+
 }
 
 void CSystem::Release()
@@ -422,7 +422,7 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 				if (event.keyId == eKI_Enter)
 				{
 //TODO: IMPLEMENT THIS
-#if 0 
+#if 0
 					static_cast<CWindow*>(m_pWindow)->ToogleFullScreen(1366, 768);
 #endif
 				}

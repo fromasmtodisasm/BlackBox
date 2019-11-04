@@ -251,12 +251,12 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 		}
 		fscanf(f, "%s\n", desc);
 		if (strlen(desc) > 0)
-			GameWarning("%s", desc);
+			;//GameWarning("%s", desc);
 		fclose(f);
 	}
 	else
 	{
-		GameWarning("Tag file %s not found", filename.c_str());
+		;//GameWarning("Tag file %s not found", filename.c_str());
 	}
 
 	Vec3 p = tagLocations[index];

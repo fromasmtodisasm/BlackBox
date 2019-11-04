@@ -12,6 +12,7 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/Terrain.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
 
 #include <map>
 #include <string>

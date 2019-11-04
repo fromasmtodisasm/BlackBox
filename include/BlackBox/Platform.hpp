@@ -44,13 +44,13 @@ inline auto SAFE_DELETE(T *& t)
 #define MASK64(x) (BIT64(x) - 1ULL)
 
 #define ASSERT(msg) assert(msg)
-#define FUNCTION_PROFILER() 
-#define LogAlways() void(0);
+#define FUNCTION_PROFILER(...)
+#define LogAlways(...) void(0);
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
 #if !defined(_DEBUG) && !defined(CRY_UBSAN)
-#define ILINE BB_FORCE_INLINE
+#define ILINE
 #else
 #define ILINE inline
 #endif

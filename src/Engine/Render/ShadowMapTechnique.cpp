@@ -38,13 +38,13 @@ bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
 
 	ProgramDesc pd = {
 		"shadowpass",
-		"shadowpass.vs",
-		"shadowpass.frag"
+		ShaderDesc("shadowpass.vs"),
+		ShaderDesc("shadowpass.frag")
 	};
 
 	MaterialManager::instance()->loadProgram(pd, false);
 	m_ShadowMapShader = MaterialManager::instance()->getProgram(pd.name);
-  
+
   //==============
 	lightPosX = CREATE_CVAR("lpx", -1.f, 0, "light pos x");
 	lightPosY = CREATE_CVAR("lpy", 15.f, 0, "light pos y");
@@ -95,7 +95,7 @@ void ShadowMapping::DepthPass()
 
   renderStage = RENDER_DEPTH;
   m_Scene->ForEachObject(this);
-  
+
   m_ShadowMapShader->Unuse();
   m_DepthBuffer->unbind();
 }
@@ -131,11 +131,11 @@ void ShadowMapping::RenderPass()
 	);
 	points->draw();
 	points->shader->Unuse();
-  
+
   // Render transparent objects
   renderStage = RENDER_TRANSPARENT;
   m_Scene->ForEachObject(this);
-  
+
 }
 
 void ShadowMapping::RenderDepth(Object* object)
@@ -153,7 +153,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
   auto camera = m_Scene->getCurrentCamera();
-  if (!object->m_transparent && (object->visible()) && 
+  if (!object->m_transparent && (object->visible()) &&
     glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
   {
     auto program = object->m_Material->program;
@@ -250,7 +250,7 @@ void ShadowMapping::SetupLights(Object *object)
   SetupSpotLights();
 
   object->m_Material->program->Uniform(currentLight + 1, "countOfPointLights");
- 
+
 }
 
 void ShadowMapping::SetupDirectionLights()
@@ -355,7 +355,7 @@ bool ShadowMapping::OnLightFound(PointLight* light)
 
 bool ShadowMapping::OnLightFound(SpotLight* light)
 {
-  
+
 	DEBUG_GROUP(__FUNCTION__);
   auto program = Pipeline::instance()->object->m_Material->program;
   program->Uniform(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");

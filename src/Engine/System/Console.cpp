@@ -71,12 +71,12 @@ void findAndReplaceAll(std::string& data, std::string toSearch, std::function<st
 	}
 }
 
-class HelpCommand : public IConsoleCommand 
+class HelpCommand : public IConsoleCommand
 {
 public:
 	HelpCommand()
 	{
-		
+
 	}
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
@@ -88,13 +88,13 @@ public:
 		return true;
 	}
 };
-class SetCommand : public IConsoleCommand 
+class SetCommand : public IConsoleCommand
 {
 	CConsole* m_Console;
 public:
 	SetCommand(CConsole *console) : m_Console(console)
 	{
-		
+
 	}
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
@@ -104,13 +104,13 @@ public:
 	}
 };
 
-class GetCommand : public IConsoleCommand 
+class GetCommand : public IConsoleCommand
 {
 	CConsole* m_Console;
 public:
 	GetCommand(CConsole *console) : m_Console(console)
 	{
-		
+
 	}
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
@@ -120,13 +120,13 @@ public:
 	}
 };
 
-class DumpCommand : public IConsoleCommand 
+class DumpCommand : public IConsoleCommand
 {
 	CConsole* m_Console;
 public:
 	DumpCommand(CConsole *console) : m_Console(console)
 	{
-		
+
 	}
 	// Inherited via IEditCommand
 	virtual bool execute(CommandDesc& cd) override
@@ -183,7 +183,7 @@ void CConsole::Draw()
 	{
 		printText(element, line_count - 1);
 	}
-	char *cursor = needShowCursor() ? "*" : " ";
+	auto cursor = needShowCursor() ? "*" : " ";
 	//command_text.replace(command_text.size() - 1, 1, 1, cursor);
 	//command_text[command.length()] = cursor;
 
@@ -282,7 +282,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 	}
 	std::vector<std::wstring> completion;
 	//m_World->getActiveScene()->setPostProcessor(postProcessors[4]);
-	
+
 	if (cmd_is_compete)
 	{
 		//SetInputLine("");
@@ -495,7 +495,7 @@ void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
 	}
 }
 
-void CConsole::addText(std::wstring& cmd)
+void CConsole::addText(std::wstring const& cmd)
 {
 	cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
 }
@@ -618,7 +618,7 @@ bool CConsole::needShowCursor()
 		cursor_tick = cursor_tack;
 		cursor_tick_tack = true;
 	}
-	*/	
+	*/
 
 	blinking += dt;
 
@@ -952,7 +952,7 @@ void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 
 void CConsole::OnElementFound(ICVar* pCVar)
 {
-	
+
 	auto name = pCVar->GetName();
 	auto helpString = pCVar->GetHelp();
 	auto help = helpString[0] != '\0' ? ". Help: " + std::string(helpString) : "";
@@ -1181,7 +1181,7 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 		}
 		return std::wstring();
 	};
-	
+
 	for (int i = begin_cmd; i < command.size(); i++)
 	{
 		switch (state1)
@@ -1198,7 +1198,7 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 			}
 			else
 			{
-				state1 = INARGSPACE;	
+				state1 = INARGSPACE;
 			}
 			break;
 		case INSTRING:
@@ -1224,7 +1224,7 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 			}
 			else
 			{
-				state1 = INARGSPACE;	
+				state1 = INARGSPACE;
 				if (get_value)
 				{
 					cd.args.push_back(getVal(value));
@@ -1327,7 +1327,7 @@ void CConsole::ExecuteFile(const char* file)
 	}
 }
 
-CConsole::CConsole() 
+CConsole::CConsole()
 	:
 	m_pBackGround(nullptr)
 {
@@ -1377,10 +1377,10 @@ CommandLine CConsole::getPrompt()
 	auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	std::string time_str = std::ctime(&time);
 	time_str[time_str.size() - 1] = 0;
-	return { 
-		Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0) , 
-		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) , 
-		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) , 
+	return {
+		Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0) ,
+		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) ,
+		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) ,
 		Text(std::string(" " + time_str), promptColor, 1.0),
 		Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
 	};
@@ -1389,13 +1389,14 @@ CommandLine CConsole::getPrompt()
 void CConsole::printLine(size_t line)
 {
 	auto i = line;
-	for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
+	//for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
+    for (const auto &element : cmd_buffer[line])
 	{
-		printText(*element, line);
+		printText(element, line);
 	}
 }
 
-void CConsole::printText(Text & element, size_t line)
+void CConsole::printText(Text const& element, size_t line)
 {
 	auto curr_y = m_Font->GetYPos();
 	m_Font->RenderText(
