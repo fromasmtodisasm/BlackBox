@@ -55,6 +55,7 @@ struct TextRenderInfo
   IFont* font;
   std::vector<std::string> text;
   glm::vec4 color;
+	SDrawTextInfo dti;
   TextRenderInfo() : font(nullptr), color(glm::vec4(1.0)){}
   TextRenderInfo(IFont *f, glm::vec4 c)
     :
@@ -67,7 +68,6 @@ struct TextRenderInfo
   }
   SDrawTextInfo& getDTI()
   {
-    SDrawTextInfo dti;
     dti.color[0] = color[0];
     dti.color[1] = color[1];
     dti.color[2] = color[2];
