@@ -34,4 +34,6 @@ struct IWindow {
  virtual void setCursor(Cursor* cursor) = 0;
 };
 
-EXPORT IWindow* CreateIWindow();
+extern "C" {
+	IWindow* CreateIWindow();
+}

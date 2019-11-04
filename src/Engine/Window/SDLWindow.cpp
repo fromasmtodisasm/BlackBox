@@ -164,7 +164,7 @@ void CSDLWindow::setCursor(Cursor* cursor)
 }
 
 extern "C" {
-	inline IWindow* CreateIWindow()
+	IWindow* CreateIWindow()
 	{
 		return new CSDLWindow();
 	}
