@@ -25,7 +25,9 @@ CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
 	bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
-	bool mouseMoved = /*event.deviceType == eIDT_Mouse &&*/ (event.keyId == eKI_MouseX || event.keyId == eKI_MouseY || event.keyId == eKI_XI_ThumbRX || event.keyId == eKI_XI_ThumbRY);
+	bool rotated = false;
+	if (event.pSymbol != nullptr)
+		rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY || event.pSymbol->type == SInputSymbol::EType::Axis;
 
 
 	////////////////////////
@@ -46,11 +48,11 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 
     return true;
   }
-	else if (mouseMoved)
+	else if (rotated)
 	{
 		// TODO: GET DELTA  MOUSE
 		delta = Vec2(0);
-		if (event.keyId == eKI_MouseX || event.keyId == eKI_XI_ThumbRX)
+		if (event.keyId == eKI_MouseX || event.keyId == eKI_XI_ThumbRX || event.keyId == eKI_XI_ThumbLX)
 			delta.x = event.value;
 		else
 			delta.y = event.value;
