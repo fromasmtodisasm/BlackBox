@@ -6,7 +6,7 @@
 
 void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4])
 {
-	// Activate corresponding render state	
+	// Activate corresponding render state
 	shader->Use();
 	auto render = GetISystem()->GetIRender();
 	glm::mat4 uv_projection = glm::mat4(1.0);
@@ -101,8 +101,8 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	ProgramDesc pd = {
 		"sprite",
-		"sprite.vs",
-		"sprite.frag"
+		ShaderDesc("sprite.vs"),
+		ShaderDesc("sprite.frag")
 	};
 
 	if (!MaterialManager::instance()->loadProgram(pd, false))
@@ -128,7 +128,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 
 	for (GLubyte c = 0; c < 128; c++)
 	{
-		// Load character glyph 
+		// Load character glyph
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
 			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;

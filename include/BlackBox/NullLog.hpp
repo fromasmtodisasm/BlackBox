@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-#include <varargs.h>
+#include <cstdarg>
 #include <Utils.hpp>
 
 #define strdup _strdup
@@ -85,7 +85,7 @@ void NullLog::Release()
 }
 
 void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
-{    
+{
 	vsprintf(buf, szFormat, args);
 	auto len = strlen(buf);
 	buf[len] = '\n';

@@ -126,11 +126,11 @@ class CDebugSection
 {
 public:
 
-	__forceinline CDebugSection(size_t length, const char* message)
+    inline CDebugSection(size_t length, const char* message)
 	{
 		OpenglDebuger::PushGroup(0, static_cast<GLsizei>(length), message);
 	}
-	__forceinline ~CDebugSection()
+	inline ~CDebugSection()
 	{
 		OpenglDebuger::EndGroup();
 	}
@@ -224,7 +224,7 @@ namespace gl {
 		glCheck(glCullFace(mode));
 	}
 
-	inline void ViewPort(Vec4 &viewPort)
+	inline void ViewPort(Vec4 const&viewPort)
 	{
 		glCheck(glViewport(static_cast<GLint>(viewPort.x), static_cast<GLint>(viewPort.y), static_cast<GLint>(viewPort.z), static_cast<GLint>(viewPort.w)));
 	}
@@ -239,7 +239,7 @@ namespace gl {
 		glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, level));
 	}
 
-	inline void ClearColor(Color &color)
+	inline void ClearColor(Color const& color)
 	{
 		glCheck(glClearColor(color.r, color.g, color.b, color.a));
 	}
@@ -291,22 +291,22 @@ namespace gl {
     glCheck(glUniform1f(location, value));
 	}
 
-	inline void UniformValue(GLint location, glm::vec1 &value)
+	inline void UniformValue(GLint location, glm::vec1 const&value)
 	{
     glCheck(glUniform1fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void UniformValue(GLint location, glm::vec2 &value)
+	inline void UniformValue(GLint location, glm::vec2 const&value)
 	{
     glCheck(glUniform2fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void UniformValue(GLint location, glm::vec3 &value)
+	inline void UniformValue(GLint location, glm::vec3 const&value)
 	{
     glCheck(glUniform3fv(location, 1, glm::value_ptr(value)));
 	}
 
-	inline void UniformValue(GLint location, glm::vec4 &value)
+	inline void UniformValue(GLint location, glm::vec4 const&value)
 	{
     glCheck(glUniform4fv(location, 1, glm::value_ptr(value)));
 	}
@@ -328,7 +328,7 @@ namespace gl {
 
 	// Shader
 	template<typename T>
-	inline void Uniform(GLint location, T& const value)
+	inline void Uniform(GLint location, T& value)
 	{
 		UniformValue(location, value);
 	}

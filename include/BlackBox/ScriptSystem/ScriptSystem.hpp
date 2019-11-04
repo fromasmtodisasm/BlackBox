@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/ScriptBinding.hpp>
-#include <BlackBox/ScriptSystem/LuaCommon.hpp> 
+#include <BlackBox/ScriptSystem/LuaCommon.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/IConsole.hpp>
 
@@ -204,7 +204,7 @@ private:
 	template<typename T>
 	bool       EndCallAny(T& any);
 	template<typename T>
-	bool       EndCallAnyN(T*& any);
+	bool       EndCallAnyN(int n, T*& any);
 	template<typename T>
 	void PushFuncParamAny(T val);
 
@@ -264,7 +264,7 @@ inline bool CScriptSystem::EndCallAny(T& any)
 }
 
 template<typename T>
-inline bool CScriptSystem::EndCallAnyN(T*& anys)
+inline bool CScriptSystem::EndCallAnyN(int n, T*& anys)
 {
 	if (!EndCallN(n))
 		return false;

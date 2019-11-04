@@ -73,7 +73,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
 	auto console = GetISystem()->GetIConsole();
 
 	auto format = m_DispFormats.get();
-	
+
 	//CreateFrameBuffers(format);
 	CreateFrameBuffers(nullptr);
 	m_HdrBuffer->clear(gl::Color(1, 0, 0, 1));
@@ -245,36 +245,36 @@ void HdrTechnique::createShader()
 		//0
 		{
 			"hdr_shader",
-			"screenshader.vs",
-			"hdrshader.frag"
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("hdrshader.frag")
 		},
 		//1
 		{
 			"downsampling",
-			"screenshader.vs",
-			"downsampling.frag"
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("downsampling.frag")
 		},
 		//2
 		{
 			"downsampling_compute",
-			"",
-			"",
-			"",
-			"downsampling.comp"
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc("downsampling.comp")
 		},
 		//3
 		{
 			"upsampling",
-			"screenshader.vs",
-			"upsampling.frag",
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("upsampling.frag"),
 		},
 		//4
 		{
 			"upsampling_compute",
-			"",
-			"",
-			"",
-			"upsampling.comp"
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc("upsampling.comp")
 		},
 	};
 
@@ -380,7 +380,7 @@ void HdrTechnique::CreateCommands()
 
 	IConsoleCommand *cmd = new HdrCommands(this);
 	GetISystem()->GetIConsole()->AddCommand(
-		"setmode", 
+		"setmode",
 		cmd,
 		"Set display mode"
 		);
@@ -418,7 +418,7 @@ void HdrTechnique::downsampling()
 
 void HdrTechnique::downsamplingStandard()
 {
-	// 2. blur bright fragments with two-pass Gaussian Blur 
+	// 2. blur bright fragments with two-pass Gaussian Blur
 	// --------------------------------------------------
 	bool horizontal = true, first_iteration = true;
 	unsigned int amount = PASSES;
@@ -429,7 +429,7 @@ void HdrTechnique::downsamplingStandard()
 	render->SetState(IRender::State::DEPTH_TEST, false);
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
-		
+
 	float w = cam_width->GetIVal();
 	float h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
@@ -501,7 +501,7 @@ void HdrTechnique::upsampling()
 	up->Use();
 	up->Uniform(blurOn->GetIVal(), "blurOn");
 	up->Uniform(blurOnly->GetIVal(), "blurOnly");
-	
+
 	uint32_t amount;
 	bool first_iteration = true;
 	render->SetState(IRender::State::DEPTH_TEST, false);
@@ -549,7 +549,7 @@ void HdrTechnique::Do(unsigned int texture)
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 	auto& ss = m_ScreenShader;
 
-	
+
 	ss->Use();
   ss->Uniform(exposure->GetFVal(), "exposure");
   ss->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");

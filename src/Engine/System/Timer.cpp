@@ -15,7 +15,8 @@
 static int64_t g_lCurrentTime = 0;
 #endif
 
-#include <ASSERT.h>
+#include <cassert>
+#include <cmath>
 
 //! Profile smoothing time in seconds (original default was .8 / log(10) ~= .35 s)
 static const float fDEFAULT_PROFILE_SMOOTHING = 1.0f;

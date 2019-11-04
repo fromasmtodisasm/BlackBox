@@ -21,7 +21,7 @@ public:
 	~FrameBufferObject();
 
   static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
-	void clear(gl::Color &color);
+	void clear(gl::Color const& color);
 	void clear();
   void bind();
   void bind(glm::vec4 viewPort);

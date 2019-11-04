@@ -45,7 +45,7 @@ bool ShaderStatus::get(GLenum statusType) {
     return false;
   }
   return true;
- 
+
 }
 
 ShaderProgramStatus::ShaderProgramStatus(CBaseShaderProgram *program) :
@@ -79,12 +79,12 @@ bool ShaderProgramStatus::get(GLenum statusType) {
     return false;
   }
   return true;
- 
+
 }
 CShader::CShader(string text, CShader::type type) :
   m_Text(text), m_Type(type), m_Status(this), m_Empty(true)
 {
-  
+
 }
 
 CShader::~CShader() {
@@ -99,7 +99,7 @@ bool CShader::Create() {
 }
 
 
-std::shared_ptr<CShader> CShader::load(ShaderDesc& desc) {
+std::shared_ptr<CShader> CShader::load(ShaderDesc  const& desc) {
   string text;
 
 	auto path = ShaderDesc::root + desc.name;
@@ -148,21 +148,22 @@ bool CShader::parseLine(std::ifstream &fin, std::string& buffer)
 
 		std::string file(buffer.substr(begin + 1, end - begin - 1));
 		std::string buff;
-		if (!loadInternal("res/shaders/" + file, buff)) return false;
+
+		if (!loadInternal(std::string("res/shaders/"), buff)) return false;
 		buffer.clear();
 		buffer += buff;
 	}
-		
+
 	return true;
 }
 
-bool CShader::loadInternal(std::string &path, std::string& buffer)
+bool CShader::loadInternal(std::string const& path, std::string& buffer)
 {
   ifstream fin(path);
   string buff;
 
   if (!fin.is_open()) return false;
-  
+
   while (parseLine(fin, buff)) {
     buffer += buff;
     buffer += '\n';
@@ -190,7 +191,7 @@ bool CShader::Compile() {
 }
 
 bool CShader::Bind() {
- return true; 
+ return true;
 }
 
 bool CShader::Empty()
@@ -288,7 +289,7 @@ bool CBaseShaderProgram::Create(const char *label) {
 
 void CBaseShaderProgram::Attach(ShaderInfo& info) {
 	ShaderInfo &attached = info;
-	
+
 	if (!info.used) return;
   switch (info.shader->m_Type) {
   case CShader::type::E_VERTEX:

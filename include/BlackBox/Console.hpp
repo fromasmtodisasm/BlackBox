@@ -145,7 +145,7 @@ struct Text
 	glm::vec3 color;
 	int x, y;
 	float scale;
-	Text(std::string& data, glm::vec3& color, float scale)
+	Text(std::string data, glm::vec3 color, float scale)
 		:
 		data(data), color(color), scale(scale), x(0), y(0)
 	{
@@ -232,15 +232,15 @@ private:
 	void setFont(IFont* font);
 	CommandLine getPrompt();
 	void printLine(size_t line);
-	void printText(Text & element, size_t line);
+	void printText(Text const& element, size_t line);
 	void addToCommandBuffer(std::vector<std::wstring>& completion);
-	void addText(std::wstring& cmd);
+	void addText(std::wstring const& cmd);
 	;
 	void Set(CommandDesc& cd);
 	void SetInternal(ICVar* pVar, std::string& value, std::string& name);
 	void Get(CommandDesc& cd);
 	void GetInternal(ICVar* pVar, std::string& name);
-	void CConsole::Dump();
+	void Dump();
 	void getBuffer();
 	bool needShowCursor();
   void pageUp(bool isPgUp);

@@ -24,7 +24,7 @@ struct ICVar;
 struct ITexture;
 
 //! Flags used by ICVar.
-enum EVarFlags : unsigned int 
+enum EVarFlags : unsigned int
 {
 	VF_NULL = 0x00000000,      //!< Just to have one recognizable spot where the flags are located in the Register call.
 	VF_CHEAT = 0x00000002,      //!< Stays in the default state when cheats are disabled.
@@ -341,14 +341,14 @@ struct ICVar
 };
 
 #define GET_CONSOLE() GetISystem()->GetIConsole()
-#define CREATE_CVAR(name, value, flags, ...) GET_CONSOLE()->CreateVariable(name, value, flags, __VA_ARGS__)
+#define CREATE_CVAR(name, value, flags, ...) GET_CONSOLE()->CreateVariable(name, value, flags, ##__VA_ARGS__)
 #define GET_CVAR(name) GET_CONSOLE()->GetCVar(name)
 
 //! Preferred way to register a CVar
 #if IMPLEMENTED_CVAR_REG
 #define REGISTER_CVAR(_var, _def_val, _flags, _comment) ConsoleRegistrationHelper::Register(( # _var), &(_var), (_def_val), (_flags), CVARHELP(_comment))
 #else
-#define REGISTER_CVAR(_var, _def_var, _flags, ...) GET_CONSOLE()->Register((#_var), &(_var), (_def_var), (_flags), __VA_ARGS__)
+#define REGISTER_CVAR(_var, _def_var, _flags, ...) GET_CONSOLE()->Register((#_var), &(_var), (_def_var), (_flags), ##__VA_ARGS__)
 #endif
 
 //! Preferred way to register a console command

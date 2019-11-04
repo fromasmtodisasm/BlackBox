@@ -26,7 +26,7 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
 {
   std::shared_ptr<CShader> vs, fs;
   std::shared_ptr<CShaderProgram> p;
-  vs = getShader(ShaderDesc(vShader, "vertex"), false);
+  vs = getShader(std::move(ShaderDesc(vShader, "vertex")), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
   if (vs == nullptr || fs == nullptr)
   {
@@ -90,7 +90,7 @@ std::shared_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
 	return defaultProgram;
 }
 
-std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc& desc, bool isReload)
+std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
 {
   std::shared_ptr<CShader> result = nullptr;
   auto Path = root + desc.name;

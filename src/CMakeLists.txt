@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(BlackBox)
+project(BlackBox CXX)
 
 include(GenerateExportHeader)
 include(FindFreetype)
@@ -118,6 +118,7 @@ if (USE_GLM)
   include_directories(${GLM_INCLUDE_DIRS})
   target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
   add_definitions(-DUSE_GLM)
+  add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 
 endif()
 
@@ -220,13 +221,13 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Timer.cpp
   #Utils folder
-  PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp  
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
 
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
-  
+
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})

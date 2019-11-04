@@ -4,7 +4,9 @@
 #include <BlackBox/ILog.hpp>
 
 #include <iostream>
-#include <filesystem>
+#include <ctime>
+#include <iomanip>
+//#include <filesystem>
 #include <sstream>
 
 /*##############################################*/
@@ -26,12 +28,12 @@ int main(int argc, char *argv[]) {
   }
 
 	//std::filesystem::current_path("../../");
-	cout << "current path: " << std::filesystem::current_path() << endl;
+	//cout << "current path: " << std::filesystem::current_path() << endl;
 
   //chdir((path = getBasePath(string(argv[0]))).c_str());
   //path = getBasePath(string(argv[0]));
 	std::string cmdline;
-	
+
 	if (argc > 1)
 	{
 		cmdline += argv[1];
@@ -43,7 +45,7 @@ int main(int argc, char *argv[]) {
 
 	SSystemInitParams params;
 
-	std::time_t t = std::time(nullptr);
+	time_t t = time(nullptr);
 	std::stringstream ss;
 	ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
 	params.sLogFileName = _strdup(ss.str().c_str());

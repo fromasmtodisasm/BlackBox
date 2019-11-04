@@ -74,7 +74,7 @@ BaseCommand::~BaseCommand()
 {
 }
 
-class LastCommand : public BaseCommand 
+class LastCommand : public BaseCommand
 {
 public:
 	LastCommand(CGame *game);
@@ -83,7 +83,7 @@ private:
 	// Inherited via IConsoleCommand
 	virtual bool execute(CommandDesc& cd) override
 	{
-		
+
 		bool result = false;
 		if (cd.history->size() == 0)
 			return false;
@@ -112,7 +112,7 @@ LastCommand::~LastCommand()
 {
 }
 
-class ClearCommand : public BaseCommand 
+class ClearCommand : public BaseCommand
 {
 public:
 	ClearCommand(CGame *game);
@@ -130,7 +130,7 @@ ClearCommand::ClearCommand(CGame *game) : BaseCommand(game)
 }
 
 //*******************************************************
-class GotoCommand : public BaseCommand 
+class GotoCommand : public BaseCommand
 {
 public:
 	GotoCommand(CGame *game);
@@ -160,7 +160,7 @@ GotoCommand::GotoCommand(CGame *game) : BaseCommand(game)
 }
 //*******************************************************
 //*******************************************************
-class QuitCommand : public BaseCommand 
+class QuitCommand : public BaseCommand
 {
 public:
 	QuitCommand(CGame *game);
@@ -177,7 +177,7 @@ QuitCommand::QuitCommand(CGame *game) : BaseCommand(game)
 {
 }
 //*******************************************************
-class MoveCommand : public BaseCommand 
+class MoveCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -208,7 +208,7 @@ MoveCommand::MoveCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class RotateCommand : public BaseCommand 
+class RotateCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -248,7 +248,7 @@ RotateCommand::RotateCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class SelectCommand : public BaseCommand 
+class SelectCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -267,7 +267,7 @@ SelectCommand::SelectCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class WireframeCommand : public BaseCommand 
+class WireframeCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -357,7 +357,7 @@ ExecCommand::ExecCommand(CGame *game) : BaseCommand(game)
 	console = GetISystem()->GetIConsole();
 }
 //*******************************************************
-class MaterialCommand : public BaseCommand 
+class MaterialCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -438,7 +438,7 @@ bool ShaderCommand::reload(CommandDesc& cd)
 	{
 		if (MaterialManager::instance()->reloadShaders())
 			return true;
-		else 
+		else
 			return false;
 	}
 	default:
@@ -450,7 +450,7 @@ bool ShaderCommand::reload(CommandDesc& cd)
 		}
 		if (MaterialManager::instance()->reloadShaders(shaders))
 			return true;
-		else 
+		else
 			return false;
 	}
 	}
@@ -513,7 +513,7 @@ bool ShaderCommand::enumerate(CommandDesc& cd)
 	return true;
 }
 //*******************************************************
-class CameraCommand : public BaseCommand 
+class CameraCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -550,7 +550,7 @@ bool CameraCommand::lookat(CommandDesc& cd)
 
 bool CameraCommand::move(CommandDesc& cd)
 {
-	
+
 	if (cd.args.size() == 4)
 	{
 		auto pos = unpack_vector((cd.args.begin()++)++);
@@ -562,7 +562,7 @@ bool CameraCommand::move(CommandDesc& cd)
 
 }
 //*******************************************************
-class SceneCommand : public BaseCommand 
+class SceneCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -658,7 +658,7 @@ bool SceneCommand::activate(CommandDesc& cd)
 	return false;
 }
 //*******************************************************
-class TagPointCommand : public BaseCommand 
+class TagPointCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -697,7 +697,7 @@ private:
         m_World->getActiveScene()->getCurrentCamera()->updateCameraVectors();
         return true;
       }
-			
+
 			auto pos = unpack_vector(args_it);
 			obj->move(pos);
 			return true;
@@ -711,7 +711,7 @@ TagPointCommand::TagPointCommand(CGame *game) : BaseCommand(game)
 	m_World = game->getWorld();
 }
 //*******************************************************
-class ObjDumpCommand : public BaseCommand 
+class ObjDumpCommand : public BaseCommand
 {
 	World* m_World;
 public:
@@ -773,7 +773,7 @@ void CGame::initVariables()
   r_displayinfo =			CREATE_CVAR("r_displayinfo", 1, 0, "Display info [1/0]");
   r_profile =					CREATE_CVAR("r_profile", 1, 0, "Profile [1/0]");
   r_cap_profile =			CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
-	m_pCVarCheatMode =	CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED);
+  m_pCVarCheatMode =	CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 }
 
 ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseCommand(game)

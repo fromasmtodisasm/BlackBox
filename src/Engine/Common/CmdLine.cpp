@@ -1,4 +1,5 @@
 #include "CmdLine.hpp"
+#include <cstring>
 
 using namespace std;
 

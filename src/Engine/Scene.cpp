@@ -18,7 +18,7 @@
 
 #include <tinyxml2.h>
 #include <sstream>
-#include <variant>
+
 #include <algorithm>
 
 
@@ -247,7 +247,7 @@ const char *lightName = nullptr;
       return;
     }
     baseLight->toStr = strdup(tmp.c_str());
-    
+
   }
 
   baseLight->ambient = loadColorAttribute(light->FirstChildElement("ambient"));
@@ -283,10 +283,10 @@ glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
   return color;
 }
 
-Scene::Scene(std::string name) 
-  : 
+Scene::Scene(std::string name)
+  :
   lighting(true),
-  name(name), 
+  name(name),
   m_RenderedScene(-1),
   m_Technique(nullptr),
   m_World(nullptr),
@@ -307,14 +307,14 @@ Scene::Scene(std::string name)
 
 	ProgramDesc pd = {
 		"screen_shader",
-		"screenshader.vs",
-		"screenshader.frag"
+		ShaderDesc("screenshader.vs"),
+		ShaderDesc("screenshader.frag")
 	};
 
 	MaterialManager::instance()->loadProgram(pd, false);
 	m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
-	
-	
+
+
 	m_ScreenShader->Use();
 	m_ScreenShader->Uniform(0,"screenTexture");
 	m_ScreenShader->Unuse();
@@ -363,7 +363,7 @@ bool Scene::selectObject(std::string name)
 }
 
 void Scene::draw(float dt)
-{ 
+{
 	//auto tech_name = m_Technique->GetName();
 	//sprintf(debug_label, "Technique: %s", tech_name);
 	DEBUG_GROUP("Render Loop");
@@ -373,7 +373,7 @@ void Scene::draw(float dt)
     for (int pass = 0; m_Technique->OnRenderPass(pass); pass++);
   }
   m_RenderedScene = m_Technique->GetFrame();
-	
+
   /*
 	if (skyBox != nullptr)
 		skyBox->draw(m_Camera);
@@ -598,7 +598,7 @@ tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight 
   XMLElement* diffuse = saveVec3(xmlDoc, light->diffuse, "diffuse");
   XMLElement* specular = saveVec3(xmlDoc, light->specular, "specular");
 
-  
+
   result->InsertEndChild(ambient);
   result->InsertEndChild(diffuse);
   result->InsertEndChild(specular);
@@ -695,7 +695,7 @@ void Scene::loadCamera(tinyxml2::XMLElement* element)
   result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
 
   result->MovementSpeed = GetISystem()->GetIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
-  
+
   m_Camera[name] = result;
 }
 
@@ -895,7 +895,7 @@ PointObject* Scene::createPointObject(XMLElement* object)
 					fgets(line, 128, file);
 					continue;
 				}
-				
+
 				points.push_back(point);
 			}
 			if (points.size() > 0)
@@ -933,8 +933,8 @@ PointObject::PointObject()
 {
 	ProgramDesc pd = {
 		"points",
-		"points.vert",
-		"points.frag"
+		ShaderDesc("points.vert"),
+		ShaderDesc("points.frag")
 	};
 
 	MaterialManager::instance()->loadProgram(pd, false);

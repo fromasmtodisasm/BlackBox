@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 
-class CShader; 
+class CShader;
 class CBaseShaderProgram;
 class CShaderProgram;
 struct ICVar;
@@ -18,7 +18,7 @@ using ShaderRef							= std::shared_ptr<CShader>;
 
 struct ShaderStatus
 {
-	GLchar m_InfoLog[512]; 
+	GLchar m_InfoLog[512];
 	GLint m_Status;
 	CShader *m_Shader;
 
@@ -29,7 +29,7 @@ struct ShaderStatus
 
 struct ShaderProgramStatus
 {
-	GLchar m_InfoLog[512]; 
+	GLchar m_InfoLog[512];
 	GLint m_Status;
 	CBaseShaderProgram *m_Program;
 
@@ -37,7 +37,7 @@ struct ShaderProgramStatus
 	bool get(GLenum statusType);
 };
 
-class CShader 
+class CShader
 {
 private:
 	GLuint m_Shader;
@@ -56,9 +56,9 @@ public:
   };
   CShader(std::string text, CShader::type type);
   ~CShader();
-  static std::shared_ptr<CShader> load(ShaderDesc& desc);
+  static std::shared_ptr<CShader> load(ShaderDesc const& desc);
   static bool parseLine(std::ifstream &fin, std::string &buffer);
-  static bool loadInternal(std::string &path, std::string& buffer);
+  static bool loadInternal(std::string const& path, std::string& buffer);
   static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
   bool Create();
   bool Compile();
@@ -130,7 +130,7 @@ public:
     dirty = true;
 		gl::Uniform(location, value);
   }
-  
+
 
   inline void* Get(UniformValue::Type type, void *res)
   {

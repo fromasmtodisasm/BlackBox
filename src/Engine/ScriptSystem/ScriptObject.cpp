@@ -175,13 +175,13 @@ void CScriptObject::SetValue(const char* sKey, IScriptObject* Val)
 
 void CScriptObject::SetValue(const char* sKey, USER_DATA ud)
 {
-	assert(0 && __FUNCTION__" Not implemented");
+	//assert(0 && __FUNCTION__ " Not implemented");
 	//SetValueTemplate(this, sKey, ud);
 }
 
 void CScriptObject::SetToNull(const char* sKey)
 {
-	assert(0 && __FUNCTION__" Not implemented");
+	//assert(0 && __FUNCTION__ " Not implemented");
 }
 
 bool CScriptObject::GetValue(const char* sKey, int& nVal)
@@ -292,12 +292,12 @@ void CScriptObject::SetValueChain(const char* sKey, IScriptObject* Val)
 
 void CScriptObject::SetValueChain(const char* sKey, USER_DATA ud)
 {
-	assert(0 && __FUNCTION__" Not implemented");
+	//assert(0 && __FUNCTION__" Not implemented");
 }
 
 void CScriptObject::SetToNullChain(const char* sKey)
 {
-	assert(0 && __FUNCTION__" Not implemented");
+	//assert(0 && __FUNCTION__" Not implemented");
 }
 
 void CScriptObject::EndSetGetChain()

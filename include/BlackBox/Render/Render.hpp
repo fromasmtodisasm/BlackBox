@@ -18,10 +18,10 @@ enum AttributeType
 	CORE
 };
 
-class CRender : 
+class CRender :
 	public IRender,
 	public IConsoleVarSink,
-	public IInputEventListener 
+	public IInputEventListener
 {
 public:
 	CRender(ISystem *engine);
@@ -129,18 +129,18 @@ private:
 	//============
 	CCamera *m_Camera = nullptr;
 	Quad *m_ScreenQuad = nullptr;
-	// Shaders 
+	// Shaders
 	BaseShaderProgramRef m_ScreenShader;
 #if defined(_DEBUG) || defined(GL_DEBUG)
 	bool isDebug = true;
 #else
 	bool isDebug = false;
-#endif 
+#endif
 #if defined(_DEBUG) || defined(GL_DEBUG)
 	glContextAttribute glContextType = AttributeType::DEBUG;
 #else
-	sf::ContextSettings::Attribute glContextType = sf::ContextSettings::Attribute::Core;
-#endif 
+	glContextAttribute glContextType = AttributeType::CORE;
+#endif
 	// DEBUG
 	ICVar* translateImageX = nullptr;
 	ICVar* translateImageY = nullptr;

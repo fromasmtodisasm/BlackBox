@@ -172,6 +172,7 @@ public:
 
 	static void InsertProperty(const char* sName, Property & prop)
 	{
+	    #if 0
 		USER_DATA ud;
 		Property* p = new Property;
 		m_pvPropertiesVector->push_back(p);
@@ -186,6 +187,7 @@ public:
 		p = (Property*)nP;
 		if (p->nType != prop.nType)
 			CryError("Scriptable EX:Insert Property");
+        #endif // 0
 	}
 
 	static void RegisterProperty(const char* sName, PropertyType t, unsigned int offset)
@@ -264,7 +266,9 @@ protected:
 					m_pFunctionHandler->GetParam(2, sTemp);
 					if (!sTemp)
 						return -1;
+                    #if 0
 					(*((string*)val)) = sTemp;
+                    #endif // 0
 				}
 				return 0;
 				break;
@@ -316,7 +320,7 @@ protected:
 					return m_pFunctionHandler->EndFunction((const char*)val);
 					break;
 				case PROPERTY_TYPE_STRING: {
-					return m_pFunctionHandler->EndFunction((*((string*)val)).c_str());
+					return -1;//return m_pFunctionHandler->EndFunction((*((string*)val)).c_str());
 				}
 																	 break;
 				case PROPERTY_TYPE_BOOL:
@@ -348,7 +352,7 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-#if defined(LINUX)
+#if defined(LINUX) || defined(__MINGW32__)
 #define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
 		template<> _ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs = _ScriptableEx<_class>::FunctionsVec(); \
 		template<> IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=NULL; \
@@ -356,7 +360,7 @@ protected:
 		template<> IScriptSystem *_ScriptableEx<_class>::m_pSS=NULL; \
 		template<> _ScriptableEx<_class>::PropertiesVec *_ScriptableEx<_class>::m_pvPropertiesVector=NULL;
 #else
-#define _DECLARE_SCRIPTABLEEX(_class) IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
+#define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
 		_ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs; \
 		IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=NULL; \
 		IScriptObject *_ScriptableEx<_class>::m_pPropertiesTable=NULL; \
@@ -369,7 +373,7 @@ protected:
 {  \
 	_pSS->RaiseError("%s: %d arguments passed, " #_n " expected)", __FUNCTION__, pH->GetParamCount()); \
 	return pH->EndFunctionNull(); \
-} 
+}
 
 // NOTE
 // The following RegExp replace macro was used to change to the new check_parameters
@@ -385,7 +389,7 @@ protected:
 	{  \
 		m_pScriptSystem->RaiseError( ": %d arguments passed, " #_n " expected)", pH->GetParamCount()); \
 		return pH->EndFunctionNull(); \
-	} 
+	}
 #endif
 #define SCRIPT_CHECK_PARAMETERS(_n) CHECK_PARAMETERS(_n)
 #define SCRIPT_REG_CLASSNAME

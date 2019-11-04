@@ -4,7 +4,7 @@
 
 #include <string>
 
-#define GameWarning() void(0)
+#define GameWarning(...) void(0)
 
 //////////////////////////////////////////////////////////////////////////
 struct ISystem;
