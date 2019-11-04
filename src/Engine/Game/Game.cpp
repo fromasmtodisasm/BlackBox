@@ -164,6 +164,12 @@ bool CGame::Init(ISystem *pEngine)  {
     return false;
   }
 
+	InitInputMap();
+	InitConsoleCommands();
+
+	m_pSystem->GetIConsole()->ShowConsole(0);
+	DevModeInit();
+
 	if (!loadScene()) {
 		m_Log->Log("[FAILED] Failed init objects\n");
 		return false;

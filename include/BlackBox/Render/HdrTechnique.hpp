@@ -95,7 +95,7 @@ private:
 	GLuint quadCornersVBO;
 	glm::vec2 quadCorners;
 
-	int showAllFrameBuffer = true;
+	int show_all_fb = true;
 
 	// Inherited via ITechnique
 	virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;

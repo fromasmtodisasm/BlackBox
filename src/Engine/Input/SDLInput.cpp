@@ -163,19 +163,6 @@ int CLinuxInput::ShowCursor(const bool bShow)
 	return displayCounter;
 }
 
-bool CLinuxInput::AddTouchEventListener(ITouchEventListener* pListener, const char* name)
-{
-	return false;
-}
-
-void CLinuxInput::RemoveTouchEventListener(ITouchEventListener* pListener)
-{
-}
-
-void CLinuxInput::PostTouchEvent(const STouchEvent& event, bool bForce/* = false*/)
-{
-}
-
 IActionMapManager* CLinuxInput::CreateActionMapManager()
 {
 	return nullptr;

@@ -18,19 +18,19 @@ public:
 	virtual ~CBaseInput();
 
 	// IInput
-	// stub implementation
+// stub implementation
 	virtual bool                Init();
 	virtual void                PostInit();
 	virtual void                Update(bool bFocus);
 	virtual void                ShutDown();
 	virtual void                SetExclusiveMode(EInputDeviceType deviceType, bool exclusive, void* pUser);
 	virtual bool                InputState(const TKeyName& keyName, EInputState state);
-	virtual const char* GetKeyName(const SInputEvent& event) const;
-	virtual const char* GetKeyName(EKeyId keyId) const;
-	virtual uint32_t              GetInputCharUnicode(const SInputEvent& event);
-	virtual SInputSymbol* LookupSymbol(EInputDeviceType deviceType, int deviceIndex, EKeyId keyId);
+	virtual const char*					GetKeyName(const SInputEvent& event) const;
+	virtual const char*					GetKeyName(EKeyId keyId) const;
+	virtual uint32_t            GetInputCharUnicode(const SInputEvent& event);
+	virtual SInputSymbol*				LookupSymbol(EInputDeviceType deviceType, int deviceIndex, EKeyId keyId);
 	virtual const SInputSymbol* GetSymbolByName(const char* name) const;
-	virtual const char* GetOSKeyName(const SInputEvent& event);
+	virtual const char*					GetOSKeyName(const SInputEvent& event);
 	virtual void                ClearKeyState();
 	virtual void                ClearAnalogKeyState();
 	virtual void                RetriggerKeyState();
@@ -38,11 +38,13 @@ public:
 	virtual bool                HasInputDeviceOfType(EInputDeviceType type);
 	virtual void                SetDeadZone(float fThreshold);
 	virtual void                RestoreDefaultDeadZone();
-	virtual IInputDevice* GetDevice(uint16_t id, EInputDeviceType deviceType);
+	virtual IInputDevice*				GetDevice(uint16_t id, EInputDeviceType deviceType);
 
 	// listener functions (implemented)
 	virtual void                 AddEventListener(IInputEventListener* pListener);
 	virtual void                 RemoveEventListener(IInputEventListener* pListener);
+	virtual bool                 AddTouchEventListener(ITouchEventListener* pListener, const char* name);
+	virtual void                 RemoveTouchEventListener(ITouchEventListener* pListener);
 	virtual void                 AddConsoleEventListener(IInputEventListener* pListener);
 	virtual void                 RemoveConsoleEventListener(IInputEventListener* pLstener);
 	virtual void                 SetExclusiveListener(IInputEventListener* pListener);
@@ -51,7 +53,10 @@ public:
 	virtual void                 EnableEventPosting(bool bEnable);
 	virtual bool                 IsEventPostingEnabled() const;
 	virtual void                 PostInputEvent(const SInputEvent& event, bool bForce = false);
+	virtual void                 PostTouchEvent(const STouchEvent& event, bool bForce = false);
 	virtual void                 PostUnicodeEvent(const SUnicodeEvent& event, bool bForce = false);
+	virtual void                 ForceFeedbackEvent(const SFFOutputEvent& event);
+	virtual void                 ForceFeedbackSetDeviceIndex(int index);
 	virtual void                 EnableDevice(EInputDeviceType deviceType, bool enable);
 	virtual void                 ProcessKey(uint32_t key, bool pressed, wchar_t unicode, bool repeat) {};
 	// ~IInput
@@ -98,7 +103,8 @@ private:
 	TInputSymbols                      m_holdSymbols;
 	TInputEventListeners               m_listeners;
 	TInputEventListeners               m_consoleListeners;
-	IInputEventListener* m_pExclusiveListener;
+	IInputEventListener*							 m_pExclusiveListener;
+	std::set<ITouchEventListener*>		 m_touchListeners;
 
 	bool                               m_enableEventPosting;
 	bool                               m_retriggering;
@@ -122,9 +128,11 @@ private:
 	//CVars
 	CInputCVars* m_pCVars;
 
+
 protected:
 	uint32_t m_platformFlags;
 };
+
 
 #endif //__BASEINPUT_H__
 

@@ -336,7 +336,7 @@ void HdrTechnique::InitConsoleVariables()
 	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
 	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
-	REGISTER_CVAR("show_all_frame_buffer", showAllFrameBuffer, 0, VF_NULL, "");
+	REGISTER_CVAR(show_all_fb, 0, VF_NULL, "Show all frame buffer");
 
 }
 
@@ -559,7 +559,7 @@ void HdrTechnique::Do(unsigned int texture)
 	ss->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
 	ss->Uniform(bloom->GetIVal(), "bloom");
 	Vec2 scale(1.f);
-	if (!showAllFrameBuffer)
+	if (!show_all_fb)
 		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
 	auto uv_projection = Mat4(1.f);

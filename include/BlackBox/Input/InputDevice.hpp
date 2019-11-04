@@ -18,16 +18,17 @@ public:
 	virtual bool                Init() { return true; }
 	virtual void                PostInit() {}
 	virtual void                Update(bool bFocus);
+	virtual bool                SetForceFeedback(IFFParams params) { return false; };
 	virtual bool                InputState(const TKeyName& key, EInputState state);
 	virtual bool                SetExclusiveMode(bool value) { return true; }
 	virtual void                ClearKeyState();
 	virtual void                ClearAnalogKeyState(TInputSymbols& clearedSymbols);
 	virtual void                SetUniqueId(uint8_t const uniqueId) { m_uniqueId = uniqueId; }
-	virtual const char* GetKeyName(const SInputEvent& event) const;
-	virtual const char* GetKeyName(const EKeyId keyId) const;
-	virtual uint32_t              GetInputCharUnicode(const SInputEvent& event);
-	virtual const char* GetOSKeyName(const SInputEvent& event);
-	virtual SInputSymbol* LookupSymbol(EKeyId id) const;
+	virtual const char*					GetKeyName(const SInputEvent& event) const;
+	virtual const char*					GetKeyName(const EKeyId keyId) const;
+	virtual uint32_t            GetInputCharUnicode(const SInputEvent& event);
+	virtual const char*					GetOSKeyName(const SInputEvent& event);
+	virtual SInputSymbol*				LookupSymbol(EKeyId id) const;
 	virtual const SInputSymbol* GetSymbolByName(const char* name) const;
 	virtual void                Enable(bool enable);
 	virtual bool                IsEnabled() const { return m_enabled; }
