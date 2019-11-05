@@ -525,8 +525,8 @@ void HdrTechnique::upsampling()
 		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
-		up->Uniform((float)rx, "rx");
-		up->Uniform((float)ry, "ry");
+		up->Uniform(rx, "rx");
+		up->Uniform(ry, "ry");
 		LOG("\t\trx = %d\n", rx);
 		LOG("\t\try = %d\n", ry);
 

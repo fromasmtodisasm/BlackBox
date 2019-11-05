@@ -14,8 +14,8 @@ uniform bool blurOnly = true;
 // viewport
 uniform float vx = 0;
 uniform float vy = 0;
-uniform float rx = 1;
-uniform float ry = 1;
+uniform int rx = 1;
+uniform int ry = 1;
 //
 
 float weight[9] = float[](
@@ -41,8 +41,8 @@ vec4 blur(vec2 uv)
 				w += weight[index];
 				//vec2 texel = clamp((uv + vec2(j, i) * tex_offset), vec2(0.5)*tex_offset, m);
 				vec2 coord = uv + vec2(j, i);
-				vec2 texel = round(clamp(coord, vec2(1),	0.5*floor(vec2(rx-1,ry-1))-1)) * tex_offset;
-				if (all(greaterThan(uv + vec2(j,i),			0.5*floor(vec2(rx-1,ry-1))-1)))
+				vec2 texel = clamp(coord, vec2(1),	0.5*vec2(rx,ry)-1) * tex_offset;
+				if (all(greaterThan(uv + vec2(j,i),	0.5*vec2(rx,ry)-1)))
 					continue;
 				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
 			//}
