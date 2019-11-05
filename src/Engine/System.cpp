@@ -80,22 +80,22 @@ bool CSystem::Init()
   if (m_pLog == nullptr)
     return false;
 	//=============
-	CWindow* window = new CWindow("BlackBox", 1366, 768);
-	m_pWindow = window;
-	m_InputHandler = window;
-	if (window == nullptr)
+	m_Render = CreateIRender(this);
+	if (m_Render == nullptr)
 		return false;
 	//=============
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
-	//=============
-	m_Render = CreateIRender(this);
-	if (m_Render == nullptr)
-		return false;
-	//=============
 	if (!ConfigLoad("res/scripts/engine.cfg"))
 		return false;
+	//=============
+	CWindow* window = new CWindow("BlackBox", r_window_width->GetIVal(), r_window_height->GetIVal());
+	m_pWindow = window;
+	m_InputHandler = window;
+	if (window == nullptr)
+		return false;
+	//=============
 	if (!MaterialManager::init(this))
 	{
 		return false;
