@@ -24,7 +24,7 @@ CCamera::CCamera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
 	FOV = CREATE_CVAR("fov", 45.0f, 0, "Camera field of view");
 	zFar = CREATE_CVAR("zfar", 10000.f, 0, "Draw distance");
 
-	REGISTER_CVAR("mouse_sense", MouseSensitivity, SENSITIVTY, 0, "");
+	REGISTER_CVAR("mouse_sense", MouseSensitivity, 0.02, 0, "");
 }
 
 // Constructor with scalar values
