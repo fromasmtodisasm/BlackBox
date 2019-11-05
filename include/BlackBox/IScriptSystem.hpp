@@ -784,7 +784,7 @@ public:
 	_HScriptFunction(IScriptSystem* pSS) { m_pScriptSystem = pSS; m_hFunc = 0; }
 	_HScriptFunction(IScriptSystem* pSS, HSCRIPTFUNCTION hFunc) { m_pScriptSystem = pSS; m_hFunc = 0; }
 	~_HScriptFunction() { if (m_hFunc)m_pScriptSystem->ReleaseFunc(m_hFunc); m_hFunc = 0; }
-	void Init(IScriptSystem* pSS, HSCRIPTFUNCTION hFunc) { if (m_hFunc)m_pScriptSystem->ReleaseFunc(m_hFunc); m_hFunc = hFunc; m_pScriptSystem = pSS; }
+	void Create(IScriptSystem* pSS, HSCRIPTFUNCTION hFunc) { if (m_hFunc)m_pScriptSystem->ReleaseFunc(m_hFunc); m_hFunc = hFunc; m_pScriptSystem = pSS; }
 	operator HSCRIPTFUNCTION() const
 	{
 		return m_hFunc;

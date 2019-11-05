@@ -71,6 +71,8 @@ function init()
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
 	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
+	addcommand("connect", [[Client:Connect(%1,%2)]]) 
+
 	Console:CreateKeyBind("f5", "screen_shot") 
 
 	setFog(0,0,0)

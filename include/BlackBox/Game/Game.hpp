@@ -13,6 +13,9 @@
 #include <BlackBox/ScriptObjectGame.hpp>
 #include <BlackBox/IInput.hpp>
 
+#include <BlackBox/ScriptObjectServer.hpp>
+#include <BlackBox/ScriptObjectClient.hpp>
+
 #include <BlackBox/common.h>
 
 
@@ -41,6 +44,39 @@ typedef std::vector<string> Vec2Str;
 typedef Vec2Str::iterator Vec2StrIt;
 typedef std::list<CPlayer*> ListOfPlayers;
 
+struct IServer;
+struct IClient;
+
+struct IServer
+{
+	virtual bool Create(int port) = 0;
+	virtual bool Start() = 0;
+	virtual bool Stop() = 0;
+	virtual bool Send(std::string const& str) = 0;
+	virtual std::string const& Response() = 0;
+	virtual bool Update() = 0;
+};
+
+struct IClient
+{
+	virtual bool Init() = 0;
+	virtual bool Connect(const char* addr, int port) = 0;
+	virtual bool Disconnect() = 0;
+	virtual bool Send(std::string const& str) = 0;
+	virtual std::string const& Response() = 0;
+	virtual bool Update() = 0;
+};
+
+struct INetwork
+{
+	virtual bool			Init() = 0;
+	virtual IClient*	CreateClient() = 0;
+	virtual IServer*	CreateServer() = 0;
+	virtual bool			Update() = 0;
+};
+
+INetwork* CreateNetwork(ISystem *pSystem);
+
 struct ActionInfo
 {
 	int nId;
@@ -63,7 +99,14 @@ class CGame : public IGame, public IInputEventListener, public IPostRenderCallba
   friend class GameGUI;
   friend class CPlayer;
 
-public:
+public:	
+	enum HostType
+	{
+		CLIENT,
+		SERVER,
+		NOT_CONECTED
+	};
+
   CGame(std::string title);
   CGame() = default;
   ~CGame() = default;
@@ -99,6 +142,7 @@ public:
 	virtual void SendMessage(const char* str) override {
 		m_qMessages.push(str);
 	}
+	virtual void Release() override;
 	IWindow* getWindow();
 private:
 
@@ -157,6 +201,8 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	void  ResetInputMap();
 	string GetLevelsFolder() const;
+
+	void SetHostType(HostType hostType);
 
 protected:
 	void SetConfigToActionMap(const char* pszActionName, ...);
@@ -266,13 +312,14 @@ private:
 	//other
 	bool can_drag_vp = true; // can drag view port ?
 
+	HostType m_HostType = NOT_CONECTED;
 
-													 // Inherited via IGame
+	IClient *m_pClient;
+	IServer *m_pServer;
+	INetwork* m_pNetwork;
 
-
-													 // Inherited via IGame
-	virtual void Release() override;
-
+	CScriptObjectClient* m_pScriptClient = nullptr;
+	CScriptObjectServer* m_pScriptServer = nullptr;
 };
 
 

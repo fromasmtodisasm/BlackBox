@@ -76,7 +76,15 @@ bool CGame::InitScripts()
 	m_ScriptObjectGame = new CScriptObjectGame();
 	m_ScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
+	m_pScriptClient = new CScriptObjectClient();
+	m_pScriptClient->InitializeTemplate(m_pScriptSystem);
+
+	m_pScriptServer = new CScriptObjectServer();
+	m_pScriptServer->InitializeTemplate(m_pScriptSystem);
+
 	m_ScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
+	m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
+	m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
 
 	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
 

@@ -19,6 +19,7 @@
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/Utils.h>
 
+
 #ifdef GUI
 #include <imgui-SFML.h>
 #include <imgui.h>
@@ -146,6 +147,18 @@ bool CGame::Init(ISystem *pEngine)  {
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
   m_pInput->AddEventListener(this);
+	m_pNetwork = CreateNetwork(m_pSystem);
+
+	if (!m_pNetwork->Init())
+		return false;
+
+	m_pClient = m_pNetwork->CreateClient();
+	if (!m_pClient || !m_pClient->Init())
+		return false;
+
+	m_pServer = m_pNetwork->CreateServer();
+	if (!m_pServer)
+		return false;
 
 	initCommands();
 	initVariables();
@@ -234,6 +247,12 @@ bool CGame::Update() {
 		execScripts();
 		if (!IsInPause())
 			m_World->update(m_pSystem->GetDeltaTime());
+
+		m_pNetwork->Update();
+		if (m_HostType == CLIENT)
+			m_pClient->Update();
+		if (m_HostType == SERVER)
+			m_pServer->Update();
 
 		setRenderState();
 
@@ -993,3 +1012,4 @@ void CGame::gotoFullscreen()
   isFullScreen = !isFullScreen;
 
 }
+

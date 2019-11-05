@@ -29,7 +29,7 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   //m_Window->setMouseCursorGrabbed(true);
 
 #ifdef GUI
-  ImGui::SFML::Init(*m_Window);
+  ImGui::SFML::Create(*m_Window);
 #endif // GUI
 
   // Make it the active window for OpenGL calls

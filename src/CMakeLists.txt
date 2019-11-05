@@ -83,6 +83,8 @@ if (USE_SDL)
 	  PRIVATE ${SOURCE_DIR}/Engine/Window/SDLWindow.cpp
 	)
 	add_definitions(-DSDL_WINDOW)
+	find_package(sdl2-net CONFIG REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 elseif (USE_SFML)
 
   find_package(SFML 2 REQUIRED audio graphics window system)
@@ -136,6 +138,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectScript.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectClient.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectServer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
@@ -144,6 +148,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Game.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameActionInput.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/GameClientServer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameDevMode.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
@@ -167,6 +172,10 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
+  #Network folder
+  PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
+
   #Profiler folder
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp

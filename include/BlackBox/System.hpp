@@ -75,6 +75,7 @@ private:
 	IWindow*								m_pWindow;
 	IRender*								m_Render;
 	IScriptSystem*					m_pScriptSystem;
+	INetwork*								m_pNetwork;
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher;
 
@@ -99,5 +100,9 @@ private:
 
 	// Inherited via ISystem
 	virtual float GetDeltaTime() override;
+
+
+	// Унаследовано через ISystem
+	virtual INetwork* GetINetwork() override;
 
 };

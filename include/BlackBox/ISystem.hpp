@@ -16,7 +16,7 @@ struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
 struct ITimer;
-
+struct INetwork;
 
 //! System wide events.
 enum ESystemEvent
@@ -148,6 +148,7 @@ struct ISystem
   virtual IInput*										GetIInput() = 0;
   virtual IGame*										GetIGame() = 0;
 	virtual IFont*										GetIFont() = 0;
+	virtual INetwork*									GetINetwork() = 0;
 	virtual IWindow*									GetIWindow() = 0;
 #if 0
 	virtual IInputHandler*						GetIInputHandler() = 0;

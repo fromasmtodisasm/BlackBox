@@ -300,6 +300,11 @@ float CSystem::GetDeltaTime()
 	return static_cast<float>(m_DeltaTime);
 }
 
+INetwork* CSystem::GetINetwork()
+{
+	return m_pNetwork;
+}
+
 ITimer* CSystem::GetITimer()
 {
 	return &m_Time;
