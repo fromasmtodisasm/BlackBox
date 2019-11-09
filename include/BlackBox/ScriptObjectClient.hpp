@@ -17,6 +17,7 @@ public:
 	int Connect(IFunctionHandler *pH);
 	int Disconnect(IFunctionHandler *pH);
 	int Send(IFunctionHandler *pH);
+	int Response(IFunctionHandler *pH);
 
 private:
 	IClient* m_pClient;

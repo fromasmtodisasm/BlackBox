@@ -10,6 +10,8 @@ Scene *World::getActiveScene() const
 }
 
 World::World()
+	:
+	activeScene(nullptr)
 {
     
 }
@@ -36,9 +38,12 @@ void World::setScene(Scene *scene) {
 
 void World::update(float deltatime)
 {
-	PROFILER_PUSH_CPU_MARKER(__FUNCTION__, Utils::COLOR_DARK_RED);
-  activeScene->update(deltatime);
-	PROFILER_POP_CPU_MARKER();
+	if (activeScene != nullptr)
+	{
+		PROFILER_PUSH_CPU_MARKER(__FUNCTION__, Utils::COLOR_DARK_RED);
+		activeScene->update(deltatime);
+		PROFILER_POP_CPU_MARKER();
+	}
 }
 
 void World::setPretRenderCallback(IPreRenderCallback* callBack)

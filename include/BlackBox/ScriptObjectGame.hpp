@@ -27,10 +27,27 @@ public:
 	int showMenu(IFunctionHandler *pH);
 	int getFPS(IFunctionHandler *pH);
 
-	int GetTagPoint(IFunctionHandler* pH);
-	/////////////////////////////////////////////////////////////		
+	int GetVersion(IFunctionHandler* pH);
+	int GetVersionString(IFunctionHandler* pH);
 
-	int CreateVariable(IFunctionHandler* pH);//str
+	int ReloadScripts(IFunctionHandler* pH);
+	int Load(IFunctionHandler* pH);
+	int Save(IFunctionHandler* pH);
+	int LoadLatestCheckPoint(IFunctionHandler* pH);
+	int ShowSaveGameMenu(IFunctionHandler* pH);
+	int Quit(IFunctionHandler* pH);
+	int IsPointInWater(IFunctionHandler* pH);
+	int GetWaterHeight(IFunctionHandler* pH);
+	int GetTagPoint(IFunctionHandler* pH);
+	/////////////////////////////////////////////////////////////
+	int IsServer(IFunctionHandler* pH);
+	int IsClient(IFunctionHandler* pH);
+	int IsMultiplayer(IFunctionHandler* pH);
+	int GetMaterialIDByName(IFunctionHandler* pH);
+	int ReloadMaterialPhysics(IFunctionHandler* pH);
+	int StartRecord(IFunctionHandler* pH);
+	int StopRecord(IFunctionHandler* pH);
+	///////////////////////////////////////////////////////////////	int CreateVariable(IFunctionHandler* pH);//str
 	int SetVariable(IFunctionHandler* pH);
 	int RemoveVariable(IFunctionHandler* pH);//str
 	int GetVariable(IFunctionHandler* pH);

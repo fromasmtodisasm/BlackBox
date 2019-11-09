@@ -72,6 +72,12 @@ function init()
 	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
 	addcommand("connect", [[Client:Connect(%1,%2)]]) 
+	addcommand("send", 
+	[[
+		if Client:Send(%1) then
+			Console:PrintLine(Client:Response())
+		end
+	]]) 
 
 	Console:CreateKeyBind("f5", "screen_shot") 
 

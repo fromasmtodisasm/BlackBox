@@ -14,6 +14,13 @@ public:
 	{
 
 	}
+	~CClient()
+	{
+		if (connected)
+		{
+			SDLNet_TCP_Close(m_pServer);
+		}
+	}
 	// Унаследовано через IClient
 	virtual bool Init() override
 	{
@@ -30,9 +37,6 @@ public:
 		if (!m_pServer)
 			return false;
 		connected = true;
-		Send("");
-		auto resp = Response();
-		GetISystem()->GetIConsole()->PrintLine(resp.size() > 0 ? resp.c_str() : "empty string");
 		return true;
 	}
 	virtual bool Disconnect() override
@@ -42,16 +46,11 @@ public:
 	}
 	virtual bool Send(std::string const& str) override
 	{
-		std::string msg = 
-			R"(
-GET /hello.htm HTTP/1.1
-User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
-Host: vk.com
-
-)";
-		if (SDLNet_TCP_Send(m_pServer, msg.c_str(), msg.size()) < msg.size())
+		if (!connected)
+			return false;
+		if (SDLNet_TCP_Send(m_pServer, str.c_str(), str.size()) < str.size())
 		{
-			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+			GetISystem()->GetIConsole()->PrintLine("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			return false;
 		}
 		return true;
@@ -103,6 +102,13 @@ public:
 		m_pConsole = GetISystem()->GetIConsole();
 		m_Buffer.resize(1024);
 	}
+	~CServer()
+	{
+		if (connected)
+		{
+			SDLNet_TCP_Close(m_pClient);
+		}
+	}
 	// Унаследовано через IServer
 	virtual bool Create(int port) override
 	{
@@ -121,8 +127,6 @@ public:
 	{
 		int result;
 		if (!connected)
-			return "";
-		if (!SDLNet_SocketReady(m_pServer))
 			return "";
 		result = SDLNet_TCP_Recv(m_pClient, &m_Buffer[0], m_Buffer.size());
 		if (result <= 0)

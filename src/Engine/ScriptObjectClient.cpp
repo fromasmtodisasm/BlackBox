@@ -18,6 +18,7 @@ void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_FUNC(Connect);
 	SCRIPT_REG_FUNC(Disconnect);
 	SCRIPT_REG_FUNC(Send);
+	SCRIPT_REG_FUNC(Response);
 }
 
 void CScriptObjectClient::Init(IScriptSystem* pScriptSystem, IClient* pClient)
@@ -65,4 +66,10 @@ int CScriptObjectClient::Send(IFunctionHandler* pH)
 		m_pScriptSystem->RaiseError("Send() parameter is nil");
 
 	return pH->EndFunction(result);
+}
+
+int CScriptObjectClient::Response(IFunctionHandler* pH)
+{
+	auto resp = m_pClient->Response();
+	return pH->EndFunction(resp.c_str());
 }

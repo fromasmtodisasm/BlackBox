@@ -244,6 +244,10 @@ IGame* CSystem::CreateGame(IGame* game)
 
 void CSystem::Quit()
 {
+	m_pGame->SendMessage("Quit");
+	m_pGame->Release();
+
+	exit(0);
 }
 
 IFont* CSystem::GetIFont()

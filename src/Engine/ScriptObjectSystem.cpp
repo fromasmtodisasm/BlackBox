@@ -37,6 +37,7 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 
 	SCRIPT_REG_FUNC(EnumDisplayFormats);
 	SCRIPT_REG_FUNC(ScreenShot);
+	SCRIPT_REG_FUNC(ClearConsole);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
@@ -109,5 +110,11 @@ int CScriptObjectSystem::ScreenShot(IFunctionHandler* pH)
 
 	pH->GetParam(1, filename);
 	m_pRenderer->ScreenShot(filename);
+	return pH->EndFunction();
+}
+
+int CScriptObjectSystem::ClearConsole(IFunctionHandler* pH)
+{
+	m_pConsole->Clear();
 	return pH->EndFunction();
 }

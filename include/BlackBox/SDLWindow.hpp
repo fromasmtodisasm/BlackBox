@@ -3,6 +3,7 @@
 #include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <SDL2/SDL_video.h>
+#include <SDL2/SDL_events.h>
 
 #include <glm/glm.hpp>
 
@@ -59,6 +60,8 @@ public:
   virtual void swap() override;
   virtual void setTitle(const char *) override;
   virtual void show() override;
+
+	void handleEvent(SDL_Event* event);
 
   // IWindow interface
 public:

@@ -183,12 +183,15 @@ bool CGame::Init(ISystem *pEngine)  {
 	m_pSystem->GetIConsole()->ShowConsole(0);
 	DevModeInit();
 
+#if 0
 	if (!loadScene()) {
 		m_Log->Log("[FAILED] Failed init objects\n");
 		return false;
 	}
+#endif
   // Set scene before camera, camera setted to active scene in world
-  m_World->setScene(m_scene);
+	if (m_scene)
+		m_World->setScene(m_scene);
 #ifdef GUI
   gui = new GameGUI();
   gui->game = this;
@@ -197,16 +200,11 @@ bool CGame::Init(ISystem *pEngine)  {
   m_pInput->ShowCursor(false);
 	m_pInput->GrabInput(true);
 
-  auto tech = new HdrTechnique();
-  tech->Init(m_World->getActiveScene(), nullptr);
-  m_World->getActiveScene()->setTechnique(tech);
+	if (m_scene != nullptr)
+	{
+		initTechniques();
+	}
 
-	postProcessors.push_back(nullptr);
-	postProcessors.push_back(new PostProcessor("negative"));
-	postProcessors.push_back(new PostProcessor("grayscale"));
-	postProcessors.push_back(new PostProcessor("kernel.outline"));
-	postProcessors.push_back(new PostProcessor("kernel.blur"));
-	m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
 	m_Font = new FreeTypeFont();
 	m_Font->Init("arial.ttf", 16, 18);
 
@@ -240,6 +238,7 @@ bool CGame::Update() {
 	m_pSystem->Update(0, IsInPause());
 	m_pSystem->BeginFrame();
 	{
+		m_SceneRendered = false;
 		// TODO: FIX IT
 		m_deltaTime = m_pSystem->GetDeltaTime();
 		m_time += m_deltaTime;
@@ -260,8 +259,10 @@ bool CGame::Update() {
 			DEBUG_GROUP("ALL RENDERING");
 				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 					render();
+					if (!m_SceneRendered)
+						gl::Clear(GL_COLOR_BUFFER_BIT);
 				PROFILER_POP_CPU_MARKER();
-					m_World->getActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
+					if (m_World->getActiveScene()) m_World->getActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
 				PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 					drawHud(fps);
 				PROFILER_POP_CPU_MARKER();
@@ -306,7 +307,11 @@ void CGame::drawHud(float fps)
 
 void CGame::DisplayInfo(float fps)
 {
-  auto num_objects = m_World->getActiveScene()->numObjects();
+  size_t num_objects;
+	if (m_World->getActiveScene())
+	{
+		num_objects = m_World->getActiveScene()->numObjects();
+	}
   auto line = m_pRender->GetHeight();
   auto step = 18;
 
@@ -328,23 +333,26 @@ void CGame::DisplayInfo(float fps)
   m_Font->SetYPos(18);
   auto& text = info.text;
   auto& color = info.color;
-  auto camera = m_World->getActiveScene()->getCurrentCamera();
+  //auto camera = m_World->getActiveScene()->getCurrentCamera();
 
-  auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
+  //auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
   info.AddLine("FPS: "							+ std::to_string(fps));
-  info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
+  //info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
   info.AddLine("Current mode: "			+ mode);
   info.AddLine("Width = "						+ std::to_string(m_pRender->GetWidth()) + "Height = " + std::to_string(m_pRender->GetHeight()));
-  info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
-  info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
-  info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
+  //info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
+  //info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
+  //info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
+	/*
   info.AddLine("  Pos: "						+
     std::to_string(objPos.x) + ", " +
     std::to_string(objPos.y) + ", " +
     std::to_string(objPos.z) + "; ");
-  info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
-  auto camPos = camera->getPosition();
-  auto camRot = camera->getRotation();
+	*/
+  //info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
+  //auto camPos = camera->getPosition();
+  //auto camRot = camera->getRotation();
+	/*
   auto pos = "Pos: " +
     std::to_string(camPos.x) + ", " +
     std::to_string(camPos.y) + ", " +
@@ -354,6 +362,7 @@ void CGame::DisplayInfo(float fps)
     "Pitch: " +
     std::to_string(camRot.x) + "; "
     ;
+	*/
 
   for (auto& text : info.text)
   {
@@ -365,7 +374,7 @@ void CGame::DisplayInfo(float fps)
   render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 
   info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
-  render->PrintLine(pos.c_str(), info.getDTI());
+  //render->PrintLine(pos.c_str(), info.getDTI());
 	if (canDragViewPortWidth)
 		render->PrintLine("CanDrag\n", info.getDTI());
 	if (mousePressed)
@@ -437,8 +446,6 @@ bool CGame::loadScene() {
   if (!SceneManager::init(m_Console->GetCVar("g_scene")->GetString()))
     return false;
 
-  TechniqueManager::init();
-
   m_scene = defaultScene;
   return m_scene != nullptr;
 }
@@ -468,6 +475,8 @@ void CGame::setRenderState()
 
 void CGame::render()
 {
+	if (nullptr == m_World->getActiveScene())
+		return;
   //m_Window->clear();
 	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
   /* Rendering code here */
@@ -630,6 +639,8 @@ IWindow* CGame::getWindow()
 
 bool CGame::initPlayer()
 {
+	if (!m_scene)
+		return false;
   if (m_player != nullptr)
   {
     delete m_player;
@@ -641,6 +652,22 @@ bool CGame::initPlayer()
     return true;
   }
   return false;
+}
+
+void CGame::initTechniques()
+{
+  TechniqueManager::init();
+
+  auto tech = new HdrTechnique();
+  tech->Init(m_World->getActiveScene(), nullptr);
+  m_World->getActiveScene()->setTechnique(tech);
+
+	postProcessors.push_back(nullptr);
+	postProcessors.push_back(new PostProcessor("negative"));
+	postProcessors.push_back(new PostProcessor("grayscale"));
+	postProcessors.push_back(new PostProcessor("kernel.outline"));
+	postProcessors.push_back(new PostProcessor("kernel.blur"));
+	m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
 }
 
 bool CGame::FpsInputEvent(const SInputEvent& event)

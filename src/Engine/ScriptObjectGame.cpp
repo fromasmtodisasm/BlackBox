@@ -37,6 +37,10 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 
 	REG_FUNC(CScriptObjectGame, AddCommand);
 
+	REG_FUNC(CScriptObjectGame, Quit);
+
+
+
 	REG_FUNC(CScriptObjectGame, SavePlayerPos);
 	REG_FUNC(CScriptObjectGame, LoadPlayerPos);
 }
@@ -110,6 +114,62 @@ int CScriptObjectGame::getFPS(IFunctionHandler* pH)
 	return pH->EndFunction(m_pGame->getFPS());
 }
 
+int CScriptObjectGame::GetVersion(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::GetVersionString(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::ReloadScripts(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::Load(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::Save(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::LoadLatestCheckPoint(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::ShowSaveGameMenu(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+/*!quit the game
+*/
+int CScriptObjectGame::Quit(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(0);
+	//m_pConsole->Exit(NULL);
+	m_pSystem->Quit();
+	return pH->EndFunction();
+}
+
+int CScriptObjectGame::IsPointInWater(IFunctionHandler* pH)
+{
+	return 0;
+}
+
+int CScriptObjectGame::GetWaterHeight(IFunctionHandler* pH)
+{
+	return 0;
+}
+
 int CScriptObjectGame::GetTagPoint(IFunctionHandler* pH)
 {
 	CHECK_PARAMETERS(1);
@@ -127,6 +187,34 @@ int CScriptObjectGame::GetTagPoint(IFunctionHandler* pH)
 	}
 	m_pGetTagPoint.Set(vec);
 	return pH->EndFunction(m_pGetTagPoint);
+}
+int CScriptObjectGame::IsServer(IFunctionHandler* pH)
+{
+	return 0;
+}
+int CScriptObjectGame::IsClient(IFunctionHandler* pH)
+{
+	return 0;
+}
+int CScriptObjectGame::IsMultiplayer(IFunctionHandler* pH)
+{
+	return 0;
+}
+int CScriptObjectGame::GetMaterialIDByName(IFunctionHandler* pH)
+{
+	return 0;
+}
+int CScriptObjectGame::ReloadMaterialPhysics(IFunctionHandler* pH)
+{
+	return 0;
+}
+int CScriptObjectGame::StartRecord(IFunctionHandler* pH)
+{
+	return 0;
+}
+int CScriptObjectGame::StopRecord(IFunctionHandler* pH)
+{
+	return 0;
 }
 //////////////////////////////////////////////////////////////////////
 /*!create a console variable

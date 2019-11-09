@@ -147,6 +147,7 @@ public:
 private:
 
   bool initPlayer();
+	void initTechniques();
 
   bool FpsInputEvent(const SInputEvent& event);
   bool FlyInputEvent(const SInputEvent& event);
@@ -320,6 +321,8 @@ private:
 
 	CScriptObjectClient* m_pScriptClient = nullptr;
 	CScriptObjectServer* m_pScriptServer = nullptr;
+
+	bool m_SceneRendered = false;
 };
 
 
