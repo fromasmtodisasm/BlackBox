@@ -27,6 +27,22 @@ public:
 	int showMenu(IFunctionHandler *pH);
 	int getFPS(IFunctionHandler *pH);
 
+	///////////////////////////////////////////////////////////////	
+	int CreateVariable(IFunctionHandler* pH);//str
+	int SetVariable(IFunctionHandler* pH);
+	int RemoveVariable(IFunctionHandler* pH);//str
+	int GetVariable(IFunctionHandler* pH);
+	///////////////////////////////////////////////////////////////	
+
+	/////////////////////////////////////////////////////////////
+	int Connect(IFunctionHandler* pH);
+	int Reconnect(IFunctionHandler* pH);
+	int Disconnect(IFunctionHandler* pH);
+	int GetLevelList(IFunctionHandler* pH);
+	int LoadLevel(IFunctionHandler* pH);
+	int LoadLevelListen(IFunctionHandler* pH);
+	int LoadLevelMPServer(IFunctionHandler* pH);
+
 	int GetVersion(IFunctionHandler* pH);
 	int GetVersionString(IFunctionHandler* pH);
 
@@ -47,13 +63,26 @@ public:
 	int ReloadMaterialPhysics(IFunctionHandler* pH);
 	int StartRecord(IFunctionHandler* pH);
 	int StopRecord(IFunctionHandler* pH);
-	///////////////////////////////////////////////////////////////	int CreateVariable(IFunctionHandler* pH);//str
-	int SetVariable(IFunctionHandler* pH);
-	int RemoveVariable(IFunctionHandler* pH);//str
-	int GetVariable(IFunctionHandler* pH);
 	/////////////////////////////////////////////////////////////
 
+	int GetSaveGameList(IFunctionHandler* pH);
+	int ToggleMenu(IFunctionHandler* pH);
+	int ShowMenu(IFunctionHandler* pH);
+	int HideMenu(IFunctionHandler* pH);
+	int IsInMenu(IFunctionHandler* pH);
+
+	int SaveConfiguration(IFunctionHandler* pH);
+	int LoadConfiguration(IFunctionHandler* pH);
+	int LoadConfigurationEx(IFunctionHandler* pH);
+	int RemoveConfiguration(IFunctionHandler* pH);
+	int DrawHealthBar(IFunctionHandler* pH);
+	int LoadScript(IFunctionHandler* pH);
+	int GetLevelName(IFunctionHandler* pH);
 	int AddCommand(IFunctionHandler* pH);
+
+	int GetModsList(IFunctionHandler* pH);
+	int LoadMOD(IFunctionHandler* pH);
+	int GetCurrentModName(IFunctionHandler* pH);
 
 	/////////////////////////////////////////////////////////////
 
