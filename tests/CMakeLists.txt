@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.0)
-project(BlackBox_test CXX)
+project(Launcher CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
 enable_testing()
 
 add_executable(${PROJECT_NAME} Main.cpp)
-target_link_libraries(BlackBox_test TestGame)
+target_link_libraries(Launcher TestGame)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 
@@ -27,7 +27,7 @@ if (BUILD_SHARED_LIBS)
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
 		COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
 			$<TARGET_FILE_DIR:BlackBox>/BlackBox.dll
-			$<TARGET_FILE_DIR:BlackBox_test>)      # <--this is in-file
+			$<TARGET_FILE_DIR:Launcher>)      # <--this is in-file
 endif()
 
 install(

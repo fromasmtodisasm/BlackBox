@@ -16,7 +16,6 @@ include_directories(
 target_sources(
   ${PROJECT_NAME}
   #Game folder
-  PRIVATE ${SOURCE_DIR}/Actions.cpp
   PRIVATE ${SOURCE_DIR}/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Game.cpp
   PRIVATE ${SOURCE_DIR}/GameActionInput.cpp

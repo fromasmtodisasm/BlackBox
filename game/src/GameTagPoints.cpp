@@ -1,5 +1,5 @@
 #include <Game.hpp>
-#include <BlackBox/TagPoint.hpp>
+#include <TagPoint.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Inserts a tag-point in the list.

@@ -13,8 +13,8 @@ class CTagPoint : public ITagPoint
 
   Vec3					m_vPosition;
   Vec3					m_vAngles;
-  std::string		    m_sName;
-  CGame*       m_pGame;
+  std::string		m_sName;
+  CGame*				m_pGame;
 
 public:
   CTagPoint(CGame* pGame) { m_pGame = pGame; }
