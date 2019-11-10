@@ -202,7 +202,7 @@ bool CGame::Init(ISystem *pEngine)  {
 		initTechniques();
 	}
 
-	m_Font = new FreeTypeFont();
+	m_Font = m_pSystem->GetIFont();
 	m_Font->Init("arial.ttf", 16, 18);
 
   ITexture* consoleBackGround = new Texture();

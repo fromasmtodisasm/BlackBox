@@ -259,7 +259,7 @@ void CSystem::Quit()
 
 IFont* CSystem::GetIFont()
 {
-	return m_pFont;
+	return new FreeTypeFont;
 }
 
 IWindow* CSystem::GetIWindow()

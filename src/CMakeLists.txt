@@ -16,7 +16,7 @@ set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ###################################################
-configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in Config.h @ONLY)
+configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
 ###################################################
 if (BB_TESET_ENABLE)
   add_definitions(-DTEST)

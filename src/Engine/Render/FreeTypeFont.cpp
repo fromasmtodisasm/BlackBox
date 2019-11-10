@@ -1,4 +1,4 @@
-#include <BlackBox\Render\FreeTypeFont.hpp>
+#include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
