@@ -3,7 +3,9 @@ project(BlackBox CXX)
 
 include(GenerateExportHeader)
 include(FindFreetype)
+if (UNIX)
 find_package(PkgConfig REQUIRED)
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
