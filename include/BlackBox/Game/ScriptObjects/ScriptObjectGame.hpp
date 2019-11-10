@@ -15,6 +15,8 @@ public:
 	void InitializeTemplate(IScriptSystem* pSS);
 
 	void Init(IScriptSystem* pScriptSystem, CGame* pGame);
+	void OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo);
+	void OnNETServerTimeout(CIPAddress& ip);
 
 	int SendMessage(IFunctionHandler* pH);
 
@@ -25,7 +27,6 @@ public:
 	int gotoFly(IFunctionHandler *pH);
 	int gotoEdit(IFunctionHandler *pH);
 	int showMenu(IFunctionHandler *pH);
-	int getFPS(IFunctionHandler *pH);
 
 	///////////////////////////////////////////////////////////////	
 	int CreateVariable(IFunctionHandler* pH);//str

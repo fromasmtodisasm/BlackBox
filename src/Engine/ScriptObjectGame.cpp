@@ -1,7 +1,9 @@
-#include <BlackBox/ScriptObjectGame.hpp>
 #include <BlackBox/Game/Game.hpp>
 #include <BlackBox/IMarkers.hpp>
 #include <BlackBox/IConsole.hpp>
+#include <BlackBox/Game/Server/XServer.hpp>
+
+#include <BlackBox/Game/ScriptObjects/ScriptObjectGame.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -27,7 +29,6 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 	REG_FUNC(CScriptObjectGame, gotoFly);
 	REG_FUNC(CScriptObjectGame, gotoEdit);
 	REG_FUNC(CScriptObjectGame, showMenu);
-	REG_FUNC(CScriptObjectGame, getFPS);
 
 	REG_FUNC(CScriptObjectGame, GetTagPoint);
 	REG_FUNC(CScriptObjectGame, CreateVariable);
@@ -51,6 +52,70 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
 	m_pSystem = pGame->GetSystem();
 	m_pConsole = m_pSystem->GetIConsole();
 	InitGlobal(pScriptSystem, "Game", this);
+}
+
+void CScriptObjectGame::OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo)
+{
+	SmartScriptObject pServer(m_pScriptSystem);
+
+	pServer->SetValue("Name", pServerInfo.strName.c_str());
+	pServer->SetValue("Map", pServerInfo.strMap.c_str());
+	pServer->SetValue("Players", (int)pServerInfo.nPlayers);
+	pServer->SetValue("MaxPlayers", (int)pServerInfo.nMaxPlayers);
+	pServer->SetValue("GameType", pServerInfo.strGameType.c_str());
+	pServer->SetValue("Mod", pServerInfo.strMod.c_str());
+	pServer->SetValue("Ping", (int)pServerInfo.nPing);
+	pServer->SetValue("IP", pServerInfo.IP.GetAsString(true));
+	pServer->SetValue("Password", (int)((pServerInfo.nServerFlags & SXServerInfos::FLAG_PASSWORD) ? 1 : 0));
+	pServer->SetValue("CheatsEnabled", (int)((pServerInfo.nServerFlags & SXServerInfos::FLAG_CHEATS) ? 1 : 0));
+	char str[80];
+	pServerInfo.VersionInfo.ToString(str);
+	pServer->SetValue("GameVersion", str);
+	pServer->SetValue("InternetServer", (int)((pServerInfo.nServerFlags & SXServerInfos::FLAG_NET) ? 1 : 0));
+	pServer->SetValue("ComputerType", (int)pServerInfo.nComputerType);
+	pServer->SetValue("PunkBuster", (int)((pServerInfo.nServerFlags & SXServerInfos::FLAG_PUNKBUSTER) ? 1 : 0));
+
+	HSCRIPTFUNCTION pfOnNETServerFound = 0;
+
+	if (m_pScriptThis->GetValue("OnNETServerFound", pfOnNETServerFound))
+	{
+		m_pScriptSystem->BeginCall(pfOnNETServerFound);
+		m_pScriptSystem->PushFuncParam(GetScriptObject());
+		m_pScriptSystem->PushFuncParam(pServer);
+		m_pScriptSystem->EndCall();
+	}
+	m_pScriptSystem->ReleaseFunc(pfOnNETServerFound);
+}
+
+void CScriptObjectGame::OnNETServerTimeout(CIPAddress& ip)
+{
+	SmartScriptObject pServer(m_pScriptSystem);
+
+	pServer->SetValue("Name", "");
+	pServer->SetValue("Map", "");
+	pServer->SetValue("Players", 0);
+	pServer->SetValue("MaxPlayers", 0);
+	pServer->SetValue("GameType", "");
+	pServer->SetValue("Mod", "");
+	pServer->SetValue("Ping", 0);
+	pServer->SetValue("IP", ip.GetAsString(true));
+	pServer->SetValue("Password", 0);
+	pServer->SetValue("CheatsEnabled", 0);
+	pServer->SetValue("GameVersion", "");
+	pServer->SetValue("InternetServer", 0);
+	pServer->SetValue("ComputerType", 0);
+	pServer->SetValue("PunkBuster", 0);
+
+	HSCRIPTFUNCTION pfOnNETServerTimeout = 0;
+
+	if (m_pScriptThis->GetValue("OnNETServerTimeout", pfOnNETServerTimeout))
+	{
+		m_pScriptSystem->BeginCall(pfOnNETServerTimeout);
+		m_pScriptSystem->PushFuncParam(GetScriptObject());
+		m_pScriptSystem->PushFuncParam(pServer);
+		m_pScriptSystem->EndCall();
+	}
+	m_pScriptSystem->ReleaseFunc(pfOnNETServerTimeout);
 }
 
 int CScriptObjectGame::SendMessage(IFunctionHandler* pH)
@@ -107,11 +172,6 @@ int CScriptObjectGame::showMenu(IFunctionHandler* pH)
 {
 	m_pGame->showMenu();
 	return pH->EndFunction();
-}
-
-int CScriptObjectGame::getFPS(IFunctionHandler* pH)
-{
-	return pH->EndFunction(m_pGame->getFPS());
 }
 
 int CScriptObjectGame::GetVersion(IFunctionHandler* pH)

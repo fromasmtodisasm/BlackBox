@@ -73,8 +73,8 @@ bool CGame::RenameTagPoint(const string& oldname, const string& newname)
 
 bool CGame::InitScripts()
 {
-	m_ScriptObjectGame = new CScriptObjectGame();
-	m_ScriptObjectGame->InitializeTemplate(m_pScriptSystem);
+	m_pScriptObjectGame = new CScriptObjectGame();
+	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
 #if 0
 	m_pScriptClient = new CScriptObjectClient();
@@ -84,7 +84,7 @@ bool CGame::InitScripts()
 	m_pScriptServer->InitializeTemplate(m_pScriptSystem);
 #endif
 
-	m_ScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
+	m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
 #if 0
 	m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
 	m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);

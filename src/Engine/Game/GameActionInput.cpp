@@ -488,5 +488,32 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
 #endif
 }
 
+void CGame::SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile)
+{
+}
+
+void CGame::ReloadScripts()
+{
+}
+
+bool CGame::GetModuleState(EGameCapability eCap)
+{
+	return false;
+}
+
+void CGame::UpdateDuringLoading()
+{
+}
+
+IXAreaMgr* CGame::GetAreaManager()
+{
+	return nullptr;
+}
+
+ITagPointManager* CGame::GetTagPointManager()
+{
+	return nullptr;
+}
+
 #if 0
 #endif

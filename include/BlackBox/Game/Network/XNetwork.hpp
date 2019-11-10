@@ -184,15 +184,15 @@ struct SXServerInfos
 		FLAG_PUNKBUSTER = 1 << 3,
 	};
 
-	std::string				strName;							//!< e.g. "Jack's Server"
-	std::string				strMap;								//!< e.g. "MP_Airstrip"
-	std::string				strGameType;					//!< e.g. "ASSAULT", "FFA", "TDM"
-	std::string				strMod;								//!< e.g. "FarCry", "Counterstrike"  current TCM(Total Conversion Mod), specified with -MOD ...
+	std::string		strName;							//!< e.g. "Jack's Server"
+	std::string		strMap;								//!< e.g. "MP_Airstrip"
+	std::string		strGameType;					//!< e.g. "ASSAULT", "FFA", "TDM"
+	std::string		strMod;								//!< e.g. "FarCry", "Counterstrike"  current TCM(Total Conversion Mod), specified with -MOD ...
 	BYTE					nPlayers;							//!< current player count
 	BYTE					nMaxPlayers;					//!< max player count
-	WORD					nPort;								//!<
-	WORD					nPing;								//!<
-//	DWORD					dwGameVersion;				//!< still used?
+	uint16_t			nPort;								//!<
+	uint16_t			nPing;								//!<
+//	Duint16_t					dwGameVersion;				//!< still used?
 	CIPAddress		IP;										//!< 
 	BYTE					nComputerType;        //!< reserved, currently not used (CPU: AMD64,Intel  OS:Linux,Win)
 	int						nServerFlags;					//!< Flags with special info about server.
@@ -214,8 +214,8 @@ struct SXGameContext
 	std::string					strMod;								//!< e.g. "FarCry", "FarStrike" current TCM(Total Conversion Mod), specified with -MOD ...
 	std::string					strGameType;					//!< e.g. "ASSAULT", "FFA", "TDM"
 	std::string					strMission;						//!<
-	DWORD						dwNetworkVersion;			//!< NETWORK_FORMAT_VERSION
-	WORD						wLevelDataCheckSum;		//!<
+	uint32_t						dwNetworkVersion;			//!< NETWORK_FORMAT_VERSION
+	uint16_t						wLevelDataCheckSum;		//!<
 	bool						bForceNonDevMode;			//!< client is forced not to use the Devmode
 	bool						bInternetServer;			//!< true=requires UBI login, false=LAN
 	BYTE						nComputerType;        //!< HI:CPUType, LO:OSType

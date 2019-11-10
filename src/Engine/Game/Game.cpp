@@ -91,11 +91,6 @@ void CGame::PreRender()
 	//glCheck(glViewport(0, 0, 1366, 768));
 }
 
-float CGame::getTime()
-{
-	return m_time;
-}
-
 CGame::CGame(std::string title) :
 	//camControl(nullptr),
 	g_scene(nullptr),
@@ -115,7 +110,7 @@ CGame::CGame(std::string title) :
 	m_sceneManager(nullptr),
 	shaderManager(nullptr),
 	m_World(new World()), m_Title(title),
-	m_ScriptObjectGame(nullptr),
+	m_pScriptObjectGame(nullptr),
 	m_pRender(nullptr),
 	m_pInput(nullptr),
 	m_pScriptSystem(nullptr),
@@ -605,11 +600,6 @@ void CGame::PersistentHandler(const SInputEvent& event)
 	}
 }
 
-IInputHandler *CGame::getInputHandler()
-{
-  return m_inputHandler;
-}
-
 void CGame::gotoGame()
 {
 	if (m_player != nullptr)
@@ -1020,11 +1010,6 @@ bool CGame::IsInPause()
 void CGame::Stop()
 {
   m_bUpdateRet = false;
-}
-
-float CGame::getFPS()
-{
-	return fps;
 }
 
 void CGame::PostRender()

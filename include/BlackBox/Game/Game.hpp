@@ -42,12 +42,12 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Console.hpp>
-#include <BlackBox/ScriptObjectGame.hpp>
 #include <BlackBox/IInput.hpp>
 
 #include <BlackBox/Game/Network/XNetwork.hpp>
-#include <BlackBox/ScriptObjectServer.hpp>
-#include <BlackBox/ScriptObjectClient.hpp>
+#include <BlackBox/Game/ScriptObjects/ScriptObjectServer.hpp>
+#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
+#include <BlackBox/Game/ScriptObjects/ScriptObjectGame.hpp>
 
 #include <BlackBox/common.h>
 
@@ -79,6 +79,9 @@ typedef std::vector<string> Vec2Str;
 typedef Vec2Str::iterator Vec2StrIt;
 typedef std::list<CPlayer*> ListOfPlayers;
 
+typedef std::map<CIPAddress, SXServerInfos>	ServerInfosMap;
+typedef ServerInfosMap::iterator ServerInfosVecItor;
+
 struct ActionInfo
 {
 	int nId;
@@ -94,7 +97,13 @@ typedef ActionsEnumMap::iterator ActionsEnumMapItor;
 typedef std::multimap<string, CTagPoint*> TagPointMap;
 
 
-class CGame : public IGame, public IInputEventListener, public IPostRenderCallback, public IPreRenderCallback
+class CGame : 
+	public IGame, 
+	public IInputEventListener, 
+	public IPostRenderCallback, 
+	public IPreRenderCallback,
+	public IServerSnooperSink,
+	public INETServerSnooperSink
 {
   class GameState;
   class EventListener;
@@ -119,6 +128,7 @@ public:
   void DisplayInfo(float fps);
   bool Run(bool& bRelaunch) override;
 
+
   bool loadScene();
   void setRenderState();
   void render();
@@ -133,7 +143,12 @@ public:
 
   // IGame interface
 public:
-  virtual IInputHandler *getInputHandler() override;
+	virtual void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) override;
+	virtual void ReloadScripts() override;
+	virtual bool GetModuleState(EGameCapability eCap) override;
+	virtual void UpdateDuringLoading() override;
+	virtual IXAreaMgr* GetAreaManager() override;
+	virtual ITagPointManager* GetTagPointManager() override;
   void Stop();
 	void gotoMenu();
 	void gotoFullscreen();
@@ -165,7 +180,6 @@ private:
 
   // IGame interface
 public:
-  virtual float getFPS() override;
 
   // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;
@@ -177,9 +191,6 @@ public:
 
 	// Inherited via IPreRenderCallback
 	virtual void PreRender() override;
-
-	// Inherited via IGame
-	virtual float getTime() override;
 
   // tagpoint management functions
   ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
@@ -229,10 +240,6 @@ protected:
 	void SetCommonKeyBindings(IActionMap* pActionMap);
 public:
   float m_deltaTime;
-public:
-	std::string										m_currentLevel;						//!< Name of current level.
-	std::string										m_currentMission;					//!< Name of current mission.
-	std::string										m_currentLevelFolder;			//!< Folder of the current level.
 
 private:
 	ISystem *											m_pSystem;								//!< The system interface
@@ -293,6 +300,27 @@ private:
   ShaderManager *shaderManager;
 	std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
+
+public:
+	//!	The dummy client of this computer, required to get the list of servers if
+	//! theres not a real client actually connected and playing
+
+	IServerSnooper*								m_pServerSnooper;					//!< used for LAN Multiplayer, to remove control servers
+	INETServerSnooper*						m_pNETServerSnooper;			//!< used for Internet Multiplayer, to remove control servers
+	IRConSystem*									m_pRConSystem;						//!< used for Multiplayer, to remote control servers
+	std::string										m_szLastAddress;
+	bool													m_bLastDoLateSwitch;
+	bool													m_bLastCDAuthentication;
+
+	//CUIHud* m_pUIHud;									//!< Hud
+	//CUIHud* m_pCurrentUI;							//!< for the current ui
+
+	std::string										m_currentLevel;						//!< Name of current level.
+	std::string										m_currentMission;					//!< Name of current mission.
+	std::string										m_currentLevelFolder;			//!< Folder of the current level.
+
+
+	// console variables -----------------------------------------------------------
 	//=======================
   ICVar* g_scene;
   ICVar* r_displayinfo;
@@ -300,8 +328,29 @@ private:
 	ICVar* r_cap_profile;
 	ICVar* m_pCVarCheatMode;
 
+	ICVar* g_LevelName;
+	ICVar* g_StartMission;
+
+	ICVar* sv_port;
+	ICVar* sv_mapcyclefile;
+	ICVar* sv_cheater_kick;
+	ICVar* sv_cheater_ban;
+
+	ICVar* sv_timeout;
+	ICVar* cl_timeout;
+	ICVar* cl_loadtimeout;
+	ICVar* cl_snooptimeout;
+	ICVar* cl_snoopretries;
+	ICVar* cl_snoopcount;
+
+	ServerInfosMap						m_ServersInfos;							//!< Infos about the avaible servers
+	std::string								m_strLastSaveGame;
+	bool											m_bEditor;
+	//tPlayerPersistentData			m_tPlayerPersistentData;
+
+
   TagPointMap													m_mapTagPoints;					//!< Map of tag points by name
-	CScriptObjectGame*									m_ScriptObjectGame;
+	CScriptObjectGame*									m_pScriptObjectGame;
 	IScriptObject*											m_playerObject;
 
 	// other
@@ -335,6 +384,7 @@ private:
 	//CScriptObjectServer* m_pScriptServer = nullptr;
 
 	bool m_SceneRendered = false;
+
 };
 
 

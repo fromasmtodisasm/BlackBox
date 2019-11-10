@@ -94,8 +94,7 @@ inline unsigned short __ntohs(unsigned short us)
 class CIPAddress
 {
 public:
-#if 0
-	CIPAddress(WORD wPort, const char* sAddress)
+	CIPAddress(uint16_t wPort, const char* sAddress)
 	{
 		m_Address.sin_family = AF_INET;
 		m_Address.sin_port = htons(wPort);
@@ -142,10 +141,9 @@ public:
 			return true;
 		return false;
 	}
-#endif
 
-	inline void Set(WORD wPort, char* sAddress);
-	inline void Set(WORD wPort, UINT dwAddress);
+	inline void Set(uint16_t wPort, char* sAddress);
+	inline void Set(uint16_t wPort, UINT dwAddress);
 	inline void Set(sockaddr_in* sa);
 	inline void Set(const CIPAddress& xa);
 	UINT GetAsUINT() const;
@@ -161,7 +159,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////
-inline void CIPAddress::Set(WORD wPort, char* sAddress)
+inline void CIPAddress::Set(uint16_t wPort, char* sAddress)
 {
 	m_Address.sin_family = AF_INET;
 	m_Address.sin_port = htons(wPort);
@@ -178,7 +176,7 @@ inline void CIPAddress::Set(WORD wPort, char* sAddress)
 }
 
 //////////////////////////////////////////////////////////////////////
-inline void CIPAddress::Set(WORD wPort, UINT dwAddress)
+inline void CIPAddress::Set(uint16_t wPort, UINT dwAddress)
 {
 	m_Address.sin_family = AF_INET;
 	m_Address.sin_port = htons(wPort);
