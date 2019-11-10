@@ -185,7 +185,7 @@ struct IClient
 		@param iAuthorizationSize >0
 		--@param wPort the remote port of the server
 	*/
-	virtual void Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize) = 0;
+	virtual void Connect(const char* szIP, uint16_t wPort, const uint8_t* pbAuthorizationID, unsigned int iAuthorizationSize) = 0;
 	/*! start disconnect from a server
 		@param szCause cause of the disconneciton that will be send to the server
 	*/
@@ -240,7 +240,7 @@ struct IClient
 	//!
 	virtual void InitiateCDKeyAuthorization(const bool inbCDAuthorization) = 0;
 	//! \param pbAuthorizationID 0 if you wanna create a fake AuthorizationID, otherwise pointer to the AuthorizationID
-	virtual void OnCDKeyAuthorization(BYTE* pbAuthorizationID) = 0;
+	virtual void OnCDKeyAuthorization(uint8_t* pbAuthorizationID) = 0;
 	//!
 	virtual void SetServerIP(const char* szServerIP) = 0;
 };
@@ -323,7 +323,7 @@ struct IRConSystem
 struct IServerSlotSink
 {
 	//! called by the serverslot when the connection occur
-	virtual void OnXServerSlotConnect(const BYTE* pbAuthorizationID, unsigned int uiAuthorizationSize) = 0;
+	virtual void OnXServerSlotConnect(const uint8_t* pbAuthorizationID, unsigned int uiAuthorizationSize) = 0;
 	/*! called by the serverslot when the disconnection occur
 		@param std::string representation of the disconnection cause
 	*/
@@ -337,7 +337,7 @@ struct IServerSlotSink
 	*/
 	virtual void OnData(CStream& stm) = 0;
 	//! 
-	virtual void OnXPlayerAuthorization(bool bAllow, const char* szError, const BYTE* pGlobalID,
+	virtual void OnXPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID,
 		unsigned int uiGlobalIDSize) = 0;
 };
 
@@ -417,7 +417,7 @@ struct IServerSlot
 	//! used for bandwidth calculations (to adjust the bandwidth)
 	virtual void GetBandwidthStats(SServerSlotBandwidthStats& out) const = 0;
 	//! just calles OnXPlayerAuthorization of the corresponding game specific object
-	virtual void OnPlayerAuthorization(bool bAllow, const char* szError, const BYTE* pGlobalID,
+	virtual void OnPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID,
 		unsigned int uiGlobalIDSize) = 0;
 };
 

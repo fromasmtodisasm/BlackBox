@@ -9,7 +9,7 @@ CNetworkClient::~CNetworkClient()
 {
 }
 
-void CNetworkClient::Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize)
+void CNetworkClient::Connect(const char* szIP, uint16_t wPort, const uint8_t* pbAuthorizationID, unsigned int iAuthorizationSize)
 {
 }
 
@@ -76,7 +76,7 @@ void CNetworkClient::InitiateCDKeyAuthorization(const bool inbCDAuthorization)
 {
 }
 
-void CNetworkClient::OnCDKeyAuthorization(BYTE* pbAuthorizationID)
+void CNetworkClient::OnCDKeyAuthorization(uint8_t* pbAuthorizationID)
 {
 }
 

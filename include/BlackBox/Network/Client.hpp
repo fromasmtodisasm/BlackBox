@@ -7,7 +7,7 @@ public:
 	CNetworkClient();
 	~CNetworkClient();
 	// Унаследовано через IClient
-	virtual void Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize) override;
+	virtual void Connect(const char* szIP, uint16_t wPort, const uint8_t* pbAuthorizationID, unsigned int iAuthorizationSize) override;
 	virtual void Disconnect(const char* szCause) override;
 	virtual void SendReliable(CStream& stm) override;
 	virtual void SendUnreliable(CStream& stm) override;
@@ -22,6 +22,6 @@ public:
 	virtual unsigned int GetUnreliablePacketsLostCount() override;
 	virtual CIPAddress GetServerIP() const override;
 	virtual void InitiateCDKeyAuthorization(const bool inbCDAuthorization) override;
-	virtual void OnCDKeyAuthorization(BYTE* pbAuthorizationID) override;
+	virtual void OnCDKeyAuthorization(uint8_t* pbAuthorizationID) override;
 	virtual void SetServerIP(const char* szServerIP) override;
 };

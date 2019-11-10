@@ -9,7 +9,7 @@ public:
 	// Унаследовано через IServer
 	virtual void Update(unsigned int nTime) override;
 	virtual void Release() override;
-	virtual void SetVariable(CryNetworkVarible eVarName, unsigned int nValue) override;
+	virtual void SetVariable(enum CryNetworkVarible eVarName, unsigned int nValue) override;
 	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets) override;
 	virtual const char* GetHostName() override;
 	virtual void RegisterPacketSink(const unsigned char inPacketID, INetworkPacketSink* inpSink) override;

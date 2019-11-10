@@ -1,5 +1,9 @@
 #include <BlackBox/Network/Server.hpp>
 
+CNetworkServer::CNetworkServer()
+{
+}
+
 CNetworkServer::~CNetworkServer()
 {
 }
@@ -12,7 +16,7 @@ void CNetworkServer::Release()
 {
 }
 
-void CNetworkServer::SetVariable(CryNetworkVarible eVarName, unsigned int nValue)
+void CNetworkServer::SetVariable(enum CryNetworkVarible eVarName, unsigned int nValue)
 {
 }
 
