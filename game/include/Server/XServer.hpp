@@ -21,13 +21,13 @@
 # pragma once
 #endif
 
-#include <BlackBox/Game/Network/XNetwork.hpp>
-#include <BlackBox/Game/Server/XServerRules.hpp>
+#include <Network/XNetwork.hpp>
+#include <Server/XServerRules.hpp>
 //#include "XSnapshot.h"
 #include <BlackBox/INetwork.hpp>					// IServerSlotFactory
-#include <BlackBox/Game/ScriptObjects/ScriptObjectServer.hpp>
+#include <ScriptObjects/ScriptObjectServer.hpp>
 #include <BlackBox/IConsole.hpp>
-#include <BlackBox/Game/Server/XServerSlot.hpp>			// XServerSlot
+#include <Server/XServerSlot.hpp>			// XServerSlot
 
 #include <map>
 #include <algorithm>

@@ -2,7 +2,7 @@
 #define CPLAYER_H
 
 #include <BlackBox/Camera.hpp>
-#include <BlackBox/Game/GameObject.hpp>
+#include <GameObject.hpp>
 #include <BlackBox/ICommand.hpp>
 #include <BlackBox/IInput.hpp>
 #include <BlackBox/MathHelper.hpp>

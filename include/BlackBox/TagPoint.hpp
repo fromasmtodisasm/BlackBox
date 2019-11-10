@@ -2,7 +2,7 @@
 
 #include <BlackBox/MathHelper.hpp>
 #include <BlackBox/IMarkers.hpp>
-#include <BlackBox/Game/Game.hpp>
+#include <Game.hpp>
 #include <string>
 
 class CGame;

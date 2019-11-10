@@ -7,10 +7,9 @@
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/IPostProcessor.hpp>
-#include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
-#include <BlackBox/Terrain.hpp>
+#include <BlackBox/Render/Terrain.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 
@@ -82,7 +81,7 @@ class Scene
   friend class GameGUI;
   friend class CGame;
 private:
-	FreeTypeFont *m_Font;
+	IFont *m_Font;
   std::string name;
   World *m_World;
   GLint m_RenderedScene;

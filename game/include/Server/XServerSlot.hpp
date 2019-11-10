@@ -26,7 +26,7 @@
 class CScriptObjectServerSlot;
 
 //#include "XNetworkStats.h"									// CXNetworkStats
-#include <BlackBox/Game/Network/XNetwork.hpp>
+#include <Network/XNetwork.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/ITimer.hpp>
 

@@ -1,6 +1,6 @@
 #pragma once
 #ifdef GUI
-#include <BlackBox/Game/Game.hpp>
+#include <Game.hpp>
 #include <BlackBox/IInputHandler.hpp>
 
 // Std inc

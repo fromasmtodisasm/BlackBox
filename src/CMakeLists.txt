@@ -40,7 +40,6 @@ include_directories(
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
-  " ${CMAKE_SOURCE_DIR}/include/BlackBox/Game/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
@@ -143,31 +142,11 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectGame.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectScript.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectClient.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectServer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
-  #Game folder
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Actions.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Commands.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Game.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/GameActionInput.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/GameClientServer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/GameDevMode.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/GameGUI.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/GameObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/GameTagPoints.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Player.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Client/XClient.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/ScriptObjects/ScriptObjectClient.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Server/XServer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Server/XServerRules.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Game/Network/XNetwork.cpp
   #Geometry folder
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/ObjLoader.cpp
@@ -220,6 +199,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TechniqueManager.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/Terrain.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp

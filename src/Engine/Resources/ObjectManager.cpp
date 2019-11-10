@@ -3,7 +3,7 @@
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/Game/Player.h>
+//#include <Player.h>
 
 #include <iostream>
 using	namespace std;
@@ -71,9 +71,12 @@ string ObjectManager::getPathByPointer(Object *object)
 
 Object *ObjectManager::objectFactory(Object *object, string type)
 {
+	return nullptr;
+#if 0
   if (type == "player")
     return new CPlayer(object);
   else if (type == "gameobject")
     return new GameObject(object);
   else return object;
+#endif
 }

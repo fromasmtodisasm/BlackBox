@@ -30,7 +30,7 @@ struct IScriptObject;
 #define TEAM_HAS_NOT_CHANGED	-1
 #define SPECTATORS_TEAM				0
 
-#include <BlackBox/Game/ScriptObjects/ScriptObjectServerSlot.hpp>
+#include <ScriptObjects/ScriptObjectServerSlot.hpp>
 
 //////////////////////////////////////////////////////////////////////
 class CXServerRules

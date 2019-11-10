@@ -1,10 +1,11 @@
 #include <BlackBox/Console.hpp>
 #include <BlackBox/ISystem.hpp>
+#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ILog.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Game/Game.hpp>
 #include <BlackBox/Common/IClipBoard.hpp>
 #include <BlackBox/IInput.hpp>
 

@@ -1,7 +1,5 @@
 ﻿#include <Game.hpp>
 #include <GameObject.hpp>
-#include <BlackBox/Window.hpp>
-#include <BlackBox/Triangle.hpp>
 #include <BlackBox/Render/Texture.hpp>
 #ifdef GUI
 #include <BlackBox/GUI.hpp>
@@ -10,7 +8,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Render/FreeTypeFont.hpp>
+#include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/HdrTechnique.hpp>
@@ -259,8 +257,6 @@ bool CGame::Update() {
 			DEBUG_GROUP("ALL RENDERING");
 				PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 					render();
-					if (!m_SceneRendered)
-						gl::Clear(GL_COLOR_BUFFER_BIT);
 				PROFILER_POP_CPU_MARKER();
 					if (m_World->getActiveScene()) m_World->getActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
 				PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);

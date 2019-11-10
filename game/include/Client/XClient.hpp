@@ -30,12 +30,12 @@
 //#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
 //#include "XClientSnapshot.h"
 //#include "XEntityProcessingCmd.h"
-#include <BlackBox/Game/Network/XNetwork.hpp>	
+#include <Network/XNetwork.hpp>	
 //#include "XNetworkStats.h"						// CXNetworkStats
 //#include <BlackBox/ScriptObjectVector.hpp>						// CXNetworkStats
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>						// CXNetworkStats
-#include <BlackBox/Game/Game.hpp>
-#include <BlackBox/Game/GameShared.hpp>
+#include <Game.hpp>
+#include <GameShared.hpp>
 #include <BlackBox/ITimer.hpp>
 
 struct SCameraParams;

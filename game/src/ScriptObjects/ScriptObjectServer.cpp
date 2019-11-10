@@ -15,8 +15,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Game/IXSystem.hpp>
-#include <Game/ScriptObjects/ScriptObjectServer.hpp>
+#include <IXSystem.hpp>
+#include <ScriptObjects/ScriptObjectServer.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectServer)

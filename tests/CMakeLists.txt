@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
 add_executable(${PROJECT_NAME} Main.cpp)
-target_link_libraries(BlackBox_test BlackBox)
+target_link_libraries(BlackBox_test TestGame)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 

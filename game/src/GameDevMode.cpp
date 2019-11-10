@@ -1,7 +1,6 @@
 #include <Game.hpp>
 
 #include <string>
-#include "..\..\..\include\BlackBox\Game\Game.hpp"
 
 using namespace std;
 
