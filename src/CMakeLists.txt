@@ -166,6 +166,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Game/Client/XClient.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/ScriptObjects/ScriptObjectClient.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Server/XServer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Server/XServerRules.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Network/XNetwork.cpp
   #Geometry folder
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp

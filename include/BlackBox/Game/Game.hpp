@@ -198,6 +198,13 @@ public:
   void RemoveTagPoint(ITagPoint* pPoint);
   bool RenameTagPoint(const string& oldname, const string& newname);
 
+	IScriptSystem* GetScriptSystem() { return m_pScriptSystem; }
+	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
+	{
+		return m_pNetwork->CreateClient(pSink, bLocal);
+	}
+	IActionMapManager* GetActionMapManager() { return m_pIActionMapManager; }
+
 	//
 	bool InitScripts();
 
@@ -241,7 +248,7 @@ protected:
 public:
   float m_deltaTime;
 
-private:
+public:
 	ISystem *											m_pSystem;								//!< The system interface
 	CXServer *										m_pServer;								//!< The server of this computer
 	CXClient *										m_pClient;								//!< The client of this computer

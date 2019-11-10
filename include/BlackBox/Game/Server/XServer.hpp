@@ -51,14 +51,14 @@
 
 class IRenderer;
 
-typedef std::multimap<string, ITagPoint*>	RespawnPointMap;
+typedef std::multimap<std::string, ITagPoint*>	RespawnPointMap;
 
 //////////////////////////////////////////////////////////////////////
 class BannedID
 {
 public:
 	BannedID() { memset(vBanID, 0, 64); bSize = 0; };
-	BannedID(const unsigned char* vByteArr, unsigned char bArrSize, const string& szPlayerName) { memset(vBanID, 0, 64); memcpy(vBanID, vByteArr, std::min(bArrSize, (uint8_t)64)); szName = szPlayerName; bSize = bArrSize; };
+	BannedID(const unsigned char* vByteArr, unsigned char bArrSize, const std::string& szPlayerName) { memset(vBanID, 0, 64); memcpy(vBanID, vByteArr, std::min(bArrSize, (uint8_t)64)); szName = szPlayerName; bSize = bArrSize; };
 	BannedID(const BannedID& NewBannedID) { szName = NewBannedID.szName; memset(vBanID, 0, 64); memcpy(vBanID, NewBannedID.vBanID, NewBannedID.bSize); bSize = NewBannedID.bSize; };
 	virtual ~BannedID() {};
 
@@ -75,7 +75,7 @@ public:
 
 	unsigned char	vBanID[64];
 	unsigned char bSize;
-	string				szName;
+	std::string				szName;
 };
 
 typedef std::vector<BannedID>					BannedIDList;
@@ -131,10 +131,10 @@ public:
 
 	// IServerSlotFactory /////////////////////////////////
 	virtual bool CreateServerSlot(IServerSlot* pIServerSlot);
-	virtual bool GetServerInfoStatus(string& szServerStatus);
-	virtual bool GetServerInfoStatus(string& szName, string& szGameType, string& szMap, string& szVersion, bool* pbPassword, int* piPlayers, int* piMaxPlayers);
-	virtual bool GetServerInfoRules(string& szServerRules);
-	virtual bool GetServerInfoPlayers(string* vszStrings[4], int& nStrings);
+	virtual bool GetServerInfoStatus(std::string& szServerStatus);
+	virtual bool GetServerInfoStatus(std::string& szName, std::string& szGameType, std::string& szMap, std::string& szVersion, bool* pbPassword, int* piPlayers, int* piMaxPlayers);
+	virtual bool GetServerInfoRules(std::string& szServerRules);
+	virtual bool GetServerInfoPlayers(std::string* vszStrings[4], int& nStrings);
 	virtual bool ProcessXMLInfoRequest(const char* sRequest, const char* sRespone, int nResponseMaxLength);
 
 	/////////////////////////////////////////////////////////

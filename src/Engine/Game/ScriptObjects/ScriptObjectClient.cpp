@@ -14,7 +14,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <ScriptObjectClient.hpp>
+#include <Game/ScriptObjects/ScriptObjectClient.hpp>
 #include <Game/Client/XClient.hpp>
 
 //////////////////////////////////////////////////////////////////////
@@ -48,6 +48,7 @@ void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
 {
 	_ScriptableEx<CScriptObjectClient>::InitializeTemplate(pSS);
 
+#if 0
 	REG_FUNC(CScriptObjectClient, GetGameStartTime);
 	REG_FUNC(CScriptObjectClient, GetGameState);
 	REG_FUNC(CScriptObjectClient, GetGameStateString);
@@ -66,6 +67,7 @@ void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
 	REG_FUNC(CScriptObjectClient, SetUpdateRate);
 	REG_FUNC(CScriptObjectClient, GetServerCPUTargetName);
 	REG_FUNC(CScriptObjectClient, GetServerOSTargetName);
+#endif
 
 	pSS->SetGlobalValue("CGS_INPROGRESS", 0);
 	pSS->SetGlobalValue("CGS_COUNTDOWN", 1);
@@ -73,6 +75,7 @@ void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
 	pSS->SetGlobalValue("CGS_INTERMISSION", 3);
 }
 
+#if 0
 //////////////////////////////////////////////////////////////////////
 int CScriptObjectClient::GetGameStartTime(IFunctionHandler* pH)
 {
@@ -281,7 +284,7 @@ int CScriptObjectClient::Say(IFunctionHandler* pH)
 		return pH->EndFunction();
 	}
 
-	char* szParam = 0;
+	const char* szParam = 0;
 	string szText;
 
 	for (int i = 1; i <= iParamCount; i++)
@@ -529,3 +532,4 @@ int CScriptObjectClient::GetServerOSTargetName(IFunctionHandler* pH)
 
 	return pH->EndFunction(m_pClient->m_GameContext.GetOSTarget());
 }
+#endif

@@ -27,7 +27,7 @@
 #include <map>
 #include <BlackBox/IInput.hpp>
 #include <BlackBox/IConsole.hpp>
-#include <BlackBox/Game/ScriptObjectClient.hpp>
+//#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
 //#include "XClientSnapshot.h"
 //#include "XEntityProcessingCmd.h"
 #include <BlackBox/Game/Network/XNetwork.hpp>	
@@ -239,6 +239,7 @@ public:
 	void TriggerAimToggle(float fValue, XActivationEvent ae);
 
 	BEGIN_INPUTACTIONMAP()
+#if 0
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_RIGHT, TriggerMoveRight)
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_FORWARD, TriggerMoveForward)
@@ -292,7 +293,7 @@ public:
 
 		REGISTER_INPUTACTIONMAP(ACTION_MOVEMODE_TOGGLE, TriggerMoveModeToggle)
 		REGISTER_INPUTACTIONMAP(ACTION_AIM_TOGGLE, TriggerAimToggle)
-
+#endif
 		END_INPUTACTIONMAP()
 
 private:
@@ -350,12 +351,12 @@ public:
 	CStream* m_pSavedConsoleVars;			//!< saved console variable state (to restore the VF_REQUIRE_NET_SYNC marked vars), 0 when not used
 
 	bool								m_bLocalHost;							//!< this client is the local host ?
-	class CGame* m_pGame;									//!< The game
+	class CGame*				m_pGame;									//!< The game
 	bool								m_bLinkListenerToCamera;	//!<
-	struct IXSystem* m_pISystem;								//!< The system interface
-	IScriptSystem* m_pScriptSystem;					//!<
-	//IEntitySystem* m_pEntitySystem;					//!<
-	ILog* m_pLog;										//!<
+	struct IXSystem*		m_pISystem;								//!< The system interface
+	IScriptSystem*			m_pScriptSystem;					//!<
+	//IEntitySystem*		m_pEntitySystem;					//!<
+	ILog*								m_pLog;										//!<
 	bool								m_bLazyChannelState;			//!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
 
 
@@ -411,7 +412,7 @@ public:
 	ITimer* m_pTimer;								//!<
 	bool										m_bRecordingDemo;				//!< used for demo recording (use network stream)
 	bool										m_bPlaybackDemo;				//!< used for demo recording (use network stream)
-	//CScriptObjectClient* m_pScriptObjectClient;	//!<
+	CScriptObjectClient* m_pScriptObjectClient;	//!<
 	IScriptObject* m_pClientStuff;					//!< connection to the associated scriptobject
 
 private:
