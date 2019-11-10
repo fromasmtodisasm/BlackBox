@@ -480,6 +480,7 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 	m_pSystemEventDispatcher->Update();
 	m_pWindow->update();
 	m_pConsole->Update();
+	m_Render->Update();
 	if (m_pWindow->closed())
 	{
 		m_pGame->SendMessage("Quit");
