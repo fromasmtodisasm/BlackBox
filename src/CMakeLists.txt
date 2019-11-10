@@ -155,6 +155,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Game/GameTagPoints.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/Player.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Game/PlayerCommands.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Game/Network/XNetwork.cpp
   #Geometry folder
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/ObjLoader.cpp
@@ -174,6 +175,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
   #Network folder
   PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Network/Network.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
 
   #Profiler folder

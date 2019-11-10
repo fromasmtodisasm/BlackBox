@@ -8,6 +8,16 @@
 
 #include <vector>				// STL vector<>
 
+#define DEFAULT_SERVERPORT				49001
+#define DEFAULT_SERVERPORT_STR		"49001"
+
+#define SERVER_MULTICAST_PORT	5678
+//<<FIXME>> It can be changed
+#define SERVER_MULTICAST_ADDRESS	"234.5.6.7"
+
+#define SERVER_QUERY_MAX_PACKETS	(8)
+#define SERVER_QUERY_PACKET_SIZE	(1120)
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // Interfaces
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +43,7 @@ struct ISystem;
 struct INetwork
 {
 	//! \return local IPAddress (needed if we have several servers on one machine), 0.0.0.0 if not used
-	virtual DWORD GetLocalIP() const = 0;
+	virtual uint32_t GetLocalIP() const = 0;
 
 	//! also initialize Ubi.com integration (flaw in the UBI.com SDK - we would like to be able to set the IP later but they
 	//! need it during initialization)
@@ -54,7 +64,7 @@ struct INetwork
 			@param nPort local IP port where the server will listen
 			@return an IServer interface
 	*/
-	virtual IServer* CreateServer(IServerSlotFactory* pFactory, WORD nPort, bool local = false) = 0;
+	virtual IServer* CreateServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local = false) = 0;
 
 	//! create an RCon System (remote control system)
 	virtual IRConSystem* CreateRConSystem() = 0;
@@ -86,14 +96,14 @@ struct INetwork
 	virtual void AddProtectedFile(const char* sFilename) = 0;
 	//!
 	//! \return 0 if there is no server registered at this port
-	virtual IServer* GetServerByPort(const WORD wPort) = 0;
+	virtual IServer* GetServerByPort(const uint16_t wPort) = 0;
 	//! used to update things like the UBI.com services
 	virtual void UpdateNetwork() = 0;
 	//! currently used to update UBI.com info and check CDKey
 	//! If it is a UBI type server we should the register, if we have already registered this will do nothing.
 	//! \param szServerName must not be 0
 	//! \param dwPlayerCount >0
-	virtual void OnAfterServerLoadLevel(const char* szServerName, const uint32_t dwPlayerCount, const WORD wPort) = 0;
+	virtual void OnAfterServerLoadLevel(const char* szServerName, const uint32_t dwPlayerCount, const uint16_t wPort) = 0;
 	//! \return true=it's possible (e.g. logged into UBI.com), false=it's not possible
 	virtual bool VerifyMultiplayerOverInternet() = 0;
 	//! We have to tell Ubisoft that the client has successfully connected
@@ -175,7 +185,7 @@ struct IClient
 		@param iAuthorizationSize >0
 		--@param wPort the remote port of the server
 	*/
-	virtual void Connect(const char* szIP, WORD wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize) = 0;
+	virtual void Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize) = 0;
 	/*! start disconnect from a server
 		@param szCause cause of the disconneciton that will be send to the server
 	*/
@@ -211,7 +221,7 @@ struct IClient
 		@param nIncomingPackets per sec
 		@param nOutgoingPackets per sec
 	*/
-	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, DWORD& nIncomingPackets, DWORD& nOutgoingPackets) = 0;
+	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets) = 0;
 	/*! release the interface(and delete the object that implements it)
 	*/
 	virtual void Release() = 0;
@@ -502,7 +512,7 @@ struct IServer
 		@param nIncomingPackets per sec
 		@param nOutgoingPackets per sec
 	*/
-	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, DWORD& nIncomingPackets, DWORD& nOutgoingPackets) = 0;
+	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets) = 0;
 	/*!return the symbolic name of the localhost
 		@return the symbolic name of the localhost
 	*/

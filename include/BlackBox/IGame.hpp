@@ -1,5 +1,6 @@
 #pragma once
 
+#include <BlackBox/Version.hpp>
 #include <BlackBox/MathHelper.hpp>
 
 #include <string>

@@ -20,7 +20,7 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-#include <Stream.h>
+#include <BlackBox/Stream.hpp>
 
 #include <BlackBox/Platform.hpp>
 
@@ -31,6 +31,11 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #endif //LINUX
+
+#ifdef WIN32
+#include <winsock.h>
+#endif //WIN32
+
 
 //////////////////////////////////////////////////////////////////////
 struct _SOCKADDR_IN
@@ -50,10 +55,6 @@ struct _SOCKADDR_IN
 };
 
 class CStream;
-
-#ifdef WIN32
-#include <winsock.h>
-#endif //WIN32
 
 #ifdef PS2
 #include <SocketManager.h>
@@ -93,6 +94,7 @@ inline unsigned short __ntohs(unsigned short us)
 class CIPAddress
 {
 public:
+#if 0
 	CIPAddress(WORD wPort, const char* sAddress)
 	{
 		m_Address.sin_family = AF_INET;
@@ -140,6 +142,7 @@ public:
 			return true;
 		return false;
 	}
+#endif
 
 	inline void Set(WORD wPort, char* sAddress);
 	inline void Set(WORD wPort, UINT dwAddress);
@@ -151,8 +154,8 @@ public:
 	inline bool operator ==(const CIPAddress& s1);
 	inline bool operator <(const CIPAddress& s1) const;
 	inline char* GetAsString(bool bPort = false) const;
-	inline bool Load(CStream& s);
-	inline bool Save(CStream& s);
+	//inline bool Load(CStream& s);
+	//inline bool Save(CStream& s);
 public:
 	struct _SOCKADDR_IN m_Address;
 };
@@ -264,6 +267,7 @@ inline bool CIPAddress::operator <(const CIPAddress& s1) const
 		}
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 inline bool CIPAddress::operator !=(const CIPAddress& s1)
@@ -278,6 +282,7 @@ inline const CIPAddress& CIPAddress::operator =(const CIPAddress& xa)
 	return *this;
 }
 
+/*
 //////////////////////////////////////////////////////////////////////
 inline bool CIPAddress::Load(CStream& s)
 {
@@ -297,5 +302,4 @@ inline bool CIPAddress::Save(CStream& s)
 		return false;
 	return true;
 }
-
-#endif
+*/

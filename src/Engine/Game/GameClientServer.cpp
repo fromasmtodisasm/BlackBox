@@ -1,243 +1,186 @@
-#if 0
-
 #include <BlackBox/Game/Game.hpp>
 #include <BlackBox/IConsole.hpp>
 
-#include <SDL2/SDL_net.h>
-#include <memory>
-#include <algorithm>
-
-class CClient : public IClient
+#if 0
+//////////////////////////////////////////////////////////////////////
+//! create the server
+bool CGame::StartupServer(bool listen, const char* szName)
 {
-public:
-	CClient(CGame *pGame)
-		:
-		m_pGame(pGame)
-	{
+	m_pLog->Log("Creating the server");
 
-	}
-	~CClient()
+	ShutdownServer();	// to be sure
+
+	int nPort = sv_port->GetIVal();
+
+	// set port and create server
+	if (!m_pServer)
+		m_pServer = new CXServer(this, nPort, szName, listen);
+
+	if (!m_pServer || !m_pServer->IsOK()) // Check if the server has been created
 	{
-		if (connected)
+		// failed, lets try a different port
+		m_pLog->Log("Server creation failed ! Try with another port");
+		SAFE_DELETE(m_pServer);
+		m_pServer = new CXServer(this, nPort + 1, szName, listen);
+		sv_port->Set(nPort + 1);
+		if (!m_pServer || !m_pServer->IsOK()) // Check if the server has been created
 		{
-			SDLNet_TCP_Close(m_pServer);
-		}
-	}
-	// Унаследовано через IClient
-	virtual bool Init() override
-	{
-		m_Buffer.resize(1024);
-		return true;
-	}
-	virtual bool Connect(const char* addr, int port) override
-	{
-		IPaddress ipaddress;
-		if (SDLNet_ResolveHost(&ipaddress, addr, port) != 0)
-			return false;
-		m_pGame->SetHostType(CGame::CLIENT);
-		m_pServer = SDLNet_TCP_Open(&ipaddress);
-		if (!m_pServer)
-			return false;
-		connected = true;
-		return true;
-	}
-	virtual bool Disconnect() override
-	{
-		SDLNet_TCP_Close(m_pServer);
-		return true;
-	}
-	virtual bool Send(std::string const& str) override
-	{
-		if (!connected)
-			return false;
-		if (SDLNet_TCP_Send(m_pServer, str.c_str(), str.size()) < str.size())
-		{
-			GetISystem()->GetIConsole()->PrintLine("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+			SAFE_DELETE(m_pServer);
+			m_pLog->Log("Server creation failed !");
 			return false;
 		}
-		return true;
-	}
-	virtual std::string const& Response() override
-	{
-
-		int result;
-		if (!connected)
-			return "";
-		m_Message = "";
-		result = SDLNet_TCP_Recv(m_pServer, &m_Buffer[0], m_Buffer.size());
-		if (result <= 0)
-		{
-			// TCP Connection is broken. (because of error or closure)
-			SDLNet_TCP_Close(m_pServer);
-			connected = false;
-			m_Message = "";
-		}
-		else
-		{
-			m_Message = m_Buffer;
-			//std::copy(m_Buffer.begin(), m_Buffer.end(), m_Message.begin());
-		}
-		auto err = SDLNet_GetError();
-		return m_Message;
-	}
-	virtual bool Update() override
-	{
-		return false;
-	}
-	bool connected = false;
-	TCPsocket m_pClient;
-	TCPsocket m_pServer;
-	
-	std::string m_Message;
-	std::string m_Buffer;
-
-	CGame* m_pGame;
-};
-
-class CServer : public IServer
-{
-public:
-	CServer(CGame *pGame)
-		:
-		m_pGame(pGame)
-	{
-		m_pConsole = GetISystem()->GetIConsole();
-		m_Buffer.resize(1024);
-	}
-	~CServer()
-	{
-		if (connected)
-		{
-			SDLNet_TCP_Close(m_pClient);
-		}
-	}
-	// Унаследовано через IServer
-	virtual bool Create(int port) override
-	{
-		IPaddress ipaddress;
-		if (SDLNet_ResolveHost(&ipaddress, NULL, port) != 0)
-			return false;
-		m_pServer = SDLNet_TCP_Open(&ipaddress);
-		m_pGame->SetHostType(CGame::SERVER);
-		return true;
-	}
-	virtual bool Send(std::string const& str) override
-	{
-		return SDLNet_TCP_Send(m_pClient, str.c_str(), str.size()) == str.size();
-	}
-	virtual std::string const& Response() override
-	{
-		int result;
-		if (!connected)
-			return "";
-		result = SDLNet_TCP_Recv(m_pClient, &m_Buffer[0], m_Buffer.size());
-		if (result <= 0)
-		{
-			// TCP Connection is broken. (because of error or closure)
-			SDLNet_TCP_Close(m_pClient);
-			connected = false;
-			m_Message = "";
-		}
-		else
-		{
-			m_Message = m_Buffer;
-		}
-		return m_Message;
-	}
-	virtual bool Update() override
-	{
-		if (!connected)
-		{
-			Accept();
-		}
-		if (Response().size() > 0)
-		{
-			m_pConsole->PrintLine(m_Message.c_str());
-			Send(m_Message);
-			//m_Message = "";
-		}
-		return true;
 	}
 
-	void Accept()
-	{
-		TCPsocket new_tcpsock;
-		std::string resp  = "Test String";
+	if (m_pRConSystem)
+		m_pRConSystem->OnServerCreated(m_pServer->m_pIServer);
 
-		new_tcpsock = SDLNet_TCP_Accept(m_pServer);
-		if (!new_tcpsock) {
-			;// printf("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
-		}
-		else {
-			// communicate over new_tcpsock
-			m_pClient = new_tcpsock;
-			connected = true;
-		}
-	}
-	bool connected = false;
-	bool started = false;
-	TCPsocket m_pClient;
-	TCPsocket m_pServer;
-	std::string m_Message;
-	std::string m_Buffer;
+	m_pLog->Log("Server created");
 
-	CGame* m_pGame;
-	IConsole* m_pConsole;
+	//m_pServer->Update(); // server is created but map wasn't set yet we don't want to allow connects before
 
-	// Унаследовано через IServer
-	virtual bool Start() override
-	{
-		return true;
-	}
-
-	// Унаследовано через IServer
-	virtual bool Stop() override
-	{
-		return true;
-	}
-};
-
-class CNetwork : public INetwork
-{
-public:
-	CNetwork(CGame *pGame)
-		:
-		m_pGame(pGame)
-	{
-		
-	}
-	~CNetwork()
-	{
-		SDLNet_Quit();
-	}
-	// Унаследовано через INetwork
-	virtual bool Init() override
-	{
-		if (SDLNet_Init() < 0) {
-			std::cerr << "SDLNet_Init: " << SDLNet_GetError() << std::endl;
-			return false;
-		}
-		else
-			return true;
-	}
-	virtual IClient* CreateClient() override
-	{
-		return new CClient(m_pGame);
-	}
-	virtual IServer* CreateServer() override
-	{
-		return new CServer(m_pGame);
-	}
-	virtual bool Update() override
-	{
-		return false;
-	}
-	CGame* m_pGame;
-};
-
-INetwork* CreateNetwork(ISystem *pSystem)
-{
-	return new CNetwork(dynamic_cast<CGame*>(pSystem->GetIGame()));
+	return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+//! shutdown the server
+void CGame::ShutdownServer()
+{
+	if (!m_pServer)
+		return;
+
+	if (!m_pServer->IsInDestruction())
+	{
+		m_pLog->Log("Shutdown CXServer");
+		SAFE_DELETE(m_pServer);
+		m_pLog->Log("CXServer shutdowned");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+//! create the client for a multiplayer session
+bool CGame::StartupClient()
+{
+	m_pLog->Log("Creating the Client");
+
+	ShutdownClient();	// to be sure
+
+	m_pClient = new CXClient;
+
+	if (!m_pClient->Init(this)) // Check if the client has been created
+	{
+		ShutdownClient();
+
+		m_pLog->Log("Client creation failed !");
+		return false;
+	}
+
+	m_pLog->Log("Client created");
+
+	return true;
+}
+
+//! create the client for a singleplayer session
+//! the client will use a fake connection
+//////////////////////////////////////////////////////////////////////////
+bool CGame::StartupLocalClient()
+{
+	m_pLog->Log("Creating the LocalClient");
+
+	m_pClient = new CXClient;
+
+	if (!m_pClient->Init(this, true)) // Check if the client has been created
+	{
+		ShutdownClient();
+
+		m_pLog->Log("LocalClient creation failed !");
+		return false;
+	}
+
+	m_pLog->Log("LocalClient created");
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+//! shutdown the client
+void CGame::ShutdownClient()
+{
+	if (!m_pClient)
+		return;
+	m_pLog->Log("Disconnect the client");
+	m_pClient->XDisconnect("@ClientHasQuit");
+	m_pLog->Log("Shutdown the Client");
+
+	m_pClient->MarkForDestruct();
+	m_pClient->DestructIfMarked();
+	m_pClient = NULL;
+}
+
+//////////////////////////////////////////////////////////////////////
+bool CGame::IsClient()
+{
+	return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
+}
+
+//////////////////////////////////////////////////////////////////////
+//! mark the client for deletion
+void CGame::MarkClientForDestruct()
+{
+	if (m_pClient)
+		m_pClient->MarkForDestruct();
+}
+
+//////////////////////////////////////////////////////////////////////
+/*! implementation of IServerSnooperSink::OnServerFound
+	called when a server is found after a CGame::RefreshServerList() call
+	@param ip address of the server
+	@param stmServerInfo stream sent by the server to identitfy himself
+	@param ping average lantency of the server response
+*/
+void CGame::OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping)
+{
+	SXServerInfos ServerInfos;
+
+	if (ServerInfos.Read(szServerInfoString))
+	{
+		ServerInfos.IP = CIPAddress(ServerInfos.nPort, ip.GetAsString());		// get the game port from the packet
+		ServerInfos.nPing = ping;
+		m_ServersInfos[ServerInfos.IP] = ServerInfos;
+		TRACE("CGame::OnServerFound %s[%s]==>%s", ServerInfos.strName.c_str(), ServerInfos.IP.GetAsString(true), ServerInfos.strMap.c_str());
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void CGame::OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping)
+{
+	SXServerInfos ServerInfos;
+
+	bool bOk = ServerInfos.Read(szServerInfoString);
+
+	if (bOk || IsDevModeEnable())			// in DevMode we still wanna see these servers
+	{
+		ServerInfos.IP = ip;
+		ServerInfos.nPing = ping;
+
+		m_pScriptObjectGame->OnNETServerFound((CIPAddress&)ip, ServerInfos);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void CGame::OnNETServerTimeout(const CIPAddress& ip)
+{
+	m_pScriptObjectGame->OnNETServerTimeout((CIPAddress&)ip);
+}
+
+//////////////////////////////////////////////////////////////////////
+/*! search the LAN for FarCry servers
+	remove all "old" servers from the server list before start searching
+*/
+void CGame::RefreshServerList()
+{
+	m_ServersInfos.clear();
+	if (m_pServerSnooper)
+		m_pServerSnooper->SearchForLANServers(GetCurrentTime());
+	TRACE("Refresh for lan");
+}
 #endif

@@ -381,11 +381,6 @@ void  CGame::ResetInputMap()
 
 }
 
-void CGame::SetHostType(HostType hostType)
-{
-	m_HostType = hostType;
-}
-
 void CGame::SetCommonKeyBindings(IActionMap* pMap)
 {
 	//movements

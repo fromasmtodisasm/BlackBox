@@ -1,4 +1,36 @@
 #pragma once
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Version of the game
+#define GAME_MAIN_VERSION						1						//!< [0..255]
+#define GAME_SUB_VERSION						4						//!< [0..255] patch version number, shown in menu
+#define GAME_PATCH_VERSION					0						//!< [0..256*256[
+#define SERVERINFO_FORMAT_VERSION		88				  //!< [0..255] bump if server info format changes (old version won't show up any more)
+#define NETWORK_FORMAT_VERSION			5						//!< [0..2^32] bump if netcode stream format changes
+
+#define SAVEVERSION									23					// [Petar] Do not bump this value anymore it shows the release version of the savegame - it will always be supported
+#define PATCH1_SAVEVERSION					24					// [Kirill] Do not bump this value anymore it shows the Patch 1 version of the savegame - it will always be supported
+#define PATCH2_SAVEVERSION					36					//!< bump this if the savegame format changes and we are still working on patch 2
+
+#define GAME_VERSION_SUFIX					"F"				//!< A - alpha, B - beta, RC - release candidate, F - final
+
+
+#define MAKE_GAME_VERSION(m,s,p)		(((m)<<24)|((s)<<16)|(p))
+#define GAME_VERSION								MAKE_GAME_VERSION(GAME_MAIN_VERSION,GAME_SUB_VERSION,GAME_PATCH_VERSION)
+
+#define ENTITYTYPE_PLAYER				0x00000001
+#define ENTITYTYPE_WAYPOINT			0x00000002
+#define ENTITYTYPE_OWNTEAM			0x00000004
+
+#define SAVEMAGIC "CRYLEVELSAVE"
+
+// game states
+enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION = 3 };
+
+//#include "BitStream_Base.h"						// CBitStream_Base
+//#include "BitStream_Compressed.h"			// CBitStream_Compressed
+
+
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
@@ -13,6 +45,7 @@
 #include <BlackBox/ScriptObjectGame.hpp>
 #include <BlackBox/IInput.hpp>
 
+#include <BlackBox/Game/Network/XNetwork.hpp>
 #include <BlackBox/ScriptObjectServer.hpp>
 #include <BlackBox/ScriptObjectClient.hpp>
 
@@ -24,7 +57,6 @@
 #include <vector>
 #include <memory>
 #include <stack>
-
 //forward declarations
 //////////////////////////////////////////////////////////////////////
 using string = std::string;
@@ -33,6 +65,9 @@ class GameGUI;
 class Scene;
 class SceneManager;
 class CTagPoint;
+
+class CXClient;
+class CXServer;
 
 enum ActionType { ACTIONTYPE_MOVEMENT = 1, ACTIONTYPE_COMBAT, ACTIONTYPE_GAME, ACTIONTYPE_MULTIPLAYER, ACTIONTYPE_DEBUG };
 
@@ -170,8 +205,19 @@ public:
 	void  ResetInputMap();
 	string GetLevelsFolder() const;
 
-	void SetHostType(HostType hostType);
-
+	// Network -------------------------------------------------------------
+	bool StartupServer(bool listen, const char* szName);
+	void ShutdownServer();
+	bool StartupClient();
+	bool StartupLocalClient();
+	void ShutdownClient();
+	bool IsClient();
+	void MarkClientForDestruct();
+	void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
+	void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
+	void OnNETServerTimeout(const CIPAddress& ip);
+	void RefreshServerList();
+	//////////////////////////////////////////////////////////////////////////
 protected:
 	void SetConfigToActionMap(const char* pszActionName, ...);
 	//bool LoadMaterials(string sFolder);
@@ -184,26 +230,29 @@ protected:
 public:
   float m_deltaTime;
 public:
-		std::string										m_currentLevel;						//!< Name of current level.
-		std::string										m_currentMission;					//!< Name of current mission.
-		std::string										m_currentLevelFolder;			//!< Folder of the current level.
+	std::string										m_currentLevel;						//!< Name of current level.
+	std::string										m_currentMission;					//!< Name of current mission.
+	std::string										m_currentLevelFolder;			//!< Folder of the current level.
 
 private:
-  ISystem *m_pSystem;
-  IScriptSystem *m_pScriptSystem;
-  IRender *m_pRender;
-	IInput* m_pInput;
-  IWindow *m_Window;
-  IInputHandler *m_inputHandler;
-  World *m_World;
-  CPlayer *m_player = nullptr;
+	ISystem *											m_pSystem;								//!< The system interface
+	CXServer *										m_pServer;								//!< The server of this computer
+	CXClient *										m_pClient;								//!< The client of this computer
+  IScriptSystem *								m_pScriptSystem;
+  IRender *											m_pRender;
+	IInput *											m_pInput;
+  IWindow *											m_Window;
+  IInputHandler *								m_inputHandler;
+  World *												m_World;
+  CPlayer *											m_player = nullptr;
 	//CameraController *camControl;
-  Scene *m_scene;
-  SceneManager *m_sceneManager;
-  ILog *m_Log;
-	StringQueue							m_qMessages;
-  bool isWireFrame = false;
-  bool isFullScreen = false;
+  Scene *												m_scene;
+  SceneManager *								m_sceneManager;
+  ILog *												m_pLog;
+	INetwork*											m_pNetwork;
+	StringQueue										m_qMessages;
+  bool													isWireFrame = false;
+  bool													isFullScreen = false;
 
 #ifdef ENABLE_MUSIC_LIST
   MusicList m_PlayList;
@@ -251,9 +300,9 @@ private:
 	ICVar* r_cap_profile;
 	ICVar* m_pCVarCheatMode;
 
-  TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
-	CScriptObjectGame* m_ScriptObjectGame;
-	IScriptObject* m_playerObject;
+  TagPointMap													m_mapTagPoints;					//!< Map of tag points by name
+	CScriptObjectGame*									m_ScriptObjectGame;
+	IScriptObject*											m_playerObject;
 
 	// other
 	bool canDragViewPortWidth = false;
@@ -281,10 +330,6 @@ private:
 	bool can_drag_vp = true; // can drag view port ?
 
 	HostType m_HostType = NOT_CONECTED;
-
-	IClient *m_pClient;
-	IServer *m_pServer;
-	INetwork* m_pNetwork;
 
 	//CScriptObjectClient* m_pScriptClient = nullptr;
 	//CScriptObjectServer* m_pScriptServer = nullptr;

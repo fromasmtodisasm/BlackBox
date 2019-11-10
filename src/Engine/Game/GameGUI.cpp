@@ -249,10 +249,10 @@ void GameGUI::controlPanel()
           CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
           player->attachCamera(scene->getCurrentCamera());
           player->setGame(game);
-          game->m_Log->Log("[OK] Scene %s loaded\n", path);
+          game->m_pLog->Log("[OK] Scene %s loaded\n", path);
         }
         else {
-          game->m_Log->Log("[FAILED] Scene %s not founded\n", path);
+          game->m_pLog->Log("[FAILED] Scene %s not founded\n", path);
         }
       }
       ImGui::SameLine();

@@ -105,7 +105,7 @@ CGame::CGame(std::string title) :
 	listener(nullptr),
 	m_Console(nullptr),
 	m_Font(nullptr),
-	m_Log(nullptr),
+	m_pLog(nullptr),
 	m_ScreenShader(nullptr),
 	m_Window(nullptr),
 	m_inputHandler(nullptr),
@@ -144,7 +144,7 @@ bool CGame::Init(ISystem *pEngine)  {
 	m_pRender = m_pSystem->GetIRender();
 	m_pInput = m_pSystem->GetIInput();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
-  m_Log = m_pSystem->GetILog();
+  m_pLog = m_pSystem->GetILog();
 	m_Console = m_pSystem->GetIConsole();
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
@@ -189,7 +189,7 @@ bool CGame::Init(ISystem *pEngine)  {
 
 #if 0
 	if (!loadScene()) {
-		m_Log->Log("[FAILED] Failed init objects\n");
+		m_pLog->Log("[FAILED] Failed init objects\n");
 		return false;
 	}
 #endif
@@ -396,7 +396,7 @@ void CGame::DisplayInfo(float fps)
 }
 
 bool CGame::Run(bool& bRelaunch) {
-	m_Log->Log("[OK] Game started\n");
+	m_pLog->Log("[OK] Game started\n");
 	//TODO: FIX THIS
   //m_time = deltaClock.restart().asSeconds();
 #ifdef ENABLE_MUSIC_LIST
@@ -426,7 +426,7 @@ bool CGame::Run(bool& bRelaunch) {
 			std::time_t t = std::time(nullptr);
 			std::stringstream ss;
 			ss << "screen_shots/tests/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".png";
-			m_Log->Log("Screenshot name: %s", ss.str().c_str());
+			m_pLog->Log("Screenshot name: %s", ss.str().c_str());
 			m_pRender->ScreenShot(ss.str().c_str());
 			#endif // 0
 
