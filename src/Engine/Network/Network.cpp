@@ -1,4 +1,7 @@
 #include <BlackBox/Network/Network.hpp>
+#include <BlackBox/Network/Client.hpp>
+#include <BlackBox/Network/Server.hpp>
+#include <SDL2/SDL_net.h>
 
 CNetwork::CNetwork(ISystem* pSystem)
 {
@@ -8,6 +11,16 @@ CNetwork::~CNetwork()
 {
 }
 
+bool CNetwork::Init()
+{
+	bool res = false;
+	if (SDLNet_Init())
+	{
+		res = true;
+	}
+	return res;
+}
+
 uint32_t CNetwork::GetLocalIP() const
 {
 	return uint32_t();
@@ -15,16 +28,17 @@ uint32_t CNetwork::GetLocalIP() const
 
 void CNetwork::SetLocalIP(const char* szLocalIP)
 {
+	m_LocalIP = szLocalIP;
 }
 
 IClient* CNetwork::CreateClient(IClientSink* pSink, bool bLocal)
 {
-	return nullptr;
+	return new CNetworkClient;
 }
 
 IServer* CNetwork::CreateServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
 {
-	return nullptr;
+	return new CNetworkServer;
 }
 
 IRConSystem* CNetwork::CreateRConSystem()
@@ -107,5 +121,11 @@ const char* CNetwork::GetUBIGameServerIP(bool bLan)
 
 INetwork* CreateNetwork(ISystem *pSystem)
 {
-	return new CNetwork(pSystem);
+	CNetwork* pNetwork = new CNetwork(pSystem);
+	if (pNetwork->Init())
+	{
+		pNetwork->Release();
+		pNetwork = nullptr;
+	}
+	return pNetwork;
 }

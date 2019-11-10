@@ -1,10 +1,11 @@
 #pragma once
 #include <BlackBox/INetwork.hpp>
 
-class CServer : public IServer
+class CNetworkServer : public IServer
 {
-	CServer();
-	~CServer();
+public:
+	CNetworkServer();
+	~CNetworkServer();
 	// Унаследовано через IServer
 	virtual void Update(unsigned int nTime) override;
 	virtual void Release() override;

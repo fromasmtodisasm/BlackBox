@@ -172,11 +172,9 @@ bool CSystem::Init()
   if (CreateGame(nullptr) == nullptr)
     return false;
 	//====================================================
-#if 0
 	m_pNetwork = CreateNetwork(this);
 	if (m_pNetwork == nullptr)
 		return false;
-#endif
 	//====================================================
 
   if (!m_pGame->Init(this)) {

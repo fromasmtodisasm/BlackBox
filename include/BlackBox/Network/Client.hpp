@@ -1,10 +1,11 @@
 #pragma once
 #include <BlackBox/INetwork.hpp>
 
-class CClient : public IClient
+class CNetworkClient : public IClient
 {
-	CClient();
-	~CClient();
+public:
+	CNetworkClient();
+	~CNetworkClient();
 	// Унаследовано через IClient
 	virtual void Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize) override;
 	virtual void Disconnect(const char* szCause) override;

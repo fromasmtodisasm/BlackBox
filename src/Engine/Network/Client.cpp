@@ -1,77 +1,85 @@
 #include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/IPAddress.hpp>
 
-void CClient::Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize)
+CNetworkClient::CNetworkClient()
 {
 }
 
-void CClient::Disconnect(const char* szCause)
+CNetworkClient::~CNetworkClient()
 {
 }
 
-void CClient::SendReliable(CStream& stm)
+void CNetworkClient::Connect(const char* szIP, uint16_t wPort, const BYTE* pbAuthorizationID, unsigned int iAuthorizationSize)
 {
 }
 
-void CClient::SendUnreliable(CStream& stm)
+void CNetworkClient::Disconnect(const char* szCause)
 {
 }
 
-void CClient::ContextReady(CStream& stm)
+void CNetworkClient::SendReliable(CStream& stm)
 {
 }
 
-bool CClient::IsReady()
+void CNetworkClient::SendUnreliable(CStream& stm)
+{
+}
+
+void CNetworkClient::ContextReady(CStream& stm)
+{
+}
+
+bool CNetworkClient::IsReady()
 {
 	return false;
 }
 
-bool CClient::Update(unsigned int nTime)
+bool CNetworkClient::Update(unsigned int nTime)
 {
 	return false;
 }
 
-void CClient::GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets)
+void CNetworkClient::GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets)
 {
 }
 
-void CClient::Release()
+void CNetworkClient::Release()
 {
 }
 
-unsigned int CClient::GetPing()
-{
-	return 0;
-}
-
-unsigned int CClient::GetRemoteTimestamp(unsigned int nTime)
+unsigned int CNetworkClient::GetPing()
 {
 	return 0;
 }
 
-unsigned int CClient::GetPacketsLostCount()
+unsigned int CNetworkClient::GetRemoteTimestamp(unsigned int nTime)
 {
 	return 0;
 }
 
-unsigned int CClient::GetUnreliablePacketsLostCount()
+unsigned int CNetworkClient::GetPacketsLostCount()
 {
 	return 0;
 }
 
-CIPAddress CClient::GetServerIP() const
+unsigned int CNetworkClient::GetUnreliablePacketsLostCount()
+{
+	return 0;
+}
+
+CIPAddress CNetworkClient::GetServerIP() const
 {
 	return CIPAddress();
 }
 
-void CClient::InitiateCDKeyAuthorization(const bool inbCDAuthorization)
+void CNetworkClient::InitiateCDKeyAuthorization(const bool inbCDAuthorization)
 {
 }
 
-void CClient::OnCDKeyAuthorization(BYTE* pbAuthorizationID)
+void CNetworkClient::OnCDKeyAuthorization(BYTE* pbAuthorizationID)
 {
 }
 
-void CClient::SetServerIP(const char* szServerIP)
+void CNetworkClient::SetServerIP(const char* szServerIP)
 {
 }

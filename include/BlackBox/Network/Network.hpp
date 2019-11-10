@@ -2,11 +2,16 @@
 
 #include <BlackBox/INetwork.hpp>
 
+#include <SDL2/SDL_net.h>
+
 class CNetwork : public INetwork
 {
 public:
 	CNetwork(ISystem *pSystem);
 	~CNetwork();
+
+	bool Init();
+
 	// Унаследовано через INetwork
 	virtual uint32_t GetLocalIP() const override;
 	virtual void SetLocalIP(const char* szLocalIP) override;
@@ -29,4 +34,10 @@ public:
 	virtual IClient* GetClient() override;
 	virtual void SetUBIGameServerIP(const char* szAddress) override;
 	virtual const char* GetUBIGameServerIP(bool bLan) override;
+private:
+	ISystem* m_pSystem;
+
+	std::string m_LocalIP;
+
+
 };
