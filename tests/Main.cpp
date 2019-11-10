@@ -6,7 +6,9 @@
 #include <iostream>
 #include <ctime>
 #include <iomanip>
-//#include <filesystem>
+#if NEED_FILE_SYSTEM
+#include <filesystem>
+#endif
 #include <sstream>
 
 /*##############################################*/
@@ -27,12 +29,12 @@ int main(int argc, char *argv[]) {
       debug = true;
   }
 
-	//std::filesystem::current_path("../../");
-	//cout << "current path: " << std::filesystem::current_path() << endl;
+#if NEED_FILE_SYSTEM
+	std::filesystem::current_path("../../");
+	cout << "current path: " << std::filesystem::current_path() << endl;
+#endif
 
-  //chdir((path = getBasePath(string(argv[0]))).c_str());
-  //path = getBasePath(string(argv[0]));
-	std::string cmdline;
+  std::string cmdline;
 
 	if (argc > 1)
 	{
