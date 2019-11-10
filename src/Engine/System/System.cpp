@@ -374,6 +374,7 @@ void CSystem::BeginFrame()
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 	m_Render->SetState(IRender::State::DEPTH_TEST, true);
+	m_Render->BeginFrame();
 }
 
 void CSystem::EndFrame()
