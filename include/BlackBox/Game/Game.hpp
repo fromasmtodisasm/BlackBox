@@ -44,39 +44,6 @@ typedef std::vector<string> Vec2Str;
 typedef Vec2Str::iterator Vec2StrIt;
 typedef std::list<CPlayer*> ListOfPlayers;
 
-struct IServer;
-struct IClient;
-
-struct IServer
-{
-	virtual bool Create(int port) = 0;
-	virtual bool Start() = 0;
-	virtual bool Stop() = 0;
-	virtual bool Send(std::string const& str) = 0;
-	virtual std::string const& Response() = 0;
-	virtual bool Update() = 0;
-};
-
-struct IClient
-{
-	virtual bool Init() = 0;
-	virtual bool Connect(const char* addr, int port) = 0;
-	virtual bool Disconnect() = 0;
-	virtual bool Send(std::string const& str) = 0;
-	virtual std::string const& Response() = 0;
-	virtual bool Update() = 0;
-};
-
-struct INetwork
-{
-	virtual bool			Init() = 0;
-	virtual IClient*	CreateClient() = 0;
-	virtual IServer*	CreateServer() = 0;
-	virtual bool			Update() = 0;
-};
-
-INetwork* CreateNetwork(ISystem *pSystem);
-
 struct ActionInfo
 {
 	int nId;
@@ -319,8 +286,8 @@ private:
 	IServer *m_pServer;
 	INetwork* m_pNetwork;
 
-	CScriptObjectClient* m_pScriptClient = nullptr;
-	CScriptObjectServer* m_pScriptServer = nullptr;
+	//CScriptObjectClient* m_pScriptClient = nullptr;
+	//CScriptObjectServer* m_pScriptServer = nullptr;
 
 	bool m_SceneRendered = false;
 };

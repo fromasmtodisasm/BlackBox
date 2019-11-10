@@ -19,6 +19,8 @@
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/Utils.h>
 
+#include <BlackBox/INetwork.hpp>
+
 
 #ifdef GUI
 #include <imgui-SFML.h>
@@ -147,8 +149,9 @@ bool CGame::Init(ISystem *pEngine)  {
   p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
   m_pInput->AddEventListener(this);
-	m_pNetwork = CreateNetwork(m_pSystem);
+	m_pNetwork = m_pSystem->GetINetwork();
 
+#if 0
 	if (!m_pNetwork->Init())
 		return false;
 
@@ -159,6 +162,7 @@ bool CGame::Init(ISystem *pEngine)  {
 	m_pServer = m_pNetwork->CreateServer();
 	if (!m_pServer)
 		return false;
+#endif
 
 	initCommands();
 	initVariables();
@@ -247,11 +251,12 @@ bool CGame::Update() {
 		if (!IsInPause())
 			m_World->update(m_pSystem->GetDeltaTime());
 
-		m_pNetwork->Update();
+#if 0
 		if (m_HostType == CLIENT)
 			m_pClient->Update();
 		if (m_HostType == SERVER)
 			m_pServer->Update();
+#endif
 
 		setRenderState();
 

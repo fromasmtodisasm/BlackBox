@@ -1,3 +1,5 @@
+#if 0
+
 #include <BlackBox/Game/Game.hpp>
 #include <BlackBox/IConsole.hpp>
 
@@ -237,3 +239,5 @@ INetwork* CreateNetwork(ISystem *pSystem)
 {
 	return new CNetwork(dynamic_cast<CGame*>(pSystem->GetIGame()));
 }
+
+#endif

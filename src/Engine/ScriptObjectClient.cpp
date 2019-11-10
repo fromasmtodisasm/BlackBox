@@ -1,4 +1,6 @@
+#if 0
 #include <BlackBox/ScriptObjectClient.hpp>
+#include <BlackBox/INetwork.hpp>
 #include <BlackBox/Game/Game.hpp>
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectClient)
@@ -73,3 +75,4 @@ int CScriptObjectClient::Response(IFunctionHandler* pH)
 	auto resp = m_pClient->Response();
 	return pH->EndFunction(resp.c_str());
 }
+#endif

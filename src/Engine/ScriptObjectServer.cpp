@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/ScriptObjectServer.hpp>
 #include <BlackBox/Game/Game.hpp>
 
@@ -56,3 +57,4 @@ int CScriptObjectServer::Stop(IFunctionHandler* pH)
 	pH->EndFunction();
 }
 
+#endif

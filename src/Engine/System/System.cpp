@@ -20,11 +20,11 @@
 #include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/Profiler/Drawer2D.h>
 
+#include <BlackBox/INetwork.hpp>
+
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
-#include "..\..\..\include\BlackBox\System.hpp"
-
 
 using namespace Utils;
 
@@ -89,28 +89,28 @@ bool CSystem::Init()
   m_pLog = new NullLog(m_startupParams.sLogFileName);
   if (m_pLog == nullptr)
     return false;
-	//=============
+	//====================================================
 	m_pWindow= CreateIWindow(/*"BlackBox", 1366, 768*/);
 	if (m_pWindow == nullptr)
 		return false;
-	//=============
+	//====================================================
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
-	//=============
+	//====================================================
 	m_pInput = CreateInput(this, m_pWindow->getHandle());
-	//=============
+	//====================================================
 	m_Render = CreateIRender(this);
 	if (m_Render == nullptr)
 		return false;
-	//=============
+	//====================================================
 	if (!ConfigLoad("res/scripts/engine.cfg"))
 		return false;
 	if (!MaterialManager::init(this))
 	{
 		return false;
 	}
-	//=============
+	//====================================================
 	if (!(m_pWindow = m_Render->Init(
 		0,0,
 		r_window_width->GetIVal(), r_window_height->GetIVal(),
@@ -118,23 +118,23 @@ bool CSystem::Init()
 		r_fullscreen->GetIVal(), m_pWindow))
 		)
 		return false;
-	//=============
+	//====================================================
 	m_pInput->Init();
-	//=============
+	//====================================================
 	// Initialize the 2D drawer
 	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
 	{
 		fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
 		return EXIT_FAILURE;
 	}
-	//=============
+	//====================================================
 	//TODO: IMPLEMENT THIS
 #if 0
 	PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
 #endif
-	//=============
+	//====================================================
 	m_pLog->Log("[OK] Window susbsystem inited\n");
-	//=============
+	//====================================================
 	m_pScriptSystem = new CScriptSystem();
 	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
 	{
@@ -142,10 +142,10 @@ bool CSystem::Init()
 	}
 	if (!m_pConsole->Init(this))
 		return false;
-	//=============
+	//====================================================
 	m_pConsole->AddConsoleVarSink(this);
 	ParseCMD();
-	//=============
+	//====================================================
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
 
@@ -156,7 +156,7 @@ bool CSystem::Init()
 	m_ScriptObjectScript->Init(GetIScriptSystem());
 
 	m_pScriptSystem->ExecuteFile("scripts/engine.lua");
-	//=============
+	//====================================================
   m_pFont = new FreeTypeFont();
 	if (m_pFont != nullptr)
 	{
@@ -171,6 +171,13 @@ bool CSystem::Init()
 	m_pInput->AddEventListener(m_pConsole);
   if (CreateGame(nullptr) == nullptr)
     return false;
+	//====================================================
+#if 0
+	m_pNetwork = CreateNetwork(this);
+	if (m_pNetwork == nullptr)
+		return false;
+#endif
+	//====================================================
 
   if (!m_pGame->Init(this)) {
     return false;
@@ -459,6 +466,8 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 	// Update input
 	LAST = NOW;
 	NOW = SDL_GetPerformanceCounter();
+
+	//m_pNetwork->Update();
 
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
