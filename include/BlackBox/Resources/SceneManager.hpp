@@ -2,6 +2,7 @@
 #include <BlackBox/IConsole.hpp>
 
 class Scene;
+struct LoadObjectSink;
 
 #include <map>
 #include <string>
@@ -16,8 +17,8 @@ class SceneManager
   //SceneManager();
 public:
   static SceneManager *instance();
-  static bool init(const char *scene);
-  Scene *getScene(std::string scene);
+  static bool init(const char *scene, LoadObjectSink *callback);
+  Scene *getScene(std::string scene, LoadObjectSink *callback);
   void removeScene(std::string scene);
   Scene *currentScene();
 	void nextScene();

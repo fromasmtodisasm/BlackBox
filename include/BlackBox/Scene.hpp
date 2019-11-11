@@ -107,7 +107,7 @@ private:
 	decltype(m_Objects)::iterator selected_object_it;
 private:
   void loadTerrain(tinyxml2::XMLElement *terrain);
-  void loadObject(tinyxml2::XMLElement *object);
+  void loadObject(tinyxml2::XMLElement *object, LoadObjectSink *callback);
   void loadMesh(tinyxml2::XMLElement *mesh);
   void loadLight(tinyxml2::XMLElement* light);
   glm::vec3 loadColorAttribute(tinyxml2::XMLElement* element);
@@ -140,7 +140,7 @@ public:
   glm::vec3 loadVec3(tinyxml2::XMLElement &element, const char* name);
   void loadCamera(tinyxml2::XMLElement* element);
   void loadTagPoint(tinyxml2::XMLElement* element);
-  bool load(std::string name);
+  bool load(std::string name, LoadObjectSink *callback);
   GLint getRenderTarget();
 
   Material* shadowMapMat;

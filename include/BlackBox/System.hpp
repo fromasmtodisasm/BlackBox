@@ -63,6 +63,7 @@ public:
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 private:
+	bool InitResourceManagers();
 	void ParseCMD();
 private:
 	CTimer									m_Time;                  //!<

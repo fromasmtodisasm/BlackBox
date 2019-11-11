@@ -565,6 +565,7 @@ bool CameraCommand::move(CommandDesc& cd)
 class SceneCommand : public BaseCommand
 {
 	World* m_World;
+	CGame* m_Game;
 public:
 	SceneCommand(CGame *game);
 private:
@@ -594,33 +595,8 @@ SceneCommand::SceneCommand(CGame *game) : BaseCommand(game)
 }
 bool SceneCommand::load(CommandDesc& cd)
 {
-	//MessageBox(NULL, "Save scene", "scene name", MB_OKCANCEL);
-	Scene *scene;
 	std::string path = wstr_to_str(cd.args[1]);
-  SceneManager::instance()->removeScene(path);
-	if ((scene = SceneManager::instance()->getScene(path)) != nullptr)
-	{
-		/*
-		if (game->initPlayer())
-			game->gotoGame();
-		*/
-		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::SCENE_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
-		//FrameBufferObject *sceneBuffer = new FrameBufferObject(FrameBufferObject::buffer_type::HDR_BUFFER, game->getWindow()->getWidth(), game->getWindow()->getHeight());
-		//sceneBuffer->create();
-		//scene->setRenderTarget(sceneBuffer);
-    m_World->setScene(scene);
-    auto tech = TechniqueManager::get("hdr");
-    tech->Init(m_World->getActiveScene(), nullptr);
-    scene->setTechnique(tech);
-
-		//scene->setCamera("main", new CCamera());
-		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
-		player->attachCamera(scene->getCurrentCamera());
-		player->setGame(game);
-    game->setPlayer(player);
-    return true;
-	}
-	return false;
+	return game->loadScene(path);
 }
 bool SceneCommand::save(CommandDesc& cd)
 {
@@ -629,7 +605,7 @@ bool SceneCommand::save(CommandDesc& cd)
     std::string path = wstr_to_str(cd.args[1]);
     if (SceneManager::instance()->exist(path))
     {
-      auto scene = SceneManager::instance()->getScene(path);
+      auto scene = SceneManager::instance()->getScene(path, game);
       std::string as = "";
       if (cd.args.size() == 3)
         as = wstr_to_str(cd.args[2]);
@@ -642,7 +618,7 @@ bool SceneCommand::activate(CommandDesc& cd)
 {
 	Scene *scene;
 	std::string name = wstr_to_str(cd.args[1]);
-	if ((scene = SceneManager::instance()->getScene(name)) != nullptr)
+	if ((scene = SceneManager::instance()->getScene(name, game)) != nullptr)
 	{
 		//=====================
 		game->getWorld()->setScene(scene);

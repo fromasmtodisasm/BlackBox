@@ -71,7 +71,7 @@ void Scene::loadTerrain(tinyxml2::XMLElement* terrain)
 	//m_Objects.insert({ "terrain", this->terrain.load(terrainName)});
 }
 
-void Scene::loadObject(XMLElement *object)
+void Scene::loadObject(XMLElement *object, LoadObjectSink *callback)
 {
   Object *obj;
   Material *material;
@@ -109,7 +109,7 @@ void Scene::loadObject(XMLElement *object)
 		meshPath = mesh->Attribute("name");
 		if (meshPath == nullptr)
 			return;
-		obj = ObjectManager::instance()->getObject(meshPath, objectType);
+		obj = ObjectManager::instance()->getObject(meshPath, objectType, callback);
 	}
   if (obj == nullptr)
     return;
@@ -372,7 +372,8 @@ void Scene::draw(float dt)
 		DEBUG_GROUP("PASS...");
     for (int pass = 0; m_Technique->OnRenderPass(pass); pass++);
   }
-  m_RenderedScene = m_Technique->GetFrame();
+  if (m_Technique)
+		m_RenderedScene = m_Technique->GetFrame();
 
   /*
 	if (skyBox != nullptr)
@@ -703,7 +704,7 @@ void Scene::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
 
-bool Scene::load(std::string name = "default.xml")
+bool Scene::load(std::string name, LoadObjectSink *callback)
 {
   tinyxml2::XMLDocument xmlDoc;
 
@@ -718,7 +719,7 @@ bool Scene::load(std::string name = "default.xml")
   if (objects == nullptr) return false;
   while (objects != nullptr)
   {
-    loadObject(objects);
+    loadObject(objects, callback);
     objects = objects->NextSiblingElement("object");
   }
 

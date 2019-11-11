@@ -8,7 +8,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 
-CPlayer::CPlayer() : GameObject(ObjectManager::instance()->getObject("pengium.obj"))
+CPlayer::CPlayer(CGame *game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game))
 {
   //getShaderProgram()->Uniform("color", glm::vec3(1,0,0));
   mouseState = FREE;
@@ -37,7 +37,7 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 	bool shift = event.modifiers & eMM_Shift;
 	bool alt = event.modifiers & eMM_Alt;
 	////////////////////////
-  if (mousePressed)
+  if (false)
   {
     Object *obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
     GameObject *go = new GameObject(obj);

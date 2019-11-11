@@ -23,17 +23,17 @@ SceneManager *SceneManager::instance()
   return manager;
 }
 
-bool SceneManager::init(const char * scene)
+bool SceneManager::init(const char * scene, LoadObjectSink *callback)
 {
-  defaultScene = SceneManager::instance()->getScene(scene == nullptr ? "default" : scene);
-  SceneManager::instance()->current_scene_it = SceneManager::instance()->cache.find(scene == nullptr ? 
+  //defaultScene = SceneManager::instance()->getScene(scene == nullptr ? "default" : scene, callback);
+  /*SceneManager::instance()->current_scene_it = SceneManager::instance()->cache.find(scene == nullptr ? 
     std::string(scene_path->GetString()) + "default" : 
     std::string(scene_path->GetString()) + scene
-  );
+  );*/
   return true;
 }
 
-Scene *SceneManager::getScene(string scene)
+Scene *SceneManager::getScene(string scene, LoadObjectSink *callback)
 {
   std::string prefix = "res/scenes/";
   bool usPrefix = true;
@@ -54,7 +54,7 @@ Scene *SceneManager::getScene(string scene)
     }
     else {
       result = new Scene(scene);
-      if (!result->load(scenePath + ".xml"))
+      if (!result->load(scenePath + ".xml", callback))
       {
         GetISystem()->GetILog()->Log("[ERROR] Error or load scene: %s\n",scenePath.c_str());
         delete result;

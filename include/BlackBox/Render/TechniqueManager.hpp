@@ -11,6 +11,7 @@ private:
   ~TechniqueManager();
 public:
   static ITechnique *get(std::string name);
+  static ITechnique *add(std::string name, ITechnique *tech);
   static bool init();
 
 private:

@@ -194,6 +194,8 @@ bool CGame::Init(ISystem *pEngine)  {
 	{
 		initTechniques();
 	}
+  else 
+		TechniqueManager::init();
 
 	m_Font = m_pSystem->GetIFont();
 	m_Font->Init("arial.ttf", 16, 18);
@@ -427,16 +429,32 @@ bool CGame::Run(bool& bRelaunch) {
   return true;
 }
 
-bool CGame::loadScene() {
-  if (!ShaderManager::init() && (shaderManager = ShaderManager::instance()) == nullptr)
-    return false;
-  if (!MaterialManager::init("default.xml"))
-    return false;
-  if (!SceneManager::init(m_Console->GetCVar("g_scene")->GetString()))
-    return false;
+bool CGame::loadScene(std::string name) {
+	Scene *scene;
+	std::string &path = name;
+  SceneManager::instance()->removeScene(path);
+	if ((scene = SceneManager::instance()->getScene(path, this)) != nullptr)
+	{
+    m_World->setScene(scene);
+		auto tech = TechniqueManager::get("hdr");
+		if (tech != nullptr)
+		{
+			tech->Init(m_World->getActiveScene(), nullptr);
+			scene->setTechnique(tech);
+		}
 
-  m_scene = defaultScene;
-  return m_scene != nullptr;
+		//scene->setCamera("main", new CCamera());
+		CPlayer *player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
+		if (player != nullptr)
+		{
+			player->attachCamera(scene->getCurrentCamera());
+			player->setGame(this);
+			this->setPlayer(player);
+		}
+    return true;
+	}
+
+  return false;
 }
 
 void CGame::setRenderState()
@@ -446,7 +464,7 @@ void CGame::setRenderState()
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-	m_pRender->SetClearColor(Vec3(0, 1, 0));
+	//m_pRender->SetClearColor(Vec3(0, 1, 0));
 	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
 	m_pRender->SetState(IRender::State::BLEND, false);
 	if (culling)

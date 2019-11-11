@@ -38,7 +38,7 @@ class CPlayer : public GameObject
   Vec3 impulse;
 
 public:
-  CPlayer();
+  CPlayer(CGame *game);
   CPlayer(Object *obj);
 
   // IInputEventListener interface

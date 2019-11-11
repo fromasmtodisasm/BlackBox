@@ -515,5 +515,14 @@ ITagPointManager* CGame::GetTagPointManager()
 	return nullptr;
 }
 
+Object* CGame::OnLoad(Object* object, std::string type)
+{
+  if (type == "player")
+    return new CPlayer(object);
+  else if (type == "gameobject")
+    return new GameObject(object);
+  else return object;
+}
+
 #if 0
 #endif

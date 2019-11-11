@@ -8,6 +8,12 @@ struct Mesh;
 #include <memory>
 #include <vector>
 
+struct LoadObjectSink
+{
+	virtual Object* OnLoad(Object *object, std::string type) = 0;
+};
+
+
 class ObjectManager
 {
   static ObjectManager *manager;
@@ -15,8 +21,8 @@ class ObjectManager
   //ObjectManager();
 public:
   static ObjectManager *instance();
-  Object *getObject(std::string Object, std::string type="object");
+  Object *getObject(std::string Object, std::string type, LoadObjectSink *callback);
   std::string getPathByPointer(Object *object);
-  Object *objectFactory(Object *object, std::string type);
+  Object *objectFactory(Object *object, std::string type, LoadObjectSink *callback);
   //Object *getPrimitive(Primitive::Type type, CShaderProgram *program);
 };

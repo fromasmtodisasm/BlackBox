@@ -102,7 +102,8 @@ class CGame :
 	public IPostRenderCallback, 
 	public IPreRenderCallback,
 	public IServerSnooperSink,
-	public INETServerSnooperSink
+	public INETServerSnooperSink,
+	public LoadObjectSink
 {
   class GameState;
   class EventListener;
@@ -128,7 +129,7 @@ public:
   bool Run(bool& bRelaunch) override;
 
 
-  bool loadScene();
+  bool loadScene(std::string name);
   void setRenderState();
   void render();
   void setPlayer(CPlayer *player);
@@ -244,6 +245,8 @@ protected:
 	//set the common key bindings for the specified action map.
 	//it reduces code redundancy and makes things more clear.
 	void SetCommonKeyBindings(IActionMap* pActionMap);
+
+	virtual Object* OnLoad(Object* object, std::string type) override;
 public:
   float m_deltaTime;
 

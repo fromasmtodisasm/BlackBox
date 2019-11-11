@@ -119,6 +119,9 @@ bool CSystem::Init()
 		)
 		return false;
 	//====================================================
+	if (!InitResourceManagers())
+		return false;
+	//====================================================
 	m_pInput->Init();
 	//====================================================
 	// Initialize the 2D drawer
@@ -292,6 +295,15 @@ bool CSystem::ConfigLoad(const char* file)
 		r_fullscreen == nullptr
 		)
 		return false;
+	return true;
+}
+
+bool CSystem::InitResourceManagers()
+{
+  if (!ShaderManager::init())
+    return false;
+  if (!MaterialManager::init("default.xml"))
+    return false;
 	return true;
 }
 

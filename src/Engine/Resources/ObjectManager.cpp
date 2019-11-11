@@ -19,7 +19,7 @@ ObjectManager *ObjectManager::instance()
   return manager;
 }
 
-Object *ObjectManager::getObject(std::string object, std::string type)
+Object *ObjectManager::getObject(std::string object, std::string type, LoadObjectSink *callback)
 {
   std::string prefix = "res/geom/";
   bool usPrefix = true;
@@ -35,12 +35,12 @@ Object *ObjectManager::getObject(std::string object, std::string type)
     const auto v = cache.find(oPath);
     if (v != cache.end())
     {
-      obj = objectFactory(new Object(v->second), type);
+      obj = objectFactory(new Object(v->second), type, callback);
       obj->type = type;
       GetISystem()->GetILog()->Log("[INFO] Object [%s] already cached\n", oPath.c_str());
     }
     else {
-      obj = objectFactory(Object::load(oPath), type);
+      obj = objectFactory(Object::load(oPath), type, callback);
 			if (obj == nullptr) return nullptr;
       obj->type = type;
       cache[oPath] = obj->m_Mesh;
@@ -69,9 +69,9 @@ string ObjectManager::getPathByPointer(Object *object)
   return string("");
 }
 
-Object *ObjectManager::objectFactory(Object *object, string type)
+Object *ObjectManager::objectFactory(Object *object, string type, LoadObjectSink *callback)
 {
-	return nullptr;
+	return callback->OnLoad(object, type);
 #if 0
   if (type == "player")
     return new CPlayer(object);
