@@ -35,20 +35,20 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/World.hpp>
-#include <Player.h>
 #include <BlackBox/CameraController.hpp>
 #include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
+#include <BlackBox/common.h>
 
 #include <Network/XNetwork.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <ScriptObjects/ScriptObjectGame.hpp>
+#include <Player.h>
 
-#include <BlackBox/common.h>
 
 
 #include <map>

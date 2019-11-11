@@ -52,6 +52,13 @@ target_sources(${PROJECT_NAME}
   ${INCLUDE_ROOT}
   )
 
+source_group(
+  TREE ${CMAKE_CURRENT_SOURCE_DIR}/include
+  PREFIX TestGame\\Inc 
+  FILES
+  ${INCLUDE_FILES}
+)
+
   add_definitions(-DUSE_GLM)
   add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
   add_definitions(-DGLAD_LOADER)
