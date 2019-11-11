@@ -26,8 +26,8 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
 	bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
 	bool rotated = false;
-	if (event.pSymbol != nullptr)
-		rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY || event.pSymbol->type == SInputSymbol::EType::Axis;
+	//if (event.pSymbol != nullptr)
+		rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY;// || event.pSymbol->type == SInputSymbol::EType::Axis;
 
 
 	////////////////////////
