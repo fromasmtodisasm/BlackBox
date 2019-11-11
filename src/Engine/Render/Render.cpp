@@ -302,6 +302,7 @@ int CRender::GetCurrentContextViewportWidth() const
 void CRender::SetClearColor(const Vec3& vColor)
 {
 	m_clearColor = vColor;
+	gl::ClearColor(Vec4(vColor,1));
 }
 
 void CRender::ClearDepthBuffer()

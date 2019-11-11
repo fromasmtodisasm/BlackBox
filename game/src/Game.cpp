@@ -29,17 +29,11 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <ctime>
 #include <cctype>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-
-//using namespace std;
-
-IGame *p_gIGame;
 
 namespace {
 #if 0
@@ -55,10 +49,10 @@ struct TextRenderInfo
 {
   IFont* font;
   std::vector<std::string> text;
-  glm::vec4 color;
+  Vec4 color;
 	SDrawTextInfo dti;
-  TextRenderInfo() : font(nullptr), color(glm::vec4(1.0)){}
-  TextRenderInfo(IFont *f, glm::vec4 c)
+  TextRenderInfo() : font(nullptr), color(Vec4(1.0)){}
+  TextRenderInfo(IFont *f, Vec4 c)
     :
     font(f), color(c)
   {
@@ -139,7 +133,6 @@ bool CGame::Init(ISystem *pEngine)  {
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_pLog = m_pSystem->GetILog();
 	m_Console = m_pSystem->GetIConsole();
-  p_gIGame = reinterpret_cast<IGame*>(this);
 	m_Window = m_pSystem->GetIWindow();
   m_pInput->AddEventListener(this);
 	m_pNetwork = m_pSystem->GetINetwork();
@@ -317,7 +310,7 @@ void CGame::DisplayInfo(float fps)
     : "EDIT";
 
   // Info
-  TextRenderInfo info(m_Font, glm::vec4(0.5, 1.0f, 0.6f, 1.0));
+  TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
   SDrawTextInfo dti = info.getDTI();
 
   //
@@ -369,7 +362,7 @@ void CGame::DisplayInfo(float fps)
   render->PrintLine((std::string("Camera width = ")		+	std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
   render->PrintLine((std::string("Camera height = ")	+	std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 
-  info.color = glm::vec4(1.0f, 0.f, 0.f, 1.0f);
+  info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
   //render->PrintLine(pos.c_str(), info.getDTI());
 	if (canDragViewPortWidth)
 		render->PrintLine("CanDrag\n", info.getDTI());
@@ -453,6 +446,7 @@ void CGame::setRenderState()
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
+	m_pRender->SetClearColor(Vec3(0, 1, 0));
 	m_pRender->SetState(IRender::State::DEPTH_TEST, true);
 	m_pRender->SetState(IRender::State::BLEND, false);
 	if (culling)
