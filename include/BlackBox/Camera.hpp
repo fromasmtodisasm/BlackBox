@@ -52,26 +52,9 @@ public:
   }mode = Mode::FPS;
 
   // Constructor with vectors
-  CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
-  {
-    this->transform.position = position;
-    this->WorldUp = up;
-    this->transform.rotation.y = yaw;
-    this->transform.rotation.x = pitch;
-    this->updateCameraVectors();
-    MovementSpeed = GetISystem()->GetIConsole()->CreateVariable("cam_speed", 5.0f, 0, "Speed of camera");
-    FOV = GetISystem()->GetIConsole()->CreateVariable("fov", 45.0f, 0, "Camera field of view");
-    zFar = GetISystem()->GetIConsole()->CreateVariable("zfar", 10000.f, 0, "Draw distance");
-  }
+	CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH);
   // Constructor with scalar values
-  CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
-  {
-    this->transform.position = glm::vec3(posX, posY, posZ);
-    this->WorldUp = glm::vec3(upX, upY, upZ);
-    this->transform.rotation.y = yaw;
-    this->transform.rotation.x = pitch;
-    this->updateCameraVectors();
-  }
+	CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   glm::mat4 getViewMatrix();

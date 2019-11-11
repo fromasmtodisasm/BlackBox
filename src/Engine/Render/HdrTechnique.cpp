@@ -525,8 +525,8 @@ void HdrTechnique::upsampling()
 		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
-		up->Uniform((float)rx, "rx");
-		up->Uniform((float)ry, "ry");
+		up->Uniform(rx, "rx");
+		up->Uniform(ry, "ry");
 		LOG("\t\trx = %d\n", rx);
 		LOG("\t\try = %d\n", ry);
 
@@ -543,8 +543,8 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	auto w = cam_width->GetIVal();
-	auto h = cam_height->GetIVal();
+	float w = cam_width->GetIVal();
+	float h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 	auto& ss = m_ScreenShader;
@@ -562,9 +562,10 @@ void HdrTechnique::Do(unsigned int texture)
 	if (!show_all_fb)
 		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
-	auto uv_projection = Mat4(1.f);
-	uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
-	ss->Uniform(uv_projection, "uv_projection");
+	//auto uv_projection = Mat4(1.f);
+	//uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
+	//ss->Uniform(uv_projection, "uv_projection");
+	ss->Uniform(scale, "scale");
 	//FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
 	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();

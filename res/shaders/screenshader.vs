@@ -23,4 +23,4 @@ void main()
 	#ifdef STORE_TEXCOORDS
 	quadCorners[gl_VertexID] = TexCoords;
 	#endif
-} 
+}

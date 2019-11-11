@@ -62,14 +62,14 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   case FrameBufferObject::SCENE_BUFFER:
     internalFormat = Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_REPEAT;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
     dataType = GL_UNSIGNED_BYTE;
     break;
   case FrameBufferObject::HDR_BUFFER:
     internalFormat = GL_RGBA16F;
     Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_CLAMP_TO_BORDER;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
     dataType = GL_FLOAT;
     break;
   default:
