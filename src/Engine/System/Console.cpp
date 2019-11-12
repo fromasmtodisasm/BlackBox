@@ -896,6 +896,7 @@ float CConsole::Register(const char* name, float* src, float defaultvalue, int f
 	auto it = m_mapVariables.find(name);
 	if (it != m_mapVariables.end())
 	{
+		pCVar = it->second;
 		GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
 		gEnv->pSystem->debug_LogCallStack();

@@ -122,15 +122,18 @@ void ShadowMapping::RenderPass()
   }
 
 	auto points = m_Scene->getPoints();
-	points->shader->Use();
-	points->shader->Uniform(
-		Pipeline::instance()->projection *
-		Pipeline::instance()->view *
-		Pipeline::instance()->model,
-		"MVP"
-	);
-	points->draw();
-	points->shader->Unuse();
+	if (points != nullptr)
+	{
+		points->shader->Use();
+		points->shader->Uniform(
+			Pipeline::instance()->projection *
+			Pipeline::instance()->view *
+			Pipeline::instance()->model,
+			"MVP"
+		);
+		points->draw();
+		points->shader->Unuse();
+	}
 
   // Render transparent objects
   renderStage = RENDER_TRANSPARENT;
