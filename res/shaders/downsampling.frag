@@ -55,24 +55,15 @@ vec4 downsample(vec2 uv)
 		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
 		float dev = 0.5;
 		vec2 m = vec2(vx,vy) - tex_size;
-//		if (all(lessThan((2 * gl_FragCoord.xy + (offsets[i].xy + offset)), vec2(2*floor(rx) - dev,2*floor(ry) - dev))))
-//		{
-			//vec2 texel = clamp((coord * tex_size), vec2(0.5)*tex_size, m);
-			vec2 texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
-			if (all(greaterThan(coord, vec2(rx,ry)-1)))
-			{
-				vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + 2*offset));
-				texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
-				result += Sample(texel) * offsets[i].z;
-				continue;
-			}
-			result += Sample(texel) * offsets[i].z;
-//		}
-		if (1==0)	
+		vec2 texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
+		if (all(greaterThan(coord, vec2(rx,ry)-1)))
 		{
-			vec2 texel = clamp(((2 * gl_FragCoord.xy ) * tex_size), vec2(0.5)*tex_size, m);
+			vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + 2*offset));
+			texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
 			result += Sample(texel) * offsets[i].z;
+			continue;
 		}
+		result += Sample(texel) * offsets[i].z;
 	}
 	return result;
 }
