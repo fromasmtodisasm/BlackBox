@@ -36,33 +36,20 @@ vec4 blur(vec2 uv)
 		{
 			float dev = 2;
 			vec2 m = vec2(vx,vy) - 1*tex_offset;
-			//if (all(lessThan((0.5*gl_FragCoord.xy + vec2(j, i)), vec2(0.5*floor(rx) - dev,0.5*floor(ry) - dev))))
-			//{
-				w += weight[index];
-				//vec2 texel = clamp((uv + vec2(j, i) * tex_offset), vec2(0.5)*tex_offset, m);
-				vec2 coord = uv + vec2(j, i);
-				vec2 texel = clamp(coord, vec2(1),	0.5*vec2(rx,ry)-1) * tex_offset;
-				if (all(greaterThan(uv + vec2(j,i),	0.5*vec2(rx,ry)-1)))
-				{
-					vec2 coord = coord - 1;
-					texel = clamp(coord, vec2(1),	0.5*vec2(rx,ry)-1) * tex_offset;
-					result += vec4(texture(blured, texel).rgb * weight[index], 1);  
-					continue;
-				}
-				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
-			//}
-			if (1==0)		
+			w += weight[index];
+			vec2 coord = uv + vec2(j, i);
+			vec2 texel = clamp(coord, vec2(1),	0.5*vec2(rx,ry)-1) * tex_offset;
+			if (all(greaterThan(uv + vec2(j,i),	0.5*vec2(rx,ry)-1)))
 			{
-				vec2 texel = clamp(vec2(uv), vec2(0.5)*tex_offset, 0.5*(gl_FragCoord.xy - 2)/textureSize(blured,0));
-				float anti_overexposure = 1;
-				result += vec4(texture(blured, texel).rgb * weight[index], 1)*anti_overexposure;  
+				vec2 coord = coord - 1;
+				texel = clamp(coord, vec2(1),	0.5*vec2(rx,ry)-1) * tex_offset;
+				result += vec4(texture(blured, texel).rgb * weight[index], 1);  
+				continue;
 			}
-			
+			result += vec4(texture(blured, texel).rgb * weight[index], 1);  
 		}
 	}
-	//return result / (divisor == 0 ? 1 : divisor);
 	return result / 16.0;
-	//return result / w;
 }
 
 void main()
