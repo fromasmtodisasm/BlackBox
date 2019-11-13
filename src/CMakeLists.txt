@@ -1,17 +1,20 @@
 cmake_minimum_required(VERSION 3.3)
 project(BlackBox CXX)
+###################################################
 
 include(GenerateExportHeader)
 include(FindFreetype)
+
+###################################################
 if (UNIX OR CYGWIN)
 	set(UNIX_OR_CYGWIN ON)
 	message(STATUS "UNIX_OR_CYGWIN")
 	find_package(PkgConfig REQUIRED)
 endif()
-
+###################################################
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Cmake/modules/")
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
@@ -20,12 +23,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ###################################################
 configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
 ###################################################
+
 if (BB_TESET_ENABLE)
   add_definitions(-DTEST)
   add_definitions(-DSINGLE_PASS)
 endif()
 if (GLAD_LOADER)
-  #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glad glad)
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib lib)
   add_definitions(-DGLAD_LOADER)
   add_definitions(-DGLAD_GLAPI_EXPORT_BUILD)
@@ -34,7 +37,6 @@ elseif(GLEW_LOADER)
   add_definitions(-DGLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
-#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/nvtt nvtt)
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 include_directories(
@@ -69,40 +71,37 @@ find_package(Freetype REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${FREETYPE_LIBRARIES})
 
-#find_package(SDL 2 CONFIG REQUIRED)
-#target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
-#target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
-
 if (USE_SDL)
-	#include(FindSDL)
-	#target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
 	if (UNIX_OR_CYGWIN)
+		#################################################################
 		PKG_CHECK_MODULES(SDL REQUIRED SDL2)
 		if (SDL_FOUND)
 			target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
 		endif()
+		#################################################################
 		PKG_CHECK_MODULES(SDLNET REQUIRED SDL2_net)
 		if (SDLNET_FOUND)
 			target_link_libraries(${PROJECT_NAME} PUBLIC ${SDLNET_LIBRARIES})
 		endif()
 		
 	else()
+		#################################################################
 		find_package(SDL2 REQUIRED)
 		if (SDL_FOUND)
 			target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
 		endif()
-
+		#################################################################
+		find_package(SDL2-net REQUIRED)
+		if (SDL2-net_FOUND)
+			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
+		endif()
 	endif()
+	#################################################################
 	target_sources(
   	  ${PROJECT_NAME}
 	  PRIVATE ${SOURCE_DIR}/Engine/Window/SDLWindow.cpp
 	)
 	add_definitions(-DSDL_WINDOW)
-	#find_package(sdl2-net)
-	#if (NOT sdl2-net_FOUND)
-	#	PKG_CHECK_MODULES(SDLNET SDL2_net)
-	#endif()
-    	#target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 elseif (USE_SFML)
 
   find_package(SFML 2 REQUIRED audio graphics window system)
@@ -141,12 +140,14 @@ if (USE_GLM)
   add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 
 endif()
+###################################################
 
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES
   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
   $<INSTALL_INTERFACE:>  # <prefix>/include/mylib
   )
 
+###################################################
 target_sources(
   ${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
@@ -239,6 +240,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
+###################################################
 
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
 
@@ -324,12 +326,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 #target_link_libraries(${PROJECT_NAME} nvtt)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-
-#target_link_libraries(${PROJECT_NAME}
-#  ${Boost_FILESYSTEM_LIBRARY}
-#  ${Boost_SYSTEM_LIBRARY}
-#)
-
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:BlackBox>/dlls)
 
 install(
