@@ -122,7 +122,7 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError/* = true
     auto it = m_dqLoadedFiles.find(path);
     std::string src;
     std::string buffer;
-    if (it == m_dqLoadedFiles.end())
+    if (it == m_dqLoadedFiles.end() || bForceReload)
     {
         m_dqLoadedFiles.insert(path);
         std::ifstream fin("res/" + path);

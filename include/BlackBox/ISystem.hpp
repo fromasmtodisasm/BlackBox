@@ -183,8 +183,16 @@ extern "C"
 #define CryFatalError(...) FatalError(__VA_ARGS__)
 
 
-#define Warning(...)
-#define CryWarning(...) Warning(__VA_ARGS__)
+inline void Warning(const char* fmt ...)
+{
+    char buffer[1024];
+    va_list ptr;
+    va_start(ptr, fmt);
+    vsprintf(buffer, fmt, ptr);
+    va_end(ptr);
+    GetISystem()->Log(buffer);
+}
+#define CryWarning(...) void(0)//Warning(__VA_ARGS__)
 #define ScriptWarning(...) Warning(__VA_ARGS__)
 
 #define CryError(...) void(0)

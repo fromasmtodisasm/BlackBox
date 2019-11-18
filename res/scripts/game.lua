@@ -6,7 +6,6 @@ player = {
 
 function player:OnInit( data )
 	Console:PrintLine("Player OnInit");
-	Console:PrintLine("Fps count = " .. Game:getFPS())
 	Console:PrintLine("Username: " .. self.name)
 
 	--Console:Show(true)

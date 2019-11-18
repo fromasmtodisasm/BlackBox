@@ -320,4 +320,14 @@ private:
 
 
 
+
+    // Inherited via IConsole
+    virtual void Exit(const char* command, ...) override;
+
+    virtual char* GetVariable(const char* szVarName, const char* szFileName, const char* def_val) override;
+
+    virtual float GetVariable(const char* szVarName, const char* szFileName, float def_val) override;
+
+    virtual void PrintLinePlus(const char* s) override;
+
 };

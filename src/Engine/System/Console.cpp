@@ -176,9 +176,9 @@ void CConsole::Draw()
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(16);
-	for (on_line = 0; current_line < end; current_line++, on_line++)
+	for (on_line = current_line; on_line < end; on_line++)
 	{
-		printLine(current_line);
+		printLine(on_line);
 	}
 	for (auto& element : prompt)
 	{
@@ -233,12 +233,12 @@ void CConsole::CalcMetrics(size_t& end)
 	else
 	{
 		current_line = num_all_lines - line_in_console + MAGIC;
-    if (page_up && current_line > 0)
-      current_line--;
-    else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
-    {
-      current_line++;
-    }
+        if (page_up && current_line > 0)
+          current_line++;
+        else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
+        {
+          current_line--;
+        }
 		line_count = line_in_console - MAGIC;
 		end = num_all_lines;
 	}
@@ -820,6 +820,25 @@ void CConsole::initBind()
 		m_str2key[std::string("xi_triggerr_btn")] = eKI_XI_TriggerRBtn;
 
 	}
+}
+
+void CConsole::Exit(const char* command, ...)
+{
+}
+
+char* CConsole::GetVariable(const char* szVarName, const char* szFileName, const char* def_val)
+{
+    return nullptr;
+}
+
+float CConsole::GetVariable(const char* szVarName, const char* szFileName, float def_val)
+{
+    return 0.0f;
+}
+
+void CConsole::PrintLinePlus(const char* s)
+{
+
 }
 
 void CConsole::CreateKeyBind(const char* key, const char* cmd)
