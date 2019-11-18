@@ -4,6 +4,8 @@
 #include <SDL2/SDL_net.h>
 
 CNetwork::CNetwork(ISystem* pSystem)
+    :
+    m_pSystem(pSystem)
 {
 }
 
@@ -14,7 +16,7 @@ CNetwork::~CNetwork()
 bool CNetwork::Init()
 {
 	bool res = false;
-	if (SDLNet_Init())
+	if (SDLNet_Init() == 0)
 	{
 		res = true;
 	}
@@ -122,7 +124,7 @@ const char* CNetwork::GetUBIGameServerIP(bool bLan)
 INetwork* CreateNetwork(ISystem *pSystem)
 {
 	CNetwork* pNetwork = new CNetwork(pSystem);
-	if (pNetwork->Init())
+	if (!pNetwork->Init())
 	{
 		pNetwork->Release();
 		pNetwork = nullptr;

@@ -292,7 +292,8 @@ Scene::Scene(std::string name)
   m_World(nullptr),
   quadVAO(-1),
   shadowMapMat(nullptr),
-  skyBox(nullptr)
+  skyBox(nullptr),
+	m_Points(nullptr)
 {
 	float quadVertices[] = {
 		// positions   // texCoords

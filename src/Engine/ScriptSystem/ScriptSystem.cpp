@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <functional>
 
 #include <cstdarg>
@@ -116,8 +117,24 @@ void CScriptSystem::RegisterErrorHandler(void)
 
 bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError/* = true*/, bool bForceReload/* = false*/)
 {
-	std::string path("res/" + std::string(sFileName));
-	return luaL_dofile(L, path.c_str()) == LUA_OK;
+	std::string path(sFileName);
+
+    auto it = m_dqLoadedFiles.find(path);
+    std::string src;
+    std::string buffer;
+    if (it == m_dqLoadedFiles.end() || bForceReload)
+    {
+        m_dqLoadedFiles.insert(path);
+        std::ifstream fin("res/" + path);
+        if (!fin.is_open()) return false;
+        while (std::getline(fin, buffer)) {
+            src += buffer;
+            src += '\n';
+        }
+        fin.close();
+    }
+	//return luaL_dofile(L, path.c_str()) == LUA_OK;
+    return ExecuteBuffer(src.c_str(), src.length());
 }
 
 bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
@@ -227,7 +244,8 @@ void CScriptSystem::DumpLoadedScripts()
 	itor = m_dqLoadedFiles.begin();
 	while (itor != m_dqLoadedFiles.end())
 	{
-		LogAlways("%s", itor->c_str());
+		//LogAlways("%s", itor->c_str());
+        m_pSystem->GetIConsole()->PrintLine("%s", itor->c_str());
 		++itor;
 	}
 }

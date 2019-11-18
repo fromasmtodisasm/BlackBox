@@ -176,9 +176,9 @@ void CConsole::Draw()
 	CalcMetrics(end);
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(16);
-	for (on_line = 0; current_line < end; current_line++, on_line++)
+	for (on_line = current_line; on_line < end; on_line++)
 	{
-		printLine(current_line);
+		printLine(on_line);
 	}
 	for (auto& element : prompt)
 	{
@@ -189,7 +189,7 @@ void CConsole::Draw()
 	//command_text[command.length()] = cursor;
 
 	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-	printText(Text(std::string("#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
+	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
 	printText(Text(std::string(command_text), textColor, 1.0f), 0);
 	drawCursor();
 	/*m_Font->RenderText(
@@ -233,12 +233,12 @@ void CConsole::CalcMetrics(size_t& end)
 	else
 	{
 		current_line = num_all_lines - line_in_console + MAGIC;
-    if (page_up && current_line > 0)
-      current_line--;
-    else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
-    {
-      current_line++;
-    }
+        if (page_up && current_line > 0)
+          current_line++;
+        else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
+        {
+          current_line--;
+        }
 		line_count = line_in_console - MAGIC;
 		end = num_all_lines;
 	}
@@ -822,6 +822,25 @@ void CConsole::initBind()
 	}
 }
 
+void CConsole::Exit(const char* command, ...)
+{
+}
+
+char* CConsole::GetVariable(const char* szVarName, const char* szFileName, const char* def_val)
+{
+    return nullptr;
+}
+
+float CConsole::GetVariable(const char* szVarName, const char* szFileName, float def_val)
+{
+    return 0.0f;
+}
+
+void CConsole::PrintLinePlus(const char* s)
+{
+
+}
+
 void CConsole::CreateKeyBind(const char* key, const char* cmd)
 {
 	auto it = m_str2key.find(key);
@@ -896,6 +915,7 @@ float CConsole::Register(const char* name, float* src, float defaultvalue, int f
 	auto it = m_mapVariables.find(name);
 	if (it != m_mapVariables.end())
 	{
+		pCVar = it->second;
 		GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
 		gEnv->pSystem->debug_LogCallStack();
