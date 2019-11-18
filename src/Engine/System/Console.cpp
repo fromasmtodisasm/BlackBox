@@ -189,7 +189,7 @@ void CConsole::Draw()
 	//command_text[command.length()] = cursor;
 
 	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-	printText(Text(std::string("#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
+	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
 	printText(Text(std::string(command_text), textColor, 1.0f), 0);
 	drawCursor();
 	/*m_Font->RenderText(

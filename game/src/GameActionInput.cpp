@@ -69,6 +69,9 @@ void CGame::InitConsoleCommands()
 	REGISTER_COMMAND("dump_scripts", "Script:DumpLoadedScripts()", VF_CHEAT,
 		"Outputs a list of currently loaded scripts.\n"
 		"Usage: dump_scripts\n");
+	REGISTER_COMMAND("reload_scripts", "Script:ReloadScripts()", VF_CHEAT,
+		"Reload a list of currently loaded scripts.\n"
+		"Usage: dump_scripts\n");
 	REGISTER_COMMAND("quit", "Game:Quit()", 0,
 		"Quits the game.\n"
 		"Usage: quit\n");
