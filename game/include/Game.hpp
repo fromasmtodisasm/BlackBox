@@ -130,6 +130,8 @@ public:
 
 
   bool loadScene(std::string name);
+  void unloadScene(std::string name);
+  void saveScene(std::string name, std::string as);
   void setRenderState();
   void render();
   void setPlayer(CPlayer *player);

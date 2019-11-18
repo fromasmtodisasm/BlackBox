@@ -457,6 +457,21 @@ bool CGame::loadScene(std::string name) {
   return false;
 }
 
+void CGame::unloadScene(std::string name)
+{
+	SceneManager::instance()->removeScene(name);
+}
+
+void CGame::saveScene(std::string name, std::string as)
+{
+	std::string &path = name;
+	if (SceneManager::instance()->exist(path))
+	{
+		auto scene = SceneManager::instance()->getScene(path, this);
+		scene->save(as);
+	}
+}
+
 void CGame::setRenderState()
 {
   if (isWireFrame)

@@ -603,13 +603,12 @@ bool SceneCommand::save(CommandDesc& cd)
   if (cd.args.size() >= 2)
   {
     std::string path = wstr_to_str(cd.args[1]);
-    if (SceneManager::instance()->exist(path))
     {
-      auto scene = SceneManager::instance()->getScene(path, game);
       std::string as = "";
       if (cd.args.size() == 3)
         as = wstr_to_str(cd.args[2]);
-      return scene->save(as);
+			game->saveScene(path, as);
+			return true;
     }
   }
 	return false;
