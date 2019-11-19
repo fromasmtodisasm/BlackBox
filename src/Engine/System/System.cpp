@@ -27,6 +27,7 @@
 #include <cstdlib>
 
 using namespace Utils;
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
@@ -148,6 +149,7 @@ bool CSystem::Init()
 	//====================================================
 	m_pConsole->AddConsoleVarSink(this);
 	ParseCMD();
+    LoadScreen();
 	//====================================================
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
@@ -314,6 +316,19 @@ void CSystem::ParseCMD()
 	{
 		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
 	}
+}
+
+void CSystem::LoadScreen()
+{
+    m_pConsole->Clear();
+    m_pConsole->SetScrollMax(600);
+    m_pConsole->ShowConsole(true);
+
+    string sLoadingScreenTexture = string("loading.png");
+
+    m_pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
+    m_pConsole->ResetProgressBar(0x7fffffff);
+    //GetILog()->UpdateLoadingScreen("");	// just to draw the console
 }
 
 float CSystem::GetDeltaTime()

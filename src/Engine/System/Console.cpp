@@ -8,6 +8,8 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Common/IClipBoard.hpp>
 #include <BlackBox/IInput.hpp>
+#include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/Render/Texture.hpp>
 
 #include <string>
 #include <fstream>
@@ -163,35 +165,44 @@ void CConsole::Update()
 
 void CConsole::Draw()
 {
-	if (!isOpened) return;
-	auto deltatime = GetISystem()->GetDeltaTime();
-	auto render = GetISystem()->GetIRender();
-	height = (float)(render->GetHeight()) / 2;
-	Animate(deltatime, render);
-	size_t end;
-	auto prompt = getPrompt();
-	time += GetISystem()->GetDeltaTime();
-	render->SetRenderTarget(0);
-	render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
-	CalcMetrics(end);
-	m_Font->SetXPos(0);
-	m_Font->SetYPos(16);
-	for (on_line = current_line; on_line < end; on_line++)
-	{
-		printLine(on_line);
-	}
-	for (auto& element : prompt)
-	{
-		printText(element, line_count - 1);
-	}
-	auto cursor = needShowCursor() ? "*" : " ";
-	//command_text.replace(command_text.size() - 1, 1, 1, cursor);
-	//command_text[command.length()] = cursor;
+    if (!isOpened) return;
+    auto deltatime = GetISystem()->GetDeltaTime();
+    auto render = GetISystem()->GetIRender();
+    height = (float)(render->GetHeight()) / 2;
+    Animate(deltatime, render);
+    size_t end;
+    auto prompt = getPrompt();
+    time += GetISystem()->GetDeltaTime();
+    if (!m_nProgressRange)
+    {
+        render->SetRenderTarget(0);
+        render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
+        CalcMetrics(end);
+        m_Font->SetXPos(0);
+        m_Font->SetYPos(16);
+        for (on_line = current_line; on_line < end; on_line++)
+        {
+            printLine(on_line);
+        }
+        for (auto& element : prompt)
+        {
+            printText(element, line_count - 1);
+        }
+        auto cursor = needShowCursor() ? "*" : " ";
+        //command_text.replace(command_text.size() - 1, 1, 1, cursor);
+        //command_text[command.length()] = cursor;
 
-	//printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
-	printText(Text(std::string(command_text), textColor, 1.0f), 0);
-	drawCursor();
+        //printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
+        printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
+        printText(Text(std::string(command_text), textColor, 1.0f), 0);
+        drawCursor();
+    }
+    else
+    {
+        // draw progress bar
+        //render->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
+        render->DrawImage(0.0, 0.0, 800.0f, 600.0f, m_nLoadingBackTexID, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 1.0);
+    }
 	/*m_Font->RenderText(
 		command_text + "\n",
 		m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
@@ -841,6 +852,42 @@ void CConsole::PrintLinePlus(const char* s)
 
 }
 
+void CConsole::SetScrollMax(int value)
+{
+    m_nScrollMax = value;
+    m_nTempScrollMax = m_nScrollMax;
+}
+
+void CConsole::SetLoadingImage(const char* szFilename)
+{
+    ITexture* pTex = 0;
+
+    //pTex = m_pSystem->GetIRenderer()->EF_LoadTexture(szFilename, FT_DONT_STREAM | FT_NOMIPS);
+    pTex = TextureManager::instance()->getTexture(szFilename, false);
+
+    if (!pTex)
+    {
+        SAFE_DELETE(pTex);
+    }
+
+    if (pTex)
+    {
+        m_nLoadingBackTexID = pTex->getId();
+    }
+    else
+    {
+        m_nLoadingBackTexID = -1;
+    }
+}
+
+void CConsole::ResetProgressBar(int nProgressRange)
+{
+}
+
+void CConsole::TickProgressBar()
+{
+}
+
 void CConsole::CreateKeyBind(const char* key, const char* cmd)
 {
 	auto it = m_str2key.find(key);
@@ -1054,7 +1101,8 @@ bool CConsole::Init(ISystem* pSystem)
 
 	if (background != nullptr)
 		texture_path = background->GetString();
-	//m_pBackGround->load(texture_path);
+    m_pBackGround = new Texture();
+	m_pBackGround->load(texture_path);
 	initBind();
 	return true;
 }

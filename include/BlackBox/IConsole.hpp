@@ -137,6 +137,11 @@ struct IConsole
 		@param Callback callback-interface which needs to be called for each element
 	*/
 	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) = 0;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*! Set the y coordinate where the console will stop to scroll when is dropped
+        @param value y in screen coordinates
+    */
+    virtual void SetScrollMax(int value) = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! show/hide the console
 		@param specifies if the window must be (true=show,false=hide)
@@ -175,6 +180,11 @@ struct IConsole
 		@param pImage background-image
 	*/
 	virtual void	SetImage(struct ITexture* pTexture) = 0;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*! Sets the loading-background-image
+    @param pImage background-image
+    */
+    virtual void	SetLoadingImage(const char* szFilename) = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Update the console
 	*/
@@ -262,6 +272,11 @@ struct IConsole
         @param s the string to print
     */
     virtual void PrintLinePlus(const char* s) = 0;
+
+    //! Function related to progress bar
+    virtual void ResetProgressBar(int nProgressRange) = 0;
+    //! Function related to progress bar
+    virtual void TickProgressBar() = 0;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Console variable sink.

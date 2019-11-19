@@ -210,7 +210,6 @@ public:
 
 	void CreateKeyBind(const char* key, const char* cmd);
 	virtual void SetInputLine(const char* szLine) override;
-	void ClearInputLine();
 	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
 	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
 	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
@@ -218,6 +217,16 @@ public:
 	virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "")  override;
 	virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
 	virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
+
+    virtual void Exit(const char* command, ...) override;
+    virtual char* GetVariable(const char* szVarName, const char* szFileName, const char* def_val) override;
+    virtual float GetVariable(const char* szVarName, const char* szFileName, float def_val) override;
+    virtual void PrintLinePlus(const char* s) override;
+
+    virtual void SetScrollMax(int value) override;
+    virtual void SetLoadingImage(const char* szFilename) override;
+    virtual void ResetProgressBar(int nProgressRange) override;
+    virtual void TickProgressBar() override;
 
 
 private:
@@ -248,6 +257,7 @@ private:
 	void moveCursor(bool left, bool wholeWord = false);
 
 	void initBind();
+	void ClearInputLine();
 private:
 	std::vector<IConsoleVarSink*> varSinks;
 	std::map<std::wstring, CommandInfo> m_Commands;
@@ -318,16 +328,24 @@ private:
 
 	int lines = 0;
 
+    // --------------------------------------------------------------------------------
+
+    bool                           m_bStaticBackground = -1;
+    int                            m_nLoadingBackTexID = -1;
+    int                            m_nWhiteTexID = 0;
+    int                            m_nProgress = 0;
+    int                            m_nProgressRange = 0;
+
+    int                            m_nScrollPos;
+    int                            m_nTempScrollMax;          // for currently opened console, reset to m_nScrollMax
+    int                            m_nScrollMax;              //
+    int                            m_nScrollLine;
+    int                            m_nHistoryPos;
+    size_t                         m_nCursorPos;                // x position in characters
+
 
 
 
     // Inherited via IConsole
-    virtual void Exit(const char* command, ...) override;
-
-    virtual char* GetVariable(const char* szVarName, const char* szFileName, const char* def_val) override;
-
-    virtual float GetVariable(const char* szVarName, const char* szFileName, float def_val) override;
-
-    virtual void PrintLinePlus(const char* s) override;
 
 };

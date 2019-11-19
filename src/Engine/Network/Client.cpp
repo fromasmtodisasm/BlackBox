@@ -1,5 +1,6 @@
 #include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/IPAddress.hpp>
+#include <SDL2/SDL_net.h>
 
 CNetworkClient::CNetworkClient()
 {
@@ -11,6 +12,11 @@ CNetworkClient::~CNetworkClient()
 
 void CNetworkClient::Connect(const char* szIP, uint16_t wPort, const uint8_t* pbAuthorizationID, unsigned int iAuthorizationSize)
 {
+    IPaddress ip;
+    if (SDLNet_ResolveHost(&ip, szIP, wPort))
+    {
+
+    }
 }
 
 void CNetworkClient::Disconnect(const char* szCause)

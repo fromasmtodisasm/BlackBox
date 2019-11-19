@@ -65,6 +65,7 @@ public:
 private:
 	bool InitResourceManagers();
 	void ParseCMD();
+    void LoadScreen();
 private:
 	CTimer									m_Time;                  //!<
 
