@@ -22,7 +22,7 @@ struct IPreRenderCallback
 class World {
   friend class GameGUI;
 private:
-  Scene *activeScene;
+  Scene* activeScene;
   IPostRenderCallback* m_PostRender = nullptr;
   IPreRenderCallback* m_PreRender = nullptr;
 public:
@@ -30,10 +30,10 @@ public:
   World();
   void draw(float dt);
 
-  void setCamera(CCamera *camera);
+  void setCamera(CCamera* camera);
   void setScene(Scene* scene);
   void update(float deltatime);
   void setPretRenderCallback(IPreRenderCallback* callBack);
   void setPostRenderCallback(IPostRenderCallback* callBack);
-  Scene *getActiveScene() const;
+  Scene* getActiveScene() const;
 };

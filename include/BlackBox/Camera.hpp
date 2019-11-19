@@ -17,12 +17,11 @@ struct ICVar;
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 
 // Default camera values
-const GLfloat YAW        = -90.0f;
-const GLfloat PITCH      =  0.0f;
-const GLfloat SPEED      =  0.1f;
-const GLfloat SENSITIVTY =  0.25f;
-const GLfloat ZOOM       =  45.0f;
-
+const GLfloat YAW = -90.0f;
+const GLfloat PITCH = 0.0f;
+const GLfloat SPEED = 0.1f;
+const GLfloat SENSITIVTY = 0.25f;
+const GLfloat ZOOM = 45.0f;
 
 // An abstract camera class that processes input and calculates the corresponding Eular Angles, Vectors and Matrices for use in OpenGL
 class CCamera
@@ -35,15 +34,15 @@ public:
   glm::vec3 Right;
   glm::vec3 WorldUp;
   // Camera options
-  ICVar *MovementSpeed;
+  ICVar* MovementSpeed;
   ICVar* FOV;
   GLfloat MouseSensitivity;
   GLfloat Zoom;
   //GLfloat FOV = 45.0f;
-  GLfloat Ratio = 16.0f/9;
+  GLfloat Ratio = 16.0f / 9;
   GLfloat zNear = 0.1f;
   //GLfloat zFar = 5000.f;
-  ICVar *zFar = nullptr;
+  ICVar* zFar = nullptr;
 
   enum class Mode
   {
@@ -52,9 +51,9 @@ public:
   }mode = Mode::FPS;
 
   // Constructor with vectors
-	CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH);
+  CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH);
   // Constructor with scalar values
-	CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
+  CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   glm::mat4 getViewMatrix();

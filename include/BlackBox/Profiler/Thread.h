@@ -6,29 +6,29 @@
 
 // Basic types: ThreadHandle, ThreadId, Mutex, Event
 #ifdef WIN32
-	
+
 #pragma warning(push)
 #pragma warning(disable : 4005)
 #include <Windows.h>
 #pragma warning(pop)
-	typedef	HANDLE				ThreadHandle;
-	typedef	DWORD				ThreadId;
-	typedef	CRITICAL_SECTION	Mutex;
-	typedef	HANDLE				Event;
+typedef	HANDLE				ThreadHandle;
+typedef	DWORD				ThreadId;
+typedef	CRITICAL_SECTION	Mutex;
+typedef	HANDLE				Event;
 #else
-	#include <pthread.h>
-	typedef	pthread_t			ThreadHandle;
-	typedef	pthread_t			ThreadId;
-	typedef	pthread_mutex_t		Mutex;
-	struct						Event
-	{
-		pthread_mutex_t	mutex;
-		pthread_cond_t	cond;
-		bool			triggered;
-	};
+#include <pthread.h>
+typedef	pthread_t			ThreadHandle;
+typedef	pthread_t			ThreadId;
+typedef	pthread_mutex_t		Mutex;
+struct						Event
+{
+  pthread_mutex_t	mutex;
+  pthread_cond_t	cond;
+  bool			triggered;
+};
 #endif
 
-typedef	void*	(*ThreadProc)(void* arg);
+typedef	void* (*ThreadProc)(void* arg);
 
 ThreadHandle	threadCreate(ThreadProc proc, void* arg);
 ThreadId		threadGetCurrentId();

@@ -4,8 +4,8 @@
 #include <SDL2/SDL_net.h>
 
 CNetwork::CNetwork(ISystem* pSystem)
-    :
-    m_pSystem(pSystem)
+  :
+  m_pSystem(pSystem)
 {
 }
 
@@ -15,52 +15,52 @@ CNetwork::~CNetwork()
 
 bool CNetwork::Init()
 {
-	bool res = false;
-	if (SDLNet_Init() == 0)
-	{
-		res = true;
-	}
-	return res;
+  bool res = false;
+  if (SDLNet_Init() == 0)
+  {
+    res = true;
+  }
+  return res;
 }
 
 uint32_t CNetwork::GetLocalIP() const
 {
-	return uint32_t();
+  return uint32_t();
 }
 
 void CNetwork::SetLocalIP(const char* szLocalIP)
 {
-	m_LocalIP = szLocalIP;
+  m_LocalIP = szLocalIP;
 }
 
 IClient* CNetwork::CreateClient(IClientSink* pSink, bool bLocal)
 {
-	return new CNetworkClient;
+  return new CNetworkClient;
 }
 
 IServer* CNetwork::CreateServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
 {
-	return new CNetworkServer;
+  return new CNetworkServer;
 }
 
 IRConSystem* CNetwork::CreateRConSystem()
 {
-	return nullptr;
+  return nullptr;
 }
 
 INETServerSnooper* CNetwork::CreateNETServerSnooper(INETServerSnooperSink* pSink)
 {
-	return nullptr;
+  return nullptr;
 }
 
 IServerSnooper* CNetwork::CreateServerSnooper(IServerSnooperSink* pSink)
 {
-	return nullptr;
+  return nullptr;
 }
 
 const char* CNetwork::EnumerateError(uint32_t err)
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CNetwork::Release()
@@ -73,7 +73,7 @@ void CNetwork::GetMemoryStatistics(ICrySizer* pSizer)
 
 ICompressionHelper* CNetwork::GetCompressionHelper()
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CNetwork::ClearProtectedFiles()
@@ -86,7 +86,7 @@ void CNetwork::AddProtectedFile(const char* sFilename)
 
 IServer* CNetwork::GetServerByPort(const uint16_t wPort)
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CNetwork::UpdateNetwork()
@@ -99,7 +99,7 @@ void CNetwork::OnAfterServerLoadLevel(const char* szServerName, const uint32_t d
 
 bool CNetwork::VerifyMultiplayerOverInternet()
 {
-	return false;
+  return false;
 }
 
 void CNetwork::Client_ReJoinGameServer()
@@ -108,7 +108,7 @@ void CNetwork::Client_ReJoinGameServer()
 
 IClient* CNetwork::GetClient()
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CNetwork::SetUBIGameServerIP(const char* szAddress)
@@ -117,17 +117,16 @@ void CNetwork::SetUBIGameServerIP(const char* szAddress)
 
 const char* CNetwork::GetUBIGameServerIP(bool bLan)
 {
-	return nullptr;
+  return nullptr;
 }
 
-
-INetwork* CreateNetwork(ISystem *pSystem)
+INetwork* CreateNetwork(ISystem* pSystem)
 {
-	CNetwork* pNetwork = new CNetwork(pSystem);
-	if (!pNetwork->Init())
-	{
-		pNetwork->Release();
-		pNetwork = nullptr;
-	}
-	return pNetwork;
+  CNetwork* pNetwork = new CNetwork(pSystem);
+  if (!pNetwork->Init())
+  {
+    pNetwork->Release();
+    pNetwork = nullptr;
+  }
+  return pNetwork;
 }

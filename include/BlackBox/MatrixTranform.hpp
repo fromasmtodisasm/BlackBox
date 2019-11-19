@@ -7,7 +7,6 @@
 
 std::vector<float> operator * (std::vector<float> vec, glm::mat4 m);
 
-
 // vector = vector * m && vector = vector / m
 
 // vec = changeMatrix(vec,mat,vec2,'*')

@@ -4,7 +4,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/IConsole.hpp>
 
-ShaderManager *ShaderManager::manager = nullptr;
+ShaderManager* ShaderManager::manager = nullptr;
 static std::shared_ptr<CShaderProgram> defaultProgram = nullptr;
 
 std::string ShaderDesc::root = "res/shaders/";
@@ -12,8 +12,7 @@ std::string ShaderDesc::root = "res/shaders/";
 ICVar* CBaseShaderProgram::print_loc_name = nullptr;
 ICVar* CBaseShaderProgram::use_cache = nullptr;
 
-
-ShaderManager *ShaderManager::instance()
+ShaderManager* ShaderManager::instance()
 {
   if (manager == nullptr)
   {
@@ -55,11 +54,10 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   else
   {
     GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
-		assert(0 && "Not implemented");
+    assert(0 && "Not implemented");
     return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
   }
-
 }
 
 std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
@@ -68,7 +66,7 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   std::shared_ptr<CShaderProgram> p;
   vs = getShader(ShaderDesc(vShader, "vertex"), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
-	if (gShader.size() > 0) gs = getShader(ShaderDesc(fShader, "geometry"), false);
+  if (gShader.size() > 0) gs = getShader(ShaderDesc(fShader, "geometry"), false);
   cs = getShader(ShaderDesc(fShader, "compute"), false);
   if (vs == nullptr || fs == nullptr)
   {
@@ -78,16 +76,15 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   else
   {
     GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
-		assert(0 && "Not implemented");
+    assert(0 && "Not implemented");
     return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);
   }
-
 }
 
 std::shared_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
 {
-	return defaultProgram;
+  return defaultProgram;
 }
 
 std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
@@ -111,14 +108,14 @@ std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool i
 
 void ShaderManager::removeShader(std::string name)
 {
-	cache.erase(root + name);
+  cache.erase(root + name);
 }
 
 bool ShaderManager::init()
 {
   defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
   defaultProgram->Create("default");
-	ShaderDesc::root = ShaderManager::instance()->root;
-	CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");
+  ShaderDesc::root = ShaderManager::instance()->root;
+  CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");
   return true;
 }

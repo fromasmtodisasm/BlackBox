@@ -4,9 +4,9 @@
 
 using namespace std;
 
-ICommand * CSFMLWindow::handleInput(bool bPause)
+ICommand* CSFMLWindow::handleInput(bool bPause)
 {
-	int offset = 5;
+  int offset = 5;
   sf::Event event;
   while (m_Window->pollEvent(event))
   {
@@ -22,11 +22,11 @@ ICommand * CSFMLWindow::handleInput(bool bPause)
     }
     this->OnInputEvent(event);
     //if (viewPort.contains(sf::Mouse::getPosition(*m_Window)))
-      for (const auto &listener : listeners)
-      {
-				if (listener->OnInputEvent(event))
-					break;
-      }
+    for (const auto& listener : listeners)
+    {
+      if (listener->OnInputEvent(event))
+        break;
+    }
     //else {
     //  continue;
     //}
@@ -34,7 +34,7 @@ ICommand * CSFMLWindow::handleInput(bool bPause)
   return nullptr;
 }
 
-void CSFMLWindow::AddEventListener(IInputEventListener * pListener)
+void CSFMLWindow::AddEventListener(IInputEventListener* pListener)
 {
   listeners.push_back(pListener);
 }
@@ -54,38 +54,38 @@ void CSFMLWindow::mouseLock(bool lock)
 
   sf::Mouse::setPosition(center, *m_Window);
   m_Window->setMouseCursorGrabbed(lock);
-	m_Window->setMouseCursorVisible(!lock);
+  m_Window->setMouseCursorVisible(!lock);
 }
 
-Rect &CSFMLWindow::getViewPort()
+Rect& CSFMLWindow::getViewPort()
 {
-	return viewPort;
+  return viewPort;
 }
 
 bool CSFMLWindow::create(Params params)
 {
-	auto settings = reinterpret_cast<sf::ContextSettings*>(params);
+  auto settings = reinterpret_cast<sf::ContextSettings*>(params);
   m_contextSettings = sf::ContextSettings(settings->depthBits, settings->stencilBits, 0, settings->majorVersion, settings->minorVersion, settings->attributeFlags);
-	return true;
+  return true;
 }
 
 Point CSFMLWindow::getCursorPos()
 {
-	return Point(sf::Mouse::getPosition().x,sf::Mouse::getPosition().y);
+  return Point(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);
 }
 
 void CSFMLWindow::changeSize(int w, int h)
 {
-	m_Window->setSize(sf::Vector2u(std::max(0, w),std::max(0, h)));
+  m_Window->setSize(sf::Vector2u(std::max(0, w), std::max(0, h)));
 }
 
 void CSFMLWindow::ToogleFullScreen(int w, int h)
 {
-	Create(w, h, !m_bFullScreen, 32);
+  Create(w, h, !m_bFullScreen, 32);
 }
 
 void CSFMLWindow::setCursor(Cursor* cursor)
 {
-	m_Window->setMouseCursor(*reinterpret_cast<sf::Cursor*>(cursor));
+  m_Window->setMouseCursor(*reinterpret_cast<sf::Cursor*>(cursor));
 }
 #endif

@@ -4,5 +4,5 @@
 
 struct IShaderManager
 {
-  virtual CBaseShaderProgram *getShader(std::string name) = 0;
+  virtual CBaseShaderProgram* getShader(std::string name) = 0;
 };

@@ -4,12 +4,10 @@
 
 VertexArrayObject::VertexArrayObject()
 {
-
 }
 
 VertexArrayObject::VertexArrayObject(std::vector<Vertex> &vb, std::vector<int> &ib)
 {
-
   glGenVertexArrays(1, &VAO);
 
   glBindVertexArray(VAO);

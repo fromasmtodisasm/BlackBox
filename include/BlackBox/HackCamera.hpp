@@ -11,7 +11,7 @@ class CCamera : public IInputEventListener
 //private:
 public:
   const float MOVE_SPEED = 0.9f;
-  glm::vec3 m_pos; 
+  glm::vec3 m_pos;
   glm::vec3 m_target;
   glm::vec3 m_right;
   glm::vec3 m_up;
@@ -50,7 +50,5 @@ public:
   void setView(int x, int y, int w, int h);
 
   bool OnInputEvent(sf::Event &event);
-
-
 };
 */
