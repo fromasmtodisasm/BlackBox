@@ -8,65 +8,64 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 
-CPlayer::CPlayer(CGame *game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game))
+CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game))
 {
   //getShaderProgram()->Uniform("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);
-	GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
+  GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
-CPlayer::CPlayer(Object *obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
+CPlayer::CPlayer(Object* obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
-	m_pScript = GetISystem()->GetIScriptSystem()->CreateEmptyObject();
-	GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
+  m_pScript = GetISystem()->GetIScriptSystem()->CreateEmptyObject();
+  GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
 }
 
 bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
-	bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
-	bool rotated = false;
-	//if (event.pSymbol != nullptr)
-		rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY;// || event.pSymbol->type == SInputSymbol::EType::Axis;
+  bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
+  bool rotated = false;
+  //if (event.pSymbol != nullptr)
+  rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY;// || event.pSymbol->type == SInputSymbol::EType::Axis;
 
-
-	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
-	bool control = event.modifiers & eMM_Ctrl;
-	bool shift = event.modifiers & eMM_Shift;
-	bool alt = event.modifiers & eMM_Alt;
-	////////////////////////
+////////////////////////
+  bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+  bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
+  bool control = event.modifiers & eMM_Ctrl;
+  bool shift = event.modifiers & eMM_Shift;
+  bool alt = event.modifiers & eMM_Alt;
+  ////////////////////////
   if (false)
   {
-    Object *obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
-    GameObject *go = new GameObject(obj);
+    Object* obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
+    GameObject* go = new GameObject(obj);
     go->setMaterial(obj->getMaterial());
     go->m_transform.position = m_Camera->getPosition();// + glm::vec3(0,0,5);
-    go->velocity = 48.0f*m_Camera->Front;
+    go->velocity = 48.0f * m_Camera->Front;
     Game->getWorld()->getActiveScene()->addObject("bullet", go);
 
     return true;
   }
-	else if (rotated)
-	{
-		// TODO: GET DELTA  MOUSE
-		delta = Vec2(0);
-		if (event.keyId == eKI_MouseX || event.keyId == eKI_XI_ThumbRX || event.keyId == eKI_XI_ThumbLX)
-			delta.x = event.value;
-		else
-			delta.y = event.value;
+  else if (rotated)
+  {
+    // TODO: GET DELTA  MOUSE
+    delta = Vec2(0);
+    if (event.keyId == eKI_MouseX || event.keyId == eKI_XI_ThumbRX || event.keyId == eKI_XI_ThumbLX)
+      delta.x = event.value;
+    else
+      delta.y = event.value;
 
     m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
     return true;
   }
-	else if (keyPressed)
-	{
-		return OnKeyPress(event.keyId);
-	}
-	else if (keyReleased)
-		return OnKeyReleas(event.keyId);
-	else
+  else if (keyPressed)
+  {
+    return OnKeyPress(event.keyId);
+  }
+  else if (keyReleased)
+    return OnKeyReleas(event.keyId);
+  else
     return GameObject::OnInputEvent(event);
 }
 
@@ -82,12 +81,12 @@ bool CPlayer::OnKeyReleas(EKeyId key)
   return false;
 }
 
-void CPlayer::draw(void *camera)
+void CPlayer::draw(void* camera)
 {
   Object::draw(camera);
 }
 
-void CPlayer::attachCamera(CCamera *camera)
+void CPlayer::attachCamera(CCamera* camera)
 {
   m_Camera = camera;
   GameObject::m_Camera = camera;
@@ -103,7 +102,7 @@ glm::vec3 CPlayer::getPos()
   return m_transform.position;
 }
 
-void CPlayer::setGame(CGame *game)
+void CPlayer::setGame(CGame* game)
 {
   Game = game;
 }
@@ -116,8 +115,8 @@ CGame* CPlayer::getGame()
 void CPlayer::update(float deltatime)
 {
   //ImGui
-  float speed = deltatime*MOVE_SPEED;
-  float rotSpeed = deltatime*5.f;//m_rotAngle;
+  float speed = deltatime * MOVE_SPEED;
+  float rotSpeed = deltatime * 5.f;//m_rotAngle;
   for (auto& key : m_keys)
   {
     switch (key)
@@ -146,19 +145,19 @@ void CPlayer::update(float deltatime)
   }
 #if 0
   if (m_transform.position.y < 0)
-    velocity.y = - velocity.y*friction;
+    velocity.y = -velocity.y * friction;
   m_transform.position += velocity * deltatime;
 #endif
   //m_Camera->m_target = m_transform.position;
-	PROFILER_PUSH_CPU_MARKER("CALL SCRIPT", Utils::COLOR_DARK_GREEN);
-	GetISystem()->GetIScriptSystem()->BeginCall("player", "Update");
-	GetISystem()->GetIScriptSystem()->PushFuncParam(m_pScript);
-	GetISystem()->GetIScriptSystem()->PushFuncParam(deltatime);
-	GetISystem()->GetIScriptSystem()->EndCall();
-	PROFILER_POP_CPU_MARKER();
+  PROFILER_PUSH_CPU_MARKER("CALL SCRIPT", Utils::COLOR_DARK_GREEN);
+  GetISystem()->GetIScriptSystem()->BeginCall("player", "Update");
+  GetISystem()->GetIScriptSystem()->PushFuncParam(m_pScript);
+  GetISystem()->GetIScriptSystem()->PushFuncParam(deltatime);
+  GetISystem()->GetIScriptSystem()->EndCall();
+  PROFILER_POP_CPU_MARKER();
 }
 
-CPlayer *CPlayer::operator=(Object *obj)
+CPlayer* CPlayer::operator=(Object* obj)
 {
   return nullptr;
 }

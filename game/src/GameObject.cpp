@@ -3,8 +3,8 @@
 
 void GameObject::update(float deltatime)
 {
-  float speed = deltatime*MOVE_SPEED;
-  float rotSpeed = deltatime*5.f;//m_rotAngle;
+  float speed = deltatime * MOVE_SPEED;
+  float rotSpeed = deltatime * 5.f;//m_rotAngle;
   /*
   for (const auto &key : m_keys)
   {
@@ -15,7 +15,7 @@ void GameObject::update(float deltatime)
   }
   */
   if (m_transform.position.y < 0)
-    velocity.y = - velocity.y*friction;
+    velocity.y = -velocity.y * friction;
   m_transform.position += velocity * deltatime;
 }
 
@@ -26,13 +26,13 @@ glm::mat4 GameObject::getTransform()
 }
 */
 
-GameObject::GameObject(const Object *obj) : Object(obj), m_Camera(nullptr)
+GameObject::GameObject(const Object* obj) : Object(obj), m_Camera(nullptr)
 {
 }
 
 bool GameObject::OnInputEvent(const SInputEvent& event)
 {
-	if (event.deviceType == eIDT_Keyboard)
-		this->getTransform();
+  if (event.deviceType == eIDT_Keyboard)
+    this->getTransform();
   return false;
 }
