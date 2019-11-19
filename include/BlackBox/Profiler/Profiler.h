@@ -3,15 +3,18 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
+#include "Config.h"
+
+#ifdef ENABLE_PROFILER
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Hole_array.h>
 #include <BlackBox/Profiler/thread.h>
 #include <BlackBox/Profiler/Utils.h>
-#include "Config.h"
 
 #include <string.h>
 #include <assert.h>
 #include <stdint.h>
+#endif
 
 #define INVALID_TIME	((uint64_t)(-1))
 #define INVALID_QUERY	((GLuint)0)

@@ -322,7 +322,7 @@ private:
 
   // --------------------------------------------------------------------------------
 
-  bool                           m_bStaticBackground = -1;
+  bool                           m_bStaticBackground = 1;
   int                            m_nLoadingBackTexID = -1;
   int                            m_nWhiteTexID = 0;
   int                            m_nProgress = 0;

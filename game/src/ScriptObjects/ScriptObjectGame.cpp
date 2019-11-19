@@ -298,7 +298,7 @@ int CScriptObjectGame::CreateVariable(IFunctionHandler* pH)
         if (pH->GetParam(3, sflags))
         {
           if (strcmp(sflags, "NetSynch") == 0)
-            ;// iflags = VF_REQUIRE_NET_SYNC;
+            iflags = VF_NET_SYNCED;
         }
         else
           m_pSystem->GetILog()->LogWarning("Game:CreateVariable can't get the 3rd parameter (string)");

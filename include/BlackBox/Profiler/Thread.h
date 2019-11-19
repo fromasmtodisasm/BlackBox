@@ -4,6 +4,7 @@
 #ifndef __THREAD_H__
 #define __THREAD_H__
 
+#if defined(ENABLE_PROFILER)
 // Basic types: ThreadHandle, ThreadId, Mutex, Event
 #ifdef WIN32
 
@@ -44,5 +45,6 @@ void			eventDestroy(Event* event);
 void			eventTrigger(Event* event);
 void			eventReset(Event* event);
 void			eventWait(Event* event);
+#endif
 
 #endif // __THREAD_H__

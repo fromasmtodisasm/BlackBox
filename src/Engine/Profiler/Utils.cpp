@@ -1,5 +1,6 @@
 // utils.cpp
 
+#ifdef ENABLE_PROFILER
 #include <BlackBox/Profiler/Utils.h>
 #include <iostream>
 #include <fstream>
@@ -196,3 +197,4 @@ namespace Utils
     return true;
   }
 }
+#endif

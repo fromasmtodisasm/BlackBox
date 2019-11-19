@@ -331,7 +331,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
       {
         if (control)
         {
-          cursor.x = command.size();
+          cursor.x = (int)command.size();
         }
         return true;
       }
@@ -659,7 +659,7 @@ void CConsole::moveCursor(bool left, bool wholeWord)
     {
       std::size_t found = command_text.rfind(" ", cursor.x - 1);
       if (found != std::string::npos)
-        cursor.x = std::min((size_t)cursor.x, found - 1);
+        cursor.x = static_cast<int>(std::min((size_t)cursor.x, found - 1));
     }
     else
     {
@@ -672,9 +672,9 @@ void CConsole::moveCursor(bool left, bool wholeWord)
     {
       std::size_t found = command_text.find_first_of(" ", cursor.x);
       if (found != std::string::npos)
-        cursor.x = std::min(command_text.size(), found + 1);
+        cursor.x = (int)std::min(command_text.size(), found + 1);
       else
-        cursor.x = command_text.size();
+        cursor.x = (int)command_text.size();
     }
     else
     {

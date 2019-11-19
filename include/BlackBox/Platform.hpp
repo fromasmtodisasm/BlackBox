@@ -10,6 +10,9 @@
 #define _CPU_X86
 // Insert your headers here
 #define WIN32_LEAN_AND_MEAN
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
 #include <Windows.h>
 #undef min
 #undef max

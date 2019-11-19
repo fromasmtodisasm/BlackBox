@@ -271,9 +271,9 @@ void CBaseInput::ClearAnalogKeyState()
     TInputSymbols clearedSymbols;
     (*i)->ClearAnalogKeyState(clearedSymbols);
 
-    int clearedSize = clearedSymbols.size();
+    size_t clearedSize = clearedSymbols.size();
 
-    for (int j = 0; j < clearedSize; j++)
+    for (size_t j = 0; j < clearedSize; j++)
     {
       ClearHoldEvent(clearedSymbols[j]);
     }
@@ -761,7 +761,7 @@ void CBaseInput::ClearHoldEvent(SInputSymbol* pSymbol)
 {
   // remove hold key
   int slot = -1;
-  int last = m_holdSymbols.size() - 1;
+  int last = static_cast<int>(m_holdSymbols.size() - 1);
 
   for (int i = last; i >= 0; --i)
   {

@@ -133,7 +133,7 @@ void CXClient::OnXClientDisconnect(const char* szCause)
   m_bConnected = 0;
 
   if (m_pISystem)
-    ;// m_pISystem->Disconnected(szCause);
+    void(0);// m_pISystem->Disconnected(szCause);
 
   m_pScriptSystem->BeginCall("ClientOnDisconnect");
   m_pScriptSystem->PushFuncParam(szCause);

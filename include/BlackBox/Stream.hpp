@@ -416,7 +416,7 @@ inline void CStream::Debug(const char* inTxt)
   {
     char str[256];
 
-    sprintf(str, "CStream::Debug (%d/%d/%d %c)%s\n", m_dwReadBitPos, m_dwBitSize, m_dwAllocatedBitSize, m_sa ? 't' : 'f', inTxt ? inTxt : "");
+    sprintf(str, "CStream::Debug (%zd/%zd/%zd %c)%s\n", m_dwReadBitPos, m_dwBitSize, m_dwAllocatedBitSize, m_sa ? 't' : 'f', inTxt ? inTxt : "");
 
     OutputDebugString(str);
 

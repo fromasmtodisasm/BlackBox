@@ -1,5 +1,7 @@
 // thread.cpp
 
+#ifdef ENABLE_PROFILER
+
 #include <BlackBox/Profiler/Thread.h>
 #include <assert.h>
 
@@ -153,5 +155,7 @@ void eventWait(Event* event)
     pthread_cond_wait(&event->cond, &event->mutex);
   pthread_mutex_unlock(&event->mutex);
 }
+
+#endif
 
 #endif

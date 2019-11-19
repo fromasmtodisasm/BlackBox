@@ -1,6 +1,7 @@
 // tgaloader.cpp
 // Version 2.1
 
+#ifdef ENABLE_PROFILER
 #include <BlackBox/Profiler/tgaloader.h>
 
 #ifdef TGA_USE_LOG_H
@@ -520,3 +521,5 @@ void TGALoader::free()
     bpp = 0;
   }
 }
+
+#endif

@@ -84,7 +84,9 @@ bool CSystem::Init()
   gISystem = this;
   /////////////////////////////////////////////
   m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
+#ifdef ENABLE_PROFILER
   initTimer();
+#endif
   m_pLog = new NullLog(m_startupParams.sLogFileName);
   if (m_pLog == nullptr)
     return false;
@@ -124,11 +126,13 @@ bool CSystem::Init()
   m_pInput->Init();
   //====================================================
   // Initialize the 2D drawer
+#ifdef ENABLE_PROFILER
   if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
   {
     fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
     return EXIT_FAILURE;
   }
+#endif
   //====================================================
   //TODO: IMPLEMENT THIS
 #if 0

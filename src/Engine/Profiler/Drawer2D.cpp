@@ -1,5 +1,6 @@
 // drawer2D.cpp
 
+#ifdef ENABLE_PROFILER
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Utils.h>
@@ -247,3 +248,4 @@ bool Drawer2D::initFont()
 
   return true;
 }
+#endif

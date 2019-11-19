@@ -1,5 +1,6 @@
 // hp_timer.cpp
 
+#ifdef ENABLE_PROFILER
 #include <BlackBox/Profiler/hp_timer.h>
 #include <stdio.h>
 
@@ -68,4 +69,5 @@ void initTimer()
 }
 
 void shutTimer() {}
+#endif
 #endif

@@ -1,5 +1,4 @@
 #include <BlackBox/Render/OpenGL/Debug.hpp>
-#include <glad/glad.h>
 #include <iostream>
 #include <vector>
 #include <sstream>

@@ -426,8 +426,8 @@ void HdrTechnique::downsamplingStandard()
   render->SetState(IRender::State::DEPTH_TEST, false);
   amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
-  float w = cam_width->GetIVal();
-  float h = cam_height->GetIVal();
+  float w = (int)cam_width->GetIVal();
+  float h = (int)cam_height->GetIVal();
   auto hdr_w = m_HdrBuffer->viewPort.z;
   auto hdr_h = m_HdrBuffer->viewPort.w;
 
@@ -513,8 +513,8 @@ void HdrTechnique::upsampling()
   for (unsigned int i = amount - 1; i > 0; i--)
   {
     LOG("\tBegin %d iteration\n", i);
-    int rx = (w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
-    int ry = (h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
+    int rx = (int)(w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
+    int ry = (int)(h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
     // Texture that blured
     auto& blured = first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0];
     // Texture on which the blur is superimposed
@@ -539,8 +539,8 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
   DEBUG_GROUP(__FUNCTION__);
-  float w = cam_width->GetIVal();
-  float h = cam_height->GetIVal();
+  float w = (int)cam_width->GetIVal();
+  float h = (int)cam_height->GetIVal();
   auto hdr_w = m_HdrBuffer->viewPort.z;
   auto hdr_h = m_HdrBuffer->viewPort.w;
   auto& ss = m_ScreenShader;

@@ -451,6 +451,9 @@ bool CRender::OnInputEvent(const SInputEvent& event)
 {
   switch (event.deviceType)
   {
+    break;
+  default:
+    break;
   }
   return false;
 }
