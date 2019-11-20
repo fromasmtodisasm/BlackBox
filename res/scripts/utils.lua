@@ -80,8 +80,12 @@ function init()
 	]]) 
 
 	Console:CreateKeyBind("f5", "screen_shot") 
+	Console:CreateKeyBind("s", "scene load test") 
+	Console:CreateKeyBind("p", "reload_scripts") 
 
 	setFog(0,0,0)
+
+	setvar("MouseSenitivity")
 end
 
 Test = {

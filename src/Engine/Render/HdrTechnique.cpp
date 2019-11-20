@@ -513,8 +513,8 @@ void HdrTechnique::upsampling()
   for (unsigned int i = amount - 1; i > 0; i--)
   {
     LOG("\tBegin %d iteration\n", i);
-    int rx = (int)(w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
-    int ry = (int)(h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
+    int rx = w / (1 << i - 1);
+    int ry = h / (1 << i - 1);
     // Texture that blured
     auto& blured = first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0];
     // Texture on which the blur is superimposed

@@ -37,9 +37,6 @@ function test(  )
 	player:OnInit(123)
 end
 
-
-
-
 test()
 
 
