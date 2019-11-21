@@ -32,6 +32,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <ctime>
 #include <cctype>
+#include <ctime>
+#include <iomanip>
 
 #include <sstream>
 
@@ -346,9 +348,6 @@ void CGame::DisplayInfo(float fps)
 		auto c = sf::Mouse::getPosition(::getWindow());
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(m_pRender->GetHeight() - c.y)).c_str(), info.getDTI());
 	}
-
-
-
 }
 
 bool CGame::Run(bool& bRelaunch) {
@@ -358,6 +357,32 @@ bool CGame::Run(bool& bRelaunch) {
   //m_PlayList.play();
   m_isMusicPlaying = true;
 	m_bRelaunch = false;
+	{
+		auto p = GET_CVAR("single_pass");
+		if (p->GetIVal())
+		{
+			SmartScriptObject test(m_pScriptSystem);
+			if (!m_pScriptSystem->GetGlobalValue("Test", *test))
+			{
+				delete test;
+				m_pSystem->Log("\002 ERROR: can't find Test table ");
+				return false;
+			}
+			
+			m_pScriptSystem->BeginCall("Test", "OnInit");
+			m_pScriptSystem->PushFuncParam(*test);
+			m_pScriptSystem->EndCall();
+
+			Update();
+			std::time_t t = std::time(nullptr);
+			std::stringstream ss;
+			ss << "screen_shots/tests/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".png";
+			m_Log->Log("Screenshot name: %s", ss.str().c_str());
+			m_pRender->ScreenShot(ss.str().c_str());
+
+			return true;
+		}
+	}
 	while (1)
 	{
 		if (!Update())

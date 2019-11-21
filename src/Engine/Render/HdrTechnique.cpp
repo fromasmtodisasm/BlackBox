@@ -9,6 +9,11 @@
 #include <BlackBox/ISystem.hpp>
 
 #define NBLOOM
+#ifdef TEST
+	#define LOG(fmt, ...) log->Log(fmt, __VA_ARGS__)
+#else
+	#define LOG(fmt, ...)
+#endif
 constexpr auto IMAGE = 0;
 constexpr auto PREVIOS = 0;
 constexpr auto CURRENT = 1;
@@ -38,6 +43,7 @@ HdrTechnique::HdrTechnique()
 	cam_height(nullptr),
 	cam_width(nullptr),
 	render(nullptr),
+	log(nullptr),
 
 	quadCorners{0},
 	quadCornersVBO{0},
@@ -57,6 +63,7 @@ bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
   if (inited)
     return true;
   render = GetISystem()->GetIRender();
+	log = GetISystem()->GetILog();
   m_Scene = pScene;
 	InitConsoleVariables();
 	initTest();
@@ -329,7 +336,7 @@ void HdrTechnique::InitConsoleVariables()
 	cam_height	= GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
 	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
-	REGISTER_CVAR("show_all_frame_buffer", showAllFrameBuffer, 1, VF_NULL, "");
+	REGISTER_CVAR("show_all_frame_buffer", showAllFrameBuffer, 0, VF_NULL, "");
 
 }
 
@@ -402,6 +409,7 @@ void HdrTechnique::PostRenderPass()
 
 void HdrTechnique::downsampling()
 {
+	LOG("Start downsampling\n");
 	if (downsampleType->GetIVal() == 0)
 		downsamplingStandard();
 	else
@@ -429,15 +437,23 @@ void HdrTechnique::downsamplingStandard()
 
 	ds->Uniform((w/hdr_w), "vx");
 	ds->Uniform((h/hdr_h), "vy");
+	LOG("\tvx = %f\n", (w / hdr_w));
+	LOG("\tvy = %f\n", (h/hdr_h));
+
 	for (unsigned int i = 0; i < amount - 1; i++)
 	{
-		auto rx = w / (1 << (i + 1));
-		auto ry = h / (1 << (i + 1));
-		ds->Uniform(rx, "rx");
-		ds->Uniform(rx, "ry");
-		m_DownsampleBuffer[i + 1]->bind({ 0,0, rx, ry });
+	LOG("\tBegin %d iteration\n", i);
+		auto rx = w / (1 << (i/* + 1*/));
+		auto ry = h / (1 << (i/* + 1*/));
+		auto vpx = w / (1 << (i + 1));
+		auto vpy = h / (1 << (i + 1));
+		ds->Uniform((int)rx, "rx");
+		ds->Uniform((int)ry, "ry");
+	LOG("\t\trx = %f\n", rx);
+	LOG("\t\try = %f\n", ry);
+		m_DownsampleBuffer[i + 1]->bind({ 0,0, vpx, vpy });
 
-		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[1] : m_DownsampleBuffer[i]->texture[0], IMAGE);
+		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
 		m_ScreenQuad.draw();
 		horizontal = !horizontal;
 		if (first_iteration)
@@ -480,6 +496,7 @@ void HdrTechnique::downsamplingCompute()
 
 void HdrTechnique::upsampling()
 {
+	LOG("Start upsampling\n");
 	auto& up = m_UpsampleShader;
 	up->Use();
 	up->Uniform(blurOn->GetIVal(), "blurOn");
@@ -499,7 +516,7 @@ void HdrTechnique::upsampling()
 	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 	for (unsigned int i = amount - 1; i > 0; i--)
 	{
-
+		LOG("\tBegin %d iteration\n", i);
 		int rx = (w / hdr_w) * m_UpsampleBuffer[i - 1]->viewPort.z;
 		int ry = (h / hdr_h) * m_UpsampleBuffer[i - 1]->viewPort.w;
 		// Texture that blured
@@ -508,8 +525,10 @@ void HdrTechnique::upsampling()
 		auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
 		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
-		up->Uniform((float)rx, "rx");
-		up->Uniform((float)rx, "ry");
+		up->Uniform(rx, "rx");
+		up->Uniform(ry, "ry");
+		LOG("\t\trx = %d\n", rx);
+		LOG("\t\try = %d\n", ry);
 
 		rt->bind(Vec4(0,0, rx, ry));
 		up->BindTexture2D(blured,					PREVIOS, "blured");
@@ -524,8 +543,8 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	auto w = cam_width->GetIVal();
-	auto h = cam_height->GetIVal();
+	float w = cam_width->GetIVal();
+	float h = cam_height->GetIVal();
 	auto hdr_w = m_HdrBuffer->viewPort.z;
 	auto hdr_h = m_HdrBuffer->viewPort.w;
 	auto& ss = m_ScreenShader;
@@ -543,7 +562,10 @@ void HdrTechnique::Do(unsigned int texture)
 	if (!showAllFrameBuffer)
 		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
-	ss->Uniform(scale, "viewPortf");
+	//auto uv_projection = Mat4(1.f);
+	//uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
+	//ss->Uniform(uv_projection, "uv_projection");
+	ss->Uniform(scale, "scale");
 	//FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
 	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
 	m_ScreenQuad.draw();

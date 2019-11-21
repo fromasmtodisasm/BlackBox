@@ -13,8 +13,8 @@ uniform float weight[2] = float[](0.125, 0.5);
 uniform float offset = -3.0;
 uniform float vx = 1;
 uniform float vy = 1;
-uniform float rx;
-uniform float ry;
+uniform int rx;
+uniform int ry;
 
 // Todo: specify calculation of offset for box filter
 vec3 offsets[13] = vec3[](
@@ -53,18 +53,17 @@ vec4 downsample(vec2 uv)
 	for (int i = 0; i < 13; i++)
 	{
 		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
-		float dev = 0;
+		float dev = 0.5;
 		vec2 m = vec2(vx,vy) - tex_size;
-		if (all(lessThan((gl_FragCoord.xy-1.5 + 0.5*(offsets[i].xy + offset)), vec2(floor(rx) - dev,floor(ry) - dev))))
+		vec2 texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
+		if (all(greaterThan(coord, vec2(rx,ry)-1)))
 		{
-			vec2 texel = clamp((coord * tex_size), vec2(0.5)*tex_size, m);
+			vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + 2*offset));
+			texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
 			result += Sample(texel) * offsets[i].z;
+			continue;
 		}
-		else
-		{
-			vec2 texel = clamp(((2 * gl_FragCoord.xy ) * tex_size), vec2(0.5)*tex_size, m);
-			result += 0;//Sample(texel) * offsets[i].z*0.00000001;
-		}
+		result += Sample(texel) * offsets[i].z;
 	}
 	return result;
 }
@@ -74,5 +73,4 @@ void main()
 	vec2 uv = 2 * (gl_FragCoord.xy) / vec2(textureSize(image, 0));
 	FragColor = downsample(uv);
 }
-
 

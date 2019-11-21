@@ -6,6 +6,9 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 //
 #include <SFML/Window.hpp>
 
@@ -147,6 +150,23 @@ int CRender::GetHeight()
 
 void CRender::ScreenShot(const char* filename)
 {
+	GLint drawFboId = 0;// , readFboId = 0;
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+
+	gl::BindFramebuffer(0);
+	GLint dims[4] = { 0 };
+	glGetIntegerv(GL_VIEWPORT, dims);
+	GLint width = dims[2];
+	GLint height = dims[3];
+
+	uint8_t* pixels = new uint8_t[3 * width * height];
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+	stbi_flip_vertically_on_write(1);
+	stbi_write_png(filename, width, height, 3, pixels, width * 3);
+
+	//stbi_image_free(img);
+	gl::BindFramebuffer(drawFboId);
 }
 
 void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width, float height)

@@ -572,12 +572,12 @@ void CConsole::Dump()
 void CConsole::getBuffer()
 {
 	std::string toClipBoard = "";
-	for (auto& cmd_line : cmd_buffer)
+	for (auto& cmd_line : command_text)
 	{
-		for (auto& cmd : cmd_line)
-		{
-			toClipBoard += cmd.data;
-		}
+		//for (auto& cmd : cmd_line)
+		//{
+			toClipBoard += cmd_line;// .data;
+		//}
 
 	}
 	sf::Clipboard::setString(toClipBoard);

@@ -17,6 +17,10 @@ set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
 
 ###################################################
 #add_subdirectory(submodules/glfw)
+if (BB_TESET_ENABLE)
+  add_definitions(-DTEST)
+  add_definitions(-DSINGLE_PASS)
+endif()
 if (GLAD_LOADER)
   #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glad glad)
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib lib)

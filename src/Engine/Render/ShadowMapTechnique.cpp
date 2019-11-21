@@ -229,7 +229,6 @@ void ShadowMapping::OnRenderPass()
 	//pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
 	//pSystem->GetIRender()->SetScissor(0, 0, w, h);
 	auto render = GetISystem()->GetIRender();
-	render->DrawImage(0, 0, w, render->GetHeight() - h, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 	//render->ClearDepthBuffer();
 	m_RenderedScene->clear(gl::Color(fog));
 	//pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
