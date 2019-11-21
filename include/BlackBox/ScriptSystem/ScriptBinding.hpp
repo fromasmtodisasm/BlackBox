@@ -12,12 +12,12 @@ struct ScriptBase;
 class CScriptBindings
 {
 public:
-	CScriptBindings();
-	virtual ~CScriptBindings();
+  CScriptBindings();
+  virtual ~CScriptBindings();
 
-	void         Init(ISystem* pSystem, IScriptSystem* pSS);
-	void         Done();
+  void         Init(ISystem* pSystem, IScriptSystem* pSS);
+  void         Done();
 
 private:
-	std::vector<std::unique_ptr<ScriptBase>> m_binds;
+  std::vector<std::unique_ptr<ScriptBase>> m_binds;
 };

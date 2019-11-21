@@ -2,7 +2,6 @@
 #include <iostream>
 using namespace std;
 
-
 bool OpenGLLoader()
 {
   if (!gladLoadGL()) {

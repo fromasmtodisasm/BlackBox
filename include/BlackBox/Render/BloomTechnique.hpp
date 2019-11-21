@@ -25,10 +25,10 @@ private:
   void createShader();
 
 private:
-  ITechnique *shadowMapping;
+  ITechnique* shadowMapping;
   CBaseShaderProgram* m_ScreenShader;
   //ScreenShader *m_ScreenShader;
-	Quad m_ScreenQuad;
+  Quad m_ScreenQuad;
   FrameBufferObject* m_HdrBuffer;
   Scene* m_Scene;
 

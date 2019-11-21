@@ -14,12 +14,12 @@ void CXServer::DrawNetStats(IRenderer* pRenderer)
 
 bool CXServer::IsInDestruction() const
 {
-	return false;
+  return false;
 }
 
 bool CXServer::IsIPBanned(const unsigned int dwIP)
 {
-	return false;
+  return false;
 }
 
 void CXServer::BanIP(const unsigned int dwIP)
@@ -36,17 +36,17 @@ void CXServer::CheaterFound(const unsigned int dwIP, int type, const char* sMsg)
 
 bool CXServer::GetSlotInfo(const unsigned int dwIP, SSlotInfo& info, int nameOnly)
 {
-	return false;
+  return false;
 }
 
 bool CXServer::GetServerInfo()
 {
-	return false;
+  return false;
 }
 
 const char* CXServer::GetMsgName(XSERVERMSG inValue)
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CXServer::SaveBanList(bool bSaveID, bool bSaveIP)
@@ -59,37 +59,37 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 
 CXServerSlot* CXServer::GetServerSlotByIP(unsigned int clientIP) const
 {
-	return nullptr;
+  return nullptr;
 }
 
 bool CXServer::CreateServerSlot(IServerSlot* pIServerSlot)
 {
-	return false;
+  return false;
 }
 
 bool CXServer::GetServerInfoStatus(std::string& szServerStatus)
 {
-	return false;
+  return false;
 }
 
 bool CXServer::GetServerInfoStatus(std::string& szName, std::string& szGameType, std::string& szMap, std::string& szVersion, bool* pbPassword, int* piPlayers, int* piMaxPlayers)
 {
-	return false;
+  return false;
 }
 
 bool CXServer::GetServerInfoRules(std::string& szServerRules)
 {
-	return false;
+  return false;
 }
 
 bool CXServer::GetServerInfoPlayers(std::string* vszStrings[4], int& nStrings)
 {
-	return false;
+  return false;
 }
 
 bool CXServer::ProcessXMLInfoRequest(const char* sRequest, const char* sRespone, int nResponseMaxLength)
 {
-	return false;
+  return false;
 }
 
 void CXServer::RegisterSlot(CXServerSlot* pSlot)
@@ -106,7 +106,7 @@ void CXServer::ClearSlots()
 
 int CXServer::GetNumPlayers()
 {
-	return 0;
+  return 0;
 }
 
 void CXServer::Update()
@@ -143,7 +143,7 @@ void CXServer::SyncAIState(void)
 
 bool CXServer::GetContext(SXGameContext& ctxOut)
 {
-	return false;
+  return false;
 }
 
 void CXServer::AddRespawnPoint(ITagPoint* pPoint)
@@ -156,27 +156,27 @@ void CXServer::RemoveRespawnPoint(ITagPoint* pPoint)
 
 ITagPoint* CXServer::GetFirstRespawnPoint()
 {
-	return nullptr;
+  return nullptr;
 }
 
 ITagPoint* CXServer::GetNextRespawnPoint()
 {
-	return nullptr;
+  return nullptr;
 }
 
 ITagPoint* CXServer::GetPrevRespawnPoint()
 {
-	return nullptr;
+  return nullptr;
 }
 
 ITagPoint* CXServer::GetRespawnPoint(char* name)
 {
-	return nullptr;
+  return nullptr;
 }
 
 ITagPoint* CXServer::GetRandomRespawnPoint(const char* sFilter)
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CXServer::AddToTeam(const char* sTeam, int eid)
@@ -205,17 +205,17 @@ void CXServer::SetTeamFlags(const char* sTeam, int flags)
 
 unsigned CXServer::MemStats()
 {
-	return 0;
+  return 0;
 }
 
 unsigned int CXServer::GetSchedulingDelay()
 {
-	return 0;
+  return 0;
 }
 
 unsigned int CXServer::GetMaxUpdateRate() const
 {
-	return 0;
+  return 0;
 }
 
 void CXServer::OnMapChanged()
@@ -224,7 +224,7 @@ void CXServer::OnMapChanged()
 
 bool CXServer::IsIDBanned(const BannedID& ID)
 {
-	return false;
+  return false;
 }
 
 void CXServer::BanID(const BannedID& ID)

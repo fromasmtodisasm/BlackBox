@@ -11,5 +11,4 @@
 
 #define lua_getref(L,ref)       lua_rawgeti(L, LUA_REGISTRYINDEX, (ref))
 
-
 #define luaL_reg	luaL_Reg

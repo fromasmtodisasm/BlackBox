@@ -9,13 +9,12 @@ class ShadowMapShader : public CBaseShaderProgram
   static const char* vs;
   static const char* fs;
 public:
-	ShadowMapShader();
-	~ShadowMapShader();
-
+  ShadowMapShader();
+  ~ShadowMapShader();
 
 private:
-	ISystem* m_Engine;
+  ISystem* m_Engine;
 
-	// Inherited via CBaseShaderProgram
-	virtual void setup() override;
+  // Inherited via CBaseShaderProgram
+  virtual void setup() override;
 };

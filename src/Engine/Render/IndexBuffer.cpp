@@ -4,13 +4,13 @@
 
 using namespace std;
 
-IndexBuffer::IndexBuffer(const void *data, size_t size) :
+IndexBuffer::IndexBuffer(const void* data, size_t size) :
   m_Data(data), m_Size(size)
 {
   glCheck(glGenVertexArrays(1, &VAO));
 
-  glCheck(glBindVertexArray(VAO)); 
-  glCheck(glGenBuffers(1, &VBO));  
+  glCheck(glBindVertexArray(VAO));
+  glCheck(glGenBuffers(1, &VBO));
 
   glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO));
   glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
@@ -39,8 +39,7 @@ void IndexBuffer::unbind()
 
 void IndexBuffer::draw()
 {
-
-  glCheck(glBindVertexArray(VAO)); 
+  glCheck(glBindVertexArray(VAO));
   glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Size, m_Data, GL_STATIC_DRAW));
   // 1. Затем установим указатели на вершинные атрибуты
   glCheck(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0));

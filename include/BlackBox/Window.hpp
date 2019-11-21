@@ -6,5 +6,3 @@ typedef CSFMLWindow CWindow;
 #include "GLFWWindow.hpp"
 typedef CGLFWWindow CWindow;
 #endif // SFML_WINDOW
-
-

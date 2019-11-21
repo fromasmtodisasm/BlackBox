@@ -1,16 +1,15 @@
-
 //////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-//	
+//
 //  File:   Linux64Specific.h
 //  Description: Specific to Linux declarations, inline functions etc.
 //								64 bit version.
 //
 //	History:
 //	- 05/03/2004: Created by Marco Koegler
-//	- February 2005: Modified by Marco Corbetta for SDK release	
+//	- February 2005: Modified by Marco Corbetta for SDK release
 //
 ////////////////////////////////////////////////////////////////////////////
 
@@ -42,28 +41,27 @@ typedef unsigned short			u16;
 typedef unsigned int				u32;
 typedef unsigned long long	u64;
 
-
 typedef uint64							DWORD_PTR;
-typedef intptr_t INT_PTR, *PINT_PTR;
-typedef uintptr_t UINT_PTR, *PUINT_PTR;
-typedef char *LPSTR, *PSTR;
+typedef intptr_t INT_PTR, * PINT_PTR;
+typedef uintptr_t UINT_PTR, * PUINT_PTR;
+typedef char* LPSTR, * PSTR;
 typedef unsigned long long __uint64;
 typedef signed long long __int64;
 
 typedef signed long long		INT64;
 typedef long long						UINT64;
 
-typedef long LONG_PTR, *PLONG_PTR, *PLONG;
-typedef unsigned long ULONG_PTR, *PULONG_PTR;
+typedef long LONG_PTR, * PLONG_PTR, * PLONG;
+typedef unsigned long ULONG_PTR, * PULONG_PTR;
 
 typedef unsigned char				BYTE;
 typedef unsigned short			WORD;
-typedef void*								HWND;
+typedef void* HWND;
 typedef UINT_PTR 						WPARAM;
 typedef LONG_PTR 						LPARAM;
 typedef LONG_PTR 						LRESULT;
 #define PLARGE_INTEGER LARGE_INTEGER*
-typedef const char *LPCSTR, *PCSTR;
+typedef const char* LPCSTR, * PCSTR;
 typedef long long						LONGLONG;
 typedef	ULONG_PTR						SIZE_T;
 typedef unsigned char				byte;

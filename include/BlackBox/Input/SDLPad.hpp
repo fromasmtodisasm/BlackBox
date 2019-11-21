@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 /*************************************************************************
    -------------------------------------------------------------------------
@@ -13,8 +13,8 @@
 
 #pragma once
 
-	#include <SDL2/SDL.h>
-	#include <BlackBox/Input/SDLInput.hpp>
+#include <SDL2/SDL.h>
+#include <BlackBox/Input/SDLInput.hpp>
 // We need a manager, since all the input for each Game Pad is collected
 // in the same queue. If we were to update the game pads seperately
 // they would consume each other's events.
@@ -23,69 +23,69 @@ class CSDLPad : public CLinuxInputDevice
 {
 public:
 
-	CSDLPad(CLinuxInput& input, int device);
+  CSDLPad(CLinuxInput& input, int device);
 
-	virtual ~CSDLPad();
+  virtual ~CSDLPad();
 
-	// IInputDevice overrides
-	virtual int  GetDeviceIndex() const { return m_deviceNo; }
-	virtual bool Init();
-	virtual void Update(bool bFocus);
-	virtual void ClearAnalogKeyState(TInputSymbols& clearedSymbols);
-	virtual void ClearKeyState();
-	virtual bool SetForceFeedback(IFFParams params);
-	// ~IInputDevice
+  // IInputDevice overrides
+  virtual int  GetDeviceIndex() const { return m_deviceNo; }
+  virtual bool Init();
+  virtual void Update(bool bFocus);
+  virtual void ClearAnalogKeyState(TInputSymbols& clearedSymbols);
+  virtual void ClearKeyState();
+  virtual bool SetForceFeedback(IFFParams params);
+  // ~IInputDevice
 
-	int          GetInstanceId() const;
+  int          GetInstanceId() const;
 
-	void         HandleAxisEvent(const SDL_JoyAxisEvent& evt);
+  void         HandleAxisEvent(const SDL_JoyAxisEvent& evt);
 
-	void         HandleHatEvent(const SDL_JoyHatEvent& evt);
+  void         HandleHatEvent(const SDL_JoyHatEvent& evt);
 
-	void         HandleButtonEvent(const SDL_JoyButtonEvent& evt);
+  void         HandleButtonEvent(const SDL_JoyButtonEvent& evt);
 
-	void         HandleConnectionState(const bool connected);
+  void         HandleConnectionState(const bool connected);
 private:
-	static float DeadZoneFilter(int input);
+  static float DeadZoneFilter(int input);
 
-	bool         OpenDevice();
+  bool         OpenDevice();
 
-	void         CloseDevice();
+  void         CloseDevice();
 
 private:
-	SDL_Joystick* m_pSDLDevice;
-	SDL_Haptic*   m_pHapticDevice;
-	int           m_curHapticEffect;
-	int           m_deviceNo;
-	int           m_handle;
-	bool          m_connected;
-	bool          m_supportsFeedback;
-	float         m_vibrateTime;
+  SDL_Joystick* m_pSDLDevice;
+  SDL_Haptic* m_pHapticDevice;
+  int           m_curHapticEffect;
+  int           m_deviceNo;
+  int           m_handle;
+  bool          m_connected;
+  bool          m_supportsFeedback;
+  float         m_vibrateTime;
 };
 
 class CSDLPadManager
 {
 public:
 
-	CSDLPadManager(CLinuxInput& input);
+  CSDLPadManager(CLinuxInput& input);
 
-	~CSDLPadManager();
+  ~CSDLPadManager();
 
-	bool Init();
+  bool Init();
 
-	void Update(bool bFocus);
+  void Update(bool bFocus);
 
 private:
-	bool     AddGamePad(int deviceIndex);
+  bool     AddGamePad(int deviceIndex);
 
-	bool     RemovGamePad(int instanceId);
+  bool     RemovGamePad(int instanceId);
 
-	CSDLPad* FindPadByInstanceId(int instanceId);
-	CSDLPad* FindPadByDeviceIndex(int deviceIndex);
+  CSDLPad* FindPadByInstanceId(int instanceId);
+  CSDLPad* FindPadByDeviceIndex(int deviceIndex);
 private:
 
-	typedef std::vector<CSDLPad*> GamePadVector;
+  typedef std::vector<CSDLPad*> GamePadVector;
 
-	CLinuxInput&  m_rLinuxInput;
-	GamePadVector m_gamePads;
+  CLinuxInput& m_rLinuxInput;
+  GamePadVector m_gamePads;
 };

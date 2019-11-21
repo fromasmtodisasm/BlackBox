@@ -4,26 +4,25 @@
 
 using	namespace std;
 
-TextureManager *TextureManager::manager = nullptr;
+TextureManager* TextureManager::manager = nullptr;
 
-TextureManager *TextureManager::instance()
+TextureManager* TextureManager::instance()
 {
   if (manager == nullptr)
   {
     manager = new TextureManager();
   }
   return manager;
-
 }
 
-BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
+BaseTexture* TextureManager::getTexture(std::string name, bool isSkyBox)
 {
   std::string prefix = "res/images/";
   bool usPrefix = true;
   if (name.find("/") != name.npos)
     usPrefix = false;
 
-  BaseTexture *texture;
+  BaseTexture* texture;
   {
     std::string Path;
     if (usPrefix)
@@ -35,20 +34,20 @@ BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
       texture = t->second;
     }
     else {
-			if (isSkyBox)
-				texture = new TextureCube();
-			else
-				texture = new Texture();
+      if (isSkyBox)
+        texture = new TextureCube();
+      else
+        texture = new Texture();
       texture->path = std::make_shared<std::string>(Path);
-			texture->load(name.c_str());
-			if (t != cache.end())
-			{
-				cache[Path + "alphaDist"] = texture;
-			}
-			else
-			{
-				cache[Path] = texture;
-			}
+      texture->load(name.c_str());
+      if (t != cache.end())
+      {
+        cache[Path + "alphaDist"] = texture;
+      }
+      else
+      {
+        cache[Path] = texture;
+      }
     }
     if (texture == nullptr)
     {
@@ -56,7 +55,7 @@ BaseTexture *TextureManager::getTexture(std::string name, bool isSkyBox)
     }
     else
     {
-      GetISystem()->GetILog()->Log("[INFO] Texture [%s] loaded\n",  Path.c_str());
+      GetISystem()->GetILog()->Log("[INFO] Texture [%s] loaded\n", Path.c_str());
     }
   }
   return texture;

@@ -22,7 +22,7 @@ public:
   void pause();
   void stop();
   void setVolume(float volume);
-  void setRootPath(const std::string &RootPath);
+  void setRootPath(const std::string& RootPath);
   float getVolume() const;
 };
 

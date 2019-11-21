@@ -1,7 +1,6 @@
 #ifndef _IMARKERS_H_
 #define _IMARKERS_H_
 
-
 //////////////////////////////////////////////////////////////////////
 typedef struct ITagPoint
 {
@@ -15,7 +14,6 @@ typedef struct ITagPoint
   virtual char* GetName() = 0;
 
   virtual void Release() = 0;
-
 } ITagPoint;
 
 //////////////////////////////////////////////////////////////////////

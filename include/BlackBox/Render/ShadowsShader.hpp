@@ -6,13 +6,12 @@
 class ShadowsShader : public CBaseShaderProgram
 {
 public:
-	ShadowsShader();
-	~ShadowsShader();
-
+  ShadowsShader();
+  ~ShadowsShader();
 
 private:
-	ISystem* m_Engine;
+  ISystem* m_Engine;
 
-	// Inherited via CBaseShaderProgram
-	virtual void setup() override;
+  // Inherited via CBaseShaderProgram
+  virtual void setup() override;
 };

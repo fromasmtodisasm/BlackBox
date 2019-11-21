@@ -10,6 +10,9 @@
 #define _CPU_X86
 // Insert your headers here
 #define WIN32_LEAN_AND_MEAN
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
 #include <Windows.h>
 #undef min
 #undef max
@@ -25,17 +28,17 @@
 template<typename T>
 inline auto SAFE_DELETE(T const* t) -> decltype((void)(t->Release()), void())
 {
-	t->Release();
+  t->Release();
 }
 
 template<typename T>
-inline auto SAFE_DELETE(T *& t)
+inline auto SAFE_DELETE(T*& t)
 {
-	if (t != nullptr)
-	{
-		delete t;
-		t = nullptr;
-	}
+  if (t != nullptr)
+  {
+    delete t;
+    t = nullptr;
+  }
 }
 
 #define BIT(x)    (1u << (x))
@@ -47,7 +50,7 @@ inline auto SAFE_DELETE(T *& t)
 #define FUNCTION_PROFILER(...)
 #define LogAlways(...) void(0);
 
-#define TRACE(...)  
+#define TRACE(...)
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.

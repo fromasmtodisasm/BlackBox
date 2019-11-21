@@ -2,5 +2,4 @@
 
 Plane::Plane()
 {
-  
 }
