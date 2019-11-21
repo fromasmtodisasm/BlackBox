@@ -187,6 +187,7 @@ public:
 	virtual bool OnInputEventUI(const SUnicodeEvent& event);
 	void getHistoryElement();
 	void completeCommand(std::vector<std::wstring>& completion);
+	void completeCommands(std::vector<std::wstring>& completion);
 	void setBuffer();
 	bool handleEnterText();
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;

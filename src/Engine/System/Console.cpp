@@ -302,16 +302,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				completion = autocomplete(command);
 				if (completion.size() > 0)
 				{
-					if (completion.size() == 1)
-					{
-						completeCommand(completion);
-					}
-					else
-					{
-						//SetInputLine("");
-						//ClearInputLine();
-						addToCommandBuffer(completion);
-					}
+          completeCommand(completion);
 				}
 				return true;
 			case eKI_A:
@@ -452,12 +443,46 @@ void CConsole::getHistoryElement()
 
 void CConsole::completeCommand(std::vector<std::wstring>& completion)
 {
-	SetInputLine("");
-	for (auto& ch : completion[0])
-	{
-		AddInputChar(ch);
-	}
-	command += L" ";
+  SetInputLine("");
+  std::wstring result;
+
+  if (completion.size() == 1)
+    result = completion[0];
+
+  // Sort the given array 
+  std::sort(completion.begin(), completion.end());
+
+  // Find the minimum length from  
+  // first and last string 
+  int en = std::min(completion[0].size(),
+    completion[completion.size() - 1].size());
+
+  // Now the common prefix in first and  
+  // last string is the longest common prefix 
+  std::wstring first = completion[0], last = completion[completion.size() - 1];
+  int i = 0;
+  while (i < en && first[i] == last[i])
+    i++;
+
+  result = first.substr(0, i);
+
+  for (auto& ch : result)
+  {
+    AddInputChar(ch);
+  }
+
+  if (completion.size() > 1)
+  {
+    addToCommandBuffer(completion);
+  }
+  else
+  {
+    command += L" ";
+  }
+}
+
+void CConsole::completeCommands(std::vector<std::wstring>& completion)
+{
 }
 
 void CConsole::setBuffer()
