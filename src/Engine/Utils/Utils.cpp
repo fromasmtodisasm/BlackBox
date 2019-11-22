@@ -129,7 +129,7 @@ std::wstring str_to_wstr(const std::string& str)
 {
   std::wstring result;
   if (str.length() == 0)
-    return L" ";
+    return L"";
   result.resize(str.length());
   auto r_it = result.begin();
   char tmp[6] = { 0 };
