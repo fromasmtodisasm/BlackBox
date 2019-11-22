@@ -55,7 +55,7 @@ vec4 downsample(vec2 uv)
 		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
 		float dev = 0.5;
 		vec2 m = vec2(vx,vy) - tex_size;
-		vec2 texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
+		vec2 texel = clamp(coord, vec2(1), vec2(rx,ry) - 1) * tex_size;
 		if (all(greaterThan(coord, vec2(rx,ry)-1)))
 		{
 			vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + 2*offset));

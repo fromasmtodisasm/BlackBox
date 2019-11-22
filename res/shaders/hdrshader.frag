@@ -23,8 +23,9 @@ void main()
 {             
     const float gamma = 2.2;
 	vec2 bloom_size = 1.0/textureSize(bloomBlur,0);
-    vec3 hdrColor = texture(scene, TexCoords*scale).rgb;      
-    vec3 bloomColor = texture(bloomBlur, clamp((TexCoords - bloom_size)*scale, vec2(0.5)*bloom_size, vec2(1.0))).rgb;
+	vec2 hdr_size = 1.0/textureSize(scene,0);
+    vec3 hdrColor = textureLod(scene, (TexCoords - hdr_size)*scale, 0).rgb;      
+    vec3 bloomColor = textureLod(bloomBlur, clamp((TexCoords - bloom_size)*scale, vec2(0.5)*bloom_size, vec2(1.0)), 0).rgb;
     if(bloom)
         hdrColor += bloomColor * bloom_exposure; // additive blending
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);

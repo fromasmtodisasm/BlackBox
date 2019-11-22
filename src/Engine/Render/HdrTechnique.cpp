@@ -417,7 +417,7 @@ void HdrTechnique::downsamplingStandard()
 {
   // 2. blur bright fragments with two-pass Gaussian Blur
   // --------------------------------------------------
-  bool horizontal = true, first_iteration = true;
+  bool first_iteration = true;
   unsigned int amount = PASSES;
   auto& ds = m_DownsampleShader;
   ds->Use();
@@ -426,10 +426,10 @@ void HdrTechnique::downsamplingStandard()
   render->SetState(IRender::State::DEPTH_TEST, false);
   amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
-  float w = (int)cam_width->GetIVal();
-  float h = (int)cam_height->GetIVal();
-  auto hdr_w = m_HdrBuffer->viewPort.z;
-  auto hdr_h = m_HdrBuffer->viewPort.w;
+  const float w = cam_width->GetIVal();
+  const float h = cam_height->GetIVal();
+  const auto hdr_w = m_HdrBuffer->viewPort.z;
+  const auto hdr_h = m_HdrBuffer->viewPort.w;
 
   ds->Uniform((w / hdr_w), "vx");
   ds->Uniform((h / hdr_h), "vy");
@@ -439,23 +439,21 @@ void HdrTechnique::downsamplingStandard()
   for (unsigned int i = 0; i < amount - 1; i++)
   {
     LOG("\tBegin %d iteration\n", i);
-    auto rx = w / (1 << (i/* + 1*/));
-    auto ry = h / (1 << (i/* + 1*/));
+    int rx = w / (1 << (i));
+    int ry = h / (1 << (i));
     auto vpx = w / (1 << (i + 1));
     auto vpy = h / (1 << (i + 1));
-    ds->Uniform((int)rx, "rx");
-    ds->Uniform((int)ry, "ry");
+    ds->Uniform(rx, "rx");
+    ds->Uniform(ry, "ry");
     LOG("\t\trx = %f\n", rx);
     LOG("\t\try = %f\n", ry);
     m_DownsampleBuffer[i + 1]->bind({ 0,0, vpx, vpy });
 
     ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
     m_ScreenQuad.draw();
-    horizontal = !horizontal;
     if (first_iteration)
       first_iteration = false;
   }
-  pingpong = !horizontal;
   ds->Unuse();
 
 #if 0
