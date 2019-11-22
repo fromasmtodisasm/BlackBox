@@ -59,6 +59,7 @@ function init()
 	Console:CreateKeyBind("num2", "@load2()");
 
 	Console:CreateKeyBind("a", [[@retrigger_value("r_aspect")]]);
+	Console:CreateKeyBind("c", "Console:Show(false)")  
 	Console:CreateKeyBind("b", "@setFog(0,0,0)") 
 	Console:CreateKeyBind("g", "@setFog(0,0.01,0.01)")  
 
