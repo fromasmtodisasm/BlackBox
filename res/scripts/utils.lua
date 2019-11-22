@@ -86,6 +86,8 @@ function init()
 	setFog(0,0,0)
 
 	setvar("MouseSenitivity")
+
+	Console:Show(true)
 end
 
 Test = {

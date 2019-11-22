@@ -167,7 +167,6 @@ bool CGame::Init(ISystem* pEngine) {
   InitInputMap();
   InitConsoleCommands();
 
-  m_pSystem->GetIConsole()->ShowConsole(0);
   DevModeInit();
 
 #if 0

@@ -3,6 +3,7 @@
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
+#include <BlackBox/Input/InputCVars.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -161,7 +162,7 @@ void CSDLMouse::Update(bool focus)
       {
         if (motionEvent->xrel != 0 || motionEvent->yrel != 0)
         {
-          float mouseaccel = 1.0f;// g_pInputCVars->i_mouse_accel;
+          float mouseaccel = g_pInputCVars->i_mouse_accel;
           m_deltas.x = (float)motionEvent->xrel;
           m_deltas.y = (float)motionEvent->yrel;
 
@@ -170,10 +171,10 @@ void CSDLMouse::Update(bool focus)
             m_deltas.x = m_deltas.x * fabs(m_deltas.x * mouseaccel);
             m_deltas.y = m_deltas.y * fabs(m_deltas.y * mouseaccel);
 
-            CapDeltas(1.0f/*g_pInputCVars->i_mouse_accel_max*/);
+            CapDeltas(g_pInputCVars->i_mouse_accel_max);
           }
 
-          SmoothDeltas(/*g_pInputCVars->i_mouse_smooth*/ 0.00001f);
+          SmoothDeltas(g_pInputCVars->i_mouse_smooth);
 
           pSymbol = DevSpecIdToSymbol(MOUSE_AXIS_X);
           assert(pSymbol);
