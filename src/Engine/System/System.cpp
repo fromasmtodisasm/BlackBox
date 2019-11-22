@@ -25,6 +25,7 @@
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
+#include <thread>
 
 using namespace Utils;
 using namespace std;
@@ -120,9 +121,6 @@ bool CSystem::Init()
     )
     return false;
   //====================================================
-  if (!InitResourceManagers())
-    return false;
-  //====================================================
   m_pInput->Init();
   //====================================================
   // Initialize the 2D drawer
@@ -148,6 +146,34 @@ bool CSystem::Init()
   }
   if (!m_pConsole->Init(this))
     return false;
+  m_pConsole->ShowConsole(true);
+  //====================================================
+  bool complete = false;
+  auto lambd_update = [&complete, this]
+  {
+    m_Render->SetState(IRender::State::DEPTH_TEST, false);
+    m_Render->SetViewport(0, 0, m_Render->GetWidth(), m_Render->GetHeight());
+    while (!complete)
+    {
+      m_Render->BeginFrame();
+      //m_pConsole->Update();
+      m_pConsole->Draw();
+      //m_pWindow->swap();
+    }
+    m_Render->SetState(IRender::State::DEPTH_TEST, true);
+  };
+  std::thread up(lambd_update);
+  auto lambd_res = [&, this](GLContext& ctx) {
+    auto w = static_cast<SDL_Window*>(m_pWindow->getHandle());
+    SDL_GL_MakeCurrent(w, ctx);
+    this->InitResourceManagers();
+    SDL_GL_MakeCurrent(w, NULL);
+  };
+  bool res_ret = false;
+  GLContext ctx = m_pWindow->getContext();
+  std::thread rt(lambd_res, std::ref(ctx));
+  //if (!InitResourceManagers())
+  //  return false;
   //====================================================
   m_pConsole->AddConsoleVarSink(this);
   ParseCMD();
@@ -188,6 +214,17 @@ bool CSystem::Init()
     return false;
   }
   m_pConsole->PrintLine("[OK] IGame created\n");
+  complete = true;
+  up.join();
+  rt.join();
+  //gl::ClearColor({ 0,1,0,1 });
+  gl::Clear(GL_COLOR_BUFFER_BIT);
+  m_pWindow->swap();
+  if (false)
+  {
+    m_pLog->Log("error init resource manager");
+    return false;
+  }
   return true;
 }
 
@@ -303,10 +340,12 @@ bool CSystem::ConfigLoad(const char* file)
 
 bool CSystem::InitResourceManagers()
 {
+  m_pConsole->PrintLine("Begin loading resources");
   if (!ShaderManager::init())
     return false;
   if (!MaterialManager::init("default.xml"))
     return false;
+  m_pConsole->PrintLine("End loading resources");
   return true;
 }
 

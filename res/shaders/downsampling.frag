@@ -40,37 +40,63 @@ vec3 offsets[13] = vec3[](
 
 #define Sample(uv) textureLod(image, uv, 0)
 
+vec4 get_texel(int i)
+{
+	vec4 result = vec4(0);
+	vec2 tex_size = 1.0 / textureSize(image, 0); // gets size of single texel
+
+	vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
+	float dev = 0.5;
+	vec2 m = vec2(vx,vy) - tex_size;
+	vec2 texel = clamp(coord, vec2(1), vec2(rx,ry) - 1) * tex_size;
+	if (all(greaterThan(coord, vec2(rx,ry)-1)))
+	{
+		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + 2*offset));
+		texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
+		result = Sample(texel) * offsets[i].z;
+	}
+	else
+	{
+		result = Sample(texel) * offsets[i].z;
+	}
+
+	return result;
+}
+
 /*
 	TexCoords - coordinates current pixel in out framebuffer
 	image - n + 1 mip level
 	texel_scale - step in relative units in input image -- key of sampling
 */
-vec4 downsample(vec2 uv)
+vec4 downsampling(vec2 uv)
 {
 	vec4 result = vec4(0);
-	vec2 tex_size = 1.0 / textureSize(image, 0); // gets size of single texel
-
+	#if 0
 	for (int i = 0; i < 13; i++)
 	{
-		vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + offset));
-		float dev = 0.5;
-		vec2 m = vec2(vx,vy) - tex_size;
-		vec2 texel = clamp(coord, vec2(1), vec2(rx,ry) - 1) * tex_size;
-		if (all(greaterThan(coord, vec2(rx,ry)-1)))
-		{
-			vec2 coord = (2 * (gl_FragCoord.xy)+ (offsets[i].xy + 2*offset));
-			texel = floor(clamp(coord, vec2(1), vec2(rx,ry) - 1)) * tex_size;
-			result += Sample(texel) * offsets[i].z;
-			continue;
-		}
-		result += Sample(texel) * offsets[i].z;
+		result += get_texel(i);	
 	}
+	#else
+	result += get_texel(0);
+	result += get_texel(1);
+	result += get_texel(2);
+	result += get_texel(3);
+	result += get_texel(4);
+	result += get_texel(5);
+	result += get_texel(6);
+	result += get_texel(7);
+	result += get_texel(8);
+	result += get_texel(9);
+	result += get_texel(10);
+	result += get_texel(11);
+	result += get_texel(12);
+	#endif
 	return result;
 }
 
 void main()
 {    
 	vec2 uv = 2 * (gl_FragCoord.xy) / vec2(textureSize(image, 0));
-	FragColor = downsample(uv);
+	FragColor = downsampling(uv);
 }
 

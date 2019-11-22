@@ -199,6 +199,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, maj);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, min);
+  SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
   /* Turn on double buffering with a 24bit Z buffer.
    * You may need to change this to 16 or 32 for your system */
@@ -213,8 +214,9 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     return false;
   }
   // Create an OpenGL context associated with the window.
-  SDL_GLContext glcontext = SDL_GL_CreateContext(m_Window);
-  SDL_GL_MakeCurrent(m_Window, glcontext);
+  glThreadContext = SDL_GL_CreateContext(m_Window);
+  glRenderContext = SDL_GL_CreateContext(m_Window);
+  SDL_GL_MakeCurrent(m_Window, glRenderContext);
   return true;
 }
 
@@ -247,6 +249,11 @@ void CSDLWindow::changeSize(int w, int h)
 
 void CSDLWindow::setCursor(Cursor* cursor)
 {
+}
+
+GLContext CSDLWindow::getContext()
+{
+  return static_cast<GLContext>(glThreadContext);
 }
 
 extern "C" {

@@ -96,7 +96,7 @@ void CRender::Release()
 
 void CRender::BeginFrame(void)
 {
-  gl::Clear(GL_COLOR_BUFFER_BIT);
+  gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CRender::Update(void)

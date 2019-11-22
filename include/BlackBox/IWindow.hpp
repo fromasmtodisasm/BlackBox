@@ -14,6 +14,7 @@ struct Rect
 
 typedef void* Params;
 typedef struct Cursor Cursor;
+typedef void* GLContext;
 
 struct IWindow {
   virtual bool create(Params params) = 0;
@@ -32,6 +33,7 @@ struct IWindow {
   virtual Rect& getViewPort() = 0;
   virtual void changeSize(int w, int h) = 0;
   virtual void setCursor(Cursor* cursor) = 0;
+  virtual GLContext getContext() = 0;
 };
 
 extern "C" {

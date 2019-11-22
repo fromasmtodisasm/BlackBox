@@ -352,8 +352,8 @@ void HdrTechnique::initTest()
 
 int HdrTechnique::getMips(Vec2 resolution)
 {
-  //return static_cast<int>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1);
-  return 6;
+  return static_cast<int>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1) - 5;
+  //return 6;
 }
 
 void HdrTechnique::CreateCommands()
