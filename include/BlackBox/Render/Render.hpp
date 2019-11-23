@@ -18,7 +18,7 @@ enum AttributeType
 };
 
 class CRender :
-  public IRender,
+  public IRenderer,
   public IConsoleVarSink,
   public IInputEventListener
 {
@@ -27,7 +27,7 @@ public:
   ~CRender();
 
 public:
-  // Inherited via IRender
+  // Inherited via IRenderer
   virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) override;
 
   virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) override;
@@ -73,7 +73,7 @@ public:
   virtual int EnumDisplayFormats(SDispFormat* formats) override;
 
   virtual void SetState(State state, bool enable) override;
-  // Inherited via IRender
+  // Inherited via IRenderer
   virtual void DrawFullScreenImage(int texture_id) override;
 
   virtual void SetCullMode(CullMode mode = CullMode::BACK) override;
@@ -167,6 +167,6 @@ private:
 
   int m_CurrentTarget;
 
-  // Inherited via IRender
+  // Inherited via IRenderer
   virtual void SetRenderTarget(int nHandle) override;
 };

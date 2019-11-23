@@ -31,8 +31,7 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   ImGui::SFML::Create(*m_Window);
 #endif // GUI
 
-  // Make it the active window for OpenGL calls
-  //m_Window->setActive();
+  // Make it the active window for OpenGL w->setActive();
 
   // Input handling specific
   //Mouse.curr_pos = Mouse.curr_pos = sf::Mouse::getPosition(*m_Window);
@@ -188,17 +187,10 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
      * SDL doesn't have the ability to choose which profile at this time of writing,
      * but it should default to the core profile */
 
-  int maj = 0, min = 0;
-  SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &maj);
-  SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &min);
-
-  SDL_GLprofile profile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-  if (maj * 10 + min >= 33)
-    profile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, maj);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, min);
+  SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
   SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
   /* Turn on double buffering with a 24bit Z buffer.
@@ -206,8 +198,16 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+  int posx = SDL_WINDOWPOS_UNDEFINED;
+  int posy = SDL_WINDOWPOS_UNDEFINED;
+  if (fullscreen)
+  {
+    posx = 0;
+    posy = 0;
+  }
   // Create window
-  m_Window = SDL_CreateWindow(m_Title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+  m_Window = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
   if (m_Window == NULL)
   {
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());

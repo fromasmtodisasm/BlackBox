@@ -3,7 +3,7 @@
 
 #include "SDLInput.hpp"
 
-struct IRender;
+struct IRenderer;
 class CSDLMouse : public CLinuxInputDevice
 {
 public:
@@ -28,7 +28,7 @@ protected:
   void SmoothDeltas(float accel, float decel = 0.0f);
 
 private:
-  IRender* m_pRenderer;
+  IRenderer* m_pRenderer;
   Vec2       m_deltas;
   Vec2       m_oldDeltas;
   Vec2       m_deltasInertia;

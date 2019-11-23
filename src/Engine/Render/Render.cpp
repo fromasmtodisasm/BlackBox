@@ -404,7 +404,7 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
     height = GetHeight();
   //gl::BindFramebuffer(0);
   SetState(State::BLEND, true);
-  SetState(IRender::State::CULL_FACE, false);
+  SetState(IRenderer::State::CULL_FACE, false);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   m_ScreenShader->Use();
   m_ScreenShader->Uniform(a, "alpha");
@@ -458,7 +458,7 @@ bool CRender::OnInputEvent(const SInputEvent& event)
   return false;
 }
 
-IRENDER_API IRender* CreateIRender(ISystem* pSystem)
+IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
   return new CRender(pSystem);
 }

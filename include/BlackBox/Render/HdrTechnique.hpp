@@ -85,7 +85,7 @@ private:
 
   GLuint timer_queries[3];
 
-  IRender* render;
+  IRenderer* render;
   ILog* log;
 
   std::vector<glm::vec2> bloomTest;

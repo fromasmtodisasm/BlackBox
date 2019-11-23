@@ -475,16 +475,16 @@ void CGame::setRenderState()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   //m_pRender->SetClearColor(Vec3(0, 1, 0));
-  m_pRender->SetState(IRender::State::DEPTH_TEST, true);
-  m_pRender->SetState(IRender::State::BLEND, false);
+  m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
+  m_pRender->SetState(IRenderer::State::BLEND, false);
   if (culling)
   {
-    m_pRender->SetState(IRender::State::CULL_FACE, true);
-    m_pRender->SetCullMode(IRender::CullMode::BACK);
+    m_pRender->SetState(IRenderer::State::CULL_FACE, true);
+    m_pRender->SetCullMode(IRenderer::CullMode::BACK);
   }
   else
   {
-    m_pRender->SetState(IRender::State::CULL_FACE, false);
+    m_pRender->SetState(IRenderer::State::CULL_FACE, false);
   }
   /*
   */
@@ -495,7 +495,7 @@ void CGame::render()
   if (nullptr == m_World->getActiveScene())
     return;
   //m_Window->clear();
-  m_pRender->SetState(IRender::State::DEPTH_TEST, true);
+  m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
   /* Rendering code here */
   //int w = m_Window->viewPort.width - m_Window->viewPort.left;
   //int h = m_Window->viewPort.height - m_Window->viewPort.top;

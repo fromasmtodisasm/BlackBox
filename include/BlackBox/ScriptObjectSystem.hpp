@@ -18,6 +18,6 @@ public:
 private:
   ISystem* m_pSystem;
   ILog* m_pLog;
-  IRender* m_pRenderer;
+  IRenderer* m_pRenderer;
   IConsole* m_pConsole;
 };

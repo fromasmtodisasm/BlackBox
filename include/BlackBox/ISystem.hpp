@@ -6,7 +6,7 @@
 struct ISystem;
 struct IGame;
 struct IShaderManager;
-struct IRender;
+struct IRenderer;
 struct ILog;
 struct IConsole;
 struct IInput;
@@ -139,7 +139,7 @@ struct ISystem
   virtual IGame* CreateGame(IGame* game) = 0;
 
   virtual IShaderManager* GetShaderManager() = 0;
-  virtual IRender* GetIRender() = 0;
+  virtual IRenderer* GetIRender() = 0;
   virtual ILog* GetILog() = 0;
   virtual IConsole* GetIConsole() = 0;
   virtual IInput* GetIInput() = 0;

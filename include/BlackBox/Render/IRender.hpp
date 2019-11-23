@@ -62,7 +62,7 @@ struct SDispFormat
   SDispFormat() {}
 };
 
-struct IRender
+struct IRenderer
 {
   enum class State
   {
@@ -175,5 +175,5 @@ struct IRender
 };
 
 extern "C" {
-  IRENDER_API IRender* CreateIRender(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+  IRENDER_API IRenderer* CreateIRender(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
 }

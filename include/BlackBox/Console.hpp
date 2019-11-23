@@ -170,7 +170,7 @@ public:
   virtual void SetImage(ITexture* pTexture) override;
   virtual void Update() override;
   virtual void Draw() override;
-  void Animate(float deltatime, IRender* render);
+  void Animate(float deltatime, IRenderer* render);
   void CalcMetrics(size_t& end);
   virtual void AddCommand(const char* sName, IConsoleCommand* command, const char* help = "") override;
   virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") override;

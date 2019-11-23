@@ -203,7 +203,7 @@ void CConsole::Draw()
   */
 }
 
-void CConsole::Animate(float deltatime, IRender* render)
+void CConsole::Animate(float deltatime, IRenderer* render)
 {
   animate = false;
   if (animate)

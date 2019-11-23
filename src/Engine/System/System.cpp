@@ -151,8 +151,8 @@ bool CSystem::Init()
   bool complete = false;
   auto lambd_update = [&complete, this]
   {
-    m_Render->SetState(IRender::State::DEPTH_TEST, false);
-    m_Render->SetViewport(0, 0, m_Render->GetWidth(), m_Render->GetHeight());
+    //m_Render->SetState(IRenderer::State::DEPTH_TEST, false);
+    //m_Render->SetViewport(0, 0, m_Render->GetWidth(), m_Render->GetHeight());
     while (!complete)
     {
       m_Render->BeginFrame();
@@ -160,7 +160,7 @@ bool CSystem::Init()
       m_pConsole->Draw();
       //m_pWindow->swap();
     }
-    m_Render->SetState(IRender::State::DEPTH_TEST, true);
+    //m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
   };
   std::thread up(lambd_update);
   auto lambd_res = [&, this](GLContext& ctx) {
@@ -259,7 +259,7 @@ IShaderManager* CSystem::GetShaderManager()
   return nullptr;
 }
 
-IRender* CSystem::GetIRender()
+IRenderer* CSystem::GetIRender()
 {
   return m_Render;
 }
@@ -439,7 +439,7 @@ void CSystem::BeginFrame()
 {
   PROFILER_SYNC_FRAME();
   PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
-  m_Render->SetState(IRender::State::DEPTH_TEST, true);
+  m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
   m_Render->BeginFrame();
 }
 

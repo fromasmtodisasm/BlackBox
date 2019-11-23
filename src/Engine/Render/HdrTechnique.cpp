@@ -423,7 +423,7 @@ void HdrTechnique::downsamplingStandard()
   ds->Use();
   ds->Uniform(offset->GetFVal(), "offset");
 
-  render->SetState(IRender::State::DEPTH_TEST, false);
+  render->SetState(IRenderer::State::DEPTH_TEST, false);
   amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
   const float w = cam_width->GetIVal();
@@ -466,7 +466,7 @@ void HdrTechnique::downsamplingStandard()
   }
 #endif
 
-  GetISystem()->GetIRender()->SetState(IRender::State::DEPTH_TEST, true);
+  GetISystem()->GetIRender()->SetState(IRenderer::State::DEPTH_TEST, true);
 }
 
 void HdrTechnique::downsamplingCompute()
@@ -498,7 +498,7 @@ void HdrTechnique::upsampling()
 
   uint32_t amount;
   bool first_iteration = true;
-  render->SetState(IRender::State::DEPTH_TEST, false);
+  render->SetState(IRenderer::State::DEPTH_TEST, false);
 
   float w = (float)cam_width->GetIVal();
   float h = (float)cam_height->GetIVal();
@@ -546,7 +546,7 @@ void HdrTechnique::Do(unsigned int texture)
   ss->Use();
   ss->Uniform(exposure->GetFVal(), "exposure");
   ss->Uniform(bloom_exposure->GetFVal(), "bloom_exposure");
-  render->SetState(IRender::State::DEPTH_TEST, false);
+  render->SetState(IRenderer::State::DEPTH_TEST, false);
 
   ss->BindTexture2D(m_HdrBuffer->texture[0], 0, "scene");
   ss->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");

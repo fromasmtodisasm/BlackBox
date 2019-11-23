@@ -33,7 +33,7 @@ public:
   virtual void Release() override;
 
   virtual IShaderManager* GetShaderManager() override;
-  virtual IRender* GetIRender() override;
+  virtual IRenderer* GetIRender() override;
   virtual ILog* GetILog() override;
   virtual ITimer* GetITimer() override;
   virtual IConsole* GetIConsole() override;
@@ -75,7 +75,7 @@ private:
   IGame* m_pGame;
   IFont* m_pFont;
   IWindow* m_pWindow;
-  IRender* m_Render;
+  IRenderer* m_Render;
   IScriptSystem* m_pScriptSystem;
   INetwork* m_pNetwork;
   //! system event dispatcher

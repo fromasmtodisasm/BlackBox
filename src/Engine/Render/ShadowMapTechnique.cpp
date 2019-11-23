@@ -183,7 +183,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 void ShadowMapping::RenderTransparent(Object* object)
 {
   DEBUG_GROUP(__FUNCTION__);
-  m_pRender->SetState(IRender::State::BLEND, true);
+  m_pRender->SetState(IRenderer::State::BLEND, true);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (object->m_transparent && (object->visible()))
   {
@@ -202,15 +202,15 @@ void ShadowMapping::RenderTransparent(Object* object)
 
     object->draw(m_Scene->getCurrentCamera());
   }
-  m_pRender->SetState(IRender::State::BLEND, false);
+  m_pRender->SetState(IRenderer::State::BLEND, false);
 }
 
 void ShadowMapping::OnDepthPass()
 {
   DEBUG_GROUP(__FUNCTION__);
-  m_pRender->SetCullMode(IRender::CullMode::FRONT);
+  m_pRender->SetCullMode(IRenderer::CullMode::FRONT);
   DepthPass();
-  m_pRender->SetCullMode(IRender::CullMode::BACK);
+  m_pRender->SetCullMode(IRenderer::CullMode::BACK);
 }
 
 void ShadowMapping::OnRenderPass()
@@ -226,12 +226,12 @@ void ShadowMapping::OnRenderPass()
   auto pSystem = GetISystem();
   auto w = cam_width->GetIVal();
   auto h = cam_height->GetIVal();
-  //pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, true);
+  //pSystem->GetIRender()->SetState(IRenderer::State::SCISSOR_TEST, true);
   //pSystem->GetIRender()->SetScissor(0, 0, w, h);
   auto render = GetISystem()->GetIRender();
   //render->ClearDepthBuffer();
   m_RenderedScene->clear(gl::Color(fog));
-  //pSystem->GetIRender()->SetState(IRender::State::SCISSOR_TEST, false);
+  //pSystem->GetIRender()->SetState(IRenderer::State::SCISSOR_TEST, false);
   RenderPass();
 }
 
