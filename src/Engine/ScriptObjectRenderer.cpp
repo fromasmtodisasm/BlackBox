@@ -16,7 +16,7 @@
 
 #include <BlackBox/ScriptObjectRenderer.hpp>
 
-#define REG_FUNC(_class,_func) _class::RegisterFunction(pSS,#_func,&_class::_func);
+//#define REG_FUNC(_class,_func) _class::RegisterFunction(pSS,#_func,&_class::_func);
 _DECLARE_SCRIPTABLEEX(CScriptObjectRenderer)
 
 //////////////////////////////////////////////////////////////////////
@@ -165,6 +165,7 @@ int CScriptObjectRenderer::Draw(IFunctionHandler* pH)
     }
     */
 
+    /*
     m_pRenderer->Set2DMode(true, 800, 600);
     m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
     m_pRenderer->SetTexture(tid);
@@ -174,6 +175,7 @@ int CScriptObjectRenderer::Draw(IFunctionHandler* pH)
     m_pRenderer->DrawDynVB((struct_VERTEX_FORMAT_P3F_COL4UB_TEX2F*)&m_vBuffer[0], &m_vIdxBuf[0], m_vBuffer.size(), m_vIdxBuf.size(), R_PRIMV_TRIANGLES);
 
     m_pRenderer->Set2DMode(false, 0, 0);
+    */
   }
 
   m_vBuffer.resize(0);

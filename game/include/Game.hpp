@@ -257,7 +257,7 @@ public:
 	CXServer *										m_pServer;								//!< The server of this computer
 	CXClient *										m_pClient;								//!< The client of this computer
   IScriptSystem *								m_pScriptSystem;
-  IRender *											m_pRender;
+  IRenderer *										m_pRender;
 	IInput *											m_pInput;
   IWindow *											m_Window;
   IInputHandler *								m_inputHandler;
