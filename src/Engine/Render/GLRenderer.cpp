@@ -92,6 +92,7 @@ bool GLRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDept
 
 void GLRenderer::Release()
 {
+  delete this;
 }
 
 void GLRenderer::BeginFrame(void)
