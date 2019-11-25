@@ -1,10 +1,5 @@
 #pragma once
-#include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
-#include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Quad.hpp>
-#include <BlackBox/IConsole.hpp>
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Render/BaseRenderer.hpp>
 
 struct IWindow;
 
@@ -17,14 +12,14 @@ enum AttributeType
   CORE
 };
 
-class CRender :
-  public IRenderer,
+class GLRenderer :
+  public CRenderer,
   public IConsoleVarSink,
   public IInputEventListener
 {
 public:
-  CRender(ISystem* engine);
-  ~CRender();
+  GLRenderer(ISystem* engine);
+  ~GLRenderer();
 
 public:
   // Inherited via IRenderer
@@ -69,8 +64,6 @@ public:
   virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 
   virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
-
-  virtual int EnumDisplayFormats(SDispFormat* formats) override;
 
   virtual void SetState(State state, bool enable) override;
   // Inherited via IRenderer

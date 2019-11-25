@@ -11,7 +11,6 @@
 #include <BlackBox/Timer.hpp>
 
 class CConsole;
-class CRender;
 struct IWindow;
 
 class CSystem :

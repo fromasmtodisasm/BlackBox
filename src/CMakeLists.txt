@@ -206,7 +206,8 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/Pipeline.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Render.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/GLRenderer.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseRenderer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Shader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp

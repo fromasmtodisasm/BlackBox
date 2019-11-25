@@ -17,16 +17,16 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
-CRender::CRender(ISystem* engine) :
+GLRenderer::GLRenderer(ISystem* engine) :
   m_pSystem(engine), m_viewPort(0, 0, 0, 0)
 {
 }
 
-CRender::~CRender()
+GLRenderer::~GLRenderer()
 {
 }
 
-IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
+IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
   IWindow* result = m_Window = window;
   if (window == nullptr)
@@ -85,77 +85,76 @@ IWindow* CRender::Init(int x, int y, int width, int height, unsigned int cbpp, i
   return result;
 }
 
-bool CRender::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
+bool GLRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
 {
   return false;
 }
 
-void CRender::Release()
+void GLRenderer::Release()
 {
 }
 
-void CRender::BeginFrame(void)
+void GLRenderer::BeginFrame(void)
 {
   gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void CRender::Update(void)
+void GLRenderer::Update(void)
 {
 }
 
-void CRender::GetViewport(int* x, int* y, int* width, int* height)
+void GLRenderer::GetViewport(int* x, int* y, int* width, int* height)
 {
 }
 
-void CRender::SetViewport(int x, int y, int width, int height)
+void GLRenderer::SetViewport(int x, int y, int width, int height)
 {
   gl::ViewPort(glm::vec4(x, y, width, height));
 }
 
-void CRender::SetScissor(int x, int y, int width, int height)
+void GLRenderer::SetScissor(int x, int y, int width, int height)
 {
 }
 
-void CRender::SetCamera(const CCamera& cam)
+void GLRenderer::SetCamera(const CCamera& cam)
 {
 }
 
-const CCamera& CRender::GetCamera()
+const CCamera& GLRenderer::GetCamera()
 {
-  // TODO: insert return statement here
   return *m_Camera;
 }
 
-bool CRender::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)
+bool GLRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)
 {
   return false;
 }
 
-void CRender::ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+void GLRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 {
 }
 
-void CRender::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
+void GLRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
 {
   info.font->RenderText(szText, posX, posY, 1.0, info.color);
 }
 
-int CRender::SetPolygonMode(int mode)
+int GLRenderer::SetPolygonMode(int mode)
 {
   return 0;
 }
 
-int CRender::GetWidth()
+int GLRenderer::GetWidth()
 {
   return m_Window->getWidth();
 }
 
-int CRender::GetHeight()
+int GLRenderer::GetHeight()
 {
   return m_Window->getHeight();
 }
 
-void CRender::ScreenShot(const char* filename)
+void GLRenderer::ScreenShot(const char* filename)
 {
   GLint drawFboId = 0;// , readFboId = 0;
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
@@ -176,11 +175,11 @@ void CRender::ScreenShot(const char* filename)
   gl::BindFramebuffer(drawFboId);
 }
 
-void CRender::RenderToViewport(const CCamera& cam, float x, float y, float width, float height)
+void GLRenderer::RenderToViewport(const CCamera& cam, float x, float y, float width, float height)
 {
 }
 
-void CRender::glInit()
+void GLRenderer::glInit()
 {
   CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
   fillSates();
@@ -200,7 +199,7 @@ void CRender::glInit()
   SetCullMode(CullMode::BACK);
 }
 
-void CRender::fillSates()
+void GLRenderer::fillSates()
 {
 #define STATEMAP(k,v) stateMap.insert(std::make_pair(k,v))
   STATEMAP(State::DEPTH_TEST, GL_DEPTH_TEST);
@@ -216,7 +215,7 @@ void CRender::fillSates()
 #undef STATEMAP
 }
 
-void CRender::InitConsoleVariables()
+void GLRenderer::InitConsoleVariables()
 {
   translateImageY = CREATE_CVAR("ty", 0.0f, 0);
   translateImageX = CREATE_CVAR("tx", 0.0f, 0);
@@ -232,7 +231,7 @@ void CRender::InitConsoleVariables()
   cam_height = GET_CVAR("r_cam_h");
 }
 
-void CRender::InitConsoleCommands()
+void GLRenderer::InitConsoleCommands()
 {
   /*
   REGISTER_COMMAND(
@@ -244,13 +243,13 @@ void CRender::InitConsoleCommands()
   */
 }
 
-void CRender::SetRenderTarget(int nHandle)
+void GLRenderer::SetRenderTarget(int nHandle)
 {
   if (m_CurrentTarget != nHandle)
     gl::BindFramebuffer(nHandle);
 }
 
-void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
+void GLRenderer::SetCullMode(CullMode mode/* = CullMode::BACK*/)
 {
   if (mode == CullMode::FRONT_AND_BACK)
     gl::CullFace(GL_FRONT_AND_BACK);
@@ -258,52 +257,52 @@ void CRender::SetCullMode(CullMode mode/* = CullMode::BACK*/)
     gl::CullFace(GL_FRONT + static_cast<unsigned int>(mode));
 }
 
-bool CRender::DeleteContext(WIN_HWND hWnd)
+bool GLRenderer::DeleteContext(WIN_HWND hWnd)
 {
   return false;
 }
 
-bool CRender::CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX/* = 1*/, int SSY/* = 1*/)
+bool GLRenderer::CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX/* = 1*/, int SSY/* = 1*/)
 {
   return false;
 }
 
-bool CRender::SetCurrentContext(WIN_HWND hWnd)
+bool GLRenderer::SetCurrentContext(WIN_HWND hWnd)
 {
   return false;
 }
 
-void CRender::MakeMainContextActive()
+void GLRenderer::MakeMainContextActive()
 {
 }
 
-WIN_HWND CRender::GetCurrentContextHWND()
+WIN_HWND GLRenderer::GetCurrentContextHWND()
 {
   return m_HWND;
 }
 
-bool CRender::IsCurrentContextMainVP()
+bool GLRenderer::IsCurrentContextMainVP()
 {
   return false;
 }
 
-int CRender::GetCurrentContextViewportHeight() const
+int GLRenderer::GetCurrentContextViewportHeight() const
 {
   return 0;
 }
 
-int CRender::GetCurrentContextViewportWidth() const
+int GLRenderer::GetCurrentContextViewportWidth() const
 {
   return 0;
 }
 
-void CRender::SetClearColor(const Vec3& vColor)
+void GLRenderer::SetClearColor(const Vec3& vColor)
 {
   m_clearColor = vColor;
   gl::ClearColor(Vec4(vColor, 1));
 }
 
-void CRender::ClearDepthBuffer()
+void GLRenderer::ClearDepthBuffer()
 {
   //glCheck(glClearBufferfv(GL_DEPTH, 0, &m_clearDepth));
 
@@ -311,36 +310,12 @@ void CRender::ClearDepthBuffer()
   gl::Clear(GL_DEPTH_BUFFER_BIT);
 }
 
-void CRender::ClearColorBuffer(const Vec3 vColor)
+void GLRenderer::ClearColorBuffer(const Vec3 vColor)
 {
   glCheck(glClearBufferfv(GL_COLOR, 0, &glm::vec4(vColor, 1)[0]));
 }
 
-int CRender::EnumDisplayFormats(SDispFormat* formats)
-{
-  int numModes = 0;
-  //TODO: FIX IT
-#if 0
-  auto videoModes = sf::VideoMode::getFullscreenModes();
-
-  numModes = static_cast<int>(videoModes.size());
-  int i = 0;
-  if (formats != nullptr)
-  {
-    for (auto& mode : videoModes)
-    {
-      formats[i].m_BPP = mode.bitsPerPixel;
-      formats[i].m_Width = mode.width;
-      formats[i].m_Height = mode.height;
-      i++;
-    }
-  }
-#endif
-
-  return numModes;
-}
-
-void CRender::SetState(State state, bool enable)
+void GLRenderer::SetState(State state, bool enable)
 {
   auto it = stateMap.find(state);
   if (it != stateMap.end())
@@ -352,7 +327,7 @@ void CRender::SetState(State state, bool enable)
   }
 }
 
-void CRender::DrawFullScreenImage(int texture_id)
+void GLRenderer::DrawFullScreenImage(int texture_id)
 {
   auto
     width = GetWidth(),
@@ -368,7 +343,7 @@ void CRender::DrawFullScreenImage(int texture_id)
   m_ScreenQuad->draw();
 }
 
-bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
+bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 #if 0
   if (!strcmp(pVar->GetName(), "r_Width"))
@@ -392,11 +367,11 @@ bool CRender::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
   return false;
 }
 
-void CRender::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
+void GLRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
 {
 }
 
-void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
+void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
   bool flipY = true;
   float
@@ -442,12 +417,12 @@ void CRender::DrawImage(float xpos, float ypos, float w, float h, int texture_id
   SetState(State::CULL_FACE, true);
 }
 
-void CRender::PrintLine(const char* szText, SDrawTextInfo& info)
+void GLRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
 {
   Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
 }
 
-bool CRender::OnInputEvent(const SInputEvent& event)
+bool GLRenderer::OnInputEvent(const SInputEvent& event)
 {
   switch (event.deviceType)
   {
@@ -460,7 +435,7 @@ bool CRender::OnInputEvent(const SInputEvent& event)
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
-  return new CRender(pSystem);
+  return new GLRenderer(pSystem);
 }
 
 #pragma warning(push)

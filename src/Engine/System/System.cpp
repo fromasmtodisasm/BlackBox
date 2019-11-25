@@ -4,7 +4,7 @@
 #include <BlackBox/Console.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/Render/Render.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/SystemEventDispatcher.hpp>
