@@ -172,8 +172,8 @@ bool HdrTechnique::OnRenderPass(int pass)
   DEBUG_GROUP(__FUNCTION__);
   if (!shadowMapping->OnRenderPass(pass))
   {
-    if (m_Scene->GetSkyBox() != nullptr)
-      void(0);// m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
+    if (draw_sky && m_Scene->GetSkyBox() != nullptr)
+      m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
     {
       Object* water;
       if ((water = m_Scene->getObject("water")) != nullptr)
@@ -335,6 +335,7 @@ void HdrTechnique::InitConsoleVariables()
 
   GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
   REGISTER_CVAR(show_all_fb, 0, VF_NULL, "Show all frame buffer");
+  REGISTER_CVAR(draw_sky, 0, VF_NULL, "Draw skybox");
 }
 
 void HdrTechnique::initTest()
