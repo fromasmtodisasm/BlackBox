@@ -368,7 +368,7 @@ void HdrTechnique::CreateCommands()
       GetISystem()->GetIConsole()->PrintLine("set mode!");
       if (cd.argsCount() == 1)
       {
-        tech->SetMode(_wtoi(cd.get(0).c_str()));
+        tech->SetMode(static_cast<int>(_wtof(cd.get(0).c_str())));
         return true;
       }
       return false;

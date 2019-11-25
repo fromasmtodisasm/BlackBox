@@ -1,4 +1,5 @@
 #include <Game.hpp>
+#include <BlackBox/Common.hpp>
 #include <BlackBox/IMarkers.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <Server/XServer.hpp>

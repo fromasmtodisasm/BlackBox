@@ -41,6 +41,8 @@ CTimer::CTimer()
   m_nFrameCounter = 0;
 
   LARGE_INTEGER TTicksPerSec;
+  // TODO: FIX IT
+#ifdef _WIN32
   if (QueryPerformanceFrequency(&TTicksPerSec))
   {
     // performance counter is available, use it instead of multimedia timer
@@ -51,6 +53,7 @@ CTimer::CTimer()
     ASSERT(false && "QueryPerformanceFrequency failed");
     m_lTicksPerSec = 1000000;
   }
+#endif
   m_fSecsPerTick = 1.0 / m_lTicksPerSec;
 
   m_fAverageFrameTime = 1.0f / 30.0f;

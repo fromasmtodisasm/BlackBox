@@ -25,6 +25,7 @@
 typedef unsigned int				DWORD;
 typedef unsigned int*				LPDWORD;
 typedef void*								LPVOID;
+typedef DWORD               UINT;
 #define VOID            		void
 #define PVOID								void*
 
@@ -42,11 +43,19 @@ inline int IsHeapValid ()
 // MSVC compiler-specific keywords
 #define __forceinline inline
 #define _inline inline
-#define __cdecl
-#define __stdcall
-#define __fastcall
+#ifndef __cdecl
+  #define __cdecl
+#endif
+#ifndef __stdcall
+  #define __stdcall
+#endif
+#ifndef __fastcall
+  #define __fastcall
+#endif
 #define IN
 #define OUT
+
+#define ZeroMemory(dst, len) memset(dst, 0, len)
 
 // Safe memory freeing
 #ifndef SAFE_DELETE
@@ -183,7 +192,9 @@ typedef struct in_addr_windows
 //end socket stuff
 ////////////////////////////////////////////////////////////////////////////
 
-#define __TIMESTAMP__ __DATE__" "__TIME__
+#ifndef __TIMESTAMP__
+  #define __TIMESTAMP__ __DATE__ " " __TIME__
+#endif
 
 // function renaming
 #define _finite __finite
@@ -195,6 +206,13 @@ typedef struct in_addr_windows
 
 #define _vsnprintf vsnprintf
 #define _wtof( str ) wcstod( str, 0 )
+
+//
+unsigned int GetCurrentTimeInternal();
+inline unsigned int GetCurrentTime()
+{
+  return GetCurrentTimeInternal();
+}
 
 typedef union _LARGE_INTEGER
 {

@@ -23,7 +23,7 @@
 #endif
 
 #if defined(LINUX64)
-#include <Linux64Specific.h>
+#include <BlackBox/Linux64Specific.h>
 #define _CPU_AMD64
 #endif
 

@@ -28,6 +28,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#pragma message("Linux client")
 #endif //LINUX
 
 #ifdef WIN32
@@ -59,11 +60,15 @@ class CStream;
 #endif //PS2
 
 //////////////////////////////////////////////////////////////////////
+#if 0
 inline unsigned short __ntohs(unsigned short us)
 {
   unsigned short nTemp = (us >> 8) | (us << 8);
   return nTemp;
 }
+#else
+#define __ntohs(us) ntohs(us)
+#endif
 /* NOTE FOR PS2 PROGRAMMERS ABOUT THIS CLASS
   I rollback this file to our version because
   your change caused a bug inside our version.

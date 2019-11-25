@@ -105,7 +105,6 @@ class CGame :
 	public INETServerSnooperSink,
 	public LoadObjectSink
 {
-  class GameState;
   class EventListener;
   friend class GameGUI;
   friend class CPlayer;
@@ -290,7 +289,6 @@ public:
 
   EventListener *listener;
 	bool isDrawingGui = false;
-  class GameState; 
   //GUI
 #ifdef GUI
   GameGUI *gui;
@@ -379,7 +377,6 @@ public:
 		EDIT
     
   }m_Mode = Mode::FPS;
-  std::stack<GameState*> states;
 	float fps = 0.0;
 
 	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
@@ -399,9 +396,3 @@ public:
 };
 
 
-
-class CGame::GameState
-{
-  EventListener *m_eventListener;
-public:
-};

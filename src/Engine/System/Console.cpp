@@ -23,8 +23,6 @@
 
 #include <glm/glm.hpp>
 
-#define strdup _strdup
-
 bool isnumber(const char* s)
 {
   auto p = s;

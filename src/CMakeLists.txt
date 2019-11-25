@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -43,6 +44,7 @@ find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 include_directories(
   " ${CMAKE_BINARY_DIR}"
+  " ${SUBMODULES_DIR}/stb/"
   " ${CMAKE_SOURCE_DIR}/include/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/"
   " ${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
@@ -235,6 +237,7 @@ target_sources(
 
   #System folder
   PRIVATE ${SOURCE_DIR}/Engine/System/Console.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Log.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
@@ -244,8 +247,15 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
-###################################################
 
+if (UNIX_OR_CYGWIN)
+  target_sources(
+    ${PROJECT_NAME}
+    PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
+    )
+
+endif()
+###################################################
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
 
 #--------------------------------------------------

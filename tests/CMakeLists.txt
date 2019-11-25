@@ -1,12 +1,22 @@
 cmake_minimum_required(VERSION 3.0)
 project(Launcher CXX)
 
+###################################################
+if (UNIX OR CYGWIN)
+	set(UNIX_OR_CYGWIN ON)
+	message(STATUS "UNIX_OR_CYGWIN")
+	find_package(PkgConfig REQUIRED)
+  add_definitions(-DLINUX64)
+  add_definitions(-DLINUX)
+endif()
+###################################################
+
 set(CMAKE_CXX_STANDARD 17)
 
 enable_testing()
 
 add_executable(${PROJECT_NAME} Main.cpp)
-target_link_libraries(Launcher TestGame)
+target_link_libraries(Launcher PRIVATE TestGame)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 
