@@ -1,3 +1,4 @@
+#include "Common.hpp"
 #include "CmdLine.hpp"
 #include <cstring>
 

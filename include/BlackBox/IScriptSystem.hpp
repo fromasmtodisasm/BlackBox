@@ -621,10 +621,10 @@ struct IFunctionHandler
   virtual bool GetParam(int nIdx, float& f) = 0;
   virtual bool GetParam(int nIdx, const char*& s) = 0;
 #if defined(WIN64) || defined(LINUX)
-  inline bool GetParam(int nIdx, char*& s) { return GetParam(nIdx, (const char*&)s); }
+  //inline bool GetParam(int nIdx, char*& s) { return GetParam(nIdx, (const char*&)s); }
 #endif
 #if defined(WIN64) || defined(LINUX64)
-  virtual bool GetParam(int nIdx, INT_PTR& n) = 0;	//## AMD Port
+  //virtual bool GetParam(int nIdx, INT_PTR& n) = 0;	//## AMD Port
 #endif
   virtual bool GetParam(int nIdx, bool& b) = 0;
   virtual bool GetParam(int nIdx, IScriptObject* pObj) = 0;

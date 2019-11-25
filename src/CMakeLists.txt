@@ -10,6 +10,8 @@ if (UNIX OR CYGWIN)
 	set(UNIX_OR_CYGWIN ON)
 	message(STATUS "UNIX_OR_CYGWIN")
 	find_package(PkgConfig REQUIRED)
+  add_definitions(-DLINUX64)
+  add_definitions(-DLINUX)
 endif()
 ###################################################
 set(CMAKE_CXX_STANDARD 14)
