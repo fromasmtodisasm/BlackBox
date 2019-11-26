@@ -5,14 +5,16 @@
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
 #include <BlackBox/IScriptSystem.hpp>
-#include <BlackBox/ScriptObjectConsole.hpp>
-#include <BlackBox/ScriptObjectScript.hpp>
 #include <BlackBox/Common/CmdLine.hpp>
 #include <BlackBox/Timer.hpp>
 
 class CConsole;
 class CRender;
 struct IWindow;
+
+class CScriptObjectConsole;
+class CScriptObjectScript;
+class CScriptObjectRenderer;
 
 class CSystem :
   public ISystem,
@@ -66,6 +68,7 @@ private:
   bool InitResourceManagers();
   void ParseCMD();
   void LoadScreen();
+  bool InitScripts();
 private:
   CTimer									m_Time;                  //!<
 
@@ -83,6 +86,7 @@ private:
 
   CScriptObjectConsole* m_ScriptObjectConsole;
   CScriptObjectScript* m_ScriptObjectScript;
+  CScriptObjectRenderer* m_ScriptObjectRenderer;
 
 private:
   ICVar* r_window_width;

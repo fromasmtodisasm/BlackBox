@@ -15,6 +15,10 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/IWindow.hpp>
+
+#include <BlackBox/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptObjectScript.hpp>
+#include <BlackBox/ScriptObjectRenderer.hpp>
 //
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Profiler/HP_Timer.h>
@@ -174,16 +178,7 @@ bool CSystem::Init()
   ParseCMD();
   LoadScreen();
   //====================================================
-  m_ScriptObjectConsole = new CScriptObjectConsole();
-  CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
-
-  m_ScriptObjectScript = new CScriptObjectScript();
-  CScriptObjectScript::InitializeTemplate(m_pScriptSystem);
-
-  m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
-  m_ScriptObjectScript->Init(GetIScriptSystem());
-
-  m_pScriptSystem->ExecuteFile("scripts/engine.lua");
+  InitScripts();
   //====================================================
   m_pFont = new FreeTypeFont();
   if (m_pFont != nullptr)
@@ -363,6 +358,24 @@ void CSystem::LoadScreen()
   m_pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
   m_pConsole->ResetProgressBar(0x7fffffff);
   //GetILog()->UpdateLoadingScreen("");	// just to draw the console
+}
+
+bool CSystem::InitScripts()
+{
+  m_ScriptObjectConsole = new CScriptObjectConsole();
+  CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
+
+  m_ScriptObjectScript = new CScriptObjectScript();
+  CScriptObjectScript::InitializeTemplate(m_pScriptSystem);
+
+  m_ScriptObjectRenderer = new CScriptObjectRenderer();
+  CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
+
+  m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
+  m_ScriptObjectScript->Init(GetIScriptSystem());
+  m_ScriptObjectRenderer->Init(m_pScriptSystem, nullptr);
+
+  return m_pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 
 float CSystem::GetDeltaTime()
