@@ -364,6 +364,13 @@ private:
       ((n & 0x0000FF00) << 8) |
       ((n & 0x000000FF) << 24));
   }
+  unsigned int __ntohl(unsigned int n) {
+    return (unsigned int)(((n & 0xFF000000) >> 24) |
+      ((n & 0x00FF0000) >> 8) |
+      ((n & 0x0000FF00) << 8) |
+      ((n & 0x000000FF) << 24));
+  }
+
 
   BYTE* m_pBuffer;													//!<
   BYTE									m_vBuffer[DEFAULT_STREAM_BYTESIZE];	//!<
