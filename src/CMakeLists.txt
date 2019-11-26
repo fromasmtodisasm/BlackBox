@@ -78,9 +78,17 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${FREETYPE_LIBRARIES})
 if (USE_SDL)
 	if (UNIX_OR_CYGWIN)
 		#################################################################
-		PKG_CHECK_MODULES(SDL REQUIRED SDL2)
+		PKG_CHECK_MODULES(SDL SDL2)
 		if (SDL_FOUND)
 			target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
+    else()
+      find_package(SDL2 CONFIG REQUIRED)
+      if (SDL2_FOUND)
+        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+      else()
+        message(FATAL_ERROR "Could not found SDL2")
+      endif()
+      
 		endif()
 		#################################################################
 		PKG_CHECK_MODULES(SDLNET REQUIRED SDL2_net)
@@ -304,9 +312,8 @@ endif()
 get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
 source_group(
   TREE ${SOURCE_DIR}
-  PREFIX BlackBox
-  FILES
-  ${SOURCE_FILES}
+  #PREFIX BlackBox
+  FILES  ${SOURCE_FILES}
   )
 target_sources(${PROJECT_NAME}
   PRIVATE
