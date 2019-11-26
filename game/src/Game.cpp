@@ -530,7 +530,7 @@ void CGame::setCamera(CCamera* camera)
   //m_World->setCamera(camera);
 }
 
-extern "C" IGame * CreateIGame(const char* title) {
+IGame * CreateIGame(const char* title) {
   CGame* game = new CGame(title);
   return (game);
 }

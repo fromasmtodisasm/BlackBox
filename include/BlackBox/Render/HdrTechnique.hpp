@@ -96,6 +96,7 @@ private:
   glm::vec2 quadCorners;
 
   int show_all_fb = true;
+  int draw_sky = false;
 
   // Inherited via ITechnique
   virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;

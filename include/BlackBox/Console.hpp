@@ -262,12 +262,13 @@ private:
   bool isOpened = false;
   bool cmd_is_compete = false;
   ISystem* m_pSystem = nullptr;
+  IRenderer* m_pRenderer = nullptr;
   IScriptSystem* m_pScriptSystem = nullptr;
   IInput* m_pInput = nullptr;
   ITexture* m_pBackGround;
   //ITexture* m_pBackGround = nullptr;
 
-  float height;
+  float m_ScrollHeight = 0.0;
 
   // for animate console
   bool animate = false;

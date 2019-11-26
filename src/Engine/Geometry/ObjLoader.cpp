@@ -54,7 +54,7 @@ bool ObjLoader::load(const char* path, VerteciesInfo& verteciesInfo, BoundingBox
     }
     else if (strcmp(lineHeader, "f") == 0) {
       face current_face;
-      char* pattern[4] = {
+      const char* pattern[4] = {
         "%d/%d/%d %d/%d/%d %d/%d/%d\n",
         "%d//%d %d//%d %d//%d\n",
         "%d %d %d\n",

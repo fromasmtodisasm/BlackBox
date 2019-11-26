@@ -20,6 +20,10 @@
 #endif
 #endif
 
+#if !defined(_WIN32) || !defined(_WIN64)
+#define OutputDebugString(str) GetISystem()->Log(str)
+#endif
+
 struct ScriptBase
 {
   virtual ~ScriptBase() {};

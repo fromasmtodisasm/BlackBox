@@ -1,3 +1,4 @@
+#include <BlackBox/Common.hpp>
 #include <BlackBox/ScriptObjectSystem.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/Render/IRender.hpp>

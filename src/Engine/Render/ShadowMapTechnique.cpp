@@ -274,8 +274,8 @@ void ShadowMapping::InitLights()
   {
     auto light = lightit.second;
     auto program = m_ShadowMapShader;
-    PointLightValues plv;
-    UNREFERENCED_PARAMETER(plv);
+    //PointLightValues plv;
+    //UNREFERENCED_PARAMETER(plv);
 
     //program->getUniformValue("pointLights[%d].position");
     program->Uniform(light->position, "pointLights[%d].position", currentLight);

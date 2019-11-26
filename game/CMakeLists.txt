@@ -1,9 +1,19 @@
 cmake_minimum_required(VERSION 3.0)
 
+project(TestGame CXX)
+
+###################################################
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-project(TestGame CXX)
+###################################################
+if (UNIX OR CYGWIN)
+	set(UNIX_OR_CYGWIN ON)
+	message(STATUS "UNIX_OR_CYGWIN")
+	find_package(PkgConfig REQUIRED)
+  add_definitions(-DLINUX64)
+  add_definitions(-DLINUX)
+endif()
+###################################################
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} BlackBox)

@@ -1,4 +1,5 @@
-#include <Server\XServerRules.hpp>
+#include <BlackBox/Common.hpp>
+#include <Server/XServerRules.hpp>
 
 CXServerRules::CXServerRules()
 {

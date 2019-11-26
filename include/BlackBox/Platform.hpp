@@ -22,6 +22,11 @@
 //#define RC_EXECUTABLE "rc.exe"
 #endif
 
+#if defined(LINUX64)
+#include <BlackBox/Linux64Specific.h>
+#define _CPU_AMD64
+#endif
+
 #include <cstring>
 
 // Safe memory helpers

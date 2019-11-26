@@ -7,8 +7,6 @@
 #include <cstdarg>
 #include <Utils.hpp>
 
-#define strdup _strdup
-
 class NullLog : public ILog
 {
 public:

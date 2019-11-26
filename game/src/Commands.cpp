@@ -1,3 +1,5 @@
+#include <BlackBox/Common.hpp>
+
 #include <Game.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
@@ -10,6 +12,7 @@
 
 bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
 {
+#ifdef _WIN32
   //DWORD res;
   STARTUPINFO         si;
   PROCESS_INFORMATION pi;
@@ -38,6 +41,9 @@ bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
     *handle = pi.hProcess;
     return true;
   }
+#else
+  return false;
+#endif
 }
 
 class BaseCommand : public IConsoleCommand
@@ -86,7 +92,7 @@ private:
       return false;
     if (cd.args.size() == 1)
     {
-      for (auto i = cd.history->size() - 1 - _wtoi(cd.args[0].c_str()); i < cd.history->size();)
+      for (auto i = cd.history->size() - 1 - static_cast<size_t>(_wtof(cd.args[0].c_str())); i < cd.history->size();)
       {
         result = true;
         GetISystem()->GetIConsole()->ExecuteString(wstr_to_str(cd.history->back()).c_str());
@@ -292,7 +298,9 @@ class ExecCommand : public BaseCommand, public IWorkerCommand
   World* m_World;
   IConsole* console;
   int wait_cnt = 0;
+#ifdef _WIN32
   HANDLE process;
+#endif
 public:
   ExecCommand(CGame* game);
 private:
@@ -323,10 +331,12 @@ private:
           args += "\"" + wstr_to_str(cd.get(i)) + "\" ";
         }
       }
+#ifdef _WIN32
       if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &process))
       {
         console->AddWorkerCommand(this);
       }
+#endif
     }
     return false;
   }
@@ -334,6 +344,7 @@ private:
   // Унаследовано через IWorkerCommand
   virtual bool OnUpdate() override
   {
+#ifdef _WIN32
     auto res = WaitForSingleObject(process, 0);
     if (res == WAIT_OBJECT_0)
     {
@@ -343,6 +354,7 @@ private:
     if ((wait_cnt % 60) == 0)
       console->PrintLine("wait");
     wait_cnt++;
+#endif
     return false;
   }
 };

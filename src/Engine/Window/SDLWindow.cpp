@@ -187,11 +187,13 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
      * SDL doesn't have the ability to choose which profile at this time of writing,
      * but it should default to the core profile */
 
+#ifdef LINUX
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
   SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+#endif
 
   /* Turn on double buffering with a 24bit Z buffer.
    * You may need to change this to 16 or 32 for your system */
@@ -214,9 +216,13 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     return false;
   }
   // Create an OpenGL context associated with the window.
-  glThreadContext = SDL_GL_CreateContext(m_Window);
+  //glThreadContext = SDL_GL_CreateContext(m_Window);
   glRenderContext = SDL_GL_CreateContext(m_Window);
-  SDL_GL_MakeCurrent(m_Window, glRenderContext);
+  if (!SDL_GL_MakeCurrent(m_Window, glRenderContext))
+  {
+    printf("Can't create context current! SDL_Error: %s\n", SDL_GetError());
+
+  }
   return true;
 }
 

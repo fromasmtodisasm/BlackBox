@@ -22,7 +22,6 @@
 #include <algorithm>
 
 using namespace tinyxml2;
-#define strdup _strdup
 
 #ifndef XMLCheckResult
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }

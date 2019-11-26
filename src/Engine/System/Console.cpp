@@ -1,3 +1,4 @@
+#include <BlackBox/Common.hpp>
 #include <BlackBox/Console.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IScriptSystem.hpp>
@@ -21,8 +22,6 @@
 #include <functional>
 
 #include <glm/glm.hpp>
-
-#define strdup _strdup
 
 bool isnumber(const char* s)
 {
@@ -161,8 +160,8 @@ void CConsole::Draw()
 {
   if (!isOpened) return;
   auto deltatime = GetISystem()->GetDeltaTime();
-  auto render = GetISystem()->GetIRender();
-  height = (float)(render->GetHeight()) / 2;
+  auto render = m_pRenderer;
+  //m_ScrollHeight = (float)(render->GetHeight()) / 2;
   Animate(deltatime, render);
   size_t end;
   auto prompt = getPrompt();
@@ -170,7 +169,7 @@ void CConsole::Draw()
   if (!m_nProgressRange)
   {
     render->SetRenderTarget(0);
-    render->DrawImage(0, 0, (float)render->GetWidth(), height, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
+    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
     CalcMetrics(end);
     m_Font->SetXPos(0);
     m_Font->SetYPos(16);
@@ -209,16 +208,16 @@ void CConsole::Animate(float deltatime, IRenderer* render)
   if (animate)
   {
     curr_height += curr_speed * deltatime;
-    if (curr_height >= height)
+    if (curr_height >= m_ScrollHeight)
     {
-      height = static_cast<float>(render->GetHeight());
+      m_ScrollHeight = static_cast<float>(render->GetHeight());
       animate = false;
       curr_speed = speed;
       curr_height = 0.0f;
     }
     else
     {
-      height = curr_height;
+      m_ScrollHeight = curr_height;
       curr_speed -= gravity * deltatime;
     }
   }
@@ -227,7 +226,7 @@ void CConsole::Animate(float deltatime, IRenderer* render)
 void CConsole::CalcMetrics(size_t& end)
 {
   constexpr int MAGIC = 1;
-  line_in_console = (int)((height)) / (int)line_height;
+  line_in_console = (int)((m_ScrollHeight)) / (int)line_height;
   auto num_all_lines = cmd_buffer.size();
   if (line_in_console > num_all_lines)
   {
@@ -1090,6 +1089,7 @@ ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 bool CConsole::Init(ISystem* pSystem)
 {
   m_pSystem = pSystem;
+  m_pRenderer = pSystem->GetIRender();
   m_pScriptSystem = pSystem->GetIScriptSystem();
   m_pInput = pSystem->GetIInput();
   m_Font = new FreeTypeFont();
@@ -1105,12 +1105,16 @@ bool CConsole::Init(ISystem* pSystem)
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
   blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
+  m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
 
   if (background != nullptr)
     texture_path = background->GetString();
   m_pBackGround = new Texture();
   m_pBackGround->load(texture_path);
   initBind();
+
+  Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
+
   return true;
 }
 

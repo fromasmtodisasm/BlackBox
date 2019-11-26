@@ -4,7 +4,7 @@
 #include <BlackBox/Console.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/Render/Render.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/SystemEventDispatcher.hpp>
@@ -21,7 +21,7 @@
 #include <BlackBox/ScriptObjectRenderer.hpp>
 //
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Profiler/HP_Timer.h>
+//#include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/Profiler/Drawer2D.h>
 
 #include <BlackBox/INetwork.hpp>
@@ -408,7 +408,9 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 
 void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
 {
+#ifdef _WIN32
   ::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
+#endif
 }
 
 void CSystem::Log(const char* message)

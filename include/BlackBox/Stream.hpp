@@ -185,7 +185,7 @@ public:
     return *this;
   }
 
-  void CStream::Debug(const char* inTxt = 0);
+  void Debug(const char* inTxt = 0);
 
   //! set a bit at the specified position in the bitstream
   bool SetBit(size_t nPos, DWORD_PTR nValue);
@@ -359,12 +359,6 @@ public:
 private:
 
   unsigned int __htonl(unsigned int n) {
-    return (unsigned int)(((n & 0xFF000000) >> 24) |
-      ((n & 0x00FF0000) >> 8) |
-      ((n & 0x0000FF00) << 8) |
-      ((n & 0x000000FF) << 24));
-  }
-  unsigned int __ntohl(unsigned int n) {
     return (unsigned int)(((n & 0xFF000000) >> 24) |
       ((n & 0x00FF0000) >> 8) |
       ((n & 0x0000FF00) << 8) |
