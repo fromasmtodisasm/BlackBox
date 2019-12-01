@@ -17,6 +17,20 @@
 
 struct IFont;
 
+using VariablesMap = std::map<std::string, ICVar*>;
+using KeyBindMap = std::map<EKeyId, std::wstring>;
+using CommandMap = std::map<std::wstring, CommandInfo>;
+using VarSinkList = std::vector<IConsoleVarSink*>;
+
+struct AnimationParams
+{
+  bool animate = false;
+  float gravity = 1;
+  float speed = 400;
+  float curr_speed = 1300;
+  float curr_height = 0;
+};
+
 struct cmpKeys {
   bool operator()(const std::string& a, const std::string& b) const {
     return stricmp(a.c_str(), b.c_str()) < 0;
@@ -151,9 +165,39 @@ struct Text
 struct Cursor : Text
 {
   Cursor() : Text(std::string("_"), glm::vec3(1, 0, 0), 1.f) {}
+
+  bool needDraw = true;
+  float blinking = 0.0f;
+  ICVar* blinkTime = nullptr;
 };
 
 typedef std::vector<Text> CommandLine;
+
+struct ConsolePrompt
+{
+  std::string user = "root";
+  std::string pc = "HackMan";
+  std::string env = "BlackBox";
+  std::string cd = "~"; //current directory
+  Vec3 color = glm::vec3(0.0, 1.0, 0.0);
+
+  ConsolePrompt(
+    std::string user = "root",
+    std::string pc = "HackMan",
+    std::string env = "BlackBox",
+    std::string cd = "~",//current directory
+    Vec3 color = Vec3(0.0, 1.0, 0.0)
+  )
+  {
+    this->user = user;
+    this->pc = pc;
+    this->env = env;
+    this->cd = cd;
+    this->color = color;
+
+  }
+  CommandLine get();
+};
 
 class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSink
 {
@@ -251,13 +295,11 @@ private:
   void initBind();
   void ClearInputLine();
 private:
-  std::vector<IConsoleVarSink*> varSinks;
-  std::map<std::wstring, CommandInfo> m_Commands;
-  std::map<std::string, std::ifstream> scripts;
-  bool is_input = false;
-  bool input_trigered = false;
-  std::wstring command;
-  std::string command_text;
+  VarSinkList varSinks;
+  CommandMap m_Commands;
+  std::wstring m_CommandW;
+  std::string m_CommandA;
+
   IFont* m_Font = nullptr;
   bool isOpened = false;
   bool cmd_is_compete = false;
@@ -266,54 +308,37 @@ private:
   IScriptSystem* m_pScriptSystem = nullptr;
   IInput* m_pInput = nullptr;
   ITexture* m_pBackGround;
-  //ITexture* m_pBackGround = nullptr;
 
   float m_ScrollHeight = 0.0;
+  std::map<std::string, std::ifstream> scripts;
 
   // for animate console
-  bool animate = false;
-  float gravity = 1;
-  float speed = 400;
-  float curr_speed = 1300;
-  float curr_height = 0;
+  AnimationParams m_AnimationParams;
   //
   size_t line_count = 0;
   size_t line_in_console = 0;
   size_t line_height = 18;
   size_t current_line = 0;
   size_t on_line = 0;
-  bool page_up = false;
-  bool page_dn = false;
-  std::vector<CommandLine> cmd_buffer;
-  std::vector<std::wstring> history;
-  std::wstring last_command;
-  std::string m_prompt;
-  std::string message_buffer;
 
-  std::string user = "root";
-  std::string pc = "HackMan";
-  std::string env = "BlackBox";
-  std::string cd = "~"; //current directory
-  //
-  glm::vec3 promptColor = glm::vec3(0.0, 1.0, 0.0);
+  std::vector<CommandLine> m_CmdBuffer;
+  std::vector<std::wstring> m_History;
+  std::wstring m_LastCommand;
+  std::string m_MessageBuffer;
+  ConsolePrompt m_Prompt;
+
   glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
 
-  std::map<std::string, ICVar*> m_mapVariables;
+  VariablesMap m_mapVariables;
 
   ICVarDumpSink* m_pCVarDumpCallback = nullptr;
   ICVar* r_anim_speed;
   float time = 0.0f;
-  float cursor_tick = 0.0, cursor_tack = 0.0;
-  bool cursor_tick_tack = true;
   size_t history_line = 0;
   //
   float transparency = 0.5f;
-  Cursor cursor;
-  bool needDrawCursor = true;
-  float blinking = 0.0f;
-  //float blinkTime = 1.0;
-  ICVar* blinkTime;
-  std::map<EKeyId, std::wstring> m_keyBind;
+  Cursor m_Cursor;
+  KeyBindMap m_keyBind;
   std::map<std::string, EKeyId, cmpKeys> m_str2key;
 
   std::set<IWorkerCommand*> m_workers;

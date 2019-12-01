@@ -187,7 +187,7 @@ void CConsole::Draw()
 
     //printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
     printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
-    printText(Text(std::string(command_text), textColor, 1.0f), 0);
+    printText(Text(std::string(m_CommandA), textColor, 1.0f), 0);
     drawCursor();
   }
   else
@@ -204,21 +204,21 @@ void CConsole::Draw()
 
 void CConsole::Animate(float deltatime, IRenderer* render)
 {
-  animate = false;
-  if (animate)
+  m_AnimationParams.animate = false;
+  if (m_AnimationParams.animate)
   {
-    curr_height += curr_speed * deltatime;
-    if (curr_height >= m_ScrollHeight)
+    m_AnimationParams.curr_height += m_AnimationParams.curr_speed * deltatime;
+    if (m_AnimationParams.curr_height >= m_ScrollHeight)
     {
       m_ScrollHeight = static_cast<float>(render->GetHeight());
-      animate = false;
-      curr_speed = speed;
-      curr_height = 0.0f;
+      m_AnimationParams.animate = false;
+      m_AnimationParams.curr_speed = m_AnimationParams.speed;
+      m_AnimationParams.curr_height = 0.0f;
     }
     else
     {
-      m_ScrollHeight = curr_height;
-      curr_speed -= gravity * deltatime;
+      m_ScrollHeight = m_AnimationParams.curr_height;
+      m_AnimationParams.curr_speed -= m_AnimationParams.gravity * deltatime;
     }
   }
 }
@@ -227,7 +227,7 @@ void CConsole::CalcMetrics(size_t& end)
 {
   constexpr int MAGIC = 1;
   line_in_console = (int)((m_ScrollHeight)) / (int)line_height;
-  auto num_all_lines = cmd_buffer.size();
+  auto num_all_lines = m_CmdBuffer.size();
   if (line_in_console > num_all_lines)
   {
     current_line = 0;
@@ -237,17 +237,17 @@ void CConsole::CalcMetrics(size_t& end)
   else
   {
     current_line = num_all_lines - line_in_console + MAGIC;
-    if (page_up && current_line > 0)
+    if (/*page_up && */current_line > 0)
       current_line++;
-    else if (page_dn && current_line < cmd_buffer.size() - line_in_console)
+    else if (/*page_dn && */current_line < m_CmdBuffer.size() - line_in_console)
     {
       current_line--;
     }
     line_count = line_in_console - MAGIC;
     end = num_all_lines;
   }
-  page_up = false;
-  page_dn = false;
+  //page_up = false;
+  //page_dn = false;
 }
 
 void CConsole::AddCommand(const char* sName, IConsoleCommand* command, const char* help)
@@ -294,7 +294,6 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
     ClearInputLine();
   }
   cmd_is_compete = false;
-  input_trigered = false;
 
   {
     bool textEntered = false;
@@ -303,7 +302,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
       switch (event.keyId)
       {
       case eKI_Tab:
-        completion = autocomplete(command);
+        completion = autocomplete(m_CommandW);
         if (completion.size() > 0)
         {
           completeCommand(completion);
@@ -313,7 +312,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
       {
         if (control)
         {
-          cursor.x = 0;
+          m_Cursor.x = 0;
         }
         return true;
       }
@@ -321,7 +320,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
       {
         if (control)
         {
-          cursor.x = (int)command.size();
+          m_Cursor.x = (int)m_CommandW.size();
         }
         return true;
       }
@@ -331,7 +330,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
         if (event.keyId != eKI_Enter && !control)
           return false;
         handleEnterText();
-        cursor.x = 0;
+        m_Cursor.x = 0;
         return true;
       }
       case eKI_Insert:
@@ -368,7 +367,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
       {
         if (control)
         {
-          if (history_line < (cmd_buffer.size() - 1))
+          if (history_line < (m_CmdBuffer.size() - 1))
             ++history_line;
           getHistoryElement();
           return true;
@@ -400,16 +399,16 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
       case eKI_Delete:
       {
         //TODO: rewrite erasing
-        command.erase((int)cursor.x, 1);
+        m_CommandW.erase((int)m_Cursor.x, 1);
         fillCommandText();
         return true;
       }
       case eKI_Backspace:
       {
-        if (command.size() > 0 && (int)cursor.x > 0)
+        if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
         {
           //command.pop_back();
-          command.erase(std::max(0, (int)cursor.x - 1), 1);
+          m_CommandW.erase(std::max(0, (int)m_Cursor.x - 1), 1);
           moveCursor(true);
         }
         fillCommandText();
@@ -433,9 +432,9 @@ bool CConsole::OnInputEventUI(const SUnicodeEvent& event)
 void CConsole::getHistoryElement()
 {
   SetInputLine("");
-  if (cmd_buffer.size() < 1)
+  if (m_CmdBuffer.size() < 1)
     return;
-  auto line_history = cmd_buffer[history_line];
+  auto line_history = m_CmdBuffer[history_line];
   for (auto& element : line_history)
   {
     for (auto& ch : element.data)
@@ -505,16 +504,16 @@ bool CConsole::handleEnterText()
   {
     cmd.push_back(element);
   }*/
-  cmd.push_back(Text(wstr_to_str(command) + "\n", textColor, 1.0));
-  cmd_buffer.push_back(cmd);
-  history_line = cmd_buffer.size();
-  return handleCommand(command);
+  cmd.push_back(Text(wstr_to_str(m_CommandW) + "\n", textColor, 1.0));
+  m_CmdBuffer.push_back(cmd);
+  history_line = m_CmdBuffer.size();
+  return handleCommand(m_CommandW);
 }
 
 void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
 {
-  cmd_buffer.push_back(getPrompt());
-  cmd_buffer.push_back({ Text(std::string("\n"), textColor, 1.0f) });
+  m_CmdBuffer.push_back(getPrompt());
+  m_CmdBuffer.push_back({ Text(std::string("\n"), textColor, 1.0f) });
   for (auto& cmd : completion)
   {
     addText(cmd);
@@ -523,7 +522,7 @@ void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
 
 void CConsole::addText(std::wstring const& cmd)
 {
-  cmd_buffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
+  m_CmdBuffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
 }
 
 void CConsole::Set(CommandDesc& cd)
@@ -613,7 +612,7 @@ void CConsole::Dump()
 void CConsole::getBuffer()
 {
   std::string toClipBoard = "";
-  for (auto& cmd_line : command_text)
+  for (auto& cmd_line : m_CommandA)
   {
     //for (auto& cmd : cmd_line)
     //{
@@ -643,22 +642,22 @@ bool CConsole::needShowCursor()
   }
   */
 
-  blinking += dt;
+  m_Cursor.blinking += dt;
 
-  if (blinking >= blinkTime->GetFVal())
+  if (m_Cursor.blinking >= m_Cursor.blinkTime->GetFVal())
   {
-    blinking = 0.0f;
-    needDrawCursor = !needDrawCursor;
+    m_Cursor.blinking = 0.0f;
+    m_Cursor.needDraw = !m_Cursor.needDraw;
   }
-  return needDrawCursor;
+  return m_Cursor.needDraw;
 }
 
 void CConsole::pageUp(bool isPgUp)
 {
   if (isPgUp)
-    page_up = true;
+    ;// page_up = true;
   else
-    page_dn = true;
+    ;// page_dn = true;
 }
 
 void CConsole::drawCursor()
@@ -667,8 +666,8 @@ void CConsole::drawCursor()
     return;
   auto curr_y = m_Font->GetYPos();
   m_Font->RenderText(
-    cursor.data,
-    m_Font->CharWidth('#') + m_Font->TextWidth(command_text.substr(0, static_cast<int>(cursor.x))), curr_y, 1.0f, &glm::vec4(cursor.color, 1.0)[0]);
+    m_Cursor.data,
+    m_Font->CharWidth('#') + m_Font->TextWidth(m_CommandA.substr(0, static_cast<int>(m_Cursor.x))), curr_y, 1.0f, &glm::vec4(m_Cursor.color, 1.0)[0]);
 }
 
 void CConsole::moveCursor(bool left, bool wholeWord)
@@ -677,28 +676,28 @@ void CConsole::moveCursor(bool left, bool wholeWord)
   {
     if (wholeWord)
     {
-      std::size_t found = command_text.rfind(" ", cursor.x - 1);
+      std::size_t found = m_CommandA.rfind(" ", m_Cursor.x - 1);
       if (found != std::string::npos)
-        cursor.x = static_cast<int>(std::min((size_t)cursor.x, found - 1));
+        m_Cursor.x = static_cast<int>(std::min((size_t)m_Cursor.x, found - 1));
     }
     else
     {
-      cursor.x = std::max(0, (int)cursor.x - 1);
+      m_Cursor.x = std::max(0, (int)m_Cursor.x - 1);
     }
   }
   else
   {
     if (wholeWord)
     {
-      std::size_t found = command_text.find_first_of(" ", cursor.x);
+      std::size_t found = m_CommandA.find_first_of(" ", m_Cursor.x);
       if (found != std::string::npos)
-        cursor.x = (int)std::min(command_text.size(), found + 1);
+        m_Cursor.x = (int)std::min(m_CommandA.size(), found + 1);
       else
-        cursor.x = (int)command_text.size();
+        m_Cursor.x = (int)m_CommandA.size();
     }
     else
     {
-      cursor.x = std::min((int)command.size(), (int)cursor.x + 1);
+      m_Cursor.x = std::min((int)m_CommandW.size(), (int)m_Cursor.x + 1);
     }
   }
 }
@@ -907,14 +906,14 @@ void CConsole::CreateKeyBind(const char* key, const char* cmd)
 
 void CConsole::SetInputLine(const char* szLine)
 {
-  command = str_to_wstr(szLine);
-  cursor.x = 0;
+  m_CommandW = str_to_wstr(szLine);
+  m_Cursor.x = 0;
 }
 
 void CConsole::ClearInputLine()
 {
-  command.clear();
-  cursor.x = 0;
+  m_CommandW.clear();
+  m_Cursor.x = 0;
   fillCommandText();
 }
 
@@ -1104,7 +1103,7 @@ bool CConsole::Init(ISystem* pSystem)
   const char* texture_path = "console_background2.jpg";
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
-  blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
+  m_Cursor.blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
   m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
 
   if (background != nullptr)
@@ -1151,7 +1150,7 @@ void CConsole::AddInputChar(uint32_t ch)
 {
   if (iswgraph(ch) || (iswblank(ch) && ch != '\t'))
   {
-    command.insert((int)cursor.x, 1, ch);// += ch;
+    m_CommandW.insert((int)m_Cursor.x, 1, ch);// += ch;
     moveCursor(false);
   }
   fillCommandText();
@@ -1413,7 +1412,7 @@ CConsole::CConsole()
   AddCommand("set", new SetCommand(this));
   AddCommand("get", new GetCommand(this));
   AddCommand("dump", new DumpCommand(this));
-  message_buffer.resize(MESSAGE_BUFFER_SIZE);
+  m_MessageBuffer.resize(MESSAGE_BUFFER_SIZE);
 }
 CConsole::~CConsole()
 {
@@ -1428,18 +1427,17 @@ void CConsole::ShowConsole(bool show)
     isOpened = show;
     if (show)
     {
-      input_trigered = true;
-      animate = true;
+      m_AnimationParams.animate = true;
     }
   }
 }
 
 void CConsole::fillCommandText()
 {
-  command_text.clear();
-  for (auto ch : command)
+  m_CommandA.clear();
+  for (auto ch : m_CommandW)
   {
-    command_text.push_back(static_cast<char>(ch));
+    m_CommandA.push_back(static_cast<char>(ch));
   }
   //command_text.push_back(cursor);
 }
@@ -1451,23 +1449,14 @@ void CConsole::setFont(IFont* font)
 
 CommandLine CConsole::getPrompt()
 {
-  auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  std::string time_str = std::ctime(&time);
-  time_str[time_str.size() - 1] = 0;
-  return {
-    Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0) ,
-    Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) ,
-    Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) ,
-    Text(std::string(" " + time_str), promptColor, 1.0)//,
-    //Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
-  };
+  return m_Prompt.get();
 }
 
 void CConsole::printLine(size_t line)
 {
   auto i = line;
   //for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
-  for (const auto& element : cmd_buffer[line])
+  for (const auto& element : m_CmdBuffer[line])
   {
     printText(element, line);
   }
@@ -1491,9 +1480,9 @@ void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
 
 void CConsole::Clear()
 {
-  cmd_buffer.clear();
-  cursor.x = 0;
-  cursor.y = 0;
+  m_CmdBuffer.clear();
+  m_Cursor.x = 0;
+  m_Cursor.y = 0;
   history_line = 0;
 }
 
@@ -1517,18 +1506,18 @@ void CConsole::Help(const char* cmd)
         return;
     }
 
-    cmd_buffer.push_back({ Text(std::string(cmd) + ": " + help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+    m_CmdBuffer.push_back({ Text(std::string(cmd) + ": " + help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
   }
   else
   {
     for (auto& cmd : m_Commands)
     {
       if (cmd.second.help.size() > 0)
-        cmd_buffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+        m_CmdBuffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
     }
     for (auto& var : m_mapVariables)
     {
-      cmd_buffer.push_back({ Text(var.first + ": " + var.second->GetHelp() + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+      m_CmdBuffer.push_back({ Text(var.first + ": " + var.second->GetHelp() + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
     }
   }
 }
@@ -1537,10 +1526,10 @@ void CConsole::PrintLine(const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
-  vsnprintf(const_cast<char*>(message_buffer.data()), MESSAGE_BUFFER_SIZE, format, ptr);
+  vsnprintf(const_cast<char*>(m_MessageBuffer.data()), MESSAGE_BUFFER_SIZE, format, ptr);
   va_end(ptr);
 
-  addText(str_to_wstr(message_buffer));
+  addText(str_to_wstr(m_MessageBuffer));
 }
 
 char* CCVar::GetString()
@@ -1769,4 +1758,18 @@ const char* CCVarRef::GetName()
 const char* CCVarRef::GetHelp()
 {
   return help;
+}
+
+CommandLine ConsolePrompt::get()
+{
+  auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  std::string time_str = std::ctime(&time);
+  time_str[time_str.size() - 1] = 0;
+  return {
+    Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0) ,
+    Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0) ,
+    Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0) ,
+    Text(std::string(" " + time_str), color, 1.0)//,
+    //Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
+  };
 }

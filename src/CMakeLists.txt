@@ -12,6 +12,8 @@ if (UNIX OR CYGWIN)
 	find_package(PkgConfig REQUIRED)
   add_definitions(-DLINUX64)
   add_definitions(-DLINUX)
+else()
+
 endif()
 ###################################################
 set(CMAKE_CXX_STANDARD 14)
