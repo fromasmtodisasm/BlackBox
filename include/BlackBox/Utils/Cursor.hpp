@@ -15,25 +15,25 @@
 
 namespace sf
 {
-	class StandardCursor
-	{
-	private:
+  class StandardCursor
+  {
+  private:
 #ifdef SFML_SYSTEM_WINDOWS
 
-		HCURSOR Cursor; /*Type of the Cursor with Windows*/
+    HCURSOR Cursor; /*Type of the Cursor with Windows*/
 
 #else
 
-		XID Cursor;
-		Display* display;
+    XID Cursor;
+    Display* display;
 
 #endif
-	public:
-		enum TYPE { WAIT, TEXT, NORMAL, HAND /*,...*/ };
-		StandardCursor(const TYPE t);
-		void set(const sf::WindowHandle& aWindowHandle) const;
-		~StandardCursor();
-	};
+  public:
+    enum TYPE { WAIT, TEXT, NORMAL, HAND /*,...*/ };
+    StandardCursor(const TYPE t);
+    void set(const sf::WindowHandle& aWindowHandle) const;
+    ~StandardCursor();
+  };
 }
 
 #endif // STANDARDCURSOR_HPP

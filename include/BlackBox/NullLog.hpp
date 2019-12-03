@@ -4,15 +4,13 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-#include <varargs.h>
+#include <cstdarg>
 #include <Utils.hpp>
-
-#define strdup _strdup
 
 class NullLog : public ILog
 {
 public:
-  NullLog(const char *filename);
+  NullLog(const char* filename);
   ~NullLog();
 
   // Inherited via ILog
@@ -22,7 +20,7 @@ private:
   void Shutdown();
 private:
   FILE* output;
-  const char *filename = "log.txt";
+  const char* filename = "log.txt";
   bool inited = false;
   std::vector<std::string> log;
   char buf[2048];
@@ -30,11 +28,11 @@ private:
   // Inherited via ILog
   virtual void Release() override;
 
-	// Inherited via ILog
-	virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override;
+  // Inherited via ILog
+  virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override;
 };
 
-NullLog::NullLog(const char *filename) : filename(filename)
+NullLog::NullLog(const char* filename) : filename(filename)
 {
   output = fopen(filename, "w");
   ZeroMemory(buf, sizeof(buf));
@@ -64,18 +62,19 @@ inline void NullLog::Shutdown()
   {
     fputs(str.c_str(), output);
   }
-	if (GET_CVAR("stpo_running"))
-	{
-		fputs("\n\n*****Game stopped*****", output);
-	}
-	else if (GET_CVAR("window_closed"))
-	{
-		fputs("\n\n*****Window Closed*****", output);
-	}
-	else
-	{
-		fputs("\n\n*****Unknown stop cause*****", output);
-	}
+  bool hasConsole = GetISystem()->GetIConsole() != nullptr;
+  if (hasConsole && GET_CVAR("stpo_running"))
+  {
+    fputs("\n\n*****Game stopped*****", output);
+  }
+  else if (hasConsole && GET_CVAR("window_closed"))
+  {
+    fputs("\n\n*****Window Closed*****", output);
+  }
+  else
+  {
+    fputs("\n\n*****Unknown stop cause*****", output);
+  }
 }
 
 void NullLog::Release()
@@ -84,7 +83,10 @@ void NullLog::Release()
 }
 
 void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
-{    
-	vsprintf(buf, szFormat, args);
-	log.push_back(strdup(buf));
+{
+  vsprintf(buf, szFormat, args);
+  auto len = strlen(buf);
+  buf[len] = '\n';
+  buf[len + 1] = '\0';
+  log.push_back(strdup(buf));
 }

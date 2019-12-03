@@ -16,4 +16,3 @@ using Matrix44 = glm::mat4;
 #else
 
 #endif // USE_GLM
-

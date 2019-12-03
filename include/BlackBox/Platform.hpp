@@ -10,13 +10,21 @@
 #define _CPU_X86
 // Insert your headers here
 #define WIN32_LEAN_AND_MEAN
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
 #include <Windows.h>
 #undef min
 #undef max
 
-//#include <Win32specific.h>
+#include <BlackBox/WindowsSpecific.hpp>
 
 //#define RC_EXECUTABLE "rc.exe"
+#endif
+
+#if defined(LINUX64)
+#include <BlackBox/Linux64Specific.h>
+#define _CPU_AMD64
 #endif
 
 #include <cstring>
@@ -25,17 +33,17 @@
 template<typename T>
 inline auto SAFE_DELETE(T const* t) -> decltype((void)(t->Release()), void())
 {
-	t->Release();
+  t->Release();
 }
 
 template<typename T>
-inline auto SAFE_DELETE(T *& t)
+inline auto SAFE_DELETE(T*& t)
 {
-	if (t != nullptr)
-	{
-		delete t;
-		t = nullptr;
-	}
+  if (t != nullptr)
+  {
+    delete t;
+    t = nullptr;
+  }
 }
 
 #define BIT(x)    (1u << (x))
@@ -44,8 +52,22 @@ inline auto SAFE_DELETE(T *& t)
 #define MASK64(x) (BIT64(x) - 1ULL)
 
 #define ASSERT(msg) assert(msg)
-#define FUNCTION_PROFILER() 
-#define LogAlways() void(0);
+#define FUNCTION_PROFILER(...)
+#define LogAlways(...) void(0);
+
+#define TRACE(...)
+
+//! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
+//! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
+#if !defined(_DEBUG) && !defined(CRY_UBSAN)
+#define ILINE
+#else
+#define ILINE inline
+#endif
+#include <cstdint>
+
+int64_t    bbGetTicks();
+void       bbSleep(unsigned int dwMilliseconds);
 
 // Include most commonly used STL headers.
 // They end up in precompiled header and make compilation faster.
@@ -59,6 +81,8 @@ inline auto SAFE_DELETE(T *& t)
 #include <stack>
 #include <algorithm>
 #include <functional>
+#include <cassert>
+#include <cstdint>
 
 #ifdef SendMessage
 #undef SendMessage

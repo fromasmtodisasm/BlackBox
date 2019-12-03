@@ -5,20 +5,19 @@
 #include <memory>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ITexture.hpp>
-#include <SFML/Graphics.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif
 
 enum TextureType
 {
-    DIFFUSE,
-    SPECULAR,
-    BUMP,
-    NORMAL,
-    MASK,
-		EMISSIVE,
-    UNKNOWN
+  DIFFUSE,
+  SPECULAR,
+  BUMP,
+  NORMAL,
+  MASK,
+  EMISSIVE,
+  UNKNOWN
 };
 
 class BaseTexture : public ITexture
@@ -28,23 +27,23 @@ public:
   int height;
   TextureType type;
   GLuint id;
-	GLint unit = 0;
+  GLint unit = 0;
   std::shared_ptr<std::string> path;
   std::string name;
-	std::string texture_root = "res/images/";
+  std::string texture_root = "res/images/";
 
   BaseTexture()
-		:
-		width(0),
-		height(0),
-		type(TextureType::DIFFUSE),
-		id(-1),
-		path(std::make_shared<std::string>("")),
-		name("")
-	{}
+    :
+    width(0),
+    height(0),
+    type(TextureType::DIFFUSE),
+    id(-1),
+    path(std::make_shared<std::string>("")),
+    name("")
+  {}
 #ifdef NVTT
-	void GetMipMapLevel(int level, nvtt::Surface &surface);
-	void SaveMipMaps();
+  void GetMipMapLevel(int level, nvtt::Surface& surface);
+  void SaveMipMaps();
 #endif
 
   virtual int getWidth() override;

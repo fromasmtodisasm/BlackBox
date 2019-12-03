@@ -59,8 +59,12 @@ function init()
 	Console:CreateKeyBind("num2", "@load2()");
 
 	Console:CreateKeyBind("a", [[@retrigger_value("r_aspect")]]);
+	--Console:CreateKeyBind("c", "Console:Show(false)")  
 	Console:CreateKeyBind("b", "@setFog(0,0,0)") 
 	Console:CreateKeyBind("g", "@setFog(0,0.01,0.01)")  
+
+	Console:CreateKeyBind("xi_b", "quit")  
+	Console:CreateKeyBind("xi_back", "@Game:gotoMenu()")  
 
 
 	addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
@@ -68,9 +72,24 @@ function init()
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
 	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
+	addcommand("connect", [[Client:Connect(%1,%2)]]) 
+	addcommand("send", 
+	[[
+		if Client:Send(%1) then
+			Console:PrintLine(Client:Response())
+		end
+	]]) 
+
 	Console:CreateKeyBind("f5", "screen_shot") 
+	Console:CreateKeyBind("s", "scene load test") 
+	Console:CreateKeyBind("p", "reload_scripts") 
+	Console:CreateKeyBind("c", "@Game:gotoMenu()") 
 
 	setFog(0,0,0)
+
+	setvar("MouseSenitivity")
+
+	Console:Show(true)
 end
 
 Test = {

@@ -1,6 +1,7 @@
+#ifdef ENABLE_MUSIC_LIST
 #include <BlackBox/MusicList.hpp>
 
-void MusicList::setRootPath(const std::string &RootPath)
+void MusicList::setRootPath(const std::string& RootPath)
 {
   m_RootPath = RootPath;
 }
@@ -44,7 +45,7 @@ bool MusicList::prev()
 {
   m_Playlist[m_CurrentTrack]->pause();
   ;
-  if (--m_CurrentTrack < 0 )
+  if (--m_CurrentTrack < 0)
     m_CurrentTrack = m_Playlist.size() - 1;
   m_Playlist[m_CurrentTrack]->setVolume(m_Volume);
   m_Playlist[m_CurrentTrack]->play();
@@ -75,4 +76,4 @@ void MusicList::setVolume(float volume)
   m_Volume = volume;
   m_Playlist[m_CurrentTrack]->setVolume(volume);
 }
-
+#endif

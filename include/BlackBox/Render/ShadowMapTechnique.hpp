@@ -3,10 +3,9 @@
 #include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/Scene.hpp>
 
-
-class ShadowMapping 
+class ShadowMapping
   :
-  public ITechnique, 
+  public ITechnique,
   public ForEachObjectSink,
   public ForEachDirectionLightSink,
   public ForEachPointLightSink,
@@ -39,7 +38,7 @@ class ShadowMapping
     UniformValue quadratic;
   };
 
-  struct SpotLightValues : public PointLightValues 
+  struct SpotLightValues : public PointLightValues
   {
     UniformValue direction;
     UniformValue cutOff;
@@ -51,7 +50,7 @@ public:
   ~ShadowMapping();
 
   // Inherited via ITechnique
-  virtual bool Init(Scene* scene, FrameBufferObject *renderTarget) override;
+  virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) override;
   virtual bool PreRenderPass() override;
   virtual bool OnRenderPass(int pass) override;
   virtual void PostRenderPass() override;
@@ -76,13 +75,13 @@ private:
 
   void OnDepthPass();
   void OnRenderPass();
-  void SetupLights(Object *object);
+  void SetupLights(Object* object);
   inline void SetupDirectionLights();
   inline void SetupPointLights();
   inline void SetupSpotLights();
   void InitLights();
 private:
-	IRender* m_pRender = nullptr;
+  IRenderer* m_pRender = nullptr;
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
   FrameBufferObject* m_RenderedScene;
@@ -92,14 +91,14 @@ private:
   const int width = 1024;
   const int height = 1024;
   //====================
-	ICVar* s_divider = nullptr;
-	ICVar* lightPosX = nullptr;
-	ICVar* lightPosY = nullptr;
-	ICVar* lightPosZ = nullptr;
-	ICVar* lighting = nullptr;
+  ICVar* s_divider = nullptr;
+  ICVar* lightPosX = nullptr;
+  ICVar* lightPosY = nullptr;
+  ICVar* lightPosZ = nullptr;
+  ICVar* lighting = nullptr;
 
-	ICVar* cam_width = nullptr;
-	ICVar* cam_height = nullptr;
+  ICVar* cam_width = nullptr;
+  ICVar* cam_height = nullptr;
 
   bool bLighting = true;
 
@@ -112,6 +111,6 @@ private:
   std::vector<PointLightValues> m_PointLights;
   std::vector<SpotLightValues> m_SpotLights;
 
-	// Inherited via ITechnique
-	virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;
-	};
+  // Inherited via ITechnique
+  virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;
+};

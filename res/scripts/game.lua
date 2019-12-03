@@ -6,7 +6,6 @@ player = {
 
 function player:OnInit( data )
 	Console:PrintLine("Player OnInit");
-	Console:PrintLine("Fps count = " .. Game:getFPS())
 	Console:PrintLine("Username: " .. self.name)
 
 	--Console:Show(true)
@@ -19,6 +18,11 @@ function player:OnInit( data )
 
 	Game:CreateVariable("game_inited", 1)
 end
+
+function player:PostInit( )
+	Game:LoadLevel("test")
+end
+
 
 function player:TestChanges(string)
 	Console:PrintLine("TestChanges"):PrintLine("call chain"..string)
@@ -37,9 +41,6 @@ end
 function test(  )
 	player:OnInit(123)
 end
-
-
-
 
 test()
 

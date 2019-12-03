@@ -7,17 +7,17 @@
 
 class ShaderManager
 {
-  static ShaderManager *manager;
+  static ShaderManager* manager;
   std::map<std::string, std::shared_ptr<CShader>> cache;
-	std::string root = "res/shaders/";
+  std::string root = "res/shaders/";
   //ShaderManager();
 public:
-  static ShaderManager *instance();
+  static ShaderManager* instance();
   std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader);
   std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader);
   std::shared_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader);
   std::shared_ptr<CShaderProgram> getDefaultProgram();
-  std::shared_ptr<CShader> getShader(ShaderDesc& desc, bool isReload);
+  std::shared_ptr<CShader> getShader(ShaderDesc const& desc, bool isReload);
   void removeShader(std::string name);
   static bool init();
 private:

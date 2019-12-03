@@ -19,15 +19,36 @@ float float_to_sRGB(float val)
     return val;
 }
 
+//uniform sampler2D mainMap;
+//uniform sampler2D blurMap;
+
+vec3 tonemap_reinhard(vec3 color)
+{
+	return (vec3(1.0) - exp(-color * exposure))*0.6;
+}
+
+vec3 tonemap2(vec3 base, vec3 blur)
+{
+    const vec3  luminance = vec3 ( 0.3, 0.59, 0.11 );
+    float       l         = dot ( luminance, base );
+    float       scale     = l / ( 1.0 + l );
+    vec3 color = base * scale + bloom_exposure * blur;
+
+	return color;
+}
+
 void main()
 {             
-    const float gamma = 2.2;
 	vec2 bloom_size = 1.0/textureSize(bloomBlur,0);
-    vec3 hdrColor = texture(scene, TexCoords*scale).rgb;      
-    vec3 bloomColor = texture(bloomBlur, clamp((TexCoords - bloom_size)*scale, vec2(0.5)*bloom_size, vec2(1.0))).rgb;
+	vec2 hdr_size = 1.0/textureSize(scene,0);
+    vec3 hdrColor = textureLod(scene, (TexCoords - hdr_size)*scale, 0).rgb;      
+    vec3 bloomColor = textureLod(bloomBlur, clamp((TexCoords - bloom_size)*scale, vec2(0.5)*bloom_size, vec2(1.0)), 0).rgb;
+	vec3 result = vec3(0);
+	vec3 color = vec3(hdrColor);
     if(bloom)
-        hdrColor += bloomColor * bloom_exposure; // additive blending
-    vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+        color = hdrColor + bloomColor * bloom_exposure; // additive blending
+	//result = tonemap2(hdrColor, bloomColor);	
+	result = tonemap_reinhard(color);
 	result = vec3(float_to_sRGB(result.x), float_to_sRGB(result.y), float_to_sRGB(result.z));
     FragColor = vec4(result, 1.0);
 }

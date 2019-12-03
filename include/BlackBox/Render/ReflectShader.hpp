@@ -6,13 +6,12 @@
 class ReflectShader : public CBaseShaderProgram
 {
 public:
-	ReflectShader();
-	~ReflectShader();
-
+  ReflectShader();
+  ~ReflectShader();
 
 private:
-	ISystem* m_Engine;
+  ISystem* m_Engine;
 
-	// Inherited via CBaseShaderProgram
-	virtual void setup() override;
+  // Inherited via CBaseShaderProgram
+  virtual void setup() override;
 };

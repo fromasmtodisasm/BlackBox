@@ -6,13 +6,13 @@
 
 class Quad
 {
-	GLuint id;
+  GLuint id;
   GLuint VBO;
-	std::vector<float> m_vertecies;
+  std::vector<float> m_vertecies;
 public:
-	Quad();
-	~Quad();
-	void draw();
+  Quad();
+  ~Quad();
+  void draw();
 private:
-	virtual bool init();
+  virtual bool init();
 };

@@ -12,6 +12,6 @@ class Renderer
   void beginFrame();
   void endFrame();
 
-  void setCamera(CCamera *camera);
-  void drawVertexBuffer(VertexArrayObject *vao);
+  void setCamera(CCamera* camera);
+  void drawVertexBuffer(VertexArrayObject* vao);
 };

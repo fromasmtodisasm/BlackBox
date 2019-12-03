@@ -1,6 +1,6 @@
 #pragma once
 #ifdef GUI
-#include <BlackBox/Game/Game.hpp>
+#include <Game.hpp>
 #include <BlackBox/IInputHandler.hpp>
 
 // Std inc
@@ -51,13 +51,12 @@ struct MyWindow
 {
   ImVec2 size;
   ImVec2 pos;
-
 };
 
 class GameGUI : public IInputEventListener
 {
   friend class CGame;
-  CGame *game;
+  CGame* game;
   bool editing = false;
   //Menu
   float MainMenuHeight;
@@ -71,11 +70,11 @@ class GameGUI : public IInputEventListener
     LIGHT
   }style = DARK;
   bool
-      show_player=1,
-      show_camera=1,
-      show_demo=0,
-      edit_player = 1,
-      lighting = 0;
+    show_player = 1,
+    show_camera = 1,
+    show_demo = 0,
+    edit_player = 1,
+    lighting = 0;
   bool open = true;
   MyWindow leftPanel;
   MyWindow assetsWindow;
@@ -87,14 +86,14 @@ public:
   ~GameGUI();
 
   void Draw();
-  void objectInfo(Object *obj, std::string);
+  void objectInfo(Object* obj, std::string);
   void musiListController();
   void cameraController();
-  void showLights(BaseLight* light, const char *name);
+  void showLights(BaseLight* light, const char* name);
   void controlPanel();
   void assets();
   void setStyle();
-  void showScene(Scene *scene);
+  void showScene(Scene* scene);
   void drawFullScreenViewPort();
 
   // Унаследовано через IInputEventListener

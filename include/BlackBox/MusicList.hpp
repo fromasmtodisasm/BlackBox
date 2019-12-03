@@ -1,3 +1,4 @@
+#ifdef ENABLE_MUSIC_LIST
 #ifndef MUSICLIST_H
 #define MUSICLIST_H
 
@@ -21,10 +22,10 @@ public:
   void pause();
   void stop();
   void setVolume(float volume);
-  void setRootPath(const std::string &RootPath);
+  void setRootPath(const std::string& RootPath);
   float getVolume() const;
 };
 
 #endif // MUSICLIST_H
 
-
+#endif

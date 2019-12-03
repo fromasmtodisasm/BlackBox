@@ -8,7 +8,6 @@
 struct ITexture;
 class Texture;
 
-
 class FrameBufferObject
 {
 public:
@@ -18,11 +17,11 @@ public:
     SCENE_BUFFER,
     HDR_BUFFER,
   };
-	~FrameBufferObject();
+  ~FrameBufferObject();
 
-  static FrameBufferObject *create(BufferType type, int width, int height, int nColors, bool createMipChain);
-	void clear(gl::Color &color);
-	void clear();
+  static FrameBufferObject* create(BufferType type, int width, int height, int nColors, bool createMipChain);
+  void clear(gl::Color const& color);
+  void clear();
   void bind();
   void bind(glm::vec4 viewPort);
   static void bindDefault(glm::vec4 viewPort);
@@ -37,6 +36,6 @@ public:
   std::vector<GLuint> texture;
   GLuint rbo;
   BufferType type;
-	glm::vec4 viewPort;
-	glm::vec4 defaultColor = glm::vec4(glm::vec3(0.f), 1.f);
+  glm::vec4 viewPort;
+  glm::vec4 defaultColor = glm::vec4(glm::vec3(0.f), 1.f);
 };
