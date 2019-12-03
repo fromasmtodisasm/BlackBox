@@ -7,7 +7,7 @@
 class GameObject : public Object, public IInputEventListener
 {
 protected:
-  const float MOVE_SPEED = 0.5f;
+  float MOVE_SPEED = 0.5f;
   CCamera *m_Camera;
 
   GameObject(Primitive::Type type);

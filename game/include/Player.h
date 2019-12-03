@@ -35,11 +35,14 @@ class CPlayer : public GameObject
     FREE
   }mouseState;
   Vec2 delta;
-  Vec3 impulse;
+  Vec3 impulse = Vec3(0.f, 3.f, 0.f);
+  float floor = 4.f;
 
 public:
   CPlayer(CGame *game);
   CPlayer(Object *obj);
+
+  void init();
 
   // IInputEventListener interface
 public:

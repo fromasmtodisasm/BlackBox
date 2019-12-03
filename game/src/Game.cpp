@@ -704,7 +704,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
       */
     case eKI_Backspace:
       return true;
-    case eKI_Space:
+    case eKI_M:
       camera->mode = CCamera::Mode::FLY;
       m_Mode = Mode::FLY;
       return true;
@@ -718,9 +718,9 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
       //m_inputHandler->mouseLock(false);
       m_Mode = EDIT;
       return true;
-    case eKI_M:
+    /*case eKI_M:
       camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
-      return true;
+      return true;*/
     case eKI_B:
       culling = !culling;
       return true;

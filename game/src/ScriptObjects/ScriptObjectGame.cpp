@@ -36,6 +36,7 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
   REG_FUNC(CScriptObjectGame, SetVariable);
   REG_FUNC(CScriptObjectGame, RemoveVariable);
   REG_FUNC(CScriptObjectGame, GetVariable);
+  REG_FUNC(CScriptObjectGame, LoadLevel);
 
   REG_FUNC(CScriptObjectGame, AddCommand);
 
@@ -429,6 +430,19 @@ int CScriptObjectGame::GetVariable(IFunctionHandler* pH)
   default:
     return pH->EndFunctionNull();
   }
+}
+
+int CScriptObjectGame::LoadLevel(IFunctionHandler* pH)
+{
+  CHECK_PARAMETERS(1);
+  const char* szLevelName = nullptr;
+
+  if (pH->GetParam(1, szLevelName))
+  {
+    return pH->EndFunction(m_pGame->loadScene(szLevelName));
+  }
+  return pH->EndFunctionNull();
+
 }
 
 int CScriptObjectGame::AddCommand(IFunctionHandler* pH)

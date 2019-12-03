@@ -130,6 +130,11 @@ void ShadowMapping::RenderPass()
       Pipeline::instance()->model,
       "MVP"
     );
+    if (auto ps = GetISystem()->GetIConsole()->GetCVar("point_size"))
+    {
+      points->shader->Uniform(ps->GetIVal(), "point_size");
+
+    }
     points->draw();
     points->shader->Unuse();
   }

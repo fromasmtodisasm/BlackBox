@@ -19,6 +19,11 @@ function player:OnInit( data )
 	Game:CreateVariable("game_inited", 1)
 end
 
+function player:PostInit( )
+	Game:LoadLevel("test")
+end
+
+
 function player:TestChanges(string)
 	Console:PrintLine("TestChanges"):PrintLine("call chain"..string)
 	Console:PrintLine("Username: " .. self.name)

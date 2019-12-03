@@ -8,18 +8,24 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 
-CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game))
+CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game)), impulse(0.0f, 3.0f, 0.0f)
 {
   //getShaderProgram()->Uniform("color", glm::vec3(1,0,0));
   mouseState = FREE;
   setMaterial(defaultMaterial);
-  GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
+  init();
 }
 
 CPlayer::CPlayer(Object* obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
   m_pScript = GetISystem()->GetIScriptSystem()->CreateEmptyObject();
+  init();
+}
+
+void CPlayer::init()
+{
   GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
+  GetISystem()->GetIConsole()->Register("floor", &floor, floor, 0, "floor height");
 }
 
 bool CPlayer::OnInputEvent(const SInputEvent& event)
@@ -115,39 +121,62 @@ CGame* CPlayer::getGame()
 void CPlayer::update(float deltatime)
 {
   //ImGui
-  float speed = deltatime * MOVE_SPEED;
-  float rotSpeed = deltatime * 5.f;//m_rotAngle;
+  float mult = m_keys.find(eKI_LShift) != m_keys.end() ? 3 : 1;
+  float rotation_speed = deltatime * MOVE_SPEED * mult;
+  //float rotSpeed = deltatime * 5.f;//m_rotAngle;
+  static Vec3 impulse = Vec3(0.f, 10.f, 0.f);
+  float move_speed = deltatime * mult;
   for (auto& key : m_keys)
   {
     switch (key)
     {
-    case eKI_J:
+    case eKI_Space:
       velocity += impulse;
       break;
-    case eKI_K:
+    /*case eKI_K:
       velocity -= impulse;
-      break;
+      break;*/
     case eKI_W:
-      m_Camera->ProcessKeyboard(Movement::FORWARD, deltatime);
+      m_Camera->ProcessKeyboard(Movement::FORWARD, move_speed);
       break;
     case eKI_S:
-      m_Camera->ProcessKeyboard(Movement::BACKWARD, deltatime);
+      m_Camera->ProcessKeyboard(Movement::BACKWARD, move_speed);
       break;
     case eKI_A:
-      m_Camera->ProcessKeyboard(Movement::LEFT, deltatime);
+      m_Camera->ProcessKeyboard(Movement::LEFT, move_speed);
       break;
     case eKI_D:
-      m_Camera->ProcessKeyboard(Movement::RIGHT, deltatime);
+      m_Camera->ProcessKeyboard(Movement::RIGHT, move_speed);
+      break;
+    case eKI_Up:
+      m_Camera->ProcessMouseMovement(0.f, rotation_speed);
+      break;
+    case eKI_Down:
+      m_Camera->ProcessMouseMovement(0.f, -rotation_speed);
+      break;
+    case eKI_Left:
+      m_Camera->ProcessMouseMovement(-rotation_speed, 0.f);
+      break;
+    case eKI_Right:
+      m_Camera->ProcessMouseMovement(rotation_speed, 0.f);
       break;
     default:
       ;//GameObject::update(deltatime);
     }
   }
-#if 0
-  if (m_transform.position.y < 0)
-    velocity.y = -velocity.y * friction;
-  m_transform.position += velocity * deltatime;
-#endif
+//#if 0
+  if (m_Camera->mode == CCamera::Mode::FPS)
+  {
+    if (m_Camera->transform.position.y < floor)
+    {
+      velocity.y = 0.f;
+      m_Camera->transform.position.y = floor;
+    }
+    //m_transform.position += velocity * deltatime;
+    m_Camera->transform.position += velocity * deltatime;
+  }
+
+//#endif
   //m_Camera->m_target = m_transform.position;
   PROFILER_PUSH_CPU_MARKER("CALL SCRIPT", Utils::COLOR_DARK_GREEN);
   GetISystem()->GetIScriptSystem()->BeginCall("player", "Update");

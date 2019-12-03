@@ -166,6 +166,8 @@ void CSDLMouse::Update(bool focus)
           m_deltas.x = (float)motionEvent->xrel;
           m_deltas.y = (float)motionEvent->yrel;
 
+          m_deltas *= g_pInputCVars->i_mouse_sensitivity;
+
           if (mouseaccel > 0.0f)
           {
             m_deltas.x = m_deltas.x * fabs(m_deltas.x * mouseaccel);

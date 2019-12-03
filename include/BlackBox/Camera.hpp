@@ -36,7 +36,6 @@ public:
   // Camera options
   ICVar* MovementSpeed;
   ICVar* FOV;
-  GLfloat MouseSensitivity;
   GLfloat Zoom;
   //GLfloat FOV = 45.0f;
   GLfloat Ratio = 16.0f / 9;

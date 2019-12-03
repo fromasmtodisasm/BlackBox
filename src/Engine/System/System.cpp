@@ -24,8 +24,9 @@
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/Profiler/Drawer2D.h>
 
+/////////////////////////////////////////////////////////
 #include <BlackBox/INetwork.hpp>
-
+/////////////////////////////////////////////////////////
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
@@ -214,6 +215,8 @@ bool CSystem::Init()
     m_pLog->Log("error init resource manager");
     return false;
   }
+
+
   return true;
 }
 

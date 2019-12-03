@@ -17,11 +17,6 @@
 
 struct IFont;
 
-using VariablesMap = std::map<std::string, ICVar*>;
-using KeyBindMap = std::map<EKeyId, std::wstring>;
-using CommandMap = std::map<std::wstring, CommandInfo>;
-using VarSinkList = std::vector<IConsoleVarSink*>;
-
 struct AnimationParams
 {
   bool animate = false;
@@ -172,6 +167,12 @@ struct Cursor : Text
 };
 
 typedef std::vector<Text> CommandLine;
+
+using VariablesMap = std::map<std::string, ICVar*>;
+using KeyBindMap = std::map<EKeyId, std::wstring>;
+using CommandMap = std::map<std::wstring, CommandInfo>;
+using VarSinkList = std::vector<IConsoleVarSink*>;
+
 
 struct ConsolePrompt
 {

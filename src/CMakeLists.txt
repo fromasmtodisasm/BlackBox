@@ -6,6 +6,8 @@ include(GenerateExportHeader)
 include(FindFreetype)
 
 ###################################################
+add_library(${PROJECT_NAME})
+###################################################
 if (UNIX OR CYGWIN)
 	set(UNIX_OR_CYGWIN ON)
 	message(STATUS "UNIX_OR_CYGWIN")
@@ -15,6 +17,9 @@ if (UNIX OR CYGWIN)
 else()
 
 endif()
+###################################################
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core)
 ###################################################
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -63,7 +68,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 #...
 #--------------------------------------------------
 ###################################################
-add_library(${PROJECT_NAME})
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )

@@ -10,7 +10,7 @@ using namespace  std;
 
 // Constructor with vectors
 
-CCamera::CCamera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+CCamera::CCamera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
 {
   this->transform.position = position;
   this->WorldUp = up;
@@ -21,13 +21,11 @@ CCamera::CCamera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
   MovementSpeed = CREATE_CVAR("cam_speed", 5.0f, 0, "Speed of camera");
   FOV = CREATE_CVAR("fov", 45.0f, 0, "Camera field of view");
   zFar = CREATE_CVAR("zfar", 10000.f, 0, "Draw distance");
-
-  REGISTER_CVAR(MouseSensitivity, 0.02f, 0);
 }
 
 // Constructor with scalar values
 
-CCamera::CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+CCamera::CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
 {
   this->transform.position = glm::vec3(posX, posY, posZ);
   this->WorldUp = glm::vec3(upX, upY, upZ);
@@ -84,9 +82,6 @@ void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
 // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 void CCamera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch)
 {
-  xoffset *= this->MouseSensitivity;
-  yoffset *= this->MouseSensitivity;
-
   this->transform.rotation.y += xoffset;
   this->transform.rotation.x += yoffset;
 

@@ -191,6 +191,7 @@ void GLRenderer::glInit()
     SetState(State::DEBUG_OUTPUT_SYNCHRONOUS, true);
   }
   SetState(State::POLYGON_OFFSET_FILL, true);
+  SetState(State::PROGRAM_POINT_SIZE , true);
   glPolygonOffset(1, 0);
   glLineWidth(1);
   SetState(State::DEPTH_TEST, true);
@@ -212,6 +213,7 @@ void GLRenderer::fillSates()
   STATEMAP(State::FRAMEBUFFER_SRGB, GL_FRAMEBUFFER_SRGB);
   STATEMAP(State::SCISSOR_TEST, GL_SCISSOR_TEST);
   STATEMAP(State::STENCIL_TEST, GL_STENCIL_TEST);
+  STATEMAP(State::PROGRAM_POINT_SIZE, GL_PROGRAM_POINT_SIZE);
 
 #undef STATEMAP
 }

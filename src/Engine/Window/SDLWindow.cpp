@@ -200,7 +200,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
   int posx = SDL_WINDOWPOS_UNDEFINED;
   int posy = SDL_WINDOWPOS_UNDEFINED;
   if (fullscreen)
