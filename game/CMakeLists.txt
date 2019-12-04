@@ -5,29 +5,18 @@ include(FetchContent)
 project(TestGame CXX)
 
 ###################################################
-set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(INCLUDE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/include)
-###################################################
-if (UNIX OR CYGWIN)
-	set(UNIX_OR_CYGWIN ON)
-	message(STATUS "UNIX_OR_CYGWIN")
-	find_package(PkgConfig REQUIRED)
-  add_definitions(-DLINUX64)
-  add_definitions(-DLINUX)
-endif()
+set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
+set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 ###################################################
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} BlackBox)
-include_directories(
-	"include/"
-	${CMAKE_SOURCE_DIR}/include
-	${CMAKE_BINARY_DIR}/include
+target_include_directories(${PROJECT_NAME}
+	PRIVATE "include/"
 )
 
 target_sources(
   ${PROJECT_NAME}
-  #Game folder
   PRIVATE ${SOURCE_DIR}/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Game.cpp
   PRIVATE ${SOURCE_DIR}/GameActionInput.cpp

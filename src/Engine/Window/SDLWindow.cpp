@@ -1,7 +1,7 @@
 #include <BlackBox/SDLWindow.hpp>
 #include <BlackBox/Render/BaseTexture.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
 {

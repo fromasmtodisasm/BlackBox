@@ -2,10 +2,8 @@
 #include <BlackBox/IWindow.hpp>
 #include <BlackBox/IInputHandler.hpp>
 #include <BlackBox/MathHelper.hpp>
-#include <SDL2/SDL_video.h>
-#include <SDL2/SDL_events.h>
-
-#include <glm/glm.hpp>
+#include <SDL_video.h>
+#include <SDL_events.h>
 
 #include <map>
 #include <list>
@@ -29,7 +27,7 @@ class CSDLWindow :
   //sf::ContextSettings m_contextSettings;
   //===============================================================================
   std::string m_Title;
-  glm::vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+  Vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
   int m_flags = 0;
   // For input handling
   //std::list<IInputEventListener*> listeners;

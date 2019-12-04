@@ -15,6 +15,7 @@ public:
   int EnumDisplayFormats(IFunctionHandler* pH);
   int ScreenShot(IFunctionHandler* pH);
   int ClearConsole(IFunctionHandler* pH);
+  int ShowConsole(IFunctionHandler* pH);
 private:
   ISystem* m_pSystem;
   ILog* m_pLog;
