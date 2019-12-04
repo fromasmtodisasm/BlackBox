@@ -47,14 +47,6 @@ if (BB_TESET_ENABLE)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTEST)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DSINGLE_PASS)
 endif()
-if (GLAD_LOADER)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/lib lib EXCLUDE_FROM_ALL)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLAD_LOADER)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLAD_GLAPI_EXPORT_BUILD)
-elseif(GLEW_LOADER)
-  find_package(GLEW REQUIRED)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLEW_LOADER)
-endif()
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 target_include_directories(
@@ -77,6 +69,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2 EXCLUDE_FROM_A
 add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
 add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
 add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
+add_subdirectory(${SOURCE_DIR}/Engine/Render OpenGlBackend)
 ###################################################
 
 #get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
@@ -152,7 +145,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Render/Camera.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/HdrTechnique.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
@@ -238,15 +230,19 @@ if (GUI)
 	  )
 endif(GUI)
 #--------------------------------------------------
+#[[
 if (GLEW_LOADER)
   target_sources(${PROJECT_NAME}
     PRIVATE ${CMAKE_SOURCE_DIR}/Engine/Render/GlewLoader.cpp
   )
+  target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 elseif(GLAD_LOADER)
   target_sources(${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
   )
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${GLEW_LIBRARY})
 endif()
+]]
 #--------------------------------------------------
 get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
 source_group(
@@ -276,11 +272,6 @@ source_group(
   ${IMGUI_SOURCES}
   )
 #--------------------------------------------------
-if (GLAD_LOADER)
-  target_link_libraries(${PROJECT_NAME} PUBLIC glad)
-elseif(GLEW_LOADER)
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${GLEW_LIBRARY})
-endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
 ###################################################
 target_link_libraries(${PROJECT_NAME} PUBLIC ScriptSystem)
@@ -288,6 +279,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Window)
 ###################################################
 #target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 #target_link_libraries(${PROJECT_NAME} nvtt)
 #target_include_directories(${PROJECT_NAME} PUBLIC include)
 

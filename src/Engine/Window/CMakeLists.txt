@@ -7,6 +7,7 @@ target_include_directories(
 ${PROJECT_NAME}
 	PUBLIC	"${CMAKE_BINARY_DIR}"
 	PUBLIC	"${CMAKE_SOURCE_DIR}/include/"
+	PRIVATE $<TARGET_PROPERTY:OpenGLBackend,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
 if (USE_SDL)
@@ -72,4 +73,4 @@ endif()
 
 ###################################################
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_include_directories(${PROJECT_NAME} PRIVATE $<)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGLBackend)
