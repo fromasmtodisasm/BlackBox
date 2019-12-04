@@ -1,8 +1,9 @@
 #include <BlackBox/World.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/IConsole.hpp>
 
-float World::gravity = 1;
+float World::gravity = 9.8;
 
 Scene* World::getActiveScene() const
 {
@@ -13,6 +14,7 @@ World::World()
   :
   activeScene(nullptr)
 {
+  REGISTER_CVAR(gravity, gravity, VF_NULL, "gravity");
 }
 
 void World::draw(float dt) {

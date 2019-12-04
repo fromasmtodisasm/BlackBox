@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+include(FetchContent)
+
 project(TestGame CXX)
 
 ###################################################
@@ -69,6 +71,6 @@ source_group(
   ${INCLUDE_FILES}
 )
 
-  add_definitions(-DUSE_GLM)
-  add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
-  add_definitions(-DGLAD_LOADER)
+  #add_definitions(-DUSE_GLM)
+  #add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
+  #add_definitions(-DGLAD_LOADER)

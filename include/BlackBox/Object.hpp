@@ -67,6 +67,7 @@ public:
   std::string m_path;
   float friction = 0.99f;
   glm::vec3 velocity;
+  float gravity = 9.8;
   bool m_transparent = false;
   bool m_visible = true;
 

@@ -408,7 +408,7 @@ void Scene::update(float dt)
   for (auto& obj : m_Objects)
   {
     obj.second->update(dt);
-    obj.second->velocity.y -= World::gravity;
+    obj.second->velocity.y -= World::gravity*dt;
   }
 }
 

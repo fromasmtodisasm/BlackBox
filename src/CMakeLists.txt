@@ -12,8 +12,8 @@ if (UNIX OR CYGWIN)
 	set(UNIX_OR_CYGWIN ON)
 	message(STATUS "UNIX_OR_CYGWIN")
 	find_package(PkgConfig REQUIRED)
-  add_definitions(-DLINUX64)
-  add_definitions(-DLINUX)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX64)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)
 else()
 
 endif()
@@ -35,16 +35,16 @@ configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}
 ###################################################
 
 if (BB_TESET_ENABLE)
-  add_definitions(-DTEST)
-  add_definitions(-DSINGLE_PASS)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTEST)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DSINGLE_PASS)
 endif()
 if (GLAD_LOADER)
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib lib)
-  add_definitions(-DGLAD_LOADER)
-  add_definitions(-DGLAD_GLAPI_EXPORT_BUILD)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLAD_LOADER)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLAD_GLAPI_EXPORT_BUILD)
 elseif(GLEW_LOADER)
   find_package(GLEW REQUIRED)
-  add_definitions(-DGLEW_LOADER)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLEW_LOADER)
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 find_package(OpenGL REQUIRED)
@@ -119,7 +119,7 @@ if (USE_SDL)
   	  ${PROJECT_NAME}
 	  PRIVATE ${SOURCE_DIR}/Engine/Window/SDLWindow.cpp
 	)
-	add_definitions(-DSDL_WINDOW)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC -DSDL_WINDOW)
 elseif (USE_SFML)
 
   find_package(SFML 2 REQUIRED audio graphics window system)
@@ -129,13 +129,13 @@ elseif (USE_SFML)
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
     )
-    add_definitions(-DSFML_WINDOW)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC -DSFML_WINDOW)
 elseif(USE_GLFW)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Window/GLFWWindow.cpp
     )
-    add_definitions(-DGLFW_WINDOW)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLFW_WINDOW)
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -154,8 +154,8 @@ if (USE_GLM)
   target_link_libraries(${PROJECT_NAME} PUBLIC glm)
   include_directories(${GLM_INCLUDE_DIRS})
   target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
-  add_definitions(-DUSE_GLM)
-  add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_GLM)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLM_ENABLE_EXPERIMENTAL)
 
 endif()
 ###################################################
