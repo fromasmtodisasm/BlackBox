@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 project(resources LANGUAGES)
 
 add_library(${PROJECT_NAME} EXCLUDE_FROM_ALL)
