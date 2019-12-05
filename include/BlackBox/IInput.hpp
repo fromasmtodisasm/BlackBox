@@ -7,8 +7,8 @@ struct ISystem;
 #include <cstring>
 #include <vector>
 
-#include "MathHelper.hpp"
-#include "Platform.hpp"
+#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Platform.hpp>
 
 #ifndef stricmp
 #define stricmp _stricmp

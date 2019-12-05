@@ -14,6 +14,14 @@
 #include <cstdarg>
 #include <cstring>
 
+//////////////////////////////////////////////////////////////////////
+// Pointer to Global ISystem.
+static ISystem* gISystem = nullptr;
+ISystem* GetISystem()
+{
+  return gISystem;
+}
+
 extern "C" {
 #define DumpCallStack(L) printf("DumpCallStack() not implemented")
 }
@@ -54,6 +62,7 @@ CScriptSystem::~CScriptSystem()
 
 bool CScriptSystem::Init(ISystem* pSystem)
 {
+  gISystem = pSystem;
   m_pSystem = pSystem;
   L = luaL_newstate();
   luaL_openlibs(L);

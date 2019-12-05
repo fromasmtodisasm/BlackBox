@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
+project(TestGame CXX)
 
 include(FetchContent)
-
-project(TestGame CXX)
 
 ###################################################
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
@@ -11,6 +10,8 @@ set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} BlackBox)
+target_link_libraries(${PROJECT_NAME} Math)
+target_link_libraries(${PROJECT_NAME} OpenGlBackend)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "include/"
 )
@@ -59,7 +60,3 @@ source_group(
   FILES
   ${INCLUDE_FILES}
 )
-
-  #add_definitions(-DUSE_GLM)
-  #add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
-  #add_definitions(-DGLAD_LOADER)

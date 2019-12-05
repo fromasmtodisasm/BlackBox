@@ -18,10 +18,11 @@ endif()
 ###################################################
 
 target_sources(${PROJECT_NAME}
-  #ScriptSystem folder
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectScript.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectSystem.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
 )
 

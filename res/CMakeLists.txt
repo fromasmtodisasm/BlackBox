@@ -10,7 +10,7 @@ target_sources(${PROJECT_NAME} PRIVATE dummy.c)
 
 source_group(
   TREE ${CMAKE_SOURCE_DIR}/res
-  PREFIX resources 
+  PREFIX Resources 
   FILES
   ${res_files}
   )

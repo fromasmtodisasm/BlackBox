@@ -62,14 +62,31 @@ ${PROJECT_NAME}
 	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
 	PRIVATE "${SUBMODULES_DIR}/stb/"
 )
+#--------------------------------------------------
+if (GLEW_LOADER)
+  target_sources(${PROJECT_NAME}
+    PRIVATE ${CMAKE_SOURCE_DIR}/Engine/Render/GlewLoader.cpp
+  )
+  target_link_libraries(${PROJECT_NAME} PUBLIC glad)
+elseif(GLAD_LOADER)
+  target_sources(${PROJECT_NAME}
+    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
+  )
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${GLEW_LIBRARY})
+endif()
+#--------------------------------------------------
 ###################################################
 # Subs
 ###################################################
-add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2 EXCLUDE_FROM_ALL)
-add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
-add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2 EXCLUDE_FROM_ALL)
 add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
 add_subdirectory(${SOURCE_DIR}/Engine/Render OpenGlBackend)
+#target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
+add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
+###################################################
+find_package(tinyxml2 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2::tinyxml2)
 ###################################################
 
 #get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
@@ -103,8 +120,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectRenderer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectScript.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectSystem.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Common folder
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
@@ -229,21 +244,6 @@ if (GUI)
 	  ${IMGUI_DIR}/imgui_demo.cpp
 	  )
 endif(GUI)
-#--------------------------------------------------
-#[[
-if (GLEW_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/Engine/Render/GlewLoader.cpp
-  )
-  target_link_libraries(${PROJECT_NAME} PUBLIC glad)
-elseif(GLAD_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
-  )
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${GLEW_LIBRARY})
-endif()
-]]
-#--------------------------------------------------
 get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
 source_group(
   TREE ${SOURCE_DIR}
@@ -272,7 +272,7 @@ source_group(
   ${IMGUI_SOURCES}
   )
 #--------------------------------------------------
-target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
+#target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
 ###################################################
 target_link_libraries(${PROJECT_NAME} PUBLIC ScriptSystem)
 target_link_libraries(${PROJECT_NAME} PUBLIC Window)
