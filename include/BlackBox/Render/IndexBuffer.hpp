@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/Render/Renderer.hpp>
 
+#if 0
 class IndexBuffer
 {
 private:
@@ -16,3 +17,4 @@ public:
   void unbind();
   void draw();
 };
+#endif

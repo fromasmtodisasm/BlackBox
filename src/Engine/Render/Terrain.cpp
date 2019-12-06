@@ -1,6 +1,6 @@
 #include <BlackBox/Render/Terrain.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Object.hpp>
 #include <stb_image.h>
 

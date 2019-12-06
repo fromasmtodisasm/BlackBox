@@ -274,10 +274,10 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
   if (shader_it != shaders_map.end() && !isReload)
     return true;
   auto vs = !is_compute ? desc.vs.type = "vertex", loadShader(desc.vs, isReload) : nullptr;
-  if (vs == nullptr && !is_compute) return false;
+  if (!vs && !is_compute) return false;
 
   auto fs = !is_compute ? desc.fs.type = "fragment", loadShader(desc.fs, isReload) : nullptr;
-  if (fs == nullptr && !is_compute) return false;
+  if (!fs && !is_compute) return false;
 
   decltype(fs) gs;
   decltype(fs) cs;
@@ -286,13 +286,13 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
   {
     desc.gs.type = "geometry";
     gs = loadShader(desc.gs, isReload);
-    if (gs == nullptr) return false;
+    if (!gs) return false;
   }
   if (load_cs)
   {
     desc.cs.type = "compute";
     cs = loadShader(desc.cs, isReload);
-    if (cs == nullptr) return false;
+    if (!cs) return false;
   }
 
   if (isReload)
@@ -325,7 +325,7 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
     {
       gi = ShaderInfo(gs, desc.gs.name);
     }
-    shaderProgram = std::make_shared<CShaderProgram>(vi, fi, gi, ci);
+    shaderProgram = _smart_ptr<CShaderProgram>(new CShaderProgram(vi, fi, gi, ci));
 
     if (!shaderProgram->Create(desc.name.c_str()))
       return false;
@@ -416,9 +416,9 @@ XMLElement* MaterialManager::saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture*
   return textureElement;
 }
 
-IShader* MaterialManager::loadShader(ShaderDesc& sd, bool isReload)
+ShaderRef MaterialManager::loadShader(ShaderDesc& sd, bool isReload)
 {
-  auto shader = ShaderManager::instance()->getShader(sd, isReload)
+  //auto shader = ShaderManager::instance()->getShader(sd, isReload);
   return ShaderManager::instance()->getShader(sd, isReload);
 }
 

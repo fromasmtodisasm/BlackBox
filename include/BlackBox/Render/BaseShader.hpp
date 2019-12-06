@@ -14,8 +14,8 @@ class CBaseShaderProgram;
 class CShaderProgram;
 struct ICVar;
 
-using BaseShaderProgramRef = std::shared_ptr<CBaseShaderProgram>;
-using ShaderProgramRef = std::shared_ptr<CShaderProgram>;
+using BaseShaderProgramRef = _smart_ptr<CBaseShaderProgram>;
+using ShaderProgramRef = _smart_ptr<CShaderProgram>;
 using ShaderRef = _smart_ptr<CShader>;
 
 struct ShaderStatus
@@ -47,10 +47,10 @@ public:
   virtual void AddRef() override;
   virtual int Release() override;
 
-  static IShader* load(ShaderDesc const& desc);
+  static CShader* load(ShaderDesc const& desc);
   static bool parseLine(std::ifstream& fin, std::string& buffer);
   static bool loadInternal(std::string const& path, std::string& buffer);
-  static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
+  static ShaderRef loadFromMemory(std::string text, CShader::type type);
   
   virtual bool Create() override;
   virtual bool Compile() override;

@@ -9,7 +9,7 @@ class Pipeline
 {
 public:
   static Pipeline* instance();
-  void bindProgram(std::shared_ptr<CShaderProgram> program);
+  void bindProgram(ShaderProgramRef program);
   void bindProgram(const char* name);
 private:
   Pipeline() = default;

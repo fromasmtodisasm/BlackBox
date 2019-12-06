@@ -9,7 +9,7 @@
 class ShaderManager
 {
   static ShaderManager* manager;
-  std::map<std::string, _smart_ptr<IShader>> cache;
+  std::map<std::string, _smart_ptr<CShader>> cache;
   std::string root = "res/shaders/";
   //ShaderManager();
 public:

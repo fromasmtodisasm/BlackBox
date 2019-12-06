@@ -60,7 +60,7 @@ private:
   FrameBufferObject* m_HdrBuffer;
   std::vector<FrameBufferObject*> m_DownsampleBuffer;
   std::vector<FrameBufferObject*> m_UpsampleBuffer;
-  Scene* m_Scene;
+  IScene* m_Scene;
 
   ICVar* exposure;
   ICVar* enabled;

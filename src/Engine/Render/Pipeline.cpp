@@ -16,7 +16,7 @@ Pipeline* Pipeline::instance()
   return m_instance;
 }
 
-void Pipeline::bindProgram(std::shared_ptr<CShaderProgram> program)
+void Pipeline::bindProgram(ShaderProgramRef program)
 {
   shader = program;
 }
@@ -26,7 +26,7 @@ void Pipeline::bindProgram(const char* name)
   auto mat = MaterialManager::instance()->getMaterial(name);
   if (mat != nullptr)
   {
-    if (mat->program != nullptr)
+    if (!mat->program)
       shader = mat->program;
     else
       shader = ShaderManager::instance()->getDefaultProgram();

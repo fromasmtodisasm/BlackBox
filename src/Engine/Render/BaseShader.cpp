@@ -93,7 +93,7 @@ bool CShader::Create() {
   // return m_Status.get(GL_VALIDATE_STATUS);
 }
 
-IShader* CShader::load(ShaderDesc  const& desc) {
+CShader* CShader::load(ShaderDesc  const& desc) {
   string text;
 
   auto path = ShaderDesc::root + desc.name;
@@ -166,9 +166,9 @@ bool CShader::loadInternal(std::string const& path, std::string& buffer)
   return true;
 }
 
-std::shared_ptr<CShader> CShader::loadFromMemory(std::string text, IShader::type type)
+ShaderRef CShader::loadFromMemory(std::string text, IShader::type type)
 {
-  auto shader = std::make_shared<CShader>(text, type);
+  auto shader = _smart_ptr<CShader>(new CShader(text, type));
   if (!shader->Create())
     return nullptr;
   shader->Compile();
@@ -574,9 +574,9 @@ void CBaseShaderProgram::Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef
 
   m_Vertex.shader = v;
   m_Fragment.shader = f;
-  if (g != nullptr)
+  if (!g)
     m_Geometry.shader = g;
-  if (c != nullptr)
+  if (!c)
     m_Compute.shader = c;
   Create(label);
 }
@@ -620,7 +620,8 @@ void CBaseShaderProgram::Dump()
 void CBaseShaderProgram::reset(ShaderInfo src)
 {
   if (src.shader != nullptr)
-    src.shader.reset();
+    //src.shader.reset();
+    src.shader = nullptr;
 }
 
 const char* CBaseShaderProgram::buildName(const char* format, va_list args)
