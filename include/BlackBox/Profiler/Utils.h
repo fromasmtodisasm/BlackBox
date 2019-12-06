@@ -3,13 +3,13 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Render/IRender.hpp>
 
 namespace Utils {
   void		msleep(int ms);
   const char* loadText(const char* filename);
   bool		loadShaders(const char* vert_filename, const char* frag_filename,
-    GLuint& id_vert, GLuint& id_frag, GLuint& id_prog);
+    uint& id_vert, uint& id_frag, uint& id_prog);
   bool		checkGLError();
 
   template <class T>

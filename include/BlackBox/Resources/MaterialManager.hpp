@@ -48,6 +48,6 @@ private:
   bool loadMaterial(tinyxml2::XMLElement* material);
   BaseTexture* loadTexture(tinyxml2::XMLElement* texture);
   tinyxml2::XMLElement* saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture* texture);
-  std::shared_ptr<CShader> loadShader(ShaderDesc& sd, bool isReload);
+  IShader* loadShader(ShaderDesc& sd, bool isReload);
   tinyxml2::XMLElement* saveShader(tinyxml2::XMLDocument& xmlDoc, CShader* shader);
 };

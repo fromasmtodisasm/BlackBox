@@ -6,7 +6,7 @@
 #include "Config.h"
 
 #ifdef ENABLE_PROFILER
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Profiler/Hole_array.h>
 #include <BlackBox/Profiler/thread.h>
 #include <BlackBox/Profiler/Utils.h>

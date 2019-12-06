@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/Renderer.hpp>
+#include <BlackBox/Render/IRender.hpp>
 
 #include <map>
 
@@ -20,19 +20,19 @@ public:
     std::map<Attribute, int> attributes;
   };
 
-  VertexArrayObject(const void* data, GLint size, GLenum type, Attributes attributes);
+  VertexArrayObject(const void* data, int size, int type, Attributes attributes);
   ~VertexArrayObject();
   void draw();
   void setAttributes(Attributes& attributes);
   Attributes& getAttributes();
-  GLuint getId() { return id; }
+  uint getId() { return id; }
 protected:
   virtual bool init();
 protected:
-  GLuint VBO;
-  GLuint id;
+  uint VBO;
+  uint id;
   const void* m_Data;
-  GLint m_Count;
-  GLenum m_Type;
+  int m_Count;
+  int m_Type;
   Attributes m_attributes;
 };

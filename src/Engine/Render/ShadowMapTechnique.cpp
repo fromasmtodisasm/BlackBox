@@ -6,8 +6,9 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 
 #include <BlackBox/Scene.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Camera.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
 
 ShadowMapping::ShadowMapping() : m_Scene(nullptr), m_DepthBuffer(nullptr)
 {

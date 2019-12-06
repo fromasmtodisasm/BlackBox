@@ -1,8 +1,5 @@
 #pragma once
 #include <BlackBox/Object.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
-#include <glm/fwd.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
 class Plane : public Object

@@ -6,12 +6,12 @@
 #endif // GUI
 #include <BlackBox/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Render/FrameBufferObject.hpp>
+//#include <BlackBox/Resources/MaterialManager.hpp>
+//#include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Render/ShadowMapTechnique.hpp>
-#include <BlackBox/Render/HdrTechnique.hpp>
+//#include <BlackBox/Render/ShadowMapTechnique.hpp>
+//#include <BlackBox/Render/HdrTechnique.hpp>
 #include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Profiler/Profiler.h>
@@ -463,18 +463,13 @@ void CGame::saveScene(std::string name, std::string as)
   if (SceneManager::instance()->exist(path))
   {
     auto scene = SceneManager::instance()->getScene(path, this);
-    scene->save(as);
+    scene->save(as.c_str());
   }
 }
 
 void CGame::setRenderState()
 {
-  if (isWireFrame)
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  else
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-  //m_pRender->SetClearColor(Vec3(0, 1, 0));
   m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
   m_pRender->SetState(IRenderer::State::BLEND, false);
   if (culling)
@@ -486,8 +481,6 @@ void CGame::setRenderState()
   {
     m_pRender->SetState(IRenderer::State::CULL_FACE, false);
   }
-  /*
-  */
 }
 
 void CGame::render()
@@ -665,6 +658,7 @@ bool CGame::initPlayer()
 
 void CGame::initTechniques()
 {
+#if 0
   TechniqueManager::init();
 
   auto tech = new HdrTechnique();
@@ -677,6 +671,7 @@ void CGame::initTechniques()
   postProcessors.push_back(new PostProcessor("kernel.outline"));
   postProcessors.push_back(new PostProcessor("kernel.blur"));
   m_World->getActiveScene()->setPostProcessor(postProcessors[0]);
+#endif
 }
 
 bool CGame::FpsInputEvent(const SInputEvent& event)

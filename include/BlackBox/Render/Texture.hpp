@@ -4,7 +4,6 @@
 #include <string>
 #include <memory>
 #include <BlackBox/Render/BaseTexture.hpp>
-#include <BlackBox/Render/IRender.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif

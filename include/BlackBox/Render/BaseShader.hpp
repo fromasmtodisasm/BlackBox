@@ -4,6 +4,7 @@
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 #include <string>
 #include <map>
 #include <memory>
@@ -15,7 +16,7 @@ struct ICVar;
 
 using BaseShaderProgramRef = std::shared_ptr<CBaseShaderProgram>;
 using ShaderProgramRef = std::shared_ptr<CShaderProgram>;
-using ShaderRef = std::shared_ptr<CShader>;
+using ShaderRef = _smart_ptr<CShader>;
 
 struct ShaderStatus
 {
@@ -39,23 +40,13 @@ struct ShaderProgramStatus
 
 class CShader : public IShader
 {
-private:
-  GLuint m_Shader;
-  std::string m_Text;
-  ShaderStatus m_Status;
-  bool m_Empty;
 public:
-  std::string m_Path;
-  int m_Type;
-  enum type : int {
-    E_VERTEX = GL_VERTEX_SHADER,
-    E_FRAGMENT = GL_FRAGMENT_SHADER,
-    E_GEOMETRY = GL_GEOMETRY_SHADER,
-    E_COMPUTE = GL_COMPUTE_SHADER,
-    E_UNKNOWN = -1
-  };
   CShader(std::string text, CShader::type type);
   ~CShader();
+  // Inherited via IShader
+  virtual void AddRef() override;
+  virtual int Release() override;
+
   static IShader* load(ShaderDesc const& desc);
   static bool parseLine(std::ifstream& fin, std::string& buffer);
   static bool loadInternal(std::string const& path, std::string& buffer);
@@ -69,6 +60,18 @@ public:
   virtual const char* typeToStr() override;
   virtual const char* getName() override;
   virtual uint get() override;
+
+private:
+  GLuint m_Shader;
+  std::string m_Text;
+  ShaderStatus m_Status;
+  bool m_Empty;
+  int m_Refs = 0;
+public:
+  std::string m_Path;
+  int m_Type;
+  // Inherited via IShader
+  virtual IShader::type GetType() override;
 };
 
 class UniformValue {
@@ -298,33 +301,59 @@ public:
   GLint program;
 };
 
-class CBaseShaderProgram {
+class CBaseShaderProgram : public IShaderProgram {
+public:
+  CBaseShaderProgram();
+  CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
+  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs);
+  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs);
+  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
+  ~CBaseShaderProgram();
+
+  virtual void AddRef() override;
+  virtual int Release() override;
+
+  virtual bool Create(const char* label) override;
+  virtual void Attach(ShaderInfo& shader) override;
+  virtual ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst) override;
+  virtual void Detach(ShaderInfo& shader) override;
+  virtual bool Dispatch(int x, int y, int z, GLbitfield barriers) override;
+  virtual bool DispatchInderect() override;
+  virtual bool Link() override;
+  virtual void Use() override;
+  virtual void Unuse() override;
+  virtual void DeleteProgram() override;
+  virtual GLint GetUniformLocation(const char* format, ...) override;
+  virtual GLint GetUniformLocation(std::string& name) override;
+  UniformValue GetUniformValue(const char* name);
+  void Uniform(bool value, const char* format, ...) { Uniform((int)value, format);}
+  virtual void Uniform(int value, const char* format, ...) override;
+  virtual void Uniform(unsigned int value, const char* format, ...) override;
+  virtual void Uniform(float value, const char* format, ...) override;
+  virtual void Uniform(Vec1 value, const char* format, ...) override;
+  virtual void Uniform(Vec2 value, const char* format, ...) override;
+  virtual void Uniform(Vec3 value, const char* format, ...) override;
+  virtual void Uniform(Vec4 value, const char* format, ...) override;
+  virtual void Uniform(Mat2 value, const char* format, ...) override;
+  virtual void Uniform(Mat3 value, const char* format, ...) override;
+  virtual void Uniform(Mat4 value, const char* format, ...) override;
+  virtual void Uniform(glm::ivec4 value, const char* format, ...) override;
+
+  template<typename T>
+  void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
+
+  void Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
+
+  virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
+  virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
+  virtual GLuint Get() override;
+  virtual void setup() = 0;
+  virtual void Dump() override;
+private:
+  void reset(ShaderInfo src);
+  const char* buildName(const char* format, va_list args);
 public:
   const size_t BUFFER_SIZE = 1024;
-  struct ShaderInfo
-  {
-    ShaderInfo()
-      :
-      shader(nullptr),
-      attached(false),
-      used(false)
-    {
-    }
-    ShaderInfo(ShaderRef shader, std::string& name)
-      :
-      shader(shader),
-      name(name),
-      attached(false),
-      used(true)
-    {
-    }
-
-    ShaderRef shader;
-    std::string name;
-    bool attached;
-    bool used;
-  };
-
   ShaderInfo m_Vertex;
   ShaderInfo m_Fragment;
   ShaderInfo m_Geometry;
@@ -341,53 +370,9 @@ public:
   static ICVar* print_loc_name;
   static ICVar* use_cache;
 
-public:
-  CBaseShaderProgram();
-  CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
-  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs);
-  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs);
-  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
-  ~CBaseShaderProgram();
-
-  bool Create(const char* label);
-  void Attach(ShaderInfo& shader);
-  ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst);
-  void Detach(ShaderInfo& shader);
-  bool Dispatch(int x, int y, int z, GLbitfield barriers);
-  bool DispatchInderect();
-  bool Link();
-  void Use();
-  void Unuse();
-  void DeleteProgram();
-  GLint GetUniformLocation(const char* format, ...);
-  GLint GetUniformLocation(std::string& name);
-  UniformValue GetUniformValue(const char* name);
-  void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
-  void Uniform(int value, const char* format, ...);
-  void Uniform(unsigned int value, const char* format, ...);
-  void Uniform(float value, const char* format, ...);
-  void Uniform(Vec1 value, const char* format, ...);
-  void Uniform(Vec2 value, const char* format, ...);
-  void Uniform(Vec3 value, const char* format, ...);
-  void Uniform(Vec4 value, const char* format, ...);
-  void Uniform(Mat2 value, const char* format, ...);
-  void Uniform(Mat3 value, const char* format, ...);
-  void Uniform(Mat4 value, const char* format, ...);
-  void Uniform(glm::ivec4 value, const char* format, ...);
-
-  template<typename T>
-  void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
-
-  void Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
-
-  void BindTexture2D(GLuint texture, GLint unit, const char* sampler);
-  void BindTextureUnit2D(GLuint texture, GLint unit);
-  GLuint Get();
-  virtual void setup() = 0;
-  void Dump();
 private:
-  void reset(ShaderInfo src);
-  const char* buildName(const char* format, va_list args);
+  int m_Refs = 0;
+
 };
 
 CShader::type str2typ(std::string type);

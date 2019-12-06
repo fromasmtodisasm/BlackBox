@@ -3,6 +3,8 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <vector>
 
+class Object;
+
 class Terrain
 {
 public:
@@ -20,6 +22,6 @@ private:
 
   std::vector<Vertex> vb;
   std::unique_ptr<Image> img;
-  GLuint VBO, VAO;
+  uint VBO, VAO;
   int size;
 };

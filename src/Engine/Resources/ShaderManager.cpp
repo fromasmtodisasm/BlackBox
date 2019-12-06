@@ -5,7 +5,7 @@
 #include <BlackBox/IConsole.hpp>
 
 ShaderManager* ShaderManager::manager = nullptr;
-static std::shared_ptr<CShaderProgram> defaultProgram = nullptr;
+static _smart_ptr<CShaderProgram> defaultProgram = nullptr;
 
 std::string ShaderDesc::root = "res/shaders/";
 
@@ -21,13 +21,13 @@ ShaderManager* ShaderManager::instance()
   return manager;
 }
 
-std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::string fShader)
+_smart_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::string fShader)
 {
-  std::shared_ptr<CShader> vs, fs;
-  std::shared_ptr<CShaderProgram> p;
+  _smart_ptr<CShader> vs, fs;
+  _smart_ptr<CShaderProgram> p;
   vs = getShader(std::move(ShaderDesc(vShader, "vertex")), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
-  if (vs == nullptr || fs == nullptr)
+  if (!vs || !fs)
   {
     GetISystem()->GetILog()->Log("Error of load shader");
     return nullptr;
@@ -39,10 +39,10 @@ std::shared_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, 
   }
 }
 
-std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
+_smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
 {
-  std::shared_ptr<CShader> vs, fs, gs;
-  std::shared_ptr<CShaderProgram> p;
+  _smart_ptr<CShader> vs, fs, gs;
+  _smart_ptr<CShaderProgram> p;
   vs = getShader(ShaderDesc(vShader, "vertex"), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
   gs = getShader(ShaderDesc(fShader, "geometry"), false);
@@ -60,10 +60,10 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   }
 }
 
-std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
+_smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
 {
-  std::shared_ptr<CShader> vs, fs, gs, cs;
-  std::shared_ptr<CShaderProgram> p;
+  _smart_ptr<CShader> vs, fs, gs, cs;
+  _smart_ptr<CShaderProgram> p;
   vs = getShader(ShaderDesc(vShader, "vertex"), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
   if (gShader.size() > 0) gs = getShader(ShaderDesc(fShader, "geometry"), false);
@@ -82,14 +82,14 @@ std::shared_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, s
   }
 }
 
-std::shared_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
+_smart_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
 {
   return defaultProgram;
 }
 
-std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
+_smart_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
 {
-  std::shared_ptr<CShader> result = nullptr;
+  _smart_ptr<IShader> result = nullptr;
   auto Path = root + desc.name;
   auto shader = cache.find(Path);
   if (shader != cache.end() && !isReload)
@@ -98,9 +98,9 @@ std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool i
   }
   else {
     //result = std::make_shared<CShader>(static_cast<CShader*>(CShader::load(desc)));
-    result.reset(static_cast<CShader*>(CShader::load(desc)));
+    result = CShader::load(desc);
     result->m_Path = Path;
-    if (result == nullptr)
+    if (!result)
       return result;
     cache[Path] = result;
   }

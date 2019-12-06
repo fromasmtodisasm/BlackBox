@@ -35,10 +35,6 @@ Object::Object(const Object* obj) :
   refs++;
 }
 
-void Object::parse(std::string filename, std::vector<Vertex>& vs, CBaseShaderProgram** shader)
-{
-}
-
 void Object::draw(void* camera) {
   DEBUG_GROUP(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);

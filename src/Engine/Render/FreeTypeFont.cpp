@@ -1,10 +1,8 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <MaterialManager.hpp>
 
-void FreeTypeFont::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4])
+void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, float color[4])
 {
   // Activate corresponding render state
   shader->Use();

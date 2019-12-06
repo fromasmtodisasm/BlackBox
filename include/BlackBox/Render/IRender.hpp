@@ -14,8 +14,6 @@
 #define IRENDER_API
 #endif
 
-#include <BlackBox/MathHelper.hpp>
-
 // Global typedefs.
 //////////////////////////////////////////////////////////////////////
 #ifndef uchar
@@ -23,6 +21,9 @@ typedef unsigned char		uchar;
 typedef unsigned int		uint;
 typedef unsigned short	ushort;
 #endif
+
+#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Render/IShader.hpp>
 
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////
@@ -85,53 +86,6 @@ struct SDrawTextInfo
     font = 0;
   }
 };
-
-//////////////////////////////////////////////////////////////////////
-#include <map>
-#include <string>
-
-struct ShaderDesc
-{
-  ShaderDesc() {}
-  ShaderDesc(std::string name) : name(name) {}
-  ShaderDesc(std::string name, std::string type) : type(type), name(name) {}
-
-  using Macro = std::map<std::string, std::string>;
-  std::string type;
-  std::string name;
-  Macro macro;
-
-  static std::string root;
-};
-struct ProgramDesc
-{
-  std::string name;
-  ShaderDesc vs;
-  ShaderDesc fs;
-  ShaderDesc gs;
-  ShaderDesc cs;
-};
-
-struct IShader
-{
-  enum type : int {
-    E_VERTEX,
-    E_FRAGMENT,
-    E_GEOMETRY,
-    E_COMPUTE,
-    E_UNKNOWN = -1
-  };
-  //static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
-  virtual bool Create() = 0;
-  virtual bool Compile() = 0;
-  virtual bool Bind() = 0;
-  virtual bool Empty() = 0;
-  virtual void print() = 0;
-  virtual const char* typeToStr() = 0;
-  virtual const char* getName() = 0;
-  virtual uint get() = 0;
-};
-
 
 //////////////////////////////////////////////////////////////////////
 

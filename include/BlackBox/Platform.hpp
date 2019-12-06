@@ -46,6 +46,16 @@ inline auto SAFE_DELETE(T*& t)
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// common Typedef                                                                   //
+///////////////////////////////////////////////////////////////////////////////
+typedef double real;
+typedef int index_t;
+typedef int                 INT;
+typedef unsigned int        UINT;
+typedef unsigned int        *PUINT;
+
+
 #define BIT(x)    (1u << (x))
 #define BIT64(x)  (1ull << (x))
 #define MASK(x)   (BIT(x) - 1U)

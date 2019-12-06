@@ -6,8 +6,8 @@
 
 class Quad
 {
-  GLuint id;
-  GLuint VBO;
+  uint id;
+  uint VBO;
   std::vector<float> m_vertecies;
 public:
   Quad();

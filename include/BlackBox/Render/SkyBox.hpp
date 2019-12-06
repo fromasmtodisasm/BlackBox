@@ -6,6 +6,7 @@
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Render/Pipeline.hpp>
 
 class SkyBox : public IDrawable
 {

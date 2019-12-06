@@ -166,7 +166,7 @@ bool CShader::loadInternal(std::string const& path, std::string& buffer)
   return true;
 }
 
-std::shared_ptr<CShader> CShader::loadFromMemory(std::string text, CShader::type type)
+std::shared_ptr<CShader> CShader::loadFromMemory(std::string text, IShader::type type)
 {
   auto shader = std::make_shared<CShader>(text, type);
   if (!shader->Create())
@@ -220,6 +220,27 @@ const char* CShader::getName() {
 GLuint CShader::get() {
   return m_Shader;
 }
+
+IShader::type CShader::GetType()
+{
+  return IShader::type();
+}
+
+void CShader::AddRef()
+{
+  m_Refs++;
+}
+
+int CShader::Release()
+{
+  m_Refs--;
+  if (m_Refs == 0)
+  {
+    delete this;
+  }
+  return m_Refs;
+}
+
 
 CBaseShaderProgram::CBaseShaderProgram() : m_Status(this)
 {
@@ -285,7 +306,7 @@ void CBaseShaderProgram::Attach(ShaderInfo& info) {
   ShaderInfo& attached = info;
 
   if (!info.used) return;
-  switch (info.shader->m_Type) {
+  switch (info.shader->GetType()) {
   case CShader::type::E_VERTEX:
     attached = attachInternal(info, m_Vertex);
     break;
@@ -606,4 +627,19 @@ const char* CBaseShaderProgram::buildName(const char* format, va_list args)
 {
   vsprintf(buffer, format, args);
   return buffer;
+}
+
+void CBaseShaderProgram::AddRef()
+{
+  m_Refs++;
+}
+
+int CBaseShaderProgram::Release()
+{
+  m_Refs--;
+  if (m_Refs == 0)
+  {
+    delete this;
+  }
+  return m_Refs;
 }

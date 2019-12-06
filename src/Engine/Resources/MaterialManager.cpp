@@ -416,8 +416,9 @@ XMLElement* MaterialManager::saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture*
   return textureElement;
 }
 
-std::shared_ptr<CShader> MaterialManager::loadShader(ShaderDesc& sd, bool isReload)
+IShader* MaterialManager::loadShader(ShaderDesc& sd, bool isReload)
 {
+  auto shader = ShaderManager::instance()->getShader(sd, isReload)
   return ShaderManager::instance()->getShader(sd, isReload);
 }
 
