@@ -1,4 +1,5 @@
 #include <BlackBox/Render/Render.hpp>
+#include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/Camera.hpp>
@@ -9,8 +10,6 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/glm.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -250,6 +249,11 @@ void GLRenderer::SetRenderTarget(int nHandle)
 {
   if (m_CurrentTarget != nHandle)
     gl::BindFramebuffer(nHandle);
+}
+
+IShader* GLRenderer::Sh_Load(ShaderDesc const& desc)
+{
+  return dynamic_cast<IShader*>(CShader::load(desc));
 }
 
 void GLRenderer::SetCullMode(CullMode mode/* = CullMode::BACK*/)

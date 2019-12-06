@@ -73,4 +73,4 @@ endif()
 
 ###################################################
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGLBackend)
+target_link_libraries(${PROJECT_NAME} INTERFACE OpenGLBackend)

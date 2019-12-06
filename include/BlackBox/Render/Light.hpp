@@ -1,14 +1,14 @@
 #pragma once
-#include <glm/glm.hpp>
+#include <BlackBox/MathHelper.hpp>
 
 struct DirectionLight;
 struct SpotLight;
 
 struct BaseLight
 {
-  glm::vec3 ambient;
-  glm::vec3 diffuse;
-  glm::vec3 specular;
+  Vec3 ambient;
+  Vec3 diffuse;
+  Vec3 specular;
   bool enabled;
   enum Type
   {
@@ -21,12 +21,12 @@ struct BaseLight
 
 struct DirectionLight : BaseLight
 {
-  glm::vec3 direction;
+  Vec3 direction;
 };
 
 struct PointLight : public BaseLight
 {
-  glm::vec3 position;
+  Vec3 position;
 
   float constant;
   float linear;
@@ -36,7 +36,7 @@ struct PointLight : public BaseLight
 
 struct SpotLight : public PointLight
 {
-  glm::vec3 direction;
+  Vec3 direction;
   float cutOff;
   float outerCutOff;
 };

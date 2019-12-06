@@ -4,7 +4,7 @@
 #ifdef GUI
 #include <BlackBox/GUI.hpp>
 #endif // GUI
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>

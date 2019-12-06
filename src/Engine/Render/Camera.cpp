@@ -1,8 +1,4 @@
 #include <BlackBox/Camera.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <iostream>
 #include <sstream>
@@ -10,7 +6,7 @@ using namespace  std;
 
 // Constructor with vectors
 
-CCamera::CCamera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
+CCamera::CCamera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
 {
   this->transform.position = position;
   this->WorldUp = up;
@@ -25,7 +21,7 @@ CCamera::CCamera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
 
 // Constructor with scalar values
 
-CCamera::CCamera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
+CCamera::CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
 {
   this->transform.position = glm::vec3(posX, posY, posZ);
   this->WorldUp = glm::vec3(upX, upY, upZ);
@@ -66,9 +62,9 @@ void CCamera::setRotation(glm::vec3 ang)
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
+void CCamera::ProcessKeyboard(Movement direction, float deltaTime)
 {
-  GLfloat velocity = this->MovementSpeed->GetFVal() * deltaTime;
+  float velocity = this->MovementSpeed->GetFVal() * deltaTime;
   if (direction == FORWARD)
     this->transform.position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z) * velocity;
   if (direction == BACKWARD)
@@ -80,7 +76,7 @@ void CCamera::ProcessKeyboard(Movement direction, GLfloat deltaTime)
 }
 
 // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void CCamera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch)
+void CCamera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
   this->transform.rotation.y += xoffset;
   this->transform.rotation.x += yoffset;
@@ -99,7 +95,7 @@ void CCamera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean c
 }
 
 // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-void CCamera::ProcessMouseScroll(GLfloat yoffset)
+void CCamera::ProcessMouseScroll(float yoffset)
 {
   if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
     this->Zoom -= yoffset;

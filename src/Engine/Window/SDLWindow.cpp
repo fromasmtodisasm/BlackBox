@@ -1,7 +1,8 @@
 #include <BlackBox/SDLWindow.hpp>
-#include <BlackBox/Render/BaseTexture.hpp>
+#include <BlackBox/Render/IRender.hpp>
 
 #include <SDL.h>
+#include <memory>
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
 {
@@ -42,11 +43,11 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   //if (ip)
   //{
     //std::string icon(ip->GetString());
-  Image img;
-  if (img.load("res/images/icon.jpg", nullptr))
-  {
-    ;// m_Window->setIcon(img.width, img.height, static_cast<sf::Uint8*>(img.data));
-  }
+  //std::unique_ptr<Image> img;
+  //if (img->load("res/images/icon.jpg", nullptr))
+  //{
+  //  ;// m_Window->setIcon(img->width, img->height, static_cast<sf::Uint8*>(img->data));
+  //}
   //}
 
   return true;

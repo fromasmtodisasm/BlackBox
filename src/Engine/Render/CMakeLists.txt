@@ -4,6 +4,7 @@ add_library(OpenGlBackend INTERFACE)
 ###################################################
 
 if (GLAD_LOADER)
+  message(STATUS "Using Glad OpenGL loader")
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib/glad glad EXCLUDE_FROM_ALL)
 
   get_property(includes TARGET glad PROPERTY INTERFACE_INCLUDE_DIRECTORIES)

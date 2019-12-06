@@ -3,9 +3,7 @@
 #include <BlackBox/IObject.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/IDrawable.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Material.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 
 #include <glm/glm.hpp>
@@ -41,11 +39,11 @@ public:
   //=============================
   // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
   // Default camera values
-  const GLfloat YAW = -90.0f;
-  const GLfloat PITCH = 0.0f;
-  const GLfloat SPEED = 0.1f;
-  const GLfloat SENSITIVTY = 0.25f;
-  const GLfloat ZOOM = 45.0f;
+  const float YAW = -90.0f;
+  const float PITCH = 0.0f;
+  const float SPEED = 0.1f;
+  const float SENSITIVTY = 0.25f;
+  const float ZOOM = 45.0f;
   //*****************************
     // Camera Attributes
   glm::vec3 Front = glm::vec3(0.f, 0.f, -1.0f);
@@ -53,10 +51,10 @@ public:
   glm::vec3 Right = glm::vec3(0.f, 0.f, 0.f);
   glm::vec3 WorldUp = glm::vec3(0.f, 1.f, 0.0f);
   // Eular Angles
-  GLfloat Yaw = YAW;
-  GLfloat Pitch = PITCH;
+  float Yaw = YAW;
+  float Pitch = PITCH;
   // Camera options
-  GLfloat MovementSpeed = 2;
+  float MovementSpeed = 2;
   //=============================
 
   int m_RenderMode = GL_FILL;

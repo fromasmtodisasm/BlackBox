@@ -54,7 +54,7 @@ Scene* SceneManager::getScene(string scene, LoadObjectSink* callback)
     }
     else {
       result = new Scene(scene);
-      if (!result->load(scenePath + ".xml", callback))
+      if (!result->load(std::string(scenePath + ".xml").c_str(), callback))
       {
         GetISystem()->GetILog()->Log("[ERROR] Error or load scene: %s\n", scenePath.c_str());
         delete result;

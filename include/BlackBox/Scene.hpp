@@ -1,5 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
+
+#include <BlackBox/IScene.hpp>
 #include <tinyxml2.h>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Render/Light.hpp>
@@ -42,26 +44,6 @@ using CameraList = std::map<std::string, CCamera*>;
 using CameraListIt = std::map<std::string, CCamera*>::iterator;
 //////////////////////////////////////////////////////////////////
 
-struct ForEachObjectSink
-{
-  virtual bool OnObjectFound(Object* object) = 0;
-};
-
-struct ForEachDirectionLightSink
-{
-  virtual bool OnLightFound(DirectionLight* light) = 0;
-};
-
-struct ForEachPointLightSink
-{
-  virtual bool OnLightFound(PointLight* light) = 0;
-};
-
-struct ForEachSpotLightSink
-{
-  virtual bool OnLightFound(SpotLight* light) = 0;
-};
-
 struct PointObject
 {
 public:
@@ -76,7 +58,7 @@ public:
   BaseShaderProgramRef shader;
 };
 
-class Scene
+class Scene : public IScene
 {
   friend class GameGUI;
   friend class CGame;
@@ -128,7 +110,7 @@ public:
   CCamera* getCurrentCamera();
   void update(float dt);
   void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene);
-  bool save(std::string as = "");
+  virtual bool save(const char* as = "") override;
   tinyxml2::XMLElement* saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform);
   //tinyxml2::XMLElement *saveVec3(tinyxml2::XMLDocument &xmlDoc, glm::vec3 &);
   tinyxml2::XMLElement* saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light);
@@ -140,7 +122,7 @@ public:
   glm::vec3 loadVec3(tinyxml2::XMLElement& element, const char* name);
   void loadCamera(tinyxml2::XMLElement* element);
   void loadTagPoint(tinyxml2::XMLElement* element);
-  bool load(std::string name, LoadObjectSink* callback);
+  virtual bool load(const char* name, LoadObjectSink* callback) override;
   GLint getRenderTarget();
 
   Material* shadowMapMat;

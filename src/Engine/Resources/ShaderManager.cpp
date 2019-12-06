@@ -97,7 +97,8 @@ std::shared_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool i
     result = shader->second;
   }
   else {
-    result = CShader::load(desc);
+    //result = std::make_shared<CShader>(static_cast<CShader*>(CShader::load(desc)));
+    result.reset(static_cast<CShader*>(CShader::load(desc)));
     result->m_Path = Path;
     if (result == nullptr)
       return result;

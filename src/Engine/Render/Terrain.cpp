@@ -1,7 +1,12 @@
 #include <BlackBox/Render/Terrain.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Object.hpp>
 #include <stb_image.h>
+
+Terrain::Terrain() : img(std::make_unique<Image>())
+{
+}
 
 Terrain::Face Terrain::getFace(size_t v1, size_t v2, size_t v3)
 {
@@ -87,7 +92,7 @@ Object* Terrain::load(const char* heightmap)
   auto obj = Object::getEmpty();
   obj->m_Mesh = mesh;
   obj->m_path = "";
-  img.free();
+  img->free();
   return obj;
 }
 
@@ -100,5 +105,5 @@ void Terrain::draw()
 
 float Terrain::getHeight(int x, int y)
 {
-  return 40 * ((unsigned char*)(img.data))[y * img.width + x] / 255.0f;
+  return 40 * ((unsigned char*)(img->data))[y * img->width + x] / 255.0f;
 }

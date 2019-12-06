@@ -1,6 +1,7 @@
 #include <BlackBox/Render/Pipeline.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/Object.hpp>
 

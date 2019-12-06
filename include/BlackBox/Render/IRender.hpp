@@ -16,6 +16,14 @@
 
 #include <BlackBox/MathHelper.hpp>
 
+// Global typedefs.
+//////////////////////////////////////////////////////////////////////
+#ifndef uchar
+typedef unsigned char		uchar;
+typedef unsigned int		uint;
+typedef unsigned short	ushort;
+#endif
+
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////
 typedef void* WIN_HWND;
@@ -28,6 +36,32 @@ struct IWindow;
 struct IFont;
 class CCamera;
 class IShader;
+
+class Image
+{
+public:
+  int width;
+  int height;
+  int bpp;
+  void* data;
+
+  Image() : width(0), height(0), bpp(0), data(nullptr) {}
+  ~Image();
+  bool load(const char* name, bool* hasAlpha);
+  void free();
+};
+
+struct ITexture
+{
+  virtual bool load(const char* name) = 0;
+  virtual void bind() = 0;
+  virtual void setUnit(uint unit) = 0;
+  virtual void setType(const char* TextureType) = 0;
+  virtual const char* typeToStr() = 0;
+  virtual int getWidth() = 0;
+  virtual int getHeight() = 0;
+  virtual int getId() = 0;
+};
 
 //////////////////////////////////////////////////////////////////////////
 //! This structure used in DrawText method of renderer.
@@ -51,6 +85,53 @@ struct SDrawTextInfo
     font = 0;
   }
 };
+
+//////////////////////////////////////////////////////////////////////
+#include <map>
+#include <string>
+
+struct ShaderDesc
+{
+  ShaderDesc() {}
+  ShaderDesc(std::string name) : name(name) {}
+  ShaderDesc(std::string name, std::string type) : type(type), name(name) {}
+
+  using Macro = std::map<std::string, std::string>;
+  std::string type;
+  std::string name;
+  Macro macro;
+
+  static std::string root;
+};
+struct ProgramDesc
+{
+  std::string name;
+  ShaderDesc vs;
+  ShaderDesc fs;
+  ShaderDesc gs;
+  ShaderDesc cs;
+};
+
+struct IShader
+{
+  enum type : int {
+    E_VERTEX,
+    E_FRAGMENT,
+    E_GEOMETRY,
+    E_COMPUTE,
+    E_UNKNOWN = -1
+  };
+  //static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
+  virtual bool Create() = 0;
+  virtual bool Compile() = 0;
+  virtual bool Bind() = 0;
+  virtual bool Empty() = 0;
+  virtual void print() = 0;
+  virtual const char* typeToStr() = 0;
+  virtual const char* getName() = 0;
+  virtual uint get() = 0;
+};
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -173,6 +254,9 @@ struct IRenderer
   virtual void ClearColorBuffer(const Vec3 vColor) = 0;
 
   virtual void SetRenderTarget(int nHandle) = 0;
+
+  ////////////////////////////////////////////////////////////////////////////////
+  virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;
 };
 
 extern "C" {

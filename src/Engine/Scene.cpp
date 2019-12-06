@@ -439,7 +439,7 @@ void Scene::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManag
   //object->InsertEndChild(mesh);
 }
 
-bool Scene::save(std::string as)
+bool Scene::save(const char* as)
 {
   std::stringstream sceneName;
   tinyxml2::XMLDocument xmlDoc;
@@ -691,11 +691,11 @@ void Scene::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
 
-bool Scene::load(std::string name, LoadObjectSink* callback)
+bool Scene::load(const char* name, LoadObjectSink* callback)
 {
   tinyxml2::XMLDocument xmlDoc;
 
-  XMLError eResult = xmlDoc.LoadFile(name.c_str());
+  XMLError eResult = xmlDoc.LoadFile(name);
   XMLCheckResult(eResult);
 
   XMLNode* pScene = xmlDoc.FirstChild();

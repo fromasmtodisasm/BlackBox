@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Render/ShaderUtils.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/MathHelper.hpp>
@@ -18,8 +19,8 @@ using ShaderRef = std::shared_ptr<CShader>;
 
 struct ShaderStatus
 {
-  GLchar m_InfoLog[512];
-  GLint m_Status;
+  char m_InfoLog[512];
+  int m_Status;
   CShader* m_Shader;
 
   ShaderStatus(CShader* shader);
@@ -28,15 +29,15 @@ struct ShaderStatus
 
 struct ShaderProgramStatus
 {
-  GLchar m_InfoLog[512];
-  GLint m_Status;
+  char m_InfoLog[512];
+  int m_Status;
   CBaseShaderProgram* m_Program;
 
   ShaderProgramStatus(CBaseShaderProgram* program);
   bool get(GLenum statusType);
 };
 
-class CShader
+class CShader : public IShader
 {
 private:
   GLuint m_Shader;
@@ -55,18 +56,19 @@ public:
   };
   CShader(std::string text, CShader::type type);
   ~CShader();
-  static std::shared_ptr<CShader> load(ShaderDesc const& desc);
+  static IShader* load(ShaderDesc const& desc);
   static bool parseLine(std::ifstream& fin, std::string& buffer);
   static bool loadInternal(std::string const& path, std::string& buffer);
   static std::shared_ptr<CShader> loadFromMemory(std::string text, CShader::type type);
-  bool Create();
-  bool Compile();
-  bool Bind();
-  bool Empty();
-  void print();
-  std::string typeToStr();
-  std::string getName();
-  GLuint get();
+  
+  virtual bool Create() override;
+  virtual bool Compile() override;
+  virtual bool Bind() override;
+  virtual bool Empty() override;
+  virtual void print() override;
+  virtual const char* typeToStr() override;
+  virtual const char* getName() override;
+  virtual uint get() override;
 };
 
 class UniformValue {

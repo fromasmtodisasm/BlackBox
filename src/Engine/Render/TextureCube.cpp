@@ -1,4 +1,5 @@
 #include <BlackBox/Render/TextureCube.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 
 #include <vector>
@@ -15,9 +16,9 @@ void TextureCube::setType(const char* TextureType)
 {
 }
 
-std::string TextureCube::typeToStr()
+const char* TextureCube::typeToStr()
 {
-  return std::string();
+  return "unknown";
 }
 
 bool TextureCube::load(const char* name)
@@ -36,16 +37,16 @@ bool TextureCube::load(const char* name)
     "_back.jpg"
   };
 
-  Image img;
+  std::unique_ptr<Image> img;
   glCheck(glGenTextures(1, &id));
   glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
 
   for (unsigned int i = 0; i < faces.size(); i++)
   {
-    if (!img.load((skybox_root + name + faces[i]).c_str(), nullptr))
+    if (!img->load((skybox_root + name + faces[i]).c_str(), nullptr))
       return false;
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-      0, internalFormat, img.width, img.height, 0, inputFormat, GL_UNSIGNED_BYTE, img.data
+      0, internalFormat, img->width, img->height, 0, inputFormat, GL_UNSIGNED_BYTE, img->data
     );
   }
   gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

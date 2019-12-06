@@ -1,8 +1,8 @@
 #pragma once
+#if 1
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/ISystem.hpp>
-#include <glm/fwd.hpp>
 #include <string>
 #include <memory>
 
@@ -20,3 +20,4 @@ public:
   ~CShaderProgram();
   virtual void setup() override;
 };
+#endif

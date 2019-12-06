@@ -2,13 +2,12 @@
 #include <BlackBox/common.h>
 #include <BlackBox/Render/VertexArrayObject.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
-#include <cassert>
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
+#include <BlackBox/MathHelper.hpp>
 
 #include <memory>
 #include <string>
 #include <vector>
+#include <cassert>
 
 class VertexArrayObject;
 class IndexBuffer;
@@ -41,14 +40,14 @@ struct face
 
 struct Vertex
 {
-  glm::vec3 pos;
-  glm::vec2 uv;
-  glm::vec3 normal;
-  glm::vec3 tangent;
-  glm::vec3 btangent;
+  Vec3 pos;
+  Vec2 uv;
+  Vec3 normal;
+  Vec3 tangent;
+  Vec3 btangent;
 
   Vertex() : pos(0), uv(0), normal(0), tangent(0), btangent(0) {}
-  Vertex(glm::vec3 pos, glm::vec2 uv) : pos(pos), uv(uv), normal(0), tangent(0), btangent(0)
+  Vertex(Vec3 pos, Vec2 uv) : pos(pos), uv(uv), normal(0), tangent(0), btangent(0)
   {}
   Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n), tangent(0), btangent(0)
   {}

@@ -40,7 +40,7 @@ bool ShaderStatus::get(GLenum statusType) {
   if (m_Status != GL_TRUE)
   {
     glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, m_InfoLog));
-    GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName().c_str(), m_InfoLog);;
+    GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), m_InfoLog);;
     return false;
   }
   return true;
@@ -93,7 +93,7 @@ bool CShader::Create() {
   // return m_Status.get(GL_VALIDATE_STATUS);
 }
 
-std::shared_ptr<CShader> CShader::load(ShaderDesc  const& desc) {
+IShader* CShader::load(ShaderDesc  const& desc) {
   string text;
 
   auto path = ShaderDesc::root + desc.name;
@@ -115,7 +115,7 @@ std::shared_ptr<CShader> CShader::load(ShaderDesc  const& desc) {
     }
   }
 
-  auto shader = std::make_shared<CShader>(text, str2typ(desc.type));
+  auto shader = new CShader(text, str2typ(desc.type));
   if (!shader->Create())
     return nullptr;
   shader->Compile();
@@ -197,7 +197,7 @@ void CShader::print() {
   //cout << m_Text << endl;
 }
 
-string CShader::typeToStr()
+const char* CShader::typeToStr()
 {
   switch (m_Type) {
   case E_VERTEX:
@@ -213,8 +213,8 @@ string CShader::typeToStr()
   }
 }
 
-string CShader::getName() {
-  return m_Path;
+const char* CShader::getName() {
+  return m_Path.c_str();
 }
 
 GLuint CShader::get() {

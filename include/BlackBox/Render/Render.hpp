@@ -162,4 +162,7 @@ private:
 
   // Inherited via IRenderer
   virtual void SetRenderTarget(int nHandle) override;
+
+  // Inherited via CRenderer
+  virtual IShader* Sh_Load(ShaderDesc const& desc) override;
 };

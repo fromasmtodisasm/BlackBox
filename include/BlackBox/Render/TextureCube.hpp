@@ -18,7 +18,7 @@ public:
   void SaveMipMaps();
 #endif
   virtual void setType(const char* TextureType) override;
-  virtual std::string typeToStr() override;
+  virtual const char* typeToStr() override;
 
   // Унаследовано через BaseTexture
   virtual bool load(const char* name) override;

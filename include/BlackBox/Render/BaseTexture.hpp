@@ -3,11 +3,12 @@
 
 #include <string>
 #include <memory>
-#include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/ITexture.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif
+
+class Image;
 
 enum TextureType
 {
@@ -23,11 +24,11 @@ enum TextureType
 class BaseTexture : public ITexture
 {
 public:
-  GLint width;
+  int width;
   int height;
   TextureType type;
-  GLuint id;
-  GLint unit = 0;
+  uint id;
+  int unit = 0;
   std::shared_ptr<std::string> path;
   std::string name;
   std::string texture_root = "res/images/";

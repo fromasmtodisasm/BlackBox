@@ -2,6 +2,7 @@
 #if USE_GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 using Vec1 = glm::vec1;
 using Vec2 = glm::vec2;
 using Vec3 = glm::vec3;

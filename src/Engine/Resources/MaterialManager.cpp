@@ -410,7 +410,7 @@ XMLElement* MaterialManager::saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture*
 {
   XMLElement* textureElement = xmlDoc.NewElement("shader");
 
-  textureElement->SetAttribute("type", texture->typeToStr().c_str());
+  textureElement->SetAttribute("type", texture->typeToStr());
   textureElement->Attribute("name", texture->path->c_str());
 
   return textureElement;
@@ -425,7 +425,7 @@ XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, CShader* 
 {
   XMLElement* shaderElement = xmlDoc.NewElement("shader");
 
-  shaderElement->SetAttribute("type", shader->typeToStr().c_str());
+  shaderElement->SetAttribute("type", shader->typeToStr());
   shaderElement->Attribute("name", shader->m_Path.c_str());
 
   return shaderElement;

@@ -1,5 +1,6 @@
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #ifdef ALPHA_DIST
 #include <BlackBox/Utils/AlphaDistribution.h>
 #endif
@@ -46,7 +47,7 @@ void Texture::setType(const char* type)
     this->type = UNKNOWN;
 }
 
-std::string Texture::typeToStr()
+const char* Texture::typeToStr()
 {
   std::string result;
   switch (type)

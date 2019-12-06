@@ -81,12 +81,13 @@ endif()
 #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2 EXCLUDE_FROM_ALL)
 add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
 add_subdirectory(${SOURCE_DIR}/Engine/Render OpenGlBackend)
-#target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
 add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
 ###################################################
 find_package(tinyxml2 CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2::tinyxml2)
+target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
 ###################################################
 
 #get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
