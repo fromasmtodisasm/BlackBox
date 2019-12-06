@@ -100,7 +100,7 @@ public:
   Scene(std::string name);
   void selectPrevObject();
   void selectNextObject();
-  std::map<std::string, Object*>::iterator selectedObject();
+  ObjectMapItr selectedObject();
   bool selectObject(std::string name);
   void draw(float dt);
   void addObject(std::string name, Object* object);

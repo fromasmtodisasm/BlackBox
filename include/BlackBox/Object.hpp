@@ -1,5 +1,6 @@
 #pragma once
 
+#include <BlackBox/Platform.hpp>
 #include <BlackBox/IObject.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/IDrawable.hpp>
@@ -63,7 +64,7 @@ public:
   std::string m_path;
   float friction = 0.99f;
   Vec3 velocity;
-  float gravity = 9.8;
+  float gravity = 9.8f;
   bool m_transparent = false;
   bool m_visible = true;
 

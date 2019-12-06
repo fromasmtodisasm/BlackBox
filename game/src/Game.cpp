@@ -1,9 +1,11 @@
-﻿#include <Game.hpp>
+﻿//#define IncludeWithMessage(header) p
+#include <Game.hpp>
 #include <GameObject.hpp>
 #include <BlackBox/Render/Texture.hpp>
 #ifdef GUI
 #include <BlackBox/GUI.hpp>
 #endif // GUI
+#include <BlackBox/Camera.hpp>
 #include <BlackBox/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 //#include <BlackBox/Resources/MaterialManager.hpp>
@@ -90,14 +92,14 @@ CGame::CGame(std::string title) :
   m_Console(nullptr),
   m_Font(nullptr),
   m_pLog(nullptr),
-  m_ScreenShader(nullptr),
+  //m_ScreenShader(nullptr),
   m_Window(nullptr),
   m_inputHandler(nullptr),
   m_player(nullptr),
   m_pSystem(nullptr),
   m_scene(nullptr),
   m_sceneManager(nullptr),
-  shaderManager(nullptr),
+  //shaderManager(nullptr),
   m_World(new World()), m_Title(title),
   m_pScriptObjectGame(nullptr),
   m_pRender(nullptr),
@@ -177,7 +179,7 @@ bool CGame::Init(ISystem* pEngine) {
 #endif
   // Set scene before camera, camera setted to active scene in world
   if (m_scene)
-    m_World->setScene(m_scene);
+    m_World->SetScene(m_scene);
 #ifdef GUI
   gui = new GameGUI();
   gui->game = this;
@@ -233,7 +235,7 @@ bool CGame::Update() {
     fps = 1.0f / m_deltaTime;
     execScripts();
     if (!IsInPause())
-      m_World->update(m_pSystem->GetDeltaTime());
+      m_World->Update(m_pSystem->GetDeltaTime());
 
 #if 0
     if (m_HostType == CLIENT)
@@ -245,11 +247,11 @@ bool CGame::Update() {
     setRenderState();
 
     {
-      DEBUG_GROUP("ALL RENDERING");
+      //DEBUG_GROUP("ALL RENDERING");
       PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
       render();
       PROFILER_POP_CPU_MARKER();
-      if (m_World->getActiveScene()) m_World->getActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
+      if (m_World->GetActiveScene()) m_World->GetActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
       PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
       drawHud(fps);
       PROFILER_POP_CPU_MARKER();
@@ -294,9 +296,9 @@ void CGame::drawHud(float fps)
 void CGame::DisplayInfo(float fps)
 {
   size_t num_objects;
-  if (m_World->getActiveScene())
+  if (m_World->GetActiveScene())
   {
-    num_objects = m_World->getActiveScene()->numObjects();
+    num_objects = m_World->GetActiveScene()->numObjects();
   }
   auto line = m_pRender->GetHeight();
   auto step = 18;
@@ -425,16 +427,16 @@ bool CGame::Run(bool& bRelaunch) {
 }
 
 bool CGame::loadScene(std::string name) {
-  Scene* scene;
+  IScene* scene;
   std::string& path = name;
   SceneManager::instance()->removeScene(path);
   if ((scene = SceneManager::instance()->getScene(path, this)) != nullptr)
   {
-    m_World->setScene(scene);
+    m_World->SetScene(scene);
     auto tech = TechniqueManager::get("hdr");
     if (tech != nullptr)
     {
-      tech->Init(m_World->getActiveScene(), nullptr);
+      tech->Init(m_World->GetActiveScene(), nullptr);
       scene->setTechnique(tech);
     }
 
@@ -485,7 +487,7 @@ void CGame::setRenderState()
 
 void CGame::render()
 {
-  if (nullptr == m_World->getActiveScene())
+  if (nullptr == m_World->GetActiveScene())
     return;
   //m_Window->clear();
   m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
@@ -506,10 +508,10 @@ void CGame::render()
   }
 
   auto r = ((float)w) / h;
-  m_World->getActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
+  m_World->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
   //m_World->setCamera(m_camera1);
-  m_World->draw(m_deltaTime);
+  m_World->Draw(m_deltaTime);
 }
 
 void CGame::setPlayer(CPlayer* player)
@@ -612,7 +614,7 @@ void CGame::gotoGame()
 {
   if (m_player != nullptr)
   {
-    m_World->getActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
+    m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
     m_pInput->ShowCursor(false);
     m_pInput->GrabInput(true);
@@ -649,7 +651,7 @@ bool CGame::initPlayer()
   }
   if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
   {
-    m_player->attachCamera(m_World->getActiveScene()->getCurrentCamera());
+    m_player->attachCamera(m_World->GetActiveScene()->getCurrentCamera());
     m_player->setGame(this);
     return true;
   }
@@ -687,7 +689,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
   bool shift = event.modifiers & eMM_Shift;
   bool alt = event.modifiers & eMM_Alt;
   ////////////////////////
-  auto camera = m_World->getActiveScene()->getCurrentCamera();
+  auto camera = m_World->GetActiveScene()->getCurrentCamera();
   if (keyPressed)
   {
     switch (event.keyId)
@@ -720,14 +722,14 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
       culling = !culling;
       return true;
     case eKI_F1:
-      m_World->getActiveScene()->selectedObject()->second->m_Material->nextDiffuse();
+      m_World->GetActiveScene()->selectedObject()->second->m_Material->nextDiffuse();
       return true;
     case eKI_F9:
       if (shift)
         ++currPP;
       else
         --currPP;
-      m_World->getActiveScene()->setPostProcessor(postProcessors[currPP % postProcessors.size()]);
+      //m_World->GetActiveScene()->setPostProcessor(postProcessors[currPP % postProcessors.size()]);
       return true;
     case eKI_Enter:
       if (alt == true)
@@ -904,34 +906,35 @@ bool CGame::EditInputEvent(const SInputEvent& event)
   ////////////////////////
   if (keyPressed)
   {
+    IObject* obj = m_World->GetActiveScene()->selectedObject()->second;
     switch (event.keyId)
     {
     case eKI_Escape:
       gotoMenu();
       return true;
     case eKI_I:
-      m_World->getActiveScene()->selectedObject()->second->move(Movement::FORWARD);
+      obj->move(Movement::FORWARD);
       return true;
     case eKI_U:
-      m_World->getActiveScene()->selectedObject()->second->move(Movement::BACKWARD);
+      obj->move(Movement::BACKWARD);
       return true;
     case eKI_J:
-      m_World->getActiveScene()->selectedObject()->second->move(Movement::DOWN);
+      obj->move(Movement::DOWN);
       return true;
     case eKI_K:
-      m_World->getActiveScene()->selectedObject()->second->move(Movement::UP);
+      obj->move(Movement::UP);
       return true;
     case eKI_V:
-      m_World->getActiveScene()->selectedObject()->second->setVisibility(!m_World->getActiveScene()->selectedObject()->second->visible());
+      obj->setVisibility(!obj->visible());
       return true;
     case eKI_Tab:
       if (shift)
       {
-        m_World->getActiveScene()->selectPrevObject();
+        m_World->GetActiveScene()->selectPrevObject();
       }
       else
       {
-        m_World->getActiveScene()->selectNextObject();
+        m_World->GetActiveScene()->selectNextObject();
       }
       return true;
     default:

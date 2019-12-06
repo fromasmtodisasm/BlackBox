@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
-#include <BlackBox/Render/OpenGL/Core.hpp>
+//#include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/BaseTexture.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
@@ -27,5 +27,5 @@ public:
   virtual void bind() override;
 
   // Inherited via BaseTexture
-  virtual void setUnit(GLuint unit) override;
+  virtual void setUnit(uint unit) override;
 };

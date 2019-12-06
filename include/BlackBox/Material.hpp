@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <BlackBox/Render/Texture.hpp>
-#include <BlackBox/Render/Shader.hpp>
+//#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <vector>
@@ -26,7 +26,8 @@ struct Material
 
   std::vector<BaseTexture*> diffuse;
 
-  BaseShaderProgramRef program;
+  //BaseShaderProgramRef program;
+  IShaderProgram *program;
   std::string program_name;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;

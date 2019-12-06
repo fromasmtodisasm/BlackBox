@@ -33,8 +33,8 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IGame.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/IWorld.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/World.hpp>
 //#include <BlackBox/CameraController.hpp>
 //#include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
@@ -47,7 +47,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <ScriptObjects/ScriptObjectServer.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <ScriptObjects/ScriptObjectGame.hpp>
-#include <Player.h>
+#include "Player.h"
 
 
 
@@ -61,7 +61,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 using string = std::string;
 class EventListener; 
 class GameGUI;
-class Scene;
+class IScene;
 class SceneManager;
 class CTagPoint;
 
@@ -263,7 +263,7 @@ public:
   World *												m_World;
   CPlayer *											m_player = nullptr;
 	//CameraController *camControl;
-  Scene *												m_scene;
+  IScene *											m_scene;
   SceneManager *								m_sceneManager;
   ILog *												m_pLog;
 	INetwork*											m_pNetwork;
@@ -294,7 +294,7 @@ public:
   GameGUI *gui;
 #endif // GUI
 
-	CShaderProgram *m_ScreenShader;
+	//CShaderProgram *m_ScreenShader;
 	IFont* m_Font;
 	//EDIT MODE
 	//==========
@@ -306,8 +306,8 @@ public:
   bool openShadowMap = true;
 
   //
-  ShaderManager *shaderManager;
-	std::vector<IPostProcessor*> postProcessors;
+  //ShaderManager *shaderManager;
+	//std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
 
 public:

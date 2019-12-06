@@ -1,4 +1,5 @@
 #include <GameObject.hpp>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

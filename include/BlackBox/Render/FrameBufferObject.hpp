@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <vector>
 
 #define EXTRACT_COLOR(c) c.r, c.g, c.b, c.a
@@ -32,9 +33,9 @@ private:
   void createSceneBuffer();
   void createDepthBuffer();
 public:
-  GLuint id;
-  std::vector<GLuint> texture;
-  GLuint rbo;
+  uint id;
+  std::vector<uint> texture;
+  uint rbo;
   BufferType type;
   glm::vec4 viewPort;
   glm::vec4 defaultColor = glm::vec4(glm::vec3(0.f), 1.f);

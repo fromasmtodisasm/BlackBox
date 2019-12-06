@@ -29,6 +29,9 @@ struct IObject
   virtual void setTexture(Texture* texture, const char* type) = 0;
   virtual Mat4 getTransform() = 0;
 
+  virtual void setVisibility(bool flag) = 0;
+  virtual bool visible() = 0;
+
   virtual void SetScriptObject(IScriptObject* pObject) = 0;
   virtual IScriptObject* GetScriptObject() = 0;
 };

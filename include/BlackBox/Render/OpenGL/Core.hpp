@@ -9,7 +9,8 @@
 #ifdef GLEW_LOADER
 #include <GL/glew.h>
 #else
-#error OPENGL LOADER NOT SETTED
+#pragma message(__FILE__ "OPENGL LOADER NOT SETTED")
+//#error OPENGL LOADER NOT SETTED
 #endif
 #endif
 

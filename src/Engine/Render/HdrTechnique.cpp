@@ -58,7 +58,7 @@ HdrTechnique::~HdrTechnique()
   SAFE_DELETE(shadowMapping);
 }
 
-bool HdrTechnique::Init(Scene* pScene, FrameBufferObject* renderTarget)
+bool HdrTechnique::Init(IScene* pScene, FrameBufferObject* renderTarget)
 {
   if (inited)
     return true;

@@ -33,7 +33,7 @@ bool SceneManager::init(const char* scene, LoadObjectSink* callback)
   return true;
 }
 
-Scene* SceneManager::getScene(string scene, LoadObjectSink* callback)
+IScene* SceneManager::getScene(string scene, LoadObjectSink* callback)
 {
   std::string prefix = "res/scenes/";
   bool usPrefix = true;
@@ -75,7 +75,7 @@ void SceneManager::removeScene(std::string scene)
   cache.erase(scene_path->GetString() + scene);
 }
 
-Scene* SceneManager::currentScene()
+IScene* SceneManager::currentScene()
 {
   return current_scene_it->second;
 }

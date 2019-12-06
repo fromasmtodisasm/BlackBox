@@ -1,11 +1,13 @@
 #include <BlackBox/World.hpp>
+#include <BlackBox/Scene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/ISystem.hpp>
 #include <BlackBox/IConsole.hpp>
 
 float World::gravity = 9.8;
 
-Scene* World::getActiveScene() const
+IScene* World::GetActiveScene()
 {
   return activeScene;
 }
@@ -17,7 +19,7 @@ World::World()
   REGISTER_CVAR(gravity, gravity, VF_NULL, "gravity");
 }
 
-void World::draw(float dt) {
+void World::Draw(float dt) {
   activeScene->begin();
   if (m_PreRender != nullptr)
     m_PreRender->PreRender();
@@ -28,16 +30,16 @@ void World::draw(float dt) {
   // Camera ...
 }
 
-void World::setCamera(CCamera* camera)
+void World::SetCamera(CCamera* camera)
 {
   //activeScene->setCamera(camera);
 }
 
-void World::setScene(Scene* scene) {
+void World::SetScene(IScene* scene) {
   activeScene = scene;
 }
 
-void World::update(float deltatime)
+void World::Update(float deltatime)
 {
   if (activeScene != nullptr)
   {
@@ -47,12 +49,12 @@ void World::update(float deltatime)
   }
 }
 
-void World::setPretRenderCallback(IPreRenderCallback* callBack)
+void World::SetPretRenderCallback(IPreRenderCallback* callBack)
 {
   m_PreRender = callBack;
 }
 
-void World::setPostRenderCallback(IPostRenderCallback* callBack)
+void World::SetPostRenderCallback(IPostRenderCallback* callBack)
 {
   m_PostRender = callBack;
 }

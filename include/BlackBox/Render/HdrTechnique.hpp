@@ -19,7 +19,7 @@ public:
 
   // Inherited via ITechnique
   /////////////////////////////////////////////////
-  virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) override;
+  virtual bool Init(IScene* scene, FrameBufferObject* renderTarget) override;
 
   void CreateFrameBuffers(SDispFormat* format);
   void DeleteFrameBuffers();

@@ -337,7 +337,7 @@ void Scene::selectNextObject()
   }
 }
 
-std::map<std::string, Object*>::iterator Scene::selectedObject()
+ObjectMapItr Scene::selectedObject()
 {
   if (selected_object_it == m_Objects.end())
     return m_Objects.begin();

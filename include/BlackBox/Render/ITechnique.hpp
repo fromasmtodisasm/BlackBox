@@ -1,11 +1,11 @@
 #pragma once
 
-class Scene;
+class IScene;
 class FrameBufferObject;
 
 struct ITechnique
 {
-  virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) = 0;
+  virtual bool Init(IScene* scene, FrameBufferObject* renderTarget) = 0;
   virtual bool PreRenderPass() = 0;
   virtual bool OnRenderPass(int pass) = 0;
   virtual void PostRenderPass() = 0;

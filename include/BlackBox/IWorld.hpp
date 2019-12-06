@@ -1,5 +1,8 @@
 #pragma once
 
+class CCamera;
+class IScene;
+
 struct IPostRenderCallback
 {
   virtual void PostRender() = 0;
@@ -13,12 +16,11 @@ struct IPreRenderCallback
 struct IWorld 
 {
 public:
-  void draw(float dt);
-
-  void setCamera(CCamera* camera);
-  void setScene(Scene* scene);
-  void update(float deltatime);
-  void setPretRenderCallback(IPreRenderCallback* callBack);
-  void setPostRenderCallback(IPostRenderCallback* callBack);
-  Scene* getActiveScene() const;
+  virtual virtual void Draw(float dt) = 0;
+  virtual void SetCamera(CCamera* camera) = 0;
+  virtual void SetScene(IScene* scene) = 0;
+  virtual void Update(float deltatime) = 0;
+  virtual void SetPretRenderCallback(IPreRenderCallback* callBack) = 0;
+  virtual void SetPostRenderCallback(IPostRenderCallback* callBack) = 0;
+  virtual IScene* GetActiveScene() = 0;
 };

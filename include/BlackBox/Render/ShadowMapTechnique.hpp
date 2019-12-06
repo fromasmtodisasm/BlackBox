@@ -50,7 +50,7 @@ public:
   ~ShadowMapping();
 
   // Inherited via ITechnique
-  virtual bool Init(Scene* scene, FrameBufferObject* renderTarget) override;
+  virtual bool Init(IScene* scene, FrameBufferObject* renderTarget) override;
   virtual bool PreRenderPass() override;
   virtual bool OnRenderPass(int pass) override;
   virtual void PostRenderPass() override;

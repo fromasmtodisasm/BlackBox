@@ -1,9 +1,7 @@
 #pragma once
 
-#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Triangle.hpp>
-#include <BlackBox/Cube.hpp>
-#include <BlackBox/Tetrahedron.hpp>
+//#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Object.hpp>
 #include <string>
 
 class Primitive

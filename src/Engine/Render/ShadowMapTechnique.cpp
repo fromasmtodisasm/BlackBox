@@ -18,7 +18,7 @@ ShadowMapping::~ShadowMapping()
 {
 }
 
-bool ShadowMapping::Init(Scene* scene, FrameBufferObject* renderTarget)
+bool ShadowMapping::Init(IScene* scene, FrameBufferObject* renderTarget)
 {
   m_pRender = GetISystem()->GetIRender();
   m_Scene = scene;

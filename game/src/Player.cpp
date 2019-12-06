@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include <Player.h>
+#include <BlackBox/IScene.hpp>
 #include <BlackBox/Primitives.hpp>
 #include <Game.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+//#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 
@@ -12,7 +13,7 @@ CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject(
 {
   //getShaderProgram()->Uniform("color", glm::vec3(1,0,0));
   mouseState = FREE;
-  setMaterial(defaultMaterial);
+  //setMaterial(defaultMaterial);
   init();
 }
 
@@ -44,12 +45,12 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
   ////////////////////////
   if (false)
   {
-    Object* obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
+    auto obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
     GameObject* go = new GameObject(obj);
     go->setMaterial(obj->getMaterial());
     go->m_transform.position = m_Camera->getPosition();// + glm::vec3(0,0,5);
     go->velocity = 48.0f * m_Camera->Front;
-    Game->getWorld()->getActiveScene()->addObject("bullet", go);
+    Game->getWorld()->GetActiveScene()->addObject("bullet", go);
 
     return true;
   }
@@ -62,7 +63,7 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
     else
       delta.y = event.value;
 
-    m_Camera->ProcessMouseMovement(static_cast<GLfloat>(delta.x), -static_cast<GLfloat>(delta.y));
+    m_Camera->ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
     return true;
   }
   else if (keyPressed)

@@ -2,9 +2,10 @@
 
 #include <Game.hpp>
 #include <BlackBox/Utils.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/World.hpp>
+#include <BlackBox/IScene.hpp>
+//#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
-#include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/IMarkers.hpp>
@@ -189,14 +190,14 @@ private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
   {
-    auto obj = m_World->getActiveScene()->selectedObject()->second;
+    auto obj = m_World->GetActiveScene()->selectedObject()->second;
     auto args_it = cd.args.begin();
     if (cd.args.size() >= 3)
     {
       if (cd.args.size() == 4)
       {
         std::string name = wstr_to_str(*args_it++);
-        obj = m_World->getActiveScene()->getObject(name);
+        obj = m_World->GetActiveScene()->getObject(name);
       }
       auto pos = unpack_vector(args_it);
       obj->move(pos);
@@ -223,10 +224,10 @@ private:
     if (cd.args.size() >= 4 && cd.args.size() <= 5)
     {
       auto args_it = cd.args.begin();
-      auto obj = m_World->getActiveScene()->selectedObject()->second;
+      auto obj = m_World->GetActiveScene()->selectedObject()->second;
       if (cd.args.size() == 5) {
         std::string name = wstr_to_str(*args_it++);
-        obj = m_World->getActiveScene()->getObject(name);
+        obj = m_World->GetActiveScene()->getObject(name);
       }
       if (obj != nullptr)
       {
@@ -260,35 +261,11 @@ private:
   virtual bool execute(CommandDesc& cd) override
   {
     std::string name = wstr_to_str(cd.args[0]);
-    return m_World->getActiveScene()->selectObject(name);
+    return m_World->GetActiveScene()->selectObject(name);
   }
 };
 
 SelectCommand::SelectCommand(CGame* game) : BaseCommand(game)
-{
-  m_World = game->getWorld();
-}
-//*******************************************************
-class WireframeCommand : public BaseCommand
-{
-  World* m_World;
-public:
-  WireframeCommand(CGame* game);
-private:
-  // Inherited via IConsoleCommand
-  virtual bool execute(CommandDesc& cd) override
-  {
-    int mode = m_World->getActiveScene()->selectedObject()->second->getRenderMode();
-    if (mode == GL_FILL) mode = GL_LINE;
-    else if (mode == GL_LINE) mode = GL_FILL;
-    auto obj = m_World->getActiveScene()->selectedObject();
-    obj->second->setRenderMode(mode);
-    GetISystem()->GetIConsole()->PrintLine("Name of wired object %s\n", obj->first.c_str());
-    return true;
-  }
-};
-
-WireframeCommand::WireframeCommand(CGame* game) : BaseCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -365,6 +342,7 @@ ExecCommand::ExecCommand(CGame* game) : BaseCommand(game)
   console = GetISystem()->GetIConsole();
 }
 //*******************************************************
+#if 0
 class MaterialCommand : public BaseCommand
 {
   World* m_World;
@@ -380,7 +358,7 @@ private:
       Material* m = MaterialManager::instance()->getMaterial(name);
       if (!m)
         return false;
-      game->getWorld()->getActiveScene()->selectedObject()->second->setMaterial(m);
+      game->getWorld()->GetActiveScene()->selectedObject()->second->setMaterial(m);
       return true;
     }
     return false;
@@ -391,7 +369,9 @@ MaterialCommand::MaterialCommand(CGame* game) : BaseCommand(game)
 {
   m_World = game->getWorld();
 }
+#endif
 //*******************************************************
+#if 0
 class ShaderCommand : public BaseCommand, public IMaterialShaderSink
 {
   World* m_World;
@@ -469,8 +449,9 @@ bool ShaderCommand::move(CommandDesc& cd)
 {
   if (cd.args.size() == 2)
   {
+    assert(0 && "Goodbye");
     auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
-    game->getWorld()->getActiveScene()->selectedObject()->second->getMaterial()->program = s;
+    //game->getWorld()->GetActiveScene()->selectedObject()->second->getMaterial()->program = s;
     return true;
   }
   return false;
@@ -520,6 +501,7 @@ bool ShaderCommand::enumerate(CommandDesc& cd)
   MaterialManager::instance()->EnumShaders(this);
   return true;
 }
+#endif
 //*******************************************************
 class CameraCommand : public BaseCommand
 {
@@ -550,8 +532,8 @@ CameraCommand::CameraCommand(CGame* game) : BaseCommand(game)
 
 bool CameraCommand::lookat(CommandDesc& cd)
 {
-  auto object = m_World->getActiveScene()->selectedObject();
-  auto camera = m_World->getActiveScene()->getCurrentCamera();
+  auto object = m_World->GetActiveScene()->selectedObject();
+  auto camera = m_World->GetActiveScene()->getCurrentCamera();
 
   return false;
 }
@@ -561,7 +543,7 @@ bool CameraCommand::move(CommandDesc& cd)
   if (cd.args.size() == 4)
   {
     auto pos = unpack_vector((cd.args.begin()++)++);
-    auto camera = m_World->getActiveScene()->getCurrentCamera();
+    auto camera = m_World->GetActiveScene()->getCurrentCamera();
     camera->setPosition(pos);
     return true;
   }
@@ -620,12 +602,12 @@ bool SceneCommand::save(CommandDesc& cd)
 }
 bool SceneCommand::activate(CommandDesc& cd)
 {
-  Scene* scene;
+  IScene* scene;
   std::string name = wstr_to_str(cd.args[1]);
   if ((scene = SceneManager::instance()->getScene(name, game)) != nullptr)
   {
     //=====================
-    game->getWorld()->setScene(scene);
+    game->getWorld()->SetScene(scene);
     game->setCamera(scene->getCurrentCamera());
     game->setPlayer((CPlayer*)scene->getObject("MyPlayer"));
     //=====================
@@ -647,7 +629,7 @@ private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
   {
-    auto obj = m_World->getActiveScene()->selectedObject()->second;
+    auto obj = m_World->GetActiveScene()->selectedObject()->second;
     auto args_it = cd.args.begin();
     if (cd.args.size() == 2)
     {
@@ -656,7 +638,7 @@ private:
       {
         auto tag = wstr_to_str(cd.get(1));
         if (tag.length() == 0) return false;
-        game->CreateTagPoint(tag, m_World->getActiveScene()->getCurrentCamera()->getPosition(), m_World->getActiveScene()->getCurrentCamera()->getRotation());
+        game->CreateTagPoint(tag, m_World->GetActiveScene()->getCurrentCamera()->getPosition(), m_World->GetActiveScene()->getCurrentCamera()->getRotation());
         return true;
       }
       else if (subcmd == "goto")
@@ -672,9 +654,9 @@ private:
         Vec3 pos, ang;
         tag_point->GetPos(pos);
         tag_point->GetAngles(ang);
-        m_World->getActiveScene()->getCurrentCamera()->setPosition(pos);
-        m_World->getActiveScene()->getCurrentCamera()->setRotation(ang);
-        m_World->getActiveScene()->getCurrentCamera()->updateCameraVectors();
+        m_World->GetActiveScene()->getCurrentCamera()->setPosition(pos);
+        m_World->GetActiveScene()->getCurrentCamera()->setRotation(ang);
+        m_World->GetActiveScene()->getCurrentCamera()->updateCameraVectors();
         return true;
       }
 
@@ -711,7 +693,7 @@ private:
     */
     FILE* fp;
 
-    auto obj = m_World->getActiveScene()->selectedObject()->second;
+    auto obj = m_World->GetActiveScene()->selectedObject()->second;
     auto path = obj->m_path;
     auto pos = path.find_last_of('.');
     if (pos == path.npos)
@@ -737,10 +719,9 @@ void CGame::initCommands()
   m_Console->AddCommand("move", new MoveCommand(this));
   m_Console->AddCommand("rotate", new RotateCommand(this));
   m_Console->AddCommand("select", new SelectCommand(this));
-  m_Console->AddCommand("wire", new WireframeCommand(this));
   m_Console->AddCommand("exec", new ExecCommand(this), "Load end execute scripts");
-  m_Console->AddCommand("material", new MaterialCommand(this));
-  m_Console->AddCommand("shader", new ShaderCommand(this), "Set shader to object and reload shader");
+  //m_Console->AddCommand("material", new MaterialCommand(this));
+  //m_Console->AddCommand("shader", new ShaderCommand(this), "Set shader to object and reload shader");
   m_Console->AddCommand("camera", new CameraCommand(this));
   m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
   m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
