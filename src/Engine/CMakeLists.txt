@@ -126,6 +126,9 @@ file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUD
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})
 endif()
+target_sources(BlackBox
+	PRIVATE dummy.cpp
+)
 #--------------------------------------------------
 get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
 source_group(

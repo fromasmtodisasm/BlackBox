@@ -17,7 +17,7 @@ struct IPreRenderCallback
 struct IWorld 
 {
 public:
-  virtual virtual void Draw(float dt) = 0;
+  virtual void Draw(float dt) = 0;
   virtual void SetCamera(CCamera* camera) = 0;
   virtual void SetScene(IScene* scene) = 0;
   virtual void Update(float deltatime) = 0;

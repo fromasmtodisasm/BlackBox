@@ -126,6 +126,8 @@ bool CSystem::Init()
     return false;
   }
   //====================================================
+  // In release mode it failed!!!
+  // TODO: Fix it
   if (!(m_pWindow = m_Render->Init(
     0, 0,
     r_window_width->GetIVal(), r_window_height->GetIVal(),
