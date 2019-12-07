@@ -50,6 +50,13 @@ target_sources(Renderer
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
 )
 
+if (GLAD_LOADER)
+  target_sources(${PROJECT_NAME}
+    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
+  )
+endif()
+
+
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)

@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(BlackBox CXX)
 ###################################################
-
 include(GenerateExportHeader)
 include(FindFreetype)
-
 ###################################################
 add_library(${PROJECT_NAME})
 add_library(Common INTERFACE)
@@ -38,21 +36,18 @@ set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 ###################################################
 configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
 ###################################################
-
 if (BB_TESET_ENABLE)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DTEST)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DSINGLE_PASS)
 endif()
 find_package(OpenGL REQUIRED)
+find_package(tinyxml2 CONFIG REQUIRED)
 #--------------------------------------------------
 target_include_directories(
 BB_Private
-
-	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/"
 	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
 	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
 	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
@@ -60,12 +55,16 @@ BB_Private
 	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
 	INTERFACE "${SUBMODULES_DIR}/stb/"
 )
+target_include_directories (
+Common
+	INTERFACE	"${CMAKE_BINARY_DIR}"
+	INTERFACE	"${BLACKBOX_ROOT}/include/"
+	)
 #--------------------------------------------------
 #--------------------------------------------------
 ###################################################
 # Subs
 ###################################################
-#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 add_subdirectory(${SOURCE_DIR}/Engine/Input Input)
 add_subdirectory(${SOURCE_DIR}/Engine/Geometry Geometry)
 add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
@@ -75,6 +74,7 @@ add_subdirectory(${SOURCE_DIR}/Engine/System System)
 add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
 add_subdirectory(${SOURCE_DIR}/Engine/Profiler Profiler)
 add_subdirectory(${SOURCE_DIR}/Engine/Resources Resources)
+add_subdirectory(${SOURCE_DIR}/Engine/Utils Utils)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
@@ -87,8 +87,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Profiler)
 target_link_libraries(${PROJECT_NAME} PUBLIC Resources)
 target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
 target_link_libraries(${PROJECT_NAME} PRIVATE Window)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
+
+target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 ###################################################
-find_package(tinyxml2 CONFIG REQUIRED)
 ###################################################
 
 ###################################################
@@ -121,28 +125,16 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Network/Network.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
-  #Utils folder
-  PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
-
-if (GLAD_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
-  )
-endif()
 
 if (UNIX_OR_CYGWIN)
   target_sources(
     ${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
     )
-
 endif()
 ###################################################
 file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
-
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})
@@ -194,21 +186,7 @@ source_group(
   FILES
   ${IMGUI_SOURCES}
   )
-#--------------------------------------------------
 ###################################################
-###################################################
-#target_link_libraries(${PROJECT_NAME} ImGui)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
-#/////////////////////////////////////////////////////////////////
-target_include_directories (
-Common
-	INTERFACE	"${CMAKE_BINARY_DIR}"
-	INTERFACE	"${CMAKE_SOURCE_DIR}/include/"
-	)
-target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
-#/////////////////////////////////////////////////////////////////
-
 install (
   TARGETS  ${PROJECT_NAME}
   RUNTIME DESTINATION bin
@@ -222,3 +200,4 @@ install(
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION ${PROJECT_NAME}
 )
+###################################################

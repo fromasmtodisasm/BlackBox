@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.15)
+project(Utils CXX)
+###################################################
+add_library(${PROJECT_NAME})
+
+###################################################
+
+target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
+target_link_libraries(${PROJECT_NAME} PRIVATE Common)
+target_link_libraries(${PROJECT_NAME} PRIVATE Math)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
+
+target_sources(${PROJECT_NAME}
+  #Utils folder
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
+)

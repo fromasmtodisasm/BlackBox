@@ -19,3 +19,5 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Timer.cpp
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
