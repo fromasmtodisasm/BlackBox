@@ -66,17 +66,27 @@ BB_Private
 # Subs
 ###################################################
 #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
-add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
 add_subdirectory(${SOURCE_DIR}/Engine/Input Input)
+add_subdirectory(${SOURCE_DIR}/Engine/Geometry Geometry)
+add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
 add_subdirectory(${SOURCE_DIR}/Engine/Render Renderer)
 add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
+add_subdirectory(${SOURCE_DIR}/Engine/System System)
 add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
+add_subdirectory(${SOURCE_DIR}/Engine/Profiler Profiler)
+add_subdirectory(${SOURCE_DIR}/Engine/Resources Resources)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Input)
-target_link_libraries(${PROJECT_NAME} PUBLIC Common)
-target_link_libraries(${PROJECT_NAME} PUBLIC Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
+target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
+target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
+target_link_libraries(${PROJECT_NAME} PRIVATE System)
+target_link_libraries(${PROJECT_NAME} PUBLIC Common)
+target_link_libraries(${PROJECT_NAME} PUBLIC Input)
+target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+target_link_libraries(${PROJECT_NAME} PUBLIC Profiler)
+target_link_libraries(${PROJECT_NAME} PUBLIC Resources)
+target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
+target_link_libraries(${PROJECT_NAME} PRIVATE Window)
 ###################################################
 find_package(tinyxml2 CONFIG REQUIRED)
 ###################################################
@@ -107,42 +117,10 @@ target_sources(
   #Common folder
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
-  #Geometry folder
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry/ObjLoader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Object.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Plane.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Primitives.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
-
   #Network folder
   PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Network/Network.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
-
-  #Profiler folder
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Drawer2D.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/HP_Timer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Profiler.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Tgaloader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Thread.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
-
-  #Resources folder
-  PRIVATE ${SOURCE_DIR}/Engine/Resources/MaterialManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Resources/ObjectManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Resources/SceneManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
-
-  #System folder
-  PRIVATE ${SOURCE_DIR}/Engine/System/Commands.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Console.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Log.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/System.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Timer.cpp
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
@@ -171,14 +149,6 @@ if (LINUX OR UNIX OR APPLE)
 endif()
 #--------------------------------------------------
 if (GUI)
-	#IMGUI
-	#if (BUILD_SHARED_LIBS)
-	#  add_library(ImGui SHARED)
-	#  message(STATUS "build shared libs!")
-	#else()
-	#  add_library(ImGui STATIC)
-	#  message(STATUS "build static libs!")
-	#endif()
 	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
 	set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 
@@ -225,16 +195,11 @@ source_group(
   ${IMGUI_SOURCES}
   )
 #--------------------------------------------------
-#target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
 ###################################################
-target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
-target_link_libraries(${PROJECT_NAME} PRIVATE Window)
 ###################################################
 #target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
-#target_link_libraries(${PROJECT_NAME} nvtt)
-#target_include_directories(${PROJECT_NAME} PUBLIC include)
 #/////////////////////////////////////////////////////////////////
 target_include_directories (
 Common
@@ -244,7 +209,7 @@ Common
 target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
 #/////////////////////////////////////////////////////////////////
 
-install(
+install (
   TARGETS  ${PROJECT_NAME}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib

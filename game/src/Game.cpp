@@ -4,6 +4,8 @@
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Render/TechniqueManager.hpp>
+#include <BlackBox/Render/IFont.hpp>
 #ifdef GUI
 #include <BlackBox/GUI.hpp>
 #endif // GUI
@@ -231,9 +233,9 @@ bool CGame::Update() {
     {
       m_pSystem->RenderBegin();
       m_pSystem->Render();
-      PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+      //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
       DrawHud(fps);
-      PROFILER_POP_CPU_MARKER();
+      //PROFILER_POP_CPU_MARKER();
     }
   }
   //////////////////////////////////////////////////////////////////////////
