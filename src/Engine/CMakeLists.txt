@@ -32,6 +32,7 @@ PRIVATE
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src/Engine)
 set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
@@ -65,17 +66,20 @@ Common
 ###################################################
 # Subs
 ###################################################
-add_subdirectory(${SOURCE_DIR}/Engine/Input Input)
-add_subdirectory(${SOURCE_DIR}/Engine/Geometry Geometry)
-add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
-add_subdirectory(${SOURCE_DIR}/Engine/Render Renderer)
-add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
-add_subdirectory(${SOURCE_DIR}/Engine/System System)
-add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
-add_subdirectory(${SOURCE_DIR}/Engine/Profiler Profiler)
-add_subdirectory(${SOURCE_DIR}/Engine/Resources Resources)
-add_subdirectory(${SOURCE_DIR}/Engine/Utils Utils)
-add_subdirectory(${SOURCE_DIR}/Engine/Network Network)
+add_subdirectory(${ENGINE_DIR}/Input Input)
+add_subdirectory(${ENGINE_DIR}/Geometry Geometry)
+add_subdirectory(${ENGINE_DIR}/Math Math)
+add_subdirectory(${ENGINE_DIR}/Render Renderer)
+add_subdirectory(${ENGINE_DIR}/ScriptSystem ScriptSystem)
+add_subdirectory(${ENGINE_DIR}/System System)
+add_subdirectory(${ENGINE_DIR}/Window Window)
+add_subdirectory(${ENGINE_DIR}/Profiler Profiler)
+add_subdirectory(${ENGINE_DIR}/Resources Resources)
+add_subdirectory(${ENGINE_DIR}/Utils Utils)
+add_subdirectory(${ENGINE_DIR}/Network Network)
+add_subdirectory(${ENGINE_DIR}/GUI GUI)
+add_subdirectory(${ENGINE_DIR}/World World)
+add_subdirectory(${ENGINE_DIR}/Scene Scene)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
@@ -114,17 +118,9 @@ set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIE
 ###################################################
 target_sources(
   ${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Common folder
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
-  #Network folder
-  PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Network/Network.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
 )
 
 if (UNIX_OR_CYGWIN)

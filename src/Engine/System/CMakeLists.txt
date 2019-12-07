@@ -10,6 +10,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Common)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 
+target_link_libraries(${PROJECT_NAME} PRIVATE World)
+
 target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/System/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Console.cpp
