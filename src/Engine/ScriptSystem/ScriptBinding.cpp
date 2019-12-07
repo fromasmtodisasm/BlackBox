@@ -2,7 +2,7 @@
 #include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
-#include <BlackBox/ScriptObjectSystem.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
 
 CScriptBindings::CScriptBindings()
 {

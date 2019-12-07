@@ -19,9 +19,9 @@
 #include <BlackBox/Scene.hpp>
 #include <BlackBox/Camera.hpp>
 
-#include <BlackBox/ScriptObjectConsole.hpp>
-#include <BlackBox/ScriptObjectScript.hpp>
-#include <BlackBox/ScriptObjectRenderer.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
 //
 #include <BlackBox/Profiler/Profiler.h>
 //#include <BlackBox/Profiler/HP_Timer.h>

@@ -1,5 +1,5 @@
 #include <BlackBox/Common.hpp>
-#include <BlackBox/Common/CmdLine.hpp>
+#include <BlackBox/System/CmdLine.hpp>
 #include <cstring>
 
 using namespace std;

@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <BlackBox/Common.hpp>
-#include <BlackBox/ScriptObjectRenderer.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
 
 //#define REG_FUNC(_class,_func) _class::RegisterFunction(pSS,#_func,&_class::_func);
 _DECLARE_SCRIPTABLEEX(CScriptObjectRenderer)

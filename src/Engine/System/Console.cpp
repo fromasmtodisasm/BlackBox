@@ -7,7 +7,7 @@
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Common/IClipBoard.hpp>
+#include <BlackBox/IClipBoard.hpp>
 #include <BlackBox/IInput.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Render/Texture.hpp>

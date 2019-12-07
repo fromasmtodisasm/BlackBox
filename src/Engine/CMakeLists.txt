@@ -114,13 +114,6 @@ generate_export_header(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIBRARIES})
 ###################################################
-target_sources(
-  ${PROJECT_NAME}
-  #Common folder
-  PRIVATE ${ENGINE_DIR}/Common/CmdLine.cpp
-  PRIVATE ${ENGINE_DIR}/Common/CmdLineArg.cpp
-)
-
 if (UNIX_OR_CYGWIN)
   target_sources(
     ${PROJECT_NAME}

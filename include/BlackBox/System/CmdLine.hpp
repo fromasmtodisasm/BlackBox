@@ -5,8 +5,8 @@
 #pragma once
 #endif
 
-#include <BlackBox/Common/ICmdLine.hpp>
-#include <BlackBox/Common/CmdLineArg.hpp>
+#include <BlackBox/ICmdLine.hpp>
+#include <BlackBox/System/CmdLineArg.hpp>
 
 #include <string>
 #include <vector>

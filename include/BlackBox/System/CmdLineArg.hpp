@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include <BlackBox/Common/ICmdLine.hpp>
+#include <BlackBox/ICmdLine.hpp>
 #include <string>
 
 class CCmdLineArg :

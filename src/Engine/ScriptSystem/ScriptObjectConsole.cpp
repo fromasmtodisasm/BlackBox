@@ -1,5 +1,5 @@
 #include <BlackBox/Common.hpp>
-#include <BlackBox/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/IConsole.hpp>
 
 #include <iostream>

@@ -19,13 +19,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE World)
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/System/Commands.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Console.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Log.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/System.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/Timer.cpp
+  PRIVATE ${ENGINE_DIR}/System/CmdLine.cpp
+  PRIVATE ${ENGINE_DIR}/System/CmdLineArg.cpp
+  PRIVATE ${ENGINE_DIR}/System/Commands.cpp
+  PRIVATE ${ENGINE_DIR}/System/Console.cpp
+  PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
+  PRIVATE ${ENGINE_DIR}/System/Log.cpp
+  PRIVATE ${ENGINE_DIR}/System/System.cpp
+  PRIVATE ${ENGINE_DIR}/System/SystemEventDispatcher.cpp
+  PRIVATE ${ENGINE_DIR}/System/Timer.cpp
   PRIVATE ${POST_CONFIGURE_FILE}
 )
 

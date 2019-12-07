@@ -1,5 +1,5 @@
 #include <BlackBox/Common.hpp>
-#include <BlackBox/ScriptObjectScript.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/ILog.hpp>
 
