@@ -44,3 +44,5 @@ set(
 ###################################################
 include(Tools/CMake/Build.cmake)
 ###################################################
+
+set_property(DIRECTORY tests PROPERTY VS_STARTUP_PROJECT Launcher)
