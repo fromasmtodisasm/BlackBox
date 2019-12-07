@@ -30,6 +30,8 @@
 /////////////////////////////////////////////////////////
 #include <BlackBox/INetwork.hpp>
 /////////////////////////////////////////////////////////
+#include <BlackBox/System/VersionControl.hpp>
+/////////////////////////////////////////////////////////
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
@@ -132,7 +134,7 @@ bool CSystem::Init()
     )
     return false;
   //====================================================
-  m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : cvGameName->GetString());
+  m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- " + Hash).c_str());
   //====================================================
   m_pInput->Init();
   //====================================================
