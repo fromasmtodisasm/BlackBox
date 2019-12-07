@@ -1,6 +1,6 @@
 #pragma once
 
-class IScene;
+struct IScene;
 class FrameBufferObject;
 
 struct ITechnique

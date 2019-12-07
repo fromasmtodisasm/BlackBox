@@ -606,7 +606,7 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
   return true;
 }
 
-BLACKBOX_EXPORT ISystem* CreateSystemInterface(SSystemInitParams& initParams)
+ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
   //MessageBox(NULL, "TEST", "Message", MB_OK);
   ISystem* system = new CSystem(initParams);

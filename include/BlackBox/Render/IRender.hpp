@@ -36,7 +36,7 @@ struct ISystem;
 struct IWindow;
 struct IFont;
 class CCamera;
-class IShader;
+struct IShader;
 
 class Image
 {

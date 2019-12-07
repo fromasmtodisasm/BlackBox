@@ -7,20 +7,7 @@ include(FindFreetype)
 add_library(${PROJECT_NAME})
 add_library(Common INTERFACE)
 add_library(BB_Private INTERFACE)
-###################################################
-if (UNIX OR CYGWIN)
-	set(UNIX_OR_CYGWIN ON)
-	message(STATUS "UNIX_OR_CYGWIN")
-	find_package(PkgConfig REQUIRED)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX64)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)
-else()
 
-endif()
-###################################################
-#find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-#target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core)
-###################################################
 target_compile_features(BlackBox
 PUBLIC
 	cxx_strong_enums
@@ -119,14 +106,14 @@ set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIE
 target_sources(
   ${PROJECT_NAME}
   #Common folder
-  PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLineArg.cpp
+  PRIVATE ${ENGINE_DIR}/Common/CmdLine.cpp
+  PRIVATE ${ENGINE_DIR}/Common/CmdLineArg.cpp
 )
 
 if (UNIX_OR_CYGWIN)
   target_sources(
     ${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
+    PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
     )
 endif()
 ###################################################
@@ -173,13 +160,6 @@ source_group(
   )
 target_sources(${PROJECT_NAME}
   PRIVATE
-  ${IMGUI_SOURCES}
-  )
-source_group(
-  BlackBox\\Engine\\Gui
-  #TREE ${CMAKE_SOURCE_DIR}/submodules
-  #PREFIX BlackBox\\Engine\\Gui
-  FILES
   ${IMGUI_SOURCES}
   )
 ###################################################
