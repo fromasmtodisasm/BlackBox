@@ -2,7 +2,7 @@
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <BlackBox/Utils.hpp>
 //#include <SDL.h>
 

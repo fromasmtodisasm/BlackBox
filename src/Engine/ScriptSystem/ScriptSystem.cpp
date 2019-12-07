@@ -17,10 +17,12 @@
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
 static ISystem* gISystem = nullptr;
+/*
 ISystem* GetISystem()
 {
   return gISystem;
 }
+*/
 
 extern "C" {
 #define DumpCallStack(L) printf("DumpCallStack() not implemented")

@@ -86,8 +86,32 @@ CShader::~CShader() {
   glCheck(glDeleteShader(m_Shader));
 }
 
+static int get_gl_enum(IShader::type type)
+{
+  switch (type)
+  {
+  case IShader::E_VERTEX:
+    return GL_VERTEX_SHADER;
+    break;
+  case IShader::E_FRAGMENT:
+    return GL_FRAGMENT_SHADER;
+    break;
+  case IShader::E_GEOMETRY:
+    return GL_GEOMETRY_SHADER;
+    break;
+  case IShader::E_COMPUTE:
+    return GL_COMPUTE_SHADER;
+    break;
+  case IShader::E_UNKNOWN:
+    return -1;
+    break;
+  default:
+    break;
+  }
+}
+
 bool CShader::Create() {
-  m_Shader = glCreateShader(m_Type);
+  m_Shader = glCreateShader(get_gl_enum(m_Type));
   if (m_Shader != 0) { return true; }
   else { return false; }
   // return m_Status.get(GL_VALIDATE_STATUS);
@@ -223,7 +247,7 @@ GLuint CShader::get() {
 
 IShader::type CShader::GetType()
 {
-  return IShader::type();
+  return m_Type;
 }
 
 void CShader::AddRef()

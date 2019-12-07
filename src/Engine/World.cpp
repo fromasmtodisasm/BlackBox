@@ -36,7 +36,7 @@ void World::SetCamera(CCamera* camera)
 }
 
 void World::SetScene(IScene* scene) {
-  activeScene = scene;
+  activeScene = dynamic_cast<Scene*>(scene);
 }
 
 void World::Update(float deltatime)

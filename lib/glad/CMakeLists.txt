@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.3)
-#project(glad)
 
 set(GLAD_OUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(GLAD_INCLUDE_DIRS "${GLAD_OUT_DIR}/include")
@@ -10,11 +9,9 @@ list(APPEND GLAD_SOURCES
 
 add_library(glad STATIC ${GLAD_SOURCES})
 
-target_include_directories(glad INTERFACE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
-)
+set_property(TARGET glad PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${GLAD_INCLUDE_DIRS}")
 
-target_include_directories(glad PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+target_include_directories(glad PUBLIC 
+  $<BUILD_INTERFACE:${GLAD_INCLUDE_DIRS}>
+  $<INSTALL_INTERFACE:include> 
 )

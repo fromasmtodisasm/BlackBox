@@ -15,6 +15,9 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/IWindow.hpp>
+#include <BlackBox/World.hpp>
+#include <BlackBox/Scene.hpp>
+#include <BlackBox/Camera.hpp>
 
 #include <BlackBox/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptObjectScript.hpp>
@@ -58,6 +61,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
   m_pGame(nullptr),
   m_pLog(nullptr),
   m_pWindow(nullptr),
+  m_pWorld(nullptr),
   m_pScriptSystem(nullptr),
   m_ScriptObjectConsole(nullptr)
 {
@@ -200,7 +204,7 @@ bool CSystem::Init()
   if (m_pNetwork == nullptr)
     return false;
   //====================================================
-
+  m_pWorld = new World();
   if (!m_pGame->Init(this)) {
     return false;
   }
@@ -300,6 +304,11 @@ IWindow* CSystem::GetIWindow()
   return m_pWindow;
 }
 
+IWorld* CSystem::GetIWorld()
+{
+  return m_pWorld;
+}
+
 #if 0
 IInputHandler* CSystem::GetIInputHandler()
 {
@@ -391,6 +400,38 @@ INetwork* CSystem::GetINetwork()
   return m_pNetwork;
 }
 
+void CSystem::Render()
+{
+  PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+  {
+    if (nullptr == m_pWorld->GetActiveScene())
+      return;
+    m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
+    float w;
+    float h;
+    if (GET_CVAR("r_aspect")->GetIVal())
+    {
+      w = m_Render->GetHeight();
+      h = m_Render->GetWidth();
+    }
+    else
+    {
+      w = GET_CVAR("r_cam_w")->GetIVal();
+      h = GET_CVAR("r_cam_h")->GetIVal();
+    }
+
+    auto r = ((float)w) / h;
+    m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
+
+    //m_World->setCamera(m_camera1);
+    m_pWorld->Draw(m_DeltaTime);
+
+    if (m_pWorld->GetActiveScene()) m_pWorld->GetActiveScene()->present(m_Render->GetWidth(), m_Render->GetHeight());
+
+  }
+  PROFILER_POP_CPU_MARKER();
+}
+
 ITimer* CSystem::GetITimer()
 {
   return &m_Time;
@@ -447,7 +488,7 @@ bool CSystem::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
   return false;
 }
 
-void CSystem::BeginFrame()
+void CSystem::RenderBegin()
 {
   PROFILER_SYNC_FRAME();
   PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
@@ -455,7 +496,7 @@ void CSystem::BeginFrame()
   m_Render->BeginFrame();
 }
 
-void CSystem::EndFrame()
+void CSystem::RenderEnd()
 {
   PROFILER_POP_CPU_MARKER();
   {

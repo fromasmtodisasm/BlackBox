@@ -34,7 +34,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/World.hpp>
+#include <BlackBox/IWorld.hpp>
 //#include <BlackBox/CameraController.hpp>
 //#include <BlackBox/MusicList.hpp>
 #include <BlackBox/ILog.hpp>
@@ -122,8 +122,8 @@ public:
   ~CGame() = default;
   bool Init(ISystem *pSystem) override;
   bool Update() override;
-	void execScripts();
-	void drawHud(float fps);
+	void ExecScripts();
+	void DrawHud(float fps);
   void DisplayInfo(float fps);
   bool Run(bool& bRelaunch) override;
 
@@ -131,8 +131,7 @@ public:
   bool loadScene(std::string name);
   void unloadScene(std::string name);
   void saveScene(std::string name, std::string as);
-  void setRenderState();
-  void render();
+  void SetRenderState();
   void setPlayer(CPlayer *player);
   void setCamera(CCamera *camera);
 
@@ -184,7 +183,7 @@ public:
 
   // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;
-  World *getWorld() const;
+  IWorld *getWorld() const;
 
 	void drawHud();
 	void initCommands();
@@ -260,7 +259,7 @@ public:
 	IInput *											m_pInput;
   IWindow *											m_Window;
   IInputHandler *								m_inputHandler;
-  World *												m_World;
+  IWorld *											m_World;
   CPlayer *											m_player = nullptr;
 	//CameraController *camControl;
   IScene *											m_scene;

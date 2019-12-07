@@ -106,7 +106,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
   if (!MaterialManager::instance()->loadProgram(pd, false))
     return false;
   shader = MaterialManager::instance()->getProgram(pd.name);
-  if (shader == nullptr)
+  if (!shader)
     return false;
 
   if (FT_Init_FreeType(&ft))

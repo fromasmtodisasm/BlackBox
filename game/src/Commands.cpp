@@ -1,4 +1,5 @@
 #include <BlackBox/Common.hpp>
+#include <BlackBox/ConsoleCommands.hpp>
 
 #include <Game.hpp>
 #include <BlackBox/Utils.hpp>
@@ -7,7 +8,6 @@
 //#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Render/TechniqueManager.hpp>
-#include <BlackBox/IConsole.hpp>
 #include <BlackBox/IMarkers.hpp>
 #include <process.h>
 
@@ -47,39 +47,19 @@ bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
 #endif
 }
 
-class BaseCommand : public IConsoleCommand
+class BaseGameCommand : public BaseCommand
 {
 protected:
   CGame* game;
-  glm::vec3 unpack_vector(std::vector<std::wstring>::iterator it, int size = 3)
-  {
-    glm::vec3 pos;
-    pos[0] = static_cast<float>(_wtof(it->c_str()));
-    it++;
-    pos[1] = static_cast<float>(_wtof(it->c_str()));
-    if (size == 3)
-    {
-      it++;
-      pos[2] = static_cast<float>(_wtof(it->c_str()));
-    }
-    return pos;
-  };
 public:
-  BaseCommand(CGame* game);
-  ~BaseCommand();
+  BaseGameCommand(CGame* game) : game(game), BaseCommand()
+  {
 
-private:
+  }
+
 };
 
-BaseCommand::BaseCommand(CGame* game) : game(game)
-{
-}
-
-BaseCommand::~BaseCommand()
-{
-}
-
-class LastCommand : public BaseCommand
+class LastCommand : public BaseGameCommand
 {
 public:
   LastCommand(CGame* game);
@@ -108,7 +88,7 @@ private:
   }
 };
 
-LastCommand::LastCommand(CGame* game) : BaseCommand(game)
+LastCommand::LastCommand(CGame* game) : BaseGameCommand(game)
 {
 }
 
@@ -116,7 +96,7 @@ LastCommand::~LastCommand()
 {
 }
 
-class ClearCommand : public BaseCommand
+class ClearCommand : public BaseGameCommand
 {
 public:
   ClearCommand(CGame* game);
@@ -129,12 +109,12 @@ private:
   }
 };
 
-ClearCommand::ClearCommand(CGame* game) : BaseCommand(game)
+ClearCommand::ClearCommand(CGame* game) : BaseGameCommand(game)
 {
 }
 
 //*******************************************************
-class GotoCommand : public BaseCommand
+class GotoCommand : public BaseGameCommand
 {
 public:
   GotoCommand(CGame* game);
@@ -159,12 +139,12 @@ private:
   }
 };
 
-GotoCommand::GotoCommand(CGame* game) : BaseCommand(game)
+GotoCommand::GotoCommand(CGame* game) : BaseGameCommand(game)
 {
 }
 //*******************************************************
 //*******************************************************
-class QuitCommand : public BaseCommand
+class QuitCommand : public BaseGameCommand
 {
 public:
   QuitCommand(CGame* game);
@@ -177,13 +157,13 @@ private:
   }
 };
 
-QuitCommand::QuitCommand(CGame* game) : BaseCommand(game)
+QuitCommand::QuitCommand(CGame* game) : BaseGameCommand(game)
 {
 }
 //*******************************************************
-class MoveCommand : public BaseCommand
+class MoveCommand : public BaseGameCommand
 {
-  World* m_World;
+  IWorld* m_World;
 public:
   MoveCommand(CGame* game);
 private:
@@ -207,14 +187,14 @@ private:
   }
 };
 
-MoveCommand::MoveCommand(CGame* game) : BaseCommand(game)
+MoveCommand::MoveCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
 //*******************************************************
-class RotateCommand : public BaseCommand
+class RotateCommand : public BaseGameCommand
 {
-  World* m_World;
+  IWorld* m_World;
 public:
   RotateCommand(CGame* game);
 private:
@@ -246,14 +226,14 @@ private:
   }
 };
 
-RotateCommand::RotateCommand(CGame* game) : BaseCommand(game)
+RotateCommand::RotateCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
 //*******************************************************
-class SelectCommand : public BaseCommand
+class SelectCommand : public BaseGameCommand
 {
-  World* m_World;
+  IWorld* m_World;
 public:
   SelectCommand(CGame* game);
 private:
@@ -265,14 +245,14 @@ private:
   }
 };
 
-SelectCommand::SelectCommand(CGame* game) : BaseCommand(game)
+SelectCommand::SelectCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
 //*******************************************************
-class ExecCommand : public BaseCommand, public IWorkerCommand
+class ExecCommand : public BaseGameCommand, public IWorkerCommand
 {
-  World* m_World;
+  IWorld* m_World;
   IConsole* console;
   int wait_cnt = 0;
 #ifdef _WIN32
@@ -336,176 +316,15 @@ private:
   }
 };
 
-ExecCommand::ExecCommand(CGame* game) : BaseCommand(game)
+ExecCommand::ExecCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
   console = GetISystem()->GetIConsole();
 }
 //*******************************************************
-#if 0
-class MaterialCommand : public BaseCommand
+class CameraCommand : public BaseGameCommand
 {
-  World* m_World;
-public:
-  MaterialCommand(CGame* game);
-private:
-  // Inherited via IConsoleCommand
-  virtual bool execute(CommandDesc& cd) override
-  {
-    if (cd.args.size() == 1)
-    {
-      std::string name = wstr_to_str(cd.args[0]);
-      Material* m = MaterialManager::instance()->getMaterial(name);
-      if (!m)
-        return false;
-      game->getWorld()->GetActiveScene()->selectedObject()->second->setMaterial(m);
-      return true;
-    }
-    return false;
-  }
-};
-
-MaterialCommand::MaterialCommand(CGame* game) : BaseCommand(game)
-{
-  m_World = game->getWorld();
-}
-#endif
-//*******************************************************
-#if 0
-class ShaderCommand : public BaseCommand, public IMaterialShaderSink
-{
-  World* m_World;
-public:
-  ShaderCommand(CGame* game);
-private:
-  // Inherited via IConsoleCommand
-  virtual bool execute(CommandDesc& cd) override
-  {
-    if (cd.args.size() > 0)
-    {
-      if (cd.args[0] == L"reload")
-        return reload(cd);
-      else if (cd.args[0] == L"set")
-        return move(cd);
-      if (cd.args[0] == L"dump")
-        return dump(cd);
-      if (cd.args[0] == L"edit")
-        return edit(cd);
-      if (cd.args[0] == L"enum")
-        return enumerate(cd);
-    }
-    else
-    {
-      GetISystem()->GetIConsole()->PrintLine("help");
-    }
-    return false;
-  }
-  bool reload(CommandDesc& cd);
-  bool move(CommandDesc& cd);
-  bool dump(CommandDesc& cd);
-  bool edit(CommandDesc& cd);
-  bool enumerate(CommandDesc& cd);
-
-  // Inherited via IMaterialShaderSink
-  virtual void OnShaderFound(const std::string& name) override
-  {
-    GetISystem()->GetIConsole()->PrintLine("Program: %s", name.c_str());
-  }
-};
-
-ShaderCommand::ShaderCommand(CGame* game) : BaseCommand(game)
-{
-  m_World = game->getWorld();
-}
-
-bool ShaderCommand::reload(CommandDesc& cd)
-{
-  switch (cd.args.size())
-  {
-  case 1:
-  {
-    if (MaterialManager::instance()->reloadShaders())
-      return true;
-    else
-      return false;
-  }
-  default:
-  {
-    std::vector<std::string> shaders;
-    for (auto arg = cd.args.begin()++; arg != cd.args.end(); arg++)
-    {
-      shaders.push_back(wstr_to_str(*arg));
-    }
-    if (MaterialManager::instance()->reloadShaders(shaders))
-      return true;
-    else
-      return false;
-  }
-  }
-  return false;
-}
-
-bool ShaderCommand::move(CommandDesc& cd)
-{
-  if (cd.args.size() == 2)
-  {
-    assert(0 && "Goodbye");
-    auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
-    //game->getWorld()->GetActiveScene()->selectedObject()->second->getMaterial()->program = s;
-    return true;
-  }
-  return false;
-}
-bool ShaderCommand::dump(CommandDesc& cd)
-{
-  if (cd.args.size() == 2)
-  {
-    auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
-    if (s == nullptr)
-      return false;
-    s->Dump();
-    GetISystem()->GetIConsole()->ExecuteString("exec os @EDITOR dump.bin");
-    return true;
-  }
-  return false;
-}
-bool ShaderCommand::edit(CommandDesc& cd)
-{
-  if (cd.args.size() == 3)
-  {
-    auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[2]));
-    if (s == nullptr)
-      return false;
-    std::string shader_name;
-    std::string type = wstr_to_str(cd.get(1));
-    if (type == "vs")
-      shader_name = s->m_Vertex.name;
-    else if (type == "fs")
-      shader_name = s->m_Fragment.name;
-    else if (type == "gs")
-      shader_name = s->m_Geometry.name;
-    else if (type == "cs")
-      shader_name = s->m_Compute.name;
-    if (shader_name.length() > 0)
-      //GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -multiInst -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
-      GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
-    else
-      GetISystem()->GetIConsole()->PrintLine("Shader type[%s] not present", type);
-
-    return true;
-  }
-  return false;
-}
-bool ShaderCommand::enumerate(CommandDesc& cd)
-{
-  MaterialManager::instance()->EnumShaders(this);
-  return true;
-}
-#endif
-//*******************************************************
-class CameraCommand : public BaseCommand
-{
-  World* m_World;
+  IWorld* m_World;
 public:
   CameraCommand(CGame* game);
 private:
@@ -525,7 +344,7 @@ private:
   bool move(CommandDesc& cd);
 };
 
-CameraCommand::CameraCommand(CGame* game) : BaseCommand(game)
+CameraCommand::CameraCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -550,9 +369,9 @@ bool CameraCommand::move(CommandDesc& cd)
   return false;
 }
 //*******************************************************
-class SceneCommand : public BaseCommand
+class SceneCommand : public BaseGameCommand
 {
-  World* m_World;
+  IWorld* m_World;
   CGame* m_Game;
 public:
   SceneCommand(CGame* game);
@@ -576,7 +395,7 @@ private:
   bool activate(CommandDesc& cd);
 };
 
-SceneCommand::SceneCommand(CGame* game) : BaseCommand(game)
+SceneCommand::SceneCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -620,9 +439,9 @@ bool SceneCommand::activate(CommandDesc& cd)
   return false;
 }
 //*******************************************************
-class TagPointCommand : public BaseCommand
+class TagPointCommand : public BaseGameCommand
 {
-  World* m_World;
+  IWorld* m_World;
 public:
   TagPointCommand(CGame* game);
 private:
@@ -668,14 +487,14 @@ private:
   }
 };
 
-TagPointCommand::TagPointCommand(CGame* game) : BaseCommand(game)
+TagPointCommand::TagPointCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
 //*******************************************************
-class ObjDumpCommand : public BaseCommand
+class ObjDumpCommand : public BaseGameCommand
 {
-  World* m_World;
+  IWorld* m_World;
 public:
   ObjDumpCommand(CGame* game);
 private:
@@ -736,7 +555,7 @@ void CGame::initVariables()
   m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 }
 
-ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseCommand(game)
+ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }

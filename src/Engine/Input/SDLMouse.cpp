@@ -5,7 +5,7 @@
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/InputCVars.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #define MOUSE_SYM_BASE (1024)
 #define MOUSE_SYM(X) (MOUSE_SYM_BASE + (X))

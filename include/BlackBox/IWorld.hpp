@@ -2,6 +2,7 @@
 
 class CCamera;
 class IScene;
+class SkyBox;
 
 struct IPostRenderCallback
 {

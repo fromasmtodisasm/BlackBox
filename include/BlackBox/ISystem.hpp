@@ -17,6 +17,7 @@ struct IScriptSystem;
 struct IValidator;
 struct ITimer;
 struct INetwork;
+struct IWorld;
 
 //! System wide events.
 enum ESystemEvent
@@ -130,11 +131,17 @@ struct ISystem
     M_WARNING
   };
 
+	// Begin rendering frame.
+	virtual void	RenderBegin() = 0;
+	// Render subsystems.
+	virtual void	Render() = 0;
+	// End rendering frame and swap back buffer.
+	virtual void	RenderEnd() = 0;
+
+
   virtual bool Init() = 0;
   virtual void Start() = 0;
   virtual bool Update(int updateFlags = 0, int nPauseMode = 0) = 0;
-  virtual void BeginFrame() = 0;
-  virtual void EndFrame() = 0;
   virtual void Release() = 0;
   virtual IGame* CreateGame(IGame* game) = 0;
 
@@ -147,6 +154,7 @@ struct ISystem
   virtual IFont* GetIFont() = 0;
   virtual INetwork* GetINetwork() = 0;
   virtual IWindow* GetIWindow() = 0;
+  virtual IWorld* GetIWorld() = 0;
 #if 0
   virtual IInputHandler* GetIInputHandler() = 0;
 #endif

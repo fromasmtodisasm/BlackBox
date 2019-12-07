@@ -5,6 +5,7 @@
 #include <string>
 
 class Object;
+class SkyBox;
 class CCamera;
 struct LoadObjectSink;
 struct IPostProcessor;
@@ -49,5 +50,6 @@ struct IScene
   virtual void setTechnique(ITechnique* technique) = 0;
   virtual void setPostProcessor(IPostProcessor* postProcessor) = 0;
   virtual bool selectObject(std::string name) = 0;
+  virtual SkyBox* GetSkyBox() = 0;
 
 };

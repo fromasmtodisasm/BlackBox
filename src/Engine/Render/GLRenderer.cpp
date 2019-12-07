@@ -69,7 +69,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   pd.vs.macro["STORE_TEXCOORDS"] = "1";
   MaterialManager::instance()->loadProgram(pd, false);
   m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
-  if (m_ScreenShader == nullptr)
+  if (!m_ScreenShader)
   {
     m_pSystem->Log("Error of creating screen shader");
     return nullptr;

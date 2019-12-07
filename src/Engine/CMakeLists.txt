@@ -7,6 +7,8 @@ include(FindFreetype)
 
 ###################################################
 add_library(${PROJECT_NAME})
+add_library(Common INTERFACE)
+add_library(BB_Private INTERFACE)
 ###################################################
 if (UNIX OR CYGWIN)
 	set(UNIX_OR_CYGWIN ON)
@@ -30,8 +32,6 @@ PRIVATE
 	cxx_final
 )
 
-#set(CMAKE_CXX_STANDARD 14)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
@@ -50,51 +50,37 @@ endif()
 find_package(OpenGL REQUIRED)
 #--------------------------------------------------
 target_include_directories(
-${PROJECT_NAME}
-	PUBLIC	"${CMAKE_BINARY_DIR}"
-	PUBLIC	"${CMAKE_SOURCE_DIR}/include/"
+BB_Private
 
-	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/"
-	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
-	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
-	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
-	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
-	PRIVATE "${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
-	PRIVATE "${SUBMODULES_DIR}/stb/"
+	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/"
+	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
+	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
+	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
+	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
+	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
+	INTERFACE "${SUBMODULES_DIR}/stb/"
 )
 #--------------------------------------------------
-if (GLEW_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/Engine/Render/GlewLoader.cpp
-  )
-  target_link_libraries(${PROJECT_NAME} PUBLIC glad)
-elseif(GLAD_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
-  )
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${GLEW_LIBRARY})
-endif()
 #--------------------------------------------------
 ###################################################
 # Subs
 ###################################################
-#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2 EXCLUDE_FROM_ALL)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/tinyxml2 tinyxml2)
 add_subdirectory(${SOURCE_DIR}/Engine/Math Math)
-add_subdirectory(${SOURCE_DIR}/Engine/Render OpenGlBackend)
-target_link_libraries(${PROJECT_NAME} PUBLIC Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
+add_subdirectory(${SOURCE_DIR}/Engine/Input Input)
+add_subdirectory(${SOURCE_DIR}/Engine/Render Renderer)
 add_subdirectory(${SOURCE_DIR}/Engine/ScriptSystem ScriptSystem)
 add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC Input)
+target_link_libraries(${PROJECT_NAME} PUBLIC Common)
+target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
+target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 ###################################################
 find_package(tinyxml2 CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
 ###################################################
 
-#get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-#--------------------------------------------------
-#find_package(Boost COMPONENTS system filesystem REQUIRED)
-#...
-#--------------------------------------------------
 ###################################################
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
@@ -103,16 +89,12 @@ generate_export_header(${PROJECT_NAME}
 find_package(Freetype REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIBRARIES})
-
-
 #[[
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES
   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
   $<INSTALL_INTERFACE:>  # <prefix>/include/mylib
   )
 ]]
-
-
 ###################################################
 target_sources(
   ${PROJECT_NAME}
@@ -133,15 +115,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Primitives.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
 
-  #Input folder
-  PRIVATE ${SOURCE_DIR}/Engine/Input/BaseInput.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/InputCVars.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/InputDevice.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLInput.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
   #Network folder
   PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Network/Network.cpp
@@ -155,34 +128,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Thread.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
 
-  #Render folder
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Camera.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/HdrTechnique.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Particles.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Pipeline.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/GLRenderer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseRenderer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Shader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/TechniqueManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Terrain.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
-
   #Resources folder
   PRIVATE ${SOURCE_DIR}/Engine/Resources/MaterialManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ObjectManager.cpp
@@ -191,6 +136,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
 
   #System folder
+  PRIVATE ${SOURCE_DIR}/Engine/System/Commands.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Console.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Linux/Runtime.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Log.cpp
@@ -202,6 +148,12 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )
+
+if (GLAD_LOADER)
+  target_sources(${PROJECT_NAME}
+    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
+  )
+endif()
 
 if (UNIX_OR_CYGWIN)
   target_sources(
@@ -275,14 +227,22 @@ source_group(
 #--------------------------------------------------
 #target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
 ###################################################
-target_link_libraries(${PROJECT_NAME} PUBLIC ScriptSystem)
-target_link_libraries(${PROJECT_NAME} PUBLIC Window)
+target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
+target_link_libraries(${PROJECT_NAME} PRIVATE Window)
 ###################################################
 #target_link_libraries(${PROJECT_NAME} ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 #target_link_libraries(${PROJECT_NAME} nvtt)
 #target_include_directories(${PROJECT_NAME} PUBLIC include)
+#/////////////////////////////////////////////////////////////////
+target_include_directories (
+Common
+	INTERFACE	"${CMAKE_BINARY_DIR}"
+	INTERFACE	"${CMAKE_SOURCE_DIR}/include/"
+	)
+target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
+#/////////////////////////////////////////////////////////////////
 
 install(
   TARGETS  ${PROJECT_NAME}
@@ -297,24 +257,3 @@ install(
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION ${PROJECT_NAME}
 )
-
-#install(FILES
-# BlackBoxExport.h
-# ${PROJECT_BINARY_DIR}/blackbox_export.h DESTINATION ${BLACKBOX_INCLUDE_DIRS}
-#)
-#[[
-cmake_minimum_required(VERSION 3.12 FATALERROR)
-project(BlackBoxMoudules)
-
-add_subdirectory(Common)
-add_subdirectory(Geometry)
-add_subdirectory(Input)
-add_subdirectory(Network)
-add_subdirectory(Profiler)
-add_subdirectory(Render)
-add_subdirectory(Resources)
-add_subdirectory(ScriptSystem)
-add_subdirectory(System)
-add_subdirectory(Utils)
-
-]]

@@ -21,7 +21,7 @@ ShadowMapping::~ShadowMapping()
 bool ShadowMapping::Init(IScene* scene, FrameBufferObject* renderTarget)
 {
   m_pRender = GetISystem()->GetIRender();
-  m_Scene = scene;
+  m_Scene = dynamic_cast<Scene*>(scene);
   //
   m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 1, false);
 

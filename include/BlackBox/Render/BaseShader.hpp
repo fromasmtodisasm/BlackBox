@@ -69,7 +69,7 @@ private:
   int m_Refs = 0;
 public:
   std::string m_Path;
-  int m_Type;
+  IShader::type m_Type;
   // Inherited via IShader
   virtual IShader::type GetType() override;
 };

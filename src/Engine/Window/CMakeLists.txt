@@ -3,13 +3,6 @@ project(Window CXX)
 ###################################################
 add_library(${PROJECT_NAME})
 ###################################################
-target_include_directories(
-${PROJECT_NAME}
-	PUBLIC	"${CMAKE_BINARY_DIR}"
-	PUBLIC	"${CMAKE_SOURCE_DIR}/include/"
-	#PRIVATE $<TARGET_PROPERTY:OpenGLBackend,INTERFACE_INCLUDE_DIRECTORIES>
-)
-
 if (USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	if (UNIX_OR_CYGWIN)
@@ -34,9 +27,9 @@ if (USE_SDL)
 		
 	else()
 		#################################################################
-		find_package(SDL2 REQUIRED)
+		find_package(SDL2 CONFIG REQUIRED)
 		if (SDL_FOUND)
-			target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 		endif()
 		#################################################################
 		find_package(SDL2-net REQUIRED)
@@ -71,6 +64,14 @@ elseif(USE_GLFW)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif()
 
+target_include_directories(
+${PROJECT_NAME}
+	PUBLIC	"${CMAKE_BINARY_DIR}"
+	PUBLIC	"${CMAKE_SOURCE_DIR}/include/"
+	PRIVATE $<TARGET_PROPERTY:OpenGlBackend,INTERFACE_INCLUDE_DIRECTORIES>
+	PRIVATE $<TARGET_PROPERTY:SDL2::SDL2,INTERFACE_INCLUDE_DIRECTORIES>
+)
+
 ###################################################
-target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} INTERFACE OpenGLBackend)
+target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)

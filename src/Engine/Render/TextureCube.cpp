@@ -37,7 +37,7 @@ bool TextureCube::load(const char* name)
     "_back.jpg"
   };
 
-  std::unique_ptr<Image> img;
+  auto img = std::make_unique<Image>();
   glCheck(glGenTextures(1, &id));
   glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
 

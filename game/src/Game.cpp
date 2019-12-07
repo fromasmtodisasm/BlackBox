@@ -1,32 +1,19 @@
-﻿//#define IncludeWithMessage(header) p
-#include <Game.hpp>
+﻿#include <Game.hpp>
 #include <GameObject.hpp>
 #include <BlackBox/Render/Texture.hpp>
-#ifdef GUI
-#include <BlackBox/GUI.hpp>
-#endif // GUI
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
-//#include <BlackBox/Resources/MaterialManager.hpp>
-//#include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Render/IFont.hpp>
-#include <BlackBox/Render/IRender.hpp>
-//#include <BlackBox/Render/ShadowMapTechnique.hpp>
-//#include <BlackBox/Render/HdrTechnique.hpp>
-#include <BlackBox/Render/TechniqueManager.hpp>
-#include <BlackBox/Utils.hpp>
-#include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Profiler/Utils.h>
+#ifdef GUI
+#include <BlackBox/GUI.hpp>
+#endif // GUI
 
-#include <BlackBox/INetwork.hpp>
 
 #ifdef GUI
 #include <imgui-SFML.h>
 #include <imgui.h>
 #endif
 
-//#include <iostream>
 #include <vector>
 #include <string>
 #include <cstdlib>
@@ -72,7 +59,7 @@ struct TextRenderInfo
   }
 };
 
-World* CGame::getWorld() const
+IWorld* CGame::getWorld() const
 {
   return m_World;
 }
@@ -100,7 +87,8 @@ CGame::CGame(std::string title) :
   m_scene(nullptr),
   m_sceneManager(nullptr),
   //shaderManager(nullptr),
-  m_World(new World()), m_Title(title),
+  m_World(nullptr),
+  m_Title(title),
   m_pScriptObjectGame(nullptr),
   m_pRender(nullptr),
   m_pInput(nullptr),
@@ -135,6 +123,7 @@ bool CGame::Init(ISystem* pEngine) {
   m_Window = m_pSystem->GetIWindow();
   m_pInput->AddEventListener(this);
   m_pNetwork = m_pSystem->GetINetwork();
+  m_World = m_pSystem->GetIWorld();
 
 #if 0
   if (!m_pNetwork->Init())
@@ -225,35 +214,25 @@ bool CGame::Init(ISystem* pEngine) {
 }
 
 bool CGame::Update() {
+  bool bRenderFrame = true;
   m_pSystem->Update(0, IsInPause());
-  m_pSystem->BeginFrame();
   {
     m_SceneRendered = false;
     // TODO: FIX IT
     m_deltaTime = m_pSystem->GetDeltaTime();
     m_time += m_deltaTime;
     fps = 1.0f / m_deltaTime;
-    execScripts();
+    ExecScripts();
     if (!IsInPause())
       m_World->Update(m_pSystem->GetDeltaTime());
 
-#if 0
-    if (m_HostType == CLIENT)
-      m_pClient->Update();
-    if (m_HostType == SERVER)
-      m_pServer->Update();
-#endif
-
-    setRenderState();
-
+    SetRenderState();
+    if (bRenderFrame)
     {
-      //DEBUG_GROUP("ALL RENDERING");
-      PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
-      render();
-      PROFILER_POP_CPU_MARKER();
-      if (m_World->GetActiveScene()) m_World->GetActiveScene()->present(m_pRender->GetWidth(), m_pRender->GetHeight());
+      m_pSystem->RenderBegin();
+      m_pSystem->Render();
       PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-      drawHud(fps);
+      DrawHud(fps);
       PROFILER_POP_CPU_MARKER();
     }
   }
@@ -271,16 +250,17 @@ bool CGame::Update() {
   }
   //////////////////////////////////////////////////////////////////////////
 
-  m_pSystem->EndFrame();
+  if (bRenderFrame)
+    m_pSystem->RenderEnd();
 
   return m_bUpdateRet;
 }
 
-void CGame::execScripts()
+void CGame::ExecScripts()
 {
 }
 
-void CGame::drawHud(float fps)
+void CGame::DrawHud(float fps)
 {
   m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
   if (r_displayinfo->GetIVal() != 0)
@@ -469,9 +449,8 @@ void CGame::saveScene(std::string name, std::string as)
   }
 }
 
-void CGame::setRenderState()
+void CGame::SetRenderState()
 {
-
   m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
   m_pRender->SetState(IRenderer::State::BLEND, false);
   if (culling)
@@ -483,35 +462,6 @@ void CGame::setRenderState()
   {
     m_pRender->SetState(IRenderer::State::CULL_FACE, false);
   }
-}
-
-void CGame::render()
-{
-  if (nullptr == m_World->GetActiveScene())
-    return;
-  //m_Window->clear();
-  m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
-  /* Rendering code here */
-  //int w = m_Window->viewPort.width - m_Window->viewPort.left;
-  //int h = m_Window->viewPort.height - m_Window->viewPort.top;
-  float w;
-  float h;
-  if (GET_CVAR("r_aspect")->GetIVal())
-  {
-    w = m_pRender->GetHeight();
-    h = m_pRender->GetWidth();
-  }
-  else
-  {
-    w = GET_CVAR("r_cam_w")->GetIVal();
-    h = GET_CVAR("r_cam_h")->GetIVal();
-  }
-
-  auto r = ((float)w) / h;
-  m_World->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
-
-  //m_World->setCamera(m_camera1);
-  m_World->Draw(m_deltaTime);
 }
 
 void CGame::setPlayer(CPlayer* player)

@@ -20,7 +20,7 @@ public:
   glm::mat4 transform;
   glm::vec3 view_pos;
   BaseTexture* skyBox;
-  BaseShaderProgramRef shader;
+  IShaderProgram* shader;
   Object* object;
 
 private:
