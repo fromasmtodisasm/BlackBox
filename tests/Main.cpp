@@ -1,4 +1,3 @@
-#include <BlackBox/IGame.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 
