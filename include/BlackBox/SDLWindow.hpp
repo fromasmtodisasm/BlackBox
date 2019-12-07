@@ -56,7 +56,7 @@ public:
   virtual void clear() override;
   virtual bool closed() override;
   virtual void swap() override;
-  virtual void setTitle(const char*) override;
+  virtual void setTitle(const char* title) override;
   virtual void show() override;
 
   void handleEvent(SDL_Event* event);

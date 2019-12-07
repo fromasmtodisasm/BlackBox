@@ -79,8 +79,9 @@ void CSDLWindow::swap()
   SDL_GL_SwapWindow(m_Window);
 }
 
-void CSDLWindow::setTitle(const char*)
+void CSDLWindow::setTitle(const char* title)
 {
+  SDL_SetWindowTitle(m_Window, title);
 }
 
 void CSDLWindow::show()

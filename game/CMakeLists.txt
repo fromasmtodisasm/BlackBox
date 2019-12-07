@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(TestGame CXX)
+project(FPS_Game CXX)
 
 include(FetchContent)
 
@@ -42,7 +42,7 @@ target_sources(
 get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
 source_group(
   TREE ${SOURCE_DIR}
-  PREFIX TestGame 
+  PREFIX ${PROJECT_NAME} 
   FILES
   ${SOURCE_FILES}
 )
@@ -54,9 +54,9 @@ target_sources(${PROJECT_NAME}
 
 source_group(
   TREE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  PREFIX TestGame\\Inc 
+  PREFIX ${PROJECT_NAME}\\Inc 
   FILES
   ${INCLUDE_FILES}
 )
 
-set_target_properties(TestGame PROPERTIES FOLDER "Game")
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Game")

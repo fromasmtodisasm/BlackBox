@@ -8,6 +8,8 @@
 #include <BlackBox/Common/CmdLine.hpp>
 #include <BlackBox/Timer.hpp>
 
+#define DEFAULT_APP_NAME "BlackBox"
+
 class CConsole;
 struct IWindow;
 
@@ -97,6 +99,7 @@ private:
   ICVar* r_zbpp;
   ICVar* r_sbpp;
   ICVar* r_fullscreen;
+  ICVar* cvGameName;
 
   SSystemInitParams& m_startupParams;
   CCmdLine* m_pCmdLine;

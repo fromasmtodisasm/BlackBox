@@ -55,6 +55,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
   r_zbpp(nullptr),
   r_sbpp(nullptr),
   r_fullscreen(nullptr),
+  cvGameName(nullptr),
   m_Render(nullptr),
   m_pConsole(nullptr),
   m_pFont(nullptr),
@@ -101,12 +102,15 @@ bool CSystem::Init()
   if (m_pLog == nullptr)
     return false;
   //====================================================
-  m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
-  if (m_pWindow == nullptr)
-    return false;
-  //====================================================
   m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
+    return false;
+  //====================================================
+  if (!ConfigLoad("res/scripts/engine.cfg"))
+    return false;
+  //====================================================
+  m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
+  if (m_pWindow == nullptr)
     return false;
   //====================================================
   m_pInput = CreateInput(this, m_pWindow->getHandle());
@@ -115,8 +119,6 @@ bool CSystem::Init()
   if (m_Render == nullptr)
     return false;
   //====================================================
-  if (!ConfigLoad("res/scripts/engine.cfg"))
-    return false;
   if (!MaterialManager::init(this))
   {
     return false;
@@ -129,6 +131,8 @@ bool CSystem::Init()
     r_fullscreen->GetIVal(), m_pWindow))
     )
     return false;
+  //====================================================
+  m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : cvGameName->GetString());
   //====================================================
   m_pInput->Init();
   //====================================================
@@ -282,7 +286,7 @@ IGame* CSystem::GetIGame()
 
 IGame* CSystem::CreateGame(IGame* game)
 {
-  m_pGame = CreateIGame("MyGame");
+  m_pGame = CreateIGame("");
   return m_pGame;
 }
 
@@ -326,6 +330,7 @@ bool CSystem::ConfigLoad(const char* file)
   r_zbpp = m_pConsole->GetCVar("r_zbpp");
   r_sbpp = m_pConsole->GetCVar("r_sbpp");
   r_fullscreen = m_pConsole->GetCVar("r_fullscreen");
+  cvGameName = m_pConsole->GetCVar("cvGameName");
 
   if (
     r_window_width == nullptr ||
