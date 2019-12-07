@@ -80,8 +80,11 @@ CHECK_REQUIRED_VARIABLE(GIT_EXECUTABLE)
 function(GitStateChangedAction _state_as_list)
     # Set variables by index, then configure the file w/ these variables defined.
     LIST(GET _state_as_list 0 GIT_RETRIEVED_STATE)
-    LIST(GET _state_as_list 1 GIT_HEAD_SHA1)
+    LIST(GET _state_as_list 1 sha1)
     LIST(GET _state_as_list 2 GIT_IS_DIRTY)
+    LIST(GET _state_as_list 3 GIT_COMMIT_SUBJECT)
+
+	STRING(SUBSTRING ${sha1} 0 5 GIT_HEAD_SHA1)
     configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
 endfunction()
 
@@ -136,7 +139,7 @@ function(GetGitState _working_dir _state)
 	  ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     # Return a list of our variables to the parent scope.
-    set(${_state} ${_success} ${_hashvar} ${_dirty} PARENT_SCOPE)
+    set(${_state} ${_success} ${_hashvar} ${_dirty} ${GIT_COMMIT_SUBJECT} PARENT_SCOPE)
 	set(GIT_MESSAGE ${GIT_COMMIT_SUBJECT} PARENT_SCOPE)
 endfunction()
 

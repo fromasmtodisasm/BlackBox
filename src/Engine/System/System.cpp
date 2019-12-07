@@ -134,7 +134,9 @@ bool CSystem::Init()
     )
     return false;
   //====================================================
-  m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- " + Hash).c_str());
+  m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : 
+    (std::string(cvGameName->GetString()) + " -- hash[" + Hash + "]; " + GitIsDirty + "; Message: [" + Message + "]").c_str()
+  );
   //====================================================
   m_pInput->Init();
   //====================================================
