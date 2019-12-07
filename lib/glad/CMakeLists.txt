@@ -15,3 +15,4 @@ target_include_directories(glad PUBLIC
   $<BUILD_INTERFACE:${GLAD_INCLUDE_DIRS}>
   $<INSTALL_INTERFACE:include> 
 )
+set_target_properties(glad PROPERTIES FOLDER "ThirdPaty")

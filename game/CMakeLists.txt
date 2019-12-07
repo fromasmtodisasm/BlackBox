@@ -58,3 +58,5 @@ source_group(
   FILES
   ${INCLUDE_FILES}
 )
+
+set_target_properties(TestGame PROPERTIES FOLDER "Game")

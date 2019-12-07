@@ -14,3 +14,5 @@ source_group(
   FILES
   ${res_files}
   )
+
+set_target_properties(resources PROPERTIES FOLDER "Data")

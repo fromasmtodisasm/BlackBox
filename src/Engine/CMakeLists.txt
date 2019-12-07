@@ -7,6 +7,8 @@ include(FindFreetype)
 add_library(${PROJECT_NAME})
 add_library(Common INTERFACE)
 add_library(BB_Private INTERFACE)
+###################################################
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Engine")
 
 target_compile_features(BlackBox
 PUBLIC
@@ -33,6 +35,7 @@ if (BB_TESET_ENABLE)
 endif()
 find_package(OpenGL REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
 #--------------------------------------------------
 target_include_directories(
 BB_Private
@@ -70,38 +73,46 @@ add_subdirectory(${ENGINE_DIR}/Scene Scene)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
+set_target_properties(Geometry PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
+set_target_properties(Renderer PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE System)
+set_target_properties(System PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PUBLIC Common)
+#set_target_properties(Common PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PUBLIC Input)
+set_target_properties(Input PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PUBLIC Math)
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PUBLIC Profiler)
+set_target_properties(Profiler PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PUBLIC Resources)
+set_target_properties(Resources PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
+set_target_properties(ScriptSystem PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE Window)
+set_target_properties(Window PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
+set_target_properties(Utils PROPERTIES FOLDER "Engine")
 target_link_libraries(${PROJECT_NAME} PRIVATE Network)
+set_target_properties(Network PROPERTIES FOLDER "Engine")
+target_link_libraries(${PROJECT_NAME} PRIVATE Scene)
+set_target_properties(Scene PROPERTIES FOLDER "Engine")
+target_link_libraries(${PROJECT_NAME} PRIVATE World)
+set_target_properties(World PROPERTIES FOLDER "Engine")
+
+set_target_properties(GUI PROPERTIES FOLDER "Engine")
 
 target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 ###################################################
-###################################################
-
-###################################################
 generate_export_header(${PROJECT_NAME}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )
-
-find_package(Freetype REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIBRARIES})
-#[[
-set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES
-  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
-  $<INSTALL_INTERFACE:>  # <prefix>/include/mylib
-  )
-]]
 ###################################################
 target_sources(
   ${PROJECT_NAME}
@@ -123,25 +134,6 @@ if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})
 endif()
 #--------------------------------------------------
-if (GUI)
-	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
-	set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
-
-	target_include_directories(
-	  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
-	)
-	target_include_directories(
-	  ${PROJECT_NAME} PUBLIC ${IMGUI-SFML_DIR}
-	)
-	set(
-	  IMGUI_SOURCES
-	  ${IMGUI_DIR}/imgui.cpp
-	  ${IMGUI_DIR}/imgui_widgets.cpp
-	  ${IMGUI_DIR}/imgui_draw.cpp
-	  ${IMGUI-SFML_DIR}/imgui-SFML.cpp
-	  ${IMGUI_DIR}/imgui_demo.cpp
-	  )
-endif(GUI)
 get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
 source_group(
   TREE ${SOURCE_DIR}
