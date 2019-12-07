@@ -83,6 +83,7 @@ function(GitStateChangedAction _state_as_list)
     LIST(GET _state_as_list 1 sha1)
     LIST(GET _state_as_list 2 GIT_IS_DIRTY)
     LIST(GET _state_as_list 3 GIT_COMMIT_SUBJECT)
+    LIST(GET _state_as_list 4 GIT_BRANCH)
 
 	STRING(SUBSTRING ${sha1} 0 5 GIT_HEAD_SHA1)
     configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
@@ -138,8 +139,16 @@ function(GetGitState _working_dir _state)
 	  OUTPUT_VARIABLE GIT_COMMIT_SUBJECT
 	  ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+	# Get the current working branch
+	execute_process(
+	  COMMAND git rev-parse --abbrev-ref HEAD
+	  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	  OUTPUT_VARIABLE GIT_BRANCH
+	  OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+
     # Return a list of our variables to the parent scope.
-    set(${_state} ${_success} ${_hashvar} ${_dirty} ${GIT_COMMIT_SUBJECT} PARENT_SCOPE)
+    set(${_state} ${_success} ${_hashvar} ${_dirty} ${GIT_COMMIT_SUBJECT} ${GIT_BRANCH} PARENT_SCOPE)
 	set(GIT_MESSAGE ${GIT_COMMIT_SUBJECT} PARENT_SCOPE)
 endfunction()
 

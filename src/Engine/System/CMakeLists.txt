@@ -7,7 +7,7 @@ add_library(System)
 ## Define the two required variables before including
 # the source code for watching a git repository.
 set(PRE_CONFIGURE_FILE "VersionControl.cpp.in")
-set(POST_CONFIGURE_FILE "VersionControl.cpp")
+set(POST_CONFIGURE_FILE ${CMAKE_BINARY_DIR}/VersionControl.cpp)
 include(${CMAKE_SOURCE_DIR}/Tools/CMake/GitWatcher.cmake)
 ##################################################
 
@@ -26,7 +26,6 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/System/System.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/SystemEventDispatcher.cpp
   PRIVATE ${SOURCE_DIR}/Engine/System/Timer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/System/VersionControl.cpp
   PRIVATE ${POST_CONFIGURE_FILE}
 )
 
