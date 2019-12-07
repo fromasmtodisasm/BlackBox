@@ -18,6 +18,8 @@ endif()
 ###################################################
 
 target_sources(${PROJECT_NAME}
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectConsole.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectRenderer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp

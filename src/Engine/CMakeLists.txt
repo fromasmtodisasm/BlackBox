@@ -75,6 +75,7 @@ add_subdirectory(${SOURCE_DIR}/Engine/Window Window)
 add_subdirectory(${SOURCE_DIR}/Engine/Profiler Profiler)
 add_subdirectory(${SOURCE_DIR}/Engine/Resources Resources)
 add_subdirectory(${SOURCE_DIR}/Engine/Utils Utils)
+add_subdirectory(${SOURCE_DIR}/Engine/Network Network)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
@@ -89,6 +90,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
 target_link_libraries(${PROJECT_NAME} PRIVATE Window)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
+target_link_libraries(${PROJECT_NAME} PRIVATE Network)
 
 target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
@@ -115,8 +117,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Engine/GUI.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Scene.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectConsole.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptObjectRenderer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/World.cpp
   #Common folder
   PRIVATE ${SOURCE_DIR}/Engine/Common/CmdLine.cpp
