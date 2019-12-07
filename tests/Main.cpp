@@ -1,22 +1,11 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/ISystem.hpp>
-//#include <BlackBox/Utils.hpp>
 #include <BlackBox/ILog.hpp>
 
 #include <iostream>
 #include <ctime>
 #include <iomanip>
-#if NEED_FILE_SYSTEM
-#include <filesystem>
-#endif
 #include <sstream>
-
-/*##############################################*/
-
-/*----------------------------------------------*/
-
-/*##############################################*/
-
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -27,13 +16,7 @@ int main(int argc, char* argv[]) {
       debug = true;
   }
 
-#if NEED_FILE_SYSTEM
-  std::filesystem::current_path("../../");
-  cout << "current path: " << std::filesystem::current_path() << endl;
-#endif
-
   std::string cmdline;
-
   if (argc > 1)
   {
     cmdline += argv[1];
