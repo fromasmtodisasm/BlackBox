@@ -142,7 +142,7 @@ target_sources(${PROJECT_NAME}
   )
 source_group(
   TREE ${CMAKE_SOURCE_DIR}/include/BlackBox
-  PREFIX BlackBox\\Inc
+  PREFIX BlackBox
   FILES
   ${INCLUDE_FILES}
   )
