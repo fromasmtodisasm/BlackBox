@@ -2,10 +2,10 @@
 #include <BlackBox/System/System.hpp>
 #include <BlackBox/NullLog.hpp>
 #include <BlackBox/System/Console.hpp>
-#include <BlackBox/IGame.hpp>
+#include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 
@@ -14,7 +14,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
-#include <BlackBox/IWindow.hpp>
+#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/World/World.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Camera.hpp>
@@ -28,7 +28,7 @@
 #include <BlackBox/Profiler/Drawer2D.h>
 
 /////////////////////////////////////////////////////////
-#include <BlackBox/INetwork.hpp>
+#include <BlackBox/Network/INetwork.hpp>
 /////////////////////////////////////////////////////////
 #include <BlackBox/System/VersionControl.hpp>
 /////////////////////////////////////////////////////////
