@@ -1,6 +1,6 @@
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
 

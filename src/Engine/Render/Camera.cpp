@@ -1,6 +1,6 @@
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <iostream>
 #include <sstream>
 using namespace  std;

@@ -6,7 +6,7 @@
 #pragma once
 
 #include <BlackBox/Platform.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 struct  IInputDevice;
 class CInputCVars;

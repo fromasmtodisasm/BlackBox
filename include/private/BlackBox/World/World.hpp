@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IWorld.hpp>
+#include <BlackBox/World/IWorld.hpp>
 
 #include <map>
 #include <string>

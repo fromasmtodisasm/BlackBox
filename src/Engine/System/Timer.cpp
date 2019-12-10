@@ -1,8 +1,8 @@
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Timer.hpp>
 #include <time.h>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 /////////////////////////////////////////////////////
 //#include <CryCore/Platform/CryWindows.h>
 

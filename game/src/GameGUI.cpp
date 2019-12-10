@@ -1,5 +1,5 @@
 ﻿#ifdef GUI
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/GUI.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>

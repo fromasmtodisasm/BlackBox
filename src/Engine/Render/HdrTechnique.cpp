@@ -6,7 +6,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #define NBLOOM
 #ifdef TEST

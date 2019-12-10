@@ -2,7 +2,7 @@
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
 float World::gravity = 9.8;

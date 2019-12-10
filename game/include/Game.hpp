@@ -31,7 +31,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
 
 
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/IWorld.hpp>

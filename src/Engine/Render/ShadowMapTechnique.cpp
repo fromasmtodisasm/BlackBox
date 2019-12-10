@@ -1,6 +1,6 @@
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>

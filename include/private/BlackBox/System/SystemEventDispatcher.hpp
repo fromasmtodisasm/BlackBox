@@ -1,7 +1,7 @@
 #ifndef __SYSTEMEVENTDISPATCHER_H__
 #define __SYSTEMEVENTDISPATCHER_H__
 
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <set>
 #include <queue>
 

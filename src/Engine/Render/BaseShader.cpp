@@ -1,5 +1,5 @@
 #include <BlackBox/Render/BaseShader.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>

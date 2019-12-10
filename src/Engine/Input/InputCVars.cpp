@@ -2,7 +2,7 @@
 
 #include <BlackBox/Input/InputCVars.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 CInputCVars* g_pInputCVars = 0;
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/Texture.hpp>
 

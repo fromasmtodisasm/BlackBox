@@ -1,6 +1,6 @@
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/InputCVars.hpp>

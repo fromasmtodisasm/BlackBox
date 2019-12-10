@@ -5,7 +5,7 @@
 //extern CInputCVars* g_pInputCVars;
 #endif
 
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #include <string>
 

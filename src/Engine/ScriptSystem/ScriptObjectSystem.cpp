@@ -1,6 +1,6 @@
 #include <BlackBox/Common.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>

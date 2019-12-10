@@ -3,7 +3,7 @@
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #include <cassert>
 

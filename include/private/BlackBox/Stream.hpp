@@ -26,7 +26,7 @@
 #define GET_BYTE_INDEX(n) DIV8((n))
 #include <string>
 #include <BlackBox/MathHelper.hpp>	// Vec3
-#include <BlackBox/ISystem.hpp>			// ISystem
+#include <BlackBox/System/ISystem.hpp>			// ISystem
 //#include <IStreamEngine.hpp>					// IStreamEngine
 #include <BlackBox/IGame.hpp>					// IGame
 #include <BlackBox/INetwork.hpp>								// INetwork
