@@ -20,6 +20,20 @@
 #include <crtdbg.h>
 #endif
 
+#if defined(WIN32) && !defined(WIN64)
+#define _CPU_X86
+// Insert your headers here
+#define WIN32_LEAN_AND_MEAN
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
+#include <Windows.h>
+#undef min
+#undef max
+//#define RC_EXECUTABLE "rc.exe"
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////
 // checks if the heap is valid in debug; in release, this function shouldn't be called
 // returns non-0 if it's valid and 0 if not valid

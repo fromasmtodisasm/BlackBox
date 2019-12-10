@@ -9,7 +9,7 @@ set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 ###################################################
 
 add_library(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
+target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox::Common)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "include/"
 )

@@ -5,10 +5,6 @@
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/IConsole.hpp>
 
-#ifdef _WIN32
-//#include <windows.h>
-#endif // Win32
-
 #include <vector>
 #include <set>
 #include <string>

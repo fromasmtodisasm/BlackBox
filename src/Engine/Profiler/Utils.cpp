@@ -1,6 +1,7 @@
 // utils.cpp
 
 #ifdef ENABLE_PROFILER
+#include <BlackBox/Platform.hpp>
 #include <BlackBox/Profiler/Utils.h>
 #include <iostream>
 #include <fstream>
@@ -31,7 +32,6 @@ namespace Utils
   const Color	COLOR_YELLOW = Color(0xFF, 0xFF, 0x00);
 
 #ifdef WIN32
-#include <windows.h>
   void msleep(int ms)
   {
     Sleep(ms);

@@ -1,5 +1,36 @@
 #pragma once
 
+#ifdef _WINDOWS_
+#error windows.h should not be included prior to platform.h
+#endif
+
+enum class EPlatform
+{
+  Windows,
+  Linux,
+  MacOS,
+  XboxOne,
+  PS4,
+  Android,
+  iOS,
+
+#ifdef BB_PLATFORM_WINDOWS
+  Current = Windows
+#elif defined(BB_PLATFORM_LINUX)
+  Current = Linux
+#elif defined(BB_PLATFORM_APPLE) && !defined(BB_PLATFORM_MOBILE)
+  Current = MacOS
+#elif defined(BB_PLATFORM_DURANGO)
+  Current = XboxOne
+#elif defined(BB_PLATFORM_ORBIS)
+  Current = PS4
+#elif defined(BB_PLATFORM_ANDROID)
+  Current = Android
+#elif defined(BB_PLATFORM_APPLE) && defined(BB_PLATFORM_MOBILE)
+  Current = iOS
+#endif
+};
+
 #if defined(WIN32) || defined(WIN64)
 #define DEBUG_BREAK _asm { int 3 }
 #else
@@ -17,7 +48,6 @@
 #undef min
 #undef max
 
-#include <BlackBox/WindowsSpecific.hpp>
 
 //#define RC_EXECUTABLE "rc.exe"
 #endif
@@ -96,4 +126,16 @@ void       bbSleep(unsigned int dwMilliseconds);
 
 #ifdef SendMessage
 #undef SendMessage
+#endif
+
+#if BB_PLATFORM_WINDOWS
+#include <BlackBox/Core/Platform/WindowsSpecific.hpp>
+#endif
+
+#if BB_PLATFORM_LINUX
+#include <CryCore/Platform/Linux64Specific.h>
+#endif
+
+#if BB_PLATFORM_ANDROID
+#include <CryCore/Platform/Android64Specific.h>
 #endif

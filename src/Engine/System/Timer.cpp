@@ -6,8 +6,8 @@
 /////////////////////////////////////////////////////
 //#include <CryCore/Platform/CryWindows.h>
 
-#if CRY_PLATFORM_WINDOWS
-#include <Mmsystem.h> // needs <windows.h>
+#if BB_PLATFORM_WINDOWS
+//#include <Mmsystem.h> // needs <windows.h>
 #endif
 
 //#define PROFILING 1

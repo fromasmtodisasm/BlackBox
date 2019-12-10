@@ -80,7 +80,7 @@ vec4 get_texel(vec2 offset)
   vec2 tex_size = 1.0 / textureSize(image, 0); // gets size of single texel
 
   const vec2 dev = vec2(0.5);
-  vec2 coord = (2 * (gl_FragCoord.xy) + offset);
+  vec2 coord = (2 * (gl_FragCoord.xy + dev) + offset);
   //vec2 texel = clamp(coord, vec2(1), vec2(rx, ry) - 1) * tex_size;
   vec2 texel = coord * tex_size;
   /*

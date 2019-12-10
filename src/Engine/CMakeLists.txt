@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 3.15)
-project(BlackBox CXX)
+project(Common CXX)
 ###################################################
 include(GenerateExportHeader)
 include(FindFreetype)
 ###################################################
-add_library(${PROJECT_NAME})
+set(BLACKBOX_PROJECT BlackBox)
+###################################################
+add_library(${BLACKBOX_PROJECT})
+add_library(${BLACKBOX_PROJECT}::Common ALIAS ${BLACKBOX_PROJECT})
 add_library(Common INTERFACE)
 add_library(BB_Private INTERFACE)
 ###################################################
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Engine")
+set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
 
 target_compile_features(BlackBox
 PUBLIC
@@ -30,8 +33,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
 ###################################################
 if (BB_TESET_ENABLE)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DTEST)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DSINGLE_PASS)
+  target_compile_definitions(${BLACKBOX_PROJECT} PUBLIC -DTEST)
+  target_compile_definitions(${BLACKBOX_PROJECT} PUBLIC -DSINGLE_PASS)
 endif()
 find_package(OpenGL REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
@@ -71,52 +74,52 @@ add_subdirectory(${ENGINE_DIR}/GUI GUI)
 add_subdirectory(${ENGINE_DIR}/World World)
 add_subdirectory(${ENGINE_DIR}/Scene Scene)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
-target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE BB_Private)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Geometry)
 set_target_properties(Geometry PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Renderer)
 set_target_properties(Renderer PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE System)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE System)
 set_target_properties(System PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PUBLIC Common)
+target_link_libraries(${BLACKBOX_PROJECT} PUBLIC Common)
 #set_target_properties(Common PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PUBLIC Input)
+target_link_libraries(${BLACKBOX_PROJECT} PUBLIC Input)
 set_target_properties(Input PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PUBLIC Math)
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PUBLIC Profiler)
+target_link_libraries(${BLACKBOX_PROJECT} PUBLIC Math)
+set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
+target_link_libraries(${BLACKBOX_PROJECT} PUBLIC Profiler)
 set_target_properties(Profiler PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PUBLIC Resources)
+target_link_libraries(${BLACKBOX_PROJECT} PUBLIC Resources)
 set_target_properties(Resources PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE ScriptSystem)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ScriptSystem)
 set_target_properties(ScriptSystem PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE Window)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Window)
 set_target_properties(Window PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE OpenGlBackend)
+set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Utils)
 set_target_properties(Utils PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE Network)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Network)
 set_target_properties(Network PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE Scene)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Scene)
 set_target_properties(Scene PROPERTIES FOLDER "Engine")
-target_link_libraries(${PROJECT_NAME} PRIVATE World)
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE World)
 set_target_properties(World PROPERTIES FOLDER "Engine")
 
 set_target_properties(GUI PROPERTIES FOLDER "Engine")
 
 target_link_libraries(Common INTERFACE tinyxml2::tinyxml2)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${OPENGL_gl_LIBRARY})
 ###################################################
-generate_export_header(${PROJECT_NAME}
+generate_export_header(${BLACKBOX_PROJECT}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )
-target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIBRARIES})
+target_include_directories(${BLACKBOX_PROJECT} PRIVATE ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${FREETYPE_LIBRARIES})
 ###################################################
 if (UNIX_OR_CYGWIN)
   target_sources(
-    ${PROJECT_NAME}
+    ${BLACKBOX_PROJECT}
     PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
     )
 endif()
@@ -130,38 +133,38 @@ target_sources(BlackBox
 	PRIVATE dummy.cpp
 )
 #--------------------------------------------------
-get_target_property(SOURCE_FILES ${PROJECT_NAME}  SOURCES)
+get_target_property(SOURCE_FILES ${BLACKBOX_PROJECT}  SOURCES)
 source_group(
   TREE ${SOURCE_DIR}
   #PREFIX BlackBox
   FILES  ${SOURCE_FILES}
   )
-target_sources(${PROJECT_NAME}
+target_sources(${BLACKBOX_PROJECT}
   PRIVATE
   ${INCLUDE_FILES}
   )
 source_group(
   TREE ${CMAKE_SOURCE_DIR}/include/BlackBox
-  PREFIX BlackBox
+  PREFIX Common
   FILES
   ${INCLUDE_FILES}
   )
-target_sources(${PROJECT_NAME}
+target_sources(${BLACKBOX_PROJECT}
   PRIVATE
   ${IMGUI_SOURCES}
   )
 ###################################################
 install (
-  TARGETS  ${PROJECT_NAME}
+  TARGETS  ${BLACKBOX_PROJECT}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   #ARCHIVE DESTINATION lib/static
 )
 
 install(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION ${PROJECT_NAME}
+  DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION ${BLACKBOX_PROJECT}
 )
 install(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION ${PROJECT_NAME}
+  DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION ${BLACKBOX_PROJECT}
 )
 ###################################################

@@ -174,7 +174,7 @@ void CPlayer::update(float deltatime)
       m_Camera->transform.position.y = floor;
     }
     //m_transform.position += velocity * deltatime;
-    m_Camera->transform.position += velocity * deltatime;
+    m_Camera->transform.position -= velocity * deltatime;
   }
 
 //#endif

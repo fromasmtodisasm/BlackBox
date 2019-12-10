@@ -19,7 +19,7 @@ if (UNIX OR CYGWIN)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX64)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)
 else()
-
+  add_compile_definitions(BB_PLATFORM_WINDOWS)
 endif()
 ###################################################
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
