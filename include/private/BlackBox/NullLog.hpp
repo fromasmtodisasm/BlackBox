@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <cstdarg>
-#include <BlackBox/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 
 class NullLog : public ILog
 {

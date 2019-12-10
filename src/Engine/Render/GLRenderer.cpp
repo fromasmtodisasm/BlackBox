@@ -6,7 +6,7 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/IWindow.hpp>
+#include <BlackBox/System/IWindow.hpp>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>

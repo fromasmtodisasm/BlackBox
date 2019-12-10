@@ -1,5 +1,5 @@
 #include <Game.hpp>
-#include <BlackBox/IScene.hpp>
+#include <BlackBox/Scene/IScene.hpp>
 
 #include <string>
 

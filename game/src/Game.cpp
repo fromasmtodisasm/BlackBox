@@ -1,8 +1,10 @@
 ﻿#include <Game.hpp>
 #include <GameObject.hpp>
+#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Render/Material.hpp>
 #include <BlackBox/Render/Texture.hpp>
-#include <BlackBox/Camera.hpp>
-#include <BlackBox/IScene.hpp>
+#include <BlackBox/Render/Camera.hpp>
+#include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Render/TechniqueManager.hpp>
 #include <BlackBox/Render/IFont.hpp>

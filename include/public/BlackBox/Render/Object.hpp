@@ -2,14 +2,15 @@
 
 #include <BlackBox/Core/Platform.hpp>
 #include <BlackBox/Render/IObject.hpp>
+#include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/IGeometry.hpp>
 #include <BlackBox/Render/IDrawable.hpp>
-#include <BlackBox/Material.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <memory>
 
+class Material;
 using MeshList = std::shared_ptr<std::vector<Mesh>>;
 
 struct Transform

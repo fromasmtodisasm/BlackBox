@@ -1,4 +1,4 @@
-#include <BlackBox/Material.hpp>
+#include <BlackBox/Render/Material.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Render/Object.hpp>

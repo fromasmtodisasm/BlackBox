@@ -1,6 +1,4 @@
 #pragma once
-#include <BlackBox/common.h>
-#include <BlackBox/Render/VertexArrayObject.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 
 #include <memory>

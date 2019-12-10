@@ -1,9 +1,10 @@
 #pragma once
-#include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 class CBaseShaderProgram;
 struct Material;
 struct IScriptObject;
+class Texture;
 
 enum Movement {
   FORWARD,

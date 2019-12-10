@@ -3,7 +3,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <SDL.h>
-#include <BlackBox/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 //#include <SDL.h>
 
 #define KEYBOARD_MAX_PEEP 64

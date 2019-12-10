@@ -1,5 +1,5 @@
 #pragma once
-//#include <BlackBox/Primitives.hpp>
+#include <BlackBox/Core/Primitives.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Render/Camera.hpp>
 #include <set>

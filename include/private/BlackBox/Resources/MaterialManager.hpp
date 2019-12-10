@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Material.hpp>
+#include <BlackBox/Render/Material.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/System/IConsole.hpp>
