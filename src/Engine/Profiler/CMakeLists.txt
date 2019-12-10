@@ -18,3 +18,5 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Thread.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
 )
+
+add_headers()

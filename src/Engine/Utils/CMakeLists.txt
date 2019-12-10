@@ -14,5 +14,4 @@ target_sources(${PROJECT_NAME}
   #Utils folder
   PRIVATE ${SOURCE_DIR}/Engine/Utils/MusicList.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Utils/Utils.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Utils/Cursor.cpp
 )

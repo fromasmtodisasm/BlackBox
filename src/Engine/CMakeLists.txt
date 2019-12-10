@@ -25,7 +25,7 @@ PRIVATE
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 ###################################################
-configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
+configure_file(${BLACKBOX_PUBLIC_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
 ###################################################
 if (BB_TESET_ENABLE)
   target_compile_definitions(${BLACKBOX_PROJECT} PUBLIC -DTEST)
@@ -119,7 +119,7 @@ if (UNIX_OR_CYGWIN)
     )
 endif()
 ###################################################
-file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_INCLUDE_DIRS}/*.hpp ${BLACKBOX_INCLUDE_DIRS}/*.h)
+file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/*.hpp ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/*.h)
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})
@@ -139,7 +139,7 @@ target_sources(${BLACKBOX_PROJECT}
   ${INCLUDE_FILES}
   )
 source_group(
-  TREE ${CMAKE_SOURCE_DIR}/include/BlackBox
+  TREE ${BLACKBOX_PUBLIC_INCLUDE_DIRS}
   PREFIX Common
   FILES
   ${INCLUDE_FILES}
