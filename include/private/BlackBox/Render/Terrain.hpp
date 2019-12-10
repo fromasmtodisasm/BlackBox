@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Render/IGeometry.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <vector>
 

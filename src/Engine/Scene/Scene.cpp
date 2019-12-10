@@ -12,7 +12,6 @@
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/SkyBox.hpp>
-#include <BlackBox/IGame.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 

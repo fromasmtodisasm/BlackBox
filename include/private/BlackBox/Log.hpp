@@ -1,6 +1,6 @@
 #pragma once
 #ifdef GUI
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <imgui.h>
 
 // Usage:

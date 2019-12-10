@@ -2,7 +2,7 @@
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/IScriptSystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>

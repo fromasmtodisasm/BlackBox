@@ -1,7 +1,7 @@
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
 ShaderManager* ShaderManager::manager = nullptr;

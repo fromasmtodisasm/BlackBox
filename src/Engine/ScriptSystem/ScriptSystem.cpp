@@ -2,7 +2,7 @@
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
 

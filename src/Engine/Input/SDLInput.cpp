@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Render/IRender.hpp>
 

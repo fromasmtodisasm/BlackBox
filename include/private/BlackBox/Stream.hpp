@@ -31,7 +31,7 @@
 #include <BlackBox/IGame.hpp>					// IGame
 #include <BlackBox/INetwork.hpp>								// INetwork
 //#include "ICompressionHelper.h"			// ICompressionHelper
-#include <BlackBox/ILog.hpp>					// ILOg
+#include <BlackBox/System/ILog.hpp>					// ILOg
 
 class CStream;
 

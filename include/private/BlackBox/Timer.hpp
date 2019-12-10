@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/ITimer.hpp>
+#include <BlackBox/System/ITimer.hpp>
 
 // Implements all common timing routines
 class CTimer : public ITimer

@@ -12,7 +12,7 @@
 *************************************************************************/
 #include <BlackBox/Input/SDLPad.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/ITimer.hpp>
 
 // NOTE: The current implementation is modled after the XI input

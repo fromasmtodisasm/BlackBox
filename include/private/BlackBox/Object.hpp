@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Platform.hpp>
+#include <BlackBox/Core/Platform.hpp>
 #include <BlackBox/Render/IObject.hpp>
 #include <BlackBox/Render/IGeometry.hpp>
 #include <BlackBox/Render/IDrawable.hpp>

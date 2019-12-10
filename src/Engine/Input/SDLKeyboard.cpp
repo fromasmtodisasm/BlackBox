@@ -1,7 +1,7 @@
 #include <BlackBox/Input/SDLKeyboard.hpp>
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <SDL.h>
 #include <BlackBox/Utils.hpp>
 //#include <SDL.h>

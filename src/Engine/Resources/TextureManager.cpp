@@ -1,5 +1,5 @@
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 
 using	namespace std;

@@ -37,7 +37,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <BlackBox/IWorld.hpp>
 //#include <BlackBox/CameraController.hpp>
 //#include <BlackBox/MusicList.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 //#include <BlackBox/Render/PostProcessor.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/IInput.hpp>

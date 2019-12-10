@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IDrawable.hpp>
+#include <BlackBox/Render/IDrawable.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Texture.hpp>
 #include <BlackBox/Render/TextureCube.hpp>

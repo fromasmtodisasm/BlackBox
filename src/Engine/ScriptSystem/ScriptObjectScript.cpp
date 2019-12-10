@@ -1,7 +1,7 @@
 #include <BlackBox/Common.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
-#include <BlackBox/ILog.hpp>
+#include <BlackBox/System/ILog.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
