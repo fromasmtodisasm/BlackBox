@@ -2,6 +2,10 @@ if(ANDROID OR LINUX)
 	# WIN32 Should be unset after project() line to work correctly
 	unset(WIN32)
 	unset(WINDOWS)
+else()
+	if(WIN32)
+		set(WINDOWS ON)
+	endif()
 endif()
 
 message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
