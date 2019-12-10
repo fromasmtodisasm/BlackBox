@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 struct DirectionLight;
 struct SpotLight;

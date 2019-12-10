@@ -1,11 +1,11 @@
 #pragma once
 
-#include <BlackBox/Platform.hpp>
-#include <BlackBox/IObject.hpp>
-#include <BlackBox/IGeometry.hpp>
-#include <BlackBox/IDrawable.hpp>
+#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/Render/IObject.hpp>
+#include <BlackBox/Render/IGeometry.hpp>
+#include <BlackBox/Render/IDrawable.hpp>
 #include <BlackBox/Material.hpp>
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <memory>

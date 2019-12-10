@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/IConsole.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 class BaseCommand : public IConsoleCommand
 {

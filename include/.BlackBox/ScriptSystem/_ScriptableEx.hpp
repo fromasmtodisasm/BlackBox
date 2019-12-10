@@ -4,8 +4,8 @@
 #define _SCRIPTABLE_H_
 
 #include <BlackBox/IScriptSystem.hpp>
-#include <BlackBox/ISystem.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <vector>
 #include <string>
 //#define _NO_HASHMAP

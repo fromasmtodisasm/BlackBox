@@ -22,7 +22,7 @@ typedef unsigned int		uint;
 typedef unsigned short	ushort;
 #endif
 
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Render/IShader.hpp>
 
 // Forward declarations.

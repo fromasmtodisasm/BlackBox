@@ -24,9 +24,9 @@
 #include <Network/XNetwork.hpp>
 #include <Server/XServerRules.hpp>
 //#include "XSnapshot.h"
-#include <BlackBox/INetwork.hpp>					// IServerSlotFactory
+#include <BlackBox/Network/INetwork.hpp>					// IServerSlotFactory
 #include <ScriptObjects/ScriptObjectServer.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <Server/XServerSlot.hpp>			// XServerSlot
 
 #include <map>

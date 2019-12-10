@@ -3,7 +3,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 
 #include <iostream>
 using	namespace std;

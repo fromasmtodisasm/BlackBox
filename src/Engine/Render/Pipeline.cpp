@@ -3,7 +3,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Render/IGeometry.hpp>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 
 Pipeline* Pipeline::m_instance = nullptr;
 

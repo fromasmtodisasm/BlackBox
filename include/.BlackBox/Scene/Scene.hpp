@@ -3,14 +3,14 @@
 
 #include <BlackBox/IScene.hpp>
 #include <tinyxml2.h>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
 #include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/IPostProcessor.hpp>
-#include <BlackBox/ISystem.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Render/Terrain.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>

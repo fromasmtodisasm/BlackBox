@@ -1,8 +1,8 @@
 #pragma once
 
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Window.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
 #include <BlackBox/IScriptSystem.hpp>
 #include <BlackBox/System/CmdLine.hpp>

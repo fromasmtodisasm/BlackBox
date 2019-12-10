@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/ILog.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <cstdio>
 #include <string>
 #include <vector>

@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <vector>
 

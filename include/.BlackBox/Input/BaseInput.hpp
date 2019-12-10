@@ -5,8 +5,8 @@
 #define __BASEINPUT_H__
 #pragma once
 
-#include <BlackBox/Platform.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 struct  IInputDevice;
 class CInputCVars;

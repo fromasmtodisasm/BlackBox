@@ -1,5 +1,5 @@
 #include <BlackBox/Camera.hpp>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <iostream>
 #include <sstream>

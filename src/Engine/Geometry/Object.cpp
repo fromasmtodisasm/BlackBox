@@ -1,4 +1,4 @@
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 #include <BlackBox/ObjLoader.hpp>
 #include <BlackBox/Render/VertexBuffer.hpp>
 #include <BlackBox/Render/Renderer.hpp>

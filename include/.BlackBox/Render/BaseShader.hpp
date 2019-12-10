@@ -2,8 +2,8 @@
 #include <BlackBox/Render/ShaderUtils.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/ISystem.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 #include <string>
 #include <map>

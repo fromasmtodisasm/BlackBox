@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/INetwork.hpp>
+#include <BlackBox/Network/INetwork.hpp>
 
 #include <SDL2/SDL_net.h>
 

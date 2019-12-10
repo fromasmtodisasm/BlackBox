@@ -5,7 +5,7 @@
 
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <vector>
 #include <string>
 //#define _NO_HASHMAP

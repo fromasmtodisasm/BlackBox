@@ -4,9 +4,9 @@
 #include <vector>
 #include <iostream>
 
-#include <BlackBox/MathHelper.hpp>
-#include <BlackBox/Object.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Render/Object.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 struct ICVar;
 

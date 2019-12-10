@@ -4,7 +4,7 @@
 
 #define NETWORK_API
 
-#include <BlackBox/Platform.hpp>
+#include <BlackBox/Core/Platform.hpp>
 
 #include <vector>				// STL vector<>
 

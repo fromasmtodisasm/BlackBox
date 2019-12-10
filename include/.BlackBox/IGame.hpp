@@ -1,7 +1,7 @@
 #pragma once
 
 #include <BlackBox/Version.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 #include <string>
 

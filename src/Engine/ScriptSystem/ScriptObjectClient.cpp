@@ -1,6 +1,6 @@
 #if 0
 #include <BlackBox/ScriptObjectClient.hpp>
-#include <BlackBox/INetwork.hpp>
+#include <BlackBox/Network/INetwork.hpp>
 #include <Game.hpp>
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectClient)

@@ -3,7 +3,7 @@
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 #include <string>
 #include <map>

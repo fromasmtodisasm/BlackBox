@@ -1,7 +1,7 @@
 #pragma once
 
 //#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 #include <string>
 
 class Primitive

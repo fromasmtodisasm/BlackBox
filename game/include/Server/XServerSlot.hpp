@@ -27,8 +27,8 @@ class CScriptObjectServerSlot;
 
 //#include "XNetworkStats.h"									// CXNetworkStats
 #include <Network/XNetwork.hpp>
-#include <BlackBox/IScriptSystem.hpp>
-#include <BlackBox/ITimer.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include <BlackBox/System/ITimer.hpp>
 
 class CXSnapshot;
 class CXServer;

@@ -6,7 +6,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 
 #include <BlackBox/Scene/IScene.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
 

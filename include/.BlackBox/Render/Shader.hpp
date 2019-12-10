@@ -1,7 +1,7 @@
 #pragma once
 #if 1
 #include <BlackBox/Render/BaseShader.hpp>
-#include <BlackBox/ISystem.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <string>
 #include <memory>
 

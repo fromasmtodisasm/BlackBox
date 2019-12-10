@@ -15,7 +15,7 @@
 #endif
 
 #include <BlackBox/Render/OpenGL/Debug.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 #include <iostream>
 #include <fstream>

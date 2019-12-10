@@ -3,7 +3,7 @@
 #include <BlackBox/Render/Texture.hpp>
 //#include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <vector>
 
 class CShader;

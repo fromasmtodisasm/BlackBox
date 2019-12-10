@@ -3,7 +3,7 @@
 
 #include <BlackBox/Scene/IScene.hpp>
 #include <tinyxml2.h>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>

@@ -25,8 +25,8 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <BlackBox/IInput.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/System/IConsole.hpp>
 //#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
 //#include "XClientSnapshot.h"
 //#include "XEntityProcessingCmd.h"
@@ -36,7 +36,7 @@
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>						// CXNetworkStats
 #include <Game.hpp>
 #include <GameShared.hpp>
-#include <BlackBox/ITimer.hpp>
+#include <BlackBox/System/ITimer.hpp>
 
 struct SCameraParams;
 struct IScriptSystem;

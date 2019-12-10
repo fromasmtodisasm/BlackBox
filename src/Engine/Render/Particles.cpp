@@ -1,6 +1,6 @@
 #include <BlackBox/Render/Particles.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 #include <vector>
 #include <cstdlib>

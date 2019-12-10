@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/common.h>
 #include <BlackBox/Render/VertexArrayObject.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 #include <memory>
 #include <string>

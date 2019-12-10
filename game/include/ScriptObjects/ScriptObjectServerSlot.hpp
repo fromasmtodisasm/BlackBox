@@ -25,7 +25,7 @@
 #ifndef _SCRIPTOBJECTSERVERSLOT_H_
 #define _SCRIPTOBJECTSERVERSLOT_H_
 
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
 class CXServerSlot;
