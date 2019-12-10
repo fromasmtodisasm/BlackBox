@@ -59,8 +59,15 @@ include("${TOOLS_CMAKE_DIR}/CommonMacros.cmake")
 # Must be included after SDK_DIR definition
 include("${TOOLS_CMAKE_DIR}/CopyFilesToBin.cmake")
 
+if(OPTION_STATIC_LINKING)
+	# Enable static libraries
+	MESSAGE(STATUS "Use Static Linking (.lib/.a)")
+	set(BUILD_SHARED_LIBS FALSE)
+else()
+	# Enable dynamic libraries
+	MESSAGE(STATUS "Use Dynamic Linking (.dll/.so)")
+	set(BUILD_SHARED_LIBS TRUE)
+endif()
 
+include("${TOOLS_CMAKE_DIR}/Build.cmake")
 
-
-
-include(Tools/CMake/Build.cmake)

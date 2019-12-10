@@ -35,6 +35,3 @@ project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 ###################################################
 include(Tools/CMake/Configure.cmake)
 ###################################################
-
-set_property(DIRECTORY tests PROPERTY VS_STARTUP_PROJECT Launcher)
-set_property(TARGET Launcher PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
