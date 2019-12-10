@@ -54,7 +54,7 @@ set(
 	src
 	game
 	tests
-	Tools/CMake
+	#Tools/CMake
 	res
 )
 

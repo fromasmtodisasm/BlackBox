@@ -13,3 +13,10 @@ if(OPTION_ENGINE)
 	# 1. CryEngine
 	include ("${TOOLS_CMAKE_DIR}/BuildEngine.cmake")
 endif()
+
+# Only allow building legacy GameDLL's with the engine, assuming that we're not using the project system
+if(OPTION_ENGINE AND NOT PROJECT_BUILD)
+	# 2. Games
+	#add_subdirectories_glob("Code/Game*")
+endif()
+	
