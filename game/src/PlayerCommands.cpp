@@ -2,7 +2,7 @@
 /*
 #include <PlayerCommands.hpp>
 #include <Player.h>
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 
 MoveForward::MoveForward(CPlayer* player) : player(player), camera(nullptr)
 {

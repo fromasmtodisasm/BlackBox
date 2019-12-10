@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <memory>
-//#include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/Render/BaseTexture.hpp>
+//#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/BaseTexture.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif

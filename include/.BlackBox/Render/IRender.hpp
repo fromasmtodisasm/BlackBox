@@ -23,7 +23,7 @@ typedef unsigned short	ushort;
 #endif
 
 #include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Render/IShader.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
 
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////

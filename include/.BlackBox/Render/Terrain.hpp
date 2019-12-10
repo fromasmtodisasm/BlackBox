@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/IGeometry.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <vector>
 
 class Object;

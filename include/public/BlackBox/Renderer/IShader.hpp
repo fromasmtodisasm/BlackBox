@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <string>
 #include <map>
 

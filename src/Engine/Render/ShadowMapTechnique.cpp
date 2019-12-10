@@ -7,7 +7,7 @@
 
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 
 ShadowMapping::ShadowMapping() : m_Scene(nullptr), m_DepthBuffer(nullptr)

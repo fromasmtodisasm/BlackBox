@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/BaseRenderer.hpp>
+#include <BlackBox/Renderer/BaseRenderer.hpp>
 
 struct IWindow;
 

@@ -1,7 +1,7 @@
 #pragma once
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <vector>
 
 #define EXTRACT_COLOR(c) c.r, c.g, c.b, c.a

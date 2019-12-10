@@ -1,4 +1,4 @@
-#include <BlackBox\Render\ScreenShader.hpp>
+#include <BlackBox/Renderer/ScreenShader.hpp>
 
 const char* vs = R"(
 #version 330 core

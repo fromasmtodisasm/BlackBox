@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include <BlackBox/Render/BaseTexture.hpp>
+#include <BlackBox/Renderer/BaseTexture.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif

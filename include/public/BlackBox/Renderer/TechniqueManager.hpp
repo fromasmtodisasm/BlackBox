@@ -2,7 +2,7 @@
 
 #include <string>
 #include <map>
-#include <BlackBox/Render/ITechnique.hpp>
+#include <BlackBox/Renderer/ITechnique.hpp>
 
 class TechniqueManager
 {

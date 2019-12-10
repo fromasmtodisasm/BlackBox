@@ -1,7 +1,7 @@
-#include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -1,4 +1,4 @@
-#include <BlackBox/Render/Object.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 
 class Plane : public Object
 {

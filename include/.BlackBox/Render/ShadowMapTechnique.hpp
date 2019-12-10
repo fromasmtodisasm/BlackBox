@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Render/ITechnique.hpp>
+#include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 
 class ShadowMapping

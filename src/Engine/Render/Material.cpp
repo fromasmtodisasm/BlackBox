@@ -1,11 +1,11 @@
-#include <BlackBox/Render/Material.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Render/Object.hpp>
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Material.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
+#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
-#include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
 
 void Material::apply(Object* object)
 {

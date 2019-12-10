@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Render/ShaderUtils.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
+#include <BlackBox/Renderer/ShaderUtils.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <map>

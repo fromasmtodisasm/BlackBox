@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/Object.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 #include <vector>
 
 class Plane : public Object

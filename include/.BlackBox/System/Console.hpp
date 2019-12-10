@@ -1,8 +1,8 @@
 #pragma once
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
-#include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/Texture.hpp>
 
 #include <map>
 #include <set>

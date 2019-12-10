@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/Renderer.hpp>
+#include <BlackBox/Renderer/Renderer.hpp>
 
 #if 0
 class IndexBuffer

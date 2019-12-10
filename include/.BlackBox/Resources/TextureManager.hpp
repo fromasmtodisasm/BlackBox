@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/Render/Texture.hpp>
-#include <BlackBox/Render/TextureCube.hpp>
+#include <BlackBox/Renderer/Texture.hpp>
+#include <BlackBox/Renderer/TextureCube.hpp>
 
 #include <map>
 #include <string>

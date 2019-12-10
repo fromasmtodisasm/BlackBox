@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
 #endif

@@ -1,12 +1,12 @@
 #pragma once
 #include <BlackBox/IDrawable.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/Render/Texture.hpp>
-#include <BlackBox/Render/TextureCube.hpp>
-#include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/Render/Shader.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/Texture.hpp>
+#include <BlackBox/Renderer/TextureCube.hpp>
+#include <BlackBox/Renderer/VertexBuffer.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
 
 class SkyBox : public IDrawable
 {

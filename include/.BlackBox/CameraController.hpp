@@ -1,6 +1,6 @@
 #pragma once
 #ifdef CAMERA_CONTROLLER
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/IInputHandler.hpp>
 
 class CameraController : public IInputEventListener

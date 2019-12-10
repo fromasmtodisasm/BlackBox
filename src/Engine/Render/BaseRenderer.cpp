@@ -1,4 +1,4 @@
-#include <BlackBox\Render\BaseRenderer.hpp>
+#include <BlackBox/Renderer/BaseRenderer.hpp>
 #include <SDL2/SDL.h>
 
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)

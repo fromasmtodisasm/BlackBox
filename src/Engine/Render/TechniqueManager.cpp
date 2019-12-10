@@ -1,4 +1,4 @@
-#include "TechniqueManager.hpp"
+#include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/HdrTechnique.hpp>
 
 std::map<std::string, ITechnique*> TechniqueManager::techs;

@@ -1,4 +1,4 @@
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <iostream>

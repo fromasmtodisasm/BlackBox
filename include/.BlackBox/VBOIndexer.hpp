@@ -3,7 +3,7 @@
 #include <BlackBox/IGeometry.hpp>
 #include <vector>
 #include <glm/glm.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 void indexVBO(
   std::vector<Vertex>& vb,

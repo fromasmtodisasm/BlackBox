@@ -1,7 +1,7 @@
 #ifndef CPLAYER_H
 #define CPLAYER_H
 
-#include <BlackBox/Render/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <GameObject.hpp>
 #include <BlackBox/System/ICommand.hpp>
 #include <BlackBox/Input/IInput.hpp>

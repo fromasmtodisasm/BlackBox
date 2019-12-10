@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/BaseShader.hpp>
+#include <BlackBox/Renderer/BaseShader.hpp>
 
 #include <memory>
 

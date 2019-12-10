@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Renderer/Texture.hpp>
 
 class CBaseShaderProgram;
 struct Material;

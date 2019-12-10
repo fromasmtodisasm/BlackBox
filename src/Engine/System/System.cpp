@@ -17,7 +17,7 @@
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/World/World.hpp>
 #include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>

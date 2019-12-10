@@ -1,7 +1,7 @@
 #pragma once
 
-#include <BlackBox/Render/ITechnique.hpp>
-#include <BlackBox/Render/ScreenShader.hpp>
+#include <BlackBox/Renderer/ITechnique.hpp>
+#include <BlackBox/Renderer/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/Quad.hpp>
 

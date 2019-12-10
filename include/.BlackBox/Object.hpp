@@ -1,7 +1,7 @@
 #pragma once
 
 #include <BlackBox/Core/Platform.hpp>
-#include <BlackBox/Render/IObject.hpp>
+#include <BlackBox/Renderer/IObject.hpp>
 #include <BlackBox/IGeometry.hpp>
 #include <BlackBox/IDrawable.hpp>
 #include <BlackBox/Material.hpp>
