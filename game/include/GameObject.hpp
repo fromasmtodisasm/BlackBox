@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Primitives.hpp>
 #include <BlackBox/Input/IInput.hpp>
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Render/Camera.hpp>
 #include <set>
 
 class GameObject : public Object, public IInputEventListener

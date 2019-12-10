@@ -1,11 +1,11 @@
 #ifndef CPLAYER_H
 #define CPLAYER_H
 
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Render/Camera.hpp>
 #include <GameObject.hpp>
-#include <BlackBox/ICommand.hpp>
-#include <BlackBox/IInput.hpp>
-#include <BlackBox/MathHelper.hpp>
+#include <BlackBox/System/ICommand.hpp>
+#include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #ifdef GUI
 #include <imgui-SFML.h>
 #include <imgui.h>

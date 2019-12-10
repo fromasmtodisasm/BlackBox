@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 class Scene;
 class IScene;

@@ -1,6 +1,6 @@
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 
 class SystemCommand : public BaseCommand
 {
