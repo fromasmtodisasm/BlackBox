@@ -8,7 +8,7 @@
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IClipBoard.hpp>
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Render/Texture.hpp>
 

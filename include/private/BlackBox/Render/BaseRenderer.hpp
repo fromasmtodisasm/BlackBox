@@ -4,7 +4,7 @@
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 
 class CRenderer :
   public IRenderer

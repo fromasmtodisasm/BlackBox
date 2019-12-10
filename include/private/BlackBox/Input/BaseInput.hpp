@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 
 #ifndef __BASEINPUT_H__
 #define __BASEINPUT_H__

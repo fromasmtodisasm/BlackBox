@@ -12,6 +12,8 @@ add_library(Common INTERFACE)
 add_library(BB_Private INTERFACE)
 ###################################################
 set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
+#set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/.." )
+set_property(DIRECTORY APPEND PROPERTY INCLUDE_DIRECTORIES "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/.." "${BLACKBOX_PUBLIC_INCLUDE_DIRS}/..")
 
 target_compile_features(BlackBox
 PUBLIC

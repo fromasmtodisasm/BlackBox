@@ -1,7 +1,7 @@
 #pragma once
 #if USE_SFML
 #include <BlackBox/IWindow.hpp>
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 

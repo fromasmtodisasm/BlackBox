@@ -2,7 +2,7 @@
 #define __INPUTDEVICE_H__
 #pragma once
 
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 
 class CInputDevice : public IInputDevice
 {

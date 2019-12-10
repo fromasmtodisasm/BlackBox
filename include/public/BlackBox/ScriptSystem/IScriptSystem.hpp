@@ -6,7 +6,7 @@
 #ifdef APIENTRY
 #undef APIENTRY
 #endif
-#include <Windows.h>
+#include <BlackBox/Core/Platform.hpp>
 #pragma warning(pop)
 #endif // _WIN32
 #include <cassert>

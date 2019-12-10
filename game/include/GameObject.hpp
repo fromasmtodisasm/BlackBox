@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/Primitives.hpp>
-#include <BlackBox/IInput.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Camera.hpp>
 #include <set>
 

@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/IWindow.hpp>
-#include <BlackBox/IInputHandler.hpp>
+#include <BlackBox/System/IWindow.hpp>
+#include <BlackBox/System/IInputHandler.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <SDL_video.h>
 #include <SDL_events.h>
