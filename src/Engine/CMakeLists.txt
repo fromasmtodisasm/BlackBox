@@ -37,17 +37,18 @@ find_package(Freetype REQUIRED)
 #--------------------------------------------------
 target_include_directories(
 BB_Private
-	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Common"
-	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Interfaces/"
-	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Render/"
-	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Resources/"
-	INTERFACE "${CMAKE_SOURCE_DIR}/include/BlackBox/Utils/"
+	INTERFACE "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/../"
+	INTERFACE "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/Common"
+	INTERFACE "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/Interfaces/"
+	INTERFACE "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/Render/"
+	INTERFACE "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/Resources/"
+	INTERFACE "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/Utils/"
 	INTERFACE "${SUBMODULES_DIR}/stb/"
 )
 target_include_directories (
 Common
 	INTERFACE	"${CMAKE_BINARY_DIR}"
-	INTERFACE	"${BLACKBOX_ROOT}/include/"
+	INTERFACE	"${BLACKBOX_PUBLIC_INCLUDE_DIRS}/../"
 	)
 #--------------------------------------------------
 #--------------------------------------------------
@@ -119,7 +120,8 @@ if (UNIX_OR_CYGWIN)
     )
 endif()
 ###################################################
-file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/*.hpp ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/*.h)
+file(GLOB_RECURSE PRIVATE_INCLUDE_FILES ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/*.hpp ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/*.h)
+file(GLOB_RECURSE PUBLIC_INCLUDE_FILES ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/*.hpp ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/*.h)
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)
 	target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})
@@ -136,13 +138,13 @@ source_group(
   )
 target_sources(${BLACKBOX_PROJECT}
   PRIVATE
-  ${INCLUDE_FILES}
+  ${PRIVATE_INCLUDE_FILES}
   )
 source_group(
   TREE ${BLACKBOX_PUBLIC_INCLUDE_DIRS}
   PREFIX Common
   FILES
-  ${INCLUDE_FILES}
+  ${PRIVATE_INCLUDE_FILES}
   )
 target_sources(${BLACKBOX_PROJECT}
   PRIVATE
