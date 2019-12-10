@@ -2,7 +2,7 @@
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/Camera.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
