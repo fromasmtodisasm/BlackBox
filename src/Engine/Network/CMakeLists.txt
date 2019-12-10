@@ -15,4 +15,4 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
 )
 
-add_headers()
+add_private_headers()

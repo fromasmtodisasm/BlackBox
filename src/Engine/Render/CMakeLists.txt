@@ -67,4 +67,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE)
 #	INTERFACE $<TARGET_PROPERTY:glad,INTERFACE_INCLUDE_DIRECTORIES>
 #)
 
-#add_headers()
+#add_private_headers()

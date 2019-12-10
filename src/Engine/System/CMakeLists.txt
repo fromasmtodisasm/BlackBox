@@ -34,4 +34,4 @@ target_sources(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
 set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
 
-add_headers()
+add_private_headers()

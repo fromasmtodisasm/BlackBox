@@ -19,4 +19,4 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Profiler/Utils.cpp
 )
 
-add_headers()
+add_private_headers()

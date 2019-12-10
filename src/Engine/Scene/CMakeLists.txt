@@ -14,4 +14,4 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/Scene/Scene.cpp
 )
 
-add_headers()
+add_private_headers()
