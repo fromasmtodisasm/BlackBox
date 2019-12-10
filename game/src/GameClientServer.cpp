@@ -1,6 +1,6 @@
 #include <Game.hpp>
 #include <BlackBox/Common.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <Client/XClient.hpp>
 #include <Server/XServer.hpp>
 

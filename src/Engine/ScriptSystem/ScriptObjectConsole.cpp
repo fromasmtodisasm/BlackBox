@@ -1,6 +1,6 @@
 #include <BlackBox/Common.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 #include <iostream>
 

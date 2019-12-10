@@ -3,7 +3,7 @@
 #include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp>
 #include <BlackBox/Utils.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 #include <vector>
 #include <set>

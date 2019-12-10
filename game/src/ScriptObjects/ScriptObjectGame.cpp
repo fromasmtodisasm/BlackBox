@@ -1,7 +1,7 @@
 #include <Game.hpp>
 #include <BlackBox/Common.hpp>
 #include <BlackBox/IMarkers.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <Server/XServer.hpp>
 
 #include <ScriptObjects/ScriptObjectGame.hpp>

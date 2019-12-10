@@ -10,7 +10,7 @@
 #include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/IPostProcessor.hpp>
 #include <BlackBox/ISystem.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Render/Terrain.hpp>
 #include <BlackBox/Render/BaseShader.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>

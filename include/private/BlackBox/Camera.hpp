@@ -6,7 +6,7 @@
 
 #include <BlackBox/MathHelper.hpp>
 #include <BlackBox/Object.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 struct ICVar;
 

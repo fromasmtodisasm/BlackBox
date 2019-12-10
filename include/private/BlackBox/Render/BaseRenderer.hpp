@@ -3,7 +3,7 @@
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/IInput.hpp>
 
 class CRenderer :

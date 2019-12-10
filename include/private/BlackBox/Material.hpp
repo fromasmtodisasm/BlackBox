@@ -2,7 +2,7 @@
 #include <memory>
 #include <BlackBox/Render/Texture.hpp>
 //#include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <vector>
 

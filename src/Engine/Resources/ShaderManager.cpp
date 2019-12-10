@@ -2,7 +2,7 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/ISystem.hpp>
 #include <BlackBox/ILog.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 ShaderManager* ShaderManager::manager = nullptr;
 static _smart_ptr<CShaderProgram> defaultProgram = nullptr;

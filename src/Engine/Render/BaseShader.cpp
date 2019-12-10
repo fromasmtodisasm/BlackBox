@@ -3,7 +3,7 @@
 #include <BlackBox/ILog.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 #include <fstream>
 #include <string>

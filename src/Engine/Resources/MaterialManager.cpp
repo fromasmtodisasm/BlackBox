@@ -3,7 +3,7 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Render/ReflectShader.hpp>
 #include <BlackBox/ISystem.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <glm/glm.hpp>
 
 #include <tinyxml2.h>

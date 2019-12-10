@@ -3,7 +3,7 @@
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/IScene.hpp>
 #include <BlackBox/Render/SkyBox.hpp>
-#include <BlackBox/IConsole.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/ISystem.hpp>
