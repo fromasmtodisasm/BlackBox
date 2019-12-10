@@ -138,22 +138,6 @@ source_group(
   #PREFIX BlackBox
   FILES  ${SOURCE_FILES}
   )
-#[[
-target_sources(${BLACKBOX_PROJECT}
-  PRIVATE
-  ${PRIVATE_INCLUDE_FILES}
-  )
-source_group(
-  TREE ${BLACKBOX_PUBLIC_INCLUDE_DIRS}
-  PREFIX Common
-  FILES
-  ${PUBLIC_INCLUDE_FILES}
-  )
-]]
-target_sources(${BLACKBOX_PROJECT}
-  PRIVATE
-  ${IMGUI_SOURCES}
-  )
 ###################################################
 install (
   TARGETS  ${BLACKBOX_PROJECT}

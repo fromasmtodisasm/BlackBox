@@ -15,7 +15,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/GUI/GUI.cpp
 )
 if (GUI)
-	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui)
+	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/lib/imgui)
 	set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 
 	target_include_directories(
