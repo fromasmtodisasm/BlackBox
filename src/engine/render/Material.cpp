@@ -1,7 +1,7 @@
 #include <BlackBox/Material.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Shader.hpp>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Render/Object.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
