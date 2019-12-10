@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp>
 
 class CScriptSystem;

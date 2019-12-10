@@ -1,7 +1,7 @@
 #include <BlackBox/Common.hpp>
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Utils.hpp>

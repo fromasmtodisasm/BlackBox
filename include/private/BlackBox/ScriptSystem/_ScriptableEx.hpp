@@ -3,7 +3,7 @@
 #ifndef _SCRIPTABLE_H_
 #define _SCRIPTABLE_H_
 
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <vector>

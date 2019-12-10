@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 /*!
  *	<description>This class implements script-functions for exposing the scripting system functionalities.</description>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
 class CScriptObjectConsole :
