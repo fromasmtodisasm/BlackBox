@@ -1,5 +1,5 @@
-#include <BlackBox/World.hpp>
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/World/World.hpp>
+#include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/ISystem.hpp>

@@ -1,4 +1,4 @@
-#include <BlackBox/ConsoleCommands.hpp>
+#include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Utils.hpp>
 

@@ -15,3 +15,4 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/World/World.cpp
 )
 
+add_headers()

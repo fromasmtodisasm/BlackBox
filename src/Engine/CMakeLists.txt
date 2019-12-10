@@ -24,11 +24,6 @@ PRIVATE
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src/Engine)
-set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
-set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
-set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ###################################################
 configure_file(${BLACKBOX_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
 ###################################################

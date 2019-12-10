@@ -22,7 +22,6 @@ if(WIN32)
   endif()
 endif(WIN32)
 
-
 add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 if (BUILD_SHARED_LIBS)
@@ -37,10 +36,4 @@ install(
   RUNTIME DESTINATION bin
 )
 
-#[[
-add_custom_target(
-	run ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	)
-]]
-
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)

@@ -1,4 +1,4 @@
-#include <BlackBox/SDLWindow.hpp>
+#include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Render/IRender.hpp>
 
 #include <SDL.h>

@@ -1,4 +1,4 @@
-#include <BlackBox/SystemEventDispatcher.hpp>
+#include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <cassert>
 
 CSystemEventDispatcher::CSystemEventDispatcher()

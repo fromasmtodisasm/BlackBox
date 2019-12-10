@@ -1,7 +1,7 @@
 #pragma once
 
 #include <BlackBox/Render/ITechnique.hpp>
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/Scene/Scene.hpp>
 
 class ShadowMapping
   :

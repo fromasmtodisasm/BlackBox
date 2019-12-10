@@ -1,9 +1,9 @@
 #include <BlackBox/Common.hpp>
-#include <BlackBox/ConsoleCommands.hpp>
+#include <BlackBox/System/ConsoleCommands.hpp>
 
 #include <Game.hpp>
 #include <BlackBox/Utils.hpp>
-#include <BlackBox/World.hpp>
+#include <BlackBox/World/World.hpp>
 #include <BlackBox/IScene.hpp>
 //#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>

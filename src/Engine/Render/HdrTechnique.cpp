@@ -1,7 +1,7 @@
 #include <BlackBox/Render/HdrTechnique.hpp>
 #include <BlackBox/Render/ShadowMapTechnique.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/IScene.hpp>
 #include <BlackBox/Render/SkyBox.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>

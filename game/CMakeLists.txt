@@ -59,4 +59,4 @@ source_group(
   ${INCLUDE_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Game")
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")

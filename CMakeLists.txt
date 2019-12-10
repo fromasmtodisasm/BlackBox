@@ -11,6 +11,13 @@ project(BlackBox)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BLACKBOX_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src/Engine)
+set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
+set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
+set(BLACKBOX_INCLUDE_DIRS ${INCLUDE_DIRECTORIES}/BlackBox)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 ###################################################
 if (UNIX OR CYGWIN)
 	set(UNIX_OR_CYGWIN ON)
@@ -43,6 +50,8 @@ set(
 )
 
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+###################################################
+include(Tools/CMake/CommonMacros.cmake)
 ###################################################
 include(Tools/CMake/Build.cmake)
 ###################################################

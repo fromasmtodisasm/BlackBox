@@ -13,3 +13,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/Scene/Scene.cpp
 )
+
+add_headers()

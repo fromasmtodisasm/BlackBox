@@ -79,3 +79,5 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
 )
+
+add_headers()

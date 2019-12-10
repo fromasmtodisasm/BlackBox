@@ -5,7 +5,7 @@
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/IScene.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/Pipeline.hpp>

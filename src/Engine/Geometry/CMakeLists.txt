@@ -18,3 +18,5 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Primitives.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Geometry/Quad.cpp
 )
+
+add_headers()

@@ -17,3 +17,5 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Resources/ShaderManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Resources/TextureManager.cpp
 )
+
+add_headers()

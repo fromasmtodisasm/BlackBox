@@ -1,13 +1,13 @@
 #include <BlackBox/platform_impl.inl>
-#include <BlackBox/System.hpp>
+#include <BlackBox/System/System.hpp>
 #include <BlackBox/NullLog.hpp>
-#include <BlackBox/Console.hpp>
+#include <BlackBox/System/Console.hpp>
 #include <BlackBox/IGame.hpp>
 #include <BlackBox/Render/FreeTypeFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
-#include <BlackBox/SystemEventDispatcher.hpp>
+#include <BlackBox/System/SystemEventDispatcher.hpp>
 
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
@@ -15,8 +15,8 @@
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/IWindow.hpp>
-#include <BlackBox/World.hpp>
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/World/World.hpp>
+#include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Camera.hpp>
 
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>

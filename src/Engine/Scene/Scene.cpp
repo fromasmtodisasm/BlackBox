@@ -1,9 +1,9 @@
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Object.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/World.hpp>
+#include <BlackBox/World/World.hpp>
 #include <BlackBox/Render/Light.hpp>
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/Render/TextureCube.hpp>
