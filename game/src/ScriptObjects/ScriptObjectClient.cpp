@@ -13,7 +13,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <BlackBox/Common.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <Client/XClient.hpp>
 

@@ -48,7 +48,8 @@ set(
 	src
 	game
 	tests
-	#res
+	Tools/CMake
+	res
 )
 
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
