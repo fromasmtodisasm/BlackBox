@@ -1,2 +1,2 @@
-#include <BlackBox/Render/ShadowMapShader.hpp>
+#include <BlackBox/Renderer/ShadowMapShader.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>

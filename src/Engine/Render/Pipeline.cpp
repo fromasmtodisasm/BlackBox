@@ -1,9 +1,9 @@
-#include <BlackBox/Render/Pipeline.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/Render/IGeometry.hpp>
-#include <BlackBox/Render/Object.hpp>
+#include <BlackBox/Renderer/IGeometry.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 
 Pipeline* Pipeline::m_instance = nullptr;
 

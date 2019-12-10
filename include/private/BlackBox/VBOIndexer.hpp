@@ -1,9 +1,9 @@
 #ifndef VBOINDEXER_HPP
 #define VBOINDEXER_HPP
-#include <BlackBox/Render/IGeometry.hpp>
+#include <BlackBox/Renderer/IGeometry.hpp>
 #include <vector>
 #include <glm/glm.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 void indexVBO(
   std::vector<Vertex>& vb,

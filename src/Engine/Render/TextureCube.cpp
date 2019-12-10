@@ -1,6 +1,6 @@
-#include <BlackBox/Render/TextureCube.hpp>
-#include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/TextureCube.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 
 #include <vector>
 

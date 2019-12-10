@@ -1,13 +1,13 @@
 ﻿#include <Game.hpp>
 #include <GameObject.hpp>
-#include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Render/Material.hpp>
-#include <BlackBox/Render/Texture.hpp>
-#include <BlackBox/Render/Camera.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/Material.hpp>
+#include <BlackBox/Renderer/Texture.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
-#include <BlackBox/Render/TechniqueManager.hpp>
-#include <BlackBox/Render/IFont.hpp>
+#include <BlackBox/Renderer/TechniqueManager.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
 #ifdef GUI
 #include <BlackBox/GUI.hpp>
 #endif // GUI

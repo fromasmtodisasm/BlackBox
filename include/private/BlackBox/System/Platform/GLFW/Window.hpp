@@ -2,7 +2,7 @@
 #if USE_GLFW
 
 #include <BlackBox/IWindow.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 #include <GLFW/glfw3.h>
 

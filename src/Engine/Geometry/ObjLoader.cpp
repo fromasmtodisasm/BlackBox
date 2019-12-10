@@ -1,5 +1,5 @@
 #include <BlackBox/ObjLoader.hpp>
-#include <BlackBox/Render/IGeometry.hpp>
+#include <BlackBox/Renderer/IGeometry.hpp>
 #include <fstream>
 #include <cstring>
 #include <cstdio>

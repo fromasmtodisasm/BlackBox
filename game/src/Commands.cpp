@@ -6,7 +6,7 @@
 #include <BlackBox/Scene/IScene.hpp>
 //#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
-//#include <BlackBox/Render/TechniqueManager.hpp>
+//#include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Core/IMarkers.hpp>
 #include <process.h>
 

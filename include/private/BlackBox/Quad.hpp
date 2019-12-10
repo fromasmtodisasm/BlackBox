@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/Render/IGeometry.hpp>
+#include <BlackBox/Renderer/VertexBuffer.hpp>
+#include <BlackBox/Renderer/IGeometry.hpp>
 
 #include <vector>
 

@@ -11,8 +11,8 @@ set(POST_CONFIGURE_FILE ${CMAKE_BINARY_DIR}/VersionControl.cpp)
 include(${CMAKE_SOURCE_DIR}/Tools/CMake/GitWatcher.cmake)
 ##################################################
 
-target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)
+target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 

@@ -1,17 +1,17 @@
 #include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/Render/Object.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/World/World.hpp>
-#include <BlackBox/Render/Light.hpp>
-#include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Render/TextureCube.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
-#include <BlackBox/Render/Pipeline.hpp>
-#include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/Render/SkyBox.hpp>
+#include <BlackBox/Renderer/Light.hpp>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
+#include <BlackBox/Renderer/TextureCube.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 

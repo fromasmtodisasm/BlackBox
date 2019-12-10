@@ -1,11 +1,11 @@
-#include <BlackBox/Render/Object.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/ObjLoader.hpp>
-#include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/Render/Renderer.hpp>
-#include <BlackBox/Render/OpenGL/Core.hpp>
-#include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Renderer/VertexBuffer.hpp>
+#include <BlackBox/Renderer/Renderer.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Render/Material.hpp>
+#include <BlackBox/Renderer/Material.hpp>
 
 #include <fstream>
 #include <iostream>

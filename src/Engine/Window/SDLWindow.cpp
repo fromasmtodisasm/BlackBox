@@ -1,5 +1,5 @@
 #include <BlackBox/System/Platform/SDL/Window.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 
 #include <SDL.h>
 #include <memory>

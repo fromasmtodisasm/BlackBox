@@ -1,5 +1,5 @@
 #include "TechniqueManager.hpp"
-#include <BlackBox/Render/HdrTechnique.hpp>
+#include <BlackBox/Renderer/HdrTechnique.hpp>
 
 std::map<std::string, ITechnique*> TechniqueManager::techs;
 

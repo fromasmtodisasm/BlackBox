@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Render/Light.hpp>
+#include <BlackBox/Renderer/Light.hpp>
 
 #include <map>
 #include <string>

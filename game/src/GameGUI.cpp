@@ -1,8 +1,8 @@
 ﻿#ifdef GUI
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/GUI.hpp>
-#include <BlackBox/Render/Light.hpp>
-#include <BlackBox/Render/FrameBufferObject.hpp>
+#include <BlackBox/Renderer/Light.hpp>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/Console.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 

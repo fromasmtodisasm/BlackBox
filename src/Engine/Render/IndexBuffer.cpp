@@ -1,6 +1,6 @@
 #if 0
-#include <BlackBox/Render/IndexBuffer.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/IndexBuffer.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <iostream>
 
 using namespace std;

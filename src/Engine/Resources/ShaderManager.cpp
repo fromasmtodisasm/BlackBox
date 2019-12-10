@@ -1,4 +1,4 @@
-#include <BlackBox/Render/Shader.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>

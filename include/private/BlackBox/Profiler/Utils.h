@@ -3,7 +3,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 
 namespace Utils {
   void		msleep(int ms);

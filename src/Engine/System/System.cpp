@@ -3,8 +3,8 @@
 #include <BlackBox/NullLog.hpp>
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>

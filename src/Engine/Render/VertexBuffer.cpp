@@ -1,7 +1,7 @@
-#include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/Render/IGeometry.hpp>
-#include <BlackBox/Render/Renderer.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/VertexBuffer.hpp>
+#include <BlackBox/Renderer/IGeometry.hpp>
+#include <BlackBox/Renderer/Renderer.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 
 #include <glm/glm.hpp>
 #include <iostream>

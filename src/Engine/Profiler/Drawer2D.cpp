@@ -1,7 +1,7 @@
 // drawer2D.cpp
 
 #ifdef ENABLE_PROFILER
-#include <BlackBox/Render/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Utils.h>
 #include <BlackBox/Profiler/Tgaloader.h>

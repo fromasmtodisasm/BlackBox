@@ -5,12 +5,12 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Core/Utils.hpp>
-#include <BlackBox/Render/IFont.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IClipBoard.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
-#include <BlackBox/Render/Texture.hpp>
+#include <BlackBox/Renderer/Texture.hpp>
 
 #include <string>
 #include <fstream>

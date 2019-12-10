@@ -1,5 +1,5 @@
-#include <BlackBox/Render/FreeTypeFont.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <MaterialManager.hpp>
 
 void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, float color[4])

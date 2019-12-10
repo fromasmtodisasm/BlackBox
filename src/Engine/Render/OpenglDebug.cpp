@@ -1,4 +1,4 @@
-#include <BlackBox/Render/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <iostream>
 #include <vector>
 #include <sstream>

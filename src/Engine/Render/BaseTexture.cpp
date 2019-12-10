@@ -1,5 +1,5 @@
-#include <BlackBox/Render/BaseTexture.hpp>
-#include <BlackBox/Render/IRender.hpp>
+#include <BlackBox/Renderer/BaseTexture.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

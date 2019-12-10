@@ -1,8 +1,8 @@
-#include <BlackBox/Render/BaseShader.hpp>
+#include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Render/OpenGL/Debug.hpp>
-#include <BlackBox/Render/Pipeline.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
 #include <fstream>
