@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/IPostProcessor.hpp>
+#include <BlackBox/Render/IPostProcessor.hpp>
 #include <BlackBox/Render/Shader.hpp>
 #include <BlackBox/Quad.hpp>
 

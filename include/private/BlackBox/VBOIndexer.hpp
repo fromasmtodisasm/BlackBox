@@ -1,6 +1,6 @@
 #ifndef VBOINDEXER_HPP
 #define VBOINDEXER_HPP
-#include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Render/IGeometry.hpp>
 #include <vector>
 #include <glm/glm.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>

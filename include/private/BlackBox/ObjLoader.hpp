@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
-#include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Render/IGeometry.hpp>
 
 class ObjLoader
 {

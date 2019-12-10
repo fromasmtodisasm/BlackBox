@@ -29,7 +29,7 @@
 #ifndef _SCRIPTOBJECTSERVER_H_
 #define _SCRIPTOBJECTSERVER_H_
 
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 class CXServer;
 class CGame;

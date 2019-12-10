@@ -28,8 +28,8 @@
 #include <BlackBox/MathHelper.hpp>	// Vec3
 #include <BlackBox/System/ISystem.hpp>			// ISystem
 //#include <IStreamEngine.hpp>					// IStreamEngine
-#include <BlackBox/IGame.hpp>					// IGame
-#include <BlackBox/INetwork.hpp>								// INetwork
+#include <BlackBox/Core/IGame.hpp>					// IGame
+#include <BlackBox/Network/INetwork.hpp>								// INetwork
 //#include "ICompressionHelper.h"			// ICompressionHelper
 #include <BlackBox/System/ILog.hpp>					// ILOg
 

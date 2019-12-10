@@ -2,7 +2,7 @@
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Render/IGeometry.hpp>
 #include <BlackBox/Object.hpp>
 
 Pipeline* Pipeline::m_instance = nullptr;

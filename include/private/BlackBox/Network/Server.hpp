@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/INetwork.hpp>
+#include <BlackBox/Network/INetwork.hpp>
 
 class CNetworkServer : public IServer
 {

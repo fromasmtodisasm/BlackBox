@@ -3,7 +3,7 @@
 #include <BlackBox/Render/ITechnique.hpp>
 #include <BlackBox/Render/IRender.hpp>
 #include <BlackBox/Render/ScreenShader.hpp>
-#include <BlackBox/IPostProcessor.hpp>
+#include <BlackBox/Render/IPostProcessor.hpp>
 #include <BlackBox/Quad.hpp>
 #include <vector>
 

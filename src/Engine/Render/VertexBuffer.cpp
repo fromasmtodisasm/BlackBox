@@ -1,5 +1,5 @@
 #include <BlackBox/Render/VertexBuffer.hpp>
-#include <BlackBox/IGeometry.hpp>
+#include <BlackBox/Render/IGeometry.hpp>
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/OpenGL/Debug.hpp>
 

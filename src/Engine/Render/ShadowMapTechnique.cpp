@@ -2,10 +2,10 @@
 #include <BlackBox/Render/FrameBufferObject.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Render/IRender.hpp>
-#include <BlackBox/IGame.hpp>
+#include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 
-#include <BlackBox/IScene.hpp>
+#include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/MathHelper.hpp>
 #include <BlackBox/Camera.hpp>
 #include <BlackBox/Render/Pipeline.hpp>

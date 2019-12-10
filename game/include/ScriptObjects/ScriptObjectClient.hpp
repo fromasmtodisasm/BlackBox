@@ -28,7 +28,7 @@
 #ifndef _SCRIPTOBJECTCLIENT_H_
 #define _SCRIPTOBJECTCLIENT_H_
 
-#include <BlackBox/IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 class CXClient;
 class CGame;

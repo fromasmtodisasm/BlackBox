@@ -4,7 +4,7 @@
 #include <BlackBox/Render/Renderer.hpp>
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Render/Pipeline.hpp>
-#include <BlackBox/IGame.hpp>
+#include <BlackBox/Core/IGame.hpp>
 
 #include <fstream>
 #include <iostream>

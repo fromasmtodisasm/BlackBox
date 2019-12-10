@@ -3,7 +3,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/IGame.hpp>
+#include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Utils.hpp>
 #include <BlackBox/Render/IFont.hpp>
 #include <BlackBox/Render/IRender.hpp>
