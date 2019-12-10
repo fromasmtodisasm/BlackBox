@@ -1,0 +1,16 @@
+
+if (OPTION_ENGINE)
+	if (NOT ANDROID)
+		set(OPTION_LAUNCHER_EXECUTABLE "GameLauncher" CACHE STRING "Base file name for the game executable (without file extension)")
+	endif()
+	if (ANDROID)
+		add_subdirectory("src/Launcher/AndroidLauncher")
+	elseif (LINUX)
+		add_subdirectory("src/Launcher/LinuxLauncher")
+	elseif (WIN32)
+		#add_subdirectory("src/Launcher/DedicatedLauncher")
+		add_subdirectory("src/Launcher/WindowsLauncher")
+	endif ()
+endif()
+
+set_property(TARGET Launcher PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

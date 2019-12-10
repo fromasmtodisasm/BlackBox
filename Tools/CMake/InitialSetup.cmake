@@ -53,7 +53,6 @@ set(
 	SUBPROJECTS
 	src
 	game
-	tests
 	#Tools/CMake
 	res
 )

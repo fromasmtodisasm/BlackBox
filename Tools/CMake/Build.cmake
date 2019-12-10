@@ -20,3 +20,5 @@ if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	#add_subdirectories_glob("Code/Game*")
 endif()
 	
+# 5. Launchers
+include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")

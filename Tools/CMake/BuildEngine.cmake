@@ -16,6 +16,3 @@ foreach(PROJ ${SUBPROJECTS})
 			"The project ${PROJ} will NOT be included")
 	endif()
 endforeach()
-
-set_property(DIRECTORY tests PROPERTY VS_STARTUP_PROJECT Launcher)
-set_property(TARGET Launcher PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
