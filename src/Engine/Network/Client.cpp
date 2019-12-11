@@ -1,6 +1,6 @@
-#include <BlackBox/Common.hpp>
 #include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/IPAddress.hpp>
+
 #include <SDL2/SDL_net.h>
 
 CNetworkClient::CNetworkClient()

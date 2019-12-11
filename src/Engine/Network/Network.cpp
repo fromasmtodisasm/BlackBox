@@ -1,6 +1,7 @@
 #include <BlackBox/Network/Network.hpp>
 #include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/Server.hpp>
+
 #include <SDL2/SDL_net.h>
 
 CNetwork::CNetwork(ISystem* pSystem)
