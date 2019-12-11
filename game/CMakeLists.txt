@@ -11,27 +11,28 @@ set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox::Common)
 target_include_directories(${PROJECT_NAME}
-	PRIVATE "include/"
+	PRIVATE "${INCLUDE_ROOT}"
+	PRIVATE "${INCLUDE_ROOT}/GameFiles"
 )
 
 target_sources(
   ${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Commands.cpp
-  PRIVATE ${SOURCE_DIR}/Game.cpp
-  PRIVATE ${SOURCE_DIR}/GameActionInput.cpp
-  PRIVATE ${SOURCE_DIR}/GameClientServer.cpp
-  PRIVATE ${SOURCE_DIR}/GameDevMode.cpp
-  PRIVATE ${SOURCE_DIR}/GameGUI.cpp
-  PRIVATE ${SOURCE_DIR}/GameObject.cpp
-  PRIVATE ${SOURCE_DIR}/GameTagPoints.cpp
-  PRIVATE ${SOURCE_DIR}/Player.cpp
   PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
+  PRIVATE ${SOURCE_DIR}/Commands.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/Game.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameActionInput.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameClientServer.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameDevMode.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
+  PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
+  PRIVATE ${SOURCE_DIR}/Player.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
-  PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServer.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectGame.cpp
+  PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServer.cpp
   PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
   PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
-  PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
 
   )
 
@@ -48,12 +49,12 @@ source_group(
 
 target_sources(${PROJECT_NAME}
   PRIVATE
-  ${INCLUDE_ROOT}
+  ${INCLUDE_FILES}
   )
 
 source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  PREFIX ${PROJECT_NAME}\\Inc 
+  TREE ${INCLUDE_ROOT}
+  PREFIX "Header Files" 
   FILES
   ${INCLUDE_FILES}
 )

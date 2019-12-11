@@ -975,3 +975,122 @@ void CGame::gotoFullscreen()
 {
   isFullScreen = !isFullScreen;
 }
+
+
+bool CGame::InitScripts()
+{
+  m_pScriptObjectGame = new CScriptObjectGame();
+  m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
+
+#if 0
+  m_pScriptClient = new CScriptObjectClient();
+  m_pScriptClient->InitializeTemplate(m_pScriptSystem);
+
+  m_pScriptServer = new CScriptObjectServer();
+  m_pScriptServer->InitializeTemplate(m_pScriptSystem);
+#endif
+
+  m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
+#if 0
+  m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
+  m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
+#endif
+
+  m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
+
+  fps = 35.f;
+  m_pScriptSystem->ExecuteFile("scripts/game.lua");
+  class toogle_viewport_drag : public IConsoleCommand
+  {
+    CGame* game;
+  public:
+    toogle_viewport_drag(CGame* game) : game(game) {}
+    bool execute(CommandDesc& cd)
+    {
+      game->can_drag_vp = !game->can_drag_vp;
+      return true;
+    }
+  };
+
+  m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
+
+  m_pScriptSystem->ExecuteFile("scripts/utils.lua");
+
+  bool retflag;
+  bool retval = TestScriptSystem(retflag);
+  if (retflag) return retval;
+  return true;
+}
+
+bool CGame::TestScriptSystem(bool& retflag)
+{
+  retflag = true;
+  m_playerObject = m_pScriptSystem->CreateEmptyObject();
+  if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
+  {
+    delete m_playerObject;
+    m_pSystem->Log("\002 ERROR: can't find player table ");
+    return false;
+  }
+  const char* name;
+  int age;
+  m_playerObject->GetValue("name", name);
+  m_playerObject->GetValue("age", age);
+  m_Console->PrintLine("Player name: %s", name);
+  m_Console->PrintLine("Player age: %d", age);
+
+  m_Console->AddCommand(
+    "enumd",
+    R"(
+		local formats = System:EnumDisplayFormats()
+		for i=1, #formats do
+			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+		end
+		Console:PrintLine(%2)
+		Console:PrintLine(%1)
+		)",
+    0,
+    "Enum Display formats"
+  );
+
+#if 0
+  HSCRIPTFUNCTION psina;
+  m_playerObject->GetValue("TestChanges", psina);
+
+  m_playerObject->SetValue("name", "Psina");
+  //m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+  IScriptObject* console = nullptr;
+  m_pScriptSystem->BeginCall("Console", "PrintLine");
+  m_pScriptSystem->PushFuncParam(m_ScriptObjectConsole->GetScriptObject());
+  m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
+  m_pScriptSystem->EndCall(console);
+
+  m_pScriptSystem->BeginCall("player", "TestChanges");
+  m_pScriptSystem->PushFuncParam(m_playerObject);
+  m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
+  m_pScriptSystem->EndCall(console);
+
+  m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
+  m_pScriptSystem->PushFuncParam(m_playerObject);
+  m_pScriptSystem->PushFuncParam("Test lkjakldfj call!!!");
+  m_pScriptSystem->EndCall(console);
+
+  HSCRIPTFUNCTION PrintLine = 0;
+  console->GetValue("PrintLine", PrintLine);
+  m_pScriptSystem->BeginCall(PrintLine);
+  m_pScriptSystem->PushFuncParam(console);
+  m_pScriptSystem->PushFuncParam("=====================Test HSCRIPTFUNCTION call!!!");
+  m_pScriptSystem->EndCall();
+
+  int n;
+  m_pScriptSystem->BeginCall(console, "PrintLine");
+  m_pScriptSystem->PushFuncParam(console);
+  m_pScriptSystem->PushFuncParam("Call by table reference");
+  m_pScriptSystem->EndCall(console);
+
+  m_playerObject->GetValue("name", name);
+  m_Console->PrintLine("Player name: %s", name);
+#endif
+  retflag = false;
+  return {};
+}
