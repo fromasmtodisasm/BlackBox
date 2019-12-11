@@ -7,7 +7,6 @@ public:
   CFunctionHandler(CScriptSystem* pSS, lua_State* L);
   ~CFunctionHandler();
 
-  // Унаследовано через IFunctionHandler
   virtual void __Attach(HSCRIPT hScript) override;
 
   virtual THIS_PTR GetThis() override;

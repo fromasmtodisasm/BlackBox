@@ -1,9 +1,9 @@
 #pragma once
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp>
-#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/Core/Utils.hpp>
 
 #include <vector>
 #include <set>

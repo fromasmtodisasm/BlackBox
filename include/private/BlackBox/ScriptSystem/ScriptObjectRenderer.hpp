@@ -18,9 +18,10 @@
 #ifndef _SCRIPT_OBJECT_RENDERER_H_
 #define _SCRIPT_OBJECT_RENDERER_H_
 
-#include <vector>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
+
+#include <vector>
 
 struct IRenderer;
 class CVertexBuffer;
