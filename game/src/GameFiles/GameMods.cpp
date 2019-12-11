@@ -13,15 +13,17 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "GameMods.hpp"
-#include <BlackBox/System/File/ICryPak.hpp>
-#include "Game.hpp"
-
 #if defined(LINUX)
 	#include <sys/io.h>
 #else
 #	include <io.h>
 #endif
+
+#include "GameMods.hpp"
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/System/File/ICryPak.hpp>
+#include "Game.hpp"
+
 
 //////////////////////////////////////////////////////////////////////////
 CGameMods::CGameMods( CGame *pGame )

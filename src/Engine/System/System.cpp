@@ -400,6 +400,11 @@ float CSystem::GetDeltaTime()
   return static_cast<float>(m_DeltaTime);
 }
 
+ICryPak* CSystem::GetIPak()
+{
+  return nullptr;
+}
+
 INetwork* CSystem::GetINetwork()
 {
   return m_pNetwork;

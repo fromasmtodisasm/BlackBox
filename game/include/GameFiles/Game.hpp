@@ -58,6 +58,7 @@ class IScene;
 class SceneManager;
 class CTagPoint;
 class ILog;
+class CGameMods;
 
 class CXClient;
 class CXServer;

@@ -49,6 +49,7 @@ public:
   virtual IScriptSystem* GetIScriptSystem() override;
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
   virtual INetwork* GetINetwork() override;
+  virtual ICryPak* GetIPak() override;
 
   virtual IGame* CreateGame(IGame* game) override;
 
@@ -110,4 +111,5 @@ private:
   double m_DeltaTime = 0.0;
 
   virtual float GetDeltaTime() override;
+
 };

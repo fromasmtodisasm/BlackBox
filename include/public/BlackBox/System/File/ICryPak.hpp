@@ -16,11 +16,12 @@
 #ifndef _ICRY_PAK_HDR_
 #define _ICRY_PAK_HDR_
 
-#include <smartptr.h>
+#include <BlackBox/Utils/smartptr.hpp>
 #ifdef LINUX
 	#include <winbase.h>
 	#include <stdint.h>
 #endif
+#include <cstdio>
 
 ////////////////////////////////////////////////////////////////////////////
 // this represents one particular archive filter
