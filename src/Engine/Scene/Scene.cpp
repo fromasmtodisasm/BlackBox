@@ -1,10 +1,11 @@
 #include <BlackBox/Scene/Scene.hpp>
+#include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/Renderer/IPostProcessor.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/World/World.hpp>
-#include <BlackBox/Renderer/Light.hpp>
 #include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/Renderer/TextureCube.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
@@ -13,6 +14,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 
 #include <tinyxml2.h>

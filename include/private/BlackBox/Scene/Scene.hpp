@@ -2,28 +2,27 @@
 #define SCENE_H
 
 #include <BlackBox/Scene/IScene.hpp>
-#include <tinyxml2.h>
-#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/Light.hpp>
 #include <BlackBox/Quad.hpp>
-#include <BlackBox/Renderer/ScreenShader.hpp>
-#include <BlackBox/Renderer/ITechnique.hpp>
-#include <BlackBox/Renderer/IPostProcessor.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Renderer/Terrain.hpp>
 #include <BlackBox/Renderer/BaseShader.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
+
+#include <tinyxml2.h>
 
 #include <map>
 #include <string>
 
+
 class World;
 class CCamera;
 class Object;
+class Transform;
+class ObjectManager;
 class FrameBufferObject;
 class Scene;
 class SkyBox;
+class Material;
+struct IPostProcessor;
 
 extern Scene* defaultScene;
 
