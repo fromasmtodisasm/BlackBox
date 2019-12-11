@@ -1,13 +1,12 @@
-#include <BlackBox/System/ConsoleCommands.hpp>
-
 #include <Game.hpp>
-#include <BlackBox/Core/Utils.hpp>
-#include <BlackBox/World/IWorld.hpp>
-#include <BlackBox/Scene/IScene.hpp>
-//#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
-//#include <BlackBox/Renderer/TechniqueManager.hpp>
+
 #include <BlackBox/Core/IMarkers.hpp>
+#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/System/ConsoleCommands.hpp>
+#include <BlackBox/World/IWorld.hpp>
+
 #include <process.h>
 
 bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)

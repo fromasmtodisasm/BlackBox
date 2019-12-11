@@ -25,7 +25,6 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/GameTagPoints.cpp
   PRIVATE ${SOURCE_DIR}/Player.cpp
-  PRIVATE ${SOURCE_DIR}/PlayerCommands.cpp
   PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServer.cpp

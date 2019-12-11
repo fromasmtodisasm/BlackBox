@@ -1,13 +1,13 @@
-#include <iostream>
-
 #include <Player.h>
-#include <BlackBox/Scene/IScene.hpp>
-#include <BlackBox/Core/Primitives.hpp>
 #include <Game.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
-//#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
+
+#include <BlackBox/Core/Primitives.hpp>
 #include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+
+#include <iostream>
 
 CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game)), impulse(0.0f, 3.0f, 0.0f)
 {

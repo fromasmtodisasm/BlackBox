@@ -1,9 +1,10 @@
 #include <Game.hpp>
+#include <Server/XServer.hpp>
+#include <ScriptObjects/ScriptObjectGame.hpp>
+
 #include <BlackBox/Core/IMarkers.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <Server/XServer.hpp>
 
-#include <ScriptObjects/ScriptObjectGame.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

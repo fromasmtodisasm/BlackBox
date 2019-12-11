@@ -1,7 +1,8 @@
 #include <Game.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <Client/XClient.hpp>
 #include <Server/XServer.hpp>
+
+#include <BlackBox/System/IConsole.hpp>
 
 //////////////////////////////////////////////////////////////////////
 //! create the server

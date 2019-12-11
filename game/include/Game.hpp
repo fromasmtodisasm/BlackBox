@@ -30,15 +30,10 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 //#include "BitStream_Base.h"						// CBitStream_Base
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
 
-
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/World/IWorld.hpp>
-//#include <BlackBox/CameraController.hpp>
-//#include <BlackBox/MusicList.hpp>
-#include <BlackBox/System/ILog.hpp>
-//#include <BlackBox/Renderer/PostProcessor.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>
 
@@ -48,13 +43,12 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <ScriptObjects/ScriptObjectGame.hpp>
 #include "Player.h"
 
-
-
 #include <map>
 #include <string>
 #include <vector>
 #include <memory>
 #include <stack>
+
 //forward declarations
 //////////////////////////////////////////////////////////////////////
 using string = std::string;
@@ -63,6 +57,7 @@ class GameGUI;
 class IScene;
 class SceneManager;
 class CTagPoint;
+class ILog;
 
 class CXClient;
 class CXServer;
