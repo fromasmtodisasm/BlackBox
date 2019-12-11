@@ -70,7 +70,10 @@ ${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME}
+  PRIVATE ${SOURCE_DIR}/Engine/Input/ActionMap.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/ActionMapManager.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/BaseInput.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Input/InputActionMap.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/InputCVars.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/InputDevice.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp

@@ -1094,3 +1094,40 @@ bool CGame::TestScriptSystem(bool& retflag)
   retflag = false;
   return {};
 }
+
+void CGame::SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile)
+{
+}
+
+void CGame::ReloadScripts()
+{
+}
+
+bool CGame::GetModuleState(EGameCapability eCap)
+{
+  return false;
+}
+
+void CGame::UpdateDuringLoading()
+{
+}
+
+IXAreaMgr* CGame::GetAreaManager()
+{
+  return nullptr;
+}
+
+ITagPointManager* CGame::GetTagPointManager()
+{
+  return nullptr;
+}
+
+Object* CGame::OnLoad(Object* object, std::string type)
+{
+  if (type == "player")
+    return new CPlayer(object);
+  else if (type == "gameobject")
+    return new GameObject(object);
+  else return object;
+}
+
