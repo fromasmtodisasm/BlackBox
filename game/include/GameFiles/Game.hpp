@@ -114,6 +114,10 @@ public:
   CGame(std::string title);
   CGame() = default;
   ~CGame() = default;
+
+	const char *IsMODLoaded();
+	IGameMods* GetModsInterface();
+
   bool Init(ISystem *pSystem) override;
   bool Update() override;
 	void ExecScripts();
@@ -154,6 +158,10 @@ public:
 		m_qMessages.push(str);
 	}
 	virtual void Release() override;
+
+	bool	OpenPacks(const char *szFolder);
+	bool	ClosePacks(const char *szFolder);
+
 private:
 
   bool initPlayer();
@@ -353,6 +361,7 @@ public:
   TagPointMap													m_mapTagPoints;					//!< Map of tag points by name
 	CScriptObjectGame*									m_pScriptObjectGame;
 	IScriptObject*											m_playerObject;
+	CGameMods *							m_pGameMods;								//!< might be 0 (before game init)
 
 	// other
 	bool canDragViewPortWidth = false;

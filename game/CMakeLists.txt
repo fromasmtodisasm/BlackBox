@@ -23,6 +23,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/GameFiles/GameActionInput.cpp
   PRIVATE ${SOURCE_DIR}/GameFiles/GameClientServer.cpp
   PRIVATE ${SOURCE_DIR}/GameFiles/GameDevMode.cpp
+  PRIVATE ${SOURCE_DIR}/GameFiles/GameMods.cpp
   PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
   PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
   PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp

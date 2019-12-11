@@ -18,6 +18,11 @@ struct IValidator;
 struct ITimer;
 struct INetwork;
 struct IWorld;
+struct ICryPak;
+
+//////////////////////////////////////////////////////////////////////////
+#define DEFAULT_GAME_PATH	"FarCry"
+#define DATA_FOLDER "FCData"
 
 //! System wide events.
 enum ESystemEvent
@@ -155,6 +160,7 @@ struct ISystem
   virtual INetwork* GetINetwork() = 0;
   virtual IWindow* GetIWindow() = 0;
   virtual IWorld* GetIWorld() = 0;
+  virtual ICryPak* GetIPak() = 0;
 #if 0
   virtual IInputHandler* GetIInputHandler() = 0;
 #endif
