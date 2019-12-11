@@ -4,7 +4,7 @@
 #include <BlackBox/Input/InputDevice.hpp>
 #include <BlackBox/Input/InputCVars.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Utils.hpp>
 
 bool compareInputListener(const IInputEventListener* pListenerA, const IInputEventListener* pListenerB)

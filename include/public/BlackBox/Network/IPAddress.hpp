@@ -20,7 +20,7 @@
 #endif // _MSC_VER > 1000
 #include <BlackBox/Core/Stream.hpp>
 
-#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 #ifdef LINUX
 #include <sys/types.h>

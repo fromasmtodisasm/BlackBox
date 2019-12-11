@@ -4,7 +4,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/ScreenShader.hpp>
 #include <BlackBox/Renderer/IPostProcessor.hpp>
-#include <BlackBox/Quad.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 #include <vector>
 
 class FrameBufferObject;

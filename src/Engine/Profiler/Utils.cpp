@@ -1,7 +1,7 @@
 // utils.cpp
 
 #ifdef ENABLE_PROFILER
-#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Profiler/Utils.h>
 #include <iostream>
 #include <fstream>

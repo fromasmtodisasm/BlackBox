@@ -1,6 +1,6 @@
 #pragma once
 #include "Exports.hpp"
-#include <BlackBox/Core/Platform.hpp> 
+#include <BlackBox/Core/Platform/Platform.hpp> 
 #include <cstdarg>
 
 struct ISystem;

@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Renderer/IPostProcessor.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
-#include <BlackBox/Quad.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 
 class PostProcessor : public IPostProcessor
 {

@@ -1,4 +1,4 @@
-#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #define DS "\\" //dir separator

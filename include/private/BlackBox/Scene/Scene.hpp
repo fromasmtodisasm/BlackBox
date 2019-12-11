@@ -3,7 +3,7 @@
 
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Renderer/Light.hpp>
-#include <BlackBox/Quad.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/Terrain.hpp>
 #include <BlackBox/Renderer/BaseShader.hpp>
 

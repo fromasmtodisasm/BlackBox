@@ -1,9 +1,9 @@
-#include <BlackBox/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/System.hpp>
 
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Network/INetwork.hpp>
-#include <BlackBox/NullLog.hpp>
+#include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>

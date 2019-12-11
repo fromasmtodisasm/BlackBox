@@ -1,4 +1,3 @@
-#include <BlackBox/Common.hpp>
 #include <BlackBox/System/CmdLine.hpp>
 #include <cstring>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Core/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 int64_t  bbGetTicks()
 {

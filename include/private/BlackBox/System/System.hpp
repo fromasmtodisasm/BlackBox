@@ -5,8 +5,8 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/CmdLine.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Timer.hpp>
-#include <BlackBox/Window.hpp>
+#include <BlackBox/System/Timer.hpp>
+#include <BlackBox/System/Window.hpp>
 
 #define DEFAULT_APP_NAME "BlackBox"
 

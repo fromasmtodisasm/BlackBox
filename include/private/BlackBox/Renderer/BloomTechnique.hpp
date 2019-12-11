@@ -3,7 +3,7 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Renderer/ScreenShader.hpp>
 #include <BlackBox/IPostProcessor.hpp>
-#include <BlackBox/Quad.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 
 class FrameBufferObject;
 struct ICVar;

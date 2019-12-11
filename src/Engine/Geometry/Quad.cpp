@@ -1,4 +1,4 @@
-﻿#include <BlackBox/Quad.hpp>
+﻿#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
 

@@ -1,5 +1,5 @@
 #include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/ObjLoader.hpp>
+#include <BlackBox/Geometry/ObjLoader.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/Renderer.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
@@ -12,8 +12,6 @@
 #include <cctype>
 #include <cstdio>
 #include <sstream>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
 int Object::refs = 0;
