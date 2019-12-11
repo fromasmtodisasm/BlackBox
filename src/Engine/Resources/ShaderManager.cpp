@@ -1,8 +1,8 @@
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 ShaderManager* ShaderManager::manager = nullptr;
 static _smart_ptr<CShaderProgram> defaultProgram = nullptr;

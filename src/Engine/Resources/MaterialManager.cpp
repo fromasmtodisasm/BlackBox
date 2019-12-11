@@ -1,10 +1,9 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/TextureManager.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Renderer/ReflectShader.hpp>
-#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <glm/glm.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #include <tinyxml2.h>
 #ifndef XMLCheckResult

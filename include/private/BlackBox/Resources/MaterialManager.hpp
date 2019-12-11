@@ -1,10 +1,9 @@
 #pragma once
 
 #include <BlackBox/Renderer/Material.hpp>
-#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Renderer/ShaderUtils.hpp>
+#include <BlackBox/System/ILog.hpp>
 
 #include <map>
 #include <string>

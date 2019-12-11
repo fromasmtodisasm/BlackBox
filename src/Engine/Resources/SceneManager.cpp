@@ -1,9 +1,10 @@
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #include <iostream>
 using	namespace std;
