@@ -489,6 +489,86 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
 #endif
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Bind a key to a action in a specified actionmap.
+void CGame::BindAction(const char *sAction,const char *sKeys,const char *sActionMap, int iKeyPos)
+{
+	ActionsEnumMapItor itor;
+	// find action
+	itor=m_mapActionsEnum.find(sAction);
+	if(itor==m_mapActionsEnum.end())
+		return;
+	IActionMap *pMap=NULL;
+	// if no actionmap specified we use the default one
+	if(!sActionMap)
+		pMap=m_pIActionMapManager->GetActionMap("default");
+	else
+		pMap=m_pIActionMapManager->GetActionMap(sActionMap);
+	// bind
+	pMap->BindAction(itor->second.nId,sKeys, 0, iKeyPos);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Binds a key (or other input) to a certain action (eg. JUMP) in all action-maps associated with this action
+void CGame::BindActionMultipleMaps(const char *sAction,const char *sKeys, int iKeyPos)
+{
+	XBind Bind;
+	//Bind.nKey=m_pSystem->GetIInput()->GetKeyID(sKeys);
+	Bind.nKey=m_pSystem->GetIInput()->GetSymbolByName(sKeys)->keyId;
+	// find action
+	ActionsEnumMapItor It=m_mapActionsEnum.find(sAction);
+	if (It!=m_mapActionsEnum.end())
+	{
+		ActionInfo &Info=It->second;
+		for (Vec2StrIt Itor=Info.vecSetToActionMap.begin();Itor!=Info.vecSetToActionMap.end();++Itor)
+		{
+			for (ActionsEnumMapItor RemIt=m_mapActionsEnum.begin();RemIt!=m_mapActionsEnum.end();++RemIt)
+			{
+				if (RemIt->second.nId!=Info.nId)
+				{
+					for (Vec2StrIt RemItor=RemIt->second.vecSetToActionMap.begin();RemItor!=RemIt->second.vecSetToActionMap.end();++RemItor)
+					{
+						if (strcmp((*RemItor).c_str(), (*Itor).c_str())==0)
+						{
+							for (Vec2StrIt RemItor=RemIt->second.vecSetToActionMap.begin();RemItor!=RemIt->second.vecSetToActionMap.end();++RemItor)
+							{
+								IActionMap *pMap=m_pIActionMapManager->GetActionMap((*RemItor).c_str());
+								if (pMap)
+									pMap->RemoveBind(RemIt->second.nId, Bind, RemIt->second.ActivationMode);
+							}
+							goto NextAction;
+						}
+					}
+				}
+NextAction:; 
+			}
+			BindAction(sAction, sKeys, (*Itor).c_str(), iKeyPos);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+// Check if a action is triggered.
+bool CGame::CheckForAction(const char *sAction)
+{
+	ActionsEnumMapItor itor;
+	// find action
+	itor=m_mapActionsEnum.find(sAction);
+	if(itor==m_mapActionsEnum.end())
+		return false;
+	// triggered ?
+	if(m_pIActionMapManager->CheckActionMap(itor->second.nId))
+		return true;
+	return false;
+} 
+
+//////////////////////////////////////////////////////////////////////
+// Clears a action-flag (untrigger)
+void CGame::ClearAction(const char *sAction)//<<FIXME>> remove
+{
+
+}
+
 void CGame::SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile)
 {
 }

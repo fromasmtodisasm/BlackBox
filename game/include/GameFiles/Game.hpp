@@ -226,6 +226,10 @@ public:
 	void OnNETServerTimeout(const CIPAddress& ip);
 	void RefreshServerList();
 	//////////////////////////////////////////////////////////////////////////
+	void BindAction(const char *sAction,const char *sKeys,const char *sActionMap=NULL, int iKeyPos = -1);
+	void BindActionMultipleMaps(const char *sAction,const char *sKeys, int iKeyPos = -1);
+	bool CheckForAction(const char *sAction);
+	void ClearAction(const char *sAction);
 protected:
 	void SetConfigToActionMap(const char* pszActionName, ...);
 	//bool LoadMaterials(string sFolder);

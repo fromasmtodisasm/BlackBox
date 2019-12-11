@@ -30,6 +30,7 @@ target_sources(
   PRIVATE ${SOURCE_DIR}/Player.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectGame.cpp
+  PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectInput.cpp
   PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServer.cpp
   PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
   PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
