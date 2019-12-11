@@ -1,37 +1,31 @@
 #include <BlackBox/platform_impl.inl>
 #include <BlackBox/System/System.hpp>
-#include <BlackBox/NullLog.hpp>
-#include <BlackBox/System/Console.hpp>
+
 #include <BlackBox/Core/IGame.hpp>
+#include <BlackBox/Network/INetwork.hpp>
+#include <BlackBox/NullLog.hpp>
+#include <BlackBox/Profiler/Drawer2D.h>
+#include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
-#include <BlackBox/System/SystemEventDispatcher.hpp>
-
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
-#include <BlackBox/System/IWindow.hpp>
-#include <BlackBox/World/World.hpp>
 #include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/Renderer/Camera.hpp>
-
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
-//
-#include <BlackBox/Profiler/Profiler.h>
-//#include <BlackBox/Profiler/HP_Timer.h>
-#include <BlackBox/Profiler/Drawer2D.h>
-
-/////////////////////////////////////////////////////////
-#include <BlackBox/Network/INetwork.hpp>
-/////////////////////////////////////////////////////////
+#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
+#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
+#include <BlackBox/System/Console.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/IWindow.hpp>
+#include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
-/////////////////////////////////////////////////////////
+#include <BlackBox/World/World.hpp>
+//#include <BlackBox/Profiler/HP_Timer.h>
 #include <SDL2/SDL.h>
 
 #include <cstdlib>

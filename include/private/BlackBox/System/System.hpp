@@ -1,12 +1,12 @@
 #pragma once
 
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Window.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/CmdLine.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Timer.hpp>
+#include <BlackBox/Window.hpp>
 
 #define DEFAULT_APP_NAME "BlackBox"
 
@@ -48,6 +48,7 @@ public:
   virtual IWorld* GetIWorld() override;
   virtual IScriptSystem* GetIScriptSystem() override;
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
+  virtual INetwork* GetINetwork() override;
 
   virtual IGame* CreateGame(IGame* game) override;
 
@@ -108,9 +109,5 @@ private:
   uint64_t LAST;
   double m_DeltaTime = 0.0;
 
-  // Inherited via ISystem
   virtual float GetDeltaTime() override;
-
-  // Унаследовано через ISystem
-  virtual INetwork* GetINetwork() override;
 };
