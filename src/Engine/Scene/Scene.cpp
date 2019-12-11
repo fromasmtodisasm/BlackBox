@@ -1,25 +1,25 @@
 #include <BlackBox/Scene/Scene.hpp>
+#include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/IPostProcessor.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/Renderer/IPostProcessor.hpp>
-#include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/World/World.hpp>
-#include <BlackBox/Renderer/FrameBufferObject.hpp>
-#include <BlackBox/Renderer/TextureCube.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Renderer/FreeTypeFont.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/SkyBox.hpp>
-#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Renderer/TextureCube.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/ObjectManager.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/World/World.hpp>
 
 #include <tinyxml2.h>
-#include <sstream>
 
+#include <sstream>
 #include <algorithm>
 
 using namespace tinyxml2;
@@ -263,7 +263,7 @@ void Scene::loadLight(tinyxml2::XMLElement* light)
   }
 }
 
-glm::vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
+Vec3 Scene::loadColorAttribute(tinyxml2::XMLElement* element)
 {
   glm::vec3 color;
   if (element == nullptr)
@@ -644,7 +644,7 @@ Transform Scene::loadTransform(XMLElement& object)
   return result;
 }
 
-glm::vec3 Scene::loadVec3(tinyxml2::XMLElement& element, const char* name)
+Vec3 Scene::loadVec3(tinyxml2::XMLElement& element, const char* name)
 {
   glm::vec3 result;
 
