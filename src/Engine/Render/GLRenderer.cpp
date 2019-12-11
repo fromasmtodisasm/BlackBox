@@ -1,11 +1,11 @@
-#include <BlackBox/Renderer/Render.hpp>
 #include <BlackBox/Renderer/BaseShader.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
-#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/Render.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION

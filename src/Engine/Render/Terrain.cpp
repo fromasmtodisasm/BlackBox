@@ -1,7 +1,8 @@
 #include <BlackBox/Renderer/Terrain.hpp>
-#include <BlackBox/Renderer/VertexBuffer.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/VertexBuffer.hpp>
+
 #include <stb_image.h>
 
 Terrain::Terrain() : img(std::make_unique<Image>())

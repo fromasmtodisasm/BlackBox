@@ -1,6 +1,6 @@
 #include <BlackBox/Renderer/Texture.hpp>
-#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #ifdef ALPHA_DIST
 #include <BlackBox/Utils/AlphaDistribution.h>
 #endif

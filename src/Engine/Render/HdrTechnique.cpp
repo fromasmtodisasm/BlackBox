@@ -1,12 +1,12 @@
-#include <BlackBox/Renderer/HdrTechnique.hpp>
-#include <BlackBox/Renderer/ShadowMapTechnique.hpp>
-#include <BlackBox/Renderer/FrameBufferObject.hpp>
-#include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/Scene/IScene.hpp>
-#include <BlackBox/Renderer/SkyBox.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Profiler/Profiler.h>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
+#include <BlackBox/Renderer/HdrTechnique.hpp>
+#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/Renderer/ShadowMapTechnique.hpp>
+#include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
 #define NBLOOM

@@ -1,14 +1,13 @@
 #include <BlackBox/Renderer/ShadowMapTechnique.hpp>
-#include <BlackBox/Renderer/FrameBufferObject.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-
-#include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
+#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 ShadowMapping::ShadowMapping() : m_Scene(nullptr), m_DepthBuffer(nullptr)
 {
