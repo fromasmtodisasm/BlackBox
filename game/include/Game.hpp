@@ -154,7 +154,6 @@ public:
 		m_qMessages.push(str);
 	}
 	virtual void Release() override;
-	IWindow* getWindow();
 private:
 
   bool initPlayer();
@@ -175,7 +174,6 @@ private:
   // IGame interface
 public:
 
-  // Унаследовано через IPostRenderCallback
   virtual void PostRender() override;
   IWorld *getWorld() const;
 
@@ -183,9 +181,7 @@ public:
 	void initCommands();
 	void initVariables();
 
-	// Inherited via IPreRenderCallback
 	virtual void PreRender() override;
-
   // tagpoint management functions
   ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
   ITagPoint* GetTagPoint(const string& name);
@@ -251,7 +247,6 @@ public:
   IScriptSystem *								m_pScriptSystem;
   IRenderer *										m_pRender;
 	IInput *											m_pInput;
-  IWindow *											m_Window;
   IInputHandler *								m_inputHandler;
   IWorld *											m_World;
   CPlayer *											m_player = nullptr;

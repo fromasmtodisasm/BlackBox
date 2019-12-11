@@ -76,7 +76,6 @@ CGame::CGame(std::string title) :
   m_Font(nullptr),
   m_pLog(nullptr),
   //m_ScreenShader(nullptr),
-  m_Window(nullptr),
   m_inputHandler(nullptr),
   m_player(nullptr),
   m_pSystem(nullptr),
@@ -116,7 +115,6 @@ bool CGame::Init(ISystem* pEngine) {
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_pLog = m_pSystem->GetILog();
   m_Console = m_pSystem->GetIConsole();
-  m_Window = m_pSystem->GetIWindow();
   m_pInput->AddEventListener(this);
   m_pNetwork = m_pSystem->GetINetwork();
   m_World = m_pSystem->GetIWorld();
@@ -580,11 +578,6 @@ void CGame::gotoEdit()
 
 void CGame::showMenu()
 {
-}
-
-IWindow* CGame::getWindow()
-{
-  return m_Window;
 }
 
 bool CGame::initPlayer()
