@@ -74,12 +74,14 @@ private:
   void ParseCMD();
   void LoadScreen();
   bool InitScripts();
+	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
 private:
   CTimer									m_Time;                  //!<
 
   ILog* m_pLog;
   CConsole* m_pConsole;
   IInput* m_pInput;
+  ICryPak* m_pCryPak;
   IGame* m_pGame;
   IFont* m_pFont;
   IWindow* m_pWindow;

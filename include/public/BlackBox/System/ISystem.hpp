@@ -21,8 +21,8 @@ struct IWorld;
 struct ICryPak;
 
 //////////////////////////////////////////////////////////////////////////
-#define DEFAULT_GAME_PATH	"FarCry"
-#define DATA_FOLDER "FCData"
+#define DEFAULT_GAME_PATH	"TestGame"
+#define DATA_FOLDER "res"
 
 //! System wide events.
 enum ESystemEvent

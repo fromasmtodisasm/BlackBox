@@ -3,7 +3,6 @@
 
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Network/INetwork.hpp>
-#include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>
@@ -20,8 +19,10 @@
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
+#include <BlackBox/System/File/CryPak.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/IWindow.hpp>
+#include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/World.hpp>
@@ -395,6 +396,112 @@ bool CSystem::InitScripts()
   return m_pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+bool CSystem::InitFileSystem()
+{
+	//LOADING_TIME_PROFILE_SECTION;
+  m_pCryPak = new CCryPak(m_pLog);
+
+#if 0
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing File System...");
+
+	bool bLvlRes = false;               // true: all assets since executable start are recorded, false otherwise
+
+#if !defined(_RELEASE)
+	const ICmdLineArg* pArg = m_pCmdLine->FindArg(eCLAT_Pre, "LvlRes");      // -LvlRes command line option
+
+	if (pArg)
+		bLvlRes = true;
+#endif // !defined(_RELEASE)
+
+	CCryPak* pCryPak;
+	pCryPak = new CCryPak(m_env.pLog, &g_cvars.pakVars, bLvlRes, pGameStartup);
+	pCryPak->SetGameFolderWritable(m_bGameFolderWritable);
+	m_env.pCryPak = pCryPak;
+
+	// Check if root folder is overridden by command-line
+	const ICmdLineArg* root = m_pCmdLine->FindArg(eCLAT_Pre, "root");
+	if (root)
+	{
+		string temp = PathUtil::ToUnixPath(PathUtil::AddSlash(root->GetValue()));
+		if (pCryPak->MakeDir(temp.c_str()))
+			m_root = temp;
+	}
+
+	if (m_bEditor || bLvlRes)
+		m_env.pCryPak->RecordFileOpen(ICryPak::RFOM_EngineStartup);
+
+	{
+		char szEngineRootDir[_MAX_PATH];
+		CryFindEngineRootFolder(CRY_ARRAY_COUNT(szEngineRootDir), szEngineRootDir);
+		string engineRootDir = PathUtil::RemoveSlash(szEngineRootDir);
+		m_env.pCryPak->SetAlias("%ENGINEROOT%", engineRootDir.c_str(), true);
+
+		const CryPathString engineDir = PathUtil::Make(CryPathString(engineRootDir.c_str()), CryPathString(CRYENGINE_ENGINE_FOLDER));
+		m_env.pCryPak->SetAlias("%ENGINE%", engineDir.c_str(), true);
+
+#ifndef RELEASE
+		if (m_bEditor)
+		{
+			const CryPathString editorDir = PathUtil::Make(CryPathString(engineRootDir.c_str()), CryPathString("Editor"));
+			m_env.pCryPak->SetAlias("%EDITOR%", editorDir.c_str(), true);
+		}
+#endif
+	}
+
+	// Now set up the log
+	InitLog();
+
+	LogVersion();
+
+	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);
+
+	// Load value of sys_game_folder from system.cfg into the sys_game_folder console variable
+	ILoadConfigurationEntrySink* pCVarsWhiteListConfigSink = GetCVarsWhiteListConfigSink();
+#if CRY_PLATFORM_ANDROID && !defined(ANDROID_OBB)
+	string path = string(CryGetProjectStoragePath()) + "/system.cfg";
+	LoadConfiguration(path.c_str(), pCVarsWhiteListConfigSink, eLoadConfigInit);
+#else
+	LoadConfiguration("system.cfg", pCVarsWhiteListConfigSink, eLoadConfigInit);
+#endif
+
+	if (!m_pProjectManager->ParseProjectFile())
+	{
+		return false;
+	}
+
+	bool bRes = m_env.pCryPak->Init("");
+
+	if (bRes)
+	{
+#if !defined(_RELEASE)
+		const ICmdLineArg* pakalias = m_pCmdLine->FindArg(eCLAT_Pre, "pakalias");
+#else
+		const ICmdLineArg* pakalias = NULL;
+#endif // !defined(_RELEASE)
+		if (pakalias && strlen(pakalias->GetValue()) > 0)
+			m_env.pCryPak->ParseAliases(pakalias->GetValue());
+	}
+
+	// Create Engine folder mod mapping only for Engine assets
+	pCryPak->AddMod("%ENGINEROOT%/" CRYENGINE_ENGINE_FOLDER);
+
+#if CRY_PLATFORM_ANDROID
+	pCryPak->AddMod(CryGetProjectStoragePath());
+	#if defined(ANDROID_OBB)
+	pCryPak->SetAssetManager(androidGetAssetManager());
+	#endif
+#elif CRY_PLATFORM_LINUX
+	//apparently Linux needs the parent dir as a module for letting CryPak find the file system.cfg
+	pCryPak->AddMod("./");
+#endif
+
+	return (bRes);
+#endif
+  return true;
+}
+
 float CSystem::GetDeltaTime()
 {
   return static_cast<float>(m_DeltaTime);
@@ -402,7 +509,7 @@ float CSystem::GetDeltaTime()
 
 ICryPak* CSystem::GetIPak()
 {
-  return nullptr;
+  return m_pCryPak;
 }
 
 INetwork* CSystem::GetINetwork()

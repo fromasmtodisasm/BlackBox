@@ -23,15 +23,28 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/CmdLineArg.cpp
   PRIVATE ${ENGINE_DIR}/System/Commands.cpp
   PRIVATE ${ENGINE_DIR}/System/Console.cpp
+  PRIVATE ${ENGINE_DIR}/System/File/CryPak.cpp
   PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
   PRIVATE ${ENGINE_DIR}/System/Log.cpp
   PRIVATE ${ENGINE_DIR}/System/System.cpp
   PRIVATE ${ENGINE_DIR}/System/SystemEventDispatcher.cpp
   PRIVATE ${ENGINE_DIR}/System/Timer.cpp
-  PRIVATE ${POST_CONFIGURE_FILE}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
 set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
+
+get_target_property(SOURCE_FILES System SOURCES )
+
+source_group(
+	TREE ${CMAKE_CURRENT_SOURCE_DIR}
+	PREFIX "Source Files"
+	FILES
+	${SOURCE_FILES}
+)
+
+target_sources(${PROJECT_NAME}
+  PRIVATE ${POST_CONFIGURE_FILE}
+)
 
 add_private_headers()

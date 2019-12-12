@@ -32,7 +32,7 @@ CGameMods::CGameMods( CGame *pGame )
 	m_pSystem = pGame->GetSystem();
 	m_pILog=m_pSystem->GetILog();
 	m_pMod=NULL;
-	m_sCurrentMod=string("FarCry");
+	m_sCurrentMod=string(THISGAME);
 	ScanMods();
 }
 
@@ -127,7 +127,7 @@ bool CGameMods::SetCurrentMod(const char *sModName,bool bNeedsRestart)
 	m_sCurrentMod.clear();
 
 	bool bNormalGame=false;
-	if	((stricmp(sModName,"FarCry")==0))
+	if	((stricmp(sModName,THISGAME)==0))
 		bNormalGame=true;
 
 	m_pILog->Log("Loading MOD %s",sModName);
@@ -326,7 +326,7 @@ void CGameMods::ScanMods()
 		if ((c_file.attrib &_A_SUBDIR) && ((strncmp(c_file.name,".",1)!=0)))
 		{			
 			m_pILog->Log("Found MOD game: %s",c_file.name);
-			if (stricmp(c_file.name,"FarCry")==0)
+			if (stricmp(c_file.name, THISGAME)==0)
 				continue;
 
 			SGameModDescription *pGameMod=new SGameModDescription;
@@ -349,7 +349,7 @@ void CGameMods::ScanMods()
 //////////////////////////////////////////////////////////////////////////
 const char *CGameMods::GetModPath(const char *szSource)
 {
-	if (m_sCurrentMod.empty() || (stricmp(m_sCurrentMod.c_str(),"FarCry")==0))
+	if (m_sCurrentMod.empty() || (stricmp(m_sCurrentMod.c_str(),THISGAME)==0))
 		return (NULL); 
 
 	m_sReturnPath=string("Mods/")+m_sCurrentMod+"/"+string(szSource);
@@ -366,7 +366,7 @@ bool CGame::OpenPacks(const char *szFolder)
 	{
 		const char *szMOD=m_pGameMods->GetCurrentMod();
 		// override paks		
-		if (szMOD && (stricmp(szMOD,"FarCry")!=0))
+		if (szMOD && (stricmp(szMOD,THISGAME)!=0))
 		{		
 			string sPaks=string("Mods/")+string(szMOD)+"/"+szFolder;
 			if (m_pSystem->GetIPak()->OpenPacks(sPaks.c_str()))
@@ -418,7 +418,7 @@ const char *CGame::IsMODLoaded()
 	if (m_pGameMods)
 	{
 		const char *szMod=m_pGameMods->GetCurrentMod();
-		if ((szMod) && (stricmp(szMod,"FarCry")!=0))
+		if ((szMod) && (stricmp(szMod,THISGAME)!=0))
 			return (szMod);
 	}
 
