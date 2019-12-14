@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.14)
 project(Common CXX)
 ###################################################
 include(GenerateExportHeader)
-include(FindFreetype)
 ###################################################
 set(BLACKBOX_PROJECT BlackBox)
 ###################################################
@@ -34,8 +33,16 @@ if (BB_TESET_ENABLE)
   target_compile_definitions(${BLACKBOX_PROJECT} PUBLIC -DSINGLE_PASS)
 endif()
 find_package(OpenGL REQUIRED)
-find_package(tinyxml2 CONFIG REQUIRED)
-find_package(Freetype REQUIRED)
+find_package(tinyxml2)
+if (NOT tinyxml2_FOUND)
+	install_package("tinyxml2:x64-windows" result)
+	find_package(tinyxml2 REQUIRED)
+endif()
+find_package(Freetype)
+if (NOT Freetype_FOUND)
+	install_package("freetype:x64-windows" result)
+	find_package(Freetype REQUIRED)
+endif()
 #--------------------------------------------------
 target_include_directories(
 BB_Private
@@ -112,8 +119,9 @@ target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${OPENGL_gl_LIBRARY})
 generate_export_header(${BLACKBOX_PROJECT}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )
-target_include_directories(${BLACKBOX_PROJECT} PRIVATE ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${FREETYPE_LIBRARIES})
+#target_include_directories(${BLACKBOX_PROJECT} PRIVATE ${FREETYPE_INCLUDE_DIRS})
+#target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${FREETYPE_LIBRARIES})
+target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Freetype::Freetype)
 ###################################################
 if (UNIX_OR_CYGWIN)
   target_sources(

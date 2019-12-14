@@ -19,6 +19,15 @@ elseif(GLEW_LOADER)
   target_compile_definitions(OpenGlBackend INTERFACE -DGLEW_LOADER)
 endif()
 
+find_package(Stb)
+if (NOT Stb_FOUND)
+	install_package("stb:x64-windows" result)
+	if (NOT result EQUAL 0)
+		message(FATAL_ERROR "Could not install stb")
+	endif()
+	find_package(Stb REQUIRED)
+endif()
+
 add_library(Renderer)
 target_sources(Renderer
   #Render folder
@@ -62,7 +71,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 
-target_include_directories(${PROJECT_NAME} PRIVATE)
+target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #target_include_directories(${OpenGlBackend} 
 #	INTERFACE $<TARGET_PROPERTY:glad,INTERFACE_INCLUDE_DIRECTORIES>
 #)

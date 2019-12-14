@@ -10,11 +10,16 @@ ${PROJECT_NAME}
 )
 
 ###################################################
-find_package(LUA REQUIRED)
-if (LUA_FOUND)
-	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
-	target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
+find_package(LUA)
+if (NOT LUA_FOUND)
+  install_package("lua:x64-windows" result)
+  if (NOT result EQUAL 0)
+    message(FATAL_ERROR "Could not install lua")
+  endif()
+  find_package(LUA REQUIRED)
 endif()
+target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 ###################################################
 
 target_sources(${PROJECT_NAME}

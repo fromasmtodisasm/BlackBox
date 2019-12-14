@@ -11,3 +11,12 @@ macro(add_private_headers)
 		${INCLUDE_FILES}
 	)
 endmacro()
+
+macro(install_package package result)
+  set(EXECUTE_COMMAND vcpkg install ${package})
+  execute_process(
+    COMMAND ${EXECUTE_COMMAND} 
+    RESULT_VARIABLE result
+  )
+
+endmacro()
