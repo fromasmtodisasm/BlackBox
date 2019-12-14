@@ -12,11 +12,13 @@ macro(add_private_headers)
 	)
 endmacro()
 
-macro(install_package package result)
-  set(EXECUTE_COMMAND vcpkg install ${package})
+function(install_package Package Result)
+  set(EXECUTE_COMMAND vcpkg install ${Package})
+  message(STATUS "Trying install package [${Package}]")
   execute_process(
     COMMAND ${EXECUTE_COMMAND} 
     RESULT_VARIABLE result
   )
+  set(${Result} ${result} PARENT_SCOPE)
 
-endmacro()
+endfunction()
