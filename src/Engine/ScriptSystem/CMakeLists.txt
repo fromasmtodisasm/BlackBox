@@ -12,7 +12,7 @@ ${PROJECT_NAME}
 ###################################################
 find_package(LUA)
 if (NOT LUA_FOUND)
-  install_package("lua:x64-windows" result)
+  install_package("lua" result)
   if (NOT result EQUAL 0)
     message(FATAL_ERROR "Could not install lua")
   endif()

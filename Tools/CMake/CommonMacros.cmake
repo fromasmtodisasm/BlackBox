@@ -13,12 +13,21 @@ macro(add_private_headers)
 endmacro()
 
 function(install_package Package Result)
-  set(EXECUTE_COMMAND vcpkg install ${Package})
-  message(STATUS "Trying install package [${Package}]")
+
+  set(ToInstall "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}")
+  set(CMD "vcpkg")
+  set(ARGS " install ${ToInstall}")
+  message(STATUS "Trying install package [${ToInstall}]")
   execute_process(
-    COMMAND ${EXECUTE_COMMAND} 
+    COMMAND ${CMD} install "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}"
     RESULT_VARIABLE result
   )
   set(${Result} ${result} PARENT_SCOPE)
 
 endfunction()
+
+macro(CommonMacrosInit)
+  set(BB_PLATFORM windows)
+endmacro()
+
+CommonMacrosInit()
