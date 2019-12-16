@@ -516,9 +516,9 @@ void HdrTechnique::upsampling()
     int rx = w / (1 << i - 1);
     int ry = h / (1 << i - 1);
     // Texture that blured
-    auto& blured = first_iteration ? m_DownsampleBuffer[amount - 1]->texture[0] : m_UpsampleBuffer[i]->texture[0];
+    auto& blured = m_UpsampleBuffer[i]->texture[0];
     // Texture on which the blur is superimposed
-    auto& current_level = first_iteration ? m_DownsampleBuffer[amount - 2]->texture[0] : i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
+    auto& current_level = i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
     auto& rt = m_UpsampleBuffer[i - 1]; // Render target
     up->Uniform(rx, "rx");
