@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.14)
 project(Renderer CXX)
 ###################################################
 add_library(OpenGlBackend INTERFACE)
@@ -17,6 +17,15 @@ if (GLAD_LOADER)
 elseif(GLEW_LOADER)                          
   find_package(GLEW REQUIRED)                
   target_compile_definitions(OpenGlBackend INTERFACE -DGLEW_LOADER)
+endif()
+
+find_package(Stb)
+if (NOT Stb_FOUND)
+	install_package("stb" result)
+	if (NOT result EQUAL 0)
+		message(FATAL_ERROR "Could not install stb with error: ${result}")
+	endif()
+	find_package(Stb REQUIRED)
 endif()
 
 add_library(Renderer)
@@ -62,7 +71,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 
-target_include_directories(${PROJECT_NAME} PRIVATE)
+target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #target_include_directories(${OpenGlBackend} 
 #	INTERFACE $<TARGET_PROPERTY:glad,INTERFACE_INCLUDE_DIRECTORIES>
 #)

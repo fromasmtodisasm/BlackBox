@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.14)
 project(ScriptSystem CXX)
 ###################################################
 add_library(${PROJECT_NAME})
@@ -10,11 +10,16 @@ ${PROJECT_NAME}
 )
 
 ###################################################
-find_package(LUA REQUIRED)
-if (LUA_FOUND)
-	target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
-	target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
+find_package(LUA)
+if (NOT LUA_FOUND)
+  install_package("lua" result)
+  if (NOT result EQUAL 0)
+    message(FATAL_ERROR "Could not install lua")
+  endif()
+  find_package(LUA REQUIRED)
 endif()
+target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 ###################################################
 
 target_sources(${PROJECT_NAME}

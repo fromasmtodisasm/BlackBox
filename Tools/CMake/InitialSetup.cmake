@@ -10,6 +10,7 @@ set(CMAKE_MODULE_PATH "${TOOLS_CMAKE_DIR}/modules")
 
 ###################################################
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_GENERATOR_PLATFORM = ${CMAKE_GENERATOR_PLATFORM}")
 message(STATUS "CMAKE_CONFIGURATION_TYPES = ${CMAKE_CONFIGURATION_TYPES}")
 message(STATUS "OPTION_PROFILE = ${OPTION_PROFILE}")
 message(STATUS "OPTION_PCH = ${OPTION_PCH}")
@@ -18,6 +19,18 @@ message(STATUS "SDK_DIR = ${SDK_DIR}")
 message(STATUS "PROJECT_DIR = ${PROJECT_DIR}")
 message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 ###################################################
+
+# Including the Toolchain file, as it sets important variables.
+if(DEFINED TOOLCHAIN_FILE)
+	include(${CMAKE_TOOLCHAIN_FILE})
+elseif(WIN32)
+	include("${TOOLS_CMAKE_DIR}/toolchain/windows/WindowsPC-MSVC.cmake")
+endif()
+
+if (NOT DEFINED BUILD_PLATFORM)
+	# For now, we expect BUILD_PLATFORM to have been set via a Toolchain file.
+	message(FATAL_ERROR "BUILD_PLATFORM not defined. Please always supply one of the CRYENGINE toolchain files.")
+endif()
 
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src/Engine)
 set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)

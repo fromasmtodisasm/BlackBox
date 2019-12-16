@@ -10,7 +10,7 @@
 
 #include <memory>
 
-class Material;
+struct Material;
 using MeshList = std::shared_ptr<std::vector<Mesh>>;
 
 struct Transform

@@ -21,7 +21,7 @@ class ObjectManager;
 class FrameBufferObject;
 class Scene;
 class SkyBox;
-class Material;
+struct Material;
 struct IPostProcessor;
 
 extern Scene* defaultScene;
