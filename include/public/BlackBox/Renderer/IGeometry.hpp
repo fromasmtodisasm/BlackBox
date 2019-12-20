@@ -109,3 +109,9 @@ public:
   VertexArrayObject* getVertexBuffer();
   IndexBuffer* getIndexBuffer();
 };
+
+namespace Geometry
+{
+
+
+}

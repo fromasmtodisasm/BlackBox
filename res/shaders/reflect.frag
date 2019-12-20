@@ -11,6 +11,6 @@ void main()
 {             
     vec3 I = normalize(Position - viewPos);
     vec3 R = reflect(I, normalize(Normal));
-	vec4 color = vec4(1.0, 0.5, 0.3, 1.0);
+	vec4 color = vec4(1.0, 0.5, 0.3, 0.5);
     FragColor = vec4(texture(skybox, R).rgb, 1.0) * color;
 }

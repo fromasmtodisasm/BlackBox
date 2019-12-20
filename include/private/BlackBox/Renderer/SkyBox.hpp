@@ -92,6 +92,7 @@ public:
     // ... задание видовой и проекционной матриц
     shader->Uniform(glm::mat4(glm::mat3(View)), "View");
     shader->Uniform(Projection, "Projection");
+	shader->BindTextureUnit2D(Pipeline::instance()->skyBox->id, 0);
 
     texture->bind();
     vao->draw();

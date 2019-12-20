@@ -14,12 +14,13 @@ endmacro()
 
 function(install_package Package Result)
 
-  set(ToInstall "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}")
+  #set(ToInstall "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}")
+  set(ToInstall "${Package}:x64-${BB_PLATFORM}")
   set(CMD "vcpkg")
   set(ARGS " install ${ToInstall}")
   message(STATUS "Trying install package [${ToInstall}]")
   execute_process(
-    COMMAND ${CMD} install "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}"
+    COMMAND ${CMD} install "${ToInstall}"
     RESULT_VARIABLE result
   )
   set(${Result} ${result} PARENT_SCOPE)
