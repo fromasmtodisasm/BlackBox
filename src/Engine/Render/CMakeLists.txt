@@ -4,7 +4,7 @@ project(Renderer CXX)
 add_library(OpenGlBackend INTERFACE)
 ###################################################
 
-if (GLAD_LOADER)
+if (OPTION_GLAD_LOADER)
   message(STATUS "Using Glad OpenGL loader")
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib/glad glad EXCLUDE_FROM_ALL)
   target_link_libraries(OpenGlBackend INTERFACE glad)
@@ -59,7 +59,7 @@ target_sources(Renderer
   PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
 )
 
-if (GLAD_LOADER)
+if (OPTION_GLAD_LOADER)
   target_sources(${PROJECT_NAME}
     PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
   )

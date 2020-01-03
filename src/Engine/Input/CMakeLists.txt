@@ -4,7 +4,7 @@ project(Input CXX)
 add_library(Input)
 
 ###################################################
-if (USE_SDL)
+if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	if (UNIX_OR_CYGWIN)
 		#################################################################

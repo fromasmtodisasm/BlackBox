@@ -3,7 +3,7 @@ project(Math CXX)
 ###################################################
 add_library(Math INTERFACE)
 
-if (USE_GLM)
+if (OPTION_USE_GLM)
   find_package(glm)
   if (NOT GLM_FOUND)
     install_package("glm" result)

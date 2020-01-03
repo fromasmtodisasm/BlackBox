@@ -3,7 +3,7 @@ project(Window CXX)
 ###################################################
 add_library(${PROJECT_NAME})
 ###################################################
-if (USE_SDL)
+if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	if (UNIX_OR_CYGWIN)
 		#################################################################
