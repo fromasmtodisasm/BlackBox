@@ -10,14 +10,7 @@ ${PROJECT_NAME}
 )
 
 ###################################################
-find_package(LUA)
-if (NOT LUA_FOUND)
-  install_package("lua" result)
-  if (NOT result EQUAL 0)
-    message(FATAL_ERROR "Could not install lua")
-  endif()
-  find_package(LUA REQUIRED)
-endif()
+add_package(LUA)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 ###################################################

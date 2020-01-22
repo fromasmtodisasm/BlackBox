@@ -16,20 +16,15 @@ target_sources(${PROJECT_NAME}
 )
 if (GUI)
 	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/lib/imgui)
-	set(IMGUI-SFML_DIR ${CMAKE_SOURCE_DIR}/submodules/imgui-sfml)
 
 	target_include_directories(
 	  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
-	)
-	target_include_directories(
-	  ${PROJECT_NAME} PUBLIC ${IMGUI-SFML_DIR}
 	)
 	set(
 	  IMGUI_SOURCES
 	  ${IMGUI_DIR}/imgui.cpp
 	  ${IMGUI_DIR}/imgui_widgets.cpp
 	  ${IMGUI_DIR}/imgui_draw.cpp
-	  ${IMGUI-SFML_DIR}/imgui-SFML.cpp
 	  ${IMGUI_DIR}/imgui_demo.cpp
 	  )
 endif(GUI)
