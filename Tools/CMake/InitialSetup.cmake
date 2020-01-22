@@ -1,4 +1,4 @@
-set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug Profile)
+#set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug Profile)
 
 # Fix slashes on paths
 file(TO_CMAKE_PATH "${BLACKBOX_DIR}" BLACKBOX_DIR)
