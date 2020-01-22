@@ -1,0 +1,21 @@
+#!/bin/sh
+sm=$1
+root=`pwd`
+
+pushd . > /dev/null
+
+cd submodules  
+#0
+echo 1
+mv ${sm} ${sm}_tmp
+#1
+#git submodule deinit -f -- glad
+echo 2
+#2
+rm -rf ${root}/.git/modules/${sm}
+#3
+git rm -f ${sm}
+
+rm -rf ${sm}_tmp
+
+popd > /dev/null
