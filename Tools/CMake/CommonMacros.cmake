@@ -44,4 +44,11 @@ macro(add_package Package)
 	endif()
 endmacro()
 
+macro(add_subsystem subsystem)
+	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})
+	target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${subsystem})
+	set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
+
+endmacro()
+
 CommonMacrosInit()

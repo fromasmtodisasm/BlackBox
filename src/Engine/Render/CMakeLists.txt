@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(Renderer CXX)
+project(Render CXX)
 ###################################################
 add_library(OpenGlBackend INTERFACE)
 ###################################################
@@ -28,8 +28,8 @@ if (NOT Stb_FOUND)
 	find_package(Stb REQUIRED)
 endif()
 
-add_library(Renderer)
-target_sources(Renderer
+add_library(${PROJECT_NAME})
+target_sources(${PROJECT_NAME}
   #Render folder
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
