@@ -37,4 +37,5 @@ install(
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)
-set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+set_solution_startup_target(Launcher)
+#set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

@@ -44,4 +44,12 @@ macro(add_package Package)
 	endif()
 endmacro()
 
+# Helper macro to set default StartUp Project in Visual Studio
+macro(set_solution_startup_target target)
+	if ("${CMAKE_GENERATOR}" MATCHES "^Visual Studio")
+		# Set startup project to launch Game.exe with this project
+		set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${target})
+	endif()
+endmacro()
+
 CommonMacrosInit()
