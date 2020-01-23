@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.14)
 
-project(LIBS)
-
-add_subdirectory(glad)
+add_subdirectory(glad EXCLUDE_FROM_ALL)
+set_target_properties(glad PROPERTIES FOLDER "ThirdPaty")

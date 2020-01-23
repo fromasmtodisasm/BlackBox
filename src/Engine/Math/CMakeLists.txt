@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.14)
+project(Math CXX)
+###################################################
+add_library(Math INTERFACE)
+
+if (OPTION_USE_GLM)
+  find_package(glm)
+  if (NOT GLM_FOUND)
+    install_package("glm" result)
+    if (NOT result EQUAL 0)
+      message(FATAL_ERROR "Could not install glm")
+    endif()
+    #add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/glm glm EXCLUDE_FROM_ALL)
+  endif()
+  include_directories(${GLM_INCLUDE_DIRS})
+  target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
+  target_compile_definitions(${PROJECT_NAME} INTERFACE -DUSE_GLM)
+  target_compile_definitions(${PROJECT_NAME} INTERFACE -DGLM_ENABLE_EXPERIMENTAL)
+endif()
+###################################################

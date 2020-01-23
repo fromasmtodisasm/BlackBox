@@ -1,46 +1,47 @@
-#include <BlackBox/ISystem.hpp>
-#include <BlackBox/ILog.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
-#include <BlackBox/Scene.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Object.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Scene/Scene.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #include <iostream>
 using	namespace std;
 
-SceneManager *SceneManager::manager = nullptr;
-Scene *defaultScene = nullptr;
+SceneManager* SceneManager::manager = nullptr;
+Scene* defaultScene = nullptr;
 ICVar* SceneManager::scene_path = nullptr;
 
-SceneManager *SceneManager::instance()
+SceneManager* SceneManager::instance()
 {
   if (manager == nullptr)
   {
     manager = new SceneManager();
-		manager->current_scene_it = manager->cache.begin();
+    manager->current_scene_it = manager->cache.begin();
     scene_path = GetISystem()->GetIConsole()->GetCVar("scenes_path");
   }
   return manager;
 }
 
-bool SceneManager::init(const char * scene)
+bool SceneManager::init(const char* scene, LoadObjectSink* callback)
 {
-  defaultScene = SceneManager::instance()->getScene(scene == nullptr ? "default" : scene);
-  SceneManager::instance()->current_scene_it = SceneManager::instance()->cache.find(scene == nullptr ? 
-    std::string(scene_path->GetString()) + "default" : 
+  //defaultScene = SceneManager::instance()->getScene(scene == nullptr ? "default" : scene, callback);
+  /*SceneManager::instance()->current_scene_it = SceneManager::instance()->cache.find(scene == nullptr ?
+    std::string(scene_path->GetString()) + "default" :
     std::string(scene_path->GetString()) + scene
-  );
+  );*/
   return true;
 }
 
-Scene *SceneManager::getScene(string scene)
+IScene* SceneManager::getScene(string scene, LoadObjectSink* callback)
 {
   std::string prefix = "res/scenes/";
   bool usPrefix = true;
   if (scene.find("/") != scene.npos)
     usPrefix = false;
 
-  Scene *result;
+  Scene* result;
   {
     std::string scenePath;
     if (usPrefix)
@@ -50,20 +51,20 @@ Scene *SceneManager::getScene(string scene)
     if (v != cache.end())
     {
       result = v->second;
-      GetISystem()->GetILog()->AddLog("[INFO] Scene [%s] already cached\n", scenePath.c_str());
+      GetISystem()->GetILog()->Log("[INFO] Scene [%s] already cached\n", scenePath.c_str());
     }
     else {
       result = new Scene(scene);
-      if (!result->load(scenePath + ".xml"))
+      if (!result->load(std::string(scenePath + ".xml").c_str(), callback))
       {
-        GetISystem()->GetILog()->AddLog("[ERROR] Error or load scene: %s\n",scenePath.c_str());
+        GetISystem()->GetILog()->Log("[ERROR] Error or load scene: %s\n", scenePath.c_str());
         delete result;
         return nullptr;
       }
       else
       {
         cache[scenePath] = result;
-        GetISystem()->GetILog()->AddLog("[INFO] Scene [%s] loaded\n", scenePath.c_str());
+        GetISystem()->GetILog()->Log("[INFO] Scene [%s] loaded\n", scenePath.c_str());
       }
     }
   }
@@ -75,25 +76,25 @@ void SceneManager::removeScene(std::string scene)
   cache.erase(scene_path->GetString() + scene);
 }
 
-Scene* SceneManager::currentScene()
+IScene* SceneManager::currentScene()
 {
-	return current_scene_it->second;
+  return current_scene_it->second;
 }
 
 void SceneManager::nextScene()
 {
-	if (++current_scene_it == cache.end())
-	{
-		current_scene_it = cache.begin();
-	}
+  if (++current_scene_it == cache.end())
+  {
+    current_scene_it = cache.begin();
+  }
 }
 
 void SceneManager::prevScene()
 {
-	if (--current_scene_it == cache.begin())
-	{
-		current_scene_it = cache.end();
-	}
+  if (--current_scene_it == cache.begin())
+  {
+    current_scene_it = cache.end();
+  }
 }
 
 bool SceneManager::exist(std::string scene)

@@ -1,26 +1,26 @@
-#include <BlackBox/Render/FrameBufferObject.hpp>
-#include <BlackBox/Render/OpenglDebug.hpp>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
+#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 
 #include <iostream>
 #include <cassert>
 #include <algorithm>
 using namespace std;
 
-FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors) 
-  : 
+FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors)
+  :
   type(type),
   id(-1),
   rbo(-1),
-	viewPort(glm::vec4(0))
+  viewPort(glm::vec4(0))
 {
 }
 
 FrameBufferObject::~FrameBufferObject()
 {
-	glDeleteFramebuffers(1, &id);
+  glDeleteFramebuffers(1, &id);
 }
 
-FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int height, int nColors, bool createMipChain)
+FrameBufferObject* FrameBufferObject::create(BufferType type, int width, int height, int nColors, bool createMipChain)
 {
   bool status = true;
   GLint internalFormat, Format;
@@ -28,27 +28,26 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   GLint wrapS, wrapT;
   GLint dataType;
 
-	int texCnt = 1;
-	int mip_cnt = 1;
-	if (createMipChain)
-	{
-		if (nColors > 1)
-			return nullptr;
-		mip_cnt = std::log2(std::max(width, height));
-	}
+  int texCnt = 1;
+  int mip_cnt = 1;
+  if (createMipChain)
+  {
+    if (nColors > 1)
+      return nullptr;
+    mip_cnt = static_cast<int>(std::log2(std::max(width, height)));
+  }
 
-
-  FrameBufferObject *fbo = new FrameBufferObject(type, width, height, nColors);
+  FrameBufferObject* fbo = new FrameBufferObject(type, width, height, nColors);
   glCheck(glGenFramebuffers(1, &fbo->id));
 
-	fbo->viewPort.z = (float)width;
-	fbo->viewPort.w = (float)height;
+  fbo->viewPort.z = (float)width;
+  fbo->viewPort.w = (float)height;
 
-	if (type != DEPTH_BUFFER)
-	{
-		texCnt = nColors;
-	}
-	fbo->texture.resize(texCnt);
+  if (type != DEPTH_BUFFER)
+  {
+    texCnt = nColors;
+  }
+  fbo->texture.resize(texCnt);
   glCheck(glGenTextures(nColors, &fbo->texture[0]));
   switch (type)
   {
@@ -57,59 +56,57 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
     filterMin = filterMag = GL_LINEAR;
     wrapS = wrapT = GL_CLAMP_TO_BORDER;
     dataType = GL_FLOAT;
-    //attachment = 
+    //attachment =
     break;
   case FrameBufferObject::SCENE_BUFFER:
     internalFormat = Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_REPEAT;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
     dataType = GL_UNSIGNED_BYTE;
     break;
   case FrameBufferObject::HDR_BUFFER:
     internalFormat = GL_RGBA16F;
     Format = GL_RGBA;
     filterMin = filterMag = GL_LINEAR;
-    wrapS = wrapT = GL_CLAMP_TO_BORDER;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
     dataType = GL_FLOAT;
     break;
   default:
     break;
   }
 
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fbo->id));
-	
-	{
-		for (int i = 0; i < texCnt; i++)
-		{
-			for (int j = 0, mw = width, mh = height; j < mip_cnt; j++)
-			{
-				glBindTexture(GL_TEXTURE_2D, fbo->texture[i]);
-				glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mw, mh, 0, Format, dataType, NULL));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS));
-				glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT));
-				float b[] = { 0,0,0,1 };
-				glCheck(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, b));
-				if (createMipChain)
-				{
-					mw /= 2;
-					mh /= 2;
-				}
+  gl::BindFramebuffer(fbo->id);
 
-				if (type != DEPTH_BUFFER)
-					glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0));
+  {
+    for (int i = 0; i < texCnt; i++)
+    {
+      for (int j = 0, mw = width, mh = height; j < mip_cnt; j++)
+      {
+        gl::BindTexture2D(fbo->texture[i]);
+        glCheck(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mw, mh, 0, Format, dataType, NULL));
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+        float b[] = { 0,0,0,1 };
+        glCheck(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, b));
+        if (createMipChain)
+        {
+          mw /= 2;
+          mh /= 2;
+        }
 
-			}
-		}
-
-	}
+        if (type != DEPTH_BUFFER)
+          gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, fbo->texture[i], 0);
+      }
+    }
+  }
   if (type == DEPTH_BUFFER)
   {
     float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
   }
-  glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+  gl::BindTexture2D(0);
 
   if (type == SCENE_BUFFER || type == HDR_BUFFER)
   {
@@ -127,57 +124,57 @@ FrameBufferObject *FrameBufferObject::create(BufferType type, int width, int hei
   }
 
   if (texCnt > 1 && type != DEPTH_BUFFER)
-	{
-		// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-		std::vector<unsigned int> attachments;
-		for (int i = 0; i < texCnt; i++)
-		{
-			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
-		}
-		glCheck(glDrawBuffers(texCnt, &attachments[0]));
-	}
+  {
+    // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+    std::vector<unsigned int> attachments;
+    for (int i = 0; i < texCnt; i++)
+    {
+      attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+    }
+    glCheck(glDrawBuffers(texCnt, &attachments[0]));
+  }
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-		assert(0);
+    assert(0);
     status = false;
   }
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+  gl::BindFramebuffer(0);
 
   return fbo;
 }
 
-void FrameBufferObject::clear(Color &color)
+void FrameBufferObject::clear(gl::Color const& color)
 {
-	glCheck(glClearColor(EXTRACT_COLOR(color)));
-	glCheck(glClearDepthf(1.f));
-	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  gl::ClearColor(color);
+  glCheck(glClearDepthf(1.f));
+  gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void FrameBufferObject::clear()
 {
-	clear(defaultColor);
+  clear(defaultColor);
 }
 
 void FrameBufferObject::bind()
 {
-	bind(viewPort);
+  bind(viewPort);
 }
 
 void FrameBufferObject::bind(glm::vec4 viewPort)
 {
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
-	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
+  gl::BindFramebuffer(id);
+  gl::ViewPort(viewPort);
 }
 
 void FrameBufferObject::bindDefault(glm::vec4 viewPort)
 {
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	glCheck(glViewport(viewPort.x, viewPort.y, viewPort.z, viewPort.w));
+  gl::BindFramebuffer(0);
+  gl::ViewPort(viewPort);
 }
 
 void FrameBufferObject::unbind()
 {
-  glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+  gl::BindFramebuffer(0);
 }
 
 ITexture* FrameBufferObject::getTexture()

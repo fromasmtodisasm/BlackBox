@@ -1,4 +1,4 @@
-#include <BlackBox/Render/ShadowsShader.hpp>
+#include <BlackBox/Renderer/ShadowsShader.hpp>
 
 ShadowsShader::ShadowsShader() : m_Engine(GetIEngine()), CBaseShaderProgram(CShader::load("res/shaders/reflect.vs", CShader::E_VERTEX), CShader::load("res/shaders/reflect.frag", CShader::E_FRAGMENT))
 {

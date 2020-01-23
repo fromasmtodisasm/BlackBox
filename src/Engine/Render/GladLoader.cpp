@@ -1,7 +1,6 @@
-#include <BlackBox/Render/Opengl.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <iostream>
 using namespace std;
-
 
 bool OpenGLLoader()
 {
