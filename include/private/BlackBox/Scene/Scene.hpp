@@ -66,17 +66,13 @@ private:
   void loadObject(tinyxml2::XMLElement* object, LoadObjectSink* callback);
   void loadMesh(tinyxml2::XMLElement* mesh);
   void loadLight(tinyxml2::XMLElement* light);
-  Vec3 loadColorAttribute(tinyxml2::XMLElement* element);
   Transform loadTransform(tinyxml2::XMLElement& object);
-  Vec3 loadVec3(tinyxml2::XMLElement& element, const char* name);
   void loadCamera(tinyxml2::XMLElement* element);
   void loadTagPoint(tinyxml2::XMLElement* element);
 
   tinyxml2::XMLElement* saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform);
   tinyxml2::XMLElement* saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light);
   tinyxml2::XMLElement* saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera);
-  tinyxml2::XMLElement* saveVec3(tinyxml2::XMLDocument& xmlDoc, glm::vec3& color, const char* name);;
-  tinyxml2::XMLElement* saveFloat(tinyxml2::XMLDocument& xmlDoc, float value, const char* name);;
   tinyxml2::XMLElement* saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object);
   void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene);
 

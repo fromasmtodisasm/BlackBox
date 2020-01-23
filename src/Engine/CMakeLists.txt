@@ -14,14 +14,9 @@ set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
 #set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/.." )
 set_property(DIRECTORY APPEND PROPERTY INCLUDE_DIRECTORIES "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/.." "${BLACKBOX_PUBLIC_INCLUDE_DIRS}/..")
 
-target_compile_features(BlackBox
-PUBLIC
-	cxx_strong_enums
-PRIVATE
-	cxx_lambdas
-	cxx_range_for
-	cxx_final
-)
+#set(CMAKE_CXX_STANDARD 17)
+target_compile_features(BlackBox PUBLIC cxx_std_17)
+target_compile_features(Common INTERFACE cxx_std_17)
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Tools/Cmake/modules/")
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
