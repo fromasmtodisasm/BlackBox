@@ -62,19 +62,30 @@ class Scene : public IScene
   friend class GameGUI;
   friend class CGame;
 private:
-  void loadTerrain(tinyxml2::XMLElement* terrain);
-  void loadObject(tinyxml2::XMLElement* object, LoadObjectSink* callback);
-  void loadMesh(tinyxml2::XMLElement* mesh);
-  void loadLight(tinyxml2::XMLElement* light);
-  Transform loadTransform(tinyxml2::XMLElement& object);
-  void loadCamera(tinyxml2::XMLElement* element);
-  void loadTagPoint(tinyxml2::XMLElement* element);
+  class Serializator
+  {
+  public:
+    Serializator(Scene* scene);
+    bool save(const char* as = "");
+    bool load(const char* name, LoadObjectSink* callback);
 
-  tinyxml2::XMLElement* saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform);
-  tinyxml2::XMLElement* saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light);
-  tinyxml2::XMLElement* saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera);
-  tinyxml2::XMLElement* saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object);
-  void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene);
+    void loadTerrain(tinyxml2::XMLElement* terrain);
+    void loadObject(tinyxml2::XMLElement* object, LoadObjectSink* callback);
+    void loadMesh(tinyxml2::XMLElement* mesh);
+    void loadLight(tinyxml2::XMLElement* light);
+    Transform loadTransform(tinyxml2::XMLElement& object);
+    void loadCamera(tinyxml2::XMLElement* element);
+    void loadTagPoint(tinyxml2::XMLElement* element);
+    
+    void saveLights(tinyxml2::XMLDocument& xmlDoc, tinyxml2::XMLNode* pScene);
+    void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene);
+    tinyxml2::XMLElement* saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform);
+    tinyxml2::XMLElement* saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light);
+    tinyxml2::XMLElement* saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera);
+    tinyxml2::XMLElement* saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object);
+  private:
+    Scene *m_Scene = nullptr;
+  };
 
 public:
   Scene(std::string name);
@@ -108,10 +119,11 @@ public:
   void ForEachSpotLight(ForEachSpotLightSink* callback);
   void setTechnique(ITechnique* technique);
 
+
   PointObject* createPointObject(tinyxml2::XMLElement* object);
   PointObject* getPoints();
 private:
-  IFont* m_Font;
+#pragma region Fields
   std::string name;
   World* m_World;
   GLint m_RenderedScene;
@@ -139,6 +151,7 @@ private:
 
   unsigned int quadVAO;
   ICVar* texture_speed = nullptr;
+#pragma endregion Fields
 };
 
 #endif // SCENE_H

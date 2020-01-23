@@ -53,6 +53,17 @@ Scene::Scene(std::string name)
 }
 
 // IScene
+bool Scene::save(const char* as)
+{
+  Serializator serializator(this);
+  return serializator.save(as);
+}
+
+bool Scene::load(const char* name, LoadObjectSink* callback)
+{
+  Serializator serializator(this);
+  return serializator.load(name, callback);
+}
 
 void Scene::selectPrevObject()
 {

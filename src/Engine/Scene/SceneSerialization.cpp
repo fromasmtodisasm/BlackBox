@@ -13,49 +13,82 @@
 
 using namespace tinyxml2;
 
-bool Scene::save(const char* as)
+PointObject* Scene::createPointObject(XMLElement* object)
+{
+  struct Point
+  {
+    glm::vec3 pos;
+  };
+
+  auto positions = object->FirstChildElement("positions");
+  if (positions)
+  {
+    auto filename = positions->Attribute("file");
+    if (filename)
+    {
+      FILE* file = fopen(filename, "r");
+      if (file == nullptr) return nullptr;
+      std::vector<Point> points;
+      char line[128];
+      while (!feof(file))
+      {
+        Point point;
+        auto m = fscanf(file, "v\t%f %f %f\n", &point.pos.x, &point.pos.y, &point.pos.z);
+        if (m != 3)
+        {
+          fgets(line, 128, file);
+          continue;
+        }
+
+        points.push_back(point);
+      }
+      if (points.size() > 0)
+      {
+        PointObject* po = new PointObject();
+        GLuint VBO;
+
+        po->point_cnt = points.size();
+        glGenVertexArrays(1, &po->VAO);
+        glBindVertexArray(po->VAO);
+        glGenBuffers(1, &VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(Point), points.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+        glBindVertexArray(0);
+
+        debuger::vertex_array_label(po->VAO, "point objects");
+        debuger::buffer_label(VBO, "point objects");
+        return po;
+      }
+    }
+  }
+  return nullptr;
+}
+
+Scene::Serializator::Serializator(Scene* scene)
+  :
+  m_Scene(scene)
+{
+}
+
+bool Scene::Serializator::save(const char* as)
 {
   std::stringstream sceneName;
   tinyxml2::XMLDocument xmlDoc;
   XMLNode* pScene = xmlDoc.NewElement("scene");
   ObjectManager* objectManager = ObjectManager::instance();
 
-  for (auto& obj : m_Objects)
+  for (auto& obj : m_Scene->m_Objects)
   {
     saveObject(xmlDoc, objectManager, obj, pScene);
   }
 
-  for (auto& light : m_PointLights)
-  {
-    {
-      XMLElement* lightElement = saveLight(xmlDoc, light.second);
-      lightElement->SetAttribute("name", light.first.c_str());
-      lightElement->SetAttribute("type", light.second->toStr);
-      lightElement->SetAttribute("enabled", light.second->enabled);
-      pScene->InsertEndChild(lightElement);
-    }
-  }
-  for (auto& light : m_DirectionLight)
-  {
-    {
-      XMLElement* lightElement = saveLight(xmlDoc, light.second);
-      lightElement->SetAttribute("name", light.first.c_str());
-      lightElement->SetAttribute("type", light.second->toStr);
-      lightElement->SetAttribute("enabled", light.second->enabled);
-      pScene->InsertEndChild(lightElement);
-    }
-  }
-  for (auto& light : m_SpotLights)
-  {
-    {
-      XMLElement* lightElement = saveLight(xmlDoc, light.second);
-      lightElement->SetAttribute("name", light.first.c_str());
-      lightElement->SetAttribute("type", light.second->toStr);
-      lightElement->SetAttribute("enabled", light.second->enabled);
-      pScene->InsertEndChild(lightElement);
-    }
-  }
-  for (auto& camera : m_Camera)
+  saveLights(xmlDoc, pScene);
+
+  for (auto& camera : m_Scene->m_Camera)
   {
     XMLElement* cameraElement = saveCamera(xmlDoc, camera.second);
     cameraElement->SetAttribute("name", camera.first.c_str());
@@ -63,21 +96,21 @@ bool Scene::save(const char* as)
   }
   xmlDoc.InsertFirstChild(pScene);
 
+#if 0
   if (as == "")
     sceneName << "res/scenes/" << name << ".xml";
   else
+#endif
     sceneName << "res/scenes/" << as;
   XMLError eResult = xmlDoc.SaveFile(sceneName.str().c_str());
   XMLCheckResult(eResult);
 
-  return true;
+  return false;
 }
 
-
-bool Scene::load(const char* name, LoadObjectSink* callback)
+bool Scene::Serializator::load(const char* name, LoadObjectSink* callback)
 {
   tinyxml2::XMLDocument xmlDoc;
-
   XMLError eResult = xmlDoc.LoadFile(name);
   XMLCheckResult(eResult);
 
@@ -105,12 +138,12 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
     loadLight(lights);
     lights = lights->NextSiblingElement("light");
   }
-  selected_object_it = m_Objects.begin();
+  m_Scene->selected_object_it = m_Scene->m_Objects.begin();
 
   auto sbm = MaterialManager::instance()->getMaterial("skybox");
   if (sbm != nullptr)
   {
-    skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
+    m_Scene->skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
     Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
   }
 
@@ -137,13 +170,13 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
     cameras = cameras->NextSiblingElement("camera");
   }
 
-  m_CurrentCamera = m_Camera.find("main");
-  assert(m_CurrentCamera != m_Camera.end());
+  m_Scene->m_CurrentCamera = m_Scene->m_Camera.find("main");
+  assert(m_Scene->m_CurrentCamera != m_Scene->m_Camera.end());
 
   return true;
 }
 
-void Scene::loadTerrain(tinyxml2::XMLElement* terrain)
+void Scene::Serializator::loadTerrain(tinyxml2::XMLElement* terrain)
 {
   //Object* obj;
   Material* material;
@@ -178,11 +211,9 @@ void Scene::loadTerrain(tinyxml2::XMLElement* terrain)
         material = defaultMaterial;
     }
   }
-
-  //m_Objects.insert({ "terrain", this->terrain.load(terrainName)});
 }
 
-void Scene::loadObject(XMLElement* object, LoadObjectSink* callback)
+void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callback)
 {
   Object* obj;
   Material* material;
@@ -205,7 +236,7 @@ void Scene::loadObject(XMLElement* object, LoadObjectSink* callback)
     objectType = "object";
   if (objectType == std::string("points"))
   {
-    m_Points = createPointObject(object);
+    m_Scene->m_Points = m_Scene->createPointObject(object);
     return;
   }
   else
@@ -255,14 +286,14 @@ void Scene::loadObject(XMLElement* object, LoadObjectSink* callback)
   obj->m_transparent = objectTransparent;
   obj->m_visible = objectVisible;
   obj->setMaterial(material);
-  m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
+  m_Scene->m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
 }
 
-void Scene::loadMesh(XMLElement* mesh)
+void Scene::Serializator::loadMesh(XMLElement* mesh)
 {
 }
 
-void Scene::loadLight(tinyxml2::XMLElement* light)
+void Scene::Serializator::loadLight(tinyxml2::XMLElement* light)
 {
   struct Light {
     union {
@@ -365,20 +396,20 @@ void Scene::loadLight(tinyxml2::XMLElement* light)
   switch (baseLight->type)
   {
   case BaseLight::DIRECTIONAL:
-    m_DirectionLight[lightName] = result.d;
+    m_Scene->m_DirectionLight[lightName] = result.d;
     break;
   case BaseLight::POINT:
-    m_PointLights[lightName] = result.p;
+    m_Scene->m_PointLights[lightName] = result.p;
     break;
   case BaseLight::SPOT:
-    m_SpotLights[lightName] = result.s;
+    m_Scene->m_SpotLights[lightName] = result.s;
     break;
   default:
     break;
   }
 }
 
-void Scene::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene)
+void Scene::Serializator::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene)
 {
   XMLElement* object = xmlDoc.NewElement("object");
   XMLElement* mesh = xmlDoc.NewElement("mesh");
@@ -405,7 +436,7 @@ void Scene::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManag
   //object->InsertEndChild(mesh);
 }
 
-XMLElement* Scene::saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform)
+XMLElement* Scene::Serializator::saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform)
 {
   XMLElement* result = xmlDoc.NewElement("transform");
 
@@ -416,7 +447,7 @@ XMLElement* Scene::saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* trans
   return result;
 }
 
-tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light)
+tinyxml2::XMLElement* Scene::Serializator::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light)
 {
   XMLElement* result = xmlDoc.NewElement("light");
   if (light->BaseLight::type == BaseLight::DIRECTIONAL)
@@ -458,7 +489,41 @@ tinyxml2::XMLElement* Scene::saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight*
   return result;
 }
 
-tinyxml2::XMLElement* Scene::saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera)
+void Scene::Serializator::saveLights(XMLDocument& xmlDoc, XMLNode* pScene)
+{
+  for (auto& light : m_Scene->m_PointLights)
+  {
+    {
+      XMLElement* lightElement = saveLight(xmlDoc, light.second);
+      lightElement->SetAttribute("name", light.first.c_str());
+      lightElement->SetAttribute("type", light.second->toStr);
+      lightElement->SetAttribute("enabled", light.second->enabled);
+      pScene->InsertEndChild(lightElement);
+    }
+  }
+  for (auto& light : m_Scene->m_DirectionLight)
+  {
+    {
+      XMLElement* lightElement = saveLight(xmlDoc, light.second);
+      lightElement->SetAttribute("name", light.first.c_str());
+      lightElement->SetAttribute("type", light.second->toStr);
+      lightElement->SetAttribute("enabled", light.second->enabled);
+      pScene->InsertEndChild(lightElement);
+    }
+  }
+  for (auto& light : m_Scene->m_SpotLights)
+  {
+    {
+      XMLElement* lightElement = saveLight(xmlDoc, light.second);
+      lightElement->SetAttribute("name", light.first.c_str());
+      lightElement->SetAttribute("type", light.second->toStr);
+      lightElement->SetAttribute("enabled", light.second->enabled);
+      pScene->InsertEndChild(lightElement);
+    }
+  }
+}
+
+tinyxml2::XMLElement* Scene::Serializator::saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera)
 {
   XMLElement* result = xmlDoc.NewElement("camera");
   auto transform = saveTransform(xmlDoc, &camera->transform);
@@ -469,7 +534,7 @@ tinyxml2::XMLElement* Scene::saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* 
   return result;
 }
 
-XMLElement* Scene::saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object)
+XMLElement* Scene::Serializator::saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object)
 {
   XMLElement* material = xmlDoc.NewElement("material");
 
@@ -477,7 +542,7 @@ XMLElement* Scene::saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object)
   return material;
 }
 
-Transform Scene::loadTransform(XMLElement& object)
+Transform Scene::Serializator::loadTransform(XMLElement& object)
 {
   Transform result;
   XMLElement* transform = object.FirstChildElement("transform");
@@ -492,7 +557,7 @@ Transform Scene::loadTransform(XMLElement& object)
   return result;
 }
 
-void Scene::loadCamera(tinyxml2::XMLElement* element)
+void Scene::Serializator::loadCamera(tinyxml2::XMLElement* element)
 {
   CCamera* result;
   const char* name = element->Attribute("name");
@@ -518,64 +583,10 @@ void Scene::loadCamera(tinyxml2::XMLElement* element)
 
   result->MovementSpeed = GetISystem()->GetIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
 
-  m_Camera[name] = result;
+  m_Scene->m_Camera[name] = result;
 }
 
-void Scene::loadTagPoint(tinyxml2::XMLElement* element)
+void Scene::Serializator::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
 
-PointObject* Scene::createPointObject(XMLElement* object)
-{
-  struct Point
-  {
-    glm::vec3 pos;
-  };
-
-  auto positions = object->FirstChildElement("positions");
-  if (positions)
-  {
-    auto filename = positions->Attribute("file");
-    if (filename)
-    {
-      FILE* file = fopen(filename, "r");
-      if (file == nullptr) return nullptr;
-      std::vector<Point> points;
-      char line[128];
-      while (!feof(file))
-      {
-        Point point;
-        auto m = fscanf(file, "v\t%f %f %f\n", &point.pos.x, &point.pos.y, &point.pos.z);
-        if (m != 3)
-        {
-          fgets(line, 128, file);
-          continue;
-        }
-
-        points.push_back(point);
-      }
-      if (points.size() > 0)
-      {
-        PointObject* po = new PointObject();
-        GLuint VBO;
-
-        po->point_cnt = points.size();
-        glGenVertexArrays(1, &po->VAO);
-        glBindVertexArray(po->VAO);
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(Point), points.data(), GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        glBindVertexArray(0);
-
-        debuger::vertex_array_label(po->VAO, "point objects");
-        debuger::buffer_label(VBO, "point objects");
-        return po;
-      }
-    }
-  }
-  return nullptr;
-}
