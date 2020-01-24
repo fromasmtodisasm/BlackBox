@@ -14,13 +14,11 @@ ${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/GUI/GUI.cpp
   PRIVATE ${ENGINE_DIR}/GUI/ImGuiManager.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_impl_opengl3.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_impl_sdl.cpp
   PRIVATE ${ENGINE_DIR}/GUI/imgui_demo.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/imgui_impl_opengl3.cpp
 )
 
 find_package(imgui CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
-add_compile_definitions(GUI)
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui Render)
 
 add_private_headers()

@@ -7,6 +7,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/Timer.hpp>
 #include <BlackBox/System/Window.hpp>
+#include <BlackBox/GUI/ImGuiManager.hpp>
 
 #define DEFAULT_APP_NAME "BlackBox"
 
@@ -111,6 +112,8 @@ private:
   uint64_t NOW;
   uint64_t LAST;
   double m_DeltaTime = 0.0;
+
+  ImGuiManager m_GuiManager;
 
   virtual float GetDeltaTime() override;
 

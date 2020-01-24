@@ -61,7 +61,8 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
   m_pWindow(nullptr),
   m_pWorld(nullptr),
   m_pScriptSystem(nullptr),
-  m_ScriptObjectConsole(nullptr)
+  m_ScriptObjectConsole(nullptr),
+  m_GuiManager(this)
 {
   m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
   if (m_pSystemEventDispatcher)
@@ -200,8 +201,12 @@ bool CSystem::Init()
     if (m_pFont->Init(font, 16, 18) == false)
       return false;
   }
+  m_GuiManager.Init();
+
+  //====================================================
   m_pInput->AddEventListener(this);
   m_pInput->AddEventListener(m_pConsole);
+  m_pInput->AddEventListener(&m_GuiManager);
   if (CreateGame(nullptr) == nullptr)
     return false;
   //====================================================
@@ -611,6 +616,8 @@ void CSystem::RenderBegin()
   PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
   m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
   m_Render->BeginFrame();
+  m_GuiManager.NewFrame();
+  m_GuiManager.AddDemoWindow();
 }
 
 void CSystem::RenderEnd()
@@ -620,6 +627,8 @@ void CSystem::RenderEnd()
     DEBUG_GROUP("DRAW_PROFILE");
     PROFILER_DRAW();
   }
+
+  m_GuiManager.Render();
 
   m_pWindow->swap();
 }

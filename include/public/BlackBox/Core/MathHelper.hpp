@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 using Vec1 = glm::vec1;
 using Vec2 = glm::vec2;
+using IVec2 = glm::ivec2;
 using Vec3 = glm::vec3;
 using Vec4 = glm::vec4;
 

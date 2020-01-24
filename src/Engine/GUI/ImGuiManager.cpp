@@ -3,24 +3,68 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
-ImGuiManager::ImGuiManager(IInput* pInput)
+#define GLAD_LOADER
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+
+#include "imgui_impl_opengl3.h"
+
+ImGuiManager::ImGuiManager(ISystem* pSystem)
   :
-  m_pInput(pInput)
+  m_pSystem(pSystem)
 {
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+
 }
 
 bool ImGuiManager::OnInputEvent(const SInputEvent& event)
 {
   ImGuiIO& io = ImGui::GetIO();
+
+  bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
+  bool mouseMoution = event.state == eIS_Changed;
+  bool rotated = false;
+  //if (event.pSymbol != nullptr)
+  rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY;// || event.pSymbol->type == SInputSymbol::EType::Axis;
+
+////////////////////////
+  bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+  bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
+  bool control = event.modifiers & eMM_Ctrl;
+  bool shift = event.modifiers & eMM_Shift;
+  bool alt = event.modifiers & eMM_Alt;
+  ////////////////////////
+
   if (event.deviceType == eIDT_Mouse)
   {
     switch (event.keyId)
     {
-    case eKI_MouseWheelUp: io.MouseWheel += 1; return true;
-    case eKI_MouseWheelDown: io.MouseWheel -= 1; return true;
-    case eKI_Mouse1: m_MousePressed[0] = true; return true;
-    case eKI_Mouse2: m_MousePressed[1] = true; return true;
-    case eKI_Mouse3: m_MousePressed[2] = true; return true;
+    case eKI_MouseWheelUp: io.MouseWheel += 1; //return true;
+      break;
+    case eKI_MouseWheelDown: io.MouseWheel -= 1; //return true;
+      break;
+    case eKI_Mouse1: m_MousePressed[0] = event.state == eIS_Pressed;
+      break;
+    case eKI_Mouse2: m_MousePressed[1] = event.state == eIS_Pressed;
+      break;
+    case eKI_Mouse3: m_MousePressed[2] = event.state == eIS_Pressed;
+      break;
+    case eKI_MouseX:
+    case eKI_MouseY:
+    case eKI_MouseZ:
+      if (mouseMoution)
+      {
+        switch (event.keyId)
+        {
+        case eKI_MouseX:
+          m_MousePose.x = event.value;
+        case eKI_MouseY:
+          m_MousePose.y = event.value;
+        default:
+          break;
+        }
+      }
+      break;
     default:
       break;
     }
@@ -35,7 +79,7 @@ bool ImGuiManager::OnInputEvent(const SInputEvent& event)
     io.KeyCtrl = event.modifiers & eMM_Ctrl;
     io.KeyAlt = event.modifiers & eMM_Alt;
     io.KeySuper = event.modifiers & eMM_Win;
-    return true;
+    return false;
   }
   return false;
 }
@@ -52,7 +96,40 @@ bool ImGuiManager::OnInputEventUI(const SUnicodeEvent& event)
   return false;
 }
 
-void ImGuiManager::ImGui_ImplSDL2_UpdateGamepads()
+bool ImGuiManager::Init()
+{
+  // Setup Dear ImGui style
+  bool result = true;
+  ImGui::StyleColorsDark();
+  result &= SDL_Init();
+  result &= OpenGL3_Init();
+  return result;
+}
+
+void ImGuiManager::NewFrame()
+{
+  OpenGL3_NewFrame();
+  SDL_NewFrame();
+  ImGui::NewFrame();
+}
+
+void ImGuiManager::Render()
+{
+  // Rendering
+  auto& io = ImGui::GetIO();
+  ImGui::Render();
+  gl::ViewPort(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiManager::AddDemoWindow()
+{
+  // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+  if (show_demo_window)
+    ImGui::ShowDemoWindow(&show_demo_window);
+}
+
+void ImGuiManager::UpdateGamepads()
 {
   ImGuiIO& io = ImGui::GetIO();
   memset(io.NavInputs, 0, sizeof(io.NavInputs));
@@ -97,25 +174,22 @@ void ImGuiManager::ImGui_ImplSDL2_UpdateGamepads()
 #undef MAP_ANALOG
 }
 
-void ImGuiManager::ImGui_ImplSDL2_UpdateMousePosAndButtons()
+void ImGuiManager::UpdateMousePosAndButtons()
 {
-#if 0
   ImGuiIO& io = ImGui::GetIO();
 
-#if 0
+
   // Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
   if (io.WantSetMousePos)
-    SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
+    ;
+    //m_pSystem->GetIInput()->GetDevice()
+    // SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
   else
-#endif
     io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
-  int mx, my;
-  auto mouse_buttons = SDL_GetMouseState(&mx, &my);
-  io.MouseDown[0] = g_MousePressed[0] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;  // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-  io.MouseDown[1] = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
-  io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
-  g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
+  io.MouseDown[0] = m_MousePressed[0];
+  io.MouseDown[1] = m_MousePressed[1]; 
+  io.MouseDown[2] = m_MousePressed[2]; 
 
 #if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS)
   SDL_Window* focused_window = SDL_GetKeyboardFocus();
@@ -136,13 +210,13 @@ void ImGuiManager::ImGui_ImplSDL2_UpdateMousePosAndButtons()
   bool any_mouse_button_down = ImGui::IsAnyMouseDown();
   SDL_CaptureMouse(any_mouse_button_down ? SDL_TRUE : SDL_FALSE);
 #else
-  if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
-    io.MousePos = ImVec2((float)mx, (float)my);
-#endif
+  //if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
+  if (true)
+    io.MousePos = m_MousePose;
 #endif
 }
 
-void ImGuiManager::ImGui_ImplSDL2_NewFrame()
+void ImGuiManager::SDL_NewFrame()
 {
   ImGuiIO& io = ImGui::GetIO();
   IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGui_ImplOpenGL3_NewFrame().");
@@ -166,9 +240,97 @@ void ImGuiManager::ImGui_ImplSDL2_NewFrame()
   io.DeltaTime = m_Time > 0 ? (float)((double)(current_time - m_Time) / frequency) : (float)(1.0f / 60.0f);
   m_Time = current_time;
 
-  ImGui_ImplSDL2_UpdateMousePosAndButtons();
+  UpdateMousePosAndButtons();
   //ImGui_ImplSDL2_UpdateMouseCursor();
 
   // Update game controllers (if enabled and available)
-  ImGui_ImplSDL2_UpdateGamepads();
+  UpdateGamepads();
+}
+
+bool ImGuiManager::SDL_Init()
+{
+
+  // Setup back-end capabilities flags
+  ImGuiIO& io = ImGui::GetIO();
+  io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
+  io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
+  io.BackendPlatformName = "imgui_impl_sdl";
+
+  // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
+  io.KeyMap[ImGuiKey_Tab] = eKI_Tab;
+  io.KeyMap[ImGuiKey_LeftArrow] = eKI_Left;
+  io.KeyMap[ImGuiKey_RightArrow] = eKI_Right;
+  io.KeyMap[ImGuiKey_UpArrow] = eKI_Up;
+  io.KeyMap[ImGuiKey_DownArrow] = eKI_Down;
+  io.KeyMap[ImGuiKey_PageUp] = eKI_PgUp;
+  io.KeyMap[ImGuiKey_PageDown] = eKI_PgDn;
+  io.KeyMap[ImGuiKey_Home] = eKI_Home;
+  io.KeyMap[ImGuiKey_End] = eKI_End;
+  io.KeyMap[ImGuiKey_Insert] = eKI_Insert;
+  io.KeyMap[ImGuiKey_Delete] = eKI_Delete;
+  io.KeyMap[ImGuiKey_Backspace] = eKI_Backspace;
+  io.KeyMap[ImGuiKey_Space] = eKI_Space;
+  io.KeyMap[ImGuiKey_Enter] = eKI_Enter;
+  io.KeyMap[ImGuiKey_Escape] = eKI_Escape;
+  io.KeyMap[ImGuiKey_KeyPadEnter] = eKI_NP_Enter;
+  io.KeyMap[ImGuiKey_A] = eKI_A;
+  io.KeyMap[ImGuiKey_C] = eKI_C;
+  io.KeyMap[ImGuiKey_V] = eKI_V;
+  io.KeyMap[ImGuiKey_X] = eKI_X;
+  io.KeyMap[ImGuiKey_Y] = eKI_Y;
+  io.KeyMap[ImGuiKey_Z] = eKI_Z;
+
+  //io.SetClipboardTextFn = ImGui_ImplSDL2_SetClipboardText;
+  //io.GetClipboardTextFn = ImGui_ImplSDL2_GetClipboardText;
+  io.ClipboardUserData = NULL;
+
+  // Load mouse cursors
+  /*
+  m_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  m_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+  m_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+  m_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+  m_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+  m_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+  m_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+  m_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  m_MouseCursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+  */
+
+  // Check and store if we are on Wayland
+  //g_MouseCanUseGlobalState = strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7) != 0;
+  //g_MouseCanUseGlobalState = false;// strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7) != 0;
+
+#if 0
+#ifdef _WIN32
+  SDL_SysWMinfo wmInfo;
+  SDL_VERSION(&wmInfo.version);
+  SDL_GetWindowWMInfo(window, &wmInfo);
+  io.ImeWindowHandle = wmInfo.info.win.window;
+#else
+  (void)window;
+#endif
+#endif
+
+  return true;
+}
+
+bool ImGuiManager::OpenGL3_Init(const char* glsl_version)
+{
+  return ::ImGui_ImplOpenGL3_Init(glsl_version);
+}
+
+void ImGuiManager::OpenGL3_Shutdown()
+{
+  ::ImGui_ImplOpenGL3_Shutdown();
+}
+
+void ImGuiManager::OpenGL3_NewFrame()
+{
+  ::ImGui_ImplOpenGL3_NewFrame();
+}
+
+void ImGuiManager::OpenGL3_RenderDrawData(ImDrawData* draw_data)
+{
+  ::ImGui_ImplOpenGL3_RenderDrawData(draw_data);
 }

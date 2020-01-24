@@ -44,9 +44,10 @@ CSDLMouse::~CSDLMouse()
 
 bool CSDLMouse::Init()
 {
-  m_deltas = glm::vec2(0);
-  m_oldDeltas = glm::vec2(0);
-  m_deltasInertia = glm::vec2(0);
+  SDL_GetMouseState(&m_posX, &m_posY);
+  m_deltas = Vec2(0);
+  m_oldDeltas = Vec2(0);
+  m_deltasInertia = Vec2(0);
 
   MapSymbol(MOUSE_SYM(SDL_BUTTON_LEFT), eKI_Mouse1, "mouse1");
   MapSymbol(MOUSE_SYM(SDL_BUTTON_MIDDLE), eKI_Mouse3, "mouse3");
@@ -75,7 +76,7 @@ void CSDLMouse::Update(bool focus)
 
   int nEvents;
   unsigned type = 0;
-  // unsigned newX = m_posX, newY = m_posY;
+  unsigned newX = m_posX, newY = m_posY;
 
   SInputSymbol* pSymbol = NULL;
   //EInputState newState;

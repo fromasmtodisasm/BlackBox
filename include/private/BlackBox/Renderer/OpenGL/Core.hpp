@@ -230,6 +230,11 @@ namespace gl {
     glCheck(glViewport(static_cast<GLint>(viewPort.x), static_cast<GLint>(viewPort.y), static_cast<GLint>(viewPort.z), static_cast<GLint>(viewPort.w)));
   }
 
+  inline void ViewPort(GLuint x, GLuint y, GLuint w, GLuint h)
+  {
+    glCheck(glViewport(x,y,w,h));
+  }
+
   // Framebuffer
   inline void BindFramebuffer(GLuint id)
   {
