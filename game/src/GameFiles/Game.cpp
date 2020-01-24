@@ -161,8 +161,10 @@ bool CGame::Init(ISystem* pEngine) {
   if (m_scene)
     m_World->SetScene(m_scene);
   initPlayer();
+#if 0
   m_pInput->ShowCursor(false);
-  m_pInput->GrabInput(true);
+#endif
+  //m_pInput->GrabInput(true);
 
   if (m_scene != nullptr)
   {
@@ -868,7 +870,7 @@ void CGame::gotoMenu()
 {
   m_Mode = MENU;
   m_pInput->ShowCursor(true);
-  m_pInput->GrabInput(true);
+  m_pInput->GrabInput(false);
 }
 
 void CGame::gotoFullscreen()

@@ -8,6 +8,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+  int status = EXIT_FAILURE;
   string path;
   bool debug = false;
   if (argc > 1) {
@@ -34,15 +35,14 @@ int main(int argc, char* argv[]) {
 
   snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem* pSystem = CreateSystemInterface(params);
-  if (!pSystem->Init())
+  if (pSystem->Init())
   {
-    pSystem->Release();
-    return EXIT_FAILURE;
+    pSystem->GetILog()->Log("[OK] ISystem created\n");
+    pSystem->GetILog()->Log("[INFO] Current working directory: %s\n", path.c_str());
+    pSystem->Start();
+    status = EXIT_SUCCESS;
   }
-  pSystem->GetILog()->Log("[OK] ISystem created\n");
-  pSystem->GetILog()->Log("[INFO] Current working directory: %s\n", path.c_str());
-  pSystem->Start();
   pSystem->Release();
 
-  return 0;
+  return status;
 }
