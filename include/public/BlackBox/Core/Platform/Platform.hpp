@@ -139,3 +139,10 @@ void       bbSleep(unsigned int dwMilliseconds);
 #if BB_PLATFORM_ANDROID
 #include <CryCore/Platform/Android64Specific.h>
 #endif
+
+#define DECLARE_SHARED_POINTERS(name)                   \
+  typedef std::shared_ptr<name> name ##       Ptr;      \
+  typedef std::shared_ptr<const name> name ## ConstPtr; \
+  typedef std::weak_ptr<name> name ##         WeakPtr;  \
+  typedef std::weak_ptr<const name> name ##   ConstWeakPtr;
+
