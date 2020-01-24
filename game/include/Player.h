@@ -6,10 +6,6 @@
 #include <BlackBox/System/ICommand.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
-#ifdef GUI
-#include <imgui-SFML.h>
-#include <imgui.h>
-#endif
 
 #include <map>
 #include <queue>

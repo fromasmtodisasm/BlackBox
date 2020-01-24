@@ -291,12 +291,7 @@ public:
 
   EventListener *listener;
 	bool isDrawingGui = false;
-  //GUI
-#ifdef GUI
-  GameGUI *gui;
-#endif // GUI
 
-	//CShaderProgram *m_ScreenShader;
 	IFont* m_Font;
 	//EDIT MODE
 	//==========
@@ -307,9 +302,6 @@ public:
   //
   bool openShadowMap = true;
 
-  //
-  //ShaderManager *shaderManager;
-	//std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
 
 public:
@@ -369,8 +361,6 @@ public:
 	bool canDragViewPortWidth = false;
 	bool canDragViewPortHeight = false;
 	bool mousePressed = false;
-	//sf::Vector2i mouseDelta;
-	//sf::Vector2i mousePrev;
 
   enum Mode
   {

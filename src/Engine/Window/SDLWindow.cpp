@@ -2,6 +2,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 
 #include <SDL.h>
+#include <BlackBox/GUI/GUI.hpp>
 #include <memory>
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
@@ -29,7 +30,8 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   //m_Window->setMouseCursorGrabbed(true);
 
 #ifdef GUI
-  ImGui::SFML::Create(*m_Window);
+  ImGui_ImplOpenGL3_Init();
+  ImGui_ImplSDL2_InitForOpenGL(m_Window, glRenderContext);
 #endif // GUI
 
   // Make it the active window for OpenGL w->setActive();
