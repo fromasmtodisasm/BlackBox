@@ -389,7 +389,7 @@ void CSDLMouse::UngrabInput()
     return;
   m_bGrabInput = false;
 
-  SDL_SetWindowGrab(*static_cast<SDL_Window**>(m_pRenderer->GetCurrentContextHWND()), SDL_FALSE);
+  SDL_SetWindowGrab(static_cast<SDL_Window*>(m_pRenderer->GetCurrentContextHWND()), SDL_FALSE);
   if (SDL_SetRelativeMouseMode(SDL_FALSE) != 0)
     LogAlways("SDL: Could not unset relative mouse mode: %s", SDL_GetError());
   SDL_ShowCursor(SDL_ENABLE);
