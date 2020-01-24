@@ -49,7 +49,7 @@
 
 #define MAXPLAYERS_LIMIT					(32)
 
-class IRenderer;
+struct IRenderer;
 
 typedef std::multimap<std::string, ITagPoint*>	RespawnPointMap;
 

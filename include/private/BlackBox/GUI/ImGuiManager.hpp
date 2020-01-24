@@ -19,5 +19,6 @@ private:
 private:
   IInput* m_pInput = nullptr;
   bool m_MousePressed[3] = { false, false, false };
+  uint64_t m_Time = 0;
 
 };

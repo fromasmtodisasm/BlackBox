@@ -154,8 +154,8 @@ void ImGuiManager::ImGui_ImplSDL2_NewFrame()
   // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
   static Uint64 frequency = SDL_GetPerformanceFrequency();
   Uint64 current_time = SDL_GetPerformanceCounter();
-  io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
-  g_Time = current_time;
+  io.DeltaTime = m_Time > 0 ? (float)((double)(current_time - m_Time) / frequency) : (float)(1.0f / 60.0f);
+  m_Time = current_time;
 
   ImGui_ImplSDL2_UpdateMousePosAndButtons();
   ImGui_ImplSDL2_UpdateMouseCursor();
