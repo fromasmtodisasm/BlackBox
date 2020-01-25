@@ -23,17 +23,23 @@
 
 #pragma once
 
+class IMGUI_IMPL_API ImGuiOpenglRender
+{
+public:
 // Backend API
-IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_Init(const char* glsl_version = NULL);
-IMGUI_IMPL_API void     ImGui_ImplOpenGL3_Shutdown();
-IMGUI_IMPL_API void     ImGui_ImplOpenGL3_NewFrame();
-IMGUI_IMPL_API void     ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data);
+  static bool     Init(const char* glsl_version = NULL);
+  static void     Shutdown();
+  static void     NewFrame();
+  static void     RenderDrawData(ImDrawData* draw_data);
+  // (Optional) Called by Init/NewFrame/Shutdown
+  static bool     CreateFontsTexture();
+  static void     DestroyFontsTexture();
+  static bool     CreateDeviceObjects();
+  static void     DestroyDeviceObjects();
 
-// (Optional) Called by Init/NewFrame/Shutdown
-IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_CreateFontsTexture();
-IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyFontsTexture();
-IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_CreateDeviceObjects();
-IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyDeviceObjects();
+};
+
+using ImGuiRender = ImGuiOpenglRender;
 
 // Specific OpenGL versions
 //#define IMGUI_IMPL_OPENGL_ES2     // Auto-detected on Emscripten

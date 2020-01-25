@@ -66,7 +66,7 @@ if (OPTION_GLAD_LOADER)
 endif()
 
 
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
