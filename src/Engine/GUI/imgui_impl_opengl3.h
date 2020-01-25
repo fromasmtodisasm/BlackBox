@@ -22,20 +22,25 @@
 //  Only override if your GL version doesn't handle this GLSL version. See GLSL version table at the top of imgui_impl_opengl3.cpp.
 
 #pragma once
+struct IRenderer;
 
 class IMGUI_IMPL_API ImGuiOpenglRender
 {
 public:
 // Backend API
-  static bool     Init(const char* glsl_version = NULL);
-  static void     Shutdown();
-  static void     NewFrame();
-  static void     RenderDrawData(ImDrawData* draw_data);
+  bool Init(IRenderer *pRenderer, const char* glsl_version = NULL);
+  void Shutdown();
+  void NewFrame();
+  void RenderDrawData(ImDrawData* draw_data);
+  void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object);
+
   // (Optional) Called by Init/NewFrame/Shutdown
-  static bool     CreateFontsTexture();
-  static void     DestroyFontsTexture();
-  static bool     CreateDeviceObjects();
-  static void     DestroyDeviceObjects();
+  bool CreateFontsTexture();
+  void DestroyFontsTexture();
+  bool CreateDeviceObjects();
+  void DestroyDeviceObjects();
+private:
+  IRenderer* m_pRender;
 
 };
 

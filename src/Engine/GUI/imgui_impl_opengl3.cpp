@@ -68,6 +68,7 @@
 #endif
 
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
@@ -182,8 +183,9 @@ namespace {
 }
 
 // Functions
-bool    ImGuiOpenglRender::Init(const char* glsl_version)
+bool    ImGuiOpenglRender::Init(IRenderer *pRenderer, const char* glsl_version)
 {
+    m_pRender = pRenderer;
     // Setup back-end capabilities flags
     ImGuiIO& io = ImGui::GetIO();
     io.BackendRendererName = "imgui_impl_opengl3";
@@ -242,57 +244,6 @@ void ImGuiOpenglRender::NewFrame()
     if (!g_ShaderHandle)
         CreateDeviceObjects();
 }
-
-static void ImGui_ImplOpenGL3_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object)
-{
-    // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
-    glEnable(GL_BLEND);
-    glBlendEquation(GL_FUNC_ADD);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_SCISSOR_TEST);
-#ifdef GL_POLYGON_MODE
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-#endif
-
-    // Setup viewport, orthographic projection matrix
-    // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
-    glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
-    float L = draw_data->DisplayPos.x;
-    float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x;
-    float T = draw_data->DisplayPos.y;
-    float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
-    const float ortho_projection[4][4] =
-    {
-        { 2.0f/(R-L),   0.0f,         0.0f,   0.0f },
-        { 0.0f,         2.0f/(T-B),   0.0f,   0.0f },
-        { 0.0f,         0.0f,        -1.0f,   0.0f },
-        { (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f },
-    };
-    glUseProgram(g_ShaderHandle);
-    glUniform1i(g_AttribLocationTex, 0);
-    glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
-#ifdef GL_SAMPLER_BINDING
-    glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
-#endif
-
-    (void)vertex_array_object;
-#ifndef IMGUI_IMPL_OPENGL_ES2
-    glBindVertexArray(vertex_array_object);
-#endif
-
-    // Bind vertex/index buffers and setup attributes for ImDrawVert
-    glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ElementsHandle);
-    glEnableVertexAttribArray(g_AttribLocationVtxPos);
-    glEnableVertexAttribArray(g_AttribLocationVtxUV);
-    glEnableVertexAttribArray(g_AttribLocationVtxColor);
-    glVertexAttribPointer(g_AttribLocationVtxPos,   2, GL_FLOAT,         GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
-    glVertexAttribPointer(g_AttribLocationVtxUV,    2, GL_FLOAT,         GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
-    glVertexAttribPointer(g_AttribLocationVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, col));
-}
-
 // OpenGL3 Render function.
 // (this used to be set in io.RenderDrawListsFn and called by ImGui::Render(), but you can now call this directly from your main loop)
 // Note that this implementation is little overcomplicated because we are saving/setting up/restoring every OpenGL state explicitly, in order to be able to run within any OpenGL engine that doesn't do so.
@@ -313,7 +264,7 @@ void    ImGuiOpenglRender::RenderDrawData(ImDrawData* draw_data)
 #ifndef IMGUI_IMPL_OPENGL_ES2
     glGenVertexArrays(1, &vertex_array_object);
 #endif
-    ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
+    SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
 
     // Will project scissor/clipping rectangles into framebuffer space
     ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
@@ -336,7 +287,7 @@ void    ImGuiOpenglRender::RenderDrawData(ImDrawData* draw_data)
                 // User callback, registered via ImDrawList::AddCallback()
                 // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
                 if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-                    ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
+                    SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
                 else
                     pcmd->UserCallback(cmd_list, pcmd);
             }
@@ -374,6 +325,64 @@ void    ImGuiOpenglRender::RenderDrawData(ImDrawData* draw_data)
     glDeleteVertexArrays(1, &vertex_array_object);
 #endif
 
+}
+
+void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object)
+{
+  // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
+  m_pRender->SetState(IRenderer::State::BLEND, true);
+  //glEnable(GL_BLEND);
+  glBlendEquation(GL_FUNC_ADD);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  m_pRender->SetState(IRenderer::State::CULL_FACE, false);
+  //glDisable(GL_CULL_FACE);
+  m_pRender->SetState(IRenderer::State::DEPTH_TEST, false);
+  //glDisable(GL_DEPTH_TEST);
+  m_pRender->SetState(IRenderer::State::SCISSOR_TEST, false);
+  //glEnable(GL_SCISSOR_TEST);
+#ifdef GL_POLYGON_MODE
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
+
+  // Setup viewport, orthographic projection matrix
+  // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
+  m_pRender->SetViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
+  //glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
+  float L = draw_data->DisplayPos.x;
+  float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x;
+  float T = draw_data->DisplayPos.y;
+  float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
+  glm::mat4 ortho_projection = glm::ortho(L, R, B, T);
+  /*
+  const float ortho_projection[4][4] =
+  {
+    { 2.0f / (R - L),   0.0f,         0.0f,   0.0f },
+    { 0.0f,         2.0f / (T - B),   0.0f,   0.0f },
+    { 0.0f,         0.0f,        -1.0f,   0.0f },
+    { (R + L) / (L - R),  (T + B) / (B - T),  0.0f,   1.0f },
+  };
+  */
+  glUseProgram(g_ShaderHandle);
+  glUniform1i(g_AttribLocationTex, 0);
+  glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+#ifdef GL_SAMPLER_BINDING
+  glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
+#endif
+
+  (void)vertex_array_object;
+#ifndef IMGUI_IMPL_OPENGL_ES2
+  glBindVertexArray(vertex_array_object);
+#endif
+
+  // Bind vertex/index buffers and setup attributes for ImDrawVert
+  glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ElementsHandle);
+  glEnableVertexAttribArray(g_AttribLocationVtxPos);
+  glEnableVertexAttribArray(g_AttribLocationVtxUV);
+  glEnableVertexAttribArray(g_AttribLocationVtxColor);
+  glVertexAttribPointer(g_AttribLocationVtxPos, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
+  glVertexAttribPointer(g_AttribLocationVtxUV, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
+  glVertexAttribPointer(g_AttribLocationVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, col));
 }
 
 bool ImGuiOpenglRender::CreateFontsTexture()

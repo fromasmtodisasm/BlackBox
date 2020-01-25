@@ -286,6 +286,7 @@ public:
   };
 
   static ImGuiInput input;
+  static ImGuiRender render;
 }
 
 ImGuiManager::ImGuiManager(ISystem* pSystem)
@@ -296,7 +297,7 @@ ImGuiManager::ImGuiManager(ISystem* pSystem)
 
 ImGuiManager::~ImGuiManager()
 {
-  ImGuiRender::Shutdown();
+  render.Shutdown();
 }
 
 bool ImGuiManager::OnInputEvent(const SInputEvent& event)
@@ -315,13 +316,13 @@ bool ImGuiManager::Init()
   bool result = true;
   ImGui::StyleColorsDark();
   result &= input.Init();
-  result &= ImGuiRender::Init();
+  result &= render.Init(GetISystem()->GetIRender());
   return result;
 }
 
 void ImGuiManager::NewFrame()
 {
-  ImGuiRender::NewFrame();
+  render.NewFrame();
   input.NewFrame();
   ImGui::NewFrame();
 }
@@ -332,7 +333,7 @@ void ImGuiManager::Render()
   auto& io = ImGui::GetIO();
   ImGui::Render();
   gl::ViewPort(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-  ImGuiRender::RenderDrawData(ImGui::GetDrawData());
+  render.RenderDrawData(ImGui::GetDrawData());
 }
 
 void ImGuiManager::AddDemoWindow()
