@@ -24,6 +24,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/Commands.cpp
   PRIVATE ${ENGINE_DIR}/System/Console.cpp
   PRIVATE ${ENGINE_DIR}/System/File/CryPak.cpp
+  PRIVATE ${ENGINE_DIR}/System/HardwareMouse.cpp
   PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
   PRIVATE ${ENGINE_DIR}/System/Log.cpp
   PRIVATE ${ENGINE_DIR}/System/System.cpp

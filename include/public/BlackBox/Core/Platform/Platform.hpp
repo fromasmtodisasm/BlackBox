@@ -60,6 +60,7 @@ enum class EPlatform
 #include <cstring>
 
 // Safe memory helpers
+#if 0
 template<typename T>
 inline auto SAFE_DELETE(T const* t) -> decltype((void)(t->Release()), void())
 {
@@ -75,6 +76,15 @@ inline auto SAFE_DELETE(T*& t)
     t = nullptr;
   }
 }
+#else
+// Safe memory helpers
+#define SAFE_DELETE(p)        { if (p) { delete (p);          (p) = NULL; } }
+#define SAFE_DELETE_ARRAY(p)  { if (p) { delete[] (p);        (p) = NULL; } }
+#define SAFE_RELEASE(p)       { if (p) { (p)->Release();      (p) = NULL; } }
+#define SAFE_RELEASE_FORCE(p) { if (p) { (p)->ReleaseForce(); (p) = NULL; } }
+#endif
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // common Typedef                                                                   //

@@ -376,6 +376,12 @@ struct ICVar
   virtual const char* GetHelp() = 0;
 };
 
+#ifdef EXCLUDE_CVARHELP
+	#define CVARHELP(_comment) 0
+#else
+	#define CVARHELP(_comment) _comment
+#endif
+
 #define GET_CONSOLE() GetISystem()->GetIConsole()
 #define CREATE_CVAR(name, value, flags, ...) GET_CONSOLE()->CreateVariable(name, value, flags, ##__VA_ARGS__)
 #define GET_CVAR(name) GET_CONSOLE()->GetCVar(name)
@@ -385,6 +391,8 @@ struct ICVar
 #define REGISTER_CVAR(_var, _def_val, _flags, _comment) ConsoleRegistrationHelper::Register(( # _var), &(_var), (_def_val), (_flags), CVARHELP(_comment))
 #else
 #define REGISTER_CVAR(_var, _def_var, _flags, ...) GET_CONSOLE()->Register((#_var), &(_var), (_def_var), (_flags), ##__VA_ARGS__)
+//! Offers more flexibility but more code is required
+#define REGISTER_CVAR2(_name, _var, _def_val, _flags, _comment) GET_CONSOLE()->Register(_name, _var, (_def_val), (_flags), CVARHELP(_comment))
 #endif
 
 //! Preferred way to register a console command

@@ -8,8 +8,10 @@ struct IGame;
 struct IShaderManager;
 struct IRenderer;
 struct ILog;
+struct ICmdLine;
 struct IConsole;
 struct IInput;
+struct IHardwareMouse;
 struct IFont;
 struct IWindow;
 struct IInputHandler;
@@ -129,6 +131,20 @@ struct SSystemInitParams
   }
 };
 
+struct SSystemGlobalEnvironment
+{
+  INetwork* pNetwork;
+  IScriptSystem* pScriptSystem;
+  IInput* pInput;
+  ICryPak* pCryPak;
+  ITimer* pTimer;
+  IConsole* pConsole;
+  ISystem* pSystem;
+  ILog* pLog;
+  IRenderer* pRenderer;
+  IHardwareMouse* pHardwareMouse;
+};
+
 struct ISystem
 {
   enum MessageType {
@@ -148,19 +164,22 @@ struct ISystem
   virtual void Start() = 0;
   virtual bool Update(int updateFlags = 0, int nPauseMode = 0) = 0;
   virtual void Release() = 0;
+	//! Returns pointer to the global environment structure.
+	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() = 0;
   virtual IGame* CreateGame(IGame* game) = 0;
 
-  virtual IShaderManager* GetShaderManager() = 0;
-  virtual IRenderer* GetIRender() = 0;
-  virtual ILog* GetILog() = 0;
-  virtual IConsole* GetIConsole() = 0;
-  virtual IInput* GetIInput() = 0;
-  virtual IGame* GetIGame() = 0;
-  virtual IFont* GetIFont() = 0;
-  virtual INetwork* GetINetwork() = 0;
-  virtual IWindow* GetIWindow() = 0;
-  virtual IWorld* GetIWorld() = 0;
-  virtual ICryPak* GetIPak() = 0;
+  virtual IShaderManager*         GetShaderManager() = 0;
+  virtual IRenderer*              GetIRender() = 0;
+  virtual ILog*                   GetILog() = 0;
+	virtual ICmdLine*               GetICmdLine() = 0;
+  virtual IConsole*               GetIConsole() = 0;
+  virtual IInput*                 GetIInput() = 0;
+  virtual IGame*                  GetIGame() = 0;
+  virtual IFont*                  GetIFont() = 0;
+  virtual INetwork*               GetINetwork() = 0;
+  virtual IWindow*                GetIWindow() = 0;
+  virtual IWorld*                 GetIWorld() = 0;
+  virtual ICryPak*                GetIPak() = 0;
 #if 0
   virtual IInputHandler* GetIInputHandler() = 0;
 #endif

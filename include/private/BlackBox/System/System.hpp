@@ -36,10 +36,12 @@ public:
   virtual void Render() override;
   virtual void RenderEnd() override;
   virtual void Release() override;
+	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() override { return &m_env; }
 
   virtual IShaderManager* GetShaderManager() override;
   virtual IRenderer* GetIRender() override;
   virtual ILog* GetILog() override;
+  virtual ICmdLine* GetICmdLine() override { return m_pCmdLine; };
   virtual ITimer* GetITimer() override;
   virtual IConsole* GetIConsole() override;
   virtual IInput* GetIInput() override;
@@ -76,7 +78,17 @@ private:
   void LoadScreen();
   bool InitScripts();
 	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
+protected:
+	CCmdLine*                                 m_pCmdLine;
+
 private:
+	// System environment.
+#if defined(SYS_ENV_AS_STRUCT)
+	//since gEnv is a global var, this should just be a reference for code consistency
+	SSystemGlobalEnvironment & m_env;
+#else
+	SSystemGlobalEnvironment m_env;
+#endif
   CTimer									m_Time;                  //!<
 
   ILog* m_pLog;
@@ -107,7 +119,6 @@ private:
   ICVar* cvGameName;
 
   SSystemInitParams& m_startupParams;
-  CCmdLine* m_pCmdLine;
 
   uint64_t NOW;
   uint64_t LAST;
