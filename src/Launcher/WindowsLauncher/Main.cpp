@@ -10,12 +10,6 @@ using namespace std;
 int main(int argc, char* argv[]) {
   int status = EXIT_FAILURE;
   string path;
-  bool debug = false;
-  if (argc > 1) {
-    if (string(argv[1]) == "-debug")
-      debug = true;
-  }
-
   std::string cmdline;
   if (argc > 1)
   {

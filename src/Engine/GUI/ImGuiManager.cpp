@@ -2,6 +2,7 @@
 
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Input/IHardwareMouse.hpp>
 
 #define GLAD_LOADER
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
@@ -194,7 +195,8 @@ namespace
 #else
       //if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
       if (true)
-        io.MousePos = m_MousePose;
+        gEnv->pHardwareMouse->GetHardwareMousePosition(&m_MousePose.x, &m_MousePose.y);
+      io.MousePos = m_MousePose;
 #endif
     }
 
@@ -202,20 +204,8 @@ namespace
     {
       ImGuiIO& io = ImGui::GetIO();
 
-      bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
       bool mouseMoution = event.state == eIS_Changed;
-      bool rotated = false;
       //if (event.pSymbol != nullptr)
-      rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY;// || event.pSymbol->type == SInputSymbol::EType::Axis;
-
-    ////////////////////////
-      bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-      bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
-      bool control = event.modifiers & eMM_Ctrl;
-      bool shift = event.modifiers & eMM_Shift;
-      bool alt = event.modifiers & eMM_Alt;
-      ////////////////////////
-
       if (event.deviceType == eIDT_Mouse)
       {
         switch (event.keyId)
@@ -229,22 +219,6 @@ namespace
         case eKI_Mouse2: m_MousePressed[1] = event.state == eIS_Pressed;
           break;
         case eKI_Mouse3: m_MousePressed[2] = event.state == eIS_Pressed;
-          break;
-        case eKI_MouseX:
-        case eKI_MouseY:
-        case eKI_MouseZ:
-          if (mouseMoution)
-          {
-            switch (event.keyId)
-            {
-            case eKI_MouseX:
-              m_MousePose.x = event.value;
-            case eKI_MouseY:
-              m_MousePose.y = event.value;
-            default:
-              break;
-            }
-          }
           break;
         default:
           break;
@@ -268,14 +242,9 @@ namespace
     
     bool OnInputEventUI(const SUnicodeEvent& event)
     {
-    #if 0
-      case SDL_TEXTINPUT:
-          {
-              io.AddInputCharactersUTF8(event->text.text);
-              return true;
-          }
-    #endif
-      return false;
+      ImGuiIO& io = ImGui::GetIO();
+      io.AddInputCharactersUTF8(reinterpret_cast<const char*>(&event.inputChar));
+      return true;
 
     }
 public:

@@ -1,5 +1,4 @@
 // Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
-#if 0
 
 /*************************************************************************
    -------------------------------------------------------------------------
@@ -110,7 +109,7 @@ CHardwareMouse::~CHardwareMouse()
 	{
 		if (gEnv->pRenderer)
 		{
-			gEnv->pRenderer->RemoveListener(this);
+			//gEnv->pRenderer->RemoveListener(this);
 #if !defined(DEDICATED_SERVER)
 			SAFE_RELEASE(m_pCursorTexture);     // On dedicated server this texture is actually a static returned by NULL renderer.. can't release that.
 #endif
@@ -232,6 +231,7 @@ void CHardwareMouse::ConfineCursor(bool confine)
 #endif
 }
 
+#if 0
 //-----------------------------------------------------------------------------------------------------
 
 void CHardwareMouse::OnPostCreateDevice()
@@ -245,6 +245,7 @@ void CHardwareMouse::OnPostResetDevice()
 }
 
 //-----------------------------------------------------------------------------------------------------
+#endif
 
 bool CHardwareMouse::OnInputEvent(const SInputEvent& rInputEvent)
 {
@@ -386,12 +387,18 @@ void CHardwareMouse::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR
 	// fine grained focus notifications to determine mouse visibility and capture
 	if (event == ESYSTEM_EVENT_ACTIVATE || event == ESYSTEM_EVENT_CHANGE_FOCUS)
 	{
+#if 0
 		if (!gEnv->IsEditor())
 		{
 			bool bFocus = (wparam != 0);
 			HandleFocusEvent(bFocus);
 		}
+#else
+			bool bFocus = (wparam != 0);
+			HandleFocusEvent(bFocus);
+#endif
 	}
+#if 0
 	// only makes sense for editor (or engine clients that support many windows)
 	else if (event == ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE)
 	{
@@ -402,14 +409,17 @@ void CHardwareMouse::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR
 	{
 		EvaluateCursorConfinement();
 	}
+#endif
 	else if (event == ESYSTEM_EVENT_RESIZE)
 	{
 		EvaluateCursorConfinement();
 	}
+#if 0
 	else if (event == ESYSTEM_EVENT_TOGGLE_FULLSCREEN)
 	{
 		EvaluateCursorConfinement();
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -423,17 +433,19 @@ void CHardwareMouse::Release()
 
 void CHardwareMouse::OnPreInitRenderer()
 {
-	CRY_ASSERT(gEnv->pRenderer);
+#if 0
+	ASSERT(gEnv->pRenderer);
 
 	if (gEnv->pRenderer)
 		gEnv->pRenderer->AddListener(this);
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void CHardwareMouse::OnPostInitInput()
 {
-	CRY_ASSERT(gEnv->pInput);
+	ASSERT(gEnv->pInput);
 
 	if (gEnv->pInput)
 		gEnv->pInput->AddEventListener(this);
@@ -445,7 +457,7 @@ void CHardwareMouse::Event(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEve
 {
 	// TODO: console event filtering should not be hardwired, it should use something like the exclusive event listener mechanism, maybe with some priority ordering capability added
 	// Ignore events while console is active
-	if (gEnv->pConsole->GetStatus())
+	if (gEnv->pConsole->IsOpened())
 	{
 		return;
 	}
@@ -465,14 +477,18 @@ void CHardwareMouse::Event(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEve
 
 void CHardwareMouse::AddListener(IHardwareMouseEventListener* pHardwareMouseEventListener)
 {
+#if 0
 	stl::push_back_unique(m_listHardwareMouseEventListeners, pHardwareMouseEventListener);
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void CHardwareMouse::RemoveListener(IHardwareMouseEventListener* pHardwareMouseEventListener)
 {
+#if 0
 	stl::find_and_erase(m_listHardwareMouseEventListeners, pHardwareMouseEventListener);
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -497,7 +513,7 @@ void CHardwareMouse::IncrementCounter()
 
 	if (m_debugHardwareMouse)
 		LogAlways("HM: IncrementCounter = %d", m_iReferenceCounter);
-	CRY_ASSERT(m_iReferenceCounter >= 0);
+	ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
 	EvaluateCursorConfinement();
@@ -511,7 +527,7 @@ void CHardwareMouse::DecrementCounter()
 
 	if (m_debugHardwareMouse)
 		LogAlways("HM: DecrementCounter = %d", m_iReferenceCounter);
-	CRY_ASSERT(m_iReferenceCounter >= 0);
+	ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
 	EvaluateCursorConfinement();
@@ -585,7 +601,7 @@ void CHardwareMouse::GetHardwareMouseClientPosition(float* pfX, float* pfY)
 		return;
 
 	HWND hWnd = (HWND) gEnv->pRenderer->GetCurrentContextHWND();
-	CRY_ASSERT_MESSAGE(hWnd, "Impossible to get client coordinates from a non existing window!");
+	ASSERT_MESSAGE(hWnd, "Impossible to get client coordinates from a non existing window!");
 
 	if (hWnd)
 	{
@@ -612,7 +628,7 @@ void CHardwareMouse::SetHardwareMouseClientPosition(float fX, float fY)
 {
 #if CRY_PLATFORM_WINDOWS
 	HWND hWnd = (HWND) gEnv->pRenderer->GetCurrentContextHWND();
-	CRY_ASSERT_MESSAGE(hWnd, "Impossible to set position of the mouse relative to client coordinates from a non existing window!");
+	ASSERT_MESSAGE(hWnd, "Impossible to set position of the mouse relative to client coordinates from a non existing window!");
 
 	if (hWnd)
 	{
@@ -671,6 +687,7 @@ bool CHardwareMouse::SetCursor(int idc_cursor_id)
 //-----------------------------------------------------------------------------------------------------
 bool CHardwareMouse::SetCursor(const char* path)
 {
+#if 0
 #if CRY_PLATFORM_WINDOWS
 	if (m_nCurIDCCursorId || m_curCursorPath.compare(path))
 		DestroyCursor();
@@ -732,6 +749,9 @@ bool CHardwareMouse::SetCursor(const char* path)
 		}
 		return true;
 	}
+#else
+	return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -766,6 +786,7 @@ void CHardwareMouse::Update()
 
 void CHardwareMouse::Render()
 {
+#if 0
 	if (m_shouldUseSystemCursor)
 		return;
 
@@ -780,12 +801,14 @@ void CHardwareMouse::Render()
 		gEnv->pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
 		gEnv->pRenderer->Draw2dImage(fPosX / fScalerX, fPosY / fScalerY, fSizeX / fScalerX, fSizeY / fScalerY, m_pCursorTexture->GetTextureID(), 0, 1, 1, 0, 0, 1, 1, 1, 1, 0);
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 bool CHardwareMouse::IsFullscreen()
 {
+#if 0
 	assert(gEnv);
 	assert(gEnv->pRenderer || gEnv->IsDedicated());
 
@@ -795,6 +818,9 @@ bool CHardwareMouse::IsFullscreen()
 		gEnv->pRenderer->EF_Query(EFQ_Fullscreen, bFullScreen);
 	}
 	return bFullScreen;
+#else
+	return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -877,4 +903,3 @@ void CHardwareMouse::EvaluateCursorConfinement()
 
 	ConfineCursor(bConfine);
 }
-#endif

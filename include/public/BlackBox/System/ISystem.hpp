@@ -42,6 +42,8 @@ enum ESystemEvent
   ESYSTEM_EVENT_LEVEL_POST_UNLOAD,
 
   ESYSTEM_EVENT_LANGUAGE_CHANGE,
+
+  ESYSTEM_EVENT_ACTIVATE,
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,6 +145,8 @@ struct SSystemGlobalEnvironment
   ILog* pLog;
   IRenderer* pRenderer;
   IHardwareMouse* pHardwareMouse;
+
+  bool IsEditor() { return false; }
 };
 
 struct ISystem
@@ -180,6 +184,7 @@ struct ISystem
   virtual IWindow*                GetIWindow() = 0;
   virtual IWorld*                 GetIWorld() = 0;
   virtual ICryPak*                GetIPak() = 0;
+  virtual IHardwareMouse*         GetIHardwareMouse() = 0;
 #if 0
   virtual IInputHandler* GetIInputHandler() = 0;
 #endif
@@ -199,6 +204,13 @@ struct ISystem
 
   virtual float GetDeltaTime() = 0;
 };
+
+// Global environment variable.
+#if defined(SYS_ENV_AS_STRUCT)
+  extern SSystemGlobalEnvironment gEnv;
+#else
+  extern SSystemGlobalEnvironment* gEnv;
+#endif
 
 // Get the system interface (must be defined locally in each module)
 extern ISystem* GetISystem();

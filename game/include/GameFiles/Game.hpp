@@ -55,7 +55,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 using string = std::string;
 class EventListener; 
 class GameGUI;
-class IScene;
+struct IScene;
 class SceneManager;
 class CTagPoint;
 class ILog;

@@ -53,6 +53,7 @@ public:
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
   virtual INetwork* GetINetwork() override;
   virtual ICryPak* GetIPak() override;
+  virtual IHardwareMouse* GetIHardwareMouse()  { return m_env.pHardwareMouse; };
 
   virtual IGame* CreateGame(IGame* game) override;
 
@@ -73,6 +74,8 @@ public:
   virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 private:
+  bool InitConsole();
+
   bool InitResourceManagers();
   void ParseCMD();
   void LoadScreen();
