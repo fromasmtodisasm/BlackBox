@@ -12,8 +12,8 @@
 #define MOUSE_AXIS_X      (MOUSE_SYM(10))
 #define MOUSE_AXIS_Y      (MOUSE_SYM(11))
 #define MOUSE_AXIS_Z      (MOUSE_SYM(12))
-#define MOUSE_AXIS_X_ABS  (MOUSE_SYM(13))
-#define MOUSE_AXIS_Y_ABS  (MOUSE_SYM(14))
+//#define MOUSE_AXIS_X_ABS  (MOUSE_SYM(13))
+//#define MOUSE_AXIS_Y_ABS  (MOUSE_SYM(14))
 // We need to define custom macros for mouse wheel symbols
 // since in SDL2 the mouse wheel event is handles as a single
 // occurance
@@ -59,8 +59,8 @@ bool CSDLMouse::Init()
   MapSymbol(MOUSE_AXIS_X, eKI_MouseX, "maxis_x", SInputSymbol::RawAxis);
   MapSymbol(MOUSE_AXIS_Y, eKI_MouseY, "maxis_y", SInputSymbol::RawAxis);
   MapSymbol(MOUSE_AXIS_Z, eKI_MouseZ, "maxis_z", SInputSymbol::RawAxis);
-  MapSymbol(MOUSE_AXIS_X_ABS, eKI_MouseXAbsolute, "maxis_xabs", SInputSymbol::RawAxis);
-  MapSymbol(MOUSE_AXIS_Y_ABS, eKI_MouseYAbsolute, "maxis_yabs", SInputSymbol::RawAxis);
+  //MapSymbol(MOUSE_AXIS_X_ABS, eKI_MouseXAbsolute, "maxis_xabs", SInputSymbol::RawAxis);
+  //MapSymbol(MOUSE_AXIS_Y_ABS, eKI_MouseYAbsolute, "maxis_yabs", SInputSymbol::RawAxis);
 
 #if defined(HIDE_MOUSE_POINTER)
   SDL_ShowCursor(SDL_DISABLE);
