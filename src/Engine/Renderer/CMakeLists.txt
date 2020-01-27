@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(Render CXX)
+project(Renderer CXX)
 ###################################################
 add_library(OpenGlBackend INTERFACE)
 ###################################################
@@ -31,37 +31,37 @@ endif()
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseTexture.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Camera.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/FrameBufferObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/FreeTypeFont.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/HdrTechnique.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/IndexBuffer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Light.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Material.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Particles.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Pipeline.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/GLRenderer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/BaseRenderer.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ScreenShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Shader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapShader.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/ShadowMapTechnique.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/TechniqueManager.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Terrain.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Texture.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/TextureCube.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/VertexArrayObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/VertexBuffer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Camera.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/FrameBufferObject.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/HdrTechnique.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/IndexBuffer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Light.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Material.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/OpenglDebug.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Particles.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Pipeline.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Postprocessor.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/ReflectShader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/GLRenderer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/ScreenShader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/ShadowMapShader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/ShadowMapTechnique.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/TechniqueManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Terrain.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Texture.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/VertexArrayObject.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 )
 
 if (OPTION_GLAD_LOADER)
   target_sources(${PROJECT_NAME}
-    PRIVATE ${SOURCE_DIR}/Engine/Render/GladLoader.cpp
+    PRIVATE ${PROJECT_SOURCE_DIR}/GladLoader.cpp
   )
 endif()
 
