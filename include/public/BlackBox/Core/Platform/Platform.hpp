@@ -96,6 +96,14 @@ typedef unsigned int        UINT;
 typedef unsigned int        *PUINT;
 
 
+#if defined(__GNUC__)
+	#define DLL_EXPORT __attribute__ ((visibility("default")))
+	#define DLL_IMPORT __attribute__ ((visibility("default")))
+#else
+	#define DLL_EXPORT __declspec(dllexport)
+	#define DLL_IMPORT __declspec(dllimport)
+#endif
+
 #define BIT(x)    (1u << (x))
 #define BIT64(x)  (1ull << (x))
 #define MASK(x)   (BIT(x) - 1U)
