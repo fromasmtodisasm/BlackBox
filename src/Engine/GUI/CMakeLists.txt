@@ -19,7 +19,7 @@ target_sources(${PROJECT_NAME}
 )
 
 find_package(imgui CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui Render)
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui Renderer)
 
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()
