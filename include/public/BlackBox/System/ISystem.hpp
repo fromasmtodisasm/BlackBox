@@ -146,7 +146,15 @@ struct SSystemGlobalEnvironment
   IRenderer* pRenderer;
   IHardwareMouse* pHardwareMouse;
 
-  bool IsEditor() { return false; }
+  ILINE bool IsEditor() { return false; }
+	ILINE const bool IsEditing() const
+	{
+#if BB_PLATFORM_DESKTOP
+		return bEditor && !bEditorGameMode;
+#else
+		return false;
+#endif
+	}
 };
 
 struct ISystem

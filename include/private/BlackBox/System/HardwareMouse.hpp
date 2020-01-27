@@ -35,6 +35,7 @@ public:
 
 	// IInputEventListener
 	virtual bool OnInputEvent(const SInputEvent& rInputEvent);
+  virtual int GetPriority() const { return 0; }
 	// ~IInputEventListener
 
 	// ISystemEventListener
@@ -64,7 +65,7 @@ public:
 	virtual bool                         SetCursor(int idc_cursor_id);
 	virtual bool                         SetCursor(const char* path);
 	virtual void                         UseSystemCursor(bool bUseSystemCursor);
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	virtual void*                        GetCurrentCursor();
 #endif
 	virtual ISystemEventListener*        GetSystemEventListener() { return this; }
@@ -103,7 +104,7 @@ private:
 
 	bool                             m_shouldUseSystemCursor;
 	bool                             m_usingSystemCursor;
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	HCURSOR                          m_hCursor;
 	int                              m_nCurIDCCursorId;
 #else

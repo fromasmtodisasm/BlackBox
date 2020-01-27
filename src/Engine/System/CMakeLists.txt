@@ -32,6 +32,9 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/Timer.cpp
 )
 
+if (OPTION_USE_LINUXINPUT)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
 set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
 

@@ -53,7 +53,7 @@ namespace
       ImGuiIO& io = ImGui::GetIO();
       io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
       io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
-      io.BackendPlatformName = "imgui_impl_sdl";
+      io.BackendPlatformName = "ImGui_Impl_BlackBoxInput";
 
       // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
       io.KeyMap[ImGuiKey_Tab] = eKI_Tab;
@@ -234,7 +234,7 @@ namespace
         io.KeyCtrl = event.modifiers & eMM_Ctrl;
         io.KeyAlt = event.modifiers & eMM_Alt;
         io.KeySuper = event.modifiers & eMM_Win;
-        return false;
+        return true;
       }
       return false;
 
@@ -283,7 +283,7 @@ bool ImGuiManager::Init()
 {
   // Setup Dear ImGui style
   bool result = true;
-  ImGui::StyleColorsDark();
+  ImGui::StyleColorsLight();
   result &= input.Init();
   result &= render.Init(GetISystem()->GetIRender());
   return result;

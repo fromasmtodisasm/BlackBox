@@ -138,6 +138,7 @@ public:
   // IInputEventListener interface
 public:
   virtual bool OnInputEvent(const SInputEvent& event) override;
+  virtual int GetPriority() const { return 2; }
 
 	void PersistentHandler(const SInputEvent& event);
 

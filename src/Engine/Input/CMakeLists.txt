@@ -5,6 +5,9 @@ add_library(Input)
 
 ###################################################
 if (OPTION_USE_SDL)
+	if (OPTION_USE_LINUXINPUT)
+		target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)
+	endif()
 	message(STATUS "Using sdl for window managment")
 	if (UNIX_OR_CYGWIN)
 		#################################################################

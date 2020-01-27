@@ -11,6 +11,7 @@ public:
   // Inherited via IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) override;
   virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
+  virtual int GetPriority() const { return 3; }
 
   bool Init();
   void NewFrame();

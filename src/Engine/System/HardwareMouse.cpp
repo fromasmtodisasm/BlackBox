@@ -17,23 +17,24 @@
 
 *************************************************************************/
 
-#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/System/HardwareMouse.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
-#include <BlackBox/System/HardwareMouse.hpp>
-#include <BlackBox/Core/Platform/Platform.hpp>
 //#include <BlackBox/Core/Platform/WindowsUtils.hpp>
 
 //#include <BlackBox/Core/Platform/CryLibrary.hpp>
 
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	#include <CryRenderer/IImage.h>
 #endif
 
 namespace
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 void ReleaseCursor()
 {
 	::ClipCursor(nullptr);
@@ -55,12 +56,12 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 #endif // !defined(_RELEASE)
 	, m_shouldUseSystemCursor(gEnv->IsEditor())
 	, m_usingSystemCursor(true)
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	, m_hCursor(nullptr)
 	, m_nCurIDCCursorId(~0)
 #endif
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	atexit(ReleaseCursor);
 #endif
 
@@ -73,7 +74,7 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 		}
 	}
 
-#if !CRY_PLATFORM_WINDOWS
+#if !BB_PLATFORM_WINDOWS
 	if (gEnv->pRenderer)
 		SetHardwareMousePosition(gEnv->pRenderer->GetWidth() * 0.5f, gEnv->pRenderer->GetHeight() * 0.5f);
 	else
@@ -96,7 +97,7 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 	if (IsFullscreen())
 		ConfineCursor(true);
 
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	CryLog("Initialized hardware mouse (game is %s to confine mouse to window)", m_allowConfine ? "allowed" : "not allowed");
 #endif
 }
@@ -191,7 +192,7 @@ void CHardwareMouse::ConfineCursor(bool confine)
 	if (!gEnv || gEnv->pRenderer == NULL || m_allowConfine == false || !m_bFocus)
 		return;
 
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	HWND hWnd = 0;
 
 	if (gEnv->IsEditor())
@@ -220,7 +221,7 @@ void CHardwareMouse::ConfineCursor(bool confine)
 			::ClipCursor(NULL);
 		}
 	}
-#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_MAC
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_MAC
 	if (gEnv->pInput)
 	{
 		if (confine && !gEnv->IsEditing())
@@ -294,7 +295,7 @@ bool CHardwareMouse::OnInputEvent(const SInputEvent& rInputEvent)
 			// TODO: do we simulate double-click?
 		}
 	}
-#if !CRY_PLATFORM_WINDOWS
+#if !BB_PLATFORM_WINDOWS
 	else if (rInputEvent.deviceType == eIDT_Mouse)
 	{
 		if (rInputEvent.keyId == eKI_MouseXAbsolute)
@@ -537,7 +538,7 @@ void CHardwareMouse::DecrementCounter()
 
 void CHardwareMouse::GetHardwareMousePosition(float* pfX, float* pfY)
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	POINT pointCursor;
 	GetCursorPos(&pointCursor);
 	*pfX = (float)pointCursor.x;
@@ -552,7 +553,7 @@ void CHardwareMouse::GetHardwareMousePosition(float* pfX, float* pfY)
 
 void CHardwareMouse::SetHardwareMousePosition(float fX, float fY)
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	if (gEnv->pRenderer)
 	{
 		HWND hWnd = (HWND)gEnv->pRenderer->GetCurrentContextHWND();
@@ -596,12 +597,12 @@ void CHardwareMouse::SetHardwareMousePosition(float fX, float fY)
 
 void CHardwareMouse::GetHardwareMouseClientPosition(float* pfX, float* pfY)
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	if (gEnv == NULL || gEnv->pRenderer == NULL)
 		return;
 
 	HWND hWnd = (HWND) gEnv->pRenderer->GetCurrentContextHWND();
-	ASSERT_MESSAGE(hWnd, "Impossible to get client coordinates from a non existing window!");
+	ASSERT(hWnd, "Impossible to get client coordinates from a non existing window!");
 
 	if (hWnd)
 	{
@@ -626,9 +627,9 @@ void CHardwareMouse::GetHardwareMouseClientPosition(float* pfX, float* pfY)
 
 void CHardwareMouse::SetHardwareMouseClientPosition(float fX, float fY)
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	HWND hWnd = (HWND) gEnv->pRenderer->GetCurrentContextHWND();
-	ASSERT_MESSAGE(hWnd, "Impossible to set position of the mouse relative to client coordinates from a non existing window!");
+	ASSERT(hWnd, "Impossible to set position of the mouse relative to client coordinates from a non existing window!");
 
 	if (hWnd)
 	{
@@ -646,7 +647,7 @@ void CHardwareMouse::SetHardwareMouseClientPosition(float fX, float fY)
 //-----------------------------------------------------------------------------------------------------
 bool CHardwareMouse::SetCursor(int idc_cursor_id)
 {
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	if (m_nCurIDCCursorId != idc_cursor_id || !m_curCursorPath.empty())
 		DestroyCursor();
 
@@ -688,7 +689,7 @@ bool CHardwareMouse::SetCursor(int idc_cursor_id)
 bool CHardwareMouse::SetCursor(const char* path)
 {
 #if 0
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	if (m_nCurIDCCursorId || m_curCursorPath.compare(path))
 		DestroyCursor();
 #else
@@ -702,7 +703,7 @@ bool CHardwareMouse::SetCursor(const char* path)
 	// Load cursor
 	if (m_shouldUseSystemCursor)
 	{
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 		// HW cursor
 		if (!m_hCursor)
 		{
@@ -849,7 +850,7 @@ void CHardwareMouse::UseSystemCursor(bool useSystemCursor)
 
 //-----------------------------------------------------------------------------------------------------
 
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 void* CHardwareMouse::GetCurrentCursor()
 {
 	return m_hCursor;
@@ -887,7 +888,7 @@ void CHardwareMouse::DestroyCursor()
 	}
 	m_curCursorPath.clear();
 
-#if CRY_PLATFORM_WINDOWS
+#if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	if (m_hCursor)
 	{
 		::DestroyCursor(m_hCursor);
