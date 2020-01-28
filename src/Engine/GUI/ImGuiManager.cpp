@@ -164,9 +164,7 @@ namespace
 
       // Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
       if (io.WantSetMousePos)
-        ;
-      //m_pSystem->GetIInput()->GetDevice()
-      // SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
+        gEnv->pHardwareMouse->SetHardwareMousePosition((int)io.MousePos.x, (int)io.MousePos.y);
       else
         io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
