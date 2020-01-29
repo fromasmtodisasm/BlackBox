@@ -14,8 +14,8 @@
 #ifndef __Linux_Win32Wrapper_h__
 #define __Linux_Win32Wrapper_h__
 #pragma once
-
-#include <CryCore/Assert/CryAssert.h>
+#if 0
+//#include <CryCore/Assert/CryAssert.h>
 /* Memory block identification */
 #define _FREE_BLOCK   0
 #define _NORMAL_BLOCK 1
@@ -170,6 +170,7 @@ typedef struct tagPOINT
 	LONG x;
 	LONG y;
 } POINT, * PPOINT;
+#endif
 
 #ifndef _FILETIME_
 	#define _FILETIME_
@@ -179,7 +180,7 @@ typedef struct _FILETIME
 	DWORD dwHighDateTime;
 } FILETIME, * PFILETIME, * LPFILETIME;
 #endif
-
+#if 0
 typedef union _ULARGE_INTEGER
 {
 	struct
@@ -321,7 +322,7 @@ typedef int64 __time64_t;     /* 64-bit time value */
 #define _wtof(str) wcstod(str, 0)
 
 // Need to include this before using it's used in finddata, but after the strnicmp definition
-#include <CryString/CryString.h>
+//#include <CryString/CryString.h>
 
 //! < Atributes set by find request.
 typedef struct __finddata64_t
@@ -652,5 +653,6 @@ inline unsigned long long _byteswap_uint64(unsigned long long input)
 	        ((input & 0x000000000000ff00ull) << 40) |
 	        ((input & 0x00000000000000ffull) << 56));
 }
+#endif
 
 #endif // __Linux_Win32Wrapper_h__

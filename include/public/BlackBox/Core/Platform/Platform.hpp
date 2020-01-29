@@ -136,7 +136,6 @@ void       bbSleep(unsigned int dwMilliseconds);
 #endif
 
 #if BB_PLATFORM_LINUX
-#pragma message "Using linux 64 header"
 #include <BlackBox/Core/Platform/Linux64Specific.h>
 #endif
 

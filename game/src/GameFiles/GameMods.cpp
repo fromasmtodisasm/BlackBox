@@ -18,6 +18,7 @@
 #else
 #	include <io.h>
 #endif
+#include <stdlib.h>
 
 #include "GameMods.hpp"
 #include <BlackBox/Core/Platform/Platform.hpp>
@@ -260,7 +261,7 @@ bool CGameMods::ParseModDescription(const char *szFolder,SGameModDescription*pMo
 	ICryPak *pIPak = m_pSystem->GetIPak();
 #else
 	ICryPak *pIPak = nullptr;
-	assert(0, "notimplemented")
+	assert(0 && "notimplemented")
 #endif
 	FILE *pFile=pIPak->FOpen(szFilename,"rb");
 	if (!pFile)	
@@ -326,7 +327,7 @@ void CGameMods::ScanMods()
 	ICryPak *pIPak = m_pSystem->GetIPak();
 #else
 	ICryPak *pIPak = nullptr;
-	assert(0, "notimplemented")
+	assert(0 && "notimplemented")
 #endif
 	if ((hFile = pIPak->FindFirst(sSearchPattern.c_str(),&c_file)) == -1L )					
 		return;
