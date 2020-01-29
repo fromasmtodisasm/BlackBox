@@ -19,6 +19,8 @@
 //////////////////////////////////////////////////////////////////
 template <class _I> class _smart_ptr
 {
+public:
+  using value_type = _I;
 private:
   _I* p;
 public:
