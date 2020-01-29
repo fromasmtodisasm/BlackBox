@@ -25,6 +25,9 @@
 #include <BlackBox/System/File/ICryPak.hpp>
 #include "Game.hpp"
 
+// TODO: Rewrite it
+#define RemoveCRLF(...)
+
 
 //////////////////////////////////////////////////////////////////////////
 CGameMods::CGameMods( CGame *pGame )
@@ -199,7 +202,8 @@ bool CGameMods::SetCurrentMod(const char *sModName,bool bNeedsRestart)
 
 	// Open all paks in the mod folder.
 	char sPaksFilter[_MAX_PATH];
-	_makepath( sPaksFilter,NULL,m_pMod->sFolder.c_str(),"*","pak" );
+	// TODO: recover this
+	//_makepath( sPaksFilter,NULL,m_pMod->sFolder.c_str(),"*","pak" );
 	m_pSystem->GetIPak()->OpenPacks( "",sPaksFilter );
 	
 	// Open all basic *.pak files in the MOD folder		
@@ -261,7 +265,7 @@ bool CGameMods::ParseModDescription(const char *szFolder,SGameModDescription*pMo
 	ICryPak *pIPak = m_pSystem->GetIPak();
 #else
 	ICryPak *pIPak = nullptr;
-	assert(0 && "notimplemented")
+	assert(0 && "notimplemented");
 #endif
 	FILE *pFile=pIPak->FOpen(szFilename,"rb");
 	if (!pFile)	
@@ -315,12 +319,14 @@ bool CGameMods::ParseModDescription(const char *szFolder,SGameModDescription*pMo
 //////////////////////////////////////////////////////////////////////////
 void CGameMods::ScanMods()
 {
+	// TODO: recover it
+#if 0
 	// delete previous mods
 	ClearMods();
 
 	// search all files in the mods folder
 	struct _finddata_t c_file;
-  intptr_t hFile;
+	intptr_t hFile;
 	string sSearchPattern = "Mods/*.*";  
 
 #ifndef LINUX
@@ -355,6 +361,7 @@ void CGameMods::ScanMods()
 	} while(pIPak->FindNext( hFile, &c_file ) == 0);
 
 	pIPak->FindClose( hFile );
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
