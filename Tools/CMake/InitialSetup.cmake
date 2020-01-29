@@ -58,7 +58,6 @@ if (UNIX OR CYGWIN)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)
 ]]
 else()
-  add_compile_definitions(BB_PLATFORM_WINDOWS)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 # Prefix all Visual Studio solution folder names with this string
