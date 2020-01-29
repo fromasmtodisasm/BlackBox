@@ -1,3 +1,4 @@
+#ifndef LINUX
 #include <BlackBox/System/File/CryPak.hpp>
 
 #include <algorithm>
@@ -230,3 +231,4 @@ void CCryPak::EnumerateRecordedFiles(RecordedFilesEnumCallback enumCallback)
 void CCryPak::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
 }
+#endif

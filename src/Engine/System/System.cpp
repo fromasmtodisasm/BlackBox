@@ -19,7 +19,9 @@
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
+#ifndef LINUX
 #include <BlackBox/System/File/CryPak.hpp>
+#endif
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
@@ -400,7 +402,9 @@ bool CSystem::InitScripts()
 bool CSystem::InitFileSystem()
 {
 	//LOADING_TIME_PROFILE_SECTION;
+#ifndef LINUX
   m_pCryPak = new CCryPak(m_pLog);
+#endif
 
 #if 0
 	if (m_pUserCallback)
