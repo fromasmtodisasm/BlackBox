@@ -5,6 +5,9 @@ add_library(${PROJECT_NAME})
 
 ###################################################
 
+find_package(sdl2-net CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)

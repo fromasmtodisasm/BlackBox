@@ -7,9 +7,13 @@ add_library(Input)
 if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	#################################################################
-	add_package(SDL2 CONFIG)
+	#add_package(SDL2 CONFIG)
+	find_package(SDL2 CONFIG REQUIRED)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
 	#################################################################
-	add_package(SDL2-net)
+	#add_package(SDL2-net)
+	find_package(sdl2-net CONFIG REQUIRED)
+	#target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 	#################################################################
 elseif (USE_SFML)
