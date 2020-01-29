@@ -543,6 +543,7 @@ extern BOOL  GetComputerName(LPSTR lpBuffer, LPDWORD lpnSize);  //!< Required fo
 extern DWORD GetCurrentProcessId(void);
 
 //////////////////////////////////////////////////////////////////////////
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 #ifdef __cplusplus
@@ -654,6 +655,7 @@ inline unsigned long long _byteswap_uint64(unsigned long long input)
 	        ((input & 0x000000000000ff00ull) << 40) |
 	        ((input & 0x00000000000000ffull) << 56));
 }
+#if 0
 #endif
 
 #endif // __Linux_Win32Wrapper_h__
