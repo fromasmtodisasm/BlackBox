@@ -143,3 +143,10 @@ void       bbSleep(unsigned int dwMilliseconds);
 #if BB_PLATFORM_ANDROID
 #include <BlackBox/Core/Platform/Android64Specific.h>
 #endif
+
+// Wrapper code for non-windows builds.
+#if BB_PLATFORM_LINUX || BB_PLATFORM_MAC || BB_PLATFORM_IOS || BB_PLATFORM_ANDROID
+  #include <BlackBox/Core/Platform/Linux_Win32Wrapper.h>
+#elif BB_PLATFORM_ORBIS
+  #include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
+#endif
