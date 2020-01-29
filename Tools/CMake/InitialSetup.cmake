@@ -22,7 +22,8 @@ message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 
 # Including the Toolchain file, as it sets important variables.
 if(DEFINED TOOLCHAIN_FILE)
-	include(${CMAKE_TOOLCHAIN_FILE})
+	message(STATUS "USED TOOLCHAIN FILE ${TOOLS_CMAKE_DIR}/${TOOLCHAIN_FILE}")
+	include(${TOOLS_CMAKE_DIR}/${TOOLCHAIN_FILE})
 elseif(WIN32)
 	include("${TOOLS_CMAKE_DIR}/toolchain/windows/WindowsPC-MSVC.cmake")
 endif()
@@ -49,13 +50,16 @@ set(BLACKBOX_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 ###################################################
 
 if (UNIX OR CYGWIN)
-	set(UNIX_OR_CYGWIN ON)
 	message(STATUS "UNIX_OR_CYGWIN")
+#[[
+	set(UNIX_OR_CYGWIN ON)
 	find_package(PkgConfig REQUIRED)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX64)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)
+]]
 else()
   add_compile_definitions(BB_PLATFORM_WINDOWS)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 # Prefix all Visual Studio solution folder names with this string
 set(VS_FOLDER_PREFIX "BLACKBOX/")
@@ -70,4 +74,3 @@ set(
 	res
 )
 
-add_compile_definitions(_CRT_SECURE_NO_WARNINGS)

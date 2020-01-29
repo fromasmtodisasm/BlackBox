@@ -28,7 +28,11 @@ function(install_package Package Result)
 endfunction()
 
 macro(CommonMacrosInit)
-  set(BB_PLATFORM windows)
+	if (DEFINED LINUX)
+	  set(BB_PLATFORM linux)
+	else()
+	  set(BB_PLATFORM windows)
+	endif()
 endmacro()
 
 macro(add_package Package)
