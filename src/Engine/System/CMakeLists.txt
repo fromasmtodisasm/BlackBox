@@ -35,7 +35,9 @@ target_sources(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
-set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
+if (NOT LINUX)
+	set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
+endif()
 
 get_target_property(SOURCE_FILES System SOURCES )
 
