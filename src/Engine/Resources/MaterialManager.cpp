@@ -37,9 +37,14 @@ BaseShaderProgramRef MaterialManager::getProgram(std::string name)
 {
   auto p_it = shaders_map.find(name);
   if (p_it == shaders_map.end())
-    return ShaderManager::instance()->getDefaultProgram();
+  {
+    auto p = dynamic_cast<BaseShaderProgramRef::value_type*>(static_cast<CShaderProgram*>(ShaderManager::instance()->getDefaultProgram()));
+    return _smart_ptr<BaseShaderProgramRef::value_type>(p);
+  }
   else
+  {
     return p_it->second;
+  }
 }
 
 Material* MaterialManager::getMaterial(std::string name)
