@@ -9,7 +9,11 @@ if (OPTION_USE_SDL)
 	#################################################################
 	#add_package(SDL2 CONFIG)
 	find_package(SDL2 CONFIG REQUIRED)
-	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
+	if (DEFINED LINUX)
+		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
+	else()
+		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+	endif()
 	#################################################################
 	#add_package(SDL2-net)
 	find_package(sdl2-net CONFIG REQUIRED)

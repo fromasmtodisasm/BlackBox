@@ -26,7 +26,7 @@ _smart_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::
   //TODO: !!!
   _smart_ptr<CShader> vs, fs;
   _smart_ptr<CShaderProgram> p;
-#if 0
+#if BB_PLATFORM_WINDOWS 
   vs = getShader(std::move(ShaderDesc(vShader, "vertex")), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
   if (!vs || !fs)

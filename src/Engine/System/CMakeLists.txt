@@ -7,7 +7,7 @@ add_library(System)
 ## Define the two required variables before including
 # the source code for watching a git repository.
 
-if (NOT LINUX)
+if (NEED_VC)
 	set(PRE_CONFIGURE_FILE "VersionControl.cpp.in")
 	set(POST_CONFIGURE_FILE ${CMAKE_BINARY_DIR}/VersionControl.cpp)
 	include(${CMAKE_SOURCE_DIR}/Tools/CMake/GitWatcher.cmake)
@@ -35,7 +35,7 @@ target_sources(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
-if (NOT LINUX)
+if (NEED_VC)
 	set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
 endif()
 

@@ -7,8 +7,10 @@ if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	#################################################################
 	find_package(SDL2 CONFIG REQUIRED)
-	if (SDL_FOUND)
-		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2-static)
+	if (DEFINED LINUX)
+		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
+	else()
+		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 	endif()
 	#################################################################
 	#################################################################
@@ -43,7 +45,7 @@ ${PROJECT_NAME}
 	PUBLIC	"${CMAKE_BINARY_DIR}"
 	PUBLIC	"${CMAKE_SOURCE_DIR}/include/"
 	PRIVATE $<TARGET_PROPERTY:OpenGlBackend,INTERFACE_INCLUDE_DIRECTORIES>
-	PRIVATE $<TARGET_PROPERTY:SDL2::SDL2,INTERFACE_INCLUDE_DIRECTORIES>
+	#PRIVATE $<TARGET_PROPERTY:SDL2::SDL2,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
 ###################################################
