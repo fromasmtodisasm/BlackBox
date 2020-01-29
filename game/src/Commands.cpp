@@ -7,7 +7,9 @@
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
+#ifdef _WIN32
 #include <process.h>
+#endif
 
 bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
 {
