@@ -32,6 +32,7 @@ elseif(USE_GLFW)
 	set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif()
 
+#target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 
 target_include_directories(

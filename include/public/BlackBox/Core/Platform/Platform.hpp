@@ -1,5 +1,8 @@
 #pragma once
 
+//#include <BlackBox/Core/Platform/PlatformDefines.hpp>
+#include "PlatformDefines.hpp"
+
 #ifdef _WINDOWS_
 #error windows.h should not be included prior to platform.h
 #endif

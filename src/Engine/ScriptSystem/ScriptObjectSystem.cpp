@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>

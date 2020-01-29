@@ -7,12 +7,11 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include <BlackBox/Input/SDLKeyboard.hpp>
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/Input/SDLPad.hpp>
-//#include "SDLPad.h"
 
 CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
 {

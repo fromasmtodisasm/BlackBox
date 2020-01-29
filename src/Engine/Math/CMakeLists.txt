@@ -16,5 +16,6 @@ if (OPTION_USE_GLM)
   target_include_directories(${PROJECT_NAME} INTERFACE ${GLM_INCLUDE_DIR})
   target_compile_definitions(${PROJECT_NAME} INTERFACE -DUSE_GLM)
   target_compile_definitions(${PROJECT_NAME} INTERFACE -DGLM_ENABLE_EXPERIMENTAL)
+  target_link_libraries(${PROJECT_NAME} INTERFACE glm)
 endif()
 ###################################################

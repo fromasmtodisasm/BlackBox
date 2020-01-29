@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Core/Utils.hpp>
