@@ -23,6 +23,8 @@ ShaderManager* ShaderManager::instance()
 
 _smart_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::string fShader)
 {
+  //TODO: !!!
+#if 0
   _smart_ptr<CShader> vs, fs;
   _smart_ptr<CShaderProgram> p;
   vs = getShader(std::move(ShaderDesc(vShader, "vertex")), false);
@@ -37,6 +39,8 @@ _smart_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::
     GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
     return p = _smart_ptr<CShaderProgram>(new CShaderProgram(vs, fs));
   }
+#endif
+  return p;
 }
 
 _smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
