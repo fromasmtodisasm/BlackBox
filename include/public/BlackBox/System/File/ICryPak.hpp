@@ -18,7 +18,9 @@
 
 #include <BlackBox/Utils/smartptr.hpp>
 #ifdef LINUX
+#if 0
 	#include <winbase.h>
+#endif
 	#include <stdint.h>
 #endif
 #include <cstdio>
