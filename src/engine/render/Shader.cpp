@@ -29,7 +29,7 @@ CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs) :
 {
 }
 
-CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs) : CBaseShaderProgram(vs, fs, gs, cs)
+CShaderProgram::CShaderProgram(IShaderProgram::ShaderInfo& vs, IShaderProgram::ShaderInfo& fs, IShaderProgram::ShaderInfo& gs, IShaderProgram::ShaderInfo& cs) : CBaseShaderProgram(vs, fs, gs, cs)
 {
 }
 
