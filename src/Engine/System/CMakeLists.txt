@@ -6,9 +6,12 @@ add_library(System)
 ##################################################
 ## Define the two required variables before including
 # the source code for watching a git repository.
-set(PRE_CONFIGURE_FILE "VersionControl.cpp.in")
-set(POST_CONFIGURE_FILE ${CMAKE_BINARY_DIR}/VersionControl.cpp)
-include(${CMAKE_SOURCE_DIR}/Tools/CMake/GitWatcher.cmake)
+
+if (NOT LINUX)
+	set(PRE_CONFIGURE_FILE "VersionControl.cpp.in")
+	set(POST_CONFIGURE_FILE ${CMAKE_BINARY_DIR}/VersionControl.cpp)
+	include(${CMAKE_SOURCE_DIR}/Tools/CMake/GitWatcher.cmake)
+endif()
 ##################################################
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Common)
