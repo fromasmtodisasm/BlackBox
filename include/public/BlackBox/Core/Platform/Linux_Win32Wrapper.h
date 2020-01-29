@@ -306,6 +306,7 @@ inline uint32 GetTickCount()
 //////////////////////////////////////////////////////////////////////////
 
 typedef int64 __time64_t;     /* 64-bit time value */
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // function renaming
@@ -320,7 +321,7 @@ typedef int64 __time64_t;     /* 64-bit time value */
 #define _strups   strupr
 
 #define _wtof(str) wcstod(str, 0)
-
+#if 0
 // Need to include this before using it's used in finddata, but after the strnicmp definition
 //#include <CryString/CryString.h>
 
