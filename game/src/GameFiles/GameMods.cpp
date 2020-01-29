@@ -256,7 +256,12 @@ bool CGameMods::ParseModDescription(const char *szFolder,SGameModDescription*pMo
 {
 	char szFilename[256];
 	sprintf(szFilename,"%s/ModDesc.txt",szFolder);
+#ifndef LINUX
 	ICryPak *pIPak = m_pSystem->GetIPak();
+#else
+	ICryPak *pIPak = nullptr;
+	assert(0, "notimplemented")
+#endif
 	FILE *pFile=pIPak->FOpen(szFilename,"rb");
 	if (!pFile)	
 		return (false);			
@@ -317,7 +322,12 @@ void CGameMods::ScanMods()
   intptr_t hFile;
 	string sSearchPattern = "Mods/*.*";  
 
+#ifndef LINUX
 	ICryPak *pIPak = m_pSystem->GetIPak();
+#else
+	ICryPak *pIPak = nullptr;
+	assert(0, "notimplemented")
+#endif
 	if ((hFile = pIPak->FindFirst(sSearchPattern.c_str(),&c_file)) == -1L )					
 		return;
 	do
