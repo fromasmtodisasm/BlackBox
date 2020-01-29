@@ -14,6 +14,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <IXSystem.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>

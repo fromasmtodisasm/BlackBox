@@ -204,6 +204,10 @@ typedef struct in_addr_windows
 #define _stricmp strcasecmp
 #define strnicmp strncasecmp
 
+#define _strlwr   strlwr
+#define _strlwr_s(BUF, SIZE) strlwr(BUF)
+#define _strups   strupr
+
 #define _vsnprintf vsnprintf
 #define _wtof( str ) wcstod( str, 0 )
 

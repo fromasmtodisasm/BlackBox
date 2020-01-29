@@ -8,7 +8,7 @@ if (OPTION_USE_SDL)
 	#################################################################
 	find_package(SDL2 CONFIG REQUIRED)
 	if (SDL_FOUND)
-		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2-static)
 	endif()
 	#################################################################
 	#################################################################
