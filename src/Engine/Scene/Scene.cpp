@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/FrameBufferObject.hpp>

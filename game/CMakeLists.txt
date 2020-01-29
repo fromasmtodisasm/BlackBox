@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(FPS_Game CXX)
 
-include(FetchContent)
+#include(FetchContent)
 
 ###################################################
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)

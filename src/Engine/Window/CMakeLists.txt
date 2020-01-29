@@ -5,38 +5,12 @@ add_library(${PROJECT_NAME})
 ###################################################
 if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
-	if (UNIX_OR_CYGWIN)
-		#################################################################
-		PKG_CHECK_MODULES(SDL SDL2)
-		if (SDL_FOUND)
-			target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
-    else()
-      find_package(SDL2 CONFIG REQUIRED)
-      if (SDL2_FOUND)
-        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
-      else()
-        message(FATAL_ERROR "Could not found SDL2")
-      endif()
-      
-		endif()
-		#################################################################
-		PKG_CHECK_MODULES(SDLNET REQUIRED SDL2_net)
-		if (SDLNET_FOUND)
-			target_link_libraries(${PROJECT_NAME} PUBLIC ${SDLNET_LIBRARIES})
-		endif()
-		
-	else()
-		#################################################################
-		find_package(SDL2 CONFIG REQUIRED)
-		if (SDL_FOUND)
-			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
-		endif()
-		#################################################################
-		find_package(SDL2-net REQUIRED)
-		if (SDL2-net_FOUND)
-			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
-		endif()
+	#################################################################
+	find_package(SDL2 CONFIG REQUIRED)
+	if (SDL_FOUND)
+		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 	endif()
+	#################################################################
 	#################################################################
 	target_sources(
   	  ${PROJECT_NAME}

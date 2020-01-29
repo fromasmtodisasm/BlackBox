@@ -78,7 +78,8 @@ target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${OPENGL_gl_LIBRARY})
 generate_export_header(${BLACKBOX_PROJECT}
 	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
 )
-target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Freetype::Freetype)
+#target_link_libraries(${BLACKBOX_PROJECT} PRIVATE Freetype::Freetype)
+#target_link_libraries(${BLACKBOX_PROJECT} PRIVATE freetype)
 ###################################################
 if (UNIX_OR_CYGWIN)
   target_sources(
@@ -106,7 +107,7 @@ install (
   TARGETS  ${BLACKBOX_PROJECT}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
-  #ARCHIVE DESTINATION lib/static
+  ARCHIVE DESTINATION lib/static
 )
 
 install(

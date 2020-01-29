@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 project(Render CXX)
 ###################################################
 add_library(OpenGlBackend INTERFACE)
@@ -43,7 +43,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Render/OpenglDebug.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Particles.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/Pipeline.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Render/Postprocessor.cpp
+  PRIVATE ${SOURCE_DIR}/Engine/Render/PostProcessor.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/ReflectShader.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/GLRenderer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/Render/BaseRenderer.cpp

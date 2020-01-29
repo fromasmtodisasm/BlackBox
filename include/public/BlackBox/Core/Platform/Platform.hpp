@@ -53,7 +53,7 @@ enum class EPlatform
 #endif
 
 #if defined(LINUX64)
-#include <BlackBox/Linux64Specific.h>
+//#include <BlackBox/Linux64Specific.h>
 #define _CPU_AMD64
 #endif
 
@@ -133,9 +133,10 @@ void       bbSleep(unsigned int dwMilliseconds);
 #endif
 
 #if BB_PLATFORM_LINUX
-#include <CryCore/Platform/Linux64Specific.h>
+#pragma message "Using linux 64 header"
+#include <BlackBox/Core/Platform/Linux64Specific.h>
 #endif
 
 #if BB_PLATFORM_ANDROID
-#include <CryCore/Platform/Android64Specific.h>
+#include <BlackBox/Core/Platform/Android64Specific.h>
 #endif
