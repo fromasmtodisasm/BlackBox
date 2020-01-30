@@ -8,10 +8,12 @@
 #include <SDL2/SDL.h>
 
 #define MOUSE_SYM_BASE (1024)
-#define MOUSE_SYM(X) (MOUSE_SYM_BASE + (X))
-#define MOUSE_AXIS_X   (MOUSE_SYM(10))
-#define MOUSE_AXIS_Y   (MOUSE_SYM(11))
-#define MOUSE_AXIS_Z   (MOUSE_SYM(12))
+#define MOUSE_SYM(X)      (MOUSE_SYM_BASE + (X))
+#define MOUSE_AXIS_X      (MOUSE_SYM(10))
+#define MOUSE_AXIS_Y      (MOUSE_SYM(11))
+#define MOUSE_AXIS_Z      (MOUSE_SYM(12))
+//#define MOUSE_AXIS_X_ABS  (MOUSE_SYM(13))
+//#define MOUSE_AXIS_Y_ABS  (MOUSE_SYM(14))
 // We need to define custom macros for mouse wheel symbols
 // since in SDL2 the mouse wheel event is handles as a single
 // occurance
@@ -44,9 +46,10 @@ CSDLMouse::~CSDLMouse()
 
 bool CSDLMouse::Init()
 {
-  m_deltas = glm::vec2(0);
-  m_oldDeltas = glm::vec2(0);
-  m_deltasInertia = glm::vec2(0);
+  SDL_GetMouseState(&m_posX, &m_posY);
+  m_deltas = Vec2(0);
+  m_oldDeltas = Vec2(0);
+  m_deltasInertia = Vec2(0);
 
   MapSymbol(MOUSE_SYM(SDL_BUTTON_LEFT), eKI_Mouse1, "mouse1");
   MapSymbol(MOUSE_SYM(SDL_BUTTON_MIDDLE), eKI_Mouse3, "mouse3");
@@ -56,6 +59,8 @@ bool CSDLMouse::Init()
   MapSymbol(MOUSE_AXIS_X, eKI_MouseX, "maxis_x", SInputSymbol::RawAxis);
   MapSymbol(MOUSE_AXIS_Y, eKI_MouseY, "maxis_y", SInputSymbol::RawAxis);
   MapSymbol(MOUSE_AXIS_Z, eKI_MouseZ, "maxis_z", SInputSymbol::RawAxis);
+  //MapSymbol(MOUSE_AXIS_X_ABS, eKI_MouseXAbsolute, "maxis_xabs", SInputSymbol::RawAxis);
+  //MapSymbol(MOUSE_AXIS_Y_ABS, eKI_MouseYAbsolute, "maxis_yabs", SInputSymbol::RawAxis);
 
 #if defined(HIDE_MOUSE_POINTER)
   SDL_ShowCursor(SDL_DISABLE);
@@ -75,7 +80,7 @@ void CSDLMouse::Update(bool focus)
 
   int nEvents;
   unsigned type = 0;
-  // unsigned newX = m_posX, newY = m_posY;
+  unsigned newX = m_posX, newY = m_posY;
 
   SInputSymbol* pSymbol = NULL;
   //EInputState newState;
@@ -91,7 +96,7 @@ void CSDLMouse::Update(bool focus)
   }
   for (int i = 0; i < nEvents; ++i)
   {
-    bool bFlashUI = false;// (gEnv && gEnv->pHardwareMouse);
+    bool bFlashUI = (gEnv && gEnv->pHardwareMouse);
     type = eventList[i].type;
     if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP)
     {
@@ -123,7 +128,7 @@ void CSDLMouse::Update(bool focus)
             mouseEvent = HARDWAREMOUSEEVENT_RBUTTONDOWN;
             break;
           }
-          //gEnv->pHardwareMouse->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
+          gEnv->pHardwareMouse->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
         }
       }
       else
@@ -148,7 +153,7 @@ void CSDLMouse::Update(bool focus)
             mouseEvent = HARDWAREMOUSEEVENT_RBUTTONUP;
             break;
           }
-          //gEnv->pHardwareMouse->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
+          gEnv->pHardwareMouse->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
         }
       }
     }
@@ -212,8 +217,8 @@ void CSDLMouse::Update(bool focus)
       // Update flashUI mouse:
       if (bFlashUI)
       {
-        //gEnv->pHardwareMouse->Event(motionEvent->x, motionEvent->y, HARDWAREMOUSEEVENT_MOVE);
-        //gEnv->pHardwareMouse->SetHardwareMousePosition((float)motionEvent->x, (float)motionEvent->y);
+        gEnv->pHardwareMouse->Event(motionEvent->x, motionEvent->y, HARDWAREMOUSEEVENT_MOVE);
+        gEnv->pHardwareMouse->SetHardwareMousePosition((float)motionEvent->x, (float)motionEvent->y);
       }
     }
     else if (type == SDL_MOUSEWHEEL)
@@ -242,7 +247,7 @@ void CSDLMouse::Update(bool focus)
       {
         // 120 needs to be added manually to correctly integrate with mouse handling
         // logic which assumes that the value comes in mulitples of 120.
-        //gEnv->pHardwareMouse->Event(0, 0, HARDWAREMOUSEEVENT_WHEEL, pWheelEvent->y * 120);
+        gEnv->pHardwareMouse->Event(0, 0, HARDWAREMOUSEEVENT_WHEEL, pWheelEvent->y * 120);
       }
     }
     else
@@ -388,7 +393,7 @@ void CSDLMouse::UngrabInput()
     return;
   m_bGrabInput = false;
 
-  SDL_SetWindowGrab(*static_cast<SDL_Window**>(m_pRenderer->GetCurrentContextHWND()), SDL_FALSE);
+  SDL_SetWindowGrab(static_cast<SDL_Window*>(m_pRenderer->GetCurrentContextHWND()), SDL_FALSE);
   if (SDL_SetRelativeMouseMode(SDL_FALSE) != 0)
     LogAlways("SDL: Could not unset relative mouse mode: %s", SDL_GetError());
   SDL_ShowCursor(SDL_ENABLE);

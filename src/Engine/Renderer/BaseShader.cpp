@@ -140,12 +140,13 @@ CShader* CShader::load(ShaderDesc  const& desc) {
   }
 
   auto shader = new CShader(text, str2typ(desc.type));
-  if (!shader->Create())
-    return nullptr;
-  shader->Compile();
-  shader->print();
-  shader->m_Empty = false;
-  debuger::shader_label(shader->get(), path);
+  if (shader->Create())
+  {
+    shader->Compile();
+    shader->print();
+    shader->m_Empty = false;
+    debuger::shader_label(shader->get(), path);
+  }
   return shader;
 }
 

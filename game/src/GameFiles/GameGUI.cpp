@@ -1,9 +1,9 @@
-﻿#ifdef GUI
+﻿#ifdef GAME_GUI
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/GUI.hpp>
+#include <BlackBox/GUI/GUI.hpp>
 #include <BlackBox/Renderer/Light.hpp>
-#include <BlackBox/Renderer/FrameBufferObject.hpp>
-#include <BlackBox/Console.hpp>
+//#include <BlackBox/Renderer/FrameBufferObject.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 
 #include <imgui.h>

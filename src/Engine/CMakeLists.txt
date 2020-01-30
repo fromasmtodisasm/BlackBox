@@ -56,7 +56,7 @@ target_link_libraries(${BLACKBOX_PROJECT} PUBLIC Common)
 
 add_subsystem(Input)
 add_subsystem(Geometry)
-add_subsystem(Render)
+add_subsystem(Renderer)
 add_subsystem(ScriptSystem)
 add_subsystem(System)
 add_subsystem(Window)

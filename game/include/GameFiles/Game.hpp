@@ -55,7 +55,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 using string = std::string;
 class EventListener; 
 class GameGUI;
-class IScene;
+struct IScene;
 class SceneManager;
 class CTagPoint;
 class ILog;
@@ -138,6 +138,7 @@ public:
   // IInputEventListener interface
 public:
   virtual bool OnInputEvent(const SInputEvent& event) override;
+  virtual int GetPriority() const { return 2; }
 
 	void PersistentHandler(const SInputEvent& event);
 
@@ -289,12 +290,7 @@ public:
 
   EventListener *listener;
 	bool isDrawingGui = false;
-  //GUI
-#ifdef GUI
-  GameGUI *gui;
-#endif // GUI
 
-	//CShaderProgram *m_ScreenShader;
 	IFont* m_Font;
 	//EDIT MODE
 	//==========
@@ -305,9 +301,6 @@ public:
   //
   bool openShadowMap = true;
 
-  //
-  //ShaderManager *shaderManager;
-	//std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
 
 public:
@@ -367,8 +360,6 @@ public:
 	bool canDragViewPortWidth = false;
 	bool canDragViewPortHeight = false;
 	bool mousePressed = false;
-	//sf::Vector2i mouseDelta;
-	//sf::Vector2i mousePrev;
 
   enum Mode
   {

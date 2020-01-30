@@ -69,5 +69,11 @@ else()
 	set(BUILD_SHARED_LIBS TRUE)
 endif()
 
+#[[
+if (OPTION_USE_GUI)
+	add_definitions(GUI)
+endif()
+]]
+
 include("${TOOLS_CMAKE_DIR}/Build.cmake")
 

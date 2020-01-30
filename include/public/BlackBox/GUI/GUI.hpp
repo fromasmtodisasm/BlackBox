@@ -1,7 +1,9 @@
 #pragma once
-#ifdef GUI
+#if 0
 #include <Game.hpp>
 #include <BlackBox/IInputHandler.hpp>
+
+#include <imgui.h>
 
 // Std inc
 #include <vector>
@@ -101,3 +103,6 @@ public:
 };
 
 #endif
+
+#include <imgui.h>
+

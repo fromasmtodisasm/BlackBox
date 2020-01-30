@@ -28,6 +28,7 @@
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/World.hpp>
+#include <BlackBox/System/HardwareMouse.hpp>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <SDL2/SDL.h>
 
@@ -47,6 +48,9 @@ ISystem* GetISystem()
 
 CSystem::CSystem(SSystemInitParams& m_startupParams)
   :
+#if defined(SYS_ENV_AS_STRUCT)
+	m_env(gEnv),
+#endif
   m_startupParams(m_startupParams),
   r_window_width(nullptr),
   r_window_height(nullptr),
@@ -63,13 +67,21 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
   m_pWindow(nullptr),
   m_pWorld(nullptr),
   m_pScriptSystem(nullptr),
-  m_ScriptObjectConsole(nullptr)
+  m_ScriptObjectConsole(nullptr),
+  m_GuiManager(this)
 {
   m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
   if (m_pSystemEventDispatcher)
   {
     m_pSystemEventDispatcher->RegisterListener(this, "CSystem");
   }
+	//////////////////////////////////////////////////////////////////////////
+	// Initialize global environment interface pointers.
+	m_env.pSystem = this;
+
+#if !defined(SYS_ENV_AS_STRUCT)
+	gEnv = &m_env;
+#endif
 }
 
 CSystem::~CSystem()
@@ -101,7 +113,7 @@ bool CSystem::Init()
   if (m_pLog == nullptr)
     return false;
   //====================================================
-  m_pConsole = new CConsole();
+  m_env.pConsole = m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
   //====================================================
@@ -114,7 +126,7 @@ bool CSystem::Init()
   //====================================================
   m_pInput = CreateInput(this, m_pWindow->getHandle());
   //====================================================
-  m_Render = CreateIRender(this);
+  m_env.pRenderer = m_Render = CreateIRender(this);
   if (m_Render == nullptr)
     return false;
   //====================================================
@@ -204,10 +216,28 @@ bool CSystem::Init()
     if (m_pFont->Init(font, 16, 18) == false)
       return false;
   }
+  m_GuiManager.Init();
+
+  //====================================================
   m_pInput->AddEventListener(this);
   m_pInput->AddEventListener(m_pConsole);
+  m_pInput->AddEventListener(&m_GuiManager);
   if (CreateGame(nullptr) == nullptr)
     return false;
+  //====================================================
+
+		//////////////////////////////////////////////////////////////////////////
+		// Hardware mouse
+		//////////////////////////////////////////////////////////////////////////
+		// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+		// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+		// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+#ifdef DEDICATED_SERVER
+		m_env.pHardwareMouse = NULL;
+#else
+		m_env.pHardwareMouse = new CHardwareMouse(true);
+#endif
+
   //====================================================
   m_pNetwork = CreateNetwork(this);
   if (m_pNetwork == nullptr)
@@ -347,6 +377,11 @@ bool CSystem::ConfigLoad(const char* file)
     )
     return false;
   return true;
+}
+
+bool CSystem::InitConsole()
+{
+  return false;
 }
 
 bool CSystem::InitResourceManagers()
@@ -617,6 +652,8 @@ void CSystem::RenderBegin()
   PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
   m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
   m_Render->BeginFrame();
+  m_GuiManager.NewFrame();
+  m_GuiManager.AddDemoWindow();
 }
 
 void CSystem::RenderEnd()
@@ -626,6 +663,8 @@ void CSystem::RenderEnd()
     DEBUG_GROUP("DRAW_PROFILE");
     PROFILER_DRAW();
   }
+
+  m_GuiManager.Render();
 
   m_pWindow->swap();
 }

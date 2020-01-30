@@ -48,5 +48,6 @@ private:
   BaseTexture* loadTexture(tinyxml2::XMLElement* texture);
   tinyxml2::XMLElement* saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture* texture);
   ShaderRef loadShader(ShaderDesc& sd, bool isReload);
+  ShaderRef addShader(ShaderDesc& sd, bool isReload);
   tinyxml2::XMLElement* saveShader(tinyxml2::XMLDocument& xmlDoc, CShader* shader);
 };

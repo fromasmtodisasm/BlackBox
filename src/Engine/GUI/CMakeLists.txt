@@ -8,23 +8,18 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_include_directories(
 ${PROJECT_NAME}
 	PRIVATE	"${CMAKE_BINARY_DIR}"
-	PRIVATE	"${CMAKE_SOURCE_DIR}/include/"
+	PRIVATE	"${CMAKE_SOURCE_DIR}/"
 )
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/GUI/GUI.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/ImGuiManager.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/imgui_demo.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/imgui_impl_opengl3.cpp
 )
-if (GUI)
-	set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/lib/imgui)
 
-	target_include_directories(
-	  ${PROJECT_NAME} PUBLIC ${IMGUI_DIR}
-	)
-	set(
-	  IMGUI_SOURCES
-	  ${IMGUI_DIR}/imgui.cpp
-	  ${IMGUI_DIR}/imgui_widgets.cpp
-	  ${IMGUI_DIR}/imgui_draw.cpp
-	  ${IMGUI_DIR}/imgui_demo.cpp
-	  )
-endif(GUI)
+find_package(imgui CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui Renderer)
+
+#target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
+add_private_headers()

@@ -68,9 +68,6 @@ void CGame::PreRender()
 CGame::CGame(std::string title) :
   //camControl(nullptr),
   g_scene(nullptr),
-#ifdef GUI
-  gui(nullptr),
-#endif // GUI
   listener(nullptr),
   m_Console(nullptr),
   m_Font(nullptr),
@@ -195,13 +192,11 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
   // Set scene before camera, camera setted to active scene in world
   if (m_scene)
     m_World->SetScene(m_scene);
-#ifdef GUI
-  gui = new GameGUI();
-  gui->game = this;
-#endif // GUI
   initPlayer();
+#if 0
   m_pInput->ShowCursor(false);
-  m_pInput->GrabInput(true);
+#endif
+  //m_pInput->GrabInput(true);
 
   if (m_scene != nullptr)
   {
@@ -763,102 +758,9 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
       gotoGame();
       return true;
     default:
-#ifdef GUI
-      return gui->OnInputEvent(event);
-#else
       return false;
-#endif // GUI
     }
   }
-  //TODO: FIXT IT
-#if NEED_USE_IT
-	case sf::Event::MouseMoved:
-  {
-    if (!can_drag_vp)
-      return true;
-    auto w = GET_CVAR("r_cam_w")->GetIVal();
-    auto h = GET_CVAR("r_cam_h")->GetIVal();
-    auto window = m_pSystem->GetIWindow();
-
-    if (GET_CVAR("show_all_frame_buffer")->GetIVal())
-    {
-      w *= w / GET_CVAR("r_backbuffer_w")->GetFVal();
-      h *= h / GET_CVAR("r_backbuffer_h")->GetFVal();
-    }
-
-    mouseDelta = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - mousePrev;
-    mousePrev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
-
-    if (
-      std::abs(event.mouseMove.x - w) <= 8 && !mousePressed
-      && event.mouseMove.y > (m_pRender->GetHeight() - h)
-      )
-    {
-      cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-      canDragViewPortWidth = true;
-    }
-    else if (canDragViewPortWidth && !mousePressed)
-    {
-      canDragViewPortWidth = false;
-    }
-    if (
-      std::abs(event.mouseMove.y - (m_pRender->GetHeight() - h)) <= 8
-      && event.mouseMove.x < w && !mousePressed
-      )
-    {
-      cursor.loadFromSystem(sf::Cursor::SizeVertical);
-      canDragViewPortHeight = true;
-    }
-    else if (canDragViewPortHeight && !mousePressed)
-    {
-      canDragViewPortHeight = false;
-    }
-    if (canDragViewPortHeight && canDragViewPortWidth)
-    {
-      cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
-    }
-    if (!canDragViewPortHeight && !canDragViewPortWidth && !mousePressed)
-    {
-      cursor.loadFromSystem(sf::Cursor::Arrow);
-    }
-
-    window->setCursor(reinterpret_cast<Cursor*>(&cursor));
-    break;
-  }
-  case sf::Event::MouseButtonPressed:
-  {
-    if (event.mouseButton.button == sf::Mouse::Button::Left)
-    {
-      mousePressed = true;
-    }
-    break;
-  }
-  case sf::Event::MouseButtonReleased:
-  {
-    if (event.mouseButton.button == sf::Mouse::Button::Left)
-    {
-      mousePressed = false;
-    }
-    break;
-  }
-  default:
-#ifdef GUI
-    return gui->OnInputEvent(event);
-#else
-    return false;
-#endif // GUI
-
-    if (canDragViewPortWidth && mousePressed)
-    {
-      ICVar* w = m_Console->GetCVar("r_cam_w");
-      w->Set(w->GetIVal() + mouseDelta.x);
-    }
-    if (canDragViewPortHeight && mousePressed)
-    {
-      ICVar* h = m_Console->GetCVar("r_cam_h");
-      h->Set(h->GetIVal() - mouseDelta.y);
-    }
-#endif
     return false;
 }
 
@@ -1000,7 +902,7 @@ void CGame::gotoMenu()
 {
   m_Mode = MENU;
   m_pInput->ShowCursor(true);
-  m_pInput->GrabInput(true);
+  m_pInput->GrabInput(false);
 }
 
 void CGame::gotoFullscreen()

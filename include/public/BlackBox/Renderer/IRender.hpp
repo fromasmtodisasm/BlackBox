@@ -54,6 +54,8 @@ public:
 
 struct ITexture
 {
+  virtual int             AddRef() { return 0; }
+	virtual int             Release() { return 0; };
   virtual bool load(const char* name) = 0;
   virtual void bind() = 0;
   virtual void setUnit(uint unit) = 0;

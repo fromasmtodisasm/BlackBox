@@ -63,6 +63,7 @@ enum class EPlatform
 #include <cstring>
 
 // Safe memory helpers
+#if 0
 template<typename T>
 inline auto SAFE_DELETE(T const* t) -> decltype((void)(t->Release()), void())
 {
@@ -78,6 +79,15 @@ inline auto SAFE_DELETE(T*& t)
     t = nullptr;
   }
 }
+#else
+// Safe memory helpers
+#define SAFE_DELETE(p)        { if (p) { delete (p);          (p) = NULL; } }
+#define SAFE_DELETE_ARRAY(p)  { if (p) { delete[] (p);        (p) = NULL; } }
+#define SAFE_RELEASE(p)       { if (p) { (p)->Release();      (p) = NULL; } }
+#define SAFE_RELEASE_FORCE(p) { if (p) { (p)->ReleaseForce(); (p) = NULL; } }
+#endif
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // common Typedef                                                                   //
@@ -88,6 +98,14 @@ typedef int                 INT;
 typedef unsigned int        UINT;
 typedef unsigned int        *PUINT;
 
+
+#if defined(__GNUC__)
+	#define DLL_EXPORT __attribute__ ((visibility("default")))
+	#define DLL_IMPORT __attribute__ ((visibility("default")))
+#else
+	#define DLL_EXPORT __declspec(dllexport)
+	#define DLL_IMPORT __declspec(dllimport)
+#endif
 
 #define BIT(x)    (1u << (x))
 #define BIT64(x)  (1ull << (x))
@@ -149,3 +167,10 @@ void       bbSleep(unsigned int dwMilliseconds);
 #elif BB_PLATFORM_ORBIS
   #include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
 #endif
+
+#define DECLARE_SHARED_POINTERS(name)                   \
+  typedef std::shared_ptr<name> name ##       Ptr;      \
+  typedef std::shared_ptr<const name> name ## ConstPtr; \
+  typedef std::weak_ptr<name> name ##         WeakPtr;  \
+  typedef std::weak_ptr<const name> name ##   ConstWeakPtr;
+

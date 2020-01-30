@@ -426,6 +426,11 @@ ShaderRef MaterialManager::loadShader(ShaderDesc& sd, bool isReload)
   return ShaderManager::instance()->getShader(sd, isReload);
 }
 
+ShaderRef MaterialManager::addShader(ShaderDesc& sd, bool isReload)
+{
+  return ShaderRef();
+}
+
 XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, CShader* shader)
 {
   XMLElement* shaderElement = xmlDoc.NewElement("shader");
