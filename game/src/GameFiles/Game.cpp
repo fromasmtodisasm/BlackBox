@@ -855,6 +855,7 @@ void CGame::ProcessPMessages(const char* szMsg)
 {
   if (stricmp(szMsg, "Quit") == 0)	// quit message
   {
+		GetISystem()->Log("Quiting");
     m_bUpdateRet = false;
     return;
   }
@@ -874,6 +875,7 @@ bool CGame::IsInPause()
 
 void CGame::Stop()
 {
+	GetISystem()->Log("Stopping");
   m_bUpdateRet = false;
 }
 
