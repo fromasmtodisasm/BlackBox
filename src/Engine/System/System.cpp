@@ -115,9 +115,11 @@ bool CSystem::Init()
     return false;
   Log("Initializing System");
   //====================================================
+  Log("Initializing Console");
   if (!InitConsole())
     return false;
   //====================================================
+  Log("Initializing System");
   if (!ConfigLoad("res/scripts/engine.cfg"))
     return false;
   //====================================================
@@ -357,6 +359,7 @@ bool CSystem::InitConsole()
 
 bool CSystem::OpenRenderLibrary(std::string_view render)
 {
+  Log("Open Render Library");
 	if (gEnv->IsDedicated())
 		return true;
   //====================================================
