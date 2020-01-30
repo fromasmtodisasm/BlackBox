@@ -43,7 +43,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/OpenglDebug.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Particles.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Pipeline.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Postprocessor.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/PostProcessor.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/ReflectShader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/GLRenderer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
