@@ -113,7 +113,10 @@ bool CSystem::Init()
   m_pLog = new NullLog(m_startupParams.sLogFileName);
   if (m_pLog == nullptr)
     return false;
-  Log("Initializing System");
+    std::string prompt = "Initializing System";
+  if (gEnv->IsDedicated())
+    prompt += " on dedicated server";
+  Log(prompt.c_str());
   //====================================================
   Log("Initializing Console");
   if (!CreateConsole())
@@ -151,9 +154,11 @@ bool CSystem::Init()
   Log("Initialize Input");
   if (!InitInput())
     return false;
+  Log("Ok");
   //====================================================
   // Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
+  Log("Initialize Profiling");
   if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
   {
     fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
@@ -166,8 +171,9 @@ bool CSystem::Init()
   PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
 #endif
   //====================================================
-  m_pLog->Log("[OK] Window susbsystem inited\n");
+  //m_pLog->Log("[OK] Window susbsystem inited\n");
   //====================================================
+  Log("Creating ScriptSystem");
   m_pScriptSystem = new CScriptSystem();
   if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
   {
