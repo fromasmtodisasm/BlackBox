@@ -155,6 +155,16 @@ struct SSystemGlobalEnvironment
 		return false;
 #endif
 	}
+
+#if BB_PLATFORM_DESKTOP
+	bool bDedicatedArbitrator;
+
+private:
+	bool bClient;
+	bool bEditor;          //!< Engine is running under editor.
+	bool bEditorGameMode;  //!< Engine is in editor game mode.
+	bool bDedicated;       //!< Engine is in dedicated.
+#endif
 };
 
 struct ISystem

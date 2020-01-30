@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(Render CXX)
+project(Renderer CXX)
 ###################################################
 add_library(OpenGlBackend INTERFACE)
 ###################################################
