@@ -192,17 +192,10 @@ bool CSystem::Init()
   //====================================================
   InitScripts();
   //====================================================
-  m_pFont = new FreeTypeFont();
-  if (m_pFont != nullptr)
+  if (!gEnv->IsDedicated())
   {
-    auto font = "arial.ttf";
-    auto var = GET_CVAR("s_font");
-    if (var)
-      font = var->GetString();
-    if (m_pFont->Init(font, 16, 18) == false)
-      return false;
+    m_GuiManager.Init();
   }
-  m_GuiManager.Init();
 
   //====================================================
   m_pInput->AddEventListener(this);
@@ -366,7 +359,6 @@ bool CSystem::InitConsole()
 {
   if (!m_pConsole->Init(this))
     return false;
-  Log("Console Inited");
   m_pConsole->ShowConsole(true);
   return true;
 }
@@ -421,11 +413,14 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 bool CSystem::InitResourceManagers()
 {
   m_pConsole->PrintLine("Begin loading resources");
-  if (!ShaderManager::init())
-    return false;
-  if (!MaterialManager::init("default.xml"))
-    return false;
-  m_pConsole->PrintLine("End loading resources");
+  if (!gEnv->IsDedicated())
+  {
+    if (!ShaderManager::init())
+      return false;
+    if (!MaterialManager::init("default.xml"))
+      return false;
+    m_pConsole->PrintLine("End loading resources");
+  }
   return true;
 }
 
@@ -440,6 +435,10 @@ void CSystem::ParseCMD()
 
 void CSystem::LoadScreen()
 {
+  if (gEnv->IsDedicated())
+  {
+    return;
+  }
   m_pConsole->Clear();
   m_pConsole->SetScrollMax(600);
   m_pConsole->ShowConsole(true);
