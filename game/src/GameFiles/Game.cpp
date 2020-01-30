@@ -284,9 +284,6 @@ bool CGame::Update() {
   if (bRenderFrame)
     m_pSystem->RenderEnd();
 
-	auto str = std::string("ret = ") + std::to_string(m_bUpdateRet);
-	GetISystem()->Log(str.c_str());
-
   return m_bUpdateRet;
 }
 
