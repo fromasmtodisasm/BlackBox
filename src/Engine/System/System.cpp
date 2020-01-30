@@ -366,6 +366,7 @@ bool CSystem::InitConsole()
 {
   if (!m_pConsole->Init(this))
     return false;
+  Log("Console Inited");
   m_pConsole->ShowConsole(true);
   return true;
 }
