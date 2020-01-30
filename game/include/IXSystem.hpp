@@ -75,18 +75,18 @@ struct IXSystem
 	//! read infos from the context setup
 	//virtual bool	ReadTeams(CStream& stm) = 0;
 	//!bind an entity to another one
-	//virtual void		BindEntity(EntityId idParent, EntityId idChild) = 0;
+	virtual void		BindEntity(EntityId idParent, EntityId idChild) = 0;
 	//!unbind an entity from another one
-	//virtual void		UnbindEntity(EntityId idParent, EntityId idChild) = 0;
+	virtual void		UnbindEntity(EntityId idParent, EntityId idChild) = 0;
 	//! return a pointer to the entity matching with entity ID
-	//virtual IEntity* GetEntity(EntityId wID) = 0;
+	virtual IEntity* GetEntity(EntityId wID) = 0;
 	//! retrun a pointer to the entity matching with a certain name
 	virtual IEntity* GetEntity(const char* sEntity) = 0;
 	//virtual bool IsLevelEntity(EntityId id) = 0;
 	//! return the entity assigned as player of le local client if exists, if not return null
 	virtual IEntity* GetLocalPlayer() = 0;
 	//! return all entities
-	//virtual IEntityIt* GetEntities() = 0;
+	virtual IEntityIt* GetEntities() = 0;
 	//! return all player entities
 	virtual EntitiesSet& GetPlayerEntities() = 0;
 	//! return true if the given entity is in the entity list

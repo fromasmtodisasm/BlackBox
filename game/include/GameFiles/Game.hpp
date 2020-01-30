@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _DEBUG
+#define _VERIFY(x) ASSERT(x)
+#else
+#define _VERIFY(x) x
+#endif
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Version of the game
 #define GAME_MAIN_VERSION						1						//!< [0..255]
@@ -204,6 +210,7 @@ public:
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
 	}
+	IServer *CreateServer(IServerSlotFactory *pSink,WORD nPort, bool listen){return m_pNetwork->CreateServer(pSink,nPort,listen);}
 	IActionMapManager* GetActionMapManager() { return m_pIActionMapManager; }
 
 	//
@@ -212,7 +219,6 @@ public:
 	bool TestScriptSystem(bool& retflag);
 
 	ISystem* GetSystem() { return m_pSystem; }
-	bool	IsDevModeEnable();
 	//////////////////////////////////////////////////////////////////////////
 	// DevMode.
 	//////////////////////////////////////////////////////////////////////////
@@ -225,12 +231,18 @@ public:
 	string GetLevelsFolder() const;
 
 	// Network -------------------------------------------------------------
+	//! functions to know if the current terminal is a server and/or a client
+	//@{
+	bool	IsServer()	{	return m_pServer!=NULL;	}
+	bool	IsClient();
+	bool  IsMultiplayer();   // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
+	bool	IsDevModeEnable();
+	//@}
 	bool StartupServer(bool listen, const char* szName);
 	void ShutdownServer();
 	bool StartupClient();
 	bool StartupLocalClient();
 	void ShutdownClient();
-	bool IsClient();
 	void MarkClientForDestruct();
 	void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
 	void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
@@ -257,7 +269,7 @@ public:
 
 public:
 	ISystem *											m_pSystem;								//!< The system interface
-	CXServer *										m_pServer;								//!< The server of this computer
+	CXServer *										m_pServer = nullptr;								//!< The server of this computer
 	CXClient *										m_pClient;								//!< The client of this computer
   IScriptSystem *								m_pScriptSystem;
   IRenderer *										m_pRender;
@@ -309,7 +321,7 @@ public:
 
 	IServerSnooper*								m_pServerSnooper;					//!< used for LAN Multiplayer, to remove control servers
 	INETServerSnooper*						m_pNETServerSnooper;			//!< used for Internet Multiplayer, to remove control servers
-	IRConSystem*									m_pRConSystem;						//!< used for Multiplayer, to remote control servers
+	IRConSystem*									m_pRConSystem = nullptr;						//!< used for Multiplayer, to remote control servers
 	std::string										m_szLastAddress;
 	bool													m_bLastDoLateSwitch;
 	bool													m_bLastCDAuthentication;

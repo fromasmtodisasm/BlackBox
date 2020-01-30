@@ -27,8 +27,10 @@ class CScriptObjectServerSlot;
 
 //#include "XNetworkStats.h"									// CXNetworkStats
 #include <Network/XNetwork.hpp>
+#include <ScriptObjects/ScriptObjectServerSlot.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
 class CXSnapshot;
 class CXServer;
@@ -77,9 +79,9 @@ public:
 	virtual void OnXPlayerAuthorization(bool bAllow, const char* szError, const BYTE* pGlobalID, unsigned int uiGlobalIDSize);
 
 	//! this function is only used to optimize the network code
-	//void OnSpawnEntity(CEntityDesc& ed, IEntity* pEntity, bool bSend);
+	void OnSpawnEntity(CEntityDesc& ed, IEntity* pEntity, bool bSend);
 	//! this function is only used to optimize the network code
-	//void OnRemoveEntity(IEntity* pEntity);
+	void OnRemoveEntity(IEntity* pEntity);
 
 	//!
 	void BanByID();
@@ -97,9 +99,9 @@ public:
 	//! \return pin in milliseconds
 	unsigned int GetPing();
 	//! \param idPlayer
-	//void SetPlayerID(EntityId idPlayer);
+	void SetPlayerID(EntityId idPlayer);
 	//! \return 
-	//EntityId GetPlayerId() const;
+	EntityId GetPlayerId() const;
 
 	//! \return client requested name
 	const char* GetName();

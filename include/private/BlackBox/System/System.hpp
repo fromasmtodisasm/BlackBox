@@ -127,6 +127,8 @@ private:
   ICVar* cvGameName;
 
   SSystemInitParams& m_startupParams;
+  SFileVersion m_FileVersion;
+  SFileVersion m_ProductVersion;
 
   uint64_t NOW;
   uint64_t LAST;
@@ -135,5 +137,15 @@ private:
   ImGuiManager m_GuiManager;
 
   virtual float GetDeltaTime() override;
+
+
+  // Inherited via ISystem
+  virtual const SFileVersion& GetFileVersion() override;
+
+  virtual const SFileVersion& GetProductVersion() override;
+
+
+  // Inherited via ISystem
+  virtual IEntitySystem* GetIEntitySystem() override;
 
 };

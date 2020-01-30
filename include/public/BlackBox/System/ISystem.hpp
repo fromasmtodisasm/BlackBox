@@ -1,13 +1,15 @@
 #pragma once
 #include "Exports.hpp"
 #include <BlackBox/Core/Platform/Platform.hpp> 
+#include <BlackBox/Core/Version.hpp> 
 #include <cstdarg>
 
 struct ISystem;
+struct ILog;
+struct IEntitySystem;
 struct IGame;
 struct IShaderManager;
 struct IRenderer;
-struct ILog;
 struct ICmdLine;
 struct IConsole;
 struct IInput;
@@ -220,6 +222,7 @@ struct ISystem
   virtual INetwork*               GetINetwork() = 0;
   virtual IWindow*                GetIWindow() = 0;
   virtual IWorld*                 GetIWorld() = 0;
+	virtual IEntitySystem		*       GetIEntitySystem() = 0;
   virtual ICryPak*                GetIPak() = 0;
   virtual IHardwareMouse*         GetIHardwareMouse() = 0;
 #if 0
@@ -240,6 +243,13 @@ struct ISystem
   virtual bool IsDevMode() = 0;
 
   virtual float GetDeltaTime() = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// File version.
+	//////////////////////////////////////////////////////////////////////////
+	
+	virtual const SFileVersion& GetFileVersion() = 0;
+	virtual const SFileVersion& GetProductVersion() = 0;
 };
 
 // Global environment variable.

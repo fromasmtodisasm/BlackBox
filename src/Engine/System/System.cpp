@@ -600,6 +600,21 @@ float CSystem::GetDeltaTime()
   return static_cast<float>(m_DeltaTime);
 }
 
+const SFileVersion& CSystem::GetFileVersion()
+{
+  return m_FileVersion;
+}
+
+const SFileVersion& CSystem::GetProductVersion()
+{
+  return m_ProductVersion;
+}
+
+IEntitySystem* CSystem::GetIEntitySystem()
+{
+  return nullptr;
+}
+
 ICryPak* CSystem::GetIPak()
 {
   return m_pCryPak;

@@ -124,6 +124,21 @@ bool CGame::IsClient()
   return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
 }
 
+bool CGame::IsMultiplayer()
+{
+	// cannot be in multiplayer when in editor
+	if (m_bEditor)
+		return false;
+
+	bool bServer=IsServer();
+	bool bClient=IsClient();
+
+	if(!bServer && !bClient)
+		return false;
+
+	return !bServer || !bClient || m_pServer->m_bListen;
+}
+
 //////////////////////////////////////////////////////////////////////
 //! mark the client for deletion
 void CGame::MarkClientForDestruct()

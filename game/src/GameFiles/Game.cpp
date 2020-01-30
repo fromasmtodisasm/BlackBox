@@ -134,8 +134,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
     return false;
 #endif
 
+	InitConsoleVars();
   initCommands();
-  initVariables();
   InitScripts();
   auto init_cfg = m_Console->GetCVar("game_config");
   if (init_cfg == nullptr)
@@ -391,12 +391,14 @@ void CGame::DisplayInfo(float fps)
 bool CGame::Run(bool& bRelaunch) {
   m_pLog->Log("[OK] Game started\n");
   m_pSystem->Log("[OK] Game started\n");
-		m_bRelaunch=false;
-		while(1) 
-		{		
-			if (!Update()) 
-				break;
-		}
+  StartupServer(true, "test_server");
+
+  m_bRelaunch=false;
+  while(1) 
+  {		
+    if (!Update()) 
+      break;
+  }
 
 		bRelaunch=m_bRelaunch;
 
