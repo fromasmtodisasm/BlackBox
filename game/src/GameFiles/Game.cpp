@@ -244,7 +244,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 bool CGame::Update() {
   bool bRenderFrame = !m_bDedicatedServer;
-	GetISystem()->Log("Game update");
   m_pSystem->Update(0, IsInPause());
   {
     // TODO: FIX IT

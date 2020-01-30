@@ -1,5 +1,5 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include "..\..\..\include\public\BlackBox\Core\Utils.hpp"
+#include <BlackBox/Core/Utils.hpp>
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #define DS "\\" //dir separator
