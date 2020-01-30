@@ -214,7 +214,7 @@ bool CSystem::Init()
     return false;
   //====================================================
   m_pWorld = new World();
-  if (!m_pGame->Init(this)) {
+  if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal")) {
     return false;
   }
   m_pConsole->PrintLine("[OK] IGame created\n");
@@ -248,7 +248,7 @@ void CSystem::Start()
   {
     m_pGame->Release();
     m_pGame = CreateGame(nullptr);
-    if (!m_pGame->Init(this))
+    if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal"))
       break;
     m_pGame->Run(bRelaunch);
   }

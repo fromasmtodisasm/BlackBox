@@ -85,7 +85,7 @@ enum EGameCapability
 
 //	Exposes the basic functionality to initialize and run the game.
 struct IGame {
-  virtual bool Init(ISystem* pSystem) = 0;
+  virtual bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) = 0;
   virtual bool Update() = 0;
   virtual bool Run(bool& bRelaunch) = 0;
   virtual void Stop() = 0;

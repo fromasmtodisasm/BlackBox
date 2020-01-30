@@ -120,7 +120,7 @@ public:
 	const char *IsMODLoaded();
 	IGameMods* GetModsInterface();
 
-  bool Init(ISystem *pSystem) override;
+  bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) override;
   bool Update() override;
 	void ExecScripts();
 	void DrawHud(float fps);
@@ -280,8 +280,6 @@ public:
 
 
   std::string m_Title;
-  bool m_bUpdateRet = true;
-  bool m_bRelaunch = true;
   float m_lastTime;
 	float m_time = 0.0f;
 #ifdef CLOCK_FIXED
@@ -384,6 +382,10 @@ public:
 
 	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
 	struct IActionMapManager* m_pIActionMapManager;			//!<
+	bool											m_bDedicatedServer;				//!<
+	bool											m_bOK;										//!<
+	bool											m_bUpdateRet;							//!<
+	bool											m_bRelaunch;							//!<
 	bool m_bInPause = false;
 
 	//other

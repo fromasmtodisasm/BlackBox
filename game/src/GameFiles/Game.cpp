@@ -108,8 +108,10 @@ CGame::CGame(std::string title) :
 #endif
 }
 
-bool CGame::Init(ISystem* pEngine) {
-  m_pSystem /*= gISystem */ = pEngine;
+bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
+{
+  m_pSystem /*= gISystem */ = pSystem;
+	m_bDedicatedServer  =bDedicatedSrv;
   m_pRender = m_pSystem->GetIRender();
   m_pInput = m_pSystem->GetIInput();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
@@ -149,7 +151,37 @@ bool CGame::Init(ISystem* pEngine) {
     return false;
   }
 
-  InitInputMap();
+	// init key-bindings
+	if(!m_bDedicatedServer)
+		InitInputMap();
+	if(!m_bDedicatedServer)
+	{
+		m_pSystem->GetIConsole()->ShowConsole(0);
+#if 0
+		if (!bInEditor)
+		{
+			//////////////////////////////////////////////////////////////////////
+			m_pUISystem = new CUISystem;
+
+			if (m_pUISystem)
+			{
+				m_pUISystem->Create(this, m_pSystem, m_pScriptSystem, "Scripts/MenuScreens/UISystem.lua", 1);
+			}
+			else
+			{
+				m_pLog->Log("Failed to create UI System!");
+			}
+			//////////////////////////////////////////////////////////////////////
+		}
+		
+		if (m_pUISystem)
+		{
+			m_bMenuOverlay = 1;
+		}
+#endif
+	}
+	else
+		m_pSystem->GetIConsole()->ShowConsole(true);
   InitConsoleCommands();
 
   DevModeInit();
