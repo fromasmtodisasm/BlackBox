@@ -4,6 +4,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Render.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>

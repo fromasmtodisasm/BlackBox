@@ -172,6 +172,7 @@ bool Scene::Serializator::load(const char* name, LoadObjectSink* callback)
 
   m_Scene->m_CurrentCamera = m_Scene->m_Camera.find("main");
   assert(m_Scene->m_CurrentCamera != m_Scene->m_Camera.end());
+	GetISystem()->Log("3");
 
   return true;
 }
@@ -179,6 +180,7 @@ bool Scene::Serializator::load(const char* name, LoadObjectSink* callback)
 void Scene::Serializator::loadTerrain(tinyxml2::XMLElement* terrain)
 {
   //Object* obj;
+	GetISystem()->Log(__func__);
   Material* material;
   MaterialManager* materialManager = MaterialManager::instance();
   const char* terrainName = nullptr;
@@ -236,7 +238,8 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
     objectType = "object";
   if (objectType == std::string("points"))
   {
-    m_Scene->m_Points = m_Scene->createPointObject(object);
+		if (!gEnv->IsDedicated())
+			m_Scene->m_Points = m_Scene->createPointObject(object);
     return;
   }
   else
@@ -287,6 +290,7 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
   obj->m_visible = objectVisible;
   obj->setMaterial(material);
   m_Scene->m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
+	GetISystem()->Log(__func__);
 }
 
 void Scene::Serializator::loadMesh(XMLElement* mesh)

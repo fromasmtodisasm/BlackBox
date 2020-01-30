@@ -127,7 +127,6 @@ private:
   std::string name;
   World* m_World;
   GLint m_RenderedScene;
-  Quad m_ScreenQuad;
   SkyBox* skyBox;
   BaseShaderProgramRef m_ScreenShader;
   CShaderProgram* m_TextShader;

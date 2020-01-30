@@ -208,16 +208,19 @@ bool CSystem::Init()
     return false;
   //====================================================
 
-		//////////////////////////////////////////////////////////////////////////
-		// Hardware mouse
-		//////////////////////////////////////////////////////////////////////////
-		// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
-		// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
-		// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+  //////////////////////////////////////////////////////////////////////////
+  // Hardware mouse
+  //////////////////////////////////////////////////////////////////////////
+  // - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+  // - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+  // - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
 #ifdef DEDICATED_SERVER
-		m_env.pHardwareMouse = NULL;
+  m_env.pHardwareMouse = NULL;
 #else
-		m_env.pHardwareMouse = new CHardwareMouse(true);
+  if (!m_env.IsDedicated())
+    m_env.pHardwareMouse = new CHardwareMouse(true);
+  else
+    m_env.pHardwareMouse = NULL;
 #endif
 
   //====================================================
@@ -226,6 +229,7 @@ bool CSystem::Init()
     return false;
   //====================================================
   m_pWorld = new World();
+  Log("Initialize Game");
   if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal")) {
     return false;
   }
@@ -790,17 +794,17 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
   {
     PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
     //FIXME: CHECK IT
-    m_pInput->Update(true);
+    if (m_pInput) m_pInput->Update(true);
     PROFILER_POP_CPU_MARKER();
   }
-  m_pSystemEventDispatcher->Update();
-  m_pWindow->update();
-  m_pConsole->Update();
-  m_Render->Update();
-  if (m_pWindow->closed())
+  if (m_pWindow) m_pWindow->update();
+  if (m_pConsole) m_pConsole->Update();
+  if (m_Render) m_Render->Update();
+  if (m_pWindow && m_pWindow->closed())
   {
     m_pGame->SendMessage("Quit");
   }
+  Log("System update");
   return true;
 }
 

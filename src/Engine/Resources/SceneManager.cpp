@@ -63,6 +63,7 @@ IScene* SceneManager::getScene(string scene, LoadObjectSink* callback)
       }
       else
       {
+				GetISystem()->Log("Cached");
         cache[scenePath] = result;
         GetISystem()->GetILog()->Log("[INFO] Scene [%s] loaded\n", scenePath.c_str());
       }

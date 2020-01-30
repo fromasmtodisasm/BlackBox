@@ -52,6 +52,10 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {
   SCRIPT_CHECK_PARAMETERS(0);
+	if (gEnv->IsDedicated())
+  {
+    return pH->EndFunction();
+  }
   m_pConsole->PrintLine("Enumerating display settings...");
   SmartScriptObject pDispArray(m_pSS);
   SDispFormat* Formats = NULL;

@@ -108,13 +108,14 @@ CGame::CGame(std::string title) :
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
   m_pSystem /*= gISystem */ = pSystem;
-	m_bDedicatedServer  =bDedicatedSrv;
+  m_bDedicatedServer  = bDedicatedSrv;
   m_pRender = m_pSystem->GetIRender();
   m_pInput = m_pSystem->GetIInput();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_pLog = m_pSystem->GetILog();
   m_Console = m_pSystem->GetIConsole();
-  m_pInput->AddEventListener(this);
+  if (!bDedicatedSrv)
+    m_pInput->AddEventListener(this);
   m_pNetwork = m_pSystem->GetINetwork();
   m_World = m_pSystem->GetIWorld();
 
@@ -179,6 +180,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	}
 	else
 		m_pSystem->GetIConsole()->ShowConsole(true);
+	
   InitConsoleCommands();
 
   DevModeInit();
@@ -198,21 +200,25 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 #endif
   //m_pInput->GrabInput(true);
 
-  if (m_scene != nullptr)
-  {
-    initTechniques();
-  }
-  else
-    TechniqueManager::init();
+	if (m_pRender)
+	{
+		if (m_scene != nullptr)
+		{
+			initTechniques();
+		}
+		else
+			TechniqueManager::init();
 
-  m_Font = m_pSystem->GetIFont();
-  m_Font->Init("arial.ttf", 16, 18);
+		m_Font = m_pSystem->GetIFont();
+		m_Font->Init("arial.ttf", 16, 18);
 
-  ITexture* consoleBackGround = new Texture();
+		ITexture* consoleBackGround = new Texture();
 #if 0
-  consoleBackGround->load("console/fc.jpg");
+		consoleBackGround->load("console/fc.jpg");
 #endif
-  m_Console->SetImage(consoleBackGround);
+		m_Console->SetImage(consoleBackGround);
+
+	}
 
   // other
   //TODO: FIX IT
@@ -235,21 +241,22 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 }
 
 bool CGame::Update() {
-  bool bRenderFrame = true;
+  bool bRenderFrame = !m_bDedicatedServer;
   m_pSystem->Update(0, IsInPause());
   {
-    m_SceneRendered = false;
     // TODO: FIX IT
     m_deltaTime = m_pSystem->GetDeltaTime();
     m_time += m_deltaTime;
     fps = 1.0f / m_deltaTime;
     ExecScripts();
     if (!IsInPause())
+		{
       m_World->Update(m_pSystem->GetDeltaTime());
+		}
 
-    SetRenderState();
     if (bRenderFrame)
     {
+			SetRenderState();
       m_pSystem->RenderBegin();
       m_pSystem->Render();
       //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
@@ -381,50 +388,23 @@ void CGame::DisplayInfo(float fps)
 
 bool CGame::Run(bool& bRelaunch) {
   m_pLog->Log("[OK] Game started\n");
-  //TODO: FIX THIS
-  //m_time = deltaClock.restart().asSeconds();
-#ifdef ENABLE_MUSIC_LIST
-  m_PlayList.setVolume(10.f);
-  m_PlayList.play();
-  m_isMusicPlaying = true;
-#endif
-  m_bRelaunch = false;
-  {
-    auto p = GET_CVAR("single_pass");
-    if (p->GetIVal())
-    {
-#if 0
-      SmartScriptObject test(m_pScriptSystem);
-      if (!m_pScriptSystem->GetGlobalValue("Test", *test))
-      {
-        delete test;
-        m_pSystem->Log("\002 ERROR: can't find Test table ");
-        return false;
-      }
+	GetISystem()->Log("Run");
+  if(m_bDedicatedServer)
+	{
+		return Update();
+	}
+	else 
+	{		
+		m_bRelaunch=false;
+		while(1) 
+		{		
+			if (!Update()) 
+				break;
+		}
 
-      m_pScriptSystem->BeginCall("Test", "OnInit");
-      m_pScriptSystem->PushFuncParam(*test);
-      m_pScriptSystem->EndCall();
-
-      Update();
-      std::time_t t = std::time(nullptr);
-      std::stringstream ss;
-      ss << "screen_shots/tests/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".png";
-      m_pLog->Log("Screenshot name: %s", ss.str().c_str());
-      m_pRender->ScreenShot(ss.str().c_str());
-#endif // 0
-
-      return true;
-    }
-  }
-  while (1)
-  {
-    if (!Update())
-      break;
-  }
-
-  bRelaunch = m_bRelaunch;
-  return true;
+		bRelaunch=m_bRelaunch;
+	}
+	return true;
 }
 
 bool CGame::loadScene(std::string name) {
@@ -434,21 +414,24 @@ bool CGame::loadScene(std::string name) {
   if ((scene = SceneManager::instance()->getScene(path, this)) != nullptr)
   {
     m_World->SetScene(scene);
-    auto tech = TechniqueManager::get("hdr");
-    if (tech != nullptr)
-    {
-      tech->Init(m_World->GetActiveScene(), nullptr);
-      scene->setTechnique(tech);
-    }
+		if (!gEnv->IsDedicated())
+		{
+			auto tech = TechniqueManager::get("hdr");
+			if (tech != nullptr)
+			{
+				tech->Init(m_World->GetActiveScene(), nullptr);
+				scene->setTechnique(tech);
+			}
 
-    //scene->setCamera("main", new CCamera());
-    CPlayer* player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
-    if (player != nullptr)
-    {
-      player->attachCamera(scene->getCurrentCamera());
-      player->setGame(this);
-      this->setPlayer(player);
-    }
+			//scene->setCamera("main", new CCamera());
+			CPlayer* player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
+			if (player != nullptr)
+			{
+				player->attachCamera(scene->getCurrentCamera());
+				player->setGame(this);
+				this->setPlayer(player);
+			}
+		}
     return true;
   }
 
