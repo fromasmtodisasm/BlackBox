@@ -74,7 +74,10 @@ public:
   virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 private:
+  bool CreateConsole();
   bool InitConsole();
+  bool InitRender();
+  bool InitInput();
   bool OpenRenderLibrary(std::string_view render);
 
   bool InitResourceManagers();

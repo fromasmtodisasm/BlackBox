@@ -116,10 +116,10 @@ bool CSystem::Init()
   Log("Initializing System");
   //====================================================
   Log("Initializing Console");
-  if (!InitConsole())
+  if (!CreateConsole())
     return false;
   //====================================================
-  Log("Initializing System");
+  Log("Loading config");
   if (!ConfigLoad("res/scripts/engine.cfg"))
     return false;
   //====================================================
@@ -128,21 +128,17 @@ bool CSystem::Init()
     return false;
   }
   //====================================================
+  Log("Creating Input");
   m_pInput = CreateInput(this, m_pWindow->getHandle());
   //====================================================
+  Log("Init materials");
   if (!MaterialManager::init(this))
   {
     return false;
   }
   //====================================================
-  // In release mode it failed!!!
-  // TODO: Fix it
-  if (!(m_pWindow = m_Render->Init(
-    0, 0,
-    r_window_width->GetIVal(), r_window_height->GetIVal(),
-    r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(),
-    r_fullscreen->GetIVal(), m_pWindow))
-    )
+  Log("Initialize Render");
+  if (!InitRender())
     return false;
   //====================================================
 #ifdef NEED_VC 
@@ -151,7 +147,9 @@ bool CSystem::Init()
   );
 #endif
   //====================================================
-  m_pInput->Init();
+  Log("Initialize Input");
+  if (!InitInput())
+    return false;
   //====================================================
   // Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
@@ -174,9 +172,6 @@ bool CSystem::Init()
   {
     return false;
   }
-  if (!m_pConsole->Init(this))
-    return false;
-  m_pConsole->ShowConsole(true);
   //====================================================
   if (!InitResourceManagers())
     return false;
@@ -349,12 +344,43 @@ bool CSystem::ConfigLoad(const char* file)
   return true;
 }
 
-bool CSystem::InitConsole()
+bool CSystem::CreateConsole()
 {
   m_env.pConsole = m_pConsole = new CConsole();
   if (m_pConsole == nullptr)
     return false;
   return true;
+}
+
+bool CSystem::InitConsole()
+{
+  if (!m_pConsole->Init(this))
+    return false;
+  m_pConsole->ShowConsole(true);
+  return true;
+}
+
+bool CSystem::InitRender()
+{
+	if (gEnv->IsDedicated())
+		return true;
+  // In release mode it failed!!!
+  // TODO: Fix it
+  if (!(m_pWindow = m_Render->Init(
+    0, 0,
+    r_window_width->GetIVal(), r_window_height->GetIVal(),
+    r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(),
+    r_fullscreen->GetIVal(), m_pWindow))
+    )
+    return false;
+  return true;
+}
+
+bool CSystem::InitInput()
+{
+	if (gEnv->IsDedicated())
+		return true;
+  return m_pInput->Init();
 }
 
 bool CSystem::OpenRenderLibrary(std::string_view render)
