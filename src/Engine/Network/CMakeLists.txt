@@ -6,7 +6,9 @@ add_library(${PROJECT_NAME})
 ###################################################
 
 find_package(sdl2-net CONFIG REQUIRED)
-find_package(sdl2 CONFIG REQUIRED)
+if (LINUX)
+	find_package(sdl2 CONFIG REQUIRED)
+endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
