@@ -11,13 +11,9 @@ int main(int argc, char* argv[]) {
   int status = EXIT_FAILURE;
   string path;
   std::string cmdline;
-  if (argc > 1)
+  for (int i = 0; i < argc; i++)
   {
-    cmdline += argv[1];
-    for (int i = 2; i < argc; i++)
-    {
-      cmdline = cmdline + " " + argv[i];
-    }
+    cmdline = cmdline + " " + argv[i];
   }
 
   SSystemInitParams params;

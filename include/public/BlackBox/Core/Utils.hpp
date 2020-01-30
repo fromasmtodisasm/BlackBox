@@ -23,6 +23,9 @@ std::string getBasePath(std::string fullpath);
 std::string wstr_to_str(const std::wstring& ws);
 std::wstring str_to_wstr(const std::string& str);
 
+void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr);
+void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr);
+
 namespace stl {
   template<class Type>
   //! Case insensetive less key for any type convertable to const char*.

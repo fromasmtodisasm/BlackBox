@@ -1,4 +1,5 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
+#include "..\..\..\include\public\BlackBox\Core\Utils.hpp"
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #define DS "\\" //dir separator
@@ -134,4 +135,43 @@ std::wstring str_to_wstr(const std::string& str)
   char tmp[6] = { 0 };
   std::mbstowcs(&r_it++[0], str.data(), str.length());
   return result;
+}
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
+{
+  // Get the first occurrence
+  size_t pos = data.find(toSearch);
+
+  // Repeat till end is reached
+  while (pos != std::string::npos)
+  {
+    // Replace this occurrence of Sub String
+    data.replace(pos, toSearch.size(), replaceStr);
+    // Get the next occurrence from the current position
+    pos = data.find(toSearch, pos + replaceStr.size());
+  }
+}
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr)
+{
+  // Get the first occurrence
+  size_t pos = data.find(toSearch);
+
+  // Repeat till end is reached
+  int n = 0;
+  while (pos != std::string::npos)
+  {
+    // Replace this occurrence of Sub String
+    if ((pos + 1) < data.length() && std::isdigit(data[pos + 1]))
+    {
+      data.replace(pos, toSearch.size() + 1, replaceStr(data[pos + 1] - '0'));
+      n++;
+    }
+    else
+    {
+      data.replace(pos, toSearch.size(), "");
+    }
+    // Get the next occurrence from the current position
+    pos = data.find(toSearch, ++pos);
+  }
 }

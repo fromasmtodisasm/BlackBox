@@ -154,7 +154,10 @@ bool CSystem::Init()
   Log("Initialize Input");
   if (!InitInput())
     return false;
-  Log("Ok");
+  if (m_pCmdLine->FindArg(eCLAT_Pre, "debug"))
+  {
+    Log("Debug mode");
+  }
   //====================================================
   // Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
