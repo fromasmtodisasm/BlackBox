@@ -129,7 +129,8 @@ bool CSystem::Init()
   }
   //====================================================
   Log("Creating Input");
-  m_pInput = CreateInput(this, m_pWindow->getHandle());
+  if (!gEnv->IsDedicated())
+    m_pInput = CreateInput(this, m_pWindow->getHandle());
   //====================================================
   Log("Init materials");
   if (!MaterialManager::init(this))
@@ -172,6 +173,9 @@ bool CSystem::Init()
   {
     return false;
   }
+  //====================================================
+  if (!InitConsole())
+    return false;
   //====================================================
   if (!InitResourceManagers())
     return false;
