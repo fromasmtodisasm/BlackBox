@@ -118,6 +118,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
     m_pInput->AddEventListener(this);
   m_pNetwork = m_pSystem->GetINetwork();
   m_World = m_pSystem->GetIWorld();
+	m_bUpdateRet = true;
+
 
 #if 0
   if (!m_pNetwork->Init())
@@ -242,6 +244,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 bool CGame::Update() {
   bool bRenderFrame = !m_bDedicatedServer;
+	GetISystem()->Log("Game update");
   m_pSystem->Update(0, IsInPause());
   {
     // TODO: FIX IT
@@ -280,6 +283,9 @@ bool CGame::Update() {
 
   if (bRenderFrame)
     m_pSystem->RenderEnd();
+
+	auto str = std::string("ret = ") + std::to_string(m_bUpdateRet);
+	GetISystem()->Log(str.c_str());
 
   return m_bUpdateRet;
 }
@@ -388,13 +394,6 @@ void CGame::DisplayInfo(float fps)
 
 bool CGame::Run(bool& bRelaunch) {
   m_pLog->Log("[OK] Game started\n");
-	GetISystem()->Log("Run");
-  if(m_bDedicatedServer)
-	{
-		return Update();
-	}
-	else 
-	{		
 		m_bRelaunch=false;
 		while(1) 
 		{		
@@ -403,11 +402,12 @@ bool CGame::Run(bool& bRelaunch) {
 		}
 
 		bRelaunch=m_bRelaunch;
-	}
+
 	return true;
 }
 
 bool CGame::loadScene(std::string name) {
+	GetISystem()->Log("Scene loading");
   IScene* scene;
   std::string& path = name;
   SceneManager::instance()->removeScene(path);

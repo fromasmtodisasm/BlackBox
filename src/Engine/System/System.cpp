@@ -804,7 +804,6 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
   {
     m_pGame->SendMessage("Quit");
   }
-  Log("System update");
   return true;
 }
 

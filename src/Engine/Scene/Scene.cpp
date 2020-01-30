@@ -195,7 +195,6 @@ void Scene::update(float dt)
 {
   for (auto& obj : m_Objects)
   {
-		GetISystem()->Log(obj.first.c_str());
     obj.second->update(dt);
     //obj.second->velocity.y -= World::gravity*dt;
   }
