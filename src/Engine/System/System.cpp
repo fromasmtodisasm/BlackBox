@@ -113,9 +113,9 @@ bool CSystem::Init()
   m_pLog = new NullLog(m_startupParams.sLogFileName);
   if (m_pLog == nullptr)
     return false;
+  Log("Initializing System");
   //====================================================
-  m_env.pConsole = m_pConsole = new CConsole();
-  if (m_pConsole == nullptr)
+  if (!InitConsole())
     return false;
   //====================================================
   if (!ConfigLoad("res/scripts/engine.cfg"))
@@ -176,27 +176,8 @@ bool CSystem::Init()
     return false;
   m_pConsole->ShowConsole(true);
   //====================================================
-  bool complete = false;
-  bool res_threaded = false;
-  if (res_threaded)
-  {
-    auto lambd_res = [&, this](GLContext& ctx) {
-      auto w = static_cast<SDL_Window*>(m_pWindow->getHandle());
-      SDL_GL_MakeCurrent(w, ctx);
-      this->InitResourceManagers();
-      SDL_GL_MakeCurrent(w, NULL);
-    };
-    bool res_ret = false;
-    GLContext ctx = m_pWindow->getContext();
-    std::thread rt(lambd_res, std::ref(ctx));
-  }
-  else
-  {
-    this->InitResourceManagers();
-  }
-
-  //if (!InitResourceManagers())
-  //  return false;
+  if (!InitResourceManagers())
+    return false;
   //====================================================
   m_pConsole->AddConsoleVarSink(this);
   ParseCMD();
@@ -246,17 +227,6 @@ bool CSystem::Init()
     return false;
   }
   m_pConsole->PrintLine("[OK] IGame created\n");
-  complete = true;
-  //rt.join();
-  //gl::ClearColor({ 0,1,0,1 });
-  gl::Clear(GL_COLOR_BUFFER_BIT);
-  m_pWindow->swap();
-  if (false)
-  {
-    m_pLog->Log("error init resource manager");
-    return false;
-  }
-
 
   return true;
 }
@@ -379,7 +349,10 @@ bool CSystem::ConfigLoad(const char* file)
 
 bool CSystem::InitConsole()
 {
-  return false;
+  m_env.pConsole = m_pConsole = new CConsole();
+  if (m_pConsole == nullptr)
+    return false;
+  return true;
 }
 
 bool CSystem::OpenRenderLibrary(std::string_view render)
