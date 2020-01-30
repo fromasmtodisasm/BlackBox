@@ -113,7 +113,7 @@ bool CSystem::Init()
   m_pLog = new NullLog(m_startupParams.sLogFileName);
   if (m_pLog == nullptr)
     return false;
-    std::string prompt = "Initializing System";
+  std::string prompt = "Initializing System";
   if (gEnv->IsDedicated())
     prompt += " on dedicated server";
   Log(prompt.c_str());

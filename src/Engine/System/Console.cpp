@@ -19,6 +19,7 @@
 #include <cstring>
 #include <locale>
 #include <functional>
+#include "NullImplementation/NullFont.hpp"
 
 bool isnumber(const char* s)
 {
@@ -914,6 +915,22 @@ void CConsole::ClearInputLine()
   fillCommandText();
 }
 
+IFont* CConsole::getFont(const char* name, float w, float h)
+{
+  if (gEnv->IsDedicated())
+    return new CNullFont();
+  else
+  {
+    m_Font = new FreeTypeFont();
+    auto font = name;
+    auto var = GET_CVAR("s_font");
+    if (var)
+      font = var->GetString();
+    if (!m_Font->Init(font, w, h))
+      return m_Font;
+  }
+}
+
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)
 {
   CommandInfo cmdInfo;
@@ -1088,15 +1105,7 @@ bool CConsole::Init(ISystem* pSystem)
   m_pRenderer = pSystem->GetIRender();
   m_pScriptSystem = pSystem->GetIScriptSystem();
   m_pInput = pSystem->GetIInput();
-  m_Font = new FreeTypeFont();
-  {
-    auto font = "arial.ttf";
-    auto var = GET_CVAR("s_font");
-    if (var)
-      font = var->GetString();
-    if (!m_Font->Init(font, 16, static_cast<unsigned int>(line_height)))
-      return false;
-  }
+  m_Font = getFont("arial.ttf", 16, static_cast<unsigned int>(line_height));
   const char* texture_path = "console_background2.jpg";
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
