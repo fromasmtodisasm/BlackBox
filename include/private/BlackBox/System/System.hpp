@@ -30,6 +30,7 @@ public:
 
   // Inherited via ISystem
   virtual bool Init() override;
+  bool CreateLog();
   virtual void Start() override;
   virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
   virtual void RenderBegin() override;

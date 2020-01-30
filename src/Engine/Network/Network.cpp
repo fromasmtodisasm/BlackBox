@@ -1,3 +1,5 @@
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Network/Network.hpp>
 #include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/Server.hpp>
@@ -12,14 +14,33 @@ CNetwork::CNetwork(ISystem* pSystem)
 
 CNetwork::~CNetwork()
 {
+  SDLNet_Quit();
 }
 
 bool CNetwork::Init()
 {
-  bool res = false;
-  if (SDLNet_Init() == 0)
+  SDL_version compile_version;
+  const SDL_version* link_version = SDLNet_Linked_Version();
+  SDL_NET_VERSION(&compile_version);
+  gEnv->pLog->Log("-- Compiled with SDL_net version: %d.%d.%d",
+    compile_version.major,
+    compile_version.minor,
+    compile_version.patch);
+  gEnv->pLog->Log("-- Running with SDL_net version: %d.%d.%d",
+    link_version->major,
+    link_version->minor,
+    link_version->patch);
+  bool res = true;
+  if (SDL_Init(0) != -1) {
+    if (SDLNet_Init() == -1) {
+      gEnv->pLog->Log("SDLNet_Init: %s\n", SDLNet_GetError());
+      res = false;
+    }
+  }
+  else
   {
-    res = true;
+    gEnv->pLog->Log("SDL_Init: %s\n", SDL_GetError());
+    res = false;
   }
   return res;
 }
@@ -66,6 +87,7 @@ const char* CNetwork::EnumerateError(uint32_t err)
 
 void CNetwork::Release()
 {
+  delete this;
 }
 
 void CNetwork::GetMemoryStatistics(ICrySizer* pSizer)

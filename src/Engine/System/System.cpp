@@ -61,6 +61,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
   cvGameName(nullptr),
   m_Render(nullptr),
   m_pConsole(nullptr),
+  m_pInput(nullptr),
   m_pFont(nullptr),
   m_pGame(nullptr),
   m_pLog(nullptr),
@@ -107,12 +108,14 @@ bool CSystem::Init()
   gEnv->SetIsDedicated(m_startupParams.bDedicatedServer);
   /////////////////////////////////////////////
   m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
+  if (m_pCmdLine->FindArg(eCLAT_Pre, "dedicated"))
+  {
+    gEnv->SetIsDedicated(true);
+  }
 #ifdef ENABLE_PROFILER
   initTimer();
 #endif
-  m_pLog = new NullLog(m_startupParams.sLogFileName);
-  if (m_pLog == nullptr)
-    return false;
+  if (!CreateLog()) return false;
   std::string prompt = "Initializing System";
   if (gEnv->IsDedicated())
     prompt += " on dedicated server";
@@ -154,10 +157,6 @@ bool CSystem::Init()
   Log("Initialize Input");
   if (!InitInput())
     return false;
-  if (m_pCmdLine->FindArg(eCLAT_Pre, "debug"))
-  {
-    Log("Debug mode");
-  }
   //====================================================
   // Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
@@ -227,17 +226,27 @@ bool CSystem::Init()
 #endif
 
   //====================================================
+  m_env.pLog->Log("-- Creating Network");
   m_pNetwork = CreateNetwork(this);
   if (m_pNetwork == nullptr)
     return false;
   //====================================================
   m_pWorld = new World();
   Log("Initialize Game");
-  if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal")) {
+  if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal")) {
     return false;
   }
   m_pConsole->PrintLine("[OK] IGame created\n");
 
+  return true;
+}
+
+bool CSystem::CreateLog()
+{
+  m_pLog = new NullLog(m_startupParams.sLogFileName);
+  if (m_pLog == nullptr)
+    return false;
+  m_env.pLog = m_pLog;
   return true;
 }
 
@@ -256,7 +265,7 @@ void CSystem::Start()
   {
     m_pGame->Release();
     m_pGame = CreateGame(nullptr);
-    if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal"))
+    if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
       break;
     m_pGame->Run(bRelaunch);
   }
@@ -660,8 +669,8 @@ void CSystem::ShowMessage(const char* message, const char* caption, MessageType 
 
 void CSystem::Log(const char* message)
 {
-  std::cout << "-- " << message << std::endl;
-  m_pLog->Log("-- %s\n", message);
+  //std::cout << "-- " << message << std::endl;
+  m_pLog->Log("-- %s", message);
 }
 
 IScriptSystem* CSystem::GetIScriptSystem()

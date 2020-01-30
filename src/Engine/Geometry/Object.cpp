@@ -12,6 +12,7 @@
 #include <cctype>
 #include <cstdio>
 #include <sstream>
+#include <memory>
 
 using namespace std;
 int Object::refs = 0;
@@ -199,7 +200,7 @@ Object* Object::load(string path)
 {
   Object* obj = nullptr;
   MeshList mesh;
-  VertexArrayObject* vb;
+  std::unique_ptr<VertexArrayObject> vb;
   VerteciesInfo vertecies;
   BoundingBox bb;
   ObjLoader OBJ;
@@ -207,10 +208,13 @@ Object* Object::load(string path)
   if (!OBJ.load(path.c_str(), vertecies, bb))
     return nullptr;
 
-  vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
-  debuger::vertex_array_label(vb->getId(), ("model: " + path).c_str());
+  if (!gEnv->IsDedicated())
+  {
+    vb.reset( new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes()));
+    debuger::vertex_array_label(vb->getId(), ("model: " + path).c_str());
+  }
   mesh = std::make_shared<std::vector<Mesh>>();
-  Mesh _mesh(vb, nullptr);
+  Mesh _mesh(vb.get(), nullptr);
   _mesh.bb = bb;
   mesh->push_back(_mesh);
   obj = new Object();
