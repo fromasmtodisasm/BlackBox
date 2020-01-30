@@ -104,6 +104,7 @@ CSystem::~CSystem()
 bool CSystem::Init()
 {
   gISystem = this;
+  gEnv->SetIsDedicated(m_startupParams.bDedicatedServer);
   /////////////////////////////////////////////
   m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
 #ifdef ENABLE_PROFILER
@@ -120,15 +121,12 @@ bool CSystem::Init()
   if (!ConfigLoad("res/scripts/engine.cfg"))
     return false;
   //====================================================
-  m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
-  if (m_pWindow == nullptr)
+  if (!OpenRenderLibrary("OpenGL"))
+  {
     return false;
+  }
   //====================================================
   m_pInput = CreateInput(this, m_pWindow->getHandle());
-  //====================================================
-  m_env.pRenderer = m_Render = CreateIRender(this);
-  if (m_Render == nullptr)
-    return false;
   //====================================================
   if (!MaterialManager::init(this))
   {
@@ -382,6 +380,29 @@ bool CSystem::ConfigLoad(const char* file)
 bool CSystem::InitConsole()
 {
   return false;
+}
+
+bool CSystem::OpenRenderLibrary(std::string_view render)
+{
+	if (gEnv->IsDedicated())
+		return true;
+  //====================================================
+  m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
+  if (m_pWindow == nullptr)
+    return false;
+  //====================================================
+
+  m_env.pRenderer = m_Render = CreateIRender(this);
+  if (m_Render == nullptr)
+    return false;
+  else
+    return true;
+
+#if 0
+	CryFatalError("Unknown renderer type: %s", t_rend);
+	return false;
+#endif
+
 }
 
 bool CSystem::InitResourceManagers()

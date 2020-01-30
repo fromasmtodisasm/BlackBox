@@ -146,6 +146,15 @@ struct SSystemGlobalEnvironment
   IRenderer* pRenderer;
   IHardwareMouse* pHardwareMouse;
 
+	ILINE void SetIsDedicated(bool isDedicated)
+	{
+	#if defined(DEDICATED_SERVER)
+		bDedicated = true;
+	#else
+		bDedicated = isDedicated;
+	#endif
+	}
+
   ILINE bool IsEditor() { return false; }
 	ILINE const bool IsEditing() const
 	{
@@ -153,6 +162,16 @@ struct SSystemGlobalEnvironment
 		return bEditor && !bEditorGameMode;
 #else
 		return false;
+#endif
+	}
+	ILINE const bool IsDedicated() const
+	{
+#if !BB_PLATFORM_DESKTOP
+		return false;
+#elif defined(DEDICATED_SERVER)
+		return true;
+#else
+		return bDedicated;
 #endif
 	}
 

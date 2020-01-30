@@ -75,6 +75,7 @@ public:
 
 private:
   bool InitConsole();
+  bool OpenRenderLibrary(std::string_view render);
 
   bool InitResourceManagers();
   void ParseCMD();
