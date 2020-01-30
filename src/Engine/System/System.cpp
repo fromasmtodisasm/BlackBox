@@ -240,7 +240,7 @@ bool CSystem::Init()
 
 void CSystem::Start()
 {
-  bool bRelaunch = false;
+  bool bRelaunch = m_env.IsDedicated();
 
   m_pGame->Run(bRelaunch);
 
