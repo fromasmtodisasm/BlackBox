@@ -1111,14 +1111,14 @@ bool CConsole::Init(ISystem* pSystem)
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
   m_Cursor.blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
 
-  if (background != nullptr)
-    texture_path = background->GetString();
-  m_pBackGround = new Texture();
-  m_pBackGround->load(texture_path);
-  initBind();
-
   if (!gEnv->IsDedicated())
   {
+    if (background != nullptr)
+      texture_path = background->GetString();
+    m_pBackGround = new Texture();
+    m_pBackGround->load(texture_path);
+    initBind();
+
     m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
     Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
   }
