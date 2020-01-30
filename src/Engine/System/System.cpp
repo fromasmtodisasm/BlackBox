@@ -198,9 +198,12 @@ bool CSystem::Init()
   }
 
   //====================================================
-  m_pInput->AddEventListener(this);
-  m_pInput->AddEventListener(m_pConsole);
-  m_pInput->AddEventListener(&m_GuiManager);
+  if (!m_env.IsDedicated())
+  {
+    m_pInput->AddEventListener(this);
+    m_pInput->AddEventListener(m_pConsole);
+    m_pInput->AddEventListener(&m_GuiManager);
+  }
   if (CreateGame(nullptr) == nullptr)
     return false;
   //====================================================
