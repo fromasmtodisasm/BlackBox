@@ -6,10 +6,12 @@ add_library(${PROJECT_NAME})
 if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	#################################################################
-	find_package(SDL2 CONFIG REQUIRED)
+	
 	if (DEFINED LINUX)
+		find_package(SDL2 CONFIG REQUIRED)
 		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
 	else()
+		add_package(SDL2)
 		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 	endif()
 	#################################################################

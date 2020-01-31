@@ -10,8 +10,7 @@ ${PROJECT_NAME}
 )
 
 ###################################################
-#add_package(lua)
-find_package(Lua REQUIRED)
+add_package(lua)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 ###################################################

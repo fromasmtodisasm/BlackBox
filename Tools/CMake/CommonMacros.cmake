@@ -61,7 +61,11 @@ macro(add_package Package)
 		if (NOT result EQUAL 0)
 			message(FATAL_ERROR "could not install ${Package}") 
 		endif()
-		find_package(${Package} CONFIG REQUIRED)
+		find_package(${Package} CONFIG)
+		if (NOT ${Package}_FOUND)
+			find_package(${Package} REQUIRED)
+
+		endif()
 	endif()
 endmacro()
 
