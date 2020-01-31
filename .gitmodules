@@ -1,21 +1,3 @@
-[submodule "submodules/glfw"]
-	path = submodules/glfw
-	url = https://github.com/glfw/glfw
-[submodule "submodules/glad"]
-	path = submodules/glad
-	url = https://github.com/Dav1dde/glad.git
-[submodule "submodules/glm"]
-	path = submodules/glm
-	url = https://github.com/g-truc/glm
-[submodule "submodules/imgui"]
-	path = submodules/imgui
-	url = https://github.com/fromasmtodisasm/imgui
 [submodule "submodules/soil"]
 	path = submodules/soil
 	url = git@github.com:fromasmtodisasm/soil.git
-[submodule "submodules/tinyxml2"]
-	path = submodules/tinyxml2
-	url = https://github.com/leethomason/tinyxml2
-[submodule "submodules/nvtt"]
-	path = submodules/nvtt
-	url = https://github.com/castano/nvidia-texture-tools
