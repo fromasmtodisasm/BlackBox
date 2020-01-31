@@ -103,7 +103,7 @@ public:
   }
   bool Init()
   {
-    if (SDLNet_ResolveHost(&m_IP, nullptr, 80) == -1) {
+    if (SDLNet_ResolveHost(&m_IP, nullptr, 8080) == -1) {
       gEnv->pLog->Log("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
       return false;
     }
