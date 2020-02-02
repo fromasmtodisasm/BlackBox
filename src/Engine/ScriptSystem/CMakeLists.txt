@@ -10,7 +10,7 @@ ${PROJECT_NAME}
 )
 
 ###################################################
-add_package(lua)
+add_package(Lua)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 ###################################################

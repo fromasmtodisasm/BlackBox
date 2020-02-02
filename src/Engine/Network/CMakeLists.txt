@@ -5,7 +5,7 @@ add_library(${PROJECT_NAME})
 
 ###################################################
 
-if (DEFINED LINUX)
+if (DEFINED LINUX AND NOT DEFINED VCPKG_INSTALLER)
 	find_package(sdl2-net CONFIG REQUIRED)
 	find_package(SDL2 CONFIG REQUIRED)
 else()
