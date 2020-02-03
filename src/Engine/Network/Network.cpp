@@ -114,7 +114,7 @@ public:
       return false;
     }
     gEnv->pLog->Log("Conntection Opened");
-
+    return true;
   }
   // Inherited via IServer
   virtual void Update(unsigned int nTime) override
