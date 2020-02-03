@@ -22,9 +22,11 @@ endif()
 find_package(Stb)
 if (NOT Stb_FOUND)
 	install_package("stb" result)
+        #[[
 	if (NOT result EQUAL 0)
 		message(FATAL_ERROR "Could not install stb with error: ${result}")
-	endif()
+        endif()
+        ]]
 	find_package(Stb REQUIRED)
 endif()
 
