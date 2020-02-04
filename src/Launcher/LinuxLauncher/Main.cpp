@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
   std::stringstream ss;
   ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
   params.sLogFileName = strdup(ss.str().c_str());
-  params.bDedicatedServer = true;
+  //params.bDedicatedServer = true;
 
   snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem* pSystem = CreateSystemInterface(params);

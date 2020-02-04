@@ -11,5 +11,6 @@ void main()
 {
     gl_Position = projection * model * vec4(aPos.x, aPos.y, 0.5f, 1.0f); 
     //TexCoords = (uv_transform * vec3(aTexCoords, 1.0)).xy;
-    TexCoords = (uv_projection * vec4(aTexCoords, 1.0, 1.0)).xy;
+    //TexCoords = (uv_projection * vec4(aTexCoords, 1.0, 1.0)).xy;
+    TexCoords = aTexCoords;
 }

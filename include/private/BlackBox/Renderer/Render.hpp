@@ -12,6 +12,24 @@ enum AttributeType
   CORE
 };
 
+struct Hardware
+{
+  const GLubyte* unknown_desc;
+  Hardware()
+    :
+      vendor(unknown_desc),
+      render(unknown_desc),
+      version(unknown_desc),
+      glsl_version(unknown_desc)
+  {
+
+  }
+  const GLubyte* vendor;
+  const GLubyte* render;
+  const GLubyte* version;
+  const GLubyte* glsl_version;
+};
+
 class GLRenderer :
   public CRenderer,
   public IConsoleVarSink,
@@ -102,6 +120,7 @@ private:
   void fillSates();
   void InitConsoleVariables();
   void InitConsoleCommands();
+  void printHardware();
 
 private:
   IWindow* m_Window = nullptr;
@@ -123,7 +142,7 @@ private:
   Quad* m_ScreenQuad = nullptr;
   // Shaders
   BaseShaderProgramRef m_ScreenShader;
-#if defined(_DEBUG) || defined(GL_DEBUG)
+#if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
   bool isDebug = true;
 #else
   bool isDebug = false;
@@ -159,6 +178,8 @@ private:
   float m_clearDepth;
 
   int m_CurrentTarget;
+
+  Hardware m_Hardware;
 
   // Inherited via IRenderer
   virtual void SetRenderTarget(int nHandle) override;

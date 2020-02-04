@@ -26,7 +26,7 @@ void Pipeline::bindProgram(const char* name)
   auto mat = MaterialManager::instance()->getMaterial(name);
   if (mat != nullptr)
   {
-    if (!mat->program)
+    if (mat->program != nullptr)
       shader = mat->program;
     else
       shader = ShaderManager::instance()->getDefaultProgram();

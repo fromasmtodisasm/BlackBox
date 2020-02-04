@@ -43,8 +43,6 @@ public:
 private:
   bool Create(int width, int height, bool fullscreen);
   Vec2 nextMousePos(Vec2& position);
-  void setMouseWrap(bool wrap);
-  void glInit();
   void handleEvent(SDL_Event* event);
 
 private:
