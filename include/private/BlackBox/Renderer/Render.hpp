@@ -12,23 +12,63 @@ enum AttributeType
   CORE
 };
 
-struct Hardware
+class CGLDevice
 {
-  const GLubyte* unknown_desc;
-  Hardware()
+public:
+  struct SDesc
+  {
+    SDesc()
+      :
+      Vendor(),
+      Renderer(),
+      Version(),
+      GLSLVersion()
+    {
+
+    }
+
+    const GLubyte* GetVendor()
+    {
+      return Vendor;
+    }
+
+    const GLubyte* GetRenderer()
+    {
+      return Renderer;
+    }
+
+    const GLubyte* GetVersion()
+    {
+      return Version;
+    }
+
+    const GLubyte* GetGLSLVersion()
+    {
+      return GLSLVersion;
+    }
+
+    const GLubyte* Vendor;
+    const GLubyte* Renderer;
+    const GLubyte* Version;
+    const GLubyte* GLSLVersion;
+  };
+
+  CGLDevice()
     :
-      vendor(unknown_desc),
-      render(unknown_desc),
-      version(unknown_desc),
-      glsl_version(unknown_desc)
+    m_Desc()
   {
 
   }
-  const GLubyte* vendor;
-  const GLubyte* render;
-  const GLubyte* version;
-  const GLubyte* glsl_version;
+  ~CGLDevice() = default;
+
+  SDesc& GetDesc()
+  {
+    return m_Desc;
+  }
+
+  SDesc m_Desc;
 };
+
 
 class GLRenderer :
   public CRenderer,
@@ -179,7 +219,7 @@ private:
 
   int m_CurrentTarget;
 
-  Hardware m_Hardware;
+  CGLDevice m_GLDevice;
 
   // Inherited via IRenderer
   virtual void SetRenderTarget(int nHandle) override;

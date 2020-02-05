@@ -203,10 +203,10 @@ void GLRenderer::glInit()
   SetState(State::CULL_FACE, true);
   SetCullMode(CullMode::BACK);
 
-  m_Hardware.vendor = 			gl::GetString(GL_VENDOR);
-  m_Hardware.render = 			gl::GetString(GL_RENDERER);
-  m_Hardware.version = 			gl::GetString(GL_VERSION);
-  m_Hardware.glsl_version = gl::GetString(GL_SHADING_LANGUAGE_VERSION);
+  m_GLDevice.m_Desc.Vendor = 			gl::GetString(GL_VENDOR);
+  m_GLDevice.m_Desc.Renderer = 		gl::GetString(GL_RENDERER);
+  m_GLDevice.m_Desc.Version = 		gl::GetString(GL_VERSION);
+  m_GLDevice.m_Desc.GLSLVersion = gl::GetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
 void GLRenderer::fillSates()
@@ -258,10 +258,10 @@ void GLRenderer::printHardware()
 {
   std::stringstream hardware_info;
   hardware_info << "Hardware render info\n" <<
-                   "Vendor: [" << m_Hardware.vendor << "]\n"
-                   "Render: [" << m_Hardware.render << "]\n"
-                   "Version: [" << m_Hardware.version << "]\n"
-                   "Shader Language Version: [" << m_Hardware.glsl_version << "]\n";
+                   "Vendor: ["                  << m_GLDevice.GetDesc().GetVendor() <<      "]\n"
+                   "Render: ["                  << m_GLDevice.GetDesc().GetRenderer() <<    "]\n"
+                   "Version: ["                 << m_GLDevice.GetDesc().GetVersion() <<     "]\n"
+                   "Shader Language Version: [" << m_GLDevice.GetDesc().GetGLSLVersion() << "]\n";
   m_pSystem->Log(hardware_info.str().c_str());
 }
 
