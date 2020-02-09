@@ -174,3 +174,5 @@ void       bbSleep(unsigned int dwMilliseconds);
   typedef std::weak_ptr<name> name ##         WeakPtr;  \
   typedef std::weak_ptr<const name> name ##   ConstWeakPtr;
 
+#define UNUSED_VARIABLE(v) static_cast<void>(v)
+

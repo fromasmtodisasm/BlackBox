@@ -31,6 +31,8 @@ if (BUILD_SHARED_LIBS)
 			$<TARGET_FILE_DIR:Launcher>)      # <--this is in-file
 endif()
 
+add_test(NAME TestLauncher COMMAND Launcher -dedicated)
+
 install(
   TARGETS ${PROJECT_NAME} 
   RUNTIME DESTINATION bin

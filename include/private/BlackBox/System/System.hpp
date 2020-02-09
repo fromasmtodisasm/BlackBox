@@ -42,7 +42,7 @@ public:
   virtual IShaderManager* GetShaderManager() override;
   virtual IRenderer* GetIRender() override;
   virtual ILog* GetILog() override;
-  virtual ICmdLine* GetICmdLine() override { return m_pCmdLine; };
+	virtual ICmdLine* GetICmdLine() override { return m_pCmdLine; }
   virtual ITimer* GetITimer() override;
   virtual IConsole* GetIConsole() override;
   virtual IInput* GetIInput() override;
@@ -54,7 +54,7 @@ public:
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
   virtual INetwork* GetINetwork() override;
   virtual ICryPak* GetIPak() override;
-  virtual IHardwareMouse* GetIHardwareMouse()  { return m_env.pHardwareMouse; };
+	virtual IHardwareMouse* GetIHardwareMouse() override { return m_env.pHardwareMouse; }
 
   virtual IGame* CreateGame(IGame* game) override;
 
@@ -104,27 +104,27 @@ private:
   IInput* m_pInput;
   ICryPak* m_pCryPak;
   IGame* m_pGame;
-  IFont* m_pFont;
-  IWindow* m_pWindow;
+	IFont* m_pFont;
+	IWindow* m_pWindow;
   IWorld* m_pWorld;
-  IRenderer* m_Render;
+	IRenderer* m_Render;
   IScriptSystem* m_pScriptSystem;
   INetwork* m_pNetwork;
   //! system event dispatcher
   ISystemEventDispatcher* m_pSystemEventDispatcher;
 
-  CScriptObjectConsole* m_ScriptObjectConsole;
+	CScriptObjectConsole* m_ScriptObjectConsole;
   CScriptObjectScript* m_ScriptObjectScript;
   CScriptObjectRenderer* m_ScriptObjectRenderer;
 
 private:
-  ICVar* r_window_width;
-  ICVar* r_window_height;
-  ICVar* r_bpp;
-  ICVar* r_zbpp;
-  ICVar* r_sbpp;
-  ICVar* r_fullscreen;
-  ICVar* cvGameName;
+	ICVar* r_window_width;
+	ICVar* r_window_height;
+	ICVar* r_bpp;
+	ICVar* r_zbpp;
+	ICVar* r_sbpp;
+	ICVar* r_fullscreen;
+	ICVar* cvGameName;
 
   SSystemInitParams& m_startupParams;
   SFileVersion m_FileVersion;

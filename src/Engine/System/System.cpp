@@ -94,8 +94,8 @@ CSystem::~CSystem()
 	SAFE_RELEASE(r_sbpp);
 	SAFE_RELEASE(r_fullscreen);
 
-  SAFE_DELETE(m_pLog);
-  SAFE_DELETE(m_pConsole);
+	SAFE_DELETE(m_pLog);
+	SAFE_DELETE(m_pConsole);
 	SAFE_RELEASE(m_pGame);
 	SAFE_DELETE(m_pFont);
 	SAFE_DELETE(m_pWindow);
@@ -219,12 +219,12 @@ bool CSystem::Init()
   // - Mouse is always visible by default in Editor (we never start directly in Game Mode)
   // - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
 #ifdef DEDICATED_SERVER
-  m_env.pHardwareMouse = NULL;
+	m_env.pHardwareMouse = nullptr;
 #else
   if (!m_env.IsDedicated())
     m_env.pHardwareMouse = new CHardwareMouse(true);
   else
-    m_env.pHardwareMouse = NULL;
+		m_env.pHardwareMouse = nullptr;
 #endif
 
   //====================================================
@@ -450,7 +450,7 @@ void CSystem::ParseCMD()
   std::string cmd = m_startupParams.szSystemCmdLine;
   if (cmd.find("-nsightDebug") != std::string::npos)
   {
-    m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
+		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
   }
 }
 
@@ -573,7 +573,7 @@ bool CSystem::InitFileSystem()
 #if !defined(_RELEASE)
 		const ICmdLineArg* pakalias = m_pCmdLine->FindArg(eCLAT_Pre, "pakalias");
 #else
-		const ICmdLineArg* pakalias = NULL;
+		const ICmdLineArg* pakalias = nullptr;
 #endif // !defined(_RELEASE)
 		if (pakalias && strlen(pakalias->GetValue()) > 0)
 			m_env.pCryPak->ParseAliases(pakalias->GetValue());
@@ -671,17 +671,23 @@ bool CSystem::IsDevMode()
 
 void CSystem::Error(const char* message)
 {
+	UNUSED_VARIABLE(message);
 }
 
 void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
+	UNUSED_VARIABLE(event);
+	UNUSED_VARIABLE(lparam);
 }
 
 void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
 {
 #ifdef _WIN32
-  ::MessageBox(NULL, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
+	::MessageBox(nullptr, message, caption, messageType == 0 ? MB_OK : MB_OKCANCEL);
 #endif
+	UNUSED_VARIABLE(message);
+	UNUSED_VARIABLE(caption);
+	UNUSED_VARIABLE(messageType);
 }
 
 void CSystem::Log(const char* message)
@@ -821,7 +827,7 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 
   //m_pNetwork->Update();
 
-  m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
+	m_DeltaTime = static_cast<double>(((NOW - LAST) * 1000) / static_cast<double>(SDL_GetPerformanceFrequency()) * 0.001);
   {
     PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
     //FIXME: CHECK IT
@@ -841,7 +847,7 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
 
 ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
-  //MessageBox(NULL, "TEST", "Message", MB_OK);
+	//MessageBox(nullptr, "TEST", "Message", MB_OK);
   ISystem* system = new CSystem(initParams);
   return system;
 }
