@@ -26,7 +26,7 @@
 
 struct ScriptBase
 {
-  virtual ~ScriptBase() {};
+  virtual ~ScriptBase() {}
 };
 
 //////////////////////////////////////////////////////////////////////
