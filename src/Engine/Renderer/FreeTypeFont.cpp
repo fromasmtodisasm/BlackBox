@@ -208,3 +208,8 @@ void FreeTypeFont::SetYPos(float y)
 {
   posY = y;
 }
+
+void FreeTypeFont::Release()
+{
+	delete this;
+}

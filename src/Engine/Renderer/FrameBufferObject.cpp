@@ -6,7 +6,7 @@
 #include <algorithm>
 using namespace std;
 
-FrameBufferObject::FrameBufferObject(BufferType type, int width, int height, int nColors)
+FrameBufferObject::FrameBufferObject(BufferType type, size_t width, size_t height, int nColors)
   :
   type(type),
   id(-1),
@@ -20,7 +20,7 @@ FrameBufferObject::~FrameBufferObject()
   glDeleteFramebuffers(1, &id);
 }
 
-FrameBufferObject* FrameBufferObject::create(BufferType type, int width, int height, int nColors, bool createMipChain)
+FrameBufferObject* FrameBufferObject::create(BufferType type, size_t width, size_t height, int nColors, bool createMipChain)
 {
   bool status = true;
   GLint internalFormat, Format;
@@ -40,8 +40,8 @@ FrameBufferObject* FrameBufferObject::create(BufferType type, int width, int hei
   FrameBufferObject* fbo = new FrameBufferObject(type, width, height, nColors);
   glCheck(glGenFramebuffers(1, &fbo->id));
 
-  fbo->viewPort.z = (float)width;
-  fbo->viewPort.w = (float)height;
+	fbo->viewPort.z = static_cast<float>(width);
+	fbo->viewPort.w = static_cast<float>(height);
 
   if (type != DEPTH_BUFFER)
   {

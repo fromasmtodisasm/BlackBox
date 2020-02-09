@@ -46,30 +46,30 @@ ISystem* GetISystem()
   return gISystem;
 }
 
-CSystem::CSystem(SSystemInitParams& m_startupParams)
+CSystem::CSystem(SSystemInitParams& startupParams)
   :
 #if defined(SYS_ENV_AS_STRUCT)
 	m_env(gEnv),
 #endif
-  m_startupParams(m_startupParams),
-  r_window_width(nullptr),
-  r_window_height(nullptr),
-  r_bpp(nullptr),
-  r_zbpp(nullptr),
-  r_sbpp(nullptr),
-  r_fullscreen(nullptr),
-  cvGameName(nullptr),
-  m_Render(nullptr),
-  m_pConsole(nullptr),
-  m_pInput(nullptr),
-  m_pFont(nullptr),
-  m_pGame(nullptr),
-  m_pLog(nullptr),
-  m_pWindow(nullptr),
-  m_pWorld(nullptr),
-  m_pScriptSystem(nullptr),
-  m_ScriptObjectConsole(nullptr),
-  m_GuiManager(this)
+	m_pLog(nullptr),
+	m_pConsole(nullptr),
+	m_pInput(nullptr),
+	m_pGame(nullptr),
+	m_pFont(nullptr),
+	m_pWindow(nullptr),
+	m_pWorld(nullptr),
+	m_Render(nullptr),
+	m_pScriptSystem(nullptr),
+	m_ScriptObjectConsole(nullptr),
+	r_window_width(nullptr),
+	r_window_height(nullptr),
+	r_bpp(nullptr),
+	r_zbpp(nullptr),
+	r_sbpp(nullptr),
+	r_fullscreen(nullptr),
+	cvGameName(nullptr),
+	m_startupParams(startupParams),
+	m_GuiManager(this)
 {
   m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
   if (m_pSystemEventDispatcher)
@@ -87,19 +87,19 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 
 CSystem::~CSystem()
 {
-  SAFE_DELETE(r_window_width);
-  SAFE_DELETE(r_window_height);
-  SAFE_DELETE(r_bpp);
-  SAFE_DELETE(r_zbpp);
-  SAFE_DELETE(r_sbpp);
-  SAFE_DELETE(r_fullscreen);
+	SAFE_RELEASE(r_window_width);
+	SAFE_RELEASE(r_window_height);
+	SAFE_RELEASE(r_bpp);
+	SAFE_RELEASE(r_zbpp);
+	SAFE_RELEASE(r_sbpp);
+	SAFE_RELEASE(r_fullscreen);
 
   SAFE_DELETE(m_pLog);
   SAFE_DELETE(m_pConsole);
-  SAFE_DELETE(m_pGame);
-  SAFE_DELETE(m_pFont);
-  SAFE_DELETE(m_pWindow);
-  SAFE_DELETE(m_Render);
+	SAFE_RELEASE(m_pGame);
+	SAFE_DELETE(m_pFont);
+	SAFE_DELETE(m_pWindow);
+	SAFE_RELEASE(m_Render);
 }
 
 bool CSystem::Init()
@@ -599,17 +599,17 @@ bool CSystem::InitFileSystem()
 
 float CSystem::GetDeltaTime()
 {
-  return static_cast<float>(m_DeltaTime);
+		return static_cast<float>(m_DeltaTime);
 }
 
 const SFileVersion& CSystem::GetFileVersion()
 {
-  return m_FileVersion;
+		return m_FileVersion;
 }
 
 const SFileVersion& CSystem::GetProductVersion()
 {
-  return m_ProductVersion;
+		return m_ProductVersion;
 }
 
 IEntitySystem* CSystem::GetIEntitySystem()

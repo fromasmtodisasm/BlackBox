@@ -20,7 +20,7 @@ public:
   };
   ~FrameBufferObject();
 
-  static FrameBufferObject* create(BufferType type, int width, int height, int nColors, bool createMipChain);
+	static FrameBufferObject* create(BufferType type, size_t width, size_t height, int nColors, bool createMipChain);
   void clear(gl::Color const& color);
   void clear();
   void bind();
@@ -29,7 +29,7 @@ public:
   void unbind();
   ITexture* getTexture();
 private:
-  FrameBufferObject(BufferType type, int width, int height, int nColors);
+	FrameBufferObject(BufferType type, size_t width, size_t height, int nColors);
   void createSceneBuffer();
   void createDepthBuffer();
 public:

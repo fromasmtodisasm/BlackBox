@@ -21,36 +21,36 @@ constexpr auto PREVIOS = 0;
 constexpr auto CURRENT = 1;
 
 HdrTechnique::HdrTechnique()
-  :
-  shadowMapping(nullptr),
+	:
+	shadowMapping(nullptr),
 
-  m_HdrBuffer(nullptr),
-  m_Scene(nullptr),
+	m_HdrBuffer(nullptr),
+	m_Scene(nullptr),
 
-  exposure(nullptr),
-  enabled(nullptr),
-  bloom(nullptr),
-  bloomThreshold(nullptr),
-  blurOn(nullptr),
-  useBoxFilter(nullptr),
-  defaultFilter(nullptr),
-  bloom_exposure(nullptr),
-  offset(nullptr),
-  bloomTime(nullptr),
-  upsampleTime(nullptr),
-  downsampleTime(nullptr),
-  averageBloomTime(nullptr),
-  downsampleType(nullptr),
-  blurOnly(nullptr),
-  cam_height(nullptr),
-  cam_width(nullptr),
-  render(nullptr),
-  log(nullptr),
+	exposure(nullptr),
+	enabled(nullptr),
+	bloom(nullptr),
+	bloomThreshold(nullptr),
+	blurOn(nullptr),
+	useBoxFilter(nullptr),
+	defaultFilter(nullptr),
+	bloom_exposure(nullptr),
+	offset(nullptr),
+	bloomTime(nullptr),
+	upsampleTime(nullptr),
+	downsampleTime(nullptr),
+	averageBloomTime(nullptr),
+	downsampleType(nullptr),
+	blurOnly(nullptr),
+	cam_height(nullptr),
+	cam_width(nullptr),
+	render(nullptr),
+	log(nullptr),
 
-  quadCorners{ 0 },
-  quadCornersVBO{ 0 },
-  testid(-1),
-  timer_queries{ 0 }
+	quadCorners{ 0 },
+	quadCornersVBO{ 0 },
+	testid(-1),
+	timer_queries{ 0 }
 {
 }
 
@@ -62,8 +62,8 @@ HdrTechnique::~HdrTechnique()
 
 bool HdrTechnique::Init(IScene* pScene, FrameBufferObject* renderTarget)
 {
-  if (inited)
-    return true;
+	if (inited)
+		return true;
   render = GetISystem()->GetIRender();
   log = GetISystem()->GetILog();
   m_Scene = pScene;
@@ -72,11 +72,8 @@ bool HdrTechnique::Init(IScene* pScene, FrameBufferObject* renderTarget)
   createShader();
   CreateCommands();
   shadowMapping = new ShadowMapping();
-  auto console = GetISystem()->GetIConsole();
 
-  auto format = m_DispFormats.get();
-
-  //CreateFrameBuffers(format);
+	//CreateFrameBuffers(format);
   CreateFrameBuffers(nullptr);
   m_HdrBuffer->clear(gl::Color(1, 0, 0, 1));
 
@@ -89,24 +86,24 @@ bool HdrTechnique::Init(IScene* pScene, FrameBufferObject* renderTarget)
 
 void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 {
-  glm::ivec2 resolution;
+	glm::uvec2 resolution;
   auto w = GET_CVAR("r_backbuffer_w");
   auto h = GET_CVAR("r_backbuffer_h");
-  if (format != nullptr)
-  {
-    resolution = glm::ivec2(format->m_Width, format->m_Height);
-  }
-  else if (w == nullptr || h == nullptr)
-  {
+	if (format != nullptr)
+	{
+		resolution = glm::uvec2(format->m_Width, format->m_Height);
+	}
+	else if (w == nullptr || h == nullptr)
+	{
     resolution = glm::ivec2(render->GetWidth(), render->GetHeight());
     GetISystem()->Log("Use window resulution");
-  }
-  else
+	}
+	else
     resolution = glm::ivec2(w->GetIVal(), h->GetIVal());
-  //cam_width->Set(resolution.x);
-  //cam_height->Set(resolution.y);
+	//cam_width->Set(resolution.x);
+	//cam_height->Set(resolution.y);
 
-  m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
+	m_HdrBuffer = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, resolution.x, resolution.y, 2, false);
   debuger::frame_buffer_label(m_HdrBuffer->id, "hdrBuffer");
   m_HdrBuffer->bind();
   m_HdrBuffer->clear(gl::Color(1, 1, 1, 1));
@@ -116,29 +113,29 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
   m_DownsampleBuffer.resize(mip_cnt);
   m_UpsampleBuffer.resize(mip_cnt);
 
-  auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*>& chain) {
-    for (int i = 0, width = resolution.x, height = resolution.y; i < mip_cnt; i++)
-    {
-      chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
+	auto create_mip_chain = [&resolution, mip_cnt](std::vector<FrameBufferObject*>& chain) {
+		for (size_t i = 0, width = static_cast<size_t>(resolution.x), height = static_cast<size_t>(resolution.y); i < mip_cnt; i++)
+		{
+			chain[i] = FrameBufferObject::create(FrameBufferObject::HDR_BUFFER, width, height, 1, false);
       chain[i]->bind();
       chain[i]->clear(gl::Color(1, 0, 0, 1));
       chain[i]->unbind();
       width >>= 1;
-      if (width <= 0)
-        width = 1;
+			if (width <= 0)
+				width = 1;
       height >>= 1;
-      if (height <= 0)
-        height = 1;
+			if (height <= 0)
+				height = 1;
     }
   };
 
   create_mip_chain(m_DownsampleBuffer);
   create_mip_chain(m_UpsampleBuffer);
 
-  auto label_buffer = [](std::vector<FrameBufferObject*>& fb, std::string base) {
+	auto label_buffer = [](std::vector<FrameBufferObject*>& fb, std::string base) {
     int i = 0;
-    for (auto& pass : fb)
-    {
+		for (auto& pass : fb)
+		{
       debuger::frame_buffer_label(pass->id, base + std::to_string(i));
       i++;
     }
@@ -151,35 +148,35 @@ void HdrTechnique::CreateFrameBuffers(SDispFormat* format)
 void HdrTechnique::DeleteFrameBuffers()
 {
   SAFE_DELETE(m_HdrBuffer);
-  if (m_DownsampleBuffer.size() > 0)
-  {
-    for (auto& buf : m_DownsampleBuffer)
-    {
+	if (m_DownsampleBuffer.size() > 0)
+	{
+		for (auto& buf : m_DownsampleBuffer)
+		{
       SAFE_DELETE(buf);
     }
   }
-  if (m_DownsampleBuffer.size() > 0)
-  {
-    for (auto& buf : m_DownsampleBuffer)
-    {
+	if (m_DownsampleBuffer.size() > 0)
+	{
+		for (auto& buf : m_DownsampleBuffer)
+		{
       SAFE_DELETE(buf);
     }
   }
-  m_DownsampleBuffer.erase(m_DownsampleBuffer.begin(), m_DownsampleBuffer.end());
+	m_DownsampleBuffer.erase(m_DownsampleBuffer.begin(), m_DownsampleBuffer.end());
   m_UpsampleBuffer.erase(m_UpsampleBuffer.begin(), m_UpsampleBuffer.end());
 }
 
 bool HdrTechnique::OnRenderPass(int pass)
 {
   DEBUG_GROUP(__FUNCTION__);
-  if (!shadowMapping->OnRenderPass(pass))
-  {
+	if (!shadowMapping->OnRenderPass(pass))
+	{
     if (draw_sky && m_Scene->GetSkyBox() != nullptr)
       m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
     {
       Object* water;
-      if ((water = m_Scene->getObject("water")) != nullptr)
-      {
+			if ((water = m_Scene->getObject("water")) != nullptr)
+			{
         water->m_transparent = true;
         static_cast<ShadowMapping*>(shadowMapping)->RenderTransparent(water);
       }
@@ -191,20 +188,20 @@ bool HdrTechnique::OnRenderPass(int pass)
 
 int HdrTechnique::GetFrame()
 {
-  return shadowMapping->GetFrame();
+	return shadowMapping->GetFrame();
 }
 
 bool HdrTechnique::HdrPass()
 {
-  if (enabled->GetIVal())
-  {
+	if (enabled->GetIVal())
+	{
     m_Scene->setPostProcessor(this);
     PROFILER_PUSH_GPU_MARKER("BLOOM PASS", Utils::COLOR_DARK_GREEN);
     BloomPass();
     PROFILER_POP_GPU_MARKER();
-  }
-  else
-    ;// m_Scene->setPostProcessor(nullptr);
+	}
+	else
+		;// m_Scene->setPostProcessor(nullptr);
 
   return false;
 }
@@ -243,40 +240,40 @@ void HdrTechnique::BloomPass()
 void HdrTechnique::createShader()
 {
   ProgramDesc desc[] = {
-    //0
-    {
-      "hdr_shader",
-      ShaderDesc("screenshader.vs"),
-      ShaderDesc("hdrshader.frag")
-    },
-    //1
-    {
-      "downsampling",
-      ShaderDesc("screenshader.vs"),
-      ShaderDesc("downsampling.frag")
-    },
-    //2
-    {
-      "downsampling_compute",
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc("downsampling.comp")
-    },
-    //3
-    {
-      "upsampling",
-      ShaderDesc("screenshader.vs"),
-      ShaderDesc("upsampling.frag"),
-    },
-    //4
-    {
-      "upsampling_compute",
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc("upsampling.comp")
-    },
+		//0
+		{
+			"hdr_shader",
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("hdrshader.frag")
+		},
+		//1
+		{
+			"downsampling",
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("downsampling.frag")
+		},
+		//2
+		{
+			"downsampling_compute",
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc("downsampling.comp")
+		},
+		//3
+		{
+			"upsampling",
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("upsampling.frag"),
+		},
+		//4
+		{
+			"upsampling_compute",
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc(""),
+			ShaderDesc("upsampling.comp")
+		},
   };
 
   desc[1].vs.macro["STORE_TEXCOORDS"] = 1;
@@ -298,20 +295,20 @@ void HdrTechnique::createShader()
   m_DownsampleShader->Uniform(0, "image");
   m_DownsampleShader->Unuse();
 
-  m_DownsampleComputeShader = MaterialManager::instance()->getProgram(desc[2].name);
+	m_DownsampleComputeShader = MaterialManager::instance()->getProgram(desc[2].name);
   m_DownsampleComputeShader->Use();
   m_DownsampleComputeShader->Uniform(0, "image");
   m_DownsampleComputeShader->Unuse();
 
   m_UpsampleShader = MaterialManager::instance()->getProgram(desc[3].name);
 
-  m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
+	m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
 
-  const int MAX_CORNERS = 4;
-#if COMPUTE_BLOOM
+	//const int MAX_CORNERS = 4;
+#ifdef COMPUTE_BLOOM
   glGenBuffers(1, &quadCornersVBO);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, quadCornersVBO);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(Vec2), NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(Vec2), NULL, GL_DYNAMIC_DRAW);
 #endif
 }
 
@@ -323,19 +320,19 @@ void HdrTechnique::InitConsoleVariables()
   bloomThreshold = CREATE_CVAR("bt", 2.0f, 0, "Bloom threshold");
   blurOn = CREATE_CVAR("blur", 1, 0, "Enable/disable blur for bloom");
   blurOnly = CREATE_CVAR("blur_only", 0, 0, "Enable/disable blur for bloom");
-  bloom_exposure = CREATE_CVAR("bexp", 0.007f, 0, "Enable/disable blur for bloom");
+	bloom_exposure = CREATE_CVAR("bexp", 0.007f, 0, "Enable/disable blur for bloom");
   bloomTime = CREATE_CVAR("bloomtime", 0.f, 0, "Time of bloom");
   upsampleTime = CREATE_CVAR("uptime", 0.f, 0, "Time of bloom");
   downsampleTime = CREATE_CVAR("dtime", 0.f, 0, "Time of bloom");
-  downsampleType = CREATE_CVAR("dtype", 0, 0, "Type of bloom downsample [0-standard/1-compute]");
+	downsampleType = CREATE_CVAR("dtype", 0, 0, "Type of bloom downsample [0-standard/1-compute]");
   offset = CREATE_CVAR("offset", -3.0f, 0, "Enable/disable blur for bloom");
   useBoxFilter = CREATE_CVAR("bf", 0, 0, "Enable/disable BoxFilter in bloom");
-  defaultFilter = CREATE_CVAR("df", 1, 0, "Enable/disable default filtering in bloom");
+	defaultFilter = CREATE_CVAR("df", 1, 0, "Enable/disable default filtering in bloom");
 
   cam_width = GetISystem()->GetIConsole()->GetCVar("r_cam_w");
   cam_height = GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
-  GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
+	GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
   REGISTER_CVAR(show_all_fb, 0, VF_NULL, "Show all frame buffer");
   REGISTER_CVAR(draw_sky, 0, VF_NULL, "Draw skybox");
 }
@@ -344,32 +341,32 @@ void HdrTechnique::initTest()
 {
   auto render = GetISystem()->GetIRender();
   auto numFormats = render->EnumDisplayFormats(nullptr);
-  if (numFormats > 0)
-  {
+	if (numFormats > 0)
+	{
     m_DispFormats = std::shared_ptr<SDispFormat>(new SDispFormat[numFormats]);
     render->EnumDisplayFormats(m_DispFormats.get());
   }
 
-  testid = std::min(GetISystem()->GetIConsole()->GetCVar("testid")->GetIVal(), numFormats);
+	testid = std::min(GetISystem()->GetIConsole()->GetCVar("testid")->GetIVal(), numFormats);
 }
 
-int HdrTechnique::getMips(Vec2 resolution)
+size_t HdrTechnique::getMips(Vec2 resolution)
 {
-  return static_cast<int>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1) - 5;
-  //return 6;
+	return static_cast<size_t>(std::log2(std::max(m_HdrBuffer->viewPort.z, m_HdrBuffer->viewPort.w)) + 1) - 5;
+	//return 6;
 }
 
 void HdrTechnique::CreateCommands()
 {
-  struct HdrCommands : public IConsoleCommand
-  {
-  public:
+	struct HdrCommands : public IConsoleCommand
+	{
+	public:
     HdrCommands(HdrTechnique* tech) : tech(tech) {}
-    virtual bool execute(CommandDesc& cd) override
-    {
+		virtual bool execute(CommandDesc& cd) override
+		{
       GetISystem()->GetIConsole()->PrintLine("set mode!");
-      if (cd.argsCount() == 1)
-      {
+			if (cd.argsCount() == 1)
+			{
         tech->SetMode(static_cast<int>(_wtof(cd.get(0).c_str())));
         return true;
       }
@@ -379,16 +376,16 @@ void HdrTechnique::CreateCommands()
   };
 
   IConsoleCommand* cmd = new HdrCommands(this);
-  GetISystem()->GetIConsole()->AddCommand(
-    "setmode",
-    cmd,
-    "Set display mode"
-  );
+	GetISystem()->GetIConsole()->AddCommand(
+		"setmode",
+		cmd,
+		"Set display mode"
+	);
 }
 
 int HdrTechnique::SetRenderTarget(FrameBufferObject* renderTarget)
 {
-  return 0;
+	return 0;
 }
 
 void HdrTechnique::SetMode(int n)
@@ -400,7 +397,7 @@ void HdrTechnique::SetMode(int n)
 
 bool HdrTechnique::PreRenderPass()
 {
-  return false;
+	return false;
 }
 
 void HdrTechnique::PostRenderPass()
@@ -427,7 +424,7 @@ void HdrTechnique::downsamplingStandard()
   ds->Uniform(offset->GetFVal(), "offset");
 
   render->SetState(IRenderer::State::DEPTH_TEST, false);
-  amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
+	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
 
   const float w = cam_width->GetIVal();
   const float h = cam_height->GetIVal();
@@ -439,8 +436,8 @@ void HdrTechnique::downsamplingStandard()
   LOG("\tvx = %f\n", (w / hdr_w));
   LOG("\tvy = %f\n", (h / hdr_h));
 
-  for (unsigned int i = 0; i < amount - 1; i++)
-  {
+	for (unsigned int i = 0; i < amount - 1; i++)
+	{
     LOG("\tBegin %d iteration\n", i);
     int rx = w / (1 << (i));
     int ry = h / (1 << (i));
@@ -450,12 +447,12 @@ void HdrTechnique::downsamplingStandard()
     ds->Uniform(ry, "ry");
     LOG("\t\trx = %f\n", rx);
     LOG("\t\try = %f\n", ry);
-    m_DownsampleBuffer[i + 1]->bind({ 0,0, vpx, vpy });
+		m_DownsampleBuffer[i + 1]->bind({ 0,0, vpx, vpy });
 
-    ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
+		ds->BindTextureUnit2D(first_iteration ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i]->texture[0], IMAGE);
     m_ScreenQuad.draw();
-    if (first_iteration)
-      first_iteration = false;
+		if (first_iteration)
+			first_iteration = false;
   }
   ds->Unuse();
 
@@ -477,17 +474,17 @@ void HdrTechnique::downsamplingCompute()
   m_DownsampleComputeShader->Use();
   {
     unsigned int image_unit = 2;
-    m_DownsampleComputeShader->BindTexture2D(m_HdrBuffer->texture[1], image_unit, "inputImg1");
+		m_DownsampleComputeShader->BindTexture2D(m_HdrBuffer->texture[1], image_unit, "inputImg1");
   }
 
   {
     unsigned int image_unit = 3;
-    glBindImageTexture(image_unit, m_UpsampleBuffer[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		glBindImageTexture(image_unit, m_UpsampleBuffer[0]->texture[0], 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
     m_DownsampleComputeShader->Uniform(3, "inputImg2");
   }
 
   auto render = GetISystem()->GetIRender();
-  m_DownsampleComputeShader->Dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	m_DownsampleComputeShader->Dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
   return;
 }
 
@@ -510,18 +507,18 @@ void HdrTechnique::upsampling()
   up->Uniform((w / hdr_w), "vx");
   up->Uniform((h / hdr_h), "vy");
 
-  amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
-  for (unsigned int i = amount - 1; i > 0; i--)
-  {
+	amount = getMips({ m_DownsampleBuffer[0]->viewPort.z, m_DownsampleBuffer[0]->viewPort.w });
+	for (unsigned int i = amount - 1; i > 0; i--)
+	{
     LOG("\tBegin %d iteration\n", i);
     int rx = w / (1 << i - 1);
     int ry = h / (1 << i - 1);
     // Texture that blured
     auto& blured = m_UpsampleBuffer[i]->texture[0];
     // Texture on which the blur is superimposed
-    auto& current_level = i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
+		auto& current_level = i == 1 ? m_HdrBuffer->texture[0] : m_DownsampleBuffer[i - 1]->texture[0];
 
-    auto& rt = m_UpsampleBuffer[i - 1]; // Render target
+		auto& rt = m_UpsampleBuffer[i - 1]; // Render target
     up->Uniform(rx, "rx");
     up->Uniform(ry, "ry");
     LOG("\t\trx = %d\n", rx);
@@ -531,8 +528,8 @@ void HdrTechnique::upsampling()
     up->BindTexture2D(blured, PREVIOS, "blured");
     up->BindTexture2D(current_level, CURRENT, "current");
     m_ScreenQuad.draw();
-    if (first_iteration)
-      first_iteration = false;
+		if (first_iteration)
+			first_iteration = false;
   }
   up->Unuse();
 }
@@ -555,14 +552,14 @@ void HdrTechnique::Do(unsigned int texture)
   ss->BindTexture2D(m_UpsampleBuffer[0]->texture[0], 1, "bloomBlur");
   ss->Uniform(bloom->GetIVal(), "bloom");
   Vec2 scale(1.f);
-  if (!show_all_fb)
-    scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
+	if (!show_all_fb)
+		scale = Vec2(w, h) / Vec2(hdr_w, hdr_h);
 
-  //auto uv_projection = Mat4(1.f);
-  //uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
-  //ss->Uniform(uv_projection, "uv_projection");
+	//auto uv_projection = Mat4(1.f);
+	//uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
+	//ss->Uniform(uv_projection, "uv_projection");
   ss->Uniform(scale, "scale");
-  //FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
-  FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
+	//FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
+	FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
   m_ScreenQuad.draw();
 }

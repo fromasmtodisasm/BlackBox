@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
 
-class FreeTypeFont : public IFont
+class FreeTypeFont final: public IFont
 {
 public:
   struct Character {
@@ -51,7 +51,9 @@ private:
 
 public:
   // Унаследовано через IFont
-  virtual bool Init(const char* font, unsigned int w, unsigned int h) override;
+	virtual void Release() override;
+
+	virtual bool Init(const char* font, unsigned int w, unsigned int h) override;
 
   // Унаследовано через IFont
   virtual float GetXPos() override;
@@ -62,4 +64,5 @@ public:
   virtual void SetXPos(float x) override;
 
   virtual void SetYPos(float y) override;
+
 };

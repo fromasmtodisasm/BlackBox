@@ -45,7 +45,7 @@ private:
   void createShader();
   void InitConsoleVariables();
   void initTest();
-  int getMips(glm::vec2 resolution);
+	size_t getMips(glm::vec2 resolution);
   void CreateCommands();
 
 private:
