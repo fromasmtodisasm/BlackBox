@@ -29,11 +29,18 @@ addons:
       - libvorbis-dev
       - libogg-dev
       - g++-7
+      - git
     sources: &sources
       - llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
 script:
+  - mkdir tools
+  - cd tools
+  - git clone https://github.com/microsoft/vcpkg
+  - cd vcpkg
+  - ./bootstrap-vcpkg.sh
+  - cd ../..
   - mkdir build
   - cd build
-  - cmake -DBUILD_SHARED_LIBS=ON -DGLM_TEST_ENABLE=OFF -DGLAD_INSTALL=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON .. 
-  - cmake --build .
+  - cmake "-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
+  - cmake --build . -- -j4
