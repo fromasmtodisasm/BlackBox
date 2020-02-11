@@ -45,5 +45,5 @@ script:
   - mkdir build
   - cd build
   - export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
-  - cmake "-DCMAKE_TOOLCHAIN_FILE=tools/vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
+  - cmake "-DCMAKE_TOOLCHAIN_FILE=tools/vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DVCPKG_INSTALLER=ON -DCMAKE_BUILD_TYPE=Debug  ..
   - cmake --build . -- -j4
