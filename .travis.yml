@@ -28,6 +28,8 @@ addons:
       - libflac-dev
       - libvorbis-dev
       - libogg-dev
+      - libgl1-mesa-glx
+      - libgl1-mesa-dev
       - g++-7
     sources: &sources
       - llvm-toolchain-precise-3.8
