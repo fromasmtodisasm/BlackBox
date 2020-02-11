@@ -43,14 +43,12 @@ public:
 private:
   bool Create(int width, int height, bool fullscreen);
   Vec2 nextMousePos(Vec2& position);
-  void setMouseWrap(bool wrap);
-  void glInit();
   void handleEvent(SDL_Event* event);
 
 private:
   static constexpr int DEFAULT_WIDTH = 1024;
   static constexpr int DEFAULT_HEIGHT = 768;
-  static constexpr char* DEFAULT_TITLE = "SDL Window";
+  static constexpr const char* DEFAULT_TITLE = "SDL Window";
 
   SDL_Window* m_Window;
   SDL_GLContext glRenderContext, glThreadContext;

@@ -29,6 +29,8 @@ protected:
 
 private:
   IRenderer* m_pRenderer;
+  int        m_posX;
+  int        m_posY;
   Vec2       m_deltas;
   Vec2       m_oldDeltas;
   Vec2       m_deltasInertia;

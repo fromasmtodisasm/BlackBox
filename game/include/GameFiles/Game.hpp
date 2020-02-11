@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _DEBUG
+#define _VERIFY(x) ASSERT(x)
+#else
+#define _VERIFY(x) x
+#endif
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Version of the game
 #define GAME_MAIN_VERSION						1						//!< [0..255]
@@ -55,7 +61,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 using string = std::string;
 class EventListener; 
 class GameGUI;
-class IScene;
+struct IScene;
 class SceneManager;
 class CTagPoint;
 class ILog;
@@ -138,6 +144,7 @@ public:
   // IInputEventListener interface
 public:
   virtual bool OnInputEvent(const SInputEvent& event) override;
+  virtual int GetPriority() const { return 2; }
 
 	void PersistentHandler(const SInputEvent& event);
 
@@ -203,6 +210,7 @@ public:
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
 	}
+	IServer *CreateServer(IServerSlotFactory *pSink,WORD nPort, bool listen){return m_pNetwork->CreateServer(pSink,nPort,listen);}
 	IActionMapManager* GetActionMapManager() { return m_pIActionMapManager; }
 
 	//
@@ -211,7 +219,6 @@ public:
 	bool TestScriptSystem(bool& retflag);
 
 	ISystem* GetSystem() { return m_pSystem; }
-	bool	IsDevModeEnable();
 	//////////////////////////////////////////////////////////////////////////
 	// DevMode.
 	//////////////////////////////////////////////////////////////////////////
@@ -224,12 +231,18 @@ public:
 	string GetLevelsFolder() const;
 
 	// Network -------------------------------------------------------------
+	//! functions to know if the current terminal is a server and/or a client
+	//@{
+	bool	IsServer()	{	return m_pServer!=NULL;	}
+	bool	IsClient();
+	bool  IsMultiplayer();   // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
+	bool	IsDevModeEnable();
+	//@}
 	bool StartupServer(bool listen, const char* szName);
 	void ShutdownServer();
 	bool StartupClient();
 	bool StartupLocalClient();
 	void ShutdownClient();
-	bool IsClient();
 	void MarkClientForDestruct();
 	void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
 	void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
@@ -256,7 +269,7 @@ public:
 
 public:
 	ISystem *											m_pSystem;								//!< The system interface
-	CXServer *										m_pServer;								//!< The server of this computer
+	CXServer *										m_pServer = nullptr;								//!< The server of this computer
 	CXClient *										m_pClient;								//!< The client of this computer
   IScriptSystem *								m_pScriptSystem;
   IRenderer *										m_pRender;
@@ -289,12 +302,7 @@ public:
 
   EventListener *listener;
 	bool isDrawingGui = false;
-  //GUI
-#ifdef GUI
-  GameGUI *gui;
-#endif // GUI
 
-	//CShaderProgram *m_ScreenShader;
 	IFont* m_Font;
 	//EDIT MODE
 	//==========
@@ -305,9 +313,6 @@ public:
   //
   bool openShadowMap = true;
 
-  //
-  //ShaderManager *shaderManager;
-	//std::vector<IPostProcessor*> postProcessors;
 	int currPP = 0;
 
 public:
@@ -316,7 +321,7 @@ public:
 
 	IServerSnooper*								m_pServerSnooper;					//!< used for LAN Multiplayer, to remove control servers
 	INETServerSnooper*						m_pNETServerSnooper;			//!< used for Internet Multiplayer, to remove control servers
-	IRConSystem*									m_pRConSystem;						//!< used for Multiplayer, to remote control servers
+	IRConSystem*									m_pRConSystem = nullptr;						//!< used for Multiplayer, to remote control servers
 	std::string										m_szLastAddress;
 	bool													m_bLastDoLateSwitch;
 	bool													m_bLastCDAuthentication;
@@ -367,8 +372,6 @@ public:
 	bool canDragViewPortWidth = false;
 	bool canDragViewPortHeight = false;
 	bool mousePressed = false;
-	//sf::Vector2i mouseDelta;
-	//sf::Vector2i mousePrev;
 
   enum Mode
   {

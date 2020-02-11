@@ -1,4 +1,3 @@
-message(STATUS "Linux Gcc Toolchain\n***************")
 set(CMAKE_CONFIGURATION_TYPES Debug Profile Release)
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations to what we need" FORCE)
 

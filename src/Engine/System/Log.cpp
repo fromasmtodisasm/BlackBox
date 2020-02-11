@@ -1,4 +1,4 @@
-#ifdef GUI
+#ifdef GUI_LOG
 
 #include <BlackBox/Log.hpp>
 

@@ -4,6 +4,7 @@
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/ShadowMapTechnique.hpp>
 #include <BlackBox/Renderer/SkyBox.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/System/IConsole.hpp>

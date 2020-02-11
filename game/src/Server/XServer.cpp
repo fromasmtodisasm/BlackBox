@@ -1,7 +1,138 @@
+#include <Game.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <Server/XServer.hpp>
+#include <IXSystem.hpp>
+#include <Server/XServerSlot.hpp>
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+void CXServer::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
+{
+	m_pISystem->OnSpawnContainer(ed,pEntity);
+}
+
+//////////////////////////////////////////////////////////////////////
+void CXServer::OnSpawn(IEntity *ent, CEntityDesc & ed )
+{
+	m_pISystem->OnSpawn(ent,ed);
+
+	bool bSend = true;
+	
+	bSend=!m_bIsLoadingLevel;		// during loading we don't sync entities
+
+	XSlotMap::iterator i = m_mapXSlots.begin();
+	while(i != m_mapXSlots.end())
+	{
+		i->second->OnSpawnEntity(ed,ent,bSend);
+		++i;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void CXServer::OnRemove(IEntity *ent)
+{
+	XSlotMap::iterator i = m_mapXSlots.begin();
+	while(i != m_mapXSlots.end())
+	{
+		//TRACE("CXServer::OnRemove [%d]",ent->GetId());
+		i->second->OnRemoveEntity(ent);
+		++i;
+	}
+}
 
 CXServer::CXServer(CGame* pGame, WORD nPort, const char* szName, bool listen)
 {
+  assert(pGame);
+
+  m_pGame = pGame;
+  m_pTimer = pGame->m_pSystem->GetITimer();
+  IConsole* pConsole = m_pGame->GetSystem()->GetIConsole();			assert(pConsole);
+
+  sv_name = pConsole->GetCVar("sv_name");
+
+  sv_password = pConsole->GetCVar("sv_password");
+  sv_maxplayers = pConsole->GetCVar("sv_maxplayers");
+  sv_maxupdaterate = pConsole->GetCVar("sv_maxupdaterate");
+
+  sv_maxrate = pConsole->GetCVar("sv_maxrate");
+  sv_maxrate_lan = pConsole->GetCVar("sv_maxrate_lan");
+
+  sv_netstats = pConsole->GetCVar("sv_netstats");
+  sv_max_scheduling_delay = pConsole->GetCVar("sv_max_scheduling_delay");
+  sv_min_scheduling_delay = pConsole->GetCVar("sv_min_scheduling_delay");
+  m_bIsLoadingLevel = false;
+
+  m_bListen = listen;
+
+  m_mapXSlots.clear();
+
+  float	timeout = m_pGame->sv_timeout->GetFVal() * 1000;
+
+  // create the entity system sink
+  //m_pGame->GetSystem()->GetIEntitySystem()->SetSink(this);
+
+  // create the system interface
+  #if 0
+  m_pISystem = new CXSystemServer(this, m_pGame, m_pGame->m_pLog);
+#endif
+
+  // get this info before we set the server
+  #if 0
+  m_pGame->GetSystem()->SetForceNonDevMode(!m_pGame->IsDevModeEnable());
+#endif
+
+  INetwork* pNet = pGame->m_pSystem->GetINetwork();
+  pNet->SetUBIGameServerIP(NULL);
+
+  // fill m_ServerInfo structure
+  GetServerInfo();
+
+  // create the server
+  m_pIServer = m_pGame->CreateServer(this, nPort, m_bListen);
+  if (!m_pIServer)
+  {
+    m_pGame->m_pLog->Log("!!---------Server creation failed---------!!");
+    m_bOK = false;
+    return;
+  }
+  else
+    m_bOK = true;
+
+  m_pIServer->SetSecuritySink(this);
+  m_pIServer->SetVariable(cnvDataStreamTimeout, (unsigned int)timeout);
+
+  m_ServerInfos.nPort = nPort;
+  m_ServerInfos.VersionInfo = GetISystem()->GetFileVersion();
+
+  // initialise the game context
+  m_GameContext.dwNetworkVersion = NETWORK_FORMAT_VERSION;
+  m_GameContext.strMission = "";
+
+  m_ScriptObjectServer.Create(m_pGame->GetScriptSystem(), m_pISystem, m_pGame);
+  m_ScriptObjectServer.SetServer(this);
+  m_bInDestruction = false;
+
+  LoadBanList();
+
+  IScriptSystem* pScriptSystem = GetISystem()->GetIScriptSystem();
+  assert(pScriptSystem);
+
+  SmartScriptObject pMapCycle(pScriptSystem);
+  pScriptSystem->GetGlobalValue("MapCycle", pMapCycle);
+
+  if (((IScriptObject*)pMapCycle) != 0)
+  {
+    HSCRIPTFUNCTION pfnInit = 0;
+    if (pMapCycle->GetValue("Init", pfnInit))
+    {
+      pScriptSystem->BeginCall(pfnInit);
+      pScriptSystem->PushFuncParam((IScriptObject*)pMapCycle);
+      pScriptSystem->EndCall();
+
+#ifndef _DEBUG
+      pScriptSystem->ReleaseFunc(pfnInit);
+#endif
+    }
+  }
 }
 
 CXServer::~CXServer()
@@ -216,6 +347,40 @@ unsigned int CXServer::GetSchedulingDelay()
 unsigned int CXServer::GetMaxUpdateRate() const
 {
   return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+void CXServer::BindEntity(EntityId idParent,EntityId idChild,unsigned char cParam)
+{
+#if 0
+	IEntity *pChild=m_pISystem->GetEntity(idChild);
+	IEntity *pParent=m_pISystem->GetEntity(idParent);
+	CStream stm;
+	stm.Write(idParent);
+	stm.Write(idChild);
+	stm.Write(cParam);
+	stm.Write(true);
+	stm.Write(pParent->GetAngles(1));
+	stm.Write(pChild->GetAngles(1));
+	BroadcastReliable(XSERVERMSG_BINDENTITY,stm,false);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////
+void CXServer::UnbindEntity(EntityId idParent,EntityId idChild,unsigned char cParam)
+{
+#if 0
+	IEntity *pChild=m_pISystem->GetEntity(idChild);
+	IEntity *pParent=m_pISystem->GetEntity(idParent);
+	CStream stm;
+	stm.Write(idParent);
+	stm.Write(idChild);
+	stm.Write(cParam);
+	stm.Write(false);
+	stm.Write(pParent->GetAngles(1));
+	stm.Write(pChild->GetAngles(1));
+	BroadcastReliable(XSERVERMSG_BINDENTITY,stm,false);
+#endif
 }
 
 void CXServer::OnMapChanged()

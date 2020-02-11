@@ -19,9 +19,9 @@ using ShaderRef = _smart_ptr<CShader>;
 
 struct ShaderStatus
 {
-  char m_InfoLog[512];
-  int m_Status;
-  CShader* m_Shader;
+  char m_InfoLog[512] = {0};
+  int m_Status = GL_FALSE;
+  CShader* m_Shader = nullptr;
 
   ShaderStatus(CShader* shader);
   bool get(GLenum statusType);

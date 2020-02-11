@@ -549,10 +549,6 @@ void CGame::initCommands()
 
 void CGame::initVariables()
 {
-  r_displayinfo = CREATE_CVAR("r_displayinfo", 1, 0, "Display info [1/0]");
-  r_profile = CREATE_CVAR("r_profile", 1, 0, "Profile [1/0]");
-  r_cap_profile = CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
-  m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 }
 
 ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseGameCommand(game)

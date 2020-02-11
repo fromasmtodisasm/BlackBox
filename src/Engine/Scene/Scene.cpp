@@ -37,20 +37,24 @@ Scene::Scene(std::string name)
          1.0f,  1.0f,  1.0f, 1.0f
   };
 
-  ProgramDesc pd = {
-    "screen_shader",
-    ShaderDesc("screenshader.vs"),
-    ShaderDesc("screenshader.frag")
-  };
+	if (!gEnv->IsDedicated())
+	{
+		ProgramDesc pd = {
+			"screen_shader",
+			ShaderDesc("screenshader.vs"),
+			ShaderDesc("screenshader.frag")
+		};
 
-  MaterialManager::instance()->loadProgram(pd, false);
-  m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
+		MaterialManager::instance()->loadProgram(pd, false);
+		m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
 
-  m_ScreenShader->Use();
-  m_ScreenShader->Uniform(0, "screenTexture");
-  m_ScreenShader->Unuse();
+		m_ScreenShader->Use();
+		m_ScreenShader->Uniform(0, "screenTexture");
+		m_ScreenShader->Unuse();
 
-  texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
+		texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
+
+	}
 }
 
 // IScene
@@ -64,6 +68,7 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
 {
   Serializator serializator(this);
   return serializator.load(name, callback);
+	GetISystem()->Log("***************");
 }
 
 void Scene::selectPrevObject()

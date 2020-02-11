@@ -9,7 +9,7 @@ function player:OnInit( data )
 	Console:PrintLine("Username: " .. self.name)
 
 	--Console:Show(true)
-	Game:gotoMenu(true)
+	--Game:gotoMenu(true)
 
 	local formats = System:EnumDisplayFormats()
 	--for i=1, #formats do
@@ -24,7 +24,7 @@ function player:PostInit( )
 	setvar("gravity", 200)
 	setvar("floor", 20)
 	System:ShowConsole(false)
-	Game:gotoMenu()
+	--Game:gotoMenu()
 end
 
 
@@ -46,6 +46,6 @@ function test(  )
 	player:OnInit(123)
 end
 
-test()
+Game:CreateVariable("game_inited", 1)
 
 

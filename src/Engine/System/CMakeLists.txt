@@ -27,6 +27,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/Commands.cpp
   PRIVATE ${ENGINE_DIR}/System/Console.cpp
   PRIVATE ${ENGINE_DIR}/System/File/CryPak.cpp
+  PRIVATE ${ENGINE_DIR}/System/HardwareMouse.cpp
   PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
   PRIVATE ${ENGINE_DIR}/System/Log.cpp
   PRIVATE ${ENGINE_DIR}/System/System.cpp
@@ -34,6 +35,9 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/Timer.cpp
 )
 
+if (OPTION_USE_LINUXINPUT)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
 if (NEED_VC)
 	set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
@@ -51,5 +55,7 @@ source_group(
 target_sources(${PROJECT_NAME}
   PRIVATE ${POST_CONFIGURE_FILE}
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_private_headers()

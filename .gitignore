@@ -17,3 +17,5 @@ out/glDebug.txt
 /log.txt
 /tmp
 /logs
+compile_commands.json
+.clangd/

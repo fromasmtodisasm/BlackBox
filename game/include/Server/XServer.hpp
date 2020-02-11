@@ -21,6 +21,7 @@
 # pragma once
 #endif
 
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <Network/XNetwork.hpp>
 #include <Server/XServerRules.hpp>
 //#include "XSnapshot.h"
@@ -49,7 +50,7 @@
 
 #define MAXPLAYERS_LIMIT					(32)
 
-class IRenderer;
+struct IRenderer;
 
 typedef std::multimap<std::string, ITagPoint*>	RespawnPointMap;
 
@@ -92,7 +93,7 @@ for every connected client a respective CXServerSlot exists.
 class CXServer
 	: 
 	public IServerSlotFactory, 
-	//public IEntitySystemSink, 
+	public IEntitySystemSink, 
 	public IServerSecuritySink
 {
 	// the respawn points
@@ -137,20 +138,20 @@ public:
 	virtual bool GetServerInfoPlayers(std::string* vszStrings[4], int& nStrings);
 	virtual bool ProcessXMLInfoRequest(const char* sRequest, const char* sRespone, int nResponseMaxLength);
 
-	/////////////////////////////////////////////////////////
-	//// IEntitySystemSink /////////////////////////////////
-	//void OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity);
-	//void OnSpawn(IEntity* ent, CEntityDesc& ed);
-	//void OnRemove(IEntity* ent);
-	//void OnBind(EntityId id, EntityId child, unsigned char param)
-	//{
-	//	BindEntity(id, child, param);
-	//}
-	//void OnUnbind(EntityId id, EntityId child, unsigned char param)
-	//{
-	//	UnbindEntity(id, child, param);
-	//}
 	///////////////////////////////////////////////////////
+	// IEntitySystemSink /////////////////////////////////
+	void OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity);
+	void OnSpawn(IEntity* ent, CEntityDesc& ed);
+	void OnRemove(IEntity* ent);
+	void OnBind(EntityId id, EntityId child, unsigned char param)
+	{
+		BindEntity(id, child, param);
+	}
+	void OnUnbind(EntityId id, EntityId child, unsigned char param)
+	{
+		UnbindEntity(id, child, param);
+	}
+	/////////////////////////////////////////////////////
 
 	void RegisterSlot(CXServerSlot* pSlot);
 
@@ -175,8 +176,8 @@ public:
 	void BroadcastCommand(const char* sCmd);
 	//void BroadcastCommand(const char* sCmd, const Vec3& invPos, const Vec3& invNormal, const EntityId inId, const unsigned char incUserByte);
 
-	//void BindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);
-	//void UnbindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);
+	void BindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);
+	void UnbindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);
 	void SyncVariable(ICVar* p);
 	void SyncAIState(void);
 	XSlotMap& GetSlotsMap() { return m_mapXSlots; }

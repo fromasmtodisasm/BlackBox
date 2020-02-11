@@ -4,6 +4,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Render.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
@@ -12,6 +13,8 @@
 #include <stb_image_write.h>
 
 #include <SDL2/SDL.h>
+
+#include <sstream>
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -51,7 +54,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   context = SDL_GL_GetCurrentContext();
   m_HWND = (HWND)window->getHandle();
   // now you can make GL calls.
-  glClearColor(0, 0, 0, 1);
+  glClearColor(1, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);
   m_Window->swap();
   //=======================
@@ -59,6 +62,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   m_pSystem->GetIInput()->AddEventListener(this);
   //=======================
   glInit();
+  printHardware();
   m_ScreenQuad = new Quad();
   //=======================
   ProgramDesc pd = {
@@ -66,7 +70,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
     ShaderDesc("screenshader.vs"),
     ShaderDesc("screenshader.frag")
   };
-  pd.vs.macro["STORE_TEXCOORDS"] = "1";
+  //pd.vs.macro["STORE_TEXCOORDS"] = "1";
   MaterialManager::instance()->loadProgram(pd, false);
   m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
   if (!m_ScreenShader)
@@ -198,6 +202,11 @@ void GLRenderer::glInit()
   SetState(State::BLEND, true);
   SetState(State::CULL_FACE, true);
   SetCullMode(CullMode::BACK);
+
+  m_Hardware.vendor = 			gl::GetString(GL_VENDOR);
+  m_Hardware.render = 			gl::GetString(GL_RENDERER);
+  m_Hardware.version = 			gl::GetString(GL_VERSION);
+  m_Hardware.glsl_version = gl::GetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
 void GLRenderer::fillSates()
@@ -243,6 +252,17 @@ void GLRenderer::InitConsoleCommands()
     "Set size of camera"
   );
   */
+}
+
+void GLRenderer::printHardware()
+{
+  std::stringstream hardware_info;
+  hardware_info << "Hardware render info\n" <<
+                   "Vendor: [" << m_Hardware.vendor << "]\n"
+                   "Render: [" << m_Hardware.render << "]\n"
+                   "Version: [" << m_Hardware.version << "]\n"
+                   "Shader Language Version: [" << m_Hardware.glsl_version << "]\n";
+  m_pSystem->Log(hardware_info.str().c_str());
 }
 
 void GLRenderer::SetRenderTarget(int nHandle)
@@ -352,7 +372,6 @@ void GLRenderer::DrawFullScreenImage(int texture_id)
 
 bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
-#if 0
   if (!strcmp(pVar->GetName(), "r_Width"))
   {
     m_Window->changeSize(pVar->GetFVal(), GetHeight());
@@ -361,7 +380,6 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
   {
     m_Window->changeSize(GetWidth(), pVar->GetFVal());
   }
-#endif
   if (!strcmp(pVar->GetName(), "r_cam_w"))
   {
     printf("");

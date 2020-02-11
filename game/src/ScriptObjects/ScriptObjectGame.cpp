@@ -435,6 +435,7 @@ int CScriptObjectGame::GetVariable(IFunctionHandler* pH)
 int CScriptObjectGame::LoadLevel(IFunctionHandler* pH)
 {
   CHECK_PARAMETERS(1);
+	GetISystem()->Log("Loading level");
   const char* szLevelName = nullptr;
 
   if (pH->GetParam(1, szLevelName))

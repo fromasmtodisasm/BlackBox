@@ -27,7 +27,7 @@
 #define GET_SEVERITY(v) TO_STR(v, "Severity: ")
 #define DEBUG_GROUP(message) CDebugSection debugSection(sizeof(message), message)
 
-#if defined(_DEBUG) || defined(GL_DEBUG)
+#if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
 
 // In debug mode, perform a test on every OpenGL call
 // The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
@@ -230,6 +230,11 @@ namespace gl {
     glCheck(glViewport(static_cast<GLint>(viewPort.x), static_cast<GLint>(viewPort.y), static_cast<GLint>(viewPort.z), static_cast<GLint>(viewPort.w)));
   }
 
+  inline void ViewPort(GLuint x, GLuint y, GLuint w, GLuint h)
+  {
+    glCheck(glViewport(x,y,w,h));
+  }
+
   // Framebuffer
   inline void BindFramebuffer(GLuint id)
   {
@@ -332,5 +337,11 @@ namespace gl {
   inline void Uniform(GLint location, T& value)
   {
     UniformValue(location, value);
+  }
+
+  // Get
+  inline const GLubyte* GetString(GLenum name)
+  {
+    return glGetString(name);
   }
 }

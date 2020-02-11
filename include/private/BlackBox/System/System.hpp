@@ -7,6 +7,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/Timer.hpp>
 #include <BlackBox/System/Window.hpp>
+#include <BlackBox/GUI/ImGuiManager.hpp>
 
 #define DEFAULT_APP_NAME "BlackBox"
 
@@ -29,16 +30,19 @@ public:
 
   // Inherited via ISystem
   virtual bool Init() override;
+  bool CreateLog();
   virtual void Start() override;
   virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
   virtual void RenderBegin() override;
   virtual void Render() override;
   virtual void RenderEnd() override;
   virtual void Release() override;
+	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() override { return &m_env; }
 
   virtual IShaderManager* GetShaderManager() override;
   virtual IRenderer* GetIRender() override;
   virtual ILog* GetILog() override;
+  virtual ICmdLine* GetICmdLine() override { return m_pCmdLine; };
   virtual ITimer* GetITimer() override;
   virtual IConsole* GetIConsole() override;
   virtual IInput* GetIInput() override;
@@ -50,6 +54,7 @@ public:
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
   virtual INetwork* GetINetwork() override;
   virtual ICryPak* GetIPak() override;
+  virtual IHardwareMouse* GetIHardwareMouse()  { return m_env.pHardwareMouse; };
 
   virtual IGame* CreateGame(IGame* game) override;
 
@@ -70,12 +75,28 @@ public:
   virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
 private:
+  bool CreateConsole();
+  bool InitConsole();
+  bool InitRender();
+  bool InitInput();
+  bool OpenRenderLibrary(std::string_view render);
+
   bool InitResourceManagers();
   void ParseCMD();
   void LoadScreen();
   bool InitScripts();
 	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
+protected:
+	CCmdLine*                                 m_pCmdLine;
+
 private:
+	// System environment.
+#if defined(SYS_ENV_AS_STRUCT)
+	//since gEnv is a global var, this should just be a reference for code consistency
+	SSystemGlobalEnvironment & m_env;
+#else
+	SSystemGlobalEnvironment m_env;
+#endif
   CTimer									m_Time;                  //!<
 
   ILog* m_pLog;
@@ -106,12 +127,25 @@ private:
   ICVar* cvGameName;
 
   SSystemInitParams& m_startupParams;
-  CCmdLine* m_pCmdLine;
+  SFileVersion m_FileVersion;
+  SFileVersion m_ProductVersion;
 
   uint64_t NOW;
   uint64_t LAST;
   double m_DeltaTime = 0.0;
 
+  ImGuiManager m_GuiManager;
+
   virtual float GetDeltaTime() override;
+
+
+  // Inherited via ISystem
+  virtual const SFileVersion& GetFileVersion() override;
+
+  virtual const SFileVersion& GetProductVersion() override;
+
+
+  // Inherited via ISystem
+  virtual IEntitySystem* GetIEntitySystem() override;
 
 };

@@ -19,6 +19,7 @@
 #include <cstring>
 #include <locale>
 #include <functional>
+#include "NullImplementation/NullFont.hpp"
 
 bool isnumber(const char* s)
 {
@@ -29,45 +30,6 @@ bool isnumber(const char* s)
       return false;
   }
   return true;
-}
-
-void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
-{
-  // Get the first occurrence
-  size_t pos = data.find(toSearch);
-
-  // Repeat till end is reached
-  while (pos != std::string::npos)
-  {
-    // Replace this occurrence of Sub String
-    data.replace(pos, toSearch.size(), replaceStr);
-    // Get the next occurrence from the current position
-    pos = data.find(toSearch, pos + replaceStr.size());
-  }
-}
-
-void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr)
-{
-  // Get the first occurrence
-  size_t pos = data.find(toSearch);
-
-  // Repeat till end is reached
-  int n = 0;
-  while (pos != std::string::npos)
-  {
-    // Replace this occurrence of Sub String
-    if ((pos + 1) < data.length() && std::isdigit(data[pos + 1]))
-    {
-      data.replace(pos, toSearch.size() + 1, replaceStr(data[pos + 1] - '0'));
-      n++;
-    }
-    else
-    {
-      data.replace(pos, toSearch.size(), "");
-    }
-    // Get the next occurrence from the current position
-    pos = data.find(toSearch, ++pos);
-  }
 }
 
 class HelpCommand : public IConsoleCommand
@@ -914,6 +876,23 @@ void CConsole::ClearInputLine()
   fillCommandText();
 }
 
+IFont* CConsole::getFont(const char* name, float w, float h)
+{
+  if (gEnv->IsDedicated())
+    m_Font = new CNullFont();
+  else
+  {
+    m_Font = new FreeTypeFont();
+    auto font = name;
+    auto var = GET_CVAR("s_font");
+    if (var)
+      font = var->GetString();
+    m_Font->Init(font, w, h);
+    //return m_Font;
+  }
+  return m_Font;
+}
+
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)
 {
   CommandInfo cmdInfo;
@@ -1088,28 +1067,23 @@ bool CConsole::Init(ISystem* pSystem)
   m_pRenderer = pSystem->GetIRender();
   m_pScriptSystem = pSystem->GetIScriptSystem();
   m_pInput = pSystem->GetIInput();
-  m_Font = new FreeTypeFont();
-  {
-    auto font = "arial.ttf";
-    auto var = GET_CVAR("s_font");
-    if (var)
-      font = var->GetString();
-    if (!m_Font->Init(font, 16, static_cast<unsigned int>(line_height)))
-      return false;
-  }
+  m_Font = getFont("arial.ttf", 16, static_cast<unsigned int>(line_height));
   const char* texture_path = "console_background2.jpg";
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
   m_Cursor.blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
-  m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
 
-  if (background != nullptr)
-    texture_path = background->GetString();
-  m_pBackGround = new Texture();
-  m_pBackGround->load(texture_path);
-  initBind();
+  if (!gEnv->IsDedicated())
+  {
+    if (background != nullptr)
+      texture_path = background->GetString();
+    m_pBackGround = new Texture();
+    m_pBackGround->load(texture_path);
+    initBind();
 
-  Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
+    m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
+    Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
+  }
 
   return true;
 }

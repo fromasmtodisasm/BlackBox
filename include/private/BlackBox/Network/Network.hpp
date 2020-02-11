@@ -38,4 +38,7 @@ private:
   ISystem* m_pSystem;
 
   std::string m_LocalIP;
+
+  std::vector<IServer*> m_Servers;
+  std::vector<IClient*> m_Clients;
 };

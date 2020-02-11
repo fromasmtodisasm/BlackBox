@@ -121,6 +121,11 @@ CGame* CPlayer::getGame()
 
 void CPlayer::update(float deltatime)
 {
+	if (gEnv->IsDedicated())
+  {
+    return;
+  }
+
   //ImGui
   float mult = m_keys.find(eKI_LShift) != m_keys.end() ? 3 : 1;
   float rotation_speed = deltatime * MOVE_SPEED * mult;

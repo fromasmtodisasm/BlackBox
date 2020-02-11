@@ -3,6 +3,7 @@
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
+#include "NullImplementation/NullFont.hpp"
 
 #include <map>
 #include <set>
@@ -295,6 +296,8 @@ private:
 
   void initBind();
   void ClearInputLine();
+
+  IFont* getFont(const char* name, float w, float h);
 private:
   VarSinkList varSinks;
   CommandMap m_Commands;

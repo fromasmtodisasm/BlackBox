@@ -14,6 +14,9 @@ bool CGame::StartupServer(bool listen, const char* szName)
 
   int nPort = sv_port->GetIVal();
 
+  auto s = CreateServer(nullptr, 10000, true);
+
+#if 0
   // set port and create server
   if (!m_pServer)
     m_pServer = new CXServer(this, nPort, szName, listen);
@@ -37,6 +40,7 @@ bool CGame::StartupServer(bool listen, const char* szName)
     m_pRConSystem->OnServerCreated(m_pServer->m_pIServer);
 
   m_pLog->Log("Server created");
+#endif
 
   //m_pServer->Update(); // server is created but map wasn't set yet we don't want to allow connects before
 
@@ -122,6 +126,21 @@ void CGame::ShutdownClient()
 bool CGame::IsClient()
 {
   return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
+}
+
+bool CGame::IsMultiplayer()
+{
+	// cannot be in multiplayer when in editor
+	if (m_bEditor)
+		return false;
+
+	bool bServer=IsServer();
+	bool bClient=IsClient();
+
+	if(!bServer && !bClient)
+		return false;
+
+	return !bServer || !bClient || m_pServer->m_bListen;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -91,9 +91,9 @@ _smart_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
   return defaultProgram;
 }
 
-_smart_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
+ShaderRef  ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
 {
-  _smart_ptr<CShader> result = nullptr;
+  ShaderRef result = nullptr;
   auto Path = root + desc.name;
   auto shader = cache.find(Path);
   if (shader != cache.end() && !isReload)
@@ -101,11 +101,19 @@ _smart_ptr<CShader> ShaderManager::getShader(ShaderDesc const& desc, bool isRelo
     result = shader->second;
   }
   else {
-    //result = std::make_shared<CShader>(static_cast<CShader*>(CShader::load(desc)));
-    result = CShader::load(desc);
-    result->m_Path = Path;
-    if (!result)
-      return result;
+    result = addShader(desc);
+  }
+  return result;
+}
+
+ShaderRef ShaderManager::addShader(const ShaderDesc& desc)
+{
+  //result = std::make_shared<CShader>(static_cast<CShader*>(CShader::load(desc)));
+  auto result = CShader::load(desc);
+  auto Path = root + desc.name;
+  result->m_Path = Path;
+  if (result)
+  {
     cache[Path] = result;
   }
   return result;

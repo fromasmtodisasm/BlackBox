@@ -28,6 +28,7 @@
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/World.hpp>
+#include <BlackBox/System/HardwareMouse.hpp>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <SDL2/SDL.h>
 
@@ -47,6 +48,9 @@ ISystem* GetISystem()
 
 CSystem::CSystem(SSystemInitParams& m_startupParams)
   :
+#if defined(SYS_ENV_AS_STRUCT)
+	m_env(gEnv),
+#endif
   m_startupParams(m_startupParams),
   r_window_width(nullptr),
   r_window_height(nullptr),
@@ -57,19 +61,28 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
   cvGameName(nullptr),
   m_Render(nullptr),
   m_pConsole(nullptr),
+  m_pInput(nullptr),
   m_pFont(nullptr),
   m_pGame(nullptr),
   m_pLog(nullptr),
   m_pWindow(nullptr),
   m_pWorld(nullptr),
   m_pScriptSystem(nullptr),
-  m_ScriptObjectConsole(nullptr)
+  m_ScriptObjectConsole(nullptr),
+  m_GuiManager(this)
 {
   m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
   if (m_pSystemEventDispatcher)
   {
     m_pSystemEventDispatcher->RegisterListener(this, "CSystem");
   }
+	//////////////////////////////////////////////////////////////////////////
+	// Initialize global environment interface pointers.
+	m_env.pSystem = this;
+
+#if !defined(SYS_ENV_AS_STRUCT)
+	gEnv = &m_env;
+#endif
 }
 
 CSystem::~CSystem()
@@ -92,45 +105,47 @@ CSystem::~CSystem()
 bool CSystem::Init()
 {
   gISystem = this;
+  gEnv->SetIsDedicated(m_startupParams.bDedicatedServer);
   /////////////////////////////////////////////
   m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
+  if (m_pCmdLine->FindArg(eCLAT_Pre, "dedicated"))
+  {
+    gEnv->SetIsDedicated(true);
+  }
 #ifdef ENABLE_PROFILER
   initTimer();
 #endif
-  m_pLog = new NullLog(m_startupParams.sLogFileName);
-  if (m_pLog == nullptr)
+  if (!CreateLog()) return false;
+  std::string prompt = "Initializing System";
+  if (gEnv->IsDedicated())
+    prompt += " on dedicated server";
+  Log(prompt.c_str());
+  //====================================================
+  Log("Initializing Console");
+  if (!CreateConsole())
     return false;
   //====================================================
-  m_pConsole = new CConsole();
-  if (m_pConsole == nullptr)
-    return false;
-  //====================================================
+  Log("Loading config");
   if (!ConfigLoad("res/scripts/engine.cfg"))
     return false;
   //====================================================
-  m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
-  if (m_pWindow == nullptr)
+  if (!OpenRenderLibrary("OpenGL"))
+  {
     return false;
+  }
   //====================================================
-  m_pInput = CreateInput(this, m_pWindow->getHandle());
+  Log("Creating Input");
+  if (!gEnv->IsDedicated())
+    m_pInput = CreateInput(this, m_pWindow->getHandle());
   //====================================================
-  m_Render = CreateIRender(this);
-  if (m_Render == nullptr)
-    return false;
-  //====================================================
+  Log("Init materials");
   if (!MaterialManager::init(this))
   {
     return false;
   }
   //====================================================
-  // In release mode it failed!!!
-  // TODO: Fix it
-  if (!(m_pWindow = m_Render->Init(
-    0, 0,
-    r_window_width->GetIVal(), r_window_height->GetIVal(),
-    r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(),
-    r_fullscreen->GetIVal(), m_pWindow))
-    )
+  Log("Initialize Render");
+  if (!InitRender())
     return false;
   //====================================================
 #ifdef NEED_VC 
@@ -139,10 +154,13 @@ bool CSystem::Init()
   );
 #endif
   //====================================================
-  m_pInput->Init();
+  Log("Initialize Input");
+  if (!InitInput())
+    return false;
   //====================================================
   // Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
+  Log("Initialize Profiling");
   if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
   {
     fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
@@ -155,38 +173,20 @@ bool CSystem::Init()
   PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
 #endif
   //====================================================
-  m_pLog->Log("[OK] Window susbsystem inited\n");
+  //m_pLog->Log("[OK] Window susbsystem inited\n");
   //====================================================
+  Log("Creating ScriptSystem");
   m_pScriptSystem = new CScriptSystem();
   if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
   {
     return false;
   }
-  if (!m_pConsole->Init(this))
-    return false;
-  m_pConsole->ShowConsole(true);
   //====================================================
-  bool complete = false;
-  bool res_threaded = false;
-  if (res_threaded)
-  {
-    auto lambd_res = [&, this](GLContext& ctx) {
-      auto w = static_cast<SDL_Window*>(m_pWindow->getHandle());
-      SDL_GL_MakeCurrent(w, ctx);
-      this->InitResourceManagers();
-      SDL_GL_MakeCurrent(w, NULL);
-    };
-    bool res_ret = false;
-    GLContext ctx = m_pWindow->getContext();
-    std::thread rt(lambd_res, std::ref(ctx));
-  }
-  else
-  {
-    this->InitResourceManagers();
-  }
-
-  //if (!InitResourceManagers())
-  //  return false;
+  if (!InitConsole())
+    return false;
+  //====================================================
+  if (!InitResourceManagers())
+    return false;
   //====================================================
   m_pConsole->AddConsoleVarSink(this);
   ParseCMD();
@@ -194,48 +194,67 @@ bool CSystem::Init()
   //====================================================
   InitScripts();
   //====================================================
-  m_pFont = new FreeTypeFont();
-  if (m_pFont != nullptr)
+#if 0
+  if (!gEnv->IsDedicated())
   {
-    auto font = "arial.ttf";
-    auto var = GET_CVAR("s_font");
-    if (var)
-      font = var->GetString();
-    if (m_pFont->Init(font, 16, 18) == false)
-      return false;
+    m_GuiManager.Init();
   }
-  m_pInput->AddEventListener(this);
-  m_pInput->AddEventListener(m_pConsole);
+#endif
+
+  //====================================================
+  if (!m_env.IsDedicated())
+  {
+    m_pInput->AddEventListener(this);
+    m_pInput->AddEventListener(m_pConsole);
+    //m_pInput->AddEventListener(&m_GuiManager);
+  }
   if (CreateGame(nullptr) == nullptr)
     return false;
   //====================================================
+
+  //////////////////////////////////////////////////////////////////////////
+  // Hardware mouse
+  //////////////////////////////////////////////////////////////////////////
+  // - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+  // - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+  // - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+#ifdef DEDICATED_SERVER
+  m_env.pHardwareMouse = NULL;
+#else
+  if (!m_env.IsDedicated())
+    m_env.pHardwareMouse = new CHardwareMouse(true);
+  else
+    m_env.pHardwareMouse = NULL;
+#endif
+
+  //====================================================
+  m_env.pLog->Log("-- Creating Network");
   m_pNetwork = CreateNetwork(this);
   if (m_pNetwork == nullptr)
     return false;
   //====================================================
   m_pWorld = new World();
-  if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal")) {
+  Log("Initialize Game");
+  if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal")) {
     return false;
   }
   m_pConsole->PrintLine("[OK] IGame created\n");
-  complete = true;
-  //rt.join();
-  //gl::ClearColor({ 0,1,0,1 });
-  gl::Clear(GL_COLOR_BUFFER_BIT);
-  m_pWindow->swap();
-  if (false)
-  {
-    m_pLog->Log("error init resource manager");
+
+  return true;
+}
+
+bool CSystem::CreateLog()
+{
+  m_pLog = new NullLog(m_startupParams.sLogFileName);
+  if (m_pLog == nullptr)
     return false;
-  }
-
-
+  m_env.pLog = m_pLog;
   return true;
 }
 
 void CSystem::Start()
 {
-  bool bRelaunch = false;
+  bool bRelaunch = m_env.IsDedicated();
 
   m_pGame->Run(bRelaunch);
 
@@ -248,7 +267,7 @@ void CSystem::Start()
   {
     m_pGame->Release();
     m_pGame = CreateGame(nullptr);
-    if (!m_pGame->Init(this, m_startupParams.bDedicatedServer, m_startupParams.bEditor, "Normal"))
+    if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
       break;
     m_pGame->Run(bRelaunch);
   }
@@ -349,14 +368,80 @@ bool CSystem::ConfigLoad(const char* file)
   return true;
 }
 
+bool CSystem::CreateConsole()
+{
+  m_env.pConsole = m_pConsole = new CConsole();
+  if (m_pConsole == nullptr)
+    return false;
+  return true;
+}
+
+bool CSystem::InitConsole()
+{
+  if (!m_pConsole->Init(this))
+    return false;
+  m_pConsole->ShowConsole(true);
+  return true;
+}
+
+bool CSystem::InitRender()
+{
+	if (gEnv->IsDedicated())
+		return true;
+  // In release mode it failed!!!
+  // TODO: Fix it
+  if (!(m_pWindow = m_Render->Init(
+    0, 0,
+    r_window_width->GetIVal(), r_window_height->GetIVal(),
+    r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(),
+    r_fullscreen->GetIVal(), m_pWindow))
+    )
+    return false;
+  return true;
+}
+
+bool CSystem::InitInput()
+{
+	if (gEnv->IsDedicated())
+		return true;
+  return m_pInput->Init();
+}
+
+bool CSystem::OpenRenderLibrary(std::string_view render)
+{
+  Log("Open Render Library");
+	if (gEnv->IsDedicated())
+		return true;
+  //====================================================
+  m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
+  if (m_pWindow == nullptr)
+    return false;
+  //====================================================
+
+  m_env.pRenderer = m_Render = CreateIRender(this);
+  if (m_Render == nullptr)
+    return false;
+  else
+    return true;
+
+#if 0
+	CryFatalError("Unknown renderer type: %s", t_rend);
+	return false;
+#endif
+
+}
+
 bool CSystem::InitResourceManagers()
 {
   m_pConsole->PrintLine("Begin loading resources");
-  if (!ShaderManager::init())
-    return false;
-  if (!MaterialManager::init("default.xml"))
-    return false;
-  m_pConsole->PrintLine("End loading resources");
+  if (!gEnv->IsDedicated())
+  {
+    if (!ShaderManager::init())
+      return false;
+    if (!MaterialManager::init("default.xml"))
+      return false;
+    m_pConsole->PrintLine("End loading resources");
+  }
   return true;
 }
 
@@ -371,6 +456,10 @@ void CSystem::ParseCMD()
 
 void CSystem::LoadScreen()
 {
+  if (gEnv->IsDedicated())
+  {
+    return;
+  }
   m_pConsole->Clear();
   m_pConsole->SetScrollMax(600);
   m_pConsole->ShowConsole(true);
@@ -513,6 +602,21 @@ float CSystem::GetDeltaTime()
   return static_cast<float>(m_DeltaTime);
 }
 
+const SFileVersion& CSystem::GetFileVersion()
+{
+  return m_FileVersion;
+}
+
+const SFileVersion& CSystem::GetProductVersion()
+{
+  return m_ProductVersion;
+}
+
+IEntitySystem* CSystem::GetIEntitySystem()
+{
+  return nullptr;
+}
+
 ICryPak* CSystem::GetIPak()
 {
   return m_pCryPak;
@@ -582,8 +686,8 @@ void CSystem::ShowMessage(const char* message, const char* caption, MessageType 
 
 void CSystem::Log(const char* message)
 {
-  std::cout << "-- " << message << std::endl;
-  m_pLog->Log("-- %s\n", message);
+  //std::cout << "-- " << message << std::endl;
+  m_pLog->Log("-- %s", message);
 }
 
 IScriptSystem* CSystem::GetIScriptSystem()
@@ -617,6 +721,10 @@ void CSystem::RenderBegin()
   PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
   m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
   m_Render->BeginFrame();
+#if 0
+  m_GuiManager.NewFrame();
+  m_GuiManager.AddDemoWindow();
+#endif
 }
 
 void CSystem::RenderEnd()
@@ -626,6 +734,8 @@ void CSystem::RenderEnd()
     DEBUG_GROUP("DRAW_PROFILE");
     PROFILER_DRAW();
   }
+
+  //m_GuiManager.Render();
 
   m_pWindow->swap();
 }
@@ -715,14 +825,14 @@ bool CSystem::Update(int updateFlags/* = 0*/, int nPauseMode/* = 0*/)
   {
     PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
     //FIXME: CHECK IT
-    m_pInput->Update(true);
+    if (m_pInput) m_pInput->Update(true);
     PROFILER_POP_CPU_MARKER();
   }
-  m_pSystemEventDispatcher->Update();
-  m_pWindow->update();
-  m_pConsole->Update();
-  m_Render->Update();
-  if (m_pWindow->closed())
+  if (m_pWindow) m_pWindow->update();
+  if (m_pConsole) m_pConsole->Update();
+  if (m_Render) m_Render->Update();
+  if (m_pNetwork) m_pNetwork->UpdateNetwork();
+  if (m_pWindow && m_pWindow->closed())
   {
     m_pGame->SendMessage("Quit");
   }

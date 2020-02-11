@@ -23,7 +23,7 @@ private:
   const char* filename = "log.txt";
   bool inited = false;
   std::vector<std::string> log;
-  char buf[2048];
+  char buf[2048] = {0};
 
   // Inherited via ILog
   virtual void Release() override;
@@ -88,5 +88,6 @@ void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
   auto len = strlen(buf);
   buf[len] = '\n';
   buf[len + 1] = '\0';
+  std::cout << buf;
   log.push_back(strdup(buf));
 }

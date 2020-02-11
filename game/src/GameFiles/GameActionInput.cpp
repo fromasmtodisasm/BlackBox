@@ -99,6 +99,21 @@ void CGame::InitConsoleCommands()
 void CGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
+  r_displayinfo = CREATE_CVAR("r_displayinfo", 1, 0, "Display info [1/0]");
+  r_profile = CREATE_CVAR("r_profile", 1, 0, "Profile [1/0]");
+  r_cap_profile = CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
+  m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
+
+	sv_port= pConsole->CreateVariable("sv_port",DEFAULT_SERVERPORT_STR,0,
+		"Sets the server port for a multiplayer game.\n"
+		"Usage: sv_port portnumber\n"
+		"Default is '49001'.");
+	sv_timeout= pConsole->CreateVariable("sv_timeout","60",0, // until entity loading speeds up :)	
+		"Sets the server timeout (seconds).\n"
+		"Usage: sv_timeout 60\n"
+		"The default timeout is 60 seconds. This is the time the\n"
+		"server waits while trying to establish a connection with\n"
+		"a client."); 
 }
 
 void  CGame::ResetInputMap()

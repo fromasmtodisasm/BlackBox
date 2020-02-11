@@ -1,6 +1,5 @@
-#ifdef GUI
-
-#include "..\include\BlackBox\GUI.hpp"
+#if 0
+#include <BlackBox/GUI/GUI.hpp>
 
 void MenuItem::execute()
 {
@@ -36,3 +35,9 @@ void MainMenu::execute()
 }
 
 #endif // GUI
+
+#include <BlackBox/GUI/GUI.hpp>
+//IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_Init(const char* glsl_version = NULL);
+//IMGUI_IMPL_API void     ImGui_ImplOpenGL3_NewFrame();
+//IMGUI_IMPL_API void     ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data);
+

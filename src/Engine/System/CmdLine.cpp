@@ -1,4 +1,5 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/System/CmdLine.hpp>
 #include <cstring>
 
@@ -45,7 +46,8 @@ CCmdLine::CCmdLine(const char* commandLine)
     {
       // this is the filename, convert backslash to forward slash
       //arg.replace('\\', '/');
-      arg.replace(arg.begin(), arg.end(), '\\', '/');
+      findAndReplaceAll(arg, "\\", "/");
+      //arg.replace(arg.begin(), arg.end(), '\\', '/');
       m_args.push_back(CCmdLineArg("filename", arg.c_str(), eCLAT_Executable));
     }
     else

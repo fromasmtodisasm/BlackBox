@@ -236,7 +236,8 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
     objectType = "object";
   if (objectType == std::string("points"))
   {
-    m_Scene->m_Points = m_Scene->createPointObject(object);
+		if (!gEnv->IsDedicated())
+			m_Scene->m_Points = m_Scene->createPointObject(object);
     return;
   }
   else
