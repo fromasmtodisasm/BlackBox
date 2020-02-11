@@ -42,5 +42,5 @@ script:
   - cd ../..
   - mkdir build
   - cd build
-  - cmake "-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
+  - cmake "-DCMAKE_TOOLCHAIN_FILE=tools/vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
   - cmake --build . -- -j4
