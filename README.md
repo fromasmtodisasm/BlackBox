@@ -1,6 +1,6 @@
 # BlackBox 
 [![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=master)](https://travis-ci.org/fromasmtodisasm/BlackBox)
-
+[![Build Status](https://travis-ci.org/fromasmtodisasm/BlackBox.svg?branch=develop)](https://travis-ci.org/fromasmtodisasm/BlackBox)
 OpenGL based game engine
 
 To build project, make build directory in repository root
