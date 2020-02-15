@@ -944,7 +944,7 @@ bool CGame::TestScriptSystem(bool& retflag)
 {
   retflag = true;
   m_playerObject = m_pScriptSystem->CreateEmptyObject();
-  if (!m_pScriptSystem->GetGlobalValue("player", m_playerObject))
+  if (!m_pScriptSystem->GetGlobalValue("Player", m_playerObject))
   {
     delete m_playerObject;
     m_pSystem->Log("\002 ERROR: can't find player table ");

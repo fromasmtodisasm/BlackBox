@@ -1,10 +1,10 @@
-player = {
+Player = {
 	name = "PesBarbos",
 	age = 47,
 	alltime = 0.0
 }
 
-function player:OnInit( data )
+function Player:OnInit( data )
 	Console:PrintLine("Player OnInit");
 	Console:PrintLine("Username: " .. self.name)
 
@@ -19,7 +19,7 @@ function player:OnInit( data )
 	Game:CreateVariable("game_inited", 1)
 end
 
-function player:PostInit( )
+function Player:PostInit( )
 	Game:LoadLevel("test")
 	setvar("gravity", 200)
 	setvar("floor", 20)
@@ -28,7 +28,7 @@ function player:PostInit( )
 end
 
 
-function player:TestChanges(string)
+function Player:TestChanges(string)
 	Console:PrintLine("TestChanges"):PrintLine("call chain"..string)
 	Console:PrintLine("Username: " .. self.name)
 	
@@ -36,14 +36,14 @@ function player:TestChanges(string)
 	return Console;
 end
 
-function player:Update( dt )
+function Player:Update( dt )
 	self.alltime = self.alltime + dt;
 end
 
 
 
 function test(  )
-	player:OnInit(123)
+	Player:OnInit(123)
 end
 
 Game:CreateVariable("game_inited", 1)
