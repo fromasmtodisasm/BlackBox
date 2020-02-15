@@ -24,8 +24,9 @@
 // Define to enable automatic input grabbing support.  We don't want this
 // during development.  If automatic input grabbing support is off, then input
 // grabbing can be enforced by typing CTRL+ALT+G.
+#define NDEBUG
 
-#if !defined(_DEBUG)
+#ifndef NDEBUG
 #define LINUXINPUT_AUTOGRAB 1
 #define HIDE_MOUSE_POINTER
 #else

@@ -25,32 +25,14 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   {
     return false;
   }
-  //m_Window->setVerticalSyncEnabled(true);
-  //m_Window->setFramerateLimit(60);
-  //m_Window->setMouseCursorGrabbed(true);
 
 #ifdef GUI
   ImGui_ImplOpenGL3_Init();
   ImGui_ImplSDL2_InitForOpenGL(m_Window, glRenderContext);
 #endif // GUI
 
-  // Make it the active window for OpenGL w->setActive();
-
-  // Input handling specific
-  //Mouse.curr_pos = Mouse.curr_pos = sf::Mouse::getPosition(*m_Window);
   Mouse.x_wraped = Mouse.y_wraped = false;
   Mouse.locked = false;
-
-  //auto ip = GetISystem()->GetIConsole()->GetCVar("image_path");
-  //if (ip)
-  //{
-    //std::string icon(ip->GetString());
-  //std::unique_ptr<Image> img;
-  //if (img->load("res/images/icon.jpg", nullptr))
-  //{
-  //  ;// m_Window->setIcon(img->width, img->height, static_cast<sf::Uint8*>(img->data));
-  //}
-  //}
 
   return true;
 }
@@ -194,8 +176,8 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 #ifdef LINUX
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 #endif
 
@@ -235,14 +217,6 @@ Vec2 CSDLWindow::nextMousePos(Vec2& position)
   return Vec2();
 }
 
-void CSDLWindow::setMouseWrap(bool wrap)
-{
-}
-
-void CSDLWindow::glInit()
-{
-}
-
 Rect& CSDLWindow::getViewPort()
 {
   return viewPort;
@@ -255,6 +229,7 @@ bool CSDLWindow::create(Params params)
 
 void CSDLWindow::changeSize(int w, int h)
 {
+  SDL_SetWindowSize(m_Window, w, h);
 }
 
 void CSDLWindow::setCursor(Cursor* cursor)

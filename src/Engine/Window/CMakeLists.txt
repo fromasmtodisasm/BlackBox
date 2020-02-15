@@ -6,23 +6,22 @@ add_library(${PROJECT_NAME})
 if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	#################################################################
+	#################################################################
 	if (DEFINED LINUX )
 		if (NOT DEFINED VCPKG_INSTALLER)
 			find_package(SDL2 CONFIG REQUIRED)
 		else()
 			add_package(SDL2)
 		endif()
-#find_package
-    find_package(SDL2 CONFIG REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE  SDL2::SDL2-static)
-
-#target_link_libraries(
-#target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARY})
-#		target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
+		target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARY})
+		target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
+		target_link_libraries(${PROJECT_NAME} PRIVATE pthread sndio)
 	else()
 		add_package(SDL2)
 		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+		target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
 	endif()
+
 	#################################################################
 	#################################################################
 	target_sources(

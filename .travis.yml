@@ -28,12 +28,22 @@ addons:
       - libflac-dev
       - libvorbis-dev
       - libogg-dev
+      - libgl1-mesa-glx
+      - libgl1-mesa-dev
       - g++-7
+      - git
     sources: &sources
       - llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
 script:
+  - mkdir tools
+  - cd tools
+  - git clone https://github.com/microsoft/vcpkg
+  - cd vcpkg
+  - ./bootstrap-vcpkg.sh
+  - cd ../..
   - mkdir build
   - cd build
-  - cmake -DBUILD_SHARED_LIBS=ON -DGLM_TEST_ENABLE=OFF -DGLAD_INSTALL=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON .. 
-  - cmake --build .
+  - export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
+  - cmake "-DCMAKE_TOOLCHAIN_FILE=tools/vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DVCPKG_INSTALLER=ON -DCMAKE_BUILD_TYPE=Debug  ..
+  - cmake --build . -- -j4

@@ -879,7 +879,7 @@ void CConsole::ClearInputLine()
 IFont* CConsole::getFont(const char* name, float w, float h)
 {
   if (gEnv->IsDedicated())
-    return new CNullFont();
+    m_Font = new CNullFont();
   else
   {
     m_Font = new FreeTypeFont();
@@ -887,9 +887,10 @@ IFont* CConsole::getFont(const char* name, float w, float h)
     auto var = GET_CVAR("s_font");
     if (var)
       font = var->GetString();
-    if (!m_Font->Init(font, w, h))
-      return m_Font;
+    m_Font->Init(font, w, h);
+    //return m_Font;
   }
+  return m_Font;
 }
 
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)

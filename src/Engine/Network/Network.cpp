@@ -132,7 +132,7 @@ public:
         gEnv->pLog->Log("New connection");
         //m_ClientSockes.push_back(new_tcpsock);
         int len, result;
-        char* msg = R"(
+        auto* msg = R"(
 HTTP/1.1 200 OK
 Host: site.com
 Content-Type: text/html;

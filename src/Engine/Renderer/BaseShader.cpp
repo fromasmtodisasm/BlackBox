@@ -36,11 +36,24 @@ ShaderStatus::ShaderStatus(CShader* shader) :
 }
 
 bool ShaderStatus::get(GLenum statusType) {
-  glCheck(glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status)));
+  GLenum err;
+  while((err = glGetError()) != GL_NO_ERROR)
+  {
+    GetISystem()->GetILog()->Log("current error %d\n", err);
+  }
+  glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status));
+  while((err = glGetError()) != GL_NO_ERROR)
+  {
+    GetISystem()->GetILog()->Log("current error %d\n", err);
+  }
   if (m_Status != GL_TRUE)
   {
-    glCheck(glGetShaderInfoLog(m_Shader->get(), 512, NULL, m_InfoLog));
-    GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), m_InfoLog);;
+    GLsizei length = 0;
+    glCheck(glGetShaderInfoLog(m_Shader->get(), 512, &length, m_InfoLog));
+    if (length > 0)
+    {
+      GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), m_InfoLog);;
+    }
     return false;
   }
   return true;

@@ -5,12 +5,14 @@ add_library(${PROJECT_NAME})
 
 ###################################################
 
+#[[
 if (DEFINED LINUX AND NOT DEFINED VCPKG_INSTALLER)
 	find_package(sdl2-net CONFIG REQUIRED)
 	find_package(SDL2 CONFIG REQUIRED)
 else()
-	add_package(sdl2-net)
 endif()
+]]
+add_package(sdl2-net)
 add_package(SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 

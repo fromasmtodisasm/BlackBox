@@ -44,7 +44,7 @@ void Object::draw(void* camera) {
 
   for (auto& mesh : *m_Mesh)
   {
-    glPolygonMode(GL_FRONT_AND_BACK, m_RenderMode);
+    //glPolygonMode(GL_FRONT_AND_BACK, m_RenderMode);
     mesh.getVertexBuffer()->draw();
   }
 }

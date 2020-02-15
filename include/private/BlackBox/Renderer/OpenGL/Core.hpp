@@ -27,7 +27,7 @@
 #define GET_SEVERITY(v) TO_STR(v, "Severity: ")
 #define DEBUG_GROUP(message) CDebugSection debugSection(sizeof(message), message)
 
-#if defined(_DEBUG) || defined(GL_DEBUG)
+#if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
 
 // In debug mode, perform a test on every OpenGL call
 // The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
@@ -337,5 +337,11 @@ namespace gl {
   inline void Uniform(GLint location, T& value)
   {
     UniformValue(location, value);
+  }
+
+  // Get
+  inline const GLubyte* GetString(GLenum name)
+  {
+    return glGetString(name);
   }
 }

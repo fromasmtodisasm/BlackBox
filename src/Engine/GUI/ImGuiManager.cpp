@@ -4,7 +4,6 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 
-#define GLAD_LOADER
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 //#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>
