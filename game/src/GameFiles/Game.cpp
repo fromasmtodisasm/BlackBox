@@ -252,9 +252,9 @@ bool CGame::Update() {
     fps = 1.0f / m_deltaTime;
     ExecScripts();
     if (!IsInPause())
-		{
-      m_World->Update(m_pSystem->GetDeltaTime());
-		}
+    {
+        m_World->Update(m_pSystem->GetDeltaTime());
+    }
 
     if (bRenderFrame)
     {
