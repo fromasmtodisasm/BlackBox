@@ -30,31 +30,46 @@ VertexArrayObject::VertexArrayObject(const void* data, int count, int type, Attr
   {
     gl::EnableVertexAttribArray(position);
     //																										 stride
-    gl::VertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[POSITION]));
+    gl::VertexAttribPointer(
+        position, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, 
+        reinterpret_cast<GLvoid*>(m_attributes.attributes[POSITION])
+        );
   }
 
   if (m_attributes.attributes.find(NORMAL) != m_attributes.attributes.end())
   {
     gl::EnableVertexAttribArray(normal);
-    gl::VertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[NORMAL]));
+    gl::VertexAttribPointer(
+        normal, 3, GL_FLOAT, GL_FALSE, m_attributes.stride,
+        reinterpret_cast<GLvoid*>(m_attributes.attributes[NORMAL])
+        );
   }
 
   if (m_attributes.attributes.find(UV) != m_attributes.attributes.end())
   {
     gl::EnableVertexAttribArray(uv);
-    gl::VertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[UV]));
+    gl::VertexAttribPointer(
+        uv, 2, GL_FLOAT, GL_FALSE, m_attributes.stride,
+        reinterpret_cast<GLvoid*>(m_attributes.attributes[UV])
+        );
   }
 
   if (m_attributes.attributes.find(TANGENT) != m_attributes.attributes.end())
   {
     gl::EnableVertexAttribArray(tangent);
-    gl::VertexAttribPointer(tangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[TANGENT]));
+    gl::VertexAttribPointer(
+        tangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride,
+        reinterpret_cast<GLvoid*>(m_attributes.attributes[TANGENT])
+        );
   }
 
   if (m_attributes.attributes.find(BTANGENT) != m_attributes.attributes.end())
   {
     gl::EnableVertexAttribArray(btangent);
-    gl::VertexAttribPointer(btangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride, reinterpret_cast<GLvoid*>(m_attributes.attributes[BTANGENT]));
+    gl::VertexAttribPointer(
+        btangent, 3, GL_FLOAT, GL_FALSE, m_attributes.stride,
+        reinterpret_cast<GLvoid*>(m_attributes.attributes[BTANGENT])
+        );
   }
   glCheck(glBindVertexArray(0));
 }
