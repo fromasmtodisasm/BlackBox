@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <BlackBox/Input/SDLInput.hpp>
 // We need a manager, since all the input for each Game Pad is collected
 // in the same queue. If we were to update the game pads seperately

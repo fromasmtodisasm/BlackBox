@@ -1,3 +1,17 @@
+#!/bin/bash
+
 clear
 ./build.sh
-./build/src/Launcher/LinuxLauncher/Launcher "$1"
+
+EXE=""
+case `uname` in
+  MINGW*)
+    EXE=WindowsLauncher/Debug/Launcher;;
+  LINUX*)
+    EXE=LinuxLauncher/Launcher;;
+  *)
+    echo "Unknown OS"
+esac
+
+
+./build/src/Launcher/$EXE "$1"
