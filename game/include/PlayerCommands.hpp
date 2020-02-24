@@ -6,14 +6,13 @@ class CCamera;
 
 class MoveForward : public ICommand
 {
-	CPlayer* player;
-	CCamera* camera;
-	float deltatime;
-
-  public:
-	MoveForward(CPlayer* player);
-	// Унаследовано через ICommand
-	virtual void execute() override;
+  CPlayer* player;
+  CCamera* camera;
+  float deltatime;
+public:
+  MoveForward(CPlayer* player);
+  // Унаследовано через ICommand
+  virtual void execute() override;
 };
 
 /*

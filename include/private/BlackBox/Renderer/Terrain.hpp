@@ -7,21 +7,21 @@ class Object;
 
 class Terrain
 {
-  public:
-	struct Face
-	{
-		Vertex v[3];
-	};
-	Terrain();
-	Face getFace(size_t v1, size_t v2, size_t v3);
-	Object* load(const char* heightmap);
-	void draw();
+public:
+  struct Face
+  {
+    Vertex v[3];
+  };
+  Terrain();
+  Face getFace(size_t v1, size_t v2, size_t v3);
+  Object* load(const char* heightmap);
+  void draw();
 
-  private:
-	float getHeight(int x, int y);
+private:
+  float getHeight(int x, int y);
 
-	std::vector<Vertex> vb;
-	std::unique_ptr<Image> img;
-	uint VBO, VAO;
-	int size;
+  std::vector<Vertex> vb;
+  std::unique_ptr<Image> img;
+  uint VBO, VAO;
+  int size;
 };

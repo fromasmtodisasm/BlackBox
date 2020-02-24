@@ -1,7 +1,7 @@
 #if 0
-#	include <BlackBox/Network/INetwork.hpp>
-#	include <BlackBox/ScriptObjectClient.hpp>
-#	include <Game.hpp>
+#include <BlackBox/ScriptObjectClient.hpp>
+#include <BlackBox/Network/INetwork.hpp>
+#include <Game.hpp>
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectClient)
 
@@ -16,7 +16,7 @@ CScriptObjectClient::~CScriptObjectClient()
 void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
 {
 	_ScriptableEx<CScriptObjectClient>::InitializeTemplate(pSS);
-#	define SCRIPT_REG_CLASSNAME CScriptObjectClient
+#define SCRIPT_REG_CLASSNAME CScriptObjectClient
 	SCRIPT_REG_FUNC(Connect);
 	SCRIPT_REG_FUNC(Disconnect);
 	SCRIPT_REG_FUNC(Send);

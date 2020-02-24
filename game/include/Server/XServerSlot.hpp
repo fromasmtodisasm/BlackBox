@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code
+//	Crytek Source code 
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XServerSlot.h
@@ -18,19 +18,19 @@
 #define GAME_XSERVERSLOT_H
 
 #if _MSC_VER > 1000
-#	pragma once
+# pragma once
 #endif
 
 //#include "XEntityProcessingCmd.h"
-#define MAX_ENT_DIST_FACTOR 100
+#define MAX_ENT_DIST_FACTOR 100	
 class CScriptObjectServerSlot;
 
 //#include "XNetworkStats.h"									// CXNetworkStats
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
-#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/System/ITimer.hpp>
 #include <Network/XNetwork.hpp>
 #include <ScriptObjects/ScriptObjectServerSlot.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include <BlackBox/System/ITimer.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
 class CXSnapshot;
 class CXServer;
@@ -38,12 +38,12 @@ class CXServer;
 //////////////////////////////////////////////////////////////////////
 struct SlotNetStats
 {
-	unsigned int ping;				  //!<
-	unsigned int packetslost;		  //!<
-	unsigned int upacketslost;		  //!<
-	std::string name;				  //!<
-	unsigned int maxsnapshotbitsize;  //!<
-	unsigned int lastsnapshotbitsize; //!<
+	unsigned int								ping;										//!<
+	unsigned int								packetslost;						//!<
+	unsigned int								upacketslost;						//!<
+	std::string									name;										//!<
+	unsigned int								maxsnapshotbitsize;			//!<
+	unsigned int								lastsnapshotbitsize;		//!<
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ for every connected client a respective CXServerSlot exists.
 */
 class CXServerSlot : public IServerSlotSink
 {
-  public:
+public:
 	//! constructor
 	CXServerSlot(CXServer* pParent, IServerSlot* pSlot);
 	//! destructor
@@ -70,7 +70,7 @@ class CXServerSlot : public IServerSlotSink
 	//!< from the serverslot internals
 	void ResetBandwidthStats();
 
-	// interface IServerSlotSink
+	// interface IServerSlotSink 
 
 	virtual void OnXServerSlotConnect(const BYTE* pbAuthorizationID, unsigned int uiAuthorizationSize);
 	virtual void OnXServerSlotDisconnect(const char* szCause);
@@ -88,7 +88,7 @@ class CXServerSlot : public IServerSlotSink
 	//!
 	void BanByIP();
 
-	// attributes
+	// attributes 
 
 	//! \return slot id
 	BYTE GetID();
@@ -100,7 +100,7 @@ class CXServerSlot : public IServerSlotSink
 	unsigned int GetPing();
 	//! \param idPlayer
 	void SetPlayerID(EntityId idPlayer);
-	//! \return
+	//! \return 
 	EntityId GetPlayerId() const;
 
 	//! \return client requested name
@@ -133,10 +133,7 @@ class CXServerSlot : public IServerSlotSink
 	//!
 	bool IsReady();
 	//!
-	bool CanSpawn()
-	{
-		return m_bCanSpawn;
-	}
+	bool CanSpawn() { return m_bCanSpawn; }
 	////!
 	//float GetPlayerWriteStepBack()
 	//{
@@ -159,10 +156,7 @@ class CXServerSlot : public IServerSlotSink
 	//!
 	void SendTextMessage(TextMessage& tm, bool bSecondaryChannel);
 	//!
-	IScriptObject* GetScriptObject()
-	{
-		return m_ScriptObjectServerSlot.GetScriptObject();
-	}
+	IScriptObject* GetScriptObject() { return m_ScriptObjectServerSlot.GetScriptObject(); }
 	//! update the server slot stuff
 	void Update(bool send_snap, bool send_events);
 
@@ -178,22 +172,13 @@ class CXServerSlot : public IServerSlotSink
 
 	//return if this is the first snapshot(so you have to send the full snapshot for all entities)
 
-	void ResetPlayTime()
-	{
-		m_fPlayTime = m_pTimer->GetCurrTime();
-	}
+	void ResetPlayTime() { m_fPlayTime = m_pTimer->GetCurrTime(); }
 	//!
-	float GetPlayTime()
-	{
-		return m_pTimer->GetCurrTime() - m_fPlayTime;
-	}
-	//! \return amount of bytes allocated by this instance and it's childs
+	float GetPlayTime() { return m_pTimer->GetCurrTime() - m_fPlayTime; }
+	//! \return amount of bytes allocated by this instance and it's childs 
 	unsigned MemStats();
 	//!
-	int GetClientTimeDelta()
-	{
-		return m_iClientWorldPhysTimeDelta;
-	}
+	int GetClientTimeDelta() { return m_iClientWorldPhysTimeDelta; }
 	//!
 	//void MarkEntityOffSync(EntityId id);
 	//!
@@ -201,13 +186,10 @@ class CXServerSlot : public IServerSlotSink
 	//!
 	//bool IsClientSideEntity(IEntity* pEnt);
 	//!
-	IServerSlot* GetIServerSlot()
-	{
-		return m_pISSlot;
-	}
+	IServerSlot* GetIServerSlot() { return m_pISSlot; }
 	//! \return true=channel is now occupied you can send your data through the lazy channel, false=channel is not ready yet
 	bool OccupyLazyChannel();
-	//!
+	//! 
 	bool ShouldSendOverLazyChannel();
 	//!
 	bool GetServerLazyChannelState();
@@ -215,11 +197,12 @@ class CXServerSlot : public IServerSlotSink
 	static void ConvertToValidPlayerName(const char* szName, char* outName, size_t sizeOfOutName);
 
 	//CXEntityProcessingCmd		m_PlayerProcessingCmd;				//!<
-	bool m_bForceScoreBoard;	 //!<
-	float m_fLastScoreBoardTime; //!<
-								 //CXSnapshot							m_Snapshot;										//!< snapshot
+	bool										m_bForceScoreBoard;						//!<
+	float										m_fLastScoreBoardTime;				//!<
+	//CXSnapshot							m_Snapshot;										//!< snapshot
 
-  private:
+private:
+
 	bool ParseIncomingStream(CStream& stm);
 	void OnClientMsgPlayerProcessingCmd(CStream& stm);
 	void OnClientMsgJoinTeamRequest(CStream& stm);
@@ -237,51 +220,51 @@ class CXServerSlot : public IServerSlotSink
 	void ClientString(const char* s);
 	void FinishOnContextReady();
 
-	std::string m_strPlayerName;  //!< client requested player name
-	std::string m_strPlayerModel; //!< client requested player model
-	std::string m_strClientColor; //!< client requested player color in non team base multiplayer mods
+	std::string										m_strPlayerName;									//!< client requested player name
+	std::string										m_strPlayerModel;									//!< client requested player model
+	std::string										m_strClientColor;									//!< client requested player color in non team base multiplayer mods
 
 	//EntityId									m_wPlayerId;											//!<
-	float m_fPlayTime;				//!< absolute time when ResetPlayTime() was called
-	bool m_bXServerSlotGarbage;		//!<
-	bool m_bLocalHost;				//!<
-	bool m_bCanSpawn;				//!<
-	bool m_bWaitingForContextReady; //!<
-	bool m_bContextIsReady;			//!< Gametype on client is syncronized (ClientStuff is available)
-	IServerSlot* m_pISSlot;			//!< might be 0
-	CXServer* m_pParent;			//!<
+	float											m_fPlayTime;											//!< absolute time when ResetPlayTime() was called
+	bool											m_bXServerSlotGarbage;						//!<
+	bool											m_bLocalHost;											//!<
+	bool											m_bCanSpawn;											//!<
+	bool											m_bWaitingForContextReady;				//!<
+	bool											m_bContextIsReady;								//!< Gametype on client is syncronized (ClientStuff is available)
+	IServerSlot* m_pISSlot;												//!< might be 0
+	CXServer* m_pParent;												//!<
 
-	CScriptObjectServerSlot m_ScriptObjectServerSlot;
+	CScriptObjectServerSlot		m_ScriptObjectServerSlot;
 	ILog* m_pLog;
 	ITimer* m_pTimer;
 	//IPhysicalWorld* m_pPhysicalWorld;
-	int m_nState;
+	int												m_nState;
 
 	//EntityClassId							m_ClassId;												//!<
-	int m_ClientRequestedClassId; //!< do we need this?
-	bool m_bReady;				  //!<
+	int												m_ClientRequestedClassId;					//!< do we need this?
+	bool											m_bReady;													//!<
 
 	//CEntityDesc								m_ed;
 
-	int m_iLastCommandServerPhysTime;
-	int m_iLastCommandClientPhysTime;
-	int m_iClientWorldPhysTimeDelta;
-	int m_nDesyncFrames;
+	int												m_iLastCommandServerPhysTime;
+	int												m_iLastCommandClientPhysTime;
+	int												m_iClientWorldPhysTimeDelta;
+	int												m_nDesyncFrames;
 	//std::map<EntityId, int>		m_mapOffSyncEnts;
-	int m_iLastEventSent;
+	int												m_iLastEventSent;
 
-	float m_fLastClientStringTime;
-	std::string m_sClientString; //!< XSERVERMSG_CLIENTSTRING
+	float											m_fLastClientStringTime;
+	std::string								m_sClientString;									//!< XSERVERMSG_CLIENTSTRING
 	//EntityId									m_idClientVehicle;
-	float m_fClientVehicleSimTime;
+	float											m_fClientVehicleSimTime;
 
-	BYTE m_vGlobalID[64];
-	unsigned char m_bGlobalIDSize;
-	BYTE m_vAuthID[64];
-	unsigned char m_bAuthIDSize;
-	bool m_bServerLazyChannelState;		   //!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
-	bool m_bClientLazyChannelState;		   //!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
-	uint32_t m_dwUpdatesSinceLastLazySend; //!< update cylces we wait for response (for resending), 0=it wasn't set at all
+	BYTE											m_vGlobalID[64];
+	unsigned char							m_bGlobalIDSize;
+	BYTE											m_vAuthID[64];
+	unsigned char							m_bAuthIDSize;
+	bool											m_bServerLazyChannelState;				//!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
+	bool											m_bClientLazyChannelState;				//!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
+	uint32_t									m_dwUpdatesSinceLastLazySend;			//!< update cylces we wait for response (for resending), 0=it wasn't set at all
 
 	friend class CScriptObjectServerSlot;
 	friend class CXSnapshot;

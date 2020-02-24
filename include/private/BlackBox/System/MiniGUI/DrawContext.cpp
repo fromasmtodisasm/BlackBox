@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
 
 // -------------------------------------------------------------------------
 //  File name:   DrawContext.cpp
@@ -9,11 +9,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#include "DrawContext.h"
-#include <CryRenderer/IRenderAuxGeom.h>
-#include <CryRenderer/IRenderer.h>
-#include <CrySystem/ISystem.h>
 #include <StdAfx.h>
+#include "DrawContext.h"
+#include <CrySystem/ISystem.h>
+#include <CryRenderer/IRenderer.h>
+#include <CryRenderer/IRenderAuxGeom.h>
 
 MINIGUI_BEGIN
 
@@ -21,15 +21,16 @@ MINIGUI_BEGIN
 CDrawContext::CDrawContext(SMetrics* pMetrics)
 {
 	m_currentStackLevel = 0;
-	m_x					= 0;
-	m_y					= 0;
-	m_pMetrics			= pMetrics;
-	m_color				= ColorB(0, 0, 0, 0);
-	m_defaultZ			= 0.0f;
-	m_pAuxRender		= gEnv->pRenderer->GetIRenderAuxGeom();
+	m_x = 0;
+	m_y = 0;
+	m_pMetrics = pMetrics;
+	m_color = ColorB(0, 0, 0, 0);
+	m_defaultZ = 0.0f;
+	m_pAuxRender = gEnv->pRenderer->GetIRenderAuxGeom();
 
-	m_frameWidth  = (float)gEnv->pRenderer->GetWidth();
+	m_frameWidth = (float)gEnv->pRenderer->GetWidth();
 	m_frameHeight = (float)gEnv->pRenderer->GetHeight();
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,7 @@ void CDrawContext::DrawFrame(const Rect& rc, ColorB lineColor, ColorB solidColor
 //////////////////////////////////////////////////////////////////////////
 void CDrawContext::StartDrawing()
 {
-	int width  = gEnv->pRenderer->GetWidth();
+	int width = gEnv->pRenderer->GetWidth();
 	int height = gEnv->pRenderer->GetHeight();
 	gEnv->pRenderer->Set2DMode(true, width, height);
 
@@ -95,7 +96,7 @@ void CDrawContext::StopDrawing()
 	// Restore old flags that where set before our draw context.
 	m_pAuxRender->SetRenderFlags(m_prevRenderFlags);
 
-	int width  = gEnv->pRenderer->GetWidth();
+	int width = gEnv->pRenderer->GetWidth();
 	int height = gEnv->pRenderer->GetHeight();
 	gEnv->pRenderer->Set2DMode(false, width, height);
 }

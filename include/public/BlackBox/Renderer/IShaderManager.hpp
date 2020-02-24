@@ -1,7 +1,7 @@
 #if 0
-#	pragma once
-#	include <BlackBox/Shader.hpp>
-#	include <string>
+#pragma once
+#include <BlackBox/Shader.hpp>
+#include <string>
 
 struct IShaderManager
 {

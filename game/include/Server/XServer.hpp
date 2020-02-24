@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code
+//	Crytek Source code 
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XServer.h
@@ -18,20 +18,20 @@
 #define GAME_XSERVER_H
 
 #if _MSC_VER > 1000
-#	pragma once
+# pragma once
 #endif
 
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <Network/XNetwork.hpp>
 #include <Server/XServerRules.hpp>
 //#include "XSnapshot.h"
-#include <BlackBox/Network/INetwork.hpp> // IServerSlotFactory
-#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/Network/INetwork.hpp>					// IServerSlotFactory
 #include <ScriptObjects/ScriptObjectServer.hpp>
-#include <Server/XServerSlot.hpp> // XServerSlot
+#include <BlackBox/System/IConsole.hpp>
+#include <Server/XServerSlot.hpp>			// XServerSlot
 
-#include <algorithm>
 #include <map>
+#include <algorithm>
 
 //////////////////////////////////////////////////////////////////////
 // Broadcast flags organisation (from low byte to top):
@@ -39,85 +39,69 @@
 //              8 bits - Message
 //				8 bits - Id of a slot (id 0 is the localhost)
 
-#define BROADCAST_RELIABLE		  0x0000				// Send a reliable packet
-#define BROADCAST_UNRELIABLE	  0x0001				// Send an unreliable packet
-#define BROADCAST_EXCLUDE		  0x0002				// Exclude the specified slots
-#define BROADCAST_MESSAGE		  0x0004				// Add a message at the begining of the stream
-#define BROADCAST_SLOTID(id)	  (((BYTE)(id)) << 16)	// Specify a slot
-#define BROADCAST_MSG(msg)		  (((BYTE)(msg)) << 24) // Specify a message
-#define GETBROADCAST_SLOTID(data) ((BYTE)(((data) >> 16) & 0xFF))
-#define GETBROADCAST_MSG(data)	  ((BYTE)(((data) >> 24) & 0xFF))
+#define BROADCAST_RELIABLE				0x0000								// Send a reliable packet
+#define BROADCAST_UNRELIABLE			0x0001								// Send an unreliable packet
+#define BROADCAST_EXCLUDE					0x0002								// Exclude the specified slots
+#define BROADCAST_MESSAGE					0x0004								// Add a message at the begining of the stream
+#define BROADCAST_SLOTID(id)			(((BYTE)(id))<<16)		// Specify a slot
+#define BROADCAST_MSG(msg)				(((BYTE)(msg))<<24)		// Specify a message
+#define GETBROADCAST_SLOTID(data)	((BYTE)(((data)>>16)&0xFF))
+#define GETBROADCAST_MSG(data)		((BYTE)(((data)>>24)&0xFF))
 
-#define MAXPLAYERS_LIMIT (32)
+#define MAXPLAYERS_LIMIT					(32)
 
 struct IRenderer;
 
-typedef std::multimap<std::string, ITagPoint*> RespawnPointMap;
+typedef std::multimap<std::string, ITagPoint*>	RespawnPointMap;
 
 //////////////////////////////////////////////////////////////////////
 class BannedID
 {
-  public:
-	BannedID()
-	{
-		memset(vBanID, 0, 64);
-		bSize = 0;
-	};
-	BannedID(const unsigned char* vByteArr, unsigned char bArrSize, const std::string& szPlayerName)
-	{
-		memset(vBanID, 0, 64);
-		memcpy(vBanID, vByteArr, std::min(bArrSize, (uint8_t)64));
-		szName = szPlayerName;
-		bSize  = bArrSize;
-	};
-	BannedID(const BannedID& NewBannedID)
-	{
-		szName = NewBannedID.szName;
-		memset(vBanID, 0, 64);
-		memcpy(vBanID, NewBannedID.vBanID, NewBannedID.bSize);
-		bSize = NewBannedID.bSize;
-	};
-	virtual ~BannedID(){};
+public:
+	BannedID() { memset(vBanID, 0, 64); bSize = 0; };
+	BannedID(const unsigned char* vByteArr, unsigned char bArrSize, const std::string& szPlayerName) { memset(vBanID, 0, 64); memcpy(vBanID, vByteArr, std::min(bArrSize, (uint8_t)64)); szName = szPlayerName; bSize = bArrSize; };
+	BannedID(const BannedID& NewBannedID) { szName = NewBannedID.szName; memset(vBanID, 0, 64); memcpy(vBanID, NewBannedID.vBanID, NewBannedID.bSize); bSize = NewBannedID.bSize; };
+	virtual ~BannedID() {};
 
-	bool operator==(const BannedID& arg) const
-	{
+	bool operator ==(const BannedID& arg) const {
 		if (bSize != arg.bSize)
 			return 0;
 		return (memcmp(arg.vBanID, vBanID, bSize) == 0);
 	}
-	bool operator!=(const BannedID& arg) const
-	{
+	bool operator !=(const BannedID& arg) const {
 		if (bSize != arg.bSize)
 			return 1;
 		return (memcmp(arg.vBanID, vBanID, bSize) != 0);
 	}
 
-	unsigned char vBanID[64];
+	unsigned char	vBanID[64];
 	unsigned char bSize;
-	std::string szName;
+	std::string				szName;
 };
 
-typedef std::vector<BannedID> BannedIDList;
-typedef BannedIDList::iterator BannedIDListItor;
+typedef std::vector<BannedID>					BannedIDList;
+typedef BannedIDList::iterator				BannedIDListItor;
 
-typedef std::vector<unsigned int> BannedIPList;
-typedef BannedIPList::iterator BannedIPListItor;
+typedef std::vector<unsigned int>			BannedIPList;
+typedef BannedIPList::iterator				BannedIPListItor;
+
 
 ///////////////////////////////////////////////
 /*! this class represent a client on the server-side.This mean that
 for every connected client a respective CXServerSlot exists.
 */
 class CXServer
-	: public IServerSlotFactory
-	, public IEntitySystemSink
-	, public IServerSecuritySink
+	: 
+	public IServerSlotFactory, 
+	public IEntitySystemSink, 
+	public IServerSecuritySink
 {
 	// the respawn points
 	RespawnPointMap m_vRespawnPoints;
-	RespawnPointMap::iterator m_CurRespawnPoint;
+	RespawnPointMap::iterator	m_CurRespawnPoint;
 
-  public:
-	typedef std::map<BYTE, CXServerSlot*> XSlotMap;
+public:
+	typedef std::map<BYTE, CXServerSlot*>		XSlotMap;
 
 	//! constructor
 	CXServer(class CGame* pGame, WORD nPort, const char* szName, bool listen);
@@ -127,10 +111,7 @@ class CXServer
 	void DrawNetStats(IRenderer* pRenderer);
 
 	//! /return true=server creation was successful, false otherwise
-	bool IsOK()
-	{
-		return m_bOK;
-	}
+	bool IsOK() { return m_bOK; }
 
 	//! /return pointer to the ServerSlot or 0 if there is no server slot for this id
 	/*CXServerSlot* GetServerSlotByEntityId(const EntityId inId) const
@@ -175,7 +156,7 @@ class CXServer
 	void RegisterSlot(CXServerSlot* pSlot);
 
 	//! is called by the XServerSlot itself during destruction
-	//! don't call from anywhere else - a call cycle is likely
+	//! don't call from anywhere else - a call cycle is likely 
 	void UnregisterXSlot(DWORD nClientID);
 
 	void ClearSlots();
@@ -185,6 +166,7 @@ class CXServer
 
 	void Update();
 	void UpdateXServerNetwork();
+
 
 	// Message broadcast
 	void BroadcastUnreliable(XSERVERMSG msg, CStream& stmIn, int nExclude = -1);
@@ -198,26 +180,17 @@ class CXServer
 	void UnbindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);
 	void SyncVariable(ICVar* p);
 	void SyncAIState(void);
-	XSlotMap& GetSlotsMap()
-	{
-		return m_mapXSlots;
-	}
+	XSlotMap& GetSlotsMap() { return m_mapXSlots; }
 
 	// Infos retriving
-	const char* GetName()
-	{
-		return sv_name->GetString();
-	}
-	const WORD GetPort()
-	{
-		return m_ServerInfos.nPort;
-	}
+	const char* GetName() { return sv_name->GetString(); }
+	const WORD  GetPort() { return m_ServerInfos.nPort; }
 
 	// return the current context
 	bool GetContext(SXGameContext& ctxOut);
 
-	void AddRespawnPoint(ITagPoint* pPoint);
-	void RemoveRespawnPoint(ITagPoint* pPoint);
+	void	AddRespawnPoint(ITagPoint* pPoint);
+	void	RemoveRespawnPoint(ITagPoint* pPoint);
 	// get a random respawn point
 	ITagPoint* GetFirstRespawnPoint();
 	ITagPoint* GetNextRespawnPoint();
@@ -250,15 +223,9 @@ class CXServer
 	//!
 	unsigned int GetMaxUpdateRate() const;
 	//!
-	void ClearRespawnPoints()
-	{
-		m_vRespawnPoints.clear();
-	}
+	void ClearRespawnPoints() { m_vRespawnPoints.clear(); }
 	//!
-	CXServerRules* GetRules()
-	{
-		return &m_ServerRules;
-	};
+	CXServerRules* GetRules() { return &m_ServerRules; };
 	//!
 	void OnMapChanged();
 	//!
@@ -270,7 +237,7 @@ class CXServer
 	//! \return true during destruction (to avoid recursive calls), false otherwise
 	bool IsInDestruction() const;
 
-	// interface IServerSecuritySink
+	// interface IServerSecuritySink 
 
 	virtual bool IsIPBanned(const unsigned int dwIP);
 	virtual void BanIP(const unsigned int dwIP);
@@ -280,51 +247,52 @@ class CXServer
 
 	bool GetServerInfo();
 
-	bool m_bOK;					//!< true=server creation was successful, false otherwise
-	bool m_bListen;				//!< server accepts non-local connections
-	struct IServer* m_pIServer; //!<
+	bool									m_bOK;										//!< true=server creation was successful, false otherwise
+	bool									m_bListen;								//!< server accepts non-local connections
+	struct IServer* m_pIServer;								//!<
 
-	struct IXSystem* m_pISystem; //!< The system interface
+	struct IXSystem* m_pISystem;								//!< The system interface
 
-	struct ITimer* m_pTimer; //!< timer interface to avoid thousands of GetTimer()
-	class CGame* m_pGame;	 //!< the game
+	struct ITimer* m_pTimer;									//!< timer interface to avoid thousands of GetTimer()
+	class CGame* m_pGame;									//!< the game
 
-	// ID Generator
-	SXServerInfos m_ServerInfos; //!< server infos
-	SXGameContext m_GameContext; //!< the current game context
-	CXServerRules m_ServerRules; //!< server rules
+	// ID Generator	
+	SXServerInfos					m_ServerInfos;						//!< server infos
+	SXGameContext					m_GameContext;						//!< the current game context
+	CXServerRules					m_ServerRules;						//!< server rules
 
 	// snapshot
-	CScriptObjectServer m_ScriptObjectServer; //!<
+	CScriptObjectServer		m_ScriptObjectServer;			//!<
 
 	// console variables
-	ICVar* sv_name;					//!< server name (shown in the serverlist)
-	ICVar* sv_ServerType;			//!< "LAN"-no publich, no cdkeychecks, "NET"-no publish, cdkey checks, "UBI", publish, cdkey checks
-	ICVar* sv_password;				//!< "" if not used
-	ICVar* sv_maxplayers;			//!<
-	ICVar* sv_maxrate;				//!< bitspersecond, Internet, maximum for all player, value is for one player
-	ICVar* sv_maxrate_lan;			//!< bitspersecond, LAN, maximum for all player, value is for one player
-	ICVar* sv_netstats;				//!<
-	ICVar* sv_max_scheduling_delay; //!<
-	ICVar* sv_min_scheduling_delay; //!<
+	ICVar* sv_name;									//!< server name (shown in the serverlist)
+	ICVar* sv_ServerType;						//!< "LAN"-no publich, no cdkeychecks, "NET"-no publish, cdkey checks, "UBI", publish, cdkey checks
+	ICVar* sv_password;							//!< "" if not used
+	ICVar* sv_maxplayers;						//!<
+	ICVar* sv_maxrate;								//!< bitspersecond, Internet, maximum for all player, value is for one player
+	ICVar* sv_maxrate_lan;						//!< bitspersecond, LAN, maximum for all player, value is for one player
+	ICVar* sv_netstats;							//!<
+	ICVar* sv_max_scheduling_delay;	//!<
+	ICVar* sv_min_scheduling_delay;	//!<
 
 	//CXNetworkStats				m_NetStats;								//!< for network statistics (count and size per packet type)
 
 	static const char* GetMsgName(XSERVERMSG inValue);
 
-	bool m_bIsLoadingLevel; //!< true during loading of the level (used to disable synchronized spawning of entities and to make client waiting during that time)
+	bool									m_bIsLoadingLevel;				//!< true during loading of the level (used to disable synchronized spawning of entities and to make client waiting during that time)
 
-	BannedIDList m_vBannedIDList; //!<
-	BannedIPList m_vBannedIPList; //!<
+	BannedIDList					m_vBannedIDList;					//!<
+	BannedIPList					m_vBannedIPList;					//!<
 
 	void SaveBanList(bool bSaveID = true, bool bSaveIP = true);
 	void LoadBanList(bool bLoadID = true, bool bLoadIP = true);
 
-  private:
-	XSlotMap m_mapXSlots;  //!<
-	bool m_bInDestruction; //!< only true during destruction (to avoid recursive calls)
+private:
 
-	ICVar* sv_maxupdaterate; //!< is limiting the updaterate of the clients
+	XSlotMap							m_mapXSlots;							//!<
+	bool									m_bInDestruction;					//!< only true during destruction (to avoid recursive calls)
+
+	ICVar* sv_maxupdaterate;					//!< is limiting the updaterate of the clients
 };
 
 #endif // GAME_XSERVER_H

@@ -14,7 +14,7 @@ void CActionMapManager::SetInvertedMouse(bool bEnable)
 
 bool CActionMapManager::GetInvertedMouse()
 {
-	return false;
+  return false;
 }
 
 void CActionMapManager::RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam)
@@ -25,18 +25,18 @@ void CActionMapManager::SetSink(IActionMapSink* pSink)
 {
 }
 
-void CActionMapManager::CreateAction(XACTIONID nActionID, const char* sActionName, XActionActivationMode aam /* = aamOnPress*/)
+void CActionMapManager::CreateAction(XACTIONID nActionID, const char* sActionName, XActionActivationMode aam/* = aamOnPress*/)
 {
 }
 
 IActionMap* CActionMapManager::CreateActionMap(const char* s)
 {
-	return nullptr;
+  return nullptr;
 }
 
 IActionMap* CActionMapManager::GetActionMap(const char* s)
 {
-	return nullptr;
+  return nullptr;
 }
 
 void CActionMapManager::ResetAllBindings()
@@ -53,12 +53,12 @@ void CActionMapManager::SetActionMap(const char* s)
 
 bool CActionMapManager::CheckActionMap(XACTIONID nActionID)
 {
-	return false;
+  return false;
 }
 
 bool CActionMapManager::CheckActionMap(const char* sActionName)
 {
-	return false;
+  return false;
 }
 
 void CActionMapManager::Reset()
@@ -83,5 +83,5 @@ void CActionMapManager::Disable()
 
 bool CActionMapManager::IsEnabled()
 {
-	return false;
+  return false;
 }

@@ -26,12 +26,12 @@ void CInputActionMap::CallActionTrigger(INPUTACTIONID nActionID, float fValue)
 
 float CInputActionMap::CheckAction(const INPUTACTIONID nActionID)
 {
-	return 0.0f;
+  return 0.0f;
 }
 
-bool CInputActionMap::SetAction(const INPUTACTIONID nActionID, bool bCheckPressed, const char* szCodes, const char* szMods /* = NULL*/)
+bool CInputActionMap::SetAction(const INPUTACTIONID nActionID, bool bCheckPressed, const char* szCodes, const char* szMods/* = NULL*/)
 {
-	return false;
+  return false;
 }
 
 void CInputActionMap::ClearAction(const INPUTACTIONID nActionID)

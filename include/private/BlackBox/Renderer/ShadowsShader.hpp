@@ -1,17 +1,17 @@
 #pragma once
+#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Renderer/Shader.hpp>
 
 class ShadowsShader : public CBaseShaderProgram
 {
-  public:
-	ShadowsShader();
-	~ShadowsShader();
+public:
+  ShadowsShader();
+  ~ShadowsShader();
 
-  private:
-	ISystem* m_Engine;
+private:
+  ISystem* m_Engine;
 
-	// Inherited via CBaseShaderProgram
-	virtual void setup() override;
+  // Inherited via CBaseShaderProgram
+  virtual void setup() override;
 };
