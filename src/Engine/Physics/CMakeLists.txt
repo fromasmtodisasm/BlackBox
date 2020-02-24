@@ -10,7 +10,7 @@ ${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/Pysics.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Physics.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)

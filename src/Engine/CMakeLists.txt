@@ -67,6 +67,7 @@ add_subsystem(Network)
 add_subsystem(GUI)
 add_subsystem(World)
 add_subsystem(Scene)
+add_subsystem(Physics)
 
 
 set_target_properties(GUI PROPERTIES FOLDER "Engine")
