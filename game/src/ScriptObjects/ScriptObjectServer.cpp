@@ -17,42 +17,42 @@
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 #include <IXSystem.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>
-#include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectServer)
 
 //////////////////////////////////////////////////////////////////////
 CScriptObjectServer::CScriptObjectServer()
 {
-  m_pServer = NULL;
-  m_pSlotMap = NULL;
+	m_pServer  = NULL;
+	m_pSlotMap = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 CScriptObjectServer::~CScriptObjectServer()
 {
-  if (m_pSlotMap)
-    m_pSlotMap->Release();
-  m_pSlotMap = NULL;
+	if (m_pSlotMap)
+		m_pSlotMap->Release();
+	m_pSlotMap = NULL;
 }
 //////////////////////////////////////////////////////////////////////
 //! create the object into the LUA VM
 bool CScriptObjectServer::Create(IScriptSystem* pScriptSystem, IXSystem* pXSystem, CGame* pGame)
 {
-  m_pXSystem = pXSystem;
-  m_pGame = pGame;
-  InitGlobal(pScriptSystem, "Server", this);
-  m_pSlotMap = pScriptSystem->CreateObject();
+	m_pXSystem = pXSystem;
+	m_pGame	   = pGame;
+	InitGlobal(pScriptSystem, "Server", this);
+	m_pSlotMap = pScriptSystem->CreateObject();
 
-  return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 void CScriptObjectServer::InitializeTemplate(IScriptSystem* pSS)
 {
-  _ScriptableEx<CScriptObjectServer>::InitializeTemplate(pSS);
+	_ScriptableEx<CScriptObjectServer>::InitializeTemplate(pSS);
 #if 0
   REG_FUNC(CScriptObjectServer, Unban);
   REG_FUNC(CScriptObjectServer, ListBans);

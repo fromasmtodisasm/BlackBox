@@ -2,5 +2,5 @@
 
 struct IPostProcessor
 {
-  virtual void Do(unsigned int texture) = 0;
+	virtual void Do(unsigned int texture) = 0;
 };

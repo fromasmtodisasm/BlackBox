@@ -44,46 +44,46 @@
       - added to CryPlatform
  */
 
-#include <stdio.h>
 #include "CryPlatformDefines.h"
+#include <stdio.h>
 
 #if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO
-	#include <CryCore/Platform/CryWindows.h>
-	#if CRY_PLATFORM_WINDOWS
-		#define CryLoadLibrary(libName) ::LoadLibraryA(libName)
-	#elif CRY_PLATFORM_DURANGO
-		#define CryLoadLibrary(libName) ::LoadLibraryExA(libName, 0, 0)
-	#endif
-	#define CryGetCurrentModule()                         ::GetModuleHandle(nullptr)
-	#define CryGetModuleFileName(module, filename, size)  ::GetModuleFileName(module, filename, size)
-	#define CrySharedLibrarySupported   true
-	#define CrySharedLibraryPrefix      ""
-	#define CrySharedLibraryExtension   ".dll"
-	#define CryGetProcAddress(libHandle, procName) ::GetProcAddress((HMODULE)(libHandle), procName)
-	#define CryFreeLibrary(libHandle)              ::FreeLibrary((HMODULE)(libHandle))
+#	include <CryCore/Platform/CryWindows.h>
+#	if CRY_PLATFORM_WINDOWS
+#		define CryLoadLibrary(libName) ::LoadLibraryA(libName)
+#	elif CRY_PLATFORM_DURANGO
+#		define CryLoadLibrary(libName) ::LoadLibraryExA(libName, 0, 0)
+#	endif
+#	define CryGetCurrentModule()						 ::GetModuleHandle(nullptr)
+#	define CryGetModuleFileName(module, filename, size) ::GetModuleFileName(module, filename, size)
+#	define CrySharedLibrarySupported					 true
+#	define CrySharedLibraryPrefix						 ""
+#	define CrySharedLibraryExtension					 ".dll"
+#	define CryGetProcAddress(libHandle, procName)		 ::GetProcAddress((HMODULE)(libHandle), procName)
+#	define CryFreeLibrary(libHandle)					 ::FreeLibrary((HMODULE)(libHandle))
 #elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
-	#include <dlfcn.h>
-	#include <unistd.h>
-	#include <stdlib.h>
-	#include <cstring>
+#	include <dlfcn.h>
+#	include <unistd.h>
+#	include <stdlib.h>
+#	include <cstring>
 
-	// for compatibility with code written for windows
-	#define CrySharedLibrarySupported     true
-	#define CrySharedLibraryPrefix        "lib"
-	#if CRY_PLATFORM_APPLE
-		#define CrySharedLibraryExtension ".dylib"
-	#else
-		#define CrySharedLibraryExtension ".so"
-	#endif
+// for compatibility with code written for windows
+#	define CrySharedLibrarySupported true
+#	define CrySharedLibraryPrefix	  "lib"
+#	if CRY_PLATFORM_APPLE
+#		define CrySharedLibraryExtension ".dylib"
+#	else
+#		define CrySharedLibraryExtension ".so"
+#	endif
 
-	#define CryGetProcAddress(libHandle, procName) ::dlsym(libHandle, procName)
-	#define CryFreeLibrary(libHandle)              ::dlclose(libHandle)
-	#define CryGetCurrentModule()                  ::dlopen(NULL, RTLD_LAZY)
-	#define HMODULE                                void*
+#	define CryGetProcAddress(libHandle, procName) ::dlsym(libHandle, procName)
+#	define CryFreeLibrary(libHandle)			   ::dlclose(libHandle)
+#	define CryGetCurrentModule()				   ::dlopen(NULL, RTLD_LAZY)
+#	define HMODULE								   void*
 
 static size_t CryGetModuleFileName(void* handle, char path[], size_t size)
 {
-	if(handle == nullptr)
+	if (handle == nullptr)
 	{
 		readlink("/proc/self/exe", path, size);
 		return strlen(path);
@@ -92,7 +92,7 @@ static size_t CryGetModuleFileName(void* handle, char path[], size_t size)
 	Dl_info info;
 
 	::dladdr(handle, &info);
-	if(info.dli_sname == NULL && info.dli_saddr == NULL)
+	if (info.dli_sname == NULL && info.dli_saddr == NULL)
 		return 0;
 
 	size_t len = strlen(info.dli_fname);
@@ -126,22 +126,22 @@ static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInM
 	const char* filePre = cry_strncmp(libName, CrySharedLibraryPrefix) != 0 ? CrySharedLibraryPrefix : "";
 	const char* fileExt = cry_strncmp(libName + strlen(libName) - (CRY_ARRAY_COUNT(CrySharedLibraryExtension) - 1), CrySharedLibraryExtension) != 0 ? CrySharedLibraryExtension : "";
 
-#if CRY_PLATFORM_ANDROID
+#	if CRY_PLATFORM_ANDROID
 	// 1) Load dll via Java -> ensure JNI_OnLoad is called and all native exported functions are exposed to java
 	// Need to be called first to ensure JNI_OnLoad() is called the first time we load the library
 	if (Cry::JNI::JNI_IsAvailable())
 	{
 		// Call library via Java so we invoke JNI_OnLoad and load the library symbols into the global space
 		// Note: Also call dlopen(libName) so that we can get the handle ... the library should have been loaded via the JNI_LoadLibrary() call already.
-		char strippedLibName[128] = {};
-		const int lenFilePre = strlen(filePre) == 0 ? CRY_ARRAY_COUNT(CrySharedLibraryPrefix) - 1 : 0;
-		const int lenFileExt = strlen(fileExt) == 0 ? CRY_ARRAY_COUNT(CrySharedLibraryExtension) - 2 : 0;
+		char strippedLibName[128]	  = {};
+		const int lenFilePre		  = strlen(filePre) == 0 ? CRY_ARRAY_COUNT(CrySharedLibraryPrefix) - 1 : 0;
+		const int lenFileExt		  = strlen(fileExt) == 0 ? CRY_ARRAY_COUNT(CrySharedLibraryExtension) - 2 : 0;
 		const char* strippedNameBegin = &libName[lenFilePre];
 		cry_sprintf(strippedLibName, strlen(strippedNameBegin) - lenFileExt, "%s", strippedNameBegin);
 
 		if (!Cry::JNI::JNI_LoadLibrary(strippedLibName))
 		{
-			return NULL;  // mimic dlopen() return for failed load
+			return NULL; // mimic dlopen() return for failed load
 		}
 	}
 
@@ -161,36 +161,36 @@ static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInM
 	{
 		libPath = CryGetSharedLibraryStoragePath();
 	}
-#else
+#	else
 	const char* libPath = bInModulePath ? (GetModulePath() ? GetModulePath() : ".") : "";
-#endif	
+#	endif
 
 	cry_sprintf(finalPath, "%s%s%s%s%s", libPath, libPath ? "/" : "", filePre, libName, fileExt);
 
-#if CRY_PLATFORM_LINUX
+#	if CRY_PLATFORM_LINUX
 	return ::dlopen(finalPath, (bLazy ? RTLD_LAZY : RTLD_NOW) | RTLD_DEEPBIND);
-#else
+#	else
 	return ::dlopen(finalPath, bLazy ? RTLD_LAZY : RTLD_NOW);
-#endif
+#	endif
 }
 #else
-	#define CrySharedLibrarySupported              false
-	#define CrySharedLibraryPrefix                 ""
-	#define CrySharedLibraryExtension              ""
-	#define CryLoadLibrary(libName)                NULL
-	#define CryGetProcAddress(libHandle, procName) NULL
-	#define CryFreeLibrary(libHandle)
-	#define GetModuleHandle(x)                     0
-	#define CryGetCurrentModule()                  NULL
+#	define CrySharedLibrarySupported			   false
+#	define CrySharedLibraryPrefix				   ""
+#	define CrySharedLibraryExtension			   ""
+#	define CryLoadLibrary(libName)				   NULL
+#	define CryGetProcAddress(libHandle, procName) NULL
+#	define CryFreeLibrary(libHandle)
+#	define GetModuleHandle(x)	  0
+#	define CryGetCurrentModule() NULL
 #endif
 
-#define CryLibraryDefName(libName)               CrySharedLibraryPrefix libName CrySharedLibraryExtension
-#define CryLoadLibraryDefName(libName)           CryLoadLibrary(CryLibraryDefName(libName))
+#define CryLibraryDefName(libName)	   CrySharedLibraryPrefix libName CrySharedLibraryExtension
+#define CryLoadLibraryDefName(libName) CryLoadLibrary(CryLibraryDefName(libName))
 
 // RAII helper to load a dynamic library and free it at the end of the scope.
 class CCryLibrary
 {
-public:
+  public:
 	CCryLibrary(const char* szLibraryPath)
 		: m_hModule(nullptr)
 	{
@@ -222,8 +222,14 @@ public:
 		}
 	}
 
-	void ReleaseOwnership() { m_hModule = nullptr; }
-	bool IsLoaded() const { return m_hModule != nullptr; }
+	void ReleaseOwnership()
+	{
+		m_hModule = nullptr;
+	}
+	bool IsLoaded() const
+	{
+		return m_hModule != nullptr;
+	}
 
 	template<typename TProcedure>
 	TProcedure GetProcedureAddress(const char* szName)

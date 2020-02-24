@@ -1,6 +1,6 @@
-#include <Server/XServerSlot.hpp>
-#include <Server/XServer.hpp>
 #include <Game.hpp>
+#include <Server/XServer.hpp>
+#include <Server/XServerSlot.hpp>
 //#include <Server/XSystemServer.hpp>
 
 #define NET_TRACE(...)
@@ -152,30 +152,30 @@ void CXServerSlot::OnXServerSlotDisconnect(const char *szCause)
 	// set as a garbage
 	m_bXServerSlotGarbage = true;
 }
-#include <XPlayer.hpp>
-#include "XV.hppicle.hpp"
-#include "Spectator.hpp"								// CSpectator
-#include "AdvCamSystem.hpp"							// CAdvCamSystem
-#include "StreamData.hpp"								// CStreamData_WorldPos
-#include "PlayerSystem.hpp"
-#include <functional>
+#	include "AdvCamSystem.hpp" // CAdvCamSystem
+#	include "PlayerSystem.hpp"
+#	include "Spectator.hpp"  // CSpectator
+#	include "StreamData.hpp" // CStreamData_WorldPos
+#	include "XV.hppicle.hpp"
+#	include <XPlayer.hpp>
+#	include <functional>
 #endif
 //////////////////////////////////////////////////////////////////////
-void CXServerSlot::OnSpawnEntity(CEntityDesc &ed,IEntity *pEntity,bool bSend)
+void CXServerSlot::OnSpawnEntity(CEntityDesc& ed, IEntity* pEntity, bool bSend)
 {
-	if(!m_bCanSpawn)
+	if (!m_bCanSpawn)
 	{
-		NET_TRACE("<<NET>>CXServerSlot::OnSpawnEntity[%s] [%d] NOT READY TO SPAWN!",GetName() ,pEntity->GetId());
+		NET_TRACE("<<NET>>CXServerSlot::OnSpawnEntity[%s] [%d] NOT READY TO SPAWN!", GetName(), pEntity->GetId());
 		return;
 	}
-	if(bSend)
+	if (bSend)
 	{
 		CStream stm;
 
 		//ed.Write(m_pParent->m_pGame->GetIBitStream(),stm);
 		//SendReliableMsg(XSERVERMSG_ADDENTITY,stm,false,(const char *)ed.className);
 	}
-	NET_TRACE("<<NET>>CXServerSlot::OnSpawnEntity[%s] [%d]",GetName(),pEntity->GetId());
+	NET_TRACE("<<NET>>CXServerSlot::OnSpawnEntity[%s] [%d]", GetName(), pEntity->GetId());
 	//m_Snapshot.AddEntity(pEntity);
 
 #if 0
@@ -236,11 +236,11 @@ CXServer *CXServerSlot::GetServer()
 #endif
 
 //////////////////////////////////////////////////////////////////////
-void CXServerSlot::OnRemoveEntity(IEntity *pEntity)
+void CXServerSlot::OnRemoveEntity(IEntity* pEntity)
 {
-	if(!m_bCanSpawn)
+	if (!m_bCanSpawn)
 	{
-		NET_TRACE("<<NET>>CXServerSlot::OnRemoveEntity[%s] [%d] NOT READY TO SPAWN!",GetName() ,pEntity->GetId());
+		NET_TRACE("<<NET>>CXServerSlot::OnRemoveEntity[%s] [%d] NOT READY TO SPAWN!", GetName(), pEntity->GetId());
 		return;
 	}
 #if 0
@@ -254,7 +254,7 @@ void CXServerSlot::OnRemoveEntity(IEntity *pEntity)
 	else
 	{
 		NET_TRACE("<<NET>> CXServerSlot::OnRemoveEntity[%s] [%d] ##SKIPPED## (WAS NOT IN THE SNAPSHOT)",GetName(),pEntity->GetId());
-	}		
+	}
 #endif
 }
 #if 0
@@ -500,7 +500,7 @@ size_t CXServerSlot::SendReliableMsg( XSERVERMSG msg, CStream &stm,bool bSeconda
 
 	m_pParent->m_NetStats.AddPacket(msg,istm.GetSize(),true);
 
-#ifdef NET_PACKET_LOGGING
+#	ifdef NET_PACKET_LOGGING
 	// debugging
 	{
 		FILE *out=fopen("c:/temp/ServerOutPackets.txt","a");
@@ -529,7 +529,7 @@ size_t CXServerSlot::SendReliableMsg( XSERVERMSG msg, CStream &stm,bool bSeconda
 			fclose(out);	
 		}
 	}
-#endif
+#	endif
 
 	return istm.GetSize();
 }
@@ -550,7 +550,7 @@ size_t CXServerSlot::SendUnreliableMsg(XSERVERMSG msg, CStream &stm, const char 
 
 	m_pParent->m_NetStats.AddPacket(msg,istm.GetSize(),false);
 
-#ifdef NET_PACKET_LOGGING
+#	ifdef NET_PACKET_LOGGING
 	// debugging
 	{
 		FILE *out=fopen("c:/temp/ServerOutPackets.txt","a");
@@ -579,7 +579,7 @@ size_t CXServerSlot::SendUnreliableMsg(XSERVERMSG msg, CStream &stm, const char 
 			fclose(out);	
 		}
 	}
-#endif
+#	endif
 
 	return istm.GetSize();
 }
@@ -1430,4 +1430,3 @@ void CXServerSlot::GetNetStats(SlotNetStats &ss)
 	ss.maxsnapshotbitsize=m_Snapshot.m_nMaxSnapshotBitSize;
 }
 #endif
-

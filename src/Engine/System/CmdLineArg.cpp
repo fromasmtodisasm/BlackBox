@@ -3,9 +3,9 @@
 
 CCmdLineArg::CCmdLineArg(const char* name, const char* value, ECmdLineArgType type)
 {
-  m_name = name;
-  m_value = value;
-  m_type = type;
+	m_name	= name;
+	m_value = value;
+	m_type	= type;
 }
 
 CCmdLineArg::~CCmdLineArg()
@@ -14,21 +14,21 @@ CCmdLineArg::~CCmdLineArg()
 
 const char* CCmdLineArg::GetName() const
 {
-  return m_name.c_str();
+	return m_name.c_str();
 }
 const char* CCmdLineArg::GetValue() const
 {
-  return m_value.c_str();
+	return m_value.c_str();
 }
 const ECmdLineArgType CCmdLineArg::GetType() const
 {
-  return m_type;
+	return m_type;
 }
 const float CCmdLineArg::GetFValue() const
 {
-  return (float)atof(m_value.c_str());
+	return (float)atof(m_value.c_str());
 }
 const int CCmdLineArg::GetIValue() const
 {
-  return atoi(m_value.c_str());
+	return atoi(m_value.c_str());
 }

@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XServerRules.h
@@ -16,7 +16,7 @@
 #ifndef GAME_XSERVERRULES_H
 #define GAME_XSERVERRULES_H
 #if _MSC_VER > 1000
-# pragma once
+#	pragma once
 #endif
 
 // Forward declarations.
@@ -27,23 +27,23 @@ struct ICVar;
 struct IScriptObject;
 
 //////////////////////////////////////////////////////////////////////
-#define TEAM_HAS_NOT_CHANGED	-1
-#define SPECTATORS_TEAM				0
+#define TEAM_HAS_NOT_CHANGED -1
+#define SPECTATORS_TEAM		 0
 
 #include <ScriptObjects/ScriptObjectServerSlot.hpp>
 
 //////////////////////////////////////////////////////////////////////
 class CXServerRules
 {
-public:
+  public:
 	CXServerRules();
 	virtual ~CXServerRules();
 
 	//!	Load the rules set by the console variables
-	bool	Init(CGame* pGame, IConsole* pConsole, IScriptSystem* pScriptSystem, ILog* pLog = NULL);
-	void	Update();
+	bool Init(CGame* pGame, IConsole* pConsole, IScriptSystem* pScriptSystem, ILog* pLog = NULL);
+	void Update();
 	//! Unload the rules
-	void	ShutDown();
+	void ShutDown();
 
 	void CallVote(CScriptObjectServerSlot& sss, char* command, char* arg1);
 	void Vote(CScriptObjectServerSlot& sss, int vote);
@@ -51,16 +51,19 @@ public:
 	void MapChanged();
 	//! \return 0 if the class is not initialized (e.g. during loading)
 	const char* GetGameType();
-	IScriptObject* GetScriptObject() { return m_pGameRulesObj; };
+	IScriptObject* GetScriptObject()
+	{
+		return m_pGameRulesObj;
+	};
 
-	void  PrintEnterGameMessage(const char* playername, int color);
-	void  OnHitObject(const SWeaponHit& hit);
-	void  OnHitPlayer(const SWeaponHit& hit);
+	void PrintEnterGameMessage(const char* playername, int color);
+	void OnHitObject(const SWeaponHit& hit);
+	void OnHitPlayer(const SWeaponHit& hit);
 
 	//! When new player connected.
-	int	OnClientConnect(IScriptObject* pSS, int nRequestedClassID);
+	int OnClientConnect(IScriptObject* pSS, int nRequestedClassID);
 	//! When new player connected.
-	void	OnClientDisconnect(IScriptObject* pSS);
+	void OnClientDisconnect(IScriptObject* pSS);
 	//void	OnClientRequestRespawn(IScriptObject* pSS, const EntityClassId nRequestedClassID);
 	//! When player respawn after death.
 	//void	OnPlayerRespawn(IEntity* player);
@@ -78,14 +81,13 @@ public:
 	void SendWorldTextMessage(EntityId sender, TextMessage& tm);*/
 
 	//! After the map and its entities have been loaded
-	void	OnAfterLoad();
+	void OnAfterLoad();
 
-public:
+  public:
 	// console variable used to set the rules
 	IConsole* m_pConsole;
 
-private:
-
+  private:
 	//! Get rules script.
 	CGame* m_pGame;
 	IScriptSystem* m_pScriptSystem;

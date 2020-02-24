@@ -1,5 +1,5 @@
-#include <Game.hpp>
 #include <Client/XClient.hpp>
+#include <Game.hpp>
 #include <Server/XServer.hpp>
 
 #include <BlackBox/System/IConsole.hpp>
@@ -8,13 +8,13 @@
 //! create the server
 bool CGame::StartupServer(bool listen, const char* szName)
 {
-  m_pLog->Log("Creating the server");
+	m_pLog->Log("Creating the server");
 
-  ShutdownServer();	// to be sure
+	ShutdownServer(); // to be sure
 
-  int nPort = sv_port->GetIVal();
+	int nPort = sv_port->GetIVal();
 
-  auto s = CreateServer(nullptr, 10000, true);
+	auto s = CreateServer(nullptr, 10000, true);
 
 #if 0
   // set port and create server
@@ -42,47 +42,47 @@ bool CGame::StartupServer(bool listen, const char* szName)
   m_pLog->Log("Server created");
 #endif
 
-  //m_pServer->Update(); // server is created but map wasn't set yet we don't want to allow connects before
+	//m_pServer->Update(); // server is created but map wasn't set yet we don't want to allow connects before
 
-  return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 //! shutdown the server
 void CGame::ShutdownServer()
 {
-  if (!m_pServer)
-    return;
+	if (!m_pServer)
+		return;
 
-  if (!m_pServer->IsInDestruction())
-  {
-    m_pLog->Log("Shutdown CXServer");
-    SAFE_DELETE(m_pServer);
-    m_pLog->Log("CXServer shutdowned");
-  }
+	if (!m_pServer->IsInDestruction())
+	{
+		m_pLog->Log("Shutdown CXServer");
+		SAFE_DELETE(m_pServer);
+		m_pLog->Log("CXServer shutdowned");
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
 //! create the client for a multiplayer session
 bool CGame::StartupClient()
 {
-  m_pLog->Log("Creating the Client");
+	m_pLog->Log("Creating the Client");
 
-  ShutdownClient();	// to be sure
+	ShutdownClient(); // to be sure
 
-  m_pClient = new CXClient;
+	m_pClient = new CXClient;
 
-  if (!m_pClient->Init(this)) // Check if the client has been created
-  {
-    ShutdownClient();
+	if (!m_pClient->Init(this)) // Check if the client has been created
+	{
+		ShutdownClient();
 
-    m_pLog->Log("Client creation failed !");
-    return false;
-  }
+		m_pLog->Log("Client creation failed !");
+		return false;
+	}
 
-  m_pLog->Log("Client created");
+	m_pLog->Log("Client created");
 
-  return true;
+	return true;
 }
 
 //! create the client for a singleplayer session
@@ -90,42 +90,42 @@ bool CGame::StartupClient()
 //////////////////////////////////////////////////////////////////////////
 bool CGame::StartupLocalClient()
 {
-  m_pLog->Log("Creating the LocalClient");
+	m_pLog->Log("Creating the LocalClient");
 
-  m_pClient = new CXClient;
+	m_pClient = new CXClient;
 
-  if (!m_pClient->Init(this, true)) // Check if the client has been created
-  {
-    ShutdownClient();
+	if (!m_pClient->Init(this, true)) // Check if the client has been created
+	{
+		ShutdownClient();
 
-    m_pLog->Log("LocalClient creation failed !");
-    return false;
-  }
+		m_pLog->Log("LocalClient creation failed !");
+		return false;
+	}
 
-  m_pLog->Log("LocalClient created");
+	m_pLog->Log("LocalClient created");
 
-  return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 //! shutdown the client
 void CGame::ShutdownClient()
 {
-  if (!m_pClient)
-    return;
-  m_pLog->Log("Disconnect the client");
-  m_pClient->XDisconnect("@ClientHasQuit");
-  m_pLog->Log("Shutdown the Client");
+	if (!m_pClient)
+		return;
+	m_pLog->Log("Disconnect the client");
+	m_pClient->XDisconnect("@ClientHasQuit");
+	m_pLog->Log("Shutdown the Client");
 
-  m_pClient->MarkForDestruct();
-  m_pClient->DestructIfMarked();
-  m_pClient = NULL;
+	m_pClient->MarkForDestruct();
+	m_pClient->DestructIfMarked();
+	m_pClient = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CGame::IsClient()
 {
-  return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
+	return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
 }
 
 bool CGame::IsMultiplayer()
@@ -134,10 +134,10 @@ bool CGame::IsMultiplayer()
 	if (m_bEditor)
 		return false;
 
-	bool bServer=IsServer();
-	bool bClient=IsClient();
+	bool bServer = IsServer();
+	bool bClient = IsClient();
 
-	if(!bServer && !bClient)
+	if (!bServer && !bClient)
 		return false;
 
 	return !bServer || !bClient || m_pServer->m_bListen;
@@ -147,8 +147,8 @@ bool CGame::IsMultiplayer()
 //! mark the client for deletion
 void CGame::MarkClientForDestruct()
 {
-  if (m_pClient)
-    m_pClient->MarkForDestruct();
+	if (m_pClient)
+		m_pClient->MarkForDestruct();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -160,37 +160,37 @@ void CGame::MarkClientForDestruct()
 */
 void CGame::OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping)
 {
-  SXServerInfos ServerInfos;
+	SXServerInfos ServerInfos;
 
-  if (ServerInfos.Read(szServerInfoString))
-  {
-    ServerInfos.IP = CIPAddress(ServerInfos.nPort, ip.GetAsString());		// get the game port from the packet
-    ServerInfos.nPing = ping;
-    m_ServersInfos[ServerInfos.IP] = ServerInfos;
-    TRACE("CGame::OnServerFound %s[%s]==>%s", ServerInfos.strName.c_str(), ServerInfos.IP.GetAsString(true), ServerInfos.strMap.c_str());
-  }
+	if (ServerInfos.Read(szServerInfoString))
+	{
+		ServerInfos.IP				   = CIPAddress(ServerInfos.nPort, ip.GetAsString()); // get the game port from the packet
+		ServerInfos.nPing			   = ping;
+		m_ServersInfos[ServerInfos.IP] = ServerInfos;
+		TRACE("CGame::OnServerFound %s[%s]==>%s", ServerInfos.strName.c_str(), ServerInfos.IP.GetAsString(true), ServerInfos.strMap.c_str());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
 void CGame::OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping)
 {
-  SXServerInfos ServerInfos;
+	SXServerInfos ServerInfos;
 
-  bool bOk = ServerInfos.Read(szServerInfoString);
+	bool bOk = ServerInfos.Read(szServerInfoString);
 
-  if (bOk || IsDevModeEnable())			// in DevMode we still wanna see these servers
-  {
-    ServerInfos.IP = ip;
-    ServerInfos.nPing = ping;
+	if (bOk || IsDevModeEnable()) // in DevMode we still wanna see these servers
+	{
+		ServerInfos.IP	  = ip;
+		ServerInfos.nPing = ping;
 
-    m_pScriptObjectGame->OnNETServerFound((CIPAddress&)ip, ServerInfos);
-  }
+		m_pScriptObjectGame->OnNETServerFound((CIPAddress&)ip, ServerInfos);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
 void CGame::OnNETServerTimeout(const CIPAddress& ip)
 {
-  m_pScriptObjectGame->OnNETServerTimeout((CIPAddress&)ip);
+	m_pScriptObjectGame->OnNETServerTimeout((CIPAddress&)ip);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -199,8 +199,8 @@ void CGame::OnNETServerTimeout(const CIPAddress& ip)
 */
 void CGame::RefreshServerList()
 {
-  m_ServersInfos.clear();
-  if (m_pServerSnooper)
-    m_pServerSnooper->SearchForLANServers(GetCurrentTime());
-  TRACE("Refresh for lan");
+	m_ServersInfos.clear();
+	if (m_pServerSnooper)
+		m_pServerSnooper->SearchForLANServers(GetCurrentTime());
+	TRACE("Refresh for lan");
 }

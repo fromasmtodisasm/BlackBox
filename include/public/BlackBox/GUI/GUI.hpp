@@ -1,12 +1,12 @@
 #pragma once
 #if 0
-#include <Game.hpp>
-#include <BlackBox/IInputHandler.hpp>
+#	include <BlackBox/IInputHandler.hpp>
+#	include <Game.hpp>
 
-#include <imgui.h>
+#	include <imgui.h>
 
 // Std inc
-#include <vector>
+#	include <vector>
 
 struct BaseLight;
 class Object;
@@ -105,4 +105,3 @@ public:
 #endif
 
 #include <imgui.h>
-

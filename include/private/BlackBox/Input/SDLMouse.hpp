@@ -6,35 +6,37 @@
 struct IRenderer;
 class CSDLMouse : public CLinuxInputDevice
 {
-public:
-  CSDLMouse(CLinuxInput& input);
+  public:
+	CSDLMouse(CLinuxInput& input);
 
-  virtual ~CSDLMouse();
+	virtual ~CSDLMouse();
 
-  virtual int  GetDeviceIndex() const { return 0; }   //Assume only one mouse
+	virtual int GetDeviceIndex() const
+	{
+		return 0;
+	} //Assume only one mouse
 
-  virtual bool Init();
+	virtual bool Init();
 
-  virtual void Update(bool focus);
+	virtual void Update(bool focus);
 
-  void         GrabInput();
+	void GrabInput();
 
-  void         UngrabInput();
+	void UngrabInput();
 
-protected:
+  protected:
+	void CapDeltas(float cap);
 
-  void CapDeltas(float cap);
+	void SmoothDeltas(float accel, float decel = 0.0f);
 
-  void SmoothDeltas(float accel, float decel = 0.0f);
-
-private:
-  IRenderer* m_pRenderer;
-  int        m_posX;
-  int        m_posY;
-  Vec2       m_deltas;
-  Vec2       m_oldDeltas;
-  Vec2       m_deltasInertia;
-  bool       m_bGrabInput;
+  private:
+	IRenderer* m_pRenderer;
+	int m_posX;
+	int m_posY;
+	Vec2 m_deltas;
+	Vec2 m_oldDeltas;
+	Vec2 m_deltasInertia;
+	bool m_bGrabInput;
 };
 
 #endif // __SDLMOUSE_H__

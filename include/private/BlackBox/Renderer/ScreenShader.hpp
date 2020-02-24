@@ -3,7 +3,7 @@
 
 class ScreenShader : public CBaseShaderProgram
 {
-public:
-  ScreenShader();
-  ~ScreenShader();
+  public:
+	ScreenShader();
+	~ScreenShader();
 };

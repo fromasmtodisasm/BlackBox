@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 // -------------------------------------------------------------------------
 //  File name:   MiniMenu.cpp
@@ -9,17 +9,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#include <StdAfx.h>
 #include "MiniMenu.h"
 #include "DrawContext.h"
+#include <StdAfx.h>
 
 MINIGUI_BEGIN
 
 CMiniMenu::CMiniMenu()
 {
-	m_bVisible = false;
-	m_bSubMenu = false;
-	m_menuWidth = 0.f;
+	m_bVisible		 = false;
+	m_bSubMenu		 = false;
+	m_menuWidth		 = 0.f;
 	m_selectionIndex = -1;
 }
 
@@ -64,7 +64,7 @@ void CMiniMenu::OnPaint(CDrawContext& dc)
 //////////////////////////////////////////////////////////////////////////
 void CMiniMenu::SetRect(const Rect& rc)
 {
-	Rect newrc = rc;
+	Rect newrc	 = rc;
 	newrc.bottom = newrc.top + m_pGUI->Metrics().fTitleSize + 2;
 	CMiniCtrl::SetRect(newrc);
 }
@@ -75,48 +75,48 @@ void CMiniMenu::OnEvent(float x, float y, EMiniCtrlEvent event)
 	switch (event)
 	{
 	case eCtrlEvent_LButtonDown:
-		{
-			if (m_bVisible)
-				Close();
-			else
-				Open();
-		}
-		break;
+	{
+		if (m_bVisible)
+			Close();
+		else
+			Open();
+	}
+	break;
 	case eCtrlEvent_MouseOff:
+	{
+		bool closeMenu	 = true;
+		IMiniCtrl* pCtrl = m_pGUI->GetCtrlFromPoint(x, y);
+
+		//check if the cursor is still in one of the menu's children
+		if (pCtrl)
 		{
-			bool closeMenu = true;
-			IMiniCtrl* pCtrl = m_pGUI->GetCtrlFromPoint(x, y);
-
-			//check if the cursor is still in one of the menu's children
-			if (pCtrl)
+			for (int i = 0, num = GetSubCtrlCount(); i < num; i++)
 			{
-				for (int i = 0, num = GetSubCtrlCount(); i < num; i++)
+				if (pCtrl == GetSubCtrl(i))
 				{
-					if (pCtrl == GetSubCtrl(i))
-					{
-						closeMenu = false;
-						break;
-					}
-				}
-			}
-
-			if (closeMenu)
-			{
-				Close();
-
-				if (m_pParent)
-				{
-					m_pParent->OnEvent(x, y, eCtrlEvent_MouseOff);
+					closeMenu = false;
+					break;
 				}
 			}
 		}
-		break;
+
+		if (closeMenu)
+		{
+			Close();
+
+			if (m_pParent)
+			{
+				m_pParent->OnEvent(x, y, eCtrlEvent_MouseOff);
+			}
+		}
+	}
+	break;
 	}
 }
 
 CMiniMenu* CMiniMenu::UpdateSelection(EMiniCtrlEvent event)
 {
-	CMiniMenu* pNewMenu = this;
+	CMiniMenu* pNewMenu			 = this;
 	IMiniCtrl* pCurrentSelection = NULL;
 
 	if (m_selectionIndex != -1)
@@ -188,21 +188,21 @@ CMiniMenu* CMiniMenu::UpdateSelection(EMiniCtrlEvent event)
 		break;
 
 	case eCtrlEvent_LButtonDown: //pass on button press
+	{
+		if (pCurrentSelection)
 		{
-			if (pCurrentSelection)
+			if (pCurrentSelection->GetType() == eCtrlType_Menu)
 			{
-				if (pCurrentSelection->GetType() == eCtrlType_Menu)
-				{
-					pNewMenu = (CMiniMenu*)pCurrentSelection;
-				}
-				pCurrentSelection->OnEvent(0, 0, eCtrlEvent_LButtonDown);
+				pNewMenu = (CMiniMenu*)pCurrentSelection;
 			}
-			else
-			{
-				OnEvent(0, 0, eCtrlEvent_LButtonDown);
-			}
+			pCurrentSelection->OnEvent(0, 0, eCtrlEvent_LButtonDown);
 		}
-		break;
+		else
+		{
+			OnEvent(0, 0, eCtrlEvent_LButtonDown);
+		}
+	}
+	break;
 	}
 
 	if (pCurrentSelection)
@@ -229,22 +229,22 @@ void CMiniMenu::Open()
 	if (m_bSubMenu)
 	{
 		CMiniMenu* pParent = static_cast<CMiniMenu*>(m_pParent.get());
-		rc.left = pParent->m_menuWidth; //rcParent.right;
-		rc.right = rc.left + m_menuWidth;
+		rc.left			   = pParent->m_menuWidth; //rcParent.right;
+		rc.right		   = rc.left + m_menuWidth;
 	}
 	else
 	{
 		Rect rcThis = GetRect();
-		rc.top = rcThis.Height();
+		rc.top		= rcThis.Height();
 	}
 
 	for (int i = 0, num = GetSubCtrlCount(); i < num; i++)
 	{
 		IMiniCtrl* pSubCtrl = GetSubCtrl(i);
 		pSubCtrl->ClearFlag(eCtrl_Hidden);
-		float h = pSubCtrl->GetRect().Height();
-		Rect rcCtrl = rc;
-		rcCtrl.top = rc.top;
+		float h		  = pSubCtrl->GetRect().Height();
+		Rect rcCtrl	  = rc;
+		rcCtrl.top	  = rc.top;
 		rcCtrl.bottom = rcCtrl.top + h;
 		pSubCtrl->SetRect(rcCtrl);
 		rc.top += h;
@@ -319,9 +319,9 @@ void CMiniMenu::AddSubCtrl(IMiniCtrl* pCtrl)
 
 	if (pCtrl->GetType() == eCtrlType_Menu)
 	{
-		CMiniMenu* pSubMenu = static_cast<CMiniMenu*>(pCtrl);
+		CMiniMenu* pSubMenu	 = static_cast<CMiniMenu*>(pCtrl);
 		pSubMenu->m_bSubMenu = true;
-		bSubMenu = true;
+		bSubMenu			 = true;
 	}
 
 	if (!m_bSubMenu)

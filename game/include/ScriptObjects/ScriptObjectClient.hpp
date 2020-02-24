@@ -1,12 +1,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-// 
+//
 //	File: ScriptObjectClient.h
 //  Description:	Interface of the CScriptObjectClient class,
-//								for multiplayer game session.			
+//								for multiplayer game session.
 //		This class implements script-functions for exposing the local client functionalities
 //
 //		REMARKS:
@@ -19,7 +19,7 @@
 //		IMPLEMENTATIONS NOTES:
 //		These function will never be called from C-Code. They're script-exclusive.
 //
-//	History: 
+//	History:
 //	- June 2001: File created by Marco Corbetta
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
@@ -34,10 +34,9 @@ class CXClient;
 class CGame;
 
 //////////////////////////////////////////////////////////////////////
-class CScriptObjectClient :
-	public _ScriptableEx<CScriptObjectClient>
+class CScriptObjectClient : public _ScriptableEx<CScriptObjectClient>
 {
-public:
+  public:
 	CScriptObjectClient();
 	virtual ~CScriptObjectClient();
 	void Create(IScriptSystem* pScriptSystem, CGame* pGame, CXClient* pClient);
@@ -64,11 +63,10 @@ public:
 	// to sync AI state for co-op
 	int AIState(IFunctionHandler* pH);
 
-private:
-
-	CXClient* m_pClient;					//!<
-	CGame* m_pGame;						//!<
-	IScriptObject* m_pSoundEventPos;		//!<
+  private:
+	CXClient* m_pClient;			 //!<
+	CGame* m_pGame;					 //!<
+	IScriptObject* m_pSoundEventPos; //!<
 };
 
 #endif

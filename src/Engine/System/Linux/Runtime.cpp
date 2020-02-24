@@ -2,5 +2,5 @@
 
 unsigned int GetCurrentTimeInternal()
 {
-  return SDL_GetTicks();
+	return SDL_GetTicks();
 }

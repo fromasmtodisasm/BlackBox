@@ -10,40 +10,42 @@ class CSDLMouse;
 struct ILog;
 
 #if !BB_PLATFORM_ANDROID && !BB_PLATFORM_IOS
-#define SDL_USE_HAPTIC_FEEDBACK
+#	define SDL_USE_HAPTIC_FEEDBACK
 #endif
 
 class CLinuxInput : public CBaseInput
 {
-public:
-  CLinuxInput(ISystem* pSystem);
+  public:
+	CLinuxInput(ISystem* pSystem);
 
-  virtual bool Init() override;
-  virtual void ShutDown() override;
-  virtual void Update(bool focus) override;
-  virtual bool GrabInput(bool bGrab) override;
-  virtual int  ShowCursor(const bool bShow) override;
+	virtual bool Init() override;
+	virtual void ShutDown() override;
+	virtual void Update(bool focus) override;
+	virtual bool GrabInput(bool bGrab) override;
+	virtual int ShowCursor(const bool bShow) override;
 
-private:
-  ISystem* m_pSystem;
-  ILog* m_pLog;
-  CSDLPadManager* m_pPadManager;
-  CSDLMouse* m_pMouse;
+  private:
+	ISystem* m_pSystem;
+	ILog* m_pLog;
+	CSDLPadManager* m_pPadManager;
+	CSDLMouse* m_pMouse;
 
-  virtual IActionMapManager* CreateActionMapManager() override;
+	virtual IActionMapManager* CreateActionMapManager() override;
 };
 
 class CLinuxInputDevice : public CInputDevice
 {
-public:
-  CLinuxInputDevice(CLinuxInput& input, const char* deviceName);
-  virtual ~CLinuxInputDevice();
+  public:
+	CLinuxInputDevice(CLinuxInput& input, const char* deviceName);
+	virtual ~CLinuxInputDevice();
 
-  CLinuxInput& GetLinuxInput() const;
-protected:
-  void         PostEvent(SInputSymbol* pSymbol, unsigned keyMod = ~0);
-private:
-  CLinuxInput& m_linuxInput;
+	CLinuxInput& GetLinuxInput() const;
+
+  protected:
+	void PostEvent(SInputSymbol* pSymbol, unsigned keyMod = ~0);
+
+  private:
+	CLinuxInput& m_linuxInput;
 };
 
 struct ILog;

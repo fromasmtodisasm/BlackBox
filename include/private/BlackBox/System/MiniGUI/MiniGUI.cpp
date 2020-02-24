@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 // -------------------------------------------------------------------------
 //  File name:   MiniGUI.cpp
@@ -9,17 +9,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#include <StdAfx.h>
 #include "MiniGUI.h"
 #include "DrawContext.h"
+#include <StdAfx.h>
 
 #include "MiniButton.h"
-#include "MiniMenu.h"
 #include "MiniInfoBox.h"
+#include "MiniMenu.h"
 #include "MiniTable.h"
 
-#include <CrySystem/ISystem.h>
 #include <CryRenderer/IRenderer.h>
+#include <CrySystem/ISystem.h>
 
 CRYREGISTER_SINGLETON_CLASS(minigui::CMiniGUI)
 
@@ -28,9 +28,9 @@ MINIGUI_BEGIN
 //////////////////////////////////////////////////////////////////////////
 void CMiniGUI::InitMetrics()
 {
-	m_metrics.clrText = ColorB(255, 255, 255, 255);
+	m_metrics.clrText		  = ColorB(255, 255, 255, 255);
 	m_metrics.clrTextSelected = ColorB(0, 255, 0, 255);
-	m_metrics.fTextSize = 12.0f;
+	m_metrics.fTextSize		  = 12.0f;
 
 	m_metrics.clrTitle = ColorB(255, 255, 255, 255);
 
@@ -38,33 +38,36 @@ void CMiniGUI::InitMetrics()
 
 	const int backgroundAlpha = 255;
 
-	m_metrics.clrBackground = ColorB(20, 20, 20, backgroundAlpha);
+	m_metrics.clrBackground			 = ColorB(20, 20, 20, backgroundAlpha);
 	m_metrics.clrBackgroundHighlight = ColorB(10, 10, 150, backgroundAlpha);
-	m_metrics.clrBackgroundSelected = ColorB(10, 120, 10, backgroundAlpha);
+	m_metrics.clrBackgroundSelected	 = ColorB(10, 120, 10, backgroundAlpha);
 
-	m_metrics.clrFrameBorder = ColorB(255, 0, 0, 255);
-	m_metrics.clrFrameBorderHighlight = ColorB(255, 255, 0, 255);
+	m_metrics.clrFrameBorder		   = ColorB(255, 0, 0, 255);
+	m_metrics.clrFrameBorderHighlight  = ColorB(255, 255, 0, 255);
 	m_metrics.clrFrameBorderOutOfFocus = ColorB(0, 0, 0, 255);
 
-	m_metrics.clrChecked = ColorB(0, 0, 0, 255);
+	m_metrics.clrChecked	  = ColorB(0, 0, 0, 255);
 	m_metrics.outOfFocusAlpha = 32;
 }
 
 class CMiniCtrlRoot : public CMiniCtrl
 {
-public:
-	CMiniCtrlRoot() {};
-	virtual EMiniCtrlType GetType() const                 { return eCtrlType_Unknown; };
-	virtual void          OnPaint(class CDrawContext& dc) {};
+  public:
+	CMiniCtrlRoot(){};
+	virtual EMiniCtrlType GetType() const
+	{
+		return eCtrlType_Unknown;
+	};
+	virtual void OnPaint(class CDrawContext& dc){};
 };
 
 //////////////////////////////////////////////////////////////////////////
-CMiniGUI::CMiniGUI() :
-	m_enabled(false),
-	m_inFocus(true),
-	m_bListenersRegistered(false),
-	m_pDPadMenu(NULL),
-	m_pMovingCtrl(NULL)
+CMiniGUI::CMiniGUI()
+	: m_enabled(false)
+	, m_inFocus(true)
+	, m_bListenersRegistered(false)
+	, m_pDPadMenu(NULL)
+	, m_pMovingCtrl(NULL)
 {
 }
 
@@ -282,8 +285,7 @@ IMiniCtrl* CMiniGUI::CreateCtrl(IMiniCtrl* pParentCtrl, int nCtrlID, EMiniCtrlTy
 	default:
 		assert(0 && "Unknown MiniGUI control type");
 		break;
-	}
-	;
+	};
 	if (pCtrl)
 	{
 		pCtrl->SetGUI(this);
@@ -326,8 +328,8 @@ void CMiniGUI::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwar
 		return;
 	}
 
-	float mx = float(iX);
-	float my = float(iY);
+	float mx		 = float(iX);
+	float my		 = float(iY);
 	IMiniCtrl* pCtrl = GetCtrlFromPoint(mx, my);
 	if (pCtrl)
 	{
@@ -371,8 +373,7 @@ void CMiniGUI::CloseDPadMenu()
 		{
 			closeMenu->Close();
 			closeMenu = (CMiniMenu*)closeMenu->GetParent();
-		}
-		while (closeMenu->GetType() == eCtrlType_Menu);
+		} while (closeMenu->GetType() == eCtrlType_Menu);
 
 		m_pDPadMenu->ClearFlag(eCtrl_Highlight);
 		m_pDPadMenu = NULL;
@@ -383,14 +384,14 @@ void CMiniGUI::CloseDPadMenu()
 void CMiniGUI::UpdateDPadMenu(const SInputEvent& rInputEvent)
 {
 	EKeyId inputKey = rInputEvent.keyId;
-	bool isPressed = (rInputEvent.state == eIS_Pressed);
+	bool isPressed	= (rInputEvent.state == eIS_Pressed);
 
-	const EKeyId DPAD_UP = eKI_XI_DPadUp;
-	const EKeyId DPAD_DOWN = eKI_XI_DPadDown;
-	const EKeyId DPAD_LEFT = eKI_XI_DPadLeft;
+	const EKeyId DPAD_UP	= eKI_XI_DPadUp;
+	const EKeyId DPAD_DOWN	= eKI_XI_DPadDown;
+	const EKeyId DPAD_LEFT	= eKI_XI_DPadLeft;
 	const EKeyId DPAD_RIGHT = eKI_XI_DPadRight;
-	const EKeyId X_BUTTON = eKI_XI_A;
-	const EKeyId O_BUTTON = eKI_XI_B;
+	const EKeyId X_BUTTON	= eKI_XI_A;
+	const EKeyId O_BUTTON	= eKI_XI_B;
 
 	if (inputKey == eKI_XI_ThumbLUp)
 	{
@@ -422,89 +423,89 @@ void CMiniGUI::UpdateDPadMenu(const SInputEvent& rInputEvent)
 			switch (inputKey)
 			{
 			case DPAD_DOWN:
-				{
-					m_pDPadMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadDown);
-				}
-				break;
+			{
+				m_pDPadMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadDown);
+			}
+			break;
 
 			case DPAD_UP:
-				{
-					m_pDPadMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadUp);
-				}
-				break;
+			{
+				m_pDPadMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadUp);
+			}
+			break;
 
 			case DPAD_LEFT:
+			{
+				CMiniMenu* pNewMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadLeft);
+
+				//get previous root menu
+				if (pNewMenu == NULL)
 				{
-					CMiniMenu* pNewMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadLeft);
+					int i = 0, nRootMenus = m_rootMenus.size();
 
-					//get previous root menu
-					if (pNewMenu == NULL)
+					for (i = 0; i < nRootMenus; i++)
 					{
-						int i = 0, nRootMenus = m_rootMenus.size();
-
-						for (i = 0; i < nRootMenus; i++)
-						{
-							if (m_rootMenus[i] == m_pDPadMenu)
-								break;
-						}
-
-						if (i > 0)
-						{
-							m_pDPadMenu->Close();
-							m_pDPadMenu->ClearFlag(eCtrl_Highlight);
-
-							m_pDPadMenu = (CMiniMenu*)m_rootMenus[i - 1];
-							m_pDPadMenu->Open();
-							m_pDPadMenu->SetFlag(eCtrl_Highlight);
-						}
-						//else selected menu remains the same
+						if (m_rootMenus[i] == m_pDPadMenu)
+							break;
 					}
-					else
+
+					if (i > 0)
 					{
-						m_pDPadMenu = pNewMenu;
+						m_pDPadMenu->Close();
+						m_pDPadMenu->ClearFlag(eCtrl_Highlight);
+
+						m_pDPadMenu = (CMiniMenu*)m_rootMenus[i - 1];
+						m_pDPadMenu->Open();
+						m_pDPadMenu->SetFlag(eCtrl_Highlight);
 					}
+					//else selected menu remains the same
 				}
+				else
+				{
+					m_pDPadMenu = pNewMenu;
+				}
+			}
 
-				break;
+			break;
 
 			case DPAD_RIGHT:
+			{
+				CMiniMenu* pNewMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadRight);
+
+				//get next root menu
+				if (pNewMenu == NULL)
 				{
-					CMiniMenu* pNewMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_DPadRight);
+					int i = 0, nRootMenus = m_rootMenus.size();
 
-					//get next root menu
-					if (pNewMenu == NULL)
+					for (i = 0; i < nRootMenus; i++)
 					{
-						int i = 0, nRootMenus = m_rootMenus.size();
-
-						for (i = 0; i < nRootMenus; i++)
-						{
-							if (m_rootMenus[i] == m_pDPadMenu)
-								break;
-						}
-
-						if (i < nRootMenus - 1)
-						{
-							m_pDPadMenu->Close();
-							m_pDPadMenu->ClearFlag(eCtrl_Highlight);
-
-							m_pDPadMenu = (CMiniMenu*)m_rootMenus[i + 1];
-							m_pDPadMenu->Open();
-							m_pDPadMenu->SetFlag(eCtrl_Highlight);
-						}
-						//else selected menu remains the same
+						if (m_rootMenus[i] == m_pDPadMenu)
+							break;
 					}
-					else
+
+					if (i < nRootMenus - 1)
 					{
-						m_pDPadMenu = pNewMenu;
+						m_pDPadMenu->Close();
+						m_pDPadMenu->ClearFlag(eCtrl_Highlight);
+
+						m_pDPadMenu = (CMiniMenu*)m_rootMenus[i + 1];
+						m_pDPadMenu->Open();
+						m_pDPadMenu->SetFlag(eCtrl_Highlight);
 					}
+					//else selected menu remains the same
 				}
-				break;
+				else
+				{
+					m_pDPadMenu = pNewMenu;
+				}
+			}
+			break;
 
 			case X_BUTTON:
-				{
-					m_pDPadMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_LButtonDown);
-				}
-				break;
+			{
+				m_pDPadMenu = m_pDPadMenu->UpdateSelection(eCtrlEvent_LButtonDown);
+			}
+			break;
 			}
 		}
 	}
@@ -677,8 +678,8 @@ IMiniCtrl* CMiniCtrl::GetCtrlFromPoint(float x, float y)
 
 	for (int i = 0, num = (int)m_subCtrls.size(); i < num; i++)
 	{
-		float lx = x - m_rect.left;
-		float ly = y - m_rect.top;
+		float lx		= x - m_rect.left;
+		float ly		= y - m_rect.top;
 		IMiniCtrl* pHit = m_subCtrls[i]->GetCtrlFromPoint(lx, ly);
 		if (pHit)
 			return pHit;
@@ -771,8 +772,8 @@ void CMiniCtrl::StartMoving(float x, float y)
 {
 	if (!m_moving)
 	{
-		m_prevX = x;
-		m_prevY = y;
+		m_prevX	 = x;
+		m_prevY	 = y;
 		m_moving = true;
 
 		m_pGUI->SetMovingCtrl(this);
@@ -816,13 +817,13 @@ void CMiniCtrl::OnEvent(float x, float y, EMiniCtrlEvent event)
 	switch (event)
 	{
 	case eCtrlEvent_LButtonDown:
+	{
+		if (is_flag(eCtrl_Highlight | eCtrl_Moveable))
 		{
-			if (is_flag(eCtrl_Highlight | eCtrl_Moveable))
-			{
-				StartMoving(x, y);
-			}
+			StartMoving(x, y);
 		}
-		break;
+	}
+	break;
 
 	case eCtrlEvent_LButtonUp:
 		if (m_moving)

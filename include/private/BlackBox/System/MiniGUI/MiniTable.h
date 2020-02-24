@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 // -------------------------------------------------------------------------
 //  File name:   MiniTable.cpp
@@ -16,22 +16,27 @@
 
 MINIGUI_BEGIN
 
-class CMiniTable : public CMiniCtrl, public IMiniTable, public IInputEventListener
+class CMiniTable : public CMiniCtrl
+	, public IMiniTable
+	, public IInputEventListener
 {
-public:
+  public:
 	CMiniTable();
 
 	//////////////////////////////////////////////////////////////////////////
 	// CMiniCtrl interface implementation.
 	//////////////////////////////////////////////////////////////////////////
-	virtual EMiniCtrlType GetType() const { return eCtrlType_Table; }
-	virtual void          OnPaint(CDrawContext& dc);
-	virtual void          OnEvent(float x, float y, EMiniCtrlEvent event);
-	virtual void          Reset();
-	virtual void          SaveState();
-	virtual void          RestoreState();
-	virtual void          AutoResize();
-	virtual void          SetVisible(bool state);
+	virtual EMiniCtrlType GetType() const
+	{
+		return eCtrlType_Table;
+	}
+	virtual void OnPaint(CDrawContext& dc);
+	virtual void OnEvent(float x, float y, EMiniCtrlEvent event);
+	virtual void Reset();
+	virtual void SaveState();
+	virtual void RestoreState();
+	virtual void AutoResize();
+	virtual void SetVisible(bool state);
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +56,10 @@ public:
 	//Clear all data from table
 	virtual void ClearTable();
 
-	virtual bool IsHidden() { return CheckFlag(eCtrl_Hidden); }
+	virtual bool IsHidden()
+	{
+		return CheckFlag(eCtrl_Hidden);
+	}
 
 	virtual void Hide(bool stat);
 
@@ -60,26 +68,25 @@ public:
 
 	static const int MAX_TEXT_LENGTH = 64;
 
-protected:
-
+  protected:
 	struct SCell
 	{
-		char   text[MAX_TEXT_LENGTH];
+		char text[MAX_TEXT_LENGTH];
 		ColorB col;
 	};
 
 	struct SColumn
 	{
-		char               name[MAX_TEXT_LENGTH];
-		float              width;
+		char name[MAX_TEXT_LENGTH];
+		float width;
 		std::vector<SCell> cells;
 	};
 
 	std::vector<SColumn> m_columns;
-	int                  m_pageSize;
-	int                  m_pageNum;
+	int m_pageSize;
+	int m_pageNum;
 };
 
 MINIGUI_END
 
-#endif// _MINITABLE_H_
+#endif // _MINITABLE_H_

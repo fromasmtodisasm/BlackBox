@@ -1,13 +1,13 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XEntityPlayer.cpp
 //  Description: Entity player class.
 //
-//  History: 
+//  History:
 //  - August 16, 2001: Created by Alberto Demichelis
 //	- 2001 - 2004: Modified by Kirill Bulatsev and many others
 //	- February 2005: Modified by Marco Corbetta for SDK release
@@ -16,29 +16,29 @@
 //////////////////////////////////////////////////////////////////////
 
 #if 0
-#include "XPlayer.h"
-#include "WeaponClass.h"
-#include "XVehicle.h"
-#include "WeaponSystemEx.h"
-#include "ScriptObjectStream.h"
+#	include "XPlayer.h"
+#	include "ScriptObjectStream.h"
+#	include "WeaponClass.h"
+#	include "WeaponSystemEx.h"
+#	include "XVehicle.h"
 
-#include <IEntitySystem.h>
-#include <IAISystem.h>
-#include <IAgent.h>
-#include <ISound.h>
-#include "I3DEngine.h"
-#include <crycharanimationparams.h>
+#	include "I3DEngine.h"
+#	include <IAISystem.h>
+#	include <IAgent.h>
+#	include <IEntitySystem.h>
+#	include <ISound.h>
+#	include <crycharanimationparams.h>
 // to use _isnan()
-#include <float.h>
+#	include <float.h>
 
 //////////////////////////////////////////////////////////////////////
 //! Minimal time before player can be alive again.
-#define PLAYER_RESPAWN_TIME 1.0f
+#	define PLAYER_RESPAWN_TIME		  1.0f
 //! Minimal time before player can be respawned.
-#define PLAYER_DEATH_TIME 1.0f
+#	define PLAYER_DEATH_TIME		  1.0f
 
 //! Minimal time before player can change weapon.
-#define PLAYER_WEAPON_CHANGE_TIME 0.1f
+#	define PLAYER_WEAPON_CHANGE_TIME 0.1f
 
 //////////////////////////////////////////////////////////////////////
 bool CheckIfNAN( const Vec3d& vPos )
@@ -5184,11 +5184,11 @@ bool	CPlayer::GoStand(bool ignoreSpam)
 			// when calculating BBox
 			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
 
-#if defined(LINUX64)
+#	if defined(LINUX64)
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, 0);
-#else
+#	else
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, NULL);
-#endif
+#	endif
 			m_bStayCrouch = false;
 
 			m_fLastProneTime = m_pTimer->GetCurrTime() + 0.5f;
@@ -5241,11 +5241,11 @@ bool	CPlayer::GoStealth( )
 			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
 
 			m_Running = false;
-#if defined(LINUX64)
+#	if defined(LINUX64)
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, 0);
-#else
+#	else
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, NULL);
-#endif
+#	endif
 			return true;
 		}
 
@@ -5295,11 +5295,11 @@ bool	CPlayer::GoCrouch( )
 			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
 
 			m_Running = false;
-#if defined(LINUX64)
+#	if defined(LINUX64)
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, 0);
-#else
+#	else
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, NULL);
-#endif
+#	endif
 			return true;
 		}
 		// could not change - restore angle if proning
@@ -5359,11 +5359,11 @@ bool	CPlayer::GoProne( )
 		GetEntity()->ClearFlags( ETY_FLAG_CALCBBOX_ZROTATE );
 
 		m_Running = false;
-#if defined(LINUX64)
+#	if defined(LINUX64)
 		m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, 0);
-#else
+#	else
 		m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, NULL);
-#endif
+#	endif
 	}
 
 	m_bStayCrouch = false;
@@ -5404,11 +5404,11 @@ bool	CPlayer::GoSwim( )
 			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
 
 			m_Running = false;
-#if defined(LINUX64)
+#	if defined(LINUX64)
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, 0);
-#else
+#	else
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, NULL);
-#endif
+#	endif
 			m_bStayCrouch = false;
 
 			return true;

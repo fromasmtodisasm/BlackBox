@@ -26,22 +26,22 @@ struct IRenderer;
 
 class IMGUI_IMPL_API ImGuiOpenglRender
 {
-public:
-// Backend API
-  bool Init(IRenderer *pRenderer, const char* glsl_version = NULL);
-  void Shutdown();
-  void NewFrame();
-  void RenderDrawData(ImDrawData* draw_data);
-  void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object);
+  public:
+	// Backend API
+	bool Init(IRenderer* pRenderer, const char* glsl_version = NULL);
+	void Shutdown();
+	void NewFrame();
+	void RenderDrawData(ImDrawData* draw_data);
+	void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object);
 
-  // (Optional) Called by Init/NewFrame/Shutdown
-  bool CreateFontsTexture();
-  void DestroyFontsTexture();
-  bool CreateDeviceObjects();
-  void DestroyDeviceObjects();
-private:
-  IRenderer* m_pRender;
+	// (Optional) Called by Init/NewFrame/Shutdown
+	bool CreateFontsTexture();
+	void DestroyFontsTexture();
+	bool CreateDeviceObjects();
+	void DestroyDeviceObjects();
 
+  private:
+	IRenderer* m_pRender;
 };
 
 using ImGuiRender = ImGuiOpenglRender;
@@ -51,25 +51,21 @@ using ImGuiRender = ImGuiOpenglRender;
 //#define IMGUI_IMPL_OPENGL_ES3     // Auto-detected on iOS/Android
 
 // Desktop OpenGL: attempt to detect default GL loader based on available header files.
-// If auto-detection fails or doesn't select the same GL loader file as used by your application, 
-// you are likely to get a crash in ImGui_ImplOpenGL3_Init(). 
+// If auto-detection fails or doesn't select the same GL loader file as used by your application,
+// you are likely to get a crash in ImGui_ImplOpenGL3_Init().
 // You can explicitly select a loader by using '#define IMGUI_IMPL_OPENGL_LOADER_XXX' in imconfig.h or compiler command-line.
-#if !defined(IMGUI_IMPL_OPENGL_LOADER_GL3W) \
- && !defined(IMGUI_IMPL_OPENGL_LOADER_GLEW) \
- && !defined(IMGUI_IMPL_OPENGL_LOADER_GLAD) \
- && !defined(IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
-    #if defined(__has_include)
-        #if __has_include(<GL/glew.h>)
-            #define IMGUI_IMPL_OPENGL_LOADER_GLEW
-        #elif __has_include(<glad/glad.h>)
-            #define IMGUI_IMPL_OPENGL_LOADER_GLAD
-        #elif __has_include(<GL/gl3w.h>)
-            #define IMGUI_IMPL_OPENGL_LOADER_GL3W
-        #else
-            #error "Cannot detect OpenGL loader!"
-        #endif
-    #else
-        #define IMGUI_IMPL_OPENGL_LOADER_GL3W       // Default to GL3W
-    #endif
+#if !defined(IMGUI_IMPL_OPENGL_LOADER_GL3W) && !defined(IMGUI_IMPL_OPENGL_LOADER_GLEW) && !defined(IMGUI_IMPL_OPENGL_LOADER_GLAD) && !defined(IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
+#	if defined(__has_include)
+#		if __has_include(<GL/glew.h>)
+#			define IMGUI_IMPL_OPENGL_LOADER_GLEW
+#		elif __has_include(<glad/glad.h>)
+#			define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#		elif __has_include(<GL/gl3w.h>)
+#			define IMGUI_IMPL_OPENGL_LOADER_GL3W
+#		else
+#			error "Cannot detect OpenGL loader!"
+#		endif
+#	else
+#		define IMGUI_IMPL_OPENGL_LOADER_GL3W // Default to GL3W
+#	endif
 #endif
-

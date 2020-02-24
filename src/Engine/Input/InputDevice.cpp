@@ -13,22 +13,22 @@ using namespace std;
 using ColorF = Vec4;
 
 CInputDevice::CInputDevice(IInput& input, const char* deviceName)
-  : m_input(input)
-  , m_deviceName(deviceName)
-  , m_deviceType(eIDT_Unknown)
-  , m_enabled(true)
+	: m_input(input)
+	, m_deviceName(deviceName)
+	, m_deviceType(eIDT_Unknown)
+	, m_enabled(true)
 {
 }
 
 CInputDevice::~CInputDevice()
 {
-  while (m_idToInfo.size())
-  {
-    TIdToSymbolMap::iterator iter = m_idToInfo.begin();
-    SInputSymbol* pSymbol = (*iter).second;
-    m_idToInfo.erase(iter);
-    SAFE_DELETE(pSymbol);
-  }
+	while (m_idToInfo.size())
+	{
+		TIdToSymbolMap::iterator iter = m_idToInfo.begin();
+		SInputSymbol* pSymbol		  = (*iter).second;
+		m_idToInfo.erase(iter);
+		SAFE_DELETE(pSymbol);
+	}
 }
 
 void CInputDevice::Update(bool bFocus)
@@ -37,32 +37,32 @@ void CInputDevice::Update(bool bFocus)
 
 bool CInputDevice::InputState(const TKeyName& keyName, EInputState state)
 {
-  SInputSymbol* pSymbol = NameToSymbol(keyName);
-  if (pSymbol && pSymbol->state == state)
-    return true;
+	SInputSymbol* pSymbol = NameToSymbol(keyName);
+	if (pSymbol && pSymbol->state == state)
+		return true;
 
-  return false;
+	return false;
 }
 
 void CInputDevice::ClearKeyState()
 {
-  for (TIdToSymbolMap::iterator i = m_idToInfo.begin(); i != m_idToInfo.end(); ++i)
-  {
-    SInputSymbol* pSymbol = (*i).second;
-    if (pSymbol && pSymbol->value > 0.0)
-    {
-      SInputEvent event;
-      event.deviceType = m_deviceType;
-      event.keyName = pSymbol->name;
-      event.keyId = pSymbol->keyId;
-      event.state = eIS_Released;
-      event.value = 0.0f;
-      event.pSymbol = pSymbol;
-      pSymbol->value = 0.0f;
-      pSymbol->state = eIS_Released;
-      m_input.PostInputEvent(event);
-    }
-  }
+	for (TIdToSymbolMap::iterator i = m_idToInfo.begin(); i != m_idToInfo.end(); ++i)
+	{
+		SInputSymbol* pSymbol = (*i).second;
+		if (pSymbol && pSymbol->value > 0.0)
+		{
+			SInputEvent event;
+			event.deviceType = m_deviceType;
+			event.keyName	 = pSymbol->name;
+			event.keyId		 = pSymbol->keyId;
+			event.state		 = eIS_Released;
+			event.value		 = 0.0f;
+			event.pSymbol	 = pSymbol;
+			pSymbol->value	 = 0.0f;
+			pSymbol->state	 = eIS_Released;
+			m_input.PostInputEvent(event);
+		}
+	}
 }
 
 void CInputDevice::ClearAnalogKeyState(TInputSymbols& clearedSymbols)
@@ -71,29 +71,29 @@ void CInputDevice::ClearAnalogKeyState(TInputSymbols& clearedSymbols)
 
 const char* CInputDevice::GetKeyName(const SInputEvent& event) const
 {
-  return GetKeyName(event.keyId);
+	return GetKeyName(event.keyId);
 }
 
 const char* CInputDevice::GetKeyName(const EKeyId keyId) const
 {
-  TIdToSymbolMap::const_iterator iter = m_idToInfo.find(keyId);
-  if (iter == m_idToInfo.end())
-    return NULL;
+	TIdToSymbolMap::const_iterator iter = m_idToInfo.find(keyId);
+	if (iter == m_idToInfo.end())
+		return NULL;
 
-  const SInputSymbol* pInputSymbol = iter->second;
-  ASSERT(pInputSymbol != NULL);
+	const SInputSymbol* pInputSymbol = iter->second;
+	ASSERT(pInputSymbol != NULL);
 
-  return pInputSymbol->name.c_str();
+	return pInputSymbol->name.c_str();
 }
 
 uint32_t CInputDevice::GetInputCharUnicode(const SInputEvent& event)
 {
-  return '\0';
+	return '\0';
 }
 
 const char* CInputDevice::GetOSKeyName(const SInputEvent& event)
 {
-  return "";
+	return "";
 }
 
 /*
@@ -111,72 +111,72 @@ const char* CInputDevice::GetOSKeyName(const SInputEvent& event)
 
 SInputSymbol* CInputDevice::IdToSymbol(EKeyId id) const
 {
-  TIdToSymbolMap::const_iterator i = m_idToInfo.find(id);
-  if (i != m_idToInfo.end())
-    return (*i).second;
-  else
-    return 0;
+	TIdToSymbolMap::const_iterator i = m_idToInfo.find(id);
+	if (i != m_idToInfo.end())
+		return (*i).second;
+	else
+		return 0;
 }
 
 SInputSymbol* CInputDevice::DevSpecIdToSymbol(uint32_t devSpecId) const
 {
-  TDevSpecIdToSymbolMap::const_iterator i = m_devSpecIdToSymbol.find(devSpecId);
-  if (i != m_devSpecIdToSymbol.end())
-    return (*i).second;
-  else
-    return 0;
+	TDevSpecIdToSymbolMap::const_iterator i = m_devSpecIdToSymbol.find(devSpecId);
+	if (i != m_devSpecIdToSymbol.end())
+		return (*i).second;
+	else
+		return 0;
 }
 
 uint32_t CInputDevice::NameToId(const TKeyName& name) const
 {
-  TNameToIdMap::const_iterator i = m_nameToId.find(name);
-  if (i != m_nameToId.end())
-    return (*i).second;
-  else
-    return 0xffffffff;
+	TNameToIdMap::const_iterator i = m_nameToId.find(name);
+	if (i != m_nameToId.end())
+		return (*i).second;
+	else
+		return 0xffffffff;
 }
 
 SInputSymbol* CInputDevice::NameToSymbol(const TKeyName& name) const
 {
-  TNameToSymbolMap::const_iterator i = m_nameToInfo.find(name);
-  if (i != m_nameToInfo.end())
-    return (*i).second;
-  else
-    return 0;
+	TNameToSymbolMap::const_iterator i = m_nameToInfo.find(name);
+	if (i != m_nameToInfo.end())
+		return (*i).second;
+	else
+		return 0;
 }
 
 SInputSymbol* CInputDevice::MapSymbol(uint32_t deviceSpecificId, EKeyId keyId, const TKeyName& name, SInputSymbol::EType type, uint32_t user)
 {
-  SInputSymbol* pSymbol = new SInputSymbol(deviceSpecificId, keyId, name, type);
-  pSymbol->user = user;
-  pSymbol->deviceType = m_deviceType;
-  m_idToInfo[keyId] = pSymbol;
-  m_devSpecIdToSymbol[deviceSpecificId] = pSymbol;
-  m_nameToId[name] = deviceSpecificId;
-  m_nameToInfo[name] = pSymbol;
+	SInputSymbol* pSymbol				  = new SInputSymbol(deviceSpecificId, keyId, name, type);
+	pSymbol->user						  = user;
+	pSymbol->deviceType					  = m_deviceType;
+	m_idToInfo[keyId]					  = pSymbol;
+	m_devSpecIdToSymbol[deviceSpecificId] = pSymbol;
+	m_nameToId[name]					  = deviceSpecificId;
+	m_nameToInfo[name]					  = pSymbol;
 
-  return pSymbol;
+	return pSymbol;
 }
 
 //////////////////////////////////////////////////////////////////////////
 SInputSymbol* CInputDevice::LookupSymbol(EKeyId id) const
 {
-  return IdToSymbol(id);
+	return IdToSymbol(id);
 }
 
 const SInputSymbol* CInputDevice::GetSymbolByName(const char* name) const
 {
-  TKeyName tKeyName(name);
-  TNameToSymbolMap::const_iterator i = m_nameToInfo.find(tKeyName);
-  if (i != m_nameToInfo.end())
-    return (*i).second;
-  else
-    return 0;
+	TKeyName tKeyName(name);
+	TNameToSymbolMap::const_iterator i = m_nameToInfo.find(tKeyName);
+	if (i != m_nameToInfo.end())
+		return (*i).second;
+	else
+		return 0;
 }
 
 void CInputDevice::Enable(bool enable)
 {
-  m_enabled = enable;
+	m_enabled = enable;
 }
 
 // ------------------------------------------------------------------------
@@ -185,88 +185,88 @@ void CInputDevice::Enable(bool enable)
 #if !defined(RELEASE)
 namespace // anonymous
 {
-  const string s_kButtonA = "xi_a";
-  const string s_kButtonB = "xi_b";
-  const string s_kButtonX = "xi_x";
-  const string s_kButtonY = "xi_y";
+	const string s_kButtonA = "xi_a";
+	const string s_kButtonB = "xi_b";
+	const string s_kButtonX = "xi_x";
+	const string s_kButtonY = "xi_y";
 
-  const ColorF s_KColA(0.f, 1.f, 0.f, 1.f);
-  const ColorF s_KColB(1.f, 0.f, 0.f, 1.f);
-  const ColorF s_KColX(0.39f, 0.58f, 0.93f, 1.f);
-  const ColorF s_KColY(1.f, 0.6f, 0.f, 1.f);
-}
+	const ColorF s_KColA(0.f, 1.f, 0.f, 1.f);
+	const ColorF s_KColB(1.f, 0.f, 0.f, 1.f);
+	const ColorF s_KColX(0.39f, 0.58f, 0.93f, 1.f);
+	const ColorF s_KColY(1.f, 0.6f, 0.f, 1.f);
+} // namespace
 // ------------------------------------------------------------------------
 CInputDevice::CDebugPressedButtons::SData::SData(const SInputSymbol* pSymbol_, uint32_t frame_)
 {
-  frame = 0;
-  if (pSymbol_)
-  {
-    frame = frame_;
+	frame = 0;
+	if (pSymbol_)
+	{
+		frame = frame_;
 
-    switch (pSymbol_->state)
-    {
-    case eIS_Unknown:
-      state = "Unknown";
-      break;
-    case eIS_Pressed:
-      state = "Pressed";
-      break;
-    case eIS_Released:
-      state = "Released";
-      break;
-    case eIS_Down:
-      state = "Down";
-      break;
-    case eIS_Changed:
-      state = "Changed";
-      break;
-    default:
-      state = "?State?";
-    }
-    key = pSymbol_->name.c_str();
-    if (key == s_kButtonA)
-    {
-      color = s_KColA;
-      key = "A";
-    }
-    else if (key == s_kButtonB)
-    {
-      color = s_KColB;
-      key = "B";
-    }
-    else if (key == s_kButtonX)
-    {
-      color = s_KColX;
-      key = "X";
-    }
-    else if (key == s_kButtonY)
-    {
-      color = s_KColY;
-      key = "Y";
-    }
-    else
-    {
-      color = ColorF(1.f, 1.f, 0.f, 1.f);
-    }
-  }
+		switch (pSymbol_->state)
+		{
+		case eIS_Unknown:
+			state = "Unknown";
+			break;
+		case eIS_Pressed:
+			state = "Pressed";
+			break;
+		case eIS_Released:
+			state = "Released";
+			break;
+		case eIS_Down:
+			state = "Down";
+			break;
+		case eIS_Changed:
+			state = "Changed";
+			break;
+		default:
+			state = "?State?";
+		}
+		key = pSymbol_->name.c_str();
+		if (key == s_kButtonA)
+		{
+			color = s_KColA;
+			key	  = "A";
+		}
+		else if (key == s_kButtonB)
+		{
+			color = s_KColB;
+			key	  = "B";
+		}
+		else if (key == s_kButtonX)
+		{
+			color = s_KColX;
+			key	  = "X";
+		}
+		else if (key == s_kButtonY)
+		{
+			color = s_KColY;
+			key	  = "Y";
+		}
+		else
+		{
+			color = ColorF(1.f, 1.f, 0.f, 1.f);
+		}
+	}
 }
 
 // ------------------------------------------------------------------------
 void CInputDevice::CDebugPressedButtons::Add(const SInputSymbol* pSymbol)
 {
-#if INPUT_CVARS_IMPLEMENTED
-  if (g_pInputCVars->i_debugDigitalButtons && pSymbol)
-  {
-    if (pSymbol->state != eIS_Changed || ((g_pInputCVars->i_debugDigitalButtons & eDF_LogChangeState) != 0))
-    {
-      m_history.insert(m_history.begin(), SData(pSymbol, m_frameCnt));
-      if (m_history.size() > e_MaxNumEntries)
-      {
-        m_history.resize(e_MaxNumEntries);
-      }
-    }
-  }
-#endif
+#	if INPUT_CVARS_IMPLEMENTED
+	if (g_pInputCVars->i_debugDigitalButtons && pSymbol)
+	{
+		if (pSymbol->state != eIS_Changed || ((g_pInputCVars->i_debugDigitalButtons & eDF_LogChangeState) != 0))
+		{
+			m_history.insert(m_history.begin(), SData(pSymbol, m_frameCnt));
+			if (m_history.size() > e_MaxNumEntries)
+			{
+				m_history.resize(e_MaxNumEntries);
+			}
+		}
+	}
+#	endif
 }
 
 //#include <CryRenderer/IRenderAuxGeom.h>
@@ -274,7 +274,7 @@ void CInputDevice::CDebugPressedButtons::Add(const SInputSymbol* pSymbol)
 // ------------------------------------------------------------------------
 void CInputDevice::CDebugPressedButtons::DebugRender()
 {
-#if 0
+#	if 0
   if (g_pInputCVars->i_debugDigitalButtons)
   {
     static float deltaY = 15.f;
@@ -297,6 +297,6 @@ void CInputDevice::CDebugPressedButtons::DebugRender()
     }
     ++m_frameCnt;
   }
-#endif
+#	endif
 }
 #endif

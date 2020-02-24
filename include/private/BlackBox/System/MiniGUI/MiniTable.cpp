@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 // -------------------------------------------------------------------------
 //  File name:   MiniTable.cpp
@@ -9,17 +9,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#include <StdAfx.h>
 #include "MiniTable.h"
 #include "DrawContext.h"
+#include <StdAfx.h>
 
 MINIGUI_BEGIN
 
 CMiniTable::CMiniTable()
 {
 	m_fTextSize = 15.f;
-	m_pageNum = 0;
-	m_pageSize = 35;
+	m_pageNum	= 0;
+	m_pageSize	= 35;
 }
 
 void CMiniTable::OnPaint(CDrawContext& dc)
@@ -45,7 +45,7 @@ void CMiniTable::OnPaint(CDrawContext& dc)
 	}
 	else
 	{
-		borderCol = dc.Metrics().clrFrameBorderOutOfFocus;
+		borderCol		= dc.Metrics().clrFrameBorderOutOfFocus;
 		backgroundCol.a = dc.Metrics().outOfFocusAlpha;
 	}
 
@@ -61,10 +61,10 @@ void CMiniTable::OnPaint(CDrawContext& dc)
 	float y = m_rect.top + indent;
 
 	const int nColumns = m_columns.size();
-	int numEntries = m_columns[0].cells.size();
+	int numEntries	   = m_columns[0].cells.size();
 
 	int startIdx = 0;
-	int endIdx = numEntries;
+	int endIdx	 = numEntries;
 
 	//Page number
 	if (nColumns)
@@ -74,7 +74,7 @@ void CMiniTable::OnPaint(CDrawContext& dc)
 		if (numPages)
 		{
 			startIdx = m_pageNum * m_pageSize;
-			endIdx = min(startIdx + m_pageSize, numEntries);
+			endIdx	 = min(startIdx + m_pageSize, numEntries);
 			dc.SetColor(ColorB(255, 255, 255, 255));
 
 			//print page details (adjust for zero indexed)
@@ -129,12 +129,12 @@ void CMiniTable::AutoResize()
 	//must be at least the size of cross box
 	float tableWidth = 30.f;
 
-	float tableHeight = 0.f;
+	float tableHeight	   = 0.f;
 	const float widthScale = 0.6f;
-	const int nColumns = m_columns.size();
+	const int nColumns	   = m_columns.size();
 
 	int startIdx = 0;
-	int endIdx = 0;
+	int endIdx	 = 0;
 
 	bool bPageHeader = false;
 
@@ -142,7 +142,7 @@ void CMiniTable::AutoResize()
 	if (nColumns)
 	{
 		int numEntries = m_columns[0].cells.size();
-		int numPages = numEntries / m_pageSize;
+		int numPages   = numEntries / m_pageSize;
 
 		//page index is now invalid, cap at max
 		if ((m_pageNum * m_pageSize) > numEntries)
@@ -151,7 +151,7 @@ void CMiniTable::AutoResize()
 		}
 
 		startIdx = m_pageNum * m_pageSize;
-		endIdx = min(startIdx + m_pageSize, numEntries);
+		endIdx	 = min(startIdx + m_pageSize, numEntries);
 
 		if (numEntries > m_pageSize)
 		{
@@ -189,7 +189,7 @@ void CMiniTable::AutoResize()
 
 	Rect newRect = m_rect;
 
-	newRect.right = newRect.left + tableWidth;
+	newRect.right  = newRect.left + tableWidth;
 	newRect.bottom = newRect.top + tableHeight;
 
 	SetRect(newRect);
@@ -263,7 +263,6 @@ int CMiniTable::AddData(int columnIndex, ColorB col, const char* format, ...)
 	m_requiresResize = true;
 
 	return m_columns[columnIndex].cells.size() - 1;
-
 }
 
 void CMiniTable::ClearTable()

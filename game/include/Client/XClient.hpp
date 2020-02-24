@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XClient.h
@@ -19,24 +19,24 @@
 #define GAME_XCLIENT_H
 
 #if _MSC_VER > 1000
-# pragma once
+#	pragma once
 #endif
 
-#include <vector>
-#include <string>
-#include <map>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/IConsole.hpp>
+#include <map>
+#include <string>
+#include <vector>
 //#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
 //#include "XClientSnapshot.h"
 //#include "XEntityProcessingCmd.h"
-#include <Network/XNetwork.hpp>	
+#include <Network/XNetwork.hpp>
 //#include "XNetworkStats.h"						// CXNetworkStats
 //#include <BlackBox/ScriptObjectVector.hpp>						// CXNetworkStats
-#include <BlackBox/ScriptSystem/_ScriptableEx.hpp>						// CXNetworkStats
+#include <BlackBox/ScriptSystem/_ScriptableEx.hpp> // CXNetworkStats
+#include <BlackBox/System/ITimer.hpp>
 #include <Game.hpp>
 #include <GameShared.hpp>
-#include <BlackBox/System/ITimer.hpp>
 
 struct SCameraParams;
 struct IScriptSystem;
@@ -45,34 +45,33 @@ struct SXGameContext;
 //////////////////////////////////////////////////////////////////////
 struct SSoundInfo
 {
-	int nEntityId;			//!<
-	Vec3 Pos;						//!<
-	float fRadius;			//!<
-	float fThread;			//!<
-	float fDistance2;		//!< squared distance from player at the time of occurance
-	float fTimeout;			//!< Time until this soundinfo is removed from list
+	int nEntityId;	  //!<
+	Vec3 Pos;		  //!<
+	float fRadius;	  //!<
+	float fThread;	  //!<
+	float fDistance2; //!< squared distance from player at the time of occurance
+	float fTimeout;	  //!< Time until this soundinfo is removed from list
 };
 
 //////////////////////////////////////////////////////////////////////
 
-typedef std::vector<SSoundInfo>	TSoundList;
+typedef std::vector<SSoundInfo> TSoundList;
 typedef TSoundList::iterator TSoundListIt;
 
 //////////////////////////////////////////////////////////////////////
 // CXClient class.
-class CXClient :
-	public IClientSink,
-	public IActionMapSink
+class CXClient : public IClientSink
+	, public IActionMapSink
 {
-public:
+  public:
 	//! constructor
 	CXClient();
 
-private:
+  private:
 	//! destructor
 	virtual ~CXClient();
 
-public:
+  public:
 	//!
 	bool Init(CGame* pGame, bool bLocal = false);
 	//!
@@ -80,7 +79,7 @@ public:
 	//!
 	void DrawNetStats();
 
-	// interface IClientSink 
+	// interface IClientSink
 
 	virtual void OnXConnect();
 	virtual void OnXClientDisconnect(const char* szCause);
@@ -92,12 +91,18 @@ public:
 	virtual void MarkForDestruct();
 	virtual bool DestructIfMarked();
 
-	IClient* GetNetworkClient() const { return m_pIClient; };
+	IClient* GetNetworkClient() const
+	{
+		return m_pIClient;
+	};
 
 	// console variables
 	bool CreateConsoleVariables();
 
-	TSoundList& GetSoundEventList() { return m_lstSounds; }
+	TSoundList& GetSoundEventList()
+	{
+		return m_lstSounds;
+	}
 
 	// Connection management functions
 	//! \param szAddr
@@ -118,7 +123,7 @@ public:
 	{
 		return (unsigned int)(m_pTimer->GetCurrTime() * 1000.f);
 	}
-#else	
+#else
 	inline unsigned int GetCurrentTime()
 	{
 		return (unsigned int)(m_pTimer->GetCurrTime() * 1000.f);
@@ -166,7 +171,10 @@ public:
 		return m_pIClient->GetPing();
 	}
 
-	bool IsConnected() { return m_bConnected; };
+	bool IsConnected()
+	{
+		return m_bConnected;
+	};
 	//!
 	void LazyChannelAcknowledge();
 	//!
@@ -294,10 +302,9 @@ public:
 		REGISTER_INPUTACTIONMAP(ACTION_MOVEMODE_TOGGLE, TriggerMoveModeToggle)
 		REGISTER_INPUTACTIONMAP(ACTION_AIM_TOGGLE, TriggerAimToggle)
 #endif
-		END_INPUTACTIONMAP()
+	END_INPUTACTIONMAP()
 
-private:
-
+  private:
 	void UpdateISystem();
 	void LoadPlayerDesc();
 	// packet parsers
@@ -328,65 +335,61 @@ private:
 	bool OnServerMsgRequestScriptHash(CStream& stm);
 	bool OnServerMsgSyncAIState(CStream& stm);
 
-
 	void LoadingError(const char* szError);
 
-private:
-
+  private:
 	//EntityId						m_wPlayerID;							//!<
-	int									m_iPhysicalWorldTime;			//!<
-	bool								m_bIgnoreSnapshot;				//!<
-	bool								bDoSwitch;								//!<
+	int m_iPhysicalWorldTime; //!<
+	bool m_bIgnoreSnapshot;	  //!<
+	bool bDoSwitch;			  //!<
 
-public:
+  public:
+	float m_fFrontSound;	//!<
+	float m_fBackSound;		//!<
+	float m_fLeftSound;		//!<
+	float m_fRightSound;	//!<
+	TSoundList m_lstSounds; //!< occured sounds to be used for the radar
 
-	float								m_fFrontSound;						//!<
-	float								m_fBackSound;							//!<
-	float								m_fLeftSound;							//!<
-	float								m_fRightSound;						//!<
-	TSoundList					m_lstSounds;							//!< occured sounds to be used for the radar
+	bool m_bDisplayHud;			  //!<
+	IClient* m_pIClient;		  //!<
+	CStream* m_pSavedConsoleVars; //!< saved console variable state (to restore the VF_REQUIRE_NET_SYNC marked vars), 0 when not used
 
-	bool								m_bDisplayHud;						//!<
-	IClient* m_pIClient;								//!<
-	CStream* m_pSavedConsoleVars;			//!< saved console variable state (to restore the VF_REQUIRE_NET_SYNC marked vars), 0 when not used
-
-	bool								m_bLocalHost;							//!< this client is the local host ?
-	class CGame*				m_pGame;									//!< The game
-	bool								m_bLinkListenerToCamera;	//!<
-	struct IXSystem*		m_pISystem;								//!< The system interface
-	IScriptSystem*			m_pScriptSystem;					//!<
+	bool m_bLocalHost;				//!< this client is the local host ?
+	class CGame* m_pGame;			//!< The game
+	bool m_bLinkListenerToCamera;	//!<
+	struct IXSystem* m_pISystem;	//!< The system interface
+	IScriptSystem* m_pScriptSystem; //!<
 	//IEntitySystem*		m_pEntitySystem;					//!<
-	ILog*								m_pLog;										//!<
-	bool								m_bLazyChannelState;			//!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
-
+	ILog* m_pLog;			  //!<
+	bool m_bLazyChannelState; //!< used for sending ordered reliable data over the unreliable connection (slow but never stalls, used for scoreboard)
 
 	// Player
 	//CXEntityProcessingCmd m_PlayerProcessingCmd;
 	//CXEntityProcessingCmd m_PrevPlayerProcessingCmd;
 
 	// The current game context
-	SXGameContext				m_GameContext;
+	SXGameContext m_GameContext;
 
 	// Action map
 	struct IActionMapManager* m_pIActionMapManager;
 
 	//used to discard old unreliable packets
-	float								m_fLastRemoteAsyncCurrTime;
+	float m_fLastRemoteAsyncCurrTime;
 
-	float								m_fLastScoreBoardTime;
-	float								m_fLastClientStringTime;
+	float m_fLastScoreBoardTime;
+	float m_fLastClientStringTime;
 
-	SCameraParams* m_CameraParams;						//!<
+	SCameraParams* m_CameraParams; //!<
 
 	// gamestate stuff
-	char								m_nGameState;							//!< one of the above. hardcoded in Lua
-	short								m_nGameLastTime;					//!< in seconds
-	float								m_fGameLastTimeReceived;	//!<
+	char m_nGameState;			   //!< one of the above. hardcoded in Lua
+	short m_nGameLastTime;		   //!< in seconds
+	float m_fGameLastTimeReceived; //!<
 
-	unsigned int				m_nDiscardedPackets;			//!<
+	unsigned int m_nDiscardedPackets; //!<
 
 	//CXClientSnapshot		m_Snapshot;								//!< Snapshot
-	bool								m_bSelfDestruct;					//!< usually false, to make sure the client is only released in one place
+	bool m_bSelfDestruct; //!< usually false, to make sure the client is only released in one place
 
 	// Client console variables
 	ICVar* cl_sound_event_timeout;
@@ -408,22 +411,21 @@ public:
 	ICVar* cl_netstats;
 	ICVar* cl_cmdrate;
 
-	bool										m_bMapConnecting;				//!<
-	ITimer* m_pTimer;								//!<
-	bool										m_bRecordingDemo;				//!< used for demo recording (use network stream)
-	bool										m_bPlaybackDemo;				//!< used for demo recording (use network stream)
-	CScriptObjectClient* m_pScriptObjectClient;	//!<
-	IScriptObject* m_pClientStuff;					//!< connection to the associated scriptobject
+	bool m_bMapConnecting;						//!<
+	ITimer* m_pTimer;							//!<
+	bool m_bRecordingDemo;						//!< used for demo recording (use network stream)
+	bool m_bPlaybackDemo;						//!< used for demo recording (use network stream)
+	CScriptObjectClient* m_pScriptObjectClient; //!<
+	IScriptObject* m_pClientStuff;				//!< connection to the associated scriptobject
 
-private:
-
-	std::string							m_sClientString;				//!< XSERVERMSG_CLIENTSTRING
+  private:
+	std::string m_sClientString; //!< XSERVERMSG_CLIENTSTRING
 	//CXNetworkStats					m_NetStats;							//!< for network statistics (count and size per packet type)
-	CStream									m_stmVehicle;						//!<
-	bool										m_bConnected;						//!< is the client fully connected to the game ? (connection established, map loaded, setup complete, ...)
+	CStream m_stmVehicle; //!<
+	bool m_bConnected;	  //!< is the client fully connected to the game ? (connection established, map loaded, setup complete, ...)
 
-	CScriptObjectVector			m_sopMsgNormal;					//!<
-	CScriptObjectVector			m_sopMsgPos;						//!<
+	CScriptObjectVector m_sopMsgNormal; //!<
+	CScriptObjectVector m_sopMsgPos;	//!<
 
 	//!
 	static const char* GetMsgName(XSERVERMSG inValue);

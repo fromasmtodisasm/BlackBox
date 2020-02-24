@@ -6,37 +6,37 @@ struct SpotLight;
 
 struct BaseLight
 {
-  Vec3 ambient;
-  Vec3 diffuse;
-  Vec3 specular;
-  bool enabled;
-  enum Type
-  {
-    DIRECTIONAL,
-    POINT,
-    SPOT
-  }type;
-  const char* toStr;
+	Vec3 ambient;
+	Vec3 diffuse;
+	Vec3 specular;
+	bool enabled;
+	enum Type
+	{
+		DIRECTIONAL,
+		POINT,
+		SPOT
+	} type;
+	const char* toStr;
 };
 
 struct DirectionLight : BaseLight
 {
-  Vec3 direction;
+	Vec3 direction;
 };
 
 struct PointLight : public BaseLight
 {
-  Vec3 position;
+	Vec3 position;
 
-  float constant;
-  float linear;
-  float quadratic;
-  const char* type;
+	float constant;
+	float linear;
+	float quadratic;
+	const char* type;
 };
 
 struct SpotLight : public PointLight
 {
-  Vec3 direction;
-  float cutOff;
-  float outerCutOff;
+	Vec3 direction;
+	float cutOff;
+	float outerCutOff;
 };

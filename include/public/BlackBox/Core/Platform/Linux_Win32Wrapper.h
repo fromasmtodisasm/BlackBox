@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 // -------------------------------------------------------------------------
 //  File name:   Linux_Win32Wrapper.h
@@ -17,12 +17,12 @@
 #if 0
 //#include <CryCore/Assert/CryAssert.h>
 /* Memory block identification */
-#define _FREE_BLOCK   0
-#define _NORMAL_BLOCK 1
-#define _CRT_BLOCK    2
-#define _IGNORE_BLOCK 3
-#define _CLIENT_BLOCK 4
-#define _MAX_BLOCKS   5
+#	define _FREE_BLOCK	  0
+#	define _NORMAL_BLOCK 1
+#	define _CRT_BLOCK	  2
+#	define _IGNORE_BLOCK 3
+#	define _CLIENT_BLOCK 4
+#	define _MAX_BLOCKS	  5
 
 typedef void* HMODULE;
 
@@ -40,23 +40,23 @@ typedef struct _MEMORYSTATUS
 
 extern void GlobalMemoryStatus(LPMEMORYSTATUS lpmem);
 
-#if CRY_PLATFORM_64BIT
-	#define MEMORY_ALLOCATION_ALIGNMENT 16
-#else
-	#define MEMORY_ALLOCATION_ALIGNMENT 8
-#endif
+#	if CRY_PLATFORM_64BIT
+#		define MEMORY_ALLOCATION_ALIGNMENT 16
+#	else
+#		define MEMORY_ALLOCATION_ALIGNMENT 8
+#	endif
 
-#define S_OK                          0
-#define THREAD_PRIORITY_NORMAL        0
-#define THREAD_PRIORITY_IDLE          0
-#define THREAD_PRIORITY_LOWEST        0
-#define THREAD_PRIORITY_BELOW_NORMAL  0
-#define THREAD_PRIORITY_ABOVE_NORMAL  0
-#define THREAD_PRIORITY_HIGHEST       0
-#define THREAD_PRIORITY_TIME_CRITICAL 0
-#define MAX_COMPUTERNAME_LENGTH       15 // required by CryOnline module
+#	define S_OK						  0
+#	define THREAD_PRIORITY_NORMAL		  0
+#	define THREAD_PRIORITY_IDLE		  0
+#	define THREAD_PRIORITY_LOWEST		  0
+#	define THREAD_PRIORITY_BELOW_NORMAL  0
+#	define THREAD_PRIORITY_ABOVE_NORMAL  0
+#	define THREAD_PRIORITY_HIGHEST		  0
+#	define THREAD_PRIORITY_TIME_CRITICAL 0
+#	define MAX_COMPUTERNAME_LENGTH		  15 // required by CryOnline module
 
-#if 0
+#	if 0
 //! For compatibility reason we got to create a class which actually contains an int rather than a void* and make sure it does not get mistreated.
 //! U is default type for invalid handle value, T the encapsulated handle type to be used instead of void* (as under windows and never linux).
 template<class T, T U>
@@ -103,35 +103,35 @@ typedef CHandle<INT_PTR, (INT_PTR) 0> HANDLE;
 typedef HANDLE                        EVENT_HANDLE;
 typedef HANDLE                        THREAD_HANDLE;
 
-	#define INVALID_HANDLE_VALUE ((HANDLE)(LONG_PTR)-1)
-#endif
+#		define INVALID_HANDLE_VALUE ((HANDLE)(LONG_PTR)-1)
+#	endif
 
 //#define __TIMESTAMP__ __DATE__" "__TIME__
 
 // stdlib.h stuff
-#define _MAX_DRIVE 3    // max. length of drive component
-#define _MAX_DIR   256  // max. length of path component
-#define _MAX_FNAME 256  // max. length of file name component
-#define _MAX_EXT   256  // max. length of extension component
+#	define _MAX_DRIVE	   3	  // max. length of drive component
+#	define _MAX_DIR	   256	  // max. length of path component
+#	define _MAX_FNAME	   256	  // max. length of file name component
+#	define _MAX_EXT	   256	  // max. length of extension component
 
 // fcntl.h
-#define _O_RDONLY      0x0000   /* open for reading only */
-#define _O_WRONLY      0x0001   /* open for writing only */
-#define _O_RDWR        0x0002   /* open for reading and writing */
-#define _O_APPEND      0x0008   /* writes done at eof */
-#define _O_CREAT       0x0100   /* create and open file */
-#define _O_TRUNC       0x0200   /* open and truncate */
-#define _O_EXCL        0x0400   /* open only if file doesn't already exist */
-#define _O_TEXT        0x4000   /* file mode is text (translated) */
-#define _O_BINARY      0x8000   /* file mode is binary (untranslated) */
-#define _O_RAW         _O_BINARY
-#define _O_NOINHERIT   0x0080   /* child process doesn't inherit file */
-#define _O_TEMPORARY   0x0040   /* temporary file bit */
-#define _O_SHORT_LIVED 0x1000   /* temporary storage file, try not to flush */
-#define _O_SEQUENTIAL  0x0020   /* file access is primarily sequential */
-#define _O_RANDOM      0x0010   /* file access is primarily random */
+#	define _O_RDONLY	   0x0000 /* open for reading only */
+#	define _O_WRONLY	   0x0001 /* open for writing only */
+#	define _O_RDWR		   0x0002 /* open for reading and writing */
+#	define _O_APPEND	   0x0008 /* writes done at eof */
+#	define _O_CREAT	   0x0100 /* create and open file */
+#	define _O_TRUNC	   0x0200 /* open and truncate */
+#	define _O_EXCL		   0x0400 /* open only if file doesn't already exist */
+#	define _O_TEXT		   0x4000 /* file mode is text (translated) */
+#	define _O_BINARY	   0x8000 /* file mode is binary (untranslated) */
+#	define _O_RAW		   _O_BINARY
+#	define _O_NOINHERIT   0x0080 /* child process doesn't inherit file */
+#	define _O_TEMPORARY   0x0040 /* temporary file bit */
+#	define _O_SHORT_LIVED 0x1000 /* temporary storage file, try not to flush */
+#	define _O_SEQUENTIAL  0x0020 /* file access is primarily sequential */
+#	define _O_RANDOM	   0x0010 /* file access is primarily random */
 
-#define MemoryBarrier() __sync_synchronize()
+#	define MemoryBarrier() __sync_synchronize()
 // Memory barrier implementation taken from https://code.google.com/p/gperftools/
 //inline void MemoryBarrier() {
 //  __asm__ __volatile__("mfence" : : : "memory");
@@ -147,9 +147,9 @@ inline int MoveFileEx(const char* pOld, const char* pNew, const uint32 flags)
 
 //////////////////////////////////////////////////////////////////////////
 // io.h stuff
-#if !CRY_PLATFORM_ANDROID
+#	if !CRY_PLATFORM_ANDROID
 extern int errno;
-#endif
+#	endif
 typedef unsigned int _fsize_t;
 
 struct _OVERLAPPED;
@@ -173,12 +173,12 @@ typedef struct tagPOINT
 #endif
 
 #ifndef _FILETIME_
-	#define _FILETIME_
+#	define _FILETIME_
 typedef struct _FILETIME
 {
 	DWORD dwLowDateTime;
 	DWORD dwHighDateTime;
-} FILETIME, * PFILETIME, * LPFILETIME;
+} FILETIME, *PFILETIME, *LPFILETIME;
 #endif
 #if 0
 typedef union _ULARGE_INTEGER
@@ -193,11 +193,11 @@ typedef union _ULARGE_INTEGER
 
 typedef ULARGE_INTEGER* PULARGE_INTEGER;
 
-#ifdef __cplusplus
+#	ifdef __cplusplus
 inline LONG CompareFileTime(const FILETIME* lpFileTime1, const FILETIME* lpFileTime2)
-#else
+#	else
 static LONG CompareFileTime(const FILETIME* lpFileTime1, const FILETIME* lpFileTime2)
-#endif
+#	endif
 {
 	ULARGE_INTEGER u1, u2;
 	memcpy(&u1, lpFileTime1, sizeof u1);
@@ -233,9 +233,9 @@ typedef struct _TIME_FIELDS
 	short Weekday;
 } TIME_FIELDS, * PTIME_FIELDS;
 
-#define DAYSPERNORMALYEAR 365
-#define DAYSPERLEAPYEAR   366
-#define MONSPERYEAR       12
+#	define DAYSPERNORMALYEAR 365
+#	define DAYSPERLEAPYEAR	  366
+#	define MONSPERYEAR		  12
 
 inline void ZeroMemory(void* pPtr, int nSize)
 {
@@ -288,7 +288,7 @@ DLL_IMPORT void OutputDebugString(const char*);    //!< Defined in the launcher.
 
 extern bool QueryPerformanceCounter(LARGE_INTEGER* counter);
 extern bool QueryPerformanceFrequency(LARGE_INTEGER* frequency);
-#ifdef __cplusplus
+#	ifdef __cplusplus
 
 inline uint32 GetTickCount()
 {
@@ -298,9 +298,9 @@ inline uint32 GetTickCount()
 	return uint32(count.QuadPart * 1000 / freq.QuadPart);
 }
 
-	#define IGNORE   0                // Ignore signal
-	#define INFINITE 0xFFFFFFFF       // Infinite timeout
-#endif
+#		define IGNORE	 0			// Ignore signal
+#		define INFINITE 0xFFFFFFFF // Infinite timeout
+#	endif
 //begin--------------------------------findfirst/-next declaration/implementation----------------------------------------------------
 
 //////////////////////////////////////////////////////////////////////////
@@ -309,17 +309,17 @@ typedef int64 __time64_t;     /* 64-bit time value */
 
 //////////////////////////////////////////////////////////////////////////
 // function renaming
-#define _chmod    chmod
-#define stricmp   strcasecmp
-#define _stricmp  strcasecmp
-#define strnicmp  strncasecmp
-#define _strnicmp strncasecmp
+#	define _chmod	  chmod
+#	define stricmp	  strcasecmp
+#	define _stricmp  strcasecmp
+#	define strnicmp  strncasecmp
+#	define _strnicmp strncasecmp
 
-#define _strlwr   strlwr
-#define _strlwr_s(BUF, SIZE) strlwr(BUF)
-#define _strups   strupr
+#	define _strlwr				 strlwr
+#	define _strlwr_s(BUF, SIZE) strlwr(BUF)
+#	define _strups				 strupr
 
-#define _wtof(str) wcstod(str, 0)
+#	define _wtof(str)		wcstod(str, 0)
 // Need to include this before using it's used in finddata, but after the strnicmp definition
 //#include <CryString/CryString.h>
 
@@ -378,30 +378,30 @@ inline DWORD GetLastError() { return errno; }
 inline void SetLastError(DWORD dwErrCode) { errno = dwErrCode; }
 
 //////////////////////////////////////////////////////////////////////////
-#define GENERIC_READ              (0x80000000L)
-#define GENERIC_WRITE             (0x40000000L)
-#define GENERIC_EXECUTE           (0x20000000L)
-#define GENERIC_ALL               (0x10000000L)
+#	define GENERIC_READ	(0x80000000L)
+#	define GENERIC_WRITE	(0x40000000L)
+#	define GENERIC_EXECUTE (0x20000000L)
+#	define GENERIC_ALL		(0x10000000L)
 
-#define CREATE_NEW                1
-#define CREATE_ALWAYS             2
-#define OPEN_EXISTING             3
-#define OPEN_ALWAYS               4
-#define TRUNCATE_EXISTING         5
+#	define CREATE_NEW		  1
+#	define CREATE_ALWAYS	  2
+#	define OPEN_EXISTING	  3
+#	define OPEN_ALWAYS		  4
+#	define TRUNCATE_EXISTING 5
 
-#define FILE_SHARE_READ           0x00000001
-#define FILE_SHARE_WRITE          0x00000002
-#define OPEN_EXISTING             3
-#define FILE_FLAG_OVERLAPPED      0x40000000
-#define INVALID_FILE_SIZE         ((DWORD)0xFFFFFFFFl)
-#define FILE_BEGIN                0
-#define FILE_CURRENT              1
-#define FILE_END                  2
-#define ERROR_NO_SYSTEM_RESOURCES 1450L
-#define ERROR_INVALID_USER_BUFFER 1784L
-#define ERROR_NOT_ENOUGH_MEMORY   8L
-#define ERROR_PATH_NOT_FOUND      3L
-#define FILE_FLAG_SEQUENTIAL_SCAN 0x08000000
+#	define FILE_SHARE_READ			  0x00000001
+#	define FILE_SHARE_WRITE		  0x00000002
+#	define OPEN_EXISTING			  3
+#	define FILE_FLAG_OVERLAPPED	  0x40000000
+#	define INVALID_FILE_SIZE		  ((DWORD)0xFFFFFFFFl)
+#	define FILE_BEGIN				  0
+#	define FILE_CURRENT			  1
+#	define FILE_END				  2
+#	define ERROR_NO_SYSTEM_RESOURCES 1450L
+#	define ERROR_INVALID_USER_BUFFER 1784L
+#	define ERROR_NOT_ENOUGH_MEMORY	  8L
+#	define ERROR_PATH_NOT_FOUND	  3L
+#	define FILE_FLAG_SEQUENTIAL_SCAN 0x08000000
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -548,15 +548,15 @@ extern DWORD GetCurrentProcessId(void);
 
 // Helper functions.
 extern const bool ConvertFilenameNoCase(char* file);
-extern void       adaptFilenameToLinux(char* rAdjustedFilename);
-extern const int  comparePathNames(const char* cpFirst, const char* cpSecond, unsigned int len); //!< \return 0 if identical.
-extern void       replaceDoublePathFilename(char* szFileName);                                   //!< Removes "\.\" to "\" and "/./" to "/".
+extern void adaptFilenameToLinux(char* rAdjustedFilename);
+extern const int comparePathNames(const char* cpFirst, const char* cpSecond, unsigned int len); //!< \return 0 if identical.
+extern void replaceDoublePathFilename(char* szFileName);										//!< Removes "\.\" to "\" and "/./" to "/".
 
 //////////////////////////////////////////////////////////////////////////
-extern char*    _fullpath(char* absPath, const char* relPath, size_t maxLength);
+extern char* _fullpath(char* absPath, const char* relPath, size_t maxLength);
 extern intptr_t _findfirst64(const char* filespec, struct __finddata64_t* fileinfo);
-extern int      _findnext64(intptr_t handle, struct __finddata64_t* fileinfo);
-extern int      _findclose(intptr_t handle);
+extern int _findnext64(intptr_t handle, struct __finddata64_t* fileinfo);
+extern int _findclose(intptr_t handle);
 
 //////////////////////////////////////////////////////////////////////////
 extern void _makepath(char* path, const char* drive, const char* dir, const char* filename, const char* ext);
@@ -569,33 +569,33 @@ extern int strcmpi(const char* str1, const char* str2);
 extern "C" char* strlwr(char* str);
 extern "C" char* strupr(char* str);
 
-extern char*     _ui64toa(unsigned long long value, char* str, int radix);
+extern char* _ui64toa(unsigned long long value, char* str, int radix);
 extern long long _atoi64(const char* str);
 
-extern int*      _errno();
+extern int* _errno();
 
-	#ifdef _isnan
-		#undef _isnan
+#	ifdef _isnan
+#		undef _isnan
 template<typename T>
 bool _isnan(T value)
 {
 	return value != value;
 }
-	#endif
+#	endif
 
-	#define fprintf_s fprintf
-	#define sscanf_s  sscanf
+#	define fprintf_s fprintf
+#	define sscanf_s  sscanf
 
 //////////////////////////////////////////////////////////////////////////
 
-	#ifndef __TRLTOA__
-		#define __TRLTOA__
+#	ifndef __TRLTOA__
+#		define __TRLTOA__
 extern char* ltoa(long i, char* a, int radix);
-	#endif
-	#define itoa ltoa
+#	endif
+#	define itoa ltoa
 
 //////////////////////////////////////////////////////////////////////////
-	#if 0
+#	if 0
 inline long int abs(long int x)
 {
 	return labs(x);
@@ -615,12 +615,12 @@ inline float sqrt(float x)
 {
 	return sqrtf(x);
 }
-	#else
-		#include <cmath>
+#	else
+#		include <cmath>
 using std::abs;
-using std::sqrt;
 using std::fabs;
-	#endif
+using std::sqrt;
+#	endif
 
 extern char* _strtime(char* date);
 extern char* _strdate(char* date);
@@ -637,21 +637,21 @@ inline unsigned short _byteswap_ushort(unsigned short input)
 inline LONG _byteswap_ulong(LONG input)
 {
 	return (input & 0x000000ff) << 24 |
-	       (input & 0x0000ff00) << 8 |
-	       (input & 0x00ff0000) >> 8 |
-	       (input & 0xff000000) >> 24;
+		   (input & 0x0000ff00) << 8 |
+		   (input & 0x00ff0000) >> 8 |
+		   (input & 0xff000000) >> 24;
 }
 
 inline unsigned long long _byteswap_uint64(unsigned long long input)
 {
 	return (((input & 0xff00000000000000ull) >> 56) |
-	        ((input & 0x00ff000000000000ull) >> 40) |
-	        ((input & 0x0000ff0000000000ull) >> 24) |
-	        ((input & 0x000000ff00000000ull) >> 8) |
-	        ((input & 0x00000000ff000000ull) << 8) |
-	        ((input & 0x0000000000ff0000ull) << 24) |
-	        ((input & 0x000000000000ff00ull) << 40) |
-	        ((input & 0x00000000000000ffull) << 56));
+			((input & 0x00ff000000000000ull) >> 40) |
+			((input & 0x0000ff0000000000ull) >> 24) |
+			((input & 0x000000ff00000000ull) >> 8) |
+			((input & 0x00000000ff000000ull) << 8) |
+			((input & 0x0000000000ff0000ull) << 24) |
+			((input & 0x000000000000ff00ull) << 40) |
+			((input & 0x00000000000000ffull) << 56));
 }
 #if 0
 #endif

@@ -9,18 +9,18 @@ CScriptBindings::CScriptBindings()
 
 CScriptBindings::~CScriptBindings()
 {
-  Done();
+	Done();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CScriptBindings::Init(ISystem* pSystem, IScriptSystem* pSS)
 {
-  m_binds.push_back(std::unique_ptr<CScriptObjectSystem>((new CScriptObjectSystem(pSystem, pSS))));
+	m_binds.push_back(std::unique_ptr<CScriptObjectSystem>((new CScriptObjectSystem(pSystem, pSS))));
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CScriptBindings::Done()
 {
-  // Done script bindings.
-  m_binds.clear();
+	// Done script bindings.
+	m_binds.clear();
 }
