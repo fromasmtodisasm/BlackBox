@@ -43,8 +43,8 @@ BreakBeforeBraces: Allman # Attach
 BreakInheritanceList: BeforeComma
 BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: true
-#BreakConstructorInitializersBeforeComma: false
-BreakConstructorInitializers: BeforeComma
+BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializers: BeforeColon
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
 ColumnLimit:    0 
