@@ -14,22 +14,9 @@ endmacro()
 
 function(install_package Package Result)
 
+  #set(ToInstall "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}")
   set(ToInstall "${Package}:x64-${BB_PLATFORM}")
   set(CMD "vcpkg")
-  set(ARGS " install ${ToInstall}")
-  message(STATUS "Trying install package [${ToInstall}]")
-  execute_process(
-    COMMAND ${CMD} install "${ToInstall}"
-    RESULT_VARIABLE result
-  )
-  set(${Result} ${result} PARENT_SCOPE)
-
-endfunction()
-
-function(install_package_cygwin Package Result)
-
-  set(ToInstall "${Package}")
-  set(CMD "apt-cyg")
   set(ARGS " install ${ToInstall}")
   message(STATUS "Trying install package [${ToInstall}]")
   execute_process(
@@ -64,57 +51,22 @@ macro(CommonMacrosInit)
 	endif()
 	InstallVcpkg()
 endmacro()
-##########################################################
-macro(add_package_vcpkg Package)
+
+macro(add_package Package)
 	message(STATUS "Adding ${Package}")
 	find_package(${Package})
 	if (NOT ${Package}_FOUND)
 		message(STATUS "${Package} yet not installed")
-    install_package("${Package}" result)
-		if (${result})
+		install_package("${Package}" result)
+		if (NOT result EQUAL 0)
 			message(FATAL_ERROR "could not install ${Package}") 
 		endif()
 		find_package(${Package} CONFIG)
 		if (NOT ${Package}_FOUND)
 			find_package(${Package} REQUIRED)
+
 		endif()
 	endif()
-endmacro()
-##########################################################
-function(find_package_cygwin Package)
-    find_package(${Package})
-    if (NOT ${Package}_FOUND)
-      find_package("lib${Package}-devel" result)
-      if (NOT ${Package}_FOUND)
-        find_package("${Package}-devel" result)
-      endif()
-    endif()
-endfunction()
-function(add_package_cygwin Package)
-	message(STATUS "Adding ${Package}")
-	find_package(${Package})
-	if (NOT ${Package}_FOUND)
-		message(STATUS "${Package} yet not installed")
-    install_package_cygwin("lib${Package}-devel" result)
-		if (${result})
-      install_package_cygwin("${Package}-devel" result)
-      if (${result})
-        message(FATAL_ERROR "could not install ${Package}") 
-      endif()
-		endif()
-		find_package(${Package} CONFIG)
-		if (NOT ${Package}_FOUND)
-			find_package(${Package} REQUIRED)
-		endif()
-	endif()
-endfunction()
-##########################################################
-macro(add_package Package)
-  if (CYGWIN)
-    add_package_cygwin(${Package})
-  else()
-    add_package_vcpkg(${Package})
-  endif()
 endmacro()
 
 # Helper macro to set default StartUp Project in Visual Studio
@@ -129,6 +81,10 @@ macro(add_subsystem subsystem)
 	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})
 	target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${subsystem})
 	set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
+
+  get_target_property(SOURCE_FILES ${subsystem} SOURCES)
+
+  list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
 
 endmacro()
 

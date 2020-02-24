@@ -75,5 +75,7 @@ if (OPTION_USE_GUI)
 endif()
 ]]
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include("${TOOLS_CMAKE_DIR}/ClangFormat.cmake")
 include("${TOOLS_CMAKE_DIR}/Build.cmake")
 

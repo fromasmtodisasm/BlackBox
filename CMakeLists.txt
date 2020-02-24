@@ -12,6 +12,7 @@ if(NOT DEFINED BLACKBOX_DIR)
 	set(BLACKBOX_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
+set(ALL_PROJECT_SOURCES)
 # Part of the setup is split into the InitialSetup file so projects created by cryrun can include it.
 # This needs to be re-visited after the toolchain files are cleaned up.
 include(Tools/CMake/InitialSetup.cmake)
