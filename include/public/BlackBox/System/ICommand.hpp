@@ -2,5 +2,5 @@
 
 struct ICommand
 {
-	virtual void execute() = 0;
+  virtual void execute() = 0;
 };

@@ -14,8 +14,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <Client/XClient.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
+#include <Client/XClient.hpp>
 
 //////////////////////////////////////////////////////////////////////
 _DECLARE_SCRIPTABLEEX(CScriptObjectClient)
@@ -23,29 +23,29 @@ _DECLARE_SCRIPTABLEEX(CScriptObjectClient)
 //////////////////////////////////////////////////////////////////////
 CScriptObjectClient::CScriptObjectClient()
 {
-	m_pClient = NULL;
+  m_pClient = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 CScriptObjectClient::~CScriptObjectClient()
 {
-	if (m_pSoundEventPos)
-		m_pSoundEventPos->Release();
+  if (m_pSoundEventPos)
+    m_pSoundEventPos->Release();
 }
 
 //////////////////////////////////////////////////////////////////////
 void CScriptObjectClient::Create(IScriptSystem* pScriptSystem, CGame* pGame, CXClient* pClient)
 {
-	m_pGame	  = pGame;
-	m_pClient = pClient;
-	InitGlobal(pScriptSystem, "Client", this);
-	m_pSoundEventPos = pScriptSystem->CreateObject();
+  m_pGame = pGame;
+  m_pClient = pClient;
+  InitGlobal(pScriptSystem, "Client", this);
+  m_pSoundEventPos = pScriptSystem->CreateObject();
 }
 
 //////////////////////////////////////////////////////////////////////
 void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
 {
-	_ScriptableEx<CScriptObjectClient>::InitializeTemplate(pSS);
+  _ScriptableEx<CScriptObjectClient>::InitializeTemplate(pSS);
 
 #if 0
   REG_FUNC(CScriptObjectClient, GetGameStartTime);
@@ -68,10 +68,10 @@ void CScriptObjectClient::InitializeTemplate(IScriptSystem* pSS)
   REG_FUNC(CScriptObjectClient, GetServerOSTargetName);
 #endif
 
-	pSS->SetGlobalValue("CGS_INPROGRESS", 0);
-	pSS->SetGlobalValue("CGS_COUNTDOWN", 1);
-	pSS->SetGlobalValue("CGS_PREWAR", 2);
-	pSS->SetGlobalValue("CGS_INTERMISSION", 3);
+  pSS->SetGlobalValue("CGS_INPROGRESS", 0);
+  pSS->SetGlobalValue("CGS_COUNTDOWN", 1);
+  pSS->SetGlobalValue("CGS_PREWAR", 2);
+  pSS->SetGlobalValue("CGS_INTERMISSION", 3);
 }
 
 #if 0

@@ -5,47 +5,47 @@
 */
 struct SCameraParams
 {
-	SCameraParams()
-	{
-		//cameraNode = 0;
-		nCameraId = 0;
-		fFOV	  = 0.0f;
-	}
-	//IAnimNode* cameraNode;
-	unsigned short nCameraId;
-	float fFOV;
+  SCameraParams()
+  {
+    //cameraNode = 0;
+    nCameraId = 0;
+    fFOV = 0.0f;
+  }
+  //IAnimNode* cameraNode;
+  unsigned short nCameraId;
+  float fFOV;
 };
 
 //////////////////////////////////////////////////////////////////////
 CXClient::CXClient()
 {
-	m_bConnected		  = 0;
-	m_CameraParams		  = 0;
-	m_pScriptObjectClient = 0;
-	m_pIActionMapManager  = 0;
-	//m_pEntitySystem = 0;
-	m_pISystem = 0;
-	m_pIClient = 0;
-	m_pISystem = 0;
-	//m_wPlayerID = INVALID_WID;
-	m_pGame = 0;
+  m_bConnected = 0;
+  m_CameraParams = 0;
+  m_pScriptObjectClient = 0;
+  m_pIActionMapManager = 0;
+  //m_pEntitySystem = 0;
+  m_pISystem = 0;
+  m_pIClient = 0;
+  m_pISystem = 0;
+  //m_wPlayerID = INVALID_WID;
+  m_pGame = 0;
 
-	cl_explShakeDCoef = 0.07f;
-	cl_explShakeAmplH = 0.001f;
-	cl_explShakeAmplV = 0.001f;
-	cl_explShakeFreq  = 11.73f;
-	cl_explShakeTime  = 1.73f;
+  cl_explShakeDCoef = 0.07f;
+  cl_explShakeAmplH = 0.001f;
+  cl_explShakeAmplV = 0.001f;
+  cl_explShakeFreq = 11.73f;
+  cl_explShakeTime = 1.73f;
 
-	m_fFrontSound		= 0;
-	m_fBackSound		= 0;
-	m_fLeftSound		= 0;
-	m_fRightSound		= 0;
-	m_pClientStuff		= 0;
-	bDoSwitch			= false;
-	m_pTimer			= 0;
-	m_bSelfDestruct		= false; //  to make sure the client is only released in one place
-	m_pSavedConsoleVars = 0;
-	m_bLazyChannelState = false; // start with false on client and serverslot side
+  m_fFrontSound = 0;
+  m_fBackSound = 0;
+  m_fLeftSound = 0;
+  m_fRightSound = 0;
+  m_pClientStuff = 0;
+  bDoSwitch = false;
+  m_pTimer = 0;
+  m_bSelfDestruct = false;			//  to make sure the client is only released in one place
+  m_pSavedConsoleVars = 0;
+  m_bLazyChannelState = false;	// start with false on client and serverslot side
 }
 
 CXClient::~CXClient()
@@ -54,97 +54,97 @@ CXClient::~CXClient()
 
 bool CXClient::Init(CGame* pGame, bool bLocal)
 {
-	m_fLastClientStringTime = 0;
-	m_bDisplayHud			= true;
-	m_bMapConnecting		= false;
-	m_bRecordingDemo		= false;
-	m_bPlaybackDemo			= false;
-	//m_wPlayerID = INVALID_WID;
-	m_pISystem				= NULL;
-	m_bLocalHost			= false;
-	m_bLinkListenerToCamera = true;
-	m_pGame					= pGame;
-	m_pScriptSystem			= m_pGame->GetScriptSystem();
-	//m_pEntitySystem = m_pGame->GetSystem()->GetIEntitySystem();
-	m_pLog = m_pGame->m_pLog;
+  m_fLastClientStringTime = 0;
+  m_bDisplayHud = true;
+  m_bMapConnecting = false;
+  m_bRecordingDemo = false;
+  m_bPlaybackDemo = false;
+  //m_wPlayerID = INVALID_WID;
+  m_pISystem = NULL;
+  m_bLocalHost = false;
+  m_bLinkListenerToCamera = true;
+  m_pGame = pGame;
+  m_pScriptSystem = m_pGame->GetScriptSystem();
+  //m_pEntitySystem = m_pGame->GetSystem()->GetIEntitySystem();
+  m_pLog = m_pGame->m_pLog;
 
-	m_sopMsgNormal.Create(m_pScriptSystem);
-	m_sopMsgPos.Create(m_pScriptSystem);
+  m_sopMsgNormal.Create(m_pScriptSystem);
+  m_sopMsgPos.Create(m_pScriptSystem);
 
-	m_pTimer = m_pGame->GetSystem()->GetITimer();
-	// Create the client
-	m_pIClient = m_pGame->CreateClient(this, bLocal);
+  m_pTimer = m_pGame->GetSystem()->GetITimer();
+  // Create the client
+  m_pIClient = m_pGame->CreateClient(this, bLocal);
 
-	//m_PrevPlayerProcessingCmd = m_PlayerProcessingCmd;
+  //m_PrevPlayerProcessingCmd = m_PlayerProcessingCmd;
 
-	// Set the first System interface.
-	UpdateISystem();
+  // Set the first System interface.
+  UpdateISystem();
 
-	m_pIActionMapManager = m_pGame->GetActionMapManager();
-	if (m_pIActionMapManager)
-		m_pIActionMapManager->SetSink(this);
+  m_pIActionMapManager = m_pGame->GetActionMapManager();
+  if (m_pIActionMapManager)
+    m_pIActionMapManager->SetSink(this);
 
-	// Create the console variables
-	CreateConsoleVariables();
+  // Create the console variables
+  CreateConsoleVariables();
 
-	m_nGameState			= CGS_INTERMISSION; // until we get first update from the mod
-	m_nGameLastTime			= 0;
-	m_fGameLastTimeReceived = 0;
-	m_pScriptObjectClient	= new CScriptObjectClient;
-	m_pScriptObjectClient->Create(pGame->GetScriptSystem(), pGame, this);
+  m_nGameState = CGS_INTERMISSION;   // until we get first update from the mod
+  m_nGameLastTime = 0;
+  m_fGameLastTimeReceived = 0;
+  m_pScriptObjectClient = new CScriptObjectClient;
+  m_pScriptObjectClient->Create(pGame->GetScriptSystem(), pGame, this);
 
-	m_CameraParams		 = new SCameraParams;
-	m_pClientStuff		 = m_pScriptSystem->CreateEmptyObject();
-	m_iPhysicalWorldTime = 0;
-	m_bIgnoreSnapshot	 = false;
+  m_CameraParams = new SCameraParams;
+  m_pClientStuff = m_pScriptSystem->CreateEmptyObject();
+  m_iPhysicalWorldTime = 0;
+  m_bIgnoreSnapshot = false;
 
-	return true;
+  return true;
 }
 
 void CXClient::OnXConnect()
 {
-	//sound sources
-	m_fFrontSound = 0;
-	m_fBackSound  = 0;
-	m_fLeftSound  = 0;
-	m_fRightSound = 0;
-	m_lstSounds.clear();
-	m_nDiscardedPackets		   = 0;
-	m_fLastRemoteAsyncCurrTime = 0;
-	m_fLastScoreBoardTime	   = 0;
-	TRACE("CXClient::OnXConnect");
-	LoadPlayerDesc();
+  //sound sources
+  m_fFrontSound = 0;
+  m_fBackSound = 0;
+  m_fLeftSound = 0;
+  m_fRightSound = 0;
+  m_lstSounds.clear();
+  m_nDiscardedPackets = 0;
+  m_fLastRemoteAsyncCurrTime = 0;
+  m_fLastScoreBoardTime = 0;
+  TRACE("CXClient::OnXConnect");
+  LoadPlayerDesc();
 }
 
 void CXClient::OnXClientDisconnect(const char* szCause)
 {
-	SmartScriptObject pClientStuff(m_pScriptSystem, true);
-	if (m_pScriptSystem->GetGlobalValue("ClientStuff", pClientStuff)) // call ClientStuff:OnShutdown()
-	{
-		m_pScriptSystem->BeginCall("ClientStuff", "OnShutdown");
-		m_pScriptSystem->PushFuncParam(pClientStuff);
-		m_pScriptSystem->EndCall();
-	}
+  SmartScriptObject pClientStuff(m_pScriptSystem, true);
+  if (m_pScriptSystem->GetGlobalValue("ClientStuff", pClientStuff))				// call ClientStuff:OnShutdown()
+  {
+    m_pScriptSystem->BeginCall("ClientStuff", "OnShutdown");
+    m_pScriptSystem->PushFuncParam(pClientStuff);
+    m_pScriptSystem->EndCall();
+  }
 
-	TRACE(szCause);
-	//SetPlayerID(0);
-	// <<FIXME>> Should cleanup the stuff with a new function of the IXSystem interface
+  TRACE(szCause);
+  //SetPlayerID(0);
+  // <<FIXME>> Should cleanup the stuff with a new function of the IXSystem interface
 
-	m_bConnected = 0;
+  m_bConnected = 0;
 
-	if (m_pISystem)
-		void(0); // m_pISystem->Disconnected(szCause);
+  if (m_pISystem)
+    void(0);// m_pISystem->Disconnected(szCause);
 
-	m_pScriptSystem->BeginCall("ClientOnDisconnect");
-	m_pScriptSystem->PushFuncParam(szCause);
-	m_pScriptSystem->EndCall();
+  m_pScriptSystem->BeginCall("ClientOnDisconnect");
+  m_pScriptSystem->PushFuncParam(szCause);
+  m_pScriptSystem->EndCall();
 
-	m_pGame->MarkClientForDestruct(); // to make sure the client is only released in one place
+  m_pGame->MarkClientForDestruct();		// to make sure the client is only released in one place
 
-	// hide console and reset progress bar after a disconnection
-	//GetISystem()->GetIConsole()->ResetProgressBar(0);
-	//GetISystem()->GetIConsole()->SetScrollMax(600 / 2);
-	GetISystem()->GetIConsole()->ShowConsole(0);
+  // hide console and reset progress bar after a disconnection
+  //GetISystem()->GetIConsole()->ResetProgressBar(0);
+  //GetISystem()->GetIConsole()->SetScrollMax(600 / 2);
+  GetISystem()->GetIConsole()->ShowConsole(0);
 }
 
 void CXClient::OnXContextSetup(CStream& stmContex)
@@ -396,7 +396,7 @@ void CXClient::OnXServerRessurect()
 
 unsigned int CXClient::GetTimeoutCompensation()
 {
-	return 0;
+  return 0;
 }
 
 void CXClient::MarkForDestruct()
@@ -405,104 +405,104 @@ void CXClient::MarkForDestruct()
 
 bool CXClient::DestructIfMarked()
 {
-	return false;
+  return false;
 }
 
 bool CXClient::CreateConsoleVariables()
 {
-	IConsole* pConsole = m_pGame->GetSystem()->GetIConsole();
-	cl_runroll		   = pConsole->CreateVariable("cl_runroll", "0", 0,
-										  "\n"
-										  "Usage: cl_runroll ?\n"
-										  "Default is 0.");
-	cl_runpitch		   = pConsole->CreateVariable("cl_runpitch", "0.4", 0,
-											  "\n"
-											  "Usage: cl_runpitch 0.4\n"
-											  "Default is 0.4.");
-	cl_runheight	   = pConsole->CreateVariable("cl_runheight", "0.03", 0,
-											  "\n"
-											  "Usage: cl_runheight 0.03\n"
-											  "Default is 0.03.");
-	cl_runheightspeed  = pConsole->CreateVariable("cl_runheightspeed", "1.5", 0,
-												  "\n"
-												  "Usage: cl_runheightspeed 1.5\n"
-												  "Default is 1.5.");
-	cl_playerclassid   = pConsole->CreateVariable("cl_playerclassid", "1", 0,
-												  "Sets the player class.\n"
-												  "Usage: cl_playerclassid #\n"
-												  "Default is 1.");
-	cl_netstats		   = pConsole->CreateVariable("cl_netstats", "0", 0,
-											  "Toggles client network statistics.\n"
-											  "Usage: cl_netstats [0/1]\n"
-											  "Default is 0 (off). Set to 1 to display network statistics.");
-	cl_cmdrate		   = pConsole->CreateVariable("cl_cmdrate", "40", 0,
-										  "Specify the max client network command rate\n"
-										  "(less is better for bandwidth, more is better for response,\n"
-										  "the actual rate is limited by frame rate as well)\n"
-										  "Usage: cl_cmdrate [5..100]\n"
-										  "Default is 40");
+  IConsole* pConsole = m_pGame->GetSystem()->GetIConsole();
+  cl_runroll = pConsole->CreateVariable("cl_runroll", "0", 0,
+    "\n"
+    "Usage: cl_runroll ?\n"
+    "Default is 0.");
+  cl_runpitch = pConsole->CreateVariable("cl_runpitch", "0.4", 0,
+    "\n"
+    "Usage: cl_runpitch 0.4\n"
+    "Default is 0.4.");
+  cl_runheight = pConsole->CreateVariable("cl_runheight", "0.03", 0,
+    "\n"
+    "Usage: cl_runheight 0.03\n"
+    "Default is 0.03.");
+  cl_runheightspeed = pConsole->CreateVariable("cl_runheightspeed", "1.5", 0,
+    "\n"
+    "Usage: cl_runheightspeed 1.5\n"
+    "Default is 1.5.");
+  cl_playerclassid = pConsole->CreateVariable("cl_playerclassid", "1", 0,
+    "Sets the player class.\n"
+    "Usage: cl_playerclassid #\n"
+    "Default is 1.");
+  cl_netstats = pConsole->CreateVariable("cl_netstats", "0", 0,
+    "Toggles client network statistics.\n"
+    "Usage: cl_netstats [0/1]\n"
+    "Default is 0 (off). Set to 1 to display network statistics.");
+  cl_cmdrate = pConsole->CreateVariable("cl_cmdrate", "40", 0,
+    "Specify the max client network command rate\n"
+    "(less is better for bandwidth, more is better for response,\n"
+    "the actual rate is limited by frame rate as well)\n"
+    "Usage: cl_cmdrate [5..100]\n"
+    "Default is 40");
 
-	cl_sound_detection_max_distance = pConsole->CreateVariable("cl_sound_detection_max_distance", "50", 0);
-	cl_sound_detection_min_distance = pConsole->CreateVariable("cl_sound_detection_min_distance", "2", 0);
-	cl_sound_event_radius			= pConsole->CreateVariable("cl_sound_event_radius", "50", 0);
-	cl_sound_event_timeout			= pConsole->CreateVariable("cl_sound_event_timeout", "1", 0);
+  cl_sound_detection_max_distance = pConsole->CreateVariable("cl_sound_detection_max_distance", "50", 0);
+  cl_sound_detection_min_distance = pConsole->CreateVariable("cl_sound_detection_min_distance", "2", 0);
+  cl_sound_event_radius = pConsole->CreateVariable("cl_sound_event_radius", "50", 0);
+  cl_sound_event_timeout = pConsole->CreateVariable("cl_sound_event_timeout", "1", 0);
 
-	pConsole->AddCommand("say", "Client:Say(%line)", VF_NULL, "");
-	pConsole->AddCommand("sayteam", "Client:SayTeam(%line)", VF_NULL, "");
-	pConsole->AddCommand("sayone", "Client:SayOne(%%)", VF_NULL, "");
-	pConsole->AddCommand("tell", "Client:SayOne(%%)", VF_NULL, "");
-	pConsole->AddCommand("team", "Client:JoinTeamRequest(%%)", 0,
-						 "Sends a request to join a team.\n"
-						 "Usage: team teamname\n");
-	pConsole->AddCommand("ready", "Client:CallVote(\"ready\")", 0,
-						 "Asks if other players are ready.\n"
-						 "Usage: ready\n"
-						 "Works by sending a request to players.\n"
-						 "Players respond y or n.\n");
-	pConsole->AddCommand("callvote", "Client:CallVote(%%)", 0,
-						 "Asks players to vote on a command.\n"
-						 "Usage: callvote commandname arg\n"
-						 "Sends a request to players to vote on 'commandname arg'.\n"
-						 "Players respond y or n.\n");
-	pConsole->AddCommand("vote", "Client:Vote(%1)", 0,
-						 "Used to vote on suggestions from other players.\n"
-						 "Usage: vote [y/n]\n"
-						 "Vote y for yes or n for no.");
-	pConsole->AddCommand("name", "Client:SetName(%line)", VF_NULL, "");
-	pConsole->AddCommand("kill", "Client:Kill()", 0,
-						 "Kills the player.\n"
-						 "Usage: kill\n"
-						 "Player respawns as normal.");
-	pConsole->AddCommand("cl_maxrate", "Client:SetBitsPerSecond(%1)", 0,
-						 "Sets client maximum download bandwidth\n"
-						 "(the actual rate is limited by server setting as well)\n"
-						 "Usage: cl_maxrate 28800\n"
-						 "Sets bits per second the server is allowed to send to you (this client).");
-	pConsole->AddCommand("cl_updaterate", "Client:SetUpdateRate(%1)", 0,
-						 "Specify the max server network update rate\n"
-						 "(less is better for bandwidth, more is better for response,\n"
-						 "the actual rate is limited by frame/update rate and the server setting as well)\n"
-						 "Usage: cl_updaterate [5..100]\n"
-						 "Default is 20");
-	return true;
+  pConsole->AddCommand("say", "Client:Say(%line)", VF_NULL, "");
+  pConsole->AddCommand("sayteam", "Client:SayTeam(%line)", VF_NULL, "");
+  pConsole->AddCommand("sayone", "Client:SayOne(%%)", VF_NULL, "");
+  pConsole->AddCommand("tell", "Client:SayOne(%%)", VF_NULL, "");
+  pConsole->AddCommand("team", "Client:JoinTeamRequest(%%)", 0,
+    "Sends a request to join a team.\n"
+    "Usage: team teamname\n");
+  pConsole->AddCommand("ready", "Client:CallVote(\"ready\")", 0,
+    "Asks if other players are ready.\n"
+    "Usage: ready\n"
+    "Works by sending a request to players.\n"
+    "Players respond y or n.\n");
+  pConsole->AddCommand("callvote", "Client:CallVote(%%)", 0,
+    "Asks players to vote on a command.\n"
+    "Usage: callvote commandname arg\n"
+    "Sends a request to players to vote on 'commandname arg'.\n"
+    "Players respond y or n.\n");
+  pConsole->AddCommand("vote", "Client:Vote(%1)", 0,
+    "Used to vote on suggestions from other players.\n"
+    "Usage: vote [y/n]\n"
+    "Vote y for yes or n for no.");
+  pConsole->AddCommand("name", "Client:SetName(%line)", VF_NULL, "");
+  pConsole->AddCommand("kill", "Client:Kill()", 0,
+    "Kills the player.\n"
+    "Usage: kill\n"
+    "Player respawns as normal.");
+  pConsole->AddCommand("cl_maxrate", "Client:SetBitsPerSecond(%1)", 0,
+    "Sets client maximum download bandwidth\n"
+    "(the actual rate is limited by server setting as well)\n"
+    "Usage: cl_maxrate 28800\n"
+    "Sets bits per second the server is allowed to send to you (this client).");
+  pConsole->AddCommand("cl_updaterate", "Client:SetUpdateRate(%1)", 0,
+    "Specify the max server network update rate\n"
+    "(less is better for bandwidth, more is better for response,\n"
+    "the actual rate is limited by frame/update rate and the server setting as well)\n"
+    "Usage: cl_updaterate [5..100]\n"
+    "Default is 20");
+  return true;
 }
 
 void CXClient::XConnect(const char* szAddr, const bool inbDoLateSwitch, const bool inbCDAuthorization)
 {
-	m_pIClient->SetServerIP(szAddr);
-	//bDoSwitch = _bDoLateSwitch;
+  m_pIClient->SetServerIP(szAddr);
+  //bDoSwitch = _bDoLateSwitch;
 
-	m_pIClient->InitiateCDKeyAuthorization(inbCDAuthorization);
+  m_pIClient->InitiateCDKeyAuthorization(inbCDAuthorization);
 
-	m_pGame->m_szLastAddress = szAddr;
-	//m_pGame->m_bLastDoLateSwitch = _bDoLateSwitch;
-	m_pGame->m_bLastCDAuthentication = inbCDAuthorization;
+  m_pGame->m_szLastAddress = szAddr;
+  //m_pGame->m_bLastDoLateSwitch = _bDoLateSwitch;
+  m_pGame->m_bLastCDAuthentication = inbCDAuthorization;
 }
 
 void CXClient::XDisconnect(const char* szCause)
 {
-	if (m_pIClient)
-		m_pIClient->Disconnect(szCause);
+  if (m_pIClient)
+    m_pIClient->Disconnect(szCause);
 }
 
 void CXClient::LoadPlayerDesc()

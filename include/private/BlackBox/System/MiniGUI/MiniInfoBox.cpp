@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
 
 // -------------------------------------------------------------------------
 //  File name:   MiniInfoBox.cpp
@@ -9,15 +9,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+#include <StdAfx.h>
 #include "MiniInfoBox.h"
 #include "DrawContext.h"
 #include <CrySystem/ISystem.h>
-#include <StdAfx.h>
 
 MINIGUI_BEGIN
 
-CMiniInfoBox::CMiniInfoBox()
-	: m_fTextIndent(4)
+CMiniInfoBox::CMiniInfoBox() :
+	m_fTextIndent(4)
 {
 }
 
@@ -57,12 +57,12 @@ void CMiniInfoBox::OnPaint(CDrawContext& dc)
 		AutoResize();
 	}
 
-	ColorB borderCol	 = dc.Metrics().clrFrameBorder;
+	ColorB borderCol = dc.Metrics().clrFrameBorder;
 	ColorB backgroundCol = dc.Metrics().clrBackground;
 
 	if (!m_pGUI->InFocus())
 	{
-		borderCol		= dc.Metrics().clrFrameBorderOutOfFocus;
+		borderCol = dc.Metrics().clrFrameBorderOutOfFocus;
 		backgroundCol.a = dc.Metrics().outOfFocusAlpha;
 	}
 	else if (m_moving)
@@ -108,7 +108,7 @@ void CMiniInfoBox::AddEntry(const char* str, ColorB col, float textSize)
 {
 	SInfoEntry info;
 
-	info.color	  = col;
+	info.color = col;
 	info.textSize = textSize;
 	cry_strcpy(info.text, str);
 
@@ -150,8 +150,8 @@ void CMiniInfoBox::AutoResize()
 	//scale width, could do with kerning info
 	width *= 0.6f;
 
-	Rect newRect   = m_rect;
-	newRect.right  = newRect.left + width;
+	Rect newRect = m_rect;
+	newRect.right = newRect.left + width;
 	newRect.bottom = newRect.top + height;
 
 	SetRect(newRect);

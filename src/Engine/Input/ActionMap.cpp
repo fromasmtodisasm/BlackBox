@@ -20,15 +20,15 @@ void CActiontMap::RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivat
 {
 }
 
-void CActiontMap::BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos /* = -1*/)
+void CActiontMap::BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos/* = -1*/)
 {
 }
 
-void CActiontMap::BindAction(XACTIONID nActionID, int nKey, int nModifier /* = eKI_Unknown*/, int iKeyPos /* = -1*/)
+void CActiontMap::BindAction(XACTIONID nActionID, int nKey, int nModifier/* = eKI_Unknown*/, int iKeyPos/* = -1*/)
 {
 }
 
-void CActiontMap::BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier /* = NULL*/, int iKeyPos /* = -1*/)
+void CActiontMap::BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier/* = NULL*/, int iKeyPos/* = -1*/)
 {
 }
 

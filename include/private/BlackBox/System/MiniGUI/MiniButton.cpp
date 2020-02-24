@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
 
 // -------------------------------------------------------------------------
 //  File name:   MiniButton.cpp
@@ -9,22 +9,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+#include <StdAfx.h>
 #include "MiniButton.h"
 #include "DrawContext.h"
-#include <CrySystem/IConsole.h>
 #include <CrySystem/ISystem.h>
-#include <StdAfx.h>
+#include <CrySystem/IConsole.h>
 
 MINIGUI_BEGIN
 
 CMiniButton::CMiniButton()
 {
-	m_pCVar			 = NULL;
-	m_fCVarValue[0]	 = 0;
-	m_fCVarValue[1]	 = 1;
-	m_saveStateOn	 = false;
-	m_clickCallback	 = NULL;
-	m_pCallbackData	 = NULL;
+	m_pCVar = NULL;
+	m_fCVarValue[0] = 0;
+	m_fCVarValue[1] = 1;
+	m_saveStateOn = false;
+	m_clickCallback = NULL;
+	m_pCallbackData = NULL;
 	m_pConnectedCtrl = NULL;
 }
 
@@ -69,6 +69,7 @@ void CMiniButton::RestoreState()
 {
 	if (m_pCVar)
 	{
+
 		if (m_pCVar->GetFVal() == m_fCVarValue[1])
 		{
 			set_flag(eCtrl_Checked);
@@ -135,7 +136,7 @@ void CMiniButton::OnPaint(CDrawContext& dc)
 
 	if (!m_pGUI->InFocus())
 	{
-		borderCol  = dc.Metrics().clrFrameBorderOutOfFocus;
+		borderCol = dc.Metrics().clrFrameBorderOutOfFocus;
 		bkgColor.a = dc.Metrics().outOfFocusAlpha;
 	}
 
@@ -156,12 +157,12 @@ void CMiniButton::OnPaint(CDrawContext& dc)
 	if (is_flag(eCtrl_TextAlignCentre))
 	{
 		startX = (m_rect.left + m_rect.right) / 2.f;
-		align  = eTextAlign_Center;
+		align = eTextAlign_Center;
 	}
 	else
 	{
 		startX = m_rect.left + 5.f;
-		align  = eTextAlign_Left;
+		align = eTextAlign_Left;
 	}
 
 	dc.DrawString(startX, m_rect.top, dc.Metrics().fTitleSize, align, GetTitle());
@@ -178,12 +179,13 @@ void CMiniButton::OnPaint(CDrawContext& dc)
 		dc.DrawLine(checkX + 3, checkY + 3, checkX + 7, checkY - 6);
 	}
 #endif
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CMiniButton::SetRect(const Rect& rc)
 {
-	Rect newrc	 = rc;
+	Rect newrc = rc;
 	newrc.bottom = newrc.top + m_pGUI->Metrics().fTitleSize + 2;
 	CMiniCtrl::SetRect(newrc);
 }
@@ -194,73 +196,74 @@ void CMiniButton::OnEvent(float x, float y, EMiniCtrlEvent event)
 	switch (event)
 	{
 	case eCtrlEvent_LButtonDown:
-	{
-		SCommand cmd;
-
-		if (CheckFlag(eCtrl_CheckButton))
 		{
-			if (!CheckFlag(eCtrl_Checked))
-				cmd.command = eCommand_ButtonChecked;
-			else
-				cmd.command = eCommand_ButtonUnchecked;
-		}
-		else
-		{
-			cmd.command = eCommand_ButtonPress;
-		}
+			SCommand cmd;
 
-		cmd.nCtrlID = GetId();
-		cmd.pCtrl	= this;
-		GetGUI()->OnCommand(cmd);
-
-		if (CheckFlag(eCtrl_CheckButton))
-		{
-			bool bOn = false;
-
-			if (CheckFlag(eCtrl_Checked))
+			if (CheckFlag(eCtrl_CheckButton))
 			{
-				bOn = false;
-				ClearFlag(eCtrl_Checked);
+				if (!CheckFlag(eCtrl_Checked))
+					cmd.command = eCommand_ButtonChecked;
+				else
+					cmd.command = eCommand_ButtonUnchecked;
 			}
 			else
 			{
-				bOn = true;
-				SetFlag(eCtrl_Checked);
+				cmd.command = eCommand_ButtonPress;
 			}
 
-			if (m_pCVar)
+			cmd.nCtrlID = GetId();
+			cmd.pCtrl = this;
+			GetGUI()->OnCommand(cmd);
+
+			if (CheckFlag(eCtrl_CheckButton))
 			{
-				m_pCVar->Set(m_fCVarValue[bOn ? 1 : 0]);
+				bool bOn = false;
+
+				if (CheckFlag(eCtrl_Checked))
+				{
+					bOn = false;
+					ClearFlag(eCtrl_Checked);
+				}
+				else
+				{
+					bOn = true;
+					SetFlag(eCtrl_Checked);
+				}
+
+				if (m_pCVar)
+				{
+					m_pCVar->Set(m_fCVarValue[bOn ? 1 : 0]);
+				}
+
+				if (m_pConnectedCtrl)
+				{
+					m_pConnectedCtrl->SetVisible(bOn);
+				}
+			}
+			else
+			{
+				//cross button behavior
+				if (m_pConnectedCtrl)
+				{
+					m_pConnectedCtrl->SetVisible(false);
+				}
 			}
 
-			if (m_pConnectedCtrl)
+			if (m_clickCallback)
 			{
-				m_pConnectedCtrl->SetVisible(bOn);
+				m_clickCallback(m_pCallbackData, true);
 			}
-		}
-		else
-		{
-			//cross button behavior
-			if (m_pConnectedCtrl)
-			{
-				m_pConnectedCtrl->SetVisible(false);
-			}
-		}
 
-		if (m_clickCallback)
-		{
-			m_clickCallback(m_pCallbackData, true);
 		}
-	}
-	break;
+		break;
 	case eCtrlEvent_MouseOff:
-	{
-		if (m_pParent)
 		{
-			m_pParent->OnEvent(x, y, eCtrlEvent_MouseOff);
+			if (m_pParent)
+			{
+				m_pParent->OnEvent(x, y, eCtrlEvent_MouseOff);
+			}
 		}
-	}
-	break;
+		break;
 	}
 }
 

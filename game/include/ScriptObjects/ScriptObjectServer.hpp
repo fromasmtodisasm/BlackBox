@@ -1,12 +1,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code
+//	Crytek Source code 
 //	Copyright (c) Crytek 2001-2004
-//
+// 
 //	File: ScriptObjectServer.h
 //
-//  Description:
+//  Description: 
 //		Interface for the CScriptObjectServer class.
 //		This class implements script-functions for exposing the server functionalities
 //
@@ -20,7 +20,7 @@
 //		IMPLEMENTATIONS NOTES:
 //		These function will never be called from C-Code. They're script-exclusive.
 //
-//	History:
+//	History: 
 //	- File Created by Alberto Demichelis, Martin Mittring
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
@@ -37,17 +37,16 @@ struct ITagPoint;
 struct IXSystem;
 
 //////////////////////////////////////////////////////////////////////
-class CScriptObjectServer : public _ScriptableEx<CScriptObjectServer>
+class CScriptObjectServer :
+	public _ScriptableEx<CScriptObjectServer>
 {
-  public:
+public:
+
 	CScriptObjectServer();
 	virtual ~CScriptObjectServer();
 
 	bool Create(IScriptSystem* pScriptSystem, IXSystem* pCSystem, CGame* pGame);
-	void SetServer(CXServer* pServer)
-	{
-		m_pServer = pServer;
-	}
+	void SetServer(CXServer* pServer) { m_pServer = pServer; }
 
 	int Unban(IFunctionHandler* pH);
 	int ListBans(IFunctionHandler* pH);
@@ -79,7 +78,8 @@ class CScriptObjectServer : public _ScriptableEx<CScriptObjectServer>
 	int BroadcastCommand(IFunctionHandler* pH);
 	static void InitializeTemplate(IScriptSystem* pSS);
 
-  private:
+private:
+
 	static void MakeTagScriptObject(ITagPoint* pInTagPoint, SmartScriptObject& rOut);
 
 	CXServer* m_pServer;

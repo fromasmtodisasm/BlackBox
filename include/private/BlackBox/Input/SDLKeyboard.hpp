@@ -7,35 +7,32 @@ class CSDLMouse;
 
 class CSDLKeyboard : public CLinuxInputDevice
 {
-	friend class CLinuxInputDevice;
+  friend class CLinuxInputDevice;
+public:
 
-  public:
-	CSDLKeyboard(CLinuxInput& input);
+  CSDLKeyboard(CLinuxInput& input);
 
-	virtual ~CSDLKeyboard();
+  virtual ~CSDLKeyboard();
 
-	virtual int GetDeviceIndex() const
-	{
-		return 0;
-	} //Assume only one keyboard
+  virtual int  GetDeviceIndex() const { return 0; }   //Assume only one keyboard
 
-	virtual bool Init();
+  virtual bool Init();
 
-	virtual void Update(bool focus);
+  virtual void Update(bool focus);
 
-	virtual char GetInputCharAscii(const SInputEvent& event);
+  virtual char GetInputCharAscii(const SInputEvent& event);
 
-  protected:
-	static int ConvertModifiers(unsigned);
+protected:
+  static int ConvertModifiers(unsigned);
 
-  private:
-	unsigned char Event2ASCII(const SInputEvent& event);
-	void SetupKeyNames();
+private:
+  unsigned char Event2ASCII(const SInputEvent& event);
+  void          SetupKeyNames();
 
-  private:
-	unsigned m_lastKeySym;
-	int m_lastMod;
-	//unsigned m_lastUNICODE;
+private:
+  unsigned m_lastKeySym;
+  int      m_lastMod;
+  //unsigned m_lastUNICODE;
 };
 
 #endif
