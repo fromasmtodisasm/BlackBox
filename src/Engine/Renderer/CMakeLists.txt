@@ -59,6 +59,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexArrayObject.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/GBuffer.cpp
 )
 
 if (OPTION_GLAD_LOADER)

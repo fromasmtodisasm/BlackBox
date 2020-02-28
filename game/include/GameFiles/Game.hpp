@@ -56,6 +56,34 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <memory>
 #include <stack>
 
+struct TextRenderInfo
+{
+  IFont* font;
+  std::vector<std::string> text;
+  Vec4 color;
+  SDrawTextInfo dti;
+  TextRenderInfo() : font(nullptr), color(Vec4(1.0)) {}
+  TextRenderInfo(IFont* f, Vec4 c)
+    :
+    font(f), color(c)
+  {
+  }
+  void AddLine(std::string line)
+  {
+    text.push_back(line + '\n');
+  }
+  SDrawTextInfo& getDTI()
+  {
+    dti.color[0] = color[0];
+    dti.color[1] = color[1];
+    dti.color[2] = color[2];
+    dti.color[3] = color[3];
+    dti.font = font;
+    return dti;
+  }
+};
+
+
 //forward declarations
 //////////////////////////////////////////////////////////////////////
 using string = std::string;
@@ -264,7 +292,8 @@ protected:
 	void SetCommonKeyBindings(IActionMap* pActionMap);
 
 	virtual Object* OnLoad(Object* object, std::string type) override;
-public:
+	void MainMenu();
+  public:
   float m_deltaTime;
 
 public:
@@ -400,6 +429,15 @@ public:
 	//CScriptObjectServer* m_pScriptServer = nullptr;
 
 	bool m_SceneRendered = false;
+
+	std::list<TextRenderInfo> m_MenuEntry;
+	size_t m_MenuEntryIdx = 0;
+	std::vector<string> test_text = {
+		"Entry ...............1\n",
+		"Entry ..............10\n",
+		"Entry .............122\n",
+		"Entry ............1444\n",
+	};
 
 };
 

@@ -72,6 +72,8 @@ function init()
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
 	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
+	addcommand("level", [[Game:LoadLevel(%1)]]) 
+
 	addcommand("connect", [[Client:Connect(%1,%2)]]) 
 	addcommand("send", 
 	[[

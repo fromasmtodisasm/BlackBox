@@ -3,20 +3,6 @@ layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 
 
-interface vs_out 
-{
-	vec3 get_color();	
-};
-
-struct vs_out_impl : vs_out 
-{
-	vec3 get_color()
-	{
-
-		return vec3(1, 0,0);
-	}
-};
-
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;

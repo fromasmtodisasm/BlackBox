@@ -9,6 +9,7 @@
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/Input/IHardwareMouse.hpp>
 
 #include <vector>
 #include <string>
@@ -27,33 +28,6 @@ namespace {
   }
 #endif
 }
-
-struct TextRenderInfo
-{
-  IFont* font;
-  std::vector<std::string> text;
-  Vec4 color;
-  SDrawTextInfo dti;
-  TextRenderInfo() : font(nullptr), color(Vec4(1.0)) {}
-  TextRenderInfo(IFont* f, Vec4 c)
-    :
-    font(f), color(c)
-  {
-  }
-  void AddLine(std::string line)
-  {
-    text.push_back(line + '\n');
-  }
-  SDrawTextInfo& getDTI()
-  {
-    dti.color[0] = color[0];
-    dti.color[1] = color[1];
-    dti.color[2] = color[2];
-    dti.color[3] = color[3];
-    dti.font = font;
-    return dti;
-  }
-};
 
 IWorld* CGame::getWorld() const
 {
@@ -321,6 +295,13 @@ void CGame::DisplayInfo(float fps)
   // Info
   TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
   SDrawTextInfo dti = info.getDTI();
+  SDrawTextInfo MenuDTI;
+  MenuDTI.color[0] = 0;
+  MenuDTI.color[0] = 1;
+  MenuDTI.color[0] = 0;
+  MenuDTI.color[0] = 1;
+  MenuDTI.font = m_Font;
+  
 
   //
   auto render = m_pSystem->GetIRender();
@@ -367,7 +348,7 @@ void CGame::DisplayInfo(float fps)
     render->PrintLine(text.c_str(), dti);
   }
 
-  render->PrintLine("To hide depth buffer press <;>\n", dti);
+  //render->PrintLine("To hide depth buffer press <;>\n", dti);
   render->PrintLine((std::string("Camera width = ") + std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
   render->PrintLine((std::string("Camera height = ") + std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 
@@ -380,11 +361,15 @@ void CGame::DisplayInfo(float fps)
 
   if (m_Mode == MENU)
   {
-    //TODO: FIX THIS
-#if 0
-    auto c = sf::Mouse::getPosition(::getWindow());
-    render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(m_pRender->GetHeight() - c.y)).c_str(), info.getDTI());
-#endif
+	  Vec2 c;
+		m_pSystem->GetIHardwareMouse()->GetHardwareMouseClientPosition(&c.x, &c.y);
+		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */c.y)).c_str(), info.getDTI());
+		m_Font->SetYPos(m_pRender->GetHeight() / 2);
+		for (size_t i = 0; i < test_text.size(); i++)
+		{
+			m_Font->SetXPos((m_pRender->GetWidth() - m_Font->TextWidth(test_text[i])) / 2);
+			render->PrintLine(test_text[i].data(), i == m_MenuEntryIdx ? MenuDTI : info.getDTI());
+		}
   }
 }
 
@@ -739,6 +724,12 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
     case eKI_Enter:
       gotoGame();
       return true;
+    case eKI_J:
+			m_MenuEntryIdx = ++m_MenuEntryIdx % test_text.size();
+      return true;
+    case eKI_K:
+			m_MenuEntryIdx = --m_MenuEntryIdx % test_text.size();
+      return true;
     default:
       return false;
     }
@@ -1047,5 +1038,10 @@ Object* CGame::OnLoad(Object* object, std::string type)
   else if (type == "gameobject")
     return new GameObject(object);
   else return object;
+}
+
+void CGame::MainMenu()
+{
+
 }
 
