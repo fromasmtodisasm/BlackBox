@@ -194,7 +194,7 @@ bool CSystem::Init()
   //====================================================
   InitScripts();
   //====================================================
-#if 0
+#if 1
   if (!gEnv->IsDedicated())
   {
     m_GuiManager.Init();
@@ -206,7 +206,7 @@ bool CSystem::Init()
   {
     m_pInput->AddEventListener(this);
     m_pInput->AddEventListener(m_pConsole);
-    //m_pInput->AddEventListener(&m_GuiManager);
+    m_pInput->AddEventListener(&m_GuiManager);
   }
   if (CreateGame(nullptr) == nullptr)
     return false;
@@ -721,7 +721,7 @@ void CSystem::RenderBegin()
   PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
   m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
   m_Render->BeginFrame();
-#if 0
+#if 1
   m_GuiManager.NewFrame();
   m_GuiManager.AddDemoWindow();
 #endif
@@ -735,7 +735,7 @@ void CSystem::RenderEnd()
     PROFILER_DRAW();
   }
 
-  //m_GuiManager.Render();
+  m_GuiManager.Render();
 
   m_pWindow->swap();
 }
