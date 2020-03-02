@@ -197,7 +197,7 @@ namespace
 #endif
     }
 
-    bool OnInputEvent(const SInputEvent& event)
+    bool OnInputEvent(const SInputEvent& event, ImGuiManager &imguiManager)
     {
       ImGuiIO& io = ImGui::GetIO();
 
@@ -216,6 +216,8 @@ namespace
         case eKI_Mouse2: m_MousePressed[1] = event.state == eIS_Pressed;
           break;
         case eKI_Mouse3: m_MousePressed[2] = event.state == eIS_Pressed;
+          break;
+        case eKI_Escape: GetISystem()->GetIInput()->RemoveEventListener(&imguiManager);
           break;
         default:
           break;
@@ -276,7 +278,7 @@ ImGuiManager::~ImGuiManager()
 
 bool ImGuiManager::OnInputEvent(const SInputEvent& event)
 {
-  return input.OnInputEvent(event);
+  return input.OnInputEvent(event, *this);
 }
 
 bool ImGuiManager::OnInputEventUI(const SUnicodeEvent& event)
@@ -310,9 +312,13 @@ void ImGuiManager::Render()
   render.RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImGuiManager::AddDemoWindow()
+void ImGuiManager::ShowDemoWindow()
 {
   // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
+}
+
+void ImGuiManager::HideDemoWindow()
+{
 }

@@ -438,6 +438,8 @@ public:
 		"Entry .............122\n",
 		"Entry ............1444\n",
 	};
+	float m_time_to_random = 0.f;
+	Movement direction	   = FORWARD;
 
 };
 

@@ -16,7 +16,8 @@ public:
   bool Init();
   void NewFrame();
   void Render();
-  void AddDemoWindow();
+  void ShowDemoWindow();
+  void HideDemoWindow();
 private:
   bool show_demo_window = true;
 };

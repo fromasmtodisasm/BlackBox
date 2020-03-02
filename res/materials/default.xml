@@ -29,7 +29,7 @@
       <!--<texture type="emissive" name="emissive.png"/>-->
       <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>
-    <shader name="refract"/>
+    <shader name="phong"/>
   </material>
   <material name="wood_box">
     <textures>
