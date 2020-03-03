@@ -17,6 +17,7 @@ public:
   void NewFrame();
   void Render();
   void ShowDemoWindow();
+  void ShowNodeEditor();
   void HideDemoWindow();
 private:
   bool show_demo_window = true;

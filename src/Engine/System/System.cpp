@@ -721,6 +721,7 @@ void CSystem::RenderBegin()
 #if 1
 	m_GuiManager.NewFrame();
 	m_GuiManager.ShowDemoWindow();
+	m_GuiManager.ShowNodeEditor();
 #endif
 }
 
