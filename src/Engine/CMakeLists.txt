@@ -114,9 +114,9 @@ install (
 )
 
 install(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION ${BLACKBOX_PROJECT}
+  DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION .
 )
 install(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION ${BLACKBOX_PROJECT}
+  DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION .
 )
 ###################################################

@@ -36,6 +36,10 @@ install(
   RUNTIME DESTINATION bin
 )
 
+install(
+    DIRECTORY ${RUNTIME_OUTPUT_DIRECTORY} DESTINATION bin
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)
 set_solution_startup_target(Launcher)
 #set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

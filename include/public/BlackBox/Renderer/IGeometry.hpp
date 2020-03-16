@@ -9,9 +9,11 @@
 class VertexArrayObject;
 class IndexBuffer;
 struct Vertex;
+class Mesh;
 
 using VertexData = std::vector<Vertex>;
 using IndexData = std::vector<int>;
+using MeshRef = std::shared_ptr<Mesh>;
 
 enum VertexAtribute
 {
@@ -22,6 +24,16 @@ enum VertexAtribute
   VA_BTANGENT,
   VA_NUM
 };
+
+#if 0
+enum RenderPrimitive
+{
+    POINTS,
+	LINES,
+    LINE_STRIP,
+	TRIANGLES
+};
+#endif
 
 struct indexed_vertex
 {
@@ -108,6 +120,12 @@ public:
 
   VertexArrayObject* getVertexBuffer();
   IndexBuffer* getIndexBuffer();
+};
+
+class SubdivisionShpereTessellatorSimple
+{
+public:
+    static MeshRef Compute(int numberOfSubdivisions);
 };
 
 namespace Geometry

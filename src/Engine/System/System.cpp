@@ -34,9 +34,11 @@
 
 #include <cstdlib>
 #include <thread>
+#include <filesystem>
 
 using namespace Utils;
 using namespace std;
+namespace fs = std::filesystem;
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
@@ -102,16 +104,55 @@ CSystem::~CSystem()
 	SAFE_DELETE(m_Render);
 }
 
+void CSystem::PreprocessCommandLine()
+{
+	if (const auto ca = m_pCmdLine->FindArg(eCLAT_Pre, "myproto"); ca)
+	{
+		std::string output;
+		const auto input = ca->GetValue();
+		output.resize(strlen(input) + 1);
+		urldecode2(output.data(), input);
+		printf("Decoded string: %s\n", output.data());
+		/////////////////////////////////////////////////////////////////
+		delete m_pCmdLine;
+		/////////////////////////////////////////////////////////////////
+		output = output.substr(strlen("myproto://"));
+		std::string left = std::string(m_startupParams.szSystemCmdLine);
+		auto p = left.find("-myproto");
+		left.resize(p);
+		output =  left + " " + output;
+		std::cout << "output:::: " << output << std::endl;
+		system("pause");
+		m_pCmdLine = new CCmdLine(
+			output.data()
+		);
+		/////////////////////////////////////////////////////////////////
+	}
+}
+
+void CSystem::ProcessCommandLine()
+{
+	if (m_pCmdLine->FindArg(eCLAT_Pre, "dedicated"))
+	{
+		gEnv->SetIsDedicated(true);
+	}
+		 
+	if (const auto ca = m_pCmdLine->FindArg(eCLAT_Post, "wd"); ca)
+	{
+		SetWorkingDirectory(ca->GetValue());
+		std::cout << "work dir = " << ca->GetValue() << endl;
+	}
+}
+
 bool CSystem::Init()
 {
 	gISystem = this;
 	gEnv->SetIsDedicated(m_startupParams.bDedicatedServer);
 	/////////////////////////////////////////////
 	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
-	if (m_pCmdLine->FindArg(eCLAT_Pre, "dedicated"))
-	{
-		gEnv->SetIsDedicated(true);
-	}
+	LogCommandLine();
+	PreprocessCommandLine();
+	ProcessCommandLine();
 #ifdef ENABLE_PROFILER
 	initTimer();
 #endif
@@ -592,6 +633,20 @@ bool CSystem::InitFileSystem()
 	return (bRes);
 #endif
 	return true;
+}
+
+void CSystem::SetWorkingDirectory(const std::string& path) const
+{
+	fs::current_path(fs::path(path));
+}
+
+void CSystem::LogCommandLine() const
+{
+	std::cout << "Log command line" << std::endl;
+	for (int i = 0; i < m_pCmdLine->GetArgCount(); i++)
+	{
+		std::cout << "\t" << m_pCmdLine->GetArg(i)->GetValue() << std::endl;
+	}
 }
 
 float CSystem::GetDeltaTime()
