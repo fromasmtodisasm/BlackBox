@@ -125,7 +125,6 @@ public:
 private:
 #pragma region Fields
   std::string name;
-  World* m_World;
   GLint m_RenderedScene;
   SkyBox* skyBox;
   BaseShaderProgramRef m_ScreenShader;

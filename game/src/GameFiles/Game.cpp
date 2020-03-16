@@ -232,6 +232,7 @@ bool CGame::Update() {
 
     auto camera = m_World->GetActiveScene()->getCurrentCamera();
 
+#if 0
     camera->ProcessKeyboard(direction, m_deltaTime);
 		if (m_time_to_random >= 4.0f)
 		{
@@ -241,6 +242,7 @@ bool CGame::Update() {
 			camera->ProcessMouseMovement(xo, 0);
 		}
 		m_time_to_random += m_deltaTime;
+#endif
 
     if (bRenderFrame)
     {

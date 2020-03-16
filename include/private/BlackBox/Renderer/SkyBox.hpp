@@ -11,7 +11,7 @@
 class SkyBox : public IDrawable
 {
 public:
-  TextureCube* texture;
+  _smart_ptr<TextureCube> texture;
   VertexArrayObject* vao;
   BaseShaderProgramRef shader;
 
@@ -103,8 +103,6 @@ public:
 
   void setTextureCube(TextureCube* t)
   {
-    if (texture)
-      delete texture;
     texture = t;
   }
 };

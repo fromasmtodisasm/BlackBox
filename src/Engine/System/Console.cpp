@@ -1370,7 +1370,7 @@ void CConsole::ExecuteFile(const char* file)
     if (!f.is_open())
       return;
     doFile(f);
-    scripts["file"] = std::move(f);
+    scripts[file] = std::move(f);
   }
 }
 

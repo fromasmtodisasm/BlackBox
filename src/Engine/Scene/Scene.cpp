@@ -19,7 +19,6 @@ Scene::Scene(std::string name)
 	  name(name),
 	  m_RenderedScene(-1),
 	  m_Technique(nullptr),
-	  m_World(nullptr),
 	  quadVAO(-1),
 	  shadowMapMat(nullptr),
 	  skyBox(nullptr),
@@ -65,6 +64,7 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
 	Serializator serializator(this);
 	auto result = serializator.load(name, callback);
 
+#if 0
 	auto obj = terrain.load("res/images/heightmaps/heightmap_thin.png");
 	if (obj != nullptr)
 	{
@@ -72,6 +72,7 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
 		obj->setMaterial(MaterialManager::instance()->getMaterial("terrain"));
 		m_Objects.insert(std::make_pair("terrain", obj));
 	}
+#endif
 
 	GetISystem()->Log("***************");
 	return result;

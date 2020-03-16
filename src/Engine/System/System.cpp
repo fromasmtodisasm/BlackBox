@@ -234,7 +234,7 @@ bool CSystem::Init()
 	//====================================================
 	InitScripts();
 	//====================================================
-#if 1
+#if 0
 	if (!gEnv->IsDedicated())
 	{
 		m_GuiManager.Init();
@@ -773,7 +773,7 @@ void CSystem::RenderBegin()
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 	m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
 	m_Render->BeginFrame();
-#if 1
+#if 0
 	m_GuiManager.NewFrame();
 	m_GuiManager.ShowDemoWindow();
 	m_GuiManager.ShowNodeEditor();
@@ -788,7 +788,7 @@ void CSystem::RenderEnd()
 		PROFILER_DRAW();
 	}
 
-	m_GuiManager.Render();
+	//m_GuiManager.Render();
 
 	m_pWindow->swap();
 }
@@ -875,7 +875,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	//m_pNetwork->Update();
 	if (nPauseMode)
 	{
-    m_pInput->AddEventListener(&m_GuiManager);
+    //m_pInput->AddEventListener(&m_GuiManager);
 	}
 
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
