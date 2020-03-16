@@ -171,3 +171,10 @@ bool ShaderCommand::enumerate(CommandDesc& cd)
   MaterialManager::instance()->EnumShaders(this);
   return true;
 }
+
+void AddInternalCommands(ISystem *pSystem)
+{
+  auto pConsole = gEnv->pConsole;
+  pConsole->AddCommand("shader", new ShaderCommand(pSystem), "Set shader to object and reload shader");
+
+}

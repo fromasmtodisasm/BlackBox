@@ -149,3 +149,5 @@ private:
   virtual IEntitySystem* GetIEntitySystem() override;
 
 };
+
+void AddInternalCommands(ISystem* pSystem);

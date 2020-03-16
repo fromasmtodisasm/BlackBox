@@ -185,6 +185,8 @@ bool CSystem::Init()
   if (!InitConsole())
     return false;
   //====================================================
+  AddInternalCommands(this);
+  //====================================================
   if (!InitResourceManagers())
     return false;
   //====================================================

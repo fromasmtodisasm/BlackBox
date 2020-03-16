@@ -341,7 +341,7 @@ public:
   template<typename T>
   void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
 
-  void Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label);
+  void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label);
 
   virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
   virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
