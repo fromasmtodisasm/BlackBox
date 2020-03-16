@@ -69,6 +69,15 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
+	if (isTerrain)
+	{
+		FragColor = vec4(1, 1, 1, 1);
+		return;
+	}
+	else
+	{
+		texture(diffuseMap, fs_in.TexCoords).rgb;
+	}
     vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
 	//vec3 color = vs_out_impl::get_color(); // Intresting possibility
 	vec3 emissive = vec3(0.0f);

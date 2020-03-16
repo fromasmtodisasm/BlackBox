@@ -25,7 +25,7 @@
         <positions file="res/geom/points.txt"/>
         <uv scaleX="100" scaleY="100"/>
     </object>
-    <object name="terrain" type="object" visible="true" transparent="true">
+    <!--<object name="terrain" type="object" visible="true" transparent="true">
         <mesh name="res/geom/terrain.obj"/>
         <transform>
             <position>
@@ -46,7 +46,7 @@
         </transform>
         <material name="terrain"/>
         <uv scaleX="100" scaleY="100"/>
-    </object>
+    </object>-->
     <object name="babe" type="object" visible="true" transparent="false">
         <mesh name="res/geom/test.bin"/>
         <transform>

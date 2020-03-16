@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
-#include <imgui.h>
+#include "imgui.h"
 
 class ImGuiManager : public IInputEventListener
 {
@@ -16,7 +16,9 @@ public:
   bool Init();
   void NewFrame();
   void Render();
-  void AddDemoWindow();
+  void ShowDemoWindow();
+  void ShowNodeEditor();
+  void HideDemoWindow();
 private:
   bool show_demo_window = true;
 };

@@ -14,12 +14,17 @@ ${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/GUI/GUI.cpp
   PRIVATE ${ENGINE_DIR}/GUI/ImGuiManager.cpp
+
   PRIVATE ${ENGINE_DIR}/GUI/imgui_demo.cpp
   PRIVATE ${ENGINE_DIR}/GUI/imgui_impl_opengl3.cpp
+
+  PRIVATE ${ENGINE_DIR}/GUI/imgui.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/imgui_draw.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/imgui_widgets.cpp
 )
 
-add_package(imgui CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui Renderer)
+#add_package(imgui CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME}  PRIVATE Renderer)
 
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()

@@ -230,6 +230,18 @@ bool CGame::Update() {
         m_World->Update(m_pSystem->GetDeltaTime());
     }
 
+    auto camera = m_World->GetActiveScene()->getCurrentCamera();
+
+    camera->ProcessKeyboard(direction, m_deltaTime);
+		if (m_time_to_random >= 4.0f)
+		{
+			m_time_to_random = 0.0f;
+			direction		 = static_cast<Movement>(std::rand() % 6);
+			float xo		 = (std::rand() % 10)  - 5;
+			camera->ProcessMouseMovement(xo, 0);
+		}
+		m_time_to_random += m_deltaTime;
+
     if (bRenderFrame)
     {
 			SetRenderState();
@@ -876,6 +888,7 @@ void CGame::PostRender()
 void CGame::gotoMenu()
 {
   m_Mode = MENU;
+	m_bInPause = true;
   m_pInput->ShowCursor(true);
   m_pInput->GrabInput(false);
 }

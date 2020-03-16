@@ -86,6 +86,8 @@ function init()
 	Console:CreateKeyBind("s", "scene load test") 
 	Console:CreateKeyBind("p", "reload_scripts") 
 	Console:CreateKeyBind("c", "@Game:gotoMenu()") 
+	Console:CreateKeyBind("f7", "@Game:gotoGame()") 
+
 
 	setFog(0,0,0)
 

@@ -27,6 +27,8 @@ class CSystem :
 public:
   CSystem(SSystemInitParams& initParams);
   ~CSystem();
+  void PreprocessCommandLine();
+  void ProcessCommandLine();
 
   // Inherited via ISystem
   virtual bool Init() override;
@@ -85,7 +87,9 @@ private:
   void ParseCMD();
   void LoadScreen();
   bool InitScripts();
-	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
+  bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
+  void SetWorkingDirectory(const std::string& path) const;
+  void LogCommandLine() const;
 protected:
 	CCmdLine*                                 m_pCmdLine;
 
