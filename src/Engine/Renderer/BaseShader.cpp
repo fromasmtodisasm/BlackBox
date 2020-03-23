@@ -240,12 +240,12 @@ const char* CShader::typeToStr()
   switch (m_Type) {
   case E_VERTEX:
     return "vertex";
-  case E_FRAGMENT:
-    return "fragment";
   case E_GEOMETRY:
     return "geometry";
   case E_COMPUTE:
     return "compute";
+  case E_FRAGMENT:
+    return "fragment";
   default:
     return "unknown";
   }

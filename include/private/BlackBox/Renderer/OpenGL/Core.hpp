@@ -256,6 +256,32 @@ namespace gl {
   }
 
   // Texture
+  inline void GenTextures(GLsizei n, GLuint *textures)
+  {
+	  glCheck(glGenTextures(n, textures));
+  }
+
+  inline void BindTexture(GLenum target, GLuint texture)
+  {
+	  glCheck(glBindTexture(target, texture));
+  }
+  inline void TexImage2D(
+      GLenum target, 
+      GLint level, 
+      GLint internalformat, 
+      GLsizei width, 
+      GLsizei height,
+      GLint border,
+      GLenum format,
+      GLenum type,
+      const void *pixels
+  )
+  {
+    glCheck(glTexImage2D(target,
+      level, internalformat, width, height, border, format, type, pixels
+    ));
+  }
+
   inline void TexParameteri(GLenum target, GLenum pname, GLint param)
   {
     glCheck(glTexParameteri(target, pname, param));
