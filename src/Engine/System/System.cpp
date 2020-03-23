@@ -280,6 +280,7 @@ bool CSystem::Init()
 		return false;
 	}
 	m_pConsole->PrintLine("[OK] IGame created\n");
+	Tests();
 
 	return true;
 }
@@ -647,6 +648,24 @@ void CSystem::LogCommandLine() const
 	{
 		std::cout << "\t" << m_pCmdLine->GetArg(i)->GetValue() << std::endl;
 	}
+}
+
+void CSystem::Tests()
+{
+	Object* obj = nullptr;
+	MeshList mesh;
+	VerteciesInfo vertecies;
+	BoundingBox bb;
+	
+	auto plane_mesh = CreatePlane(4, 4);
+	mesh = std::make_shared<std::vector<Mesh>>();
+	mesh->push_back(*plane_mesh.get());
+	obj = Object::getEmpty();
+	obj->m_Mesh = mesh;
+	obj->m_path = "";
+
+	SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
+	
 }
 
 float CSystem::GetDeltaTime()

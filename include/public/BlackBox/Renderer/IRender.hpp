@@ -38,6 +38,15 @@ struct IFont;
 class CCamera;
 struct IShader;
 
+enum class RenderPrimitive
+{
+	LINES,
+    LINE_STRIP,
+	TRIANGLES,
+	TRIANGLE_STRIP
+};
+
+
 class Image
 {
 public:

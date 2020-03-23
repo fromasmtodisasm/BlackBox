@@ -20,7 +20,7 @@ public:
     std::map<Attribute, int> attributes;
   };
 
-  VertexArrayObject(const void* data, int size, int type, Attributes attributes);
+  VertexArrayObject(const void* data, int size, RenderPrimitive primitive, const Attributes &attributes);
   ~VertexArrayObject();
   void draw() const;
   void draw_indexed() const;

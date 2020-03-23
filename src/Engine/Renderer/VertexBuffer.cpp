@@ -9,8 +9,19 @@ using namespace std;
 #pragma warning(push)
 #pragma warning(disable : 4312)
 
-VertexArrayObject::VertexArrayObject(const void* data, int count, int type, Attributes attributes) :
-  m_Data(data), m_Count(count), m_Mode(type)
+GLenum toGlPrimitive(RenderPrimitive rp)
+{
+	switch (rp)
+	{
+	case RenderPrimitive::LINES: return GL_LINES;
+	case RenderPrimitive::LINE_STRIP: return GL_LINE_STRIP;
+	case RenderPrimitive::TRIANGLES: return GL_TRIANGLES;
+	case RenderPrimitive::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+	default: return -1;
+	}
+}
+VertexArrayObject::VertexArrayObject(const void* data, int count, RenderPrimitive primitive, const Attributes &attributes) :
+  m_Data(data), m_Count(count), m_Mode(toGlPrimitive(primitive))
 {
   if (attributes.attributes.empty())
     init();

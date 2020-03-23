@@ -34,3 +34,33 @@ MeshRef SubdivisionShpereTessellatorSimple::Compute(int numberOfSubdivisions)
 
     return mesh;
 }
+
+MeshRef CreatePlane(int vSegment, int hSegments)
+{
+    std::vector<glm::vec3> plane( (vSegment) * (hSegments) * 6);
+	VertexArrayObject* vb = nullptr;
+
+    for (int z = 0, i = 0; z < hSegments; z++)
+    {
+        for (int x = 0; x < hSegments; x++)
+        {
+            plane[i] = glm::vec3(x, 0, z) / glm::vec3(vSegment, 1, hSegments); i++;
+            plane[i] = glm::vec3(x + 1, 0, z) / glm::vec3(vSegment, 1, hSegments); i++;
+            plane[i] = glm::vec3(x, 0, z + 1) / glm::vec3(vSegment, 1, hSegments); i++;
+
+            plane[i] = glm::vec3(x + 1, 0, z) / glm::vec3(vSegment, 1, hSegments); i++;
+            plane[i] = glm::vec3(x + 1, 0, z + 1) / glm::vec3(vSegment, 1, hSegments); i++;
+            plane[i] = glm::vec3(x, 0, z + 1) / glm::vec3(vSegment, 1, hSegments); i++;
+        	
+        }
+    }
+
+    VertexArrayObject::Attributes attributes;
+    attributes.stride = sizeof(glm::vec3);
+    attributes.attributes[VertexArrayObject::POSITION] = 0;
+
+	vb = new VertexArrayObject(
+        plane.data(), static_cast<unsigned int>(plane.size()), RenderPrimitive::TRIANGLES, attributes
+    );
+    return  std::make_shared<Mesh>(vb, nullptr);
+}

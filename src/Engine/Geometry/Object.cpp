@@ -210,7 +210,7 @@ Object* Object::load(string path)
 
   if (!gEnv->IsDedicated())
   {
-    vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), GL_TRIANGLES, VertexArrayObject::Attributes());
+    vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), RenderPrimitive::TRIANGLES, VertexArrayObject::Attributes());
     debuger::vertex_array_label(vb->getId(), ("model: " + path).c_str());
   }
   mesh = std::make_shared<std::vector<Mesh>>();
