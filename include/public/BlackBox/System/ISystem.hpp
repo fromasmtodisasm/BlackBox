@@ -211,7 +211,6 @@ struct ISystem
 	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() = 0;
   virtual IGame* CreateGame(IGame* game) = 0;
 
-  virtual IShaderManager*         GetShaderManager() = 0;
   virtual IRenderer*              GetIRender() = 0;
   virtual ILog*                   GetILog() = 0;
 	virtual ICmdLine*               GetICmdLine() = 0;

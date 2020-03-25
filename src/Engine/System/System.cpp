@@ -319,11 +319,6 @@ void CSystem::Release()
 	delete this;
 }
 
-IShaderManager* CSystem::GetShaderManager()
-{
-	return nullptr;
-}
-
 IRenderer* CSystem::GetIRender()
 {
 	return m_Render;

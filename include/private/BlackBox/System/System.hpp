@@ -41,7 +41,6 @@ public:
   virtual void Release() override;
 	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() override { return &m_env; }
 
-  virtual IShaderManager* GetShaderManager() override;
   virtual IRenderer* GetIRender() override;
   virtual ILog* GetILog() override;
   virtual ICmdLine* GetICmdLine() override { return m_pCmdLine; };
