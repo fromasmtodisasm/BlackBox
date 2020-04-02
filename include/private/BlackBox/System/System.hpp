@@ -89,6 +89,7 @@ private:
   bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
   void SetWorkingDirectory(const std::string& path) const;
   void LogCommandLine() const;
+  void Tests();
 protected:
 	CCmdLine*                                 m_pCmdLine;
 

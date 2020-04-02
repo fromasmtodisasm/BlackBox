@@ -20,19 +20,21 @@ public:
     std::map<Attribute, int> attributes;
   };
 
-  VertexArrayObject(const void* data, int size, int type, Attributes attributes);
+  VertexArrayObject(const void* data, int size, RenderPrimitive primitive, const Attributes &attributes);
   ~VertexArrayObject();
-  void draw();
+  void draw() const;
+  void draw_indexed() const;
   void setAttributes(Attributes& attributes);
   Attributes& getAttributes();
   uint getId() { return id; }
 protected:
   virtual bool init();
+  void setup_attributes();
 protected:
   uint VBO;
   uint id;
   const void* m_Data;
   int m_Count;
-  int m_Type;
+  int m_Mode;
   Attributes m_attributes;
 };

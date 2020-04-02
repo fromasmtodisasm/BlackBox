@@ -69,6 +69,10 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
+	if(any(lessThan(mod(fs_in.TexCoords, 0.1), vec2(0.001, 0.001))))
+	{
+		FragColor = vec4(1,0,0,1);
+	}
 	if (isTerrain)
 	{
 		FragColor = vec4(1, 1, 1, 1);
@@ -87,11 +91,13 @@ void main()
 	}
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightColor = vec3(0.01);
+	#if 0
 	if (!lightOn)
 	{
 		FragColor = vec4(color, 1.0f);
 		return;
 	}
+	#endif
 
     // ambient
     vec3 ambient = 0.15 * color; 
@@ -108,12 +114,7 @@ void main()
     vec3 specular = spec * lightColor;
 	if (has_specular)
 	{
-
-
 		specular *= vec3(texture(specularMap, fs_in.TexCoords));
-		//FragColor = vec4(10, 0, 0, 1.0);
-		//specular *= vec3(10, 0, 0);
-
 	}
 	specular + vec3(10, 0, 0);
     // calculate shadow

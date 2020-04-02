@@ -79,7 +79,7 @@ public:
     VertexArrayObject::Attributes attributes;
     attributes.stride = 3 * sizeof(float);
     attributes.attributes[VertexArrayObject::POSITION] = 0;
-    vao = new VertexArrayObject(skyboxVertices, 36, GL_TRIANGLES, attributes);
+    vao = new VertexArrayObject(skyboxVertices, 36, RenderPrimitive::TRIANGLES, attributes);
   }
   // Унаследовано через IDrawable
   virtual void draw(void* data) override

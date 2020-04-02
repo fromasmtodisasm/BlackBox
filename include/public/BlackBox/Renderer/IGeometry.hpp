@@ -25,16 +25,6 @@ enum VertexAtribute
   VA_NUM
 };
 
-#if 0
-enum RenderPrimitive
-{
-    POINTS,
-	LINES,
-    LINE_STRIP,
-	TRIANGLES
-};
-#endif
-
 struct indexed_vertex
 {
   unsigned int v;
@@ -127,6 +117,8 @@ class SubdivisionShpereTessellatorSimple
 public:
     static MeshRef Compute(int numberOfSubdivisions);
 };
+
+MeshRef CreatePlane(int vSegment, int hSegments);
 
 namespace Geometry
 {
