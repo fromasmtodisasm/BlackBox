@@ -27,6 +27,8 @@ class CSystem :
 public:
   CSystem(SSystemInitParams& initParams);
   ~CSystem();
+  void PreprocessCommandLine();
+  void ProcessCommandLine();
 
   // Inherited via ISystem
   virtual bool Init() override;
@@ -39,7 +41,6 @@ public:
   virtual void Release() override;
 	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() override { return &m_env; }
 
-  virtual IShaderManager* GetShaderManager() override;
   virtual IRenderer* GetIRender() override;
   virtual ILog* GetILog() override;
   virtual ICmdLine* GetICmdLine() override { return m_pCmdLine; };
@@ -85,7 +86,10 @@ private:
   void ParseCMD();
   void LoadScreen();
   bool InitScripts();
-	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
+  bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
+  void SetWorkingDirectory(const std::string& path) const;
+  void LogCommandLine() const;
+  void Tests();
 protected:
 	CCmdLine*                                 m_pCmdLine;
 
@@ -149,3 +153,5 @@ private:
   virtual IEntitySystem* GetIEntitySystem() override;
 
 };
+
+void AddInternalCommands(ISystem* pSystem);

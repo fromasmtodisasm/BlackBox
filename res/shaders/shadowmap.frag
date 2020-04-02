@@ -3,20 +3,6 @@ layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 
 
-interface vs_out 
-{
-	vec3 get_color();	
-};
-
-struct vs_out_impl : vs_out 
-{
-	vec3 get_color()
-	{
-
-		return vec3(1, 0,0);
-	}
-};
-
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -83,6 +69,19 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
+	if(any(lessThan(mod(fs_in.TexCoords, 0.1), vec2(0.001, 0.001))))
+	{
+		FragColor = vec4(1,0,0,1);
+	}
+	if (isTerrain)
+	{
+		FragColor = vec4(1, 1, 1, 1);
+		return;
+	}
+	else
+	{
+		texture(diffuseMap, fs_in.TexCoords).rgb;
+	}
     vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
 	//vec3 color = vs_out_impl::get_color(); // Intresting possibility
 	vec3 emissive = vec3(0.0f);
@@ -92,11 +91,13 @@ void main()
 	}
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightColor = vec3(0.01);
+	#if 0
 	if (!lightOn)
 	{
 		FragColor = vec4(color, 1.0f);
 		return;
 	}
+	#endif
 
     // ambient
     vec3 ambient = 0.15 * color; 
@@ -113,12 +114,7 @@ void main()
     vec3 specular = spec * lightColor;
 	if (has_specular)
 	{
-
-
 		specular *= vec3(texture(specularMap, fs_in.TexCoords));
-		//FragColor = vec4(10, 0, 0, 1.0);
-		//specular *= vec3(10, 0, 0);
-
 	}
 	specular + vec3(10, 0, 0);
     // calculate shadow
@@ -127,5 +123,6 @@ void main()
     vec3 lighting =(ambient + (1.0 - shadow) * (diffuse + specular)) * color + emissive * emissive_factor;
 
 	vec3 result = lighting;
-	FragColor = vec4(result, alpha);
+	//FragColor = vec4(result, alpha);
+	FragColor = vec4(1,0,1, alpha);
 }

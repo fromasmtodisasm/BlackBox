@@ -30,8 +30,10 @@ struct IShader
 {
   enum type : int {
     E_VERTEX,
-    E_FRAGMENT,
+    E_TESSELATION_CONTROL,
+    E_TESSELATION_EVALUATION,
     E_GEOMETRY,
+    E_FRAGMENT,
     E_COMPUTE,
     E_UNKNOWN = -1
   };

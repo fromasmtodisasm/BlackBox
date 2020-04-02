@@ -240,12 +240,12 @@ const char* CShader::typeToStr()
   switch (m_Type) {
   case E_VERTEX:
     return "vertex";
-  case E_FRAGMENT:
-    return "fragment";
   case E_GEOMETRY:
     return "geometry";
   case E_COMPUTE:
     return "compute";
+  case E_FRAGMENT:
+    return "fragment";
   default:
     return "unknown";
   }
@@ -373,7 +373,7 @@ CBaseShaderProgram::ShaderInfo& CBaseShaderProgram::attachInternal(ShaderInfo& s
 
 void CBaseShaderProgram::Detach(ShaderInfo& info)
 {
-  if (info.attached)
+  if (info.attached && info.shader != nullptr)
     glCheck(glDetachShader(m_Program, info.shader->get()));
 }
 
@@ -598,7 +598,7 @@ void CBaseShaderProgram::Uniform(Mat4 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Reload(ShaderRef v, ShaderRef f, ShaderRef g, ShaderRef c, const char* label)
+void CBaseShaderProgram::Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label)
 {
   Detach(m_Vertex);
   //reset(m_Vertex);

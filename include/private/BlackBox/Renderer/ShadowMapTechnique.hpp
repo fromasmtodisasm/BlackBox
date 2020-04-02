@@ -111,6 +111,8 @@ private:
   std::vector<PointLightValues> m_PointLights;
   std::vector<SpotLightValues> m_SpotLights;
 
+  int frame_id = 0;
+
   // Inherited via ITechnique
   virtual int SetRenderTarget(FrameBufferObject* renderTarget) override;
 };

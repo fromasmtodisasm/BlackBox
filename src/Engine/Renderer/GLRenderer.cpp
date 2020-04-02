@@ -54,8 +54,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   context = SDL_GL_GetCurrentContext();
   m_HWND = (HWND)window->getHandle();
   // now you can make GL calls.
-  glClearColor(1, 0, 0, 1);
-  glClear(GL_COLOR_BUFFER_BIT);
+  gl::ClearColor({0, 0, 0, 0});
+  gl::Clear(GL_COLOR_BUFFER_BIT);
   m_Window->swap();
   //=======================
   m_pSystem->GetIConsole()->AddConsoleVarSink(this);
@@ -274,6 +274,11 @@ void GLRenderer::SetRenderTarget(int nHandle)
 IShader* GLRenderer::Sh_Load(ShaderDesc const& desc)
 {
   return dynamic_cast<IShader*>(CShader::load(desc));
+}
+
+void GLRenderer::DrawFullscreenQuad()
+{
+  m_ScreenQuad->draw();
 }
 
 void GLRenderer::SetCullMode(CullMode mode/* = CullMode::BACK*/)

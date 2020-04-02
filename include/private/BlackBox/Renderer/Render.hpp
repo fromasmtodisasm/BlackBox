@@ -186,4 +186,7 @@ private:
 
   // Inherited via CRenderer
   virtual IShader* Sh_Load(ShaderDesc const& desc) override;
+
+  // Inherited via CRenderer
+  virtual void DrawFullscreenQuad() override;
 };

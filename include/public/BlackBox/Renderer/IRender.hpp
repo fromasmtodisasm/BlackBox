@@ -38,6 +38,15 @@ struct IFont;
 class CCamera;
 struct IShader;
 
+enum class RenderPrimitive
+{
+	LINES,
+    LINE_STRIP,
+	TRIANGLES,
+	TRIANGLE_STRIP
+};
+
+
 class Image
 {
 public:
@@ -210,6 +219,8 @@ struct IRenderer
   virtual void ClearColorBuffer(const Vec3 vColor) = 0;
 
   virtual void SetRenderTarget(int nHandle) = 0;
+
+  virtual void DrawFullscreenQuad() = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;

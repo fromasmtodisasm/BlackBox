@@ -11,7 +11,7 @@
 class SkyBox : public IDrawable
 {
 public:
-  TextureCube* texture;
+  _smart_ptr<TextureCube> texture;
   VertexArrayObject* vao;
   BaseShaderProgramRef shader;
 
@@ -79,7 +79,7 @@ public:
     VertexArrayObject::Attributes attributes;
     attributes.stride = 3 * sizeof(float);
     attributes.attributes[VertexArrayObject::POSITION] = 0;
-    vao = new VertexArrayObject(skyboxVertices, 36, GL_TRIANGLES, attributes);
+    vao = new VertexArrayObject(skyboxVertices, 36, RenderPrimitive::TRIANGLES, attributes);
   }
   // Унаследовано через IDrawable
   virtual void draw(void* data) override
@@ -103,8 +103,6 @@ public:
 
   void setTextureCube(TextureCube* t)
   {
-    if (texture)
-      delete texture;
     texture = t;
   }
 };

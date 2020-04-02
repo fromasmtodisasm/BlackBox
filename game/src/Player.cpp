@@ -185,10 +185,12 @@ void CPlayer::update(float deltatime)
 //#endif
   //m_Camera->m_target = m_transform.position;
   PROFILER_PUSH_CPU_MARKER("CALL SCRIPT", Utils::COLOR_DARK_GREEN);
-  GetISystem()->GetIScriptSystem()->BeginCall("player", "Update");
+  #if 0
+  GetISystem()->GetIScriptSystem()->BeginCall("Player", "Update");
   GetISystem()->GetIScriptSystem()->PushFuncParam(m_pScript);
   GetISystem()->GetIScriptSystem()->PushFuncParam(deltatime);
   GetISystem()->GetIScriptSystem()->EndCall();
+  #endif
   PROFILER_POP_CPU_MARKER();
 }
 

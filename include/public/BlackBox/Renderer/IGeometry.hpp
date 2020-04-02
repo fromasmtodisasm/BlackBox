@@ -9,9 +9,11 @@
 class VertexArrayObject;
 class IndexBuffer;
 struct Vertex;
+class Mesh;
 
 using VertexData = std::vector<Vertex>;
 using IndexData = std::vector<int>;
+using MeshRef = std::shared_ptr<Mesh>;
 
 enum VertexAtribute
 {
@@ -109,6 +111,14 @@ public:
   VertexArrayObject* getVertexBuffer();
   IndexBuffer* getIndexBuffer();
 };
+
+class SubdivisionShpereTessellatorSimple
+{
+public:
+    static MeshRef Compute(int numberOfSubdivisions);
+};
+
+MeshRef CreatePlane(int vSegment, int hSegments);
 
 namespace Geometry
 {

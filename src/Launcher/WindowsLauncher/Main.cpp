@@ -5,7 +5,9 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <filesystem>
 using namespace std;
+namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]) {
   int status = EXIT_FAILURE;
@@ -17,6 +19,8 @@ int main(int argc, char* argv[]) {
   }
 
   SSystemInitParams params;
+
+  std::cout << "Current path is " << fs::current_path() << '\n';
 
   time_t t = time(nullptr);
   std::stringstream ss;

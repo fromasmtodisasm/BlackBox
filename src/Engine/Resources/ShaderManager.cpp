@@ -116,6 +116,7 @@ ShaderRef ShaderManager::addShader(const ShaderDesc& desc)
   {
     cache[Path] = result;
   }
+  assert(result);
   return result;
 }
 

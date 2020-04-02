@@ -123,24 +123,21 @@ bool MaterialManager::loadLib(std::string name)
     pd.name = program->Value();
 
     auto shader = program->FirstChildElement("shader");
-    if (shader != nullptr)
-    {
+	while (shader != nullptr)
+	{
+
       getShaderAttributes(shader, pd);
       shader = shader->NextSiblingElement("shader");
-      if (shader != nullptr)
-      {
-        getShaderAttributes(shader, pd);
-        if (!loadProgram(pd, false))
-        {
-          //TODO: handle this case
-          m_pLog->Log("[ERROR] Failed load material\n");
-        }
-        else
-        {
-          auto p = this->shaders_map[pd.name];
-        }
-      }
-    }
+	}
+	if (!loadProgram(pd, false))
+	{
+	  //TODO: handle this case
+	  m_pLog->Log("[ERROR] Failed load material\n");
+	}
+	else
+	{
+	  auto p = this->shaders_map[pd.name];
+	}
     program = program->NextSibling();
   }
 
@@ -167,6 +164,8 @@ void MaterialManager::getShaderAttributes(tinyxml2::XMLElement* shader, ProgramD
 
   if (type == "vertex")
     pd.vs = name;
+  else if (type == "geometry")
+    pd.gs = name;
   else if (type == "fragment")
     pd.fs = name;
 }
@@ -310,7 +309,6 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
     ShaderInfo gi;
     ShaderInfo ci;
 
-    ShaderProgramRef shaderProgram;
     if (!is_compute)
     {
       vi = ShaderInfo(vs, desc.vs.name);
@@ -329,11 +327,11 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
     {
       gi = ShaderInfo(gs, desc.gs.name);
     }
-    shaderProgram = _smart_ptr<CShaderProgram>(new CShaderProgram(vi, fi, gi, ci));
+    ShaderProgramRef shaderProgram(new CShaderProgram(vi, fi, gi, ci));
 
     if (!shaderProgram->Create(desc.name.c_str()))
       return false;
-    auto it = shaders_map.find(desc.name);
+    //auto it = shaders_map.find(desc.name);
     shaders_map[desc.name] = shaderProgram;
     //debuger::program_label(shaderProgram->get(), desc.name);
   }

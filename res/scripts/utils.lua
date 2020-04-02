@@ -72,6 +72,8 @@ function init()
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
 	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
+	addcommand("level", [[Game:LoadLevel(%1)]]) 
+
 	addcommand("connect", [[Client:Connect(%1,%2)]]) 
 	addcommand("send", 
 	[[
@@ -84,6 +86,8 @@ function init()
 	Console:CreateKeyBind("s", "scene load test") 
 	Console:CreateKeyBind("p", "reload_scripts") 
 	Console:CreateKeyBind("c", "@Game:gotoMenu()") 
+	Console:CreateKeyBind("f7", "@Game:gotoGame()") 
+
 
 	setFog(0,0,0)
 

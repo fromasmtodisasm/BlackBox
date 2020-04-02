@@ -12,6 +12,7 @@ if(NOT DEFINED BLACKBOX_DIR)
 	set(BLACKBOX_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
+set(ALL_PROJECT_SOURCES)
 # Part of the setup is split into the InitialSetup file so projects created by cryrun can include it.
 # This needs to be re-visited after the toolchain files are cleaned up.
 include(Tools/CMake/InitialSetup.cmake)
@@ -35,3 +36,12 @@ project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 ###################################################
 include(Tools/CMake/Configure.cmake)
 ###################################################
+include(CPack)
+# Packaging support
+set(CPACK_PACKAGE_VENDOR "fromasmtodisasm")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Some summary")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+
+set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+set(CPACK_NSIS_CREATE_ICONS "CreateShortCut '\$SMPROGRAMS\\\\${PROJECT_NAME}.lnk' '\$INSTDIR\\\\bin\\\\Launcher.exe'")
