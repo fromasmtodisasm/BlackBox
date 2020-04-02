@@ -659,7 +659,7 @@ void CSystem::Tests()
 	obj->m_Mesh = mesh;
 	obj->m_path = "";
 
-	SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
+	//SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
 	
 }
 
