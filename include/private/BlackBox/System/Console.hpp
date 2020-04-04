@@ -174,7 +174,6 @@ using KeyBindMap = std::map<EKeyId, std::wstring>;
 using CommandMap = std::map<std::wstring, CommandInfo>;
 using VarSinkList = std::vector<IConsoleVarSink*>;
 
-
 struct ConsolePrompt
 {
   std::string user = "root";
@@ -203,10 +202,39 @@ struct ConsolePrompt
 
 class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSink
 {
-  friend class SetCommand;
-  friend class GetCommand;
-  friend class DumpCommand;
-  const int MESSAGE_BUFFER_SIZE = 1024 * 16;
+	friend class SetCommand;
+	friend class GetCommand;
+	friend class DumpCommand;
+	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
+	enum EInputFunctions
+	{
+		EAutoComplete,
+		EGotoBeginLine,
+		EGotoEndLine,
+		ESubmit,
+		ECopy,
+		EPaste,
+		EClearInputLine,
+		ENextHistoryElement,
+		EPrevHistoryElement,
+		EMoveCursorToPrevChar,
+		EMoveCursorToNextChar,
+		EMoveCursorToPrevWord,
+		EMoveCursorToNextWord,
+		EDeleteRightChar,
+		EDeleteLeftChar,
+		EClear,
+	};
+
+	struct cmpInputEvents
+	{
+		bool operator()(const SInputEvent& a, const SInputEvent& b) const {
+			if (a.keyId != b.keyId) return (a.keyId < b.keyId);
+			if (a.modifiers != b.modifiers) return (a.modifiers < b.modifiers);
+			return (a.state < b.state);
+    }
+	};
+	using InputBinding = std::map<const SInputEvent, EInputFunctions, cmpInputEvents>;
 public:
   CConsole();
   ~CConsole();
@@ -297,7 +325,10 @@ private:
   void initBind();
   void ClearInputLine();
 
+	bool MatchInput(const SInputEvent& event);
+
   IFont* getFont(const char* name, float w, float h);
+	void InitInputBindings();
 private:
   VarSinkList varSinks;
   CommandMap m_Commands;
@@ -349,6 +380,8 @@ private:
   std::list<IWorkerCommand*> m_worker_to_delete;
 
   int lines = 0;
+
+	InputBinding m_InputBindings;
 
   // --------------------------------------------------------------------------------
 

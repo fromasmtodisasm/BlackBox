@@ -254,115 +254,105 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
   }
   cmd_is_compete = false;
 
+	if (event.keyName != "commit")
   {
     bool textEntered = false;
-    if (keyPressed)
+		SInputEvent e(event);
+		e.modifiers &= (~eMM_NumLock);
+    if (auto result = m_InputBindings.find(e); result != m_InputBindings.end())
     {
-      switch (event.keyId)
+      switch (result->second)
       {
-      case eKI_Tab:
+      case EAutoComplete:
+			{
         completion = autocomplete(m_CommandW);
         if (completion.size() > 0)
         {
           completeCommand(completion);
         }
         return true;
-      case eKI_A:
+			}
+      case EGotoBeginLine:
       {
-        if (control)
-        {
-          m_Cursor.x = 0;
-        }
+				m_Cursor.x = 0;
         return true;
       }
-      case eKI_E:
+      case EGotoEndLine:
       {
-        if (control)
-        {
-          m_Cursor.x = (int)m_CommandW.size();
-        }
+				m_Cursor.x = (int)m_CommandW.size();
         return true;
       }
-      case eKI_Enter:
-      case eKI_M:
+      case ESubmit:
       {
-        if (event.keyId != eKI_Enter && !control)
-          return false;
         handleEnterText();
         m_Cursor.x = 0;
         return true;
       }
-      case eKI_Insert:
-      {
-        if (shift)
-        {
-          setBuffer();
-          return true;
-        }
-        else if (control)
-        {
-          getBuffer();
-        }
-
-        return false;
+      case EPaste:
+			{
+				setBuffer();
+				return true;
+			}
+      case ECopy:
+			{
+				getBuffer();
+        return true;
       }
-      case eKI_Escape:
+      case EClearInputLine:
       {
         ClearInputLine();
         return true;
       }
-      case eKI_P:
+      case EPrevHistoryElement:
       {
-        if (control)
-        {
-          if (history_line > 0)
-            --history_line;
-          getHistoryElement();
-          return true;
-        }
-        return false;
+				if (history_line > 0)
+					--history_line;
+				getHistoryElement();
+				return true;
       }
-      case eKI_N:
+      case ENextHistoryElement:
       {
-        if (control)
-        {
-          if (history_line < (m_CmdBuffer.size() - 1))
-            ++history_line;
-          getHistoryElement();
-          return true;
-        }
-        return false;
+				if (history_line < (m_CmdBuffer.size() - 1))
+					++history_line;
+				getHistoryElement();
+				return true;
       }
+#if 0
       case eKI_PgUp:
       case eKI_PgDn:
       {
         pageUp(event.keyId == eKI_PgUp);
         return true;
       }
-      case eKI_Left:
-      case eKI_Right:
+#endif
+      case EMoveCursorToPrevChar:
       {
-        moveCursor(event.keyId == eKI_Left);
+        moveCursor(true);
         return true;
       }
-      case eKI_B:
-      case eKI_L:
+      case EMoveCursorToNextChar:
       {
-        if (alt)
-        {
-          moveCursor(event.keyId == eKI_B, true);
-          return true;
-        }
-        return false;
+        moveCursor(false);
+        return true;
       }
-      case eKI_Delete:
+      case EMoveCursorToPrevWord:
+      {
+				moveCursor(true, true);
+				return true;
+      }
+      case EMoveCursorToNextWord:
+      {
+				moveCursor(false, true);
+				return true;
+      }
+      case EDeleteRightChar:
       {
         //TODO: rewrite erasing
         m_CommandW.erase((int)m_Cursor.x, 1);
         fillCommandText();
         return true;
       }
-      case eKI_Backspace:
+      case EDeleteLeftChar:
       {
         if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
         {
@@ -373,6 +363,11 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
         fillCommandText();
         return true;
       }
+			case EClear:
+			{
+				Clear();
+				return true;
+			}
       default:
         return false;
       }
@@ -876,6 +871,11 @@ void CConsole::ClearInputLine()
   fillCommandText();
 }
 
+bool CConsole::MatchInput(const SInputEvent& event)
+{
+	return false;
+}
+
 IFont* CConsole::getFont(const char* name, float w, float h)
 {
   if (gEnv->IsDedicated())
@@ -891,6 +891,40 @@ IFont* CConsole::getFont(const char* name, float w, float h)
     //return m_Font;
   }
   return m_Font;
+}
+
+void CConsole::InitInputBindings()
+{
+	auto CreateInputEvent = [](EKeyId keyId, int modifiers, EInputState state)
+	{
+		SInputEvent event;
+		event.keyId = keyId;
+		event.modifiers = modifiers;
+		event.state = state;
+		return event;
+	};
+	auto CreateBinding = [this](SInputEvent event, EInputFunctions function)
+	{
+		m_InputBindings[event] = function;
+	};
+
+	CreateBinding(CreateInputEvent(eKI_Tab, eMM_None, EInputState::eIS_Pressed), EAutoComplete);
+	CreateBinding(CreateInputEvent(eKI_A, eMM_LCtrl, EInputState::eIS_Pressed), EGotoBeginLine);
+	CreateBinding(CreateInputEvent(eKI_E, eMM_LCtrl, EInputState::eIS_Pressed), EGotoEndLine);
+	CreateBinding(CreateInputEvent(eKI_Enter, eMM_None, EInputState::eIS_Pressed), ESubmit);
+	CreateBinding(CreateInputEvent(eKI_M, eMM_LCtrl, EInputState::eIS_Pressed), ESubmit);
+	CreateBinding(CreateInputEvent(eKI_Insert, eMM_LCtrl, EInputState::eIS_Pressed), ECopy);
+	CreateBinding(CreateInputEvent(eKI_Insert, eMM_LShift, EInputState::eIS_Pressed), EPaste);
+	CreateBinding(CreateInputEvent(eKI_Escape, eMM_LCtrl, EInputState::eIS_Pressed), EClearInputLine);
+	CreateBinding(CreateInputEvent(eKI_N, eMM_LCtrl, EInputState::eIS_Pressed), ENextHistoryElement);
+	CreateBinding(CreateInputEvent(eKI_P, eMM_LCtrl, EInputState::eIS_Pressed), EPrevHistoryElement);
+	CreateBinding(CreateInputEvent(eKI_Left, eMM_None, EInputState::eIS_Pressed), EMoveCursorToPrevChar);
+	CreateBinding(CreateInputEvent(eKI_Right, eMM_None, EInputState::eIS_Pressed), EMoveCursorToNextChar);
+	CreateBinding(CreateInputEvent(eKI_B, eMM_LAlt, EInputState::eIS_Pressed), EMoveCursorToPrevWord);
+	CreateBinding(CreateInputEvent(eKI_F, eMM_LAlt, EInputState::eIS_Pressed), EMoveCursorToNextWord);
+	CreateBinding(CreateInputEvent(eKI_Delete, eMM_None, EInputState::eIS_Pressed), EDeleteRightChar);
+	CreateBinding(CreateInputEvent(eKI_Backspace, eMM_None, EInputState::eIS_Pressed), EDeleteLeftChar);
+	CreateBinding(CreateInputEvent(eKI_L, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
 }
 
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)
@@ -1083,6 +1117,8 @@ bool CConsole::Init(ISystem* pSystem)
 
     m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
     Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
+
+		InitInputBindings();
   }
 
   return true;
