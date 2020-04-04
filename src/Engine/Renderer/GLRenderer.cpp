@@ -191,8 +191,9 @@ void GLRenderer::glInit()
 {
   CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
   fillSates();
-  //if (glContextType == AttributeType::DEBUG && r_debug->GetIVal() == 1)
+  if (glContextType == AttributeType::DEBUG || r_debug->GetIVal() == 1)
   {
+		m_pSystem->Log("Create debug render context");
     glDebug = std::make_shared<OpenglDebuger>("out/glDebug.txt");
     SetState(State::DEBUG_OUTPUT, true);
     SetState(State::DEBUG_OUTPUT_SYNCHRONOUS, true);
