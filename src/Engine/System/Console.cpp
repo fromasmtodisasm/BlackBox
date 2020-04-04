@@ -317,14 +317,6 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				getHistoryElement();
 				return true;
       }
-#if 0
-      case eKI_PgUp:
-      case eKI_PgDn:
-      {
-        pageUp(event.keyId == eKI_PgUp);
-        return true;
-      }
-#endif
       case EMoveCursorToPrevChar:
       {
         moveCursor(true);
