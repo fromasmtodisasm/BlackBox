@@ -1,0 +1,2 @@
+vcpkg list boost | awk '{print $1}' | while read line; do vcpkg remove --recurse ; done
+

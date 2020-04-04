@@ -7,7 +7,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <BlackBox/Input/SDLKeyboard.hpp>
 #include <BlackBox/Input/SDLMouse.hpp>

@@ -2,5 +2,5 @@
 
 pushd `pwd`
 cd build
-cmake --build . -- -j8
+cmake -j8 --build . 
 popd
