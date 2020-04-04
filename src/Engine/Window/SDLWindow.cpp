@@ -204,7 +204,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   // Create an OpenGL context associated with the window.
   //glThreadContext = SDL_GL_CreateContext(m_Window);
   glRenderContext = SDL_GL_CreateContext(m_Window);
-  if (!SDL_GL_MakeCurrent(m_Window, glRenderContext))
+  if (SDL_GL_MakeCurrent(m_Window, glRenderContext) != 0)
   {
     printf("Can't create context current! SDL_Error: %s\n", SDL_GetError());
 

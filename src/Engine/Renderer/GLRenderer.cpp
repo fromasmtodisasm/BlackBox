@@ -71,7 +71,11 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
     ShaderDesc("screenshader.frag")
   };
   //pd.vs.macro["STORE_TEXCOORDS"] = "1";
-  MaterialManager::instance()->loadProgram(pd, false);
+	if (!MaterialManager::instance()->loadProgram(pd, false))
+	{
+    m_pSystem->Log("Error of loading screen shader");
+    return nullptr;
+	}
   m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
   if (!m_ScreenShader)
   {

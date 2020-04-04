@@ -229,8 +229,10 @@ class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSi
 	struct cmpInputEvents
 	{
 		bool operator()(const SInputEvent& a, const SInputEvent& b) const {
+			auto am = a.modifiers & (~eMM_NumLock);
+			auto bm = b.modifiers & (~eMM_NumLock);
 			if (a.keyId != b.keyId) return (a.keyId < b.keyId);
-			if (a.modifiers != b.modifiers) return (a.modifiers < b.modifiers);
+			if (am != bm) return (am < bm);
 			return (a.state < b.state);
     }
 	};

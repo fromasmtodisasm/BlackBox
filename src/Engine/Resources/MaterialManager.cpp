@@ -282,6 +282,8 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
   auto fs = !is_compute ? desc.fs.type = "fragment", loadShader(desc.fs, isReload) : nullptr;
   if (!fs && !is_compute) return false;
 
+	gEnv->pSystem->Log("before decltype");
+
   decltype(fs) gs;
   decltype(fs) cs;
 
@@ -329,8 +331,11 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
     }
     ShaderProgramRef shaderProgram(new CShaderProgram(vi, fi, gi, ci));
 
-    if (!shaderProgram->Create(desc.name.c_str()))
+		if (!shaderProgram->Create(desc.name.c_str()))
+		{
+			gEnv->pSystem->Log("Error of creating program");
       return false;
+		}
     //auto it = shaders_map.find(desc.name);
     shaders_map[desc.name] = shaderProgram;
     //debuger::program_label(shaderProgram->get(), desc.name);

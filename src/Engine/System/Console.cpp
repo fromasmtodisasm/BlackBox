@@ -257,9 +257,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 	if (event.keyName != "commit")
   {
     bool textEntered = false;
-		SInputEvent e(event);
-		e.modifiers &= (~eMM_NumLock);
-    if (auto result = m_InputBindings.find(e); result != m_InputBindings.end())
+    if (auto result = m_InputBindings.find(event); result != m_InputBindings.end())
     {
       switch (result->second)
       {
