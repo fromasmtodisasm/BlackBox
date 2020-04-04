@@ -191,18 +191,16 @@ void GLRenderer::glInit()
 {
   CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
   fillSates();
-  if (glContextType == AttributeType::DEBUG && r_debug->GetIVal() == 1)
+  //if (glContextType == AttributeType::DEBUG && r_debug->GetIVal() == 1)
   {
-    glDebug = new OpenglDebuger("out/glDebug.txt");
+    glDebug = std::make_shared<OpenglDebuger>("out/glDebug.txt");
     SetState(State::DEBUG_OUTPUT, true);
     SetState(State::DEBUG_OUTPUT_SYNCHRONOUS, true);
   }
   SetState(State::POLYGON_OFFSET_FILL, true);
   SetState(State::PROGRAM_POINT_SIZE , true);
-  glPolygonOffset(1, 0);
   glLineWidth(1);
   SetState(State::DEPTH_TEST, true);
-  //glCheck(glEnable(GL_TEXTURE_2D));
   SetState(State::BLEND, true);
   SetState(State::CULL_FACE, true);
   SetCullMode(CullMode::BACK);

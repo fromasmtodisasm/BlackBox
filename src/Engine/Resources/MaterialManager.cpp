@@ -282,8 +282,6 @@ bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
   auto fs = !is_compute ? desc.fs.type = "fragment", loadShader(desc.fs, isReload) : nullptr;
   if (!fs && !is_compute) return false;
 
-	gEnv->pSystem->Log("before decltype");
-
   decltype(fs) gs;
   decltype(fs) cs;
 

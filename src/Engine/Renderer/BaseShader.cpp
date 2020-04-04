@@ -37,23 +37,16 @@ ShaderStatus::ShaderStatus(CShader* shader) :
 
 bool ShaderStatus::get(GLenum statusType) {
   GLenum err;
-  while((err = glGetError()) != GL_NO_ERROR)
-  {
-    GetISystem()->GetILog()->Log("current error %d\n", err);
-  }
   glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status));
-  while((err = glGetError()) != GL_NO_ERROR)
+  if (m_Status == GL_FALSE)
   {
-    GetISystem()->GetILog()->Log("current error %d\n", err);
-  }
-  if (m_Status != GL_TRUE)
-  {
+		GetISystem()->GetILog()->Log("[ERROR] Pizdec Shader %s \n %s\n", m_Shader->getName(), m_InfoLog);;
     GLsizei length = 0;
-    glCheck(glGetShaderInfoLog(m_Shader->get(), 512, &length, m_InfoLog));
-    if (length > 0)
-    {
-      GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), m_InfoLog);;
-    }
+		glGetShaderiv(m_Shader->get(), GL_INFO_LOG_LENGTH, &length);
+		std::vector<GLchar> errorLog(length);
+    glCheck(glGetShaderInfoLog(m_Shader->get(), length, &length, &errorLog[0]));
+		GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), errorLog);;
+		glDeleteShader(m_Shader->get());
     return false;
   }
   return true;
@@ -132,7 +125,6 @@ bool CShader::Create() {
 
 CShader* CShader::load(ShaderDesc  const& desc) {
   string text;
-
   auto path = ShaderDesc::root + desc.name;
   if (!loadInternal(path, text)) return nullptr;
 
@@ -232,7 +224,9 @@ bool CShader::Empty()
 }
 
 void CShader::print() {
-  //cout << m_Text << endl;
+#ifdef _DEBUG
+  cout << m_Text << endl;
+#endif
 }
 
 const char* CShader::typeToStr()

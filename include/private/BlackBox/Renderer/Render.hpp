@@ -136,7 +136,7 @@ private:
   const GLuint majorVersion = 4;
   const GLuint minorVersion = 3;
   const int antialiassing = 8;
-  OpenglDebuger* glDebug;
+	std::shared_ptr<OpenglDebuger> glDebug;
   //============
   CCamera* m_Camera = nullptr;
   Quad* m_ScreenQuad = nullptr;
