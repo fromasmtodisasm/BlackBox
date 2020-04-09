@@ -20,12 +20,12 @@
         </transform>
         <material name="player"/>
     </object>-->
-    <object name="ps1" type="points" visible="true" transparent="false">
+    <!--<object name="ps1" type="points" visible="true" transparent="false">
         <material name="point"/>
         <positions file="res/geom/points.txt"/>
         <uv scaleX="100" scaleY="100"/>
-    </object>
-    <object name="terrain" type="object" visible="true" transparent="true">
+    </object>-->
+    <!--<object name="terrain" type="object" visible="true" transparent="true">
         <mesh name="res/geom/terrain.obj"/>
         <transform>
             <position>
@@ -68,8 +68,8 @@
         </transform>
         <material name="terrain"/>
         <uv scaleX="100" scaleY="100"/>
-    </object>
-    <object name="MyPlayer" type="player" visible="true" transparent="true">
+    </object>-->
+    <object name="MyPlayer" type="player" visible="true" transparent="false">
         <mesh name="res/geom/pengium.obj"/>
         <transform>
             <position>
@@ -153,6 +153,28 @@
         </transform>
         <uv scaleX="800" scaleY="800"/>
         <material name="water"/>
+    </object>
+    <object name="quad" type="object" visible="true" transparent="true">
+        <mesh name="res/geom/plane.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <!--<uv scaleX="800" scaleY="800"/>-->
+        <material name="default"/>
     </object>
     <object name="sphere" type="object" visible="false" transparent="false">
         <mesh name="res/geom/sphere.obj"/>

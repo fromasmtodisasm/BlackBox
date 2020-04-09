@@ -10,7 +10,6 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
-#include <BlackBox/Renderer/QuadTree.hpp>
 
 #include <vector>
 #include <string>
@@ -20,6 +19,40 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+
+class CRender : public IQuadTreeRender {
+public:
+	CRender(IRenderer* pRender)
+	{
+
+	}
+  void draw_plane(double ox, double oy, double size, color3 color) override {
+		m_Plane->moveTo(Vec3(ox, 0, oy));
+		m_Plane->scale(Vec3(size, size, size));
+
+  }
+	std::shared_ptr<Object> m_Plane;
+};
+
+class TreeRender : public ITreeVisitorCallback {
+public:
+  TreeRender(IQuadTreeRender *render) : render(render) {}
+  // Inherited via ITreeVisitorCallback
+  virtual void BeforVisit(QuadTree *qt) override {
+
+  }
+  virtual void OnLeaf(QuadTree *qt, bool is_last, int level) override {
+    render->draw_plane(qt->m_x, qt->m_y, qt->m_size, qt->m_color);
+  }
+
+  IQuadTreeRender *render = nullptr;
+};
+
+class TreeObject : public Object
+{
+
+};
+
 
 namespace {
 #if 0
@@ -214,6 +247,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
     m_Console->ExecuteString("r_displayinfo 0");
   }
 
+  m_QuadTree = std::make_shared<QuadTree>(8, 10, 0, 0, color3(1, 0, 0));
+  m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
+  TreeRender treeRender(m_QuadTreeRender.get());
 
   return true;
 }

@@ -25,7 +25,7 @@ struct color3 {
   color3() = default;
 };
 
-struct IRender {
+struct IQuadTreeRender {
   virtual void draw_plane(double ox, double oy, double size, color3 color) = 0;
 };
 

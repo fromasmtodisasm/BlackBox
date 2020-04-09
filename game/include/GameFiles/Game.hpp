@@ -50,6 +50,8 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include <ScriptObjects/ScriptObjectGame.hpp>
 #include "Player.h"
 
+#include <BlackBox/Renderer/QuadTree.hpp>
+
 #include <map>
 #include <string>
 #include <vector>
@@ -440,6 +442,8 @@ public:
 	};
 	float m_time_to_random = 0.f;
 	Movement direction	   = FORWARD;
+	std::shared_ptr<IQuadTreeRender> m_QuadTreeRender;
+	std::shared_ptr<QuadTree> m_QuadTree;
 
 };
 
