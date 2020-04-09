@@ -10,6 +10,7 @@
 #include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
+#include <BlackBox/Renderer/QuadTree.hpp>
 
 #include <vector>
 #include <string>
