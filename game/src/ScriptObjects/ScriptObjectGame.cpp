@@ -44,6 +44,9 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 
   REG_FUNC(CScriptObjectGame, SavePlayerPos);
   REG_FUNC(CScriptObjectGame, LoadPlayerPos);
+
+	//AllowPropertiesMapping(pSS);
+	//RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CGame,test_string));
 }
 
 void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
@@ -52,6 +55,15 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
   m_pSystem = pGame->GetSystem();
   m_pConsole = m_pSystem->GetIConsole();
   InitGlobal(pScriptSystem, "Game", this);
+
+
+#if 0
+	if(!EnablePropertiesMapping(m_pGame))
+	{
+		CryError( "<CryGame> (CScriptObjectGame::Init) failed" );
+		return;
+	}
+#endif
 }
 
 void CScriptObjectGame::OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo)
