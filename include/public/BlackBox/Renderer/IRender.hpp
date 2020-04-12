@@ -229,3 +229,8 @@ struct IRenderer
 extern "C" {
   IRENDER_API IRenderer* CreateIRender(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
 }
+
+struct SRenderParams
+{
+	
+};

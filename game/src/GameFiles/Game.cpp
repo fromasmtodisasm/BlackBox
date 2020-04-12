@@ -50,7 +50,10 @@ public:
 
 class TreeObject : public Object
 {
+	virtual void draw(void* camera) final
+	{
 
+	}
 };
 
 
@@ -164,7 +167,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		InitInputMap();
 	if(!m_bDedicatedServer)
 	{
-		m_pSystem->GetIConsole()->ShowConsole(0);
+		//m_pSystem->GetIConsole()->ShowConsole(0);
 #if 0
 		if (!bInEditor)
 		{
@@ -286,7 +289,7 @@ bool CGame::Update() {
     {
 			SetRenderState();
       m_pSystem->RenderBegin();
-      m_pSystem->Render();
+      //m_pSystem->Render();
       //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
       DrawHud(fps);
       //PROFILER_POP_CPU_MARKER();
@@ -961,7 +964,7 @@ bool CGame::InitScripts()
   m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
 
   fps = 35.f;
-  m_pScriptSystem->ExecuteFile("scripts/game.lua");
+  m_pScriptSystem->ExecuteFile("scripts/game.lua", true, false);
   class toogle_viewport_drag : public IConsoleCommand
   {
     CGame* game;
@@ -975,12 +978,24 @@ bool CGame::InitScripts()
   };
 
   m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
+#if 0
+  m_Console->AddCommand(
+    "enumd",
+    R"(
+		local formats = System:EnumDisplayFormats()
+		for i=1, #formats do
+			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+		end
+		Console:PrintLine(%2)
+		Console:PrintLine(%1)
+		)",
+    0,
+    "Enum Display formats"
+  );
+#endif
 
   m_pScriptSystem->ExecuteFile("scripts/utils.lua");
 
-  bool retflag;
-  bool retval = TestScriptSystem(retflag);
-  if (retflag) return retval;
   return true;
 }
 
@@ -1001,19 +1016,6 @@ bool CGame::TestScriptSystem(bool& retflag)
   m_Console->PrintLine("Player name: %s", name);
   m_Console->PrintLine("Player age: %d", age);
 
-  m_Console->AddCommand(
-    "enumd",
-    R"(
-		local formats = System:EnumDisplayFormats()
-		for i=1, #formats do
-			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
-		end
-		Console:PrintLine(%2)
-		Console:PrintLine(%1)
-		)",
-    0,
-    "Enum Display formats"
-  );
 
 #if 0
   HSCRIPTFUNCTION psina;
@@ -1097,4 +1099,3 @@ void CGame::MainMenu()
 {
 
 }
-

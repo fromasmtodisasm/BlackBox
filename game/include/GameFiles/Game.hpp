@@ -445,6 +445,8 @@ public:
 	std::shared_ptr<IQuadTreeRender> m_QuadTreeRender;
 	std::shared_ptr<QuadTree> m_QuadTree;
 
+	char* test_string = "user data string";
+
 };
 
 
