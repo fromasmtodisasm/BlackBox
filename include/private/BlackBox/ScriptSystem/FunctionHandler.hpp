@@ -27,6 +27,15 @@ public:
 
   virtual bool GetParam(int nIdx, HSCRIPTFUNCTION& hFunc, int nReference = 0) override;
 
+  virtual bool GetParam(int nIdx, USER_DATA& ud) override;
+
+  template<typename T> bool GetParamAny(int nIdx, T& val)
+  {
+		int nRealIdx = nIdx + m_paramIdOffset;
+    /*bool res = */m_pSS->ToAny(val, nRealIdx);
+    return true;
+  }
+
   virtual ScriptVarType GetParamType(int nIdx) override;
 
   virtual int EndFunctionNull() override;
@@ -50,8 +59,6 @@ public:
   virtual int EndFunction(float fRetVal1, float fRetVal2) override;
 
   virtual void Unref(HSCRIPTFUNCTION hFunc) override;
-
-  virtual bool GetParam(int nIdx, USER_DATA& ud) override;
 
   virtual bool GetParamUDVal(int nIdx, USER_DATA& val, int& cookie) override;
 
