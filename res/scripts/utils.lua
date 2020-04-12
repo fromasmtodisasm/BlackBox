@@ -67,8 +67,8 @@ function init()
 	Console:CreateKeyBind("xi_back", "@Game:gotoMenu()")  
 
 
-	addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
-	addcommand("set_ws", [[set2dvec("r_Width", "r_Height", %1, %2)]], "Set size of window")
+	--addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
+	--addcommand("set_ws", [[set2dvec("r_Width", "r_Height", %1, %2)]], "Set size of window")
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
 	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
@@ -91,9 +91,10 @@ function init()
 
 	setFog(0,0,0)
 
-	setvar("MouseSenitivity")
+	setvar("MouseSenitivity", 2)
 
 	Console:Show(true)
+	--Console:PrintLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 end
 
 Test = {
@@ -106,4 +107,5 @@ end
 
 
 init()
+Console:PrintLine("TestChanges")
 

@@ -30,6 +30,8 @@ config = {
 	sh_use_cache = 0,
 }
 
-for k,v in pairs(config) do
-	Console:PrintLine(k .. "\t=\t" .. v)
+function print_config()
+	for k,v in pairs(config) do
+		Console:PrintLine(k .. "\t=\t" .. v)
+	end
 end
