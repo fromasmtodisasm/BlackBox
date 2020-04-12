@@ -56,36 +56,27 @@ int CFunctionHandler::GetParamCount()
 
 bool CFunctionHandler::GetParam(int nIdx, int& n)
 {
-  int nRealIdx = nIdx + m_paramIdOffset;
-  n = static_cast<int>(lua_tointeger(L, nRealIdx));
-  return true;
+  return GetParamAny(nIdx, n);
 }
 
 bool CFunctionHandler::GetParam(int nIdx, float& f)
 {
-  int nRealIdx = nIdx + m_paramIdOffset;
-  f = static_cast<float>(lua_tonumber(L, nRealIdx));
-  return true;
+  return GetParamAny(nIdx, f);
 }
 
 bool CFunctionHandler::GetParam(int nIdx, const char*& s)
 {
-  int nRealIdx = nIdx + m_paramIdOffset;
-  s = lua_tostring(L, nRealIdx);
-  return true;
+  return GetParamAny(nIdx, s);
 }
 
 bool CFunctionHandler::GetParam(int nIdx, bool& b)
 {
-  int nRealIdx = nIdx + m_paramIdOffset;
-  b = lua_toboolean(L, nRealIdx);
-  return true;
+  return GetParamAny(nIdx, b);
 }
 
 bool CFunctionHandler::GetParam(int nIdx, IScriptObject* pObj)
 {
-  int nRealIdx = nIdx + m_paramIdOffset;
-  return false;
+  return GetParamAny(nIdx, pObj);
 }
 
 bool CFunctionHandler::GetParam(int nIdx, HSCRIPTFUNCTION& hFunc, int nReference/* = 0*/)
@@ -93,7 +84,14 @@ bool CFunctionHandler::GetParam(int nIdx, HSCRIPTFUNCTION& hFunc, int nReference
   int nRealIdx = nIdx + m_paramIdOffset;
   //hFunc = lua_tocfunction(L, nIdx);
   return false;
+  //return GetParamAny(nIdx, pObj);
 }
+
+bool CFunctionHandler::GetParam(int nIdx, USER_DATA& ud)
+{
+  return GetParamAny(nIdx, ud);
+}
+
 
 ScriptVarType CFunctionHandler::GetParamType(int nIdx)
 {
@@ -191,17 +189,14 @@ void CFunctionHandler::Unref(HSCRIPTFUNCTION hFunc)
 {
 }
 
-bool CFunctionHandler::GetParam(int nIdx, USER_DATA& ud)
-{
-  return false;
-}
-
 bool CFunctionHandler::GetParamUDVal(int nIdx, USER_DATA& val, int& cookie)
 {
+	GetParamAny(nIdx, val);
   return false;
 }
 
 int CFunctionHandler::EndFunction(USER_DATA ud)
 {
-  return 0;
+  m_pSS->PushAny(ud);
+  return 1;
 }
