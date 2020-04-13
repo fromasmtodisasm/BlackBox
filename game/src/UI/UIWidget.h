@@ -120,7 +120,7 @@ typedef struct UIBorder
 typedef struct UIFont
 {
 	UIFont(): szFaceName("Default"), szEffectName("Default"), fSize(14.0f), cColor(color4f(1.0f, 1.0f, 1.0f, 1.0f)) {};
-	UIFont(const string &szNewName, const string &szNewEffect, float fNewSize, const color4f &cNewColor)
+	UIFont(const std::string &szNewName, const std::string &szNewEffect, float fNewSize, const color4f &cNewColor)
 	{
 		szFaceName = szNewName;
 		szEffectName = szNewEffect;
@@ -135,8 +135,8 @@ typedef struct UIFont
 		cColor = pFont.cColor;
 	};
 
-	string		szFaceName;
-	string		szEffectName;
+	std::string		szFaceName;
+	std::string		szEffectName;
 	float					fSize;
 	color4f	cColor;																																																								
 
@@ -209,19 +209,19 @@ public:
 	virtual ~CUIWidget() {}
 
 	//! Set the widget name
-	virtual int SetName(const string &szName);
+	virtual int SetName(const std::string &szName);
 	//! Get the widget name
-	virtual string &GetName();
+	virtual std::string &GetName();
 
 	//! Get the classname of the widget
-	virtual string GetClassName() = 0;
+	virtual std::string GetClassName() = 0;
 
 	//! Get the child list
 	virtual CUIWidgetList *GetChildList();
 	//! Get a child by index
 	virtual CUIWidget *GetChild(int iIndex);
 	//! Get a child by name
-	virtual CUIWidget *GetChild(const string &szName);
+	virtual CUIWidget *GetChild(const std::string &szName);
 	//! Get the number of children
 	virtual int	GetChildCount();
 
@@ -232,7 +232,7 @@ public:
 	//! Remove a widget from child
 	virtual int DelChild(int iIndex);
 	//! Remove a widget from child
-	virtual int DelChild(const string &szName);
+	virtual int DelChild(const std::string &szName);
 
 	//! Get the widget flags
 	virtual int GetFlags();
@@ -266,7 +266,7 @@ public:
 	virtual int SetTabStop(int iTabStop);
 
 	//! Get the tooltip of the window
-	virtual int GetToolTip(const float fX, const float fY, wstring &szwToolTip);
+	virtual int GetToolTip(const float fX, const float fY, std::wstring &szwToolTip);
     
 	//! Process messages
 	virtual LRESULT Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) = 0;	//AMD Port
@@ -361,7 +361,7 @@ protected:
 		return pOne->GetZ() < pTwo->GetZ();
 	}
 
-	string		m_szName;
+	std::string		m_szName;
 	CUIWidgetList	m_pChildList;
 
 	int					m_iFlags;
@@ -387,7 +387,7 @@ protected:
 	CUISystem		*m_pUISystem;
 	CUIScreen		*m_pScreen;
 
-	wstring			m_szwToolTip;
+	std::wstring			m_szwToolTip;
  
 	CUIWidgetList m_vVisibleWidgetList; 
 };

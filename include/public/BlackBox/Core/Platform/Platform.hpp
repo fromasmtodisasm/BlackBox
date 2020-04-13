@@ -174,3 +174,7 @@ void       bbSleep(unsigned int dwMilliseconds);
   typedef std::weak_ptr<name> name ##         WeakPtr;  \
   typedef std::weak_ptr<const name> name ##   ConstWeakPtr;
 
+#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+
+using color4f = Vec4;

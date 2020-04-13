@@ -13,7 +13,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+//#include "StdAfx.h"
+#include "BlackBox/Core/Platform/Platform.hpp"
 #include "UIWidget.h"
 #include "UISystem.h"
 #include "UIScreen.h"
@@ -37,7 +38,7 @@ CUIWidget::CUIWidget()
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetName(const string &szName)
+int CUIWidget::SetName(const std::string &szName)
 {
 	m_szName = szName;
 
@@ -45,7 +46,7 @@ int CUIWidget::SetName(const string &szName)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-string &CUIWidget::GetName()
+std::string &CUIWidget::GetName()
 {
 	return m_szName;
 }
@@ -63,7 +64,7 @@ CUIWidget *CUIWidget::GetChild(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUIWidget::GetChild(const string &szName)
+CUIWidget *CUIWidget::GetChild(const std::string &szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -121,7 +122,7 @@ int CUIWidget::DelChild(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUIWidget::DelChild(const string &szName)
+int CUIWidget::DelChild(const std::string &szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -252,7 +253,7 @@ int CUIWidget::SetTabStop(int iTabStop)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetToolTip(const float fX, const float fY, wstring &szwToolTip)
+int CUIWidget::GetToolTip(const float fX, const float fY, std::wstring &szwToolTip)
 {
 	szwToolTip = m_szwToolTip;
 
