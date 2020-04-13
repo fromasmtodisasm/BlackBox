@@ -358,6 +358,16 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				Clear();
 				return true;
 			}
+			case EScrolUp:
+			{
+				Clear();
+				return true;
+			}
+			case EScrolDown:
+			{
+				Clear();
+				return true;
+			}
       default:
         return false;
       }
@@ -915,6 +925,9 @@ void CConsole::InitInputBindings()
 	CreateBinding(CreateInputEvent(eKI_Delete, eMM_None, EInputState::eIS_Pressed), EDeleteRightChar);
 	CreateBinding(CreateInputEvent(eKI_Backspace, eMM_None, EInputState::eIS_Pressed), EDeleteLeftChar);
 	CreateBinding(CreateInputEvent(eKI_L, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
+
+	CreateBinding(CreateInputEvent(eKI_1, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
+	CreateBinding(CreateInputEvent(eKI_2, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
 }
 
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)

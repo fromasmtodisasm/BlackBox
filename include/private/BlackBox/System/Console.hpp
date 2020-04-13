@@ -224,6 +224,8 @@ class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSi
 		EDeleteRightChar,
 		EDeleteLeftChar,
 		EClear,
+		EScrolUp,
+		EScrolDown,
 	};
 
 	struct cmpInputEvents
