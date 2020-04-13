@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Core/Platform/Platform.h>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>

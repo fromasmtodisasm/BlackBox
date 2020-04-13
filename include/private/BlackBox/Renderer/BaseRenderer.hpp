@@ -98,6 +98,7 @@ class CRenderer :
   virtual void SetRenderTarget(int nHandle) = 0;
 
   virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;
+  virtual int GetFrameID(bool bIncludeRecursiveCalls=true) = 0;
 
 };
 

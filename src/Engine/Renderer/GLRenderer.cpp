@@ -471,6 +471,10 @@ int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls)
 	return 0;
 }
 
+void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
+{
+}
+
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
   return new GLRenderer(pSystem);

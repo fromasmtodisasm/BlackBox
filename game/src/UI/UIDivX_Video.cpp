@@ -14,8 +14,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #define STRICT
-//#include "StdAfx.h"
-#include "BlackBox/Core/Platform/Platform.hpp"
+#include "StdAfx.h"
 
 #if !defined(LINUX) &&  !defined(NOT_USE_DIVX_SDK)
 

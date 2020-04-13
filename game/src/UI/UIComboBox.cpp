@@ -13,8 +13,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#include "StdAfx.h"
-#include "BlackBox/Core/Platform/Platform.hpp"
+#include "StdAfx.h"
+//#include "BlackBox/Core/Platform/Platform.hpp"
 #include <vector>
 #include <algorithm>
 #include <iostream>

@@ -97,6 +97,12 @@ public:
   virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
   // Inherited via IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) override;
+  // Inherited via IRenderer
+  virtual void SetRenderTarget(int nHandle) override;
+
+  // Inherited via CRenderer
+  virtual IShader* Sh_Load(ShaderDesc const& desc) override;
+
 private:
   void glInit();
   void fillSates();
@@ -160,11 +166,4 @@ private:
 
   int m_CurrentTarget;
 
-  // Inherited via IRenderer
-  virtual void SetRenderTarget(int nHandle) override;
-
-  // Inherited via CRenderer
-  virtual IShader* Sh_Load(ShaderDesc const& desc) override;
-
-  virtual int GetFrameID(bool bIncludeRecursiveCalls=true) override;
 };

@@ -13,8 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#include "StdAfx.h"
-#include "BlackBox/Core/Platform/Platform.hpp"
+#include "StdAfx.h"
 #include "ScriptObjectUI.h"
 #include "UIStatic.h"
 #include "UIButton.h"

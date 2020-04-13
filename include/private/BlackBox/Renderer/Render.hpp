@@ -189,4 +189,8 @@ private:
 
   // Inherited via CRenderer
   virtual void DrawFullscreenQuad() override;
+  virtual int GetFrameID(bool bIncludeRecursiveCalls = true) override;
+
+	// Inherited via CRenderer
+	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
 };

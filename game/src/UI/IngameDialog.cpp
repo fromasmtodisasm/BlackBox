@@ -13,8 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#include "stdafx.h"
-#include "BlackBox/Core/Platform/Platform.hpp"
+#include "stdafx.h"
 #include "IngameDialog.h"
 
 #define EDGESIZE		8.0f
