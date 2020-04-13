@@ -543,7 +543,7 @@ void CGame::initCommands()
   //m_Console->AddCommand("shader", new ShaderCommand(this), "Set shader to object and reload shader");
   m_Console->AddCommand("camera", new CameraCommand(this));
   m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
-  m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment");
+  m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment, tagpoint create|goto \"name\"");
   m_Console->AddCommand("objdump", new ObjDumpCommand(this), "Dump model to disk in binary");
 }
 
