@@ -64,7 +64,7 @@ bool HdrTechnique::Init(IScene* pScene, FrameBufferObject* renderTarget)
 {
   if (inited)
     return true;
-  render = GetISystem()->GetIRender();
+  render = GetISystem()->GetIRenderer();
   log = GetISystem()->GetILog();
   m_Scene = pScene;
   InitConsoleVariables();
@@ -342,7 +342,7 @@ void HdrTechnique::InitConsoleVariables()
 
 void HdrTechnique::initTest()
 {
-  auto render = GetISystem()->GetIRender();
+  auto render = GetISystem()->GetIRenderer();
   auto numFormats = render->EnumDisplayFormats(nullptr);
   if (numFormats > 0)
   {
@@ -469,7 +469,7 @@ void HdrTechnique::downsamplingStandard()
   }
 #endif
 
-  GetISystem()->GetIRender()->SetState(IRenderer::State::DEPTH_TEST, true);
+  GetISystem()->GetIRenderer()->SetState(IRenderer::State::DEPTH_TEST, true);
 }
 
 void HdrTechnique::downsamplingCompute()
@@ -486,7 +486,7 @@ void HdrTechnique::downsamplingCompute()
     m_DownsampleComputeShader->Uniform(3, "inputImg2");
   }
 
-  auto render = GetISystem()->GetIRender();
+  auto render = GetISystem()->GetIRenderer();
   m_DownsampleComputeShader->Dispatch(render->GetWidth() / 6, render->GetHeight() / 6, 1, GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
   return;
 }

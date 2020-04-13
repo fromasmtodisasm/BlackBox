@@ -38,6 +38,39 @@ struct IFont;
 class CCamera;
 struct IShader;
 
+// Render State flags
+#define GS_BLSRC_MASK              0xf
+#define GS_BLSRC_ZERO              0x1
+#define GS_BLSRC_ONE               0x2
+#define GS_BLSRC_DSTCOL            0x3
+#define GS_BLSRC_ONEMINUSDSTCOL    0x4
+#define GS_BLSRC_SRCALPHA          0x5
+#define GS_BLSRC_ONEMINUSSRCALPHA  0x6
+#define GS_BLSRC_DSTALPHA          0x7
+#define GS_BLSRC_ONEMINUSDSTALPHA  0x8
+#define GS_BLSRC_ALPHASATURATE     0x9
+
+#define GS_BLDST_MASK              0xf0
+#define GS_BLDST_ZERO              0x10
+#define GS_BLDST_ONE               0x20
+#define GS_BLDST_SRCCOL            0x30
+#define GS_BLDST_ONEMINUSSRCCOL    0x40
+#define GS_BLDST_SRCALPHA          0x50
+#define GS_BLDST_ONEMINUSSRCALPHA  0x60
+#define GS_BLDST_DSTALPHA          0x70
+#define GS_BLDST_ONEMINUSDSTALPHA  0x80
+
+#define GS_POLYLINE                0x00001000
+#define GS_TEXPARAM_CLAMP          0x00002000
+#define GS_TEXPARAM_UCLAMP         0x00004000
+#define GS_TEXPARAM_VCLAMP         0x00008000
+#define GS_COLMASKONLYALPHA        0x00010000
+#define GS_NODEPTHTEST             0x00020000
+#define GS_COLMASKONLYRGB          0x00040000
+#define GS_DEPTHFUNC_EQUAL         0x00100000
+#define GS_DEPTHFUNC_GREAT         0x00200000
+#define GS_STENCIL                 0x00400000
+
 enum class RenderPrimitive
 {
 	LINES,
@@ -218,9 +251,12 @@ struct IRenderer
   virtual void ClearDepthBuffer() = 0;
   virtual void ClearColorBuffer(const Vec3 vColor) = 0;
 
+  virtual int GetFrameID(bool bIncludeRecursiveCalls=true)=0;
+
   virtual void SetRenderTarget(int nHandle) = 0;
 
   virtual void DrawFullscreenQuad() = 0;
+  virtual void Set2DMode(bool enable, int ortox, int ortoy)=0;
 
   ////////////////////////////////////////////////////////////////////////////////
   virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;

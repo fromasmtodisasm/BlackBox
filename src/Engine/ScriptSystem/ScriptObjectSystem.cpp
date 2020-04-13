@@ -18,7 +18,7 @@ CScriptObjectSystem::CScriptObjectSystem(ISystem* pSystem, IScriptSystem* pSS)
   m_pSystem(pSystem)
 {
   m_pLog = m_pSystem->GetILog();
-  m_pRenderer = m_pSystem->GetIRender();
+  m_pRenderer = m_pSystem->GetIRenderer();
   m_pConsole = m_pSystem->GetIConsole();
   InitializeTemplate(pSS);
   Init(pSS, pSystem);

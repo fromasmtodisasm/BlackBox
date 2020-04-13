@@ -13,7 +13,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+//#include "StdAfx.h"
+#include "BlackBox/Core/Platform/Platform.hpp"
 #include "UIWidget.h"
 #include "UISystem.h"
 #include "UIStatic.h"
@@ -223,7 +224,7 @@ int CUISystem::ReleaseTemplates()
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSystem, const string &szScriptFileName, bool bRunScriptFile)
+int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSystem, const std::string &szScriptFileName, bool bRunScriptFile)
 {
 	m_pGame = pGame;
 	m_pSystem = pSystem;
@@ -286,7 +287,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 int CUISystem::ResetKeyRepeat()
 {
 	m_fRepeatTimer = 0;
-	m_iLastKey = XKEY_NULL;
+	m_iLastKey = eKI_Unknown;
 	m_szLastKeyName = "";
 
 	return 1;
@@ -340,7 +341,7 @@ void CUISystem::Update()
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	if (m_iLastKey != XKEY_NULL)
+	if (m_iLastKey != eKI_Unknown)
 	{
 		float fTime = m_pSystem->GetITimer()->GetAsyncCurTime() * 1000.0f;
 		float fNextTimer = (1000.0f / (float)ui_RepeatSpeed->GetIVal()); // repeat speed
@@ -690,7 +691,7 @@ void CUISystem::Draw()
 //	m_pRenderer->ClearDepthBuffer();
 
 	m_pRenderer->Set2DMode(1, m_pRenderer->GetWidth(), m_pRenderer->GetHeight());
-  m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
+  m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST, true);
 
 	int iCurrentFlags = m_iFlags;
 
@@ -982,7 +983,7 @@ CUIWidget *CUISystem::GetWidget(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUISystem::GetWidget(const string &szName)
+CUIWidget *CUISystem::GetWidget(const std::string &szName)
 {
 	for (CUIWidgetItor pItor = m_pWidgetList.begin(); pItor != m_pWidgetList.end(); pItor++)
 	{
@@ -996,7 +997,7 @@ CUIWidget *CUISystem::GetWidget(const string &szName)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUISystem::GetWidget(const string &szName, const string &szScreenName)
+CUIWidget *CUISystem::GetWidget(const std::string &szName, const std::string &szScreenName)
 {
 	CUIScreen *pScreen = GetScreen(szScreenName);
 
@@ -1041,7 +1042,7 @@ CUIScreen *CUISystem::GetScreen(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIScreen *CUISystem::GetScreen(const string &szName)
+CUIScreen *CUISystem::GetScreen(const std::string &szName)
 {
 	for (CUIScreenItor pItor = m_vScreenList.begin(); pItor != m_vScreenList.end(); pItor++)
 	{
@@ -1194,7 +1195,7 @@ CUIWidget *CUISystem::GetChild(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUISystem::GetChild(const string &szName)
+CUIWidget *CUISystem::GetChild(const std::string &szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -1252,7 +1253,7 @@ int CUISystem::DelChild(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::DelChild(const string &szName)
+int CUISystem::DelChild(const std::string &szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -1422,8 +1423,11 @@ bool CUISystem::IsMouseCursorVisible()
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::SetMouseXY(float fX, float fY)
 {
+	m_pHardwareMouse->SetHardwareMousePosition(fX, fY);
+#if 0
 	m_pInput->GetIMouse()->SetVScreenX(fX);
 	m_pInput->GetIMouse()->SetVScreenY(fY);
+#endif
 
 	return 1;
 }
@@ -1431,7 +1435,9 @@ int CUISystem::SetMouseXY(float fX, float fY)
 ////////////////////////////////////////////////////////////////////// 
 vector2f CUISystem::GetMouseXY()
 {
-	return vector2f(m_pInput->MouseGetVScreenX(), m_pInput->MouseGetVScreenY());
+	vector2f pos;
+	m_pHardwareMouse->GetHardwareMousePosition(pos.x, pos.y);
+	return pos;
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -1458,11 +1464,11 @@ int CUISystem::ReleaseMouse()
 ////////////////////////////////////////////////////////////////////// 
 float CUISystem::GetIdleTime()
 {
-	return max((m_pSystem->GetITimer()->GetCurrTime() - m_fLastInput) - UI_DEFAULT_IDLETIME_START, 0.0f);
+	return std::max((m_pSystem->GetITimer()->GetCurrTime() - m_fLastInput) - UI_DEFAULT_IDLETIME_START, 0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////// 
-LRESULT CUISystem::SendMessage(string &szName, const string &szScreenName, int iMessage, WPARAM wParam, LPARAM lParam)
+LRESULT CUISystem::SendMessage(std::string &szName, const std::string &szScreenName, int iMessage, WPARAM wParam, LPARAM lParam)
 {
 	CUIWidget *pWidget = GetWidget(szName, szScreenName);
 
@@ -1621,7 +1627,7 @@ CUIWidget *CUISystem::GetWidgetParent(CUIWidget *pWidget)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-wstring CUISystem::GetWidgetText(CUIWidget *pWidget)
+std::wstring CUISystem::GetWidgetText(CUIWidget *pWidget)
 {
 	if (pWidget->GetClassName() == UICLASSNAME_STATIC)
 	{
@@ -1784,7 +1790,7 @@ int CUISystem::LastTabStop()
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetTopMostWidget(const string &szName)
+int CUISystem::SetTopMostWidget(const std::string &szName)
 {
 	CUIWidget *pWidget = GetChild(szName);
 
@@ -1864,7 +1870,7 @@ int CUISystem::SetFocus(CUIWidget *pWidget)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetFocus(string &szName)
+int CUISystem::SetFocus(std::string &szName)
 {
 	CUIWidget *pWidget = GetWidget(szName);
 
@@ -1874,7 +1880,7 @@ int CUISystem::SetFocus(string &szName)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetFocus(string &szName, string &szScreenName)
+int CUISystem::SetFocus(std::string &szName, std::string &szScreenName)
 {
 	CUIWidget *pWidget = GetWidget(szName, szScreenName);
 
@@ -1898,7 +1904,7 @@ int CUISystem::SetFocusScreen(CUIScreen *pScreen)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetFocusScreen(string &szScreenName)
+int CUISystem::SetFocusScreen(std::string &szScreenName)
 {
 	m_pFocusScreen = GetScreen(szScreenName);
 
@@ -1916,7 +1922,7 @@ color4f CUISystem::GetSelectionColor(const color4f &cBackground, const color4f &
 {
 	color4f cColor = (color4f(1.0f, 1.0f, 1.0f, 1.0f) - 0.5f * cBackground + 0.5f * cTextcolor);
 
-	cColor.v[3] = 0.8f;
+	cColor[3] = 0.8f;
 
 	return cColor;
 }
@@ -2809,7 +2815,7 @@ int CUISystem::DrawToolTip()
 }
 
 //////////////////////////////////////////////////////////////////////  
-int CUISystem::CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText)
+int CUISystem::CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::string &szText)
 {
 	*pStatic = new CUIStatic;
 
@@ -2831,7 +2837,7 @@ int CUISystem::CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const strin
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateButton(CUIButton **pButton, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText)
+int CUISystem::CreateButton(CUIButton **pButton, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::string &szText)
 {
 	*pButton = new CUIButton;
 
@@ -2849,7 +2855,7 @@ int CUISystem::CreateButton(CUIButton **pButton, CUIWidget *pParent, const strin
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText)
+int CUISystem::CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::string &szText)
 {
 	*pEditBox = new CUIEditBox;
 
@@ -2868,7 +2874,7 @@ int CUISystem::CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const st
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, int iType)
+int CUISystem::CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, int iType)
 {
 	*pScrollBar = new CUIScrollBar;
 
@@ -2897,7 +2903,7 @@ int CUISystem::CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, co
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateListView(CUIListView **pListView, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateListView(CUIListView **pListView, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pListView = new CUIListView;
 
@@ -2914,7 +2920,7 @@ int CUISystem::CreateListView(CUIListView **pListView, CUIWidget *pParent, const
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pCheckBox = new CUICheckBox;
 
@@ -2931,7 +2937,7 @@ int CUISystem::CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pComboBox = new CUIComboBox;
 
@@ -2952,7 +2958,7 @@ int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pVideoPanel = new CUIVideoPanel;
 
@@ -2969,7 +2975,7 @@ int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent,
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
+int CUISystem::CreateScreen(CUIScreen **pScreen, const std::string &szName)
 {
 	*pScreen = new CUIScreen;
 
@@ -3109,7 +3115,7 @@ bool CUISystem::OnInputEvent(const SInputEvent &event)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	pWidget->m_pRect.fLeft = pRect.fLeft;
 	pWidget->m_pRect.fTop = pRect.fTop;
@@ -3608,7 +3614,7 @@ int CUISystem::RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, char *szTe
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const string &szTextField)
+int CUISystem::RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const std::string &szTextField)
 {
 	char	*szKeyName;
 	char	szAttributeName[256];
@@ -3715,7 +3721,7 @@ int CUISystem::RetrieveTextureAttribute(UISkinTexture *pSkinTexture, IScriptObje
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CUIScreen *pScreen, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CUIScreen *pScreen, IScriptObject *pObject, const std::string &szName)
 {
 	char				*szKeyName;
 	char				*szAttributeValue;
@@ -3901,7 +3907,7 @@ int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CU
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateStaticFromTable(CUIStatic **pStatic, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateStaticFromTable(CUIStatic **pStatic, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateStatic(pStatic, pParent, szName, pRect, UIFLAG_DEFAULT, 0, L""))
 	{
@@ -4032,7 +4038,7 @@ int CUISystem::SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateButtonFromTable(CUIButton **pButton, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateButtonFromTable(CUIButton **pButton, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateButton(pButton, pParent, szName, pRect, UIFLAG_DEFAULT, 0, L""))
 	{
@@ -4112,7 +4118,7 @@ int CUISystem::SetupButtonFromTable(CUIButton *pButton, IScriptObject *pObject)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateEditBoxFromTable(CUIEditBox **pEditBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateEditBoxFromTable(CUIEditBox **pEditBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateEditBox(pEditBox, pParent, szName, pRect, UIFLAG_DEFAULT, 0, L""))
 	{
@@ -4240,7 +4246,7 @@ int CUISystem::SetupEditBoxFromTable(CUIEditBox *pEditBox, IScriptObject *pObjec
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScrollBarFromTable(CUIScrollBar **pScrollBar, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateScrollBarFromTable(CUIScrollBar **pScrollBar, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateScrollBar(pScrollBar, pParent, szName,pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4330,7 +4336,7 @@ int CUISystem::SetupScrollBarFromTable(CUIScrollBar *pScrollBar, IScriptObject *
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateListView(pListView, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4436,7 +4442,7 @@ int CUISystem::SetupListViewFromTable(CUIListView *pListView, IScriptObject *pOb
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateCheckBox(pCheckBox, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4523,7 +4529,7 @@ int CUISystem::SetupCheckBoxFromTable(CUICheckBox *pCheckBox, IScriptObject *pOb
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateComboBox(pComboBox, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4629,7 +4635,7 @@ int CUISystem::SetupComboBoxFromTable(CUIComboBox *pComboBox, IScriptObject *pOb
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
+int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
 {
 	if (!CreateVideoPanel(pVideoPanel, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4746,7 +4752,7 @@ int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObjec
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, IScriptObject *pObject)
+int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const std::string &szName, IScriptObject *pObject)
 {
 	if (!CreateScreen(pScreen, szName))
 	{
@@ -4829,7 +4835,7 @@ int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, 
 #undef CHECKATTRIBUTE
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToWString(wstring &szWString, const char *szString)
+int CUISystem::ConvertToWString(std::string &szWString, const char *szString)
 {
 	szWString.clear();
 
@@ -4839,7 +4845,7 @@ int CUISystem::ConvertToWString(wstring &szWString, const char *szString)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToWString(wstring &szWString, IFunctionHandler *pH, int iParam)
+int CUISystem::ConvertToWString(std::string &szWString, IFunctionHandler *pH, int iParam)
 {
 	char *szString;
 	char szValue[32];
@@ -4860,7 +4866,7 @@ int CUISystem::ConvertToWString(wstring &szWString, IFunctionHandler *pH, int iP
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToWString(wstring &szWString, int iStrID)
+int CUISystem::ConvertToWString(std::string &szWString, int iStrID)
 {
 	szWString = ((CXGame *)m_pSystem->GetIGame())->m_StringTableMgr.EnumString(iStrID);
 
@@ -4884,7 +4890,7 @@ int CUISystem::ConvertToString(char *szString, const UIRect &pRect)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CUISystem::ConvertToString(char *szString, const wstring &szWString, int iMaxSize)
+int CUISystem::ConvertToString(char *szString, const std::string &szWString, int iMaxSize)
 {
 	int iSize = szWString.size();
 
@@ -4932,7 +4938,7 @@ int CUISystem::ConvertToString(char *szString, const wstring &szWString, int iMa
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToString(string &szString, const wstring &szWString)
+int CUISystem::ConvertToString(std::string &szString, const std::string &szWString)
 {
 	szString.clear();
 
@@ -4947,7 +4953,7 @@ int CUISystem::ConvertToString(string &szString, const wstring &szWString)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::StripControlCodes(wstring &szOutString, const wstring &szWString)
+int CUISystem::StripControlCodes(std::string &szOutString, const std::string &szWString)
 {
 	szOutString.clear();
 
@@ -4979,7 +4985,7 @@ int CUISystem::StripControlCodes(wstring &szOutString, const wstring &szWString)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CUISystem::StripControlCodes(string &szOutString, const wstring &szWString)
+int CUISystem::StripControlCodes(std::string &szOutString, const std::string &szWString)
 {
 	szOutString.clear();
 
@@ -5011,7 +5017,7 @@ int CUISystem::StripControlCodes(string &szOutString, const wstring &szWString)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::StripControlCodes(string &szOutString, const string &szString)
+int CUISystem::StripControlCodes(std::string &szOutString, const std::string &szString)
 {
 	szOutString.clear();
 

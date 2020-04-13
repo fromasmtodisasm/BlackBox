@@ -24,7 +24,7 @@
 // Warning very compressed code block ahead :D
 #define REGISTER_SCRIPTOBJECT_MEMBER(scriptsystem,classname,functionname){classname::RegisterFunction(scriptsystem,#functionname,&classname::functionname);}
 #define REGISTER_SCRIPT_CONSTANT(scriptsystem,constant)(scriptsystem)->SetGlobalValue(#constant,constant)
-#define GET_SCRIPT_TYPE_STRING(itype)(itype==svtObject?"Object":(itype==svtString?"String":(itype==svtNumber?"Number":(itype==svtFunction?"Function":(itype==svtUserData?"UserData":(itype==svtNull?"Null":"Unknown"))))))
+#define GET_SCRIPT_TYPE_STRING(itype)(itype==ScriptVarType::Object?"Object":(itype==ScriptVarType::String?"String":(itype==ScriptVarType::Number?"Number":(itype==ScriptVarType::Function?"Function":(itype==ScriptVarType::UserData?"UserData":(itype==ScriptVarType::Null?"Null":"Unknown"))))))
 #define CHECK_SCRIPT_FUNCTION_PARAMCOUNT(scriptsystem,objectname,funcname,nparameters){if(pH->GetParamCount()!=nparameters){scriptsystem->RaiseError("%s:%s() Wrong number of parameters! Expected %d, but found %d!",objectname,#funcname,nparameters, pH->GetParamCount());return pH->EndFunctionNull();}}
 #define CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(scriptsystem,objectname,funcname,nparameters,nparameters2){if((pH->GetParamCount()!=nparameters)&&(pH->GetParamCount()!=nparameters2)){scriptsystem->RaiseError("%s:%s() Wrong number of parameters! Expected %d or %d, but found %d!",objectname,#funcname,nparameters, nparameters2, pH->GetParamCount());return pH->EndFunctionNull();}}
 #define CHECK_SCRIPT_FUNCTION_PARAMTYPE(scriptsystem,objectname,funcname,idparam,type){if(pH->GetParamType(idparam)!=type){scriptsystem->RaiseError("%s:%s() Wrong type in parameter %d! Expected '%s', but found '%s'!",objectname,#funcname,idparam,GET_SCRIPT_TYPE_STRING(type),GET_SCRIPT_TYPE_STRING(pH->GetParamType(idparam)));return pH->EndFunctionNull();}}
@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////////////////// 
 #define RETURN_TEXTURE_FROM_SCRIPT(scriptsystem, objectname, functionname, varname)	\
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(scriptsystem, objectname, functionname, 1); \
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(scriptsystem, objectname, functionname, 1, svtUserData, svtNull); \
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(scriptsystem, objectname, functionname, 1, ScriptVarType::UserData, ScriptVarType::Null); \
 	int iCookie = 0; \
 	USER_DATA iTextureID = -1; \
 	if(pH->GetParamUDVal(1, iTextureID, iCookie)) \
@@ -57,13 +57,13 @@
 ////////////////////////////////////////////////////////////////////////// 
 #define RETURN_INT_FROM_SCRIPT(scriptsystem, objectname, functionname, varname) \
     CHECK_SCRIPT_FUNCTION_PARAMCOUNT(scriptsystem, objectname, functionname, 1); \
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(scriptsystem, objectname, functionname, 1, svtNumber); \
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(scriptsystem, objectname, functionname, 1, ScriptVarType::Number); \
     pH->GetParam(1, varname); \
 	return pH->EndFunction() \
 
 #define RETURN_COLOR_FROM_SCRIPT(scriptsystem, objectname, functionname, varname) \
     CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(scriptsystem, objectname, functionname, 1, 4); \
-    if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == svtString)) \
+    if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String)) \
     { \
 		color4f cColor; \
 		char *szColor; \
@@ -71,7 +71,7 @@
 		m_pUISystem->RetrieveColor(&cColor, szColor); \
 		varname = cColor; \
 	} \
-	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == svtNumber) && (pH->GetParamType(4) == svtNumber)) \
+	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == ScriptVarType::Number) && (pH->GetParamType(4) == ScriptVarType::Number)) \
 	{ \
 		color4f cColor; \
 		int iColor; \
@@ -224,6 +224,7 @@ class CUIScreen;
 typedef std::vector<CUIScreen *>						CUIScreenList;
 typedef std::vector<CUIScreen *>::iterator	CUIScreenItor;
 
+struct IProcess {};
 //////////////////////////////////////////////////////////////////////////
 class CUISystem : public IProcess, public IInputEventListener
 {
@@ -236,7 +237,7 @@ public:
 	static LRESULT DefaultUpdate(CUIWidget *pWidget, unsigned int iMessage, WPARAM wParam, LPARAM lParam);
 
 	//////////////////////////////////////////////////////////////////////
-	int	Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSystem, const string &szScriptFileName, bool bRunScriptFile = true);
+	int	Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSystem, const std::string &szScriptFileName, bool bRunScriptFile = true);
 	bool Init() { return 1; };	
 	void Update();
 	void Draw();
@@ -278,15 +279,15 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	CUIWidgetList *GetWidgetList();
 	CUIWidget *GetWidget(int iIndex);
-	CUIWidget *GetWidget(const string &szName);
-	CUIWidget *GetWidget(const string &szName, const string &szScreenName);
+	CUIWidget *GetWidget(const std::string &szName);
+	CUIWidget *GetWidget(const std::string &szName, const std::string &szScreenName);
 	int	GetWidgetCount();
 	int WidgetExist(CUIWidget *pWidget);
 
 	//////////////////////////////////////////////////////////////////////
 	CUIScreenList *GetScreenList();
 	CUIScreen *GetScreen(int iIndex);
-	CUIScreen *GetScreen(const string &szName);
+	CUIScreen *GetScreen(const std::string &szName);
 	int	GetScreenCount();
 	int ActivateScreen(CUIScreen *pScreen);
 	int DeactivateScreen(CUIScreen *pScreen);
@@ -298,13 +299,13 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	CUIWidgetList *GetChildList();
 	CUIWidget *GetChild(int iIndex);
-	CUIWidget *GetChild(const string &szName);
+	CUIWidget *GetChild(const std::string &szName);
 	int	GetChildCount();
 	
 	int AddChild(CUIWidget *pWidget);
 	int DelChild(CUIWidget *pWidget);
 	int DelChild(int iIndex);
-	int DelChild(const string &szName);
+	int DelChild(const std::string &szName);
 
 	//////////////////////////////////////////////////////////////////////
 	int SetBackground(int iBackgroundTexture);
@@ -336,14 +337,14 @@ public:
 
 	float GetIdleTime();
 	//////////////////////////////////////////////////////////////////////
-	LRESULT SendMessage(string &szName, const string &szScreenName, int iMessage, WPARAM wParam, LPARAM lParam);
-	LRESULT SendMessage(string &szName, int iMessage, WPARAM wParam, LPARAM lParam);
+	LRESULT SendMessage(std::string &szName, const std::string &szScreenName, int iMessage, WPARAM wParam, LPARAM lParam);
+	LRESULT SendMessage(std::string &szName, int iMessage, WPARAM wParam, LPARAM lParam);
 	LRESULT SendMessage(CUIWidget *pWidget, int iMessage, WPARAM wParam, LPARAM lParam);
 	LRESULT BroadcastMessage(int iMessage, WPARAM wParam, LPARAM lParam);
 
 	////////////////////////////////////////////////////////////////////// 
 	CUIWidget *GetWidgetParent(CUIWidget *pWidget);
-	wstring GetWidgetText(CUIWidget *pWidget);
+	std::wstring GetWidgetText(CUIWidget *pWidget);
 	UIRect &GetWidgetRect(CUIWidget *pWidget);
 
 	////////////////////////////////////////////////////////////////////// 
@@ -354,17 +355,17 @@ public:
 	int LastTabStop();
 
 	////////////////////////////////////////////////////////////////////// 
-	int SetTopMostWidget(const string &szName);
+	int SetTopMostWidget(const std::string &szName);
 	int SetTopMostWidget(CUIWidget *pWidget);
 	CUIWidget *GetTopMostWidget();
 
 	////////////////////////////////////////////////////////////////////// 
 	int SetFocus(CUIWidget *pWidget);
-	int SetFocus(string &szName);
-	int SetFocus(string &szName, string &szScreenName);
+	int SetFocus(std::string &szName);
+	int SetFocus(std::string &szName, std::string &szScreenName);
 	CUIWidget *GetFocus();
 	int SetFocusScreen(CUIScreen *pScreen);
-	int SetFocusScreen(string &szScreenName);
+	int SetFocusScreen(std::string &szScreenName);
 	CUIScreen *GetFocusScreen();
 
 
@@ -408,7 +409,7 @@ public:
 	int DrawQuad(const UIRect &pRect, const color4f &cColor);
 	int DrawGreyedQuad(const UIRect &pRect, const color4f &cColor, int iMode);
 	int DrawText(const UIRect &pRect, int iHAlignment, int iVAlignment, IFFont *pFont, const wchar_t *szText, bool bTranslateEscapes = 1);
-	int DrawMultiLineText(const UIRect &pRect, int iHAlignment, int iVAlignment, IFFont *pFont, const std::vector<wstring> &vLines, float fHorizontalOffset = 0.0f, float fVerticalOffset = 0.0f);
+	int DrawMultiLineText(const UIRect &pRect, int iHAlignment, int iVAlignment, IFFont *pFont, const std::vector<std::wstring> &vLines, float fHorizontalOffset = 0.0f, float fVerticalOffset = 0.0f);
 	int DrawImage(const UIRect &pRect, const UISkinTexture &pTexture, const color4f &cColor);
 	int DrawImage(const UIRect &pRect, int iTextureID, const float *vTexCoord, const color4f &cColor);
 	int DrawSkin(const UIRect &pRect, const UISkinTexture &pTexture, const color4f &cColor, int iState);
@@ -419,15 +420,15 @@ public:
 	int DrawToolTip();
 
 	////////////////////////////////////////////////////////////////////// 
-	int CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText);
-	int CreateButton(CUIButton **pButton, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText);
-	int CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText);
-	int CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, int iType = 0);
-	int CreateListView(CUIListView **pListView, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
-	int CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
-	int CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
-	int CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
-	int CreateScreen(CUIScreen **pScreen, const string &szName);
+	int CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::wstring &szText);
+	int CreateButton(CUIButton **pButton, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::wstring &szText);
+	int CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::wstring &szText);
+	int CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, int iType = 0);
+	int CreateListView(CUIListView **pListView, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle);
+	int CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle);
+	int CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle);
+	int CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle);
+	int CreateScreen(CUIScreen **pScreen, const std::string &szName);
 
 	////////////////////////////////////////////////////////////////////// 
 	int InheritParentAttributes(CUIWidget *pWidget, CUIWidget *pParent);
@@ -435,20 +436,20 @@ public:
 	int RetrieveColor(color4f *pColor, char *szString);
 	int RetrieveRect(UIRect *pRect, char *szString);
 	int RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, char *szTexRect);
-	int RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const string &szTextField);
+	int RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const std::string &szTextField);
 	int RetrieveTextureAttribute(UISkinTexture *pSkinTexture, IScriptObject *pObject, const char *szTextureField, const char *szTexRectField);
 
 	////////////////////////////////////////////////////////////////////// 
-	int CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CUIScreen *pScreen, IScriptObject *pObject, const string &szName);
-	int CreateStaticFromTable(CUIStatic **pStatic,CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateButtonFromTable(CUIButton **pButton, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateEditBoxFromTable(CUIEditBox **pEditBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateScrollBarFromTable(CUIScrollBar **pScrollBar, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	int CreateScreenFromTable(CUIScreen **pScreen, const string &szName, IScriptObject *pObject);
+	int CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CUIScreen *pScreen, IScriptObject *pObject, const std::string &szName);
+	int CreateStaticFromTable(CUIStatic **pStatic,CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateButtonFromTable(CUIButton **pButton, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateEditBoxFromTable(CUIEditBox **pEditBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateScrollBarFromTable(CUIScrollBar **pScrollBar, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName);
+	int CreateScreenFromTable(CUIScreen **pScreen, const std::string &szName, IScriptObject *pObject);
 
 	////////////////////////////////////////////////////////////////////// 
 	int SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject);
@@ -462,16 +463,16 @@ public:
 
 	////////////////////////////////////////////////////////////////////// 
 	//_int LogToConsole(char *szFormat, ...);
-	int ConvertToWString(wstring &szWString, IFunctionHandler *pH, int iParam);
-	int ConvertToWString(wstring &szWString, const char *szString);
-	int ConvertToWString(wstring &szWString, int iStrID);
+	int ConvertToWString(std::string &szWString, IFunctionHandler *pH, int iParam);
+	int ConvertToWString(std::string &szWString, const char *szString);
+	int ConvertToWString(std::string &szWString, int iStrID);
 	int ConvertToString(char *szString, const color4f &pColor);
 	int ConvertToString(char *szString, const UIRect &pRect);
-	int ConvertToString(char *szString, const wstring &szWString, int iMaxSize = 0);
-	int ConvertToString(string &szString, const wstring &szWString);
-	int StripControlCodes(wstring &szOutString, const wstring &szWString);
-	int StripControlCodes(string &szOutString, const wstring &szWString);
-	int StripControlCodes(string &szOutString, const string &szString);
+	int ConvertToString(char *szString, const std::string &szWString, int iMaxSize = 0);
+	int ConvertToString(std::string &szString, const std::string &szWString);
+	int StripControlCodes(std::string &szOutString, const std::string &szWString);
+	int StripControlCodes(std::string &szOutString, const std::string &szWString);
+	int StripControlCodes(std::string &szOutString, const std::string &szString);
 
 	////////////////////////////////////////////////////////////////////// 
 	int DestroyWidget(CUIWidget *pWidget);
@@ -498,7 +499,7 @@ private:
 
 	bool OnInputEvent(const SInputEvent &event);
 
-	int InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
+	int InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle);
 	int InitializeTemplates();
 	int ReleaseTemplates();
 	void DeleteWidget(CUIWidget *pWidget);
@@ -566,9 +567,10 @@ private:
 	IScriptSystem	*m_pScriptSystem;
 	IRenderer			*m_pRenderer;
 	IInput				*m_pInput;
+	IHardwareMouse				*m_pHardwareMouse;
 	ILog					*m_pLog;
 
-	string		m_szScriptFileName;
+	std::string		m_szScriptFileName;
 
 	////////////////////////////////////////////////////////////////////// 
 	CScriptObjectUI	*m_pScriptObjectUI;
@@ -616,7 +618,7 @@ private:
 	UIBorder			m_pToolTipBorder;
 	float					m_fToolTipX;
 	float					m_fToolTipY;
-	wstring				m_szwToolTipText;
+	std::wstring				m_szwToolTipText;
 	float					m_fToolTipOverStart;
 	float					m_fToolTipAlpha;
 

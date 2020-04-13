@@ -165,4 +165,6 @@ private:
 
   // Inherited via CRenderer
   virtual IShader* Sh_Load(ShaderDesc const& desc) override;
+
+  virtual int GetFrameID(bool bIncludeRecursiveCalls=true) override;
 };

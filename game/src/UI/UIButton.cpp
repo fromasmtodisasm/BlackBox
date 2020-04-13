@@ -13,7 +13,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+//#include "StdAfx.h"
+#include "BlackBox/Core/Platform/Platform.hpp"
 #include "UIButton.h"
 #include "UISystem.h"
 
@@ -35,7 +36,7 @@ CUIButton::~CUIButton()
 }
 
 ////////////////////////////////////////////////////////////////////////// 
-string CUIButton::GetClassName()
+std::string CUIButton::GetClassName()
 {
 	return UICLASSNAME_BUTTON;
 }
@@ -199,7 +200,7 @@ int CUIButton::Draw(int iPass)
 }
 
 ////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetText(const wstring &szText)
+int CUIButton::SetText(const std::wstring &szText)
 {
 	m_szText = szText;
 

@@ -120,7 +120,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 {
   m_pSystem /*= gISystem */ = pSystem;
   m_bDedicatedServer  = bDedicatedSrv;
-  m_pRender = m_pSystem->GetIRender();
+  m_pRender = m_pSystem->GetIRenderer();
   m_pInput = m_pSystem->GetIInput();
   m_pScriptSystem = m_pSystem->GetIScriptSystem();
   m_pLog = m_pSystem->GetILog();
@@ -366,7 +366,7 @@ void CGame::DisplayInfo(float fps)
   
 
   //
-  auto render = m_pSystem->GetIRender();
+  auto render = m_pSystem->GetIRenderer();
 
   //===========
 

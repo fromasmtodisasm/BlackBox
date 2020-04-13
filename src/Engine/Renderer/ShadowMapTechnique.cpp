@@ -20,7 +20,7 @@ ShadowMapping::~ShadowMapping()
 
 bool ShadowMapping::Init(IScene* scene, FrameBufferObject* renderTarget)
 {
-	m_pRender = GetISystem()->GetIRender();
+	m_pRender = GetISystem()->GetIRenderer();
 	m_Scene	  = dynamic_cast<Scene*>(scene);
 	//
 	m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 1, false);
@@ -234,12 +234,12 @@ void ShadowMapping::OnRenderPass()
 	auto pSystem = GetISystem();
 	auto w		 = cam_width->GetIVal();
 	auto h		 = cam_height->GetIVal();
-	//pSystem->GetIRender()->SetState(IRenderer::State::SCISSOR_TEST, true);
-	//pSystem->GetIRender()->SetScissor(0, 0, w, h);
-	auto render = GetISystem()->GetIRender();
+	//pSystem->GetIRenderer()->SetState(IRenderer::State::SCISSOR_TEST, true);
+	//pSystem->GetIRenderer()->SetScissor(0, 0, w, h);
+	auto render = GetISystem()->GetIRenderer();
 	//render->ClearDepthBuffer();
 	m_RenderedScene->clear(gl::Color(fog));
-	//pSystem->GetIRender()->SetState(IRenderer::State::SCISSOR_TEST, false);
+	//pSystem->GetIRenderer()->SetState(IRenderer::State::SCISSOR_TEST, false);
 	RenderPass();
 }
 

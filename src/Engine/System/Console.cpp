@@ -1101,7 +1101,7 @@ ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 bool CConsole::Init(ISystem* pSystem)
 {
   m_pSystem = pSystem;
-  m_pRenderer = pSystem->GetIRender();
+  m_pRenderer = pSystem->GetIRenderer();
   m_pScriptSystem = pSystem->GetIScriptSystem();
   m_pInput = pSystem->GetIInput();
   m_Font = getFont("arial.ttf", 16, static_cast<unsigned int>(line_height));

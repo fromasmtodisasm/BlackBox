@@ -322,7 +322,7 @@ void CSystem::Release()
 	delete this;
 }
 
-IRenderer* CSystem::GetIRender()
+IRenderer* CSystem::GetIRenderer()
 {
 	return m_Render;
 }

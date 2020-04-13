@@ -466,6 +466,11 @@ bool GLRenderer::OnInputEvent(const SInputEvent& event)
   return false;
 }
 
+int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls)
+{
+	return 0;
+}
+
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
   return new GLRenderer(pSystem);

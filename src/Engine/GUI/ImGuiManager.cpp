@@ -23,7 +23,7 @@ namespace
       // Setup display size (every frame to accommodate for window resizing)
       int w, h;
       int display_w, display_h;
-      auto r = GetISystem()->GetIRender();
+      auto r = GetISystem()->GetIRenderer();
       // TODO: rewrite it
       //SDL_GetWindowSize(window, &w, &h);
       w = display_w = r->GetWidth();
@@ -293,7 +293,7 @@ bool ImGuiManager::Init()
   bool result = true;
   ImGui::StyleColorsLight();
   result &= input.Init();
-  result &= render.Init(GetISystem()->GetIRender());
+  result &= render.Init(GetISystem()->GetIRenderer());
   return result;
 }
 

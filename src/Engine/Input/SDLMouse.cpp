@@ -38,7 +38,7 @@ CSDLMouse::CSDLMouse(CLinuxInput& input) :
   m_bGrabInput(false)
 {
   m_deviceType = eIDT_Mouse;
-  m_pRenderer = GetISystem()->GetIRender();
+  m_pRenderer = GetISystem()->GetIRenderer();
 }
 
 CSDLMouse::~CSDLMouse()

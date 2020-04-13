@@ -13,7 +13,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+//#include "stdafx.h"
+#include "BlackBox/Core/Platform/Platform.hpp"
 #include "IngameDialog.h"
 
 #define EDGESIZE		8.0f
@@ -43,7 +44,7 @@ CIngameDialog::~CIngameDialog()
 
 //////////////////////////////////////////////////////////////////////////
 // INit the dialog; must be called before all other function of this class.
-bool CIngameDialog::Init(CIngameDialogMgr *pMgr, int nId, ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, string sText,wstring swText, float fTimeout)
+bool CIngameDialog::Init(CIngameDialogMgr *pMgr, int nId, ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, std::string sText,std::wstring swText, float fTimeout)
 {
 	if (m_bInited || (!pSystem) || (sText.empty() && swText.empty()))
 		return (false);
@@ -150,7 +151,7 @@ CIngameDialogMgr::~CIngameDialogMgr()
 
 //////////////////////////////////////////////////////////////////////////
 // Adds a new dialog on the screen.
-int CIngameDialogMgr::AddDialog(ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, string sText,wstring swText, float fTimeout)
+int CIngameDialogMgr::AddDialog(ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, std::string sText,std::wstring swText, float fTimeout)
 {
 	if (!m_pRenderer)
 		m_pRenderer=pSystem->GetIRenderer();

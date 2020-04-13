@@ -30,6 +30,9 @@ private:
 
   // Inherited via ILog
   virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override;
+
+	// Inherited via ILog
+	virtual void LogToConsole(const char* command, ...) override;
 };
 
 NullLog::NullLog(const char* filename) : filename(filename)
@@ -90,4 +93,8 @@ void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
   buf[len + 1] = '\0';
   std::cout << buf;
   log.push_back(strdup(buf));
+}
+
+void NullLog::LogToConsole(const char* command, ...)
+{
 }

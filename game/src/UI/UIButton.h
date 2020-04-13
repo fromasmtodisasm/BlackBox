@@ -30,12 +30,12 @@ public:
 	CUIButton();
 	~CUIButton();
 
-	string GetClassName();
+	std::string GetClassName();
 
 	LRESULT Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam);	//AMD Port
 	int Draw(int iPass);
 
-	int SetText(const wstring &szText);
+	int SetText(const std::wstring &szText);
 
 	static void InitializeTemplate(IScriptSystem *pScriptSystem);
 
@@ -67,7 +67,7 @@ public:
 
 private:
 
-	wstring					m_szText;
+	std::wstring					m_szText;
 	int							m_iHAlignment;
 	int							m_iVAlignment;
 

@@ -32,7 +32,7 @@ class CIngameDialog
 private:
 	CIngameDialog();
 	virtual ~CIngameDialog();
-	bool Init(CIngameDialogMgr *pMgr, int nId, ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, string sText,wstring swText, float fTimeout);
+	bool Init(CIngameDialogMgr *pMgr, int nId, ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, std::string sText,std::wstring swText, float fTimeout);
 	void SetPos(float x, float y);
 	float GetHeight() { return m_fH; }
 	bool Update();
@@ -46,11 +46,11 @@ private:
 	float m_fW;
 	float m_fH;
 	int m_nSize;
-	string		m_sText;
-	wstring	m_swText;
+	std::string		m_sText;
+	std::wstring	m_swText;
 	IRenderer *m_pRenderer;
 	IFFont *m_pFont;
-	string m_sEffect;
+	std::string m_sEffect;
 	int m_nFillId;
 	float m_fTimeout;
 	bool m_bInited;
@@ -76,7 +76,7 @@ private:
 public:
 	CIngameDialogMgr();
 	~CIngameDialogMgr(); 
-	int AddDialog(ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, string sText, wstring swText, float fTimeout=0.0f);  // return id to dialog
+	int AddDialog(ISystem *pSystem, int nFillId, const char *pszFontName, const char *pszEffectName, int nSize, std::string sText, std::wstring swText, float fTimeout=0.0f);  // return id to dialog
 	void RemoveDialog(int nId);
 	void Update();
 };

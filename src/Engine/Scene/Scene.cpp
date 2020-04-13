@@ -134,7 +134,7 @@ void Scene::present(int width, int height)
 	DEBUG_GROUP(__FUNCTION__);
 	if (postProcessor == nullptr)
 	{
-		GetISystem()->GetIRender()->DrawFullScreenImage(m_RenderedScene);
+		GetISystem()->GetIRenderer()->DrawFullScreenImage(m_RenderedScene);
 	}
 	else
 	{

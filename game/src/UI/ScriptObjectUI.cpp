@@ -13,7 +13,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+//#include "StdAfx.h"
+#include "BlackBox/Core/Platform/Platform.hpp"
 #include "ScriptObjectUI.h"
 #include "UIStatic.h"
 #include "UIButton.h"
@@ -476,7 +477,7 @@ int CScriptObjectUI::Reload(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", Reload, 1, svtNumber);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", Reload, 1, ScriptVarType::Number);
 
 		int iFrameDelta = 0;
 
@@ -505,16 +506,16 @@ int CScriptObjectUI::GetWidget(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() >= 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", GetWidget, 1, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", GetWidget, 1, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 	}
 
 	if (pH->GetParamCount() == 2)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", GetWidget, 2, svtString, svtObject);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", GetWidget, 2, ScriptVarType::String, ScriptVarType::Object);
 
-		if (pH->GetParamType(2) == svtString)
+		if (pH->GetParamType(2) == ScriptVarType::String)
 		{
 			pH->GetParam(2, szScreenName);
 		}
@@ -570,9 +571,9 @@ int CScriptObjectUI::ShowWidget(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ShowWidget, 1, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ShowWidget, 1, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(1) == svtObject)
+		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -591,8 +592,8 @@ int CScriptObjectUI::ShowWidget(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ShowWidget, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ShowWidget, 2, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ShowWidget, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ShowWidget, 2, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 		pH->GetParam(2, szScreenName);
@@ -626,9 +627,9 @@ int CScriptObjectUI::HideWidget(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", HideWidget, 1, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", HideWidget, 1, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(1) == svtObject)
+		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -647,8 +648,8 @@ int CScriptObjectUI::HideWidget(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", HideWidget, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", HideWidget, 2, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", HideWidget, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", HideWidget, 2, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 		pH->GetParam(2, szScreenName);
@@ -682,9 +683,9 @@ int CScriptObjectUI::IsWidgetVisible(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsWidgetVisible, 1, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsWidgetVisible, 1, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(1) == svtObject)
+		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -703,8 +704,8 @@ int CScriptObjectUI::IsWidgetVisible(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetVisible, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetVisible, 2, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetVisible, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetVisible, 2, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 		pH->GetParam(2, szScreenName);
@@ -738,9 +739,9 @@ int CScriptObjectUI::EnableWidget(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", EnableWidget, 1, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", EnableWidget, 1, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(1) == svtObject)
+		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -759,8 +760,8 @@ int CScriptObjectUI::EnableWidget(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", EnableWidget, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", EnableWidget, 2, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", EnableWidget, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", EnableWidget, 2, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 		pH->GetParam(2, szScreenName);
@@ -794,9 +795,9 @@ int CScriptObjectUI::DisableWidget(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", DisableWidget, 1, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", DisableWidget, 1, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(1) == svtObject)
+		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -815,8 +816,8 @@ int CScriptObjectUI::DisableWidget(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", DisableWidget, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", DisableWidget, 2, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", DisableWidget, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", DisableWidget, 2, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 		pH->GetParam(2, szScreenName);
@@ -850,9 +851,9 @@ int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsWidgetEnabled, 1, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsWidgetEnabled, 1, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(1) == svtObject)
+		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -871,8 +872,8 @@ int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetEnabled, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetEnabled, 2, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetEnabled, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", IsWidgetEnabled, 2, ScriptVarType::String);
 
 		pH->GetParam(1, szWidgetName);
 		pH->GetParam(2, szScreenName);
@@ -899,14 +900,14 @@ int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler *pH)
 int CScriptObjectUI::SendMessage(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SendMessage, 4);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SendMessage, 1, svtString, svtObject);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 2, svtNumber);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 3, svtNumber);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 4, svtNumber);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SendMessage, 1, ScriptVarType::String, ScriptVarType::Object);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 2, ScriptVarType::Number);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 3, ScriptVarType::Number);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 4, ScriptVarType::Number);
 
 	CUIWidget *pWidget = 0;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szWidget;
 
@@ -944,9 +945,9 @@ int CScriptObjectUI::SendMessage(IFunctionHandler *pH)
 int CScriptObjectUI::BroadcastMessage(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", BroadcastMessage, 3);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 1, svtNumber);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 2, svtNumber);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 3, svtNumber);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 1, ScriptVarType::Number);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 2, ScriptVarType::Number);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 3, ScriptVarType::Number);
 
 	int iMessage;
 	int wParam;
@@ -963,7 +964,7 @@ int CScriptObjectUI::BroadcastMessage(IFunctionHandler *pH)
 int CScriptObjectUI::SetBackground(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetBackground, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetBackground, 1, svtUserData);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetBackground, 1, ScriptVarType::UserData);
 
 	int iCookie = 0;
 	INT_PTR iTextureID = -1;
@@ -990,7 +991,7 @@ int CScriptObjectUI::SetBackgroundColor(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetBackgroundColor, 1, 4);
 
-	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == svtString))
+	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String))
 	{
 		color4f cColor;
 		char *szColor;
@@ -1001,7 +1002,7 @@ int CScriptObjectUI::SetBackgroundColor(IFunctionHandler *pH)
 
 		m_pUISystem->SetBackgroundColor(cColor);
 	}
-	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == svtNumber) && (pH->GetParamType(4) == svtNumber))
+	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == ScriptVarType::Number) && (pH->GetParamType(4) == ScriptVarType::Number))
 	{
 		color4f cColor;
 
@@ -1072,8 +1073,8 @@ int CScriptObjectUI::IsBackgroundVisible(IFunctionHandler *pH)
 int CScriptObjectUI::SetMouseXY(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseXY, 2);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseXY, 1, svtNumber);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseXY, 2, svtNumber);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseXY, 1, ScriptVarType::Number);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseXY, 2, ScriptVarType::Number);
 
 	float fX = 0.0f;
 	float fY = 0.0f;
@@ -1100,7 +1101,7 @@ int CScriptObjectUI::GetMouseXY(IFunctionHandler *pH)
 int CScriptObjectUI::SetMouseCursor(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseCursor, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursor, 1, svtUserData);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursor, 1, ScriptVarType::UserData);
 
 	int iCookie = 0;
 	INT_PTR iTextureID = -1;
@@ -1127,7 +1128,7 @@ int CScriptObjectUI::SetMouseCursorColor(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetMouseColorColor, 1, 4);
 
-	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == svtString))
+	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String))
 	{
 		color4f cColor;
 		char *szColor;
@@ -1138,7 +1139,7 @@ int CScriptObjectUI::SetMouseCursorColor(IFunctionHandler *pH)
 
 		m_pUISystem->SetMouseCursorColor(cColor);
 	}
-	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == svtNumber) && (pH->GetParamType(4) == svtNumber))
+	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == ScriptVarType::Number) && (pH->GetParamType(4) == ScriptVarType::Number))
 	{
 		color4f cColor;
 
@@ -1181,8 +1182,8 @@ int CScriptObjectUI::GetMouseCursorColor(IFunctionHandler *pH)
 int CScriptObjectUI::SetMouseCursorSize(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseCursorSize, 2);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursorSize, 1, svtNumber);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursorSize, 2, svtNumber);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursorSize, 1, ScriptVarType::Number);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursorSize, 2, ScriptVarType::Number);
 
 	float fWidth, fHeight;
 
@@ -1251,7 +1252,7 @@ int CScriptObjectUI::SetGreyedColor(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetGreyedColor, 1, 4);
 
-	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == svtString))
+	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String))
 	{
 		color4f cColor;
 		char *szColor;
@@ -1262,7 +1263,7 @@ int CScriptObjectUI::SetGreyedColor(IFunctionHandler *pH)
 
 		m_pUISystem->SetBackgroundColor(cColor);
 	}
-	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == svtNumber) && (pH->GetParamType(4) == svtNumber))
+	else if ((pH->GetParamCount() == 4) && (pH->GetParamType(1) == ScriptVarType::Number) && (pH->GetParamType(4) == ScriptVarType::Number))
 	{
 		color4f cColor;
 
@@ -1304,11 +1305,11 @@ int CScriptObjectUI::GetGreyedColor(IFunctionHandler *pH)
 int CScriptObjectUI::CaptureMouse(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ReleaseMouse, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ReleaseMouse, 1, svtObject, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ReleaseMouse, 1, ScriptVarType::Object, ScriptVarType::String);
 
 	CUIWidget *pWidget = 0;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szWidget;
 
@@ -1345,7 +1346,7 @@ int CScriptObjectUI::ReleaseMouse(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractRed(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractRed, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractRed, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractRed, 1, ScriptVarType::String);
 
 	char *szColor;
 	color4f cColor;
@@ -1361,7 +1362,7 @@ int CScriptObjectUI::ExtractRed(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractGreen(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractGreen, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractGreen, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractGreen, 1, ScriptVarType::String);
 
 	char *szColor;
 	color4f cColor;
@@ -1377,7 +1378,7 @@ int CScriptObjectUI::ExtractGreen(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractBlue(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractBlue, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractBlue, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractBlue, 1, ScriptVarType::String);
 
 	char *szColor;
 	color4f cColor;
@@ -1393,7 +1394,7 @@ int CScriptObjectUI::ExtractBlue(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractAlpha(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractAlpha, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractAlpha, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractAlpha, 1, ScriptVarType::String);
 
 	char *szColor;
 	color4f cColor;
@@ -1409,7 +1410,7 @@ int CScriptObjectUI::ExtractAlpha(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractLeft(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractLeft, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractLeft, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractLeft, 1, ScriptVarType::String);
 
 	char *szRect;
 	UIRect pRect;
@@ -1425,7 +1426,7 @@ int CScriptObjectUI::ExtractLeft(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractTop(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractTop, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractTop, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractTop, 1, ScriptVarType::String);
 
 	char *szRect;
 	UIRect pRect;
@@ -1441,7 +1442,7 @@ int CScriptObjectUI::ExtractTop(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractWidth(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractWidth, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractWidth, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractWidth, 1, ScriptVarType::String);
 
 	char *szRect;
 	UIRect pRect;
@@ -1457,7 +1458,7 @@ int CScriptObjectUI::ExtractWidth(IFunctionHandler *pH)
 int CScriptObjectUI::ExtractHeight(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractHeight, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractHeight, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractHeight, 1, ScriptVarType::String);
 
 	char *szRect;
 	UIRect pRect;
@@ -1493,11 +1494,11 @@ int CScriptObjectUI::GetMouseY(IFunctionHandler *pH)
 int CScriptObjectUI::SetTopMostWidget(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetTopMostWidget, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetTopMostWidget, 1, svtString, svtObject);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetTopMostWidget, 1, ScriptVarType::String, ScriptVarType::Object);
 
 	CUIWidget *pWidget;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szWidgetName;
 
@@ -1505,7 +1506,7 @@ int CScriptObjectUI::SetTopMostWidget(IFunctionHandler *pH)
 
 		pWidget = m_pUISystem->GetWidget(szWidgetName);
 	}
-	else if (pH->GetParamType(1) == svtObject)
+	else if (pH->GetParamType(1) == ScriptVarType::Object)
 	{
 		IScriptObject *pScriptObject = 0;
 
@@ -1539,7 +1540,7 @@ int CScriptObjectUI::SetFocus(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 1)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetFocus, 1, svtObject);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetFocus, 1, ScriptVarType::Object);
 
 		IScriptObject *pScriptObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -1551,15 +1552,15 @@ int CScriptObjectUI::SetFocus(IFunctionHandler *pH)
 	}
 	else
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetFocus, 1, svtString);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetFocus, 2, svtString, svtObject);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetFocus, 1, ScriptVarType::String);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetFocus, 2, ScriptVarType::String, ScriptVarType::Object);
 
 		char *szWidgetName;
 		char *szScreenName;
 
 		pH->GetParam(1, szWidgetName);
 
-		if (pH->GetParamType(2) == svtObject)
+		if (pH->GetParamType(2) == ScriptVarType::Object)
 		{
 			IScriptObject *pScriptObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -1606,14 +1607,14 @@ int CScriptObjectUI::SetFocusScreen(IFunctionHandler *pH)
 
 	if (pH->GetParamCount())
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetFocusScreen, 1, svtString, svtObject);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetFocusScreen, 1, ScriptVarType::String, ScriptVarType::Object);
 	}
 	
 	CUIScreen *pScreen = 0;
 
 	if (pH->GetParamCount())
 	{
-		if (pH->GetParamType(1) == svtString)
+		if (pH->GetParamType(1) == ScriptVarType::String)
 		{
 			char *szName;
 
@@ -1698,16 +1699,16 @@ int CScriptObjectUI::PrevTabStop(IFunctionHandler *pH)
 int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", CreateStatic, 2, 3);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateStatic, 1, svtString);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateStatic, 2, svtObject);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateStatic, 1, ScriptVarType::String);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateStatic, 2, ScriptVarType::Object);
 
 	CUIScreen *pScreen = 0;
 
 	if (pH->GetParamCount() == 3)
 	{
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", CreateStatic, 2, svtObject, svtString);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", CreateStatic, 2, ScriptVarType::Object, ScriptVarType::String);
 
-		if (pH->GetParamType(3) == svtObject)
+		if (pH->GetParamType(3) == ScriptVarType::Object)
 		{
 			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
 
@@ -1751,8 +1752,8 @@ int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler *pH)
 int CScriptObjectUI::CreateScreenFromTable(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", CreateScreenFromTable, 2);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateScreenFromTable, 1, svtString);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateScreenFromTable, 2, svtObject);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateScreenFromTable, 1, ScriptVarType::String);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateScreenFromTable, 2, ScriptVarType::Object);
 
 	char *szName;
 	IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();;
@@ -1788,11 +1789,11 @@ int CScriptObjectUI::GetScreenCount(IFunctionHandler *pH)
 int CScriptObjectUI::GetScreen(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetScreen, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", GetScreen, 1, svtString, svtNumber);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", GetScreen, 1, ScriptVarType::String, ScriptVarType::Number);
 
 	CUIScreen *pScreen = 0;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szName;
 
@@ -1831,11 +1832,11 @@ int CScriptObjectUI::GetScreen(IFunctionHandler *pH)
 int CScriptObjectUI::ActivateScreen(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ActivateScreen, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ActivateScreen, 1, svtString, svtObject);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ActivateScreen, 1, ScriptVarType::String, ScriptVarType::Object);
 
 	CUIScreen *pScreen = 0;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szName;
 
@@ -1874,11 +1875,11 @@ int CScriptObjectUI::ActivateScreen(IFunctionHandler *pH)
 int CScriptObjectUI::DeactivateScreen(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", DeactivateScreen, 1);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", DeactivateScreen, 1, svtString, svtObject);
+		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", DeactivateScreen, 1, ScriptVarType::String, ScriptVarType::Object);
 
 	CUIScreen *pScreen = 0;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szName;
 
@@ -1917,11 +1918,11 @@ int CScriptObjectUI::DeactivateScreen(IFunctionHandler *pH)
 int CScriptObjectUI::IsScreenActive(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", IsScreenActive, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsScreenActive, 1, svtString, svtObject);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsScreenActive, 1, ScriptVarType::String, ScriptVarType::Object);
 
 	CUIScreen *pScreen = 0;
 
-	if (pH->GetParamType(1) == svtString)
+	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
 		char *szName;
 
@@ -2066,7 +2067,7 @@ int CScriptObjectUI::GetToolTipBorderStyle(IFunctionHandler *pH)
 int CScriptObjectUI::SetToolTipFontName(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontName, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontName, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontName, 1, ScriptVarType::String);
 
 	char *szFontName;
 
@@ -2089,9 +2090,9 @@ int CScriptObjectUI::GetToolTipFontName(IFunctionHandler *pH)
 int CScriptObjectUI::SetToolTipFontEffect(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontEffect, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontEffect, 1, svtString);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontEffect, 1, ScriptVarType::String);
 
-	char *szFontEffect;
+	const char *szFontEffect;
 
 	pH->GetParam(1, szFontEffect);
 
