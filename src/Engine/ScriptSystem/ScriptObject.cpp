@@ -13,7 +13,7 @@ CScriptSystem* CScriptObject::m_pSS = nullptr;
 namespace {
   ///////////////////////////////////////////////////////////////////
   template<typename T>
-  bool GetValueTemplate(CScriptObject* pSO, const char* sKey, T& Val, bool bChain = false)
+  bool GetValueAny(CScriptObject* pSO, const char* sKey, T& Val, bool bChain = false)
   {
     auto L = CScriptObject::L;
     CHECK_STACK(L);
@@ -47,7 +47,7 @@ namespace {
     if (top && lua_getmetatable(L, -1))     // if there is no metatable nothing is pushed
     {
       lua_pop(L, 1);    // pop the metatable - we only care that it exists, not about the value
-      if (GetValueTemplate(pSO, sKey, oldValue) && oldValue == Val)
+      if (GetValueAny(pSO, sKey, oldValue) && oldValue == Val)
         return;
     }
 
@@ -122,6 +122,10 @@ void CScriptObject::Delegate(IScriptObject* pMetatable)
   lua_pushstring(L, "__index"); // push key.
   PushRef(pMetatable);
   lua_rawset(L, -3); // sets metatable.__index = metatable
+
+  lua_pushstring(L, "__newindex"); // push key.
+  PushRef(pMetatable);
+  lua_rawset(L, -3); // sets metatable.__newindex = metatable
   lua_pop(L, 1);     // pop metatable from stack.
 
   SetMetatable(pMetatable);
@@ -129,22 +133,27 @@ void CScriptObject::Delegate(IScriptObject* pMetatable)
 
 void CScriptObject::PushBack(int nVal)
 {
+	m_pSS->PushAny(nVal);
 }
 
 void CScriptObject::PushBack(float fVal)
 {
+	m_pSS->PushAny(fVal);
 }
 
 void CScriptObject::PushBack(const char* sVal)
 {
+	m_pSS->PushAny(sVal);
 }
 
 void CScriptObject::PushBack(bool bVal)
 {
+	m_pSS->PushAny(bVal);
 }
 
 void CScriptObject::PushBack(IScriptObject* pObj)
 {
+	m_pSS->PushAny(pObj);
 }
 
 void CScriptObject::SetValue(const char* sKey, int Val)
@@ -174,8 +183,7 @@ void CScriptObject::SetValue(const char* sKey, IScriptObject* Val)
 
 void CScriptObject::SetValue(const char* sKey, USER_DATA ud)
 {
-  //assert(0 && __FUNCTION__ " Not implemented");
-  //SetValueTemplate(this, sKey, ud);
+  SetValueTemplate(this, sKey, ud);
 }
 
 void CScriptObject::SetToNull(const char* sKey)
@@ -185,37 +193,44 @@ void CScriptObject::SetToNull(const char* sKey)
 
 bool CScriptObject::GetValue(const char* sKey, int& nVal)
 {
-  return GetValueTemplate(this, sKey, nVal);
+  return GetValueAny(this, sKey, nVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, float& fVal)
 {
-  return GetValueTemplate(this, sKey, fVal);
+  return GetValueAny(this, sKey, fVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, bool& bVal)
 {
-  return GetValueTemplate(this, sKey, bVal);
+  return GetValueAny(this, sKey, bVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, const char*& sVal)
 {
-  return GetValueTemplate(this, sKey, sVal);
+  return GetValueAny(this, sKey, sVal);
 }
 
 bool CScriptObject::GetValue(const char* sKey, IScriptObject* pObj)
 {
-  return GetValueTemplate(this, sKey, pObj);
+  return GetValueAny(this, sKey, pObj);
 }
 
 bool CScriptObject::GetValue(const char* sKey, HSCRIPTFUNCTION& funcVal)
 {
-  return GetValueTemplate(this, sKey, funcVal);
+  return GetValueAny(this, sKey, funcVal);
 }
 
 bool CScriptObject::GetUDValue(const char* sKey, USER_DATA& nValue, int& nCookie)
 {
-  return false;
+  auto result =  GetValueAny(this, sKey, nValue);
+	if (result && nValue != nullptr)
+	{
+		UserDataInfo* ud = (UserDataInfo*)nValue;
+		nCookie = ud->cookie;
+		nValue = (void*)ud->ptr;
+	}
+	return result;
 }
 
 bool CScriptObject::GetFuncData(const char* sKey, unsigned int*& pCode, int& iSize)
@@ -231,37 +246,37 @@ bool CScriptObject::BeginSetGetChain()
 
 bool CScriptObject::GetValueChain(const char* sKey, int& Val)
 {
-  return GetValueTemplate(this, sKey, Val, true);
+  return GetValueAny(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetValueChain(const char* sKey, float& Val)
 {
-  return GetValueTemplate(this, sKey, Val, true);
+  return GetValueAny(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetValueChain(const char* sKey, bool& Val)
 {
-  return GetValueTemplate(this, sKey, Val, true);
+  return GetValueAny(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetValueChain(const char* sKey, const char*& Val)
 {
-  return GetValueTemplate(this, sKey, Val, true);
+  return GetValueAny(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetValueChain(const char* sKey, IScriptObject* Val)
 {
-  return GetValueTemplate(this, sKey, Val, true);
+  return GetValueAny(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetValueChain(const char* sKey, HSCRIPTFUNCTION& Val)
 {
-  return GetValueTemplate(this, sKey, Val, true);
+  return GetValueAny(this, sKey, Val, true);
 }
 
 bool CScriptObject::GetUDValueChain(const char* sKey, USER_DATA& nValue, int& nCookie)
 {
-  return false;
+  return GetValueAny(this, sKey, nValue, true);
 }
 
 void CScriptObject::SetValueChain(const char* sKey, int Val)
@@ -291,7 +306,7 @@ void CScriptObject::SetValueChain(const char* sKey, IScriptObject* Val)
 
 void CScriptObject::SetValueChain(const char* sKey, USER_DATA ud)
 {
-  //assert(0 && __FUNCTION__" Not implemented");
+  SetValueTemplate(this, sKey, ud, true);
 }
 
 void CScriptObject::SetToNullChain(const char* sKey)
@@ -413,6 +428,7 @@ void CScriptObject::SetAt(int nIdx, IScriptObject* Val)
 
 void CScriptObject::SetAtUD(int nIdx, USER_DATA nValue)
 {
+  SetAtAny(this, nIdx, nValue);
 }
 
 void CScriptObject::SetNullAt(int nIdx)
@@ -446,7 +462,11 @@ bool CScriptObject::GetAt(int nIdx, IScriptObject* Val)
 
 bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
 {
-  return false;
+	UserDataInfo *ud;
+  auto result = GetAtAny(this, nIdx, (USER_DATA&)ud);
+	nValue = (USER_DATA&)ud->ptr;
+	nCookie = ud->cookie;
+	return result;
 }
 
 bool CScriptObject::BeginIteration()
@@ -789,7 +809,17 @@ bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int n
 
 bool CScriptObject::AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION pGetThunk)
 {
-  return false;
+	PushRef();
+	lua_getmetatable(L, -1);
+
+	if (!lua_istable(L, -1))
+		return false;
+  CScriptObject* metaObject = new CScriptObject;
+	metaObject->Attach();
+	
+	metaObject->AddFunction("__newindex", pSetThunk, -1);
+	metaObject->AddFunction("__index", pGetThunk, -1);
+	return false;
 }
 
 void CScriptObject::RegisterParent(IScriptObjectSink* pSink)

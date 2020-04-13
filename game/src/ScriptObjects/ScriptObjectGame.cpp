@@ -45,8 +45,10 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
   REG_FUNC(CScriptObjectGame, SavePlayerPos);
   REG_FUNC(CScriptObjectGame, LoadPlayerPos);
 
-	//AllowPropertiesMapping(pSS);
-	//RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CGame,test_string));
+#if 0
+	AllowPropertiesMapping(pSS);
+	RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CGame,test_string));
+#endif
 }
 
 void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)

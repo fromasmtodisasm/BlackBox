@@ -110,8 +110,9 @@ public:
       CryError("Scriptable EX:FUNCTION HANDLER NULL");
     m_pScriptThis = pScriptSystem->CreateGlobalObject(sName);
     m_pScriptThis->SetNativeData(pParent);
-    if (_ScriptableEx<T>::m_pTemplateTable)
-      m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);
+    m_pScriptThis->Delegate(_ScriptableEx<T>::m_pTemplateTable);
+    /*if (_ScriptableEx<T>::m_pTemplateTable)
+      m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);*/
 
     if (m_pScriptThis->GetNativeData() != pParent)
       CryError("Scriptable EX:Init Global");

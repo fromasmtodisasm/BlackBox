@@ -258,6 +258,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 }
 
 bool CGame::Update() {
+	static const auto& render_game = m_Console->GetCVar("render_game");
   bool bRenderFrame = !m_bDedicatedServer;
   m_pSystem->Update(0, IsInPause());
   {
@@ -289,7 +290,13 @@ bool CGame::Update() {
     {
 			SetRenderState();
       m_pSystem->RenderBegin();
-      //m_pSystem->Render();
+			if (render_game)
+			{
+				if (render_game->GetIVal() != 0)
+				{
+					m_pSystem->Render();
+				}
+			}
       //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
       DrawHud(fps);
       //PROFILER_POP_CPU_MARKER();

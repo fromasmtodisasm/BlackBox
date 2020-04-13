@@ -16,6 +16,12 @@ typedef ScriptFileList::iterator															ScriptFileListItor;
 
 class CFunctionHandler;
 
+struct UserDataInfo
+{
+	INT_PTR ptr;
+	int cookie;
+};
+
 class CScriptSystem : public IScriptSystem
 {
 public:
@@ -83,7 +89,7 @@ public:
   virtual HTAG CreateTaggedValue(const char* sKey, int* pVal) override;
   virtual HTAG CreateTaggedValue(const char* sKey, float* pVal) override;
   virtual HTAG CreateTaggedValue(const char* sKey, char* pVal) override;
-  virtual USER_DATA CreateUserData(void* ptr, int size) override;
+	virtual USER_DATA CreateUserData(INT_PTR nVal,int nCookie) override;
   virtual void RemoveTaggedValue(HTAG tag) override;
   //
   virtual void RaiseError(const char* sErr, ...) override;
@@ -108,7 +114,7 @@ public:
 
   void TraceScriptError(const char* file, int line, const char* errorStr);
 
-  void PushObject(IScriptObject* pObj);
+  void PushObject(const IScriptObject* pObj);
 
   virtual void LogStackTrace();
 
@@ -149,6 +155,12 @@ public:
     lua_pushvalue(L, -1);
     pObj->Attach();
   }
+
+  inline void ToAny(USER_DATA& val, int nIdx)
+  {
+		val = (USER_DATA)lua_topointer(L, nIdx);
+    //(INT_PTR)lua_ref(L, 1);
+  }
   template<typename T> bool PopAny(T& val)
   {
     /*bool res = */ToAny(val, -1);
@@ -188,6 +200,16 @@ public:
     PushObject(val);
   }
 
+  inline void PushAny(USER_DATA& val)
+  {
+		lua_pushlightuserdata(L, val);
+  }
+
+  inline void PushAny()
+  {
+		lua_pushnil(L);
+  }
+
 private:
   bool       EndCallN(int nReturns);
   template<typename T>
@@ -196,6 +218,8 @@ private:
   bool       EndCallAnyN(int n, T*& any);
   template<typename T>
   void PushFuncParamAny(T val);
+	template<class T>
+	void SetGlobalAny(const char* sKey, T& value);
 
   static int ErrorHandler(lua_State* L);
 
@@ -269,4 +293,12 @@ inline void CScriptSystem::PushFuncParamAny(T val)
     return;
   PushAny(val);
   m_nTempArg++;
+}
+
+template<class T>
+void CScriptSystem::SetGlobalAny(const char* sKey, T& any)
+{ 
+	//CHECK_STACK(L);
+	PushAny(any);
+	lua_setglobal(L, sKey);
 }

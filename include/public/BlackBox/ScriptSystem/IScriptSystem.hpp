@@ -268,7 +268,7 @@ struct IScriptSystem
   virtual HTAG CreateTaggedValue(const char* sKey, char* pVal) = 0;
   //##@}
 
-  virtual USER_DATA CreateUserData(void* ptr, int size) = 0;
+	virtual USER_DATA CreateUserData(INT_PTR nVal,int nCookie)=0;
   /*! remove a tagged value
     @param tag handle to a tagged value
   */

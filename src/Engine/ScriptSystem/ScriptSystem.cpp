@@ -481,32 +481,24 @@ void CScriptSystem::PushFuncParam(IScriptObject* pVal)
   PushFuncParamAny(pVal);
 }
 
-void CScriptSystem::SetGlobalValue(const char* sKey, int nVal)
+void CScriptSystem::SetGlobalValue(const char* sKey, int Val)
 {
-  CHECK_STACK(L);
-  lua_pushinteger(L, nVal);
-  lua_setglobal(L, sKey);
+	SetGlobalAny(sKey, Val);
 }
 
-void CScriptSystem::SetGlobalValue(const char* sKey, float fVal)
+void CScriptSystem::SetGlobalValue(const char* sKey, float Val)
 {
-  CHECK_STACK(L);
-  lua_pushnumber(L, fVal);
-  lua_setglobal(L, sKey);
+	SetGlobalAny(sKey, Val);
 }
 
-void CScriptSystem::SetGlobalValue(const char* sKey, const char* sVal)
+void CScriptSystem::SetGlobalValue(const char* sKey, const char* Val)
 {
-  CHECK_STACK(L);
-  lua_pushstring(L, sVal);
-  lua_setglobal(L, sKey);
+	SetGlobalAny(sKey, Val);
 }
 
 void CScriptSystem::SetGlobalValue(const char* sKey, IScriptObject* pObj)
 {
-  CHECK_STACK(L);
-  PushObject(pObj);
-  lua_setglobal(L, sKey);
+	SetGlobalAny(sKey, pObj);
 }
 
 bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
@@ -545,16 +537,17 @@ HTAG CScriptSystem::CreateTaggedValue(const char* sKey, char* pVal)
   return HTAG();
 }
 
-USER_DATA CScriptSystem::CreateUserData(void* ptr, int size)
+USER_DATA CScriptSystem::CreateUserData(INT_PTR nVal,int nCookie)
 {
   CHECK_STACK(L);
 
-  void* nptr = lua_newuserdata(L, size);
-  memcpy(nptr, ptr, size);
-  CScriptObject* pNewTbl = new CScriptObject();
-  pNewTbl->Attach();
+	auto size = sizeof(UserDataInfo);
+  UserDataInfo* ud = (UserDataInfo*)lua_newuserdata(L, size);
+	ud->ptr = nVal;
+	ud->cookie = nCookie;
+	lua_pop(L, 1);
 
-  return pNewTbl;
+  return ud;
 }
 
 void CScriptSystem::RemoveTaggedValue(HTAG tag)
@@ -686,7 +679,7 @@ void CScriptSystem::TraceScriptError(const char* file, int line, const char* err
   }
 }
 
-void CScriptSystem::PushObject(IScriptObject* pObj)
+void CScriptSystem::PushObject(const IScriptObject* pObj)
 {
   ((CScriptObject*)pObj)->PushRef();
 }

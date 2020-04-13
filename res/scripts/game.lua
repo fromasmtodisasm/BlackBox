@@ -46,6 +46,6 @@ function test(  )
 	Player:OnInit(123)
 end
 
-Game:CreateVariable("game_inited", 1)
+Game:CreateVariable("render_game", 0)
 
 
