@@ -174,8 +174,9 @@ bool HdrTechnique::OnRenderPass(int pass)
   DEBUG_GROUP(__FUNCTION__);
   if (!shadowMapping->OnRenderPass(pass))
   {
+		SRenderParams renderParams;
     if (draw_sky && m_Scene->GetSkyBox() != nullptr)
-      m_Scene->GetSkyBox()->draw(m_Scene->getCurrentCamera());
+      m_Scene->GetSkyBox()->draw(renderParams);
     {
       Object* water;
       if ((water = m_Scene->getObject("water")) != nullptr)

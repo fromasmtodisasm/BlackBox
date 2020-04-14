@@ -80,7 +80,8 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
 #define SH 64
-    vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+    //vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+    vec3 color = normalize(fs_in.Normal);//texture(diffuseMap, vec2(0)).rgb;
 	vec3 emissive = vec3(0.0f);
 	if (has_emissive)
 	{

@@ -54,9 +54,9 @@ class TreeObject : public Object
 	
 	
 	}
-	virtual void draw(void* camera) final
+	virtual void draw(SRenderParams& renderParams) final
 	{
-		Object::draw(camera);
+		Object::draw(renderParams);
 	}
 
 	std::unique_ptr<TreeRender> m_TreeRender;

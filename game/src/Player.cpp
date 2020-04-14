@@ -88,9 +88,9 @@ bool CPlayer::OnKeyReleas(EKeyId key)
   return false;
 }
 
-void CPlayer::draw(void* camera)
+void CPlayer::draw(SRenderParams& renderParams)
 {
-  Object::draw(camera);
+  Object::draw(renderParams);
 }
 
 void CPlayer::attachCamera(CCamera* camera)

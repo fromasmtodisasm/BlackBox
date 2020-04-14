@@ -404,4 +404,11 @@ struct SRenderParams
 	CCamera* Camera;
 	DirectionLight* DirectionLight;
 	Mat4 Transform;
+
 };
+
+struct IDrawable
+{
+  virtual void draw(SRenderParams& renderParams) = 0;
+};
+

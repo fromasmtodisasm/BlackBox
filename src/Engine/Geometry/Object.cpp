@@ -36,7 +36,7 @@ Object::Object(const Object* obj) :
   refs++;
 }
 
-void Object::draw(void* camera) {
+void Object::draw(SRenderParams& renderParams) {
   DEBUG_GROUP(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
 
@@ -46,7 +46,6 @@ void Object::draw(void* camera) {
   for (auto& mesh : *m_Mesh)
   {
 		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, GL_TRIANGLES);
-    //mesh.getVertexBuffer()->draw();
   }
 }
 

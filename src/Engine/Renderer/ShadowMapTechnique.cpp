@@ -150,9 +150,10 @@ void ShadowMapping::RenderDepth(Object* object)
 	DEBUG_GROUP(__FUNCTION__);
 	if (object->visible())
 	{
+		SRenderParams renderParams;
 		m_ShadowMapShader->Uniform(object->getTransform(), "model");
 		m_ShadowMapShader->setup();
-		object->draw(nullptr);
+		object->draw(renderParams);
 	}
 }
 
@@ -163,6 +164,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 	if (!object->m_transparent && (object->visible()) &&
 		glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
 	{
+		SRenderParams renderParams;
 		auto program = object->m_Material->program;
 		program->Use();
 		program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
@@ -184,7 +186,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 			program->Uniform(false, "isTerrain");
 		program->Uniform(frame_id, "frame_id");
 		//glPointSize(7);
-		object->draw(camera);
+		object->draw(renderParams);
 	}
 }
 
@@ -195,6 +197,7 @@ void ShadowMapping::RenderTransparent(Object* object)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (object->m_transparent && (object->visible()))
 	{
+		SRenderParams renderParams;
 		auto program = object->m_Material->program;
 		program->Use();
 		program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
@@ -208,7 +211,7 @@ void ShadowMapping::RenderTransparent(Object* object)
 		SetupLights(object);
 		object->m_Material->apply(object);
 
-		object->draw(m_Scene->getCurrentCamera());
+		object->draw(renderParams);
 	}
 	m_pRender->SetState(IRenderer::State::BLEND, false);
 }

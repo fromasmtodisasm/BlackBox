@@ -81,7 +81,7 @@ public:
   virtual void moveTo(Vec3 v);
   virtual void rotate(float angle, Vec3 v) override;
   virtual void scale(Vec3 v) override;
-  virtual void draw(void* camera);
+  virtual void draw(SRenderParams& renderParams);
   virtual Mat4 getTransform() override;
   void updateVectors();
 

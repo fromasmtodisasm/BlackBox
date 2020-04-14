@@ -84,7 +84,7 @@ public:
 		gEnv->pRenderer->UpdateBuffer(vertexBuffer, skyboxVertices, 36, false);
   }
   // Унаследовано через IDrawable
-  virtual void draw(void* data) override
+  virtual void draw(SRenderParams& renderParams) override
   {
     glm::mat4 View = Pipeline::instance()->view;
     glm::mat4 Projection = Pipeline::instance()->projection;
@@ -94,7 +94,7 @@ public:
     // ... задание видовой и проекционной матриц
     shader->Uniform(glm::mat4(glm::mat3(View)), "View");
     shader->Uniform(Projection, "Projection");
-	shader->BindTextureUnit2D(Pipeline::instance()->skyBox->id, 0);
+		shader->BindTextureUnit2D(Pipeline::instance()->skyBox->id, 0);
 
     texture->bind();
 		gEnv->pRenderer->DrawBuffer(vertexBuffer, nullptr, 0, 0, GL_TRIANGLES);

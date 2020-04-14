@@ -142,7 +142,7 @@
             </position>
             <rotation>
                 <X>0</X>
-                <Y>0</Y>
+                <Y>180</Y>
                 <Z>0</Z>
             </rotation>
             <scale>
@@ -154,7 +154,7 @@
         <uv scaleX="800" scaleY="800"/>
         <material name="water"/>
     </object>
-    <object name="quad" type="object" visible="true" transparent="true">
+    <object name="quad" type="object" visible="true" transparent="false">
         <mesh name="res/geom/plane.obj"/>
         <transform>
             <position>
@@ -174,7 +174,7 @@
             </scale>
         </transform>
         <!--<uv scaleX="800" scaleY="800"/>-->
-        <material name="default"/>
+        <material name="water"/>
     </object>
     <object name="sphere" type="object" visible="false" transparent="false">
         <mesh name="res/geom/sphere.obj"/>
