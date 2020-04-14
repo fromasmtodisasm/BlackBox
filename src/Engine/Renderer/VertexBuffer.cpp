@@ -20,9 +20,11 @@ GLenum toGlPrimitive(RenderPrimitive rp)
 	default: return -1;
 	}
 }
+/*
 VertexArrayObject::VertexArrayObject(const void* data, int count, RenderPrimitive primitive, const Attributes &attributes) :
   m_Data(data), m_Count(count), m_Mode(toGlPrimitive(primitive))
 {
+	assert(0);
   if (attributes.attributes.empty())
     init();
   else
@@ -129,5 +131,7 @@ void VertexArrayObject::setup_attributes()
         );
   }
 }
+*/
 
 #pragma warning(pop)
+

@@ -30,6 +30,12 @@ struct Hardware
   const GLubyte* glsl_version;
 };
 
+struct SVertexPoolEntry
+{
+	bool free;
+	CVertexBuffer* vertexBuffer;
+};
+
 class GLRenderer :
   public CRenderer,
   public IConsoleVarSink,
@@ -180,6 +186,8 @@ private:
   int m_CurrentTarget;
 
   Hardware m_Hardware;
+
+	std::vector<SVertexPoolEntry> m_VertexBufferPool;
 
   // Inherited via IRenderer
   virtual void SetRenderTarget(int nHandle) override;

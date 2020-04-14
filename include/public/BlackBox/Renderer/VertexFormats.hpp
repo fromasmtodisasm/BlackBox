@@ -267,7 +267,7 @@ _inline void *CreateVertexBuffer(int nFormat, int nVerts)
 
 //////////////////////////////////////////////////////////////////////////
 // Vertex Sizes
-const int m_VertexSize[]=
+const int gVertexSize[]=
 {
   0,
   sizeof(struct_VERTEX_FORMAT_P3F),	

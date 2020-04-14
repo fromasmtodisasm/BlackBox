@@ -1,5 +1,6 @@
 #pragma once
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 
 #include <memory>
 #include <string>
@@ -40,15 +41,17 @@ struct face
 struct Vertex
 {
   Vec3 pos;
-  Vec2 uv;
   Vec3 normal;
+  Vec2 uv;
+#if 0
   Vec3 tangent;
   Vec3 btangent;
+#endif
 
-  Vertex() : pos(0), uv(0), normal(0), tangent(0), btangent(0) {}
-  Vertex(Vec3 pos, Vec2 uv) : pos(pos), uv(uv), normal(0), tangent(0), btangent(0)
+  Vertex() : pos(0), uv(0), normal(0)/*, tangent(0), btangent(0)*/ {}
+  Vertex(Vec3 pos, Vec2 uv) : pos(pos), uv(uv), normal(0)/*, tangent(0), btangent(0)*/
   {}
-  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n), tangent(0), btangent(0)
+  Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 n) : pos(pos), uv(uv), normal(n)/*, tangent(0), btangent(0)*/
   {}
 };
 
@@ -100,16 +103,14 @@ struct BoundingBox
 
 struct Mesh {
 public:
-  VertexArrayObject* m_Verts;
-  IndexBuffer* m_Indexes;
+  CVertexBuffer* m_Verts;
   BoundingBox bb;
 public:
   std::shared_ptr<std::string> m_Path;
-  Mesh(VertexArrayObject* verts, IndexBuffer* indxs);
+  Mesh(CVertexBuffer* vertexBuffer);
   Mesh() = default;
 
-  VertexArrayObject* getVertexBuffer();
-  IndexBuffer* getIndexBuffer();
+  CVertexBuffer* getVertexBuffer();
 };
 
 class SubdivisionShpereTessellatorSimple
@@ -118,7 +119,7 @@ public:
     static MeshRef Compute(int numberOfSubdivisions);
 };
 
-MeshRef CreatePlane(int vSegment, int hSegments);
+//MeshRef CreatePlane(int vSegment, int hSegments);
 
 namespace Geometry
 {

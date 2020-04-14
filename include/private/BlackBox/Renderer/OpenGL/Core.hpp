@@ -299,9 +299,29 @@ namespace gl {
   }
 
   // VAO
+  inline void GenVertexArrays(GLsizei n, GLuint *arrays)
+  {
+		glCheck(glGenVertexArrays(n, arrays));
+  }
+
+  inline void BindVertexArray(GLuint array)
+  {
+		glCheck(glBindVertexArray(array));
+  }
+
+  inline void DrawArrays(GLenum mode, GLint first, GLsizei count)
+  {
+		glCheck(glDrawArrays(mode, first, count));
+  }
+
   inline void EnableVertexAttribArray(GLuint index)
   {
     glCheck(glEnableVertexAttribArray(index));
+  }
+
+  inline void DisableVertexAttribArray(GLuint index)
+  {
+    glCheck(glDisableVertexAttribArray(index));
   }
 
   inline void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer)
@@ -309,6 +329,30 @@ namespace gl {
     glCheck(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
   }
 
+	inline void GenBuffers(GLsizei n, GLuint* buffers)
+	{
+		glCheck(glGenBuffers(n, buffers));
+	}
+
+	inline void GenBuffer(GLuint* buffers)
+	{
+		glCheck(glGenBuffers(1, buffers));
+	}
+
+	inline void BindBuffer(GLenum target, GLuint buffer)
+	{
+		glCheck(glBindBuffer(target, buffer));
+	}
+
+	inline void BufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage)
+	{
+		glCheck(glBufferData(target, size, data, usage));
+	}
+
+	inline void BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
+	{
+		glCheck(glBufferSubData(target, offset, size, data));
+	}
   inline void UniformValue(GLint location, int value)
   {
     glCheck(glUniform1i(location, value));

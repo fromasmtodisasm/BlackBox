@@ -143,8 +143,8 @@ bool Scene::Serializator::load(const char* name, LoadObjectSink* callback)
   auto sbm = MaterialManager::instance()->getMaterial("skybox");
   if (sbm != nullptr)
   {
-    m_Scene->skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
-    Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
+    //m_Scene->skyBox = new SkyBox(reinterpret_cast<TextureCube*>(sbm->diffuse[0]));
+    //Pipeline::instance()->skyBox = reinterpret_cast<TextureCube*>(sbm->diffuse[0]);
   }
 
   //XMLElement* technique = pScene->FirstChildElement("technique");

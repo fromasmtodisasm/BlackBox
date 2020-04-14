@@ -33,7 +33,7 @@ OpenglDebuger::~OpenglDebuger()
 void OpenglDebuger::checkError(const char* file, int line, const char* expr)
 {
 	std::stringstream ss;
-  if (isError && !ignore)
+  if (isError/* && !ignore*/)
   {
     isError = false;
 

@@ -654,12 +654,14 @@ void CSystem::Tests()
 	VerteciesInfo vertecies;
 	BoundingBox bb;
 	
+#if 0
 	auto plane_mesh = CreatePlane(4, 4);
 	mesh = std::make_shared<std::vector<Mesh>>();
 	mesh->push_back(*plane_mesh.get());
 	obj = Object::getEmpty();
 	obj->m_Mesh = mesh;
 	obj->m_path = "";
+#endif
 
 	//SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
 	

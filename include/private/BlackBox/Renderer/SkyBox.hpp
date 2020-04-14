@@ -7,12 +7,13 @@
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 class SkyBox : public IDrawable
 {
 public:
   _smart_ptr<TextureCube> texture;
-  VertexArrayObject* vao;
+	CVertexBuffer* vertexBuffer;
   BaseShaderProgramRef shader;
 
   SkyBox(TextureCube* t)
@@ -79,7 +80,8 @@ public:
     VertexArrayObject::Attributes attributes;
     attributes.stride = 3 * sizeof(float);
     attributes.attributes[VertexArrayObject::POSITION] = 0;
-    vao = new VertexArrayObject(skyboxVertices, 36, RenderPrimitive::TRIANGLES, attributes);
+		vertexBuffer = gEnv->pRenderer->CreateBuffer(36, VERTEX_FORMAT_P3F, "SkyBox");
+		gEnv->pRenderer->UpdateBuffer(vertexBuffer, skyboxVertices, 36, false);
   }
   // Унаследовано через IDrawable
   virtual void draw(void* data) override
@@ -95,7 +97,7 @@ public:
 	shader->BindTextureUnit2D(Pipeline::instance()->skyBox->id, 0);
 
     texture->bind();
-    vao->draw();
+		gEnv->pRenderer->DrawBuffer(vertexBuffer, nullptr, 0, 0, GL_TRIANGLES);
 
     glCheck(glDepthFunc(GL_LESS));
     glCheck(glDepthMask(GL_TRUE));

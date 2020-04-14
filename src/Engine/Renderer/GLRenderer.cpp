@@ -10,6 +10,8 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
+#include <BlackBox/Renderer/VertexBuffer.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
@@ -19,6 +21,117 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
+
+namespace
+{
+	enum AttributeLocation : GLuint {
+		position = 0,
+		normal = 1,
+		uv = 2,
+		tangent = 3,
+		btangent = 4,
+		color = 5
+	};
+	struct VertexAttributePointer
+	{
+		GLuint index;
+		GLint size;
+		GLenum type;
+		GLboolean normalized;
+		GLsizei stride;
+		const void* pointer;
+
+		VertexAttributePointer(
+			GLuint index,
+			GLint size,
+			GLenum type,
+			GLboolean normalized,
+			GLsizei stride,
+			const void* pointer
+		)
+			:
+			index(index),
+			size(size),
+			type(type),
+			normalized(normalized),
+			stride(stride),
+			pointer(pointer)
+		{}
+
+	};
+
+	inline VertexAttributePointer GetPositionAttributePointer(int vertexFormat)
+	{
+		return VertexAttributePointer(
+			position, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(0)
+		);
+	}
+	inline VertexAttributePointer GetNormalAttributePointer(int vertexFormat)
+	{
+		return VertexAttributePointer(
+			normal, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsNormal)
+		);
+	}
+	inline VertexAttributePointer GetColorAttributePointer(int vertexFormat)
+	{
+		return VertexAttributePointer(
+			color, 4, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsColor)
+		);
+	}
+	inline VertexAttributePointer GetUVAttributePointer(int vertexFormat)
+	{
+		return VertexAttributePointer(
+			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsTC)
+		);
+	}
+
+	void SetAttribPointer(VertexAttributePointer vap)
+	{
+		gl::EnableVertexAttribArray(position);
+		gl::VertexAttribPointer(
+				vap.index, vap.size, vap.type, vap.normalized, vap.stride, vap.pointer 
+				);
+	}
+	void DisableAttributes(CVertexBuffer* vb)
+	{
+		SVertBufComps vbc;
+		GetVertBufComps(&vbc, vb->m_vertexformat);
+
+		gl::DisableVertexAttribArray(position);
+		if (vbc.m_bHasNormals)
+		{
+			gl::DisableVertexAttribArray(normal);
+		}
+		if (vbc.m_bHasTC)
+		{
+			gl::DisableVertexAttribArray(uv);
+		}
+		if (vbc.m_bHasColors)
+		{
+			gl::DisableVertexAttribArray(color);
+		}
+
+	}
+	void EnableAttributes(CVertexBuffer* vb)
+	{
+		SVertBufComps vbc;
+		GetVertBufComps(&vbc, vb->m_vertexformat);
+
+		SetAttribPointer(GetPositionAttributePointer(vb->m_vertexformat));
+		if (vbc.m_bHasNormals)
+		{
+			SetAttribPointer(GetNormalAttributePointer(vb->m_vertexformat));
+		}
+		if (vbc.m_bHasTC)
+		{
+			SetAttribPointer(GetUVAttributePointer(vb->m_vertexformat));
+		}
+		if (vbc.m_bHasColors)
+		{
+			SetAttribPointer(GetColorAttributePointer(vb->m_vertexformat));
+		}
+	}
+}
 
 GLRenderer::GLRenderer(ISystem* engine) :
   m_pSystem(engine), m_viewPort(0, 0, 0, 0)
@@ -260,7 +373,29 @@ void GLRenderer::InitConsoleCommands()
 
 CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic/* = false*/)
 {
-	return nullptr;
+	assert(vertexformat >= VERTEX_FORMAT_P3F && vertexformat < VERTEX_FORMAT_NUMS);
+	SVertexStream stream;
+	CVertexBuffer *buffer = new CVertexBuffer;
+	stream.m_bDynamic = bDynamic;
+	stream.m_VData = CreateVertexBuffer(vertexformat, vertexcount);
+
+	//gl::GenVertexArrays(1, &buffer->m_Container);
+	//gl::BindVertexArray(buffer->m_Container);
+		gl::GenBuffer(&stream.m_VertBuf.m_nID);
+
+		gl::BindBuffer(GL_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
+		gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], nullptr, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+		//gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], stream.m_VData, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+
+		buffer->m_bDynamic = bDynamic;
+		buffer->m_NumVerts = vertexcount;
+		buffer->m_vertexformat = vertexformat;
+		buffer->m_VS[VSF_GENERAL] = stream;
+		m_VertexBufferPool.push_back({ false, buffer });
+	//gl::BindVertexArray(0);
+	debuger::buffer_label(stream.m_VertBuf.m_nID, szSource);
+	return buffer;
 }
 
 void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
@@ -269,10 +404,21 @@ void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 
 void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start/* = 0*/, int vert_stop/* = 0*/, CMatInfo* mi/* = NULL*/)
 {
+	auto to_draw = vert_stop - vert_start;
+	//gl::BindVertexArray(src->m_Container);
+	gl::BindBuffer(GL_ARRAY_BUFFER, src->m_VS[VSF_GENERAL].m_VertBuf.m_nID);
+	EnableAttributes(src);
+	gl::DrawArrays(prmode, 0, to_draw == 0 ? src->m_NumVerts : to_draw);
+	DisableAttributes(src);
+	gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+	//gl::BindVertexArray(0);
 }
 
 void GLRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs/* = 0*/, int Type/* = 0*/)
 {
+	gl::BindBuffer(GL_ARRAY_BUFFER, dest->m_VS[VSF_GENERAL].m_VertBuf.m_nID);
+	gl::BufferSubData(GL_ARRAY_BUFFER, nOffs, vertexcount * gVertexSize[dest->m_vertexformat], src);
+	gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void GLRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)

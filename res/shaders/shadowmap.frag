@@ -92,7 +92,7 @@ void main()
     vec3 ambient = dirLight.ambient*color; 
     // diffuse
     vec3 lightDir = normalize(-dirLight.direction);
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0) + 0.2;
     vec3 diffuse = diff * dirLight.diffuse * color;
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);

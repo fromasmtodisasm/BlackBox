@@ -17,7 +17,8 @@
   </material>
   <material name="specular_box" alpha="0.2">
     <textures>
-      <texture type="diffuse" name="container2.png"/>
+      <!--<texture type="diffuse" name="container2.png"/>-->
+      <texture type="diffuse" name="opengl.png"/>
       <!--<texture type="emissive" name="emissive.png"/>-->
       <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>

@@ -106,9 +106,10 @@ Object* Terrain::load(const char* heightmap)
 	//fclose(fout);
 
 	//VertexArrayObject* vb = new VertexArrayObject(vertecies.data(), static_cast<GLint>(vertecies.size()), GL_LINES, VertexArrayObject::Attributes());
-	VertexArrayObject* vb = new VertexArrayObject(vertecies.data(), static_cast<GLint>(vertecies.size()), RenderPrimitive::LINES, VertexArrayObject::Attributes());
+	//VertexArrayObject* vb = new VertexArrayObject(vertecies.data(), static_cast<GLint>(vertecies.size()), RenderPrimitive::LINES, VertexArrayObject::Attributes());
 	//std::vector<Mesh> mesh;
-	auto mesh = std::make_shared<std::vector<Mesh>>();
+	//auto mesh = std::make_shared<std::vector<Mesh>>();
+#if 0
 	Mesh _mesh(vb, nullptr);
 	//_mesh.bb = bb;
 	mesh->push_back(_mesh);
@@ -117,6 +118,8 @@ Object* Terrain::load(const char* heightmap)
 	obj->m_path = "terrain";
 	img->free();
 	return obj;
+#endif
+	return nullptr;
 }
 
 void Terrain::draw()

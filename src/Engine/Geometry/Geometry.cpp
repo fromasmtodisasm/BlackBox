@@ -1,21 +1,17 @@
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 
-Mesh::Mesh(VertexArrayObject* verts, IndexBuffer* indxs) :
-  m_Verts(verts), m_Indexes(indxs)
+Mesh::Mesh(CVertexBuffer* vertexBuffer) :
+  m_Verts(vertexBuffer)
 {
 }
 
-VertexArrayObject* Mesh::getVertexBuffer()
+CVertexBuffer* Mesh::getVertexBuffer()
 {
   return m_Verts;
 }
 
-IndexBuffer* Mesh::getIndexBuffer()
-{
-  return m_Indexes;
-}
-
+/*
 MeshRef SubdivisionShpereTessellatorSimple::Compute(int numberOfSubdivisions)
 {
     MeshRef mesh = std::make_shared<Mesh>();
@@ -64,3 +60,4 @@ MeshRef CreatePlane(int vSegment, int hSegments)
     );
     return  std::make_shared<Mesh>(vb, nullptr);
 }
+*/

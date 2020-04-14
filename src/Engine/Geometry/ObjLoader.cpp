@@ -180,7 +180,7 @@ BoundingBox ObjLoader::buildVertexData(VertexData& vertex_data, std::vector<face
       }
       bb.currentFace(face);
 
-      calcTangentSpace(face);
+      //calcTangentSpace(face);
       vertex_data.push_back(face[0]);
       vertex_data.push_back(face[1]);
       vertex_data.push_back(face[2]);
@@ -206,6 +206,7 @@ void ObjLoader::calcNormal(std::vector<Vertex>& face)
 
 void ObjLoader::calcTangentSpace(std::vector<Vertex>& face)
 {
+#if 0
   Vertex& v0 = face[0];
   Vertex& v1 = face[1];
   Vertex& v2 = face[2];
@@ -237,4 +238,5 @@ void ObjLoader::calcTangentSpace(std::vector<Vertex>& face)
   v0.btangent = glm::normalize(Bitangent);
   v1.btangent = glm::normalize(Bitangent);
   v2.btangent = glm::normalize(Bitangent);
+#endif
 }

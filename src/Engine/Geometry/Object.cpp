@@ -6,6 +6,7 @@
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Renderer/Material.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -44,7 +45,8 @@ void Object::draw(void* camera) {
 
   for (auto& mesh : *m_Mesh)
   {
-    mesh.getVertexBuffer()->draw();
+		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, GL_TRIANGLES);
+    //mesh.getVertexBuffer()->draw();
   }
 }
 
@@ -199,7 +201,7 @@ Object* Object::load(string path)
 {
   Object* obj = nullptr;
   MeshList mesh;
-  VertexArrayObject* vb = nullptr;
+  CVertexBuffer* vb = nullptr;
   VerteciesInfo vertecies;
   BoundingBox bb;
   ObjLoader OBJ;
@@ -209,11 +211,11 @@ Object* Object::load(string path)
 
   if (!gEnv->IsDedicated())
   {
-    vb = new VertexArrayObject(vertecies.data.data(), static_cast<GLint>(vertecies.data.size()), RenderPrimitive::TRIANGLES, VertexArrayObject::Attributes());
-    debuger::vertex_array_label(vb->getId(), ("model: " + path).c_str());
+		vb = gEnv->pRenderer->CreateBuffer(vertecies.data.size(), VERTEX_FORMAT_P3F_N_TEX2F, ("model: " + path).c_str());
+		gEnv->pRenderer->UpdateBuffer(vb, vertecies.data.data(), vertecies.data.size(), false);
   }
   mesh = std::make_shared<std::vector<Mesh>>();
-  Mesh _mesh(vb, nullptr);
+  Mesh _mesh(vb);
   _mesh.bb = bb;
   mesh->push_back(_mesh);
   obj = new Object();

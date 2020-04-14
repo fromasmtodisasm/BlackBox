@@ -41,6 +41,12 @@ struct IShader;
 class Material;
 class CMatInfo;
 
+//////////////////////////////////////////////////////////////////////
+typedef unsigned char bvec4[4];
+typedef float vec4_t[4];
+typedef unsigned char byte;
+typedef float vec2_t[2];
+
 // Render State flags
 #define GS_BLSRC_MASK              0xf
 #define GS_BLSRC_ZERO              0x1
@@ -73,6 +79,12 @@ class CMatInfo;
 #define GS_DEPTHFUNC_EQUAL         0x00100000
 #define GS_DEPTHFUNC_GREAT         0x00200000
 #define GS_STENCIL                 0x00400000
+
+union UCol
+{
+	uint dcolor;
+	bvec4 bcolor;
+};
 
 enum class RenderPrimitive
 {
@@ -147,9 +159,9 @@ struct SDispFormat
 //////////////////////////////////////////////////////////////////////////
 // Stream ID's
 #define VSF_GENERAL  0  // General vertex buffer
-#define VSF_TANGENTS 1  // Tangents buffer
+//#define VSF_TANGENTS 1  // Tangents buffer
 
-#define VSF_NUM      2  // Number of vertex streams
+#define VSF_NUM      1  // Number of vertex streams
 
 // Stream Masks (Used during updating)
 #define VSM_GENERAL  (1<<VSM_GENERAL)
@@ -222,16 +234,25 @@ public:
   }
   void *GetStream(int nStream, int *nOffs);
 
-  SVertexStream m_VS[VSF_NUM]; // 4 vertex streams and one index stream
+  SVertexStream m_VS[VSF_NUM]; // 1 vertex streams and one index stream
 
   uint m_bFenceSet : 1;
   uint m_bDynamic : 1;
 	int		m_vertexformat;
 	unsigned int m_fence;
   int   m_NumVerts;
+	uint m_Container; 
 //## MM unused?	void *pPS2Buffer;
 
   int Size(int Flags, int nVerts);
+};
+//////////////////////////////////////////////////////////////////////
+struct SVertBufComps
+{
+  bool m_bHasTC;
+  bool m_bHasColors;
+  bool m_bHasSecColors;
+  bool m_bHasNormals;
 };
 
 struct IRenderer
