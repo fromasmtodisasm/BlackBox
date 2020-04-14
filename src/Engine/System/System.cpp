@@ -808,6 +808,8 @@ void CSystem::RenderEnd()
 
 	//m_GuiManager.Render();
 
+	if (m_Render)
+		m_Render->Update();
 	m_pWindow->swap();
 }
 
@@ -908,8 +910,6 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		m_pWindow->update();
 	if (m_pConsole)
 		m_pConsole->Update();
-	if (m_Render)
-		m_Render->Update();
 	if (m_pNetwork)
 		m_pNetwork->UpdateNetwork();
 	if (m_pWindow && m_pWindow->closed())

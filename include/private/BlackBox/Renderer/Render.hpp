@@ -188,6 +188,7 @@ private:
   Hardware m_Hardware;
 
 	std::vector<SVertexPoolEntry> m_VertexBufferPool;
+	int m_FrameID = 0;
 
   // Inherited via IRenderer
   virtual void SetRenderTarget(int nHandle) override;

@@ -81,7 +81,7 @@ namespace
 	inline VertexAttributePointer GetUVAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
-			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsTC)
+			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(0x18)
 		);
 	}
 
@@ -223,6 +223,7 @@ void GLRenderer::BeginFrame(void)
 
 void GLRenderer::Update(void)
 {
+	m_FrameID++;
 }
 
 void GLRenderer::GetViewport(int* x, int* y, int* width, int* height)
@@ -379,13 +380,13 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const
 	stream.m_bDynamic = bDynamic;
 	stream.m_VData = CreateVertexBuffer(vertexformat, vertexcount);
 
-	//gl::GenVertexArrays(1, &buffer->m_Container);
-	//gl::BindVertexArray(buffer->m_Container);
+	gl::GenVertexArrays(1, &buffer->m_Container);
+	gl::BindVertexArray(buffer->m_Container);
 		gl::GenBuffer(&stream.m_VertBuf.m_nID);
 
 		gl::BindBuffer(GL_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
 		gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], nullptr, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-		gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+		//gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 		//gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], stream.m_VData, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
 		buffer->m_bDynamic = bDynamic;
@@ -393,6 +394,7 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const
 		buffer->m_vertexformat = vertexformat;
 		buffer->m_VS[VSF_GENERAL] = stream;
 		m_VertexBufferPool.push_back({ false, buffer });
+		EnableAttributes(buffer);
 	//gl::BindVertexArray(0);
 	debuger::buffer_label(stream.m_VertBuf.m_nID, szSource);
 	return buffer;
@@ -405,13 +407,13 @@ void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start/* = 0*/, int vert_stop/* = 0*/, CMatInfo* mi/* = NULL*/)
 {
 	auto to_draw = vert_stop - vert_start;
-	//gl::BindVertexArray(src->m_Container);
-	gl::BindBuffer(GL_ARRAY_BUFFER, src->m_VS[VSF_GENERAL].m_VertBuf.m_nID);
-	EnableAttributes(src);
+	gl::BindVertexArray(src->m_Container);
+	//gl::BindBuffer(GL_ARRAY_BUFFER, src->m_VS[VSF_GENERAL].m_VertBuf.m_nID);
+	//EnableAttributes(src);
 	gl::DrawArrays(prmode, 0, to_draw == 0 ? src->m_NumVerts : to_draw);
-	DisableAttributes(src);
-	gl::BindBuffer(GL_ARRAY_BUFFER, 0);
-	//gl::BindVertexArray(0);
+	//DisableAttributes(src);
+	//gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+	gl::BindVertexArray(0);
 }
 
 void GLRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs/* = 0*/, int Type/* = 0*/)
