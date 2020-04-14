@@ -1,9 +1,10 @@
+#include <BlackBox/Renderer/Render.hpp>
+
 #include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
-#include <BlackBox/Renderer/Render.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
@@ -257,6 +258,40 @@ void GLRenderer::InitConsoleCommands()
   */
 }
 
+CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic/* = false*/)
+{
+	return nullptr;
+}
+
+void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
+{
+}
+
+void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start/* = 0*/, int vert_stop/* = 0*/, CMatInfo* mi/* = NULL*/)
+{
+}
+
+void GLRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs/* = 0*/, int Type/* = 0*/)
+{
+}
+
+void GLRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
+{
+}
+
+void GLRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock/* = true*/)
+{
+}
+
+void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
+{
+}
+
+int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls/* = true*/)
+{
+	return 0;
+}
+
 void GLRenderer::printHardware()
 {
   std::stringstream hardware_info;
@@ -464,11 +499,6 @@ bool GLRenderer::OnInputEvent(const SInputEvent& event)
     break;
   }
   return false;
-}
-
-int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls)
-{
-	return 0;
 }
 
 void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)

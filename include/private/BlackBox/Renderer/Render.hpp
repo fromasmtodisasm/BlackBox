@@ -193,4 +193,19 @@ private:
 
 	// Inherited via CRenderer
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
+
+	virtual CVertexBuffer* CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false) override;
+
+	virtual void ReleaseBuffer(CVertexBuffer* bufptr) override;
+
+	virtual void DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_stop = 0, CMatInfo* mi = NULL) override;
+
+	virtual void UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs = 0, int Type = 0) override;
+
+	virtual void CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount) override;
+
+	virtual void UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) override;
+
+	virtual void ReleaseIndexBuffer(SVertexStream* dest) override;
+
 };

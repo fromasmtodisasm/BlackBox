@@ -24,6 +24,7 @@ typedef unsigned short	ushort;
 
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/IShader.hpp>
+#include <BlackBox/Renderer/Light.hpp>
 
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////
@@ -37,6 +38,8 @@ struct IWindow;
 struct IFont;
 class CCamera;
 struct IShader;
+class Material;
+class CMatInfo;
 
 // Render State flags
 #define GS_BLSRC_MASK              0xf
@@ -139,6 +142,96 @@ struct SDispFormat
   int m_Height;
   int m_BPP;
   SDispFormat() {}
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Stream ID's
+#define VSF_GENERAL  0  // General vertex buffer
+#define VSF_TANGENTS 1  // Tangents buffer
+
+#define VSF_NUM      2  // Number of vertex streams
+
+// Stream Masks (Used during updating)
+#define VSM_GENERAL  (1<<VSM_GENERAL)
+#define VSM_TANGENTS (1<<VSF_TANGENTS)
+
+//////////////////////////////////////////////////////////////////////////
+union UHWBuf
+{
+  void *m_pPtr;
+  uint m_nID;
+};
+
+//////////////////////////////////////////////////////////////////////////
+struct SVertexStream
+{
+  void *m_VData;      // pointer to buffer data
+  UHWBuf m_VertBuf;   // HW buffer descriptor 
+  int m_nItems;
+  bool m_bLocked;     // Used in Direct3D only
+  bool m_bDynamic;
+  int m_nBufOffset;
+  struct SVertPool *m_pPool;
+  SVertexStream()
+  {
+    Reset();
+    m_bDynamic = false;
+    m_nBufOffset = 0;
+    m_pPool = NULL;
+  }
+
+  void Reset()
+  {
+    m_VData = NULL;
+    m_VertBuf.m_pPtr = NULL;
+    m_nItems = NULL;
+    m_bLocked = false;
+  }
+};
+
+//////////////////////////////////////////////////////////////////////
+// General VertexBuffer created by CreateVertexBuffer() function
+class CVertexBuffer
+{
+public:	
+  CVertexBuffer() 
+  {
+    for (int i=0; i<VSF_NUM; i++)
+    {
+      m_VS[i].Reset();
+    }
+    m_fence=0;
+    m_bFenceSet=0;
+    m_NumVerts = 0;
+    m_vertexformat = 0;
+  }
+  
+  CVertexBuffer(void* pData, int nVertexFormat, int nVertCount=0)
+  {
+    for (int i=0; i<VSF_NUM; i++)
+    {
+      m_VS[i].m_VData = NULL;
+      m_VS[i].m_VertBuf.m_pPtr = NULL;
+      m_VS[i].m_bLocked = false;
+    }
+    m_VS[VSF_GENERAL].m_VData = pData;
+    m_vertexformat = nVertexFormat;
+	  m_fence=0;
+	  m_bFenceSet=0;
+    m_NumVerts = nVertCount;
+  }
+  void *GetStream(int nStream, int *nOffs);
+
+  SVertexStream m_VS[VSF_NUM]; // 4 vertex streams and one index stream
+
+  uint m_bFenceSet : 1;
+  uint m_bDynamic : 1;
+	int		m_vertexformat;
+	unsigned int m_fence;
+  int   m_NumVerts;
+//## MM unused?	void *pPS2Buffer;
+
+  int Size(int Flags, int nVerts);
 };
 
 struct IRenderer
@@ -258,6 +351,23 @@ struct IRenderer
   virtual void DrawFullscreenQuad() = 0;
   virtual void Set2DMode(bool enable, int ortox, int ortoy)=0;
 
+	//! Create a vertex buffer
+	virtual	CVertexBuffer	*CreateBuffer(int  vertexcount,int vertexformat, const char *szSource, bool bDynamic=false)=0;
+
+	//! Release a vertex buffer
+	virtual void	ReleaseBuffer(CVertexBuffer *bufptr)=0;
+
+	//! Draw a vertex buffer
+	virtual void	DrawBuffer(CVertexBuffer *src,SVertexStream *indicies,int numindices, int offsindex, int prmode,int vert_start=0,int vert_stop=0, CMatInfo *mi=NULL)=0;
+
+	//! Update a vertex buffer
+	virtual void	UpdateBuffer(CVertexBuffer *dest,const void *src,int vertexcount, bool bUnLock, int nOffs=0, int Type=0)=0;
+
+  virtual void  CreateIndexBuffer(SVertexStream *dest,const void *src,int indexcount)=0;
+  //! Update indicies 
+  virtual void  UpdateIndexBuffer(SVertexStream *dest,const void *src, int indexcount, bool bUnLock=true)=0;
+  virtual void  ReleaseIndexBuffer(SVertexStream *dest)=0;
+
   ////////////////////////////////////////////////////////////////////////////////
   virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;
 };
@@ -268,5 +378,9 @@ extern "C" {
 
 struct SRenderParams
 {
-	
+	IShader* Shader;
+	Material* Material;
+	CCamera* Camera;
+	DirectionLight* DirectionLight;
+	Mat4 Transform;
 };
