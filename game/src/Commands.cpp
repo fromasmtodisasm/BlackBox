@@ -192,6 +192,37 @@ MoveCommand::MoveCommand(CGame* game) : BaseGameCommand(game)
   m_World = game->getWorld();
 }
 //*******************************************************
+class ScaleCommand : public BaseGameCommand
+{
+  IWorld* m_World;
+public:
+  ScaleCommand(CGame* game);
+private:
+  // Inherited via IConsoleCommand
+  virtual bool execute(CommandDesc& cd) override
+  {
+    auto obj = m_World->GetActiveScene()->selectedObject()->second;
+    auto args_it = cd.args.begin();
+    if (cd.args.size() >= 3)
+    {
+      if (cd.args.size() == 4)
+      {
+        std::string name = wstr_to_str(*args_it++);
+        obj = m_World->GetActiveScene()->getObject(name);
+      }
+      auto scale = unpack_vector(args_it);
+      obj->scale(scale);
+      return true;
+    }
+    return false;
+  }
+};
+
+ScaleCommand::ScaleCommand(CGame* game) : BaseGameCommand(game)
+{
+  m_World = game->getWorld();
+}
+//*******************************************************
 class RotateCommand : public BaseGameCommand
 {
   IWorld* m_World;
@@ -536,6 +567,7 @@ void CGame::initCommands()
   m_Console->AddCommand("goto", new GotoCommand(this), "Change mode [FPS/FLY/MENU/EDIT]");
   m_Console->AddCommand("quit", new QuitCommand(this));
   m_Console->AddCommand("move", new MoveCommand(this));
+  m_Console->AddCommand("scale", new ScaleCommand(this));
   m_Console->AddCommand("rotate", new RotateCommand(this));
   m_Console->AddCommand("select", new SelectCommand(this));
   m_Console->AddCommand("exec", new ExecCommand(this), "Load end execute scripts");

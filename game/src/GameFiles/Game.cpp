@@ -50,10 +50,16 @@ public:
 
 class TreeObject : public Object
 {
+	TreeObject(TreeRender *treeRender) : m_TreeRender(std::unique_ptr<TreeRender>(treeRender)) {
+	
+	
+	}
 	virtual void draw(void* camera) final
 	{
-
+		Object::draw(camera);
 	}
+
+	std::unique_ptr<TreeRender> m_TreeRender;
 };
 
 

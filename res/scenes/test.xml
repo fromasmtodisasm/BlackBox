@@ -25,7 +25,7 @@
         <positions file="res/geom/points.txt"/>
         <uv scaleX="100" scaleY="100"/>
     </object>-->
-    <!--<object name="terrain" type="object" visible="true" transparent="true">
+    <object name="terrain" type="object" visible="true" transparent="true">
         <mesh name="res/geom/terrain.obj"/>
         <transform>
             <position>
@@ -47,7 +47,7 @@
         <material name="terrain"/>
         <uv scaleX="100" scaleY="100"/>
     </object>
-    <object name="babe" type="object" visible="true" transparent="false">
+    <!--<object name="babe" type="object" visible="true" transparent="false">
         <mesh name="res/geom/test.bin"/>
         <transform>
             <position>
@@ -208,9 +208,9 @@
     </light>
     <light name="sun" type="direction" enabled="false">
         <direction x="-0.2" y="-2" z="26.700001"/>
-        <ambient x="0" y="0" z="0"/>
-        <diffuse x="0" y="0" z="0"/>
-        <specular x="0" y="0" z="0"/>
+        <ambient r="0.1" g="0.07 " b="0.1"/>
+        <diffuse r="0.9" g="0.8" b="0.9"/>
+        <specular r="0.5" g="0.5" b="0.5"/>
     </light>
     <camera name="main">
         <transform>

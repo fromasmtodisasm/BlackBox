@@ -18,8 +18,8 @@
   <material name="specular_box" alpha="0.2">
     <textures>
       <texture type="diffuse" name="container2.png"/>
-      <texture type="emissive" name="emissive.png"/>
-      <texture type="specular" name="container2_specular.png"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
+      <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>
     <shader name="phong"/>
   </material>
@@ -29,7 +29,7 @@
       <!--<texture type="emissive" name="emissive.png"/>-->
       <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>
-    <shader name="wireframe_phong"/>
+    <shader name="phong"/>
   </material>
   <material name="wood_box">
     <textures>
@@ -78,7 +78,7 @@
   </material>
   <material name="player" alpha="0.1">
     <textures>
-      <texture type="diffuse" name="coral.png"/>
+      <texture type="diffuse" name="pengium.png"/>
       <texture type="specular" name="gray.png"/>
     </textures>
     <shader name="phong"/>

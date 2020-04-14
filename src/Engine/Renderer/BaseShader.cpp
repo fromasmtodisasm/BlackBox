@@ -148,7 +148,7 @@ CShader* CShader::load(ShaderDesc  const& desc) {
   if (shader->Create())
   {
     shader->Compile();
-    shader->print();
+    ///shader->print();
     shader->m_Empty = false;
     debuger::shader_label(shader->get(), path);
   }

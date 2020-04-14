@@ -39,7 +39,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp
 
-
+	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.h
 	PRIVATE ${SOURCE_DIR}/UI/ScriptObjectUI.cpp
@@ -73,6 +73,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/UI/UIVideoPanel.h
 	PRIVATE ${SOURCE_DIR}/UI/UIWidget.cpp
 	PRIVATE ${SOURCE_DIR}/UI/UIWidget.h
+	]]
 
   )
 
