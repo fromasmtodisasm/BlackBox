@@ -8,6 +8,7 @@
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Renderer/BaseTexture.hpp>
 
 ShadowMapping::ShadowMapping()
 	: m_Scene(nullptr), m_DepthBuffer(nullptr)
@@ -24,6 +25,8 @@ bool ShadowMapping::Init(IScene* scene, FrameBufferObject* renderTarget)
 	m_Scene	  = dynamic_cast<Scene*>(scene);
 	//
 	m_DepthBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::DEPTH_BUFFER, width, height, 1, false);
+	m_DepthTexture = new Texture(m_DepthBuffer->texture[0]);
+	m_DepthTexture->setUnit(6);
 
 	if (renderTarget == nullptr)
 	{
@@ -179,16 +182,11 @@ void ShadowMapping::RenderOpaque(Object* object)
 		add_uniform(renderParams, "projection", Pipeline::instance()->projection);
 		add_uniform(renderParams, "viewPos", Pipeline::instance()->view_pos);
 		add_uniform(renderParams, "material.shininess", 128.0f);
-		renderParams.Transform = object->getTransform();
+		add_uniform(renderParams, "shadoMap", m_DepthTexture);
 
+		renderParams.Transform = object->getTransform();
 		SetupLights(object);
 		object->m_Material->apply(object);
-
-		program->Uniform(1, "shadowMap");
-		gl::ActiveTexture(GL_TEXTURE1);
-
-		gl::BindTexture2D(m_DepthBuffer->texture[0]);
-
 		object->draw(renderParams);
 	}
 }

@@ -84,6 +84,7 @@ private:
   IRenderer* m_pRender = nullptr;
   Scene* m_Scene;
   FrameBufferObject* m_DepthBuffer;
+	ITexture* m_DepthTexture;
   FrameBufferObject* m_RenderedScene;
   BaseShaderProgramRef m_ShadowMapShader;
   glm::mat4 lightSpaceMatrix;
