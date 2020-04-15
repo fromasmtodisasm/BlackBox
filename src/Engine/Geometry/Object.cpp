@@ -40,11 +40,48 @@ void Object::draw(SRenderParams& renderParams) {
   DEBUG_GROUP(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
 
-  NormalMatrix = glm::mat3(glm::transpose(glm::inverse(getTransform())));
-  m_Material->program->Uniform(NormalMatrix, "NormalMatrix");
+	add_uniform(renderParams, "NormalMatrix", glm::mat3(glm::transpose(glm::inverse(getTransform()))));
 
   for (auto& mesh : *m_Mesh)
   {
+		for (auto& uv : renderParams.uniforms)
+		{
+			switch (uv.type)
+			{
+			case UniformValue::Type::FLOAT_VAL:
+				m_Material->program->Uniform(uv.val.f, uv.name.data());
+				break;
+			case UniformValue::Type::INT_VAL:
+				m_Material->program->Uniform(uv.val.i, uv.name.data());
+				break;
+			case UniformValue::Type::V1_VAL:
+				m_Material->program->Uniform(uv.val.v1, uv.name.data());
+				break;
+			case UniformValue::Type::V2_VAL:
+				m_Material->program->Uniform(uv.val.v2, uv.name.data());
+				break;
+			case UniformValue::Type::V3_VAL:
+				m_Material->program->Uniform(uv.val.v3, uv.name.data());
+				break;
+			case UniformValue::Type::V4_VAL:
+				m_Material->program->Uniform(uv.val.v4, uv.name.data());
+				break;
+			case UniformValue::Type::M2_VAL:
+				m_Material->program->Uniform(uv.val.m2, uv.name.data());
+				break;
+			case UniformValue::Type::M3_VAL:
+				m_Material->program->Uniform(uv.val.m3, uv.name.data());
+				break;
+			case UniformValue::Type::M4_VAL:
+				m_Material->program->Uniform(uv.val.m4, uv.name.data());
+				break;
+			case UniformValue::Type::Samp_VAL:
+				m_Material->program->Uniform(uv.val.t, uv.name.data());
+				break;
+			default:
+				break;
+			}
+		}
 		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, GL_TRIANGLES);
   }
 }

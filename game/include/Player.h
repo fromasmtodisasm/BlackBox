@@ -32,7 +32,7 @@ class CPlayer : public GameObject
   }mouseState;
   Vec2 delta;
   Vec3 impulse = Vec3(0.f, 3.f, 0.f);
-  float floor = 4.f;
+  float floor = 1.f;
 
 public:
   CPlayer(CGame *game);

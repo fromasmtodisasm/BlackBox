@@ -22,6 +22,8 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
+static const int SIZEOF_INDEX = sizeof(short);
+
 namespace
 {
 	enum AttributeLocation : GLuint {
@@ -81,13 +83,13 @@ namespace
 	inline VertexAttributePointer GetUVAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
-			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(0x18)
+			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsTC)
 		);
 	}
 
 	void SetAttribPointer(VertexAttributePointer vap)
 	{
-		gl::EnableVertexAttribArray(position);
+		gl::EnableVertexAttribArray(vap.index);
 		gl::VertexAttribPointer(
 				vap.index, vap.size, vap.type, vap.normalized, vap.stride, vap.pointer 
 				);
@@ -115,20 +117,21 @@ namespace
 	void EnableAttributes(CVertexBuffer* vb)
 	{
 		SVertBufComps vbc;
-		GetVertBufComps(&vbc, vb->m_vertexformat);
+		auto& vf = vb->m_vertexformat;
+		GetVertBufComps(&vbc, vf);
 
-		SetAttribPointer(GetPositionAttributePointer(vb->m_vertexformat));
+		SetAttribPointer(GetPositionAttributePointer(vf));
 		if (vbc.m_bHasNormals)
 		{
-			SetAttribPointer(GetNormalAttributePointer(vb->m_vertexformat));
+			SetAttribPointer(GetNormalAttributePointer(vf));
 		}
 		if (vbc.m_bHasTC)
 		{
-			SetAttribPointer(GetUVAttributePointer(vb->m_vertexformat));
+			SetAttribPointer(GetUVAttributePointer(vf));
 		}
 		if (vbc.m_bHasColors)
 		{
-			SetAttribPointer(GetColorAttributePointer(vb->m_vertexformat));
+			SetAttribPointer(GetColorAttributePointer(vf));
 		}
 	}
 }
@@ -386,8 +389,6 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const
 
 		gl::BindBuffer(GL_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
 		gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], nullptr, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-		//gl::BindBuffer(GL_ARRAY_BUFFER, 0);
-		//gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], stream.m_VData, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
 		buffer->m_bDynamic = bDynamic;
 		buffer->m_NumVerts = vertexcount;
@@ -395,8 +396,8 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const
 		buffer->m_VS[VSF_GENERAL] = stream;
 		m_VertexBufferPool.push_back({ false, buffer });
 		EnableAttributes(buffer);
-	//gl::BindVertexArray(0);
-	debuger::buffer_label(stream.m_VertBuf.m_nID, szSource);
+	gl::BindVertexArray(0);
+	debuger::vertex_array_label(stream.m_VertBuf.m_nID, szSource);
 	return buffer;
 }
 
@@ -408,11 +409,7 @@ void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int num
 {
 	auto to_draw = vert_stop - vert_start;
 	gl::BindVertexArray(src->m_Container);
-	//gl::BindBuffer(GL_ARRAY_BUFFER, src->m_VS[VSF_GENERAL].m_VertBuf.m_nID);
-	//EnableAttributes(src);
 	gl::DrawArrays(prmode, 0, to_draw == 0 ? src->m_NumVerts : to_draw);
-	//DisableAttributes(src);
-	//gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 	gl::BindVertexArray(0);
 }
 
@@ -425,10 +422,26 @@ void GLRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexco
 
 void GLRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
 {
+	assert(dest != nullptr);
+	assert(src != nullptr);
+
+	SVertexStream stream;
+	stream.m_bDynamic = false;
+	stream.m_nBufOffset = 0;
+	stream.m_nItems = indexcount;
+
+	gl::GenBuffer(&stream.m_VertBuf.m_nID);
+	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
+	gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, indexcount * sizeof(short), nullptr, GL_STATIC_DRAW);
+	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 }
 
 void GLRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock/* = true*/)
 {
+	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, dest->m_VertBuf.m_nID);
+	gl::BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexcount * SIZEOF_INDEX, src);
+	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
@@ -437,7 +450,7 @@ void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 
 int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls/* = true*/)
 {
-	return 0;
+	return m_FrameID;
 }
 
 void GLRenderer::printHardware()

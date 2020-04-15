@@ -25,24 +25,24 @@ class ShadowMapping
   };
   struct BaseLightValues
   {
-    UniformValue ambient;
+    /*UniformValue ambient;
     UniformValue diffuse;
-    UniformValue specular;
+    UniformValue specular;*/
   };
 
   struct PointLightValues : public BaseLightValues
   {
-    UniformValue position;
+    /*UniformValue position;
     UniformValue constant;
     UniformValue linear;
-    UniformValue quadratic;
+    UniformValue quadratic;*/
   };
 
   struct SpotLightValues : public PointLightValues
   {
-    UniformValue direction;
+    /*UniformValue direction;
     UniformValue cutOff;
-    UniformValue outerCutOff;
+    UniformValue outerCutOff;*/
   };
 
 public:
@@ -107,7 +107,7 @@ private:
   //////////////////////////
   int currentLight = 0;
 
-  UniformValue m_DirectionLight;
+  //UniformValue m_DirectionLight;
   std::vector<PointLightValues> m_PointLights;
   std::vector<SpotLightValues> m_SpotLights;
 

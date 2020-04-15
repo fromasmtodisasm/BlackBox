@@ -1,7 +1,10 @@
 #pragma once
 //#include <BlackBox/Renderer/IRender.hpp>
 #include <string>
+#include <string_view>
 #include <map>
+
+struct ITexture;
 
 //////////////////////////////////////////////////////////////////////
 struct UniformValue
@@ -17,8 +20,25 @@ struct UniformValue
     M1_VAL,
     M2_VAL,
     M3_VAL,
-    M4_VAL
+    M4_VAL,
+		Samp_VAL
   };
+  union value
+  {
+    int i;
+    float f;
+    glm::vec1 v1;
+    glm::vec2 v2;
+    glm::vec3 v3;
+    glm::vec4 v4;
+
+    glm::mat2 m2;
+    glm::mat3 m3;
+    glm::mat4 m4;
+		ITexture* t;
+  }val;
+	UniformValue() = default;
+	UniformValue(std::string_view name, Type type) : name(name), type(type) {}
 	template<class T>
 	inline void Set(T value)
 	{
@@ -60,6 +80,57 @@ struct UniformValue
   inline void Set(glm::mat4 value)
   {
 		val.m4 = value;
+  }
+
+  inline void Set(ITexture* value)
+  {
+		val.t = value;
+  }
+
+  inline void Set(value val)
+  {
+    int len = 0;
+    switch (type)
+    {
+    case UniformValue::Type::INT_VAL:
+      len = sizeof(int);
+      Set(val.i);
+      break;
+    case UniformValue::Type::FLOAT_VAL:
+      len = sizeof(float);
+      Set(val.f);
+      break;
+    case UniformValue::Type::V1_VAL:
+      len = sizeof(glm::vec1);
+      Set(val.v1);
+      break;
+    case UniformValue::Type::V2_VAL:
+      len = sizeof(glm::vec2);
+      Set(val.v2);
+      break;
+    case UniformValue::Type::V3_VAL:
+      len = sizeof(glm::vec3);
+      Set(val.v3);
+      break;
+    case UniformValue::Type::V4_VAL:
+      len = sizeof(glm::vec4);
+      Set(val.v4);
+      break;
+    case UniformValue::Type::M2_VAL:
+      len = sizeof(glm::mat2);
+      Set(val.m2);
+      break;
+    case UniformValue::Type::M3_VAL:
+      len = sizeof(glm::mat3);
+      Set(val.m3);
+      break;
+    case UniformValue::Type::M4_VAL:
+      len = sizeof(glm::mat4);
+      Set(val.m4);
+      break;
+    default:
+      break;
+    }
   }
 
   inline void* Get(UniformValue::Type type, void* res)
@@ -162,19 +233,8 @@ struct UniformValue
 		value = val.m4;
   }
   int location = -1;
-  union value
-  {
-    int i;
-    float f;
-    glm::vec1 v1;
-    glm::vec2 v2;
-    glm::vec3 v3;
-    glm::vec4 v4;
-
-    glm::mat2 m2;
-    glm::mat3 m3;
-    glm::mat4 m4;
-  }val;
+	std::string_view name;
+	Type type;
   bool dirty;
 };
 
@@ -283,6 +343,7 @@ public:
   virtual void Uniform(Mat3 value, const char* format, ...) = 0;
   virtual void Uniform(Mat4 value, const char* format, ...) = 0;
   virtual void Uniform(glm::ivec4 value, const char* format, ...) = 0;
+  virtual void Uniform(ITexture* texture, const char* format, ...) = 0;
 
   template<typename T>
   void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }

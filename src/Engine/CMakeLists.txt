@@ -13,7 +13,7 @@ add_library(BB_Private INTERFACE)
 set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
 set_property(DIRECTORY APPEND PROPERTY INCLUDE_DIRECTORIES "${BLACKBOX_PRIVATE_INCLUDE_DIRS}/.." "${BLACKBOX_PUBLIC_INCLUDE_DIRS}/..")
 
-#set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 target_compile_features(BlackBox PUBLIC cxx_std_17)
 target_compile_features(Common INTERFACE cxx_std_17)
 

@@ -9,16 +9,23 @@
   </material>
   <material name="sprite2">
     <textures>
-      <texture type="diffuse" name="container2.png"/>
-      <texture type="emissive" name="emissive.png"/>
-      <texture type="specular" name="container2_specular.png"/>
+      <texture type="diffuse" name="DirectXLogo.png"/>
+    </textures>
+    <shader name="phong"/>
+  </material>
+  <material name="dx_box" alpha="0.2">
+    <textures>
+      <!--<texture type="diffuse" name="container2.png"/>-->
+      <texture type="diffuse" name="opengl.png"/>
+      <!--<texture type="emissive" name="emissive.png"/>-->
+      <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>
     <shader name="phong"/>
   </material>
   <material name="specular_box" alpha="0.2">
     <textures>
       <!--<texture type="diffuse" name="container2.png"/>-->
-      <texture type="diffuse" name="opengl.png"/>
+      <texture type="diffuse" name="DirectXLogo.png"/>
       <!--<texture type="emissive" name="emissive.png"/>-->
       <!--<texture type="specular" name="container2_specular.png"/>-->
     </textures>

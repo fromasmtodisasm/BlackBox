@@ -441,12 +441,13 @@ GLint CBaseShaderProgram::GetUniformLocation(std::string& name)
 
 UniformValue CBaseShaderProgram::GetUniformValue(const char* name)
 {
-  UniformValue result;
-  auto location = GetUniformLocation(name);
+  //UniformValue result(name);
+  //auto location = GetUniformLocation(name);
 
-  result.location = location;
-  //result.program = m_Program;
-  return result;
+  //result.location = location;
+  ////result.program = m_Program;
+  //return result;
+	return UniformValue();
 }
 
 void CBaseShaderProgram::Uniform(int value, const char* format, ...)
@@ -550,6 +551,19 @@ void CBaseShaderProgram::Uniform(glm::ivec4 value, const char* format, ...)
   GLint loc = GetUniformLocation(name);
   if (loc != -1) {
     glCheck(glUniform4iv(loc, 1, glm::value_ptr(value)));
+  }
+}
+
+void CBaseShaderProgram::Uniform(ITexture* texture, const char* format, ...)
+{
+  va_list ptr;
+  va_start(ptr, format);
+  auto name = buildName(format, ptr);
+  va_end(ptr);
+
+  GLint loc = GetUniformLocation(name);
+  if (loc != -1) {
+		BindTexture2D(texture->getId(), texture->getUnit(), name);
   }
 }
 

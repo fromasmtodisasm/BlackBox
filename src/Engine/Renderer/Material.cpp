@@ -57,7 +57,7 @@ void Material::apply(Object* object)
     program->Uniform(diffuseColor, "diffuseColor");
   }
   program->Uniform(object->uvMatrix, "uvMatrix");
-  program->setup();
+  //program->setup();
 }
 
 void Material::setTexture(Texture* texture, const char* type)

@@ -39,9 +39,9 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>6</X>
-                <Y>6</Y>
-                <Z>6</Z>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
             </scale>
         </transform>
         <material name="terrain"/>
@@ -74,7 +74,7 @@
         <transform>
             <position>
                 <X>0</X>
-                <Y>9.6492796</Y>
+                <Y>0</Y>
                 <Z>-20</Z>
             </position>
             <rotation>
@@ -83,19 +83,19 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>10</X>
-                <Y>10</Y>
-                <Z>10</Z>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
             </scale>
         </transform>
         <material name="player"/>
     </object>
-    <object name="brick_normal_box" type="object" visible="true" transparent="false">
+    <object name="dx_box" type="object" visible="true" transparent="false">
         <mesh name="res/geom/box.obj"/>
         <transform>
             <position>
-                <X>0</X>
-                <Y>15</Y>
+                <X>3</X>
+                <Y>1</Y>
                 <Z>0</Z>
             </position>
             <rotation>
@@ -104,9 +104,30 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>10</X>
-                <Y>10</Y>
-                <Z>10</Z>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <material name="dx_box"/>
+    </object>
+    <object name="brick_normal_box" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/box.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>1</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
             </scale>
         </transform>
         <material name="specular_box"/>
@@ -146,9 +167,9 @@
                 <Z>0</Z>
             </rotation>
             <scale>
-                <X>8000</X>
-                <Y>8000</Y>
-                <Z>8000</Z>
+                <X>800</X>
+                <Y>800</Y>
+                <Z>800</Z>
             </scale>
         </transform>
         <uv scaleX="800" scaleY="800"/>

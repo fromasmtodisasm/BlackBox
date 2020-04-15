@@ -353,6 +353,13 @@ namespace gl {
 	{
 		glCheck(glBufferSubData(target, offset, size, data));
 	}
+
+	inline void DeleteBuffers(GLsizei n, const GLuint *buffers)
+	{
+		glCheck(glDeleteBuffers(n, buffers));
+	}
+
+
   inline void UniformValue(GLint location, int value)
   {
     glCheck(glUniform1i(location, value));

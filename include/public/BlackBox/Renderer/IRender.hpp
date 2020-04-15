@@ -26,6 +26,8 @@ typedef unsigned short	ushort;
 #include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/Renderer/Light.hpp>
 
+#include <vector>
+
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////
 typedef void* WIN_HWND;
@@ -116,6 +118,7 @@ struct ITexture
   virtual bool load(const char* name) = 0;
   virtual void bind() = 0;
   virtual void setUnit(uint unit) = 0;
+  virtual uint getUnit() = 0;
   virtual void setType(const char* TextureType) = 0;
   virtual const char* typeToStr() = 0;
   virtual int getWidth() = 0;
@@ -400,6 +403,7 @@ extern "C" {
 struct SRenderParams
 {
 	IShader* Shader;
+	std::vector<UniformValue> uniforms;
 	Material* Material;
 	CCamera* Camera;
 	DirectionLight* DirectionLight;

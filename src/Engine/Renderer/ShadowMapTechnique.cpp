@@ -167,25 +167,28 @@ void ShadowMapping::RenderOpaque(Object* object)
 		SRenderParams renderParams;
 		auto program = object->m_Material->program;
 		program->Use();
-		program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
-		program->Uniform(lightPos, "lightPos");
-		program->Uniform(object->m_Material->alpha, "alpha");
-		//program->Uniform(bLighting, "lightOn");
-		Pipeline::instance()->shader = program;
-		Pipeline::instance()->model	 = object->getTransform();
+
+
+		add_uniform(renderParams, "lightSpaceMatrix", lightSpaceMatrix);
+		add_uniform(renderParams, "lightPos", lightPos);
+		add_uniform(renderParams, "alpha", object->m_Material->alpha);
+		add_uniform(renderParams, "frame_id", frame_id);
+
+		add_uniform(renderParams, "model", Pipeline::instance()->model);
+		add_uniform(renderParams, "view", Pipeline::instance()->view);
+		add_uniform(renderParams, "projection", Pipeline::instance()->projection);
+		add_uniform(renderParams, "viewPos", Pipeline::instance()->view_pos);
+		add_uniform(renderParams, "material.shininess", 128.0f);
+		renderParams.Transform = object->getTransform();
 
 		SetupLights(object);
 		object->m_Material->apply(object);
+
 		program->Uniform(1, "shadowMap");
 		gl::ActiveTexture(GL_TEXTURE1);
+
 		gl::BindTexture2D(m_DepthBuffer->texture[0]);
 
-		if (object->m_path.find("terrain") != object->m_path.npos)
-			program->Uniform(true, "isTerrain");
-		else
-			program->Uniform(false, "isTerrain");
-		program->Uniform(frame_id, "frame_id");
-		//glPointSize(7);
 		object->draw(renderParams);
 	}
 }

@@ -50,6 +50,10 @@ public:
   virtual int getWidth() override;
   virtual int getHeight() override;
   virtual int getId() override;
+	virtual uint getUnit() override
+	{
+		return unit;
+	}
 };
 
 #endif // BASETEXTUREXTURE_HPP

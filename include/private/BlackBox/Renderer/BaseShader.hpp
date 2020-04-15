@@ -110,6 +110,7 @@ public:
   virtual void Uniform(Mat3 value, const char* format, ...) override;
   virtual void Uniform(Mat4 value, const char* format, ...) override;
   virtual void Uniform(glm::ivec4 value, const char* format, ...) override;
+  virtual void Uniform(ITexture* texture, const char* format, ...) override;
 
   template<typename T>
   void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
