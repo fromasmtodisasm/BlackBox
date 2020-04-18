@@ -99,7 +99,6 @@ public:
   void setCamera(std::string name, CCamera* camera);
   CCamera* getCurrentCamera();
   SkyBox* GetSkyBox();
-  const PointLightList& GetPointLights();
   Terrain* getTerrain();
   GLint getRenderTarget();
 
@@ -117,6 +116,11 @@ public:
   void ForEachDirectionLight(ForEachDirectionLightSink* callback);
   void ForEachPointLight(ForEachPointLightSink* callback);
   void ForEachSpotLight(ForEachSpotLightSink* callback);
+
+  const DirectionLightList& GetDirectionLights();
+  const PointLightList& GetPointLights();
+  const SpotLightList& GetSpotLights();
+
   void setTechnique(ITechnique* technique);
 
 

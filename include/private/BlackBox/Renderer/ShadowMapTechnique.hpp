@@ -6,10 +6,10 @@
 class ShadowMapping
   :
   public ITechnique,
-  public ForEachObjectSink,
-  public ForEachDirectionLightSink,
-  public ForEachPointLightSink,
-  public ForEachSpotLightSink
+  public ForEachObjectSink
+  //public ForEachDirectionLightSink,
+  //public ForEachPointLightSink,
+  //public ForEachSpotLightSink
 {
   enum Pass
   {
@@ -60,11 +60,11 @@ public:
   virtual bool OnObjectFound(Object* object) override;
 
   // Inherited via ForEachDirectionLightSink
-  virtual bool OnLightFound(DirectionLight* light) override;
+  virtual bool OnLightFound(const DirectionLight* light, SRenderParams& renderParams);
   // Inherited via ForEachPointLightSink
-  virtual bool OnLightFound(PointLight* light) override;
+  virtual bool OnLightFound(const PointLight* light, SRenderParams& renderParams) ;
   // Inherited via ForEachSpotLightSink
-  virtual bool OnLightFound(SpotLight* light) override;
+  virtual bool OnLightFound(const SpotLight* light, SRenderParams& renderParams) ;
 
   void RenderOpaque(Object* object);
   void RenderTransparent(Object* object);
@@ -75,10 +75,10 @@ private:
 
   void OnDepthPass();
   void OnRenderPass();
-  void SetupLights(Object* object);
-  inline void SetupDirectionLights();
-  inline void SetupPointLights();
-  inline void SetupSpotLights();
+  void SetupLights(SRenderParams& renderParams);
+  inline void SetupDirectionLights(SRenderParams& renderParams);
+  inline void SetupPointLights(SRenderParams& renderParams);
+  inline void SetupSpotLights(SRenderParams& renderParams);
   void InitLights();
 private:
   IRenderer* m_pRender = nullptr;

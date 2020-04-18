@@ -10,6 +10,8 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/BaseTexture.hpp>
 
+#include <sstream>
+
 ShadowMapping::ShadowMapping()
 	: m_Scene(nullptr), m_DepthBuffer(nullptr)
 {
@@ -134,7 +136,7 @@ void ShadowMapping::RenderDepth(Object* object)
 	if (object->visible())
 	{
 		SRenderParams renderParams;
-		m_ShadowMapShader->Uniform(object->getTransform(), "model");
+		//m_ShadowMapShader->Uniform(object->getTransform(), "model");
 		m_ShadowMapShader->setup();
 		object->draw(renderParams);
 	}
@@ -148,9 +150,6 @@ void ShadowMapping::RenderOpaque(Object* object)
 		glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
 	{
 		SRenderParams renderParams;
-		auto program = object->m_Material->program;
-		program->Use();
-
 
 		add_uniform(renderParams, "lightSpaceMatrix", lightSpaceMatrix);
 		add_uniform(renderParams, "lightPos", lightPos);
@@ -165,8 +164,8 @@ void ShadowMapping::RenderOpaque(Object* object)
 		add_uniform(renderParams, "shadoMap", m_DepthTexture);
 
 		renderParams.Transform = object->getTransform();
-		SetupLights(object);
-		object->m_Material->apply(object);
+		renderParams.Material = object->getMaterial();
+		SetupLights(renderParams);
 		object->draw(renderParams);
 	}
 }
@@ -179,18 +178,12 @@ void ShadowMapping::RenderTransparent(Object* object)
 	if (object->m_transparent && (object->visible()))
 	{
 		SRenderParams renderParams;
-		auto program = object->m_Material->program;
-		program->Use();
-		program->Uniform(lightSpaceMatrix, "lightSpaceMatrix");
-		program->Uniform(lightPos, "lightPos");
-		program->Uniform(object->m_Material->alpha, "alpha");
-		program->Uniform(GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
+		add_uniform(renderParams, "lightSpaceMatrix", lightSpaceMatrix);
+		add_uniform(renderParams, "lightPos", lightPos);
+		add_uniform(renderParams, "alpha", object->m_Material->alpha);
+		add_uniform(renderParams, "bloomThreshold", GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal());
 
-		Pipeline::instance()->shader = program;
-
-		SetupLights(object);
-		object->m_Material->apply(object);
-
+		SetupLights(renderParams);
 		object->draw(renderParams);
 	}
 	m_pRender->SetState(IRenderer::State::BLEND, false);
@@ -226,36 +219,47 @@ void ShadowMapping::OnRenderPass()
 	RenderPass();
 }
 
-void ShadowMapping::SetupLights(Object* object)
+void ShadowMapping::SetupLights(SRenderParams& renderParams)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	if (!bLighting)
 		return;
 	currentLight				 = 0;
-	Pipeline::instance()->object = object;
 	// direction lights
-	SetupDirectionLights();
+	SetupDirectionLights(renderParams);
 	// point lights
-	SetupPointLights();
+	SetupPointLights(renderParams);
 	// spotLight
-	SetupSpotLights();
+	SetupSpotLights(renderParams);
 
-	object->m_Material->program->Uniform(currentLight + 1, "countOfPointLights");
+	add_uniform(renderParams, "countOfPointLights", currentLight + 1);
 }
 
-void ShadowMapping::SetupDirectionLights()
+void ShadowMapping::SetupDirectionLights(SRenderParams& renderParams)
 {
-	m_Scene->ForEachDirectionLight(this);
+	for (const auto& light : m_Scene->GetDirectionLights())
+	{
+		OnLightFound(light.second, renderParams);
+	}
 }
 
-void ShadowMapping::SetupPointLights()
+void ShadowMapping::SetupPointLights(SRenderParams& renderParams)
 {
-	m_Scene->ForEachPointLight(this);
+	for (const auto& light : m_Scene->GetPointLights())
+	{
+		OnLightFound(light.second, renderParams);
+	}
+
 }
 
-void ShadowMapping::SetupSpotLights()
+void ShadowMapping::SetupSpotLights(SRenderParams& renderParams)
 {
-	m_Scene->ForEachDirectionLight(this);
+#if 0
+	for (const auto& light : m_Scene->GetSpotLights())
+	{
+		OnLightFound(light.second, renderParams);
+	}
+#endif
 }
 
 void ShadowMapping::InitLights()
@@ -310,30 +314,29 @@ int ShadowMapping::GetFrame()
 	return m_RenderedScene->texture[0];
 }
 
-bool ShadowMapping::OnLightFound(DirectionLight* light)
+bool ShadowMapping::OnLightFound(const DirectionLight* light, SRenderParams& renderParams)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	auto program = Pipeline::instance()->object->m_Material->program;
-	program->Uniform(light->direction, "dirLight.direction");
-	program->Uniform(light->ambient, "dirLight.ambient");
-	program->Uniform(light->diffuse, "dirLight.diffuse");
-	program->Uniform(light->specular, "dirLight.specular");
+	add_uniform(renderParams, "dirLight.direction", light->direction);
+	add_uniform(renderParams, "dirLight.ambient", light->ambient);
+	add_uniform(renderParams, "dirLight.diffuse", light->diffuse);
+	add_uniform(renderParams, "dirLight.specular", light->specular);
 	return true;
 }
 
-bool ShadowMapping::OnLightFound(PointLight* light)
+bool ShadowMapping::OnLightFound(const PointLight* light, SRenderParams& renderParams)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	if (light->enabled)
 	{
-		auto program = Pipeline::instance()->object->m_Material->program;
-		program->Uniform(light->position, "pointLights[%d].position", currentLight);
-		program->Uniform(light->ambient, "pointLights[%d].ambient", currentLight);
-		program->Uniform(light->diffuse, "pointLights[%d].diffuse", currentLight);
-		program->Uniform(light->specular, "pointLights[%d].specular", currentLight);
-		program->Uniform(light->constant, "pointLights[%d].constant", currentLight);
-		program->Uniform(light->linear, "pointLights[%d].linear", currentLight);
-		program->Uniform(light->quadratic, "pointLights[%d].quadratic", currentLight);
+		std::stringstream ss;
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].position", ss.str().c_str()),  light->position );
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].ambient", ss.str().c_str()),  light->ambient );
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].diffuse", ss.str().c_str()),  light->diffuse );
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].specular", ss.str().c_str()),  light->specular );
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].constant", ss.str().c_str()),  light->constant );
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].linear", ss.str().c_str()),  light->linear );
+		add_uniform(renderParams, (ss << "pointLights[" << currentLight << "].quadratic", ss.str().c_str()),  light->quadratic );
 		++currentLight;
 
 		//program->Uniform(light.second->position, "lightPos", currentLight);
@@ -342,7 +345,7 @@ bool ShadowMapping::OnLightFound(PointLight* light)
 	return true;
 }
 
-bool ShadowMapping::OnLightFound(SpotLight* light)
+bool ShadowMapping::OnLightFound(const SpotLight* light, SRenderParams& renderParams)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	auto program = Pipeline::instance()->object->m_Material->program;

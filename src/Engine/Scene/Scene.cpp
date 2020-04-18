@@ -264,9 +264,21 @@ void Scene::ForEachSpotLight(ForEachSpotLightSink* callback)
 	}
 }
 
+const DirectionLightList& Scene::GetDirectionLights()
+{
+	return m_DirectionLight;
+}
+
 const PointLightList& Scene::GetPointLights()
 {
 	return m_PointLights;
+}
+
+const SpotLightList& Scene::GetSpotLights()
+{
+	
+	return m_SpotLights;
+
 }
 
 Terrain* Scene::getTerrain()

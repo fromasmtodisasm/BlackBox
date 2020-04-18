@@ -40,6 +40,7 @@ void Object::draw(SRenderParams& renderParams) {
 
 	add_uniform(renderParams, "NormalMatrix", glm::mat3(glm::transpose(glm::inverse(getTransform()))));
 	auto &p = m_Material->program;
+	p->Use();
 
   for (auto& mesh : *m_Mesh)
   {
@@ -90,6 +91,7 @@ void Object::draw(SRenderParams& renderParams) {
 				break;
 			}
 		}
+		m_Material->apply(this);
 		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, GL_TRIANGLES);
   }
 }
