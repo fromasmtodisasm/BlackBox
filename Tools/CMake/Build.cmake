@@ -24,7 +24,6 @@ endif()
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 
 
-message(STATUS "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII")
 message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")
 
 clang_format("${ALL_PROJECT_SOURCES}")

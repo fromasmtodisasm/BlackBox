@@ -1,6 +1,5 @@
 #pragma once
 #include <BlackBox/Renderer/Shader.hpp>
-#include <BlackBox/Renderer/ShaderUtils.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <map>
@@ -18,7 +17,8 @@ public:
   _smart_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader);
   _smart_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader);
   _smart_ptr<CShaderProgram> getDefaultProgram();
-  _smart_ptr<CShader> getShader(ShaderDesc const& desc, bool isReload);
+  ShaderRef getShader(ShaderDesc const& desc, bool isReload);
+  ShaderRef addShader(const ShaderDesc& desc);
   void removeShader(std::string name);
   static bool init();
 private:

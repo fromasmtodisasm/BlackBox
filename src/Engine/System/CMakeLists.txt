@@ -14,8 +14,6 @@ if (NEED_VC)
 endif()
 ##################################################
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Common)
-target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
 

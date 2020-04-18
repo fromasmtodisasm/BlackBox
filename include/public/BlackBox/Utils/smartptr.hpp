@@ -22,6 +22,7 @@ template <class _I> class _smart_ptr
 private:
   _I* p;
 public:
+	typedef _I value_type;
   _smart_ptr() : p(NULL) {}
 #if defined(LINUX64)
   _smart_ptr(typeof(__null)) : p(NULL) {}

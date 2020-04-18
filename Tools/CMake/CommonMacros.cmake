@@ -88,4 +88,25 @@ macro(add_subsystem subsystem)
 
 endmacro()
 
+macro(install_this THIS_PROJECT)
+#[[
+	###################################################
+	install (
+	  TARGETS  ${THIS_PROJECT}
+	  EXPORT ${THIS_PROJECT}Config
+	  RUNTIME DESTINATION bin
+	  #LIBRARY DESTINATION lib
+	  ARCHIVE DESTINATION lib/static
+	)
+
+	# This makes the project importable from the install directory
+	# Put config file in per-project dir (name MUST match), can also
+	# just go into 'cmake'.
+	install(EXPORT ${THIS_PROJECT}Config DESTINATION .)
+
+	# This makes the project importable from the build directory
+	export(TARGETS ${THIS_PROJECT} FILE ${THIS_PROJECT}Config.cmake)
+]]
+endmacro()
+
 CommonMacrosInit()

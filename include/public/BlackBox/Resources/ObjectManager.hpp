@@ -1,12 +1,12 @@
 #pragma once
 
-class Object;
-struct Mesh;
-
 #include <map>
 #include <string>
 #include <memory>
 #include <vector>
+
+class Object;
+struct Mesh;
 
 struct LoadObjectSink
 {

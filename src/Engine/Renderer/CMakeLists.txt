@@ -71,8 +71,6 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE Common)
-target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
 target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})

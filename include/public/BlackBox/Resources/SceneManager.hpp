@@ -1,9 +1,9 @@
 #pragma once
-#include <BlackBox/System/IConsole.hpp>
 
 class Scene;
 class IScene;
 struct LoadObjectSink;
+struct ICVar;
 
 #include <map>
 #include <string>

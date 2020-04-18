@@ -15,9 +15,6 @@ endif()
 add_package(sdl2-net)
 add_package(SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE BB_Private)
-target_link_libraries(${PROJECT_NAME} PRIVATE Common)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 
 target_sources(${PROJECT_NAME}
