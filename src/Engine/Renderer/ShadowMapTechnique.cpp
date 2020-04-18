@@ -110,9 +110,6 @@ void ShadowMapping::RenderPass()
 	DEBUG_GROUP(__FUNCTION__);
 	auto camera = m_Scene->getCurrentCamera();
 
-	Pipeline::instance()->view		 = camera->getViewMatrix();
-	Pipeline::instance()->projection = camera->getProjectionMatrix();
-	Pipeline::instance()->view_pos	 = camera->getPosition();
 
 	// Render opaque objects
 	renderStage = RENDER_OPAQUE;
@@ -124,23 +121,6 @@ void ShadowMapping::RenderPass()
 	for (auto& mesh : *obj->second->m_Mesh)
 	{
 		mesh.bb.draw();
-	}
-
-	auto points = m_Scene->getPoints();
-	if (points != nullptr)
-	{
-		points->shader->Use();
-		points->shader->Uniform(
-			Pipeline::instance()->projection *
-				Pipeline::instance()->view *
-				Pipeline::instance()->model,
-			"MVP");
-		if (auto ps = GetISystem()->GetIConsole()->GetCVar("point_size"))
-		{
-			points->shader->Uniform(ps->GetIVal(), "point_size");
-		}
-		points->draw();
-		points->shader->Unuse();
 	}
 
 	// Render transparent objects
@@ -177,10 +157,10 @@ void ShadowMapping::RenderOpaque(Object* object)
 		add_uniform(renderParams, "alpha", object->m_Material->alpha);
 		add_uniform(renderParams, "frame_id", frame_id);
 
-		add_uniform(renderParams, "model", Pipeline::instance()->model);
-		add_uniform(renderParams, "view", Pipeline::instance()->view);
-		add_uniform(renderParams, "projection", Pipeline::instance()->projection);
-		add_uniform(renderParams, "viewPos", Pipeline::instance()->view_pos);
+		add_uniform(renderParams, "model", object->getTransform());
+		add_uniform(renderParams, "view", gEnv->pRenderer->GetCamera().getViewMatrix());
+		add_uniform(renderParams, "projection", gEnv->pRenderer->GetCamera().getProjectionMatrix());
+		add_uniform(renderParams, "viewPos", gEnv->pRenderer->GetCamera().transform.position);
 		add_uniform(renderParams, "material.shininess", 128.0f);
 		add_uniform(renderParams, "shadoMap", m_DepthTexture);
 
@@ -207,7 +187,6 @@ void ShadowMapping::RenderTransparent(Object* object)
 		program->Uniform(GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal(), "bloomThreshold");
 
 		Pipeline::instance()->shader = program;
-		Pipeline::instance()->model	 = object->getTransform();
 
 		SetupLights(object);
 		object->m_Material->apply(object);

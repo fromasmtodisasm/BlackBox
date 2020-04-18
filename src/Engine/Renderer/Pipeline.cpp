@@ -73,7 +73,8 @@ void BoundingBox::draw()
 
   /* Apply object's transformation matrix */
   //glm::mat4 m = mesh->object2world * transform;
-  Pipeline::instance()->model = Pipeline::instance()->object->getTransform() * transform;
+	//FIXME: rewrite setup shader parameters
+  //Pipeline::instance()->model = Pipeline::instance()->object->getTransform() * transform;
   Pipeline::instance()->shader->setup();
 
   glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices));

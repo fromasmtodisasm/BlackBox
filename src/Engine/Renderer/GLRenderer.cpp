@@ -1,7 +1,6 @@
 #include <BlackBox/Renderer/Render.hpp>
 
 #include <BlackBox/Renderer/BaseShader.hpp>
-#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
@@ -244,11 +243,12 @@ void GLRenderer::SetScissor(int x, int y, int width, int height)
 
 void GLRenderer::SetCamera(const CCamera& cam)
 {
+	m_Camera = cam;
 }
 
 const CCamera& GLRenderer::GetCamera()
 {
-  return *m_Camera;
+  return m_Camera;
 }
 
 bool GLRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)

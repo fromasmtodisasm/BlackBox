@@ -36,13 +36,6 @@ find_package(OpenGL REQUIRED)
 add_package(tinyxml2)
 add_package(freetype)
 #--------------------------------------------------
-#[[
-target_include_directories(
-BB_Private
-	INTERFACE "${SUBMODULES_DIR}/stb/"
-)
-]]
-#--------------------------------------------------
 ###################################################
 # Subs
 ###################################################

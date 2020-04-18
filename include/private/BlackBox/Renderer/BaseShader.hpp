@@ -99,27 +99,27 @@ public:
   virtual GLint GetUniformLocation(std::string& name) override;
   UniformValue GetUniformValue(const char* name);
   void Uniform(bool value, const char* format, ...) { Uniform((int)value, format);}
-  virtual void Uniform(int value, const char* format, ...) override;
-  virtual void Uniform(unsigned int value, const char* format, ...) override;
-  virtual void Uniform(float value, const char* format, ...) override;
-  virtual void Uniform(Vec1 value, const char* format, ...) override;
-  virtual void Uniform(Vec2 value, const char* format, ...) override;
-  virtual void Uniform(Vec3 value, const char* format, ...) override;
-  virtual void Uniform(Vec4 value, const char* format, ...) override;
-  virtual void Uniform(Mat2 value, const char* format, ...) override;
-  virtual void Uniform(Mat3 value, const char* format, ...) override;
-  virtual void Uniform(Mat4 value, const char* format, ...) override;
-  virtual void Uniform(glm::ivec4 value, const char* format, ...) override;
-  virtual void Uniform(ITexture* texture, const char* format, ...) override;
+  virtual void Uniform(const int value, const char* format, ...) override;
+  virtual void Uniform(const unsigned int value, const char* format, ...) override;
+  virtual void Uniform(const float value, const char* format, ...) override;
+  virtual void Uniform(const Vec1 value, const char* format, ...) override;
+  virtual void Uniform(const Vec2 value, const char* format, ...) override;
+  virtual void Uniform(const Vec3 value, const char* format, ...) override;
+  virtual void Uniform(const Vec4 value, const char* format, ...) override;
+  virtual void Uniform(const Mat2 value, const char* format, ...) override;
+  virtual void Uniform(const Mat3 value, const char* format, ...) override;
+  virtual void Uniform(const Mat4 value, const char* format, ...) override;
+  virtual void Uniform(const glm::ivec4 value, const char* format, ...) override;
+  virtual void Uniform(const ITexture* texture, const char* format, ...) override;
 
   template<typename T>
-  void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
+  void Uniform(const T value, std::string name) { Uniform(value, name.c_str()); }
 
   void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label);
 
   virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
   virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
-  virtual GLuint Get() override;
+  virtual uint Get() override;
   virtual void setup() = 0;
   virtual void Dump() override;
 private:
@@ -132,8 +132,8 @@ public:
   ShaderInfo m_Geometry;
   ShaderInfo m_Compute;
 
-  GLuint m_Program;
-  GLchar infoLog[512];
+  uint m_Program;
+  char infoLog[512];
   ShaderProgramStatus m_Status;
 
   bool created = false;

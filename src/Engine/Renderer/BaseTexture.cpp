@@ -106,17 +106,17 @@ void Image::free()
   delete[] data;
 }
 
-int BaseTexture::getWidth()
+int BaseTexture::getWidth() const 
 {
   return width;
 }
 
-int BaseTexture::getHeight()
+int BaseTexture::getHeight() const 
 {
   return height;
 }
 
-int BaseTexture::getId()
+int BaseTexture::getId() const 
 {
   return id;
 }

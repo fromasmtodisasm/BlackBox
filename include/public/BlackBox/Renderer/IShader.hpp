@@ -5,6 +5,7 @@
 #include <map>
 
 struct ITexture;
+class CCamera;
 
 //////////////////////////////////////////////////////////////////////
 struct UniformValue
@@ -21,7 +22,8 @@ struct UniformValue
     M2_VAL,
     M3_VAL,
     M4_VAL,
-		Samp_VAL
+		Samp_VAL,
+		CAMERA_VAL
   };
   union value
   {
@@ -36,6 +38,7 @@ struct UniformValue
     glm::mat3 m3;
     glm::mat4 m4;
 		ITexture* t;
+		CCamera *c;
   }val;
 	UniformValue() = default;
 	UniformValue(std::string_view name, Type type) : name(name), type(type) {}
@@ -85,6 +88,11 @@ struct UniformValue
   inline void Set(ITexture* value)
   {
 		val.t = value;
+  }
+
+  inline void Set(CCamera* value)
+  {
+		val.c = value;
   }
 
   inline void Set(value val)
@@ -332,21 +340,21 @@ public:
   virtual int GetUniformLocation(std::string& name) = 0;
   //UniformValue GetUniformValue(const char* name);
   void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
-  virtual void Uniform(int value, const char* format, ...) = 0;
-  virtual void Uniform(unsigned int value, const char* format, ...) = 0;
-  virtual void Uniform(float value, const char* format, ...) = 0;
-  virtual void Uniform(Vec1 value, const char* format, ...) = 0;
-  virtual void Uniform(Vec2 value, const char* format, ...) = 0;
-  virtual void Uniform(Vec3 value, const char* format, ...) = 0;
-  virtual void Uniform(Vec4 value, const char* format, ...) = 0;
-  virtual void Uniform(Mat2 value, const char* format, ...) = 0;
-  virtual void Uniform(Mat3 value, const char* format, ...) = 0;
-  virtual void Uniform(Mat4 value, const char* format, ...) = 0;
-  virtual void Uniform(glm::ivec4 value, const char* format, ...) = 0;
-  virtual void Uniform(ITexture* texture, const char* format, ...) = 0;
+  virtual void Uniform(const int value, const char* format, ...) = 0;
+  virtual void Uniform(const unsigned int value, const char* format, ...) = 0;
+  virtual void Uniform(const float value, const char* format, ...) = 0;
+  virtual void Uniform(const Vec1 value, const char* format, ...) = 0;
+  virtual void Uniform(const Vec2 value, const char* format, ...) = 0;
+  virtual void Uniform(const Vec3 value, const char* format, ...) = 0;
+  virtual void Uniform(const Vec4 value, const char* format, ...) = 0;
+  virtual void Uniform(const Mat2 value, const char* format, ...) = 0;
+  virtual void Uniform(const Mat3 value, const char* format, ...) = 0;
+  virtual void Uniform(const Mat4 value, const char* format, ...) = 0;
+  virtual void Uniform(const glm::ivec4 value, const char* format, ...) = 0;
+  virtual void Uniform(const ITexture* texture, const char* format, ...) = 0;
 
   template<typename T>
-  void Uniform(T value, std::string name) { Uniform(value, name.c_str()); }
+  void Uniform(const T value, std::string name) { Uniform(value, name.c_str()); }
 
   void Reload(IShader *v, IShader *f, IShader *g, IShader *c, const char* label);
 

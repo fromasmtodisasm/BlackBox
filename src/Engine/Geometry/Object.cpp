@@ -1,10 +1,8 @@
 #include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Geometry/ObjLoader.hpp>
-#include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/Renderer.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
@@ -41,6 +39,7 @@ void Object::draw(SRenderParams& renderParams) {
   glm::mat3 NormalMatrix(1.0);
 
 	add_uniform(renderParams, "NormalMatrix", glm::mat3(glm::transpose(glm::inverse(getTransform()))));
+	auto &p = m_Material->program;
 
   for (auto& mesh : *m_Mesh)
   {
@@ -49,34 +48,43 @@ void Object::draw(SRenderParams& renderParams) {
 			switch (uv.type)
 			{
 			case UniformValue::Type::FLOAT_VAL:
-				m_Material->program->Uniform(uv.val.f, uv.name.data());
+				p->Uniform(uv.val.f, uv.name.data());
 				break;
 			case UniformValue::Type::INT_VAL:
-				m_Material->program->Uniform(uv.val.i, uv.name.data());
+				p->Uniform(uv.val.i, uv.name.data());
 				break;
 			case UniformValue::Type::V1_VAL:
-				m_Material->program->Uniform(uv.val.v1, uv.name.data());
+				p->Uniform(uv.val.v1, uv.name.data());
 				break;
 			case UniformValue::Type::V2_VAL:
-				m_Material->program->Uniform(uv.val.v2, uv.name.data());
+				p->Uniform(uv.val.v2, uv.name.data());
 				break;
 			case UniformValue::Type::V3_VAL:
-				m_Material->program->Uniform(uv.val.v3, uv.name.data());
+				p->Uniform(uv.val.v3, uv.name.data());
 				break;
 			case UniformValue::Type::V4_VAL:
-				m_Material->program->Uniform(uv.val.v4, uv.name.data());
+				p->Uniform(uv.val.v4, uv.name.data());
 				break;
 			case UniformValue::Type::M2_VAL:
-				m_Material->program->Uniform(uv.val.m2, uv.name.data());
+				p->Uniform(uv.val.m2, uv.name.data());
 				break;
 			case UniformValue::Type::M3_VAL:
-				m_Material->program->Uniform(uv.val.m3, uv.name.data());
+				p->Uniform(uv.val.m3, uv.name.data());
 				break;
 			case UniformValue::Type::M4_VAL:
-				m_Material->program->Uniform(uv.val.m4, uv.name.data());
+				p->Uniform(uv.val.m4, uv.name.data());
 				break;
 			case UniformValue::Type::Samp_VAL:
-				m_Material->program->Uniform(uv.val.t, uv.name.data());
+				p->Uniform(static_cast<const ITexture*>(uv.val.t), uv.name.data());
+				break;
+			case UniformValue::Type::CAMERA_VAL:
+			{
+				CCamera *c = uv.val.c;
+				p->Uniform(c->getViewMatrix(), "view");
+				p->Uniform(c->getProjectionMatrix(), "projection");
+				p->Uniform(c->getProjectionMatrix(), "viewPos");
+				break;
+			}
 				break;
 			default:
 				break;

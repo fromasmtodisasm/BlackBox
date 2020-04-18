@@ -8,7 +8,6 @@ enable_testing()
 add_executable(${PROJECT_NAME} Main.cpp)
 target_link_libraries(Launcher PRIVATE  BlackBox)
 target_link_libraries(Launcher PRIVATE  FPS_Game)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 
 if(WIN32)

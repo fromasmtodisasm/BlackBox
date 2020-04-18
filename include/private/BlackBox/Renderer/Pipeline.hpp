@@ -14,11 +14,6 @@ public:
 private:
   Pipeline() = default;
 public:
-  glm::mat4 model;
-  glm::mat4 view;
-  glm::mat4 projection;
-  glm::mat4 transform;
-  glm::vec3 view_pos;
   BaseTexture* skyBox;
   IShaderProgram* shader;
   Object* object;

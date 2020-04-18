@@ -47,10 +47,10 @@ public:
   void SaveMipMaps();
 #endif
 
-  virtual int getWidth() override;
-  virtual int getHeight() override;
-  virtual int getId() override;
-	virtual uint getUnit() override
+  virtual int getWidth() const override;
+  virtual int getHeight() const override;
+  virtual int getId() const override;
+	virtual uint getUnit() const override
 	{
 		return unit;
 	}

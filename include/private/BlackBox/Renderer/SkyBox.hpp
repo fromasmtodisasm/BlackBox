@@ -3,11 +3,10 @@
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/Renderer/TextureCube.hpp>
-#include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 
 class SkyBox : public IDrawable
 {
@@ -86,15 +85,13 @@ public:
   // Унаследовано через IDrawable
   virtual void draw(SRenderParams& renderParams) override
   {
-    glm::mat4 View = Pipeline::instance()->view;
-    glm::mat4 Projection = Pipeline::instance()->projection;
     glCheck(glDepthMask(GL_FALSE));
     glCheck(glDepthFunc(GL_LEQUAL));
     shader->Use();
     // ... задание видовой и проекционной матриц
-    shader->Uniform(glm::mat4(glm::mat3(View)), "View");
-    shader->Uniform(Projection, "Projection");
-		shader->BindTextureUnit2D(Pipeline::instance()->skyBox->id, 0);
+    shader->Uniform(gEnv->pRenderer->GetCamera().getViewMatrix(), "View");
+    shader->Uniform(gEnv->pRenderer->GetCamera().getProjectionMatrix(), "Projection");
+		shader->BindTextureUnit2D(texture->getId(), 0);
 
     texture->bind();
 		gEnv->pRenderer->DrawBuffer(vertexBuffer, nullptr, 0, 0, GL_TRIANGLES);

@@ -450,7 +450,7 @@ UniformValue CBaseShaderProgram::GetUniformValue(const char* name)
 	return UniformValue();
 }
 
-void CBaseShaderProgram::Uniform(int value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const int value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -463,7 +463,7 @@ void CBaseShaderProgram::Uniform(int value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(unsigned int value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const unsigned int value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -476,7 +476,7 @@ void CBaseShaderProgram::Uniform(unsigned int value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(float value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const float value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -489,7 +489,7 @@ void CBaseShaderProgram::Uniform(float value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Vec1 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Vec1 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -502,7 +502,7 @@ void CBaseShaderProgram::Uniform(Vec1 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Vec2 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Vec2 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -515,7 +515,7 @@ void CBaseShaderProgram::Uniform(Vec2 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Vec3 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Vec3 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -528,7 +528,7 @@ void CBaseShaderProgram::Uniform(Vec3 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Vec4 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Vec4 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -541,7 +541,7 @@ void CBaseShaderProgram::Uniform(Vec4 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(glm::ivec4 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const glm::ivec4 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -554,7 +554,7 @@ void CBaseShaderProgram::Uniform(glm::ivec4 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(ITexture* texture, const char* format, ...)
+void CBaseShaderProgram::Uniform(const ITexture* texture, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -567,7 +567,7 @@ void CBaseShaderProgram::Uniform(ITexture* texture, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Mat2 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Mat2 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -580,7 +580,7 @@ void CBaseShaderProgram::Uniform(Mat2 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Mat3 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Mat3 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);
@@ -593,7 +593,7 @@ void CBaseShaderProgram::Uniform(Mat3 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Uniform(Mat4 value, const char* format, ...)
+void CBaseShaderProgram::Uniform(const Mat4 value, const char* format, ...)
 {
   va_list ptr;
   va_start(ptr, format);

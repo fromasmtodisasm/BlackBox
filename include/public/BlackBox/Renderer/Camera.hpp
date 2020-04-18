@@ -51,8 +51,8 @@ public:
   CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-  Mat4 getViewMatrix();
-  Mat4 getProjectionMatrix();
+  Mat4 getViewMatrix() const;
+  Mat4 getProjectionMatrix() const;
 
   Vec3 getPosition();
   Vec3 getRotation();

@@ -118,12 +118,12 @@ struct ITexture
   virtual bool load(const char* name) = 0;
   virtual void bind() = 0;
   virtual void setUnit(uint unit) = 0;
-  virtual uint getUnit() = 0;
+  virtual uint getUnit() const = 0;
   virtual void setType(const char* TextureType) = 0;
   virtual const char* typeToStr() = 0;
-  virtual int getWidth() = 0;
-  virtual int getHeight() = 0;
-  virtual int getId() = 0;
+  virtual int getWidth() const = 0;
+  virtual int getHeight() const = 0;
+  virtual int getId() const = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,6 @@
 #include <thread>
 #include <filesystem>
 
-using namespace Utils;
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -916,6 +915,12 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	{
 		m_pGame->SendMessage("Quit");
 	}
+	if (!nPauseMode)
+	{
+			m_pWorld->Update(GetDeltaTime());
+	}
+
+	m_Render->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
 	return true;
 }
 

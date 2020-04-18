@@ -33,12 +33,12 @@ CCamera::CCamera(float posX, float posY, float posZ, float upX, float upY, float
 }
 
 // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-glm::mat4 CCamera::getViewMatrix()
+glm::mat4 CCamera::getViewMatrix() const
 {
   return glm::lookAt(this->transform.position, this->transform.position + this->Front, this->Up);
 }
 
-glm::mat4 CCamera::getProjectionMatrix()
+glm::mat4 CCamera::getProjectionMatrix() const
 {
   return glm::perspective(glm::radians(FOV->GetFVal()), Ratio, zNear, zFar->GetFVal());
 }

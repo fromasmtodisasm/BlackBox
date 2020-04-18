@@ -273,10 +273,6 @@ bool CGame::Update() {
     m_time += m_deltaTime;
     fps = 1.0f / m_deltaTime;
     ExecScripts();
-    if (!IsInPause())
-    {
-        m_World->Update(m_pSystem->GetDeltaTime());
-    }
 
     auto camera = m_World->GetActiveScene()->getCurrentCamera();
 

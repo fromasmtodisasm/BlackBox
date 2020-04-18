@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Renderer/BaseRenderer.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 
 struct IWindow;
 
@@ -144,7 +145,7 @@ private:
   const int antialiassing = 8;
 	std::shared_ptr<OpenglDebuger> glDebug;
   //============
-  CCamera* m_Camera = nullptr;
+  CCamera m_Camera;
   Quad* m_ScreenQuad = nullptr;
   // Shaders
   BaseShaderProgramRef m_ScreenShader;

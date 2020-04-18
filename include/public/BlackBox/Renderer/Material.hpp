@@ -68,6 +68,7 @@ template<> struct uv_type<glm::mat2> { const static UniformValue::Type type = Un
 template<> struct uv_type<glm::mat3> { const static UniformValue::Type type = UniformValue::Type::M3_VAL; };
 template<> struct uv_type<glm::mat4> { const static UniformValue::Type type = UniformValue::Type::M4_VAL; };
 template<> struct uv_type<ITexture*> { const static UniformValue::Type type = UniformValue::Type::Samp_VAL; };
+template<> struct uv_type<CCamera*> { const static UniformValue::Type type = UniformValue::Type::CAMERA_VAL; };
 
 
 template<class T>

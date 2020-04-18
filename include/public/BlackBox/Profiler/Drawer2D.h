@@ -3,6 +3,7 @@
 #ifndef __DRAWER2D_H__
 #define __DRAWER2D_H__
 
+#ifdef ENABLE_PROFILER
 #include <BlackBox/Render/OpenGL/Core.hpp>
 #include <BlackBox/Profiler/Utils.h>
 
@@ -52,5 +53,6 @@ private:
 };
 
 extern Drawer2D drawer2D;
+#endif
 
 #endif // __DRAWER2D_H__
