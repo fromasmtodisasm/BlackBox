@@ -6,7 +6,7 @@
 #include <vector>
 
 class Object;
-struct Mesh;
+class Mesh;
 
 struct LoadObjectSink
 {

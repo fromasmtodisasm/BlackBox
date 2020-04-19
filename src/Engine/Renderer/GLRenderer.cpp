@@ -1,6 +1,8 @@
-#include <BlackBox/Renderer/Render.hpp>
 
-#include <BlackBox/Renderer/BaseShader.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
+
+#include <BlackBox/Renderer/Render.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
@@ -133,6 +135,19 @@ namespace
 			SetAttribPointer(GetColorAttributePointer(vf));
 		}
 	}
+
+	GLenum toGlPrimitive(RenderPrimitive rp)
+	{
+		switch (rp)
+		{
+		case RenderPrimitive::LINES: return GL_LINES;
+		case RenderPrimitive::LINE_STRIP: return GL_LINE_STRIP;
+		case RenderPrimitive::TRIANGLES: return GL_TRIANGLES;
+		case RenderPrimitive::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+		default: return -1;
+		}
+	}
+
 }
 
 GLRenderer::GLRenderer(ISystem* engine) :
@@ -408,8 +423,9 @@ void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start/* = 0*/, int vert_stop/* = 0*/, CMatInfo* mi/* = NULL*/)
 {
 	auto to_draw = vert_stop - vert_start;
+	assert(glIsVertexArray(src->m_Container));
 	gl::BindVertexArray(src->m_Container);
-	gl::DrawArrays(prmode, 0, to_draw == 0 ? src->m_NumVerts : to_draw);
+	gl::DrawArrays(toGlPrimitive(static_cast<RenderPrimitive>(prmode)), 0, to_draw == 0 ? src->m_NumVerts : to_draw);
 	gl::BindVertexArray(0);
 }
 
@@ -653,12 +669,14 @@ void GLRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
 
 bool GLRenderer::OnInputEvent(const SInputEvent& event)
 {
+#if 0
   switch (event.deviceType)
   {
     break;
   default:
     break;
   }
+#endif
   return false;
 }
 

@@ -1,14 +1,13 @@
 #pragma once
-#include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/IGeometry.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
 #include <vector>
 
 class Quad
 {
-  uint id;
-  uint VBO;
-  std::vector<float> m_vertecies;
+	CVertexBuffer* m_VertexBuffer = nullptr;
 public:
   Quad();
   ~Quad();

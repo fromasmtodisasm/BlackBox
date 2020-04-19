@@ -1,4 +1,6 @@
 #ifndef LINUX
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/File/CryPak.hpp>
 
 #include <algorithm>
@@ -68,7 +70,7 @@ void CCryPak::AddMod(const char* szMod)
 	for (strit = m_arrMods.begin(); strit != m_arrMods.end(); ++strit)
 	{
 		std::string& sMOD = *strit;
-		if (stricmp(sMOD.c_str(), strPrepend.c_str()) == 0)
+		if (_stricmp(sMOD.c_str(), strPrepend.c_str()) == 0)
 			return; // already added
 	}
 	m_arrMods.push_back(strPrepend);
@@ -85,7 +87,7 @@ void CCryPak::RemoveMod(const char* szMod)
 	for (it = m_arrMods.begin(); it != m_arrMods.end(); ++it)
 	{
 		std::string& sMOD = *it;
-		if (stricmp(sMOD.c_str(), strPrepend.c_str()) == 0)
+		if (_stricmp(sMOD.c_str(), strPrepend.c_str()) == 0)
 		{
 			m_arrMods.erase(it);
 			break;

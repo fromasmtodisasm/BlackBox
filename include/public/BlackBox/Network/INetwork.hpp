@@ -37,7 +37,7 @@ struct IServerSnooperSink;
 struct INETServerSnooperSink;
 struct IRConSystem;
 struct ICompressionHelper;
-class ICrySizer;
+struct ICrySizer;
 class CIPAddress;
 class CStream;
 struct ISystem;

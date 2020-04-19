@@ -6,7 +6,7 @@ public:
   static const int64_t TIMEVALUE_PRECISION = 100000; //!< One second.
 
 public:
-  void GetMemoryUsage(class ICrySizer* pSizer) const { /*nothing*/ }
+  void GetMemoryUsage(struct ICrySizer* pSizer) const { /*nothing*/ }
 
   ILINE CTimeValue()
   {
@@ -141,7 +141,7 @@ public:
 
   //AUTO_STRUCT_INFO;
 
-  void GetMemoryStatistics(class ICrySizer* pSizer) const { /*nothing*/ }
+  void GetMemoryStatistics(struct ICrySizer* pSizer) const { /*nothing*/ }
 
 private:
   int64_t m_lValue;     //!< Absolute or relative value in 1/TIMEVALUE_PRECISION, might be negative.

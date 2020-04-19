@@ -22,6 +22,7 @@
 
 #include "GameMods.hpp"
 #include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
 #include "Game.hpp"
 

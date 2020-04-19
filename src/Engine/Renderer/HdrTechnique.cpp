@@ -419,6 +419,7 @@ void HdrTechnique::downsampling()
 
 void HdrTechnique::downsamplingStandard()
 {
+#if 0
   // 2. blur bright fragments with two-pass Gaussian Blur
   // --------------------------------------------------
   bool first_iteration = true;
@@ -471,6 +472,7 @@ void HdrTechnique::downsamplingStandard()
 #endif
 
   GetISystem()->GetIRenderer()->SetState(IRenderer::State::DEPTH_TEST, true);
+#endif
 }
 
 void HdrTechnique::downsamplingCompute()
@@ -541,8 +543,8 @@ void HdrTechnique::upsampling()
 void HdrTechnique::Do(unsigned int texture)
 {
   DEBUG_GROUP(__FUNCTION__);
-  float w = (int)cam_width->GetIVal();
-  float h = (int)cam_height->GetIVal();
+  float w = (float)cam_width->GetIVal();
+  float h = (float)cam_height->GetIVal();
   auto hdr_w = m_HdrBuffer->viewPort.z;
   auto hdr_h = m_HdrBuffer->viewPort.w;
   auto& ss = m_ScreenShader;

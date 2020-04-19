@@ -5,7 +5,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
-float World::gravity = 9.8;
+float World::gravity = 9.8f;
 
 IScene* World::GetActiveScene()
 {

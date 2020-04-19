@@ -228,7 +228,7 @@ void ShadowMapping::SetupLights(SRenderParams& renderParams)
 	// direction lights
 	SetupDirectionLights(renderParams);
 	// point lights
-	SetupPointLights(renderParams);
+	//SetupPointLights(renderParams);
 	// spotLight
 	SetupSpotLights(renderParams);
 

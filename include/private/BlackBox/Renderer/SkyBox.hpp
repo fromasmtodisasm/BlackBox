@@ -76,9 +76,6 @@ public:
       -1.0f, -1.0f,  1.0f,
        1.0f, -1.0f,  1.0f
     };
-    VertexArrayObject::Attributes attributes;
-    attributes.stride = 3 * sizeof(float);
-    attributes.attributes[VertexArrayObject::POSITION] = 0;
 		vertexBuffer = gEnv->pRenderer->CreateBuffer(36, VERTEX_FORMAT_P3F, "SkyBox");
 		gEnv->pRenderer->UpdateBuffer(vertexBuffer, skyboxVertices, 36, false);
   }
@@ -94,7 +91,7 @@ public:
 		shader->BindTextureUnit2D(texture->getId(), 0);
 
     texture->bind();
-		gEnv->pRenderer->DrawBuffer(vertexBuffer, nullptr, 0, 0, GL_TRIANGLES);
+		gEnv->pRenderer->DrawBuffer(vertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 
     glCheck(glDepthFunc(GL_LESS));
     glCheck(glDepthMask(GL_TRUE));

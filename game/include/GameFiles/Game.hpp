@@ -94,7 +94,7 @@ class GameGUI;
 struct IScene;
 class SceneManager;
 class CTagPoint;
-class ILog;
+struct ILog;
 class CGameMods;
 
 class CXClient;

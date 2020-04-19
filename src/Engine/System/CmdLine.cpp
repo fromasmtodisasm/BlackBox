@@ -114,7 +114,7 @@ const ICmdLineArg* CCmdLine::FindArg(const ECmdLineArgType ArgType, const char* 
     for (std::vector<CCmdLineArg>::const_iterator it = m_args.begin(); it != m_args.end(); ++it)
     {
       if (it->GetType() == ArgType)
-        if (!stricmp(it->GetName(), name))
+        if (!_stricmp(it->GetName(), name))
           return &(*it);
     }
   }

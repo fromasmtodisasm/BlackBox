@@ -10,9 +10,8 @@ enum ECmdLineArgType
 };
 
 //! Container for a command line Argument.
-class ICmdLineArg
+struct ICmdLineArg
 {
-public:
   // <interfuscator:shuffle>
   virtual ~ICmdLineArg() {}
 
@@ -34,9 +33,8 @@ public:
 };
 
 //! Command line interface.
-class ICmdLine
+struct ICmdLine
 {
-public:
   // <interfuscator:shuffle>
   virtual ~ICmdLine() {}
 

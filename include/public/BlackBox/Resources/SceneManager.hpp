@@ -1,7 +1,7 @@
 #pragma once
 
 class Scene;
-class IScene;
+struct IScene;
 struct LoadObjectSink;
 struct ICVar;
 

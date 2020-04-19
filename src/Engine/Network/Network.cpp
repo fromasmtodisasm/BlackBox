@@ -131,7 +131,7 @@ public:
       else {
         gEnv->pLog->Log("New connection");
         //m_ClientSockes.push_back(new_tcpsock);
-        int len, result;
+        size_t len, result;
         auto* msg = R"(
 HTTP/1.1 200 OK
 Host: site.com

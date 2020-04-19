@@ -1,6 +1,5 @@
 #pragma once
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
 
 #include <memory>
 #include <string>
@@ -65,8 +64,6 @@ struct VerteciesInfo
   {}
 };
 
-struct Mesh;
-
 struct BoundingBox
 {
   glm::vec3 min;
@@ -101,16 +98,15 @@ struct BoundingBox
   void draw();
 };
 
-struct Mesh {
+class Mesh {
 public:
-  CVertexBuffer* m_Verts;
-  BoundingBox bb;
-public:
-  std::shared_ptr<std::string> m_Path;
   Mesh(CVertexBuffer* vertexBuffer);
   Mesh() = default;
-
   CVertexBuffer* getVertexBuffer();
+
+  CVertexBuffer* m_Verts;
+  BoundingBox bb;
+  std::shared_ptr<std::string> m_Path;
 };
 
 class SubdivisionShpereTessellatorSimple

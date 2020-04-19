@@ -100,7 +100,7 @@ int CScriptObjectRenderer::PushQuad(IFunctionHandler* pH)
     }
   }
   _Vtx vtx[4];
-  unsigned short base = m_vBuffer.size();
+  unsigned short base = static_cast<unsigned short>(m_vBuffer.size());
 
   vtx[0].x = x;
   vtx[0].y = y;
@@ -152,8 +152,8 @@ int CScriptObjectRenderer::Draw(IFunctionHandler* pH)
 {
   if (m_vBuffer.size() > 0 && m_vIdxBuf.size() > 0)
   {
-    USER_DATA tid;
-    int cookie;
+    //USER_DATA tid;
+    //int cookie;
     if (pH->GetParamCount() < 1)
     {
       m_pScriptSystem->RaiseError("CScriptObjectRenderer::Draw wrong number of params");

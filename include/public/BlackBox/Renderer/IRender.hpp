@@ -40,7 +40,7 @@ struct IWindow;
 struct IFont;
 class CCamera;
 struct IShader;
-class Material;
+struct Material;
 class CMatInfo;
 
 //////////////////////////////////////////////////////////////////////

@@ -13,16 +13,16 @@
 #include <string>
 
 
-class World;
 class CCamera;
-class Object;
-class Transform;
-class ObjectManager;
 class FrameBufferObject;
+class Object;
+class ObjectManager;
 class Scene;
 class SkyBox;
-struct Material;
+class World;
 struct IPostProcessor;
+struct Material;
+struct Transform;
 
 extern Scene* defaultScene;
 

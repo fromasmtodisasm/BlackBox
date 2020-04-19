@@ -5,6 +5,7 @@
 
 GBuffer::GBuffer(size_t SRC_WIDTH, size_t SRC_HEIGHT)
 {
+#if 0
 	// positions buffer
 	glGenTextures(1, &gPosition);
 	glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -46,6 +47,7 @@ GBuffer::GBuffer(size_t SRC_WIDTH, size_t SRC_HEIGHT)
 
   shaderGeometryPass = MaterialManager::instance()->getProgram(desc[0].name);
   shaderLightingPass = MaterialManager::instance()->getProgram(desc[1].name);
+#endif
 }
 
 void GBuffer::GeometryPass()
@@ -54,6 +56,7 @@ void GBuffer::GeometryPass()
 
 void GBuffer::LightPass(Vec3 viewPos)
 {
+#if 0
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -69,5 +72,6 @@ void GBuffer::LightPass(Vec3 viewPos)
 	shaderLightingPass->Uniform(viewPos, "viewPos");
 
 	gEnv->pRenderer->DrawFullscreenQuad();
+#endif
 	
 }

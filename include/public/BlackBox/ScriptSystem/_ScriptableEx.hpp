@@ -220,7 +220,7 @@ protected:
     if (!pThis)
     {
       m_pSS->RaiseError("Null Self");
-      ::OutputDebugString("Null Self\n");
+      //::OutputDebugString("Null Self\n");
       return 0;
     }
     int i = m_pFunctionHandler->GetFunctionID();

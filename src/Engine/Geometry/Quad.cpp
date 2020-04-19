@@ -1,46 +1,31 @@
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/IGeometry.hpp>
-#include <BlackBox/Renderer/OpenGL/Debug.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 Quad::Quad()
 {
   float verts[] = {
-    // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
+    // positions			  // texCoords
+		-1.0f,  1.0f, 0.5f,  0.0f, 1.0f,
+		-1.0f, -1.0f, 0.5f,  0.0f, 0.0f,
+		 1.0f, -1.0f, 0.5f,  1.0f, 0.0f,
 
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
+		-1.0f,  1.0f, 0.5f,  0.0f, 1.0f,
+		 1.0f, -1.0f, 0.5f,  1.0f, 0.0f,
+		 1.0f,  1.0f, 0.5f,  1.0f, 1.0f
   };
-  glGenVertexArrays(1, &id);
-
-  glBindVertexArray(id);
-  glGenBuffers(1, &VBO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(verts), &verts, GL_STATIC_DRAW);
-  // 3. Устанавливаем указатели на вершинные атрибуты
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(float)));
-
-  debuger::vertex_array_label(id, "Quad");
-  glBindVertexArray(0);
+	;
+	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(6, VertFormatForComponents(false, false, false, true), "screen_quad", false);
+	gEnv->pRenderer->UpdateBuffer(m_VertexBuffer, verts, 6, false);
 }
 
 Quad::~Quad()
 {
-  glDeleteBuffers(1, &VBO);
+	gEnv->pRenderer->ReleaseBuffer(m_VertexBuffer);
 }
 
 void Quad::draw() {
-  glCheck(glBindVertexArray(id));
-  glCheck(glDrawArrays(GL_TRIANGLES, 0, 6));
-  glCheck(glBindVertexArray(0));
+	gEnv->pRenderer->DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 }
 
 bool Quad::init()

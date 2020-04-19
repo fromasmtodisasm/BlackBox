@@ -36,7 +36,7 @@ ShaderStatus::ShaderStatus(CShader* shader) :
 }
 
 bool ShaderStatus::get(GLenum statusType) {
-  GLenum err;
+  //GLenum err;
   glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status));
   if (m_Status == GL_FALSE)
   {
@@ -98,21 +98,16 @@ static int get_gl_enum(IShader::type type)
   {
   case IShader::E_VERTEX:
     return GL_VERTEX_SHADER;
-    break;
   case IShader::E_FRAGMENT:
     return GL_FRAGMENT_SHADER;
-    break;
   case IShader::E_GEOMETRY:
     return GL_GEOMETRY_SHADER;
-    break;
   case IShader::E_COMPUTE:
     return GL_COMPUTE_SHADER;
-    break;
   case IShader::E_UNKNOWN:
     return -1;
-    break;
   default:
-    break;
+    return -1;
   }
 }
 

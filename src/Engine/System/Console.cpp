@@ -411,13 +411,13 @@ void CConsole::completeCommand(std::vector<std::wstring>& completion)
 
   // Find the minimum length from  
   // first and last string 
-  int en = std::min(completion[0].size(),
+  auto en = std::min(completion[0].size(),
     completion[completion.size() - 1].size());
 
   // Now the common prefix in first and  
   // last string is the longest common prefix 
   std::wstring first = completion[0], last = completion[completion.size() - 1];
-  int i = 0;
+  decltype(en) i = 0;
   while (i < en && first[i] == last[i])
     i++;
 
@@ -887,7 +887,7 @@ IFont* CConsole::getFont(const char* name, float w, float h)
     auto var = GET_CVAR("s_font");
     if (var)
       font = var->GetString();
-    m_Font->Init(font, w, h);
+    m_Font->Init(font, static_cast<unsigned int>(w), static_cast<unsigned int>(h));
     //return m_Font;
   }
   return m_Font;
@@ -1104,7 +1104,10 @@ bool CConsole::Init(ISystem* pSystem)
   m_pRenderer = pSystem->GetIRenderer();
   m_pScriptSystem = pSystem->GetIScriptSystem();
   m_pInput = pSystem->GetIInput();
-  m_Font = getFont("arial.ttf", 16, static_cast<unsigned int>(line_height));
+#pragma warning(push)
+#pragma warning(disable: 4244)
+  m_Font = getFont("arial.ttf", 16, line_height);
+#pragma warning(pop)
   const char* texture_path = "console_background2.jpg";
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
@@ -1118,7 +1121,7 @@ bool CConsole::Init(ISystem* pSystem)
     m_pBackGround->load(texture_path);
     initBind();
 
-    m_ScrollHeight = m_pRenderer->GetHeight() / 2.0;
+    m_ScrollHeight = m_pRenderer->GetHeight() / 2.0f;
     Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
 
 		InitInputBindings();

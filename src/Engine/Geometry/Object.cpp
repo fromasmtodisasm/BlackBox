@@ -92,7 +92,7 @@ void Object::draw(SRenderParams& renderParams) {
 			}
 		}
 		m_Material->apply(this);
-		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, GL_TRIANGLES);
+		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
   }
 }
 
@@ -258,7 +258,7 @@ Object* Object::load(string path)
   if (!gEnv->IsDedicated())
   {
 		vb = gEnv->pRenderer->CreateBuffer(vertecies.data.size(), VERTEX_FORMAT_P3F_N_TEX2F, ("model: " + path).c_str());
-		gEnv->pRenderer->UpdateBuffer(vb, vertecies.data.data(), vertecies.data.size(), false);
+		gEnv->pRenderer->UpdateBuffer(vb, vertecies.data.data(), static_cast<int>(vertecies.data.size()), false);
   }
   mesh = std::make_shared<std::vector<Mesh>>();
   Mesh _mesh(vb);

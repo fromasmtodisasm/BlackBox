@@ -1,4 +1,5 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/System.hpp>
 
 #include <BlackBox/Core/IGame.hpp>
@@ -703,8 +704,8 @@ void CSystem::Render()
 		if (nullptr == m_pWorld->GetActiveScene())
 			return;
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
-		float w;
-		float h;
+		int w;
+		int h;
 		if (GET_CVAR("r_aspect")->GetIVal())
 		{
 			w = m_Render->GetHeight();
@@ -720,7 +721,7 @@ void CSystem::Render()
 		m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
 		//m_World->setCamera(m_camera1);
-		m_pWorld->Draw(m_DeltaTime);
+		m_pWorld->Draw(static_cast<float>(m_DeltaTime));
 
 		if (m_pWorld->GetActiveScene())
 			m_pWorld->GetActiveScene()->present(m_Render->GetWidth(), m_Render->GetHeight());

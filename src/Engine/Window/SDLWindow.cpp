@@ -39,9 +39,9 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
 
 void CSDLWindow::update()
 {
+  /*
   SDL_Event event;
 
-  /*
   while (SDL_PollEvent(&event))
   {
       handleEvent(&event);

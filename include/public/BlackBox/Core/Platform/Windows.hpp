@@ -13,7 +13,7 @@
 
 #pragma once
 
-#if CRY_PLATFORM_WINAPI
+#if BB_PLATFORM_WINAPI
 
 	#ifndef WIN32_LEAN_AND_MEAN
 		#define WIN32_LEAN_AND_MEAN
@@ -52,7 +52,10 @@
 	#endif
 
 // In RELEASE disable OutputDebugString
-	#if defined(_RELEASE) && !CRY_PLATFORM_DESKTOP && !defined(RELEASE_LOGGING)
+	#if defined(_RELEASE) && !BB_PLATFORM_DESKTOP && !defined(RELEASE_LOGGING)
+		#undef OutputDebugString
+		#define OutputDebugString(...) (void) 0
+	#else
 		#undef OutputDebugString
 		#define OutputDebugString(...) (void) 0
 	#endif

@@ -263,6 +263,7 @@ _inline void *CreateVertexBuffer(int nFormat, int nVerts)
 // it's a very small integer (even fits into a signed byte)
 #pragma warning(push)
 #pragma warning(disable:4311)
+#pragma warning(disable:4302)
 #endif
 
 //////////////////////////////////////////////////////////////////////////

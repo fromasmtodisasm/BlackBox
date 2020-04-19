@@ -68,9 +68,8 @@ enum ICrySizerFlagsEnum
 //
 // WARNING:
 //   If you have an array (pointer), you should Add its size with addArray
-class ICrySizer
+struct ICrySizer
 {
-public:
 	// this class is used to push/pop the name to/from the stack automatically
 	// (to exclude stack overruns or underruns at runtime)
 	friend class CrySizerComponentNameHelper;

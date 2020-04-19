@@ -1,7 +1,7 @@
 #pragma once
 
 class CCamera;
-class IScene;
+struct IScene;
 class SkyBox;
 
 struct IPostRenderCallback

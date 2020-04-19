@@ -15,7 +15,7 @@ set(OUTPUT_DIRECTORY_NAME "win_x64")
 
 #include ("${CMAKE_CURRENT_LIST_DIR}/../../CRYENGINE-MSVC.cmake")
 
-add_definitions(-D_WINDOWS -DWIN32 -D_WIN32 -D_WIN64)
+add_definitions(-D_WINDOWS -DWIN32 -D_WIN32 -DWIN64)
 
 if (EXISTS "${SDK_DIR}/Microsoft Windows SDK/10")
 	set(WINDOWS_SDK "${SDK_DIR}/Microsoft Windows SDK/10")

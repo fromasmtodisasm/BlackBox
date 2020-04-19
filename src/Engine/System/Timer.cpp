@@ -4,7 +4,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 /////////////////////////////////////////////////////
-//#include <CryCore/Platform/CryWindows.h>
+#include <BlackBox/Core/Platform/Windows.hpp>
 
 #if BB_PLATFORM_WINDOWS
 //#include <Mmsystem.h> // needs <windows.h>

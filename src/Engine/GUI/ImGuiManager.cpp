@@ -163,7 +163,7 @@ namespace
 
       // Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
       if (io.WantSetMousePos)
-        gEnv->pHardwareMouse->SetHardwareMousePosition((int)io.MousePos.x, (int)io.MousePos.y);
+        gEnv->pHardwareMouse->SetHardwareMousePosition(io.MousePos.x, io.MousePos.y);
       else
         io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
@@ -309,7 +309,10 @@ void ImGuiManager::Render()
   // Rendering
   auto& io = ImGui::GetIO();
   ImGui::Render();
-  gl::ViewPort(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+#pragma warning(push)
+#pragma warning(disable: 4244)
+  gl::ViewPort(0, 0, (float)io.DisplaySize.x, (float)io.DisplaySize.y);
+#pragma warning(pop)
   render.RenderDrawData(ImGui::GetDrawData());
 }
 

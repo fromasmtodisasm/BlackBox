@@ -15,7 +15,7 @@ enum AttributeType
 
 struct Hardware
 {
-  const GLubyte* unknown_desc;
+  const GLubyte* unknown_desc = nullptr;
   Hardware()
     :
       vendor(unknown_desc),
@@ -25,10 +25,10 @@ struct Hardware
   {
 
   }
-  const GLubyte* vendor;
-  const GLubyte* render;
-  const GLubyte* version;
-  const GLubyte* glsl_version;
+  const GLubyte* vendor = nullptr;
+  const GLubyte* render = nullptr;
+  const GLubyte* version = nullptr;
+  const GLubyte* glsl_version = nullptr;
 };
 
 struct SVertexPoolEntry

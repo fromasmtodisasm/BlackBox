@@ -238,6 +238,8 @@ public:
 	void TriggerMoveModeToggle(float fValue, XActivationEvent ae);
 	void TriggerAimToggle(float fValue, XActivationEvent ae);
 
+#pragma warning(push)
+#pragma warning(disable: 4065)
 	BEGIN_INPUTACTIONMAP()
 #if 0
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
@@ -295,6 +297,7 @@ public:
 		REGISTER_INPUTACTIONMAP(ACTION_AIM_TOGGLE, TriggerAimToggle)
 #endif
 		END_INPUTACTIONMAP()
+#pragma warning(pop)
 
 private:
 

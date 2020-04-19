@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/Shader.hpp>

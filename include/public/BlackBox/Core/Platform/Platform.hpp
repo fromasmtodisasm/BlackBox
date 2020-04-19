@@ -48,9 +48,6 @@ enum class EPlatform
 #undef APIENTRY
 #endif
 #include <Windows.h>
-#undef min
-#undef max
-
 
 //#define RC_EXECUTABLE "rc.exe"
 #endif
@@ -149,7 +146,7 @@ void       bbSleep(unsigned int dwMilliseconds);
 #undef SendMessage
 #endif
 
-#if BB_PLATFORM_WINDOWS
+#if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT
 #include <BlackBox/Core/Platform/WindowsSpecific.hpp>
 #endif
 

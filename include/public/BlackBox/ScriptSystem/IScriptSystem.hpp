@@ -11,7 +11,7 @@
 #endif // _WIN32
 #include <cassert>
 
-class ICrySizer;
+struct ICrySizer;
 struct IWeakScriptObject;
 struct IScriptObject;
 struct ISystem;

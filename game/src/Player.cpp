@@ -127,7 +127,7 @@ void CPlayer::update(float deltatime)
   }
 
   //ImGui
-  float mult = m_keys.find(eKI_LShift) != m_keys.end() ? 3 : 1;
+  float mult = m_keys.find(eKI_LShift) != m_keys.end() ? 3.f : 1.f;
   float rotation_speed = deltatime * MOVE_SPEED * mult;
   //float rotSpeed = deltatime * 5.f;//m_rotAngle;
   static Vec3 impulse = Vec3(0.f, 10.f, 0.f);

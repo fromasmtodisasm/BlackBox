@@ -8,6 +8,7 @@
 #include <BlackBox/System/Timer.hpp>
 #include <BlackBox/System/Window.hpp>
 #include <BlackBox/GUI/ImGuiManager.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 
 #define DEFAULT_APP_NAME "BlackBox"
 

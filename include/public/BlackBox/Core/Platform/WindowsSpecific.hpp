@@ -1,73 +1,77 @@
-//////////////////////////////////////////////////////////////////////////
-//
-//	Crytek Source code 
-//	Copyright (c) Crytek 2001-2004
-//	
-//	File: Win32specific.h
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+
+// -------------------------------------------------------------------------
+//  File name:   Win32specific.h
+//  Version:     v1.00
+//  Created:     31/03/2003 by Sergiy.
+//  Compilers:   Visual Studio.NET
 //  Description: Specific to Win32 declarations, inline functions etc.
+// -------------------------------------------------------------------------
+//  History:
 //
-//	History:
-//	- 31/03/2003:Created by Sergiy Migdalsky
-//	- February 2005: Modified by Marco Corbetta for SDK release	
-//
+////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+// Ensure WINAPI version is consistent everywhere
+#define _WIN32_WINNT  0x0600
+#define NTDDI_VERSION 0x06000000
+#define WINVER        0x0600
+
+#define RC_EXECUTABLE "rc.exe"
+#define SIZEOF_PTR    8
+
+#pragma warning( disable : 4267 ) //warning C4267: 'initializing' : conversion from 'size_t' to 'unsigned int', possible loss of data
+
+//////////////////////////////////////////////////////////////////////////
+// Standard includes.
+//////////////////////////////////////////////////////////////////////////
+#include <malloc.h>
+#include <io.h>
+#include <new.h>
+#include <direct.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <float.h>
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _CRY_COMMON_WIN32_SPECIFIC_HDR_
-#define _CRY_COMMON_WIN32_SPECIFIC_HDR_
+// Special intrinsics
+#include <math.h> // Should be included before intrin.h
+#include <intrin.h>
+#include <process.h>
 
-#ifdef __cplusplus
-#ifdef _DEBUG
-#include <crtdbg.h>
+//////////////////////////////////////////////////////////////////////////
+// Define platform independent types.
+//////////////////////////////////////////////////////////////////////////
+#include <BlackBox/Core/BaseTypes.hpp>
+
+#define THREADID_NULL 0
+typedef long                          LONG;
+typedef unsigned char                 BYTE;
+typedef unsigned long                 threadID;
+typedef unsigned long                 DWORD;
+typedef double                        real; //!< Biggest float-type on this machine.
+
+typedef void*                         THREAD_HANDLE;
+typedef void*                         EVENT_HANDLE;
+
+typedef __int64 INT_PTR, *            PINT_PTR;
+typedef unsigned __int64 UINT_PTR, *  PUINT_PTR;
+
+typedef __int64 LONG_PTR, *           PLONG_PTR;
+typedef unsigned __int64 ULONG_PTR, * PULONG_PTR;
+
+typedef ULONG_PTR DWORD_PTR, *        PDWORD_PTR;
+
+#define SIZEOF_PTR 8
+
+#ifndef FILE_ATTRIBUTE_NORMAL
+	#define FILE_ATTRIBUTE_NORMAL 0x00000080
 #endif
 
-#if defined(WIN32) && !defined(WIN64)
-#define _CPU_X86
-// Insert your headers here
-#define WIN32_LEAN_AND_MEAN
-#ifdef APIENTRY
-#undef APIENTRY
-#endif
-#include <Windows.h>
 #undef min
 #undef max
-//#define RC_EXECUTABLE "rc.exe"
-#endif
 
-
-//////////////////////////////////////////////////////////////////////////
-// checks if the heap is valid in debug; in release, this function shouldn't be called
-// returns non-0 if it's valid and 0 if not valid
-inline int IsHeapValid ()
-{
-#if defined(_DEBUG) && !defined(RELEASE_RUNTIME)
-	return _CrtCheckMemory();
-#else
-	return true;
-#endif
-}
-#endif
-#define strdup _strdup
-
-typedef signed char         int8;
-typedef signed short        int16;
-typedef signed int					int32;
-typedef signed __int64			int64;
-typedef unsigned char				uint8;
-typedef unsigned short			uint16;
-typedef unsigned int				uint32;
-typedef unsigned __int64		uint64;
-
-typedef float               f32;
-typedef double              f64;
-
-// old-style (will be removed soon)
-typedef signed char         s8;
-typedef signed short        s16;
-typedef signed int         s32;
-typedef signed __int64			s64;
-typedef unsigned char				u8;
-typedef unsigned short			u16;
-typedef unsigned int				u32;
-typedef unsigned __int64		u64;
-
-#endif //_CRY_COMMON_WIN32_SPECIFIC_HDR_
+#define TARGET_DEFAULT_ALIGN (0x8U)
