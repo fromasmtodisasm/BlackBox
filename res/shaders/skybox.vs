@@ -1,6 +1,7 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
+#include "common.h"
 
+#pragma attribute(position, aPos)
 
 out vec3 TexCoords;
 

@@ -34,6 +34,7 @@ add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/BaseShaderLoading.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Camera.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/FrameBufferObject.cpp
@@ -79,3 +80,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #)
 
 add_private_headers()
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+	<BlackBox/System/ISystem.hpp>
+	<BlackBox/System/IConsole.hpp>
+	<BlackBox/System/ILog.hpp>
+)

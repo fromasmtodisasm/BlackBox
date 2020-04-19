@@ -1,7 +1,8 @@
 #version 330
+#include "common.h"
 
-in vec3 position;
-in vec2 uv;
+#pragma attribute(position, pos)
+#pragma attribute(tc, uv)
 
 out vec4 frag_color;
 

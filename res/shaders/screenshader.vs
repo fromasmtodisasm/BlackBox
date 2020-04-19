@@ -1,6 +1,8 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoords;
+#include "common.h"
+
+#pragma attribute(position, aPos)
+#pragma attribute(tc, aTexCoords)
 
 out vec2 TexCoords;
 uniform mat4 projection = mat4(1.0);

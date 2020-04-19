@@ -1,7 +1,7 @@
 #version 330 core
+#include "common.h"
 
-layout (location = 0) in vec3 position;
-
+#pragma attribute(position, pos)
 
 uniform mat4 MVP;
 uniform int point_size = 1;
