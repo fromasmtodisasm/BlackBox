@@ -27,6 +27,7 @@
 	#ifndef _WINSOCKAPI_
 		#define _WINSOCKAPI_
 	#endif
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 	#if defined(_WINDOWS_) && !defined(CRY_INCLUDE_WINDOWS_VIA_MFC_OR_ATL_INCLUDES)
 		#error "<windows.h> has been included by other means than CryWindows.h"

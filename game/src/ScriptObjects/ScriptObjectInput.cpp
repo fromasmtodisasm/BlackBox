@@ -15,7 +15,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <BlackBox/Core/Platform/Platform.hpp> 
 #include "Game.hpp"
 #include "ScriptObjects/ScriptObjectInput.hpp"
 

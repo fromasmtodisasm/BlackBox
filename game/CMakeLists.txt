@@ -101,3 +101,8 @@ source_group(
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+	<BlackBox/Core/Platform/Platform.hpp>
+	<BlackBox/Core/Platform/Windows.hpp>
+)
