@@ -85,6 +85,7 @@ macro(add_subsystem subsystem)
   get_target_property(SOURCE_FILES ${subsystem} SOURCES)
 
   list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
+  list(APPEND ALL_PROJECT_SYSTEMS ${subsystem})
 
 endmacro()
 

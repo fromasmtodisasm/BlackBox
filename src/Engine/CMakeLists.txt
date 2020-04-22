@@ -56,6 +56,9 @@ add_subsystem(GUI)
 add_subsystem(World)
 add_subsystem(Scene)
 
+foreach(sys IN LISTS ALL_PROJECT_SYSTEMS)
+	message(STATUS "sub: ${sys}")
+endforeach()
 
 set_target_properties(GUI PROPERTIES FOLDER "Engine")
 set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
@@ -95,7 +98,7 @@ source_group(
   )
 ###################################################
 install (
-  TARGETS  ${BLACKBOX_PROJECT}
+  TARGETS  ${BLACKBOX_PROJECT} ${ALL_PROJECT_SYSTEMS}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib/static

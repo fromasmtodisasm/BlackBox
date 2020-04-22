@@ -464,6 +464,41 @@ void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 {
 }
 
+void GLRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
+{
+}
+
+int GLRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4])
+{
+	return 0;
+}
+
+int GLRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
+{
+	return 0;
+}
+
+void GLRenderer::GetModelViewMatrix(float* mat)
+{
+}
+
+void GLRenderer::GetModelViewMatrix(double* mat)
+{
+}
+
+void GLRenderer::GetProjectionMatrix(double* mat)
+{
+}
+
+void GLRenderer::GetProjectionMatrix(float* mat)
+{
+}
+
+Vec3 GLRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
+{
+	return Vec3();
+}
+
 int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls/* = true*/)
 {
 	return m_FrameID;

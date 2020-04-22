@@ -334,10 +334,40 @@ struct IRenderer
   //! Get screen height
   virtual	int		GetHeight() = 0;
 
-  //! Get a screenshot and save to a file
-  virtual void ScreenShot(const char* filename = nullptr) = 0;
+	//! Get a screenshot and save to a file
+	virtual void ScreenShot(const char *filename=NULL)=0;
 
-  virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
+  //! Project to screen
+  virtual void ProjectToScreen( float ptx, float pty, float ptz, 
+                                float *sx, float *sy, float *sz )=0;
+
+	//! Unproject to screen
+  virtual int UnProject(float sx, float sy, float sz, 
+                float *px, float *py, float *pz,
+                const float modelMatrix[16], 
+                const float projMatrix[16], 
+                const int    viewport[4])=0;
+
+	//! Unproject from screen
+  virtual int UnProjectFromScreen( float  sx, float  sy, float  sz, 
+                           float *px, float *py, float *pz)=0;
+
+  //! for editor
+  virtual void  GetModelViewMatrix(float *mat)=0;
+
+	//! for editor
+  virtual void  GetModelViewMatrix(double *mat)=0;
+
+	//! for editor
+  virtual void  GetProjectionMatrix(double *mat)=0;
+
+	//! for editor
+  virtual void  GetProjectionMatrix(float *mat)=0;
+
+	//! for editor
+  virtual Vec3 GetUnProject(const Vec3 &WindowCoords,const CCamera &cam)=0;
+
+  virtual void RenderToViewport(const CCamera &cam, float x, float y, float width, float height)=0;
 
   virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
 
