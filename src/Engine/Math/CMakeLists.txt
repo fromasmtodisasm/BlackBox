@@ -13,4 +13,6 @@ if (OPTION_USE_GLM)
 	  target_link_libraries(${PROJECT_NAME} INTERFACE glm)
   endif()
 endif()
+
+install_this(Math)
 ###################################################

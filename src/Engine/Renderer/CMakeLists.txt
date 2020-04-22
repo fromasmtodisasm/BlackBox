@@ -18,6 +18,7 @@ elseif(GLEW_LOADER)
   find_package(GLEW REQUIRED)                
   target_compile_definitions(OpenGlBackend INTERFACE -DGLEW_LOADER)
 endif()
+install_this(OpenGlBackend)
 
 find_package(Stb)
 if (NOT Stb_FOUND)

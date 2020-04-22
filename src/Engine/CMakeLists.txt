@@ -9,9 +9,11 @@ add_library(${BLACKBOX_PROJECT})
 set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
 set_property(
 	DIRECTORY APPEND PROPERTY INCLUDE_DIRECTORIES 
-	${BLACKBOX_INCLUDE_DIRS}/public
-	${BLACKBOX_INCLUDE_DIRS}/private
-	${CMAKE_BINARY_DIR}
+	$<INSTALL_INTERFACE:${BLACKBOX_INCLUDE_DIRS}/public>
+
+	$<BUILD_INTERFACE:${BLACKBOX_INCLUDE_DIRS}/public>
+	$<BUILD_INTERFACE:${BLACKBOX_INCLUDE_DIRS}/private>
+	$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
 )
 
 target_include_directories(${BLACKBOX_PROJECT}
@@ -97,12 +99,23 @@ source_group(
   FILES  ${SOURCE_FILES}
   )
 ###################################################
+#[[
 install (
-  TARGETS  ${BLACKBOX_PROJECT} ${ALL_PROJECT_SYSTEMS}
+  TARGETS  ${BLACKBOX_PROJECT}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib/static
 )
+install(
+	DIRECTORY ${CMAKE_BINARY_DIR}
+	DESTINATION include
+	COMPONENT developer
+	FILES_MATCHING
+	PATTERN "*.h"
+)
+]]
+install_this(${BLACKBOX_PROJECT})
+
 
 install(
   DIRECTORY ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/ DESTINATION include
@@ -111,7 +124,9 @@ install(
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION .
 )
+#[[
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/media DESTINATION .
 )
+]]
 ###################################################

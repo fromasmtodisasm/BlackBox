@@ -9,10 +9,9 @@ list(APPEND GLAD_SOURCES
 
 add_library(glad STATIC ${GLAD_SOURCES})
 
-set_property(TARGET glad PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${GLAD_INCLUDE_DIRS}")
-
 target_include_directories(glad PUBLIC 
   $<BUILD_INTERFACE:${GLAD_INCLUDE_DIRS}>
   $<INSTALL_INTERFACE:include> 
 )
 set_target_properties(glad PROPERTIES FOLDER "Engine/ThirdParty")
+install_this(glad)

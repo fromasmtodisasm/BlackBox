@@ -3,11 +3,13 @@ project(ScriptSystem CXX)
 ###################################################
 add_library(${PROJECT_NAME})
 ###################################################
+#[[
 target_include_directories(
 ${PROJECT_NAME}
 	PUBLIC	"${CMAKE_BINARY_DIR}"
 	PUBLIC	"${CMAKE_SOURCE_DIR}/include/"
 )
+]]
 
 ###################################################
 add_package(Lua)

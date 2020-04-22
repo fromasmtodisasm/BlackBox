@@ -86,11 +86,15 @@ macro(add_subsystem subsystem)
 
   list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
   list(APPEND ALL_PROJECT_SYSTEMS ${subsystem})
+  install_this(${subsystem})
+
+endmacro()
+
+macro(export_subsystem subsystem)
 
 endmacro()
 
 macro(install_this THIS_PROJECT)
-#[[
 	###################################################
 	install (
 	  TARGETS  ${THIS_PROJECT}
@@ -107,7 +111,6 @@ macro(install_this THIS_PROJECT)
 
 	# This makes the project importable from the build directory
 	export(TARGETS ${THIS_PROJECT} FILE ${THIS_PROJECT}Config.cmake)
-]]
 endmacro()
 
 CommonMacrosInit()

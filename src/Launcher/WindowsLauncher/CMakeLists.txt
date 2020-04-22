@@ -35,8 +35,9 @@ install(
 )
 
 install(
-    DIRECTORY ${RUNTIME_OUTPUT_DIRECTORY} DESTINATION bin
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/ DESTINATION bin
 )
+#message(FATAL_ERROR "bindir:" ${CMAKE_CURRENT_BINARY_DIR}$<CONFIG>)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)
 set_solution_startup_target(Launcher)
