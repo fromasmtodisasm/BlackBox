@@ -63,7 +63,7 @@ public:
   virtual const char* GetHelp() override;
 
 private:
-  const char* name;
+  string name;
   union Value {
     int i;
     char* s;
