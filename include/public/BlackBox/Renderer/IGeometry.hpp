@@ -95,7 +95,7 @@ struct BoundingBox
     if (v.z > max.z) max.z = v.z;
   }
 
-  void draw();
+  void draw(Mat4 transform);
 };
 
 class Mesh {

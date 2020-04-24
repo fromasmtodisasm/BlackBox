@@ -400,6 +400,7 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const
 
 	gl::GenVertexArrays(1, &buffer->m_Container);
 	gl::BindVertexArray(buffer->m_Container);
+    {
 		gl::GenBuffer(&stream.m_VertBuf.m_nID);
 
 		gl::BindBuffer(GL_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
@@ -411,6 +412,7 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const
 		buffer->m_VS[VSF_GENERAL] = stream;
 		m_VertexBufferPool.push_back({ false, buffer });
 		EnableAttributes(buffer);
+    }
 	gl::BindVertexArray(0);
 	debuger::vertex_array_label(stream.m_VertBuf.m_nID, szSource);
 	return buffer;
@@ -724,4 +726,3 @@ IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
   return new GLRenderer(pSystem);
 }
 
-#pragma warning(push)

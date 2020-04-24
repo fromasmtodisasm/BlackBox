@@ -161,10 +161,12 @@ struct SDispFormat
 
 //////////////////////////////////////////////////////////////////////////
 // Stream ID's
-#define VSF_GENERAL  0  // General vertex buffer
+enum EStreamID {
+    VSF_GENERAL = 0,  // General vertex buffer
 //#define VSF_TANGENTS 1  // Tangents buffer
 
-#define VSF_NUM      1  // Number of vertex streams
+    VSF_NUM  // Number of vertex streams
+};
 
 // Stream Masks (Used during updating)
 #define VSM_GENERAL  (1<<VSM_GENERAL)
@@ -231,8 +233,8 @@ public:
     }
     m_VS[VSF_GENERAL].m_VData = pData;
     m_vertexformat = nVertexFormat;
-	  m_fence=0;
-	  m_bFenceSet=0;
+    m_fence=0;
+    m_bFenceSet=0;
     m_NumVerts = nVertCount;
   }
   void *GetStream(int nStream, int *nOffs);

@@ -34,6 +34,7 @@ endif()
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
+  PRIVATE ${PROJECT_SOURCE_DIR}/AuxRenderer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShaderLoading.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp

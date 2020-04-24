@@ -9,6 +9,7 @@
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/BaseTexture.hpp>
+#include <BlackBox/Renderer/AuxRenderer.hpp>
 
 #include <sstream>
 
@@ -117,13 +118,14 @@ void ShadowMapping::RenderPass()
 	renderStage = RENDER_OPAQUE;
 	m_Scene->ForEachObject(this);
 
-	Pipeline::instance()->bindProgram("bb");
-	auto obj					 = m_Scene->selectedObject();
-	Pipeline::instance()->object = obj->second;
-	for (auto& mesh : *obj->second->m_Mesh)
-	{
-		mesh.bb.draw();
-	}
+	auto obj = m_Scene->selectedObject();
+    {
+        DEBUG_GROUP("DRAW_BB");
+        for (auto& mesh : *obj->second->m_Mesh)
+        {
+            AuxRenderer::DrawAABB(mesh.bb.min, mesh.bb.max);
+        }
+    }
 
 	// Render transparent objects
 	renderStage = RENDER_TRANSPARENT;
@@ -348,7 +350,7 @@ bool ShadowMapping::OnLightFound(const PointLight* light, SRenderParams& renderP
 bool ShadowMapping::OnLightFound(const SpotLight* light, SRenderParams& renderParams)
 {
 	DEBUG_GROUP(__FUNCTION__);
-	auto program = Pipeline::instance()->object->m_Material->program;
+#if 0
 	program->Uniform(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");
 	program->Uniform(m_Scene->getCurrentCamera()->Front, "spotLight.direction");
 	program->Uniform(light->ambient, "spotLight.ambient");
@@ -359,6 +361,7 @@ bool ShadowMapping::OnLightFound(const SpotLight* light, SRenderParams& renderPa
 	program->Uniform(light->quadratic, "spotLight.quadratic");
 	program->Uniform(glm::cos(glm::radians(light->cutOff)), "spotLight.cutOff");
 	program->Uniform(glm::cos(glm::radians(light->outerCutOff)), "spotLight.outerCutOff");
+#endif
 	return true;
 }
 
