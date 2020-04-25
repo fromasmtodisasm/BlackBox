@@ -178,5 +178,11 @@ private:
 	std::vector<SVertexPoolEntry> m_VertexBufferPool;
 	int m_FrameID = 0;
 
+  IRenderAuxGeom* m_RenderAuxGeom;
+
+
+
+  // Inherited via CRenderer
+  virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
 
 };

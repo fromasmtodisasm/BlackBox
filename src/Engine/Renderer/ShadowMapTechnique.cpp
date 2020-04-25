@@ -126,7 +126,7 @@ void ShadowMapping::RenderPass()
             auto t = obj->second->getTransform();
             //TODO: now this is not AABB but OBB
             //need convert it to AABB
-            AuxRenderer::DrawAABB(t * Vec4(mesh.bb.min, 1.f), t * Vec4(mesh.bb.max, 1.f));
+            gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(t * Vec4(mesh.bb.min, 1.f), t * Vec4(mesh.bb.max, 1.f));
         }
     }
 

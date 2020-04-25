@@ -1,11 +1,12 @@
 #pragma once
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 
-class IRenderAuxGeom
+class CRenderAuxGeom : public IRenderAuxGeom
 {
 public:
-  IRenderAuxGeom();
-  void DrawAABB(Vec3 min, Vec3 max);
+  CRenderAuxGeom();
+  void DrawAABB(Vec3 min, Vec3 max) override;
 
 private:
   CVertexBuffer* m_BoundingBox = nullptr;

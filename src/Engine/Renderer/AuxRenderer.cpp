@@ -7,7 +7,7 @@
 using P3F = struct_VERTEX_FORMAT_P3F;
 using VecPos = std::vector<P3F>;
 
-IRenderAuxGeom::IRenderAuxGeom()
+CRenderAuxGeom::CRenderAuxGeom()
 {
   // Cube 1x1x1, centered on origin
    static P3F vertices[] = {
@@ -30,11 +30,12 @@ IRenderAuxGeom::IRenderAuxGeom()
   m_BoundingBox = gEnv->pRenderer->CreateBuffer(cnt, VERTEX_FORMAT_P3F, "BoundingBox", false);
   gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices, cnt, false);
 
+  m_BB_IndexBuffer = new SVertexStream;
   gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements, (sizeof elements / sizeof GLushort));
 }
 
 //TODO: Довести до ума, нужно учитывать трансформации объекта
-void IRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
+void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
 {
   auto shader = Pipeline::bindProgram("bb");
 

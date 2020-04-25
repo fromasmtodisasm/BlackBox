@@ -7,6 +7,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
+#include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
@@ -141,6 +142,7 @@ namespace
 		switch (rp)
 		{
 		case RenderPrimitive::LINES: return GL_LINES;
+		case RenderPrimitive::LINE_LOOP: return GL_LINE_LOOP;
 		case RenderPrimitive::LINE_STRIP: return GL_LINE_STRIP;
 		case RenderPrimitive::TRIANGLES: return GL_TRIANGLES;
 		case RenderPrimitive::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
@@ -217,6 +219,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   m_ScreenShader->Use();
   m_ScreenShader->Uniform(0, "screenTexture");
   m_ScreenShader->Unuse();
+
+  m_RenderAuxGeom = new CRenderAuxGeom();
 
   //cam_width->Set(GetWidth());
   //cam_height->Set(GetHeight());
@@ -433,6 +437,7 @@ void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int num
   if (indicies != nullptr)
   {
     assert(numindices != 0);
+    gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicies->m_VertBuf.m_nID);
     gl::DrawElements(gl_mode, numindices, GL_UNSIGNED_SHORT, reinterpret_cast<GLushort*>(offsindex));
   }
   else
@@ -454,16 +459,17 @@ void GLRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int ind
 	assert(dest != nullptr);
 	assert(src != nullptr);
 
-	SVertexStream stream;
-	stream.m_bDynamic = false;
-	stream.m_nBufOffset = 0;
-	stream.m_nItems = indexcount;
+	SVertexStream *stream = new SVertexStream;
+	stream->m_bDynamic = false;
+	stream->m_nBufOffset = 0;
+	stream->m_nItems = indexcount;
 
-	gl::GenBuffer(&stream.m_VertBuf.m_nID);
-	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
+	gl::GenBuffer(&stream->m_VertBuf.m_nID);
+	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, stream->m_VertBuf.m_nID);
 	gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, indexcount * sizeof(short), src, GL_STATIC_DRAW);
 	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+  *dest = *stream;
 }
 
 void GLRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock/* = true*/)
@@ -526,6 +532,11 @@ void GLRenderer::printHardware()
                    "Version: [" << m_Hardware.version << "]\n"
                    "Shader Language Version: [" << m_Hardware.glsl_version << "]\n";
   m_pSystem->Log(hardware_info.str().c_str());
+}
+
+IRenderAuxGeom* GLRenderer::GetIRenderAuxGeom()
+{
+  return m_RenderAuxGeom;
 }
 
 void GLRenderer::SetRenderTarget(int nHandle)
