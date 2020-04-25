@@ -123,7 +123,10 @@ void ShadowMapping::RenderPass()
         DEBUG_GROUP("DRAW_BB");
         for (auto& mesh : *obj->second->m_Mesh)
         {
-            AuxRenderer::DrawAABB(mesh.bb.min, mesh.bb.max);
+            auto t = obj->second->getTransform();
+            //TODO: now this is not AABB but OBB
+            //need convert it to AABB
+            AuxRenderer::DrawAABB(t * Vec4(mesh.bb.min, 1.f), t * Vec4(mesh.bb.max, 1.f));
         }
     }
 

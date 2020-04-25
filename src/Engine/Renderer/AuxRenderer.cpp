@@ -1,43 +1,42 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
-//TODO: Довести до ума, нужно учитывать трансформации объекта
-void AuxRenderer::DrawAABB(Vec3 min, Vec3 max)
+using P3F = struct_VERTEX_FORMAT_P3F;
+using VecPos = std::vector<P3F>;
+
+IRenderAuxGeom::IRenderAuxGeom()
 {
-  auto shader = Pipeline::bindProgram("bb");
   // Cube 1x1x1, centered on origin
-  GLfloat vertices[] = {
-    -0.5, -0.5, -0.5, 1.0,
-     0.5, -0.5, -0.5, 1.0,
-     0.5,  0.5, -0.5, 1.0,
-    -0.5,  0.5, -0.5, 1.0,
-    -0.5, -0.5,  0.5, 1.0,
-     0.5, -0.5,  0.5, 1.0,
-     0.5,  0.5,  0.5, 1.0,
-    -0.5,  0.5,  0.5, 1.0,
+   static P3F vertices[] = {
+    Vec3{-0.5f, -0.5f, -0.5f},
+    Vec3{ 0.5, -0.5, -0.5},
+    Vec3{ 0.5,  0.5, -0.5},
+    Vec3{-0.5,  0.5, -0.5},
+    Vec3{-0.5, -0.5,  0.5},
+    Vec3{ 0.5, -0.5,  0.5},
+    Vec3{ 0.5,  0.5,  0.5},
+    Vec3{-0.5,  0.5,  0.5}
   };
-  GLuint vao_vertices, vbo_vertices;
-  glCheck(glGenVertexArrays(1, &vao_vertices));
-  glCheck(glBindVertexArray(vao_vertices));
-
-  glCheck(glGenBuffers(1, &vbo_vertices));
-  glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices));
-  glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
-  glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
-  GLushort elements[] = {
+  static GLushort elements[] = {
     0, 1, 2, 3,
     4, 5, 6, 7,
     0, 4, 1, 5, 
     2, 6, 3, 7
   };
-  GLuint ibo_elements;
-  glCheck(glGenBuffers(1, &ibo_elements));
-  glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements));
-  glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW));
-  glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+   auto cnt = sizeof vertices / sizeof P3F;
+  m_BoundingBox = gEnv->pRenderer->CreateBuffer(cnt, VERTEX_FORMAT_P3F, "BoundingBox", false);
+  gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices, cnt, false);
+
+  gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements, (sizeof elements / sizeof GLushort));
+}
+
+//TODO: Довести до ума, нужно учитывать трансформации объекта
+void IRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
+{
+  auto shader = Pipeline::bindProgram("bb");
 
   glm::vec3 size = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
   glm::vec3 center = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
@@ -48,32 +47,8 @@ void AuxRenderer::DrawAABB(Vec3 min, Vec3 max)
   shader->Uniform(cam.getViewMatrix(), "view");
   shader->Uniform(cam.getProjectionMatrix(), "projection");
 
-  /* Apply object's transformation matrix */
-  //glm::mat4 m = mesh->object2world * transform;
-	//FIXME: rewrite setup shader parameters
 
-  glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices));
-  glCheck(glEnableVertexAttribArray(0));
-  glCheck(glVertexAttribPointer(
-    0,  // attribute
-    4,                  // number of elements per vertex, here (x,y,z,w)
-    GL_FLOAT,           // the type of each element
-    GL_FALSE,           // take our values as-is
-    0,                  // no extra data between each position
-    0                   // offset of first element
-  ));
-
-  glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements));
-  glCheck(glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0));
-  glCheck(glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort))));
-  glCheck(glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort))));
-  glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
-  glCheck(glDisableVertexAttribArray(0));
-  glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
-  glCheck(glDeleteBuffers(1, &vbo_vertices));
-  glCheck(glDeleteBuffers(1, &ibo_elements));
-  glCheck(glDeleteVertexArrays(1, &vao_vertices));
-
+  gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
+  gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 8, static_cast<int>(RenderPrimitive::LINE_LOOP));
+  gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
 }

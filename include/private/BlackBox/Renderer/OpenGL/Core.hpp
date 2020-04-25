@@ -314,6 +314,11 @@ namespace gl {
 		glCheck(glDrawArrays(mode, first, count));
   }
 
+  inline void DrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices)
+  {
+		glCheck(glDrawElements(mode, count, type, indices));
+  }
+
   inline void EnableVertexAttribArray(GLuint index)
   {
     glCheck(glEnableVertexAttribArray(index));

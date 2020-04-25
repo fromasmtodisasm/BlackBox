@@ -424,10 +424,21 @@ void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 
 void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start/* = 0*/, int vert_stop/* = 0*/, CMatInfo* mi/* = NULL*/)
 {
-	auto to_draw = vert_stop - vert_start;
 	assert(glIsVertexArray(src->m_Container));
+  assert(src != nullptr);
+	auto to_draw = vert_stop - vert_start;
 	gl::BindVertexArray(src->m_Container);
-	gl::DrawArrays(toGlPrimitive(static_cast<RenderPrimitive>(prmode)), 0, to_draw == 0 ? src->m_NumVerts : to_draw);
+
+  auto gl_mode = toGlPrimitive(static_cast<RenderPrimitive>(prmode));
+  if (indicies != nullptr)
+  {
+    assert(numindices != 0);
+    gl::DrawElements(gl_mode, numindices, GL_UNSIGNED_SHORT, reinterpret_cast<GLushort*>(offsindex));
+  }
+  else
+  {
+    gl::DrawArrays(gl_mode, 0, to_draw == 0 ? src->m_NumVerts : to_draw);
+  }
 	gl::BindVertexArray(0);
 }
 
@@ -450,7 +461,7 @@ void GLRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int ind
 
 	gl::GenBuffer(&stream.m_VertBuf.m_nID);
 	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
-	gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, indexcount * sizeof(short), nullptr, GL_STATIC_DRAW);
+	gl::BufferData(GL_ELEMENT_ARRAY_BUFFER, indexcount * sizeof(short), src, GL_STATIC_DRAW);
 	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 }

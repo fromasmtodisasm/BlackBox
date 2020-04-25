@@ -35,13 +35,14 @@ typedef void* WIN_HINSTANCE;
 typedef void* WIN_HDC;
 typedef void* WIN_HGLRC;
 
+class CCamera;
+class CMatInfo;
+struct IRenderAuxGeom;
+struct IFont;
+struct IShader;
 struct ISystem;
 struct IWindow;
-struct IFont;
-class CCamera;
-struct IShader;
 struct Material;
-class CMatInfo;
 
 //////////////////////////////////////////////////////////////////////
 typedef unsigned char bvec4[4];
@@ -91,7 +92,8 @@ union UCol
 enum class RenderPrimitive
 {
 	LINES,
-    LINE_STRIP,
+  LINE_STRIP,
+  LINE_LOOP,
 	TRIANGLES,
 	TRIANGLE_STRIP
 };
@@ -377,6 +379,11 @@ struct IRenderer
 
   virtual void  SetState(State state, bool enable) = 0;
   virtual void  SetCullMode(CullMode mode = CullMode::BACK) = 0;
+
+	//////////////////////////////////////////////////////////////////////
+	//! Interface for auxiliary geometry (for debugging, editor purposes, etc.)
+	virtual IRenderAuxGeom* GetIRenderAuxGeom(/*EViewportType viewport = eViewportType_Default*/) = 0;
+	//////////////////////////////////////////////////////////////////////
 
   /////////////////////////////////////////////////////////////////////////////////
 // Render-context management

@@ -1,12 +1,13 @@
 #pragma once
-#include <BlackBox\Core\MathHelper.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 
-class AuxRenderer
+class IRenderAuxGeom
 {
 public:
-    AuxRenderer(IRenderer* pRenderer);
-    static void DrawAABB(Vec3 min, Vec3 max);
+  IRenderAuxGeom();
+  void DrawAABB(Vec3 min, Vec3 max);
 
 private:
-    IRenderer* m_Renderer;
+  CVertexBuffer* m_BoundingBox = nullptr;
+  SVertexStream* m_BB_IndexBuffer = nullptr;
 };
