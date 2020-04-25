@@ -6,6 +6,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 {
 public:
   CRenderAuxGeom();
+  ~CRenderAuxGeom();
   void DrawAABB(Vec3 min, Vec3 max) override;
 
 private:

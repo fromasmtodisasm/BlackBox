@@ -34,6 +34,12 @@ CRenderAuxGeom::CRenderAuxGeom()
   gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements, (sizeof elements / sizeof GLushort));
 }
 
+CRenderAuxGeom::~CRenderAuxGeom()
+{
+  SAFE_DELETE(m_BoundingBox);
+  SAFE_DELETE(m_BB_IndexBuffer);
+}
+
 //TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
 {
@@ -49,7 +55,7 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
   shader->Uniform(cam.getProjectionMatrix(), "projection");
 
 
+  gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
   gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
-  gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 8, static_cast<int>(RenderPrimitive::LINE_LOOP));
   gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
 }
