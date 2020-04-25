@@ -455,3 +455,26 @@ struct IDrawable
   virtual void draw(SRenderParams& renderParams) = 0;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+class ScopedState
+{
+public:
+  ScopedState(IRenderer* pRender, IRenderer::State state, bool enable)
+    :
+    pRender(pRender),
+    state(state),
+    enable(enable)
+  {
+    pRender->SetState(state, enable);
+  }
+  ~ScopedState()
+  {
+    pRender->SetState(state, !enable);
+  }
+  IRenderer* pRender;
+  IRenderer::State state;
+  bool enable;
+};
+
+#define RSS(r,s,e) ScopedState _ss##s(r, IRenderer::State::s, e)
+

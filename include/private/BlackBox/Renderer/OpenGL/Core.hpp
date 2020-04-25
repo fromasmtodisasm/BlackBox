@@ -427,4 +427,9 @@ namespace gl {
   {
     return glGetString(name);
   }
+
+  inline void GetIntegerv(GLenum name, GLint *data)
+  {
+    glGetIntegerv(name, data);
+  }
 }

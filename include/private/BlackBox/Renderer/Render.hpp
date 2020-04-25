@@ -109,10 +109,11 @@ public:
 	virtual void GetProjectionMatrix(double* mat) override;
 	virtual void GetProjectionMatrix(float* mat) override;
 	virtual Vec3 GetUnProject(const Vec3& WindowCoords, const CCamera& cam) override;
+
+  virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
 private:
   void glInit();
   void fillSates();
-  void InitConsoleVariables();
   void InitConsoleCommands();
   void printHardware();
 
@@ -147,21 +148,6 @@ private:
   glContextAttribute glContextType = AttributeType::CORE;
 #endif
   // DEBUG
-  ICVar* translateImageX = nullptr;
-  ICVar* translateImageY = nullptr;
-
-  ICVar* scaleImageX = nullptr;
-  ICVar* scaleImageY = nullptr;
-
-  ICVar* needTranslate = nullptr;
-  ICVar* needFlipY = nullptr;
-
-  ICVar* r_debug = nullptr;
-  ICVar* test_proj = nullptr;
-  ICVar* render_via_viewport = nullptr;
-
-  ICVar* cam_width;
-  ICVar* cam_height;
 
   std::map<State, GLenum> stateMap;
 
@@ -179,10 +165,5 @@ private:
 	int m_FrameID = 0;
 
   IRenderAuxGeom* m_RenderAuxGeom;
-
-
-
-  // Inherited via CRenderer
-  virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
 
 };

@@ -20,18 +20,12 @@ public:
   float posX = 0, posY = 0;
 
   FreeTypeFont() :
-    EBO(-1),
-    VAO(-1),
-    VBO(-1),
     face(nullptr),
     ft(nullptr),
     shader(nullptr)
   {
   }
   FreeTypeFont(const char* font, int w, int h) :
-    EBO(-1),
-    VAO(-1),
-    VBO(-1),
     face(nullptr),
     ft(nullptr),
     shader(nullptr)
@@ -46,7 +40,8 @@ private:
   FT_Face face;
   std::map<GLchar, Character> Characters;
 
-  GLuint VAO, VBO, EBO;
+  CVertexBuffer* m_VB = nullptr;
+  SVertexStream* m_IB = nullptr;
   BaseShaderProgramRef shader;
 
 public:

@@ -1,5 +1,6 @@
 #include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 
 void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, float color[4])
@@ -10,17 +11,18 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
   glm::mat4 uv_projection = glm::mat4(1.0);
   //uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
   glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
-  shader->Uniform(projection, "projection");
-  shader->Uniform(uv_projection, "uv_projection");
-  glCheck(glUniform3fv(glGetUniformLocation(shader->Get(), "textColor"), 1, &color[0]));
+  {
+    auto c = color;
+    shader->Uniform(projection, "projection");
+    shader->Uniform(uv_projection, "uv_projection");
+    shader->Uniform(Vec3(c[0], c[1], c[2]), "textColor");
+  }
   gl::ActiveTexture(GL_TEXTURE0);
-  glCheck(glBindVertexArray(VAO));
-  render->SetState(IRenderer::State::BLEND, true);
-  render->SetState(IRenderer::State::CULL_FACE, false);
+  RSS(render, BLEND, true);
+  RSS(render, CULL_FACE, false);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   // Iterate through all characters
-  //std::string::const_iterator c;
   const char* c;
   const char* end = text.data() + text.size();
   for (c = text.data(); c != end; c++)
@@ -42,33 +44,24 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
     GLfloat w = ch.Size.x * scale;
     GLfloat h = ch.Size.y * scale;
     // Update VBO for each character
-    GLfloat vertices[4][4] = {
-      { xpos,     ypos - h,   0.0, 0.0 },
-    { xpos,     ypos,       0.0, 1.0 },
-    //{ xpos + w, ypos,       1.0, 1.0 },
-
-    //{ xpos,     ypos + h,   0.0, 0.0 },
-    { xpos + w, ypos,       1.0, 1.0 },
-    { xpos + w, ypos - h,   1.0, 0.0 }
+    using P3F_TEX2F = struct_VERTEX_FORMAT_P3F_TEX2F;
+    P3F_TEX2F vertices[4] = {
+      P3F_TEX2F{ Vec3{xpos,      ypos - h, 0}, 0.0, 0.0 },
+      P3F_TEX2F{ Vec3{xpos,      ypos,     0}, 0.0, 1.0 },
+      P3F_TEX2F{ Vec3{ xpos + w, ypos,     0}, 1.0, 1.0 },
+      P3F_TEX2F{ Vec3{ xpos + w, ypos - h, 0}, 1.0, 0.0 }
     };
     shader->Uniform(model, "model");
     // Render glyph texture over quad
     gl::BindTexture2D(ch.TextureID);
     // Update content of VBO memory
-    glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    glCheck(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
-    //glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    // Render quad
-    //glCheck(glDrawArrays(GL_TRIANGLES, 0, 6));
+    gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 4, false);
 
-    glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
-    glCheck(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+    gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
     // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
     posX = x += (ch.Advance >> 6)* scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
   }
-  glCheck(glBindVertexArray(0));
   gl::BindTexture2D(0);
-  glCheck(glEnable(GL_CULL_FACE));
 }
 
 float FreeTypeFont::TextWidth(const std::string& text)
@@ -79,7 +72,6 @@ float FreeTypeFont::TextWidth(const std::string& text)
   for (c = text.data(); c != end; c++)
   {
     GLfloat x = 0;
-    //GLfloat xpos =
     w += CharWidth(*c);
   }
   return w;
@@ -165,27 +157,16 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
   FT_Done_Face(face);
   FT_Done_FreeType(ft);
 
-  GLuint indices[] = {  // Note that we start from 0!
+  uint16 indices[] = {  // Note that we start from 0!
     0, 1, 3,  // First Triangle
     1, 2, 3   // Second Triangle
   };
 
-  glCheck(glGenVertexArrays(1, &VAO));
-  glCheck(glGenBuffers(1, &VBO));
-  glCheck(glGenBuffers(1, &EBO));
-  glCheck(glBindVertexArray(VAO));
-  glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-  glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4 * 4, NULL, GL_DYNAMIC_DRAW));
+  m_VB = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_TEX2F, "BoundingBox", false);
 
-  glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
-  glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
+  m_IB = new SVertexStream;
+  gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 
-  glCheck(glEnableVertexAttribArray(0));
-  glCheck(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
-
-  glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
-  glCheck(glBindVertexArray(0));
   return true;
 }
 

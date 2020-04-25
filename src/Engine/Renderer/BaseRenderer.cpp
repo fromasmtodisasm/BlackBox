@@ -21,7 +21,8 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
       i++;
     }
   }
-#elif SDL_WINDOW
+#endif
+//#elif SDL_WINDOW
   SDL_DisplayMode mode;
   Uint32 f;
 
@@ -49,7 +50,28 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
     }
   }
 
-#endif
+//#endif
 
   return numModes;
+}
+
+RenderCVars::RenderCVars()
+{
+  translateImageY = CREATE_CVAR("ty", 0.0f, 0);
+  translateImageX = CREATE_CVAR("tx", 0.0f, 0);
+  scaleImageX = CREATE_CVAR("sx", 1.0f, 0);
+  scaleImageY = CREATE_CVAR("sy", 1.0f, 0);
+  needTranslate = CREATE_CVAR("nt", 1, 0, "Translate or not 2d background of console");
+  needFlipY = CREATE_CVAR("nfy", 1, 0, "Flip or not 2d background of console");
+  test_proj = CREATE_CVAR("test_proj", "test proj empty", 0);
+  render_via_viewport = CREATE_CVAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
+
+  r_debug = GET_CVAR("r_debug");
+  cam_width = GET_CVAR("r_cam_w");
+  cam_height = GET_CVAR("r_cam_h");
+}
+
+RenderCVars::~RenderCVars()
+{
+
 }

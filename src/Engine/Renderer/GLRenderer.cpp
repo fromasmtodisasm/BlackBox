@@ -167,7 +167,6 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   if (window == nullptr)
     return nullptr;
   //=======================
-  InitConsoleVariables();
   InitConsoleCommands();
   //=======================
   if (isDebug && r_debug->GetIVal() == 1)
@@ -302,11 +301,11 @@ int GLRenderer::GetHeight()
 void GLRenderer::ScreenShot(const char* filename)
 {
   GLint drawFboId = 0;// , readFboId = 0;
-  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+  gl::GetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
 
   gl::BindFramebuffer(0);
   GLint dims[4] = { 0 };
-  glGetIntegerv(GL_VIEWPORT, dims);
+  gl::GetIntegerv(GL_VIEWPORT, dims);
   GLint width = dims[2];
   GLint height = dims[3];
 
@@ -364,22 +363,6 @@ void GLRenderer::fillSates()
   STATEMAP(State::PROGRAM_POINT_SIZE, GL_PROGRAM_POINT_SIZE);
 
 #undef STATEMAP
-}
-
-void GLRenderer::InitConsoleVariables()
-{
-  translateImageY = CREATE_CVAR("ty", 0.0f, 0);
-  translateImageX = CREATE_CVAR("tx", 0.0f, 0);
-  scaleImageX = CREATE_CVAR("sx", 1.0f, 0);
-  scaleImageY = CREATE_CVAR("sy", 1.0f, 0);
-  needTranslate = CREATE_CVAR("nt", 1, 0, "Translate or not 2d background of console");
-  needFlipY = CREATE_CVAR("nfy", 1, 0, "Flip or not 2d background of console");
-  test_proj = CREATE_CVAR("test_proj", "test proj empty", 0);
-  render_via_viewport = CREATE_CVAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
-
-  r_debug = GET_CVAR("r_debug");
-  cam_width = GET_CVAR("r_cam_w");
-  cam_height = GET_CVAR("r_cam_h");
 }
 
 void GLRenderer::InitConsoleCommands()

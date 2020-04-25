@@ -7,7 +7,30 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>
 
+class RenderCVars
+{
+public:
+  RenderCVars();
+  ~RenderCVars();
+  ICVar* translateImageX = nullptr;
+  ICVar* translateImageY = nullptr;
+
+  ICVar* scaleImageX = nullptr;
+  ICVar* scaleImageY = nullptr;
+
+  ICVar* needTranslate = nullptr;
+  ICVar* needFlipY = nullptr;
+
+  ICVar* r_debug = nullptr;
+  ICVar* test_proj = nullptr;
+  ICVar* render_via_viewport = nullptr;
+
+  ICVar* cam_width = nullptr;
+  ICVar* cam_height = nullptr;
+};
+
 class CRenderer :
+  public RenderCVars,
   public IRenderer
 {
   //! Init the renderer, params are self-explanatory
