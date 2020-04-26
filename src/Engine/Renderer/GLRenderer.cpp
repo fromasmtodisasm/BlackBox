@@ -518,6 +518,16 @@ void GLRenderer::printHardware()
   m_pSystem->Log(hardware_info.str().c_str());
 }
 
+void GLRenderer::PushProfileMarker(char* label)
+{
+  OpenglDebuger::PushGroup(0, std::strlen(label), label);
+}
+
+void GLRenderer::PopProfileMarker(char* label)
+{
+  OpenglDebuger::EndGroup();
+}
+
 IRenderAuxGeom* GLRenderer::GetIRenderAuxGeom()
 {
   return m_RenderAuxGeom;
@@ -544,7 +554,7 @@ void GLRenderer::SetCullMode(CullMode mode/* = CullMode::BACK*/)
   if (mode == CullMode::FRONT_AND_BACK)
     gl::CullFace(GL_FRONT_AND_BACK);
   else
-    gl::CullFace(GL_FRONT + static_cast<unsigned int>(mode));
+    gl::CullFace(GL_FRONT + static_cast<uint>(mode));
 }
 
 bool GLRenderer::DeleteContext(WIN_HWND hWnd)

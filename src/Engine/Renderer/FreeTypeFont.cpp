@@ -44,12 +44,12 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
     GLfloat w = ch.Size.x * scale;
     GLfloat h = ch.Size.y * scale;
     // Update VBO for each character
-    using P3F_TEX2F = struct_VERTEX_FORMAT_P3F_TEX2F;
-    P3F_TEX2F vertices[4] = {
-      P3F_TEX2F{ Vec3{xpos,      ypos - h, 0}, 0.0, 0.0 },
-      P3F_TEX2F{ Vec3{xpos,      ypos,     0}, 0.0, 1.0 },
-      P3F_TEX2F{ Vec3{ xpos + w, ypos,     0}, 1.0, 1.0 },
-      P3F_TEX2F{ Vec3{ xpos + w, ypos - h, 0}, 1.0, 0.0 }
+    using P3F_T2F = SVF_P3F_T2F;
+    P3F_T2F vertices[4] = {
+      P3F_T2F{ Vec3{xpos,      ypos - h, 0}, 0.0, 0.0 },
+      P3F_T2F{ Vec3{xpos,      ypos,     0}, 0.0, 1.0 },
+      P3F_T2F{ Vec3{ xpos + w, ypos,     0}, 1.0, 1.0 },
+      P3F_T2F{ Vec3{ xpos + w, ypos - h, 0}, 1.0, 0.0 }
     };
     shader->Uniform(model, "model");
     // Render glyph texture over quad
@@ -162,7 +162,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
     1, 2, 3   // Second Triangle
   };
 
-  m_VB = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_TEX2F, "BoundingBox", false);
+  m_VB = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "BoundingBox", false);
 
   m_IB = new SVertexStream;
   gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));

@@ -111,6 +111,9 @@ public:
 	virtual Vec3 GetUnProject(const Vec3& WindowCoords, const CCamera& cam) override;
 
   virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
+
+  virtual void PushProfileMarker(char* label) override;
+  virtual void PopProfileMarker(char* label) override;
 private:
   void glInit();
   void fillSates();
@@ -165,5 +168,4 @@ private:
 	int m_FrameID = 0;
 
   IRenderAuxGeom* m_RenderAuxGeom;
-
 };

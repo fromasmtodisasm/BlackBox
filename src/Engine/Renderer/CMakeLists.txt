@@ -88,4 +88,5 @@ target_precompile_headers(${PROJECT_NAME}
 	<BlackBox/System/ISystem.hpp>
 	<BlackBox/System/IConsole.hpp>
 	<BlackBox/System/ILog.hpp>
+	<BlackBox/Utils/smartptr.hpp>
 )

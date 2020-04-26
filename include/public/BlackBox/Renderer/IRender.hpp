@@ -50,6 +50,56 @@ typedef float vec4_t[4];
 typedef unsigned char byte;
 typedef float vec2_t[2];
 
+// Interface to the graphics constant buffers
+/*
+struct IGraphicsDeviceConstantBuffer
+{
+	// Set contents of the device buffer
+	virtual void SetData(const uint8* data, size_t size) = 0;
+};
+typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferPtr;
+/*
+
+/*
+   template <typename T>
+   class CTypedGraphicsDeviceConstantBuffer
+   {
+   T m_hostBuffer;
+   IGraphicsDeviceConstantBuffer m_constantBuffer;
+
+   public:
+   CTypedConstantBuffer() : m_constantBuffer(nullptr) {}
+   CTypedConstantBuffer(const CTypedConstantBuffer<T> &cb) : m_constantBuffer(nullptr) { m_hostBuffer = cb.m_hostBuffer; }
+
+   bool IsDeviceBufferAllocated() { return m_constantBuffer != nullptr; }
+   IGraphicsDeviceConstantBuffer GetDeviceConstantBuffer()
+   {
+    if (!m_constantBuffer)
+    {
+      CreateDeviceBuffer();
+    }
+    return m_constantBuffer;
+   }
+
+   void CreateDeviceBuffer()
+   {
+    int size = sizeof(T);
+    m_constantBuffer = gcpRendD3D->m_DevBufMan.CreateConstantBuffer(size);
+    CopyToDevice();
+   }
+   void CopyToDevice()
+   {
+    m_constantBuffer->SetData(&m_hostBuffer, sizeof(m_hostBuffer));
+   }
+
+   T* operator->() { return &m_hostBuffer; }
+   T& operator=(const T& hostData)
+   {
+    return m_hostBuffer = hostData;
+   }
+   };
+ */
+
 // Render State flags
 #define GS_BLSRC_MASK              0xf
 #define GS_BLSRC_ZERO              0x1
@@ -379,6 +429,9 @@ struct IRenderer
 
   virtual void  SetState(State state, bool enable) = 0;
   virtual void  SetCullMode(CullMode mode = CullMode::BACK) = 0;
+
+	virtual void  PushProfileMarker(char* label) = 0;
+	virtual void  PopProfileMarker(char* label) = 0;
 
 	//////////////////////////////////////////////////////////////////////
 	//! Interface for auxiliary geometry (for debugging, editor purposes, etc.)
