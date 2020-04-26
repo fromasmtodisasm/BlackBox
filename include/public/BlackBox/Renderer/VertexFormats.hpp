@@ -110,7 +110,7 @@ struct SVF_P3F_N // 24 bytes
   Vec3 xyz;
   Vec3 normal;
 };
-struct struct_VERTEX_FORMAT_T2F // 8 bytes
+struct SVF_T2F // 8 bytes
 {
   float st[2];
 };
@@ -173,7 +173,7 @@ struct SVF_P3F_N_C4B_T2F
   bool operator == (SVF_P3F_N_C4B_T2F & other);
 };
 
-struct struct_VERTEX_FORMAT_TRP3F_C4B_T2F
+struct SVF_TRP3F_C4B_T2F
 {
   float x,y,z,rhw;
   UCol color;
@@ -247,10 +247,10 @@ _inline void *CreateVertexBuffer(int nFormat, int nVerts)
       return new SVF_P3F_N_C4B[nVerts];
 
     case VERTEX_FORMAT_TRP3F_C4B_T2F:
-      return new struct_VERTEX_FORMAT_TRP3F_C4B_T2F[nVerts];
+      return new SVF_TRP3F_C4B_T2F[nVerts];
 
     case VERTEX_FORMAT_T2F:
-      return new struct_VERTEX_FORMAT_T2F[nVerts];
+      return new SVF_T2F[nVerts];
 
     default:
       assert(0);
@@ -275,7 +275,7 @@ const int gVertexSize[]=
   sizeof(SVF_P3F_C4B),
   sizeof(SVF_P3F_T2F),
   sizeof(SVF_P3F_C4B_T2F),
-  sizeof(struct_VERTEX_FORMAT_TRP3F_C4B_T2F),
+  sizeof(SVF_TRP3F_C4B_T2F),
   sizeof(SVF_P3F_C4B_C4B),
   sizeof(SVF_P3F_N),	
   sizeof(SVF_P3F_N_C4B),
@@ -285,7 +285,7 @@ const int gVertexSize[]=
   sizeof(SVF_P3F_C4B_C4B_T2F),
   sizeof(SVF_P3F_N_C4B_C4B_T2F),
   sizeof(SPipTangents),
-  sizeof(struct_VERTEX_FORMAT_T2F),
+  sizeof(SVF_T2F),
   sizeof(SVF_P3F_C4B_T2F_T2F),
 };
 
@@ -300,7 +300,7 @@ const int g_VertFormatUVOffsets[] =
 	-1, // VERTEX_FORMAT_P3F_C4B=2,         // usually terrain (16 bytes)
 	(int)&(((SVF_P3F_T2F*)0)->st[0]), // VERTEX_FORMAT_P3F_T2F=3,          // everything else (20 bytes)
 	(int)&(((SVF_P3F_C4B_T2F*)0)->st[0]), // VERTEX_FORMAT_P3F_C4B_T2F=4,   // usually plants (24 bytes)
-	(int)&(((struct_VERTEX_FORMAT_TRP3F_C4B_T2F*)0)->st[0]),// VERTEX_FORMAT_TRP3F_C4B_T2F=5, // fonts (28 bytes)
+	(int)&(((SVF_TRP3F_C4B_T2F*)0)->st[0]),// VERTEX_FORMAT_TRP3F_C4B_T2F=5, // fonts (28 bytes)
 	-1, // VERTEX_FORMAT_P3F_C4B_C4B=1,     
 	-1, // VERTEX_FORMAT_P3F_N=1,                
   -1, // VERTEX_FORMAT_P3F_N_C4B=1,                
@@ -322,7 +322,7 @@ const int g_VertFormatRGBAOffsets[] =
 	(int)&(((SVF_P3F_C4B*)0)->color.dcolor),
 	-1,
 	(int)&(((SVF_P3F_C4B_T2F*)0)->color.dcolor),
-	(int)&(((struct_VERTEX_FORMAT_TRP3F_C4B_T2F*)0)->color.dcolor),
+	(int)&(((SVF_TRP3F_C4B_T2F*)0)->color.dcolor),
   (int)&(((SVF_P3F_C4B_C4B*)0)->color.dcolor),
   -1,
   (int)&(((SVF_P3F_N_C4B*)0)->color.dcolor),
@@ -383,7 +383,7 @@ static struct SBufInfoTable gBufInfoTable[] =
 #undef OOFS
   },
   {  //VERTEX_FORMAT_TRP3F_C4B_T2F
-#define OOFS(x) (int)&(((struct_VERTEX_FORMAT_TRP3F_C4B_T2F *)0)->x)  
+#define OOFS(x) (int)&(((SVF_TRP3F_C4B_T2F *)0)->x)  
     OOFS(st[0]),
     OOFS(color.dcolor),
 #undef OOFS
