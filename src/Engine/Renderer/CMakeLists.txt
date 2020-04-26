@@ -35,12 +35,16 @@ add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
   PRIVATE ${PROJECT_SOURCE_DIR}/AuxRenderer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShaderLoading.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/BufferManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Camera.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/FrameBufferObject.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/GBuffer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/GLRenderer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/HdrTechnique.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/IndexBuffer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Light.cpp
@@ -50,8 +54,6 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/Pipeline.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/PostProcessor.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/ReflectShader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/GLRenderer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/ScreenShader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/ShadowMapShader.cpp
@@ -62,7 +64,6 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexArrayObject.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/GBuffer.cpp
 )
 
 if (OPTION_GLAD_LOADER)

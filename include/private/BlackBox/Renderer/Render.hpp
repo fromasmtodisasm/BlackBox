@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/Renderer/BaseRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 struct IWindow;
 
@@ -33,8 +34,9 @@ struct Hardware
 
 struct SVertexPoolEntry
 {
-	bool free;
 	CVertexBuffer* vertexBuffer;
+  int totalSize = 0;
+  int free = 0;
 };
 
 class GLRenderer :
@@ -42,6 +44,7 @@ class GLRenderer :
   public IConsoleVarSink,
   public IInputEventListener
 {
+  const int INIT_BUFFER_SIZE = (1024 * 1024) * 4; // 4 billion of vertices 
 public:
   GLRenderer(ISystem* engine);
   ~GLRenderer();
@@ -119,6 +122,8 @@ private:
   void fillSates();
   void InitConsoleCommands();
   void printHardware();
+  void AquireVB();
+  bool VBF_InPool(int format);
 
 private:
   IWindow* m_Window = nullptr;
@@ -140,6 +145,7 @@ private:
   Quad* m_ScreenQuad = nullptr;
   // Shaders
   BaseShaderProgramRef m_ScreenShader;
+  BaseShaderProgramRef m_AuxGeomShader;
 #if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
   bool isDebug = true;
 #else
@@ -164,8 +170,9 @@ private:
 
   Hardware m_Hardware;
 
-	std::vector<SVertexPoolEntry> m_VertexBufferPool;
+	//std::vector<SVertexPoolEntry> m_VertexBufferPool;
 	int m_FrameID = 0;
 
   IRenderAuxGeom* m_RenderAuxGeom;
+  std::map<eVertexFormat, SVertexPoolEntry> m_VertexBufferPool;
 };

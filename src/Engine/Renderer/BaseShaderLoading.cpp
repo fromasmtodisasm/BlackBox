@@ -138,6 +138,12 @@ bool CShader::parseLine(std::ifstream& fin, std::string& buffer)
 						buffer = ss.str();
 						status = true;
 					}
+					else if (auto name = get_attr_name(buffer, "color", begin, end); name.size() != 0)
+					{
+						ss << "COLOR_ATTR(" << name << ");";
+						buffer = ss.str();
+						status = true;
+					}
 					return status;
 				}
 			}
