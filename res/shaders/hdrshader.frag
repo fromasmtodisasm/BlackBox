@@ -45,8 +45,10 @@ void main()
     vec3 bloomColor = textureLod(bloomBlur, clamp((TexCoords - bloom_size)*scale, vec2(0.5)*bloom_size, vec2(1.0)), 0).rgb;
 	vec3 result = vec3(0);
 	vec3 color = vec3(hdrColor);
+	#if 0
     if(bloom)
         color = hdrColor + bloomColor * bloom_exposure; // additive blending
+	#endif
 	//result = tonemap2(hdrColor, bloomColor);	
 	result = tonemap_reinhard(color);
 	result = vec3(float_to_sRGB(result.x), float_to_sRGB(result.y), float_to_sRGB(result.z));

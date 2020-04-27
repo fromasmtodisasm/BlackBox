@@ -2,6 +2,7 @@
 #include <BlackBox/Renderer/BaseRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/Renderer/BufferManager.hpp>
 
 struct IWindow;
 
@@ -32,19 +33,11 @@ struct Hardware
   const GLubyte* glsl_version = nullptr;
 };
 
-struct SVertexPoolEntry
-{
-	CVertexBuffer* vertexBuffer;
-  int totalSize = 0;
-  int free = 0;
-};
-
 class GLRenderer :
   public CRenderer,
   public IConsoleVarSink,
   public IInputEventListener
 {
-  const int INIT_BUFFER_SIZE = (1024 * 1024) * 4; // 4 billion of vertices 
 public:
   GLRenderer(ISystem* engine);
   ~GLRenderer();
@@ -174,5 +167,5 @@ private:
 	int m_FrameID = 0;
 
   IRenderAuxGeom* m_RenderAuxGeom;
-  std::map<eVertexFormat, SVertexPoolEntry> m_VertexBufferPool;
+  CBufferManager* m_BufferManager;
 };

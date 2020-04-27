@@ -216,6 +216,7 @@ void HdrTechnique::BloomPass()
   GLuint64 time_0, time_1, time_2;
 #endif
 
+#if 0
   {
     const char section[] = "DOWNSAMPLING";
     PROFILER_PUSH_CPU_MARKER(section, Utils::COLOR_BLACK);
@@ -230,6 +231,7 @@ void HdrTechnique::BloomPass()
     upsampling();
     PROFILER_POP_CPU_MARKER();
   }
+#endif
 
 #if 0
   glGetQueryObjectui64v(timer_queries[0], GL_QUERY_RESULT, &time_0);
@@ -565,7 +567,6 @@ void HdrTechnique::Do(unsigned int texture)
   //uv_projection = glm::scale(uv_projection, glm::vec3(scale, 1.f));
   //ss->Uniform(uv_projection, "uv_projection");
   ss->Uniform(scale, "scale");
-  //FrameBufferObject::bindDefault({ 0,0, /*scale.x * */w ,/*scale.y * */h });
   FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
   m_ScreenQuad.draw();
 }
