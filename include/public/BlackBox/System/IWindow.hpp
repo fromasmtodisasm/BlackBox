@@ -1,6 +1,10 @@
 #pragma once
 
-#define EXPORT extern "C"
+#ifdef IWINDOW_EXPORTS
+  #define IWINDOW_API DLL_EXPORT
+#else
+  #define IWINDOW_API DLL_IMPORT
+#endif
 
 struct Rect
 {
@@ -37,5 +41,6 @@ struct IWindow {
 };
 
 extern "C" {
-  IWindow* CreateIWindow();
+  IWINDOW_API IWindow* CreateIWindow();
+  typedef IWindow* (*PFNCREATEWINDOW)();
 }

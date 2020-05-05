@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Network/Network.hpp>
@@ -360,7 +361,7 @@ const char* CNetwork::GetUBIGameServerIP(bool bLan)
   return nullptr;
 }
 
-INetwork* CreateNetwork(ISystem* pSystem)
+NETWORK_API INetwork* CreateNetwork(ISystem* pSystem)
 {
   CNetwork* pNetwork = new CNetwork(pSystem);
   if (!pNetwork->Init())

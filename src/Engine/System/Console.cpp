@@ -882,7 +882,7 @@ IFont* CConsole::getFont(const char* name, float w, float h)
     m_Font = new CNullFont();
   else
   {
-    m_Font = new FreeTypeFont();
+    m_Font = CreateIFont();
     auto font = name;
     auto var = GET_CVAR("s_font");
     if (var)

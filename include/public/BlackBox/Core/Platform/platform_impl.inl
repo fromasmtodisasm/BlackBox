@@ -1,5 +1,8 @@
 #pragma once
 
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/System/ISystem.hpp>
+
 //////////////////////////////////////////////////////////////////////////
 // Global environment variable.
 //////////////////////////////////////////////////////////////////////////
@@ -13,14 +16,23 @@ extern SSystemGlobalEnvironment gEnv;
 struct SSystemGlobalEnvironment* gEnv = nullptr;
 #endif
 
-#include <BlackBox/Core/Platform/Platform.hpp>
-
-int64_t  bbGetTicks()
+//////////////////////////////////////////////////////////////////////////
+// This is an entry to DLL initialization function that must be called for each loaded module
+//////////////////////////////////////////////////////////////////////////
+extern "C" DLL_EXPORT void ModuleInitISystem(ISystem* pSystem, const char* moduleName)
 {
-	return 0;
+	#if defined(USE_CRY_ASSERT)
+	CryAssertSetGlobalFlagAddress(pSystem->GetAssertFlagAddress());
+	#endif
+
+	if (gEnv) // Already registered.
+		return;
+
+
+	#if !defined(SYS_ENV_AS_STRUCT)
+	if (pSystem) // DONT REMOVE THIS. ITS FOR RESOURCE COMPILER!!!!
+		gEnv = pSystem->GetGlobalEnvironment();
+	#endif
 }
 
-void bbSleep(unsigned int dwMilliseconds)
-{
 
-}

@@ -38,6 +38,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp
+	PRIVATE ${SOURCE_DIR}/Main.cpp
 
 	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
@@ -103,6 +104,5 @@ source_group(
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
-	<BlackBox/Core/Platform/Platform.hpp>
-	<BlackBox/Core/Platform/Windows.hpp>
+  "src/pch.hpp"
 )

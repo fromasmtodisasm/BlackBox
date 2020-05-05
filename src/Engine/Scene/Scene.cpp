@@ -21,8 +21,7 @@ Scene::Scene(std::string name)
 	  m_Technique(nullptr),
 	  quadVAO(-1),
 	  shadowMapMat(nullptr),
-	  skyBox(nullptr),
-	  m_Points(nullptr)
+	  skyBox(nullptr)
 {
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -284,31 +283,4 @@ const SpotLightList& Scene::GetSpotLights()
 Terrain* Scene::getTerrain()
 {
 	return &terrain;
-}
-
-PointObject* Scene::getPoints()
-{
-	return m_Points;
-}
-
-PointObject::PointObject()
-{
-	ProgramDesc pd = {
-		"points",
-		ShaderDesc("points.vert"),
-		ShaderDesc("points.frag")};
-
-	MaterialManager::instance()->loadProgram(pd, false);
-	shader = MaterialManager::instance()->getProgram(pd.name);
-}
-
-PointObject::~PointObject()
-{
-}
-
-void PointObject::draw()
-{
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(point_cnt));
-	glBindVertexArray(0);
 }

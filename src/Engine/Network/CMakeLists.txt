@@ -24,3 +24,7 @@ target_sources(${PROJECT_NAME}
 )
 
 add_private_headers()
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)

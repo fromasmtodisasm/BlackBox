@@ -189,3 +189,8 @@ void FreeTypeFont::SetYPos(float y)
 {
   posY = y;
 }
+
+IFont * CreateIFont()
+{
+  return new FreeTypeFont();
+}

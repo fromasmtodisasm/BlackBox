@@ -1,4 +1,4 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
@@ -764,4 +764,13 @@ void CScriptSystem::RemoveFileFromList(const ScriptFileListItor& itor)
 
 void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
 {
+}
+
+SCRIPTSYSTEM_API IScriptSystem * CreateScriptSystem(ISystem* pSystem, bool bStdLibs)
+{
+  auto ss = new CScriptSystem();
+  if (ss->Init(pSystem))
+    return ss;
+  else
+    return nullptr;
 }

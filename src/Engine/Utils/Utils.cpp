@@ -112,7 +112,7 @@ CommandLineToArgvA(
 #pragma warning(pop)
 #endif
 
-std::string wstr_to_str(const std::wstring& ws)
+DLL_EXPORT std::string wstr_to_str(const std::wstring& ws)
 {
   std::string result;
   result.resize(ws.length());
@@ -126,7 +126,7 @@ std::string wstr_to_str(const std::wstring& ws)
   return result;
 }
 
-std::wstring str_to_wstr(const std::string& str)
+DLL_EXPORT std::wstring str_to_wstr(const std::string& str)
 {
   std::wstring result;
   if (str.length() == 0)

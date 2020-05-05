@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Input/SDLInput.hpp>
 
 #include <math.h>
@@ -165,8 +166,11 @@ IActionMapManager* CLinuxInput::CreateActionMapManager()
   return nullptr;
 }
 
-IInput* CreateInput(ISystem* pSystem, void* hwnd)
+extern "C"
 {
-  IInput* pInput = new CLinuxInput(pSystem);
-  return pInput;
+  INPUT_API IInput* CreateInput(ISystem* pSystem, void* hwnd)
+  {
+    IInput* pInput = new CLinuxInput(pSystem);
+    return pInput;
+  }
 }

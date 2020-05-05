@@ -12,3 +12,8 @@ struct IFont
   virtual float TextWidth(const std::string& text) = 0;
   virtual float CharWidth(char ch) = 0;
 };
+
+extern "C"
+{
+  IFont* CreateIFont();
+}

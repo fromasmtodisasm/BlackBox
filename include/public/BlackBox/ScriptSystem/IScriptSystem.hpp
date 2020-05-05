@@ -900,11 +900,13 @@ private:
   IScriptObject* m_pObject;
 };
 
-#if 0
+#ifdef CRYSCRIPTSYSTEM_EXPORTS
+	#define SCRIPTSYSTEM_API DLL_EXPORT
+#else // CRYSCRIPTSYSTEM_EXPORTS
+	#define SCRIPTSYSTEM_API DLL_IMPORT
+#endif // CRYSCRIPTSYSTEM_EXPORTS
 
 extern "C" {
-  CRYSCRIPTSYSTEM_API IScriptSystem* CreateScriptSystem(ISystem* pSystem, IScriptSystemSink* pSink, IScriptDebugSink* pDebugSink, bool bStdLibs);
+	SCRIPTSYSTEM_API IScriptSystem* CreateScriptSystem(ISystem* pSystem, bool bStdLibs);
 }
-
-typedef IScriptSystem* (*CREATESCRIPTSYSTEM_FNCPTR)(ISystem* pSystem, IScriptSystemSink* pSink, IScriptDebugSink* pDebugSink, bool bStdLibs);
-#endif
+typedef IScriptSystem*(* CREATESCRIPTSYSTEM_FNCPTR)(ISystem* pSystem, bool bStdLibs);

@@ -1,7 +1,8 @@
 #pragma once
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
-#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 #include "NullImplementation/NullFont.hpp"
 
@@ -15,8 +16,6 @@
 #ifndef stricmp
 #define stricmp _stricmp
 #endif // !stricmp
-
-struct IFont;
 
 struct AnimationParams
 {

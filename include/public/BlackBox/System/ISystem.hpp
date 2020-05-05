@@ -275,8 +275,11 @@ struct ISystem
   extern SSystemGlobalEnvironment* gEnv;
 #endif
 
-// Get the system interface (must be defined locally in each module)
-extern ISystem* GetISystem();
+//! Gets the system interface.
+inline ISystem* GetISystem()
+{
+	return gEnv->pSystem;
+};
 
 // interface of the DLL
 extern "C"

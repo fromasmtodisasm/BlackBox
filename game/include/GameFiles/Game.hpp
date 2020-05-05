@@ -149,7 +149,7 @@ public:
 		NOT_CONECTED
 	};
 
-  CGame(std::string title);
+  CGame();
   CGame() = default;
   ~CGame() = default;
 

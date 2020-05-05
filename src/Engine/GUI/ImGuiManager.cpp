@@ -1,3 +1,4 @@
+//#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/GUI/ImGuiManager.hpp>
 
 #include <BlackBox/Renderer/IRender.hpp>
@@ -187,7 +188,7 @@ void ImGuiManager::Render()
   ImGui::Render();
 #pragma warning(push)
 #pragma warning(disable: 4244)
-  gl::ViewPort(0, 0, (float)io.DisplaySize.x, (float)io.DisplaySize.y);
+  gEnv->pRenderer->SetViewport(0, 0, (float)io.DisplaySize.x, (float)io.DisplaySize.y);
 #pragma warning(pop)
   render.RenderDrawData(ImGui::GetDrawData());
 }

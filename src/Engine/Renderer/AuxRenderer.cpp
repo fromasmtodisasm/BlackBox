@@ -87,7 +87,6 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
   {
     RSS(gEnv->pRenderer, BLEND, true);
     RSS(gEnv->pRenderer, CULL_FACE, false);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 24, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
   }
   //gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));

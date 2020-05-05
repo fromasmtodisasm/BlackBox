@@ -7,7 +7,7 @@
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/FreeTypeFont.hpp>
+//#include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ObjectManager.hpp>
@@ -31,6 +31,7 @@
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/World.hpp>
 //#include <BlackBox/Profiler/HP_Timer.h>
+#include <BlackBox/System/CryLibrary.hpp>
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
@@ -40,12 +41,29 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-//////////////////////////////////////////////////////////////////////
-// Pointer to Global ISystem.
-static ISystem* gISystem = nullptr;
-ISystem* GetISystem()
+namespace
 {
-	return gISystem;
+  template<typename L, typename P>
+  inline P GetProcedure(L lib, const char* name)
+  {
+    return reinterpret_cast<P>(CryGetProcAddress(lib, name));
+  }
+
+  template<typename Proc>
+  inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
+  {
+    auto L = CryLoadLibrary(lib_name);
+    if (L)
+    {
+      auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
+      if (P)
+      {
+        return f(P);
+      }
+      return false;
+    }
+    return false;
+  }
 }
 
 CSystem::CSystem(SSystemInitParams& m_startupParams)
@@ -64,7 +82,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	  m_Render(nullptr),
 	  m_pConsole(nullptr),
 	  //m_pInput(nullptr),
-	  m_pFont(nullptr),
+	  //m_pFont(nullptr),
 	  m_pGame(nullptr),
 	  m_pLog(nullptr),
 	  m_pWindow(nullptr),
@@ -104,7 +122,7 @@ CSystem::~CSystem()
 	SAFE_RELEASE(m_pLog);
 	SAFE_DELETE(m_pConsole);
 	SAFE_DELETE(m_pGame);
-	SAFE_DELETE(m_pFont);
+	//SAFE_DELETE(m_pFont);
 	SAFE_DELETE(m_pWindow);
 	SAFE_RELEASE(m_Render);
 }
@@ -151,7 +169,6 @@ void CSystem::ProcessCommandLine()
 
 bool CSystem::Init()
 {
-	gISystem = this;
 	gEnv->SetIsDedicated(m_startupParams.bDedicatedServer);
 	/////////////////////////////////////////////
 	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
@@ -181,9 +198,10 @@ bool CSystem::Init()
 		return false;
 	}
 	//====================================================
-	Log("Creating Input");
-	if (!gEnv->IsDedicated())
-		m_env.pInput = CreateInput(this, m_pWindow->getHandle());
+  if (!InitInput())
+  {
+    return false;
+  }
 	//====================================================
 	Log("Init materials");
 	if (!MaterialManager::init(this))
@@ -236,12 +254,10 @@ bool CSystem::Init()
 	//====================================================
 	//m_pLog->Log("[OK] Window susbsystem inited\n");
 	//====================================================
-	Log("Creating ScriptSystem");
-	m_pScriptSystem = new CScriptSystem();
-	if (!static_cast<CScriptSystem*>(m_pScriptSystem)->Init(this))
-	{
-		return false;
-	}
+  if (!InitScriptSystem())
+  {
+    return false;
+  }
 	//====================================================
 	if (!InitConsole())
 		return false;
@@ -274,10 +290,8 @@ bool CSystem::Init()
 		//====================================================
 
 	//====================================================
-	m_env.pLog->Log("-- Creating Network");
-	m_pNetwork = CreateNetwork(this);
-	if (m_pNetwork == nullptr)
-		return false;
+  if (!InitNetwork())
+    return false;
 	//====================================================
 	m_pWorld = new World();
 	Log("Initialize Game");
@@ -353,7 +367,10 @@ IGame* CSystem::GetIGame()
 
 IGame* CSystem::CreateGame(IGame* game)
 {
-	m_pGame = CreateIGame("");
+  LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+    m_pGame = P();
+    return true;
+    });
 	return m_pGame;
 }
 
@@ -367,7 +384,9 @@ void CSystem::Quit()
 
 IFont* CSystem::GetIFont()
 {
-	return new FreeTypeFont;
+  assert(0);
+  return nullptr;
+	//return new FreeTypeFont;
 }
 
 IWindow* CSystem::GetIWindow()
@@ -443,9 +462,47 @@ bool CSystem::InitRender()
 
 bool CSystem::InitInput()
 {
-	if (gEnv->IsDedicated())
-		return true;
-	return m_env.pInput->Init();
+	Log("Creating Input");
+  return false;
+  return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p) {
+    if (!gEnv->IsDedicated())
+    {
+      m_env.pInput = p(this, m_pWindow->getHandle());
+      return m_env.pInput->Init();
+    }
+    else
+    {
+      if (gEnv->IsDedicated())
+        return true;
+      return false;
+    }
+  });
+}
+
+bool CSystem::InitScriptSystem()
+{
+	Log("Creating ScriptSystem");
+  return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p) {
+      m_pScriptSystem = p(this, true);
+      return m_pScriptSystem != nullptr;
+  });
+}
+
+bool CSystem::InitNetwork()
+{
+	Log("Creating ScriptSystem");
+  return LoadSubsystem<PFNCREATENETWORK>("ScriptSystem", "CreateScriptSystem", [&](PFNCREATENETWORK p) {
+    m_env.pLog->Log("-- Creating Network");
+    m_pNetwork = p(this);
+    if (m_pNetwork == nullptr)
+      return false;
+    return true;
+  });
+}
+
+bool CSystem::InitSubSystem()
+{
+  return false;
 }
 
 bool CSystem::OpenRenderLibrary(std::string_view render)
@@ -454,16 +511,24 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	if (gEnv->IsDedicated())
 		return true;
 	//====================================================
-	m_pWindow = CreateIWindow(/*"BlackBox", 1366, 768*/);
-	if (m_pWindow == nullptr)
-		return false;
+  if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p) {
+
+    m_pWindow = p();
+    if (m_pWindow == nullptr)
+      return false;
+    }))
+  {
+    return false;
+  }
 	//====================================================
 
-	m_env.pRenderer = m_Render = CreateIRender(this);
-	if (m_Render == nullptr)
-		return false;
-	else
-		return true;
+  return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Render", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
+    m_env.pRenderer = m_Render = p(this);
+    if (m_Render == nullptr)
+      return false;
+    else
+      return true;
+    });
 
 #if 0
 	CryFatalError("Unknown renderer type: %s", t_rend);
@@ -806,7 +871,7 @@ void CSystem::RenderEnd()
 {
 	PROFILER_POP_CPU_MARKER();
 	{
-		DEBUG_GROUP("DRAW_PROFILE");
+		//DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
 #if ENABLE_DEBUG_GUI

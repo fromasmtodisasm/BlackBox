@@ -1,4 +1,5 @@
-﻿#include <Game.hpp>
+﻿#include <BlackBox/Core/Platform/Platform.hpp>
+#include <Game.hpp>
 #include <GameObject.hpp>
 
 #include <BlackBox/Renderer/Camera.hpp>
@@ -82,7 +83,7 @@ void CGame::PreRender()
   //glCheck(glViewport(0, 0, 1366, 768));
 }
 
-CGame::CGame(std::string title) :
+CGame::CGame() :
   //camControl(nullptr),
   g_scene(nullptr),
   listener(nullptr),
@@ -97,7 +98,7 @@ CGame::CGame(std::string title) :
   m_sceneManager(nullptr),
   //shaderManager(nullptr),
   m_World(nullptr),
-  m_Title(title),
+  m_Title("Test"),
   m_pScriptObjectGame(nullptr),
   m_pRender(nullptr),
   m_pInput(nullptr),
@@ -528,8 +529,8 @@ void CGame::setCamera(CCamera* camera)
   //m_World->setCamera(camera);
 }
 
-IGame * CreateIGame(const char* title) {
-  CGame* game = new CGame(title);
+IGAME_API IGame * CreateIGame() {
+  CGame* game = new CGame();
   return (game);
 }
 

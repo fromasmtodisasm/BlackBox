@@ -2,7 +2,11 @@
 #ifndef _INETWORK_H_
 #define _INETWORK_H_
 
-#define NETWORK_API
+#ifdef NETWORK_EXPORTS
+  #define NETWORK_API DLL_EXPORT
+#else
+  #define NETWORK_API DLL_IMPORT
+#endif
 
 #include <BlackBox/Core/Platform/Platform.hpp>
 

@@ -1,4 +1,5 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/System/System.hpp>
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Core/Utils.hpp>
@@ -130,7 +131,7 @@ bool ShaderCommand::dump(CommandDesc& cd)
 {
   if (cd.args.size() == 2)
   {
-    auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
+    _smart_ptr<IShaderProgram> s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[1]));
     if (!s)
       return false;
     s->Dump();
@@ -143,19 +144,19 @@ bool ShaderCommand::edit(CommandDesc& cd)
 {
   if (cd.args.size() == 3)
   {
-    auto s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[2]));
+    _smart_ptr<IShaderProgram> s = MaterialManager::instance()->getProgram(wstr_to_str(cd.args[2]));
     if (!s)
       return false;
     std::string shader_name;
     std::string type = wstr_to_str(cd.get(1));
     if (type == "vs")
-      shader_name = s->m_Vertex.name;
+      shader_name = s->GetShaderName(IShader::type::E_VERTEX);
     else if (type == "fs")
-      shader_name = s->m_Fragment.name;
+      shader_name = s->GetShaderName(IShader::type::E_FRAGMENT);
     else if (type == "gs")
-      shader_name = s->m_Geometry.name;
+      shader_name = s->GetShaderName(IShader::type::E_GEOMETRY);
     else if (type == "cs")
-      shader_name = s->m_Compute.name;
+      shader_name = s->GetShaderName(IShader::type::E_COMPUTE);
     if (shader_name.length() > 0)
       //GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -multiInst -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());
       GetISystem()->GetIConsole()->ExecuteString((std::string("exec os @EDITOR -lcpp ") + GetISystem()->GetIConsole()->GetCVar("shader_path")->GetString() + shader_name).c_str());

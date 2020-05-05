@@ -515,27 +515,6 @@ void CBaseShaderProgram::Uniform(const Mat4 value, const char* format, ...)
   }
 }
 
-void CBaseShaderProgram::Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label)
-{
-  Detach(m_Vertex);
-  //reset(m_Vertex);
-  Detach(m_Fragment);
-  //reset(m_Fragment);
-  Detach(m_Geometry);
-  //reset(m_Geometry);
-  Detach(m_Compute);
-  //reset(m_Compute);
-  DeleteProgram();
-
-  m_Vertex.shader = v;
-  m_Fragment.shader = f;
-  if (!g)
-    m_Geometry.shader = g;
-  if (!c)
-    m_Compute.shader = c;
-  Create(label);
-}
-
 void CBaseShaderProgram::BindTexture2D(GLuint texture, GLint unit, const char* sampler)
 {
   BindTextureUnit2D(texture, unit);
@@ -583,6 +562,47 @@ const char* CBaseShaderProgram::buildName(const char* format, va_list args)
 {
   vsprintf(buffer, format, args);
   return buffer;
+}
+
+const char* CBaseShaderProgram::GetShaderName(IShader::type type)
+{
+  switch (type)
+  {
+  case IShader::E_VERTEX:
+    return m_Vertex.name.data();
+  case IShader::E_FRAGMENT:
+    return m_Fragment.name.data();
+  case IShader::E_GEOMETRY:
+    return m_Geometry.name.data();
+  case IShader::E_COMPUTE:
+    return m_Compute.name.data();
+  case IShader::E_UNKNOWN:
+    return "Unknown";
+  default:
+    assert(0);
+  }
+
+}
+
+void CBaseShaderProgram::Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label)
+{
+  Detach(m_Vertex);
+  //reset(m_Vertex);
+  Detach(m_Fragment);
+  //reset(m_Fragment);
+  Detach(m_Geometry);
+  //reset(m_Geometry);
+  Detach(m_Compute);
+  //reset(m_Compute);
+  DeleteProgram();
+
+  m_Vertex.shader = v;
+  m_Fragment.shader = f;
+  if (!g)
+    m_Geometry.shader = g;
+  if (!c)
+    m_Compute.shader = c;
+  Create(label);
 }
 
 void CBaseShaderProgram::AddRef()

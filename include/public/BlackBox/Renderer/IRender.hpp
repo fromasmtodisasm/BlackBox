@@ -1,17 +1,9 @@
 #pragma once
 
-#ifdef WIN32
 #ifdef IRENDER_EXPORTS
-#define IRENDER_API __declspec(dllexport)
+  #define IRENDER_API DLL_EXPORT
 #else
-#ifdef DLL
-#define IRENDER_API __declspec(dllimport)
-#else
-#define IRENDER_API
-#endif
-#endif
-#else
-#define IRENDER_API
+  #define IRENDER_API DLL_IMPORT
 #endif
 
 // Global typedefs.
@@ -25,6 +17,7 @@ typedef unsigned short	ushort;
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/Renderer/Light.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 
 #include <vector>
 
@@ -490,6 +483,7 @@ struct IRenderer
 
 extern "C" {
   IRENDER_API IRenderer* CreateIRender(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+  typedef IRenderer* (*PFNCREATERENDERERINTERFACE)(ISystem* pSystem);
 }
 
 struct SRenderParams

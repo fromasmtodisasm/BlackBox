@@ -5,7 +5,7 @@
 #include <BlackBox/System/ISystem.hpp>
 
 ShaderManager* ShaderManager::manager = nullptr;
-static _smart_ptr<CShaderProgram> defaultProgram = nullptr;
+static ShaderProgramRef defaultProgram = nullptr;
 
 std::string ShaderDesc::root = "res/shaders/";
 
@@ -21,11 +21,11 @@ ShaderManager* ShaderManager::instance()
   return manager;
 }
 
-_smart_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::string fShader)
+ShaderProgramRef  ShaderManager::getProgram(std::string vShader, std::string fShader)
 {
   //TODO: !!!
-  _smart_ptr<CShader> vs, fs;
-  _smart_ptr<CShaderProgram> p;
+  ShaderRef vs, fs;
+  BaseShaderProgramRef p;
 #if BB_PLATFORM_WINDOWS 
   vs = getShader(std::move(ShaderDesc(vShader, "vertex")), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
@@ -43,9 +43,9 @@ _smart_ptr<CShaderProgram>  ShaderManager::getProgram(std::string vShader, std::
   return p;
 }
 
-_smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
+ShaderProgramRef ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
 {
-  _smart_ptr<CShader> vs, fs, gs;
+  ShaderRef vs, fs, gs;
   _smart_ptr<CShaderProgram> p;
   vs = getShader(ShaderDesc(vShader, "vertex"), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
@@ -64,9 +64,9 @@ _smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::s
   }
 }
 
-_smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
+ShaderProgramRef ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
 {
-  _smart_ptr<CShader> vs, fs, gs, cs;
+  ShaderRef vs, fs, gs, cs;
   _smart_ptr<CShaderProgram> p;
   vs = getShader(ShaderDesc(vShader, "vertex"), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
@@ -86,7 +86,7 @@ _smart_ptr<CShaderProgram> ShaderManager::getProgram(std::string vShader, std::s
   }
 }
 
-_smart_ptr<CShaderProgram> ShaderManager::getDefaultProgram()
+ShaderProgramRef ShaderManager::getDefaultProgram()
 {
   return defaultProgram;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Renderer/Shader.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <map>
@@ -13,10 +13,10 @@ class ShaderManager
   //ShaderManager();
 public:
   static ShaderManager* instance();
-  _smart_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader);
-  _smart_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader);
-  _smart_ptr<CShaderProgram> getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader);
-  _smart_ptr<CShaderProgram> getDefaultProgram();
+  ShaderProgramRef getProgram(std::string vShader, std::string fShader);
+  ShaderProgramRef getProgram(std::string vShader, std::string fShader, std::string gShader);
+  ShaderProgramRef getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader);
+  ShaderProgramRef getDefaultProgram();
   ShaderRef getShader(ShaderDesc const& desc, bool isReload);
   ShaderRef addShader(const ShaderDesc& desc);
   void removeShader(std::string name);

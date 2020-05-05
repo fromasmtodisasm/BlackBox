@@ -45,7 +45,7 @@
 		#undef DrawText
 		#undef GetCharWidth
 		#undef GetUserName
-		#undef LoadLibrary
+		//#undef LoadLibrary
 	#endif
 
 	#ifdef CRY_PLATFORM_DURANGO
@@ -60,5 +60,15 @@
 		#undef OutputDebugString
 		#define OutputDebugString(...) (void) 0
 	#endif
+
+  inline int64_t  bbGetTicks()
+  {
+    return 0;
+  }
+
+  inline void bbSleep(unsigned int dwMilliseconds)
+  {
+
+  }
 
 #endif

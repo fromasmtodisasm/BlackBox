@@ -45,6 +45,7 @@ endif()
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 
 target_include_directories(
 ${PROJECT_NAME}
@@ -65,6 +66,13 @@ target_sources(${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/Input/Input.cpp
 )
 
 add_private_headers()
+
+target_precompile_headers(
+Input
+	PRIVATE
+    "pch.hpp"
+)

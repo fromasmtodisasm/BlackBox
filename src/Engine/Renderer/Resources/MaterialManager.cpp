@@ -38,8 +38,7 @@ BaseShaderProgramRef MaterialManager::getProgram(std::string name)
   auto p_it = shaders_map.find(name);
   if (p_it == shaders_map.end())
   {
-    auto p = dynamic_cast<BaseShaderProgramRef::value_type*>(static_cast<CShaderProgram*>(ShaderManager::instance()->getDefaultProgram()));
-    return _smart_ptr<BaseShaderProgramRef::value_type>(p);
+    return ShaderManager::instance()->getDefaultProgram();
   }
   else
   {
@@ -355,10 +354,10 @@ bool MaterialManager::reloadShaders()
   {
     ProgramDesc pd;
     pd.name = shader.first;
-    pd.vs = shader.second->m_Vertex.name;
-    pd.fs = shader.second->m_Fragment.name;
-    pd.gs = shader.second->m_Geometry.name;
-    pd.cs = shader.second->m_Compute.name;
+    pd.vs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_VERTEX));
+    pd.fs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_FRAGMENT));
+    pd.gs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_GEOMETRY));
+    pd.cs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_COMPUTE));
     reloadShader(pd);
   }
   return true;
@@ -374,10 +373,10 @@ bool MaterialManager::reloadShaders(std::vector<std::string> names)
     auto s_it = shaders_map.find(shader);
     if (s_it == shaders_map.end())
       continue;
-    pd.vs = s_it->second->m_Vertex.name;
-    pd.fs = s_it->second->m_Fragment.name;
-    pd.gs = s_it->second->m_Geometry.name;
-    pd.cs = s_it->second->m_Compute.name;
+    pd.vs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_VERTEX));
+    pd.fs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_FRAGMENT));
+    pd.gs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_GEOMETRY));
+    pd.cs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_COMPUTE));
     reloadShader(pd);
   }
   return true;

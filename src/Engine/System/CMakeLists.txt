@@ -15,9 +15,9 @@ endif()
 ##################################################
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGlBackend)
-
 target_link_libraries(${PROJECT_NAME} PRIVATE World)
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
+target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/CmdLine.cpp
@@ -31,6 +31,10 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/System.cpp
   PRIVATE ${ENGINE_DIR}/System/SystemEventDispatcher.cpp
   PRIVATE ${ENGINE_DIR}/System/Timer.cpp
+
+  PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectConsole.cpp
+  PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectRenderer.cpp
+  PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectScript.cpp
 )
 
 if (OPTION_USE_LINUXINPUT)

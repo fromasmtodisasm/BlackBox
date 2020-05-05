@@ -1,6 +1,11 @@
 #ifndef __IINPUT_H__
 #define __IINPUT_H__
 
+#ifdef INPUT_EXPORTS
+	#define INPUT_API DLL_EXPORT
+#else
+	#define INPUT_API DLL_IMPORT
+#endif
 struct ISystem;
 
 #include <cstdint>
@@ -915,16 +920,11 @@ struct IInput
   // </interfuscator:shuffle>
 };
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 
-  typedef IInput(*PTRCREATEINPUTFUNC(ISystem* pSystem, void* nwnd));
+  INPUT_API IInput* CreateInput(ISystem* pSystem, void* hwnd);
+  typedef IInput*(* PTRCREATEINPUTFUNC)(ISystem* pSystem, void* nwnd);
 
-  IInput* CreateInput(ISystem* pSystem, void* hwnd);
-
-#ifdef __cplusplus
 };
-#endif
 
 #endif //__IINPUT_H__

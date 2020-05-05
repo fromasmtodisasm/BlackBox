@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/World/World.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Resources/SceneManager.hpp>

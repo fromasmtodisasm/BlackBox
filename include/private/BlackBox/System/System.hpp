@@ -82,6 +82,9 @@ private:
   bool InitConsole();
   bool InitRender();
   bool InitInput();
+  bool InitScriptSystem();
+  bool InitNetwork();
+  bool InitSubSystem();
   bool OpenRenderLibrary(std::string_view render);
 
   bool InitResourceManagers();

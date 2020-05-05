@@ -64,6 +64,21 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexArrayObject.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
+
+
+  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Geometry.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/ObjLoader.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Object.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Plane.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Primitives.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Quad.cpp
+
+  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/MaterialManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ObjectManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/SceneManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ShaderManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/TextureManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
 )
 
 if (OPTION_GLAD_LOADER)
@@ -72,10 +87,18 @@ if (OPTION_GLAD_LOADER)
   )
 endif()
 
-
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE Geometry)
+target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
+if (LINUX)
+	target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
+else()
+	target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
+endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC Scene)
+
+add_package(SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #target_include_directories(${OpenGlBackend} 
@@ -86,8 +109,5 @@ add_private_headers()
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
-	<BlackBox/System/ISystem.hpp>
-	<BlackBox/System/IConsole.hpp>
-	<BlackBox/System/ILog.hpp>
-	<BlackBox/Utils/smartptr.hpp>
+  "pch.hpp"
 )

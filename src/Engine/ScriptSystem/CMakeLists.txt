@@ -15,15 +15,14 @@ ${PROJECT_NAME}
 add_package(Lua)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
+target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 ###################################################
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectConsole.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectRenderer.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectScript.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectSystem.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
 )
@@ -31,3 +30,7 @@ target_sources(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 
 add_private_headers()
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)

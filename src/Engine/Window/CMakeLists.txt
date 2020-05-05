@@ -59,3 +59,8 @@ ${PROJECT_NAME}
 ###################################################
 target_link_libraries(${PROJECT_NAME} PUBLIC Math)
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
+
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)

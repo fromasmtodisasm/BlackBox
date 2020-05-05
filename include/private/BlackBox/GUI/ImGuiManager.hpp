@@ -2,7 +2,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
 
-class ImGuiManager : public IInputEventListener
+class DLL_EXPORT ImGuiManager : public IInputEventListener
 {
 public:
   ImGuiManager(ISystem* pSystem);

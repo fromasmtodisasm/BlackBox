@@ -35,7 +35,8 @@ Object::Object(const Object* obj) :
 }
 
 void Object::draw(SRenderParams& renderParams) {
-  DEBUG_GROUP(__FUNCTION__);
+  //DEBUG_GROUP(__FUNCTION__);
+  //gEnv->pRenderer->PushProfileMarker(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
 
 	add_uniform(renderParams, "NormalMatrix", glm::mat3(glm::transpose(glm::inverse(getTransform()))));
@@ -207,7 +208,7 @@ IScriptObject* Object::GetScriptObject()
 }
 
 void Object::move(Movement direction) {
-  GLfloat velocity = this->MovementSpeed;
+  float velocity = this->MovementSpeed;
   if (direction == FORWARD)
     this->m_transform.position += glm::vec3(this->Front.x, this->Front.y, this->Front.z) * velocity;
   if (direction == BACKWARD)

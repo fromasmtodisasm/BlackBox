@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(GUI CXX)
 ###################################################
-add_library(GUI)
+add_library(GUI SHARED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 
@@ -25,7 +25,11 @@ target_sources(${PROJECT_NAME}
 )
 
 #add_package(imgui CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME}  PRIVATE Renderer)
+target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
 
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+	<BlackBox/Core/Platform/Platform.hpp>
+)

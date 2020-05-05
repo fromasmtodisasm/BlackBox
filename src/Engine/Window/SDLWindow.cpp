@@ -242,7 +242,7 @@ GLContext CSDLWindow::getContext()
 }
 
 extern "C" {
-  IWindow* CreateIWindow()
+  IWINDOW_API IWindow* CreateIWindow()
   {
     return new CSDLWindow();
   }

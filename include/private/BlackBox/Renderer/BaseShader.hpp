@@ -8,14 +8,11 @@
 #include <map>
 #include <memory>
 
+struct ICVar;
+
 class CShader;
 class CBaseShaderProgram;
 class CShaderProgram;
-struct ICVar;
-
-using BaseShaderProgramRef = _smart_ptr<CBaseShaderProgram>;
-using ShaderProgramRef = _smart_ptr<CShaderProgram>;
-using ShaderRef = _smart_ptr<CShader>;
 
 struct ShaderStatus
 {
@@ -115,7 +112,7 @@ public:
   template<typename T>
   void Uniform(const T value, std::string name) { Uniform(value, name.c_str()); }
 
-  void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label);
+  //virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
 
   virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
   virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
@@ -145,6 +142,14 @@ public:
 
 private:
   int m_Refs = 0;
+
+
+  // Inherited via IShaderProgram
+  virtual const char* GetShaderName(IShader::type type) override;
+
+
+  // Inherited via IShaderProgram
+  virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
 
 };
 

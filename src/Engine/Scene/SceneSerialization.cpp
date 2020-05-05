@@ -13,61 +13,6 @@
 
 using namespace tinyxml2;
 
-PointObject* Scene::createPointObject(XMLElement* object)
-{
-  struct Point
-  {
-    glm::vec3 pos;
-  };
-
-  auto positions = object->FirstChildElement("positions");
-  if (positions)
-  {
-    auto filename = positions->Attribute("file");
-    if (filename)
-    {
-      FILE* file = fopen(filename, "r");
-      if (file == nullptr) return nullptr;
-      std::vector<Point> points;
-      char line[128];
-      while (!feof(file))
-      {
-        Point point;
-        auto m = fscanf(file, "v\t%f %f %f\n", &point.pos.x, &point.pos.y, &point.pos.z);
-        if (m != 3)
-        {
-          fgets(line, 128, file);
-          continue;
-        }
-
-        points.push_back(point);
-      }
-      if (points.size() > 0)
-      {
-        PointObject* po = new PointObject();
-        GLuint VBO;
-
-        po->point_cnt = points.size();
-        glGenVertexArrays(1, &po->VAO);
-        glBindVertexArray(po->VAO);
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(Point), points.data(), GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        glBindVertexArray(0);
-
-        debuger::vertex_array_label(po->VAO, "point objects");
-        debuger::buffer_label(VBO, "point objects");
-        return po;
-      }
-    }
-  }
-  return nullptr;
-}
-
 Scene::Serializator::Serializator(Scene* scene)
   :
   m_Scene(scene)
@@ -234,13 +179,6 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
   objectType = object->Attribute("type");
   if (objectType == nullptr)
     objectType = "object";
-  if (objectType == std::string("points"))
-  {
-		if (!gEnv->IsDedicated())
-			m_Scene->m_Points = m_Scene->createPointObject(object);
-    return;
-  }
-  else
   {
     if (object->BoolAttribute("transparent"))
       objectTransparent = true;

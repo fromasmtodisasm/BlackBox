@@ -5,7 +5,7 @@
 #include <BlackBox/Renderer/Light.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/Terrain.hpp>
-#include <BlackBox/Renderer/BaseShader.hpp>
+//#include <BlackBox/Renderer/BaseShader.hpp>
 
 #include <tinyxml2.h>
 
@@ -23,6 +23,7 @@ class World;
 struct IPostProcessor;
 struct Material;
 struct Transform;
+struct ICVar;
 
 extern Scene* defaultScene;
 
@@ -42,20 +43,6 @@ using SpotLightListIt = SpotLightList::iterator;
 using CameraList = std::map<std::string, CCamera*>;
 using CameraListIt = std::map<std::string, CCamera*>::iterator;
 //////////////////////////////////////////////////////////////////
-
-struct PointObject
-{
-public:
-  PointObject();
-  ~PointObject();
-
-  void draw();
-
-public:
-  GLuint VAO;
-  size_t point_cnt = 0;
-  BaseShaderProgramRef shader;
-};
 
 class Scene : public IScene
 {
@@ -100,7 +87,7 @@ public:
   CCamera* getCurrentCamera();
   SkyBox* GetSkyBox();
   Terrain* getTerrain();
-  GLint getRenderTarget();
+  int getRenderTarget();
 
   virtual bool save(const char* as = "") override;
   virtual bool load(const char* name, LoadObjectSink* callback) override;
@@ -122,17 +109,13 @@ public:
   const SpotLightList& GetSpotLights();
 
   void setTechnique(ITechnique* technique);
-
-
-  PointObject* createPointObject(tinyxml2::XMLElement* object);
-  PointObject* getPoints();
 private:
 #pragma region Fields
   std::string name;
-  GLint m_RenderedScene;
+  int m_RenderedScene;
   SkyBox* skyBox;
   BaseShaderProgramRef m_ScreenShader;
-  CShaderProgram* m_TextShader;
+  BaseShaderProgramRef m_TextShader;
   IPostProcessor* postProcessor = nullptr;
   ITechnique* m_Technique;
 
@@ -140,7 +123,6 @@ private:
   DirectionLightList m_DirectionLight;
   PointLightList m_PointLights;
   SpotLightList m_SpotLights;
-  PointObject* m_Points;
 
   Terrain terrain;
 

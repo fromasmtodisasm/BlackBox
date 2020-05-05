@@ -1,11 +1,21 @@
 #pragma once
 //#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 #include <string>
 #include <string_view>
 #include <map>
 
 struct ITexture;
 class CCamera;
+
+struct IShader;
+struct IBaseShaderProgram;
+struct IShaderProgram;
+
+using BaseShaderProgramRef = _smart_ptr<IShaderProgram>;
+using ShaderProgramRef = _smart_ptr<IShaderProgram>;
+using ShaderRef = _smart_ptr<IShader>;
+
 
 //////////////////////////////////////////////////////////////////////
 struct UniformValue
@@ -297,8 +307,7 @@ struct IShader
 
 
 
-class IShaderProgram {
-public:
+struct IShaderProgram {
   struct ShaderInfo
   {
     ShaderInfo()
@@ -338,6 +347,7 @@ public:
   virtual void DeleteProgram() = 0;
   virtual int GetUniformLocation(const char* format, ...) = 0;
   virtual int GetUniformLocation(std::string& name) = 0;
+  virtual const char* GetShaderName(IShader::type type) = 0;
   //UniformValue GetUniformValue(const char* name);
   void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
   virtual void Uniform(const int value, const char* format, ...) = 0;
@@ -356,7 +366,7 @@ public:
   template<typename T>
   void Uniform(const T value, std::string name) { Uniform(value, name.c_str()); }
 
-  void Reload(IShader *v, IShader *f, IShader *g, IShader *c, const char* label);
+  virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) = 0;
 
   virtual void BindTexture2D(uint texture, int unit, const char* sampler) = 0;
   virtual void BindTextureUnit2D(uint texture, int unit) = 0;

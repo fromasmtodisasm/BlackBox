@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef IGAME_EXPORTS
+  #define IGAME_API DLL_EXPORT
+#else
+  #define IGAME_API DLL_IMPORT
+#endif
+
 #include <BlackBox/Core/Version.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 
@@ -112,5 +118,7 @@ struct IGame {
 
 extern IGame* p_gIGame;
 extern "C" {
-  IGame* CreateIGame(const char* title);
+  typedef IGame* (*PFNCREATEGAMEINSTANCE)();
+// interface of the DLL
+  IGAME_API IGame* CreateIGame();
 }

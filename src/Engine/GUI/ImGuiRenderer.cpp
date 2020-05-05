@@ -84,8 +84,8 @@
 namespace {
   // OpenGL Data
   static char         g_GlslVersionString[32] = "";
-  static GLuint       g_FontTexture = 0;
-  static GLuint       g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
+  static uint         g_FontTexture = 0;
+  static uint         g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
   static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;                                // Uniforms location
   static int          g_AttribLocationVtxPos = 0, g_AttribLocationVtxUV = 0, g_AttribLocationVtxColor = 0; // Vertex attributes location
   static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
