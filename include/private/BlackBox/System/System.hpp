@@ -56,7 +56,8 @@ public:
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
   virtual INetwork* GetINetwork() override;
   virtual ICryPak* GetIPak() override;
-  virtual IHardwareMouse* GetIHardwareMouse()  { return m_env.pHardwareMouse; };
+  virtual IHardwareMouse* GetIHardwareMouse() override { return m_env.pHardwareMouse; };
+  virtual IEntitySystem* GetIEntitySystem() override;
 
   virtual IGame* CreateGame(IGame* game) override;
 
@@ -106,7 +107,7 @@ private:
 
   ILog* m_pLog;
   CConsole* m_pConsole;
-  IInput* m_pInput;
+  //IInput* m_pInput;
   ICryPak* m_pCryPak;
   IGame* m_pGame;
   IFont* m_pFont;
@@ -139,19 +140,15 @@ private:
   uint64_t LAST;
   double m_DeltaTime = 0.0;
 
+#if ENABLE_DEBUG_GUI
   ImGuiManager m_GuiManager;
+#endif
 
   virtual float GetDeltaTime() override;
 
 
-  // Inherited via ISystem
   virtual const SFileVersion& GetFileVersion() override;
-
   virtual const SFileVersion& GetProductVersion() override;
-
-
-  // Inherited via ISystem
-  virtual IEntitySystem* GetIEntitySystem() override;
 
 };
 

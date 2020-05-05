@@ -63,15 +63,18 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	  cvGameName(nullptr),
 	  m_Render(nullptr),
 	  m_pConsole(nullptr),
-	  m_pInput(nullptr),
+	  //m_pInput(nullptr),
 	  m_pFont(nullptr),
 	  m_pGame(nullptr),
 	  m_pLog(nullptr),
 	  m_pWindow(nullptr),
 	  m_pWorld(nullptr),
 	  m_pScriptSystem(nullptr),
-	  m_ScriptObjectConsole(nullptr),
+	  m_ScriptObjectConsole(nullptr)
+#if ENABLE_DEBUG_GUI
+    ,
 	  m_GuiManager(this)
+#endif
 {
 	m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
 	if (m_pSystemEventDispatcher)
@@ -180,7 +183,7 @@ bool CSystem::Init()
 	//====================================================
 	Log("Creating Input");
 	if (!gEnv->IsDedicated())
-		m_pInput = CreateInput(this, m_pWindow->getHandle());
+		m_env.pInput = CreateInput(this, m_pWindow->getHandle());
 	//====================================================
 	Log("Init materials");
 	if (!MaterialManager::init(this))
@@ -191,7 +194,21 @@ bool CSystem::Init()
 	Log("Initialize Render");
 	if (!InitRender())
 		return false;
-		//====================================================
+
+  //////////////////////////////////////////////////////////////////////////
+  // Hardware mouse
+  //////////////////////////////////////////////////////////////////////////
+  // - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+  // - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+  // - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+#ifdef DEDICATED_SERVER
+	m_env.pHardwareMouse = NULL;
+#else
+	if (!m_env.IsDedicated())
+		m_env.pHardwareMouse = new CHardwareMouse(true);
+	else
+		m_env.pHardwareMouse = NULL;
+#endif
 #ifdef NEED_VC
 	m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- branch[" + GitBranch + "]; hash[" + Hash + "]; " + GitIsDirty + "; Message: [" + Message + "]").c_str());
 #endif
@@ -199,6 +216,8 @@ bool CSystem::Init()
 	Log("Initialize Input");
 	if (!InitInput())
 		return false;
+  if (m_env.pHardwareMouse)
+    m_env.pHardwareMouse->OnPostInitInput();
 		//====================================================
 		// Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
@@ -236,38 +255,23 @@ bool CSystem::Init()
 	//====================================================
 	InitScripts();
 	//====================================================
-#if 0
-	if (!gEnv->IsDedicated())
-	{
-		m_GuiManager.Init();
-	}
-#endif
-
 	//====================================================
 	if (!m_env.IsDedicated())
 	{
-		m_pInput->AddEventListener(this);
-		m_pInput->AddEventListener(m_pConsole);
-		//m_pInput->AddEventListener(&m_GuiManager);
+		m_env.pInput->AddEventListener(this);
+		m_env.pInput->AddEventListener(m_pConsole);
+    #if ENABLE_DEBUG_GUI
+    if (!gEnv->IsDedicated())
+    {
+      m_GuiManager.Init();
+    }
+		m_env.pInput->AddEventListener(&m_GuiManager);
+    #endif
+
 	}
 	if (CreateGame(nullptr) == nullptr)
 		return false;
 		//====================================================
-
-		//////////////////////////////////////////////////////////////////////////
-		// Hardware mouse
-		//////////////////////////////////////////////////////////////////////////
-		// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
-		// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
-		// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
-#ifdef DEDICATED_SERVER
-	m_env.pHardwareMouse = NULL;
-#else
-	if (!m_env.IsDedicated())
-		m_env.pHardwareMouse = new CHardwareMouse(true);
-	else
-		m_env.pHardwareMouse = NULL;
-#endif
 
 	//====================================================
 	m_env.pLog->Log("-- Creating Network");
@@ -339,7 +343,7 @@ IConsole* CSystem::GetIConsole()
 
 IInput* CSystem::GetIInput()
 {
-	return m_pInput;
+	return m_env.pInput;
 }
 
 IGame* CSystem::GetIGame()
@@ -441,7 +445,7 @@ bool CSystem::InitInput()
 {
 	if (gEnv->IsDedicated())
 		return true;
-	return m_pInput->Init();
+	return m_env.pInput->Init();
 }
 
 bool CSystem::OpenRenderLibrary(std::string_view render)
@@ -791,10 +795,10 @@ void CSystem::RenderBegin()
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 	m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
 	m_Render->BeginFrame();
-#if 0
+#if ENABLE_DEBUG_GUI
 	m_GuiManager.NewFrame();
 	m_GuiManager.ShowDemoWindow();
-	m_GuiManager.ShowNodeEditor();
+	//m_GuiManager.ShowNodeEditor();
 #endif
 }
 
@@ -805,8 +809,9 @@ void CSystem::RenderEnd()
 		DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
-
-	//m_GuiManager.Render();
+#if ENABLE_DEBUG_GUI
+  m_GuiManager.Render();
+#endif
 
 	if (m_Render)
 		m_Render->Update();
@@ -895,15 +900,17 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	//m_pNetwork->Update();
 	if (nPauseMode)
 	{
-    //m_pInput->AddEventListener(&m_GuiManager);
+#if ENABLE_DEBUG_GUI
+    m_env.pInput->AddEventListener(&m_GuiManager);
+#endif
 	}
 
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
 		//FIXME: CHECK IT
-		if (m_pInput)
-			m_pInput->Update(true);
+		if (m_env.pInput)
+			m_env.pInput->Update(true);
 		PROFILER_POP_CPU_MARKER();
 	}
 	if (m_pWindow)

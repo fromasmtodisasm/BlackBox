@@ -236,6 +236,11 @@ namespace gl {
     glCheck(glViewport(x,y,w,h));
   }
 
+  inline void Scissor(GLuint x, GLuint y, GLuint w, GLuint h)
+  {
+    glCheck(glScissor(x,y,w,h));
+  }
+
   // Framebuffer
   inline void BindFramebuffer(GLuint id)
   {
@@ -431,5 +436,10 @@ namespace gl {
   inline void GetIntegerv(GLenum name, GLint *data)
   {
     glGetIntegerv(name, data);
+  }
+
+  inline void GetFloatv(GLenum name, GLfloat *data)
+  {
+    glGetFloatv(name, data);
   }
 }

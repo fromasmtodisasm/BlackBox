@@ -135,7 +135,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
     m_pInput->AddEventListener(this);
   m_pNetwork = m_pSystem->GetINetwork();
   m_World = m_pSystem->GetIWorld();
-	m_bUpdateRet = true;
+  m_bUpdateRet = true;
+  m_HardwareMouse = m_pSystem->GetIHardwareMouse();
 
 
 #if 0

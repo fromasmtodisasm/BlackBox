@@ -127,14 +127,14 @@ void GLRenderer::Release()
   delete this;
 }
 
+
 void GLRenderer::BeginFrame(void)
 {
   gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   UCol col;
   auto v = Vec4(1, 1, 1, 1);
   memcpy(col.bcolor, &v[0], 4);
-  m_RenderAuxGeom->DrawLine({ 0, -0.5, -1 }, col, { 0.5,0.5, 0 }, col);
-  m_RenderAuxGeom->DrawLine({ -1, -0.0, 0 }, col, { 1,0.5, 0 }, col);
+  m_RenderAuxGeom->DrawLine({ -0, -0.0, 0 }, col, { 0.25 ,0.1, 0.5 }, col);
 }
 
 void GLRenderer::Update(void)
@@ -151,6 +151,12 @@ void GLRenderer::Update(void)
 
 void GLRenderer::GetViewport(int* x, int* y, int* width, int* height)
 {
+  Vec4 vp;
+  gl::GetFloatv(GL_VIEWPORT, &vp[0]);
+  *x = vp.x;
+  *y = vp.y;
+  *width = vp.z;
+  *height = vp.w;
 }
 
 void GLRenderer::SetViewport(int x, int y, int width, int height)
@@ -160,6 +166,7 @@ void GLRenderer::SetViewport(int x, int y, int width, int height)
 
 void GLRenderer::SetScissor(int x, int y, int width, int height)
 {
+  gl::Scissor(x, y, width, height);
 }
 
 void GLRenderer::SetCamera(const CCamera& cam)
@@ -316,6 +323,11 @@ void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 
 void GLRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
 {
+  auto s = glm::project(Vec3(ptx, pty, ptz), m_Camera.getViewMatrix(), m_Camera.getProjectionMatrix(), Vec4(0, 0, GetWidth(), GetHeight()));
+
+  *sx = s.x;
+  *sy = s.y;
+  *sz = s.z;
 }
 
 int GLRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4])
@@ -325,6 +337,13 @@ int GLRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, fl
 
 int GLRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
 {
+  auto p = glm::unProject(
+      glm::vec3(sx, GetHeight() -sy,0), m_Camera.getViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0,0,GetWidth(),GetHeight())
+  );
+  *px = p.x;
+  *py = p.y;
+  *pz = p.z;
+
 	return 0;
 }
 
@@ -342,11 +361,16 @@ void GLRenderer::GetProjectionMatrix(double* mat)
 
 void GLRenderer::GetProjectionMatrix(float* mat)
 {
+    mat = &m_Camera.getProjectionMatrix()[0][0];
 }
 
 Vec3 GLRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
 {
-	return Vec3();
+    auto& c = WindowCoords;
+	return glm::unProject(
+        glm::vec3(c.x, GetHeight() - c.y,0), cam.getViewMatrix(), cam.getProjectionMatrix(), glm::vec4(0,0,GetWidth(),GetHeight())
+    );
+
 }
 
 int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls/* = true*/)

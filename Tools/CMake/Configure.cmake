@@ -69,11 +69,10 @@ else()
 	set(BUILD_SHARED_LIBS TRUE)
 endif()
 
-#[[
 if (OPTION_USE_GUI)
-	add_definitions(GUI)
+	add_compile_definitions(ENABLE_DEBUG_GUI)
 endif()
-]]
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include("${TOOLS_CMAKE_DIR}/ClangFormat.cmake")

@@ -71,7 +71,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 
 #include "imgui.h"
-#include "imgui_impl_opengl3.h"
+#include "ImGuiRenderer.hpp"
 #include <stdio.h>
 
 // Desktop GL has glDrawElementsBaseVertex() which GL ES and WebGL don't have.
@@ -327,7 +327,7 @@ void    ImGuiOpenglRender::RenderDrawData(ImDrawData* draw_data)
 
 }
 
-void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object)
+void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, uint vertex_array_object)
 {
   // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
   m_pRender->SetState(IRenderer::State::BLEND, true);
@@ -353,15 +353,6 @@ void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, in
   float T = draw_data->DisplayPos.y;
   float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
   glm::mat4 ortho_projection = glm::ortho(L, R, B, T);
-  /*
-  const float ortho_projection[4][4] =
-  {
-    { 2.0f / (R - L),   0.0f,         0.0f,   0.0f },
-    { 0.0f,         2.0f / (T - B),   0.0f,   0.0f },
-    { 0.0f,         0.0f,        -1.0f,   0.0f },
-    { (R + L) / (L - R),  (T + B) / (B - T),  0.0f,   1.0f },
-  };
-  */
   glUseProgram(g_ShaderHandle);
   glUniform1i(g_AttribLocationTex, 0);
   glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);

@@ -14,9 +14,10 @@ ${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/GUI/GUI.cpp
   PRIVATE ${ENGINE_DIR}/GUI/ImGuiManager.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/ImGuiInput.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/ImGuiRenderer.cpp
 
   PRIVATE ${ENGINE_DIR}/GUI/imgui_demo.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_impl_opengl3.cpp
 
   PRIVATE ${ENGINE_DIR}/GUI/imgui.cpp
   PRIVATE ${ENGINE_DIR}/GUI/imgui_draw.cpp

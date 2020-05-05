@@ -31,11 +31,21 @@ struct ICryPak;
 //! System wide events.
 enum ESystemEvent
 {
+	//! Changes to main window focus.
+	//! wparam is not 0 is focused, 0 if not focused.
+	ESYSTEM_EVENT_CHANGE_FOCUS = 10,
+
+	//! Moves of the main window.
+	//! wparam=x, lparam=y.
+	ESYSTEM_EVENT_MOVE = 11,
+
   //! Resizes of the main window.
   //! wparam=width, lparam=height.
   ESYSTEM_EVENT_RESIZE = 12,
 
-  ESYSTEM_EVENT_CHANGE_FOCUS,
+	//! Activation of the main window.
+	//! wparam=1/0, 1=active 0=inactive.
+	ESYSTEM_EVENT_ACTIVATE = 13,
 
   ESYSTEM_EVENT_LEVEL_LOAD_START,
 
@@ -45,7 +55,14 @@ enum ESystemEvent
 
   ESYSTEM_EVENT_LANGUAGE_CHANGE,
 
-  ESYSTEM_EVENT_ACTIVATE,
+	//! Toggle fullscreen.
+	//! wparam is 1 means we switched to fullscreen, 0 if for windowed.
+	ESYSTEM_EVENT_TOGGLE_FULLSCREEN,
+
+	//! Sent if the window containing the running game loses focus, but application itself still has focus
+	//! This is needed because some sub-systems still want to work even without focus on main application
+	//! while others would prefer to suspend their operation
+	ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE,
 };
 
 //////////////////////////////////////////////////////////////////////////

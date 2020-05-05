@@ -447,6 +447,8 @@ public:
 
 	char* test_string = "user data string";
 
+    IHardwareMouse* m_HardwareMouse = nullptr;
+
 };
 
 

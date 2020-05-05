@@ -388,18 +388,12 @@ void CHardwareMouse::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR
 	// fine grained focus notifications to determine mouse visibility and capture
 	if (event == ESYSTEM_EVENT_ACTIVATE || event == ESYSTEM_EVENT_CHANGE_FOCUS)
 	{
-#if 0
 		if (!gEnv->IsEditor())
 		{
 			bool bFocus = (wparam != 0);
 			HandleFocusEvent(bFocus);
 		}
-#else
-			bool bFocus = (wparam != 0);
-			HandleFocusEvent(bFocus);
-#endif
 	}
-#if 0
 	// only makes sense for editor (or engine clients that support many windows)
 	else if (event == ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE)
 	{
@@ -410,17 +404,14 @@ void CHardwareMouse::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR
 	{
 		EvaluateCursorConfinement();
 	}
-#endif
 	else if (event == ESYSTEM_EVENT_RESIZE)
 	{
 		EvaluateCursorConfinement();
 	}
-#if 0
 	else if (event == ESYSTEM_EVENT_TOGGLE_FULLSCREEN)
 	{
 		EvaluateCursorConfinement();
 	}
-#endif
 }
 
 //-----------------------------------------------------------------------------------------------------

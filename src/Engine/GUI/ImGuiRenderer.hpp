@@ -32,7 +32,7 @@ public:
   void Shutdown();
   void NewFrame();
   void RenderDrawData(ImDrawData* draw_data);
-  void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object);
+  void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, uint vertex_array_object);
 
   // (Optional) Called by Init/NewFrame/Shutdown
   bool CreateFontsTexture();
