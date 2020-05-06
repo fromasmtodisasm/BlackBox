@@ -59,6 +59,9 @@ public:
     this->transform.rotation.x = pitch;
     this->updateCameraVectors();
 
+  }
+  void InitCVars()
+  {
     MovementSpeed = CREATE_CVAR("cam_speed", 5.0f, 0, "Speed of camera");
     FOV = CREATE_CVAR("fov", 45.0f, 0, "Camera field of view");
     zFar = CREATE_CVAR("zfar", 10000.f, 0, "Draw distance");

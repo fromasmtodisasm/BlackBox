@@ -7,6 +7,7 @@ enable_testing()
 
 add_executable(${PROJECT_NAME} Main.cpp)
 target_link_libraries(Launcher PRIVATE  BlackBox)
+target_link_libraries(Launcher PRIVATE  System)
 #target_link_libraries(Launcher PRIVATE  FPS_Game)
 
 
@@ -21,13 +22,6 @@ if(WIN32)
 endif(WIN32)
 
 add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
-if (BUILD_SHARED_LIBS)
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
-		COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-			$<TARGET_FILE_DIR:BlackBox>/BlackBox.dll
-			$<TARGET_FILE_DIR:Launcher>)      # <--this is in-file
-endif()
 
 install(
   TARGETS ${PROJECT_NAME} 

@@ -9,11 +9,6 @@
 #include <BlackBox/Renderer/Camera.hpp>
 //#include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
@@ -29,7 +24,7 @@
 #include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
-#include <BlackBox/World/World.hpp>
+#include <BlackBox/World/IWorld.hpp>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/System/CryLibrary.hpp>
 #include <SDL2/SDL.h>
@@ -40,6 +35,8 @@
 
 using namespace std;
 namespace fs = std::filesystem;
+
+#define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
 
 namespace
 {
@@ -52,12 +49,19 @@ namespace
   template<typename Proc>
   inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
   {
+    gEnv->pSystem->Log("Loading...");
     auto L = CryLoadLibrary(lib_name);
     if (L)
     {
       auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
       if (P)
       {
+        typedef void*(* PtrFunc_ModuleInitISystem)(ISystem* pSystem, const char* moduleName);
+        PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem) CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
+        if (pfnModuleInitISystem)
+        {
+          pfnModuleInitISystem(gEnv->pSystem, lib_name);
+        }
         return f(P);
       }
       return false;
@@ -86,7 +90,6 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	  m_pGame(nullptr),
 	  m_pLog(nullptr),
 	  m_pWindow(nullptr),
-	  m_pWorld(nullptr),
 	  m_pScriptSystem(nullptr),
 	  m_ScriptObjectConsole(nullptr)
 #if ENABLE_DEBUG_GUI
@@ -203,12 +206,6 @@ bool CSystem::Init()
     return false;
   }
 	//====================================================
-	Log("Init materials");
-	if (!MaterialManager::init(this))
-	{
-		return false;
-	}
-	//====================================================
 	Log("Initialize Render");
 	if (!InitRender())
 		return false;
@@ -231,9 +228,6 @@ bool CSystem::Init()
 	m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- branch[" + GitBranch + "]; hash[" + Hash + "]; " + GitIsDirty + "; Message: [" + Message + "]").c_str());
 #endif
 	//====================================================
-	Log("Initialize Input");
-	if (!InitInput())
-		return false;
   if (m_env.pHardwareMouse)
     m_env.pHardwareMouse->OnPostInitInput();
 		//====================================================
@@ -262,8 +256,6 @@ bool CSystem::Init()
 	if (!InitConsole())
 		return false;
 	//====================================================
-	if (!InitResourceManagers())
-		return false;
 	//====================================================
 	m_pConsole->AddConsoleVarSink(this);
 	ParseCMD();
@@ -293,7 +285,6 @@ bool CSystem::Init()
   if (!InitNetwork())
     return false;
 	//====================================================
-	m_pWorld = new World();
 	Log("Initialize Game");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
 	{
@@ -394,11 +385,6 @@ IWindow* CSystem::GetIWindow()
 	return m_pWindow;
 }
 
-IWorld* CSystem::GetIWorld()
-{
-	return m_pWorld;
-}
-
 #if 0
 IInputHandler* CSystem::GetIInputHandler()
 {
@@ -463,7 +449,6 @@ bool CSystem::InitRender()
 bool CSystem::InitInput()
 {
 	Log("Creating Input");
-  return false;
   return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p) {
     if (!gEnv->IsDedicated())
     {
@@ -513,6 +498,7 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	//====================================================
   if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p) {
 
+    Log("Load Window Library");
     m_pWindow = p();
     if (m_pWindow == nullptr)
       return false;
@@ -522,7 +508,8 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
   }
 	//====================================================
 
-  return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Render", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
+  return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Renderer", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
+    Log("Load Render Library");
     m_env.pRenderer = m_Render = p(this);
     if (m_Render == nullptr)
       return false;
@@ -534,20 +521,6 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	CryFatalError("Unknown renderer type: %s", t_rend);
 	return false;
 #endif
-}
-
-bool CSystem::InitResourceManagers()
-{
-	m_pConsole->PrintLine("Begin loading resources");
-	if (!gEnv->IsDedicated())
-	{
-		if (!ShaderManager::init())
-			return false;
-		if (!MaterialManager::init("default.xml"))
-			return false;
-		m_pConsole->PrintLine("End loading resources");
-	}
-	return true;
 }
 
 void CSystem::ParseCMD()
@@ -770,7 +743,8 @@ void CSystem::Render()
 {
 	PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 	{
-		if (nullptr == m_pWorld->GetActiveScene())
+    IWorld* pWorld = gEnv->pRenderer->GetIWorld();
+		if (nullptr == pWorld->GetActiveScene())
 			return;
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
 		int w;
@@ -787,13 +761,13 @@ void CSystem::Render()
 		}
 
 		auto r												  = ((float)w) / h;
-		m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
+		pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
 
 		//m_World->setCamera(m_camera1);
-		m_pWorld->Draw(static_cast<float>(m_DeltaTime));
+		pWorld->Draw(static_cast<float>(m_DeltaTime));
 
-		if (m_pWorld->GetActiveScene())
-			m_pWorld->GetActiveScene()->present(m_Render->GetWidth(), m_Render->GetHeight());
+		if (pWorld->GetActiveScene())
+			pWorld->GetActiveScene()->present(m_Render->GetWidth(), m_Render->GetHeight());
 	}
 	PROFILER_POP_CPU_MARKER();
 }
@@ -988,12 +962,13 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	{
 		m_pGame->SendMessage("Quit");
 	}
+  IWorld* pWorld = gEnv->pRenderer->GetIWorld();
 	if (!nPauseMode)
 	{
-			m_pWorld->Update(GetDeltaTime());
+			pWorld->Update(GetDeltaTime());
 	}
 
-	m_Render->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
+	m_Render->SetCamera(*pWorld->GetActiveScene()->getCurrentCamera());
 	return true;
 }
 

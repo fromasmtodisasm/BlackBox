@@ -1,4 +1,4 @@
-//#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/GUI/ImGuiManager.hpp>
 
 #include <BlackBox/Renderer/IRender.hpp>

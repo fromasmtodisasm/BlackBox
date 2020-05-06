@@ -823,8 +823,8 @@ void CConsole::SetLoadingImage(const char* szFilename)
 {
   ITexture* pTex = 0;
 
-  //pTex = m_pSystem->GetIRenderer()->EF_LoadTexture(szFilename, FT_DONT_STREAM | FT_NOMIPS);
-  pTex = TextureManager::instance()->getTexture(szFilename, false);
+  pTex = gEnv->pRenderer->LoadTexture(szFilename, 0, 0);
+  //pTex = TextureManager::instance()->getTexture(szFilename, false);
 
   if (!pTex)
   {
@@ -882,7 +882,7 @@ IFont* CConsole::getFont(const char* name, float w, float h)
     m_Font = new CNullFont();
   else
   {
-    m_Font = CreateIFont();
+    m_Font = gEnv->pRenderer->GetIFont();
     auto font = name;
     auto var = GET_CVAR("s_font");
     if (var)
@@ -1117,8 +1117,7 @@ bool CConsole::Init(ISystem* pSystem)
   {
     if (background != nullptr)
       texture_path = background->GetString();
-    m_pBackGround = new Texture();
-    m_pBackGround->load(texture_path);
+    m_pBackGround = gEnv->pRenderer->LoadTexture(texture_path, 0, 0);
     initBind();
 
     m_ScrollHeight = m_pRenderer->GetHeight() / 2.0f;

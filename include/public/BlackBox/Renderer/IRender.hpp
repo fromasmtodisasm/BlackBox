@@ -477,8 +477,13 @@ struct IRenderer
   virtual void  UpdateIndexBuffer(SVertexStream *dest,const void *src, int indexcount, bool bUnLock=true)=0;
   virtual void  ReleaseIndexBuffer(SVertexStream *dest)=0;
 
+  virtual struct IWorld* GetIWorld() = 0;
+  virtual struct IFont* GetIFont() = 0;
+
   ////////////////////////////////////////////////////////////////////////////////
   virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;
+  // Loading of the texture for name(nameTex)
+  virtual ITexture *LoadTexture(const char* nameTex, uint flags, byte eTT)=0;
 };
 
 extern "C" {

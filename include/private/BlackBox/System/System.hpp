@@ -51,7 +51,6 @@ public:
   virtual IGame* GetIGame() override;
   virtual IFont* GetIFont() override;
   virtual IWindow* GetIWindow() override;
-  virtual IWorld* GetIWorld() override;
   virtual IScriptSystem* GetIScriptSystem() override;
   virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
   virtual INetwork* GetINetwork() override;
@@ -87,7 +86,6 @@ private:
   bool InitSubSystem();
   bool OpenRenderLibrary(std::string_view render);
 
-  bool InitResourceManagers();
   void ParseCMD();
   void LoadScreen();
   bool InitScripts();
@@ -115,7 +113,6 @@ private:
   IGame* m_pGame;
   IFont* m_pFont;
   IWindow* m_pWindow;
-  IWorld* m_pWorld;
   IRenderer* m_Render;
   IScriptSystem* m_pScriptSystem;
   INetwork* m_pNetwork;

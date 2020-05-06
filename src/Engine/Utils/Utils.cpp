@@ -138,7 +138,7 @@ DLL_EXPORT std::wstring str_to_wstr(const std::string& str)
   return result;
 }
 
-void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
+DLL_EXPORT void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
 {
   // Get the first occurrence
   size_t pos = data.find(toSearch);
@@ -153,7 +153,7 @@ void findAndReplaceAll(std::string& data, std::string toSearch, std::string repl
   }
 }
 
-void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr)
+DLL_EXPORT void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr)
 {
   // Get the first occurrence
   size_t pos = data.find(toSearch);
@@ -177,7 +177,7 @@ void findAndReplaceAll(std::string& data, std::string toSearch, std::function<st
   }
 }
 
-void urldecode2(char* dst, const char* src)
+DLL_EXPORT void urldecode2(char* dst, const char* src)
 {
     char a, b;
     while (*src) {

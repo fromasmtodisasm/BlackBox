@@ -10,7 +10,7 @@
 class RenderCVars
 {
 public:
-  RenderCVars();
+  void InitCVars();
   ~RenderCVars();
   ICVar* translateImageX = nullptr;
   ICVar* translateImageY = nullptr;

@@ -150,7 +150,6 @@ public:
 	};
 
   CGame();
-  CGame() = default;
   ~CGame() = default;
 
 	const char *IsMODLoaded();

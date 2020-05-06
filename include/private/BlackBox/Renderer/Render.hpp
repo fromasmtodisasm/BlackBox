@@ -5,6 +5,7 @@
 #include <BlackBox/Renderer/BufferManager.hpp>
 
 struct IWindow;
+struct World;
 
 typedef int glContextAttribute;
 
@@ -117,6 +118,7 @@ private:
   void printHardware();
   void AquireVB();
   bool VBF_InPool(int format);
+  bool InitResourceManagers();
 
 private:
   IWindow* m_Window = nullptr;
@@ -168,4 +170,15 @@ private:
 
   IRenderAuxGeom* m_RenderAuxGeom;
   CBufferManager* m_BufferManager;
+
+  World* m_pWorld;
+
+  // Inherited via CRenderer
+  virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) override;
+
+  // Inherited via CRenderer
+  virtual IWorld* GetIWorld() override;
+
+  // Inherited via CRenderer
+  virtual IFont* GetIFont() override;
 };

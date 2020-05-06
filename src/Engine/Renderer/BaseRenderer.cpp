@@ -55,7 +55,7 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
   return numModes;
 }
 
-RenderCVars::RenderCVars()
+void RenderCVars::InitCVars()
 {
   translateImageY = CREATE_CVAR("ty", 0.0f, 0);
   translateImageX = CREATE_CVAR("tx", 0.0f, 0);

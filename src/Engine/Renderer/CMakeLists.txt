@@ -81,6 +81,9 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
 )
 
+include(Scene/CMakeLists.txt)
+include(World/CMakeLists.txt)
+
 if (OPTION_GLAD_LOADER)
   target_sources(${PROJECT_NAME}
     PRIVATE ${PROJECT_SOURCE_DIR}/GladLoader.cpp
@@ -95,7 +98,7 @@ if (LINUX)
 else()
 	target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
 endif()
-target_link_libraries(${PROJECT_NAME} PUBLIC Scene)
+#target_link_libraries(${PROJECT_NAME} PUBLIC Scene)
 
 add_package(SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)

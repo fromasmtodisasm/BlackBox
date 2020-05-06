@@ -1,7 +1,6 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/System.hpp>
 #include <BlackBox/System/ConsoleCommands.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Core/Utils.hpp>
 
 class SystemCommand : public BaseCommand
@@ -43,6 +42,7 @@ MaterialCommand::MaterialCommand(CGame* game) : BaseCommand()
 }
 #endif
 //*******************************************************
+#if 0
 class ShaderCommand : public SystemCommand, public IMaterialShaderSink
 {
   IWorld* m_World;
@@ -86,7 +86,7 @@ private:
 
 ShaderCommand::ShaderCommand(ISystem* pSystem) : SystemCommand(pSystem)
 {
-  m_World = pSystem->GetIWorld();
+  m_World = pSystem->GetIRenderer()->GetIWorld();
 }
 
 bool ShaderCommand::reload(CommandDesc& cd)
@@ -172,10 +172,10 @@ bool ShaderCommand::enumerate(CommandDesc& cd)
   MaterialManager::instance()->EnumShaders(this);
   return true;
 }
-
+#endif
 void AddInternalCommands(ISystem *pSystem)
 {
   auto pConsole = gEnv->pConsole;
-  pConsole->AddCommand("shader", new ShaderCommand(pSystem), "Set shader to object and reload shader");
+  //pConsole->AddCommand("shader", new ShaderCommand(pSystem), "Set shader to object and reload shader");
 
 }

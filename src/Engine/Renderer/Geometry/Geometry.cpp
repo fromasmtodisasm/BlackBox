@@ -1,5 +1,3 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
-
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 

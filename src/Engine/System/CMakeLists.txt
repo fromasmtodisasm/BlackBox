@@ -15,9 +15,18 @@ endif()
 ##################################################
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE World)
+#target_link_libraries(${PROJECT_NAME} PRIVATE World)
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
+add_package(SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+#target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+if (UNIX_OR_CYGWIN)
+  target_sources(
+    ${PROJECT_NAME}
+    PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
+    )
+endif()
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/CmdLine.cpp

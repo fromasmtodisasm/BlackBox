@@ -1,5 +1,3 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
-
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
 
@@ -10,11 +8,14 @@
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/World/World.hpp>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
@@ -37,6 +38,8 @@ GLRenderer::~GLRenderer()
 
 IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
+  InitCVars();
+  m_Camera.InitCVars();
   IWindow* result = m_Window = window;
   if (window == nullptr)
     return nullptr;
@@ -68,6 +71,10 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   m_pSystem->GetIInput()->AddEventListener(this);
   //=======================
   glInit();
+  if (!InitResourceManagers())
+    return false;
+	m_pWorld = new World();
+
   printHardware();
   m_BufferManager = new CBufferManager();
   m_ScreenQuad = new Quad();
@@ -400,6 +407,22 @@ bool GLRenderer::VBF_InPool(int format)
   return false;
 }
 
+ITexture* GLRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
+{
+  TextureManager::instance()->getTexture(nameTex, eTT);
+  return nullptr;
+}
+
+IWorld* GLRenderer::GetIWorld()
+{
+  return nullptr;
+}
+
+IFont* GLRenderer::GetIFont()
+{
+  return CreateIFont();
+}
+
 void GLRenderer::PushProfileMarker(char* label)
 {
   OpenglDebuger::PushGroup(0, std::strlen(label), label);
@@ -619,8 +642,30 @@ void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 {
 }
 
+bool GLRenderer::InitResourceManagers()
+{
+	//====================================================
+	gEnv->pConsole->PrintLine("Init materials");
+	if (!MaterialManager::init(gEnv->pSystem))
+	{
+		return false;
+	}
+	gEnv->pConsole->PrintLine("Begin loading resources");
+	if (!gEnv->IsDedicated())
+	{
+		if (!ShaderManager::init())
+			return false;
+		if (!MaterialManager::init("default.xml"))
+			return false;
+		gEnv->pConsole->PrintLine("End loading resources");
+	}
+	return true;
+}
+
+
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
+  pSystem->Log("Loading...");
   return new GLRenderer(pSystem);
 }
 

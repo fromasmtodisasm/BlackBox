@@ -23,10 +23,10 @@ std::string getBasePath(std::string fullpath);
 DLL_EXPORT std::string wstr_to_str(const std::wstring& ws);
 DLL_EXPORT std::wstring str_to_wstr(const std::string& str);
 
-void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr);
-void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr);
+DLL_EXPORT void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr);
+DLL_EXPORT void findAndReplaceAll(std::string& data, std::string toSearch, std::function<std::string(int)> replaceStr);
 
-void urldecode2(char* dst, const char* src);
+DLL_EXPORT void urldecode2(char* dst, const char* src);
 
 namespace stl {
   template<class Type>

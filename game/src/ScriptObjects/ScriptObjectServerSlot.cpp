@@ -15,6 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#if 0
 #include "Game.hpp"
 #include <ScriptObjects/ScriptObjectServerSlot.hpp>
 //#include <XSystemBase.hpp>
@@ -326,3 +327,4 @@ int CScriptObjectServerSlot::GetId(IFunctionHandler *pH)
 {
 	return pH->EndFunction((int)m_pSS->GetID());
 }
+#endif
