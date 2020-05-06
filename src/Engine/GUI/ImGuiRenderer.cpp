@@ -225,6 +225,9 @@ bool    ImGuiOpenglRender::Init(IRenderer *pRenderer, const char* glsl_version)
     gl_loader = "Custom";
 #endif
 
+    if (!gladLoadGL())
+      return false;
+
     // Make a dummy GL call (we don't actually need the result)
     // IF YOU GET A CRASH HERE: it probably means that you haven't initialized the OpenGL function loader used by this code.
     // Desktop OpenGL 3/4 need a function loader. See the IMGUI_IMPL_OPENGL_LOADER_xxx explanation above.
