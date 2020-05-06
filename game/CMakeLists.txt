@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(FPS_Game CXX)
+project(Game CXX)
 
 #include(FetchContent)
 
@@ -10,6 +10,7 @@ set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox Renderer)
+target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox Ws2_32)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"
@@ -102,6 +103,7 @@ source_group(
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
   "src/pch.hpp"

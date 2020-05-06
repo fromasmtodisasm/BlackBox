@@ -19,7 +19,7 @@
 # pragma once
 #endif
 
-#include <BlackBox/Network/IPAddress.hpp>				// CIPAddress
+#include <Network/IPAddress.hpp>				// CIPAddress
 
 //////////////////////////////////////////////////////////////////////
 // Server to client messages

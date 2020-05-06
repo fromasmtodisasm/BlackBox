@@ -11,11 +11,11 @@ struct ICVar;
 class ISceneManager
 {
 public:
-  static bool init(const char* scene, LoadObjectSink* callback);
-  IScene* getScene(std::string scene, LoadObjectSink* callback);
-  void removeScene(std::string scene);
-  IScene* currentScene();
-  void nextScene();
-  void prevScene();
-  bool exist(std::string scene);
+  virtual bool init(const char* scene, LoadObjectSink* callback) = 0;
+  virtual IScene* getScene(std::string scene, LoadObjectSink* callback) = 0;
+  virtual void removeScene(std::string scene) = 0;
+  virtual IScene* currentScene() = 0;
+  virtual void nextScene() = 0;
+  virtual void prevScene() = 0;
+  virtual bool exist(std::string scene) = 0;
 };

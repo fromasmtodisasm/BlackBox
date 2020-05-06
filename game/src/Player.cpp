@@ -17,19 +17,21 @@ CPlayer::CPlayer(CGame* game) //: GameObject(ObjectManager::instance()->getObjec
   init();
 }
 
-/*
+#if 0
 CPlayer::CPlayer(Object* obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
   m_pScript = GetISystem()->GetIScriptSystem()->CreateEmptyObject();
   init();
 }
+#endif
 
 void CPlayer::init()
 {
-  GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
+  //GetISystem()->GetIScriptSystem()->GetGlobalValue("player", m_pScript);
   GetISystem()->GetIConsole()->Register("floor", &floor, floor, 0, "floor height");
 }
 
+#if 0
 bool CPlayer::OnInputEvent(const SInputEvent& event)
 {
   bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
@@ -93,13 +95,14 @@ void CPlayer::draw(SRenderParams& renderParams)
 {
   Object::draw(renderParams);
 }
+#endif
 
 void CPlayer::attachCamera(CCamera* camera)
 {
   m_Camera = camera;
-  GameObject::m_Camera = camera;
 }
 
+#if 0
 CCamera* CPlayer::getCurrentCamera()
 {
   return m_Camera;
@@ -109,12 +112,13 @@ glm::vec3 CPlayer::getPos()
 {
   return m_transform.position;
 }
-
+#endif
 void CPlayer::setGame(CGame* game)
 {
   Game = game;
 }
 
+#if 0
 CGame* CPlayer::getGame()
 {
   return Game;
@@ -196,4 +200,5 @@ CPlayer* CPlayer::operator=(Object* obj)
 {
   return nullptr;
 }
-*/
+#endif
+

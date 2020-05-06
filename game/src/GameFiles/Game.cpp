@@ -6,7 +6,6 @@
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Material.hpp>
-#include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/Resources/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
@@ -223,21 +222,17 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	if (m_pRender)
 	{
+#if 0
 		if (m_scene != nullptr)
 		{
 			initTechniques();
 		}
 		else
 			TechniqueManager::init();
+#endif
 
 		m_Font = m_pSystem->GetIFont();
 		m_Font->Init("arial.ttf", 16, 18);
-
-		ITexture* consoleBackGround = new Texture();
-#if 0
-		consoleBackGround->load("console/fc.jpg");
-#endif
-		m_Console->SetImage(consoleBackGround);
 
 	}
 
@@ -466,12 +461,14 @@ bool CGame::loadScene(std::string name) {
     m_World->SetScene(scene);
 		if (!gEnv->IsDedicated())
 		{
+#if 0
 			auto tech = TechniqueManager::get("hdr");
 			if (tech != nullptr)
 			{
 				tech->Init(m_World->GetActiveScene(), nullptr);
 				scene->setTechnique(tech);
 			}
+#endif
 
 			//scene->setCamera("main", new CCamera());
       CPlayer* player = nullptr;// static_cast<CPlayer*>(scene->getObject("MyPlayer"));
@@ -719,9 +716,6 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
       return true;*/
     case eKI_B:
       culling = !culling;
-      return true;
-    case eKI_F1:
-      m_World->GetActiveScene()->selectedObject()->second->m_Material->nextDiffuse();
       return true;
     case eKI_F9:
       if (shift)
