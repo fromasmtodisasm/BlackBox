@@ -7,6 +7,7 @@
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
+#if 0
 #ifdef _WIN32
 #include <process.h>
 #endif
@@ -559,9 +560,10 @@ private:
   }
 };
 //*******************************************************
-
+#endif
 void CGame::initCommands()
 {
+#if 0
   m_Console->AddCommand("last", new LastCommand(this));
   m_Console->AddCommand("clear", new ClearCommand(this), "Clear command buffer");
   m_Console->AddCommand("goto", new GotoCommand(this), "Change mode [FPS/FLY/MENU/EDIT]");
@@ -577,8 +579,9 @@ void CGame::initCommands()
   m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
   m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment, tagpoint create|goto \"name\"");
   m_Console->AddCommand("objdump", new ObjDumpCommand(this), "Dump model to disk in binary");
+#endif
 }
-
+#if 0
 void CGame::initVariables()
 {
 }
@@ -587,3 +590,4 @@ ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
+#endif

@@ -14,7 +14,7 @@ class CGame;
 typedef std::queue<ICommand*> CommandQueue;
 
 
-class CPlayer : public GameObject
+class CPlayer //: public GameObject
 {
   friend class GameGUI;
   CCamera *m_Camera;
@@ -42,13 +42,13 @@ public:
 
   // IInputEventListener interface
 public:
-  virtual bool OnInputEvent(const SInputEvent& event) override;
+  //virtual bool OnInputEvent(const SInputEvent& event) override;
   bool OnKeyPress(EKeyId key);
   bool OnKeyReleas(EKeyId key);
 
   // IDrawable interface
 public:
-  virtual void draw(SRenderParams& renderParams) override;
+  //virtual void draw(SRenderParams& renderParams) override;
 
 public:
   void attachCamera(CCamera *camera);
@@ -59,7 +59,7 @@ public:
 
   // IObject interface
 public:
-  virtual void update(float deltatime) override;
+  //virtual void update(float deltatime) override;
   CPlayer *operator=(Object *obj);
 };
 

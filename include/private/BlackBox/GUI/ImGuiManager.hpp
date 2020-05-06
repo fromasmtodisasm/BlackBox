@@ -2,6 +2,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
 
+#if ENABLE_DEBUG_GUI
 class DLL_EXPORT ImGuiManager : public IInputEventListener
 {
 public:
@@ -21,4 +22,4 @@ public:
 private:
   bool show_demo_window = true;
 };
-
+#endif

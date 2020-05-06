@@ -8,7 +8,7 @@
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Resources/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 
@@ -460,8 +460,8 @@ bool CGame::loadScene(std::string name) {
 	GetISystem()->Log("Scene loading");
   IScene* scene;
   std::string& path = name;
-  SceneManager::instance()->removeScene(path);
-  if ((scene = SceneManager::instance()->getScene(path, this)) != nullptr)
+  gEnv->pRenderer->GetISceneManager()->removeScene(path);
+  if ((scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this)) != nullptr)
   {
     m_World->SetScene(scene);
 		if (!gEnv->IsDedicated())
@@ -474,7 +474,7 @@ bool CGame::loadScene(std::string name) {
 			}
 
 			//scene->setCamera("main", new CCamera());
-			CPlayer* player = static_cast<CPlayer*>(scene->getObject("MyPlayer"));
+      CPlayer* player = nullptr;// static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
 			{
 				player->attachCamera(scene->getCurrentCamera());
@@ -490,15 +490,15 @@ bool CGame::loadScene(std::string name) {
 
 void CGame::unloadScene(std::string name)
 {
-  SceneManager::instance()->removeScene(name);
+  gEnv->pRenderer->GetISceneManager()->removeScene(name);
 }
 
 void CGame::saveScene(std::string name, std::string as)
 {
   std::string& path = name;
-  if (SceneManager::instance()->exist(path))
+  if (gEnv->pRenderer->GetISceneManager()->exist(path))
   {
-    auto scene = SceneManager::instance()->getScene(path, this);
+    auto scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this);
     scene->save(as.c_str());
   }
 }
@@ -736,8 +736,8 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
       return true;
     }
   }
-  return m_player->OnInputEvent(event);
-  //return false;
+  //return m_player->OnInputEvent(event);
+  return false;
 }
 
 bool CGame::FlyInputEvent(const SInputEvent& event)
@@ -767,7 +767,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
       return true;
     }
   }
-  return m_player->OnInputEvent(event);
+  //return m_player->OnInputEvent(event);
 }
 
 bool CGame::MenuInputEvent(const SInputEvent& event)
@@ -849,13 +849,13 @@ bool CGame::EditInputEvent(const SInputEvent& event)
         m_World->GetActiveScene()->selectNextObject();
       }
       return true;
-    default:
-      return m_player->OnInputEvent(event);
+    //default:
+      //return m_player->OnInputEvent(event);
     }
   }
   else
   {
-    return m_player->OnInputEvent(event);
+    //return m_player->OnInputEvent(event);
   }
 
   return false;
@@ -1099,11 +1099,14 @@ ITagPointManager* CGame::GetTagPointManager()
 
 Object* CGame::OnLoad(Object* object, std::string type)
 {
+#if 0
   if (type == "player")
-    return new CPlayer(object);
+    return nullptr;// new CPlayer(object);
   else if (type == "gameobject")
     return new GameObject(object);
-  else return object;
+  else 
+#endif
+    return object;
 }
 
 void CGame::MainMenu()

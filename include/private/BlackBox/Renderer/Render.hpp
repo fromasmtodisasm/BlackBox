@@ -181,4 +181,7 @@ private:
 
   // Inherited via CRenderer
   virtual IFont* GetIFont() override;
+
+  // Inherited via CRenderer
+  virtual ISceneManager* GetISceneManager() override;
 };

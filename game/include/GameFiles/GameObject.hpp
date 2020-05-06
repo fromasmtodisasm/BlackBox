@@ -4,7 +4,7 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <set>
 
-class GameObject : public Object, public IInputEventListener
+class GameObject : /*public Object, */public IInputEventListener
 {
 protected:
   float MOVE_SPEED = 0.5f;
@@ -17,7 +17,7 @@ public:
 
   // IObject interface
 public:
-  virtual void update(float deltatime) override;
+  //virtual void update(float deltatime) override;
 
   // IObject interface
 public:

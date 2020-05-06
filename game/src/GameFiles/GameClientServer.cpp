@@ -3,7 +3,7 @@
 #include <Server/XServer.hpp>
 
 #include <BlackBox/System/IConsole.hpp>
-
+#if 0
 //////////////////////////////////////////////////////////////////////
 //! create the server
 bool CGame::StartupServer(bool listen, const char* szName)
@@ -204,3 +204,4 @@ void CGame::RefreshServerList()
     m_pServerSnooper->SearchForLANServers(GetCurrentTime());
   TRACE("Refresh for lan");
 }
+#endif

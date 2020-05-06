@@ -72,7 +72,7 @@ foreach(sys IN LISTS ALL_PROJECT_SYSTEMS)
 	message(STATUS "sub: ${sys}")
 endforeach()
 
-set_target_properties(GUI PROPERTIES FOLDER "Engine")
+#set_target_properties(GUI PROPERTIES FOLDER "Engine")
 #set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
 
 target_link_libraries(${BLACKBOX_PROJECT} INTERFACE tinyxml2::tinyxml2)

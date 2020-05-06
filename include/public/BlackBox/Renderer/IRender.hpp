@@ -478,6 +478,7 @@ struct IRenderer
   virtual void  ReleaseIndexBuffer(SVertexStream *dest)=0;
 
   virtual struct IWorld* GetIWorld() = 0;
+  virtual struct ISceneManager* GetISceneManager() = 0;
   virtual struct IFont* GetIFont() = 0;
 
   ////////////////////////////////////////////////////////////////////////////////

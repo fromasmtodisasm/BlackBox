@@ -3,6 +3,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
+#if 0
 void GameObject::update(float deltatime)
 {
   float speed = deltatime * MOVE_SPEED;
@@ -41,3 +42,4 @@ bool GameObject::OnInputEvent(const SInputEvent& event)
     this->getTransform();
   return false;
 }
+#endif

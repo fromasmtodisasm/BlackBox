@@ -3,13 +3,13 @@
 
 #include <BlackBox/Core/Primitives.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Resources/IObjectManager.hpp>
+#include <BlackBox/Resources/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
 #include <iostream>
 
-CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game)), impulse(0.0f, 3.0f, 0.0f)
+CPlayer::CPlayer(CGame* game) //: GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game)), impulse(0.0f, 3.0f, 0.0f)
 {
   //getShaderProgram()->Uniform("color", glm::vec3(1,0,0));
   mouseState = FREE;
@@ -17,6 +17,7 @@ CPlayer::CPlayer(CGame* game) : GameObject(ObjectManager::instance()->getObject(
   init();
 }
 
+/*
 CPlayer::CPlayer(Object* obj) : GameObject(obj), impulse(0.0f, 3.0f, 0.0f)
 {
   m_pScript = GetISystem()->GetIScriptSystem()->CreateEmptyObject();
@@ -139,9 +140,6 @@ void CPlayer::update(float deltatime)
     case eKI_Space:
       velocity += impulse;
       break;
-    /*case eKI_K:
-      velocity -= impulse;
-      break;*/
     case eKI_W:
       m_Camera->ProcessKeyboard(Movement::FORWARD, move_speed);
       break;
@@ -198,3 +196,4 @@ CPlayer* CPlayer::operator=(Object* obj)
 {
   return nullptr;
 }
+*/

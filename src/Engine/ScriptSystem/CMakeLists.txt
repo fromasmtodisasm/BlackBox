@@ -16,7 +16,6 @@ add_package(Lua)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
-target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 ###################################################
 
 target_sources(${PROJECT_NAME}

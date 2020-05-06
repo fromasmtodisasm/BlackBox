@@ -423,6 +423,11 @@ IFont* GLRenderer::GetIFont()
   return CreateIFont();
 }
 
+ISceneManager* GLRenderer::GetISceneManager()
+{
+  return nullptr;
+}
+
 void GLRenderer::PushProfileMarker(char* label)
 {
   OpenglDebuger::PushGroup(0, std::strlen(label), label);
