@@ -189,7 +189,7 @@ void ImGuiInput::UpdateMousePosAndButtons()
   io.MousePos = m_MousePos;
 #endif
 }
-bool ImGuiInput::OnInputEvent(const SInputEvent& event, ImGuiManager& imguiManager)
+bool ImGuiInput::OnInputEvent(const SInputEvent& event, IImGuiManager* imguiManager)
 {
   ImGuiIO& io = ImGui::GetIO();
 
@@ -209,7 +209,7 @@ bool ImGuiInput::OnInputEvent(const SInputEvent& event, ImGuiManager& imguiManag
       break;
     case eKI_Mouse3: m_MousePressed[2] = event.state == eIS_Pressed;
       break;
-    case eKI_Escape: GetISystem()->GetIInput()->RemoveEventListener(&imguiManager);
+    case eKI_Escape: GetISystem()->GetIInput()->RemoveEventListener(imguiManager);
       break;
     default:
       break;

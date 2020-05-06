@@ -1,8 +1,13 @@
 #pragma once
-#include "Exports.hpp"
 #include <BlackBox/Core/Platform/Platform.hpp> 
 #include <BlackBox/Core/Version.hpp> 
 #include <cstdarg>
+
+#ifdef SYSTEM_EXPORTS
+  #define ISYSTEM_API DLL_EXPORT
+#else
+  #define ISYSTEM_API DLL_IMPORT
+#endif
 
 struct ISystem;
 struct ILog;
@@ -283,7 +288,7 @@ inline ISystem* GetISystem()
 // interface of the DLL
 extern "C"
 {
-  BLACKBOX_EXPORT ISystem* CreateSystemInterface(SSystemInitParams& initParams);
+  ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
 
 #define FatalError(...) void(0)

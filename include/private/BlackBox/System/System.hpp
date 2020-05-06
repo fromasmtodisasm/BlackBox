@@ -83,6 +83,7 @@ private:
   bool InitInput();
   bool InitScriptSystem();
   bool InitNetwork();
+  bool InitGUI();
   bool InitSubSystem();
   bool OpenRenderLibrary(std::string_view render);
 
@@ -141,7 +142,7 @@ private:
   double m_DeltaTime = 0.0;
 
 #if ENABLE_DEBUG_GUI
-  ImGuiManager m_GuiManager;
+  IImGuiManager* m_GuiManager = nullptr;
 #endif
 
   virtual float GetDeltaTime() override;

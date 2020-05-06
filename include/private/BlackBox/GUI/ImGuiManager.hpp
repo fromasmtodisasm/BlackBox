@@ -1,25 +1,28 @@
 #pragma once
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Input/IInput.hpp>
 
 #if ENABLE_DEBUG_GUI
-class DLL_EXPORT ImGuiManager : public IInputEventListener
+struct IImGuiManager : public IInputEventListener
 {
-public:
-  ImGuiManager(ISystem* pSystem);
-  ~ImGuiManager();
+  ~IImGuiManager() {}
   // Inherited via IInputEventListener
-  virtual bool OnInputEvent(const SInputEvent& event) override;
-  virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
+  virtual bool OnInputEvent(const SInputEvent& event) = 0;
+  virtual bool OnInputEventUI(const SUnicodeEvent& event) = 0;
   virtual int GetPriority() const { return 3; }
 
-  bool Init();
-  void NewFrame();
-  void Render();
-  void ShowDemoWindow();
-  void ShowNodeEditor();
-  void HideDemoWindow();
-private:
-  bool show_demo_window = true;
+  virtual bool Init() = 0;
+  virtual void NewFrame() = 0;
+  virtual void Render() = 0;
+  virtual void ShowDemoWindow() = 0;
+  virtual void ShowNodeEditor() = 0;
+  virtual void HideDemoWindow() = 0;
 };
+
+extern "C" {
+  IRENDER_API IImGuiManager* CreateGUI(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+  typedef IImGuiManager* (*PFNCREATEGUI)(ISystem* pSystem);
+}
+
 #endif

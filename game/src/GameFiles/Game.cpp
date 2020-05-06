@@ -231,7 +231,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 			TechniqueManager::init();
 #endif
 
-		m_Font = m_pSystem->GetIFont();
+		m_Font = gEnv->pRenderer->GetIFont();
 		m_Font->Init("arial.ttf", 16, 18);
 
 	}

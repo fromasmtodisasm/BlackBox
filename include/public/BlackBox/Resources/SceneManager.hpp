@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/Resources/ISceneManager.hpp>
 
 class Scene;
 struct IScene;
@@ -8,7 +9,7 @@ struct ICVar;
 #include <map>
 #include <string>
 
-class SceneManager
+class SceneManager : public ISceneManager
 {
   friend class GameGUI;
   static SceneManager* manager;
@@ -18,7 +19,7 @@ class SceneManager
   //SceneManager();
 public:
   static SceneManager* instance();
-  static bool init(const char* scene, LoadObjectSink* callback);
+  bool init(const char* scene, LoadObjectSink* callback);
   IScene* getScene(std::string scene, LoadObjectSink* callback);
   void removeScene(std::string scene);
   IScene* currentScene();

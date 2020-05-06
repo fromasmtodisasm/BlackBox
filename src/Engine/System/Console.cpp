@@ -128,7 +128,7 @@ void CConsole::Draw()
   if (!m_nProgressRange)
   {
     render->SetRenderTarget(0);
-    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround->getId(), time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
+    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
     CalcMetrics(end);
     m_Font->SetXPos(0);
     m_Font->SetYPos(16);

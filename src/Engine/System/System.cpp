@@ -93,8 +93,6 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	  m_pScriptSystem(nullptr),
 	  m_ScriptObjectConsole(nullptr)
 #if ENABLE_DEBUG_GUI
-    ,
-	  m_GuiManager(this)
 #endif
 {
 	m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
@@ -271,9 +269,10 @@ bool CSystem::Init()
     #if ENABLE_DEBUG_GUI
     if (!gEnv->IsDedicated())
     {
-      m_GuiManager.Init();
+      if (!InitGUI())
+        return false;
     }
-		m_env.pInput->AddEventListener(&m_GuiManager);
+		m_env.pInput->AddEventListener(m_GuiManager);
     #endif
 
 	}
@@ -475,14 +474,30 @@ bool CSystem::InitScriptSystem()
 
 bool CSystem::InitNetwork()
 {
-	Log("Creating ScriptSystem");
-  return LoadSubsystem<PFNCREATENETWORK>("ScriptSystem", "CreateScriptSystem", [&](PFNCREATENETWORK p) {
+	Log("Creating Network");
+  return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p) {
     m_env.pLog->Log("-- Creating Network");
     m_pNetwork = p(this);
     if (m_pNetwork == nullptr)
       return false;
     return true;
   });
+}
+
+bool CSystem::InitGUI()
+{
+	Log("Creating GUI");
+  if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
+    m_env.pLog->Log("-- Creating GUI");
+    m_GuiManager = p(this);
+    if (m_GuiManager == nullptr)
+      return false;
+    return true;
+    }))
+  {
+    return m_GuiManager->Init();
+  }
+  return false;
 }
 
 bool CSystem::InitSubSystem()
@@ -835,8 +850,8 @@ void CSystem::RenderBegin()
 	m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
 	m_Render->BeginFrame();
 #if ENABLE_DEBUG_GUI
-	m_GuiManager.NewFrame();
-	m_GuiManager.ShowDemoWindow();
+	m_GuiManager->NewFrame();
+	m_GuiManager->ShowDemoWindow();
 	//m_GuiManager.ShowNodeEditor();
 #endif
 }
@@ -849,7 +864,7 @@ void CSystem::RenderEnd()
 		PROFILER_DRAW();
 	}
 #if ENABLE_DEBUG_GUI
-  m_GuiManager.Render();
+  m_GuiManager->Render();
 #endif
 
 	if (m_Render)
@@ -940,7 +955,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	if (nPauseMode)
 	{
 #if ENABLE_DEBUG_GUI
-    m_env.pInput->AddEventListener(&m_GuiManager);
+    m_env.pInput->AddEventListener(m_GuiManager);
 #endif
 	}
 

@@ -7,7 +7,7 @@ public:
   bool Init();
   void UpdateGamepads();
   void UpdateMousePosAndButtons();
-  bool OnInputEvent(const SInputEvent& event, ImGuiManager& imguiManager);
+  bool OnInputEvent(const SInputEvent& event, struct IImGuiManager* imguiManager);
   bool OnInputEventUI(const SUnicodeEvent& event);
 public:
   IInput* m_pInput = nullptr;

@@ -1,3 +1,4 @@
+#define IRENDER_EXPORTS
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/GUI/ImGuiManager.hpp>
 
@@ -9,6 +10,26 @@
 #include "imgui.h"
 #include "ImGuiInput.hpp"
 #include "ImGuiRenderer.hpp"
+
+class ImGuiManager : public IImGuiManager
+{
+public:
+  ImGuiManager(ISystem* pSystem);
+  ~ImGuiManager();
+  // Inherited via IInputEventListener
+  virtual bool OnInputEvent(const SInputEvent& event) override;
+  virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
+  virtual int GetPriority() const { return 3; }
+
+  bool Init();
+  void NewFrame();
+  void Render();
+  void ShowDemoWindow();
+  void ShowNodeEditor();
+  void HideDemoWindow();
+private:
+  bool show_demo_window = true;
+};
 
 //#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>
 
@@ -156,7 +177,7 @@ ImGuiManager::~ImGuiManager()
 
 bool ImGuiManager::OnInputEvent(const SInputEvent& event)
 {
-  return input.OnInputEvent(event, *this);
+  return input.OnInputEvent(event, this);
 }
 
 bool ImGuiManager::OnInputEventUI(const SUnicodeEvent& event)
@@ -489,4 +510,9 @@ static void ShowExampleAppCustomNodeGraph(bool* opened)
 	ImGui::EndGroup();
 
 	ImGui::End();
+}
+
+IRENDER_API IImGuiManager * CreateGUI(ISystem * pSystem)
+{
+  return new ImGuiManager(pSystem);
 }

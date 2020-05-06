@@ -72,3 +72,7 @@ target_sources(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_private_headers()
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)

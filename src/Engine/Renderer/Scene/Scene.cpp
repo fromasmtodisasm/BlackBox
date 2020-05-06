@@ -177,14 +177,18 @@ void Scene::draw(float dt)
 	//auto tech_name = m_Technique->GetName();
 	//sprintf(debug_label, "Technique: %s", tech_name);
 	DEBUG_GROUP("Render Loop");
-	if (m_Objects.size() > 0)
-	{
-		DEBUG_GROUP("PASS...");
-		for (int pass = 0; m_Technique->OnRenderPass(pass); pass++)
-			;
-	}
-	if (m_Technique)
+
+  if (m_Technique)
+  {
+    if (m_Objects.size() > 0)
+    {
+      DEBUG_GROUP("PASS...");
+      for (int pass = 0; m_Technique->OnRenderPass(pass); pass++)
+        ;
+    }
 		m_RenderedScene = m_Technique->GetFrame();
+
+  }
 
 	/*
   if (skyBox != nullptr)

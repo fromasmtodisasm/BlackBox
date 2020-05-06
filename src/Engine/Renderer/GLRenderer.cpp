@@ -9,6 +9,7 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Resources/MaterialManager.hpp>
 #include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Resources/SceneManager.hpp>
 #include <BlackBox/Resources/TextureManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
@@ -415,7 +416,7 @@ ITexture* GLRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
 
 IWorld* GLRenderer::GetIWorld()
 {
-  return nullptr;
+  return m_pWorld;
 }
 
 IFont* GLRenderer::GetIFont()
@@ -425,7 +426,7 @@ IFont* GLRenderer::GetIFont()
 
 ISceneManager* GLRenderer::GetISceneManager()
 {
-  return nullptr;
+  return SceneManager::instance();
 }
 
 void GLRenderer::PushProfileMarker(char* label)
