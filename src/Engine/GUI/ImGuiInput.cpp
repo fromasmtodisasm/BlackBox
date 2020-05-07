@@ -193,7 +193,6 @@ bool ImGuiInput::OnInputEvent(const SInputEvent& event, IImGuiManager* imguiMana
 {
   ImGuiIO& io = ImGui::GetIO();
 
-  bool mouseMoution = event.state == eIS_Changed;
   //if (event.pSymbol != nullptr)
   if (event.deviceType == eIDT_Mouse)
   {

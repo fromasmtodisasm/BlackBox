@@ -74,7 +74,7 @@ bool HdrTechnique::Init(IScene* pScene, FrameBufferObject* renderTarget)
   shadowMapping = new ShadowMapping();
   auto console = GetISystem()->GetIConsole();
 
-  auto format = m_DispFormats.get();
+  //auto format = m_DispFormats.get();
 
   //CreateFrameBuffers(format);
   CreateFrameBuffers(nullptr);

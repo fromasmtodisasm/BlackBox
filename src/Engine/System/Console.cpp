@@ -140,7 +140,7 @@ void CConsole::Draw()
     {
       printText(element, line_count - 1);
     }
-    auto cursor = needShowCursor() ? "*" : " ";
+    //auto cursor = needShowCursor() ? "*" : " ";
     //command_text.replace(command_text.size() - 1, 1, 1, cursor);
     //command_text[command.length()] = cursor;
 
@@ -227,8 +227,6 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 {
   bool keyPressed = event.state == eIS_Pressed;
   bool control = event.modifiers & eMM_Ctrl;
-  bool shift = event.modifiers & eMM_Shift;
-  bool alt = event.modifiers & eMM_Alt;
   if (!isOpened)
   {
     if (keyPressed)
@@ -256,7 +254,6 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 
 	if (event.keyName != "commit")
   {
-    bool textEntered = false;
     if (auto result = m_InputBindings.find(event); result != m_InputBindings.end())
     {
       switch (result->second)
@@ -1255,8 +1252,7 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 {
   enum { COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG, INSTRING } state1 = INSPACE;
   CommandDesc cd;
-  int begin_cmd = 0, end_cmd = 0;
-  int begin_args = 0, end_args = 0;
+  int begin_cmd = 0;
   std::wstring current_arg;
   std::wstring value;
   bool get_value = false;
@@ -1467,7 +1463,6 @@ CommandLine CConsole::getPrompt()
 
 void CConsole::printLine(size_t line)
 {
-  auto i = line;
   //for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
   for (const auto& element : m_CmdBuffer[line])
   {
@@ -1547,7 +1542,6 @@ void CConsole::PrintLine(const char* format, ...)
 
 char* CCVar::GetString()
 {
-  int res = 0;
   if (type == CVAR_INT)
     value.s = _strdup(std::to_string(value.i).c_str());
   else if (type == CVAR_FLOAT)
@@ -1644,7 +1638,6 @@ void CCVar::Release()
 
 int CCVar::GetIVal()
 {
-  int res = 0;
   if (type == CVAR_FLOAT)
     value.i = static_cast<int>(value.f);
   else if (type == CVAR_STRING)
@@ -1655,7 +1648,6 @@ int CCVar::GetIVal()
 
 float CCVar::GetFVal()
 {
-  int res = 0;
   if (type == CVAR_INT)
     value.f = static_cast<float>(value.i);
   else if (type == CVAR_STRING)
@@ -1670,7 +1662,6 @@ void CCVarRef::Release()
 
 int CCVarRef::GetIVal()
 {
-  int res = 0;
   if (type == CVAR_FLOAT)
     *value.i = static_cast<int>(*value.f);
   else if (type == CVAR_STRING)
@@ -1681,7 +1672,6 @@ int CCVarRef::GetIVal()
 
 float CCVarRef::GetFVal()
 {
-  int res = 0;
   if (type == CVAR_INT)
     *value.f = static_cast<float>(*value.i);
   else if (type == CVAR_STRING)
@@ -1692,7 +1682,6 @@ float CCVarRef::GetFVal()
 
 char* CCVarRef::GetString()
 {
-  int res = 0;
   if (type == CVAR_INT)
     *value.s = _strdup(std::to_string(*value.i).c_str());
   else if (type == CVAR_FLOAT)

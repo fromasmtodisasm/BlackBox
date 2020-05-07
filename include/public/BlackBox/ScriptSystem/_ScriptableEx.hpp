@@ -223,7 +223,6 @@ protected:
       //::OutputDebugString("Null Self\n");
       return 0;
     }
-    int i = m_pFunctionHandler->GetFunctionID();
     return (pThis->*(pThis->m_vFuncs[m_pFunctionHandler->GetFunctionID()]))(m_pFunctionHandler);
   }
 

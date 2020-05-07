@@ -71,7 +71,6 @@ float FreeTypeFont::TextWidth(const std::string& text)
   float w = 0.f;
   for (c = text.data(); c != end; c++)
   {
-    GLfloat x = 0;
     w += CharWidth(*c);
   }
   return w;

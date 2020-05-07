@@ -22,7 +22,6 @@ bool ObjLoader::load(const char* path, VerteciesInfo& verteciesInfo, BoundingBox
   }
 
   bool n_resized = false;
-  bool t_resized = false;
 
   verteciesInfo.attributes[VA_POSITION] = true;
   while (1) {

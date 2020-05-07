@@ -245,9 +245,11 @@ void Scene::Serializator::loadLight(tinyxml2::XMLElement* light)
   const char* lightName = nullptr;
   const char* lightType = nullptr;
 
+#if 0
   XMLElement* ambient = nullptr;
   XMLElement* diffuse = nullptr;
   XMLElement* specular = nullptr;
+#endif
 
   lightName = light->Attribute("name");
   if (lightName == nullptr)
@@ -358,7 +360,6 @@ void Scene::Serializator::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManage
   //XMLElement * texture = xmlDoc.NewElement("texture");
   std::string objectName = objectManager->getPathByPointer(obj.second);
   object->SetAttribute("name", obj.first.c_str());
-  const char* objType = nullptr;
   object->SetAttribute("type", obj.second->type.c_str());
   object->SetAttribute("visible", obj.second->visible());
   object->SetAttribute("transparent", obj.second->m_transparent);

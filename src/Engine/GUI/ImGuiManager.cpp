@@ -154,7 +154,7 @@ namespace
   static ImGuiInput input;
   static ImGuiRender render;
 }
-void ShowExampleAppCustomNodeGraph(bool* opened);
+static void ShowExampleAppCustomNodeGraph(bool* opened);
 
 ImGuiManager::ImGuiManager(ISystem* pSystem)
 {

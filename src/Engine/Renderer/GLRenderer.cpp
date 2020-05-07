@@ -582,7 +582,6 @@ void GLRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
 
 void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
-  bool flipY = true;
   float
     width = GetWidth(),
     height = GetHeight();

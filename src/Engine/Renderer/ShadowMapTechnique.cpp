@@ -111,8 +111,6 @@ void ShadowMapping::DepthPass()
 void ShadowMapping::RenderPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
-	auto camera = m_Scene->getCurrentCamera();
-
 
 	// Render opaque objects
 	renderStage = RENDER_OPAQUE;
@@ -205,19 +203,17 @@ void ShadowMapping::OnDepthPass()
 void ShadowMapping::OnRenderPass()
 {
 	DEBUG_GROUP(__FUNCTION__);
-	auto& v = m_RenderedScene->viewPort;
 	m_RenderedScene->bind({0, 0, cam_width->GetIVal(), cam_height->GetIVal()});
 	glm::vec4 fog = glm::vec4(
 		GET_CVAR("fogR")->GetFVal(),
 		GET_CVAR("fogG")->GetFVal(),
 		GET_CVAR("fogB")->GetFVal(),
 		1.f);
-	auto pSystem = GetISystem();
-	auto w		 = cam_width->GetIVal();
-	auto h		 = cam_height->GetIVal();
+	//auto w		 = cam_width->GetIVal();
+	//auto h		 = cam_height->GetIVal();
 	//pSystem->GetIRenderer()->SetState(IRenderer::State::SCISSOR_TEST, true);
 	//pSystem->GetIRenderer()->SetScissor(0, 0, w, h);
-	auto render = GetISystem()->GetIRenderer();
+	//auto render = GetISystem()->GetIRenderer();
 	//render->ClearDepthBuffer();
 	m_RenderedScene->clear(gl::Color(fog));
 	//pSystem->GetIRenderer()->SetState(IRenderer::State::SCISSOR_TEST, false);

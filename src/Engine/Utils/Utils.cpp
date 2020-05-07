@@ -117,7 +117,6 @@ DLL_EXPORT std::string wstr_to_str(const std::wstring& ws)
   std::string result;
   result.resize(ws.length());
   auto r_it = result.begin();
-  char tmp[6] = { 0 };
   for (auto ch : ws)
   {
     std::wctomb(&r_it++[0], ch);
@@ -133,7 +132,6 @@ DLL_EXPORT std::wstring str_to_wstr(const std::string& str)
     return L"";
   result.resize(str.length());
   auto r_it = result.begin();
-  char tmp[6] = { 0 };
   std::mbstowcs(&r_it++[0], str.data(), str.length());
   return result;
 }

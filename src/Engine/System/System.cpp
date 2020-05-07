@@ -707,7 +707,6 @@ void CSystem::LogCommandLine() const
 
 void CSystem::Tests()
 {
-	Object* obj = nullptr;
 	MeshList mesh;
 	VerteciesInfo vertecies;
 	BoundingBox bb;
@@ -876,7 +875,6 @@ void CSystem::RenderEnd()
 bool CSystem::OnInputEvent(const SInputEvent& event)
 {
 	bool result		= false;
-	bool mouseMoved = false;
 	//TODO: handle resized
 	bool resized = false;
 	switch (event.deviceType)
