@@ -1,6 +1,6 @@
 #include <BlackBox/Renderer/GBuffer.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 
 GBuffer::GBuffer(size_t SRC_WIDTH, size_t SRC_HEIGHT)

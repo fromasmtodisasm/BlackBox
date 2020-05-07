@@ -8,10 +8,8 @@ struct ICVar;
 #include <map>
 #include <string>
 
-class ISceneManager
+struct ISceneManager
 {
-public:
-  virtual bool init(const char* scene, LoadObjectSink* callback) = 0;
   virtual IScene* getScene(std::string scene, LoadObjectSink* callback) = 0;
   virtual void removeScene(std::string scene) = 0;
   virtual IScene* currentScene() = 0;

@@ -5,7 +5,7 @@
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
-#include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/IClipBoard.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -374,6 +374,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
     }
     return false;
   }
+  return false;
 }
 
 bool CConsole::OnInputEventUI(const SUnicodeEvent& event)

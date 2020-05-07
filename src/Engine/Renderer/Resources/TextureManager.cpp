@@ -1,4 +1,4 @@
-#include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
 

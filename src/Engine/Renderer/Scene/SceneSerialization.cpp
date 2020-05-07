@@ -2,8 +2,8 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/SkyBox.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
+#include <BlackBox/Renderer/ObjectManager.hpp>
 #include <BlackBox/Scene/XmlSerialization.hpp>
 
 #include <sstream>
@@ -324,7 +324,7 @@ void Scene::Serializator::loadLight(tinyxml2::XMLElement* light)
     {
       return;
     }
-    baseLight->toStr = strdup(tmp.c_str());
+    baseLight->toStr = _strdup(tmp.c_str());
   }
 
   baseLight->ambient = serialization::loadColorAttribute(light->FirstChildElement("ambient"));

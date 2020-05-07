@@ -171,7 +171,7 @@ bool CShader::loadInternal(std::string const& path, std::string& buffer)
 
 ShaderRef CShader::loadFromMemory(std::string text, IShader::type type)
 {
-  auto shader = _smart_ptr<CShader>(new CShader(text, type));
+  auto shader = ShaderRef(new CShader(text, type));
   if (!shader->Create())
     return nullptr;
   shader->Compile();

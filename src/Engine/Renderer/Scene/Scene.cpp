@@ -7,7 +7,7 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/World/World.hpp>

@@ -2,7 +2,7 @@
 
 #include <BlackBox/Network/INetwork.hpp>
 
-#include <SDL2/SDL_net.h>
+//#include <SDL2/SDL_net.h>
 
 class CNetwork : public INetwork
 {

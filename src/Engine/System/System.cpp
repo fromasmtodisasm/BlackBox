@@ -517,6 +517,7 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
     m_pWindow = p();
     if (m_pWindow == nullptr)
       return false;
+    return true;
     }))
   {
     return false;
@@ -987,9 +988,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	return true;
 }
 
-ISystem* CreateSystemInterface(SSystemInitParams& initParams)
+ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
-	//MessageBox(NULL, "TEST", "Message", MB_OK);
 	ISystem* system = new CSystem(initParams);
 	return system;
 }

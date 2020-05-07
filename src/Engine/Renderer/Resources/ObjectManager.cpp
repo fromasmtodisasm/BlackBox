@@ -1,4 +1,4 @@
-#include <BlackBox/Resources/ObjectManager.hpp>
+#include <BlackBox/Renderer/ObjectManager.hpp>
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>

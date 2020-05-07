@@ -5,7 +5,7 @@
 #include <BlackBox/Renderer/ShadowMapTechnique.hpp>
 #include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
@@ -519,8 +519,8 @@ void HdrTechnique::upsampling()
   for (unsigned int i = amount - 1; i > 0; i--)
   {
     LOG("\tBegin %d iteration\n", i);
-    int rx = w / (1 << i - 1);
-    int ry = h / (1 << i - 1);
+    int rx = static_cast<int>(w / ((1 << i) - 1));
+    int ry = static_cast<int>(h / ((1 << i) - 1));
     // Texture that blured
     auto& blured = m_UpsampleBuffer[i]->texture[0];
     // Texture on which the blur is superimposed

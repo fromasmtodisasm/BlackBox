@@ -39,6 +39,7 @@ namespace
 
 	};
 
+#define OFFSET(m) reinterpret_cast<GLvoid*>(static_cast<INT_PTR>((gBufInfoTable[vertexFormat].m)))
 	inline VertexAttributePointer GetPositionAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
@@ -48,19 +49,19 @@ namespace
 	inline VertexAttributePointer GetNormalAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
-			normal, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsNormal)
+			normal, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], OFFSET(OffsNormal)
 		);
 	}
 	inline VertexAttributePointer GetColorAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
-			color, 4, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsColor)
+			color, 4, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	OFFSET(OffsColor)
 		);
 	}
 	inline VertexAttributePointer GetUVAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
-			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(gBufInfoTable[vertexFormat].OffsTC)
+			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	OFFSET(OffsTC)
 		);
 	}
 

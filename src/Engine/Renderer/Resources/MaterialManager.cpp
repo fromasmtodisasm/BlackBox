@@ -1,7 +1,7 @@
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/ReflectShader.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/Renderer/ShaderManager.hpp>
+#include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 

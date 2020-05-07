@@ -39,7 +39,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Resources/IObjectManager.hpp>
+#include <BlackBox/Renderer/IObjectManager.hpp>
 #include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>

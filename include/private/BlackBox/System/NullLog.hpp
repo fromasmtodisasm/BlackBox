@@ -7,6 +7,8 @@
 #include <cstdarg>
 #include <BlackBox/Core/Utils.hpp>
 
+#define strdup _strdup
+
 class NullLog : public ILog
 {
 public:

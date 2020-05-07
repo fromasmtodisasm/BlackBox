@@ -5,7 +5,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/ShadowMapTechnique.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/BaseTexture.hpp>

@@ -1,5 +1,5 @@
 #include <BlackBox/Renderer/PostProcessor.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 
 PostProcessor::PostProcessor(const char* shader)
 {

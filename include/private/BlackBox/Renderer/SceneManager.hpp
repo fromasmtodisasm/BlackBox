@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/Renderer/ISceneManager.hpp>
 
 class Scene;
 struct IScene;
@@ -8,14 +9,13 @@ struct ICVar;
 #include <map>
 #include <string>
 
-class IRENDER_API SceneManager
+class SceneManager : public ISceneManager
 {
   friend class GameGUI;
   static SceneManager* manager;
   std::map<std::string, Scene*> cache;
   decltype(cache)::iterator current_scene_it;
   static ICVar* scene_path;
-  //SceneManager();
 public:
   static SceneManager* instance();
   static bool init(const char* scene, LoadObjectSink* callback);

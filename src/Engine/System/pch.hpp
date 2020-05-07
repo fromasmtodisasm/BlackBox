@@ -1,3 +1,3 @@
 #pragma once
 
-#define IRENDER_EXPORTS
+#define SYSTEM_EXPORTS

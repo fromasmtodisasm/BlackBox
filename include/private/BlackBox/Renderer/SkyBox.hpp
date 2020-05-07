@@ -4,7 +4,7 @@
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/Renderer/TextureCube.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 

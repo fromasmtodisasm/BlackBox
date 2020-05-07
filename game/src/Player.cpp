@@ -3,8 +3,8 @@
 
 #include <BlackBox/Core/Primitives.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Resources/IObjectManager.hpp>
-#include <BlackBox/Resources/ISceneManager.hpp>
+#include <BlackBox/Renderer/IObjectManager.hpp>
+#include <BlackBox/Renderer/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
 #include <iostream>

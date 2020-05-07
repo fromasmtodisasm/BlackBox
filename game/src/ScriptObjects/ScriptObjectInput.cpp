@@ -332,7 +332,7 @@ int CScriptObjectInput::SetMouseSensitivity(IFunctionHandler *pH)
 int CScriptObjectInput::GetMouseSensitivity(IFunctionHandler *pH)
 {
 	if(!m_pInput)return pH->EndFunction(0);
-	float fSensitivity;
+	float fSensitivity = 1.f;
 #if 0
   if(m_pInput->GetIMouse())
 	  fSensitivity=m_pInput->GetIMouse()->GetSensitvity();

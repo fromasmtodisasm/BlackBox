@@ -1,5 +1,5 @@
 #include <BlackBox/Renderer/Shader.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Renderer/ShaderManager.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
@@ -21,7 +21,7 @@ ShaderManager* ShaderManager::instance()
   return manager;
 }
 
-ShaderProgramRef  ShaderManager::getProgram(std::string vShader, std::string fShader)
+ShaderProgramRef  ShaderManager::getProgram(const char* vShader, const char* fShader)
 {
   //TODO: !!!
   ShaderRef vs, fs;
@@ -43,7 +43,7 @@ ShaderProgramRef  ShaderManager::getProgram(std::string vShader, std::string fSh
   return p;
 }
 
-ShaderProgramRef ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader)
+ShaderProgramRef ShaderManager::getProgram(const char* vShader, const char* fShader, const char* gShader)
 {
   ShaderRef vs, fs, gs;
   _smart_ptr<CShaderProgram> p;
@@ -64,13 +64,13 @@ ShaderProgramRef ShaderManager::getProgram(std::string vShader, std::string fSha
   }
 }
 
-ShaderProgramRef ShaderManager::getProgram(std::string vShader, std::string fShader, std::string gShader, std::string cShader)
+ShaderProgramRef ShaderManager::getProgram(const char* vShader, const char* fShader, const char* gShader, const char* cShader)
 {
   ShaderRef vs, fs, gs, cs;
   _smart_ptr<CShaderProgram> p;
   vs = getShader(ShaderDesc(vShader, "vertex"), false);
   fs = getShader(ShaderDesc(fShader, "fragment"), false);
-  if (gShader.size() > 0) gs = getShader(ShaderDesc(fShader, "geometry"), false);
+  if (gShader != nullptr) gs = getShader(ShaderDesc(fShader, "geometry"), false);
   cs = getShader(ShaderDesc(fShader, "compute"), false);
   if (!vs || !fs)
   {
@@ -120,7 +120,7 @@ ShaderRef ShaderManager::addShader(const ShaderDesc& desc)
   return result;
 }
 
-void ShaderManager::removeShader(std::string name)
+void ShaderManager::removeShader(const char* name)
 {
   cache.erase(root + name);
 }

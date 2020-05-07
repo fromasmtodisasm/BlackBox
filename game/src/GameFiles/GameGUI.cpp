@@ -4,7 +4,7 @@
 #include <BlackBox/Renderer/Light.hpp>
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Renderer/SceneManager.hpp>
 
 #include <imgui.h>
 

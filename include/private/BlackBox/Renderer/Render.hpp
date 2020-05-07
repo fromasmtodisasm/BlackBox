@@ -5,7 +5,7 @@
 #include <BlackBox/Renderer/BufferManager.hpp>
 
 struct IWindow;
-struct World;
+class World;
 
 typedef int glContextAttribute;
 

@@ -1,10 +1,13 @@
-#if 0
 #pragma once
-#include <BlackBox/Shader.hpp>
-#include <string>
+#include <BlackBox/Renderer/IRender.hpp>
 
 struct IShaderManager
 {
-  virtual CBaseShaderProgram* getShader(std::string name) = 0;
+  virtual ShaderProgramRef getProgram(const char* vShader, const char* fShader) = 0;
+  virtual ShaderProgramRef getProgram(const char* vShader, const char* fShader, const char* gShader) = 0;
+  virtual ShaderProgramRef getProgram(const char* vShader, const char* fShader, const char* gShader, const char* cShader) = 0;
+  virtual ShaderProgramRef getDefaultProgram() = 0;
+  virtual ShaderRef getShader(ShaderDesc const& desc, bool isReload) = 0;
+  virtual ShaderRef addShader(const ShaderDesc& desc) = 0;
+  virtual void removeShader(const char* name) = 0;
 };
-#endif

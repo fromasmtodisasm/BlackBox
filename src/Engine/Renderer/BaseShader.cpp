@@ -580,6 +580,7 @@ const char* CBaseShaderProgram::GetShaderName(IShader::type type)
     return "Unknown";
   default:
     assert(0);
+    return "";
   }
 
 }

@@ -7,7 +7,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
-#include <BlackBox/Resources/ISceneManager.hpp>
+#include <BlackBox/Renderer/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 
@@ -83,19 +83,16 @@ void CGame::PreRender()
 }
 
 CGame::CGame() :
-  //camControl(nullptr),
   g_scene(nullptr),
   listener(nullptr),
   m_Console(nullptr),
   m_Font(nullptr),
   m_pLog(nullptr),
-  //m_ScreenShader(nullptr),
   m_inputHandler(nullptr),
   m_player(nullptr),
   m_pSystem(nullptr),
   m_scene(nullptr),
   m_sceneManager(nullptr),
-  //shaderManager(nullptr),
   m_World(nullptr),
   m_Title("Test"),
   m_pScriptObjectGame(nullptr),
@@ -761,6 +758,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
       return true;
     }
   }
+  return false;
   //return m_player->OnInputEvent(event);
 }
 

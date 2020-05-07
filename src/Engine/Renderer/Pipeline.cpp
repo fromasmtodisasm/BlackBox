@@ -2,8 +2,8 @@
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/OpenGL/Debug.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
+#include <BlackBox/Renderer/ShaderManager.hpp>
 
 namespace Pipeline {
 
@@ -23,8 +23,6 @@ IShaderProgram* bindProgram(const char* name)
 }
 
 }
-
-
 
 void BoundingBox::draw(Mat4 transform)
 {

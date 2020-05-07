@@ -1,6 +1,6 @@
 #include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/Resources/ObjectManager.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
+#include <BlackBox/Renderer/ObjectManager.hpp>
+#include <BlackBox/Renderer/SceneManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>

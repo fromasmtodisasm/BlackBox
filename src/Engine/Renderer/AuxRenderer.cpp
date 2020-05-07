@@ -52,7 +52,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 #endif
   };
   ///////////////////////////////////////////////////////////////////////////////
-  auto cnt = sizeof vertices / sizeof P3F;
+  int cnt = sizeof vertices / sizeof P3F;
   m_BoundingBox = gEnv->pRenderer->CreateBuffer(cnt, VERTEX_FORMAT_P3F, "BoundingBox", false);
   gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices, cnt, false);
 

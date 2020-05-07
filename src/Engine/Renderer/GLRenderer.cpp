@@ -7,10 +7,10 @@
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/AuxRenderer.hpp>
-#include <BlackBox/Resources/MaterialManager.hpp>
-#include <BlackBox/Resources/ShaderManager.hpp>
-#include <BlackBox/Resources/SceneManager.hpp>
-#include <BlackBox/Resources/TextureManager.hpp>
+#include <BlackBox/Renderer/MaterialManager.hpp>
+#include <BlackBox/Renderer/ShaderManager.hpp>
+#include <BlackBox/Renderer/SceneManager.hpp>
+#include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
