@@ -44,7 +44,6 @@ typedef unsigned char byte;
 typedef float vec2_t[2];
 
 // Interface to the graphics constant buffers
-/*
 struct IGraphicsDeviceConstantBuffer
 {
 	// Set contents of the device buffer
@@ -480,6 +479,8 @@ struct IRenderer
   virtual struct IWorld* GetIWorld() = 0;
   virtual struct ISceneManager* GetISceneManager() = 0;
   virtual struct IFont* GetIFont() = 0;
+
+  virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;

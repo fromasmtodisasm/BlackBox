@@ -174,10 +174,7 @@ SkyBox* Scene::GetSkyBox()
 
 void Scene::draw(float dt)
 {
-	//auto tech_name = m_Technique->GetName();
-	//sprintf(debug_label, "Technique: %s", tech_name);
 	DEBUG_GROUP("Render Loop");
-
   if (m_Technique)
   {
     if (m_Objects.size() > 0)
@@ -189,11 +186,6 @@ void Scene::draw(float dt)
 		m_RenderedScene = m_Technique->GetFrame();
 
   }
-
-	/*
-  if (skyBox != nullptr)
-    skyBox->draw(m_Camera);
-  */
 }
 
 void Scene::setCamera(std::string name, CCamera* camera)

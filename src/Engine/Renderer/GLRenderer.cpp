@@ -11,6 +11,7 @@
 #include <BlackBox/Renderer/ShaderManager.hpp>
 #include <BlackBox/Renderer/SceneManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
+#include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
@@ -665,6 +666,11 @@ bool GLRenderer::InitResourceManagers()
 		gEnv->pConsole->PrintLine("End loading resources");
 	}
 	return true;
+}
+
+IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)
+{
+  return nullptr;
 }
 
 

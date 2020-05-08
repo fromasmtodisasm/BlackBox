@@ -238,3 +238,13 @@ void CBufferManager::Update(SVertexStream* dest, const void* src, int indexcount
 	gl::BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexcount * SIZEOF_INDEX, src);
 	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+IGraphicsDeviceConstantBuffer* CBufferManager::CreateConstantBuffer(int size)
+{
+  return nullptr;
+}
+
+void CGraphicsDeviceConstantBuffer::SetData(const uint8* data, size_t size)
+{
+
+}

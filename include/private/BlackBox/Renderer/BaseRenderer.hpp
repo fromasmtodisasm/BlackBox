@@ -1,8 +1,6 @@
 #pragma once
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/OpenGL/Debug.hpp>
-#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>

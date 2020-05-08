@@ -52,12 +52,6 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 
 #include <BlackBox/Renderer/QuadTree.hpp>
 
-#include <map>
-#include <string>
-#include <vector>
-#include <memory>
-#include <stack>
-
 struct TextRenderInfo
 {
   IFont* font;

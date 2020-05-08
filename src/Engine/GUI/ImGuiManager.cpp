@@ -31,8 +31,6 @@ private:
   bool show_demo_window = true;
 };
 
-//#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>
-
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 // In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.txt)
 static void HelpMarker(const char* desc)
@@ -221,7 +219,7 @@ void ImGuiManager::ShowDemoWindow()
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
 #else
-  ShowExampleAppDockSpace(&show_demo_window);
+  //ShowExampleAppDockSpace(&show_demo_window);
 #endif
 
 

@@ -3,6 +3,8 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/Renderer/BufferManager.hpp>
+#include <BlackBox/Renderer/Sampler.hpp>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 struct IWindow;
 class World;
@@ -111,6 +113,11 @@ public:
 
   virtual void PushProfileMarker(char* label) override;
   virtual void PopProfileMarker(char* label) override;
+
+  virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) override;
+  virtual IWorld* GetIWorld() override;
+  virtual IFont* GetIFont() override;
+  virtual ISceneManager* GetISceneManager() override;
 private:
   void glInit();
   void fillSates();
@@ -173,15 +180,8 @@ private:
 
   World* m_pWorld;
 
-  // Inherited via CRenderer
-  virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) override;
 
   // Inherited via CRenderer
-  virtual IWorld* GetIWorld() override;
+  virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) override;
 
-  // Inherited via CRenderer
-  virtual IFont* GetIFont() override;
-
-  // Inherited via CRenderer
-  virtual ISceneManager* GetISceneManager() override;
 };
