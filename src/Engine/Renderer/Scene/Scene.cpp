@@ -184,7 +184,6 @@ void Scene::draw(float dt)
         ;
     }
 		m_RenderedScene = m_Technique->GetFrame();
-
   }
 }
 

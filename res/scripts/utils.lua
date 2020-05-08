@@ -52,7 +52,7 @@ end
 function init()
 	Console:CreateKeyBind("r", "shader reload");
 	Console:CreateKeyBind("d", [[@retrigger_value("r_displayinfo")]]);
-	Console:CreateKeyBind("q", "@Game:Stop()");
+	--Console:CreateKeyBind("q", "@Game:Stop()");
 	Console:CreateKeyBind("w", "toogle_viewport_drag");
 
 	Console:CreateKeyBind("num1", "@load1()");

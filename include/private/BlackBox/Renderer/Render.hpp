@@ -184,4 +184,8 @@ private:
   // Inherited via CRenderer
   virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) override;
 
+
+  // Inherited via CRenderer
+  virtual ITechniqueManager* GetITechniqueManager() override;
+
 };

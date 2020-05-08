@@ -2,6 +2,7 @@
 #include <BlackBox/Renderer/HdrTechnique.hpp>
 
 std::map<std::string, ITechnique*> TechniqueManager::techs;
+TechniqueManager* TechniqueManager::manager = nullptr;
 
 ITechnique* TechniqueManager::get(std::string name)
 {
@@ -11,6 +12,17 @@ ITechnique* TechniqueManager::get(std::string name)
   else
     return nullptr;
 }
+
+TechniqueManager* TechniqueManager::instance()
+{
+  if (manager == nullptr)
+  {
+    manager = new TechniqueManager();
+    manager->init();
+  }
+  return manager;
+}
+
 
 bool TechniqueManager::init()
 {

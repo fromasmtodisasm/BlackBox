@@ -467,7 +467,7 @@ tinyxml2::XMLElement* Scene::Serializator::saveCamera(tinyxml2::XMLDocument& xml
 {
   XMLElement* result = xmlDoc.NewElement("camera");
   auto transform = saveTransform(xmlDoc, &camera->transform);
-  auto speed = serialization::writeElement(xmlDoc, camera->MovementSpeed->GetFVal(), "speed");
+  auto speed = serialization::writeElement(xmlDoc, camera->MovementSpeed, "speed");
   result->InsertEndChild(transform);
   result->InsertEndChild(speed);
 
@@ -521,7 +521,7 @@ void Scene::Serializator::loadCamera(tinyxml2::XMLElement* element)
 
   result = new CCamera(position, glm::vec3(0.f, 1.f, 0.f), rotation.y, rotation.x);
 
-  result->MovementSpeed = GetISystem()->GetIConsole()->CreateVariable("cam_speed", cam_speed, 0, "Camera speed");
+  REGISTER_CVAR2("cam_speed", &result->MovementSpeed, cam_speed, 0, "Speed of camera");
 
   m_Scene->m_Camera[name] = result;
 }

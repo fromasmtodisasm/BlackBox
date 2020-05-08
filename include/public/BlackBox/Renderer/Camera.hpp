@@ -28,6 +28,12 @@ const float ZOOM = 45.0f;
 class CCamera
 {
 public:
+  enum class Mode
+  {
+    FPS,
+    FLY
+  }mode = CCamera::Mode::FPS;
+public:
   // Camera Attributes
   Transform transform;
   Vec3 Front;
@@ -35,23 +41,16 @@ public:
   Vec3 Right;
   Vec3 WorldUp;
   // Camera options
-  ICVar* MovementSpeed;
-  ICVar* FOV;
+  float MovementSpeed;
+  float FOV;
   float Zoom;
   //float FOV = 45.0f;
   float Ratio = 16.0f / 9;
   float zNear = 0.1f;
-  //float zFar = 5000.f;
-  ICVar* zFar = nullptr;
-
-  enum class Mode
-  {
-    FPS,
-    FLY
-  }mode = Mode::FPS;
+  float zFar = 5000.f;
 
   // Constructor with vectors
-  CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
+  CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(4.f), Zoom(ZOOM)
   {
     this->transform.position = position;
     this->WorldUp = up;
@@ -60,14 +59,8 @@ public:
     this->updateCameraVectors();
 
   }
-  void InitCVars()
-  {
-    MovementSpeed = CREATE_CVAR("cam_speed", 5.0f, 0, "Speed of camera");
-    FOV = CREATE_CVAR("fov", 45.0f, 0, "Camera field of view");
-    zFar = CREATE_CVAR("zfar", 10000.f, 0, "Draw distance");
-  }
   // Constructor with scalar values
-  CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(nullptr), Zoom(ZOOM)
+  CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(4.f), Zoom(ZOOM)
   {
     this->transform.position = glm::vec3(posX, posY, posZ);
     this->WorldUp = glm::vec3(upX, upY, upZ);
@@ -84,7 +77,7 @@ public:
   }
   Mat4 getProjectionMatrix() const
   {
-    return glm::perspective(glm::radians(FOV->GetFVal()), Ratio, zNear, zFar->GetFVal());
+    return glm::perspective(glm::radians(FOV), Ratio, zNear, zFar);
   }
 
   Vec3 getPosition()
@@ -105,41 +98,6 @@ public:
   void CCamera::setRotation(glm::vec3 ang)
   {
     transform.rotation = ang;
-  }
-
-  // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-  // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-  void ProcessKeyboard(Movement direction, float deltaTime)
-  {
-    float velocity = this->MovementSpeed->GetFVal() * deltaTime;
-    if (direction == FORWARD)
-      this->transform.position += glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z) * velocity;
-    if (direction == BACKWARD)
-      this->transform.position -= glm::vec3(this->Front.x, mode == Mode::FPS ? 0 : this->Front.y, this->Front.z) * velocity;
-    if (direction == LEFT)
-      this->transform.position -= this->Right * velocity;
-    if (direction == RIGHT)
-      this->transform.position += this->Right * velocity;
-  }
-
-  // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-  // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-  void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
-  {
-    this->transform.rotation.y += xoffset;
-    this->transform.rotation.x += yoffset;
-
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch)
-    {
-      if (this->transform.rotation.x > 89.0f)
-        this->transform.rotation.x = 89.0f;
-      if (this->transform.rotation.x < -89.0f)
-        this->transform.rotation.x = -89.0f;
-    }
-
-    // Update Front, Right and Up Vectors using the updated Eular angles
-    this->updateCameraVectors();
   }
 
   // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis

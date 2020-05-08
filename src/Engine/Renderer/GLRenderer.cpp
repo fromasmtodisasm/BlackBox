@@ -11,6 +11,7 @@
 #include <BlackBox/Renderer/ShaderManager.hpp>
 #include <BlackBox/Renderer/SceneManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
+#include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
@@ -41,7 +42,7 @@ GLRenderer::~GLRenderer()
 IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
   InitCVars();
-  m_Camera.InitCVars();
+  //m_Camera.InitCVars();
   IWindow* result = m_Window = window;
   if (window == nullptr)
     return nullptr;
@@ -671,6 +672,11 @@ bool GLRenderer::InitResourceManagers()
 IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)
 {
   return nullptr;
+}
+
+ITechniqueManager* GLRenderer::GetITechniqueManager()
+{
+  return TechniqueManager::instance();
 }
 
 

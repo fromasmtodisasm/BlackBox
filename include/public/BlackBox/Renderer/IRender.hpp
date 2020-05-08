@@ -478,6 +478,7 @@ struct IRenderer
 
   virtual struct IWorld* GetIWorld() = 0;
   virtual struct ISceneManager* GetISceneManager() = 0;
+  virtual struct ITechniqueManager* GetITechniqueManager() = 0;
   virtual struct IFont* GetIFont() = 0;
 
   virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) = 0;

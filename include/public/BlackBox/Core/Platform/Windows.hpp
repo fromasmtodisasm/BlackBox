@@ -45,6 +45,7 @@
 		#undef DrawText
 		#undef GetCharWidth
 		#undef GetUserName
+    #undef SendMessage
 		//#undef LoadLibrary
 	#endif
 

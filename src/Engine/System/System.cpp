@@ -484,6 +484,7 @@ bool CSystem::InitNetwork()
   });
 }
 
+#if ENABLE_DEBUG_GUI
 bool CSystem::InitGUI()
 {
 	Log("Creating GUI");
@@ -499,6 +500,7 @@ bool CSystem::InitGUI()
   }
   return false;
 }
+#endif
 
 bool CSystem::InitSubSystem()
 {

@@ -149,8 +149,12 @@ void ShadowMapping::RenderOpaque(Object* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	auto camera = m_Scene->getCurrentCamera();
-	if (!object->m_transparent && (object->visible()) &&
-		glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal())
+	if (!object->m_transparent && (object->visible())
+#if 0
+ &&
+		glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal()
+#endif
+  )
 	{
 		SRenderParams renderParams;
 
