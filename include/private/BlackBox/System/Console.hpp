@@ -238,6 +238,7 @@ class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSi
     }
 	};
 	using InputBinding = std::map<const SInputEvent, EInputFunctions, cmpInputEvents>;
+	using ConsoleBindsMap = std::map<std::string, std::string>;
 public:
   CConsole();
   ~CConsole();
@@ -384,7 +385,8 @@ private:
 
   int lines = 0;
 
-	InputBinding m_InputBindings;
+  InputBinding                   m_InputBindings;
+	ConsoleBindsMap                m_mapBinds; 
 
   // --------------------------------------------------------------------------------
 
@@ -400,6 +402,11 @@ private:
   int                            m_nScrollLine;
   int                            m_nHistoryPos;
   size_t                         m_nCursorPos;                // x position in characters
+
+	bool                           m_bConsoleActive;
+
+                                                              // Inherited via IConsole
+  virtual const char* FindKeyBind(const char* sCmd) override;
 
   // Inherited via IConsole
 };

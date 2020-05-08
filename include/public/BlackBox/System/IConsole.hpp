@@ -290,6 +290,13 @@ struct IConsole
   virtual void RemoveWorkerCommand(IWorkerCommand* cmd) = 0;
 
   virtual void CreateKeyBind(const char* key, const char* cmd) = 0;
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*! Dump all key bindings to a callback-interface
+	@param Callback callback-interface which needs to be called for each element
+	*/
+	//virtual void DumpKeyBinds(IKeyBindDumpSink *pCallback )=0;
+	virtual const char* FindKeyBind( const char *sCmd ) = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

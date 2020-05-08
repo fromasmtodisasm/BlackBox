@@ -50,18 +50,18 @@ end
 
 
 function init()
-	Console:CreateKeyBind("r", "shader reload");
-	Console:CreateKeyBind("d", [[@retrigger_value("r_displayinfo")]]);
+	Console:CreateKeyBind("ctrl_r", "shader reload");
+	Console:CreateKeyBind("ctrl_d", [[@retrigger_value("r_displayinfo")]]);
 	--Console:CreateKeyBind("q", "@Game:Stop()");
-	Console:CreateKeyBind("w", "toogle_viewport_drag");
+	Console:CreateKeyBind("ctrl_w", "toogle_viewport_drag");
 
-	Console:CreateKeyBind("num1", "@load1()");
-	Console:CreateKeyBind("num2", "@load2()");
+	Console:CreateKeyBind("ctrl_num1", "@load1()");
+	Console:CreateKeyBind("ctrl_num2", "@load2()");
 
-	Console:CreateKeyBind("a", [[@retrigger_value("r_aspect")]]);
+	Console:CreateKeyBind("ctrl_a", [[@retrigger_value("r_aspect")]]);
 	--Console:CreateKeyBind("c", "Console:Show(false)")  
-	Console:CreateKeyBind("b", "@setFog(0,0,0)") 
-	Console:CreateKeyBind("g", "@setFog(0,0.01,0.01)")  
+	Console:CreateKeyBind("ctrl_b", "@setFog(0,0,0)") 
+	Console:CreateKeyBind("ctrl_g", "@setFog(0,0.01,0.01)")  
 
 	Console:CreateKeyBind("xi_b", "quit")  
 	Console:CreateKeyBind("xi_back", "@Game:gotoMenu()")  
@@ -83,9 +83,9 @@ function init()
 	]]) 
 
 	Console:CreateKeyBind("f5", "screen_shot") 
-	Console:CreateKeyBind("s", "scene load test") 
-	Console:CreateKeyBind("p", "reload_scripts") 
-	Console:CreateKeyBind("c", "@Game:gotoMenu()") 
+	Console:CreateKeyBind("ctrl_s", "scene load test") 
+	Console:CreateKeyBind("ctrl_p", "reload_scripts") 
+	Console:CreateKeyBind("ctrl_alt_c", "@Game:gotoMenu()") 
 	Console:CreateKeyBind("f7", "@Game:gotoGame()") 
 
 

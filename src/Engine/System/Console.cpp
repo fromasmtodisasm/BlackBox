@@ -229,6 +229,39 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
   bool control = event.modifiers & eMM_Ctrl;
   if (!isOpened)
   {
+		const char* cmd = 0;
+
+		if (event.modifiers == 0)
+		{
+			// fast
+			cmd = FindKeyBind(event.keyName.c_str());
+		}
+		else
+		{
+			// slower
+			char szCombinedName[40];
+			int iLen = 0;
+
+			if (event.modifiers & eMM_Ctrl)
+			{ strcpy(szCombinedName, "ctrl_"); iLen += 5; }
+			if (event.modifiers & eMM_Shift)
+			{ strcpy(&szCombinedName[iLen], "shift_"); iLen += 6; }
+			if (event.modifiers & eMM_Alt)
+			{ strcpy(&szCombinedName[iLen], "alt_");  iLen += 4; }
+			if (event.modifiers & eMM_Win)
+			{ strcpy(&szCombinedName[iLen], "win_");  iLen += 4; }
+
+			strcpy(&szCombinedName[iLen], event.keyName.c_str());
+
+			cmd = FindKeyBind(szCombinedName);
+		}
+
+		if (cmd)
+		{
+			SetInputLine("");
+			//ExecuteStringInternal(cmd, true);    // keybinds are treated as they would come from console
+      return handleCommand(str_to_wstr(cmd).data());
+		}
     if (keyPressed)
     {
       if (control || event.deviceType == eIDT_Gamepad)
@@ -849,11 +882,7 @@ void CConsole::TickProgressBar()
 
 void CConsole::CreateKeyBind(const char* key, const char* cmd)
 {
-  auto it = m_str2key.find(key);
-  if (it != m_str2key.end())
-  {
-    m_keyBind[it->second] = str_to_wstr(cmd);
-  }
+	m_mapBinds.insert(ConsoleBindsMap::value_type(key, cmd));
 }
 
 void CConsole::SetInputLine(const char* szLine)
@@ -926,6 +955,16 @@ void CConsole::InitInputBindings()
 
 	CreateBinding(CreateInputEvent(eKI_1, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
 	CreateBinding(CreateInputEvent(eKI_2, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
+}
+
+const char* CConsole::FindKeyBind(const char* sCmd)
+{
+	ConsoleBindsMap::const_iterator it = m_mapBinds.find(sCmd);
+
+	if (it != m_mapBinds.end())
+		return it->second.c_str();
+
+	return 0;
 }
 
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)

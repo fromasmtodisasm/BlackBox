@@ -338,7 +338,7 @@ void HdrTechnique::InitConsoleVariables()
   cam_width = GetISystem()->GetIConsole()->GetCVar("r_cam_w");
   cam_height = GetISystem()->GetIConsole()->GetCVar("r_cam_h");
 
-  GetISystem()->GetIConsole()->CreateKeyBind("s", "#retrigger_value(\"show_all_frame_buffer\")");
+  //GetISystem()->GetIConsole()->CreateKeyBind("ctrl_s", "#retrigger_value(\"show_all_frame_buffer\")");
   REGISTER_CVAR(show_all_fb, 0, VF_NULL, "Show all frame buffer");
   REGISTER_CVAR(draw_sky, 0, VF_NULL, "Draw skybox");
 }
