@@ -476,8 +476,6 @@ struct IRenderer
   virtual void  UpdateIndexBuffer(SVertexStream *dest,const void *src, int indexcount, bool bUnLock=true)=0;
   virtual void  ReleaseIndexBuffer(SVertexStream *dest)=0;
 
-  virtual struct IWorld* GetIWorld() = 0;
-  virtual struct ISceneManager* GetISceneManager() = 0;
   virtual struct ITechniqueManager* GetITechniqueManager() = 0;
   virtual struct IFont* GetIFont() = 0;
 
@@ -496,13 +494,12 @@ extern "C" {
 
 struct SRenderParams
 {
-	IShader* Shader;
+	IShaderProgram* Shader;
 	std::vector<UniformValue> uniforms;
 	Material* Material;
 	CCamera* Camera;
 	DirectionLight* DirectionLight;
 	Mat4 Transform;
-
 };
 
 struct IDrawable

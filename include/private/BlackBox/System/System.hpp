@@ -84,6 +84,7 @@ private:
   bool InitScriptSystem();
   bool InitNetwork();
   bool InitGUI();
+  bool Init3DEngine();
   bool InitSubSystem();
   bool OpenRenderLibrary(std::string_view render);
 

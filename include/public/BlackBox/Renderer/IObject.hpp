@@ -23,6 +23,7 @@ struct IObject
   virtual void rotateZ(float angle) = 0;
   virtual void scale(Vec3 v) = 0;
   virtual void update(float deltatime) = 0;
+  virtual void Render(SRenderParams& renderParams) = 0;
 
   virtual Material* getMaterial() = 0;
   virtual void setMaterial(Material* material) = 0;

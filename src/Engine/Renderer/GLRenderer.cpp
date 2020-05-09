@@ -76,7 +76,6 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   glInit();
   if (!InitResourceManagers())
     return false;
-	m_pWorld = new World();
 
   printHardware();
   m_BufferManager = new CBufferManager();
@@ -416,19 +415,10 @@ ITexture* GLRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
   return nullptr;
 }
 
-IWorld* GLRenderer::GetIWorld()
-{
-  return m_pWorld;
-}
 
 IFont* GLRenderer::GetIFont()
 {
   return CreateIFont();
-}
-
-ISceneManager* GLRenderer::GetISceneManager()
-{
-  return SceneManager::instance();
 }
 
 void GLRenderer::PushProfileMarker(char* label)

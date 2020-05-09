@@ -9,6 +9,7 @@
 #include <BlackBox/Renderer/Camera.hpp>
 //#include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
@@ -207,6 +208,8 @@ bool CSystem::Init()
 	Log("Initialize Render");
 	if (!InitRender())
 		return false;
+  if (!Init3DEngine())
+    return false;
 
   //////////////////////////////////////////////////////////////////////////
   // Hardware mouse
@@ -502,6 +505,18 @@ bool CSystem::InitGUI()
 }
 #endif
 
+bool CSystem::Init3DEngine()
+{
+  
+	Log("Creating 3DEngine");
+  return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p) {
+      m_env.p3DEngine = p(this, "0.0.0");
+      if (m_env.p3DEngine != nullptr)
+        return false;
+      return m_env.p3DEngine->Init();
+  });
+}
+
 bool CSystem::InitSubSystem()
 {
   return false;
@@ -760,31 +775,9 @@ void CSystem::Render()
 {
 	PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 	{
-    IWorld* pWorld = gEnv->pRenderer->GetIWorld();
-		if (nullptr == pWorld->GetActiveScene())
-			return;
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
-		int w;
-		int h;
-		if (GET_CVAR("r_aspect")->GetIVal())
-		{
-			w = m_Render->GetHeight();
-			h = m_Render->GetWidth();
-		}
-		else
-		{
-			w = GET_CVAR("r_cam_w")->GetIVal();
-			h = GET_CVAR("r_cam_h")->GetIVal();
-		}
+    gEnv->p3DEngine->Draw();
 
-		auto r												  = ((float)w) / h;
-		pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
-
-		//m_World->setCamera(m_camera1);
-		pWorld->Draw(static_cast<float>(m_DeltaTime));
-
-		if (pWorld->GetActiveScene())
-			pWorld->GetActiveScene()->present(m_Render->GetWidth(), m_Render->GetHeight());
 	}
 	PROFILER_POP_CPU_MARKER();
 }

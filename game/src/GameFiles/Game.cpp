@@ -10,6 +10,7 @@
 #include <BlackBox/Renderer/ISceneManager.hpp>
 #include <BlackBox/Renderer/ITechniqueManager.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
+#include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 
@@ -297,7 +298,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
     m_pInput->AddEventListener(&gCameraController);
   }
   m_pNetwork = m_pSystem->GetINetwork();
-  m_World = gEnv->pRenderer->GetIWorld();
   m_bUpdateRet = true;
   m_HardwareMouse = m_pSystem->GetIHardwareMouse();
 
@@ -374,9 +374,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
     return false;
   }
 #endif
-  // Set scene before camera, camera setted to active scene in world
-  if (m_scene)
-    m_World->SetScene(m_scene);
   initPlayer();
   m_pInput->ShowCursor(false);
   m_pInput->GrabInput(true);
@@ -608,10 +605,8 @@ bool CGame::loadScene(std::string name) {
 	GetISystem()->Log("Scene loading");
   IScene* scene;
   std::string& path = name;
-  gEnv->pRenderer->GetISceneManager()->removeScene(path);
-  if ((scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this)) != nullptr)
+  if (gEnv->p3DEngine->LoadLevel(path.data(), ""))
   {
-    m_World->SetScene(scene);
 		if (!gEnv->IsDedicated())
 		{
       auto tm = gEnv->pRenderer->GetITechniqueManager();
@@ -639,19 +634,18 @@ bool CGame::loadScene(std::string name) {
   return false;
 }
 
-void CGame::unloadScene(std::string name)
-{
-  gEnv->pRenderer->GetISceneManager()->removeScene(name);
-}
-
 void CGame::saveScene(std::string name, std::string as)
 {
+  // TODO: Fix it
+  // Need implement custom save file format to save needed state
+#if 0
   std::string& path = name;
   if (gEnv->pRenderer->GetISceneManager()->exist(path))
   {
     auto scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this);
     scene->save(as.c_str());
   }
+#endif
 }
 
 void CGame::SetRenderState()
@@ -793,8 +787,6 @@ void CGame::showMenu()
 
 bool CGame::initPlayer()
 {
-  if (!m_scene)
-    return false;
   if (m_player != nullptr)
   {
     delete m_player;

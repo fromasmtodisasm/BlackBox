@@ -1,8 +1,8 @@
 #pragma once
 
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Renderer/IObject.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/IObject.hpp>
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/IDrawable.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
@@ -81,6 +81,7 @@ public:
   virtual void moveTo(Vec3 v);
   virtual void rotate(float angle, Vec3 v) override;
   virtual void scale(Vec3 v) override;
+  virtual void Render(SRenderParams& renderParams) override;
   virtual void draw(SRenderParams& renderParams);
   virtual Mat4 getTransform() override;
   void updateVectors();

@@ -30,25 +30,17 @@ CRenderAuxGeom::CRenderAuxGeom()
     Vec3{-0.5,  0.5,  0.5}
   };
   static uint16 elements[] = {
-#if 0
-    2, 1, 0,
-    3, 2, 0,
-
-    6, 5, 4,
-    7, 6, 4,
-
-    1, 0, 4,
-    5, 4, 1,
-
-    //0, 4, 1, 5, 
-    2, 6, 3, 7
+#if 1
+  0, 1, 2, 3,
+  4, 5, 6, 7,
+  0, 4, 1, 5, 2, 6, 3, 7
 #else
-0,3,2,1,
-2,3,7,6,
-0,4,7,3,
-1,2,6,5,
-4,5,6,7,
-0,1,5,4
+  0,3,2,1,
+  2,3,7,6,
+  0,4,7,3,
+  1,2,6,5,
+  4,5,6,7,
+  0,1,5,4
 #endif
   };
   ///////////////////////////////////////////////////////////////////////////////
@@ -87,7 +79,9 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
   {
     RSS(gEnv->pRenderer, BLEND, true);
     RSS(gEnv->pRenderer, CULL_FACE, false);
-    gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 24, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+    gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
+    gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
+    gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
   }
   //gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));
 }

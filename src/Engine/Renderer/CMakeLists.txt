@@ -81,9 +81,6 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
 )
 
-include(Scene/CMakeLists.txt)
-include(World/CMakeLists.txt)
-
 if (OPTION_GLAD_LOADER)
   target_sources(${PROJECT_NAME}
     PRIVATE ${PROJECT_SOURCE_DIR}/GladLoader.cpp
@@ -109,7 +106,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #)
 
 add_private_headers()
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
+#set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
   "pch.hpp"

@@ -15,6 +15,7 @@ struct IEntitySystem;
 struct IGame;
 struct IShaderManager;
 struct IRenderer;
+struct I3DEngine;
 struct ICmdLine;
 struct IConsole;
 struct IInput;
@@ -160,6 +161,7 @@ struct SSystemInitParams
 struct SSystemGlobalEnvironment
 {
   INetwork* pNetwork;
+  I3DEngine* p3DEngine;
   IScriptSystem* pScriptSystem;
   IInput* pInput;
   ICryPak* pCryPak;

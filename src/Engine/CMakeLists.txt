@@ -50,6 +50,7 @@ add_subdirectory(Math)
 target_link_libraries(${BLACKBOX_PROJECT} INTERFACE Math)
 
 add_subsystem(Utils)
+add_subsystem(3DEngine)
 #add_subdirectory(Scene)
 add_subsystem(Input)
 #add_subsystem(Geometry)
@@ -76,13 +77,6 @@ endforeach()
 #set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
 
 target_link_libraries(${BLACKBOX_PROJECT} INTERFACE tinyxml2::tinyxml2)
-#target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${OPENGL_gl_LIBRARY})
-###################################################
-#[[
-generate_export_header(${BLACKBOX_PROJECT}
-	EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/Exports.hpp
-)
-]]
 ###################################################
 #--------------------------------------------------
 if (LINUX OR UNIX OR APPLE)

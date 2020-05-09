@@ -34,7 +34,8 @@ Object::Object(const Object* obj) :
   refs++;
 }
 
-void Object::draw(SRenderParams& renderParams) {
+void Object::Render(SRenderParams& renderParams)
+{
   //DEBUG_GROUP(__FUNCTION__);
   //gEnv->pRenderer->PushProfileMarker(__FUNCTION__);
   glm::mat3 NormalMatrix(1.0);
@@ -42,7 +43,6 @@ void Object::draw(SRenderParams& renderParams) {
 	add_uniform(renderParams, "NormalMatrix", glm::mat3(glm::transpose(glm::inverse(getTransform()))));
 	auto &p = m_Material->program;
 	p->Use();
-
   for (auto& mesh : *m_Mesh)
   {
 		for (auto& uv : renderParams.uniforms)
@@ -95,6 +95,10 @@ void Object::draw(SRenderParams& renderParams) {
 		m_Material->apply(this);
 		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
   }
+}
+
+void Object::draw(SRenderParams& renderParams) {
+  Render(renderParams);
 }
 
 glm::mat4 Object::getTransform()

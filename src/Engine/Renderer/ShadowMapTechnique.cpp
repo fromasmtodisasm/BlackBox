@@ -141,7 +141,7 @@ void ShadowMapping::RenderDepth(Object* object)
 		SRenderParams renderParams;
 		//m_ShadowMapShader->Uniform(object->getTransform(), "model");
 		m_ShadowMapShader->setup();
-		object->draw(renderParams);
+		object->Render(renderParams);
 	}
 }
 
@@ -173,7 +173,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 		renderParams.Transform = object->getTransform();
 		renderParams.Material = object->getMaterial();
 		SetupLights(renderParams);
-		object->draw(renderParams);
+		object->Render(renderParams);
 	}
 }
 
@@ -191,7 +191,7 @@ void ShadowMapping::RenderTransparent(Object* object)
 		add_uniform(renderParams, "bloomThreshold", GetISystem()->GetIConsole()->GetCVar("bt")->GetFVal());
 
 		SetupLights(renderParams);
-		object->draw(renderParams);
+		object->Render(renderParams);
 	}
 	m_pRender->SetState(IRenderer::State::BLEND, false);
 }

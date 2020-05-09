@@ -158,7 +158,6 @@ public:
 
 
   bool loadScene(std::string name);
-  void unloadScene(std::string name);
   void saveScene(std::string name, std::string as);
   void SetRenderState();
   void setPlayer(CPlayer *player);
@@ -299,10 +298,9 @@ public:
   IRenderer *										m_pRender;
 	IInput *											m_pInput;
   IInputHandler *								m_inputHandler;
-  IWorld *											m_World;
+  I3DEngine*                    m_3DEngine;
   CPlayer *											m_player = nullptr;
 	//CameraController *camControl;
-  IScene *											m_scene;
   SceneManager *								m_sceneManager;
   ILog *												m_pLog;
 	INetwork*											m_pNetwork;

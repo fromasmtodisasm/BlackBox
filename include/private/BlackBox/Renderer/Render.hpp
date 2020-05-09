@@ -115,9 +115,7 @@ public:
   virtual void PopProfileMarker(char* label) override;
 
   virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) override;
-  virtual IWorld* GetIWorld() override;
   virtual IFont* GetIFont() override;
-  virtual ISceneManager* GetISceneManager() override;
 private:
   void glInit();
   void fillSates();
@@ -178,7 +176,6 @@ private:
   IRenderAuxGeom* m_RenderAuxGeom;
   CBufferManager* m_BufferManager;
 
-  World* m_pWorld;
 
 
   // Inherited via CRenderer
