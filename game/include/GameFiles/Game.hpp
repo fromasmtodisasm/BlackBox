@@ -51,6 +51,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 #include "Player.h"
 
 #include <BlackBox/Renderer/QuadTree.hpp>
+#include <CameraController.hpp>
 
 struct TextRenderInfo
 {
@@ -196,8 +197,6 @@ public:
 private:
 
   bool initPlayer();
-	void initTechniques();
-
   bool FpsInputEvent(const SInputEvent& event);
   bool FlyInputEvent(const SInputEvent& event);
   bool MenuInputEvent(const SInputEvent& event);
@@ -214,9 +213,7 @@ private:
 public:
 
   virtual void PostRender() override;
-  IWorld *getWorld() const;
 
-	void drawHud();
 	void initCommands();
 	void initVariables();
 
@@ -300,8 +297,6 @@ public:
   IInputHandler *								m_inputHandler;
   I3DEngine*                    m_3DEngine;
   CPlayer *											m_player = nullptr;
-	//CameraController *camControl;
-  SceneManager *								m_sceneManager;
   ILog *												m_pLog;
 	INetwork*											m_pNetwork;
 	StringQueue										m_qMessages;
@@ -438,7 +433,9 @@ public:
 
 	char* test_string = "user data string";
 
-    IHardwareMouse* m_HardwareMouse = nullptr;
+  IHardwareMouse* m_HardwareMouse = nullptr;
+
+  CCameraController m_CameraController;
 
 };
 

@@ -1,3 +1,4 @@
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>

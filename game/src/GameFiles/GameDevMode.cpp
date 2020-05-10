@@ -165,8 +165,10 @@ void CGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* s
   tagLocations[index] = m_pSystem->GetViewCamera().GetPos();
   tagAngles[index] = m_pSystem->GetViewCamera().GetAngles();
 #else
+#if 0
   tagLocations[index] = m_World->GetActiveScene()->getCurrentCamera()->transform.position;
   tagAngles[index] = m_World->GetActiveScene()->getCurrentCamera()->transform.rotation;
+#endif
 #endif
 
   SetFileAttributes(filename.c_str(), 0);
@@ -270,15 +272,19 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 #else
   if (p != Vec3(0.f))
   {
+#if 0
     m_World->GetActiveScene()->getCurrentCamera()->transform.position = p;
+#endif
   }
 #endif
   if (a != Vec3(0.f))
   {
+#if 0
     m_World->GetActiveScene()->getCurrentCamera()->transform.rotation = a;
     //m_pSystem->GetViewCamera().SetAngle(a);
     //SetViewAngles(a);
     m_World->GetActiveScene()->getCurrentCamera()->updateCameraVectors();
+#endif
   }
 #endif
 }

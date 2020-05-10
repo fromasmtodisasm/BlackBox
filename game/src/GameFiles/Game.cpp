@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <sstream>
 
+#if 0
 class CRender : public IQuadTreeRender {
 public:
 	CRender(IRenderer* pRender)
@@ -64,169 +65,6 @@ class TreeObject : public Object
 
 	std::unique_ptr<TreeRender> m_TreeRender;
 };
-
-class CCameraController : public IInputEventListener
-{
-public:
-public:
-  CCameraController() = default;
-  CCameraController(CCamera* pCamera) : m_Camera(pCamera) {}
-
-  CCamera* m_Camera;
-  //CCamera::Mode mode = CCamera::Mode::FPS;
-
-  // Inherited via IInputEventListener
-  virtual bool OnInputEvent(const SInputEvent& event) override
-  {
-    bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
-    bool rotated = false;
-    //if (event.pSymbol != nullptr)
-    rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY;// || event.pSymbol->type == SInputSymbol::EType::Axis;
-
-  ////////////////////////
-    bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-    bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
-    bool control = event.modifiers & eMM_Ctrl;
-    bool shift = event.modifiers & eMM_Shift;
-    bool alt = event.modifiers & eMM_Alt;
-    ////////////////////////
-    if (rotated)
-    {
-      // TODO: GET DELTA  MOUSE
-      delta = Vec2(0);
-      if (event.keyId == eKI_MouseX || event.keyId == eKI_XI_ThumbRX || event.keyId == eKI_XI_ThumbLX)
-        delta.x = event.value;
-      else
-        delta.y = event.value;
-      ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
-      return true;
-    }
-    else if (keyPressed)
-    {
-      return OnKeyPress(event.keyId);
-    }
-    else if (keyReleased)
-      return OnKeyReleas(event.keyId);
-    return false;
-  }
-  bool OnKeyPress(EKeyId key)
-  {
-    m_keys.insert(key);
-    return true;
-  }
-  bool OnKeyReleas(EKeyId key)
-  {
-    m_keys.erase(key);
-    return false;
-  }
-  void InitCVars()
-  {
-    REGISTER_CVAR2("cam_speed", &m_Camera->MovementSpeed, 5.0f, 0, "Speed of camera");
-    REGISTER_CVAR2("fov", &m_Camera->FOV, 45.0f, 0, "Camera field of view");
-    REGISTER_CVAR2("zfar", &m_Camera->zFar, 10000.f, 0, "Draw distance");
-  }
-  // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-  // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-  void ProcessKeyboard(Movement direction, float deltaTime)
-  {
-    float velocity = m_Camera->MovementSpeed * deltaTime;
-    if (direction == FORWARD)
-      m_Camera->transform.position += glm::vec3(m_Camera->Front.x, m_Camera->mode == CCamera::Mode::FPS ? 0 : m_Camera->Front.y, m_Camera->Front.z) * velocity;
-    if (direction == BACKWARD)
-      m_Camera->transform.position -= glm::vec3(m_Camera->Front.x, m_Camera->mode == CCamera::Mode::FPS ? 0 : m_Camera->Front.y, m_Camera->Front.z) * velocity;
-    if (direction == LEFT)
-      m_Camera->transform.position -= m_Camera->Right * velocity;
-    if (direction == RIGHT)
-      m_Camera->transform.position += m_Camera->Right * velocity;
-  }
-
-  // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-  // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-  void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
-  {
-    m_Camera->transform.rotation.y += xoffset;
-    m_Camera->transform.rotation.x += yoffset;
-
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch)
-    {
-      if (m_Camera->transform.rotation.x > 89.0f)
-        m_Camera->transform.rotation.x = 89.0f;
-      if (m_Camera->transform.rotation.x < -89.0f)
-        m_Camera->transform.rotation.x = -89.0f;
-    }
-
-    // Update Front, Right and Up Vectors using the updated Eular angles
-    m_Camera->updateCameraVectors();
-  }
-
-
-  void CCameraController::update(float deltatime)
-  {
-    if (gEnv->IsDedicated())
-    {
-      return;
-    }
-
-    //ImGui
-    float mult = m_keys.find(eKI_LShift) != m_keys.end() ? 3.f : 1.f;
-    float rotation_speed = 15.f * deltatime * mult;
-    //float rotSpeed = deltatime * 5.f;//m_rotAngle;
-    static Vec3 impulse = Vec3(0.f, 10.f, 0.f);
-    float move_speed = deltatime * mult;
-    for (auto& key : m_keys)
-    {
-      switch (key)
-      {
-      case eKI_Space:
-        velocity += impulse;
-        break;
-      case eKI_W:
-        ProcessKeyboard(Movement::FORWARD, move_speed);
-        break;
-      case eKI_S:
-        ProcessKeyboard(Movement::BACKWARD, move_speed);
-        break;
-      case eKI_A:
-        ProcessKeyboard(Movement::LEFT, move_speed);
-        break;
-      case eKI_D:
-        ProcessKeyboard(Movement::RIGHT, move_speed);
-        break;
-      case eKI_Up:
-        ProcessMouseMovement(0.f, rotation_speed);
-        break;
-      case eKI_Down:
-        ProcessMouseMovement(0.f, -rotation_speed);
-        break;
-      case eKI_Left:
-        ProcessMouseMovement(-rotation_speed, 0.f);
-        break;
-      case eKI_Right:
-        ProcessMouseMovement(rotation_speed, 0.f);
-        break;
-      default:
-        ;//GameObject::update(deltatime);
-      }
-    }
-    #if 0
-    GetISystem()->GetIScriptSystem()->BeginCall("Player", "Update");
-    GetISystem()->GetIScriptSystem()->PushFuncParam(m_pScript);
-    GetISystem()->GetIScriptSystem()->PushFuncParam(deltatime);
-    GetISystem()->GetIScriptSystem()->EndCall();
-    #endif
-  }
-public:
-  Vec3 velocity = Vec3(10);
-  std::set<EKeyId> m_keys;
-  Vec2 delta;
-  float MovementSpeed;
-  const float SCROLL_SPEED = 2.0f;
-  const float MOUSE_SPEED = 1.5f;
-  const float MOUSE_SENSIVITY = 0.05f;
-};
-
-CCameraController gCameraController;
 namespace {
 #if 0
   sf::RenderWindow& getWindow()
@@ -235,11 +73,7 @@ namespace {
   }
 #endif
 }
-
-IWorld* CGame::getWorld() const
-{
-  return m_World;
-}
+#endif
 
 void CGame::PreRender()
 {
@@ -255,9 +89,7 @@ CGame::CGame() :
   m_inputHandler(nullptr),
   m_player(nullptr),
   m_pSystem(nullptr),
-  m_scene(nullptr),
-  m_sceneManager(nullptr),
-  m_World(nullptr),
+  m_3DEngine(nullptr),
   m_Title("Test"),
   m_pScriptObjectGame(nullptr),
   m_pRender(nullptr),
@@ -295,7 +127,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
   if (!bDedicatedSrv)
   {
     m_pInput->AddEventListener(this);
-    m_pInput->AddEventListener(&gCameraController);
+    m_pInput->AddEventListener(&m_CameraController);
   }
   m_pNetwork = m_pSystem->GetINetwork();
   m_bUpdateRet = true;
@@ -403,8 +235,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
   }
 
   m_QuadTree = std::make_shared<QuadTree>(8, 10, 0, 0, color3(1, 0, 0));
-  m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
-  TreeRender treeRender(m_QuadTreeRender.get());
+  //m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
+  //TreeRender treeRender(m_QuadTreeRender.get());
 
   return true;
 }
@@ -419,11 +251,11 @@ bool CGame::Update() {
     m_time += m_deltaTime;
     fps = 1.0f / m_deltaTime;
     ExecScripts();
-    gCameraController.update(m_deltaTime);
+    m_CameraController.update(m_deltaTime);
 
-    auto camera = m_World->GetActiveScene()->getCurrentCamera();
 
 #if 0
+    auto camera = m_World->GetActiveScene()->getCurrentCamera();
     camera->ProcessKeyboard(direction, m_deltaTime);
 		if (m_time_to_random >= 4.0f)
 		{
@@ -491,10 +323,7 @@ void CGame::DrawHud(float fps)
 void CGame::DisplayInfo(float fps)
 {
   size_t num_objects;
-  if (m_World->GetActiveScene())
-  {
-    num_objects = m_World->GetActiveScene()->numObjects();
-  }
+  num_objects = m_3DEngine->GetLoadedObjectCount();
   auto line = m_pRender->GetHeight();
   auto step = 18;
 
@@ -603,27 +432,19 @@ bool CGame::Run(bool& bRelaunch) {
 
 bool CGame::loadScene(std::string name) {
 	GetISystem()->Log("Scene loading");
-  IScene* scene;
   std::string& path = name;
   if (gEnv->p3DEngine->LoadLevel(path.data(), ""))
   {
 		if (!gEnv->IsDedicated())
 		{
-      auto tm = gEnv->pRenderer->GetITechniqueManager();
-      auto tech = tm->get("hdr");
-			if (tech != nullptr)
-			{
-				tech->Init(m_World->GetActiveScene(), nullptr);
-				scene->setTechnique(tech);
-			}
 
 			//scene->setCamera("main", new CCamera());
-      gCameraController.m_Camera = scene->getCurrentCamera();
-      gCameraController.InitCVars();
+      m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
+      m_CameraController.InitCVars();
       CPlayer* player = nullptr;// static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
 			{
-				player->attachCamera(scene->getCurrentCamera());
+				//player->attachCamera(scene->getCurrentCamera());
 				player->setGame(this);
 				this->setPlayer(player);
 			}
@@ -763,7 +584,7 @@ void CGame::gotoGame()
 {
   //if (m_player != nullptr)
   {
-    m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
+    //m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
     m_Mode = FPS;
     m_pInput->ShowCursor(false);
     m_pInput->GrabInput(true);
@@ -787,6 +608,8 @@ void CGame::showMenu()
 
 bool CGame::initPlayer()
 {
+  // TODO: rewirte it
+#if 0
   if (m_player != nullptr)
   {
     delete m_player;
@@ -797,15 +620,8 @@ bool CGame::initPlayer()
     m_player->setGame(this);
     return true;
   }
+#endif
   return false;
-}
-
-void CGame::initTechniques()
-{
-  auto tm = gEnv->pRenderer->GetITechniqueManager();
-  auto tech = tm->get("hdr");
-  tech->Init(m_World->GetActiveScene(), nullptr);
-  m_World->GetActiveScene()->setTechnique(tech);
 }
 
 bool CGame::FpsInputEvent(const SInputEvent& event)
@@ -821,7 +637,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
   bool shift = event.modifiers & eMM_Shift;
   bool alt = event.modifiers & eMM_Alt;
   ////////////////////////
-  auto camera = m_World->GetActiveScene()->getCurrentCamera();
+  auto camera = gEnv->pRenderer->GetCamera();
   if (keyPressed)
   {
     switch (event.keyId)
@@ -834,14 +650,14 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
     case eKI_Backspace:
       return true;
     case eKI_M:
-      camera->mode = CCamera::Mode::FLY;
+      camera.mode = CCamera::Mode::FLY;
       m_Mode = Mode::FLY;
       return true;
     case eKI_Escape:
       gotoMenu();
       return true;
     case eKI_P:
-      camera->MovementSpeed += 5.0f;
+      camera.MovementSpeed += 5.0f;
       return true;
     case eKI_E:
       //m_inputHandler->mouseLock(false);
@@ -941,6 +757,7 @@ bool CGame::DefaultInputEvent(const SInputEvent& event)
 
 bool CGame::EditInputEvent(const SInputEvent& event)
 {
+#if 0
   ////////////////////////
   bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
   bool control = event.modifiers & eMM_Ctrl;
@@ -988,6 +805,7 @@ bool CGame::EditInputEvent(const SInputEvent& event)
   {
     //return m_player->OnInputEvent(event);
   }
+#endif
 
   return false;
 }

@@ -274,7 +274,3 @@ Object* Object::load(string path)
   obj->m_path = path;
   return obj;
 }
-
-Transform::Transform()
-{
-}

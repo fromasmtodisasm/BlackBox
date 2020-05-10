@@ -1,7 +1,7 @@
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/Renderer/SkyBox.hpp>
+//#include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
 #include <BlackBox/Scene/XmlSerialization.hpp>

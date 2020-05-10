@@ -1,7 +1,6 @@
 #pragma once
 
 #include <BlackBox/Renderer/Material.hpp>
-#include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -26,7 +25,6 @@ class MaterialManager
   bool alpha_shakaled = false;
   bool isSkyBox = false;
   ICVar* root_path = nullptr;
-  std::map<std::string, BaseShaderProgramRef> shaders_map;
   ISystem* m_pSystem;
 public:
   static MaterialManager* instance();
@@ -38,10 +36,10 @@ public:
   bool reloadShaders(std::vector<std::string> names);
 
   void reloadShader(ProgramDesc& pd);
-  bool loadProgram(ProgramDesc& desc, bool isReload);
   void EnumShaders(IMaterialShaderSink* callback);
 
 private:
+  bool loadProgram(ProgramDesc& desc, bool isReload);
   MaterialManager(ISystem* pSystem);
   bool loadLib(std::string name);
   void getShaderAttributes(tinyxml2::XMLElement* shader, ProgramDesc& pd);
@@ -50,5 +48,5 @@ private:
   tinyxml2::XMLElement* saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture* texture);
   ShaderRef loadShader(ShaderDesc& sd, bool isReload);
   ShaderRef addShader(ShaderDesc& sd, bool isReload);
-  tinyxml2::XMLElement* saveShader(tinyxml2::XMLDocument& xmlDoc, CShader* shader);
+  tinyxml2::XMLElement* saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef shader);
 };

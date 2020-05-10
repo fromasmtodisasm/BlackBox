@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <iostream>
-#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+
 #include <map>
+#include <iostream>
 #include <glm/glm.hpp>
-#include <BlackBox/Renderer/Shader.hpp>
 
 class FreeTypeFont : public IFont
 {
 public:
   struct Character {
-    GLuint     TextureID;  // ID handle of the glyph texture
+    uint     TextureID;  // ID handle of the glyph texture
     glm::ivec2 Size;       // Size of glyph
     glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
     FT_Pos     Advance;    // Offset to advance to next glyph
@@ -31,14 +31,14 @@ public:
     shader(nullptr)
   {
   }
-  void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, float color[4]);
+  void RenderText(std::string text, float x, float y, float scale, float color[4]);
   virtual float TextWidth(const std::string& text) override;
   virtual float CharWidth(char ch) override;
 
 private:
   FT_Library ft;
   FT_Face face;
-  std::map<GLchar, Character> Characters;
+  std::map<char, Character> Characters;
 
   CVertexBuffer* m_VB = nullptr;
   SVertexStream* m_IB = nullptr;

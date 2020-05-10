@@ -13,17 +13,6 @@
 struct Material;
 using MeshList = std::shared_ptr<std::vector<Mesh>>;
 
-struct Transform
-{
-  Vec3 position;
-  Vec3 rotation;
-  Vec3 scale;
-
-  Transform();
-  Transform(Vec3 position, Vec3 rotation, Vec3 scale) :
-    position(position), rotation(rotation), scale(scale) {}
-};
-
 class Object : public IObject, public IDrawable {
   friend class ObjectManager;
 protected:

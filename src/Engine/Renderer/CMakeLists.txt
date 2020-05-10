@@ -73,9 +73,6 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Primitives.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Quad.cpp
 
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/MaterialManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ObjectManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/SceneManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ShaderManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/TextureManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
@@ -95,7 +92,6 @@ if (LINUX)
 else()
 	target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
 endif()
-#target_link_libraries(${PROJECT_NAME} PUBLIC Scene)
 
 add_package(SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)

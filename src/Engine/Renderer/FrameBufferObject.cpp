@@ -1,5 +1,4 @@
 #include <BlackBox/Renderer/FrameBufferObject.hpp>
-#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 
 #include <iostream>
 #include <cassert>

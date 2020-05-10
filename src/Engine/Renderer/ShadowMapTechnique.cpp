@@ -1,6 +1,7 @@
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>

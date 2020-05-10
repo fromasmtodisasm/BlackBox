@@ -5,6 +5,9 @@ add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
   PRIVATE ${PROJECT_SOURCE_DIR}/3DEngine.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/MaterialManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/ObjectManager.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/SceneManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Main.cpp
 )
 

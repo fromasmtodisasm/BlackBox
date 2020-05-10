@@ -261,11 +261,16 @@ struct ShaderDesc
 {
   ShaderDesc() {}
   ShaderDesc(std::string name) : name(name) {}
-  ShaderDesc(std::string name, std::string type) : type(type), name(name) {}
+  ShaderDesc(std::string name, IShader::type type) : type(type), name(name) {}
+
+  inline void AddMacro(const std::string& key, const std::string& value)
+  {
+    macro.insert(Macro::value_type(key, value));
+  }
 
   using Macro = std::map<std::string, std::string>;
-  std::string type;
   std::string name;
+  IShader::type type;
   Macro macro;
 
   static std::string root;

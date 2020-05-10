@@ -5,13 +5,9 @@
 #include <iostream>
 
 #include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/System/ISystem.hpp>
-
-#include <iostream>
-#include <sstream>
+#include <BlackBox/Renderer/IRender.hpp>
 
 struct ICVar;
 

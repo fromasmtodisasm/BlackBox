@@ -1,6 +1,5 @@
 #pragma once
 #include <BlackBox/Renderer/IDrawable.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/Renderer/TextureCube.hpp>
 #include <BlackBox/Renderer/Shader.hpp>
@@ -82,8 +81,8 @@ public:
   // Унаследовано через IDrawable
   virtual void draw(SRenderParams& renderParams) override
   {
-    glCheck(glDepthMask(GL_FALSE));
-    glCheck(glDepthFunc(GL_LEQUAL));
+    //glCheck(glDepthMask(GL_FALSE));
+    //glCheck(glDepthFunc(GL_LEQUAL));
     shader->Use();
     // ... задание видовой и проекционной матриц
     shader->Uniform(gEnv->pRenderer->GetCamera().getViewMatrix(), "View");
@@ -93,8 +92,8 @@ public:
     texture->bind();
 		gEnv->pRenderer->DrawBuffer(vertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 
-    glCheck(glDepthFunc(GL_LESS));
-    glCheck(glDepthMask(GL_TRUE));
+    //glCheck(glDepthFunc(GL_LESS));
+    //glCheck(glDepthMask(GL_TRUE));
   }
 
   void setTextureCube(TextureCube* t)

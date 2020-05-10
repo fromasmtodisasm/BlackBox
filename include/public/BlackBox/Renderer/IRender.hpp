@@ -92,6 +92,17 @@ typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferP
    };
  */
 
+struct Transform
+{
+  Vec3 position;
+  Vec3 rotation;
+  Vec3 scale;
+
+  Transform() = default;
+  Transform(Vec3 position, Vec3 rotation, Vec3 scale) :
+    position(position), rotation(rotation), scale(scale) {}
+};
+
 // Render State flags
 #define GS_BLSRC_MASK              0xf
 #define GS_BLSRC_ZERO              0x1
@@ -482,7 +493,7 @@ struct IRenderer
   virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
-  virtual IShader* Sh_Load(ShaderDesc const& desc) = 0;
+  virtual IShaderProgram* Sh_Load(const char* name, int flags) = 0;
   // Loading of the texture for name(nameTex)
   virtual ITexture *LoadTexture(const char* nameTex, uint flags, byte eTT)=0;
 };

@@ -19,6 +19,7 @@ struct ISystem;
 struct ITexPic;
 struct CVars;
 struct IMatInfo;
+struct IEntityRender;
 
 //////////////////////////////////////////////////////////////////////////
 //! structure to pass statobj group properites

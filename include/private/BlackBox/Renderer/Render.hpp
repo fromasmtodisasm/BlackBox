@@ -88,7 +88,7 @@ public:
   virtual void ClearDepthBuffer() override;
   virtual void ClearColorBuffer(const Vec3 vColor) override;
 
-  virtual IShader* Sh_Load(ShaderDesc const& desc) override;
+  virtual IShaderProgram* Sh_Load(const char* name, int flags) override;
 
   virtual void DrawFullscreenQuad() override;
   virtual int GetFrameID(bool bIncludeRecursiveCalls = true) override;

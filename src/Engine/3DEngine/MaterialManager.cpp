@@ -1,5 +1,4 @@
 #include <BlackBox/Renderer/MaterialManager.hpp>
-#include <BlackBox/Renderer/ReflectShader.hpp>
 #include <BlackBox/Renderer/ShaderManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -12,7 +11,7 @@
 
 using	namespace std;
 using namespace tinyxml2;
-using ShaderInfo = CBaseShaderProgram::ShaderInfo;
+using ShaderInfo = IShaderProgram::ShaderInfo;
 
 MaterialManager* MaterialManager::manager = nullptr;
 Material* defaultMaterial;
@@ -265,79 +264,6 @@ bool MaterialManager::loadMaterial(XMLElement* material)
 
 bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
 {
-  auto shader_it = shaders_map.find(desc.name);
-  bool load_vs = desc.vs.name.length() > 0;
-  bool load_fs = desc.fs.name.length() > 0;
-  bool load_gs = desc.gs.name.length() > 0;
-  bool load_cs = desc.cs.name.length() > 0;
-
-  bool is_compute = load_cs && !load_vs && !load_fs & !load_gs;
-
-  if (shader_it != shaders_map.end() && !isReload)
-    return true;
-  auto vs = !is_compute ? desc.vs.type = "vertex", loadShader(desc.vs, isReload) : nullptr;
-  if (!vs && !is_compute) return false;
-
-  auto fs = !is_compute ? desc.fs.type = "fragment", loadShader(desc.fs, isReload) : nullptr;
-  if (!fs && !is_compute) return false;
-
-  decltype(fs) gs;
-  decltype(fs) cs;
-
-  if (load_gs)
-  {
-    desc.gs.type = "geometry";
-    gs = loadShader(desc.gs, isReload);
-    if (!gs) return false;
-  }
-  if (load_cs)
-  {
-    desc.cs.type = "compute";
-    cs = loadShader(desc.cs, isReload);
-    if (!cs) return false;
-  }
-
-  if (isReload)
-  {
-    shader_it->second->Reload(vs, fs, gs, cs, desc.name.c_str());
-  }
-  else
-  {
-    ShaderInfo vi;
-    ShaderInfo fi;
-    ShaderInfo gi;
-    ShaderInfo ci;
-
-    if (!is_compute)
-    {
-      vi = ShaderInfo(vs, desc.vs.name);
-      fi = ShaderInfo(fs, desc.fs.name);
-    }
-    if (load_cs && load_gs)
-    {
-      gi = ShaderInfo(gs, desc.gs.name);
-      ci = ShaderInfo(cs, desc.cs.name);
-    }
-    else if (load_cs && !load_gs)
-    {
-      ci = ShaderInfo(cs, desc.cs.name);
-    }
-    if (!load_cs && load_gs)
-    {
-      gi = ShaderInfo(gs, desc.gs.name);
-    }
-    ShaderProgramRef shaderProgram(new CShaderProgram(vi, fi, gi, ci));
-
-		if (!shaderProgram->Create(desc.name.c_str()))
-		{
-			gEnv->pSystem->Log("Error of creating program");
-      return false;
-		}
-    //auto it = shaders_map.find(desc.name);
-    shaders_map[desc.name] = shaderProgram;
-    //debuger::program_label(shaderProgram->get(), desc.name);
-  }
-  return true;
 }
 
 void MaterialManager::EnumShaders(IMaterialShaderSink* callback)
@@ -431,7 +357,7 @@ ShaderRef MaterialManager::addShader(ShaderDesc& sd, bool isReload)
   return ShaderRef();
 }
 
-XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, CShader* shader)
+XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef shader)
 {
   XMLElement* shaderElement = xmlDoc.NewElement("shader");
 

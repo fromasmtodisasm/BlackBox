@@ -442,10 +442,9 @@ void GLRenderer::SetRenderTarget(int nHandle)
     gl::BindFramebuffer(nHandle);
 }
 
-IShader* GLRenderer::Sh_Load(ShaderDesc const& desc)
+IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
-  return dynamic_cast<IShader*>(CShader::load(desc));
-}
+  return ShaderManager::instance()->loadProgram()
 
 void GLRenderer::DrawFullscreenQuad()
 {

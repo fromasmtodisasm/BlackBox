@@ -1,4 +1,9 @@
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/3DEngine.hpp>
+#include <BlackBox/Renderer/ITechniqueManager.hpp>
+#include <BlackBox/Renderer/ITechnique.hpp>
+#include <BlackBox/Scene/IScene.hpp>
 
 void C3DEngine::Enable(bool bEnable)
 {
@@ -16,6 +21,14 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
+  //IScene* scene;
+  auto tm = gEnv->pRenderer->GetITechniqueManager();
+  auto tech = tm->get("hdr");
+  if (tech != nullptr)
+  {
+    tech->Init(m_pWorld->GetActiveScene(), nullptr);
+    m_pWorld->GetActiveScene()->setTechnique(tech);
+  }
   return false;
 }
 
@@ -43,6 +56,7 @@ void C3DEngine::Draw()
   }
 
   auto r = ((float)w) / h;
+	gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
   m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
   if (m_pWorld->GetActiveScene())
   {

@@ -724,7 +724,6 @@ void CSystem::LogCommandLine() const
 
 void CSystem::Tests()
 {
-	MeshList mesh;
 	VerteciesInfo vertecies;
 	BoundingBox bb;
 	
@@ -971,13 +970,11 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	{
 		m_pGame->SendMessage("Quit");
 	}
-  IWorld* pWorld = gEnv->pRenderer->GetIWorld();
 	if (!nPauseMode)
 	{
-			pWorld->Update(GetDeltaTime());
+			gEnv->p3DEngine->Update();
 	}
 
-	m_Render->SetCamera(*pWorld->GetActiveScene()->getCurrentCamera());
 	return true;
 }
 

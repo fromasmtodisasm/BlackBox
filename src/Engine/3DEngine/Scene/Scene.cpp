@@ -1,12 +1,10 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Renderer/FrameBufferObject.hpp>
-#include <BlackBox/Renderer/FreeTypeFont.hpp>
+//#include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/Renderer/IPostProcessor.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Renderer/Object.hpp>
-#include <BlackBox/Renderer/OpenGL/Debug.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -130,7 +128,7 @@ CCamera* Scene::getCurrentCamera()
 
 void Scene::present(int width, int height)
 {
-	DEBUG_GROUP(__FUNCTION__);
+	//DEBUG_GROUP(__FUNCTION__);
 	if (postProcessor == nullptr)
 	{
 		GetISystem()->GetIRenderer()->DrawFullScreenImage(m_RenderedScene);
@@ -174,12 +172,12 @@ SkyBox* Scene::GetSkyBox()
 
 void Scene::draw(float dt)
 {
-	DEBUG_GROUP("Render Loop");
+	//DEBUG_GROUP("Render Loop");
   if (m_Technique)
   {
     if (m_Objects.size() > 0)
     {
-      DEBUG_GROUP("PASS...");
+      //DEBUG_GROUP("PASS...");
       for (int pass = 0; m_Technique->OnRenderPass(pass); pass++)
         ;
     }
@@ -202,7 +200,7 @@ void Scene::update(float dt)
 	}
 }
 
-GLint Scene::getRenderTarget()
+int Scene::getRenderTarget()
 {
 	return m_RenderedScene;
 }

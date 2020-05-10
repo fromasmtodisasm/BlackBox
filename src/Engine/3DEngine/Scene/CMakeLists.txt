@@ -5,14 +5,12 @@
 
 ###################################################
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-#target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
 target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${ENGINE_DIR}/Renderer/Scene/Scene.cpp
-  PRIVATE ${ENGINE_DIR}/Renderer/Scene/SceneSerialization.cpp
-  PRIVATE ${ENGINE_DIR}/Renderer/Scene/XmlSerialization.cpp
+  PRIVATE ${ENGINE_DIR}/3DEngine/Scene/Scene.cpp
+  PRIVATE ${ENGINE_DIR}/3DEngine/Scene/SceneSerialization.cpp
+  PRIVATE ${ENGINE_DIR}/3DEngine/Scene/XmlSerialization.cpp
 )
 #install_this(Scene)
 #add_private_headers()

@@ -1,9 +1,10 @@
 #pragma once
-#include <memory>
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
+
 #include <vector>
+#include <memory>
 
 class CShader;
 class CBaseShaderProgram;
