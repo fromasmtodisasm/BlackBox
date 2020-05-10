@@ -31,6 +31,10 @@ shader_list = {
 		"landscape.vs",
 		"landscape.frag",
 	},		
+	Phong = {
+      "shadowmap.vs",
+      "shadowmap.frag",
+	},
 	Reflect = {
 		"reflect.vs",
 		"reflect.frag",
@@ -54,5 +58,10 @@ shader_list = {
 	Sprite = {
 		"sprite.vs",
 		"sprite.frag",
+	}
+    wireframe = {
+      "shadowmap.vs",
+      "wireframe.gs",
+      "shadowmap.frag",
 	}
 }
