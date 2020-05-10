@@ -8,12 +8,14 @@
 
 class CStatObj;
 
-class ObjectManager
+class ObjectManager : public IObjectManager
 {
   static ObjectManager* manager;
   std::map<std::string, std::shared_ptr<std::vector<Mesh>>> cache;
+  //ObjectManager();
 public:
   static ObjectManager* instance();
-  IStatObj* LoadObject(std::string Object, std::string type, LoadObjectSink* callback);
+  IStatObj* getObject(std::string Object, std::string type, LoadObjectSink* callback);
   IStatObj* objectFactory(IStatObj* object, std::string type, LoadObjectSink* callback);
+  //Object *getPrimitive(Primitive::Type type, CShaderProgram *program);
 };

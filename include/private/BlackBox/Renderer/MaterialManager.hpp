@@ -29,17 +29,9 @@ class MaterialManager
 public:
   static MaterialManager* instance();
   static bool init(ISystem* pSystem);
-  BaseShaderProgramRef getProgram(std::string name);
   Material* getMaterial(std::string name);
   static bool init(std::string materialLib);
-  bool reloadShaders();
-  bool reloadShaders(std::vector<std::string> names);
-
-  void reloadShader(ProgramDesc& pd);
-  void EnumShaders(IMaterialShaderSink* callback);
-
 private:
-  bool loadProgram(ProgramDesc& desc, bool isReload);
   MaterialManager(ISystem* pSystem);
   bool loadLib(std::string name);
   void getShaderAttributes(tinyxml2::XMLElement* shader, ProgramDesc& pd);

@@ -72,7 +72,7 @@ CShader* CShader::load(ShaderDesc  const& desc) {
     }
   }
 
-  auto shader = new CShader(text, str2typ(desc.type));
+  auto shader = new CShader(text, desc.type);
   if (shader->Create())
   {
     shader->Compile();

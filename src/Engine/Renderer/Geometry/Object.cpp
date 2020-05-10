@@ -14,17 +14,17 @@
 #include <memory>
 
 using namespace std;
-int Object::refs = 0;
+int CStatObj::refs = 0;
 
-Object::Object() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)), velocity(glm::vec3(0))
+CStatObj::CStatObj() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)), velocity(glm::vec3(0))
 {
 }
 
-Object::Object(MeshList mesh) : m_Mesh(mesh)
+CStatObj::CStatObj(MeshList mesh) : m_Mesh(mesh)
 {
 }
 
-Object::Object(const Object* obj) :
+CStatObj::CStatObj(const CStatObj* obj) :
   m_transform(obj->m_transform.position, obj->m_transform.rotation, obj->m_transform.scale),
   m_Mesh(obj->m_Mesh), m_Shader(obj->m_Shader),
   velocity(glm::vec3(0)),
@@ -34,7 +34,7 @@ Object::Object(const Object* obj) :
   refs++;
 }
 
-void Object::Render(SRenderParams& renderParams)
+void CStatObj::Render(SRenderParams& renderParams)
 {
   //DEBUG_GROUP(__FUNCTION__);
   //gEnv->pRenderer->PushProfileMarker(__FUNCTION__);
@@ -97,11 +97,11 @@ void Object::Render(SRenderParams& renderParams)
   }
 }
 
-void Object::draw(SRenderParams& renderParams) {
+void CStatObj::draw(SRenderParams& renderParams) {
   Render(renderParams);
 }
 
-glm::mat4 Object::getTransform()
+glm::mat4 CStatObj::getTransform()
 {
   glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
   scale = glm::scale(scale, m_transform.scale);
@@ -112,7 +112,7 @@ glm::mat4 Object::getTransform()
   return translate * rotate * scale;
 }
 
-void Object::updateVectors()
+void CStatObj::updateVectors()
 {
   // Calculate the new Front vector
   glm::vec3 front;
@@ -125,17 +125,17 @@ void Object::updateVectors()
   this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 }
 
-bool Object::visible()
+bool CStatObj::visible()
 {
   return m_visible;
 }
 
-void Object::setVisibility(bool v)
+void CStatObj::setVisibility(bool v)
 {
   m_visible = v;
 }
 
-void Object::update(float deltatime)
+void CStatObj::update(float deltatime)
 {
   /*
   if (m_transform.position.y < 0)
@@ -145,73 +145,73 @@ void Object::update(float deltatime)
   updateVectors();
 }
 
-void Object::setTexture(Texture* texture, const char* type)
+void CStatObj::setTexture(Texture* texture, const char* type)
 {
   m_Material->setTexture(texture, type);
 }
 
-Object Object::operator=(Object& that)
+CStatObj CStatObj::operator=(CStatObj& that)
 {
-  Object obj;
+  CStatObj obj;
   obj.m_Mesh = that.m_Mesh;
   return obj;
 }
 
-Object* Object::clone()
+CStatObj* CStatObj::clone()
 {
-  Object* obj = new Object;
+  CStatObj* obj = new CStatObj;
   obj->m_Mesh = this->m_Mesh;
   return obj;
 }
 
-Material* Object::getMaterial()
+Material* CStatObj::getMaterial()
 {
   return m_Material;
 }
 
-void Object::setMaterial(Material* material)
+void CStatObj::setMaterial(Material* material)
 {
   if (m_Material != nullptr)
     delete m_Material;
   m_Material = material;
 }
 
-void Object::setRenderMode(int mode)
+void CStatObj::setRenderMode(int mode)
 {
   m_RenderMode = mode;
 }
 
-int Object::getRenderMode()
+int CStatObj::getRenderMode()
 {
   return m_RenderMode;
 }
 
-void Object::rotateX(float angle)
+void CStatObj::rotateX(float angle)
 {
   m_transform.rotation.x = angle;
 }
 
-void Object::rotateY(float angle)
+void CStatObj::rotateY(float angle)
 {
   m_transform.rotation.y = angle;
 }
 
-void Object::rotateZ(float angle)
+void CStatObj::rotateZ(float angle)
 {
   m_transform.rotation.z = angle;
 }
 
-void Object::SetScriptObject(IScriptObject* pObject)
+void CStatObj::SetScriptObject(IScriptObject* pObject)
 {
   m_pScript = pObject;
 }
 
-IScriptObject* Object::GetScriptObject()
+IScriptObject* CStatObj::GetScriptObject()
 {
   return m_pScript;
 }
 
-void Object::move(Movement direction) {
+void CStatObj::move(Movement direction) {
   float velocity = this->MovementSpeed;
   if (direction == FORWARD)
     this->m_transform.position += glm::vec3(this->Front.x, this->Front.y, this->Front.z) * velocity;
@@ -227,30 +227,30 @@ void Object::move(Movement direction) {
     this->m_transform.position -= this->Up * velocity;
 }
 
-void Object::move(glm::vec3 v)
+void CStatObj::move(glm::vec3 v)
 {
   this->m_transform.position += v;
 }
 
-void Object::moveTo(glm::vec3 v)
+void CStatObj::moveTo(glm::vec3 v)
 {
   m_transform.position = v;
 }
 
-void Object::rotate(float angle, glm::vec3 v) {
+void CStatObj::rotate(float angle, glm::vec3 v) {
   if (v.x != 0.0) m_transform.rotation.x = angle;
   if (v.y != 0.0) m_transform.rotation.y = angle;
   if (v.z != 0.0) m_transform.rotation.z = angle;
 }
 
-void Object::scale(glm::vec3 v)
+void CStatObj::scale(glm::vec3 v)
 {
   m_transform.scale = v;
 }
 
-Object* Object::load(string path)
+CStatObj* CStatObj::load(string path)
 {
-  Object* obj = nullptr;
+  CStatObj* obj = nullptr;
   MeshList mesh;
   CVertexBuffer* vb = nullptr;
   VerteciesInfo vertecies;
@@ -269,7 +269,7 @@ Object* Object::load(string path)
   Mesh _mesh(vb);
   _mesh.bb = bb;
   mesh->push_back(_mesh);
-  obj = new Object();
+  obj = new CStatObj();
   obj->m_Mesh = mesh;
   obj->m_path = path;
   return obj;

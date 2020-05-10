@@ -39,7 +39,7 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Renderer/IObjectManager.hpp>
+#include <BlackBox/3DEngine//IStatObjManager.hpp>
 #include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>
@@ -52,6 +52,8 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 
 #include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
+
+struct IStatObj;
 
 struct TextRenderInfo
 {
@@ -282,7 +284,7 @@ protected:
 	//it reduces code redundancy and makes things more clear.
 	void SetCommonKeyBindings(IActionMap* pActionMap);
 
-	virtual Object* OnLoad(Object* object, std::string type) override;
+	virtual IStatObj* OnLoad(IStatObj* object, std::string type) override;
 	void MainMenu();
   public:
   float m_deltaTime;

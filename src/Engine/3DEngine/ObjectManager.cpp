@@ -18,14 +18,14 @@ ObjectManager* ObjectManager::instance()
   return manager;
 }
 
-Object* ObjectManager::getObject(std::string object, std::string type, LoadObjectSink* callback)
+IStatObj* ObjectManager::LoadObject(std::string object, std::string type, LoadObjectSink* callback)
 {
   std::string prefix = "res/geom/";
   bool usPrefix = true;
   if (object.find("/") != object.npos)
     usPrefix = false;
 
-  Object* obj;
+  CStatObj* obj;
   {
     std::string oPath;
     if (usPrefix)
@@ -34,12 +34,12 @@ Object* ObjectManager::getObject(std::string object, std::string type, LoadObjec
     const auto v = cache.find(oPath);
     if (v != cache.end())
     {
-      obj = objectFactory(new Object(v->second), type, callback);
+      obj = static_cast<CStatObj*>(objectFactory(new CStatObj(v->second), type, callback));
       obj->type = type;
       GetISystem()->GetILog()->Log("[INFO] Object [%s] already cached\n", oPath.c_str());
     }
     else {
-      obj = objectFactory(Object::load(oPath), type, callback);
+      obj = static_cast<CStatObj*>(objectFactory(CStatObj::load(oPath), type, callback));
       if (obj == nullptr) return nullptr;
       obj->type = type;
       cache[oPath] = obj->m_Mesh;
@@ -56,19 +56,7 @@ Object* ObjectManager::getObject(std::string object, std::string type, LoadObjec
   return obj;
 }
 
-string ObjectManager::getPathByPointer(Object* object)
-{
-  for (auto& obj : cache)
-  {
-    if (obj.second == object->m_Mesh)
-      return obj.first;
-  }
-
-  //TODO: handle missing pointer
-  return string("");
-}
-
-Object* ObjectManager::objectFactory(Object* object, string type, LoadObjectSink* callback)
+IStatObj* ObjectManager::objectFactory(IStatObj* object, string type, LoadObjectSink* callback)
 {
   return callback->OnLoad(object, type);
 #if 0

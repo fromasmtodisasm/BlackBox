@@ -178,7 +178,7 @@ bool HdrTechnique::OnRenderPass(int pass)
     if (draw_sky && m_Scene->GetSkyBox() != nullptr)
       m_Scene->GetSkyBox()->draw(renderParams);
     {
-      Object* water;
+      CStatObj* water;
       if ((water = m_Scene->getObject("water")) != nullptr)
       {
         water->m_transparent = true;
@@ -246,76 +246,35 @@ void HdrTechnique::BloomPass()
 void HdrTechnique::createShader()
 {
   ProgramDesc desc[] = {
-    //0
-    {
       "hdr_shader",
-      ShaderDesc("screenshader.vs"),
-      ShaderDesc("hdrshader.frag")
-    },
-    //1
-    {
       "downsampling",
-      ShaderDesc("screenshader.vs"),
-      ShaderDesc("downsampling.frag")
-    },
-    //2
-    {
       "downsampling_compute",
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc("downsampling.comp")
-    },
-    //3
-    {
       "upsampling",
-      ShaderDesc("screenshader.vs"),
-      ShaderDesc("upsampling.frag"),
-    },
-    //4
-    {
       "upsampling_compute",
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc(""),
-      ShaderDesc("upsampling.comp")
-    },
   };
 
   desc[1].vs.macro["STORE_TEXCOORDS"] = 1;
 
-  MaterialManager::instance()->loadProgram(desc[0], false);
-  MaterialManager::instance()->loadProgram(desc[1], false);
-  MaterialManager::instance()->loadProgram(desc[2], false);
-  MaterialManager::instance()->loadProgram(desc[3], false);
-  MaterialManager::instance()->loadProgram(desc[4], false);
+  m_ScreenShader = gEnv->pRenderer->Sh_Load("HDR", 0);
+  m_DownsampleShader = gEnv->pRenderer->Sh_Load("Downsampling", 0);
+  m_UpsampleShader = gEnv->pRenderer->Sh_Load("Upsampling", 0);
+  {
+    m_ScreenShader->Use();
+    m_ScreenShader->Uniform(0, "scene");
+    m_ScreenShader->Uniform(1, "bloomBlur");
+    m_ScreenShader->Unuse();
+  }
+  {
+    m_DownsampleShader->Use();
+    m_DownsampleShader->Uniform(0, "image");
+    m_DownsampleShader->Unuse();
+  }
+  {
+    m_DownsampleComputeShader->Use();
+    m_DownsampleComputeShader->Uniform(0, "image");
+    m_DownsampleComputeShader->Unuse();
+  }
 
-  m_ScreenShader = MaterialManager::instance()->getProgram(desc[0].name);
-  m_ScreenShader->Use();
-  m_ScreenShader->Uniform(0, "scene");
-  m_ScreenShader->Uniform(1, "bloomBlur");
-  m_ScreenShader->Unuse();
-
-  m_DownsampleShader = MaterialManager::instance()->getProgram(desc[1].name);
-  m_DownsampleShader->Use();
-  m_DownsampleShader->Uniform(0, "image");
-  m_DownsampleShader->Unuse();
-
-  m_DownsampleComputeShader = MaterialManager::instance()->getProgram(desc[2].name);
-  m_DownsampleComputeShader->Use();
-  m_DownsampleComputeShader->Uniform(0, "image");
-  m_DownsampleComputeShader->Unuse();
-
-  m_UpsampleShader = MaterialManager::instance()->getProgram(desc[3].name);
-
-  m_UpsampleShaderComputeShader = MaterialManager::instance()->getProgram(desc[4].name);
-
-  const int MAX_CORNERS = 4;
-#if COMPUTE_BLOOM
-  glGenBuffers(1, &quadCornersVBO);
-  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, quadCornersVBO);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_CORNERS * sizeof(Vec2), NULL, GL_DYNAMIC_DRAW);
-#endif
 }
 
 void HdrTechnique::InitConsoleVariables()

@@ -7,7 +7,7 @@
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 
-void Material::apply(Object* object)
+void Material::apply(CStatObj* object)
 {
   GLenum block = GL_TEXTURE0;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/IObject.hpp>
+#include <BlackBox/3DEngine/IStatObj.hpp>
 
 class CCameraController : public IInputEventListener
 {

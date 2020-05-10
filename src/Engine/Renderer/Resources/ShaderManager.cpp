@@ -27,8 +27,8 @@ ShaderProgramRef  ShaderManager::getProgram(const char* vShader, const char* fSh
   ShaderRef vs, fs;
   BaseShaderProgramRef p;
 #if BB_PLATFORM_WINDOWS 
-  vs = getShader(std::move(ShaderDesc(vShader, "vertex")), false);
-  fs = getShader(ShaderDesc(fShader, "fragment"), false);
+  vs = getShader(std::move(ShaderDesc(vShader, IShader::E_VERTEX)), false);
+  fs = getShader(ShaderDesc(fShader, IShader::E_VERTEX), false);
   if (!vs || !fs)
   {
     GetISystem()->GetILog()->Log("Error of load shader");
@@ -47,9 +47,9 @@ ShaderProgramRef ShaderManager::getProgram(const char* vShader, const char* fSha
 {
   ShaderRef vs, fs, gs;
   _smart_ptr<CShaderProgram> p;
-  vs = getShader(ShaderDesc(vShader, "vertex"), false);
-  fs = getShader(ShaderDesc(fShader, "fragment"), false);
-  gs = getShader(ShaderDesc(fShader, "geometry"), false);
+  vs = getShader(ShaderDesc(vShader, IShader::E_VERTEX), false);
+  fs = getShader(ShaderDesc(fShader, IShader::E_FRAGMENT), false);
+  gs = getShader(ShaderDesc(fShader, IShader::E_GEOMETRY), false);
   if (!vs || !fs)
   {
     GetISystem()->GetILog()->Log("Error of load shader");
@@ -68,10 +68,10 @@ ShaderProgramRef ShaderManager::getProgram(const char* vShader, const char* fSha
 {
   ShaderRef vs, fs, gs, cs;
   _smart_ptr<CShaderProgram> p;
-  vs = getShader(ShaderDesc(vShader, "vertex"), false);
-  fs = getShader(ShaderDesc(fShader, "fragment"), false);
-  if (gShader != nullptr) gs = getShader(ShaderDesc(fShader, "geometry"), false);
-  cs = getShader(ShaderDesc(fShader, "compute"), false);
+  vs = getShader(ShaderDesc(vShader, IShader::E_VERTEX), false);
+  fs = getShader(ShaderDesc(fShader, IShader::E_FRAGMENT), false);
+  if (gShader != nullptr) gs = getShader(ShaderDesc(fShader, IShader::E_GEOMETRY), false);
+  cs = getShader(ShaderDesc(fShader, IShader::E_COMPUTE), false);
   if (!vs || !fs)
   {
     GetISystem()->GetILog()->Log("Error of load shader");
@@ -93,6 +93,7 @@ ShaderProgramRef ShaderManager::getProgram(IShaderProgram::ShaderInfo& vs, IShad
 
 ShaderProgramRef ShaderManager::loadProgram(ProgramDesc& desc, bool isReload)
 {
+#if 0
   auto shader_it = shaders_map.find(desc.name);
   bool load_vs = desc.vs.name.length() > 0;
   bool load_fs = desc.fs.name.length() > 0;
@@ -166,8 +167,8 @@ ShaderProgramRef ShaderManager::loadProgram(ProgramDesc& desc, bool isReload)
     shaders_map[desc.name] = shaderProgram;
     //debuger::program_label(shaderProgram->get(), desc.name);
   }
+#endif
   return true;
-
 }
 
 ShaderProgramRef ShaderManager::loadProgram(const char* name, int flags)

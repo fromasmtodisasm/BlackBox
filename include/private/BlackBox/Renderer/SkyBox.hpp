@@ -18,14 +18,8 @@ public:
     :
     texture(t)
   {
-    ProgramDesc pd = {
-      "screen_shader",
-      ShaderDesc("skybox.vs"),
-      ShaderDesc("skybox.frag")
-    };
 
-    MaterialManager::instance()->loadProgram(pd, false);
-    shader = MaterialManager::instance()->getProgram(pd.name);
+    shader = gEnv->pRenderer->Sh_Load("SkyBox", 0);
 
     shader->Use();
     shader->Uniform(0, "skybox");

@@ -3,14 +3,7 @@
 
 PostProcessor::PostProcessor(const char* shader)
 {
-  ProgramDesc desc = {
-    shader,
-    ShaderDesc("screenshader.vs"),
-    ShaderDesc(std::string(shader) + ".frag")
-  };
-
-  MaterialManager::instance()->loadProgram(desc, false);
-  m_ScreenShader = MaterialManager::instance()->getProgram(shader);
+  m_ScreenShader = gEnv->pRenderer->Sh_Load("ScreenQuad", 0);
   m_ScreenShader->Use();
   m_ScreenShader->Uniform(0, "screenTexture");
   m_ScreenShader->Unuse();

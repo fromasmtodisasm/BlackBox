@@ -44,7 +44,7 @@ class CWeaponSystemEx;
 class CVehicle;
 struct WeaponParams;
 class	CXArea;
-struct IAIObject;
+struct IAIStatObj;
 
 /*!
  *	Base class for all game objects.
@@ -692,7 +692,7 @@ protected:
 	// angular offset added of something player stands on (i.e. shaking boat)
 	Vec3 m_vEyeAnglesBaseOffset;
 
-	IAIObject *m_pLightTarget;
+	IAIStatObj *m_pLightTarget;
 
 	bool m_bLightOn;
 	ITimer	*m_pTimer;

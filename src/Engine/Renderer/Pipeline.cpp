@@ -7,6 +7,7 @@
 
 namespace Pipeline {
 
+#if 0
 IShaderProgram* bindProgram(const char* name)
 {
     auto mat = MaterialManager::instance()->getMaterial(name);
@@ -21,6 +22,7 @@ IShaderProgram* bindProgram(const char* name)
     shader->Use();
     return shader;
 }
+#endif
 
 }
 

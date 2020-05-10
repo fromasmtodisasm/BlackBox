@@ -3,12 +3,13 @@
 
 #include <BlackBox/Core/Primitives.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Renderer/IObjectManager.hpp>
+#include <BlackBox/3DEngine//IStatObjManager.hpp>
 #include <BlackBox/Renderer/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
 #include <iostream>
 
+#if 0
 CPlayer::CPlayer(CGame* game) //: GameObject(ObjectManager::instance()->getObject("pengium.obj", "player", game)), impulse(0.0f, 3.0f, 0.0f)
 {
   //getShaderProgram()->Uniform("color", glm::vec3(1,0,0));
@@ -202,3 +203,4 @@ CPlayer* CPlayer::operator=(Object* obj)
 }
 #endif
 
+#endif

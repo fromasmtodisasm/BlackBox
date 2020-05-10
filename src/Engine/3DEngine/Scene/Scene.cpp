@@ -33,18 +33,6 @@ Scene::Scene(std::string name)
 
 	if (!gEnv->IsDedicated())
 	{
-		ProgramDesc pd = {
-			"screen_shader",
-			ShaderDesc("screenshader.vs"),
-			ShaderDesc("screenshader.frag")};
-
-		MaterialManager::instance()->loadProgram(pd, false);
-		m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
-
-		m_ScreenShader->Use();
-		m_ScreenShader->Uniform(0, "screenTexture");
-		m_ScreenShader->Unuse();
-
 		texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 	}
 }
@@ -106,7 +94,7 @@ ObjectMapItr Scene::selectedObject()
 	return selected_object_it;
 }
 
-Object* Scene::getObject(std::string name)
+CStatObj* Scene::getObject(std::string name)
 {
 	auto objectIt = m_Objects.find(name);
 	if (objectIt != m_Objects.end())
@@ -116,7 +104,7 @@ Object* Scene::getObject(std::string name)
 	return nullptr;
 }
 
-void Scene::addObject(std::string name, Object* object)
+void Scene::addObject(std::string name, CStatObj* object)
 {
 	m_Objects.insert(std::make_pair(name, object));
 }

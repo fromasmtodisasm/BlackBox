@@ -22,6 +22,6 @@ private:
   SVertexStream* m_BB_IndexBuffer = nullptr;
   AuxVertexBuffer m_VB;
   CVertexBuffer* m_HardwareVB = nullptr;
-
+  ShaderProgramRef m_BoundingBoxShader;
   int m_CurrentVB_Size = INIT_VB_SIZE;
 };

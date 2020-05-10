@@ -89,15 +89,7 @@ float FreeTypeFont::CharWidth(char symbol)
 
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-  ProgramDesc pd = {
-    "sprite",
-    ShaderDesc("sprite.vs"),
-    ShaderDesc("sprite.frag")
-  };
-
-  if (!MaterialManager::instance()->loadProgram(pd, false))
-    return false;
-  shader = MaterialManager::instance()->getProgram(pd.name);
+  shader = gEnv->pRenderer->Sh_Load("Sprite", 0);
   if (!shader)
     return false;
 

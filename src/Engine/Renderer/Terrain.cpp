@@ -28,7 +28,7 @@ Terrain::Face Terrain::getFace(size_t v1, size_t v2, size_t v3)
 	return face;
 }
 
-Object* Terrain::load(const char* heightmap)
+CStatObj* Terrain::load(const char* heightmap)
 {
 	int width = 0, height = 0, channels;
 	uint8_t* data = nullptr;

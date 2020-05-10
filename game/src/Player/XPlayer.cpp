@@ -394,11 +394,11 @@ bool CPlayer::Init()
 
 	m_pEntity->GetScriptObject()->SetValue("type", "Player");
 
-	IAIObject *pObject = m_pEntity->GetAI();
+	IAIStatObj *pObject = m_pEntity->GetAI();
 	if (pObject)
 	{
 		IPuppet *pPuppet;
-		if (pObject->CanBeConvertedTo(AIOBJECT_PUPPET, (void **) &pPuppet))
+		if (pObject->CanBeConvertedTo(AIStatObj_PUPPET, (void **) &pPuppet))
 			m_bIsAI = true;
 	}
 
@@ -4327,7 +4327,7 @@ bool CPlayer::LoadGame(CStream &stm)
 	if (m_bIsAI)
 	{
 		IPuppet *pPuppet=0;
-		if (m_pEntity->GetAI()->CanBeConvertedTo(AIOBJECT_PUPPET,(void**)&pPuppet))
+		if (m_pEntity->GetAI()->CanBeConvertedTo(AIStatObj_PUPPET,(void**)&pPuppet))
 		{
 			if (pPuppet->GetPuppetParameters().m_bSpecial)
 			  m_stats.health = nStartHealth;
@@ -5720,7 +5720,7 @@ void	CPlayer::CounterUpdateAll( const float dt )
 
 		if( prevValue<(counter->second).eventTrhld && (counter->second).value>(counter->second).eventTrhld )
 		{
-			IAIObject *pObject = m_pEntity->GetAI();
+			IAIStatObj *pObject = m_pEntity->GetAI();
 			if (pObject)
 			{
 				pObject->SetSignal(1, (counter->second).eventToCall.c_str());
@@ -6288,7 +6288,7 @@ void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
 	if (!m_bIsAI)
 		return;
 
-	IAIObject *pObject = m_pEntity->GetAI();
+	IAIStatObj *pObject = m_pEntity->GetAI();
 		
     pObject->Save(stm);
 	IPipeUser *pUser =0;
@@ -6367,7 +6367,7 @@ void CPlayer::LoadAIState(CStream & stm, CScriptObjectStream & scriptStream)
 	if (!m_bIsAI)
 		return;
 
-	IAIObject *pObject = m_pEntity->GetAI();
+	IAIStatObj *pObject = m_pEntity->GetAI();
 	pObject->Load(stm);
 
 	int nGunOut=0;
@@ -6482,8 +6482,8 @@ void CPlayer::LoadAIState_RELEASE(CStream & stm)
 	if (!m_bIsAI)
 		return;
 
-	IAIObject *pObject = m_pEntity->GetAI();
-	//AIObject Load is empty in release version
+	IAIStatObj *pObject = m_pEntity->GetAI();
+	//AIStatObj Load is empty in release version
 	//	pObject->Load(stm);
 
 	int nGunOut=0;
@@ -6506,7 +6506,7 @@ void CPlayer::LoadAIState_PATCH_1(CStream & stm)
 	if (!m_bIsAI)
 		return;
 
-	IAIObject *pObject = m_pEntity->GetAI();
+	IAIStatObj *pObject = m_pEntity->GetAI();
 	pObject->Load_PATCH_1(stm);
 
 	int nGunOut=0;
@@ -6584,7 +6584,7 @@ bool CPlayer::LoadGame_PATCH_1(CStream &stm)
 	if (m_bIsAI)
 	{
 		IPuppet *pPuppet=0;
-		if (m_pEntity->GetAI()->CanBeConvertedTo(AIOBJECT_PUPPET,(void**)&pPuppet))
+		if (m_pEntity->GetAI()->CanBeConvertedTo(AIStatObj_PUPPET,(void**)&pPuppet))
 		{
 			if (pPuppet->GetPuppetParameters().m_bSpecial)
 				m_stats.health = nStartHealth;

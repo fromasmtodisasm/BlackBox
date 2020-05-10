@@ -439,13 +439,13 @@ bool CGame::loadScene(std::string name) {
 		{
 
 			//scene->setCamera("main", new CCamera());
-      m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
+      //m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
       m_CameraController.InitCVars();
       CPlayer* player = nullptr;// static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
 			{
 				//player->attachCamera(scene->getCurrentCamera());
-				player->setGame(this);
+				//player->setGame(this);
 				this->setPlayer(player);
 			}
 		}
@@ -766,7 +766,7 @@ bool CGame::EditInputEvent(const SInputEvent& event)
   ////////////////////////
   if (keyPressed)
   {
-    IObject* obj = m_World->GetActiveScene()->selectedObject()->second;
+    IStatObj* obj = m_World->GetActiveScene()->selectedObject()->second;
     switch (event.keyId)
     {
     case eKI_Escape:
@@ -1046,7 +1046,7 @@ ITagPointManager* CGame::GetTagPointManager()
   return nullptr;
 }
 
-Object* CGame::OnLoad(Object* object, std::string type)
+IStatObj* CGame::OnLoad(IStatObj* object, std::string type)
 {
 #if 0
   if (type == "player")

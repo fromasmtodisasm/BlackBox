@@ -4,6 +4,7 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <set>
 
+#if 0
 class GameObject : /*public Object, */public IInputEventListener
 {
 protected:
@@ -15,11 +16,12 @@ public:
   GameObject(const Object *obj);
   virtual bool OnInputEvent(const SInputEvent& event) override;
 
-  // IObject interface
+  // IStatObj interface
 public:
   //virtual void update(float deltatime) override;
 
-  // IObject interface
+  // IStatObj interface
 public:
   //virtual glm::mat4 getTransform() override;
 };
+#endif
