@@ -54,12 +54,6 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
     glContextType = AttributeType::DEBUG;
   else
     glContextType = AttributeType::CORE;
-  //TODO: FIX THIS
-#if 0
-  sf::ContextSettings settings(zbpp, sbits, antialiassing, majorVersion, minorVersion, glContextType);
-  if (!m_Window->create(reinterpret_cast<void*>(&settings)))
-    return nullptr;
-#endif
   if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
     return nullptr;
   if (!OpenGLLoader())
@@ -67,7 +61,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   context = SDL_GL_GetCurrentContext();
   m_HWND = (HWND)window->getHandle();
   // now you can make GL calls.
-  gl::ClearColor({0, 0, 0, 0});
+  gl::ClearColor({m_clearColor, 1});
   gl::Clear(GL_COLOR_BUFFER_BIT);
   m_Window->swap();
   //=======================

@@ -119,6 +119,10 @@ void CConsole::Draw()
 {
   if (!isOpened) return;
   auto deltatime = GetISystem()->GetDeltaTime();
+  if (!m_pRenderer)
+  {
+	  return;
+  }
   auto render = m_pRenderer;
   //m_ScrollHeight = (float)(render->GetHeight()) / 2;
   Animate(deltatime, render);
