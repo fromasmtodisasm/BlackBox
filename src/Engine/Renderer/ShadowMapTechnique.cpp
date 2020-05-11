@@ -13,7 +13,7 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 
 #include <sstream>
-
+#if 0
 ShadowMapping::ShadowMapping()
 	: m_Scene(nullptr), m_DepthBuffer(nullptr)
 {
@@ -42,13 +42,7 @@ bool ShadowMapping::Init(IScene* scene, FrameBufferObject* renderTarget)
 		m_RenderedScene = renderTarget;
 	}
 
-	ProgramDesc pd = {
-		"shadowpass",
-		ShaderDesc("shadowpass.vs"),
-		ShaderDesc("shadowpass.frag")};
-
-	MaterialManager::instance()->loadProgram(pd, false);
-	m_ShadowMapShader = MaterialManager::instance()->getProgram(pd.name);
+	m_ShadowMapShader = gEnv->pRenderer->Sh_Load("ShadowPass", 0);
 
 	//==============
 	lightPosX = CREATE_CVAR("lpx", -1.f, 0, "light pos x");
@@ -134,7 +128,7 @@ void ShadowMapping::RenderPass()
 	m_Scene->ForEachObject(this);
 }
 
-void ShadowMapping::RenderDepth(Object* object)
+void ShadowMapping::RenderDepth(CStatObj* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	if (object->visible())
@@ -146,7 +140,7 @@ void ShadowMapping::RenderDepth(Object* object)
 	}
 }
 
-void ShadowMapping::RenderOpaque(Object* object)
+void ShadowMapping::RenderOpaque(CStatObj* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	auto camera = m_Scene->getCurrentCamera();
@@ -178,7 +172,7 @@ void ShadowMapping::RenderOpaque(Object* object)
 	}
 }
 
-void ShadowMapping::RenderTransparent(Object* object)
+void ShadowMapping::RenderTransparent(CStatObj* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	m_pRender->SetState(IRenderer::State::BLEND, true);
@@ -295,7 +289,7 @@ int ShadowMapping::SetRenderTarget(FrameBufferObject* renderTarget)
 	return 0;
 }
 
-bool ShadowMapping::OnObjectFound(Object* object)
+bool ShadowMapping::OnObjectFound(CStatObj* object)
 {
 	DEBUG_GROUP(__FUNCTION__);
 	switch (renderStage)
@@ -378,3 +372,4 @@ bool ShadowMapping::PreRenderPass()
 void ShadowMapping::PostRenderPass()
 {
 }
+#endif

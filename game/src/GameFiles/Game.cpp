@@ -117,13 +117,14 @@ CGame::CGame() :
 
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
-  m_pSystem /*= gISystem */ = pSystem;
-  m_bDedicatedServer  = bDedicatedSrv;
-  m_pRender = m_pSystem->GetIRenderer();
-  m_pInput = m_pSystem->GetIInput();
-  m_pScriptSystem = m_pSystem->GetIScriptSystem();
-  m_pLog = m_pSystem->GetILog();
-  m_Console = m_pSystem->GetIConsole();
+	m_pSystem				  = pSystem;
+	m_bDedicatedServer  = bDedicatedSrv;
+	m_pRender				  = m_pSystem->GetIRenderer();
+  m_pInput				  = m_pSystem->GetIInput();
+	m_pScriptSystem	  = m_pSystem->GetIScriptSystem();
+  m_pLog					  = m_pSystem->GetILog();
+  m_Console					= m_pSystem->GetIConsole();
+  m_3DEngine				= gEnv->p3DEngine;
   if (!bDedicatedSrv)
   {
     m_pInput->AddEventListener(this);
@@ -439,13 +440,14 @@ bool CGame::loadScene(std::string name) {
 		{
 
 			//scene->setCamera("main", new CCamera());
-      m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
+      //m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
+      m_CameraController.m_Camera = new CCamera();
       m_CameraController.InitCVars();
       CPlayer* player = nullptr;// static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
 			{
 				//player->attachCamera(scene->getCurrentCamera());
-				player->setGame(this);
+				//player->setGame(this);
 				this->setPlayer(player);
 			}
 		}
@@ -517,9 +519,6 @@ bool CGame::OnInputEvent(const SInputEvent& event)
 void CGame::PersistentHandler(const SInputEvent& event)
 {
   auto useBoxFilter = m_Console->GetCVar("bf");
-  auto lpx = m_Console->GetCVar("lpx");
-  auto lpy = m_Console->GetCVar("lpy");
-  auto lpz = m_Console->GetCVar("lpz");
   ////////////////////////
   bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == event.state == eIS_Pressed;
   bool control = event.modifiers & eMM_Ctrl;
@@ -545,22 +544,18 @@ void CGame::PersistentHandler(const SInputEvent& event)
     {
     case eKI_Up:
     {
-      lpy->Set(lpy->GetFVal() + 0.5f);
       break;
     }
     case eKI_Down:
     {
-      lpy->Set(lpy->GetFVal() - 0.5f);
       break;
     }
     case eKI_Left:
     {
-      lpx->Set(lpx->GetFVal() - 0.5f);
       break;
     }
     case eKI_Right:
     {
-      lpx->Set(lpx->GetFVal() + 0.5f);
       break;
     }
     case eKI_Insert:
@@ -766,7 +761,7 @@ bool CGame::EditInputEvent(const SInputEvent& event)
   ////////////////////////
   if (keyPressed)
   {
-    IObject* obj = m_World->GetActiveScene()->selectedObject()->second;
+    IStatObj* obj = m_World->GetActiveScene()->selectedObject()->second;
     switch (event.keyId)
     {
     case eKI_Escape:
@@ -1044,18 +1039,6 @@ IXAreaMgr* CGame::GetAreaManager()
 ITagPointManager* CGame::GetTagPointManager()
 {
   return nullptr;
-}
-
-Object* CGame::OnLoad(Object* object, std::string type)
-{
-#if 0
-  if (type == "player")
-    return nullptr;// new CPlayer(object);
-  else if (type == "gameobject")
-    return new GameObject(object);
-  else 
-#endif
-    return object;
 }
 
 void CGame::MainMenu()

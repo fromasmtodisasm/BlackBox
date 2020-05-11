@@ -4,6 +4,7 @@
 #include <BlackBox/World/World.hpp>
 class C3DEngine : public I3DEngine
 {
+	typedef void(*RenderCallback)(void* pParams);
 public:
   C3DEngine(ISystem* pSystem, const char* szInterfaceVersion)
     :
@@ -31,7 +32,7 @@ public:
   virtual void RegisterEntity(IEntityRender* pEntity) override;
   virtual bool UnRegisterEntity(IEntityRender* pEntity) override;
   virtual bool UnRegisterInAllSectors(IEntityRender* pEntity = NULL) override;
-  virtual void SetRenderCallback(void(*pFunc)(void* pParams), void* pParams) override;
+  virtual void SetRenderCallback(RenderCallback pFunc, void* pParams) override;
   virtual void SetOutdoorAmbientColor(Vec3d vColor) override;
   virtual void SetSkyBox(const char* szShaderName) override;
   virtual void SetMaxViewDistance(float fMaxViewDistance) override;
@@ -93,8 +94,15 @@ public:
   virtual void ResetScreenFx(void) override;
 
 private:
-  ISystem* m_pSystem;
-  World* m_pWorld;
+	ISystem*	m_pSystem;
+	World*		m_pWorld;
+
+	CCamera		m_Camera;
+
+	bool			m_Enabled;
+	string		m_LevelPath;
+
+	void*			m_RenderCallbacksParams;
 
   // Inherited via I3DEngine
   virtual void SetFlags(int flags);

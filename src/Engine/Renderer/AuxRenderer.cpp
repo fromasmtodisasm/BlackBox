@@ -19,15 +19,15 @@ namespace
 CRenderAuxGeom::CRenderAuxGeom()
 {
   // Cube 1x1x1, centered on origin
-   static P3F vertices[] = {
-    Vec3{-0.5f, -0.5f, -0.5f},
-    Vec3{ 0.5, -0.5, -0.5},
-    Vec3{ 0.5,  0.5, -0.5},
-    Vec3{-0.5,  0.5, -0.5},
-    Vec3{-0.5, -0.5,  0.5},
-    Vec3{ 0.5, -0.5,  0.5},
-    Vec3{ 0.5,  0.5,  0.5},
-    Vec3{-0.5,  0.5,  0.5}
+  static P3F vertices[] = {
+   Vec3{-0.5f, -0.5f, -0.5f},
+   Vec3{ 0.5, -0.5, -0.5},
+   Vec3{ 0.5,  0.5, -0.5},
+   Vec3{-0.5,  0.5, -0.5},
+   Vec3{-0.5, -0.5,  0.5},
+   Vec3{ 0.5, -0.5,  0.5},
+   Vec3{ 0.5,  0.5,  0.5},
+   Vec3{-0.5,  0.5,  0.5}
   };
   static uint16 elements[] = {
 #if 1
@@ -52,6 +52,7 @@ CRenderAuxGeom::CRenderAuxGeom()
   gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements, (sizeof elements / sizeof uint16));
   ///////////////////////////////////////////////////////////////////////////////
   m_HardwareVB = gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
+  m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("BoundingBox", 0);
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -63,7 +64,7 @@ CRenderAuxGeom::~CRenderAuxGeom()
 //TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
 {
-  auto shader = Pipeline::bindProgram("bb");
+  auto &shader = m_BoundingBoxShader;
 
   glm::vec3 size = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
   glm::vec3 center = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);

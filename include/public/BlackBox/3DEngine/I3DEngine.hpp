@@ -12,7 +12,7 @@
 
 // !!! Do not add any headers here !!!
 #include <BlackBox/System/IProcess.hpp>
-#include <BlackBox/3DEngine/IStatobj.hpp>
+#include <BlackBox/3DEngine/IStatObj.hpp>
 // !!! Do not add any headers here !!!
 
 struct ISystem;

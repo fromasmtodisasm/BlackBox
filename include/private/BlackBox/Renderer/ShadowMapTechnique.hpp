@@ -57,7 +57,7 @@ public:
   virtual int GetFrame() override;
 
   // Inherited via ForEachObjectSink
-  virtual bool OnObjectFound(Object* object) override;
+  //virtual bool OnObjectFound(CStatObj* object) override;
 
   // Inherited via ForEachDirectionLightSink
   virtual bool OnLightFound(const DirectionLight* light, SRenderParams& renderParams);
@@ -66,12 +66,12 @@ public:
   // Inherited via ForEachSpotLightSink
   virtual bool OnLightFound(const SpotLight* light, SRenderParams& renderParams) ;
 
-  void RenderOpaque(Object* object);
-  void RenderTransparent(Object* object);
+  void RenderOpaque(CStatObj* object);
+  void RenderTransparent(CStatObj* object);
 private:
   void DepthPass();
   void RenderPass();
-  void RenderDepth(Object* object);
+  void RenderDepth(CStatObj* object);
 
   void OnDepthPass();
   void OnRenderPass();

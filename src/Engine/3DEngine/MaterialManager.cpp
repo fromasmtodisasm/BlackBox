@@ -4,6 +4,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
+#if 0
 #include <tinyxml2.h>
 #ifndef XMLCheckResult
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult; }
@@ -30,19 +31,6 @@ bool MaterialManager::init(ISystem* pSystem)
   if (manager == nullptr)
     manager = new MaterialManager(pSystem);
   return manager != nullptr;
-}
-
-BaseShaderProgramRef MaterialManager::getProgram(std::string name)
-{
-  auto p_it = shaders_map.find(name);
-  if (p_it == shaders_map.end())
-  {
-    return ShaderManager::instance()->getDefaultProgram();
-  }
-  else
-  {
-    return p_it->second;
-  }
 }
 
 Material* MaterialManager::getMaterial(std::string name)
@@ -115,29 +103,6 @@ bool MaterialManager::loadLib(std::string name)
   if (material == nullptr || shaders == nullptr) return false;
 
   XMLNode* program = shaders->FirstChild();
-  while (program != nullptr)
-  {
-    ProgramDesc pd;
-    pd.name = program->Value();
-
-    auto shader = program->FirstChildElement("shader");
-	while (shader != nullptr)
-	{
-
-      getShaderAttributes(shader, pd);
-      shader = shader->NextSiblingElement("shader");
-	}
-	if (!loadProgram(pd, false))
-	{
-	  //TODO: handle this case
-	  m_pLog->Log("[ERROR] Failed load material\n");
-	}
-	else
-	{
-	  auto p = this->shaders_map[pd.name];
-	}
-    program = program->NextSibling();
-  }
 
   while (material != nullptr)
   {
@@ -252,71 +217,12 @@ bool MaterialManager::loadMaterial(XMLElement* material)
   if (shader_name == nullptr)
     return false;
 
-  auto shader_it = shaders_map.find(shader_name);
-  if (shader_it == shaders_map.end())
+  if (!(result->program = gEnv->pRenderer->Sh_Load(shader_name, 0)))
     return false;
-  result->program = shader_it->second;
   result->program_name = shader_name;
   cache[materialName] = result;
   m_pLog->Log("[INFO] Created material: %s\n", materialName);
   return true;
-}
-
-bool MaterialManager::loadProgram(ProgramDesc& desc, bool isReload)
-{
-}
-
-void MaterialManager::EnumShaders(IMaterialShaderSink* callback)
-{
-  for (auto shader : shaders_map)
-  {
-    callback->OnShaderFound(shader.first);
-  }
-}
-
-bool MaterialManager::reloadShaders()
-{
-  for (auto shader : shaders_map)
-  {
-    ProgramDesc pd;
-    pd.name = shader.first;
-    pd.vs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_VERTEX));
-    pd.fs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_FRAGMENT));
-    pd.gs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_GEOMETRY));
-    pd.cs = ShaderDesc(shader.second->GetShaderName(IShader::type::E_COMPUTE));
-    reloadShader(pd);
-  }
-  return true;
-}
-
-bool MaterialManager::reloadShaders(std::vector<std::string> names)
-{
-  for (auto shader : names)
-  {
-    ProgramDesc pd;
-    pd.name = shader;
-
-    auto s_it = shaders_map.find(shader);
-    if (s_it == shaders_map.end())
-      continue;
-    pd.vs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_VERTEX));
-    pd.fs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_FRAGMENT));
-    pd.gs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_GEOMETRY));
-    pd.cs = ShaderDesc(s_it->second->GetShaderName(IShader::type::E_COMPUTE));
-    reloadShader(pd);
-  }
-  return true;
-}
-
-void MaterialManager::reloadShader(ProgramDesc& pd)
-{
-  //delete shader.second;
-  loadProgram(pd, true);
-  /*for (auto& mat : cache)
-  {
-    if (mat.second->program_name == pd.name)
-      mat.second->program = shaders_map[pd.name];
-  }*/
 }
 
 BaseTexture* MaterialManager::loadTexture(XMLElement* texture)
@@ -346,17 +252,7 @@ XMLElement* MaterialManager::saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture*
   return textureElement;
 }
 
-ShaderRef MaterialManager::loadShader(ShaderDesc& sd, bool isReload)
-{
-  //auto shader = ShaderManager::instance()->getShader(sd, isReload);
-  return ShaderManager::instance()->getShader(sd, isReload);
-}
-
-ShaderRef MaterialManager::addShader(ShaderDesc& sd, bool isReload)
-{
-  return ShaderRef();
-}
-
+#if 0
 XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef shader)
 {
   XMLElement* shaderElement = xmlDoc.NewElement("shader");
@@ -366,3 +262,5 @@ XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef
 
   return shaderElement;
 }
+#endif
+#endif

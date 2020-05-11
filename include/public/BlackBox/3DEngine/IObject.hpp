@@ -14,7 +14,7 @@ enum Movement {
   DOWN,
   UP
 };
-struct IObject
+struct IStatObj
 {
   virtual void move(Movement direction) = 0;
   virtual void rotate(float angle, Vec3 v) = 0;

@@ -11,7 +11,7 @@ void C3DEngine::Enable(bool bEnable)
 
 bool C3DEngine::Init()
 {
-	m_pWorld = new World();
+	//m_pWorld = new World();
   return true;
 }
 
@@ -22,6 +22,7 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
   //IScene* scene;
+	#if 0
   auto tm = gEnv->pRenderer->GetITechniqueManager();
   auto tech = tm->get("hdr");
   if (tech != nullptr)
@@ -29,7 +30,8 @@ bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, b
     tech->Init(m_pWorld->GetActiveScene(), nullptr);
     m_pWorld->GetActiveScene()->setTechnique(tech);
   }
-  return false;
+	#endif
+  return true;
 }
 
 void C3DEngine::Update()
@@ -55,6 +57,7 @@ void C3DEngine::Draw()
     h = GET_CVAR("r_cam_h")->GetIVal();
   }
 
+	#if 0
   auto r = ((float)w) / h;
 	gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
   m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
@@ -62,6 +65,8 @@ void C3DEngine::Draw()
   {
     m_pWorld->GetActiveScene()->present(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
   }
+	#endif
+
 }
 
 void C3DEngine::ShutDown(bool bEditorMode)
@@ -106,7 +111,7 @@ bool C3DEngine::UnRegisterInAllSectors(IEntityRender* pEntity)
   return false;
 }
 
-void C3DEngine::SetRenderCallback(void(*pFunc)(void* pParams), void* pParams)
+void C3DEngine::SetRenderCallback(RenderCallback pFunc, void* pParams)
 {
 }
 

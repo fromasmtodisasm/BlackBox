@@ -16,6 +16,7 @@ typedef std::queue<ICommand*> CommandQueue;
 
 class CPlayer //: public GameObject
 {
+#if 0
   friend class GameGUI;
   CCamera *m_Camera;
   const float SCROLL_SPEED = 2.0f;
@@ -57,10 +58,11 @@ public:
   void setGame(CGame *game);
   CGame *getGame();
 
-  // IObject interface
+  // IStatObj interface
 public:
   //virtual void update(float deltatime) override;
   CPlayer *operator=(Object *obj);
+#endif
 };
 
 #endif // CPLAYER_H

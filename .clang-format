@@ -4,12 +4,12 @@ AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
-AlignConsecutiveMacros: true
+#AlignConsecutiveMacros: true
 AlignEscapedNewlines: Right
 AlignOperands:   true
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowAllConstructorInitializersOnNextLine: false
+#AllowAllConstructorInitializersOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
@@ -100,7 +100,7 @@ SpaceAfterCStyleCast: false
 SpaceAfterTemplateKeyword: false #true
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
-SpaceInEmptyBlock: true
+#SpaceInEmptyBlock: true
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 SpacesInAngles:  false
@@ -110,5 +110,5 @@ SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard:        Cpp11
 TabWidth:        4
-UseCRLF:         false
+#UseCRLF:         false
 UseTab:          Always

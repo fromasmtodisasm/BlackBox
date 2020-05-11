@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Renderer/IObjectManager.hpp>
+//#include <BlackBox/Renderer/IObjectManager.hpp>
 #include <string>
 
 class Primitive

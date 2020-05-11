@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
 #include <BlackBox/Renderer/SceneManager.hpp>
@@ -102,3 +103,4 @@ bool SceneManager::exist(std::string scene)
 {
   return cache.find("res/scenes/" + scene) != cache.end();
 }
+#endif

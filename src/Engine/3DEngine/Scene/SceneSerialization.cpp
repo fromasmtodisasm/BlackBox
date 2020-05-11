@@ -4,6 +4,7 @@
 //#include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
+#include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Scene/XmlSerialization.hpp>
 
 #include <sstream>
@@ -13,6 +14,7 @@
 
 using namespace tinyxml2;
 
+#if 0
 Scene::Serializator::Serializator(Scene* scene)
   :
   m_Scene(scene)
@@ -131,7 +133,6 @@ void Scene::Serializator::loadTerrain(tinyxml2::XMLElement* terrain)
   const char* heightmapName = nullptr;
   XMLElement* heightmap = nullptr;
   XMLElement* materialElement = nullptr;
-  Transform transform;
 
   terrainName = terrain->Attribute("name");
   if (terrainName == nullptr)
@@ -160,7 +161,7 @@ void Scene::Serializator::loadTerrain(tinyxml2::XMLElement* terrain)
 
 void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callback)
 {
-  Object* obj;
+  CStatObj* obj;
   Material* material;
   MaterialManager* materialManager = MaterialManager::instance();
   const char* objectName = nullptr;
@@ -190,7 +191,8 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
     meshPath = mesh->Attribute("name");
     if (meshPath == nullptr)
       return;
-    obj = ObjectManager::instance()->getObject(meshPath, objectType, callback);
+    //obj = ObjectManager::instance()->getObject(meshPath, objectType, callback);
+    obj = static_cast<CStatObj*>(gEnv->p3DEngine->MakeObject(meshPath));
   }
   if (obj == nullptr)
     return;
@@ -225,7 +227,7 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
   obj->m_transparent = objectTransparent;
   obj->m_visible = objectVisible;
   obj->setMaterial(material);
-  m_Scene->m_Objects.insert(std::pair<std::string, Object*>(objectName, obj));
+  m_Scene->m_Objects.insert(std::pair<std::string, CStatObj*>(objectName, obj));
 }
 
 void Scene::Serializator::loadMesh(XMLElement* mesh)
@@ -350,7 +352,7 @@ void Scene::Serializator::loadLight(tinyxml2::XMLElement* light)
   }
 }
 
-void Scene::Serializator::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene)
+void Scene::Serializator::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, CStatObj*>& obj, tinyxml2::XMLNode* pScene)
 {
   XMLElement* object = xmlDoc.NewElement("object");
   XMLElement* mesh = xmlDoc.NewElement("mesh");
@@ -474,7 +476,7 @@ tinyxml2::XMLElement* Scene::Serializator::saveCamera(tinyxml2::XMLDocument& xml
   return result;
 }
 
-XMLElement* Scene::Serializator::saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object)
+XMLElement* Scene::Serializator::saveMaterial(tinyxml2::XMLDocument& xmlDoc, CStatObj* object)
 {
   XMLElement* material = xmlDoc.NewElement("material");
 
@@ -529,4 +531,4 @@ void Scene::Serializator::loadCamera(tinyxml2::XMLElement* element)
 void Scene::Serializator::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
-
+#endif

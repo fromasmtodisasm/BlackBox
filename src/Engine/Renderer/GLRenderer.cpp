@@ -18,6 +18,7 @@
 
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/World/World.hpp>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -81,45 +82,20 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   m_BufferManager = new CBufferManager();
   m_ScreenQuad = new Quad();
   //=======================
-  ProgramDesc pd = {
-    "screen_quad",
-    ShaderDesc("screenshader.vs"),
-    ShaderDesc("screenshader.frag")
-  };
-
-  ProgramDesc aux_pd = {
-    "aux_geom",
-    ShaderDesc("auxgeom.vs"),
-    ShaderDesc("auxgeom.frag")
-  };
   //pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!MaterialManager::instance()->loadProgram(pd, false))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("ScreenQuad", 0)))
 	{
     m_pSystem->Log("Error of loading screen shader");
     return nullptr;
 	}
-  m_ScreenShader = MaterialManager::instance()->getProgram(pd.name);
-  if (!m_ScreenShader)
-  {
-    m_pSystem->Log("Error of creating screen shader");
-    return nullptr;
-  }
-  //m_ScreenShader->Create();
   m_ScreenShader->Use();
   m_ScreenShader->Uniform(0, "screenTexture");
   m_ScreenShader->Unuse();
 
-	if (!MaterialManager::instance()->loadProgram(aux_pd, false))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("AuxGeom", 0)))
 	{
     m_pSystem->Log("Error of loading auxgeom shader");
-    return nullptr;
 	}
-  m_AuxGeomShader = MaterialManager::instance()->getProgram(aux_pd.name);
-  if (!m_AuxGeomShader)
-  {
-    m_pSystem->Log("Error of creating screen shader");
-    return nullptr;
-  }
   m_RenderAuxGeom = new CRenderAuxGeom();
 
   //cam_width->Set(GetWidth());
@@ -444,7 +420,9 @@ void GLRenderer::SetRenderTarget(int nHandle)
 
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
-  return ShaderManager::instance()->loadProgram()
+	return new CShaderProgram();
+  //return ShaderManager::instance()->loadProgram(name, flags);
+}
 
 void GLRenderer::DrawFullscreenQuad()
 {
@@ -641,17 +619,10 @@ void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 bool GLRenderer::InitResourceManagers()
 {
 	//====================================================
-	gEnv->pConsole->PrintLine("Init materials");
-	if (!MaterialManager::init(gEnv->pSystem))
-	{
-		return false;
-	}
 	gEnv->pConsole->PrintLine("Begin loading resources");
 	if (!gEnv->IsDedicated())
 	{
 		if (!ShaderManager::init())
-			return false;
-		if (!MaterialManager::init("default.xml"))
 			return false;
 		gEnv->pConsole->PrintLine("End loading resources");
 	}

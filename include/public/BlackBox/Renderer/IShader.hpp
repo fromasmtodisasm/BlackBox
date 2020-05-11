@@ -256,34 +256,6 @@ struct UniformValue
   bool dirty;
 };
 
-//////////////////////////////////////////////////////////////////////
-struct ShaderDesc
-{
-  ShaderDesc() {}
-  ShaderDesc(std::string name) : name(name) {}
-  ShaderDesc(std::string name, IShader::type type) : type(type), name(name) {}
-
-  inline void AddMacro(const std::string& key, const std::string& value)
-  {
-    macro.insert(Macro::value_type(key, value));
-  }
-
-  using Macro = std::map<std::string, std::string>;
-  std::string name;
-  IShader::type type;
-  Macro macro;
-
-  static std::string root;
-};
-struct ProgramDesc
-{
-  std::string name;
-  ShaderDesc vs;
-  ShaderDesc fs;
-  ShaderDesc gs;
-  ShaderDesc cs;
-};
-
 struct IShader
 {
   enum type : int {
@@ -379,3 +351,32 @@ struct IShaderProgram {
   virtual void setup() = 0;
   virtual void Dump() = 0;
 };
+
+//////////////////////////////////////////////////////////////////////
+struct ShaderDesc
+{
+  ShaderDesc() {}
+  ShaderDesc(std::string name) : name(name) {}
+  ShaderDesc(std::string name, IShader::type type) : type(type), name(name) {}
+
+  inline void AddMacro(const std::string& key, const std::string& value)
+  {
+    macro.insert(Macro::value_type(key, value));
+  }
+
+  using Macro = std::map<std::string, std::string>;
+  std::string name;
+  IShader::type type;
+  Macro macro;
+
+  static std::string root;
+};
+struct ProgramDesc
+{
+  std::string name;
+  ShaderDesc vs;
+  ShaderDesc fs;
+  ShaderDesc gs;
+  ShaderDesc cs;
+};
+
