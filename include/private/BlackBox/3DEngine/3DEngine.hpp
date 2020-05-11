@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/EntitySystem/IEntityRenderState.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
+#include <BlackBox/3DEngine/SceneManager.hpp>
 #include <BlackBox/World/World.hpp>
 class C3DEngine : public I3DEngine
 {
@@ -94,15 +95,16 @@ public:
   virtual void ResetScreenFx(void) override;
 
 private:
-	ISystem*	m_pSystem;
-	World*		m_pWorld;
+	ISystem*			m_pSystem;
+	World*				m_pWorld;
+	SceneManager	m_SceneManager;
 
-	CCamera		m_Camera;
+	CCamera				m_Camera;
 
-	bool			m_Enabled;
-	string		m_LevelPath;
+	bool					m_Enabled;
+	string				m_LevelPath;
 
-	void*			m_RenderCallbacksParams;
+	void*					m_RenderCallbacksParams;
 
   // Inherited via I3DEngine
   virtual void SetFlags(int flags);

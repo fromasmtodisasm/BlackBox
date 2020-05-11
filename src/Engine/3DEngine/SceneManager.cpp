@@ -1,7 +1,6 @@
-#if 0
+#include <BlackBox/3DEngine/SceneManager.hpp>
 #include <BlackBox/Renderer/Object.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
-#include <BlackBox/Renderer/SceneManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -10,10 +9,10 @@
 #include <iostream>
 using	namespace std;
 
-SceneManager* SceneManager::manager = nullptr;
 Scene* defaultScene = nullptr;
 ICVar* SceneManager::scene_path = nullptr;
 
+#if 0
 SceneManager* SceneManager::instance()
 {
   if (manager == nullptr)
@@ -34,6 +33,7 @@ bool SceneManager::init(const char* scene, LoadObjectSink* callback)
   );*/
   return true;
 }
+#endif
 
 IScene* SceneManager::getScene(string scene, LoadObjectSink* callback)
 {
@@ -73,6 +73,7 @@ IScene* SceneManager::getScene(string scene, LoadObjectSink* callback)
   return result;
 }
 
+#if 0
 void SceneManager::removeScene(std::string scene)
 {
   cache.erase(scene_path->GetString() + scene);

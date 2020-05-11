@@ -1,4 +1,3 @@
-#if 0
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
@@ -36,6 +35,7 @@ Scene::Scene(std::string name)
 		texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 	}
 }
+#if 0
 
 // IScene
 bool Scene::save(const char* as)
@@ -137,11 +137,6 @@ size_t Scene::numObjects()
 void Scene::setTechnique(ITechnique* technique)
 {
 	m_Technique = technique;
-}
-
-void Scene::setPostProcessor(IPostProcessor* postProcessor)
-{
-	this->postProcessor = postProcessor;
 }
 
 bool Scene::selectObject(std::string name)
@@ -261,8 +256,4 @@ const SpotLightList& Scene::GetSpotLights()
 
 }
 
-Terrain* Scene::getTerrain()
-{
-	return &terrain;
-}
 #endif

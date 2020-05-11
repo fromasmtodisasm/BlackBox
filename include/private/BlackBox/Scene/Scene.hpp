@@ -20,7 +20,6 @@ class ObjectManager;
 class Scene;
 class SkyBox;
 class World;
-struct IPostProcessor;
 struct Material;
 struct Transform;
 struct ICVar;
@@ -76,18 +75,12 @@ private:
 
 public:
   Scene(std::string name);
-  void selectPrevObject();
-  void selectNextObject();
-  bool selectObject(std::string name);
   void addObject(std::string name, Object* object);
   Object* getObject(std::string name);
-  ObjectMapItr selectedObject();
   size_t numObjects();
   void setCamera(std::string name, CCamera* camera);
   CCamera* getCurrentCamera();
   SkyBox* GetSkyBox();
-  Terrain* getTerrain();
-  int getRenderTarget();
 
   virtual bool save(const char* as = "") override;
   virtual bool load(const char* name, LoadObjectSink* callback) override;
@@ -98,7 +91,6 @@ public:
   void draw(float dt);
   void present(int width, int height);
 
-  void setPostProcessor(IPostProcessor* postProcessor);
   void ForEachObject(ForEachObjectSink* callback);
   void ForEachDirectionLight(ForEachDirectionLightSink* callback);
   void ForEachPointLight(ForEachPointLightSink* callback);
@@ -116,7 +108,6 @@ private:
   SkyBox* skyBox;
   BaseShaderProgramRef m_ScreenShader;
   BaseShaderProgramRef m_TextShader;
-  IPostProcessor* postProcessor = nullptr;
   ITechnique* m_Technique;
 
   ObjecstList m_Objects;

@@ -17,21 +17,12 @@ bool C3DEngine::Init()
 
 void C3DEngine::SetLevelPath(const char* szFolderName)
 {
+	m_LevelPath = szFolderName;
 }
 
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
-  //IScene* scene;
-	#if 0
-  auto tm = gEnv->pRenderer->GetITechniqueManager();
-  auto tech = tm->get("hdr");
-  if (tech != nullptr)
-  {
-    tech->Init(m_pWorld->GetActiveScene(), nullptr);
-    m_pWorld->GetActiveScene()->setTechnique(tech);
-  }
-	#endif
-  return true;
+	return m_SceneManager.getScene(string(szMissionName), nullptr) != nullptr;
 }
 
 void C3DEngine::Update()

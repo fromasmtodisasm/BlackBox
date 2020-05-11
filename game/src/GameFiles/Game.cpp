@@ -7,11 +7,9 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
-#include <BlackBox/Renderer/ISceneManager.hpp>
 #include <BlackBox/Renderer/ITechniqueManager.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
-#include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 
 #include <vector>
@@ -201,12 +199,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
   DevModeInit();
 
-#if 0
-  if (!loadScene()) {
-    m_pLog->Log("[FAILED] Failed init objects\n");
-    return false;
-  }
-#endif
   initPlayer();
   m_pInput->ShowCursor(false);
   m_pInput->GrabInput(true);
@@ -253,20 +245,6 @@ bool CGame::Update() {
     fps = 1.0f / m_deltaTime;
     ExecScripts();
     m_CameraController.update(m_deltaTime);
-
-
-#if 0
-    auto camera = m_World->GetActiveScene()->getCurrentCamera();
-    camera->ProcessKeyboard(direction, m_deltaTime);
-		if (m_time_to_random >= 4.0f)
-		{
-			m_time_to_random = 0.0f;
-			direction		 = static_cast<Movement>(std::rand() % 6);
-			float xo		 = (std::rand() % 10)  - 5;
-			camera->ProcessMouseMovement(xo, 0);
-		}
-		m_time_to_random += m_deltaTime;
-#endif
 
     if (bRenderFrame)
     {

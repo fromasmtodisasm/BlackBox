@@ -9,7 +9,6 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/ShaderManager.hpp>
-#include <BlackBox/Renderer/SceneManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/BaseShader.hpp>
