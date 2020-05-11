@@ -30,6 +30,8 @@
 #pragma warning(disable : 4244)
 
 
+
+
 GLRenderer::GLRenderer(ISystem* engine) :
   m_pSystem(engine), m_viewPort(0, 0, 0, 0)
 {
@@ -73,7 +75,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
   printHardware();
   m_BufferManager = new CBufferManager();
-  m_ScreenQuad = new Quad();
+  CreateQuad();
   //=======================
   //pd.vs.macro["STORE_TEXCOORDS"] = "1";
 	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("ScreenQuad", 0)))
@@ -419,7 +421,7 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 
 void GLRenderer::DrawFullscreenQuad()
 {
-  m_ScreenQuad->draw();
+	DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 }
 
 void GLRenderer::SetCullMode(CullMode mode/* = CullMode::BACK*/)
@@ -513,7 +515,7 @@ void GLRenderer::DrawFullScreenImage(int texture_id)
   m_ScreenShader->Uniform(transform, "transform");
   SetState(State::DEPTH_TEST, false);
   m_ScreenShader->BindTextureUnit2D(texture_id, 0);
-  m_ScreenQuad->draw();
+  DrawFullscreenQuad();
 }
 
 bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
@@ -583,7 +585,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 
   SetState(State::DEPTH_TEST, false);
   m_ScreenShader->BindTextureUnit2D(texture_id, 0);
-  m_ScreenQuad->draw();;
+  DrawFullscreenQuad();
   SetState(State::CULL_FACE, true);
 }
 
@@ -620,6 +622,23 @@ bool GLRenderer::InitResourceManagers()
 		gEnv->pConsole->PrintLine("End loading resources");
 	}
 	return true;
+}
+
+void GLRenderer::CreateQuad()
+{
+  float verts[] = {
+    // positions			  // texCoords
+		-1.0f,  1.0f, 0.5f,  0.0f, 1.0f,
+		-1.0f, -1.0f, 0.5f,  0.0f, 0.0f,
+		 1.0f, -1.0f, 0.5f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f, 0.5f,  0.0f, 1.0f,
+		 1.0f, -1.0f, 0.5f,  1.0f, 0.0f,
+		 1.0f,  1.0f, 0.5f,  1.0f, 1.0f
+  };
+	;
+	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(6, VertFormatForComponents(false, false, false, true), "screen_quad", false);
+	UpdateBuffer(m_VertexBuffer, verts, 6, false);
 }
 
 IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)

@@ -11,7 +11,6 @@ public:
 
 private:
   BaseShaderProgramRef m_ScreenShader;
-  Quad m_ScreenQuad;
 
   // Inherited via IPostProcessor
   virtual void Do(unsigned int texture) override;

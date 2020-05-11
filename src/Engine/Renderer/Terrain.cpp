@@ -1,4 +1,5 @@
-#include <BlackBox/Renderer/Object.hpp>
+#if 0
+#include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Terrain.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
@@ -133,3 +134,4 @@ float Terrain::getHeight(int x, int y)
 {
 	return 40 * ((unsigned char*)(img->data))[y * img->width + x] / 255.0f;
 }
+#endif

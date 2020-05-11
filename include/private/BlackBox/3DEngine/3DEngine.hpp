@@ -95,16 +95,18 @@ public:
   virtual void ResetScreenFx(void) override;
 
 private:
-	ISystem*			m_pSystem;
-	World*				m_pWorld;
-	SceneManager	m_SceneManager;
+	ISystem*				m_pSystem;
+	World*					m_pWorld;
+	SceneManager		m_SceneManager;
 
-	CCamera				m_Camera;
+	CCamera					m_Camera;
 
-	bool					m_Enabled;
-	string				m_LevelPath;
+	bool						m_Enabled;
+	string					m_LevelPath;
 
-	void*					m_RenderCallbacksParams;
+	void*						m_RenderCallbacksParams;
+
+	CVertexBuffer* m_TestScene;
 
   // Inherited via I3DEngine
   virtual void SetFlags(int flags);

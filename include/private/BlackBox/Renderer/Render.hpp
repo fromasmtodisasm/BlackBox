@@ -125,6 +125,8 @@ private:
   bool VBF_InPool(int format);
   bool InitResourceManagers();
 
+	void CreateQuad();
+
 private:
   IWindow* m_Window = nullptr;
   ISystem* m_pSystem = nullptr;
@@ -142,7 +144,6 @@ private:
 	std::shared_ptr<OpenglDebuger> glDebug;
   //============
   CCamera m_Camera;
-  Quad* m_ScreenQuad = nullptr;
   // Shaders
   BaseShaderProgramRef m_ScreenShader;
   BaseShaderProgramRef m_AuxGeomShader;
@@ -175,6 +176,8 @@ private:
 
   IRenderAuxGeom* m_RenderAuxGeom;
   CBufferManager* m_BufferManager;
+
+	CVertexBuffer* m_VertexBuffer = nullptr;
 
 
 

@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/Object.hpp>
@@ -7,7 +8,6 @@
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 
-#if 0
 void Material::apply(CStatObj* object)
 {
   GLenum block = GL_TEXTURE0;

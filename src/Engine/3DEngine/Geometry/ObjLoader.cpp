@@ -1,4 +1,4 @@
-#include <BlackBox/Geometry/ObjLoader.hpp>
+#include <BlackBox/3DEngine/ObjLoader.hpp>
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <fstream>
 #include <cstring>

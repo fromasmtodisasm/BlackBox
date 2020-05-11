@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/Renderer/HdrTechnique.hpp>
@@ -10,7 +11,6 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
-#if 0
 #define NBLOOM
 #ifdef TEST
 #define LOG(fmt, ...) log->Log(fmt, __VA_ARGS__)

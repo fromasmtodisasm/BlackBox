@@ -1,5 +1,5 @@
 #include <BlackBox/Renderer/ObjectManager.hpp>
-#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
 //#include <Player.h>

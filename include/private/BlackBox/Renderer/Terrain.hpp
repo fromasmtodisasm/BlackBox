@@ -1,3 +1,4 @@
+#if 0
 #pragma once
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
@@ -25,3 +26,4 @@ private:
   uint VBO, VAO;
   int size;
 };
+#endif

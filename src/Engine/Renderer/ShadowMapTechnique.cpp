@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
@@ -13,7 +14,6 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 
 #include <sstream>
-#if 0
 ShadowMapping::ShadowMapping()
 	: m_Scene(nullptr), m_DepthBuffer(nullptr)
 {

@@ -724,8 +724,6 @@ void CSystem::LogCommandLine() const
 
 void CSystem::Tests()
 {
-	VerteciesInfo vertecies;
-	BoundingBox bb;
 	
 #if 0
 	auto plane_mesh = CreatePlane(4, 4);

@@ -66,13 +66,6 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 
 
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Geometry.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/ObjLoader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Object.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Plane.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Primitives.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Quad.cpp
-
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ShaderManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/TextureManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp

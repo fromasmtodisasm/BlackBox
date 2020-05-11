@@ -1,6 +1,6 @@
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/3DEngine/StatObject.hpp>
 //#include <BlackBox/Renderer/SkyBox.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
@@ -14,7 +14,6 @@
 
 using namespace tinyxml2;
 
-#if 0
 Scene::Serializator::Serializator(Scene* scene)
   :
   m_Scene(scene)
@@ -23,6 +22,7 @@ Scene::Serializator::Serializator(Scene* scene)
 
 bool Scene::Serializator::save(const char* as)
 {
+	#if 0
   std::stringstream sceneName;
   tinyxml2::XMLDocument xmlDoc;
   XMLNode* pScene = xmlDoc.NewElement("scene");
@@ -51,12 +51,13 @@ bool Scene::Serializator::save(const char* as)
     sceneName << "res/scenes/" << as;
   XMLError eResult = xmlDoc.SaveFile(sceneName.str().c_str());
   XMLCheckResult(eResult);
-
+#endif
   return false;
 }
 
 bool Scene::Serializator::load(const char* name, LoadObjectSink* callback)
 {
+	#if 0
   tinyxml2::XMLDocument xmlDoc;
   XMLError eResult = xmlDoc.LoadFile(name);
   XMLCheckResult(eResult);
@@ -119,12 +120,18 @@ bool Scene::Serializator::load(const char* name, LoadObjectSink* callback)
 
   m_Scene->m_CurrentCamera = m_Scene->m_Camera.find("main");
   assert(m_Scene->m_CurrentCamera != m_Scene->m_Camera.end());
-
+#endif
   return true;
+}
+
+bool Scene::Serializator::loadDefault()
+{
+	return false;
 }
 
 void Scene::Serializator::loadTerrain(tinyxml2::XMLElement* terrain)
 {
+	#if 0
   //Object* obj;
   Material* material;
   MaterialManager* materialManager = MaterialManager::instance();
@@ -157,10 +164,12 @@ void Scene::Serializator::loadTerrain(tinyxml2::XMLElement* terrain)
         material = defaultMaterial;
     }
   }
+	#endif
 }
 
 void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callback)
 {
+	#if 0
   CStatObj* obj;
   Material* material;
   MaterialManager* materialManager = MaterialManager::instance();
@@ -228,6 +237,7 @@ void Scene::Serializator::loadObject(XMLElement* object, LoadObjectSink* callbac
   obj->m_visible = objectVisible;
   obj->setMaterial(material);
   m_Scene->m_Objects.insert(std::pair<std::string, CStatObj*>(objectName, obj));
+	#endif
 }
 
 void Scene::Serializator::loadMesh(XMLElement* mesh)
@@ -354,6 +364,7 @@ void Scene::Serializator::loadLight(tinyxml2::XMLElement* light)
 
 void Scene::Serializator::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, CStatObj*>& obj, tinyxml2::XMLNode* pScene)
 {
+	#if 0
   XMLElement* object = xmlDoc.NewElement("object");
   XMLElement* mesh = xmlDoc.NewElement("mesh");
   XMLElement* material = xmlDoc.NewElement("material");;
@@ -376,6 +387,7 @@ void Scene::Serializator::saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManage
   object->InsertEndChild(material);
   pScene->InsertEndChild(object);
   //object->InsertEndChild(mesh);
+	#endif
 }
 
 XMLElement* Scene::Serializator::saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform)
@@ -531,4 +543,3 @@ void Scene::Serializator::loadCamera(tinyxml2::XMLElement* element)
 void Scene::Serializator::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
-#endif

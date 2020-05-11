@@ -3,7 +3,6 @@
 
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Renderer/Light.hpp>
-#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/Terrain.hpp>
 //#include <BlackBox/Renderer/BaseShader.hpp>
 
@@ -15,7 +14,6 @@
 
 class CCamera;
 class FrameBufferObject;
-class Object;
 class ObjectManager;
 class Scene;
 class SkyBox;
@@ -27,7 +25,7 @@ struct ICVar;
 extern Scene* defaultScene;
 
 //////////////////////////////////////////////////////////////////
-using ObjecstList = std::multimap<std::string, Object*>;
+using ObjecstList = std::multimap<std::string, CStatObj*>;
 using ObjecstListIt = ObjecstList::iterator;
 
 using DirectionLightList = std::map<std::string, DirectionLight*>;
@@ -54,6 +52,7 @@ private:
     Serializator(Scene* scene);
     bool save(const char* as = "");
     bool load(const char* name, LoadObjectSink* callback);
+		bool loadDefault();
 
     void loadTerrain(tinyxml2::XMLElement* terrain);
     void loadObject(tinyxml2::XMLElement* object, LoadObjectSink* callback);
@@ -64,19 +63,19 @@ private:
     void loadTagPoint(tinyxml2::XMLElement* element);
     
     void saveLights(tinyxml2::XMLDocument& xmlDoc, tinyxml2::XMLNode* pScene);
-    void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, Object*>& obj, tinyxml2::XMLNode* pScene);
+    void saveObject(tinyxml2::XMLDocument& xmlDoc, ObjectManager* objectManager, std::pair<const std::string, CStatObj*>& obj, tinyxml2::XMLNode* pScene);
     tinyxml2::XMLElement* saveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform);
     tinyxml2::XMLElement* saveLight(tinyxml2::XMLDocument& xmlDoc, BaseLight* light);
     tinyxml2::XMLElement* saveCamera(tinyxml2::XMLDocument& xmlDoc, CCamera* camera);
-    tinyxml2::XMLElement* saveMaterial(tinyxml2::XMLDocument& xmlDoc, Object* object);
+    tinyxml2::XMLElement* saveMaterial(tinyxml2::XMLDocument& xmlDoc, CStatObj* object);
   private:
     Scene *m_Scene = nullptr;
   };
 
 public:
   Scene(std::string name);
-  void addObject(std::string name, Object* object);
-  Object* getObject(std::string name);
+  void addObject(std::string name, CStatObj* object);
+  CStatObj* getObject(std::string name);
   size_t numObjects();
   void setCamera(std::string name, CCamera* camera);
   CCamera* getCurrentCamera();
@@ -89,7 +88,6 @@ public:
   void update(float dt);
   void end();
   void draw(float dt);
-  void present(int width, int height);
 
   void ForEachObject(ForEachObjectSink* callback);
   void ForEachDirectionLight(ForEachDirectionLightSink* callback);
@@ -115,7 +113,7 @@ private:
   PointLightList m_PointLights;
   SpotLightList m_SpotLights;
 
-  Terrain terrain;
+  //Terrain terrain;
 
   CameraList m_Camera;
   CameraListIt m_CurrentCamera;

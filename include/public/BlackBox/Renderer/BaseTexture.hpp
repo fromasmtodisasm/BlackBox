@@ -8,7 +8,19 @@
 #include <nvtt/nvtt.h>
 #endif
 
-class Image;
+class Image
+{
+public:
+  int width;
+  int height;
+  int bpp;
+  uint8_t* data;
+
+  Image() : width(0), height(0), bpp(0), data(nullptr) {}
+  ~Image();
+  bool load(const char* name, bool* hasAlpha);
+  void free();
+};
 
 enum TextureType
 {

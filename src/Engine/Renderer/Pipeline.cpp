@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/IGeometry.hpp>
 #include <BlackBox/Renderer/Object.hpp>
@@ -7,7 +8,6 @@
 
 namespace Pipeline {
 
-#if 0
 IShaderProgram* bindProgram(const char* name)
 {
     auto mat = MaterialManager::instance()->getMaterial(name);
@@ -22,11 +22,7 @@ IShaderProgram* bindProgram(const char* name)
     shader->Use();
     return shader;
 }
+
+}
+
 #endif
-
-}
-
-void BoundingBox::draw(Mat4 transform)
-{
-
-}

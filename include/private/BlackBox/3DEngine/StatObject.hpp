@@ -12,3 +12,13 @@
 
 struct Material;
 using MeshList = std::shared_ptr<std::vector<Mesh>>;
+
+class CStatObj : public IStatObj
+{
+public:
+	CStatObj();
+	~CStatObj();
+
+private:
+};
+

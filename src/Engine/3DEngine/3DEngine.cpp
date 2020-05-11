@@ -1,9 +1,14 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/3DEngine.hpp>
+#include <BlackBox/3DEngine/ObjLoader.hpp>
 #include <BlackBox/Renderer/ITechniqueManager.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 void C3DEngine::Enable(bool bEnable)
 {
@@ -20,9 +25,32 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 	m_LevelPath = szFolderName;
 }
 
+void loadModel(string path)
+{
+    Assimp::Importer import;
+    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
+	
+    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
+    {
+        //cout << "ERROR::ASSIMP::" << import.GetErrorString() << endl;
+        return;
+    }
+    directory = path.substr(0, path.find_last_of('/'));
+
+    processNode(scene->mRootNode, scene);
+} 
+
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
-	return m_SceneManager.getScene(string(szMissionName), nullptr) != nullptr;
+	//Objloader
+	//return m_SceneManager.getScene(string(szMissionName), nullptr) != nullptr;
+
+	Assimp::Importer importer;
+	
+	const aiScene *scene = importer.ReadFile("res/geom/pengium.obj", aiProcess_Triangulate | aiProcess_FlipUVs); 
+
+
+	return true;
 }
 
 void C3DEngine::Update()

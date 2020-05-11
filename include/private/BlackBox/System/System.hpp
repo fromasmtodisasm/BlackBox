@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/CmdLine.hpp>
@@ -76,6 +77,17 @@ public:
   // Inherited via IConsoleVarSink
   virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
 
+  virtual float GetDeltaTime() override;
+
+
+  virtual const SFileVersion& GetFileVersion() override;
+  virtual const SFileVersion& GetProductVersion() override;
+
+
+// Унаследовано через ISystem
+  
+	void      SetViewCamera(CCamera& Camera) override { m_ViewCamera = Camera; }
+	CCamera&  GetViewCamera() override                { return m_ViewCamera; }
 private:
   bool CreateConsole();
   bool InitConsole();
@@ -107,23 +119,24 @@ private:
 	SSystemGlobalEnvironment m_env;
 #endif
   CTimer									m_Time;                  //!<
+	CCamera									m_ViewCamera;            //!<
 
   ILog* m_pLog;
-  CConsole* m_pConsole;
+  CConsole*								m_pConsole;
   //IInput* m_pInput;
-  ICryPak* m_pCryPak;
-  IGame* m_pGame;
-  IFont* m_pFont;
-  IWindow* m_pWindow;
-  IRenderer* m_Render;
-  IScriptSystem* m_pScriptSystem;
-  INetwork* m_pNetwork;
+  ICryPak*								m_pCryPak;
+  IGame*									m_pGame;
+  IFont*									m_pFont;
+  IWindow*								m_pWindow;
+  IRenderer*							m_Render;
+  IScriptSystem*					m_pScriptSystem;
+  INetwork*								m_pNetwork;
   //! system event dispatcher
   ISystemEventDispatcher* m_pSystemEventDispatcher;
 
-  CScriptObjectConsole* m_ScriptObjectConsole;
-  CScriptObjectScript* m_ScriptObjectScript;
-  CScriptObjectRenderer* m_ScriptObjectRenderer;
+  CScriptObjectConsole*		m_ScriptObjectConsole;
+  CScriptObjectScript*		m_ScriptObjectScript;
+  CScriptObjectRenderer*	m_ScriptObjectRenderer;
 
 private:
   ICVar* r_window_width;
@@ -145,12 +158,6 @@ private:
 #if ENABLE_DEBUG_GUI
   IImGuiManager* m_GuiManager = nullptr;
 #endif
-
-  virtual float GetDeltaTime() override;
-
-
-  virtual const SFileVersion& GetFileVersion() override;
-  virtual const SFileVersion& GetProductVersion() override;
 
 };
 

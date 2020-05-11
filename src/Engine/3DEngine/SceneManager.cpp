@@ -1,5 +1,5 @@
 #include <BlackBox/3DEngine/SceneManager.hpp>
-#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/System/IConsole.hpp>

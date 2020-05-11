@@ -1,6 +1,6 @@
-#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Geometry/ObjLoader.hpp>
+//#include <BlackBox/Geometry/ObjLoader.hpp>
 #include <BlackBox/Renderer/Renderer.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/Material.hpp>

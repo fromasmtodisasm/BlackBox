@@ -4,7 +4,7 @@
 #include <BlackBox/Renderer/IPostProcessor.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
-#include <BlackBox/Renderer/Object.hpp>
+#include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -35,7 +35,6 @@ Scene::Scene(std::string name)
 		texture_speed = GetISystem()->GetIConsole()->CreateVariable("tex_spd", 0.1f, 0, "Speed of texture animation");
 	}
 }
-#if 0
 
 // IScene
 bool Scene::save(const char* as)
@@ -63,37 +62,6 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
 	return result;
 }
 
-void Scene::selectPrevObject()
-{
-	if (selected_object_it == m_Objects.begin())
-	{
-		selected_object_it = m_Objects.end();
-	}
-	else
-	{
-		selected_object_it--;
-	}
-}
-
-void Scene::selectNextObject()
-{
-	if (selected_object_it == m_Objects.end())
-	{
-		selected_object_it = m_Objects.begin();
-	}
-	else
-	{
-		selected_object_it++;
-	}
-}
-
-ObjectMapItr Scene::selectedObject()
-{
-	if (selected_object_it == m_Objects.end())
-		return m_Objects.begin();
-	return selected_object_it;
-}
-
 CStatObj* Scene::getObject(std::string name)
 {
 	auto objectIt = m_Objects.find(name);
@@ -114,21 +82,6 @@ CCamera* Scene::getCurrentCamera()
 	return m_CurrentCamera->second;
 }
 
-void Scene::present(int width, int height)
-{
-	//DEBUG_GROUP(__FUNCTION__);
-	if (postProcessor == nullptr)
-	{
-		GetISystem()->GetIRenderer()->DrawFullScreenImage(m_RenderedScene);
-	}
-	else
-	{
-		//PROFILER_PUSH_GPU_MARKER("Postprocessing", Utils::COLOR_GREEN);
-		postProcessor->Do(m_RenderedScene);
-	}
-	//PROFILER_POP_GPU_MARKER();
-}
-
 size_t Scene::numObjects()
 {
 	return m_Objects.size();
@@ -137,15 +90,6 @@ size_t Scene::numObjects()
 void Scene::setTechnique(ITechnique* technique)
 {
 	m_Technique = technique;
-}
-
-bool Scene::selectObject(std::string name)
-{
-	auto it = m_Objects.find(name);
-	if (it == m_Objects.end())
-		return false;
-	selected_object_it = it;
-	return true;
 }
 
 SkyBox* Scene::GetSkyBox()
@@ -172,20 +116,6 @@ void Scene::setCamera(std::string name, CCamera* camera)
 {
 	m_Camera[name]	= camera;
 	m_CurrentCamera = m_Camera.find(name);
-}
-
-void Scene::update(float dt)
-{
-	for (auto& obj : m_Objects)
-	{
-		obj.second->update(dt);
-		//obj.second->velocity.y -= World::gravity*dt;
-	}
-}
-
-int Scene::getRenderTarget()
-{
-	return m_RenderedScene;
 }
 
 void Scene::begin()
@@ -255,5 +185,3 @@ const SpotLightList& Scene::GetSpotLights()
 	return m_SpotLights;
 
 }
-
-#endif
