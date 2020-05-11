@@ -6,7 +6,7 @@
 
 #include <iostream>
 using	namespace std;
-
+#if 0
 ObjectManager* ObjectManager::manager = nullptr;
 
 ObjectManager* ObjectManager::instance()
@@ -67,3 +67,4 @@ IStatObj* ObjectManager::objectFactory(IStatObj* object, string type, LoadObject
   else return object;
 #endif
 }
+#endif

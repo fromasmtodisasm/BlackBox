@@ -3,6 +3,13 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/IStatObj.hpp>
 
+enum class Movement
+{
+  FORWARD,
+  BACKWARD,
+  LEFT,
+  RIGHT
+};
 class CCameraController : public IInputEventListener
 {
 public:
@@ -59,22 +66,24 @@ public:
   }
   void InitCVars()
   {
+		#if 0
     REGISTER_CVAR2("cam_speed", &m_Camera->MovementSpeed, 5.0f, 0, "Speed of camera");
     REGISTER_CVAR2("fov", &m_Camera->FOV, 45.0f, 0, "Camera field of view");
     REGISTER_CVAR2("zfar", &m_Camera->zFar, 10000.f, 0, "Draw distance");
+		#endif
   }
   // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
   // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
   void ProcessKeyboard(Movement direction, float deltaTime)
   {
     float velocity = m_Camera->MovementSpeed * deltaTime;
-    if (direction == FORWARD)
+    if (direction == Movement::FORWARD)
       m_Camera->transform.position += glm::vec3(m_Camera->Front.x, m_Camera->mode == CCamera::Mode::FPS ? 0 : m_Camera->Front.y, m_Camera->Front.z) * velocity;
-    if (direction == BACKWARD)
+    if (direction == Movement::BACKWARD)
       m_Camera->transform.position -= glm::vec3(m_Camera->Front.x, m_Camera->mode == CCamera::Mode::FPS ? 0 : m_Camera->Front.y, m_Camera->Front.z) * velocity;
-    if (direction == LEFT)
+    if (direction == Movement::LEFT)
       m_Camera->transform.position -= m_Camera->Right * velocity;
-    if (direction == RIGHT)
+    if (direction == Movement::RIGHT)
       m_Camera->transform.position += m_Camera->Right * velocity;
   }
 

@@ -8,6 +8,7 @@
 
 float World::gravity = 9.8f;
 
+#if 0
 IScene* World::GetActiveScene()
 {
   return activeScene;
@@ -59,3 +60,4 @@ void World::SetPostRenderCallback(IPostRenderCallback* callBack)
 {
   m_PostRender = callBack;
 }
+#endif

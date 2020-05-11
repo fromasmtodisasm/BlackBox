@@ -13,7 +13,7 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 
 #include <sstream>
-
+#if 0
 ShadowMapping::ShadowMapping()
 	: m_Scene(nullptr), m_DepthBuffer(nullptr)
 {
@@ -372,3 +372,4 @@ bool ShadowMapping::PreRenderPass()
 void ShadowMapping::PostRenderPass()
 {
 }
+#endif

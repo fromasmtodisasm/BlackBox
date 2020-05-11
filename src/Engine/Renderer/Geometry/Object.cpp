@@ -13,6 +13,7 @@
 #include <sstream>
 #include <memory>
 
+#if 0
 using namespace std;
 int CStatObj::refs = 0;
 
@@ -274,3 +275,4 @@ CStatObj* CStatObj::load(string path)
   obj->m_path = path;
   return obj;
 }
+#endif

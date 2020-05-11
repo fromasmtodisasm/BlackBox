@@ -57,7 +57,7 @@ public:
   virtual int GetFrame() override;
 
   // Inherited via ForEachObjectSink
-  virtual bool OnObjectFound(CStatObj* object) override;
+  //virtual bool OnObjectFound(CStatObj* object) override;
 
   // Inherited via ForEachDirectionLightSink
   virtual bool OnLightFound(const DirectionLight* light, SRenderParams& renderParams);

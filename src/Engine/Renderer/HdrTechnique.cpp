@@ -10,6 +10,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
+#if 0
 #define NBLOOM
 #ifdef TEST
 #define LOG(fmt, ...) log->Log(fmt, __VA_ARGS__)
@@ -529,3 +530,4 @@ void HdrTechnique::Do(unsigned int texture)
   FrameBufferObject::bindDefault({ 0,0, render->GetWidth(), render->GetHeight() });
   m_ScreenQuad.draw();
 }
+#endif

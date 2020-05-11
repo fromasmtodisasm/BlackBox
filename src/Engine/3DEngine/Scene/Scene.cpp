@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
@@ -11,7 +12,6 @@
 #include <BlackBox/World/World.hpp>
 
 #include <algorithm>
-
 Scene::Scene(std::string name)
 	: lighting(true),
 	  name(name),
@@ -265,3 +265,4 @@ Terrain* Scene::getTerrain()
 {
 	return &terrain;
 }
+#endif

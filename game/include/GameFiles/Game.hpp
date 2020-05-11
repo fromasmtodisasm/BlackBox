@@ -39,7 +39,6 @@ enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION =
 
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/3DEngine//IStatObjManager.hpp>
 #include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>
@@ -131,8 +130,7 @@ class CGame :
 	public IPostRenderCallback, 
 	public IPreRenderCallback,
 	public IServerSnooperSink,
-	public INETServerSnooperSink,
-	public LoadObjectSink
+	public INETServerSnooperSink
 {
   class EventListener;
   friend class GameGUI;
@@ -284,7 +282,6 @@ protected:
 	//it reduces code redundancy and makes things more clear.
 	void SetCommonKeyBindings(IActionMap* pActionMap);
 
-	virtual IStatObj* OnLoad(IStatObj* object, std::string type) override;
 	void MainMenu();
   public:
   float m_deltaTime;
@@ -429,7 +426,7 @@ public:
 		"Entry ............1444\n",
 	};
 	float m_time_to_random = 0.f;
-	Movement direction	   = FORWARD;
+	//Movement direction	   = FORWARD;
 	std::shared_ptr<IQuadTreeRender> m_QuadTreeRender;
 	std::shared_ptr<QuadTree> m_QuadTree;
 

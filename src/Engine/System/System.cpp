@@ -511,7 +511,7 @@ bool CSystem::Init3DEngine()
 	Log("Creating 3DEngine");
   return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p) {
       m_env.p3DEngine = p(this, "0.0.0");
-      if (m_env.p3DEngine != nullptr)
+      if (m_env.p3DEngine == nullptr)
         return false;
       return m_env.p3DEngine->Init();
   });

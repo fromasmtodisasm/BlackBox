@@ -18,6 +18,7 @@
 
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/World/World.hpp>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -91,7 +92,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
   m_ScreenShader->Uniform(0, "screenTexture");
   m_ScreenShader->Unuse();
 
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("AuxGeom", 0)))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("AuxGeom", 0)))
 	{
     m_pSystem->Log("Error of loading auxgeom shader");
 	}
@@ -419,7 +420,8 @@ void GLRenderer::SetRenderTarget(int nHandle)
 
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
-  return ShaderManager::instance()->loadProgram(name, flags);
+	return new CShaderProgram();
+  //return ShaderManager::instance()->loadProgram(name, flags);
 }
 
 void GLRenderer::DrawFullscreenQuad()

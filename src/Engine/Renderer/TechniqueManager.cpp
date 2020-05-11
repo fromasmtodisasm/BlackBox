@@ -15,10 +15,11 @@ ITechnique* TechniqueManager::get(std::string name)
 
 TechniqueManager* TechniqueManager::instance()
 {
+	return nullptr;
   if (manager == nullptr)
   {
-    manager = new TechniqueManager();
-    manager->init();
+    //manager = new TechniqueManager();
+    //manager->init();
   }
   return manager;
 }
@@ -26,7 +27,7 @@ TechniqueManager* TechniqueManager::instance()
 
 bool TechniqueManager::init()
 {
-  techs["hdr"] = new HdrTechnique();
+  //techs["hdr"] = new HdrTechnique();
   return true;
 }
 

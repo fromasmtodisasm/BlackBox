@@ -1,5 +1,4 @@
 #pragma once
-#include <BlackBox/3DEngine/IObjectManager.hpp>
 
 #include <map>
 #include <string>
@@ -7,7 +6,7 @@
 #include <vector>
 
 class CStatObj;
-
+#if 0
 class ObjectManager
 {
   static ObjectManager* manager;
@@ -17,3 +16,4 @@ public:
   IStatObj* LoadObject(std::string Object, std::string type, LoadObjectSink* callback);
   IStatObj* objectFactory(IStatObj* object, std::string type, LoadObjectSink* callback);
 };
+#endif

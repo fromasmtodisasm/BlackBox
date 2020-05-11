@@ -7,6 +7,7 @@
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 
+#if 0
 void Material::apply(CStatObj* object)
 {
   GLenum block = GL_TEXTURE0;
@@ -106,3 +107,4 @@ void Material::activeTexture(const char* uniform, BaseTexture* texture)
   //glCheck(glUniform1i(glGetUniformLocation(program->get(), uniform), texture->unit));
   program->Uniform(texture->unit, uniform);
 }
+#endif

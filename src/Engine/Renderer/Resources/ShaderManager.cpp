@@ -222,8 +222,8 @@ void ShaderManager::removeShader(const char* name)
 bool ShaderManager::init()
 {
 #if _WIN32
-  defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
-  defaultProgram->Create("default");
+  //defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
+  //defaultProgram->Create("default");
 #endif
   ShaderDesc::root = ShaderManager::instance()->root;
   CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");

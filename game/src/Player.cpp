@@ -3,7 +3,6 @@
 
 #include <BlackBox/Core/Primitives.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/3DEngine//IStatObjManager.hpp>
 #include <BlackBox/Renderer/ISceneManager.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
