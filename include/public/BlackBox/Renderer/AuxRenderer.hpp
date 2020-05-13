@@ -3,6 +3,18 @@
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
+struct SAuxPushBufferEntry
+{
+	SAuxPushBufferEntry() = default;
+	SAuxPushBufferEntry(uint32 nv, RenderPrimitive rpt)
+		: m_numVertices(nv), m_primitive(rpt)
+	{
+	}
+	uint32              m_numVertices;
+	RenderPrimitive			m_primitive;
+};
+
+using AuxPushBuffer = std::vector<SAuxPushBufferEntry>;
 using AuxVertexBuffer = std::vector<SAuxVertex>;
 
 class CRenderAuxGeom : public IRenderAuxGeom
@@ -21,6 +33,7 @@ private:
 private:
   CVertexBuffer* m_BoundingBox = nullptr;
   SVertexStream* m_BB_IndexBuffer = nullptr;
+  AuxPushBuffer m_auxPushBuffer;
   AuxVertexBuffer m_VB;
   CVertexBuffer* m_HardwareVB = nullptr;
   ShaderProgramRef m_BoundingBoxShader;

@@ -622,6 +622,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 		case eKI_M:
 			camera.mode = CCamera::Mode::FLY;
 			m_Mode		= Mode::FLY;
+			m_CameraController.m_Camera->mode = CCamera::Mode::FLY;
 			return true;
 		case eKI_Escape:
 			gotoMenu();
@@ -1032,19 +1033,23 @@ void CGame::DrawAux()
 	float x = 10, y = 0, z = -10;
 	{
 		UCol col1;
-		col1.bcolor[0] = 0;
+		col1.bcolor[3] = 125;
 		col1.bcolor[1] = 125;
 		col1.bcolor[2] = 0;
-		col1.bcolor[3] = 1;
+		col1.bcolor[1] = 100;
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 	{
 		UCol col2;
-		col2.bcolor[0] = 0;
+		col2.bcolor[3] = 125;
 		col2.bcolor[1] = 125;
 		col2.bcolor[2] = 100;
-		col2.bcolor[3] = 1;
+		col2.bcolor[1] = 100;
 		draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
 	}
+
+	auto render	= gEnv->pRenderer->GetIRenderAuxGeom();
+	render->DrawAABB({0, 0, 0}, {5, 5, 5});
+
 
 }
