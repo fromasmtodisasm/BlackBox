@@ -35,21 +35,14 @@ void loadModel(string path)
         //cout << "ERROR::ASSIMP::" << import.GetErrorString() << endl;
         return;
     }
-    directory = path.substr(0, path.find_last_of('/'));
-
-    processNode(scene->mRootNode, scene);
 } 
 
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
-	//Objloader
-	//return m_SceneManager.getScene(string(szMissionName), nullptr) != nullptr;
-
-	Assimp::Importer importer;
-	
-	const aiScene *scene = importer.ReadFile("res/geom/pengium.obj", aiProcess_Triangulate | aiProcess_FlipUVs); 
-
-
+	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "test.frag"));
+	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "radar.frag"));
+	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "demo.frag"));
+	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "arch.frag"));
 	return true;
 }
 
@@ -60,9 +53,10 @@ void C3DEngine::Update()
 void C3DEngine::SetCamera(const CCamera& cam, bool bToTheScreen)
 {
 }
-
+static float s_time = 0;
 void C3DEngine::Draw()
 {
+	#if 0
   int w;
   int h;
   if (GET_CVAR("r_aspect")->GetIVal())
@@ -76,7 +70,6 @@ void C3DEngine::Draw()
     h = GET_CVAR("r_cam_h")->GetIVal();
   }
 
-	#if 0
   auto r = ((float)w) / h;
 	gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
   m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
@@ -85,6 +78,24 @@ void C3DEngine::Draw()
     m_pWorld->GetActiveScene()->present(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
   }
 	#endif
+  s_time += 1 / 60.0f;
+  auto w = gEnv->pRenderer->GetWidth() / 2;
+  auto h = gEnv->pRenderer->GetHeight() / 2;
+  auto draw = [&](IShaderProgram* p, Vec4d vp) {
+	  p->Use();
+	  p->Uniform(Vec2(vp.z, vp.w), "resolution");
+	  p->Uniform(Vec2(vp.x, vp.y), "origin");
+	  p->Uniform(s_time, "time");
+	  gEnv->pRenderer->SetViewport(vp.x, vp.y, vp.z, vp.w);
+	  gEnv->pRenderer->DrawFullscreenQuad();
+	  p->Unuse();
+  };
+
+	draw(m_Programs[0], Vec4d(0, 0, w, h));
+	draw(m_Programs[1], Vec4d(w, h, w, h));
+	draw(m_Programs[2], Vec4d(0, h, w, h));
+	draw(m_Programs[3], Vec4d(w, 0, w, h));
+
 
 }
 

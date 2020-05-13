@@ -258,7 +258,7 @@ bool CGame::Update() {
 				}
 			}
       //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-      DrawHud(fps);
+      //DrawHud(fps);
       //PROFILER_POP_CPU_MARKER();
     }
   }

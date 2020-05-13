@@ -14,6 +14,7 @@ using Mat3 = glm::mat3;
 using Mat4 = glm::mat4;
 
 using Vec3d = glm::ivec3;
+using Vec4d = glm::ivec4;
 using Matrix44 = glm::mat4;
 #else
 

@@ -106,7 +106,10 @@ private:
 
 	void*						m_RenderCallbacksParams;
 
-	CVertexBuffer* m_TestScene;
+	CVertexBuffer*	m_TestScene;
+	CVertexBuffer*	m_Quad;
+
+	std::vector<IShaderProgram*> m_Programs;
 
   // Inherited via I3DEngine
   virtual void SetFlags(int flags);

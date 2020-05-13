@@ -773,6 +773,7 @@ void CSystem::Render()
 	PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 	{
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
+		gEnv->p3DEngine->SetCamera(GetViewCamera());
     gEnv->p3DEngine->Draw();
 
 	}

@@ -13,18 +13,18 @@ using namespace std;
 
 char* CBaseShaderProgram::buffer = nullptr;
 
-CShader::type str2typ(std::string type)
+CShader::Type str2typ(std::string type)
 {
   if (type == "vertex")
-    return CShader::type::E_VERTEX;
+    return CShader::Type::E_VERTEX;
   else if (type == "fragment")
-    return CShader::type::E_FRAGMENT;
+    return CShader::Type::E_FRAGMENT;
   else if (type == "geometry")
-    return CShader::type::E_GEOMETRY;
+    return CShader::Type::E_GEOMETRY;
   else if (type == "compute")
-    return CShader::type::E_COMPUTE;
+    return CShader::Type::E_COMPUTE;
   else
-    return CShader::type::E_UNKNOWN;
+    return CShader::Type::E_UNKNOWN;
 }
 
 ShaderStatus::ShaderStatus(CShader* shader) :
@@ -37,12 +37,12 @@ bool ShaderStatus::get(GLenum statusType) {
   glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status));
   if (m_Status == GL_FALSE)
   {
-		GetISystem()->GetILog()->Log("[ERROR] Pizdec Shader %s \n %s\n", m_Shader->getName(), m_InfoLog);;
+		GetISystem()->GetILog()->Log("[ERROR] Pizdec Shader %s", m_Shader->getName());;
     GLsizei length = 0;
 		glGetShaderiv(m_Shader->get(), GL_INFO_LOG_LENGTH, &length);
 		std::vector<GLchar> errorLog(length);
     glCheck(glGetShaderInfoLog(m_Shader->get(), length, &length, &errorLog[0]));
-		GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), errorLog);;
+		GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), errorLog.data());;
 		glDeleteShader(m_Shader->get());
     return false;
   }
@@ -57,9 +57,9 @@ ShaderProgramStatus::ShaderProgramStatus(CBaseShaderProgram* program) :
 bool ShaderProgramStatus::get(GLenum statusType) {
   GLsizei size;
   glCheck(glGetProgramiv(m_Program->Get(), statusType, &m_Status));
-  if (m_Status != GL_TRUE)
+  if (m_Status == GL_FALSE)
   {
-    glCheck(glGetProgramInfoLog(m_Program->Get(), 512, &size, m_InfoLog));
+    glCheck(glGetProgramInfoLog(m_Program->Get(), sizeof(m_InfoLog), &size, m_InfoLog));
     auto log = GetISystem()->GetILog();
     if (log != nullptr)
     {
@@ -80,8 +80,8 @@ bool ShaderProgramStatus::get(GLenum statusType) {
   }
   return true;
 }
-CShader::CShader(string text, CShader::type type) :
-  m_Text(text), m_Type(type), m_Status(this), m_Empty(true)
+CShader::CShader(string text, CShader::Type Type) :
+  m_Text(text), m_Type(Type), m_Status(this), m_Empty(true)
 {
 }
 
@@ -89,9 +89,9 @@ CShader::~CShader() {
   glCheck(glDeleteShader(m_Shader));
 }
 
-static int get_gl_enum(IShader::type type)
+static int get_gl_enum(IShader::Type Type)
 {
-  switch (type)
+  switch (Type)
   {
   case IShader::E_VERTEX:
     return GL_VERTEX_SHADER;
@@ -162,7 +162,7 @@ GLuint CShader::get() {
   return m_Shader;
 }
 
-IShader::type CShader::GetType()
+IShader::Type CShader::GetType()
 {
   return m_Type;
 }
@@ -240,7 +240,12 @@ bool CBaseShaderProgram::Create(const char* label) {
   Attach(m_Fragment);
   Attach(m_Geometry);
   Attach(m_Compute);
-  return Link();
+  auto status =  Link();
+  Detach(m_Vertex);
+  Detach(m_Fragment);
+  Detach(m_Geometry);
+  Detach(m_Compute);
+  return status;
 }
 
 void CBaseShaderProgram::Attach(ShaderInfo& info) {
@@ -248,16 +253,16 @@ void CBaseShaderProgram::Attach(ShaderInfo& info) {
 
   if (!info.used) return;
   switch (info.shader->GetType()) {
-  case CShader::type::E_VERTEX:
+  case CShader::Type::E_VERTEX:
     attached = attachInternal(info, m_Vertex);
     break;
-  case CShader::type::E_FRAGMENT:
+  case CShader::Type::E_FRAGMENT:
     attached = attachInternal(info, m_Fragment);
     break;
-  case CShader::type::E_GEOMETRY:
+  case CShader::Type::E_GEOMETRY:
     attached = attachInternal(info, m_Geometry);
     break;
-  case CShader::type::E_COMPUTE:
+  case CShader::Type::E_COMPUTE:
     attached = attachInternal(info, m_Compute);
     break;
   }
@@ -564,9 +569,9 @@ const char* CBaseShaderProgram::buildName(const char* format, va_list args)
   return buffer;
 }
 
-const char* CBaseShaderProgram::GetShaderName(IShader::type type)
+const char* CBaseShaderProgram::GetShaderName(IShader::Type Type)
 {
-  switch (type)
+  switch (Type)
   {
   case IShader::E_VERTEX:
     return m_Vertex.name.data();

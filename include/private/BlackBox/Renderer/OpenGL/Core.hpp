@@ -334,9 +334,9 @@ namespace gl {
     glCheck(glDisableVertexAttribArray(index));
   }
 
-  inline void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer)
+  inline void VertexAttribPointer(GLuint index, GLint size, GLenum Type, GLboolean normalized, GLsizei stride, const void* pointer)
   {
-    glCheck(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
+    glCheck(glVertexAttribPointer(index, size, Type, normalized, stride, pointer));
   }
 
 	inline void GenBuffers(GLsizei n, GLuint* buffers)

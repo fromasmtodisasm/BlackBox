@@ -26,7 +26,7 @@ struct ShaderStatus
 
 struct ShaderProgramStatus
 {
-  char m_InfoLog[512];
+  char m_InfoLog[1024];
   int m_Status;
   CBaseShaderProgram* m_Program;
 
@@ -37,16 +37,17 @@ struct ShaderProgramStatus
 class CShader : public IShader
 {
 public:
-  CShader(std::string text, CShader::type type);
+  CShader(std::string text, CShader::Type type);
   ~CShader();
   // Inherited via IShader
   virtual void AddRef() override;
   virtual int Release() override;
 
   static CShader* load(ShaderDesc const& desc);
+  static CShader* load(std::string_view source);
   static bool parseLine(std::ifstream& fin, std::string& buffer);
   static bool loadInternal(std::string const& path, std::string& buffer);
-  static ShaderRef loadFromMemory(std::string text, CShader::type type);
+  static ShaderRef loadFromMemory(std::string text, CShader::Type type);
   
   virtual bool Create() override;
   virtual bool Compile() override;
@@ -65,9 +66,8 @@ private:
   int m_Refs = 0;
 public:
   std::string m_Path;
-  IShader::type m_Type;
-  // Inherited via IShader
-  virtual IShader::type GetType() override;
+  IShader::Type m_Type;
+  virtual IShader::Type GetType() override;
 };
 
 class CBaseShaderProgram : public IShaderProgram {
@@ -145,7 +145,7 @@ private:
 
 
   // Inherited via IShaderProgram
-  virtual const char* GetShaderName(IShader::type type) override;
+  virtual const char* GetShaderName(IShader::Type type) override;
 
 
   // Inherited via IShaderProgram
@@ -153,4 +153,4 @@ private:
 
 };
 
-CShader::type str2typ(std::string type);
+CShader::Type str2typ(std::string type);
