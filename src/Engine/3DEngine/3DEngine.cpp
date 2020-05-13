@@ -3,6 +3,7 @@
 #include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/3DEngine/ObjLoader.hpp>
 #include <BlackBox/Renderer/ITechniqueManager.hpp>
+#include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
@@ -43,6 +44,7 @@ bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, b
 	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "radar.frag"));
 	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "demo.frag"));
 	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "arch.frag"));
+	gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(m_Qubes.min, m_Qubes.max);
 	return true;
 }
 
@@ -91,10 +93,12 @@ void C3DEngine::Draw()
 	  p->Unuse();
   };
 
+	/*
 	draw(m_Programs[0], Vec4d(0, 0, w, h));
 	draw(m_Programs[1], Vec4d(w, h, w, h));
 	draw(m_Programs[2], Vec4d(0, h, w, h));
 	draw(m_Programs[3], Vec4d(w, 0, w, h));
+	*/
 
 
 }

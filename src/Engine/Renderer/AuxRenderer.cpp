@@ -71,6 +71,7 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
   glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
   const auto& cam = gEnv->pRenderer->GetCamera();
+  shader->Use();
   shader->Uniform(transform, "model");
   shader->Uniform(cam.getViewMatrix(), "view");
   shader->Uniform(cam.getProjectionMatrix(), "projection");
@@ -84,7 +85,23 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
     gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
     gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
   }
+  shader->Unuse();
   //gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));
+}
+
+void CRenderAuxGeom::DrawTriangle(const Vec3 & v0, const UCol & colV0, const Vec3 & v1, const UCol & colV1, const Vec3 & v2, const UCol & colV2)
+{
+	SAuxVertex* pVertices(nullptr);
+	AddPrimitive(pVertices, 3);
+
+	pVertices[0].xyz = v0;
+	pVertices[0].color.dcolor = PackColor(colV0);
+
+	pVertices[1].xyz = v1;
+	pVertices[1].color.dcolor = PackColor(colV1);
+
+	pVertices[2].xyz = v2;
+	pVertices[2].color.dcolor = PackColor(colV2);
 }
 
 void CRenderAuxGeom::DrawLine(const Vec3 & v0, const UCol & colV0, const Vec3 & v1, const UCol & colV1, float thickness)
@@ -121,7 +138,8 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex *& pVertices, uint32 numVertices)
 void CRenderAuxGeom::Flush()
 {
   RSS(gEnv->pRenderer, DEPTH_TEST, false);
+  RSS(gEnv->pRenderer, CULL_FACE, false);
   gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
-  gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(RenderPrimitive::LINES), 0, m_VB.size());
+  gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, m_VB.size());
 	m_VB.resize(0);
 }

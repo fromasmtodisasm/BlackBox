@@ -75,7 +75,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	CreateQuad();
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("ScreenQuad", 0)))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("AuxGeom", 0)))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -84,7 +84,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_ScreenShader->Uniform(0, "screenTexture");
 	m_ScreenShader->Unuse();
 
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("AuxGeom", 0)))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.vs", "auxgeom.frag")))
 	{
 		m_pSystem->Log("Error of loading auxgeom shader");
 	}
@@ -111,6 +111,8 @@ void GLRenderer::BeginFrame(void)
 	UCol col;
 	auto v = Vec4(1, 1, 1, 1);
 	memcpy(col.bcolor, &v[0], 4);
+	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
+	m_RenderAuxGeom->DrawTriangle({-1, -1, -3}, col, {0, 1, -3}, col, {1, -1, 0}, col);
 	m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
 }
 
@@ -120,6 +122,8 @@ void GLRenderer::Update(void)
 		//std::cout << " aux " << std::endl;
 		DEBUG_GROUP("AUX");
 		m_AuxGeomShader->Use();
+		m_AuxGeomShader->Uniform(m_Camera.getProjectionMatrix(), "projection");
+		m_AuxGeomShader->Uniform(m_Camera.getViewMatrix(), "view");
 		m_RenderAuxGeom->Flush();
 		m_AuxGeomShader->Unuse();
 	}

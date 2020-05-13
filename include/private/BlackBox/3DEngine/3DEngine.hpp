@@ -109,6 +109,12 @@ private:
 	CVertexBuffer*	m_TestScene;
 	CVertexBuffer*	m_Quad;
 
+	struct AABB
+	{
+		Vec3 min;
+		Vec3 max;
+	}m_Qubes;
+
 	std::vector<IShaderProgram*> m_Programs;
 
   // Inherited via I3DEngine

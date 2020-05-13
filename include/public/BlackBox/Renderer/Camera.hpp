@@ -38,9 +38,8 @@ public:
   Vec3 WorldUp;
   // Camera options
   float MovementSpeed;
-  float FOV;
   float Zoom;
-  //float FOV = 45.0f;
+  float FOV = 45.0f;
   float Ratio = 16.0f / 9;
   float zNear = 0.1f;
   float zFar = 5000.f;

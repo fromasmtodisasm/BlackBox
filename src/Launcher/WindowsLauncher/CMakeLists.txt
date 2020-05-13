@@ -8,6 +8,7 @@ enable_testing()
 add_executable(${PROJECT_NAME} Main.cpp)
 target_link_libraries(Launcher PRIVATE  BlackBox)
 target_link_libraries(Launcher PRIVATE  System)
+add_dependencies(Launcher Game)
 #target_link_libraries(Launcher PRIVATE  FPS_Game)
 
 
