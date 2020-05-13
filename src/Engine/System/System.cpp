@@ -1,5 +1,5 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/System.hpp>
 
 #include <BlackBox/Core/IGame.hpp>
@@ -8,8 +8,8 @@
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>
 //#include <BlackBox/Renderer/FreeTypeFont.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/3DEngine/3DEngine.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
@@ -31,8 +31,8 @@
 #include <SDL2/SDL.h>
 
 #include <cstdlib>
-#include <thread>
 #include <filesystem>
+#include <thread>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -41,35 +41,35 @@ namespace fs = std::filesystem;
 
 namespace
 {
-  template<typename L, typename P>
-  inline P GetProcedure(L lib, const char* name)
-  {
-    return reinterpret_cast<P>(CryGetProcAddress(lib, name));
-  }
+	template<typename L, typename P>
+	inline P GetProcedure(L lib, const char* name)
+	{
+		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
+	}
 
-  template<typename Proc>
-  inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
-  {
-    gEnv->pSystem->Log("Loading...");
-    auto L = CryLoadLibrary(lib_name);
-    if (L)
-    {
-      auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
-      if (P)
-      {
-        typedef void*(* PtrFunc_ModuleInitISystem)(ISystem* pSystem, const char* moduleName);
-        PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem) CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
-        if (pfnModuleInitISystem)
-        {
-          pfnModuleInitISystem(gEnv->pSystem, lib_name);
-        }
-        return f(P);
-      }
-      return false;
-    }
-    return false;
-  }
-}
+	template<typename Proc>
+	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
+	{
+		gEnv->pSystem->Log("Loading...");
+		auto L = CryLoadLibrary(lib_name);
+		if (L)
+		{
+			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
+			if (P)
+			{
+				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
+				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
+				if (pfnModuleInitISystem)
+				{
+					pfnModuleInitISystem(gEnv->pSystem, lib_name);
+				}
+				return f(P);
+			}
+			return false;
+		}
+		return false;
+	}
+} // namespace
 
 CSystem::CSystem(SSystemInitParams& m_startupParams)
 	:
@@ -141,16 +141,15 @@ void CSystem::PreprocessCommandLine()
 		/////////////////////////////////////////////////////////////////
 		delete m_pCmdLine;
 		/////////////////////////////////////////////////////////////////
-		output = output.substr(strlen("myproto://"));
+		output			 = output.substr(strlen("myproto://"));
 		std::string left = std::string(m_startupParams.szSystemCmdLine);
-		auto p = left.find("-myproto");
+		auto p			 = left.find("-myproto");
 		left.resize(p);
-		output =  left + " " + output;
+		output = left + " " + output;
 		std::cout << "output:::: " << output << std::endl;
 		system("pause");
 		m_pCmdLine = new CCmdLine(
-			output.data()
-		);
+			output.data());
 		/////////////////////////////////////////////////////////////////
 	}
 }
@@ -161,7 +160,7 @@ void CSystem::ProcessCommandLine()
 	{
 		gEnv->SetIsDedicated(true);
 	}
-		 
+
 	if (const auto ca = m_pCmdLine->FindArg(eCLAT_Post, "wd"); ca)
 	{
 		SetWorkingDirectory(ca->GetValue());
@@ -200,23 +199,23 @@ bool CSystem::Init()
 		return false;
 	}
 	//====================================================
-  if (!InitInput())
-  {
-    return false;
-  }
+	if (!InitInput())
+	{
+		return false;
+	}
 	//====================================================
 	Log("Initialize Render");
 	if (!InitRender())
 		return false;
-  if (!Init3DEngine())
-    return false;
+	if (!Init3DEngine())
+		return false;
 
-  //////////////////////////////////////////////////////////////////////////
-  // Hardware mouse
-  //////////////////////////////////////////////////////////////////////////
-  // - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
-  // - Mouse is always visible by default in Editor (we never start directly in Game Mode)
-  // - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+		//////////////////////////////////////////////////////////////////////////
+		// Hardware mouse
+		//////////////////////////////////////////////////////////////////////////
+		// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+		// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+		// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
 #ifdef DEDICATED_SERVER
 	m_env.pHardwareMouse = NULL;
 #else
@@ -229,8 +228,8 @@ bool CSystem::Init()
 	m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- branch[" + GitBranch + "]; hash[" + Hash + "]; " + GitIsDirty + "; Message: [" + Message + "]").c_str());
 #endif
 	//====================================================
-  if (m_env.pHardwareMouse)
-    m_env.pHardwareMouse->OnPostInitInput();
+	if (m_env.pHardwareMouse)
+		m_env.pHardwareMouse->OnPostInitInput();
 		//====================================================
 		// Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
@@ -249,10 +248,10 @@ bool CSystem::Init()
 	//====================================================
 	//m_pLog->Log("[OK] Window susbsystem inited\n");
 	//====================================================
-  if (!InitScriptSystem())
-  {
-    return false;
-  }
+	if (!InitScriptSystem())
+	{
+		return false;
+	}
 	//====================================================
 	if (!InitConsole())
 		return false;
@@ -269,23 +268,22 @@ bool CSystem::Init()
 	{
 		m_env.pInput->AddEventListener(this);
 		m_env.pInput->AddEventListener(m_pConsole);
-    #if ENABLE_DEBUG_GUI
-    if (!gEnv->IsDedicated())
-    {
-      if (!InitGUI())
-        return false;
-    }
+#if ENABLE_DEBUG_GUI
+		if (!gEnv->IsDedicated())
+		{
+			if (!InitGUI())
+				return false;
+		}
 		m_env.pInput->AddEventListener(m_GuiManager);
-    #endif
-
+#endif
 	}
 	if (CreateGame(nullptr) == nullptr)
 		return false;
-		//====================================================
+	//====================================================
 
 	//====================================================
-  if (!InitNetwork())
-    return false;
+	if (!InitNetwork())
+		return false;
 	//====================================================
 	Log("Initialize Game");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
@@ -313,7 +311,7 @@ void CSystem::Start()
 
 	m_pGame->Run(bRelaunch);
 
-	NOW	 = SDL_GetPerformanceCounter();
+	NOW  = SDL_GetPerformanceCounter();
 	LAST = 0;
 
 	m_DeltaTime = 0.0;
@@ -360,10 +358,10 @@ IGame* CSystem::GetIGame()
 
 IGame* CSystem::CreateGame(IGame* game)
 {
-  LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
-    m_pGame = P();
-    return true;
-    });
+	LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+		m_pGame = P();
+		return true;
+	});
 	return m_pGame;
 }
 
@@ -377,8 +375,8 @@ void CSystem::Quit()
 
 IFont* CSystem::GetIFont()
 {
-  assert(0);
-  return nullptr;
+	assert(0);
+	return nullptr;
 	//return new FreeTypeFont;
 }
 
@@ -398,7 +396,7 @@ bool CSystem::ConfigLoad(const char* file)
 {
 	m_pConsole->ExecuteFile(file);
 
-	r_window_width	= m_pConsole->GetCVar("r_Width");
+	r_window_width  = m_pConsole->GetCVar("r_Width");
 	r_window_height = m_pConsole->GetCVar("r_Height");
 	r_bpp			= m_pConsole->GetCVar("r_bpp");
 	r_zbpp			= m_pConsole->GetCVar("r_zbpp");
@@ -451,75 +449,74 @@ bool CSystem::InitRender()
 bool CSystem::InitInput()
 {
 	Log("Creating Input");
-  return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p) {
-    if (!gEnv->IsDedicated())
-    {
-      m_env.pInput = p(this, m_pWindow->getHandle());
-      return m_env.pInput->Init();
-    }
-    else
-    {
-      if (gEnv->IsDedicated())
-        return true;
-      return false;
-    }
-  });
+	return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p) {
+		if (!gEnv->IsDedicated())
+		{
+			m_env.pInput = p(this, m_pWindow->getHandle());
+			return m_env.pInput->Init();
+		}
+		else
+		{
+			if (gEnv->IsDedicated())
+				return true;
+			return false;
+		}
+	});
 }
 
 bool CSystem::InitScriptSystem()
 {
 	Log("Creating ScriptSystem");
-  return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p) {
-      m_pScriptSystem = p(this, true);
-      return m_pScriptSystem != nullptr;
-  });
+	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p) {
+		m_pScriptSystem = p(this, true);
+		return m_pScriptSystem != nullptr;
+	});
 }
 
 bool CSystem::InitNetwork()
 {
 	Log("Creating Network");
-  return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p) {
-    m_env.pLog->Log("-- Creating Network");
-    m_pNetwork = p(this);
-    if (m_pNetwork == nullptr)
-      return false;
-    return true;
-  });
+	return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p) {
+		m_env.pLog->Log("-- Creating Network");
+		m_pNetwork = p(this);
+		if (m_pNetwork == nullptr)
+			return false;
+		return true;
+	});
 }
 
 #if ENABLE_DEBUG_GUI
 bool CSystem::InitGUI()
 {
 	Log("Creating GUI");
-  if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
-    m_env.pLog->Log("-- Creating GUI");
-    m_GuiManager = p(this);
-    if (m_GuiManager == nullptr)
-      return false;
-    return true;
-    }))
-  {
-    return m_GuiManager->Init();
-  }
-  return false;
+	if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
+			m_env.pLog->Log("-- Creating GUI");
+			m_GuiManager = p(this);
+			if (m_GuiManager == nullptr)
+				return false;
+			return true;
+		}))
+	{
+		return m_GuiManager->Init();
+	}
+	return false;
 }
 #endif
 
 bool CSystem::Init3DEngine()
 {
-  
 	Log("Creating 3DEngine");
-  return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p) {
-      m_env.p3DEngine = p(this, "0.0.0");
-      if (m_env.p3DEngine == nullptr)
-        return false;
-      return m_env.p3DEngine->Init();
-  });
+	return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p) {
+		m_env.p3DEngine = p(this, "0.0.0");
+		if (m_env.p3DEngine == nullptr)
+			return false;
+		return m_env.p3DEngine->Init();
+	});
 }
 
 bool CSystem::InitSubSystem()
 {
-  return false;
+	return false;
 }
 
 bool CSystem::OpenRenderLibrary(std::string_view render)
@@ -528,27 +525,26 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	if (gEnv->IsDedicated())
 		return true;
 	//====================================================
-  if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p) {
-
-    Log("Load Window Library");
-    m_pWindow = p();
-    if (m_pWindow == nullptr)
-      return false;
-    return true;
-    }))
-  {
-    return false;
-  }
+	if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p) {
+			Log("Load Window Library");
+			m_pWindow = p();
+			if (m_pWindow == nullptr)
+				return false;
+			return true;
+		}))
+	{
+		return false;
+	}
 	//====================================================
 
-  return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Renderer", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
-    Log("Load Render Library");
-    m_env.pRenderer = m_Render = p(this);
-    if (m_Render == nullptr)
-      return false;
-    else
-      return true;
-    });
+	return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Renderer", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
+		Log("Load Render Library");
+		m_env.pRenderer = m_Render = p(this);
+		if (m_Render == nullptr)
+			return false;
+		else
+			return true;
+	});
 
 #if 0
 	CryFatalError("Unknown renderer type: %s", t_rend);
@@ -724,7 +720,6 @@ void CSystem::LogCommandLine() const
 
 void CSystem::Tests()
 {
-	
 #if 0
 	auto plane_mesh = CreatePlane(4, 4);
 	mesh = std::make_shared<std::vector<Mesh>>();
@@ -735,7 +730,6 @@ void CSystem::Tests()
 #endif
 
 	//SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
-	
 }
 
 float CSystem::GetDeltaTime()
@@ -774,8 +768,7 @@ void CSystem::Render()
 	{
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
 		gEnv->p3DEngine->SetCamera(GetViewCamera());
-    gEnv->p3DEngine->Draw();
-
+		gEnv->p3DEngine->Draw();
 	}
 	PROFILER_POP_CPU_MARKER();
 }
@@ -857,17 +850,20 @@ void CSystem::RenderEnd()
 		PROFILER_DRAW();
 	}
 #if ENABLE_DEBUG_GUI
-  m_GuiManager->Render();
+	m_GuiManager->Render();
 #endif
 
 	if (m_Render)
+	{
 		m_Render->Update();
-	m_pWindow->swap();
+		m_pConsole->Draw();
+		m_pWindow->swap();
+	}
 }
 
 bool CSystem::OnInputEvent(const SInputEvent& event)
 {
-	bool result		= false;
+	bool result = false;
 	//TODO: handle resized
 	bool resized = false;
 	switch (event.deviceType)
@@ -941,13 +937,13 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	//PROFILER_SYNC_FRAME();
 	// Update input
 	LAST = NOW;
-	NOW	 = SDL_GetPerformanceCounter();
+	NOW  = SDL_GetPerformanceCounter();
 
 	//m_pNetwork->Update();
 	if (nPauseMode)
 	{
 #if ENABLE_DEBUG_GUI
-    m_env.pInput->AddEventListener(m_GuiManager);
+		m_env.pInput->AddEventListener(m_GuiManager);
 #endif
 	}
 
@@ -971,7 +967,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	}
 	if (!nPauseMode)
 	{
-			gEnv->p3DEngine->Update();
+		gEnv->p3DEngine->Update();
 	}
 
 	return true;

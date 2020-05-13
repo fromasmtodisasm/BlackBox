@@ -283,6 +283,7 @@ protected:
 	void SetCommonKeyBindings(IActionMap* pActionMap);
 
 	void MainMenu();
+	void DrawAux();
   public:
   float m_deltaTime;
 

@@ -75,7 +75,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	CreateQuad();
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("AuxGeom", 0)))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screenshader.vs", "screenshader.frag")))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -108,12 +108,6 @@ void GLRenderer::Release()
 void GLRenderer::BeginFrame(void)
 {
 	gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	UCol col;
-	auto v = Vec4(1, 1, 1, 1);
-	memcpy(col.bcolor, &v[0], 4);
-	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
-	m_RenderAuxGeom->DrawTriangle({-1, -1, -3}, col, {0, 1, -3}, col, {1, -1, 0}, col);
-	m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
 }
 
 void GLRenderer::Update(void)
@@ -414,9 +408,9 @@ void GLRenderer::SetRenderTarget(int nHandle)
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
 	using ShaderInfo = IShaderProgram::ShaderInfo;
-	auto vs = CShader::load(ShaderDesc("test.vs", IShader::E_VERTEX));
-	auto fs = CShader::load(ShaderDesc("test.frag", IShader::E_FRAGMENT));
-	auto p = new CShaderProgram(ShaderInfo(vs, std::string("test.vs")), ShaderInfo(fs, std::string("test.vs")));
+	auto vs			 = CShader::load(ShaderDesc("test.vs", IShader::E_VERTEX));
+	auto fs			 = CShader::load(ShaderDesc("test.frag", IShader::E_FRAGMENT));
+	auto p			 = new CShaderProgram(ShaderInfo(vs, std::string("test.vs")), ShaderInfo(fs, std::string("test.vs")));
 	p->Create("TestProgram");
 	return p;
 }
@@ -424,9 +418,9 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)
 {
 	using ShaderInfo = IShaderProgram::ShaderInfo;
-	auto vs = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
-	auto fs = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
-	auto p = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
+	auto vs			 = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
+	auto fs			 = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+	auto p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
 	p->Create((std::string(vertex) + std::string(fragment)).data());
 	return p;
 }
@@ -570,9 +564,9 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 
 	glm::mat4 model(1.0);
 	auto uv_projection   = glm::mat4(1.0);
-	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1000.0f);
+	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f);
 
-	model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.f));
+	//model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
 
 	if (needFlipY->GetIVal() == 1)
@@ -638,16 +632,14 @@ bool GLRenderer::InitResourceManagers()
 
 void GLRenderer::CreateQuad()
 {
-	float verts[] = {
-		// positions			  // texCoords
-		-1.0f, 1.0f, 0.5f, 0.0f, 1.0f,
-		-1.0f, -1.0f, 0.5f, 0.0f, 0.0f,
-		1.0f, -1.0f, 0.5f, 1.0f, 0.0f,
+	SVF_P3F_T2F verts[] = {
+		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+		{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
 
-		-1.0f, 1.0f, 0.5f, 0.0f, 1.0f,
-		1.0f, -1.0f, 0.5f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.5f, 1.0f, 1.0f};
-	;
+		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}};
 	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(6, VertFormatForComponents(false, false, false, true), "screen_quad", false);
 	UpdateBuffer(m_VertexBuffer, verts, 6, false);
 }

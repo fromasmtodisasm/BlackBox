@@ -55,7 +55,7 @@ namespace
 	inline VertexAttributePointer GetColorAttributePointer(int vertexFormat)
 	{
 		return VertexAttributePointer(
-			color, 4, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	OFFSET(OffsColor)
+			color, 4, GL_BYTE, GL_TRUE, gVertexSize[vertexFormat],	OFFSET(OffsColor)
 		);
 	}
 	inline VertexAttributePointer GetUVAttributePointer(int vertexFormat)

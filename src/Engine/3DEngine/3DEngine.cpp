@@ -54,6 +54,7 @@ void C3DEngine::Update()
 
 void C3DEngine::SetCamera(const CCamera& cam, bool bToTheScreen)
 {
+	m_Camera = cam;
 }
 static float s_time = 0;
 void C3DEngine::Draw()
@@ -80,7 +81,9 @@ void C3DEngine::Draw()
     m_pWorld->GetActiveScene()->present(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
   }
 	#endif
+
   s_time += 1 / 60.0f;
+	gEnv->pRenderer->SetCamera(m_Camera);
   auto w = gEnv->pRenderer->GetWidth() / 2;
   auto h = gEnv->pRenderer->GetHeight() / 2;
   auto draw = [&](IShaderProgram* p, Vec4d vp) {

@@ -137,7 +137,7 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex *& pVertices, uint32 numVertices)
 
 void CRenderAuxGeom::Flush()
 {
-  RSS(gEnv->pRenderer, DEPTH_TEST, false);
+  //RSS(gEnv->pRenderer, DEPTH_TEST, false);
   RSS(gEnv->pRenderer, CULL_FACE, false);
   gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
   gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, m_VB.size());
