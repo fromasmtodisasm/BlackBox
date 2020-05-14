@@ -227,6 +227,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
 
+	m_AABBs.emplace_back(AABB({0, 0, 0}, {5, 5, 5}));
+	m_AABBs.emplace_back(AABB({4, 0, 0}, {9, 5, 5}));
+
 	return true;
 }
 
@@ -618,10 +621,11 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
         return true;
       */
 		case eKI_Backspace:
+			m_SelectedBox = ++m_SelectedBox % 2;
 			return true;
 		case eKI_M:
-			camera.mode = CCamera::Mode::FLY;
-			m_Mode		= Mode::FLY;
+			camera.mode						  = CCamera::Mode::FLY;
+			m_Mode							  = Mode::FLY;
 			m_CameraController.m_Camera->mode = CCamera::Mode::FLY;
 			return true;
 		case eKI_Escape:
@@ -1026,30 +1030,52 @@ void CGame::DrawAux()
 {
 	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
 	auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col) {
-		auto render	= gEnv->pRenderer->GetIRenderAuxGeom();
+		auto render = gEnv->pRenderer->GetIRenderAuxGeom();
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
 	float x = 10, y = 0, z = -10;
 	{
 		UCol col1;
-		col1.bcolor[3] = 125;
+		col1.bcolor[0] = 50;
 		col1.bcolor[1] = 125;
 		col1.bcolor[2] = 0;
-		col1.bcolor[1] = 100;
+		col1.bcolor[3] = 100;
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 	{
 		UCol col2;
-		col2.bcolor[3] = 125;
+		col2.bcolor[0] = 50; //alpha
 		col2.bcolor[1] = 125;
 		col2.bcolor[2] = 100;
-		col2.bcolor[1] = 100;
+		col2.bcolor[3] = 100;
 		draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
 	}
 
-	auto render	= gEnv->pRenderer->GetIRenderAuxGeom();
-	render->DrawAABB({0, 0, 0}, {5, 5, 5});
+	auto render = gEnv->pRenderer->GetIRenderAuxGeom();
+	size_t i	= 0;
+	UCol slected_color;
+	slected_color.bcolor[0] = 255; //alpha
+	slected_color.bcolor[1] = 0;
+	slected_color.bcolor[2] = 100;
+	slected_color.bcolor[3] = 255;
 
-
+	UCol col;
+	col.bcolor[0] = 255; //alpha
+	col.bcolor[1] = 255;
+	col.bcolor[2] = 255;
+	col.bcolor[3] = 255;
+	for (auto aabb : m_AABBs)
+	{
+		UCol curr_color = col;
+		if (m_AABBs[0].IsIntersectBox((m_AABBs[1])))
+		{
+			curr_color = slected_color;	
+		}
+		render->DrawAABB(aabb.min, aabb.max, curr_color);
+	}
+	render->DrawLine(
+		{m_CameraController.m_Camera->transform.position}, col, {0, 0, 0}, col);
+	render->DrawLine(
+		{-10, 10, -5}, col, {10, 10, -5}, col);
 }

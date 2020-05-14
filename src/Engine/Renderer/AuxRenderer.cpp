@@ -93,7 +93,7 @@ CRenderAuxGeom::~CRenderAuxGeom()
 }
 
 //TODO: Довести до ума, нужно учитывать трансформации объекта
-void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
+void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, UCol& col)
 {
 	auto& shader = m_BoundingBoxShader;
 
@@ -102,11 +102,13 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
 	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
 	const auto& cam = gEnv->pRenderer->GetCamera();
+	Vec4 color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
 	shader->Use();
 	shader->Uniform(transform, "model");
 	shader->Uniform(cam.getViewMatrix(), "view");
 	shader->Uniform(cam.getProjectionMatrix(), "projection");
 	shader->Uniform(0.1f, "alpha");
+	shader->Uniform(color, "color");
 
 	{
 		RSS(gEnv->pRenderer, BLEND, true);
@@ -122,7 +124,7 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max)
 void CRenderAuxGeom::DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2)
 {
 	SAuxVertex* pVertices(nullptr);
-	AddPrimitive(pVertices, 3);
+	AddPrimitive(pVertices, 3, RenderPrimitive::TRIANGLES);
 
 	pVertices[0].xyz		  = v0;
 	pVertices[0].color.dcolor = PackColor(colV0);
@@ -139,7 +141,7 @@ void CRenderAuxGeom::DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1,
 	if (thickness <= 1.0f)
 	{
 		SAuxVertex* pVertices(nullptr);
-		AddPrimitive(pVertices, 2);
+		AddPrimitive(pVertices, 2, RenderPrimitive::LINES);
 
 		pVertices[0].xyz		  = v0;
 		pVertices[0].color.dcolor = PackColor(colV0);
@@ -152,12 +154,12 @@ void CRenderAuxGeom::DrawLines(const Vec3* v, uint32 numPoints, const UCol& col,
 {
 }
 
-void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices)
+void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive)
 {
 	;
 	assert(numVertices > 0);
 	{
-		m_auxPushBuffer.emplace_back(AuxPushBuffer::value_type(numVertices, RenderPrimitive::TRIANGLES));
+		m_auxPushBuffer.emplace_back(AuxPushBuffer::value_type(numVertices, primitive));
 	}
 	// get vertex ptr
 	AuxVertexBuffer& auxVertexBuffer(m_VB);
@@ -170,7 +172,7 @@ void CRenderAuxGeom::Flush()
 {
 	//RSS(gEnv->pRenderer, DEPTH_TEST, false);
 	RSS(gEnv->pRenderer, CULL_FACE, false);
-	//RSS(gEnv->pRenderer, BLEND, true);
+	RSS(gEnv->pRenderer, BLEND, true);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;

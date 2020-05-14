@@ -123,6 +123,30 @@ typedef std::map<string, ActionInfo> ActionsEnumMap;
 typedef ActionsEnumMap::iterator ActionsEnumMapItor;
 typedef std::multimap<string, CTagPoint*> TagPointMap;
 
+struct AABB
+{
+	Vec3 min;
+	Vec3 max;
+
+	AABB(Vec3 min, Vec3 max)
+		: min(min), max(max)
+	{
+	}
+	// Check two bounding boxes for intersection.
+	inline bool	IsIntersectBox( const AABB &b ) const	
+	{
+		// Check for intersection on X axis.
+		if ((min.x > b.max.x)||(b.min.x > max.x)) return false;
+		// Check for intersection on Y axis.
+		if ((min.y > b.max.y)||(b.min.y > max.y)) return false;
+		// Check for intersection on Z axis.
+		if ((min.z > b.max.z)||(b.min.z > max.z)) return false;
+		// Boxes overlap in all 3 axises.
+		return true;
+	}
+};
+
+
 
 class CGame : 
 	public IGame, 
@@ -436,6 +460,10 @@ public:
   IHardwareMouse* m_HardwareMouse = nullptr;
 
   CCameraController m_CameraController;
+
+	std::vector<AABB> m_AABBs;
+
+	size_t m_SelectedBox = 0;
 
 };
 
