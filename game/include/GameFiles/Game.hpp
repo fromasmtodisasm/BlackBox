@@ -1,53 +1,58 @@
 #pragma once
 
 #ifdef _DEBUG
-#define _VERIFY(x) ASSERT(x)
+#	define _VERIFY(x) ASSERT(x)
 #else
-#define _VERIFY(x) x
+#	define _VERIFY(x) x
 #endif
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Version of the game
-#define GAME_MAIN_VERSION						1						//!< [0..255]
-#define GAME_SUB_VERSION						4						//!< [0..255] patch version number, shown in menu
-#define GAME_PATCH_VERSION					0						//!< [0..256*256[
-#define SERVERINFO_FORMAT_VERSION		88				  //!< [0..255] bump if server info format changes (old version won't show up any more)
-#define NETWORK_FORMAT_VERSION			5						//!< [0..2^32] bump if netcode stream format changes
+#define GAME_MAIN_VERSION 1			 //!< [0..255]
+#define GAME_SUB_VERSION 4			 //!< [0..255] patch version number, shown in menu
+#define GAME_PATCH_VERSION 0		 //!< [0..256*256[
+#define SERVERINFO_FORMAT_VERSION 88 //!< [0..255] bump if server info format changes (old version won't show up any more)
+#define NETWORK_FORMAT_VERSION 5	 //!< [0..2^32] bump if netcode stream format changes
 
-#define SAVEVERSION									23					// [Petar] Do not bump this value anymore it shows the release version of the savegame - it will always be supported
-#define PATCH1_SAVEVERSION					24					// [Kirill] Do not bump this value anymore it shows the Patch 1 version of the savegame - it will always be supported
-#define PATCH2_SAVEVERSION					36					//!< bump this if the savegame format changes and we are still working on patch 2
+#define SAVEVERSION 23		  // [Petar] Do not bump this value anymore it shows the release version of the savegame - it will always be supported
+#define PATCH1_SAVEVERSION 24 // [Kirill] Do not bump this value anymore it shows the Patch 1 version of the savegame - it will always be supported
+#define PATCH2_SAVEVERSION 36 //!< bump this if the savegame format changes and we are still working on patch 2
 
-#define GAME_VERSION_SUFIX					"F"				//!< A - alpha, B - beta, RC - release candidate, F - final
+#define GAME_VERSION_SUFIX "F" //!< A - alpha, B - beta, RC - release candidate, F - final
 
+#define MAKE_GAME_VERSION(m, s, p) (((m) << 24) | ((s) << 16) | (p))
+#define GAME_VERSION MAKE_GAME_VERSION(GAME_MAIN_VERSION, GAME_SUB_VERSION, GAME_PATCH_VERSION)
 
-#define MAKE_GAME_VERSION(m,s,p)		(((m)<<24)|((s)<<16)|(p))
-#define GAME_VERSION								MAKE_GAME_VERSION(GAME_MAIN_VERSION,GAME_SUB_VERSION,GAME_PATCH_VERSION)
-
-#define ENTITYTYPE_PLAYER				0x00000001
-#define ENTITYTYPE_WAYPOINT			0x00000002
-#define ENTITYTYPE_OWNTEAM			0x00000004
+#define ENTITYTYPE_PLAYER 0x00000001
+#define ENTITYTYPE_WAYPOINT 0x00000002
+#define ENTITYTYPE_OWNTEAM 0x00000004
 
 #define SAVEMAGIC "CRYLEVELSAVE"
 #define THISGAME "TestGame"
 
 // game states
-enum { CGS_INPROGRESS = 0, CGS_COUNTDOWN = 1, CGS_PREWAR = 2, CGS_INTERMISSION = 3 };
+enum
+{
+	CGS_INPROGRESS   = 0,
+	CGS_COUNTDOWN	= 1,
+	CGS_PREWAR		 = 2,
+	CGS_INTERMISSION = 3
+};
 
 //#include "BitStream_Base.h"						// CBitStream_Base
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
 
-#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/World/IWorld.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/World/IWorld.hpp>
 
+#include "Player.h"
 #include <Network/XNetwork.hpp>
-#include <ScriptObjects/ScriptObjectServer.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <ScriptObjects/ScriptObjectGame.hpp>
-#include "Player.h"
+#include <ScriptObjects/ScriptObjectServer.hpp>
 
 #include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
@@ -56,36 +61,37 @@ struct IStatObj;
 
 struct TextRenderInfo
 {
-  IFont* font;
-  std::vector<std::string> text;
-  Vec4 color;
-  SDrawTextInfo dti;
-  TextRenderInfo() : font(nullptr), color(Vec4(1.0)) {}
-  TextRenderInfo(IFont* f, Vec4 c)
-    :
-    font(f), color(c)
-  {
-  }
-  void AddLine(std::string line)
-  {
-    text.push_back(line + '\n');
-  }
-  SDrawTextInfo& getDTI()
-  {
-    dti.color[0] = color[0];
-    dti.color[1] = color[1];
-    dti.color[2] = color[2];
-    dti.color[3] = color[3];
-    dti.font = font;
-    return dti;
-  }
+	IFont* font;
+	std::vector<std::string> text;
+	Vec4 color;
+	SDrawTextInfo dti;
+	TextRenderInfo()
+		: font(nullptr), color(Vec4(1.0))
+	{
+	}
+	TextRenderInfo(IFont* f, Vec4 c)
+		: font(f), color(c)
+	{
+	}
+	void AddLine(std::string line)
+	{
+		text.push_back(line + '\n');
+	}
+	SDrawTextInfo& getDTI()
+	{
+		dti.color[0] = color[0];
+		dti.color[1] = color[1];
+		dti.color[2] = color[2];
+		dti.color[3] = color[3];
+		dti.font	 = font;
+		return dti;
+	}
 };
-
 
 //forward declarations
 //////////////////////////////////////////////////////////////////////
 using string = std::string;
-class EventListener; 
+class EventListener;
 class GameGUI;
 struct IScene;
 class SceneManager;
@@ -96,7 +102,14 @@ class CGameMods;
 class CXClient;
 class CXServer;
 
-enum ActionType { ACTIONTYPE_MOVEMENT = 1, ACTIONTYPE_COMBAT, ACTIONTYPE_GAME, ACTIONTYPE_MULTIPLAYER, ACTIONTYPE_DEBUG };
+enum ActionType
+{
+	ACTIONTYPE_MOVEMENT = 1,
+	ACTIONTYPE_COMBAT,
+	ACTIONTYPE_GAME,
+	ACTIONTYPE_MULTIPLAYER,
+	ACTIONTYPE_DEBUG
+};
 
 //////////////////////////////////////////////////////////////////////
 typedef std::queue<string> StringQueue;
@@ -106,7 +119,7 @@ typedef std::vector<string> Vec2Str;
 typedef Vec2Str::iterator Vec2StrIt;
 typedef std::list<CPlayer*> ListOfPlayers;
 
-typedef std::map<CIPAddress, SXServerInfos>	ServerInfosMap;
+typedef std::map<CIPAddress, SXServerInfos> ServerInfosMap;
 typedef ServerInfosMap::iterator ServerInfosVecItor;
 
 struct ActionInfo
@@ -115,7 +128,7 @@ struct ActionInfo
 	string sDesc;
 	bool bConfigurable;
 	XActionActivationMode ActivationMode;
-	Vec2Str vecSetToActionMap;	// if it is configured via "BindActionMultipleMaps" it will set the key-bindings to all action-maps in this array and leaves the others untouched
+	Vec2Str vecSetToActionMap; // if it is configured via "BindActionMultipleMaps" it will set the key-bindings to all action-maps in this array and leaves the others untouched
 	int nType;
 };
 
@@ -133,34 +146,45 @@ struct AABB
 	{
 	}
 	// Check two bounding boxes for intersection.
-	inline bool	IsIntersectBox( const AABB &b ) const	
+	inline bool IsIntersectBox(const AABB& b) const
 	{
 		// Check for intersection on X axis.
-		if ((min.x > b.max.x)||(b.min.x > max.x)) return false;
+		if ((min.x > b.max.x) || (b.min.x > max.x))
+			return false;
 		// Check for intersection on Y axis.
-		if ((min.y > b.max.y)||(b.min.y > max.y)) return false;
+		if ((min.y > b.max.y) || (b.min.y > max.y))
+			return false;
 		// Check for intersection on Z axis.
-		if ((min.z > b.max.z)||(b.min.z > max.z)) return false;
+		if ((min.z > b.max.z) || (b.min.z > max.z))
+			return false;
 		// Boxes overlap in all 3 axises.
 		return true;
 	}
 };
 
-
-
-class CGame : 
-	public IGame, 
-	public IInputEventListener, 
-	public IPostRenderCallback, 
-	public IPreRenderCallback,
-	public IServerSnooperSink,
-	public INETServerSnooperSink
+struct TestObject
 {
-  class EventListener;
-  friend class GameGUI;
-  friend class CPlayer;
+	TestObject(AABB aabb, Vec4 color)
+		: m_AABB(aabb), m_Color(color)
+	{
+	}
 
-public:	
+	AABB m_AABB;
+	Vec4 m_Color;
+};
+
+class CGame : public IGame
+	, public IInputEventListener
+	, public IPostRenderCallback
+	, public IPreRenderCallback
+	, public IServerSnooperSink
+	, public INETServerSnooperSink
+{
+	class EventListener;
+	friend class GameGUI;
+	friend class CPlayer;
+
+  public:
 	enum HostType
 	{
 		CLIENT,
@@ -168,100 +192,112 @@ public:
 		NOT_CONECTED
 	};
 
-  CGame();
-  ~CGame() = default;
+	CGame();
+	~CGame() = default;
 
-	const char *IsMODLoaded();
+	const char* IsMODLoaded();
 	IGameMods* GetModsInterface();
 
-  bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) override;
-  bool Update() override;
+	bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) override;
+	bool Update() override;
 	void ExecScripts();
 	void DrawHud(float fps);
-  void DisplayInfo(float fps);
-  bool Run(bool& bRelaunch) override;
+	void DisplayInfo(float fps);
+	bool Run(bool& bRelaunch) override;
 
+	bool loadScene(std::string name);
+	void saveScene(std::string name, std::string as);
+	void SetRenderState();
+	void setPlayer(CPlayer* player);
+	void setCamera(CCamera* camera);
 
-  bool loadScene(std::string name);
-  void saveScene(std::string name, std::string as);
-  void SetRenderState();
-  void setPlayer(CPlayer *player);
-  void setCamera(CCamera *camera);
-
-  // IInputEventListener interface
-public:
-  virtual bool OnInputEvent(const SInputEvent& event) override;
-  virtual int GetPriority() const { return 2; }
+	// IInputEventListener interface
+  public:
+	virtual bool OnInputEvent(const SInputEvent& event) override;
+	virtual int GetPriority() const
+	{
+		return 2;
+	}
 
 	void PersistentHandler(const SInputEvent& event);
 
-  // IGame interface
-public:
+	// IGame interface
+  public:
 	virtual void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) override;
 	virtual void ReloadScripts() override;
 	virtual bool GetModuleState(EGameCapability eCap) override;
 	virtual void UpdateDuringLoading() override;
 	virtual IXAreaMgr* GetAreaManager() override;
 	virtual ITagPointManager* GetTagPointManager() override;
-  void Stop();
+	void Stop();
 	void gotoMenu();
 	void gotoFullscreen();
 	void gotoGame();
 	void gotoFly();
 	void gotoEdit();
-  void showMenu();
-	virtual void SendMessage(const char* str) override {
+	void showMenu();
+	virtual void SendMessage(const char* str) override
+	{
 		m_qMessages.push(str);
 	}
 	virtual void Release() override;
 
-	bool	OpenPacks(const char *szFolder);
-	bool	ClosePacks(const char *szFolder);
+	bool OpenPacks(const char* szFolder);
+	bool ClosePacks(const char* szFolder);
 
-private:
-
-  bool initPlayer();
-  bool FpsInputEvent(const SInputEvent& event);
-  bool FlyInputEvent(const SInputEvent& event);
-  bool MenuInputEvent(const SInputEvent& event);
-  bool DefaultInputEvent(const SInputEvent& event);
-  bool EditInputEvent(const SInputEvent& event);
-  bool OnInputEventProxy(const SInputEvent& event);
+  private:
+	bool initPlayer();
+	bool FpsInputEvent(const SInputEvent& event);
+	bool FlyInputEvent(const SInputEvent& event);
+	bool MenuInputEvent(const SInputEvent& event);
+	bool DefaultInputEvent(const SInputEvent& event);
+	bool EditInputEvent(const SInputEvent& event);
+	bool OnInputEventProxy(const SInputEvent& event);
 
 	bool ShouldHandleEvent(const SInputEvent& event, bool& retflag);
 	void ProcessPMessages(const char* szMsg);
 	bool IsInPause();
 
-
-  // IGame interface
-public:
-
-  virtual void PostRender() override;
+	// IGame interface
+  public:
+	virtual void PostRender() override;
 
 	void initCommands();
 	void initVariables();
 
 	virtual void PreRender() override;
-  // tagpoint management functions
-  ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
-  ITagPoint* GetTagPoint(const string& name);
-  void RemoveTagPoint(ITagPoint* pPoint);
-  bool RenameTagPoint(const string& oldname, const string& newname);
+	// tagpoint management functions
+	ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
+	ITagPoint* GetTagPoint(const string& name);
+	void RemoveTagPoint(ITagPoint* pPoint);
+	bool RenameTagPoint(const string& oldname, const string& newname);
 
-	IScriptSystem* GetScriptSystem() { return m_pScriptSystem; }
+	IScriptSystem* GetScriptSystem()
+	{
+		return m_pScriptSystem;
+	}
 	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
 	}
-	IServer *CreateServer(IServerSlotFactory *pSink,WORD nPort, bool listen){return m_pNetwork->CreateServer(pSink,nPort,listen);}
-	IActionMapManager* GetActionMapManager() { return m_pIActionMapManager; }
+	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen)
+	{
+		return m_pNetwork->CreateServer(pSink, nPort, listen);
+	}
+	IActionMapManager* GetActionMapManager()
+	{
+		return m_pIActionMapManager;
+	}
 
 	//
 	bool InitScripts();
 
 	bool TestScriptSystem(bool& retflag);
 
-	ISystem* GetSystem() { return m_pSystem; }
+	ISystem* GetSystem()
+	{
+		return m_pSystem;
+	}
 	//////////////////////////////////////////////////////////////////////////
 	// DevMode.
 	//////////////////////////////////////////////////////////////////////////
@@ -270,16 +306,19 @@ public:
 	void DevMode_SavePlayerPos(int index, const char* sTagName = NULL, const char* sDescription = NULL);
 	void DevMode_LoadPlayerPos(int index, const char* sTagName = NULL);
 	//////////////////////////////////////////////////////////////////////////
-	void  ResetInputMap();
+	void ResetInputMap();
 	string GetLevelsFolder() const;
 
 	// Network -------------------------------------------------------------
 	//! functions to know if the current terminal is a server and/or a client
 	//@{
-	bool	IsServer()	{	return m_pServer!=NULL;	}
-	bool	IsClient();
-	bool  IsMultiplayer();   // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
-	bool	IsDevModeEnable();
+	bool IsServer()
+	{
+		return m_pServer != NULL;
+	}
+	bool IsClient();
+	bool IsMultiplayer(); // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
+	bool IsDevModeEnable();
 	//@}
 	bool StartupServer(bool listen, const char* szName);
 	void ShutdownServer();
@@ -292,56 +331,57 @@ public:
 	void OnNETServerTimeout(const CIPAddress& ip);
 	void RefreshServerList();
 	//////////////////////////////////////////////////////////////////////////
-	void BindAction(const char *sAction,const char *sKeys,const char *sActionMap=NULL, int iKeyPos = -1);
-	void BindActionMultipleMaps(const char *sAction,const char *sKeys, int iKeyPos = -1);
-	bool CheckForAction(const char *sAction);
-	void ClearAction(const char *sAction);
-protected:
+	void BindAction(const char* sAction, const char* sKeys, const char* sActionMap = NULL, int iKeyPos = -1);
+	void BindActionMultipleMaps(const char* sAction, const char* sKeys, int iKeyPos = -1);
+	bool CheckForAction(const char* sAction);
+	void ClearAction(const char* sAction);
+
+  protected:
 	void SetConfigToActionMap(const char* pszActionName, ...);
 	//bool LoadMaterials(string sFolder);
-	void	InitInputMap();
-	void	InitConsoleCommands();
-	void	InitConsoleVars();
+	void InitInputMap();
+	void InitConsoleCommands();
+	void InitConsoleVars();
 	//set the common key bindings for the specified action map.
 	//it reduces code redundancy and makes things more clear.
 	void SetCommonKeyBindings(IActionMap* pActionMap);
 
 	void MainMenu();
 	void DrawAux();
-  public:
-  float m_deltaTime;
 
-public:
-	ISystem *											m_pSystem;								//!< The system interface
-	CXServer *										m_pServer = nullptr;								//!< The server of this computer
-	CXClient *										m_pClient;								//!< The client of this computer
-  IScriptSystem *								m_pScriptSystem;
-  IRenderer *										m_pRender;
-	IInput *											m_pInput;
-  IInputHandler *								m_inputHandler;
-  I3DEngine*                    m_3DEngine;
-  CPlayer *											m_player = nullptr;
-  ILog *												m_pLog;
-	INetwork*											m_pNetwork;
-	StringQueue										m_qMessages;
-  bool													isWireFrame = false;
-  bool													isFullScreen = false;
+  public:
+	float m_deltaTime;
+
+  public:
+	ISystem* m_pSystem;			   //!< The system interface
+	CXServer* m_pServer = nullptr; //!< The server of this computer
+	CXClient* m_pClient;		   //!< The client of this computer
+	IScriptSystem* m_pScriptSystem;
+	IRenderer* m_pRender;
+	IInput* m_pInput;
+	IInputHandler* m_inputHandler;
+	I3DEngine* m_3DEngine;
+	CPlayer* m_player = nullptr;
+	ILog* m_pLog;
+	INetwork* m_pNetwork;
+	StringQueue m_qMessages;
+	bool isWireFrame  = false;
+	bool isFullScreen = false;
 
 #ifdef ENABLE_MUSIC_LIST
-  MusicList m_PlayList;
-  bool m_isMusicPlaying = false;
+	MusicList m_PlayList;
+	bool m_isMusicPlaying = false;
 #endif // ENABLE_MUSIC_LIST
 
-
-  std::string m_Title;
-  float m_lastTime;
+	std::string m_Title;
+	float m_lastTime;
 	float m_time = 0.0f;
 #ifdef CLOCK_FIXED
 	//TODO: FIX CLOCK
-  sf::Clock deltaClock;
+	sf::Clock deltaClock;
 #endif // CLOCK_FIXED
 
-  EventListener *listener;
+	EventListener* listener;
 	bool isDrawingGui = false;
 
 	IFont* m_Font;
@@ -349,36 +389,35 @@ public:
 	//==========
 	IConsole* m_Console;
 	// Render states
-	bool culling = true;
-	glm::vec2 viewPort = glm::vec2(1366.0f,768.0f);
-  //
-  bool openShadowMap = true;
+	bool culling	   = true;
+	glm::vec2 viewPort = glm::vec2(1366.0f, 768.0f);
+	//
+	bool openShadowMap = true;
 
 	int currPP = 0;
 
-public:
+  public:
 	//!	The dummy client of this computer, required to get the list of servers if
 	//! theres not a real client actually connected and playing
 
-	IServerSnooper*								m_pServerSnooper;					//!< used for LAN Multiplayer, to remove control servers
-	INETServerSnooper*						m_pNETServerSnooper;			//!< used for Internet Multiplayer, to remove control servers
-	IRConSystem*									m_pRConSystem = nullptr;						//!< used for Multiplayer, to remote control servers
-	std::string										m_szLastAddress;
-	bool													m_bLastDoLateSwitch;
-	bool													m_bLastCDAuthentication;
+	IServerSnooper* m_pServerSnooper;		//!< used for LAN Multiplayer, to remove control servers
+	INETServerSnooper* m_pNETServerSnooper; //!< used for Internet Multiplayer, to remove control servers
+	IRConSystem* m_pRConSystem = nullptr;   //!< used for Multiplayer, to remote control servers
+	std::string m_szLastAddress;
+	bool m_bLastDoLateSwitch;
+	bool m_bLastCDAuthentication;
 
 	//CUIHud* m_pUIHud;									//!< Hud
 	//CUIHud* m_pCurrentUI;							//!< for the current ui
 
-	std::string										m_currentLevel;						//!< Name of current level.
-	std::string										m_currentMission;					//!< Name of current mission.
-	std::string										m_currentLevelFolder;			//!< Folder of the current level.
-
+	std::string m_currentLevel;		  //!< Name of current level.
+	std::string m_currentMission;	 //!< Name of current mission.
+	std::string m_currentLevelFolder; //!< Folder of the current level.
 
 	// console variables -----------------------------------------------------------
 	//=======================
-  ICVar* g_scene;
-  ICVar* r_displayinfo;
+	ICVar* g_scene;
+	ICVar* r_displayinfo;
 	ICVar* r_profile;
 	ICVar* r_cap_profile;
 	ICVar* m_pCVarCheatMode;
@@ -398,38 +437,37 @@ public:
 	ICVar* cl_snoopretries;
 	ICVar* cl_snoopcount;
 
-	ServerInfosMap						m_ServersInfos;							//!< Infos about the avaible servers
-	std::string								m_strLastSaveGame;
-	bool											m_bEditor;
+	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
+	std::string m_strLastSaveGame;
+	bool m_bEditor;
 	//tPlayerPersistentData			m_tPlayerPersistentData;
 
-
-  TagPointMap													m_mapTagPoints;					//!< Map of tag points by name
-	CScriptObjectGame*									m_pScriptObjectGame;
-	IScriptObject*											m_playerObject;
-	CGameMods *							m_pGameMods;								//!< might be 0 (before game init)
+	TagPointMap m_mapTagPoints; //!< Map of tag points by name
+	CScriptObjectGame* m_pScriptObjectGame;
+	IScriptObject* m_playerObject;
+	CGameMods* m_pGameMods; //!< might be 0 (before game init)
 
 	// other
-	bool canDragViewPortWidth = false;
+	bool canDragViewPortWidth  = false;
 	bool canDragViewPortHeight = false;
-	bool mousePressed = false;
+	bool mousePressed		   = false;
 
-  enum Mode
-  {
-    FPS,
-    MENU,
-    FLY,
+	enum Mode
+	{
+		FPS,
+		MENU,
+		FLY,
 		EDIT
-    
-  }m_Mode = Mode::FPS;
+
+	} m_Mode  = Mode::FPS;
 	float fps = 0.0;
 
-	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
-	struct IActionMapManager* m_pIActionMapManager;			//!<
-	bool											m_bDedicatedServer;				//!<
-	bool											m_bOK;										//!<
-	bool											m_bUpdateRet;							//!<
-	bool											m_bRelaunch;							//!<
+	ActionsEnumMap m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
+	struct IActionMapManager* m_pIActionMapManager; //!<
+	bool m_bDedicatedServer;						//!<
+	bool m_bOK;										//!<
+	bool m_bUpdateRet;								//!<
+	bool m_bRelaunch;								//!<
 	bool m_bInPause = false;
 
 	//other
@@ -443,7 +481,7 @@ public:
 	bool m_SceneRendered = false;
 
 	std::list<TextRenderInfo> m_MenuEntry;
-	size_t m_MenuEntryIdx = 0;
+	size_t m_MenuEntryIdx		  = 0;
 	std::vector<string> test_text = {
 		"Entry ...............1\n",
 		"Entry ..............10\n",
@@ -457,14 +495,11 @@ public:
 
 	char* test_string = "user data string";
 
-  IHardwareMouse* m_HardwareMouse = nullptr;
+	IHardwareMouse* m_HardwareMouse = nullptr;
 
-  CCameraController m_CameraController;
+	CCameraController m_CameraController;
 
-	std::vector<AABB> m_AABBs;
+	std::vector<TestObject> m_testObjects;
 
 	size_t m_SelectedBox = 0;
-
 };
-
-

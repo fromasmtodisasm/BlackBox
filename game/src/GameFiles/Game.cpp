@@ -227,8 +227,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
 
-	m_AABBs.emplace_back(AABB({0, 0, 0}, {5, 5, 5}));
-	m_AABBs.emplace_back(AABB({4, 0, 0}, {9, 5, 5}));
+	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255,0,0,255)));
+	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0,255,0,255)));
 
 	return true;
 }
@@ -627,6 +627,14 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			camera.mode						  = CCamera::Mode::FLY;
 			m_Mode							  = Mode::FLY;
 			m_CameraController.m_Camera->mode = CCamera::Mode::FLY;
+			return true;
+		case eKI_NP_4:
+			m_testObjects[m_SelectedBox].m_AABB.min.x += 1;
+			m_testObjects[m_SelectedBox].m_AABB.max.x += 1;
+			return true;
+		case eKI_NP_6:
+			m_testObjects[m_SelectedBox].m_AABB.min.x -= 1;
+			m_testObjects[m_SelectedBox].m_AABB.max.x -= 1;
 			return true;
 		case eKI_Escape:
 			gotoMenu();
@@ -1056,8 +1064,8 @@ void CGame::DrawAux()
 	size_t i	= 0;
 	UCol slected_color;
 	slected_color.bcolor[0] = 255; //alpha
-	slected_color.bcolor[1] = 0;
-	slected_color.bcolor[2] = 100;
+	slected_color.bcolor[1] = 255;
+	slected_color.bcolor[2] = 50;
 	slected_color.bcolor[3] = 255;
 
 	UCol col;
@@ -1065,14 +1073,18 @@ void CGame::DrawAux()
 	col.bcolor[1] = 255;
 	col.bcolor[2] = 255;
 	col.bcolor[3] = 255;
-	for (auto aabb : m_AABBs)
+	for (auto object : m_testObjects)
 	{
-		UCol curr_color = col;
-		if (m_AABBs[0].IsIntersectBox((m_AABBs[1])))
+		UCol curr_color;
+		curr_color.bcolor[0] = object.m_Color[0]; //alpha
+		curr_color.bcolor[1] = object.m_Color[1];
+		curr_color.bcolor[2] = object.m_Color[2];
+		curr_color.bcolor[3] = object.m_Color[3];
+		if (m_testObjects[0].m_AABB.IsIntersectBox((m_testObjects[1].m_AABB)))
 		{
 			curr_color = slected_color;	
 		}
-		render->DrawAABB(aabb.min, aabb.max, curr_color);
+		render->DrawAABB(object.m_AABB.min, object.m_AABB.max, curr_color);
 	}
 	render->DrawLine(
 		{m_CameraController.m_Camera->transform.position}, col, {0, 0, 0}, col);
