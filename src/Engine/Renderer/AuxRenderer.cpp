@@ -172,7 +172,7 @@ void CRenderAuxGeom::Flush()
 {
 	//RSS(gEnv->pRenderer, DEPTH_TEST, false);
 	RSS(gEnv->pRenderer, CULL_FACE, false);
-	RSS(gEnv->pRenderer, BLEND, true);
+	//RSS(gEnv->pRenderer, BLEND, true);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;

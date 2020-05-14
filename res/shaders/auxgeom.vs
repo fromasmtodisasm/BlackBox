@@ -17,5 +17,5 @@ void main()
     gl_Position = projection * view * vec4(aPos, 1.0);
     //gl_Position = vec4(aPos, 1.0);
 	//v_color = aColor;
-	v_color = vec4(aColor.a);
+	v_color = vec4(aColor);
 } 

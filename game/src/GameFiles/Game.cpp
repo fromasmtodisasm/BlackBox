@@ -227,8 +227,10 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
 
-	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255,0,0,255)));
-	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0,255,0,255)));
+	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255, 0, 0, 255)));
+	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 255, 255)));
+	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 255, 255)));
+	m_testObjects.emplace_back(TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255)));
 
 	return true;
 }
@@ -620,8 +622,8 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
         isWireFrame = !isWireFrame;
         return true;
       */
-		case eKI_Backspace:
-			m_SelectedBox = ++m_SelectedBox % 2;
+		case eKI_NP_0:
+			m_SelectedBox = ++m_SelectedBox % m_testObjects.size();
 			return true;
 		case eKI_M:
 			camera.mode						  = CCamera::Mode::FLY;
@@ -636,6 +638,23 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			m_testObjects[m_SelectedBox].m_AABB.min.x -= 1;
 			m_testObjects[m_SelectedBox].m_AABB.max.x -= 1;
 			return true;
+		case eKI_NP_8:
+			m_testObjects[m_SelectedBox].m_AABB.min.z += 1;
+			m_testObjects[m_SelectedBox].m_AABB.max.z += 1;
+			return true;
+		case eKI_NP_2:
+			m_testObjects[m_SelectedBox].m_AABB.min.z -= 1;
+			m_testObjects[m_SelectedBox].m_AABB.max.z -= 1;
+			return true;
+		case eKI_NP_5:
+		{
+			int module = 1;
+			if (control)
+				module = -1;
+			m_testObjects[m_SelectedBox].m_AABB.min.y += module;
+			m_testObjects[m_SelectedBox].m_AABB.max.y += module;
+			return true;
+		}
 		case eKI_Escape:
 			gotoMenu();
 			return true;
@@ -1034,6 +1053,12 @@ void CGame::MainMenu()
 {
 }
 
+struct ray
+{
+	Vec3 origin;
+	Vec3 direction;
+};
+
 void CGame::DrawAux()
 {
 	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
@@ -1042,6 +1067,14 @@ void CGame::DrawAux()
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
+	UCol col;
+	col.bcolor[0] = 255; //alpha
+	col.bcolor[1] = 255;
+	col.bcolor[2] = 255;
+	col.bcolor[3] = 255;
+	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
+	render->DrawLine(
+		{-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 10, y = 0, z = -10;
 	{
 		UCol col1;
@@ -1057,37 +1090,62 @@ void CGame::DrawAux()
 		col2.bcolor[1] = 125;
 		col2.bcolor[2] = 100;
 		col2.bcolor[3] = 100;
-		draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
+		//draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
 	}
 
-	auto render = gEnv->pRenderer->GetIRenderAuxGeom();
-	size_t i	= 0;
-	UCol slected_color;
-	slected_color.bcolor[0] = 255; //alpha
-	slected_color.bcolor[1] = 255;
-	slected_color.bcolor[2] = 50;
-	slected_color.bcolor[3] = 255;
+	size_t i = 0;
+	UCol selected_color;
+	selected_color.bcolor[0] = 255; //alpha
+	selected_color.bcolor[1] = 255;
+	selected_color.bcolor[2] = 50;
+	selected_color.bcolor[3] = 255;
 
-	UCol col;
-	col.bcolor[0] = 255; //alpha
-	col.bcolor[1] = 255;
-	col.bcolor[2] = 255;
-	col.bcolor[3] = 255;
-	for (auto object : m_testObjects)
+	for (size_t i = 0; i < m_testObjects.size() - 1; i++)
 	{
-		UCol curr_color;
-		curr_color.bcolor[0] = object.m_Color[0]; //alpha
-		curr_color.bcolor[1] = object.m_Color[1];
-		curr_color.bcolor[2] = object.m_Color[2];
-		curr_color.bcolor[3] = object.m_Color[3];
-		if (m_testObjects[0].m_AABB.IsIntersectBox((m_testObjects[1].m_AABB)))
+		auto& left = m_testObjects[i];
+
+		//for (auto object : m_testObjects)
+		for (size_t j = i + 1; j < m_testObjects.size(); j++)
 		{
-			curr_color = slected_color;	
+			auto& right = m_testObjects[j];
+			if (left.m_AABB.IsIntersectBox((right.m_AABB)))
+			{
+				left.intersected = right.intersected = true;
+			}
 		}
-		render->DrawAABB(object.m_AABB.min, object.m_AABB.max, curr_color);
 	}
+	for (auto& object : m_testObjects)
+	{
+		render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.intersected ? selected_color : object.m_Color);
+		object.intersected = false;
+	}
+
+	ray ray;
+
+	ray.origin = m_CameraController.m_Camera->transform.position;
+	ray.direction = m_CameraController.m_Camera->Front;
+
 	render->DrawLine(
-		{m_CameraController.m_Camera->transform.position}, col, {0, 0, 0}, col);
-	render->DrawLine(
-		{-10, 10, -5}, col, {10, 10, -5}, col);
+		ray.origin + 0.1f, col, ray.origin + ray.direction * 20.f, col);
+
+	// Axis
+	///////////////////////////////////////
+	{
+		int l = 10;
+		{
+			UCol c = Vec3(1, 0, 0);
+			render->DrawLine(
+				{-l, 0, 0}, c, {l, 0, 0}, c);
+		}
+		{
+			UCol c = Vec3(0, 1, 0);
+			render->DrawLine(
+				{0, -l, 0}, c, {0, l, 0}, c);
+		}
+		{
+			UCol c = Vec3(0, 0, 1);
+			render->DrawLine(
+				{0, 0, -l}, c, {0, 0, l}, c);
+		}
+	}
 }

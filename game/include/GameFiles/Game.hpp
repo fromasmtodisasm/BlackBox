@@ -165,12 +165,17 @@ struct AABB
 struct TestObject
 {
 	TestObject(AABB aabb, Vec4 color)
-		: m_AABB(aabb), m_Color(color)
+		: m_AABB(aabb) 
 	{
+		m_Color.bcolor[0] = static_cast<char>(color[0]);
+		m_Color.bcolor[1] = static_cast<char>(color[1]);
+		m_Color.bcolor[2] = static_cast<char>(color[2]);
+		m_Color.bcolor[3] = static_cast<char>(color[3]);
 	}
 
 	AABB m_AABB;
-	Vec4 m_Color;
+	UCol m_Color;
+	bool intersected = false;
 };
 
 class CGame : public IGame
