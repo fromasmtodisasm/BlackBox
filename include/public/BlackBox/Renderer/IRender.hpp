@@ -165,11 +165,11 @@ union UCol {
 	{
 	}
 	UCol(bvec4 v): 
-		 bcolor({v[0], v[1], v[2], v[3]})
+		 bcolor{v[0], v[1], v[2], v[3]}
 	{
 	}
-	UCol(char v0, char v1, char v2, char v3): 
-		 bcolor({v0, v1, v2, v3})
+	UCol(uint8 v0, uint8 v1, uint8 v2, uint8 v3): 
+		 bcolor{v0, v1, v2, v3}
 	{
 	}
 			
