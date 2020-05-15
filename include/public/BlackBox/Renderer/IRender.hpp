@@ -163,8 +163,16 @@ union UCol {
 	UCol(Vec3& v)
 		: UCol(Vec4(v, 1))
 	{
-
 	}
+	UCol(bvec4 v): 
+		 bcolor({v[0], v[1], v[2], v[3]})
+	{
+	}
+	UCol(char v0, char v1, char v2, char v3): 
+		 bcolor({v0, v1, v2, v3})
+	{
+	}
+			
 };
 
 enum class RenderPrimitive
@@ -510,6 +518,8 @@ struct IRenderer
 	virtual struct IFont* GetIFont()						 = 0;
 
 	virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) = 0;
+
+	virtual float GetDepthValue(int x, int y) = 0;
 
 	////////////////////////////////////////////////////////////////////////////////
 	virtual IShaderProgram* Sh_Load(const char* name, int flags)			  = 0;

@@ -19,18 +19,36 @@ namespace
 
 CRenderAuxGeom::CRenderAuxGeom()
 {
+	#if 0
 	// Cube 1x1x1, centered on origin
+  GLfloat cube_vertices[] = {
+    // front
+		Vec3{-1.0, -1.0, 1.0},
+     Vec3{1.0, -1.0,  1.0},
+     Vec3{1.0,  1.0,  1.0},
+    Vec3{-1.0,  1.0,  1.0},
+    // back
+    Vec3{-1.0, -1.0, -1.0},
+     Vec3{1.0, -1.0, -1.0},
+     Vec3{1.0,  1.0, -1.0},
+    Vec3{-1.0,  1.0, -1.}0
+  };
+	#endif
 	static P3F vertices[] = {
-		Vec3{-0.5f, -0.5f, -0.5f},
-		Vec3{0.5, -0.5, -0.5},
-		Vec3{0.5, 0.5, -0.5},
-		Vec3{-0.5, 0.5, -0.5},
-		Vec3{-0.5, -0.5, 0.5},
-		Vec3{0.5, -0.5, 0.5},
-		Vec3{0.5, 0.5, 0.5},
-		Vec3{-0.5, 0.5, 0.5}};
+		
+    // front
+		Vec3{-1.0, -1.0, 1.0},
+     Vec3{1.0, -1.0,  1.0},
+     Vec3{1.0,  1.0,  1.0},
+    Vec3{-1.0,  1.0,  1.0},
+    // back
+    Vec3{-1.0, -1.0, -1.0},
+     Vec3{1.0, -1.0, -1.0},
+     Vec3{1.0,  1.0, -1.0},
+    Vec3{-1.0,  1.0, -1.}
+};
 	static uint16 elements[] = {
-#if 1
+#if 0
 		0,
 		1,
 		2,
@@ -48,32 +66,30 @@ CRenderAuxGeom::CRenderAuxGeom()
 		3,
 		7
 #else
-		0,
-		3,
-		2,
-		1,
-		2,
-		3,
-		7,
-		6,
-		0,
-		4,
-		7,
-		3,
-		1,
-		2,
-		6,
-		5,
-		4,
-		5,
-		6,
-		7,
-		0,
-		1,
-		5,
-		4
+		// front
+		0, 1, 2,
+		2, 3, 0,
+		// right
+		1, 5, 6,
+		6, 2, 1,
+		// back
+		7, 6, 5,
+		5, 4, 7,
+		// left
+		4, 0, 3,
+		3, 7, 4,
+		// bottom
+		4, 5, 1,
+		1, 0, 4,
+		// top
+		3, 2, 6,
+		6, 7, 3
 #endif
 	};
+	for (int i = 0; i < 8; i++)
+	{
+		vertices[i].xyz *= 0.5;		
+	}
 	///////////////////////////////////////////////////////////////////////////////
 	int cnt		  = sizeof vertices / sizeof P3F;
 	m_BoundingBox = gEnv->pRenderer->CreateBuffer(cnt, VERTEX_FORMAT_P3F, "BoundingBox", false);
@@ -113,9 +129,14 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, UCol& col)
 	{
 		RSS(gEnv->pRenderer, BLEND, true);
 		RSS(gEnv->pRenderer, CULL_FACE, false);
+		#if 0
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
+		#else
+
+		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, m_BB_IndexBuffer->m_nItems, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+		#endif
 	}
 	shader->Unuse();
 	//gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));

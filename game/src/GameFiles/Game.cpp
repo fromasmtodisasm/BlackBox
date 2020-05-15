@@ -18,6 +18,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #if 0
 class CRender : public IQuadTreeRender {
@@ -227,9 +228,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
 
+	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 255, 255)));
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255, 0, 0, 255)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 255, 255)));
-	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 255, 255)));
 	m_testObjects.emplace_back(TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255)));
 
 	return true;
@@ -388,6 +389,14 @@ void CGame::DisplayInfo(float fps)
 			m_Font->SetXPos((m_pRender->GetWidth() - m_Font->TextWidth(test_text[i])) / 2);
 			render->PrintLine(test_text[i].data(), i == m_MenuEntryIdx ? MenuDTI : info.getDTI());
 		}
+		{
+			auto& lpp	 = m_LastPickedPos;
+			auto pos = std::to_string(lpp.x) + ",";
+			pos += std::to_string(lpp.y) + ",";
+			pos += std::to_string(lpp.z) + ";\n";
+			render->PrintLine((std::string("Last picking pos: ") + pos).data(), info.getDTI());
+			render->PrintLine((std::string("Current distant: ") + std::to_string(m_CurrentDistant)).data(), info.getDTI());
+		}
 	}
 }
 
@@ -419,7 +428,7 @@ bool CGame::loadScene(std::string name)
 		{
 			//scene->setCamera("main", new CCamera());
 			//m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
-			m_CameraController.m_Camera = new CCamera();
+			m_CameraController.m_Camera = new CCamera(Vec3(0,0,0));
 			m_CameraController.InitCVars();
 			CPlayer* player = nullptr; // static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
@@ -500,7 +509,7 @@ void CGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == event.state == eIS_Pressed;
+	bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -522,6 +531,19 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		}
 		switch (event.keyId)
 		{
+    case eKI_Mouse1: 
+		{
+			if (event.state == eIS_Pressed)
+			{
+				m_NeedIntersect = true;
+				float x = -1, y = -1;
+				gEnv->pHardwareMouse->GetHardwareMousePosition(&x, &y);
+				m_DepthValue = gEnv->pRenderer->GetDepthValue((int)x, int(y));
+				auto& lpp	 = m_LastPickedPos;
+				gEnv->pRenderer->UnProjectFromScreen(x, y, m_DepthValue, &lpp.x, &lpp.y, &lpp.z);
+			}
+      break;
+		}
 		case eKI_Up:
 		{
 			break;
@@ -1067,39 +1089,22 @@ void CGame::DrawAux()
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
-	UCol col;
-	col.bcolor[0] = 255; //alpha
-	col.bcolor[1] = 255;
-	col.bcolor[2] = 255;
-	col.bcolor[3] = 255;
+	UCol col(255, 255, 255, 255);
 	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
 	render->DrawLine(
 		{-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 10, y = 0, z = -10;
 	{
-		UCol col1;
-		col1.bcolor[0] = 50;
-		col1.bcolor[1] = 125;
-		col1.bcolor[2] = 0;
-		col1.bcolor[3] = 100;
+		UCol col1(50, 125, 0, 100);
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 	{
-		UCol col2;
-		col2.bcolor[0] = 50; //alpha
-		col2.bcolor[1] = 125;
-		col2.bcolor[2] = 100;
-		col2.bcolor[3] = 100;
-		//draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
+		UCol col2(50, 125, 100, 100);
+		draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
 	}
 
 	size_t i = 0;
-	UCol selected_color;
-	selected_color.bcolor[0] = 255; //alpha
-	selected_color.bcolor[1] = 255;
-	selected_color.bcolor[2] = 50;
-	selected_color.bcolor[3] = 255;
-
+	UCol selected_color(255, 255, 50, 255);
 	for (size_t i = 0; i < m_testObjects.size() - 1; i++)
 	{
 		auto& left = m_testObjects[i];
@@ -1114,10 +1119,37 @@ void CGame::DrawAux()
 			}
 		}
 	}
+
+	float minDist = m_CurrentDistant =1000;
+	auto picked	   = m_testObjects.end();
+	int idx		   = -1;
+	int _							  = 0;
+	for (auto it = m_testObjects.begin(); it != m_testObjects.end(); it++)
+	{
+		float dist = glm::distance(it->m_Position, m_LastPickedPos);	
+		auto r	   = glm::distance(Vec3(0), it->m_AABB.max - it->m_AABB.min);
+		if (dist <= r && dist < minDist)
+		{
+			picked = it;	
+			minDist = dist;
+			idx				 = _;
+			m_CurrentDistant = minDist;
+		}
+		_++;
+	}
+	int _idx = 0;
 	for (auto& object : m_testObjects)
 	{
-		render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.intersected ? selected_color : object.m_Color);
+		if (picked == m_testObjects.end() || idx != _idx)
+			render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.intersected ? selected_color : object.m_Color);
+		else
+		{
+			render->DrawAABB(
+				object.m_AABB.min, object.m_AABB.max, UCol(Vec3(1,1,1))
+			);
+		}
 		object.intersected = false;
+		_idx++;
 	}
 
 	ray ray;

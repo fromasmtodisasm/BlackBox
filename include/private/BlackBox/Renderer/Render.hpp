@@ -189,4 +189,7 @@ private:
   // Inherited via CRenderer
   virtual ITechniqueManager* GetITechniqueManager() override;
 
+
+// Унаследовано через CRenderer
+  virtual float GetDepthValue(int x, int y) override;
 };

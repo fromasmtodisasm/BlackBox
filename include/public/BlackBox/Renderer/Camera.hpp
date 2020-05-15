@@ -42,7 +42,7 @@ public:
   float FOV = 45.0f;
   float Ratio = 16.0f / 9;
   float zNear = 0.1f;
-  float zFar = 5000.f;
+  float zFar = 100.f;
 
   // Constructor with vectors
   CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(4.f), Zoom(ZOOM)
@@ -72,7 +72,7 @@ public:
   }
   Mat4 getProjectionMatrix() const
   {
-    return glm::perspective(glm::radians(FOV), Ratio, zNear, zFar);
+    return glm::perspective(glm::radians(FOV), (float)gEnv->pRenderer->GetWidth() / (float)gEnv->pRenderer->GetHeight(), zNear, zFar);
   }
 
   Vec3 getPosition()
@@ -120,5 +120,6 @@ public:
     // Also re-calculate the Right and Up vector
     this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     this->Up = glm::normalize(glm::cross(this->Right, this->Front));
+
   }
 };

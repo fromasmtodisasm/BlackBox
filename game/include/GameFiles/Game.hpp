@@ -171,10 +171,12 @@ struct TestObject
 		m_Color.bcolor[1] = static_cast<char>(color[1]);
 		m_Color.bcolor[2] = static_cast<char>(color[2]);
 		m_Color.bcolor[3] = static_cast<char>(color[3]);
+		m_Position		  = (aabb.max - aabb.min) * 0.5f + aabb.min;
 	}
 
 	AABB m_AABB;
 	UCol m_Color;
+	Vec3 m_Position;
 	bool intersected = false;
 };
 
@@ -507,4 +509,10 @@ class CGame : public IGame
 	std::vector<TestObject> m_testObjects;
 
 	size_t m_SelectedBox = 0;
+
+	// Intersection
+	bool m_NeedIntersect = false;
+	float m_DepthValue;
+	Vec3 m_LastPickedPos = Vec3(0);
+	float m_CurrentDistant = 1000;
 };

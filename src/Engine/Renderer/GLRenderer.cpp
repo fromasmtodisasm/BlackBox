@@ -311,8 +311,10 @@ int GLRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, fl
 
 int GLRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
 {
+	Vec4d vp;                  // Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, &vp[0]);           // Retrieves The Viewport Values (X, Y, Width, Height)
 	auto p = glm::unProject(
-		glm::vec3(sx, GetHeight() - sy, 0), m_Camera.getViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.getViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
 	*py = p.y;
 	*pz = p.z;
@@ -652,6 +654,13 @@ IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)
 ITechniqueManager* GLRenderer::GetITechniqueManager()
 {
 	return TechniqueManager::instance();
+}
+
+float GLRenderer::GetDepthValue(int x, int y)
+{
+	float out;
+	glReadPixels( x, GetHeight()-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &out);
+	return out;
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
