@@ -44,6 +44,7 @@ private:
   bool Create(int width, int height, bool fullscreen);
   Vec2 nextMousePos(Vec2& position);
   void handleEvent(SDL_Event* event);
+  void SetIcon(char* path);
 
 private:
   static constexpr int DEFAULT_WIDTH = 1024;

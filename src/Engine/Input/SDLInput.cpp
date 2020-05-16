@@ -14,6 +14,8 @@
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/Input/SDLPad.hpp>
 
+#include <BlackBox/Input/ActionMapManager.hpp>
+
 CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
 {
   m_pSystem = pSystem;
@@ -163,7 +165,7 @@ int CLinuxInput::ShowCursor(const bool bShow)
 
 IActionMapManager* CLinuxInput::CreateActionMapManager()
 {
-  return nullptr;
+  return new CActionMapManager(this);
 }
 
 extern "C"

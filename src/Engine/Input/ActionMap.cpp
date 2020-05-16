@@ -1,49 +1,52 @@
 #include <BlackBox/Input/ActionMap.hpp>
+#include <BlackBox/Input/ActionMapManager.hpp>
 
-CActiontMap::CActiontMap()
+CActionMap::CActionMap(IActionMapManager* pActionMapManager) 
+	: m_ActionMapManager(pActionMapManager)
 {
 }
 
-CActiontMap::~CActiontMap()
+CActionMap::~CActionMap()
 {
 }
 
-void CActiontMap::ResetAllBindings()
+void CActionMap::ResetAllBindings()
 {
 }
 
-void CActiontMap::ResetBinding(XACTIONID nActionID)
+void CActionMap::ResetBinding(XACTIONID nActionID)
 {
 }
 
-void CActiontMap::RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam)
+void CActionMap::RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam)
 {
 }
 
-void CActiontMap::BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos/* = -1*/)
+void CActionMap::BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos/* = -1*/)
 {
 }
 
-void CActiontMap::BindAction(XACTIONID nActionID, int nKey, int nModifier/* = eKI_Unknown*/, int iKeyPos/* = -1*/)
+void CActionMap::BindAction(XACTIONID nActionID, int nKey, int nModifier/* = eKI_Unknown*/, int iKeyPos/* = -1*/)
+{
+
+}
+
+void CActionMap::BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier/* = NULL*/, int iKeyPos/* = -1*/)
 {
 }
 
-void CActiontMap::BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier/* = NULL*/, int iKeyPos/* = -1*/)
+void CActionMap::GetBinding(XACTIONID nActionID, int nKeyPos, XBind& Bind)
 {
 }
 
-void CActiontMap::GetBinding(XACTIONID nActionID, int nKeyPos, XBind& Bind)
+void CActionMap::GetBinding(XACTIONID nActionID, int nKeyPos, int& nKey, int& nModifier)
 {
 }
 
-void CActiontMap::GetBinding(XACTIONID nActionID, int nKeyPos, int& nKey, int& nModifier)
+void CActionMap::GetBinding(XACTIONID nActionID, int nKeyPos, char* pszKey, char* pszModifier)
 {
 }
 
-void CActiontMap::GetBinding(XACTIONID nActionID, int nKeyPos, char* pszKey, char* pszModifier)
-{
-}
-
-void CActiontMap::GetBindDifferences(IActionMap* pActionMap, std::vector<int>& keys)
+void CActionMap::GetBindDifferences(IActionMap* pActionMap, std::vector<int>& keys)
 {
 }

@@ -1,7 +1,9 @@
 #include <BlackBox/Input/ActionMapManager.hpp>
+#include <BlackBox/Input/ActionMap.hpp>
 
-CActionMapManager::CActionMapManager()
+CActionMapManager::CActionMapManager(IInput* pInput)
 {
+	pInput->AddEventListener(this);
 }
 
 CActionMapManager::~CActionMapManager()
@@ -25,13 +27,14 @@ void CActionMapManager::SetSink(IActionMapSink* pSink)
 {
 }
 
-void CActionMapManager::CreateAction(XACTIONID nActionID, const char* sActionName, XActionActivationMode aam/* = aamOnPress*/)
+void CActionMapManager::CreateAction(XACTIONID nActionID, const char* sActionName, XActionActivationMode aam /* = aamOnPress*/)
 {
+	m_ActionList.emplace_back(ActionInfo(nActionID, sActionName, aam));
 }
 
 IActionMap* CActionMapManager::CreateActionMap(const char* s)
 {
-  return nullptr;
+  return (m_ActionMaps[string(s)] = new CActionMap(this));
 }
 
 IActionMap* CActionMapManager::GetActionMap(const char* s)
@@ -84,4 +87,9 @@ void CActionMapManager::Disable()
 bool CActionMapManager::IsEnabled()
 {
   return false;
+}
+
+bool CActionMapManager::OnInputEvent(const SInputEvent& event)
+{
+	return false;
 }

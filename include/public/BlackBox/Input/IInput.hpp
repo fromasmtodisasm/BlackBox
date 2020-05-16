@@ -404,9 +404,9 @@ struct IActionMapManager
 typedef unsigned char INPUTACTIONID;
 
 //@{ Helper macros to implement the action triggers callback interface
-#define BEGIN_INPUTACTIONTRIGGERS() void OnAction(INPUTACTIONID nActionID, float fValue) { switch(nActionID) {
-#define END_INPUTACTIONTRIGGERS() default: break; } }
-#define REGISTER_INPUTACTIONTRIGGER(actionid, handler) case actionid: handler(fValue); break;
+#define BEGIN_INPUTACTIONMAP() void OnAction(XACTIONID nActionID, float fValue,XActivationEvent ae) { switch(nActionID) {
+#define END_INPUTACTIONMAP() default: break; } }
+#define REGISTER_INPUTACTIONMAP(actionid, handler) case actionid: handler(fValue,ae); break;
 //@}
 
 //////////////////////////////////////////////////////////////////////

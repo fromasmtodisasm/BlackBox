@@ -1,10 +1,33 @@
 #pragma once
 #include <BlackBox/Input/IInput.hpp>
 
-class CActionMapManager : public IActionMapManager
+class CActionMap;
+struct ActionInfo
 {
+	XACTIONID nActionID;
+	const char* sActionName;
+	XActionActivationMode aam;
+
+  ActionInfo(XACTIONID nActionID, const char* sActionName, XActionActivationMode aam)
+		: nActionID(nActionID), sActionName(sActionName), aam(aam)
+	{
+
+	}
+};
+
+struct ActionBinding
+{
+	ActionInfo info;
+	CActionMap *map;
+};
+
+using ActionList = std::vector<ActionInfo>;
+
+class CActionMapManager : public IActionMapManager, public IInputEventListener
+{
+  using ActionMaps = std::map<string, CActionMap*>;
 public:
-  CActionMapManager();
+  CActionMapManager(IInput* pInput);
   ~CActionMapManager();
   // Inherited via IActionMapManager
   virtual void SetInvertedMouse(bool bEnable) override;
@@ -25,4 +48,16 @@ public:
   virtual void Enable() override;
   virtual void Disable() override;
   virtual bool IsEnabled() override;
+
+  // Унаследовано через IInputEventListener
+  virtual bool OnInputEvent(const SInputEvent& event) override;
+
+
+public:
+  //void AddBind(IActionMap* mpa, )
+
+private:
+  ActionMaps m_ActionMaps;
+  ActionList m_ActionList;
+
 };
