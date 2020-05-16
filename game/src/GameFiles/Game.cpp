@@ -72,6 +72,8 @@ namespace {
 }
 #endif
 
+float CameraRayLength = 40.f;
+
 void CGame::PreRender()
 {
 	//glCheck(glViewport(0, 0, 1366, 768));
@@ -231,7 +233,10 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 255, 255)));
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255, 0, 0, 255)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 255, 255)));
-	m_testObjects.emplace_back(TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255)));
+
+	auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255));
+	CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
+	m_testObjects.emplace_back(CameraBox);
 
 	return true;
 }
@@ -257,7 +262,7 @@ bool CGame::Update()
 			{
 				if (render_game->GetIVal() != 0)
 				{
-					m_pSystem->SetViewCamera(*m_CameraController.m_Camera);
+					m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
 					m_pSystem->Render();
 					DrawAux();
 				}
@@ -428,7 +433,9 @@ bool CGame::loadScene(std::string name)
 		{
 			//scene->setCamera("main", new CCamera());
 			//m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
-			m_CameraController.m_Camera = new CCamera(Vec3(0,0,0));
+			m_CameraController.AddCamera(new CCamera(Vec3(0,0,0)));
+			m_CameraController.AddCamera(new CCamera(Vec3(10,10,10)));
+			m_CameraController.SetRenderCamera(1);
 			m_CameraController.InitCVars();
 			CPlayer* player = nullptr; // static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
@@ -544,20 +551,14 @@ void CGame::PersistentHandler(const SInputEvent& event)
 			}
       break;
 		}
-		case eKI_Up:
+		case eKI_1:
+		case eKI_2:
 		{
-			break;
-		}
-		case eKI_Down:
-		{
-			break;
-		}
-		case eKI_Left:
-		{
-			break;
-		}
-		case eKI_Right:
-		{
+			auto id = event.keyId - eKI_1;
+			if (control)
+				m_CameraController.SetMovementCamera(id);
+			else
+				m_CameraController.SetRenderCamera(id);
 			break;
 		}
 		case eKI_Insert:
@@ -650,7 +651,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 		case eKI_M:
 			camera.mode						  = CCamera::Mode::FLY;
 			m_Mode							  = Mode::FLY;
-			m_CameraController.m_Camera->mode = CCamera::Mode::FLY;
+			m_CameraController.CurrentCamera()->mode = CCamera::Mode::FLY;
 			return true;
 		case eKI_NP_4:
 			m_testObjects[m_SelectedBox].m_AABB.min.x += 1;
@@ -1154,11 +1155,11 @@ void CGame::DrawAux()
 
 	ray ray;
 
-	ray.origin = m_CameraController.m_Camera->transform.position;
-	ray.direction = m_CameraController.m_Camera->Front;
+	ray.origin = m_CameraController.RenderCamera()->transform.position;
+	ray.direction = m_CameraController.RenderCamera()->Front;
 
 	render->DrawLine(
-		ray.origin + 0.1f, col, ray.origin + ray.direction * 20.f, col);
+		ray.origin + Vec3(1,0,0), col, ray.origin + ray.direction * CameraRayLength, col);
 
 	// Axis
 	///////////////////////////////////////
@@ -1180,4 +1181,8 @@ void CGame::DrawAux()
 				{0, 0, -l}, c, {0, 0, l}, c);
 		}
 	}
+}
+
+void CGame::Jump(float fValue, XActivationEvent ae)
+{
 }

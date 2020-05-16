@@ -15,9 +15,11 @@ class CCameraController : public IInputEventListener
 public:
 public:
   CCameraController() = default;
-  CCameraController(CCamera* pCamera) : m_Camera(pCamera) {}
+  CCameraController(CCamera* pCamera) : m_Camera{pCamera} {}
 
-  CCamera* m_Camera;
+  std::vector<CCamera*> m_Camera;
+  size_t m_CurrentCamera = 0;
+  size_t m_RenderCamera = 0;
   //CCamera::Mode mode = CCamera::Mode::FPS;
 
   // Inherited via IInputEventListener
@@ -76,35 +78,35 @@ public:
   // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
   void ProcessKeyboard(Movement direction, float deltaTime)
   {
-    float velocity = m_Camera->MovementSpeed * deltaTime;
+    float velocity = CurrentCamera()->MovementSpeed * deltaTime;
     if (direction == Movement::FORWARD)
-      m_Camera->transform.position += glm::vec3(m_Camera->Front.x, m_Camera->mode == CCamera::Mode::FPS ? 0 : m_Camera->Front.y, m_Camera->Front.z) * velocity;
+      CurrentCamera()->transform.position += glm::vec3(CurrentCamera()->Front.x, CurrentCamera()->mode == CCamera::Mode::FPS ? 0 : CurrentCamera()->Front.y, CurrentCamera()->Front.z) * velocity;
     if (direction == Movement::BACKWARD)
-      m_Camera->transform.position -= glm::vec3(m_Camera->Front.x, m_Camera->mode == CCamera::Mode::FPS ? 0 : m_Camera->Front.y, m_Camera->Front.z) * velocity;
+      CurrentCamera()->transform.position -= glm::vec3(CurrentCamera()->Front.x, CurrentCamera()->mode == CCamera::Mode::FPS ? 0 : CurrentCamera()->Front.y, CurrentCamera()->Front.z) * velocity;
     if (direction == Movement::LEFT)
-      m_Camera->transform.position -= m_Camera->Right * velocity;
+      CurrentCamera()->transform.position -= CurrentCamera()->Right * velocity;
     if (direction == Movement::RIGHT)
-      m_Camera->transform.position += m_Camera->Right * velocity;
+      CurrentCamera()->transform.position += CurrentCamera()->Right * velocity;
   }
 
   // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
   // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
   void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
   {
-    m_Camera->transform.rotation.y += xoffset;
-    m_Camera->transform.rotation.x += yoffset;
+    CurrentCamera()->transform.rotation.y += xoffset;
+    CurrentCamera()->transform.rotation.x += yoffset;
 
     // Make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch)
     {
-      if (m_Camera->transform.rotation.x > 89.0f)
-        m_Camera->transform.rotation.x = 89.0f;
-      if (m_Camera->transform.rotation.x < -89.0f)
-        m_Camera->transform.rotation.x = -89.0f;
+      if (CurrentCamera()->transform.rotation.x > 89.0f)
+        CurrentCamera()->transform.rotation.x = 89.0f;
+      if (CurrentCamera()->transform.rotation.x < -89.0f)
+        CurrentCamera()->transform.rotation.x = -89.0f;
     }
 
     // Update Front, Right and Up Vectors using the updated Eular angles
-    m_Camera->updateCameraVectors();
+    CurrentCamera()->updateCameraVectors();
   }
 
 
@@ -163,7 +165,33 @@ public:
     GetISystem()->GetIScriptSystem()->EndCall();
     #endif
   }
-public:
+
+  CCamera* CurrentCamera()
+  {
+	  return m_Camera[m_CurrentCamera];
+  }
+
+  CCamera* RenderCamera()
+  {
+	  return m_Camera[m_RenderCamera];
+  }
+
+  void AddCamera(CCamera* pCamera)
+  {
+	  m_Camera.push_back(pCamera);
+  }
+
+  void SetRenderCamera(size_t n)
+  {
+	  assert(n < m_Camera.size());
+	  m_RenderCamera = n; 
+  }
+  void SetMovementCamera(size_t n)
+  {
+	  assert(n < m_Camera.size());
+	  m_CurrentCamera = n; 
+  }
+ public:
   Vec3 velocity = Vec3(10);
   std::set<EKeyId> m_keys;
   Vec2 delta;

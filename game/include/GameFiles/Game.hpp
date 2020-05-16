@@ -57,6 +57,8 @@ enum
 #include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
 
+#include "GameShared.hpp"
+
 struct IStatObj;
 
 struct TextRenderInfo
@@ -160,6 +162,14 @@ struct AABB
 		// Boxes overlap in all 3 axises.
 		return true;
 	}
+
+	inline void Translate(Vec3 Position)
+	{
+			auto cur_pos = (max - min) * 0.5f + min;	
+			auto diff	 = Position - cur_pos;
+			max += diff;
+			min += diff;
+	}
 };
 
 struct TestObject
@@ -180,12 +190,14 @@ struct TestObject
 	bool intersected = false;
 };
 
-class CGame : public IGame
+class CGame 
+	: public IGame
 	, public IInputEventListener
 	, public IPostRenderCallback
 	, public IPreRenderCallback
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
+	, public IActionMapSink
 {
 	class EventListener;
 	friend class GameGUI;
@@ -356,6 +368,12 @@ class CGame : public IGame
 	void MainMenu();
 	void DrawAux();
 
+	void Jump(float fValue,XActivationEvent ae);
+
+	BEGIN_INPUTACTIONMAP()
+		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
+	END_INPUTACTIONMAP() 
+
   public:
 	float m_deltaTime;
 
@@ -515,4 +533,6 @@ class CGame : public IGame
 	float m_DepthValue;
 	Vec3 m_LastPickedPos = Vec3(0);
 	float m_CurrentDistant = 1000;
+
+	
 };
