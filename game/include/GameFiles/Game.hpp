@@ -138,6 +138,13 @@ typedef std::map<string, ActionInfo> ActionsEnumMap;
 typedef ActionsEnumMap::iterator ActionsEnumMapItor;
 typedef std::multimap<string, CTagPoint*> TagPointMap;
 
+struct Ray
+{
+	Vec3 origin;
+	Vec3 direction;
+};
+
+
 struct AABB
 {
 	Vec3 min;
@@ -161,6 +168,17 @@ struct AABB
 			return false;
 		// Boxes overlap in all 3 axises.
 		return true;
+	}
+
+	glm::vec2 intersectBox(const Ray& ray) {
+		glm::vec3 inv_dir = 1.0f/ray.direction;
+		glm::vec3 tMin = (min - ray.origin) * inv_dir;
+		glm::vec3 tMax = (max - ray.origin) * inv_dir;
+		glm::vec3 t1 = glm::min(tMin, tMax);
+		glm::vec3 t2 = glm::max(tMin, tMax);
+		float tNear = glm::max(glm::max(t1.x, t1.y), t1.z);
+		float tFar = glm::min(glm::min(t2.x, t2.y), t2.z);
+		return glm::vec2(tNear, tFar);
 	}
 
 	inline void Translate(Vec3 Position)
@@ -368,7 +386,12 @@ class CGame
 	void MainMenu();
 	void DrawAux();
 
+	void IntersectionTest();
+
 	void Jump(float fValue,XActivationEvent ae);
+
+	void IntersectionByDepthPicking();
+	void IntersectionByRayCasting();
 
 	BEGIN_INPUTACTIONMAP()
 		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
@@ -529,10 +552,35 @@ class CGame
 	size_t m_SelectedBox = 0;
 
 	// Intersection
-	bool m_NeedIntersect = false;
-	float m_DepthValue;
-	Vec3 m_LastPickedPos = Vec3(0);
-	float m_CurrentDistant = 1000;
+
+	struct SIntersectionState
+	{
+		SIntersectionState() = default;
+		bool m_NeedIntersect = false;
+		Vec3 m_LastPickedPos = Vec3(0);
+		enum Type
+		{
+			Depth,	
+			Ray
+		}type = Depth;
+			struct Depth
+			{
+				Depth() = default;
+				float m_DepthValue;
+				float m_CurrentDistant = 1000;
+			}depth;
+			struct Ray
+			{
+				Ray() = default;
+				Vec3 start;		
+				Vec3 end;		
+				Vec3 origin;
+				Vec3 direction;
+			}ray;
+			std::vector<TestObject>::iterator picked;
+			int idx = -1;
+			float mx, my;
+	}m_IntersectionState;
 
 	
 };
