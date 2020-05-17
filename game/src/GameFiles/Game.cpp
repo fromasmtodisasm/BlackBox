@@ -27,6 +27,14 @@ namespace
 		Vec3 vec(rand(), rand(), rand());
 		return (glm::modf(vec, glm::abs(left)) + glm::abs(right)) - left;
 	}
+
+	std::string vec_to_string(Vec3 vec)
+	{
+		auto result = "{ x: " + std::to_string(vec.x);
+		result += ", y: " + std::to_string(vec.y);
+		result += ", z: " + std::to_string(vec.z) + "}";
+		return result;
+	}
 } // namespace
 
 #if 0
@@ -403,6 +411,7 @@ void CGame::DisplayInfo(float fps)
 	//render->PrintLine("To hide depth buffer press <;>\n", dti);
 	render->PrintLine((std::string("Camera width = ") + std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
 	render->PrintLine((std::string("Camera height = ") + std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
+	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.CurrentCamera()->transform.position) + "\n").c_str(), dti);
 
 	info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
 	//render->PrintLine(pos.c_str(), info.getDTI());
@@ -428,10 +437,7 @@ void CGame::DisplayInfo(float fps)
 			pos += std::to_string(lpp.y) + ",";
 			pos += std::to_string(lpp.z) + ";\n";
 			render->PrintLine((std::string("Last picking pos: ") + pos).data(), info.getDTI());
-			#if 0
-			if (m_IntersectionState.type == SIntersectionState::Depth) 
-				render->PrintLine((std::string("Current distant: ") + std::to_string(m_IntersectionState.depth.m_CurrentDistant)).data(), info.getDTI());
-			#endif
+			render->PrintLine((std::string("Current distant: ") + std::to_string(m_IntersectionState.m_CurrentDistant)).data(), info.getDTI());
 		}
 	}
 }
@@ -1116,7 +1122,7 @@ void CGame::DrawAux()
 	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
 	render->DrawLine(
 		{-10, 10, -5}, col, {10, 10, -5}, col);
-	float x = 10, y = 0, z = -10;
+	float x = 40, y = 0, z = -40;
 	{
 		UCol col1(50, 125, 0, 100);
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
@@ -1151,24 +1157,30 @@ void CGame::DrawAux()
 	render->DrawLine(
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
+	DrawAxis(render, Vec3(40));
+}
+
+void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
+{
 	// Axis
 	///////////////////////////////////////
+	RSS(gEnv->pRenderer, DEPTH_TEST, false);
 	{
-		int l = 10;
+		auto& a = axis;
 		{
 			UCol c = Vec3(1, 0, 0);
 			render->DrawLine(
-				{-l, 0, 0}, c, {l, 0, 0}, c);
+				{-a.x, 0, 0}, c, {a.x, 0, 0}, c);
 		}
 		{
 			UCol c = Vec3(0, 1, 0);
 			render->DrawLine(
-				{0, -l, 0}, c, {0, l, 0}, c);
+				{0, -a.y, 0}, c, {0, a.y, 0}, c);
 		}
 		{
 			UCol c = Vec3(0, 0, 1);
 			render->DrawLine(
-				{0, 0, -l}, c, {0, 0, l}, c);
+				{0, 0, -a.z}, c, {0, 0, a.z}, c);
 		}
 	}
 }
@@ -1202,12 +1214,14 @@ void CGame::IntersectionByRayCasting()
 	eyeRay.direction = glm::normalize(end-start);
 
 	m_IntersectionState.idx = -1;
-	for (size_t i = 0; i < m_testObjects.size() - 1; i++){
+	for (size_t i = 0; i < m_testObjects.size(); i++){
 		glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
 			m_IntersectionState.idx=i;
 			m_IntersectionState.picked = m_testObjects.begin() + i;
 			tMin = tMinMax.x;
+			m_IntersectionState.m_LastPickedPos = eyeRay.origin + eyeRay.direction * tMin;
+			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
 		}
 	}
 }

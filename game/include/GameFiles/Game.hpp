@@ -392,6 +392,8 @@ class CGame
 	void MainMenu();
 	void DrawAux();
 
+	void DrawAxis(IRenderAuxGeom* render, Vec3 axis);
+
 	void IntersectionTest();
 
 	void Jump(float fValue,XActivationEvent ae);
@@ -572,6 +574,7 @@ class CGame
 			Vec3 direction;
 		}ray;
 		std::vector<TestObject>::iterator picked;
+		float m_CurrentDistant = 0.f;
 		int idx = -1;
 		float mx, my;
 	}m_IntersectionState;
