@@ -20,6 +20,15 @@
 #include <vector>
 #include <cmath>
 
+namespace
+{
+	Vec3 RandomVector(Vec3 left, Vec3 right)
+	{
+		Vec3 vec(rand(), rand(), rand());
+		return (glm::modf(vec, glm::abs(left)) + glm::abs(right)) - left;
+	}
+} // namespace
+
 #if 0
 class CRender : public IQuadTreeRender {
 public:
@@ -234,10 +243,28 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255, 0, 0, 255)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 255, 255)));
 
+	srand(static_cast<unsigned int>(time(0)));
+
+	Vec3 left(-40, -40, -40);
+	Vec3 right(40, 40, 40);
+	auto create_obj = [&]()->auto {
+
+		auto rand_pos = RandomVector(left, right);
+		return TestObject(
+			rand_pos, {5, 5, 5}, Vec4(255, 80, 255, 255));
+	};
+	for (int i = 0; i < 20; i++)
+	{
+		m_testObjects.emplace_back(
+			create_obj()
+		);
+	}
+
 	auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255));
 	CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
 	m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.end();
+
 
 	return true;
 }
@@ -582,6 +609,8 @@ void CGame::gotoGame()
 	//if (m_player != nullptr)
 	{
 		//m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
+
+		m_bInPause = false;
 		m_Mode = FPS;
 		m_pInput->ShowCursor(false);
 		m_pInput->GrabInput(true);
@@ -645,30 +674,30 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
         return true;
       */
 		case eKI_NP_0:
-			m_SelectedBox = ++m_SelectedBox % m_testObjects.size();
+			//m_SelectedBox = ++m_SelectedBox % m_testObjects.size();
 			return true;
 		case eKI_M:
 			camera.mode						  = CCamera::Mode::FLY;
 			m_Mode							  = Mode::FLY;
 			m_CameraController.CurrentCamera()->mode = CCamera::Mode::FLY;
 			return true;
-		case eKI_NP_4:
+		case eKI_H:
 			m_testObjects[m_SelectedBox].m_AABB.min.x += 1;
 			m_testObjects[m_SelectedBox].m_AABB.max.x += 1;
 			return true;
-		case eKI_NP_6:
+		case eKI_L:
 			m_testObjects[m_SelectedBox].m_AABB.min.x -= 1;
 			m_testObjects[m_SelectedBox].m_AABB.max.x -= 1;
 			return true;
-		case eKI_NP_8:
+		case eKI_K:
 			m_testObjects[m_SelectedBox].m_AABB.min.z += 1;
 			m_testObjects[m_SelectedBox].m_AABB.max.z += 1;
 			return true;
-		case eKI_NP_2:
+		case eKI_J:
 			m_testObjects[m_SelectedBox].m_AABB.min.z -= 1;
 			m_testObjects[m_SelectedBox].m_AABB.max.z -= 1;
 			return true;
-		case eKI_NP_5:
+		case eKI_U:
 		{
 			int module = 1;
 			if (control)

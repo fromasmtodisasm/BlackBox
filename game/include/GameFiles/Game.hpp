@@ -192,6 +192,12 @@ struct AABB
 
 struct TestObject
 {
+	TestObject(Vec3 position, Vec3 size, Vec4 color)
+		: TestObject(AABB(Vec3(position - 0.5f*size), Vec3(position + 0.5f*size)), color)
+	{
+	
+	}
+
 	TestObject(AABB aabb, Vec4 color)
 		: m_AABB(aabb) 
 	{
