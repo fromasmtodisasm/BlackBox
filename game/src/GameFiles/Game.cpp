@@ -401,8 +401,10 @@ void CGame::DisplayInfo(float fps)
 			pos += std::to_string(lpp.y) + ",";
 			pos += std::to_string(lpp.z) + ";\n";
 			render->PrintLine((std::string("Last picking pos: ") + pos).data(), info.getDTI());
+			#if 0
 			if (m_IntersectionState.type == SIntersectionState::Depth) 
 				render->PrintLine((std::string("Current distant: ") + std::to_string(m_IntersectionState.depth.m_CurrentDistant)).data(), info.getDTI());
+			#endif
 		}
 	}
 }
@@ -547,14 +549,6 @@ void CGame::PersistentHandler(const SInputEvent& event)
 				auto& lpp = m_IntersectionState.m_LastPickedPos;
 				m_IntersectionState.m_NeedIntersect = true;
 				gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
-				if (m_IntersectionState.type == SIntersectionState::Depth)
-				{
-					m_IntersectionState.depth.m_DepthValue = gEnv->pRenderer->GetDepthValue((int)m_IntersectionState.mx, (int)m_IntersectionState.my);
-					gEnv->pRenderer->UnProjectFromScreen(
-						m_IntersectionState.mx, m_IntersectionState.my, m_IntersectionState.depth.m_DepthValue, 
-						&lpp.x, &lpp.y, &lpp.z
-					);
-				}
 			}
       break;
 		}
@@ -570,7 +564,6 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		}
 		case eKI_Insert:
 		{
-			m_IntersectionState.type = SIntersectionState::Ray;
 			break;
 		}
 		case eKI_Pause:
@@ -1155,51 +1148,8 @@ void CGame::IntersectionTest()
 {
 	if (m_IntersectionState.m_NeedIntersect)
 	{
-		if (m_IntersectionState.type == SIntersectionState::Depth)
-		{
-			IntersectionByDepthPicking();
-		}
-		else
-		{
-			IntersectionByRayCasting();
-		}
+		IntersectionByRayCasting();
 		m_IntersectionState.m_NeedIntersect = false;
-	}
-}
-
-void CGame::IntersectionByDepthPicking()
-{
-	size_t i = 0;
-	for (size_t i = 0; i < m_testObjects.size() - 1; i++)
-	{
-		auto& left = m_testObjects[i];
-
-		//for (auto object : m_testObjects)
-		for (size_t j = i + 1; j < m_testObjects.size(); j++)
-		{
-			auto& right = m_testObjects[j];
-			if (left.m_AABB.IsIntersectBox((right.m_AABB)))
-			{
-				left.intersected = right.intersected = true;
-			}
-		}
-	}
-
-	float minDist = m_IntersectionState.depth.m_CurrentDistant = 1000;
-	m_IntersectionState.idx									   = -1;
-	int _													   = 0;
-	for (auto it = m_testObjects.begin(); it != m_testObjects.end(); it++)
-	{
-		float dist = glm::distance(it->m_Position, m_IntersectionState.m_LastPickedPos);
-		auto r	   = glm::distance(Vec3(0), it->m_AABB.max - it->m_AABB.min);
-		if (dist <= r && dist < minDist)
-		{
-			m_IntersectionState.picked				   = it;
-			minDist									   = dist;
-			m_IntersectionState.idx					   = _;
-			m_IntersectionState.depth.m_CurrentDistant = minDist;
-		}
-		_++;
 	}
 }
 
@@ -1227,6 +1177,7 @@ void CGame::IntersectionByRayCasting()
 		glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
 			m_IntersectionState.idx=i;
+			m_IntersectionState.picked = m_testObjects.begin() + i;
 			tMin = tMinMax.x;
 		}
 	}

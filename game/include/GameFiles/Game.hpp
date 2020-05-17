@@ -390,7 +390,6 @@ class CGame
 
 	void Jump(float fValue,XActivationEvent ae);
 
-	void IntersectionByDepthPicking();
 	void IntersectionByRayCasting();
 
 	BEGIN_INPUTACTIONMAP()
@@ -558,28 +557,17 @@ class CGame
 		SIntersectionState() = default;
 		bool m_NeedIntersect = false;
 		Vec3 m_LastPickedPos = Vec3(0);
-		enum Type
+		struct Ray
 		{
-			Depth,	
-			Ray
-		}type = Depth;
-			struct Depth
-			{
-				Depth() = default;
-				float m_DepthValue;
-				float m_CurrentDistant = 1000;
-			}depth;
-			struct Ray
-			{
-				Ray() = default;
-				Vec3 start;		
-				Vec3 end;		
-				Vec3 origin;
-				Vec3 direction;
-			}ray;
-			std::vector<TestObject>::iterator picked;
-			int idx = -1;
-			float mx, my;
+			Ray() = default;
+			Vec3 start;		
+			Vec3 end;		
+			Vec3 origin;
+			Vec3 direction;
+		}ray;
+		std::vector<TestObject>::iterator picked;
+		int idx = -1;
+		float mx, my;
 	}m_IntersectionState;
 
 	
