@@ -95,7 +95,7 @@ void CGame::InitConsoleCommands()
     "Usage: loadpos pointname\n");
 }
 
-extern float CameraRayLength = 40.f;
+//extern float CameraRayLength = 40.f;
 void CGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
@@ -104,7 +104,7 @@ void CGame::InitConsoleVars()
   r_cap_profile = CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
   m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 
-  REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
+  //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 
 	sv_port= pConsole->CreateVariable("sv_port",DEFAULT_SERVERPORT_STR,0,
 		"Sets the server port for a multiplayer game.\n"
