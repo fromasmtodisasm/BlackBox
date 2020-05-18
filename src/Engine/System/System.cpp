@@ -975,6 +975,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
-	ISystem* system = new CSystem(initParams);
-	return system;
+	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
+	ModuleInitISystem(pSystem.get(), "System");
+	return pSystem.release();
 }

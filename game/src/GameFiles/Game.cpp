@@ -25,7 +25,8 @@ namespace
 	Vec3 RandomVector(Vec3 left, Vec3 right)
 	{
 		Vec3 vec(rand(), rand(), rand());
-		return (glm::modf(vec, glm::abs(left)) + glm::abs(right)) - left;
+
+		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(RAND_MAX)/(right - left)));
 	}
 
 	std::string vec_to_string(Vec3 vec)
@@ -229,7 +230,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	// other
 	//TODO: FIX IT
 #if 0
-  mousePrev = sf::Mouse::getPosition();
+  mousePrev = sf::Mouse::GetPos();
   mouseDelta = sf::Vector2i(0, 0);
 #endif
 #if CURSOR_FIXED
@@ -261,7 +262,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(255, 80, 255, 255));
 	};
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		m_testObjects.emplace_back(
 			create_obj()
@@ -271,7 +272,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255));
 	CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
 	m_testObjects.emplace_back(CameraBox);
-	m_IntersectionState.picked = m_testObjects.end();
+	m_IntersectionState.picked = m_testObjects.begin();
 
 
 	return true;
@@ -426,11 +427,6 @@ void CGame::DisplayInfo(float fps)
 		m_pSystem->GetIHardwareMouse()->GetHardwareMouseClientPosition(&c.x, &c.y);
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */ c.y)).c_str(), info.getDTI());
 		m_Font->SetYPos(m_pRender->GetHeight() / 2);
-		for (size_t i = 0; i < test_text.size(); i++)
-		{
-			m_Font->SetXPos((m_pRender->GetWidth() - m_Font->TextWidth(test_text[i])) / 2);
-			render->PrintLine(test_text[i].data(), i == m_MenuEntryIdx ? MenuDTI : info.getDTI());
-		}
 		{
 			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
 			auto pos = std::to_string(lpp.x) + ",";
@@ -597,6 +593,7 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		}
 		case eKI_Insert:
 		{
+			m_InsertLines = !m_InsertLines;
 			break;
 		}
 		case eKI_Pause:
@@ -688,28 +685,28 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			m_CameraController.CurrentCamera()->mode = CCamera::Mode::FLY;
 			return true;
 		case eKI_H:
-			m_testObjects[m_SelectedBox].m_AABB.min.x += 1;
-			m_testObjects[m_SelectedBox].m_AABB.max.x += 1;
+			m_IntersectionState.picked->m_AABB.min.x += 1;
+			m_IntersectionState.picked->m_AABB.max.x += 1;
 			return true;
 		case eKI_L:
-			m_testObjects[m_SelectedBox].m_AABB.min.x -= 1;
-			m_testObjects[m_SelectedBox].m_AABB.max.x -= 1;
+			m_IntersectionState.picked->m_AABB.min.x -= 1;
+			m_IntersectionState.picked->m_AABB.max.x -= 1;
 			return true;
 		case eKI_K:
-			m_testObjects[m_SelectedBox].m_AABB.min.z += 1;
-			m_testObjects[m_SelectedBox].m_AABB.max.z += 1;
+			m_IntersectionState.picked->m_AABB.min.z += 1;
+			m_IntersectionState.picked->m_AABB.max.z += 1;
 			return true;
 		case eKI_J:
-			m_testObjects[m_SelectedBox].m_AABB.min.z -= 1;
-			m_testObjects[m_SelectedBox].m_AABB.max.z -= 1;
+			m_IntersectionState.picked->m_AABB.min.z -= 1;
+			m_IntersectionState.picked->m_AABB.max.z -= 1;
 			return true;
 		case eKI_U:
 		{
 			int module = 1;
 			if (control)
 				module = -1;
-			m_testObjects[m_SelectedBox].m_AABB.min.y += module;
-			m_testObjects[m_SelectedBox].m_AABB.max.y += module;
+			m_IntersectionState.picked->m_AABB.min.y += module;
+			m_IntersectionState.picked->m_AABB.max.y += module;
 			return true;
 		}
 		case eKI_Escape:
@@ -797,10 +794,8 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 			gotoGame();
 			return true;
 		case eKI_J:
-			m_MenuEntryIdx = ++m_MenuEntryIdx % test_text.size();
 			return true;
 		case eKI_K:
-			m_MenuEntryIdx = --m_MenuEntryIdx % test_text.size();
 			return true;
 		default:
 			return false;
@@ -1137,7 +1132,7 @@ void CGame::DrawAux()
 	int _idx = 0;
 	for (auto& object : m_testObjects)
 	{
-		if (m_IntersectionState.picked == m_testObjects.end() || m_IntersectionState.idx != _idx)
+		if (m_IntersectionState.picked != m_testObjects.begin() + _idx)
 			render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.intersected ? selected_color : object.m_Color);
 		else
 		{
@@ -1213,11 +1208,9 @@ void CGame::IntersectionByRayCasting()
 	eyeRay.origin = m_CameraController.CurrentCamera()->transform.position;
 	eyeRay.direction = glm::normalize(end-start);
 
-	m_IntersectionState.idx = -1;
 	for (size_t i = 0; i < m_testObjects.size(); i++){
 		glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
-			m_IntersectionState.idx=i;
 			m_IntersectionState.picked = m_testObjects.begin() + i;
 			tMin = tMinMax.x;
 			m_IntersectionState.m_LastPickedPos = eyeRay.origin + eyeRay.direction * tMin;

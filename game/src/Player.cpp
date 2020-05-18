@@ -51,7 +51,7 @@ bool CPlayer::OnInputEvent(const SInputEvent& event)
     auto obj = SceneManager::instance()->currentScene()->getObject("MyPlayer");
     GameObject* go = new GameObject(obj);
     go->setMaterial(obj->getMaterial());
-    go->m_transform.position = m_Camera->getPosition();// + glm::vec3(0,0,5);
+    go->m_transform.position = m_Camera->GetPos();// + glm::vec3(0,0,5);
     go->velocity = 48.0f * m_Camera->Front;
     Game->getWorld()->GetActiveScene()->addObject("bullet", go);
 

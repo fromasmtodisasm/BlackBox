@@ -14,6 +14,12 @@ struct SAuxPushBufferEntry
 	RenderPrimitive			m_primitive;
 };
 
+struct SAABBBuffer
+{
+	Mat4 Model;
+	Vec4 Color;
+};
+
 using AuxPushBuffer = std::vector<SAuxPushBufferEntry>;
 using AuxVertexBuffer = std::vector<SAuxVertex>;
 
@@ -37,5 +43,8 @@ private:
   AuxVertexBuffer m_VB;
   CVertexBuffer* m_HardwareVB = nullptr;
   ShaderProgramRef m_BoundingBoxShader;
+
+
+
   int m_CurrentVB_Size = INIT_VB_SIZE;
 };

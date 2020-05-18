@@ -147,7 +147,7 @@ void ShadowMapping::RenderOpaque(CStatObj* object)
 	if (!object->m_transparent && (object->visible())
 #if 0
  &&
-		glm::abs(glm::distance(camera->getPosition(), object->m_transform.position)) < camera->zFar->GetFVal()
+		glm::abs(glm::distance(camera->GetPos(), object->m_transform.position)) < camera->zFar->GetFVal()
 #endif
   )
 	{
@@ -159,7 +159,7 @@ void ShadowMapping::RenderOpaque(CStatObj* object)
 		add_uniform(renderParams, "frame_id", frame_id);
 
 		add_uniform(renderParams, "model", object->getTransform());
-		add_uniform(renderParams, "view", gEnv->pRenderer->GetCamera().getViewMatrix());
+		add_uniform(renderParams, "view", gEnv->pRenderer->GetCamera().GetViewMatrix());
 		add_uniform(renderParams, "projection", gEnv->pRenderer->GetCamera().getProjectionMatrix());
 		add_uniform(renderParams, "viewPos", gEnv->pRenderer->GetCamera().transform.position);
 		add_uniform(renderParams, "material.shininess", 128.0f);
@@ -349,7 +349,7 @@ bool ShadowMapping::OnLightFound(const SpotLight* light, SRenderParams& renderPa
 {
 	DEBUG_GROUP(__FUNCTION__);
 #if 0
-	program->Uniform(m_Scene->getCurrentCamera()->getPosition(), "spotLight.position");
+	program->Uniform(m_Scene->getCurrentCamera()->GetPos(), "spotLight.position");
 	program->Uniform(m_Scene->getCurrentCamera()->Front, "spotLight.direction");
 	program->Uniform(light->ambient, "spotLight.ambient");
 	program->Uniform(light->diffuse, "spotLight.diffuse");

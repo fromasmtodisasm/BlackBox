@@ -52,7 +52,7 @@ void CSFMLWindow::mouseLock(bool lock)
   Mouse.prev_pos = center;
   Mouse.curr_pos = center;
 
-  sf::Mouse::setPosition(center, *m_Window);
+  sf::Mouse::SetPos(center, *m_Window);
   m_Window->setMouseCursorGrabbed(lock);
   m_Window->setMouseCursorVisible(!lock);
 }
@@ -71,7 +71,7 @@ bool CSFMLWindow::create(Params params)
 
 Point CSFMLWindow::getCursorPos()
 {
-  return Point(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);
+  return Point(sf::Mouse::GetPos().x, sf::Mouse::GetPos().y);
 }
 
 void CSFMLWindow::changeSize(int w, int h)

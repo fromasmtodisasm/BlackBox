@@ -83,7 +83,7 @@ void CStatObj::Render(SRenderParams& renderParams)
 			case UniformValue::Type::CAMERA_VAL:
 			{
 				CCamera *c = uv.val.c;
-				p->Uniform(c->getViewMatrix(), "view");
+				p->Uniform(c->GetViewMatrix(), "view");
 				p->Uniform(c->getProjectionMatrix(), "projection");
 				p->Uniform(c->getProjectionMatrix(), "viewPos");
 				break;

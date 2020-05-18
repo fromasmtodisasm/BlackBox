@@ -121,7 +121,7 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, UCol& col)
 	Vec4 color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
 	shader->Use();
 	shader->Uniform(transform, "model");
-	shader->Uniform(cam.getViewMatrix(), "view");
+	shader->Uniform(cam.GetViewMatrix(), "view");
 	shader->Uniform(cam.getProjectionMatrix(), "projection");
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");

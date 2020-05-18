@@ -161,16 +161,8 @@ void CGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* s
     fclose(f);
   }
 
-#if 0
   tagLocations[index] = m_pSystem->GetViewCamera().GetPos();
   tagAngles[index] = m_pSystem->GetViewCamera().GetAngles();
-#else
-#if 0
-  tagLocations[index] = m_World->GetActiveScene()->getCurrentCamera()->transform.position;
-  tagAngles[index] = m_World->GetActiveScene()->getCurrentCamera()->transform.rotation;
-#endif
-#endif
-
   SetFileAttributes(filename.c_str(), 0);
 
   f = fopen(filename.c_str(), "wt"); // Dont change this to CryPak
@@ -272,19 +264,14 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 #else
   if (p != Vec3(0.f))
   {
-#if 0
-    m_World->GetActiveScene()->getCurrentCamera()->transform.position = p;
-#endif
+    m_pSystem->GetViewCamera().SetPos(p);
   }
 #endif
   if (a != Vec3(0.f))
   {
-#if 0
-    m_World->GetActiveScene()->getCurrentCamera()->transform.rotation = a;
-    //m_pSystem->GetViewCamera().SetAngle(a);
+    m_pSystem->GetViewCamera().SetAngles(a);
     //SetViewAngles(a);
-    m_World->GetActiveScene()->getCurrentCamera()->updateCameraVectors();
-#endif
+    m_pSystem->GetViewCamera().updateCameraVectors();
   }
 #endif
 }

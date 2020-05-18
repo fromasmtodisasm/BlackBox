@@ -117,7 +117,7 @@ void GLRenderer::Update(void)
 		DEBUG_GROUP("AUX");
 		m_AuxGeomShader->Use();
 		m_AuxGeomShader->Uniform(m_Camera.getProjectionMatrix(), "projection");
-		m_AuxGeomShader->Uniform(m_Camera.getViewMatrix(), "view");
+		m_AuxGeomShader->Uniform(m_Camera.GetViewMatrix(), "view");
 		m_RenderAuxGeom->Flush();
 		m_AuxGeomShader->Unuse();
 	}
@@ -297,7 +297,7 @@ void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 
 void GLRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
 {
-	auto s = glm::project(Vec3(ptx, pty, ptz), m_Camera.getViewMatrix(), m_Camera.getProjectionMatrix(), Vec4(0, 0, GetWidth(), GetHeight()));
+	auto s = glm::project(Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), Vec4(0, 0, GetWidth(), GetHeight()));
 
 	*sx = s.x;
 	*sy = s.y;
@@ -314,7 +314,7 @@ int GLRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, flo
 	Vec4d vp;                  // Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, &vp[0]);           // Retrieves The Viewport Values (X, Y, Width, Height)
 	auto p = glm::unProject(
-		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.getViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
 	*py = p.y;
 	*pz = p.z;
@@ -343,7 +343,7 @@ Vec3 GLRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
 {
 	auto& c = WindowCoords;
 	return glm::unProject(
-		glm::vec3(c.x, GetHeight() - c.y, 0), cam.getViewMatrix(), cam.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+		glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 }
 
 int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)

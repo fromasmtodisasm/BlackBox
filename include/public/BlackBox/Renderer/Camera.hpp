@@ -66,7 +66,7 @@ public:
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-  Mat4 getViewMatrix() const
+  Mat4 GetViewMatrix() const
   {
     return glm::lookAt(this->transform.position, this->transform.position + this->Front, this->Up);
   }
@@ -75,22 +75,22 @@ public:
     return glm::perspective(glm::radians(FOV), (float)gEnv->pRenderer->GetWidth() / (float)gEnv->pRenderer->GetHeight(), zNear, zFar);
   }
 
-  Vec3 getPosition()
+  Vec3 GetPos()
   {
     return transform.position;
   }
-  Vec3 getRotation()
+  Vec3 GetAngles()
   {
     return transform.rotation;
   }
 
   
-  void CCamera::setPosition(glm::vec3 pos)
+  void CCamera::SetPos(glm::vec3 pos)
   {
     transform.position = pos;
   }
 
-  void CCamera::setRotation(glm::vec3 ang)
+  void CCamera::SetAngles(glm::vec3 ang)
   {
     transform.rotation = ang;
   }
@@ -107,7 +107,6 @@ public:
       this->Zoom = 45.0f;
   }
 
-  // Calculates the front vector from the Camera's (updated) Eular Angles
   // Calculates the front vector from the Camera's (updated) Eular Angles
   void updateCameraVectors()
   {

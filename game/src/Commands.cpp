@@ -395,7 +395,7 @@ bool CameraCommand::move(CommandDesc& cd)
   {
     auto pos = unpack_vector((cd.args.begin()++)++);
     auto camera = m_World->GetActiveScene()->getCurrentCamera();
-    camera->setPosition(pos);
+    camera->SetPos(pos);
     return true;
   }
   return false;
@@ -489,7 +489,7 @@ private:
       {
         auto tag = wstr_to_str(cd.get(1));
         if (tag.length() == 0) return false;
-        game->CreateTagPoint(tag, m_World->GetActiveScene()->getCurrentCamera()->getPosition(), m_World->GetActiveScene()->getCurrentCamera()->getRotation());
+        game->CreateTagPoint(tag, m_World->GetActiveScene()->getCurrentCamera()->GetPos(), m_World->GetActiveScene()->getCurrentCamera()->GetAngles());
         return true;
       }
       else if (subcmd == "goto")
@@ -505,8 +505,8 @@ private:
         Vec3 pos, ang;
         tag_point->GetPos(pos);
         tag_point->GetAngles(ang);
-        m_World->GetActiveScene()->getCurrentCamera()->setPosition(pos);
-        m_World->GetActiveScene()->getCurrentCamera()->setRotation(ang);
+        m_World->GetActiveScene()->getCurrentCamera()->SetPos(pos);
+        m_World->GetActiveScene()->getCurrentCamera()->SetAngles(ang);
         m_World->GetActiveScene()->getCurrentCamera()->updateCameraVectors();
         return true;
       }

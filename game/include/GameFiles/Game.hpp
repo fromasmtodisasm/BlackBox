@@ -575,9 +575,11 @@ class CGame
 		}ray;
 		std::vector<TestObject>::iterator picked;
 		float m_CurrentDistant = 0.f;
-		int idx = -1;
 		float mx, my;
 	}m_IntersectionState;
+
+	std::vector<Vec3> m_LineList;
+	bool m_InsertLines = false;
 
 	
 };
