@@ -19,6 +19,44 @@ if(NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio")
 	endif()
 endif()
 
+# Correct output directory slashes, has to be done after toolchain includes
+if (OUTPUT_DIRECTORY)
+  string(REPLACE "\\" "/" OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}")
+else()
+  # Note that PROJECT_DIR can be different depending on whether we're building the engine or a standalone game / plugin project
+  set(OUTPUT_DIRECTORY "${PROJECT_DIR}/bin")
+endif()
+
+if(OUTPUT_DIRECTORY_NAME)
+  set(OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}/${OUTPUT_DIRECTORY_NAME}")
+  set(OUTPUT_DIRECTORY_NAME "")
+endif()
+
+set(BASE_OUTPUT_DIRECTORY         "${OUTPUT_DIRECTORY}")
+set(BASE_OUTPUT_DIRECTORY_DEBUG   "${OUTPUT_DIRECTORY}")
+set(BASE_OUTPUT_DIRECTORY_PROFILE "${OUTPUT_DIRECTORY}")
+set(BASE_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIRECTORY}_release")
+
+set(OUTPUT_DIRECTORY_SUFFIX "" CACHE STRING "Optional suffix for the binary output directory")
+if(OUTPUT_DIRECTORY_SUFFIX)
+  set(OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}_${OUTPUT_DIRECTORY_SUFFIX}")
+endif()
+
+if (OUTPUT_DIRECTORY)
+  if(OPTION_DEDICATED_SERVER)
+    set(OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}_dedicated")
+  endif()
+
+  message(STATUS "OUTPUT_DIRECTORY=${OUTPUT_DIRECTORY}")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}")
+  set(EXECUTABLE_OUTPUT_PATH "${OUTPUT_DIRECTORY}")
+
+  # Make sure the output directory exists
+  file(MAKE_DIRECTORY "${OUTPUT_DIRECTORY}")
+endif (OUTPUT_DIRECTORY)
+
+
 # Prefix all Visual Studio solution folder names with this string
 set(VS_FOLDER_PREFIX "BLACKBOX/")
 

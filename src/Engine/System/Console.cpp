@@ -14,6 +14,7 @@
 #include <string>
 #include <fstream>
 #include <ctime>
+#include <cctype>
 #include <chrono>
 #include <cstdlib>
 #include <cstring>

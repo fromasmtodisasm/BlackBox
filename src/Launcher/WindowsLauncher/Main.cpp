@@ -1,6 +1,7 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 
 #include <iostream>
 #include <ctime>
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]) {
 
   snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem* pSystem = CreateSystemInterface(params);
-  if (pSystem->Init())
+  if (pSystem)
   {
     pSystem->GetILog()->Log("[OK] ISystem created\n");
     pSystem->GetILog()->Log("[INFO] Current working directory: %s\n", path.c_str());

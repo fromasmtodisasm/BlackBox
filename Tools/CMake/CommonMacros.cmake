@@ -79,15 +79,15 @@ endmacro()
 
 macro(add_subsystem subsystem)
 	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})
-	#target_link_libraries(${BLACKBOX_PROJECT} PRIVATE ${subsystem})
+  target_link_libraries(${BLACKBOX_PROJECT} INTERFACE ${subsystem})
 	set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
-	set_target_properties(${subsystem} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 	${CMAKE_BINARY_DIR}/bin	)
 
-	get_target_property(SOURCE_FILES ${subsystem} SOURCES)
+  get_target_property(SOURCE_FILES ${subsystem} SOURCES)
 
-	list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
-	list(APPEND ALL_PROJECT_SYSTEMS ${subsystem})
-	install_this(${subsystem})
+  list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
+  list(APPEND ALL_PROJECT_SYSTEMS ${subsystem})
+  install_this(${subsystem})
+
 endmacro()
 
 macro(export_subsystem subsystem)

@@ -103,7 +103,6 @@ source_group(
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
   "src/pch.hpp"

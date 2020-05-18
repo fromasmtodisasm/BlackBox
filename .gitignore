@@ -19,3 +19,4 @@ out/glDebug.txt
 /logs
 compile_commands.json
 .clangd/
+bin/*

@@ -161,7 +161,7 @@ DLL_EXPORT void findAndReplaceAll(std::string& data, std::string toSearch, std::
   while (pos != std::string::npos)
   {
     // Replace this occurrence of Sub String
-    if ((pos + 1) < data.length() && std::isdigit(data[pos + 1]))
+    if ((pos + 1) < data.length() && isdigit(data[pos + 1]))
     {
       data.replace(pos, toSearch.size() + 1, replaceStr(data[pos + 1] - '0'));
       n++;

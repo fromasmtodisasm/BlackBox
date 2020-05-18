@@ -1,5 +1,15 @@
 #set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug Profile)
 
+# Turn on the ability to create folders to organize projects (.vcxproj)
+# It creates "CMakePredefinedTargets" folder by default and adds CMake
+# defined projects like INSTALL.vcxproj and ZERO_CHECK.vcxproj
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# Set the PROJECT_DIR to the source path used to start CMake
+if(NOT DEFINED PROJECT_DIR)
+  set(PROJECT_DIR "${CMAKE_SOURCE_DIR}")
+endif()
+
 # Fix slashes on paths
 file(TO_CMAKE_PATH "${BLACKBOX_DIR}" BLACKBOX_DIR)
 file(TO_CMAKE_PATH "${PROJECT_DIR}" PROJECT_DIR)

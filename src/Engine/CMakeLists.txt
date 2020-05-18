@@ -23,7 +23,7 @@ macro(setup_subsystems)
 	endif()
 	add_subsystem(System)
 	add_subsystem(Window)
-	add_subsystem(Profiler)
+  #add_subsystem(Profiler)
 	add_subsystem(Network)
 
 	foreach(system IN LISTS ALL_PROJECT_SYSTEMS)
@@ -77,10 +77,12 @@ macro(main)
 		$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
 	)
 
+#[[
 	set_property(
 		DIRECTORY APPEND PROPERTY RUNTIME_OUTPUT_DIRECTORY 
 		${CMAKE_BINARY_DIR}/bin
 	)
+]]
 
 	target_include_directories(${BLACKBOX_PROJECT}
 		INTERFACE

@@ -977,5 +977,16 @@ ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
 	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
 	ModuleInitISystem(pSystem.get(), "System");
-	return pSystem.release();
+#if CRY_PLATFORM_DURANGO
+#if !defined(_LIB)
+    gEnv = pSystem->GetGlobalEnvironment();
+#endif
+    gEnv->pWindow = startupParams.hWnd;
+#endif
+  if (!pSystem->Init())
+  {
+    return nullptr;
+  }
+
+  return pSystem.release();
 }
