@@ -1,8 +1,12 @@
+#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 
 #include <SDL.h>
 #include <BlackBox/GUI/GUI.hpp>
+
+#include "_TinyWindow.hpp"
 #include <memory>
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
@@ -196,6 +200,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   {
     posx = 0;
     posy = 0;
+    //flags |= SDL_WINDOW_FULLSCREEN;
   }
   // Create window
   m_Window = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
@@ -203,6 +208,17 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   {
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
     return false;
+  }
+  if (fullscreen)
+  {
+    //SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_DisplayMode dm;
+    if (SDL_GetDesktopDisplayMode(1, &dm) != 0)
+    {
+      SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+      return false;
+    }
+    SDL_SetWindowDisplayMode(m_Window, &dm);
   }
   // Create an OpenGL context associated with the window.
   //glThreadContext = SDL_GL_CreateContext(m_Window);
