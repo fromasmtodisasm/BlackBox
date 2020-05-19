@@ -1,4 +1,5 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
+//#include <BlackBox/Core/Platform/platform_impl.inl>
+#define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
@@ -6,8 +7,29 @@
 #include <SDL.h>
 #include <BlackBox/GUI/GUI.hpp>
 
+#include <tchar.h>
 #include "_TinyWindow.hpp"
 #include <memory>
+#include <cstdio>
+
+class EditWindow : public _TinyEdit
+{
+public:
+  virtual BOOL Create(_TinyWindow* pParent)
+  {
+    RECT rect;
+    rect.top = 0;
+    rect.left = 0;
+    rect.right = 100;
+    rect.bottom = 50;
+    return _TinyEdit::Create(0,WS_VISIBLE|WS_CHILD,0,&rect,pParent);
+  }
+};
+///////////////////////////////////
+_TINY_DECLARE_APP()
+_TinyWindow mainWindow;
+EditWindow editWindow;
+
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
 {
@@ -25,6 +47,13 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
     printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
   }
 
+  if (_Tiny_InitApp(::GetModuleHandle(NULL), NULL, NULL))
+  {
+    mainWindow.Create("_default_TinyWindowClass", "MainWindow");
+    //editWindow.Create(&mainWindow);
+    //edit.ShowWindow();
+  }
+
   if (!Create(width, height, fullscreen))
   {
     return false;
@@ -35,10 +64,6 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   ImGui_ImplOpenGL3_Init();
   ImGui_ImplSDL2_InitForOpenGL(m_Window, glRenderContext);
 #endif // GUI
-
-  Mouse.x_wraped = Mouse.y_wraped = false;
-  Mouse.locked = false;
-
   return true;
 }
 
@@ -65,12 +90,12 @@ bool CSDLWindow::closed()
 
 void CSDLWindow::swap()
 {
-  SDL_GL_SwapWindow(m_Window);
+  SDL_GL_SwapWindow(m_MainWindow);
 }
 
 void CSDLWindow::setTitle(const char* title)
 {
-  SDL_SetWindowTitle(m_Window, title);
+  SDL_SetWindowTitle(m_MainWindow, title);
 }
 
 void CSDLWindow::show()
@@ -151,20 +176,20 @@ void CSDLWindow::handleEvent(SDL_Event* event)
 
 void* CSDLWindow::getHandle()
 {
-  return m_Window;
+  return m_MainWindow;
 }
 
 int CSDLWindow::getWidth()
 {
   int w = 0;
-  SDL_GetWindowSize(m_Window, &w, nullptr);
+  SDL_GetWindowSize(m_MainWindow, &w, nullptr);
   return w;
 }
 
 int CSDLWindow::getHeight()
 {
   int h = 0;
-  SDL_GetWindowSize(m_Window, nullptr, &h);
+  SDL_GetWindowSize(m_MainWindow, nullptr, &h);
   return h;
 }
 
@@ -193,7 +218,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,16);
 
-  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
   int posx = SDL_WINDOWPOS_UNDEFINED;
   int posy = SDL_WINDOWPOS_UNDEFINED;
   if (fullscreen)
@@ -202,13 +227,15 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     posy = 0;
     //flags |= SDL_WINDOW_FULLSCREEN;
   }
+//  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
   // Create window
-  m_Window = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
-  if (m_Window == NULL)
+  m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
+  if (m_MainWindow == NULL)
   {
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
     return false;
   }
+
   if (fullscreen)
   {
     //SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -218,22 +245,30 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
       SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
       return false;
     }
-    SDL_SetWindowDisplayMode(m_Window, &dm);
+    SDL_SetWindowDisplayMode(m_MainWindow, &dm);
+  }
+  // Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint
+  char addres[32];
+  sprintf(addres, "%p", m_MainWindow);
+  SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, addres);
+
+  m_SecondaryWindow = SDL_CreateWindowFrom(mainWindow.m_hWnd);
+
+  if (m_SecondaryWindow == NULL)
+  {
+    printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+    return false;
   }
   // Create an OpenGL context associated with the window.
   //glThreadContext = SDL_GL_CreateContext(m_Window);
-  glRenderContext = SDL_GL_CreateContext(m_Window);
-  if (SDL_GL_MakeCurrent(m_Window, glRenderContext) != 0)
+  glRenderContext = SDL_GL_CreateContext(m_MainWindow);
+  if (SDL_GL_MakeCurrent(m_SecondaryWindow, glRenderContext) != 0)
   {
     printf("Can't create context current! SDL_Error: %s\n", SDL_GetError());
 
   }
+  std::swap(m_MainWindow, m_SecondaryWindow);
   return true;
-}
-
-Vec2 CSDLWindow::nextMousePos(Vec2& position)
-{
-  return Vec2();
 }
 
 Rect& CSDLWindow::getViewPort()
@@ -248,7 +283,7 @@ bool CSDLWindow::create(Params params)
 
 void CSDLWindow::changeSize(int w, int h)
 {
-  SDL_SetWindowSize(m_Window, w, h);
+  SDL_SetWindowSize(m_MainWindow, w, h);
 }
 
 void CSDLWindow::setCursor(Cursor* cursor)
@@ -300,7 +335,7 @@ void CSDLWindow::SetIcon(char* path)
   surface = SDL_CreateRGBSurfaceFrom(pixels,16,16,16,16*2,0x0f00,0x00f0,0x000f,0xf000);
 
   // The icon is attached to the window pointer
-  SDL_SetWindowIcon(m_Window, surface);
+  SDL_SetWindowIcon(m_MainWindow, surface);
 
   // ...and the surface containing the icon pixel data is no longer required.
   SDL_FreeSurface(surface);

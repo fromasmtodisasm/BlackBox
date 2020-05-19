@@ -266,6 +266,8 @@ public:
       height=(pRect->bottom-pRect->top);
     }
     //create
+#pragma warning(push)
+#pragma warning(disable: 4312)
     m_hWnd=::CreateWindowEx(dwExStyle,lpszClassName,
       lpszWindowName,
       dwStyle,
@@ -277,6 +279,7 @@ public:
       (HMENU)nID,
       _Tiny_GetInstance(),
       NULL);
+#pragma warning(pop)
     if(!m_hWnd)
     {
       DWORD n=::GetLastError();
@@ -345,7 +348,7 @@ public:
     if(!m_hWnd)return FALSE;
     //fake the WM_CREATE message
     //__Tiny_WindowProc(m_hWnd,WM_CREATE,0,0);
-    return ::SetWindowLongPtr(m_hWnd,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(this) );
+    return ::SetWindowLongPtr(m_hWnd,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(this) ) != 0;
   }
   int DoModal()
   {
@@ -381,7 +384,7 @@ public:
 #else
   bool AddMenu(WORD idMenu)
   {
-    _asm int 3;
+    //_asm int 3;
     m_hMenu=LoadMenu(_Tiny_GetInstance(),MAKEINTRESOURCE(idMenu));
     //<<FIXME>>
   }
@@ -535,8 +538,11 @@ public:
       tvins.hParent=TVI_ROOT;
     else
       tvins.hParent=hParent;
+#pragma warning(push)
+#pragma warning(disable: 4312)
     hPrev = (HTREEITEM) SendMessage(TVM_INSERTITEM, 0,
          (LPARAM) (LPTVINSERTSTRUCT) &tvins);
+#pragma warning(pop)
 
     return hPrev;
   }

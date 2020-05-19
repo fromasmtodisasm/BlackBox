@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/IInputHandler.hpp>
-#include <BlackBox/Core/MathHelper.hpp>
+//#include <BlackBox/Core/MathHelper.hpp>
 #include <SDL_video.h>
 #include <SDL_events.h>
 
@@ -42,7 +42,6 @@ public:
   virtual void* getHandle() override;
 private:
   bool Create(int width, int height, bool fullscreen);
-  Vec2 nextMousePos(Vec2& position);
   void handleEvent(SDL_Event* event);
   void SetIcon(char* path);
 
@@ -51,7 +50,8 @@ private:
   static constexpr int DEFAULT_HEIGHT = 768;
   static constexpr const char* DEFAULT_TITLE = "SDL Window";
 
-  SDL_Window* m_Window;
+  SDL_Window* m_MainWindow;
+  SDL_Window* m_SecondaryWindow;
   SDL_GLContext glRenderContext, glThreadContext;
 
   bool m_bClose;
@@ -61,18 +61,8 @@ private:
   //sf::ContextSettings m_contextSettings;
   //===============================================================================
   std::string m_Title;
-  Vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+  //Vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
   int m_flags = 0;
   // For input handling
   //std::list<IInputEventListener*> listeners;
-  struct
-  {
-    Vec2 prev_pos;
-    Vec2 curr_pos;
-    bool x_wraped = false;
-    bool y_wraped = false;
-    bool locked = false;
-    Vec2 lockedPos;
-    int limit = 4;
-  }Mouse;
 };
