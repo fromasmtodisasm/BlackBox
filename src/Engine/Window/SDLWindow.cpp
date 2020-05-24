@@ -321,7 +321,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     SDL_SetWindowDisplayMode(m_MainWindow, &dm);
 #endif
   }
-  SDL_AddEventWatch(EventWatcher, this);
+  //SDL_AddEventWatch(EventWatcher, this);
   SDL_SetWindowInputFocus(m_MainWindow);
   return true;
 }

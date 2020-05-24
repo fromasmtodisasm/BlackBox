@@ -158,19 +158,19 @@ int CCryPak::FPrintf(FILE* handle, const char* format, ...)
   return res;
 }
 
-char* CCryPak::FGets(char*, int, FILE*)
+char* CCryPak::FGets(char* buffer, int max_count, FILE* file)
 {
-  return nullptr;
+  return fgets(buffer, max_count, file);
 }
 
-int CCryPak::Getc(FILE*)
+int CCryPak::Getc(FILE* file)
 {
-  return 0;
+  return getc(file);
 }
 
-int CCryPak::Ungetc(int c, FILE*)
+int CCryPak::Ungetc(int c, FILE* file)
 {
-  return 0;
+  return ungetc(c, file);
 }
 
 intptr_t CCryPak::FindFirst(const char* pDir, _finddata_t* fd)

@@ -146,6 +146,10 @@ private:
   ICVar* r_sbpp;
   ICVar* r_fullscreen;
   ICVar* cvGameName;
+	//////////////////////////////////////////////////////////////////////////
+	//! User define callback for system events.
+	ISystemUserCallback* m_pUserCallback;
+
 
   SSystemInitParams& m_startupParams;
   SFileVersion m_FileVersion;

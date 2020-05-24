@@ -185,6 +185,15 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 	return buffer;
 }
 
+void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
+{
+	if (pVertexBuffer->m_VS != nullptr)
+	{
+		glDeleteBuffers(1, &pVertexBuffer->m_VS[0].m_VertBuf.m_nID);
+		glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
+	}
+}
+
 void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount)
 {
 	assert(dest != nullptr);
@@ -201,6 +210,14 @@ void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount
 	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   *dest = *stream;
+}
+
+void CBufferManager::Release(SVertexStream* pVertexStream)
+{
+	if (pVertexStream != nullptr)
+	{
+		glDeleteBuffers(1, &pVertexStream[0].m_VertBuf.m_nID);
+	}
 }
 
 void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start, int vert_stop, CMatInfo* mi)
