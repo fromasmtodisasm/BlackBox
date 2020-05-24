@@ -12,7 +12,7 @@ ${PROJECT_NAME}
 ]]
 
 ###################################################
-add_package(Lua)
+add_package(Lua 5.1)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)

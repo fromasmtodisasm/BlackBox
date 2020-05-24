@@ -1,4 +1,4 @@
-//#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/Platform/SDL/Window.hpp>
@@ -11,6 +11,24 @@
 #include "_TinyWindow.hpp"
 #include <memory>
 #include <cstdio>
+
+class TinyWindow : public _TinyWindow
+{
+ public:
+
+  virtual LRESULT __Tiny_WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+  {
+    //int wmId, wmEvent;
+    if(hWnd!=m_hWnd)DebugBreak();
+    switch(message){
+      case WM_KEYDOWN:
+      {
+        return 0;
+      }
+    }
+    return 0;
+  }
+};
 
 class EditWindow : public _TinyEdit
 {
@@ -25,9 +43,24 @@ public:
     return _TinyEdit::Create(0,WS_VISIBLE|WS_CHILD,0,&rect,pParent);
   }
 };
+class ButtonWindow : public _TinyButton
+{
+public:
+  virtual BOOL Create(_TinyWindow* pParent)
+  {
+    RECT rect;
+    rect.top = 0;
+    rect.left = 900;
+    rect.right = 100;
+    rect.bottom = 50;
+    return _TinyButton::Create(0,WS_VISIBLE|WS_CHILD,0,&rect,pParent);
+  }
+};
 ///////////////////////////////////
 _TINY_DECLARE_APP()
 _TinyWindow mainWindow;
+_TinyWindow childWindow;
+ButtonWindow button;
 EditWindow editWindow;
 
 
@@ -49,16 +82,28 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
 
   if (_Tiny_InitApp(::GetModuleHandle(NULL), NULL, NULL))
   {
-    mainWindow.Create("_default_TinyWindowClass", "MainWindow");
-    //editWindow.Create(&mainWindow);
-    //edit.ShowWindow();
+    #if 0
+    //mainWindow.Create("_default_TinyWindowClass", "MainWindow");
+    _TinyRect rect(800,600);
+    //childWindow.Create("_default_TinyWindowClass", "ChileWindow");
+    /*childWindow.Create(
+          "_default_TinyWindowClass", "ChildWindow",
+          WS_VISIBLE | WS_SYSMENU | WS_CAPTION | WS_MAXIMIZEBOX | WS_BORDER | WS_THICKFRAME,
+          0,
+          &rect,
+          NULL
+     );*/
+    button.Create(&mainWindow);
+    button.ShowWindow();
+    button.AddString("TestButton");
+    #endif
   }
 
   if (!Create(width, height, fullscreen))
   {
     return false;
   }
-  SetIcon(nullptr);
+  //SetIcon(nullptr);
 
 #ifdef GUI
   ImGui_ImplOpenGL3_Init();
@@ -218,7 +263,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,16);
 
-  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_HIDDEN*/;
   int posx = SDL_WINDOWPOS_UNDEFINED;
   int posy = SDL_WINDOWPOS_UNDEFINED;
   if (fullscreen)
@@ -229,30 +274,21 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   }
 //  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
   // Create window
-  m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
+  m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width,height, flags);
   if (m_MainWindow == NULL)
   {
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
     return false;
   }
+  //SDL_HideWindow(m_MainWindow);
 
-  if (fullscreen)
-  {
-    //SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    SDL_DisplayMode dm;
-    if (SDL_GetDesktopDisplayMode(1, &dm) != 0)
-    {
-      SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
-      return false;
-    }
-    SDL_SetWindowDisplayMode(m_MainWindow, &dm);
-  }
   // Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint
+  #if 0
   char addres[32];
   sprintf(addres, "%p", m_MainWindow);
   SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, addres);
 
-  m_SecondaryWindow = SDL_CreateWindowFrom(mainWindow.m_hWnd);
+  m_SecondaryWindow = SDL_CreateWindowFrom(childWindow.m_hWnd);
 
   if (m_SecondaryWindow == NULL)
   {
@@ -261,13 +297,32 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   }
   // Create an OpenGL context associated with the window.
   //glThreadContext = SDL_GL_CreateContext(m_Window);
+  #endif
   glRenderContext = SDL_GL_CreateContext(m_MainWindow);
+  #if 0
   if (SDL_GL_MakeCurrent(m_SecondaryWindow, glRenderContext) != 0)
   {
     printf("Can't create context current! SDL_Error: %s\n", SDL_GetError());
 
   }
-  std::swap(m_MainWindow, m_SecondaryWindow);
+  #endif
+  //SDL_DestroyWindow(m_MainWindow);
+  //std::swap(m_MainWindow, m_SecondaryWindow);
+  if (fullscreen)
+  {
+    //SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+#if 0
+    SDL_DisplayMode dm;
+    if (SDL_GetDesktopDisplayMode(1, &dm) != 0)
+    {
+      SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+      return false;
+    }
+    SDL_SetWindowDisplayMode(m_MainWindow, &dm);
+#endif
+  }
+  SDL_AddEventWatch(EventWatcher, this);
+  SDL_SetWindowInputFocus(m_MainWindow);
   return true;
 }
 
@@ -340,6 +395,14 @@ void CSDLWindow::SetIcon(char* path)
   // ...and the surface containing the icon pixel data is no longer required.
   SDL_FreeSurface(surface);
 
+}
+#include <iostream>
+int CSDLWindow::EventWatcher(void *self, SDL_Event *event)
+{
+  using namespace  std;
+  CSDLWindow *& w = reinterpret_cast<CSDLWindow*&>(self);
+  cout << "Event: " << event->type << endl;
+  return 1;
 }
 
 extern "C" {

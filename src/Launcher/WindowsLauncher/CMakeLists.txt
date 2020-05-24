@@ -5,7 +5,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 enable_testing()
 
-add_executable(${PROJECT_NAME} Main.cpp)
+add_executable(${PROJECT_NAME} 
+	Main.cpp
+    "Resource.rc"
+)
 target_link_libraries(Launcher PRIVATE  BlackBox)
 target_link_libraries(Launcher PRIVATE  System)
 add_dependencies(Launcher Game)
@@ -14,8 +17,8 @@ add_dependencies(Launcher Game)
 
 if(WIN32)
   if (MSVC)
-    #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
-    #set_target_properties(${PROJECT_NAME}_test PROPERTIES CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows)
+    #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows /ENTRY:main")
+    #set_target_properties(${PROJECT_NAME} PROPERTIES CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows)
   endif()
   if (MINGW)
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--subsystem,windows")

@@ -44,6 +44,7 @@ private:
   bool Create(int width, int height, bool fullscreen);
   void handleEvent(SDL_Event* event);
   void SetIcon(char* path);
+  static int EventWatcher(void* self, SDL_Event* event);
 
 private:
   static constexpr int DEFAULT_WIDTH = 1024;

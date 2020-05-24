@@ -28,6 +28,9 @@ macro(setup_subsystems)
 
 	foreach(system IN LISTS ALL_PROJECT_SYSTEMS)
 		add_dependencies(${BLACKBOX_PROJECT} ${system})
+		set_target_properties(${subsystem} 
+			PROPERTIES
+			RUNTIME_OUTPUT_NAME_<CONFIG> "bb${system}")
 		message(STATUS "sub: ${system}")
 	endforeach()
 endmacro()

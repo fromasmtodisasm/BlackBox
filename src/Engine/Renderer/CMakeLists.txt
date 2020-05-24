@@ -20,17 +20,7 @@ elseif(GLEW_LOADER)
 endif()
 install_this(OpenGlBackend)
 
-find_package(Stb)
-if (NOT Stb_FOUND)
-	install_package("stb" result)
-        #[[
-	if (NOT result EQUAL 0)
-		message(FATAL_ERROR "Could not install stb with error: ${result}")
-        endif()
-        ]]
-	find_package(Stb REQUIRED)
-endif()
-
+ADD_PACKAGE(stb)
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
