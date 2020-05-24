@@ -36,7 +36,7 @@ ShaderProgramRef  ShaderManager::getProgram(const char* vShader, const char* fSh
   }
   else
   {
-    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded");
     return p = _smart_ptr<CShaderProgram>(new CShaderProgram(vs, fs));
   }
 #endif
@@ -57,7 +57,7 @@ ShaderProgramRef ShaderManager::getProgram(const char* vShader, const char* fSha
   }
   else
   {
-    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded");
     assert(0 && "Not implemented");
     return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs);
@@ -79,7 +79,7 @@ ShaderProgramRef ShaderManager::getProgram(const char* vShader, const char* fSha
   }
   else
   {
-    GetISystem()->GetILog()->Log("[OK] Shaders loaded\n");
+    GetISystem()->GetILog()->Log("[OK] Shaders loaded");
     assert(0 && "Not implemented");
     return nullptr;
     //return p = std::make_shared<CShaderProgram>(vs, fs, gs, cs);

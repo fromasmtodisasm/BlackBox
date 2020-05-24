@@ -180,7 +180,7 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 		EnableAttributes(buffer);
     }
 	gl::BindVertexArray(0);
-	debuger::vertex_array_label(stream.m_VertBuf.m_nID, szSource);
+	debuger::vertex_array_label(buffer->m_Container, szSource);
 
 	return buffer;
 }

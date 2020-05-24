@@ -440,8 +440,8 @@ void CGame::DisplayInfo(float fps)
 
 bool CGame::Run(bool& bRelaunch)
 {
-	m_pLog->Log("[OK] Game started\n");
-	m_pSystem->Log("[OK] Game started\n");
+	m_pLog->Log("[OK] Game started");
+	m_pSystem->Log("[OK] Game started");
 	StartupServer(true, "test_server");
 
 	m_bRelaunch = false;
