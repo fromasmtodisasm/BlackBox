@@ -34,7 +34,7 @@ CRenderAuxGeom::CRenderAuxGeom()
     Vec3{-1.0,  1.0, -1.}0
   };
 	#endif
-	std::vector<P3F> vertices = {
+	std::vector<P3F> reference = {
 		
     // front
 		P3F{{-1.0, -1.0, 1.0},{0, 0, 0}},
@@ -46,7 +46,8 @@ CRenderAuxGeom::CRenderAuxGeom()
     P3F{{1.0, -1.0, -1.0},{0,0,0}},
     P3F{{1.0,  1.0, -1.0},{0,0,0}},
     P3F{{-1.0,  1.0, -1.},{0,0,0}}
-};
+	};
+	std::vector<P3F> vertices(24);
 	
 	std::vector<glm::u16vec3> elements = {
 #if 0
@@ -87,13 +88,20 @@ CRenderAuxGeom::CRenderAuxGeom()
 		{6, 7, 3}
 #endif
 	};
-	for (int i = 0; i < 8; i++)
+	for (int i = 0, j = 0; i < elements.size(); i+=2, j+=4)
+	{
+		auto n = glm::normalize(glm::cross(
+			reference[elements[i][1]].xyz - reference[elements[i][0]].xyz, 
+			reference[elements[i][2]].xyz - reference[elements[i][1]].xyz)
+		);
+		vertices[j		]	= P3F{reference[elements[i][0]].xyz, n};
+		vertices[j + 1] = P3F{reference[elements[i][1]].xyz, n};
+		vertices[j + 2] = P3F{reference[elements[i][2]].xyz, n};
+		vertices[j + 3] = P3F{reference[elements[i + 1][1]].xyz, n};
+	}
+	for (int i = 0; i < 24; i++)
 	{
 		vertices[i].xyz *= 0.5;		
-	}
-	for (int i = 0; i < sizeof elements / 3 * sizeof uint16; i++)
-	{
-			
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	//int cnt		  = sizeof vertices / sizeof P3F;
