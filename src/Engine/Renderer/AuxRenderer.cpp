@@ -3,7 +3,7 @@
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 
-using P3F	= SVF_P3F;
+using P3F	= SVF_P3F_N;
 using VecPos = std::vector<P3F>;
 
 namespace
@@ -34,20 +34,21 @@ CRenderAuxGeom::CRenderAuxGeom()
     Vec3{-1.0,  1.0, -1.}0
   };
 	#endif
-	static P3F vertices[] = {
+	std::vector<P3F> vertices = {
 		
     // front
-		Vec3{-1.0, -1.0, 1.0},
-     Vec3{1.0, -1.0,  1.0},
-     Vec3{1.0,  1.0,  1.0},
-    Vec3{-1.0,  1.0,  1.0},
+		P3F{{-1.0, -1.0, 1.0},{0, 0, 0}},
+		P3F{{1.0, -1.0,  1.0},{0,0,0}},
+		P3F{{1.0,  1.0,  1.0},{0,0,0}},
+    P3F{{-1.0,  1.0,  1.0},{0,0,0}},
     // back
-    Vec3{-1.0, -1.0, -1.0},
-     Vec3{1.0, -1.0, -1.0},
-     Vec3{1.0,  1.0, -1.0},
-    Vec3{-1.0,  1.0, -1.}
+    P3F{{-1.0, -1.0, -1.0},{0,0,0}},
+    P3F{{1.0, -1.0, -1.0},{0,0,0}},
+    P3F{{1.0,  1.0, -1.0},{0,0,0}},
+    P3F{{-1.0,  1.0, -1.},{0,0,0}}
 };
-	static uint16 elements[] = {
+	
+	std::vector<glm::u16vec3> elements = {
 #if 0
 		0,
 		1,
@@ -67,36 +68,40 @@ CRenderAuxGeom::CRenderAuxGeom()
 		7
 #else
 		// front
-		0, 1, 2,
-		2, 3, 0,
+		{0, 1, 2},
+		{2, 3, 0},
 		// right
-		1, 5, 6,
-		6, 2, 1,
+		{1, 5, 6},
+		{6, 2, 1},
 		// back
-		7, 6, 5,
-		5, 4, 7,
+		{7, 6, 5},
+		{5, 4, 7},
 		// left
-		4, 0, 3,
-		3, 7, 4,
+		{4, 0, 3},
+		{3, 7, 4},
 		// bottom
-		4, 5, 1,
-		1, 0, 4,
+		{4, 5, 1},
+		{1, 0, 4},
 		// top
-		3, 2, 6,
-		6, 7, 3
+		{3, 2, 6},
+		{6, 7, 3}
 #endif
 	};
 	for (int i = 0; i < 8; i++)
 	{
 		vertices[i].xyz *= 0.5;		
 	}
+	for (int i = 0; i < sizeof elements / 3 * sizeof uint16; i++)
+	{
+			
+	}
 	///////////////////////////////////////////////////////////////////////////////
-	int cnt		  = sizeof vertices / sizeof P3F;
-	m_BoundingBox = gEnv->pRenderer->CreateBuffer(cnt, VERTEX_FORMAT_P3F, "BoundingBox", false);
-	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices, cnt, false);
+	//int cnt		  = sizeof vertices / sizeof P3F;
+	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), VERTEX_FORMAT_P3F_N, "BoundingBox", false);
+	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
 
 	m_BB_IndexBuffer = new SVertexStream;
-	gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements, (sizeof elements / sizeof uint16));
+	gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb.vs", "bb.frag");

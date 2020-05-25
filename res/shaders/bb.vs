@@ -2,6 +2,7 @@
 #include "common.h"
 
 #pragma attribute(position, aPos)
+#pragma attribute(normal, aN)
 
 uniform mat4 projection;
 uniform mat4 view;
