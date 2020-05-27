@@ -47,9 +47,23 @@ CRenderAuxGeom::CRenderAuxGeom()
     P3F{{1.0,  1.0, -1.0},{0,0,0}},
     P3F{{-1.0,  1.0, -1.},{0,0,0}}
 	};
+
+
 	std::vector<P3F> vertices(24);
+	auto get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16 {
+		int idx = 0;
+		for (int i = 0; i < 24; i++)
+		{
+			if (vertices[i].xyz == pos && vertices[i].normal == n)
+			{
+				idx = i;	
+				break;
+			}
+		}
+		return idx;
+	};
 	
-	std::vector<glm::u16vec3> elements = {
+	std::vector<glm::u16vec3> reference_elements = {
 #if 0
 		0,
 		1,
@@ -88,17 +102,29 @@ CRenderAuxGeom::CRenderAuxGeom()
 		{6, 7, 3}
 #endif
 	};
-	for (int i = 0, j = 0; i < elements.size(); i+=2, j+=4)
+	for (int i = 0, j = 0; i < reference_elements.size(); i+=2, j+=4)
 	{
 		auto n = glm::normalize(glm::cross(
-			reference[elements[i][1]].xyz - reference[elements[i][0]].xyz, 
-			reference[elements[i][2]].xyz - reference[elements[i][1]].xyz)
+			reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz, 
+			reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz)
 		);
-		vertices[j		]	= P3F{reference[elements[i][0]].xyz, n};
-		vertices[j + 1] = P3F{reference[elements[i][1]].xyz, n};
-		vertices[j + 2] = P3F{reference[elements[i][2]].xyz, n};
-		vertices[j + 3] = P3F{reference[elements[i + 1][1]].xyz, n};
+		vertices[j		]	= P3F{reference[reference_elements[i][0]].xyz, n};
+		vertices[j + 1] = P3F{reference[reference_elements[i][1]].xyz, n};
+		vertices[j + 2] = P3F{reference[reference_elements[i][2]].xyz, n};
+		vertices[j + 3] = P3F{reference[reference_elements[i + 1][1]].xyz, n};
 	}
+	std::vector<glm::u16vec3> elements(12);
+	std::cout << "elments:" << std::endl;
+	for (int i = 0; i < 12; i++)
+	{
+		elements[i] = {
+			(get_idx(reference[reference_elements[i][0]].xyz, vertices[2 * i].normal)),
+			(get_idx(reference[reference_elements[i][1]].xyz, vertices[2 * i].normal)),
+			(get_idx(reference[reference_elements[i][2]].xyz, vertices[2 * i].normal))
+		};
+		std::cout << elements[i][0] << ", " << elements[i][1] << ", " << elements[i][2] << std::endl;
+	}
+	std::cout << std::endl;
 	for (int i = 0; i < 24; i++)
 	{
 		vertices[i].xyz *= 0.5;		
@@ -138,6 +164,9 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, UCol& col)
 	shader->Uniform(cam.getProjectionMatrix(), "projection");
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");
+	shader->Uniform(Vec3(20), "lightPos");
+	shader->Uniform(gEnv->pRenderer->GetFrameID(), "fid");
+	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");
 
 	{
 		RSS(gEnv->pRenderer, BLEND, true);

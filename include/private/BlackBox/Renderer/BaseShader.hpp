@@ -140,7 +140,6 @@ public:
   static ICVar* print_loc_name;
   static ICVar* use_cache;
 
-private:
   int m_Refs = 0;
 
 
@@ -151,6 +150,9 @@ private:
   // Inherited via IShaderProgram
   virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
 
+
+// Inherited via IShaderProgram
+  virtual int Reload() override;
 };
 
 CShader::Type str2typ(std::string type);

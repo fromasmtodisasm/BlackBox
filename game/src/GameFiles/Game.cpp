@@ -596,6 +596,14 @@ void CGame::PersistentHandler(const SInputEvent& event)
 			m_InsertLines = !m_InsertLines;
 			break;
 		}
+		case eKI_R:
+		{
+			if (control)
+			{
+				gEnv->pRenderer->Sh_Reload();
+			}
+			break;
+		}
 		case eKI_Pause:
 		{
 			m_bInPause = !m_bInPause;
@@ -1205,7 +1213,7 @@ void CGame::IntersectionByRayCasting()
 	float tMin = std::numeric_limits<float>::max();
 	Ray eyeRay;
 
-	eyeRay.origin = m_CameraController.CurrentCamera()->transform.position;
+	eyeRay.origin = m_CameraController.CurrentCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 
 	for (size_t i = 0; i < m_testObjects.size(); i++){

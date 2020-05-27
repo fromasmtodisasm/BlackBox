@@ -322,6 +322,7 @@ struct IShaderProgram
 
 	virtual void AddRef() = 0;
 	virtual int Release() = 0;
+	virtual int Reload() = 0;
 
 	virtual bool Create(const char* label)								 = 0;
 	virtual void Attach(ShaderInfo& shader)								 = 0;

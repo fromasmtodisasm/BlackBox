@@ -29,6 +29,32 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
+class ShaderMan
+{
+  public:
+	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
+	{
+		using ShaderInfo = IShaderProgram::ShaderInfo;
+		auto vs			 = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
+		auto fs			 = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+		auto p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
+		p->Create((std::string(vertex) + std::string(fragment)).data());
+		m_Shaders.push_back(p);
+		return p;
+	}
+	void ReloadAll()
+	{
+		for (auto &s : m_Shaders)
+		{
+			s->Reload();
+		}
+	}
+
+  std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
+};
+
+ShaderMan* gShMan = nullptr;
+
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
 {
@@ -73,6 +99,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	printHardware();
 	m_BufferManager = new CBufferManager();
 	CreateQuad();
+	gShMan			= new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
 	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screenshader.vs", "screenshader.frag")))
@@ -414,17 +441,13 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 	auto fs			 = CShader::load(ShaderDesc("test.frag", IShader::E_FRAGMENT));
 	auto p			 = new CShaderProgram(ShaderInfo(vs, std::string("test.vs")), ShaderInfo(fs, std::string("test.vs")));
 	p->Create("TestProgram");
+	m_Shaders.push_back(p);
 	return p;
 }
 
 IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)
 {
-	using ShaderInfo = IShaderProgram::ShaderInfo;
-	auto vs			 = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
-	auto fs			 = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
-	auto p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
-	p->Create((std::string(vertex) + std::string(fragment)).data());
-	return p;
+	return gShMan->Sh_Load(vertex, fragment);
 }
 
 void GLRenderer::DrawFullscreenQuad()
@@ -661,6 +684,11 @@ float GLRenderer::GetDepthValue(int x, int y)
 	float out;
 	glReadPixels( x, GetHeight()-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &out);
 	return out;
+}
+
+void GLRenderer::Sh_Reload()
+{
+	gShMan->ReloadAll();
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

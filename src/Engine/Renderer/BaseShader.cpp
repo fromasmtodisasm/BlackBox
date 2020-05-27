@@ -611,6 +611,11 @@ void CBaseShaderProgram::Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, Shader
   Create(label);
 }
 
+int CBaseShaderProgram::Reload()
+{
+	return 0;
+}
+
 void CBaseShaderProgram::AddRef()
 {
   m_Refs++;

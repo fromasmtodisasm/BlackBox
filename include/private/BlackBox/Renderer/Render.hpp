@@ -180,6 +180,7 @@ private:
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
 
+  std::vector<CShaderProgram*> m_Shaders;
 
 
   // Inherited via CRenderer
@@ -192,4 +193,9 @@ private:
 
 // Унаследовано через CRenderer
   virtual float GetDepthValue(int x, int y) override;
+
+  // Inherited via CRenderer
+  virtual void Sh_Reload() override;
 };
+
+extern class ShaderMan* gShMan;
