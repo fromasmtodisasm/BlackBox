@@ -1,0 +1,3 @@
+[submodule "res/shaders/tonemap"]
+	path = res/shaders/tonemap
+	url = https://github.com/dmnsgn/glsl-tone-map.git
