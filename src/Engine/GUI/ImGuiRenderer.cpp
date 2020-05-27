@@ -85,9 +85,10 @@ namespace {
   // OpenGL Data
   static char         g_GlslVersionString[32] = "";
   static uint         g_FontTexture = 0;
-  static uint         g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
-  static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;                                // Uniforms location
-  static int          g_AttribLocationVtxPos = 0, g_AttribLocationVtxUV = 0, g_AttribLocationVtxColor = 0; // Vertex attributes location
+  //static uint         g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
+  ShaderProgramRef    g_Shader;
+  //static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;                                // Uniforms location
+  //static int          g_AttribLocationVtxPos = 0, g_AttribLocationVtxUV = 0, g_AttribLocationVtxColor = 0; // Vertex attributes location
   static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
 
   class BackupGlState
@@ -244,7 +245,7 @@ void ImGuiOpenglRender::Shutdown()
 
 void ImGuiOpenglRender::NewFrame()
 {
-    if (!g_ShaderHandle)
+    if (!g_Shader)
         CreateDeviceObjects();
 }
 // OpenGL3 Render function.
@@ -356,11 +357,14 @@ void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, in
   float T = draw_data->DisplayPos.y;
   float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
   glm::mat4 ortho_projection = glm::ortho(L, R, B, T);
-  glUseProgram(g_ShaderHandle);
-  glUniform1i(g_AttribLocationTex, 0);
-  glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+  //glUseProgram(g_ShaderHandle);
+  g_Shader->Use();
+  //g_Shader->BindTextureUnit2D()
+  //glUniform1i(g_AttribLocationTex, 0);
+  g_Shader->Uniform(ortho_projection[0][0], "ProjMtx");
+  //glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 #ifdef GL_SAMPLER_BINDING
-  glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
+  //glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
 #endif
 
   (void)vertex_array_object;
@@ -465,135 +469,6 @@ bool    ImGuiOpenglRender::CreateDeviceObjects()
     GLint last_vertex_array;
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 #endif
-
-    // Parse GLSL version string
-    int glsl_version = 130;
-    if (sscanf(g_GlslVersionString, "#version %d", &glsl_version) != 1)
-      return false;
-
-    const GLchar* vertex_shader_glsl_120 =
-        "uniform mat4 ProjMtx;\n"
-        "attribute vec2 Position;\n"
-        "attribute vec2 UV;\n"
-        "attribute vec4 Color;\n"
-        "varying vec2 Frag_UV;\n"
-        "varying vec4 Frag_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Frag_UV = UV;\n"
-        "    Frag_Color = Color;\n"
-        "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-        "}\n";
-
-    const GLchar* vertex_shader_glsl_130 =
-        "uniform mat4 ProjMtx;\n"
-        "in vec2 Position;\n"
-        "in vec2 UV;\n"
-        "in vec4 Color;\n"
-        "out vec2 Frag_UV;\n"
-        "out vec4 Frag_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Frag_UV = UV;\n"
-        "    Frag_Color = Color;\n"
-        "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-        "}\n";
-
-    const GLchar* vertex_shader_glsl_300_es =
-        "precision mediump float;\n"
-        "layout (location = 0) in vec2 Position;\n"
-        "layout (location = 1) in vec2 UV;\n"
-        "layout (location = 2) in vec4 Color;\n"
-        "uniform mat4 ProjMtx;\n"
-        "out vec2 Frag_UV;\n"
-        "out vec4 Frag_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Frag_UV = UV;\n"
-        "    Frag_Color = Color;\n"
-        "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-        "}\n";
-
-    const GLchar* vertex_shader_glsl_410_core =
-        "layout (location = 0) in vec2 Position;\n"
-        "layout (location = 1) in vec2 UV;\n"
-        "layout (location = 2) in vec4 Color;\n"
-        "uniform mat4 ProjMtx;\n"
-        "out vec2 Frag_UV;\n"
-        "out vec4 Frag_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Frag_UV = UV;\n"
-        "    Frag_Color = Color;\n"
-        "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-        "}\n";
-
-    const GLchar* fragment_shader_glsl_120 =
-        "#ifdef GL_ES\n"
-        "    precision mediump float;\n"
-        "#endif\n"
-        "uniform sampler2D Texture;\n"
-        "varying vec2 Frag_UV;\n"
-        "varying vec4 Frag_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
-        "}\n";
-
-    const GLchar* fragment_shader_glsl_130 =
-        "uniform sampler2D Texture;\n"
-        "in vec2 Frag_UV;\n"
-        "in vec4 Frag_Color;\n"
-        "out vec4 Out_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-        "}\n";
-
-    const GLchar* fragment_shader_glsl_300_es =
-        "precision mediump float;\n"
-        "uniform sampler2D Texture;\n"
-        "in vec2 Frag_UV;\n"
-        "in vec4 Frag_Color;\n"
-        "layout (location = 0) out vec4 Out_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-        "}\n";
-
-    const GLchar* fragment_shader_glsl_410_core =
-        "in vec2 Frag_UV;\n"
-        "in vec4 Frag_Color;\n"
-        "uniform sampler2D Texture;\n"
-        "layout (location = 0) out vec4 Out_Color;\n"
-        "void main()\n"
-        "{\n"
-        "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-        "}\n";
-
-    // Select shaders matching our GLSL versions
-    const GLchar* vertex_shader = NULL;
-    const GLchar* fragment_shader = NULL;
-    if (glsl_version < 130)
-    {
-        vertex_shader = vertex_shader_glsl_120;
-        fragment_shader = fragment_shader_glsl_120;
-    }
-    else if (glsl_version >= 410)
-    {
-        vertex_shader = vertex_shader_glsl_410_core;
-        fragment_shader = fragment_shader_glsl_410_core;
-    }
-    else if (glsl_version == 300)
-    {
-        vertex_shader = vertex_shader_glsl_300_es;
-        fragment_shader = fragment_shader_glsl_300_es;
-    }
-    else
-    {
-        vertex_shader = vertex_shader_glsl_130;
-        fragment_shader = fragment_shader_glsl_130;
-    }
 
     // Create shaders
     const GLchar* vertex_shader_with_version[2] = { g_GlslVersionString, vertex_shader };
