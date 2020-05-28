@@ -138,7 +138,10 @@ void GLRenderer::Release()
 
 void GLRenderer::BeginFrame(void)
 {
-	m_FrameBuffer->bind();
+	int vp[4];
+	m_pRenerCallback->CallBack(IRenderCallback::eOnRender);
+	GetViewport(&vp[0], &vp[1], &vp[2], &vp[3]);
+	m_FrameBuffer->bind({vp[0], vp[1], vp[2], vp[3]});
 	//m_FrameBuffer->clear({m_clearColor, 1});
 	gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

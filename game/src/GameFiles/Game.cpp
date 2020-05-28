@@ -276,6 +276,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
+	m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
 
 	return true;
 }
@@ -284,6 +285,7 @@ bool CGame::Update()
 {
 	static const auto& render_game = m_Console->GetCVar("render_game");
 	bool bRenderFrame			   = !m_bDedicatedServer;
+	*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	{
 		// TODO: FIX IT

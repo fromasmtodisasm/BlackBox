@@ -10,6 +10,7 @@ public:
 
 	int m_ViewRenderTarget = -1;
 	IGame* m_pGame = nullptr;
+	Vec2 m_NextFrameViewPortSize = Vec2(1);
 
 	// Inherited via IRenderCallback
 	virtual void CallBack(Type type) override;

@@ -497,7 +497,7 @@ bool CSystem::InitGUI()
 			return true;
 		}))
 	{
-		return m_GuiManager->Init();
+		return m_GuiManager->Init(m_pWindow);
 	}
 	return false;
 }
@@ -730,6 +730,11 @@ void CSystem::Tests()
 #endif
 
 	//SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
+}
+
+void CSystem::PollEvents()
+{
+
 }
 
 void CSystem::EnableGui(bool enable)

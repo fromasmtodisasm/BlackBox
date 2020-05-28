@@ -346,6 +346,7 @@ struct IRenderCallback
 {
 	enum Type
 	{
+		eOnRender,
 		eBeforeSwapBuffers
 	};
 	virtual void CallBack(Type type) = 0;

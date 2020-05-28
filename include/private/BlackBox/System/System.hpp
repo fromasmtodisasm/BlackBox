@@ -10,6 +10,7 @@
 #include <BlackBox/System/Window.hpp>
 #include <BlackBox/GUI/ImGuiManager.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/System/IWindowMessageHandler.h>
 
 #define DEFAULT_APP_NAME "BlackBox"
 
@@ -24,7 +25,8 @@ class CSystem :
   public ISystem,
   public IInputEventListener,
   public IConsoleVarSink,
-  public ISystemEventListener
+  public ISystemEventListener,
+  public IWindowMessageHandler
 {
 public:
   CSystem(SSystemInitParams& initParams);
@@ -107,6 +109,7 @@ private:
   void SetWorkingDirectory(const std::string& path) const;
   void LogCommandLine() const;
   void Tests();
+  void PollEvents();
 protected:
 	CCmdLine*                                 m_pCmdLine;
 

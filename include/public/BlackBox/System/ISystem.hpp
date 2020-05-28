@@ -28,6 +28,7 @@ struct IValidator;
 struct ITimer;
 struct INetwork;
 struct IWorld;
+struct IPlatform;
 struct ICryPak;
 
 //////////////////////////////////////////////////////////////////////////
@@ -171,6 +172,7 @@ struct SSystemGlobalEnvironment
   ILog* pLog;
   IRenderer* pRenderer;
   IHardwareMouse* pHardwareMouse;
+  IPlatform* pPlatform;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{

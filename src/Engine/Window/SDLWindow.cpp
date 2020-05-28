@@ -268,8 +268,8 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   int posy = SDL_WINDOWPOS_CENTERED;
   if (fullscreen)
   {
-    posx = 0;
-    posy = 0;
+    //posx = 0;
+    //posy = 0;
     //flags |= SDL_WINDOW_FULLSCREEN;
   }
 //  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
