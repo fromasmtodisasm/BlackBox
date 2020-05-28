@@ -13,13 +13,13 @@
 
 class ImGuiManager : public IImGuiManager
 {
-public:
-  ImGuiManager(ISystem* pSystem);
-  ~ImGuiManager();
-  // Inherited via IInputEventListener
-  virtual bool OnInputEvent(const SInputEvent& event) override;
-  virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
-  virtual int GetPriority() const { return 3; }
+  public:
+	ImGuiManager(ISystem* pSystem);
+	~ImGuiManager();
+	// Inherited via IInputEventListener
+	virtual bool OnInputEvent(const SInputEvent& event) override;
+	virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
+	virtual int GetPriority() const;
 
   bool Init();
   void NewFrame();
@@ -183,6 +183,11 @@ bool ImGuiManager::OnInputEventUI(const SUnicodeEvent& event)
   return input.OnInputEventUI(event);
 }
 
+int ImGuiManager::GetPriority() const 
+{ 
+	return 1; 
+}
+
 bool ImGuiManager::Init()
 {
   // Setup Dear ImGui style
@@ -215,7 +220,7 @@ void ImGuiManager::Render()
 void ImGuiManager::ShowDemoWindow()
 {
   // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-#if 0
+#if 1
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
 #else

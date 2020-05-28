@@ -21,9 +21,14 @@ void ImGuiInput::NewFrame()
   //SDL_GetWindowSize(window, &w, &h);
   w = display_w = r->GetWidth();
   h = display_h = r->GetHeight();
+
+  int vp[4]; 
+  r->GetViewport(&vp[0], &vp[1], &vp[2], &vp[3]);
+  w				 = vp[2];
+  h				 = vp[3];
   io.DisplaySize = ImVec2((float)w, (float)h);
   if (w > 0 && h > 0)
-    io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
+    io.DisplayFramebufferScale = ImVec2((float)w / w, (float)h / h);
 
   // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
   // TODO: rewrite it
@@ -224,7 +229,7 @@ bool ImGuiInput::OnInputEvent(const SInputEvent& event, IImGuiManager* imguiMana
     io.KeyCtrl = event.modifiers & eMM_Ctrl;
     io.KeyAlt = event.modifiers & eMM_Alt;
     io.KeySuper = event.modifiers & eMM_Win;
-    return true;
+    //return true;
   }
   return false;
 

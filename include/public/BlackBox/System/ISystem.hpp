@@ -275,6 +275,8 @@ struct ISystem
 	
 	virtual const SFileVersion& GetFileVersion() = 0;
 	virtual const SFileVersion& GetProductVersion() = 0;
+
+  virtual void EnableGui(bool enable) = 0;
 };
 
 // Global environment variable.

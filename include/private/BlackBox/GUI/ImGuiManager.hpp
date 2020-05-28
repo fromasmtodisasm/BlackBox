@@ -10,7 +10,6 @@ struct IImGuiManager : public IInputEventListener
   // Inherited via IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) = 0;
   virtual bool OnInputEventUI(const SUnicodeEvent& event) = 0;
-  virtual int GetPriority() const { return 3; }
 
   virtual bool Init() = 0;
   virtual void NewFrame() = 0;

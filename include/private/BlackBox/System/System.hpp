@@ -163,6 +163,9 @@ private:
   IImGuiManager* m_GuiManager = nullptr;
 #endif
 
+
+// Inherited via ISystem
+  virtual void EnableGui(bool enable) override;
 };
 
 void AddInternalCommands(ISystem* pSystem);

@@ -626,6 +626,7 @@ void CGame::gotoGame()
 		m_pInput->ShowCursor(false);
 		m_pInput->GrabInput(true);
 		m_Console->ShowConsole(false);
+		m_pSystem->EnableGui(false);
 	}
 }
 
@@ -955,6 +956,7 @@ void CGame::gotoMenu()
 	m_bInPause = true;
 	m_pInput->ShowCursor(true);
 	m_pInput->GrabInput(false);
+	m_pSystem->EnableGui(true);
 }
 
 void CGame::gotoFullscreen()

@@ -732,6 +732,18 @@ void CSystem::Tests()
 	//SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
 }
 
+void CSystem::EnableGui(bool enable)
+{
+	if (enable)
+	{
+		m_env.pInput->AddEventListener(m_GuiManager);
+	}
+	else
+	{
+		m_env.pInput->RemoveEventListener(m_GuiManager);
+	}
+}
+
 float CSystem::GetDeltaTime()
 {
 	return static_cast<float>(m_DeltaTime);

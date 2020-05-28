@@ -1,72 +1,8 @@
-#pragma region Preambula
-// dear imgui: Renderer for modern OpenGL with shaders / programmatic pipeline
-// - Desktop GL: 2.x 3.x 4.x
-// - Embedded GL: ES 2.0 (WebGL 1.0), ES 3.0 (WebGL 2.0)
-// This needs to be used along with a Platform Binding (e.g. GLFW, SDL, Win32, custom..)
-
-// Implemented features:
-//  [X] Renderer: User texture binding. Use 'GLuint' OpenGL texture identifier as void*/ImTextureID. Read the FAQ about ImTextureID in imgui.cpp.
-//  [x] Renderer: Desktop GL only: Support for large meshes (64k+ vertices) with 16-bits indices.
-
-// You can copy and use unmodified imgui_impl_* files in your project. See main.cpp for an example of using this.
-// If you are new to dear imgui, read examples/README.txt and read the documentation at the top of imgui.cpp.
-// https://github.com/ocornut/imgui
-
-// CHANGELOG
-// (minor and older changes stripped away, please see git history for details)
-//  2019-09-22: OpenGL: Detect default GL loader using __has_include compiler facility.
-//  2019-09-16: OpenGL: Tweak initialization code to allow application calling ImGui_ImplOpenGL3_CreateFontsTexture() before the first NewFrame() call.
-//  2019-05-29: OpenGL: Desktop GL only: Added support for large mesh (64K+ vertices), enable ImGuiBackendFlags_RendererHasVtxOffset flag.
-//  2019-04-30: OpenGL: Added support for special ImDrawCallback_ResetRenderState callback to reset render state.
-//  2019-03-29: OpenGL: Not calling glBindBuffer more than necessary in the render loop.
-//  2019-03-15: OpenGL: Added a dummy GL call + comments in ImGui_ImplOpenGL3_Init() to detect uninitialized GL function loaders early.
-//  2019-03-03: OpenGL: Fix support for ES 2.0 (WebGL 1.0).
-//  2019-02-20: OpenGL: Fix for OSX not supporting OpenGL 4.5, we don't try to read GL_CLIP_ORIGIN even if defined by the headers/loader.
-//  2019-02-11: OpenGL: Projecting clipping rectangles correctly using draw_data->FramebufferScale to allow multi-viewports for retina display.
-//  2019-02-01: OpenGL: Using GLSL 410 shaders for any version over 410 (e.g. 430, 450).
-//  2018-11-30: Misc: Setting up io.BackendRendererName so it can be displayed in the About Window.
-//  2018-11-13: OpenGL: Support for GL 4.5's glClipControl(GL_UPPER_LEFT) / GL_CLIP_ORIGIN.
-//  2018-08-29: OpenGL: Added support for more OpenGL loaders: glew and glad, with comments indicative that any loader can be used.
-//  2018-08-09: OpenGL: Default to OpenGL ES 3 on iOS and Android. GLSL version default to "#version 300 ES".
-//  2018-07-30: OpenGL: Support for GLSL 300 ES and 410 core. Fixes for Emscripten compilation.
-//  2018-07-10: OpenGL: Support for more GLSL versions (based on the GLSL version string). Added error output when shaders fail to compile/link.
-//  2018-06-08: Misc: Extracted imgui_impl_opengl3.cpp/.h away from the old combined GLFW/SDL+OpenGL3 examples.
-//  2018-06-08: OpenGL: Use draw_data->DisplayPos and draw_data->DisplaySize to setup projection matrix and clipping rectangle.
-//  2018-05-25: OpenGL: Removed unnecessary backup/restore of GL_ELEMENT_ARRAY_BUFFER_BINDING since this is part of the VAO state.
-//  2018-05-14: OpenGL: Making the call to glBindSampler() optional so 3.2 context won't fail if the function is a NULL pointer.
-//  2018-03-06: OpenGL: Added const char* glsl_version parameter to ImGui_ImplOpenGL3_Init() so user can override the GLSL version e.g. "#version 150".
-//  2018-02-23: OpenGL: Create the VAO in the render function so the setup can more easily be used with multiple shared GL context.
-//  2018-02-16: Misc: Obsoleted the io.RenderDrawListsFn callback and exposed ImGui_ImplSdlGL3_RenderDrawData() in the .h file so you can call it yourself.
-//  2018-01-07: OpenGL: Changed GLSL shader version from 330 to 150.
-//  2017-09-01: OpenGL: Save and restore current bound sampler. Save and restore current polygon mode.
-//  2017-05-01: OpenGL: Fixed save and restore of current blend func state.
-//  2017-05-01: OpenGL: Fixed save and restore of current GL_ACTIVE_TEXTURE.
-//  2016-09-05: OpenGL: Fixed save and restore of current scissor rectangle.
-//  2016-07-29: OpenGL: Explicitly setting GL_UNPACK_ROW_LENGTH to reduce issues because SDL changes it. (#752)
-
-//----------------------------------------
-// OpenGL    GLSL      GLSL
-// version   version   string
-//----------------------------------------
-//  2.0       110       "#version 110"
-//  2.1       120       "#version 120"
-//  3.0       130       "#version 130"
-//  3.1       140       "#version 140"
-//  3.2       150       "#version 150"
-//  3.3       330       "#version 330 core"
-//  4.0       400       "#version 400 core"
-//  4.1       410       "#version 410 core"
-//  4.2       420       "#version 410 core"
-//  4.3       430       "#version 430 core"
-//  ES 2.0    100       "#version 100"      = WebGL 1.0
-//  ES 3.0    300       "#version 300 es"   = WebGL 2.0
-//----------------------------------------
-#pragma endregion Preambula
-
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 
@@ -85,11 +21,14 @@ namespace {
   // OpenGL Data
   static char         g_GlslVersionString[32] = "";
   static uint         g_FontTexture = 0;
-  //static uint         g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
   ShaderProgramRef    g_Shader;
-  //static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;                                // Uniforms location
-  //static int          g_AttribLocationVtxPos = 0, g_AttribLocationVtxUV = 0, g_AttribLocationVtxColor = 0; // Vertex attributes location
   static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
+  enum AtribLoc : GLuint
+  {
+    Position,
+    UV,
+    Color,
+  };
 
   class BackupGlState
   {
@@ -193,21 +132,6 @@ bool    ImGuiOpenglRender::Init(IRenderer *pRenderer, const char* glsl_version)
 #if IMGUI_IMPL_OPENGL_HAS_DRAW_WITH_BASE_VERTEX
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
 #endif
-
-    // Store GLSL version string so we can refer to it later in case we recreate shaders. Note: GLSL version is NOT the same as GL version. Leave this to NULL if unsure.
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-    if (glsl_version == NULL)
-        glsl_version = "#version 100";
-#elif defined(IMGUI_IMPL_OPENGL_ES3)
-    if (glsl_version == NULL)
-        glsl_version = "#version 300 es";
-#else
-    if (glsl_version == NULL)
-        glsl_version = "#version 130";
-#endif
-    IM_ASSERT((int)strlen(glsl_version) + 2 < IM_ARRAYSIZE(g_GlslVersionString));
-    strcpy(g_GlslVersionString, glsl_version);
-    strcat(g_GlslVersionString, "\n");
 
     // Dummy construct to make it easily visible in the IDE and debugger which GL loader has been selected. 
     // The code actually never uses the 'gl_loader' variable! It is only here so you can read it!
@@ -359,9 +283,9 @@ void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, in
   glm::mat4 ortho_projection = glm::ortho(L, R, B, T);
   //glUseProgram(g_ShaderHandle);
   g_Shader->Use();
-  //g_Shader->BindTextureUnit2D()
+  g_Shader->Uniform(0, "Texture");
   //glUniform1i(g_AttribLocationTex, 0);
-  g_Shader->Uniform(ortho_projection[0][0], "ProjMtx");
+  g_Shader->Uniform(ortho_projection, "ProjMtx");
   //glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 #ifdef GL_SAMPLER_BINDING
   //glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
@@ -375,12 +299,12 @@ void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, in
   // Bind vertex/index buffers and setup attributes for ImDrawVert
   glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ElementsHandle);
-  glEnableVertexAttribArray(g_AttribLocationVtxPos);
-  glEnableVertexAttribArray(g_AttribLocationVtxUV);
-  glEnableVertexAttribArray(g_AttribLocationVtxColor);
-  glVertexAttribPointer(g_AttribLocationVtxPos, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
-  glVertexAttribPointer(g_AttribLocationVtxUV, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
-  glVertexAttribPointer(g_AttribLocationVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, col));
+  glEnableVertexAttribArray(AtribLoc::Position);
+  glEnableVertexAttribArray(AtribLoc::UV);
+  glEnableVertexAttribArray(AtribLoc::Color);
+  glVertexAttribPointer(AtribLoc::Position, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, pos));
+  glVertexAttribPointer(AtribLoc::UV, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, uv));
+  glVertexAttribPointer(AtribLoc::Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, col));
 }
 
 bool ImGuiOpenglRender::CreateFontsTexture()
@@ -423,42 +347,6 @@ void ImGuiOpenglRender::DestroyFontsTexture()
     }
 }
 
-// If you get an error please report on github. You may try different GL context version or GLSL version. See GL<>GLSL version table at the top of this file.
-static bool CheckShader(GLuint handle, const char* desc)
-{
-    GLint status = 0, log_length = 0;
-    glGetShaderiv(handle, GL_COMPILE_STATUS, &status);
-    glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &log_length);
-    if ((GLboolean)status == GL_FALSE)
-        fprintf(stderr, "ERROR: CreateDeviceObjects: failed to compile %s!\n", desc);
-    if (log_length > 1)
-    {
-        ImVector<char> buf;
-        buf.resize((int)(log_length + 1));
-        glGetShaderInfoLog(handle, log_length, NULL, (GLchar*)buf.begin());
-        fprintf(stderr, "%s\n", buf.begin());
-    }
-    return (GLboolean)status == GL_TRUE;
-}
-
-// If you get an error please report on GitHub. You may try different GL context version or GLSL version.
-static bool CheckProgram(GLuint handle, const char* desc)
-{
-    GLint status = 0, log_length = 0;
-    glGetProgramiv(handle, GL_LINK_STATUS, &status);
-    glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &log_length);
-    if ((GLboolean)status == GL_FALSE)
-        fprintf(stderr, "ERROR: CreateDeviceObjects: failed to link %s! (with GLSL '%s')\n", desc, g_GlslVersionString);
-    if (log_length > 1)
-    {
-        ImVector<char> buf;
-        buf.resize((int)(log_length + 1));
-        glGetProgramInfoLog(handle, log_length, NULL, (GLchar*)buf.begin());
-        fprintf(stderr, "%s\n", buf.begin());
-    }
-    return (GLboolean)status == GL_TRUE;
-}
-
 bool    ImGuiOpenglRender::CreateDeviceObjects()
 {
     // Backup GL state
@@ -471,29 +359,10 @@ bool    ImGuiOpenglRender::CreateDeviceObjects()
 #endif
 
     // Create shaders
-    const GLchar* vertex_shader_with_version[2] = { g_GlslVersionString, vertex_shader };
-    g_VertHandle = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(g_VertHandle, 2, vertex_shader_with_version, NULL);
-    glCompileShader(g_VertHandle);
-    CheckShader(g_VertHandle, "vertex shader");
+	g_Shader = gEnv->pRenderer->Sh_Load("gui.vs", "gui.frag");
 
-    const GLchar* fragment_shader_with_version[2] = { g_GlslVersionString, fragment_shader };
-    g_FragHandle = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(g_FragHandle, 2, fragment_shader_with_version, NULL);
-    glCompileShader(g_FragHandle);
-    CheckShader(g_FragHandle, "fragment shader");
-
-    g_ShaderHandle = glCreateProgram();
-    glAttachShader(g_ShaderHandle, g_VertHandle);
-    glAttachShader(g_ShaderHandle, g_FragHandle);
-    glLinkProgram(g_ShaderHandle);
-    CheckProgram(g_ShaderHandle, "shader program");
-
-    g_AttribLocationTex = glGetUniformLocation(g_ShaderHandle, "Texture");
-    g_AttribLocationProjMtx = glGetUniformLocation(g_ShaderHandle, "ProjMtx");
-    g_AttribLocationVtxPos = glGetAttribLocation(g_ShaderHandle, "Position");
-    g_AttribLocationVtxUV = glGetAttribLocation(g_ShaderHandle, "UV");
-    g_AttribLocationVtxColor = glGetAttribLocation(g_ShaderHandle, "Color");
+    //g_AttribLocationTex = glGetUniformLocation(g_ShaderHandle, "Texture");
+    //g_AttribLocationProjMtx = glGetUniformLocation(g_ShaderHandle, "ProjMtx");
 
     // Create buffers
     glGenBuffers(1, &g_VboHandle);
@@ -515,11 +384,13 @@ void    ImGuiOpenglRender::DestroyDeviceObjects()
 {
     if (g_VboHandle)        { glDeleteBuffers(1, &g_VboHandle); g_VboHandle = 0; }
     if (g_ElementsHandle)   { glDeleteBuffers(1, &g_ElementsHandle); g_ElementsHandle = 0; }
+    #if 0
     if (g_ShaderHandle && g_VertHandle) { glDetachShader(g_ShaderHandle, g_VertHandle); }
     if (g_ShaderHandle && g_FragHandle) { glDetachShader(g_ShaderHandle, g_FragHandle); }
     if (g_VertHandle)       { glDeleteShader(g_VertHandle); g_VertHandle = 0; }
     if (g_FragHandle)       { glDeleteShader(g_FragHandle); g_FragHandle = 0; }
     if (g_ShaderHandle)     { glDeleteProgram(g_ShaderHandle); g_ShaderHandle = 0; }
+    #endif
 
     DestroyFontsTexture();
 }
