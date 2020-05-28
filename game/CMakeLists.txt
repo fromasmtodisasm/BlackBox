@@ -10,6 +10,7 @@ set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
+target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 target_link_libraries(${PROJECT_NAME} PRIVATE Ws2_32)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "${INCLUDE_ROOT}"

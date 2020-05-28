@@ -342,6 +342,15 @@ struct SVertBufComps
 	bool m_bHasNormals;
 };
 
+struct IRenderCallback
+{
+	enum Type
+	{
+		eBeforeSwapBuffers
+	};
+	virtual void CallBack(Type type) = 0;
+};
+
 struct IRenderer
 {
 	enum class State
@@ -380,6 +389,8 @@ struct IRenderer
 
 	//! Should be called at the end of every frame
 	virtual void Update(void) = 0;
+
+	virtual void SetRenderCallback(IRenderCallback* pCallback) = 0;
 
 	virtual void GetViewport(int* x, int* y, int* width, int* height)			  = 0;
 	virtual void SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) = 0;
@@ -493,6 +504,7 @@ struct IRenderer
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
 
 	virtual void SetRenderTarget(int nHandle) = 0;
+  virtual int CreateRenderTarget() = 0;
 
 	virtual void DrawFullscreenQuad()						  = 0;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) = 0;

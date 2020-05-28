@@ -133,7 +133,7 @@ FrameBufferObject* FrameBufferObject::create(BufferType type, int width, int hei
     glCheck(glDrawBuffers(texCnt, &attachments[0]));
   }
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		gEnv->pLog->LogError("Framebuffer not complete");
     assert(0);
     status = false;
   }
@@ -156,7 +156,14 @@ void FrameBufferObject::clear()
 
 void FrameBufferObject::bind()
 {
-  bind(viewPort);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+	{
+		bind(viewPort);
+  }
+	else
+	{
+		gEnv->pLog->LogError("Framebuffer not complete");
+	}
 }
 
 void FrameBufferObject::bind(glm::vec4 viewPort)

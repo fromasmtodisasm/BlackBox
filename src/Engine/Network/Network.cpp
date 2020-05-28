@@ -226,11 +226,11 @@ bool CNetwork::Init()
   SDL_version compile_version;
   const SDL_version* link_version = SDLNet_Linked_Version();
   SDL_NET_VERSION(&compile_version);
-  gEnv->pLog->Log("-- Compiled with SDL_net version: %d.%d.%d",
+  gEnv->pLog->Log("Compiled with SDL_net version: %d.%d.%d",
     compile_version.major,
     compile_version.minor,
     compile_version.patch);
-  gEnv->pLog->Log("-- Running with SDL_net version: %d.%d.%d",
+  gEnv->pLog->Log("Running with SDL_net version: %d.%d.%d",
     link_version->major,
     link_version->minor,
     link_version->patch);

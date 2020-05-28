@@ -72,23 +72,33 @@ const char* Texture::typeToStr()
 
 bool Texture::load(const char* name)
 {
+  Image img;
+  bool hasAlpha = false;
+  if (!img.load((texture_root + name).c_str(), &hasAlpha))
+    return false;
+  auto t = create(img.width, img.height, UNKNOWN, hasAlpha, name, img.data); 
+  if (t != nullptr)
+  {
+	  std::swap(*this, *t); 
+  }
+  return t == nullptr;
+}
+
+Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha, const std::string & name, void* data)
+{
+	Texture* t = new Texture;
   GLenum inputFormat = GL_RGB;
   GLenum internalFormat = GL_SRGB;
   GLenum inputDataType = GL_UNSIGNED_BYTE;
-  bool hasAlpha = false;
 
-  Image img;
-  if (!img.load((texture_root + name).c_str(), &hasAlpha))
-    return false;
   if (hasAlpha)
   {
     inputFormat = GL_RGBA;
     internalFormat = GL_SRGB_ALPHA;
   }
-  glCheck(glGenTextures(1, &id));
-  gl::BindTexture2D(id);
-  width = img.width;
-  height = img.height;
+
+  glCheck(glGenTextures(1, &t->id));
+  gl::BindTexture2D(t->id);
   gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -99,9 +109,9 @@ bool Texture::load(const char* name)
   gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
-    img.width, img.height,
+    width, height,
     0,
-    inputFormat, inputDataType, img.data
+    inputFormat, inputDataType, data
   );
 
   glCheck(glGenerateMipmap(GL_TEXTURE_2D));
@@ -112,8 +122,8 @@ bool Texture::load(const char* name)
   }
 #endif
   gl::BindTexture2D(0);
-  debuger::texture_label(id, name);
-  return true;
+  debuger::texture_label(t->id, name);
+	return false;
 }
 
 void Texture::bind()

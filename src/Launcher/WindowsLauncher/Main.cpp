@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
   ISystem* pSystem = CreateSystemInterface(params);
   if (pSystem)
   {
-    pSystem->GetILog()->Log("[OK] ISystem created");
-    pSystem->GetILog()->Log("[INFO] Current working directory: %s", path.c_str());
+    pSystem->GetILog()->Log("ISystem created");
+    pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
     pSystem->Start();
     status = EXIT_SUCCESS;
   }

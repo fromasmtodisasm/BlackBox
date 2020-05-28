@@ -117,6 +117,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	}
 	m_RenderAuxGeom = new CRenderAuxGeom();
 
+	m_FrameBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::SCENE_BUFFER, width, height, 1, false);
+
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
 	return result;
@@ -134,6 +136,8 @@ void GLRenderer::Release()
 
 void GLRenderer::BeginFrame(void)
 {
+	m_FrameBuffer->bind();
+	//m_FrameBuffer->clear({m_clearColor, 1});
 	gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -148,6 +152,9 @@ void GLRenderer::Update(void)
 		m_RenderAuxGeom->Flush();
 		m_AuxGeomShader->Unuse();
 	}
+	m_FrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
+	if (m_pRenerCallback)
+		m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
 	m_FrameID++;
 }
 
@@ -382,12 +389,12 @@ void GLRenderer::printHardware()
 {
 	std::stringstream hardware_info;
 	hardware_info << "Hardware render info\n"
-				  << "Vendor: [" << m_Hardware.vendor << "]\n"
-														 "Render: ["
+				  << "\tVendor: [" << m_Hardware.vendor << "]\n"
+														 "\tRender: ["
 				  << m_Hardware.render << "]\n"
-										  "Version: ["
+										  "\tVersion: ["
 				  << m_Hardware.version << "]\n"
-										   "Shader Language Version: ["
+										   "\tShader Language Version: ["
 				  << m_Hardware.glsl_version << "]\n";
 	m_pSystem->Log(hardware_info.str().c_str());
 }
@@ -430,8 +437,11 @@ IRenderAuxGeom* GLRenderer::GetIRenderAuxGeom()
 
 void GLRenderer::SetRenderTarget(int nHandle)
 {
+	m_FrameBuffer->texture[0] = nHandle;
+	#if 0
 	if (m_CurrentTarget != nHandle)
 		gl::BindFramebuffer(nHandle);
+	#endif
 }
 
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
@@ -690,6 +700,18 @@ void GLRenderer::Sh_Reload()
 {
 	gShMan->ReloadAll();
 }
+
+int GLRenderer::CreateRenderTarget()
+{
+	m_RenderTargets.push_back(Texture::create(GetWidth(), GetHeight(), TextureType::RENDER_TARGET, false, "rt", nullptr));
+	return m_RenderTargets.back()->getId();
+}
+
+void GLRenderer::SetRenderCallback(IRenderCallback* pCallback)
+{
+	m_pRenerCallback = pCallback;
+}
+
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {

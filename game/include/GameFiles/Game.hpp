@@ -222,6 +222,7 @@ class CGame
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
 	, public IActionMapSink
+	, public IRenderCallback
 {
 	class EventListener;
 	friend class GameGUI;
@@ -582,4 +583,7 @@ class CGame
 	bool m_InsertLines = false;
 
 	
+
+// Inherited via IRenderCallback
+	virtual void CallBack(Type type) override;
 };

@@ -477,7 +477,7 @@ bool CSystem::InitNetwork()
 {
 	Log("Creating Network");
 	return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p) {
-		m_env.pLog->Log("-- Creating Network");
+		m_env.pLog->Log("Creating Network");
 		m_pNetwork = p(this);
 		if (m_pNetwork == nullptr)
 			return false;
@@ -490,7 +490,7 @@ bool CSystem::InitGUI()
 {
 	Log("Creating GUI");
 	if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
-			m_env.pLog->Log("-- Creating GUI");
+			m_env.pLog->Log("Creating GUI");
 			m_GuiManager = p(this);
 			if (m_GuiManager == nullptr)
 				return false;
@@ -813,7 +813,7 @@ void CSystem::ShowMessage(const char* message, const char* caption, MessageType 
 void CSystem::Log(const char* message)
 {
 	//std::cout << "-- " << message << std::endl;
-	m_pLog->Log("-- %s", message);
+	m_pLog->Log("%s", message);
 }
 
 IScriptSystem* CSystem::GetIScriptSystem()
@@ -861,13 +861,12 @@ void CSystem::RenderEnd()
 		//DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
-#if ENABLE_DEBUG_GUI
-	m_GuiManager->Render();
-#endif
-
 	if (m_Render)
 	{
 		m_Render->Update();
+	#if ENABLE_DEBUG_GUI
+		m_GuiManager->Render();
+	#endif
 		m_pConsole->Draw();
 		m_pWindow->swap();
 	}

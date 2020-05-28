@@ -3,6 +3,7 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/Renderer/BufferManager.hpp>
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
 #include <BlackBox/Renderer/Sampler.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 
@@ -181,6 +182,9 @@ private:
 	CVertexBuffer* m_VertexBuffer = nullptr;
 
   std::vector<CShaderProgram*> m_Shaders;
+	FrameBufferObject* m_FrameBuffer;
+  IRenderCallback* m_pRenerCallback = nullptr;
+	std::vector<Texture*> m_RenderTargets;
 
 
   // Inherited via CRenderer
@@ -196,6 +200,12 @@ private:
 
   // Inherited via CRenderer
   virtual void Sh_Reload() override;
+
+  // Inherited via CRenderer
+  virtual int CreateRenderTarget() override;
+
+  // Inherited via CRenderer
+  virtual void SetRenderCallback(IRenderCallback* pCallback) override;
 };
 
 extern class ShaderMan* gShMan;

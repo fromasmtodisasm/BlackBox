@@ -25,7 +25,7 @@ private:
   const char* filename = "log.txt";
   bool inited = false;
   std::vector<std::string> log;
-  char buf[2048] = {0};
+  char buf[4096] = {0};
 
   // Inherited via ILog
   virtual void Release() override;
@@ -87,10 +87,42 @@ void NullLog::Release()
   delete this;
 }
 
+const char* LogTypeToString(IMiniLog::ELogType type)
+{
+	switch (type)
+	{
+	case IMiniLog::eMessage:
+		return "Message";
+		break;
+	case IMiniLog::eWarning:
+		return "Warning";
+		break;
+	case IMiniLog::eError:
+		return "Error";
+		break;
+	case IMiniLog::eAlways:
+		return "Always";
+		break;
+	case IMiniLog::eWarningAlways:
+		return "WarningAlways";
+		break;
+	case IMiniLog::eErrorAlways:
+		return "ErrorAlways";
+		break;
+	case IMiniLog::eInput:
+		return "Input";
+		break;
+	default:
+		return "Unknown";
+		break;
+	}
+
+}
+
 void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
 {
-  vsprintf(buf, szFormat, args);
-  auto len = strlen(buf);
+  auto len = sprintf(buf, "[%s] ", LogTypeToString(nType));
+  len += vsprintf(buf + len, szFormat, args);
   buf[len] = '\n';
   buf[len + 1] = '\0';
   std::cout << buf;

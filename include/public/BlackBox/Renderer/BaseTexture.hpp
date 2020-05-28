@@ -30,30 +30,39 @@ enum TextureType
   NORMAL,
   MASK,
   EMISSIVE,
+  RENDER_TARGET,
   UNKNOWN
 };
 
 class BaseTexture : public ITexture
 {
-public:
-  int width;
-  int height;
-  TextureType type;
-  uint id;
-  int unit = 0;
-  std::shared_ptr<std::string> path;
-  std::string name;
-  std::string texture_root = "res/images/";
+  public:
+	int width;
+	int height;
+	TextureType type;
+	uint id;
+	int unit = 0;
+	std::shared_ptr<std::string> path;
+	std::string name;
+	std::string texture_root = "res/images/";
 
-  BaseTexture()
-    :
-    width(0),
-    height(0),
-    type(TextureType::DIFFUSE),
-    id(-1),
-    path(std::make_shared<std::string>("")),
-    name("")
-  {}
+	BaseTexture()
+		: width(0),
+		  height(0),
+		  type(TextureType::DIFFUSE),
+		  id(-1),
+		  path(std::make_shared<std::string>("")),
+		  name("")
+	{
+	}
+	BaseTexture(int width, int height, TextureType type, const std::string& name)
+		: width(width),
+		  height(height),
+		  type(type),
+		  name(name)
+	{
+	
+	}
 #ifdef NVTT
   void GetMipMapLevel(int level, nvtt::Surface& surface);
   void SaveMipMaps();

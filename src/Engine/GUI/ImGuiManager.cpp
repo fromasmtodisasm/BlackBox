@@ -226,15 +226,6 @@ void ImGuiManager::ShowDemoWindow()
 #else
   //ShowExampleAppDockSpace(&show_demo_window);
 #endif
-
-
-  auto size = ImGui::GetContentRegionAvail();
-  ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
-  ImGui::Begin("View",(bool*)true);
-    ImGui::Image(0, ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
-    //ImGui::EndTabItem();
-  ImGui::End();
-
 }
 
 void ImGuiManager::ShowNodeEditor()

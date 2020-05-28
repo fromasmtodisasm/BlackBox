@@ -9,6 +9,7 @@ target_include_directories(
 ${PROJECT_NAME}
 	PRIVATE	"${CMAKE_BINARY_DIR}"
 	PRIVATE	"${CMAKE_SOURCE_DIR}/"
+	PUBLIC	"${CMAKE_CURRENT_SOURCE_DIR}/"
 )
 
 target_sources(${PROJECT_NAME}
@@ -26,7 +27,7 @@ target_sources(${PROJECT_NAME}
 
 #add_package(imgui CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
-
+target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}
