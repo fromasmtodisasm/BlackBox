@@ -263,18 +263,20 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,16);
 
-  int flags = SDL_WINDOW_OPENGL /*| SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN*/;
+  int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_HIDDEN*/;
   int posx = SDL_WINDOWPOS_CENTERED;
   int posy = SDL_WINDOWPOS_CENTERED;
+	SDL_DisplayMode dm;
+	SDL_GetDesktopDisplayMode(0, &dm);
   if (fullscreen)
   {
-    posx = 0;
-    posy = 0;
-    //flags |= SDL_WINDOW_FULLSCREEN;
+    //posx = 0;
+    //posy = 0;
+    flags |= SDL_WINDOW_FULLSCREEN;
   }
 //  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
   // Create window
-  m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width,height, flags);
+  m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, dm.w, dm.h, flags);
   if (m_MainWindow == NULL)
   {
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());

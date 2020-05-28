@@ -238,7 +238,7 @@ bool ImGuiInput::OnInputEventUI(const SUnicodeEvent& event)
 {
   ImGuiIO& io = ImGui::GetIO();
   io.AddInputCharactersUTF8(reinterpret_cast<const char*>(&event.inputChar));
-  return true;
+  return false;
 
 }
 

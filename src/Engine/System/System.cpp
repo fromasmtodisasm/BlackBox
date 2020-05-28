@@ -863,11 +863,11 @@ void CSystem::RenderEnd()
 	}
 	if (m_Render)
 	{
+		m_pConsole->Draw();
 		m_Render->Update();
 	#if ENABLE_DEBUG_GUI
 		m_GuiManager->Render();
 	#endif
-		m_pConsole->Draw();
 		m_pWindow->swap();
 	}
 }

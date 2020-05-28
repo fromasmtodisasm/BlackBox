@@ -222,7 +222,6 @@ class CGame
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
 	, public IActionMapSink
-	, public IRenderCallback
 {
 	class EventListener;
 	friend class GameGUI;
@@ -421,6 +420,8 @@ class CGame
 	ILog* m_pLog;
 	INetwork* m_pNetwork;
 	StringQueue m_qMessages;
+
+	int m_RenderTarget = -1;
 	bool isWireFrame  = false;
 	bool isFullScreen = false;
 
@@ -581,9 +582,4 @@ class CGame
 
 	std::vector<Vec3> m_LineList;
 	bool m_InsertLines = false;
-
-	
-
-// Inherited via IRenderCallback
-	virtual void CallBack(Type type) override;
 };

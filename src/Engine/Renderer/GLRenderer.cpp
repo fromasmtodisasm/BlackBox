@@ -117,7 +117,9 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	}
 	m_RenderAuxGeom = new CRenderAuxGeom();
 
-	m_FrameBuffer = FrameBufferObject::create(FrameBufferObject::BufferType::SCENE_BUFFER, width, height, 1, false);
+	CreateRenderTarget();
+	
+	m_FrameBuffer = FrameBufferObject::create(width, height, m_RenderTargets.back(), false);
 
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
@@ -437,11 +439,15 @@ IRenderAuxGeom* GLRenderer::GetIRenderAuxGeom()
 
 void GLRenderer::SetRenderTarget(int nHandle)
 {
-	m_FrameBuffer->texture[0] = nHandle;
-	#if 0
-	if (m_CurrentTarget != nHandle)
-		gl::BindFramebuffer(nHandle);
-	#endif
+	if (
+		auto it = std::find_if(m_RenderTargets.begin(), m_RenderTargets.end(), [nHandle](ITexture* texture) { return texture->getId() == nHandle; }); 
+		it != m_RenderTargets.end())
+	{
+		m_FrameBuffer->bind();
+		m_FrameBuffer->attach(*it);
+		m_FrameBuffer->bindDefault(Vec4(0,0,1600,900));
+	}
+
 }
 
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
@@ -703,7 +709,7 @@ void GLRenderer::Sh_Reload()
 
 int GLRenderer::CreateRenderTarget()
 {
-	m_RenderTargets.push_back(Texture::create(GetWidth(), GetHeight(), TextureType::RENDER_TARGET, false, "rt", nullptr));
+	m_RenderTargets.push_back(Texture::create(GetWidth(), GetHeight(), TextureType::LDR_RENDER_TARGET, false, "rt", false, nullptr));
 	return m_RenderTargets.back()->getId();
 }
 

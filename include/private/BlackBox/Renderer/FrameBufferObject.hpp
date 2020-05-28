@@ -20,16 +20,17 @@ public:
   };
   ~FrameBufferObject();
 
-  static FrameBufferObject* create(BufferType type, int width, int height, int nColors, bool createMipChain);
+  static FrameBufferObject* create(int width, int height, Texture* attachment, bool createMipChain);
   void clear(gl::Color const& color);
   void clear();
+  void attach(Texture* texture);
   void bind();
   void bind(glm::vec4 viewPort);
   static void bindDefault(glm::vec4 viewPort);
   void unbind();
   ITexture* getTexture();
 private:
-  FrameBufferObject(BufferType type, int width, int height, int nColors);
+  FrameBufferObject(int width, int height);
   void createSceneBuffer();
   void createDepthBuffer();
 public:

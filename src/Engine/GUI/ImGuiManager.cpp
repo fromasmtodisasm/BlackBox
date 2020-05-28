@@ -117,7 +117,7 @@ static void ShowExampleAppDockSpace(bool* p_open)
         {
             // Disabling fullscreen would allow the window to be moved to the front of other windows,
             // which we can't undo at the moment without finer window depth/z control.
-            //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
             if (ImGui::MenuItem("Flag: NoSplit",                "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))                 dockspace_flags ^= ImGuiDockNodeFlags_NoSplit;
             if (ImGui::MenuItem("Flag: NoResize",               "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0))                dockspace_flags ^= ImGuiDockNodeFlags_NoResize;
@@ -192,7 +192,7 @@ bool ImGuiManager::Init()
 {
   // Setup Dear ImGui style
   bool result = true;
-  ImGui::StyleColorsLight();
+  ImGui::StyleColorsDark();
   result &= input.Init();
   result &= render.Init(GetISystem()->GetIRenderer());
   return result;
@@ -220,11 +220,12 @@ void ImGuiManager::Render()
 void ImGuiManager::ShowDemoWindow()
 {
   // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-#if 1
+#if 0
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
 #else
-  //ShowExampleAppDockSpace(&show_demo_window);
+  ShowExampleAppDockSpace(&show_demo_window);
+	ImGui::ShowDemoWindow(&show_demo_window);
 #endif
 }
 

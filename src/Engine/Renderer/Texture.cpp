@@ -84,29 +84,63 @@ bool Texture::load(const char* name)
   return t == nullptr;
 }
 
-Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha, const std::string & name, void* data)
+Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha, const std::string & name, bool createMipChain, void* data)
 {
 	Texture* t = new Texture;
-  GLenum inputFormat = GL_RGB;
-  GLenum internalFormat = GL_SRGB;
-  GLenum inputDataType = GL_UNSIGNED_BYTE;
+  bool status = true;
+  GLint internalFormat, inputFormat;
+  GLint filterMin, filterMag;
+  GLint wrapS, wrapT;
+  GLint inputDataType;
 
-  if (hasAlpha)
+  gl::GenTextures(1, &t->id);
+  gl::BindTexture2D(t->id);
+  switch (type)
   {
+  case TextureType::DEPTH:
+    internalFormat = inputFormat = GL_DEPTH_COMPONENT;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_CLAMP_TO_BORDER;
+    inputDataType = GL_FLOAT;
+    //attachment =
+    break;
+  case TextureType::LDR_RENDER_TARGET:
+    internalFormat = inputFormat = GL_RGBA;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
+    inputDataType = GL_UNSIGNED_BYTE;
+    break;
+  case TextureType::HDR_RENDER_TARGET:
+    internalFormat = GL_RGBA16F;
     inputFormat = GL_RGBA;
-    internalFormat = GL_SRGB_ALPHA;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
+    inputDataType = GL_FLOAT;
+    break;
+  default:
+    internalFormat = inputFormat = GL_RGB;
+    filterMin = filterMag = GL_LINEAR;
+    wrapS = wrapT = GL_CLAMP_TO_EDGE;
+    inputDataType = GL_UNSIGNED_BYTE;
+		gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    break;
+
+		if (hasAlpha)
+		{
+			inputFormat = GL_RGBA;
+			internalFormat = GL_SRGB_ALPHA;
+		}
   }
 
-  glCheck(glGenTextures(1, &t->id));
-  gl::BindTexture2D(t->id);
-  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
+  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag);
 
-  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  if (type == DEPTH)
+  {
+    float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+  }
   glTexImage2D(
     GL_TEXTURE_2D, 0, internalFormat,
     width, height,
@@ -114,16 +148,14 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
     inputFormat, inputDataType, data
   );
 
-  glCheck(glGenerateMipmap(GL_TEXTURE_2D));
-#ifdef ALPHA_DIST
-  if (true)
+  if (createMipChain)
   {
-    cy::AlphaDistribution::FixTextureAlpha(cy::AlphaDistribution::Method::METHOD_PYRAMID, id);
+		glCheck(glGenerateMipmap(GL_TEXTURE_2D));
   }
-#endif
+
   gl::BindTexture2D(0);
   debuger::texture_label(t->id, name);
-	return false;
+	return t;
 }
 
 void Texture::bind()

@@ -25,6 +25,8 @@ public:
   // Inherited via IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) override
   {
+	  if (gEnv->pConsole->IsOpened())
+		  return false;
     bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
     bool rotated = false;
     //if (event.pSymbol != nullptr)

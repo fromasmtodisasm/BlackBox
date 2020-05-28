@@ -148,7 +148,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	{
 		m_pInput->AddEventListener(this);
 		m_pInput->AddEventListener(&m_CameraController);
-		m_pRender->SetRenderCallback(this);
 	}
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
@@ -1229,24 +1228,5 @@ void CGame::IntersectionByRayCasting()
 			m_IntersectionState.m_LastPickedPos = eyeRay.origin + eyeRay.direction * tMin;
 			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
 		}
-	}
-}
-
-void CGame::CallBack(Type type)
-{
-	switch (type)
-	{
-	case IRenderCallback::eBeforeSwapBuffers:
-	{
-		auto size = ImGui::GetContentRegionAvail();
-		ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
-		ImGui::Begin("View",(bool*)true);
-			ImGui::Image(0, ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
-			//ImGui::EndTabItem();
-		ImGui::End();
-		break;
-	}
-	default:
-		break;
 	}
 }
