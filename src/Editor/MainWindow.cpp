@@ -36,9 +36,6 @@ void MainWindow::CallBack(Type type)
 			ImGui::Image(reinterpret_cast<ImTextureID>(m_ViewRenderTarget), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
 			auto pos = ImGui::GetCursorPos();
 			auto size = ImGui::GetContentRegionAvail();
-			gEnv->pRenderer->SetViewport(
-				0, 0, gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight()
-			);
 #pragma warning(pop)
 			//ImGui::EndTabItem();
 		ImGui::End();
