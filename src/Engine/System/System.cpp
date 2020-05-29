@@ -497,7 +497,7 @@ bool CSystem::InitGUI()
 			return true;
 		}))
 	{
-		return m_GuiManager->Init(m_pWindow);
+		return m_GuiManager->Init();
 	}
 	return false;
 }

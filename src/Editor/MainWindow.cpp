@@ -2,6 +2,7 @@
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/System/ILog.hpp>
 
 #include "MainWindow.hpp"
 #include "imgui.h"
@@ -47,6 +48,10 @@ void MainWindow::CallBack(Type type)
 #pragma warning(disable: 4312)
 			auto size = ImGui::GetContentRegionAvail();
 			ImGui::Image(reinterpret_cast<ImTextureID>(m_ViewRenderTarget), size, ImVec2(0, 1), ImVec2(1, 0));
+			if (ImGui::IsItemClicked())
+			{
+				gEnv->pLog->Log("View clicked");
+			}
 			auto pos = ImGui::GetCursorPos();
 			m_NextFrameViewPortSize = Vec2(size.x, size.y);
 #pragma warning(pop)

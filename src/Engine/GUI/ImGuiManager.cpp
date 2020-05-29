@@ -224,7 +224,7 @@ void ImGuiManager::ShowDemoWindow()
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
 #else
-  ShowExampleAppDockSpace(&show_demo_window);
+  //ShowExampleAppDockSpace(&show_demo_window);
 	ImGui::ShowDemoWindow(&show_demo_window);
 #endif
 }
