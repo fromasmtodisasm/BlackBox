@@ -76,8 +76,13 @@ else()
 	target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
 endif()
 
-add_package(SDL2)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
+if (LINUX)
+	add_package(SDL2)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
+elseif(WINDOWS)
+	add_package(SDL2)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #target_include_directories(${OpenGlBackend} 

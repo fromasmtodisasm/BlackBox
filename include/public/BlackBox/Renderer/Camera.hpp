@@ -105,7 +105,7 @@ public:
       this->Zoom = 1.0f;
     if (this->Zoom >= 45.0f)
       this->Zoom = 45.0f;
-  }
+}
 
   // Calculates the front vector from the Camera's (updated) Eular Angles
   void updateCameraVectors()
