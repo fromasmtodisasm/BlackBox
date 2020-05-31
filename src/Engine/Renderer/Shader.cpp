@@ -13,7 +13,7 @@ CShaderProgram::CShaderProgram(ShaderRef vs, ShaderRef fs) : CBaseShaderProgram(
 {
 }
 
-CShaderProgram::CShaderProgram(ShaderInfo& vs, ShaderInfo& fs) : CBaseShaderProgram(vs, fs)
+CShaderProgram::CShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs) : CBaseShaderProgram(vs, fs)
 {
 }
 

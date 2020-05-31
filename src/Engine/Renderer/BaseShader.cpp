@@ -199,7 +199,7 @@ CBaseShaderProgram::CBaseShaderProgram(
   m_Fragment.shader = fs;
 }
 
-CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs)
+CBaseShaderProgram::CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs)
   :
   CBaseShaderProgram()
 {
@@ -207,7 +207,7 @@ CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs)
   m_Fragment = fs;
 }
 
-CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs)
+CBaseShaderProgram::CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs)
   :
   CBaseShaderProgram()
 {
@@ -216,7 +216,7 @@ CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInf
   m_Geometry = gs;
 }
 
-CBaseShaderProgram::CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs)
+CBaseShaderProgram::CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs, const ShaderInfo& cs)
   :
   CBaseShaderProgram()
 {

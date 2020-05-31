@@ -160,11 +160,11 @@ union UCol {
 		bcolor[2] = static_cast<char>(v[2] * 255.f);
 		bcolor[3] = static_cast<char>(v[0] * 255.f);
 	}
-	UCol(Vec3& v)
+	UCol(const Vec3& v)
 		: UCol(Vec4(v, 1))
 	{
 	}
-	UCol(bvec4 v): 
+	UCol(const bvec4 v): 
 		 bcolor{v[0], v[1], v[2], v[3]}
 	{
 	}

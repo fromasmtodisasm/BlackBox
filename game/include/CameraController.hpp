@@ -112,7 +112,7 @@ public:
   }
 
 
-  void CCameraController::update(float deltatime)
+  void update(float deltatime)
   {
     if (gEnv->IsDedicated())
     {

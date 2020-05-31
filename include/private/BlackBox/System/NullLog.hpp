@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <cstdio>
@@ -6,8 +7,6 @@
 #include <vector>
 #include <cstdarg>
 #include <BlackBox/Core/Utils.hpp>
-
-#define strdup _strdup
 
 class NullLog : public ILog
 {

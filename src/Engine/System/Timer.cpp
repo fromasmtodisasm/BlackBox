@@ -22,6 +22,9 @@ static int64_t g_lCurrentTime = 0;
 static const float fDEFAULT_PROFILE_SMOOTHING = 1.0f;
 
 #define DEFAULT_FRAME_SMOOTHING 1
+#ifdef BB_PLATFORM_LINUX
+#define	  bbGetTicks() 0
+#endif
 
 /////////////////////////////////////////////////////
 CTimer::CTimer()
@@ -326,7 +329,11 @@ void CTimer::UpdateOnFrameStart()
     if (elapsedTicks < minTicks)
     {
       const int64_t ms = (minTicks - elapsedTicks) * 1000 / m_lTicksPerSec;
+#ifndef BB_PLATFORM_LINUX
       bbSleep((unsigned int)ms);
+#else
+      assert(0 && "Not implemented");
+#endif
     }
   }
 

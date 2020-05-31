@@ -57,7 +57,7 @@
 #elif defined(LINUX)
 	#include <dlfcn.h>
 	#include <stdlib.h>
-	#include "platform.h"
+	#include <BlackBox/Core/Platform/Platform.hpp>
 
 	// for compatibility with code written for windows
 	#define CrySharedLibraySupported true

@@ -74,9 +74,9 @@ class CBaseShaderProgram : public IShaderProgram {
 public:
   CBaseShaderProgram();
   CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
-  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs);
-  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs);
-  CBaseShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs, ShaderInfo& cs);
+  CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs);
+  CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs);
+  CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs, const ShaderInfo& cs);
   ~CBaseShaderProgram();
 
   virtual void AddRef() override;

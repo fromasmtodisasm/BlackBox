@@ -306,7 +306,7 @@ struct IShaderProgram
 			  used(false)
 		{
 		}
-		ShaderInfo(IShader* shader, std::string& name)
+		ShaderInfo(IShader* shader, const std::string& name)
 			: shader(shader),
 			  name(name),
 			  attached(false),

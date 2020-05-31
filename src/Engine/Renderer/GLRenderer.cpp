@@ -94,7 +94,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	//=======================
 	glInit();
 	if (!InitResourceManagers())
-		return false;
+		return nullptr;
 
 	printHardware();
 	m_BufferManager = new CBufferManager();

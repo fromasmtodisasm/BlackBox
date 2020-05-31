@@ -148,7 +148,7 @@ CRenderAuxGeom::~CRenderAuxGeom()
 }
 
 //TODO: Довести до ума, нужно учитывать трансформации объекта
-void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, UCol& col)
+void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
 	auto& shader = m_BoundingBoxShader;
 

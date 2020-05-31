@@ -7,61 +7,8 @@
 #include <SDL.h>
 #include <BlackBox/GUI/GUI.hpp>
 
-#include <tchar.h>
-#include "_TinyWindow.hpp"
 #include <memory>
 #include <cstdio>
-
-class TinyWindow : public _TinyWindow
-{
- public:
-
-  virtual LRESULT __Tiny_WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-  {
-    //int wmId, wmEvent;
-    if(hWnd!=m_hWnd)DebugBreak();
-    switch(message){
-      case WM_KEYDOWN:
-      {
-        return 0;
-      }
-    }
-    return 0;
-  }
-};
-
-class EditWindow : public _TinyEdit
-{
-public:
-  virtual BOOL Create(_TinyWindow* pParent)
-  {
-    RECT rect;
-    rect.top = 0;
-    rect.left = 0;
-    rect.right = 100;
-    rect.bottom = 50;
-    return _TinyEdit::Create(0,WS_VISIBLE|WS_CHILD,0,&rect,pParent);
-  }
-};
-class ButtonWindow : public _TinyButton
-{
-public:
-  virtual BOOL Create(_TinyWindow* pParent)
-  {
-    RECT rect;
-    rect.top = 0;
-    rect.left = 900;
-    rect.right = 100;
-    rect.bottom = 50;
-    return _TinyButton::Create(0,WS_VISIBLE|WS_CHILD,0,&rect,pParent);
-  }
-};
-///////////////////////////////////
-_TINY_DECLARE_APP()
-_TinyWindow mainWindow;
-_TinyWindow childWindow;
-ButtonWindow button;
-EditWindow editWindow;
 
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
@@ -78,25 +25,6 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
     printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-  }
-
-  if (_Tiny_InitApp(::GetModuleHandle(NULL), NULL, NULL))
-  {
-    #if 0
-    //mainWindow.Create("_default_TinyWindowClass", "MainWindow");
-    _TinyRect rect(800,600);
-    //childWindow.Create("_default_TinyWindowClass", "ChileWindow");
-    /*childWindow.Create(
-          "_default_TinyWindowClass", "ChildWindow",
-          WS_VISIBLE | WS_SYSMENU | WS_CAPTION | WS_MAXIMIZEBOX | WS_BORDER | WS_THICKFRAME,
-          0,
-          &rect,
-          NULL
-     );*/
-    button.Create(&mainWindow);
-    button.ShowWindow();
-    button.AddString("TestButton");
-    #endif
   }
 
   if (!Create(width, height, fullscreen))
