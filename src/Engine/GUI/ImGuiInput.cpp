@@ -235,10 +235,7 @@ bool ImGuiInput::OnInputEvent(const SInputEvent& event, IImGuiManager* imguiMana
 		return true;
   if (io.WantCaptureMouse == true)
 		return true;
-  else
-		return false;
-
-
+	return false;
 }
 bool ImGuiInput::OnInputEventUI(const SUnicodeEvent& event)
 {
@@ -248,6 +245,5 @@ bool ImGuiInput::OnInputEventUI(const SUnicodeEvent& event)
 	  return true;
   else
 	  return false;
-
 }
 

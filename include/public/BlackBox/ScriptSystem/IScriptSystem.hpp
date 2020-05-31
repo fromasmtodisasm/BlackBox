@@ -561,7 +561,7 @@ struct IScriptObject
     @param nFuncID id of the function that will be passed beck by the engine
     @return false if failed true if succeded
   */
-  virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int nFuncID) = 0;
+  virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, INT_PTR nFuncID) = 0;
   //!
   virtual bool AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION pGetThunk) = 0;
   /*!	register the host object as parent

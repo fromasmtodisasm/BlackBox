@@ -4,8 +4,6 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
-#include "MainWindow.hpp"
-
 #include <iostream>
 #include <ctime>
 #include <iomanip>
@@ -13,6 +11,11 @@
 #include <filesystem>
 using namespace std;
 namespace fs = std::filesystem;
+
+extern "C"
+{
+	int AppMain(int argc, char* argv[]);
+};
 
 int main(int argc, char* argv[]) {
   int status = EXIT_FAILURE;
@@ -31,7 +34,6 @@ int main(int argc, char* argv[]) {
   std::stringstream ss;
   ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
   params.sLogFileName = _strdup(ss.str().c_str());
-  params.bEditor	  = true;
 
   snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem* pSystem = CreateSystemInterface(params);
@@ -40,11 +42,8 @@ int main(int argc, char* argv[]) {
     pSystem->GetILog()->Log("ISystem created");
     pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
 		gEnv = pSystem->GetGlobalEnvironment();
-		MainWindow mainWindow;
 
-    while (mainWindow.Update())
-			;
-    status = EXIT_SUCCESS;
+    status = AppMain(argc, argv);
   }
   pSystem->Release();
 

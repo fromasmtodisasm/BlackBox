@@ -789,7 +789,7 @@ void CScriptObject::Dump(IScriptObjectDumpSink* p)
   lua_pop(L, 1); // pop table ref
 }
 
-bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, int nFuncID)
+bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, INT_PTR nFuncID)
 {
   PushRef();
   lua_pushstring(L, sName);

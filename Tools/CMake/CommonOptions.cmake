@@ -17,6 +17,7 @@ option(OPTION_USE_GUI "Build GUI library" OFF)
 option(OPTION_USE_LINUXINPUT "Build GUI library" ON)
 option(OPTION_GLAD_LOADER "Build with GLAD opengl loading library" ON)
 option(OPTION_EDITOR "Build editor" ON)
+option(OPTION_CONFIGURATOR "Build configurator" ON)
 
 if(ANDROID)
 	set(OPTION_STATIC_LINKING TRUE)

@@ -8,6 +8,7 @@
 #include <BlackBox/Core/MathHelper.hpp>
 #include <vector>
 #include <string>
+#include <functional>
 //#define _NO_HASHMAP
 //#define NO_USERDATA_FOR_PROPERTIES
 #ifndef _NO_HASHMAP
@@ -43,8 +44,6 @@ struct ScriptTemplateCallHelper
 			unsigned char* buffer = (unsigned char*)pBuffer;
 			Callee* pCallee;
 			Func func;
-			LoadUnaligned(buffer, pCallee);
-			LoadUnaligned(buffer + sizeof(Callee*), func);
 			return ScriptTemplateCallHelper::Call(pCallee, func, pH);
 		}
 	};
@@ -168,7 +167,21 @@ public:
     m_pPropertiesTable = NULL;
   }
 
+  #if 0
   static void RegisterFunction(IScriptSystem* pSS, const char* sName, MemberFunc mfunc)
+  {
+    if (m_pTemplateTable == NULL)
+    {
+      m_pTemplateTable = pSS->CreateObject();
+    }
+
+    int nIdx = (int)m_vFuncs.size();
+    m_vFuncs.push_back(mfunc);
+    m_pTemplateTable->AddFunction(sName, _ScriptableEx<T>::FuncThunk, nIdx);
+  }
+  #endif
+
+  static void RegisterFunction(IScriptSystem* pSS, const char* sName, std::mem_fn mfunc)
   {
     if (m_pTemplateTable == NULL)
     {

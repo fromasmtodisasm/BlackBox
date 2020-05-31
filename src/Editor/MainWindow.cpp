@@ -1,4 +1,4 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
@@ -43,7 +43,11 @@ void MainWindow::CallBack(Type type)
 	{
 		//auto size = ImGui::GetContentRegionAvail();
 		//ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
-		ImGui::Begin("View",(bool*)true);
+		static bool p_open = true;
+		ImGui::Begin("View",&p_open,
+			ImGuiWindowFlags_NoNav
+			| ImGuiWindowFlags_NoInputs
+			);
 #pragma warning(push)
 #pragma warning(disable: 4312)
 			auto size = ImGui::GetContentRegionAvail();
@@ -62,4 +66,12 @@ void MainWindow::CallBack(Type type)
 	default:
 		break;
 	}
+}
+
+extern "C" int AppMain(int c, char** v)
+{
+    MainWindow mainWindow;
+    while (mainWindow.Update())
+			;
+	return 0;
 }

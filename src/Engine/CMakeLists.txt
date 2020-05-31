@@ -25,6 +25,7 @@ macro(setup_subsystems)
 	add_subsystem(Window)
   #add_subsystem(Profiler)
 	add_subsystem(Network)
+	add_subdirectory(AppMain)
 
 	foreach(system IN LISTS ALL_PROJECT_SYSTEMS)
 		add_dependencies(${BLACKBOX_PROJECT} ${system})

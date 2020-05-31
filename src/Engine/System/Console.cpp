@@ -1294,7 +1294,7 @@ void CConsole::RegisterVar(ICVar* pCVar)
 
 CommandDesc CConsole::parseCommand(std::wstring& command)
 {
-  enum { COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, INARG, INSTRING } state1 = INSPACE;
+  enum { COMMAND, ARGS, INCMD, INSPACE, INARGSPACE, AFTER_EQ, INARG, INSTRING } state1 = INSPACE;
   CommandDesc cd;
   int begin_cmd = 0;
   std::wstring current_arg;
@@ -1376,6 +1376,13 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
         cd.command += command[i];
       }
       break;
+    case AFTER_EQ:
+		if (command[i] != L' ')
+		{
+			state1 = ARGS;
+			current_arg += command[i];
+		}
+		break;
     case INARGSPACE:
       if (command[i] != L' ')
       {
@@ -1383,6 +1390,13 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
         if (command[i] == L'@')
         {
           get_value = true;
+        }
+        else if (command[i] == L'=')
+        {
+					auto arg   = cd.command;
+					cd.args.insert(cd.args.begin(), arg);
+					cd.command = L"set";
+					state1	   = AFTER_EQ;
         }
         else
         {

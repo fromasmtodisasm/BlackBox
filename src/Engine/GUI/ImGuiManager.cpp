@@ -185,14 +185,14 @@ bool ImGuiManager::OnInputEventUI(const SUnicodeEvent& event)
 
 int ImGuiManager::GetPriority() const 
 { 
-	return 1; 
+	return 0; 
 }
 
 bool ImGuiManager::Init()
 {
   // Setup Dear ImGui style
   bool result = true;
-  ImGui::StyleColorsDark();
+  ImGui::StyleColorsLight();
   result &= input.Init();
   result &= render.Init(GetISystem()->GetIRenderer());
   return result;
@@ -224,8 +224,8 @@ void ImGuiManager::ShowDemoWindow()
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
 #else
-  //ShowExampleAppDockSpace(&show_demo_window);
-	ImGui::ShowDemoWindow(&show_demo_window);
+  ShowExampleAppDockSpace(&show_demo_window);
+	//ImGui::ShowDemoWindow(&show_demo_window);
 #endif
 }
 

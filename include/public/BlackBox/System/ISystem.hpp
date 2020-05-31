@@ -132,6 +132,7 @@ struct SSystemInitParams
   bool bPreview;												// When runing in Preview mode (Minimal initialization).
   bool bTestMode;												// When runing in Automated testing mode.
   bool bDedicatedServer;								// When runing a dedicated server.
+	bool bMinimal;                        //!< Don't load banks.
   ISystem* pSystem;											// Pointer to existing ISystem interface, it will be reused if not NULL.
 
 #if defined(LINUX)
