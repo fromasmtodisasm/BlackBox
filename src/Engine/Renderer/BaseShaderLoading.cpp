@@ -53,6 +53,7 @@ CShader* CShader::load(ShaderDesc const& desc)
 {
 	string text;
 	auto path = ShaderDesc::root + desc.name;
+  gEnv->pLog->Log("Loading %s shader", path.data());
 	if (!loadInternal(path, text))
 		return nullptr;
 
@@ -109,10 +110,6 @@ bool CShader::parseLine(std::ifstream& fin, std::string& buffer)
 			return false;
 		buffer.clear();
 		buffer += buff;
-	}
-  else if ((pos = buffer.find("#version")) != buffer.npos)
-	{
-		buffer += "#version 150\n";
 	}
 	else if ((pos = buffer.find("#pragma")) != buffer.npos)
 	{

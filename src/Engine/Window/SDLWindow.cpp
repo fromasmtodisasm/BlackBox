@@ -177,11 +177,11 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
      * SDL doesn't have the ability to choose which profile at this time of writing,
      * but it should default to the core profile */
 
-#if 1
-  //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#if 0 
+  SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
   //SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 #endif
 
@@ -209,7 +209,6 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
     return false;
   }
-  std::cin >> fullscreen;
   //SDL_HideWindow(m_MainWindow);
 
   // Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint

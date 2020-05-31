@@ -100,6 +100,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	printHardware();
 	m_BufferManager = new CBufferManager();
 	CreateQuad();
+  gEnv->pLog->Log("here");
 	gShMan			= new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
@@ -403,7 +404,9 @@ void GLRenderer::printHardware()
 				  << m_Hardware.version << "]\n"
 										   "\tShader Language Version: ["
 				  << m_Hardware.glsl_version << "]\n";
-	m_pSystem->Log(hardware_info.str().c_str());
+	m_pSystem->Log(hardware_info.str().data());
+  std::cout << gl::GetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+	m_pSystem->Log("OOOK");
 }
 
 void GLRenderer::AquireVB()
@@ -686,6 +689,7 @@ void GLRenderer::CreateQuad()
 		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
 		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
 		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}};
+  gEnv->pLog->Log("here");
 	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(6, VertFormatForComponents(false, false, false, true), "screen_quad", false);
 	UpdateBuffer(m_VertexBuffer, verts, 6, false);
 }
