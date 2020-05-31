@@ -8,6 +8,7 @@
 #include <BlackBox/GUI/GUI.hpp>
 
 #include <memory>
+#include <iostream>
 #include <cstdio>
 
 
@@ -177,11 +178,11 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
      * but it should default to the core profile */
 
 #if 1
-  SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+  //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  //SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 #endif
 
   /* Turn on double buffering with a 24bit Z buffer.
@@ -208,6 +209,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
     return false;
   }
+  std::cin >> fullscreen;
   //SDL_HideWindow(m_MainWindow);
 
   // Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint

@@ -54,9 +54,11 @@ namespace
 		auto L = CryLoadLibrary(lib_name);
 		if (L)
 		{
+      gEnv->pSystem->Log("Library found");
 			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
 			if (P)
 			{
+        gEnv->pSystem->Log("Entrypoint found");
 				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
 				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
 				if (pfnModuleInitISystem)

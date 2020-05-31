@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     pSystem->Start();
     status = EXIT_SUCCESS;
   }
-  pSystem->Release();
+  SAFE_RELEASE(pSystem);
 
   return status;
 }

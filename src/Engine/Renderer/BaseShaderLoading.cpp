@@ -110,6 +110,10 @@ bool CShader::parseLine(std::ifstream& fin, std::string& buffer)
 		buffer.clear();
 		buffer += buff;
 	}
+  else if ((pos = buffer.find("#version")) != buffer.npos)
+	{
+		buffer += "#version 150\n";
+	}
 	else if ((pos = buffer.find("#pragma")) != buffer.npos)
 	{
 		size_t begin = pos, end = buffer.size();

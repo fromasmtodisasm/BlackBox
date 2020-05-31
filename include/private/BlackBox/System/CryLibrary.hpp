@@ -81,7 +81,7 @@
 	static HMODULE CryLoadLibrary(const char* libName, const bool cAppend = true, const bool cLoadLazy = false)
 	{
 		string newLibName(GetModulePath());
-#if !defined(NDEBUG)
+#if 0//!defined(NDEBUG)
 		string t(libName);
 		string c("_debug.so");
 		if(cAppend)
@@ -89,8 +89,11 @@
 		newLibName += t;
 		printf("loading library  %s...\n",newLibName.c_str());
 #else
+		newLibName += "lib";
 		newLibName += libName;
+		newLibName += CrySharedLibrayExtension;
 #endif
+    gEnv->pLog->Log("Loading %s library", newLibName.data());
 		return ::dlopen(newLibName.c_str(), cLoadLazy?(RTLD_LAZY | RTLD_GLOBAL):(RTLD_NOW | RTLD_GLOBAL));
 	}
 
