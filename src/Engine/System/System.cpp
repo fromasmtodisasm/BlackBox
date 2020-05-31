@@ -739,6 +739,7 @@ void CSystem::PollEvents()
 
 void CSystem::EnableGui(bool enable)
 {
+#if ENABLE_DEBUG_GUI
 	if (enable)
 	{
 		m_env.pInput->AddEventListener(m_GuiManager);
@@ -747,6 +748,7 @@ void CSystem::EnableGui(bool enable)
 	{
 		m_env.pInput->RemoveEventListener(m_GuiManager);
 	}
+#endif
 }
 
 float CSystem::GetDeltaTime()

@@ -85,7 +85,7 @@ public:
   }
 
   
-  void GetPos(glm::vec3 pos)
+  void SetPos(glm::vec3 pos)
   {
     transform.position = pos;
   }

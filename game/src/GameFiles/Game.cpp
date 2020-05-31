@@ -11,8 +11,6 @@
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 
-#include <imgui.h>
-
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
