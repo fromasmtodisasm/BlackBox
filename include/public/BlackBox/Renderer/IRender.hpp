@@ -153,7 +153,7 @@ union UCol {
 	};
 	*/
 	UCol() = default;
-	UCol(Vec4& v)
+	UCol(const Vec4& v)
 	{
 		bcolor[0] = static_cast<char>(v[3] * 255.f);
 		bcolor[1] = static_cast<char>(v[1] * 255.f);

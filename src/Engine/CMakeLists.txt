@@ -118,7 +118,7 @@ macro(main)
 	###################################################
 	#--------------------------------------------------
 	if (LINUX OR UNIX OR APPLE)
-		target_link_libraries(BlackBox PUBLIC ${CMAKE_DL_LIBS})
+		target_link_libraries(BlackBox INTERFACE ${CMAKE_DL_LIBS})
 	endif()
 	#--------------------------------------------------
 	#get_target_property(SOURCE_FILES ${BLACKBOX_PROJECT}  SOURCES)
@@ -129,7 +129,7 @@ macro(main)
 	  FILES  ${SOURCE_FILES}
 	  )
 	]]
-	install_target()
+	#install_target()
 endmacro()
 
 main()

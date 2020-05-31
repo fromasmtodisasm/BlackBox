@@ -85,12 +85,12 @@ public:
   }
 
   
-  void CCamera::SetPos(glm::vec3 pos)
+  void GetPos(glm::vec3 pos)
   {
     transform.position = pos;
   }
 
-  void CCamera::SetAngles(glm::vec3 ang)
+  void SetAngles(glm::vec3 ang)
   {
     transform.rotation = ang;
   }

@@ -74,4 +74,6 @@ typedef ULONG_PTR DWORD_PTR, *        PDWORD_PTR;
 #undef min
 #undef max
 
+#define strdup _strdup
+
 #define TARGET_DEFAULT_ALIGN (0x8U)

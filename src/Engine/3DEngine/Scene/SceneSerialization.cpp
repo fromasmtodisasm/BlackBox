@@ -338,7 +338,7 @@ void Scene::Serializator::loadLight(tinyxml2::XMLElement* light)
     {
       return;
     }
-    baseLight->toStr = _strdup(tmp.c_str());
+    baseLight->toStr = strdup(tmp.c_str());
   }
 
   baseLight->ambient = serialization::loadColorAttribute(light->FirstChildElement("ambient"));

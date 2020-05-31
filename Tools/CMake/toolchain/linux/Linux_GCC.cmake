@@ -9,10 +9,8 @@ set(LINUX64 1)
 
 set(OUTPUT_DIRECTORY_NAME "linux_x64_gcc")
 
-#[[
-set(CMAKE_C_COMPILER gcc-4.9)
-set(CMAKE_CXX_COMPILER g++-4.9)
-]]
+set(CMAKE_C_COMPILER /usr/bin/gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/g++)
 
 add_definitions(-DLINUX64)
 

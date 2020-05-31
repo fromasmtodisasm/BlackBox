@@ -21,7 +21,7 @@ if (OPTION_USE_GUI)
 	target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 endif()
 add_package(SDL2)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 #target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 if (UNIX_OR_CYGWIN)
   target_sources(

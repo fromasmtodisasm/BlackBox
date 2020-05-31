@@ -10,14 +10,16 @@ if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for Input System")
 	#################################################################
 	if (DEFINED LINUX )
+		#[[
 		if (NOT DEFINED VCPKG_INSTALLER)
 			find_package(SDL2 CONFIG REQUIRED)
 			target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARY})
 			target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
 		else()
+		]]
 			add_package(SDL2)
-			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
-		endif()
+			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
+		#endif()
 	else()
 		add_package(SDL2)
 		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)

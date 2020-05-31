@@ -20,7 +20,7 @@ elseif(GLEW_LOADER)
 endif()
 install_this(OpenGlBackend)
 
-ADD_PACKAGE(stb)
+ADD_PACKAGE(Stb)
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder
@@ -77,7 +77,7 @@ else()
 endif()
 
 add_package(SDL2)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 #target_include_directories(${OpenGlBackend} 

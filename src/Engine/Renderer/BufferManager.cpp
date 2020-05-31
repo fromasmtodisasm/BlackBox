@@ -231,7 +231,7 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
   if (indicies != nullptr)
   {
     assert(numindices != 0);
-    auto s = sizeof GLushort;
+    auto s = sizeof(GLushort);
     gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicies->m_VertBuf.m_nID);
     gl::DrawElements(gl_mode, numindices, GL_UNSIGNED_SHORT, reinterpret_cast<GLushort*>(offsindex * s + offset_in_buffer));
   }

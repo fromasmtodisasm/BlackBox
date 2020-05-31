@@ -1178,7 +1178,7 @@ bool CConsole::IsOpened()
 
 ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help)
 {
-  ICVar* var = new CCVar(sName, _strdup(sValue), const_cast<char*>(help));
+  ICVar* var = new CCVar(sName, strdup(sValue), const_cast<char*>(help));
   if (var == nullptr) return var;
   m_mapVariables[sName] = var;
   return var;
@@ -1601,9 +1601,9 @@ void CConsole::PrintLine(const char* format, ...)
 char* CCVar::GetString()
 {
   if (type == CVAR_INT)
-    value.s = _strdup(std::to_string(value.i).c_str());
+    value.s = strdup(std::to_string(value.i).c_str());
   else if (type == CVAR_FLOAT)
-    value.s = _strdup(std::to_string(value.f).c_str());
+    value.s = strdup(std::to_string(value.f).c_str());
   type = CVAR_STRING;
   return value.s;
 }
@@ -1623,7 +1623,7 @@ void CCVar::Set(const char* s)
   }
   else
   {
-    value.s = _strdup(s);
+    value.s = strdup(s);
     type = CVAR_STRING;
   }
 }
@@ -1741,9 +1741,9 @@ float CCVarRef::GetFVal()
 char* CCVarRef::GetString()
 {
   if (type == CVAR_INT)
-    *value.s = _strdup(std::to_string(*value.i).c_str());
+    *value.s = strdup(std::to_string(*value.i).c_str());
   else if (type == CVAR_FLOAT)
-    *value.s = _strdup(std::to_string(*value.f).c_str());
+    *value.s = strdup(std::to_string(*value.f).c_str());
   type = CVAR_STRING;
   return *value.s;
 }
@@ -1754,7 +1754,7 @@ void CCVarRef::Set(const char* s)
     return;
   if (*value.s != nullptr)
     delete[] * value.s;
-  *value.s = _strdup(s);
+  *value.s = strdup(s);
   type = CVAR_STRING;
 }
 
