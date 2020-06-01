@@ -58,5 +58,5 @@ struct IMiniLog
 struct CNullMiniLog : public IMiniLog
 {
   // the default implementation just won't do anything
-  void LogV(const char* szFormat, va_list args) {}
+    void LogV(const ELogType nType, const char* szFormat, va_list args) {};
 };
