@@ -11,11 +11,9 @@
 #include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
+
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif
@@ -273,7 +271,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-		m_env.pInput->AddEventListener(m_pConsole);
+        m_env.pInput->AddEventListener(static_cast<CConsole*>(m_pConsole));
 #if ENABLE_DEBUG_GUI
 		if (!gEnv->IsDedicated())
 		{
@@ -431,7 +429,7 @@ bool CSystem::CreateConsole()
 
 bool CSystem::InitConsole()
 {
-	if (!m_pConsole->Init(this))
+    if (!static_cast<CConsole*>(m_pConsole)->Init(this))
 		return false;
 	m_pConsole->ShowConsole(true);
 	return true;
@@ -595,9 +593,8 @@ bool CSystem::InitScripts()
 	m_ScriptObjectRenderer = new CScriptObjectRenderer();
 	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
 
-	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
+    m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
-	m_ScriptObjectRenderer->Init(m_pScriptSystem, nullptr);
 
 	return m_pScriptSystem->ExecuteFile("scripts/engine.lua");
 }

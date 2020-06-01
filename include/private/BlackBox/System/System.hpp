@@ -12,9 +12,12 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/IWindowMessageHandler.h>
 
+#include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
+
 #define DEFAULT_APP_NAME "BlackBox"
 
-class CConsole;
 struct IWindow;
 
 class CScriptObjectConsole;
@@ -125,7 +128,7 @@ private:
 	CCamera									m_ViewCamera;            //!<
 
   ILog* m_pLog;
-  CConsole*								m_pConsole;
+  IConsole*								m_pConsole;
   //IInput* m_pInput;
   ICryPak*								m_pCryPak;
   IGame*									m_pGame;

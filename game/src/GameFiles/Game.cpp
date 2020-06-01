@@ -26,7 +26,7 @@ namespace
 	{
 		Vec3 vec(rand(), rand(), rand());
 
-		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(RAND_MAX)/(right - left)));
+        return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(float(RAND_MAX))/(right - left)));
 	}
 
 	std::string vec_to_string(Vec3 vec)
@@ -747,6 +747,8 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			if (alt == true)
 				gotoFullscreen();
 			return true;
+        default:
+            return false;
 		}
 	}
 	//return m_player->OnInputEvent(event);
@@ -778,6 +780,8 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 			//m_inputHandler->mouseLock(false);
 			m_Mode = Mode::MENU;
 			return true;
+        default:
+            return false;
 		}
 	}
 	return false;
@@ -912,6 +916,8 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 			else
 				m_Console->ShowConsole(true);
 			return true;
+        default:
+            return false;
 		}
 	}
 

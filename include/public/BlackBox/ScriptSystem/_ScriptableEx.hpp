@@ -353,7 +353,8 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 #if defined(LINUX) || defined(__MINGW32__)
-#define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=nullptr; \
+#define _DECLARE_SCRIPTABLEEX(_class) \
+        template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=nullptr; \
 		template<> _ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs = _ScriptableEx<_class>::FunctionsVec(); \
         template<> IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=nullptr; \
         template<> IScriptObject *_ScriptableEx<_class>::m_pPropertiesTable=nullptr; \
