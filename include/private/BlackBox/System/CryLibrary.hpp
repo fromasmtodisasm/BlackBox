@@ -93,8 +93,12 @@
 		newLibName += libName;
 		newLibName += CrySharedLibrayExtension;
 #endif
-    gEnv->pLog->Log("Loading %s library", newLibName.data());
-		return ::dlopen(newLibName.c_str(), cLoadLazy?(RTLD_LAZY | RTLD_GLOBAL):(RTLD_NOW | RTLD_GLOBAL));
+        gEnv->pLog->Log("Loading %s library", newLibName.data());
+        auto result = ::dlopen(newLibName.c_str(), cLoadLazy?(RTLD_LAZY | RTLD_GLOBAL):(RTLD_NOW | RTLD_GLOBAL));
+        if (!result)
+            gEnv->pLog->Log("Error open library: %s", dlerror());
+        return result;
+
 	}
 
 
