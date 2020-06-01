@@ -300,10 +300,6 @@ struct ITouchEventListener
 
 typedef int XACTIONID;
 
-#define BEGIN_INPUTACTIONMAP() void OnAction(XACTIONID nActionID, float fValue,XActivationEvent ae) { switch(nActionID) {
-#define END_INPUTACTIONMAP() default: break; } }
-#define REGISTER_INPUTACTIONMAP(actionid, handler) case actionid: handler(fValue,ae); break;
-
 #ifdef _XBOX
 #define MAX_BINDS_PER_ACTION 3
 #else
@@ -364,6 +360,15 @@ struct IActionMap
 };
 
 //////////////////////////////////////////////////////////////////////
+typedef unsigned char INPUTACTIONID;
+
+//@{ Helper macros to implement the action triggers callback interface
+#define BEGIN_INPUTACTIONMAP() void OnAction(XACTIONID nActionID, float fValue,XActivationEvent ae) override { switch(nActionID) {
+#define END_INPUTACTIONMAP() default: break; } }
+#define REGISTER_INPUTACTIONMAP(actionid, handler) case actionid: handler(fValue,ae); break;
+//@}
+
+//////////////////////////////////////////////////////////////////////
 struct IActionMapDumpSink
 {
   virtual void OnElementFound(const char* pszActionMapName, IActionMap* pActionMap) = 0;
@@ -399,15 +404,6 @@ struct IActionMapManager
   virtual void Disable() = 0;
   virtual bool IsEnabled() = 0;
 };
-
-//////////////////////////////////////////////////////////////////////
-typedef unsigned char INPUTACTIONID;
-
-//@{ Helper macros to implement the action triggers callback interface
-#define BEGIN_INPUTACTIONMAP() void OnAction(XACTIONID nActionID, float fValue,XActivationEvent ae) { switch(nActionID) {
-#define END_INPUTACTIONMAP() default: break; } }
-#define REGISTER_INPUTACTIONMAP(actionid, handler) case actionid: handler(fValue,ae); break;
-//@}
 
 //////////////////////////////////////////////////////////////////////
 // Action triggers callback interface

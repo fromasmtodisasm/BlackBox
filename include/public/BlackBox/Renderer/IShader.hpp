@@ -266,6 +266,7 @@ class BasicIncluder : public IIncluder
 {
 	std::string_view OnInclude(std::string_view file) override
 	{
+        return "";
 	}
 };
 

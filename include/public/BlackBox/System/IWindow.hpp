@@ -21,6 +21,7 @@ typedef struct Cursor Cursor;
 typedef void* GLContext;
 
 struct IWindow {
+  virtual void Release() = 0;
   virtual bool create(Params params) = 0;
   virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) = 0;
   //virtual bool Init() = 0;

@@ -551,7 +551,7 @@ void CGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	////////////////////////
-	bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == event.state == eIS_Pressed;
+    bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -1033,7 +1033,7 @@ bool CGame::TestScriptSystem(bool& retflag)
 	m_playerObject = m_pScriptSystem->CreateEmptyObject();
 	if (!m_pScriptSystem->GetGlobalValue("Player", m_playerObject))
 	{
-		delete m_playerObject;
+        m_playerObject->Release();
 		m_pSystem->Log("\002 ERROR: can't find player table ");
 		return false;
 	}

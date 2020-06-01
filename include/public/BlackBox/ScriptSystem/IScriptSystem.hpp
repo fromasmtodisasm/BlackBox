@@ -195,7 +195,7 @@ struct IScriptSystem
 
   */
   //##@{
-  virtual int BeginCall(HSCRIPTFUNCTION hFunc) = 0;						 // Márcio: changed the return type
+  virtual int BeginCall(HSCRIPTFUNCTION hFunc) = 0;						 // Mï¿½rcio: changed the return type
   virtual int BeginCall(const char* sFuncName) = 0;						 // from void to int for error checking
   virtual int BeginCall(const char* sTableName, const char* sFuncName) = 0;//
   virtual int BeginCall(IScriptObject* pTable, const char* sFuncName) = 0;
@@ -210,7 +210,7 @@ struct IScriptSystem
   virtual bool EndCall(float& fRet) = 0;
   virtual bool EndCall(const char*& sRet) = 0;
 #if defined(WIN64) || defined(LINUX)
-  inline bool EndCall(char*& sRet) { EndCall((const char*&)sRet); }
+  inline bool EndCall(char*& sRet) { return EndCall((const char*&)sRet); }
 #endif
   virtual bool EndCall(bool& bRet) = 0;
   virtual bool EndCall(IScriptObject*& pScriptObject) = 0;

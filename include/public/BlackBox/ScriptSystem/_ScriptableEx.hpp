@@ -36,9 +36,9 @@ class _ScriptableEx : public ScriptBase
 public:
   _ScriptableEx()
   {
-    m_pScriptThis = NULL;
-    m_pScriptSystem = NULL;
-    m_nBase = NULL;
+    m_pScriptThis = nullptr;
+    m_pScriptSystem = nullptr;
+    m_nBase = 0;
   }
 
   virtual ~_ScriptableEx()
@@ -353,12 +353,12 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 #if defined(LINUX) || defined(__MINGW32__)
-#define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
+#define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=nullptr; \
 		template<> _ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs = _ScriptableEx<_class>::FunctionsVec(); \
-		template<> IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=NULL; \
-		template<> IScriptObject *_ScriptableEx<_class>::m_pPropertiesTable=NULL; \
-		template<> IScriptSystem *_ScriptableEx<_class>::m_pSS=NULL; \
-		template<> _ScriptableEx<_class>::PropertiesVec *_ScriptableEx<_class>::m_pvPropertiesVector=NULL;
+        template<> IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=nullptr; \
+        template<> IScriptObject *_ScriptableEx<_class>::m_pPropertiesTable=nullptr; \
+        template<> IScriptSystem *_ScriptableEx<_class>::m_pSS=nullptr; \
+        template<> _ScriptableEx<_class>::PropertiesVec *_ScriptableEx<_class>::m_pvPropertiesVector=nullptr;
 #else
 #define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
 		_ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs; \

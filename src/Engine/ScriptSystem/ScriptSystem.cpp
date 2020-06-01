@@ -413,7 +413,7 @@ HSCRIPTFUNCTION CScriptSystem::GetFunctionPtr(const char* sFuncName)
   if (lua_isnil(L, -1) || (!lua_isfunction(L, -1)))
   {
     lua_pop(L, 1);
-    return NULL;
+    return 0;
   }
   func = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
 

@@ -50,7 +50,6 @@ struct IGraphicsDeviceConstantBuffer
 	virtual void SetData(const uint8* data, size_t size) = 0;
 };
 typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferPtr;
-/*
 
 /*
    template <typename T>
@@ -283,7 +282,7 @@ struct SVertexStream
 	{
 		m_VData			 = NULL;
 		m_VertBuf.m_pPtr = NULL;
-		m_nItems		 = NULL;
+        m_nItems		 = 0;
 		m_bLocked		 = false;
 	}
 };

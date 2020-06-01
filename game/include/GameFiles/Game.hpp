@@ -257,7 +257,7 @@ class CGame
 	// IInputEventListener interface
   public:
 	virtual bool OnInputEvent(const SInputEvent& event) override;
-	virtual int GetPriority() const
+    virtual int GetPriority() const override
 	{
 		return 2;
 	}
@@ -272,7 +272,7 @@ class CGame
 	virtual void UpdateDuringLoading() override;
 	virtual IXAreaMgr* GetAreaManager() override;
 	virtual ITagPointManager* GetTagPointManager() override;
-	void Stop();
+    void Stop() override;
 	void gotoMenu();
 	void gotoFullscreen();
 	void gotoGame();
@@ -369,9 +369,9 @@ class CGame
 	bool StartupLocalClient();
 	void ShutdownClient();
 	void MarkClientForDestruct();
-	void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
-	void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
-	void OnNETServerTimeout(const CIPAddress& ip);
+    void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping) override;
+    void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping) override;
+    void OnNETServerTimeout(const CIPAddress& ip) override;
 	void RefreshServerList();
 	//////////////////////////////////////////////////////////////////////////
 	void BindAction(const char* sAction, const char* sKeys, const char* sActionMap = NULL, int iKeyPos = -1);
@@ -550,7 +550,7 @@ class CGame
 	std::shared_ptr<IQuadTreeRender> m_QuadTreeRender;
 	std::shared_ptr<QuadTree> m_QuadTree;
 
-	char* test_string = "user data string";
+    const char* test_string = "user data string";
 
 	IHardwareMouse* m_HardwareMouse = nullptr;
 

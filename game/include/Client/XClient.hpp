@@ -82,15 +82,15 @@ public:
 
 	// interface IClientSink 
 
-	virtual void OnXConnect();
-	virtual void OnXClientDisconnect(const char* szCause);
-	virtual void OnXContextSetup(CStream& stmContex);
-	virtual void OnXData(CStream& stm);
-	virtual void OnXServerTimeout();
-	virtual void OnXServerRessurect();
-	virtual unsigned int GetTimeoutCompensation();
-	virtual void MarkForDestruct();
-	virtual bool DestructIfMarked();
+    virtual void OnXConnect() override;
+    virtual void OnXClientDisconnect(const char* szCause) override;
+    virtual void OnXContextSetup(CStream& stmContex) override;
+    virtual void OnXData(CStream& stm) override;
+    virtual void OnXServerTimeout() override;
+    virtual void OnXServerRessurect() override;
+    virtual unsigned int GetTimeoutCompensation() override;
+    virtual void MarkForDestruct() override;
+    virtual bool DestructIfMarked() override;
 
 	IClient* GetNetworkClient() const { return m_pIClient; };
 

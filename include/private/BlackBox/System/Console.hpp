@@ -255,7 +255,7 @@ public:
   virtual void ExecuteString(const char* command) override;
   virtual void ExecuteFile(const char* file) override;
   virtual bool OnInputEvent(const SInputEvent& event) override;
-  virtual bool OnInputEventUI(const SUnicodeEvent& event);
+  virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
   void getHistoryElement();
   void completeCommand(std::vector<std::wstring>& completion);
   void setBuffer();
@@ -279,7 +279,7 @@ public:
   virtual void AddConsoleVarSink(IConsoleVarSink* pSink) override;
   virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) override;
 
-  void CreateKeyBind(const char* key, const char* cmd);
+  void CreateKeyBind(const char* key, const char* cmd) override;
   virtual void SetInputLine(const char* szLine) override;
   virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
   virtual void AddWorkerCommand(IWorkerCommand* cmd) override;

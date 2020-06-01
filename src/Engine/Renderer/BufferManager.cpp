@@ -141,6 +141,7 @@ bool CBufferManager::Preallocate()
 
 CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const char* szSource, bool bDynamic)
 {
+    bDynamic = true;
 	assert(vertexformat >= VERTEX_FORMAT_P3F && vertexformat < VERTEX_FORMAT_NUMS);
 #if 0
   if (auto it = m_VertexBufferPool.find((eVertexFormat)vertexformat); it != m_VertexBufferPool.end())
@@ -188,11 +189,8 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 
 void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
 {
-	if (pVertexBuffer->m_VS != nullptr)
-	{
-		glDeleteBuffers(1, &pVertexBuffer->m_VS[0].m_VertBuf.m_nID);
-		glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
-	}
+    glDeleteBuffers(1, &pVertexBuffer->m_VS[0].m_VertBuf.m_nID);
+    glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
 }
 
 void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount)

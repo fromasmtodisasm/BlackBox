@@ -116,7 +116,7 @@ public:
 
   void PushObject(const IScriptObject* pObj);
 
-  virtual void LogStackTrace();
+  virtual void LogStackTrace() override;
 
 public:
   inline void ToAny(bool& val, int nIdx)

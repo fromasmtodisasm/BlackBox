@@ -62,7 +62,7 @@ namespace {
       last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
       last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
       last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
-  #if defined(GL_CLIP_ORIGIN) && !defined(__APPLE__)
+  #if defined(GL_CLIP_ORIGIN) && !defined(__APPLE__) && 0
       glGetIntegerv(GL_CLIP_ORIGIN, (GLint*)&last_clip_origin); // Support for GL 4.5's glClipControl(GL_UPPER_LEFT)
       if (last_clip_origin == GL_UPPER_LEFT)
           clip_origin_lower_left = false;
@@ -117,8 +117,8 @@ namespace {
     GLboolean last_enable_cull_face;
     GLboolean last_enable_depth_test;
     GLboolean last_enable_scissor_test;
-    bool clip_origin_lower_left = true;
-    GLenum last_clip_origin = 0; 
+    //bool clip_origin_lower_left = true;
+    //GLenum last_clip_origin = 0;
   };
 }
 
@@ -146,7 +146,7 @@ bool    ImGuiOpenglRender::Init(IRenderer *pRenderer, const char* glsl_version)
     gl_loader = "GLEW";
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
     gl_loader = "GLAD";
-#else IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#elseif IMGUI_IMPL_OPENGL_LOADER_CUSTOM
     gl_loader = "Custom";
 #endif
 
@@ -231,7 +231,7 @@ void    ImGuiOpenglRender::RenderDrawData(ImDrawData* draw_data)
                 if (clip_rect.x < fb_width && clip_rect.y < fb_height && clip_rect.z >= 0.0f && clip_rect.w >= 0.0f)
                 {
                     // Apply scissor/clipping rectangle
-#if defined(GL_CLIP_ORIGIN) && !defined(__APPLE__)
+#if defined(GL_CLIP_ORIGIN) && !defined(__APPLE__) && 0
                         glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
 #else
                         glScissor((int)clip_rect.x, (int)clip_rect.y, (int)clip_rect.z, (int)clip_rect.w); // Support for GL 4.5 rarely used glClipControl(GL_UPPER_LEFT)

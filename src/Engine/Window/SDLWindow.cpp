@@ -334,6 +334,11 @@ int CSDLWindow::EventWatcher(void *self, SDL_Event *event)
   return 1;
 }
 
+void CSDLWindow::Release()
+{
+    delete this;
+}
+
 extern "C" {
   IWINDOW_API IWindow* CreateIWindow()
   {

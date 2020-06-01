@@ -119,19 +119,19 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 CSystem::~CSystem()
 {
 	Log("Releasing system");
-	SAFE_DELETE(r_window_width);
-	SAFE_DELETE(r_window_height);
-	SAFE_DELETE(r_bpp);
-	SAFE_DELETE(r_zbpp);
-	SAFE_DELETE(r_sbpp);
-	SAFE_DELETE(r_fullscreen);
+    SAFE_RELEASE(r_window_width);
+    SAFE_RELEASE(r_window_height);
+    SAFE_RELEASE(r_bpp);
+    SAFE_RELEASE(r_zbpp);
+    SAFE_RELEASE(r_sbpp);
+    SAFE_RELEASE(r_fullscreen);
 
 	//SAFE_DELETE(m_pLog);
 	SAFE_RELEASE(m_pLog);
 	SAFE_DELETE(m_pConsole);
-	SAFE_DELETE(m_pGame);
+    SAFE_RELEASE(m_pGame);
 	//SAFE_DELETE(m_pFont);
-	SAFE_DELETE(m_pWindow);
+    SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_Render);
 }
 

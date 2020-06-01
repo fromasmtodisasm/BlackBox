@@ -118,6 +118,6 @@ private:
 	std::vector<IShaderProgram*> m_Programs;
 
   // Inherited via I3DEngine
-  virtual void SetFlags(int flags);
-  virtual int GetFlags();
+  virtual void SetFlags(int flags) override;
+  virtual int GetFlags() override;
 };

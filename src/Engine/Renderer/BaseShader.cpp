@@ -256,6 +256,10 @@ void CBaseShaderProgram::Attach(ShaderInfo& info) {
   case CShader::Type::E_VERTEX:
     attached = attachInternal(info, m_Vertex);
     break;
+  case CShader::Type::E_TESSELATION_CONTROL:
+      break;
+  case CShader::Type::E_TESSELATION_EVALUATION:
+      break;
   case CShader::Type::E_FRAGMENT:
     attached = attachInternal(info, m_Fragment);
     break;
@@ -264,6 +268,9 @@ void CBaseShaderProgram::Attach(ShaderInfo& info) {
     break;
   case CShader::Type::E_COMPUTE:
     attached = attachInternal(info, m_Compute);
+    break;
+  case CShader::Type::E_UNKNOWN:
+    assert(0);
     break;
   }
   attached.attached = true;

@@ -19,14 +19,14 @@ class ImGuiManager : public IImGuiManager
 	// Inherited via IInputEventListener
 	virtual bool OnInputEvent(const SInputEvent& event) override;
 	virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
-	virtual int GetPriority() const;
+    virtual int GetPriority() const override;
 
-  bool Init();
-  void NewFrame();
-  void Render();
-  void ShowDemoWindow();
-  void ShowNodeEditor();
-  void HideDemoWindow();
+  bool Init() override;
+  void NewFrame() override;
+  void Render() override;
+  void ShowDemoWindow() override;
+  void ShowNodeEditor() override;
+  void HideDemoWindow() override;
 private:
   bool show_demo_window = true;
 };

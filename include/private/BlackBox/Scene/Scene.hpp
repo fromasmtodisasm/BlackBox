@@ -74,12 +74,12 @@ private:
 
 public:
   Scene(std::string name);
-  void addObject(std::string name, CStatObj* object);
-  CStatObj* getObject(std::string name);
-  size_t numObjects();
+  void addObject(std::string name, CStatObj* object) override ;
+  CStatObj* getObject(std::string name) override ;
+  size_t numObjects() override ;
   void setCamera(std::string name, CCamera* camera);
-  CCamera* getCurrentCamera();
-  SkyBox* GetSkyBox();
+  CCamera* getCurrentCamera() override ;
+  SkyBox* GetSkyBox() override ;
 
   virtual bool save(const char* as = "") override;
   virtual bool load(const char* name, LoadObjectSink* callback) override;

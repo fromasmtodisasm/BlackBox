@@ -9,7 +9,7 @@
 #include <list>
 #include <string>
 
-class CSDLWindow :
+class CSDLWindow final:
   public IWindow
 {
 public:
@@ -66,4 +66,8 @@ private:
   int m_flags = 0;
   // For input handling
   //std::list<IInputEventListener*> listeners;
+
+  // IWindow interface
+public:
+  virtual void Release() override;
 };

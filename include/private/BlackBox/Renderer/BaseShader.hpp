@@ -117,7 +117,7 @@ public:
   virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
   virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
   virtual uint Get() override;
-  virtual void setup() = 0;
+  virtual void setup() override {};
   virtual void Dump() override;
 private:
   void reset(ShaderInfo src);
