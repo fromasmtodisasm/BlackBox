@@ -69,6 +69,10 @@ namespace
 			}
 			return false;
 		}
+    else
+    {
+      gEnv->pSystem->Log("Library not found");
+    }
 		return false;
 	}
 } // namespace

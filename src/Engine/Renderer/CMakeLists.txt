@@ -20,7 +20,7 @@ elseif(GLEW_LOADER)
 endif()
 install_this(OpenGlBackend)
 
-ADD_PACKAGE(Stb)
+add_package(Stb)
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
   #Render folder

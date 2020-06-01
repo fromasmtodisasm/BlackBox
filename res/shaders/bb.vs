@@ -8,11 +8,11 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 
-//out VS_OUT
-//{
+out VS_OUT
+{
 	vec3 fragPos;
 	vec3 N;
-//}vs_out;
+}vs_out;
 
 void main()
 {

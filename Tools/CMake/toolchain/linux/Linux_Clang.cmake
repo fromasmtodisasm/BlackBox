@@ -8,8 +8,8 @@ set(LINUX64 1)
 
 set(OUTPUT_DIRECTORY_NAME "linux_x64_clang")
 
-#set(CMAKE_C_COMPILER clang-3.8)
-#set(CMAKE_CXX_COMPILER clang++-3.8)
+set(CMAKE_C_COMPILER cc)
+set(CMAKE_CXX_COMPILER c++)
 
 add_definitions(-DLINUX64)
 
