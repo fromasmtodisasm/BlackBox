@@ -218,6 +218,18 @@ inline unsigned int GetCurrentTime()
   return GetCurrentTimeInternal();
 }
 
+extern "C" inline char *strlwr(char *str)
+{
+  unsigned char *p = (unsigned char *)str;
+
+  while (*p) {
+     *p = tolower((unsigned char)*p);
+      p++;
+  }
+
+  return str;
+}
+
 typedef union _LARGE_INTEGER
 {
   struct

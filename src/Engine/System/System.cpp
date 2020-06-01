@@ -360,7 +360,7 @@ IGame* CSystem::GetIGame()
 
 IGame* CSystem::CreateGame(IGame* game)
 {
-	LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+    LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
 		m_pGame = P();
 		return true;
 	});

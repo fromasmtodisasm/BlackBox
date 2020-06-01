@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
   snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem* pSystem = CreateSystemInterface(params);
-  if (pSystem->Init())
+  if (pSystem)
   {
     pSystem->GetILog()->Log("[OK] ISystem created\n");
     pSystem->GetILog()->Log("[INFO] Current working directory: %s\n", path.c_str());
