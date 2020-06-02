@@ -163,6 +163,13 @@ void GLRenderer::Update(void)
 	m_FrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
 	if (m_pRenerCallback)
 		m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
+	m_FrameBuffer->DrawToBackbuffer(
+		[&]() -> Vec4 {
+			Vec4d r;
+			GetViewport(&r.x, &r.y, &r.z, &r.w);
+			return r;
+		}()
+	);
 	m_FrameID++;
 }
 

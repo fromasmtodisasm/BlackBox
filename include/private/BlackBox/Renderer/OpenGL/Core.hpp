@@ -246,6 +246,22 @@ namespace gl {
   {
     glCheck(glBindFramebuffer(GL_FRAMEBUFFER, id));
   }
+  inline void BindDrawFramebuffer(GLuint id)
+  {
+    glCheck(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id));
+  }
+  inline void BindReadFramebuffer(GLuint id)
+  {
+    glCheck(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
+  }
+  inline void DrawBackBuffer()
+  {
+    glCheck(glDrawBuffer(GL_BACK));
+  }
+  inline void BlitFrameBuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
+  {
+	  glCheck(glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter));
+  }
   inline void FramebufferTexture2D(GLenum attachment, GLenum textarget, GLuint texture, GLint level)
   {
     glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, level));

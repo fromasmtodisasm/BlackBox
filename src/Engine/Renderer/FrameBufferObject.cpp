@@ -107,6 +107,16 @@ ITexture* FrameBufferObject::getTexture()
   return nullptr;
 }
 
+void FrameBufferObject::DrawToBackbuffer(const Vec4& dstViewport)
+{
+	auto& dvp = Vec4d(dstViewport);
+	auto& svp = Vec4d(viewPort);
+	gl::BindDrawFramebuffer(0);
+	gl::BindReadFramebuffer(id);
+	gl::DrawBackBuffer();
+	gl::BlitFrameBuffer(svp.x, svp.y, svp.z, svp.w, dvp.x, dvp.y, dvp.z, dvp.w, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
 void FrameBufferObject::createSceneBuffer()
 {
 }

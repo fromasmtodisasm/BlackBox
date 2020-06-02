@@ -106,7 +106,6 @@ macro(main)
 	  target_compile_definitions(${BLACKBOX_PROJECT} INTERFACE -DTEST)
 	  target_compile_definitions(${BLACKBOX_PROJECT} INTERFACE -DSINGLE_PASS)
 	endif()
-	find_package(OpenGL REQUIRED)
 	add_package(tinyxml2)
 	add_package(freetype)
 	###################################################

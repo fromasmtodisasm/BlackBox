@@ -29,6 +29,7 @@ public:
   static void bindDefault(glm::vec4 viewPort);
   void unbind();
   ITexture* getTexture();
+  void DrawToBackbuffer(const Vec4& dstViewport);
 private:
   FrameBufferObject(int width, int height);
   void createSceneBuffer();
