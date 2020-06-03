@@ -189,7 +189,7 @@ function(add_sdl)
 endfunction()
 
 function(add_SDL_net)
-	if (DEFINED LINUX )
+	if (DEFINED LINUX OR DEFINED MINGW)
 		if (NOT DEFINED VCPKG_INSTALLER)
       pkg_check_modules(SDL2_NET SDL2_net)
 			target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_NET_LIBRARY})
