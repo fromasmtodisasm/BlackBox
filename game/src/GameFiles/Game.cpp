@@ -916,8 +916,8 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 			else
 				m_Console->ShowConsole(true);
 			return true;
-        default:
-            return false;
+		default:
+			break;
 		}
 	}
 

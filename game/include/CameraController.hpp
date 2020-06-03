@@ -48,7 +48,7 @@ public:
       else
         delta.y = event.value;
       ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
-      return true;
+      return false;
     }
     else if (keyPressed)
     {
