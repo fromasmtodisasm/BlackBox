@@ -5,7 +5,8 @@
 
 ###################################################
 
-target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
+#target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
+target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2)
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/3DEngine/Scene/Scene.cpp

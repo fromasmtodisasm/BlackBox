@@ -12,9 +12,8 @@ if (DEFINED LINUX AND NOT DEFINED VCPKG_INSTALLER)
 else()
 endif()
 ]]
-add_package(sdl2-net)
-add_package(SDL2)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
+add_SDL()
+add_SDL_net()
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 
 target_sources(${PROJECT_NAME}

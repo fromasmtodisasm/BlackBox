@@ -7,17 +7,7 @@ if (OPTION_USE_SDL)
 	message(STATUS "Using sdl for window managment")
 	#################################################################
 	#################################################################
-	if (DEFINED LINUX )
-    find_package(SDL2 CONFIG REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
-    #target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
-		#target_link_libraries(${PROJECT_NAME} PRIVATE pthread sndio)
-	else()
-		add_package(SDL2)
-		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
-		target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
-	endif()
-
+  add_SDL()
 	#################################################################
 	#################################################################
 	target_sources(

@@ -69,7 +69,6 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PUBLIC tinyxml2::tinyxml2)
 if (LINUX)
 	target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 else()

@@ -61,8 +61,8 @@ set(BLACKBOX_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (UNIX OR CYGWIN)
 	message(STATUS "UNIX_OR_CYGWIN")
-#[[
 	set(UNIX_OR_CYGWIN ON)
+#[[
 	find_package(PkgConfig REQUIRED)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX64)
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)

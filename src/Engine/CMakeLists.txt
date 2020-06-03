@@ -113,7 +113,7 @@ macro(main)
 	###################################################
 	#set_target_properties(GUI PROPERTIES FOLDER "Engine")
 	#set_target_properties(${BLACKBOX_PROJECT} PROPERTIES FOLDER "Engine")
-	target_link_libraries(${BLACKBOX_PROJECT} INTERFACE tinyxml2::tinyxml2)
+  #target_link_libraries(${BLACKBOX_PROJECT} INTERFACE tinyxml2::tinyxml2)
 	###################################################
 	#--------------------------------------------------
 	if (LINUX OR UNIX OR APPLE)
