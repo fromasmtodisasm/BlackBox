@@ -1,114 +1,131 @@
 
-//////////////////////////////////////////////////////////////////////////
-//
-//	Crytek Source code 
-//	Copyright (c) Crytek 2001-2004
-//
-//	File: CryLibrary.h
-//  Description: 
-//			Convenience-Macros which abstract the use of DLLs/shared libraries in a platform independent way.
-//		A short explanation of the different macros follows:
-//
-//		CrySharedLibraySupported:
-//		This macro can be used to test if the current active platform support shared library calls. The default
-//		value is false. This gets redefined if a certain platform (WIN32 or LINUX) is desired.
-//
-//		CrySharedLibrayExtension:
-//		The default extension which will get appended to library names in calls to CryLoadLibraryDefExt
-//		(see below).
-//
-//		CryLoadLibrary(libName):
-//		Loads a shared library.
-//
-//		CryLoadLibraryDefExt(libName):
-//		Loads a shared library. The platform-specific default extension is appended to the libName. This allows
-//		writing of somewhat platform-independent library loading code and is therefore the function which should
-//		be used most of the time, unless some special extensions are used (e.g. for plugins).
-//
-//		CryGetProcAddress(libHandle, procName):
-//		Import function from the library presented by libHandle.
-//
-//		CryFreeLibrary(libHandle):
-//		Unload the library presented by libHandle.
-//
-//
-//	History:
-//	- 03.03.2004: Created by Marco Koegler
-//	- initial version
-//	- added to CryPlatform
-//	- February 2005: Modified by Marco Corbetta for SDK release
-//
-//////////////////////////////////////////////////////////////////////
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
 
 #ifndef CRYLIBRARY_H__
 #define CRYLIBRARY_H__
 
+/*!
+   CryLibrary
+
+   Convenience-Macros which abstract the use of DLLs/shared libraries in a platform independent way.
+   A short explanation of the different macros follows:
+
+   CrySharedLibrarySupported:
+    This macro can be used to test if the current active platform supports shared library calls. The default
+    value is false. This gets redefined if a certain platform (Windows or Linux) is desired.
+
+   CrySharedLibraryPrefix:
+    The default prefix which will get prepended to library names in calls to CryLoadLibraryDefName
+    (see below).
+
+   CrySharedLibraryExtension:
+    The default extension which will get appended to library names in calls to CryLoadLibraryDefName
+    (see below).
+
+   CryLoadLibrary(libName):
+    Loads a shared library.
+
+   CryLoadLibraryDefName(libName):
+    Loads a shared library. The platform-specific default library prefix and extension are appended to the libName.
+    This allows writing of somewhat platform-independent library loading code and is therefore the function
+    which should be used most of the time, unless some special extensions are used (e.g. for plugins).
+
+   CryGetProcAddress(libHandle, procName):
+    Import function from the library presented by libHandle.
+
+   CryFreeLibrary(libHandle):
+    Unload the library presented by libHandle.
+
+   HISTORY:
+    03.03.2004 MarcoK
+      - initial version
+      - added to CryPlatform
+ */
+
 #include <stdio.h>
+#include <BlackBox/Core/Platform/Windows.hpp>
 
-//////////////////////////////////////////////////////////////////////
-#if defined(WIN32)
-	#include <windows.h>
-
-	#define CrySharedLibraySupported true
-	#define CrySharedLibrayExtension ".dll"
-	#define CryLoadLibrary(libName) ::LoadLibrary(libName)
-	#define CryGetProcAddress(libHandle, procName) ::GetProcAddress((HMODULE)libHandle, procName)
-	#define CryFreeLibrary(libHandle) ::FreeLibrary(libHandle)
-#elif defined(LINUX)
+#if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO
+	#if CRY_PLATFORM_WINDOWS
+		#define CryLoadLibrary(libName) ::LoadLibraryA(libName)
+	#elif CRY_PLATFORM_DURANGO
+//For Durango
+extern HMODULE DurangoLoadLibrary(const char* libName);
+		#define CryLoadLibrary(libName) DurangoLoadLibrary(libName)
+	#endif
+	#define CryGetCurrentModule() ::GetModuleHandle(nullptr)
+	#define CrySharedLibrarySupported true
+	#define CrySharedLibraryPrefix    ""
+	#define CrySharedLibraryExtension ".dll"
+	#define CryGetProcAddress(libHandle, procName) ::GetProcAddress((HMODULE)(libHandle), procName)
+	#define CryFreeLibrary(libHandle)              ::FreeLibrary((HMODULE)(libHandle))
+#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
 	#include <dlfcn.h>
 	#include <stdlib.h>
-	#include <BlackBox/Core/Platform/Platform.hpp>
+	#include "platform.h"
 
-	// for compatibility with code written for windows
-	#define CrySharedLibraySupported true
-	#define CrySharedLibrayExtension ".so"
+// for compatibility with code written for windows
+	#define CrySharedLibrarySupported   true
+	#define CrySharedLibraryPrefix      "lib"
+	#if CRY_PLATFORM_APPLE
+		#define CrySharedLibraryExtension ".dylib"
+	#else
+		#define CrySharedLibraryExtension ".so"
+	#endif
+
 	#define CryGetProcAddress(libHandle, procName) ::dlsym(libHandle, procName)
-	#define CryFreeLibrary(libHandle) ::dlclose(libHandle)
-
+	#define CryFreeLibrary(libHandle)              ::dlclose(libHandle)
+	#define CryGetCurrentModule()                  ::dlopen(NULL, RTLD_LAZY)
 	#define HMODULE void*
-	static const char* gEnvName("MODULE_PATH");
+static const char* gEnvName("MODULE_PATH");
 
-	static const char* GetModulePath()
-	{
-		return getenv(gEnvName);
-	}
+static const char* GetModulePath()
+{
+	return getenv(gEnvName);
+}
 
-	static void SetModulePath(const char* pModulePath)
-	{
-		setenv(gEnvName, pModulePath?pModulePath:"",true);
-	}
+static void SetModulePath(const char* pModulePath)
+{
+	setenv(gEnvName, pModulePath ? pModulePath : "", true);
+}
 
-	static HMODULE CryLoadLibrary(const char* libName, const bool cAppend = true, const bool cLoadLazy = false)
-	{
-		string newLibName(GetModulePath());
-#if 0//!defined(NDEBUG)
-		string t(libName);
-		string c("_debug.so");
-		if(cAppend)
-			t.replace(t.size()-3, c.size(), c.c_str());
-		newLibName += t;
-		printf("loading library  %s...\n",newLibName.c_str());
+static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInModulePath = true)
+{
+	char finalPath[_MAX_PATH] = {};
+	CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryPrefix));
+	CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryExtension));
+	
+#if CRY_PLATFORM_ANDROID
+	const char* libPath = bInModulePath ? (CryGetSharedLibraryStoragePath() ? CryGetSharedLibraryStoragePath() : ".") : "";
 #else
-		newLibName += "lib";
-		newLibName += libName;
-		newLibName += CrySharedLibrayExtension;
+	const char* libPath = bInModulePath ? (GetModulePath() ? GetModulePath() : ".") : "";
+#endif	
+
+	const char* filePre = strncmp(libName, CrySharedLibraryPrefix, CRY_ARRAY_COUNT(CrySharedLibraryPrefix) - 1) != 0 ? CrySharedLibraryPrefix : "";
+	const char* fileExt = strcmp(libName + strlen(libName) - (CRY_ARRAY_COUNT(CrySharedLibraryExtension) - 1), CrySharedLibraryExtension) != 0 ? CrySharedLibraryExtension : "";
+
+	cry_sprintf(finalPath, "%s%s%s%s%s", libPath, libPath ? "/" : "", filePre, libName, fileExt);
+
+	#if CRY_PLATFORM_LINUX
+	return ::dlopen(finalPath, (bLazy ? RTLD_LAZY : RTLD_NOW) | RTLD_DEEPBIND);
+	#else
+	return ::dlopen(finalPath, bLazy ? RTLD_LAZY : RTLD_NOW);
+	#endif
+}
+#else
+	#define CrySharedLibrarySupported false
+	#define CrySharedLibraryPrefix    ""
+	#define CrySharedLibraryExtension ""
+	#define CryLoadLibrary(libName)                NULL
+	#define CryGetProcAddress(libHandle, procName) NULL
+	#define CryFreeLibrary(libHandle)
+	#define GetModuleHandle(x)                     0
+	#define CryGetCurrentModule()                  NULL
+
 #endif
-        gEnv->pLog->Log("Loading %s library", newLibName.data());
-        auto result = ::dlopen(newLibName.c_str(), cLoadLazy?(RTLD_LAZY | RTLD_GLOBAL):(RTLD_NOW | RTLD_GLOBAL));
-        if (!result)
-            gEnv->pLog->Log("Error open library: %s", dlerror());
-        return result;
 
-	}
-
-
-#else
-#define CrySharedLibraySupported false
-#define CrySharedLibrayExtension ""
-#define CryLoadLibrary(libName) NULL
-#define CryLoadLibraryDefExt(libName) CryLoadLibrary(libName CrySharedLibrayExtension)
-#define CryGetProcAddress(libHandle, procName) NULL
-#define CryFreeLibrary(libHandle)
-#endif 
+#define CryLibraryDefName(libName)               CrySharedLibraryPrefix libName CrySharedLibraryExtension
+#define CryLoadLibraryDefName(libName)           CryLoadLibrary(CryLibraryDefName(libName))
 
 #endif //CRYLIBRARY_H__
+
