@@ -53,7 +53,7 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, 1.0, 0.0}};
 		shader->Uniform(model, "model");
 		// Render glyph texture over quad
-		gl::BindTexture2D(ch.TextureID);
+		gl::BindTexture2D(GL_TEXTURE_2D, ch.TextureID);
 		// Update content of VBO memory
 		gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 4, false);
 
@@ -61,7 +61,7 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
-	gl::BindTexture2D(0);
+	gl::BindTexture2D(GL_TEXTURE_2D, 0);
 }
 
 float FreeTypeFont::TextWidth(const std::string& text)

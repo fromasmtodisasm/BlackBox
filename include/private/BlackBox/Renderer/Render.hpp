@@ -182,7 +182,8 @@ private:
 	CVertexBuffer* m_VertexBuffer = nullptr;
 
   std::vector<CShaderProgram*> m_Shaders;
-	FrameBufferObject* m_FrameBuffer;
+	FrameBufferObject* m_MainMSAAFrameBuffer;
+	FrameBufferObject* m_MainReslovedFrameBuffer;
   IRenderCallback* m_pRenerCallback = nullptr;
 	std::vector<Texture*> m_RenderTargets;
 

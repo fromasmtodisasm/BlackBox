@@ -19,6 +19,7 @@ struct Rect
 typedef void* Params;
 typedef struct Cursor Cursor;
 typedef void* GLContext;
+typedef void* DisplayMode;
 
 struct IWindow {
   virtual void Release() = 0;
@@ -39,6 +40,7 @@ struct IWindow {
   virtual void changeSize(int w, int h) = 0;
   virtual void setCursor(Cursor* cursor) = 0;
   virtual GLContext getContext() = 0;
+  virtual DisplayMode GetDesktopMode()		 = 0;
 };
 
 extern "C" {

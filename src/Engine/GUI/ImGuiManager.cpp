@@ -4,6 +4,7 @@
 
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 
@@ -224,7 +225,11 @@ void ImGuiManager::ShowDemoWindow()
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
 #else
-  //ShowExampleAppDockSpace(&show_demo_window);
+  if (auto v = gEnv->pConsole->GetCVar("gui_docking"); v)
+  {
+	  if (v->GetIVal()) 
+			ShowExampleAppDockSpace(&show_demo_window);
+	}
 	//ImGui::ShowDemoWindow(&show_demo_window);
 #endif
 }

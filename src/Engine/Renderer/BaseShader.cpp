@@ -536,7 +536,7 @@ void CBaseShaderProgram::BindTexture2D(GLuint texture, GLint unit, const char* s
 void CBaseShaderProgram::BindTextureUnit2D(GLuint texture, GLint unit)
 {
   gl::ActiveTexture(GL_TEXTURE0 + unit);
-  gl::BindTexture2D(texture);
+  gl::BindTexture2D(GL_TEXTURE_2D, texture);
 }
 
 GLuint CBaseShaderProgram::Get() {

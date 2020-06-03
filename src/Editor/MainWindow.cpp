@@ -44,13 +44,18 @@ void MainWindow::CallBack(Type type)
 		//auto size = ImGui::GetContentRegionAvail();
 		//ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
 		static bool p_open = true;
-		ImGui::Begin("View",&p_open,
-			ImGuiWindowFlags_NoNav
+		ImGui::Begin("View",&p_open
+			#if 0
+			,ImGuiWindowFlags_NoNav
 			| ImGuiWindowFlags_NoInputs
+			#endif
 			);
 #pragma warning(push)
 #pragma warning(disable: 4312)
 			auto size = ImGui::GetContentRegionAvail();
+			auto r	   = gEnv->pRenderer;
+			auto x	  = (float)r->GetWidth() / m_ViewRenderTarget;
+			auto y	   = (float)r->GetHeight();
 			ImGui::Image(reinterpret_cast<ImTextureID>(m_ViewRenderTarget), size, ImVec2(0, 1), ImVec2(1, 0));
 			if (ImGui::IsItemClicked())
 			{

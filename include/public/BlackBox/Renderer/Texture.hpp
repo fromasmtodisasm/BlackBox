@@ -27,7 +27,9 @@ public:
   // Inherited via BaseTexture
   virtual void bind() override;
   virtual void setUnit(uint unit) override;
-  static Texture* create(int width, int height, TextureType type, bool hasAlpha, const std::string& name, bool createMipChain = false, void* data = nullptr);
+  static Texture* create(int width, int height, TextureType type, bool hasAlpha, const std::string& name, bool createMipChain = false, void* data = nullptr, bool is_msaa = false);
+
+  bool isMS = false;
 };
 
 #endif // TEXTUREXTURE_HPP

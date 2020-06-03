@@ -22,23 +22,19 @@ FrameBufferObject::~FrameBufferObject()
 FrameBufferObject* FrameBufferObject::create(int width, int height, Texture* attachment, bool createMipChain)
 {
   FrameBufferObject* fbo = new FrameBufferObject(width, height);
-  glCheck(glGenFramebuffers(1, &fbo->id));
+  glCheck(glCreateFramebuffers(1, &fbo->id));
 
   fbo->viewPort.z = (float)width;
   fbo->viewPort.w = (float)height;
 
-  gl::BindFramebuffer(fbo->id);
-
   if (attachment->type != TextureType::DEPTH)
   {
-		gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, attachment->getId(), 0);
-    glCheck(glGenRenderbuffers(1, &fbo->rbo));
-    glCheck(glBindRenderbuffer(GL_RENDERBUFFER, fbo->rbo));
-    glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
-    glCheck(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-    glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->rbo));
+		glCheck(glNamedFramebufferTexture(fbo->id, GL_COLOR_ATTACHMENT0, attachment->getId(), 0));
+    glCheck(glCreateRenderbuffers(1, &fbo->rbo));
+    glCheck(glNamedRenderbufferStorage(fbo->rbo, GL_DEPTH24_STENCIL8, width, height));
+    glCheck(glNamedFramebufferRenderbuffer(fbo->id, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->rbo));
 		GLenum db = GL_COLOR_ATTACHMENT0;
-		glCheck(glDrawBuffers(1, &db));
+		glCheck(glNamedFramebufferDrawBuffers(fbo->id, 1, &db));
   }
   else
   {
@@ -47,11 +43,35 @@ FrameBufferObject* FrameBufferObject::create(int width, int height, Texture* att
     glReadBuffer(GL_NONE);
   }
 
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+  if (auto status = glCheckNamedFramebufferStatus(fbo->id, GL_FRAMEBUFFER); status != GL_FRAMEBUFFER_COMPLETE)
+  {
+	  switch (status)
+	  {
+	  case GL_FRAMEBUFFER_UNDEFINED:
+		  gEnv->pLog->LogError("GL_FRAMEBUFFER_UNDEFINED");
+		  break;
+	  case GL_FRAMEBUFFER_COMPLETE:
+		  gEnv->pLog->LogError("GL_FRAMEBUFFER_COMPLETE");
+		  break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			gEnv->pLog->LogError("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			gEnv->pLog->LogError("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			gEnv->pLog->LogError("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+			gEnv->pLog->LogError("GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+			break;
+	  default:
+			gEnv->pLog->LogError("Undefined framebuffer status");
+		  break;
+	  }
 		gEnv->pLog->LogError("Framebuffer not complete");
     assert(0);
   }
-  gl::BindFramebuffer(0);
 
   return fbo;
 }
@@ -70,7 +90,8 @@ void FrameBufferObject::clear()
 
 void FrameBufferObject::attach(Texture* texture)
 {
-	gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->getId(), 0);
+	auto attachmen_type = texture->isMS ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+	gl::FramebufferTexture2D(GL_COLOR_ATTACHMENT0, attachmen_type, texture->getId(), 0);
 }
 
 void FrameBufferObject::bind()
@@ -109,12 +130,19 @@ ITexture* FrameBufferObject::getTexture()
 
 void FrameBufferObject::DrawToBackbuffer(const Vec4& dstViewport)
 {
+	DrawTo(nullptr, dstViewport);
+}
+
+void FrameBufferObject::DrawTo(FrameBufferObject* target, const Vec4& dstViewport)
+{
 	auto& dvp = Vec4d(dstViewport);
-	auto& svp = Vec4d(viewPort);
-	gl::BindDrawFramebuffer(0);
-	gl::BindReadFramebuffer(id);
-	gl::DrawBackBuffer();
-	gl::BlitFrameBuffer(svp.x, svp.y, svp.z, svp.w, dvp.x, dvp.y, dvp.z, dvp.w, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	auto& svp = target == nullptr ? dvp : Vec4d(viewPort);
+	auto target_id = target == nullptr ? 0 : target->id;
+	if (target == nullptr)
+	{
+		gl::DrawBackBuffer();
+  }
+	glCheck(glBlitNamedFramebuffer(id, target_id, svp.x, svp.y, svp.z, svp.w, dvp.x, dvp.y, dvp.z, dvp.w, GL_COLOR_BUFFER_BIT, target == nullptr ? GL_LINEAR : GL_NEAREST));
 }
 
 void FrameBufferObject::createSceneBuffer()

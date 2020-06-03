@@ -121,7 +121,9 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
 	CreateRenderTarget();
 	
-	m_FrameBuffer = FrameBufferObject::create(width, height, m_RenderTargets.back(), false);
+	auto dm					  = reinterpret_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
+	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
@@ -140,12 +142,14 @@ void GLRenderer::Release()
 
 void GLRenderer::BeginFrame(void)
 {
-	int vp[4];
+	Vec4d vp(0, 0, GetWidth(), GetHeight());
 	if (m_pRenerCallback)
         m_pRenerCallback->CallBack(IRenderCallback::eOnRender);
-	GetViewport(&vp[0], &vp[1], &vp[2], &vp[3]);
-	m_FrameBuffer->bind({vp[0], vp[1], vp[2], vp[3]});
-	//m_FrameBuffer->clear({m_clearColor, 1});
+	//GetViewport(&vp[0], &vp[1], &vp[2], &vp[3]);
+	
+
+	m_MainMSAAFrameBuffer->bind({vp[0], vp[1], vp[2], vp[3]});
+	//m_MainMSAAFrameBuffer->clear({m_clearColor, 1});
 	gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -160,15 +164,22 @@ void GLRenderer::Update(void)
 		m_RenderAuxGeom->Flush();
 		m_AuxGeomShader->Unuse();
 	}
-	m_FrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
+	m_MainMSAAFrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
 	if (m_pRenerCallback)
 		m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
-	m_FrameBuffer->DrawToBackbuffer(
+	m_MainMSAAFrameBuffer->DrawTo(
+		m_MainReslovedFrameBuffer,
+		m_MainReslovedFrameBuffer->viewPort
+	);
+	m_MainReslovedFrameBuffer->DrawToBackbuffer(
+		#if 0
 		[&]() -> Vec4 {
 			Vec4d r;
 			GetViewport(&r.x, &r.y, &r.z, &r.w);
 			return r;
 		}()
+		#endif
+		Vec4(0, 0, GetWidth(), GetHeight())
 	);
 	m_FrameID++;
 }
@@ -274,6 +285,7 @@ void GLRenderer::glInit()
 	SetState(State::DEPTH_TEST, true);
 	SetState(State::BLEND, true);
 	SetState(State::CULL_FACE, true);
+	SetState(State::MULTISAMPLE, true);
 	SetCullMode(CullMode::BACK);
 
 	m_Hardware.vendor		= gl::GetString(GL_VENDOR);
@@ -295,6 +307,7 @@ void GLRenderer::fillSates()
 	STATEMAP(State::SCISSOR_TEST, GL_SCISSOR_TEST);
 	STATEMAP(State::STENCIL_TEST, GL_STENCIL_TEST);
 	STATEMAP(State::PROGRAM_POINT_SIZE, GL_PROGRAM_POINT_SIZE);
+	STATEMAP(State::MULTISAMPLE, GL_MULTISAMPLE);
 
 #undef STATEMAP
 }
@@ -458,9 +471,9 @@ void GLRenderer::SetRenderTarget(int nHandle)
 		auto it = std::find_if(m_RenderTargets.begin(), m_RenderTargets.end(), [nHandle](ITexture* texture) { return texture->getId() == nHandle; }); 
 		it != m_RenderTargets.end())
 	{
-		m_FrameBuffer->bind();
-		m_FrameBuffer->attach(*it);
-		m_FrameBuffer->bindDefault(Vec4(0,0,1600,900));
+		m_MainMSAAFrameBuffer->bind();
+		m_MainMSAAFrameBuffer->attach(*it);
+		m_MainMSAAFrameBuffer->bindDefault(Vec4(0,0,GetWidth(),GetHeight()));
 	}
 
 }
@@ -725,7 +738,10 @@ void GLRenderer::Sh_Reload()
 
 int GLRenderer::CreateRenderTarget()
 {
-	m_RenderTargets.push_back(Texture::create(GetWidth(), GetHeight(), TextureType::LDR_RENDER_TARGET, false, "rt", false, nullptr));
+	char buffer[32];
+	snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
+	auto dm					  = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
+	m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr));
 	return m_RenderTargets.back()->getId();
 }
 

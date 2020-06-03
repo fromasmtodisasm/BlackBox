@@ -337,7 +337,7 @@ void CGame::ExecScripts()
 
 void CGame::DrawHud(float fps)
 {
-	m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
+	//m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
 	if (r_displayinfo->GetIVal() != 0)
 	{
 		DisplayInfo(fps);

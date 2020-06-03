@@ -30,6 +30,7 @@ public:
   void unbind();
   ITexture* getTexture();
   void DrawToBackbuffer(const Vec4& dstViewport);
+  void DrawTo(FrameBufferObject* target, const Vec4& dstViewport);
 private:
   FrameBufferObject(int width, int height);
   void createSceneBuffer();

@@ -64,10 +64,13 @@ private:
   std::string m_Title;
   //Vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
   int m_flags = 0;
+  SDL_DisplayMode m_DesktopMode;
   // For input handling
   //std::list<IInputEventListener*> listeners;
 
   // IWindow interface
 public:
   virtual void Release() override;
+  virtual DisplayMode GetDesktopMode() override;
+
 };

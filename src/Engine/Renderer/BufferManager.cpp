@@ -170,9 +170,8 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
   gEnv->pLog->Log("Here");
     {
 		gl::GenBuffer(&stream.m_VertBuf.m_nID);
-
 		gl::BindBuffer(GL_ARRAY_BUFFER, stream.m_VertBuf.m_nID);
-		gl::BufferData(GL_ARRAY_BUFFER, vertexcount * gVertexSize[vertexformat], nullptr, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		gl::NamedBufferData(stream.m_VertBuf.m_nID, vertexcount * gVertexSize[vertexformat], nullptr, bDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
 		buffer->m_bDynamic = bDynamic;
 		buffer->m_NumVerts = vertexcount;
@@ -243,16 +242,12 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
 
 void CBufferManager::Update(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs, int Type)
 {
-	gl::BindBuffer(GL_ARRAY_BUFFER, dest->m_VS[VSF_GENERAL].m_VertBuf.m_nID);
-	gl::BufferSubData(GL_ARRAY_BUFFER, nOffs + dest->m_VS[VSF_GENERAL].m_nBufOffset, vertexcount * gVertexSize[dest->m_vertexformat], src);
-	gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+	gl::NamedBufferSubData(dest->m_VS[VSF_GENERAL].m_VertBuf.m_nID, nOffs + dest->m_VS[VSF_GENERAL].m_nBufOffset, vertexcount * gVertexSize[dest->m_vertexformat], src);
 }
 
 void CBufferManager::Update(SVertexStream* dest, const void* src, int indexcount, bool bUnLock)
 {
-	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, dest->m_VertBuf.m_nID);
-	gl::BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexcount * SIZEOF_INDEX, src);
-	gl::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	gl::NamedBufferSubData(dest->m_VertBuf.m_nID, 0, indexcount * SIZEOF_INDEX, src);
 }
 
 IGraphicsDeviceConstantBuffer* CBufferManager::CreateConstantBuffer(int size)

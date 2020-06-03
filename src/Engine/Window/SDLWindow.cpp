@@ -3,6 +3,7 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/System/ILog.hpp>
 
 #include <SDL.h>
 #include <BlackBox/GUI/GUI.hpp>
@@ -32,6 +33,10 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   {
     return false;
   }
+  if (SDL_GetDesktopDisplayMode(0, &m_DesktopMode) != 0) {
+    gEnv->pLog->Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+    return 1;
+	}
   //SetIcon(nullptr);
 
 #ifdef GUI
@@ -339,6 +344,10 @@ void CSDLWindow::Release()
     delete this;
 }
 
+DisplayMode CSDLWindow::GetDesktopMode()
+{
+	return &m_DesktopMode;
+}
 extern "C" {
   IWINDOW_API IWindow* CreateIWindow()
   {

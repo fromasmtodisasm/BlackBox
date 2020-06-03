@@ -278,17 +278,17 @@ namespace gl {
   }
 
   // Texture
-  inline void GenTextures(GLsizei n, GLuint *textures)
+  inline void CreateTextures2D(GLenum target, GLsizei n, GLuint *textures)
   {
-	  glCheck(glGenTextures(n, textures));
+	  glCheck(glCreateTextures(target, n, textures));
   }
 
   inline void BindTexture(GLenum target, GLuint texture)
   {
 	  glCheck(glBindTexture(target, texture));
   }
-  inline void TexImage2D(
-      GLenum target, 
+  inline void TextureImage2D(
+      GLint texture, 
       GLint level, 
       GLint internalformat, 
       GLsizei width, 
@@ -299,19 +299,30 @@ namespace gl {
       const void *pixels
   )
   {
-    glCheck(glTexImage2D(target,
+    glCheck(glTextureSubImage2D(texture,
       level, internalformat, width, height, border, format, type, pixels
     ));
   }
 
-  inline void TexParameteri(GLenum target, GLenum pname, GLint param)
+  inline void TexImage2DMS(
+    GLenum target,
+		GLsizei samples,
+		GLenum internalformat,
+		GLsizei width,
+		GLsizei height,
+		GLboolean fixedsamplelocations)
   {
-    glCheck(glTexParameteri(target, pname, param));
+	  glCheck(glTexImage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations));
   }
 
-  inline void BindTexture2D(GLuint texture)
+  inline void TextureParameteri(GLint texture, GLenum pname, GLint param)
   {
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glCheck(glTextureParameteri(texture, pname, param));
+  }
+
+  inline void BindTexture2D(GLenum target, GLuint texture)
+  {
+    glCheck(glBindTexture(target, texture));
   }
 
   inline void ActiveTexture(GLenum texture)
@@ -375,9 +386,19 @@ namespace gl {
 		glCheck(glBufferData(target, size, data, usage));
 	}
 
+	inline void NamedBufferData(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage)
+	{
+		glCheck(glNamedBufferData(buffer, size, data, usage));
+	}
+
 	inline void BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
 	{
 		glCheck(glBufferSubData(target, offset, size, data));
+	}
+
+	inline void NamedBufferSubData(GLint buffer, GLintptr offset, GLsizeiptr size, const void *data)
+	{
+		glCheck(glNamedBufferSubData(buffer, offset, size, data));
 	}
 
 	inline void DeleteBuffers(GLsizei n, const GLuint *buffers)

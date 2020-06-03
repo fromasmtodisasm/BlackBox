@@ -364,7 +364,8 @@ struct IRenderer
 		POLYGON_OFFSET_FILL,
 		SCISSOR_TEST,
 		STENCIL_TEST,
-		PROGRAM_POINT_SIZE
+		PROGRAM_POINT_SIZE,
+		MULTISAMPLE
 	};
 
 	enum class CullMode : unsigned int
