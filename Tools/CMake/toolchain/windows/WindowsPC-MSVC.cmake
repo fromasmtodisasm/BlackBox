@@ -16,13 +16,15 @@ set(OUTPUT_DIRECTORY_NAME "win_x64")
 #include ("${CMAKE_CURRENT_LIST_DIR}/../../CRYENGINE-MSVC.cmake")
 
 add_definitions(-D_WINDOWS -DWIN32 -D_WIN32 -DWIN64)
-add_definitions(/WX)
-add_definitions(/W3)
-add_definitions(/wd26812) #enum class
-add_definitions(/wd4100) #unreferenced local var
-add_definitions(/wd4201) 
-add_definitions(/wd4458) 
-add_definitions(/wd4127) #in glm
+if (NOT DEFINED MINGW)
+  add_definitions(/WX)
+  add_definitions(/W3)
+  add_definitions(/wd26812) #enum class
+  add_definitions(/wd4100) #unreferenced local var
+  add_definitions(/wd4201) 
+  add_definitions(/wd4458) 
+  add_definitions(/wd4127) #in glm
+endif()
 
 if (EXISTS "${SDK_DIR}/Microsoft Windows SDK/10")
 	set(WINDOWS_SDK "${SDK_DIR}/Microsoft Windows SDK/10")
