@@ -59,7 +59,7 @@ set(BLACKBOX_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 ###################################################
 
-if (UNIX OR CYGWIN)
+if (UNIX OR CYGWIN OR LINUX)
 	message(STATUS "UNIX_OR_CYGWIN")
 	set(UNIX_OR_CYGWIN ON)
 #[[
