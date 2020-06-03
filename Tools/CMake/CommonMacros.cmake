@@ -167,7 +167,7 @@ endmacro()
   endfunction()
 
 function(add_sdl)
-	if (DEFINED LINUX )
+  if (DEFINED LINUX OR DEFINED MINGW)
 		if (NOT DEFINED VCPKG_INSTALLER)
 			find_package(SDL2 CONFIG REQUIRED)
       target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
