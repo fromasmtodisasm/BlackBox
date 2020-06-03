@@ -37,7 +37,7 @@ endmacro()
 
 macro(CommonMacrosInit)
 	message(STATUS "INITIALIZE COMMON MACROS")
-  if (DEFINED LINUX AND (NOT DEFINED VCPKG_INSTALLER))
+  if ((DEFINED LINUX OR MINGW) AND (NOT DEFINED VCPKG_INSTALLER))
     include(FindPkgConfig)
     message("lskdjflskdjflsjflksdjfklsjlfkjsdlkfjkldsjf")
   elseif(DEFINED LINUX AND (DEFINED VCPKG_INSTALLER))
