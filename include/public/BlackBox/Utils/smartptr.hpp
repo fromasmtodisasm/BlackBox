@@ -191,6 +191,7 @@ typedef _reference_target<int> _reference_target_t;
 
 #if (defined(_WINDOWS_)||defined(LINUX))
 
+#if 0
 //////////////////////////////////////////////////////////////////////////
 // reference target for smart pointer
 // implements AddRef() and Release() strategy using reference counter of the specified type
@@ -232,7 +233,7 @@ public:
 };
 
 #endif //_WINDOWS_
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 // base class for interfaces implementing reference counting
 // derive your interface from this class and the descendants won't have to implement
