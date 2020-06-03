@@ -31,8 +31,13 @@ FrameBufferObject* FrameBufferObject::create(int width, int height, Texture* att
   {
 		glCheck(glNamedFramebufferTexture(fbo->id, GL_COLOR_ATTACHMENT0, attachment->getId(), 0));
     glCheck(glCreateRenderbuffers(1, &fbo->rbo));
-    glCheck(glNamedRenderbufferStorage(fbo->rbo, GL_DEPTH24_STENCIL8, width, height));
+		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, fbo->rbo));
+		int samples = 0;
+		if (attachment->isMS)
+			samples = 8;
+		glCheck(glNamedRenderbufferStorageMultisample(fbo->rbo, samples, GL_DEPTH_STENCIL, width, height));
     glCheck(glNamedFramebufferRenderbuffer(fbo->id, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->rbo));
+		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 		GLenum db = GL_COLOR_ATTACHMENT0;
 		glCheck(glNamedFramebufferDrawBuffers(fbo->id, 1, &db));
   }
@@ -138,10 +143,6 @@ void FrameBufferObject::DrawTo(FrameBufferObject* target, const Vec4& dstViewpor
 	auto& dvp = Vec4d(dstViewport);
 	auto& svp = target == nullptr ? dvp : Vec4d(viewPort);
 	auto target_id = target == nullptr ? 0 : target->id;
-	if (target == nullptr)
-	{
-		gl::DrawBackBuffer();
-  }
 	glCheck(glBlitNamedFramebuffer(id, target_id, svp.x, svp.y, svp.z, svp.w, dvp.x, dvp.y, dvp.z, dvp.w, GL_COLOR_BUFFER_BIT, target == nullptr ? GL_LINEAR : GL_NEAREST));
 }
 

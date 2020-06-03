@@ -231,19 +231,24 @@ bool ImGuiInput::OnInputEvent(const SInputEvent& event, IImGuiManager* imguiMana
     io.KeySuper = event.modifiers & eMM_Win;
     //return true;
   }
+  #if 0
   if (io.WantCaptureKeyboard == true)
 		return true;
   if (io.WantCaptureMouse == true)
 		return true;
+  #endif
 	return false;
 }
 bool ImGuiInput::OnInputEventUI(const SUnicodeEvent& event)
 {
   ImGuiIO& io = ImGui::GetIO();
   io.AddInputCharactersUTF8(reinterpret_cast<const char*>(&event.inputChar));
+  #if 0
   if (io.WantTextInput)
 	  return true;
   else
 	  return false;
+  #endif
+  return false;
 }
 

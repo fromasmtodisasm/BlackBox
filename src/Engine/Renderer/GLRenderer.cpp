@@ -123,6 +123,14 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	
 	auto dm					  = reinterpret_cast<SDL_DisplayMode*>(window->GetDesktopMode());
 	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
+
+	{
+		char buffer[32];
+		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
+		auto dm = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
+		m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr, true));
+	}
+
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	//cam_width->Set(GetWidth());
@@ -741,7 +749,7 @@ int GLRenderer::CreateRenderTarget()
 	char buffer[32];
 	snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 	auto dm					  = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
-	m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr));
+	m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr, true));
 	return m_RenderTargets.back()->getId();
 }
 

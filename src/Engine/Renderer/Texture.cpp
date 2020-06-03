@@ -138,13 +138,13 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
 
   if (is_msaa)
   {
-	  glTextureStorage2D(t->id, 1, internalFormat, width, height);
+	  glTextureStorage2DMultisample(t->id, 8, internalFormat, width, height, true);
 	  gl::TexImage2DMS(textureTarget, 8, internalFormat, width, height, GL_TRUE); 
   }
   else
   {
-		gl::TextureParameteri(t->id, GL_TEXTURE_MIN_FILTER, filterMin);
-		gl::TextureParameteri(t->id, GL_TEXTURE_MAG_FILTER, filterMag);
+		//gl::TextureParameteri(t->id, GL_TEXTURE_MIN_FILTER, filterMin);
+		//gl::TextureParameteri(t->id, GL_TEXTURE_MAG_FILTER, filterMag);
 
 		if (type == DEPTH)
 		{
@@ -152,12 +152,14 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
 			glTexParameterfv(t->id, GL_TEXTURE_BORDER_COLOR, borderColor);
 		}
 
-	  //glTextureStorage2D(t->id, 1, internalFormat, width, height);
+	  glTextureStorage2D(t->id, 1, internalFormat, width, height);
+		/*
 		gl::TextureImage2D(
 			t->id, 0, 0, 0,
 			width, height,
 			inputFormat, inputDataType, data
 		);
+    */
   }
 
 
