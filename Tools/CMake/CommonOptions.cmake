@@ -19,6 +19,8 @@ option(OPTION_GLAD_LOADER "Build with GLAD opengl loading library" ON)
 option(OPTION_EDITOR "Build editor" OFF)
 option(OPTION_CONFIGURATOR "Build configurator" ON)
 
+option(OPTION_VCPKG "Use vcpkg for libraries" ON)
+
 if(ANDROID)
 	set(OPTION_STATIC_LINKING TRUE)
 else()
