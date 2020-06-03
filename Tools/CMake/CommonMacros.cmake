@@ -141,28 +141,30 @@ macro(install_this THIS_PROJECT)
 	export(TARGETS ${THIS_PROJECT} FILE ${THIS_PROJECT}Config.cmake)
 endmacro()
 
-if (CMAKE_MAJOR_VERSION LESS 17)
   function(target_precompile_headers _target)
-    cmake_parse_arguments(
-      _ARGS
-      ""
-      "NOTUSED"
-      "INTERFACE;PRIVATE;PUBLIC"
-      ${ARGN}
-      )
-    message("precomiled headers for [${_target}]")
-    foreach(interface ${_ARGS_INTERFACE})
-      message(STATUS "interface pch ${interface}")
-    endforeach()
-    foreach(public ${_ARGS_PUBLIC})
-      message(STATUS "public pch ${public}")
-    endforeach()
-    foreach(private ${_ARGS_PRIVATE})
-      message(STATUS "private pch ${private}")
-    endforeach()
+	if (${CMAKE_VERSION} VERSION_LESS "3.16.0")
+		cmake_parse_arguments(
+		  _ARGS
+		  ""
+		  "NOTUSED"
+		  "INTERFACE;PRIVATE;PUBLIC"
+		  ${ARGN}
+		  )
+		message("precomiled headers for [${_target}]")
+		foreach(interface ${_ARGS_INTERFACE})
+		  message(STATUS "interface pch ${interface}")
+		endforeach()
+		foreach(public ${_ARGS_PUBLIC})
+		  message(STATUS "public pch ${public}")
+		endforeach()
+		foreach(private ${_ARGS_PRIVATE})
+		  message(STATUS "private pch ${private}")
+		endforeach()
+	else()
+		_target_precompile_headers(${ARGV})
+	endif()
 
   endfunction()
-endif()
 
 function(add_sdl)
 	if (DEFINED LINUX )
@@ -197,7 +199,7 @@ function(add_SDL_net)
 			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 		endif()
 	else()
-		add_package(SDL2_net)
+		add_package(SDL2-net)
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 	endif()
 endfunction()
