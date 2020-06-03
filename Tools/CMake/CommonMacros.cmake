@@ -91,7 +91,7 @@ endfunction()
 
 function(add_package Package)
 	find_package(${ARGV})
-  if (UNIX_OR_CYGWIN OR (NOT DEFINED VCPKG_INSTALLER))
+  if (MINGW OR UNIX OR CYGWIN)
     add_package_unix_or_cygwin(${Package})
   else()
     add_package_msvc(${Package})

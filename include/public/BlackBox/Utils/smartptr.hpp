@@ -272,6 +272,7 @@ protected:
 
 typedef _i_reference_target<int> _i_reference_target_t;
 
+#if 0
 #if (defined(WIN32) || defined(LINUX))
 
 //////////////////////////////////////////////////////////////////////////
@@ -316,6 +317,7 @@ public:
   int32 NumRefs()const { return m_nRefCount; }
 };
 
+#endif
 #endif
 
 
