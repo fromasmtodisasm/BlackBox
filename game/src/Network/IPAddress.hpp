@@ -25,10 +25,12 @@
 
 #ifdef LINUX
 #include <sys/types.h>
+#if 0
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#endif
 #endif //LINUX
 
 #ifdef WIN32
