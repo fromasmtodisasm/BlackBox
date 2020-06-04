@@ -28,6 +28,7 @@ if (OPTION_CONFIGURATOR)
 endif()
 # 5. Launchers
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
+add_subdirectory("${TOOLS_DIR}/font_attlas")
 
 
 message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")
