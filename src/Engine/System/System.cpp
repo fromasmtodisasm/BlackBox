@@ -873,8 +873,8 @@ void CSystem::RenderEnd()
 	}
 	if (m_Render)
 	{
-		m_pConsole->Draw();
 		m_Render->Update();
+		m_pConsole->Draw();
 	#if ENABLE_DEBUG_GUI
 		m_GuiManager->Render();
 	#endif
