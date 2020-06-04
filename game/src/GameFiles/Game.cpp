@@ -147,10 +147,14 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	{
 		m_pInput->AddEventListener(this);
 		m_pInput->AddEventListener(&m_CameraController);
+		gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
+		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(m_pRender->GetWidth(), m_pRender->GetHeight());
 	}
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
+
+	m_CrossHair = m_pRender->LoadTexture("crosshair.png", 0, false);
 
 #if 0
   if (!m_pNetwork->Init())
@@ -279,6 +283,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
 
+	auto water = m_pRender->LoadTexture("water.jpg", 0, 0);
+	m_Console->SetImage(water);
+
 	return true;
 }
 
@@ -311,6 +318,7 @@ bool CGame::Update()
 			}
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
+			m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 80, 80, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 			//PROFILER_POP_CPU_MARKER();
 		}
 	}
@@ -1162,10 +1170,14 @@ void CGame::DrawAux()
 	}
 	if (lineBuffer.size() >= 2)
 	{
+		#if 0
 		for (int i = 0; i < (lineBuffer.size() - 1); i ++)
 		{
 			render->DrawLine(lineBuffer[i] + Vec3(0, 0.1, 0), UCol(255,255,255,255), lineBuffer[i + 1] + Vec3(0, 0.1, 0), UCol(255,255,255,255));	
 		}
+		#else
+			render->DrawLines(lineBuffer.data(), lineBuffer.size(), UCol(255,255,255,255));	
+		#endif
 	}
 
 	Ray ray;

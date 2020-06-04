@@ -78,7 +78,7 @@ namespace
 CSystem::CSystem(SSystemInitParams& m_startupParams)
 	:
 #if defined(SYS_ENV_AS_STRUCT)
-	  m_env(gEnv),
+	  m_env(m_env),
 #endif
 	  m_startupParams(m_startupParams),
 	  r_window_width(nullptr),
@@ -162,7 +162,7 @@ void CSystem::ProcessCommandLine()
 {
 	if (m_pCmdLine->FindArg(eCLAT_Pre, "dedicated"))
 	{
-		gEnv->SetIsDedicated(true);
+		m_env.SetIsDedicated(true);
 	}
 
 	if (const auto ca = m_pCmdLine->FindArg(eCLAT_Post, "wd"); ca)
@@ -174,7 +174,7 @@ void CSystem::ProcessCommandLine()
 
 bool CSystem::Init()
 {
-	gEnv->SetIsDedicated(m_startupParams.bDedicatedServer);
+	m_env.SetIsDedicated(m_startupParams.bDedicatedServer);
 	/////////////////////////////////////////////
 	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
 	LogCommandLine();
@@ -186,7 +186,7 @@ bool CSystem::Init()
 	if (!CreateLog())
 		return false;
 	std::string prompt = "Initializing System";
-	if (gEnv->IsDedicated())
+	if (m_env.IsDedicated())
 		prompt += " on dedicated server";
 	Log(prompt.c_str());
 	//====================================================
@@ -213,6 +213,7 @@ bool CSystem::Init()
 		return false;
 	if (!Init3DEngine())
 		return false;
+	m_env.pInput->PostInit();
 
 		//////////////////////////////////////////////////////////////////////////
 		// Hardware mouse
@@ -273,7 +274,7 @@ bool CSystem::Init()
 		m_env.pInput->AddEventListener(this);
         m_env.pInput->AddEventListener(static_cast<CConsole*>(m_pConsole));
 #if ENABLE_DEBUG_GUI
-		if (!gEnv->IsDedicated())
+		if (!m_env.IsDedicated())
 		{
 			if (!InitGUI())
 				return false;
@@ -437,7 +438,7 @@ bool CSystem::InitConsole()
 
 bool CSystem::InitRender()
 {
-	if (gEnv->IsDedicated())
+	if (m_env.IsDedicated())
 		return true;
 	// In release mode it failed!!!
 	// TODO: Fix it
@@ -454,14 +455,14 @@ bool CSystem::InitInput()
 {
 	Log("Creating Input");
 	return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p) {
-		if (!gEnv->IsDedicated())
+		if (!m_env.IsDedicated())
 		{
 			m_env.pInput = p(this, m_pWindow->getHandle());
 			return m_env.pInput->Init();
 		}
 		else
 		{
-			if (gEnv->IsDedicated())
+			if (m_env.IsDedicated())
 				return true;
 			return false;
 		}
@@ -526,7 +527,7 @@ bool CSystem::InitSubSystem()
 bool CSystem::OpenRenderLibrary(std::string_view render)
 {
 	Log("Open Render Library");
-	if (gEnv->IsDedicated())
+	if (m_env.IsDedicated())
 		return true;
 	//====================================================
 	if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p) {
@@ -567,7 +568,7 @@ void CSystem::ParseCMD()
 
 void CSystem::LoadScreen()
 {
-	if (gEnv->IsDedicated())
+	if (m_env.IsDedicated())
 	{
 		return;
 	}
@@ -789,8 +790,8 @@ void CSystem::Render()
 	PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 	{
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
-		gEnv->p3DEngine->SetCamera(GetViewCamera());
-		gEnv->p3DEngine->Draw();
+		m_env.p3DEngine->SetCamera(GetViewCamera());
+		m_env.p3DEngine->Draw();
 	}
 	PROFILER_POP_CPU_MARKER();
 }
@@ -988,7 +989,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	}
 	if (!nPauseMode)
 	{
-		gEnv->p3DEngine->Update();
+		m_env.p3DEngine->Update();
 	}
 
 	return true;
@@ -1000,9 +1001,9 @@ ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 	ModuleInitISystem(pSystem.get(), "System");
 #if CRY_PLATFORM_DURANGO
 #if !defined(_LIB)
-    gEnv = pSystem->GetGlobalEnvironment();
+    m_env = pSystem->GetGlobalEnvironment();
 #endif
-    gEnv->pWindow = startupParams.hWnd;
+    m_env.pWindow = startupParams.hWnd;
 #endif
   if (!pSystem->Init())
   {

@@ -15,6 +15,7 @@ bool Image::load(const char* name, bool* hasAlpha)
   if (channels == 4 && dc != STBI_rgb_alpha)
   {
     stbi_image_free(ptr);
+	  ptr = nullptr;
     ptr = stbi_load(path.c_str(), &width, &height, &channels, dc = STBI_rgb_alpha);
   }
 

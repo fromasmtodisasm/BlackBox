@@ -24,7 +24,7 @@
 // Define to enable automatic input grabbing support.  We don't want this
 // during development.  If automatic input grabbing support is off, then input
 // grabbing can be enforced by typing CTRL+ALT+G.
-#define NDEBUG
+//#define NDEBUG
 
 #ifndef NDEBUG
 #define LINUXINPUT_AUTOGRAB 1
@@ -69,10 +69,18 @@ bool CSDLMouse::Init()
 
 #if defined(LINUXINPUT_AUTOGRAB)
   GrabInput();
-  //SDL_SetWindowGrab(static_cast<SDL_Window*>(gEnv->pRenderer->GetCurrentContextHWND()),SDL_TRUE);
-  //m_bGrabInput = true;RUE
+  SDL_SetWindowGrab(static_cast<SDL_Window*>(gEnv->pRenderer->GetCurrentContextHWND()),SDL_TRUE);
+  m_bGrabInput = true;
 #endif
   return true;
+}
+
+void CSDLMouse::PostInit()
+{
+	SDL_WarpMouseInWindow(
+		static_cast<SDL_Window*>(gEnv->pRenderer->GetCurrentContextHWND()),
+		m_posX = gEnv->pRenderer->GetWidth() / 2,
+		m_posY = gEnv->pRenderer->GetHeight() / 2);
 }
 
 void CSDLMouse::Update(bool focus)

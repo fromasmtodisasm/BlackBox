@@ -469,9 +469,7 @@ void CHardwareMouse::Event(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEve
 
 void CHardwareMouse::AddListener(IHardwareMouseEventListener* pHardwareMouseEventListener)
 {
-#if 0
-	stl::push_back_unique(m_listHardwareMouseEventListeners, pHardwareMouseEventListener);
-#endif
+	m_listHardwareMouseEventListeners.push_back(pHardwareMouseEventListener);
 }
 
 //-----------------------------------------------------------------------------------------------------

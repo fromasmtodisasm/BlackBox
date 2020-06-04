@@ -216,6 +216,16 @@ void CRenderAuxGeom::DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1,
 
 void CRenderAuxGeom::DrawLines(const Vec3* v, uint32 numPoints, const UCol& col, float thickness)
 {
+	if (thickness <= 1.0f)
+	{
+		SAuxVertex* pVertices(nullptr);
+		AddPrimitive(pVertices, numPoints, RenderPrimitive::LINE_STRIP);
+		for (size_t i = 0; i < numPoints; i++)
+		{
+			pVertices[i].xyz		  = v[i];
+			pVertices[i].color.dcolor = PackColor(col);
+		}
+	}
 }
 
 void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive)

@@ -76,7 +76,7 @@ bool Texture::load(const char* name)
   bool hasAlpha = false;
   if (!img.load((texture_root + name).c_str(), &hasAlpha))
     return false;
-  auto t = create(img.width, img.height, UNKNOWN, hasAlpha, name, img.data); 
+  auto t = create(img.width, img.height, UNKNOWN, hasAlpha, name, true, img.data); 
   if (t != nullptr)
   {
 	  std::swap(*this, *t); 
@@ -127,7 +127,6 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
     inputDataType = GL_UNSIGNED_BYTE;
 		gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    break;
 
 		if (hasAlpha)
 		{
@@ -153,13 +152,17 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
 		}
 
 	  glTextureStorage2D(t->id, 1, internalFormat, width, height);
-		/*
-		gl::TextureImage2D(
-			t->id, 0, 0, 0,
-			width, height,
-			inputFormat, inputDataType, data
-		);
-    */
+		if (UNKNOWN == type)
+	  {
+			std::vector<char> pixels(width * height * 4);
+		  if (data == nullptr)
+			  data = pixels.data();
+			gl::TextureImage2D(
+				t->id, 0, 0, 0,
+				width, height,
+				inputFormat, inputDataType, data
+			);
+	  }
   }
 
 
