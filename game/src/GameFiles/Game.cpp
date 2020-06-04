@@ -22,11 +22,10 @@
 
 namespace
 {
-	Vec3 RandomVector(Vec3 left, Vec3 right)
+	Vec3 RandomVector(Vec3 left, Vec3 right, float floor = 5)
 	{
 		Vec3 vec(rand(), rand(), rand());
-
-        return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(float(RAND_MAX))/(right - left)));
+		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(float(RAND_MAX))/(right - left)));
 	}
 
 	std::string vec_to_string(Vec3 vec)
@@ -37,6 +36,8 @@ namespace
 		return result;
 	}
 } // namespace
+
+std::vector<Vec3> lineBuffer;
 
 #if 0
 class CRender : public IQuadTreeRender {
@@ -146,10 +147,14 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	{
 		m_pInput->AddEventListener(this);
 		m_pInput->AddEventListener(&m_CameraController);
+		gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
+		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(m_pRender->GetWidth(), m_pRender->GetHeight());
 	}
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
+
+	m_CrossHair = m_pRender->LoadTexture("crosshair.png", 0, false);
 
 #if 0
   if (!m_pNetwork->Init())
@@ -248,9 +253,11 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
 
-	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 255, 255)));
-	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(255, 0, 0, 255)));
-	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 255, 255)));
+	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 10, 10)));
+	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
+	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
+	m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
+
 
 	srand(static_cast<unsigned int>(time(0)));
 
@@ -260,7 +267,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 		auto rand_pos = RandomVector(left, right);
 		return TestObject(
-			rand_pos, {5, 5, 5}, Vec4(255, 80, 255, 255));
+			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
 	for (int i = 0; i < 100; i++)
 	{
@@ -269,12 +276,15 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		);
 	}
 
-	auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(40, 255, 40, 255));
+	auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(4, 10, 40, 255));
 	CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
 	m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
 	m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
+
+	auto water = m_pRender->LoadTexture("water.jpg", 0, 0);
+	m_Console->SetImage(water);
 
 	return true;
 }
@@ -308,6 +318,7 @@ bool CGame::Update()
 			}
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
+			m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 80, 80, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 			//PROFILER_POP_CPU_MARKER();
 		}
 	}
@@ -916,8 +927,8 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 			else
 				m_Console->ShowConsole(true);
 			return true;
-        default:
-            return false;
+		default:
+			break;
 		}
 	}
 
@@ -1140,12 +1151,8 @@ void CGame::DrawAux()
 		UCol col1(50, 125, 0, 100);
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
-	{
-		UCol col2(50, 125, 100, 100);
-		draw_quad({-x, -y, z}, {-x, y, -z}, {x, y, -z}, {x, -y, z}, col2);
-	}
 
-	UCol selected_color(255, 255, 50, 255);
+	UCol selected_color(0,1,0,1);
 	IntersectionTest();
 	int _idx = 0;
 	for (auto& object : m_testObjects)
@@ -1155,11 +1162,22 @@ void CGame::DrawAux()
 		else
 		{
 			render->DrawAABB(
-				object.m_AABB.min, object.m_AABB.max, UCol(Vec3(1,1,1))
+				object.m_AABB.min, object.m_AABB.max, selected_color
 			);
 		}
 		object.intersected = false;
 		_idx++;
+	}
+	if (lineBuffer.size() >= 2)
+	{
+		#if 0
+		for (int i = 0; i < (lineBuffer.size() - 1); i ++)
+		{
+			render->DrawLine(lineBuffer[i] + Vec3(0, 0.1, 0), UCol(255,255,255,255), lineBuffer[i + 1] + Vec3(0, 0.1, 0), UCol(255,255,255,255));	
+		}
+		#else
+			render->DrawLines(lineBuffer.data(), lineBuffer.size(), UCol(255,255,255,255));	
+		#endif
 	}
 
 	Ray ray;
@@ -1226,13 +1244,20 @@ void CGame::IntersectionByRayCasting()
 	eyeRay.origin = m_CameraController.CurrentCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 
+	auto lastPos = m_IntersectionState.m_LastPickedPos; 
 	for (size_t i = 0; i < m_testObjects.size(); i++){
 		glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
+		if (tMinMax.x < 0 || tMinMax.y < 0)
+			continue;
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
 			m_IntersectionState.picked = m_testObjects.begin() + i;
 			tMin = tMinMax.x;
 			m_IntersectionState.m_LastPickedPos = eyeRay.origin + eyeRay.direction * tMin;
 			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
 		}
+	}
+	if (lastPos != m_IntersectionState.m_LastPickedPos)
+	{
+		lineBuffer.push_back(m_IntersectionState.m_LastPickedPos);
 	}
 }

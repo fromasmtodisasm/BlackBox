@@ -14,6 +14,7 @@ public:
   virtual int  GetDeviceIndex() const { return 0; }   //Assume only one mouse
 
   virtual bool Init();
+  virtual void PostInit();
 
   virtual void Update(bool focus);
 

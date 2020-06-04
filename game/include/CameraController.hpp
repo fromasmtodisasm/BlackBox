@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/IStatObj.hpp>
 
@@ -10,12 +11,15 @@ enum class Movement
   LEFT,
   RIGHT
 };
-class CCameraController : public IInputEventListener
+class CCameraController : public IInputEventListener, public IHardwareMouseEventListener
 {
 public:
 public:
   CCameraController() = default;
-  CCameraController(CCamera* pCamera) : m_Camera{pCamera} {}
+  CCameraController(CCamera* pCamera) : m_Camera{pCamera} 
+  {
+	  gEnv->pSystem->GetIHardwareMouse()->AddListener(this); 
+  }
 
   std::vector<CCamera*> m_Camera;
   size_t m_CurrentCamera = 0;
@@ -48,7 +52,7 @@ public:
       else
         delta.y = event.value;
       ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
-      return true;
+      return false;
     }
     else if (keyPressed)
     {
@@ -201,4 +205,21 @@ public:
   const float SCROLL_SPEED = 2.0f;
   const float MOUSE_SPEED = 1.5f;
   const float MOUSE_SENSIVITY = 0.05f;
+
+  // Inherited via IHardwareMouseEventListener
+  
+	void CCameraController::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta = 0)
+	{
+		if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_WHEEL)
+		{
+			if (wheelDelta > 0)
+			{
+        ProcessKeyboard(Movement::FORWARD, 1);
+			}
+			else
+			{
+        ProcessKeyboard(Movement::BACKWARD, 1);
+			}
+		}
+	}
 };

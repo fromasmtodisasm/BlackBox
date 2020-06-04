@@ -559,6 +559,7 @@ class CGame
 	std::vector<TestObject> m_testObjects;
 
 	size_t m_SelectedBox = 0;
+	ITexture* m_CrossHair = nullptr;
 
 	// Intersection
 

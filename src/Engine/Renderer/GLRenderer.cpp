@@ -449,8 +449,7 @@ bool GLRenderer::VBF_InPool(int format)
 
 ITexture* GLRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
 {
-	TextureManager::instance()->getTexture(nameTex, eTT);
-	return nullptr;
+	return TextureManager::instance()->getTexture(nameTex, eTT);
 }
 
 IFont* GLRenderer::GetIFont()
@@ -633,17 +632,18 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 		width  = GetWidth(),
 		height = GetHeight();
 	//gl::BindFramebuffer(0);
-	SetState(State::BLEND, true);
-	SetState(IRenderer::State::CULL_FACE, false);
+	RSS(this, BLEND, true);
+	RSS(this, CULL_FACE, false);
+	RSS(this, DEPTH_TEST, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_ScreenShader->Use();
-	m_ScreenShader->Uniform(a, "alpha");
+	m_ScreenShader->Uniform(Vec4(r, g, b, a), "color");
 
 	glm::mat4 model(1.0);
 	auto uv_projection   = glm::mat4(1.0);
 	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f);
 
-	//model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.f));
+	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
 
 	if (needFlipY->GetIVal() == 1)
@@ -666,10 +666,8 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 		SetViewport(xpos, GetHeight() - h, xpos + w, GetHeight() - ypos - h);
 	}
 
-	SetState(State::DEPTH_TEST, false);
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 	DrawFullscreenQuad();
-	SetState(State::CULL_FACE, true);
 }
 
 void GLRenderer::PrintLine(const char* szText, SDrawTextInfo& info)

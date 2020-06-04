@@ -10,6 +10,8 @@ uniform vec3 eye;
 uniform int fid;
 uniform mat4 projection;
 
+uniform bool bTonemap;
+
 in VS_OUT
 {
 	vec3 fragPos;
@@ -20,7 +22,21 @@ void main()
 { 
 	//FragColor = color / 255.0;
 	vec4 p = gl_FragCoord;
-	FragColor = vec4(
-		tonemap(ambient() + diffuse(lightPos, vs_out.fragPos, vs_out.N) + specular(lightPos, vs_out.fragPos, eye, vs_out.N)
-	), 1);
+	vec3 _color = vec3(color);
+
+	if (bTonemap)
+	{
+		FragColor = vec4(
+			tonemap(ambient()*_color + diffuse(lightPos, vs_out.fragPos, vs_out.N)*_color + 0.8*_color*specular(lightPos, vs_out.fragPos, eye, vs_out.N)
+		), 1);
+
+	}
+	else
+	{
+		FragColor = vec4(
+			ambient()*_color + diffuse(lightPos, vs_out.fragPos, vs_out.N)*_color + 0.8*_color*specular(lightPos, vs_out.fragPos, eye, vs_out.N
+		), 1);
+
+	}
+
 }
