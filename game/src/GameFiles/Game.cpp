@@ -283,9 +283,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
 
-	auto water = m_pRender->LoadTexture("water.jpg", 0, 0);
-	m_Console->SetImage(water);
-
 	return true;
 }
 
@@ -318,7 +315,7 @@ bool CGame::Update()
 			}
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
-			m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 80, 80, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
+			m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 40, 40, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 			//PROFILER_POP_CPU_MARKER();
 		}
 	}
@@ -591,6 +588,11 @@ void CGame::PersistentHandler(const SInputEvent& event)
 				auto& lpp = m_IntersectionState.m_LastPickedPos;
 				m_IntersectionState.m_NeedIntersect = true;
 				gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
+				if (m_Mode != MENU)
+				{
+					m_IntersectionState.mx= m_pRender->GetWidth() / 2;
+					m_IntersectionState.my= m_pRender->GetHeight() / 2;
+				}
 			}
       break;
 		}

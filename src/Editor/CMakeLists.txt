@@ -26,3 +26,4 @@ target_precompile_headers(${PROJECT_NAME}
 )
 
 set_property(TARGET Editor PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+set_target_properties(Editor PROPERTIES FOLDER "Engine/Editor")

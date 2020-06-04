@@ -16,6 +16,7 @@ file(TO_CMAKE_PATH "${PROJECT_DIR}" PROJECT_DIR)
 file(TO_CMAKE_PATH "${TOOLS_CMAKE_DIR}" TOOLS_CMAKE_DIR)
 
 set(TOOLS_CMAKE_DIR "${BLACKBOX_DIR}/Tools/CMake")
+set(TOOLS_DIR "${BLACKBOX_DIR}/Tools")
 set(CMAKE_MODULE_PATH "${TOOLS_CMAKE_DIR}/modules")
 
 ###################################################
