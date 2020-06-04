@@ -16,4 +16,5 @@ function(clang_format SOURCE_FILES)
           --verbose
           ${ALL_SOURCE_FILES}
   )
+set_target_properties(clangformat PROPERTIES FOLDER "Engine/Utils")
 endfunction()
