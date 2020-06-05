@@ -20,6 +20,8 @@
 #include <vector>
 #include <cmath>
 
+int render_camera = 0;
+int movement_camera = 0;
 namespace
 {
 	Vec3 RandomVector(Vec3 left, Vec3 right, float floor = 5)
@@ -269,7 +271,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		m_testObjects.emplace_back(
 			create_obj()
@@ -281,7 +283,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
-	m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
+	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
 	return true;
 }
@@ -290,7 +292,7 @@ bool CGame::Update()
 {
 	static const auto& render_game = m_Console->GetCVar("render_game");
 	bool bRenderFrame			   = !m_bDedicatedServer;
-	*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
+	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	{
 		// TODO: FIX IT
@@ -308,14 +310,27 @@ bool CGame::Update()
 			{
 				if (render_game->GetIVal() != 0)
 				{
-					m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
-					m_pSystem->Render();
-					DrawAux();
+					m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+					m_CameraController.SetRenderCamera(0);
+					auto cam = m_CameraController.RenderCamera();
+					//cam->SetAngles(Vec3(0,0,0));
+					//cam->SetPos(Vec3(0, 40, 0));
+					cam->updateCameraVectors();
+					
+
+					cam->type = CCamera::Type::Perspective;
+					Render();
+					m_pRender->Flush();
+					m_CameraController.SetRenderCamera(1);
+					m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
+					m_pRender->SetViewport(0, m_pRender->GetHeight() / 2, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+					Render();
+					m_CameraController.SetRenderCamera(render_camera);
+
 				}
 			}
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
-			m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 40, 40, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 			//PROFILER_POP_CPU_MARKER();
 		}
 	}
@@ -422,7 +437,7 @@ void CGame::DisplayInfo(float fps)
 	//render->PrintLine("To hide depth buffer press <;>\n", dti);
 	render->PrintLine((std::string("Camera width = ") + std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
 	render->PrintLine((std::string("Camera height = ") + std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
-	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.CurrentCamera()->transform.position) + "\n").c_str(), dti);
+	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
 
 	info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
 	//render->PrintLine(pos.c_str(), info.getDTI());
@@ -534,6 +549,13 @@ void CGame::setCamera(CCamera* camera)
 	//m_World->setCamera(camera);
 }
 
+void CGame::Render()
+{
+	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
+	m_pSystem->Render();
+	DrawAux();
+}
+
 IGAME_API IGame* CreateIGame()
 {
 	CGame* game = new CGame();
@@ -601,9 +623,17 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		{
 			auto id = event.keyId - eKI_1;
 			if (control)
+			{
+				movement_camera = id;
 				m_CameraController.SetMovementCamera(id);
-			else
 				m_CameraController.SetRenderCamera(id);
+			}
+			else
+			{
+				render_camera = id;
+				m_CameraController.SetMovementCamera(id);
+				m_CameraController.SetRenderCamera(id);
+			}
 			break;
 		}
 		case eKI_Insert:
@@ -1191,6 +1221,7 @@ void CGame::DrawAux()
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
 	DrawAxis(render, Vec3(40));
+	m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 40, 40, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
 void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
@@ -1243,7 +1274,8 @@ void CGame::IntersectionByRayCasting()
 	float tMin = std::numeric_limits<float>::max();
 	Ray eyeRay;
 
-	eyeRay.origin = m_CameraController.CurrentCamera()->GetPos();
+	m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
+	eyeRay.origin = m_CameraController.RenderCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 
 	auto lastPos = m_IntersectionState.m_LastPickedPos; 

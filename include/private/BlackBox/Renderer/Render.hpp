@@ -207,6 +207,9 @@ private:
 
   // Inherited via CRenderer
   virtual void SetRenderCallback(IRenderCallback* pCallback) override;
+
+  // Inherited via CRenderer
+  virtual void Flush() override;
 };
 
 extern class ShaderMan* gShMan;

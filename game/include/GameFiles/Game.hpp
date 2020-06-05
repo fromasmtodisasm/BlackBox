@@ -254,6 +254,8 @@ class CGame
 	void setPlayer(CPlayer* player);
 	void setCamera(CCamera* camera);
 
+	void Render();
+
 	// IInputEventListener interface
   public:
 	virtual bool OnInputEvent(const SInputEvent& event) override;

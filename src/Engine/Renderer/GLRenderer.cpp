@@ -165,12 +165,7 @@ void GLRenderer::Update(void)
 {
 	{
 		//std::cout << " aux " << std::endl;
-		DEBUG_GROUP("AUX");
-		m_AuxGeomShader->Use();
-		m_AuxGeomShader->Uniform(m_Camera.getProjectionMatrix(), "projection");
-		m_AuxGeomShader->Uniform(m_Camera.GetViewMatrix(), "view");
-		m_RenderAuxGeom->Flush();
-		m_AuxGeomShader->Unuse();
+		Flush();
 	}
 	m_MainMSAAFrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
 	if (m_pRenerCallback)
@@ -754,6 +749,16 @@ int GLRenderer::CreateRenderTarget()
 void GLRenderer::SetRenderCallback(IRenderCallback* pCallback)
 {
 	m_pRenerCallback = pCallback;
+}
+
+void GLRenderer::Flush()
+{
+	DEBUG_GROUP("AUX");
+	m_AuxGeomShader->Use();
+	m_AuxGeomShader->Uniform(m_Camera.getProjectionMatrix(), "projection");
+	m_AuxGeomShader->Uniform(m_Camera.GetViewMatrix(), "view");
+	m_RenderAuxGeom->Flush();
+	m_AuxGeomShader->Unuse();
 }
 
 

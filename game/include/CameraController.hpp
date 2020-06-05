@@ -191,6 +191,7 @@ public:
   {
 	  assert(n < m_Camera.size());
 	  m_RenderCamera = n; 
+    gEnv->pRenderer->SetCamera(*m_Camera[n]);
   }
   void SetMovementCamera(size_t n)
   {

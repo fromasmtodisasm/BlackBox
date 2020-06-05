@@ -29,6 +29,11 @@ public:
     FPS,
     FLY
   }mode = CCamera::Mode::FPS;
+  enum class Type
+  {
+    Perspective,
+    Ortho
+  }type = Type::Perspective;
 public:
   // Camera Attributes
   Transform transform;
@@ -72,7 +77,16 @@ public:
   }
   Mat4 getProjectionMatrix() const
   {
-    return glm::perspective(glm::radians(FOV), (float)gEnv->pRenderer->GetWidth() / (float)gEnv->pRenderer->GetHeight(), zNear, zFar);
+	  Vec4d v;
+	  gEnv->pRenderer->GetViewport(&v.x, &v.y, &v.z, &v.w);
+	  if (type == Type::Perspective)
+	  {
+		  return glm::perspective(glm::radians(FOV), (float)(v.z) / (float)(v.w), zNear, zFar);
+    }
+	  else
+	  {
+		  return glm::ortho(0.f, 160.f, 0.f, 90.f, 0.1f, 500.f);
+	  }
   }
 
   Vec3 GetPos()
@@ -121,4 +135,9 @@ public:
     this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 
   }
+};
+
+class COrthoCamera : public CCamera
+{
+
 };

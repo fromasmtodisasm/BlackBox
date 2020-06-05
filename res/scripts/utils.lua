@@ -51,20 +51,20 @@ end
 
 function init()
 	Console:CreateKeyBind("ctrl_r", "shader reload");
-	Console:CreateKeyBind("ctrl_d", [[@retrigger_value("r_displayinfo")]]);
-	--Console:CreateKeyBind("q", "@Game:Stop()");
+	Console:CreateKeyBind("ctrl_d", [[#retrigger_value("r_displayinfo")]]);
+	--Console:CreateKeyBind("q", "#Game:Stop()");
 	Console:CreateKeyBind("ctrl_w", "toogle_viewport_drag");
 
-	Console:CreateKeyBind("ctrl_num1", "@load1()");
-	Console:CreateKeyBind("ctrl_num2", "@load2()");
+	Console:CreateKeyBind("ctrl_num1", "#load1()");
+	Console:CreateKeyBind("ctrl_num2", "#load2()");
 
-	Console:CreateKeyBind("ctrl_a", [[@retrigger_value("r_aspect")]]);
+	Console:CreateKeyBind("ctrl_a", [[#retrigger_value("r_aspect")]]);
 	--Console:CreateKeyBind("c", "Console:Show(false)")  
-	Console:CreateKeyBind("ctrl_b", "@setFog(0,0,0)") 
-	Console:CreateKeyBind("ctrl_g", "@setFog(0,0.01,0.01)")  
+	Console:CreateKeyBind("ctrl_b", "#setFog(0,0,0)") 
+	Console:CreateKeyBind("ctrl_g", "#setFog(0,0.01,0.01)")  
 
 	Console:CreateKeyBind("xi_b", "quit")  
-	Console:CreateKeyBind("xi_back", "@Game:gotoMenu()")  
+	Console:CreateKeyBind("xi_back", "#Game:gotoMenu()")  
 
 
 	--addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
@@ -85,8 +85,8 @@ function init()
 	Console:CreateKeyBind("f5", "screen_shot") 
 	Console:CreateKeyBind("ctrl_s", "scene load test") 
 	Console:CreateKeyBind("ctrl_p", "reload_scripts") 
-	Console:CreateKeyBind("ctrl_c", "@Game:gotoMenu()") 
-	Console:CreateKeyBind("f7", "@Game:gotoGame()") 
+	Console:CreateKeyBind("ctrl_c", "#Game:gotoMenu()") 
+	Console:CreateKeyBind("f7", "#Game:gotoGame()") 
 
 
 	setFog(0,0,0)
