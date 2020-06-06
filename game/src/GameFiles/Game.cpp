@@ -310,7 +310,7 @@ bool CGame::Update()
 			{
 				if (render_game->GetIVal() != 0)
 				{
-					m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+					//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 					m_CameraController.SetRenderCamera(0);
 					auto cam = m_CameraController.RenderCamera();
 					//cam->SetAngles(Vec3(0,0,0));
@@ -320,11 +320,13 @@ bool CGame::Update()
 
 					cam->type = CCamera::Type::Perspective;
 					Render();
+					#if 0
 					m_pRender->Flush();
 					m_CameraController.SetRenderCamera(1);
 					m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
 					m_pRender->SetViewport(0, m_pRender->GetHeight() / 2, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 					Render();
+					#endif
 					m_CameraController.SetRenderCamera(render_camera);
 
 				}
