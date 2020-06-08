@@ -11,6 +11,10 @@
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 
+#include <ScriptObjects/ScriptObjectTest.hpp>
+
+
+
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -1021,6 +1025,10 @@ bool CGame::InitScripts()
 {
 	m_pScriptObjectGame = new CScriptObjectGame();
 	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
+
+	auto SOT = new CScriptObjectTest();
+	SOT->InitializeTemplate(m_pScriptSystem);
+	SOT->Init(m_pScriptSystem, this);
 
 #if 0
   m_pScriptClient = new CScriptObjectClient();

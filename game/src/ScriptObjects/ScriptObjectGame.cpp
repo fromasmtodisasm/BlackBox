@@ -23,27 +23,29 @@ CScriptObjectGame::~CScriptObjectGame()
 void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 {
   _ScriptableEx<CScriptObjectGame>::InitializeTemplate(pSS);
-  REG_FUNC(CScriptObjectGame, SendMessage);
-  REG_FUNC(CScriptObjectGame, Stop);
-  REG_FUNC(CScriptObjectGame, gotoMenu);
-  REG_FUNC(CScriptObjectGame, gotoGame);
-  REG_FUNC(CScriptObjectGame, gotoFly);
-  REG_FUNC(CScriptObjectGame, gotoEdit);
-  REG_FUNC(CScriptObjectGame, showMenu);
+  #undef SCRIPT_REG_CLASSNAME
+  #define SCRIPT_REG_CLASSNAME CScriptObjectGame
+  SCRIPT_REG_FUNC(SendMessage);
+  SCRIPT_REG_FUNC(Stop);
+  SCRIPT_REG_FUNC(gotoMenu);
+  SCRIPT_REG_FUNC(gotoGame);
+  SCRIPT_REG_FUNC(gotoFly);
+  SCRIPT_REG_FUNC(gotoEdit);
+  SCRIPT_REG_FUNC(showMenu);
 
-  REG_FUNC(CScriptObjectGame, GetTagPoint);
-  REG_FUNC(CScriptObjectGame, CreateVariable);
-  REG_FUNC(CScriptObjectGame, SetVariable);
-  REG_FUNC(CScriptObjectGame, RemoveVariable);
-  REG_FUNC(CScriptObjectGame, GetVariable);
-  REG_FUNC(CScriptObjectGame, LoadLevel);
+  SCRIPT_REG_FUNC(GetTagPoint);
+  SCRIPT_REG_FUNC(CreateVariable);
+  SCRIPT_REG_FUNC(SetVariable);
+  SCRIPT_REG_FUNC(RemoveVariable);
+  SCRIPT_REG_FUNC(GetVariable);
+  SCRIPT_REG_FUNC(LoadLevel);
 
-  REG_FUNC(CScriptObjectGame, AddCommand);
+  SCRIPT_REG_FUNC(AddCommand);
 
-  REG_FUNC(CScriptObjectGame, Quit);
+  SCRIPT_REG_FUNC(Quit);
 
-  REG_FUNC(CScriptObjectGame, SavePlayerPos);
-  REG_FUNC(CScriptObjectGame, LoadPlayerPos);
+  SCRIPT_REG_FUNC(SavePlayerPos);
+  SCRIPT_REG_FUNC(LoadPlayerPos);
 
 #if 0
 	AllowPropertiesMapping(pSS);

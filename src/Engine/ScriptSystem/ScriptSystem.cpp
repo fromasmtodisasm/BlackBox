@@ -26,7 +26,30 @@ ISystem* GetISystem()
 */
 
 extern "C" {
-#define DumpCallStack(L) printf("DumpCallStack() not implemented")
+	//////////////////////////////////////////////////////////////////////////
+	void DumpCallStack(lua_State* L)
+	{
+		lua_Debug ar;
+
+		memset(&ar, 0, sizeof(lua_Debug));
+
+		//////////////////////////////////////////////////////////////////////////
+		// Print callstack.
+		//////////////////////////////////////////////////////////////////////////
+		int level = 0;
+		while (lua_getstack(L, level++, &ar))
+		{
+			const char* slevel = "";
+			if (level == 1)
+				slevel = "  ";
+			int nRes = lua_getinfo(L, "lnS", &ar);
+			if (ar.name)
+				CryLog("$6%s    > %s, (%s: %d)", slevel, ar.name, ar.short_src, ar.currentline);
+			else
+				CryLog("$6%s    > (null) (%s: %d)", slevel, ar.short_src, ar.currentline);
+		}
+	}
+
 }
 
 CFunctionHandler* CScriptSystem::m_pH = nullptr;

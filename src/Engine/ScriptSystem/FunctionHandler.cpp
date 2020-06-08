@@ -39,10 +39,11 @@ THIS_PTR CFunctionHandler::GetThis()
   return ptr;
 }
 
-int CFunctionHandler::GetFunctionID()
+INT_PTR CFunctionHandler::GetFunctionID()
 {
   unsigned char* pBuffer = (unsigned char*)lua_touserdata(L, lua_upvalueindex(1));
-  int fID = (int)(*pBuffer);
+	INT_PTR fID = 0;
+  memcpy(&fID, pBuffer, sizeof(INT_PTR));
   return fID;
 }
 

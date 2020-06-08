@@ -99,7 +99,7 @@ public:
   virtual int Count() override;
   virtual bool Clone(IScriptObject* pObj) override;
   virtual void Dump(IScriptObjectDumpSink* p) override;
-  virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, INT_PTR nFuncID) override;
+  virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, const INT_PTR nFuncID) override;
   virtual bool AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION pGetThunk) override;
   virtual void RegisterParent(IScriptObjectSink* pSink) override;
   virtual void Detach() override;

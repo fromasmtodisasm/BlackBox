@@ -39,6 +39,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectInput.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServer.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServerSlot.cpp
+	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectTest.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp
