@@ -188,8 +188,9 @@ bool CSystem::Init()
 		return false;
 	//====================================================
 	Log("Loading config");
-	if (!ConfigLoad("res/scripts/engine.cfg"))
+	if (!ConfigLoad("system.cfg"))
 		return false;
+	CreateRendererVars(m_startupParams);
 	//====================================================
 	if (!OpenRenderLibrary("OpenGL"))
 	{
@@ -392,24 +393,9 @@ IInputHandler* CSystem::GetIInputHandler()
 
 bool CSystem::ConfigLoad(const char* file)
 {
-	m_pConsole->ExecuteFile(file);
+	//m_pConsole->ExecuteFile(file);
+	LoadConfiguration(file);
 
-	r_window_width  = m_pConsole->GetCVar("r_Width");
-	r_window_height = m_pConsole->GetCVar("r_Height");
-	r_bpp			= m_pConsole->GetCVar("r_bpp");
-	r_zbpp			= m_pConsole->GetCVar("r_zbpp");
-	r_sbpp			= m_pConsole->GetCVar("r_sbpp");
-	r_fullscreen	= m_pConsole->GetCVar("r_fullscreen");
-	cvGameName		= m_pConsole->GetCVar("cvGameName");
-
-	if (
-		r_window_width == nullptr ||
-		r_window_height == nullptr ||
-		r_bpp == nullptr ||
-		r_zbpp == nullptr ||
-		r_sbpp == nullptr ||
-		r_fullscreen == nullptr)
-		return false;
 	return true;
 }
 
@@ -435,13 +421,28 @@ bool CSystem::InitRender()
 		return true;
 	// In release mode it failed!!!
 	// TODO: Fix it
-	if (!(m_pWindow = m_Render->Init(
-			  0, 0,
-			  r_window_width->GetIVal(), r_window_height->GetIVal(),
-			  r_bpp->GetIVal(), r_zbpp->GetIVal(), r_sbpp->GetIVal(),
-			  r_fullscreen->GetIVal(), m_pWindow)))
-		return false;
-	return true;
+
+	if (m_env.pRenderer)
+	{
+		int width  = m_rWidth->GetIVal();
+		int height = m_rHeight->GetIVal();
+		if (gEnv->IsEditor())
+		{
+			// In Editor base default Display Context is not really used, so it is allocated with the minimal resolution.
+			width  = 32;
+			height = 32;
+		}
+
+		if (!(m_pWindow = m_env.pRenderer->Init(
+			0, 0, width, height,
+			m_rColorBits->GetIVal(), m_rDepthBits->GetIVal(), m_rStencilBits->GetIVal(),
+			m_rFullscreen->GetIVal(), m_pWindow)))
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 bool CSystem::InitInput()
@@ -734,6 +735,71 @@ void CSystem::PollEvents()
 
 }
 
+void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
+{
+	m_rIntialWindowSizeRatio = CREATE_CVAR("r_InitialWindowSizeRatio", 0.666f, VF_DUMPTODISK,
+	                                          "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
+	                                          "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
+
+	int iFullScreenDefault  = 1;
+	int iDisplayInfoDefault = 1;
+	int iWidthDefault       = 1280;
+	int iHeightDefault      = 720;
+#if BB_PLATFORM_WINDOWS
+	iFullScreenDefault = 0;
+	const float initialWindowSizeRatio = m_rIntialWindowSizeRatio->GetFVal();
+	iWidthDefault = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) * initialWindowSizeRatio);
+	iHeightDefault = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) * initialWindowSizeRatio);
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_APPLE
+	iFullScreenDefault = 0;
+#endif
+
+#if defined(RELEASE)
+	iDisplayInfoDefault = 0;
+#endif
+
+	// load renderer settings from engine.ini
+	m_rWidth = CREATE_CVAR("r_Width", iWidthDefault, VF_DUMPTODISK,
+		"Sets the display width, in pixels.\n"
+		"Usage: r_Width [800/1024/..]"
+		);
+	m_rHeight = REGISTER_INT("r_Height", iHeightDefault, VF_DUMPTODISK,
+		"Sets the display height, in pixels.\n"
+		"Usage: r_Height [600/768/..]"
+	);
+	m_rColorBits = REGISTER_INT("r_ColorBits", 32, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+		"Sets the color resolution, in bits per pixel. Default is 32.\n"
+		"Usage: r_ColorBits [32/24/16/8]");
+	m_rDepthBits = REGISTER_INT("r_DepthBits", 24, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+		"Sets the depth precision, in bits per pixel. Default is 24.\n"
+		"Usage: r_DepthBits [32/24/16]");
+	m_rStencilBits = REGISTER_INT("r_StencilBits", 8, VF_DUMPTODISK,
+		"Sets the stencil precision, in bits per pixel. Default is 8.\n");
+
+
+	m_rFullscreen = REGISTER_INT("r_Fullscreen", iFullScreenDefault, VF_DUMPTODISK,
+		"Toggles fullscreen mode. Default is 1 in normal game and 0 in DevMode.\n"
+		"Usage: r_Fullscreen [0=window/1=fullscreen]");
+
+	m_rFullsceenNativeRes = REGISTER_INT("r_FullscreenNativeRes", 0, VF_DUMPTODISK,
+		"Toggles native resolution upscaling.\n"
+		"If enabled, scene gets upscaled from specified resolution while UI is rendered in native resolution.");
+
+	m_rDisplayInfo = REGISTER_INT("r_DisplayInfo", 1, VF_RESTRICTEDMODE | VF_DUMPTODISK,
+		"Toggles debugging information display.\n"
+		"Usage: r_DisplayInfo [0=off/1=show/2=enhanced/3=minimal/4=fps bar/5=heartbeat]");
+	m_rDebug = CREATE_CVAR("r_Debug", 0, VF_RESTRICTEDMODE | VF_DUMPTODISK,
+		"Toggles debugging of renderer.\n"
+		"Usage: r_DisplayInfo [0=off/1=on]");
+	m_rTonemap = CREATE_CVAR("r_Tonemap", 1, VF_DUMPTODISK,
+		"Using tonemap.\n"
+		"Usage: r_Tonemap [0=off/1=on]");
+}
+
+void CSystem::CreateSystemVars()
+{
+}
+
 void CSystem::EnableGui(bool enable)
 {
 #if ENABLE_DEBUG_GUI
@@ -746,6 +812,10 @@ void CSystem::EnableGui(bool enable)
 		m_env.pInput->RemoveEventListener(m_GuiManager);
 	}
 #endif
+}
+
+void CSystem::SaveConfiguration()
+{
 }
 
 float CSystem::GetDeltaTime()

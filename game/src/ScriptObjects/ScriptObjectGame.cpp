@@ -47,6 +47,9 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_FUNC(SavePlayerPos);
   SCRIPT_REG_FUNC(LoadPlayerPos);
 
+  SCRIPT_REG_FUNC(SaveConfiguration);
+
+
 #if 0
 	AllowPropertiesMapping(pSS);
 	RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CGame,test_string));
@@ -292,6 +295,104 @@ int CScriptObjectGame::StopRecord(IFunctionHandler* pH)
 {
   return 0;
 }
+
+//////////////////////////////////////////////////////////////////////
+bool CScriptObjectGame::_GetProfileFileNames( IFunctionHandler *pH, string &outSystem, string &outGame, const char *insCallerName )
+{ 
+	outSystem="system.cfg";
+	outGame="game.cfg";
+
+	if(pH->GetParamCount()>0)		// use given profile name or don't use profiles 
+	{
+		CHECK_PARAMETERS(1);
+
+		const char *sProfileName;
+		pH->GetParam(1,sProfileName);
+
+		if(!sProfileName || sProfileName=="")
+		{
+			m_pScriptSystem->RaiseError("%s profilename is nil or empty",insCallerName);
+			return false;
+		}
+
+		string sName;
+
+		outSystem=string("Profiles/Player/")+sProfileName+"_"+outSystem;
+		outGame=string("Profiles/Player/")+sProfileName+"_"+outGame;
+	}
+	return true;
+}
+
+int CScriptObjectGame::SaveConfiguration(IFunctionHandler* pH)
+{
+	string sSystemCfg, sGameCfg;
+
+	if(!_GetProfileFileNames(pH,sSystemCfg,sGameCfg,__FUNCTION__))
+		return pH->EndFunction();
+
+	if(m_pGame->m_bDedicatedServer)
+		return pH->EndFunction();
+
+	if (m_pGame->m_bEditor)
+		return pH->EndFunction();
+
+	const char *szProfileName = 0;
+
+	if (pH->GetParamCount() > 0)
+	{
+			pH->GetParam(1, szProfileName);
+	}
+	
+	// profile is already specified in the string
+	m_pGame->SaveConfiguration(sSystemCfg.c_str(),sGameCfg.c_str(),NULL);
+
+	if (szProfileName)
+	{
+		string path = "profiles/player/";
+		path += szProfileName;
+#if defined(LINUX)
+		mkdir( path.c_str(), 0xFFFF );
+#else
+		if (auto result = _mkdir( path.c_str() ); result != 0)
+		{
+			if (result == EEXIST)
+			{
+				m_pSystem->GetILog()->LogWarning("Path already exist");
+			}
+			else if (ENOENT)
+			{
+				m_pSystem->GetILog()->LogWarning("Path was not found");
+			}
+    }
+#endif
+		path += "savegames/";
+#if defined(LINUX)
+		mkdir( path.c_str(), 0xFFFF );
+#else
+		_mkdir( path.c_str() );
+#endif
+	}
+
+	return pH->EndFunction();
+
+}
+
+//////////////////////////////////////////////////////////////////////
+int CScriptObjectGame::LoadConfiguration(IFunctionHandler *pH)
+{
+	string sSystemCfg, sGameCfg;
+
+	if(!_GetProfileFileNames(pH,sSystemCfg,sGameCfg,__FUNCTION__))
+		return pH->EndFunction();
+ 
+	//m_pScriptSystem->ExecuteFile(sSystemCfg.c_str(),true,true);
+	//m_pScriptSystem->ExecuteFile(sGameCfg.c_str(),true,true);
+
+	m_pGame->LoadConfiguration(sSystemCfg,sGameCfg);
+
+	return pH->EndFunction();
+}
+
 //////////////////////////////////////////////////////////////////////
 /*!create a console variable
   @param sName name of the console variable

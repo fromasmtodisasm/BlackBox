@@ -268,7 +268,11 @@ class CGame final
 
 	// IGame interface
   public:
-	virtual void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) override;
+	
+	void LoadConfiguration(const string &sSystemCfg,const string &sGameCfg);
+	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile);
+	void RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfile);
+
 	virtual void ReloadScripts() override;
 	virtual bool GetModuleState(EGameCapability eCap) override;
 	virtual void UpdateDuringLoading() override;

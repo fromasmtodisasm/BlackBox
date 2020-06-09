@@ -29,7 +29,8 @@ class CSystem :
   public IInputEventListener,
   public IConsoleVarSink,
   public ISystemEventListener,
-  public IWindowMessageHandler
+  public IWindowMessageHandler,
+  public ILoadConfigurationEntrySink
 {
 public:
   CSystem(SSystemInitParams& initParams);
@@ -113,6 +114,13 @@ private:
   void LogCommandLine() const;
   void Tests();
   void PollEvents();
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper functions.
+	//////////////////////////////////////////////////////////////////////////
+	void        CreateRendererVars(const SSystemInitParams& startupParams);
+	void        CreateSystemVars();
 protected:
 	CCmdLine*                                 m_pCmdLine;
 
@@ -169,9 +177,40 @@ private:
   IImGuiManager* m_GuiManager = nullptr;
 #endif
 
+	//! to hold the values stored in system.cfg
+	//! because editor uses it's own values,
+	//! and then saves them to file, overwriting the user's resolution.
+	int m_iHeight = 0;
+	int m_iWidth = 0;
+	int m_iColorBits = 0;
+
+	// System console variables.
+	//////////////////////////////////////////////////////////////////////////
+	ICVar* m_rIntialWindowSizeRatio;
+	ICVar* m_rWidth;
+	ICVar* m_rHeight;
+	ICVar* m_rColorBits;
+	ICVar* m_rDepthBits;
+	ICVar* m_rStencilBits;
+	ICVar* m_rFullscreen;
+	ICVar* m_rFullsceenNativeRes;
+	ICVar* m_rWindowState;
+	ICVar* m_rDriver;
+	ICVar* m_rDisplayInfo;
+  ICVar* m_rDebug;
+  ICVar* m_rTonemap;
+
+
 
 // Inherited via ISystem
   virtual void EnableGui(bool enable) override;
+
+  // Inherited via ISystem
+  virtual void SaveConfiguration() override;
+  virtual void LoadConfiguration(const string& sFilename) override;
+
+  // Inherited via ILoadConfigurationEntrySink
+  virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;
 };
 
 void AddInternalCommands(ISystem* pSystem);

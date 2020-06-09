@@ -117,6 +117,18 @@ struct ISystemEventDispatcher
   // </interfuscator:shuffle>
 };
 
+//! \cond INTERNAL
+//! \note Can be used for LoadConfiguration().
+struct ILoadConfigurationEntrySink
+{
+	// <interfuscator:shuffle>
+	virtual ~ILoadConfigurationEntrySink(){}
+	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) = 0;
+	virtual void OnLoadConfigurationEntry_End() {}
+	// </interfuscator:shuffle>
+};
+//! \endcond
+
 //////////////////////////////////////////////////////////////////////////
 // Structure passed to Init method of ISystem interface.
 struct SSystemInitParams
@@ -280,6 +292,15 @@ struct ISystem
 	virtual const SFileVersion& GetProductVersion() = 0;
 
   virtual void EnableGui(bool enable) = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Configuration.
+	//////////////////////////////////////////////////////////////////////////
+	// Saves system configuration.
+	virtual void SaveConfiguration() = 0;
+	// Loads system configuration
+	virtual void LoadConfiguration(const string &sFilename)=0;
+
 };
 
 // Global environment variable.

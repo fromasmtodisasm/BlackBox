@@ -160,7 +160,7 @@ struct IConsole
     @return the value
     @see ICVar
   */
-  virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") = 0;
+  virtual ICVar* Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") = 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*! Crate a new console variable that store the value in a user defined floating point
       @param sName console variable name
@@ -169,7 +169,7 @@ struct IConsole
       @return the value
       @see ICVar
     */
-  virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") = 0;
+  virtual ICVar* Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") = 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*! Crate a new console variable that store the value in a user defined integer
       @param sName console variable name
@@ -178,7 +178,7 @@ struct IConsole
       @return the value
       @see ICVar
     */
-  virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "") = 0;
+  virtual ICVar*  Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "") = 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /*! Sets the background-image
     @param pImage background-image
@@ -291,6 +291,8 @@ struct IConsole
   virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) = 0;
   //! \param szLine Must not be 0.
   virtual void SetInputLine(const char* szLine) = 0;
+
+	virtual void LoadConfigVar(const char* sVariable, const char* sValue) = 0;
 
   virtual void AddWorkerCommand(IWorkerCommand* cmd) = 0;
   virtual void RemoveWorkerCommand(IWorkerCommand* cmd) = 0;
@@ -411,3 +413,6 @@ struct ICVar
 
 //! Preferred way to register a console command
 #define REGISTER_COMMAND(_name, _func, _flags, _comment) GET_CONSOLE()->AddCommand(_name, _func, _flags, _comment)
+
+//! Preferred way to register an int CVar
+#define REGISTER_INT(_name, _def_val, _flags, _comment) CREATE_CVAR(_name, _def_val, _flags, _comment)

@@ -74,7 +74,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	//=======================
 	InitConsoleCommands();
 	//=======================
-	if (isDebug && r_debug->GetIVal() == 1)
+	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
 		glContextType = AttributeType::DEBUG;
 	else
 		glContextType = AttributeType::CORE;
@@ -275,7 +275,7 @@ void GLRenderer::glInit()
 {
 	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
-	if (glContextType == AttributeType::DEBUG || r_debug->GetIVal() == 1)
+	if (glContextType == AttributeType::DEBUG || GET_CVAR("r_Debug")->GetIVal() == 1)
 	{
 		m_pSystem->Log("Create debug render context");
 		glDebug = std::make_shared<OpenglDebuger>("out/glDebug.txt");
@@ -650,17 +650,12 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
 	}
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
-	if (render_via_viewport->GetIVal() == 0)
+
 	{
 		m_ScreenShader->Uniform(projection, "projection");
 		m_ScreenShader->Uniform(uv_projection, "uv_projection");
 		m_ScreenShader->Uniform(model, "model");
 	}
-	else
-	{
-		SetViewport(xpos, GetHeight() - h, xpos + w, GetHeight() - ypos - h);
-	}
-
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 	DrawFullscreenQuad();
 }

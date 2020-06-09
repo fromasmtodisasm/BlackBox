@@ -39,6 +39,7 @@ public:
 	CBaseVariable(const char* name)
 		: m_Name(name)
   {
+	  CBaseVariable::SetFlags(VF_DUMPTODISK);
   }
 	~CBaseVariable()
   {
@@ -54,7 +55,24 @@ public:
 		return m_Name.c_str();
 	}
 
-  string m_Name;
+	virtual void ClearFlags(int flags) override
+	{
+		m_Flags &= ~flags;
+	}
+
+	virtual int GetFlags() override
+	{
+		return m_Flags;
+	}
+
+	virtual int SetFlags(int flags) override
+	{
+		m_Flags |= flags;
+		return m_Flags;
+	}
+
+	string m_Name;
+	int m_Flags;
 };
 
 class CCVar : public CBaseVariable
@@ -78,9 +96,6 @@ public:
   virtual void Set(float f) override;
   virtual void Set(int i) override;
   virtual void Refresh() override;
-  virtual void ClearFlags(int flags) override;
-  virtual int GetFlags() override;
-  virtual int SetFlags(int flags) override;
   virtual int GetType() override;
   virtual const char* GetHelp() override;
 
@@ -118,9 +133,6 @@ public:
   virtual void Set(float f) override;
   virtual void Set(int i) override;
   virtual void Refresh() override;
-  virtual void ClearFlags(int flags) override;
-  virtual int GetFlags() override;
-  virtual int SetFlags(int flags) override;
   virtual int GetType() override;
   virtual const char* GetHelp() override;
 
@@ -187,6 +199,7 @@ struct Cursor : Text
 
 typedef std::vector<Text> CommandLine;
 
+using ConfigVar = std::map<string, string>;
 using VariablesMap = std::map<std::string, ICVar*>;
 using KeyBindMap = std::map<EKeyId, std::wstring>;
 using CommandMap = std::map<std::wstring, CommandInfo>;
@@ -300,13 +313,14 @@ public:
 
   void CreateKeyBind(const char* key, const char* cmd) override;
   virtual void SetInputLine(const char* szLine) override;
+	virtual void LoadConfigVar(const char* sVariable, const char* sValue) override;
   virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
   virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
   virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
   virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
-  virtual char* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "")  override;
-  virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
-  virtual int Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
+  virtual ICVar* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "")  override;
+  virtual ICVar* Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
+  virtual ICVar* Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
 
   virtual void Exit(const char* command, ...) override;
   virtual char* GetVariable(const char* szVarName, const char* szFileName, const char* def_val) override;
@@ -388,6 +402,7 @@ private:
   glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
 
   VariablesMap m_mapVariables;
+  ConfigVar m_ConfigVars;
 
   ICVarDumpSink* m_pCVarDumpCallback = nullptr;
   ICVar* r_anim_speed;

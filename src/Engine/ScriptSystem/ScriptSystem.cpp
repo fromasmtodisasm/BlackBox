@@ -15,6 +15,9 @@
 #include <cstdarg>
 #include <cstring>
 
+#undef CryLog
+#define CryLog(format, ...) ScriptWarning(format, __VA_ARGS__)
+
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
 static ISystem* gISystem = nullptr;

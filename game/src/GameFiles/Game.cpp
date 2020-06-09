@@ -187,19 +187,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	InitConsoleVars();
 	initCommands();
 	InitScripts();
-	auto init_cfg = m_Console->GetCVar("game_config");
-	if (init_cfg == nullptr)
-	{
-		//TODO: log: game config not specified
-		return false;
-	}
-	m_Console->ExecuteFile((std::string("res/scripts/") + init_cfg->GetString()).c_str());
-	const auto is_complete = m_Console->GetCVar("g_init_complete");
-	if (is_complete == nullptr)
-	{
-		//TODO: log: error load Init.cfg
-		return false;
-	}
+	
+	LoadConfiguration("","game.cfg");
 
 	// init key-bindings
 	if (!m_bDedicatedServer)
@@ -302,7 +291,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 bool CGame::Update()
 {
-	static const auto& render_game = m_Console->GetCVar("render_game");
+	static const auto& render_game = true;
 	const bool bRenderFrame			   = !m_bDedicatedServer;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
@@ -318,31 +307,28 @@ bool CGame::Update()
 		{
 			SetRenderState();
 			m_pSystem->RenderBegin();
-			if (render_game)
 			{
-				if (render_game->GetIVal() != 0)
-				{
-					//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
-					m_CameraController.SetRenderCamera(0);
-					auto cam = m_CameraController.RenderCamera();
-					//cam->SetAngles(Vec3(0,0,0));
-					//cam->SetPos(Vec3(0, 40, 0));
-					cam->updateCameraVectors();
-					
+				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+				m_CameraController.SetRenderCamera(0);
+				auto cam = m_CameraController.RenderCamera();
+				//cam->SetAngles(Vec3(0,0,0));
+				//cam->SetPos(Vec3(0, 40, 0));
+				cam->updateCameraVectors();
+				
 
-					cam->type = CCamera::Type::Perspective;
-					Render();
-					#if 0
-					m_pRender->Flush();
-					m_CameraController.SetRenderCamera(1);
-					m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
-					m_pRender->SetViewport(0, m_pRender->GetHeight() / 2, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
-					Render();
-					#endif
-					m_CameraController.SetRenderCamera(render_camera);
+				cam->type = CCamera::Type::Perspective;
+				Render();
+				#if 0
+				m_pRender->Flush();
+				m_CameraController.SetRenderCamera(1);
+				m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
+				m_pRender->SetViewport(0, m_pRender->GetHeight() / 2, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+				Render();
+				#endif
+				m_CameraController.SetRenderCamera(render_camera);
 
-				}
 			}
+
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
 			//PROFILER_POP_CPU_MARKER();
@@ -449,8 +435,6 @@ void CGame::DisplayInfo(float fps)
 	}
 
 	//render->PrintLine("To hide depth buffer press <;>\n", dti);
-	render->PrintLine((std::string("Camera width = ") + std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
-	render->PrintLine((std::string("Camera height = ") + std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
 	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
 
 	info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
@@ -1153,10 +1137,6 @@ bool CGame::TestScriptSystem(bool& retflag)
 #endif
 	retflag = false;
 	return {};
-}
-
-void CGame::SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile)
-{
 }
 
 void CGame::ReloadScripts()

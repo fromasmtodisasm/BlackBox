@@ -896,6 +896,31 @@ void CConsole::SetInputLine(const char* szLine)
   m_Cursor.x = 0;
 }
 
+void CConsole::LoadConfigVar(const char* szVariable, const char* sValue)
+{
+	ICVar* pCVar = GetCVar(szVariable);
+	if (pCVar)
+	{
+		const bool isCheat = ((pCVar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0);
+		const bool isReadOnly = ((pCVar->GetFlags() & VF_READONLY) != 0);
+		const bool isDeprecated = ((pCVar->GetFlags() & VF_DEPRECATED) != 0);
+		const bool wasInConfig = ((pCVar->GetFlags() & VF_WASINCONFIG) != 0);
+		const bool fromSystemConfig = ((pCVar->GetFlags() & VF_SYSSPEC_OVERWRITE) != 0);
+		bool allowChange = true;
+
+		if (allowChange)
+		{
+			pCVar->Set(sValue);
+		}
+		return;
+	}
+
+  if (auto it = m_ConfigVars.find(szVariable); it == m_ConfigVars.end())
+	{
+	  m_ConfigVars[szVariable] = sValue;
+	}
+}
+
 void CConsole::ClearInputLine()
 {
   m_CommandW.clear();
@@ -1005,74 +1030,6 @@ void CConsole::UnregisterVariable(const char* sVarName, bool bDelete/* = false*/
 		delete var;
 	}
 }
-
-char* CConsole::Register(const char* name, const char** src, const char* defaultvalue, int flags, const char* help/* = ""*/)
-{
-  ICVar* pCVar(nullptr);
-  auto it = m_mapVariables.find(name);
-  if (it != m_mapVariables.end())
-  {
-    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
-#if LOG_CVAR_INFRACTIONS_CALLSTACK
-    gEnv->pSystem->debug_LogCallStack();
-#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
-    return 0;
-  }
-  /*
-  if (!allowModify)
-    nFlags |= VF_CONST_CVAR;
-  */
-  pCVar = new CCVarRef(name, src, help);
-  *src = defaultvalue;
-  RegisterVar(pCVar/*, pChangeFunc*/);
-  return 0;
-}
-
-float CConsole::Register(const char* name, float* src, float defaultvalue, int flags/* = 0*/, const char* help/* = ""*/)
-{
-  ICVar* pCVar(nullptr);
-  auto it = m_mapVariables.find(name);
-  if (it != m_mapVariables.end())
-  {
-    pCVar = it->second;
-    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
-#if LOG_CVAR_INFRACTIONS_CALLSTACK
-    gEnv->pSystem->debug_LogCallStack();
-#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
-    return 0;
-  }
-  /*
-  if (!allowModify)
-    nFlags |= VF_CONST_CVAR;
-  */
-  pCVar = new CCVarRef(name, src, help);
-  *src = defaultvalue;
-  RegisterVar(pCVar/*, pChangeFunc*/);
-  return 0.0f;
-}
-
-int CConsole::Register(const char* name, int* src, int defaultvalue, int flags/* = 0*/, const char* help/* = ""*/)
-{
-  ICVar* pCVar(nullptr);
-  auto it = m_mapVariables.find(name);
-  if (it != m_mapVariables.end())
-  {
-    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
-#if LOG_CVAR_INFRACTIONS_CALLSTACK
-    gEnv->pSystem->debug_LogCallStack();
-#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
-    return 0;
-  }
-  /*
-  if (!allowModify)
-    nFlags |= VF_CONST_CVAR;
-  */
-  pCVar = new CCVarRef(name, src, help);
-  *src = defaultvalue;
-  RegisterVar(pCVar/*, pChangeFunc*/);
-  return 0;
-}
-
 void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags/* = 0*/, const char* help/* = ""*/)
 {
   CommandInfo cmdInfo;
@@ -1086,7 +1043,7 @@ void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 {
   for (auto& var : m_mapVariables)
   {
-    OnElementFound(var.second);
+    pCallback->OnElementFound(var.second);
   }
 }
 
@@ -1188,27 +1145,140 @@ bool CConsole::IsOpened()
 
 ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help)
 {
-  ICVar* var = new CCVar(sName, strdup(sValue), const_cast<char*>(help));
-  if (var == nullptr) return var;
-  m_mapVariables[sName] = var;
-  return var;
+  ICVar* pCVar(nullptr);
+  auto it = m_mapVariables.find(sName);
+  if (it != m_mapVariables.end())
+  {
+    pCVar = it->second;
+    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(string): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+    gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+    return pCVar;
+  }
+  /*
+  if (!allowModify)
+    nFlags |= VF_CONST_CVAR;
+  */
+  pCVar = new CCVar(sName, strdup(sValue), const_cast<char*>(help));
+  RegisterVar(pCVar/*, pChangeFunc*/);
+  return pCVar;
 }
 
 ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const char* help)
 {
-  ICVar* var = new CCVar(sName, iValue, const_cast<char*>(help));
-  if (var == nullptr) return var;
-  m_mapVariables[sName] = var;
-  return var;
+  ICVar* pCVar(nullptr);
+  auto it = m_mapVariables.find(sName);
+  if (it != m_mapVariables.end())
+  {
+	  pCVar = it->second;
+    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(int): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+    gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+    return pCVar;
+  }
+  /*
+  if (!allowModify)
+    nFlags |= VF_CONST_CVAR;
+  */
+  pCVar = new CCVar(sName, iValue, const_cast<char*>(help));
+  RegisterVar(pCVar/*, pChangeFunc*/);
+  return pCVar;
 }
 
 ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, const char* help)
 {
-  ICVar* var = new CCVar(sName, fValue, const_cast<char*>(help));
-  if (var == nullptr) return var;
-  m_mapVariables[sName] = var;
-  return var;
+  ICVar* pCVar(nullptr);
+  auto it = m_mapVariables.find(sName);
+  if (it != m_mapVariables.end())
+  {
+    pCVar = it->second;
+    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+    gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+    return pCVar;
+  }
+  /*
+  if (!allowModify)
+    nFlags |= VF_CONST_CVAR;
+  */
+  
+  pCVar = new CCVar(sName, fValue, const_cast<char*>(help));
+  RegisterVar(pCVar/*, pChangeFunc*/);
+  return pCVar;
 }
+
+ICVar* CConsole::Register(const char* name, const char** src, const char* defaultvalue, int flags, const char* help/* = ""*/)
+{
+  ICVar* pCVar(nullptr);
+  auto it = m_mapVariables.find(name);
+  if (it != m_mapVariables.end())
+  {
+    pCVar = it->second;
+    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(string): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+    gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+	return pCVar;
+  }
+  /*
+  if (!allowModify)
+    nFlags |= VF_CONST_CVAR;
+  */
+  pCVar = new CCVarRef(name, src, help);
+  *src = defaultvalue;
+  RegisterVar(pCVar/*, pChangeFunc*/);
+  return pCVar;
+}
+
+ICVar* CConsole::Register(const char* name, float* src, float defaultvalue, int flags/* = 0*/, const char* help/* = ""*/)
+{
+  ICVar* pCVar(nullptr);
+  auto it = m_mapVariables.find(name);
+  if (it != m_mapVariables.end())
+  {
+    pCVar = it->second;
+    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+    gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+    return pCVar;
+  }
+  /*
+  if (!allowModify)
+    nFlags |= VF_CONST_CVAR;
+  */
+  pCVar = new CCVarRef(name, src, help);
+  RegisterVar(pCVar/*, pChangeFunc*/);
+  return pCVar;
+  
+}
+
+ICVar* CConsole::Register(const char* name, int* src, int defaultvalue, int flags/* = 0*/, const char* help/* = ""*/)
+{
+  ICVar* pCVar(nullptr);
+  auto it = m_mapVariables.find(name);
+  if (it != m_mapVariables.end())
+  {
+	  pCVar = it->second;
+    GetISystem()->GetILog()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(int): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+    gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+    return pCVar;
+  }
+  /*
+  if (!allowModify)
+    nFlags |= VF_CONST_CVAR;
+  */
+  pCVar = new CCVarRef(name, src, help);
+  *src = defaultvalue;
+  RegisterVar(pCVar/*, pChangeFunc*/);
+  return pCVar;
+}
+
 
 void CConsole::AddInputChar(uint32_t ch)
 {
@@ -1299,6 +1369,28 @@ bool CConsole::handleCommand(std::wstring command)
 
 void CConsole::RegisterVar(ICVar* pCVar)
 {
+	const bool isCheat = ((pCVar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0);
+	const bool isReadOnly = ((pCVar->GetFlags() & VF_READONLY) != 0);
+	const bool isDeprecated = ((pCVar->GetFlags() & VF_DEPRECATED) != 0);
+
+	auto it = m_ConfigVars.find(pCVar->GetName());
+	if (it != m_ConfigVars.end())
+	{
+		bool allowChange			  = true;
+
+		if (allowChange)
+		{
+			pCVar->Set(it->second.c_str());
+		}
+
+		m_ConfigVars.erase(it);
+	}
+	else
+	{
+		// Variable is not modified when just registered.
+		pCVar->ClearFlags(VF_MODIFIED);
+	}
+
   m_mapVariables[pCVar->GetName()] = pCVar;
 }
 
@@ -1389,8 +1481,15 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
     case AFTER_EQ:
 		if (command[i] != L' ')
 		{
-			state1 = ARGS;
-			current_arg += command[i];
+			if (command[i] == '\"')
+			{
+				state1 = INSTRING;
+			}
+			else
+			{
+				state1 = ARGS;
+				current_arg += command[i];
+			}
 		}
 		break;
     case INARGSPACE:
@@ -1679,20 +1778,6 @@ void CCVar::Refresh()
   value.i = 0;
 }
 
-void CCVar::ClearFlags(int flags)
-{
-}
-
-int CCVar::GetFlags()
-{
-  return 0;
-}
-
-int CCVar::SetFlags(int flags)
-{
-  return 0;
-}
-
 int CCVar::GetType()
 {
   return type;
@@ -1794,20 +1879,6 @@ void CCVarRef::Set(int i)
 void CCVarRef::Refresh()
 {
   *value.i = 0;
-}
-
-void CCVarRef::ClearFlags(int flags)
-{
-}
-
-int CCVarRef::GetFlags()
-{
-  return 0;
-}
-
-int CCVarRef::SetFlags(int flags)
-{
-  return 0;
 }
 
 int CCVarRef::GetType()
