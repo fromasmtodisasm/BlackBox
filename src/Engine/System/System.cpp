@@ -116,21 +116,14 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 
 CSystem::~CSystem()
 {
-	Log("Releasing system");
-    SAFE_RELEASE(r_window_width);
-    SAFE_RELEASE(r_window_height);
-    SAFE_RELEASE(r_bpp);
-    SAFE_RELEASE(r_zbpp);
-    SAFE_RELEASE(r_sbpp);
-    SAFE_RELEASE(r_fullscreen);
+	CSystem::Log("Releasing system");
 
-	//SAFE_DELETE(m_pLog);
-	SAFE_RELEASE(m_pLog);
-	SAFE_DELETE(m_pConsole);
-    SAFE_RELEASE(m_pGame);
+	SAFE_RELEASE(m_pGame);
 	//SAFE_DELETE(m_pFont);
-    SAFE_RELEASE(m_pWindow);
+	SAFE_RELEASE(m_pWindow);
+	SAFE_RELEASE(m_pConsole);
 	SAFE_RELEASE(m_Render);
+	SAFE_RELEASE(m_pLog);
 }
 
 void CSystem::PreprocessCommandLine()
@@ -373,7 +366,7 @@ IGame* CSystem::CreateGame(IGame* game)
 void CSystem::Quit()
 {
 	m_pGame->SendMessage("Quit");
-	m_pGame->Release();
+	Release();
 
 	exit(0);
 }

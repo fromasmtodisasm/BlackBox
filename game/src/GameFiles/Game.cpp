@@ -30,8 +30,8 @@ namespace
 {
 	Vec3 RandomVector(Vec3 left, Vec3 right, float floor = 5)
 	{
-		Vec3 vec(rand(), rand(), rand());
-		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(float(RAND_MAX))/(right - left)));
+		const Vec3 vec(rand(), rand(), rand());
+		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(static_cast<float>(RAND_MAX))/(right - left)));
 	}
 
 	std::string vec_to_string(Vec3 vec)
@@ -105,38 +105,47 @@ void CGame::PreRender()
 }
 
 CGame::CGame()
-	: g_scene(nullptr),
-	  listener(nullptr),
-	  m_Console(nullptr),
-	  m_Font(nullptr),
-	  m_pLog(nullptr),
-	  m_inputHandler(nullptr),
-	  m_player(nullptr),
-	  m_pSystem(nullptr),
-	  m_3DEngine(nullptr),
-	  m_Title("Test"),
-	  m_pScriptObjectGame(nullptr),
-	  m_pRender(nullptr),
-	  m_pInput(nullptr),
-	  m_pScriptSystem(nullptr),
-	  r_displayinfo(nullptr),
-	  r_cap_profile(nullptr),
-	  r_profile(nullptr),
-	  m_pCVarCheatMode(nullptr),
-
-	  m_currentLevelFolder("tmp")
+	:
+	m_pSystem(nullptr),
+	m_pScriptSystem(nullptr),
+	m_pRender(nullptr),
+	m_pInput(nullptr),
+	m_inputHandler(nullptr),
+	m_3DEngine(nullptr), m_pLog(nullptr),
+	m_lastTime(0),
+	listener(nullptr),
+	m_Font(nullptr),
+	m_Console(nullptr),
+	g_scene(nullptr),
+	r_displayinfo(nullptr),
+	r_profile(nullptr),
+	r_cap_profile(nullptr),
+	m_pCVarCheatMode(nullptr),
+	m_pScriptObjectGame(nullptr),
+	m_CameraController(),
+	m_IntersectionState()
 {
-#pragma warning(push)
-#pragma warning(disable : 4244)
-	srand(time(nullptr));
-#pragma warning(push)
-	m_deltaTime = 0.0f;
-	m_lastTime  = 0.0f;
-#ifdef ENABLE_MUSIC_LIST
-	m_PlayList.setRootPath("res/music/");
-	m_PlayList.addTrack("background.ogg");
-	m_PlayList.addTrack("japan.ogg");
-#endif
+
+	//const auto ltime = time (NULL);
+	//auto stime = (unsigned int) ltime/2;
+	//srand(stime);
+}
+
+void CGame::initVariables()
+{
+}
+
+CGame::~CGame()
+{
+	m_pScriptSystem->BeginCall("Shutdown");
+	m_pScriptSystem->PushFuncParam(0);
+	m_pScriptSystem->EndCall();
+
+	// shutdown the client if there is one
+	ShutdownClient();
+
+	// shutdown the server if there is one
+	ShutdownServer();
 }
 
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
@@ -154,7 +163,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		m_pInput->AddEventListener(this);
 		m_pInput->AddEventListener(&m_CameraController);
 		gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
-		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(m_pRender->GetWidth(), m_pRender->GetHeight());
+		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRender->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
 	}
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
@@ -185,7 +194,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		return false;
 	}
 	m_Console->ExecuteFile((std::string("res/scripts/") + init_cfg->GetString()).c_str());
-	auto is_complete = m_Console->GetCVar("g_init_complete");
+	const auto is_complete = m_Console->GetCVar("g_init_complete");
 	if (is_complete == nullptr)
 	{
 		//TODO: log: error load Init.cfg
@@ -270,8 +279,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	Vec3 left(-40, -40, -40);
 	Vec3 right(40, 40, 40);
 	auto create_obj = [&]()->auto {
-
-		auto rand_pos = RandomVector(left, right);
+		const auto rand_pos = RandomVector(left, right);
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
@@ -295,7 +303,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 bool CGame::Update()
 {
 	static const auto& render_game = m_Console->GetCVar("render_game");
-	bool bRenderFrame			   = !m_bDedicatedServer;
+	const bool bRenderFrame			   = !m_bDedicatedServer;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	{
@@ -380,10 +388,10 @@ void CGame::DisplayInfo(float fps)
 	auto line   = m_pRender->GetHeight();
 	auto step   = 18;
 
-	std::string mode = m_Mode == MENU ? "MENU"
-									  : m_Mode == FPS ? "FPS"
-													  : m_Mode == FLY ? "FLY"
-																	  : "EDIT";
+	const std::string mode = m_Mode == MENU ? "MENU"
+		                         : m_Mode == FPS ? "FPS"
+		                         : m_Mode == FLY ? "FLY"
+		                         : "EDIT";
 
 	// Info
 	TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
@@ -457,7 +465,7 @@ void CGame::DisplayInfo(float fps)
 		Vec2 c;
 		m_pSystem->GetIHardwareMouse()->GetHardwareMouseClientPosition(&c.x, &c.y);
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */ c.y)).c_str(), info.getDTI());
-		m_Font->SetYPos(m_pRender->GetHeight() / 2);
+		m_Font->SetYPos((float)m_pRender->GetHeight() / 2);
 		{
 			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
 			auto pos = std::to_string(lpp.x) + ",";
@@ -572,11 +580,11 @@ bool CGame::OnInputEvent(const SInputEvent& event)
 {
 	{
 		bool retflag;
-		bool retval = ShouldHandleEvent(event, retflag);
+		const bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag)
 			return retval;
 	}
-	bool result = false;
+	const bool result = false;
 	if (!IsInPause())
 		OnInputEventProxy(event);
 	PersistentHandler(event);
@@ -587,9 +595,9 @@ void CGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	////////////////////////
-    bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
+	const bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
+	const bool control	= event.modifiers & eMM_Ctrl;
+	const bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
 	////////////////////////
 	if (keyPressed)
@@ -618,8 +626,8 @@ void CGame::PersistentHandler(const SInputEvent& event)
 				gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 				if (m_Mode != MENU)
 				{
-					m_IntersectionState.mx= m_pRender->GetWidth() / 2;
-					m_IntersectionState.my= m_pRender->GetHeight() / 2;
+					m_IntersectionState.mx= (float)m_pRender->GetWidth() / 2;
+					m_IntersectionState.my= (float)m_pRender->GetHeight() / 2;
 				}
 			}
       break;
@@ -627,7 +635,7 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		case eKI_1:
 		case eKI_2:
 		{
-			auto id = event.keyId - eKI_1;
+			const auto id = event.keyId - eKI_1;
 			if (control)
 			{
 				movement_camera = id;
@@ -721,10 +729,10 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
   */
 
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
-	bool alt		= event.modifiers & eMM_Alt;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool control	= event.modifiers & eMM_Ctrl;
+	const bool shift		= event.modifiers & eMM_Shift;
+	const bool alt		= event.modifiers & eMM_Alt;
 	////////////////////////
 	auto camera = gEnv->pRenderer->GetCamera();
 	if (keyPressed)
@@ -807,7 +815,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 bool CGame::FlyInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -840,7 +848,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 bool CGame::MenuInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -949,7 +957,7 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 
 bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -1044,10 +1052,12 @@ bool CGame::InitScripts()
   m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
 #endif
 
-	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
+	m_pScriptSystem->ExecuteFile("scripts/main.lua", true, false);
+	m_pScriptSystem->BeginCall("Init");
+	m_pScriptSystem->PushFuncParam(0);
+	m_pScriptSystem->EndCall();
 
 	fps = 35.f;
-	m_pScriptSystem->ExecuteFile("scripts/game.lua", true, false);
 	class toogle_viewport_drag : public IConsoleCommand
 	{
 		CGame* game;
@@ -1184,13 +1194,13 @@ void CGame::DrawAux()
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
-	UCol col(255, 255, 255, 255);
+	const UCol col(255, 255, 255, 255);
 	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
 	render->DrawLine(
 		{-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 40, y = 0, z = -40;
 	{
-		UCol col1(50, 125, 0, 100);
+		const UCol col1(50, 125, 0, 100);
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 
@@ -1231,7 +1241,7 @@ void CGame::DrawAux()
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
 	DrawAxis(render, Vec3(40));
-	m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 40, 40, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
+	m_pRender->DrawImage(static_cast<float>(m_pRender->GetWidth()) / 2, static_cast<float>(m_pRender->GetHeight()) / 2, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
 void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
@@ -1242,17 +1252,17 @@ void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
 	{
 		auto& a = axis;
 		{
-			UCol c = Vec3(1, 0, 0);
+			const UCol c = Vec3(1, 0, 0);
 			render->DrawLine(
 				{-a.x, 0, 0}, c, {a.x, 0, 0}, c);
 		}
 		{
-			UCol c = Vec3(0, 1, 0);
+			const UCol c = Vec3(0, 1, 0);
 			render->DrawLine(
 				{0, -a.y, 0}, c, {0, a.y, 0}, c);
 		}
 		{
-			UCol c = Vec3(0, 0, 1);
+			const UCol c = Vec3(0, 0, 1);
 			render->DrawLine(
 				{0, 0, -a.z}, c, {0, 0, a.z}, c);
 		}
@@ -1288,9 +1298,9 @@ void CGame::IntersectionByRayCasting()
 	eyeRay.origin = m_CameraController.RenderCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 
-	auto lastPos = m_IntersectionState.m_LastPickedPos; 
+	const auto lastPos = m_IntersectionState.m_LastPickedPos; 
 	for (size_t i = 0; i < m_testObjects.size(); i++){
-		glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
+		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
 		if (tMinMax.x < 0 || tMinMax.y < 0)
 			continue;
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {

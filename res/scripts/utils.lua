@@ -64,7 +64,7 @@ function init()
 	Console:CreateKeyBind("ctrl_g", "#setFog(0,0.01,0.01)")  
 
 	Console:CreateKeyBind("xi_b", "quit")  
-	Console:CreateKeyBind("xi_back", "#Game:gotoMenu()")  
+	--Console:CreateKeyBind("xi_back", "#Game:gotoMenu()")  
 
 
 	--addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
@@ -85,8 +85,9 @@ function init()
 	Console:CreateKeyBind("f5", "screen_shot") 
 	Console:CreateKeyBind("ctrl_s", "scene load test") 
 	Console:CreateKeyBind("ctrl_p", "reload_scripts") 
-	Console:CreateKeyBind("ctrl_c", "#Game:gotoMenu()") 
+	--Console:CreateKeyBind("ctrl_c", "#Game:gotoMenu()") 
 	Console:CreateKeyBind("f7", "#Game:gotoGame()") 
+	Console:CreateKeyBind("ctrl_q", "#Game:Quit()") 
 
 
 	setFog(0,0,0)
@@ -108,5 +109,4 @@ end
 
 init()
 Console:PrintLine("TestChanges")
-tealkfj
 

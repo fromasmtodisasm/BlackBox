@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
@@ -32,20 +33,43 @@ struct cmpKeys {
   }
 };
 
-class CCVar : public ICVar
+class CBaseVariable : public ICVar
 {
 public:
-  CCVar(const char* name, int value, char* help) : name(name), value(value), type(CVAR_INT), help(help) {}
-  CCVar(const char* name, const char* value, char* help) : name(name), value(value), type(CVAR_STRING), help(help) {}
-  CCVar(const char* name, float value, char* help) : name(name), value(value), type(CVAR_FLOAT), help(help) {}
-  CCVar() : name(""), value(0.0f), type(CVAR_STRING), help(nullptr) {}
+	CBaseVariable(const char* name)
+		: m_Name(name)
+  {
+  }
+	~CBaseVariable()
+  {
+		gEnv->pLog->Log("Unregistering %s variable", m_Name.c_str());
+  }
+  virtual void Release() override
+  {
+	  gEnv->pConsole->UnregisterVariable(m_Name.c_str()); 
+  }
+
+	virtual const char* GetName() override
+	{
+		return m_Name.c_str();
+	}
+
+  string m_Name;
+};
+
+class CCVar : public CBaseVariable
+{
+public:
+  CCVar(const char* name, int value, char* help) : CBaseVariable(name), value(value), type(CVAR_INT), help(help) {}
+  CCVar(const char* name, const char* value, char* help) : CBaseVariable(name), value(value), type(CVAR_STRING), help(help) {}
+  CCVar(const char* name, float value, char* help) : CBaseVariable(name), value(value), type(CVAR_FLOAT), help(help) {}
+  CCVar() : CBaseVariable(""), value(0.0f), type(CVAR_STRING), help(nullptr) {}
 
   ~CCVar()
   {
   }
 
   // Inherited via ICVar
-  virtual void Release() override;
   virtual int GetIVal() override;
   virtual float GetFVal() override;
   virtual char* GetString() override;
@@ -58,11 +82,9 @@ public:
   virtual int GetFlags() override;
   virtual int SetFlags(int flags) override;
   virtual int GetType() override;
-  virtual const char* GetName() override;
   virtual const char* GetHelp() override;
 
 private:
-  string name;
   union Value {
     int i;
     char* s;
@@ -75,12 +97,12 @@ private:
   char* help;
 };
 
-class CCVarRef : public ICVar
+class CCVarRef : public CBaseVariable
 {
 public:
-  CCVarRef(const char* name, int* value, const char* help) : name(name), value(value), type(CVAR_INT), help(help) {}
-  CCVarRef(const char* name, const char** value, const char* help) : name(name), value(value), type(CVAR_STRING), help(help) {}
-  CCVarRef(const char* name, float* value, const char* help) : name(name), value(value), type(CVAR_FLOAT), help(help) {}
+  CCVarRef(const char* name, int* value, const char* help) : CBaseVariable(name), value(value), type(CVAR_INT), help(help) {}
+  CCVarRef(const char* name, const char** value, const char* help) : CBaseVariable(name), value(value), type(CVAR_STRING), help(help) {}
+  CCVarRef(const char* name, float* value, const char* help) : CBaseVariable(name), value(value), type(CVAR_FLOAT), help(help) {}
   //CCVarRef() : name(""), value(nullptr), type(CVAR_STRING), help(nullptr) {}
 
   ~CCVarRef()
@@ -88,7 +110,6 @@ public:
   }
 
   // Inherited via ICVar
-  virtual void Release() override;
   virtual int GetIVal() override;
   virtual float GetFVal() override;
   virtual char* GetString() override;
@@ -101,11 +122,9 @@ public:
   virtual int GetFlags() override;
   virtual int SetFlags(int flags) override;
   virtual int GetType() override;
-  virtual const char* GetName() override;
   virtual const char* GetHelp() override;
 
 private:
-  const char* name;
   union Value {
     int* i;
     char** s;
@@ -407,6 +426,10 @@ private:
 
                                                               // Inherited via IConsole
   virtual const char* FindKeyBind(const char* sCmd) override;
+
+  
+// Inherited via IConsole
+  virtual void Release() override;
 
   // Inherited via IConsole
 };

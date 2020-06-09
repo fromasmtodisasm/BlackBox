@@ -133,7 +133,7 @@ void CConsole::Draw()
   if (!m_nProgressRange)
   {
     render->SetRenderTarget(0);
-    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, time * r_anim_speed->GetFVal(), 0, 0, 0, 0, 0, 0, transparency);
+    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, time * r_anim_speed->GetFVal(), 0, 0, 0, 1, 1, 1, transparency);
     CalcMetrics(end);
     m_Font->SetXPos(0);
     m_Font->SetYPos(16);
@@ -972,6 +972,11 @@ const char* CConsole::FindKeyBind(const char* sCmd)
 	return 0;
 }
 
+void CConsole::Release()
+{
+	delete this;
+}
+
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)
 {
   CommandInfo cmdInfo;
@@ -993,7 +998,12 @@ void CConsole::RemoveWorkerCommand(IWorkerCommand* cmd)
 
 void CConsole::UnregisterVariable(const char* sVarName, bool bDelete/* = false*/)
 {
-  //TODO: implement this
+	if (auto it = m_mapVariables.find(sVarName); it != m_mapVariables.end())
+	{
+		ICVar* var = it->second;
+		m_mapVariables.erase(it);
+		delete var;
+	}
 }
 
 char* CConsole::Register(const char* name, const char** src, const char* defaultvalue, int flags, const char* help/* = ""*/)
@@ -1485,6 +1495,14 @@ CConsole::~CConsole()
 {
   if (m_Font) delete m_Font;
   if (m_pBackGround) delete m_pBackGround;
+
+	if (!m_mapVariables.empty())
+	{
+		while (!m_mapVariables.empty())
+			m_mapVariables.begin()->second->Release();
+
+		m_mapVariables.clear();
+	}
 }
 
 void CConsole::ShowConsole(bool show)
@@ -1680,18 +1698,9 @@ int CCVar::GetType()
   return type;
 }
 
-const char* CCVar::GetName()
-{
-  return name.data();
-}
-
 const char* CCVar::GetHelp()
 {
   return help;
-}
-
-void CCVar::Release()
-{
 }
 
 int CCVar::GetIVal()
@@ -1712,10 +1721,6 @@ float CCVar::GetFVal()
     value.f = static_cast<float>(std::atof(value.s));
   type = CVAR_FLOAT;
   return value.f;
-}
-
-void CCVarRef::Release()
-{
 }
 
 int CCVarRef::GetIVal()
@@ -1808,11 +1813,6 @@ int CCVarRef::SetFlags(int flags)
 int CCVarRef::GetType()
 {
   return type;
-}
-
-const char* CCVarRef::GetName()
-{
-  return name;
 }
 
 const char* CCVarRef::GetHelp()

@@ -111,6 +111,12 @@ struct CommandDesc
 
 struct IConsole
 {
+	// <interfuscator:shuffle>
+	virtual ~IConsole(){}
+
+	//! Deletes the console.
+	virtual void Release() = 0;
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /*! Crate a new console variable
     @param sName console variable name
@@ -308,6 +314,7 @@ struct IConsole
 //! (with the same name of the variable in the console)
 struct ICVar
 {
+	virtual ~ICVar() {}
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /*! delete the variable
     NOTE: the variable will automatically unregister itself from the console

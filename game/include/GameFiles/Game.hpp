@@ -214,7 +214,7 @@ struct TestObject
 	bool intersected = false;
 };
 
-class CGame 
+class CGame final
 	: public IGame
 	, public IInputEventListener
 	, public IPostRenderCallback
@@ -236,7 +236,7 @@ class CGame
 	};
 
 	CGame();
-	~CGame() = default;
+	~CGame();
 
 	const char* IsMODLoaded();
 	IGameMods* GetModsInterface();
@@ -404,15 +404,15 @@ class CGame
 
 	BEGIN_INPUTACTIONMAP()
 		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
-	END_INPUTACTIONMAP() 
+	END_INPUTACTIONMAP()
 
-  public:
-	float m_deltaTime;
+public:
+	float m_deltaTime = 0.f;
 
   public:
 	ISystem* m_pSystem;			   //!< The system interface
 	CXServer* m_pServer = nullptr; //!< The server of this computer
-	CXClient* m_pClient;		   //!< The client of this computer
+	CXClient* m_pClient{};		   //!< The client of this computer
 	IScriptSystem* m_pScriptSystem;
 	IRenderer* m_pRender;
 	IInput* m_pInput;
@@ -420,7 +420,7 @@ class CGame
 	I3DEngine* m_3DEngine;
 	CPlayer* m_player = nullptr;
 	ILog* m_pLog;
-	INetwork* m_pNetwork;
+	INetwork* m_pNetwork{};
 	StringQueue m_qMessages;
 
 	int m_RenderTarget = -1;
@@ -459,12 +459,12 @@ class CGame
 	//!	The dummy client of this computer, required to get the list of servers if
 	//! theres not a real client actually connected and playing
 
-	IServerSnooper* m_pServerSnooper;		//!< used for LAN Multiplayer, to remove control servers
-	INETServerSnooper* m_pNETServerSnooper; //!< used for Internet Multiplayer, to remove control servers
+	IServerSnooper* m_pServerSnooper{};		//!< used for LAN Multiplayer, to remove control servers
+	INETServerSnooper* m_pNETServerSnooper{}; //!< used for Internet Multiplayer, to remove control servers
 	IRConSystem* m_pRConSystem = nullptr;   //!< used for Multiplayer, to remote control servers
 	std::string m_szLastAddress;
-	bool m_bLastDoLateSwitch;
-	bool m_bLastCDAuthentication;
+	bool m_bLastDoLateSwitch{};
+	bool m_bLastCDAuthentication{};
 
 	//CUIHud* m_pUIHud;									//!< Hud
 	//CUIHud* m_pCurrentUI;							//!< for the current ui
@@ -481,30 +481,30 @@ class CGame
 	ICVar* r_cap_profile;
 	ICVar* m_pCVarCheatMode;
 
-	ICVar* g_LevelName;
-	ICVar* g_StartMission;
+	ICVar* g_LevelName{};
+	ICVar* g_StartMission{};
 
-	ICVar* sv_port;
-	ICVar* sv_mapcyclefile;
-	ICVar* sv_cheater_kick;
-	ICVar* sv_cheater_ban;
+	ICVar* sv_port{};
+	ICVar* sv_mapcyclefile{};
+	ICVar* sv_cheater_kick{};
+	ICVar* sv_cheater_ban{};
 
-	ICVar* sv_timeout;
-	ICVar* cl_timeout;
-	ICVar* cl_loadtimeout;
-	ICVar* cl_snooptimeout;
-	ICVar* cl_snoopretries;
-	ICVar* cl_snoopcount;
+	ICVar* sv_timeout{};
+	ICVar* cl_timeout{};
+	ICVar* cl_loadtimeout{};
+	ICVar* cl_snooptimeout{};
+	ICVar* cl_snoopretries{};
+	ICVar* cl_snoopcount{};
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
 	std::string m_strLastSaveGame;
-	bool m_bEditor;
+	bool m_bEditor{};
 	//tPlayerPersistentData			m_tPlayerPersistentData;
 
 	TagPointMap m_mapTagPoints; //!< Map of tag points by name
 	CScriptObjectGame* m_pScriptObjectGame;
-	IScriptObject* m_playerObject;
-	CGameMods* m_pGameMods; //!< might be 0 (before game init)
+	IScriptObject* m_playerObject{};
+	CGameMods* m_pGameMods{}; //!< might be 0 (before game init)
 
 	// other
 	bool canDragViewPortWidth  = false;
@@ -522,11 +522,11 @@ class CGame
 	float fps = 0.0;
 
 	ActionsEnumMap m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
-	struct IActionMapManager* m_pIActionMapManager; //!<
-	bool m_bDedicatedServer;						//!<
-	bool m_bOK;										//!<
-	bool m_bUpdateRet;								//!<
-	bool m_bRelaunch;								//!<
+	struct IActionMapManager* m_pIActionMapManager{}; //!<
+	bool m_bDedicatedServer{};						//!<
+	bool m_bOK{};										//!<
+	bool m_bUpdateRet{};								//!<
+	bool m_bRelaunch{};								//!<
 	bool m_bInPause = false;
 
 	//other

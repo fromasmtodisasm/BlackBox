@@ -215,11 +215,11 @@ public:
 		{
 			if (wheelDelta > 0)
 			{
-        ProcessKeyboard(Movement::FORWARD, 1);
+        ProcessKeyboard(Movement::FORWARD, 0.5);
 			}
 			else
 			{
-        ProcessKeyboard(Movement::BACKWARD, 1);
+        ProcessKeyboard(Movement::BACKWARD, 0.5);
 			}
 		}
 	}
