@@ -1227,8 +1227,7 @@ ICVar* CConsole::Register(const char* name, const char** src, const char* defaul
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVarRef(name, src, help);
-  *src = defaultvalue;
+  pCVar = new CCVarRef(name, src, defaultvalue, help);
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }
@@ -1250,7 +1249,7 @@ ICVar* CConsole::Register(const char* name, float* src, float defaultvalue, int 
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVarRef(name, src, help);
+  pCVar = new CCVarRef(name, src, defaultvalue, help);
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
   
@@ -1273,8 +1272,7 @@ ICVar* CConsole::Register(const char* name, int* src, int defaultvalue, int flag
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVarRef(name, src, help);
-  *src = defaultvalue;
+  pCVar = new CCVarRef(name, src, defaultvalue, help);
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }
@@ -1390,6 +1388,8 @@ void CConsole::RegisterVar(ICVar* pCVar)
 		// Variable is not modified when just registered.
 		pCVar->ClearFlags(VF_MODIFIED);
 	}
+
+  //gEnv->pLog->Log("Registered variable %s with value %s", pCVar->GetName(), pCVar->GetString());
 
   m_mapVariables[pCVar->GetName()] = pCVar;
 }
@@ -1717,32 +1717,31 @@ void CConsole::PrintLine(const char* format, ...)
 
 char* CCVar::GetString()
 {
-  if (type == CVAR_INT)
-    value.s = strdup(std::to_string(value.i).c_str());
-  else if (type == CVAR_FLOAT)
-    value.s = strdup(std::to_string(value.f).c_str());
-  type = CVAR_STRING;
-  return value.s;
+	static char sResult[256];
+	char* result;
+	if (type == CVAR_INT)
+	{
+		sprintf(sResult, "%d", value.i);
+		result = sResult;
+  }
+	else if (type == CVAR_FLOAT)
+	{
+		sprintf(sResult, "%f", value.f);
+		result = sResult;
+	}
+	else
+	{
+		result = value.s;
+	}
+  return result;
 }
 
 void CCVar::Set(const char* s)
 {
-  // TODO: fix it, to check if <s> is number
-  if (type == CVAR_STRING)
-  {
-    if (value.s != nullptr)
-      delete[] value.s;
-  }
-  else if (isnumber(s))
-  {
-    value.i = std::atoi(s);
-    type = CVAR_INT;
-  }
-  else
-  {
-    value.s = strdup(s);
-    type = CVAR_STRING;
-  }
+  if (value.s != nullptr && type == CVAR_STRING)
+    delete[] value.s;
+  value.s = strdup(s);
+  type = CVAR_STRING;
 }
 
 void CCVar::ForceSet(const char* s)
@@ -1830,22 +1829,46 @@ float CCVarRef::GetFVal()
 
 char* CCVarRef::GetString()
 {
-  if (type == CVAR_INT)
-    *value.s = strdup(std::to_string(*value.i).c_str());
-  else if (type == CVAR_FLOAT)
-    *value.s = strdup(std::to_string(*value.f).c_str());
-  type = CVAR_STRING;
-  return *value.s;
+	static char sResult[256];
+	char* result;
+	if (type == CVAR_INT)
+	{
+		sprintf(sResult, "%d", *value.i);
+		result = sResult;
+  }
+	else if (type == CVAR_FLOAT)
+	{
+		sprintf(sResult, "%f", *value.f);
+		result = sResult;
+	}
+	else
+	{
+		result = *value.s;
+	}
+  return result;
 }
 
 void CCVarRef::Set(const char* s)
 {
-  if (type != CVAR_STRING)
-    return;
-  if (*value.s != nullptr)
-    delete[] * value.s;
+  #if 0
+  if (*value.s != nullptr && type == CVAR_STRING)
+    delete[] *value.s;
   *value.s = strdup(s);
   type = CVAR_STRING;
+  #endif
+	if (type == CVAR_INT)
+	{
+		Set(atoi(s));	
+  }
+	else
+	if (type == CVAR_FLOAT)
+	{
+		Set((float)atof(s));	
+  }
+	else
+  {
+		ForceSet(s); 
+  }
 }
 
 void CCVarRef::ForceSet(const char* s)

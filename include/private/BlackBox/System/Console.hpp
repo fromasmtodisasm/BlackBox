@@ -43,7 +43,7 @@ public:
   }
 	~CBaseVariable()
   {
-		gEnv->pLog->Log("Unregistering %s variable", m_Name.c_str());
+		//gEnv->pLog->Log("Unregistering %s variable", m_Name.c_str());
   }
   virtual void Release() override
   {
@@ -115,9 +115,19 @@ private:
 class CCVarRef : public CBaseVariable
 {
 public:
-  CCVarRef(const char* name, int* value, const char* help) : CBaseVariable(name), value(value), type(CVAR_INT), help(help) {}
-  CCVarRef(const char* name, const char** value, const char* help) : CBaseVariable(name), value(value), type(CVAR_STRING), help(help) {}
-  CCVarRef(const char* name, float* value, const char* help) : CBaseVariable(name), value(value), type(CVAR_FLOAT), help(help) {}
+	CCVarRef(const char* name, int* value, int defaultValue, const char* help)
+		: CBaseVariable(name), value(value), type(CVAR_INT), help(help)
+	{
+		*value = defaultValue;
+	} 
+  CCVarRef(const char* name, const char** value,  const char* defaultValue, const char* help) : CBaseVariable(name), value(value), type(CVAR_STRING), help(help)
+	{
+		*value = strdup(defaultValue);
+	} 
+  CCVarRef(const char* name, float* value, float defaultValue, const char* help) : CBaseVariable(name), value(value), type(CVAR_FLOAT), help(help)
+	{
+		*value = defaultValue;
+	} 
   //CCVarRef() : name(""), value(nullptr), type(CVAR_STRING), help(nullptr) {}
 
   ~CCVarRef()

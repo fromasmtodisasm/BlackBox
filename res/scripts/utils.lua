@@ -22,12 +22,6 @@ function load2()
 	Console:ExecuteString("r_cam_h 1000")
 end
 
-function setFog( r,g,b )
-	Game:SetVariable("fogR", r)	
-	Game:SetVariable("fogG", g)	
-	Game:SetVariable("fogB", b)	
-end
-
 function setvar(n,v)
 	-- Game:SetVariable(n,v)	
 	Console:ExecuteString(n .. " " .. v)
@@ -60,8 +54,6 @@ function init()
 
 	Console:CreateKeyBind("ctrl_a", [[#retrigger_value("r_aspect")]]);
 	--Console:CreateKeyBind("c", "Console:Show(false)")  
-	Console:CreateKeyBind("ctrl_b", "#setFog(0,0,0)") 
-	Console:CreateKeyBind("ctrl_g", "#setFog(0,0.01,0.01)")  
 
 	Console:CreateKeyBind("xi_b", "quit")  
 	--Console:CreateKeyBind("xi_back", "#Game:gotoMenu()")  
@@ -89,9 +81,6 @@ function init()
 	Console:CreateKeyBind("f7", "#Game:gotoGame()") 
 	Console:CreateKeyBind("ctrl_q", "#Game:Quit()") 
 
-
-	setFog(0,0,0)
-
 	setvar("MouseSenitivity", 2)
 
 	Console:Show(true)
@@ -103,7 +92,7 @@ Test = {
 }
 
 function Test:OnInit( )
-	setFog(0, 0.01, 0.01)
+
 end
 
 
