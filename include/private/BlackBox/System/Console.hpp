@@ -36,8 +36,8 @@ struct cmpKeys {
 class CBaseVariable : public ICVar
 {
 public:
-	CBaseVariable(const char* name)
-		: m_Name(name)
+	CBaseVariable(const char* name, int flags)
+	  : m_Name(name), m_Flags(flags)
   {
 	  CBaseVariable::SetFlags(VF_NULL);
   }
@@ -78,10 +78,10 @@ public:
 class CCVar : public CBaseVariable
 {
 public:
-  CCVar(const char* name, int value, char* help) : CBaseVariable(name), value(value), type(CVAR_INT), help(help) {}
-  CCVar(const char* name, const char* value, char* help) : CBaseVariable(name), value(value), type(CVAR_STRING), help(help) {}
-  CCVar(const char* name, float value, char* help) : CBaseVariable(name), value(value), type(CVAR_FLOAT), help(help) {}
-  CCVar() : CBaseVariable(""), value(0.0f), type(CVAR_STRING), help(nullptr) {}
+  CCVar(const char* name, int value, int flags, char* help) : CBaseVariable(name, flags), value(value), type(CVAR_INT), help(help) {}
+  CCVar(const char* name, const char* value, int flags, char* help) : CBaseVariable(name, flags), value(value), type(CVAR_STRING), help(help) {}
+  CCVar(const char* name, float value, int flags, char* help) : CBaseVariable(name, flags), value(value), type(CVAR_FLOAT), help(help) {}
+  CCVar() : CBaseVariable("", 0), value(0.0f), type(CVAR_STRING), help(nullptr) {}
 
   ~CCVar()
   {
@@ -115,16 +115,16 @@ private:
 class CCVarRef : public CBaseVariable
 {
 public:
-	CCVarRef(const char* name, int* value, int defaultValue, const char* help)
-		: CBaseVariable(name), value(value), type(CVAR_INT), help(help)
+	CCVarRef(const char* name, int* value, int defaultValue, int flags, const char* help)
+		: CBaseVariable(name, flags), value(value), type(CVAR_INT), help(help)
 	{
 		*value = defaultValue;
 	} 
-  CCVarRef(const char* name, const char** value,  const char* defaultValue, const char* help) : CBaseVariable(name), value(value), type(CVAR_STRING), help(help)
+  CCVarRef(const char* name, const char** value,  const char* defaultValue, int flags, const char* help) : CBaseVariable(name, flags), value(value), type(CVAR_STRING), help(help)
 	{
 		*value = strdup(defaultValue);
 	} 
-  CCVarRef(const char* name, float* value, float defaultValue, const char* help) : CBaseVariable(name), value(value), type(CVAR_FLOAT), help(help)
+  CCVarRef(const char* name, float* value, float defaultValue, int flags, const char* help) : CBaseVariable(name, flags), value(value), type(CVAR_FLOAT), help(help)
 	{
 		*value = defaultValue;
 	} 

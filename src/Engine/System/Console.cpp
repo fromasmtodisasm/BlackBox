@@ -1041,10 +1041,11 @@ void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
 {
-  for (auto& var : m_mapVariables)
-  {
-    pCallback->OnElementFound(var.second);
-  }
+	for (auto& pair : m_mapVariables)
+	{
+		if ((nFlagsFilter == 0) || ((nFlagsFilter != 0) && (pair.second->GetFlags() & nFlagsFilter)))
+			pCallback->OnElementFound(pair.second);
+	}
 }
 
 void CConsole::OnElementFound(ICVar* pCVar)
@@ -1160,7 +1161,7 @@ ICVar* CConsole::CreateVariable(const char* sName, const char* sValue, int nFlag
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVar(sName, strdup(sValue), const_cast<char*>(help));
+  pCVar = new CCVar(sName, strdup(sValue), nFlags, const_cast<char*>(help));
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }
@@ -1182,7 +1183,7 @@ ICVar* CConsole::CreateVariable(const char* sName, int iValue, int nFlags, const
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVar(sName, iValue, const_cast<char*>(help));
+  pCVar = new CCVar(sName, iValue, nFlags, const_cast<char*>(help));
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }
@@ -1205,7 +1206,7 @@ ICVar* CConsole::CreateVariable(const char* sName, float fValue, int nFlags, con
     nFlags |= VF_CONST_CVAR;
   */
   
-  pCVar = new CCVar(sName, fValue, const_cast<char*>(help));
+  pCVar = new CCVar(sName, fValue, nFlags, const_cast<char*>(help));
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }
@@ -1227,7 +1228,7 @@ ICVar* CConsole::Register(const char* name, const char** src, const char* defaul
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVarRef(name, src, defaultvalue, help);
+  pCVar = new CCVarRef(name, src, defaultvalue, flags, help);
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }
@@ -1249,7 +1250,7 @@ ICVar* CConsole::Register(const char* name, float* src, float defaultvalue, int 
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVarRef(name, src, defaultvalue, help);
+  pCVar = new CCVarRef(name, src, defaultvalue, flags, help);
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
   
@@ -1272,7 +1273,7 @@ ICVar* CConsole::Register(const char* name, int* src, int defaultvalue, int flag
   if (!allowModify)
     nFlags |= VF_CONST_CVAR;
   */
-  pCVar = new CCVarRef(name, src, defaultvalue, help);
+  pCVar = new CCVarRef(name, src, defaultvalue, flags, help);
   RegisterVar(pCVar/*, pChangeFunc*/);
   return pCVar;
 }

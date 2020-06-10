@@ -1,15 +1,17 @@
 #pragma once
 
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/System/CmdLine.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/Timer.hpp>
 #include <BlackBox/System/Window.hpp>
 #include <BlackBox/GUI/ImGuiManager.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/IWindowMessageHandler.h>
 
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
@@ -100,6 +102,7 @@ private:
   bool InitRender();
   bool InitInput();
   bool InitScriptSystem();
+  bool InitEntitySystem();
   bool InitNetwork();
   bool InitGUI();
   bool Init3DEngine();
@@ -144,6 +147,7 @@ private:
   IWindow*								m_pWindow;
   IRenderer*							m_Render;
   IScriptSystem*					m_pScriptSystem;
+  IEntitySystem*					m_pEntitySystem;
   INetwork*								m_pNetwork;
   //! system event dispatcher
   ISystemEventDispatcher* m_pSystemEventDispatcher;

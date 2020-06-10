@@ -69,6 +69,7 @@ bool CGame::StartupClient()
 
   ShutdownClient();	// to be sure
 
+  #if 0
   m_pClient = new CXClient;
 
   if (!m_pClient->Init(this)) // Check if the client has been created
@@ -78,6 +79,7 @@ bool CGame::StartupClient()
     m_pLog->Log("Client creation failed !");
     return false;
   }
+  #endif
 
   m_pLog->Log("Client created");
 
@@ -91,6 +93,7 @@ bool CGame::StartupLocalClient()
 {
   m_pLog->Log("Creating the LocalClient");
 
+  #if 0
   m_pClient = new CXClient;
 
   if (!m_pClient->Init(this, true)) // Check if the client has been created
@@ -100,6 +103,7 @@ bool CGame::StartupLocalClient()
     m_pLog->Log("LocalClient creation failed !");
     return false;
   }
+  #endif
 
   m_pLog->Log("LocalClient created");
 
@@ -110,6 +114,7 @@ bool CGame::StartupLocalClient()
 //! shutdown the client
 void CGame::ShutdownClient()
 {
+  #if 0
   if (!m_pClient)
     return;
   m_pLog->Log("Disconnect the client");
@@ -119,6 +124,7 @@ void CGame::ShutdownClient()
   m_pClient->MarkForDestruct();
   m_pClient->DestructIfMarked();
   m_pClient = NULL;
+  #endif
 }
 
 //////////////////////////////////////////////////////////////////////

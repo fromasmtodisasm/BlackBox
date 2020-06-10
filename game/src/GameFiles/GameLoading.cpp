@@ -287,6 +287,83 @@ bool CGame::LoadFromStream(CStream& stm, bool isdemo)
 		return false;
 	};
 
+	int nVersion;
+	stm.Read(nVersion);
+
+  stm.SetStreamVersion(nVersion);
+
+	switch (nVersion)
+	{
+		case SAVEVERSION:
+			return LoadFromStream_RELEASEVERSION(stm,isdemo,scriptStream);
+		case PATCH1_SAVEVERSION:
+			return LoadFromStream_PATCH_1(stm,isdemo,scriptStream);
+		// add more here as more patches are released
+	}
+
+	if(nVersion!=PATCH1_SAVEVERSION && nVersion!=PATCH2_SAVEVERSION)
+	{
+		m_pLog->LogToConsole("ERROR: savegame file from different version of the game");
+		m_bIsLoadingLevelFromFile = false;
+		return false;
+	};
+
+	string sLevelName;
+	string sMissionName;
+	stm.Read(sLevelName);
+	stm.Read(sMissionName);
+
+	// read dummy save date and time
+	unsigned char bDummy;
+	unsigned short wDummy;
+	stm.Read(bDummy);	// hour
+	stm.Read(bDummy);	// minute
+	stm.Read(bDummy);	// second
+	stm.Read(bDummy);	// day
+	stm.Read(bDummy);	// month
+	stm.Read(wDummy);	// year
+
+	// load savegame name
+	string sFilename;
+	stm.Read(sFilename);
+
+	// [marco] load saved cvars
+	string varname,val;
+	int nCount,i;
+	stm.Read(nCount);
+	IConsole *pCon=m_pSystem->GetIConsole();	
+	for (i=0;i<nCount;i++)
+	{
+		if(stm.Read(varname))
+		if(stm.Read(val))
+		{
+			ICVar *pCVar=m_pSystem->GetIConsole()->GetCVar(varname.c_str());
+			if (!pCVar)
+			{
+				m_pSystem->GetILog()->Log("\001 WARNING, CVar %s(%s) was saved but is not present",varname.c_str(),val.c_str());
+			}
+			else
+				pCVar->Set(val.c_str());
+		}
+		else
+		{
+			m_pSystem->GetILog()->LogError("CXGame::LoadFromStream %d/%d critical error",i,nCount);
+			stm.Debug();
+			m_bIsLoadingLevelFromFile = false;
+			return false;
+		}
+	} //i
+
+	bool			bLoadBar = false;
+	IConsole *pConsole = m_pSystem->GetIConsole();
+
+	assert(pConsole);
+
+
+	m_bIsLoadingLevelFromFile = false;
+
+	m_bMapLoadedFromCheckpoint=true;
+	
 	return true;
 }
 

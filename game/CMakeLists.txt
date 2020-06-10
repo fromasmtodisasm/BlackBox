@@ -43,6 +43,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServerSlot.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectStream.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectTest.cpp
+	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptTimerMgr.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp
@@ -110,6 +111,7 @@ source_group(
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
+
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
   "src/pch.hpp"

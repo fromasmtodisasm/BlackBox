@@ -253,6 +253,10 @@ bool CSystem::Init()
 	{
 		return false;
 	}
+	if (!InitEntitySystem())
+	{
+		return false;
+	}
 	//====================================================
 	if (!InitConsole())
 		return false;
@@ -472,6 +476,16 @@ bool CSystem::InitScriptSystem()
 		m_pScriptSystem = p(this, true);
 		return m_pScriptSystem != nullptr;
 	});
+}
+
+bool CSystem::InitEntitySystem()
+{
+	Log("Creating EntitySystem");
+	return LoadSubsystem<PFNCREATEENTITYSYSTEM>("EntitySystem", "CreateEntitySystem", [&](PFNCREATEENTITYSYSTEM p) {
+		m_pEntitySystem = p(this);
+		return m_pEntitySystem != nullptr;
+	});
+
 }
 
 bool CSystem::InitNetwork()

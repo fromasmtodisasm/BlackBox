@@ -564,6 +564,7 @@ public:
 
 	ActionsEnumMap m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
 	bool											m_bIsLoadingLevelFromFile{};  //!<
+	bool											m_bMapLoadedFromCheckpoint{};
 	struct IActionMapManager* m_pIActionMapManager{};				//!<
 	bool m_bDedicatedServer{};															//!<
 	bool m_bOK{};																						//!<

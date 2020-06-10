@@ -91,9 +91,9 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/ITimer.hpp>
-//#include <IEntitySystem.h>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-//#include "EntityDesc.h"
+#include <BlackBox/EntitySystem/EntityDesc.hpp>
 
 /////////////////////////////////////////////////////////////////////////////
 #include "Game.hpp"
