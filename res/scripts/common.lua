@@ -6,37 +6,38 @@
 --------------------------------------------------------------------------------
 function ReadTableFromFile(szFilename, LineMode)
 
-	local hfile = openfile(szFilename, "r");
+	local hfile = assert(io.open(szFilename, "r"))
 
+	Console:PrintLine("Begin read: "..szFilename)
 	if (hfile == nil) then
 		return
 	end
 
 	local iEqual;
 	local tList = {};
-	local szLine = read(hfile, "*l");
+	local szLine = hfile:read("*l");
 	local szProp;
 	local szValue;
 
 	while (szLine ~= nil) do
 	
-		if (strlen(szLine) > 0) then
-			if (strsub(szLine, -1) == "\n") then
-				szLine = strsub(szLine, 1, strlen(szLine)-1);
+		if (szLine:len() > 0) then
+			if (string.sub(szLine, -1) == "\n") then
+				szLine = string.sub(szLine, 1, szLine:len()-1);
 			end	
 		end
 		
-		if (strlen(szLine) > 0) then
+		if (szLine:len() > 0) then
 			if (LineMode) then
 				tinsert(tList, szLine);
 			else
-				if (strlen(szLine) > 0) then
+				if (szLine:len() > 0) then
 	
-					iEqual = strfind(szLine, "=", 1, 1);
+					iEqual = string.find(szLine, "=", 1, 1);
 	
 					if (iEqual) then
-						szProp = strsub(szLine, 1, iEqual-1);
-						szValue = strsub(szLine, iEqual+1, -1);
+						szProp = string.sub(szLine, 1, iEqual-1);
+						szValue = string.sub(szLine, iEqual+1, -1);
 	
 						tList[szProp] = szValue;
 					else
@@ -46,10 +47,11 @@ function ReadTableFromFile(szFilename, LineMode)
 			end
 		end
 		
-		szLine = read(hfile, "*l");
+		szLine = hfile:read("*l");
+		System:Log("read line")
 	end
 
-	closefile(hfile);
+	hfile:close();
 
 	if (LineMode) then
 		tList.n = nil;
@@ -180,7 +182,7 @@ function dump(_class,no_func)
 		for n=0,g_dump_tabs,1 do
 			str=str.."  ";
 		end
-		for i,field in _class do
+		for i,field in pairs(_class) do
 			if(type(field)=="table") then
 				g_dump_tabs=g_dump_tabs+1;
 				System:Log(str.."$4"..i.."$1= {");

@@ -23,6 +23,7 @@
 #include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
+#include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/World/IWorld.hpp>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/System/CryLibrary.hpp>
@@ -30,6 +31,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#include <fstream>
 #include <thread>
 
 using namespace std;
@@ -1057,6 +1059,47 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 	return true;
 }
+
+bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
+{
+	FILE* fp = fopen(filename, "wb");
+	bool result = false;
+	if (fp != nullptr)
+	{
+		if (BITS2BYTES(bitlen) == fwrite(data, 1, BITS2BYTES(bitlen), fp))
+		{
+			result = true;
+		}
+	}
+	fclose(fp);
+	return result;
+}
+
+unsigned int CSystem::ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen)
+{
+	FILE* fp = fopen(filename, "bb");
+	int result = 0;
+	if (fp != nullptr)
+	{
+		result = fread(data, 1, BITS2BYTES(maxbitlen), fp);
+	}
+	fclose(fp);
+	return result;
+}
+
+unsigned int CSystem::GetCompressedFileSize(char* filename)
+{
+	FILE* fp = fopen(filename, "wb");
+	int size = 0;
+	if (fp != nullptr)
+	{
+		fseek(fp, 0L, SEEK_END);
+		size = ftell(fp);
+		fseek(fp, 0L, SEEK_SET);
+	}
+	return BYTES2BITS(size);
+}
+
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {

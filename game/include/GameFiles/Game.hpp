@@ -60,6 +60,7 @@ enum
 #include "GameShared.hpp"
 
 struct IStatObj;
+class CScriptObjectStream;
 
 struct TextRenderInfo
 {
@@ -269,6 +270,13 @@ class CGame final
 	// IGame interface
   public:
 	
+	bool SaveToStream(CStream &stm, Vec3 *pos, Vec3 *angles,string sFilename);
+	bool LoadFromStream(CStream &stm, bool isdemo);
+	bool LoadFromStream_RELEASEVERSION(CStream &str, bool isdemo, CScriptObjectStream &scriptStream);
+	bool LoadFromStream_PATCH_1(CStream &str, bool isdemo, CScriptObjectStream &scriptStream);
+
+	void Save(string sFileName, Vec3 *pos, Vec3 *angles,bool bFirstCheckpoint=false );
+	bool Load(string sFileName);
 	void LoadConfiguration(const string &sSystemCfg,const string &sGameCfg);
 	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile);
 	void RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfile);
@@ -486,6 +494,7 @@ public:
 	ICVar* m_pCVarCheatMode;
 
 	ICVar* g_LevelName{};
+	ICVar* g_MissionName{};
 	ICVar* g_StartMission{};
 
 	ICVar* sv_port{};
@@ -500,6 +509,20 @@ public:
 	ICVar* cl_snoopretries{};
 	ICVar* cl_snoopcount{};
 
+	ICVar* g_playerprofile{};
+
+	ICVar* cv_game_Difficulty{};
+	ICVar* cv_game_Aggression{};
+	ICVar* cv_game_Accuracy{};
+	ICVar* cv_game_Health{};
+	ICVar* cv_game_AllowAIMovement{};
+	ICVar* cv_game_AllAIInvulnerable{};
+	ICVar* cv_game_GliderGravity{};
+	ICVar* cv_game_GliderBackImpulse{};
+	ICVar* cv_game_GliderDamping{};
+	ICVar* cv_game_GliderStartGravity{};
+	ICVar* cv_game_physics_quality{};
+
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
 	std::string m_strLastSaveGame;
 	bool m_bEditor{};
@@ -508,6 +531,9 @@ public:
 	TagPointMap m_mapTagPoints; //!< Map of tag points by name
 	CScriptObjectGame* m_pScriptObjectGame;
 	IScriptObject* m_playerObject{};
+
+	//! Name of the last saved checkpoint.
+	string									m_sLastSavedCheckpointFilename;
 	CGameMods* m_pGameMods{}; //!< might be 0 (before game init)
 
 	// other

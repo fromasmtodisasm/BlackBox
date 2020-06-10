@@ -106,6 +106,9 @@ void CGame::InitConsoleVars()
 
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 
+	g_playerprofile= pConsole->CreateVariable("g_playerprofile","default",VF_DUMPTODISK,
+		"Sets the player profile (to store player settings).\n"
+		"Leave this empty to get the defaults from the root directory.\n");
 	sv_port= pConsole->CreateVariable("sv_port",DEFAULT_SERVERPORT_STR,0,
 		"Sets the server port for a multiplayer game.\n"
 		"Usage: sv_port portnumber\n"
@@ -116,6 +119,37 @@ void CGame::InitConsoleVars()
 		"The default timeout is 60 seconds. This is the time the\n"
 		"server waits while trying to establish a connection with\n"
 		"a client."); 
+
+
+	g_LevelName= pConsole->CreateVariable("g_LevelName","0.4",0);
+	g_MissionName= pConsole->CreateVariable("g_MissionName","TestMission",0);
+
+	{
+		cv_game_Difficulty = pConsole->CreateVariable("game_AdaptiveDifficulty", "0", VF_SAVEGAME,
+			"0=off, 1=on\n"
+			"Usage: \n"
+			"");
+		cv_game_Aggression = pConsole->CreateVariable("game_Aggression", "1", VF_SAVEGAME,
+			"Factor to scale the ai agression, default = 1.0\n"
+			"Usage: cv_game_Aggression 1.2\n"
+			"");
+		cv_game_Accuracy = pConsole->CreateVariable("game_Accuracy", "1", VF_SAVEGAME,
+			"Factor to scale the ai accuracy, default = 1.0\n"
+			"Usage: game_Accuracy 1.2\n");
+		cv_game_GliderGravity = pConsole->CreateVariable("game_GliderGravity", "-0.1f", VF_DUMPTODISK,
+			"Sets paraglider's gravity.\n"
+			"Usage: game_GliderGravity -.1\n");
+		cv_game_GliderBackImpulse = pConsole->CreateVariable("game_GliderBackImpulse", "2.5f", VF_DUMPTODISK,
+			"Sets paraglider's back impulse (heading up).\n"
+			"Usage: game_GliderBackImpulse 2.5\n");
+		cv_game_GliderDamping = pConsole->CreateVariable("game_GliderDamping", "0.15f", VF_DUMPTODISK,
+			"Sets paraglider's damping (control/inertia).\n"
+			"Usage: game_GliderDamping 0.15\n");
+		cv_game_GliderStartGravity = pConsole->CreateVariable("game_GliderStartGravity", "-0.8f", VF_DUMPTODISK,
+			"Sets initial paraglider's gravity.\n"
+			"Usage: game_GliderStartGravity -0.8");
+	}
+
 }
 
 void  CGame::ResetInputMap()

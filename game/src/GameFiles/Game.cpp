@@ -976,11 +976,24 @@ void CGame::ProcessPMessages(const char* szMsg)
 		m_bUpdateRet = false;
 		return;
 	}
-	else if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
+	else
+	if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
 	{
 		m_bRelaunch  = true;
 		m_bUpdateRet = false;
 		return;
+	}
+	else
+	if (strnicmp(szMsg,"SaveGame", 8)==0)		// save current game
+	{
+		if(!m_bEditor)
+		{
+			const char *sname="quicksave";
+			if(strlen(szMsg)>8) { 
+				sname=szMsg+9;
+			}
+			Save(sname, NULL, NULL);			
+		}
 	}
 }
 

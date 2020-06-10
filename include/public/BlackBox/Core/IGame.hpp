@@ -11,13 +11,97 @@
 
 #include <string>
 
-#define GameWarning(...) void(0)
+//////////////////////////////////////////////////////////////////////////
+typedef unsigned short EntityClassId;			//< unique identifier for the entity class (defined in ClassRegistry.lua)
 
 //////////////////////////////////////////////////////////////////////////
 struct ISystem;
 struct IInputHandler;
 struct ITagPoint;
 struct	IXAreaMgr;
+
+/*
+This structure stores the informations to identify an entity type
+@see CEntityClassRegistry
+*/
+//////////////////////////////////////////////////////////////////////////
+struct EntityClass
+{
+	// type id
+	EntityClassId				ClassId;
+	// class name inside the script file
+	string							strClassName;
+	// script relative file path
+	string							strScriptFile;
+	// script fully specified file path (Relative to root folder).
+	string							strFullScriptFile;
+	// Game type of this entity (Ex. Weapon,Player).
+	string							strGameType;
+	//specify that this class is not level dependent and is not loaded from LevelData.xml
+	bool								bReserved;
+	//
+	bool								bLoaded;
+
+	EntityClass() { ClassId = 0;bLoaded=false; }
+	// Copy constrctor required by STL containers.
+	EntityClass( const EntityClass &ec ) { *this = ec; }
+	// Copy operator required by STL containers.
+	EntityClass& operator=( const EntityClass &ec )
+	{
+		bReserved=ec.bReserved;
+		ClassId = ec.ClassId;
+		strClassName = ec.strClassName;
+		strScriptFile = ec.strScriptFile;
+		strFullScriptFile = ec.strFullScriptFile;
+		strGameType = ec.strGameType;
+		bLoaded=ec.bLoaded;
+		return *this;
+	}
+};
+
+//////////////////////////////////////////////////////////////////////
+/* This interface allows to load or create new entity types
+@see CEntityClassRegistry
+*/
+struct IEntityClassRegistry
+{
+	/*Retrieves an entity class by name
+	@param str entity name
+	@return EntityClass ptr if succeded, NULL if failed
+	*/
+	virtual EntityClass *GetByClass(const char *sClassName,bool bAutoLoadScript=true)= 0;
+	//virtual EntityClass *GetByClass(const string &str)= 0;
+	/*Retrieves an entity class by ClassId
+	@param ClassId class id
+	@return EntityClass ptr if succeded, NULL if failed
+	*/
+	virtual EntityClass *GetByClassId(const EntityClassId ClassId,bool bAutoLoadScript=true)= 0;
+	/*Adds a class type into the registry
+	@param ClassId class id
+	@param sClassName class name(into the script file)
+	@param sScriptFile script file path
+	@param pLog pointer to the log interface
+	@param bForceReload if set to true force script to be eloaded for already registered class.
+	@return true if added, false if failed
+	*/
+	virtual bool AddClass(const EntityClassId ClassId,const char* sClassName,const char* sScriptFile,bool bReserved=false,bool bForceReload=false) = 0;
+
+	/*move the iterator to the begin of the registry
+	*/
+	virtual void MoveFirst() = 0;
+	/*get the next entity class into the registry
+	@return a pointer to the next entityclass, or NULL if is the end
+	*/
+	virtual EntityClass *Next() = 0;
+	/*return the count of the entity classes
+	@return the count of the entity classes
+	*/
+	virtual int Count() = 0;
+
+	virtual bool LoadRegistryEntry(EntityClass *pClass, bool bForceReload=false) = 0;
+	// debug to OutputDebugString()
+	virtual void Debug()=0;
+};
 
 // Description of the Game MOD.
 //////////////////////////////////////////////////////////////////////////

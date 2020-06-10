@@ -39,7 +39,7 @@ public:
 	CBaseVariable(const char* name)
 		: m_Name(name)
   {
-	  CBaseVariable::SetFlags(VF_DUMPTODISK);
+	  CBaseVariable::SetFlags(VF_NULL);
   }
 	~CBaseVariable()
   {

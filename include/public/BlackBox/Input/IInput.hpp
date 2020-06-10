@@ -15,10 +15,6 @@ struct ISystem;
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Core/Platform/Platform.hpp>
 
-#ifndef stricmp
-#define stricmp _stricmp
-#endif // !stricmp
-
 enum EModifierMask
 {
   eMM_None = 0,

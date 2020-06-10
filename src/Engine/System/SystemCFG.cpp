@@ -125,6 +125,28 @@ void CSystem::OnLoadConfigurationEntry(const char* szKey, const char* szValue, c
 		gEnv->pConsole->LoadConfigVar(szKey, szValue);
 }
 
+void CSystem::Relaunch(bool bRelaunch)
+{
+}
+
+bool CSystem::IsQuitting()
+{
+	return false;
+}
+
+void CSystem::Error(const char* sFormat, ...)
+{
+}
+
+void CSystem::Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...)
+{
+}
+
+bool CSystem::CheckLogVerbosity(int verbosity)
+{
+	return false;
+}
+
 void CSystem::LoadConfiguration(const string& sFilename)
 {
 	if (sFilename.empty() && sFilename.size() > 0)

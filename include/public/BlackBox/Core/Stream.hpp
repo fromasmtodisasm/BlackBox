@@ -25,13 +25,13 @@
 #define BYTES2BITS(n)((n) << 3)
 #define GET_BYTE_INDEX(n) DIV8((n))
 #include <string>
-#include <BlackBox/Core/MathHelper.hpp>	// Vec3
-#include <BlackBox/System/ISystem.hpp>			// ISystem
-//#include <IStreamEngine.hpp>					// IStreamEngine
-#include <BlackBox/Core/IGame.hpp>					// IGame
-#include <BlackBox/Network/INetwork.hpp>								// INetwork
-//#include "ICompressionHelper.h"			      // ICompressionHelper
-#include <BlackBox/System/ILog.hpp>					// ILOg
+#include <BlackBox/Core/MathHelper.hpp>	        // Vec3
+#include <BlackBox/System/ISystem.hpp>			    // ISystem
+//#include <IStreamEngine.hpp>					        // IStreamEngine
+#include <BlackBox/Core/IGame.hpp>					    // IGame
+#include <BlackBox/Network/INetwork.hpp>				// INetwork
+#include <BlackBox/Core/ICompressionHelper.hpp> // ICompressionHelper
+#include <BlackBox/System/ILog.hpp>					    // ILog
 
 class CStream;
 

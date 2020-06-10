@@ -74,7 +74,7 @@ function init()
 		end
 	]]) 
 
-	Console:CreateKeyBind("f5", "screen_shot") 
+	Console:CreateKeyBind("f5", "Game:Save()") 
 	Console:CreateKeyBind("ctrl_s", "scene load test") 
 	Console:CreateKeyBind("ctrl_p", "reload_scripts") 
 	--Console:CreateKeyBind("ctrl_c", "#Game:gotoMenu()") 

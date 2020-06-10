@@ -49,6 +49,8 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 
   SCRIPT_REG_FUNC(SaveConfiguration);
 
+  SCRIPT_REG_FUNC(Save);
+  SCRIPT_REG_FUNC(Load);
 
 #if 0
 	AllowPropertiesMapping(pSS);
@@ -64,13 +66,11 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
   InitGlobal(pScriptSystem, "Game", this);
 
 
-#if 0
 	if(!EnablePropertiesMapping(m_pGame))
 	{
 		CryError( "<CryGame> (CScriptObjectGame::Init) failed" );
 		return;
 	}
-#endif
 }
 
 void CScriptObjectGame::OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo)
@@ -208,14 +208,28 @@ int CScriptObjectGame::ReloadScripts(IFunctionHandler* pH)
   return 0;
 }
 
-int CScriptObjectGame::Load(IFunctionHandler* pH)
+//////////////////////////////////////////////////////////////////////
+/*!load the game from a file
+	@param sFileName the name of the target file[optional] the default "is farcry_save.sav"
+*/
+int CScriptObjectGame::Load(IFunctionHandler *pH)
 {
-  return 0;
+	const char *sFileName="";
+	if(pH->GetParamCount()) pH->GetParam(1,sFileName);
+	m_pGame->Load(sFileName);
+	return pH->EndFunction();
 }
 
-int CScriptObjectGame::Save(IFunctionHandler* pH)
+//////////////////////////////////////////////////////////////////////
+/*!save the game on a file
+	@param sFileName the name of the target file[optional] the default "is farcry_save.sav"
+*/
+int CScriptObjectGame::Save(IFunctionHandler *pH)
 {
-  return 0;
+	const char *sFileName="";
+	if(pH->GetParamCount()) pH->GetParam(1,sFileName);
+	m_pGame->Save(sFileName, NULL, NULL);
+	return pH->EndFunction();
 }
 
 int CScriptObjectGame::LoadLatestCheckPoint(IFunctionHandler* pH)
@@ -615,3 +629,4 @@ int CScriptObjectGame::LoadPlayerPos(IFunctionHandler* pH)
   }
   return pH->EndFunction();
 }
+

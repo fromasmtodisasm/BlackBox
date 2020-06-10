@@ -1,5 +1,14 @@
 #include "Game.hpp"
 
+#include <ScriptObjects/ScriptObjectStream.hpp>
+
+#if !defined(LINUX)
+#	include <dbghelp.h>
+#	pragma comment(lib, "dbghelp.lib")
+#else
+#	include <stdio.h>
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 class CCVarSaveDump : public ICVarDumpSink
 {
@@ -150,5 +159,200 @@ void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 	fclose(pFile);
 } 
 
+//////////////////////////////////////////////////////////////////////////
+class CCVarSerializeGameSave : public ICVarDumpSink
+{
+public:
+	CCVarSerializeGameSave(CStream *pStm, bool bSave)
+	{
+		m_pStm=pStm;
+		m_bSave=bSave;
+		m_nCount=0;
+	}
+
+	void OnElementFound(ICVar *pCVar)
+	{
+		if (m_bSave)
+		{		
+			m_pStm->Write(pCVar->GetName());
+			m_pStm->Write(pCVar->GetString());
+		}
+		
+		m_nCount++;
+	}
+
+	int	GetCount() { return(m_nCount); }
+	
+private:
+	CStream *m_pStm;
+	bool m_bSave;
+	int	m_nCount;
+};
+
+//////////////////////////////////////////////////////////////////////////
+void SaveName(string &s, string &prof)
+{
+	if(!s[0]) s = "quicksave";
+	for(unsigned int i = 0; i<s.size(); i++) if(!isalnum(s[i])) s[i] = '_';
+	s = "profiles/player/" + prof + "/savegames/" + s + ".sav";
+};
+
+bool CGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename)
+{
+
+	if(m_bEditor)				 
+	{
+		m_pLog->Log("Skipping savegame in editor...");
+		return false;
+	};
+
+	CScriptObjectStream scriptStream;
+	scriptStream.Create(m_pScriptSystem);
+	scriptStream.Attach(&stm);
+
+	stm.Reset();
+
+	// save header
+	stm.Write(SAVEMAGIC);
+	stm.Write((int)PATCH2_SAVEVERSION);
+
+	// get lowercase versions of levelname and missionname
+	char szLowerCaseStr[256] = {0};
+
+	strncpy(szLowerCaseStr, g_LevelName->GetString(), 255);
+	strlwr(szLowerCaseStr);
+	
+	// save levelname
+	stm.Write(szLowerCaseStr);
+
+	//strncpy(szLowerCaseStr, m_pServer->m_GameContext.strMission.c_str(), 255);
+	strncpy(szLowerCaseStr, g_MissionName->GetString(), 255);
+	strlwr(szLowerCaseStr);
+
+	// save mission name
+	stm.Write(szLowerCaseStr);
+
+	// write current time and date
+	SYSTEMTIME pSystemTime;		
+	GetLocalTime(&pSystemTime);	// FIXME: this win32 call should be moved to crysystem
+
+	stm.Write((unsigned char)pSystemTime.wHour);	// hour
+	stm.Write((unsigned char)pSystemTime.wMinute);// minute
+	stm.Write((unsigned char)pSystemTime.wSecond);// second
+	stm.Write((unsigned char)pSystemTime.wDay);		// day
+	stm.Write((unsigned char)pSystemTime.wMonth);	// month
+	stm.Write((unsigned short)pSystemTime.wYear);	// year
+
+	// save savegame name
+	stm.Write(sFilename);
+
+	WRITE_COOKIE_NO(stm,0x22);
+
+	CCVarSerializeGameSave tCount(&stm,false);
+	m_pSystem->GetIConsole()->DumpCVars(&tCount,VF_SAVEGAME);
+	int nCount=tCount.GetCount(); // get the number of cvars to save
+	stm.Write(nCount);  
+	CCVarSerializeGameSave t(&stm,true); 
+	m_pSystem->GetIConsole()->DumpCVars(&t,VF_SAVEGAME); // save them
+	ASSERT(t.GetCount()==nCount);
 
 
+
+	return true;
+}
+
+bool CGame::LoadFromStream(CStream& stm, bool isdemo)
+{
+	return false;
+}
+
+bool CGame::LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
+{
+	return false;
+}
+
+bool CGame::LoadFromStream_PATCH_1(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
+{
+	return false;
+}
+
+void CGame::Save(string sFileName, Vec3 * pos, Vec3 * angles, bool bFirstCheckpoint)
+{
+	#if 0
+	if(!m_pClient)
+	{
+		m_pLog->Log("Cannot save game with no map loaded");
+		return;
+	};
+
+	if(!m_pServer)
+	{
+		m_pLog->Log("Cannot save multiplayer game");
+		return;
+	};
+	#endif
+
+	CDefaultStreamAllocator sa;
+	CStream stm(3000, &sa);   
+
+	if (SaveToStream(stm, pos, angles,sFileName))
+	{
+		m_strLastSaveGame = sFileName;
+		assert(g_playerprofile);
+
+		if (g_playerprofile->GetString() && strlen(g_playerprofile->GetString()))
+		{
+			string tmp( g_playerprofile->GetString() );
+			SaveName(sFileName, tmp);
+		}
+		else
+		{
+			string tmp( "default" );
+			SaveName(sFileName, tmp);
+		}
+		
+		m_pLog->LogToConsole("Level saved in %d bytes(%s)", BITS2BYTES(stm.GetSize()), sFileName.c_str());
+
+		// replace / by \ because MakeSureDirectoryPathExists does not work with unix paths
+		size_t pos = 1;
+		
+		for(;;)
+		{
+			pos = sFileName.find_first_of("/", pos);
+
+			if (pos == string::npos)
+			{
+				break;
+			}
+
+			sFileName.replace(pos, 1, "\\", 1);
+			pos+=1;
+		}
+
+		if (MakeSureDirectoryPathExists(sFileName.c_str()))
+		{
+			if(!m_pSystem->WriteCompressedFile((char *)sFileName.c_str(), stm.GetPtr(), stm.GetSize()))
+			{
+				m_pLog->Log("cannot write savegame to file %s", sFileName.c_str());
+
+				return;
+			};
+			m_sLastSavedCheckpointFilename = sFileName;
+
+			/*
+			// Make screenshot of current location, and save it to a .dds file.			
+			if (!bFirstCheckpoint)
+				m_fTimeToSaveThumbnail = 1.0f; // Save checkpoint thumbnail 1 second from now.
+			else
+			{
+				m_fTimeToSaveThumbnail = 5.0f; // Save checkpoint thumbnail 5 seconds from now.
+			}			
+			*/
+		}
+	};
+}
+
+bool CGame::Load(string sFileName)
+{
+	return false;
+}

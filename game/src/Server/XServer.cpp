@@ -13,6 +13,7 @@ void CXServer::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
 //////////////////////////////////////////////////////////////////////
 void CXServer::OnSpawn(IEntity *ent, CEntityDesc & ed )
 {
+  #if 0
 	m_pISystem->OnSpawn(ent,ed);
 
 	bool bSend = true;
@@ -25,11 +26,13 @@ void CXServer::OnSpawn(IEntity *ent, CEntityDesc & ed )
 		i->second->OnSpawnEntity(ed,ent,bSend);
 		++i;
 	}
+  #endif
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXServer::OnRemove(IEntity *ent)
 {
+  #if 0
 	XSlotMap::iterator i = m_mapXSlots.begin();
 	while(i != m_mapXSlots.end())
 	{
@@ -37,6 +40,7 @@ void CXServer::OnRemove(IEntity *ent)
 		i->second->OnRemoveEntity(ent);
 		++i;
 	}
+  #endif
 }
 
 CXServer::CXServer(CGame* pGame, WORD nPort, const char* szName, bool listen)

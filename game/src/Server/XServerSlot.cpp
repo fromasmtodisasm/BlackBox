@@ -3,7 +3,7 @@
 #include <Game.hpp>
 //#include <Server/XSystemServer.hpp>
 
-#define NET_TRACE(...)
+#if 0
 #if 0
 //////////////////////////////////////////////////////////////////////
 CXServerSlot::CXServerSlot(CXServer *pParent, IServerSlot *pSlot)
@@ -1430,4 +1430,4 @@ void CXServerSlot::GetNetStats(SlotNetStats &ss)
 	ss.maxsnapshotbitsize=m_Snapshot.m_nMaxSnapshotBitSize;
 }
 #endif
-
+#endif

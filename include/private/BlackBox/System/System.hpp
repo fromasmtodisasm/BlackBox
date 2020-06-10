@@ -211,6 +211,18 @@ private:
 
   // Inherited via ILoadConfigurationEntrySink
   virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;
+
+  // Inherited via ISystem
+  virtual void Relaunch(bool bRelaunch) override;
+  virtual bool IsQuitting() override;
+  virtual void Error(const char* sFormat, ...) override;
+  virtual void Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...) override;
+  virtual bool CheckLogVerbosity(int verbosity) override;
+
+  // Inherited via ISystem
+  virtual bool WriteCompressedFile(char* filename, void* data, unsigned int bitlen) override;
+  virtual unsigned int ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen) override;
+  virtual unsigned int GetCompressedFileSize(char* filename) override;
 };
 
 void AddInternalCommands(ISystem* pSystem);

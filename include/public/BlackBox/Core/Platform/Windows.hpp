@@ -35,7 +35,7 @@
 
 	#include <windows.h>
 
-	#if !defined(CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING)
+	#if !defined(BB_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING)
 		#undef min
 		#undef max
 		#undef GetCommandLine
@@ -48,6 +48,7 @@
     #undef SendMessage
 		//#undef LoadLibrary
 	#endif
+	#undef GetCompressedFileSize
 
 	#ifdef CRY_PLATFORM_DURANGO
 		#include <CryCore/Platform/Durango_Win32Legacy.h>
