@@ -48,4 +48,9 @@ end
 
 Game:CreateVariable("render_game", 1)
 
+Mission = {}
+
+function Mission:OnCheckpointLoaded()
+	Console:PrintLine("Checkpoint Loaded")
+end
 

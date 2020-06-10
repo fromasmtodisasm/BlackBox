@@ -1,5 +1,6 @@
 #include "Game.hpp"
 
+#include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
 
 #if !defined(LINUX)
@@ -263,7 +264,30 @@ bool CGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename
 
 bool CGame::LoadFromStream(CStream& stm, bool isdemo)
 {
-	return false;
+	if(IsMultiplayer())
+	{
+		assert(0);
+		m_pLog->LogError("ERROR: LoadFromStream IsMultiplayer=true");				// severe problem - stream is different for MP
+    return false;
+	}
+
+	m_bIsLoadingLevelFromFile = true;
+	//m_pSystem->GetIPhysicalWorld()->GetPhysVars()->bMultiplayer = IsMultiplayer() ? 1:0;
+		
+	CScriptObjectStream scriptStream;
+	scriptStream.Create(m_pScriptSystem);
+	scriptStream.Attach(&stm);
+
+	string sMagic;
+	stm.Read(sMagic);
+	if(strcmp(sMagic.c_str(), SAVEMAGIC))
+	{
+		m_pLog->LogToConsole("ERROR: this is not a valid savegame file");
+		m_bIsLoadingLevelFromFile = false;
+		return false;
+	};
+
+	return true;
 }
 
 bool CGame::LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
@@ -354,5 +378,60 @@ void CGame::Save(string sFileName, Vec3 * pos, Vec3 * angles, bool bFirstCheckpo
 
 bool CGame::Load(string sFileName)
 {
-	return false;
+	assert(g_playerprofile);
+	
+	string tmp( g_playerprofile->GetString() );
+	SaveName(sFileName, tmp);
+
+	CDefaultStreamAllocator sa;
+	CStream stm(300, &sa); 
+
+	int bitslen=m_pSystem->GetCompressedFileSize((char *)sFileName.c_str());
+	if(bitslen==0) 
+	{
+		return false;
+	}
+
+	stm.Resize(bitslen);
+	int bitsread = m_pSystem->ReadCompressedFile((char *)sFileName.c_str(), stm.GetPtr(), stm.GetAllocatedSize());
+	if(!bitsread)
+	{
+		m_pLog->Log("No such savegame: %s", sFileName.c_str());
+		return false;
+	};
+
+	stm.SetSize(bitsread);
+	//////////////////////////////////////////////////////////////////////////
+
+	bool ok = LoadFromStream(stm, false);
+
+	//////////////////////////////////////////////////////////////////////////
+
+	if(ok)
+		m_strLastSaveGame = sFileName;
+
+	if (!IsMultiplayer())
+	{
+		SmartScriptObject pMissionScript(m_pScriptSystem);
+		m_pScriptSystem->GetGlobalValue("Mission", pMissionScript);
+
+		if (((IScriptObject *)pMissionScript) != 0)
+		{
+			HSCRIPTFUNCTION pfnOnCheckpointLoaded = 0;
+
+			pMissionScript->GetValue("OnCheckpointLoaded", pfnOnCheckpointLoaded);
+
+			if (pfnOnCheckpointLoaded != -1)
+			{
+				m_pScriptSystem->BeginCall(pfnOnCheckpointLoaded);
+				m_pScriptSystem->PushFuncParam((IScriptObject*)pMissionScript);
+				m_pScriptSystem->EndCall();
+
+				m_pScriptSystem->ReleaseFunc(pfnOnCheckpointLoaded);
+			}
+		}
+	}
+
+	AllowQuicksave(true);
+	return ok;
 }

@@ -24,19 +24,40 @@ public:
   // Inherited via ICompressionHelper
   virtual bool Write(CStream& outStream, const unsigned char inChar) override
   {
+	  assert(0);
 	  return false;
   }
   virtual bool Read(CStream& inStream, unsigned char& outChar) override
   {
+	  assert(0);
 	  return false;
   }
   virtual bool Write(CStream& outStream, const char* inszString) override
   {
-	  return false;
+	  auto len = strlen(inszString) + 1;
+		return outStream.WriteBits((BYTE*)inszString, BYTES2BITS(len));
   }
   virtual bool Read(CStream& inStream, char* outszString, const DWORD indwStringSize) override
   {
-	  return false;
+		DWORD i = 0; 
+    bool ok = false;
+	  for (; i < indwStringSize && !inStream.EOS() ; i++)
+	  {
+      if (inStream.ReadBits((BYTE*)(outszString + i), BYTES2BITS(sizeof(char))))
+      {
+				if (outszString[i] == 0)
+				{
+					outszString[i + 1] = 0;
+					ok = true;
+					break; 
+        }
+      }
+			else
+			{
+				return false; 
+      }
+	  }
+	  return ok;
   }
 };
 
@@ -278,6 +299,8 @@ bool CNetwork::Init()
     gEnv->pLog->Log("SDL_Init: %s\n", SDL_GetError());
     res = false;
   }
+
+  m_pCompressionHelper = new CCompressionHelper(this);
   return res;
 }
 

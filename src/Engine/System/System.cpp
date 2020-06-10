@@ -1070,32 +1070,33 @@ bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitle
 		{
 			result = true;
 		}
+		fclose(fp);
 	}
-	fclose(fp);
 	return result;
 }
 
 unsigned int CSystem::ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen)
 {
-	FILE* fp = fopen(filename, "bb");
+	FILE* fp = fopen(filename, "rb");
 	int result = 0;
 	if (fp != nullptr)
 	{
 		result = fread(data, 1, BITS2BYTES(maxbitlen), fp);
+		fclose(fp);
 	}
-	fclose(fp);
 	return result;
 }
 
 unsigned int CSystem::GetCompressedFileSize(char* filename)
 {
-	FILE* fp = fopen(filename, "wb");
+	FILE* fp = fopen(filename, "rb");
 	int size = 0;
 	if (fp != nullptr)
 	{
 		fseek(fp, 0L, SEEK_END);
 		size = ftell(fp);
 		fseek(fp, 0L, SEEK_SET);
+		fclose(fp);
 	}
 	return BYTES2BITS(size);
 }

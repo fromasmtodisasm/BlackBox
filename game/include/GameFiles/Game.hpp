@@ -249,6 +249,9 @@ class CGame final
 	void DisplayInfo(float fps);
 	bool Run(bool& bRelaunch) override;
 
+	void AllowQuicksave(bool bAllow) {m_bAllowQuicksave = bAllow;};
+	bool IsQuicksaveAllowed(void) {return m_bAllowQuicksave;}
+
 	bool loadScene(std::string name);
 	void saveScene(std::string name, std::string as);
 	void SetRenderState();
@@ -302,7 +305,15 @@ class CGame final
 	bool OpenPacks(const char* szFolder);
 	bool ClosePacks(const char* szFolder);
 
-  private:
+  
+private: // ------------------------------------------------------------
+
+	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);
+
+	float										m_fFadingStartTime;
+	char										m_szLoadMsg[512];
+	bool										m_bAllowQuicksave;
+
 	bool initPlayer();
 	bool FpsInputEvent(const SInputEvent& event);
 	bool FlyInputEvent(const SInputEvent& event);
@@ -552,11 +563,12 @@ public:
 	float fps = 0.0;
 
 	ActionsEnumMap m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
-	struct IActionMapManager* m_pIActionMapManager{}; //!<
-	bool m_bDedicatedServer{};						//!<
-	bool m_bOK{};										//!<
-	bool m_bUpdateRet{};								//!<
-	bool m_bRelaunch{};								//!<
+	bool											m_bIsLoadingLevelFromFile{};  //!<
+	struct IActionMapManager* m_pIActionMapManager{};				//!<
+	bool m_bDedicatedServer{};															//!<
+	bool m_bOK{};																						//!<
+	bool m_bUpdateRet{};																		//!<
+	bool m_bRelaunch{};																			//!<
 	bool m_bInPause = false;
 
 	//other
