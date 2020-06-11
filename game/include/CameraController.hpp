@@ -51,7 +51,7 @@ public:
         delta.x = event.value;
       else
         delta.y = event.value;
-      ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
+      //ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
       return false;
     }
     else if (keyPressed)
@@ -149,16 +149,16 @@ public:
         //ProcessKeyboard(Movement::RIGHT, move_speed);
         break;
       case eKI_Up:
-        ProcessMouseMovement(0.f, rotation_speed);
+        //ProcessMouseMovement(0.f, rotation_speed);
         break;
       case eKI_Down:
-        ProcessMouseMovement(0.f, -rotation_speed);
+        //ProcessMouseMovement(0.f, -rotation_speed);
         break;
       case eKI_Left:
-        ProcessMouseMovement(-rotation_speed, 0.f);
+        //ProcessMouseMovement(-rotation_speed, 0.f);
         break;
       case eKI_Right:
-        ProcessMouseMovement(rotation_speed, 0.f);
+        //ProcessMouseMovement(rotation_speed, 0.f);
         break;
       default:
         ;//GameObject::update(deltatime);
