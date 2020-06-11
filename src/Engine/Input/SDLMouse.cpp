@@ -426,14 +426,14 @@ void CSDLMouse::SmoothDeltas(float accel, float decel)
     //do nothing ,just like it was before.
     return;
   }
-#if 0
   else if (accel < 0.9999f)//mouse smooth, average the old and the actual delta by the delta ammount, less delta = more smooth speed.
   {
     Vec2 delta = m_deltas - m_oldDeltas;
 
-    float len = delta.GetLength();
+    float len = glm::length(delta);
+	//delta.GetLength();
 
-    float amt = 1.0f - (min(10.0f, len) / 10.0f * min(accel, 0.9f));
+    float amt = 1.0f - (std::min(10.0f, len) / 10.0f * std::min(accel, 0.9f));
 
     m_deltas = m_oldDeltas + delta * amt;
   }
@@ -443,13 +443,16 @@ void CSDLMouse::SmoothDeltas(float accel, float decel)
   }
   else  //mouse smooth with acceleration
   {
-    float dt = min(gEnv->pTimer->GetFrameTime(), 0.1f);
+    //float dt = std::min(gEnv->pTimer->GetFrameTime(), 0.1f);
+	  float dt = 0.1f;
+	  //std::min(gEnv->pTimer->GetFrameTime(), 0.1f);
 
     Vec2 delta;
 
     float amt = 0.0;
 
     //if the input want to stop use twice of the acceleration.
+    #if 0
     if (m_deltas.GetLength2() < 0.0001f)
       if (decel > 0.0001f)    //there is a custom deceleration value? use it.
         amt = min(1.0f, dt * decel);
@@ -457,11 +460,11 @@ void CSDLMouse::SmoothDeltas(float accel, float decel)
         amt = min(1.0f, dt * accel * 2.0f);
     else
       amt = min(1.0f, dt * accel);
+    #endif
 
     delta = m_deltas - m_oldDeltas;
     m_deltas = m_oldDeltas + delta * amt;
   }
 
   m_oldDeltas = m_deltas;
-#endif
 }

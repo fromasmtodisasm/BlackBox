@@ -19,11 +19,11 @@ CInputCVars::CInputCVars()
     "Toggles mouse input buffering.\n"
     "Usage: i_mouse_buffered [0/1]\n"
     "Default is 0 (off). Set to 1 to process buffered mouse input.");
-  REGISTER_CVAR(i_mouse_sensitivity, 1, 0,
+  REGISTER_CVAR(i_mouse_sensitivity, 0.2f, 0,
     "Changes mouse sensitivity.\n"
     "Usage: i_mouse_sensitivity [float number]\n"
     "Default is 1 (raw movement), Set to 0 for no movement, [0/1] for slower movement and [1/n] for faster movement");
-  REGISTER_CVAR(i_mouse_accel, 0.0f, VF_DUMPTODISK,
+  REGISTER_CVAR(i_mouse_accel, 0.1f, VF_DUMPTODISK,
     "Set mouse acceleration, 0.0 means no acceleration.\n"
     "Usage: i_mouse_accel [float number] (usually a small number, 0.1 is a good one)\n"
     "Default is 0.0 (off)");
