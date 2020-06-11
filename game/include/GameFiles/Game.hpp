@@ -30,6 +30,12 @@
 #define SAVEMAGIC "CRYLEVELSAVE"
 #define THISGAME "TestGame"
 
+#define PLAYER_CLASS_ID						1
+#define ADVCAMSYSTEM_CLASS_ID			97			//
+#define SPECTATOR_CLASS_ID				98			//
+#define SYNCHED2DTABLE_CLASS_ID		205			//
+
+
 // game states
 enum
 {
@@ -49,6 +55,7 @@ enum
 #include <BlackBox/World/IWorld.hpp>
 
 #include "Player.h"
+#include "EntityClassRegistry.h"
 #include <Network/XNetwork.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <ScriptObjects/ScriptObjectGame.hpp>
@@ -61,6 +68,8 @@ enum
 
 struct IStatObj;
 class CScriptObjectStream;
+class CPlayerSystem;
+class CVehicleSystem;
 
 struct TextRenderInfo
 {
@@ -243,6 +252,7 @@ class CGame final
 	IGameMods* GetModsInterface();
 
 	bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) override;
+	bool InitClassRegistry();
 	bool Update() override;
 	void ExecScripts();
 	void DrawHud(float fps);
@@ -344,6 +354,9 @@ private: // ------------------------------------------------------------
 	{
 		return m_pScriptSystem;
 	}
+	CVehicleSystem *GetVehicleSystem(){ return m_pVehicleSystem; }
+	CPlayerSystem *GetPlayerSystem(){ return m_pPlayerSystem; }
+
 	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
@@ -446,6 +459,7 @@ public:
 	ISystem* m_pSystem;			   //!< The system interface
 	CXServer* m_pServer = nullptr; //!< The server of this computer
 	CXClient* m_pClient{};		   //!< The client of this computer
+	CEntityClassRegistry		m_EntityClassRegistry;
 	IScriptSystem* m_pScriptSystem;
 	IRenderer* m_pRender;
 	IInput* m_pInput;
@@ -552,6 +566,9 @@ public:
 	TagPointMap m_mapTagPoints; //!< Map of tag points by name
 	CScriptObjectGame* m_pScriptObjectGame;
 	IScriptObject* m_playerObject{};
+
+	CVehicleSystem *				m_pVehicleSystem;
+	CPlayerSystem *					m_pPlayerSystem;
 
 	//! Name of the last saved checkpoint.
 	string									m_sLastSavedCheckpointFilename;

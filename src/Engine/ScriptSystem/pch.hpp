@@ -1,13 +1,7 @@
 #pragma once
 
 #define CRYSCRIPTSYSTEM_EXPORTS
-
 #include <BlackBox/System/ISystem.hpp>
-
-//! Static branch-prediction helpers
-#define IF(condition, hint)    if (condition)
-//! Compiler-supported type-checking helper
-#define PRINTF_PARAMS(...)
 
 //////////////////////////////////////////////////////////////////////////
 //! Reports a Game Warning to validator with WARNING severity.

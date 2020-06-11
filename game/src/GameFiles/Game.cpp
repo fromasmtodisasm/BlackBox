@@ -13,6 +13,8 @@
 
 #include <ScriptObjects/ScriptObjectTest.hpp>
 
+#include "PlayerSystem.h"
+#include "XVehicleSystem.h"
 
 
 #include <cctype>
@@ -169,6 +171,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_bUpdateRet	= true;
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
 
+	m_pVehicleSystem = new CVehicleSystem();
+	m_pPlayerSystem = new CPlayerSystem();
+
 	m_CrossHair = m_pRender->LoadTexture("crosshair.png", 0, false);
 
 #if 0
@@ -288,6 +293,47 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	return true;
 }
+
+//////////////////////////////////////////////////////////////////////
+bool CGame::InitClassRegistry()
+{
+	m_EntityClassRegistry.Init( m_pSystem );
+	CPlayerSystem *pPlayerSystem = GetPlayerSystem();
+	CVehicleSystem *pVehicleSystem = GetVehicleSystem();
+	//CWeaponSystemEx *pWeaponSystemEx = GetWeaponSystemEx();	// m10
+
+	assert( pPlayerSystem );
+	assert( pVehicleSystem );
+	//assert( pWeaponSystemEx );
+
+	// Enumerate entity classes.
+	EntityClass *entCls = NULL;
+	m_EntityClassRegistry.MoveFirst();
+	do {
+		entCls = m_EntityClassRegistry.Next();
+		if (entCls)
+		{
+			const char* entity_type = entCls->strGameType.c_str();
+			EntityClassId ClassId = entCls->ClassId;
+			if(strcmp("Player",entity_type)==0)
+				pPlayerSystem->AddPlayerClass(ClassId);
+
+			if(strcmp("Vehicle",entity_type)==0)
+				pVehicleSystem->AddVehicleClass(ClassId);
+
+			#if 0
+			if(strcmp("Projectile",entity_type)==0)
+			{
+				// cannot be loaded at that point - other scripts must be loaded before
+				pWeaponSystemEx->AddProjectileClass(ClassId);
+			}
+			#endif
+		}
+	} while (entCls);
+	return true;
+}
+
+
 
 bool CGame::Update()
 {
@@ -1049,6 +1095,9 @@ bool CGame::InitScripts()
   m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
 #endif
 
+	InitClassRegistry();
+
+	// execute the "main"-script (to pre-load other scripts, etc.)
 	m_pScriptSystem->ExecuteFile("scripts/main.lua", true, false);
 	m_pScriptSystem->BeginCall("Init");
 	m_pScriptSystem->PushFuncParam(0);

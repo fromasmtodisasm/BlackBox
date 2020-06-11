@@ -28,7 +28,8 @@ function setvar(n,v)
 end
 
 function addcommand( name, src, help )
-	Game:AddCommand(name, src, 0, help)
+	System:Log("Adding command: "..name.."cmd: "..src)
+	Game:AddCommand(name, src, help, 0)
 end
 
 
@@ -73,6 +74,7 @@ function init()
 			Console:PrintLine(Client:Response())
 		end
 	]]) 
+	Game:CreateVariable("test_var")
 
 	Console:CreateKeyBind("f5", "Game:Save()") 
 	Console:CreateKeyBind("ctrl_s", "scene load test") 

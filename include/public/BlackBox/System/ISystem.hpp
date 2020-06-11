@@ -11,6 +11,13 @@
   #define ISYSTEM_API DLL_IMPORT
 #endif
 
+//! Static branch-prediction helpers
+#define IF(condition, hint)    if (condition)
+//! Compiler-supported type-checking helper
+#define PRINTF_PARAMS(...)
+
+
+
 struct ISystem;
 struct ILog;
 struct IEntitySystem;
@@ -403,6 +410,20 @@ inline void CryLog( const char *format,... )
 		va_list args;
 		va_start(args,format);
 		GetISystem()->GetILog()->LogV( ILog::eMessage,format,args );
+		va_end(args);
+	}
+}
+
+//! Very rarely used log comment.
+void        CryComment(const char*, ...) PRINTF_PARAMS(1, 2);
+inline void CryComment(const char* format, ...)
+{
+	// Fran: we need these guards for the testing framework to work
+	if (gEnv && gEnv->pSystem && gEnv->pLog)
+	{
+		va_list args;
+		va_start(args, format);
+		gEnv->pLog->LogV(ILog::eComment, format, args);
 		va_end(args);
 	}
 }

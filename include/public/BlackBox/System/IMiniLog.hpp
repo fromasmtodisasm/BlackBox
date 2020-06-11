@@ -6,13 +6,16 @@ struct IMiniLog
 {
   enum ELogType
   {
-    eMessage,
-    eWarning,
-    eError,
-    eAlways,
-    eWarningAlways,
-    eErrorAlways,
-    eInput,
+		eMessage,
+		eWarning,
+		eError,
+		eAlways,
+		eWarningAlways,
+		eErrorAlways,
+		eInput,           //!< e.g. "e_CaptureFolder ?" or all printouts from history or auto completion.
+		eInputResponse,   //!< e.g. "Set output folder for video capturing" in response to "e_CaptureFolder ?".
+		eComment,
+		eAssert
   };
 
   //! you only have to implement this function

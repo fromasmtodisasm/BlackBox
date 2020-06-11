@@ -10,6 +10,16 @@
 #include <string>
 #include <stack>
 #include <cassert>
+#include <cstddef>
+
+class CLUADbg;
+
+struct SLuaStackEntry
+{
+	int    line;
+	string source;
+	string description;
+};
 
 typedef std::set<std::string, stl::less_stricmp<std::string>> ScriptFileList;
 typedef ScriptFileList::iterator															ScriptFileListItor;
@@ -119,53 +129,84 @@ public:
   virtual void LogStackTrace() override;
 
 public:
-  inline void ToAny(bool& val, int nIdx)
+  inline bool CheckType(int expected, int idx)
   {
+	  return lua_type(L, idx) == expected;
+  }
+
+  inline bool ToAny(bool& val, int nIdx)
+  {
+	  if (!CheckType(LUA_TBOOLEAN, nIdx))
+		  return false;
     val = lua_toboolean(L, nIdx);
+	  return true;
   }
 
-  inline void ToAny(int& val, int nIdx)
+  inline bool ToAny(int& val, int nIdx)
   {
+	  if (!CheckType(LUA_TNUMBER, nIdx))
+		  return false;
     val = static_cast<int>(lua_tointeger(L, nIdx));
+	  return true;
   }
 
-  inline void ToAny(float& val, int nIdx)
+  inline bool ToAny(float& val, int nIdx)
   {
+	  if (!CheckType(LUA_TNUMBER, nIdx))
+		  return false;
     val = static_cast<float>(lua_tonumber(L, nIdx));
+	  return true;
   }
 
-  inline void ToAny(const char*& val, int nIdx)
+  inline bool ToAny(const char*& val, int nIdx)
   {
+	  if (!CheckType(LUA_TSTRING, nIdx))
+		  return false;
     val = lua_tostring(L, nIdx);
+	  return true;
   }
 
-  inline void ToAny(HSCRIPTFUNCTION& val, int nIdx)
+  inline bool ToAny(HSCRIPTFUNCTION& val, int nIdx)
   {
+	  if (!CheckType(LUA_TFUNCTION, nIdx))
+		  return false;
     lua_pushvalue(L, nIdx);
     val = (HSCRIPTFUNCTION)(INT_PTR)lua_ref(L, 1);
+	  return true;
   }
 
-  inline void ToAny(IScriptObject*& pObj, int nIdx)
+  inline bool ToAny(IScriptObject*& pObj, int nIdx)
   {
-    if (lua_istable(L, -1))
+	  if (!CheckType(LUA_TTABLE, nIdx) && !CheckType(LUA_TUSERDATA, nIdx))
+		  return false;
+    #if 0
+    if (static_cast<CScriptObject*>(pObj)->IsEmpty())
     {
       pObj = CreateEmptyObject();
       //pObj->AddRef();
     }
+    #endif
     lua_pushvalue(L, -1);
     pObj->Attach();
+		return true;
   }
 
-  inline void ToAny(USER_DATA& val, int nIdx)
+  inline bool ToAny(USER_DATA& val, int nIdx)
   {
+	  if (!CheckType(LUA_TUSERDATA, nIdx))
+		  return false;
 		val = (USER_DATA)lua_topointer(L, nIdx);
     //(INT_PTR)lua_ref(L, 1);
+	  return true;
   }
+
   template<typename T> bool PopAny(T& val)
   {
-    /*bool res = */ToAny(val, -1);
+		if (!lua_gettop(L))
+			return false;
+    bool res = ToAny(val, -1);
     lua_pop(L, 1);
-    return true;
+    return res;
   }
   ///////////////////////////////////////////////////////////////////
 
@@ -205,10 +246,13 @@ public:
 		lua_pushlightuserdata(L, val);
   }
 
-  inline void PushAny()
+  inline void PushAny(std::nullptr_t nullp)
   {
 		lua_pushnil(L);
   }
+
+private:
+	void GetCallStack(std::vector<SLuaStackEntry>& callstack);
 
 private:
   bool       EndCallN(int nReturns);
@@ -220,6 +264,11 @@ private:
   void PushFuncParamAny(T val);
 	template<class T>
 	void SetGlobalAny(const char* sKey, T& value);
+	void SetGlobalAny(const char* sKey, std::nullptr_t value)
+	{
+		PushAny(value);
+		lua_setglobal(L, sKey);
+  }
 
   static int ErrorHandler(lua_State* L);
 
@@ -259,6 +308,7 @@ private:
   std::stack<std::string>     m_sCallDescriptions[MAX_CALLDEPTH];
 private:
   static CFunctionHandler* m_pH;
+	CLUADbg* m_pLuaDebugger;
 
   // Inherited via IScriptSystem
   virtual void ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason) override;

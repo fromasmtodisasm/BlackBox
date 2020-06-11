@@ -32,8 +32,8 @@ public:
   template<typename T> bool GetParamAny(int nIdx, T& val)
   {
 		int nRealIdx = nIdx + m_paramIdOffset;
-    /*bool res = */m_pSS->ToAny(val, nRealIdx);
-    return true;
+    bool res = m_pSS->ToAny(val, nRealIdx);
+    return res;
   }
 
   virtual ScriptVarType GetParamType(int nIdx) override;

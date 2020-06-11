@@ -116,6 +116,8 @@ public:
   void PushRef();
   // Push reference to specified script table to the stack.
   void PushRef(IScriptObject* pObj);
+  bool IsEmpty() { return m_nRef == NULL_REF; }
+
 private:
   static void CloneTable(int srcTable, int trgTable);
   static void CloneTable_r(int srcTable, int trgTable);

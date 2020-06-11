@@ -65,6 +65,13 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
   m_pConsole = m_pSystem->GetIConsole();
   InitGlobal(pScriptSystem, "Game", this);
 
+	// entity classes
+	m_pScriptSystem->SetGlobalValue("SPECTATOR_CLASS_ID",SPECTATOR_CLASS_ID);
+	m_pScriptSystem->SetGlobalValue("ADVCAMSYSTEM_CLASS_ID",ADVCAMSYSTEM_CLASS_ID);
+	m_pScriptSystem->SetGlobalValue("PLAYER_CLASS_ID",PLAYER_CLASS_ID);
+	m_pScriptSystem->SetGlobalValue("SYNCHED2DTABLE_CLASS_ID",SYNCHED2DTABLE_CLASS_ID);	
+
+
 
 	if(!EnablePropertiesMapping(m_pGame))
 	{
@@ -418,7 +425,7 @@ int CScriptObjectGame::CreateVariable(IFunctionHandler* pH)
   const char* sName;
   const char* sDefault;
   const char* sflags;
-  int iflags = 0;
+  int iflags = VF_SAVEGAME;
   pH->GetParam(1, sName);
   if (nPCount > 1)
   {
@@ -431,7 +438,7 @@ int CScriptObjectGame::CreateVariable(IFunctionHandler* pH)
         if (pH->GetParam(3, sflags))
         {
           if (strcmp(sflags, "NetSynch") == 0)
-            iflags = VF_NET_SYNCED;
+            iflags |= VF_NET_SYNCED;
         }
         else
           m_pSystem->GetILog()->LogWarning("Game:CreateVariable can't get the 3rd parameter (string)");
@@ -594,9 +601,9 @@ int CScriptObjectGame::AddCommand(IFunctionHandler* pH)
         sHelp = NULL;
     }
     if (sHelp)
-      m_pConsole->AddCommand(sName, sCommand, 0, sHelp);
+      m_pConsole->AddCommand(sName, sCommand, VF_DUMPTODISK | VF_SAVEGAME, sHelp);
     else
-      m_pConsole->AddCommand(sName, sCommand, 0/*VF_NOHELP*/, "");
+      m_pConsole->AddCommand(sName, sCommand, VF_DUMPTODISK, "");
   }
 
   return pH->EndFunction();

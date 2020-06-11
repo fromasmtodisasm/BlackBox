@@ -269,7 +269,7 @@ bool CEntityClassRegistry::InitRegistry()
 {
 	m_pSystem->GetILog()->Log("<EntityClassRegistry> Initializing");
 
-	const char *sFilename = "Scripts/ClassRegistry.lua";
+	const char *sFilename = "scripts/ClassRegistry.lua";
 	// load registry lua script.
 	m_pScriptSystem->ExecuteFile(sFilename);
 

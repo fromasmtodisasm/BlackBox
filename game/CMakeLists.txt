@@ -30,6 +30,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameDevMode.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameLoading.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameMods.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
 	#PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
