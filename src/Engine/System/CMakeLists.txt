@@ -41,6 +41,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/Log.cpp
   PRIVATE ${ENGINE_DIR}/System/System.cpp
   PRIVATE ${ENGINE_DIR}/System/SystemEventDispatcher.cpp
+  PRIVATE ${ENGINE_DIR}/System/SystemCFG.cpp
   PRIVATE ${ENGINE_DIR}/System/Timer.cpp
 
   PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectConsole.cpp
@@ -50,6 +51,13 @@ target_sources(${PROJECT_NAME}
 
 if (OPTION_USE_LINUXINPUT)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)
+endif()
+
+if (NOT OPTION_STREAM_COOKIEFIED)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC -DNOT_COOKIEFIED)
+endif()
+if (OPTION_STREAM_ACTIVETYPECHECK)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC -DSTREAM_ACTIVETYPECHECK)
 endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLACKBOX_ROOT}/include/System)
 if (NEED_VC)

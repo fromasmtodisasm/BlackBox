@@ -11,7 +11,7 @@ public:
 
   virtual THIS_PTR GetThis() override;
 
-  virtual int GetFunctionID() override;
+  virtual INT_PTR GetFunctionID() override;
 
   virtual int GetParamCount() override;
 
@@ -32,8 +32,8 @@ public:
   template<typename T> bool GetParamAny(int nIdx, T& val)
   {
 		int nRealIdx = nIdx + m_paramIdOffset;
-    /*bool res = */m_pSS->ToAny(val, nRealIdx);
-    return true;
+    bool res = m_pSS->ToAny(val, nRealIdx);
+    return res;
   }
 
   virtual ScriptVarType GetParamType(int nIdx) override;
@@ -66,8 +66,8 @@ public:
 
 private:
   lua_State* L;
-  THIS_PTR				m_ThisPtr;
-  CScriptSystem* m_pSS;
+  THIS_PTR				m_ThisPtr = nullptr;
+  CScriptSystem* m_pSS = nullptr;
   const char* m_sFuncName;
   int							m_paramIdOffset = 1; // on first place __this
 };

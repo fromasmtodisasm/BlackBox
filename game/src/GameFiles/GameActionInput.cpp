@@ -53,6 +53,8 @@ void CGame::InitInputMap()
   IInput* pInput = m_pSystem->GetIInput();
 
   m_pIActionMapManager = pInput->CreateActionMapManager();
+	if(m_pIActionMapManager)
+		m_pIActionMapManager->SetSink(this);
 
   ResetInputMap();
 }
@@ -106,6 +108,9 @@ void CGame::InitConsoleVars()
 
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 
+	g_playerprofile= pConsole->CreateVariable("g_playerprofile","default",VF_DUMPTODISK,
+		"Sets the player profile (to store player settings).\n"
+		"Leave this empty to get the defaults from the root directory.\n");
 	sv_port= pConsole->CreateVariable("sv_port",DEFAULT_SERVERPORT_STR,0,
 		"Sets the server port for a multiplayer game.\n"
 		"Usage: sv_port portnumber\n"
@@ -116,6 +121,38 @@ void CGame::InitConsoleVars()
 		"The default timeout is 60 seconds. This is the time the\n"
 		"server waits while trying to establish a connection with\n"
 		"a client."); 
+
+
+	g_LevelName= pConsole->CreateVariable("g_LevelName","0.4",0);
+	pConsole->CreateVariable("g_LevelStated","0",0, "");
+	g_MissionName= pConsole->CreateVariable("g_MissionName","TestMission",0);
+
+	{
+		cv_game_Difficulty = pConsole->CreateVariable("game_AdaptiveDifficulty", "0", VF_SAVEGAME,
+			"0=off, 1=on\n"
+			"Usage: \n"
+			"");
+		cv_game_Aggression = pConsole->CreateVariable("game_Aggression", "1", VF_SAVEGAME,
+			"Factor to scale the ai agression, default = 1.0\n"
+			"Usage: cv_game_Aggression 1.2\n"
+			"");
+		cv_game_Accuracy = pConsole->CreateVariable("game_Accuracy", "1", VF_SAVEGAME,
+			"Factor to scale the ai accuracy, default = 1.0\n"
+			"Usage: game_Accuracy 1.2\n");
+		cv_game_GliderGravity = pConsole->CreateVariable("game_GliderGravity", "-0.1f", VF_DUMPTODISK,
+			"Sets paraglider's gravity.\n"
+			"Usage: game_GliderGravity -.1\n");
+		cv_game_GliderBackImpulse = pConsole->CreateVariable("game_GliderBackImpulse", "2.5f", VF_DUMPTODISK,
+			"Sets paraglider's back impulse (heading up).\n"
+			"Usage: game_GliderBackImpulse 2.5\n");
+		cv_game_GliderDamping = pConsole->CreateVariable("game_GliderDamping", "0.15f", VF_DUMPTODISK,
+			"Sets paraglider's damping (control/inertia).\n"
+			"Usage: game_GliderDamping 0.15\n");
+		cv_game_GliderStartGravity = pConsole->CreateVariable("game_GliderStartGravity", "-0.8f", VF_DUMPTODISK,
+			"Sets initial paraglider's gravity.\n"
+			"Usage: game_GliderStartGravity -0.8");
+	}
+
 }
 
 void  CGame::ResetInputMap()
@@ -187,8 +224,8 @@ void  CGame::ResetInputMap()
   ADD_ACTION(ZOOM_OUT, aamOnPress, "@ZoomOut", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("ZOOM_OUT", "zoom", "binozoom", "");
   ADD_ACTION(HOLDBREATH, aamOnHold, "@HoldBreath", ACTIONTYPE_GAME, true) SetConfigToActionMap("HOLDBREATH", "zoom", "");
   ADD_ACTION(FIREMODE, aamOnPress, "@ToggleFiremode", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIREMODE", ACTIONMAPS_NODEAD);
-  //	ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
-  //	ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
+  ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
+  ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
   ADD_ACTION(FIRE_GRENADE, aamOnHold, "@ThrowGrenade", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE_GRENADE", ACTIONMAPS_NODEAD);
   //ADD_ACTION(CONCENTRATION,aamOnHold,"@Concentration",ACTIONTYPE_GAME,true) SetConfigToActionMap("CONCENTRATION", "default", "");
   ADD_ACTION(FLASHLIGHT, aamOnPress, "@ToggleFlashlight", ACTIONTYPE_GAME, true) SetConfigToActionMap("FLASHLIGHT", ACTIONMAPS_NODEAD);
@@ -433,8 +470,8 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   //pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_J_DIR_DOWN);
 
   //look around
-  //N pMap->BindAction(ACTION_TURNLR,eKI_MAXIS_X);
-  //N pMap->BindAction(ACTION_TURNUD,eKI_MAXIS_Y);
+  pMap->BindAction(ACTION_TURNLR,eKI_MouseX);
+  pMap->BindAction(ACTION_TURNUD,eKI_MouseY);
 #if 0
   pMap->BindAction(ACTION_TURNLR, eKI_J_AXIS_5);
   pMap->BindAction(ACTION_TURNUD, eKI_J_AXIS_4);
@@ -495,8 +532,8 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
 
   // save/load bindings
   // disable this conflicts with cutscene
-  //	pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
-  //	pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
+  pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
+  pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
 
 #ifdef _DEBUG

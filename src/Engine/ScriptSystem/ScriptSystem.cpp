@@ -15,6 +15,9 @@
 #include <cstdarg>
 #include <cstring>
 
+#undef CryLog
+#define CryLog(format, ...) ScriptWarning(format, __VA_ARGS__)
+
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
 static ISystem* gISystem = nullptr;
@@ -26,7 +29,30 @@ ISystem* GetISystem()
 */
 
 extern "C" {
-#define DumpCallStack(L) printf("DumpCallStack() not implemented")
+	//////////////////////////////////////////////////////////////////////////
+	void DumpCallStack(lua_State* L)
+	{
+		lua_Debug ar;
+
+		memset(&ar, 0, sizeof(lua_Debug));
+
+		//////////////////////////////////////////////////////////////////////////
+		// Print callstack.
+		//////////////////////////////////////////////////////////////////////////
+		int level = 0;
+		while (lua_getstack(L, level++, &ar))
+		{
+			const char* slevel = "";
+			if (level == 1)
+				slevel = "  ";
+			int nRes = lua_getinfo(L, "lnS", &ar);
+			if (ar.name)
+				CryLog("$6%s    > %s, (%s: %d)", slevel, ar.name, ar.short_src, ar.currentline);
+			else
+				CryLog("$6%s    > (null) (%s: %d)", slevel, ar.short_src, ar.currentline);
+		}
+	}
+
 }
 
 CFunctionHandler* CScriptSystem::m_pH = nullptr;
@@ -502,6 +528,11 @@ void CScriptSystem::SetGlobalValue(const char* sKey, IScriptObject* pObj)
 	SetGlobalAny(sKey, pObj);
 }
 
+void CScriptSystem::SetGlobalToNull(const char* sKey)
+{
+	SetGlobalAny(sKey, nullptr);
+}
+
 bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
 {
   lua_getglobal(L, sKey);
@@ -517,10 +548,6 @@ bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
   //AttachTable(pObj);
 
   return true;
-}
-
-void CScriptSystem::SetGlobalToNull(const char* sKey)
-{
 }
 
 HTAG CScriptSystem::CreateTaggedValue(const char* sKey, int* pVal)
@@ -573,10 +600,45 @@ void CScriptSystem::RaiseError(const char* format, ...)
 
 void CScriptSystem::ForceGarbageCollection()
 {
+#if !defined(EXCLUDE_NORMAL_LOG)
+	int beforeUsage = lua_gc(L, LUA_GCCOUNT, 0) * 1024 + lua_gc(L, LUA_GCCOUNTB, 0);
+#endif
+
+	// Do a full garbage collection cycle.
+	lua_gc(L, LUA_GCCOLLECT, 0);
+
+#if !defined(EXCLUDE_NORMAL_LOG)
+	int fracUsage = lua_gc(L, LUA_GCCOUNTB, 0);
+	int totalUsage = lua_gc(L, LUA_GCCOUNT, 0) * 1024 + fracUsage;
+#endif
+
+#if USE_RAW_LUA_ALLOCS
+	// Nothing to do.
+	#ifdef USE_GLOBAL_BUCKET_ALLOCATOR
+	gLuaAlloc.cleanup();
+	#endif
+#endif
+
+	CryComment("Lua garbage collection %i -> %i", beforeUsage, totalUsage);
+
+	/*char sTemp[200];
+	   lua_StateStats lss;
+	   lua_getstatestats(L,&lss);
+	   cry_sprintf(sTemp,"protos=%d closures=%d tables=%d udata=%d strings=%d\n",lss.nProto,lss.nClosure,lss.nHash,lss.nUdata,lss.nString);
+	   OutputDebugString("BEFORE GC STATS :");
+	   OutputDebugString(sTemp);*/
+
+	//lua_setgcthreshold(L, 0);
+
+	/*lua_getstatestats(L,&lss);
+	   cry_sprintf(sTemp,"protos=%d closures=%d tables=%d udata=%d strings=%d\n",lss.nProto,lss.nClosure,lss.nHash,lss.nUdata,lss.nString);
+	   OutputDebugString("AFTER GC STATS :");
+	   OutputDebugString(sTemp);*/
 }
 
 int CScriptSystem::GetCGCount()
 {
+	//return lua_getgccount(L);
   return 0;
 }
 
@@ -604,17 +666,182 @@ IScriptObject* CScriptSystem::GetBreakPoints()
 
 HBREAKPOINT CScriptSystem::AddBreakPoint(const char* sFile, int nLineNumber)
 {
-  return HBREAKPOINT();
+#if BB_PLATFORM_WINDOWS && 0
+	if (m_pLuaDebugger)
+		m_pLuaDebugger->AddBreakPoint(sFile, nLineNumber);
+#endif
+	return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// For debugger.
+//////////////////////////////////////////////////////////////////////////
 IScriptObject* CScriptSystem::GetLocalVariables(int nLevel/* = 0*/)
 {
-  return nullptr;
+	lua_Debug ar;
+	const char* name;
+	IScriptObject* pObj = CreateEmptyObject();
+	//pObj->AddRef();
+
+	// Attach a new table
+#if !defined(_RELEASE)
+	const int checkStack = lua_gettop(L);
+#endif
+	lua_newtable(L);
+	lua_pushvalue(L, -1);
+	pObj->Attach();
+	//AttachTable(pObj);
+
+	// Get the stack frame
+	while (lua_getstack(L, nLevel, &ar) != 0)
+	{
+		// Push a sub-table for this frame (recursive only)
+    #if 0
+		if (bRecursive)
+		{
+			assert(lua_istable(L, -1) && "The result table should be on the top of the stack");
+			lua_pushinteger(L, nLevel);
+			lua_newtable(L);
+			lua_pushvalue(L, -1);
+			lua_insert(L, -3);
+			lua_rawset(L, -4);
+			assert(lua_istable(L, -1) && lua_istable(L, -2) && lua_gettop(L) == checkStack + 2 && "There should now be two tables on the top of the stack");
+		}
+    #endif
+
+		// Assign variable names and values for the current frame to the table on top of the stack
+		int i = 1;
+#if !defined(_RELEASE)
+		const int checkInner = lua_gettop(L);
+#endif
+		//assert(checkInner == checkStack + 1 + bRecursive && "Too much stack space used");
+		assert(lua_istable(L, -1) && "The target table must be on the top of the stack");
+		while ((name = lua_getlocal(L, &ar, i++)) != NULL)
+		{
+			if (strcmp(name, "(*temporary)") == 0)
+			{
+				// Not interested in temporaries
+				lua_pop(L, 1);
+			}
+			else
+			{
+				// Push the name, swap the top two items, and set in the table
+				lua_pushstring(L, name);
+				lua_insert(L, -2);
+				assert(lua_gettop(L) == checkInner + 2 && "There should be a key-value pair on top of the stack");
+				lua_rawset(L, -3);
+			}
+			assert(lua_gettop(L) == checkInner && "Unbalanced algorithm problem");
+			assert(lua_istable(L, -1) && "The target table should be on the top of the stack");
+		}
+
+		// Pop the sub-table (recursive only)
+    #if 0
+		if (bRecursive)
+		{
+			assert(lua_istable(L, -1) && lua_istable(L, -2) && "There should now be two tables on the top of the stack");
+			lua_pop(L, 1);
+		}
+		else break;
+    #endif
+
+		nLevel++;
+	}
+
+	// Pop the result table from the stack
+	lua_pop(L, 1);
+	assert(lua_gettop(L) == checkStack && "Unbalanced algorithm problem");
+	return pObj;
+}
+
+const int LEVELS1 = 12; /* size of the first part of the stack */
+const int LEVELS2 = 10; /* size of the second part of the stack */
+
+void CScriptSystem::GetCallStack(std::vector<SLuaStackEntry>& callstack)
+{
+	callstack.clear();
+
+	int level = 0;
+	int firstpart = 1;  /* still before eventual `...' */
+	lua_Debug ar;
+	while (lua_getstack(L, level++, &ar))
+	{
+
+		char buff[512];  /* enough to fit following `cry_sprintf's */
+		if (level == 2)
+		{
+			//luaL_addstring(&b, ("stack traceback:\n"));
+		}
+		else if (level > LEVELS1 && firstpart)
+		{
+			/* no more than `LEVELS2' more levels? */
+			if (!lua_getstack(L, level + LEVELS2, &ar))
+				level--;  /* keep going */
+			else
+			{
+				//		luaL_addstring(&b, ("       ...\n"));  /* too many levels */
+				while (lua_getstack(L, level + LEVELS2, &ar))  /* find last levels */
+					level++;
+			}
+			firstpart = 0;
+			continue;
+		}
+
+		sprintf(buff, ("%4d:  "), level - 1);
+
+		lua_getinfo(L, ("Snl"), &ar);
+		switch (*ar.namewhat)
+		{
+		case 'l':
+			sprintf(buff, "function[local] `%.50s'", ar.name);
+			break;
+		case 'g':
+			sprintf(buff, "function[global] `%.50s'", ar.name);
+			break;
+		case 'f':  /* field */
+			sprintf(buff, "field `%.50s'", ar.name);
+			break;
+		case 'm':  /* field */
+			sprintf(buff, "method `%.50s'", ar.name);
+			break;
+		case 't':  /* tag method */
+			sprintf(buff, "`%.50s' tag method", ar.name);
+			break;
+		default:
+			strcpy(buff, "");
+			break;
+		}
+
+		SLuaStackEntry se;
+		se.description = buff;
+		se.line = ar.currentline;
+		se.source = ar.source;
+
+		callstack.push_back(se);
+	}
 }
 
 IScriptObject* CScriptSystem::GetCallsStack()
 {
-  return nullptr;
+	std::vector<SLuaStackEntry> stack;
+
+	IScriptObject* pCallsStack = CreateObject();
+	assert(pCallsStack);
+
+	//pCallsStack->AddRef();
+	GetCallStack(stack);
+
+	for (size_t i = 0; i < stack.size(); ++i)
+	{
+		SmartScriptObject pEntry(this);
+
+		pEntry->SetValue("description", stack[i].description.c_str());
+		pEntry->SetValue("line", stack[i].line);
+		pEntry->SetValue("sourcefile", stack[i].source.c_str());
+
+		pCallsStack->PushBack(pEntry);
+	}
+	return pCallsStack;
 }
 
 void CScriptSystem::DebugContinue()

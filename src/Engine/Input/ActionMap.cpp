@@ -1,7 +1,7 @@
 #include <BlackBox/Input/ActionMap.hpp>
 #include <BlackBox/Input/ActionMapManager.hpp>
 
-CActionMap::CActionMap(IActionMapManager* pActionMapManager) 
+CActionMap::CActionMap(CActionMapManager* pActionMapManager) 
 	: m_ActionMapManager(pActionMapManager)
 {
 }
@@ -26,9 +26,12 @@ void CActionMap::BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos/* =
 {
 }
 
-void CActionMap::BindAction(XACTIONID nActionID, int nKey, int nModifier/* = eKI_Unknown*/, int iKeyPos/* = -1*/)
+void CActionMap::BindAction(XACTIONID nActionID, uint32 nKey, EModifierMask nModifier/* = eKI_Unknown*/, int iKeyPos/* = -1*/)
 {
-
+	XBind bind;
+	bind.nKey = nKey;
+	bind.nModifier = nModifier;
+	m_ActionMapManager->AddBind(this, ActionBinding{nActionID, bind});
 }
 
 void CActionMap::BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier/* = NULL*/, int iKeyPos/* = -1*/)

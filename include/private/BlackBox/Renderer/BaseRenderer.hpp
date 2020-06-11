@@ -19,12 +19,15 @@ public:
   ICVar* needTranslate = nullptr;
   ICVar* needFlipY = nullptr;
 
-  ICVar* r_debug = nullptr;
-  ICVar* test_proj = nullptr;
-  ICVar* render_via_viewport = nullptr;
-
   ICVar* cam_width = nullptr;
   ICVar* cam_height = nullptr;
+
+  int r_Width = 0;
+  int r_Height = 0;
+  int r_Bpp = 0;
+  int r_Zbpp = 0;
+  int r_Sbpp = 0;
+  int r_Fullscreen = 0;
 };
 
 class CRenderer :

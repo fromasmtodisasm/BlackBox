@@ -38,8 +38,19 @@ struct ScriptTemplateCallHelper
 	template<typename Callee, typename Func>
 	struct CallDispatcher
 	{
-		static int Dispatch(IFunctionHandler* pH, void* pBuffer, int nSize)
+		static int Dispatch(IFunctionHandler* pH)
 		{
+			pH->__Attach(h);
+			T* pThis = (T*)(pH->GetThis());
+			if (!pThis)
+			{
+				m_pSS->RaiseError("Null Self");
+				::OutputDebugString("Null Self\n");
+				return 0;
+			}
+			int i = pH->GetFunctionID();
+			return (pThis->*(pThis->m_vFuncs[pH->GetFunctionID()]))(pH);
+
 			unsigned char* buffer = (unsigned char*)pBuffer;
 			Callee* pCallee;
 			Func func;
@@ -248,6 +259,22 @@ protected:
     }
     int i = m_pFunctionHandler->GetFunctionID();
     return (pThis->*(pThis->m_vFuncs[m_pFunctionHandler->GetFunctionID()]))(m_pFunctionHandler);
+  }
+
+	template<typename Callee, typename Func>
+  static int FuncThunk(HSCRIPT h)
+  {
+    m_pFunctionHandler->__Attach(h);
+    T* pThis = (T*)(m_pFunctionHandler->GetThis());
+    if (!pThis)
+    {
+      m_pSS->RaiseError("Null Self");
+      ::OutputDebugString("Null Self\n");
+      return 0;
+    }
+		return ScriptTemplateCallHelper::CallDispatcher<Callee, Func>::Dispatch(m_pFunctionHandler);
+    //int i = m_pFunctionHandler->GetFunctionID();
+    //return (pThis->*(pThis->m_vFuncs[m_pFunctionHandler->GetFunctionID()]))(m_pFunctionHandler);
   }
 
   static int SetThunk(HSCRIPT h)

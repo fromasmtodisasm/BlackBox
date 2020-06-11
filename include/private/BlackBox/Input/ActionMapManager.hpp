@@ -17,15 +17,18 @@ struct ActionInfo
 
 struct ActionBinding
 {
-	ActionInfo info;
-	CActionMap *map;
+	XACTIONID id;
+	XBind bind;
 };
 
-using ActionList = std::vector<ActionInfo>;
 
 class CActionMapManager : public IActionMapManager, public IInputEventListener
 {
+	using ActionList = std::vector<ActionInfo>;
   using ActionMaps = std::map<string, CActionMap*>;
+  using ActionMapsToString = std::map<CActionMap*, string>;
+  using ActionMapIt = std::map<string, CActionMap*>::iterator;
+  using ActionBindingMap = std::map<CActionMap*, std::vector<ActionBinding>>;
 public:
   CActionMapManager(IInput* pInput);
   ~CActionMapManager();
@@ -49,15 +52,25 @@ public:
   virtual void Disable() override;
   virtual bool IsEnabled() override;
 
+  void BindAction();
+
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) override;
 
 
 public:
-  //void AddBind(IActionMap* mpa, )
+  void AddBind(CActionMap* mpa, ActionBinding& actionBinding);
 
 private:
   ActionMaps m_ActionMaps;
+  ActionMapIt m_CurrentActionMap;
   ActionList m_ActionList;
+  ActionBindingMap m_ActionBindingMap;
+  ActionMapsToString m_ActionMapsToString;
+
+  bool m_Enabled = true;
+
+	IActionMapSink* m_ActionMapSink{};
+  std::set<EKeyId> m_keys;
 
 };

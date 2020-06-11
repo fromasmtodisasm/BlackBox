@@ -26,6 +26,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Standard includes.
 //////////////////////////////////////////////////////////////////////////
+#include <cstdlib>
 #include <malloc.h>
 #include <io.h>
 #include <new.h>
@@ -74,6 +75,13 @@ typedef ULONG_PTR DWORD_PTR, *        PDWORD_PTR;
 #undef min
 #undef max
 
+#ifndef stricmp
+#define stricmp _stricmp
+#endif 
 #define strdup _strdup
+#define strnicmp _strnicmp
+#define strlwr _strlwr
+
+
 
 #define TARGET_DEFAULT_ALIGN (0x8U)

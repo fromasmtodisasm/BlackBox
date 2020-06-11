@@ -561,7 +561,7 @@ struct IScriptObject
     @param nFuncID id of the function that will be passed beck by the engine
     @return false if failed true if succeded
   */
-  virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, INT_PTR nFuncID) = 0;
+  virtual bool AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, const INT_PTR nFuncID) = 0;
   //!
   virtual bool AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION pGetThunk) = 0;
   /*!	register the host object as parent
@@ -605,7 +605,7 @@ struct IFunctionHandler
   virtual THIS_PTR GetThis() = 0;
   //virtual THIS_PTR GetThis2() = 0;
   /*! internal use */
-  virtual int GetFunctionID() = 0;
+  virtual INT_PTR GetFunctionID() = 0;
   //DOC-IGNORE-END
 
   //!	Get the number of parameter passed by lua
@@ -655,6 +655,77 @@ struct IFunctionHandler
   virtual int EndFunction(int nRetVal1, int nRetVal2) = 0;
   virtual int EndFunction(float fRetVal1, float fRetVal2) = 0;
   //##@}
+
+
+	//! Template methods to get multiple parameters.
+	template<class P1>
+	bool GetParams(P1& p1)
+	{
+		if (!GetParam(1, p1)) return false;
+		return true;
+	}
+	template<class P1, class P2>
+	bool GetParams(P1& p1, P2& p2)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3>
+	bool GetParams(P1& p1, P2& p2, P3& p3)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4, class P5>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4, P5& p5)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		if (!GetParam(5, p5)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class P6>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4, P5& p5, P6& p6)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		if (!GetParam(5, p5) || !GetParam(6, p6)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class P6, class P7>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4, P5& p5, P6& p6, P7& p7)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		if (!GetParam(5, p5) || !GetParam(6, p6) || !GetParam(7, p7)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4, P5& p5, P6& p6, P7& p7, P8& p8)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		if (!GetParam(5, p5) || !GetParam(6, p6) || !GetParam(7, p7) || !GetParam(8, p8)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4, P5& p5, P6& p6, P7& p7, P8& p8, P9& p9)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		if (!GetParam(5, p5) || !GetParam(6, p6) || !GetParam(7, p7) || !GetParam(8, p8)) return false;
+		if (!GetParam(9, p9)) return false;
+		return true;
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
+	bool GetParams(P1& p1, P2& p2, P3& p3, P4& p4, P5& p5, P6& p6, P7& p7, P8& p8, P9& p9, P10& p10)
+	{
+		if (!GetParam(1, p1) || !GetParam(2, p2) || !GetParam(3, p3) || !GetParam(4, p4)) return false;
+		if (!GetParam(5, p5) || !GetParam(6, p6) || !GetParam(7, p7) || !GetParam(8, p8)) return false;
+		if (!GetParam(9, p9) || !GetParam(10, p10)) return false;
+		return true;
+	}
 
   virtual void Unref(HSCRIPTFUNCTION hFunc) = 0;
 };

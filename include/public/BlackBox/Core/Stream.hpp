@@ -25,13 +25,13 @@
 #define BYTES2BITS(n)((n) << 3)
 #define GET_BYTE_INDEX(n) DIV8((n))
 #include <string>
-#include <BlackBox/Core/MathHelper.hpp>	// Vec3
-#include <BlackBox/System/ISystem.hpp>			// ISystem
-//#include <IStreamEngine.hpp>					// IStreamEngine
-#include <BlackBox/Core/IGame.hpp>					// IGame
-#include <BlackBox/Network/INetwork.hpp>								// INetwork
-//#include "ICompressionHelper.h"			      // ICompressionHelper
-#include <BlackBox/System/ILog.hpp>					// ILOg
+#include <BlackBox/Core/MathHelper.hpp>	        // Vec3
+#include <BlackBox/System/ISystem.hpp>			    // ISystem
+//#include <IStreamEngine.hpp>					        // IStreamEngine
+#include <BlackBox/Core/IGame.hpp>					    // IGame
+#include <BlackBox/Network/INetwork.hpp>				// INetwork
+#include <BlackBox/Core/ICompressionHelper.hpp> // ICompressionHelper
+#include <BlackBox/System/ILog.hpp>					    // ILog
 
 class CStream;
 
@@ -702,19 +702,14 @@ inline bool CStream::Read(float& f)
 inline bool CStream::Read(char* psz, const DWORD indwBufferSize)
 {
   STREAM_VERIFY_TYPE_READ(30);
-#if 0
   ICompressionHelper* pCHelper = GetISystem()->GetINetwork()->GetCompressionHelper();
 
   return pCHelper->Read(*this, psz, indwBufferSize);
-#else
-  return false;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 inline bool CStream::Read(std::string& str)
 {
-#if 0
   static char cTemp[MAX_STRING_SIZE];
   STREAM_VERIFY_TYPE_READ(30);
   ICompressionHelper* pCHelper = GetISystem()->GetINetwork()->GetCompressionHelper();
@@ -722,9 +717,6 @@ inline bool CStream::Read(std::string& str)
   bool bRet = pCHelper->Read(*this, cTemp, MAX_STRING_SIZE);
   str = cTemp;
   return bRet;
-#else
-  return false;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -841,14 +833,10 @@ inline bool CStream::Write(CStream& stm)
 //////////////////////////////////////////////////////////////////////
 inline bool CStream::Write(const char* psz)
 {
-#if 0
   STREAM_VERIFY_TYPE_WRITE(30);
   ICompressionHelper* pCHelper = GetISystem()->GetINetwork()->GetCompressionHelper();
 
   return pCHelper->Write(*this, psz);
-#else
-  return false;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -96,4 +96,6 @@ private:
 	ISystem *						m_pSystem;
 	IConsole *					m_pConsole;
 	CScriptObjectVector	m_pGetTagPoint;
+
+	bool _GetProfileFileNames( IFunctionHandler *pH, string &outSystem, string &outGame, const char *insCallerName );
 };

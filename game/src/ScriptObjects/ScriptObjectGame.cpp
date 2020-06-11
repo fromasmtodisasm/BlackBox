@@ -23,27 +23,34 @@ CScriptObjectGame::~CScriptObjectGame()
 void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 {
   _ScriptableEx<CScriptObjectGame>::InitializeTemplate(pSS);
-  REG_FUNC(CScriptObjectGame, SendMessage);
-  REG_FUNC(CScriptObjectGame, Stop);
-  REG_FUNC(CScriptObjectGame, gotoMenu);
-  REG_FUNC(CScriptObjectGame, gotoGame);
-  REG_FUNC(CScriptObjectGame, gotoFly);
-  REG_FUNC(CScriptObjectGame, gotoEdit);
-  REG_FUNC(CScriptObjectGame, showMenu);
+  #undef SCRIPT_REG_CLASSNAME
+  #define SCRIPT_REG_CLASSNAME CScriptObjectGame
+  SCRIPT_REG_FUNC(SendMessage);
+  SCRIPT_REG_FUNC(Stop);
+  SCRIPT_REG_FUNC(gotoMenu);
+  SCRIPT_REG_FUNC(gotoGame);
+  SCRIPT_REG_FUNC(gotoFly);
+  SCRIPT_REG_FUNC(gotoEdit);
+  SCRIPT_REG_FUNC(showMenu);
 
-  REG_FUNC(CScriptObjectGame, GetTagPoint);
-  REG_FUNC(CScriptObjectGame, CreateVariable);
-  REG_FUNC(CScriptObjectGame, SetVariable);
-  REG_FUNC(CScriptObjectGame, RemoveVariable);
-  REG_FUNC(CScriptObjectGame, GetVariable);
-  REG_FUNC(CScriptObjectGame, LoadLevel);
+  SCRIPT_REG_FUNC(GetTagPoint);
+  SCRIPT_REG_FUNC(CreateVariable);
+  SCRIPT_REG_FUNC(SetVariable);
+  SCRIPT_REG_FUNC(RemoveVariable);
+  SCRIPT_REG_FUNC(GetVariable);
+  SCRIPT_REG_FUNC(LoadLevel);
 
-  REG_FUNC(CScriptObjectGame, AddCommand);
+  SCRIPT_REG_FUNC(AddCommand);
 
-  REG_FUNC(CScriptObjectGame, Quit);
+  SCRIPT_REG_FUNC(Quit);
 
-  REG_FUNC(CScriptObjectGame, SavePlayerPos);
-  REG_FUNC(CScriptObjectGame, LoadPlayerPos);
+  SCRIPT_REG_FUNC(SavePlayerPos);
+  SCRIPT_REG_FUNC(LoadPlayerPos);
+
+  SCRIPT_REG_FUNC(SaveConfiguration);
+
+  SCRIPT_REG_FUNC(Save);
+  SCRIPT_REG_FUNC(Load);
 
 #if 0
 	AllowPropertiesMapping(pSS);
@@ -58,14 +65,19 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
   m_pConsole = m_pSystem->GetIConsole();
   InitGlobal(pScriptSystem, "Game", this);
 
+	// entity classes
+	m_pScriptSystem->SetGlobalValue("SPECTATOR_CLASS_ID",SPECTATOR_CLASS_ID);
+	m_pScriptSystem->SetGlobalValue("ADVCAMSYSTEM_CLASS_ID",ADVCAMSYSTEM_CLASS_ID);
+	m_pScriptSystem->SetGlobalValue("PLAYER_CLASS_ID",PLAYER_CLASS_ID);
+	m_pScriptSystem->SetGlobalValue("SYNCHED2DTABLE_CLASS_ID",SYNCHED2DTABLE_CLASS_ID);	
 
-#if 0
+
+
 	if(!EnablePropertiesMapping(m_pGame))
 	{
 		CryError( "<CryGame> (CScriptObjectGame::Init) failed" );
 		return;
 	}
-#endif
 }
 
 void CScriptObjectGame::OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo)
@@ -203,14 +215,28 @@ int CScriptObjectGame::ReloadScripts(IFunctionHandler* pH)
   return 0;
 }
 
-int CScriptObjectGame::Load(IFunctionHandler* pH)
+//////////////////////////////////////////////////////////////////////
+/*!load the game from a file
+	@param sFileName the name of the target file[optional] the default "is farcry_save.sav"
+*/
+int CScriptObjectGame::Load(IFunctionHandler *pH)
 {
-  return 0;
+	const char *sFileName="";
+	if(pH->GetParamCount()) pH->GetParam(1,sFileName);
+	m_pGame->Load(sFileName);
+	return pH->EndFunction();
 }
 
-int CScriptObjectGame::Save(IFunctionHandler* pH)
+//////////////////////////////////////////////////////////////////////
+/*!save the game on a file
+	@param sFileName the name of the target file[optional] the default "is farcry_save.sav"
+*/
+int CScriptObjectGame::Save(IFunctionHandler *pH)
 {
-  return 0;
+	const char *sFileName="";
+	if(pH->GetParamCount()) pH->GetParam(1,sFileName);
+	m_pGame->Save(sFileName, NULL, NULL);
+	return pH->EndFunction();
 }
 
 int CScriptObjectGame::LoadLatestCheckPoint(IFunctionHandler* pH)
@@ -290,6 +316,104 @@ int CScriptObjectGame::StopRecord(IFunctionHandler* pH)
 {
   return 0;
 }
+
+//////////////////////////////////////////////////////////////////////
+bool CScriptObjectGame::_GetProfileFileNames( IFunctionHandler *pH, string &outSystem, string &outGame, const char *insCallerName )
+{ 
+	outSystem="system.cfg";
+	outGame="game.cfg";
+
+	if(pH->GetParamCount()>0)		// use given profile name or don't use profiles 
+	{
+		CHECK_PARAMETERS(1);
+
+		const char *sProfileName;
+		pH->GetParam(1,sProfileName);
+
+		if(!sProfileName || sProfileName=="")
+		{
+			m_pScriptSystem->RaiseError("%s profilename is nil or empty",insCallerName);
+			return false;
+		}
+
+		string sName;
+
+		outSystem=string("Profiles/Player/")+sProfileName+"_"+outSystem;
+		outGame=string("Profiles/Player/")+sProfileName+"_"+outGame;
+	}
+	return true;
+}
+
+int CScriptObjectGame::SaveConfiguration(IFunctionHandler* pH)
+{
+	string sSystemCfg, sGameCfg;
+
+	if(!_GetProfileFileNames(pH,sSystemCfg,sGameCfg,__FUNCTION__))
+		return pH->EndFunction();
+
+	if(m_pGame->m_bDedicatedServer)
+		return pH->EndFunction();
+
+	if (m_pGame->m_bEditor)
+		return pH->EndFunction();
+
+	const char *szProfileName = 0;
+
+	if (pH->GetParamCount() > 0)
+	{
+			pH->GetParam(1, szProfileName);
+	}
+	
+	// profile is already specified in the string
+	m_pGame->SaveConfiguration(sSystemCfg.c_str(),sGameCfg.c_str(),NULL);
+
+	if (szProfileName)
+	{
+		string path = "profiles/player/";
+		path += szProfileName;
+#if defined(LINUX)
+		mkdir( path.c_str(), 0xFFFF );
+#else
+		if (auto result = _mkdir( path.c_str() ); result != 0)
+		{
+			if (result == EEXIST)
+			{
+				m_pSystem->GetILog()->LogWarning("Path already exist");
+			}
+			else if (ENOENT)
+			{
+				m_pSystem->GetILog()->LogWarning("Path was not found");
+			}
+    }
+#endif
+		path += "savegames/";
+#if defined(LINUX)
+		mkdir( path.c_str(), 0xFFFF );
+#else
+		_mkdir( path.c_str() );
+#endif
+	}
+
+	return pH->EndFunction();
+
+}
+
+//////////////////////////////////////////////////////////////////////
+int CScriptObjectGame::LoadConfiguration(IFunctionHandler *pH)
+{
+	string sSystemCfg, sGameCfg;
+
+	if(!_GetProfileFileNames(pH,sSystemCfg,sGameCfg,__FUNCTION__))
+		return pH->EndFunction();
+ 
+	//m_pScriptSystem->ExecuteFile(sSystemCfg.c_str(),true,true);
+	//m_pScriptSystem->ExecuteFile(sGameCfg.c_str(),true,true);
+
+	m_pGame->LoadConfiguration(sSystemCfg,sGameCfg);
+
+	return pH->EndFunction();
+}
+
 //////////////////////////////////////////////////////////////////////
 /*!create a console variable
   @param sName name of the console variable
@@ -301,7 +425,7 @@ int CScriptObjectGame::CreateVariable(IFunctionHandler* pH)
   const char* sName;
   const char* sDefault;
   const char* sflags;
-  int iflags = 0;
+  int iflags = VF_SAVEGAME;
   pH->GetParam(1, sName);
   if (nPCount > 1)
   {
@@ -314,7 +438,7 @@ int CScriptObjectGame::CreateVariable(IFunctionHandler* pH)
         if (pH->GetParam(3, sflags))
         {
           if (strcmp(sflags, "NetSynch") == 0)
-            iflags = VF_NET_SYNCED;
+            iflags |= VF_NET_SYNCED;
         }
         else
           m_pSystem->GetILog()->LogWarning("Game:CreateVariable can't get the 3rd parameter (string)");
@@ -477,9 +601,9 @@ int CScriptObjectGame::AddCommand(IFunctionHandler* pH)
         sHelp = NULL;
     }
     if (sHelp)
-      m_pConsole->AddCommand(sName, sCommand, 0, sHelp);
+      m_pConsole->AddCommand(sName, sCommand, VF_DUMPTODISK | VF_SAVEGAME, sHelp);
     else
-      m_pConsole->AddCommand(sName, sCommand, 0/*VF_NOHELP*/, "");
+      m_pConsole->AddCommand(sName, sCommand, VF_DUMPTODISK, "");
   }
 
   return pH->EndFunction();
@@ -512,3 +636,4 @@ int CScriptObjectGame::LoadPlayerPos(IFunctionHandler* pH)
   }
   return pH->EndFunction();
 }
+

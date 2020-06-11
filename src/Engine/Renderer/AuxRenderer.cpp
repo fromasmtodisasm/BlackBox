@@ -164,8 +164,8 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	shader->Uniform(cam.getProjectionMatrix(), "projection");
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");
-	shader->Uniform(gEnv->pConsole->GetCVar("r_tonemap")->GetIVal(), "bTonemap");
-	shader->Uniform(Vec3(20), "lightPos");
+	shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
+	shader->Uniform(Vec3(300), "lightPos");
 	shader->Uniform(gEnv->pRenderer->GetFrameID(), "fid");
 	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");
 

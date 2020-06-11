@@ -39,6 +39,7 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_FUNC(ScreenShot);
   SCRIPT_REG_FUNC(ClearConsole);
   SCRIPT_REG_FUNC(ShowConsole);
+  SCRIPT_REG_FUNC(Log);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
@@ -130,5 +131,16 @@ int CScriptObjectSystem::ShowConsole(IFunctionHandler* pH)
 
   pH->GetParam(1, show);
   m_pConsole->ShowConsole(show);
+  return pH->EndFunction();
+}
+
+int CScriptObjectSystem::Log(IFunctionHandler* pH)
+{
+  SCRIPT_CHECK_PARAMETERS(1);
+	const char* string;
+
+  pH->GetParam(1, string);
+	m_pSystem->Log(string);
+  m_pConsole->PrintLine(string);
   return pH->EndFunction();
 }

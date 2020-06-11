@@ -534,6 +534,8 @@ struct IRenderer
 
 	virtual float GetDepthValue(int x, int y) = 0;
 
+	virtual void Flush() = 0;
+
 	////////////////////////////////////////////////////////////////////////////////
 	virtual IShaderProgram* Sh_Load(const char* name, int flags)			  = 0;
 	virtual IShaderProgram* Sh_Load(const char* vertex, const char* fragment) = 0;

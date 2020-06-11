@@ -410,6 +410,11 @@ bool CGame::ClosePacks(const char *szFolder)
 	return(m_pSystem->GetIPak()->ClosePacks(szFolder));	
 }
 
+bool CGame::ParseLevelName(const char* szLevelName, char* szLevel, char* szMission)
+{
+	return false;
+}
+
 // TODO: editor support
 //////////////////////////////////////////////////////////////////////////
 string CGame::GetLevelsFolder() const

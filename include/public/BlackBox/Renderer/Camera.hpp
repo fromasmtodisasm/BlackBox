@@ -29,6 +29,11 @@ public:
     FPS,
     FLY
   }mode = CCamera::Mode::FPS;
+  enum class Type
+  {
+    Perspective,
+    Ortho
+  }type = Type::Perspective;
 public:
   // Camera Attributes
   Transform transform;
@@ -45,7 +50,7 @@ public:
   float zFar = 1000.f;
 
   // Constructor with vectors
-  CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(4.f), Zoom(ZOOM)
+  CCamera(glm::vec3 position = glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(10.f), Zoom(ZOOM)
   {
     this->transform.position = position;
     this->WorldUp = up;
@@ -55,7 +60,7 @@ public:
 
   }
   // Constructor with scalar values
-  CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(4.f), Zoom(ZOOM)
+  CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(10.f), Zoom(ZOOM)
   {
     this->transform.position = glm::vec3(posX, posY, posZ);
     this->WorldUp = glm::vec3(upX, upY, upZ);
@@ -72,7 +77,16 @@ public:
   }
   Mat4 getProjectionMatrix() const
   {
-    return glm::perspective(glm::radians(FOV), (float)gEnv->pRenderer->GetWidth() / (float)gEnv->pRenderer->GetHeight(), zNear, zFar);
+	  Vec4d v;
+	  gEnv->pRenderer->GetViewport(&v.x, &v.y, &v.z, &v.w);
+	  if (type == Type::Perspective)
+	  {
+		  return glm::perspective(glm::radians(FOV), (float)(v.z) / (float)(v.w), zNear, zFar);
+    }
+	  else
+	  {
+		  return glm::ortho(0.f, 160.f, 0.f, 90.f, 0.1f, 500.f);
+	  }
   }
 
   Vec3 GetPos()
@@ -121,4 +135,9 @@ public:
     this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 
   }
+};
+
+class COrthoCamera : public CCamera
+{
+
 };

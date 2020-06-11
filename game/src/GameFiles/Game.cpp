@@ -11,6 +11,12 @@
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 
+#include <ScriptObjects/ScriptObjectTest.hpp>
+
+#include "PlayerSystem.h"
+#include "XVehicleSystem.h"
+
+
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -20,12 +26,14 @@
 #include <vector>
 #include <cmath>
 
+int render_camera = 0;
+int movement_camera = 0;
 namespace
 {
 	Vec3 RandomVector(Vec3 left, Vec3 right, float floor = 5)
 	{
-		Vec3 vec(rand(), rand(), rand());
-		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(float(RAND_MAX))/(right - left)));
+		const Vec3 vec(rand(), rand(), rand());
+		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(static_cast<float>(RAND_MAX))/(right - left)));
 	}
 
 	std::string vec_to_string(Vec3 vec)
@@ -99,38 +107,47 @@ void CGame::PreRender()
 }
 
 CGame::CGame()
-	: g_scene(nullptr),
-	  listener(nullptr),
-	  m_Console(nullptr),
-	  m_Font(nullptr),
-	  m_pLog(nullptr),
-	  m_inputHandler(nullptr),
-	  m_player(nullptr),
-	  m_pSystem(nullptr),
-	  m_3DEngine(nullptr),
-	  m_Title("Test"),
-	  m_pScriptObjectGame(nullptr),
-	  m_pRender(nullptr),
-	  m_pInput(nullptr),
-	  m_pScriptSystem(nullptr),
-	  r_displayinfo(nullptr),
-	  r_cap_profile(nullptr),
-	  r_profile(nullptr),
-	  m_pCVarCheatMode(nullptr),
-
-	  m_currentLevelFolder("tmp")
+	:
+	m_pSystem(nullptr),
+	m_pScriptSystem(nullptr),
+	m_pRender(nullptr),
+	m_pInput(nullptr),
+	m_inputHandler(nullptr),
+	m_3DEngine(nullptr), m_pLog(nullptr),
+	m_lastTime(0),
+	listener(nullptr),
+	m_Font(nullptr),
+	m_Console(nullptr),
+	g_scene(nullptr),
+	r_displayinfo(nullptr),
+	r_profile(nullptr),
+	r_cap_profile(nullptr),
+	m_pCVarCheatMode(nullptr),
+	m_pScriptObjectGame(nullptr),
+	m_CameraController(),
+	m_IntersectionState()
 {
-#pragma warning(push)
-#pragma warning(disable : 4244)
-	srand(time(nullptr));
-#pragma warning(push)
-	m_deltaTime = 0.0f;
-	m_lastTime  = 0.0f;
-#ifdef ENABLE_MUSIC_LIST
-	m_PlayList.setRootPath("res/music/");
-	m_PlayList.addTrack("background.ogg");
-	m_PlayList.addTrack("japan.ogg");
-#endif
+
+	//const auto ltime = time (NULL);
+	//auto stime = (unsigned int) ltime/2;
+	//srand(stime);
+}
+
+void CGame::initVariables()
+{
+}
+
+CGame::~CGame()
+{
+	m_pScriptSystem->BeginCall("Shutdown");
+	m_pScriptSystem->PushFuncParam(0);
+	m_pScriptSystem->EndCall();
+
+	// shutdown the client if there is one
+	ShutdownClient();
+
+	// shutdown the server if there is one
+	ShutdownServer();
 }
 
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
@@ -148,11 +165,14 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		m_pInput->AddEventListener(this);
 		m_pInput->AddEventListener(&m_CameraController);
 		gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
-		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(m_pRender->GetWidth(), m_pRender->GetHeight());
+		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRender->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
 	}
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
+
+	m_pVehicleSystem = new CVehicleSystem();
+	m_pPlayerSystem = new CPlayerSystem();
 
 	m_CrossHair = m_pRender->LoadTexture("crosshair.png", 0, false);
 
@@ -172,19 +192,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	InitConsoleVars();
 	initCommands();
 	InitScripts();
-	auto init_cfg = m_Console->GetCVar("game_config");
-	if (init_cfg == nullptr)
-	{
-		//TODO: log: game config not specified
-		return false;
-	}
-	m_Console->ExecuteFile((std::string("res/scripts/") + init_cfg->GetString()).c_str());
-	auto is_complete = m_Console->GetCVar("g_init_complete");
-	if (is_complete == nullptr)
-	{
-		//TODO: log: error load Init.cfg
-		return false;
-	}
+	
+	LoadConfiguration("","game.cfg");
 
 	// init key-bindings
 	if (!m_bDedicatedServer)
@@ -264,12 +273,11 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	Vec3 left(-40, -40, -40);
 	Vec3 right(40, 40, 40);
 	auto create_obj = [&]()->auto {
-
-		auto rand_pos = RandomVector(left, right);
+		const auto rand_pos = RandomVector(left, right);
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		m_testObjects.emplace_back(
 			create_obj()
@@ -281,16 +289,57 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
-	m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
+	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+bool CGame::InitClassRegistry()
+{
+	m_EntityClassRegistry.Init( m_pSystem );
+	CPlayerSystem *pPlayerSystem = GetPlayerSystem();
+	CVehicleSystem *pVehicleSystem = GetVehicleSystem();
+	//CWeaponSystemEx *pWeaponSystemEx = GetWeaponSystemEx();	// m10
+
+	assert( pPlayerSystem );
+	assert( pVehicleSystem );
+	//assert( pWeaponSystemEx );
+
+	// Enumerate entity classes.
+	EntityClass *entCls = NULL;
+	m_EntityClassRegistry.MoveFirst();
+	do {
+		entCls = m_EntityClassRegistry.Next();
+		if (entCls)
+		{
+			const char* entity_type = entCls->strGameType.c_str();
+			EntityClassId ClassId = entCls->ClassId;
+			if(strcmp("Player",entity_type)==0)
+				pPlayerSystem->AddPlayerClass(ClassId);
+
+			if(strcmp("Vehicle",entity_type)==0)
+				pVehicleSystem->AddVehicleClass(ClassId);
+
+			#if 0
+			if(strcmp("Projectile",entity_type)==0)
+			{
+				// cannot be loaded at that point - other scripts must be loaded before
+				pWeaponSystemEx->AddProjectileClass(ClassId);
+			}
+			#endif
+		}
+	} while (entCls);
+	return true;
+}
+
+
+
 bool CGame::Update()
 {
-	static const auto& render_game = m_Console->GetCVar("render_game");
-	bool bRenderFrame			   = !m_bDedicatedServer;
-	*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
+	static const auto& render_game = true;
+	const bool bRenderFrame			   = !m_bDedicatedServer;
+	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	{
 		// TODO: FIX IT
@@ -304,18 +353,30 @@ bool CGame::Update()
 		{
 			SetRenderState();
 			m_pSystem->RenderBegin();
-			if (render_game)
 			{
-				if (render_game->GetIVal() != 0)
-				{
-					m_pSystem->SetViewCamera(*m_CameraController.CurrentCamera());
-					m_pSystem->Render();
-					DrawAux();
-				}
+				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+				m_CameraController.SetRenderCamera(0);
+				auto cam = m_CameraController.RenderCamera();
+				//cam->SetAngles(Vec3(0,0,0));
+				//cam->SetPos(Vec3(0, 40, 0));
+				cam->updateCameraVectors();
+				
+
+				cam->type = CCamera::Type::Perspective;
+				Render();
+				#if 0
+				m_pRender->Flush();
+				m_CameraController.SetRenderCamera(1);
+				m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
+				m_pRender->SetViewport(0, m_pRender->GetHeight() / 2, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+				Render();
+				#endif
+				m_CameraController.SetRenderCamera(render_camera);
+
 			}
+
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
-			m_pRender->DrawImage(m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2, 40, 40, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 			//PROFILER_POP_CPU_MARKER();
 		}
 	}
@@ -359,10 +420,10 @@ void CGame::DisplayInfo(float fps)
 	auto line   = m_pRender->GetHeight();
 	auto step   = 18;
 
-	std::string mode = m_Mode == MENU ? "MENU"
-									  : m_Mode == FPS ? "FPS"
-													  : m_Mode == FLY ? "FLY"
-																	  : "EDIT";
+	const std::string mode = m_Mode == MENU ? "MENU"
+		                         : m_Mode == FPS ? "FPS"
+		                         : m_Mode == FLY ? "FLY"
+		                         : "EDIT";
 
 	// Info
 	TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
@@ -420,9 +481,7 @@ void CGame::DisplayInfo(float fps)
 	}
 
 	//render->PrintLine("To hide depth buffer press <;>\n", dti);
-	render->PrintLine((std::string("Camera width = ") + std::to_string(GET_CVAR("r_cam_w")->GetIVal()) + "\n").c_str(), dti);
-	render->PrintLine((std::string("Camera height = ") + std::to_string(GET_CVAR("r_cam_h")->GetIVal()) + "\n").c_str(), dti);
-	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.CurrentCamera()->transform.position) + "\n").c_str(), dti);
+	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
 
 	info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
 	//render->PrintLine(pos.c_str(), info.getDTI());
@@ -436,7 +495,7 @@ void CGame::DisplayInfo(float fps)
 		Vec2 c;
 		m_pSystem->GetIHardwareMouse()->GetHardwareMouseClientPosition(&c.x, &c.y);
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */ c.y)).c_str(), info.getDTI());
-		m_Font->SetYPos(m_pRender->GetHeight() / 2);
+		m_Font->SetYPos((float)m_pRender->GetHeight() / 2);
 		{
 			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
 			auto pos = std::to_string(lpp.x) + ",";
@@ -534,6 +593,13 @@ void CGame::setCamera(CCamera* camera)
 	//m_World->setCamera(camera);
 }
 
+void CGame::Render()
+{
+	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
+	m_pSystem->Render();
+	DrawAux();
+}
+
 IGAME_API IGame* CreateIGame()
 {
 	CGame* game = new CGame();
@@ -544,11 +610,11 @@ bool CGame::OnInputEvent(const SInputEvent& event)
 {
 	{
 		bool retflag;
-		bool retval = ShouldHandleEvent(event, retflag);
+		const bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag)
 			return retval;
 	}
-	bool result = false;
+	const bool result = false;
 	if (!IsInPause())
 		OnInputEventProxy(event);
 	PersistentHandler(event);
@@ -559,9 +625,9 @@ void CGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	////////////////////////
-    bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
+	const bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
+	const bool control	= event.modifiers & eMM_Ctrl;
+	const bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
 	////////////////////////
 	if (keyPressed)
@@ -590,8 +656,8 @@ void CGame::PersistentHandler(const SInputEvent& event)
 				gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 				if (m_Mode != MENU)
 				{
-					m_IntersectionState.mx= m_pRender->GetWidth() / 2;
-					m_IntersectionState.my= m_pRender->GetHeight() / 2;
+					m_IntersectionState.mx= (float)m_pRender->GetWidth() / 2;
+					m_IntersectionState.my= (float)m_pRender->GetHeight() / 2;
 				}
 			}
       break;
@@ -599,11 +665,19 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		case eKI_1:
 		case eKI_2:
 		{
-			auto id = event.keyId - eKI_1;
+			const auto id = event.keyId - eKI_1;
 			if (control)
+			{
+				movement_camera = id;
 				m_CameraController.SetMovementCamera(id);
-			else
 				m_CameraController.SetRenderCamera(id);
+			}
+			else
+			{
+				render_camera = id;
+				m_CameraController.SetMovementCamera(id);
+				m_CameraController.SetRenderCamera(id);
+			}
 			break;
 		}
 		case eKI_Insert:
@@ -685,10 +759,10 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
   */
 
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
-	bool alt		= event.modifiers & eMM_Alt;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool control	= event.modifiers & eMM_Ctrl;
+	const bool shift		= event.modifiers & eMM_Shift;
+	const bool alt		= event.modifiers & eMM_Alt;
 	////////////////////////
 	auto camera = gEnv->pRenderer->GetCamera();
 	if (keyPressed)
@@ -771,7 +845,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 bool CGame::FlyInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -804,7 +878,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 bool CGame::MenuInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -913,7 +987,7 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 
 bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
-	bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool control	= event.modifiers & eMM_Ctrl;
 	bool shift		= event.modifiers & eMM_Shift;
 	bool alt		= event.modifiers & eMM_Alt;
@@ -948,11 +1022,24 @@ void CGame::ProcessPMessages(const char* szMsg)
 		m_bUpdateRet = false;
 		return;
 	}
-	else if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
+	else
+	if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
 	{
 		m_bRelaunch  = true;
 		m_bUpdateRet = false;
 		return;
+	}
+	else
+	if (strnicmp(szMsg,"SaveGame", 8)==0)		// save current game
+	{
+		if(!m_bEditor)
+		{
+			const char *sname="quicksave";
+			if(strlen(szMsg)>8) { 
+				sname=szMsg+9;
+			}
+			Save(sname, NULL, NULL);			
+		}
 	}
 }
 
@@ -990,6 +1077,10 @@ bool CGame::InitScripts()
 	m_pScriptObjectGame = new CScriptObjectGame();
 	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
+	auto SOT = new CScriptObjectTest();
+	SOT->InitializeTemplate(m_pScriptSystem);
+	SOT->Init(m_pScriptSystem, this);
+
 #if 0
   m_pScriptClient = new CScriptObjectClient();
   m_pScriptClient->InitializeTemplate(m_pScriptSystem);
@@ -1004,10 +1095,15 @@ bool CGame::InitScripts()
   m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
 #endif
 
-	m_pScriptSystem->ExecuteFile("scripts/common.lua", true, false);
+	InitClassRegistry();
+
+	// execute the "main"-script (to pre-load other scripts, etc.)
+	m_pScriptSystem->ExecuteFile("scripts/main.lua", true, false);
+	m_pScriptSystem->BeginCall("Init");
+	m_pScriptSystem->PushFuncParam(0);
+	m_pScriptSystem->EndCall();
 
 	fps = 35.f;
-	m_pScriptSystem->ExecuteFile("scripts/game.lua", true, false);
 	class toogle_viewport_drag : public IConsoleCommand
 	{
 		CGame* game;
@@ -1105,10 +1201,6 @@ bool CGame::TestScriptSystem(bool& retflag)
 	return {};
 }
 
-void CGame::SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile)
-{
-}
-
 void CGame::ReloadScripts()
 {
 }
@@ -1144,13 +1236,13 @@ void CGame::DrawAux()
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
-	UCol col(255, 255, 255, 255);
+	const UCol col(255, 255, 255, 255);
 	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
 	render->DrawLine(
 		{-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 40, y = 0, z = -40;
 	{
-		UCol col1(50, 125, 0, 100);
+		const UCol col1(50, 125, 0, 100);
 		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 
@@ -1191,6 +1283,7 @@ void CGame::DrawAux()
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
 	DrawAxis(render, Vec3(40));
+	m_pRender->DrawImage(static_cast<float>(m_pRender->GetWidth()) / 2, static_cast<float>(m_pRender->GetHeight()) / 2, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
 void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
@@ -1201,17 +1294,17 @@ void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
 	{
 		auto& a = axis;
 		{
-			UCol c = Vec3(1, 0, 0);
+			const UCol c = Vec3(1, 0, 0);
 			render->DrawLine(
 				{-a.x, 0, 0}, c, {a.x, 0, 0}, c);
 		}
 		{
-			UCol c = Vec3(0, 1, 0);
+			const UCol c = Vec3(0, 1, 0);
 			render->DrawLine(
 				{0, -a.y, 0}, c, {0, a.y, 0}, c);
 		}
 		{
-			UCol c = Vec3(0, 0, 1);
+			const UCol c = Vec3(0, 0, 1);
 			render->DrawLine(
 				{0, 0, -a.z}, c, {0, 0, a.z}, c);
 		}
@@ -1243,12 +1336,13 @@ void CGame::IntersectionByRayCasting()
 	float tMin = std::numeric_limits<float>::max();
 	Ray eyeRay;
 
-	eyeRay.origin = m_CameraController.CurrentCamera()->GetPos();
+	m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
+	eyeRay.origin = m_CameraController.RenderCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 
-	auto lastPos = m_IntersectionState.m_LastPickedPos; 
+	const auto lastPos = m_IntersectionState.m_LastPickedPos; 
 	for (size_t i = 0; i < m_testObjects.size(); i++){
-		glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
+		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
 		if (tMinMax.x < 0 || tMinMax.y < 0)
 			continue;
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
@@ -1262,4 +1356,71 @@ void CGame::IntersectionByRayCasting()
 	{
 		lineBuffer.push_back(m_IntersectionState.m_LastPickedPos);
 	}
+}
+
+void CGame::TriggerMoveLeft(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::LEFT, m_deltaTime);
+}
+
+void CGame::TriggerMoveRight(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::RIGHT, m_deltaTime);
+}
+
+void CGame::TriggerMoveForward(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
+}
+
+void CGame::TriggerMoveBackward(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_deltaTime);
+}
+
+void CGame::TriggerUse(float fValue, XActivationEvent ae)
+{
+}
+
+void CGame::TriggerTurnLR(float fValue, XActivationEvent ae)
+{
+	//float rotation_speed = m_deltaTime * (fValue > 0 ? 1.f : -1.f);
+	m_CameraController.ProcessMouseMovement(fValue, 0);
+}
+
+void CGame::TriggerTurnUD(float fValue, XActivationEvent ae)
+{
+	//float rotation_speed = m_deltaTime * (fValue > 0 ? -1.f : 1.f);
+	m_CameraController.ProcessMouseMovement(0, -fValue);
+}
+
+void CGame::TriggerQuickLoad(float fValue, XActivationEvent ae)
+{
+	if (this->IsQuicksaveAllowed())
+		this->SendMessage("LoadGame");
+}
+
+void CGame::TriggerQuickSave(float fValue, XActivationEvent ae)
+{
+	ICVar *g_LevelStated = GetISystem()->GetIConsole()->GetCVar("g_LevelStated");
+	if (!g_LevelStated->GetIVal())
+	{
+		if (this->IsQuicksaveAllowed())
+			this->SendMessage("SaveGame");
+	}
+}
+
+void CGame::TriggerMessageMode(float fValue, XActivationEvent ae)
+{
+	//m_pSystem->GetIConsole()->ExecuteString("@messagemode");
+}
+
+void CGame::TriggerMessageMode2(float fValue, XActivationEvent ae)
+{
+	//m_pSystem->GetIConsole()->ExecuteString("@messagemode2");
+}
+
+void CGame::TriggerScreenshot(float fValue, XActivationEvent ae)
+{
+	this->m_pSystem->GetIConsole()->ExecuteString("screenshot");
 }

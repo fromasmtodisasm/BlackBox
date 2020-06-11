@@ -63,10 +63,17 @@ void RenderCVars::InitCVars()
   scaleImageY = CREATE_CVAR("sy", 1.0f, 0);
   needTranslate = CREATE_CVAR("nt", 1, 0, "Translate or not 2d background of console");
   needFlipY = CREATE_CVAR("nfy", 1, 0, "Flip or not 2d background of console");
-  test_proj = CREATE_CVAR("test_proj", "test proj empty", 0);
-  render_via_viewport = CREATE_CVAR("rvv", 0, 0, "Rendering use view port, if 1 else with projection matrix");
 
-  r_debug = GET_CVAR("r_debug");
+  #if 0
+  REGISTER_CVAR(r_Width, 800, VF_NULL, "Window Width");
+  REGISTER_CVAR(r_Height, 600, VF_NULL, "Window Height");
+  REGISTER_CVAR(r_Bpp, 800, VF_NULL);
+  REGISTER_CVAR(r_Zbpp, 600, VF_NULL);
+  REGISTER_CVAR(r_Sbpp, 800, VF_NULL);
+  REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
+  #endif
+
+
   cam_width = GET_CVAR("r_cam_w");
   cam_height = GET_CVAR("r_cam_h");
 }

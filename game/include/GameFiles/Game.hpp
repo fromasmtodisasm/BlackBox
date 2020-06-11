@@ -30,6 +30,12 @@
 #define SAVEMAGIC "CRYLEVELSAVE"
 #define THISGAME "TestGame"
 
+#define PLAYER_CLASS_ID						1
+#define ADVCAMSYSTEM_CLASS_ID			97			//
+#define SPECTATOR_CLASS_ID				98			//
+#define SYNCHED2DTABLE_CLASS_ID		205			//
+
+
 // game states
 enum
 {
@@ -49,6 +55,7 @@ enum
 #include <BlackBox/World/IWorld.hpp>
 
 #include "Player.h"
+#include "EntityClassRegistry.h"
 #include <Network/XNetwork.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <ScriptObjects/ScriptObjectGame.hpp>
@@ -60,6 +67,9 @@ enum
 #include "GameShared.hpp"
 
 struct IStatObj;
+class CScriptObjectStream;
+class CPlayerSystem;
+class CVehicleSystem;
 
 struct TextRenderInfo
 {
@@ -214,7 +224,7 @@ struct TestObject
 	bool intersected = false;
 };
 
-class CGame 
+class CGame final
 	: public IGame
 	, public IInputEventListener
 	, public IPostRenderCallback
@@ -236,23 +246,29 @@ class CGame
 	};
 
 	CGame();
-	~CGame() = default;
+	~CGame();
 
 	const char* IsMODLoaded();
 	IGameMods* GetModsInterface();
 
 	bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) override;
+	bool InitClassRegistry();
 	bool Update() override;
 	void ExecScripts();
 	void DrawHud(float fps);
 	void DisplayInfo(float fps);
 	bool Run(bool& bRelaunch) override;
 
+	void AllowQuicksave(bool bAllow) {m_bAllowQuicksave = bAllow;};
+	bool IsQuicksaveAllowed(void) {return m_bAllowQuicksave;}
+
 	bool loadScene(std::string name);
 	void saveScene(std::string name, std::string as);
 	void SetRenderState();
 	void setPlayer(CPlayer* player);
 	void setCamera(CCamera* camera);
+
+	void Render();
 
 	// IInputEventListener interface
   public:
@@ -266,7 +282,18 @@ class CGame
 
 	// IGame interface
   public:
-	virtual void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) override;
+	
+	bool SaveToStream(CStream &stm, Vec3 *pos, Vec3 *angles,string sFilename);
+	bool LoadFromStream(CStream &stm, bool isdemo);
+	bool LoadFromStream_RELEASEVERSION(CStream &str, bool isdemo, CScriptObjectStream &scriptStream);
+	bool LoadFromStream_PATCH_1(CStream &str, bool isdemo, CScriptObjectStream &scriptStream);
+
+	void Save(string sFileName, Vec3 *pos, Vec3 *angles,bool bFirstCheckpoint=false );
+	bool Load(string sFileName);
+	void LoadConfiguration(const string &sSystemCfg,const string &sGameCfg);
+	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile);
+	void RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfile);
+
 	virtual void ReloadScripts() override;
 	virtual bool GetModuleState(EGameCapability eCap) override;
 	virtual void UpdateDuringLoading() override;
@@ -288,7 +315,15 @@ class CGame
 	bool OpenPacks(const char* szFolder);
 	bool ClosePacks(const char* szFolder);
 
-  private:
+  
+private: // ------------------------------------------------------------
+
+	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);
+
+	float										m_fFadingStartTime;
+	char										m_szLoadMsg[512];
+	bool										m_bAllowQuicksave = true;
+
 	bool initPlayer();
 	bool FpsInputEvent(const SInputEvent& event);
 	bool FlyInputEvent(const SInputEvent& event);
@@ -319,6 +354,9 @@ class CGame
 	{
 		return m_pScriptSystem;
 	}
+	CVehicleSystem *GetVehicleSystem(){ return m_pVehicleSystem; }
+	CPlayerSystem *GetPlayerSystem(){ return m_pPlayerSystem; }
+
 	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
@@ -400,17 +438,50 @@ class CGame
 
 	void IntersectionByRayCasting();
 
-	BEGIN_INPUTACTIONMAP()
-		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
-	END_INPUTACTIONMAP() 
+	// Triggers function
+	void TriggerMoveLeft(float fValue,XActivationEvent ae);
+	void TriggerMoveRight(float fValue,XActivationEvent ae);
+	void TriggerMoveForward(float fValue,XActivationEvent ae);
+	void TriggerMoveBackward(float fValue,XActivationEvent ae);
 
-  public:
-	float m_deltaTime;
+	void TriggerUse(float fValue,XActivationEvent ae);
+	void TriggerTurnLR(float fValue,XActivationEvent ae);
+	void TriggerTurnUD(float fValue,XActivationEvent ae);
+
+	void TriggerQuickLoad(float fValue,XActivationEvent ae);
+	void TriggerQuickSave(float fValue,XActivationEvent ae);
+	void TriggerMessageMode(float fValue,XActivationEvent ae);
+	void TriggerMessageMode2(float fValue,XActivationEvent ae);
+	void TriggerScreenshot(float fValue, XActivationEvent ae);
+
+	BEGIN_INPUTACTIONMAP()
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_RIGHT, TriggerMoveRight)
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_FORWARD, TriggerMoveForward)
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_BACKWARD, TriggerMoveBackward)
+		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
+
+		REGISTER_INPUTACTIONMAP(ACTION_USE, TriggerUse)
+		REGISTER_INPUTACTIONMAP(ACTION_TURNLR, TriggerTurnLR)
+		REGISTER_INPUTACTIONMAP(ACTION_TURNUD, TriggerTurnUD)
+
+		REGISTER_INPUTACTIONMAP(ACTION_QUICKLOAD,TriggerQuickLoad);
+		REGISTER_INPUTACTIONMAP(ACTION_QUICKSAVE,TriggerQuickSave);
+
+
+		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE, TriggerMessageMode)
+		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE2, TriggerMessageMode2)
+		REGISTER_INPUTACTIONMAP(ACTION_TAKESCREENSHOT, TriggerScreenshot)
+	END_INPUTACTIONMAP()
+
+public:
+	float m_deltaTime = 0.f;
 
   public:
 	ISystem* m_pSystem;			   //!< The system interface
 	CXServer* m_pServer = nullptr; //!< The server of this computer
-	CXClient* m_pClient;		   //!< The client of this computer
+	CXClient* m_pClient{};		   //!< The client of this computer
+	CEntityClassRegistry		m_EntityClassRegistry;
 	IScriptSystem* m_pScriptSystem;
 	IRenderer* m_pRender;
 	IInput* m_pInput;
@@ -418,7 +489,7 @@ class CGame
 	I3DEngine* m_3DEngine;
 	CPlayer* m_player = nullptr;
 	ILog* m_pLog;
-	INetwork* m_pNetwork;
+	INetwork* m_pNetwork{};
 	StringQueue m_qMessages;
 
 	int m_RenderTarget = -1;
@@ -457,12 +528,12 @@ class CGame
 	//!	The dummy client of this computer, required to get the list of servers if
 	//! theres not a real client actually connected and playing
 
-	IServerSnooper* m_pServerSnooper;		//!< used for LAN Multiplayer, to remove control servers
-	INETServerSnooper* m_pNETServerSnooper; //!< used for Internet Multiplayer, to remove control servers
+	IServerSnooper* m_pServerSnooper{};		//!< used for LAN Multiplayer, to remove control servers
+	INETServerSnooper* m_pNETServerSnooper{}; //!< used for Internet Multiplayer, to remove control servers
 	IRConSystem* m_pRConSystem = nullptr;   //!< used for Multiplayer, to remote control servers
 	std::string m_szLastAddress;
-	bool m_bLastDoLateSwitch;
-	bool m_bLastCDAuthentication;
+	bool m_bLastDoLateSwitch{};
+	bool m_bLastCDAuthentication{};
 
 	//CUIHud* m_pUIHud;									//!< Hud
 	//CUIHud* m_pCurrentUI;							//!< for the current ui
@@ -479,30 +550,51 @@ class CGame
 	ICVar* r_cap_profile;
 	ICVar* m_pCVarCheatMode;
 
-	ICVar* g_LevelName;
-	ICVar* g_StartMission;
+	ICVar* g_LevelName{};
+	ICVar* g_MissionName{};
+	ICVar* g_StartMission{};
 
-	ICVar* sv_port;
-	ICVar* sv_mapcyclefile;
-	ICVar* sv_cheater_kick;
-	ICVar* sv_cheater_ban;
+	ICVar* sv_port{};
+	ICVar* sv_mapcyclefile{};
+	ICVar* sv_cheater_kick{};
+	ICVar* sv_cheater_ban{};
 
-	ICVar* sv_timeout;
-	ICVar* cl_timeout;
-	ICVar* cl_loadtimeout;
-	ICVar* cl_snooptimeout;
-	ICVar* cl_snoopretries;
-	ICVar* cl_snoopcount;
+	ICVar* sv_timeout{};
+	ICVar* cl_timeout{};
+	ICVar* cl_loadtimeout{};
+	ICVar* cl_snooptimeout{};
+	ICVar* cl_snoopretries{};
+	ICVar* cl_snoopcount{};
+
+	ICVar* g_playerprofile{};
+
+	ICVar* cv_game_Difficulty{};
+	ICVar* cv_game_Aggression{};
+	ICVar* cv_game_Accuracy{};
+	ICVar* cv_game_Health{};
+	ICVar* cv_game_AllowAIMovement{};
+	ICVar* cv_game_AllAIInvulnerable{};
+	ICVar* cv_game_GliderGravity{};
+	ICVar* cv_game_GliderBackImpulse{};
+	ICVar* cv_game_GliderDamping{};
+	ICVar* cv_game_GliderStartGravity{};
+	ICVar* cv_game_physics_quality{};
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
 	std::string m_strLastSaveGame;
-	bool m_bEditor;
+	bool m_bEditor{};
 	//tPlayerPersistentData			m_tPlayerPersistentData;
 
 	TagPointMap m_mapTagPoints; //!< Map of tag points by name
 	CScriptObjectGame* m_pScriptObjectGame;
-	IScriptObject* m_playerObject;
-	CGameMods* m_pGameMods; //!< might be 0 (before game init)
+	IScriptObject* m_playerObject{};
+
+	CVehicleSystem *				m_pVehicleSystem;
+	CPlayerSystem *					m_pPlayerSystem;
+
+	//! Name of the last saved checkpoint.
+	string									m_sLastSavedCheckpointFilename;
+	CGameMods* m_pGameMods{}; //!< might be 0 (before game init)
 
 	// other
 	bool canDragViewPortWidth  = false;
@@ -520,11 +612,13 @@ class CGame
 	float fps = 0.0;
 
 	ActionsEnumMap m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
-	struct IActionMapManager* m_pIActionMapManager; //!<
-	bool m_bDedicatedServer;						//!<
-	bool m_bOK;										//!<
-	bool m_bUpdateRet;								//!<
-	bool m_bRelaunch;								//!<
+	bool											m_bIsLoadingLevelFromFile{};  //!<
+	bool											m_bMapLoadedFromCheckpoint{};
+	struct IActionMapManager* m_pIActionMapManager{};				//!<
+	bool m_bDedicatedServer{};															//!<
+	bool m_bOK{};																						//!<
+	bool m_bUpdateRet{};																		//!<
+	bool m_bRelaunch{};																			//!<
 	bool m_bInPause = false;
 
 	//other

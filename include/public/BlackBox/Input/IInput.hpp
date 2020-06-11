@@ -15,10 +15,6 @@ struct ISystem;
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Core/Platform/Platform.hpp>
 
-#ifndef stricmp
-#define stricmp _stricmp
-#endif // !stricmp
-
 enum EModifierMask
 {
   eMM_None = 0,
@@ -333,8 +329,8 @@ struct XBind
     nKey = eKI_Unknown;
     nModifier = eKI_Unknown;
   }
-  int nKey;
-  int nModifier;
+  uint32 nKey;
+  uint32 nModifier;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -350,7 +346,7 @@ struct IActionMap
   virtual void ResetBinding(XACTIONID nActionID) = 0;
   virtual void RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam) = 0;
   virtual void BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos = -1) = 0;//int nKey,int nModifier=XKEY_NULL) = 0;
-  virtual void BindAction(XACTIONID nActionID, int nKey, int nModifier = eKI_Unknown, int iKeyPos = -1) = 0;//, bool bConfigurable=false, bool bReplicate=false) = 0;
+  virtual void BindAction(XACTIONID nActionID, uint32 nKey, EModifierMask nModifier = eMM_None, int iKeyPos = -1) = 0;//, bool bConfigurable=false, bool bReplicate=false) = 0;
   virtual void BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier = NULL, int iKeyPos = -1) = 0;
   virtual void GetBinding(XACTIONID nActionID, int nKeyPos, XBind& Bind) = 0;
   virtual void GetBinding(XACTIONID nActionID, int nKeyPos, int& nKey, int& nModifier) = 0;

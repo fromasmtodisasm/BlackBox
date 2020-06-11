@@ -26,8 +26,162 @@
 
 struct ScriptBase
 {
-  virtual ~ScriptBase() {};
+  virtual ~ScriptBase() {}
 };
+
+//! Helper template class.
+//! Handles dispatching of Lua to C script function callbacks to the specified
+//! member functions of the CScriptableBase.
+// See Also: CScriptableBase::RegisterTemplateFunction
+struct ScriptTemplateCallHelper
+{
+	template<typename Callee, typename P0>
+	static int Call(Callee* callee, P0 (Callee::* func)(), IFunctionHandler* pH)
+	{
+		return pH->EndFunction((callee->*func)());
+	}
+	template<typename Callee, typename P0, typename P1>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1), IFunctionHandler* pH)
+	{
+		P1 p1;
+		if (!pH->GetParams(p1))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		if (!pH->GetParams(p1, p2))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		if (!pH->GetParams(p1, p2, p3))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		if (!pH->GetParams(p1, p2, p3, p4))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4, P5), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		P5 p5;
+		if (!pH->GetParams(p1, p2, p3, p4, p5))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4, p5));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4, P5, P6), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		P5 p5;
+		P6 p6;
+		if (!pH->GetParams(p1, p2, p3, p4, p5, p6))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4, p5, p6));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4, P5, P6, P7), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		P5 p5;
+		P6 p6;
+		P7 p7;
+		if (!pH->GetParams(p1, p2, p3, p4, p5, p6, p7))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4, p5, p6, p7));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4, P5, P6, P7, P8), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		P5 p5;
+		P6 p6;
+		P7 p7;
+		P8 p8;
+		if (!pH->GetParams(p1, p2, p3, p4, p5, p6, p7, p8))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4, p5, p6, p7, p8));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4, P5, P6, P7, P8, P9), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		P5 p5;
+		P6 p6;
+		P7 p7;
+		P8 p8;
+		P9 p9;
+		if (!pH->GetParams(p1, p2, p3, p4, p5, p6, p7, p8, p9))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4, p5, p6, p7, p8, p9));
+	}
+	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9, typename P10>
+	static int Call(Callee* callee, P0 (Callee::* func)(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10), IFunctionHandler* pH)
+	{
+		P1 p1;
+		P2 p2;
+		P3 p3;
+		P4 p4;
+		P5 p5;
+		P6 p6;
+		P7 p7;
+		P8 p8;
+		P9 p9;
+		P10 p10;
+		if (!pH->GetParams(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10))
+			return pH->EndFunction();
+		return pH->EndFunction((callee->*func)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10));
+	}
+
+	template<typename Callee, typename Func>
+	struct CallDispatcher
+	{
+		static int Dispatch(IFunctionHandler* pH)
+		{
+			Callee* pCallee = (Callee*)pH->GetThis();
+			Func func;
+			auto i = pH->GetFunctionID();
+			memcpy(&func, &i, sizeof(func));
+			gEnv->pLog->Log("i = %d; c = %c", 100, 'A');	
+			return ScriptTemplateCallHelper::Call(pCallee, func, pH);
+			return 0;
+		}
+	};
+};
+
 
 //////////////////////////////////////////////////////////////////////
 template<class T>
@@ -36,9 +190,9 @@ class _ScriptableEx : public ScriptBase
 public:
   _ScriptableEx()
   {
-    m_pScriptThis = nullptr;
-    m_pScriptSystem = nullptr;
-    m_nBase = 0;
+    m_pScriptThis = NULL;
+    m_pScriptSystem = NULL;
+    m_nBase = NULL;
   }
 
   virtual ~_ScriptableEx()
@@ -110,9 +264,8 @@ public:
       CryError("Scriptable EX:FUNCTION HANDLER NULL");
     m_pScriptThis = pScriptSystem->CreateGlobalObject(sName);
     m_pScriptThis->SetNativeData(pParent);
-    m_pScriptThis->Delegate(_ScriptableEx<T>::m_pTemplateTable);
-    /*if (_ScriptableEx<T>::m_pTemplateTable)
-      m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);*/
+    if (_ScriptableEx<T>::m_pTemplateTable)
+      m_pScriptThis->Clone(_ScriptableEx<T>::m_pTemplateTable);
 
     if (m_pScriptThis->GetNativeData() != pParent)
       CryError("Scriptable EX:Init Global");
@@ -159,6 +312,17 @@ public:
     m_pTemplateTable->AddFunction(sName, _ScriptableEx<T>::FuncThunk, nIdx);
   }
 
+	template<typename Callee, typename Func>
+  void RegisterTemplateFunction(const char* sFuncName, const char* sFuncParams, Callee& callee, const Func& mfunc)
+  {
+    if (m_pTemplateTable == NULL)
+    {
+      m_pTemplateTable = m_pSS->CreateObject();
+    }
+
+    m_pTemplateTable->AddFunction(sFuncName, _ScriptableEx<T>::FuncThunk<Callee, Func>, *((INT_PTR*)(&mfunc)));
+  }
+
   bool EnablePropertiesMapping(void* pBase)
   {
     assert(pBase);
@@ -177,6 +341,7 @@ public:
 
   static void InsertProperty(const char* sName, Property& prop)
   {
+#if 0
     USER_DATA ud;
     Property* p = new Property;
     m_pvPropertiesVector->push_back(p);
@@ -185,12 +350,13 @@ public:
     m_pPropertiesTable->SetValue(sName, ud);
     //test
     int nTemp;
-    INT_PTR nP;
+    ULONG_PTR nP;
     if (!m_pPropertiesTable->GetUDValue(sName, nP, nTemp))
       CryError("Scriptable EX:Insert Property (GetUDValue)");
     p = (Property*)nP;
     if (p->nType != prop.nType)
       CryError("Scriptable EX:Insert Property");
+#endif // 0
   }
 
   static void RegisterProperty(const char* sName, PropertyType t, unsigned int offset)
@@ -224,6 +390,20 @@ protected:
       return 0;
     }
     return (pThis->*(pThis->m_vFuncs[m_pFunctionHandler->GetFunctionID()]))(m_pFunctionHandler);
+  }
+
+	template<typename Callee, typename Func>
+  static int FuncThunk(HSCRIPT h)
+  {
+    m_pFunctionHandler->__Attach(h);
+    T* pThis = (T*)(m_pFunctionHandler->GetThis());
+    if (!pThis)
+    {
+      m_pSS->RaiseError("Null Self");
+      //::OutputDebugString("Null Self\n");
+      return 0;
+    }
+		return ScriptTemplateCallHelper::CallDispatcher<Callee, Func>::Dispatch(m_pFunctionHandler);
   }
 
   static int SetThunk(HSCRIPT h)
@@ -353,13 +533,12 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 #if defined(LINUX) || defined(__MINGW32__)
-#define _DECLARE_SCRIPTABLEEX(_class) \
-        template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=nullptr; \
+#define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
 		template<> _ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs = _ScriptableEx<_class>::FunctionsVec(); \
-        template<> IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=nullptr; \
-        template<> IScriptObject *_ScriptableEx<_class>::m_pPropertiesTable=nullptr; \
-        template<> IScriptSystem *_ScriptableEx<_class>::m_pSS=nullptr; \
-        template<> _ScriptableEx<_class>::PropertiesVec *_ScriptableEx<_class>::m_pvPropertiesVector=nullptr;
+		template<> IScriptObject *_ScriptableEx<_class>::m_pTemplateTable=NULL; \
+		template<> IScriptObject *_ScriptableEx<_class>::m_pPropertiesTable=NULL; \
+		template<> IScriptSystem *_ScriptableEx<_class>::m_pSS=NULL; \
+		template<> _ScriptableEx<_class>::PropertiesVec *_ScriptableEx<_class>::m_pvPropertiesVector=NULL;
 #else
 #define _DECLARE_SCRIPTABLEEX(_class) template<> IFunctionHandler * _ScriptableEx<_class>::m_pFunctionHandler=NULL; \
 		_ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs; \
@@ -395,7 +574,8 @@ protected:
 #define SCRIPT_CHECK_PARAMETERS(_n) CHECK_PARAMETERS(_n)
 #define SCRIPT_REG_CLASSNAME
 #define SCRIPT_REG_FUNC(_func)  SCRIPT_REG_CLASSNAME::RegisterFunction(m_pSS,# _func, &SCRIPT_REG_CLASSNAME::_func);
-#define REG_FUNC(_class,_func) _class::RegisterFunction(_ScriptableEx::m_pSS,#_func,&_class::_func);
+#define REG_FUNC(_class,_func) _class::RegisterFunction(m_pSS,#_func,&_class::_func);
+#define SCRIPT_REG_TEMPLFUNC(func, sFuncParams) RegisterTemplateFunction( # func, sFuncParams, *this, &SCRIPT_REG_CLASSNAME::func);
 #define REG_DERIVED_FUNC(_class,_func) RegisterFunction(m_pSS,#_func,&_class::_func);
 #define SCRIPT_REG_CONST_SS(_pSS, _const) m_pSS->SetGlobalValue(#_const, _const);
 #define SCRIPT_REG_CONST(_const) SCRIPT_REG_CONST_SS(m_pScriptSystem,_const)

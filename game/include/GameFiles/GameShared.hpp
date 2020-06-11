@@ -101,6 +101,8 @@ typedef unsigned char ACTIONTYPE;
 #define ACTION_MOVEMODE_TOGGLE	63
 #define ACTION_AIM_TOGGLE				64
 
+#define ACTION_QUICKLOAD				65
+#define ACTION_QUICKSAVE				66
 #define PLAYER_MAX_WEAPONS			9
 
 //////////////////////////////////////////////////////////////////////////

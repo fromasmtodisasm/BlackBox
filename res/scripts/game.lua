@@ -16,7 +16,6 @@ function Player:OnInit( data )
 	--	Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
 	--end
 
-	Game:CreateVariable("game_inited", 1)
 end
 
 function Player:PostInit( )
@@ -46,6 +45,10 @@ function test(  )
 	Player:OnInit(123)
 end
 
-Game:CreateVariable("render_game", 1)
 
+Mission = {}
+
+function Mission:OnCheckpointLoaded()
+	Console:PrintLine("Checkpoint Loaded")
+end
 

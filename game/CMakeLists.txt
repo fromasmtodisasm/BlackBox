@@ -23,11 +23,14 @@ target_sources(
 	${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
 	PRIVATE ${SOURCE_DIR}/Commands.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/EntityClassRegistry.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/Game.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameActionInput.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameClientServer.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameDevMode.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/GameLoading.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameMods.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
 	#PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
@@ -39,6 +42,9 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectInput.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServer.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectServerSlot.cpp
+	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectStream.cpp
+	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectTest.cpp
+	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptTimerMgr.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp
@@ -106,6 +112,7 @@ source_group(
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
+
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
   "src/pch.hpp"

@@ -51,7 +51,7 @@ public:
         delta.x = event.value;
       else
         delta.y = event.value;
-      ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
+      //ProcessMouseMovement(static_cast<float>(delta.x), -static_cast<float>(delta.y));
       return false;
     }
     else if (keyPressed)
@@ -137,28 +137,28 @@ public:
         velocity += impulse;
         break;
       case eKI_W:
-        ProcessKeyboard(Movement::FORWARD, move_speed);
+        //ProcessKeyboard(Movement::FORWARD, move_speed);
         break;
       case eKI_S:
-        ProcessKeyboard(Movement::BACKWARD, move_speed);
+        //ProcessKeyboard(Movement::BACKWARD, move_speed);
         break;
       case eKI_A:
-        ProcessKeyboard(Movement::LEFT, move_speed);
+        //ProcessKeyboard(Movement::LEFT, move_speed);
         break;
       case eKI_D:
-        ProcessKeyboard(Movement::RIGHT, move_speed);
+        //ProcessKeyboard(Movement::RIGHT, move_speed);
         break;
       case eKI_Up:
-        ProcessMouseMovement(0.f, rotation_speed);
+        //ProcessMouseMovement(0.f, rotation_speed);
         break;
       case eKI_Down:
-        ProcessMouseMovement(0.f, -rotation_speed);
+        //ProcessMouseMovement(0.f, -rotation_speed);
         break;
       case eKI_Left:
-        ProcessMouseMovement(-rotation_speed, 0.f);
+        //ProcessMouseMovement(-rotation_speed, 0.f);
         break;
       case eKI_Right:
-        ProcessMouseMovement(rotation_speed, 0.f);
+        //ProcessMouseMovement(rotation_speed, 0.f);
         break;
       default:
         ;//GameObject::update(deltatime);
@@ -191,6 +191,7 @@ public:
   {
 	  assert(n < m_Camera.size());
 	  m_RenderCamera = n; 
+    gEnv->pRenderer->SetCamera(*m_Camera[n]);
   }
   void SetMovementCamera(size_t n)
   {
@@ -214,11 +215,11 @@ public:
 		{
 			if (wheelDelta > 0)
 			{
-        ProcessKeyboard(Movement::FORWARD, 1);
+        ProcessKeyboard(Movement::FORWARD, 0.5);
 			}
 			else
 			{
-        ProcessKeyboard(Movement::BACKWARD, 1);
+        ProcessKeyboard(Movement::BACKWARD, 0.5);
 			}
 		}
 	}

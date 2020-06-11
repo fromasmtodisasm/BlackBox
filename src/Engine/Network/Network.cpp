@@ -1,12 +1,65 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/Core/ICompressionHelper.hpp>
 #include <BlackBox/Network/Network.hpp>
 #include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/Server.hpp>
 #include <BlackBox/Network/IPAddress.hpp>
 
 #include <SDL2/SDL_net.h>
+
+class CCompressionHelper : public ICompressionHelper
+{
+public:
+	CCompressionHelper(CNetwork* pNetwork)
+		: m_pNetwork(pNetwork)
+  {
+     
+  }
+
+public:
+  CNetwork* m_pNetwork;
+
+  // Inherited via ICompressionHelper
+  virtual bool Write(CStream& outStream, const unsigned char inChar) override
+  {
+	  assert(0);
+	  return false;
+  }
+  virtual bool Read(CStream& inStream, unsigned char& outChar) override
+  {
+	  assert(0);
+	  return false;
+  }
+  virtual bool Write(CStream& outStream, const char* inszString) override
+  {
+	  auto len = strlen(inszString) + 1;
+		return outStream.WriteBits((BYTE*)inszString, BYTES2BITS(len));
+  }
+  virtual bool Read(CStream& inStream, char* outszString, const DWORD indwStringSize) override
+  {
+		DWORD i = 0; 
+    bool ok = false;
+	  for (; i < indwStringSize && !inStream.EOS() ; i++)
+	  {
+      if (inStream.ReadBits((BYTE*)(outszString + i), BYTES2BITS(sizeof(char))))
+      {
+				if (outszString[i] == 0)
+				{
+					outszString[i + 1] = 0;
+					ok = true;
+					break; 
+        }
+      }
+			else
+			{
+				return false; 
+      }
+	  }
+	  return ok;
+  }
+};
 
 class CTmpNetworkClient : public IClient
 {
@@ -246,6 +299,8 @@ bool CNetwork::Init()
     gEnv->pLog->Log("SDL_Init: %s\n", SDL_GetError());
     res = false;
   }
+
+  m_pCompressionHelper = new CCompressionHelper(this);
   return res;
 }
 
@@ -306,7 +361,7 @@ void CNetwork::GetMemoryStatistics(ICrySizer* pSizer)
 
 ICompressionHelper* CNetwork::GetCompressionHelper()
 {
-  return nullptr;
+  return m_pCompressionHelper;
 }
 
 void CNetwork::ClearProtectedFiles()

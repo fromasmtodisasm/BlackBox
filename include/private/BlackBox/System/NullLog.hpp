@@ -34,6 +34,13 @@ private:
 
 	// Inherited via ILog
 	virtual void LogToConsole(const char* command, ...) override;
+
+  // Inherited via ILog
+  virtual void SetFileName(const char* command = NULL) override;
+	virtual const char* GetFileName() override;
+
+  // Inherited via ILog
+  virtual void LogToFile(const char* command, ...) override;
 };
 
 NullLog::NullLog(const char* filename) : filename(filename)
@@ -129,5 +136,18 @@ void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
 }
 
 void NullLog::LogToConsole(const char* command, ...)
+{
+}
+
+void NullLog::SetFileName(const char* command)
+{
+}
+
+const char* NullLog::GetFileName()
+{
+	return NULL;
+}
+
+void NullLog::LogToFile(const char* command, ...)
 {
 }

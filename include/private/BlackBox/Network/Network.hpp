@@ -41,4 +41,6 @@ private:
 
   std::vector<IServer*> m_Servers;
   std::vector<IClient*> m_Clients;
+
+  ICompressionHelper* m_pCompressionHelper{};
 };

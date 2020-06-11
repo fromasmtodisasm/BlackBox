@@ -1,6 +1,8 @@
 #pragma once
 #include <BlackBox/Core/Platform/Platform.hpp> 
 #include <BlackBox/Core/Version.hpp> 
+#include <BlackBox/System/ILog.hpp> 
+#include <BlackBox/System/IValidator.hpp> 
 #include <cstdarg>
 
 #ifdef SYSTEM_EXPORTS
@@ -8,6 +10,13 @@
 #else
   #define ISYSTEM_API DLL_IMPORT
 #endif
+
+//! Static branch-prediction helpers
+#define IF(condition, hint)    if (condition)
+//! Compiler-supported type-checking helper
+#define PRINTF_PARAMS(...)
+
+
 
 struct ISystem;
 struct ILog;
@@ -116,6 +125,18 @@ struct ISystemEventDispatcher
   //virtual void OnLocaleChange() = 0;
   // </interfuscator:shuffle>
 };
+
+//! \cond INTERNAL
+//! \note Can be used for LoadConfiguration().
+struct ILoadConfigurationEntrySink
+{
+	// <interfuscator:shuffle>
+	virtual ~ILoadConfigurationEntrySink(){}
+	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) = 0;
+	virtual void OnLoadConfigurationEntry_End() {}
+	// </interfuscator:shuffle>
+};
+//! \endcond
 
 //////////////////////////////////////////////////////////////////////////
 // Structure passed to Init method of ISystem interface.
@@ -258,8 +279,35 @@ struct ISystem
 
   virtual ITimer* GetITimer() = 0;
 
-  //! Quits the application.
-  virtual void Quit() = 0;
+  
+	// Quit the appliacation
+	virtual void	Quit() = 0;
+	// Tells the system if it is relaunching or not
+	virtual void	Relaunch(bool bRelaunch) = 0;
+	// return true if the application is in the shutdown phase
+	virtual bool	IsQuitting() = 0;
+
+	// Display error message.
+	// Logs it to console and file and error message box.
+	// Then terminates execution.
+	virtual void Error( const char *sFormat,... ) = 0;
+	
+	//DOC-IGNORE-BEGIN
+	//[Timur] DEPRECATED! Use Validator Warning instead.
+	// Display warning message.
+	// Logs it to console and file and display a warning message box.
+	// Not terminates execution.
+	//__declspec(deprecated) virtual void Warning( const char *sFormat,... ) = 0;
+	//DOC-IGNORE-END
+
+	// Report warning to current Validator object.
+	// Not terminates execution.
+	virtual void Warning( EValidatorModule module,EValidatorSeverity severity,int flags,const char *file,const char *format,... ) = 0;
+	// Compare specified verbosity level to the one currently set.
+	virtual bool CheckLogVerbosity( int verbosity ) = 0;
+
+	// returns true if this is dedicated server application
+	virtual bool IsDedicated() {return false;}
 
   virtual void Log(const char* message) = 0;
   virtual void Error(const char* message) = 0;
@@ -280,6 +328,20 @@ struct ISystem
 	virtual const SFileVersion& GetProductVersion() = 0;
 
   virtual void EnableGui(bool enable) = 0;
+
+	// Compressed file read & write
+	virtual bool WriteCompressedFile(char *filename, void *data, unsigned int bitlen) = 0;
+	virtual unsigned int ReadCompressedFile(char *filename, void *data, unsigned int maxbitlen) = 0;
+	virtual unsigned int GetCompressedFileSize(char *filename)=0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Configuration.
+	//////////////////////////////////////////////////////////////////////////
+	// Saves system configuration.
+	virtual void SaveConfiguration() = 0;
+	// Loads system configuration
+	virtual void LoadConfiguration(const string &sFilename)=0;
+
 };
 
 // Global environment variable.
@@ -304,20 +366,90 @@ extern "C"
 #define FatalError(...) void(0)
 #define CryFatalError(...) FatalError(__VA_ARGS__)
 
-inline void Warning(const char* fmt ...)
-{
-  char buffer[1024];
-  va_list ptr;
-  va_start(ptr, fmt);
-  vsprintf(buffer, fmt, ptr);
-  va_end(ptr);
-  GetISystem()->Log(buffer);
+//////////////////////////////////////////////////////////////////////////
+// Display error message.
+// Logs it to console and file and error message box.
+// Then terminates execution.
+inline void CryError( const char *format,... )
+{ 
+	if (!GetISystem())
+		return;
+
+	va_list	ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	va_start(ArgList, format);
+	vsprintf(szBuffer, format, ArgList);
+	va_end(ArgList);
+
+	GetISystem()->Error( "%s",szBuffer );
 }
-#define CryWarning(...) void(0)//Warning(__VA_ARGS__)
-#define ScriptWarning(...) Warning(__VA_ARGS__)
 
-#define CryError(...) void(0)
 
-//! Simple logs of data with low verbosity.
-//void        CryLog(const char*, ...) PRINTF_PARAMS(1, 2);
-#define CryLog(format, ...) GetISystem()->GetIConsole()->PrintLine(format, __VA_ARGS__)
+//////////////////////////////////////////////////////////////////////////
+// Display warning message.
+// Logs it to console and file and display a warning message box.
+// Not terminates execution.
+inline void CryWarning( EValidatorModule module,EValidatorSeverity severity,const char *format,... )
+{
+	if (!GetISystem() || !format)
+		return;
+	va_list	ArgList;
+	char		szBuffer[MAX_WARNING_LENGTH];
+	va_start(ArgList, format);
+	vsprintf(szBuffer, format, ArgList);
+	va_end(ArgList);
+	GetISystem()->Warning( module,severity,0,0,szBuffer );
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Simple log of data with low verbosity.
+inline void CryLog( const char *format,... )
+{
+	if (GetISystem() && GetISystem()->CheckLogVerbosity(8))
+	{
+		va_list args;
+		va_start(args,format);
+		GetISystem()->GetILog()->LogV( ILog::eMessage,format,args );
+		va_end(args);
+	}
+}
+
+//! Very rarely used log comment.
+void        CryComment(const char*, ...) PRINTF_PARAMS(1, 2);
+inline void CryComment(const char* format, ...)
+{
+	// Fran: we need these guards for the testing framework to work
+	if (gEnv && gEnv->pSystem && gEnv->pLog)
+	{
+		va_list args;
+		va_start(args, format);
+		gEnv->pLog->LogV(ILog::eComment, format, args);
+		va_end(args);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Very rarely used log comment.
+inline void CryLogComment( const char *format,... )
+{
+	if (GetISystem() && GetISystem()->CheckLogVerbosity(9))
+	{
+		va_list args;
+		va_start(args,format);
+		GetISystem()->GetILog()->LogV( ILog::eMessage,format,args );
+		va_end(args);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Logs important data that must be printed regardless verbosity.
+inline void CryLogAlways( const char *format,... )
+{
+	if (GetISystem())
+	{
+		va_list args;
+		va_start(args,format);
+		GetISystem()->GetILog()->LogV( ILog::eAlways,format,args );
+		va_end(args);
+	}
+}
