@@ -137,8 +137,8 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
 
   if (is_msaa)
   {
-	  glTextureStorage2DMultisample(t->id, 8, internalFormat, width, height, true);
-	  gl::TexImage2DMS(textureTarget, 8, internalFormat, width, height, GL_TRUE); 
+      glTextureStorage2DMultisample(t->id, SAMPLES_COUNT, internalFormat, width, height, true);
+      gl::TexImage2DMS(textureTarget, SAMPLES_COUNT, internalFormat, width, height, GL_TRUE);
   }
   else
   {

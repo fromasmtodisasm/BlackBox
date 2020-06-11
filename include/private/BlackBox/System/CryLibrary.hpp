@@ -44,6 +44,7 @@
 
 #include <stdio.h>
 #include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 namespace Detail
 {
@@ -61,10 +62,9 @@ namespace Detail
 	#define CryGetProcAddress(libHandle, procName) ::GetProcAddress((HMODULE)(libHandle), procName)
 	#define CryFreeLibrary(libHandle)              ::FreeLibrary((HMODULE)(libHandle))
 // || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
-#elif BB_PLATFORM_LINUX 
+#elif BB_PLATFORM_LINUX
 	#include <dlfcn.h>
 	#include <stdlib.h>
-	#include "platform.h"
 
 // for compatibility with code written for windows
 	#define CrySharedLibrarySupported   true
@@ -94,8 +94,8 @@ static void SetModulePath(const char* pModulePath)
 static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInModulePath = true)
 {
 	char finalPath[_MAX_PATH] = {};
-	//CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryPrefix));
-	//CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryExtension));
+    //ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryPrefix));
+    //ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryExtension));
 	
 #if BB_PLATFORM_ANDROID
 	const char* libPath = bInModulePath ? (CryGetSharedLibraryStoragePath() ? CryGetSharedLibraryStoragePath() : ".") : "";
@@ -106,7 +106,7 @@ static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInM
 	const char* filePre = strncmp(libName, CrySharedLibraryPrefix, CRY_ARRAY_COUNT(CrySharedLibraryPrefix) - 1) != 0 ? CrySharedLibraryPrefix : "";
 	const char* fileExt = strcmp(libName + strlen(libName) - (CRY_ARRAY_COUNT(CrySharedLibraryExtension) - 1), CrySharedLibraryExtension) != 0 ? CrySharedLibraryExtension : "";
 
-	cry_sprintf(finalPath, "%s%s%s%s%s", libPath, libPath ? "/" : "", filePre, libName, fileExt);
+    sprintf(finalPath, "%s%s%s%s%s", libPath, libPath ? "/" : "", filePre, libName, fileExt);
 
 	#if CRY_PLATFORM_LINUX
 	return ::dlopen(finalPath, (bLazy ? RTLD_LAZY : RTLD_NOW) | RTLD_DEEPBIND);

@@ -34,7 +34,7 @@ FrameBufferObject* FrameBufferObject::create(int width, int height, Texture* att
 		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, fbo->rbo));
 		int samples = 0;
 		if (attachment->isMS)
-			samples = 8;
+            samples = SAMPLES_COUNT;
 		glCheck(glNamedRenderbufferStorageMultisample(fbo->rbo, samples, GL_DEPTH_STENCIL, width, height));
     glCheck(glNamedFramebufferRenderbuffer(fbo->id, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->rbo));
 		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, 0));

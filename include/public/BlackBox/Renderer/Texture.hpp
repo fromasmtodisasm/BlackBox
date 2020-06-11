@@ -8,6 +8,8 @@
 #include <nvtt/nvtt.h>
 #endif
 
+#define SAMPLES_COUNT 2
+
 class Texture : public BaseTexture
 {
 public:
