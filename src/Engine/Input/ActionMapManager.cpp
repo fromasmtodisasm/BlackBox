@@ -3,7 +3,7 @@
 
 CActionMapManager::CActionMapManager(IInput* pInput)
 {
-	pInput->SetExclusiveListener(this);
+    pInput->SetExclusiveListener(static_cast<IInputEventListener*>(this));
 }
 
 CActionMapManager::~CActionMapManager()
@@ -25,7 +25,7 @@ bool CActionMapManager::GetInvertedMouse()
 
 void CActionMapManager::RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam)
 {
-	for (size_t i = 0; i < m_ActionList.size(); i++)
+    for (std::size_t i = 0; i < m_ActionList.size(); i++)
 	{
 		if (m_ActionList[i].nActionID == nActionID)
 		{
@@ -152,7 +152,7 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 			default:
 				break;
 			}
-			for (size_t i = 0; i < m_ActionList.size(); i++)
+            for (std::size_t i = 0; i < m_ActionList.size(); i++)
 			{
 				if (m_ActionList[i].aam == aam)
 				{
@@ -165,7 +165,7 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 	return false;
 }
 
-void CActionMapManager::AddBind(CActionMap* mpa, ActionBinding& actionBinding)
+void CActionMapManager::AddBind(CActionMap* mpa, const ActionBinding& actionBinding)
 {
 	m_ActionBindingMap[mpa].push_back(actionBinding);
 }

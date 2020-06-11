@@ -140,7 +140,7 @@ void FrameBufferObject::DrawToBackbuffer(const Vec4& dstViewport)
 
 void FrameBufferObject::DrawTo(FrameBufferObject* target, const Vec4& dstViewport)
 {
-	auto& dvp = Vec4d(dstViewport);
+    const auto& dvp = Vec4d(dstViewport);
 	auto& svp = target == nullptr ? dvp : Vec4d(viewPort);
 	auto target_id = target == nullptr ? 0 : target->id;
 	glCheck(glBlitNamedFramebuffer(id, target_id, svp.x, svp.y, svp.z, svp.w, dvp.x, dvp.y, dvp.z, dvp.w, GL_COLOR_BUFFER_BIT, target == nullptr ? GL_LINEAR : GL_NEAREST));

@@ -1,5 +1,5 @@
 #include <Game.hpp>
-#include <ScriptObjects\ScriptObjectTest.hpp>
+#include <ScriptObjects/ScriptObjectTest.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -24,7 +24,7 @@
 #define ENTITYDLL_API __declspec(dllimport)
 #endif
 #else
-#define CRYENTITYDLL_API
+#define ENTITYDLL_API
 #endif
 
 ////////////////////////////////////////////////////////////////////////////

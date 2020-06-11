@@ -59,7 +59,7 @@ public:
 
 
 public:
-  void AddBind(CActionMap* mpa, ActionBinding& actionBinding);
+  void AddBind(CActionMap* mpa, const ActionBinding& actionBinding);
 
 private:
   ActionMaps m_ActionMaps;

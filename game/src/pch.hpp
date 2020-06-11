@@ -13,12 +13,37 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
+
 #if defined(LINUX)
-#	include <stdarg.h>
-#	include "platform.h"
-#	include "IGame.h"
-#	include "string.h"
+//#	include <stdarg.h>
+//#	include "platform.h"
+//#	include "IGame.h"
+//#	include "string.h"
+#define OutputDebugString(...) void(0)
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define MakeSureDirectoryPathExists(path) mkdir((path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 #endif
+
+typedef struct _SYSTEMTIME
+{
+    WORD wYear;
+    WORD wMonth;
+    WORD wDayOfWeek;
+    WORD wDay;
+    WORD wHour;
+    WORD wMinute;
+    WORD wSecond;
+    WORD wMilliseconds;
+}SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
+
+inline void GetLocalTime(LPSYSTEMTIME lpSystemTime)
+{
+    ZeroStruct(lpSystemTime);
+}
+
 
 #if defined(_AMD64_) && !defined(LINUX)
 #include <io.h>
@@ -27,8 +52,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // VARIOUS MACROS ///////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-
-template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
 
 _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 {

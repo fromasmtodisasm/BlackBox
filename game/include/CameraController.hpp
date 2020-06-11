@@ -209,7 +209,7 @@ public:
 
   // Inherited via IHardwareMouseEventListener
   
-	void CCameraController::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta = 0)
+    void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta = 0)
 	{
 		if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_WHEEL)
 		{
