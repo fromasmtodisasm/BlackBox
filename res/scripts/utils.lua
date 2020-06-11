@@ -63,7 +63,7 @@ function init()
 	--addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
 	--addcommand("set_ws", [[set2dvec("r_Width", "r_Height", %1, %2)]], "Set size of window")
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
-	addcommand("screen_shot", [[System:ScreenShot("screen_shots/ss.png")]]) 
+	addcommand("screenshot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
 	addcommand("level", [[Game:LoadLevel(%1)]]) 
 
@@ -76,7 +76,6 @@ function init()
 	]]) 
 	Game:CreateVariable("test_var")
 
-	Console:CreateKeyBind("f5", "Game:Save()") 
 	Console:CreateKeyBind("ctrl_s", "scene load test") 
 	Console:CreateKeyBind("ctrl_p", "reload_scripts") 
 	--Console:CreateKeyBind("ctrl_c", "#Game:gotoMenu()") 

@@ -322,7 +322,7 @@ private: // ------------------------------------------------------------
 
 	float										m_fFadingStartTime;
 	char										m_szLoadMsg[512];
-	bool										m_bAllowQuicksave;
+	bool										m_bAllowQuicksave = true;
 
 	bool initPlayer();
 	bool FpsInputEvent(const SInputEvent& event);
@@ -444,12 +444,34 @@ private: // ------------------------------------------------------------
 	void TriggerMoveForward(float fValue,XActivationEvent ae);
 	void TriggerMoveBackward(float fValue,XActivationEvent ae);
 
+	void TriggerUse(float fValue,XActivationEvent ae);
+	void TriggerTurnLR(float fValue,XActivationEvent ae);
+	void TriggerTurnUD(float fValue,XActivationEvent ae);
+
+	void TriggerQuickLoad(float fValue,XActivationEvent ae);
+	void TriggerQuickSave(float fValue,XActivationEvent ae);
+	void TriggerMessageMode(float fValue,XActivationEvent ae);
+	void TriggerMessageMode2(float fValue,XActivationEvent ae);
+	void TriggerScreenshot(float fValue, XActivationEvent ae);
+
 	BEGIN_INPUTACTIONMAP()
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_RIGHT, TriggerMoveRight)
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_FORWARD, TriggerMoveForward)
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_BACKWARD, TriggerMoveBackward)
 		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
+
+		REGISTER_INPUTACTIONMAP(ACTION_USE, TriggerUse)
+		REGISTER_INPUTACTIONMAP(ACTION_TURNLR, TriggerTurnLR)
+		REGISTER_INPUTACTIONMAP(ACTION_TURNUD, TriggerTurnUD)
+
+		REGISTER_INPUTACTIONMAP(ACTION_QUICKLOAD,TriggerQuickLoad);
+		REGISTER_INPUTACTIONMAP(ACTION_QUICKSAVE,TriggerQuickSave);
+
+
+		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE, TriggerMessageMode)
+		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE2, TriggerMessageMode2)
+		REGISTER_INPUTACTIONMAP(ACTION_TAKESCREENSHOT, TriggerScreenshot)
 	END_INPUTACTIONMAP()
 
 public:

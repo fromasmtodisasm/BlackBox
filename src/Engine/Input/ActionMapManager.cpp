@@ -128,15 +128,16 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 	
 	for (auto &bind : binding->second)
 	{
-		if (bind.bind.nKey == event.keyId && (bind.bind.nModifier == event.modifiers))
+		if (bind.bind.nKey == event.keyId && ((bind.bind.nModifier == event.modifiers) || (bind.bind.nModifier == eMM_None)))
 		{
 			XActionActivationMode aam;
 			switch (event.state)
 			{
 			case EInputState::eIS_Pressed:
-				if (auto it = m_keys.find(event.keyId); it != m_keys.end())
+			case EInputState::eIS_Changed:
+				if (auto it = m_keys.find(event.keyId); it == m_keys.end())
 				{
-					aam = XActionActivationMode::aamOnHold;
+					aam = XActionActivationMode::aamOnPress;
 				}
 				else
 				{

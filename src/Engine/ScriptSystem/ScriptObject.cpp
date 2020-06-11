@@ -832,6 +832,7 @@ void CScriptObject::Detach()
 
 void CScriptObject::Release()
 {
+	delete this;
 }
 
 bool CScriptObject::GetValueRecursive(const char* szPath, IScriptObject* pObj)

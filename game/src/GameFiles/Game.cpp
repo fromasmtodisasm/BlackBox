@@ -1377,3 +1377,46 @@ void CGame::TriggerMoveBackward(float fValue, XActivationEvent ae)
 {
 	m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_deltaTime);
 }
+
+void CGame::TriggerUse(float fValue, XActivationEvent ae)
+{
+}
+
+void CGame::TriggerTurnLR(float fValue, XActivationEvent ae)
+{
+}
+
+void CGame::TriggerTurnUD(float fValue, XActivationEvent ae)
+{
+}
+
+void CGame::TriggerQuickLoad(float fValue, XActivationEvent ae)
+{
+	if (this->IsQuicksaveAllowed())
+		this->SendMessage("LoadGame");
+}
+
+void CGame::TriggerQuickSave(float fValue, XActivationEvent ae)
+{
+	ICVar *g_LevelStated = GetISystem()->GetIConsole()->GetCVar("g_LevelStated");
+	if (!g_LevelStated->GetIVal())
+	{
+		if (this->IsQuicksaveAllowed())
+			this->SendMessage("SaveGame");
+	}
+}
+
+void CGame::TriggerMessageMode(float fValue, XActivationEvent ae)
+{
+	//m_pSystem->GetIConsole()->ExecuteString("@messagemode");
+}
+
+void CGame::TriggerMessageMode2(float fValue, XActivationEvent ae)
+{
+	//m_pSystem->GetIConsole()->ExecuteString("@messagemode2");
+}
+
+void CGame::TriggerScreenshot(float fValue, XActivationEvent ae)
+{
+	this->m_pSystem->GetIConsole()->ExecuteString("screenshot");
+}

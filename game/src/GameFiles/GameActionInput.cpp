@@ -124,6 +124,7 @@ void CGame::InitConsoleVars()
 
 
 	g_LevelName= pConsole->CreateVariable("g_LevelName","0.4",0);
+	pConsole->CreateVariable("g_LevelStated","0",0, "");
 	g_MissionName= pConsole->CreateVariable("g_MissionName","TestMission",0);
 
 	{
@@ -223,8 +224,8 @@ void  CGame::ResetInputMap()
   ADD_ACTION(ZOOM_OUT, aamOnPress, "@ZoomOut", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("ZOOM_OUT", "zoom", "binozoom", "");
   ADD_ACTION(HOLDBREATH, aamOnHold, "@HoldBreath", ACTIONTYPE_GAME, true) SetConfigToActionMap("HOLDBREATH", "zoom", "");
   ADD_ACTION(FIREMODE, aamOnPress, "@ToggleFiremode", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIREMODE", ACTIONMAPS_NODEAD);
-  //	ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
-  //	ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
+  ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
+  ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
   ADD_ACTION(FIRE_GRENADE, aamOnHold, "@ThrowGrenade", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE_GRENADE", ACTIONMAPS_NODEAD);
   //ADD_ACTION(CONCENTRATION,aamOnHold,"@Concentration",ACTIONTYPE_GAME,true) SetConfigToActionMap("CONCENTRATION", "default", "");
   ADD_ACTION(FLASHLIGHT, aamOnPress, "@ToggleFlashlight", ACTIONTYPE_GAME, true) SetConfigToActionMap("FLASHLIGHT", ACTIONMAPS_NODEAD);
@@ -469,8 +470,8 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   //pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_J_DIR_DOWN);
 
   //look around
-  //N pMap->BindAction(ACTION_TURNLR,eKI_MAXIS_X);
-  //N pMap->BindAction(ACTION_TURNUD,eKI_MAXIS_Y);
+  pMap->BindAction(ACTION_TURNLR,eKI_MouseX);
+  pMap->BindAction(ACTION_TURNUD,eKI_MouseY);
 #if 0
   pMap->BindAction(ACTION_TURNLR, eKI_J_AXIS_5);
   pMap->BindAction(ACTION_TURNUD, eKI_J_AXIS_4);
@@ -531,8 +532,8 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
 
   // save/load bindings
   // disable this conflicts with cutscene
-  //	pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
-  //	pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
+  pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
+  pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
 
 #ifdef _DEBUG
