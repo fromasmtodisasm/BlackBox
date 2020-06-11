@@ -25,7 +25,6 @@ template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
 #include <sys/stat.h>
 
 #define MakeSureDirectoryPathExists(path) mkdir((path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
-#endif
 
 typedef struct _SYSTEMTIME
 {
@@ -44,6 +43,7 @@ inline void GetLocalTime(LPSYSTEMTIME lpSystemTime)
     ZeroStruct(lpSystemTime);
 }
 
+#endif
 
 #if defined(_AMD64_) && !defined(LINUX)
 #include <io.h>

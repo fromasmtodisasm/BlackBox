@@ -45,21 +45,23 @@
 #include <stdio.h>
 #include <BlackBox/Core/Platform/Windows.hpp>
 
-#if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO
-	#if CRY_PLATFORM_WINDOWS
-		#define CryLoadLibrary(libName) ::LoadLibraryA(libName)
-	#elif CRY_PLATFORM_DURANGO
-//For Durango
-extern HMODULE DurangoLoadLibrary(const char* libName);
-		#define CryLoadLibrary(libName) DurangoLoadLibrary(libName)
-	#endif
+namespace Detail
+{
+	template<typename T, size_t size>
+	char (&ArrayCountHelper(T(&)[size]))[size];
+}
+
+#define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
+#if BB_PLATFORM_WINDOWS
+	#define CryLoadLibrary(libName) ::LoadLibraryA(libName)
 	#define CryGetCurrentModule() ::GetModuleHandle(nullptr)
 	#define CrySharedLibrarySupported true
 	#define CrySharedLibraryPrefix    ""
 	#define CrySharedLibraryExtension ".dll"
 	#define CryGetProcAddress(libHandle, procName) ::GetProcAddress((HMODULE)(libHandle), procName)
 	#define CryFreeLibrary(libHandle)              ::FreeLibrary((HMODULE)(libHandle))
-#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
+// || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
+#elif BB_PLATFORM_LINUX 
 	#include <dlfcn.h>
 	#include <stdlib.h>
 	#include "platform.h"
@@ -67,7 +69,7 @@ extern HMODULE DurangoLoadLibrary(const char* libName);
 // for compatibility with code written for windows
 	#define CrySharedLibrarySupported   true
 	#define CrySharedLibraryPrefix      "lib"
-	#if CRY_PLATFORM_APPLE
+	#if BB_PLATFORM_APPLE
 		#define CrySharedLibraryExtension ".dylib"
 	#else
 		#define CrySharedLibraryExtension ".so"
@@ -92,10 +94,10 @@ static void SetModulePath(const char* pModulePath)
 static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInModulePath = true)
 {
 	char finalPath[_MAX_PATH] = {};
-	CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryPrefix));
-	CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryExtension));
+	//CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryPrefix));
+	//CRY_ASSERT(strlen(libName) > CRY_ARRAY_COUNT(CrySharedLibraryExtension));
 	
-#if CRY_PLATFORM_ANDROID
+#if BB_PLATFORM_ANDROID
 	const char* libPath = bInModulePath ? (CryGetSharedLibraryStoragePath() ? CryGetSharedLibraryStoragePath() : ".") : "";
 #else
 	const char* libPath = bInModulePath ? (GetModulePath() ? GetModulePath() : ".") : "";
