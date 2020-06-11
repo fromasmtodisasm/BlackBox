@@ -53,6 +53,8 @@ void CGame::InitInputMap()
   IInput* pInput = m_pSystem->GetIInput();
 
   m_pIActionMapManager = pInput->CreateActionMapManager();
+	if(m_pIActionMapManager)
+		m_pIActionMapManager->SetSink(this);
 
   ResetInputMap();
 }

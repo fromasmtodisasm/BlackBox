@@ -137,16 +137,16 @@ public:
         velocity += impulse;
         break;
       case eKI_W:
-        ProcessKeyboard(Movement::FORWARD, move_speed);
+        //ProcessKeyboard(Movement::FORWARD, move_speed);
         break;
       case eKI_S:
-        ProcessKeyboard(Movement::BACKWARD, move_speed);
+        //ProcessKeyboard(Movement::BACKWARD, move_speed);
         break;
       case eKI_A:
-        ProcessKeyboard(Movement::LEFT, move_speed);
+        //ProcessKeyboard(Movement::LEFT, move_speed);
         break;
       case eKI_D:
-        ProcessKeyboard(Movement::RIGHT, move_speed);
+        //ProcessKeyboard(Movement::RIGHT, move_speed);
         break;
       case eKI_Up:
         ProcessMouseMovement(0.f, rotation_speed);

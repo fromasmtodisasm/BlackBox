@@ -7,6 +7,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/EntitySystem/EntitySystem.cpp
+  PRIVATE ${ENGINE_DIR}/EntitySystem/Entity.cpp
 )
 
 get_target_property(SOURCE_FILES EntitySystem SOURCES )

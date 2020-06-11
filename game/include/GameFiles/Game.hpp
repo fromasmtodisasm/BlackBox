@@ -425,7 +425,17 @@ private: // ------------------------------------------------------------
 
 	void IntersectionByRayCasting();
 
+	// Triggers function
+	void TriggerMoveLeft(float fValue,XActivationEvent ae);
+	void TriggerMoveRight(float fValue,XActivationEvent ae);
+	void TriggerMoveForward(float fValue,XActivationEvent ae);
+	void TriggerMoveBackward(float fValue,XActivationEvent ae);
+
 	BEGIN_INPUTACTIONMAP()
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_RIGHT, TriggerMoveRight)
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_FORWARD, TriggerMoveForward)
+		REGISTER_INPUTACTIONMAP(ACTION_MOVE_BACKWARD, TriggerMoveBackward)
 		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
 	END_INPUTACTIONMAP()
 

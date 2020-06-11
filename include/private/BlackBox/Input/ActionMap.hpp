@@ -1,10 +1,10 @@
 #pragma once
 #include <BlackBox/Input/IInput.hpp>
-
+class CActionMapManager;
 class CActionMap : public IActionMap
 {
 public:
-  CActionMap(IActionMapManager* pActionMapManager);
+  CActionMap(CActionMapManager* pActionMapManager);
   ~CActionMap();
 
   // Inherited via IActionMap
@@ -16,7 +16,7 @@ public:
 
   virtual void BindAction(XACTIONID nActionID, XBind& NewBind, int iKeyPos = -1) override;
 
-  virtual void BindAction(XACTIONID nActionID, int nKey, int nModifier = eKI_Unknown, int iKeyPos = -1) override;
+  virtual void BindAction(XACTIONID nActionID, uint32 nKey, EModifierMask nModifier, int iKeyPos = -1) override;
 
   virtual void BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier = NULL, int iKeyPos = -1) override;
 
@@ -29,6 +29,6 @@ public:
   virtual void GetBindDifferences(IActionMap* pActionMap, std::vector<int>& keys) override;
 
 private:
-  IActionMapManager* m_ActionMapManager;
+  class CActionMapManager* m_ActionMapManager;
 
 };

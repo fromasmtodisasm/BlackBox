@@ -1308,3 +1308,23 @@ void CGame::IntersectionByRayCasting()
 		lineBuffer.push_back(m_IntersectionState.m_LastPickedPos);
 	}
 }
+
+void CGame::TriggerMoveLeft(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::LEFT, m_deltaTime);
+}
+
+void CGame::TriggerMoveRight(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::RIGHT, m_deltaTime);
+}
+
+void CGame::TriggerMoveForward(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
+}
+
+void CGame::TriggerMoveBackward(float fValue, XActivationEvent ae)
+{
+	m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_deltaTime);
+}
