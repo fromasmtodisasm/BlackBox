@@ -27,16 +27,6 @@ if (NOT VERSION)
 endif()
 set(METADATA_VERSION ${VERSION} CACHE STRING "Version number for executable metadata" FORCE)
 
-if (DEFINED CMAKE_TOOLCHAIN_FILE)
-  if (NOT (EXISTS ${CMAKE_TOOLCHAIN_FILE}))
-    message(STATUS "Here")
-    if (VCPKG_INSTALLER)
-      include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
-      PrepareVcpkg()
-      set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
-    endif()
-  endif()
-endif()
 # Declare the project.
 set(METADATA_PROJECT_NAME "BLACKBOX" CACHE STRING "Name of the solution project")
 project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"

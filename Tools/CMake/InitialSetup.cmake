@@ -31,6 +31,17 @@ message(STATUS "PROJECT_DIR = ${PROJECT_DIR}")
 message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 ###################################################
 
+if (DEFINED CMAKE_TOOLCHAIN_FILE)
+  if (NOT (EXISTS ${CMAKE_TOOLCHAIN_FILE}))
+    message(STATUS "Here")
+    if (VCPKG_INSTALLER)
+      include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
+      PrepareVcpkg()
+      set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    endif()
+  endif()
+endif()
+
 # Including the Toolchain file, as it sets important variables.
 if(DEFINED TOOLCHAIN_FILE)
 	message(STATUS "USED TOOLCHAIN FILE ${TOOLS_CMAKE_DIR}/${TOOLCHAIN_FILE}")
