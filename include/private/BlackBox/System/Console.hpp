@@ -75,6 +75,32 @@ public:
 	int m_Flags;
 };
 
+class CNullCVar : public ICVar
+{
+public:
+// Inherited via ICVar
+  virtual void Release() override;
+  virtual int GetIVal() override;
+  virtual float GetFVal() override;
+  virtual char* GetString() override;
+  virtual void Set(const char* s) override;
+  virtual void ForceSet(const char* s) override;
+  virtual void Set(float f) override;
+  virtual void Set(int i) override;
+  virtual void Refresh() override;
+  virtual void ClearFlags(int flags) override;
+  virtual int GetFlags() override;
+  virtual int SetFlags(int flags) override;
+  virtual int GetType() override;
+  virtual const char* GetName() override;
+  virtual const char* GetHelp() override;
+
+  operator bool() const 
+  {
+	  return false; 
+  }
+};
+
 class CCVar : public CBaseVariable
 {
 public:
@@ -431,6 +457,9 @@ private:
 
   InputBinding                   m_InputBindings;
 	ConsoleBindsMap                m_mapBinds; 
+  // --------------------------------------------------------------------------------
+	CNullCVar m_NullCVar;
+
 
   // --------------------------------------------------------------------------------
 

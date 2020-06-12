@@ -1094,6 +1094,7 @@ void CConsole::RemoveConsoleVarSink(IConsoleVarSink* pSink)
 ICVar* CConsole::GetCVar(const char* name, const bool bCaseSensitive)
 {
   std::string data = name;
+  //ICVar* pVar = &m_NullCVar;
   ICVar* pVar = nullptr;
   if (!bCaseSensitive)
   {
@@ -1927,4 +1928,72 @@ CommandLine ConsolePrompt::get()
     Text(std::string(" " + time_str), color, 1.0)//,
     //Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
   };
+}
+
+void CNullCVar::Release()
+{
+}
+
+int CNullCVar::GetIVal()
+{
+	return 0;
+}
+
+float CNullCVar::GetFVal()
+{
+	return 0.0f;
+}
+
+char* CNullCVar::GetString()
+{
+	return nullptr;
+}
+
+void CNullCVar::Set(const char* s)
+{
+}
+
+void CNullCVar::ForceSet(const char* s)
+{
+}
+
+void CNullCVar::Set(float f)
+{
+}
+
+void CNullCVar::Set(int i)
+{
+}
+
+void CNullCVar::Refresh()
+{
+}
+
+void CNullCVar::ClearFlags(int flags)
+{
+}
+
+int CNullCVar::GetFlags()
+{
+	return 0;
+}
+
+int CNullCVar::SetFlags(int flags)
+{
+	return 0;
+}
+
+int CNullCVar::GetType()
+{
+	return 0;
+}
+
+const char* CNullCVar::GetName()
+{
+	return nullptr;
+}
+
+const char* CNullCVar::GetHelp()
+{
+	return nullptr;
 }

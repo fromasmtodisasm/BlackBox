@@ -68,6 +68,54 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
+class CActionMapDumpSink : public IActionMapDumpSink
+{
+private:
+	CGame *m_pGame;
+	FILE *m_pFile;
+public:
+	CActionMapDumpSink(CGame *pGame, FILE *pFile)
+	{
+		m_pGame=pGame;
+		m_pFile=pFile;
+		fputs("Input:ResetAllBindings();\r\n", m_pFile);
+	}
+	virtual void OnElementFound(const char *pszActionMapName, IActionMap *pActionMap)
+	{
+		char pszKey[256];
+		char pszMod[256];
+		ActionsEnumMap &ActionsMap=m_pGame->GetActionsEnumMap();
+		ActionsEnumMapItor It=ActionsMap.begin();
+		while (It!=ActionsMap.end())
+		{
+			ActionInfo &Info=It->second;
+			for (int i=0;i<MAX_BINDS_PER_ACTION;i++)
+			{
+				pActionMap->GetBinding(Info.nId, i, pszKey, pszMod);
+
+				if (strlen(pszKey))
+				{
+					if (strcmp(pszKey, "\\") == 0)
+					{
+						strcpy(pszKey, "\\\\");
+					}
+					else if (strcmp(pszKey, "\"") == 0)
+					{
+						strcpy(pszKey, "\\\"");
+					}
+
+					char szLine[1024] = {0};
+
+					sprintf(szLine, "Input:BindAction(\"%s\", \"%s\", \"%s\", %d);\r\n", It->first.c_str(), pszKey, pszActionMapName, i);
+					fputs(szLine, m_pFile);
+				}
+			}
+			++It;
+		}
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
 void CGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,const char *sProfileName)
 {
 	string sSystemCfg = pszSystemCfg;
@@ -86,6 +134,31 @@ void CGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,c
 		CCVarSaveDump SaveDump(pFile);
 		m_pSystem->GetIConsole()->DumpCVars(&SaveDump);		
 		fclose(pFile); 
+	}
+
+	if (m_pIActionMapManager)
+	{
+		pFile=fopen(sGameCfg.c_str(), "wb");
+		if (pFile)
+		{
+			fputs("-- [Game-Configuration]\r\n", pFile);
+			fputs("-- Attention: This file will be overwritten when updated, so dont add lines ! Editing is not recommended !\r\n\r\n", pFile);
+			CActionMapDumpSink SaveActionMaps(this, pFile);
+			m_pIActionMapManager->GetActionMaps(&SaveActionMaps);
+			// Mouse
+			char sValue[32];
+			sprintf(sValue, "%4.4f", m_pSystem->GetIConsole()->GetCVar("i_mouse_sensitivity")->GetFVal());
+			fputs(string(string("Input:SetMouseSensitivity(")+string(sValue)+string(");\r\n")).c_str(), pFile);
+
+			IInput *pInput=m_pSystem->GetIInput();
+
+			// Special keys
+			m_pIActionMapManager->GetInvertedMouse() ? strcpy(sValue, "1") : strcpy(sValue, "nil");
+			fputs(string(string("Input:SetInvertedMouse(")+string(sValue)+string(");\r\n")).c_str(), pFile);
+			fputs("Input:BindCommandToKey(\"\\\\SkipCutScene\",\"F7\",1);\r\n",pFile);
+			fputs("Input:BindCommandToKey(\"\\\\SkipCutScene\",\"spacebar\",1);\r\n",pFile);
+			fclose(pFile); 
+		}
 	}
 
 }

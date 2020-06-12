@@ -152,7 +152,7 @@ int CScriptObjectInput::BindAction(IFunctionHandler *pH)
 		pH->GetParam(3,sActionMap);
 	if (nNumOfParams>3)
 		pH->GetParam(4, iKeyPos);
-	//TRACE("BindAction %s %s %s\n",sAction,sKeys,(nCheckPressed)?"true":"false");
+	TRACE("BindAction %s %s %s\n",sAction,sKeys,(nCheckPressed)?"true":"false");
 	m_pGame->BindAction(sAction,sKeys,sActionMap, iKeyPos);
 
 	return pH->EndFunction();
@@ -322,6 +322,7 @@ int CScriptObjectInput::SetMouseSensitivity(IFunctionHandler *pH)
   if (m_pInput->GetDevice(0, eIDT_Mouse))
     m_pInput->GetDevice(0, eIDT_Mouse)->SetSensitvity(fSensitivity);
 #endif
+	gEnv->pConsole->GetCVar("i_mouse_sensitivity")->Set(fSensitivity);
 	return pH->EndFunction();
 }
 

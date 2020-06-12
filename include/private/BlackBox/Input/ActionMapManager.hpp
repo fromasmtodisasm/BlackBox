@@ -24,6 +24,7 @@ struct ActionBinding
 
 class CActionMapManager : public IActionMapManager, public IInputEventListener
 {
+	friend CActionMap;
 	using ActionList = std::vector<ActionInfo>;
   using ActionMaps = std::map<string, CActionMap*>;
   using ActionMapsToString = std::map<CActionMap*, string>;

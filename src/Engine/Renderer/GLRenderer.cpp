@@ -599,11 +599,11 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 	if (!strcmp(pVar->GetName(), "r_Width"))
 	{
-		m_Window->changeSize(pVar->GetFVal(), GetHeight());
+		m_Window->changeSize(std::strtof(sNewValue, nullptr), GetHeight());
 	}
 	else if (!strcmp(pVar->GetName(), "r_Height"))
 	{
-		m_Window->changeSize(GetWidth(), pVar->GetFVal());
+		m_Window->changeSize(GetWidth(), std::strtof(sNewValue, nullptr));
 	}
 	if (!strcmp(pVar->GetName(), "r_cam_w"))
 	{

@@ -67,6 +67,7 @@ enum
 #include "GameShared.hpp"
 
 struct IStatObj;
+class CScriptObjectInput;
 class CScriptObjectStream;
 class CPlayerSystem;
 class CVehicleSystem;
@@ -417,6 +418,7 @@ private: // ------------------------------------------------------------
 	bool CheckForAction(const char* sAction);
 	void ClearAction(const char* sAction);
 
+	ActionsEnumMap& GetActionsEnumMap() { return m_mapActionsEnum; }
   protected:
 	void SetConfigToActionMap(const char* pszActionName, ...);
 	//bool LoadMaterials(string sFolder);
@@ -426,6 +428,7 @@ private: // ------------------------------------------------------------
 	//set the common key bindings for the specified action map.
 	//it reduces code redundancy and makes things more clear.
 	void SetCommonKeyBindings(IActionMap* pActionMap);
+
 
 	void MainMenu();
 	void DrawAux();
@@ -587,6 +590,7 @@ public:
 
 	TagPointMap m_mapTagPoints; //!< Map of tag points by name
 	CScriptObjectGame* m_pScriptObjectGame;
+	CScriptObjectInput *		m_pScriptObjectInput;
 	IScriptObject* m_playerObject{};
 
 	CVehicleSystem *				m_pVehicleSystem;

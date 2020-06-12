@@ -67,6 +67,8 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 	OutputDebugString(sTraceString);	
 }
 
+#define TRACE __DLL_TRACE
+
 #ifdef ENABLE_NET_TRACE
 #define NET_TRACE __DLL_TRACE
 #else

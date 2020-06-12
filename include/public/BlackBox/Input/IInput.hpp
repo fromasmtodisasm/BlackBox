@@ -327,7 +327,7 @@ struct XBind
   XBind()
   {
     nKey = eKI_Unknown;
-    nModifier = eKI_Unknown;
+    nModifier = eMM_None;
   }
   uint32 nKey;
   uint32 nModifier;

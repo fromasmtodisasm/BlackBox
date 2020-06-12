@@ -113,7 +113,6 @@ typedef unsigned int        *PUINT;
 #define FUNCTION_PROFILER(...)
 #define LogAlways(...) void(0);
 
-#define TRACE(...)
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.

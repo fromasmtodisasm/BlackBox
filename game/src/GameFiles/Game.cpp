@@ -11,6 +11,7 @@
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 
+#include <ScriptObjects/ScriptObjectInput.hpp>
 #include <ScriptObjects/ScriptObjectTest.hpp>
 
 #include "PlayerSystem.h"
@@ -193,11 +194,12 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	initCommands();
 	InitScripts();
 	
-	LoadConfiguration("","game.cfg");
-
 	// init key-bindings
 	if (!m_bDedicatedServer)
 		InitInputMap();
+
+	LoadConfiguration("","game.cfg");
+
 	if (!m_bDedicatedServer)
 	{
 		//m_pSystem->GetIConsole()->ShowConsole(0);
@@ -1077,6 +1079,9 @@ bool CGame::InitScripts()
 	m_pScriptObjectGame = new CScriptObjectGame();
 	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
+	m_pScriptObjectInput=new CScriptObjectInput;
+	CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
+
 	auto SOT = new CScriptObjectTest();
 	SOT->InitializeTemplate(m_pScriptSystem);
 	SOT->Init(m_pScriptSystem, this);
@@ -1090,6 +1095,7 @@ bool CGame::InitScripts()
 #endif
 
 	m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
+	m_pScriptObjectInput->Init(m_pScriptSystem,this,m_pSystem);
 #if 0
   m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
   m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
