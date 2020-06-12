@@ -20,3 +20,4 @@ out/glDebug.txt
 compile_commands.json
 .clangd/
 bin/*
+vcpkg/
