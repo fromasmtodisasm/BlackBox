@@ -221,7 +221,7 @@ void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 		if (bValid)
 		{					
 			strcpy(szBuffer,szLine);
-			m_pLog->Log("  '%s'",szBuffer);
+			//m_pLog->Log("  '%s'",szBuffer);
 			m_pSystem->GetIScriptSystem()->ExecuteBuffer(szBuffer,strlen(szBuffer));
 		}
 		else
