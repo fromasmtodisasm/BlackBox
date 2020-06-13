@@ -336,7 +336,7 @@ bool CGame::InitClassRegistry()
 }
 
 
-
+static ITexture* splash = nullptr;
 bool CGame::Update()
 {
 	static const auto& render_game = true;
@@ -511,6 +511,7 @@ void CGame::DisplayInfo(float fps)
 
 bool CGame::Run(bool& bRelaunch)
 {
+	splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
 	m_pLog->Log("[OK] Game started");
 	m_pSystem->Log("[OK] Game started");
 	StartupServer(true, "test_server");
@@ -599,7 +600,7 @@ void CGame::Render()
 {
 	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_pSystem->Render();
-	DrawAux();
+	//DrawAux();
 }
 
 IGAME_API IGame* CreateIGame()

@@ -103,6 +103,7 @@ void CConsole::SetImage(ITexture* pTexture)
 
 void CConsole::Update()
 {
+	m_ScrollHeight = m_pRenderer->GetHeight() / 2.0f;
   for (const auto& worker : m_workers)
   {
     worker->OnUpdate();
@@ -1132,7 +1133,7 @@ bool CConsole::Init(ISystem* pSystem)
     initBind();
 
     m_ScrollHeight = m_pRenderer->GetHeight() / 2.0f;
-    Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_NULL, "Console scroll height");
+    Register("scrol_height", &m_ScrollHeight, m_ScrollHeight, VF_DUMPTODISK, "Console scroll height");
 
 		InitInputBindings();
   }

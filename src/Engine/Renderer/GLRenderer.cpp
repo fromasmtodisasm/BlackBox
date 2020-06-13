@@ -498,7 +498,7 @@ IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)
 
 void GLRenderer::DrawFullscreenQuad()
 {
-	DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+	DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLE_STRIP));
 }
 
 void GLRenderer::SetCullMode(CullMode mode /* = CullMode::BACK*/)
@@ -581,18 +581,7 @@ void GLRenderer::SetState(State state, bool enable)
 
 void GLRenderer::DrawFullScreenImage(int texture_id)
 {
-	auto
-		width  = GetWidth(),
-		height = GetHeight();
-	gl::BindFramebuffer(0);
-	SetViewport(0, 0, width, height);
-	m_ScreenShader->Use();
-	auto proj	  = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
-	auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-	m_ScreenShader->Uniform(transform, "transform");
-	SetState(State::DEPTH_TEST, false);
-	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
-	DrawFullscreenQuad();
+	DrawImage(0,0, GetWidth(),GetHeight(), texture_id, 0, 0, 1, 1, 1, 1, 1, 1);
 }
 
 bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
@@ -605,13 +594,8 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(GetWidth(), std::strtof(sNewValue, nullptr));
 	}
-	if (!strcmp(pVar->GetName(), "r_cam_w"))
-	{
-		printf("");
-	}
 	else if (!strcmp(pVar->GetName(), "r_debug"))
 	{
-		//OpenglDebuger::SetIgnore(!r_debug->GetIVal());
 		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
 	}
 	return false;
@@ -636,25 +620,19 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 
 	glm::mat4 model(1.0);
 	auto uv_projection   = glm::mat4(1.0);
-	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f);
+	glm::mat4 projection = glm::ortho(0.f, width, height, 0.f);
 
-	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
+	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 
-	if (needFlipY->GetIVal() == 1)
-	{
-		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f));
-	}
-	else
-	{
-		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
-	}
+	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
 
 	{
 		m_ScreenShader->Uniform(projection, "projection");
 		m_ScreenShader->Uniform(uv_projection, "uv_projection");
 		m_ScreenShader->Uniform(model, "model");
+		m_ScreenShader->Uniform(Vec4(GetWidth(), GetHeight(), 1.f/GetWidth(), -1.f/GetHeight()), "screen");
 	}
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 	DrawFullscreenQuad();
@@ -697,17 +675,14 @@ bool GLRenderer::InitResourceManagers()
 
 void GLRenderer::CreateQuad()
 {
-	SVF_P3F_T2F verts[] = {
-		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-		{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
-		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-
-		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}};
+	SVF_P3F verts[] = {
+		{{0, 1, 0}},
+		{{0, 0, 0}},
+		{{1, 1, 0}},
+		{{1, 0, 0}}};
   gEnv->pLog->Log("here");
-	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(6, VertFormatForComponents(false, false, false, true), "screen_quad", false);
-	UpdateBuffer(m_VertexBuffer, verts, 6, false);
+	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F, "screen_quad", false);
+	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
 
 IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)

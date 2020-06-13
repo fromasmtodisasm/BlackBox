@@ -165,7 +165,7 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 	stream.m_bDynamic = bDynamic;
 	stream.m_VData = CreateVertexBuffer(vertexformat, vertexcount);
 
-	gl::GenVertexArrays(1, &buffer->m_Container);
+	gl::CreateVertexArrays(1, &buffer->m_Container);
 	gl::BindVertexArray(buffer->m_Container);
   gEnv->pLog->Log("Here");
     {

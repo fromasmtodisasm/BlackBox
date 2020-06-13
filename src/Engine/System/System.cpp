@@ -207,6 +207,10 @@ bool CSystem::Init()
 	Log("Initialize Render");
 	if (!InitRender())
 		return false;
+	auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
+	RenderBegin();
+	gEnv->pRenderer->DrawFullScreenImage(splash->getId());
+	RenderEnd();
 	if (!Init3DEngine())
 		return false;
 	m_env.pInput->PostInit();
@@ -744,6 +748,7 @@ void CSystem::Tests()
 #endif
 
 	//SceneManager::instance()->currentScene()->addObject("subdiveded plane", obj);
+	//Sleep(3000);
 }
 
 void CSystem::PollEvents()
@@ -938,8 +943,11 @@ void CSystem::RenderBegin()
 	m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
 	m_Render->BeginFrame();
 #if ENABLE_DEBUG_GUI
-	m_GuiManager->NewFrame();
-	m_GuiManager->ShowDemoWindow();
+	if (m_GuiManager)
+	{
+		m_GuiManager->NewFrame();
+		m_GuiManager->ShowDemoWindow();
+	}
 	//m_GuiManager.ShowNodeEditor();
 #endif
 }
@@ -956,7 +964,8 @@ void CSystem::RenderEnd()
 		m_Render->Update();
 		m_pConsole->Draw();
 	#if ENABLE_DEBUG_GUI
-		m_GuiManager->Render();
+		if (m_GuiManager)
+			m_GuiManager->Render();
 	#endif
 		m_pWindow->swap();
 	}
