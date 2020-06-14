@@ -677,6 +677,14 @@ bool GLRenderer::InitResourceManagers()
 	return true;
 }
 
+void GLRenderer::ShareWith(GLRenderer* renderer)
+{
+	if (renderer != nullptr)
+	{
+	
+	}
+}
+
 void GLRenderer::CreateQuad()
 {
 	SVF_P3F verts[] = {
@@ -733,6 +741,11 @@ void GLRenderer::Flush()
 	m_AuxGeomShader->Uniform(m_Camera.GetViewMatrix(), "view");
 	m_RenderAuxGeom->Flush();
 	m_AuxGeomShader->Unuse();
+}
+
+void GLRenderer::ShareResources(IRenderer* renderer)
+{
+	ShareWith(dynamic_cast<GLRenderer*>(renderer));
 }
 
 

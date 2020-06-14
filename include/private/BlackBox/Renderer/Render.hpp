@@ -126,6 +126,7 @@ private:
   void AquireVB();
   bool VBF_InPool(int format);
   bool InitResourceManagers();
+  void ShareWith(GLRenderer* renderer);
 
 	void CreateQuad();
 
@@ -210,6 +211,9 @@ private:
 
   // Inherited via CRenderer
   virtual void Flush() override;
+
+  // Inherited via CRenderer
+  virtual void ShareResources(IRenderer* renderer) override;
 };
 
 extern class ShaderMan* gShMan;
