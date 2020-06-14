@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Game CXX)
 
 #include(FetchContent)
+add_definitions("/ZI")
 
 ###################################################
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)

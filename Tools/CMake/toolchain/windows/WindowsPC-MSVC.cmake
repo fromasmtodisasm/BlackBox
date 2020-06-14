@@ -26,8 +26,9 @@ if (NOT DEFINED MINGW AND NEED_MSVC)
   add_definitions(/wd4127) #in glm
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /ZI" CACHE STRING "C++ Common Flags" FORCE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /ZI" CACHE STRING "C++ Common Flags" FORCE)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "C++ Common Flags" FORCE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "C++ Common Flags" FORCE)
+message(STATUS ${CMAKE_CXX_FLAGS})
 
 if (EXISTS "${SDK_DIR}/Microsoft Windows SDK/10")
 	set(WINDOWS_SDK "${SDK_DIR}/Microsoft Windows SDK/10")
