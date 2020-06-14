@@ -1391,12 +1391,14 @@ void CGame::TriggerUse(float fValue, XActivationEvent ae)
 void CGame::TriggerTurnLR(float fValue, XActivationEvent ae)
 {
 	//float rotation_speed = m_deltaTime * (fValue > 0 ? 1.f : -1.f);
+		fValue *=m_deltaTime;	
 	m_CameraController.ProcessMouseMovement(fValue, 0);
 }
 
 void CGame::TriggerTurnUD(float fValue, XActivationEvent ae)
 {
 	//float rotation_speed = m_deltaTime * (fValue > 0 ? -1.f : 1.f);
+		fValue *=m_deltaTime;	
 	m_CameraController.ProcessMouseMovement(0, -fValue);
 }
 

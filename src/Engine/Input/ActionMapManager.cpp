@@ -135,13 +135,14 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 			{
 			case EInputState::eIS_Pressed:
 			case EInputState::eIS_Changed:
+			case EInputState::eIS_Down:
 				if (auto it = m_keys.find(event.keyId); it == m_keys.end())
 				{
 					aam = XActionActivationMode::aamOnPress;
 				}
 				else
 				{
-					m_keys.insert(event.keyId);
+					//m_keys.insert(event.keyId);
 					aam = XActionActivationMode::aamOnHold;
 				}
 				break;

@@ -339,7 +339,8 @@ bool CHardwareMouse::OnInputEvent(const SInputEvent& rInputEvent)
 		if (m_fIncX < -fDeadZone || m_fIncX > +fDeadZone ||
 		    m_fIncY < -fDeadZone || m_fIncY > +fDeadZone)
 		{
-			float fFrameTime = gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);
+			float fFrameTime = 0.016;
+			//gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);
 			if (s_fAcceleration < 10.0f)
 			{
 				s_fAcceleration += fFrameTime * 5.0f;

@@ -445,18 +445,18 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   //eKI_Minus,
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_A);
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_NP_4);
-  //pMap->BindAction(ACTION_MOVE_LEFT,eKI_J_DIR_LEFT);
+  pMap->BindAction(ACTION_MOVE_LEFT,eKI_XI_DPadLeft);
 
   //strafe right
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_D);
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_NP_6);
-  //pMap->BindAction(ACTION_MOVE_RIGHT,eKI_J_DIR_RIGHT);
+  pMap->BindAction(ACTION_MOVE_RIGHT,eKI_XI_DPadRight);
 
   //run forward
   pMap->BindAction(ACTION_MOVE_FORWARD, eKI_W);
-  //pMap->BindAction(ACTION_MOVE_FORWARD,eKI_NP_8);
+  pMap->BindAction(ACTION_MOVE_FORWARD,eKI_NP_8);
   pMap->BindAction(ACTION_MOVE_FORWARD, eKI_NP_5);
-  //pMap->BindAction(ACTION_MOVE_FORWARD,eKI_J_DIR_UP);
+  pMap->BindAction(ACTION_MOVE_FORWARD,eKI_XI_DPadUp);
 
 #if 0
   pMap->BindAction(ACTION_MOVELR, eKI_J_AXIS_1);
@@ -465,17 +465,15 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
 
   //run backward
   pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_S);
-  //pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_NP_5);
+  pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_NP_5);
   pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_NP_2);
-  //pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_J_DIR_DOWN);
+  pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_XI_DPadDown);
 
   //look around
   pMap->BindAction(ACTION_TURNLR,eKI_MouseX);
   pMap->BindAction(ACTION_TURNUD,eKI_MouseY);
-#if 0
-  pMap->BindAction(ACTION_TURNLR, eKI_J_AXIS_5);
-  pMap->BindAction(ACTION_TURNUD, eKI_J_AXIS_4);
-#endif
+  pMap->BindAction(ACTION_TURNLR, eKI_XI_ThumbRX);
+  pMap->BindAction(ACTION_TURNUD, eKI_XI_ThumbRY);
 
   //reload
   pMap->BindAction(ACTION_RELOAD, eKI_R);
@@ -491,9 +489,9 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_NP_8);
 
   //use
-  //pMap->BindAction(ACTION_USE,eKI_RETURN);
+  pMap->BindAction(ACTION_USE,eKI_Enter);
   pMap->BindAction(ACTION_USE, eKI_F);
-  //pMap->BindAction(ACTION_USE,eKI_NP_ENTER);
+  pMap->BindAction(ACTION_USE,eKI_NP_Enter);
 
   //cycle grenade
   pMap->BindAction(ACTION_CYCLE_GRENADE, eKI_H);
