@@ -44,13 +44,13 @@ class ShaderMan
 	}
 	void ReloadAll()
 	{
-		for (auto &s : m_Shaders)
+		for (auto& s : m_Shaders)
 		{
 			s->Reload();
 		}
 	}
 
-  std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
+	std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
 };
 
 ShaderMan* gShMan = nullptr;
@@ -62,6 +62,19 @@ GLRenderer::GLRenderer(ISystem* engine)
 
 GLRenderer::~GLRenderer()
 {
+	SAFE_DELETE(m_RenderAuxGeom);
+	SAFE_DELETE(m_BufferManager);
+	SAFE_DELETE(m_VertexBuffer);
+
+	for (auto t : m_RenderTargets)
+	{
+		SAFE_RELEASE(t);
+	}
+
+	SAFE_DELETE(m_MainMSAAFrameBuffer);
+	SAFE_DELETE(m_MainReslovedFrameBuffer);
+
+	SAFE_DELETE(gShMan);
 }
 
 IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
@@ -80,11 +93,11 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 		glContextType = AttributeType::CORE;
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
 		return nullptr;
-  gEnv->pLog->Log("window inited");
+	gEnv->pLog->Log("window inited");
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();
-	m_HWND  = (HWND)window->getHandle();
+	m_HWND	= (HWND)window->getHandle();
 	// now you can make GL calls.
 	gl::ClearColor({m_clearColor, 1});
 	gl::Clear(GL_COLOR_BUFFER_BIT);
@@ -100,8 +113,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	printHardware();
 	m_BufferManager = new CBufferManager();
 	CreateQuad();
-  gEnv->pLog->Log("here");
-	gShMan			= new ShaderMan;
+	gEnv->pLog->Log("here");
+	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
 	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screenshader.vs", "screenshader.frag")))
@@ -120,8 +133,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_RenderAuxGeom = new CRenderAuxGeom();
 
 	CreateRenderTarget();
-	
-	auto dm					  = reinterpret_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+
+	auto dm				  = reinterpret_cast<SDL_DisplayMode*>(window->GetDesktopMode());
 	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	{
@@ -152,9 +165,8 @@ void GLRenderer::BeginFrame(void)
 {
 	Vec4d vp(0, 0, GetWidth(), GetHeight());
 	if (m_pRenerCallback)
-        m_pRenerCallback->CallBack(IRenderCallback::eOnRender);
+		m_pRenerCallback->CallBack(IRenderCallback::eOnRender);
 	//GetViewport(&vp[0], &vp[1], &vp[2], &vp[3]);
-	
 
 	m_MainMSAAFrameBuffer->bind({vp[0], vp[1], vp[2], vp[3]});
 	//m_MainMSAAFrameBuffer->clear({m_clearColor, 1});
@@ -172,18 +184,16 @@ void GLRenderer::Update(void)
 		m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
 	m_MainMSAAFrameBuffer->DrawTo(
 		m_MainReslovedFrameBuffer,
-		m_MainReslovedFrameBuffer->viewPort
-	);
+		m_MainReslovedFrameBuffer->viewPort);
 	m_MainReslovedFrameBuffer->DrawToBackbuffer(
-		#if 0
+#if 0
 		[&]() -> Vec4 {
 			Vec4d r;
 			GetViewport(&r.x, &r.y, &r.z, &r.w);
 			return r;
 		}()
-		#endif
-		Vec4(0, 0, GetWidth(), GetHeight())
-	);
+#endif
+		Vec4(0, 0, GetWidth(), GetHeight()));
 	m_FrameID++;
 }
 
@@ -193,7 +203,7 @@ void GLRenderer::GetViewport(int* x, int* y, int* width, int* height)
 	gl::GetFloatv(GL_VIEWPORT, &vp[0]);
 	*x		= vp.x;
 	*y		= vp.y;
-	*width  = vp.z;
+	*width	= vp.z;
 	*height = vp.w;
 }
 
@@ -254,7 +264,7 @@ void GLRenderer::ScreenShot(const char* filename)
 	gl::BindFramebuffer(0);
 	GLint dims[4] = {0};
 	gl::GetIntegerv(GL_VIEWPORT, dims);
-	GLint width  = dims[2];
+	GLint width	 = dims[2];
 	GLint height = dims[3];
 
 	uint8_t* pixels = new uint8_t[3 * width * height];
@@ -376,8 +386,8 @@ int GLRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, fl
 
 int GLRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
 {
-	Vec4d vp;                  // Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, &vp[0]);           // Retrieves The Viewport Values (X, Y, Width, Height)
+	Vec4d vp;							// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
 	auto p = glm::unProject(
 		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
@@ -421,14 +431,14 @@ void GLRenderer::printHardware()
 	std::stringstream hardware_info;
 	hardware_info << "Hardware render info\n"
 				  << "\tVendor: [" << m_Hardware.vendor << "]\n"
-														 "\tRender: ["
+														   "\tRender: ["
 				  << m_Hardware.render << "]\n"
 										  "\tVersion: ["
 				  << m_Hardware.version << "]\n"
 										   "\tShader Language Version: ["
 				  << m_Hardware.glsl_version << "]\n";
 	m_pSystem->Log(hardware_info.str().data());
-  std::cout << gl::GetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+	std::cout << gl::GetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 	m_pSystem->Log("OOOK");
 }
 
@@ -470,14 +480,13 @@ IRenderAuxGeom* GLRenderer::GetIRenderAuxGeom()
 void GLRenderer::SetRenderTarget(int nHandle)
 {
 	if (
-		auto it = std::find_if(m_RenderTargets.begin(), m_RenderTargets.end(), [nHandle](ITexture* texture) { return texture->getId() == nHandle; }); 
+		auto it = std::find_if(m_RenderTargets.begin(), m_RenderTargets.end(), [nHandle](ITexture* texture) { return texture->getId() == nHandle; });
 		it != m_RenderTargets.end())
 	{
 		m_MainMSAAFrameBuffer->bind();
 		m_MainMSAAFrameBuffer->attach(*it);
-		m_MainMSAAFrameBuffer->bindDefault(Vec4(0,0,GetWidth(),GetHeight()));
+		m_MainMSAAFrameBuffer->bindDefault(Vec4(0, 0, GetWidth(), GetHeight()));
 	}
-
 }
 
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
@@ -498,7 +507,7 @@ IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)
 
 void GLRenderer::DrawFullscreenQuad()
 {
-	DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+	DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLE_STRIP));
 }
 
 void GLRenderer::SetCullMode(CullMode mode /* = CullMode::BACK*/)
@@ -581,18 +590,7 @@ void GLRenderer::SetState(State state, bool enable)
 
 void GLRenderer::DrawFullScreenImage(int texture_id)
 {
-	auto
-		width  = GetWidth(),
-		height = GetHeight();
-	gl::BindFramebuffer(0);
-	SetViewport(0, 0, width, height);
-	m_ScreenShader->Use();
-	auto proj	  = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
-	auto transform = glm::scale(proj, glm::vec3(width, height, 1));
-	m_ScreenShader->Uniform(transform, "transform");
-	SetState(State::DEPTH_TEST, false);
-	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
-	DrawFullscreenQuad();
+	DrawImage(0, 0, GetWidth(), GetHeight(), texture_id, 0, 0, 1, 1, 1, 1, 1, 1);
 }
 
 bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
@@ -605,13 +603,12 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(GetWidth(), std::strtof(sNewValue, nullptr));
 	}
-	if (!strcmp(pVar->GetName(), "r_cam_w"))
+	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
 	{
-		printf("");
+		m_Window->EnterFullscreen(bool(std::strtol(sNewValue, nullptr, 10)));
 	}
 	else if (!strcmp(pVar->GetName(), "r_debug"))
 	{
-		//OpenglDebuger::SetIgnore(!r_debug->GetIVal());
 		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
 	}
 	return false;
@@ -635,26 +632,20 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	m_ScreenShader->Uniform(Vec4(r, g, b, a), "color");
 
 	glm::mat4 model(1.0);
-	auto uv_projection   = glm::mat4(1.0);
-	glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f);
+	auto uv_projection	 = glm::mat4(1.0);
+	glm::mat4 projection = glm::ortho(0.f, width, height, 0.f);
 
-	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
+	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 
-	if (needFlipY->GetIVal() == 1)
-	{
-		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.0f, -1.0f, 1.0f));
-	}
-	else
-	{
-		uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
-	}
+	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
 
 	{
 		m_ScreenShader->Uniform(projection, "projection");
 		m_ScreenShader->Uniform(uv_projection, "uv_projection");
 		m_ScreenShader->Uniform(model, "model");
+		m_ScreenShader->Uniform(Vec4(GetWidth(), GetHeight(), 1.f / GetWidth(), -1.f / GetHeight()), "screen");
 	}
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 	DrawFullscreenQuad();
@@ -695,19 +686,23 @@ bool GLRenderer::InitResourceManagers()
 	return true;
 }
 
+void GLRenderer::ShareWith(GLRenderer* renderer)
+{
+	if (renderer != nullptr)
+	{
+	}
+}
+
 void GLRenderer::CreateQuad()
 {
-	SVF_P3F_T2F verts[] = {
-		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-		{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
-		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-
-		{{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-		{{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}};
-  gEnv->pLog->Log("here");
-	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(6, VertFormatForComponents(false, false, false, true), "screen_quad", false);
-	UpdateBuffer(m_VertexBuffer, verts, 6, false);
+	SVF_P3F verts[] = {
+		{{0, 1, 0}},
+		{{0, 0, 0}},
+		{{1, 1, 0}},
+		{{1, 0, 0}}};
+	gEnv->pLog->Log("here");
+	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F, "screen_quad", false);
+	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
 
 IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)
@@ -723,7 +718,7 @@ ITechniqueManager* GLRenderer::GetITechniqueManager()
 float GLRenderer::GetDepthValue(int x, int y)
 {
 	float out;
-	glReadPixels( x, GetHeight()-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &out);
+	glReadPixels(x, GetHeight() - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &out);
 	return out;
 }
 
@@ -736,7 +731,7 @@ int GLRenderer::CreateRenderTarget()
 {
 	char buffer[32];
 	snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
-	auto dm					  = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
+	auto dm = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
 	m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr, true));
 	return m_RenderTargets.back()->getId();
 }
@@ -756,6 +751,10 @@ void GLRenderer::Flush()
 	m_AuxGeomShader->Unuse();
 }
 
+void GLRenderer::ShareResources(IRenderer* renderer)
+{
+	ShareWith(dynamic_cast<GLRenderer*>(renderer));
+}
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {

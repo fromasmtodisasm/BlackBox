@@ -41,6 +41,7 @@ struct IWindow {
   virtual void setCursor(Cursor* cursor) = 0;
   virtual GLContext getContext() = 0;
   virtual DisplayMode GetDesktopMode()		 = 0;
+  virtual void EnterFullscreen(bool mode) = 0;
 };
 
 extern "C" {

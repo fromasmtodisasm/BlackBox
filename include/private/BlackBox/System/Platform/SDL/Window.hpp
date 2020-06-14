@@ -72,5 +72,6 @@ private:
 public:
   virtual void Release() override;
   virtual DisplayMode GetDesktopMode() override;
+  virtual void EnterFullscreen(bool mode) override;
 
 };

@@ -145,6 +145,7 @@ CRenderAuxGeom::~CRenderAuxGeom()
 {
 	SAFE_DELETE(m_BoundingBox);
 	SAFE_DELETE(m_BB_IndexBuffer);
+	SAFE_DELETE(m_HardwareVB);
 }
 
 //TODO: Довести до ума, нужно учитывать трансформации объекта

@@ -10,17 +10,6 @@ class RenderCVars
 public:
   void InitCVars();
   ~RenderCVars();
-  ICVar* translateImageX = nullptr;
-  ICVar* translateImageY = nullptr;
-
-  ICVar* scaleImageX = nullptr;
-  ICVar* scaleImageY = nullptr;
-
-  ICVar* needTranslate = nullptr;
-  ICVar* needFlipY = nullptr;
-
-  ICVar* cam_width = nullptr;
-  ICVar* cam_height = nullptr;
 
   int r_Width = 0;
   int r_Height = 0;
@@ -28,6 +17,9 @@ public:
   int r_Zbpp = 0;
   int r_Sbpp = 0;
   int r_Fullscreen = 0;
+
+  int r_MSAA = 1;
+  int r_MSAA_samples = 2;
 };
 
 class CRenderer :

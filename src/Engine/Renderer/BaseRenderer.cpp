@@ -57,25 +57,18 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 
 void RenderCVars::InitCVars()
 {
-  translateImageY = CREATE_CVAR("ty", 0.0f, 0);
-  translateImageX = CREATE_CVAR("tx", 0.0f, 0);
-  scaleImageX = CREATE_CVAR("sx", 1.0f, 0);
-  scaleImageY = CREATE_CVAR("sy", 1.0f, 0);
-  needTranslate = CREATE_CVAR("nt", 1, 0, "Translate or not 2d background of console");
-  needFlipY = CREATE_CVAR("nfy", 1, 0, "Flip or not 2d background of console");
 
   #if 0
   REGISTER_CVAR(r_Width, 800, VF_NULL, "Window Width");
   REGISTER_CVAR(r_Height, 600, VF_NULL, "Window Height");
-  REGISTER_CVAR(r_Bpp, 800, VF_NULL);
-  REGISTER_CVAR(r_Zbpp, 600, VF_NULL);
-  REGISTER_CVAR(r_Sbpp, 800, VF_NULL);
+  REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
   REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
   #endif
+  REGISTER_CVAR(r_MSAA, r_MSAA, VF_DUMPTODISK | VF_READONLY);
+  REGISTER_CVAR(r_MSAA_samples, r_MSAA_samples, VF_DUMPTODISK);
 
 
-  cam_width = GET_CVAR("r_cam_w");
-  cam_height = GET_CVAR("r_cam_h");
+
 }
 
 RenderCVars::~RenderCVars()

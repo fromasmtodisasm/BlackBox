@@ -212,6 +212,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
     printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
     return false;
   }
+  SDL_GL_SetSwapInterval(-1);
   //SDL_HideWindow(m_MainWindow);
 
   // Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint
@@ -242,16 +243,14 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   //std::swap(m_MainWindow, m_SecondaryWindow);
   if (fullscreen)
   {
-    //SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-#if 0
+    SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
     SDL_DisplayMode dm;
-    if (SDL_GetDesktopDisplayMode(1, &dm) != 0)
+    if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
     {
       SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
       return false;
     }
     SDL_SetWindowDisplayMode(m_MainWindow, &dm);
-#endif
   }
   //SDL_AddEventWatch(EventWatcher, this);
   SDL_SetWindowInputFocus(m_MainWindow);
@@ -345,6 +344,17 @@ void CSDLWindow::Release()
 DisplayMode CSDLWindow::GetDesktopMode()
 {
 	return &m_DesktopMode;
+}
+void CSDLWindow::EnterFullscreen(bool mode)
+{
+	if (mode)
+	{
+		SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN); 	
+  }
+	else
+	{
+		SDL_SetWindowFullscreen(m_MainWindow, 0); 	
+	}
 }
 extern "C" {
   IWINDOW_API IWindow* CreateIWindow()

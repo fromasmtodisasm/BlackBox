@@ -1,9 +1,9 @@
-#include <BlackBox/Input/ActionMapManager.hpp>
 #include <BlackBox/Input/ActionMap.hpp>
+#include <BlackBox/Input/ActionMapManager.hpp>
 
 CActionMapManager::CActionMapManager(IInput* pInput)
 {
-    pInput->SetExclusiveListener(static_cast<IInputEventListener*>(this));
+	pInput->SetExclusiveListener(static_cast<IInputEventListener*>(this));
 }
 
 CActionMapManager::~CActionMapManager()
@@ -20,16 +20,16 @@ void CActionMapManager::SetInvertedMouse(bool bEnable)
 
 bool CActionMapManager::GetInvertedMouse()
 {
-  return false;
+	return false;
 }
 
 void CActionMapManager::RemoveBind(XACTIONID nActionID, XBind& NewBind, XActionActivationMode aam)
 {
-    for (std::size_t i = 0; i < m_ActionList.size(); i++)
+	for (std::size_t i = 0; i < m_ActionList.size(); i++)
 	{
 		if (m_ActionList[i].nActionID == nActionID)
 		{
-			m_ActionList.erase(m_ActionList.begin() + i);	
+			m_ActionList.erase(m_ActionList.begin() + i);
 			break;
 		}
 	}
@@ -47,14 +47,14 @@ void CActionMapManager::CreateAction(XACTIONID nActionID, const char* sActionNam
 
 IActionMap* CActionMapManager::CreateActionMap(const char* s)
 {
-  return (m_ActionMaps[string(s)] = new CActionMap(this));
+	return (m_ActionMaps[string(s)] = new CActionMap(this));
 }
 
 IActionMap* CActionMapManager::GetActionMap(const char* s)
 {
 	if (auto it = m_ActionMaps.find(s); it != m_ActionMaps.end())
 	{
-		return it->second;	
+		return it->second;
 	}
 	return nullptr;
 }
@@ -65,9 +65,9 @@ void CActionMapManager::ResetAllBindings()
 
 void CActionMapManager::GetActionMaps(IActionMapDumpSink* pCallback)
 {
-	for (auto &am : m_ActionMaps)
+	for (auto& am : m_ActionMaps)
 	{
-		pCallback->OnElementFound(am.first.c_str(), am.second);	
+		pCallback->OnElementFound(am.first.c_str(), am.second);
 	}
 }
 
@@ -75,18 +75,18 @@ void CActionMapManager::SetActionMap(const char* s)
 {
 	if (auto it = m_ActionMaps.find(s); it != m_ActionMaps.end())
 	{
-		m_CurrentActionMap = it;	
+		m_CurrentActionMap = it;
 	}
 }
 
 bool CActionMapManager::CheckActionMap(XACTIONID nActionID)
 {
-  return false;
+	return false;
 }
 
 bool CActionMapManager::CheckActionMap(const char* sActionName)
 {
-  return false;
+	return false;
 }
 
 void CActionMapManager::Reset()
@@ -114,19 +114,19 @@ void CActionMapManager::Disable()
 
 bool CActionMapManager::IsEnabled()
 {
-  return m_Enabled;
+	return m_Enabled;
 }
 
 bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 {
 	if (event.keyId == eKI_SYS_Commit)
 		return false;
-	bool keyPressed = event.state == eIS_Pressed;
+	bool keyPressed	 = event.state == eIS_Pressed;
 	bool keyReleased = event.state == eIS_Released;
 
 	auto binding = m_ActionBindingMap.find(m_CurrentActionMap->second);
-	
-	for (auto &bind : binding->second)
+
+	for (auto& bind : binding->second)
 	{
 		if (bind.bind.nKey == event.keyId && ((bind.bind.nModifier == event.modifiers) || (bind.bind.nModifier == eMM_None)))
 		{
@@ -138,11 +138,11 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 			case EInputState::eIS_Down:
 				if (auto it = m_keys.find(event.keyId); it == m_keys.end())
 				{
-					aam = XActionActivationMode::aamOnPress;
+					m_keys.insert(event.keyId);
+					aam = XActionActivationMode::aamOnHold;
 				}
 				else
 				{
-					//m_keys.insert(event.keyId);
 					aam = XActionActivationMode::aamOnHold;
 				}
 				break;
@@ -153,16 +153,16 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 			default:
 				break;
 			}
-            for (std::size_t i = 0; i < m_ActionList.size(); i++)
+			for (std::size_t i = 0; i < m_ActionList.size(); i++)
 			{
 				if (m_ActionList[i].aam == aam)
 				{
-					m_ActionMapSink->OnAction(bind.id, event.value, etHolding);		
+					m_ActionMapSink->OnAction(bind.id, event.value, etHolding);
 				}
 			}
 		}
 	}
-		
+
 	return false;
 }
 

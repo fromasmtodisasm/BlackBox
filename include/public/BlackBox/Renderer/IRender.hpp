@@ -391,6 +391,10 @@ struct IRenderer
 	//! Should be called at the end of every frame
 	virtual void Update(void) = 0;
 
+	//! This renderer will share resources (textures) with specified renderer.
+	//! Specified renderer must be of same type as this renderer.
+	virtual void  ShareResources( IRenderer *renderer )=0;
+
 	virtual void SetRenderCallback(IRenderCallback* pCallback) = 0;
 
 	virtual void GetViewport(int* x, int* y, int* width, int* height)			  = 0;

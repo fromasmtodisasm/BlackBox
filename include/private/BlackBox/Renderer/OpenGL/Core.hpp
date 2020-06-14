@@ -335,6 +335,10 @@ namespace gl {
   {
 		glCheck(glGenVertexArrays(n, arrays));
   }
+  inline void CreateVertexArrays(GLsizei n, GLuint *arrays)
+  {
+		glCheck(glCreateVertexArrays(n, arrays));
+  }
 
   inline void BindVertexArray(GLuint array)
   {
