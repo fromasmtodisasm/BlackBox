@@ -134,6 +134,10 @@ CBufferManager::CBufferManager()
 
 }
 
+CBufferManager::~CBufferManager()
+{
+}
+
 bool CBufferManager::Preallocate()
 {
   return false;

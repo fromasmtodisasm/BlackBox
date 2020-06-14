@@ -200,7 +200,7 @@ public:
     if (m_pScriptThis)
     {
       m_pScriptThis->SetNativeData(NULL);
-      m_pScriptThis->AddSetGetHandlers(NULL, NULL);
+      //m_pScriptThis->AddSetGetHandlers(NULL, NULL);
       m_pScriptThis->Release();
     }
   }

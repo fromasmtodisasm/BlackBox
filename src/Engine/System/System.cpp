@@ -83,12 +83,6 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	  m_env(m_env),
 #endif
 	  m_startupParams(m_startupParams),
-	  r_window_width(nullptr),
-	  r_window_height(nullptr),
-	  r_bpp(nullptr),
-	  r_zbpp(nullptr),
-	  r_sbpp(nullptr),
-	  r_fullscreen(nullptr),
 	  cvGameName(nullptr),
 	  m_Render(nullptr),
 	  m_pConsole(nullptr),
@@ -125,6 +119,13 @@ CSystem::~CSystem()
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_pConsole);
 	SAFE_RELEASE(m_Render);
+
+	
+  SAFE_DELETE(m_ScriptObjectConsole);
+  SAFE_DELETE(m_ScriptObjectScript);
+  SAFE_DELETE(m_ScriptObjectRenderer);
+	SAFE_RELEASE(m_pScriptSystem);
+
 	SAFE_RELEASE(m_pLog);
 }
 

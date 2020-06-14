@@ -20,6 +20,7 @@ class CBufferManager
   const int INIT_BUFFER_SIZE = (1024 * 1024) * 4; // 4 billion of vertices 
 public:
   CBufferManager();
+  ~CBufferManager();
   bool Preallocate();
   CVertexBuffer* Create(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false);
   void Release(CVertexBuffer* pVertexBuffer);

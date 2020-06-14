@@ -157,12 +157,6 @@ private:
   CScriptObjectRenderer*	m_ScriptObjectRenderer;
 
 private:
-  ICVar* r_window_width;
-  ICVar* r_window_height;
-  ICVar* r_bpp;
-  ICVar* r_zbpp;
-  ICVar* r_sbpp;
-  ICVar* r_fullscreen;
   ICVar* cvGameName;
 	//////////////////////////////////////////////////////////////////////////
 	//! User define callback for system events.

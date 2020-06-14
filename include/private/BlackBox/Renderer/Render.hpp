@@ -177,7 +177,7 @@ private:
 	//std::vector<SVertexPoolEntry> m_VertexBufferPool;
 	int m_FrameID = 0;
 
-  IRenderAuxGeom* m_RenderAuxGeom;
+  CRenderAuxGeom* m_RenderAuxGeom;
   CBufferManager* m_BufferManager;
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
