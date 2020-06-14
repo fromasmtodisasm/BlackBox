@@ -594,6 +594,10 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		m_Window->changeSize(GetWidth(), std::strtof(sNewValue, nullptr));
 	}
+	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
+	{
+		m_Window->EnterFullscreen(bool(std::strtol(sNewValue, nullptr, 10)));
+	}
 	else if (!strcmp(pVar->GetName(), "r_debug"))
 	{
 		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));

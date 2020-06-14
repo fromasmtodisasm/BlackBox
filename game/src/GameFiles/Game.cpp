@@ -600,7 +600,7 @@ void CGame::Render()
 {
 	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_pSystem->Render();
-	//DrawAux();
+	DrawAux();
 }
 
 IGAME_API IGame* CreateIGame()

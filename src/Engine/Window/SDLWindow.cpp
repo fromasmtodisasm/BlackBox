@@ -345,6 +345,17 @@ DisplayMode CSDLWindow::GetDesktopMode()
 {
 	return &m_DesktopMode;
 }
+void CSDLWindow::EnterFullscreen(bool mode)
+{
+	if (mode)
+	{
+		SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN); 	
+  }
+	else
+	{
+		SDL_SetWindowFullscreen(m_MainWindow, 0); 	
+	}
+}
 extern "C" {
   IWINDOW_API IWindow* CreateIWindow()
   {
