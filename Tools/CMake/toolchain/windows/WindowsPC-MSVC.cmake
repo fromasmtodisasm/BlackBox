@@ -16,6 +16,7 @@ set(OUTPUT_DIRECTORY_NAME "win_x64")
 #include ("${CMAKE_CURRENT_LIST_DIR}/../../CRYENGINE-MSVC.cmake")
 
 add_definitions(-D_WINDOWS -DWIN32 -D_WIN32 -DWIN64)
+add_definitions("/ZI")
 if (NOT DEFINED MINGW AND NEED_MSVC)
   add_definitions(/WX)
   add_definitions(/W3)

@@ -103,6 +103,8 @@ typedef unsigned char ACTIONTYPE;
 
 #define ACTION_QUICKLOAD				65
 #define ACTION_QUICKSAVE				66
+#define ACTION_FULLSCRN_TOOGLE	67
+
 #define PLAYER_MAX_WEAPONS			9
 
 //////////////////////////////////////////////////////////////////////////

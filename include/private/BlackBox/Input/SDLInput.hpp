@@ -41,7 +41,7 @@ public:
 
   CLinuxInput& GetLinuxInput() const;
 protected:
-  void         PostEvent(SInputSymbol* pSymbol, unsigned keyMod = ~0);
+  void         PostEvent(SInputSymbol* pSymbol, unsigned keyMod =  0);
 private:
   CLinuxInput& m_linuxInput;
 };

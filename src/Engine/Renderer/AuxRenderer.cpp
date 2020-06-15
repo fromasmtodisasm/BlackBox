@@ -19,21 +19,6 @@ namespace
 
 CRenderAuxGeom::CRenderAuxGeom()
 {
-	#if 0
-	// Cube 1x1x1, centered on origin
-  GLfloat cube_vertices[] = {
-    // front
-		Vec3{-1.0, -1.0, 1.0},
-     Vec3{1.0, -1.0,  1.0},
-     Vec3{1.0,  1.0,  1.0},
-    Vec3{-1.0,  1.0,  1.0},
-    // back
-    Vec3{-1.0, -1.0, -1.0},
-     Vec3{1.0, -1.0, -1.0},
-     Vec3{1.0,  1.0, -1.0},
-    Vec3{-1.0,  1.0, -1.}0
-  };
-	#endif
 	std::vector<P3F> reference = {
 		
     // front

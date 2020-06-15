@@ -130,6 +130,8 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 	{
 		if (bind.bind.nKey == event.keyId && ((bind.bind.nModifier == event.modifiers) || (bind.bind.nModifier == eMM_None)))
 		{
+			if ((event.modifiers != eMM_None) && (bind.bind.nModifier == eMM_None))
+				continue;
 			XActionActivationMode aam;
 			switch (event.state)
 			{
@@ -158,6 +160,7 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 				if (m_ActionList[i].aam == aam)
 				{
 					m_ActionMapSink->OnAction(bind.id, event.value, etHolding);
+					break;
 				}
 			}
 		}

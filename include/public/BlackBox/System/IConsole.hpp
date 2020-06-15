@@ -81,13 +81,24 @@ struct ICVarDumpSink
 };
 
 //////////////////////////////////////////////////////////////////////
-//! Callback class to derive from when you want to recieve callbacks when console var changes.
+//! Callback class to derive from when you want to receive callbacks when console var changes.
 struct IConsoleVarSink
 {
-  //! Called by Console before changing console var value, to validate if var can be changed.
-  //! @return true if ok to change value, false if should not change value.
-  virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) = 0;
+	// <interfuscator:shuffle>
+	virtual ~IConsoleVarSink(){}
+
+	//! Called by Console before changing console var value, to validate if var can be changed.
+	//! \return true if ok to change value, false if should not change value.
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) = 0;
+
+	//! Called by Console after variable has changed value.
+	virtual void OnAfterVarChange(ICVar* pVar) = 0;
+
+	//! Called by Console after variable has been unregistered.
+	virtual void OnVarUnregister(ICVar* pVar) = 0;
+	// </interfuscator:shuffle>
 };
+
 
 struct CommandDesc
 {

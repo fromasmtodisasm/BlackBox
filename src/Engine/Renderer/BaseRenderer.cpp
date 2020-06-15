@@ -67,7 +67,8 @@ void RenderCVars::InitCVars()
   REGISTER_CVAR(r_MSAA, r_MSAA, VF_DUMPTODISK | VF_READONLY);
   REGISTER_CVAR(r_MSAA_samples, r_MSAA_samples, VF_DUMPTODISK);
 
-
+  REGISTER_CVAR(r_Vsync, r_Vsync, VF_DUMPTODISK);
+  REGISTER_CVAR(r_DisplayIndex, r_DisplayIndex, VF_DUMPTODISK);
 
 }
 

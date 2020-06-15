@@ -58,6 +58,8 @@ ShaderMan* gShMan = nullptr;
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
 {
+
+	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "GLRenderer");
 }
 
 GLRenderer::~GLRenderer()
@@ -82,6 +84,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	InitCVars();
 	//m_Camera.InitCVars();
 	IWindow* result = m_Window = window;
+	bInFullScreen = fullscreen;
 	if (window == nullptr)
 		return nullptr;
 	//=======================
@@ -175,25 +178,28 @@ void GLRenderer::BeginFrame(void)
 
 void GLRenderer::Update(void)
 {
+	if (bIsActive)
 	{
-		//std::cout << " aux " << std::endl;
-		Flush();
+		{
+			//std::cout << " aux " << std::endl;
+			Flush();
+		}
+		m_MainMSAAFrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
+		if (m_pRenerCallback)
+			m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
+		m_MainMSAAFrameBuffer->DrawTo(
+			m_MainReslovedFrameBuffer,
+			m_MainReslovedFrameBuffer->viewPort);
+		m_MainReslovedFrameBuffer->DrawToBackbuffer(
+	#if 0
+			[&]() -> Vec4 {
+				Vec4d r;
+				GetViewport(&r.x, &r.y, &r.z, &r.w);
+				return r;
+			}()
+	#endif
+			Vec4(0, 0, GetWidth(), GetHeight()));
 	}
-	m_MainMSAAFrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
-	if (m_pRenerCallback)
-		m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
-	m_MainMSAAFrameBuffer->DrawTo(
-		m_MainReslovedFrameBuffer,
-		m_MainReslovedFrameBuffer->viewPort);
-	m_MainReslovedFrameBuffer->DrawToBackbuffer(
-#if 0
-		[&]() -> Vec4 {
-			Vec4d r;
-			GetViewport(&r.x, &r.y, &r.z, &r.w);
-			return r;
-		}()
-#endif
-		Vec4(0, 0, GetWidth(), GetHeight()));
 	m_FrameID++;
 }
 
@@ -489,6 +495,42 @@ void GLRenderer::SetRenderTarget(int nHandle)
 	}
 }
 
+void GLRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
+{
+	switch (event)
+	{
+	case ESYSTEM_EVENT_CHANGE_FOCUS:
+		break;
+	case ESYSTEM_EVENT_MOVE:
+		break;
+	case ESYSTEM_EVENT_RESIZE:
+		if (!transit_to_FS)
+			m_Window->changeSize(wparam, lparam);
+		transit_to_FS = false;
+		break;
+	case ESYSTEM_EVENT_ACTIVATE:
+		bIsActive = bool(wparam);
+		break;
+	case ESYSTEM_EVENT_LEVEL_LOAD_START:
+		break;
+	case ESYSTEM_EVENT_LEVEL_GAMEPLAY_START:
+		break;
+	case ESYSTEM_EVENT_LEVEL_POST_UNLOAD:
+		break;
+	case ESYSTEM_EVENT_LANGUAGE_CHANGE:
+		break;
+	case ESYSTEM_EVENT_TOGGLE_FULLSCREEN:
+		bInFullScreen = bool(wparam);
+		m_Window->EnterFullscreen(bInFullScreen);
+		break;
+	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
+		bIsActive = bool(wparam);
+		break;
+	default:
+		break;
+	}
+}
+
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
 	using ShaderInfo = IShaderProgram::ShaderInfo;
@@ -597,21 +639,29 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 	if (!strcmp(pVar->GetName(), "r_Width"))
 	{
-		m_Window->changeSize(std::strtof(sNewValue, nullptr), GetHeight());
+		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
 	}
 	else if (!strcmp(pVar->GetName(), "r_Height"))
 	{
-		m_Window->changeSize(GetWidth(), std::strtof(sNewValue, nullptr));
+		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
 	}
 	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
 	{
-		m_Window->EnterFullscreen(bool(std::strtol(sNewValue, nullptr, 10)));
+		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
 	}
 	else if (!strcmp(pVar->GetName(), "r_debug"))
 	{
 		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
 	}
 	return false;
+}
+
+void GLRenderer::OnAfterVarChange(ICVar* pVar)
+{
+}
+
+void GLRenderer::OnVarUnregister(ICVar* pVar)
+{
 }
 
 void GLRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)

@@ -168,6 +168,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
 		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRender->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
 	}
+	pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CGame");
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
@@ -380,6 +381,10 @@ bool CGame::Update()
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 			DrawHud(fps);
 			//PROFILER_POP_CPU_MARKER();
+			if (!m_isActive)
+			{
+				Sleep(40);
+			}
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -1432,4 +1437,24 @@ void CGame::TriggerMessageMode2(float fValue, XActivationEvent ae)
 void CGame::TriggerScreenshot(float fValue, XActivationEvent ae)
 {
 	this->m_pSystem->GetIConsole()->ExecuteString("screenshot");
+}
+
+void CGame::TriggerFullscreen(float fValue, XActivationEvent ae)
+{
+	auto fs = gEnv->pConsole->GetCVar("r_Fullscreen");
+	auto val = !fs->GetIVal();
+
+	gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, val, 0);
+}
+
+void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
+{
+	switch (event)
+	{
+	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
+		m_isActive = bool(wparam);
+		break;
+	default:
+		break;
+	}
 }

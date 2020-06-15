@@ -233,6 +233,7 @@ class CGame final
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
 	, public IActionMapSink
+	, public ISystemEventListener
 {
 	class EventListener;
 	friend class GameGUI;
@@ -456,6 +457,7 @@ private: // ------------------------------------------------------------
 	void TriggerMessageMode(float fValue,XActivationEvent ae);
 	void TriggerMessageMode2(float fValue,XActivationEvent ae);
 	void TriggerScreenshot(float fValue, XActivationEvent ae);
+	void TriggerFullscreen(float fValue, XActivationEvent ae);
 
 	BEGIN_INPUTACTIONMAP()
 		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
@@ -475,6 +477,7 @@ private: // ------------------------------------------------------------
 		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE, TriggerMessageMode)
 		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE2, TriggerMessageMode2)
 		REGISTER_INPUTACTIONMAP(ACTION_TAKESCREENSHOT, TriggerScreenshot)
+		REGISTER_INPUTACTIONMAP(ACTION_FULLSCRN_TOOGLE, TriggerFullscreen);
 	END_INPUTACTIONMAP()
 
 public:
@@ -681,4 +684,9 @@ public:
 
 	std::vector<Vec3> m_LineList;
 	bool m_InsertLines = false;
+
+	bool m_isActive = false;
+
+	// Inherited via ISystemEventListener
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 };

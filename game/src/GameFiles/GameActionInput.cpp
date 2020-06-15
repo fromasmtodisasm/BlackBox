@@ -226,6 +226,7 @@ void  CGame::ResetInputMap()
   ADD_ACTION(FIREMODE, aamOnPress, "@ToggleFiremode", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIREMODE", ACTIONMAPS_NODEAD);
   ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
   ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
+  //ADD_ACTION(FULLSCRN_TOOGLE,aamOnPress,"@ToogleFullScreen",ACTIONTYPE_GAME,true) SetConfigToActionMap("FULLSCRN_TOOGLE", ACTIONMAPS_ALL);
   ADD_ACTION(FIRE_GRENADE, aamOnHold, "@ThrowGrenade", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE_GRENADE", ACTIONMAPS_NODEAD);
   //ADD_ACTION(CONCENTRATION,aamOnHold,"@Concentration",ACTIONTYPE_GAME,true) SetConfigToActionMap("CONCENTRATION", "default", "");
   ADD_ACTION(FLASHLIGHT, aamOnPress, "@ToggleFlashlight", ACTIONTYPE_GAME, true) SetConfigToActionMap("FLASHLIGHT", ACTIONMAPS_NODEAD);
@@ -430,6 +431,9 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_Right);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
   //	pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
+  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
+  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
+
 
   //////////////////////////////////////////////////////////////////////
   //switch to default action map now
@@ -533,6 +537,9 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
   pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
+
+  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
+  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
 
 #ifdef _DEBUG
   // <<FIXME>> Hack only in debug mode

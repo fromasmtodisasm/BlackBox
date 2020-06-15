@@ -4,13 +4,15 @@
 #include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 #include <SDL.h>
-#include <BlackBox/GUI/GUI.hpp>
 
 #include <memory>
 #include <iostream>
 #include <cstdio>
+
+#define WINDOW_MAX_PEEP   64
 
 
 CSDLWindow::CSDLWindow(std::string, int width, int height)
@@ -24,6 +26,7 @@ CSDLWindow::~CSDLWindow()
 bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen)
 {
   //Initialize SDL
+	bInFullScreen = fullscreen;
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
     printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -39,23 +42,32 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
 	}
   //SetIcon(nullptr);
 
-#ifdef GUI
-  ImGui_ImplOpenGL3_Init();
-  ImGui_ImplSDL2_InitForOpenGL(m_Window, glRenderContext);
-#endif // GUI
   return true;
 }
 
 void CSDLWindow::update()
 {
-  /*
-  SDL_Event event;
+  
+  SDL_Event eventList[WINDOW_MAX_PEEP];
 
-  while (SDL_PollEvent(&event))
+  int nEvents;
+  unsigned type = 0;
+  //EInputState newState;
+
+  // Assuming that SDL_PumpEvents is called from CLinuxInput
+
+  nEvents = SDL_PeepEvents(eventList, WINDOW_MAX_PEEP, SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT);
+
+  if (nEvents == -1)
   {
-      handleEvent(&event);
+    GetISystem()->GetILog()->LogError("SDL_GETEVENT error: %s", SDL_GetError());
+    return;
   }
-  */
+  for (int i = 0; i < nEvents; ++i)
+  {
+	  handleEvent(eventList[i]);
+  }
+
 }
 
 void CSDLWindow::clear()
@@ -81,76 +93,86 @@ void CSDLWindow::show()
 {
 }
 
-void CSDLWindow::handleEvent(SDL_Event* event)
+void CSDLWindow::handleEvent(SDL_Event& event)
 {
-  return;
-  if (event->type == SDL_WINDOWEVENT) {
-    switch (event->window.event) {
+#define SDL_Log(format, ...) gEnv->pLog->Log(format, __VA_ARGS__)
+	auto& system = gEnv->pSystem;
+  if (event.type == SDL_WINDOWEVENT) {
+    switch (event.window.event) {
     case SDL_WINDOWEVENT_SHOWN:
-      SDL_Log("Window %d shown", event->window.windowID);
+      SDL_Log("Window %d shown", event.window.windowID);
       break;
     case SDL_WINDOWEVENT_HIDDEN:
-      SDL_Log("Window %d hidden", event->window.windowID);
+      SDL_Log("Window %d hidden", event.window.windowID);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
       break;
     case SDL_WINDOWEVENT_EXPOSED:
-      SDL_Log("Window %d exposed", event->window.windowID);
+      SDL_Log("Window %d exposed", event.window.windowID);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
       break;
     case SDL_WINDOWEVENT_MOVED:
       SDL_Log("Window %d moved to %d,%d",
-        event->window.windowID, event->window.data1,
-        event->window.data2);
+        event.window.windowID, event.window.data1,
+        event.window.data2);
+			system->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_MOVE, event.window.data1, event.window.data2);
       break;
     case SDL_WINDOWEVENT_RESIZED:
       SDL_Log("Window %d resized to %dx%d",
-        event->window.windowID, event->window.data1,
-        event->window.data2);
+        event.window.windowID, event.window.data1,
+        event.window.data2);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, event.window.data1, event.window.data2);
       break;
     case SDL_WINDOWEVENT_SIZE_CHANGED:
       SDL_Log("Window %d size changed to %dx%d",
-        event->window.windowID, event->window.data1,
-        event->window.data2);
+        event.window.windowID, event.window.data1,
+        event.window.data2);
       break;
     case SDL_WINDOWEVENT_MINIMIZED:
-      SDL_Log("Window %d minimized", event->window.windowID);
+      SDL_Log("Window %d minimized", event.window.windowID);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
       break;
     case SDL_WINDOWEVENT_MAXIMIZED:
-      SDL_Log("Window %d maximized", event->window.windowID);
+      SDL_Log("Window %d maximized", event.window.windowID);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
       break;
     case SDL_WINDOWEVENT_RESTORED:
-      SDL_Log("Window %d restored", event->window.windowID);
+      SDL_Log("Window %d restored", event.window.windowID);
       break;
     case SDL_WINDOWEVENT_ENTER:
       SDL_Log("Mouse entered window %d",
-        event->window.windowID);
+        event.window.windowID);
       break;
     case SDL_WINDOWEVENT_LEAVE:
-      SDL_Log("Mouse left window %d", event->window.windowID);
+      SDL_Log("Mouse left window %d", event.window.windowID);
       break;
     case SDL_WINDOWEVENT_FOCUS_GAINED:
       SDL_Log("Window %d gained keyboard focus",
-        event->window.windowID);
+        event.window.windowID);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
       break;
     case SDL_WINDOWEVENT_FOCUS_LOST:
       SDL_Log("Window %d lost keyboard focus",
-        event->window.windowID);
+        event.window.windowID);
+			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
       break;
     case SDL_WINDOWEVENT_CLOSE:
-      SDL_Log("Window %d closed", event->window.windowID);
+      SDL_Log("Window %d closed", event.window.windowID);
       break;
 #if SDL_VERSION_ATLEAST(2, 0, 5)
     case SDL_WINDOWEVENT_TAKE_FOCUS:
-      SDL_Log("Window %d is offered a focus", event->window.windowID);
+      SDL_Log("Window %d is offered a focus", event.window.windowID);
       break;
     case SDL_WINDOWEVENT_HIT_TEST:
-      SDL_Log("Window %d has a special hit test", event->window.windowID);
+      SDL_Log("Window %d has a special hit test", event.window.windowID);
       break;
 #endif
     default:
       SDL_Log("Window %d got unknown event %d",
-        event->window.windowID, event->window.event);
+        event.window.windowID, event.window.event);
       break;
     }
   }
+  #undef SDL_Log
 }
 
 void* CSDLWindow::getHandle()
@@ -196,8 +218,8 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,8);
 
   int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_HIDDEN*/;
-  int posx = SDL_WINDOWPOS_CENTERED;
-  int posy = SDL_WINDOWPOS_CENTERED;
+  int posx = 0;
+  int posy = 0;
   if (fullscreen)
   {
     //posx = 0;
@@ -206,6 +228,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   }
 //  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
   // Create window
+  SelectDisplay(posx, posy, width, height);
   m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width,height, flags);
   if (m_MainWindow == NULL)
   {
@@ -257,6 +280,24 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   return true;
 }
 
+void CSDLWindow::SelectDisplay(int &x, int &y, int w, int h)
+{
+  // enumerate displays
+	int displays = SDL_GetNumVideoDisplays();
+  auto display = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
+	display   	 = std::min(displays, display);
+
+	// get display bounds for all displays
+	std::vector< SDL_Rect > displayBounds;
+	for( int i = 0; i < displays; i++ ) {
+			displayBounds.push_back( SDL_Rect() );
+			SDL_GetDisplayBounds( i, &displayBounds.back() );
+	}
+
+	// window of dimensions 500 * 500 offset 100 pixels on secondary monitor
+	x = (displayBounds[display].w - w) / 2 + displayBounds[display].x;
+	y = (displayBounds[display].h - h) / 2 + displayBounds[display].y;
+}
 Rect& CSDLWindow::getViewPort()
 {
   return viewPort;
@@ -349,7 +390,12 @@ void CSDLWindow::EnterFullscreen(bool mode)
 {
 	if (mode)
 	{
-		SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN); 	
+#ifdef _DEBUG
+		static constexpr int flag = SDL_WINDOW_FULLSCREEN_DESKTOP;
+	#else
+		static constexpr int flag = SDL_WINDOW_FULLSCREEN;
+#endif // DEBUG
+		SDL_SetWindowFullscreen(m_MainWindow, flag); 	
   }
 	else
 	{

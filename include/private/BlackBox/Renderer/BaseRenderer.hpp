@@ -20,6 +20,9 @@ public:
 
   int r_MSAA = 1;
   int r_MSAA_samples = 2;
+
+  int r_Vsync = true;
+  int r_DisplayIndex = 0;
 };
 
 class CRenderer :

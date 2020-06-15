@@ -435,8 +435,8 @@ bool CSystem::InitRender()
 
 	if (m_env.pRenderer)
 	{
-		int width  = m_rWidth->GetIVal();
-		int height = m_rHeight->GetIVal();
+		int width  = m_rWidth;
+		int height = m_rHeight;
 		if (gEnv->IsEditor())
 		{
 			// In Editor base default Display Context is not really used, so it is allocated with the minimal resolution.
@@ -446,8 +446,8 @@ bool CSystem::InitRender()
 
 		if (!(m_pWindow = m_env.pRenderer->Init(
 			0, 0, width, height,
-			m_rColorBits->GetIVal(), m_rDepthBits->GetIVal(), m_rStencilBits->GetIVal(),
-			m_rFullscreen->GetIVal(), m_pWindow)))
+			m_rColorBits, m_rDepthBits, m_rStencilBits,
+			m_rFullscreen, m_pWindow)))
 		{
 			return false;
 		}
@@ -759,7 +759,7 @@ void CSystem::PollEvents()
 
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {
-	m_rIntialWindowSizeRatio = CREATE_CVAR("r_InitialWindowSizeRatio", 0.666f, VF_DUMPTODISK,
+	REGISTER_CVAR2("r_InitialWindowSizeRatio", &m_rIntialWindowSizeRatio, 0.666f, VF_DUMPTODISK,
 	                                          "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
 	                                          "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
 
@@ -767,7 +767,7 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 	int iDisplayInfoDefault = 1;
 	int iWidthDefault       = 1280;
 	int iHeightDefault      = 720;
-#if BB_PLATFORM_WINDOWS
+#if BB_PLATFORM_WINDOWS && 0
 	iFullScreenDefault = 0;
 	const float initialWindowSizeRatio = m_rIntialWindowSizeRatio->GetFVal();
 	iWidthDefault = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) * initialWindowSizeRatio);
@@ -781,39 +781,41 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 #endif
 
 	// load renderer settings from engine.ini
-	m_rWidth = CREATE_CVAR("r_Width", iWidthDefault, VF_DUMPTODISK,
+	REGISTER_CVAR2("r_Width", &m_rWidth, iWidthDefault, VF_DUMPTODISK,
 		"Sets the display width, in pixels.\n"
 		"Usage: r_Width [800/1024/..]"
 		);
-	m_rHeight = REGISTER_INT("r_Height", iHeightDefault, VF_DUMPTODISK,
+	REGISTER_CVAR2("r_Height", &m_rHeight, iHeightDefault, VF_DUMPTODISK,
 		"Sets the display height, in pixels.\n"
 		"Usage: r_Height [600/768/..]"
 	);
-	m_rColorBits = REGISTER_INT("r_ColorBits", 32, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+	REGISTER_CVAR2("r_ColorBits", &m_rColorBits, 32, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
 		"Sets the color resolution, in bits per pixel. Default is 32.\n"
 		"Usage: r_ColorBits [32/24/16/8]");
-	m_rDepthBits = REGISTER_INT("r_DepthBits", 24, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+	REGISTER_CVAR2("r_DepthBits", &m_rDepthBits, 24, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
 		"Sets the depth precision, in bits per pixel. Default is 24.\n"
 		"Usage: r_DepthBits [32/24/16]");
-	m_rStencilBits = REGISTER_INT("r_StencilBits", 8, VF_DUMPTODISK,
+	REGISTER_CVAR2("r_StencilBits", &m_rStencilBits, 8, VF_DUMPTODISK,
 		"Sets the stencil precision, in bits per pixel. Default is 8.\n");
 
 
-	m_rFullscreen = REGISTER_INT("r_Fullscreen", iFullScreenDefault, VF_DUMPTODISK,
+	REGISTER_CVAR2("r_Fullscreen", &m_rFullscreen, iFullScreenDefault, VF_DUMPTODISK,
 		"Toggles fullscreen mode. Default is 1 in normal game and 0 in DevMode.\n"
 		"Usage: r_Fullscreen [0=window/1=fullscreen]");
 
-	m_rFullsceenNativeRes = REGISTER_INT("r_FullscreenNativeRes", 0, VF_DUMPTODISK,
+	#if 0
+	REGISTER_CVAR2("r_FullscreenNativeRes", &m_rFullscreenNativeRes, 0, VF_DUMPTODISK,
 		"Toggles native resolution upscaling.\n"
 		"If enabled, scene gets upscaled from specified resolution while UI is rendered in native resolution.");
+	#endif
 
-	m_rDisplayInfo = REGISTER_INT("r_DisplayInfo", 1, VF_RESTRICTEDMODE | VF_DUMPTODISK,
+	REGISTER_CVAR2("r_DisplayInfo", &m_rDisplayInfo, 1, VF_RESTRICTEDMODE | VF_DUMPTODISK,
 		"Toggles debugging information display.\n"
 		"Usage: r_DisplayInfo [0=off/1=show/2=enhanced/3=minimal/4=fps bar/5=heartbeat]");
-	m_rDebug = CREATE_CVAR("r_Debug", 0, VF_RESTRICTEDMODE | VF_DUMPTODISK,
+	REGISTER_CVAR2("r_Debug", &m_rDebug, 0, VF_RESTRICTEDMODE | VF_DUMPTODISK,
 		"Toggles debugging of renderer.\n"
 		"Usage: r_DisplayInfo [0=off/1=on]");
-	m_rTonemap = CREATE_CVAR("r_Tonemap", 1, VF_DUMPTODISK,
+	REGISTER_CVAR2("r_Tonemap", &m_rTonemap, 1, VF_DUMPTODISK,
 		"Using tonemap.\n"
 		"Usage: r_Tonemap [0=off/1=on]");
 }
@@ -897,6 +899,35 @@ void CSystem::Error(const char* message)
 
 void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
+	switch (event)
+	{
+	case ESYSTEM_EVENT_CHANGE_FOCUS:
+		break;
+	case ESYSTEM_EVENT_MOVE:
+		break;
+	case ESYSTEM_EVENT_RESIZE:
+		m_rWidth = wparam;
+		m_rHeight = lparam;
+		break;
+	case ESYSTEM_EVENT_ACTIVATE:
+		break;
+	case ESYSTEM_EVENT_LEVEL_LOAD_START:
+		break;
+	case ESYSTEM_EVENT_LEVEL_GAMEPLAY_START:
+		break;
+	case ESYSTEM_EVENT_LEVEL_POST_UNLOAD:
+		break;
+	case ESYSTEM_EVENT_LANGUAGE_CHANGE:
+		break;
+	case ESYSTEM_EVENT_TOGGLE_FULLSCREEN:
+		m_rFullscreen = wparam;
+		break;
+	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
+		m_bIsActive = bool(wparam);
+		break;
+	default:
+		break;
+	}
 }
 
 void CSystem::ShowMessage(const char* message, const char* caption, MessageType messageType)
@@ -968,7 +999,8 @@ void CSystem::RenderEnd()
 		if (m_GuiManager)
 			m_GuiManager->Render();
 	#endif
-		m_pWindow->swap();
+		if (m_bIsActive)
+			m_pWindow->swap();
 	}
 }
 
@@ -1058,6 +1090,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 #endif
 	}
 
+	m_pSystemEventDispatcher->Update();
+
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
@@ -1123,6 +1157,14 @@ unsigned int CSystem::GetCompressedFileSize(char* filename)
 		fclose(fp);
 	}
 	return BYTES2BITS(size);
+}
+
+void CSystem::OnAfterVarChange(ICVar* pVar)
+{
+}
+
+void CSystem::OnVarUnregister(ICVar* pVar)
+{
 }
 
 

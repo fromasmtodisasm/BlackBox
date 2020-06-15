@@ -42,7 +42,8 @@ public:
   virtual void* getHandle() override;
 private:
   bool Create(int width, int height, bool fullscreen);
-  void handleEvent(SDL_Event* event);
+  void SelectDisplay(int &x, int &y, int w, int h);
+  void handleEvent(SDL_Event& event);
   void SetIcon(char* path);
   static int EventWatcher(void* self, SDL_Event* event);
 
@@ -58,6 +59,7 @@ private:
   bool m_bClose;
   int m_Width;
   int m_Height;
+  bool bInFullScreen = false;
   //TODO: SDL CONTEXT SETTINGS
   //sf::ContextSettings m_contextSettings;
   //===============================================================================

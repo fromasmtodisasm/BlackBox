@@ -129,9 +129,15 @@ void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
 {
   auto len = sprintf(buf, "[%s] ", LogTypeToString(nType));
   len += vsprintf(buf + len, szFormat, args);
-  buf[len] = '\n';
-  buf[len + 1] = '\0';
-  std::cout << buf;
+  buf[len] = '\0';
+  if (gEnv->pConsole)
+		gEnv->pConsole->PrintLine(buf);
+  else
+  {
+		buf[len] = '\n';
+		buf[len + 1] = '\0';
+		std::cout << buf;
+  }
   log.push_back(strdup(buf));
 }
 

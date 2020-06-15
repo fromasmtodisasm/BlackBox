@@ -184,19 +184,21 @@ private:
 
 	// System console variables.
 	//////////////////////////////////////////////////////////////////////////
-	ICVar* m_rIntialWindowSizeRatio;
-	ICVar* m_rWidth;
-	ICVar* m_rHeight;
-	ICVar* m_rColorBits;
-	ICVar* m_rDepthBits;
-	ICVar* m_rStencilBits;
-	ICVar* m_rFullscreen;
-	ICVar* m_rFullsceenNativeRes;
-	ICVar* m_rWindowState;
-	ICVar* m_rDriver;
-	ICVar* m_rDisplayInfo;
-  ICVar* m_rDebug;
-  ICVar* m_rTonemap;
+	float m_rIntialWindowSizeRatio;
+	int m_rWidth;
+	int m_rHeight;
+	int m_rColorBits;
+	int m_rDepthBits;
+	int m_rStencilBits;
+	int m_rFullscreen;
+	//ICVar* m_rFullsceenNativeRes;
+	//ICVar* m_rWindowState;
+	//ICVar* m_rDriver;
+	int m_rDisplayInfo;
+  int m_rDebug;
+  int m_rTonemap;
+
+  bool m_bIsActive = true;
 
 
 
@@ -221,6 +223,10 @@ private:
   virtual bool WriteCompressedFile(char* filename, void* data, unsigned int bitlen) override;
   virtual unsigned int ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen) override;
   virtual unsigned int GetCompressedFileSize(char* filename) override;
+
+  // Inherited via IConsoleVarSink
+  virtual void OnAfterVarChange(ICVar* pVar) override;
+  virtual void OnVarUnregister(ICVar* pVar) override;
 };
 
 void AddInternalCommands(ISystem* pSystem);

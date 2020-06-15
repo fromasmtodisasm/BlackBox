@@ -40,7 +40,8 @@ struct Hardware
 class GLRenderer :
   public CRenderer,
   public IConsoleVarSink,
-  public IInputEventListener
+  public IInputEventListener,
+  public ISystemEventListener
 {
 public:
   GLRenderer(ISystem* engine);
@@ -49,9 +50,13 @@ public:
 public:
   // Inherited via IConsoleVarSink
   virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
+	virtual void OnAfterVarChange(ICVar* pVar) override;
+	virtual void OnVarUnregister(ICVar* pVar) override;
   // Inherited via IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) override;
   virtual void SetRenderTarget(int nHandle) override;
+  // Inherited via ISystemEventListener
+  virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
   // Inherited via IRenderer
   virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) override;
   virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) override;
@@ -140,6 +145,8 @@ private:
   int zbpp = 0;
   int sbits = 0;
 
+  bool bInFullScreen = false;
+
   //============
   const GLuint majorVersion = 4;
   const GLuint minorVersion = 3;
@@ -187,6 +194,9 @@ private:
 	FrameBufferObject* m_MainReslovedFrameBuffer;
   IRenderCallback* m_pRenerCallback = nullptr;
 	std::vector<Texture*> m_RenderTargets;
+
+  bool transit_to_FS = false;
+	bool bIsActive	   = true;
 
 
   // Inherited via CRenderer

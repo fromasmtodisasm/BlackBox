@@ -330,7 +330,7 @@ struct XBind
     nModifier = eMM_None;
   }
   uint32 nKey;
-  uint32 nModifier;
+  int nModifier;
 };
 
 //////////////////////////////////////////////////////////////////////
