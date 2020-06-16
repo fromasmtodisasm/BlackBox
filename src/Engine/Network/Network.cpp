@@ -8,6 +8,9 @@
 #include <BlackBox/Network/IPAddress.hpp>
 
 #include <SDL2/SDL_net.h>
+#include <sstream>
+#include <functional>
+#include <map>
 
 class CCompressionHelper : public ICompressionHelper
 {
@@ -141,6 +144,7 @@ class CTmpNetworkServer : public IServer
   IPaddress m_IP;
   TCPsocket m_Socket;
   std::vector<TCPsocket> m_ClientSockes;
+  std::map<string, std::function<void(std::stringstream& ss)>> handlers;
 public:
   CTmpNetworkServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
     :
@@ -149,7 +153,26 @@ public:
     m_bLocal(local)
   {
     gEnv->pLog->Log("NetworkServer Constructed");
-
+	  handlers["info"] = [this](std::stringstream& ss) {
+      auto& content = ss;
+				content << R"(
+<html>
+	<head>
+    <title>
+      BlackBox
+    </title>
+	</head>
+  <body>
+		<h1>BlackBox</h1>
+  </body>
+</html>
+)";
+				content << "CTmpNetworkServer: " << this << "</br>";
+				content << "ISystem: " << gEnv->pSystem << "</br>";
+				content << "IConsole: " << gEnv->pConsole << "</br>";
+				content << "IRenderer: " << gEnv->pRenderer << "</br>";
+				content << "ILog: " << gEnv->pLog << "</br>";
+    };
   }
   ~CTmpNetworkServer()
   {
@@ -185,15 +208,8 @@ public:
       else {
         gEnv->pLog->Log("New connection");
         //m_ClientSockes.push_back(new_tcpsock);
-        size_t len, result;
-        auto* msg = R"(
-HTTP/1.1 200 OK
-Host: site.com
-Content-Type: text/html;
-Connection: close
-Content-Length: 21
-
-<h1>Test page...</h1>)";
+        size_t length = 0, result;
+				std::stringstream response;
         static char buf[1024];
         int reslen = 0;
         if ((reslen = SDLNet_TCP_Recv(new_tcpsock, buf, 1000)) <= 0)
@@ -202,16 +218,40 @@ Content-Length: 21
         }
         else
         {
-          gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
-        }
+					std::stringstream content; 
+          //gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
+					std::stringstream ss(buf);
+          gEnv->pLog->Log("Response %s:\n", ss.str().data());
+					std::string line;
+					std::getline(ss, line);
+					const int len = 14; // GET / HTTP/1.1
+					std::string location;
+					location.resize(len - 14);
+					sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
+          gEnv->pLog->Log("Location: %s", location.data());
 
-        len = strlen(msg) + 1; // add one for the terminating NULL
-        result = SDLNet_TCP_Send(new_tcpsock, msg, len);
-        SDLNet_TCP_Close(new_tcpsock);
+          if (auto it = handlers.find(location.c_str()); it != handlers.end())
+					{
+						it->second(content);
+          }
+					response << 
+					 R"(
+	HTTP/1.1 200 OK
+	Host: site.com
+	Content-Type: text/html;
+	Connection: close
+	Content-Length: )";
+					response << content.str().length() << "\r\n\r\n"
+							 << content.str();
 
-        if (result < len) {
-           printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-          // It may be good to disconnect sock because it is likely invalid now.
+					length = response.str().length() + 1; // add one for the terminating NULL
+					result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
+					SDLNet_TCP_Close(new_tcpsock);
+
+					if (result < len) {
+						 printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						// It may be good to disconnect sock because it is likely invalid now.
+					}
         }
       }
     }
