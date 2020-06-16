@@ -685,8 +685,8 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	auto uv_projection	 = glm::mat4(1.0);
 	glm::mat4 projection = glm::ortho(0.f, width, height, 0.f);
 
-	model = glm::scale(model, {w, h, 1.f});
 	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
+	model = glm::scale(model, {w, h, 1.f});
 
 	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
