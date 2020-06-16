@@ -155,24 +155,25 @@ public:
     gEnv->pLog->Log("NetworkServer Constructed");
 	  handlers["info"] = [this](std::stringstream& ss) {
       auto& content = ss;
-				content << R"(
-<html>
-	<head>
-    <title>
-      BlackBox
-    </title>
-	</head>
-  <body>
-		<h1>BlackBox</h1>
-  </body>
-</html>
-)";
 				content << "CTmpNetworkServer: " << this << "</br>";
 				content << "ISystem: " << gEnv->pSystem << "</br>";
 				content << "IConsole: " << gEnv->pConsole << "</br>";
 				content << "IRenderer: " << gEnv->pRenderer << "</br>";
 				content << "ILog: " << gEnv->pLog << "</br>";
+				content << R"(<a href="gaben">Тык тык!!!</a>)";
     };
+		handlers["main"] = [this](std::stringstream& ss) {
+		  ss << "Main Page";
+		};
+		handlers[""] = [this](std::stringstream& ss) {
+		  ss << "Main Page!!!";
+		};
+		handlers["gaben"] = [this](std::stringstream& ss) {
+			ss << R"(
+      <h1>Gabe, give me money!!!</h1>
+      <a href="info">Info<a>
+)";
+		};
   }
   ~CTmpNetworkServer()
   {
@@ -219,6 +220,17 @@ public:
         else
         {
 					std::stringstream content; 
+					content << R"(
+<html>
+	<head>
+    <title>
+      BlackBox
+    </title>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+	</head>
+  <body>
+		<h1>BlackBox</h1>
+)";
           //gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
 					std::stringstream ss(buf);
           gEnv->pLog->Log("Response %s:\n", ss.str().data());
@@ -234,6 +246,10 @@ public:
 					{
 						it->second(content);
           }
+		content << R"(
+  </body>
+</html>
+)";
 					response << 
 					 R"(
 	HTTP/1.1 200 OK
@@ -244,7 +260,7 @@ public:
 					response << content.str().length() << "\r\n\r\n"
 							 << content.str();
 
-					length = response.str().length() + 1; // add one for the terminating NULL
+					length = response.str().length(); // add one for the terminating NULL
 					result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
 					SDLNet_TCP_Close(new_tcpsock);
 
