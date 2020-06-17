@@ -128,7 +128,8 @@ ScriptVarType CFunctionHandler::GetParamType(int nIdx)
 
 int CFunctionHandler::EndFunctionNull()
 {
-  return 0;
+	m_pSS->PushAny(nullptr);
+  return 1;
 }
 
 int CFunctionHandler::EndFunction(int nRetVal)

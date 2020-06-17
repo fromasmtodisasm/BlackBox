@@ -16,6 +16,8 @@ public:
   int ScreenShot(IFunctionHandler* pH);
   int ClearConsole(IFunctionHandler* pH);
   int ShowConsole(IFunctionHandler* pH);
+  int DrawImage(IFunctionHandler* pH);
+  int LoadTexture(IFunctionHandler* pH);
   int Log(IFunctionHandler* pH);
 private:
   ISystem* m_pSystem;

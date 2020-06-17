@@ -177,7 +177,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_pPlayerSystem = new CPlayerSystem();
 
 	m_CrossHair = m_pRender->LoadTexture("crosshair.png", 0, false);
-
 #if 0
   if (!m_pNetwork->Init())
     return false;
@@ -194,6 +193,21 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	InitConsoleVars();
 	initCommands();
 	InitScripts();
+
+	SmartScriptObject Gui(m_pScriptSystem,true);
+	if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
+	{
+		CryError("Cannot find Gui table in scripts (wrong working folder?)");
+		return false;
+	}
+	else
+	{
+		m_pScriptSystem->BeginCall(Gui, "Init");
+		m_pScriptSystem->PushFuncParam(Gui);
+		m_pScriptSystem->EndCall();
+
+	}
+
 	
 	// init key-bindings
 	if (!m_bDedicatedServer)
@@ -352,6 +366,15 @@ bool CGame::Update()
 		ExecScripts();
 		m_CameraController.update(m_deltaTime);
 
+		
+		SmartScriptObject Gui(m_pScriptSystem,true);
+		if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
+		{
+			CryError("Cannot find Gui table in scripts (wrong working folder?)");
+			return false;
+		}
+
+
 		if (bRenderFrame)
 		{
 			SetRenderState();
@@ -379,6 +402,10 @@ bool CGame::Update()
 			}
 
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+			m_pScriptSystem->BeginCall(Gui, "OnDraw");
+			m_pScriptSystem->PushFuncParam(Gui);
+			m_pScriptSystem->EndCall();
+
 			DrawHud(fps);
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
@@ -1295,6 +1322,7 @@ void CGame::DrawAux()
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
 	DrawAxis(render, Vec3(40));
+	//m_pRender->DrawFullScreenImage(m_CrossHair->getId());
 	m_pRender->DrawImage(static_cast<float>(m_pRender->GetWidth()) / 2, static_cast<float>(m_pRender->GetHeight()) / 2, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
