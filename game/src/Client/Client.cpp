@@ -4,7 +4,7 @@
 
 #define YAW		(0)  
 #define PITCH	(1)    
-#define ROLL	(2)   
+#define ROLL	(0)   
 
 std::vector<Vec3> lineBuffer;
 
@@ -19,6 +19,7 @@ CClient::CClient(CGame *pGame)
 
 void CClient::Update()
 {
+	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));
 	m_pGame->GetActionMapManager()->Update(16);
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
@@ -38,16 +39,16 @@ void CClient::Update()
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNLR))
 	{
-		auto ang = m_PlayerProcessingCmd.GetDeltaAngles();
-		ang *= 0.00001;
-		m_CameraController.ProcessMouseMovement(ang[0], ang[1]);
+		auto ang = m_PlayerProcessingCmd.GetDeltaAngles()[YAW];
+		//ang *= 0.01;
+		m_CameraController.ProcessMouseMovement(ang, 0);
 		//m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime);	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNUD))
 	{
-		auto ang = m_PlayerProcessingCmd.GetDeltaAngles();
-		ang *= 0.00001;
-		m_CameraController.ProcessMouseMovement(ang[0], ang[1]);
+		auto ang = m_PlayerProcessingCmd.GetDeltaAngles()[PITCH];
+		ang *= 0.01;
+		m_CameraController.ProcessMouseMovement(0, ang);
 		//m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime);	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
@@ -190,7 +191,7 @@ void CClient::TriggerTurnLR(float fValue,XActivationEvent ae)
 			}
 		}
 		#endif
-		m_PlayerProcessingCmd.GetDeltaAngles()[ROLL] -= fValue*fFovMul;
+		m_PlayerProcessingCmd.GetDeltaAngles()[YAW] -= fValue*fFovMul;
 		m_PlayerProcessingCmd.AddAction(ACTION_TURNLR);
 	}
 }
@@ -214,7 +215,7 @@ void CClient::TriggerTurnUD(float fValue,XActivationEvent ae)
 			IEntityContainer *pCnt=pPlayerEnt->GetContainer();
 		}
 		#endif
-		m_PlayerProcessingCmd.GetDeltaAngles()[YAW] += fValue*fFovMul;
+		m_PlayerProcessingCmd.GetDeltaAngles()[PITCH] += fValue*fFovMul;
 		m_PlayerProcessingCmd.AddAction(ACTION_TURNUD);
 	}
 }

@@ -96,6 +96,7 @@ private:
 	IActionMapSink* m_ActionMapSink{};
   //std::set<EKeyId> m_keys;
 	std::array<EvnetBufferEntry, 512> m_Keys;
+	std::set<EKeyId> m_Queue;
 	uint32 m_Modifires = 0;
 	//std::set<EvnetBufferEntry, cmpEvnetBufferEntry> m_EventBuffer;
   //std::vector<std::set<EvnetBufferEntry>::iterator> m_EventQueue;

@@ -102,23 +102,21 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 	auto binding = m_ActionBindingMap.find(m_CurrentActionMap->second);
 
 	uint32 i = 0;
-	for (auto &event : m_Keys)
+	for (auto &event : m_Queue)
 	{
-		if (event.empty)
-			continue;
 		for (auto& bind : binding->second)
 		{
 			if (!m_ActionMapSink)
 				return;
-			if (bind.bind.nKey ==  EKeyId(i) && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
+			if (bind.bind.nKey ==  event && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
 			{
 				if ((m_Modifires != eMM_None) && (bind.bind.nModifier == eMM_None))
 					continue;
 				for (std::size_t i = 0; i < m_ActionList.size(); i++)
 				{
-					if (m_ActionList[i].aam == event.aam)
+					if (m_ActionList[i].aam == m_Keys[event].aam)
 					{
-						m_ActionMapSink->OnAction(bind.id, event.value, event.ae);
+						m_ActionMapSink->OnAction(bind.id, m_Keys[event].value, m_Keys[event].ae);
 						break;
 					}
 				}
@@ -126,8 +124,9 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 		}
 		i++;
 	}
-	m_Keys[eKI_MouseX].empty = true;
-	m_Keys[eKI_MouseY].empty = true;
+	m_Queue.erase(eKI_MouseX);
+	m_Queue.erase(eKI_MouseY);
+	m_Queue.erase(eKI_MouseZ);
 	#if 0
 	for (auto it : m_EventRelease)
 	{
@@ -174,6 +173,7 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 		ebe.ae = XActivationEvent::etPressing;
 		ebe.aam = XActionActivationMode::aamOnPress;
 		ebe.modifires = event.modifiers;
+		ebe.value	  = event.value;
 		ebe.empty	  = false;
 		if (m_Keys[event.keyId].empty)
 		{
@@ -181,15 +181,17 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 		}
 		else
 		{
-			auto e = m_Keys[event.keyId];
+			auto &e = m_Keys[event.keyId];
 			e.ae = XActivationEvent::etHolding;
 			e.aam = XActionActivationMode::aamOnHold;
 		}
+		m_Queue.insert(event.keyId);
 	}
 	break;
 	case EInputState::eIS_Released:
 	{
 		m_Keys[event.keyId].empty = true;
+		m_Queue.erase(event.keyId);
 		/*
 		EvnetBufferEntry ebe;
 		ebe.ae = XActivationEvent::etPressing;
