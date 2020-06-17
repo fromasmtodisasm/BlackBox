@@ -20,7 +20,8 @@ CClient::CClient(CGame *pGame)
 void CClient::Update()
 {
 	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));
-	m_pGame->GetActionMapManager()->Update(16);
+	if (!gEnv->pConsole->IsOpened())
+		m_pGame->GetActionMapManager()->Update(16);
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
 		m_CameraController.ProcessKeyboard(Movement::LEFT, m_pGame->m_deltaTime);	
@@ -41,14 +42,14 @@ void CClient::Update()
 	{
 		auto ang = m_PlayerProcessingCmd.GetDeltaAngles()[YAW];
 		//ang *= 0.01;
-		m_CameraController.ProcessMouseMovement(ang, 0);
+		m_CameraController.ProcessMouseMovement(-ang, 0);
 		//m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime);	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNUD))
 	{
 		auto ang = m_PlayerProcessingCmd.GetDeltaAngles()[PITCH];
-		ang *= 0.01;
-		m_CameraController.ProcessMouseMovement(0, ang);
+		//ang *= 0.01;
+		m_CameraController.ProcessMouseMovement(0, -ang);
 		//m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime);	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
@@ -392,7 +393,7 @@ void CClient::IntersectionByRayCasting()
 	float tMin = std::numeric_limits<float>::max();
 	Ray eyeRay;
 
-	m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
+	//m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
 	eyeRay.origin = m_CameraController.RenderCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 

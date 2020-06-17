@@ -618,19 +618,6 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		}
 		switch (event.keyId)
 		{
-    case eKI_Mouse1: 
-		{
-			if (event.state == eIS_Pressed)
-			{
-			}
-      break;
-		}
-		case eKI_1:
-		case eKI_Insert:
-		{
-			//m_InsertLines = !m_InsertLines;
-			break;
-		}
 		case eKI_R:
 		{
 			if (control)

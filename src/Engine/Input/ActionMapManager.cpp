@@ -1,5 +1,7 @@
 #include <BlackBox/Input/ActionMap.hpp>
 #include <BlackBox/Input/ActionMapManager.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/ILog.hpp>
 
 CActionMapManager::CActionMapManager(IInput* pInput)
 {
@@ -111,7 +113,8 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 			if (bind.bind.nKey ==  event && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
 			{
 				if ((m_Modifires != eMM_None) && (bind.bind.nModifier == eMM_None))
-					continue;
+					;
+				//continue;
 				for (std::size_t i = 0; i < m_ActionList.size(); i++)
 				{
 					if (m_ActionList[i].aam == m_Keys[event].aam)
@@ -120,6 +123,10 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 						break;
 					}
 				}
+			}
+			else if (bind.bind.nKey ==  event)
+			{
+				gEnv->pLog->Log("fffffffffffffff");
 			}
 		}
 		i++;
@@ -184,6 +191,7 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 			auto &e = m_Keys[event.keyId];
 			e.ae = XActivationEvent::etHolding;
 			e.aam = XActionActivationMode::aamOnHold;
+			e.value = event.value;
 		}
 		m_Queue.insert(event.keyId);
 	}
