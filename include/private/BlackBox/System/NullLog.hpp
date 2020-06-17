@@ -132,7 +132,7 @@ void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
   buf[len] = '\0';
   if (gEnv->pConsole)
 		gEnv->pConsole->PrintLine(buf);
-  else
+  //else
   {
 		buf[len] = '\n';
 		buf[len + 1] = '\0';

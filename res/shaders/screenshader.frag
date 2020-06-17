@@ -10,7 +10,8 @@ uniform vec4 screen;
 
 void main()
 { 
-    vec2 uv = screen.zw * gl_FragCoord.xy; 
+    //vec2 uv = screen.zw * gl_FragCoord.xy; 
+    vec2 uv = TexCoords; 
     FragColor = vec4(texture(screenTexture, uv)*color);
 	//FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }

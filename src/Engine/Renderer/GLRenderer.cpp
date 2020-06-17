@@ -745,13 +745,13 @@ void GLRenderer::ShareWith(GLRenderer* renderer)
 
 void GLRenderer::CreateQuad()
 {
-	SVF_P3F verts[] = {
-		{{0, 1, 0}},
-		{{0, 0, 0}},
-		{{1, 1, 0}},
-		{{1, 0, 0}}};
+	SVF_P3F_T2F verts[] = {
+		{{0, 1, 0}, {0,1}},
+		{{0, 0, 0}, {0,0}},
+		{{1, 1, 0}, {1,1}},
+		{{1, 0, 0}, {1,0}}};
 	gEnv->pLog->Log("here");
-	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F, "screen_quad", false);
+	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
 	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
 

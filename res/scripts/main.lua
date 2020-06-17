@@ -3,6 +3,7 @@ function Init()
 	--System:LoadFont("hud");
 	Script:ReloadScript("scripts/common.lua");
 	Script:ReloadScript("scripts/game.lua");
+	Script:ReloadScript("scripts/Gui.lua");
 	--Script:ReloadScript("scripts/methoddispatcher.lua");
 	--Script:ReloadScript("scripts/saveutils.lua" );
 

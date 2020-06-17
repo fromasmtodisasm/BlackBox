@@ -40,12 +40,16 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_FUNC(ClearConsole);
   SCRIPT_REG_FUNC(ShowConsole);
   SCRIPT_REG_FUNC(Log);
+
+	SCRIPT_REG_FUNC(DrawImage);
+	SCRIPT_REG_FUNC(LoadTexture);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
   m_pSystem = pSystem;
   InitGlobal(pScriptSystem, "System", this);
+
 }
 
 #include <lua.hpp>
@@ -132,6 +136,34 @@ int CScriptObjectSystem::ShowConsole(IFunctionHandler* pH)
   pH->GetParam(1, show);
   m_pConsole->ShowConsole(show);
   return pH->EndFunction();
+}
+
+int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
+{
+  SCRIPT_CHECK_PARAMETERS(6);
+	int id;
+	int xpos;
+	int ypos;
+	int w;
+	int h;
+	int blending_mode;
+	pH->GetParams(id, xpos, ypos, w, h, blending_mode);
+	gEnv->pRenderer->DrawImage(xpos, ypos, w, h, id, 0, 0, 1, 1, 0, 1, 0, 1);
+	return pH->EndFunction();
+}
+
+int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
+{
+	const char* name;
+	if (pH->GetParams(name))
+	{
+		auto t = gEnv->pRenderer->LoadTexture(name, 0, 0);
+		if (t != nullptr)
+		{
+			return pH->EndFunction(t->getId());
+    }
+  }
+	return pH->EndFunctionNull();
 }
 
 int CScriptObjectSystem::Log(IFunctionHandler* pH)
