@@ -112,7 +112,8 @@ class CTagPoint;
 struct ILog;
 class CGameMods;
 
-class CXClient;
+//class CXClient;
+class CClient;
 class CXServer;
 
 enum ActionType
@@ -232,7 +233,7 @@ class CGame final
 	, public IPreRenderCallback
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
-	, public IActionMapSink
+	//, public IActionMapSink
 	, public ISystemEventListener
 {
 	class EventListener;
@@ -432,53 +433,6 @@ private: // ------------------------------------------------------------
 
 
 	void MainMenu();
-	void DrawAux();
-
-	void DrawAxis(IRenderAuxGeom* render, Vec3 axis);
-
-	void IntersectionTest();
-
-	void Jump(float fValue,XActivationEvent ae);
-
-	void IntersectionByRayCasting();
-
-	// Triggers function
-	void TriggerMoveLeft(float fValue,XActivationEvent ae);
-	void TriggerMoveRight(float fValue,XActivationEvent ae);
-	void TriggerMoveForward(float fValue,XActivationEvent ae);
-	void TriggerMoveBackward(float fValue,XActivationEvent ae);
-
-	void TriggerUse(float fValue,XActivationEvent ae);
-	void TriggerTurnLR(float fValue,XActivationEvent ae);
-	void TriggerTurnUD(float fValue,XActivationEvent ae);
-
-	void TriggerQuickLoad(float fValue,XActivationEvent ae);
-	void TriggerQuickSave(float fValue,XActivationEvent ae);
-	void TriggerMessageMode(float fValue,XActivationEvent ae);
-	void TriggerMessageMode2(float fValue,XActivationEvent ae);
-	void TriggerScreenshot(float fValue, XActivationEvent ae);
-	void TriggerFullscreen(float fValue, XActivationEvent ae);
-
-	BEGIN_INPUTACTIONMAP()
-		REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
-		REGISTER_INPUTACTIONMAP(ACTION_MOVE_RIGHT, TriggerMoveRight)
-		REGISTER_INPUTACTIONMAP(ACTION_MOVE_FORWARD, TriggerMoveForward)
-		REGISTER_INPUTACTIONMAP(ACTION_MOVE_BACKWARD, TriggerMoveBackward)
-		REGISTER_INPUTACTIONMAP(ACTION_JUMP, Jump)
-
-		REGISTER_INPUTACTIONMAP(ACTION_USE, TriggerUse)
-		REGISTER_INPUTACTIONMAP(ACTION_TURNLR, TriggerTurnLR)
-		REGISTER_INPUTACTIONMAP(ACTION_TURNUD, TriggerTurnUD)
-
-		REGISTER_INPUTACTIONMAP(ACTION_QUICKLOAD,TriggerQuickLoad);
-		REGISTER_INPUTACTIONMAP(ACTION_QUICKSAVE,TriggerQuickSave);
-
-
-		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE, TriggerMessageMode)
-		REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE2, TriggerMessageMode2)
-		REGISTER_INPUTACTIONMAP(ACTION_TAKESCREENSHOT, TriggerScreenshot)
-		REGISTER_INPUTACTIONMAP(ACTION_FULLSCRN_TOOGLE, TriggerFullscreen);
-	END_INPUTACTIONMAP()
 
 public:
 	float m_deltaTime = 0.f;
@@ -486,7 +440,8 @@ public:
   public:
 	ISystem* m_pSystem;			   //!< The system interface
 	CXServer* m_pServer = nullptr; //!< The server of this computer
-	CXClient* m_pClient{};		   //!< The client of this computer
+	//CXClient* m_pClient{};		   //!< The client of this computer
+	CClient* m_pClient{};		   //!< The client of this computer
 	CEntityClassRegistry		m_EntityClassRegistry;
 	IScriptSystem* m_pScriptSystem;
 	IRenderer* m_pRender;
@@ -655,35 +610,7 @@ public:
 
 	IHardwareMouse* m_HardwareMouse = nullptr;
 
-	CCameraController m_CameraController;
-
-	std::vector<TestObject> m_testObjects;
-
-	size_t m_SelectedBox = 0;
-	ITexture* m_CrossHair = nullptr;
-
 	// Intersection
-
-	struct SIntersectionState
-	{
-		SIntersectionState() = default;
-		bool m_NeedIntersect = false;
-		Vec3 m_LastPickedPos = Vec3(0);
-		struct Ray
-		{
-			Ray() = default;
-			Vec3 start;		
-			Vec3 end;		
-			Vec3 origin;
-			Vec3 direction;
-		}ray;
-		std::vector<TestObject>::iterator picked;
-		float m_CurrentDistant = 0.f;
-		float mx, my;
-	}m_IntersectionState;
-
-	std::vector<Vec3> m_LineList;
-	bool m_InsertLines = false;
 
 	bool m_isActive = false;
 

@@ -130,7 +130,8 @@ void CGame::ShutdownClient()
 //////////////////////////////////////////////////////////////////////
 bool CGame::IsClient()
 {
-  return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
+	return m_pClient != NULL;
+	//&&!m_pClient->m_bSelfDestruct;
 }
 
 bool CGame::IsMultiplayer()
@@ -152,8 +153,10 @@ bool CGame::IsMultiplayer()
 //! mark the client for deletion
 void CGame::MarkClientForDestruct()
 {
+  #if 0
   if (m_pClient)
     m_pClient->MarkForDestruct();
+  #endif
 }
 
 //////////////////////////////////////////////////////////////////////

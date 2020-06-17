@@ -23,6 +23,7 @@ target_include_directories(${PROJECT_NAME}
 target_sources(
 	${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
+	PRIVATE ${SOURCE_DIR}/Client/Client.cpp
 	PRIVATE ${SOURCE_DIR}/Commands.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/EntityClassRegistry.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/Game.cpp

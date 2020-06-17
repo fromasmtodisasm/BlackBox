@@ -4,6 +4,10 @@
 CActionMapManager::CActionMapManager(IInput* pInput)
 {
 	pInput->SetExclusiveListener(static_cast<IInputEventListener*>(this));
+	for (auto k : m_Keys)
+	{
+		k.empty = true;
+	}
 }
 
 CActionMapManager::~CActionMapManager()
@@ -95,6 +99,43 @@ void CActionMapManager::Reset()
 
 void CActionMapManager::Update(unsigned int nTimeMSec)
 {
+	auto binding = m_ActionBindingMap.find(m_CurrentActionMap->second);
+
+	uint32 i = 0;
+	for (auto &event : m_Keys)
+	{
+		if (event.empty)
+			continue;
+		for (auto& bind : binding->second)
+		{
+			if (!m_ActionMapSink)
+				return;
+			if (bind.bind.nKey ==  EKeyId(i) && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
+			{
+				if ((m_Modifires != eMM_None) && (bind.bind.nModifier == eMM_None))
+					continue;
+				for (std::size_t i = 0; i < m_ActionList.size(); i++)
+				{
+					if (m_ActionList[i].aam == event.aam)
+					{
+						m_ActionMapSink->OnAction(bind.id, event.value, event.ae);
+						break;
+					}
+				}
+			}
+		}
+		i++;
+	}
+	m_Keys[eKI_MouseX].empty = true;
+	m_Keys[eKI_MouseY].empty = true;
+	#if 0
+	for (auto it : m_EventRelease)
+	{
+		m_EventBuffer.erase(it);	
+	}
+
+	m_EventRelease.clear();
+	#endif
 }
 
 void CActionMapManager::Release()
@@ -121,51 +162,52 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 {
 	if (event.keyId == eKI_SYS_Commit)
 		return false;
-	bool keyPressed	 = event.state == eIS_Pressed;
-	bool keyReleased = event.state == eIS_Released;
+	m_Modifires = event.modifiers;
 
-	auto binding = m_ActionBindingMap.find(m_CurrentActionMap->second);
-
-	for (auto& bind : binding->second)
+	switch (event.state)
 	{
-		if (bind.bind.nKey == event.keyId && ((bind.bind.nModifier == event.modifiers) || (bind.bind.nModifier == eMM_None)))
+	case EInputState::eIS_Pressed:
+	case EInputState::eIS_Changed:
+	case EInputState::eIS_Down:
+	{
+		EvnetBufferEntry ebe;
+		ebe.ae = XActivationEvent::etPressing;
+		ebe.aam = XActionActivationMode::aamOnPress;
+		ebe.modifires = event.modifiers;
+		ebe.empty	  = false;
+		if (m_Keys[event.keyId].empty)
 		{
-			if ((event.modifiers != eMM_None) && (bind.bind.nModifier == eMM_None))
-				continue;
-			XActionActivationMode aam;
-			switch (event.state)
-			{
-			case EInputState::eIS_Pressed:
-			case EInputState::eIS_Changed:
-			case EInputState::eIS_Down:
-				if (auto it = m_keys.find(event.keyId); it == m_keys.end())
-				{
-					m_keys.insert(event.keyId);
-					aam = XActionActivationMode::aamOnHold;
-				}
-				else
-				{
-					aam = XActionActivationMode::aamOnHold;
-				}
-				break;
-			case EInputState::eIS_Released:
-				m_keys.erase(event.keyId);
-				aam = XActionActivationMode::aamOnRelease;
-				break;
-			default:
-				break;
-			}
-			for (std::size_t i = 0; i < m_ActionList.size(); i++)
-			{
-				if (m_ActionList[i].aam == aam)
-				{
-					m_ActionMapSink->OnAction(bind.id, event.value, etHolding);
-					break;
-				}
-			}
+			m_Keys[event.keyId] = ebe;
+		}
+		else
+		{
+			auto e = m_Keys[event.keyId];
+			e.ae = XActivationEvent::etHolding;
+			e.aam = XActionActivationMode::aamOnHold;
 		}
 	}
-
+	break;
+	case EInputState::eIS_Released:
+	{
+		m_Keys[event.keyId].empty = true;
+		/*
+		EvnetBufferEntry ebe;
+		ebe.ae = XActivationEvent::etPressing;
+		ebe.aam = XActionActivationMode::aamOnRelease;
+		ebe.bindInfo.nKey = event.keyId;
+		ebe.bindInfo.nModifier = event.modifiers;
+		if (auto &it = m_EventBuffer.find(ebe); it != m_EventBuffer.end())
+		{
+			assert(it != m_EventBuffer.end());
+			m_EventRelease.push_back(it);
+			//m_EventQueue.push_back(it);
+		}
+		*/
+	}
+	break;
+	default:
+		break;
+	}
 	return false;
 }
 
