@@ -36,6 +36,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
+	PRIVATE ${SOURCE_DIR}/Network/XEntityProcessingCmd.cpp
 	PRIVATE ${SOURCE_DIR}/Player.cpp
 	PRIVATE ${SOURCE_DIR}/Player/XPlayer.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
