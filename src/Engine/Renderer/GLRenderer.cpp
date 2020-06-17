@@ -178,7 +178,7 @@ void GLRenderer::BeginFrame(void)
 
 void GLRenderer::Update(void)
 {
-	if (bIsActive)
+	//if (bIsActive)
 	{
 		{
 			//std::cout << " aux " << std::endl;

@@ -999,7 +999,7 @@ void CSystem::RenderEnd()
 		if (m_GuiManager)
 			m_GuiManager->Render();
 	#endif
-		if (m_bIsActive)
+		//if (m_bIsActive)
 			m_pWindow->swap();
 	}
 }

@@ -84,6 +84,8 @@ public:
 		REGISTER_INPUTACTIONMAP(ACTION_JUMP, TriggerJump)
 		REGISTER_INPUTACTIONMAP(ACTION_FIRE0, TriggerFire0)
 
+		REGISTER_INPUTACTIONMAP(ACTION_CAMERA_MODE, TriggerChangeCameraMode)
+
 
 		REGISTER_INPUTACTIONMAP(ACTION_USE, TriggerUse)
 		REGISTER_INPUTACTIONMAP(ACTION_TURNLR, TriggerTurnLR)
@@ -114,6 +116,8 @@ private:
 	CXEntityProcessingCmd m_PrevPlayerProcessingCmd;
 	CCameraController m_CameraController;
 	IActionMapManager* m_pIActionMapManager{};
+
+	IClient* m_pClient;
 
 	std::vector<TestObject> m_testObjects;
 	size_t m_SelectedBox = 0;
