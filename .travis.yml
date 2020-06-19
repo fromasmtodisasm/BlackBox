@@ -8,7 +8,7 @@ sudo: true
 #  - libwrandr
 os: linux 
 env: 
-  - COMPILER_NAME=gcc CXX=clang++-7 CC=clang-9
+  - COMPILER_NAME=clang CXX=clang++-7 CC=clang-9
 after_success:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
