@@ -30,20 +30,25 @@ addons:
       - libogg-dev
       - libgl1-mesa-glx
       - libgl1-mesa-dev
-      - g++-7
+      - clang++-6
+      - clang-6
+      - libtinyxml2-dev
+      - libSDL2-dev
+      - libSDL2-net-dev
+      - libfreetype6-dev
       - git
     sources: &sources
       - llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
 script:
-  - mkdir tools
-  - cd tools
-  - git clone https://github.com/microsoft/vcpkg
-  - cd vcpkg
-  - ./bootstrap-vcpkg.sh
-  - cd ../..
-  - mkdir build
+  #- mkdir tools
+  #- cd tools
+  #- git clone https://github.com/microsoft/vcpkg
+  #- cd vcpkg
+  #- ./bootstrap-vcpkg.sh
+  #- cd ../..
+  #- mkdir build
   - cd build
-  - export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
-  - cmake "-DCMAKE_TOOLCHAIN_FILE=tools/vcpkg/scripts/buildsystems/vcpkg.cmake" "-DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake" -DVCPKG_INSTALLER=ON -DCMAKE_BUILD_TYPE=Debug  ..
+  #- export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
+  - cmake "-DTOOLCHAIN_FILE=toolchain/linux/Linux_Clang.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
   - cmake --build . -- -j4
