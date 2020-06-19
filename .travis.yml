@@ -38,7 +38,7 @@ addons:
       - libfreetype6-dev
       - git
     sources: &sources
-      - llvm-toolchain-precise-3.8
+      #- llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
 script:
   #- mkdir tools
