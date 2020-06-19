@@ -31,7 +31,6 @@ addons:
       - libgl1-mesa-glx
       - libgl1-mesa-dev
       - clang++-6
-      - clang-6
       - libtinyxml2-dev
       - libsdl2-dev
       - libsdl2-net-dev
