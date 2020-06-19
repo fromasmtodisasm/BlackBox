@@ -46,7 +46,7 @@ script:
   #- cd vcpkg
   #- ./bootstrap-vcpkg.sh
   #- cd ../..
-  #- mkdir build
+  - mkdir build
   - cd build
   #- export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
   - cmake "-DTOOLCHAIN_FILE=toolchain/linux/Linux_Clang.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
