@@ -45,9 +45,10 @@ macro(install_target)
 	install (
 	  TARGETS  ${BLACKBOX_PROJECT}
 	  RUNTIME DESTINATION bin
-	  LIBRARY DESTINATION lib
-	  ARCHIVE DESTINATION lib/static
+	  #LIBRARY DESTINATION lib
+	  #ARCHIVE DESTINATION lib/static
 	)
+	#[[
 	install(
 		DIRECTORY ${CMAKE_BINARY_DIR}
 		DESTINATION include
@@ -55,15 +56,21 @@ macro(install_target)
 		FILES_MATCHING
 		PATTERN "*.h"
 	)
-	#install_this(${BLACKBOX_PROJECT})
+	]]
+	install_this(${BLACKBOX_PROJECT})
 
 
+	#[[
 	install(
 	  DIRECTORY ${BLACKBOX_PUBLIC_INCLUDE_DIRS}/ DESTINATION include
 	)
+	]]
 
 	install(
 	  DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION .
+	)
+	install(
+	  DIRECTORY ${OUTPUT_DIRECTORY}/$<CONFIG>/ DESTINATION bin 
 	)
 	#[[
 	install(
@@ -129,7 +136,7 @@ macro(main)
 	  FILES  ${SOURCE_FILES}
 	  )
 	]]
-	#install_target()
+	install_target()
 endmacro()
 
 main()

@@ -19,9 +19,5 @@ install(
   RUNTIME DESTINATION bin
 )
 
-install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/ DESTINATION bin
-)
-
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)
 set_solution_startup_target(Launcher)
