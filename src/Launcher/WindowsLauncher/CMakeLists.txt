@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
 )
 target_link_libraries(Launcher PRIVATE  BlackBox)
 target_link_libraries(Launcher PRIVATE  System)
+target_link_libraries(Launcher PRIVATE  Steam)
 add_dependencies(Launcher Game)
 
 add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

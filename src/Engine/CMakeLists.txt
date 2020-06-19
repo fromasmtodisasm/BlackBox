@@ -11,6 +11,7 @@ add_library(${BLACKBOX_PROJECT} INTERFACE)
 
 macro(setup_subsystems)
 	add_subdirectory(Math)
+	add_subdirectory(Steam)
 	target_link_libraries(${BLACKBOX_PROJECT} INTERFACE Math)
 
 	add_subsystem(Utils)
