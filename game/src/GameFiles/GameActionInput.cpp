@@ -185,7 +185,7 @@ void  CGame::ResetInputMap()
   //	ADD_ACTION(MOVEMODE2,aamOnDoublePress,"Change Movemode",true)
   ADD_ACTION(LEANLEFT, aamOnHold, "@LeanLeft", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("LEANLEFT", "default", "zoom", "binozoom", "");
   //ADD_ACTION(LEANRIGHT, aamOnHold, "@LeanRight", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("LEANRIGHT", "default", "zoom", "binozoom", "");
-  ADD_ACTION(FIRE0, aamOnHold, "@Fire", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE0", "default", "zoom", "vehicle", "player_dead", "");
+  ADD_ACTION(FIRE0, aamOnPress, "@Fire", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE0", "default", "zoom", "vehicle", "player_dead", "");
   //ADD_ACTION(FIRECANCEL,aamOnHold,"@CancelCurrentTarget",ACTIONTYPE_COMBAT,true) SetConfigToActionMap("FIRECANCEL", "default", "zoom", "vehicle", "");
   ADD_ACTION(USE, aamOnPress, "@Use", ACTIONTYPE_GAME, true) SetConfigToActionMap("USE", ACTIONMAPS_NODEAD);
   ADD_ACTION(TURNLR, aamOnHold, "@TurnLeftRight", 0, false) SetConfigToActionMap("TURNLR", ACTIONMAPS_NODEAD);

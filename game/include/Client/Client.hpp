@@ -105,8 +105,8 @@ public:
 private:
 	void DrawAux();
 	void DrawAxis(IRenderAuxGeom* render, Vec3 axis);
-	void CClient::IntersectionTest();
-	void CClient::IntersectionByRayCasting();
+	void IntersectionTest();
+	void IntersectionByRayCasting();
 
 private:
 	CGame* m_pGame{};
@@ -143,5 +143,7 @@ private:
 	bool m_InsertLines = false;
 
 	ITexture* m_CrossHair = nullptr;
+
+	size_t m_FireCount;
 
 };

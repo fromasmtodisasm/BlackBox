@@ -19,6 +19,7 @@ CClient::CClient(CGame *pGame)
 
 void CClient::Update()
 {
+	//m_pClient->Update(16);
 	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));
 	if (!gEnv->pConsole->IsOpened())
 		m_pGame->GetActionMapManager()->Update(16);
@@ -80,6 +81,8 @@ bool CClient::Init()
 		m_pIActionMapManager->SetSink(this);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
+	//m_pClient = gEnv->pNetwork->CreateClient(this);
+
 	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 10, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
@@ -126,6 +129,7 @@ void CClient::OnXContextSetup(CStream& stmContext)
 
 void CClient::OnXData(CStream& stm)
 {
+	gEnv->pLog->Log("Client recived stream");
 }
 
 void CClient::OnXServerTimeout()
