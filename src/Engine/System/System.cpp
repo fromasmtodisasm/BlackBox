@@ -206,6 +206,7 @@ bool CSystem::Init()
 	}
 	//====================================================
 	Log("Initialize Render");
+	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
 	if (!InitRender())
 		return false;
 	auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);

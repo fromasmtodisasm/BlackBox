@@ -63,17 +63,20 @@ enum ESystemEvent
 	//! wparam=1/0, 1=active 0=inactive.
 	ESYSTEM_EVENT_ACTIVATE = 13,
 
-  ESYSTEM_EVENT_LEVEL_LOAD_START,
+	ESYSTEM_EVENT_LEVEL_LOAD_START,
 
-  ESYSTEM_EVENT_LEVEL_GAMEPLAY_START,
+	ESYSTEM_EVENT_LEVEL_GAMEPLAY_START,
 
-  ESYSTEM_EVENT_LEVEL_POST_UNLOAD,
+	ESYSTEM_EVENT_LEVEL_POST_UNLOAD,
 
-  ESYSTEM_EVENT_LANGUAGE_CHANGE,
+	ESYSTEM_EVENT_LANGUAGE_CHANGE,
 
 	//! Toggle fullscreen.
 	//! wparam is 1 means we switched to fullscreen, 0 if for windowed.
 	ESYSTEM_EVENT_TOGGLE_FULLSCREEN,
+
+	//! Sent before initializing the renderer.
+	ESYSTEM_EVENT_PRE_RENDERER_INIT,
 
 	//! Sent if the window containing the running game loses focus, but application itself still has focus
 	//! This is needed because some sub-systems still want to work even without focus on main application
