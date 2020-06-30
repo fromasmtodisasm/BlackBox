@@ -8,6 +8,7 @@ add_definitions("/ZI")
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(INCLUDE_ROOT ${PROJECT_SOURCE_DIR}/include)
 ###################################################
+add_subdirectory(thirdparty)
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
