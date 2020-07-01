@@ -16,6 +16,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
 if (WINDOWS)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Ws2_32)
 endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE Steam)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"

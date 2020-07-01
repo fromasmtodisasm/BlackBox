@@ -150,6 +150,8 @@ CGame::~CGame()
 
 	// shutdown the server if there is one
 	ShutdownServer();
+
+	SteamAPI_Shutdown();
 }
 
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
@@ -550,19 +552,11 @@ bool CGame::Run(bool& bRelaunch)
 	StartupServer(true, "test_server");
 
 	m_bRelaunch = false;
-  bool steamInited = false;
-  cout << "steam api init: " << (steamInited = SteamAPI_Init()) << endl;
-  // Получить имена профилей Steam текущих пользователей.
-	const char *name = SteamFriends()->GetPersonaName();
-  cout << "person name: " << name << endl;
 	while (1)
 	{
 		if (!Update())
 			break;
 	}
-
-  if (steamInited)
-	  SteamAPI_Shutdown();
 
 	bRelaunch = m_bRelaunch;
 
@@ -1491,7 +1485,20 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
 		m_isActive = bool(wparam);
 		break;
+	case ESYSTEM_EVENT_FAST_SHUTDOWN:
+		SendMessage("Quit");
 	default:
 		break;
 	}
 }
+
+bool CGame::SteamInit()
+{
+  bool steamInited = false;
+  gEnv->pLog->Log("steam api init: %d", (steamInited = SteamAPI_Init()));
+  // Получить имена профилей Steam текущих пользователей.
+	const char *name = SteamFriends()->GetPersonaName();
+  gEnv->pLog->Log("person name: %s", name);
+	return steamInited;
+}
+

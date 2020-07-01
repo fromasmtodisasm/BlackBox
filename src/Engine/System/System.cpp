@@ -378,7 +378,7 @@ IGame* CSystem::CreateGame(IGame* game)
 
 void CSystem::Quit()
 {
-	m_pGame->SendMessage("Quit");
+	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_FAST_SHUTDOWN, 0, 0);
 	Release();
 
 	exit(0);

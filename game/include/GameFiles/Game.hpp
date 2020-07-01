@@ -275,7 +275,7 @@ class CGame final
 	// IInputEventListener interface
   public:
 	virtual bool OnInputEvent(const SInputEvent& event) override;
-    virtual int GetPriority() const override
+	virtual int GetPriority() const override
 	{
 		return 2;
 	}
@@ -321,6 +321,8 @@ class CGame final
 private: // ------------------------------------------------------------
 
 	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);
+
+	bool SteamInit();
 
 	float										m_fFadingStartTime;
 	char										m_szLoadMsg[512];

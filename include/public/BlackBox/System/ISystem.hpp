@@ -71,6 +71,12 @@ enum ESystemEvent
 
 	ESYSTEM_EVENT_LANGUAGE_CHANGE,
 
+	//! Sent when the system is doing a full shutdown.
+	ESYSTEM_EVENT_FULL_SHUTDOWN,
+
+	//! Sent when the system is doing a fast shutdown.
+	ESYSTEM_EVENT_FAST_SHUTDOWN,
+
 	//! Toggle fullscreen.
 	//! wparam is 1 means we switched to fullscreen, 0 if for windowed.
 	ESYSTEM_EVENT_TOGGLE_FULLSCREEN,
