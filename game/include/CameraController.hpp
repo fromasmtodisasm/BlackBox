@@ -76,7 +76,7 @@ public:
   {
 		#if 0
     REGISTER_CVAR2("cam_speed", &m_Camera->MovementSpeed, 5.0f, 0, "Speed of camera");
-    REGISTER_CVAR2("fov", &m_Camera->FOV, 45.0f, 0, "Camera field of view");
+    REGISTER_CVAR2("fov", &m_Camera->m_fov, 45.0f, 0, "Camera field of view");
     REGISTER_CVAR2("zfar", &m_Camera->zFar, 10000.f, 0, "Draw distance");
 		#endif
   }

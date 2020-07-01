@@ -25,6 +25,7 @@ target_include_directories(${PROJECT_NAME}
 target_sources(
 	${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
+	PRIVATE ${SOURCE_DIR}/Client/Client.cpp
 	PRIVATE ${SOURCE_DIR}/Commands.cpp
 	#PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/EntityClassRegistry.cpp
@@ -39,6 +40,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/GameFiles/SteamHelper.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
+	PRIVATE ${SOURCE_DIR}/Network/XEntityProcessingCmd.cpp
 	PRIVATE ${SOURCE_DIR}/Player.cpp
 	PRIVATE ${SOURCE_DIR}/Player/XPlayer.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
@@ -49,6 +51,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectStream.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectTest.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptTimerMgr.cpp
+	PRIVATE ${SOURCE_DIR}/Server/Server.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp

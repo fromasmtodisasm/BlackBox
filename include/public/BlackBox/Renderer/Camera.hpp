@@ -44,7 +44,7 @@ public:
   // Camera options
   float MovementSpeed;
   float Zoom;
-  float FOV = 45.0f;
+  float m_fov = 45.0f;
   float Ratio = 16.0f / 9;
   float zNear = 0.1f;
   float zFar = 1000.f;
@@ -81,7 +81,7 @@ public:
 	  gEnv->pRenderer->GetViewport(&v.x, &v.y, &v.z, &v.w);
 	  if (type == Type::Perspective)
 	  {
-		  return glm::perspective(glm::radians(FOV), (float)(v.z) / (float)(v.w), zNear, zFar);
+		  return glm::perspective(glm::radians(m_fov), (float)(v.z) / (float)(v.w), zNear, zFar);
     }
 	  else
 	  {
@@ -108,6 +108,9 @@ public:
   {
     transform.rotation = ang;
   }
+
+	inline void	SetFov(float fov)	{ m_fov=fov; }
+	inline float GetFov() const { return(m_fov); }	
 
   // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
   // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis

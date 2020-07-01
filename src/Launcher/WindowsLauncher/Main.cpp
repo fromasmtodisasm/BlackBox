@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   time_t t = time(nullptr);
   std::stringstream ss;
   ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
-  params.sLogFileName = _strdup(ss.str().c_str());
+  params.sLogFileName = strdup(ss.str().c_str());
 
   snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
   ISystem* pSystem = CreateSystemInterface(params);

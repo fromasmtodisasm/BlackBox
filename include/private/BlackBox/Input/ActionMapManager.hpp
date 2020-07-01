@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Input/IInput.hpp>
+#include <array>
 
 class CActionMap;
 struct ActionInfo
@@ -30,6 +31,27 @@ class CActionMapManager : public IActionMapManager, public IInputEventListener
   using ActionMapsToString = std::map<CActionMap*, string>;
   using ActionMapIt = std::map<string, CActionMap*>::iterator;
   using ActionBindingMap = std::map<CActionMap*, std::vector<ActionBinding>>;
+  struct EvnetBufferEntry
+  {
+	  //XBind bindInfo; 
+    uint32 modifires;
+		XActivationEvent ae;
+	  XActionActivationMode aam;
+		float value;
+	  bool empty;
+  };
+
+  #if 0
+	struct cmpEvnetBufferEntry {
+		bool operator()(const EvnetBufferEntry& a, const EvnetBufferEntry& b) const {
+			if (a.bindInfo.nKey > b.bindInfo.nKey)
+				return false;
+			else
+				return (a.bindInfo.nModifier > b.bindInfo.nModifier);
+		}
+	};
+  #endif
+
 public:
   CActionMapManager(IInput* pInput);
   ~CActionMapManager();
@@ -72,6 +94,12 @@ private:
   bool m_Enabled = true;
 
 	IActionMapSink* m_ActionMapSink{};
-  std::set<EKeyId> m_keys;
+  //std::set<EKeyId> m_keys;
+	std::array<EvnetBufferEntry, 512> m_Keys;
+	std::set<EKeyId> m_Queue;
+	uint32 m_Modifires = 0;
+	//std::set<EvnetBufferEntry, cmpEvnetBufferEntry> m_EventBuffer;
+  //std::vector<std::set<EvnetBufferEntry>::iterator> m_EventQueue;
+  //std::vector<std::set<EvnetBufferEntry>::iterator> m_EventRelease;
 
 };

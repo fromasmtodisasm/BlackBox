@@ -17,6 +17,8 @@
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
 
+#include <Client/Client.hpp>
+
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -27,14 +29,6 @@
 #include <cmath>
 
 int render_camera = 0;
-int movement_camera = 0;
-namespace
-{
-	Vec3 RandomVector(Vec3 left, Vec3 right, float floor = 5)
-	{
-		const Vec3 vec(rand(), rand(), rand());
-		return left + static_cast <Vec3> (vec) /( static_cast <Vec3> (Vec3(static_cast<float>(RAND_MAX))/(right - left)));
-	}
 
 	std::string vec_to_string(Vec3 vec)
 	{
@@ -151,9 +145,7 @@ CGame::CGame()
 	r_profile(nullptr),
 	r_cap_profile(nullptr),
 	m_pCVarCheatMode(nullptr),
-	m_pScriptObjectGame(nullptr),
-	m_CameraController(),
-	m_IntersectionState()
+	m_pScriptObjectGame(nullptr)
 {
 
 	//const auto ltime = time (NULL);
@@ -199,8 +191,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	if (!bDedicatedSrv)
 	{
 		m_pInput->AddEventListener(this);
-		m_pInput->AddEventListener(&m_CameraController);
-		gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
+		//m_pInput->AddEventListener(&m_CameraController);
+		//gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
 		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRender->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
 	}
 	pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CGame");
@@ -211,7 +203,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_pVehicleSystem = new CVehicleSystem();
 	m_pPlayerSystem = new CPlayerSystem();
 
-	m_CrossHair = m_pRender->LoadTexture("crosshair.png", 0, false);
 #if 0
   if (!m_pNetwork->Init())
     return false;
@@ -304,7 +295,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
 #endif
 
+	m_pClient = new CClient(this);
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+	m_pClient->Init();
 	if (m_Console->GetCVar("nsightDebug"))
 	{
 		m_Console->ExecuteString("r_displayinfo 0");
@@ -313,35 +306,6 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_QuadTree = std::make_shared<QuadTree>(8, 10, 0, 0, color3(1, 0, 0));
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
-
-	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 10, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
-
-
-	srand(static_cast<unsigned int>(time(0)));
-
-	Vec3 left(-40, -40, -40);
-	Vec3 right(40, 40, 40);
-	auto create_obj = [&]()->auto {
-		const auto rand_pos = RandomVector(left, right);
-		return TestObject(
-			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
-	};
-	for (int i = 0; i < 50; i++)
-	{
-		m_testObjects.emplace_back(
-			create_obj()
-		);
-	}
-
-	auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(4, 10, 40, 255));
-	CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
-	m_testObjects.emplace_back(CameraBox);
-	m_IntersectionState.picked = m_testObjects.begin();
-
-	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
 	return true;
 }
@@ -400,8 +364,6 @@ bool CGame::Update()
 		m_time += m_deltaTime;
 		fps = 1.0f / m_deltaTime;
 		ExecScripts();
-		m_CameraController.update(m_deltaTime);
-
 		
 		SmartScriptObject Gui(m_pScriptSystem,true);
 		if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
@@ -417,23 +379,10 @@ bool CGame::Update()
 			m_pSystem->RenderBegin();
 			{
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
-				m_CameraController.SetRenderCamera(0);
-				auto cam = m_CameraController.RenderCamera();
-				//cam->SetAngles(Vec3(0,0,0));
-				//cam->SetPos(Vec3(0, 40, 0));
-				cam->updateCameraVectors();
+				m_pClient->Update();
 				
 
-				cam->type = CCamera::Type::Perspective;
 				Render();
-				#if 0
-				m_pRender->Flush();
-				m_CameraController.SetRenderCamera(1);
-				m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
-				m_pRender->SetViewport(0, m_pRender->GetHeight() / 2, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
-				Render();
-				#endif
-				m_CameraController.SetRenderCamera(render_camera);
 
 			}
 
@@ -551,7 +500,7 @@ void CGame::DisplayInfo(float fps)
 	}
 
 	//render->PrintLine("To hide depth buffer press <;>\n", dti);
-	render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
+	//render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
 
 	info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
 	//render->PrintLine(pos.c_str(), info.getDTI());
@@ -567,12 +516,14 @@ void CGame::DisplayInfo(float fps)
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */ c.y)).c_str(), info.getDTI());
 		m_Font->SetYPos((float)m_pRender->GetHeight() / 2);
 		{
+			#if 0
 			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
 			auto pos = std::to_string(lpp.x) + ",";
 			pos += std::to_string(lpp.y) + ",";
 			pos += std::to_string(lpp.z) + ";\n";
 			render->PrintLine((std::string("Last picking pos: ") + pos).data(), info.getDTI());
 			render->PrintLine((std::string("Current distant: ") + std::to_string(m_IntersectionState.m_CurrentDistant)).data(), info.getDTI());
+			#endif
 		}
 	}
 }
@@ -606,10 +557,6 @@ bool CGame::loadScene(std::string name)
 		{
 			//scene->setCamera("main", new CCamera());
 			//m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
-			m_CameraController.AddCamera(new CCamera(Vec3(0,0,0)));
-			m_CameraController.AddCamera(new CCamera(Vec3(10,10,10)));
-			m_CameraController.SetRenderCamera(1);
-			m_CameraController.InitCVars();
 			CPlayer* player = nullptr; // static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
 			{
@@ -617,6 +564,7 @@ bool CGame::loadScene(std::string name)
 				//player->setGame(this);
 				this->setPlayer(player);
 			}
+			m_pClient->OnLoadScene();
 		}
 		return true;
 	}
@@ -666,9 +614,8 @@ void CGame::setCamera(CCamera* camera)
 
 void CGame::Render()
 {
-	m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_pSystem->Render();
-	DrawAux();
+	m_pClient->Render();
 }
 
 IGAME_API IGame* CreateIGame()
@@ -718,44 +665,6 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		}
 		switch (event.keyId)
 		{
-    case eKI_Mouse1: 
-		{
-			if (event.state == eIS_Pressed)
-			{
-				auto& lpp = m_IntersectionState.m_LastPickedPos;
-				m_IntersectionState.m_NeedIntersect = true;
-				gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
-				if (m_Mode != MENU)
-				{
-					m_IntersectionState.mx= (float)m_pRender->GetWidth() / 2;
-					m_IntersectionState.my= (float)m_pRender->GetHeight() / 2;
-				}
-			}
-      break;
-		}
-		case eKI_1:
-		case eKI_2:
-		{
-			const auto id = event.keyId - eKI_1;
-			if (control)
-			{
-				movement_camera = id;
-				m_CameraController.SetMovementCamera(id);
-				m_CameraController.SetRenderCamera(id);
-			}
-			else
-			{
-				render_camera = id;
-				m_CameraController.SetMovementCamera(id);
-				m_CameraController.SetRenderCamera(id);
-			}
-			break;
-		}
-		case eKI_Insert:
-		{
-			m_InsertLines = !m_InsertLines;
-			break;
-		}
 		case eKI_R:
 		{
 			if (control)
@@ -851,8 +760,8 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 		case eKI_M:
 			camera.mode						  = CCamera::Mode::FLY;
 			m_Mode							  = Mode::FLY;
-			m_CameraController.CurrentCamera()->mode = CCamera::Mode::FLY;
 			return true;
+			#if 0
 		case eKI_H:
 			m_IntersectionState.picked->m_AABB.min.x += 1;
 			m_IntersectionState.picked->m_AABB.max.x += 1;
@@ -878,6 +787,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			m_IntersectionState.picked->m_AABB.max.y += module;
 			return true;
 		}
+		#endif
 		case eKI_Escape:
 			gotoMenu();
 			return true;
@@ -1301,214 +1211,6 @@ ITagPointManager* CGame::GetTagPointManager()
 
 void CGame::MainMenu()
 {
-}
-
-void CGame::DrawAux()
-{
-	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
-	auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col) {
-		auto render = gEnv->pRenderer->GetIRenderAuxGeom();
-		render->DrawTriangle(p1, col, p2, col, p3, col);
-		render->DrawTriangle(p3, col, p4, col, p1, col);
-	};
-	const UCol col(255, 255, 255, 255);
-	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
-	render->DrawLine(
-		{-10, 10, -5}, col, {10, 10, -5}, col);
-	float x = 40, y = 0, z = -40;
-	{
-		const UCol col1(50, 125, 0, 100);
-		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
-	}
-
-	UCol selected_color(0,1,0,1);
-	IntersectionTest();
-	int _idx = 0;
-	for (auto& object : m_testObjects)
-	{
-		if (m_IntersectionState.picked != m_testObjects.begin() + _idx)
-			render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.intersected ? selected_color : object.m_Color);
-		else
-		{
-			render->DrawAABB(
-				object.m_AABB.min, object.m_AABB.max, selected_color
-			);
-		}
-		object.intersected = false;
-		_idx++;
-	}
-	if (lineBuffer.size() >= 2)
-	{
-		#if 0
-		for (int i = 0; i < (lineBuffer.size() - 1); i ++)
-		{
-			render->DrawLine(lineBuffer[i] + Vec3(0, 0.1, 0), UCol(255,255,255,255), lineBuffer[i + 1] + Vec3(0, 0.1, 0), UCol(255,255,255,255));	
-		}
-		#else
-			render->DrawLines(lineBuffer.data(), lineBuffer.size(), UCol(255,255,255,255));	
-		#endif
-	}
-
-	Ray ray;
-
-	ray.origin = m_CameraController.RenderCamera()->transform.position;
-	ray.direction = m_CameraController.RenderCamera()->Front;
-
-	render->DrawLine(
-		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
-
-	DrawAxis(render, Vec3(40));
-	//m_pRender->DrawFullScreenImage(m_CrossHair->getId());
-	m_pRender->DrawImage(static_cast<float>(m_pRender->GetWidth()) / 2, static_cast<float>(m_pRender->GetHeight()) / 2, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
-}
-
-void CGame::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
-{
-	// Axis
-	///////////////////////////////////////
-	RSS(gEnv->pRenderer, DEPTH_TEST, false);
-	{
-		auto& a = axis;
-		{
-			const UCol c = Vec3(1, 0, 0);
-			render->DrawLine(
-				{-a.x, 0, 0}, c, {a.x, 0, 0}, c);
-		}
-		{
-			const UCol c = Vec3(0, 1, 0);
-			render->DrawLine(
-				{0, -a.y, 0}, c, {0, a.y, 0}, c);
-		}
-		{
-			const UCol c = Vec3(0, 0, 1);
-			render->DrawLine(
-				{0, 0, -a.z}, c, {0, 0, a.z}, c);
-		}
-	}
-}
-
-void CGame::IntersectionTest()
-{
-	if (m_IntersectionState.m_NeedIntersect)
-	{
-		IntersectionByRayCasting();
-		m_IntersectionState.m_NeedIntersect = false;
-	}
-}
-
-void CGame::Jump(float fValue, XActivationEvent ae)
-{
-}
-
-void CGame::IntersectionByRayCasting()
-{
-	auto& start = m_IntersectionState.ray.start;
-	gEnv->pRenderer->UnProjectFromScreen(
-		m_IntersectionState.mx, m_IntersectionState.my, 0, &start.x, &start.y, &start.z);
-	auto& end = m_IntersectionState.ray.end;
-	gEnv->pRenderer->UnProjectFromScreen(
-		m_IntersectionState.mx, m_IntersectionState.my, 1, &end.x, &end.y, &end.z);
-
-	float tMin = std::numeric_limits<float>::max();
-	Ray eyeRay;
-
-	m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
-	eyeRay.origin = m_CameraController.RenderCamera()->GetPos();
-	eyeRay.direction = glm::normalize(end-start);
-
-	const auto lastPos = m_IntersectionState.m_LastPickedPos; 
-	for (size_t i = 0; i < m_testObjects.size(); i++){
-		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
-		if (tMinMax.x < 0 || tMinMax.y < 0)
-			continue;
-		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
-			m_IntersectionState.picked = m_testObjects.begin() + i;
-			tMin = tMinMax.x;
-			m_IntersectionState.m_LastPickedPos = eyeRay.origin + eyeRay.direction * tMin;
-			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
-		}
-	}
-	if (lastPos != m_IntersectionState.m_LastPickedPos)
-	{
-		lineBuffer.push_back(m_IntersectionState.m_LastPickedPos);
-	}
-}
-
-void CGame::TriggerMoveLeft(float fValue, XActivationEvent ae)
-{
-	m_CameraController.ProcessKeyboard(Movement::LEFT, m_deltaTime);
-}
-
-void CGame::TriggerMoveRight(float fValue, XActivationEvent ae)
-{
-	m_CameraController.ProcessKeyboard(Movement::RIGHT, m_deltaTime);
-}
-
-void CGame::TriggerMoveForward(float fValue, XActivationEvent ae)
-{
-	m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
-}
-
-void CGame::TriggerMoveBackward(float fValue, XActivationEvent ae)
-{
-	m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_deltaTime);
-}
-
-void CGame::TriggerUse(float fValue, XActivationEvent ae)
-{
-}
-
-void CGame::TriggerTurnLR(float fValue, XActivationEvent ae)
-{
-	//float rotation_speed = m_deltaTime * (fValue > 0 ? 1.f : -1.f);
-		fValue *=m_deltaTime;	
-	m_CameraController.ProcessMouseMovement(fValue, 0);
-}
-
-void CGame::TriggerTurnUD(float fValue, XActivationEvent ae)
-{
-	//float rotation_speed = m_deltaTime * (fValue > 0 ? -1.f : 1.f);
-		fValue *=m_deltaTime;	
-	m_CameraController.ProcessMouseMovement(0, -fValue);
-}
-
-void CGame::TriggerQuickLoad(float fValue, XActivationEvent ae)
-{
-	if (this->IsQuicksaveAllowed())
-		this->SendMessage("LoadGame");
-}
-
-void CGame::TriggerQuickSave(float fValue, XActivationEvent ae)
-{
-	ICVar *g_LevelStated = GetISystem()->GetIConsole()->GetCVar("g_LevelStated");
-	if (!g_LevelStated->GetIVal())
-	{
-		if (this->IsQuicksaveAllowed())
-			this->SendMessage("SaveGame");
-	}
-}
-
-void CGame::TriggerMessageMode(float fValue, XActivationEvent ae)
-{
-	//m_pSystem->GetIConsole()->ExecuteString("@messagemode");
-}
-
-void CGame::TriggerMessageMode2(float fValue, XActivationEvent ae)
-{
-	//m_pSystem->GetIConsole()->ExecuteString("@messagemode2");
-}
-
-void CGame::TriggerScreenshot(float fValue, XActivationEvent ae)
-{
-	this->m_pSystem->GetIConsole()->ExecuteString("screenshot");
-}
-
-void CGame::TriggerFullscreen(float fValue, XActivationEvent ae)
-{
-	auto fs = gEnv->pConsole->GetCVar("r_Fullscreen");
-	auto val = !fs->GetIVal();
-
-	gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, val, 0);
 }
 
 void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)

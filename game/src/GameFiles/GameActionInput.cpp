@@ -53,8 +53,9 @@ void CGame::InitInputMap()
   IInput* pInput = m_pSystem->GetIInput();
 
   m_pIActionMapManager = pInput->CreateActionMapManager();
-	if(m_pIActionMapManager)
-		m_pIActionMapManager->SetSink(this);
+  if (m_pIActionMapManager)
+	  ;
+  //m_pIActionMapManager->SetSink(this);
 
   ResetInputMap();
 }
@@ -187,8 +188,8 @@ void  CGame::ResetInputMap()
   ADD_ACTION(MOVEMODE2, aamOnPress, "@Prone", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("MOVEMODE2", ACTIONMAPS_NODEAD);
   //	ADD_ACTION(MOVEMODE2,aamOnDoublePress,"Change Movemode",true)
   ADD_ACTION(LEANLEFT, aamOnHold, "@LeanLeft", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("LEANLEFT", "default", "zoom", "binozoom", "");
-  ADD_ACTION(LEANRIGHT, aamOnHold, "@LeanRight", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("LEANRIGHT", "default", "zoom", "binozoom", "");
-  ADD_ACTION(FIRE0, aamOnHold, "@Fire", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE0", "default", "zoom", "vehicle", "player_dead", "");
+  //ADD_ACTION(LEANRIGHT, aamOnHold, "@LeanRight", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("LEANRIGHT", "default", "zoom", "binozoom", "");
+  ADD_ACTION(FIRE0, aamOnPress, "@Fire", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE0", "default", "zoom", "vehicle", "player_dead", "");
   //ADD_ACTION(FIRECANCEL,aamOnHold,"@CancelCurrentTarget",ACTIONTYPE_COMBAT,true) SetConfigToActionMap("FIRECANCEL", "default", "zoom", "vehicle", "");
   ADD_ACTION(USE, aamOnPress, "@Use", ACTIONTYPE_GAME, true) SetConfigToActionMap("USE", ACTIONMAPS_NODEAD);
   ADD_ACTION(TURNLR, aamOnHold, "@TurnLeftRight", 0, false) SetConfigToActionMap("TURNLR", ACTIONMAPS_NODEAD);
@@ -231,7 +232,7 @@ void  CGame::ResetInputMap()
   ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
   ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
   //ADD_ACTION(FULLSCRN_TOOGLE,aamOnPress,"@ToogleFullScreen",ACTIONTYPE_GAME,true) SetConfigToActionMap("FULLSCRN_TOOGLE", ACTIONMAPS_ALL);
-  ADD_ACTION(FIRE_GRENADE, aamOnHold, "@ThrowGrenade", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE_GRENADE", ACTIONMAPS_NODEAD);
+  //ADD_ACTION(FIRE_GRENADE, aamOnHold, "@ThrowGrenade", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE_GRENADE", ACTIONMAPS_NODEAD);
   //ADD_ACTION(CONCENTRATION,aamOnHold,"@Concentration",ACTIONTYPE_GAME,true) SetConfigToActionMap("CONCENTRATION", "default", "");
   ADD_ACTION(FLASHLIGHT, aamOnPress, "@ToggleFlashlight", ACTIONTYPE_GAME, true) SetConfigToActionMap("FLASHLIGHT", ACTIONMAPS_NODEAD);
   ADD_ACTION(CHANGE_VIEW, aamOnPress, "@SwitchView", ACTIONTYPE_GAME, true) SetConfigToActionMap("CHANGE_VIEW", "default", "vehicle", "");
@@ -239,6 +240,10 @@ void  CGame::ResetInputMap()
 
   ADD_ACTION(MOVEMODE_TOGGLE, aamOnPress, "@CrouchToggle", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("MOVEMODE_TOGGLE", ACTIONMAPS_NODEAD);
   ADD_ACTION(AIM_TOGGLE, aamOnPress, "@ToggleAim", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("AIM_TOGGLE", "default", "zoom", "");
+
+  ADD_ACTION(CAMERA_MODE, aamOnPress, "@CameraMode", ACTIONTYPE_GAME, true) SetConfigToActionMap("CAMERA_MODE", ACTIONMAPS_ALL);
+
+	
 
   //default action map
   //////////////////////////////////////////////////////////////////////
@@ -268,8 +273,8 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_LEANLEFT, eKI_NP_7);
 
   //lean right
-  pMap->BindAction(ACTION_LEANRIGHT, eKI_E);
-  pMap->BindAction(ACTION_LEANRIGHT, eKI_NP_9);
+  //pMap->BindAction(ACTION_LEANRIGHT, eKI_E);
+  //pMap->BindAction(ACTION_LEANRIGHT, eKI_NP_9);
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
@@ -323,8 +328,8 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_LEANLEFT, eKI_NP_7);
 
   //lean right
-  pMap->BindAction(ACTION_LEANRIGHT, eKI_E);
-  pMap->BindAction(ACTION_LEANRIGHT, eKI_NP_9);
+  //pMap->BindAction(ACTION_LEANRIGHT, eKI_E);
+  //pMap->BindAction(ACTION_LEANRIGHT, eKI_NP_9);
   //zoom
   pMap->BindAction(ACTION_ZOOM_IN, eKI_MouseWheelUp);
   pMap->BindAction(ACTION_ZOOM_IN, eKI_NP_Add);
@@ -365,8 +370,8 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_LEANLEFT, eKI_NP_7);
 
   //lean right
-  pMap->BindAction(ACTION_LEANRIGHT, eKI_E);
-  pMap->BindAction(ACTION_LEANRIGHT, eKI_NP_9);
+  //pMap->BindAction(ACTION_LEANRIGHT, eKI_E);
+  //pMap->BindAction(ACTION_LEANRIGHT, eKI_NP_9);
 
   //change to distinct weapons(outside common key bindings because is not possible in zoom)
   /*
@@ -417,7 +422,7 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_JUMP, eKI_NP_Enter);
 
   //accellerate
-  pMap->BindAction(ACTION_VEHICLE_BOOST, eKI_Up);
+  pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
 
   // switch between 1st and 3rd pesron while driving
   //pMap->BindAction(ACTION_CHANGE_VIEW,eKI_RMB);
@@ -435,8 +440,8 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_Right);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
   //	pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
-  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
-  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
+  //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
+  //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
 
 
   //////////////////////////////////////////////////////////////////////
@@ -492,7 +497,7 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_FIREMODE, eKI_NumLock);
 
   //throw grenade
-  pMap->BindAction(ACTION_FIRE_GRENADE, eKI_G);
+  //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_G);
   //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_DIVIDE);
   //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_NP_8);
 
@@ -542,8 +547,10 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
 
-  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
-  pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
+  //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
+  //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
+
+  pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
 
 #ifdef _DEBUG
   // <<FIXME>> Hack only in debug mode
