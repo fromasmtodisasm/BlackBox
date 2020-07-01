@@ -64,6 +64,9 @@ enum
 #include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
 
+#include <SteamHelper.hpp>
+
+
 #include "GameShared.hpp"
 
 struct IStatObj;
@@ -587,6 +590,8 @@ public:
 	ICVar* cv_game_GliderDamping{};
 	ICVar* cv_game_GliderStartGravity{};
 	ICVar* cv_game_physics_quality{};
+
+	ICVar* st_achivements_numHits{};
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
 	std::string m_strLastSaveGame;

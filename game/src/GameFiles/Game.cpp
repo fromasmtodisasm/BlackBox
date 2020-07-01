@@ -17,8 +17,6 @@
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
 
-#include <steam/steam_api.h>
-
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -46,6 +44,34 @@ namespace
 		return result;
 	}
 } // namespace
+
+namespace
+{
+	// определяем достижения
+	enum EAchievements
+	{
+		TEST_ACHIEVEMENT_1_0 = 0,
+		#if 0
+		ACH_WIN_100_GAMES = 1,
+		ACH_TRAVEL_FAR_ACCUM = 2,
+		ACH_TRAVEL_FAR_SINGLE = 3,
+		#endif
+	};
+
+	// массив достижений, содержащий данные о достижениях и их состоянии
+	Achievement_t g_Achievements[] =
+	{
+		_ACH_ID( TEST_ACHIEVEMENT_1_0, "10 Hits To Box" ),
+		#if 0
+		_ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
+		_ACH_ID( ACH_TRAVEL_FAR_ACCUM, "Interstellar" ),
+		_ACH_ID( ACH_TRAVEL_FAR_SINGLE, "Orbiter" ),
+		#endif
+	};
+
+	// глобальный доступ к объекту Achievements
+	CSteamAchievements*	g_SteamAchievements = NULL;
+}
 
 std::vector<Vec3> lineBuffer;
 
@@ -151,11 +177,17 @@ CGame::~CGame()
 	// shutdown the server if there is one
 	ShutdownServer();
 
+	// Выключаем Steam
 	SteamAPI_Shutdown();
+	// Удаляем SteamAchievements
+	if (g_SteamAchievements)
+		delete g_SteamAchievements;
 }
 
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
+	if (!SteamInit())
+		return false;
 	m_pSystem		   = pSystem;
 	m_bDedicatedServer = bDedicatedSrv;
 	m_pRender		   = m_pSystem->GetIRenderer();
@@ -361,6 +393,7 @@ bool CGame::Update()
 	const bool bRenderFrame			   = !m_bDedicatedServer;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
+	SteamAPI_RunCallbacks();
 	{
 		// TODO: FIX IT
 		m_deltaTime = m_pSystem->GetDeltaTime();
@@ -1494,11 +1527,18 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 
 bool CGame::SteamInit()
 {
-  bool steamInited = false;
-  gEnv->pLog->Log("steam api init: %d", (steamInited = SteamAPI_Init()));
-  // Получить имена профилей Steam текущих пользователей.
-	const char *name = SteamFriends()->GetPersonaName();
-  gEnv->pLog->Log("person name: %s", name);
-	return steamInited;
+	// инициализируем Steam
+	bool bRet = SteamAPI_Init();
+	// создаем объект SteamAchievements, если инициализация Steam удалась
+	if (bRet)
+	{
+		g_SteamAchievements = new CSteamAchievements(g_Achievements, 4);
+		// Получить имена профилей Steam текущих пользователей.
+		const char *name = SteamFriends()->GetPersonaName();
+		gEnv->pLog->Log("person name: %s", name);
+	}
+
+  gEnv->pLog->Log("steam api init: %d", bRet);
+	return bRet;
 }
 

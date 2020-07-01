@@ -26,6 +26,7 @@ target_sources(
 	${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
 	PRIVATE ${SOURCE_DIR}/Commands.cpp
+	#PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/EntityClassRegistry.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/Game.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameActionInput.cpp
@@ -33,10 +34,10 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameDevMode.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameLoading.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameMods.cpp
-	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
-	#PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/SteamHelper.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
 	PRIVATE ${SOURCE_DIR}/Player.cpp
 	PRIVATE ${SOURCE_DIR}/Player/XPlayer.cpp
