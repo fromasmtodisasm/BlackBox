@@ -123,10 +123,7 @@ void CGame::InitConsoleVars()
 		"server waits while trying to establish a connection with\n"
 		"a client."); 
 
-	st_achivements_numHits = pConsole->CreateVariable("st_achivements_numHits", 0, VF_SAVEGAME,
-		"Num hits to any box.\n");
-
-
+	REGISTER_CVAR(st_achivements_numHits, 0, VF_DUMPTODISK, "Num hits to any box.\n");
 
 	g_LevelName= pConsole->CreateVariable("g_LevelName","0.4",0);
 	pConsole->CreateVariable("g_LevelStated","0",0, "");

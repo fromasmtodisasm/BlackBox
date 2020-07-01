@@ -146,4 +146,7 @@ private:
 
 	size_t m_FireCount;
 
+	int m_CurrentFrameID = 0;
+	int m_NumHitsInFrame = 0;
+
 };

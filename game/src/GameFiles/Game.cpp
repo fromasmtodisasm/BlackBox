@@ -37,7 +37,6 @@ int render_camera = 0;
 		result += ", z: " + std::to_string(vec.z) + "}";
 		return result;
 	}
-} // namespace
 
 namespace
 {
@@ -66,8 +65,6 @@ namespace
 	// глобальный доступ к объекту Achievements
 	CSteamAchievements*	g_SteamAchievements = NULL;
 }
-
-std::vector<Vec3> lineBuffer;
 
 #if 0
 class CRender : public IQuadTreeRender {
@@ -1213,6 +1210,11 @@ void CGame::MainMenu()
 {
 }
 
+CSteamAchievements* CGame::SteamAchivements()
+{
+	return g_SteamAchievements;
+}
+
 void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
 	switch (event)
@@ -1234,7 +1236,7 @@ bool CGame::SteamInit()
 	// создаем объект SteamAchievements, если инициализация Steam удалась
 	if (bRet)
 	{
-		g_SteamAchievements = new CSteamAchievements(g_Achievements, 4);
+		g_SteamAchievements = new CSteamAchievements(g_Achievements, 1);
 		// Получить имена профилей Steam текущих пользователей.
 		const char *name = SteamFriends()->GetPersonaName();
 		gEnv->pLog->Log("person name: %s", name);

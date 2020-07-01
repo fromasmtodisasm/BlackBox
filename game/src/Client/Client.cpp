@@ -8,7 +8,6 @@
 
 std::vector<Vec3> lineBuffer;
 
-
 CClient::CClient(CGame *pGame)
 	: 
 	m_pGame(pGame),
@@ -20,6 +19,8 @@ CClient::CClient(CGame *pGame)
 void CClient::Update()
 {
 	//m_pClient->Update(16);
+	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
+	m_NumHitsInFrame = 0;
 	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));
 	if (!gEnv->pConsole->IsOpened())
 		m_pGame->GetActionMapManager()->Update(16);
@@ -237,7 +238,8 @@ void CClient::TriggerJump(float fValue,XActivationEvent ae)
 
 void CClient::TriggerFire0(float fValue, XActivationEvent ae)
 {
-	m_PlayerProcessingCmd.AddAction(ACTION_FIRE0);
+	if (++m_NumHitsInFrame <= 1)
+		m_PlayerProcessingCmd.AddAction(ACTION_FIRE0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -415,6 +417,18 @@ void CClient::IntersectionByRayCasting()
 			tMin = tMinMax.x;
 			m_IntersectionState.m_LastPickedPos = eyeRay.origin + eyeRay.direction * tMin;
 			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
+
+			auto num_hits = gEnv->pConsole->GetCVar("st_achivements_numHits");
+
+			{
+				auto nh = num_hits->GetIVal();
+				if (nh == 10)
+				{
+					//if (g_SteamAchievements)
+						m_pGame->SteamAchivements()->SetAchievement("TEST_ACHIEVEMENT_1_0");
+				}
+				num_hits->Set(nh + 1);
+			}
 		}
 	}
 	if (lastPos != m_IntersectionState.m_LastPickedPos)

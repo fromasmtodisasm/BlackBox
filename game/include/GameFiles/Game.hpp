@@ -321,7 +321,7 @@ class CGame final
 	bool OpenPacks(const char* szFolder);
 	bool ClosePacks(const char* szFolder);
 
-  
+	CSteamAchievements* SteamAchivements();
 private: // ------------------------------------------------------------
 
 	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);
@@ -546,7 +546,7 @@ public:
 	ICVar* cv_game_GliderStartGravity{};
 	ICVar* cv_game_physics_quality{};
 
-	ICVar* st_achivements_numHits{};
+	int st_achivements_numHits = 0;
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
 	std::string m_strLastSaveGame;
