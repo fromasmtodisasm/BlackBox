@@ -17,6 +17,7 @@
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
 
+#include <steam/steam_api.h>
 
 #include <cctype>
 #include <cstdlib>
@@ -549,11 +550,19 @@ bool CGame::Run(bool& bRelaunch)
 	StartupServer(true, "test_server");
 
 	m_bRelaunch = false;
+  bool steamInited = false;
+  cout << "steam api init: " << (steamInited = SteamAPI_Init()) << endl;
+  // Получить имена профилей Steam текущих пользователей.
+	const char *name = SteamFriends()->GetPersonaName();
+  cout << "person name: " << name << endl;
 	while (1)
 	{
 		if (!Update())
 			break;
 	}
+
+  if (steamInited)
+	  SteamAPI_Shutdown();
 
 	bRelaunch = m_bRelaunch;
 

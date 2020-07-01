@@ -9,7 +9,6 @@
 #include <sstream>
 #include <filesystem>
 
-#include <steam/steam_api.h>
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -19,14 +18,9 @@ int main(int argc, char* argv[]) {
   std::string cmdline;
   for (int i = 0; i < argc; i++)
   {
-    cmdline = cmdline + " " + argv[i];
+		cmdline = cmdline + " " + argv[i];
   }
 
-  bool steamInited = false;
-  cout << "steam api init: " << (steamInited = SteamAPI_Init()) << endl;
-  // Получить имена профилей Steam текущих пользователей.
-	const char *name = SteamFriends()->GetPersonaName();
-  cout << "person name: " << name << endl;
   SSystemInitParams params;
 
   std::cout << "Current path is " << fs::current_path() << '\n';
@@ -40,14 +34,12 @@ int main(int argc, char* argv[]) {
   ISystem* pSystem = CreateSystemInterface(params);
   if (pSystem)
   {
-    pSystem->GetILog()->Log("ISystem created");
-    pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
-    pSystem->Start();
-    status = EXIT_SUCCESS;
+		pSystem->GetILog()->Log("ISystem created");
+		pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
+		pSystem->Start();
+		status = EXIT_SUCCESS;
   }
   pSystem->Release();
-  if (steamInited)
-	  SteamAPI_Shutdown();
 
   return status;
 }
