@@ -12,6 +12,16 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+// Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
+extern "C"
+{
+	// nVidia
+	DLL_EXPORT DWORD NvOptimusEnablement = 0x00000001;
+	// AMD
+	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
+}
+
+
 int main(int argc, char* argv[]) {
   int status = EXIT_FAILURE;
   string path;

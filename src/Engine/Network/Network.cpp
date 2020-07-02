@@ -239,7 +239,7 @@ public:
 )";
           //gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
 					std::stringstream ss(buf);
-          gEnv->pLog->Log("Response %s:\n", ss.str().data());
+          //gEnv->pLog->Log("Response %s:\n", ss.str().data());
 					std::string line;
 					std::getline(ss, line);
 					const int len = line.size() - 14; // GET / HTTP/1.1
