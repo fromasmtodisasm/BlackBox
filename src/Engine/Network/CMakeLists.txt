@@ -15,6 +15,7 @@ endif()
 add_SDL()
 add_SDL_net()
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp

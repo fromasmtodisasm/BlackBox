@@ -1,5 +1,6 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Core/ICompressionHelper.hpp>
 #include <BlackBox/Network/Network.hpp>
@@ -11,6 +12,8 @@
 #include <sstream>
 #include <functional>
 #include <map>
+
+#include <BlackBox/Core/Utils.hpp>
 
 class CCompressionHelper : public ICompressionHelper
 {
@@ -144,7 +147,7 @@ class CTmpNetworkServer : public IServer
   IPaddress m_IP;
   TCPsocket m_Socket;
   std::vector<TCPsocket> m_ClientSockes;
-  std::map<string, std::function<void(std::stringstream& ss)>> handlers;
+  std::map<string, std::function<void(std::stringstream& ss, const string& args)>> handlers;
 public:
   CTmpNetworkServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
     :
@@ -153,7 +156,7 @@ public:
     m_bLocal(local)
   {
     gEnv->pLog->Log("NetworkServer Constructed");
-	  handlers["info"] = [this](std::stringstream& ss) {
+	  handlers["info"] = [this](std::stringstream& ss, const string& args) {
       auto& content = ss;
 				content << "CTmpNetworkServer: " << this << "</br>";
 				content << "ISystem: " << gEnv->pSystem << "</br>";
@@ -162,13 +165,16 @@ public:
 				content << "ILog: " << gEnv->pLog << "</br>";
 				content << R"(<a href="gaben">Тык тык!!!</a>)";
     };
-		handlers["main"] = [this](std::stringstream& ss) {
+		handlers["main"] = [this](std::stringstream& ss, const string& args) {
 		  ss << "Main Page";
 		};
-		handlers[""] = [this](std::stringstream& ss) {
+		handlers["cmd"] = [this](std::stringstream& ss, const string& args) {
+			gEnv->pConsole->ExecuteString(args.c_str());
+		};
+		handlers[""] = [this](std::stringstream& ss, const string& args) {
 		  ss << "Main Page!!!";
 		};
-		handlers["gaben"] = [this](std::stringstream& ss) {
+		handlers["gaben"] = [this](std::stringstream& ss, const string& args) {
 			ss << R"(
       <h1>Gabe, give me money!!!</h1>
       <a href="info">Info<a>
@@ -236,15 +242,27 @@ public:
           gEnv->pLog->Log("Response %s:\n", ss.str().data());
 					std::string line;
 					std::getline(ss, line);
-					const int len = 14; // GET / HTTP/1.1
+					const int len = line.size() - 14; // GET / HTTP/1.1
 					std::string location;
-					location.resize(len - 14);
-					sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
+					std::string args;
+					location.resize(len);
+					std::string tmp		= line;
+					urldecode2(tmp.data(), line.data());
+					line   = tmp;
+					auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
           gEnv->pLog->Log("Location: %s", location.data());
+
+					auto pos = location.find('/'); 
+          auto s	 = location.size();
+					if (pos != string::npos)
+					{
+						args = location.substr(pos + 1); 
+            location.resize(pos);
+          }
 
           if (auto it = handlers.find(location.c_str()); it != handlers.end())
 					{
-						it->second(content);
+						it->second(content, args);
           }
 		content << R"(
   </body>

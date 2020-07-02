@@ -544,6 +544,7 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 
 IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)
 {
+	gEnv->pLog->Log("load shader: %s_%s", vertex, fragment);
 	return gShMan->Sh_Load(vertex, fragment);
 }
 

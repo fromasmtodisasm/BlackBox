@@ -204,10 +204,30 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
      * SDL doesn't have the ability to choose which profile at this time of writing,
      * but it should default to the core profile */
 
+  struct GlVersion
+  {
+	  int maj = 3, min = 3;
+	  GlVersion() = default;
+	  GlVersion(int maj, int min)
+		  : maj(maj), min(min)
+	  {
+	  }
+  };
+
+  GlVersion glVersion;
+  auto gl_v_maj = gEnv->pConsole->GetCVar("r_gl_v_maj");
+  auto gl_v_min = gEnv->pConsole->GetCVar("r_gl_v_min");
+  if (gl_v_maj && gl_v_min)
+  {
+	  glVersion = GlVersion(gl_v_maj->GetIVal(), gl_v_min->GetIVal());
+  }
+
+
+
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glVersion.maj);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, glVersion.min);
   //SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
   /* Turn on double buffering with a 24bit Z buffer.
