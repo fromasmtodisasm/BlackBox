@@ -304,8 +304,8 @@ void CSDLWindow::SelectDisplay(int &x, int &y, int w, int h)
 {
   // enumerate displays
 	int displays = SDL_GetNumVideoDisplays();
-  auto display = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
-	display   	 = std::min(displays, display);
+	auto display = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
+	display   	 = std::min(displays - 1, display);
 
 	// get display bounds for all displays
 	std::vector< SDL_Rect > displayBounds;
