@@ -92,6 +92,8 @@ Texture* Texture::create(int width, int height, TextureType type, bool hasAlpha,
 	GLenum textureTarget = !is_msaa ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE;
 	t->isMS				 = is_msaa;
 
+	t->width = width;
+	t->height = height;
 	gl::CreateTextures2D(textureTarget, 1, &t->id);
 	switch (type)
 	{

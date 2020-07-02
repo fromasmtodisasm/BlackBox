@@ -210,9 +210,21 @@ bool CSystem::Init()
 	if (!InitRender())
 		return false;
 	auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
-	RenderBegin();
-	gEnv->pRenderer->DrawFullScreenImage(splash->getId());
-	RenderEnd();
+	for (int i = 0; i < 3; i++)
+	{
+        RenderBegin();
+        //gEnv->pRenderer->DrawFullScreenImage(splash->getId());
+        gEnv->pRenderer->DrawImage(
+            gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
+            gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2 ,
+            splash->getWidth(),
+            splash->getHeight(),
+            splash->getId(),
+            0, 0, 1, 1, 1, 1, 1, 1
+        );
+        RenderEnd();
+	    
+	}
 	if (!Init3DEngine())
 		return false;
 	m_env.pInput->PostInit();
