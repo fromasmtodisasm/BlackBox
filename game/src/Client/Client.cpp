@@ -422,10 +422,10 @@ void CClient::IntersectionByRayCasting()
 
 			{
 				auto nh = num_hits->GetIVal();
-				if (nh == 10)
+				if (nh == 100)
 				{
 					//if (g_SteamAchievements)
-						m_pGame->SteamAchivements()->SetAchievement("TEST_ACHIEVEMENT_1_0");
+						m_pGame->SteamAchivements()->SetAchievement("achievement_100_hits");
 				}
 				num_hits->Set(nh + 1);
 			}
