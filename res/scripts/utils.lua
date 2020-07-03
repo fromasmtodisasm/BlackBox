@@ -65,6 +65,9 @@ function init()
 	addcommand("relaunch", [[Game:SendMessage("Relaunch")]], "Relaunch game")
 	addcommand("screenshot", [[System:ScreenShot("screen_shots/ss.png")]]) 
 
+	addcommand("os_execute", [[os.execute(%1)]], "Execute native command")
+	addcommand("webpage", [[os.execute("start http://localhost:10000/info")]], "Execute native command")
+
 	addcommand("level", [[Game:LoadLevel(%1)]]) 
 
 	addcommand("connect", [[Client:Connect(%1,%2)]]) 
@@ -86,6 +89,8 @@ function init()
 
 	Console:Show(true)
 	--Console:PrintLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	Console:ExecuteString("webpage")
+	--Console:ExecuteString([[os_execute "calc"]])
 end
 
 Test = {

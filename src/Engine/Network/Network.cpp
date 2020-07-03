@@ -164,12 +164,32 @@ public:
 				content << "IRenderer: " << gEnv->pRenderer << "</br>";
 				content << "ILog: " << gEnv->pLog << "</br>";
 				content << R"(<a href="gaben">Тык тык!!!</a>)";
+				content <<
+R"(
+<form action="/cmd" method="get">
+	<p>Remote command<input type="text" name="remote_command"></p>
+	<p><input type="submit" value="Отправить"></p>
+</form>
+)";
     };
 		handlers["main"] = [this](std::stringstream& ss, const string& args) {
 		  ss << "Main Page";
 		};
 		handlers["cmd"] = [this](std::stringstream& ss, const string& args) {
+			gEnv->pConsole->ExecuteString("remote_command = \"\"");
 			gEnv->pConsole->ExecuteString(args.c_str());
+			auto cmd = gEnv->pConsole->GetCVar("remote_command");
+			if (cmd)
+			{
+				gEnv->pConsole->ExecuteString(cmd->GetString());	
+			}
+			ss <<
+R"(
+<form action="/cmd" method="get">
+	<p>Remote command<input type="text" name="remote_command"></p>
+	<p><input type="submit" value="Отправить"></p>
+</form>
+)";
 		};
 		handlers[""] = [this](std::stringstream& ss, const string& args) {
 		  ss << "Main Page!!!";
@@ -225,8 +245,8 @@ public:
         }
         else
         {
-					std::stringstream content; 
-					content << R"(
+			std::stringstream content; 
+			content << R"(
 <html>
 	<head>
     <title>
@@ -237,55 +257,56 @@ public:
   <body>
 		<h1>BlackBox</h1>
 )";
-          //gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
-					std::stringstream ss(buf);
-          //gEnv->pLog->Log("Response %s:\n", ss.str().data());
-					std::string line;
-					std::getline(ss, line);
-					const int len = line.size() - 14; // GET / HTTP/1.1
-					std::string location;
-					std::string args;
-					location.resize(len);
-					std::string tmp		= line;
-					urldecode2(tmp.data(), line.data());
-					line   = tmp;
-					auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
-          gEnv->pLog->Log("Location: %s", location.data());
+			//gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
+			std::stringstream ss(buf);
+			//gEnv->pLog->Log("Response %s:\n", ss.str().data());
+			std::string line;
+			std::getline(ss, line);
+			const int len = line.size() - 14; // GET / HTTP/1.1
+			std::string location;
+			std::string args;
+			location.resize(len);
+			std::string tmp		= line;
+			urldecode2(tmp.data(), line.data());
+			line   = tmp;
+			//auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
+			location = line.substr(5, line.size() - (5 + 10));
+			gEnv->pLog->Log("Location: %s", location.data());
 
-					auto pos = location.find('/'); 
-          auto s	 = location.size();
-					if (pos != string::npos)
-					{
-						args = location.substr(pos + 1); 
-            location.resize(pos);
-          }
+			auto pos = location.find('?'); 
+			auto s	 = location.size();
+			if (pos != string::npos)
+			{
+				args = location.substr(pos + 1); 
+				location.resize(pos);
+			}
 
-          if (auto it = handlers.find(location.c_str()); it != handlers.end())
-					{
-						it->second(content, args);
-          }
-		content << R"(
+			if (auto it = handlers.find(location.c_str()); it != handlers.end())
+			{
+				it->second(content, args);
+			}
+			content << R"(
   </body>
 </html>
 )";
-					response << 
-					 R"(
+			response << 
+			 R"(
 	HTTP/1.1 200 OK
 	Host: site.com
 	Content-Type: text/html;
 	Connection: close
 	Content-Length: )";
-					response << content.str().length() << "\r\n\r\n"
-							 << content.str();
+			response << content.str().length() << "\r\n\r\n"
+					 << content.str();
 
-					length = response.str().length(); // add one for the terminating NULL
-					result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
-					SDLNet_TCP_Close(new_tcpsock);
+			length = response.str().length(); // add one for the terminating NULL
+			result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
+			SDLNet_TCP_Close(new_tcpsock);
 
-					if (result < len) {
-						 printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						// It may be good to disconnect sock because it is likely invalid now.
-					}
+			if (result < len) {
+				 printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+				// It may be good to disconnect sock because it is likely invalid now.
+			}
         }
       }
     }

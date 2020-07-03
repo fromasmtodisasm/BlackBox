@@ -518,7 +518,7 @@ void CConsole::addText(std::wstring const& cmd)
 
 void CConsole::Set(CommandDesc& cd)
 {
-  if (cd.args.size() == 2)
+  if (cd.args.size() >= 2)
   {
     auto name = wstr_to_str(cd.args[0]);
     auto value = wstr_to_str(cd.args[1]);
@@ -1421,7 +1421,7 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
     switch (state1)
     {
     case COMMAND:
-      if (command[i] != L' ')
+      if (command[i] != L' ' && command[i] != L'=')
       {
         if (command[i] == L'"')
         {
@@ -1430,8 +1430,15 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
         }
         cd.command += command[i];
       }
-      else
+	  else if (command[i] == L'=')
       {
+		auto arg   = cd.command;
+		cd.args.insert(cd.args.begin(), arg);
+		cd.command = L"set";
+		state1	   = AFTER_EQ;
+      }
+	  else
+	  {
         state1 = INARGSPACE;
       }
       break;
