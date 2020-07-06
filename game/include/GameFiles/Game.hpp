@@ -77,29 +77,27 @@ class CVehicleSystem;
 
 struct TextRenderInfo
 {
-	IFont* font;
-	std::vector<std::string> text;
-	Vec4 color;
+	IFont* m_Font;
+	std::vector<std::string> m_Text;
+	Vec4 m_Color{};
 	SDrawTextInfo dti;
-	TextRenderInfo()
-		: font(nullptr), color(Vec4(1.0))
-	{
-	}
+	TextRenderInfo();
+
 	TextRenderInfo(IFont* f, Vec4 c)
-		: font(f), color(c)
+		: m_Font(f), m_Color(c)
 	{
 	}
 	void AddLine(std::string line)
 	{
-		text.push_back(line + '\n');
+		m_Text.push_back(line + '\n');
 	}
 	SDrawTextInfo& getDTI()
 	{
-		dti.color[0] = color[0];
-		dti.color[1] = color[1];
-		dti.color[2] = color[2];
-		dti.color[3] = color[3];
-		dti.font	 = font;
+		dti.color[0] = m_Color[0];
+		dti.color[1] = m_Color[1];
+		dti.color[2] = m_Color[2];
+		dti.color[3] = m_Color[3];
+		dti.font	 = m_Font;
 		return dti;
 	}
 };
@@ -226,7 +224,7 @@ struct TestObject
 	AABB m_AABB;
 	UCol m_Color;
 	Vec3 m_Position;
-	bool intersected = false;
+	bool m_Intersected = false;
 };
 
 class CGame final

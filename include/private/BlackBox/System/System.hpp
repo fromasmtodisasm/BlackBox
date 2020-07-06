@@ -26,7 +26,7 @@ class CScriptObjectConsole;
 class CScriptObjectScript;
 class CScriptObjectRenderer;
 
-class CSystem :
+class CSystem final :
   public ISystem,
   public IInputEventListener,
   public IConsoleVarSink,

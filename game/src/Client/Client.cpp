@@ -322,14 +322,14 @@ void CClient::DrawAux()
 	for (auto& object : m_testObjects)
 	{
 		if (m_IntersectionState.picked != m_testObjects.begin() + _idx)
-			render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.intersected ? selected_color : object.m_Color);
+			render->DrawAABB(object.m_AABB.min, object.m_AABB.max, object.m_Intersected ? selected_color : object.m_Color);
 		else
 		{
 			render->DrawAABB(
 				object.m_AABB.min, object.m_AABB.max, selected_color
 			);
 		}
-		object.intersected = false;
+		object.m_Intersected = false;
 		_idx++;
 	}
 	if (lineBuffer.size() >= 2)

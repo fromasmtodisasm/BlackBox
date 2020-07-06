@@ -458,8 +458,8 @@ void CGame::DisplayInfo(float fps)
 
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
-	auto& text  = info.text;
-	auto& color = info.color;
+	auto& text  = info.m_Text;
+	auto& color = info.m_Color;
 	//auto camera = m_World->getActiveScene()->getCurrentCamera();
 
 	//auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
@@ -491,7 +491,7 @@ void CGame::DisplayInfo(float fps)
     ;
   */
 
-	for (auto& text : info.text)
+	for (auto& text : info.m_Text)
 	{
 		render->PrintLine(text.c_str(), dti);
 	}
@@ -499,7 +499,7 @@ void CGame::DisplayInfo(float fps)
 	//render->PrintLine("To hide depth buffer press <;>\n", dti);
 	//render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
 
-	info.color = Vec4(1.0f, 0.f, 0.f, 1.0f);
+	info.m_Color = Vec4(1.0f, 0.f, 0.f, 1.0f);
 	//render->PrintLine(pos.c_str(), info.getDTI());
 	if (canDragViewPortWidth)
 		render->PrintLine("CanDrag\n", info.getDTI());
