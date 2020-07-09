@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Game CXX)
 
 #include(FetchContent)
-add_definitions("/ZI")
+#add_definitions("/ZI")
 
 ###################################################
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
@@ -15,6 +15,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
 #target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 if (WINDOWS)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Ws2_32)
+	target_link_libraries(${PROJECT_NAME} PRIVATE dbghelp)
 endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE Steam)
 target_include_directories(${PROJECT_NAME}

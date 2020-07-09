@@ -101,6 +101,8 @@ bool CScriptSystem::Init(ISystem* pSystem)
 
   m_stdScriptBinds.Init(pSystem, this);
 
+  pSystem->GetILog()->Log("Initializing ScriptSystem");
+
   // Ensure the debugger is in the correct mode
   //EnableDebugger((ELuaDebugMode)m_cvar_script_debugger->GetIVal());
 
