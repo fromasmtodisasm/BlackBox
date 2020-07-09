@@ -57,7 +57,6 @@ if (OUTPUT_DIRECTORY)
   # Make sure the output directory exists
   file(MAKE_DIRECTORY "${OUTPUT_DIRECTORY}")
 endif (OUTPUT_DIRECTORY)
-message(STATUS "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "${OUTPUT_DIRECTORY}$<CONFIG>)
 
 # Prefix all Visual Studio solution folder names with this string
 set(VS_FOLDER_PREFIX "BLACKBOX/")

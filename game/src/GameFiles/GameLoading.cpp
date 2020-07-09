@@ -5,7 +5,7 @@
 
 #if !defined(LINUX)
 #	include <dbghelp.h>
-#	pragma comment(lib, "dbghelp.lib")
+//#	pragma comment(lib, "dbghelp.lib")
 #else
 #	include <stdio.h>
 #endif

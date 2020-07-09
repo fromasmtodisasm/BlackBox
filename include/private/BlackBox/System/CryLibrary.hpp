@@ -54,13 +54,27 @@ namespace Detail
 
 #define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 #if BB_PLATFORM_WINDOWS
-	#define CryLoadLibrary(libName) ::LoadLibraryA(libName)
+
 	#define CryGetCurrentModule() ::GetModuleHandle(nullptr)
 	#define CrySharedLibrarySupported true
+#ifdef __MINGW32__
+	#define CrySharedLibraryPrefix    "lib"
+#else
 	#define CrySharedLibraryPrefix    ""
+#endif
 	#define CrySharedLibraryExtension ".dll"
 	#define CryGetProcAddress(libHandle, procName) ::GetProcAddress((HMODULE)(libHandle), procName)
 	#define CryFreeLibrary(libHandle)              ::FreeLibrary((HMODULE)(libHandle))
+#ifdef __MINGW32__
+static HMODULE CryLoadLibrary(const char* libName)
+{
+	char finalPath[_MAX_PATH] = {};
+	sprintf(finalPath, CrySharedLibraryPrefix "%s", libName);
+	return ::LoadLibraryA(finalPath);
+}
+#else
+	#define CryLoadLibrary(libName) ::LoadLibraryA(CrySharedLibraryPrefix libName)
+#endif
 // || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
 #elif BB_PLATFORM_LINUX
 	#include <dlfcn.h>

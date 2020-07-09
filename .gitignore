@@ -22,3 +22,4 @@ compile_commands.json
 bin/*
 vcpkg/
 /.vscode
+cmake-build*
