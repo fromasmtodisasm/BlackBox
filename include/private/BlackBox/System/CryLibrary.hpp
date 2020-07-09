@@ -73,7 +73,7 @@ static HMODULE CryLoadLibrary(const char* libName)
 	return ::LoadLibraryA(finalPath);
 }
 #else
-	#define CryLoadLibrary(libName) ::LoadLibraryA(CrySharedLibraryPrefix libName)
+	#define CryLoadLibrary(libName) ::LoadLibraryA(libName)
 #endif
 // || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
 #elif BB_PLATFORM_LINUX
