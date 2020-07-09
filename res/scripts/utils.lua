@@ -89,7 +89,7 @@ function init()
 
 	Console:Show(true)
 	--Console:PrintLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-	Console:ExecuteString("webpage")
+	--Console:ExecuteString("webpage")
 	--Console:ExecuteString([[os_execute "calc"]])
 end
 

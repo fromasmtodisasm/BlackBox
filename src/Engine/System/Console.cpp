@@ -33,6 +33,28 @@ bool isnumber(const char* s)
   return true;
 }
 
+template<typename T>
+size_t get_endword_from_cursor_pos(const T& str, size_t pos)
+{
+	size_t end = pos;
+	if (iswalnum(str[pos]) && iswalnum(str[std::min(str.size(), ++pos)]))
+	{
+		while (pos < str.size() && iswalnum(str[pos++]))
+		{
+			end++;
+		}
+		return end;
+	}
+	else
+	{
+		while (pos < str.size() && !iswalnum(str[pos++]))
+		{
+			end++;
+		}
+		return get_endword_from_cursor_pos(str, end);
+	}
+}
+
 class HelpCommand : public IConsoleCommand
 {
 public:
@@ -292,124 +314,156 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
   cmd_is_compete = false;
 
 	if (event.keyName != "commit")
-  {
-    if (auto result = m_InputBindings.find(event); result != m_InputBindings.end())
-    {
-      switch (result->second)
-      {
-      case EAutoComplete:
+	{
+		if (auto result = m_InputBindings.find(event); result != m_InputBindings.end())
+		{
+			switch (result->second)
 			{
-        completion = autocomplete(m_CommandW);
-        if (completion.size() > 0)
-        {
-          completeCommand(completion);
-        }
-        return true;
-			}
-      case EGotoBeginLine:
-      {
-				m_Cursor.x = 0;
-        return true;
-      }
-      case EGotoEndLine:
-      {
-				m_Cursor.x = (int)m_CommandW.size();
-        return true;
-      }
-      case ESubmit:
-      {
-        handleEnterText();
-        m_Cursor.x = 0;
-        return true;
-      }
-      case EPaste:
-			{
-				setBuffer();
-				return true;
-			}
-      case ECopy:
-			{
-				getBuffer();
-        return true;
-      }
-      case EClearInputLine:
-      {
-        ClearInputLine();
-        return true;
-      }
-      case EPrevHistoryElement:
-      {
-				if (history_line > 0)
-					--history_line;
-				getHistoryElement();
-				return true;
-      }
-      case ENextHistoryElement:
-      {
-				if (history_line < (m_CmdBuffer.size() - 1))
-					++history_line;
-				getHistoryElement();
-				return true;
-      }
-      case EMoveCursorToPrevChar:
-      {
-        moveCursor(true);
-        return true;
-      }
-      case EMoveCursorToNextChar:
-      {
-        moveCursor(false);
-        return true;
-      }
-      case EMoveCursorToPrevWord:
-      {
-				moveCursor(true, true);
-				return true;
-      }
-      case EMoveCursorToNextWord:
-      {
-				moveCursor(false, true);
-				return true;
-      }
-      case EDeleteRightChar:
-      {
-        //TODO: rewrite erasing
-        m_CommandW.erase((int)m_Cursor.x, 1);
-        fillCommandText();
-        return true;
-      }
-      case EDeleteLeftChar:
-      {
-        if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
-        {
-          //command.pop_back();
-          m_CommandW.erase(std::max(0, (int)m_Cursor.x - 1), 1);
-          moveCursor(true);
-        }
-        fillCommandText();
-        return true;
-      }
-			case EClear:
-			{
-				Clear();
-				return true;
-			}
-			case EScrolUp:
-			{
-				Clear();
-				return true;
-			}
-			case EScrolDown:
-			{
-				Clear();
-				return true;
-			}
-      default:
-        return false;
-      }
-    }
-    return false;
-  }
+				case EAutoComplete:
+				{
+					completion = autocomplete(m_CommandW);
+					if (completion.size() > 0)
+					{
+						completeCommand(completion);
+					}
+					return true;
+				}
+				case EGotoBeginLine:
+				{
+					m_Cursor.x = 0;
+					return true;
+				}
+				case EGotoEndLine:
+				{
+					m_Cursor.x = (int)m_CommandW.size();
+					return true;
+				}
+				case ESubmit:
+				{
+					handleEnterText();
+					m_Cursor.x = 0;
+					return true;
+				}
+				case EPaste:
+				{
+					setBuffer();
+					return true;
+				}
+				case ECopy:
+				{
+					getBuffer();
+					return true;
+				}
+				case EClearInputLine:
+				{
+					ClearInputLine();
+					return true;
+				}
+				case EPrevHistoryElement:
+				{
+					if (history_line > 0)
+						--history_line;
+					getHistoryElement();
+					return true;
+				}
+				case ENextHistoryElement:
+				{
+					if (history_line < (m_CmdBuffer.size() - 1))
+						++history_line;
+					getHistoryElement();
+					return true;
+				}
+				case EMoveCursorToPrevChar:
+				{
+					moveCursor(true);
+					return true;
+				}
+				case EMoveCursorToNextChar:
+				{
+					moveCursor(false);
+					return true;
+				}
+				case EMoveCursorToPrevWord:
+				{
+					moveCursor(true, true);
+					return true;
+				}
+				case EMoveCursorToNextWord:
+				{
+					moveCursor(false, true);
+					return true;
+				}
+				case EDeleteRightChar:
+				{
+					//TODO: rewrite erasing
+					m_CommandW.erase((int)m_Cursor.x, 1);
+					fillCommandText();
+					return true;
+				}
+				case EDeleteLeftChar:
+				{
+					if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
+					{
+						//command.pop_back();
+						m_CommandW.erase(std::max(0, (int)m_Cursor.x - 1), 1);
+						moveCursor(true);
+					}
+					fillCommandText();
+					return true;
+				}
+				case EDeleteAllAfterCursor:
+				{
+					if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
+					{
+						m_CommandW.erase(std::min((int)m_CommandW.size(), (int)m_Cursor.x + 1), m_CommandW.size());
+					}
+					fillCommandText();
+					return true;
+				}                 
+				case EDeleteAllBeforeCursor:
+				{
+					if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
+					{
+						m_CommandW.erase(0, (m_Cursor.x));
+						m_Cursor.x = 0;
+					}
+					fillCommandText();
+					return true;
+				}                 
+				case EDeleteWordAfterCursor:
+				{
+					if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
+					{
+						auto size = get_endword_from_cursor_pos(m_CommandW, m_Cursor.x) - m_Cursor.x;
+						m_CommandW.erase(m_Cursor.x, size);
+						//m_Cursor.x = 0;
+					}
+					fillCommandText();
+					return true;
+				}                 
+
+				case EClear:      
+				{
+					Clear();
+					return true;
+				}
+				case EScrolUp:
+				{
+					Clear();
+					return true;
+				}
+				case EScrolDown:
+				{
+					Clear();
+					return true;
+				}
+				default:
+					return false;
+				}
+		}
+		return false;
+	}
+
   return false;
 }
 
@@ -667,9 +721,13 @@ void CConsole::moveCursor(bool left, bool wholeWord)
   {
     if (wholeWord)
     {
+	#if 0
       std::size_t found = m_CommandA.rfind(" ", m_Cursor.x - 1);
       if (found != std::string::npos)
         m_Cursor.x = static_cast<int>(std::min((size_t)m_Cursor.x, found - 1));
+    #else
+		m_Cursor.x = get_beginword_from_cursor_pos(m_CommandA, m_Cursor.x);
+	#endif
     }
     else
     {
@@ -680,11 +738,15 @@ void CConsole::moveCursor(bool left, bool wholeWord)
   {
     if (wholeWord)
     {
+	#if 0
       std::size_t found = m_CommandA.find_first_of(" ", m_Cursor.x);
       if (found != std::string::npos)
         m_Cursor.x = (int)std::min(m_CommandA.size(), found + 1);
       else
         m_Cursor.x = (int)m_CommandA.size();
+      #else
+		m_Cursor.x = get_endword_from_cursor_pos(m_CommandA, m_Cursor.x);
+      #endif
     }
     else
     {
@@ -971,17 +1033,28 @@ void CConsole::InitInputBindings()
 	CreateBinding(CreateInputEvent(eKI_E, eMM_LCtrl, EInputState::eIS_Pressed), EGotoEndLine);
 	CreateBinding(CreateInputEvent(eKI_Enter, eMM_None, EInputState::eIS_Pressed), ESubmit);
 	CreateBinding(CreateInputEvent(eKI_M, eMM_LCtrl, EInputState::eIS_Pressed), ESubmit);
+	CreateBinding(CreateInputEvent(eKI_J, eMM_LCtrl, EInputState::eIS_Pressed), ESubmit);
 	CreateBinding(CreateInputEvent(eKI_Insert, eMM_LCtrl, EInputState::eIS_Pressed), ECopy);
 	CreateBinding(CreateInputEvent(eKI_Insert, eMM_LShift, EInputState::eIS_Pressed), EPaste);
 	CreateBinding(CreateInputEvent(eKI_Escape, eMM_LCtrl, EInputState::eIS_Pressed), EClearInputLine);
 	CreateBinding(CreateInputEvent(eKI_N, eMM_LCtrl, EInputState::eIS_Pressed), ENextHistoryElement);
 	CreateBinding(CreateInputEvent(eKI_P, eMM_LCtrl, EInputState::eIS_Pressed), EPrevHistoryElement);
 	CreateBinding(CreateInputEvent(eKI_Left, eMM_None, EInputState::eIS_Pressed), EMoveCursorToPrevChar);
+	CreateBinding(CreateInputEvent(eKI_B, eMM_LCtrl, EInputState::eIS_Pressed), EMoveCursorToPrevChar);
 	CreateBinding(CreateInputEvent(eKI_Right, eMM_None, EInputState::eIS_Pressed), EMoveCursorToNextChar);
+	CreateBinding(CreateInputEvent(eKI_F, eMM_LCtrl, EInputState::eIS_Pressed), EMoveCursorToNextChar);
 	CreateBinding(CreateInputEvent(eKI_B, eMM_LAlt, EInputState::eIS_Pressed), EMoveCursorToPrevWord);
 	CreateBinding(CreateInputEvent(eKI_F, eMM_LAlt, EInputState::eIS_Pressed), EMoveCursorToNextWord);
 	CreateBinding(CreateInputEvent(eKI_Delete, eMM_None, EInputState::eIS_Pressed), EDeleteRightChar);
+	CreateBinding(CreateInputEvent(eKI_D, eMM_LCtrl, EInputState::eIS_Pressed), EDeleteRightChar);
 	CreateBinding(CreateInputEvent(eKI_Backspace, eMM_None, EInputState::eIS_Pressed), EDeleteLeftChar);
+	CreateBinding(CreateInputEvent(eKI_H, eMM_LCtrl, EInputState::eIS_Pressed), EDeleteLeftChar);
+
+	CreateBinding(CreateInputEvent(eKI_K, eMM_LCtrl, EInputState::eIS_Pressed), EDeleteAllAfterCursor);
+	CreateBinding(CreateInputEvent(eKI_W, eMM_LCtrl, EInputState::eIS_Pressed), EDeleteAllBeforeCursor);
+
+	CreateBinding(CreateInputEvent(eKI_D, eMM_LAlt, EInputState::eIS_Pressed), EDeleteWordAfterCursor);
+
 	CreateBinding(CreateInputEvent(eKI_L, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
 
 	CreateBinding(CreateInputEvent(eKI_1, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
