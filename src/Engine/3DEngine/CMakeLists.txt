@@ -32,3 +32,5 @@ target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
   "pch.hpp"
 )
+
+add_subdirectory(Tools/xml_scene_to_lua)
