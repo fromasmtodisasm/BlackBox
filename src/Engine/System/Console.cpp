@@ -413,7 +413,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				}
 				case EDeleteAllAfterCursor:
 				{
-					if (m_CommandW.size() > 0 && (int)m_Cursor.x > 0)
+					if (m_CommandW.size() > 0 && (int)m_Cursor.x <= 0)
 					{
 						m_CommandW.erase(std::min((int)m_CommandW.size(), (int)m_Cursor.x + 1), m_CommandW.size());
 					}
@@ -721,7 +721,7 @@ void CConsole::moveCursor(bool left, bool wholeWord)
   {
     if (wholeWord)
     {
-	#if 0
+	#if 1
       std::size_t found = m_CommandA.rfind(" ", m_Cursor.x - 1);
       if (found != std::string::npos)
         m_Cursor.x = static_cast<int>(std::min((size_t)m_Cursor.x, found - 1));

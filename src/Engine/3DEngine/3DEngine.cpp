@@ -7,7 +7,7 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
-#if 0
+#if 1
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -30,7 +30,7 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 
 void loadModel(string path)
 {
-#if 0
+#if 1
     Assimp::Importer import;
     const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 	
@@ -63,7 +63,7 @@ void C3DEngine::SetCamera(const CCamera& cam, bool bToTheScreen)
 static float s_time = 0;
 void C3DEngine::Draw()
 {
-	#if 0
+#if 0
   int w;
   int h;
   if (GET_CVAR("r_aspect")->GetIVal())
@@ -84,7 +84,6 @@ void C3DEngine::Draw()
   {
     m_pWorld->GetActiveScene()->present(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
   }
-	#endif
 
   s_time += 1 / 60.0f;
 	gEnv->pRenderer->SetCamera(m_Camera);
@@ -100,14 +99,16 @@ void C3DEngine::Draw()
 	  p->Unuse();
   };
 
-	/*
 	draw(m_Programs[0], Vec4d(0, 0, w, h));
 	draw(m_Programs[1], Vec4d(w, h, w, h));
 	draw(m_Programs[2], Vec4d(0, h, w, h));
 	draw(m_Programs[3], Vec4d(w, 0, w, h));
-	*/
+#endif
 
-
+	#if 0
+	if (m_pRenderCallback)
+		m_pRenderCallback(m_RenderCallbackParams);
+	#endif
 }
 
 void C3DEngine::ShutDown(bool bEditorMode)
