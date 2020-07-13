@@ -38,9 +38,16 @@ struct Camera
 
 struct Scene
 {
+	Scene(std::string& name)
+		: Name(name)
+	{
+	}
 	std::vector<std::shared_ptr<Object>> Objects;
+
+	const std::string& Name;
 };
 
+template<typename Reader, typename Writer>
 class Serializator
 {
 	public:
@@ -50,11 +57,11 @@ class Serializator
 	{
 		return false;	
 	}
-	bool Load(const char* name)
+	bool Load()
 	{
 			
 		tinyxml2::XMLDocument xmlDoc;
-		XMLError eResult = xmlDoc.LoadFile(name);
+		XMLError eResult = xmlDoc.LoadFile(m_Scene.Name);
 		XMLCheckResult(eResult);
 
 		XMLNode* pScene = xmlDoc.FirstChild();
@@ -198,7 +205,7 @@ class Serializator
 	}
 	void SaveObject(tinyxml2::XMLDocument& xmlDoc, Object& obj, tinyxml2::XMLNode* pScene)
 	{
-	
+			
 	}
 	tinyxml2::XMLElement* SaveTransform(tinyxml2::XMLDocument& xmlDoc, Transform* transform)
 	{
@@ -218,10 +225,9 @@ int main(int argc, char* argv[])
 	argc = 2;
 	if (argc < 2)
 		return -1;
-	std::string scene_name = "./res/scenes/test.xml";
+	Scene scene(std::string("./res/scenes/test.xml"));
 	//scene_name = argv[1]
-	Scene scene;
-	Serializator serializtor(scene);
-	serializtor.Load(scene_name.c_str());
+	Serializator<void,void> serializtor(scene);
+	serializtor.Load();
 	serializtor.Save();
 }
