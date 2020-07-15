@@ -1,7 +1,11 @@
 #include <tinyxml2.h> 
 #include <vector>
 #include <string>
+#include <string_view>
 #include <memory>
+#include <fstream>
+#include <sstream>
+#include <variant>
 #include <BlackBox/Core/MathHelper.hpp>
 
 using namespace tinyxml2;
@@ -47,6 +51,32 @@ struct Scene
 	const std::string& Name;
 };
 
+struct LuaTable
+{
+	std::string Name;
+	std::string Value;
+	LuaTable* 
+};
+struct LuaDoc
+{
+
+	void SaveFile(const std::string& file)
+	{
+		std::ofstream of(file); 		
+		if (!of.is_open())
+			return;
+
+	}
+
+	template<typename T>
+	std::stringstream& operator >> (T& t)
+	{
+		return content << t;	
+	}
+
+	std::stringstream content;
+};
+
 template<typename Reader, typename Writer>
 class Serializator
 {
@@ -55,7 +85,33 @@ class Serializator
 		  : m_Scene(scene) {}
 	bool Save(const char* as = "")
 	{
-		return false;	
+		std::stringstream sceneName;
+		tinyxml2::XMLDocument xmlDoc;
+		XMLNode* pScene = xmlDoc.NewElement("scene");
+
+		for (auto& obj : m_Scene->m_Objects)
+		{
+			SaveObject(xmlDoc, objectManager, obj, pScene);
+		}
+
+		saveLights(xmlDoc, pScene);
+
+		for (auto& camera : m_Scene->m_Camera)
+		{
+			XMLElement* cameraElement = saveCamera(xmlDoc, camera.second);
+			cameraElement->SetAttribute("name", camera.first.c_str());
+			pScene->InsertEndChild(cameraElement);
+		}
+		xmlDoc.InsertFirstChild(pScene);
+
+		#if 0
+		if (as == "")
+			sceneName << "res/scenes/" << name << ".xml";
+		else
+		#endif
+		sceneName << "res/scenes/" << as;
+		XMLError eResult = xmlDoc.SaveFile(sceneName.str().c_str());
+		XMLCheckResult(eResult);
 	}
 	bool Load()
 	{
@@ -226,7 +282,7 @@ int main(int argc, char* argv[])
 	if (argc < 2)
 		return -1;
 	Scene scene(std::string("./res/scenes/test.xml"));
-	//scene_name = argv[1]
+	//Scene scene(std::string(argv[1]));
 	Serializator<void,void> serializtor(scene);
 	serializtor.Load();
 	serializtor.Save();
