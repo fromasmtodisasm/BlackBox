@@ -172,7 +172,8 @@ CGame::~CGame()
 	if (g_SteamAchievements)
 		delete g_SteamAchievements;
 }
-
+#include "TextEditorDemo.hpp"
+static GLSLEditor* glslEditor = nullptr;
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
 	if (!SteamInit())
@@ -199,6 +200,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	m_pVehicleSystem = new CVehicleSystem();
 	m_pPlayerSystem = new CPlayerSystem();
+
+	glslEditor = new GLSLEditor;
 
 #if 0
   if (!m_pNetwork->Init())
@@ -389,6 +392,7 @@ bool CGame::Update()
 			m_pScriptSystem->EndCall();
 
 			DrawHud(fps);
+			glslEditor->Update();
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
 			{
