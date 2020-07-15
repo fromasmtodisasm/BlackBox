@@ -8,6 +8,7 @@ class CInputCVars
 public:
   int   i_debug;
   int   i_forcefeedback;
+  int	i_grab_input;
 
   int   i_mouse_buffered;
   float i_mouse_sensitivity;

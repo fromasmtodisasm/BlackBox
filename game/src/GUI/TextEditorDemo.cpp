@@ -77,15 +77,10 @@ GLSLEditor::GLSLEditor()
     //editor->SetBreakpoints(bpts);
 
 //	static const char* fileToEdit = "test.cpp";
+	fileDialog.SetTitle("title");
+	fileDialog.SetTypeFilters({".h", ".cpp"});
 
-    {
-        std::ifstream t(fileToEdit);
-        if (t.good())
-        {
-            std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-            editor->SetText(str);
-        }
-    }
+    OpenFile(fileToEdit);
 
 }
 
@@ -93,6 +88,21 @@ GLSLEditor::~GLSLEditor()
 {
     if (editor)
         delete editor;
+}
+
+void GLSLEditor::OpenFile(const std::string& name)
+{
+	std::ifstream t(name);
+	if (t.good())
+	{
+		std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		editor->SetText(str);
+	}
+}
+
+void GLSLEditor::OpenFileDialog()
+{
+	fileDialog.Open();
 }
 
 void GLSLEditor::Update()
@@ -107,7 +117,9 @@ void GLSLEditor::Update()
     auto cpos = editor->GetCursorPosition();
     ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
-	if (alt && ImGui::BeginMainMenuBar())
+	if (
+        //alt && 
+        ImGui::BeginMainMenuBar())
 	{
         if (ImGui::BeginMenu("File"))
         {
@@ -121,7 +133,13 @@ void GLSLEditor::Update()
                     t << textToSave;
                 }
             }
+
+            if (ImGui::MenuItem("Open"))
+            {
+				OpenFileDialog();
+            }
             ImGui::EndMenu();
+
         }
         if (ImGui::BeginMenu("Edit"))
         {
@@ -173,6 +191,17 @@ void GLSLEditor::Update()
         editor->CanUndo() ? "*" : " ",
         editor->GetLanguageDefinition().mName.c_str(), fileToEdit);
 
+    if (ctrl && ImGui::IsKeyPressed(eKI_O))
+	{
+		OpenFileDialog();	
+    }
+	fileDialog.Display();
+	if (fileDialog.HasSelected())
+	{
+		std::cout << "Selected filename" << fileDialog.GetSelected().string() << std::endl;
+		OpenFile(fileDialog.GetSelected().string());
+		fileDialog.ClearSelected();
+	}
     editor->Render("TextEditor");
     ImGui::End();
 }
