@@ -12,7 +12,11 @@ add_subdirectory(thirdparty)
 
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
-#target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
+if (OPTION_USE_GUI)
+	target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
+	target_link_libraries(${PROJECT_NAME} PRIVATE ImGuiColorTextEdit)
+	target_link_libraries(${PROJECT_NAME} PRIVATE ImGuiFileDialog)
+endif()
 if (WINDOWS)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Ws2_32)
 	target_link_libraries(${PROJECT_NAME} PRIVATE dbghelp)
@@ -21,14 +25,16 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Steam)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"
+	PRIVATE "${INCLUDE_ROOT}/GUI"
 )
 
 target_sources(
 	${PROJECT_NAME}
-	PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
-	PRIVATE ${SOURCE_DIR}/Client/Client.cpp
-	PRIVATE ${SOURCE_DIR}/Commands.cpp
 	#PRIVATE ${SOURCE_DIR}/GameFiles/GameGUI.cpp
+	PRIVATE ${SOURCE_DIR}/Client/Client.cpp
+	PRIVATE ${SOURCE_DIR}/Client/XClient.cpp
+	PRIVATE ${SOURCE_DIR}/Commands.cpp
+	PRIVATE ${SOURCE_DIR}/GUI/TextEditorDemo.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/EntityClassRegistry.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/Game.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameActionInput.cpp
@@ -40,8 +46,9 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/SteamHelper.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
-	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
+	PRIVATE ${SOURCE_DIR}/Main.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XEntityProcessingCmd.cpp
+	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
 	PRIVATE ${SOURCE_DIR}/Player.cpp
 	PRIVATE ${SOURCE_DIR}/Player/XPlayer.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
@@ -56,7 +63,6 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/Server/XServer.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerRules.cpp
 	PRIVATE ${SOURCE_DIR}/Server/XServerSlot.cpp
-	PRIVATE ${SOURCE_DIR}/Main.cpp
 
 	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp

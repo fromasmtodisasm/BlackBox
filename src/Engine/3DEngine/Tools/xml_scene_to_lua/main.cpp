@@ -1,27 +1,59 @@
+#include <BlackBox/Core/MathHelper.hpp>
+
 #include <tinyxml2.h> 
-#include <vector>
-#include <string>
-#include <string_view>
-#include <memory>
+
+#include <algorithm>
 #include <fstream>
-#include <sstream>
-#include <variant>
+#include <iostream>
+#include <memory>
 #include <BlackBox/Core/MathHelper.hpp>
 
 using namespace tinyxml2;
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
+std::ostream& operator<<(std::ostream& ss, const Vec3& v)
+{
+	return ss << "{ x = " << v.x << ", y = " << v.y << ", z = " << v.z << "}";
+}
 
 struct Mesh
 {
 	std::string m_Path;
+	Mesh()				= default;
+	Mesh(const Mesh& m) = default;
+	Mesh(Mesh&& m) = default;
+	friend std::ostream& operator<<(std::ostream& ss, const Mesh& scene);
+	std::ostream& format(std::ostream& ss) const
+	{
+		return ss << m_Path;	
+	}
 };
+
+std::ostream& operator<<(std::ostream& ss, const Mesh& o)
+{
+	return o.format(ss);
+}
 
 struct Transform
 {
 	Vec3 Position;	
 	Vec3 Rotation;	
 	Vec3 Scale;	
+
+	friend std::ostream& operator<<(std::ostream& ss, const Transform& scene);
+
+	std::ostream& format(std::ostream& ss) const
+	{
+		return ss 
+			<< "position = " << Position << ", " 
+			<< "rotation = " << Rotation << ", " 
+			<< "scale = " << Scale;	
+	}
 };
+
+std::ostream& operator<<(std::ostream& ss, const Transform& o)
+{
+	return o.format(ss);
+}
 
 struct Object
 {
@@ -32,7 +64,44 @@ struct Object
 	bool Transparent;
 	Mesh Geometry;
 	Transform Transform;
+
+	friend std::ostream& operator<<(std::ostream& ss, const Object& o);
+
+	template<typename T>
+	void format(std::ostream& ss, const T& field, const char* name, bool is_end = false, bool is_table = false) const
+	{
+		using namespace std;
+		ss << "\t\t" << name << " =  " ;
+		if (!is_table)
+			ss << "\"" << field << "\"";
+		else
+			ss << "{" << field << "}";
+		if (!is_end)
+		{
+			ss << ",";
+		}
+		ss << "\n";
+	}
+	std::ostream& format(std::ostream& ss) const
+	{
+		ss << "\t" << Name << " = {\n";
+		format(ss, Geometry, "mesh");
+		format(ss, Transform, "transform", false, true);
+		format(ss, Type, "type");
+		format(ss, Material, "material");
+		format(ss, Visible, "visible");
+		format(ss, Transparent, "transparent", true);
+		ss << "\t}";
+		return ss;
+	}
+
+
 };
+
+std::ostream& operator<<(std::ostream& ss, const Object& o)
+{
+	return o.format(ss);
+}
 
 struct Camera
 {
@@ -42,39 +111,33 @@ struct Camera
 
 struct Scene
 {
-	Scene(std::string& name)
+	Scene(const std::string& name)
 		: Name(name)
 	{
 	}
 	std::vector<std::shared_ptr<Object>> Objects;
-
-	const std::string& Name;
-};
-
-struct LuaTable
-{
 	std::string Name;
-	std::string Value;
-	LuaTable* 
-};
-struct LuaDoc
-{
 
-	void SaveFile(const std::string& file)
+	friend std::ostream& operator<<(std::ostream& ss, const Scene& scene);
+
+	std::ostream& format(std::ostream& ss) const
 	{
-		std::ofstream of(file); 		
-		if (!of.is_open())
-			return;
-
+		ss << "objects = {\n";
+		size_t i = 0;
+		for (const auto& o : Objects)
+		{
+			ss << *o;	
+			if (i < Objects.size() -1)
+			{
+				ss << ",";	
+			}
+			ss << "\n";
+			i++;
+		}
+		ss << "}";
+		return ss;
+	
 	}
-
-	template<typename T>
-	std::stringstream& operator >> (T& t)
-	{
-		return content << t;	
-	}
-
-	std::stringstream content;
 };
 
 template<typename Reader, typename Writer>
@@ -83,41 +146,34 @@ class Serializator
 	public:
 	Serializator(Scene& scene)
 		  : m_Scene(scene) {}
-	bool Save(const char* as = "")
+	void Save()
 	{
-		std::stringstream sceneName;
-		tinyxml2::XMLDocument xmlDoc;
-		XMLNode* pScene = xmlDoc.NewElement("scene");
+		auto replace_ext = [&](const std::string& str, const std::string& ext) -> std::string {
+			std::cout << "Splitting: " << str << '\n';
+			auto new_str = std::string(str);
+			new_str.erase(str.find_last_of(".") + 1, std::string::npos).insert(new_str.size(), ext);
+			return new_str;
+		};
 
-		for (auto& obj : m_Scene->m_Objects)
+		std::ofstream scene(replace_ext(m_Scene.Name, "lua"));
+		if (scene.is_open())
 		{
-			SaveObject(xmlDoc, objectManager, obj, pScene);
+			scene << m_Scene;
 		}
-
-		saveLights(xmlDoc, pScene);
-
-		for (auto& camera : m_Scene->m_Camera)
-		{
-			XMLElement* cameraElement = saveCamera(xmlDoc, camera.second);
-			cameraElement->SetAttribute("name", camera.first.c_str());
-			pScene->InsertEndChild(cameraElement);
-		}
-		xmlDoc.InsertFirstChild(pScene);
-
-		#if 0
-		if (as == "")
-			sceneName << "res/scenes/" << name << ".xml";
-		else
-		#endif
-		sceneName << "res/scenes/" << as;
-		XMLError eResult = xmlDoc.SaveFile(sceneName.str().c_str());
-		XMLCheckResult(eResult);
+		//std::cout << scene.str();
 	}
+	template<typename T>
+	void Save(const T& value)
+	{
+		return false;	
+	}
+
+
 	bool Load()
 	{
 			
 		tinyxml2::XMLDocument xmlDoc;
-		XMLError eResult = xmlDoc.LoadFile(m_Scene.Name);
+		XMLError eResult = xmlDoc.LoadFile(m_Scene.Name.c_str());
 		XMLCheckResult(eResult);
 
 		XMLNode* pScene = xmlDoc.FirstChild();
@@ -189,23 +245,24 @@ class Serializator
 
 		objectName = object->Attribute("name");
 		if (objectName == nullptr)
-		return;
+			return;
 		objectType = object->Attribute("type");
 		if (objectType == nullptr)
-		objectType = "object";
+			objectType = "object";
 		{
-		if (object->BoolAttribute("transparent"))
-		  objectTransparent = true;
-		if (object->BoolAttribute("visible"))
-		  objectVisible = true;
-		mesh = object->FirstChildElement("mesh");
-		if (mesh == nullptr)
-		  return;
-		meshPath = mesh->Attribute("name");
-		if (meshPath == nullptr)
-		  return;
-		//obj = ObjectManager::instance()->getObject(meshPath, objectType, callback);
-		obj->Name;
+			if (object->BoolAttribute("transparent"))
+			  objectTransparent = true;
+			if (object->BoolAttribute("visible"))
+			  objectVisible = true;
+			mesh = object->FirstChildElement("mesh");
+			if (mesh == nullptr)
+			  return;
+			meshPath = mesh->Attribute("name");
+			if (meshPath == nullptr)
+			  return;
+			obj->Geometry.m_Path = meshPath;
+			//obj = ObjectManager::instance()->getObject(meshPath, objectType, callback);
+			obj->Name;
 		}
 		if (obj == nullptr)
 		return;
@@ -226,7 +283,9 @@ class Serializator
 			//obj->uvMatrix = glm::mat4(1.0f);
 		}
 
-		transform = loadTransform(*object);
+		transform = LoadTransform(*object);
+		obj->Name = objectName;
+		obj->Type = objectType;
 		obj->Transform = transform;
 		obj->Transparent = objectTransparent;
 		obj->Visible = objectVisible;
@@ -242,7 +301,7 @@ class Serializator
 	{
 	
 	}
-	Transform loadTransform(tinyxml2::XMLElement& object)
+	Transform LoadTransform(tinyxml2::XMLElement& object)
 	{
 		return Transform();
 	}

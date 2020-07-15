@@ -101,10 +101,12 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <algorithm>
 #include <memory>
 
-#if defined(_DEBUG) && !defined(LINUX)
-#include <crtdbg.h>
-#define DEBUG_CLIENTBLOCK new( _NORMAL_BLOCK, __FILE__, __LINE__) 
-#define new DEBUG_CLIENTBLOCK
+#if defined USE_DEBUG_NEW
+    #if defined(_DEBUG) && !defined(LINUX)
+        #include <crtdbg.h>
+        #define DEBUG_CLIENTBLOCK new( _NORMAL_BLOCK, __FILE__, __LINE__) 
+        #define new DEBUG_CLIENTBLOCK
+    #endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
