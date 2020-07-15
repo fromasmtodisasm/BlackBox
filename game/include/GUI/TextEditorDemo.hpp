@@ -12,7 +12,7 @@ class GLSLEditor
 public:
     class TextEditor* editor = nullptr;
     static const char* fileToEdit;
-	ImGui::FileBrowser fileDialog;
+	ImGui::FileBrowser fileDialog = ImGui::FileBrowser(ImGuiFileBrowserFlags_EnterNewFilename);
     GLSLEditor();
     ~GLSLEditor();
 
