@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(GUI CXX)
 ###################################################
 add_library(GUI SHARED)
+add_library(imgui::imgui ALIAS GUI)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 
