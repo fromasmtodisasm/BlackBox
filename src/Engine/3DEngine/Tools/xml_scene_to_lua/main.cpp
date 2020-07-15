@@ -70,7 +70,7 @@ struct Object
 	friend std::ostream& operator<<(std::ostream& ss, const Object& o);
 
 	template<typename T>
-	void format(std::ostream& ss, const T& field, const char* name, bool is_end, bool is_table = false) const
+	void format(std::ostream& ss, const T& field, const char* name, bool is_end = false, bool is_table = false) const
 	{
 		using namespace std;
 		ss << "\t\t" << name << " =  " ;
@@ -87,11 +87,11 @@ struct Object
 	std::ostream& format(std::ostream& ss) const
 	{
 		ss << "\t" << Name << " = {\n";
-		format(ss, Geometry, "mesh", false);
+		format(ss, Geometry, "mesh");
 		format(ss, Transform, "transform", false, true);
-		format(ss, Type, "type", false);
-		format(ss, Material, "material", false);
-		format(ss, Visible, "visible", false);
+		format(ss, Type, "type");
+		format(ss, Material, "material");
+		format(ss, Visible, "visible");
 		format(ss, Transparent, "transparent", true);
 		ss << "\t}";
 		return ss;

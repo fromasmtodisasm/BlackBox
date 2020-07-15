@@ -28,6 +28,8 @@ target_sources(${PROJECT_NAME}
 #add_package(imgui CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
 target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
+
+add_subdirectory(GuiTools)
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}
