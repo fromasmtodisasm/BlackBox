@@ -4,6 +4,3 @@
 [submodule "ImGuiColorTextEdit"]
 	path = src/Engine/GUI/GuiTools/ImGuiColorTextEdit
 	url = https://github.com/fromasmtodisasm/ImGuiColorTextEdit.git
-[submodule "src/Engine/GUI/GuiTools/ImGuiFileDialog"]
-	path = src/Engine/GUI/GuiTools/ImGuiFileDialog
-	url = git@github.com:fromasmtodisasm/ImGuiFileDialog.git

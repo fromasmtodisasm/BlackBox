@@ -1,9 +1,7 @@
 #ifdef new
 #undef new
 #endif
-#include "Texteditor.h"
 #include "TextEditorDemo.hpp"
-const char* GLSLEditor::fileToEdit = "TextEditorDemo.hpp";
 
 GLSLEditor::GLSLEditor()
 {
@@ -77,15 +75,10 @@ GLSLEditor::GLSLEditor()
     //editor->SetBreakpoints(bpts);
 
 //	static const char* fileToEdit = "test.cpp";
+	//fileDialog.SetTitle("title");
+	//fileDialog.SetTypeFilters({".h", ".cpp"});
 
-    {
-        std::ifstream t(fileToEdit);
-        if (t.good())
-        {
-            std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-            editor->SetText(str);
-        }
-    }
+    OpenFile(fileToEdit);
 
 }
 
@@ -93,6 +86,32 @@ GLSLEditor::~GLSLEditor()
 {
     if (editor)
         delete editor;
+}
+
+void GLSLEditor::OpenFile(const std::string& name)
+{
+	std::ifstream t(name);
+	if (t.good())
+	{
+		std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		editor->SetText(str);
+		if (auto pos = name.find_last_of("."); pos != string::npos)
+		{
+			languageReflection.SetLang(*editor, name.substr(pos + 1));
+        }
+	}
+}
+
+void GLSLEditor::OpenFileDialog()
+{
+	fileDialog.Open();
+}
+
+void GLSLEditor::Syntax(){
+	if (ImGui::ListBox("Languages", &languageReflection.selectedItem, languageReflection.names.data(), languageReflection.languages.size(), languageReflection.languages.size()))
+	{
+		editor->SetLanguageDefinition(languageReflection.languages[languageReflection.selectedItem]);	
+    }
 }
 
 void GLSLEditor::Update()
@@ -107,7 +126,9 @@ void GLSLEditor::Update()
     auto cpos = editor->GetCursorPosition();
     ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
-	if (alt && ImGui::BeginMainMenuBar())
+	if (
+        //alt && 
+        ImGui::BeginMainMenuBar())
 	{
         if (ImGui::BeginMenu("File"))
         {
@@ -121,7 +142,13 @@ void GLSLEditor::Update()
                     t << textToSave;
                 }
             }
+
+            if (ImGui::MenuItem("Open"))
+            {
+				OpenFileDialog();
+            }
             ImGui::EndMenu();
+
         }
         if (ImGui::BeginMenu("Edit"))
         {
@@ -154,6 +181,29 @@ void GLSLEditor::Update()
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Syntax"))
+        {
+			Syntax();
+            ImGui::EndMenu();
+
+        }
+
+		if (ImGui::BeginMenu("Options"))
+		{
+			static bool enabled = true;
+			ImGui::MenuItem("Enabled", "", &enabled);
+			ImGui::BeginChild("child", ImVec2(0, 60), true);
+			for (int i = 0; i < 10; i++)
+				ImGui::Text("Scrolling Text %d", i);
+			ImGui::EndChild();
+			static float f = 0.5f;
+			static int n = 0;
+			ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+			ImGui::InputFloat("Input", &f, 0.1f);
+			ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+			ImGui::EndMenu();
+		}
+
         if (ImGui::BeginMenu("View"))
         {
             if (ImGui::MenuItem("Dark palette"))
@@ -171,8 +221,20 @@ void GLSLEditor::Update()
     ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, editor->GetTotalLines(),
         editor->IsOverwrite() ? "Ovr" : "Ins",
         editor->CanUndo() ? "*" : " ",
-        editor->GetLanguageDefinition().mName.c_str(), fileToEdit);
+        editor->GetLanguageDefinition().mName.c_str(), fileToEdit.c_str());
 
+    if (ctrl && ImGui::IsKeyPressed(eKI_O))
+	{
+		OpenFileDialog();	
+    }
+	fileDialog.Display();
+	if (fileDialog.HasSelected())
+	{
+		fileToEdit = fileDialog.GetSelected().string();
+		std::cout << "Selected filename" <<  fileToEdit << std::endl;
+		OpenFile(fileToEdit);
+		fileDialog.ClearSelected();
+	}
     editor->Render("TextEditor");
     ImGui::End();
 }
