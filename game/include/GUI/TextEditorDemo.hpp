@@ -13,7 +13,7 @@ class GLSLEditor
 public:
     TextEditor* editor = nullptr;
     std::string fileToEdit = "TextEditorDemo.hpp";
-	ImGui::FileBrowser fileDialog = ImGui::FileBrowser(ImGuiFileBrowserFlags_EnterNewFilename);
+	ImGui::FileBrowser fileDialog = ImGui::FileBrowser(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CloseOnEsc);
     GLSLEditor();
     ~GLSLEditor();
 

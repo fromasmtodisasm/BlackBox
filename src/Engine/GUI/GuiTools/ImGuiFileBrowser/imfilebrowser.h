@@ -446,7 +446,9 @@ inline void ImGui::FileBrowser::Display()
                 }
             }
 
-            if(IsItemClicked(0) && IsMouseDoubleClicked(0) && rsc.isDir)
+            if((IsItemClicked(0) && IsMouseDoubleClicked(0) || 
+                ImGui::GetIO().KeysDown[ImGuiKey_Enter]) 
+                && rsc.isDir)
             {
                 setNewPwd = true;
                 newPwd = (rsc.name != "..") ? (pwd_ / rsc.name) :
@@ -472,7 +474,7 @@ inline void ImGui::FileBrowser::Display()
 
     if(!(flags_ & ImGuiFileBrowserFlags_SelectDirectory))
     {
-        if(Button(" ok ") && !selectedFilename_.empty())
+        if((Button(" ok ")) && !selectedFilename_.empty())
         {
             ok_ = true;
             CloseCurrentPopup();
