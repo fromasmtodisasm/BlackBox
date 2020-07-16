@@ -263,9 +263,10 @@ void ImGuiOpenglRender::SetupRenderState(ImDrawData* draw_data, int fb_width, in
 {
   // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
   m_pRender->SetState(IRenderer::State::BLEND, true);
-  //glEnable(GL_BLEND);
+  glEnable(GL_BLEND);
   glBlendEquation(GL_FUNC_ADD);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
   m_pRender->SetState(IRenderer::State::CULL_FACE, false);
   //glDisable(GL_CULL_FACE);
   m_pRender->SetState(IRenderer::State::DEPTH_TEST, false);
