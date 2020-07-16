@@ -111,6 +111,9 @@ endif()
 if (OPTION_USE_GUI)
 	add_compile_definitions(ENABLE_DEBUG_GUI)
 endif()
+if (WIN32)
+	add_definitions("/ZI")
+endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
