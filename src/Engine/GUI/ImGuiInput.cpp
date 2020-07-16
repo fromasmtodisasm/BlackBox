@@ -38,7 +38,7 @@ void ImGuiInput::NewFrame()
   m_Time = current_time;
 
   UpdateMousePosAndButtons();
-  //ImGui_ImplSDL2_UpdateMouseCursor();
+  UpdateMouseCursor();
 
   // Update game controllers (if enabled and available)
   UpdateGamepads();
@@ -81,17 +81,15 @@ bool ImGuiInput::Init()
   io.ClipboardUserData = NULL;
 
   // Load mouse cursors
-  /*
-  m_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-  m_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-  m_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-  m_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-  m_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-  m_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-  m_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-  m_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-  m_MouseCursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
-  */
+  m_MouseCursors[ImGuiMouseCursor_Arrow] = gEnv->pInput->CreateCursor(ICursor::ARROW);
+  m_MouseCursors[ImGuiMouseCursor_TextInput] = gEnv->pInput->CreateCursor(ICursor::IBEAM);
+  m_MouseCursors[ImGuiMouseCursor_ResizeAll] = gEnv->pInput->CreateCursor(ICursor::SIZEALL);
+  m_MouseCursors[ImGuiMouseCursor_ResizeNS] = gEnv->pInput->CreateCursor(ICursor::SIZENS);
+  m_MouseCursors[ImGuiMouseCursor_ResizeEW] = gEnv->pInput->CreateCursor(ICursor::SIZEWE);
+  m_MouseCursors[ImGuiMouseCursor_ResizeNESW] = gEnv->pInput->CreateCursor(ICursor::SIZENESW);
+  m_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = gEnv->pInput->CreateCursor(ICursor::SIZENWSE);
+  m_MouseCursors[ImGuiMouseCursor_Hand] = gEnv->pInput->CreateCursor(ICursor::HAND);
+  m_MouseCursors[ImGuiMouseCursor_NotAllowed] = gEnv->pInput->CreateCursor(ICursor::NO);
 
   // Check and store if we are on Wayland
   //g_MouseCanUseGlobalState = strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7) != 0;
@@ -245,5 +243,25 @@ bool ImGuiInput::OnInputEventUI(const SUnicodeEvent& event)
 	  return true;
   else
 	  return false;
+}
+
+void ImGuiInput::UpdateMouseCursor()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
+		return;
+
+	ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+	if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
+	{
+		// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+		gEnv->pInput->ShowCursor(false);
+	}
+	else
+	{
+		// Show OS mouse cursor
+		(m_MouseCursors[imgui_cursor] ? m_MouseCursors[imgui_cursor] : m_MouseCursors[ImGuiMouseCursor_Arrow])->Ativate();
+		//SDL_ShowCursor(SDL_TRUE);
+	}
 }
 
