@@ -79,6 +79,7 @@ GLSLEditor::GLSLEditor()
 	//fileDialog.SetTypeFilters({".h", ".cpp"});
 
     OpenFile(fileToEdit);
+	REGISTER_CVAR2("editor_opened", &opened, opened, VF_DUMPTODISK, "Editor opened/closed");
 
 }
 
@@ -124,7 +125,9 @@ void GLSLEditor::Update()
     //else if (!IsReadOnly() && !ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
 
     auto cpos = editor->GetCursorPosition();
-    ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
+	if (!opened)
+		return;
+    ImGui::Begin("Text Editor Demo", (bool*)(&opened), ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
 	if (
         //alt && 

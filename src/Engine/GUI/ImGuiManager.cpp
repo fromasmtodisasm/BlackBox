@@ -186,7 +186,7 @@ bool ImGuiManager::OnInputEventUI(const SUnicodeEvent& event)
 
 int ImGuiManager::GetPriority() const 
 { 
-	return 0; 
+	return 5; 
 }
 
 bool ImGuiManager::Init()
@@ -204,6 +204,7 @@ void ImGuiManager::NewFrame()
   render.NewFrame();
   input.NewFrame();
   ImGui::NewFrame();
+  //ImGui::CaptureKeyboardFromApp(true);
 }
 
 void ImGuiManager::Render()

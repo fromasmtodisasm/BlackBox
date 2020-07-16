@@ -327,6 +327,10 @@ public:
   virtual void ExecuteFile(const char* file) override;
   virtual bool OnInputEvent(const SInputEvent& event) override;
   virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
+  virtual int GetPriority() const override
+  {
+	  return 4;
+  }
   void getHistoryElement();
   void completeCommand(std::vector<std::wstring>& completion);
   void setBuffer();

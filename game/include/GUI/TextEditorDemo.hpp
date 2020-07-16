@@ -88,4 +88,5 @@ public:
 			}
 		}
     }languageReflection;
+	int opened = true;
 };

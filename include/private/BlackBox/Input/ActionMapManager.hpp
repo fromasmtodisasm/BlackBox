@@ -79,6 +79,7 @@ public:
 
   // Унаследовано через IInputEventListener
   virtual bool OnInputEvent(const SInputEvent& event) override;
+  virtual int GetPriority() const override { return 1; }
 
 
 public:
