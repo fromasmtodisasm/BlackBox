@@ -129,6 +129,7 @@ void GLSLEditor::Update()
 		return;
     ImGui::Begin("Text Editor Demo", (bool*)(&opened), ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
+	auto main_editor_window_focused = ImGui::IsWindowFocused();
 	if (
         //alt && 
         ImGui::BeginMainMenuBar())
@@ -238,6 +239,8 @@ void GLSLEditor::Update()
 		OpenFile(fileToEdit);
 		fileDialog.ClearSelected();
 	}
+	if (main_editor_window_focused) 
+        ImGui::SetNextWindowFocus();
     editor->Render("TextEditor");
     ImGui::End();
 }
