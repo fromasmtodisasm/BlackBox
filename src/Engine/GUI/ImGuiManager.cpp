@@ -12,6 +12,8 @@
 #include "ImGuiInput.hpp"
 #include "ImGuiRenderer.hpp"
 
+#include <SDL.h>
+
 class ImGuiManager : public IImGuiManager
 {
   public:
@@ -160,11 +162,12 @@ ImGuiManager::ImGuiManager(ISystem* pSystem)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;}
 }
@@ -204,6 +207,7 @@ void ImGuiManager::NewFrame()
   render.NewFrame();
   input.NewFrame();
   ImGui::NewFrame();
+  ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
   //ImGui::CaptureKeyboardFromApp(true);
 }
 
@@ -217,6 +221,17 @@ void ImGuiManager::Render()
   gEnv->pRenderer->SetViewport(0, 0, (float)io.DisplaySize.x, (float)io.DisplaySize.y);
 #pragma warning(pop)
   render.RenderDrawData(ImGui::GetDrawData());
+	// Update and Render additional Platform Windows
+	// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+	//  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+	}
 }
 
 void ImGuiManager::ShowDemoWindow()

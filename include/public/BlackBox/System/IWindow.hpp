@@ -46,5 +46,6 @@ struct IWindow {
 
 extern "C" {
   IWINDOW_API IWindow* CreateIWindow();
+  IWINDOW_API void* CurrentHandledWindow();
   typedef IWindow* (*PFNCREATEWINDOW)();
 }

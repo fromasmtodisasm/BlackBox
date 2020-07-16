@@ -1,6 +1,6 @@
 #pragma once
 class ImGuiManager;
-class ImGuiInput
+class ImGuiInput : public ISystemEventListener
 {
 public:
   void NewFrame();
@@ -18,5 +18,8 @@ public:
   uint64_t m_Time = 0;
   ImVec2 m_MousePos;
   ICursor* m_MouseCursors[ImGuiMouseCursor_COUNT] = {};
+
+  // Inherited via ISystemEventListener
+  virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 };
 

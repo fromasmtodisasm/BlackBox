@@ -31,8 +31,11 @@ public:
   bool Init(IRenderer *pRenderer, const char* glsl_version = NULL);
   void Shutdown();
   void NewFrame();
-  void RenderDrawData(ImDrawData* draw_data);
-  void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, uint vertex_array_object);
+  static void RenderDrawData(ImDrawData* draw_data);
+  static void SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, uint vertex_array_object);
+
+  static void InitPlatformInterface();
+  static void RenderWindow(ImGuiViewport* viewport, void*);
 
   // (Optional) Called by Init/NewFrame/Shutdown
   bool CreateFontsTexture();
@@ -40,7 +43,7 @@ public:
   bool CreateDeviceObjects();
   void DestroyDeviceObjects();
 private:
-  IRenderer* m_pRender;
+  static IRenderer* m_pRender;
 
 };
 

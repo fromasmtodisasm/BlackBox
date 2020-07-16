@@ -17,6 +17,8 @@
 #define IMGUI_IMPL_OPENGL_HAS_DRAW_WITH_BASE_VERTEX     1
 #endif
 
+IRenderer*  ImGuiRender::m_pRender;
+
 namespace {
   // OpenGL Data
   static char         g_GlslVersionString[32] = "";
@@ -128,10 +130,12 @@ bool    ImGuiOpenglRender::Init(IRenderer *pRenderer, const char* glsl_version)
     m_pRender = pRenderer;
     // Setup back-end capabilities flags
     ImGuiIO& io = ImGui::GetIO();
+	io.BackendFlags |= ImGuiBackendFlags_RendererHasViewports; // We can create multi-viewports on the Renderer side (optional)
     io.BackendRendererName = "imgui_impl_opengl3";
 #if IMGUI_IMPL_OPENGL_HAS_DRAW_WITH_BASE_VERTEX
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
 #endif
+	InitPlatformInterface();
 
     // Dummy construct to make it easily visible in the IDE and debugger which GL loader has been selected. 
     // The code actually never uses the 'gl_loader' variable! It is only here so you can read it!
@@ -393,4 +397,32 @@ void    ImGuiOpenglRender::DestroyDeviceObjects()
     #endif
 
     DestroyFontsTexture();
+}
+
+//--------------------------------------------------------------------------------------------------------
+// MULTI-VIEWPORT / PLATFORM INTERFACE SUPPORT
+// This is an _advanced_ and _optional_ feature, allowing the back-end to create and handle multiple viewports simultaneously.
+// If you are new to dear imgui or creating a new binding for dear imgui, it is recommended that you completely ignore this section first..
+//--------------------------------------------------------------------------------------------------------
+
+void ImGuiOpenglRender::RenderWindow(ImGuiViewport* viewport, void*)
+{
+	if (!(viewport->Flags & ImGuiViewportFlags_NoRendererClear))
+	{
+		ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+	RenderDrawData(viewport->DrawData);
+}
+
+void ImGuiOpenglRender::InitPlatformInterface()
+{
+	ImGuiPlatformIO& platform_io	  = ImGui::GetPlatformIO();
+	platform_io.Renderer_RenderWindow = RenderWindow;
+}
+
+static void ImGui_ImplOpenGL3_ShutdownPlatformInterface()
+{
+	ImGui::DestroyPlatformWindows();
 }

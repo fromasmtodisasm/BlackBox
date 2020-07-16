@@ -3,10 +3,61 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
-
+#include <BlackBox/System/IWindow.hpp>
 #include "imgui.h"
 #include "ImGuiInput.hpp"
 #include "ImGuiRenderer.hpp"
+
+// FIXME: work around input system
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_syswm.h>
+
+static WIN_HWND     g_Window = NULL;
+static char*        g_ClipboardTextData = NULL;
+// Forward Declarations
+static void ImGui_ImplSDL2_UpdateMonitors();
+static void ImGui_ImplSDL2_InitPlatformInterface(WIN_HWND window);
+static void ImGui_ImplSDL2_ShutdownPlatformInterface();
+
+static const char* ImGui_ImplSDL2_GetClipboardText(void*)
+{
+	if (g_ClipboardTextData)
+		SDL_free(g_ClipboardTextData);
+	g_ClipboardTextData = SDL_GetClipboardText();
+	return g_ClipboardTextData;
+}
+
+static void ImGui_ImplSDL2_SetClipboardText(void*, const char* text)
+{
+	SDL_SetClipboardText(text);
+}
+// FIXME-PLATFORM: SDL doesn't have an event to notify the application of display/monitor changes
+static void ImGui_ImplSDL2_UpdateMonitors()
+{
+    ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
+    platform_io.Monitors.resize(0);
+    int display_count = SDL_GetNumVideoDisplays();
+    for (int n = 0; n < display_count; n++)
+    {
+        // Warning: the validity of monitor DPI information on Windows depends on the application DPI awareness settings, which generally needs to be set in the manifest or at runtime.
+        ImGuiPlatformMonitor monitor;
+        SDL_Rect r;
+        SDL_GetDisplayBounds(n, &r);
+        monitor.MainPos = monitor.WorkPos = ImVec2((float)r.x, (float)r.y);
+        monitor.MainSize = monitor.WorkSize = ImVec2((float)r.w, (float)r.h);
+#if SDL_HAS_USABLE_DISPLAY_BOUNDS
+        SDL_GetDisplayUsableBounds(n, &r);
+        monitor.WorkPos = ImVec2((float)r.x, (float)r.y);
+        monitor.WorkSize = ImVec2((float)r.w, (float)r.h);
+#endif
+#if SDL_HAS_PER_MONITOR_DPI
+        float dpi = 0.0f;
+        if (!SDL_GetDisplayDPI(n, &dpi, NULL, NULL))
+            monitor.DpiScale = dpi / 96.0f;
+#endif
+        platform_io.Monitors.push_back(monitor);
+    }
+}
 
 void ImGuiInput::NewFrame()
 {
@@ -46,6 +97,7 @@ void ImGuiInput::NewFrame()
 bool ImGuiInput::Init()
 {
 
+  auto window = g_Window = gEnv->pRenderer->GetCurrentContextHWND();
   // Setup back-end capabilities flags
   ImGuiIO& io = ImGui::GetIO();
   io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
@@ -95,18 +147,27 @@ bool ImGuiInput::Init()
   //g_MouseCanUseGlobalState = strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7) != 0;
   //g_MouseCanUseGlobalState = false;// strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7) != 0;
 
-#if 0
-#ifdef _WIN32
-  SDL_SysWMinfo wmInfo;
-  SDL_VERSION(&wmInfo.version);
-  SDL_GetWindowWMInfo(window, &wmInfo);
-  io.ImeWindowHandle = wmInfo.info.win.window;
-#else
-  (void)window;
-#endif
+	// Our mouse update function expect PlatformHandle to be filled for the main viewport
+    ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    main_viewport->PlatformHandle = (void*)window;
+#if defined(_WIN32)
+    SDL_SysWMinfo info;
+    SDL_VERSION(&info.version);
+    if (SDL_GetWindowWMInfo((SDL_Window*)window, &info))
+        main_viewport->PlatformHandleRaw = info.info.win.window;
 #endif
 
-  return true;
+    // Update monitors
+    ImGui_ImplSDL2_UpdateMonitors();
+
+    // We need SDL_CaptureMouse(), SDL_GetGlobalMouseState() from SDL 2.0.4+ to support multiple viewports.
+    // We left the call to ImGui_ImplSDL2_InitPlatformInterface() outside of #ifdef to avoid unused-function warnings.
+    if ((io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) && (io.BackendFlags & ImGuiBackendFlags_PlatformHasViewports))
+        ImGui_ImplSDL2_InitPlatformInterface(window);
+
+    gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "ImGuiInput");
+
+    return true;
 }
 void ImGuiInput::UpdateGamepads()
 {
@@ -263,5 +324,261 @@ void ImGuiInput::UpdateMouseCursor()
 		(m_MouseCursors[imgui_cursor] ? m_MouseCursors[imgui_cursor] : m_MouseCursors[ImGuiMouseCursor_Arrow])->Ativate();
 		//SDL_ShowCursor(SDL_TRUE);
 	}
+}
+void ImGuiInput::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
+{
+	if (event == ESYSTEM_EVENT_MOVE || event == ESYSTEM_EVENT_RESIZE)
+	{
+		if (ImGuiViewport* viewport = ImGui::FindViewportByPlatformHandle(CurrentHandledWindow()))
+		{
+			switch (event)
+			{
+			case ESYSTEM_EVENT_MOVE:
+				viewport->PlatformRequestMove = true;
+				break;
+			case ESYSTEM_EVENT_RESIZE:
+				viewport->PlatformRequestResize = true;
+				break;
+			default:
+				break;
+			}
+		}
+	
+    }
+
+}
+// Helper structure we store in the void* RenderUserData field of each ImGuiViewport to easily retrieve our backend data.
+struct ImGuiViewportDataSDL2
+{
+    SDL_Window*     Window;
+    Uint32          WindowID;
+    bool            WindowOwned;
+    SDL_GLContext   GLContext;
+
+    ImGuiViewportDataSDL2() { Window = NULL; WindowID = 0; WindowOwned = false; GLContext = NULL; }
+    ~ImGuiViewportDataSDL2() { IM_ASSERT(Window == NULL && GLContext == NULL); }
+};
+
+static void ImGui_ImplSDL2_CreateWindow(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = IM_NEW(ImGuiViewportDataSDL2)();
+    viewport->PlatformUserData = data;
+
+    ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGuiViewportDataSDL2* main_viewport_data = (ImGuiViewportDataSDL2*)main_viewport->PlatformUserData;
+
+    // Share GL resources with main context
+	bool use_opengl = true;
+	//(main_viewport_data->GLContext != NULL);
+    SDL_GLContext backup_context = NULL;
+    if (use_opengl)
+    {
+        backup_context = SDL_GL_GetCurrentContext();
+		gEnv->pRenderer->SetCurrentContext(main_viewport_data->Window);
+    }
+
+    Uint32 sdl_flags = 0;
+    sdl_flags |= SDL_WINDOW_OPENGL;
+    sdl_flags |= SDL_GetWindowFlags((SDL_Window*)g_Window) & SDL_WINDOW_ALLOW_HIGHDPI;
+    sdl_flags |= SDL_WINDOW_HIDDEN;
+    sdl_flags |= (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? SDL_WINDOW_BORDERLESS : 0;
+    sdl_flags |= (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? 0 : SDL_WINDOW_RESIZABLE;
+#if !defined(_WIN32)
+    // See SDL hack in ImGui_ImplSDL2_ShowWindow().
+    sdl_flags |= (viewport->Flags & ImGuiViewportFlags_NoTaskBarIcon) ? SDL_WINDOW_SKIP_TASKBAR : 0;
+#endif
+#if SDL_HAS_ALWAYS_ON_TOP
+    sdl_flags |= (viewport->Flags & ImGuiViewportFlags_TopMost) ? SDL_WINDOW_ALWAYS_ON_TOP : 0;
+#endif
+    data->Window = SDL_CreateWindow("No Title Yet", (int)viewport->Pos.x, (int)viewport->Pos.y, (int)viewport->Size.x, (int)viewport->Size.y, sdl_flags);
+    data->WindowOwned = true;
+    if (use_opengl)
+    {
+        data->GLContext = SDL_GL_CreateContext(data->Window);
+        SDL_GL_SetSwapInterval(0);
+    }
+    if (use_opengl && backup_context)
+        SDL_GL_MakeCurrent(data->Window, backup_context);
+
+    viewport->PlatformHandle = (void*)data->Window;
+#if defined(_WIN32)
+    SDL_SysWMinfo info;
+    SDL_VERSION(&info.version);
+    if (SDL_GetWindowWMInfo(data->Window, &info))
+        viewport->PlatformHandleRaw = info.info.win.window;
+#endif
+}
+
+static void ImGui_ImplSDL2_DestroyWindow(ImGuiViewport* viewport)
+{
+    if (ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData)
+    {
+        if (data->GLContext && data->WindowOwned)
+            SDL_GL_DeleteContext(data->GLContext);
+        if (data->Window && data->WindowOwned)
+            SDL_DestroyWindow(data->Window);
+        data->GLContext = NULL;
+        data->Window = NULL;
+        IM_DELETE(data);
+    }
+    viewport->PlatformUserData = viewport->PlatformHandle = NULL;
+}
+
+static void ImGui_ImplSDL2_ShowWindow(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+#if defined(_WIN32)
+    HWND hwnd = (HWND)viewport->PlatformHandleRaw;
+
+    // SDL hack: Hide icon from task bar
+    // Note: SDL 2.0.6+ has a SDL_WINDOW_SKIP_TASKBAR flag which is supported under Windows but the way it create the window breaks our seamless transition.
+    if (viewport->Flags & ImGuiViewportFlags_NoTaskBarIcon)
+    {
+        LONG ex_style = ::GetWindowLong(hwnd, GWL_EXSTYLE);
+        ex_style &= ~WS_EX_APPWINDOW;
+        ex_style |= WS_EX_TOOLWINDOW;
+        ::SetWindowLong(hwnd, GWL_EXSTYLE, ex_style);
+    }
+
+    // SDL hack: SDL always activate/focus windows :/
+    if (viewport->Flags & ImGuiViewportFlags_NoFocusOnAppearing)
+    {
+        ::ShowWindow(hwnd, SW_SHOWNA);
+        return;
+    }
+#endif
+
+    SDL_ShowWindow(data->Window);
+}
+
+static ImVec2 ImGui_ImplSDL2_GetWindowPos(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    int x = 0, y = 0;
+    SDL_GetWindowPosition(data->Window, &x, &y);
+    return ImVec2((float)x, (float)y);
+}
+
+static void ImGui_ImplSDL2_SetWindowPos(ImGuiViewport* viewport, ImVec2 pos)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    SDL_SetWindowPosition(data->Window, (int)pos.x, (int)pos.y);
+}
+
+static ImVec2 ImGui_ImplSDL2_GetWindowSize(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    int w = 0, h = 0;
+    SDL_GetWindowSize(data->Window, &w, &h);
+    return ImVec2((float)w, (float)h);
+}
+
+static void ImGui_ImplSDL2_SetWindowSize(ImGuiViewport* viewport, ImVec2 size)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    SDL_SetWindowSize(data->Window, (int)size.x, (int)size.y);
+}
+
+static void ImGui_ImplSDL2_SetWindowTitle(ImGuiViewport* viewport, const char* title)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    SDL_SetWindowTitle(data->Window, title);
+}
+
+#if SDL_HAS_WINDOW_ALPHA
+static void ImGui_ImplSDL2_SetWindowAlpha(ImGuiViewport* viewport, float alpha)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    SDL_SetWindowOpacity(data->Window, alpha);
+}
+#endif
+
+static void ImGui_ImplSDL2_SetWindowFocus(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    SDL_RaiseWindow(data->Window);
+}
+
+static bool ImGui_ImplSDL2_GetWindowFocus(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    return (SDL_GetWindowFlags(data->Window) & SDL_WINDOW_INPUT_FOCUS) != 0;
+}
+
+static bool ImGui_ImplSDL2_GetWindowMinimized(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    return (SDL_GetWindowFlags(data->Window) & SDL_WINDOW_MINIMIZED) != 0;
+}
+
+static void ImGui_ImplSDL2_RenderWindow(ImGuiViewport* viewport, void*)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    if (data->GLContext)
+        SDL_GL_MakeCurrent(data->Window, data->GLContext);
+}
+
+static void ImGui_ImplSDL2_SwapBuffers(ImGuiViewport* viewport, void*)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    if (data->GLContext)
+    {
+        SDL_GL_MakeCurrent(data->Window, data->GLContext);
+        SDL_GL_SwapWindow(data->Window);
+    }
+}
+
+// Vulkan support (the Vulkan renderer needs to call a platform-side support function to create the surface)
+// SDL is graceful enough to _not_ need <vulkan/vulkan.h> so we can safely include this.
+#if SDL_HAS_VULKAN
+#include <SDL_vulkan.h>
+static int ImGui_ImplSDL2_CreateVkSurface(ImGuiViewport* viewport, ImU64 vk_instance, const void* vk_allocator, ImU64* out_vk_surface)
+{
+    ImGuiViewportDataSDL2* data = (ImGuiViewportDataSDL2*)viewport->PlatformUserData;
+    (void)vk_allocator;
+    SDL_bool ret = SDL_Vulkan_CreateSurface(data->Window, (VkInstance)vk_instance, (VkSurfaceKHR*)out_vk_surface);
+    return ret ? 0 : 1; // ret ? VK_SUCCESS : VK_NOT_READY
+}
+#endif // SDL_HAS_VULKAN
+
+void ImGui_ImplSDL2_InitPlatformInterface(WIN_HWND window)
+{
+    // Register platform interface (will be coupled with a renderer interface)
+    ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
+    platform_io.Platform_CreateWindow = ImGui_ImplSDL2_CreateWindow;
+    platform_io.Platform_DestroyWindow = ImGui_ImplSDL2_DestroyWindow;
+    platform_io.Platform_ShowWindow = ImGui_ImplSDL2_ShowWindow;
+    platform_io.Platform_SetWindowPos = ImGui_ImplSDL2_SetWindowPos;
+    platform_io.Platform_GetWindowPos = ImGui_ImplSDL2_GetWindowPos;
+    platform_io.Platform_SetWindowSize = ImGui_ImplSDL2_SetWindowSize;
+    platform_io.Platform_GetWindowSize = ImGui_ImplSDL2_GetWindowSize;
+    platform_io.Platform_SetWindowFocus = ImGui_ImplSDL2_SetWindowFocus;
+    platform_io.Platform_GetWindowFocus = ImGui_ImplSDL2_GetWindowFocus;
+    platform_io.Platform_GetWindowMinimized = ImGui_ImplSDL2_GetWindowMinimized;
+    platform_io.Platform_SetWindowTitle = ImGui_ImplSDL2_SetWindowTitle;
+    platform_io.Platform_RenderWindow = ImGui_ImplSDL2_RenderWindow;
+    platform_io.Platform_SwapBuffers = ImGui_ImplSDL2_SwapBuffers;
+#if SDL_HAS_WINDOW_ALPHA
+    platform_io.Platform_SetWindowAlpha = ImGui_ImplSDL2_SetWindowAlpha;
+#endif
+#if SDL_HAS_VULKAN
+    platform_io.Platform_CreateVkSurface = ImGui_ImplSDL2_CreateVkSurface;
+#endif
+
+    // SDL2 by default doesn't pass mouse clicks to the application when the click focused a window. This is getting in the way of our interactions and we disable that behavior.
+#if SDL_HAS_MOUSE_FOCUS_CLICKTHROUGH
+    SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+#endif
+
+    // Register main window handle (which is owned by the main application, not by us)
+    // This is mostly for simplicity and consistency, so that our code (e.g. mouse handling etc.) can use same logic for main and secondary viewports.
+    ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGuiViewportDataSDL2* data = IM_NEW(ImGuiViewportDataSDL2)();
+    data->Window = (SDL_Window*)window;
+    data->WindowID = SDL_GetWindowID((SDL_Window*)window);
+    data->WindowOwned = false;
+    //data->GLContext = sdl_gl_context;
+    main_viewport->PlatformUserData = data;
+    main_viewport->PlatformHandle = data->Window;
 }
 
