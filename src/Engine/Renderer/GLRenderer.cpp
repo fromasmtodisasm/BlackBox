@@ -573,7 +573,8 @@ bool GLRenderer::CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX /* = 1
 
 bool GLRenderer::SetCurrentContext(WIN_HWND hWnd)
 {
-	return false;
+	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+	return SDL_GL_MakeCurrent((SDL_Window*)hWnd, context) == 0;
 }
 
 void GLRenderer::MakeMainContextActive()

@@ -16,6 +16,27 @@
 
 #include <BlackBox/Input/ActionMapManager.hpp>
 
+class CCursor : public ICursor
+{
+public:
+	CCursor(SDL_SystemCursor cursorId)
+	{
+		m_Cursor = SDL_CreateSystemCursor(cursorId); 
+    }
+
+	virtual void Release() override
+	{
+
+	}
+	virtual void Ativate() override
+	{
+		SDL_SetCursor(m_Cursor);
+		gEnv->pInput->ShowCursor(true);
+	}
+
+    SDL_Cursor* m_Cursor;
+};
+
 CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
 {
   m_pSystem = pSystem;
@@ -162,6 +183,12 @@ int CLinuxInput::ShowCursor(const bool bShow)
 
   return displayCounter;
 }
+
+ICursor* CLinuxInput::CreateCursor(int cursorId)
+{
+	return new CCursor((SDL_SystemCursor)cursorId);
+}
+
 
 IActionMapManager* CLinuxInput::CreateActionMapManager()
 {

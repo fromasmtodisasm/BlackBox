@@ -14,7 +14,7 @@
 
 #define WINDOW_MAX_PEEP   64
 
-
+static SDL_Window* g_CurrentWindow;
 CSDLWindow::CSDLWindow(std::string, int width, int height)
 {
 }
@@ -98,6 +98,7 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 #define SDL_Log(format, ...) gEnv->pLog->Log(format, __VA_ARGS__)
 	auto& system = gEnv->pSystem;
   if (event.type == SDL_WINDOWEVENT) {
+    g_CurrentWindow = SDL_GetWindowFromID(event.window.windowID);
     switch (event.window.event) {
     case SDL_WINDOWEVENT_SHOWN:
       SDL_Log("Window %d shown", event.window.windowID);
@@ -426,5 +427,9 @@ extern "C" {
   IWINDOW_API IWindow* CreateIWindow()
   {
     return new CSDLWindow();
+  }
+  void* CurrentHandledWindow()
+  {
+	  return g_CurrentWindow; 
   }
 }

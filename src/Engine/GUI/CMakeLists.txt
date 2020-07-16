@@ -5,6 +5,7 @@ add_library(GUI SHARED)
 add_library(imgui::imgui ALIAS GUI)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
+target_link_libraries(${PROJECT_NAME} PRIVATE Window)
 
 target_include_directories(
 ${PROJECT_NAME}
@@ -29,6 +30,8 @@ target_sources(${PROJECT_NAME}
 #add_package(imgui CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
 target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
+# FIXME: work around input system
+add_sdl()
 
 add_subdirectory(GuiTools)
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)

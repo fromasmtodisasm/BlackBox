@@ -760,6 +760,30 @@ struct IInputDevice
   // </interfuscator:shuffle>
 };
 
+struct ICursor
+{
+	enum Type
+	{
+		ARROW,
+		IBEAM,
+        WAIT,
+		CROSSHAIR,
+        WAITARROW,
+		SIZENWSE,
+		SIZENESW,
+		SIZEWE,
+		SIZENS,
+		SIZEALL,
+		NO,
+		HAND,
+	};
+	~ICursor()
+	{
+	}
+	virtual void Release() = 0;
+	virtual void Ativate() = 0;
+};
+
 //! Interface to the Input system.
 //! The input system give access and initialize Keyboard,Mouse and Joystick SubSystems.
 struct IInput
@@ -901,6 +925,7 @@ struct IInput
   //////////////////////////////////////////////////////////////////////////
   // SDL
   virtual bool GrabInput(bool bGrab) = 0;
+  virtual ICursor* CreateCursor(int cursorId) = 0;
 
   //! action mapper
   virtual struct IActionMapManager* CreateActionMapManager() = 0;

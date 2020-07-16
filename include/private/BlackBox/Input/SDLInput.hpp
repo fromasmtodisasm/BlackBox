@@ -23,6 +23,7 @@ public:
   virtual void Update(bool focus) override;
   virtual bool GrabInput(bool bGrab) override;
   virtual int  ShowCursor(const bool bShow) override;
+  virtual ICursor* CreateCursor(int cursorId) override;
 
 private:
   ISystem* m_pSystem;
@@ -40,6 +41,7 @@ public:
   virtual ~CLinuxInputDevice();
 
   CLinuxInput& GetLinuxInput() const;
+
 protected:
   void         PostEvent(SInputSymbol* pSymbol, unsigned keyMod =  0);
 private:
