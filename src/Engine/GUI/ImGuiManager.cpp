@@ -162,12 +162,14 @@ ImGuiManager::ImGuiManager(ISystem* pSystem)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
+	// FIXME: rewrite platform window handling
+	//io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+	// FIXME: rewrite platform window handling
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;}
 }
@@ -207,7 +209,6 @@ void ImGuiManager::NewFrame()
   render.NewFrame();
   input.NewFrame();
   ImGui::NewFrame();
-  ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
   //ImGui::CaptureKeyboardFromApp(true);
 }
 

@@ -543,6 +543,8 @@ static int ImGui_ImplSDL2_CreateVkSurface(ImGuiViewport* viewport, ImU64 vk_inst
 
 void ImGui_ImplSDL2_InitPlatformInterface(WIN_HWND window)
 {
+	// FIXME: rewrite platform window handling
+	return;
     // Register platform interface (will be coupled with a renderer interface)
     ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
     platform_io.Platform_CreateWindow = ImGui_ImplSDL2_CreateWindow;
