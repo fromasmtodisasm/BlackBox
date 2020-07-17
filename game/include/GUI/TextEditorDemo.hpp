@@ -8,7 +8,7 @@
 
 #include <cassert>
 
-class GLSLEditor
+class GLSLEditor : public IDocumentWriter
 {
 public:
     TextEditor* editor = nullptr;
@@ -20,7 +20,7 @@ public:
     void OpenFile(const std::string& name);
     void OpenFileDialog();
 	void Syntax();
-    void SaveFile(const std::string& name);
+    void SaveFile();
 
     void Update();
 
@@ -71,6 +71,7 @@ public:
 
 		void SetLang(TextEditor& ed, std::string_view ext)
 		{
+			return;
 			size_t n = 0;
 			for (const auto& e : exts)
 			{
@@ -89,4 +90,7 @@ public:
 		}
     }languageReflection;
 	int opened = true;
+
+	// Inherited via IDocumentWriter
+	virtual bool Write(const std::string& str) override;
 };

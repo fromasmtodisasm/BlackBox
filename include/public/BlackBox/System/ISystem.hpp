@@ -318,13 +318,13 @@ struct ISystem
 	// returns true if this is dedicated server application
 	virtual bool IsDedicated() {return false;}
 
-  virtual void Log(const char* message) = 0;
-  virtual void Error(const char* message) = 0;
+	virtual void Log(const char* message) = 0;
+	virtual void Error(const char* message) = 0;
 
-  virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) = 0;
-  virtual bool IsDevMode() = 0;
+	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) = 0;
+	virtual bool IsDevMode() = 0;
 
-  virtual float GetDeltaTime() = 0;
+	virtual float GetDeltaTime() = 0;
 
 	virtual void SetViewCamera(class CCamera &Camera) = 0;
 	virtual CCamera& GetViewCamera() = 0;
@@ -336,7 +336,7 @@ struct ISystem
 	virtual const SFileVersion& GetFileVersion() = 0;
 	virtual const SFileVersion& GetProductVersion() = 0;
 
-  virtual void EnableGui(bool enable) = 0;
+	virtual void EnableGui(bool enable) = 0;
 
 	// Compressed file read & write
 	virtual bool WriteCompressedFile(char *filename, void *data, unsigned int bitlen) = 0;

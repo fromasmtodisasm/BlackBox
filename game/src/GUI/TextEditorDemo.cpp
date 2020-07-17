@@ -44,21 +44,25 @@ GLSLEditor::GLSLEditor()
         "HWND", "HRESULT", "LPRESULT","D3D11_RENDER_TARGET_VIEW_DESC", "DXGI_SWAP_CHAIN_DESC","MSG","LRESULT","WPARAM", "LPARAM","UINT","LPVOID",
         "ID3D11Device", "ID3D11DeviceContext", "ID3D11Buffer", "ID3D11Buffer", "ID3D10Blob", "ID3D11VertexShader", "ID3D11InputLayout", "ID3D11Buffer",
         "ID3D10Blob", "ID3D11PixelShader", "ID3D11SamplerState", "ID3D11ShaderResourceView", "ID3D11RasterizerState", "ID3D11BlendState", "ID3D11DepthStencilState",
-        "IDXGISwapChain", "ID3D11RenderTargetView", "ID3D11Texture2D", "TextEditor" };
+        "IDXGISwapChain", "ID3D11RenderTargetView", "ID3D11Texture2D", "TextEditor",
+		"ISystem", "IRenderer", "ILog", 
+    };
     static const char* idecls[] = 
     {
         "typedef HWND_* HWND", "typedef long HRESULT", "typedef long* LPRESULT", "struct D3D11_RENDER_TARGET_VIEW_DESC", "struct DXGI_SWAP_CHAIN_DESC",
         "typedef tagMSG MSG\n * Message structure","typedef LONG_PTR LRESULT","WPARAM", "LPARAM","UINT","LPVOID",
         "ID3D11Device", "ID3D11DeviceContext", "ID3D11Buffer", "ID3D11Buffer", "ID3D10Blob", "ID3D11VertexShader", "ID3D11InputLayout", "ID3D11Buffer",
         "ID3D10Blob", "ID3D11PixelShader", "ID3D11SamplerState", "ID3D11ShaderResourceView", "ID3D11RasterizerState", "ID3D11BlendState", "ID3D11DepthStencilState",
-        "IDXGISwapChain", "ID3D11RenderTargetView", "ID3D11Texture2D", "class TextEditor" };
+        "IDXGISwapChain", "ID3D11RenderTargetView", "ID3D11Texture2D", "class TextEditor",
+		"struct ISystem", "struct IRenderer", "struct ILog" 
+    };
     for (int i = 0; i < sizeof(identifiers) / sizeof(identifiers[0]); ++i)
     {
         TextEditor::Identifier id;
         id.mDeclaration = std::string(idecls[i]);
         lang.mIdentifiers.insert(std::make_pair(std::string(identifiers[i]), id));
     }
-    editor = new TextEditor;
+    editor = new TextEditor(this);
     editor->SetLanguageDefinition(lang);
     //editor->SetPalette(TextEditor::GetLightPalette());
 
@@ -115,6 +119,11 @@ void GLSLEditor::Syntax(){
     }
 }
 
+void GLSLEditor::SaveFile()
+{
+	Write(editor->GetText());
+}
+
 void GLSLEditor::Update()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -138,13 +147,7 @@ void GLSLEditor::Update()
         {
             if (ImGui::MenuItem("Save"))
             {
-                auto textToSave = editor->GetText();
-                /// save text....
-                std::ofstream t(fileToEdit);
-                if (t.good())
-                {
-                    t << textToSave;
-                }
+				SaveFile();
             }
 
             if (ImGui::MenuItem("Open"))
@@ -243,4 +246,14 @@ void GLSLEditor::Update()
         ImGui::SetNextWindowFocus();
     editor->Render("TextEditor");
     ImGui::End();
+}
+
+bool GLSLEditor::Write(const std::string& str)
+{
+	std::ofstream t(fileToEdit);
+	if (t.good())
+	{
+		t << str;
+	}
+	return false;
 }
