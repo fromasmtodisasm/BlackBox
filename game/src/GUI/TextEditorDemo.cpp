@@ -136,6 +136,7 @@ void GLSLEditor::Update()
     auto cpos = editor->GetCursorPosition();
 	if (!opened)
 		return;
+	ImGui::SetNextWindowBgAlpha(0.5);
     ImGui::Begin("Text Editor Demo", (bool*)(&opened), ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
 	auto main_editor_window_focused = ImGui::IsWindowFocused();

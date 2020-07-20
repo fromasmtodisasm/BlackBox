@@ -11,6 +11,7 @@
 #include "imgui.h"
 #include "ImGuiInput.hpp"
 #include "ImGuiRenderer.hpp"
+#include "MemoryEditor.h"
 
 #include <SDL.h>
 
@@ -32,6 +33,7 @@ class ImGuiManager : public IImGuiManager
   void HideDemoWindow() override;
 private:
   bool show_demo_window = true;
+  MemoryEditor me;
 };
 
 // Helper to display a little (?) mark which shows a tooltip when hovered.
@@ -198,7 +200,8 @@ bool ImGuiManager::Init()
 {
   // Setup Dear ImGui style
   bool result = true;
-  ImGui::StyleColorsLight();
+  //ImGui::StyleColorsLight();
+  ImGui::StyleColorsDark();
   result &= input.Init();
   result &= render.Init(GetISystem()->GetIRenderer());
   return result;
@@ -214,6 +217,7 @@ void ImGuiManager::NewFrame()
 
 void ImGuiManager::Render()
 {
+	me.DrawWindow("TestHes", gEnv->pSystem->GetIGame(), 4096);
   // Rendering
   auto& io = ImGui::GetIO();
   ImGui::Render();
