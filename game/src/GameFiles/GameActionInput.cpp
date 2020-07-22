@@ -107,6 +107,8 @@ void CGame::InitConsoleVars()
   r_cap_profile = CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
   m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 
+  g_NonSteam = CREATE_CVAR("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
+
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 
 	g_playerprofile= pConsole->CreateVariable("g_playerprofile","default",VF_DUMPTODISK,

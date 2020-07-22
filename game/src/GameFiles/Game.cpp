@@ -24,6 +24,8 @@
 #include "TextEditorDemo.hpp"
 #include <imgui_internal.h>
 
+#include <BlackBox/GUI/ControlPanel.hpp>
+
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -94,7 +96,7 @@ public:
 
   }
   virtual void OnLeaf(QuadTree *qt, bool is_last, int level) override {
-    render->draw_plane(qt->m_x, qt->m_y, qt->m_size, qt->m_color);
+	render->draw_plane(qt->m_x, qt->m_y, qt->m_size, qt->m_color);
   }
 
   IQuadTreeRender *render = nullptr;
@@ -117,7 +119,7 @@ namespace {
 #	if 0
   sf::RenderWindow& getWindow()
   {
-    return *static_cast<sf::RenderWindow*>(GetISystem()->GetIWindow()->getHandle());
+	return *static_cast<sf::RenderWindow*>(GetISystem()->GetIWindow()->getHandle());
   }
 #	endif
 }
@@ -222,15 +224,15 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 #if 0
   if (!m_pNetwork->Init())
-    return false;
+	return false;
 
   m_pClient = m_pNetwork->CreateClient();
   if (!m_pClient || !m_pClient->Init())
-    return false;
+	return false;
 
   m_pServer = m_pNetwork->CreateServer();
   if (!m_pServer)
-    return false;
+	return false;
 #endif
 
 	InitConsoleVars();
@@ -410,6 +412,7 @@ bool CGame::Update()
 
 			DrawHud(fps);
 			glslEditor->Update();
+			m_Gui.Update();
 			gui::update();
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
@@ -459,9 +462,9 @@ void CGame::DisplayInfo(float fps)
 	auto step   = 18;
 
 	const std::string mode = m_Mode == MENU ? "MENU"
-		                         : m_Mode == FPS ? "FPS"
-		                         : m_Mode == FLY ? "FLY"
-		                         : "EDIT";
+								 : m_Mode == FPS ? "FPS"
+								 : m_Mode == FLY ? "FLY"
+								 : "EDIT";
 
 	// Info
 	TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
@@ -494,23 +497,23 @@ void CGame::DisplayInfo(float fps)
 	//info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
 	/*
   info.AddLine("  Pos: "						+
-    std::to_string(objPos.x) + ", " +
-    std::to_string(objPos.y) + ", " +
-    std::to_string(objPos.z) + "; ");
+	std::to_string(objPos.x) + ", " +
+	std::to_string(objPos.y) + ", " +
+	std::to_string(objPos.z) + "; ");
   */
 	//info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
 	//auto camPos = camera->getPosition();
 	//auto camRot = camera->getRotation();
 	/*
   auto pos = "Pos: " +
-    std::to_string(camPos.x) + ", " +
-    std::to_string(camPos.y) + ", " +
-    std::to_string(camPos.z) + "; " +
-    "Yaw: " +
-    std::to_string(camRot.y) + "; " +
-    "Pitch: " +
-    std::to_string(camRot.x) + "; "
-    ;
+	std::to_string(camPos.x) + ", " +
+	std::to_string(camPos.y) + ", " +
+	std::to_string(camPos.z) + "; " +
+	"Yaw: " +
+	std::to_string(camRot.y) + "; " +
+	"Pitch: " +
+	std::to_string(camRot.x) + "; "
+	;
   */
 
 	for (auto& text : info.m_Text)
@@ -599,8 +602,8 @@ void CGame::saveScene(std::string name, std::string as)
   std::string& path = name;
   if (gEnv->pRenderer->GetISceneManager()->exist(path))
   {
-    auto scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this);
-    scene->save(as.c_str());
+	auto scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this);
+	scene->save(as.c_str());
   }
 #endif
 }
@@ -738,13 +741,13 @@ bool CGame::initPlayer()
 #if 0
   if (m_player != nullptr)
   {
-    delete m_player;
+	delete m_player;
   }
   if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
   {
-    m_player->attachCamera(m_World->GetActiveScene()->getCurrentCamera());
-    m_player->setGame(this);
-    return true;
+	m_player->attachCamera(m_World->GetActiveScene()->getCurrentCamera());
+	m_player->setGame(this);
+	return true;
   }
 #endif
 	return false;
@@ -754,7 +757,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 {
 	/*
   if (m_Console->IsOpened())
-    return false;
+	return false;
   */
 
 	////////////////////////
@@ -769,10 +772,10 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 		switch (event.keyId)
 		{
 			/*
-      case eKI_P:
-        isWireFrame = !isWireFrame;
-        return true;
-      */
+	  case eKI_P:
+		isWireFrame = !isWireFrame;
+		return true;
+	  */
 		case eKI_NP_0:
 			//m_SelectedBox = ++m_SelectedBox % m_testObjects.size();
 			return true;
@@ -818,8 +821,8 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			m_Mode = EDIT;
 			return true;
 		/*case eKI_M:
-      camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
-      return true;*/
+	  camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
+	  return true;*/
 		case eKI_B:
 			culling = !culling;
 			return true;
@@ -834,8 +837,8 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			if (alt == true)
 				gotoFullscreen();
 			return true;
-        default:
-            return false;
+		default:
+			return false;
 		}
 	}
 	//return m_player->OnInputEvent(event);
@@ -867,8 +870,8 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 			//m_inputHandler->mouseLock(false);
 			m_Mode = Mode::MENU;
 			return true;
-        default:
-            return false;
+		default:
+			return false;
 		}
 	}
 	return false;
@@ -922,44 +925,44 @@ bool CGame::EditInputEvent(const SInputEvent& event)
   ////////////////////////
   if (keyPressed)
   {
-    IStatObj* obj = m_World->GetActiveScene()->selectedObject()->second;
-    switch (event.keyId)
-    {
-    case eKI_Escape:
-      gotoMenu();
-      return true;
-    case eKI_I:
-      obj->move(Movement::FORWARD);
-      return true;
-    case eKI_U:
-      obj->move(Movement::BACKWARD);
-      return true;
-    case eKI_J:
-      obj->move(Movement::DOWN);
-      return true;
-    case eKI_K:
-      obj->move(Movement::UP);
-      return true;
-    case eKI_V:
-      obj->setVisibility(!obj->visible());
-      return true;
-    case eKI_Tab:
-      if (shift)
-      {
-        m_World->GetActiveScene()->selectPrevObject();
-      }
-      else
-      {
-        m_World->GetActiveScene()->selectNextObject();
-      }
-      return true;
-    //default:
-      //return m_player->OnInputEvent(event);
-    }
+	IStatObj* obj = m_World->GetActiveScene()->selectedObject()->second;
+	switch (event.keyId)
+	{
+	case eKI_Escape:
+	  gotoMenu();
+	  return true;
+	case eKI_I:
+	  obj->move(Movement::FORWARD);
+	  return true;
+	case eKI_U:
+	  obj->move(Movement::BACKWARD);
+	  return true;
+	case eKI_J:
+	  obj->move(Movement::DOWN);
+	  return true;
+	case eKI_K:
+	  obj->move(Movement::UP);
+	  return true;
+	case eKI_V:
+	  obj->setVisibility(!obj->visible());
+	  return true;
+	case eKI_Tab:
+	  if (shift)
+	  {
+		m_World->GetActiveScene()->selectPrevObject();
+	  }
+	  else
+	  {
+		m_World->GetActiveScene()->selectNextObject();
+	  }
+	  return true;
+	//default:
+	  //return m_player->OnInputEvent(event);
+	}
   }
   else
   {
-    //return m_player->OnInputEvent(event);
+	//return m_player->OnInputEvent(event);
   }
 #endif
 
@@ -1127,8 +1130,8 @@ bool CGame::InitScripts()
 	m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
 #if 0
   m_Console->AddCommand(
-    "enumd",
-    R"(
+	"enumd",
+	R"(
 		local formats = System:EnumDisplayFormats()
 		for i=1, #formats do
 			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
@@ -1136,8 +1139,8 @@ bool CGame::InitScripts()
 		Console:PrintLine(%2)
 		Console:PrintLine(%1)
 		)",
-    0,
-    "Enum Display formats"
+	0,
+	"Enum Display formats"
   );
 #endif
 
@@ -1152,7 +1155,7 @@ bool CGame::TestScriptSystem(bool& retflag)
 	m_playerObject = m_pScriptSystem->CreateEmptyObject();
 	if (!m_pScriptSystem->GetGlobalValue("Player", m_playerObject))
 	{
-        m_playerObject->Release();
+		m_playerObject->Release();
 		m_pSystem->Log("\002 ERROR: can't find player table ");
 		return false;
 	}
@@ -1264,7 +1267,128 @@ bool CGame::SteamInit()
 		gEnv->pLog->Log("person name: %s", name);
 	}
 
-  gEnv->pLog->Log("steam api init: %d", bRet);
+	gEnv->pLog->Log("steam api init: %d", bRet);
 	return bRet;
 }
 
+void CGame::Gui::Update()
+{
+	{
+		static char var_buffer[256];
+		union CVarValue
+		{
+			int i;	
+			float f;	
+			const char* s;	
+		};
+		static CVarValue cvv;
+		static ICVar* cur_var	  = nullptr;
+
+		auto change_value = [&](ICVar* v) {
+			switch (v->GetType())
+			{
+			case CVAR_INT:
+			{
+				cvv.i = v->GetIVal();
+				break;
+			}
+			case CVAR_FLOAT:
+			{
+				cvv.f = v->GetFVal();
+				break;
+			}
+			case CVAR_STRING:
+			{
+				auto s = v->GetString();
+				auto l = strlen(s);
+				strncpy(var_buffer, s, l);
+				var_buffer[l] = 0;
+				cvv.s = var_buffer;
+				break;
+			}
+			default:
+				break;
+			}
+
+		};
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				ImGui::Separator();
+				if (ImGui::MenuItem("Quit"))
+				{
+					gEnv->pSystem->GetIGame()->SendMessage("Quit");
+				}
+				ImGui::EndMenu();
+			}
+		}
+		ImGui::EndMainMenuBar();
+		ControlPanel::AddEntry([&] {
+			ImGui::Button("Test");
+			if (ImGui::Button("Quit"))
+			{
+				gEnv->pSystem->GetIGame()->SendMessage("Quit");
+			}
+			//ImGui::BeginTooltip();
+			if (ImGui::Button("Show Vars"))
+			{
+				windows.console_vars = true;
+				gEnv->pConsole->DumpCVars(&vd);
+				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
+				change_value(cur_var);
+			}
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Open listbox with console variables");
+			//ImGui::EndTooltip();
+
+			if (windows.console_vars && ImGui::Begin("Console Variables", &windows.console_vars))
+			{
+				if (ImGui::ListBox("", &cvr, vd.vars.data(), vd.vars.size()))
+				{
+					cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
+					change_value(cur_var);
+				}
+				if (ImGui::IsItemHovered())
+					ImGui::SetTooltip("Help:\n%s", cur_var->GetHelp());
+				auto v = cur_var;
+				auto name = cur_var->GetName();
+				switch (v->GetType())
+				{
+				case CVAR_INT:
+				{
+					if (ImGui::InputInt(name, &cvv.i))
+					{
+						gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.i)).data());
+						//v->Set(cvv.i);
+					}
+					break;
+				}
+				case CVAR_FLOAT:
+				{
+					if (ImGui::InputFloat(name, &cvv.f))
+					{
+						gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.f)).data());
+						//v->Set(cvv.f);
+					}
+					break;
+				}
+				case CVAR_STRING:
+				{
+					if (ImGui::InputText(name, var_buffer, 256))
+					{
+						gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::string(cvv.s)).data());
+						//v->Set(cvv.s);
+					}
+					break;
+				}
+				default:
+					break;
+				}
+				
+				ImGui::End();
+			}
+		});
+	
+	}
+}

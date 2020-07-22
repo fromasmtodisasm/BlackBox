@@ -436,6 +436,30 @@ private: // ------------------------------------------------------------
 
 
 	void MainMenu();
+	class Gui
+	{
+	public:
+		struct Windows
+		{
+			bool console_vars = false;
+		};
+		struct VarDumper : public ICVarDumpSink
+		{
+			void OnElementFound(ICVar* pCVar) override 
+			{
+				vars.push_back(pCVar->GetName());	
+			}
+			std::vector<const char*> vars;
+				
+		};
+
+		void Update();
+	public:
+		Windows windows;
+		VarDumper vd;
+		int cvr = 0;
+	}m_Gui;
+
 
 public:
 	float m_deltaTime = 0.f;
@@ -543,6 +567,8 @@ public:
 	ICVar* cv_game_GliderDamping{};
 	ICVar* cv_game_GliderStartGravity{};
 	ICVar* cv_game_physics_quality{};
+
+	ICVar* g_NonSteam{};
 
 	int st_achivements_numHits = 0;
 
