@@ -439,10 +439,6 @@ private: // ------------------------------------------------------------
 	class Gui
 	{
 	public:
-		struct Windows
-		{
-			bool console_vars = false;
-		};
 		struct VarDumper : public ICVarDumpSink
 		{
 			void OnElementFound(ICVar* pCVar) override 
@@ -452,12 +448,36 @@ private: // ------------------------------------------------------------
 			std::vector<const char*> vars;
 				
 		};
-
+		struct Widget
+		{
+			virtual void Draw() = 0;
+		};
+		struct Windows : Widget
+		{
+			Windows();
+			virtual void Draw() override;
+			std::vector<std::shared_ptr<Widget>> widgets;
+		};
+		struct Graphics : Widget
+		{
+			virtual void Draw() override;
+			int num_resolutions;
+		};
+		struct Common : Widget
+		{
+			virtual void Draw() override;
+			bool console_vars = false;
+			VarDumper vd;
+			int cvr = 0;
+		};
+		
+		struct Input : Widget
+		{
+			virtual void Draw() override;
+		};
 		void Update();
 	public:
 		Windows windows;
-		VarDumper vd;
-		int cvr = 0;
 	}m_Gui;
 
 

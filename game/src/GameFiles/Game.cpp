@@ -1273,122 +1273,163 @@ bool CGame::SteamInit()
 
 void CGame::Gui::Update()
 {
-	{
-		static char var_buffer[256];
-		union CVarValue
-		{
-			int i;	
-			float f;	
-			const char* s;	
-		};
-		static CVarValue cvv;
-		static ICVar* cur_var	  = nullptr;
+	windows.Draw();
+}
 
-		auto change_value = [&](ICVar* v) {
+void CGame::Gui::Graphics::Draw()
+{
+	if (ImGui::TreeNode("Graphics"))
+	{
+		auto cnt = gEnv->pRenderer->EnumDisplayFormats(nullptr);
+		ImGui::TreePop();	
+	}
+}
+
+void CGame::Gui::Input::Draw()
+{
+	if (ImGui::TreeNode("Input"))
+	{
+		ImGui::TreePop();	
+	}
+}
+
+CGame::Gui::Windows::Windows()
+{
+	widgets.push_back(std::make_shared<Common>());
+	widgets.push_back(std::make_shared<Input>());
+	widgets.push_back(std::make_shared<Graphics>());
+}
+
+void CGame::Gui::Windows::Draw()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			ImGui::Separator();
+			if (ImGui::MenuItem("Quit"))
+			{
+				gEnv->pSystem->GetIGame()->SendMessage("Quit");
+			}
+			ImGui::EndMenu();
+		}
+	}
+	ImGui::EndMainMenuBar();
+	ControlPanel::AddEntry([&] {
+		for (const auto w : widgets)
+		{
+			w->Draw();
+			ImGui::Separator();
+		}
+
+	});
+}
+
+void CGame::Gui::Common::Draw()
+{
+	static char var_buffer[256];
+	union CVarValue
+	{
+		int i;	
+		float f;	
+		const char* s;	
+	};
+	static CVarValue cvv;
+	static ICVar* cur_var	  = nullptr;
+
+	auto change_value = [&](ICVar* v) {
+		switch (v->GetType())
+		{
+		case CVAR_INT:
+		{
+			cvv.i = v->GetIVal();
+			break;
+		}
+		case CVAR_FLOAT:
+		{
+			cvv.f = v->GetFVal();
+			break;
+		}
+		case CVAR_STRING:
+		{
+			auto s = v->GetString();
+			auto l = strlen(s);
+			strncpy(var_buffer, s, l);
+			var_buffer[l] = 0;
+			cvv.s = var_buffer;
+			break;
+		}
+		default:
+			break;
+		}
+
+	};
+
+	if (ImGui::TreeNode("Common"))
+	{
+		ImGui::Button("Test");
+		if (ImGui::Button("Quit"))
+		{
+			gEnv->pSystem->GetIGame()->SendMessage("Quit");
+		}
+		//ImGui::BeginTooltip();
+		if (ImGui::Checkbox("Show Vars", &console_vars))
+		{
+			gEnv->pConsole->DumpCVars(&vd);
+			cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
+			change_value(cur_var);
+		}
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Open listbox with console variables");
+		//ImGui::EndTooltip();
+
+		if (console_vars && ImGui::BeginChild("Console Variables"))
+		{
+			if (ImGui::ListBox("", &cvr, vd.vars.data(), vd.vars.size(), 10))
+			{
+				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
+				change_value(cur_var);
+			}
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Help:\n%s", cur_var->GetHelp());
+			auto v = cur_var;
+			auto name = cur_var->GetName();
 			switch (v->GetType())
 			{
 			case CVAR_INT:
 			{
-				cvv.i = v->GetIVal();
+				if (ImGui::InputInt(name, &cvv.i))
+				{
+					gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.i)).data());
+					//v->Set(cvv.i);
+				}
 				break;
 			}
 			case CVAR_FLOAT:
 			{
-				cvv.f = v->GetFVal();
+				if (ImGui::InputFloat(name, &cvv.f))
+				{
+					gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.f)).data());
+					//v->Set(cvv.f);
+				}
 				break;
 			}
 			case CVAR_STRING:
 			{
-				auto s = v->GetString();
-				auto l = strlen(s);
-				strncpy(var_buffer, s, l);
-				var_buffer[l] = 0;
-				cvv.s = var_buffer;
+				if (ImGui::InputText(name, var_buffer, 256))
+				{
+					gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::string(cvv.s)).data());
+					//v->Set(cvv.s);
+				}
 				break;
 			}
 			default:
 				break;
 			}
-
-		};
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				ImGui::Separator();
-				if (ImGui::MenuItem("Quit"))
-				{
-					gEnv->pSystem->GetIGame()->SendMessage("Quit");
-				}
-				ImGui::EndMenu();
-			}
+			
+			ImGui::EndChild();
 		}
-		ImGui::EndMainMenuBar();
-		ControlPanel::AddEntry([&] {
-			ImGui::Button("Test");
-			if (ImGui::Button("Quit"))
-			{
-				gEnv->pSystem->GetIGame()->SendMessage("Quit");
-			}
-			//ImGui::BeginTooltip();
-			if (ImGui::Button("Show Vars"))
-			{
-				windows.console_vars = true;
-				gEnv->pConsole->DumpCVars(&vd);
-				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
-				change_value(cur_var);
-			}
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Open listbox with console variables");
-			//ImGui::EndTooltip();
-
-			if (windows.console_vars && ImGui::Begin("Console Variables", &windows.console_vars))
-			{
-				if (ImGui::ListBox("", &cvr, vd.vars.data(), vd.vars.size()))
-				{
-					cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
-					change_value(cur_var);
-				}
-				if (ImGui::IsItemHovered())
-					ImGui::SetTooltip("Help:\n%s", cur_var->GetHelp());
-				auto v = cur_var;
-				auto name = cur_var->GetName();
-				switch (v->GetType())
-				{
-				case CVAR_INT:
-				{
-					if (ImGui::InputInt(name, &cvv.i))
-					{
-						gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.i)).data());
-						//v->Set(cvv.i);
-					}
-					break;
-				}
-				case CVAR_FLOAT:
-				{
-					if (ImGui::InputFloat(name, &cvv.f))
-					{
-						gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.f)).data());
-						//v->Set(cvv.f);
-					}
-					break;
-				}
-				case CVAR_STRING:
-				{
-					if (ImGui::InputText(name, var_buffer, 256))
-					{
-						gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::string(cvv.s)).data());
-						//v->Set(cvv.s);
-					}
-					break;
-				}
-				default:
-					break;
-				}
-				
-				ImGui::End();
-			}
-		});
-	
+		ImGui::TreePop();
 	}
+
 }
