@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Game CXX)
 
 #include(FetchContent)
-if (WIN32)
+if (CMAKE_COMPILER_ID STREQUAL "MSVC")
 	add_definitions("/ZI")
 endif()
 

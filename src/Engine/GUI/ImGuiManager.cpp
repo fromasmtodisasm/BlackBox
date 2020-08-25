@@ -533,7 +533,7 @@ static void ShowExampleAppCustomNodeGraph(bool* opened)
 	ImGui::End();
 }
 
-IRENDER_API IImGuiManager * CreateGUI(ISystem * pSystem)
+DLL_EXPORT IImGuiManager * CreateGUI(ISystem * pSystem)
 {
   return new ImGuiManager(pSystem);
 }

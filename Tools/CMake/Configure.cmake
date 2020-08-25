@@ -111,7 +111,7 @@ endif()
 if (OPTION_USE_GUI)
 	add_compile_definitions(ENABLE_DEBUG_GUI)
 endif()
-if (WIN32)
+if (CMAKE_COMPILER_ID STREQUAL "MSVC")
 	add_definitions("/ZI")
 endif()
 

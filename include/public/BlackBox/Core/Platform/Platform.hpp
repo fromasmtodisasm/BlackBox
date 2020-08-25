@@ -96,9 +96,9 @@ typedef unsigned int        UINT;
 typedef unsigned int        *PUINT;
 
 
-#if defined(__GNUC__)
-	#define DLL_EXPORT __attribute__ ((visibility("default")))
-	#define DLL_IMPORT __attribute__ ((visibility("default")))
+#if defined(WIN32) && defined(__GNUC__)
+	#define DLL_EXPORT __attribute__ ((dllexport))
+	#define DLL_IMPORT __attribute__ ((dllimport))
 #else
 	#define DLL_EXPORT __declspec(dllexport)
 	#define DLL_IMPORT __declspec(dllimport)

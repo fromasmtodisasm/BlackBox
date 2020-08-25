@@ -54,11 +54,11 @@ namespace
 		auto L = CryLoadLibrary(lib_name);
 		if (L)
 		{
-      gEnv->pSystem->Log("Library found");
+			gEnv->pSystem->Log("Library found");
 			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
 			if (P)
 			{
-        gEnv->pSystem->Log("Entrypoint found");
+				gEnv->pLog->Log("Entrypoint [%s] found", proc_name);
 				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
 				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
 				if (pfnModuleInitISystem)
@@ -67,12 +67,16 @@ namespace
 				}
 				return f(P);
 			}
+			else
+			{
+				gEnv->pLog->Log("Entrypoint %s not found", proc_name);
+			}
 			return false;
 		}
-    else
-    {
-      gEnv->pSystem->Log("Library not found");
-    }
+		else
+		{
+		  gEnv->pSystem->Log("Library not found");
+		}
 		return false;
 	}
 } // namespace
