@@ -81,7 +81,7 @@ void CSystemEventDispatcher::Update()
     OnSystemEvent(params.event, params.wparam, params.lparam);
   }
 }
-uint CSystemEventDispatcher::RegisterEvent(const char* EventName)
+uint CSystemEventDispatcher::RegisterEvent(const string& EventName)
 {
 	if (auto it = m_UserEvents.find(EventName); it != m_UserEvents.end())
 	{

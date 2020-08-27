@@ -4,5 +4,6 @@
 
 #ifndef BLACKBOX_WIN64_EVENTS_H
 #define BLACKBOX_WIN64_EVENTS_H
-#define InputNewFrame "Input_NewFrame"
+//#define InputNewFrame "Input_NewFrame"
+static constexpr const char* InputNewFrame = "Input_NewFrame";
 #endif //BLACKBOX_WIN64_EVENTS_H

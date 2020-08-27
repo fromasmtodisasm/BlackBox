@@ -29,6 +29,7 @@ target_sources(${PROJECT_NAME}
 
 #add_package(imgui CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 # FIXME: work around input system
 add_sdl()

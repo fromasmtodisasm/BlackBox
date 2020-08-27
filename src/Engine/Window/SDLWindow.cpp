@@ -95,7 +95,8 @@ void CSDLWindow::show()
 
 void CSDLWindow::handleEvent(SDL_Event& event)
 {
-#define SDL_Log(format, ...) gEnv->pLog->Log(format, __VA_ARGS__)
+//#define SDL_Log(format, ...) gEnv->pLog->Log(format, __VA_ARGS__)
+#define SDL_Log(format, ...) 
 	auto& system = gEnv->pSystem;
   if (event.type == SDL_WINDOWEVENT) {
     g_CurrentWindow = SDL_GetWindowFromID(event.window.windowID);

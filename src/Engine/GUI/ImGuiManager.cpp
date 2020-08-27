@@ -1,14 +1,5 @@
 #define IRENDER_EXPORTS
-#include <BlackBox/Core/Platform/platform_impl.inl>
-#include <BlackBox/GUI/ImGuiManager.hpp>
-
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/IConsole.hpp>
-
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
-
-#include "imgui.h"
+#if 0
 #include "ImGuiInput.hpp"
 #include "ImGuiRenderer.hpp"
 #include "MemoryEditor.h"
@@ -532,8 +523,4 @@ static void ShowExampleAppCustomNodeGraph(bool* opened)
 
 	ImGui::End();
 }
-
-DLL_EXPORT IImGuiManager * CreateGUI(ISystem * pSystem)
-{
-  return new ImGuiManager(pSystem);
-}
+#endif

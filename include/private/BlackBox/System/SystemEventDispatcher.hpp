@@ -18,7 +18,7 @@ public:
 
   virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam, bool force_queue = false);
   virtual void Update();
-  uint RegisterEvent(const char* EventName) override;
+  uint RegisterEvent(const string& EventName) override;
 
   // ~ISystemEventDispatcher
 private:
@@ -39,7 +39,7 @@ private:
   TSystemEventQueue  m_systemEventQueue;
 
 	;
-	std::map<const char*, uint> m_UserEvents;
+	std::map<string, uint> m_UserEvents;
 };
 
 #endif //__SYSTEMEVENTDISPATCHER_H__

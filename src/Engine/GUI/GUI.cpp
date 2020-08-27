@@ -1,43 +1,23 @@
-#if 0
-#include <BlackBox/GUI/GUI.hpp>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
-void MenuItem::execute()
+#include <BlackBox/GUI/ImGuiManager.hpp>
+
+#include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
+
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
+
+#include "imgui.h"
+#define IMGUI_VANILA_MANAGER
+
+#ifdef IMGUI_VANILA_MANAGER
+#include "ImGuiVanilaManager.cpp"
+#else
+#include "ImGuiManager.cpp"
+#endif // VANILA_MANAGER
+
+DLL_EXPORT IImGuiManager * CreateGUI(ISystem * pSystem)
 {
+  return new ImGuiManager(pSystem);
 }
-
-void Menu::execute()
-{
-  for (auto& item : items)
-  {
-    if (ImGui::MenuItem(item->name))
-    {
-      item->execute();
-    }
-  }
-}
-
-void MainMenu::execute()
-{
-  if (ImGui::BeginMainMenuBar())
-  {
-    //
-    size = ImGui::GetWindowSize();
-    for (auto& menu : menus)
-    {
-      if (ImGui::BeginMenu(menu->name))
-      {
-        menu->execute();
-        ImGui::EndMenu();
-      }
-    }
-    ImGui::EndMainMenuBar();
-  }
-}
-
-#endif // GUI
-
-#include <BlackBox/GUI/GUI.hpp>
-//IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_Init(const char* glsl_version = NULL);
-//IMGUI_IMPL_API void     ImGui_ImplOpenGL3_NewFrame();
-//IMGUI_IMPL_API void     ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data);
-
