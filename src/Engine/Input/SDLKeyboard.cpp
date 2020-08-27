@@ -1,5 +1,7 @@
 #include <BlackBox/Input/SDLKeyboard.hpp>
 #include <BlackBox/Input/SDLMouse.hpp>
+#include <BlackBox/Input/Events.h>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <SDL2/SDL.h>
@@ -8,10 +10,13 @@
 
 #define KEYBOARD_MAX_PEEP 64
 
+static uint KeyboardEvent = 0;
+
 CSDLKeyboard::CSDLKeyboard(CLinuxInput& input) :
   CLinuxInputDevice(input, "SDL Keyboard")
 {
   m_deviceType = eIDT_Keyboard;
+	KeyboardEvent = gEnv->pSystem->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
 }
 
 CSDLKeyboard::~CSDLKeyboard()
@@ -143,6 +148,7 @@ void CSDLKeyboard::Update(bool focus)
       // Unexpected event type.
       abort();
     }
+    gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESystemEvent(KeyboardEvent), UINT_PTR(gEnv->pRenderer->GetCurrentContextHWND()), UINT_PTR(&eventList[i]));
   }
 }
 

@@ -1,6 +1,8 @@
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <cassert>
 
+static const uint UserEventBase = 0x100;
+
 CSystemEventDispatcher::CSystemEventDispatcher()
 
 {
@@ -78,4 +80,14 @@ void CSystemEventDispatcher::Update()
     m_systemEventQueue.pop();
     OnSystemEvent(params.event, params.wparam, params.lparam);
   }
+}
+uint CSystemEventDispatcher::RegisterEvent(const char* EventName)
+{
+	if (auto it = m_UserEvents.find(EventName); it != m_UserEvents.end())
+	{
+		return it->second;
+	}
+	uint event = m_UserEvents.size() + UserEventBase;
+	m_UserEvents[EventName] = event;
+	return event;
 }

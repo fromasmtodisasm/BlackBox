@@ -45,7 +45,7 @@ struct ICryPak;
 #define DATA_FOLDER "res"
 
 //! System wide events.
-enum ESystemEvent
+enum ESystemEvent : uint
 {
 	//! Changes to main window focus.
 	//! wparam is not 0 is focused, 0 if not focused.
@@ -130,6 +130,8 @@ struct ISystemEventDispatcher
 
   virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam, bool force_queue = false) = 0;
   virtual void Update() = 0;
+
+  virtual uint RegisterEvent(const char* EventName) = 0;
 
   //virtual void OnLocaleChange() = 0;
   // </interfuscator:shuffle>

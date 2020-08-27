@@ -1,4 +1,5 @@
 #include <BlackBox/Input/SDLMouse.hpp>
+#include <BlackBox/Input/Events.h>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -33,12 +34,15 @@
 #undef LINUXINPUT_AUTOGRAB
 #endif
 
+static uint KeyboardEvent = 0;
+
 CSDLMouse::CSDLMouse(CLinuxInput& input) :
   CLinuxInputDevice(input, "SDL Mouse"),
   m_bGrabInput(false)
 {
   m_deviceType = eIDT_Mouse;
   m_pRenderer = GetISystem()->GetIRenderer();
+  KeyboardEvent = gEnv->pSystem->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
 }
 
 CSDLMouse::~CSDLMouse()
@@ -264,6 +268,7 @@ void CSDLMouse::Update(bool focus)
       // Unexpected event type.
       abort();
     }
+    gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESystemEvent(KeyboardEvent), UINT_PTR(gEnv->pRenderer->GetCurrentContextHWND()), UINT_PTR(&eventList[i]));
   }
   // Generate mouse motion events when running without exclusive input.
   /*if (!m_bGrabInput)
