@@ -610,6 +610,7 @@ void CGame::saveScene(std::string name, std::string as)
 
 void CGame::SetRenderState()
 {
+#if 0
 	m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
 	m_pRender->SetState(IRenderer::State::BLEND, false);
 	if (culling)
@@ -621,6 +622,7 @@ void CGame::SetRenderState()
 	{
 		m_pRender->SetState(IRenderer::State::CULL_FACE, false);
 	}
+#endif
 }
 
 void CGame::setPlayer(CPlayer* player)

@@ -12,7 +12,7 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener
 {
   public:
 	
-	ImGuiManager::ImGuiManager(ISystem* pSystem)
+	ImGuiManager(ISystem* pSystem)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -80,9 +80,14 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener
 	void NewFrame() override
 	{
 		// Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame((SDL_Window*)gEnv->pRenderer->GetCurrentContextHWND());
-        ImGui::NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame((SDL_Window*)gEnv->pRenderer->GetCurrentContextHWND());
+		ImGui::NewFrame();
+		if (auto v = gEnv->pConsole->GetCVar("gui_docking"); v)
+		{
+			if (v->GetIVal())
+				ShowExampleAppDockSpace(&show_demo_window);
+		}
 	}
 	void Render() override
 	{

@@ -9,7 +9,6 @@
 #include <iostream>
 #include <ctime>
 #include <iomanip>
-#include <sstream>
 #include <filesystem>
 using namespace std;
 namespace fs = std::filesystem;
@@ -39,10 +38,10 @@ int main(int argc, char* argv[]) {
   {
     pSystem->GetILog()->Log("ISystem created");
     pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
-		gEnv = pSystem->GetGlobalEnvironment();
-		MainWindow mainWindow;
+	gEnv = pSystem->GetGlobalEnvironment();
+	MainWindow mainWindow;
 
-    while (mainWindow.Update())
+	while (mainWindow.Update())
 			;
     status = EXIT_SUCCESS;
   }

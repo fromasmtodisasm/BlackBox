@@ -4,7 +4,7 @@ project(Editor CXX)
 add_executable(${PROJECT_NAME} 
 	Main.cpp
 	MainWindow.cpp
-    "Resource.rc"
+    #"Resource.rc"
 )
 target_link_libraries(Editor PRIVATE  BlackBox)
 target_link_libraries(Editor PRIVATE  System)
