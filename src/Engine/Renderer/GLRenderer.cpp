@@ -694,7 +694,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	model = glm::scale(model, {w, h, 1.f});
 
 	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(s1 - s0, t1 - t0, 1.0f));
-	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
+	uv_projection = glm::translate(uv_projection, glm::vec3(s0, t0, 0.f));
 
 	{
 		m_ScreenShader->Uniform(projection, "projection");

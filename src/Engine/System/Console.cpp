@@ -156,7 +156,16 @@ void CConsole::Draw()
   if (!m_nProgressRange)
   {
     render->SetRenderTarget(0);
-    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, 0, 2, 5, 1, 1, 1, 1, transparency);
+    #if 0
+    auto left = fmod(time * r_anim_speed->GetFVal(), 5);
+    auto right = fmod(time * r_anim_speed->GetFVal() + 5, 5);
+    #endif
+	auto as	   = r_anim_speed->GetFVal();
+    auto left = as * GetISystem()->GetIRenderer()->GetFrameID() / 60.f;
+    auto right = as * (GetISystem()->GetIRenderer()->GetFrameID()) / 60.f + 3.f;
+    render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, 0, 0, 0, 5, 1, 1, 1, 1, 1);
+    render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, left, 0, right, 1, 1, 1, 1, 1);
+    render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, -left, 0, -right, 1, 1, 1, 1, transparency);
     CalcMetrics(end);
     m_Font->SetXPos(0);
     m_Font->SetYPos(16);
