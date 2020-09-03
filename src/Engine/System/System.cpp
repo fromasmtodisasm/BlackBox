@@ -1184,6 +1184,46 @@ void CSystem::OnVarUnregister(ICVar* pVar)
 {
 }
 
+void CSystem::RenderStatistics()
+{
+}
+
+const char* CSystem::GetUserName()
+{
+	
+#if BB_PLATFORM_WINDOWS
+	static const int iNameBufferSize = 1024;
+	static char szNameBuffer[iNameBufferSize];
+	memset(szNameBuffer, 0, iNameBufferSize);
+
+	DWORD dwSize = iNameBufferSize;
+	wchar_t nameW[iNameBufferSize];
+	::GetUserNameW(nameW, &dwSize);
+	strcpy(szNameBuffer, wstr_to_str(nameW).c_str());
+	return szNameBuffer;
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID
+	static uid_t uid = geteuid();
+	static struct passwd* pw = getpwuid(uid);
+	if (pw)
+	{
+		return  (pw->pw_name);
+	}
+	else
+	{
+		return NULL;
+	}
+#elif BB_PLATFORM_APPLE
+	static const int iNameBufferSize = 1024;
+	static char szNameBuffer[iNameBufferSize];
+	if (AppleGetUserName(szNameBuffer, iNameBufferSize))
+		return szNameBuffer;
+	else
+		return "";
+#else
+	return "";
+#endif
+}
+
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {

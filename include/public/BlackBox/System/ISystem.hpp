@@ -249,10 +249,10 @@ private:
 
 struct ISystem
 {
-  enum MessageType {
-    M_ERROR,
-    M_WARNING
-  };
+	enum MessageType {
+		M_ERROR,
+		M_WARNING
+	};
 
 	// Begin rendering frame.
 	virtual void	RenderBegin() = 0;
@@ -260,6 +260,16 @@ struct ISystem
 	virtual void	Render() = 0;
 	// End rendering frame and swap back buffer.
 	virtual void	RenderEnd() = 0;
+
+	// Renders the statistics; this is called from RenderEnd, but if the 
+	// Host application (Editor) doesn't employ the Render cycle in ISystem,
+	// it may call this method to render the essencial statistics
+	virtual void RenderStatistics () = 0;
+
+	// Retrieve the name of the user currently logged in to the computer
+	virtual const char *GetUserName() = 0;
+
+
 
 
   virtual bool Init() = 0;

@@ -31,8 +31,8 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 	{
 		if (*c == '\n')
 		{
-			posX = x = 0;
-			posY	 = y += 18;
+			posX = x = 4;
+			posY	 = y += m_Height;
 			continue;
 		}
 		if (*c >= 0 && *c <= 255 && iscntrl(*c))
@@ -101,7 +101,7 @@ bool operator< (const test_size& a, const test_size& b) {
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-
+	m_Height = h;
 	std::set<test_size> test;
 	shader = gEnv->pRenderer->Sh_Load("sprite.vs", "sprite.frag");
 	if (!shader)

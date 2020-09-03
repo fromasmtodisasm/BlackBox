@@ -116,11 +116,49 @@ public:
   }
 };
 
+//////////////////////////////////////////////////////////////////////////
+int CConsole::con_display_last_messages = 0;
+int CConsole::con_line_buffer_size = 500;
+float CConsole::con_font_size = 14;
+int CConsole::con_showonload = 0;
+int CConsole::con_debug = 0;
+int CConsole::con_restricted = 0;
+
+CConsole::CConsole()
+  :
+  m_pBackGround(nullptr)
+{
+  //prompt = user + " #";
+  AddCommand("help", new HelpCommand());
+  AddCommand("set", new SetCommand(this));
+  AddCommand("get", new GetCommand(this));
+  AddCommand("dump", new DumpCommand(this));
+  m_MessageBuffer.resize(MESSAGE_BUFFER_SIZE);
+}
+CConsole::~CConsole()
+{
+  if (m_Font) delete m_Font;
+  if (m_pBackGround) delete m_pBackGround;
+
+	if (!m_mapVariables.empty())
+	{
+		while (!m_mapVariables.empty())
+			m_mapVariables.begin()->second->Release();
+
+		m_mapVariables.clear();
+	}
+}
+
 void CConsole::SetImage(ITexture* pTexture)
 {
   if (m_pBackGround != nullptr)
     delete m_pBackGround;
   m_pBackGround = pTexture;
+}
+
+ITexPic* CConsole::GetImage()
+{
+	return nullptr;
 }
 
 void CConsole::Update()
@@ -141,57 +179,46 @@ void CConsole::Update()
 
 void CConsole::Draw()
 {
-  if (!isOpened) return;
-  auto deltatime = GetISystem()->GetDeltaTime();
-  if (!m_pRenderer)
-  {
+	if (!isOpened) return;
+	auto deltatime = GetISystem()->GetDeltaTime();
+	if (!m_pRenderer)
+	{
 	  return;
-  }
-  auto render = m_pRenderer;
-  //m_ScrollHeight = (float)(render->GetHeight()) / 2;
-  Animate(deltatime, render);
-  size_t end;
-  auto prompt = getPrompt();
-  time += GetISystem()->GetDeltaTime();
-  if (!m_nProgressRange)
-  {
-    render->SetRenderTarget(0);
-    #if 0
-    auto left = fmod(time * r_anim_speed->GetFVal(), 5);
-    auto right = fmod(time * r_anim_speed->GetFVal() + 5, 5);
-    #endif
-	auto as	   = r_anim_speed->GetFVal();
-    auto left = as * GetISystem()->GetIRenderer()->GetFrameID() / 60.f;
-    auto right = as * (GetISystem()->GetIRenderer()->GetFrameID()) / 60.f + 3.f;
-    render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, 0, 0, 0, 5, 1, 1, 1, 1, 1);
-    render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, left, 0, right, 1, 1, 1, 1, 1);
-    render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, -left, 0, -right, 1, 1, 1, 1, transparency);
-    CalcMetrics(end);
-    m_Font->SetXPos(0);
-    m_Font->SetYPos(16);
-    for (on_line = current_line; on_line < end; on_line++)
-    {
-      printLine(on_line);
-    }
-    for (auto& element : prompt)
-    {
-      printText(element, line_count - 1);
-    }
-    //auto cursor = needShowCursor() ? "*" : " ";
-    //command_text.replace(command_text.size() - 1, 1, 1, cursor);
-    //command_text[command.length()] = cursor;
+	}
+	auto render = m_pRenderer;
+	ScrollConsole();
+	//Animate(deltatime, render);
+	time += GetISystem()->GetDeltaTime();
+	if (m_nScrollPos <= 0)
+	{
+		DrawBuffer(70, "console");
+	}
+	else
+	{
+		if (!m_nProgressRange)
+		{
+			render->SetRenderTarget(0);
+			//auto as	   = r_anim_speed->GetFVal();
+			auto as	   = 0.01;
+			auto left = as * GetISystem()->GetIRenderer()->GetFrameID() / 60.f;
+			auto right = as * (GetISystem()->GetIRenderer()->GetFrameID()) / 60.f + 3.f;
+			render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, left, 0, right, 1, 1, 1, 1, 1);
+			render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, -left, 0, -right, 1, 1, 1, 1, transparency);
+		}
+		else
+		{
+			// draw progress bar
+			//render->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
+			render->DrawImage(0.0, 0.0, 800.0f, 600.0f, m_nLoadingBackTexID, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 1.0);
+		}
 
-    //printText(Text(std::string("cursor:<" + std::string(cursor) + ">\n"), textColor, 1.0f), 0);
-    printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
-    printText(Text(std::string(m_CommandA), textColor, 1.0f), 0);
-    drawCursor();
-  }
-  else
-  {
-    // draw progress bar
-    //render->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
-    render->DrawImage(0.0, 0.0, 800.0f, 600.0f, m_nLoadingBackTexID, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 1.0);
-  }
+        if (m_nProgressRange)
+			render->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_nLoadingBackTexID, 0.0f, 1.0f, 1.0f, 0.0f, 1,1,1,1);
+
+        DrawBuffer(m_nScrollPos, "console");
+
+	}
+
   /*m_Font->RenderText(
     command_text + "\n",
     m_Font->GetXPos(), height / 2 - line_count * line_height - line_height, 1.0f, textColor);
@@ -221,8 +248,8 @@ void CConsole::Animate(float deltatime, IRenderer* render)
 
 void CConsole::CalcMetrics(size_t& end)
 {
-  constexpr int MAGIC = 1;
-  line_in_console = (int)((m_ScrollHeight)) / (int)line_height;
+  constexpr int MAGIC = 2;
+  line_in_console = (int)((m_ScrollHeight) - 8) / (int)con_font_size;
   auto num_all_lines = m_CmdBuffer.size();
   if (line_in_console > num_all_lines)
   {
@@ -233,12 +260,14 @@ void CConsole::CalcMetrics(size_t& end)
   else
   {
     current_line = num_all_lines - line_in_console + MAGIC;
+    #if 0
     if (/*page_up && */current_line > 0)
       current_line++;
     else if (/*page_dn && */current_line < m_CmdBuffer.size() - line_in_console)
     {
       current_line--;
     }
+    #endif
     line_count = line_in_console - MAGIC;
     end = num_all_lines;
   }
@@ -721,7 +750,7 @@ void CConsole::drawCursor()
   auto curr_y = m_Font->GetYPos();
   m_Font->RenderText(
     m_Cursor.data,
-    m_Font->CharWidth('#') + m_Font->TextWidth(m_CommandA.substr(0, static_cast<int>(m_Cursor.x))), curr_y, 1.0f, &glm::vec4(m_Cursor.color, 1.0)[0]);
+    4 + m_Font->CharWidth('#') + m_Font->TextWidth(m_CommandA.substr(0, static_cast<int>(m_Cursor.x))), curr_y, 1.0f, &glm::vec4(m_Cursor.color, 1.0)[0]);
 }
 
 void CConsole::moveCursor(bool left, bool wholeWord)
@@ -1070,6 +1099,69 @@ void CConsole::InitInputBindings()
 	CreateBinding(CreateInputEvent(eKI_2, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
 }
 
+void CConsole::ScrollConsole()
+{
+	if (!m_pRenderer)
+		return;
+
+	int nCurrHeight = m_pRenderer->GetHeight();
+
+	switch (m_sdScrollDir)
+	{
+	case sdDOWN:
+		m_nScrollPos = m_nTempScrollMax;
+
+		if (m_nScrollPos > m_nTempScrollMax)
+		{
+			m_nScrollPos = m_nTempScrollMax;
+			m_sdScrollDir = sdNONE;
+		}
+		break;
+	case sdUP:
+		m_nScrollPos -= nCurrHeight / 2;
+
+		if (m_nScrollPos < 0)
+		{
+			m_nScrollPos = 0;
+			m_sdScrollDir = sdNONE;
+		}
+		break;
+	case sdNONE:
+		break;
+	}
+
+}
+
+void CConsole::DrawBuffer(int nScrollPos, const char* szEffect)
+{
+
+	const float fontSize = con_font_size;
+	const float csize = 0.8f * fontSize;
+	const float fCharWidth = 0.5f * fontSize;
+
+	float yPos = nScrollPos - csize - 3.0f;
+	const float xPos = LINE_BORDER;
+
+
+	size_t end;
+	auto prompt = getPrompt();
+	CalcMetrics(end);
+	m_Font->SetXPos(4);
+	m_Font->SetYPos(con_font_size + 4);
+	for (on_line = current_line; on_line < end; on_line++)
+	{
+	  printLine(on_line);
+	}
+	for (auto& element : prompt)
+	{
+	  printText(element, line_count - 1);
+	}
+
+	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
+	printText(Text(std::string(m_CommandA), textColor, 1.0f), 0);
+	drawCursor();
+}
+
 const char* CConsole::FindKeyBind(const char* sCmd)
 {
 	ConsoleBindsMap::const_iterator it = m_mapBinds.find(sCmd);
@@ -1200,12 +1292,20 @@ bool CConsole::Init(ISystem* pSystem)
   m_pInput = pSystem->GetIInput();
 #pragma warning(push)
 #pragma warning(disable: 4244)
-  m_Font = getFont("arial.ttf", 16, line_height);
+  m_Font = getFont("arial.ttf", con_font_size, con_font_size);
 #pragma warning(pop)
   const char* texture_path = "console/defaultconsole.dds";
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
   m_Cursor.blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");
+
+	REGISTER_CVAR(con_display_last_messages, 0, VF_NULL, "");  // keep default at 1, needed for gameplay
+	REGISTER_CVAR(con_line_buffer_size, 1000, VF_NULL, "");
+	REGISTER_CVAR(con_font_size, 14, VF_NULL, "");
+	REGISTER_CVAR(con_showonload, 0, VF_NULL, "Show console on level loading");
+	REGISTER_CVAR(con_debug, 0, VF_CHEAT, "Log call stack on every GetCVar call");
+	REGISTER_CVAR(con_restricted, con_restricted, VF_RESTRICTEDMODE, "0=normal mode / 1=restricted access to the console");        // later on VF_RESTRICTEDMODE should be removed (to 0)
+
 
   if (!gEnv->IsDedicated())
   {
@@ -1669,31 +1769,6 @@ void CConsole::ExecuteFile(const char* file)
     doFile(f);
     scripts[file] = std::move(f);
   }
-}
-
-CConsole::CConsole()
-  :
-  m_pBackGround(nullptr)
-{
-  //prompt = user + " #";
-  AddCommand("help", new HelpCommand());
-  AddCommand("set", new SetCommand(this));
-  AddCommand("get", new GetCommand(this));
-  AddCommand("dump", new DumpCommand(this));
-  m_MessageBuffer.resize(MESSAGE_BUFFER_SIZE);
-}
-CConsole::~CConsole()
-{
-  if (m_Font) delete m_Font;
-  if (m_pBackGround) delete m_pBackGround;
-
-	if (!m_mapVariables.empty())
-	{
-		while (!m_mapVariables.empty())
-			m_mapVariables.begin()->second->Release();
-
-		m_mapVariables.clear();
-	}
 }
 
 void CConsole::ShowConsole(bool show)

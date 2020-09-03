@@ -174,7 +174,10 @@ private:
   HWND m_HWND;
   void* context;
 
-  Vec3 m_clearColor = {0.2, 0.2, 0.2};
+  Vec3 m_clearColor = {
+	  //0.2, 0.2, 0.2
+	  0.0, 0.0, 0.0
+  };
   float m_clearDepth;
 
   int m_CurrentTarget;

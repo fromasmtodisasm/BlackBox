@@ -18,6 +18,7 @@ public:
     FT_Pos     Advance;    // Offset to advance to next glyph
   };
   float posX = 0, posY = 0;
+  float m_Height = 0;
 
   FreeTypeFont() :
     face(nullptr),

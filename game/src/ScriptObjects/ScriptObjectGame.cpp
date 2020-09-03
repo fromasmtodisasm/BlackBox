@@ -25,6 +25,7 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
   _ScriptableEx<CScriptObjectGame>::InitializeTemplate(pSS);
   #undef SCRIPT_REG_CLASSNAME
   #define SCRIPT_REG_CLASSNAME CScriptObjectGame
+  SCRIPT_REG_FUNC(GetUserName);
   SCRIPT_REG_FUNC(SendMessage);
   SCRIPT_REG_FUNC(Stop);
   SCRIPT_REG_FUNC(gotoMenu);
@@ -142,6 +143,13 @@ void CScriptObjectGame::OnNETServerTimeout(CIPAddress& ip)
     m_pScriptSystem->EndCall();
   }
   m_pScriptSystem->ReleaseFunc(pfOnNETServerTimeout);
+}
+
+int CScriptObjectGame::GetUserName(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(0);
+
+	return pH->EndFunction(m_pSystem->GetUserName());
 }
 
 int CScriptObjectGame::SendMessage(IFunctionHandler* pH)

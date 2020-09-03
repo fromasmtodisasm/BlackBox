@@ -18,6 +18,9 @@ public:
 	void OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo);
 	void OnNETServerTimeout(CIPAddress& ip);
 
+  public:
+	int GetUserName(IFunctionHandler* pH);
+
 	int SendMessage(IFunctionHandler* pH);
 
 	int Stop(IFunctionHandler *pH);

@@ -18,6 +18,17 @@
 #define stricmp _stricmp
 #endif // !stricmp
 
+#define MAX_HISTORY_ENTRIES 50
+#define LINE_BORDER         10
+
+enum ScrollDir
+{
+	sdDOWN,
+	sdUP,
+	sdNONE
+};
+
+
 struct AnimationParams
 {
   bool animate = false;
@@ -243,14 +254,14 @@ using VarSinkList = std::vector<IConsoleVarSink*>;
 
 struct ConsolePrompt
 {
-  std::string user = "root";
+  std::string user = gEnv->pSystem->GetUserName();
   std::string pc = "HackMan";
   std::string env = "BlackBox";
   std::string cd = "~"; //current directory
   Vec3 color = glm::vec3(0.0, 1.0, 0.0);
 
   ConsolePrompt(
-    std::string user = "root",
+    std::string user = gEnv->pSystem->GetUserName(),
     std::string pc = "HackMan",
     std::string env = "BlackBox",
     std::string cd = "~",//current directory
@@ -317,6 +328,12 @@ public:
   bool Init(ISystem* pSystem);
   virtual void ShowConsole(bool show) override;
   virtual void SetImage(ITexture* pTexture) override;
+  virtual struct ITexPic *GetImage() override;
+  virtual void StaticBackground(bool bStatic) override
+  {
+	  m_bStaticBackground = bStatic;
+  };
+
   virtual void Update() override;
   virtual void Draw() override;
   void Animate(float deltatime, IRenderer* render);
@@ -409,11 +426,18 @@ private:
 
   IFont* getFont(const char* name, float w, float h);
 	void InitInputBindings();
+
+	void ScrollConsole();
+	void DrawBuffer(int nScrollPos, const char* szEffect);
+
 private:
   VarSinkList varSinks;
   CommandMap m_Commands;
   std::wstring m_CommandW;
   std::string m_CommandA;
+
+	ScrollDir                      m_sdScrollDir;
+
 
   IFont* m_Font = nullptr;
   bool isOpened = false;
@@ -432,7 +456,7 @@ private:
   //
   size_t line_count = 0;
   size_t line_in_console = 0;
-  size_t line_height = 18;
+  size_t line_height = con_font_size;
   size_t current_line = 0;
   size_t on_line = 0;
 
@@ -442,7 +466,7 @@ private:
   std::string m_MessageBuffer;
   ConsolePrompt m_Prompt;
 
-  glm::vec3 textColor = glm::vec3(1.0, 1.0, 0.0);
+  glm::vec3 textColor = glm::vec3(1.0, 1.0, 1.0);
 
   VariablesMap m_mapVariables;
   ConfigVar m_ConfigVars;
@@ -470,21 +494,27 @@ private:
 
   // --------------------------------------------------------------------------------
 
-  bool                           m_bStaticBackground = 1;
-  int                            m_nLoadingBackTexID = -1;
-  int                            m_nWhiteTexID = 0;
-  int                            m_nProgress = 0;
-  int                            m_nProgressRange = 0;
+	bool                           m_bStaticBackground = true;
+	int                            m_nLoadingBackTexID = -1;
+	int                            m_nWhiteTexID = 0;
+	int                            m_nProgress = 0;
+	int                            m_nProgressRange = 0;
 
-  int                            m_nScrollPos;
-  int                            m_nTempScrollMax;          // for currently opened console, reset to m_nScrollMax
-  int                            m_nScrollMax;              //
-  int                            m_nScrollLine;
-  int                            m_nHistoryPos;
-  size_t                         m_nCursorPos;                // x position in characters
+	int                            m_nScrollPos = 300;
+	int                            m_nTempScrollMax;          // for currently opened console, reset to m_nScrollMax
+	int                            m_nScrollMax = 300;        //
+	int                            m_nScrollLine;
+	int                            m_nHistoryPos;
+	size_t                         m_nCursorPos;                // x position in characters
 
 	bool                           m_bConsoleActive;
 
+	static int                     con_display_last_messages;
+	static int                     con_line_buffer_size;
+	static float                   con_font_size;
+	static int                     con_showonload;
+	static int                     con_debug;
+	static int                     con_restricted;
                                                               // Inherited via IConsole
   virtual const char* FindKeyBind(const char* sCmd) override;
 

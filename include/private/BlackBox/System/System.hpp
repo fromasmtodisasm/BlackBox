@@ -227,6 +227,10 @@ private:
   // Inherited via IConsoleVarSink
   virtual void OnAfterVarChange(ICVar* pVar) override;
   virtual void OnVarUnregister(ICVar* pVar) override;
+
+  // Inherited via ISystem
+  virtual void RenderStatistics() override;
+  virtual const char* GetUserName() override;
 };
 
 void AddInternalCommands(ISystem* pSystem);
