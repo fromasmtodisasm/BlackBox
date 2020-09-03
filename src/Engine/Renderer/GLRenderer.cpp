@@ -144,7 +144,10 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 		char buffer[32];
 		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 		auto dm = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
-		m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr, false));
+		m_RenderTargets.push_back(Texture::create(
+			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),  
+			TextureType::LDR_RENDER_TARGET, buffer)
+		);
 	}
 
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
@@ -690,7 +693,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
 
-	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(1.f, 1.f, 1.0f));
+	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(s1 - s0, t1 - t0, 1.0f));
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, 0, 0.f));
 
 	{
@@ -784,7 +787,10 @@ int GLRenderer::CreateRenderTarget()
 	char buffer[32];
 	snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 	auto dm = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
-	m_RenderTargets.push_back(Texture::create(dm->w, dm->h, TextureType::LDR_RENDER_TARGET, false, buffer, false, nullptr, true));
+	m_RenderTargets.push_back(Texture::create(
+		Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),  
+		TextureType::LDR_RENDER_TARGET, buffer, false, true)
+	);
 	return m_RenderTargets.back()->getId();
 }
 

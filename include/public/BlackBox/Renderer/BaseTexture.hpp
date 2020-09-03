@@ -14,11 +14,21 @@ public:
   int width;
   int height;
   int bpp;
-  uint8_t* data;
+  std::vector<uint8_t> data;
+  bool compressed = false;
+  int format;
+  uint blockSize = 0;
+  uint mipMapCount = 0;
 
-  Image() : width(0), height(0), bpp(0), data(nullptr) {}
+
+  Image() : width(0), height(0), bpp(0)  {}
+  Image(int w, int h, int bpp, std::vector<uint8_t>&& data, bool compressed = false, int format = 0, uint bs = 0, uint mMC = 0)
+	  : width(w), height(h), bpp(bpp), data(data), compressed(compressed), format(format), blockSize(bs), mipMapCount(mMC)
+  {
+  }
   ~Image();
   bool load(const char* name, bool* hasAlpha);
+private:
   void free();
 };
 

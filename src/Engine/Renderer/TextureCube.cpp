@@ -49,7 +49,7 @@ bool TextureCube::load(const char* name)
 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 	0, 
        internalFormat, 
-        img->width, img->height, 0, inputFormat, inputDataType, img->data
+        img->width, img->height, 0, inputFormat, inputDataType, &img->data[0]
     );
   }
   gl::TextureParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

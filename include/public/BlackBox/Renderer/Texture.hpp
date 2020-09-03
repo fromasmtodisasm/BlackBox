@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <string_view>
 #include <BlackBox/Renderer/BaseTexture.hpp>
 #ifdef NVTT
 #include <nvtt/nvtt.h>
@@ -23,11 +24,12 @@ public:
 
   // Унаследовано через BaseTexture
   virtual bool load(const char* name) override;
+  virtual bool load(std::string_view name);
 
   // Inherited via BaseTexture
   virtual void bind() override;
   virtual void setUnit(uint unit) override;
-  static Texture* create(int width, int height, TextureType type, bool hasAlpha, const std::string& name, bool createMipChain = false, void* data = nullptr, bool is_msaa = false);
+  static Texture* create(const Image& img, TextureType type, const std::string& name, bool createMipChain = false, bool is_msaa = false);
 
   bool isMS = false;
 };

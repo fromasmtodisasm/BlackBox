@@ -156,7 +156,7 @@ void CConsole::Draw()
   if (!m_nProgressRange)
   {
     render->SetRenderTarget(0);
-    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, time * r_anim_speed->GetFVal(), 0, 0, 0, 1, 1, 1, transparency);
+    render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, 0, 2, 5, 1, 1, 1, 1, transparency);
     CalcMetrics(end);
     m_Font->SetXPos(0);
     m_Font->SetYPos(16);
@@ -1193,7 +1193,7 @@ bool CConsole::Init(ISystem* pSystem)
 #pragma warning(disable: 4244)
   m_Font = getFont("arial.ttf", 16, line_height);
 #pragma warning(pop)
-  const char* texture_path = "console_background2.jpg";
+  const char* texture_path = "console/defaultconsole.dds";
   ICVar* background = GetCVar("console_background");
   r_anim_speed = CreateVariable("r_anim_speed", 0.1f, 0);
   m_Cursor.blinkTime = CreateVariable("btime", 1.0f, 0, "Time of cursor blinking");

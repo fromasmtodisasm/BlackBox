@@ -29,8 +29,8 @@ bool Image::load(const char* name, bool* hasAlpha)
       if (dc == STBI_rgb_alpha)
         channels = 4;
       // Copy the loaded pixels to the pixel buffer
-      data = new unsigned char[width * height * channels];
-      memcpy(data, ptr, width * height * channels);
+      data.resize(width * height * channels);
+      memcpy(&data[0], ptr, width * height * channels);
     }
 
     // Free the loaded pixels (they are now in our own pixel buffer)
@@ -104,7 +104,7 @@ Image::~Image()
 
 void Image::free()
 {
-  delete[] data;
+
 }
 
 int BaseTexture::getWidth() const 

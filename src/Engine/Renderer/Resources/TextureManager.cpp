@@ -19,8 +19,11 @@ BaseTexture* TextureManager::getTexture(std::string name, bool isSkyBox)
 {
   std::string prefix = "res/images/";
   bool usPrefix = true;
+  //FIXME: !!!
+  #if 0
   if (name.find("/") != name.npos)
     usPrefix = false;
+  #endif
 
   BaseTexture* texture;
   {
@@ -39,7 +42,7 @@ BaseTexture* TextureManager::getTexture(std::string name, bool isSkyBox)
       else
         texture = new Texture();
       texture->path = std::make_shared<std::string>(Path);
-      texture->load(name.c_str());
+      texture->load(Path.data());
       if (t != cache.end())
       {
         cache[Path + "alphaDist"] = texture;
