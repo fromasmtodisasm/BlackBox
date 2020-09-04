@@ -4,6 +4,23 @@
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
+using ColorB = glm::u8vec3;
+
+static ColorB ColorTable[10] =
+{
+	ColorB(0x00, 0x00, 0x00), // black
+	ColorB(0xff, 0xff, 0xff), // white
+	ColorB(0x00, 0x00, 0xff), // blue
+	ColorB(0x00, 0xff, 0x00), // green
+	ColorB(0xff, 0x00, 0x00), // red
+	ColorB(0x00, 0xff, 0xff), // cyan
+	ColorB(0xff, 0xff, 0x00), // yellow
+	ColorB(0xff, 0x00, 0xff), // purple
+	ColorB(0xff, 0x80, 0x00), // orange
+	ColorB(0x8f, 0x8f, 0x8f), // grey
+};
+
+
 void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, float color[4])
 {
 	// Activate corresponding render state
@@ -12,28 +29,51 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 	glm::mat4 uv_projection = glm::mat4(1.0);
 	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
-	{
-		auto c = color;
-		shader->Uniform(projection, "projection");
-		shader->Uniform(uv_projection, "uv_projection");
-		shader->Uniform(Vec3(c[0], c[1], c[2]), "textColor");
-	}
 	gl::ActiveTexture(GL_TEXTURE0);
 	RSS(render, BLEND, true);
 	RSS(render, CULL_FACE, false);
 	RSS(render, DEPTH_TEST, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	{
+		auto c = color;
+		shader->Uniform(projection, "projection");
+		shader->Uniform(uv_projection, "uv_projection");
+		shader->Uniform(Vec3(c[0], c[1], c[2]), "textColor");
+	}
+
 	// Iterate through all characters
 	const char* c;
 	const char* end = text.data() + text.size();
 	for (c = text.data(); c != end; c++)
 	{
-		if (*c == '\n')
+		switch (*c)
+		{
+		case '\n':
 		{
 			posX = x = 4;
 			posY	 = y += m_Height;
 			continue;
+		}
+		case '$':
+		{
+			if ((c + 1) != end)
+			{
+				if (isdigit(*(++c)))
+				{
+					int colorIndex = *c - '0';
+					ColorB newColor = ColorTable[colorIndex];
+					color[0] = newColor.r;
+					color[1] = newColor.g;
+					color[2] = newColor.b;
+					shader->Uniform(Vec3(color[0], color[1], color[2]), "textColor");
+					continue;
+				}
+			}
+		}
+
+		default:
+			break;
 		}
 		if (*c >= 0 && *c <= 255 && iscntrl(*c))
 			continue;

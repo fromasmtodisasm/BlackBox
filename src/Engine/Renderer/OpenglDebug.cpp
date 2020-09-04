@@ -7,6 +7,8 @@
 bool OpenglDebuger::isError = false;
 bool OpenglDebuger::ignore = false;
 
+static std::stringstream ss;
+
 OpenglDebuger::OpenglDebuger(const char* file) : debug_file(file)
 {
   if (glDebugMessageCallback != nullptr)
@@ -32,7 +34,6 @@ OpenglDebuger::~OpenglDebuger()
 
 void OpenglDebuger::checkError(const char* file, int line, const char* expr)
 {
-	std::stringstream ss;
   if (isError/* && !ignore*/)
   {
     isError = false;

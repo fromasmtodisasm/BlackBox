@@ -186,7 +186,7 @@ bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
   else
   {
     std::string errormsg = lua_tostring(L, -1);
-    m_pSystem->GetIConsole()->PrintLine("LUA ERROR: %s", errormsg.c_str());
+    m_pSystem->GetIConsole()->PrintLine("$4LUA ERROR$1: %s", errormsg.c_str());
   }
 
   return result == LUA_OK;

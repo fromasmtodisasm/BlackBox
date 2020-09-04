@@ -199,11 +199,11 @@ void CConsole::Draw()
 		{
 			render->SetRenderTarget(0);
 			//auto as	   = r_anim_speed->GetFVal();
-			auto as	   = 0.01;
+			auto as	   = 0.03;
 			auto left = as * GetISystem()->GetIRenderer()->GetFrameID() / 60.f;
 			auto right = as * (GetISystem()->GetIRenderer()->GetFrameID()) / 60.f + 3.f;
-			render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, left, 0, right, 1, 1, 1, 1, 1);
-			render->DrawImage(0, 1, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, -left, 0, -right, 1, 1, 1, 1, transparency);
+			render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, left, 0, right, 1, 1, 1, 1, 1);
+			render->DrawImage(0, 0, (float)render->GetWidth(), m_ScrollHeight, m_pBackGround ? m_pBackGround->getId() : 0, -left, 0, -right, 1, 1, 1, 1, transparency);
 		}
 		else
 		{
@@ -1734,14 +1734,14 @@ std::vector<std::wstring> CConsole::autocomplete(std::wstring cmd)
   {
     if (curr_cmd.first.substr(0, cmd.size()) == cmd)
     {
-      completion.push_back(curr_cmd.first);
+      completion.push_back(L"    $3" + curr_cmd.first);
     }
   }
   for (auto& cur_var : m_mapVariables)
   {
     if (cur_var.first.substr(0, cmd.size()) == wstr_to_str(cmd))
     {
-      completion.push_back(str_to_wstr(cur_var.first));
+      completion.push_back(L"    $3" + str_to_wstr(cur_var.first) + L" = $6" + std::wstring(str_to_wstr(cur_var.second->GetString())));
     }
   }
   return completion;

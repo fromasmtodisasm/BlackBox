@@ -13,6 +13,15 @@ using namespace std;
 
 char* CBaseShaderProgram::buffer = nullptr;
 
+inline const char* CBaseShaderProgram::buildName(const char* format, va_list args)
+{
+  vsprintf(buffer, format, args);
+  return buffer;
+}
+
+#define buildName(a, b) format
+
+
 CShader::Type str2typ(std::string type)
 {
   if (type == "vertex")
@@ -337,6 +346,7 @@ GLint CBaseShaderProgram::GetUniformLocation(const char* format, ...)
 
   GLint loc = -1;
   //if (use_cache->GetIVal())
+  #if 0
   {
     auto it = m_Cache.find(name);
     if (it != m_Cache.end())
@@ -347,8 +357,7 @@ GLint CBaseShaderProgram::GetUniformLocation(const char* format, ...)
       m_Cache[name] = loc;
     }
   }
-  #if 0
-  else
+  #else
   {
     loc = glGetUniformLocation(m_Program, name);
     m_Cache[name] = loc;
@@ -570,12 +579,6 @@ void CBaseShaderProgram::reset(ShaderInfo src)
   if (src.shader != nullptr)
     //src.shader.reset();
     src.shader = nullptr;
-}
-
-const char* CBaseShaderProgram::buildName(const char* format, va_list args)
-{
-  vsprintf(buffer, format, args);
-  return buffer;
 }
 
 const char* CBaseShaderProgram::GetShaderName(IShader::Type Type)
