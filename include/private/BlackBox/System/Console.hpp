@@ -403,8 +403,8 @@ private:
   void fillCommandText();
   void setFont(IFont* font);
   CommandLine getPrompt();
-  void printLine(size_t line);
-  void printText(Text const& element, size_t line);
+  void printLine(size_t line, Vec2 pos);
+  void printText(Text const& element, Vec2 pos);
   void addToCommandBuffer(std::vector<std::wstring>& completion);
   void addText(std::wstring const& cmd);
   ;
@@ -503,7 +503,7 @@ private:
 	int                            m_nScrollPos = 300;
 	int                            m_nTempScrollMax;          // for currently opened console, reset to m_nScrollMax
 	int                            m_nScrollMax = 300;        //
-	int                            m_nScrollLine;
+	int                            m_nScrollLine = 0;
 	int                            m_nHistoryPos;
 	size_t                         m_nCursorPos;                // x position in characters
 

@@ -487,12 +487,12 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 				}
 				case EScrolUp:
 				{
-					Clear();
+					m_nScrollLine = std::min((int)(m_CmdBuffer.size() - 1), m_nScrollLine + 1);
 					return true;
 				}
 				case EScrolDown:
 				{
-					Clear();
+					m_nScrollLine = std::max(0, m_nScrollLine - 1);
 					return true;
 				}
 				default:
@@ -747,10 +747,10 @@ void CConsole::drawCursor()
 {
   if (!needShowCursor())
     return;
-  auto curr_y = m_Font->GetYPos();
+  auto curr_y = m_pRenderer->GetHeight() / 2 - 6;
   m_Font->RenderText(
     m_Cursor.data,
-    4 + m_Font->CharWidth('#') + m_Font->TextWidth(m_CommandA.substr(0, static_cast<int>(m_Cursor.x))), curr_y, 1.0f, &glm::vec4(m_Cursor.color, 1.0)[0]);
+    m_Font->CharWidth('>') + m_Font->TextWidth(m_CommandA.substr(0, static_cast<int>(m_Cursor.x))) + LINE_BORDER, curr_y, 1.0f, &glm::vec4(m_Cursor.color, 1.0)[0]);
 }
 
 void CConsole::moveCursor(bool left, bool wholeWord)
@@ -1097,6 +1097,9 @@ void CConsole::InitInputBindings()
 
 	CreateBinding(CreateInputEvent(eKI_1, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
 	CreateBinding(CreateInputEvent(eKI_2, eMM_LCtrl, EInputState::eIS_Pressed), EClear);
+
+	CreateBinding(CreateInputEvent(eKI_PgDn, eMM_None, EInputState::eIS_Pressed), EScrolDown);
+	CreateBinding(CreateInputEvent(eKI_PgUp, eMM_None, EInputState::eIS_Pressed), EScrolUp);
 }
 
 void CConsole::ScrollConsole()
@@ -1146,20 +1149,49 @@ void CConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 	size_t end;
 	auto prompt = getPrompt();
 	CalcMetrics(end);
-	m_Font->SetXPos(4);
-	m_Font->SetYPos(con_font_size + 4);
-	for (on_line = current_line; on_line < end; on_line++)
 	{
-	  printLine(on_line);
-	}
-	for (auto& element : prompt)
-	{
-	  printText(element, line_count - 1);
-	}
+		int yPos = m_pRenderer->GetHeight() / 2 - 6;
+        #if 0
+		for (auto& element : prompt)
+		{
+			printText(element, Vec2(xPos, yPos));
+		}
+        #endif
+		//yPos -= fontSize;
+		//yPos -= fontSize;
+		printText(Text(std::string(">"), glm::vec3(1.0, 0.3, 0.5), 1.0), Vec2(xPos, yPos));
+		printText(Text(std::string(m_CommandA), textColor, 1.0f), Vec2(xPos + 8, yPos));
+		drawCursor();
 
-	printText(Text(std::string("\n#"), glm::vec3(1.0, 0.3, 0.5), 1.0), 0);
-	printText(Text(std::string(m_CommandA), textColor, 1.0f), 0);
-	drawCursor();
+		yPos -= fontSize;
+		int nScroll = 0;
+        auto ritor = m_CmdBuffer.rbegin();
+		while (ritor != m_CmdBuffer.rend() && yPos >= 0)
+		{
+			if (nScroll >= m_nScrollLine)
+			{
+				if (yPos + csize > 0)
+				{
+					for (const auto& element : *ritor)
+					{
+						printText(element, {xPos + LINE_BORDER, yPos});
+					}
+				}
+				yPos -= fontSize;
+			}
+			++nScroll;
+			ritor++;
+		}
+
+        #if 0
+		for (on_line = current_line; on_line < end; on_line++)
+		{
+			printLine(on_line, Vec2(xPos, yPos));
+			yPos -= fontSize;
+		}
+        #endif
+
+	}
 }
 
 const char* CConsole::FindKeyBind(const char* sCmd)
@@ -1803,25 +1835,20 @@ CommandLine CConsole::getPrompt()
   return m_Prompt.get();
 }
 
-void CConsole::printLine(size_t line)
+void CConsole::printLine(size_t line, Vec2 pos)
 {
   //for (auto &element = cmd_buffer[line].begin(); element != cmd_buffer[line].end(); element++, i++)
   for (const auto& element : m_CmdBuffer[line])
   {
-    printText(element, line);
+    printText(element, pos);
   }
 }
 
-void CConsole::printText(Text const& element, size_t line)
+void CConsole::printText(Text const& element, Vec2 pos)
 {
-  auto curr_y = m_Font->GetYPos();
   m_Font->RenderText(
     element.data,
-    m_Font->GetXPos(), curr_y, 1.0f, &glm::vec4(element.color, 1.0)[0]);
-  if (curr_y < m_Font->GetYPos())
-  {
-    // TODO: handle this
-  }
+    pos.x, pos.y, 1.0f, &glm::vec4(element.color, 1.0)[0]);
 }
 
 void CConsole::AddArgumentCompletion(const char* cmd, const char* arg, int n)
