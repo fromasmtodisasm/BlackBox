@@ -1,4 +1,4 @@
-#include <BlackBox/Renderer/FreeTypeFont.hpp>
+﻿#include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
@@ -75,7 +75,7 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 		default:
 			break;
 		}
-		if (*c >= 0 && *c <= 255 && iscntrl(*c))
+		if ((*c >= 0 && *c <= 255 && iscntrl(*c)))
 			continue;
 		glm::mat4 model(1.0);
 		Character ch = Characters[*c];
@@ -162,9 +162,10 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	FT_Set_Pixel_Sizes(face, 0, h);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
-	for (GLubyte c = 0; c < 128; c++)
+	for (GLubyte ch = 0; ch < 255; ch++)
 	{
 		// Load character glyph
+		GLuint c = ch;
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
 			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
@@ -194,12 +195,14 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		// Now store character for later use
-		Character character = {
-			texture,
-			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x};
-		Characters.insert(std::pair<GLchar, Character>(c, character));
+		{
+			Character character = {
+				texture,
+				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+				face->glyph->advance.x};
+			Characters.insert(std::pair<GLchar, Character>(ch, character));
+		}
 	}
 
 	FT_Done_Face(face);

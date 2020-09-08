@@ -246,12 +246,6 @@ struct Cursor : Text
 
 typedef std::vector<Text> CommandLine;
 
-using ConfigVar = std::map<string, string>;
-using VariablesMap = std::map<std::string, ICVar*>;
-using KeyBindMap = std::map<EKeyId, std::wstring>;
-using CommandMap = std::map<std::wstring, CommandInfo>;
-using VarSinkList = std::vector<IConsoleVarSink*>;
-
 struct ConsolePrompt
 {
   std::string user = gEnv->pSystem->GetUserName();
@@ -283,6 +277,15 @@ class CConsole : public IConsole, public IInputEventListener, public ICVarDumpSi
 	friend class SetCommand;
 	friend class GetCommand;
 	friend class DumpCommand;
+
+	using ConsoleBuffer = std::deque<string> ;
+	using ConfigVar		= std::map<string, string>;
+	using VariablesMap	= std::map<std::string, ICVar*>;
+	using KeyBindMap	= std::map<EKeyId, std::wstring>;
+	using CommandMap	= std::map<std::wstring, CommandInfo>;
+	using VarSinkList	= std::vector<IConsoleVarSink*>;
+
+
 	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
 	enum EInputFunctions
 	{

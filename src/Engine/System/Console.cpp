@@ -1100,6 +1100,9 @@ void CConsole::InitInputBindings()
 
 	CreateBinding(CreateInputEvent(eKI_PgDn, eMM_None, EInputState::eIS_Pressed), EScrolDown);
 	CreateBinding(CreateInputEvent(eKI_PgUp, eMM_None, EInputState::eIS_Pressed), EScrolUp);
+
+	CreateBinding(CreateInputEvent(eKI_MouseWheelDown, eMM_None, EInputState::eIS_Changed), EScrolDown);
+	CreateBinding(CreateInputEvent(eKI_MouseWheelUp, eMM_None, EInputState::eIS_Changed), EScrolUp);
 }
 
 void CConsole::ScrollConsole()
