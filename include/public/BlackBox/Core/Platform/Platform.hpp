@@ -166,6 +166,38 @@ using string = std::string;
   #include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
 #endif
 
+// CryModule memory manager routines must always be included.
+// They are used by any module which doesn't define NOT_USE_CRY_MEMORY_MANAGER
+// No Any STL includes must be before this line.
+#if 1  //#ifndef NOT_USE_CRY_MEMORY_MANAGER
+	#define USE_NEWPOOL
+	#include <BlackBox/Memory/CryMemoryManager.h>
+#else
+inline int IsHeapValid()
+{
+	#if defined(_DEBUG) && !defined(RELEASE_RUNTIME)
+	return _CrtCheckMemory();
+	#else
+	return true;
+	#endif
+}
+#endif // NOT_USE_CRY_MEMORY_MANAGER
+
+// Memory manager breaks strdup
+// Use something higher level, like CryString
+//#undef strdup
+//#define strdup dont_use_strdup
+
+#undef STATIC_CHECK
+#define STATIC_CHECK(expr, msg) static_assert((expr) != 0, # msg)
+
+// Conditionally execute code in debug only
+#ifdef _DEBUG
+	#define IF_DEBUG(expr) (expr)
+#else
+	#define IF_DEBUG(expr)
+#endif
+
 #define DECLARE_SHARED_POINTERS(name)                   \
   typedef std::shared_ptr<name> name ##       Ptr;      \
   typedef std::shared_ptr<const name> name ## ConstPtr; \

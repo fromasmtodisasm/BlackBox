@@ -7,8 +7,6 @@
 ShaderManager* ShaderManager::manager = nullptr;
 static ShaderProgramRef defaultProgram = nullptr;
 
-std::string ShaderDesc::root = "res/shaders/";
-
 ICVar* CBaseShaderProgram::print_loc_name = nullptr;
 ICVar* CBaseShaderProgram::use_cache = nullptr;
 
@@ -225,7 +223,7 @@ bool ShaderManager::init()
   //defaultProgram = ShaderManager::instance()->getProgram("vertex.glsl", "fragment.glsl");
   //defaultProgram->Create("default");
 #endif
-  ShaderDesc::root = ShaderManager::instance()->root;
+  //ShaderDesc::root = ShaderManager::instance()->root;
   CBaseShaderProgram::print_loc_name = GetISystem()->GetIConsole()->GetCVar("shader_print");
   return true;
 }

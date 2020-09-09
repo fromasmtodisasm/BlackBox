@@ -396,7 +396,7 @@ struct ShaderDesc
 	IShader::Type type;
 	Macro macro;
 
-	static std::string root;
+	const std::string root = "res/shaders/";
 };
 struct ProgramDesc
 {

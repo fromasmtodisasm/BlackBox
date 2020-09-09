@@ -14,6 +14,6 @@ public:
   static bool init();
 
 private:
-  static std::map<std::string, ITechnique*> techs;
+  std::map<std::string, ITechnique*> techs;
   static TechniqueManager* manager;
 };
