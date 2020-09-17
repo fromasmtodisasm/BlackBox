@@ -1,4 +1,3 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>

@@ -1,4 +1,4 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
 #if BB_PLATFORM_WINDOWS
 #include <BlackBox/Core/Platform/Windows.hpp>
@@ -9,4 +9,5 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 }
 	#endif
 #endif
+
 

@@ -21,6 +21,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 ###################################################
 
 target_sources(${PROJECT_NAME}
+  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LibScriptSystem.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
   PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp

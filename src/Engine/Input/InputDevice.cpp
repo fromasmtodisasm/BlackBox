@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Input/InputDevice.hpp>
 
 #if !defined(RELEASE)

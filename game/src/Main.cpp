@@ -1,3 +1,4 @@
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 #ifndef	_XBOX
@@ -6,10 +7,10 @@
 #endif //_XBOX
 
 //////////////////////////////////////////////////////////////////////////
-#if 0
 #if !defined(PS2) && !defined(_XBOX) && !defined(LINUX)
+#include <BlackBox/Core/Platform/Windows.hpp>
 // DLL-EntryPoint
-BOOL APIENTRY DllMain( HANDLE hModule, 
+BOOL CALLBACK DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
 					 )
@@ -30,7 +31,6 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #endif
     return TRUE;
 }
-#endif
 #endif
  
 //#include <CrtDebugStats.h>

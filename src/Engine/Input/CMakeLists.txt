@@ -43,6 +43,7 @@ ${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME}
+	PRIVATE ${SOURCE_DIR}/Engine/Input/Input.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/ActionMap.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/ActionMapManager.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/BaseInput.cpp
@@ -54,7 +55,6 @@ target_sources(${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/Input.cpp
 )
 
 add_private_headers()
