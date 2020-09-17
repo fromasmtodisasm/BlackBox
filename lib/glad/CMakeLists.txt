@@ -7,11 +7,12 @@ list(APPEND GLAD_SOURCES
 "${GLAD_INCLUDE_DIRS}/glad/glad.h"
 )
 
-add_library(glad SHARED ${GLAD_SOURCES})
+add_library(glad STATIC ${GLAD_SOURCES})
 
 target_include_directories(glad PUBLIC 
   $<BUILD_INTERFACE:${GLAD_INCLUDE_DIRS}>
   $<INSTALL_INTERFACE:include> 
 )
+#target_compile_definitions(glad PUBLIC -DGLAD_GLAPI_EXPORT)
 set_target_properties(glad PROPERTIES FOLDER "Engine/ThirdParty")
 install_this(glad)

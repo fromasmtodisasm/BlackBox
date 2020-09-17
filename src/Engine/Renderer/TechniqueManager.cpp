@@ -1,7 +1,7 @@
 #include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/HdrTechnique.hpp>
 
-std::map<std::string, ITechnique*> TechniqueManager::techs;
+//std::map<std::string, ITechnique*> TechniqueManager::techs;
 TechniqueManager* TechniqueManager::manager = nullptr;
 
 ITechnique* TechniqueManager::get(std::string name)

@@ -52,7 +52,7 @@ namespace
 CShader* CShader::load(ShaderDesc const& desc)
 {
 	string text;
-	auto path = ShaderDesc::root + desc.name;
+	auto path = desc.root + desc.name;
   gEnv->pLog->Log("Loading %s shader", path.data());
 	if (!loadInternal(path, text))
 		return nullptr;

@@ -35,4 +35,10 @@ extern "C" DLL_EXPORT void ModuleInitISystem(ISystem* pSystem, const char* modul
 	#endif
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+// If we use cry memory manager this should be also included in every module.
+#if defined(USING_CRY_MEMORY_MANAGER)
+	#include <BlackBox/Memory/CryMemoryManager_impl.h>
+#endif
 
