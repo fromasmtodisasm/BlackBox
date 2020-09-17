@@ -326,7 +326,7 @@ bool CConsole::OnInputEvent(const SInputEvent& event)
 		{
 			SetInputLine("");
 			//ExecuteStringInternal(cmd, true);    // keybinds are treated as they would come from console
-      return handleCommand(str_to_wstr(cmd).data());
+			return handleCommand(str_to_wstr(cmd).data());
 		}
     if (keyPressed)
     {
@@ -1210,6 +1210,11 @@ const char* CConsole::FindKeyBind(const char* sCmd)
 void CConsole::Release()
 {
 	delete this;
+}
+
+void CConsole::AddCommandToHistory(const char* szCommand)
+{
+
 }
 
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)

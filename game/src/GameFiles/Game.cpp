@@ -401,7 +401,10 @@ bool CGame::Update()
 				m_pClient->Update();
 				
 
-				//Render();
+				if (g_Render)
+				{
+					Render();
+				}
 
 			}
 
@@ -410,10 +413,14 @@ bool CGame::Update()
 			m_pScriptSystem->PushFuncParam(Gui);
 			m_pScriptSystem->EndCall();
 
-			//DrawHud(fps);
-			//glslEditor->Update();
-			//m_Gui.Update();
-			//gui::update();
+			if (g_DrawUI)
+			{
+				DrawHud(fps);
+				glslEditor->Update();
+				m_Gui.Update();
+				gui::update();
+			}
+
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
 			{

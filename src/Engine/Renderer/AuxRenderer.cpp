@@ -124,6 +124,22 @@ CRenderAuxGeom::CRenderAuxGeom()
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb.vs", "bb.frag");
+
+	auto r = gEnv->pRenderer;
+
+    albedo    = r->LoadTexture("pbr/rusted_iron/albedo.png", 0, 0);
+    normal    = r->LoadTexture("pbr/rusted_iron/normal.png", 0, 0);
+    metallic  = r->LoadTexture("pbr/rusted_iron/metallic.png", 0, 0);
+    roughness = r->LoadTexture("pbr/rusted_iron/roughness.png", 0, 0);
+    ao        = r->LoadTexture("pbr/rusted_iron/ao.png", 0, 0);
+
+    m_BoundingBoxShader->Use();
+    m_BoundingBoxShader->Uniform(0, "albedoMap");
+    m_BoundingBoxShader->Uniform(1, "normalMap");
+    m_BoundingBoxShader->Uniform(2, "metallicMap");
+    m_BoundingBoxShader->Uniform(3, "roughnessMap");
+    m_BoundingBoxShader->Uniform(4, "aoMap");
+
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -148,12 +164,47 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	shader->Uniform(transform, "model");
 	shader->Uniform(cam.GetViewMatrix(), "view");
 	shader->Uniform(cam.getProjectionMatrix(), "projection");
+	#if 0
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");
 	shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
 	shader->Uniform(Vec3(300), "lightPos");
 	shader->Uniform(gEnv->pRenderer->GetFrameID(), "fid");
 	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");
+	#endif
+
+    // lights
+    // ------
+    glm::vec3 lightPositions[] = {
+        glm::vec3(-10.0f,  10.0f, 10.0f),
+        glm::vec3( 10.0f,  10.0f, 10.0f),
+        glm::vec3(-10.0f, -10.0f, 10.0f),
+        glm::vec3( 10.0f, -10.0f, 10.0f),
+    };
+    glm::vec3 lightColors[] = {
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f)
+    };
+
+	shader->Uniform(cam.GetPos(), "camPos");
+	shader->Uniform(lightPositions[0], "lightPositions[0]");
+	shader->Uniform(lightPositions[1], "lightPositions[1]");
+	shader->Uniform(lightPositions[2], "lightPositions[2]");
+	shader->Uniform(lightPositions[3], "lightPositions[3]");
+
+	shader->Uniform(lightColors[0], "lightColors[0]");
+	shader->Uniform(lightColors[1], "lightColors[1]");
+	shader->Uniform(lightColors[2], "lightColors[2]");
+	shader->Uniform(lightColors[3], "lightColors[3]");
+
+	shader->Uniform(0.9f, "metallic");
+	shader->Uniform(0.1f, "roughness");
+    shader->Uniform(glm::vec3(0.5f, 0.0f, 0.1f), "albedo");
+    //shader->Uniform(Vec3(color), "albedo");
+    shader->Uniform(1.0f, "ao");
+
 
 	{
 		RSS(gEnv->pRenderer, BLEND, true);

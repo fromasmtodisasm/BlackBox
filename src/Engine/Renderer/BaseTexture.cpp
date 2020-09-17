@@ -9,7 +9,7 @@ bool Image::load(const char* name, bool* hasAlpha)
 
 #ifndef NVTT
   // Load the image and get a pointer to the pixels in memory
-  int channels = 4;
+  channels = 4;
   int dc = STBI_rgb;
   unsigned char* ptr = stbi_load(path.c_str(), &width, &height, &channels, dc);
   if (channels == 4 && dc != STBI_rgb_alpha)

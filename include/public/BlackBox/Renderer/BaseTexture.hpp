@@ -14,6 +14,7 @@ public:
   int width;
   int height;
   int bpp;
+  int channels;
   std::vector<uint8_t> data;
   bool compressed = false;
   int format;

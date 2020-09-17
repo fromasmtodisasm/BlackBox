@@ -44,6 +44,11 @@ private:
   CVertexBuffer* m_HardwareVB = nullptr;
   ShaderProgramRef m_BoundingBoxShader;
 
+    ITexture* albedo    {};
+    ITexture* normal    {};
+    ITexture* metallic  {};
+    ITexture* roughness {};
+    ITexture* ao        {};
 
 
   int m_CurrentVB_Size = INIT_VB_SIZE;

@@ -109,6 +109,9 @@ void CGame::InitConsoleVars()
 
   g_NonSteam = CREATE_CVAR("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
 
+  REGISTER_CVAR(g_DrawUI, 0, VF_DUMPTODISK, "[enable/disable] UI");
+  REGISTER_CVAR(g_Render, 0, VF_DUMPTODISK, "[enable/disable] Rendering");
+
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 
 	g_playerprofile= pConsole->CreateVariable("g_playerprofile","default",VF_DUMPTODISK,

@@ -525,5 +525,9 @@ private:
 // Inherited via IConsole
   virtual void Release() override;
 
+  
+// Inherited via IConsole
+  virtual void AddCommandToHistory(const char* szCommand) override;
+
   // Inherited via IConsole
 };

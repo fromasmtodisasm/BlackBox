@@ -89,11 +89,11 @@ public:
 	  }
   }
 
-  Vec3 GetPos()
+  Vec3 GetPos() const
   {
     return transform.position;
   }
-  Vec3 GetAngles()
+  Vec3 GetAngles() const
   {
     return transform.rotation;
   }

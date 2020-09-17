@@ -4,6 +4,7 @@
 #include <ctime>
 #include <iostream>
 #include <memory>
+#include <ddraw.h>
 
 using namespace std;
 
@@ -118,7 +119,6 @@ const char* Texture::typeToStr()
 Image loadDDS(const char* path)
 {
 // lay out variables to be used
-	Image img;
 	std::vector<unsigned char> header;
 	
 	int width;
@@ -138,7 +138,7 @@ Image loadDDS(const char* path)
   // open the DDS file for binary reading and get file size
 	FILE* f;
 	if((f = fopen(path, "rb")) == 0)
-		return img;
+		return Image();
 	fseek(f, 0, SEEK_END);
 	long file_size = ftell(f);
 	fseek(f, 0, SEEK_SET);
@@ -186,11 +186,9 @@ Image loadDDS(const char* path)
   // read rest of file
 	buffer.resize(file_size - 128);
 	fread(buffer.data(), 1, file_size, f);
-
-	img = Image(width, height, 0, std::move(buffer), true, format, blockSize, mipMapCount);
 exit:
 	fclose(f);
-	return img;
+	return Image(width, height, 0, std::move(buffer), true, format, blockSize, mipMapCount);
 	
 }
 
@@ -208,8 +206,14 @@ bool Texture::load(std::string_view name)
 	}
 	else
 	{
-		if (!img.load((texture_root + std::string(name)).c_str(), &hasAlpha))
+		if (!img.load((std::string(name)).c_str(), &hasAlpha))
 			return false;
+        if (img.channels == 1)
+            img.format = GL_RED;
+        else if (img.channels == 3)
+            img.format = GL_RGB;
+        else if (img.channels == 4)
+            img.format = GL_RGBA;
 	}
 	auto t = create(img, UNKNOWN, std::string(name), true);
 	if (t != nullptr)
@@ -260,15 +264,15 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 	default:
 		if (!img.compressed)
 		{
-			internalFormat = GL_RGB8;
-			inputFormat	   = GL_RGB;
+			internalFormat = GL_RGBA8;
+			inputFormat	   = img.format;
 			filterMin = filterMag = GL_LINEAR;
 			wrapS = wrapT = GL_CLAMP_TO_EDGE;
 			inputDataType = GL_UNSIGNED_BYTE;
 			gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			if (img.bpp == 4)
+			if (img.channels == 4)
 			{
 				inputFormat	   = GL_RGBA;
 				internalFormat = GL_SRGB8_ALPHA8;

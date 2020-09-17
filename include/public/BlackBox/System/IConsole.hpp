@@ -329,6 +329,8 @@ struct IConsole
 	*/
 	//virtual void DumpKeyBinds(IKeyBindDumpSink *pCallback )=0;
 	virtual const char* FindKeyBind( const char *sCmd ) = 0;
+	//! \param szCommand must not be 0
+	virtual void AddCommandToHistory( const char *szCommand )=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
