@@ -957,7 +957,7 @@ void CSystem::ShowMessage(const char* message, const char* caption, MessageType 
 void CSystem::Log(const char* message)
 {
 	//std::cout << "-- " << message << std::endl;
-	m_pLog->Log("%s", message);
+	gEnv->pLog->Log("%s", message);
 }
 
 IScriptSystem* CSystem::GetIScriptSystem()
