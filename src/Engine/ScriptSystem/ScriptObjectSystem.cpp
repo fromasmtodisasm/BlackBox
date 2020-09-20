@@ -172,7 +172,7 @@ int CScriptObjectSystem::Log(IFunctionHandler* pH)
 	const char* string;
 
   pH->GetParam(1, string);
-	m_pSystem->Log(string);
-  m_pConsole->PrintLine(string);
+  m_pSystem->Log(string);
+  //m_pConsole->PrintLine(string);
   return pH->EndFunction();
 }

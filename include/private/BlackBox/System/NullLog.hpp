@@ -98,7 +98,7 @@ const char* LogTypeToString(IMiniLog::ELogType type)
 	switch (type)
 	{
 	case IMiniLog::eMessage:
-		return "$3Message$1";
+		return "";
 		break;
 	case IMiniLog::eWarning:
 		return "$6Warning$1";

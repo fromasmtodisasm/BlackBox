@@ -24,14 +24,11 @@ extern "C"
 }
 
 
-int main(int argc, char* argv[]) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
   int status = EXIT_FAILURE;
   string path;
-  std::string cmdline;
-  for (int i = 0; i < argc; i++)
-  {
-		cmdline = cmdline + " " + argv[i];
-  }
+  std::string cmdLine(GetCommandLineA());
 
   SSystemInitParams params;
 
@@ -42,7 +39,7 @@ int main(int argc, char* argv[]) {
   ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
   params.sLogFileName = strdup(ss.str().c_str());
 
-  snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
+  snprintf(params.szSystemCmdLine, 512, "%s", cmdLine.c_str());
   ISystem* pSystem = CreateSystemInterface(params);
   if (pSystem)
   {

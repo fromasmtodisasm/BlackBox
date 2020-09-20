@@ -4,7 +4,7 @@ project(Launcher CXX)
 set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME} WIN32
 	Main.cpp
     #"Resource.rc"
 )
