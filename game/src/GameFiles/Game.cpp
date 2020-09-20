@@ -1258,6 +1258,10 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 
 bool CGame::SteamInit()
 {
+#ifndef USE_STEAM
+	return true;
+#else
+
 	// инициализируем Steam
 	bool bRet = SteamAPI_Init();
 	// создаем объект SteamAchievements, если инициализация Steam удалась
@@ -1271,6 +1275,7 @@ bool CGame::SteamInit()
 
 	gEnv->pLog->Log("steam api init: %d", bRet);
 	return bRet;
+#endif // !USE_STEAM
 }
 
 void CGame::Gui::Update()
