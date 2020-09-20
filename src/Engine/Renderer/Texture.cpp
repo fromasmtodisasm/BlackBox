@@ -208,7 +208,7 @@ bool Texture::load(std::string_view name)
 	}
 	else
 	{
-		if (!img.load((texture_root + std::string(name)).c_str(), &hasAlpha))
+		if (!img.load((std::string(name)).c_str(), &hasAlpha))
 			return false;
 	}
 	auto t = create(img, UNKNOWN, std::string(name), true);
