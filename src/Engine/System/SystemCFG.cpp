@@ -136,6 +136,12 @@ bool CSystem::IsQuitting()
 
 void CSystem::Error(const char* sFormat, ...)
 {
+	va_list	ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	va_start(ArgList, sFormat);
+	vsprintf(szBuffer, sFormat, ArgList);
+	va_end(ArgList);
+	gEnv->pLog->LogError(szBuffer);
 }
 
 void CSystem::Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...)
