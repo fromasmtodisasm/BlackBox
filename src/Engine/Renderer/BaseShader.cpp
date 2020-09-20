@@ -46,13 +46,13 @@ bool ShaderStatus::get(GLenum statusType) {
   glCheck(glGetShaderiv(m_Shader->get(), statusType, &m_Status));
   if (m_Status == GL_FALSE)
   {
-		GetISystem()->GetILog()->Log("[ERROR] Pizdec Shader %s", m_Shader->getName());;
+	CryError("Pizdec Shader %s", m_Shader->getName());
     GLsizei length = 0;
-		glGetShaderiv(m_Shader->get(), GL_INFO_LOG_LENGTH, &length);
-		std::vector<GLchar> errorLog(length);
+	glGetShaderiv(m_Shader->get(), GL_INFO_LOG_LENGTH, &length);
+	std::vector<GLchar> errorLog(length);
     glCheck(glGetShaderInfoLog(m_Shader->get(), length, &length, &errorLog[0]));
-		GetISystem()->GetILog()->Log("[ERROR] Shader %s \n %s\n", m_Shader->getName(), errorLog.data());;
-		glDeleteShader(m_Shader->get());
+	CryError("Shader %s ErrorLog: [%s]\n", m_Shader->getName(), errorLog.data());
+	glDeleteShader(m_Shader->get());
     return false;
   }
   return true;
@@ -72,7 +72,7 @@ bool ShaderProgramStatus::get(GLenum statusType) {
     auto log = GetISystem()->GetILog();
     if (log != nullptr)
     {
-      log->Log("[ERROR] Shader::programm: %s\n", m_InfoLog);
+      CryError("Shader::programm: %s\n", m_InfoLog);
       std::vector<char> label(1);
       GLsizei length = 0;
       glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->Get(), 1, &length, label.data()));
@@ -80,11 +80,11 @@ bool ShaderProgramStatus::get(GLenum statusType) {
       {
         label.resize(length);
         glCheck(glGetObjectLabel(GL_PROGRAM, this->m_Program->Get(), length, &length, label.data()));
-        log->Log("[INFO] Shader::programm label: %s\n", label.data());
+        CryLog("Shader::programm label: %s\n", label.data());
       }
     }
     else
-      GetISystem()->Log((std::string("[ERROR] Shader::programm: ") + m_InfoLog).c_str());
+      CryError((std::string("Shader::programm: ") + m_InfoLog).c_str());
     return false;
   }
   return true;

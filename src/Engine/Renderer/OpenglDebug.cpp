@@ -44,7 +44,7 @@ void OpenglDebuger::checkError(const char* file, int line, const char* expr)
       << "\nExpression:\n   " << expr
       << "\n-*-*-*-*-*"
       << std::endl;
-		std::cerr << ss.str();
+	CryError(ss.str().data());
   }
 }
 

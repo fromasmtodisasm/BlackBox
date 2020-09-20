@@ -101,33 +101,32 @@ const char* LogTypeToString(IMiniLog::ELogType type)
 		return "";
 		break;
 	case IMiniLog::eWarning:
-		return "$6Warning$1";
+		return "[$6Warning$1]";
 		break;
 	case IMiniLog::eError:
-		return "$4Error$1";
+		return "$4[Error]";
 		break;
 	case IMiniLog::eAlways:
-		return "Always";
+		return "";
 		break;
 	case IMiniLog::eWarningAlways:
-		return "WarningAlways";
+		return "";
 		break;
 	case IMiniLog::eErrorAlways:
-		return "ErrorAlways";
+		return "[$4Error$1]";
 		break;
 	case IMiniLog::eInput:
 		return "Input";
 		break;
 	default:
-		return "Unknown";
-		break;
+		return "";
 	}
 
 }
 
 void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
 {
-  auto len = sprintf(buf, "[%s] ", LogTypeToString(nType));
+  auto len = sprintf(buf, "%s ", LogTypeToString(nType));
   len += vsprintf(buf + len, szFormat, args);
   buf[len] = '\0';
   if (gEnv->pConsole)
