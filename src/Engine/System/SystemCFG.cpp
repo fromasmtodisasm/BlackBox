@@ -150,7 +150,9 @@ void CSystem::Warning(EValidatorModule module, EValidatorSeverity severity, int 
 
 bool CSystem::CheckLogVerbosity(int verbosity)
 {
-	return false;
+	//FIXME: fix
+	//return false;
+	return true;
 }
 
 void CSystem::LoadConfiguration(const string& sFilename)

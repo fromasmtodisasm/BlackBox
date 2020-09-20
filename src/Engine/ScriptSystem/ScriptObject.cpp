@@ -819,7 +819,7 @@ bool CScriptObject::AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION
 	
 	metaObject->AddFunction("__newindex", pSetThunk, -1);
 	metaObject->AddFunction("__index", pGetThunk, -1);
-	return false;
+	return true;
 }
 
 void CScriptObject::RegisterParent(IScriptObjectSink* pSink)
