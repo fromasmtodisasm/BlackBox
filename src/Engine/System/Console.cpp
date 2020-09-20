@@ -55,6 +55,42 @@ size_t get_endword_from_cursor_pos(const T& str, size_t pos)
 	}
 }
 
+const char* GetFlagsString(const uint32 dwFlags)
+{
+	static char sFlags[256];
+
+	strcpy(sFlags, "");
+
+	if (dwFlags & VF_READONLY)               strcat(sFlags, "READONLY, ");
+	if (dwFlags & VF_DEPRECATED)             strcat(sFlags, "DEPRECATED, ");
+	if (dwFlags & VF_DUMPTODISK)             strcat(sFlags, "DUMPTODISK, ");
+	if (dwFlags & VF_REQUIRE_LEVEL_RELOAD)   strcat(sFlags, "REQUIRE_LEVEL_RELOAD, ");
+	if (dwFlags & VF_REQUIRE_APP_RESTART)    strcat(sFlags, "REQUIRE_APP_RESTART, ");
+	if (dwFlags & VF_RESTRICTEDMODE)         strcat(sFlags, "RESTRICTEDMODE, ");
+
+	if (sFlags[0] != 0)
+		sFlags[strlen(sFlags) - 2] = 0;  // remove ending ", "
+
+	return sFlags;
+}
+
+void DisplayVarValue(ICVar* pVar)
+{
+	if (!pVar)
+		return;
+
+	const char* sFlagsString = GetFlagsString(pVar->GetFlags());
+	string sValue = (pVar->GetFlags() & VF_INVISIBLE) ? "" : pVar->GetString();
+	string sVar = pVar->GetName();
+
+	char szRealState[40] = "";
+
+	if (gEnv->IsEditor())
+		CryLog("%s=%s [ %s ]%s", sVar.c_str(), sValue.c_str(), sFlagsString, szRealState);
+	else
+		CryLog("    $3%s = $6%s $5[%s]$4%s", sVar.c_str(), sValue.c_str(), sFlagsString, szRealState);
+}
+
 class HelpCommand : public IConsoleCommand
 {
 public:
@@ -530,6 +566,7 @@ void CConsole::getHistoryElement()
 void CConsole::completeCommand(std::vector<std::wstring>& completion)
 {
   SetInputLine("");
+  #if 0
   std::wstring result;
 
   if (completion.size() == 1)
@@ -565,6 +602,7 @@ void CConsole::completeCommand(std::vector<std::wstring>& completion)
   {
     AddInputChar(L' ');
   }
+  #endif
 }
 
 void CConsole::setBuffer()
@@ -1776,7 +1814,8 @@ std::vector<std::wstring> CConsole::autocomplete(std::wstring cmd)
   {
     if (cur_var.first.substr(0, cmd.size()) == wstr_to_str(cmd))
     {
-      completion.push_back(L"    $3" + str_to_wstr(cur_var.first) + L" = $6" + std::wstring(str_to_wstr(cur_var.second->GetString())));
+      completion.push_back(str_to_wstr(cur_var.first) + std::wstring(str_to_wstr(cur_var.second->GetString())));
+		DisplayVarValue(cur_var.second);
     }
   }
   return completion;
