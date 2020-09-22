@@ -67,6 +67,10 @@ const char* GetFlagsString(const uint32 dwFlags)
 	if (dwFlags & VF_REQUIRE_LEVEL_RELOAD)   strcat(sFlags, "REQUIRE_LEVEL_RELOAD, ");
 	if (dwFlags & VF_REQUIRE_APP_RESTART)    strcat(sFlags, "REQUIRE_APP_RESTART, ");
 	if (dwFlags & VF_RESTRICTEDMODE)         strcat(sFlags, "RESTRICTEDMODE, ");
+	if (dwFlags & VF_EXPERIMENTAL)           strcat(sFlags, "EXPERIMENTAL, ");
+	if (dwFlags & VF_NET_SYNCED)             strcat(sFlags, "NET_SYNCED, ");
+
+	
 
 	if (sFlags[0] != 0)
 		sFlags[strlen(sFlags) - 2] = 0;  // remove ending ", "
@@ -709,6 +713,8 @@ void CConsole::Get(CommandDesc& cd)
 
 void CConsole::GetInternal(ICVar* pVar, std::string& name)
 {
+	DisplayVarValue(pVar);
+#if 0
   switch (pVar->GetType())
   {
   case CVAR_INT:
@@ -723,6 +729,7 @@ void CConsole::GetInternal(ICVar* pVar, std::string& name)
   default:
     PrintLine("Unknown type for [%s] variable", name.c_str());
   }
+#endif
 }
 
 void CConsole::Dump()
@@ -1616,8 +1623,11 @@ bool CConsole::handleCommand(std::wstring command)
         Set(desc);
       }
     }
-    else if (cd.command == L"close")
-      isOpened = false;
+	else
+	{
+		gEnv->pLog->LogWarning("\"$3%s$1\" $6is not command or variable", wstr_to_str(cd.command).c_str());
+	}
+
   }
   //history.push_back(str_to_wstr(getPrompt()) + command);
   return result;
@@ -1808,6 +1818,7 @@ std::vector<std::wstring> CConsole::autocomplete(std::wstring cmd)
     if (curr_cmd.first.substr(0, cmd.size()) == cmd)
     {
       completion.push_back(L"    $3" + curr_cmd.first);
+	  PrintLine("    $3%s $6(Command)", wstr_to_str(curr_cmd.first).c_str());
     }
   }
   for (auto& cur_var : m_mapVariables)

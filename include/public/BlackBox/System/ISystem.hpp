@@ -18,27 +18,28 @@
 
 
 
-struct ISystem;
-struct ILog;
-struct IEntitySystem;
-struct IGame;
-struct IShaderManager;
-struct IRenderer;
 struct I3DEngine;
 struct ICmdLine;
 struct IConsole;
-struct IInput;
-struct IHardwareMouse;
-struct IFont;
-struct IWindow;
-struct IInputHandler;
-struct IScriptSystem;
-struct IValidator;
-struct ITimer;
-struct INetwork;
-struct IWorld;
-struct IPlatform;
 struct ICryPak;
+struct IEntitySystem;
+struct IFont;
+struct IGame;
+struct IHardwareMouse;
+struct IInput;
+struct IInputHandler;
+struct ILog;
+struct INetwork;
+struct IPhysicalWorld;
+struct IPlatform;
+struct IRenderer;
+struct IScriptSystem;
+struct IShaderManager;
+struct ISystem;
+struct ITimer;
+struct IValidator;
+struct IWindow;
+struct IWorld;
 
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_GAME_PATH	"TestGame"
@@ -153,70 +154,86 @@ struct ILoadConfigurationEntrySink
 // Structure passed to Init method of ISystem interface.
 struct SSystemInitParams
 {
-  void* hInstance;											//
-  void* hWnd;														//
-  char szSystemCmdLine[512];						// command line, used to execute the early commands e.g. -DEVMODE "g_gametype ASSAULT"
-  ISystemUserCallback* pUserCallback;		//
-  ILog* pLog;														// You can specify your own ILog to be used by System.
-  IValidator* pValidator;								// You can specify different validator object to use by System.
-  const char* sLogFileName;							// File name to use for log.
-  bool bEditor;													// When runing in Editor mode.
-  bool bPreview;												// When runing in Preview mode (Minimal initialization).
-  bool bTestMode;												// When runing in Automated testing mode.
-  bool bDedicatedServer;								// When runing a dedicated server.
-	bool bMinimal;                        //!< Don't load banks.
-  ISystem* pSystem;											// Pointer to existing ISystem interface, it will be reused if not NULL.
+	void* hInstance;					//
+	void* hWnd;							//
+	char szSystemCmdLine[512];			// command line, used to execute the early commands e.g. -DEVMODE "g_gametype ASSAULT"
+	ISystemUserCallback* pUserCallback; //
+	ILog* pLog;							// You can specify your own ILog to be used by System.
+	IValidator* pValidator;				// You can specify different validator object to use by System.
+	const char* sLogFileName;			// File name to use for log.
+	bool bEditor;						// When runing in Editor mode.
+	bool bPreview;						// When runing in Preview mode (Minimal initialization).
+	bool bTestMode;						// When runing in Automated testing mode.
+	bool bDedicatedServer;				// When runing a dedicated server.
+	bool bMinimal;						//!< Don't load banks.
+	ISystem* pSystem;					// Pointer to existing ISystem interface, it will be reused if not NULL.
 
 #if defined(LINUX)
-  void (*pCheckFunc)(void*);							// authentication function (must be set).
+	void (*pCheckFunc)(void*); // authentication function (must be set).
 #else
-  void* pCheckFunc;											// authentication function (must be set).
+	void* pCheckFunc; // authentication function (must be set).
 #endif
 
-  // Initialization defaults.
-  SSystemInitParams()
-  {
-    hInstance = 0;
-    hWnd = 0;
-    memset(szSystemCmdLine, 0, sizeof(szSystemCmdLine));
-    pLog = 0;
-    pValidator = 0;
-    pUserCallback = 0;
-    sLogFileName = 0;
-    bEditor = false;
-    bPreview = false;
-    bTestMode = false;
-    bDedicatedServer = false;
-    pSystem = 0;
-    pCheckFunc = 0;
-  }
+	// Initialization defaults.
+	SSystemInitParams()
+	{
+		hInstance = 0;
+		hWnd	  = 0;
+		memset(szSystemCmdLine, 0, sizeof(szSystemCmdLine));
+		pLog			 = 0;
+		pValidator		 = 0;
+		pUserCallback	 = 0;
+		sLogFileName	 = 0;
+		bEditor			 = false;
+		bPreview		 = false;
+		bTestMode		 = false;
+		bDedicatedServer = false;
+		pSystem			 = 0;
+		pCheckFunc		 = 0;
+	}
 };
 
 struct SSystemGlobalEnvironment
 {
-  INetwork* pNetwork = nullptr;
-  I3DEngine* p3DEngine = nullptr;
-  IScriptSystem* pScriptSystem = nullptr;
-  IInput* pInput = nullptr;
-  ICryPak* pCryPak = nullptr;
-  ITimer* pTimer = nullptr;
-  IConsole* pConsole = nullptr;
-  ISystem* pSystem = nullptr;
-  ILog* pLog = nullptr;
-  IRenderer* pRenderer = nullptr;
-  IHardwareMouse* pHardwareMouse = nullptr;
-  IPlatform* pPlatform;
+	INetwork* pNetwork			   = nullptr;
+	I3DEngine* p3DEngine		   = nullptr;
+	IScriptSystem* pScriptSystem   = nullptr;
+	IPhysicalWorld* pPhysicalWorld = nullptr;
+	IInput* pInput				   = nullptr;
+	ICryPak* pCryPak			   = nullptr;
+	ITimer* pTimer				   = nullptr;
+	IConsole* pConsole			   = nullptr;
+	ISystem* pSystem			   = nullptr;
+	ILog* pLog					   = nullptr;
+	IRenderer* pRenderer		   = nullptr;
+	IHardwareMouse* pHardwareMouse = nullptr;
+	IPlatform* pPlatform;
+
+	//! Generic debug string which can be easily updated by any system and output by the debug handler
+	enum
+	{
+		MAX_DEBUG_STRING_LENGTH = 128
+	};
+	char szDebugStatus[MAX_DEBUG_STRING_LENGTH] = {'\0'};
+
+	//! Used to tell if this is a server/multiplayer instance
+	bool bServer		= false;
+	bool bMultiplayer	= false;
+	bool bHostMigrating = false;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{
-	#if defined(DEDICATED_SERVER)
+#if defined(DEDICATED_SERVER)
 		bDedicated = true;
-	#else
+#else
 		bDedicated = isDedicated;
-	#endif
+#endif
 	}
 
-  ILINE bool IsEditor() { return false; }
+	ILINE bool IsEditor()
+	{
+		return false;
+	}
 	ILINE const bool IsEditing() const
 	{
 #if BB_PLATFORM_DESKTOP
@@ -239,11 +256,11 @@ struct SSystemGlobalEnvironment
 #if BB_PLATFORM_DESKTOP
 	bool bDedicatedArbitrator;
 
-private:
+  private:
 	bool bClient;
-	bool bEditor;          //!< Engine is running under editor.
-	bool bEditorGameMode;  //!< Engine is in editor game mode.
-	bool bDedicated;       //!< Engine is in dedicated.
+	bool bEditor;		  //!< Engine is running under editor.
+	bool bEditorGameMode; //!< Engine is in editor game mode.
+	bool bDedicated;	  //!< Engine is in dedicated.
 #endif
 };
 

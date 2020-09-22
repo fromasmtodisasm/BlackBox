@@ -63,6 +63,7 @@ enum
 
 #include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
+#include <DevMode.hpp>
 
 #include <SteamHelper.hpp>
 
@@ -664,6 +665,8 @@ public:
 	// Intersection
 
 	bool m_isActive = false;
+	// developer mode
+	std::unique_ptr<CDevMode> m_pDevMode;
 
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;

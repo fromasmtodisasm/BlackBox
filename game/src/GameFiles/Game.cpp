@@ -238,6 +238,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	InitConsoleVars();
 	initCommands();
 	InitScripts();
+	m_pDevMode = std::make_unique<CDevMode>();	
 
 	SmartScriptObject Gui(m_pScriptSystem,true);
 	if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
@@ -291,7 +292,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	InitConsoleCommands();
 
-	DevModeInit();
+	//DevModeInit();
 
 	initPlayer();
 	m_pInput->ShowCursor(false);
@@ -401,7 +402,7 @@ bool CGame::Update()
 				m_pClient->Update();
 				
 
-				//Render();
+				Render();
 
 			}
 
@@ -421,11 +422,13 @@ bool CGame::Update()
 			}
 		}
 	}
+	#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// Special update function for developers mode.
 	//////////////////////////////////////////////////////////////////////////
 	if (IsDevModeEnable() && false)
 		DevModeUpdate();
+	#endif
 	//////////////////////////////////////////////////////////////////////////
 	while (!m_qMessages.empty())
 	{
@@ -680,11 +683,11 @@ void CGame::PersistentHandler(const SInputEvent& event)
 		{
 			if (control)
 			{
-				DevMode_SavePlayerPos(event.keyId - eKI_F1, "BloomTest");
+				//DevMode_SavePlayerPos(event.keyId - eKI_F1, "BloomTest");
 			}
 			else if (shift)
 			{
-				DevMode_LoadPlayerPos(event.keyId - eKI_F1, "BloomTest");
+				//DevMode_LoadPlayerPos(event.keyId - eKI_F1, "BloomTest");
 			}
 		}
 		switch (event.keyId)
