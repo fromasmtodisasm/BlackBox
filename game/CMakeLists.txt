@@ -39,6 +39,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/Commands.cpp
 	PRIVATE ${SOURCE_DIR}/GUI/TextEditorDemo.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/EntityClassRegistry.cpp
+	PRIVATE ${SOURCE_DIR}/GameFiles/DevMode.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/Game.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameActionInput.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameClientServer.cpp

@@ -101,10 +101,10 @@ const char* LogTypeToString(IMiniLog::ELogType type)
 		return "";
 		break;
 	case IMiniLog::eWarning:
-		return "[$6Warning$1]";
+		return "[$6Warning$1] $6";
 		break;
 	case IMiniLog::eError:
-		return "$4[Error]";
+		return "[$4Error$1] $4";
 		break;
 	case IMiniLog::eAlways:
 		return "";
@@ -113,7 +113,7 @@ const char* LogTypeToString(IMiniLog::ELogType type)
 		return "";
 		break;
 	case IMiniLog::eErrorAlways:
-		return "[$4Error$1]";
+		return "[$4Error$1] $4";
 		break;
 	case IMiniLog::eInput:
 		return "Input";
@@ -126,7 +126,7 @@ const char* LogTypeToString(IMiniLog::ELogType type)
 
 void NullLog::LogV(const ELogType nType, const char* szFormat, va_list args)
 {
-  auto len = sprintf(buf, "%s ", LogTypeToString(nType));
+  auto len = sprintf(buf, "%s", LogTypeToString(nType));
   len += vsprintf(buf + len, szFormat, args);
   buf[len] = '\0';
   if (gEnv->pConsole)
