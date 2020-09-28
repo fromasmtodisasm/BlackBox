@@ -43,8 +43,6 @@
  */
 
 #include <stdio.h>
-#include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/Core/Platform/Platform.hpp>
 
 namespace Detail
 {
@@ -54,6 +52,7 @@ namespace Detail
 
 #define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 #if BB_PLATFORM_WINDOWS
+	#include <BlackBox/Core/Platform/Windows.hpp>
 
 	#define CryGetCurrentModule() ::GetModuleHandle(nullptr)
 	#define CrySharedLibrarySupported true
@@ -143,5 +142,65 @@ static HMODULE CryLoadLibrary(const char* libName, bool bLazy = false, bool bInM
 #define CryLibraryDefName(libName)               CrySharedLibraryPrefix libName CrySharedLibraryExtension
 #define CryLoadLibraryDefName(libName)           CryLoadLibrary(CryLibraryDefName(libName))
 
+// RAII helper to load a dynamic library and free it at the end of the scope.
+class CCryLibrary
+{
+public:
+	CCryLibrary(const char* szLibraryPath)
+		: m_hModule(nullptr)
+	{
+		if (szLibraryPath != nullptr)
+		{
+			m_hModule = CryLoadLibrary(szLibraryPath);
+		}
+	}
+
+	CCryLibrary(const CCryLibrary& other) = delete;
+
+	CCryLibrary(CCryLibrary&& other)
+		: m_hModule(std::move(other.m_hModule))
+	{
+		other.m_hModule = nullptr;
+	}
+
+	~CCryLibrary()
+	{
+		Free();
+	}
+
+	void Free()
+	{
+		if (m_hModule != nullptr)
+		{
+			CryFreeLibrary(m_hModule);
+			m_hModule = nullptr;
+		}
+	}
+
+	void ReleaseOwnership() { m_hModule = nullptr; }
+	bool IsLoaded() const { return m_hModule != nullptr; }
+
+	template<typename TProcedure>
+	TProcedure GetProcedureAddress(const char* szName)
+	{
+		return (TProcedure)CryGetProcAddress(m_hModule, szName);
+	}
+
+	void Set(const char* szLibraryPath)
+	{
+		if (m_hModule != nullptr)
+		{
+			CryFreeLibrary(m_hModule);
+			m_hModule = nullptr;
+		}
+
+		if (szLibraryPath != nullptr)
+		{
+			m_hModule = CryLoadLibrary(szLibraryPath);
+		}
+	}
+
+	HMODULE m_hModule;
+};
 #endif //CRYLIBRARY_H__
 

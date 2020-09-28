@@ -96,7 +96,12 @@ public:
   
 	void      SetViewCamera(CCamera& Camera) override { m_ViewCamera = Camera; }
 	CCamera&  GetViewCamera() override                { return m_ViewCamera; }
-private:
+
+  public:
+	void RunMainLoop();
+	bool DoFrame();
+
+  private:
   bool CreateConsole();
   bool InitConsole();
   bool InitRender();

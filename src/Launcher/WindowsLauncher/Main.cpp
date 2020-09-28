@@ -3,6 +3,8 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
+#include <BlackBox/Core/Platform/CryLibrary.h>
+
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <iostream>
@@ -24,31 +26,20 @@ extern "C"
 }
 
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-  int status = EXIT_FAILURE;
-  string path;
-  std::string cmdLine(GetCommandLineA());
+	SSystemInitParams startupParams;
+	startupParams.sLogFileName = "Game.log";
 
-  SSystemInitParams params;
+	// Note: lpCmdLine does not contain the filename.
+	string cmdLine = GetCommandLineA();
+	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
 
-  std::cout << "Current path is " << fs::current_path() << '\n';
-
-  time_t t = time(nullptr);
-  std::stringstream ss;
-  ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
-  params.sLogFileName = strdup(ss.str().c_str());
-
-  snprintf(params.szSystemCmdLine, 512, "%s", cmdLine.c_str());
-  ISystem* pSystem = CreateSystemInterface(params);
-  if (pSystem)
-  {
-		pSystem->GetILog()->Log("ISystem created");
-		pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
-		pSystem->Start();
-		status = EXIT_SUCCESS;
-  }
-  pSystem->Release();
-
-  return status;
+	if (InitializeEngine(startupParams))
+	{
+		startupParams.pSystem->Start();
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
 }
+

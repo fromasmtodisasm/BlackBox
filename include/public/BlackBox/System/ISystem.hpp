@@ -81,6 +81,9 @@ enum ESystemEvent : uint
 	//! wparam is 1 means we switched to fullscreen, 0 if for windowed.
 	ESYSTEM_EVENT_TOGGLE_FULLSCREEN,
 
+	//! Sent if the System module initialized successfully.
+	ESYSTEM_EVENT_SYSTEM_INIT_DONE,
+
 	//! Sent before initializing the renderer.
 	ESYSTEM_EVENT_PRE_RENDERER_INIT,
 
@@ -165,6 +168,8 @@ struct SSystemInitParams
   bool bTestMode;												// When runing in Automated testing mode.
   bool bDedicatedServer;								// When runing a dedicated server.
 	bool bMinimal;                        //!< Don't load banks.
+	bool bManualEngineLoop;
+
   ISystem* pSystem;											// Pointer to existing ISystem interface, it will be reused if not NULL.
 
 #if defined(LINUX)
@@ -187,6 +192,7 @@ struct SSystemInitParams
     bPreview = false;
     bTestMode = false;
     bDedicatedServer = false;
+	bManualEngineLoop = true;
     pSystem = 0;
     pCheckFunc = 0;
   }
@@ -377,6 +383,9 @@ inline ISystem* GetISystem()
 {
 	return gEnv->pSystem;
 };
+
+// System DLL Exports.
+typedef ISystem* (* PFNCREATESYSTEMINTERFACE)(SSystemInitParams& initParams/*, bool bManualEngineLoop*/);
 
 // interface of the DLL
 extern "C"
