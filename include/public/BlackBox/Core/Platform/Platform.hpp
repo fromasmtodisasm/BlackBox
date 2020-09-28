@@ -188,6 +188,11 @@ inline int IsHeapValid()
 //#undef strdup
 //#define strdup dont_use_strdup
 
+//! Loads System from disk and initializes the engine, commonly called from the Launcher implementation
+//! \param bManualEngineLoop Whether or not the caller will start and maintain the engine loop themselves. Otherwise the loop is started and engine shut down automatically inside the function.
+bool			InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
+
+
 #undef STATIC_CHECK
 #define STATIC_CHECK(expr, msg) static_assert((expr) != 0, # msg)
 

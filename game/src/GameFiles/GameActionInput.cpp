@@ -240,7 +240,7 @@ void  CGame::ResetInputMap()
   ADD_ACTION(MOVEMODE_TOGGLE, aamOnPress, "@CrouchToggle", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("MOVEMODE_TOGGLE", ACTIONMAPS_NODEAD);
   ADD_ACTION(AIM_TOGGLE, aamOnPress, "@ToggleAim", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("AIM_TOGGLE", "default", "zoom", "");
 
-  ADD_ACTION(CAMERA_MODE, aamOnPress, "@CameraMode", ACTIONTYPE_GAME, true) SetConfigToActionMap("CAMERA_MODE", ACTIONMAPS_ALL);
+  //ADD_ACTION(CAMERA_MODE, aamOnPress, "@CameraMode", ACTIONTYPE_GAME, true) SetConfigToActionMap("CAMERA_MODE", ACTIONMAPS_ALL);
 
 	
 
@@ -421,7 +421,7 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_JUMP, eKI_NP_Enter);
 
   //accellerate
-  pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
+  //pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
 
   // switch between 1st and 3rd pesron while driving
   //pMap->BindAction(ACTION_CHANGE_VIEW,eKI_RMB);
@@ -549,7 +549,7 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
   //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
 
-  pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
+  //pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
 
 #ifdef _DEBUG
   // <<FIXME>> Hack only in debug mode

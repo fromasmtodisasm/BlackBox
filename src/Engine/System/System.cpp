@@ -427,6 +427,22 @@ bool CSystem::ConfigLoad(const char* file)
 	return true;
 }
 
+void CSystem::RunMainLoop()
+{
+	for (;;)
+	{
+		if (!DoFrame())
+		{
+			break;
+		}
+	}
+}
+
+bool CSystem::DoFrame()
+{
+	return Update();
+}
+
 bool CSystem::CreateConsole()
 {
 	m_env.pConsole = m_pConsole = new CConsole();
@@ -1228,6 +1244,7 @@ const char* CSystem::GetUserName()
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
 	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
+	initParams.pSystem = pSystem.get();
 	ModuleInitISystem(pSystem.get(), "System");
 #if CRY_PLATFORM_DURANGO
 #if !defined(_LIB)
@@ -1237,8 +1254,19 @@ ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 #endif
   if (!pSystem->Init())
   {
+	pSystem.release();
+	initParams.pSystem = nullptr;
+	gEnv->pSystem = nullptr;
     return nullptr;
   }
+	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
+	// run main loop
+	if (initParams.bManualEngineLoop)
+	{
+		pSystem->RunMainLoop();
+		return nullptr;
+	}
+
 
   return pSystem.release();
 }

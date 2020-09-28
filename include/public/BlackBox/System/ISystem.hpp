@@ -82,6 +82,9 @@ enum ESystemEvent : uint
 	//! wparam is 1 means we switched to fullscreen, 0 if for windowed.
 	ESYSTEM_EVENT_TOGGLE_FULLSCREEN,
 
+	//! Sent if the System module initialized successfully.
+	ESYSTEM_EVENT_SYSTEM_INIT_DONE,
+
 	//! Sent before initializing the renderer.
 	ESYSTEM_EVENT_PRE_RENDERER_INIT,
 
@@ -394,6 +397,9 @@ inline ISystem* GetISystem()
 {
 	return gEnv->pSystem;
 };
+
+// System DLL Exports.
+typedef ISystem* (* PFNCREATESYSTEMINTERFACE)(SSystemInitParams& initParams/*, bool bManualEngineLoop*/);
 
 // interface of the DLL
 extern "C"

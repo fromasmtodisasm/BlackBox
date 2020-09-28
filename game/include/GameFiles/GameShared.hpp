@@ -34,8 +34,8 @@ typedef unsigned char ACTIONTYPE;
 #define ACTION_JUMP							5
 #define ACTION_MOVEMODE					6
 #define ACTION_FIRE0						7
-//#define ACTION_VEHICLE_BOOST		8	// orphaned
-#define ACTION_CAMERA_MODE		  8	// orphaned
+#define ACTION_VEHICLE_BOOST		8	// orphaned
+//#define ACTION_CAMERA_MODE		  8	// orphaned
 
 #define ACTION_SCORE_BOARD			8
 #define ACTION_RELOAD						9
@@ -45,11 +45,11 @@ typedef unsigned char ACTIONTYPE;
 #define ACTION_WALK							13
 #define ACTION_NEXT_WEAPON			14
 #define ACTION_PREV_WEAPON			15
-//#define ACTION_LEANRIGHT				16
+#define ACTION_LEANRIGHT				16
 #define ACTION_HOLDBREATH				17
 #define ACTION_FIREMODE					18
 #define ACTION_LEANLEFT					19
-//#define ACTION_FIRE_GRENADE			20
+#define ACTION_FIRE_GRENADE			20
 
 #define ACTION_QUICKLOAD				16
 #define ACTION_QUICKSAVE				20
