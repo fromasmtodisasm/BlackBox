@@ -330,6 +330,7 @@ private:
 };
 
 class CConsole : public IConsole
+	, public IRemoteConsoleListener
 	, public IInputEventListener
 	, public ICVarDumpSink
 {
@@ -389,6 +390,8 @@ class CConsole : public IConsole
   public:
 	CConsole();
 	~CConsole();
+
+	virtual void OnConsoleCommand(const char* cmd) override;
 	// Inherited via IConsole
 	bool Init(ISystem* pSystem);
 	virtual void ShowConsole(bool show) override;

@@ -40,6 +40,7 @@ struct ICryPak;
 struct IStreamEngine;
 struct ITextModeConsole;
 struct IThreadManager;
+struct IRemoteConsole;
 
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_GAME_PATH "TestGame"
@@ -354,6 +355,7 @@ struct ISystem
 	virtual IRenderer* GetIRenderer()			= 0;
 	virtual ILog* GetILog()						= 0;
 	virtual IStreamEngine* GetStreamEngine()	= 0;
+	virtual IRemoteConsole* GetIRemoteConsole() = 0;
 	virtual ICmdLine* GetICmdLine()				= 0;
 	virtual IConsole* GetIConsole()				= 0;
 	virtual IInput* GetIInput()					= 0;
@@ -385,6 +387,7 @@ struct ISystem
 	// Then terminates execution.
 	virtual void Error(const char* sFormat, ...) = 0;
 
+	virtual void WarningV(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, va_list args) = 0;
 	//DOC-IGNORE-BEGIN
 	//[Timur] DEPRECATED! Use Validator Warning instead.
 	// Display warning message.

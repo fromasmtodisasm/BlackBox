@@ -1,17 +1,21 @@
 #pragma once
 
 #include <BlackBox/Threading/IThreadManager.h>
+#include <BlackBox/Utils/smartptr.hpp>
 
 #include <thread>
 #include <mutex>
 
 class CThreadManager;
 
+//struct CryCriticalSection
+
+using CryCriticalSection = CryMutex;
+using CryConditionVariable = std::condition_variable;
+
 //////////////////////////////////////////////////////////////////////////
-struct SThreadMetaData //: public CMultiThreadRefCount
+struct SThreadMetaData : public _reference_target_MT
 {
-	using CryMutex = std::mutex;
-	using CryConditionVariable = std::condition_variable;
 	SThreadMetaData()
 		: m_pThreadTask(0)
 		, m_pThreadMngr(nullptr)
@@ -26,6 +30,7 @@ struct SThreadMetaData //: public CMultiThreadRefCount
 	CThreadManager*                         m_pThreadMngr; // Pointer to thread manager
 
 	//CryThreadUtil::TThreadHandle            m_threadHandle; // Thread handle
+	std::thread m_threadHandle;
 	threadID                                m_threadId;     // The active threadId, 0 = Invalid Id
 
 	CryMutex                                m_threadExitMutex;     // Mutex used to safeguard thread exit condition signaling
@@ -41,6 +46,10 @@ class CThreadManager : public IThreadManager
 	// Inherited via IThreadManager
 	virtual IThreadConfigManager* GetThreadConfigManager() override;
 	virtual bool SpawnThread(IThread* pThread, const char* sThreadName, ...) override;
+
+	bool     UnregisterThread(IThread* pThreadTask);
+	bool     SpawnThreadImpl(IThread* pThread, const char* sThreadName);
+
 	virtual bool JoinThread(IThread* pThreadTask, EJoinMode joinStatus) override;
 	virtual bool RegisterThirdPartyThread(void* pThreadHandle, const char* sThreadName, ...) override;
 	virtual bool UnRegisterThirdPartyThread(const char* sThreadName, ...) override;
@@ -61,4 +70,15 @@ private:
 	typedef std::map<IThread*, _smart_ptr<SThreadMetaData>>::iterator                                      SpawnedThreadMapIter;
 	typedef std::map<IThread*, _smart_ptr<SThreadMetaData>>::const_iterator                                SpawnedThreadMapConstIter;
 	typedef std::pair<IThread*, _smart_ptr<SThreadMetaData>>                                               ThreadMapPair;
+
+	CryCriticalSection         m_spawnedThreadsLock; // Use lock for the rare occasion a thread is created/destroyed
+	SpawnedThreadMap           m_spawnedThreads;     // Holds information of all spawned threads (through this system)
+
+	CryCriticalSection         m_spawnedThirdPartyThreadsLock; // Use lock for the rare occasion a thread is created/destroyed
+	//SpawnedThirdPartyThreadMap m_spawnedThirdPartyThread;      // Holds information of all registered 3rd party threads (through this system)
+
+	//CThreadConfigManager       m_threadConfigManager;
 };
+
+#define AUTO_LOCK_T(Type, lock) std::lock_guard<Type> __AutoLock(lock)
+#define AUTO_LOCK(lock) AUTO_LOCK_T(std::mutex, lock.m_mutex)

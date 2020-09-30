@@ -184,8 +184,21 @@ bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
   }
   else
   {
-    std::string errormsg = lua_tostring(L, -1);
-    m_pSystem->GetIConsole()->PrintLine("$4LUA ERROR$1: %s", errormsg.c_str());
+    
+	if (/*status != 0*/1)
+	{
+		const char* sErr = lua_tostring(L, -1);
+		#if 0
+		if (/*sBufferDescription && strlen(sBufferDescription) != 0*/0)
+			GetISystem()->Warning(VALIDATOR_MODULE_SCRIPTSYSTEM, VALIDATOR_WARNING, VALIDATOR_FLAG_FILE | VALIDATOR_FLAG_SCRIPT, sBufferDescription,
+			                      "[Lua Error] Failed to execute file %s: %s", sBufferDescription, sErr);
+		else
+		#endif
+			ScriptWarning("[Lua Error] Error executing lua %s", sErr);
+		//assert(GetStackSize() > 0);
+		lua_pop(L, 1);
+		return false;
+	}
   }
 
   return result == LUA_OK;

@@ -4,6 +4,7 @@
 #include <thread>
 #include <mutex>
 
+#define THREAD_NAME_LENGTH_MAX 64
 struct CryMutex
 {
 	std::mutex m_mutex;
@@ -14,7 +15,7 @@ struct CryMutex
 	}
 	void Unlock()
 	{
-		m_mutex.lock();
+		m_mutex.unlock();
 	}
 };
 

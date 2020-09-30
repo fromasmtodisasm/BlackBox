@@ -86,6 +86,7 @@ class CSystem final : public ISystem
 	};
 	virtual IEntitySystem* GetIEntitySystem() override;
 	virtual IStreamEngine* GetStreamEngine() override;
+	IRemoteConsole* GetIRemoteConsole() override;
 	virtual ITextModeConsole* GetITextModeConsole() override;
 
 	virtual IGame* CreateGame(IGame* game) override;
@@ -251,6 +252,7 @@ class CSystem final : public ISystem
 	virtual bool IsQuitting() override;
 	virtual void Error(const char* sFormat, ...) override;
 	virtual void Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...) override;
+	void         WarningV(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, va_list args) override;
 	virtual bool CheckLogVerbosity(int verbosity) override;
 
 	virtual bool WriteCompressedFile(char* filename, void* data, unsigned int bitlen) override;

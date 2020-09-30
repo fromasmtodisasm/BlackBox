@@ -13,6 +13,7 @@
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
+#include "RemoteConsole/RemoteConsole.h"
 
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
@@ -375,6 +376,7 @@ bool CSystem::Init()
 			m_pUserCallback = pConsole;
 	}
 	#endif
+	GetIRemoteConsole()->RegisterConsoleVariables();
 
 #endif // CRY_PLATFORM_DESKTOP
 	if (m_pUserCallback)
@@ -498,6 +500,9 @@ void CSystem::Quit()
 		m_pTextModeConsole->OnShutdown();
 
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_FAST_SHUTDOWN, 0, 0);
+
+	GetIRemoteConsole()->Stop();
+
 	Release();
 
 	exit(0);
@@ -970,6 +975,9 @@ void CSystem::ShutDown()
 		m_pUserCallback = nullptr;
 	}
 
+	GetIRemoteConsole()->Stop();
+	GetIRemoteConsole()->UnregisterConsoleVariables();
+
 	SAFE_DELETE(m_pTextModeConsole);
 
 	SAFE_RELEASE(m_pGame);
@@ -1263,6 +1271,9 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		m_pUserCallback->OnUpdate();
 
 	m_pSystemEventDispatcher->Update();
+#if !defined(RELEASE) || defined(RELEASE_LOGGING)
+	GetIRemoteConsole()->Update();
+#endif
 
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
@@ -1378,9 +1389,16 @@ const char* CSystem::GetUserName()
 #endif
 }
 
+//////////////////////////////////////////////////////////////////////////
 IStreamEngine* CSystem::GetStreamEngine()
 {
 	return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+IRemoteConsole* CSystem::GetIRemoteConsole()
+{
+	return CRemoteConsole::GetInst();
 }
 
 ITextModeConsole* CSystem::GetITextModeConsole()

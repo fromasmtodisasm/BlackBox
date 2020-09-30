@@ -149,6 +149,9 @@ void CRemoteConsole::Update()
 			for (auto notifier : m_listener)
 				notifier.second->OnGameplayCommand(static_cast<SStringEvent<eCET_GameplayEvent>*>(pEvent.get())->GetData());
 			break;
+		case eCET_LogMessage:
+			CryLog(static_cast<SStringEvent<eCET_GameplayEvent>*>(pEvent.get())->GetData());
+			break;
 	#if 0              // currently no stroboscope support
 		case eCET_Strobo_GetThreads:
 			SendThreadData();
@@ -509,16 +512,16 @@ void SRemoteClient::ThreadEntry()
 		// read data
 		SRemoteEventFactory::GetInst()->WriteToBuffer(&reqEvt, szBuff, size);
 		ok &= SendPackage(szBuff, size);
-		ok &= RecvPackage(szBuff, size);
-		ok &= m_pServer->ReadBuffer(szBuff, size);
+		//ok &= RecvPackage(szBuff, size);
+		//ok &= m_pServer->ReadBuffer(szBuff, size);
 
 		for (int i = 0; i < 20 && !autoCompleteList.empty(); ++i)
 		{
-			SStringEvent<eCET_AutoCompleteList> autoCompleteListEvt(autoCompleteList.back().c_str());
+			SStringEvent<eCET_AutoCompleteList> autoCompleteListEvt((autoCompleteList.back() + "\r\n").c_str());
 			SRemoteEventFactory::GetInst()->WriteToBuffer(&autoCompleteListEvt, szBuff, size);
 			ok &= SendPackage(szBuff, size);
-			ok &= RecvPackage(szBuff, size);
-			ok &= m_pServer->ReadBuffer(szBuff, size);
+			//ok &= RecvPackage(szBuff, size);
+			//ok &= m_pServer->ReadBuffer(szBuff, size);
 			autoCompleteList.pop_back();
 		}
 		if (autoCompleteList.empty() && !autoCompleteDoneSent)
@@ -527,8 +530,8 @@ void SRemoteClient::ThreadEntry()
 			SRemoteEventFactory::GetInst()->WriteToBuffer(&autoCompleteDone, szBuff, size);
 
 			ok &= SendPackage(szBuff, size);
-			ok &= RecvPackage(szBuff, size);
-			ok &= m_pServer->ReadBuffer(szBuff, size);
+			//ok &= RecvPackage(szBuff, size);
+			//ok &= m_pServer->ReadBuffer(szBuff, size);
 			autoCompleteDoneSent = true;
 		}
 
@@ -558,7 +561,8 @@ bool SRemoteClient::RecvPackage(char* buffer, size_t& size)
 			return false;
 		idx += ret;
 	}
-	while (buffer[idx - 1] != '\0');
+	while (buffer[idx - 1] != '\x1c');
+	buffer[idx - 1] = '\0';
 	size = idx;
 	return true;
 }
@@ -585,10 +589,10 @@ void SRemoteClient::FillAutoCompleteList(std::vector<string>& list)
 {
 	std::vector<const char*> cmds;
 	size_t count = gEnv->pConsole->GetNumVars();
-	cmds.resize(count);
+	cmds.resize(count + 1);
 	gEnv->pConsole->GetSortedVars(&cmds[0], count);
 	cmds.resize(count); // We might have less CVars than we were expecting (invisible ones, etc.)
-	for (size_t i = 0; cmds[i]; ++i)
+	for (size_t i = 0; i < cmds.size() - 1; ++i)
 	{
 		list.push_back(cmds[i]);
 	}
