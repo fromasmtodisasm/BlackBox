@@ -30,6 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
+	startupParams.bDedicatedServer = true;
 
 	// Note: lpCmdLine does not contain the filename.
 	string cmdLine = GetCommandLineA();

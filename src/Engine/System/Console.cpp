@@ -22,6 +22,8 @@
 #include <functional>
 #include "NullImplementation/NullFont.hpp"
 
+#define CRY_ASSERT ASSERT
+
 bool isnumber(const char* s)
 {
   auto p = s;
@@ -53,6 +55,40 @@ size_t get_endword_from_cursor_pos(const T& str, size_t pos)
 		}
 		return get_endword_from_cursor_pos(str, end);
 	}
+}
+
+// user defined comparison - for nicer printout
+inline int GetCharPrio(char x)
+{
+	if (x >= 'a' && x <= 'z')
+		x += 'A' - 'a';         // make upper case
+
+	if (x == '_') 
+		return 300;
+	else 
+		return x;
+}
+
+// case sensitive
+inline bool less_CVar(const char* left, const char* right)
+{
+	while (true)
+	{
+		const uint32 l = GetCharPrio(*left), r = GetCharPrio(*right);
+
+		if (l < r)
+			return true;
+		if (l > r)
+			return false;
+
+		if (*left == 0 || *right == 0)
+			break;
+
+		++left;
+		++right;
+	}
+
+	return false;
 }
 
 const char* GetFlagsString(const uint32 dwFlags)
@@ -199,7 +235,6 @@ ITexPic* CConsole::GetImage()
 
 void CConsole::Update()
 {
-	m_ScrollHeight = m_pRenderer->GetHeight() / 2.0f;
   for (const auto& worker : m_workers)
   {
     worker->OnUpdate();
@@ -215,7 +250,15 @@ void CConsole::Update()
 
 void CConsole::Draw()
 {
+	if (!m_pRenderer)
+		m_pRenderer = m_pSystem->GetIRenderer(); // For Editor.
+
+	if (!m_pRenderer)
+		return;
+
 	if (!isOpened) return;
+
+	m_ScrollHeight = m_pRenderer->GetHeight() / 2.0f;
 	auto deltatime = GetISystem()->GetDeltaTime();
 	if (!m_pRenderer)
 	{
@@ -317,7 +360,7 @@ void CConsole::AddCommand(const char* sName, IConsoleCommand* command, const cha
   cmdInfo.Command = command;
   if (help) cmdInfo.help = help;
   cmdInfo.type = CommandInfo::Type::INTERFACE;
-  m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
+  m_mapCommands[str_to_wstr(std::string(sName))] = cmdInfo;
 }
 
 void CConsole::ExecuteString(const char* command)
@@ -644,6 +687,10 @@ void CConsole::addToCommandBuffer(std::vector<std::wstring>& completion)
 void CConsole::addText(std::wstring const& cmd)
 {
   m_CmdBuffer.push_back({ Text(wstr_to_str(cmd) + "\n", textColor, 1.0f) });
+
+	// tell everyone who is interested (e.g. dedicated server printout)
+	for (auto* sink : m_OutputSinks)
+		sink->Print(wstr_to_str(cmd.data()).data());
 }
 
 void CConsole::Set(CommandDesc& cd)
@@ -1250,13 +1297,176 @@ void CConsole::Release()
 	delete this;
 }
 
+void CConsole::AddOutputPrintSink(IOutputPrintSink* inpSink)
+{
+	CRY_ASSERT(inpSink);
+	m_OutputSinks.push_back(inpSink);
+}
+
+void CConsole::RemoveOutputPrintSink(IOutputPrintSink* inpSink)
+{
+	CRY_ASSERT(inpSink);
+
+	const int nCount = m_OutputSinks.size();
+	for (int i = 0; i < nCount; i++)
+	{
+		if (m_OutputSinks[i] == inpSink)
+		{
+			if (nCount <= 1)
+			{
+				m_OutputSinks.clear();
+			}
+			else
+			{
+				m_OutputSinks[i] = m_OutputSinks.back();
+				m_OutputSinks.pop_back();
+			}
+			return;
+		}
+	}
+	CRY_ASSERT(false);
+}
+
+int CConsole::GetNumVars()
+{
+	bool bIncludeCommands = false;
+	return m_mapVariables.size() + (bIncludeCommands ? m_mapCommands.size() : 0);
+}
+
+void CConsole::GetSortedVars(const char** pszArray, size_t numItems)
+{
+	CRY_ASSERT(pszArray != nullptr);
+	if (pszArray == nullptr)
+		//return 0;
+		return;
+
+	size_t itemAdded = 0;
+	const size_t iPrefixLen = false;//szPrefix ? strlen(szPrefix) : 0;
+
+	auto nListTypes = 0;
+	// variables
+	if (nListTypes == 0 || nListTypes == 1)
+	{
+		for (auto& it : m_mapVariables)
+		{
+			if (itemAdded >= numItems)
+				break;
+
+			#if 0
+			if (szPrefix && strnicmp(it.first, szPrefix, iPrefixLen) != 0)
+				continue;
+			#endif
+
+			if (it.second->GetFlags() & VF_INVISIBLE)
+				continue;
+
+			pszArray[itemAdded] = it.first.data();
+			itemAdded++;
+		}
+	}
+
+	// commands
+	if (nListTypes == 0 || nListTypes == 2)
+	{
+		for (auto& it : m_mapCommands)
+		{
+			if (itemAdded >= numItems)
+				break;
+
+            #if 0
+			if (szPrefix && strnicmp(it.first.c_str(), szPrefix, iPrefixLen) != 0)
+				continue;
+
+			if (it.second.m_nFlags & VF_INVISIBLE)
+				continue;
+            #endif
+
+			pszArray[itemAdded] = wstr_to_str(it.first.c_str()).data();
+			itemAdded++;
+		}
+	}
+
+	if (itemAdded != 0)
+		std::sort(pszArray, pszArray + itemAdded, less_CVar);
+
+	//return itemAdded;
+}
+
+const char* CConsole::AutoComplete(const char* substr)
+{
+	return nullptr;
+}
+
+const char* CConsole::AutoCompletePrev(const char* substr)
+{
+	return nullptr;
+}
+
+char* CConsole::ProcessCompletion(const char* szInputBuffer)
+{
+	return nullptr;
+}
+
+void CConsole::ResetAutoCompletion()
+{
+}
+
+void CConsole::DumpKeyBinds(IKeyBindDumpSink* pCallback)
+{
+}
+
+const char* CConsole::GetHistoryElement(const bool bUpOrDown)
+{
+	if (bUpOrDown)
+	{
+		if (!m_dqHistory.empty())
+		{
+			if (m_nHistoryPos < (int)(m_dqHistory.size() - 1))
+			{
+				m_nHistoryPos++;
+				m_sReturnString = m_dqHistory[m_nHistoryPos];
+				return m_sReturnString.c_str();
+			}
+		}
+	}
+	else
+	{
+		if (m_nHistoryPos > 0)
+		{
+			m_nHistoryPos--;
+			m_sReturnString = m_dqHistory[m_nHistoryPos];
+			return m_sReturnString.c_str();
+		}
+	}
+
+	return 0;
+}
+
+void CConsole::AddCommandToHistory(const char* szCommand)
+{
+	CRY_ASSERT(szCommand);
+	m_nHistoryPos = -1;
+
+	if (!m_dqHistory.empty())
+	{
+		// add only if the command is != than the last
+		if (m_dqHistory.front() != szCommand)
+			m_dqHistory.push_front(szCommand);
+	}
+	else
+		m_dqHistory.push_front(szCommand);
+
+	while (m_dqHistory.size() > MAX_HISTORY_ENTRIES)
+		m_dqHistory.pop_back();
+}
+
 void CConsole::AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags/* = 0*/, const char* help/* = NULL*/)
 {
   CommandInfo cmdInfo;
   cmdInfo.Func = func;
   if (help) cmdInfo.help = help;
   cmdInfo.type = CommandInfo::Type::FUNC;
-  m_Commands[str_to_wstr(std::string(sCommand))] = cmdInfo;
+  m_mapCommands[str_to_wstr(std::string(sCommand))] = cmdInfo;
 }
 
 void CConsole::AddWorkerCommand(IWorkerCommand* cmd)
@@ -1284,7 +1494,7 @@ void CConsole::AddCommand(const char* sName, const char* sScriptFunc, const uint
   cmdInfo.Script.code = sScriptFunc;
   if (help) cmdInfo.help = help;
   cmdInfo.type = CommandInfo::Type::SCRIPT;
-  m_Commands[str_to_wstr(std::string(sName))] = cmdInfo;
+  m_mapCommands[str_to_wstr(std::string(sName))] = cmdInfo;
 }
 
 void CConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter)
@@ -1578,9 +1788,9 @@ bool CConsole::handleCommand(std::wstring command)
   auto cd = parseCommand(command);
   //cd.history = &history;
 
-  auto cmd_it = m_Commands.find(cd.command);
+  auto cmd_it = m_mapCommands.find(cd.command);
 
-  if (cmd_it != m_Commands.end())
+  if (cmd_it != m_mapCommands.end())
   {
     if (cmd_it->second.type == CommandInfo::Type::INTERFACE)
     {
@@ -1803,7 +2013,7 @@ CommandDesc CConsole::parseCommand(std::wstring& command)
 std::vector<std::wstring> CConsole::autocomplete(std::wstring cmd)
 {
   std::vector<std::wstring> completion;
-  for (auto& curr_cmd : m_Commands)
+  for (auto& curr_cmd : m_mapCommands)
   {
     if (curr_cmd.first.substr(0, cmd.size()) == cmd)
     {
@@ -1910,9 +2120,9 @@ void CConsole::Help(const char* cmd)
   if (cmd != nullptr)
   {
     auto name = str_to_wstr(std::string(cmd));
-    auto it = m_Commands.find(name);
+    auto it = m_mapCommands.find(name);
     const char* help = nullptr;
-    if (it != m_Commands.end())
+    if (it != m_mapCommands.end())
     {
       help = it->second.help.c_str();
     }
@@ -1929,7 +2139,7 @@ void CConsole::Help(const char* cmd)
   }
   else
   {
-    for (auto& cmd : m_Commands)
+    for (auto& cmd : m_mapCommands)
     {
       if (cmd.second.help.size() > 0)
         m_CmdBuffer.push_back({ Text(std::string(wstr_to_str(cmd.first)) + ": " + cmd.second.help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });

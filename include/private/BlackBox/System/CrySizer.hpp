@@ -124,7 +124,7 @@ struct ICrySizer
 #ifdef _STRING_
 	bool Add (const string& strText)
 	{
-		AddString(strText);
+		return AddString(strText);
 	}
 #endif
 

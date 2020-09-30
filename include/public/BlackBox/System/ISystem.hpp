@@ -38,10 +38,25 @@ struct IWorld;
 struct IPlatform;
 struct ICryPak;
 struct IStreamEngine;
+struct ITextModeConsole;
 
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_GAME_PATH "TestGame"
 #define DATA_FOLDER "res"
+
+#if BB_PLATFORM_ANDROID
+	#define USE_ANDROIDCONSOLE
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_MAC
+	#define USE_UNIXCONSOLE
+#elif BB_PLATFORM_IOS
+	#define USE_IOSCONSOLE
+#elif BB_PLATFORM_WINDOWS
+	#define USE_WINDOWSCONSOLE
+#endif
+
+#if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
+	#define USE_DEDICATED_SERVER_CONSOLE
+#endif
 
 //! System wide events.
 enum ESystemEvent : uint
@@ -92,24 +107,49 @@ enum ESystemEvent : uint
 	ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE,
 };
 
-//////////////////////////////////////////////////////////////////////////
-// User defined callback, which can be passed to ISystem.
+//! User defined callback, which can be passed to ISystem.
 struct ISystemUserCallback
 {
-	/** Signals to User that engine error occured.
-      @return true to Halt execution or false to ignore this error.
-  */
-	virtual bool OnError(const char* szErrorString) = 0;
-	/** If working in Editor environment notify user that engine want to Save current document.
-      This happens if critical error have occured and engine gives a user way to save data and not lose it
-      due to crash.
-  */
-	virtual void OnSaveDocument() = 0;
+	// <interfuscator:shuffle>
+	virtual ~ISystemUserCallback(){}
 
-	/** Notify user that system wants to switch out of current process.
-      (For ex. Called when pressing ESC in game mode to go to Menu).
-  */
+	//! This method is called at the earliest point the ISystem pointer can be used the log might not be yet there.
+	virtual void OnSystemConnect(ISystem* pSystem) {}
+
+	//! If working in Editor environment notify user that engine want to Save current document.
+	//! This happens if critical error have occurred and engine gives a user way to save data and not lose it due to crash.
+#if BB_PLATFORM_WINDOWS
+	virtual bool OnSaveDocument() = 0;
+#endif
+
+	//! Notifies user that system wants to switch out of current process.
+	//! Example: Called when pressing ESC in game mode to go to Menu.
 	virtual void OnProcessSwitch() = 0;
+
+	//! Notifies user, usually editor, about initialization progress in system.
+	virtual void OnInitProgress(const char* sProgressMsg) = 0;
+
+	//! Initialization callback.
+	//! This is called early in CSystem::Init(), before any of the other callback methods is called.
+	virtual void OnInit(ISystem*) {}
+
+	//! Shutdown callback.
+	virtual void OnShutdown() {}
+
+	//! Quit callback.
+	virtual void OnQuit() {}
+
+	//! Notify user of an update iteration. Called in the update loop.
+	virtual void OnUpdate() {}
+
+	#if 0
+	//! Show message by provider.
+	virtual EQuestionResult ShowMessage(const char* text, const char* caption, EMessageBox uType) { return eQR_None; }
+	#endif
+
+	//! Collects the memory information in the user program/application.
+	virtual void GetMemoryUsage(struct ICrySizer* pSizer) = 0;
+	// </interfuscator:shuffle>
 };
 
 //! Interface used for getting notified when a system event occurs.
@@ -316,6 +356,7 @@ struct ISystem
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
 
 	virtual ITimer* GetITimer() = 0;
+	virtual ITextModeConsole* GetITextModeConsole() = 0;
 
 	// Quit the appliacation
 	virtual void Quit() = 0;
