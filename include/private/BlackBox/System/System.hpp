@@ -26,6 +26,13 @@ class CScriptObjectConsole;
 class CScriptObjectScript;
 class CScriptObjectRenderer;
 
+IThreadManager* CreateThreadManager();
+
+/*
+   ===========================================
+   The System interface Class
+   ===========================================
+ */
 class CSystem final : public ISystem
 	, public IInputEventListener
 	, public IConsoleVarSink
@@ -141,6 +148,11 @@ class CSystem final : public ISystem
 	void Tests();
 	void PollEvents();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Threading functions.
+	//////////////////////////////////////////////////////////////////////////
+	void InitThreadSystem();
+	void ShutDownThreadSystem();
 	//////////////////////////////////////////////////////////////////////////
 	// Helper functions.
 	//////////////////////////////////////////////////////////////////////////

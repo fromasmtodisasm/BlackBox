@@ -39,23 +39,24 @@ struct IPlatform;
 struct ICryPak;
 struct IStreamEngine;
 struct ITextModeConsole;
+struct IThreadManager;
 
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_GAME_PATH "TestGame"
 #define DATA_FOLDER "res"
 
 #if BB_PLATFORM_ANDROID
-	#define USE_ANDROIDCONSOLE
+#	define USE_ANDROIDCONSOLE
 #elif BB_PLATFORM_LINUX || BB_PLATFORM_MAC
-	#define USE_UNIXCONSOLE
+#	define USE_UNIXCONSOLE
 #elif BB_PLATFORM_IOS
-	#define USE_IOSCONSOLE
+#	define USE_IOSCONSOLE
 #elif BB_PLATFORM_WINDOWS
-	#define USE_WINDOWSCONSOLE
+#	define USE_WINDOWSCONSOLE
 #endif
 
 #if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
-	#define USE_DEDICATED_SERVER_CONSOLE
+#	define USE_DEDICATED_SERVER_CONSOLE
 #endif
 
 //! System wide events.
@@ -111,10 +112,14 @@ enum ESystemEvent : uint
 struct ISystemUserCallback
 {
 	// <interfuscator:shuffle>
-	virtual ~ISystemUserCallback(){}
+	virtual ~ISystemUserCallback()
+	{
+	}
 
 	//! This method is called at the earliest point the ISystem pointer can be used the log might not be yet there.
-	virtual void OnSystemConnect(ISystem* pSystem) {}
+	virtual void OnSystemConnect(ISystem* pSystem)
+	{
+	}
 
 	//! If working in Editor environment notify user that engine want to Save current document.
 	//! This happens if critical error have occurred and engine gives a user way to save data and not lose it due to crash.
@@ -131,21 +136,29 @@ struct ISystemUserCallback
 
 	//! Initialization callback.
 	//! This is called early in CSystem::Init(), before any of the other callback methods is called.
-	virtual void OnInit(ISystem*) {}
+	virtual void OnInit(ISystem*)
+	{
+	}
 
 	//! Shutdown callback.
-	virtual void OnShutdown() {}
+	virtual void OnShutdown()
+	{
+	}
 
 	//! Quit callback.
-	virtual void OnQuit() {}
+	virtual void OnQuit()
+	{
+	}
 
 	//! Notify user of an update iteration. Called in the update loop.
-	virtual void OnUpdate() {}
+	virtual void OnUpdate()
+	{
+	}
 
-	#if 0
+#if 0
 	//! Show message by provider.
 	virtual EQuestionResult ShowMessage(const char* text, const char* caption, EMessageBox uType) { return eQR_None; }
-	#endif
+#endif
 
 	//! Collects the memory information in the user program/application.
 	virtual void GetMemoryUsage(struct ICrySizer* pSizer) = 0;
@@ -260,7 +273,8 @@ struct SSystemGlobalEnvironment
 	ILog* pLog					   = nullptr;
 	IRenderer* pRenderer		   = nullptr;
 	IHardwareMouse* pHardwareMouse = nullptr;
-	IPlatform* pPlatform;
+	IPlatform* pPlatform		   = nullptr;
+	IThreadManager* pThreadManager = nullptr;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{
@@ -334,7 +348,7 @@ struct ISystem
 	virtual void Release()										 = 0;
 	//! Returns pointer to the global environment structure.
 	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() = 0;
-	virtual ISystemUserCallback* GetUserCallback() const = 0;
+	virtual ISystemUserCallback* GetUserCallback() const	 = 0;
 	virtual IGame* CreateGame(IGame* game)					 = 0;
 
 	virtual IRenderer* GetIRenderer()			= 0;
@@ -356,7 +370,7 @@ struct ISystem
 	virtual IScriptSystem* GetIScriptSystem()					= 0;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
 
-	virtual ITimer* GetITimer() = 0;
+	virtual ITimer* GetITimer()						= 0;
 	virtual ITextModeConsole* GetITextModeConsole() = 0;
 
 	// Quit the appliacation

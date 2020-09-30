@@ -130,6 +130,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 #if !defined(SYS_ENV_AS_STRUCT)
 	gEnv = &m_env;
 #endif
+	InitThreadSystem();
 }
 
 CSystem::~CSystem()

@@ -402,6 +402,38 @@ struct IConsole
 	virtual void AddCommandToHistory(const char* szCommand) = 0;
 };
 
+//! \cond INTERNAL
+//! This interface for the remote console.
+struct IRemoteConsoleListener
+{
+	virtual ~IRemoteConsoleListener() {}
+
+	virtual void OnConsoleCommand(const char* cmd)  {}
+	virtual void OnGameplayCommand(const char* cmd) {}
+};
+
+struct IRemoteConsole
+{
+	virtual ~IRemoteConsole() {}
+
+	virtual void RegisterConsoleVariables() = 0;
+	virtual void UnregisterConsoleVariables() = 0;
+
+	virtual void Start() = 0;
+	virtual void Stop() = 0;
+	virtual bool IsStarted() const = 0;
+
+	virtual void AddLogMessage(const char* log) = 0;
+	virtual void AddLogWarning(const char* log) = 0;
+	virtual void AddLogError(const char* log) = 0;
+
+	virtual void Update() = 0;
+
+	virtual void RegisterListener(IRemoteConsoleListener* pListener, const char* name) = 0;
+	virtual void UnregisterListener(IRemoteConsoleListener* pListener) = 0;
+};
+//! \endcond
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //! this interface is the 1:1 "C++ representation"
