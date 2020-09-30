@@ -52,6 +52,7 @@ class CSystem final : public ISystem
 	{
 		return &m_env;
 	}
+	virtual ISystemUserCallback*         GetUserCallback() const override { return m_pUserCallback; }
 
 	virtual IRenderer* GetIRenderer() override;
 	virtual ILog* GetILog() override;
@@ -146,6 +147,8 @@ class CSystem final : public ISystem
 	void CreateRendererVars(const SSystemInitParams& startupParams);
 	void CreateSystemVars();
 
+	void ShutDown();
+
   protected:
 	CCmdLine* m_pCmdLine;
 
@@ -232,25 +235,22 @@ class CSystem final : public ISystem
 	// Inherited via ILoadConfigurationEntrySink
 	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;
 
-	// Inherited via ISystem
 	virtual void Relaunch(bool bRelaunch) override;
 	virtual bool IsQuitting() override;
 	virtual void Error(const char* sFormat, ...) override;
 	virtual void Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...) override;
 	virtual bool CheckLogVerbosity(int verbosity) override;
 
-	// Inherited via ISystem
 	virtual bool WriteCompressedFile(char* filename, void* data, unsigned int bitlen) override;
 	virtual unsigned int ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen) override;
 	virtual unsigned int GetCompressedFileSize(char* filename) override;
 
-	// Inherited via IConsoleVarSink
 	virtual void OnAfterVarChange(ICVar* pVar) override;
 	virtual void OnVarUnregister(ICVar* pVar) override;
 
-	// Inherited via ISystem
 	virtual void RenderStatistics() override;
 	virtual const char* GetUserName() override;
+
 };
 
 void AddInternalCommands(ISystem* pSystem);

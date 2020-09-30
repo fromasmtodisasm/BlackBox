@@ -52,7 +52,22 @@ namespace
 	template<typename Proc>
 	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
-		gEnv->pSystem->Log("Loading...");
+		//gEnv->pSystem->Log("Loading...");
+		string msg;
+		msg = "Loading Module ";
+		msg += lib_name;
+		msg += "...";
+
+		if (gEnv->pSystem->GetUserCallback())
+		{
+			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
+		}
+
+		if (true)
+		{
+			CryLog("%s", msg.c_str());
+		}
+
 		auto L = CryLoadLibrary(lib_name);
 		if (L)
 		{
@@ -119,22 +134,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 
 CSystem::~CSystem()
 {
-	CSystem::Log("Releasing system");
-
-	SAFE_DELETE(m_pTextModeConsole);
-
-	SAFE_RELEASE(m_pGame);
-	//SAFE_DELETE(m_pFont);
-	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_pConsole);
-	SAFE_RELEASE(m_Render);
-
-	SAFE_DELETE(m_ScriptObjectConsole);
-	SAFE_DELETE(m_ScriptObjectScript);
-	SAFE_DELETE(m_ScriptObjectRenderer);
-	SAFE_RELEASE(m_pScriptSystem);
-
-	SAFE_RELEASE(m_pLog);
+	ShutDown();
 }
 
 void CSystem::PreprocessCommandLine()
@@ -954,6 +954,37 @@ void CSystem::CreateSystemVars()
 {
 }
 
+void CSystem::ShutDown()
+{
+	CSystem::Log("Releasing system");
+
+	if (m_pSystemEventDispatcher)
+	{
+		m_pSystemEventDispatcher->RemoveListener(this);
+	}
+
+	if (m_pUserCallback)
+	{
+		m_pUserCallback->OnShutdown();
+		m_pUserCallback = nullptr;
+	}
+
+	SAFE_DELETE(m_pTextModeConsole);
+
+	SAFE_RELEASE(m_pGame);
+	//SAFE_DELETE(m_pFont);
+	SAFE_RELEASE(m_pWindow);
+	SAFE_RELEASE(m_pConsole);
+	SAFE_RELEASE(m_Render);
+
+	SAFE_DELETE(m_ScriptObjectConsole);
+	SAFE_DELETE(m_ScriptObjectScript);
+	SAFE_DELETE(m_ScriptObjectRenderer);
+	SAFE_RELEASE(m_pScriptSystem);
+
+	SAFE_RELEASE(m_pLog);
+}
+
 void CSystem::EnableGui(bool enable)
 {
 #if ENABLE_DEBUG_GUI
@@ -1130,7 +1161,8 @@ void CSystem::RenderEnd()
 	if (m_Render)
 	{
 		m_Render->Update();
-		m_pConsole->Draw();
+		if (IConsole* pConsole = GetIConsole())
+			pConsole->Draw();
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)
 			m_GuiManager->Render();

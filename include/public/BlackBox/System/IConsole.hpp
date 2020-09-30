@@ -114,6 +114,27 @@ struct IConsoleVarSink
 	// </interfuscator:shuffle>
 };
 
+//! Interface to the arguments of the console command.
+struct IConsoleCmdArgs
+{
+	// <interfuscator:shuffle>
+	virtual ~IConsoleCmdArgs(){}
+
+	//! Gets number of arguments supplied to the command (including the command itself).
+	virtual int GetArgCount() const = 0;
+
+	//! Gets argument by index, nIndex must be in 0 <= nIndex < GetArgCount().
+	virtual const char* GetArg(int nIndex) const = 0;
+
+	//! Gets complete command line.
+	virtual const char* GetCommandLine() const = 0;
+	// </interfuscator:shuffle>
+};
+
+//! This a definition of the console command function that can be added to console with AddCommand.
+//typedef void (* ConsoleCommandFunc)(IConsoleCmdArgs*);
+
+
 struct CommandDesc
 {
 	std::wstring command;
@@ -138,7 +159,6 @@ struct CommandDesc
 		return std::wstring();
 	}
 };
-
 struct IConsole
 {
 	// <interfuscator:shuffle>

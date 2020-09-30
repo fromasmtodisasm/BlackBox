@@ -251,7 +251,7 @@ void CConsole::Update()
 void CConsole::Draw()
 {
 	if (!m_pRenderer)
-		m_pRenderer = m_pSystem->GetIRenderer(); // For Editor.
+		m_pRenderer = gEnv->pRenderer; // For Editor.
 
 	if (!m_pRenderer)
 		return;
@@ -1404,7 +1404,8 @@ const char* CConsole::AutoCompletePrev(const char* substr)
 
 char* CConsole::ProcessCompletion(const char* szInputBuffer)
 {
-	return nullptr;
+	autocomplete(str_to_wstr(szInputBuffer));
+	return const_cast<char*>(szInputBuffer);
 }
 
 void CConsole::ResetAutoCompletion()
@@ -1766,7 +1767,7 @@ bool CConsole::handleCommand(std::wstring command)
     if (/*!con_restricted || *//*isOpened*/true)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
     {
       std::string str = wstr_to_str(command);
-      //PrintLine(str.c_str());
+      PrintLine(str.c_str());
 
       if (m_pSystem->IsDevMode())
       {
@@ -1830,6 +1831,7 @@ bool CConsole::handleCommand(std::wstring command)
       isOpened = false;
   }
   //history.push_back(str_to_wstr(getPrompt()) + command);
+  PrintLine(wstr_to_str(command).data());
   return result;
 }
 
@@ -2136,6 +2138,8 @@ void CConsole::Help(const char* cmd)
     }
 
     m_CmdBuffer.push_back({ Text(std::string(cmd) + ": " + help + "\n", glm::vec3(1.f,1.f,1.f), 1.0) });
+	string str;
+	//str 
   }
   else
   {

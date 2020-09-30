@@ -307,6 +307,28 @@ struct ConsolePrompt
 	CommandLine get();
 };
 
+struct CConsoleCommandArgs : public IConsoleCmdArgs
+{
+	CConsoleCommandArgs(string& line, std::vector<string>& args) : m_line(line), m_args(args) {}
+	virtual int         GetArgCount() const { return m_args.size(); }
+	// Get argument by index, nIndex must be in 0 <= nIndex < GetArgCount()
+	virtual const char* GetArg(int nIndex) const
+	{
+		assert(nIndex >= 0 && nIndex < GetArgCount());
+		if (!(nIndex >= 0 && nIndex < GetArgCount()))
+			return NULL;
+		return m_args[nIndex].c_str();
+	}
+	virtual const char* GetCommandLine() const
+	{
+		return m_line.c_str();
+	}
+
+private:
+	string&              m_line;
+	std::vector<string>& m_args;
+};
+
 class CConsole : public IConsole
 	, public IInputEventListener
 	, public ICVarDumpSink

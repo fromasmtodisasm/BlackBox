@@ -45,6 +45,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/SystemEventDispatcher.cpp
   PRIVATE ${ENGINE_DIR}/System/Timer.cpp
   PRIVATE ${ENGINE_DIR}/System/WindowsConsole.cpp
+  PRIVATE ${ENGINE_DIR}/System/ConsoleBatchFile.cpp
 
   PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectConsole.cpp
   PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectRenderer.cpp

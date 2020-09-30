@@ -186,6 +186,7 @@ private:
 	bool TryLock();
 	void OnConsoleInputEvent(INPUT_RECORD inputRecord);
 	void OnKey(const KEY_EVENT_RECORD& event);
+	void OnMouse(const MOUSE_EVENT_RECORD& event);
 	void OnResize(const COORD& size);
 	void OnBackspace();
 	void OnTab();
@@ -206,7 +207,7 @@ private:
 	void CleanUp();
 
 	//CryCriticalSection           m_lock;
-	std::mutex					 m_lock;
+	std::recursive_mutex		 m_lock;
 	std::thread					 m_thread;
 	COORD                        m_consoleScreenBufferSize;
 	SMALL_RECT                   m_consoleWindow;

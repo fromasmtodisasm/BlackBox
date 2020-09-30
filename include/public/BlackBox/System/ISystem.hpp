@@ -334,6 +334,7 @@ struct ISystem
 	virtual void Release()										 = 0;
 	//! Returns pointer to the global environment structure.
 	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() = 0;
+	virtual ISystemUserCallback* GetUserCallback() const = 0;
 	virtual IGame* CreateGame(IGame* game)					 = 0;
 
 	virtual IRenderer* GetIRenderer()			= 0;

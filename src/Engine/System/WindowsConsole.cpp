@@ -235,7 +235,10 @@ void CWindowsConsole::OnInit(ISystem* pSystem)
 		AllocConsole();
 		m_inputBufferHandle = GetStdHandle(STD_INPUT_HANDLE);
 		m_screenBufferHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleMode(m_inputBufferHandle, ENABLE_WINDOW_INPUT);
+		if (!SetConsoleMode(m_inputBufferHandle, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+		{
+			ExitProcess(0);
+		}
 		SetConsoleCtrlHandler(CtrlHandler, TRUE);
 		m_consoleScreenBufferSize.X = WINDOWS_CONSOLE_WIDTH;
 		m_consoleScreenBufferSize.Y = WINDOWS_CONSOLE_HEIGHT;
@@ -290,12 +293,20 @@ void CWindowsConsole::OnUpdate()
 			assert(m_pCVarSvGameRules == NULL);
 			assert(m_pTimer == NULL);
 
+			{
+				m_pCVarSvMap = m_pConsole->CreateVariable("sv_map", "test_map", VF_DUMPTODISK);
+				m_pCVarSvGameRules = m_pConsole->CreateVariable("sv_gamerules", "test_sv_gamerules", VF_DUMPTODISK);
+
+			}
+
 			m_pCVarSvMap = m_pConsole->GetCVar("sv_map");
 			m_pCVarSvGameRules = m_pConsole->GetCVar("sv_gamerules");
 			m_pTimer = m_pSystem->GetITimer();
 			m_OnUpdateCalled = true;
 
 			assert(m_pCVarSvMission == NULL);
+
+			m_pCVarSvMission = m_pConsole->CreateVariable("sv_mission", "test_sv_mission", VF_DUMPTODISK);
 			m_pCVarSvMission = m_pConsole->GetCVar("sv_mission");
 		}
 
@@ -358,6 +369,9 @@ void CWindowsConsole::OnConsoleInputEvent(INPUT_RECORD inputRecord)
 	case KEY_EVENT:
 		OnKey(inputRecord.Event.KeyEvent);
 		break;
+	case MOUSE_EVENT:
+		OnMouse(inputRecord.Event.MouseEvent);
+		break;
 	case WINDOW_BUFFER_SIZE_EVENT:
 		OnResize(inputRecord.Event.WindowBufferSizeEvent.dwSize);
 		break;
@@ -406,6 +420,21 @@ void CWindowsConsole::OnKey(const KEY_EVENT_RECORD& event)
 				OnChar(event.uChar.AsciiChar);
 				break;
 			}
+		}
+	}
+}
+
+void CWindowsConsole::OnMouse(const MOUSE_EVENT_RECORD& event)
+{
+	if (event.dwEventFlags & MOUSE_WHEELED)
+	{
+		if (HIWORD(event.dwButtonState) > 0)
+		{
+			OnPgUp();
+		}
+		else
+		{
+			OnPgDn();
 		}
 	}
 }
@@ -672,7 +701,6 @@ void CWindowsConsole::DrawStatus()
 		sprintf(bufferLeft, " mission: %s map:%s", pMissionName, pMapName);
 		pStatusLeft = bufferLeft;
 
-		#if 0
 		if (!pStatusRight)
 		{
 			strcpy(bufferRight, "| ");
@@ -683,21 +711,22 @@ void CWindowsConsole::DrawStatus()
 			{
 				const float updateRate = m_pTimer ? m_pTimer->GetFrameRate() : 0.0f;
 
+				#if 0
 				sprintf(
 				  &bufferRight[len], sizeof(bufferRight) - len,
 				  "upd:%.1fms(%.2f..%.2f) " \
 					  "rate:%.1f/s up:%.1fk/s dn: %.1fk/s",
 				  m_updStats.avgUpdateTime, m_updStats.minUpdateTime, m_updStats.maxUpdateTime,
 				  updateRate, m_nubStats.bandwidthUp / 1000.0f, m_nubStats.bandwidthDown / 1000.0f);
+				#endif
 			}
 			else
 			{
-				strcat(&bufferRight[len], sizeof(bufferRight) - len, "BUSY ");
+				//strcat(&bufferRight[len], sizeof(bufferRight) - len, "BUSY ");
 			}
 
 			pStatusRight = bufferRight;
 		}
-		#endif
 	}
 
 	if (!pStatusLeft)
