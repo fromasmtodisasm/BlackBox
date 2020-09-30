@@ -236,6 +236,9 @@ private:
   // Inherited via ISystem
   virtual void RenderStatistics() override;
   virtual const char* GetUserName() override;
+
+  // Inherited via ISystem
+  virtual IStreamEngine* GetStreamEngine() override;
 };
 
 void AddInternalCommands(ISystem* pSystem);

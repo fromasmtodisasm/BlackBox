@@ -10,7 +10,7 @@ add_executable(${PROJECT_NAME} WIN32
 )
 add_definitions(-D_LAUNCHER)
 target_link_libraries(Launcher PRIVATE  BlackBox)
-target_link_libraries(Launcher PRIVATE  System)
+#target_link_libraries(Launcher PRIVATE  System)
 target_link_libraries(Launcher PRIVATE  Steam)
 add_dependencies(Launcher Game)
 

@@ -116,7 +116,7 @@ endmacro()
 
 macro(add_subsystem subsystem)
 	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})
-	target_link_libraries(${BLACKBOX_PROJECT} INTERFACE ${subsystem})
+	#target_link_libraries(${BLACKBOX_PROJECT} INTERFACE ${subsystem})
 	set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
 
 	get_target_property(SOURCE_FILES ${subsystem} SOURCES)

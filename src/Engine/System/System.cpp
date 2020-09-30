@@ -1240,6 +1240,11 @@ const char* CSystem::GetUserName()
 #endif
 }
 
+IStreamEngine* CSystem::GetStreamEngine()
+{
+	return nullptr;
+}
+
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
