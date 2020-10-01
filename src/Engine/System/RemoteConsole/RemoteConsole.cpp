@@ -512,16 +512,16 @@ void SRemoteClient::ThreadEntry()
 		// read data
 		SRemoteEventFactory::GetInst()->WriteToBuffer(&reqEvt, szBuff, size);
 		ok &= SendPackage(szBuff, size);
-		//ok &= RecvPackage(szBuff, size);
-		//ok &= m_pServer->ReadBuffer(szBuff, size);
+		ok &= RecvPackage(szBuff, size);
+		ok &= m_pServer->ReadBuffer(szBuff, size);
 
 		for (int i = 0; i < 20 && !autoCompleteList.empty(); ++i)
 		{
-			SStringEvent<eCET_AutoCompleteList> autoCompleteListEvt((autoCompleteList.back() + "\r\n").c_str());
+			SStringEvent<eCET_AutoCompleteList> autoCompleteListEvt(autoCompleteList.back().c_str());
 			SRemoteEventFactory::GetInst()->WriteToBuffer(&autoCompleteListEvt, szBuff, size);
 			ok &= SendPackage(szBuff, size);
-			//ok &= RecvPackage(szBuff, size);
-			//ok &= m_pServer->ReadBuffer(szBuff, size);
+			ok &= RecvPackage(szBuff, size);
+			ok &= m_pServer->ReadBuffer(szBuff, size);
 			autoCompleteList.pop_back();
 		}
 		if (autoCompleteList.empty() && !autoCompleteDoneSent)
@@ -530,8 +530,8 @@ void SRemoteClient::ThreadEntry()
 			SRemoteEventFactory::GetInst()->WriteToBuffer(&autoCompleteDone, szBuff, size);
 
 			ok &= SendPackage(szBuff, size);
-			//ok &= RecvPackage(szBuff, size);
-			//ok &= m_pServer->ReadBuffer(szBuff, size);
+			ok &= RecvPackage(szBuff, size);
+			ok &= m_pServer->ReadBuffer(szBuff, size);
 			autoCompleteDoneSent = true;
 		}
 
@@ -561,8 +561,7 @@ bool SRemoteClient::RecvPackage(char* buffer, size_t& size)
 			return false;
 		idx += ret;
 	}
-	while (buffer[idx - 1] != '\x1c');
-	buffer[idx - 1] = '\0';
+	while (buffer[idx - 1] != '\0');
 	size = idx;
 	return true;
 }
@@ -589,18 +588,19 @@ void SRemoteClient::FillAutoCompleteList(std::vector<string>& list)
 {
 	std::vector<const char*> cmds;
 	size_t count = gEnv->pConsole->GetNumVars();
-	cmds.resize(count + 1);
-	gEnv->pConsole->GetSortedVars(&cmds[0], count);
+	cmds.resize(count);
+	/*count = */gEnv->pConsole->GetSortedVars(&cmds[0], count - 10);
 	cmds.resize(count); // We might have less CVars than we were expecting (invisible ones, etc.)
-	for (size_t i = 0; i < cmds.size() - 1; ++i)
+	for (size_t i = 0; i < count - 10; ++i)
 	{
 		list.push_back(cmds[i]);
 	}
-	for (int i = 0, end = /*gEnv->pGameFramework->GetILevelSystem()->GetLevelCount()*/10; i < end; ++i)
+	#if 0
+	for (int i = 0, end = gEnv->pGameFramework->GetILevelSystem()->GetLevelCount(); i < end; ++i)
 	{
-		//ILevelInfo* pLevel = gEnv->pGameFramework->GetILevelSystem()->GetLevelInfo(i);
+		ILevelInfo* pLevel = gEnv->pGameFramework->GetILevelSystem()->GetLevelInfo(i);
 		string item = "map ";
-		const char* levelName = "test_level";//pLevel->GetName();
+		const char* levelName = pLevel->GetName();
 		int start = 0;
 		for (int k = 0, kend = strlen(levelName); k < kend; ++k)
 		{
@@ -610,6 +610,7 @@ void SRemoteClient::FillAutoCompleteList(std::vector<string>& list)
 		item += levelName + start;
 		list.push_back(item);
 	}
+	#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
