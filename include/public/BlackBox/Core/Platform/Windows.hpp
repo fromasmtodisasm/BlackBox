@@ -59,8 +59,8 @@
 		#undef OutputDebugString
 		#define OutputDebugString(...) (void) 0
 	#else
-		#undef OutputDebugString
-		#define OutputDebugString(...) (void) 0
+		//#undef OutputDebugString
+		//#define OutputDebugString(...) (void) 0
 	#endif
 
   inline int64_t  bbGetTicks()

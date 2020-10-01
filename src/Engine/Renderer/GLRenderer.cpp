@@ -202,6 +202,16 @@ void GLRenderer::Update(void)
 	#endif
 			Vec4(0, 0, GetWidth(), GetHeight()));
 	}
+	// Disable screenshot code path for pure release builds on consoles
+	// Capture currently presented back-buffer to be able to captures frames without capture-lag
+#if !defined(_RELEASE) || CRY_PLATFORM_WINDOWS || defined(ENABLE_LW_PROFILERS)
+	if (CV_r_GetScreenShot)
+	{
+		ScreenShot(nullptr);
+		CV_r_GetScreenShot = 0;
+	}
+#endif
+
 	m_FrameID++;
 }
 
@@ -279,7 +289,7 @@ void GLRenderer::ScreenShot(const char* filename)
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
 	stbi_flip_vertically_on_write(1);
-	stbi_write_png(filename, width, height, 3, pixels, width * 3);
+	stbi_write_png(filename != 0 ? filename : "screenshot.png", width, height, 3, pixels, width * 3);
 
 	//stbi_image_free(img);
 	gl::BindFramebuffer(drawFboId);

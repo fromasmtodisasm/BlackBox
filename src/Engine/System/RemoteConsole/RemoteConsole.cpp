@@ -325,7 +325,7 @@ void SRemoteServer::ThreadEntry()
 	CRYSOCKLEN_T iAddrSize;
 	CRYSOCKADDR_IN local, client;
 
-	#ifdef CRY_PLATFORM_WINAPI
+	#ifdef BB_PLATFORM_WINAPI
 	WSADATA wsd;
 	if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0)
 	{

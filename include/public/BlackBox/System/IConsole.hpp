@@ -83,15 +83,14 @@ struct ICVarDumpSink
 //////////////////////////////////////////////////////////////////////
 struct IKeyBindDumpSink
 {
-	virtual void OnKeyBindFound( const char *sBind,const char *sCommand ) = 0;
+	virtual void OnKeyBindFound(const char* sBind, const char* sCommand) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
 struct IOutputPrintSink
 {
-	virtual void Print( const char *inszText )=0;
+	virtual void Print(const char* inszText) = 0;
 };
-
 
 //////////////////////////////////////////////////////////////////////
 //! Callback class to derive from when you want to receive callbacks when console var changes.
@@ -118,7 +117,9 @@ struct IConsoleVarSink
 struct IConsoleCmdArgs
 {
 	// <interfuscator:shuffle>
-	virtual ~IConsoleCmdArgs(){}
+	virtual ~IConsoleCmdArgs()
+	{
+	}
 
 	//! Gets number of arguments supplied to the command (including the command itself).
 	virtual int GetArgCount() const = 0;
@@ -133,7 +134,6 @@ struct IConsoleCmdArgs
 
 //! This a definition of the console command function that can be added to console with AddCommand.
 //typedef void (* ConsoleCommandFunc)(IConsoleCmdArgs*);
-
 
 struct CommandDesc
 {
@@ -202,17 +202,17 @@ struct IConsole
 	/*! show/hide the console
     @param specifies if the window must be (true=show,false=hide)
   */
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! add output sink (clases which are interested in the output) - order is not guaranteed
 		@param inpSink must not be 0 and is not allowed to be added twice
 	*/
-	virtual void AddOutputPrintSink( IOutputPrintSink *inpSink )=0;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	virtual void AddOutputPrintSink(IOutputPrintSink* inpSink) = 0;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! remove output sink (clases which are interested in the output) - order is not guaranteed
 		@param inpSink must not be 0 and has to be added before
 	*/
-	virtual void RemoveOutputPrintSink( IOutputPrintSink *inpSink )=0;
-	virtual void ShowConsole(bool show) = 0;
+	virtual void RemoveOutputPrintSink(IOutputPrintSink* inpSink) = 0;
+	virtual void ShowConsole(bool show)							  = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Crate a new console variable that store the value in a user defined memory block
     @param sName console variable name
@@ -388,8 +388,8 @@ struct IConsole
 	/*! Dump all key bindings to a callback-interface
 	@param Callback callback-interface which needs to be called for each element
 	*/
-	virtual void DumpKeyBinds(IKeyBindDumpSink *pCallback )=0;
-	virtual const char* FindKeyBind(const char* sCmd) = 0;
+	virtual void DumpKeyBinds(IKeyBindDumpSink* pCallback) = 0;
+	virtual const char* FindKeyBind(const char* sCmd)	   = 0;
 
 	//////////////////////////////////////////////////////////////////////////
 	// History
@@ -406,31 +406,39 @@ struct IConsole
 //! This interface for the remote console.
 struct IRemoteConsoleListener
 {
-	virtual ~IRemoteConsoleListener() {}
+	virtual ~IRemoteConsoleListener()
+	{
+	}
 
-	virtual void OnConsoleCommand(const char* cmd)  {}
-	virtual void OnGameplayCommand(const char* cmd) {}
+	virtual void OnConsoleCommand(const char* cmd)
+	{
+	}
+	virtual void OnGameplayCommand(const char* cmd)
+	{
+	}
 };
 
 struct IRemoteConsole
 {
-	virtual ~IRemoteConsole() {}
+	virtual ~IRemoteConsole()
+	{
+	}
 
-	virtual void RegisterConsoleVariables() = 0;
+	virtual void RegisterConsoleVariables()	  = 0;
 	virtual void UnregisterConsoleVariables() = 0;
 
-	virtual void Start() = 0;
-	virtual void Stop() = 0;
+	virtual void Start()		   = 0;
+	virtual void Stop()			   = 0;
 	virtual bool IsStarted() const = 0;
 
 	virtual void AddLogMessage(const char* log) = 0;
 	virtual void AddLogWarning(const char* log) = 0;
-	virtual void AddLogError(const char* log) = 0;
+	virtual void AddLogError(const char* log)	= 0;
 
 	virtual void Update() = 0;
 
 	virtual void RegisterListener(IRemoteConsoleListener* pListener, const char* name) = 0;
-	virtual void UnregisterListener(IRemoteConsoleListener* pListener) = 0;
+	virtual void UnregisterListener(IRemoteConsoleListener* pListener)				   = 0;
 };
 //! \endcond
 
@@ -538,6 +546,9 @@ struct ICVar
 #	define REGISTER_CVAR(_var, _def_var, _flags, ...) GET_CONSOLE()->Register((#	_var), &(_var), (_def_var), (_flags), ##__VA_ARGS__)
 //! Offers more flexibility but more code is required
 #	define REGISTER_CVAR2(_name, _var, _def_val, _flags, _comment) GET_CONSOLE()->Register(_name, _var, (_def_val), (_flags), CVARHELP(_comment))
+//! Offers more flexibility but more code is required, explicit address taking of destination variable
+#	define REGISTER_CVAR3(_name, _var, _def_val, _flags, _comment) GET_CONSOLE()->Register(_name, &(_var), (_def_val), (_flags), CVARHELP(_comment))
+
 #endif
 
 //! Preferred way to register a console command

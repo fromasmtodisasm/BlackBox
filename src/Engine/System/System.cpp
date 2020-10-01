@@ -377,6 +377,7 @@ bool CSystem::Init()
 	}
 	#endif
 	GetIRemoteConsole()->RegisterConsoleVariables();
+	GetIRemoteConsole()->Start();
 
 #endif // CRY_PLATFORM_DESKTOP
 	if (m_pUserCallback)

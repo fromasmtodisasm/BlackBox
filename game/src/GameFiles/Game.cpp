@@ -557,7 +557,6 @@ bool CGame::Run(bool& bRelaunch)
 {
 	//splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
 	m_pLog->Log("[OK] Game started");
-	m_pSystem->Log("[OK] Game started");
 	StartupServer(true, "test_server");
 
 	m_bRelaunch = false;
