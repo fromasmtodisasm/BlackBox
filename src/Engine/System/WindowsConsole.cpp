@@ -294,8 +294,8 @@ void CWindowsConsole::OnUpdate()
 			assert(m_pTimer == NULL);
 
 			{
-				m_pCVarSvMap = m_pConsole->CreateVariable("sv_map", "test_map", VF_DUMPTODISK);
-				m_pCVarSvGameRules = m_pConsole->CreateVariable("sv_gamerules", "test_sv_gamerules", VF_DUMPTODISK);
+				m_pCVarSvMap = m_pConsole->CreateVariable("sv_map", "no_level", VF_DUMPTODISK);
+				m_pCVarSvGameRules = m_pConsole->CreateVariable("sv_gamerules", "no_rules", VF_DUMPTODISK);
 
 			}
 
@@ -306,7 +306,7 @@ void CWindowsConsole::OnUpdate()
 
 			assert(m_pCVarSvMission == NULL);
 
-			m_pCVarSvMission = m_pConsole->CreateVariable("sv_mission", "test_sv_mission", VF_DUMPTODISK);
+			m_pCVarSvMission = m_pConsole->CreateVariable("sv_mission", "no_mission", VF_DUMPTODISK);
 			m_pCVarSvMission = m_pConsole->GetCVar("sv_mission");
 		}
 

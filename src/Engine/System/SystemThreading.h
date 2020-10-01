@@ -30,7 +30,7 @@ struct SThreadMetaData : public _reference_target_MT
 	CThreadManager*                         m_pThreadMngr; // Pointer to thread manager
 
 	//CryThreadUtil::TThreadHandle            m_threadHandle; // Thread handle
-	std::thread m_threadHandle;
+	std::thread								m_threadHandle;
 	threadID                                m_threadId;     // The active threadId, 0 = Invalid Id
 
 	CryMutex                                m_threadExitMutex;     // Mutex used to safeguard thread exit condition signaling
