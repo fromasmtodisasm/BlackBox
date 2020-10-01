@@ -13,21 +13,24 @@
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
+#include "RemoteConsole/RemoteConsole.h"
 
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif
+#include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/System/HardwareMouse.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
-#include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/World/IWorld.hpp>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <BlackBox/System/CryLibrary.hpp>
 #include <SDL2/SDL.h>
+
+#include "WindowsConsole.h"
 
 #include <cstdlib>
 #include <filesystem>
@@ -50,7 +53,22 @@ namespace
 	template<typename Proc>
 	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
-		gEnv->pSystem->Log("Loading...");
+		//gEnv->pSystem->Log("Loading...");
+		string msg;
+		msg = "Loading Module ";
+		msg += lib_name;
+		msg += "...";
+
+		if (gEnv->pSystem->GetUserCallback())
+		{
+			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
+		}
+
+		if (true)
+		{
+			CryLog("%s", msg.c_str());
+		}
+
 		auto L = CryLoadLibrary(lib_name);
 		if (L)
 		{
@@ -75,7 +93,7 @@ namespace
 		}
 		else
 		{
-		  gEnv->pSystem->Log("Library not found");
+			gEnv->pSystem->Log("Library not found");
 		}
 		return false;
 	}
@@ -96,7 +114,8 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	  m_pLog(nullptr),
 	  m_pWindow(nullptr),
 	  m_pScriptSystem(nullptr),
-	  m_ScriptObjectConsole(nullptr)
+	  m_ScriptObjectConsole(nullptr),
+	  m_pTextModeConsole(nullptr)
 #if ENABLE_DEBUG_GUI
 #endif
 {
@@ -112,25 +131,12 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 #if !defined(SYS_ENV_AS_STRUCT)
 	gEnv = &m_env;
 #endif
+	InitThreadSystem();
 }
 
 CSystem::~CSystem()
 {
-	CSystem::Log("Releasing system");
-
-	SAFE_RELEASE(m_pGame);
-	//SAFE_DELETE(m_pFont);
-	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_pConsole);
-	SAFE_RELEASE(m_Render);
-
-	
-  SAFE_DELETE(m_ScriptObjectConsole);
-  SAFE_DELETE(m_ScriptObjectScript);
-  SAFE_DELETE(m_ScriptObjectRenderer);
-	SAFE_RELEASE(m_pScriptSystem);
-
-	SAFE_RELEASE(m_pLog);
+	ShutDown();
 }
 
 void CSystem::PreprocessCommandLine()
@@ -211,34 +217,42 @@ bool CSystem::Init()
 	//====================================================
 	Log("Initialize Render");
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
-	if (!InitRender())
-		return false;
-	auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
-	for (int i = 0; i < 3; i++)
+	if (!m_env.IsDedicated())
 	{
-        RenderBegin();
-        //gEnv->pRenderer->DrawFullScreenImage(splash->getId());
-        gEnv->pRenderer->DrawImage(
-            gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
-            gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2 ,
-            splash->getWidth(),
-            splash->getHeight(),
-            splash->getId(),
-            0, 0, 1, 1, 1, 1, 1, 1
-        );
-        RenderEnd();
-	    
+		if (!InitRender())
+			return false;
+		auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
+		for (int i = 0; i < 3; i++)
+		{
+			RenderBegin();
+			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
+			gEnv->pRenderer->DrawImage(
+				gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
+				gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2,
+				splash->getWidth(),
+				splash->getHeight(),
+				splash->getId(),
+				0, 0, 1, 1, 1, 1, 1, 1);
+			RenderEnd();
+		}
 	}
 	if (!Init3DEngine())
 		return false;
-	m_env.pInput->PostInit();
 
-		//////////////////////////////////////////////////////////////////////////
-		// Hardware mouse
-		//////////////////////////////////////////////////////////////////////////
-		// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
-		// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
-		// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+	//////////////////////////////////////////////////////////////////////////
+	// Input Post Initialise - enables input threads to be created after thread init
+	//////////////////////////////////////////////////////////////////////////
+	if (m_env.pInput)
+	{
+		m_env.pInput->PostInit();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Hardware mouse
+	//////////////////////////////////////////////////////////////////////////
+	// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+	// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+	// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
 #ifdef DEDICATED_SERVER
 	m_env.pHardwareMouse = NULL;
 #else
@@ -282,6 +296,91 @@ bool CSystem::Init()
 	//====================================================
 	if (!InitConsole())
 		return false;
+#if BB_PLATFORM_DESKTOP
+	#if !defined(_RELEASE)
+	bool isDaemonMode = (m_pCmdLine->FindArg(eCLAT_Pre, "daemon") != 0);
+	#else
+	bool isDaemonMode = false;
+	#endif // !defined(_RELEASE)
+
+	#if defined(USE_DEDICATED_SERVER_CONSOLE)
+
+		#if !defined(_RELEASE)
+	bool isSimpleConsole = (m_pCmdLine->FindArg(eCLAT_Pre, "simple_console") != 0);
+
+	if (!(isDaemonMode || isSimpleConsole))
+		#endif // !defined(_RELEASE)
+	{
+		string headerName;
+		#if defined(USE_UNIXCONSOLE)
+		CUNIXConsole* pConsole = pUnixConsole = new CUNIXConsole();
+		headerName = "Unix ";
+		#elif defined(USE_IOSCONSOLE)
+		CIOSConsole* pConsole = new CIOSConsole();
+		headerName = "iOS ";
+		#elif defined(USE_WINDOWSCONSOLE)
+		CWindowsConsole* pConsole = new CWindowsConsole();
+		#elif defined(USE_ANDROIDCONSOLE)
+		CAndroidConsole* pConsole = new CAndroidConsole();
+		headerName = "Android "
+		#else
+		CNULLConsole * pConsole = new CNULLConsole(false);
+		#endif
+		m_pTextModeConsole = static_cast<ITextModeConsole*>(pConsole);
+
+		if (m_pUserCallback == NULL)
+		{
+			auto getProductVersion = [this]
+			{
+				char version[64];
+				GetProductVersion().ToString(version);
+				return string(version);
+			};
+
+			if (m_env.IsDedicated())
+			{
+				m_pUserCallback = pConsole;
+				pConsole->SetRequireDedicatedServer(true);
+				headerName.append("Dedicated Server");
+				if (gEnv->bDedicatedArbitrator)
+				{
+					headerName.append(" Arbitrator");
+				}
+				headerName.append(" - Version ");
+				headerName.append(getProductVersion());
+				pConsole->SetHeader(headerName.c_str());
+			}
+#if !defined(RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)
+			else if (m_pCmdLine->FindArg(eCLAT_Pre, "console"))
+			{
+				m_pUserCallback = pConsole;
+				pConsole->SetRequireDedicatedServer(false);
+				headerName.append("Client - Version ");
+				headerName.append(getProductVersion());
+				pConsole->SetHeader(headerName.c_str());
+			}
+#endif
+		}
+	}
+		#if !defined(_RELEASE)
+	else
+		#endif
+	#endif
+
+	#if !(defined(USE_DEDICATED_SERVER_CONSOLE) && defined(_RELEASE))
+	{
+		CNULLConsole* pConsole = new CNULLConsole(isDaemonMode);
+		m_pTextModeConsole = pConsole;
+
+		if (m_pUserCallback == NULL && m_env.IsDedicated())
+			m_pUserCallback = pConsole;
+	}
+	#endif
+	GetIRemoteConsole()->RegisterConsoleVariables();
+
+#endif // CRY_PLATFORM_DESKTOP
+	if (m_pUserCallback)
+		m_pUserCallback->OnInit(this);
 	//====================================================
 	//====================================================
 	m_pConsole->AddConsoleVarSink(this);
@@ -294,7 +393,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-        m_env.pInput->AddEventListener(static_cast<CConsole*>(m_pConsole));
+		m_env.pInput->AddEventListener(static_cast<CConsole*>(m_pConsole));
 #if ENABLE_DEBUG_GUI
 		if (!m_env.IsDedicated())
 		{
@@ -304,6 +403,8 @@ bool CSystem::Init()
 		m_env.pInput->AddEventListener(m_GuiManager);
 #endif
 	}
+
+
 	if (CreateGame(nullptr) == nullptr)
 		return false;
 	//====================================================
@@ -338,7 +439,7 @@ void CSystem::Start()
 
 	m_pGame->Run(bRelaunch);
 
-	NOW  = SDL_GetPerformanceCounter();
+	NOW	 = SDL_GetPerformanceCounter();
 	LAST = 0;
 
 	m_DeltaTime = 0.0;
@@ -385,7 +486,7 @@ IGame* CSystem::GetIGame()
 
 IGame* CSystem::CreateGame(IGame* game)
 {
-    LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+	LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
 		m_pGame = P();
 		return true;
 	});
@@ -394,7 +495,14 @@ IGame* CSystem::CreateGame(IGame* game)
 
 void CSystem::Quit()
 {
+	// clean up properly the console
+	if (m_pTextModeConsole)
+		m_pTextModeConsole->OnShutdown();
+
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_FAST_SHUTDOWN, 0, 0);
+
+	GetIRemoteConsole()->Stop();
+
 	Release();
 
 	exit(0);
@@ -453,7 +561,7 @@ bool CSystem::CreateConsole()
 
 bool CSystem::InitConsole()
 {
-    if (!static_cast<CConsole*>(m_pConsole)->Init(this))
+	if (!static_cast<CConsole*>(m_pConsole)->Init(this))
 		return false;
 	m_pConsole->ShowConsole(true);
 	return true;
@@ -478,9 +586,9 @@ bool CSystem::InitRender()
 		}
 
 		if (!(m_pWindow = m_env.pRenderer->Init(
-			0, 0, width, height,
-			m_rColorBits, m_rDepthBits, m_rStencilBits,
-			m_rFullscreen, m_pWindow)))
+				  0, 0, width, height,
+				  m_rColorBits, m_rDepthBits, m_rStencilBits,
+				  m_rFullscreen, m_pWindow)))
 		{
 			return false;
 		}
@@ -523,7 +631,6 @@ bool CSystem::InitEntitySystem()
 		m_pEntitySystem = p(this);
 		return m_pEntitySystem != nullptr;
 	});
-
 }
 
 bool CSystem::InitNetwork()
@@ -642,7 +749,7 @@ bool CSystem::InitScripts()
 	m_ScriptObjectRenderer = new CScriptObjectRenderer();
 	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
 
-    m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
+	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
 
 	return m_pScriptSystem->ExecuteFile("scripts/engine.lua");
@@ -787,26 +894,25 @@ void CSystem::Tests()
 
 void CSystem::PollEvents()
 {
-
 }
 
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {
 	REGISTER_CVAR2("r_InitialWindowSizeRatio", &m_rIntialWindowSizeRatio, 0.666f, VF_DUMPTODISK,
-	                                          "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
-	                                          "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
+				   "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
+				   "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
 
-	int iFullScreenDefault  = 1;
+	int iFullScreenDefault	= 1;
 	int iDisplayInfoDefault = 1;
-	int iWidthDefault       = 1280;
-	int iHeightDefault      = 720;
+	int iWidthDefault		= 1280;
+	int iHeightDefault		= 720;
 #if BB_PLATFORM_WINDOWS && 0
-	iFullScreenDefault = 0;
+	iFullScreenDefault				   = 0;
 	const float initialWindowSizeRatio = m_rIntialWindowSizeRatio->GetFVal();
-	iWidthDefault = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) * initialWindowSizeRatio);
-	iHeightDefault = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) * initialWindowSizeRatio);
+	iWidthDefault					   = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) * initialWindowSizeRatio);
+	iHeightDefault					   = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) * initialWindowSizeRatio);
 #elif BB_PLATFORM_LINUX || BB_PLATFORM_APPLE
-	iFullScreenDefault = 0;
+	iFullScreenDefault		 = 0;
 #endif
 
 #if defined(RELEASE)
@@ -815,46 +921,77 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 
 	// load renderer settings from engine.ini
 	REGISTER_CVAR2("r_Width", &m_rWidth, iWidthDefault, VF_DUMPTODISK,
-		"Sets the display width, in pixels.\n"
-		"Usage: r_Width [800/1024/..]"
-		);
+				   "Sets the display width, in pixels.\n"
+				   "Usage: r_Width [800/1024/..]");
 	REGISTER_CVAR2("r_Height", &m_rHeight, iHeightDefault, VF_DUMPTODISK,
-		"Sets the display height, in pixels.\n"
-		"Usage: r_Height [600/768/..]"
-	);
+				   "Sets the display height, in pixels.\n"
+				   "Usage: r_Height [600/768/..]");
 	REGISTER_CVAR2("r_ColorBits", &m_rColorBits, 32, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
-		"Sets the color resolution, in bits per pixel. Default is 32.\n"
-		"Usage: r_ColorBits [32/24/16/8]");
+				   "Sets the color resolution, in bits per pixel. Default is 32.\n"
+				   "Usage: r_ColorBits [32/24/16/8]");
 	REGISTER_CVAR2("r_DepthBits", &m_rDepthBits, 24, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
-		"Sets the depth precision, in bits per pixel. Default is 24.\n"
-		"Usage: r_DepthBits [32/24/16]");
+				   "Sets the depth precision, in bits per pixel. Default is 24.\n"
+				   "Usage: r_DepthBits [32/24/16]");
 	REGISTER_CVAR2("r_StencilBits", &m_rStencilBits, 8, VF_DUMPTODISK,
-		"Sets the stencil precision, in bits per pixel. Default is 8.\n");
-
+				   "Sets the stencil precision, in bits per pixel. Default is 8.\n");
 
 	REGISTER_CVAR2("r_Fullscreen", &m_rFullscreen, iFullScreenDefault, VF_DUMPTODISK,
-		"Toggles fullscreen mode. Default is 1 in normal game and 0 in DevMode.\n"
-		"Usage: r_Fullscreen [0=window/1=fullscreen]");
+				   "Toggles fullscreen mode. Default is 1 in normal game and 0 in DevMode.\n"
+				   "Usage: r_Fullscreen [0=window/1=fullscreen]");
 
-	#if 0
+#if 0
 	REGISTER_CVAR2("r_FullscreenNativeRes", &m_rFullscreenNativeRes, 0, VF_DUMPTODISK,
 		"Toggles native resolution upscaling.\n"
 		"If enabled, scene gets upscaled from specified resolution while UI is rendered in native resolution.");
-	#endif
+#endif
 
 	REGISTER_CVAR2("r_DisplayInfo", &m_rDisplayInfo, 1, VF_RESTRICTEDMODE | VF_DUMPTODISK,
-		"Toggles debugging information display.\n"
-		"Usage: r_DisplayInfo [0=off/1=show/2=enhanced/3=minimal/4=fps bar/5=heartbeat]");
+				   "Toggles debugging information display.\n"
+				   "Usage: r_DisplayInfo [0=off/1=show/2=enhanced/3=minimal/4=fps bar/5=heartbeat]");
 	REGISTER_CVAR2("r_Debug", &m_rDebug, 0, VF_RESTRICTEDMODE | VF_DUMPTODISK,
-		"Toggles debugging of renderer.\n"
-		"Usage: r_DisplayInfo [0=off/1=on]");
+				   "Toggles debugging of renderer.\n"
+				   "Usage: r_DisplayInfo [0=off/1=on]");
 	REGISTER_CVAR2("r_Tonemap", &m_rTonemap, 1, VF_DUMPTODISK,
-		"Using tonemap.\n"
-		"Usage: r_Tonemap [0=off/1=on]");
+				   "Using tonemap.\n"
+				   "Usage: r_Tonemap [0=off/1=on]");
 }
 
 void CSystem::CreateSystemVars()
 {
+}
+
+void CSystem::ShutDown()
+{
+	CSystem::Log("Releasing system");
+
+	if (m_pSystemEventDispatcher)
+	{
+		m_pSystemEventDispatcher->RemoveListener(this);
+	}
+
+	if (m_pUserCallback)
+	{
+		m_pUserCallback->OnShutdown();
+		m_pUserCallback = nullptr;
+	}
+
+	GetIRemoteConsole()->Stop();
+	GetIRemoteConsole()->UnregisterConsoleVariables();
+
+	SAFE_DELETE(m_pTextModeConsole);
+
+	SAFE_RELEASE(m_pGame);
+	//SAFE_DELETE(m_pFont);
+	SAFE_RELEASE(m_pWindow);
+	SAFE_RELEASE(m_pConsole);
+	SAFE_RELEASE(m_Render);
+
+	SAFE_DELETE(m_ScriptObjectConsole);
+	SAFE_DELETE(m_ScriptObjectScript);
+	SAFE_DELETE(m_ScriptObjectRenderer);
+	SAFE_RELEASE(m_pScriptSystem);
+
+	SAFE_RELEASE(m_pLog);
 }
 
 void CSystem::EnableGui(bool enable)
@@ -907,6 +1044,8 @@ INetwork* CSystem::GetINetwork()
 
 void CSystem::Render()
 {
+	if (!m_env.pRenderer)
+		return;
 	PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 	{
 		m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
@@ -939,7 +1078,7 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 	case ESYSTEM_EVENT_MOVE:
 		break;
 	case ESYSTEM_EVENT_RESIZE:
-		m_rWidth = wparam;
+		m_rWidth  = wparam;
 		m_rHeight = lparam;
 		break;
 	case ESYSTEM_EVENT_ACTIVATE:
@@ -1003,6 +1142,8 @@ bool CSystem::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 
 void CSystem::RenderBegin()
 {
+	if (!m_env.pRenderer)
+		return;
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 	m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
@@ -1019,6 +1160,8 @@ void CSystem::RenderBegin()
 
 void CSystem::RenderEnd()
 {
+	if (!m_env.pRenderer)
+		return;
 	PROFILER_POP_CPU_MARKER();
 	{
 		//DEBUG_GROUP("DRAW_PROFILE");
@@ -1027,13 +1170,14 @@ void CSystem::RenderEnd()
 	if (m_Render)
 	{
 		m_Render->Update();
-		m_pConsole->Draw();
-	#if ENABLE_DEBUG_GUI
+		if (IConsole* pConsole = GetIConsole())
+			pConsole->Draw();
+#if ENABLE_DEBUG_GUI
 		if (m_GuiManager)
 			m_GuiManager->Render();
-	#endif
+#endif
 		//if (m_bIsActive)
-			m_pWindow->swap();
+		m_pWindow->swap();
 	}
 }
 
@@ -1113,7 +1257,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	//PROFILER_SYNC_FRAME();
 	// Update input
 	LAST = NOW;
-	NOW  = SDL_GetPerformanceCounter();
+	NOW	 = SDL_GetPerformanceCounter();
 
 	//m_pNetwork->Update();
 	if (nPauseMode)
@@ -1123,7 +1267,13 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 #endif
 	}
 
+	if (m_pUserCallback)
+		m_pUserCallback->OnUpdate();
+
 	m_pSystemEventDispatcher->Update();
+#if !defined(RELEASE) || defined(RELEASE_LOGGING)
+	GetIRemoteConsole()->Update();
+#endif
 
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
@@ -1153,7 +1303,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
 {
-	FILE* fp = fopen(filename, "wb");
+	FILE* fp	= fopen(filename, "wb");
 	bool result = false;
 	if (fp != nullptr)
 	{
@@ -1168,7 +1318,7 @@ bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitle
 
 unsigned int CSystem::ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen)
 {
-	FILE* fp = fopen(filename, "rb");
+	FILE* fp   = fopen(filename, "rb");
 	int result = 0;
 	if (fp != nullptr)
 	{
@@ -1206,7 +1356,6 @@ void CSystem::RenderStatistics()
 
 const char* CSystem::GetUserName()
 {
-	
 #if BB_PLATFORM_WINDOWS
 	static const int iNameBufferSize = 1024;
 	static char szNameBuffer[iNameBufferSize];
@@ -1218,11 +1367,11 @@ const char* CSystem::GetUserName()
 	strcpy(szNameBuffer, wstr_to_str(nameW).c_str());
 	return szNameBuffer;
 #elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID
-	static uid_t uid = geteuid();
+	static uid_t uid		 = geteuid();
 	static struct passwd* pw = getpwuid(uid);
 	if (pw)
 	{
-		return  (pw->pw_name);
+		return (pw->pw_name);
 	}
 	else
 	{
@@ -1240,25 +1389,43 @@ const char* CSystem::GetUserName()
 #endif
 }
 
+//////////////////////////////////////////////////////////////////////////
+IStreamEngine* CSystem::GetStreamEngine()
+{
+	return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+IRemoteConsole* CSystem::GetIRemoteConsole()
+{
+	return CRemoteConsole::GetInst();
+}
+
+ITextModeConsole* CSystem::GetITextModeConsole()
+{
+	if (m_env.IsDedicated())
+		return m_pTextModeConsole;
+	return 0;
+}
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
 	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
-	initParams.pSystem = pSystem.get();
+	initParams.pSystem				 = pSystem.get();
 	ModuleInitISystem(pSystem.get(), "System");
 #if CRY_PLATFORM_DURANGO
-#if !defined(_LIB)
-    m_env = pSystem->GetGlobalEnvironment();
+#	if !defined(_LIB)
+	m_env = pSystem->GetGlobalEnvironment();
+#	endif
+	m_env.pWindow = startupParams.hWnd;
 #endif
-    m_env.pWindow = startupParams.hWnd;
-#endif
-  if (!pSystem->Init())
-  {
-	pSystem.release();
-	initParams.pSystem = nullptr;
-	gEnv->pSystem = nullptr;
-    return nullptr;
-  }
+	if (!pSystem->Init())
+	{
+		pSystem.release();
+		initParams.pSystem = nullptr;
+		gEnv->pSystem	   = nullptr;
+		return nullptr;
+	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
 	// run main loop
 	if (initParams.bManualEngineLoop)
@@ -1267,6 +1434,5 @@ ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 		return nullptr;
 	}
 
-
-  return pSystem.release();
+	return pSystem.release();
 }

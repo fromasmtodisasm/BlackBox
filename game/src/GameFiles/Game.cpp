@@ -295,8 +295,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//DevModeInit();
 
 	initPlayer();
-	m_pInput->ShowCursor(false);
-	m_pInput->GrabInput(true);
+	//m_pInput->ShowCursor(false);
+	//m_pInput->GrabInput(true);
 
 	if (m_pRender)
 	{
@@ -374,7 +374,7 @@ static ITexture* splash = nullptr;
 bool CGame::Update()
 {
 	static const auto& render_game = true;
-	const bool bRenderFrame			   = !m_bDedicatedServer;
+	const bool bRenderFrame			   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	SteamAPI_RunCallbacks();
@@ -385,16 +385,16 @@ bool CGame::Update()
 		fps = 1.0f / m_deltaTime;
 		ExecScripts();
 		
-		SmartScriptObject Gui(m_pScriptSystem,true);
-		if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
-		{
-			CryError("Cannot find Gui table in scripts (wrong working folder?)");
-			return false;
-		}
-
 
 		if (bRenderFrame)
 		{
+			SmartScriptObject Gui(m_pScriptSystem,true);
+			if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
+			{
+				CryError("Cannot find Gui table in scripts (wrong working folder?)");
+				return false;
+			}
+
 			SetRenderState();
 			m_pSystem->RenderBegin();
 			{
@@ -555,7 +555,7 @@ void CGame::DisplayInfo(float fps)
 
 bool CGame::Run(bool& bRelaunch)
 {
-	splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
+	//splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
 	m_pLog->Log("[OK] Game started");
 	m_pSystem->Log("[OK] Game started");
 	StartupServer(true, "test_server");

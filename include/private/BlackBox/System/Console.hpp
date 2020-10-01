@@ -9,7 +9,6 @@
 
 #include <list>
 #include <map>
-#include <unordered_map>
 #include <queue>
 #include <set>
 #include <string>
@@ -308,7 +307,30 @@ struct ConsolePrompt
 	CommandLine get();
 };
 
+struct CConsoleCommandArgs : public IConsoleCmdArgs
+{
+	CConsoleCommandArgs(string& line, std::vector<string>& args) : m_line(line), m_args(args) {}
+	virtual int         GetArgCount() const { return m_args.size(); }
+	// Get argument by index, nIndex must be in 0 <= nIndex < GetArgCount()
+	virtual const char* GetArg(int nIndex) const
+	{
+		assert(nIndex >= 0 && nIndex < GetArgCount());
+		if (!(nIndex >= 0 && nIndex < GetArgCount()))
+			return NULL;
+		return m_args[nIndex].c_str();
+	}
+	virtual const char* GetCommandLine() const
+	{
+		return m_line.c_str();
+	}
+
+private:
+	string&              m_line;
+	std::vector<string>& m_args;
+};
+
 class CConsole : public IConsole
+	, public IRemoteConsoleListener
 	, public IInputEventListener
 	, public ICVarDumpSink
 {
@@ -318,9 +340,9 @@ class CConsole : public IConsole
 
 	using ConsoleBuffer = std::deque<string>;
 	using ConfigVar		= std::map<string, string>;
-	using VariablesMap	= std::unordered_map<std::string, ICVar*>;
+	using VariablesMap	= std::map<std::string, ICVar*>;
 	using KeyBindMap	= std::map<EKeyId, std::wstring>;
-	using CommandMap	= std::unordered_map<std::wstring, CommandInfo>;
+	using CommandMap	= std::map<std::wstring, CommandInfo>;
 	using VarSinkList	= std::vector<IConsoleVarSink*>;
 
 	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
@@ -363,42 +385,55 @@ class CConsole : public IConsole
 		}
 	};
 	using InputBinding	  = std::map<const SInputEvent, EInputFunctions, cmpInputEvents>;
-	using ConsoleBindsMap = std::unordered_map<std::string, std::string>;
+	using ConsoleBindsMap = std::map<std::string, std::string>;
 
   public:
 	CConsole();
 	~CConsole();
+
+	virtual void OnConsoleCommand(const char* cmd) override;
 	// Inherited via IConsole
 	bool Init(ISystem* pSystem);
-	void Animate(float deltatime, IRenderer* render);
-	void CalcMetrics(size_t& end);
-	void getHistoryElement();
-	void completeCommand(std::vector<std::wstring>& completion);
-	void setBuffer();
-	bool handleEnterText();
-
 	virtual void ShowConsole(bool show) override;
 	virtual void SetImage(ITexture* pTexture) override;
 	virtual struct ITexPic* GetImage() override;
-	virtual void StaticBackground(bool bStatic) override { m_bStaticBackground = bStatic; };
+	virtual void StaticBackground(bool bStatic) override
+	{
+		m_bStaticBackground = bStatic;
+	};
+
 	virtual void Update() override;
 	virtual void Draw() override;
+	void Animate(float deltatime, IRenderer* render);
+	void CalcMetrics(size_t& end);
 	virtual void AddCommand(const char* sName, IConsoleCommand* command, const char* help = "") override;
 	virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") override;
 	virtual void ExecuteString(const char* command) override;
 	virtual void ExecuteFile(const char* file) override;
 	virtual bool OnInputEvent(const SInputEvent& event) override;
 	virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
-	virtual int GetPriority() const override { return 4; }
+	virtual int GetPriority() const override
+	{
+		return 4;
+	}
+	void getHistoryElement();
+	void completeCommand(std::vector<std::wstring>& completion);
+	void setBuffer();
+	bool handleEnterText();
 	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
 	virtual void Clear() override;
 	virtual void Help(const char* cmd) override;
 	virtual void PrintLine(const char* format, ...) override;
 	virtual bool IsOpened() override;
+
 	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") override;
+
 	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") override;
+
 	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") override;
+
 	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
+
 	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) override;
 	virtual void OnElementFound(ICVar* pCVar) override;
 	virtual void AddConsoleVarSink(IConsoleVarSink* pSink) override;
@@ -441,6 +476,7 @@ class CConsole : public IConsole
 	void printText(Text const& element, Vec2 pos);
 	void addToCommandBuffer(std::vector<std::wstring>& completion);
 	void addText(std::wstring const& cmd);
+	;
 	void Set(CommandDesc& cd);
 	void SetInternal(ICVar* pVar, std::string& value, std::string& name);
 	void Get(CommandDesc& cd);
@@ -464,26 +500,14 @@ class CConsole : public IConsole
 	void DrawBuffer(int nScrollPos, const char* szEffect);
 
   private:
-	struct SConfigVar
-	{
-		string m_value;
-		bool m_partOfGroup;
-		uint32 nCVarOrFlags;
-	};
+	ConsoleBuffer                  m_dqConsoleBuffer;
+	ConsoleBuffer                  m_dqHistory;
 
-	struct SDeferredCommand
-	{
-		string command;
-		bool silentMode;
+	string                         m_sReturnString;
 
-		SDeferredCommand(const string& command, bool silentMode)
-			: command(command), silentMode(silentMode)
-		{
-		}
-	};
-
+	std::vector<IOutputPrintSink*> m_OutputSinks;             // objects in this vector are not released
 	VarSinkList varSinks;
-	CommandMap m_Commands;
+	CommandMap m_mapCommands;
 	std::wstring m_CommandW;
 	std::string m_CommandA;
 
@@ -569,6 +593,29 @@ class CConsole : public IConsole
 
 	// Inherited via IConsole
 	virtual void Release() override;
+
+	// Inherited via IConsole
+	virtual void AddOutputPrintSink(IOutputPrintSink* inpSink) override;
+
+	virtual void RemoveOutputPrintSink(IOutputPrintSink* inpSink) override;
+
+	virtual int GetNumVars() override;
+
+	virtual void GetSortedVars(const char** pszArray, size_t numItems) override;
+
+	virtual const char* AutoComplete(const char* substr) override;
+
+	virtual const char* AutoCompletePrev(const char* substr) override;
+
+	virtual char* ProcessCompletion(const char* szInputBuffer) override;
+
+	virtual void ResetAutoCompletion() override;
+
+	virtual void DumpKeyBinds(IKeyBindDumpSink* pCallback) override;
+
+	virtual const char* GetHistoryElement(const bool bUpOrDown) override;
+
+	virtual void AddCommandToHistory(const char* szCommand) override;
 
 	// Inherited via IConsole
 };

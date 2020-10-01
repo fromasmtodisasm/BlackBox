@@ -14,6 +14,7 @@
 
 #ifndef _SMART_PTR_H_
 #define _SMART_PTR_H_
+#include <atomic>
 //////////////////////////////////////////////////////////////////
 // SMART POINTER
 //////////////////////////////////////////////////////////////////
@@ -189,12 +190,36 @@ protected:
 // default implementation is int counter - for better alignment
 typedef _reference_target<int> _reference_target_t;
 
-#if (defined(_WINDOWS_)||defined(LINUX))
+#if (defined(_WINDOWS)||defined(LINUX))
 
-#if 0
 //////////////////////////////////////////////////////////////////////////
 // reference target for smart pointer
 // implements AddRef() and Release() strategy using reference counter of the specified type
+#if 1
+
+template<class T>
+inline void InterlockedIncrement__(std::atomic<T>& v)
+{
+	++v;
+}
+
+template<class T>
+inline auto InterlockedDecrement__(std::atomic<T>& v)
+{
+	return ++v;
+}
+
+
+#ifdef InterlockedIncrement
+#undef InterlockedIncrement
+#endif
+#ifdef InterlockedDecrement
+#undef InterlockedDecrement
+#endif
+
+#define InterlockedIncrement InterlockedIncrement__
+#define InterlockedDecrement InterlockedDecrement__
+#endif
 template <class Derived>
 class _reference_target_MT_novtbl
 {
@@ -206,12 +231,12 @@ public:
 
   void AddRef()
   {
-    InterlockedIncrement(&m_nRefCounter);
+    InterlockedIncrement(m_nRefCounter);
   }
 
   void Release()
   {
-    if (InterlockedDecrement(&m_nRefCounter) <= 0)
+    if (InterlockedDecrement(m_nRefCounter) <= 0)
       delete static_cast<Derived*>(this);
   }
 
@@ -220,7 +245,8 @@ protected:
 #if defined(LINUX)
   volatile signed int m_nRefCounter;
 #else
-  volatile signed long m_nRefCounter;
+  //volatile signed long m_nRefCounter;
+  std::atomic<signed long> m_nRefCounter;
 #endif
 };
 
@@ -233,7 +259,6 @@ public:
 };
 
 #endif //_WINDOWS_
-#endif
 //////////////////////////////////////////////////////////////////////////
 // base class for interfaces implementing reference counting
 // derive your interface from this class and the descendants won't have to implement

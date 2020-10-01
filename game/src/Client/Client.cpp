@@ -80,7 +80,8 @@ bool CClient::Init()
 	m_pIActionMapManager = m_pGame->GetActionMapManager();
 	if(m_pIActionMapManager)
 		m_pIActionMapManager->SetSink(this);
-	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
+	if (!gEnv->IsDedicated())
+		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 
@@ -111,7 +112,8 @@ bool CClient::Init()
 	//m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
-	m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
+	if (gEnv->pRenderer)
+		m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
 	return true;
 }
 
@@ -356,7 +358,8 @@ void CClient::DrawAux()
 	//m_pRender->DrawFullScreenImage(m_CrossHair->getId());
 	size_t ch_w = 20;
 	size_t ch_h = 20;
-	gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5 * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5 * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
+	if (gEnv->pRenderer)
+		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5 * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5 * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
 void CClient::DrawAxis(IRenderAuxGeom* render, Vec3 axis)

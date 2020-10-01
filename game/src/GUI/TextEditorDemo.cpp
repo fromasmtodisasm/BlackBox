@@ -196,6 +196,7 @@ void GLSLEditor::Update()
 
         }
 
+        #if 0
 		if (ImGui::BeginMenu("Options"))
 		{
 			static bool enabled = true;
@@ -211,6 +212,7 @@ void GLSLEditor::Update()
 			ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
 			ImGui::EndMenu();
 		}
+        #endif
 
         if (ImGui::BeginMenu("View"))
         {
