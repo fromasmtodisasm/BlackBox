@@ -20,6 +20,8 @@
 
 #define DEFAULT_APP_NAME "BlackBox"
 
+#define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
+
 struct IWindow;
 
 class CScriptObjectConsole;
