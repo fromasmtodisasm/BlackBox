@@ -93,6 +93,21 @@ namespace
 		}
 		else
 		{
+			#if 0
+			if (bQuitIfNotFound)
+			#endif
+			{
+	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
+				CryFatalError("Error loading dynamic library: %s, error :  %s\n", modulePath.c_str(), dlerror());
+	#else
+				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
+				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());
+	#endif
+
+				gEnv->pSystem->Quit();
+			}
+
+		return nullptr;
 			gEnv->pSystem->Log("Library not found");
 		}
 		return false;
@@ -1387,6 +1402,53 @@ const char* CSystem::GetUserName()
 #else
 	return "";
 #endif
+}
+
+void CSystem::FatalError(const char* format, ...)
+{
+	// format message
+	va_list ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	const char* sPrefix = "";
+	strcpy(szBuffer, sPrefix);
+	va_start(ArgList, format);
+	vsprintf(szBuffer + strlen(szBuffer)/*, sizeof(szBuffer) - strlen(szBuffer)*/, format, ArgList);
+	va_end(ArgList);
+
+	#
+	// get system error message before any attempt to write into log
+	const char* szSysErrorMessage = 0;
+	//CryGetLastSystemErrorMessage();
+
+	CryLogAlways("=============================================================================");
+	CryLogAlways("*ERROR");
+	CryLogAlways("=============================================================================");
+	// write both messages into log
+	CryLogAlways("%s", szBuffer);
+
+	if (szSysErrorMessage)
+		CryLogAlways("<CrySystem> Last System Error: %s", szSysErrorMessage);
+
+	assert(szBuffer[0] >= ' ');
+	//	strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
+
+	//LogSystemInfo();
+
+	//CollectMemStats(0, nMSP_ForCrashLog);
+
+	OutputDebugString(szBuffer);
+	//OnFatalError(szBuffer);
+
+	#if 0
+	if (!g_cvars.sys_no_crash_dialog)
+	{
+		CryMessageBox(szBuffer,"CRYENGINE FATAL ERROR", eMB_Error);
+	}
+	#endif
+
+	//GetITextModeConsole()->OnShutdown
+	DebugBreak();
+
 }
 
 //////////////////////////////////////////////////////////////////////////

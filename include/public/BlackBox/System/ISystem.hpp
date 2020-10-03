@@ -382,6 +382,10 @@ struct ISystem
 	// return true if the application is in the shutdown phase
 	virtual bool IsQuitting() = 0;
 
+	//! Displays error message.
+	//! Logs it to console and file and error message box then terminates execution.
+	virtual void FatalError(const char* sFormat, ...) PRINTF_PARAMS(2, 3) = 0;
+
 	// Display error message.
 	// Logs it to console and file and error message box.
 	// Then terminates execution.
@@ -464,9 +468,21 @@ extern "C"
 	ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
 
-#define FatalError(...) void(0)
-#define CryFatalError(...) FatalError(__VA_ARGS__)
+//! Displays error message, logs it to console and file and error message box, tThen terminates execution.
+void        CryFatalError(const char*, ...) PRINTF_PARAMS(1, 2);
+inline void CryFatalError(const char* format, ...)
+{
+	if (!gEnv || !gEnv->pSystem)
+		return;
 
+	va_list ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	va_start(ArgList, format);
+	vsprintf(szBuffer, format, ArgList);
+	va_end(ArgList);
+
+	gEnv->pSystem->FatalError("%s", szBuffer);
+}
 //////////////////////////////////////////////////////////////////////////
 // Display error message.
 // Logs it to console and file and error message box.

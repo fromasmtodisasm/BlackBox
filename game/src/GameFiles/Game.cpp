@@ -378,6 +378,8 @@ bool CGame::Update()
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	SteamAPI_RunCallbacks();
+	m_pSystem->FatalError("jsljafs;ldkjf;lasjf;klasjdf");
+	m_pSystem->Quit();
 	{
 		// TODO: FIX IT
 		m_deltaTime = m_pSystem->GetDeltaTime();

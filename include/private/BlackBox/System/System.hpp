@@ -265,6 +265,9 @@ class CSystem final : public ISystem
 	virtual void RenderStatistics() override;
 	virtual const char* GetUserName() override;
 
+
+// Inherited via ISystem
+	virtual void FatalError(const char* sFormat, ...);
 };
 
 void AddInternalCommands(ISystem* pSystem);
