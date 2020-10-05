@@ -360,7 +360,7 @@ bool CSystem::Init()
 	{
 		return false;
 	}
-	m_pConsole->PrintLine("[OK] IGame created\n");
+	ExecuteCommandLine();
 	Tests();
 
 	return true;

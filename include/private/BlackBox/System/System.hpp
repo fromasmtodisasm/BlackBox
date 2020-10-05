@@ -270,6 +270,12 @@ class CSystem final : public ISystem
 
 // Inherited via ISystem
 	virtual void FatalError(const char* sFormat, ...);
+
+	// Inherited via ISystem
+	virtual void ExecuteCommandLine() override;
+
+	// Inherited via ISystem
+	virtual bool IsCVarWhitelisted(const char* szName, bool silent) const override;
 };
 
 void AddInternalCommands(ISystem* pSystem);

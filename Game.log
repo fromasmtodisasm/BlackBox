@@ -1,0 +1,129 @@
+ Initializing System
+ Initializing Console
+ Loading config
+ Open Render Library
+ Loading Module Window...
+ Library found
+ Entrypoint [CreateIWindow] found
+ Load Window Library
+ Loading Module Renderer...
+ Library found
+ Entrypoint [CreateIRender] found
+ Load Render Library
+ Loading...
+ Creating Input
+ Loading Module Input...
+ Library found
+ Entrypoint [CreateInput] found
+ Initializing LinuxInput/SDL
+ Initialize Render
+ window inited
+ Create debug render context
+ Hardware render info
+	Vendor: [NVIDIA Corporation]
+	Render: [GeForce GTX 1080/PCIe/SSE2]
+	Version: [3.3.0 NVIDIA 441.20]
+	Shader Language Version: [3.30 NVIDIA via Cg compiler]
+
+ Here
+ load shader: screenshader.vs_screenshader.frag
+ Loading res/shaders/screenshader.vs shader
+ Loading res/shaders/screenshader.frag shader
+ load shader: auxgeom.vs_auxgeom.frag
+ Loading res/shaders/auxgeom.vs shader
+ Loading res/shaders/auxgeom.frag shader
+ Here
+ Here
+ load shader: bb.vs_bb.frag
+ Loading res/shaders/bb.vs shader
+ Loading res/shaders/bb.frag shader
+ Texture [res/images/fcsplash.bmp] loaded
+ Creating 3DEngine
+ Loading Module 3DEngine...
+ Library found
+ Entrypoint [Create3DEngine] found
+ Creating ScriptSystem
+ Loading Module ScriptSystem...
+ Library found
+ Entrypoint [CreateScriptSystem] found
+ Initializing ScriptSystem
+ Creating EntitySystem
+ Loading Module EntitySystem...
+ Library found
+ Entrypoint [CreateEntitySystem] found
+ load shader: sprite.vs_sprite.frag
+ Loading res/shaders/sprite.vs shader
+ Loading res/shaders/sprite.frag shader
+ Here
+ Texture [res/images/console/defaultconsole.dds] loaded
+ Texture [res/images/loading.png] loaded
+ Creating GUI
+ Loading Module GUI...
+ Library found
+ Entrypoint [CreateGUI] found
+ Creating GUI
+ Loading Module Game...
+ Library found
+ Entrypoint [CreateIGame] found
+ Creating Network
+ Loading Module Network...
+ Library found
+ Entrypoint [CreateNetwork] found
+ Creating Network
+ Compiled with SDL_net version: 2.0.1
+ Running with SDL_net version: 2.0.1
+ Initialize Game
+ <EntityClassRegistry> Initializing
+ common lua------------------------------------------------------
+ Adding command: relaunchcmd: Game:SendMessage("Relaunch")
+ Adding command: screenshotcmd: System:ScreenShot("screen_shots/ss.png")
+ Adding command: os_executecmd: os.execute(%1)
+ Adding command: webpagecmd: os.execute("start http://localhost:10000/info")
+ Adding command: levelcmd: Game:LoadLevel(%1)
+ Adding command: connectcmd: Client:Connect(%1,%2)
+ Adding command: sendcmd: 		if Client:Send(%1) then
+			Console:PrintLine(Client:Response())
+		end
+	
+ Invalid game cfg:Input:SetMouseSensitivity(0.1000);
+
+ Invalid game cfg:Input:SetInvertedMouse(nil);
+
+ load shader: sprite.vs_sprite.frag
+ Loading res/shaders/sprite.vs shader
+ Loading res/shaders/sprite.frag shader
+ Here
+ Loading level
+ Scene loading
+ load shader: test.vs_test.frag
+ Loading res/shaders/test.vs shader
+ Loading res/shaders/test.frag shader
+ load shader: test.vs_radar.frag
+ Loading res/shaders/test.vs shader
+ Loading res/shaders/radar.frag shader
+ load shader: test.vs_demo.frag
+ Loading res/shaders/test.vs shader
+ Loading res/shaders/demo.frag shader
+ load shader: test.vs_arch.frag
+ Loading res/shaders/test.vs shader
+ Loading res/shaders/arch.frag shader
+ Texture [res/images/crosshair.png] loaded
+ Executing command from command line: 
+map test
+
+ [OK] Game started
+ [OK] Game started
+ Creating the server
+ NetworkServer Constructed
+ Conntection Opened
+ Remote console listening on: 4600
+
+$4[Error] An internal OpenGL call failed in F:\code\graphics\BlackBoxDev\include\private\BlackBox/Renderer/OpenGL/Core.hpp(277).
+Expression:
+   glClear(mask)
+-*-*-*-*-*
+
+ Releasing system
+
+
+*****Unknown stop cause*****

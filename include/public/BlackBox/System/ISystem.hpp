@@ -348,9 +348,10 @@ struct ISystem
 	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) = 0;
 	virtual void Release()										 = 0;
 	//! Returns pointer to the global environment structure.
-	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() = 0;
-	virtual ISystemUserCallback* GetUserCallback() const	 = 0;
-	virtual IGame* CreateGame(IGame* game)					 = 0;
+	virtual SSystemGlobalEnvironment* GetGlobalEnvironment()			  = 0;
+	virtual bool IsCVarWhitelisted(const char* szName, bool silent) const = 0;
+	virtual ISystemUserCallback* GetUserCallback() const				  = 0;
+	virtual IGame* CreateGame(IGame* game)								  = 0;
 
 	virtual IRenderer* GetIRenderer()			= 0;
 	virtual ILog* GetILog()						= 0;
@@ -420,6 +421,8 @@ struct ISystem
 
 	virtual float GetDeltaTime() = 0;
 
+	virtual void ExecuteCommandLine() = 0;
+
 	virtual void SetViewCamera(class CCamera& Camera) = 0;
 	virtual CCamera& GetViewCamera()				  = 0;
 
@@ -469,7 +472,7 @@ extern "C"
 }
 
 //! Displays error message, logs it to console and file and error message box, tThen terminates execution.
-void        CryFatalError(const char*, ...) PRINTF_PARAMS(1, 2);
+void CryFatalError(const char*, ...) PRINTF_PARAMS(1, 2);
 inline void CryFatalError(const char* format, ...)
 {
 	if (!gEnv || !gEnv->pSystem)

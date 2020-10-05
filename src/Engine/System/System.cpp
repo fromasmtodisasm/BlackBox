@@ -25,6 +25,7 @@
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/IWorld.hpp>
+#include <BlackBox/System/CVarOverrides.h>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <SDL2/SDL.h>
 
@@ -755,6 +756,78 @@ void CSystem::FatalError(const char* format, ...)
 	//GetITextModeConsole()->OnShutdown
 	DebugBreak();
 
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::ExecuteCommandLine()
+{
+	// should only be called once
+	{
+		static bool bCalledAlready = false;
+		assert(!bCalledAlready);
+		bCalledAlready = true;
+	}
+
+	// execute command line arguments e.g. +g_gametype ASSAULT +map "testy"
+
+	ICmdLine* pCmdLine = GetICmdLine();
+	assert(pCmdLine);
+
+	const int iCnt = pCmdLine->GetArgCount();
+
+	for (int i = 0; i < iCnt; ++i)
+	{
+		const ICmdLineArg* pCmd = pCmdLine->GetArg(i);
+
+		if (pCmd->GetType() == eCLAT_Post)
+		{
+			string sLine = pCmd->GetName();
+
+			if (gEnv->pSystem->IsCVarWhitelisted(sLine.c_str(), false))
+			{
+				if (pCmd->GetValue())
+					sLine += string(" ") + pCmd->GetValue();
+
+				GetILog()->Log("Executing command from command line: \n%s\n", sLine.c_str()); // - the actual command might be executed much later (e.g. level load pause)
+				GetIConsole()->ExecuteString(sLine.c_str());
+			}
+#if defined(DEDICATED_SERVER)
+			else
+			{
+				GetILog()->LogError("Failed to execute command: '%s' as it is not whitelisted\n", sLine.c_str());
+			}
+#endif
+		}
+	}
+
+	//gEnv->pConsole->ExecuteString("sys_RestoreSpec test*"); // to get useful debugging information about current spec settings to the log file
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CSystem::IsCVarWhitelisted(const char* szName, bool silent) const
+{
+	CRY_ASSERT(szName != nullptr);
+
+	if (szName[0] == '?')
+	{
+		return true;
+	}
+
+	if (szName[0] == '+')
+	{
+		++szName;
+	}
+
+	const char* pNameEnd = std::max(strchr(szName, ' '), strchr(szName, '='));
+	if (pNameEnd == nullptr)
+	{
+		return ::IsCVarWhitelisted(szName);
+	}
+	else
+	{
+		const string name(szName, pNameEnd);
+		return ::IsCVarWhitelisted(name.c_str());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
