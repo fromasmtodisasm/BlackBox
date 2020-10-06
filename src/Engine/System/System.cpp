@@ -36,7 +36,6 @@
 #include <fstream>
 #include <thread>
 
-using namespace std;
 namespace fs = std::filesystem;
 
 CSystem::CSystem(SSystemInitParams& m_startupParams)

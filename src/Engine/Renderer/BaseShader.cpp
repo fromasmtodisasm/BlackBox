@@ -9,8 +9,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-using namespace std;
-
 char* CBaseShaderProgram::buffer = nullptr;
 
 inline const char* CBaseShaderProgram::buildName(const char* format, va_list args)
@@ -143,7 +141,7 @@ bool CShader::Empty()
 
 void CShader::print() {
 #ifdef _DEBUG
-  cout << m_Text << endl;
+
 #endif
 }
 
@@ -366,7 +364,7 @@ GLint CBaseShaderProgram::GetUniformLocation(const char* format, ...)
   return loc;
 }
 
-GLint CBaseShaderProgram::GetUniformLocation(std::string& name)
+GLint CBaseShaderProgram::GetUniformLocation(string& name)
 {
   return GetUniformLocation(name.c_str());
 }

@@ -24,10 +24,10 @@ public:
   virtual const char* GetCommandLine() const { return m_sCmdLine.c_str(); };
 
 private:
-  void   PushCommand(const std::string& sCommand, const std::string& sParameter);
-  std::string Next(char*& str);
+  void   PushCommand(const string& sCommand, const string& sParameter);
+  string Next(char*& str);
 
-  std::string              m_sCmdLine;
+  string              m_sCmdLine;
   std::vector<CCmdLineArg> m_args;
 };
 

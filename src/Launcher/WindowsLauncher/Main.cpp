@@ -13,7 +13,6 @@
 #include <sstream>
 #include <filesystem>
 
-using namespace std;
 namespace fs = std::filesystem;
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists

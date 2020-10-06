@@ -141,7 +141,14 @@ void       bbSleep(unsigned int dwMilliseconds);
 #include <cassert>
 #include <cstdint>
 
+class MyString;
+#ifndef MY_STRING
 using string = std::string;
+#else
+using string = MyString;
+#endif
+
+
 
 #ifdef SendMessage
 #undef SendMessage

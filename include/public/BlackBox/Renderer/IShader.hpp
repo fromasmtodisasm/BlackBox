@@ -336,7 +336,7 @@ struct IShaderProgram
 	virtual void Unuse()												 = 0;
 	virtual void DeleteProgram()										 = 0;
 	virtual int GetUniformLocation(const char* format, ...)				 = 0;
-	virtual int GetUniformLocation(std::string& name)					 = 0;
+	virtual int GetUniformLocation(string& name)					 = 0;
 	virtual const char* GetShaderName(IShader::Type type)				 = 0;
 	//UniformValue GetUniformValue(const char* name);
 	void Uniform(bool value, const char* format, ...)
@@ -357,7 +357,7 @@ struct IShaderProgram
 	virtual void Uniform(const ITexture* texture, const char* format, ...)  = 0;
 
 	template<typename T>
-	void Uniform(const T value, std::string name)
+	void Uniform(const T value, string name)
 	{
 		Uniform(value, name.c_str());
 	}

@@ -9,8 +9,6 @@
 #include <BlackBox/Core/Version.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 
-#include <string>
-
 //////////////////////////////////////////////////////////////////////////
 typedef unsigned short EntityClassId;			//< unique identifier for the entity class (defined in ClassRegistry.lua)
 

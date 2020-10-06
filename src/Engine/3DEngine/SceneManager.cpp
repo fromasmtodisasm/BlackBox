@@ -7,7 +7,6 @@
 #include <BlackBox/System/ISystem.hpp>
 
 #include <iostream>
-using	namespace std;
 
 Scene* defaultScene = nullptr;
 ICVar* SceneManager::scene_path = nullptr;

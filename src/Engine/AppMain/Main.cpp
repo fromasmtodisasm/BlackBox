@@ -9,7 +9,6 @@
 #include <iomanip>
 #include <sstream>
 #include <filesystem>
-using namespace std;
 namespace fs = std::filesystem;
 
 extern "C"

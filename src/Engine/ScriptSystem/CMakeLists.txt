@@ -21,13 +21,36 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 ###################################################
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LibScriptSystem.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectSystem.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LibScriptSystem.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/FunctionHandler.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptBinding.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObject.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectSystem.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
+
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/AboutWnd.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/Coverage.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/Coverage.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/FileTree.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/FileTree.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/GoToFuncWnd.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/GoToWnd.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/LUADBG.cpp
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/LUADBG.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/LUADBG.ico
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyBrowseFolder.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyCaptionWindow.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyCoolEdit.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyFileEnum.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyImageList.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyMain.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyRegistry.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinySplitter.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyStatusBar.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyTreeList.h
+	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyWindow.h
 )
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 

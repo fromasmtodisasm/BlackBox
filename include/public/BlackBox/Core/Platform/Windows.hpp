@@ -45,7 +45,7 @@
 		#undef DrawText
 		#undef GetCharWidth
 		#undef GetUserName
-    #undef SendMessage
+		//#undef SendMessage
 		//#undef LoadLibrary
 	#endif
 	#undef GetCompressedFileSize

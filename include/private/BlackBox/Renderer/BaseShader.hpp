@@ -37,7 +37,7 @@ struct ShaderProgramStatus
 class CShader : public IShader
 {
 public:
-  CShader(std::string text, CShader::Type type);
+  CShader(string text, CShader::Type type);
   ~CShader();
   // Inherited via IShader
   virtual void AddRef() override;
@@ -45,9 +45,9 @@ public:
 
   static CShader* load(ShaderDesc const& desc);
   static CShader* load(std::string_view source);
-  static bool parseLine(std::ifstream& fin, std::string& buffer);
-  static bool loadInternal(std::string const& path, std::string& buffer);
-  static ShaderRef loadFromMemory(std::string text, CShader::Type type);
+  static bool parseLine(std::ifstream& fin, string& buffer);
+  static bool loadInternal(string const& path, string& buffer);
+  static ShaderRef loadFromMemory(string text, CShader::Type type);
   
   virtual bool Create() override;
   virtual bool Compile() override;
@@ -60,12 +60,12 @@ public:
 
 private:
   GLuint m_Shader;
-  std::string m_Text;
+  string m_Text;
   ShaderStatus m_Status;
   bool m_Empty;
   int m_Refs = 0;
 public:
-  std::string m_Path;
+  string m_Path;
   IShader::Type m_Type;
   virtual IShader::Type GetType() override;
 };
@@ -93,7 +93,7 @@ public:
   virtual void Unuse() override;
   virtual void DeleteProgram() override;
   virtual GLint GetUniformLocation(const char* format, ...) override;
-  virtual GLint GetUniformLocation(std::string& name) override;
+  virtual GLint GetUniformLocation(string& name) override;
   UniformValue GetUniformValue(const char* name);
   void Uniform(bool value, const char* format, ...) { Uniform((int)value, format);}
   virtual void Uniform(const int value, const char* format, ...) override;
@@ -110,7 +110,7 @@ public:
   virtual void Uniform(const ITexture* texture, const char* format, ...) override;
 
   template<typename T>
-  void Uniform(const T value, std::string name) { Uniform(value, name.c_str()); }
+  void Uniform(const T value, string name) { Uniform(value, name.c_str()); }
 
   //virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
 
@@ -134,9 +134,9 @@ public:
   ShaderProgramStatus m_Status;
 
   bool created = false;
-  std::map<std::string, GLint> m_Cache;
+  std::map<string, GLint> m_Cache;
   static char* buffer;
-  std::string name;
+  string name;
   static ICVar* print_loc_name;
   static ICVar* use_cache;
 
@@ -155,4 +155,4 @@ public:
   virtual int Reload() override;
 };
 
-CShader::Type str2typ(std::string type);
+CShader::Type str2typ(string type);

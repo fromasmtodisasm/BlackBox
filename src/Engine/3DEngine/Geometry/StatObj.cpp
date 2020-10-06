@@ -14,7 +14,6 @@
 #include <memory>
 
 #if 0
-using namespace std;
 int CStatObj::refs = 0;
 
 CStatObj::CStatObj() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)), velocity(glm::vec3(0))

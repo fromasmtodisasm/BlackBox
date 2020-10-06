@@ -1,8 +1,8 @@
 #include <BlackBox/Renderer/BaseShader.hpp>
 
 #include <sstream>
-
-using namespace std;
+using std::stringstream;
+using std::string_view;
 
 namespace
 {
@@ -60,16 +60,15 @@ CShader* CShader::load(ShaderDesc const& desc)
 	if (desc.macro.size() > 0)
 	{
 		auto pos = text.find("#version");
-		if (pos != std::string::npos)
+		if (pos != string::npos)
 		{
 			auto end = text.find_first_of('\n', pos + 1);
-			std::string defines;
+			string defines;
 			for (auto& define : desc.macro)
 			{
 				defines = "#define " + define.first + " " + define.second + "\n";
 			}
 			text.insert(end + 1, defines);
-			std::cout << text << endl;
 		}
 	}
 
@@ -88,7 +87,7 @@ CShader* CShader::load(std::string_view source)
 	return nullptr;
 }
 
-bool CShader::parseLine(std::ifstream& fin, std::string& buffer)
+bool CShader::parseLine(std::ifstream& fin, string& buffer)
 {
 	if (!getline(fin, buffer))
 		return false;
@@ -103,10 +102,10 @@ bool CShader::parseLine(std::ifstream& fin, std::string& buffer)
 		else
 			return false;
 
-		std::string file(buffer.substr(begin + 1, end - begin - 1));
-		std::string buff;
+		string file(buffer.substr(begin + 1, end - begin - 1));
+		string buff;
 
-		if (!loadInternal(std::string("res/shaders/") + file, buff))
+		if (!loadInternal(string("res/shaders/") + file, buff))
 			return false;
 		buffer.clear();
 		buffer += buff;
@@ -164,9 +163,9 @@ bool CShader::parseLine(std::ifstream& fin, std::string& buffer)
 	return true;
 }
 
-bool CShader::loadInternal(std::string const& path, std::string& buffer)
+bool CShader::loadInternal(string const& path, string& buffer)
 {
-	ifstream fin(path);
+	std::ifstream fin(path);
 	string buff;
 
 	if (!fin.is_open())
@@ -181,7 +180,7 @@ bool CShader::loadInternal(std::string const& path, std::string& buffer)
 	return true;
 }
 
-ShaderRef CShader::loadFromMemory(std::string text, IShader::Type type)
+ShaderRef CShader::loadFromMemory(string text, IShader::Type type)
 {
 	auto shader = ShaderRef(new CShader(text, type));
 	if (!shader->Create())

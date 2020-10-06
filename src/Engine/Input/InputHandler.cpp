@@ -2,8 +2,6 @@
 #include <BlackBox/SFMLWindow.hpp>
 #include <iostream>
 
-using namespace std;
-
 ICommand* CSFMLWindow::handleInput(bool bPause)
 {
   int offset = 5;

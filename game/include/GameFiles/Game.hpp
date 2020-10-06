@@ -105,7 +105,7 @@ struct TextRenderInfo
 
 //forward declarations
 //////////////////////////////////////////////////////////////////////
-using string = std::string;
+//using string = std::string;
 class EventListener;
 class GameGUI;
 struct IScene;
@@ -414,8 +414,8 @@ private: // ------------------------------------------------------------
 	bool StartupLocalClient();
 	void ShutdownClient();
 	void MarkClientForDestruct();
-    void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping) override;
-    void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping) override;
+    void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
+    void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
     void OnNETServerTimeout(const CIPAddress& ip) override;
 	void RefreshServerList();
 	//////////////////////////////////////////////////////////////////////////
@@ -540,16 +540,16 @@ public:
 	IServerSnooper* m_pServerSnooper{};		//!< used for LAN Multiplayer, to remove control servers
 	INETServerSnooper* m_pNETServerSnooper{}; //!< used for Internet Multiplayer, to remove control servers
 	IRConSystem* m_pRConSystem = nullptr;   //!< used for Multiplayer, to remote control servers
-	std::string m_szLastAddress;
+	string m_szLastAddress;
 	bool m_bLastDoLateSwitch{};
 	bool m_bLastCDAuthentication{};
 
 	//CUIHud* m_pUIHud;									//!< Hud
 	//CUIHud* m_pCurrentUI;							//!< for the current ui
 
-	std::string m_currentLevel;		  //!< Name of current level.
-	std::string m_currentMission;	 //!< Name of current mission.
-	std::string m_currentLevelFolder; //!< Folder of the current level.
+	string m_currentLevel;		  //!< Name of current level.
+	string m_currentMission;	 //!< Name of current mission.
+	string m_currentLevelFolder; //!< Folder of the current level.
 
 	// console variables -----------------------------------------------------------
 	//=======================
@@ -594,7 +594,7 @@ public:
 	int st_achivements_numHits = 0;
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
-	std::string m_strLastSaveGame;
+	string m_strLastSaveGame;
 	bool m_bEditor{};
 	//tPlayerPersistentData			m_tPlayerPersistentData;
 

@@ -260,13 +260,13 @@ R"(
 			//gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
 			std::stringstream ss(buf);
 			//gEnv->pLog->Log("Response %s:\n", ss.str().data());
-			std::string line;
+			string line;
 			std::getline(ss, line);
 			const int len = line.size() - 14; // GET / HTTP/1.1
-			std::string location;
-			std::string args;
+			string location;
+			string args;
 			location.resize(len);
-			std::string tmp		= line;
+			string tmp		= line;
 			urldecode2(tmp.data(), line.data());
 			line   = tmp;
 			//auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());

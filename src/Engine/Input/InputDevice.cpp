@@ -10,7 +10,6 @@
 
 #include <string>
 
-using namespace std;
 using ColorF = Vec4;
 
 CInputDevice::CInputDevice(IInput& input, const char* deviceName)
