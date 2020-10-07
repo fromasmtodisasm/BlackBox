@@ -15,7 +15,7 @@ public:
 	void InitializeTemplate(IScriptSystem* pSS);
 	int TestMethod(int i)
 	{
-		gEnv->pConsole->PrintLine("i = %d;", i);	
+		CryLogAlways("i = %d;", i);
 		return 0;
 	}
 	const char* tm2(int i, int c)
@@ -26,12 +26,12 @@ public:
 
 	int tm3(int i, int c, const char* str)
 	{
-		gEnv->pConsole->PrintLine("i = %d; c = %c; s = %s", i, c, str);	
+		CryLogAlways("i = %d; c = %c; s = %s", i, c, str);	
 		return 0;
 	}
 	int tm4(int i)
 	{
-		gEnv->pConsole->PrintLine("i = %d;", i);	
+		CryLogAlways("i = %d;", i);	
 		return 0;
 	}
 

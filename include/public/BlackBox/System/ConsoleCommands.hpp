@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Core/MathHelper.hpp>
 

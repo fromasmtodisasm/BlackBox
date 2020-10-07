@@ -4,8 +4,11 @@
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/Core/StlUtils.hpp>
 
 #include <list>
 #include <map>
@@ -18,9 +21,24 @@
 #	define stricmp _stricmp
 #endif // !stricmp
 
+enum ELoadConfigurationType
+{
+	eLoadConfigDefault,
+	eLoadConfigInit,
+	eLoadConfigSystemSpec,
+	eLoadConfigGame,
+	eLoadConfigLevel
+};
+
+struct IFFont;
+struct IIpnut;
+struct INetwork;
+struct IRenderer;
+struct ITexture;
+
+class CSystem;
 #define MAX_HISTORY_ENTRIES 50
 #define LINE_BORDER 10
-
 enum ScrollDir
 {
 	sdDOWN,
@@ -28,28 +46,68 @@ enum ScrollDir
 	sdNONE
 };
 
-struct AnimationParams
+struct CConsoleCommand
 {
-	bool animate	  = false;
-	float gravity	  = 1;
-	float speed		  = 400;
-	float curr_speed  = 1300;
-	float curr_height = 0;
-};
+	string             m_sName;    // Console command name
+	string             m_sCommand; // lua code that is executed when this command is invoked
+	string             m_sHelp;    // optional help string - can be shown in the console with "<commandname> ?"
+	int                m_nFlags;   // bitmask consist of flag starting with VF_ e.g. VF_CHEAT
+	ConsoleCommandFunc m_func;     // Pointer to console command.
+	bool               m_isManagedExternally; // true if console command is added from C# and the notification of console commands will be through C# class method invocation via mono
 
-struct cmpKeys
-{
-	bool operator()(const std::string& a, const std::string& b) const
+	//////////////////////////////////////////////////////////////////////////
+	CConsoleCommand()
+		: m_nFlags(0)
+		, m_func(0)
+		, m_isManagedExternally(false)
+	{}
+	size_t sizeofThis() const { return sizeof(*this) + m_sName.capacity() + 1 + m_sCommand.capacity() + 1; }
+	void   GetMemoryUsage(class ICrySizer* pSizer) const
 	{
-		return stricmp(a.c_str(), b.c_str()) < 0;
+		#if 0
+		pSizer->AddObject(m_sName);
+		pSizer->AddObject(m_sCommand);
+		pSizer->AddObject(m_sHelp);
+		#endif
 	}
 };
+
+struct CConsoleCommandArgs : public IConsoleCmdArgs
+{
+	CConsoleCommandArgs(string& line, std::vector<string>& args) : m_line(line), m_args(args) {}
+	virtual int         GetArgCount() const { return m_args.size(); }
+	// Get argument by index, nIndex must be in 0 <= nIndex < GetArgCount()
+	virtual const char* GetArg(int nIndex) const
+	{
+		assert(nIndex >= 0 && nIndex < GetArgCount());
+		if (!(nIndex >= 0 && nIndex < GetArgCount()))
+			return NULL;
+		return m_args[nIndex].c_str();
+	}
+	virtual const char* GetCommandLine() const
+	{
+		return m_line.c_str();
+	}
+
+private:
+	string&              m_line;
+	std::vector<string>& m_args;
+};
+
+struct string_nocase_lt
+{
+	bool operator()(const char* s1, const char* s2) const
+	{
+		return stricmp(s1, s2) < 0;
+	}
+};
+
 
 class CBaseVariable : public ICVar
 {
   public:
-	CBaseVariable(const char* name, int flags)
-		: m_Name(name), m_Flags(flags)
+	CBaseVariable(IConsole *pConsole, const char* name, int flags)
+		: m_pConsole(pConsole), m_Name(name), m_Flags(flags)
 	{
 		CBaseVariable::SetFlags(VF_NULL);
 	}
@@ -83,8 +141,26 @@ class CBaseVariable : public ICVar
 		return m_Flags;
 	}
 
+	bool IsOwnedByConsole() const  { return true; }
+
+	virtual uint64 AddOnChange(std::function<void()> changeFunctor) override
+	{
+		uint64 functorId = m_changeFunctorIdTotal;
+		m_onChangeCallbacks.emplace_back(SCallback{ std::move(changeFunctor), functorId });
+		++m_changeFunctorIdTotal;
+		return functorId;
+	}
 	string m_Name;
 	int m_Flags;
+	struct SCallback
+	{
+		std::function<void()> function;
+		uint64                id;
+	};
+
+	std::vector<std::function<void()>> m_onChangeCallbacks;
+	uint64                 m_changeFunctorIdTotal = 0;
+	IConsole*              m_pConsole;              // used for the callback OnBeforeVarChange()
 };
 
 class CNullCVar : public ICVar
@@ -116,20 +192,20 @@ class CNullCVar : public ICVar
 class CCVar : public CBaseVariable
 {
   public:
-	CCVar(const char* name, int value, int flags, char* help)
-		: CBaseVariable(name, flags), value(value), type(CVAR_INT), help(help)
+	CCVar(IConsole *pConsole, const char* name, int value, int flags, const char* help)
+		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_INT), help(help)
 	{
 	}
-	CCVar(const char* name, const char* value, int flags, char* help)
-		: CBaseVariable(name, flags), value(value), type(CVAR_STRING), help(help)
+	CCVar(IConsole *pConsole, const char* name, const char* value, int flags, const char* help)
+		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_STRING), help(help)
 	{
 	}
-	CCVar(const char* name, float value, int flags, char* help)
-		: CBaseVariable(name, flags), value(value), type(CVAR_FLOAT), help(help)
+	CCVar(IConsole *pConsole, const char* name, float value, int flags, const char* help)
+		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_FLOAT), help(help)
 	{
 	}
 	CCVar()
-		: CBaseVariable("", 0), value(0.0f), type(CVAR_STRING), help(nullptr)
+		: CBaseVariable(nullptr, "", 0), value(0.0f), type(CVAR_STRING), help(nullptr)
 	{
 	}
 
@@ -169,24 +245,24 @@ class CCVar : public CBaseVariable
 		}
 	} value;
 	int type;
-	char* help;
+	const char* help;
 };
 
 class CCVarRef : public CBaseVariable
 {
   public:
-	CCVarRef(const char* name, int* value, int defaultValue, int flags, const char* help)
-		: CBaseVariable(name, flags), value(value), type(CVAR_INT), help(help)
+	CCVarRef(IConsole *pConsole, const char* name, int* value, int defaultValue, int flags, const char* help)
+		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_INT), help(help)
 	{
 		*value = defaultValue;
 	}
-	CCVarRef(const char* name, const char** value, const char* defaultValue, int flags, const char* help)
-		: CBaseVariable(name, flags), value(value), type(CVAR_STRING), help(help)
+	CCVarRef(IConsole *pConsole, const char* name, const char** value, const char* defaultValue, int flags, const char* help)
+		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_STRING), help(help)
 	{
 		*value = strdup(defaultValue);
 	}
-	CCVarRef(const char* name, float* value, float defaultValue, int flags, const char* help)
-		: CBaseVariable(name, flags), value(value), type(CVAR_FLOAT), help(help)
+	CCVarRef(IConsole *pConsole, const char* name, float* value, float defaultValue, int flags, const char* help)
+		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_FLOAT), help(help)
 	{
 		*value = defaultValue;
 	}
@@ -307,71 +383,31 @@ struct ConsolePrompt
 	CommandLine get();
 };
 
-struct CConsoleCommandArgs : public IConsoleCmdArgs
+enum EInputFunctions
 {
-	CConsoleCommandArgs(string& line, std::vector<string>& args) : m_line(line), m_args(args) {}
-	virtual int         GetArgCount() const { return m_args.size(); }
-	// Get argument by index, nIndex must be in 0 <= nIndex < GetArgCount()
-	virtual const char* GetArg(int nIndex) const
-	{
-		assert(nIndex >= 0 && nIndex < GetArgCount());
-		if (!(nIndex >= 0 && nIndex < GetArgCount()))
-			return NULL;
-		return m_args[nIndex].c_str();
-	}
-	virtual const char* GetCommandLine() const
-	{
-		return m_line.c_str();
-	}
-
-private:
-	string&              m_line;
-	std::vector<string>& m_args;
+	EAutoComplete,
+	EGotoBeginLine,
+	EGotoEndLine,
+	ESubmit,
+	ECopy,
+	EPaste,
+	EClearInputLine,
+	ENextHistoryElement,
+	EPrevHistoryElement,
+	EMoveCursorToPrevChar,
+	EMoveCursorToNextChar,
+	EMoveCursorToPrevWord,
+	EMoveCursorToNextWord,
+	EDeleteRightChar,
+	EDeleteLeftChar,
+	EDeleteAllAfterCursor,
+	EDeleteAllBeforeCursor,
+	EDeleteWordAfterCursor,
+	EClear,
+	EScrolUp,
+	EScrolDown,
 };
-
-class CConsole : public IConsole
-	, public IRemoteConsoleListener
-	, public IInputEventListener
-	, public ICVarDumpSink
-{
-	friend class SetCommand;
-	friend class GetCommand;
-	friend class DumpCommand;
-
-	using ConsoleBuffer = std::deque<string>;
-	using ConfigVar		= std::map<string, string>;
-	using VariablesMap	= std::map<std::string, ICVar*>;
-	using KeyBindMap	= std::map<EKeyId, std::wstring>;
-	using CommandMap	= std::map<std::wstring, CommandInfo>;
-	using VarSinkList	= std::vector<IConsoleVarSink*>;
-
-	const int MESSAGE_BUFFER_SIZE = 1024 * 16;
-	enum EInputFunctions
-	{
-		EAutoComplete,
-		EGotoBeginLine,
-		EGotoEndLine,
-		ESubmit,
-		ECopy,
-		EPaste,
-		EClearInputLine,
-		ENextHistoryElement,
-		EPrevHistoryElement,
-		EMoveCursorToPrevChar,
-		EMoveCursorToNextChar,
-		EMoveCursorToPrevWord,
-		EMoveCursorToNextWord,
-		EDeleteRightChar,
-		EDeleteLeftChar,
-		EDeleteAllAfterCursor,
-		EDeleteAllBeforeCursor,
-		EDeleteWordAfterCursor,
-		EClear,
-		EScrolUp,
-		EScrolDown,
-	};
-
-	struct cmpInputEvents
+struct cmpInputEvents
 	{
 		bool operator()(const SInputEvent& a, const SInputEvent& b) const
 		{
@@ -384,238 +420,271 @@ class CConsole : public IConsole
 			return (a.state < b.state);
 		}
 	};
-	using InputBinding	  = std::map<const SInputEvent, EInputFunctions, cmpInputEvents>;
-	using ConsoleBindsMap = std::map<std::string, std::string>;
+
+class CXConsole : public IConsole
+	, public IRemoteConsoleListener
+	, public IInputEventListener
+	, public ICVarDumpSink
+{
+	friend class SetCommand;
+	friend class GetCommand;
+	friend class DumpCommand;
 
   public:
-	CConsole();
-	~CConsole();
+	CXConsole(CSystem& system);
+	~CXConsole();
 
-	virtual void OnConsoleCommand(const char* cmd) override;
-	// Inherited via IConsole
+	void PreProjectSystemInit();
+	void PostRendererInit();
+
+	void SetStatus(bool bActive) { m_bConsoleActive = bActive; }
+	bool GetStatus() const       { return m_bConsoleActive; }
+	
+	void FreeRenderResources();
+	void Copy();
+	void Paste();
+
 	bool Init(ISystem* pSystem);
-	virtual void ShowConsole(bool show) override;
-	virtual void SetImage(ITexture* pTexture) override;
-	virtual struct ITexPic* GetImage() override;
-	virtual void StaticBackground(bool bStatic) override
-	{
-		m_bStaticBackground = bStatic;
-	};
-
-	virtual void Update() override;
-	virtual void Draw() override;
-	void Animate(float deltatime, IRenderer* render);
-	void CalcMetrics(size_t& end);
-	virtual void AddCommand(const char* sName, IConsoleCommand* command, const char* help = "") override;
-	virtual void AddCommand(const char* sName, const char* sScriptFunc, const uint32_t indwFlags = 0, const char* help = "") override;
-	virtual void ExecuteString(const char* command) override;
-	virtual void ExecuteFile(const char* file) override;
-	virtual bool OnInputEvent(const SInputEvent& event) override;
-	virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
-	virtual int GetPriority() const override
-	{
-		return 4;
-	}
-	void getHistoryElement();
-	void completeCommand(std::vector<std::wstring>& completion);
-	void setBuffer();
-	bool handleEnterText();
-	virtual void AddArgumentCompletion(const char* cmd, const char* arg, int n) override;
-	virtual void Clear() override;
-	virtual void Help(const char* cmd) override;
-	virtual void PrintLine(const char* format, ...) override;
-	virtual bool IsOpened() override;
-
-	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") override;
-
-	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") override;
-
-	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") override;
-
-	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
-
-	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) override;
-	virtual void OnElementFound(ICVar* pCVar) override;
-	virtual void AddConsoleVarSink(IConsoleVarSink* pSink) override;
-	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) override;
-
-	void CreateKeyBind(const char* key, const char* cmd) override;
-	virtual void SetInputLine(const char* szLine) override;
-	virtual void LoadConfigVar(const char* sVariable, const char* sValue) override;
-	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* help = NULL) override;
-	virtual void AddWorkerCommand(IWorkerCommand* cmd) override;
-	virtual void RemoveWorkerCommand(IWorkerCommand* cmd) override;
-	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
-	virtual ICVar* Register(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "") override;
-	virtual ICVar* Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
-	virtual ICVar* Register(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "") override;
-
-	virtual void Exit(const char* command, ...) override;
-	virtual char* GetVariable(const char* szVarName, const char* szFileName, const char* def_val) override;
-	virtual float GetVariable(const char* szVarName, const char* szFileName, float def_val) override;
-	virtual void PrintLinePlus(const char* s) override;
-
-	virtual void SetScrollMax(int value) override;
-	virtual void SetLoadingImage(const char* szFilename) override;
-	virtual void ResetProgressBar(int nProgressRange) override;
-	virtual void TickProgressBar() override;
-
-  private:
-	void RegisterVar(ICVar* pCVar /*, ConsoleVarFunc pChangeFunc = 0*/);
-
-  private:
-	CommandDesc parseCommand(std::wstring& command);
-	bool handleCommand(std::wstring command);
-	void AddInputChar(uint32_t ch);
-	std::vector<std::wstring> autocomplete(std::wstring cmd);
-	void doFile(std::ifstream& cfg);
-	void fillCommandText();
-	void setFont(IFont* font);
-	CommandLine getPrompt();
-	void printLine(size_t line, Vec2 pos);
-	void printText(Text const& element, Vec2 pos);
-	void addToCommandBuffer(std::vector<std::wstring>& completion);
-	void addText(std::wstring const& cmd);
-	;
-	void Set(CommandDesc& cd);
-	void SetInternal(ICVar* pVar, std::string& value, std::string& name);
-	void Get(CommandDesc& cd);
-	void GetInternal(ICVar* pVar, std::string& name);
-	void Dump();
-	void getBuffer();
-	bool needShowCursor();
-	void pageUp(bool isPgUp);
-	void drawCursor();
-	void moveCursor(bool left, bool wholeWord = false);
-
-	void initBind();
-	void ClearInputLine();
-
-	bool MatchInput(const SInputEvent& event);
-
-	IFont* getFont(const char* name, float w, float h);
-	void InitInputBindings();
-
-	void ScrollConsole();
-	void DrawBuffer(int nScrollPos, const char* szEffect);
-
-  private:
-	ConsoleBuffer                  m_dqConsoleBuffer;
-	ConsoleBuffer                  m_dqHistory;
-
-	string                         m_sReturnString;
-
-	std::vector<IOutputPrintSink*> m_OutputSinks;             // objects in this vector are not released
-	VarSinkList varSinks;
-	CommandMap m_mapCommands;
-	std::wstring m_CommandW;
-	std::string m_CommandA;
-
-	ScrollDir m_sdScrollDir;
-
-	IFont* m_Font				   = nullptr;
-	bool isOpened				   = false;
-	bool cmd_is_compete			   = false;
-	ISystem* m_pSystem			   = nullptr;
-	IRenderer* m_pRenderer		   = nullptr;
-	IScriptSystem* m_pScriptSystem = nullptr;
-	IInput* m_pInput			   = nullptr;
-	ITexture* m_pBackGround;
-
-	float m_ScrollHeight = 0.0;
-	std::map<std::string, std::ifstream> scripts;
-
-	// for animate console
-	AnimationParams m_AnimationParams;
-	//
-	size_t line_count	   = 0;
-	size_t line_in_console = 0;
-	size_t line_height	   = con_font_size;
-	size_t current_line	   = 0;
-	size_t on_line		   = 0;
-
-	std::vector<CommandLine> m_CmdBuffer;
-	std::vector<std::wstring> m_History;
-	std::wstring m_LastCommand;
-	std::string m_MessageBuffer;
-	ConsolePrompt m_Prompt;
-
-	glm::vec3 textColor = glm::vec3(1.0, 1.0, 1.0);
-
-	VariablesMap m_mapVariables;
-	ConfigVar m_ConfigVars;
-
-	ICVarDumpSink* m_pCVarDumpCallback = nullptr;
-	ICVar* r_anim_speed;
-	float time			= 0.0f;
-	size_t history_line = 0;
-	//
-	float transparency = 0.5f;
-	Cursor m_Cursor;
-	KeyBindMap m_keyBind;
-	std::map<std::string, EKeyId, cmpKeys> m_str2key;
-
-	std::set<IWorkerCommand*> m_workers;
-	std::list<IWorkerCommand*> m_worker_to_delete;
-
-	int lines = 0;
-
-	InputBinding m_InputBindings;
-	ConsoleBindsMap m_mapBinds;
-	// --------------------------------------------------------------------------------
-	CNullCVar m_NullCVar;
-
-	// --------------------------------------------------------------------------------
-
-	bool m_bStaticBackground = true;
-	int m_nLoadingBackTexID	 = -1;
-	int m_nWhiteTexID		 = 0;
-	int m_nProgress			 = 0;
-	int m_nProgressRange	 = 0;
-
-	int m_nScrollPos = 300;
-	int m_nTempScrollMax;	 // for currently opened console, reset to m_nScrollMax
-	int m_nScrollMax  = 300; //
-	int m_nScrollLine = 0;
-	int m_nHistoryPos;
-	size_t m_nCursorPos; // x position in characters
-
-	bool m_bConsoleActive;
-
-	static int con_display_last_messages;
-	static int con_line_buffer_size;
-	static float con_font_size;
-	static int con_showonload;
-	static int con_debug;
-	static int con_restricted;
-	// Inherited via IConsole
-	virtual const char* FindKeyBind(const char* sCmd) override;
 
 	// Inherited via IConsole
 	virtual void Release() override;
-
-	// Inherited via IConsole
+	virtual ICVar* CreateVariable(const char* sName, const char* sValue, int nFlags, const char* help = "") override;
+	virtual ICVar* CreateVariable(const char* sName, int iValue, int nFlags, const char* help = "") override;
+	virtual ICVar* CreateVariable(const char* sName, float fValue, int nFlags, const char* help = "") override;
+	virtual void UnregisterVariable(const char* sVarName, bool bDelete = false) override;
+	virtual void SetScrollMax(int value) override;
 	virtual void AddOutputPrintSink(IOutputPrintSink* inpSink) override;
-
 	virtual void RemoveOutputPrintSink(IOutputPrintSink* inpSink) override;
-
+	virtual void ShowConsole(bool show) override;
+	virtual int Register(const char* name, void* src, float defaultvalue, int flags, int type, const char* help = "") override;
+	virtual float Register(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "") override;
+	virtual int Register(const char* name, int* src, float defaultvalue, int flags = 0, const char* help = "") override;
+	virtual void DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter = 0) override;
+	virtual void CreateKeyBind(const char* sCmd, const char* sRes, bool bExecute) override;
+	virtual void SetImage(ITexPic* pImage, bool bDeleteCurrent) override;
+	virtual ITexPic* GetImage() override;
+	virtual void StaticBackground(bool bStatic) override;
+	virtual void SetLoadingImage(const char* szFilename) override;
+	virtual bool GetLineNo(const DWORD indwLineNo, char* outszBuffer, const DWORD indwBufferSize) const override;
+	virtual int GetLineCount() const override;
+	virtual ICVar* GetCVar(const char* name, const bool bCaseSensitive = true) override;
+	virtual CXFont* GetFont() override;
+	virtual void Help(const char* command = NULL) override;
+	virtual char* GetVariable(const char* szVarName, const char* szFileName, const char* def_val) override;
+	virtual float GetVariable(const char* szVarName, const char* szFileName, float def_val) override;
+	virtual void PrintLine(const char* s) override;
+	virtual void PrintLinePlus(const char* s) override;
+	virtual bool GetStatus() override;
+	virtual void Clear() override;
+	virtual void Update() override;
+	virtual void Draw() override;
+	virtual void AddCommand(const char* sName, const char* sScriptFunc, const DWORD indwFlags = 0, const char* help = "") override;
+	virtual void ExecuteString(const char* command, bool bNeedSlash = false, bool bIgnoreDevMode = false) override;
+	virtual void Exit(const char* command, ...) override;
+	virtual bool IsOpened() override;
 	virtual int GetNumVars() override;
-
 	virtual void GetSortedVars(const char** pszArray, size_t numItems) override;
-
 	virtual const char* AutoComplete(const char* substr) override;
-
 	virtual const char* AutoCompletePrev(const char* substr) override;
-
 	virtual char* ProcessCompletion(const char* szInputBuffer) override;
-
 	virtual void ResetAutoCompletion() override;
-
+	virtual void DumpCommandsVars(char* prefix) override;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) override;
+	virtual void ResetProgressBar(int nProgressRange) override;
+	virtual void TickProgressBar() override;
 	virtual void DumpKeyBinds(IKeyBindDumpSink* pCallback) override;
-
+	virtual const char* FindKeyBind(const char* sCmd) override;
+	virtual void AddConsoleVarSink(IConsoleVarSink* pSink) override;
+	virtual void RemoveConsoleVarSink(IConsoleVarSink* pSink) override;
 	virtual const char* GetHistoryElement(const bool bUpOrDown) override;
-
 	virtual void AddCommandToHistory(const char* szCommand) override;
 
 	// Inherited via IConsole
+	virtual void LoadConfigVar(const char* sVariable, const char* sValue) override;
+	virtual void LoadConfigCommand(const char* szCommand, const char* szArguments = nullptr) override;
+
+	// Inherited via IInputEventListener
+	virtual bool OnInputEvent(const SInputEvent& event) override;
+
+	// Inherited via ICVarDumpSink
+	virtual void OnElementFound(ICVar* pCVar) override;
+
+  protected:
+	
+	bool ProcessInput(const SInputEvent& event);
+	void DrawBuffer(int nScrollPos, const char* szEffect);
+	void AddLine(const char* inputStr);
+	void AddLinePlus(const char* inputStr);
+	void AddInputChar(const uint32 c);
+	void RemoveInputChar(bool bBackSpace);
+	void ExecuteInputBuffer();
+	void ExecuteCommand(CConsoleCommand& cmd, string& params, bool bIgnoreDevMode = false);
+	void ScrollConsole();
+	void ConsoleLogInputResponse(const char* szFormat, ...) PRINTF_PARAMS(2, 3);
+	void ConsoleLogInput(const char* szFormat, ...) PRINTF_PARAMS(2, 3);
+	void ConsoleWarning(const char* szFormat, ...) PRINTF_PARAMS(2, 3);
+
+	void DisplayHelp(const char* help, const char* name);
+	void DisplayVarValue(ICVar* pVar);
+
+	void SplitCommands(const char* line, std::list<string>& split);
+	// bFromConsole: true=from console, false=from outside
+	void ExecuteStringInternal(const char* command, const bool bFromConsole, const bool bSilentMode = false);
+	void ExecuteDeferredCommands();
+
+	static const char* GetFlagsString(const uint32 dwFlags);
+	static void        CmdDumpAllAnticheatVars(IConsoleCmdArgs* pArgs);
+	static void        CmdDumpLastHashedAnticheatVars(IConsoleCmdArgs* pArgs);
+
+
+private: // ----------------------------------------------------------
+
+	struct SConfigVar
+	{
+		string m_value;
+		bool   m_partOfGroup;
+		uint32 nCVarOrFlags;
+	};
+
+	struct SDeferredCommand
+	{
+		string command;
+		bool   silentMode;
+
+		SDeferredCommand(const string& command, bool silentMode)
+			: command(command), silentMode(silentMode)
+		{}
+	};
+
+	typedef std::deque<string>                                                                                              ConsoleBuffer;
+	typedef std::unordered_map<string, CConsoleCommand, stl::hash_stricmp<string>, stl::hash_stricmp<string>>               ConsoleCommandsMap;
+	typedef std::unordered_map<string, string, stl::hash_stricmp<string>, stl::hash_stricmp<string>>                        ConsoleBindsMap;
+	#if 0
+	typedef std::unordered_map<string, IConsoleArgumentAutoComplete*, stl::hash_stricmp<string>, stl::hash_stricmp<string>> ArgumentAutoCompleteMap;
+	#endif
+	typedef std::unordered_map<string, SConfigVar, stl::hash_stricmp<string>, stl::hash_stricmp<string>>                    ConfigVars;
+	typedef std::list<SDeferredCommand>                                                                                     TDeferredCommandList;
+	typedef std::list<IConsoleVarSink*>                                                                                     ConsoleVarSinks;
+	#if 0
+	typedef CListenerSet<IManagedConsoleCommandListener*>                                                                   TManagedConsoleCommandListener;
+	#endif
+	typedef std::unordered_map<string, ICVar*, stl::hash_stricmp<string>, stl::hash_stricmp<string>>                        ConsoleVariablesMap;
+	typedef std::vector<std::pair<const char*, ICVar*>>                                                                     ConsoleVariablesVector;
+
+	
+	void        AddCheckedCVar(ConsoleVariablesVector& vector, const ConsoleVariablesVector::value_type& value);
+	void        RemoveCheckedCVar(ConsoleVariablesVector& vector, const ConsoleVariablesVector::value_type& value);
+	//static void AddCVarsToHash(ConsoleVariablesVector::const_iterator begin, ConsoleVariablesVector::const_iterator end, CCrc32& runningNameCrc32, CCrc32& runningNameValueCrc32);
+	static bool CVarNameLess(const std::pair<const char*, ICVar*>& lhs, const std::pair<const char*, ICVar*>& rhs);
+
+	void          SetProcessingGroup(bool isGroup) { m_bIsProcessingGroup = isGroup; }
+	bool          GetIsProcessingGroup(void) const { return m_bIsProcessingGroup; }
+
+protected:
+	void UnregisterVariableImpl(const ConsoleVariablesMap::iterator& iter);
+	void RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pChangeFunc = 0);
+
+private:
+	// --------------------------------------------------------------------------------
+
+	ConsoleBuffer                  m_dqConsoleBuffer;
+	ConsoleBuffer                  m_dqHistory;
+
+	bool                           m_bStaticBackground;
+	int                            m_nLoadingBackTexID;
+	int                            m_nWhiteTexID;
+	int                            m_nProgress;
+	int                            m_nProgressRange;
+
+	string                         m_sInputBuffer;
+	string                         m_sReturnString;
+
+	string                         m_sPrevTab;
+	int                            m_nTabCount;
+
+	ConsoleCommandsMap             m_mapCommands;             //
+	ConsoleBindsMap                m_mapBinds;                //
+	ConsoleVariablesMap            m_mapVariables;            //
+	ConsoleVariablesVector         m_randomCheckedVariables;
+	ConsoleVariablesVector         m_alwaysCheckedVariables;
+	std::vector<IOutputPrintSink*> m_OutputSinks;             // objects in this vector are not released
+	#if 0
+	TManagedConsoleCommandListener m_managedConsoleCommandListeners;
+	#endif
+
+	TDeferredCommandList           m_deferredCommands;        // A fifo of deferred commands
+	bool                           m_deferredExecution;       // True when deferred commands are processed
+	int                            m_waitFrames;              // A counter which is used by wait_frames command
+	#if WAIT_SECONDS
+	CTimeValue                     m_waitSeconds;             // An absolute timestamp which is used by wait_seconds command
+	#endif
+	int                            m_blockCounter;            // This counter is incremented whenever a blocker command (VF_BLOCKFRAME) is executed.
+
+	#if 0
+	ArgumentAutoCompleteMap        m_mapArgumentAutoComplete;
+	#endif
+
+	ConsoleVarSinks                m_consoleVarSinks;
+
+	ConfigVars                     m_configVars;              // temporary data of cvars that haven't been created yet
+	std::multimap<string, string>  m_configCommands;          // temporary data of commands that haven't been created yet
+
+	int                            m_nScrollPos;
+	int                            m_nTempScrollMax;          // for currently opened console, reset to m_nScrollMax
+	int                            m_nScrollMax;              //
+	int                            m_nScrollLine;
+	int                            m_nHistoryPos;
+	size_t                         m_nCursorPos;                // x position in characters
+	ITexture*                      m_pImage;
+
+	float                          m_fRepeatTimer;            // relative, next repeat even in .. decreses over time, repeats when 0, only valid if m_nRepeatEvent.keyId != eKI_Unknown
+	SInputEvent                    m_nRepeatEvent;            // event that will be repeated
+
+	float                          m_fCursorBlinkTimer;       // relative, increases over time,
+	bool                           m_bDrawCursor;
+
+	ScrollDir                      m_sdScrollDir;
+
+	bool                           m_bConsoleActive;
+	bool                           m_bActivationKeyEnable;
+	bool                           m_bIsProcessingGroup;
+
+	size_t                         m_nCheatHashRangeFirst;
+	size_t                         m_nCheatHashRangeLast;
+	bool                           m_bCheatHashDirty;
+	uint64                         m_nCheatHash;
+
+	CSystem&                       m_system;
+	IFFont*                        m_pFont;
+	IRenderer*                     m_pRenderer;
+	IInput*                        m_pInput;
+	ITimer*                        m_pTimer;
+	INetwork*                      m_pNetwork;                // EvenBalance - M. Quinn
+
+	ICVar*                         m_pSysDeactivateConsole;
+
+	ELoadConfigurationType         m_currentLoadConfigType;
+
+	bool                           m_readOnly;
+
+	static int                     con_display_last_messages;
+	static int                     con_line_buffer_size;
+	static float                   con_font_size;
+	static int                     con_showonload;
+	static int                     con_debug;
+	static int                     con_restricted;
+
+	friend void Command_SetWaitSeconds(IConsoleCmdArgs* Cmd);
+	friend void Command_SetWaitFrames(IConsoleCmdArgs* Cmd);
+#if ALLOW_AUDIT_CVARS
+	friend void Command_AuditCVars(IConsoleCmdArgs* pArg);
+#endif // ALLOW_AUDIT_CVARS
+	friend void Command_DumpCommandsVars(IConsoleCmdArgs* Cmd);
+	friend void Command_DumpVars(IConsoleCmdArgs* Cmd);
+
+	// Inherited via IConsole
+	virtual void RemoveCommand(const char* sName) override;
+
+	// Inherited via IConsole
+	virtual void SetInputLine(const char* szLine) override;
 };

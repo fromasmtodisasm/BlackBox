@@ -121,18 +121,14 @@ unsigned countElements (const std::vector<T>& arrT, const T& x)
 */
 namespace stl
 {
+	
 	//////////////////////////////////////////////////////////////////////////
 	//! Searches the given entry in the map by key, and if there is none, returns the default value
 	//////////////////////////////////////////////////////////////////////////
-#ifdef WIN64
-	template <typename Map, typename key_type, typename mapped_type>
-		inline mapped_type find_in_map(const Map& mapKeyToValue, key_type key, mapped_type valueDefault)
-#else
-	template <typename Map>
-		inline typename Map::mapped_type find_in_map(const Map& mapKeyToValue, typename Map::key_type key, typename Map::mapped_type valueDefault)
-#endif
+	template<typename Map>
+	inline typename Map::mapped_type find_in_map(const Map& mapKeyToValue, const typename Map::key_type& key, typename Map::mapped_type valueDefault)
 	{
-		typename Map::const_iterator it = mapKeyToValue.find (key);
+		typename Map::const_iterator it = mapKeyToValue.find(key);
 		if (it == mapKeyToValue.end())
 			return valueDefault;
 		else
@@ -239,28 +235,26 @@ namespace stl
 		return type.c_str();
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	//! Case sensetive less key for any type convertable to const char*.
-	//////////////////////////////////////////////////////////////////////////
-	template <class Type>
-	struct less_strcmp : public std::binary_function<Type,Type,bool> 
+	template<class Type>
+	struct less_strcmp
 	{
-		bool operator()( const Type &left,const Type &right ) const
+		bool operator()(const Type& left, const Type& right) const
 		{
-			return strcmp(constchar_cast(left),constchar_cast(right)) < 0;
+			return strcmp(constchar_cast(left), constchar_cast(right)) < 0;
 		}
 	};
 
-	//////////////////////////////////////////////////////////////////////////
 	//! Case insensetive less key for any type convertable to const char*.
-	template <class Type>
-	struct less_stricmp : public std::binary_function<Type,Type,bool> 
+	template<class Type>
+	struct less_stricmp
 	{
-		bool operator()( const Type &left,const Type &right ) const
+		bool operator()(const Type& left, const Type& right) const
 		{
-			return stricmp(constchar_cast(left),constchar_cast(right)) < 0;
+			return stricmp(constchar_cast(left), constchar_cast(right)) < 0;
 		}
 	};
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// Hash map usage:

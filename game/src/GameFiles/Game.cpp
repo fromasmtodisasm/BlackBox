@@ -316,7 +316,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 #endif
 
 	m_pClient = new CClient(this);
+	#if 0
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+	#endif
 	m_pClient->Init();
 	if (m_Console->GetCVar("nsightDebug"))
 	{
@@ -1131,7 +1133,7 @@ bool CGame::InitScripts()
 		}
 	};
 
-	m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
+	//m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
 #if 0
   m_Console->AddCommand(
 	"enumd",
@@ -1167,8 +1169,8 @@ bool CGame::TestScriptSystem(bool& retflag)
 	int age;
 	m_playerObject->GetValue("name", name);
 	m_playerObject->GetValue("age", age);
-	m_Console->PrintLine("Player name: %s", name);
-	m_Console->PrintLine("Player age: %d", age);
+	CryLogAlways("Player name: %s", name);
+	CryLogAlways("Player age: %d", age);
 
 #if 0
   HSCRIPTFUNCTION psina;

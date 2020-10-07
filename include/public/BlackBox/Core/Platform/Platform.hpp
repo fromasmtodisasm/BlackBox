@@ -111,7 +111,6 @@ typedef unsigned int        *PUINT;
 
 #define ASSERT(...) assert(__VA_ARGS__)
 #define FUNCTION_PROFILER(...)
-#define LogAlways(...) void(0);
 
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.

@@ -4,7 +4,9 @@
 
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/System/ISystem.hpp>
 
+#if 1
 #include <algorithm>
 #include <array>
 #include <atomic>
@@ -77,5 +79,7 @@
 #include <utility>
 #include <valarray>
 #include <vector>
-#include <BlackBox/Utils/smartptr.hpp>
-#include <BlackBox/Core/StlUtils.hpp>
+#endif
+
+//#include <BlackBox/Utils/smartptr.hpp>
+//#include <BlackBox/Core/StlUtils.hpp>

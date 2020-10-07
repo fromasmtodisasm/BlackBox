@@ -19,7 +19,7 @@ source_group(
 	${SOURCE_FILES}
 )
 
-target_link_libraries(EntitySystem PRIVATE System)
+#target_link_libraries(EntitySystem PRIVATE System)
 
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}

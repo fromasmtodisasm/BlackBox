@@ -294,8 +294,7 @@ void CScriptSystem::DumpLoadedScripts()
   itor = m_dqLoadedFiles.begin();
   while (itor != m_dqLoadedFiles.end())
   {
-    //LogAlways("%s", itor->c_str());
-    m_pSystem->GetIConsole()->PrintLine("%s", itor->c_str());
+    CryLogAlways("%s", itor->c_str());
     ++itor;
   }
 }

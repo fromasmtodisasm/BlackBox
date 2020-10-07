@@ -1,7 +1,12 @@
 #pragma once
 
 #define CRYSCRIPTSYSTEM_EXPORTS
+#include <BlackBox/Core/Platform/Platform.hpp>
+
+#include <functional>
+
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/StlUtils.hpp>
 
 //////////////////////////////////////////////////////////////////////////
 //! Reports a Game Warning to validator with WARNING severity.

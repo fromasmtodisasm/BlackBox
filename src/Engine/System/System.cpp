@@ -394,7 +394,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-		m_env.pInput->AddEventListener(static_cast<CConsole*>(m_pConsole));
+		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_pConsole));
 #if ENABLE_DEBUG_GUI
 		if (!m_env.IsDedicated())
 		{
@@ -554,7 +554,7 @@ bool CSystem::DoFrame()
 
 bool CSystem::CreateConsole()
 {
-	m_env.pConsole = m_pConsole = new CConsole();
+	m_env.pConsole = m_pConsole = new CXConsole(*this);
 	if (m_pConsole == nullptr)
 		return false;
 	return true;
@@ -562,7 +562,7 @@ bool CSystem::CreateConsole()
 
 bool CSystem::InitConsole()
 {
-	if (!static_cast<CConsole*>(m_pConsole)->Init(this))
+	if (!static_cast<CXConsole*>(m_pConsole)->Init(this))
 		return false;
 	m_pConsole->ShowConsole(true);
 	return true;
