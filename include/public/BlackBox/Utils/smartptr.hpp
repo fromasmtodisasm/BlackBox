@@ -195,7 +195,7 @@ typedef _reference_target<int> _reference_target_t;
 //////////////////////////////////////////////////////////////////////////
 // reference target for smart pointer
 // implements AddRef() and Release() strategy using reference counter of the specified type
-#if 1
+#if 0
 
 template<class T>
 inline void InterlockedIncrement__(std::atomic<T>& v)
@@ -231,12 +231,14 @@ public:
 
   void AddRef()
   {
-    InterlockedIncrement(m_nRefCounter);
+    //InterlockedIncrement(m_nRefCounter);
+	  ++m_nRefCounter;
   }
 
   void Release()
   {
-    if (InterlockedDecrement(m_nRefCounter) <= 0)
+    //if (InterlockedDecrement(m_nRefCounter) <= 0)
+    if (--m_nRefCounter <= 0)
       delete static_cast<Derived*>(this);
   }
 

@@ -109,7 +109,7 @@ typedef unsigned int        *PUINT;
 #define MASK(x)   (BIT(x) - 1U)
 #define MASK64(x) (BIT64(x) - 1ULL)
 
-#define ASSERT(msg) assert(msg)
+#define ASSERT(...) assert(__VA_ARGS__)
 #define FUNCTION_PROFILER(...)
 #define LogAlways(...) void(0);
 
