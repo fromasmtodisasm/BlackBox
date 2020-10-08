@@ -536,6 +536,11 @@ CXConsole::CXConsole(CSystem& system)
 #endif
 }
 
+void CXConsole::OnConsoleCommand(const char* cmd)
+{
+	ExecuteString(cmd, false);
+}
+
 CXConsole::~CXConsole()
 {
 	if (gEnv->pSystem)
@@ -774,7 +779,7 @@ void CXConsole::Paste()
 	CloseClipboard();
 
 	const size_t length = temp.length();
-	m_sInputBuffer.insert(m_nCursorPos, temp, length);
+	m_sInputBuffer.insert(m_nCursorPos, temp/*, length*/);
 	m_nCursorPos += length;
 #endif
 }
@@ -2333,21 +2338,23 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
 			m_pFont->RenderText(
 				m_sInputBuffer.c_str(),
-				xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+				xPos, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
 			#if 0
 			IRenderAuxText::DrawText(Vec3(xPos - fCharWidth, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, ">");
 			IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
 			#endif
 
-			#if 0
 			if (m_bDrawCursor)
 			{
 				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
-				int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
+				//int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
+				int n = m_pFont->TextWidth(szCursorLeft);
 
-				IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
+				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
+				m_pFont->RenderText(
+					"_",
+					xPos + (/*fCharWidth **/ n), yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
 			}
-			#endif
 		}
 
 		yPos -= csize;

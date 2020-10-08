@@ -551,6 +551,9 @@ class CXConsole : public IConsole
 	virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
 
 	virtual void                   FindVar(const char* substr);
+	// interface IRemoteConsoleListener ------------------------------------------------------------------
+
+	virtual void OnConsoleCommand(const char* cmd) override;
 
   protected:
 	

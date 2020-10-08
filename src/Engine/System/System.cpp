@@ -72,6 +72,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	gEnv = &m_env;
 #endif
 	InitThreadSystem();
+	CreateConsole();
 }
 
 CSystem::~CSystem()

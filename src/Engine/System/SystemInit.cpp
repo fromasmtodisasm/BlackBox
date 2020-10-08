@@ -133,112 +133,8 @@ bool CSystem::Init()
 #endif
 	if (!CreateLog())
 		return false;
-	std::string prompt = "Initializing System";
-	if (m_env.IsDedicated())
-		prompt += " on dedicated server";
-	Log(prompt.c_str());
-	//====================================================
-	Log("Initializing Console");
-	if (!CreateConsole())
-		return false;
-	//====================================================
-	Log("Loading config");
-	if (!ConfigLoad("system.cfg"))
-		return false;
-	CreateRendererVars(m_startupParams);
-	//====================================================
-	if (!OpenRenderLibrary("OpenGL"))
-	{
-		return false;
-	}
-	//====================================================
-	if (!InitInput())
-	{
-		return false;
-	}
-	//====================================================
-	Log("Initialize Render");
-	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
-	if (!m_env.IsDedicated())
-	{
-		if (!InitRender())
-			return false;
-		auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
-		for (int i = 0; i < 3; i++)
-		{
-			RenderBegin();
-			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
-			gEnv->pRenderer->DrawImage(
-				gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
-				gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2,
-				splash->getWidth(),
-				splash->getHeight(),
-				splash->getId(),
-				0, 0, 1, 1, 1, 1, 1, 1);
-			RenderEnd();
-		}
-	}
-	if (m_env.pConsole != nullptr)
-	{
-		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
-	}
-	if (!Init3DEngine())
-		return false;
-
-	//////////////////////////////////////////////////////////////////////////
-	// Input Post Initialise - enables input threads to be created after thread init
-	//////////////////////////////////////////////////////////////////////////
-	if (m_env.pInput)
-	{
-		m_env.pInput->PostInit();
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Hardware mouse
-	//////////////////////////////////////////////////////////////////////////
-	// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
-	// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
-	// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
-#ifdef DEDICATED_SERVER
-	m_env.pHardwareMouse = NULL;
-#else
-	if (!m_env.IsDedicated())
-		m_env.pHardwareMouse = new CHardwareMouse(true);
-	else
-		m_env.pHardwareMouse = NULL;
-#endif
-#ifdef NEED_VC
-	m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- branch[" + GitBranch + "]; hash[" + Hash + "]; " + GitIsDirty + "; Message: [" + Message + "]").c_str());
-#endif
-	//====================================================
-	if (m_env.pHardwareMouse)
-		m_env.pHardwareMouse->OnPostInitInput();
-		//====================================================
-		// Initialize the 2D drawer
-#ifdef ENABLE_PROFILER
-	Log("Initialize Profiling");
-	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
-	{
-		fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
-		return EXIT_FAILURE;
-	}
-#endif
-	//====================================================
-	//TODO: IMPLEMENT THIS
-#if 0
-  PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
-#endif
-	//====================================================
-	//m_pLog->Log("[OK] Window susbsystem inited\n");
-	//====================================================
-	if (!InitScriptSystem())
-	{
-		return false;
-	}
-	if (!InitEntitySystem())
-	{
-		return false;
-	}
+	GetIRemoteConsole()->RegisterConsoleVariables();
+	GetIRemoteConsole()->Update();
 	//====================================================
 #if BB_PLATFORM_DESKTOP
 	#if !defined(_RELEASE)
@@ -342,12 +238,115 @@ bool CSystem::Init()
 		exit(crc);
 #endif
 	}
-	GetIRemoteConsole()->RegisterConsoleVariables();
 
 #endif // CRY_PLATFORM_DESKTOP
 	if (m_pUserCallback)
 		m_pUserCallback->OnInit(this);
 	//====================================================
+	std::string prompt = "Initializing System";
+	if (m_env.IsDedicated())
+		prompt += " on dedicated server";
+	Log(prompt.c_str());
+	//====================================================
+	Log("Initializing Console");
+	//====================================================
+	Log("Loading config");
+	if (!ConfigLoad("system.cfg"))
+		return false;
+	CreateRendererVars(m_startupParams);
+	//====================================================
+	if (!OpenRenderLibrary("OpenGL"))
+	{
+		return false;
+	}
+	//====================================================
+	if (!InitInput())
+	{
+		return false;
+	}
+	//====================================================
+	Log("Initialize Render");
+	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
+	if (!m_env.IsDedicated())
+	{
+		if (!InitRender())
+			return false;
+		auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
+		for (int i = 0; i < 3; i++)
+		{
+			RenderBegin();
+			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
+			gEnv->pRenderer->DrawImage(
+				gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
+				gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2,
+				splash->getWidth(),
+				splash->getHeight(),
+				splash->getId(),
+				0, 0, 1, 1, 1, 1, 1, 1);
+			RenderEnd();
+		}
+	}
+	if (m_env.pConsole != nullptr)
+	{
+		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
+	}
+	if (!Init3DEngine())
+		return false;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Input Post Initialise - enables input threads to be created after thread init
+	//////////////////////////////////////////////////////////////////////////
+	if (m_env.pInput)
+	{
+		m_env.pInput->PostInit();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Hardware mouse
+	//////////////////////////////////////////////////////////////////////////
+	// - Dedicated server is in console mode by default (Hardware Mouse is always shown when console is)
+	// - Mouse is always visible by default in Editor (we never start directly in Game Mode)
+	// - Mouse has to be enabled manually by the Game (this is typically done in the main menu)
+#ifdef DEDICATED_SERVER
+	m_env.pHardwareMouse = NULL;
+#else
+	if (!m_env.IsDedicated())
+		m_env.pHardwareMouse = new CHardwareMouse(true);
+	else
+		m_env.pHardwareMouse = NULL;
+#endif
+#ifdef NEED_VC
+	m_pWindow->setTitle(cvGameName == nullptr ? DEFAULT_APP_NAME : (std::string(cvGameName->GetString()) + " -- branch[" + GitBranch + "]; hash[" + Hash + "]; " + GitIsDirty + "; Message: [" + Message + "]").c_str());
+#endif
+	//====================================================
+	if (m_env.pHardwareMouse)
+		m_env.pHardwareMouse->OnPostInitInput();
+		//====================================================
+		// Initialize the 2D drawer
+#ifdef ENABLE_PROFILER
+	Log("Initialize Profiling");
+	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
+	{
+		fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
+		return EXIT_FAILURE;
+	}
+#endif
+	//====================================================
+	//TODO: IMPLEMENT THIS
+#if 0
+  PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
+#endif
+	//====================================================
+	//m_pLog->Log("[OK] Window susbsystem inited\n");
+	//====================================================
+	if (!InitScriptSystem())
+	{
+		return false;
+	}
+	if (!InitEntitySystem())
+	{
+		return false;
+	}
 	//====================================================
 	m_pConsole->AddConsoleVarSink(this);
 	ParseCMD();
