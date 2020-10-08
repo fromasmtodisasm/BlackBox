@@ -68,7 +68,7 @@ inline string& Trim(string& str, const string& pattern)
 }
 
 
-struct IFFont;
+struct IFont;
 struct IIpnut;
 struct INetwork;
 struct IRenderer;
@@ -548,6 +548,7 @@ class CXConsole : public IConsole
 
 	// Inherited via IInputEventListener
 	virtual bool OnInputEvent(const SInputEvent& event) override;
+	virtual bool OnInputEventUI(const SUnicodeEvent& event) override;
 
 	virtual void                   FindVar(const char* substr);
 
@@ -586,6 +587,8 @@ class CXConsole : public IConsole
 
 	void          SetProcessingGroup(bool isGroup) { m_bIsProcessingGroup = isGroup; }
 	bool          GetIsProcessingGroup(void) const { return m_bIsProcessingGroup; }
+
+	IFont* CXConsole::GetFont(const char* name, float w, float h);;
 
 private: // ----------------------------------------------------------
 
@@ -703,7 +706,7 @@ private:
 	uint64                         m_nCheatHash;
 
 	CSystem&                       m_system;
-	IFFont*                        m_pFont;
+	IFont*                        m_pFont;
 	IRenderer*                     m_pRenderer;
 	IInput*                        m_pInput;
 	ITimer*                        m_pTimer;

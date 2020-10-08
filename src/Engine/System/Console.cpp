@@ -91,7 +91,7 @@ inline int GetCharPrio(char x)
 }
 
 // case sensitive
-inline bool less_CVar(const char* left, const char* right)
+inline bool less_CVar_cstr(const char* left, const char* right)
 {
 	while (true)
 	{
@@ -107,6 +107,29 @@ inline bool less_CVar(const char* left, const char* right)
 
 		++left;
 		++right;
+	}
+
+	return false;
+}
+
+// case sensitive
+inline bool less_CVar(const string& left, const string& right)
+{
+	size_t lt = 0, rt = 0;
+	while (true)
+	{
+		const uint32 l = GetCharPrio(left[lt]), r = GetCharPrio(right[rt]);
+
+		if (l < r)
+			return true;
+		if (l > r)
+			return false;
+
+		if (left[lt] == 0 || right[rt] == 0)
+			break;
+
+		++lt;
+		++rt;
 	}
 
 	return false;
@@ -646,9 +669,8 @@ void CXConsole::PreProjectSystemInit()
 
 void CXConsole::PostRendererInit()
 {
-	#if 0
-	if (m_system.GetICryFont())
-		m_pFont = m_system.GetICryFont()->GetFont("default");
+	
+	m_pFont = GetFont("arial.ttf", con_font_size, con_font_size);
 	m_pRenderer = m_system.GetIRenderer();
 	m_pNetwork = gEnv->pNetwork;  // EvenBalance - M. Quinn
 	m_pInput = m_system.GetIInput();
@@ -659,16 +681,19 @@ void CXConsole::PostRendererInit()
 
 	if (m_pRenderer)
 	{
+		const char* texture_path = "console/defaultconsole.dds";
+		ICVar* background		 = GetCVar("console_background");
+		if (background != nullptr)
+			texture_path = background->GetString();
 		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
-		ITexture* pTex = m_system.GetIRenderer()->EF_LoadTexture("%ENGINE%/EngineAssets/Textures/White.dds", FT_DONT_STREAM | FT_DONT_RELEASE);
-		m_nWhiteTexID = pTex ? pTex->GetTextureID() : -1;
+		ITexture* pTex = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
+		m_nWhiteTexID = pTex ? pTex->getId() : -1;
 	}
 	else
 	{
 		m_nLoadingBackTexID = -1;
 		m_nWhiteTexID = -1;
 	}
-	#endif
 
 	if (gEnv->IsDedicated())
 		m_bConsoleActive = true;
@@ -823,9 +848,16 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 	return pCVar;
 }
 
-void CXConsole::UnregisterVariable(const char* sVarName, bool bDelete /* = false*/)
+void CXConsole::UnregisterVariable(const char* sVarName, bool bDelete)
 {
+	auto iter = m_mapVariables.find(sVarName);
+	if (iter == m_mapVariables.end())
+		return;
+
+	UnregisterVariableImpl(iter);
 }
+
+
 
 void CXConsole::AddCheckedCVar(ConsoleVariablesVector& vector, const ConsoleVariablesVector::value_type& value)
 {
@@ -959,10 +991,32 @@ void CXConsole::SetScrollMax(int value)
 
 void CXConsole::AddOutputPrintSink(IOutputPrintSink* inpSink)
 {
+	CRY_ASSERT(inpSink);
+	m_OutputSinks.push_back(inpSink);
 }
 
 void CXConsole::RemoveOutputPrintSink(IOutputPrintSink* inpSink)
 {
+	CRY_ASSERT(inpSink);
+
+	const int nCount = m_OutputSinks.size();
+	for (int i = 0; i < nCount; i++)
+	{
+		if (m_OutputSinks[i] == inpSink)
+		{
+			if (nCount <= 1)
+			{
+				m_OutputSinks.clear();
+			}
+			else
+			{
+				m_OutputSinks[i] = m_OutputSinks.back();
+				m_OutputSinks.pop_back();
+			}
+			return;
+		}
+	}
+	CRY_ASSERT(false);
 }
 
 void CXConsole::ShowConsole(bool show)
@@ -1153,6 +1207,10 @@ void CXConsole::CreateKeyBind(const char* sCmd, const char* sRes, bool bExecute)
 
 void CXConsole::SetImage(ITexPic* pImage, bool bDeleteCurrent)
 {
+	if (bDeleteCurrent)
+		((ITexture*)(pImage))->Release();
+
+	m_pImage = (ITexture*)pImage;
 }
 
 ITexPic* CXConsole::GetImage()
@@ -1162,20 +1220,52 @@ ITexPic* CXConsole::GetImage()
 
 void CXConsole::StaticBackground(bool bStatic)
 {
+	m_bStaticBackground = bStatic;
 }
 
 void CXConsole::SetLoadingImage(const char* szFilename)
 {
+	ITexture* pTex = m_system.GetIRenderer()->LoadTexture(szFilename, 0,0);
+	if (!pTex/* || (pTex->GetFlags() & FT_FAILED)*/)
+	{
+		SAFE_RELEASE(pTex);
+		pTex = m_system.GetIRenderer()->LoadTexture("Textures/Console/loadscreen_default.dds", 0,0);
+	}
+
+	if (pTex)
+		m_nLoadingBackTexID = pTex->getId();
+	else
+		m_nLoadingBackTexID = -1;
 }
+
+
 
 bool CXConsole::GetLineNo(const DWORD indwLineNo, char* outszBuffer, const DWORD indwBufferSize) const
 {
-	return false;
+	assert(outszBuffer);
+	assert(indwBufferSize > 0);
+
+	outszBuffer[0] = 0;
+	if (indwLineNo >= (int)m_dqConsoleBuffer.size())
+		return false;
+
+	auto ritor = m_dqConsoleBuffer.rbegin();
+	ritor += indwLineNo;
+	const char* buf = ritor->c_str();
+	if (*buf > 0 && *buf < 32) 
+		buf++;    // to jump over verbosity level character
+
+	#if 0
+	strcpy(outszBuffer, indwBufferSize, buf);
+	#endif
+	return true;
 }
+
+
 
 int CXConsole::GetLineCount() const
 {
-	return 0;
+	return m_dqConsoleBuffer.size();
 }
 
 ICVar* CXConsole::GetCVar(const char* sName, const bool bCaseSensitive /* = true*/)
@@ -1219,10 +1309,12 @@ float CXConsole::GetVariable(const char* szVarName, const char* szFileName, floa
 
 void CXConsole::PrintLine(const char* s)
 {
+	AddLine(s);
 }
 
 void CXConsole::PrintLinePlus(const char* s)
 {
+	AddLinePlus(s);
 }
 
 bool CXConsole::GetStatus()
@@ -1233,6 +1325,7 @@ bool CXConsole::GetStatus()
 
 void CXConsole::Clear()
 {
+	m_dqConsoleBuffer.clear();
 }
 
 void CXConsole::Update()
@@ -1276,7 +1369,6 @@ void CXConsole::Update()
 
 void CXConsole::Draw()
 {
-	#if 0
 	if (!m_nTempScrollMax)
 		return;
 
@@ -1288,11 +1380,13 @@ void CXConsole::Draw()
 
 	if (!m_pFont)
 	{
+		#if 0
 		// For Editor.
 		ICryFont* pICryFont = m_system.GetICryFont();
 
 		if (pICryFont)
 			m_pFont = m_system.GetICryFont()->GetFont("default");
+		#endif
 	}
 
 	ScrollConsole();
@@ -1300,11 +1394,11 @@ void CXConsole::Draw()
 	if (!m_bConsoleActive && con_display_last_messages == 0)
 		return;
 
-	if (m_nScrollPos <= 0)
+	//if (m_nScrollPos <= 0)
 	{
 		DrawBuffer(70, "console");
 	}
-	else
+	//else
 	{
 		// cursor blinking
 		{
@@ -1325,26 +1419,25 @@ void CXConsole::Draw()
 		{
 			if (m_bStaticBackground)
 			{
-				IRenderAuxImage::Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetOverlayWidth()) /*800*/, float(m_pRenderer->GetOverlayHeight()) /*600*/, m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f);
+				m_pRenderer->DrawImage(0.0f, 0.0f, float(800), float(600), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
 			}
 			else
 			{
 				float fReferenceSize = 600.0f;
-				float fSizeX = (float)m_pRenderer->GetOverlayWidth();
-				float fSizeY = m_nTempScrollMax * m_pRenderer->GetOverlayHeight() / fReferenceSize;
+				float fSizeX = (float)600;
+				float fSizeY = m_nTempScrollMax * 800 / fReferenceSize;
 
-				IRenderAuxImage::DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
-				IRenderAuxImage::DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetOverlayHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
+				m_pRenderer->DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
+				m_pRenderer->DrawImage(0, fSizeY, fSizeX, 2.0f * 800 / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
 			}
 		}
 
 		// draw progress bar
 		if (m_nProgressRange)
-			IRenderAuxImage::Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetOverlayWidth()), float(m_pRenderer->GetOverlayHeight()), m_nLoadingBackTexID, 0.0f, 1.0f, 1.0f, 0.0f);
+			m_pRenderer->DrawImage(0.0f, 0.0f, float(800), float(600), m_nLoadingBackTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
 
 		DrawBuffer(m_nScrollPos, "console");
 	}
-	#endif
 }
 
 
@@ -1500,17 +1593,85 @@ size_t CXConsole::GetSortedVars(const char** pszArray, size_t numItems, const ch
 
 const char* CXConsole::AutoComplete(const char* substr)
 {
-	return nullptr;
+	// following code can be optimized
+	std::vector<const char*> cmds;
+	cmds.resize(GetNumVars() + m_mapCommands.size());
+	const size_t cmdCount = GetSortedVars(&cmds[0], cmds.size(), 0, 0);
+	const size_t substrLen = strlen(substr);
+
+	// If substring is empty return first command.
+	if (substrLen == 0 && cmdCount > 0)
+		return cmds[0];
+
+	// find next
+	for (size_t i = 0; i < cmdCount; i++)
+	{
+		const char* szCmd = cmds[i];
+		const size_t cmdlen = strlen(szCmd);
+		if (cmdlen >= substrLen && memcmp(szCmd, substr, substrLen) == 0)
+		{
+			if (substrLen == cmdlen)
+			{
+				i++;
+				if (i < cmdCount)
+					return cmds[i];
+				return cmds[i - 1];
+			}
+			return cmds[i];
+		}
+	}
+
+	// then first matching case insensitive
+	for (size_t i = 0; i < cmdCount; i++)
+	{
+		const char* szCmd = cmds[i];
+		const size_t cmdlen = strlen(szCmd);
+		if (cmdlen >= substrLen && memicmp(szCmd, substr, substrLen) == 0)
+		{
+			if (substrLen == cmdlen)
+			{
+				i++;
+				if (i < cmdCount)
+					return cmds[i];
+				return cmds[i - 1];
+			}
+			return cmds[i];
+		}
+	}
+
+	// Not found.
+	return "";
 }
+
+
 
 const char* CXConsole::AutoCompletePrev(const char* substr)
 {
-	return nullptr;
+	std::vector<const char*> cmds;
+	cmds.resize(GetNumVars() + m_mapCommands.size());
+	const size_t cmdCount = GetSortedVars(&cmds[0], cmds.size(), 0, 0);
+
+	// If substring is empty return last command.
+	if (strlen(substr) == 0 && cmds.size() > 0)
+		return cmds[cmdCount - 1];
+
+	for (unsigned int i = 0; i < cmdCount; i++)
+	{
+		if (stricmp(substr, cmds[i]) == 0)
+		{
+			if (i > 0)
+				return cmds[i - 1];
+			else
+				return cmds[0];
+		}
+	}
+	return AutoComplete(substr);
 }
+
+
 
 const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 {
-	#if 0
 	m_sInputBuffer = szInputBuffer;
 	const bool isBackgroundServer = szInputBuffer[0] == BACKGROUND_SERVER_CHAR;
 	if (isBackgroundServer)
@@ -1676,8 +1837,7 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 		m_sInputBuffer.insert(0, BACKGROUND_SERVER_CHAR);
 	#endif
 
-	#endif
-	return (char*)m_sInputBuffer.c_str();
+	return m_sInputBuffer.c_str();
 }
 
 
@@ -1963,6 +2123,14 @@ bool CXConsole::OnInputEvent(const SInputEvent& event)
 #endif
 }
 
+bool CXConsole::OnInputEventUI(const SUnicodeEvent& event)
+{
+#ifdef PROCESS_XCONSOLE_INPUT
+	if (m_bConsoleActive && !m_readOnly && event.inputChar >= 32 && event.inputChar != 96) // 32: Space // 96: Console toggle
+		AddInputChar(event.inputChar);
+#endif
+	return true;
+}
 void CXConsole::FindVar(const char* substr)
 {
 	std::vector<const char*> cmds;
@@ -2145,6 +2313,77 @@ bool CXConsole::ProcessInput(const SInputEvent& event)
 	return false;
 }
 
+void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
+{
+	if (m_pFont && m_pRenderer)
+	{
+		//const int flags = eDrawText_Monospace | eDrawText_CenterV | eDrawText_2D;
+		const float fontSize = con_font_size;
+		const float csize = 0.8f * fontSize;
+		const float fCharWidth = 0.5f * fontSize;
+
+		float yPos = nScrollPos - csize - 3.0f;
+		const float xPos = LINE_BORDER;
+
+		//Draw the input line
+		if (m_bConsoleActive && !m_nProgressRange)
+		{
+			m_pFont->RenderText(
+				">",
+				xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+			m_pFont->RenderText(
+				m_sInputBuffer.c_str(),
+				xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+			#if 0
+			IRenderAuxText::DrawText(Vec3(xPos - fCharWidth, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, ">");
+			IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
+			#endif
+
+			#if 0
+			if (m_bDrawCursor)
+			{
+				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
+				int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
+
+				IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
+			}
+			#endif
+		}
+
+		yPos -= csize;
+
+		int nScroll = 0;
+		auto ritor = m_dqConsoleBuffer.rbegin();
+		while (ritor != m_dqConsoleBuffer.rend() && yPos >= 0)
+		{
+			if (nScroll >= m_nScrollLine)
+			{
+				const char* buf = ritor->c_str();// GetBuf(k);
+
+				if (*buf > 0 && *buf < 32) 
+					buf++; // to jump over verbosity level character
+
+				if (yPos + csize > 0)
+				{
+					#if 0
+					IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, buf);
+					#else
+					m_pFont->RenderText(
+						buf,
+						xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+					#endif
+
+				}
+				yPos -= csize;
+			}
+			++nScroll;
+			++ritor;
+		}
+	}
+}
+
+
+
 void CXConsole::AddLine(const char* inputStr)
 {
 	string str = inputStr;
@@ -2176,6 +2415,37 @@ void CXConsole::AddLine(const char* inputStr)
 	for (auto* sink : m_OutputSinks)
 		sink->Print(str.c_str());
 }
+
+void CXConsole::AddLinePlus(const char* inputStr)
+{
+	if (!m_dqConsoleBuffer.size())
+		return;
+
+	string str = inputStr;
+	if (!str.empty() && (str[str.size() - 1] == '\n' || str[str.size() - 1] == '\r')) // strip trailing \n or \r.
+		str.resize(str.size() - 1);
+
+	string::size_type nPos;
+	while ((nPos = str.find('\n')) != string::npos)
+		str.replace(nPos, 1, 1, ' ');
+
+	while ((nPos = str.find('\r')) != string::npos)
+		str.replace(nPos, 1, 1, ' ');
+
+	const string tmpStr = m_dqConsoleBuffer.back();
+	m_dqConsoleBuffer.pop_back();
+
+	if (tmpStr.size() < 256)
+		m_dqConsoleBuffer.push_back(tmpStr + str);
+	else
+		m_dqConsoleBuffer.push_back(tmpStr);
+
+	// tell everyone who is interested (e.g. dedicated server printout)
+	for (IOutputPrintSink* pSink : m_OutputSinks)
+		pSink->Print((tmpStr + str).c_str());
+}
+
+
 
 void CXConsole::LoadConfigVar(const char* szVariable, const char* sValue)
 {
@@ -2882,6 +3152,23 @@ void CXConsole::SplitCommands(const char* line, std::list<string>& split)
 			break;
 		}
 	}
+}
+
+IFont* CXConsole::GetFont(const char* name, float w, float h)
+{
+	if (gEnv->IsDedicated())
+		m_pFont = new CNullFont();
+	else
+	{
+		m_pFont	  = gEnv->pRenderer->GetIFont();
+		auto font = name;
+		auto var  = GET_CVAR("s_font");
+		if (var)
+			font = var->GetString();
+		m_pFont->Init(font, static_cast<unsigned int>(w), static_cast<unsigned int>(h));
+		//return m_pFont;
+	}
+	return m_pFont;
 }
 
 #pragma endregion

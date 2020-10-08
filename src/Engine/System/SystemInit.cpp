@@ -178,6 +178,10 @@ bool CSystem::Init()
 			RenderEnd();
 		}
 	}
+	if (m_env.pConsole != nullptr)
+	{
+		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
+	}
 	if (!Init3DEngine())
 		return false;
 
@@ -236,8 +240,6 @@ bool CSystem::Init()
 		return false;
 	}
 	//====================================================
-	if (!InitConsole())
-		return false;
 #if BB_PLATFORM_DESKTOP
 	#if !defined(_RELEASE)
 	bool isDaemonMode = (m_pCmdLine->FindArg(eCLAT_Pre, "daemon") != 0);

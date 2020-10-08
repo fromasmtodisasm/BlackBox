@@ -66,6 +66,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 	//////////////////////////////////////////////////////////////////////////
 	// Initialize global environment interface pointers.
 	m_env.pSystem = this;
+	m_env.pTimer = &m_Time;
 
 #if !defined(SYS_ENV_AS_STRUCT)
 	gEnv = &m_env;
@@ -217,7 +218,9 @@ void CSystem::LoadScreen()
 	string sLoadingScreenTexture = string("loading.png");
 
 	m_pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
+	#if 0
 	m_pConsole->ResetProgressBar(0x7fffffff);
+	#endif
 	//GetILog()->UpdateLoadingScreen("");	// just to draw the console
 }
 

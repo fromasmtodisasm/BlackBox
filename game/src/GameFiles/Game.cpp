@@ -318,6 +318,8 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_pClient = new CClient(this);
 	#if 0
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+	#else
+	m_Console->ExecuteString("@Player:PostInit()");
 	#endif
 	m_pClient->Init();
 	if (m_Console->GetCVar("nsightDebug"))
