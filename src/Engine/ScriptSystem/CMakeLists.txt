@@ -28,6 +28,7 @@ target_sources(${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptObjectSystem.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/ScriptSystem.cpp
 
+	#[[
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/AboutWnd.h
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/Coverage.cpp
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/Coverage.h
@@ -49,6 +50,7 @@ target_sources(${PROJECT_NAME}
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyStatusBar.h
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyTreeList.h
 	PRIVATE ${SOURCE_DIR}/Engine/ScriptSystem/LuaDebugger/_TinyWindow.h
+	]]
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -245,7 +245,9 @@ class CSystem final : public ISystem
 
 	// Inherited via ISystem
 	virtual void SaveConfiguration() override;
-	virtual void LoadConfiguration(const string& sFilename) override;
+	virtual void              LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
+	                                            ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) override;
+
 
 	// Inherited via ILoadConfigurationEntrySink
 	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;

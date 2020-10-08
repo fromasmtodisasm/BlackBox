@@ -80,8 +80,10 @@ bool CClient::Init()
 	m_pIActionMapManager = m_pGame->GetActionMapManager();
 	if(m_pIActionMapManager)
 		m_pIActionMapManager->SetSink(this);
+	#if 0
 	if (!gEnv->IsDedicated())
 		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
+	#endif
 
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 

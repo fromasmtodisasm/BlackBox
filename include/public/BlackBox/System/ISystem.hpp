@@ -214,6 +214,20 @@ struct ILoadConfigurationEntrySink
 	// </interfuscator:shuffle>
 };
 //! \endcond
+enum ELoadConfigurationType
+{
+	eLoadConfigDefault,
+	eLoadConfigInit,
+	eLoadConfigSystemSpec,
+	eLoadConfigGame,
+	eLoadConfigLevel
+};
+
+enum class ELoadConfigurationFlags : uint32
+{
+	None                          = 0,
+	SuppressConfigNotFoundWarning = BIT(0)
+};
 
 //////////////////////////////////////////////////////////////////////////
 // Structure passed to Init method of ISystem interface.
@@ -446,7 +460,12 @@ struct ISystem
 	// Saves system configuration.
 	virtual void SaveConfiguration() = 0;
 	// Loads system configuration
-	virtual void LoadConfiguration(const string& sFilename) = 0;
+	
+	//! Loads system configuration
+	//! \param pCallback 0 means normal LoadConfigVar behavior is used.
+	//! \param bQuiet when set to true will suppress warning message if config file is not found.
+	virtual void LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
+	                               ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) = 0;
 };
 
 // Global environment variable.

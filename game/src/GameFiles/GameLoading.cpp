@@ -166,7 +166,7 @@ void CGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,c
 //////////////////////////////////////////////////////////////////////////
 void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 {			
-	m_pSystem->LoadConfiguration(sSystemCfg);
+	m_pSystem->LoadConfiguration(sSystemCfg.data());
 
 	FILE *pFile=fopen(sGameCfg.c_str(), "rb");
 	if (!pFile)

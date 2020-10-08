@@ -234,6 +234,41 @@ namespace stl
 	{
 		return type.c_str();
 	}
+	template<typename K, typename P, typename A>
+	inline bool find_and_erase(std::set<K, P, A>& container, const K& value)
+	{
+		return container.erase(value) > 0;
+	}
+
+	//! Find and erase element from container.
+	//! \return true if item was find and erased, false if item not found.
+	template<class CONTAINER, class PREDICATE> inline bool find_and_erase_if(CONTAINER& container, const PREDICATE& predicate)
+	{
+		typename CONTAINER::iterator end = container.end(), i = std::find_if(container.begin(), end, predicate);
+
+		if (i != end)
+		{
+			container.erase(i);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	//! Find and erase all elements matching value from container.
+	//! Assume that this will invalidate any exiting iterators.
+	//! Commonly used for removing NULL pointers from collections.
+	template<class Container, class ValueType>
+	inline void find_and_erase_all(Container& container, const ValueType& value)
+	{
+		// Shuffles all elements == value to the end and returns the start of the removed elements.
+		typename Container::iterator endIter(container.end());
+		typename Container::iterator newEndIter(std::remove(container.begin(), endIter, value));
+
+		// Delete the removed range at the back of the container (low-cost for vector).
+		container.erase(newEndIter, endIter);
+	}
 
 	//! Case sensetive less key for any type convertable to const char*.
 	template<class Type>

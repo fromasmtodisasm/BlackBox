@@ -318,6 +318,28 @@ bool CSystem::Init()
 			m_pUserCallback = pConsole;
 	}
 	#endif
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// File system, must be very early
+		//////////////////////////////////////////////////////////////////////////
+		InitFileSystem(/*startupParams*/);
+
+		//////////////////////////////////////////////////////////////////////////
+		//InlineInitializationProcessing("CSystem::Init InitFileSystem");
+
+		//here we should be good to ask Crypak to do something
+
+		//#define GEN_PAK_CDR_CRC
+#	ifdef GEN_PAK_CDR_CRC
+
+		const char* filename = m_pCmdLine->GetArg(1)->GetName();
+		gEnv->pCryPak->OpenPack(filename);
+
+		int crc = gEnv->pCryPak->ComputeCachedPakCDR_CRC(filename, false);
+
+		exit(crc);
+#endif
+	}
 	GetIRemoteConsole()->RegisterConsoleVariables();
 
 #endif // CRY_PLATFORM_DESKTOP
@@ -335,7 +357,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-		m_env.pInput->AddEventListener(static_cast<CConsole*>(m_pConsole));
+		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_pConsole));
 #if ENABLE_DEBUG_GUI
 		if (!m_env.IsDedicated())
 		{
@@ -377,9 +399,8 @@ bool CSystem::CreateLog()
 
 bool CSystem::InitConsole()
 {
-	if (!static_cast<CConsole*>(m_pConsole)->Init(this))
+	if (!static_cast<CXConsole*>(m_pConsole)->Init(this))
 		return false;
-	m_pConsole->ShowConsole(true);
 	return true;
 }
 
@@ -536,7 +557,6 @@ bool CSystem::InitFileSystem()
 	m_pCryPak = new CCryPak(m_pLog);
 #endif
 
-#if 0
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing File System...");
 
@@ -549,6 +569,7 @@ bool CSystem::InitFileSystem()
 		bLvlRes = true;
 #	endif // !defined(_RELEASE)
 
+#if 0
 	CCryPak* pCryPak;
 	pCryPak = new CCryPak(m_env.pLog, &g_cvars.pakVars, bLvlRes, pGameStartup);
 	pCryPak->SetGameFolderWritable(m_bGameFolderWritable);
@@ -633,6 +654,12 @@ bool CSystem::InitFileSystem()
 
 	return (bRes);
 #endif
+	// Initialize console before the project system
+	// This ensures that "exec" and other early commands can be executed immediately on parsing
+	if (m_env.pConsole != nullptr)
+	{
+		static_cast<CXConsole*>(m_env.pConsole)->PreProjectSystemInit();
+	}
 	return true;
 }
 

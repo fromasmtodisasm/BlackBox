@@ -21,14 +21,52 @@
 #	define stricmp _stricmp
 #endif // !stricmp
 
-enum ELoadConfigurationType
+inline string& TrimLeft(string& str)
 {
-	eLoadConfigDefault,
-	eLoadConfigInit,
-	eLoadConfigSystemSpec,
-	eLoadConfigGame,
-	eLoadConfigLevel
-};
+	for (size_t i = 0; i < str.length() && isspace(str[i]); i++)
+	{
+		str.erase(i);
+	}
+	return str;
+}
+
+inline string& TrimRight(string& str)
+{
+	for (size_t i = str.length(); i > 0 && isspace(str[i]); i++)
+	{
+		str.erase(i);
+	}
+	return str;
+}
+
+inline string& TrimLeft(string& str, const string& pattern)
+{
+	for (size_t i = 0; i < str.length() && strstr(&str[i], pattern.data()); i++)
+	{
+		str.erase(i);
+	}
+	return str;
+}
+
+inline string& TrimRight(string& str, const string& pattern)
+{
+	for (size_t i = str.length(); i > 0 && strstr(&str[i], pattern.data()); i++)
+	{
+		str.erase(i);
+	}
+	return str;
+}
+
+inline string& Trim(string& str)
+{
+	return TrimRight(TrimLeft(str));
+}
+
+inline string& Trim(string& str, const string& pattern)
+{
+	return TrimRight(TrimLeft(str, pattern), pattern);
+}
+
 
 struct IFFont;
 struct IIpnut;
@@ -103,11 +141,12 @@ struct string_nocase_lt
 };
 
 
+#if 0
 class CBaseVariable : public ICVar
 {
   public:
 	CBaseVariable(IConsole *pConsole, const char* name, int flags)
-		: m_pConsole(pConsole), m_Name(name), m_Flags(flags)
+		: m_pConsole(pConsole), m_Name(name), m_flags(flags)
 	{
 		CBaseVariable::SetFlags(VF_NULL);
 	}
@@ -127,22 +166,24 @@ class CBaseVariable : public ICVar
 
 	virtual void ClearFlags(int flags) override
 	{
-		m_Flags &= ~flags;
+		m_flags &= ~flags;
 	}
 
 	virtual int GetFlags() override
 	{
-		return m_Flags;
+		return m_flags;
 	}
 
 	virtual int SetFlags(int flags) override
 	{
-		m_Flags |= flags;
-		return m_Flags;
+		m_flags |= flags;
+		return m_flags;
 	}
 
 	bool IsOwnedByConsole() const  { return true; }
+	virtual bool IsConstCVar() const override { return (m_flags & VF_CONST_CVAR) != 0; }
 
+	#if 0
 	virtual uint64 AddOnChange(std::function<void()> changeFunctor) override
 	{
 		uint64 functorId = m_changeFunctorIdTotal;
@@ -150,8 +191,9 @@ class CBaseVariable : public ICVar
 		++m_changeFunctorIdTotal;
 		return functorId;
 	}
+	#endif
 	string m_Name;
-	int m_Flags;
+	int m_flags;
 	struct SCallback
 	{
 		std::function<void()> function;
@@ -251,20 +293,20 @@ class CCVar : public CBaseVariable
 class CCVarRef : public CBaseVariable
 {
   public:
-	CCVarRef(IConsole *pConsole, const char* name, int* value, int defaultValue, int flags, const char* help)
+	CCVarRef(IConsole *pConsole, const char* name, int* value, int flags, const char* help)
 		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_INT), help(help)
 	{
-		*value = defaultValue;
+
 	}
-	CCVarRef(IConsole *pConsole, const char* name, const char** value, const char* defaultValue, int flags, const char* help)
+	CCVarRef(IConsole *pConsole, const char* name, const char** value, int flags, const char* help)
 		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_STRING), help(help)
 	{
-		*value = strdup(defaultValue);
+		//*value = strdup(defaultValue);
 	}
-	CCVarRef(IConsole *pConsole, const char* name, float* value, float defaultValue, int flags, const char* help)
+	CCVarRef(IConsole *pConsole, const char* name, float* value, int flags, const char* help)
 		: CBaseVariable(pConsole, name, flags), value(value), type(CVAR_FLOAT), help(help)
 	{
-		*value = defaultValue;
+		//*value = defaultValue;
 	}
 	//CCVarRef() : name(""), value(nullptr), type(CVAR_STRING), help(nullptr) {}
 
@@ -306,6 +348,7 @@ class CCVarRef : public CBaseVariable
 	int type;
 	const char* help;
 };
+#endif
 
 struct CommandInfo
 {
@@ -424,7 +467,6 @@ struct cmpInputEvents
 class CXConsole : public IConsole
 	, public IRemoteConsoleListener
 	, public IInputEventListener
-	, public ICVarDumpSink
 {
 	friend class SetCommand;
 	friend class GetCommand;
@@ -484,9 +526,10 @@ class CXConsole : public IConsole
 	virtual bool IsOpened() override;
 	virtual int GetNumVars() override;
 	virtual void GetSortedVars(const char** pszArray, size_t numItems) override;
+	virtual size_t                 GetSortedVars(const char** pszArray, size_t numItems, const char* szPrefix/* = 0*/, int nListTypes/* = 0*/) const;
 	virtual const char* AutoComplete(const char* substr) override;
 	virtual const char* AutoCompletePrev(const char* substr) override;
-	virtual char* ProcessCompletion(const char* szInputBuffer) override;
+	virtual const char* ProcessCompletion(const char* szInputBuffer) override;
 	virtual void ResetAutoCompletion() override;
 	virtual void DumpCommandsVars(char* prefix) override;
 	virtual void GetMemoryUsage(ICrySizer* pSizer) override;
@@ -506,8 +549,7 @@ class CXConsole : public IConsole
 	// Inherited via IInputEventListener
 	virtual bool OnInputEvent(const SInputEvent& event) override;
 
-	// Inherited via ICVarDumpSink
-	virtual void OnElementFound(ICVar* pCVar) override;
+	virtual void                   FindVar(const char* substr);
 
   protected:
 	
@@ -521,8 +563,8 @@ class CXConsole : public IConsole
 	void ExecuteCommand(CConsoleCommand& cmd, string& params, bool bIgnoreDevMode = false);
 	void ScrollConsole();
 	void ConsoleLogInputResponse(const char* szFormat, ...) PRINTF_PARAMS(2, 3);
-	void ConsoleLogInput(const char* szFormat, ...) PRINTF_PARAMS(2, 3);
-	void ConsoleWarning(const char* szFormat, ...) PRINTF_PARAMS(2, 3);
+	void ConsoleLogInput(const char* szFormat, ...) ;PRINTF_PARAMS(2, 3);
+	void ConsoleWarning(const char* szFormat, ...); //PRINTF_PARAMS(2, 3);
 
 	void DisplayHelp(const char* help, const char* name);
 	void DisplayVarValue(ICVar* pVar);
@@ -536,6 +578,14 @@ class CXConsole : public IConsole
 	static void        CmdDumpAllAnticheatVars(IConsoleCmdArgs* pArgs);
 	static void        CmdDumpLastHashedAnticheatVars(IConsoleCmdArgs* pArgs);
 
+
+	virtual ICVar* RegisterInternal(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true);
+	virtual ICVar* RegisterInternal(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true);
+	virtual ICVar* RegisterInternal(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true);
+	virtual ICVar* RegisterInternal(ICVar* pVar) { RegisterVar(pVar->GetName(), pVar); return pVar; }
+
+	void          SetProcessingGroup(bool isGroup) { m_bIsProcessingGroup = isGroup; }
+	bool          GetIsProcessingGroup(void) const { return m_bIsProcessingGroup; }
 
 private: // ----------------------------------------------------------
 
@@ -557,18 +607,18 @@ private: // ----------------------------------------------------------
 	};
 
 	typedef std::deque<string>                                                                                              ConsoleBuffer;
-	typedef std::unordered_map<string, CConsoleCommand, stl::hash_stricmp<string>, stl::hash_stricmp<string>>               ConsoleCommandsMap;
-	typedef std::unordered_map<string, string, stl::hash_stricmp<string>, stl::hash_stricmp<string>>                        ConsoleBindsMap;
+	typedef std::unordered_map<string, CConsoleCommand>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/               ConsoleCommandsMap;
+	typedef std::unordered_map<string, string>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/                        ConsoleBindsMap;
 	#if 0
-	typedef std::unordered_map<string, IConsoleArgumentAutoComplete*, stl::hash_stricmp<string>, stl::hash_stricmp<string>> ArgumentAutoCompleteMap;
+	typedef std::unordered_map<string, IConsoleArgumentAutoComplete*, stl::hash_strcmp<string>, stl::hash_strcmp<string>> ArgumentAutoCompleteMap;
 	#endif
-	typedef std::unordered_map<string, SConfigVar, stl::hash_stricmp<string>, stl::hash_stricmp<string>>                    ConfigVars;
+	typedef std::unordered_map<string, SConfigVar>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/                    ConfigVars;
 	typedef std::list<SDeferredCommand>                                                                                     TDeferredCommandList;
 	typedef std::list<IConsoleVarSink*>                                                                                     ConsoleVarSinks;
 	#if 0
 	typedef CListenerSet<IManagedConsoleCommandListener*>                                                                   TManagedConsoleCommandListener;
 	#endif
-	typedef std::unordered_map<string, ICVar*, stl::hash_stricmp<string>, stl::hash_stricmp<string>>                        ConsoleVariablesMap;
+	typedef std::unordered_map<string, ICVar*>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/                        ConsoleVariablesMap;
 	typedef std::vector<std::pair<const char*, ICVar*>>                                                                     ConsoleVariablesVector;
 
 	
@@ -577,8 +627,6 @@ private: // ----------------------------------------------------------
 	//static void AddCVarsToHash(ConsoleVariablesVector::const_iterator begin, ConsoleVariablesVector::const_iterator end, CCrc32& runningNameCrc32, CCrc32& runningNameValueCrc32);
 	static bool CVarNameLess(const std::pair<const char*, ICVar*>& lhs, const std::pair<const char*, ICVar*>& rhs);
 
-	void          SetProcessingGroup(bool isGroup) { m_bIsProcessingGroup = isGroup; }
-	bool          GetIsProcessingGroup(void) const { return m_bIsProcessingGroup; }
 
 protected:
 	void UnregisterVariableImpl(const ConsoleVariablesMap::iterator& iter);

@@ -112,6 +112,9 @@ typedef unsigned int        *PUINT;
 #define ASSERT(...) assert(__VA_ARGS__)
 #define FUNCTION_PROFILER(...)
 
+#define CRY_ASSERT(...) ASSERT(__VA_ARGS__)
+#define CRY_VERIFY(exp, ...) (ASSERT(exp, __VA_ARGS__), exp)
+
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.

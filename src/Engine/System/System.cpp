@@ -189,7 +189,7 @@ bool CSystem::DoFrame()
 
 bool CSystem::CreateConsole()
 {
-	m_env.pConsole = m_pConsole = new CConsole();
+	m_env.pConsole = m_pConsole = new CXConsole(*this);
 	if (m_pConsole == nullptr)
 		return false;
 	return true;
@@ -277,7 +277,7 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 				   "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
 				   "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
 
-	int iFullScreenDefault	= 1;
+	int iFullScreenDefault	= 0;
 	int iDisplayInfoDefault = 1;
 	int iWidthDefault		= 1280;
 	int iHeightDefault		= 720;

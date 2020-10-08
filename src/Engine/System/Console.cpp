@@ -11,8 +11,10 @@
 #include <BlackBox/System/IClipBoard.hpp>
 #include <BlackBox/System/ILog.hpp>
 
+#include <BlackBox/Core/StringUtils.h>
+
 #include "NullImplementation/NullFont.hpp"
-#define CRY_ASSERT ASSERT
+#include "XConsoleVariable.h"
 
 #define BACKGROUND_SERVER_CHAR '/'
 #define CONST_TEMP_STRING(s) s
@@ -134,7 +136,7 @@ void Command_SetWaitFrames(IConsoleCmdArgs* pCmd)
 		pConsole->m_waitFrames = std::max(0, atoi(pCmd->GetArg(1)));
 	}
 }
-
+#if 0
 #pragma region CVars
 char* CCVar::GetString()
 {
@@ -169,7 +171,7 @@ void CCVar::ForceSet(const char* s)
 {
 	if (value.s != nullptr)
 		delete[] value.s;
-	type	= CVAR_STRING;
+	//type	= CVAR_STRING;
 	value.s = const_cast<char*>(s);
 }
 
@@ -293,8 +295,10 @@ void CCVarRef::Set(const char* s)
 
 void CCVarRef::ForceSet(const char* s)
 {
-	if (value.s != nullptr)
+	if (type == CVAR_STRING)
+	{
 		delete[] * value.s;
+	}
 	type	 = CVAR_STRING;
 	*value.s = const_cast<char*>(s);
 }
@@ -416,7 +420,48 @@ const char* CNullCVar::GetHelp()
 	return nullptr;
 }
 #pragma endregion
+#endif
 
+void ConsoleShow(IConsoleCmdArgs*)
+{
+	gEnv->pConsole->ShowConsole(true);
+}
+void ConsoleHide(IConsoleCmdArgs*)
+{
+	gEnv->pConsole->ShowConsole(false);
+}
+
+void Bind(IConsoleCmdArgs* cmdArgs)
+{
+	if (cmdArgs->GetArgCount() >= 3)
+	{
+		string arg;
+		for (int i = 2; i < cmdArgs->GetArgCount(); ++i)
+		{
+			arg += cmdArgs->GetArg(i);
+			arg += " ";
+		}
+		gEnv->pConsole->CreateKeyBind(cmdArgs->GetArg(1), arg.c_str(), false);
+	}
+}
+
+inline bool hasprefix(const char* s, const char* prefix)
+{
+	while (*prefix)
+		if (*prefix++ != *s++) return false;
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+int CXConsole::con_display_last_messages = 0;
+int CXConsole::con_line_buffer_size = 500;
+float CXConsole::con_font_size = 14;
+int CXConsole::con_showonload = 0;
+int CXConsole::con_debug = 0;
+int CXConsole::con_restricted = 0;
+
+#pragma region CXConsole
 CXConsole::CXConsole(CSystem& system)
 	: //m_managedConsoleCommandListeners(1)
 	  /*,*/ m_system(system)
@@ -500,9 +545,217 @@ CXConsole::~CXConsole()
 	}
 }
 
+void CXConsole::PreProjectSystemInit()
+{
+#if !defined(_RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)
+	const int disableConsoleDefault = 0;
+	const int disableConsoleFlags = 0;
+#else
+	const int disableConsoleDefault = 1;
+	const int disableConsoleFlags = VF_CONST_CVAR | VF_READONLY;
+#endif
+
+	m_pSysDeactivateConsole = REGISTER_INT("sys_DeactivateConsole", disableConsoleDefault, disableConsoleFlags,
+	                                       "0: normal console behavior\n"
+	                                       "1: hide the console");
+
+	REGISTER_INT("sys_cvar_logging", 1, VF_NULL,
+		"0: Disable CVar logging\n"
+		"1: Log attempts to set CVars to forbidden/out-of-range values\n"
+		"2: Log all CVar changes");
+
+	REGISTER_CVAR(con_display_last_messages, 0, VF_NULL, "");  // keep default at 1, needed for gameplay
+	REGISTER_CVAR(con_line_buffer_size, 1000, VF_NULL, "");
+	REGISTER_CVAR(con_font_size, 14, VF_NULL, "");
+	REGISTER_CVAR(con_showonload, 0, VF_NULL, "Show console on level loading");
+	REGISTER_CVAR(con_debug, 0, VF_CHEAT, "Log call stack on every GetCVar call");
+	REGISTER_CVAR(con_restricted, con_restricted, VF_RESTRICTEDMODE, "0=normal mode / 1=restricted access to the console");        // later on VF_RESTRICTEDMODE should be removed (to 0)
+
+	if (m_system.IsDevMode()  // unrestricted console for -DEVMODE
+		|| gEnv->IsDedicated()) // unrestricted console for dedicated server
+		con_restricted = 0;
+
+	#if 0
+	// test cases -----------------------------------------------
+
+	// cppcheck-suppress assertWithSideEffect
+	assert(GetCVar("con_debug") != 0);                    // should be registered a few lines above
+	// cppcheck-suppress assertWithSideEffect
+	assert(GetCVar("Con_Debug") == GetCVar("con_debug")); // different case
+
+	// editor
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(AutoComplete("con_"), "con_debug") == 0);
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(AutoComplete("CON_"), "con_debug") == 0);
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(AutoComplete("con_debug"), "con_display_last_messages") == 0);   // actually we should reconsider this behavior
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(AutoComplete("Con_Debug"), "con_display_last_messages") == 0);   // actually we should reconsider this behavior
+
+	// game
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(ProcessCompletion("con_"), "con_debug ") == 0);
+	ResetAutoCompletion();
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(ProcessCompletion("CON_"), "con_debug ") == 0);
+	ResetAutoCompletion();
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(ProcessCompletion("con_debug"), "con_debug ") == 0);
+	ResetAutoCompletion();
+	// cppcheck-suppress assertWithSideEffect
+	assert(strcmp(ProcessCompletion("Con_Debug"), "con_debug ") == 0);
+	ResetAutoCompletion();
+	m_sInputBuffer = "";
+
+	REGISTER_COMMAND("ConsoleShow", &ConsoleShow, VF_NULL, "Opens the console");
+	REGISTER_COMMAND("ConsoleHide", &ConsoleHide, VF_NULL, "Closes the console");
+
+#if ALLOW_AUDIT_CVARS
+	REGISTER_COMMAND("audit_cvars", &Command_AuditCVars, VF_NULL, "Logs all console commands and cvars");
+#endif // ALLOW_AUDIT_CVARS
+
+#if !defined(_RELEASE) && !(CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID) && !CRY_PLATFORM_APPLE
+	REGISTER_COMMAND("DumpCommandsVars", &Command_DumpCommandsVars, VF_NULL,
+		"This console command dumps all console variables and commands to disk\n"
+		"DumpCommandsVars [prefix]");
+	REGISTER_COMMAND("DumpVars", &Command_DumpVars, VF_NULL,
+		"This console command dumps all console variables to disk\n"
+		"DumpVars [IncludeCheatCvars]");
+#endif
+
+	REGISTER_COMMAND("Bind", &Bind, VF_NULL, "");
+	REGISTER_COMMAND("wait_seconds", &Command_SetWaitSeconds, VF_BLOCKFRAME,
+		"Forces the console to wait for a given number of seconds before the next deferred command is processed\n"
+		"Works only in deferred command mode. See the 'then' command.\n"
+		"The current value is replaced, use 'then wait_seconds X' for successive waits.");
+	REGISTER_COMMAND("wait_frames", &Command_SetWaitFrames, VF_BLOCKFRAME,
+		"Forces the console to wait for a given number of frames before the next deferred command is processed\n"
+		"Works only in deferred command mode. See the 'then' command.\n"
+		"The current value is replaced, use 'then wait_frames X' for successive waits.");
+	REGISTER_COMMAND("then", &Command_Then, VF_NULL,
+		"Causes a command to be deferred. That is, it will be executed after the time specified with 'wait_seconds' or 'wait_frames'. E.g:\n"
+		"> wait_seconds 20\n"
+		"> then echo Goodbye world!\n"
+		"> then wait_seconds 5\n"
+		"> then quit");
+
+	CConsoleBatchFile::Init();
+	#endif
+}
+
+void CXConsole::PostRendererInit()
+{
+	#if 0
+	if (m_system.GetICryFont())
+		m_pFont = m_system.GetICryFont()->GetFont("default");
+	m_pRenderer = m_system.GetIRenderer();
+	m_pNetwork = gEnv->pNetwork;  // EvenBalance - M. Quinn
+	m_pInput = m_system.GetIInput();
+	m_pTimer = m_system.GetITimer();
+
+	if (m_pInput)
+		m_pInput->AddConsoleEventListener(this);
+
+	if (m_pRenderer)
+	{
+		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
+		ITexture* pTex = m_system.GetIRenderer()->EF_LoadTexture("%ENGINE%/EngineAssets/Textures/White.dds", FT_DONT_STREAM | FT_DONT_RELEASE);
+		m_nWhiteTexID = pTex ? pTex->GetTextureID() : -1;
+	}
+	else
+	{
+		m_nLoadingBackTexID = -1;
+		m_nWhiteTexID = -1;
+	}
+	#endif
+
+	if (gEnv->IsDedicated())
+		m_bConsoleActive = true;
+
+	if (con_showonload)
+		ShowConsole(true);
+
+	m_system.GetIRemoteConsole()->RegisterListener(this, "CXConsole");
+}
+
+void CXConsole::Copy()
+{
+#if BB_PLATFORM_WINDOWS
+	if (m_sInputBuffer.empty() || !OpenClipboard(NULL))
+		return;
+
+	const size_t cbLength = m_sInputBuffer.length();
+	#if 0
+	const wstring textW = CryStringUtils::UTF8ToWStr(m_sInputBuffer);
+	#endif
+	const std::wstring textW = str_to_wstr(m_sInputBuffer);
+	const int lengthA = WideCharToMultiByte(CP_ACP, 0, textW.c_str(), -1, NULL, 0, NULL, NULL); //includes null terminator
+
+	HGLOBAL hGlobalW = GlobalAlloc(GHND, (textW.length() + 1) * sizeof(wchar_t));
+	HGLOBAL hGlobalA = GlobalAlloc(GHND, lengthA);
+	LPVOID  pGlobalW = GlobalLock(hGlobalW);
+	LPVOID  pGlobalA = GlobalLock(hGlobalA);
+
+	wcscpy((wchar_t*)pGlobalW, textW.c_str());
+	WideCharToMultiByte(CP_ACP, 0, textW.c_str(), -1, (LPSTR)pGlobalA, lengthA, NULL, NULL);
+
+	GlobalUnlock(hGlobalW);
+	GlobalUnlock(hGlobalA);
+
+	EmptyClipboard();
+	SetClipboardData(CF_UNICODETEXT, hGlobalW);
+	SetClipboardData(CF_TEXT, hGlobalA);
+	CloseClipboard();
+#endif
+}
+
+void CXConsole::Paste()
+{
+#if BB_PLATFORM_WINDOWS
+	const BOOL hasANSI = IsClipboardFormatAvailable(CF_TEXT);
+	const BOOL hasUnicode = IsClipboardFormatAvailable(CF_UNICODETEXT);
+
+	if (!(hasANSI || hasUnicode))
+		return;
+	if (!OpenClipboard(NULL))
+		return;
+
+	HGLOBAL const hGlobal = GetClipboardData(hasUnicode ? CF_UNICODETEXT : CF_TEXT);
+	if (!hGlobal)
+	{
+		CloseClipboard();
+		return;
+	}
+
+	const void* const pGlobal = GlobalLock(hGlobal);
+	if (!pGlobal)
+	{
+		CloseClipboard();
+		return;
+	}
+
+	string temp;
+	#if 0
+	if (hasUnicode)
+		temp = CryStringUtils::WStrToUTF8((const wchar_t*)pGlobal);
+	else
+		temp = CryStringUtils::ANSIToUTF8((const char*)pGlobal);
+	#else
+		temp = wstr_to_str((const wchar_t*)pGlobal);
+	#endif
+
+	GlobalUnlock(hGlobal);
+	CloseClipboard();
+
+	const size_t length = temp.length();
+	m_sInputBuffer.insert(m_nCursorPos, temp, length);
+	m_nCursorPos += length;
+#endif
+}
 bool CXConsole::Init(ISystem* pSystem)
 {
-	return false;
+	return true;
 }
 
 void CXConsole::Release()
@@ -525,7 +778,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, const char* sValue, int nFla
 	}
 
 	const string name(sName);
-	pCVar = new CCVar(this, name.data(), sValue, nFlags, help /*, true*/);
+	pCVar = new CXConsoleVariableString(this, name, sValue, nFlags, help, true);
 	RegisterVar(name, pCVar /*, pChangeFunc*/);
 	return pCVar;
 }
@@ -545,7 +798,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, int iValue, int nFlags, cons
 	}
 
 	const string name(sName);
-	pCVar = new CCVar(this, name.data(), iValue, nFlags, help /*, true*/);
+	pCVar = new CXConsoleVariableInt(this, name.data(), iValue, nFlags, help , true);
 	RegisterVar(name, pCVar /*, pChangeFunc*/);
 	return pCVar;
 }
@@ -554,7 +807,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr_t(NULL));
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
 	if (pCVar)
 	{
 		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterFloat(): variable [%s] is already registered", pCVar->GetName());
@@ -565,7 +818,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 	}
 
 	const string name(sName);
-	pCVar = new CCVar(this, name.data(), fValue, nFlags, help /*, true*/);
+	pCVar = new CXConsoleVariableInt(this, name.data(), fValue, nFlags, help , true);
 	RegisterVar(name, pCVar /*, pChangeFunc*/);
 	return pCVar;
 }
@@ -650,7 +903,11 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 
 		if (allowChange)
 		{
+			#if 0
 			pCVar->ForceSet(var.m_value.c_str());
+			#else
+			pCVar->Set(var.m_value.c_str());
+			#endif
 			pCVar->SetFlags(pCVar->GetFlags() | var.nCVarOrFlags);
 		}
 
@@ -663,8 +920,10 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 		pCVar->ClearFlags(VF_MODIFIED);
 	}
 
+	#if 0
 	if (pChangeFunc)
 		pCVar->AddOnChange(pChangeFunc);
+	#endif
 
 	auto pair = std::make_pair(name.data(), pCVar);
 	m_mapVariables.insert(pair);
@@ -739,18 +998,144 @@ void CXConsole::ShowConsole(bool show)
 
 int CXConsole::Register(const char* name, void* src, float defaultvalue, int flags, int type, const char* help /* = ""*/)
 {
+	//RegisterInternal(name, src, defaultvalue, flags, help);
 	return 0;
 }
 
 float CXConsole::Register(const char* name, float* src, float defaultvalue, int flags /* = 0*/, const char* help /* = ""*/)
 {
-	return 0.0f;
+	RegisterInternal(name, src, defaultvalue, flags, help);
+			if (name == "r_MSAA_samples")
+			{
+				CryLog("here");
+			}
+	return defaultvalue;
 }
 
 int CXConsole::Register(const char* name, int* src, float defaultvalue, int flags /* = 0*/, const char* help /* = ""*/)
 {
-	return 0;
+	RegisterInternal(name, src, defaultvalue, flags, help);
+			if (name == "r_MSAA_samples")
+			{
+				CryLog("here");
+			}
+	return defaultvalue;
 }
+
+
+ICVar* CXConsole::RegisterInternal(const char* sName, int* src, int iValue, int nFlags, const char* help, ConsoleVarFunc pChangeFunc, bool allowModify)
+{
+	AssertName(sName);
+
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	if (pCVar)
+	{
+		if (pCVar->GetFlags() & VF_CONST_CVAR)
+		{
+			*src = pCVar->GetIVal();
+		}
+		else
+		{
+			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(int): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+			gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+		}
+		return pCVar;
+	}
+
+	if (!allowModify)
+		nFlags |= VF_CONST_CVAR;
+	*src = iValue; // Needs to be done before creating the CVar due to default overriding
+	const string name(sName);
+	pCVar = new CXConsoleVariableIntRef(this, name.data(), *src, nFlags, help, true);
+	RegisterVar(name, pCVar, pChangeFunc);
+	return pCVar;
+}
+
+#if 0
+ICVar* CXConsole::RegisterCVarGroup(const char* szName, const char* szFileName)
+{
+	AssertName(szName);
+	assert(szFileName);
+
+	// suppress cvars not starting with sys_spec_ as
+	// cheaters might create cvars before we created ours
+	if (strnicmp(szName, "sys_spec_", 9) != 0)
+		return 0;
+
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, szName, NULL);
+	if (pCVar)
+		return pCVar; // Already registered, this is expected when loading engine specs after game specs.
+
+	const string name(szName);
+	CXConsoleVariableCVarGroup* pCVarGroup = new CXConsoleVariableCVarGroup(this, name, szFileName, VF_COPYNAME);
+
+	pCVar = pCVarGroup;
+
+	RegisterVar(name, pCVar, CXConsoleVariableCVarGroup::OnCVarChangeFunc);
+
+	return pCVar;
+}
+#endif
+ICVar* CXConsole::RegisterInternal(const char* sName, float* src, float fValue, int nFlags, const char* help, ConsoleVarFunc pChangeFunc, bool allowModify)
+{
+	AssertName(sName);
+
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	if (pCVar)
+	{
+		if (pCVar->GetFlags() & VF_CONST_CVAR)
+		{
+			*src = pCVar->GetFVal();
+		}
+		else
+		{
+			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+			gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+		}
+		return pCVar;
+	}
+	if (!allowModify)
+		nFlags |= VF_CONST_CVAR;
+	*src = fValue; // Needs to be done before creating the CVar due to default overriding
+	const string name(sName);
+	pCVar = new CXConsoleVariableFloatRef(this, name.data(), *src, nFlags, help, true);
+	RegisterVar(name, pCVar, pChangeFunc);
+	return pCVar;
+}
+
+ICVar* CXConsole::RegisterInternal(const char* sName, const char** src, const char* defaultValue, int nFlags, const char* help, ConsoleVarFunc pChangeFunc, bool allowModify)
+{
+	AssertName(sName);
+
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	if (pCVar)
+	{
+		if (pCVar->GetFlags() & VF_CONST_CVAR)
+		{
+			*src = pCVar->GetString();
+		}
+		else
+		{
+			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(const char*): variable [%s] is already registered", pCVar->GetName());
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+			gEnv->pSystem->debug_LogCallStack();
+#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+		}
+		return pCVar;
+	}
+	if (!allowModify)
+		nFlags |= VF_CONST_CVAR;
+	const string name(sName);
+	//FIXME:
+	pCVar = new CXConsoleVariableStringRef(this, name, *src, defaultValue, nFlags, help, true);
+	RegisterVar(name, pCVar, pChangeFunc);
+	return pCVar;
+}
+
 
 void CXConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter /* = 0*/)
 {
@@ -891,32 +1276,226 @@ void CXConsole::Update()
 
 void CXConsole::Draw()
 {
+	#if 0
+	if (!m_nTempScrollMax)
+		return;
+
+	if (!m_pRenderer)
+		m_pRenderer = m_system.GetIRenderer(); // For Editor.
+
+	if (!m_pRenderer)
+		return;
+
+	if (!m_pFont)
+	{
+		// For Editor.
+		ICryFont* pICryFont = m_system.GetICryFont();
+
+		if (pICryFont)
+			m_pFont = m_system.GetICryFont()->GetFont("default");
+	}
+
+	ScrollConsole();
+
+	if (!m_bConsoleActive && con_display_last_messages == 0)
+		return;
+
+	if (m_nScrollPos <= 0)
+	{
+		DrawBuffer(70, "console");
+	}
+	else
+	{
+		// cursor blinking
+		{
+			m_fCursorBlinkTimer += gEnv->pTimer->GetRealFrameTime();                      // works even when time is manipulated
+			//	m_fCursorBlinkTimer += gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);					// can be used once ETIMER_UI works even with t_FixedTime
+
+			const float fCursorBlinkDelay = 0.5f;           // in sec (similar to Windows default but might differ from actual setting)
+
+			if (m_fCursorBlinkTimer > fCursorBlinkDelay)
+			{
+				m_bDrawCursor = !m_bDrawCursor;
+				m_fCursorBlinkTimer = 0.0f;
+			}
+		}
+
+		// TODO: relative/normalized coordinate system in screen-space
+		if (!m_nProgressRange)
+		{
+			if (m_bStaticBackground)
+			{
+				IRenderAuxImage::Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetOverlayWidth()) /*800*/, float(m_pRenderer->GetOverlayHeight()) /*600*/, m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f);
+			}
+			else
+			{
+				float fReferenceSize = 600.0f;
+				float fSizeX = (float)m_pRenderer->GetOverlayWidth();
+				float fSizeY = m_nTempScrollMax * m_pRenderer->GetOverlayHeight() / fReferenceSize;
+
+				IRenderAuxImage::DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
+				IRenderAuxImage::DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetOverlayHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
+			}
+		}
+
+		// draw progress bar
+		if (m_nProgressRange)
+			IRenderAuxImage::Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetOverlayWidth()), float(m_pRenderer->GetOverlayHeight()), m_nLoadingBackTexID, 0.0f, 1.0f, 1.0f, 0.0f);
+
+		DrawBuffer(m_nScrollPos, "console");
+	}
+	#endif
 }
 
-void CXConsole::AddCommand(const char* sName, const char* sScriptFunc, const DWORD indwFlags /* = 0*/, const char* help /* = ""*/)
+
+
+void CXConsole::AddCommand(const char* sCommand, const char* sScriptFunc, DWORD nFlags, const char* sHelp)
 {
+	AssertName(sCommand);
+
+	if (m_mapCommands.find(sCommand) == m_mapCommands.end())
+	{
+		CConsoleCommand cmd;
+		cmd.m_sName = sCommand;
+		cmd.m_sCommand = sScriptFunc;
+		if (sHelp)
+			cmd.m_sHelp = sHelp;
+		cmd.m_nFlags = nFlags;
+		m_mapCommands.insert(std::make_pair(cmd.m_sName, cmd));
+	}
+	else
+	{
+		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): script command [%s] is already registered", sCommand);
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+#endif
+	}
 }
+
 
 void CXConsole::ExecuteString(const char* command, bool bNeedSlash /* = false*/, bool bIgnoreDevMode /* = false*/)
 {
+	bool bDeferExecution = false;
+	bool bSilentMode	 = false;
+	if (!m_deferredExecution && !bDeferExecution)
+	{
+		// This is a regular mode
+		ExecuteStringInternal(command, false, bSilentMode);   // not from console
+		return;
+	}
+
+	// Store the string commands into a list and defer the execution for later.
+	// The commands will be processed in CXConsole::Update()
+	string str(command);
+	str = TrimLeft(str);
+
+	const bool unroll = false;//	(0 == str.Left(strlen("exec")).compareNoCase("exec"));
+	if (unroll)
+	{
+		const bool oldDeferredExecution = m_deferredExecution;
+
+		// Make sure that the unrolled commands are processed with deferred mode on
+		m_deferredExecution = true;
+		ExecuteStringInternal(str.c_str(), false, bSilentMode);
+		m_deferredExecution = oldDeferredExecution;
+	}
+	else
+	{
+		m_deferredCommands.push_back(SDeferredCommand(str.c_str(), bSilentMode));
+	}
 }
 
-void CXConsole::Exit(const char* command, ...)
+
+
+void CXConsole::Exit(const char* szExitComments, ...)
 {
+	char sResultMessageText[1024];
+
+	if (szExitComments)
+	{
+		va_list arglist;
+		va_start(arglist, szExitComments);
+		vsprintf(sResultMessageText, szExitComments, arglist);
+		va_end(arglist);
+	}
+	else
+	{
+		strcpy(sResultMessageText, "No comments from application");
+	}
+
+	CryFatalError("%s", sResultMessageText);
 }
+
+
 
 bool CXConsole::IsOpened()
 {
-	return false;
+	return m_nScrollPos == m_nTempScrollMax;
 }
 
-int CXConsole::GetNumVars()
+int CXConsole::GetNumVars() 
 {
-	return 0;
+	bool bIncludeCommands = true;
+	return m_mapVariables.size() + (bIncludeCommands ? m_mapCommands.size() : 0);
 }
+
 
 void CXConsole::GetSortedVars(const char** pszArray, size_t numItems)
 {
+	GetSortedVars(pszArray, numItems, 0, 0);
+}
+
+size_t CXConsole::GetSortedVars(const char** pszArray, size_t numItems, const char* szPrefix, int nListTypes) const
+{
+	CRY_ASSERT(pszArray != nullptr);
+	if (pszArray == nullptr)
+		return 0;
+
+	size_t itemAdded = 0;
+	const size_t iPrefixLen = szPrefix ? strlen(szPrefix) : 0;
+
+	// variables
+	if (nListTypes == 0 || nListTypes == 1)
+	{
+		for (auto& it : m_mapVariables)
+		{
+			if (itemAdded >= numItems)
+				break;
+
+			if (szPrefix && strnicmp(it.first.data(), szPrefix, iPrefixLen) != 0)
+				continue;
+
+			if (it.second->GetFlags() & VF_INVISIBLE)
+				continue;
+
+			pszArray[itemAdded] = it.first.data();
+			itemAdded++;
+		}
+	}
+
+	// commands
+	if (nListTypes == 0 || nListTypes == 2)
+	{
+		for (auto& it : m_mapCommands)
+		{
+			if (itemAdded >= numItems)
+				break;
+
+			if (szPrefix && strnicmp(it.first.c_str(), szPrefix, iPrefixLen) != 0)
+				continue;
+
+			if (it.second.m_nFlags & VF_INVISIBLE)
+				continue;
+
+			pszArray[itemAdded] = it.first.c_str();
+			itemAdded++;
+		}
+	}
+
+	if (itemAdded != 0)
+		std::sort(pszArray, pszArray + itemAdded, less_CVar);
+
+	return itemAdded;
 }
 
 const char* CXConsole::AutoComplete(const char* substr)
@@ -929,30 +1508,271 @@ const char* CXConsole::AutoCompletePrev(const char* substr)
 	return nullptr;
 }
 
-char* CXConsole::ProcessCompletion(const char* szInputBuffer)
+const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 {
-	return nullptr;
+	#if 0
+	m_sInputBuffer = szInputBuffer;
+	const bool isBackgroundServer = szInputBuffer[0] == BACKGROUND_SERVER_CHAR;
+	if (isBackgroundServer)
+		m_sInputBuffer = szInputBuffer + 1;
+
+	const int offset = (szInputBuffer[0] == '\\' ? 1 : 0); // legacy support
+	if ((m_sPrevTab.size() > strlen(szInputBuffer + offset)) || strnicmp(m_sPrevTab.c_str(), (szInputBuffer + offset), m_sPrevTab.size()))
+	{
+		m_nTabCount = 0;
+		m_sPrevTab = "";
+	}
+
+	if (m_sInputBuffer.empty())
+		return const_cast<char*>(m_sInputBuffer.c_str());
+
+	const bool showlist = !m_nTabCount && m_sPrevTab == "";
+
+	if (m_nTabCount == 0)
+	{
+		if (m_sInputBuffer.size() > 0)
+		{
+			if (m_sInputBuffer[0] == '\\')
+				m_sPrevTab = &m_sInputBuffer.c_str()[1]; // legacy support
+			else
+				m_sPrevTab = m_sInputBuffer;
+		}
+		else
+		{
+			m_sPrevTab = "";
+		}
+	}
+
+	// try to search in command list
+	bool bArgumentAutoComplete = false;
+	std::vector<string> matches;
+	if (m_sPrevTab.find(' ') != string::npos)
+	{
+		bool bProcessAutoCompl = true;
+
+		// Find command.
+		const string sVar = m_sPrevTab.substr(0, m_sPrevTab.find(' '));
+		const ICVar* pCVar = GetCVar(sVar.data());
+		if (pCVar)
+		{
+			if (!(pCVar->GetFlags() & VF_RESTRICTEDMODE) && con_restricted) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+				bProcessAutoCompl = false;
+		}
+
+		auto it = m_mapCommands.find(sVar);
+		if (it != m_mapCommands.end())
+		{
+			const CConsoleCommand& ccmd = it->second;
+			if (!(ccmd.m_nFlags & VF_RESTRICTEDMODE) && con_restricted) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+				bProcessAutoCompl = false;
+		}
+
+		if (bProcessAutoCompl)
+		{
+			#if 0
+			const IConsoleArgumentAutoComplete* pArgumentAutoComplete = stl::find_in_map(m_mapArgumentAutoComplete, sVar, 0);
+			if (pArgumentAutoComplete)
+			{
+				const int nMatches = pArgumentAutoComplete->GetCount();
+				for (int i = 0; i < nMatches; i++)
+				{
+					const string cmd = string(sVar) + " " + pArgumentAutoComplete->GetValue(i);
+					if (strnicmp(m_sPrevTab.c_str(), cmd.c_str(), m_sPrevTab.length()) == 0
+						&& gEnv->pSystem->IsCVarWhitelisted(cmd.c_str(), true))
+					{
+						bArgumentAutoComplete = true;
+						matches.push_back(cmd);
+					}
+				}
+			}
+			#endif
+		}
+	}
+
+	if (!bArgumentAutoComplete)
+	{
+		for (auto& pair : m_mapCommands)
+		{
+			const CConsoleCommand& cmd = pair.second;
+			if ((cmd.m_nFlags & VF_RESTRICTEDMODE) || !con_restricted) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+			{
+				if (strnicmp(m_sPrevTab.c_str(), pair.first.c_str(), m_sPrevTab.length()) == 0 
+					&& gEnv->pSystem->IsCVarWhitelisted(pair.first.c_str(), true))
+				{
+					matches.push_back(pair.first);
+				}
+			}
+		}
+
+		// try to search in console variables
+		for (auto& pair : m_mapVariables)
+		{
+			const ICVar* pVar = pair.second;
+#ifdef _RELEASE
+			if (!gEnv->IsEditor())
+			{
+				const bool isCheat = (pVar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0;
+				if (isCheat)
+				{
+					continue;
+				}
+			}
+#endif
+
+			if ((pVar->GetFlags() & VF_RESTRICTEDMODE) || !con_restricted)     // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+			{
+				if (strnicmp(m_sPrevTab.c_str(), pair.first.data(), m_sPrevTab.length()) == 0
+					&& gEnv->pSystem->IsCVarWhitelisted(pair.first.data(), true))
+				{
+					matches.push_back(pair.first);
+				}
+			}
+		}
+	}
+
+	if (!matches.empty())
+		std::sort(matches.begin(), matches.end(), less_CVar);   // to sort commands with variables
+
+	if (showlist && !matches.empty())
+	{
+		ConsoleLogInput(" ");   // empty line before auto completion
+		for (const string& match : matches)
+		{
+			ICVar* pVar = GetCVar(match.data());
+			if (pVar)
+				DisplayVarValue(pVar);
+			else
+				ConsoleLogInputResponse("    $3%s $6(Command)", match.c_str());
+		}
+	}
+
+	int nMatch = 0;
+	for (const string& match : matches)
+	{
+		if (m_nTabCount <= nMatch)
+		{
+			m_sInputBuffer = match;
+			m_sInputBuffer += " ";
+			m_nTabCount = nMatch + 1;
+			#if 0
+			if (isBackgroundServer)
+				m_sInputBuffer.insert(0, BACKGROUND_SERVER_CHAR);
+			#endif
+
+			return (m_sInputBuffer.c_str());
+		}
+		nMatch++;
+	}
+
+	if (m_nTabCount > 0)
+	{
+		m_nTabCount = 0;
+		m_sInputBuffer = m_sPrevTab;
+		m_sInputBuffer = ProcessCompletion(m_sInputBuffer.c_str());
+	}
+
+	#if 0
+	if (isBackgroundServer)
+		m_sInputBuffer.insert(0, BACKGROUND_SERVER_CHAR);
+	#endif
+
+	#endif
+	return (char*)m_sInputBuffer.c_str();
 }
+
+
 
 void CXConsole::ResetAutoCompletion()
 {
+	m_nTabCount = 0;
+	m_sPrevTab = "";
 }
 
 void CXConsole::DumpCommandsVars(char* prefix)
 {
+	FILE* f0 = fopen("consolecommandsandvars.txt", "w");
+
+	if (!f0)
+		return;
+
+	fprintf(f0, " CHEAT: stays in the default value if cheats are not disabled\n");
+	fprintf(f0, " REQUIRE_NET_SYNC: cannot be changed on client and when connecting it's sent to the client\n");
+	fprintf(f0, " SAVEGAME: stored when saving a savegame\n");
+	fprintf(f0, " READONLY: can not be changed by the user\n");
+	fprintf(f0, "-------------------------\n");
+	fprintf(f0, "\n");
+
+	for (auto& pair : m_mapCommands)
+	{
+		const CConsoleCommand& cmd = pair.second;
+		if (hasprefix(cmd.m_sName.c_str(), prefix))
+		{
+			const char* sFlags = GetFlagsString(cmd.m_nFlags);
+			fprintf(f0, "Command: %s %s\nscript: %s\nhelp: %s\n\n", cmd.m_sName.c_str(), sFlags, cmd.m_sCommand.c_str(), cmd.m_sHelp.c_str());
+		}
+	}
+
+	for (auto& pair : m_mapVariables)
+	{
+		const ICVar* var = pair.second;
+		if (hasprefix(var->GetName(), prefix))
+		{
+			const char* sFlags = GetFlagsString(var->GetFlags());
+			fprintf(f0, "variable: %s %s\ntype: %s\ncurrent: %s\nhelp: %s\n\n", var->GetName(), sFlags, ECVarTypeHelper::GetNameForECVar(ECVarType(var->GetType())), var->GetString(), var->GetHelp());
+		}
+	}
+
+	fclose(f0);
+
+	ConsoleLogInputResponse("successfully wrote consolecommandsandvars.txt");
 }
+
+
 
 void CXConsole::GetMemoryUsage(ICrySizer* pSizer)
 {
 }
 
-void CXConsole::ResetProgressBar(int nProgressRange)
+void CXConsole::ResetProgressBar(int nProgressBarRange)
 {
+	m_nProgressRange = nProgressBarRange;
+	m_nProgress = 0;
+
+	if (nProgressBarRange < 0)
+		nProgressBarRange = 0;
+
+	if (!m_nProgressRange)
+	{
+		if (m_nLoadingBackTexID)
+		{
+			#if 0
+			if (m_pRenderer)
+				m_pRenderer->RemoveTexture(m_nLoadingBackTexID);
+			#endif
+			m_nLoadingBackTexID = -1;
+		}
+	}
+
+	static ICVar* log_Verbosity = GetCVar("log_Verbosity");
+
+	if (log_Verbosity && (!log_Verbosity->GetIVal()))
+		Clear();
 }
 
 void CXConsole::TickProgressBar()
 {
+	#if 0
+	if (m_nProgressRange != 0 && m_nProgressRange > m_nProgress)
+	{
+		m_nProgress++;
+		m_system.UpdateLoadingScreen();
+	}
+	if (m_system.GetIRenderer())
+		m_system.GetIRenderer()->FlushRTCommands(false, false, false); // Try to switch render thread contexts to make RT always busy during loading
+	#endif
 }
+
+
 
 void CXConsole::DumpKeyBinds(IKeyBindDumpSink* pCallback)
 {
@@ -971,20 +1791,61 @@ const char* CXConsole::FindKeyBind(const char* sCmd)
 
 void CXConsole::AddConsoleVarSink(IConsoleVarSink* pSink)
 {
+	m_consoleVarSinks.push_back(pSink);
 }
+
 
 void CXConsole::RemoveConsoleVarSink(IConsoleVarSink* pSink)
 {
+	m_consoleVarSinks.remove(pSink);
 }
 
 const char* CXConsole::GetHistoryElement(const bool bUpOrDown)
 {
-	return nullptr;
+	if (bUpOrDown)
+	{
+		if (!m_dqHistory.empty())
+		{
+			if (m_nHistoryPos < (int)(m_dqHistory.size() - 1))
+			{
+				m_nHistoryPos++;
+				m_sReturnString = m_dqHistory[m_nHistoryPos];
+				return m_sReturnString.c_str();
+			}
+		}
+	}
+	else
+	{
+		if (m_nHistoryPos > 0)
+		{
+			m_nHistoryPos--;
+			m_sReturnString = m_dqHistory[m_nHistoryPos];
+			return m_sReturnString.c_str();
+		}
+	}
+
+	return 0;
 }
 
 void CXConsole::AddCommandToHistory(const char* szCommand)
 {
+	CRY_ASSERT(szCommand);
+	m_nHistoryPos = -1;
+
+	if (!m_dqHistory.empty())
+	{
+		// add only if the command is != than the last
+		if (m_dqHistory.front() != szCommand)
+			m_dqHistory.push_front(szCommand);
+	}
+	else
+		m_dqHistory.push_front(szCommand);
+
+	while (m_dqHistory.size() > MAX_HISTORY_ENTRIES)
+		m_dqHistory.pop_back();
 }
+
+
 
 //enable this for now, we need it for profiling etc
 //MUST DISABLE FOR TCG BUILDS
@@ -1102,8 +1963,38 @@ bool CXConsole::OnInputEvent(const SInputEvent& event)
 #endif
 }
 
-void CXConsole::OnElementFound(ICVar* pCVar)
+void CXConsole::FindVar(const char* substr)
 {
+	std::vector<const char*> cmds;
+	cmds.resize(GetNumVars() + m_mapCommands.size());
+	const size_t cmdCount = GetSortedVars(&cmds[0], cmds.size(), 0, 0);
+
+	for (size_t i = 0; i < cmdCount; i++)
+	{
+		if (CryStringUtils::stristr(cmds[i], substr))
+		{
+			if (gEnv->pSystem->IsCVarWhitelisted(cmds[i], true))
+			{
+				ICVar* pCvar = gEnv->pConsole->GetCVar(cmds[i]);
+				if (pCvar)
+				{
+#ifdef _RELEASE
+					if (!gEnv->IsEditor())
+					{
+						const bool isCheat = (pCvar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0;
+						if (isCheat)
+							continue;
+					}
+#endif
+					DisplayVarValue(pCvar);
+				}
+				else
+				{
+					ConsoleLogInputResponse("    $3%s $6(Command)", cmds[i]);
+				}
+			}
+		}
+	}
 }
 
 bool CXConsole::ProcessInput(const SInputEvent& event)
@@ -1254,12 +2145,281 @@ bool CXConsole::ProcessInput(const SInputEvent& event)
 	return false;
 }
 
-void CXConsole::LoadConfigVar(const char* sVariable, const char* sValue)
+void CXConsole::AddLine(const char* inputStr)
 {
+	string str = inputStr;
+
+	// strip trailing \n or \r.
+	if (!str.empty() && (str[str.size() - 1] == '\n' || str[str.size() - 1] == '\r'))
+		str.resize(str.size() - 1);
+
+	string::size_type nPos;
+	while ((nPos = str.find('\n')) != string::npos)
+	{
+		str.replace(nPos, 1, 1, ' ');
+	}
+
+	while ((nPos = str.find('\r')) != string::npos)
+	{
+		str.replace(nPos, 1, 1, ' ');
+	}
+
+	m_dqConsoleBuffer.push_back(str);
+	const int nBufferSize = con_line_buffer_size;
+
+	while (((int)(m_dqConsoleBuffer.size())) > nBufferSize)
+	{
+		m_dqConsoleBuffer.pop_front();
+	}
+
+	// tell everyone who is interested (e.g. dedicated server printout)
+	for (auto* sink : m_OutputSinks)
+		sink->Print(str.c_str());
+}
+
+void CXConsole::LoadConfigVar(const char* szVariable, const char* sValue)
+{
+	ICVar* pCVar = GetCVar(szVariable);
+	if (pCVar)
+	{
+		const bool isConst = pCVar->IsConstCVar();
+		const bool isCheat = ((pCVar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0);
+		const bool isReadOnly = ((pCVar->GetFlags() & VF_READONLY) != 0);
+		const bool isDeprecated = ((pCVar->GetFlags() & VF_DEPRECATED) != 0);
+		const bool wasInConfig = ((pCVar->GetFlags() & VF_WASINCONFIG) != 0);
+		const bool fromSystemConfig = ((pCVar->GetFlags() & VF_SYSSPEC_OVERWRITE) != 0);
+		bool allowChange = true;
+
+		if ((
+#if CVAR_GROUPS_ARE_PRIVILEGED
+		  !m_bIsProcessingGroup &&
+#endif
+		  (isConst || isCheat || isReadOnly)) || isDeprecated)
+		{
+			allowChange = (!isDeprecated && gEnv->pSystem->IsDevMode()) || gEnv->IsEditor();
+			if (!(gEnv->IsEditor()) || isDeprecated)
+			{
+#if LOG_CVAR_INFRACTIONS
+				LogChangeMessage(pCVar->GetName(), isConst, isCheat,
+				                 isReadOnly, isDeprecated, pCVar->GetString(), sValue, m_bIsProcessingGroup, allowChange);
+	#if LOG_CVAR_INFRACTIONS_CALLSTACK
+				gEnv->pSystem->debug_LogCallStack();
+	#endif
+#endif
+			}
+		}
+
+		if (m_currentLoadConfigType != eLoadConfigInit && wasInConfig && fromSystemConfig)
+		{
+			// When trying to change cvar not by loading standard configs (from sys specs), and cvar was present in system.cfg, protect it and not allow sys spec to change it.
+			allowChange = false;
+		}
+
+		if (allowChange)
+		{
+			#if 0
+			pCVar->SetFromString(sValue);
+			#else
+			pCVar->ForceSet(sValue);
+			#endif
+
+			if (m_currentLoadConfigType == eLoadConfigInit || m_currentLoadConfigType == eLoadConfigDefault)
+				pCVar->SetFlags(pCVar->GetFlags() | VF_WASINCONFIG);
+
+			if (m_currentLoadConfigType == eLoadConfigInit)
+				pCVar->SetFlags(pCVar->GetFlags() | VF_SYSSPEC_OVERWRITE);
+		}
+		return;
+	}
+
+	if (!CRY_VERIFY(m_mapCommands.find(szVariable) == m_mapCommands.end(), "Tried to load config CVar '%s', but it is registered as a command.", szVariable))
+	{
+		return;
+	}
+
+	auto configVar = m_configVars.find(szVariable);
+	if (configVar != m_configVars.end())
+	{
+		uint32 nCVarFlags = configVar->second.nCVarOrFlags;
+		// If this cvar was already previously loaded, check that we are allowed to override its value.
+		if (m_currentLoadConfigType != eLoadConfigInit && (nCVarFlags & VF_SYSSPEC_OVERWRITE) && (nCVarFlags & VF_WASINCONFIG))
+		{
+			// This cvar was already loaded and with higher priority config type.
+			// So ignore overriding its value
+			return;
+		}
+	}
+
+	SConfigVar temp;
+	temp.m_value = sValue;
+	temp.m_partOfGroup = m_bIsProcessingGroup;
+	temp.nCVarOrFlags = VF_WASINCONFIG;
+
+	if (m_currentLoadConfigType == eLoadConfigInit)
+		temp.nCVarOrFlags |= VF_SYSSPEC_OVERWRITE;
+
+	m_configVars[szVariable] = temp;
 }
 
 void CXConsole::LoadConfigCommand(const char* szCommand, const char* szArguments)
 {
+	auto it = m_mapCommands.find(szCommand);
+	if (it == m_mapCommands.end())
+	{
+		if (CRY_VERIFY(GetCVar(szCommand) == nullptr, "Tried to load config command '%s', but it is registered as a CVar.", szCommand))
+		{
+			m_configCommands.emplace(szCommand, szArguments);
+		}
+	}
+	else
+	{
+		string arguments = szCommand + string(" ") + szArguments;
+		ExecuteCommand(it->second, arguments);
+	}
+}
+
+
+
+void CXConsole::ExecuteStringInternal(const char* command, const bool bFromConsole, const bool bSilentMode)
+{
+	CRY_ASSERT(command);
+	CRY_ASSERT(command[0] != '\\', "ExecuteStringInternal command should not start with \"\\\"");
+
+#if !defined(RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)
+	if (command[0] == BACKGROUND_SERVER_CHAR)
+	{
+		// Send to background server
+		if (!con_restricted || !bFromConsole)
+		{
+			ExecuteStringInternal((string("cmd_server_command ") + string(command + 1)).data(), bFromConsole, bSilentMode);
+			return;
+		}
+	}
+
+	// Execute as string
+	if (command[0] == '#' || command[0] == '@')
+	{
+		if (!con_restricted || !bFromConsole)      // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+		{
+			AddLine(command);
+
+			if (m_system.IsDevMode())
+			{
+				if (m_system.GetIScriptSystem())
+					m_system.GetIScriptSystem()->ExecuteBuffer(command + 1, strlen(command) - 1);
+				m_bDrawCursor = false;
+			}
+			return;
+		}
+	}
+#endif
+
+	std::list<string> lineCommands;
+	SplitCommands(command, lineCommands);
+
+	while (!lineCommands.empty())
+	{
+		string sTemp = lineCommands.front();
+		string sCommand = lineCommands.front();
+		const string sLineCommand = sCommand;
+		lineCommands.pop_front();
+
+		if (!bSilentMode)
+			if (GetStatus())
+				AddLine(sTemp.data());
+
+		string::size_type nPos = sTemp.find_first_of('=');
+
+		if (nPos != string::npos)
+			sCommand = sTemp.substr(0, nPos);
+		else if ((nPos = sTemp.find_first_of(' ')) != string::npos)
+			sCommand = sTemp.substr(0, nPos);
+		else
+			sCommand = sTemp;
+
+		#if 0
+		sCommand.Trim();
+		#else
+		sCommand = Trim(sCommand);
+		#endif
+
+		// Search for CVars
+		if (sCommand.length() > 1 && sCommand[0] == '?')
+		{
+			sTemp = sCommand.substr(1);
+			FindVar(sTemp.c_str());
+			continue;
+		}
+
+		// Check if is a command
+		auto itrCmd = m_mapCommands.find(sCommand);
+		if (itrCmd != m_mapCommands.end())
+		{
+			if (((itrCmd->second).m_nFlags & VF_RESTRICTEDMODE) || !con_restricted || !bFromConsole) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+			{
+				if (itrCmd->second.m_nFlags & VF_BLOCKFRAME)
+					m_blockCounter++;
+
+				sTemp = sLineCommand;
+				ExecuteCommand((itrCmd->second), sTemp);
+
+				continue;
+			}
+		}
+
+		// Check  if is a variable
+		auto itrVar = m_mapVariables.find(sCommand);
+		if (itrVar != m_mapVariables.end())
+		{
+			ICVar* pCVar = itrVar->second;
+
+			if ((pCVar->GetFlags() & VF_RESTRICTEDMODE) || !con_restricted || !bFromConsole) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
+			{
+				if (pCVar->GetFlags() & VF_BLOCKFRAME)
+					m_blockCounter++;
+
+				if (nPos != string::npos)
+				{
+					sTemp = sTemp.substr(nPos + 1);   // remove the command from sTemp
+					#if 0
+					sTemp.Trim(" \t\r\n\"\'");
+					#else
+					sTemp = Trim(sTemp, " \t\r\n\"\'");
+					#endif
+
+					if (sTemp == "?")
+					{
+						ICVar* v = itrVar->second;
+						DisplayHelp(v->GetHelp(), sCommand.c_str());
+						return;
+					}
+
+					if (!sTemp.empty() || (ECVarType(pCVar->GetType()) == ECVarType::String))
+					{
+						// renderer cvars will be updated in the render thread
+						if ((pCVar->GetFlags() & VF_RENDERER_CVAR) && m_pRenderer)
+						{
+							#if 0
+							m_pRenderer->SetRendererCVar(pCVar, sTemp.c_str(), bSilentMode);
+							#endif
+							continue;
+						}
+
+						pCVar->SetFromString(sTemp.c_str());
+					}
+				}
+
+				// the following line calls AddLine() indirectly
+				if (!bSilentMode)
+					DisplayVarValue(pCVar);
+
+				continue;
+			}
+		}
+
+		if (!bSilentMode)
+			ConsoleWarning("Unknown command: %s", sCommand.c_str());
+	}
 }
 
 void CXConsole::ExecuteDeferredCommands()
@@ -1296,6 +2456,92 @@ void CXConsole::ExecuteDeferredCommands()
 	#endif
 }
 
+const char* CXConsole::GetFlagsString(const uint32 dwFlags)
+{
+	static char sFlags[256];
+
+	strcpy(sFlags, "");
+
+	if (dwFlags & VF_READONLY)               strcat(sFlags, "READONLY, ");
+	if (dwFlags & VF_DEPRECATED)             strcat(sFlags, "DEPRECATED, ");
+	if (dwFlags & VF_DUMPTODISK)             strcat(sFlags, "DUMPTODISK, ");
+	if (dwFlags & VF_REQUIRE_LEVEL_RELOAD)   strcat(sFlags, "REQUIRE_LEVEL_RELOAD, ");
+	if (dwFlags & VF_REQUIRE_APP_RESTART)    strcat(sFlags, "REQUIRE_APP_RESTART, ");
+	if (dwFlags & VF_RESTRICTEDMODE)         strcat(sFlags, "RESTRICTEDMODE, ");
+
+	if (sFlags[0] != 0)
+		sFlags[strlen(sFlags) - 2] = 0;  // remove ending ", "
+
+	return sFlags;
+}
+
+
+
+
+void CXConsole::AddInputChar(const uint32 c)
+{
+	// Convert UCS code-point into UTF-8 string
+	#if 0
+	char utf8_buf[5];
+	Unicode::Convert(utf8_buf, c);
+	#else
+	char utf8_buf;
+	auto res = wcrtomb(&utf8_buf, c, nullptr);
+	#endif
+
+	if (m_nCursorPos < (int)(m_sInputBuffer.length()))
+		m_sInputBuffer.insert(m_nCursorPos, 1, utf8_buf);
+	else
+		m_sInputBuffer = m_sInputBuffer + utf8_buf;
+	#if 0
+	m_nCursorPos += strlen(utf8_buf);
+	#else
+	m_nCursorPos++;
+	#endif
+}
+
+void CXConsole::RemoveInputChar(bool bBackSpace)
+{
+	if (m_sInputBuffer.empty())
+		return;
+
+	if (bBackSpace)
+	{
+		if (m_nCursorPos > 0)
+		{
+			const char* const pBase = m_sInputBuffer.c_str();
+			const char* pCursor = pBase + m_nCursorPos;
+			const char* const pEnd = pCursor;
+			#if 0
+			Unicode::CIterator<const char*, false> pUnicode(pCursor);
+			pUnicode--; // Remove one UCS code-point, doesn't account for combining diacritics
+			pCursor = pUnicode.GetPosition();
+			const size_t length = pEnd - pCursor;
+			#endif
+			const size_t length = 1;
+			m_sInputBuffer.erase(pCursor - pBase, length);
+			m_nCursorPos -= length;
+		}
+	}
+	else
+	{
+		if (m_nCursorPos < (int)(m_sInputBuffer.length()))
+		{
+			const char* const pBase = m_sInputBuffer.c_str();
+			const char* pCursor = pBase + m_nCursorPos;
+			const char* const pBegin = pCursor;
+			#if 0
+			Unicode::CIterator<const char*, false> pUnicode(pCursor);
+			pUnicode--; // Remove one UCS code-point, doesn't account for combining diacritics
+			pCursor = pUnicode.GetPosition();
+			const size_t length = pCursor - pBegin;
+			#endif
+			const size_t length = 1;
+			m_sInputBuffer.erase(pBegin - pBase, length);
+		}
+	}
+}
+
 void CXConsole::ExecuteInputBuffer()
 {
 	string sTemp = m_sInputBuffer;
@@ -1312,3 +2558,330 @@ void CXConsole::ExecuteInputBuffer()
 
 	m_nCursorPos = 0;
 }
+
+void CXConsole::ExecuteCommand(CConsoleCommand& cmd, string& str, bool bIgnoreDevMode)
+{
+	CryLog("[CONSOLE] Executing console command '%s'", str.c_str());
+	//INDENT_LOG_DURING_SCOPE();
+
+	std::vector<string> args;
+
+	const char* start = str.c_str();
+	const char* commandLine = start;
+	while (char ch = *commandLine++)
+	{
+		switch (ch)
+		{
+		case '\'':
+		case '\"':
+			{
+				while ((*commandLine++ != ch) && *commandLine)
+					;
+				args.push_back(string(start + 1, commandLine - 1));
+				start = commandLine;
+				break;
+			}
+		case ' ':
+			start = commandLine;
+			break;
+		default:
+			{
+				if ((*commandLine == ' ') || !*commandLine)
+				{
+					args.push_back(string(start, commandLine));
+					start = commandLine + 1;
+				}
+			}
+			break;
+		}
+	}
+
+	if (args.size() >= 2 && args[1] == "?")
+	{
+		DisplayHelp(cmd.m_sHelp.data(), cmd.m_sName.c_str());
+		return;
+	}
+
+	if (((cmd.m_nFlags & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0) && !(gEnv->IsEditor()))
+	{
+#if LOG_CVAR_INFRACTIONS
+		gEnv->pLog->LogError("[CVARS]: [EXECUTE] command %s is marked [VF_CHEAT]", cmd.m_sName.c_str());
+	#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+	#endif
+#endif
+		if (!(gEnv->IsEditor()) && !(m_system.IsDevMode()) && !bIgnoreDevMode)
+			return;
+	}
+
+	if (cmd.m_func)
+	{
+		// This is function command, execute it with a list of parameters.
+		CConsoleCommandArgs cmdArgs(str, args);
+		if (!cmd.m_isManagedExternally)
+			cmd.m_func(&cmdArgs);
+		#if 0
+		else
+		{
+			for (TManagedConsoleCommandListener::Notifier notifier(m_managedConsoleCommandListeners); notifier.IsValid(); notifier.Next())
+				notifier->OnManagedConsoleCommandEvent(cmd.m_sName.c_str(), &cmdArgs);
+		}
+		#endif
+
+		return;
+	}
+
+	string buf;
+	{
+		// only do this for commands with script implementation
+		size_t t = 1;
+		for (;; )
+		{
+			t = str.find_first_of("\\", t);
+			if (t == string::npos) 
+				break;
+			str.replace(t, 1, "\\\\", 2);
+			t += 2;
+		}
+
+		for (t = 1;; )
+		{
+			t = str.find_first_of("\"", t);
+			if (t == string::npos) 
+				break;
+			str.replace(t, 1, "\\\"", 2);
+			t += 2;
+		}
+
+		buf = cmd.m_sCommand;
+
+		size_t pp = buf.find("%%");
+		if (pp != string::npos)
+		{
+			string list = "";
+			for (unsigned int i = 1; i < args.size(); i++)
+			{
+				list += "\"" + args[i] + "\"";
+				if (i < args.size() - 1) list += ",";
+			}
+			buf.replace(pp, 2, list);
+		}
+		else if ((pp = buf.find("%line")) != string::npos)
+		{
+			string tmp = "\"" + str.substr(str.find(" ") + 1) + "\"";
+			if (args.size() > 1)
+			{
+				buf.replace(pp, 5, tmp);
+			}
+			else
+			{
+				buf.replace(pp, 5, "");
+			}
+		}
+		else
+		{
+			for (unsigned int i = 1; i <= args.size(); i++)
+			{
+				char pat[10];
+				sprintf(pat, "%%%u", i);
+				size_t pos = buf.find(pat);
+				if (pos == string::npos)
+				{
+					if (i != args.size())
+					{
+						ConsoleWarning("Too many arguments for: %s", cmd.m_sName.c_str());
+						return;
+					}
+				}
+				else
+				{
+					if (i == args.size())
+					{
+						ConsoleWarning("Not enough arguments for: %s", cmd.m_sName.c_str());
+						return;
+					}
+					string arg = "\"" + args[i] + "\"";
+					buf.replace(pos, strlen(pat), arg);
+				}
+			}
+		}
+	}
+
+	if (m_system.GetIScriptSystem())
+		m_system.GetIScriptSystem()->ExecuteBuffer(buf.c_str(), buf.length());
+	m_bDrawCursor = 0;
+}
+
+void CXConsole::ScrollConsole()
+{
+	if (!m_pRenderer)
+		return;
+
+	int nCurrHeight = 800;//	m_pRenderer->GetOverlayHeight();
+
+	switch (m_sdScrollDir)
+	{
+	case sdDOWN:
+		m_nScrollPos = m_nTempScrollMax;
+
+		if (m_nScrollPos > m_nTempScrollMax)
+		{
+			m_nScrollPos = m_nTempScrollMax;
+			m_sdScrollDir = sdNONE;
+		}
+		break;
+	case sdUP:
+		m_nScrollPos -= nCurrHeight;//2;
+
+		if (m_nScrollPos < 0)
+		{
+			m_nScrollPos = 0;
+			m_sdScrollDir = sdNONE;
+		}
+		break;
+	case sdNONE:
+		break;
+	}
+}
+
+
+
+void CXConsole::ConsoleLogInputResponse(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eInputResponse, format, args);
+	va_end(args);
+}
+
+void CXConsole::ConsoleLogInput(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eInput, format, args);
+	va_end(args);
+}
+
+void CXConsole::ConsoleWarning(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eWarningAlways, format, args);
+	va_end(args);
+}
+
+void CXConsole::DisplayHelp(const char* help, const char* name)
+{
+	if (help == 0 || *help == 0)
+	{
+		ConsoleLogInputResponse("No help available for $3%s", name);
+	}
+	else
+	{
+		char* start, * pos;
+		for (pos = (char*)help, start = (char*)help; 
+			(pos = strstr(pos, "\n")) != nullptr; 
+			start = ++pos)
+		{
+			string s = start;
+			s.resize(pos - start);
+			ConsoleLogInputResponse("    $3%s", s.c_str());
+		}
+		ConsoleLogInputResponse("    $3%s", start);
+	}
+}
+
+void CXConsole::DisplayVarValue(ICVar* pVar)
+{
+	if (!pVar)
+		return;
+
+	const char* sFlagsString = GetFlagsString(pVar->GetFlags());
+	string sValue = (pVar->GetFlags() & VF_INVISIBLE) ? "" : pVar->GetString();
+	string sVar = pVar->GetName();
+
+	char szRealState[40] = "";
+	if (ECVarType(pVar->GetType()) == ECVarType::Int)
+	{
+		#if 0
+		const int iRealState = pVar->GetRealIVal();
+		#else
+		const int iRealState = pVar->GetIVal();
+		#endif
+		if (iRealState != pVar->GetIVal())
+		{
+			if (iRealState == -1)
+				strcpy(szRealState, " RealState=Custom");
+			else
+				sprintf(szRealState, " RealState=%d", iRealState);
+		}
+	}
+
+	if (pVar->GetFlags() & VF_BITFIELD)
+	{
+		assert(0);
+		#if 0
+		const uint64 val64 = pVar->GetI64Val();
+		const uint64 alphaBits = val64 & ~63LL;
+		const uint32 nonAlphaBits = val64 & 63;
+
+		if (alphaBits != 0)
+		{
+			// the bottom 6 bits can't be set by char entry, so show them separately
+			char alphaChars[65];  // 1 char per bit + '\0'
+			BitsAlpha64(alphaBits, alphaChars);
+			sValue += " (";
+			if (nonAlphaBits != 0)
+			{
+				char nonAlphaChars[3];  // 1..63 + '\0'
+				sValue += itoa(nonAlphaBits, nonAlphaChars, 10);
+				sValue += ", ";
+			}
+			sValue += alphaChars;
+			sValue += ")";
+		}
+		#endif
+	}
+
+	if (gEnv->IsEditor())
+		ConsoleLogInputResponse("%s=%s [ %s ]%s", sVar.c_str(), sValue.c_str(), sFlagsString, szRealState);
+	else
+		ConsoleLogInputResponse("    $3%s = $6%s $5[%s]$4%s", sVar.c_str(), sValue.c_str(), sFlagsString, szRealState);
+}
+
+void CXConsole::SplitCommands(const char* line, std::list<string>& split)
+{
+	const char* start = line;
+	string working;
+
+	while (true)
+	{
+		char ch = *line++;
+		switch (ch)
+		{
+		case '\'':
+		case '\"':
+			while ((*line++ != ch) && *line)
+				;
+			break;
+		case '\n':
+		case '\r':
+		case ';':
+		case '\0':
+			{
+				working.assign(start, line - 1);
+				working = Trim(working);
+
+				if (!working.empty())
+					split.push_back(working);
+				start = line;
+
+				if (ch == '\0')
+					return;
+			}
+			break;
+		}
+	}
+}
+
+#pragma endregion

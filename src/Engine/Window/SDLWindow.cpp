@@ -250,7 +250,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
   }
 //  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
   // Create window
-  SelectDisplay(posx, posy, width, height);
+  //SelectDisplay(posx, posy, width, height);
   m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width,height, flags);
   if (m_MainWindow == NULL)
   {
@@ -306,7 +306,7 @@ void CSDLWindow::SelectDisplay(int &x, int &y, int w, int h)
 {
   // enumerate displays
 	int displays = SDL_GetNumVideoDisplays();
-	auto display = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
+	auto display = 1;// gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
 	display   	 = std::min(displays - 1, display);
 
 	// get display bounds for all displays

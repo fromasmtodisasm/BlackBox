@@ -102,6 +102,10 @@ bool CSystemConfiguration::ParseSystemConfig()
 			//strValue.replace("\\\\", "\\");
 			//strValue.replace("\\\"", "\"");
 
+			if (strKey == "r_DisplayIndex")
+			{
+				CryLog("here");
+			}
 			m_pSink->OnLoadConfigurationEntry(strKey.c_str(), strValue.c_str(), nullptr);
 		}
 		else
@@ -292,9 +296,9 @@ bool CSystem::CheckLogVerbosity(int verbosity)
 	return true;
 }
 
-void CSystem::LoadConfiguration(const string& sFilename)
+void CSystem::LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink, ELoadConfigurationType configType, ELoadConfigurationFlags flags)
 {
-	if (sFilename.empty() && sFilename.size() > 0)
+	if (sFilename && strlen(sFilename) > 0)
 	{
 		CSystemConfiguration tempConfig(sFilename, this, this);
 	}

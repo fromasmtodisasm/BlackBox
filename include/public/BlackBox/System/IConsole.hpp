@@ -81,9 +81,6 @@ struct IConsoleCommand
 	virtual bool execute(CommandDesc& cd) = 0;
 };
 
-//! This a definition of the console command function that can be added to console with AddCommand.
-typedef bool (*ConsoleCommandFunc)(CommandDesc&);
-
 //////////////////////////////////////////////////////////////////////
 struct ICVarDumpSink
 {
@@ -141,6 +138,9 @@ struct IConsoleCmdArgs
 	virtual const char* GetCommandLine() const = 0;
 	// </interfuscator:shuffle>
 };
+
+//! This a definition of the console command function that can be added to console with AddCommand.
+typedef void (* ConsoleCommandFunc)(IConsoleCmdArgs*);
 
 //! This a definition of the callback function that is called when variable change.
 typedef void (* ConsoleVarFunc)(ICVar*);
@@ -398,7 +398,7 @@ struct IBaseConsole
 	virtual void	GetSortedVars( const char **pszArray,size_t numItems ) = 0;
 	virtual const char*	AutoComplete( const char* substr ) = 0;
 	virtual const char*	AutoCompletePrev( const char* substr ) = 0;
-	virtual char *ProcessCompletion( const char *szInputBuffer ) = 0;
+	virtual const char *ProcessCompletion( const char *szInputBuffer ) = 0;
 	//! 
 	virtual void ResetAutoCompletion()=0;
 	
@@ -517,17 +517,17 @@ struct ICVarBase
 	/*! Return the integer value of the variable
       @return the value
     */
-	virtual int GetIVal() = 0;
+	virtual int GetIVal() const = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Return the float value of the variable
       @return the value
     */
-	virtual float GetFVal() = 0;
+	virtual float GetFVal() const = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Return the string value of the variable
       @return the value
     */
-	virtual char* GetString() = 0;
+	virtual const char* GetString() const = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! set the string value of the variable
       @param s string representation the value
@@ -561,7 +561,7 @@ struct ICVarBase
 	/*! return the variable's flags
       @return the variable's flags
     */
-	virtual int GetFlags() = 0;
+	virtual int GetFlags() const = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! Set the variable's flags
     */
@@ -570,32 +570,41 @@ struct ICVarBase
 	/*! return the primary variable's type
       @return the primary variable's type
     */
-	virtual int GetType() = 0;
+	virtual int GetType() const = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! return the variable's name
       @return the variable's name
     */
-	virtual const char* GetName() = 0;
+	virtual const char* GetName() const = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*! return the variable's name
       @return the variable's name
     */
-	virtual const char* GetHelp() = 0;
+	virtual const char* GetHelp() const = 0;
 };
 
 struct ICVar : public ICVarBase
 {
 	//! Indicates whether the console owns the CVar and should delete it
 	virtual bool IsOwnedByConsole() const = 0;
+	//! \return true if the variable may be modified in config files.
+	virtual bool  IsConstCVar() const = 0;
+	//! Sets the value of the variable regardless of type
+	//! \param s String representation of the value.
+	virtual void SetFromString(const char* szValue) = 0;
+
 
 	inline uint64 AddOnChange(ConsoleVarFunc pCallback)
 	{
-		return AddOnChange([this, pCallback] { pCallback(this); });
+		return AddOnChange([this, pCallback](void) { pCallback(this); });
 	}
 
 	//! Adds a new on change callback function to the cvar.
 	//! \return an ID associated with the function that is never invalidated
 	virtual uint64 AddOnChange(std::function<void()> callback) = 0;
+	//! Removes an on change functor.
+	//! \return true if removal was successful.
+	virtual bool RemoveOnChangeFunctor(const uint64 id) = 0;
 };
 #ifdef EXCLUDE_CVARHELP
 #	define CVARHELP(_comment) 0
