@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/Core/StlUtils.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp>
 #include <BlackBox/ScriptSystem/ScriptBinding.hpp>
@@ -21,8 +22,8 @@ struct SLuaStackEntry
 	string description;
 };
 
-typedef std::set<std::string, stl::less_stricmp<std::string>> ScriptFileList;
-typedef ScriptFileList::iterator ScriptFileListItor;
+typedef std::set<string, stl::less_stricmp<string>> ScriptFileList;
+typedef ScriptFileList::iterator                    ScriptFileListItor;
 
 class CFunctionHandler;
 
@@ -252,11 +253,8 @@ class CScriptSystem : public IScriptSystem
 		lua_pushnil(L);
 	}
 
-	bool IsCallStackEmpty(void);
-	void DumpStateToFile(const char* filename);
-	void GetCallStack(std::vector<SLuaStackEntry>& callstack);
-
   private:
+	void GetCallStack(std::vector<SLuaStackEntry>& callstack);
 
   private:
 	bool EndCallN(int nReturns);

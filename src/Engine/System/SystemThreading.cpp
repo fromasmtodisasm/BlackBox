@@ -90,7 +90,19 @@ bool CThreadManager::SpawnThreadImpl(IThread* pThreadTask, const char* sThreadNa
 	std::
 	CryThreadUtil::CryCreateThread(&(pThreadMetaData->m_threadHandle), desc);
 	#else
-	pThreadMetaData->m_threadHandle = std::thread([pThreadTask] { pThreadTask->ThreadEntry(); });
+	pThreadMetaData->m_threadHandle = std::thread([pThreadTask,pThreadMetaData] { 
+		pThreadTask->ThreadEntry(); 
+		// Signal imminent thread end
+		pThreadMetaData->m_threadExitMutex.Lock();
+		pThreadMetaData->m_isRunning = false;
+		pThreadMetaData->m_threadExitCondition.notify_all();
+		pThreadMetaData->m_threadExitMutex.Unlock();
+
+		// Unregister thread
+		// Note: Unregister after m_threadExitCondition.Notify() to ensure pThreadData is still valid
+		pThreadMetaData->m_pThreadMngr->UnregisterThread(pThreadMetaData->m_pThreadTask);
+	
+	});
 	pThreadMetaData->m_isRunning = true;
 	#endif
 
@@ -136,10 +148,10 @@ bool CThreadManager::JoinThread(IThread* pThreadTask, EJoinMode eJoinMode)
 
 	// Wait for completion of the target thread exit condition
 	AUTO_LOCK_T(decltype(pThreadImpl->m_threadExitMutex.m_mutex), pThreadImpl->m_threadExitMutex.m_mutex);
-	#if 0
+	#if 1
 	while (pThreadImpl->m_isRunning)
 	{
-#if !CRY_PLATFORM_ORBIS
+#if !BB_PLATFORM_ORBIS
 		// Ensure thread is still alive.
 		// Handle special case where engine shutdown is using exit(1) e.g. CrashHandler.
 		// Exit(1) force terminates all threads so they don't reach the cleanup code at the end of the RunThread() function.		

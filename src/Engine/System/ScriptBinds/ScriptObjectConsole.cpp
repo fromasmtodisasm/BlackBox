@@ -44,7 +44,7 @@ int CScriptObjectConsole::PrintLine(IFunctionHandler* pH)
 {
   const char* str;
   pH->GetParam(1, str);
-  m_Console->PrintLine("-- %s;", str);
+  CryLogAlways("-- %s;", str);
   return pH->EndFunction(m_pScriptThis);
 }
 
@@ -77,7 +77,7 @@ int CScriptObjectConsole::CreateKeyBind(IFunctionHandler* pH)
   const char* cmd;
   pH->GetParam(1, key);
   pH->GetParam(2, cmd);
-  m_Console->CreateKeyBind(key, cmd);
+  m_Console->CreateKeyBind(key, cmd, false);
   return pH->EndFunction();
   return 0;
 }

@@ -453,7 +453,9 @@ static eCrySockError TranslateLastSocketError()
 
 		TRANSLATE(WSANOTINITIALISED, eCSE_ENOTINITIALISED);
 	default:
+		#if 0
 		CRY_ASSERT(false, string().Format("CrySock could not translate OS error code %x, treating as miscellaneous", error));
+		#endif
 		socketError = eCSE_MISC_ERROR;
 		break;
 	}
@@ -502,7 +504,9 @@ static int TranslateToSocketError(eCrySockError socketError)
 
 		TRANSLATE(WSANOTINITIALISED, eCSE_ENOTINITIALISED);
 	default:
+		#if 0
 		CRY_ASSERT(false, string().Format("CrySock could not translate eCrySockError error code %x, treating as miscellaneous", socketError));
+		#endif
 		break;
 	}
 #undef TRANSLATE

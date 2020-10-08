@@ -3,6 +3,7 @@
 #pragma once
 #include <thread>
 #include <mutex>
+#include <future>
 
 #define THREAD_NAME_LENGTH_MAX 64
 struct CryMutex
@@ -125,3 +126,11 @@ public:
 	~CScopedFloatingPointException(){}
 };
 #endif
+
+namespace CryThreadUtil
+{
+	inline bool CryIsThreadAlive(const std::thread& t)
+	{
+		return t.joinable();
+	}
+}

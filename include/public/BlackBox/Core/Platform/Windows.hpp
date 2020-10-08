@@ -45,7 +45,7 @@
 		#undef DrawText
 		#undef GetCharWidth
 		#undef GetUserName
-		//#undef SendMessage
+    #undef SendMessage
 		//#undef LoadLibrary
 	#endif
 	#undef GetCompressedFileSize
@@ -58,6 +58,9 @@
 	#if defined(_RELEASE) && !BB_PLATFORM_DESKTOP && !defined(RELEASE_LOGGING)
 		#undef OutputDebugString
 		#define OutputDebugString(...) (void) 0
+	#else
+		//#undef OutputDebugString
+		//#define OutputDebugString(...) (void) 0
 	#endif
 
   inline int64_t  bbGetTicks()

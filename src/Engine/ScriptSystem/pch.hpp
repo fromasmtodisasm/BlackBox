@@ -13,6 +13,10 @@
 #define PWI_NAME_TAG "PrimitiveWorldIntersection(Script)"
 
 #define CRYSCRIPTSYSTEM_EXPORTS
+#include <BlackBox/Core/Platform/Platform.hpp>
+
+#include <functional>
+
 
 #define MY_STRING
 #include <BlackBox/Core/Platform/Platform.hpp>
@@ -79,6 +83,7 @@ class MyString : public std::string
 //#define DEBUG_LUA_STATE
 
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/StlUtils.hpp>
 #include <BlackBox/System/IConsole.hpp>
 //#include <CryCore/StlUtils.h>
 //#include <CryMemory/CrySizer.h>

@@ -160,7 +160,7 @@ void CHardwareMouse::ShowHardwareMouse(bool bShow)
 
 	if (m_debugHardwareMouse)
 	{
-		LogAlways("HM: ShowHardwareMouse = %d", bShow);
+		CryLogAlways("HM: ShowHardwareMouse = %d", bShow);
 	}
 
 	if (bShow)
@@ -187,7 +187,7 @@ void CHardwareMouse::ShowHardwareMouse(bool bShow)
 void CHardwareMouse::ConfineCursor(bool confine)
 {
 	if (m_debugHardwareMouse)
-		LogAlways("HM: ConfineCursor = %d", confine);
+		CryLogAlways("HM: ConfineCursor = %d", confine);
 
 	if (!gEnv || gEnv->pRenderer == NULL || m_allowConfine == false || !m_bFocus)
 		return;
@@ -503,7 +503,7 @@ void CHardwareMouse::IncrementCounter()
 	m_iReferenceCounter++;
 
 	if (m_debugHardwareMouse)
-		LogAlways("HM: IncrementCounter = %d", m_iReferenceCounter);
+		CryLogAlways("HM: IncrementCounter = %d", m_iReferenceCounter);
 	ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
@@ -517,7 +517,7 @@ void CHardwareMouse::DecrementCounter()
 	m_iReferenceCounter--;
 
 	if (m_debugHardwareMouse)
-		LogAlways("HM: DecrementCounter = %d", m_iReferenceCounter);
+		CryLogAlways("HM: DecrementCounter = %d", m_iReferenceCounter);
 	ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
