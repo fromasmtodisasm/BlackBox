@@ -14,7 +14,7 @@ class CXConsoleVariableBase : public ICVar
 public:
 	//! constructor
 	//! \param pConsole must not be 0
-	CXConsoleVariableBase(IConsole* pConsole, const string& name, int flags, const char* szHelp)
+	CXConsoleVariableBase(CXConsole* pConsole, const string& name, int flags, const char* szHelp)
 		: m_name(name)
 		, m_helpMessage(szHelp)
 		, m_flags(flags)
@@ -147,7 +147,7 @@ protected: // ------------------------------------------------------------------
 	std::vector<SCallback> m_onChangeCallbacks;
 	uint64                 m_changeFunctorIdTotal = 0;
 
-	IConsole*              m_pConsole;              // used for the callback OnBeforeVarChange()
+	CXConsole*             m_pConsole;              // used for the callback OnBeforeVarChange()
 };
 
 template<class T>
@@ -158,7 +158,7 @@ class CXNumericConsoleVariable : public CXConsoleVariableBase
 	static_assert(std::is_arithmetic<base_type>::value, "base_type has to be arithmetic");
 
 public:
-	CXNumericConsoleVariable(IConsole* const pConsole, const string& name, value_type var, int flags, const char* szHelp, bool ownedByConsole)
+	CXNumericConsoleVariable(CXConsole* const pConsole, const string& name, value_type var, int flags, const char* szHelp, bool ownedByConsole)
 		: CXConsoleVariableBase(pConsole, name, flags, szHelp)
 		, m_value(var) // Assign here first, in case value_type is a reference
 		, m_maxValue(std::numeric_limits<base_type>::max())
@@ -449,7 +449,6 @@ protected:
 		if (value == m_value && (m_flags & VF_ALWAYSONCHANGE) == 0)
 			return;
 
-		#if 0
 		if (m_pConsole->OnBeforeVarChange(this, GetString()))
 		{
 			if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
@@ -472,7 +471,6 @@ protected:
 
 			m_pConsole->OnAfterVarChange(this);
 		}
-		#endif
 	}
 
 	value_type             m_value;
@@ -490,7 +488,7 @@ class CXStringConsoleVariable : public CXConsoleVariableBase
 	static_assert(std::is_same<base_type, string>::value, "base_type has to be string");
 
 public:
-	CXStringConsoleVariable(IConsole* const pConsole, const string& name, typename base_type::const_pointer defaultValue, int flags, const char* szHelp, bool ownedByConsole)
+	CXStringConsoleVariable(CXConsole* const pConsole, const string& name, typename base_type::const_pointer defaultValue, int flags, const char* szHelp, bool ownedByConsole)
 		: CXConsoleVariableBase(pConsole, name, flags, szHelp)
 		//, m_value(GetCVarOverride(name, defaultValue))
 		, m_value(defaultValue)
@@ -498,7 +496,7 @@ public:
 	{
 		static_assert(!std::is_reference<value_type>::value, "This constructor can only be used for non-reference types.");
 	}
-	CXStringConsoleVariable(IConsole* const pConsole, const string& name, typename base_type::const_pointer& userBuffer, typename base_type::const_pointer defaultValue, int nFlags, const char* szHelp, bool ownedByConsole)
+	CXStringConsoleVariable(CXConsole* const pConsole, const string& name, typename base_type::const_pointer& userBuffer, typename base_type::const_pointer defaultValue, int nFlags, const char* szHelp, bool ownedByConsole)
 		: CXConsoleVariableBase(pConsole, name, nFlags, szHelp)
 		//, m_value(GetCVarOverride(name, defaultValue))
 		, m_value(defaultValue)
@@ -548,7 +546,6 @@ public:
 			}
 		}
 
-		#if 0
 		if (m_pConsole->OnBeforeVarChange(this, szValue))
 		{
 			if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
@@ -566,7 +563,6 @@ public:
 
 			m_pConsole->OnAfterVarChange(this);
 		}
-		#endif
 	}
 	virtual void Set(float value) override
 	{

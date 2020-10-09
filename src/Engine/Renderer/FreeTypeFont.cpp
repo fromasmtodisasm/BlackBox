@@ -33,6 +33,7 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 	RSS(render, BLEND, true);
 	RSS(render, CULL_FACE, false);
 	RSS(render, DEPTH_TEST, false);
+	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	{
@@ -103,6 +104,7 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	gl::BindTexture2D(GL_TEXTURE_2D, 0);
+	glDepthMask(GL_TRUE);
 }
 
 float FreeTypeFont::TextWidth(const std::string& text)

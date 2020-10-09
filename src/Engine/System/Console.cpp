@@ -594,7 +594,7 @@ void CXConsole::PreProjectSystemInit()
 
 	REGISTER_CVAR(con_display_last_messages, 0, VF_NULL, "");  // keep default at 1, needed for gameplay
 	REGISTER_CVAR(con_line_buffer_size, 1000, VF_NULL, "");
-	REGISTER_CVAR(con_font_size, 14, VF_NULL, "");
+	REGISTER_CVAR(con_font_size, con_font_size, VF_NULL, "");
 	REGISTER_CVAR(con_showonload, 0, VF_NULL, "Show console on level loading");
 	REGISTER_CVAR(con_debug, 0, VF_CHEAT, "Log call stack on every GetCVar call");
 	REGISTER_CVAR(con_restricted, con_restricted, VF_RESTRICTEDMODE, "0=normal mode / 1=restricted access to the console");        // later on VF_RESTRICTEDMODE should be removed (to 0)
@@ -686,13 +686,13 @@ void CXConsole::PostRendererInit()
 
 	if (m_pRenderer)
 	{
-		const char* texture_path = "console/defaultconsole.dds";
+		const char* texture_path = ""; //"console/defaultconsole.dds";
 		ICVar* background		 = GetCVar("console_background");
 		if (background != nullptr)
 			texture_path = background->GetString();
 		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
 		ITexture* pTex = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
-		m_nWhiteTexID = pTex ? pTex->getId() : -1;
+		m_nWhiteTexID = pTex ? pTex->getId() : 0;
 	}
 	else
 	{
@@ -986,6 +986,51 @@ void CXConsole::SetInputLine(const char* szLine)
 	CRY_ASSERT(szLine);
 	m_sInputBuffer = szLine;
 	m_nCursorPos = m_sInputBuffer.size();
+}
+
+bool CXConsole::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
+{
+	const bool isConst = pVar->IsConstCVar();
+	const bool isCheat = ((pVar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0);
+	const bool isReadOnly = ((pVar->GetFlags() & VF_READONLY) != 0);
+	const bool isDeprecated = ((pVar->GetFlags() & VF_DEPRECATED) != 0);
+
+	if (
+#if CVAR_GROUPS_ARE_PRIVILEGED
+	  !m_bIsProcessingGroup &&
+#endif
+	  (isConst || isCheat || isReadOnly || isDeprecated))
+	{
+		const bool allowChange = !isDeprecated && ((gEnv->pSystem->IsDevMode()) || (gEnv->IsEditor()));
+		if (!(gEnv->IsEditor()) || isDeprecated)
+		{
+#if LOG_CVAR_INFRACTIONS
+			LogChangeMessage(pVar->GetName(), isConst, isCheat,
+			                 isReadOnly, isDeprecated, pVar->GetString(), sNewValue, m_bIsProcessingGroup, allowChange);
+	#if LOG_CVAR_INFRACTIONS_CALLSTACK
+			gEnv->pSystem->debug_LogCallStack();
+	#endif
+#endif
+		}
+
+		if (!allowChange)
+			return false;
+	}
+
+	for (IConsoleVarSink* sink : m_consoleVarSinks)
+	{
+		if (!sink->OnBeforeVarChange(pVar, sNewValue))
+			return false;
+	}
+	return true;
+}
+
+void CXConsole::OnAfterVarChange(ICVar* pVar)
+{
+}
+
+void CXConsole::OnVarUnregister(ICVar* pVar)
+{
 }
 
 void CXConsole::SetScrollMax(int value)
@@ -1399,11 +1444,11 @@ void CXConsole::Draw()
 	if (!m_bConsoleActive && con_display_last_messages == 0)
 		return;
 
-	//if (m_nScrollPos <= 0)
+	if (m_nScrollPos <= 0)
 	{
 		DrawBuffer(70, "console");
 	}
-	//else
+	else
 	{
 		// cursor blinking
 		{
@@ -1424,22 +1469,22 @@ void CXConsole::Draw()
 		{
 			if (m_bStaticBackground)
 			{
-				m_pRenderer->DrawImage(0.0f, 0.0f, float(800), float(600), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
+				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
 			}
 			else
 			{
 				float fReferenceSize = 600.0f;
-				float fSizeX = (float)600;
-				float fSizeY = m_nTempScrollMax * 800 / fReferenceSize;
+				float fSizeX = (float)m_pRenderer->GetWidth();
+				float fSizeY = m_nTempScrollMax * m_pRenderer->GetHeight() / fReferenceSize;
 
 				m_pRenderer->DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
-				m_pRenderer->DrawImage(0, fSizeY, fSizeX, 2.0f * 800 / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
+				m_pRenderer->DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
 			}
 		}
 
 		// draw progress bar
 		if (m_nProgressRange)
-			m_pRenderer->DrawImage(0.0f, 0.0f, float(800), float(600), m_nLoadingBackTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
+			m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_nLoadingBackTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
 
 		DrawBuffer(m_nScrollPos, "console");
 	}
@@ -2324,7 +2369,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 	{
 		//const int flags = eDrawText_Monospace | eDrawText_CenterV | eDrawText_2D;
 		const float fontSize = con_font_size;
-		const float csize = 0.8f * fontSize;
+		const float csize = 1.16f * fontSize;
 		const float fCharWidth = 0.5f * fontSize;
 
 		float yPos = nScrollPos - csize - 3.0f;
@@ -2377,7 +2422,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 					#else
 					m_pFont->RenderText(
 						buf,
-						xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+						xPos - fCharWidth, yPos, fontSize * 1.5f / 14, &glm::vec4(1)[0]);
 					#endif
 
 				}
@@ -2994,7 +3039,8 @@ void CXConsole::ScrollConsole()
 	if (!m_pRenderer)
 		return;
 
-	int nCurrHeight = 800;//	m_pRenderer->GetOverlayHeight();
+	//int nCurrHeight = m_pRenderer->GetOverlayHeight();
+	int nCurrHeight = m_pRenderer->GetHeight();
 
 	switch (m_sdScrollDir)
 	{

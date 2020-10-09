@@ -495,15 +495,15 @@ bool CSystem::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 		{
 		case 0:
 			PROFILER_UNFROZE_FRAME();
-			return true;
+			return false;
 		case 1:
 			PROFILER_FROZE_FRAME();
-			return true;
-		default:
 			return false;
+		default:
+			return true;
 		}
 	}
-	return false;
+	return true;
 }
 
 bool CSystem::OnInputEvent(const SInputEvent& event)

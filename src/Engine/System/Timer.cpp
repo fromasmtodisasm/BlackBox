@@ -133,7 +133,8 @@ float CTimer::GetCurrTime(ETimer which) const
 /////////////////////////////////////////////////////
 float CTimer::GetRealFrameTime() const
 {
-  return m_bEnabled ? m_fRealFrameTime : 0.0f;
+  //return m_bEnabled ? m_fRealFrameTime : 0.0f;
+  return m_bEnabled ? m_fRealFrameTime : 0.016f;
 }
 
 /////////////////////////////////////////////////////

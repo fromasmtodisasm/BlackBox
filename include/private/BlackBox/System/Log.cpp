@@ -1,0 +1,2 @@
+#include "NullLog.hpp"
+

@@ -668,7 +668,7 @@ bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 	{
 		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
 	}
-	return false;
+	return true;
 }
 
 void GLRenderer::OnAfterVarChange(ICVar* pVar)

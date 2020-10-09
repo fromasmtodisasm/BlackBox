@@ -1,23 +1,33 @@
 #pragma once
-#include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <cstdarg>
 #include <cstdio>
 #include <string>
 #include <vector>
 
-class CLog : public ILog
+template<class T, int = 32>
+using StackStringT = std::string;
+
+class CLog : 
+	public ILog
+	, public ISystemEventListener
 {
   public:
-	CLog(const char* filename)
-		: filename(filename)
+	typedef StackStringT<char, 256> LogStringType;
+	
+	CLog::CLog(ISystem* pSystem)
+		: m_pSystem(pSystem)
+		, m_fLastLoadingUpdateTime(-1.0f)
+		, m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
 	{
-		output = fopen(filename, "w");
-		ZeroMemory(buf, sizeof(buf));
+		gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
+
 	}
+
 	~CLog()
 	{
 		if (output)
@@ -25,15 +35,6 @@ class CLog : public ILog
 			Shutdown();
 			fclose(output);
 		}
-	}
-
-	// Inherited via ILog
-	virtual void Clear() override
-	{
-		log.clear();
-	}
-	virtual void Draw(const char* title, bool* p_open) override
-	{
 	}
 
   private:
@@ -58,112 +59,59 @@ class CLog : public ILog
 		}
 	}
 
+	virtual void Release() override;
+	virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override;
+	virtual void LogToConsole(const char* command, ...) override;
+	virtual void SetFileName(const char* command = NULL) override;
+	virtual const char* GetFileName() override;
+	virtual void LogToFile(const char* command, ...) override;
+	virtual void LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_list args);
+	const char* LogTypeToString(IMiniLog::ELogType type);
+	virtual void Log(const char* szCommand, ...) override;
+	virtual void LogWarning(const char* szCommand, ...) override;
+	virtual void LogError(const char* szCommand, ...) override;
+	virtual void LogPlus(const char* command, ...) override;
+	virtual void LogToFilePlus(const char* command, ...) override;
+	virtual void LogToConsolePlus(const char* command, ...) override;
+	virtual void UpdateLoadingScreen(const char* command, ...) override;
+	virtual void UpdateLoadingScreenPlus(const char* command, ...) override;
+	virtual void EnableVerbosity(bool bEnable) override;
+	virtual void SetVerbosity(int verbosity) override;
+	virtual int GetVerbosityLevel() override;
+
+	void LogStringToFile(const char* szString, bool bAdd, bool bError = false);
+	void LogStringToConsole(const char* szString, bool bAdd = false);
+
+	ISystem*                  m_pSystem;
+	float                     m_fLastLoadingUpdateTime; // for non-frequent streamingEngine update
+	string                    m_filename;               // Contains only the file name and the extension
+	string                    m_filePath;               // Contains the full absolute path to the log file
+	string                    m_backupFilePath;         // Contains the full absolute path to the backup log file
+	FILE*                     m_pLogFile = nullptr;
+	StackStringT<char, 32> m_LogMode;                // mode m_pLogFile has been opened with
+	FILE*                     m_pErrFile = nullptr;
+	int                       m_nErrCount = 0;
+	string                    m_logFormat;              // Time logging format
   private:
+	// checks the verbosity of the message and returns NULL if the message must NOT be
+	// logged, or the pointer to the part of the message that should be logged
+	const char* CheckAgainstVerbosity(const char* pText, bool& logtofile, bool& logtoconsole, const uint8 DefaultVerbosity = 2);
+
 	FILE* output;
 	const char* filename = "log.txt";
 	bool inited			 = false;
 	std::vector<std::string> log;
 	char buf[4096] = {0};
 
-	// Inherited via ILog
-	virtual void Release() override
-	{
-		delete this;
-	}
 
-	// Inherited via ILog
-	virtual void LogV(const ELogType nType, const char* szFormat, va_list args) override
-	{
-		LogV(nType, 0, szFormat, args);
-	}
+	ICVar* m_pLogVerbosity					   = nullptr; //
+	ICVar* m_pLogWriteToFile				   = nullptr; //
+	ICVar* m_pLogWriteToFileVerbosity		   = nullptr; //
+	ICVar* m_pLogVerbosityOverridesWriteToFile = nullptr; //
+	ICVar* m_pLogSpamDelay					   = nullptr; //
+	ICVar* m_pLogModule						   = nullptr;
 
-	// Inherited via ILog
-	virtual void LogToConsole(const char* command, ...) override
-	{
-	}
-
-	// Inherited via ILog
-	virtual void SetFileName(const char* command = NULL) override
-	{
-	}
-	virtual const char* GetFileName() override
-	{
-		return NULL;
-	}
-
-	// Inherited via ILog
-	virtual void LogToFile(const char* command, ...) override
-	{
-	}
-
-	// Inherited via ILog
-	virtual void LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_list args)
-	{
-		auto len = sprintf(buf, "%s ", LogTypeToString(nType));
-		len += vsprintf(buf + len, szFormat, args);
-		buf[len] = '\0';
-		if (gEnv->pConsole)
-			gEnv->pConsole->PrintLine(buf);
-		//else
-
-		auto formatted = string(buf);
-		switch (nType)
-		{
-		case eAlways:
-		case eInput:
-		case eInputResponse:
-		case eComment:
-		case eMessage:
-			GetISystem()->GetIRemoteConsole()->AddLogMessage(formatted.c_str());
-			break;
-		case eWarning:
-		case eWarningAlways:
-			GetISystem()->GetIRemoteConsole()->AddLogWarning(formatted.c_str());
-			break;
-		case eError:
-		case eErrorAlways:
-		case eAssert:
-			GetISystem()->GetIRemoteConsole()->AddLogError(formatted.c_str());
-			break;
-		default:
-			CryFatalError("Unsupported ELogType type");
-			break;
-		}
-		{
-			buf[len]	 = '\n';
-			buf[len + 1] = '\0';
-			std::cout << buf;
-		}
-		log.push_back(strdup(buf));
-	}
-
-	inline const char* LogTypeToString(IMiniLog::ELogType type)
-	{
-		switch (type)
-		{
-		case IMiniLog::eMessage:
-			return "";
-			break;
-		case IMiniLog::eWarning:
-			return "[$6Warning$1]";
-			break;
-		case IMiniLog::eError:
-			return "$4[Error]";
-			break;
-		case IMiniLog::eAlways:
-			return "";
-			break;
-		case IMiniLog::eWarningAlways:
-			return "";
-			break;
-		case IMiniLog::eErrorAlways:
-			return "[$4Error$1]";
-			break;
-		case IMiniLog::eInput:
-			return "Input";
-			break;
-		default:
-			return "";
-		}
-	}
+	// Inherited via ISystemEventListener
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+	// Module filter for log
 };

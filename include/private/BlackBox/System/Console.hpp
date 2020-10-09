@@ -41,7 +41,7 @@ inline string& TrimRight(string& str)
 
 inline string& TrimLeft(string& str, const string& pattern)
 {
-	for (size_t i = 0; i < str.length() && strstr(&str[i], pattern.data()); i++)
+	for (size_t i = 0; i < str.length() && strchr(pattern.data(), str[i]); i++)
 	{
 		str.erase(i);
 	}
@@ -50,7 +50,7 @@ inline string& TrimLeft(string& str, const string& pattern)
 
 inline string& TrimRight(string& str, const string& pattern)
 {
-	for (size_t i = str.length(); i > 0 && strstr(&str[i], pattern.data()); i++)
+	for (size_t i = str.length() - 1; i >= 0 && strchr(pattern.data(), str[i]); i++)
 	{
 		str.erase(i);
 	}
@@ -467,6 +467,7 @@ struct cmpInputEvents
 class CXConsole : public IConsole
 	, public IRemoteConsoleListener
 	, public IInputEventListener
+	, public IConsoleVarSink
 {
 	friend class SetCommand;
 	friend class GetCommand;
@@ -554,6 +555,8 @@ class CXConsole : public IConsole
 	// interface IRemoteConsoleListener ------------------------------------------------------------------
 
 	virtual void OnConsoleCommand(const char* cmd) override;
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
+	virtual void OnAfterVarChange(ICVar* pVar) override;
 
   protected:
 	
@@ -741,4 +744,7 @@ private:
 
 	// Inherited via IConsole
 	virtual void SetInputLine(const char* szLine) override;
+
+	// Inherited via IConsoleVarSink
+	virtual void OnVarUnregister(ICVar* pVar) override;
 };

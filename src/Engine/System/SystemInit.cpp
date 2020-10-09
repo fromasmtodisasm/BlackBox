@@ -10,6 +10,9 @@
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif
 
+//////////////////////////////////////////////////////////////////////////
+#define DEFAULT_LOG_FILENAME    "Log.txt"
+
 namespace
 {
 	template<typename L, typename P>
@@ -391,10 +394,24 @@ bool CSystem::Init()
 
 bool CSystem::CreateLog()
 {
-	m_pLog = new CLog(m_startupParams.sLogFileName);
-	if (m_pLog == nullptr)
-		return false;
-	m_env.pLog = m_pLog;
+	if (m_startupParams.pLog == nullptr)
+	{
+		m_pLog = new CLog(this);
+		string sLogFileName = m_startupParams.sLogFileName != nullptr ? m_startupParams.sLogFileName : DEFAULT_LOG_FILENAME;
+
+		const ICmdLineArg* logfile = m_pCmdLine->FindArg(eCLAT_Pre, "logfile");
+		if (logfile && strlen(logfile->GetValue()) > 0)
+		{
+			sLogFileName = logfile->GetValue();
+		}
+
+		m_pLog->SetFileName(m_startupParams.sLogFileName);
+		m_env.pLog = m_pLog;
+	}
+	else
+	{
+		m_env.pLog = m_pLog = m_startupParams.pLog;
+	}
 	return true;
 }
 
