@@ -1,4 +1,4 @@
-#include "NullLog.hpp"
+#include <BlackBox/System/NullLog.hpp>
 
 void CLog::Log(const char* szFormat, ...)
 {

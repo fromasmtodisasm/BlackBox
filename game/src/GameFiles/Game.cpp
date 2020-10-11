@@ -37,13 +37,41 @@
 
 int render_camera = 0;
 
-	std::string vec_to_string(Vec3 vec)
+std::string vec_to_string(Vec3 vec)
+{
+	auto result = "{ x: " + std::to_string(vec.x);
+	result += ", y: " + std::to_string(vec.y);
+	result += ", z: " + std::to_string(vec.z) + "}";
+	return result;
+}
+
+namespace ImGui
+{
+	void InputCVarFloat(ICVar* v, const char* name, float* val)
 	{
-		auto result = "{ x: " + std::to_string(vec.x);
-		result += ", y: " + std::to_string(vec.y);
-		result += ", z: " + std::to_string(vec.z) + "}";
-		return result;
+		if (ImGui::InputFloat(name, val))
+		{
+			gEnv->pConsole->ExecuteString(std::string(std::string(name) + " " + std::to_string(*val)).data());
+			//v->Set(cvv.f);
+		}
 	}
+	void InputCVarInt(ICVar* v, const char* name, int* val)
+	{
+		if (ImGui::InputInt(name, val))
+		{
+			gEnv->pConsole->ExecuteString(std::string(std::string(name) + " " + std::to_string(*val)).data());
+			//v->Set(cvv.f);
+		}
+	}
+	void InputCVarString(ICVar* v, const char* name, char* val)
+	{
+		if (ImGui::InputText(name, val, 256))
+		{
+			gEnv->pConsole->ExecuteString(std::string(std::string(name) + " " + val).data());
+			//v->Set(cvv.f);
+		}
+	}
+} // namespace ImGui
 
 namespace
 {
@@ -416,9 +444,9 @@ bool CGame::Update()
 			m_pScriptSystem->EndCall();
 
 			//DrawHud(fps);
-			//glslEditor->Update();
-			//m_Gui.Update();
-			//gui::update();
+			glslEditor->Update();
+			m_Gui.Update();
+			gui::update();
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
 			{
@@ -1343,6 +1371,7 @@ void CGame::Gui::Common::Draw()
 	static char var_buffer[256];
 	union CVarValue
 	{
+		bool b;
 		int i;	
 		float f;	
 		const char* s;	
@@ -1380,17 +1409,25 @@ void CGame::Gui::Common::Draw()
 
 	if (ImGui::TreeNode("Common"))
 	{
+		static char search_pattern[256] = "sv"; 
+		static bool need_dump			= true;
 		ImGui::Button("Test");
 		if (ImGui::Button("Quit"))
 		{
 			gEnv->pSystem->GetIGame()->SendMessage("Quit");
 		}
 		//ImGui::BeginTooltip();
-		if (ImGui::Checkbox("Show Vars", &console_vars))
+		if (ImGui::Checkbox("Show Vars", &console_vars) || need_dump)
 		{
+			need_dump = false;
+			vd.SetSubstr(search_pattern);
+			vd.vars.resize(0);
 			gEnv->pConsole->DumpCVars(&vd);
-			cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
-			change_value(cur_var);
+			if (!vd.vars.empty())
+			{
+				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
+				change_value(cur_var);
+			}
 		}
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Open listbox with console variables");
@@ -1398,6 +1435,8 @@ void CGame::Gui::Common::Draw()
 
 		if (console_vars && ImGui::BeginChild("Console Variables"))
 		{
+			if (ImGui::InputText("Search", search_pattern, 256))
+				need_dump = true;
 			if (ImGui::ListBox("", &cvr, vd.vars.data(), vd.vars.size(), 10))
 			{
 				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
@@ -1407,39 +1446,26 @@ void CGame::Gui::Common::Draw()
 				ImGui::SetTooltip("Help:\n%s", cur_var->GetHelp());
 			auto v = cur_var;
 			auto name = cur_var->GetName();
+
 			switch (v->GetType())
 			{
 			case CVAR_INT:
 			{
-				if (ImGui::InputInt(name, &cvv.i))
-				{
-					gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.i)).data());
-					//v->Set(cvv.i);
-				}
+				ImGui::InputCVarInt(v, name, &cvv.i);
 				break;
 			}
 			case CVAR_FLOAT:
 			{
-				if (ImGui::InputFloat(name, &cvv.f))
-				{
-					gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::to_string(cvv.f)).data());
-					//v->Set(cvv.f);
-				}
-				break;
+				ImGui::InputCVarFloat(v, name, &cvv.f);
 			}
 			case CVAR_STRING:
 			{
-				if (ImGui::InputText(name, var_buffer, 256))
-				{
-					gEnv->pConsole->ExecuteString(std::string(std::string(vd.vars[cvr]) + " " + std::string(cvv.s)).data());
-					//v->Set(cvv.s);
-				}
+				ImGui::InputCVarString(v, name, const_cast<char*>(cvv.s));
 				break;
 			}
 			default:
 				break;
 			}
-			
 			ImGui::EndChild();
 		}
 		ImGui::TreePop();

@@ -25,7 +25,7 @@ class CXFont;
 struct ITexture;
 
 //! Flags used by ICVar.
-enum EVarFlags : unsigned int
+enum EVarFlags : uint64
 {
 	VF_NULL					   = 0x00000000, //!< Just to have one recognizable spot where the flags are located in the Register call.
 	VF_CHEAT				   = 0x00000002, //!< Stays in the default state when cheats are disabled.
@@ -55,6 +55,8 @@ enum EVarFlags : unsigned int
 	VF_RENDERER_CVAR		   = 0x20000000, //!< The update of this variable will be done in render thread.
 	VF_DEPRECATED			   = 0x40000000, //!< Deprecated cvars use default values which cannot be modified outside the code.
 	VF_EXPERIMENTAL			   = 0x80000000, //!< This variable is used by WIP or experimental feature.
+
+	VF_BOOL			   = 0x0000000200000000, //!< This variable is used by WIP or experimental feature.
 };
 
 #define CVAR_INT 1

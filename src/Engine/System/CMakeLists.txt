@@ -39,7 +39,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/File/CryPak.cpp
   PRIVATE ${ENGINE_DIR}/System/HardwareMouse.cpp
   PRIVATE ${ENGINE_DIR}/System/Linux/Runtime.cpp
-  PRIVATE ${ENGINE_DIR}/System/Log.cpp
+  PRIVATE ${ENGINE_DIR}/System/NullLog.cpp
   PRIVATE ${ENGINE_DIR}/System/MemoryManager.cpp
   PRIVATE ${ENGINE_DIR}/System/RemoteConsole/RemoteConsole.cpp
   PRIVATE ${ENGINE_DIR}/System/System.cpp

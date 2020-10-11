@@ -13,7 +13,7 @@ CInputCVars::CInputCVars()
     "Usage: i_debug [0/1]\n"
     "Default is 0 (off). Set to 1 to spam console with key events (only press and release).");
   REGISTER_CVAR(i_forcefeedback, 1, 0, "Enable/Disable force feedback output.");
-  REGISTER_CVAR(i_grab_input, 0, VF_DUMPTODISK, "Enable/Disable grab input.");
+  REGISTER_CVAR(i_grab_input, 0, VF_DUMPTODISK | VF_BOOL, "Enable/Disable grab input.");
 
   // mouse
   REGISTER_CVAR(i_mouse_buffered, 0, 0,

@@ -444,10 +444,16 @@ private: // ------------------------------------------------------------
 		{
 			void OnElementFound(ICVar* pCVar) override 
 			{
-				vars.push_back(pCVar->GetName());	
+				if (strstr(pCVar->GetName(), substr))
+					vars.push_back(pCVar->GetName());	
+			}
+			void SetSubstr(const char* substr)
+			{
+				this->substr = substr;
 			}
 			std::vector<const char*> vars;
-				
+			const char* substr = "";
+
 		};
 		struct Widget
 		{
