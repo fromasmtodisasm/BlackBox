@@ -11,7 +11,7 @@ git clone --recurse-submodules https://github.com/fromasmtodisasm/BlackBox
 ```
 
 ```cmake
-cmake -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -D GLM_TEST_ENABLE=OFF ${CMAKE_SOURCE_DIR}
+cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_CMAKE} -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -DGLM_TEST_ENABLE=OFF -DUSE_GLM=ON ${CMAKE_SOURCE_DIR}
 ```
 
 reflecttion
