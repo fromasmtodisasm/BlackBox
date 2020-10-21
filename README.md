@@ -10,8 +10,15 @@ and type this commands:
 git clone --recurse-submodules https://github.com/fromasmtodisasm/BlackBox
 ```
 
+```bash
+cd BlackBox
+mkdir build
+cd build
+export VCPKG_CMAKE - ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+```
+
 ```cmake
-cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_CMAKE} -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -DGLM_TEST_ENABLE=OFF -DUSE_GLM=ON ${CMAKE_SOURCE_DIR}
+cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_CMAKE} -DBUILD_SHARED_LIBS=OFF -DGLAD_LOADER=ON -DUSE_SFML=ON -DGLM_TEST_ENABLE=OFF -DUSE_GLM=ON ..
 ```
 
 reflecttion
