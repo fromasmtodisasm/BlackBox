@@ -14,7 +14,7 @@ git clone --recurse-submodules https://github.com/fromasmtodisasm/BlackBox
 cd BlackBox
 mkdir build
 cd build
-export VCPKG_CMAKE - ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+export VCPKG_CMAKE = ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
 ```
 
 ```cmake
