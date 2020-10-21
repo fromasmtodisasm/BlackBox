@@ -18,5 +18,5 @@ void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
     vs_out.fragPos = vec3(model * vec4(aPos, 1.0));
-    vs_out.N = aN;
+    vs_out.N = mat3(transpose(inverse(model))) * aN;
 }

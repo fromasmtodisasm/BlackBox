@@ -20,7 +20,7 @@
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/World/World.hpp>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb/stb_image_write.h>
+#include <stb_image_write.h>
 
 #include <SDL2/SDL.h>
 

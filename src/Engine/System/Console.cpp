@@ -515,7 +515,7 @@ CXConsole::CXConsole(CSystem& system)
 	m_bCheatHashDirty	   = false;
 	m_nCheatHash		   = 0;
 
-	m_bStaticBackground = false;
+	m_bStaticBackground = true;
 	m_nProgress			= 0;
 	m_nProgressRange	= 0;
 	m_nLoadingBackTexID = 0;
@@ -1469,7 +1469,7 @@ void CXConsole::Draw()
 		{
 			if (m_bStaticBackground)
 			{
-				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
+				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,0.8);
 			}
 			else
 			{

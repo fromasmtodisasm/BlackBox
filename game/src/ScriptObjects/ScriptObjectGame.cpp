@@ -25,33 +25,33 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
   _ScriptableEx<CScriptObjectGame>::InitializeTemplate(pSS);
   #undef SCRIPT_REG_CLASSNAME
   #define SCRIPT_REG_CLASSNAME CScriptObjectGame
-  SCRIPT_REG_FUNC(GetUserName);
-  SCRIPT_REG_FUNC(SendMessage);
-  SCRIPT_REG_FUNC(Stop);
-  SCRIPT_REG_FUNC(gotoMenu);
-  SCRIPT_REG_FUNC(gotoGame);
-  SCRIPT_REG_FUNC(gotoFly);
-  SCRIPT_REG_FUNC(gotoEdit);
-  SCRIPT_REG_FUNC(showMenu);
+  SCRIPT_REG_TEMPLFUNC_U(GetUserName);
+  SCRIPT_REG_TEMPLFUNC_U(SendMessage);
+  SCRIPT_REG_TEMPLFUNC_U(Stop);
+  SCRIPT_REG_TEMPLFUNC_U(gotoMenu);
+  SCRIPT_REG_TEMPLFUNC_U(gotoGame);
+  SCRIPT_REG_TEMPLFUNC_U(gotoFly);
+  SCRIPT_REG_TEMPLFUNC_U(gotoEdit);
+  SCRIPT_REG_TEMPLFUNC_U(showMenu);
 
-  SCRIPT_REG_FUNC(GetTagPoint);
-  SCRIPT_REG_FUNC(CreateVariable);
-  SCRIPT_REG_FUNC(SetVariable);
-  SCRIPT_REG_FUNC(RemoveVariable);
-  SCRIPT_REG_FUNC(GetVariable);
-  SCRIPT_REG_FUNC(LoadLevel);
+  SCRIPT_REG_TEMPLFUNC_U(GetTagPoint);
+  SCRIPT_REG_TEMPLFUNC_U(CreateVariable);
+  SCRIPT_REG_TEMPLFUNC_U(SetVariable);
+  SCRIPT_REG_TEMPLFUNC_U(RemoveVariable);
+  SCRIPT_REG_TEMPLFUNC_U(GetVariable);
+  SCRIPT_REG_TEMPLFUNC_U(LoadLevel);
 
-  SCRIPT_REG_FUNC(AddCommand);
+  SCRIPT_REG_TEMPLFUNC_U(AddCommand);
 
-  SCRIPT_REG_FUNC(Quit);
+  SCRIPT_REG_TEMPLFUNC_U(Quit);
 
-  SCRIPT_REG_FUNC(SavePlayerPos);
-  SCRIPT_REG_FUNC(LoadPlayerPos);
+  SCRIPT_REG_TEMPLFUNC_U(SavePlayerPos);
+  SCRIPT_REG_TEMPLFUNC_U(LoadPlayerPos);
 
-  SCRIPT_REG_FUNC(SaveConfiguration);
+  SCRIPT_REG_TEMPLFUNC_U(SaveConfiguration);
 
-  SCRIPT_REG_FUNC(Save);
-  SCRIPT_REG_FUNC(Load);
+  SCRIPT_REG_TEMPLFUNC_U(Save);
+  SCRIPT_REG_TEMPLFUNC_U(Load);
 
 #if 0
 	AllowPropertiesMapping(pSS);
