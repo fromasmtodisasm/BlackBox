@@ -2263,7 +2263,7 @@ bool CXConsole::ProcessInput(const SInputEvent& event)
 			pCursor = pUnicode.GetPosition();
 			m_nCursorPos = pCursor - m_sInputBuffer.c_str();
 			#else
-			m_nCursorPos = pCursor - m_sInputBuffer.c_str() - 1;
+			m_nCursorPos = pCursor - m_sInputBuffer.c_str() + 1;
 			#endif
 		}
 		return true;
@@ -2393,7 +2393,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			{
 				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
 				//int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
-				int n = m_pFont->TextWidth(szCursorLeft);
+				int n = 1.16f * m_pFont->TextWidth(szCursorLeft);
 
 				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
@@ -2422,7 +2422,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 					#else
 					m_pFont->RenderText(
 						buf,
-						xPos - fCharWidth, yPos, fontSize * 1.5f / 14, &glm::vec4(1)[0]);
+						xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
 					#endif
 
 				}

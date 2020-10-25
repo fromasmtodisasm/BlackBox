@@ -505,7 +505,6 @@ bool CSystem::InitGUI()
 {
 	Log("Creating GUI");
 	if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
-			m_env.pLog->Log("Creating GUI");
 			m_GuiManager = p(this);
 			if (m_GuiManager == nullptr)
 				return false;

@@ -64,7 +64,9 @@ inline string& Trim(string& str)
 
 inline string& Trim(string& str, const string& pattern)
 {
-	return TrimRight(TrimLeft(str, pattern), pattern);
+	if (str.length() > 0)
+		return TrimRight(TrimLeft(str, pattern), pattern);
+	return str;
 }
 
 

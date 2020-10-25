@@ -378,6 +378,7 @@ struct ISystem
 	virtual IFont* GetIFont()					= 0;
 	virtual INetwork* GetINetwork()				= 0;
 	virtual IWindow* GetIWindow()				= 0;
+	virtual IValidator* GetIValidator()			= 0;
 	virtual IEntitySystem* GetIEntitySystem()	= 0;
 	virtual ICryPak* GetIPak()					= 0;
 	virtual IHardwareMouse* GetIHardwareMouse() = 0;
