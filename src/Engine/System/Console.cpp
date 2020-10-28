@@ -1469,7 +1469,7 @@ void CXConsole::Draw()
 		{
 			if (m_bStaticBackground)
 			{
-				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,0.8);
+				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
 			}
 			else
 			{
@@ -2393,7 +2393,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			{
 				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
 				//int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
-				int n = m_pFont->TextWidth(szCursorLeft);
+				float n = 1.16 * m_pFont->TextWidth(szCursorLeft);
 
 				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
@@ -2422,7 +2422,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 					#else
 					m_pFont->RenderText(
 						buf,
-						xPos - fCharWidth, yPos, fontSize * 1.5f / 14, &glm::vec4(1)[0]);
+						xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
 					#endif
 
 				}
@@ -2840,7 +2840,8 @@ void CXConsole::RemoveInputChar(bool bBackSpace)
 			pCursor = pUnicode.GetPosition();
 			const size_t length = pEnd - pCursor;
 			#endif
-			const size_t length = 1;
+			pCursor--;
+			const size_t length = pEnd - pCursor;
 			m_sInputBuffer.erase(pCursor - pBase, length);
 			m_nCursorPos -= length;
 		}
