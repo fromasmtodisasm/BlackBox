@@ -374,17 +374,14 @@ enum class ScriptVarType
 	UserData,
 };
 
-enum
-{
-	svtNull = ScriptVarType::Null,
-	svtString = ScriptVarType::String,
-	svtNumber = ScriptVarType::Number,
-	svtBool = ScriptVarType::Bool,
-	svtFunction = ScriptVarType::Function,
-	svtObject = ScriptVarType::Object,
-	svtPointer = ScriptVarType::Pointer,
-	svtUserData = ScriptVarType::UserData,
-};
+#define svtNull ScriptVarType::Null
+#define svtString ScriptVarType::String
+#define svtNumber ScriptVarType::Number
+#define svtBool ScriptVarType::Bool
+#define svtFunction ScriptVarType::Function
+#define svtObject ScriptVarType::Object
+#define svtPointer ScriptVarType::Pointer
+#define svtUserData ScriptVarType::UserData
 
 //enum ScriptVarType
 //{

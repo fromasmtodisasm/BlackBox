@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <vector>
 #include <BlackBox/Core/MathHelper.hpp>
 
 using namespace tinyxml2;
@@ -165,7 +166,6 @@ class Serializator
 	template<typename T>
 	void Save(const T& value)
 	{
-		return false;	
 	}
 
 

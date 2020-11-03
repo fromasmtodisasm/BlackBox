@@ -21,9 +21,10 @@ target_sources(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 #add_package(assimp)
-find_package(assimp CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
-
+if (USE_ASSIMP)
+	find_package(assimp CONFIG REQUIRED)
+	target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
+endif()
 include(Scene/CMakeLists.txt)
 include(World/CMakeLists.txt)
 

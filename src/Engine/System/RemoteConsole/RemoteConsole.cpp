@@ -312,8 +312,8 @@ void SRemoteServer::SignalStopWork()
 	// Close socket here as server thread might be blocking on ::accept
 	if (m_socket != CRY_INVALID_SOCKET && m_socket != CRY_SOCKET_ERROR)
 	{
-		CrySock::shutdown(m_socket, SD_BOTH);
-		CrySock::closesocket(m_socket);
+		Sock::shutdown(m_socket, SD_BOTH);
+		Sock::closesocket(m_socket);
 	}
 	m_socket = CRY_SOCKET_ERROR;
 }
@@ -368,8 +368,8 @@ void SRemoteServer::ThreadEntry()
 	for (uint32 i = 0; i < maxAttempts; ++i)
 	{
 		local.sin_port = htons(port + i);
-		const int result = CrySock::bind(m_socket, (CRYSOCKADDR*)&local, sizeof(local));
-		if (CrySock::TranslateSocketError(result) == CrySock::eCSE_NO_ERROR)
+		const int result = Sock::bind(m_socket, (CRYSOCKADDR*)&local, sizeof(local));
+		if (Sock::TranslateSocketError(result) == Sock::eCSE_NO_ERROR)
 		{
 			bindOk = true;
 			break;
@@ -382,11 +382,11 @@ void SRemoteServer::ThreadEntry()
 		return;
 	}
 
-	CrySock::listen(m_socket, 8);
+	Sock::listen(m_socket, 8);
 
 	CRYSOCKADDR_IN saIn;
 	CRYSOCKLEN_T slen = sizeof(saIn);
-	if (CrySock::getsockname(m_socket, (CRYSOCKADDR*)&saIn, &slen) == 0)
+	if (Sock::getsockname(m_socket, (CRYSOCKADDR*)&saIn, &slen) == 0)
 	{
 		CryLog("Remote console listening on: %d\n", ntohs(saIn.sin_port));
 	}
@@ -398,7 +398,7 @@ void SRemoteServer::ThreadEntry()
 	while (m_bAcceptClients)
 	{
 		iAddrSize = sizeof(client);
-		sClient = CrySock::accept(m_socket, (CRYSOCKADDR*)&client, &iAddrSize);
+		sClient = Sock::accept(m_socket, (CRYSOCKADDR*)&client, &iAddrSize);
 		if (!m_bAcceptClients || sClient == CRY_INVALID_SOCKET)
 		{
 			break;
@@ -545,7 +545,7 @@ void SRemoteClient::ThreadEntry()
 		}
 	}
 
-	CrySock::closesocket(m_socket);
+	Sock::closesocket(m_socket);
 	m_socket = CRY_SOCKET_ERROR;
 }
 
@@ -556,7 +556,7 @@ bool SRemoteClient::RecvPackage(char* buffer, size_t& size)
 	int ret, idx = 0;
 	do
 	{
-		ret = CrySock::recv(m_socket, buffer + idx, DEFAULT_BUFFER - idx, 0);
+		ret = Sock::recv(m_socket, buffer + idx, DEFAULT_BUFFER - idx, 0);
 		if (ret <= 0 || ret == CRY_SOCKET_ERROR)
 			return false;
 		idx += ret;
@@ -574,7 +574,7 @@ bool SRemoteClient::SendPackage(const char* buffer, size_t size)
 	assert(buffer[size] == '\0');
 	while (left > 0)
 	{
-		ret = CrySock::send(m_socket, &buffer[idx], left, 0);
+		ret = Sock::send(m_socket, &buffer[idx], left, 0);
 		if (ret <= 0 || ret == CRY_SOCKET_ERROR)
 			return false;
 		left -= ret;

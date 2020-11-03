@@ -27,7 +27,7 @@ template <typename Map, typename key_type, typename mapped_type>
 inline mapped_type find_in_map(const Map& mapKeyToValue, key_type key, mapped_type valueDefault)
 #else
 #if defined(LINUX)
-#include "platform.h"
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <ext/hash_map>
 #else
 #include <hash_map>

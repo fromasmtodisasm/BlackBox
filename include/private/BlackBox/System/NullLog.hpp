@@ -19,7 +19,7 @@ class CLog :
   public:
 	typedef StackStringT<char, 256> LogStringType;
 	
-	CLog::CLog(ISystem* pSystem)
+	CLog(ISystem* pSystem)
 		: m_pSystem(pSystem)
 		, m_fLastLoadingUpdateTime(-1.0f)
 		, m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")

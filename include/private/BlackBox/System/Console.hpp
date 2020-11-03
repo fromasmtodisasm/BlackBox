@@ -596,7 +596,7 @@ class CXConsole : public IConsole
 	void          SetProcessingGroup(bool isGroup) { m_bIsProcessingGroup = isGroup; }
 	bool          GetIsProcessingGroup(void) const { return m_bIsProcessingGroup; }
 
-	IFont* CXConsole::GetFont(const char* name, float w, float h);;
+	IFont* GetFont(const char* name, float w, float h);;
 
 private: // ----------------------------------------------------------
 
