@@ -19,10 +19,12 @@
 
 #include <Client/Client.hpp>
 
+#ifdef USE_GUI
 #include <imgui.h>
+#include <imgui_internal.h>
+#endif
 
 #include "TextEditorDemo.hpp"
-#include <imgui_internal.h>
 
 #include <BlackBox/GUI/ControlPanel.hpp>
 
@@ -45,6 +47,7 @@ std::string vec_to_string(Vec3 vec)
 	return result;
 }
 
+#ifdef USE_GUI
 namespace ImGui
 {
 	void InputCVarFloat(ICVar* v, const char* name, float* val)
@@ -72,9 +75,11 @@ namespace ImGui
 		}
 	}
 } // namespace ImGui
+#endif
 
 namespace
 {
+	#ifdef USE_STEAM
 	// определяем достижения
 	enum EAchievements
 	{
@@ -99,6 +104,7 @@ namespace
 
 	// глобальный доступ к объекту Achievements
 	CSteamAchievements*	g_SteamAchievements = NULL;
+	#endif
 }
 
 #if 0
@@ -213,13 +219,17 @@ CGame::~CGame()
 	// shutdown the server if there is one
 	ShutdownServer();
 
+	#ifdef USE_STEAM
 	// Выключаем Steam
 	SteamAPI_Shutdown();
 	// Удаляем SteamAchievements
 	if (g_SteamAchievements)
 		delete g_SteamAchievements;
+	#endif
 }
+#ifdef  USE_STEAM
 static GLSLEditor* glslEditor = nullptr;
+#endif //  USE_STEAM
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
 	if (!SteamInit())
@@ -247,7 +257,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_pVehicleSystem = new CVehicleSystem();
 	m_pPlayerSystem = new CPlayerSystem();
 
+	#ifdef USE_GUI
 	glslEditor = new GLSLEditor;
+	#endif
 	gui::init();
 
 #if 0
@@ -409,7 +421,9 @@ bool CGame::Update()
 	const bool bRenderFrame			   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
+	#ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
+	#endif
 	{
 		// TODO: FIX IT
 		m_deltaTime = m_pSystem->GetDeltaTime();
@@ -444,9 +458,11 @@ bool CGame::Update()
 			m_pScriptSystem->EndCall();
 
 			//DrawHud(fps);
+			#ifdef uSE_GUI
 			glslEditor->Update();
 			m_Gui.Update();
 			gui::update();
+			#endif
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
 			{
@@ -1271,10 +1287,12 @@ void CGame::MainMenu()
 {
 }
 
+#ifdef USE_STEAM
 CSteamAchievements* CGame::SteamAchivements()
 {
 	return g_SteamAchievements;
 }
+#endif
 
 void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
@@ -1312,6 +1330,7 @@ bool CGame::SteamInit()
 #endif // !USE_STEAM
 }
 
+#ifdef USE_GUI
 void CGame::Gui::Update()
 {
 	windows.Draw();
@@ -1472,3 +1491,4 @@ void CGame::Gui::Common::Draw()
 	}
 
 }
+#endif

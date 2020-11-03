@@ -1,6 +1,7 @@
 #ifdef new
 #undef new
 #endif
+#ifdef USE_GUI
 #include "TextEditorDemo.hpp"
 
 GLSLEditor::GLSLEditor()
@@ -260,3 +261,4 @@ bool GLSLEditor::Write(const std::string& str)
 	}
 	return false;
 }
+#endif

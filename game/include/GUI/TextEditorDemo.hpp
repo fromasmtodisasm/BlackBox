@@ -1,4 +1,5 @@
 #pragma once
+#ifdef USE_GUI
 #include <fstream>
 #include <streambuf>
 
@@ -94,3 +95,4 @@ public:
 	// Inherited via IDocumentWriter
 	virtual bool Write(const std::string& str) override;
 };
+#endif

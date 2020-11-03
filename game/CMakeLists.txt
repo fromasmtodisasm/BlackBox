@@ -23,7 +23,9 @@ if (WINDOWS)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Ws2_32)
 	target_link_libraries(${PROJECT_NAME} PRIVATE dbghelp)
 endif()
-target_link_libraries(${PROJECT_NAME} PRIVATE Steam)
+if (USE_STEAM)
+	target_link_libraries(${PROJECT_NAME} PRIVATE Steam)
+endif()
 target_include_directories(${PROJECT_NAME}
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"

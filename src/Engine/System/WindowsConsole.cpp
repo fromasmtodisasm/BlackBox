@@ -1164,6 +1164,7 @@ void CWindowsConsoleInputThread::SignalStopWork()
 	SetEvent(m_handles[eWH_Event]);
 }
 
+#if 0
 ///////////////////////////////////////////////////////////////////////////////////////
 //
 // simple light-weight console implementation
@@ -1234,5 +1235,6 @@ void CNULLConsole::OnUpdate()
 void CNULLConsole::PutText(int x, int y, const char* msg)
 {
 }
+#endif
 
 #endif // def USE_WINDOWSCONSOLE

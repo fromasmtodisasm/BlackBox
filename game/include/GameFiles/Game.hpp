@@ -437,6 +437,7 @@ private: // ------------------------------------------------------------
 
 
 	void MainMenu();
+	#ifdef USE_GUI
 	class Gui
 	{
 	public:
@@ -486,8 +487,7 @@ private: // ------------------------------------------------------------
 	public:
 		Windows windows;
 	}m_Gui;
-
-
+	#endif
 public:
 	float m_deltaTime = 0.f;
 

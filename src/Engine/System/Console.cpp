@@ -21,6 +21,7 @@
 //#define DEFENCE_CVAR_HASH_LOGGING
 
 
+#ifndef BB_PLATFORM_WINAPI
 //////////////////////////////////////////////////////////////////////////
 int memicmp(LPCSTR s1, LPCSTR s2, DWORD len)
 {
@@ -33,6 +34,7 @@ int memicmp(LPCSTR s1, LPCSTR s2, DWORD len)
 	}
 	return ret;
 }
+#endif
 
 namespace ECVarTypeHelper
 {

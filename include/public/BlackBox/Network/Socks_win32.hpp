@@ -9,10 +9,10 @@
 //////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-#include <CryCore/Platform/CryWindows.h>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
-#include <CrySystem/ISystem.h>
+#include <BlackBox/System/ISystem.hpp>
 
 #define CRY_INVALID_SOCKET INVALID_SOCKET
 #define CRY_SOCKET_ERROR   SOCKET_ERROR
@@ -37,15 +37,15 @@ typedef timeval CRYTIMEVAL;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace CrySock
+namespace Sock
 {
 ///////////////////////////////////////////////////////////////////////////////
 // Forward declarations
-static eCrySockError TranslateLastSocketError();
-static int           TranslateToSocketError(eCrySockError socketError);
+static eSockError TranslateLastSocketError();
+static int           TranslateToSocketError(eSockError socketError);
 
-static eCrySockError TranslateInvalidSocket(CRYSOCKET s);
-static eCrySockError TranslateSocketError(int socketError);
+static eSockError TranslateInvalidSocket(CRYSOCKET s);
+static eSockError TranslateSocketError(int socketError);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -153,7 +153,7 @@ static int SetRecvTimeout(CRYSOCKET s, const int seconds, const int microseconds
 	struct timeval timeout;
 	timeout.tv_sec = seconds;
 	timeout.tv_usec = microseconds;
-	return CrySock::setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+	return Sock::setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ static int SetSendTimeout(CRYSOCKET s, const int seconds, const int microseconds
 	struct timeval timeout;
 	timeout.tv_sec = seconds;
 	timeout.tv_usec = microseconds;
-	return CrySock::setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+	return Sock::setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -276,7 +276,6 @@ static bool MakeSocketBlocking(CRYSOCKET sock)
 
 static CRYHOSTENT* gethostbyname(const char* hostname)
 {
-	PREFAST_SUPPRESS_WARNING(4996);
 	return ::gethostbyname(hostname);
 }
 
@@ -299,7 +298,6 @@ static CRYINADDR_T GetAddrForHostOrIP(const char* hostnameOrIP, uint32 timeoutMi
 	}
 	else
 	{
-		PREFAST_SUPPRESS_WARNING(4996);
 		ret = ::inet_addr(hostnameOrIP);
 	}
 	return ret != INADDR_NONE ? ret : 0;
@@ -309,7 +307,6 @@ static CRYINADDR_T GetAddrForHostOrIP(const char* hostnameOrIP, uint32 timeoutMi
 
 static CRYINADDR_T inet_addr(const char* cp)
 {
-	PREFAST_SUPPRESS_WARNING(4996);
 	return ::inet_addr(cp);
 }
 
@@ -317,7 +314,6 @@ static CRYINADDR_T inet_addr(const char* cp)
 
 static char* inet_ntoa(CRYINADDR in)
 {
-	PREFAST_SUPPRESS_WARNING(4996);
 	return ::inet_ntoa(in);
 }
 
@@ -325,7 +321,7 @@ static char* inet_ntoa(CRYINADDR in)
 
 static uint32 DNSLookup(const char* hostname, uint32 timeoutMilliseconds = 200)
 {
-	CRYINADDR_T ret = CrySock::GetAddrForHostOrIP(hostname, timeoutMilliseconds);
+	CRYINADDR_T ret = Sock::GetAddrForHostOrIP(hostname, timeoutMilliseconds);
 
 	if (ret == 0 || ret == ~0)
 	{
@@ -339,12 +335,12 @@ static uint32 DNSLookup(const char* hostname, uint32 timeoutMilliseconds = 200)
 			return 0;
 		}
 
-		cry_strcpy(host, hostname);
-		cry_strcat(host, LOCAL_FALLBACK_DOMAIN);
+		strcpy(host, hostname);
+		strcat(host, LOCAL_FALLBACK_DOMAIN);
 
 		host[hostlen + domainlen - 1] = 0;
 
-		ret = CrySock::GetAddrForHostOrIP(host, timeoutMilliseconds);
+		ret = Sock::GetAddrForHostOrIP(host, timeoutMilliseconds);
 	}
 
 	return ret;
@@ -352,7 +348,7 @@ static uint32 DNSLookup(const char* hostname, uint32 timeoutMilliseconds = 200)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static eCrySockError TranslateInvalidSocket(CRYSOCKET s)
+static eSockError TranslateInvalidSocket(CRYSOCKET s)
 {
 	if (s == CRY_INVALID_SOCKET)
 	{
@@ -363,7 +359,7 @@ static eCrySockError TranslateInvalidSocket(CRYSOCKET s)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static eCrySockError TranslateSocketError(int socketError)
+static eSockError TranslateSocketError(int socketError)
 {
 	if (socketError == CRY_SOCKET_ERROR)
 	{
@@ -374,11 +370,11 @@ static eCrySockError TranslateSocketError(int socketError)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static eCrySockError TranslateLastSocketError()
+static eSockError TranslateLastSocketError()
 {
 #define TRANSLATE(_from, _to) case (_from): \
   socketError = (_to); break;
-	eCrySockError socketError = eCSE_NO_ERROR;
+	eSockError socketError = eCSE_NO_ERROR;
 	int error = GetLastSocketError();
 	switch (error)
 	{
@@ -413,7 +409,10 @@ static eCrySockError TranslateLastSocketError()
 
 		TRANSLATE(WSANOTINITIALISED, eCSE_ENOTINITIALISED);
 	default:
-		CRY_ASSERT(false, string().Format("CrySock could not translate OS error code %x, treating as miscellaneous", error));
+		//CRY_ASSERT(false, string().Format("Sock could not translate OS error code %x, treating as miscellaneous", error));
+		char buf[256]={0};
+		sprintf(buf, "Sock could not translate OS error code %x, treating as miscellaneous", error);
+		CRY_ASSERT(false, buf);
 		socketError = eCSE_MISC_ERROR;
 		break;
 	}
@@ -424,7 +423,7 @@ static eCrySockError TranslateLastSocketError()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static int TranslateToSocketError(eCrySockError socketError)
+static int TranslateToSocketError(eSockError socketError)
 {
 #define TRANSLATE(_to, _from) case (_from): \
   error = (_to); break;                                            // reverse order of inputs (_to, _from) instead of (_from, _to) compared to TranslateLastSocketError
@@ -462,7 +461,10 @@ static int TranslateToSocketError(eCrySockError socketError)
 
 		TRANSLATE(WSANOTINITIALISED, eCSE_ENOTINITIALISED);
 	default:
-		CRY_ASSERT(false, string().Format("CrySock could not translate eCrySockError error code %x, treating as miscellaneous", socketError));
+		//CRY_ASSERT(false, string().Format("Sock could not translate eSockError error code %x, treating as miscellaneous", socketError));
+		char buf[256];
+		sprintf(buf, "Sock could not translate eSockError error code %x, treating as miscellaneous", socketError);
+		CRY_ASSERT(false, buf);
 		break;
 	}
 #undef TRANSLATE
