@@ -1,4 +1,5 @@
-#include <Client\Client.hpp>
+#include <algorithm>
+#include <Client/Client.hpp>
 
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 

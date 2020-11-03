@@ -466,7 +466,9 @@ bool CGame::Update()
 			//PROFILER_POP_CPU_MARKER();
 			if (!m_isActive)
 			{
+#ifndef BB_PLATFORM_LINUX
 				Sleep(40);
+#endif
 			}
 		}
 	}

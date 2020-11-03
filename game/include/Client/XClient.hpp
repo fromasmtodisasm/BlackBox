@@ -371,7 +371,7 @@ public:
 	CStream	*						m_pSavedConsoleVars;			//!< saved console variable state (to restore the VF_REQUIRE_NET_SYNC marked vars), 0 when not used
 
 	bool								m_bLocalHost;							//!< this client is the local host ?
-	class CXGame *			m_pGame;									//!< The game
+	class CGame *			m_pGame;									//!< The game
 	bool								m_bLinkListenerToCamera;	//!<
 	struct IXSystem *		m_pISystem;								//!< The system interface
 	IScriptSystem *			m_pScriptSystem;					//!<

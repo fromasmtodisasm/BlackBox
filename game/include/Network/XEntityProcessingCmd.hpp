@@ -57,7 +57,7 @@ public:
 	}
 	int InsertTimeSlice(float fSlice,int iBefore=0)
 	{
-		m_nTimeSlices = std::min((unsigned long long)(m_nTimeSlices+1),sizeof(m_fTimeSlices)/sizeof(m_fTimeSlices[0]));
+		m_nTimeSlices = std::min((size_t)(m_nTimeSlices+1),sizeof(m_fTimeSlices)/sizeof(m_fTimeSlices[0]));
 		for(int i=m_nTimeSlices; i>iBefore; i--)
 			m_fTimeSlices[i] = m_fTimeSlices[i-1];
 		m_fTimeSlices[iBefore] = fSlice;
