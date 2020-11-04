@@ -65,7 +65,7 @@ enum
 #include <CameraController.hpp>
 #include <DevMode.hpp>
 
-#include <SteamHelper.hpp>
+//#include <SteamHelper.hpp>
 
 
 #include "GameShared.hpp"
@@ -320,7 +320,7 @@ class CGame final
 	bool OpenPacks(const char* szFolder);
 	bool ClosePacks(const char* szFolder);
 
-	CSteamAchievements* SteamAchivements();
+	//CSteamAchievements* SteamAchivements();
 private: // ------------------------------------------------------------
 
 	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);

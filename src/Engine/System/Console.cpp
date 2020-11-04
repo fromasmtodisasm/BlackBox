@@ -20,6 +20,20 @@
 #define CONST_TEMP_STRING(s) s
 //#define DEFENCE_CVAR_HASH_LOGGING
 
+
+//////////////////////////////////////////////////////////////////////////
+int memicmp(LPCSTR s1, LPCSTR s2, DWORD len)
+{
+	int ret = 0;
+	while (len--)
+	{
+		if ((ret = tolower(*s1) - tolower(*s2))) break;
+		s1++;
+		s2++;
+	}
+	return ret;
+}
+
 namespace ECVarTypeHelper
 {
 	template<typename T>

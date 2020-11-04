@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
+set(CXX_STANDARD 17)
 project(System CXX)
 ###################################################
 add_library(System)

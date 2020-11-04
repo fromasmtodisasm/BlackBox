@@ -7,7 +7,7 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
-#if 1
+#if 0
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -30,7 +30,7 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 
 void loadModel(string path)
 {
-#if 1
+#if 0
     Assimp::Importer import;
     const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 	

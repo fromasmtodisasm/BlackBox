@@ -15,9 +15,9 @@ add_subdirectory(thirdparty)
 add_library(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE BlackBox)
 if (OPTION_USE_GUI)
-	target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
-	target_link_libraries(${PROJECT_NAME} PRIVATE ImGuiColorTextEdit)
-	target_link_libraries(${PROJECT_NAME} PRIVATE ImGuiFileBrowser)
+	#target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
+	#target_link_libraries(${PROJECT_NAME} PRIVATE ImGuiColorTextEdit)
+	#target_link_libraries(${PROJECT_NAME} PRIVATE ImGuiFileBrowser)
 endif()
 if (WINDOWS)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Ws2_32)
@@ -48,7 +48,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameMods.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameObject.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/GameTagPoints.cpp
-	PRIVATE ${SOURCE_DIR}/GameFiles/SteamHelper.cpp
+	#PRIVATE ${SOURCE_DIR}/GameFiles/SteamHelper.cpp
 	PRIVATE ${SOURCE_DIR}/GameFiles/XVehicleSystem.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XEntityProcessingCmd.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp

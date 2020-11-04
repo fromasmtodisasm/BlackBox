@@ -116,7 +116,7 @@ struct CryModuleMemoryInfo
 #endif
 
 #ifdef __cplusplus
-#include <new.h>
+#include <new>
 #endif
 
 
@@ -135,8 +135,8 @@ struct CryModuleMemoryInfo
 	#ifndef GAMECUBE //I don't know how to compile this on GC
 		inline void * __cdecl operator new   (size_t  size) { return CryModuleMalloc(size); } 
 		inline void * __cdecl operator new[](size_t size) { return CryModuleMalloc(size); }; 
-		inline void __cdecl operator delete  (void *p) { CryModuleFree(p); };
-		inline void __cdecl operator delete[](void *p) { CryModuleFree(p); };
+		inline void __cdecl operator delete  (void *p) noexcept { CryModuleFree(p); };
+		inline void __cdecl operator delete[](void *p) noexcept { CryModuleFree(p); };
 	#endif //GAMECUBE
 #endif //__cplusplus
 

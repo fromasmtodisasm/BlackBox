@@ -254,6 +254,7 @@ private:
 
 #endif // USE_UNIXCONSOLE
 
+#if 0
 // simple light-weight console
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,
@@ -325,6 +326,7 @@ private:
 
 	//CSyslogStats m_syslogStats;
 };
+#endif
 
 
 #endif // _WINDOWSCONSOLE_H_

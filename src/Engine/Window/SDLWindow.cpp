@@ -335,9 +335,11 @@ void CSDLWindow::changeSize(int w, int h)
   SDL_SetWindowSize(m_MainWindow, w, h);
 }
 
+#if 0
 void CSDLWindow::setCursor(Cursor* cursor)
 {
 }
+#endif
 
 GLContext CSDLWindow::getContext()
 {
