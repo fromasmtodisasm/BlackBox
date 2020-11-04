@@ -10,6 +10,7 @@ set(OUTPUT_DIRECTORY_NAME "linux_x64_clang")
 
 set(CMAKE_C_COMPILER cc)
 set(CMAKE_CXX_COMPILER c++)
+set(CMAKE_MAKE_PROGRAM make)
 
 add_definitions(-DLINUX64)
 

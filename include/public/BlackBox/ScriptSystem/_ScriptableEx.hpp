@@ -182,7 +182,6 @@ struct ScriptTemplateCallHelper
 			Func func;
 			auto i = pH->GetFunctionID();
 			memcpy(&func, &i, sizeof(func));
-			gEnv->pLog->Log("i = %d; c = %c", 100, 'A');
 			return ScriptTemplateCallHelper::Call(pCallee, func, pH);
 			return 0;
 		}

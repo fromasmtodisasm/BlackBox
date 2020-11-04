@@ -203,7 +203,7 @@ namespace
 				gEnv->pSystem->Quit();
 			}
 
-		return nullptr;
+		return false;
 			gEnv->pSystem->Log("Library not found");
 		}
 		return false;

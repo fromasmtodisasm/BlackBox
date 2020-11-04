@@ -16,7 +16,7 @@
 template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
 
 #if defined(LINUX)
-//#	include <stdarg.h>
+#	include <stdarg.h>
 //#	include "platform.h"
 //#	include "IGame.h"
 //#	include "string.h"

@@ -1,17 +1,14 @@
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
-#include <BlackBox/Core/Platform/CryLibrary.h>
-
-#include <BlackBox/Core/Platform/platform_impl.inl>
-
 #include <iostream>
+#include <string>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <filesystem>
 
 int main(int argc, char* argv[]) {
 	std::string cmdline;
@@ -20,17 +17,42 @@ int main(int argc, char* argv[]) {
 		cmdline = cmdline + std::string(" ") + std::string(argv[i]);
 	}
 
-  
-	SSystemInitParams startupParams;
-	startupParams.sLogFileName = "Game.log";
 
-	// Note: lpCmdLine does not contain the filename.
-	strcpy(startupParams.szSystemCmdLine, cmdline.c_str());
-
-	if (InitializeEngine(startupParams))
+	std::cerr << "cmd: " << cmdline << std::endl;
+	try
 	{
-		startupParams.pSystem->Start();
-		return EXIT_SUCCESS;
+#if 1
+		std::cout << "Here" << std::endl;
+		SSystemInitParams startupParams;
+		startupParams.sLogFileName = "Game.log";
+
+		// Note: lpCmdLine does not contain the filename.
+		strcpy(startupParams.szSystemCmdLine, cmdline.c_str());
+
+		if (InitializeEngine(startupParams))
+		{
+			startupParams.pSystem->Start();
+			return EXIT_SUCCESS;
+		}
+		else
+		{
+			std::cout << "BAAAAAAAAD\n" << std::endl;
+		}
+#endif
+
+		std::cout << "Here" << std::endl;
+		return EXIT_FAILURE;
 	}
-	return EXIT_FAILURE;
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch(...)
+	{
+
+		std::cout << "All bad" << std::endl;
+		return EXIT_FAILURE;
+	}
+  
 }

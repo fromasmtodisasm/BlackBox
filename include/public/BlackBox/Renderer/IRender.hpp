@@ -558,9 +558,9 @@ struct SRenderParams
 {
 	IShaderProgram* Shader;
 	std::vector<UniformValue> uniforms;
-	Material* Material;
+	Material* material;
 	CCamera* Camera;
-	DirectionLight* DirectionLight;
+	DirectionLight* directionLight;
 	Mat4 Transform;
 };
 
