@@ -4,7 +4,7 @@ project(Renderer CXX)
 add_package(Stb)
 add_library(${PROJECT_NAME})
 
-if (GL_RENDERER)
+if (DEFINED GL_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
 elseif(VULKAN_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
