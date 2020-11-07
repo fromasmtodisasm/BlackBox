@@ -45,11 +45,11 @@ class CLog :
 			fputs(str.c_str(), output);
 		}
 		bool hasConsole = GetISystem()->GetIConsole() != nullptr;
-		if (hasConsole && GET_CVAR("stpo_running"))
+		if (hasConsole && gEnv->pConsole->GetCVar("stpo_running"))
 		{
 			fputs("\n\n*****Game stopped*****", output);
 		}
-		else if (hasConsole && GET_CVAR("window_closed"))
+		else if (hasConsole && gEnv->pConsole->GetCVar("window_closed"))
 		{
 			fputs("\n\n*****Window Closed*****", output);
 		}

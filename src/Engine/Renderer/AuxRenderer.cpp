@@ -3,6 +3,7 @@
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 #include <array>
 

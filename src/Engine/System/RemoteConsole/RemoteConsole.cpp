@@ -15,7 +15,7 @@
 
 #ifdef USE_REMOTE_CONSOLE
 	//#include <CryGame/IGameFramework.h>
-	//#include <CrySystem/ConsoleRegistration.h>
+	#include <BlackBox/System/ConsoleRegistration.h>
 	//#include <../CryAction/ILevelSystem.h>
 	#if 0                       // currently no stroboscope support
 		#include "Stroboscope/Stroboscope.h"
@@ -365,7 +365,7 @@ void SRemoteServer::ThreadEntry()
 	}
 
 	bool bindOk = false;
-	for (uint32 i = 0; i < maxAttempts; ++i)
+	for (int i = 0; i < maxAttempts; ++i)
 	{
 		local.sin_port = htons(port + i);
 		const int result = Sock::bind(m_socket, (CRYSOCKADDR*)&local, sizeof(local));

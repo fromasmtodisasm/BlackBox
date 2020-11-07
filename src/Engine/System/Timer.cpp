@@ -53,7 +53,7 @@ CTimer::CTimer()
   }
   else
   {
-    ASSERT(false && "QueryPerformanceFrequency failed");
+    CRY_ASSERT(false && "QueryPerformanceFrequency failed");
     m_lTicksPerSec = 1000000;
   }
 #endif
@@ -126,7 +126,7 @@ float CTimer::GetReplicationTime() const
 /////////////////////////////////////////////////////
 float CTimer::GetCurrTime(ETimer which) const
 {
-  ASSERT(which >= 0 && which < ETIMER_LAST && "Bad timer index");
+  CRY_ASSERT(which >= 0 && which < ETIMER_LAST && "Bad timer index");
   return m_CurrTime[which].GetSeconds();
 }
 
@@ -146,7 +146,7 @@ float CTimer::GetTimeScale() const
 /////////////////////////////////////////////////////
 float CTimer::GetTimeScale(uint32_t channel) const
 {
-  ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
+  CRY_ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
   if (channel >= NUM_TIME_SCALE_CHANNELS)
   {
     return GetTimeScale();
@@ -157,7 +157,7 @@ float CTimer::GetTimeScale(uint32_t channel) const
 /////////////////////////////////////////////////////
 void CTimer::SetTimeScale(float scale, uint32_t channel /* = 0 */)
 {
-  ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
+  CRY_ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
   if (channel >= NUM_TIME_SCALE_CHANNELS)
   {
     return;
@@ -274,14 +274,14 @@ float CTimer::GetProfileFrameBlending(float* pfBlendTime, int* piBlendMode)
 /////////////////////////////////////////////////////
 void CTimer::RefreshGameTime(int64_t curTime)
 {
-  ASSERT(curTime + m_lOffsetTime >= 0);
+  CRY_ASSERT(curTime + m_lOffsetTime >= 0);
   m_CurrTime[ETIMER_GAME].SetSeconds(TicksToSeconds(curTime + m_lOffsetTime));
 }
 
 /////////////////////////////////////////////////////
 void CTimer::RefreshUITime(int64_t curTime)
 {
-  ASSERT(curTime >= 0);
+  CRY_ASSERT(curTime >= 0);
   m_CurrTime[ETIMER_UI].SetSeconds(TicksToSeconds(curTime));
 }
 
@@ -339,7 +339,7 @@ void CTimer::UpdateOnFrameStart()
   }
 
   const int64_t now = bbGetTicks();
-  ASSERT(now + 1 >= m_lBaseTime && "Invalid base time"); //+1 margin because QPC may be one off across cores
+  CRY_ASSERT(now + 1 >= m_lBaseTime && "Invalid base time"); //+1 margin because QPC may be one off across cores
 
   m_fRealFrameTime = TicksToSeconds(now - m_lBaseTime - m_lLastTime);
 
@@ -376,14 +376,14 @@ void CTimer::UpdateOnFrameStart()
   if (m_lBaseTime > now)
   {
     // Guard against rounding errors due to float <-> int64_t precision
-    ASSERT(m_lBaseTime - now <= 10 && "Bad base time or adjustment, too much difference for a rounding error");
+    CRY_ASSERT(m_lBaseTime - now <= 10 && "Bad base time or adjustment, too much difference for a rounding error");
     m_lBaseTime = now;
   }
   const int64_t currentTime = now - m_lBaseTime;
 
-  ASSERT(fabsf(TicksToSeconds(currentTime - m_lLastTime) - m_fFrameTime) < 0.01f && "Bad calculation");
-  ASSERT(currentTime >= m_lLastTime && "Bad adjustment in previous frame");
-  ASSERT(currentTime + m_lOffsetTime >= 0 && "Sum of game time is negative");
+  CRY_ASSERT(fabsf(TicksToSeconds(currentTime - m_lLastTime) - m_fFrameTime) < 0.01f && "Bad calculation");
+  CRY_ASSERT(currentTime >= m_lLastTime && "Bad adjustment in previous frame");
+  CRY_ASSERT(currentTime + m_lOffsetTime >= 0 && "Sum of game time is negative");
 
   // Update timers
   RefreshUITime(currentTime);

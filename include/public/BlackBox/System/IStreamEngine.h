@@ -31,7 +31,7 @@
 
 struct StreamEngineParams;
 class IStreamCallback;
-class ICrySizer;
+struct ICrySizer;
 
 //////////////////////////////////////////////////////////////////////////
 enum

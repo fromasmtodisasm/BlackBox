@@ -1,6 +1,8 @@
 #include <Game.hpp>
 #include <GameShared.hpp>
 
+#include <BlackBox/System/ConsoleRegistration.h>
+
 //////////////////////////////////////////
 //small utility macro
 //////////////////////////////////////////
@@ -53,8 +55,6 @@ void CGame::InitInputMap()
   IInput* pInput = m_pSystem->GetIInput();
 
   m_pIActionMapManager = pInput->CreateActionMapManager();
-  if (m_pIActionMapManager)
-	  ;
   //m_pIActionMapManager->SetSink(this);
 
   ResetInputMap();
@@ -102,12 +102,12 @@ void CGame::InitConsoleCommands()
 void CGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
-  r_displayinfo = CREATE_CVAR("r_displayinfo", 1, 0, "Display info [1/0]");
-  r_profile = CREATE_CVAR("r_profile", 1, 0, "Profile [1/0]");
-  r_cap_profile = CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
-  m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
+  r_displayinfo = REGISTER_INT("r_displayinfo", 1, 0, "Display info [1/0]");
+  r_profile = REGISTER_INT("r_profile", 1, 0, "Profile [1/0]");
+  r_cap_profile = REGISTER_INT("r_cap_profile", 1, 0, "Capture frame [1/0]");
+  m_pCVarCheatMode = REGISTER_STRING("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 
-  g_NonSteam = CREATE_CVAR("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
+  g_NonSteam = REGISTER_INT("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
 
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 

@@ -24,6 +24,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 //#include <BlackBox/Core/Platform/WindowsUtils.hpp>
 
 //#include <BlackBox/Core/Platform/CryLibrary.hpp>
@@ -438,7 +439,7 @@ void CHardwareMouse::OnPreInitRenderer()
 
 void CHardwareMouse::OnPostInitInput()
 {
-	ASSERT(gEnv->pInput);
+	CRY_ASSERT(gEnv->pInput);
 
 	if (gEnv->pInput)
 		gEnv->pInput->AddEventListener(this);
@@ -504,7 +505,7 @@ void CHardwareMouse::IncrementCounter()
 
 	if (m_debugHardwareMouse)
 		CryLogAlways("HM: IncrementCounter = %d", m_iReferenceCounter);
-	ASSERT(m_iReferenceCounter >= 0);
+	CRY_ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
 	EvaluateCursorConfinement();
@@ -518,7 +519,7 @@ void CHardwareMouse::DecrementCounter()
 
 	if (m_debugHardwareMouse)
 		CryLogAlways("HM: DecrementCounter = %d", m_iReferenceCounter);
-	ASSERT(m_iReferenceCounter >= 0);
+	CRY_ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
 	EvaluateCursorConfinement();

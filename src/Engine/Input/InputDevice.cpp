@@ -81,7 +81,7 @@ const char* CInputDevice::GetKeyName(const EKeyId keyId) const
     return NULL;
 
   const SInputSymbol* pInputSymbol = iter->second;
-  ASSERT(pInputSymbol != NULL);
+  CRY_ASSERT(pInputSymbol != NULL);
 
   return pInputSymbol->name.c_str();
 }

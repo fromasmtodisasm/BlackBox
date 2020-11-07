@@ -24,3 +24,5 @@ vcpkg/
 /.vscode
 /out/kate
 cmake-build*
+/msvc
+/vcpkg_lin

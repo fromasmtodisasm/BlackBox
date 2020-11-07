@@ -1,4 +1,6 @@
 #include <BlackBox/Renderer/BaseRenderer.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
+
 #include <SDL2/SDL.h>
 
 int RenderCVars::CV_r_GetScreenShot;
@@ -68,11 +70,11 @@ void RenderCVars::InitCVars()
 	REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
 	REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
 #endif
-	REGISTER_CVAR(r_MSAA, r_MSAA, VF_DUMPTODISK | VF_READONLY);
-	REGISTER_CVAR(r_MSAA_samples, r_MSAA_samples, VF_DUMPTODISK);
+	REGISTER_CVAR(r_MSAA, r_MSAA, VF_DUMPTODISK | VF_READONLY, "");
+	REGISTER_CVAR(r_MSAA_samples, r_MSAA_samples, VF_DUMPTODISK, "");
 
-	REGISTER_CVAR(r_Vsync, r_Vsync, VF_DUMPTODISK);
-	REGISTER_CVAR(r_DisplayIndex, r_DisplayIndex, VF_DUMPTODISK);
+	REGISTER_CVAR(r_Vsync, r_Vsync, VF_DUMPTODISK, "");
+	REGISTER_CVAR(r_DisplayIndex, r_DisplayIndex, VF_DUMPTODISK, "");
 	//REGISTER_CVAR3("r_GetScreenShot", CV_r_GetScreenShot, 0, VF_NULL,
 	REGISTER_CVAR3("r_getscreenshot", CV_r_GetScreenShot, 0, VF_NULL,
 				   "To capture one screenshot (variable is set to 0 after capturing)\n"

@@ -10,6 +10,7 @@
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/IClipBoard.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 #include <BlackBox/Core/StringUtils.h>
 
@@ -864,7 +865,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 	}
 
 	const string name(sName);
-	pCVar = new CXConsoleVariableInt(this, name.data(), fValue, nFlags, help , true);
+	pCVar = new CXConsoleVariableFloat(this, name.data(), fValue, nFlags, help , true);
 	RegisterVar(name, pCVar /*, pChangeFunc*/);
 	return pCVar;
 }
@@ -956,11 +957,7 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 
 		if (allowChange)
 		{
-			#if 0
-			pCVar->ForceSet(var.m_value.c_str());
-			#else
-			pCVar->Set(var.m_value.c_str());
-			#endif
+			pCVar->SetFromString(var.m_value.c_str());
 			pCVar->SetFlags(pCVar->GetFlags() | var.nCVarOrFlags);
 		}
 
@@ -1125,21 +1122,13 @@ int CXConsole::Register(const char* name, void* src, float defaultvalue, int fla
 float CXConsole::Register(const char* name, float* src, float defaultvalue, int flags /* = 0*/, const char* help /* = ""*/)
 {
 	RegisterInternal(name, src, defaultvalue, flags, help);
-			if (name == "r_MSAA_samples")
-			{
-				CryLog("here");
-			}
 	return defaultvalue;
 }
 
 int CXConsole::Register(const char* name, int* src, float defaultvalue, int flags /* = 0*/, const char* help /* = ""*/)
 {
-	RegisterInternal(name, src, defaultvalue, flags, help);
-			if (name == "r_MSAA_samples")
-			{
-				CryLog("here");
-			}
-	return defaultvalue;
+	RegisterInternal(name, src, static_cast<int>(defaultvalue), flags, help);
+	return static_cast<int>(defaultvalue);
 }
 
 
@@ -1531,6 +1520,51 @@ void CXConsole::AddCommand(const char* sCommand, const char* sScriptFunc, DWORD 
 	}
 }
 
+void CXConsole::AddCommand(const char* szCommand, ConsoleCommandFunc func, int nFlags, const char* sHelp, bool bIsManagedExternally)
+{
+	AssertName(szCommand);
+
+	if (m_configVars.find(szCommand) != m_configVars.end())
+	{
+		gEnv->pLog->LogWarning("The command '%s' appeared in a config file, but only CVars are allowed in config files.", szCommand);
+	}
+
+	if (m_mapCommands.find(szCommand) == m_mapCommands.end())
+	{
+		CConsoleCommand cmd;
+		cmd.m_sName = szCommand;
+		cmd.m_func = func;
+		cmd.m_isManagedExternally = bIsManagedExternally;
+		if (sHelp)
+			cmd.m_sHelp = sHelp;
+		cmd.m_nFlags = nFlags;
+		auto commandIt = m_mapCommands.insert(std::make_pair(cmd.m_sName, cmd)).first;
+
+		// See if this command was already executed by a config
+		// If so we need to execute it immediately
+		auto commandRange = m_configCommands.equal_range(szCommand);
+		for (auto commandPair = commandRange.first; commandPair != commandRange.second; ++commandPair)
+		{
+			//string arguments = string().Format("%s %s", szCommand, commandPair->second.c_str());
+			char arguments[512];
+			sprintf(arguments, "%s %s", szCommand, commandPair->second.c_str());
+			ExecuteCommand(commandIt->second, string(arguments));
+		}
+
+		// Remove all entries
+		m_configCommands.erase(commandRange.first, commandRange.second);
+	}
+	else
+	{
+		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [%s] is already registered", szCommand);
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+#endif
+	}
+}
+
+
+
 
 void CXConsole::ExecuteString(const char* command, bool bNeedSlash /* = false*/, bool bIgnoreDevMode /* = false*/)
 {
@@ -1692,7 +1726,7 @@ const char* CXConsole::AutoComplete(const char* substr)
 	{
 		const char* szCmd = cmds[i];
 		const size_t cmdlen = strlen(szCmd);
-		if (cmdlen >= substrLen && memicmp(szCmd, substr, substrLen) == 0)
+		if (cmdlen >= substrLen && _memicmp(szCmd, substr, substrLen) == 0)
 		{
 			if (substrLen == cmdlen)
 			{
@@ -2409,7 +2443,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			{
 				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
 				//int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
-				float n = 1.16 * m_pFont->TextWidth(szCursorLeft);
+				float n = 1.16f * m_pFont->TextWidth(szCursorLeft);
 
 				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
@@ -3232,7 +3266,7 @@ IFont* CXConsole::GetFont(const char* name, float w, float h)
 	{
 		m_pFont	  = gEnv->pRenderer->GetIFont();
 		auto font = name;
-		auto var  = GET_CVAR("s_font");
+		auto var  = GetCVar("s_font");
 		if (var)
 			font = var->GetString();
 		m_pFont->Init(font, static_cast<unsigned int>(w), static_cast<unsigned int>(h));

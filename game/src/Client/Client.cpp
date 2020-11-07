@@ -360,7 +360,7 @@ void CClient::DrawAux()
 	size_t ch_w = 20;
 	size_t ch_h = 20;
 	if (gEnv->pRenderer)
-		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5 * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5 * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
+		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
 void CClient::DrawAxis(IRenderAuxGeom* render, Vec3 axis)

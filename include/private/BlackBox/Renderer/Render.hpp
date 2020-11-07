@@ -12,11 +12,11 @@ class World;
 
 typedef int glContextAttribute;
 
-enum AttributeType
+enum class AttributeType : int
 {
-	DEBUG,
-	RELEASE,
-	CORE
+	Debug,
+	Release,
+	Core
 };
 
 struct Hardware
@@ -161,9 +161,9 @@ class GLRenderer : public CRenderer
 	bool isDebug					 = false;
 #endif
 #if defined(_DEBUG) || defined(GL_DEBUG)
-	glContextAttribute glContextType = AttributeType::DEBUG;
+	glContextAttribute glContextType = (int)AttributeType::Debug;
 #else
-	glContextAttribute glContextType = AttributeType::CORE;
+	glContextAttribute glContextType = (int)AttributeType::Core;
 #endif
 	// DEBUG
 

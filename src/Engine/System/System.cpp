@@ -26,6 +26,7 @@
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/CVarOverrides.h>
+#include <BlackBox/System/ConsoleRegistration.h>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <SDL2/SDL.h>
 
@@ -449,8 +450,8 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 	case ESYSTEM_EVENT_MOVE:
 		break;
 	case ESYSTEM_EVENT_RESIZE:
-		m_rWidth  = wparam;
-		m_rHeight = lparam;
+		m_rWidth  = (int)wparam;
+		m_rHeight = (int)lparam;
 		break;
 	case ESYSTEM_EVENT_ACTIVATE:
 		break;
@@ -463,7 +464,7 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 	case ESYSTEM_EVENT_LANGUAGE_CHANGE:
 		break;
 	case ESYSTEM_EVENT_TOGGLE_FULLSCREEN:
-		m_rFullscreen = wparam;
+		m_rFullscreen = (int)wparam;
 		break;
 	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
 		m_bIsActive = bool(wparam);

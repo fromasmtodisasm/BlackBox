@@ -8,7 +8,6 @@ add_executable(${PROJECT_NAME} WIN32
 	Main.cpp
     #"Resource.rc"
 )
-add_definitions(-D_LAUNCHER)
 target_link_libraries(Launcher PRIVATE  BlackBox)
 #target_link_libraries(Launcher PRIVATE  System)
 add_dependencies(Launcher Game)
@@ -22,3 +21,7 @@ install(
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)
 set_solution_startup_target(Launcher)
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)

@@ -102,7 +102,7 @@ struct CConsoleCommand
 		, m_isManagedExternally(false)
 	{}
 	size_t sizeofThis() const { return sizeof(*this) + m_sName.capacity() + 1 + m_sCommand.capacity() + 1; }
-	void   GetMemoryUsage(class ICrySizer* pSizer) const
+	void   GetMemoryUsage(struct ICrySizer* pSizer) const
 	{
 		#if 0
 		pSizer->AddObject(m_sName);
@@ -524,6 +524,7 @@ class CXConsole : public IConsole
 	virtual void Update() override;
 	virtual void Draw() override;
 	virtual void AddCommand(const char* sName, const char* sScriptFunc, const DWORD indwFlags = 0, const char* help = "") override;
+	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* sHelp = NULL, bool bIsManagedExternally = false) override;
 	virtual void ExecuteString(const char* command, bool bNeedSlash = false, bool bIgnoreDevMode = false) override;
 	virtual void Exit(const char* command, ...) override;
 	virtual bool IsOpened() override;

@@ -128,9 +128,6 @@ Image loadDDS(const char* path)
 	uint blockSize;
 	int format;
 	
-	uint w;
-	uint h;
-	
 	std::vector<uint8_t> buffer;
 	
 	GLuint tid = 0;

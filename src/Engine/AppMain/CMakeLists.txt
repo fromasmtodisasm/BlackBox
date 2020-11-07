@@ -10,3 +10,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC GUI)
 
 add_private_headers()
 set_target_properties(AppMain PROPERTIES FOLDER "Engine/Utils")
+target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)

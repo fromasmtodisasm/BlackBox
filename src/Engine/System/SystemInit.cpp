@@ -405,10 +405,10 @@ bool CSystem::Init()
 			RenderBegin();
 			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
 			gEnv->pRenderer->DrawImage(
-				gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
-				gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2,
-				splash->getWidth(),
-				splash->getHeight(),
+				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
+				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
+				(float)splash->getWidth(),
+				(float)splash->getHeight(),
 				splash->getId(),
 				0, 0, 1, 1, 1, 1, 1, 1);
 			RenderEnd();

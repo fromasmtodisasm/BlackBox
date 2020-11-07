@@ -609,9 +609,9 @@ int CScriptObjectGame::AddCommand(IFunctionHandler* pH)
         sHelp = NULL;
     }
     if (sHelp)
-      m_pConsole->AddCommand(sName, sCommand, VF_DUMPTODISK | VF_SAVEGAME, sHelp);
+      static_cast<IBaseConsole*>(m_pConsole)->AddCommand(sName, sCommand, VF_DUMPTODISK | VF_SAVEGAME, sHelp);
     else
-      m_pConsole->AddCommand(sName, sCommand, VF_DUMPTODISK, "");
+      static_cast<IBaseConsole*>(m_pConsole)->AddCommand(sName, sCommand, VF_DUMPTODISK, "");
   }
 
   return pH->EndFunction();

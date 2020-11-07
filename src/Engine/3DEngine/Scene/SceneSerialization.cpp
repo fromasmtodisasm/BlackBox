@@ -7,6 +7,8 @@
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Scene/XmlSerialization.hpp>
 
+#include <BlackBox/System/ConsoleRegistration.h>
+
 #include <sstream>
 #ifndef XMLCheckResult
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }

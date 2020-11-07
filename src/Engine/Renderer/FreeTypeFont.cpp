@@ -143,7 +143,7 @@ bool operator< (const test_size& a, const test_size& b) {
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-	m_Height = h;
+	m_Height = static_cast<float>(h);
 	std::set<test_size> test;
 	shader = gEnv->pRenderer->Sh_Load("sprite.vs", "sprite.frag");
 	if (!shader)

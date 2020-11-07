@@ -1,10 +1,11 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
+
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <SDL.h>
 

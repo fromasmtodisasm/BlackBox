@@ -29,7 +29,7 @@ CSystemConfiguration::CSystemConfiguration(const string& strSysConfigFilePath, C
 	m_strSysConfigFilePath(strSysConfigFilePath), 
 	m_bError(false), m_pSink(pSink)
 {
-	ASSERT(pSink);
+	CRY_ASSERT(pSink);
 	m_pSystem = pSystem;
 	m_bError = !ParseSystemConfig();
 }

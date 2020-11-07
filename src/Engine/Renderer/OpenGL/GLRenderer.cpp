@@ -90,11 +90,11 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	//=======================
 	InitConsoleCommands();
 	//=======================
-	glContextType = AttributeType::DEBUG;
+	glContextType = (int)AttributeType::Debug;
 	#if 0
 	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
 	else
-	glContextType = AttributeType::CORE;
+	glContextType = AttributeType::Core;
 	#endif
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
 		return nullptr;
@@ -305,7 +305,7 @@ void GLRenderer::glInit()
 {
 	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
-	if (glContextType == AttributeType::DEBUG || GET_CVAR("r_Debug")->GetIVal() == 1)
+	if (glContextType == (int)AttributeType::Debug || gEnv->pConsole->GetCVar("r_Debug")->GetIVal() == 1)
 	{
 		m_pSystem->Log("Create debug render context");
 		glDebug = std::make_shared<OpenglDebuger>("out/glDebug.txt");

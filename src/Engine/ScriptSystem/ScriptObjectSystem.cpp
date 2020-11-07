@@ -142,10 +142,10 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 {
   SCRIPT_CHECK_PARAMETERS(6);
 	int id;
-	int xpos;
-	int ypos;
-	int w;
-	int h;
+	float xpos;
+	float ypos;
+	float w;
+	float h;
 	int blending_mode;
 	pH->GetParams(id, xpos, ypos, w, h, blending_mode);
 	gEnv->pRenderer->DrawImage(xpos, ypos, w, h, id, 0, 0, 1, 1, 0, 1, 0, 1);

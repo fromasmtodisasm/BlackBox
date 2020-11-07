@@ -659,7 +659,7 @@ private: // --------------------------------------------------------------------
 	struct SCVarGroup
 	{
 		std::map<string, string> m_KeyValuePair;                    // e.g. m_KeyValuePair["r_fullscreen"]="0"
-		void                     GetMemoryUsage(class ICrySizer* pSizer) const
+		void                     GetMemoryUsage(struct ICrySizer* pSizer) const
 		{
 			#if 0
 			pSizer->AddObject(m_KeyValuePair);
