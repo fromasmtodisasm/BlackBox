@@ -1,4 +1,5 @@
 #include <BlackBox/System/System.hpp>
+#include "ConsoleBatchFile.h"
 #include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/IInput.hpp>
@@ -176,6 +177,16 @@ void Command_SetWaitFrames(IConsoleCmdArgs* pCmd)
 		pConsole->m_waitFrames = std::max(0, atoi(pCmd->GetArg(1)));
 	}
 }
+
+void Command_Then(IConsoleCmdArgs* pCmd)
+{
+	if (pCmd->GetArgCount() > 1)
+	{
+		const char* szTmpStr = pCmd->GetCommandLine() + sizeof("then");
+		gEnv->pConsole->ExecuteString(szTmpStr, true, true);
+	}
+}
+
 #if 0
 #pragma region CVars
 char* CCVar::GetString()
@@ -492,6 +503,44 @@ inline bool hasprefix(const char* s, const char* prefix)
 	return true;
 }
 
+#if !defined(_RELEASE) && !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_APPLE
+void Command_DumpCommandsVars(IConsoleCmdArgs* Cmd)
+{
+	const char* arg = "";
+
+	if (Cmd->GetArgCount() > 1)
+		arg = Cmd->GetArg(1);
+
+	CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+
+	// txt
+	pConsole->DumpCommandsVars(const_cast<char*>(arg));
+
+#if CRY_PLATFORM_WINDOWS
+	// HTML
+	CConsoleHelpGen Generator(*pConsole);
+	Generator.Work();
+#endif
+}
+
+void Command_DumpVars(IConsoleCmdArgs* Cmd)
+{
+	#if 0
+	bool includeCheat = false;
+
+	if (Cmd->GetArgCount() > 1)
+	{
+		const char* arg = Cmd->GetArg(1);
+		const int incCheat = atoi(arg);
+		if (incCheat == 1)
+			includeCheat = true;
+	}
+
+	CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+	pConsole->DumpVarsTxt(includeCheat);
+	#endif
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 int CXConsole::con_display_last_messages = 0;
@@ -620,9 +669,9 @@ void CXConsole::PreProjectSystemInit()
 		|| gEnv->IsDedicated()) // unrestricted console for dedicated server
 		con_restricted = 0;
 
-	#if 0
 	// test cases -----------------------------------------------
 
+	#if 0
 	// cppcheck-suppress assertWithSideEffect
 	assert(GetCVar("con_debug") != 0);                    // should be registered a few lines above
 	// cppcheck-suppress assertWithSideEffect
@@ -650,6 +699,7 @@ void CXConsole::PreProjectSystemInit()
 	ResetAutoCompletion();
 	// cppcheck-suppress assertWithSideEffect
 	assert(strcmp(ProcessCompletion("Con_Debug"), "con_debug ") == 0);
+	#endif
 	ResetAutoCompletion();
 	m_sInputBuffer = "";
 
@@ -660,7 +710,7 @@ void CXConsole::PreProjectSystemInit()
 	REGISTER_COMMAND("audit_cvars", &Command_AuditCVars, VF_NULL, "Logs all console commands and cvars");
 #endif // ALLOW_AUDIT_CVARS
 
-#if !defined(_RELEASE) && !(CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID) && !CRY_PLATFORM_APPLE
+#if !defined(_RELEASE) && !(BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID) && !BB_PLATFORM_APPLE
 	REGISTER_COMMAND("DumpCommandsVars", &Command_DumpCommandsVars, VF_NULL,
 		"This console command dumps all console variables and commands to disk\n"
 		"DumpCommandsVars [prefix]");
@@ -684,9 +734,7 @@ void CXConsole::PreProjectSystemInit()
 		"> then echo Goodbye world!\n"
 		"> then wait_seconds 5\n"
 		"> then quit");
-
 	CConsoleBatchFile::Init();
-	#endif
 }
 
 void CXConsole::PostRendererInit()

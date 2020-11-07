@@ -239,6 +239,6 @@ FILE* CCryPak::FOpenRaw(const char* pName, const char* mode)
 }
 size_t CCryPak::FReadRaw(void* data, size_t length, size_t elems, FILE* handle)
 {
-	return size_t();
+	return FRead(data, length, elems, handle);
 }
 #endif
