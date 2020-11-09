@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Renderer CXX)
 
 add_package(Stb)
+find_package(freetype CONFIG REQUIRED)
 add_library(${PROJECT_NAME})
 
 if (DEFINED GL_RENDERER)
@@ -35,11 +36,7 @@ target_sources(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-if (LINUX)
-	target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
-else()
-	target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
-endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 
 add_SDL()
 
