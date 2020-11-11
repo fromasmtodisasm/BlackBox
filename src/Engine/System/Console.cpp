@@ -1596,7 +1596,8 @@ void CXConsole::AddCommand(const char* szCommand, ConsoleCommandFunc func, int n
 			//string arguments = string().Format("%s %s", szCommand, commandPair->second.c_str());
 			char arguments[512];
 			sprintf(arguments, "%s %s", szCommand, commandPair->second.c_str());
-			ExecuteCommand(commandIt->second, string(arguments));
+      auto args = string(arguments);
+			ExecuteCommand(commandIt->second, args);
 		}
 
 		// Remove all entries
@@ -1774,7 +1775,8 @@ const char* CXConsole::AutoComplete(const char* substr)
 	{
 		const char* szCmd = cmds[i];
 		const size_t cmdlen = strlen(szCmd);
-		if (cmdlen >= substrLen && _memicmp(szCmd, substr, substrLen) == 0)
+    //FIXME
+		if (cmdlen >= substrLen && strncasecmp(szCmd, substr, substrLen) == 0)
 		{
 			if (substrLen == cmdlen)
 			{

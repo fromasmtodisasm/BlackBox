@@ -132,6 +132,8 @@ struct _CryMemoryManagerPoolHelper
 	//////////////////////////////////////////////////////////////////////////
 	__forceinline void Free( void *memblock )
 	{
+        if (!m_bInitialized)
+            Init();
 		if (memblock != 0)
 		{
 			size_t size = ((int*)memblock)[-1];

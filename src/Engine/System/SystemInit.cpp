@@ -10,6 +10,7 @@
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif
 
+//#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_LOG_FILENAME    "Log.txt"
 
@@ -281,7 +282,8 @@ bool CSystem::Init()
 	{
 		string headerName;
 		#if defined(USE_UNIXCONSOLE)
-		CUNIXConsole* pConsole = pUnixConsole = new CUNIXConsole();
+		//CUNIXConsole* pConsole = pUnixConsole = new CUNIXConsole();
+		CNULLConsole* pConsole = new CNULLConsole(false);
 		headerName = "Unix ";
 		#elif defined(USE_IOSCONSOLE)
 		CIOSConsole* pConsole = new CIOSConsole();
