@@ -1776,7 +1776,7 @@ const char* CXConsole::AutoComplete(const char* substr)
 		const char* szCmd = cmds[i];
 		const size_t cmdlen = strlen(szCmd);
     //FIXME
-		if (cmdlen >= substrLen && strncasecmp(szCmd, substr, substrLen) == 0)
+		if (cmdlen >= substrLen && _memicmp(szCmd, substr, substrLen) == 0)
 		{
 			if (substrLen == cmdlen)
 			{
