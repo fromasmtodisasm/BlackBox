@@ -147,6 +147,13 @@ void CSystem::Quit()
 
 	GetIRemoteConsole()->Stop();
 
+    extern std::vector<const char*> g_moduleCVars;
+    printf("vars size: %d", g_moduleCVars.size());
+    for (auto& var : g_moduleCVars)
+    {
+        printf("var: %s", var);
+    }
+
 	Release();
 
 	exit(0);

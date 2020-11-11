@@ -196,6 +196,7 @@ namespace
 			{
 	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
 				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
+                fprintf(stderr, "dlopen failed: %s\n", dlerror());
 	#else
 				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
 				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());

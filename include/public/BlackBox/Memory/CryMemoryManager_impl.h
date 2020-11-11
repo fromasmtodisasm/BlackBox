@@ -86,7 +86,7 @@ struct _CryMemoryManagerPoolHelper
 	}
 	~_CryMemoryManagerPoolHelper()
 	{
-#if defined(LINUX) && defined(LKJDF)
+#if defined(LINUX) && defined(lsdk)
 		if (hSystem)
 			::dlclose( hSystem );
 #endif
