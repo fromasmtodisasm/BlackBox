@@ -208,7 +208,9 @@ void CGame::OnNETServerTimeout(const CIPAddress& ip)
 void CGame::RefreshServerList()
 {
   m_ServersInfos.clear();
+#if 0
   if (m_pServerSnooper)
     m_pServerSnooper->SearchForLANServers(GetCurrentTime());
+#endif
   TRACE("Refresh for lan");
 }

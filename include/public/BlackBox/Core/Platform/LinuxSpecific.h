@@ -215,10 +215,12 @@ typedef struct in_addr_windows
 
 //
 unsigned int GetCurrentTimeInternal();
+#if 0
 inline unsigned int GetCurrentTime()
 {
   return GetCurrentTimeInternal();
 }
+#endif
 
 extern "C" inline char *strlwr(char *str)
 {

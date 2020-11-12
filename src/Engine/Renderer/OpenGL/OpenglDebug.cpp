@@ -60,7 +60,8 @@ void OpenglDebuger::callBack(GLenum source, GLenum type, GLuint id, GLenum sever
     isError = true;
     std::stringstream ss;
     ss << SOURCE_TO_STRING(source) << std::endl << TYPE_TO_STRING(type) << std::endl << SEVERITY_TO_STRING(severity) << std::endl << "Message: " << std::string(message, message + length);
-    std::cerr << ss.str().c_str() << std::endl << std::endl;
+	//std::cerr << ss.str().c_str() << std::endl << std::endl;
+	CryError(ss.str().data());
 		*df << ss.str();
   //}
 }

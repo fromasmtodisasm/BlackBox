@@ -8,8 +8,6 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <filesystem>
-namespace fs = std::filesystem;
 
 extern "C"
 {
@@ -26,8 +24,6 @@ int main(int argc, char* argv[]) {
   }
 
   SSystemInitParams params;
-
-  std::cout << "Current path is " << fs::current_path() << '\n';
 
   time_t t = time(nullptr);
   std::stringstream ss;
