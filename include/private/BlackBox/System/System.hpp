@@ -75,6 +75,10 @@ class CSystem final : public ISystem
 	virtual IGame* GetIGame() override;
 	virtual IFont* GetIFont() override;
 	virtual IWindow* GetIWindow() override;
+	IValidator* GetIValidator() override
+	{
+		return m_pValidator;
+	};
 	virtual IScriptSystem* GetIScriptSystem() override;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() override
 	{
@@ -185,6 +189,7 @@ class CSystem final : public ISystem
 	IGame* m_pGame;
 	IFont* m_pFont;
 	IWindow* m_pWindow;
+	IValidator* m_pValidator; //!< Pointer to validator interface.
 	IRenderer* m_Render;
 	IScriptSystem* m_pScriptSystem;
 	IEntitySystem* m_pEntitySystem;

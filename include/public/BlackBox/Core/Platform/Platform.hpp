@@ -174,6 +174,13 @@ using string = MyString;
 #endif
 
 
+namespace Detail
+{
+template<typename T, size_t size>
+char (&ArrayCountHelper(T(&)[size]))[size];
+}
+
+#define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 
 #ifdef SendMessage
 #undef SendMessage

@@ -119,7 +119,18 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 	return true;
 }
 
+int64 bbGetTicks()
+{
+	LARGE_INTEGER li;
+	QueryPerformanceCounter(&li);
+	return li.QuadPart;
+}
 
+//////////////////////////////////////////////////////////////////////////
+void bbSleep(unsigned int dwMilliseconds)
+{
+	Sleep(dwMilliseconds);
+}
 
 //////////////////////////////////////////////////////////////////////////
 

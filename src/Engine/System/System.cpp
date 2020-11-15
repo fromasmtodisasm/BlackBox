@@ -77,6 +77,7 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 #if !defined(SYS_ENV_AS_STRUCT)
 	gEnv = &m_env;
 #endif
+	m_pValidator = nullptr;
 	InitThreadSystem();
 	CreateConsole();
 }
@@ -225,7 +226,7 @@ void CSystem::LoadScreen()
 	{
 		return;
 	}
-	m_pConsole->Clear();
+	//m_pConsole->Clear();
 	m_pConsole->SetScrollMax(600);
 	m_pConsole->ShowConsole(true);
 

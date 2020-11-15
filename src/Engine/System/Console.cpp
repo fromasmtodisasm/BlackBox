@@ -2363,7 +2363,7 @@ bool CXConsole::ProcessInput(const SInputEvent& event)
 			pCursor = pUnicode.GetPosition();
 			m_nCursorPos = pCursor - m_sInputBuffer.c_str();
 			#else
-			m_nCursorPos = pCursor - m_sInputBuffer.c_str() - 1;
+			m_nCursorPos = pCursor - m_sInputBuffer.c_str() + 1;
 			#endif
 		}
 		return true;
