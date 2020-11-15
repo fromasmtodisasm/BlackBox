@@ -7,3 +7,10 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/CmdLineArg.hpp>
 #include <BlackBox/System/HardwareMouse.hpp>
+
+#include <cassert>
+
+#ifdef BB_PLATFORM_LINUX
+#include <pwd.h>
+#include <sys/types.h>
+#endif

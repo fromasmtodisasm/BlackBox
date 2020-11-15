@@ -36,7 +36,7 @@ public:
   virtual Rect& getViewPort() override;
   virtual bool create(Params params) override;
   virtual void changeSize(int w, int h) override;
-  virtual void setCursor(Cursor* cursor) override;
+  //virtual void setCursor(Cursor* cursor) override;
   virtual GLContext getContext() override;
 public:
   virtual void* getHandle() override;

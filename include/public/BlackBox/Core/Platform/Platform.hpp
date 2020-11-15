@@ -96,9 +96,14 @@ typedef unsigned int        UINT;
 typedef unsigned int        *PUINT;
 
 
-#if defined(WIN32) && defined(__GNUC__)
-	#define DLL_EXPORT __attribute__ ((dllexport))
-	#define DLL_IMPORT __attribute__ ((dllimport))
+#if defined(WIN32) && defined(__GNUC__) || defined(BB_PLATFORM_LINUX)
+#if 0
+	#define DLL_EXPORT [[gnu::dllexport]]
+	#define DLL_IMPORT [[gnu::dllimport]]
+#else
+	#define DLL_EXPORT
+	#define DLL_IMPORT
+#endif
 #else
 	#define DLL_EXPORT __declspec(dllexport)
 	#define DLL_IMPORT __declspec(dllimport)
@@ -109,7 +114,7 @@ typedef unsigned int        *PUINT;
 #define MASK(x)   (BIT(x) - 1U)
 #define MASK64(x) (BIT64(x) - 1ULL)
 
-#define ASSERT(...) assert(__VA_ARGS__)
+#define ASSERT(...) assert((__VA_ARGS__))
 #define FUNCTION_PROFILER(...)
 
 #define CRY_ASSERT(...) ASSERT(__VA_ARGS__)

@@ -57,7 +57,7 @@ struct IRemoteConsole;
 #endif
 
 #if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
-#	define USE_DEDICATED_SERVER_CONSOLE
+//#	define USE_DEDICATED_SERVER_CONSOLE
 #endif
 
 //! System wide events.

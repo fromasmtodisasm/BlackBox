@@ -40,47 +40,47 @@ struct _CryMemoryManagerPoolHelper
 		allocatedMemory = 0;
 		freedMemory = 0;
 		numAllocations = 0;
-	// On first iteration check ourself
-	HMODULE hMod = CryGetCurrentModule();
-	for (int i = 0; i < 2; i++)
-	{
-		if (hMod)
+		// On first iteration check ourself
+		HMODULE hMod = CryGetCurrentModule();
+		for (int i = 0; i < 2; i++)
 		{
-			_CryMalloc = (FNC_CryMalloc)CryGetProcAddress(hMod, DLL_ENTRY_CRYMALLOC);
-			_CryRealloc = (FNC_CryRealloc)CryGetProcAddress(hMod, DLL_ENTRY_CRYREALLOC);
-			_CryFree = (FNC_CryFree)CryGetProcAddress(hMod, DLL_ENTRY_CRYFREE);
+			if (hMod)
+			{
+				_CryMalloc = (FNC_CryMalloc)CryGetProcAddress(hMod, DLL_ENTRY_CRYMALLOC);
+				_CryRealloc = (FNC_CryRealloc)CryGetProcAddress(hMod, DLL_ENTRY_CRYREALLOC);
+				_CryFree = (FNC_CryFree)CryGetProcAddress(hMod, DLL_ENTRY_CRYFREE);
 
-			if ((_CryMalloc && _CryRealloc && _CryFree))
-				break;
+				if ((_CryMalloc && _CryRealloc && _CryFree))
+					break;
+			}
+
+			hMod = CryLoadLibraryDefName("System");
 		}
 
-		hMod = CryLoadLibraryDefName("System");
-	}
-
-	if (!hMod || !_CryMalloc || !_CryRealloc || !_CryFree )
-	{
-		char errMsg[10240];
-		if (hMod)
+		if (!hMod || !_CryMalloc || !_CryRealloc || !_CryFree )
 		{
-			sprintf(errMsg, "%s", "Memory Manager: Unable to bind memory management functions.");
-		}
-		else
-		{
+			char errMsg[10240];
+			if (hMod)
+			{
+				sprintf(errMsg, "%s", "Memory Manager: Unable to bind memory management functions.");
+			}
+			else
+			{
 #ifdef CRY_PLATFORM_LINUX
-			sprintf(errMsg, "%s\nError details: %s", "Memory Manager: Unable to bind memory management functions. Could not access " CryLibraryDefName("CrySystem")" (check working directory)", dlerror());
+				sprintf(errMsg, "%s\nError details: %s", "Memory Manager: Unable to bind memory management functions. Could not access " CryLibraryDefName("CrySystem")" (check working directory)", dlerror());
 #else
-			sprintf(errMsg, "%s", "Memory Manager: Unable to bind memory management functions. Could not access " CryLibraryDefName("CrySystem")" (check working directory)");
+				sprintf(errMsg, "%s", "Memory Manager: Unable to bind memory management functions. Could not access " CryLibraryDefName("CrySystem")" (check working directory)");
 #endif
-		}
+			}
 
-		//CryMessageBox(errMsg, "Memory Manager", eMB_Error);
-		__debugbreak();
-		abort();
-	}
+			//CryMessageBox(errMsg, "Memory Manager", eMB_Error);
+			__debugbreak();
+			abort();
+		}
 	}
 	~_CryMemoryManagerPoolHelper()
 	{
-#if defined(LINUX)
+#if defined(LINUX) && defined(LKJDF)
 		if (hSystem)
 			::dlclose( hSystem );
 #endif

@@ -32,11 +32,16 @@
 #include "WindowsConsole.h"
 
 #include <cstdlib>
-#include <filesystem>
 #include <fstream>
 #include <thread>
 
+#ifndef BB_PLATFORM_LINUX
+#include <filesystem>
 namespace fs = std::filesystem;
+#else
+//#include <experimental/filesystem>
+//namespace fs = std::experimental::filesystem;
+#endif
 
 CSystem::CSystem(SSystemInitParams& m_startupParams)
 	:
@@ -245,7 +250,7 @@ bool CSystem::InitScripts()
 
 void CSystem::SetWorkingDirectory(const std::string& path) const
 {
-	fs::current_path(fs::path(path));
+	//fs::current_path(fs::path(path));
 }
 
 void CSystem::LogCommandLine() const
@@ -758,7 +763,8 @@ void CSystem::FatalError(const char* format, ...)
 	#endif
 
 	//GetITextModeConsole()->OnShutdown
-	DebugBreak();
+	//DebugBreak();
+	__debugbreak();
 
 }
 

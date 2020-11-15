@@ -2,6 +2,9 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/System/IConsole.hpp>
+
+#include <array>
 
 using P3F	= SVF_P3F_N;
 using VecPos = std::vector<P3F>;
@@ -124,6 +127,9 @@ CRenderAuxGeom::CRenderAuxGeom()
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb.vs", "bb.frag");
+
+	REGISTER_CVAR(dbg_mode, 3, 0, "");
+	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -138,9 +144,11 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
 	auto& shader = m_BoundingBoxShader;
 
+	auto angle = !stop ? float(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
 	glm::vec3 size		= glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
 	glm::vec3 center	= glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
-	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
+	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(
+		glm::mat4(1), angle, {0,1,0});
 
 	const auto& cam = gEnv->pRenderer->GetCamera();
 	Vec4 color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
@@ -150,7 +158,9 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	shader->Uniform(cam.getProjectionMatrix(), "projection");
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");
-	shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
+	//shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
+	shader->Uniform(this->dbg_mode, "dbgmode");
+	shader->Uniform(0, "bTonemap");
 	shader->Uniform(Vec3(300), "lightPos");
 	shader->Uniform(gEnv->pRenderer->GetFrameID(), "fid");
 	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");

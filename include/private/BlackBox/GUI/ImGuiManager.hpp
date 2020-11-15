@@ -20,7 +20,7 @@ struct IImGuiManager : public IInputEventListener
 };
 
 extern "C" {
-__declspec(dllexport) IImGuiManager* CreateGUI(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
+  DLL_EXPORT IImGuiManager* CreateGUI(ISystem* pSystem/*, void* hinst, void* hwnd, bool usedinput*/);
   typedef IImGuiManager* (*PFNCREATEGUI)(ISystem* pSystem);
 }
 

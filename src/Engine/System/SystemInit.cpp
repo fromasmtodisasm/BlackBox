@@ -13,6 +13,131 @@
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_LOG_FILENAME    "Log.txt"
 
+class CNULLConsole : public IOutputPrintSink,
+	                   public ISystemUserCallback,
+	                   public ITextModeConsole
+{
+public:
+	CNULLConsole(bool isDaemonMode);
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	// IOutputPrintSink
+	///////////////////////////////////////////////////////////////////////////////////////
+	virtual void Print(const char* inszText);
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	// ISystemUserCallback
+	///////////////////////////////////////////////////////////////////////////////////////
+	/** this method is called at the earliest point the ISystem pointer can be used
+	   the log might not be yet there
+	 */
+	virtual void OnSystemConnect(ISystem* pSystem) {};
+
+	/** If working in Editor environment notify user that engine want to Save current document.
+	   This happens if critical error have occured and engine gives a user way to save data and not lose it
+	   due to crash.
+	 */
+	virtual bool OnSaveDocument() { return false; }
+
+	/** Notify user that system wants to switch out of current process.
+	   (For ex. Called when pressing ESC in game mode to go to Menu).
+	 */
+	virtual void OnProcessSwitch() {};
+
+	// Notify user, usually editor about initialization progress in system.
+	virtual void OnInitProgress(const char* sProgressMsg) {};
+
+	// Initialization callback.  This is called early in CSystem::Init(), before
+	// any of the other callback methods is called.
+	virtual void OnInit(ISystem*);
+
+	// Shutdown callback.
+	virtual void OnShutdown() {};
+
+	// Notify user of an update iteration.  Called in the update loop.
+	virtual void OnUpdate();
+
+	// to collect the memory information in the user program/application
+	virtual void GetMemoryUsage(ICrySizer* pSizer) {};
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	// ITextModeConsole
+	///////////////////////////////////////////////////////////////////////////////////////
+	virtual Vec2_tpl<int> 	      BeginDraw() { return Vec2_tpl<int>(0, 0); };
+	virtual void          PutText(int x, int y, const char* msg);
+	virtual void          EndDraw()   {};
+
+	void                  SetRequireDedicatedServer(bool)
+	{
+		// Does nothing
+	}
+	virtual void SetHeader(const char*)
+	{
+		//Does nothing
+	}
+private:
+		#if CRY_PLATFORM_WINDOWS
+	HANDLE m_hOut;
+		#endif
+	bool m_isDaemon;
+	//CSyslogStats m_syslogStats;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////
+//
+// simple light-weight console implementation
+//
+///////////////////////////////////////////////////////////////////////////////////////
+CNULLConsole::CNULLConsole(bool isDaemonMode) : m_isDaemon(isDaemonMode)
+{
+}
+
+void CNULLConsole::Print(const char* inszText)
+{
+	if (m_isDaemon)
+		return;
+
+	#if CRY_PLATFORM_WINDOWS
+	DWORD written;
+	char buf[1024];
+	cry_sprintf(buf, "%s\n", inszText);
+	WriteConsole(m_hOut, buf, strlen(buf), &written, NULL);
+	#elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_MAC
+	printf("%s\n", inszText);
+	#endif
+}
+
+void CNULLConsole::OnInit(ISystem* pSystem)
+{
+	//m_syslogStats.Init();
+
+	if (m_isDaemon)
+		return;
+
+	IConsole* pConsole = pSystem->GetIConsole();
+	pConsole->AddOutputPrintSink(this);
+
+	#if CRY_PLATFORM_WINDOWS
+	AllocConsole();
+	m_hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	#endif
+}
+
+void CNULLConsole::OnUpdate()
+{
+	int numPlayers = 0;
+	float srvRate = 0;
+
+	if (ITimer* pTimer = gEnv->pSystem->GetITimer())
+		srvRate = pTimer->GetFrameRate();
+
+	//m_syslogStats.Update(srvRate, numPlayers, netNub);
+}
+
+void CNULLConsole::PutText(int x, int y, const char* msg)
+{
+}
+
 namespace
 {
 	template<typename L, typename P>
@@ -69,7 +194,7 @@ namespace
 			#endif
 			{
 	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
-				CryFatalError("Error loading dynamic library: %s, error :  %s\n", modulePath.c_str(), dlerror());
+				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
 	#else
 				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
 				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());

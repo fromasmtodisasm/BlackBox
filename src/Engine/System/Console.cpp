@@ -20,6 +20,20 @@
 #define CONST_TEMP_STRING(s) s
 //#define DEFENCE_CVAR_HASH_LOGGING
 
+
+//////////////////////////////////////////////////////////////////////////
+int memicmp(LPCSTR s1, LPCSTR s2, DWORD len)
+{
+	int ret = 0;
+	while (len--)
+	{
+		if ((ret = tolower(*s1) - tolower(*s2))) break;
+		s1++;
+		s2++;
+	}
+	return ret;
+}
+
 namespace ECVarTypeHelper
 {
 	template<typename T>
@@ -515,7 +529,7 @@ CXConsole::CXConsole(CSystem& system)
 	m_bCheatHashDirty	   = false;
 	m_nCheatHash		   = 0;
 
-	m_bStaticBackground = false;
+	m_bStaticBackground = true;
 	m_nProgress			= 0;
 	m_nProgressRange	= 0;
 	m_nLoadingBackTexID = 0;
@@ -2840,7 +2854,8 @@ void CXConsole::RemoveInputChar(bool bBackSpace)
 			pCursor = pUnicode.GetPosition();
 			const size_t length = pEnd - pCursor;
 			#endif
-			const size_t length = 1;
+			pCursor--;
+			const size_t length = pEnd - pCursor;
 			m_sInputBuffer.erase(pCursor - pBase, length);
 			m_nCursorPos -= length;
 		}

@@ -1,3 +1,4 @@
+#if 0
 #include <SteamHelper.hpp>
 
 CSteamAchievements::CSteamAchievements(Achievement_t *Achievements, int NumAchievements):
@@ -104,3 +105,4 @@ void CSteamAchievements::OnAchievementStored( UserAchievementStored_t *pCallback
           OutputDebugString( "Stored Achievement for Steam\n" );
      }
 }
+#endif
