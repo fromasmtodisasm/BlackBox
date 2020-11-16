@@ -84,6 +84,13 @@ bool CClient::Init()
 	if (!gEnv->IsDedicated())
 		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
+	m_PlayerScript.Create(gEnv->pScriptSystem);
+	if (!gEnv->pScriptSystem->GetGlobalValue("Player",*m_PlayerScript))
+	{
+		CryError("Player Error");
+		return false;
+	}
+
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 
 	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 10, 10)));
@@ -115,7 +122,8 @@ bool CClient::Init()
 
 	if (gEnv->pRenderer)
 		m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
-	return true;
+
+	return Script::CallMethod(m_PlayerScript, "OnInit");
 }
 
 void CClient::OnXConnect()

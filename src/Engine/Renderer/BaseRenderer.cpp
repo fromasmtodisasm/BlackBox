@@ -30,15 +30,15 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 	SDL_DisplayMode mode;
 	Uint32 f;
 
-	SDL_Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
+	gEnv->pLog->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
 
 	numModes = SDL_GetNumDisplayModes(display_in_use);
 	if (numModes < 1)
 	{
-		SDL_Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
+		gEnv->pLog->Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
 		return 1;
 	}
-	SDL_Log("SDL_GetNumDisplayModes: %i", numModes);
+	gEnv->pLog->Log("SDL_GetNumDisplayModes: %i", numModes);
 
 	if (formats != nullptr)
 	{
@@ -46,7 +46,7 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 		{
 			if (SDL_GetDisplayMode(display_in_use, i, &mode) != 0)
 			{
-				SDL_Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
+				gEnv->pLog->Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 				return 1;
 			}
 			f = mode.format;

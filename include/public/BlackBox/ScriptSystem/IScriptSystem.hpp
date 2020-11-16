@@ -822,6 +822,7 @@ struct IScriptDebugSink
 
 class SmartScriptObject
 {
+public:
 	SmartScriptObject(const SmartScriptObject&)
 		: m_pSO(nullptr)
 	{
@@ -835,7 +836,6 @@ class SmartScriptObject
 		return *this;
 	}
 
-  public:
 	SmartScriptObject()
 	{
 		m_pSO = NULL;
@@ -914,6 +914,11 @@ class SmartScriptObject
 	{
 		return m_pSO > p2;
 	};
+
+	IScriptObject* GetPtr()
+	{
+		return m_pSO;
+	}
 
   protected:
 	IScriptObject* m_pSO;

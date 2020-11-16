@@ -4,7 +4,7 @@ Player = {
 	alltime = 0.0
 }
 
-function Player:OnInit( data )
+function Player:OnInit()
 	Console:PrintLine("Player OnInit");
 	Console:PrintLine("Username: " .. self.name)
 
@@ -12,9 +12,9 @@ function Player:OnInit( data )
 	--Game:gotoMenu(true)
 
 	local formats = System:EnumDisplayFormats()
-	--for i=1, #formats do
-	--	Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
-	--end
+	for i=1, #formats do
+		Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+	end
 
 end
 
@@ -24,6 +24,8 @@ function Player:PostInit( )
 	setvar("floor", 20)
 	System:ShowConsole(false)
 	--Game:gotoMenu()
+
+	return true
 end
 
 
@@ -42,7 +44,7 @@ end
 
 
 function test(  )
-	Player:OnInit(123)
+	Player:OnInit()
 end
 
 

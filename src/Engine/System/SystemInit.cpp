@@ -1,11 +1,12 @@
 #include <BlackBox/System/System.hpp>
-#include <BlackBox/System/CryLibrary.hpp>
-#include <BlackBox/Core/Utils.hpp>
-#include <WindowsConsole.h>
-#include <BlackBox/System/Console.hpp>
-#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
+#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/System/Console.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
+#include <BlackBox/System/CryLibrary.hpp>
+#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
+#include <WindowsConsole.h>
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif

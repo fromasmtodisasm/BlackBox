@@ -664,5 +664,393 @@ class CScriptObjectColor : public SmartScriptObject
 	}
 };
 
+//! Script call helper.
+struct Script
+{
+	static SmartScriptObject GetCachedTable(IFunctionHandler* pH, int funcParam)
+	{
+		SmartScriptObject out;
+		if (pH->GetParamCount() >= funcParam && pH->GetParamType(funcParam) == svtObject)
+			pH->GetParam(funcParam, out);
+		if (!out.GetPtr())
+			out = SmartScriptObject(gEnv->pScriptSystem);
+		return out;
+	}
+
+	static SmartScriptObject SetCachedVector(const Vec3& value, IFunctionHandler* pH, int funcParam)
+	{
+		SmartScriptObject out = GetCachedTable(pH, funcParam);
+		{
+			CScriptSetGetChain chain(out);
+			chain.SetValue("x", value.x);
+			chain.SetValue("y", value.y);
+			chain.SetValue("z", value.z);
+		}
+		return out;
+	}
+
+	static SmartScriptObject GetCachedTable(SmartScriptObject& table, const char* fieldName)
+	{
+		SmartScriptObject out;
+
+		if (table->GetValue(fieldName, out))
+			return out;
+
+		out = SmartScriptObject(gEnv->pScriptSystem);
+		table->SetValue(fieldName, out);
+		return out;
+	}
+
+	static SmartScriptObject SetCachedVector(const Vec3& value, SmartScriptObject& table, const char* fieldName)
+	{
+		SmartScriptObject out = GetCachedTable(table, fieldName);
+		{
+			CScriptSetGetChain chain(out);
+			chain.SetValue("x", value.x);
+			chain.SetValue("y", value.y);
+			chain.SetValue("z", value.z);
+		}
+		return out;
+	}
+
+	static SmartScriptObject GetCachedTable(CScriptSetGetChain& chain, const char* fieldName)
+	{
+		SmartScriptObject out;
+
+		if (chain.GetValue(fieldName, out))
+			return out;
+
+		out = SmartScriptObject(gEnv->pScriptSystem);
+		chain.SetValue(fieldName, out);
+
+		return out;
+	}
+
+	static SmartScriptObject SetCachedVector(const Vec3& value, CScriptSetGetChain& chain, const char* fieldName)
+	{
+		SmartScriptObject out = GetCachedTable(chain, fieldName);
+		{
+			CScriptSetGetChain vecChain(out);
+			vecChain.SetValue("x", value.x);
+			vecChain.SetValue("y", value.y);
+			vecChain.SetValue("z", value.z);
+		}
+		return out;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	static bool Call(IScriptSystem* pSS, const char* funcName)
+	{
+		if (!pSS->BeginCall(funcName))
+			return false;
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1>
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2>
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3>
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class P4>
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3, p4);
+		return pSS->EndCall();
+	}
+
+	template<class P1, class P2, class P3, class P4, class P5>
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3, p4, p5);
+		return pSS->EndCall();
+	}
+
+	template<class P1, class P2, class P3, class P4, class P5, class P6>
+	static bool Call(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5, const P6& p6)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3, p4, p5, p6);
+		return pSS->EndCall();
+	}
+
+	//! Call to table.
+	//! \param pTable Must not be 0.
+	static bool CallMethod(IScriptObject* pTable, const char* sMethod)
+	{
+		////MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
+
+		assert(pTable);
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(pTable, sMethod))
+			return false;
+		PushParams(pSS, pTable);
+		return pSS->EndCall();
+	}
+	//! \param pTable Must not be 0.
+	template<class P1>
+	static bool CallMethod(IScriptObject* pTable, const char* sMethod, const P1& p1)
+	{
+		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
+
+		assert(pTable);
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(pTable, sMethod))
+			return false;
+		PushParams(pSS, pTable, p1);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2>
+	static bool CallMethod(IScriptObject* pTable, const char* sMethod, const P1& p1, const P2& p2)
+	{
+		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
+
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(pTable, sMethod))
+			return false;
+		PushParams(pSS, pTable, p1, p2);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3>
+	static bool CallMethod(IScriptObject* pTable, const char* sMethod, const P1& p1, const P2& p2, const P3& p3)
+	{
+		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
+
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(pTable, sMethod))
+			return false;
+		PushParams(pSS, pTable, p1, p2, p3);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class P4>
+	static bool CallMethod(IScriptObject* pTable, const char* sMethod, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
+	{
+		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
+
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(pTable, sMethod))
+			return false;
+		PushParams(pSS, pTable, p1, p2, p3, p4);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class P4, class P5>
+	static bool CallMethod(IScriptObject* pTable, const char* sMethod, const P1& p1, const P2& p2, const P3& p3, const P4& p4,
+						   const P5& p5)
+	{
+		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
+
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(pTable, sMethod))
+			return false;
+		PushParams(pSS, pTable, p1, p2, p3, p4, p5);
+		return pSS->EndCall();
+	}
+
+	//! Call to table.
+	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func)
+	{
+		#if 0
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		#else
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		#endif
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, pTable);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1>
+	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1)
+	{
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, pTable, p1);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2>
+	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2)
+	{
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, pTable, p1, p2);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3>
+	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3)
+	{
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, pTable, p1, p2, p3);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class P4>
+	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
+	{
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, pTable, p1, p2, p3, p4);
+		return pSS->EndCall();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class P4, class P5>
+	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4,
+						   const P5& p5)
+	{
+		IScriptSystem* pSS = gEnv->pScriptSystem;
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, pTable, p1, p2, p3, p4, p5);
+		return pSS->EndCall();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	template<class Ret>
+	static bool CallReturn(IScriptSystem* pSS, HSCRIPTFUNCTION func, Ret& ret)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		return pSS->EndCall(ret);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class Ret>
+	static bool CallReturn(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, Ret& ret)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1);
+		return pSS->EndCall(ret);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class Ret>
+	static bool CallReturn(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, Ret& ret)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2);
+		return pSS->EndCall(ret);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class Ret>
+	static bool CallReturn(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, Ret& ret)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3);
+		return pSS->EndCall(ret);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class P1, class P2, class P3, class P4, class Ret>
+	static bool CallReturn(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4, Ret& ret)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3, p4);
+		return pSS->EndCall(ret);
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class Ret>
+	static bool CallReturn(IScriptSystem* pSS, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5, Ret& ret)
+	{
+		if (!pSS->BeginCall(func))
+			return false;
+		PushParams(pSS, p1, p2, p3, p4, p5);
+		return pSS->EndCall(ret);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+  private:
+	template<class P1>
+	static void PushParams(IScriptSystem* pSS, const P1& p1)
+	{
+		pSS->PushFuncParam(p1);
+	}
+	template<class P1, class P2>
+	static void PushParams(IScriptSystem* pSS, const P1& p1, const P2& p2)
+	{
+		pSS->PushFuncParam(p1);
+		pSS->PushFuncParam(p2);
+	}
+	template<class P1, class P2, class P3>
+	static void PushParams(IScriptSystem* pSS, const P1& p1, const P2& p2, const P3& p3)
+	{
+		pSS->PushFuncParam(p1);
+		pSS->PushFuncParam(p2);
+		pSS->PushFuncParam(p3);
+	}
+	template<class P1, class P2, class P3, class P4>
+	static void PushParams(IScriptSystem* pSS, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
+	{
+		pSS->PushFuncParam(p1);
+		pSS->PushFuncParam(p2);
+		pSS->PushFuncParam(p3);
+		pSS->PushFuncParam(p4);
+	}
+	template<class P1, class P2, class P3, class P4, class P5>
+	static void PushParams(IScriptSystem* pSS, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5)
+	{
+		pSS->PushFuncParam(p1);
+		pSS->PushFuncParam(p2);
+		pSS->PushFuncParam(p3);
+		pSS->PushFuncParam(p4);
+		pSS->PushFuncParam(p5);
+	}
+	template<class P1, class P2, class P3, class P4, class P5, class P6>
+	static void PushParams(IScriptSystem* pSS, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5, const P6& p6)
+	{
+		pSS->PushFuncParam(p1);
+		pSS->PushFuncParam(p2);
+		pSS->PushFuncParam(p3);
+		pSS->PushFuncParam(p4);
+		pSS->PushFuncParam(p5);
+		pSS->PushFuncParam(p6);
+	}
+};
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 #endif //_SCRIPTABLE_H_

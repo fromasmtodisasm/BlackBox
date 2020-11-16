@@ -4,6 +4,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/Threading/IThreadManager.h>
 #include <cstdarg>
 #include <cstdio>

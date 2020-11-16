@@ -288,11 +288,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	}
 	else
 	{
-		m_pScriptSystem->BeginCall(Gui, "Init");
-		m_pScriptSystem->PushFuncParam(Gui);
-		m_pScriptSystem->EndCall();
-
+		Script::CallMethod(Gui, "Init");
 	}
+	//m_Console->ExecuteString("@Player:OnInit()");
 
 	
 	// init key-bindings

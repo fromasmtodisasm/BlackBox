@@ -226,7 +226,7 @@ void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 		}
 		else
 		{
-			m_pSystem->GetILog()->Log("Invalid game cfg:%s",szLine);
+			gEnv->pLog->LogError("Invalid game cfg:%s",szLine);
 		}
 	}
 

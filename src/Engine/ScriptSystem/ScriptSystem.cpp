@@ -1008,9 +1008,15 @@ void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const cha
 
 SCRIPTSYSTEM_API IScriptSystem * CreateScriptSystem(ISystem* pSystem, bool bStdLibs)
 {
-  auto ss = new CScriptSystem();
-  if (ss->Init(pSystem))
-    return ss;
-  else
-    return nullptr;
+	auto ss				= new CScriptSystem();
+	gEnv->pScriptSystem = ss;
+	if (ss->Init(pSystem))
+	{
+		return ss;
+	}
+	else
+	{
+		gEnv->pScriptSystem = nullptr;
+		return nullptr;
+	}
 }
