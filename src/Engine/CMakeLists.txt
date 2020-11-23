@@ -109,8 +109,6 @@ macro(main)
 
 	set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 	###################################################
-	configure_file(${BLACKBOX_PUBLIC_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
-	###################################################
 	if (BB_TESET_ENABLE)
 	  target_compile_definitions(${BLACKBOX_PROJECT} INTERFACE -DTEST)
 	  target_compile_definitions(${BLACKBOX_PROJECT} INTERFACE -DSINGLE_PASS)

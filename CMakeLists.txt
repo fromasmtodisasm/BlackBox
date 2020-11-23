@@ -1,6 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-#project(BlackBox)
-
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	message(
 		FATAL_ERROR 
@@ -12,11 +10,6 @@ if(NOT DEFINED BLACKBOX_DIR)
 	set(BLACKBOX_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
-if (NOT DEFINED PROJECT_INITED)
-	set(PROJECT_INITED FALSE CACHE BOOL "After successful initialized")
-endif()
-
-set(ALL_PROJECT_SOURCES)
 # Part of the setup is split into the InitialSetup file so projects created by cryrun can include it.
 # This needs to be re-visited after the toolchain files are cleaned up.
 include(Tools/CMake/InitialSetup.cmake)
@@ -40,13 +33,3 @@ project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 ###################################################
 include(Tools/CMake/Configure.cmake)
 ###################################################
-set(PROJECT_INITED TRUE CACHE BOOL "After successful initialized")
-include(CPack)
-# Packaging support
-set(CPACK_PACKAGE_VENDOR "fromasmtodisasm")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Some summary")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-
-set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
-set(CPACK_NSIS_CREATE_ICONS "CreateShortCut '\$SMPROGRAMS\\\\${PROJECT_NAME}.lnk' '\$INSTDIR\\\\bin\\\\Launcher.exe'")

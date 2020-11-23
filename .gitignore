@@ -6,7 +6,6 @@ build/*
 *.swo
 *.lnk
 CMakeLists.txt.user*
-/CMakeSettings.json
 res/tmp/*
 res/geom/tmp/
 imgui.ini
@@ -27,3 +26,4 @@ cmake-build*
 /msvc
 /vcpkg_lin
 /Game.log
+Solutions/*

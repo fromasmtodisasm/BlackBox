@@ -7,7 +7,7 @@ list(APPEND GLAD_SOURCES
 "${GLAD_INCLUDE_DIRS}/glad/glad.h"
 )
 
-add_library(glad ${GLAD_SOURCES})
+add_library(glad STATIC ${GLAD_SOURCES})
 
 target_include_directories(glad PUBLIC 
   $<BUILD_INTERFACE:${GLAD_INCLUDE_DIRS}>

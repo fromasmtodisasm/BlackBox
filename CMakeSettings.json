@@ -1,0 +1,34 @@
+﻿{
+  "configurations": [
+    {
+      "buildRoot": "${projectDir}\\Solutions\\Win64_Debug",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "configurationType": "Debug",
+      "generator": "Visual Studio 16 2019 Win64",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "name": "Windows x64 Debug",
+      "variables": []
+    },
+    {
+      "buildRoot": "${projectDir}\\Solutions\\Win64_Profile",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "configurationType": "Profile",
+      "generator": "Visual Studio 16 2019 Win64",
+      "name": "Windows x64 Profile",
+      "inheritEnvironments": [],
+      "variables": []
+    },
+    {
+      "buildRoot": "${projectDir}\\Solutions\\Win64_Release",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "configurationType": "Release",
+      "generator": "Visual Studio 16 2019 Win64",
+      "name": "Windows x64 Release",
+      "inheritEnvironments": [],
+      "variables": []
+    }
+  ]
+}
