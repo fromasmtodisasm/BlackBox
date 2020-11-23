@@ -1,4 +1,4 @@
-﻿#ifdef GAME_GUI
+#ifdef GAME_GUI
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/GUI/GUI.hpp>
 #include <BlackBox/Renderer/Light.hpp>

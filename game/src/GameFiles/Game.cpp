@@ -1,4 +1,4 @@
-﻿#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <Game.hpp>
 #include <GameObject.hpp>
 

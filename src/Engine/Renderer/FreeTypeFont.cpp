@@ -1,4 +1,4 @@
-﻿#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
