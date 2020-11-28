@@ -18,6 +18,7 @@ endif()
 if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	# 2. Games
 	#add_subdirectories_glob("Code/Game*")
+	add_subdirectory(${CMAKE_SOURCE_DIR}/game)
 endif()
 	
 if (OPTION_EDITOR)
