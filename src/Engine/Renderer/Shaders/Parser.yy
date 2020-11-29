@@ -76,7 +76,12 @@
 %%
 %start unit;
 
-unit: GLSLSHADER { gEnv->pLog->Log("$3 Shader parsed"); };
+unit: 
+	GLSLSHADER IDENTIFIER { gEnv->pLog->Log("$3 Shader with name %s", $2.data()); }
+    "{" CODEBODY { 
+	gEnv->pLog->Log("$3 Shader parsed"); 
+}
+;
 
 %%
 

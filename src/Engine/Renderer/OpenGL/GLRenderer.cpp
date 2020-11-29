@@ -60,10 +60,12 @@ FxParser* g_FxParser;
 
 void TestFx(IConsoleCmdArgs* args)
 {
+	string filename;
 	if (args->GetArgCount() < 2)
-		return;
+		filename = "tmp/test.fx";
+	else
+		filename = args->GetArg(1);
 
-	const string filename = args->GetArg(1);
 
 	g_FxParser->Parse(filename);
 }

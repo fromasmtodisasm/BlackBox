@@ -559,13 +559,21 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 79 "Parser.yy" // lalr1.cc:859
-    { gEnv->pLog->Log("$3 Shader parsed"); }
+#line 80 "Parser.yy" // lalr1.cc:859
+    { gEnv->pLog->Log("$3 Shader with name %s", yystack_[0].value.as< std::string > ().data()); }
 #line 565 "Parser.cpp" // lalr1.cc:859
     break;
 
+  case 3:
+#line 81 "Parser.yy" // lalr1.cc:859
+    { 
+	gEnv->pLog->Log("$3 Shader parsed"); 
+}
+#line 573 "Parser.cpp" // lalr1.cc:859
+    break;
 
-#line 569 "Parser.cpp" // lalr1.cc:859
+
+#line 577 "Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -827,55 +835,55 @@ namespace yy {
   const signed char
   parser::yypact_[] =
   {
-     -14,   -15,     1,   -15
+     -14,   -13,     1,   -15,   -15,    -7,   -12,   -15
   };
 
   const unsigned char
   parser::yydefact_[] =
   {
-       0,     2,     0,     1
+       0,     0,     0,     2,     1,     0,     0,     3
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-     -15,   -15
+     -15,   -15,   -15
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,     2
+      -1,     2,     5
   };
 
   const unsigned char
   parser::yytable_[] =
   {
-       1,     3
+       1,     4,     3,     6,     7
   };
 
   const unsigned char
   parser::yycheck_[] =
   {
-      14,     0
+      14,     0,    15,    10,    16
   };
 
   const unsigned char
   parser::yystos_[] =
   {
-       0,    14,    19,     0
+       0,    14,    19,    15,     0,    20,    10,    16
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,    18,    19
+       0,    18,    20,    19
   };
 
   const unsigned char
   parser::yyr2_[] =
   {
-       0,     2,     1
+       0,     2,     0,     5
   };
 
 
@@ -888,14 +896,14 @@ namespace yy {
   "\"end of file\"", "error", "$undefined", "\":=\"", "\"-\"", "\"+\"",
   "\"*\"", "\"/\"", "\"(\"", "\")\"", "\"{\"", "\"}\"", "\";\"", "\",\"",
   "GLSLSHADER", "\"identifier\"", "CODEBODY", "\"number\"", "$accept",
-  "unit", YY_NULLPTR
+  "unit", "$@1", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
   parser::yyrline_[] =
   {
-       0,    79,    79
+       0,    80,    80,    80
   };
 
   // Print the state stack on the debug stream.
@@ -930,8 +938,8 @@ namespace yy {
 
 
 } // yy
-#line 934 "Parser.cpp" // lalr1.cc:1167
-#line 81 "Parser.yy" // lalr1.cc:1168
+#line 942 "Parser.cpp" // lalr1.cc:1167
+#line 86 "Parser.yy" // lalr1.cc:1168
 
 
 void
