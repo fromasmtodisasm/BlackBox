@@ -589,9 +589,9 @@ namespace yy {
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
   // number is the opposite.  If YYTABLE_NINF, syntax error.
-  static const unsigned char yytable_[];
+  static const signed char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -711,12 +711,12 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 4,     ///< Last index in yytable_.
-      yynnts_ = 3,  ///< Number of nonterminal symbols.
-      yyfinal_ = 4, ///< Termination state number.
+      yylast_ = 60,     ///< Last index in yytable_.
+      yynnts_ = 17,  ///< Number of nonterminal symbols.
+      yyfinal_ = 3, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 18  ///< Number of tokens.
+      yyntokens_ = 31  ///< Number of tokens.
     };
 
 
@@ -761,9 +761,10 @@ namespace yy {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30
     };
-    const unsigned int user_token_number_max_ = 272;
+    const unsigned int user_token_number_max_ = 285;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -983,7 +984,9 @@ namespace yy {
     yytoken_number_[] =
     {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271,   272
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     285
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1087,7 +1090,7 @@ namespace yy {
 
 
 } // yy
-#line 1091 "Parser.hpp" // lalr1.cc:377
+#line 1094 "Parser.hpp" // lalr1.cc:377
 
 
 

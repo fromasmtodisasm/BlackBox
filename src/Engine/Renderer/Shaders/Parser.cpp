@@ -558,14 +558,14 @@ namespace yy {
         {
           switch (yyn)
             {
-  case 2:
-#line 80 "Parser.yy" // lalr1.cc:859
+  case 20:
+#line 101 "Parser.yy" // lalr1.cc:859
     { gEnv->pLog->Log("$3 Shader with name %s", yystack_[0].value.as< std::string > ().data()); }
 #line 565 "Parser.cpp" // lalr1.cc:859
     break;
 
-  case 3:
-#line 81 "Parser.yy" // lalr1.cc:859
+  case 21:
+#line 102 "Parser.yy" // lalr1.cc:859
     { 
 	gEnv->pLog->Log("$3 Shader parsed"); 
 }
@@ -828,62 +828,91 @@ namespace yy {
   }
 
 
-  const signed char parser::yypact_ninf_ = -15;
+  const signed char parser::yypact_ninf_ = -13;
 
-  const signed char parser::yytable_ninf_ = -1;
+  const signed char parser::yytable_ninf_ = -35;
 
   const signed char
   parser::yypact_[] =
   {
-     -14,   -13,     1,   -15,   -15,    -7,   -12,   -15
+     -10,   -13,     0,   -13,   -13,   -12,   -13,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,    30,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,     4,    -5,    -9,   -13
   };
 
   const unsigned char
   parser::yydefact_[] =
   {
-       0,     0,     0,     2,     1,     0,     0,     3
+       2,     3,     0,     1,    18,     0,    19,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,     0,
+       4,     5,     6,     7,     8,     9,    10,    11,    12,    13,
+      14,    15,    16,    17,    20,    18,     0,     0,    21
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-     -15,   -15,   -15
+     -13,     6,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13,   -13,   -13
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,     2,     5
+      -1,    19,    20,    21,    36,    22,    23,    24,    25,    26,
+      27,    28,    29,    30,    31,    32,    33
   };
 
-  const unsigned char
+  const signed char
   parser::yytable_[] =
   {
-       1,     4,     3,     6,     7
+       3,     4,     1,    34,   -34,    37,     2,    38,     0,     0,
+       0,     0,     1,     0,     5,     0,     0,     0,     6,     7,
+       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    35,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     1,     0,     5,     0,     0,     0,     6,     7,
+       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
+      18
   };
 
-  const unsigned char
+  const signed char
   parser::yycheck_[] =
   {
-      14,     0,    15,    10,    16
+       0,     1,    12,    15,     0,    10,     0,    16,    -1,    -1,
+      -1,    -1,    12,    -1,    14,    -1,    -1,    -1,    18,    19,
+      20,    21,    22,    23,    24,    25,    26,    27,    28,    29,
+      30,     1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    12,    -1,    14,    -1,    -1,    -1,    18,    19,
+      20,    21,    22,    23,    24,    25,    26,    27,    28,    29,
+      30
   };
 
   const unsigned char
   parser::yystos_[] =
   {
-       0,    14,    19,    15,     0,    20,    10,    16
+       0,    12,    32,     0,     1,    14,    18,    19,    20,    21,
+      22,    23,    24,    25,    26,    27,    28,    29,    30,    32,
+      33,    34,    36,    37,    38,    39,    40,    41,    42,    43,
+      44,    45,    46,    47,    15,     1,    35,    10,    16
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,    18,    20,    19
+       0,    31,    32,    32,    32,    32,    32,    32,    32,    32,
+      32,    32,    32,    32,    32,    32,    32,    32,    32,    33,
+      35,    34,    36,    37,    38,    39,    40,    41,    42,    43,
+      44,    45,    46,    47,    47
   };
 
   const unsigned char
   parser::yyr2_[] =
   {
-       0,     2,     0,     5
+       0,     2,     0,     1,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     1,
+       0,     5,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     2
   };
 
 
@@ -895,15 +924,23 @@ namespace yy {
   {
   "\"end of file\"", "error", "$undefined", "\":=\"", "\"-\"", "\"+\"",
   "\"*\"", "\"/\"", "\"(\"", "\")\"", "\"{\"", "\"}\"", "\";\"", "\",\"",
-  "GLSLSHADER", "\"identifier\"", "CODEBODY", "\"number\"", "$accept",
-  "unit", "$@1", YY_NULLPTR
+  "GLSLSHADER", "\"identifier\"", "CODEBODY", "\"number\"", "\"tech\"",
+  "\"hlsl\"", "\"texture\"", "\"resource\"", "\"fbo\"", "\"sstate\"",
+  "\"dststate\"", "\"prstate\"", "\"csstate\"", "\"rstate\"",
+  "\"namespace\"", "\"cstbuffer\"", "\"uniforms\"", "$accept", "input",
+  "tech", "glsl", "$@1", "hlsl", "texture", "resource", "fbo", "sstate",
+  "dststate", "prstate", "csstate", "rstate", "namespace", "cstbuffer",
+  "uniforms", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
   parser::yyrline_[] =
   {
-       0,    80,    80,    80
+       0,    79,    79,    80,    81,    82,    83,    84,    85,    86,
+      87,    88,    89,    90,    91,    92,    93,    94,    95,    99,
+     101,   101,   106,   107,   108,   109,   110,   111,   112,   113,
+     114,   115,   116,   117,   118
   };
 
   // Print the state stack on the debug stream.
@@ -938,8 +975,8 @@ namespace yy {
 
 
 } // yy
-#line 942 "Parser.cpp" // lalr1.cc:1167
-#line 86 "Parser.yy" // lalr1.cc:1168
+#line 979 "Parser.cpp" // lalr1.cc:1167
+#line 121 "Parser.yy" // lalr1.cc:1168
 
 
 void

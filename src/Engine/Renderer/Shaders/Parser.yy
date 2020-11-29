@@ -74,13 +74,48 @@
 // %printer { yyo << $$; } <*>;
 
 %%
-%start unit;
+%start input;
 
-unit: 
+input: %empty
+| ";"
+| input tech
+| input glsl
+| input hlsl
+| input texture
+| input resource
+| input fbo
+| input sstate
+| input dststate
+| input prstate
+| input csstate
+| input rstate
+| input namespace
+| input cstbuffer
+| input uniforms
+| input error
+;
+
+
+tech: "tech";
+glsl: 
 	GLSLSHADER IDENTIFIER { gEnv->pLog->Log("$3 Shader with name %s", $2.data()); }
     "{" CODEBODY { 
 	gEnv->pLog->Log("$3 Shader parsed"); 
 }
+;
+hlsl: "hlsl";
+texture: "texture";
+resource: "resource";
+fbo: "fbo";
+sstate: "sstate";
+dststate: "dststate";
+prstate: "prstate";
+csstate: "csstate";
+rstate: "rstate";
+namespace: "namespace";
+cstbuffer: "cstbuffer";
+uniforms: "uniforms";
+| input error
 ;
 
 %%

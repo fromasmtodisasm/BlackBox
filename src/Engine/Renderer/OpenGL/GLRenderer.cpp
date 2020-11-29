@@ -66,7 +66,6 @@ void TestFx(IConsoleCmdArgs* args)
 	else
 		filename = args->GetArg(1);
 
-
 	g_FxParser->Parse(filename);
 }
 
