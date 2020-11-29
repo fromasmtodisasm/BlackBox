@@ -3,6 +3,33 @@ project(Renderer CXX)
 
 add_package(Stb)
 find_package(freetype CONFIG REQUIRED)
+# ===============> bison
+find_package(BISON)
+find_package(FLEX)
+if((NOT BISON_FOUND) OR (NOT FLEX_FOUND))
+    message(WARNING "
+      No Bison and/or Flex available. FxParser will only use the already generated code.
+      You can try to set BISON_EXECUTABLE & FLEX_EXECUTABLE"
+    )
+  set(BISON_EXECUTABLE "" CACHE PATHFILE "bison")
+  set(FLEX_EXECUTABLE "" CACHE PATHFILE "flex")
+  MARK_AS_ADVANCED(CLEAR BISON_EXECUTABLE)
+  MARK_AS_ADVANCED(CLEAR FLEX_EXECUTABLE)
+endif()
+
+if(BISON_FOUND)
+  BISON_TARGET(
+	  ShaderParser Parser.yy ${PROJECT_SOURCE_DIR}/Parser.cpp
+	  DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hh
+  )
+endif()
+if(FLEX_FOUND)
+  FLEX_TARGET(ShaderScanner Scanner.yy ${PROJECT_SOURCE_DIR}/Scanner.cpp)
+endif()
+if(FLEX_FOUND AND BISON_FOUND)
+  ADD_FLEX_BISON_DEPENDENCY(ShaderScanner ShaderParser)
+endif()
+
 add_library(${PROJECT_NAME})
 
 if (DEFINED GL_RENDERER)
@@ -35,6 +62,12 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
+
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
@@ -43,7 +76,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 add_SDL()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FLEX_INCLUDE_DIRS})
 
+source_group(
+	TREE ${PROJECT_SOURCE_DIR}
+	#PREFIX "Header Files"
+	FILES
+	${SOURCES}
+)
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
