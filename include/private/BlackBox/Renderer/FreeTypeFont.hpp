@@ -8,9 +8,13 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
+void RegisterColorTable();
+
 class FreeTypeFont : public IFont
 {
-public:
+	friend void RegisterColorTable();
+
+  public:
   struct Character {
     uint     TextureID;  // ID handle of the glyph texture
     glm::ivec2 Size;       // Size of glyph
@@ -25,12 +29,14 @@ public:
     ft(nullptr),
     shader(nullptr)
   {
+	  RegisterColorTable();
   }
   FreeTypeFont(const char* font, int w, int h) :
     face(nullptr),
     ft(nullptr),
     shader(nullptr)
   {
+	  RegisterColorTable();
   }
   void RenderText(std::string text, float x, float y, float scale, float color[4]) override;
   virtual float TextWidth(const std::string& text) override;
@@ -44,6 +50,8 @@ private:
   CVertexBuffer* m_VB = nullptr;
   SVertexStream* m_IB = nullptr;
   BaseShaderProgramRef shader;
+
+  static bool printColorTableRegistered;
 
 public:
   // Унаследовано через IFont

@@ -34,6 +34,7 @@
 
 	#pragma warning(push, 0)
     #include "Driver.hpp"
+    #include "Scanner.hpp"
     #include "location.hh"
 
     #if 0
@@ -52,12 +53,12 @@
         return scanner.ScanToken();
     }
 
-#line 56 "Parser.cpp" // lalr1.cc:397
+#line 57 "Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 61 "Parser.cpp" // lalr1.cc:404
+#line 62 "Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -71,7 +72,7 @@
 
 // User implementation prologue.
 
-#line 75 "Parser.cpp" // lalr1.cc:412
+#line 76 "Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -157,7 +158,7 @@
 
 
 namespace yy {
-#line 161 "Parser.cpp" // lalr1.cc:479
+#line 162 "Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -270,11 +271,12 @@ namespace yy {
   {
       switch (that.type_get ())
     {
-      case 16: // "number"
+      case 17: // "number"
         value.move< int > (that.value);
         break;
 
       case 15: // "identifier"
+      case 16: // CODEBODY
         value.move< std::string > (that.value);
         break;
 
@@ -293,11 +295,12 @@ namespace yy {
     state = that.state;
       switch (that.type_get ())
     {
-      case 16: // "number"
+      case 17: // "number"
         value.copy< int > (that.value);
         break;
 
       case 15: // "identifier"
+      case 16: // CODEBODY
         value.copy< std::string > (that.value);
         break;
 
@@ -529,11 +532,12 @@ namespace yy {
          when using variants.  */
         switch (yyr1_[yyn])
     {
-      case 16: // "number"
+      case 17: // "number"
         yylhs.value.build< int > ();
         break;
 
       case 15: // "identifier"
+      case 16: // CODEBODY
         yylhs.value.build< std::string > ();
         break;
 
@@ -554,8 +558,14 @@ namespace yy {
         {
           switch (yyn)
             {
+  case 2:
+#line 79 "Parser.yy" // lalr1.cc:859
+    { gEnv->pLog->Log("$3 Shader parsed"); }
+#line 565 "Parser.cpp" // lalr1.cc:859
+    break;
 
-#line 559 "Parser.cpp" // lalr1.cc:859
+
+#line 569 "Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -853,13 +863,13 @@ namespace yy {
   const unsigned char
   parser::yystos_[] =
   {
-       0,    14,    18,     0
+       0,    14,    19,     0
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,    17,    18
+       0,    18,    19
   };
 
   const unsigned char
@@ -877,14 +887,15 @@ namespace yy {
   {
   "\"end of file\"", "error", "$undefined", "\":=\"", "\"-\"", "\"+\"",
   "\"*\"", "\"/\"", "\"(\"", "\")\"", "\"{\"", "\"}\"", "\";\"", "\",\"",
-  "GLSLSHADER", "\"identifier\"", "\"number\"", "$accept", "unit", YY_NULLPTR
+  "GLSLSHADER", "\"identifier\"", "CODEBODY", "\"number\"", "$accept",
+  "unit", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
   parser::yyrline_[] =
   {
-       0,    77,    77
+       0,    79,    79
   };
 
   // Print the state stack on the debug stream.
@@ -919,13 +930,14 @@ namespace yy {
 
 
 } // yy
-#line 923 "Parser.cpp" // lalr1.cc:1167
-#line 79 "Parser.yy" // lalr1.cc:1168
+#line 934 "Parser.cpp" // lalr1.cc:1167
+#line 81 "Parser.yy" // lalr1.cc:1168
 
 
 void
 yy::parser::error(const location_type& l, const std::string& m)
 {
+  gEnv->pLog->LogError(m.data());    
   std::cerr << l << ": " << m << '\n';
 }
 #pragma warning(pop)

@@ -20,6 +20,7 @@
 %code top{
 	#pragma warning(push, 0)
     #include "Driver.hpp"
+    #include "Scanner.hpp"
     #include "location.hh"
 
     #if 0
@@ -67,6 +68,7 @@
 
 
 %token <std::string> IDENTIFIER "identifier"
+%token <std::string> CODEBODY
 %token <int> NUMBER "number"
 
 // %printer { yyo << $$; } <*>;
@@ -74,13 +76,14 @@
 %%
 %start unit;
 
-unit: GLSLSHADER;
+unit: GLSLSHADER { gEnv->pLog->Log("$3 Shader parsed"); };
 
 %%
 
 void
 yy::parser::error(const location_type& l, const std::string& m)
 {
+  gEnv->pLog->LogError(m.data());    
   std::cerr << l << ": " << m << '\n';
 }
 #pragma warning(pop)

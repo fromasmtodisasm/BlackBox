@@ -19,6 +19,8 @@
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/World/World.hpp>
+
+#include "../Shaders/FxParser.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
@@ -53,7 +55,19 @@ class ShaderMan
 	std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
 };
 
-ShaderMan* gShMan = nullptr;
+ShaderMan* gShMan;
+FxParser* g_FxParser;
+
+void TestFx(IConsoleCmdArgs* args)
+{
+	if (args->GetArgCount() < 2)
+		return;
+
+	const string filename = args->GetArg(1);
+
+	g_FxParser->Parse(filename);
+}
+
 
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
@@ -355,6 +369,7 @@ void GLRenderer::InitConsoleCommands()
     "Set size of camera"
   );
   */
+	gEnv->pConsole->AddCommand("testfx", TestFx, 0, "Test fx parser");
 }
 
 CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic /* = false*/)

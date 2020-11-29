@@ -6,20 +6,34 @@
 
 using ColorB = glm::u8vec3;
 
-static ColorB ColorTable[10] =
+struct ColorTable
 {
-	ColorB(0x00, 0x00, 0x00), // black
-	ColorB(0xff, 0xff, 0xff), // white
-	ColorB(0x00, 0x00, 0xff), // blue
-	ColorB(0x00, 0xff, 0x00), // green
-	ColorB(0xff, 0x00, 0x00), // red
-	ColorB(0x00, 0xff, 0xff), // cyan
-	ColorB(0xff, 0xff, 0x00), // yellow
-	ColorB(0xff, 0x00, 0xff), // purple
-	ColorB(0xff, 0x80, 0x00), // orange
-	ColorB(0x8f, 0x8f, 0x8f), // grey
+	ColorB color;
+	string name;
+}  ColorTable[10] =
+{
+	ColorB(0x00, 0x00, 0x00), "black",
+	ColorB(0xff, 0xff, 0xff), "white",
+	ColorB(0x00, 0x00, 0xff), "blue",
+	ColorB(0x00, 0xff, 0x00), "green",
+	ColorB(0xff, 0x00, 0x00), "red",
+	ColorB(0x00, 0xff, 0xff), "cyan",
+	ColorB(0xff, 0xff, 0x00), "yellow",
+	ColorB(0xff, 0x00, 0xff), "purple",
+	ColorB(0xff, 0x80, 0x00), "orange",
+	ColorB(0x8f, 0x8f, 0x8f), "grey"
 };
 
+void PrintColorTable(IConsoleCmdArgs*)
+{
+	gEnv->pLog->Log("ColorTable codes");
+	for (int i = 0; i < 10; i++)
+	{
+		gEnv->pLog->Log("$%d $$%d=%s", i, i, ColorTable[i].name.data());
+	}
+}
+
+bool FreeTypeFont::printColorTableRegistered = false;
 
 void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, float color[4])
 {
@@ -63,7 +77,7 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 				if (isdigit(*(++c)))
 				{
 					int colorIndex = *c - '0';
-					ColorB newColor = ColorTable[colorIndex];
+					ColorB newColor = ColorTable[colorIndex].color;
 					color[0] = newColor.r;
 					color[1] = newColor.g;
 					color[2] = newColor.b;
@@ -247,4 +261,12 @@ void FreeTypeFont::SetYPos(float y)
 IFont* CreateIFont()
 {
 	return new FreeTypeFont();
+}
+
+void RegisterColorTable()
+{
+	if (!FreeTypeFont::printColorTableRegistered)
+	{
+		gEnv->pConsole->AddCommand("printcb", PrintColorTable, 0, "Print color font encoding");
+	}
 }

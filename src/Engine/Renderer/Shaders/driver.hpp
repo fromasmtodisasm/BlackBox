@@ -6,12 +6,27 @@
 #pragma warning(push, 0)
 #include "Parser.hpp"
 #pragma warning(pop)
-#include "Scanner.hpp"
+//#include "Scanner.hpp"
 
-class Driver {
+#ifdef PARSERDRIVER_EXPORTS
+#	define PARSERDRIVER_API DLL_EXPORT
+#else
+#	define PARSERDRIVER_API DLL_IMPORT
+#endif
+
+struct IDriver
+{
+	virtual ~IDriver()
+	{
+	}
+	virtual bool parse(const std::string& f) = 0;
+	virtual void Release()					 = 0;
+};
+
+class Driver : public IDriver {
  public:
     Driver();
-    int parse(const std::string& f);
+    bool parse(const std::string& f) override;
     std::string file;
     bool trace_parsing;
 
@@ -22,9 +37,17 @@ class Driver {
     yy::location location;
 
     friend class Scanner;
-    Scanner scanner;
+    Scanner* scanner;
     yy::parser parser;
  private:
     std::ifstream stream;
+
+   // Унаследовано через IDriver
+   virtual void Release() override;
 };
 
+typedef IDriver* (*PFNCREATEDRIVERINTERFACE)();
+extern "C"
+{
+	PARSERDRIVER_API IDriver* CreateParserDriver();
+}

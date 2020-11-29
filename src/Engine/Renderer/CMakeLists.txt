@@ -31,6 +31,7 @@ if(FLEX_FOUND AND BISON_FOUND)
 endif()
 
 add_library(${PROJECT_NAME})
+add_library(FxParser SHARED)
 
 if (DEFINED GL_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
@@ -62,21 +63,30 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
+)
+
+target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
-
 )
+
+target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
+target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
+INSTALL_THIS(FxParser)
+
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
+#target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
 
 add_SDL()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${FLEX_INCLUDE_DIRS})
+target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
+
 
 source_group(
 	TREE ${PROJECT_SOURCE_DIR}
@@ -86,6 +96,11 @@ source_group(
 )
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}
+  PRIVATE 
+  "pch.hpp"
+)
+
+target_precompile_headers(FxParser
   PRIVATE 
   "pch.hpp"
 )

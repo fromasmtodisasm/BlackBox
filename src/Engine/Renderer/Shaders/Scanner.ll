@@ -6,6 +6,7 @@
     #include <string>
     #include <iostream>
     #include "driver.hpp"
+    #include "Scanner.hpp"
 	#pragma warning(push, 0)
 	#include "Parser.hpp"
     #define MAX_STR_CONST 16382 // TODO: Change this and make it dynamic... shaders could be big
@@ -71,6 +72,39 @@ GLSLShader {
     {id} {
         // TODO create and REGISTER the variable in a table
 		return yy::parser::make_IDENTIFIER(yytext, loc);
+    }
+}
+<shaderbody>{
+    \{  {
+        bracket_level++;
+        *string_buf_ptr++  =  yytext[0];
+    }
+    \} {
+        bracket_level--;
+        if((bracket_level) == 0)
+        {
+            *string_buf_ptr  =  '\0';
+            // shall I just do BEGIN(INITIAL) ?
+            yy_pop_state(); // back to shader
+            yy_pop_state();// back to INITIAL
+			return yy::parser::make_CODEBODY(string_buf, loc);
+        } else {
+            *string_buf_ptr++  =  yytext[0];
+        }
+    }
+    \n {  /*copy the GLSL data*/
+        char  *yptr  =  yytext;
+        while  (  *yptr  )
+        *string_buf_ptr++  =  *yptr++;
+        //TODO:
+        #if 0
+        ++line_num; 
+        #endif
+    }
+    [^\n^\{^\}]+ {  /*copy the GLSL data*/
+        char  *yptr  =  yytext;
+        while  (  *yptr  )
+        *string_buf_ptr++  =  *yptr++;
     }
 }
 
