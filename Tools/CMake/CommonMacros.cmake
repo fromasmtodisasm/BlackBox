@@ -37,11 +37,13 @@ function(message)
   endif()
 endfunction()
 
-macro(add_private_headers)
+function(add_private_headers)
 	file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}/*.hpp ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}/*.h)
+	file(GLOB_RECURSE INCLUDE_FILES1 ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 	target_sources(${PROJECT_NAME}
 		PRIVATE
 		${INCLUDE_FILES}
+		${INCLUDE_FILES1}
 	)
 	source_group(
 		TREE ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}
@@ -49,7 +51,13 @@ macro(add_private_headers)
 		FILES
 		${INCLUDE_FILES}
 	)
-endmacro()
+	source_group(
+		TREE ${CMAKE_CURRENT_SOURCE_DIR}
+		PREFIX "Header Files"
+		FILES
+		${INCLUDE_FILES1}
+	)
+endfunction()
 
 function(install_package Package Result)
 

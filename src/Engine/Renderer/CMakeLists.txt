@@ -33,6 +33,8 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/Texture.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
+
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
