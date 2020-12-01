@@ -162,12 +162,28 @@ macro(set_solution_startup_target target)
 	endif()
 endmacro()
 
+MACRO(SET_PLATFORM_TARGET_PROPERTIES THIS_PROJECT)
+	target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DCODE_BASE_FOLDER=\"${CRYENGINE_DIR}/Code/\"")
+	target_link_libraries( ${THIS_PROJECT} PRIVATE ${COMMON_LIBS} )
+
+	if(OPTION_DEVELOPER_CONSOLE_IN_RELEASE)
+		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DENABLE_DEVELOPER_CONSOLE_IN_RELEASE")
+	endif()
+
+	if (OPTION_REMOTE_CONSOLE)
+		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DUSE_REMOTE_CONSOLE")
+	endif()
+ENDMACRO()
+macro(apply_compile_settings THIS_PROJECT)
+	SET_PLATFORM_TARGET_PROPERTIES( ${THIS_PROJECT} )	
+endmacro()
 macro(add_subsystem subsystem)
 	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})
 	#target_link_libraries(${BLACKBOX_PROJECT} INTERFACE ${subsystem})
 	set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
 
 	get_target_property(SOURCE_FILES ${subsystem} SOURCES)
+	apply_compile_settings(${subsystem})
 
 	list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
 	list(APPEND ALL_PROJECT_SYSTEMS ${subsystem})

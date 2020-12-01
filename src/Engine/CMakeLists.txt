@@ -118,16 +118,8 @@ macro(main)
 
 
 	#The remote console is useful in development, but it is a potential security vulnerability, therefore opt-in
+	option(OPTION_DEVELOPER_CONSOLE_IN_RELEASE "Enables the developer console in Release builds" ON)
 	option(OPTION_REMOTE_CONSOLE "Allows remote console connection" ON)
-	if (0)
-		if (OPTION_REMOTE_CONSOLE)
-			target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DUSE_REMOTE_CONSOLE")
-		endif()
-	else()
-		if (OPTION_REMOTE_CONSOLE)
-			add_compile_options("-DUSE_REMOTE_CONSOLE")
-		endif()
-	endif()
 	setup_subsystems()
 	###################################################
 	#set_target_properties(GUI PROPERTIES FOLDER "Engine")
