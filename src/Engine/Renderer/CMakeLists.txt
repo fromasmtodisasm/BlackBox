@@ -84,6 +84,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 
 add_SDL()
 
+find_package(Vulkan REQUIRED)
+target_link_libraries(FxParser PUBLIC Vulkan::Vulkan)
+target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 
