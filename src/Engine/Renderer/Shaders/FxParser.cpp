@@ -26,7 +26,7 @@ bool FxParser::Parse(const std::string& f)
 		{
 			pfnModuleInitISystem(gEnv->pSystem, "FxParser");
 		}
-		return driver->parse(f);
+		return driver->parse(f.data());
 	}
 	return false;
 }

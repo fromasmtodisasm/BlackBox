@@ -20,6 +20,9 @@
 %define parse.error verbose
 
 %code top{
+    #ifdef S_FALSE
+    #undef S_FALSE
+    #endif
 	#pragma warning(push, 0)
     #include "Driver.hpp"
     #include "Scanner.hpp"
@@ -184,6 +187,7 @@ TODO: New resource types (from D3D)
 %token  READ_WRITE
 
 // VK_FORMATS
+/*
 %token <VkFormat> FORMAT_UNDEFINED
 %token <VkFormat> FORMAT_R4G4_UNORM_PACK8
 %token <VkFormat> FORMAT_R4G4B4A4_UNORM_PACK16
@@ -369,6 +373,7 @@ TODO: New resource types (from D3D)
 %token <VkFormat> FORMAT_ASTC_12x10_SRGB_BLOCK
 %token <VkFormat> FORMAT_ASTC_12x12_UNORM_BLOCK
 %token <VkFormat> FORMAT_ASTC_12x12_SRGB_BLOCK
+*/
 
 %token VERTEXFORMAT
 
@@ -416,7 +421,8 @@ vertexformat: VERTEXFORMAT IDENTIFIER "{" IDENTIFIER "=" format ";" "}"
 }
 ;
 
-format:
+format: %empty { $$ = VkFormat(10); }
+/*
 FORMAT_UNDEFINED { $$ = $1; }
 | FORMAT_R4G4_UNORM_PACK8 { $$ = $1; }
 | FORMAT_R4G4B4A4_UNORM_PACK16 { $$ = $1; }
@@ -602,6 +608,7 @@ FORMAT_UNDEFINED { $$ = $1; }
 | FORMAT_ASTC_12x10_SRGB_BLOCK { $$ = $1; }
 | FORMAT_ASTC_12x12_UNORM_BLOCK { $$ = $1; }
 | FORMAT_ASTC_12x12_SRGB_BLOCK { $$ = $1; }
+*/
 ;
 
 hlsl: "hlsl";

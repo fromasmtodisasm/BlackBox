@@ -141,33 +141,12 @@ class CLog :
 
 	~CLog()
 	{
-		if (output)
-		{
-			Shutdown();
-			fclose(output);
-		}
+		Shutdown();
 	}
 
   private:
 	void Shutdown()
 	{
-		for (auto& str : log)
-		{
-			fputs(str.c_str(), output);
-		}
-		bool hasConsole = GetISystem()->GetIConsole() != nullptr;
-		if (hasConsole && gEnv->pConsole->GetCVar("stpo_running"))
-		{
-			fputs("\n\n*****Game stopped*****", output);
-		}
-		else if (hasConsole && gEnv->pConsole->GetCVar("window_closed"))
-		{
-			fputs("\n\n*****Window Closed*****", output);
-		}
-		else
-		{
-			fputs("\n\n*****Unknown stop cause*****", output);
-		}
 	}
 
 	virtual void Release() override;
@@ -217,7 +196,6 @@ class CLog :
 	// logged, or the pointer to the part of the message that should be logged
 	const char* CheckAgainstVerbosity(const char* pText, bool& logtofile, bool& logtoconsole, const uint8 DefaultVerbosity = 2);
 
-	FILE* output;
 	const char* filename = "log.txt";
 	bool inited			 = false;
 	std::vector<std::string> log;

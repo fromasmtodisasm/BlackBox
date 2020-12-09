@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Renderer CXX)
 
 add_package(Stb)
-find_package(freetype CONFIG REQUIRED)
+find_package(Freetype CONFIG REQUIRED)
 # ===============> bison
 find_package(BISON)
 find_package(FLEX)
@@ -19,12 +19,12 @@ endif()
 
 if(BISON_FOUND)
   BISON_TARGET(
-	  ShaderParser Parser.yy ${PROJECT_SOURCE_DIR}/Parser.cpp
-	  DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hh
+	  ShaderParser ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
+	  #DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hpp
   )
 endif()
 if(FLEX_FOUND)
-  FLEX_TARGET(ShaderScanner Scanner.yy ${PROJECT_SOURCE_DIR}/Scanner.cpp)
+  FLEX_TARGET(ShaderScanner ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
 endif()
 if(FLEX_FOUND AND BISON_FOUND)
   ADD_FLEX_BISON_DEPENDENCY(ShaderScanner ShaderParser)
@@ -74,7 +74,10 @@ target_sources(FxParser
 )
 
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
-target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
+target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
+target_compile_definitions(FxParser PRIVATE "-DYY_NO_UNISTD_H")
+
+#target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
 INSTALL_THIS(FxParser)
 
 

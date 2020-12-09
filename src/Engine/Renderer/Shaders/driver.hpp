@@ -19,14 +19,16 @@ struct IDriver
 	virtual ~IDriver()
 	{
 	}
-	virtual bool parse(const std::string& f) = 0;
+	//virtual bool parse(const std::string& f) = 0;
+	virtual bool parse(const char* f) = 0;
 	virtual void Release()					 = 0;
 };
 
 class Driver : public IDriver {
  public:
     Driver();
-    bool parse(const std::string& f) override;
+    //bool parse(const std::string& f) override;
+    bool parse(const char* f) override;
     std::string file;
     bool trace_parsing;
 

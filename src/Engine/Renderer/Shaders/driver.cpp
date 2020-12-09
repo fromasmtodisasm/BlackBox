@@ -12,7 +12,7 @@ Driver::Driver() :
 }
 
 
-bool Driver::parse(const std::string& f) {
+bool Driver::parse(const char* f) {
     file = f;
     location.initialize(&file);
     scan_begin();

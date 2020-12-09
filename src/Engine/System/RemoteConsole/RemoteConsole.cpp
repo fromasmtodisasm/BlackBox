@@ -159,9 +159,9 @@ void CRemoteConsole::Update()
 		case eCET_Strobo_GetResult:
 			SendStroboscopeResult();
 			break;
+	#endif
 		default:
 			assert(false); // NOT SUPPORTED FOR THE SERVER!!!
-	#endif
 		}
 	}
 #endif
