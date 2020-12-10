@@ -1,5 +1,6 @@
 #pragma once
 
+#include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/Threading/IThreadManager.h>
 #include <BlackBox/Utils/smartptr.hpp>
 
@@ -38,11 +39,22 @@ struct SThreadMetaData : public _reference_target_MT
 
 	string									m_threadName; // Thread name
 	volatile bool                           m_isRunning;  // Indicates the thread is not ready to exit yet
+
+	void Dump()
+	{
+		CryLogAlways("$3Name: %s    Id: %d", m_threadName.data(), &m_threadId);
+	}
 };
+
+void DumpThreads(IConsoleCmdArgs* args);
 
 class CThreadManager : public IThreadManager
 {
   public:
+	CThreadManager()
+	{
+		REGISTER_COMMAND("dump_threads", DumpThreads, VF_NULL, "dump threads");
+	}
 	// Inherited via IThreadManager
 	virtual IThreadConfigManager* GetThreadConfigManager() override;
 	virtual bool SpawnThread(IThread* pThread, const char* sThreadName, ...) override;
@@ -60,6 +72,14 @@ class CThreadManager : public IThreadManager
 	virtual void EnableFloatExceptionsForEachOtherThread(EFPE_Severity eFPESeverity) override;
 	virtual uint GetFloatingPointExceptionMask() override;
 	virtual void SetFloatingPointExceptionMask(uint nMask) override;
+
+	void Dump()
+	{
+		for (auto &thread : m_spawnedThreads)
+		{
+			thread.second->Dump();
+		}
+	}
 
 private:
 	// Note: Guard SThreadMetaData with a _smart_ptr and lock to ensure that a thread waiting to be signaled by another still

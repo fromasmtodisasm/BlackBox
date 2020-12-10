@@ -134,7 +134,6 @@ class CSystem final : public ISystem
 	bool DoFrame();
 
   private:
-	bool CreateConsole();
 	bool InitConsole();
 	bool InitRender();
 	bool InitInput();
@@ -183,7 +182,6 @@ class CSystem final : public ISystem
 	CCamera m_ViewCamera; //!<
 
 	ILog* m_pLog;
-	IConsole* m_pConsole;
 	//IInput* m_pInput;
 	ICryPak* m_pCryPak;
 	IGame* m_pGame;

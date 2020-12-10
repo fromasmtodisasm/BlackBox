@@ -480,7 +480,7 @@ bool CSystem::Init()
 		return false;
 	}
 	//====================================================
-	m_pConsole->AddConsoleVarSink(this);
+	m_env.pConsole->AddConsoleVarSink(this);
 	ParseCMD();
 	LoadScreen();
 	//====================================================
@@ -490,7 +490,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_pConsole));
+		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_env.pConsole));
 #if ENABLE_DEBUG_GUI
 		if (!m_env.IsDedicated())
 		{
@@ -546,7 +546,7 @@ bool CSystem::CreateLog()
 
 bool CSystem::InitConsole()
 {
-	if (!static_cast<CXConsole*>(m_pConsole)->Init(this))
+	if (!static_cast<CXConsole*>(m_env.pConsole)->Init(this))
 		return false;
 	return true;
 }
