@@ -16,7 +16,8 @@ Driver::Driver() :
 
 IEffect* Driver::parse(const char* f)
 {
-	PEffect pEffect = new CEffect;
+	CEffect* pEffect = new CEffect;
+	currentEffect	= pEffect;
     file = f;
     location.initialize(&file);
     scan_begin();
@@ -26,6 +27,11 @@ IEffect* Driver::parse(const char* f)
 	{
 		gEnv->pLog->Log("$3[FX] File %s passed", file.c_str());	
 	}
+	else
+	{
+		delete pEffect;
+		currentEffect = pEffect = nullptr;
+    }
 
     scan_end();
     return pEffect;

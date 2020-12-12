@@ -44,6 +44,23 @@ namespace fs = std::filesystem;
 //namespace fs = std::experimental::filesystem;
 #endif
 
+namespace utils
+{
+	void touch(IConsoleCmdArgs* args)
+	{
+		for (int i = 1; i < args->GetArgCount(); i++)
+		{
+			if (auto f = fopen(args->GetArg(i), "a"); f)
+			{
+				fclose(f);
+				continue;
+			}
+			gEnv->pLog->LogError("Cannot touch file \"%s\"", args->GetArg(i));
+		}
+	}
+}
+
+
 CSystem::CSystem(SSystemInitParams& startupParams)
 	:
 #if defined(SYS_ENV_AS_STRUCT)
@@ -79,6 +96,7 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 	m_pValidator = nullptr;
 
 	m_env.pConsole = new CXConsole(*this);
+	REGISTER_COMMAND("touch", utils::touch, 0, "touch file");
 	if (startupParams.pPrintSync)
 		m_env.pConsole->AddOutputPrintSink(startupParams.pPrintSync);
 	InitThreadSystem();
