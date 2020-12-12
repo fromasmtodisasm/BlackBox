@@ -30,7 +30,7 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 // //                    "%code top" blocks.
-#line 22 "Parser.yy" // lalr1.cc:397
+#line 23 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
 
     #ifdef S_FALSE
     #undef S_FALSE
@@ -53,17 +53,18 @@
     #include "assignments/AssignmentList.h"
     #include "Program.h"
     #endif
+    #include "Effect.hpp"
 
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
         return scanner.ScanToken();
     }
 
-#line 62 "Parser.cpp" // lalr1.cc:397
+#line 63 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 67 "Parser.cpp" // lalr1.cc:404
+#line 68 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -77,7 +78,7 @@
 
 // User implementation prologue.
 
-#line 81 "Parser.cpp" // lalr1.cc:412
+#line 82 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -163,7 +164,7 @@
 
 
 namespace yy {
-#line 167 "Parser.cpp" // lalr1.cc:479
+#line 168 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -276,7 +277,7 @@ namespace yy {
   {
       switch (that.type_get ())
     {
-      case 111: // format
+      case 114: // format
         value.move< VkFormat > (that.value);
         break;
 
@@ -316,7 +317,7 @@ namespace yy {
     state = that.state;
       switch (that.type_get ())
     {
-      case 111: // format
+      case 114: // format
         value.copy< VkFormat > (that.value);
         break;
 
@@ -569,7 +570,7 @@ namespace yy {
          when using variants.  */
         switch (yyr1_[yyn])
     {
-      case 111: // format
+      case 114: // format
         yylhs.value.build< VkFormat > ();
         break;
 
@@ -612,37 +613,128 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 387 "Parser.yy" // lalr1.cc:859
+#line 389 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { gEnv->pLog->LogWarning("Empty effect"); }
-#line 618 "Parser.cpp" // lalr1.cc:859
+#line 619 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 410 "Parser.yy" // lalr1.cc:859
-    { 
-		gEnv->pLog->Log("$3 Shader $1%s $3parsed", yystack_[2].value.as< std::string > ().data()); 
-	}
-#line 626 "Parser.cpp" // lalr1.cc:859
+#line 415 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { CryLog("In PassState"); }
+#line 625 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 417 "Parser.yy" // lalr1.cc:859
+#line 421 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { CryLog("Creation of PASS");}
+#line 631 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 22:
+#line 422 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {
+  /*
+    LOGI("Pass with no name...\n");
+    curAnnotations = NULL;
+    curRState = NULL;
+    curCSState = NULL;
+    curDSTState = NULL;
+    curPRState = NULL;
+    lex_pop_state();
+*/
+}
+#line 647 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 23:
+#line 433 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { error(yystack_[1].location, "Error in Pass declaration\n");}
+#line 653 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 26:
+#line 440 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { error(yystack_[1].location, "Error in Pass list\n");}
+#line 659 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 27:
+#line 446 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {
+    CryLog("Creation of Technique for NO name\n");
+    //curTechnique = curContainer->createTechnique()->getExInterface();
+    //curAnnotations = curTechnique->annotations()->getExInterface();
+}
+#line 669 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 29:
+#line 451 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {
+    CryLog("creation of Technique %s...\n", yystack_[0].value.as< std::string > ().c_str() );
+    //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
+    //curAnnotations = curTechnique->annotations()->getExInterface();
+    //delete $2;
+}
+#line 680 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 30:
+#line 456 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { 
+    //lex_pop_state();
+    //curAnnotations = NULL;
+}
+#line 689 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 32:
+#line 466 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {
+/*
+    if(!curAnnotations)
+        curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized
+    if(!curAnnotations->addAnnotation($2->c_str(), $4->c_str()))
+        yyerror("err\n");
+    delete $4;
+*/
+    }
+#line 703 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 33:
+#line 476 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {CryLog("Begin annotations"); }
+#line 709 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 37:
+#line 483 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { 
+		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
+        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
+	}
+#line 718 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 38:
+#line 491 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
     yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", yystack_[2].value.as< VkFormat > ());
 }
-#line 636 "Parser.cpp" // lalr1.cc:859
+#line 728 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 22:
-#line 424 "Parser.yy" // lalr1.cc:859
+  case 39:
+#line 498 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { yylhs.value.as< VkFormat > () = VkFormat(10); }
-#line 642 "Parser.cpp" // lalr1.cc:859
+#line 734 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 646 "Parser.cpp" // lalr1.cc:859
+#line 738 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -897,106 +989,121 @@ namespace yy {
   }
 
 
-  const signed char parser::yypact_ninf_ = -27;
+  const signed char parser::yypact_ninf_ = -78;
 
-  const signed char parser::yytable_ninf_ = -1;
+  const signed char parser::yytable_ninf_ = -26;
 
   const signed char
   parser::yypact_[] =
   {
-     -11,   -27,     0,   -27,   -12,   -10,   -27,   -27,   -27,   -27,
-     -27,   -27,   -27,   -27,   -27,   -27,   -27,   -27,   -27,    14,
-     -27,   -27,   -27,   -27,   -27,   -27,   -27,   -27,   -27,   -27,
-     -27,   -27,   -27,   -27,   -27,    -7,    -5,   -27,   -26,    -6,
-     -27,     4,   -27,    -3,    -1,   -27
+     -10,   -78,     0,   -78,    -7,    -5,    -4,   -78,   -78,   -78,
+     -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,    17,
+     -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,
+     -78,   -78,   -78,   -78,   -78,     1,   -78,     7,    10,   -78,
+      -9,   -77,    -6,    12,   -78,   -78,   -78,    14,   -78,     2,
+       3,    24,   -78,    -6,   -77,   -78,   -78,   -78,     4,   -78,
+     -13,     5,    18,    19,   -65,   -78,   -78,    23,    28,    20,
+     -78,    30,   -78,   -56,   -78,   -78
   };
 
   const unsigned char
   parser::yydefact_[] =
   {
-       2,     3,     2,     1,     0,     0,    19,    23,    24,    25,
-      26,    27,    28,    29,    30,    31,    32,    33,    34,     0,
+       2,     3,     2,     1,     0,    27,     0,    40,    41,    42,
+      43,    44,    45,    46,    47,    48,    49,    50,    51,     0,
        4,     5,    18,     6,     7,     8,     9,    10,    11,    12,
-      13,    14,    15,    16,    17,     0,     0,    35,     0,     0,
-      20,     0,    22,     0,     0,    21
+      13,    14,    15,    16,    17,     0,    29,     0,     0,    52,
+       0,    35,     0,     0,    37,    33,    36,     0,    21,     0,
+       0,     0,    31,     0,    35,    23,    26,    28,     0,    39,
+       0,     0,     0,     0,     0,    34,    30,    19,     0,     0,
+      20,     0,    38,     0,    22,    32
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-     -27,   -27,    11,   -27,   -27,   -27,   -27,   -27,   -27,   -27,
-     -27,   -27,   -27,   -27,   -27,   -27,   -27,   -27
+     -78,   -78,    43,   -78,   -42,   -78,    -8,   -78,   -78,   -78,
+     -78,   -78,   -78,    -3,   -78,   -78,   -78,   -78,   -78,   -78,
+     -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,    43,    19,    20,    21,    22,    23,    24,    25,    26,
+      -1,    63,    19,    71,    49,    54,    50,    20,    37,    41,
+      60,    46,    52,    47,    21,    22,    23,    24,    25,    26,
       27,    28,    29,    30,    31,    32,    33,    34
   };
 
-  const unsigned char
+  const signed char
   parser::yytable_[] =
   {
-       3,     1,    35,    38,    36,    39,    40,    42,    41,    44,
-      45,     2,     1,     0,     0,    37,     0,     0,     0,     0,
-       0,     4,     0,     0,     0,     0,     1,     0,     0,     0,
-       0,     0,     0,     0,     0,     4,     0,     0,     0,     0,
+       3,    64,     1,    55,    56,    55,    56,    35,    58,    36,
+      38,    40,     1,   -24,    57,   -25,    66,    42,    39,    58,
+      43,     4,    45,    44,    53,    48,    51,    59,    67,     1,
+       5,    68,    69,   -24,    48,   -25,    48,    70,     4,    72,
+      73,    74,    75,     2,     0,    61,     0,     5,     0,     0,
+       0,    62,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     5,     6,     7,     8,
-       9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
-       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18
+       0,     0,     0,     0,     0,     0,     0,    65,     0,     0,
+       0,     0,     0,     0,     0,     0,     6,     0,     0,     0,
+       0,     7,     8,     9,    10,    11,    12,    13,    14,    15,
+      16,    17,    18,     6,     0,     0,     0,     0,     7,     8,
+       9,    10,    11,    12,    13,    14,    15,    16,    17,    18
   };
 
   const signed char
   parser::yycheck_[] =
   {
-       0,    12,    14,    10,    14,    10,    32,     3,    14,    12,
-      11,     0,    12,    -1,    -1,     1,    -1,    -1,    -1,    -1,
-      -1,    21,    -1,    -1,    -1,    -1,    12,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    21,    -1,    -1,    -1,    -1,
+       0,    14,    12,     1,     1,     1,     1,    14,    50,    14,
+      14,    10,    12,    11,    11,    11,    11,    10,     1,    61,
+      10,    21,    99,    32,    10,    31,    14,     3,    10,    12,
+      30,    12,    97,    31,    31,    31,    31,    14,    21,    11,
+      20,    11,    98,     0,    -1,    53,    -1,    30,    -1,    -1,
+      -1,    54,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    96,    97,    98,    99,
-     100,   101,   102,   103,   104,   105,   106,   107,   108,   109,
-      96,    97,    98,    99,   100,   101,   102,   103,   104,   105,
-     106,   107,   108,   109
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,   100,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    96,    -1,    -1,    -1,
+      -1,   101,   102,   103,   104,   105,   106,   107,   108,   109,
+     110,   111,   112,    96,    -1,    -1,    -1,    -1,   101,   102,
+     103,   104,   105,   106,   107,   108,   109,   110,   111,   112
   };
 
   const unsigned char
   parser::yystos_[] =
   {
-       0,    12,   112,     0,    21,    96,    97,    98,    99,   100,
-     101,   102,   103,   104,   105,   106,   107,   108,   109,   112,
-     113,   114,   115,   116,   117,   118,   119,   120,   121,   122,
-     123,   124,   125,   126,   127,    14,    14,     1,    10,    10,
-      32,    14,     3,   111,    12,    11
+       0,    12,   115,     0,    21,    30,    96,   101,   102,   103,
+     104,   105,   106,   107,   108,   109,   110,   111,   112,   115,
+     120,   127,   128,   129,   130,   131,   132,   133,   134,   135,
+     136,   137,   138,   139,   140,    14,    14,   121,    14,     1,
+      10,   122,    10,    10,    32,    99,   124,   126,    31,   117,
+     119,    14,   125,    10,   118,     1,     1,    11,   117,     3,
+     123,   119,   126,   114,    14,   100,    11,    10,    12,    97,
+      14,   116,    11,    20,    11,    98
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,   110,   112,   112,   112,   112,   112,   112,   112,   112,
-     112,   112,   112,   112,   112,   112,   112,   112,   112,   113,
-     114,   115,   111,   116,   117,   118,   119,   120,   121,   122,
-     123,   124,   125,   126,   127,   127
+       0,   113,   115,   115,   115,   115,   115,   115,   115,   115,
+     115,   115,   115,   115,   115,   115,   115,   115,   115,   116,
+     116,   118,   117,   117,   119,   119,   119,   121,   120,   122,
+     120,   123,   123,   125,   124,   126,   126,   127,   128,   114,
+     129,   130,   131,   132,   133,   134,   135,   136,   137,   138,
+     139,   140,   140
   };
 
   const unsigned char
   parser::yyr2_[] =
   {
        0,     2,     0,     1,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     1,
-       4,     8,     0,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     2
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     0,
+       1,     0,     6,     2,     1,     2,     2,     0,     5,     0,
+       7,     0,     5,     0,     4,     0,     1,     4,     8,     0,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     2
   };
 
 
@@ -1027,11 +1134,13 @@ namespace yy {
   "SAMPLERTEXUNIT", "SETSAMPLERSTATE", "SETDSTSTATE",
   "SETRASTERIZATIONSTATE", "SETCOLORSAMPLESTATE", "IMAGERESOURCE",
   "IMAGEUNIT", "IMAGEACCESS", "IMAGELAYER", "IMAGELAYERED", "WRITE_ONLY",
-  "READ_ONLY", "READ_WRITE", "VERTEXFORMAT", "\"tech\"", "\"hlsl\"",
-  "\"texture\"", "\"resource\"", "\"fbo\"", "\"sstate\"", "\"dststate\"",
-  "\"prstate\"", "\"csstate\"", "\"rstate\"", "\"namespace\"",
-  "\"cstbuffer\"", "\"uniforms\"", "$accept", "format", "input", "tech",
-  "glsl", "vertexformat", "hlsl", "texture", "resource", "fbo", "sstate",
+  "READ_ONLY", "READ_WRITE", "VERTEXFORMAT", "'='", "';'", "'<'", "'>'",
+  "\"hlsl\"", "\"texture\"", "\"resource\"", "\"fbo\"", "\"sstate\"",
+  "\"dststate\"", "\"prstate\"", "\"csstate\"", "\"rstate\"",
+  "\"namespace\"", "\"cstbuffer\"", "\"uniforms\"", "$accept", "format",
+  "input", "passstates", "pass", "$@1", "passes", "tech", "$@2", "$@3",
+  "annotation", "annotations2", "$@4", "annotations", "glsl",
+  "vertexformat", "hlsl", "texture", "resource", "fbo", "sstate",
   "dststate", "prstate", "csstate", "rstate", "namespace", "cstbuffer",
   "uniforms", YY_NULLPTR
   };
@@ -1040,10 +1149,12 @@ namespace yy {
   const unsigned short int
   parser::yyrline_[] =
   {
-       0,   387,   387,   388,   389,   390,   391,   392,   393,   394,
-     395,   396,   397,   398,   399,   400,   401,   402,   403,   408,
-     410,   416,   424,   614,   615,   616,   617,   618,   619,   620,
-     621,   622,   623,   624,   625,   626
+       0,   389,   389,   390,   391,   392,   393,   394,   395,   396,
+     397,   398,   399,   400,   401,   402,   403,   404,   405,   414,
+     415,   421,   421,   433,   438,   439,   440,   446,   446,   451,
+     451,   465,   466,   476,   476,   478,   479,   483,   490,   498,
+     688,   689,   690,   691,   692,   693,   694,   695,   696,   697,
+     698,   699,   700
   };
 
   // Print the state stack on the debug stream.
@@ -1078,8 +1189,8 @@ namespace yy {
 
 
 } // yy
-#line 1082 "Parser.cpp" // lalr1.cc:1167
-#line 629 "Parser.yy" // lalr1.cc:1168
+#line 1193 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
+#line 703 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

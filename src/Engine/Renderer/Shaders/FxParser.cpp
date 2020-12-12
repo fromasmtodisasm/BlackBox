@@ -9,24 +9,26 @@ FxParser::FxParser()
 {
 }
 
-bool FxParser::Parse(const std::string& f)
+bool FxParser::Parse(const std::string& f, PEffect* pEffect)
 {
 
 #define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
 	//auto driver = std::unique_ptr<IDriver>(CreateParserDriver());
-	CCryLibrary FxLibrary("FxParser");
-	if (FxLibrary.IsLoaded())
+	//CCryLibrary ;
+	HMODULE FxLibrary;
+	if (FxLibrary = CryLoadLibrary("FxParser"))
 	{
-		PFNCREATEDRIVERINTERFACE CreateParserDriver = FxLibrary.GetProcedureAddress<PFNCREATEDRIVERINTERFACE>("CreateParserDriver");
+		PFNCREATEDRIVERINTERFACE CreateParserDriver = (PFNCREATEDRIVERINTERFACE)CryGetProcAddress(FxLibrary,"CreateParserDriver");
 		auto driver									= CreateParserDriver();
 
 		typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
-		PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)FxLibrary.GetProcedureAddress<PtrFunc_ModuleInitISystem>(DLL_MODULE_INIT_ISYSTEM);
+		PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(FxLibrary, DLL_MODULE_INIT_ISYSTEM);
 		if (pfnModuleInitISystem)
 		{
 			pfnModuleInitISystem(gEnv->pSystem, "FxParser");
 		}
-		return driver->parse(f.data());
+		*pEffect = driver->parse(f.data());
+		return *pEffect != nullptr;
 	}
 	return false;
 }

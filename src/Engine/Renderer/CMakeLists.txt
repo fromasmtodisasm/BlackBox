@@ -6,6 +6,24 @@ find_package(Freetype CONFIG REQUIRED)
 # ===============> bison
 find_package(BISON)
 find_package(FLEX)
+find_package(Cygwin)
+
+macro(cygwin_bison INPUT OUTPUT)
+	add_custom_command(
+		OUTPUT ${OUTPUT} 
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
+		DEPENDS ${INPUT}
+	  ) 
+endmacro()
+
+macro(cygwin_flex INPUT OUTPUT)
+	add_custom_command(
+		OUTPUT ${OUTPUT} 
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "flex -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
+		DEPENDS ${INPUT}
+	  ) 
+endmacro()
+
 if((NOT BISON_FOUND) OR (NOT FLEX_FOUND))
     message(WARNING "
       No Bison and/or Flex available. FxParser will only use the already generated code.
@@ -22,9 +40,13 @@ if(BISON_FOUND)
 	  ShaderParser ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
 	  #DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hpp
   )
+elseif (CYGWIN_INSTALL_PATH)
+	cygwin_bison(${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp)
 endif()
 if(FLEX_FOUND)
   FLEX_TARGET(ShaderScanner ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
+elseif (CYGWIN_INSTALL_PATH)
+	cygwin_flex(${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
 endif()
 if(FLEX_FOUND AND BISON_FOUND)
   ADD_FLEX_BISON_DEPENDENCY(ShaderScanner ShaderParser)
@@ -67,6 +89,7 @@ target_sources(${PROJECT_NAME}
 
 target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Effect.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy

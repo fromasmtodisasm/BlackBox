@@ -3,6 +3,8 @@
 #include "driver.hpp"
 #include "Scanner.hpp"
 
+#include "Effect.hpp"
+
 #define PARSERDRIVER_EXPORTS
 
 Driver::Driver() :
@@ -12,7 +14,9 @@ Driver::Driver() :
 }
 
 
-bool Driver::parse(const char* f) {
+IEffect* Driver::parse(const char* f)
+{
+	PEffect pEffect = new CEffect;
     file = f;
     location.initialize(&file);
     scan_begin();
@@ -24,7 +28,7 @@ bool Driver::parse(const char* f) {
 	}
 
     scan_end();
-    return res == 0;
+    return pEffect;
 }
 
 void Driver::scan_begin()

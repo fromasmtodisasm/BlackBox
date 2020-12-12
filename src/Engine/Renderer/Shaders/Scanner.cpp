@@ -1,6 +1,6 @@
-#line 1 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 3 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 3 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -393,8 +393,8 @@ int yyFlexLexer::yylex()
 /* %% [3.0] code to copy yytext_ptr to yytext[] goes here, if %array \ */\
 	(yy_c_buf_p) = yy_cp;
 /* %% [4.0] data tables for the DFA and the user's section 1 definitions go here */
-#define YY_NUM_RULES 25
-#define YY_END_OF_BUFFER 26
+#define YY_NUM_RULES 50
+#define YY_END_OF_BUFFER 51
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -402,19 +402,24 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[97] =
+static const flex_int16_t yy_accept[147] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    6,    6,   10,   10,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,   26,   24,   10,    9,   15,   16,   13,   12,
-       21,   11,   14,   22,   18,   17,   23,   23,   23,   19,
-       20,   25,   10,    4,    3,    8,    7,    5,    6,   10,
-        9,   22,   23,   23,   23,    4,    8,   23,   23,   23,
-       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
-       23,    1,   23,   23,    2,    0
+        0,    0,   51,   49,   35,   34,   40,   41,   38,   37,
+       46,   36,   39,   47,   43,   42,   48,   48,   48,   48,
+       44,   45,   50,   35,   50,   48,    6,    8,    7,   10,
+       11,   22,   13,   12,   22,   50,   24,   23,   28,   27,
+       25,   26,   48,   30,   31,   32,   33,   35,   34,    4,
+        5,   47,   48,   48,   48,   48,    6,    7,    7,    9,
 
+       10,   22,    4,    5,   21,   14,   15,   19,   20,   16,
+       18,   17,   24,   28,   48,   48,   48,   48,   14,   15,
+       48,   48,   48,   48,   14,   29,   48,   48,   48,   48,
+       48,   48,   48,   48,   48,   48,   48,   48,   48,    2,
+       48,    1,   48,   48,    3,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -422,17 +427,17 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    1,    1,    1,    1,    1,    1,    1,    4,
-        5,    6,    7,    8,    9,    1,   10,   11,   11,   11,
-       11,   11,   11,   11,   11,   11,   11,    1,   12,    1,
-       13,    1,    1,    1,   14,   14,   14,   14,   14,   15,
-       16,   14,   14,   14,   14,   17,   14,   14,   14,   14,
-       14,   14,   18,   14,   14,   19,   14,   14,   14,   14,
-        1,    1,    1,   20,   21,    1,   22,   14,   14,   23,
+        1,    2,    1,    4,    1,    1,    1,    1,    1,    5,
+        6,    7,    8,    9,   10,    1,   11,   12,   12,   12,
+       12,   12,   12,   12,   12,   13,   13,    1,   14,    1,
+       15,    1,    1,    1,   16,   16,   16,   16,   16,   17,
+       18,   16,   16,   16,   16,   19,   16,   16,   16,   20,
+       16,   16,   21,   22,   16,   23,   16,   16,   16,   16,
+        1,   24,    1,   25,   26,    1,   27,   28,   29,   30,
 
-       24,   14,   14,   25,   14,   14,   14,   14,   26,   14,
-       27,   14,   14,   28,   14,   29,   14,   14,   14,   30,
-       14,   14,   31,    1,   32,    1,    1,    1,    1,    1,
+       31,   32,   16,   33,   34,   16,   16,   16,   35,   36,
+       37,   16,   38,   39,   40,   41,   42,   16,   16,   43,
+       16,   16,   44,    1,   45,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -449,103 +454,148 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[33] =
+static const YY_CHAR yy_meta[46] =
     {   0,
-        1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
-        3,    1,    1,    3,    3,    3,    3,    3,    3,    2,
+        1,    1,    2,    3,    1,    1,    4,    1,    1,    1,
+        1,    5,    5,    1,    1,    5,    5,    5,    5,    5,
+        5,    5,    5,    3,    6,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    6,    6
+    } ;
+
+static const flex_int16_t yy_base[160] =
+    {   0,
+        0,    0,   45,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,   88,   89,  285,  279,   90,   94,  118,    0,
+      161,  163,    0,    0,  145,  147,   55,   58,    0,    0,
+        0,    0,   62,   64,    0,    0,    0,    0,    0,    0,
+        0,    0,  276,  304,  270,  267,  304,  304,  304,  304,
+      304,  304,  104,  100,  304,  304,    0,  218,  204,  203,
+      304,  304,  304,  230,  161,    0,    0,  304,  162,    0,
+      304,    0,  304,  304,  163,  197,    0,  304,    0,  304,
+      304,  304,  204,  304,  304,  304,  304,  228,  225,  304,
+      304,  104,    0,  206,  197,  185,    0,  164,  169,  304,
+
+        0,    0,    0,    0,  304,  165,  169,  304,  304,  304,
+      304,  304,    0,    0,  183,  203,  188,  179,  171,  181,
+      179,  197,  181,  185,  183,    0,  182,  180,  170,  185,
+      173,  187,  173,  160,  164,  169,  168,  159,  158,    0,
+      152,    0,  158,  138,    0,  304,  238,  244,  250,  256,
+      262,  105,  268,  274,  280,  286,  292,   99,  298
+    } ;
+
+static const flex_int16_t yy_def[160] =
+    {   0,
+      146,    1,  146,    3,    3,    3,  147,  147,  147,  147,
+      147,  147,  148,  148,  149,  149,  150,  150,  146,   19,
+      151,  151,    3,    3,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        2,    2
+        3,    3,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  152,  152,  152,  152,
+      146,  146,  146,  146,  146,  152,  153,  146,  154,  155,
+      146,  156,  146,  146,  156,  157,  158,  146,  159,  146,
+      146,  146,  152,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  152,  152,  152,  152,  153,  154,  154,  146,
+
+      155,  156,  156,  156,  146,  146,  146,  146,  146,  146,
+      146,  146,  158,  159,  152,  152,  152,  152,  146,  146,
+      152,  152,  152,  152,  146,  152,  152,  152,  152,  152,
+      152,  152,  152,  152,  152,  152,  152,  152,  152,  152,
+      152,  152,  152,  152,  152,    0,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146
     } ;
 
-static const flex_int16_t yy_base[102] =
+static const flex_int16_t yy_nxt[350] =
     {   0,
-        0,    0,   31,   33,   35,   37,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,   40,    0,
-       70,   72,   74,   76,   78,   80,   82,   84,   86,   91,
-       93,   95,   97,  103,  105,  107,  109,  111,  113,  115,
-      117,  119,  158,  159,  155,  153,  159,  159,  159,  159,
-      159,  159,  159,  144,  159,  159,    0,  137,  129,  159,
-      159,  159,  150,    0,  159,    0,  159,  159,  159,  149,
-      147,  138,    0,  130,  119,    0,    0,  129,  116,  126,
-      119,  117,  111,  118,  124,  115,  110,  112,  107,  106,
-      107,    0,  110,  101,    0,  159,  122,  125,   88,   71,
+       44,   45,   46,   44,   47,   48,   49,   50,   51,   52,
+       53,   54,   54,   55,   56,   57,   57,   58,   57,   57,
+       57,   59,   60,   44,   44,   44,   57,   57,   57,   57,
+       57,   57,   57,   57,   57,   57,   57,   57,   57,   57,
+       57,   57,   57,   61,   62,   63,   64,   46,   63,   63,
+       63,   63,   63,   63,   63,   65,   63,   63,   63,   63,
+       66,   66,   66,   66,   66,   66,   66,   66,   63,   63,
+       63,   66,   66,   66,   66,   66,   66,   66,   66,   66,
+       66,   66,   66,   66,   66,   66,   66,   66,   63,   63,
+       68,   68,   73,   74,   69,   69,   73,   74,   86,   87,
 
-      128
+       75,   86,   87,  113,   75,   86,   87,   86,   87,   93,
+       90,   92,   92,   76,   91,   92,   92,   76,   63,   64,
+       46,   63,   63,   63,   63,   63,   63,   63,   65,   63,
+       63,   63,   63,   77,   77,   77,   77,   77,   77,   77,
+       77,   63,   63,   63,   77,   77,   77,   77,   77,   77,
+       77,   77,   77,   77,   77,   77,   77,   77,   77,   77,
+       77,   78,   63,   80,   83,   80,   83,   90,   99,  103,
+      146,   91,  100,  104,  146,   99,  119,  120,  145,  100,
+      120,  120,  125,  120,  144,   63,  143,   63,   84,   85,
+       84,   85,  120,  120,  120,  120,  142,  141,  140,  139,
+
+      138,  137,  136,  135,   81,   82,   81,   82,  106,  107,
+      134,  133,  132,  131,  130,  129,  128,  127,  126,  124,
+      123,  122,  121,  118,  108,  117,  116,   89,  109,   88,
+      115,   88,  110,   96,   95,  111,   94,  112,   63,   63,
+       63,   63,   63,   63,   67,   67,   67,   67,   67,   67,
+       70,   70,   70,   70,   70,   70,   72,   72,   72,   72,
+       72,   72,   79,   79,   79,   79,   79,   79,   97,   89,
+       97,   88,   97,   97,   98,  146,   98,   98,   98,   98,
+      101,   71,  101,  101,  101,  101,  102,   71,  146,  102,
+      102,  102,  105,  105,  105,  105,  105,  105,  114,  146,
+
+      114,  114,  114,   43,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146
     } ;
 
-static const flex_int16_t yy_def[102] =
-    {   0,
-       96,    1,   97,   97,   97,   97,   97,   97,   97,   97,
-       97,   97,   97,   97,   97,   97,   97,   97,   96,   19,
-       98,   98,   97,   97,   97,   97,   97,   97,   97,   97,
-       97,   97,   97,   97,   97,   97,   97,   97,   97,   97,
-       97,   97,   96,   96,   96,   96,   96,   96,   96,   96,
-       96,   96,   96,   96,   96,   96,   99,   99,   99,   96,
-       96,   96,   96,  100,   96,  101,   96,   96,   96,   96,
-       96,   96,   99,   99,   99,  100,  101,   99,   99,   99,
-       99,   99,   99,   99,   99,   99,   99,   99,   99,   99,
-       99,   99,   99,   99,   99,    0,   96,   96,   96,   96,
-
-       96
-    } ;
-
-static const flex_int16_t yy_nxt[192] =
-    {   0,
-       44,   45,   46,   47,   48,   49,   50,   51,   52,   53,
-       54,   55,   56,   57,   57,   58,   57,   57,   59,   44,
-       44,   57,   57,   57,   57,   57,   57,   57,   57,   57,
-       60,   61,   63,   46,   63,   46,   63,   46,   63,   46,
-       62,   63,   46,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   64,   64,   64,   64,   64,   64,   62,
-       62,   64,   64,   64,   64,   64,   64,   64,   64,   64,
-       65,   62,   67,   76,   67,   63,   46,   63,   46,   63,
-       46,   63,   46,   63,   46,   63,   46,   63,   46,   62,
-       73,   62,   63,   46,   63,   46,   63,   46,   63,   46,
-
-       68,   69,   68,   69,   63,   46,   63,   46,   63,   46,
-       63,   46,   63,   46,   63,   46,   63,   46,   63,   46,
-       63,   46,   62,   62,   62,   66,   66,   66,   77,   95,
-       77,   94,   93,   92,   91,   90,   89,   88,   87,   86,
-       85,   84,   83,   82,   81,   80,   79,   78,   72,   71,
-       70,   70,   75,   74,   72,   71,   70,   96,   43,   96,
-       96,   96,   96,   96,   96,   96,   96,   96,   96,   96,
-       96,   96,   96,   96,   96,   96,   96,   96,   96,   96,
-       96,   96,   96,   96,   96,   96,   96,   96,   96,   96,
-       96
-
-    } ;
-
-static const flex_int16_t yy_chk[192] =
+static const flex_int16_t yy_chk[350] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    3,    3,    4,    4,    5,    5,    6,    6,
-       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
-       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
-       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
-       19,   19,   21,  100,   22,   23,   23,   24,   24,   25,
-       25,   26,   26,   27,   27,   28,   28,   29,   29,   21,
-       99,   22,   30,   30,   31,   31,   32,   32,   33,   33,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    3,    3,    3,    3,    3,
+        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+       13,   14,   17,   17,   13,   14,   18,   18,   27,   27,
 
-       21,   21,   22,   22,   34,   34,   35,   35,   36,   36,
-       37,   37,   38,   38,   39,   39,   40,   40,   41,   41,
-       42,   42,   97,   97,   97,   98,   98,   98,  101,   94,
-      101,   93,   91,   90,   89,   88,   87,   86,   85,   84,
-       83,   82,   81,   80,   79,   78,   75,   74,   72,   71,
-       70,   63,   59,   58,   54,   46,   45,   43,   96,   96,
-       96,   96,   96,   96,   96,   96,   96,   96,   96,   96,
-       96,   96,   96,   96,   96,   96,   96,   96,   96,   96,
-       96,   96,   96,   96,   96,   96,   96,   96,   96,   96,
-       96
+       17,   28,   28,  158,   18,   33,   33,   34,   34,  152,
+       53,   54,   54,   17,   53,   92,   92,   18,   19,   19,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   21,   25,   22,   26,   65,   69,   75,
+       98,   65,   69,   75,   98,   99,  106,  106,  144,   99,
+      107,  107,  119,  119,  143,   21,  141,   22,   25,   25,
+       26,   26,  120,  120,  125,  125,  139,  138,  137,  136,
 
+      135,  134,  133,  132,   21,   21,   22,   22,   76,   76,
+      131,  130,  129,  128,  127,  124,  123,  122,  121,  118,
+      117,  116,  115,   96,   76,   95,   94,   89,   76,   88,
+       83,   64,   76,   60,   59,   76,   58,   76,  147,  147,
+      147,  147,  147,  147,  148,  148,  148,  148,  148,  148,
+      149,  149,  149,  149,  149,  149,  150,  150,  150,  150,
+      150,  150,  151,  151,  151,  151,  151,  151,  153,   46,
+      153,   45,  153,  153,  154,   43,  154,  154,  154,  154,
+      155,   16,  155,  155,  155,  155,  156,   15,    0,  156,
+      156,  156,  157,  157,  157,  157,  157,  157,  159,    0,
+
+      159,  159,  159,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146,  146,
+      146,  146,  146,  146,  146,  146,  146,  146,  146
     } ;
 
-static const flex_int16_t yy_rule_linenum[25] =
+static const flex_int16_t yy_rule_linenum[50] =
     {   0,
-       56,   63,   69,   76,   82,   86,   99,  106,  113,  116,
-      120,  124,  125,  126,  127,  128,  129,  130,  131,  132,
-      133,  135,  136,  137
+       56,   62,   67,   72,   77,   83,   84,   85,   87,   91,
+       92,   99,  104,  111,  119,  124,  125,  126,  127,  128,
+      129,  130,  140,  147,  153,  157,  170,  177,  187,  192,
+      195,  201,  204,  209,  212,  216,  220,  221,  222,  223,
+      224,  225,  226,  227,  228,  229,  231,  232,  233
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -555,8 +605,8 @@ static const flex_int16_t yy_rule_linenum[25] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
-#line 2 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 1 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 2 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -572,21 +622,21 @@ static const flex_int16_t yy_rule_linenum[25] =
     int  bracket_level = 0;
     char  *string_buf_ptr;
 
-#line 575 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 625 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
-#line 26 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 26 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
   // A number symbol corresponding to the value in S.
   yy::parser::symbol_type make_INT(
     const std::string &s,
     const yy::parser::location_type& loc
   );
-#line 583 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 633 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 41 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 41 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
-#line 588 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
-#line 589 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 638 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 639 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define INITIAL 0
 #define fbo 1
@@ -798,10 +848,10 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 44 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 44 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
-#line 47 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 47 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
   // A handy shortcut to the location held by the driver.
   yy::location& loc = driver.location;
   // Code run each time yylex is called.
@@ -811,7 +861,7 @@ YY_DECL
 
 
 
-#line 814 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 864 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -840,13 +890,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 97 )
+				if ( yy_current_state >= 147 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 96 );
+		while ( yy_current_state != 146 );
 		yy_cp = (yy_last_accepting_cpos);
 		yy_current_state = (yy_last_accepting_state);
 
@@ -865,12 +915,12 @@ do_action:	/* This label is used only to access EOF actions. */
 			{
 			if ( yy_act == 0 )
 				std::cerr << "--scanner backing up\n";
-			else if ( yy_act < 25 )
+			else if ( yy_act < 50 )
 				std::cerr << "--accepting rule at line " << yy_rule_linenum[yy_act] <<
 				         "(\"" << yytext << "\")\n";
-			else if ( yy_act == 25 )
+			else if ( yy_act == 50 )
 				std::cerr << "--accepting default rule (\"" << yytext << "\")\n";
-			else if ( yy_act == 26 )
+			else if ( yy_act == 51 )
 				std::cerr << "--(end of buffer or a NUL)\n";
 			else
 				std::cerr << "--EOF (start condition " << YY_START << ")\n";
@@ -888,7 +938,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 56 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 56 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     //comment_caller  =  INITIAL;
     bracket_level = 0;
@@ -898,16 +948,166 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 63 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 62 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+    yy_push_state(technique);
+	return yy::parser::make_TECHNIQUE(loc);
+}
+	YY_BREAK
+case 3:
+YY_RULE_SETUP
+#line 67 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXFORMAT(loc);
 	YY_BREAK
+/*==================================================================
+      Comment starting points
+    */
+case 4:
+YY_RULE_SETUP
+#line 72 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+    comment_caller  =  INITIAL;
+    yy_push_state(comment);
+}
+	YY_BREAK
+case 5:
+YY_RULE_SETUP
+#line 77 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+    comment_caller  =  INITIAL;
+    yy_push_state(comment2);
+}
+	YY_BREAK
+
+case 6:
+YY_RULE_SETUP
+#line 83 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+/*  eat  anything  that's  not  a  '*'  */
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 84 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+/*  eat  up  '*'s  not  followed  by  '/'s  */
+	YY_BREAK
+case 8:
+/* rule 8 can match eol */
+YY_RULE_SETUP
+#line 85 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+loc.lines (yyleng); loc.step ();
+	YY_BREAK
+case 9:
+YY_RULE_SETUP
+#line 87 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+yy_pop_state();//BEGIN(comment_caller);
+	YY_BREAK
+
+
+case 10:
+YY_RULE_SETUP
+#line 91 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+
+	YY_BREAK
+case 11:
+/* rule 11 can match eol */
+YY_RULE_SETUP
+#line 92 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+loc.lines (yyleng); loc.step ();//BEGIN(comment_caller);
+	YY_BREAK
+
+/*==================================================================
+      rules for inside a string
+    */
+
+case 12:
+YY_RULE_SETUP
+#line 99 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{  /*  saw  closing  quote  -  all  done  */
+        yy_pop_state();//BEGIN(INITIAL);
+        *string_buf_ptr  =  '\0';
+        return yy::parser::make_STR(string_buf, loc);
+    }
+	YY_BREAK
+case 13:
+/* rule 13 can match eol */
+YY_RULE_SETUP
+#line 104 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        //FIXME:
+        //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
+        //yyterminate();
+        gEnv->pLog->LogError("\nunterminated  string  constant at unknown line, FIXME!!!");
+		return yy::parser::make_END (loc);
+    }
+	YY_BREAK
+case 14:
+YY_RULE_SETUP
+#line 111 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        /*  octal  escape  sequence  */
+        int  result;
+        (void)  sscanf(  yytext  +  1,  "%o",  &result  );
+        if  (  result  >  0xff  )
+            /*  error,  constant  is  out-of-bounds  */
+        *string_buf_ptr++  =  result;
+    }
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 119 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        /*  generate  error  -  bad  escape  sequence;  something
+        *  like  '\48'  or  '\0777777'
+        */
+    }
+	YY_BREAK
+case 16:
+YY_RULE_SETUP
+#line 124 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+*string_buf_ptr++  =  '\n';
+	YY_BREAK
+case 17:
+YY_RULE_SETUP
+#line 125 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+*string_buf_ptr++  =  '\t';
+	YY_BREAK
+case 18:
+YY_RULE_SETUP
+#line 126 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+*string_buf_ptr++  =  '\r';
+	YY_BREAK
+case 19:
+YY_RULE_SETUP
+#line 127 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+*string_buf_ptr++  =  '\b';
+	YY_BREAK
+case 20:
+YY_RULE_SETUP
+#line 128 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+*string_buf_ptr++  =  '\f';
+	YY_BREAK
+case 21:
+/* rule 21 can match eol */
+YY_RULE_SETUP
+#line 129 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+*string_buf_ptr++  =  yytext[1];
+	YY_BREAK
+case 22:
+YY_RULE_SETUP
+#line 130 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        char  *yptr  =  yytext;
+        while  (  *yptr  )
+        *string_buf_ptr++  =  *yptr++;
+    }
+	YY_BREAK
+
 /*==================================================================
       rules for inside a GLSL section
     */
 
-case 3:
+case 23:
 YY_RULE_SETUP
-#line 69 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 140 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
@@ -916,9 +1116,9 @@ YY_RULE_SETUP
 		return yy::parser::make_LEFTSCOPE(loc);
     }
 	YY_BREAK
-case 4:
+case 24:
 YY_RULE_SETUP
-#line 76 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 147 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         // TODO create and REGISTER the variable in a table
 		return yy::parser::make_IDENTIFIER(yytext, loc);
@@ -926,17 +1126,17 @@ YY_RULE_SETUP
 	YY_BREAK
 
 
-case 5:
+case 25:
 YY_RULE_SETUP
-#line 82 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 153 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level++;
         *string_buf_ptr++  =  yytext[0];
     }
 	YY_BREAK
-case 6:
+case 26:
 YY_RULE_SETUP
-#line 86 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 157 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level--;
         if((bracket_level) == 0)
@@ -951,10 +1151,10 @@ YY_RULE_SETUP
         }
     }
 	YY_BREAK
-case 7:
-/* rule 7 can match eol */
+case 27:
+/* rule 27 can match eol */
 YY_RULE_SETUP
-#line 99 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 170 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -963,9 +1163,9 @@ YY_RULE_SETUP
 		loc.lines (yyleng); loc.step ();
     }
 	YY_BREAK
-case 8:
+case 28:
 YY_RULE_SETUP
-#line 106 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 177 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -973,92 +1173,137 @@ YY_RULE_SETUP
     }
 	YY_BREAK
 
-case 9:
-/* rule 9 can match eol */
+/*==================================================================
+      rules for inside a  section
+    */
+
+case 29:
 YY_RULE_SETUP
-#line 113 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 187 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        comment_caller  =  INITIAL;
+        yy_push_state(pass);
+		return yy::parser::make_PASS(loc);
+    }
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
+#line 192 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+		return yy::parser::make_LEFTSCOPE(loc);
+    }
+	YY_BREAK
+case 31:
+YY_RULE_SETUP
+#line 195 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        //yy_pop_state();//BEGIN(INITIAL);
+		return yy::parser::make_RIGHTSCOPE(loc);
+    }
+	YY_BREAK
+
+
+case 32:
+YY_RULE_SETUP
+#line 201 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+		return yy::parser::make_LEFTSCOPE(loc);
+    }
+	YY_BREAK
+case 33:
+YY_RULE_SETUP
+#line 204 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+		return yy::parser::make_RIGHTSCOPE(loc);
+    }
+	YY_BREAK
+
+case 34:
+/* rule 34 can match eol */
+YY_RULE_SETUP
+#line 209 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.lines (yyleng); loc.step ();
 }
 	YY_BREAK
-case 10:
+case 35:
 YY_RULE_SETUP
-#line 116 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 212 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.step ();
 }
 	YY_BREAK
-case 11:
+case 36:
 YY_RULE_SETUP
-#line 120 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 216 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
               std::cout << loc.begin.line << " " << loc.end.line << std::endl;
               return yy::parser::make_MINUS  (loc);
            }
 	YY_BREAK
-case 12:
+case 37:
 YY_RULE_SETUP
-#line 124 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 220 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_PLUS   (loc);
 	YY_BREAK
-case 13:
+case 38:
 YY_RULE_SETUP
-#line 125 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 221 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_STAR   (loc);
 	YY_BREAK
-case 14:
+case 39:
 YY_RULE_SETUP
-#line 126 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 222 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_SLASH  (loc);
 	YY_BREAK
-case 15:
+case 40:
 YY_RULE_SETUP
-#line 127 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 223 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_LPAREN (loc);
 	YY_BREAK
-case 16:
+case 41:
 YY_RULE_SETUP
-#line 128 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 224 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_RPAREN (loc);
 	YY_BREAK
-case 17:
+case 42:
 YY_RULE_SETUP
-#line 129 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 225 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_ASSIGN (loc);
 	YY_BREAK
-case 18:
+case 43:
 YY_RULE_SETUP
-#line 130 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 226 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_SEMICOLON(loc);
 	YY_BREAK
-case 19:
+case 44:
 YY_RULE_SETUP
-#line 131 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 227 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_LEFTSCOPE(loc);
 	YY_BREAK
-case 20:
+case 45:
 YY_RULE_SETUP
-#line 132 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 228 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_RIGHTSCOPE(loc);
 	YY_BREAK
-case 21:
+case 46:
 YY_RULE_SETUP
-#line 133 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 229 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_COMMA(loc);
 	YY_BREAK
-case 22:
+case 47:
 YY_RULE_SETUP
-#line 135 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 231 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return make_INT(yytext, loc);
 	YY_BREAK
-case 23:
+case 48:
 YY_RULE_SETUP
-#line 136 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 232 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_IDENTIFIER(yytext, loc);
 	YY_BREAK
-case 24:
+case 49:
 YY_RULE_SETUP
-#line 137 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 233 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
                 throw yy::parser::syntax_error(loc, "invalid character: " + std::string(yytext));
            }
@@ -1084,15 +1329,15 @@ case YY_STATE_EOF(color_sample_state):
 case YY_STATE_EOF(rasterization_state):
 case YY_STATE_EOF(resource):
 case YY_STATE_EOF(resource1):
-#line 140 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 236 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_END (loc);
 	YY_BREAK
-case 25:
+case 50:
 YY_RULE_SETUP
-#line 145 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 241 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1095 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1340 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1530,7 +1775,7 @@ int yyFlexLexer::yy_get_next_buffer()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 97 )
+			if ( yy_current_state >= 147 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1563,11 +1808,11 @@ int yyFlexLexer::yy_get_next_buffer()
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 97 )
+		if ( yy_current_state >= 147 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 96);
+	yy_is_jam = (yy_current_state == 146);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2209,7 +2454,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 145 "C:/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 241 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
 yy::parser::symbol_type make_INT(

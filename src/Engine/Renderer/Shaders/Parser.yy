@@ -1,6 +1,7 @@
 %skeleton "lalr1.cc"
 %require "3.0"
 
+%expect  36
 
 %defines
 %define api.token.constructor
@@ -41,6 +42,7 @@
     #include "assignments/AssignmentList.h"
     #include "Program.h"
     #endif
+    #include "Effect.hpp"
 
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
         return scanner.ScanToken();
@@ -405,10 +407,82 @@ input: %empty { gEnv->pLog->LogWarning("Empty effect"); }
 ;
 
 
-tech: "tech";
+/*------------------------------------------------------------------
+   pass-states
+   TODO: Add the states
+*/
+passstates: %empty
+| IDENTIFIER { CryLog("In PassState"); }
+;
+/*----------------------
+    what a pass can be
+*/
+pass:
+PASS { CryLog("Creation of PASS");}
+  annotations "{" passstates "}"  {
+  /*
+    LOGI("Pass with no name...\n");
+    curAnnotations = NULL;
+    curRState = NULL;
+    curCSState = NULL;
+    curDSTState = NULL;
+    curPRState = NULL;
+    lex_pop_state();
+*/
+}
+| pass error { error(@1, "Error in Pass declaration\n");}
+/*------------------------------------------------------------------
+   passes
+*/
+passes:
+pass
+| passes pass
+| passes error { error(@1, "Error in Pass list\n");}
+;
+/*------------------------------------------------------------------
+   technique
+*/
+tech:
+TECHNIQUE {
+    CryLog("Creation of Technique for NO name\n");
+    //curTechnique = curContainer->createTechnique()->getExInterface();
+    //curAnnotations = curTechnique->annotations()->getExInterface();
+} "{" passes "}" 
+| TECHNIQUE IDENTIFIER {
+    CryLog("creation of Technique %s...\n", $2.c_str() );
+    //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
+    //curAnnotations = curTechnique->annotations()->getExInterface();
+    //delete $2;
+} annotations "{" passes "}" { 
+    //lex_pop_state();
+    //curAnnotations = NULL;
+}
+;
+
+/*
+   ANNOTATIONS - TODO: more types of annotations
+ */
+annotation: /* empty */
+| annotation IDENTIFIER '=' STR ';' {
+/*
+    if(!curAnnotations)
+        curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized
+    if(!curAnnotations->addAnnotation($2->c_str(), $4->c_str()))
+        yyerror("err\n");
+    delete $4;
+*/
+    }
+;
+annotations2: '<' {CryLog("Begin annotations"); } annotation '>'
+;
+annotations: /*empty*/
+| annotations2
+;
+
 glsl: 
 	GLSLSHADER IDENTIFIER "{" CODEBODY { 
-		gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
+		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
+        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$2, $4});
 	}
 ;
 
