@@ -29,6 +29,67 @@ static void RemoveColorCodeInPlace(CLog::LogStringType& rStr)
 
 	rStr.resize(d - rStr.c_str());
 }
+CLog::CLog(ISystem* pSystem)
+	: m_pSystem(pSystem)
+	, m_fLastLoadingUpdateTime(-1.0f)
+	, m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
+{
+	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
+
+	m_nMainThreadId = std::this_thread::get_id();
+
+	IConsole* console = m_pSystem->GetIConsole();
+
+#ifdef  _RELEASE
+	#if defined(RELEASE_LOGGING)
+		#define DEFAULT_VERBOSITY 0
+	#elif defined(DEDICATED_SERVER)
+		#define DEFAULT_VERBOSITY 0
+	#else
+		#define DEFAULT_VERBOSITY -1
+	#endif
+#else
+	#define DEFAULT_VERBOSITY 3
+#endif
+
+#if defined(DEDICATED_SERVER) && defined(CRY_PLATFORM_LINUX)
+	#define DEFAULT_LOG_INCLUDE_TIME (0)
+#else
+	#define DEFAULT_LOG_INCLUDE_TIME (1)
+#endif
+
+	if (console)
+	{
+		m_pLogVerbosity = REGISTER_INT("log_Verbosity", DEFAULT_VERBOSITY, VF_DUMPTODISK,
+									   "defines the verbosity level for log messages written to console\n"
+									   "-1=suppress all logs (including eAlways)\n"
+									   "0=suppress all logs(except eAlways)\n"
+									   "1=additional errors\n"
+									   "2=additional warnings\n"
+									   "3=additional messages\n"
+									   "4=additional comments");
+
+		//writing to game.log during game play causes stalls on consoles
+		m_pLogWriteToFile = REGISTER_INT("log_WriteToFile", 1, VF_DUMPTODISK, "toggle whether to write log to file (game.log)");
+
+		// put time into begin of the string if requested by cvar
+		m_pLogIncludeTime = REGISTER_INT("log_IncludeTime", 1, 0,
+										 "Toggles time stamping of log entries.\n"
+										 "Usage: log_IncludeTime [0/1/2/3/4/5]\n"
+										 "  0=off (default)\n"
+										 "  1=current time\n"
+										 "  2=relative time\n"
+										 "  3=current+relative time\n"
+										 "  4=absolute time in seconds since this mode was started\n"
+										 "  5=current time+server time");
+	}
+}
+
+CLog::~CLog()
+{
+	Shutdown();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 void CLog::CloseLogFile(bool forceClose)

@@ -118,32 +118,9 @@ class CLog :
 {
   public:
 	typedef StackStringT<char, 256> LogStringType;
+	CLog(ISystem* pSystem);
+	~CLog();
 	
-	CLog(ISystem* pSystem)
-		: m_pSystem(pSystem)
-		, m_fLastLoadingUpdateTime(-1.0f)
-		, m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
-	{
-		gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
-
-		m_nMainThreadId = std::this_thread::get_id();
-		// put time into begin of the string if requested by cvar
-		m_pLogIncludeTime = REGISTER_INT("log_IncludeTime", 1, 0,
-		                                 "Toggles time stamping of log entries.\n"
-		                                 "Usage: log_IncludeTime [0/1/2/3/4/5]\n"
-		                                 "  0=off (default)\n"
-		                                 "  1=current time\n"
-		                                 "  2=relative time\n"
-		                                 "  3=current+relative time\n"
-		                                 "  4=absolute time in seconds since this mode was started\n"
-		                                 "  5=current time+server time");
-	}
-
-	~CLog()
-	{
-		Shutdown();
-	}
-
   private:
 	void Shutdown()
 	{
