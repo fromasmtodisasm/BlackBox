@@ -134,7 +134,7 @@ const char* CBaseInput::GetKeyName(const SInputEvent& event) const
   for (TInputDevices::const_iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
   {
     const IInputDevice* pInputDevice = (*i);
-    ASSERT(pInputDevice != NULL);
+    CRY_ASSERT(pInputDevice != NULL);
     if (event.deviceType == eIDT_Unknown || pInputDevice->GetDeviceType() == event.deviceType)
     {
       const char* szRet = pInputDevice->GetKeyName(event);
@@ -155,7 +155,7 @@ const char* CBaseInput::GetKeyName(EKeyId keyId) const
   for (; iter != iterEnd; ++iter)
   {
     const IInputDevice* pDevice = *iter;
-    ASSERT(pDevice != NULL);
+    CRY_ASSERT(pDevice != NULL);
     const char* szKeyName = pDevice->GetKeyName(keyId);
     if (szKeyName)
     {
@@ -171,7 +171,7 @@ uint32_t CBaseInput::GetInputCharUnicode(const SInputEvent& event)
   for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
   {
     IInputDevice* pInputDevice = (*i);
-    ASSERT(pInputDevice != NULL);
+    CRY_ASSERT(pInputDevice != NULL);
     if (event.deviceType == eIDT_Unknown || pInputDevice->GetDeviceType() == event.deviceType)
     {
       uint32_t inputChar = pInputDevice->GetInputCharUnicode(event);
@@ -227,7 +227,7 @@ const SInputSymbol* CBaseInput::GetSymbolByName(const char* name) const
   for (; iter != iterEnd; ++iter)
   {
     const IInputDevice* pDevice = *iter;
-    ASSERT(pDevice != NULL);
+    CRY_ASSERT(pDevice != NULL);
     const SInputSymbol* pSymbol = pDevice->GetSymbolByName(name);
     if (pSymbol)
     {

@@ -1,3 +1,8 @@
+# BLACKBOX_DIR is expected to be set by the starting CMakeLists.txt
+if (NOT DEFINED BLACKBOX_DIR)
+    message(FATAL_ERROR "BLACKBOX_DIR is not set. Please set it before including InitialSetup.cmake")
+endif()
+
 #set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug Profile)
 
 # Turn on the ability to create folders to organize projects (.vcxproj)
@@ -31,15 +36,9 @@ message(STATUS "PROJECT_DIR = ${PROJECT_DIR}")
 message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 ###################################################
 
-if (DEFINED CMAKE_TOOLCHAIN_FILE)
-  if (NOT (EXISTS ${CMAKE_TOOLCHAIN_FILE}))
-    message(STATUS "Here")
-    if (VCPKG_INSTALLER)
-      include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
-      PrepareVcpkg()
-      set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
-    endif()
-  endif()
+if (DEFINED VCPKG_INSTALLER AND (NOT DEFINED VCPKG OR NOT CMAKE_TOOLCHAIN_FILE))
+  include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
+  PrepareVcpkg()
 endif()
 
 # Including the Toolchain file, as it sets important variables.
@@ -63,35 +62,15 @@ set(BLACKBOX_PUBLIC_INCLUDE_DIRS ${BLACKBOX_INCLUDE_DIRS}/public/BlackBox)
 set(BLACKBOX_PRIVATE_INCLUDE_DIRS ${BLACKBOX_INCLUDE_DIRS}/private/BlackBox)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-###################################################
-
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BLACKBOX_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
-###################################################
-
-if (UNIX OR CYGWIN OR LINUX)
-	message(STATUS "UNIX_OR_CYGWIN")
-	set(UNIX_OR_CYGWIN ON)
-#[[
-	find_package(PkgConfig REQUIRED)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX64)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DLINUX)
-]]
-else()
+if (WIN32)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 # Prefix all Visual Studio solution folder names with this string
 set(VS_FOLDER_PREFIX "BLACKBOX/")
-
-###################################################
-
-set(
-	SUBPROJECTS
-	src
-	game
-	#Tools/CMake
-	res
-)
 

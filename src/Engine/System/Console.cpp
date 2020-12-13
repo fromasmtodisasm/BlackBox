@@ -1,4 +1,5 @@
 #include <BlackBox/System/System.hpp>
+#include "ConsoleBatchFile.h"
 #include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/IInput.hpp>
@@ -10,6 +11,7 @@
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/IClipBoard.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 #include <BlackBox/Core/StringUtils.h>
 
@@ -175,6 +177,16 @@ void Command_SetWaitFrames(IConsoleCmdArgs* pCmd)
 		pConsole->m_waitFrames = std::max(0, atoi(pCmd->GetArg(1)));
 	}
 }
+
+void Command_Then(IConsoleCmdArgs* pCmd)
+{
+	if (pCmd->GetArgCount() > 1)
+	{
+		const char* szTmpStr = pCmd->GetCommandLine() + sizeof("then");
+		gEnv->pConsole->ExecuteString(szTmpStr, true, true);
+	}
+}
+
 #if 0
 #pragma region CVars
 char* CCVar::GetString()
@@ -491,6 +503,44 @@ inline bool hasprefix(const char* s, const char* prefix)
 	return true;
 }
 
+#if !defined(_RELEASE) && !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_APPLE
+void Command_DumpCommandsVars(IConsoleCmdArgs* Cmd)
+{
+	const char* arg = "";
+
+	if (Cmd->GetArgCount() > 1)
+		arg = Cmd->GetArg(1);
+
+	CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+
+	// txt
+	pConsole->DumpCommandsVars(const_cast<char*>(arg));
+
+#if CRY_PLATFORM_WINDOWS
+	// HTML
+	CConsoleHelpGen Generator(*pConsole);
+	Generator.Work();
+#endif
+}
+
+void Command_DumpVars(IConsoleCmdArgs* Cmd)
+{
+	#if 0
+	bool includeCheat = false;
+
+	if (Cmd->GetArgCount() > 1)
+	{
+		const char* arg = Cmd->GetArg(1);
+		const int incCheat = atoi(arg);
+		if (incCheat == 1)
+			includeCheat = true;
+	}
+
+	CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+	pConsole->DumpVarsTxt(includeCheat);
+	#endif
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 int CXConsole::con_display_last_messages = 0;
@@ -546,6 +596,8 @@ CXConsole::CXConsole(CSystem& system)
 
 	m_currentLoadConfigType = eLoadConfigDefault;
 	m_readOnly				= false;
+
+	m_bUseHistoryFile		= true;
 
 #if 0
 	CNotificationNetworkConsole::Initialize();
@@ -619,9 +671,9 @@ void CXConsole::PreProjectSystemInit()
 		|| gEnv->IsDedicated()) // unrestricted console for dedicated server
 		con_restricted = 0;
 
-	#if 0
 	// test cases -----------------------------------------------
 
+	#if 0
 	// cppcheck-suppress assertWithSideEffect
 	assert(GetCVar("con_debug") != 0);                    // should be registered a few lines above
 	// cppcheck-suppress assertWithSideEffect
@@ -649,6 +701,7 @@ void CXConsole::PreProjectSystemInit()
 	ResetAutoCompletion();
 	// cppcheck-suppress assertWithSideEffect
 	assert(strcmp(ProcessCompletion("Con_Debug"), "con_debug ") == 0);
+	#endif
 	ResetAutoCompletion();
 	m_sInputBuffer = "";
 
@@ -659,7 +712,7 @@ void CXConsole::PreProjectSystemInit()
 	REGISTER_COMMAND("audit_cvars", &Command_AuditCVars, VF_NULL, "Logs all console commands and cvars");
 #endif // ALLOW_AUDIT_CVARS
 
-#if !defined(_RELEASE) && !(CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID) && !CRY_PLATFORM_APPLE
+#if !defined(_RELEASE) && !(BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID) && !BB_PLATFORM_APPLE
 	REGISTER_COMMAND("DumpCommandsVars", &Command_DumpCommandsVars, VF_NULL,
 		"This console command dumps all console variables and commands to disk\n"
 		"DumpCommandsVars [prefix]");
@@ -683,9 +736,7 @@ void CXConsole::PreProjectSystemInit()
 		"> then echo Goodbye world!\n"
 		"> then wait_seconds 5\n"
 		"> then quit");
-
 	CConsoleBatchFile::Init();
-	#endif
 }
 
 void CXConsole::PostRendererInit()
@@ -864,7 +915,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 	}
 
 	const string name(sName);
-	pCVar = new CXConsoleVariableInt(this, name.data(), fValue, nFlags, help , true);
+	pCVar = new CXConsoleVariableFloat(this, name.data(), fValue, nFlags, help , true);
 	RegisterVar(name, pCVar /*, pChangeFunc*/);
 	return pCVar;
 }
@@ -956,11 +1007,7 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 
 		if (allowChange)
 		{
-			#if 0
-			pCVar->ForceSet(var.m_value.c_str());
-			#else
-			pCVar->Set(var.m_value.c_str());
-			#endif
+			pCVar->SetFromString(var.m_value.c_str());
 			pCVar->SetFlags(pCVar->GetFlags() | var.nCVarOrFlags);
 		}
 
@@ -992,9 +1039,7 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 void CXConsole::RemoveCommand(const char* sName)
 {
 	m_mapCommands.erase(sName);
-#if 0
 	UnRegisterAutoComplete(sName);
-#endif
 }
 
 void CXConsole::SetInputLine(const char* szLine)
@@ -1125,21 +1170,13 @@ int CXConsole::Register(const char* name, void* src, float defaultvalue, int fla
 float CXConsole::Register(const char* name, float* src, float defaultvalue, int flags /* = 0*/, const char* help /* = ""*/)
 {
 	RegisterInternal(name, src, defaultvalue, flags, help);
-			if (name == "r_MSAA_samples")
-			{
-				CryLog("here");
-			}
 	return defaultvalue;
 }
 
 int CXConsole::Register(const char* name, int* src, float defaultvalue, int flags /* = 0*/, const char* help /* = ""*/)
 {
-	RegisterInternal(name, src, defaultvalue, flags, help);
-			if (name == "r_MSAA_samples")
-			{
-				CryLog("here");
-			}
-	return defaultvalue;
+	RegisterInternal(name, src, static_cast<int>(defaultvalue), flags, help);
+	return static_cast<int>(defaultvalue);
 }
 
 
@@ -1531,6 +1568,52 @@ void CXConsole::AddCommand(const char* sCommand, const char* sScriptFunc, DWORD 
 	}
 }
 
+void CXConsole::AddCommand(const char* szCommand, ConsoleCommandFunc func, int nFlags, const char* sHelp, bool bIsManagedExternally)
+{
+	AssertName(szCommand);
+
+	if (m_configVars.find(szCommand) != m_configVars.end())
+	{
+		gEnv->pLog->LogWarning("The command '%s' appeared in a config file, but only CVars are allowed in config files.", szCommand);
+	}
+
+	if (m_mapCommands.find(szCommand) == m_mapCommands.end())
+	{
+		CConsoleCommand cmd;
+		cmd.m_sName = szCommand;
+		cmd.m_func = func;
+		cmd.m_isManagedExternally = bIsManagedExternally;
+		if (sHelp)
+			cmd.m_sHelp = sHelp;
+		cmd.m_nFlags = nFlags;
+		auto commandIt = m_mapCommands.insert(std::make_pair(cmd.m_sName, cmd)).first;
+
+		// See if this command was already executed by a config
+		// If so we need to execute it immediately
+		auto commandRange = m_configCommands.equal_range(szCommand);
+		for (auto commandPair = commandRange.first; commandPair != commandRange.second; ++commandPair)
+		{
+			//string arguments = string().Format("%s %s", szCommand, commandPair->second.c_str());
+			char arguments[512];
+			sprintf(arguments, "%s %s", szCommand, commandPair->second.c_str());
+      auto args = string(arguments);
+			ExecuteCommand(commandIt->second, args);
+		}
+
+		// Remove all entries
+		m_configCommands.erase(commandRange.first, commandRange.second);
+	}
+	else
+	{
+		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [%s] is already registered", szCommand);
+#if LOG_CVAR_INFRACTIONS_CALLSTACK
+		gEnv->pSystem->debug_LogCallStack();
+#endif
+	}
+}
+
+
+
 
 void CXConsole::ExecuteString(const char* command, bool bNeedSlash /* = false*/, bool bIgnoreDevMode /* = false*/)
 {
@@ -1692,6 +1775,10 @@ const char* CXConsole::AutoComplete(const char* substr)
 	{
 		const char* szCmd = cmds[i];
 		const size_t cmdlen = strlen(szCmd);
+#ifdef BB_PLATFORM_WINDOWS
+#define memicmp _memicmp_
+#endif
+    //FIXME
 		if (cmdlen >= substrLen && memicmp(szCmd, substr, substrLen) == 0)
 		{
 			if (substrLen == cmdlen)
@@ -1796,7 +1883,6 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 
 		if (bProcessAutoCompl)
 		{
-			#if 0
 			const IConsoleArgumentAutoComplete* pArgumentAutoComplete = stl::find_in_map(m_mapArgumentAutoComplete, sVar, 0);
 			if (pArgumentAutoComplete)
 			{
@@ -1812,7 +1898,6 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 					}
 				}
 			}
-			#endif
 		}
 	}
 
@@ -1906,7 +1991,17 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 	return m_sInputBuffer.c_str();
 }
 
+void CXConsole::RegisterAutoComplete(const char* sVarOrCommand, IConsoleArgumentAutoComplete* pArgAutoComplete)
+{
+	m_mapArgumentAutoComplete[sVarOrCommand] = pArgAutoComplete;
+}
 
+void CXConsole::UnRegisterAutoComplete(const char* sVarOrCommand)
+{
+	auto it = m_mapArgumentAutoComplete.find(sVarOrCommand);
+	if (it != m_mapArgumentAutoComplete.end())
+		m_mapArgumentAutoComplete.erase(it);
+}
 
 void CXConsole::ResetAutoCompletion()
 {
@@ -2279,7 +2374,7 @@ bool CXConsole::ProcessInput(const SInputEvent& event)
 			pCursor = pUnicode.GetPosition();
 			m_nCursorPos = pCursor - m_sInputBuffer.c_str();
 			#else
-			m_nCursorPos = pCursor - m_sInputBuffer.c_str() - 1;
+			m_nCursorPos = pCursor - m_sInputBuffer.c_str() + 1;
 			#endif
 		}
 		return true;
@@ -2409,7 +2504,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			{
 				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
 				//int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
-				float n = 1.16 * m_pFont->TextWidth(szCursorLeft);
+				float n = 1.16f * m_pFont->TextWidth(szCursorLeft);
 
 				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
@@ -3232,7 +3327,7 @@ IFont* CXConsole::GetFont(const char* name, float w, float h)
 	{
 		m_pFont	  = gEnv->pRenderer->GetIFont();
 		auto font = name;
-		auto var  = GET_CVAR("s_font");
+		auto var  = GetCVar("s_font");
 		if (var)
 			font = var->GetString();
 		m_pFont->Init(font, static_cast<unsigned int>(w), static_cast<unsigned int>(h));

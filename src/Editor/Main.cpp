@@ -7,6 +7,7 @@
 #include "MainWindow.hpp"
 
 #include <iostream>
+#include <sstream>
 #include <ctime>
 #include <iomanip>
 #include <filesystem>

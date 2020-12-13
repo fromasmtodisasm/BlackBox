@@ -53,7 +53,7 @@ CTimer::CTimer()
   }
   else
   {
-    ASSERT(false && "QueryPerformanceFrequency failed");
+    CRY_ASSERT(false && "QueryPerformanceFrequency failed");
     m_lTicksPerSec = 1000000;
   }
 #endif
@@ -126,7 +126,7 @@ float CTimer::GetReplicationTime() const
 /////////////////////////////////////////////////////
 float CTimer::GetCurrTime(ETimer which) const
 {
-  ASSERT(which >= 0 && which < ETIMER_LAST && "Bad timer index");
+  CRY_ASSERT(which >= 0 && which < ETIMER_LAST && "Bad timer index");
   return m_CurrTime[which].GetSeconds();
 }
 
@@ -146,7 +146,7 @@ float CTimer::GetTimeScale() const
 /////////////////////////////////////////////////////
 float CTimer::GetTimeScale(uint32_t channel) const
 {
-  ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
+  CRY_ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
   if (channel >= NUM_TIME_SCALE_CHANNELS)
   {
     return GetTimeScale();
@@ -157,7 +157,7 @@ float CTimer::GetTimeScale(uint32_t channel) const
 /////////////////////////////////////////////////////
 void CTimer::SetTimeScale(float scale, uint32_t channel /* = 0 */)
 {
-  ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
+  CRY_ASSERT(channel < NUM_TIME_SCALE_CHANNELS);
   if (channel >= NUM_TIME_SCALE_CHANNELS)
   {
     return;
@@ -274,100 +274,96 @@ float CTimer::GetProfileFrameBlending(float* pfBlendTime, int* piBlendMode)
 /////////////////////////////////////////////////////
 void CTimer::RefreshGameTime(int64_t curTime)
 {
-  ASSERT(curTime + m_lOffsetTime >= 0);
+  CRY_ASSERT(curTime + m_lOffsetTime >= 0);
   m_CurrTime[ETIMER_GAME].SetSeconds(TicksToSeconds(curTime + m_lOffsetTime));
 }
 
 /////////////////////////////////////////////////////
 void CTimer::RefreshUITime(int64_t curTime)
 {
-  ASSERT(curTime >= 0);
+  CRY_ASSERT(curTime >= 0);
   m_CurrTime[ETIMER_UI].SetSeconds(TicksToSeconds(curTime));
 }
 
 /////////////////////////////////////////////////////
 void CTimer::UpdateOnFrameStart()
 {
-  if (!m_bEnabled)
-    return;
+	if (!m_bEnabled)
+		return;
 
-  // On Windows before Vista, frequency can change (even though it should be impossible),
-  // See also: https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx
-  // Win2000, WinXP: Uses RDTSC, which may not be monotonic across all cores (a bug), costs in the order of 10~100 cycles (cheap).
-  // WinVista: Uses HPET or ACPI timer (a kernel call, and much more expensive than RDTSC, but it's not bugged).
-  // Win7+: RDTSC if the CPU feature bit for monotonic is set, HPET or ACPI otherwise (not bugged).
+	// On Windows before Vista, frequency can change (even though it should be impossible),
+	// See also: https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx
+	// Win2000, WinXP: Uses RDTSC, which may not be monotonic across all cores (a bug), costs in the order of 10~100 cycles (cheap).
+	// WinVista: Uses HPET or ACPI timer (a kernel call, and much more expensive than RDTSC, but it's not bugged).
+	// Win7+: RDTSC if the CPU feature bit for monotonic is set, HPET or ACPI otherwise (not bugged).
 #if defined(_WIN32_WINNT) && _WIN32_WINNT < 0x0600
-  if ((m_nFrameCounter & 127) == 0)
-  {
-    // every bunch of frames, check frequency to adapt to
-    // CPU power management clock rate changes
-    LARGE_INTEGER TTicksPerSec;
-    if (QueryPerformanceFrequency(&TTicksPerSec))
-    {
-      // if returns false, no performance counter is available
-      m_lTicksPerSec = TTicksPerSec.QuadPart;
-      m_fSecsPerTick = 1.0 / m_lTicksPerSec;
-    }
-  }
+	if ((m_nFrameCounter & 127) == 0)
+	{
+		// every bunch of frames, check frequency to adapt to
+		// CPU power management clock rate changes
+		LARGE_INTEGER TTicksPerSec;
+		if (QueryPerformanceFrequency(&TTicksPerSec))
+		{
+			// if returns false, no performance counter is available
+			m_lTicksPerSec = TTicksPerSec.QuadPart;
+			m_fSecsPerTick = 1.0 / m_lTicksPerSec;
+		}
+	}
 
-  m_nFrameCounter++;
+	m_nFrameCounter++;
 #endif
 
 #ifdef PROFILING
-  m_fRealFrameTime = m_fFrameTime = 0.020f; // 20ms = 50fps
-  g_lCurrentTime += (int)(m_fFrameTime * (float)(CTimeValue::TIMEVALUE_PRECISION));
-  m_lLastTime = g_lCurrentTime;
-  RefreshGameTime(m_lLastTime);
-  RefreshUITime(m_lLastTime);
-  return;
+	m_fRealFrameTime = m_fFrameTime = 0.020f; // 20ms = 50fps
+	g_lCurrentTime += (int)(m_fFrameTime * (float)(CTimeValue::TIMEVALUE_PRECISION));
+	m_lLastTime = g_lCurrentTime;
+	RefreshGameTime(m_lLastTime);
+	RefreshUITime(m_lLastTime);
+	return;
 #endif
 
-  if (m_fixed_time_step < 0.0f)
-  {
-    // Enforce real framerate by sleeping.
-    const int64_t elapsedTicks = bbGetTicks() - m_lBaseTime - m_lLastTime;
-    const int64_t minTicks = SecondsToTicks(-m_fixed_time_step);
-    if (elapsedTicks < minTicks)
-    {
-      const int64_t ms = (minTicks - elapsedTicks) * 1000 / m_lTicksPerSec;
-#ifndef BB_PLATFORM_LINUX
-      bbSleep((unsigned int)ms);
-#else
-      assert(0 && "Not implemented");
-#endif
-    }
-  }
+	if (m_fixed_time_step < 0.0f)
+	{
+		// Enforce real framerate by sleeping.
+		const int64 elapsedTicks = bbGetTicks() - m_lBaseTime - m_lLastTime;
+		const int64 minTicks = SecondsToTicks(-m_fixed_time_step);
+		if (elapsedTicks < minTicks)
+		{
+			const int64 ms = (minTicks - elapsedTicks) * 1000 / m_lTicksPerSec;
+			bbSleep((unsigned int)ms);
+		}
+	}
 
   const int64_t now = bbGetTicks();
-  ASSERT(now + 1 >= m_lBaseTime && "Invalid base time"); //+1 margin because QPC may be one off across cores
+  CRY_ASSERT(now + 1 >= m_lBaseTime && "Invalid base time"); //+1 margin because QPC may be one off across cores
 
-  m_fRealFrameTime = TicksToSeconds(now - m_lBaseTime - m_lLastTime);
+	m_fRealFrameTime = TicksToSeconds(now - m_lBaseTime - m_lLastTime);
 
-  if (0.0f != m_fixed_time_step)
-  {
-    // Apply fixed_time_step
-    m_fFrameTime = abs(m_fixed_time_step);
-  }
-  else
-  {
-    // Clamp to max_time_step
-    m_fFrameTime = std::min(m_fRealFrameTime, m_max_time_step);
-  }
+	if (0.0f != m_fixed_time_step)
+	{
+		// Apply fixed_time_step
+		m_fFrameTime = abs(m_fixed_time_step);
+	}
+	else
+	{
+		// Clamp to max_time_step
+		m_fFrameTime = std::min(m_fRealFrameTime, m_max_time_step);
+	}
 
-  // Dilate time.
-  m_fFrameTime *= GetTimeScale();
+	// Dilate time.
+	m_fFrameTime *= GetTimeScale();
 
-  if (m_TimeSmoothing > 0)
-  {
-    m_fFrameTime = GetAverageFrameTime();
-  }
+	if (m_TimeSmoothing > 0)
+	{
+		m_fFrameTime = GetAverageFrameTime();
+	}
 
-  // Time can only go forward.
-  if (m_fFrameTime < 0.0f) m_fFrameTime = 0.0f;
-  if (m_fRealFrameTime < 0.0f) m_fRealFrameTime = 0.0;
+	// Time can only go forward.
+	if (m_fFrameTime < 0.0f) m_fFrameTime = 0.0f;
+	if (m_fRealFrameTime < 0.0f) m_fRealFrameTime = 0.0;
 
-  if (m_bEnabled && !m_bGameTimerPaused)
-    m_replicationTime += m_fFrameTime;
+	if (m_bEnabled && !m_bGameTimerPaused)
+		m_replicationTime += m_fFrameTime;
 
   // Adjust the base time so that time actually seems to have moved forward m_fFrameTime
   const int64_t frameTicks = SecondsToTicks(m_fFrameTime);
@@ -376,30 +372,30 @@ void CTimer::UpdateOnFrameStart()
   if (m_lBaseTime > now)
   {
     // Guard against rounding errors due to float <-> int64_t precision
-    ASSERT(m_lBaseTime - now <= 10 && "Bad base time or adjustment, too much difference for a rounding error");
+    CRY_ASSERT(m_lBaseTime - now <= 10 && "Bad base time or adjustment, too much difference for a rounding error");
     m_lBaseTime = now;
   }
   const int64_t currentTime = now - m_lBaseTime;
 
-  ASSERT(fabsf(TicksToSeconds(currentTime - m_lLastTime) - m_fFrameTime) < 0.01f && "Bad calculation");
-  ASSERT(currentTime >= m_lLastTime && "Bad adjustment in previous frame");
-  ASSERT(currentTime + m_lOffsetTime >= 0 && "Sum of game time is negative");
+  CRY_ASSERT(fabsf(TicksToSeconds(currentTime - m_lLastTime) - m_fFrameTime) < 0.01f && "Bad calculation");
+  CRY_ASSERT(currentTime >= m_lLastTime && "Bad adjustment in previous frame");
+  CRY_ASSERT(currentTime + m_lOffsetTime >= 0 && "Sum of game time is negative");
 
-  // Update timers
-  RefreshUITime(currentTime);
-  if (!m_bGameTimerPaused)
-  {
-    RefreshGameTime(currentTime);
-  }
+	// Update timers
+	RefreshUITime(currentTime);
+	if (!m_bGameTimerPaused)
+	{
+		RefreshGameTime(currentTime);
+	}
 
-  m_lLastTime = currentTime;
+	m_lLastTime = currentTime;
 
-  UpdateBlending();
+	UpdateBlending();
 
-  if (m_TimeDebug > 1)
-  {
-    CryLogAlways("[CTimer]: Frame=%d Cur=%lld Now=%lld Off=%lld Async=%f CurrTime=%f UI=%f", gEnv->pRenderer->GetFrameID(false), (long long)currentTime, (long long)now, (long long)m_lOffsetTime, GetAsyncCurTime(), GetCurrTime(ETIMER_GAME), GetCurrTime(ETIMER_UI));
-  }
+	if (m_TimeDebug > 1)
+	{
+		CryLogAlways("[CTimer]: Frame=%d Cur=%lld Now=%lld Off=%lld Async=%f CurrTime=%f UI=%f", gEnv->pRenderer->GetFrameID(false), (long long)currentTime, (long long)now, (long long)m_lOffsetTime, GetAsyncCurTime(), GetCurrTime(ETIMER_GAME), GetCurrTime(ETIMER_UI));
+	}
 }
 
 //------------------------------------------------------------------------

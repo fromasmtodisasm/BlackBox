@@ -75,7 +75,7 @@ FrameBufferObject* FrameBufferObject::create(int width, int height, Texture* att
 			break;
 		}
 		gEnv->pLog->LogError("Framebuffer not complete");
-		assert(0);
+        //assert(0);
 	}
 	return fbo;
 }

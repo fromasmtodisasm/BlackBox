@@ -75,6 +75,10 @@ class CSystem final : public ISystem
 	virtual IGame* GetIGame() override;
 	virtual IFont* GetIFont() override;
 	virtual IWindow* GetIWindow() override;
+	IValidator* GetIValidator() override
+	{
+		return m_pValidator;
+	};
 	virtual IScriptSystem* GetIScriptSystem() override;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() override
 	{
@@ -130,7 +134,6 @@ class CSystem final : public ISystem
 	bool DoFrame();
 
   private:
-	bool CreateConsole();
 	bool InitConsole();
 	bool InitRender();
 	bool InitInput();
@@ -179,12 +182,12 @@ class CSystem final : public ISystem
 	CCamera m_ViewCamera; //!<
 
 	ILog* m_pLog;
-	IConsole* m_pConsole;
 	//IInput* m_pInput;
 	ICryPak* m_pCryPak;
 	IGame* m_pGame;
 	IFont* m_pFont;
 	IWindow* m_pWindow;
+	IValidator* m_pValidator; //!< Pointer to validator interface.
 	IRenderer* m_Render;
 	IScriptSystem* m_pScriptSystem;
 	IEntitySystem* m_pEntitySystem;

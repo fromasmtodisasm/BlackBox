@@ -1,10 +1,11 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/Platform/SDL/Window.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
+
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <SDL.h>
 
@@ -30,6 +31,7 @@ bool CSDLWindow::init(int x, int y, int width, int height, unsigned int cbpp, in
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
     printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    //return false;
   }
 
   if (!Create(width, height, fullscreen))
@@ -307,7 +309,7 @@ void CSDLWindow::SelectDisplay(int &x, int &y, int w, int h)
   // enumerate displays
 	int displays = SDL_GetNumVideoDisplays();
 	auto display = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
-	display   	 = std::min(displays - 1, display);
+    display   	 = std::max(displays - 1, 0);
 
 	// get display bounds for all displays
 	std::vector< SDL_Rect > displayBounds;

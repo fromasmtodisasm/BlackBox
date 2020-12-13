@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ScriptSystem CXX)
+project(ScriptSystem)
 ###################################################
 include(FindLua)
 ###################################################
@@ -17,6 +17,7 @@ ${PROJECT_NAME}
 add_package(Lua)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 ###################################################
 

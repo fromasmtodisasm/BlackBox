@@ -1,5 +1,6 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 

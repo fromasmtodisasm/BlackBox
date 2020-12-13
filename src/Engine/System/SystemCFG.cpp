@@ -29,7 +29,7 @@ CSystemConfiguration::CSystemConfiguration(const string& strSysConfigFilePath, C
 	m_strSysConfigFilePath(strSysConfigFilePath), 
 	m_bError(false), m_pSink(pSink)
 {
-	ASSERT(pSink);
+	CRY_ASSERT(pSink);
 	m_pSystem = pSystem;
 	m_bError = !ParseSystemConfig();
 }
@@ -104,7 +104,7 @@ bool CSystemConfiguration::ParseSystemConfig()
 
 			if (strKey == "r_DisplayIndex")
 			{
-				CryLog("here");
+				CryLog("here r_DisplayIndex");
 			}
 			m_pSink->OnLoadConfigurationEntry(strKey.c_str(), strValue.c_str(), nullptr);
 		}

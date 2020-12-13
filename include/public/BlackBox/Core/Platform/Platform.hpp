@@ -114,12 +114,30 @@ typedef unsigned int        *PUINT;
 #define MASK(x)   (BIT(x) - 1U)
 #define MASK64(x) (BIT64(x) - 1ULL)
 
-#define ASSERT(...) assert((__VA_ARGS__))
 #define FUNCTION_PROFILER(...)
 
-#define CRY_ASSERT(...) ASSERT(__VA_ARGS__)
-#define CRY_VERIFY(exp, ...) (ASSERT(exp, __VA_ARGS__), exp)
+#if defined(USE_CRY_ASSERT)
+#else
+	//! Use the platform's default assert.
+	#include <assert.h>
+	#define CRY_ASSERT_TRACE(condition, parenthese_message) assert(condition)
+	#define CRY_ASSERT_MESSAGE_IMPL(condition, szCondition, file, line, ...) assert(condition)
+	#define CRY_ASSERT_MESSAGE(condition, ... )             assert(condition)
+	#define CRY_ASSERT(condition, ...)                      assert(condition)
+#endif
+namespace Cry
+{
+	template<typename T, typename ... Args>
+	inline T const& VerifyWithMessage(T const& expr, const char* szExpr, const char* szFile, int line, Args&& ... args)
+	{
+		CRY_ASSERT_MESSAGE_IMPL(expr, szExpr, szFile, line, std::forward<Args>(args) ...);
+		return expr;
+	}
+}
 
+#define CRY_VERIFY(expr, ...)              Cry::VerifyWithMessage(expr, # expr, __FILE__, __LINE__, ##__VA_ARGS__)
+
+#define CRY_FUNCTION_NOT_IMPLEMENTED       CRY_ASSERT(false, "Call to not implemented function: %s", __func__)
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
@@ -156,6 +174,13 @@ using string = MyString;
 #endif
 
 
+namespace Detail
+{
+template<typename T, size_t size>
+char (&ArrayCountHelper(T(&)[size]))[size];
+}
+
+#define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 
 #ifdef SendMessage
 #undef SendMessage

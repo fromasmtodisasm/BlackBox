@@ -218,7 +218,7 @@ class Serializator
 			LoadCamera(cameras);
 			cameras = cameras->NextSiblingElement("camera");
 		}
-
+		return false;
 	}
 	bool LoadDefault()
 	{

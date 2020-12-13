@@ -1177,7 +1177,9 @@ inline bool CStream::Seek(size_t dwPos)
 }
 
 //////////////////////////////////////////////////////////////////////
-#define NOT_COOKIEFIED
+#ifndef NOT_COOKIEFIED
+	#define NOT_COOKIEFIED
+#endif
 #ifndef NOT_COOKIEFIED
 #	define WRITE_COOKIE_NO(stm, c)                                                                                                                      \
 		{                                                                                                                                                \

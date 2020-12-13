@@ -34,14 +34,20 @@ struct _CryMemoryManagerPoolHelper
 	FNC_CryMalloc _CryMalloc;
 	FNC_CryRealloc _CryRealloc;
 	FNC_CryFree _CryFree;
+	static int m_bInitialized;
 
-	explicit _CryMemoryManagerPoolHelper( void *pHandle = NULL )
+	void Init( void *pHandle = NULL )
 	{
+		if (m_bInitialized)
+			return;
+
+		m_bInitialized = 1;
 		allocatedMemory = 0;
 		freedMemory = 0;
 		numAllocations = 0;
 		// On first iteration check ourself
 		HMODULE hMod = CryGetCurrentModule();
+		DWORD err = 0;
 		for (int i = 0; i < 2; i++)
 		{
 			if (hMod)
@@ -80,7 +86,7 @@ struct _CryMemoryManagerPoolHelper
 	}
 	~_CryMemoryManagerPoolHelper()
 	{
-#if defined(LINUX) && defined(LKJDF)
+#if defined(LINUX) && defined(lsdk)
 		if (hSystem)
 			::dlclose( hSystem );
 #endif
@@ -96,6 +102,9 @@ struct _CryMemoryManagerPoolHelper
 	//////////////////////////////////////////////////////////////////////////
 	__forceinline void*	Malloc(size_t size)
 	{
+		if (!m_bInitialized)
+			Init();
+
 		allocatedMemory += size;
 		numAllocations++;
 		return _CryMalloc( size );
@@ -103,6 +112,9 @@ struct _CryMemoryManagerPoolHelper
 	//////////////////////////////////////////////////////////////////////////
 	__forceinline void*	Realloc(void *memblock,size_t size)
 	{
+		if (!m_bInitialized)
+			Init();
+
 		if (memblock == NULL)
 		{
 			allocatedMemory += size;
@@ -120,6 +132,8 @@ struct _CryMemoryManagerPoolHelper
 	//////////////////////////////////////////////////////////////////////////
 	__forceinline void Free( void *memblock )
 	{
+        if (!m_bInitialized)
+            Init();
 		if (memblock != 0)
 		{
 			size_t size = ((int*)memblock)[-1];
@@ -130,6 +144,9 @@ struct _CryMemoryManagerPoolHelper
 	//////////////////////////////////////////////////////////////////////////
 };
 #endif //__cplusplus
+
+int _CryMemoryManagerPoolHelper::m_bInitialized = 0;
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 #ifndef _XBOX

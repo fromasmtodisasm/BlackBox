@@ -73,6 +73,12 @@ enum class ECVarType
 	Int64   = 4
 };
 
+#ifdef EXCLUDE_CVARHELP
+#define CVARHELP(_comment) 0
+#else
+#define CVARHELP(_comment) _comment
+#endif
+
 struct IWorkerCommand
 {
 	virtual bool OnUpdate() = 0;
@@ -140,6 +146,21 @@ struct IConsoleCmdArgs
 	virtual const char* GetCommandLine() const = 0;
 	// </interfuscator:shuffle>
 };
+
+//! Interface to the arguments of the console command.
+struct IConsoleArgumentAutoComplete
+{
+	// <interfuscator:shuffle>
+	virtual ~IConsoleArgumentAutoComplete(){}
+
+	//! Gets number of matches for the argument to auto complete.
+	virtual int GetCount() const = 0;
+
+	//! Gets argument value by index, nIndex must be in 0 <= nIndex < GetCount().
+	virtual const char* GetValue(int nIndex) const = 0;
+	// </interfuscator:shuffle>
+};
+
 
 //! This a definition of the console command function that can be added to console with AddCommand.
 typedef void (* ConsoleCommandFunc)(IConsoleCmdArgs*);
@@ -407,7 +428,7 @@ struct IBaseConsole
 	virtual void DumpCommandsVars(char *prefix) = 0;
 
 	//! Calculation of the memory used by the whole console system
-	virtual void GetMemoryUsage (class ICrySizer* pSizer) = 0;
+	virtual void GetMemoryUsage (struct ICrySizer* pSizer) = 0;
 
 	//! Function related to progress bar
 	virtual void ResetProgressBar(int nProgressRange) = 0;
@@ -442,6 +463,7 @@ struct IBaseConsole
 
 struct IConsole : public IBaseConsole
 {
+	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* sHelp = NULL, bool bIsManagedExternally = false) = 0;
 	//! Sets the value of a CVar as loaded from a config
 	//! Will defer setting of the value until the CVar is registered if it hasn't been already
 	virtual void LoadConfigVar(const char* sVariable, const char* sValue) = 0;
@@ -456,6 +478,13 @@ struct IConsole : public IBaseConsole
 	//! \param szLine Must not be 0.
 	virtual void SetInputLine(const char* szLine) = 0;
 
+	virtual ICVar* RegisterInternal(const char* name, float* src, float defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true) = 0;
+	virtual ICVar* RegisterInternal(const char* name, int* src, int defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true) = 0;
+	virtual ICVar* RegisterInternal(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true) = 0;
+	virtual ICVar* RegisterInternal(ICVar* pVar) = 0;
+
+	virtual void        RegisterAutoComplete(const char* sVarOrCommand, IConsoleArgumentAutoComplete* pArgAutoComplete) = 0;
+	virtual void        UnRegisterAutoComplete(const char* sVarOrCommand) = 0;
 };
 
 //! \cond INTERNAL
@@ -608,30 +637,3 @@ struct ICVar : public ICVarBase
 	//! \return true if removal was successful.
 	virtual bool RemoveOnChangeFunctor(const uint64 id) = 0;
 };
-#ifdef EXCLUDE_CVARHELP
-#	define CVARHELP(_comment) 0
-#else
-#	define CVARHELP(_comment) _comment
-#endif
-
-#define GET_CONSOLE() GetISystem()->GetIConsole()
-#define CREATE_CVAR(name, value, flags, ...) GET_CONSOLE()->CreateVariable(name, value, flags, ##__VA_ARGS__)
-#define GET_CVAR(name) GET_CONSOLE()->GetCVar(name)
-
-//! Preferred way to register a CVar
-#if IMPLEMENTED_CVAR_REG
-#	define REGISTER_CVAR(_var, _def_val, _flags, _comment) ConsoleRegistrationHelper::Register((#	 _var), &(_var), (_def_val), (_flags), CVARHELP(_comment))
-#else
-#	define REGISTER_CVAR(_var, _def_var, _flags, ...) GET_CONSOLE()->Register((#	_var), &(_var), (_def_var), (_flags), ##__VA_ARGS__)
-//! Offers more flexibility but more code is required
-#	define REGISTER_CVAR2(_name, _var, _def_val, _flags, _comment) GET_CONSOLE()->Register(_name, _var, (_def_val), (_flags), CVARHELP(_comment))
-//! Offers more flexibility but more code is required, explicit address taking of destination variable
-#	define REGISTER_CVAR3(_name, _var, _def_val, _flags, _comment) GET_CONSOLE()->Register(_name, &(_var), (_def_val), (_flags), CVARHELP(_comment))
-
-#endif
-
-//! Preferred way to register a console command
-#define REGISTER_COMMAND(_name, _func, _flags, _comment) GET_CONSOLE()->AddCommand(_name, _func, _flags, _comment)
-
-//! Preferred way to register an int CVar
-#define REGISTER_INT(_name, _def_val, _flags, _comment) CREATE_CVAR(_name, _def_val, _flags, _comment)

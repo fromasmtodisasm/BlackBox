@@ -136,7 +136,7 @@ DLL_EXPORT std::wstring str_to_wstr(const std::string& str)
   return result;
 }
 
-DLL_EXPORT void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
+DLL_EXPORT void findAndReplaceAll(std::string& data, const std::string& toSearch, const std::string& replaceStr)
 {
   // Get the first occurrence
   size_t pos = data.find(toSearch);

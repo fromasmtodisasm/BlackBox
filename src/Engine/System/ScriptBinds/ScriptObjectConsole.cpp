@@ -44,7 +44,7 @@ int CScriptObjectConsole::PrintLine(IFunctionHandler* pH)
 {
   const char* str;
   pH->GetParam(1, str);
-  CryLogAlways("-- %s;", str);
+  CryLog("%s;", str);
   return pH->EndFunction(m_pScriptThis);
 }
 

@@ -3,9 +3,12 @@
 #include <BlackBox/Input/InputCVars.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 CInputCVars* g_pInputCVars = 0;
 
+#pragma warning(push)
+#pragma warning (disable : 4305 4309)
 CInputCVars::CInputCVars()
 {
   REGISTER_CVAR(i_debug, 0, 0,
@@ -120,6 +123,7 @@ CInputCVars::CInputCVars()
     "Default is \"Console\"");
 #endif
 }
+#pragma warning(pop)
 
 CInputCVars::~CInputCVars()
 {

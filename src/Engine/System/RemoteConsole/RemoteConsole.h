@@ -236,6 +236,9 @@ private:
 	TEventBuffer  m_eventBuffer;
 	volatile bool m_bAcceptClients;
 	friend struct SRemoteClient;
+
+public:
+	std::thread main_loop;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,6 +268,8 @@ private:
 	SRemoteServer* m_pServer;
 	CRYSOCKET      m_socket;
 	volatile bool  m_bRun;
+public:
+	std::thread main_loop;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////

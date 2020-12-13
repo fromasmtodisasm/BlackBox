@@ -19,12 +19,15 @@
 #include <BlackBox/Renderer/VertexBuffer.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/World/World.hpp>
+
+#include "../Shaders/FxParser.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
 #include <SDL2/SDL.h>
 
 #include <sstream>
+#include <BlackBox/Core/Utils.hpp>
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -53,7 +56,21 @@ class ShaderMan
 	std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
 };
 
-ShaderMan* gShMan = nullptr;
+ShaderMan* gShMan;
+FxParser* g_FxParser;
+
+void TestFx(IConsoleCmdArgs* args)
+{
+	string filename;
+	if (args->GetArgCount() < 2)
+		filename = "tmp/test.fx";
+	else
+		filename = args->GetArg(1);
+
+	PEffect pEffect = nullptr;
+	g_FxParser->Parse(filename, &pEffect);
+}
+
 
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
@@ -90,11 +107,11 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	//=======================
 	InitConsoleCommands();
 	//=======================
-	glContextType = AttributeType::DEBUG;
+	glContextType = (int)AttributeType::Debug;
 	#if 0
 	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
 	else
-	glContextType = AttributeType::CORE;
+	glContextType = AttributeType::Core;
 	#endif
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
 		return nullptr;
@@ -305,7 +322,7 @@ void GLRenderer::glInit()
 {
 	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	fillSates();
-	if (glContextType == AttributeType::DEBUG || GET_CVAR("r_Debug")->GetIVal() == 1)
+	if (glContextType == (int)AttributeType::Debug || gEnv->pConsole->GetCVar("r_Debug")->GetIVal() == 1)
 	{
 		m_pSystem->Log("Create debug render context");
 		glDebug = std::make_shared<OpenglDebuger>("out/glDebug.txt");
@@ -345,6 +362,51 @@ void GLRenderer::fillSates()
 #undef STATEMAP
 }
 
+#ifdef LINUX
+#include <experimental/filesystem>
+using namespace std::experimental::filesystem;
+#else
+#include <filesystem>
+using namespace std::filesystem;
+#endif
+struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
+{
+	wchar_t c_file[256];
+#define fx_base "tmp"
+	virtual int GetCount() const
+	{
+#ifndef LINUX
+		int cnt = std::count_if(
+        std::experimental::filesystem::directory_iterator::directory_iterator(std::experimental::filesystem::path::path(fx_base)),
+        std::experimental::filesystem::directory_iterator::directory_iterator(),
+			static_cast<bool (*)(const path&)>(is_regular_file));
+		return cnt;
+#else
+    return 0;
+#endif
+	};
+
+	virtual const char* GetValue(int nIndex) const
+	{
+#ifndef LINUX
+		int i = 0;
+		static std::string file;
+		for (directory_iterator next(path(fx_base)), end; next != end; ++next, ++i)
+		{
+			if (i == nIndex)
+			{
+				//memset((void*)c_file, 0, 256);
+				//memcpy((void*)c_file, , wcslen(next->path().c_str()));
+				file = wstr_to_str(std::wstring(next->path().c_str()));
+				return file.data();
+			}
+		}
+#endif
+		return "!!!";
+	};
+};
+
+static STestFXAutoComplete s_TestFXAutoComplete;
 void GLRenderer::InitConsoleCommands()
 {
 	/*
@@ -355,6 +417,8 @@ void GLRenderer::InitConsoleCommands()
     "Set size of camera"
   );
   */
+	gEnv->pConsole->AddCommand("testfx", TestFx, 0, "Test fx parser");
+	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
 CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic /* = false*/)
@@ -741,12 +805,12 @@ void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 bool GLRenderer::InitResourceManagers()
 {
 	//====================================================
-	gEnv->pConsole->PrintLine("Begin loading resources");
+	CryLog("Begin loading resources");
 	if (!gEnv->IsDedicated())
 	{
 		if (!ShaderManager::init())
 			return false;
-		gEnv->pConsole->PrintLine("End loading resources");
+		CryLog("End loading resources");
 	}
 	return true;
 }

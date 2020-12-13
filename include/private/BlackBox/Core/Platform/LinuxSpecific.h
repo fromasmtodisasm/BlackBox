@@ -209,10 +209,6 @@ typedef struct in_addr_windows
 
 //
 unsigned int GetCurrentTimeInternal();
-inline unsigned int GetCurrentTime()
-{
-  return GetCurrentTimeInternal();
-}
 
 typedef union _LARGE_INTEGER
 {

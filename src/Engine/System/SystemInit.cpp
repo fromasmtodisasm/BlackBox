@@ -1,15 +1,17 @@
 #include <BlackBox/System/System.hpp>
-#include <BlackBox/System/CryLibrary.hpp>
-#include <BlackBox/Core/Utils.hpp>
-#include <WindowsConsole.h>
-#include <BlackBox/System/Console.hpp>
-#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
+#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/System/Console.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
+#include <BlackBox/System/CryLibrary.hpp>
+#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
+#include <WindowsConsole.h>
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif
 
+//#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_LOG_FILENAME    "Log.txt"
 
@@ -195,6 +197,7 @@ namespace
 			{
 	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
 				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
+                fprintf(stderr, "dlopen failed: %s\n", dlerror());
 	#else
 				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
 				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());
@@ -281,7 +284,8 @@ bool CSystem::Init()
 	{
 		string headerName;
 		#if defined(USE_UNIXCONSOLE)
-		CUNIXConsole* pConsole = pUnixConsole = new CUNIXConsole();
+		//CUNIXConsole* pConsole = pUnixConsole = new CUNIXConsole();
+		CNULLConsole* pConsole = new CNULLConsole(false);
 		headerName = "Unix ";
 		#elif defined(USE_IOSCONSOLE)
 		CIOSConsole* pConsole = new CIOSConsole();
@@ -374,11 +378,11 @@ bool CSystem::Init()
 	std::string prompt = "Initializing System";
 	if (m_env.IsDedicated())
 		prompt += " on dedicated server";
-	Log(prompt.c_str());
+	CryLog(prompt.c_str());
 	//====================================================
-	Log("Initializing Console");
+	CryLog("Initializing Console");
 	//====================================================
-	Log("Loading config");
+	CryLog("Loading config");
 	if (!ConfigLoad("system.cfg"))
 		return false;
 	CreateRendererVars(m_startupParams);
@@ -405,10 +409,10 @@ bool CSystem::Init()
 			RenderBegin();
 			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
 			gEnv->pRenderer->DrawImage(
-				gEnv->pRenderer->GetWidth() / 2 - splash->getWidth() / 2,
-				gEnv->pRenderer->GetHeight() / 2 - splash->getHeight() / 2,
-				splash->getWidth(),
-				splash->getHeight(),
+				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
+				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
+				(float)splash->getWidth(),
+				(float)splash->getHeight(),
 				splash->getId(),
 				0, 0, 1, 1, 1, 1, 1, 1);
 			RenderEnd();
@@ -476,7 +480,7 @@ bool CSystem::Init()
 		return false;
 	}
 	//====================================================
-	m_pConsole->AddConsoleVarSink(this);
+	m_env.pConsole->AddConsoleVarSink(this);
 	ParseCMD();
 	LoadScreen();
 	//====================================================
@@ -486,7 +490,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_pConsole));
+		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_env.pConsole));
 #if ENABLE_DEBUG_GUI
 		if (!m_env.IsDedicated())
 		{
@@ -542,7 +546,7 @@ bool CSystem::CreateLog()
 
 bool CSystem::InitConsole()
 {
-	if (!static_cast<CXConsole*>(m_pConsole)->Init(this))
+	if (!static_cast<CXConsole*>(m_env.pConsole)->Init(this))
 		return false;
 	return true;
 }
@@ -630,7 +634,6 @@ bool CSystem::InitGUI()
 {
 	Log("Creating GUI");
 	if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
-			m_env.pLog->Log("Creating GUI");
 			m_GuiManager = p(this);
 			if (m_GuiManager == nullptr)
 				return false;

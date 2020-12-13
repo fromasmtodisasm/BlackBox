@@ -3,7 +3,7 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
-#include "Config.h"
+//#include "Config.h"
 
 #ifdef ENABLE_PROFILER
 #include <BlackBox/Render/IRender.hpp>

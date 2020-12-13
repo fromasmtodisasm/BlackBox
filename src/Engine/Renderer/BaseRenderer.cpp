@@ -1,4 +1,6 @@
 #include <BlackBox/Renderer/BaseRenderer.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
+
 #include <SDL2/SDL.h>
 
 int RenderCVars::CV_r_GetScreenShot;
@@ -28,15 +30,15 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 	SDL_DisplayMode mode;
 	Uint32 f;
 
-	SDL_Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
+	gEnv->pLog->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
 
 	numModes = SDL_GetNumDisplayModes(display_in_use);
 	if (numModes < 1)
 	{
-		SDL_Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
+		gEnv->pLog->Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
 		return 1;
 	}
-	SDL_Log("SDL_GetNumDisplayModes: %i", numModes);
+	gEnv->pLog->Log("SDL_GetNumDisplayModes: %i", numModes);
 
 	if (formats != nullptr)
 	{
@@ -44,7 +46,7 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 		{
 			if (SDL_GetDisplayMode(display_in_use, i, &mode) != 0)
 			{
-				SDL_Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
+				gEnv->pLog->Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 				return 1;
 			}
 			f = mode.format;
@@ -68,11 +70,11 @@ void RenderCVars::InitCVars()
 	REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
 	REGISTER_CVAR(r_Fullscreen, 600, VF_NULL);
 #endif
-	REGISTER_CVAR(r_MSAA, r_MSAA, VF_DUMPTODISK | VF_READONLY);
-	REGISTER_CVAR(r_MSAA_samples, r_MSAA_samples, VF_DUMPTODISK);
+	REGISTER_CVAR(r_MSAA, r_MSAA, VF_DUMPTODISK | VF_READONLY, "");
+	REGISTER_CVAR(r_MSAA_samples, r_MSAA_samples, VF_DUMPTODISK, "");
 
-	REGISTER_CVAR(r_Vsync, r_Vsync, VF_DUMPTODISK);
-	REGISTER_CVAR(r_DisplayIndex, r_DisplayIndex, VF_DUMPTODISK);
+	REGISTER_CVAR(r_Vsync, r_Vsync, VF_DUMPTODISK, "");
+	REGISTER_CVAR(r_DisplayIndex, r_DisplayIndex, VF_DUMPTODISK, "");
 	//REGISTER_CVAR3("r_GetScreenShot", CV_r_GetScreenShot, 0, VF_NULL,
 	REGISTER_CVAR3("r_getscreenshot", CV_r_GetScreenShot, 0, VF_NULL,
 				   "To capture one screenshot (variable is set to 0 after capturing)\n"

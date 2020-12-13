@@ -1,13 +1,13 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
-#if 0
 
 #include "ConsoleBatchFile.h"
-//#include <CrySystem/ConsoleRegistration.h>
+#include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/ISystem.hpp>
 #include "BlackBox/System/Console.hpp"
 //#include <CryString/CryPath.h>
 #include <stdio.h>
 #include "BlackBox/System/System.hpp"
+#include "BlackBox/System/File/CryFile.h"
 #include "SystemCFG.hpp"
 
 void CConsoleBatchFile::Init()
@@ -22,6 +22,7 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 
 	const string filename = args->GetArg(1);
 	CCryFile file;
+	#if 0
 	{
 		if (!CSystemConfiguration::OpenFile(filename, file, ICryPak::FOPEN_ONDISK))
 		{
@@ -30,6 +31,9 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 		}
 		CryLog("Found console batch file \"%s\" at %s", filename.c_str(), file.GetFilename());
 	}
+	#else
+	file.Open(filename.data(), "r");
+	#endif
 
 	// Only circumvent whitelist when the file was in an archive, since we expect archives to be signed in release mode when whitelist is used
 	// Note that we still support running release mode without signed / encrypted archives, however this means that a conscious decision to sacrifice security has already been made.
@@ -60,7 +64,8 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 
 		//trim all whitespace characters at the beginning and the end of the current line
 		string strLine = szLineStart;
-		strLine.Trim();
+		//strLine.Trim();
+		Trim(strLine);
 
 		//skip empty lines
 		if (strLine.empty())
@@ -70,9 +75,9 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 		if (strLine[0] == ';' || strLine.find("--") == 0)
 			continue;
 
-		if (ignoreWhitelist || (gEnv->pSystem->IsCVarWhitelisted(strLine, false)))
+		if (ignoreWhitelist || (gEnv->pSystem->IsCVarWhitelisted(strLine.data(), false)))
 		{
-			gEnv->pConsole->ExecuteString(strLine);
+			gEnv->pConsole->ExecuteString(strLine.data());
 		}
 #if defined(DEDICATED_SERVER)
 		else
@@ -82,4 +87,3 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 #endif // defined(DEDICATED_SERVER)
 	}
 }
-#endif

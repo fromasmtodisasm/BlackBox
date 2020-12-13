@@ -26,6 +26,7 @@
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/CVarOverrides.h>
+#include <BlackBox/System/ConsoleRegistration.h>
 //#include <BlackBox/Profiler/HP_Timer.h>
 #include <SDL2/SDL.h>
 
@@ -43,15 +44,31 @@ namespace fs = std::filesystem;
 //namespace fs = std::experimental::filesystem;
 #endif
 
-CSystem::CSystem(SSystemInitParams& m_startupParams)
+namespace utils
+{
+	void touch(IConsoleCmdArgs* args)
+	{
+		for (int i = 1; i < args->GetArgCount(); i++)
+		{
+			if (auto f = fopen(args->GetArg(i), "a"); f)
+			{
+				fclose(f);
+				continue;
+			}
+			gEnv->pLog->LogError("Cannot touch file \"%s\"", args->GetArg(i));
+		}
+	}
+}
+
+
+CSystem::CSystem(SSystemInitParams& startupParams)
 	:
 #if defined(SYS_ENV_AS_STRUCT)
 	  m_env(m_env),
 #endif
-	  m_startupParams(m_startupParams),
+	  m_startupParams(startupParams),
 	  cvGameName(nullptr),
 	  m_Render(nullptr),
-	  m_pConsole(nullptr),
 	  //m_pInput(nullptr),
 	  //m_pFont(nullptr),
 	  m_pGame(nullptr),
@@ -76,8 +93,13 @@ CSystem::CSystem(SSystemInitParams& m_startupParams)
 #if !defined(SYS_ENV_AS_STRUCT)
 	gEnv = &m_env;
 #endif
+	m_pValidator = nullptr;
+
+	m_env.pConsole = new CXConsole(*this);
+	REGISTER_COMMAND("touch", utils::touch, 0, "touch file");
+	if (startupParams.pPrintSync)
+		m_env.pConsole->AddOutputPrintSink(startupParams.pPrintSync);
 	InitThreadSystem();
-	CreateConsole();
 }
 
 CSystem::~CSystem()
@@ -123,7 +145,7 @@ ILog* CSystem::GetILog()
 
 IConsole* CSystem::GetIConsole()
 {
-	return m_pConsole;
+	return m_env.pConsole;
 }
 
 IInput* CSystem::GetIInput()
@@ -145,6 +167,13 @@ void CSystem::Quit()
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_FAST_SHUTDOWN, 0, 0);
 
 	GetIRemoteConsole()->Stop();
+
+    extern std::vector<const char*> g_moduleCVars;
+    printf("vars size: %d", g_moduleCVars.size());
+    for (auto& var : g_moduleCVars)
+    {
+        printf("var: %s", var);
+    }
 
 	Release();
 
@@ -194,20 +223,12 @@ bool CSystem::DoFrame()
 	return Update();
 }
 
-bool CSystem::CreateConsole()
-{
-	m_env.pConsole = m_pConsole = new CXConsole(*this);
-	if (m_pConsole == nullptr)
-		return false;
-	return true;
-}
-
 void CSystem::ParseCMD()
 {
 	std::string cmd = m_startupParams.szSystemCmdLine;
 	if (cmd.find("-nsightDebug") != std::string::npos)
 	{
-		m_pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
+		m_env.pConsole->CreateVariable("nsightDebug", 1, VF_NULL, "Debuggin via Nsight Graphics");
 	}
 }
 
@@ -217,15 +238,15 @@ void CSystem::LoadScreen()
 	{
 		return;
 	}
-	m_pConsole->Clear();
-	m_pConsole->SetScrollMax(600);
-	m_pConsole->ShowConsole(true);
+	//m_pConsole->Clear();
+	m_env.pConsole->SetScrollMax(600);
+	m_env.pConsole->ShowConsole(true);
 
 	string sLoadingScreenTexture = string("loading.png");
 
-	m_pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
+	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
 	#if 0
-	m_pConsole->ResetProgressBar(0x7fffffff);
+	m_env.pConsole->ResetProgressBar(0x7fffffff);
 	#endif
 	//GetILog()->UpdateLoadingScreen("");	// just to draw the console
 }
@@ -241,7 +262,7 @@ bool CSystem::InitScripts()
 	m_ScriptObjectRenderer = new CScriptObjectRenderer();
 	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
 
-	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_pConsole);
+	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_env.pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
 
 	return m_pScriptSystem->ExecuteFile("scripts/engine.lua");
@@ -367,7 +388,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_pGame);
 	//SAFE_DELETE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_pConsole);
+	SAFE_RELEASE(m_env.pConsole);
 	SAFE_RELEASE(m_Render);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
@@ -449,8 +470,8 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 	case ESYSTEM_EVENT_MOVE:
 		break;
 	case ESYSTEM_EVENT_RESIZE:
-		m_rWidth  = wparam;
-		m_rHeight = lparam;
+		m_rWidth  = (int)wparam;
+		m_rHeight = (int)lparam;
 		break;
 	case ESYSTEM_EVENT_ACTIVATE:
 		break;
@@ -463,7 +484,7 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 	case ESYSTEM_EVENT_LANGUAGE_CHANGE:
 		break;
 	case ESYSTEM_EVENT_TOGGLE_FULLSCREEN:
-		m_rFullscreen = wparam;
+		m_rFullscreen = (int)wparam;
 		break;
 	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
 		m_bIsActive = bool(wparam);
@@ -615,8 +636,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	}
 	if (m_pWindow)
 		m_pWindow->update();
-	if (m_pConsole)
-		m_pConsole->Update();
+	if (m_env.pConsole)
+		m_env.pConsole->Update();
 	if (m_pNetwork)
 		m_pNetwork->UpdateNetwork();
 	if (m_pWindow && m_pWindow->closed())

@@ -25,7 +25,6 @@
 // Define to enable automatic input grabbing support.  We don't want this
 // during development.  If automatic input grabbing support is off, then input
 // grabbing can be enforced by typing CTRL+ALT+G.
-#define NDEBUG
 
 #ifndef NDEBUG
 #define LINUXINPUT_AUTOGRAB 1
@@ -313,7 +312,7 @@ void CSDLMouse::GrabInput()
 #endif
 
   if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
-    CryLogAlways("SDL: Could not set relative mouse mode: %s", SDL_GetError());
+    CryLogAlways("$4SDL: Could not set relative mouse mode: %s", SDL_GetError());
   // Warp the cursor to the upper left corner of the screen.
 
   /*width = gEnv->pRenderer->GetWidth();
@@ -409,7 +408,7 @@ void CSDLMouse::UngrabInput()
 
   SDL_SetWindowGrab(static_cast<SDL_Window*>(m_pRenderer->GetCurrentContextHWND()), SDL_FALSE);
   if (SDL_SetRelativeMouseMode(SDL_FALSE) != 0)
-    CryLogAlways("SDL: Could not unset relative mouse mode: %s", SDL_GetError());
+    CryLogAlways("$4SDL: Could not unset relative mouse mode: %s", SDL_GetError());
   SDL_ShowCursor(SDL_ENABLE);
 }
 

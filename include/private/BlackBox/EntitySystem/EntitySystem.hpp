@@ -4,6 +4,7 @@
 #include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
+struct ICrySizer;
 
 class CEntitySystem : public IEntitySystem
 {
