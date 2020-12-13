@@ -61,7 +61,7 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
   {
     return pH->EndFunction();
   }
-  m_pConsole->PrintLine("Enumerating display settings...");
+  CryLog("Enumerating display settings...");
   SmartScriptObject pDispArray(m_pSS);
   SDispFormat* Formats = NULL;
   unsigned int i;

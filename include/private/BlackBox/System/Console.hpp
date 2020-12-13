@@ -734,6 +734,8 @@ private:
 	static int                     con_debug;
 	static int                     con_restricted;
 
+	bool						   m_bUseHistoryFile;
+
 	friend void Command_SetWaitSeconds(IConsoleCmdArgs* Cmd);
 	friend void Command_SetWaitFrames(IConsoleCmdArgs* Cmd);
 #if ALLOW_AUDIT_CVARS

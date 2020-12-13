@@ -28,3 +28,4 @@ cmake-build*
 /Game.log
 Solutions/*
 out/*
+/history.txt

@@ -597,6 +597,8 @@ CXConsole::CXConsole(CSystem& system)
 	m_currentLoadConfigType = eLoadConfigDefault;
 	m_readOnly				= false;
 
+	m_bUseHistoryFile		= true;
+
 #if 0
 	CNotificationNetworkConsole::Initialize();
 #endif

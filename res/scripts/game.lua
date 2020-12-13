@@ -20,8 +20,6 @@ end
 
 function Player:PostInit( )
 	Game:LoadLevel("test")
-	setvar("gravity", 200)
-	setvar("floor", 20)
 	System:ShowConsole(false)
 	--Game:gotoMenu()
 

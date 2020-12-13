@@ -758,12 +758,12 @@ void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 bool GLRenderer::InitResourceManagers()
 {
 	//====================================================
-	gEnv->pConsole->PrintLine("Begin loading resources");
+	CryLog("Begin loading resources");
 	if (!gEnv->IsDedicated())
 	{
 		if (!ShaderManager::init())
 			return false;
-		gEnv->pConsole->PrintLine("End loading resources");
+		CryLog("End loading resources");
 	}
 	return true;
 }

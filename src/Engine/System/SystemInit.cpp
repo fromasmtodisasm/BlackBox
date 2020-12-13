@@ -378,11 +378,11 @@ bool CSystem::Init()
 	std::string prompt = "Initializing System";
 	if (m_env.IsDedicated())
 		prompt += " on dedicated server";
-	Log(prompt.c_str());
+	CryLog(prompt.c_str());
 	//====================================================
-	Log("Initializing Console");
+	CryLog("Initializing Console");
 	//====================================================
-	Log("Loading config");
+	CryLog("Loading config");
 	if (!ConfigLoad("system.cfg"))
 		return false;
 	CreateRendererVars(m_startupParams);
