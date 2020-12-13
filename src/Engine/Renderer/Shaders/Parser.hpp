@@ -31,23 +31,23 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // //                    "%code requires" blocks.
-#line 11 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
+#line 11 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
 
     #include <string>
     #include <vulkan/vulkan.h>
     class Scanner;
     class Driver;
 
-#line 51 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 51 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -124,7 +124,7 @@
 
 
 namespace yy {
-#line 128 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 128 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -2080,9 +2080,9 @@ namespace yy {
 
 
 } // yy
-#line 2084 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2084 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
 
-#endif // !YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

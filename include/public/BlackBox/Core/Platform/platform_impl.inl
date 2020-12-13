@@ -119,17 +119,23 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 	return true;
 }
 
+#if BB_PLATFORM_WINDOWS
 int64 bbGetTicks()
 {
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
 	return li.QuadPart;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 void bbSleep(unsigned int dwMilliseconds)
 {
+#if BB_PLATFORM_WINDOWS
 	Sleep(dwMilliseconds);
+#else
+	//sleep(dwMilliseconds);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

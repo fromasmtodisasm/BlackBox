@@ -27,6 +27,17 @@ using StackStringT = std::string;
 #endif
 
 using CryCriticalSection = std::mutex;
+namespace MT
+{
+	template<class T, class Alloc> class queue;
+	template<class T> class vector;
+}
+
+namespace stl
+{
+	template<typename T> void free_container(MT::vector<T>& v);
+	template<typename T, class Alloc> void free_container(MT::queue<T, Alloc>& v);
+}
 
 namespace MT
 {
@@ -110,6 +121,18 @@ private:
 	mutable CryCriticalSection m_cs;
 };
 
+}
+
+namespace stl
+{
+	template<typename T> void free_container(MT::vector<T>& v)
+	{
+		v.free_memory();
+	}
+	template<typename T, class Alloc> void free_container(MT::queue<T, Alloc>& v)
+	{
+		v.free_memory();
+	}
 }
 
 class CLog : 

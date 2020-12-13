@@ -281,10 +281,14 @@ void SRemoteServer::StartServer()
 	StopServer();
 	m_bAcceptClients = true;
 
+#ifdef USE_THREAD_MANAGER
 	if (!gEnv->pThreadManager->SpawnThread(this, SERVER_THREAD_NAME))
 	{
 		CryFatalError("Error spawning \"%s\" thread.", SERVER_THREAD_NAME);
 	}
+#else
+	main_loop = std::thread([this]{static_cast<IThread*>(this)->ThreadEntry();});
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,13 +297,21 @@ void SRemoteServer::StopServer()
 	if (m_bAcceptClients)
 	{
 		SignalStopWork();
+#ifdef USE_THREAD_MANAGER
 		gEnv->pThreadManager->JoinThread(this, eJM_Join);
+#else
+		main_loop.join();
+#endif
 	}
 
 	for (TClients::iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
 		it->pClient->SignalStopWork();
+#ifdef USE_THREAD_MANAGER
 		gEnv->pThreadManager->JoinThread(it->pClient.get(), eJM_Join);
+#else
+	it->pClient.get()->main_loop.join();
+#endif
 	}
 	m_clients.clear();
 }
@@ -483,10 +495,14 @@ bool SRemoteServer::ReadBuffer(const char* buffer, size_t data)
 void SRemoteClient::StartClient(CRYSOCKET socket)
 {
 	m_socket = socket;
+#ifdef USE_THREAD_MANAGER
 	if (!gEnv->pThreadManager->SpawnThread(this, CLIENT_THREAD_NAME))
 	{
 		CryFatalError("Error spawning \"%s\" thread.", CLIENT_THREAD_NAME);
 	}
+#else
+	main_loop = std::thread([this]{ThreadEntry();});
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

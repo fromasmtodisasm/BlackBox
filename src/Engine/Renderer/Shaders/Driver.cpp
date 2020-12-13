@@ -1,6 +1,6 @@
 #pragma warning(push, 0)
 #include <BlackBox/Core/Platform/platform_impl.inl>
-#include "driver.hpp"
+#include "Driver.hpp"
 #include "Scanner.hpp"
 
 #include "Effect.hpp"
@@ -76,6 +76,7 @@ extern "C" DLL_EXPORT IDriver* CreateParserDriver()
 }
 #pragma warning(pop)
 
+#if !defined(PS2) && !defined(_XBOX) && !defined(LINUX)
 BOOL WINAPI DllMain(
     HINSTANCE hinstDLL,  // handle to DLL module
     DWORD fdwReason,     // reason for calling function
@@ -103,4 +104,4 @@ BOOL WINAPI DllMain(
     }
     return TRUE;  // Successful DLL_PROCESS_ATTACH.
 }
-
+#endif

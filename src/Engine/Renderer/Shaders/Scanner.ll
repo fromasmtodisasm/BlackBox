@@ -5,7 +5,7 @@
     #include <cstring> // strerror
     #include <string>
     #include <iostream>
-    #include "driver.hpp"
+    #include "Driver.hpp"
     #include "Scanner.hpp"
 	#pragma warning(push, 0)
 	#include "Parser.hpp"

@@ -30,7 +30,7 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 // //                    "%code top" blocks.
-#line 23 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
+#line 23 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
 
     #ifdef S_FALSE
     #undef S_FALSE
@@ -59,12 +59,12 @@
         return scanner.ScanToken();
     }
 
-#line 63 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
+#line 63 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 68 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
+#line 68 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -78,7 +78,7 @@
 
 // User implementation prologue.
 
-#line 82 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
+#line 82 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -164,7 +164,7 @@
 
 
 namespace yy {
-#line 168 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
+#line 168 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -613,25 +613,25 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 389 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 389 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { gEnv->pLog->LogWarning("Empty effect"); }
-#line 619 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 619 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 415 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 415 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { CryLog("In PassState"); }
-#line 625 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 625 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 421 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 421 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { CryLog("Creation of PASS");}
-#line 631 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 631 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 22:
-#line 422 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 422 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
   /*
     LOGI("Pass with no name...\n");
@@ -643,53 +643,53 @@ namespace yy {
     lex_pop_state();
 */
 }
-#line 647 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 647 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 23:
-#line 433 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 433 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 653 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 653 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 26:
-#line 440 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 440 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass list\n");}
-#line 659 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 659 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 27:
-#line 446 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 446 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 669 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 669 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 29:
-#line 451 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 451 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("creation of Technique %s...\n", yystack_[0].value.as< std::string > ().c_str() );
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 680 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 680 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 30:
-#line 456 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 456 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
     //lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 689 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 689 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 32:
-#line 466 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 466 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
 /*
     if(!curAnnotations)
@@ -699,42 +699,42 @@ namespace yy {
     delete $4;
 */
     }
-#line 703 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 703 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 33:
-#line 476 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 476 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {CryLog("Begin annotations"); }
-#line 709 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 709 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 37:
-#line 483 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 483 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
 	}
-#line 718 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 718 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 38:
-#line 491 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 491 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
     yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", yystack_[2].value.as< VkFormat > ());
 }
-#line 728 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 728 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 39:
-#line 498 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 498 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { yylhs.value.as< VkFormat > () = VkFormat(10); }
-#line 734 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 734 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 738 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 738 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -1189,8 +1189,8 @@ namespace yy {
 
 
 } // yy
-#line 1193 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
-#line 703 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
+#line 1193 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
+#line 703 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

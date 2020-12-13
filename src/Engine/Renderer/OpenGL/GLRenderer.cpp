@@ -362,23 +362,33 @@ void GLRenderer::fillSates()
 #undef STATEMAP
 }
 
+#ifdef LINUX
+#include <experimental/filesystem>
+using namespace std::experimental::filesystem;
+#else
 #include <filesystem>
 using namespace std::filesystem;
+#endif
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 {
 	wchar_t c_file[256];
 #define fx_base "tmp"
 	virtual int GetCount() const
 	{
+#ifndef LINUX
 		int cnt = std::count_if(
-        std::filesystem::directory_iterator::directory_iterator(std::filesystem::path::path(fx_base)),
-        std::filesystem::directory_iterator::directory_iterator(),
+        std::experimental::filesystem::directory_iterator::directory_iterator(std::experimental::filesystem::path::path(fx_base)),
+        std::experimental::filesystem::directory_iterator::directory_iterator(),
 			static_cast<bool (*)(const path&)>(is_regular_file));
 		return cnt;
+#else
+    return 0;
+#endif
 	};
 
 	virtual const char* GetValue(int nIndex) const
 	{
+#ifndef LINUX
 		int i = 0;
 		static std::string file;
 		for (directory_iterator next(path(fx_base)), end; next != end; ++next, ++i)
@@ -391,6 +401,7 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 				return file.data();
 			}
 		}
+#endif
 		return "!!!";
 	};
 };
