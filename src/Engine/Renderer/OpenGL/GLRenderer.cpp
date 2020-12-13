@@ -27,6 +27,7 @@
 #include <SDL2/SDL.h>
 
 #include <sstream>
+#include <BlackBox/Core/Utils.hpp>
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -361,6 +362,40 @@ void GLRenderer::fillSates()
 #undef STATEMAP
 }
 
+#include <filesystem>
+using namespace std::filesystem;
+struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
+{
+	wchar_t c_file[256];
+#define fx_base "tmp"
+	virtual int GetCount() const
+	{
+		int cnt = std::count_if(
+        std::filesystem::directory_iterator::directory_iterator(std::filesystem::path::path(fx_base)),
+        std::filesystem::directory_iterator::directory_iterator(),
+			static_cast<bool (*)(const path&)>(is_regular_file));
+		return cnt;
+	};
+
+	virtual const char* GetValue(int nIndex) const
+	{
+		int i = 0;
+		static std::string file;
+		for (directory_iterator next(path(fx_base)), end; next != end; ++next, ++i)
+		{
+			if (i == nIndex)
+			{
+				//memset((void*)c_file, 0, 256);
+				//memcpy((void*)c_file, , wcslen(next->path().c_str()));
+				file = wstr_to_str(std::wstring(next->path().c_str()));
+				return file.data();
+			}
+		}
+		return "!!!";
+	};
+};
+
+static STestFXAutoComplete s_TestFXAutoComplete;
 void GLRenderer::InitConsoleCommands()
 {
 	/*
@@ -372,6 +407,7 @@ void GLRenderer::InitConsoleCommands()
   );
   */
 	gEnv->pConsole->AddCommand("testfx", TestFx, 0, "Test fx parser");
+	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
 CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic /* = false*/)

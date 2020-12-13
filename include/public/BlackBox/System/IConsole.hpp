@@ -147,6 +147,21 @@ struct IConsoleCmdArgs
 	// </interfuscator:shuffle>
 };
 
+//! Interface to the arguments of the console command.
+struct IConsoleArgumentAutoComplete
+{
+	// <interfuscator:shuffle>
+	virtual ~IConsoleArgumentAutoComplete(){}
+
+	//! Gets number of matches for the argument to auto complete.
+	virtual int GetCount() const = 0;
+
+	//! Gets argument value by index, nIndex must be in 0 <= nIndex < GetCount().
+	virtual const char* GetValue(int nIndex) const = 0;
+	// </interfuscator:shuffle>
+};
+
+
 //! This a definition of the console command function that can be added to console with AddCommand.
 typedef void (* ConsoleCommandFunc)(IConsoleCmdArgs*);
 
@@ -468,6 +483,8 @@ struct IConsole : public IBaseConsole
 	virtual ICVar* RegisterInternal(const char* name, const char** src, const char* defaultvalue, int flags = 0, const char* help = "", ConsoleVarFunc pChangeFunc = 0, bool allowModify = true) = 0;
 	virtual ICVar* RegisterInternal(ICVar* pVar) = 0;
 
+	virtual void        RegisterAutoComplete(const char* sVarOrCommand, IConsoleArgumentAutoComplete* pArgAutoComplete) = 0;
+	virtual void        UnRegisterAutoComplete(const char* sVarOrCommand) = 0;
 };
 
 //! \cond INTERNAL

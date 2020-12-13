@@ -106,6 +106,7 @@ INSTALL_THIS(FxParser)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 #target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
 
 add_SDL()
