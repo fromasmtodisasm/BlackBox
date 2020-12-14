@@ -1,4 +1,4 @@
-language: generic 
+language: c++ 
 before_install:
   - sudo apt-get update -q
 #compiler: gcc g++
@@ -6,6 +6,7 @@ sudo: true
 # install:
 #  - libxrandr
 #  - libwrandr
+dist: bionic
 os: linux 
 env: 
   - COMPILER_NAME=gcc CXX=g++ CC=gcc
@@ -19,8 +20,6 @@ after_failure:
   - ./send.sh failure $WEBHOOK_DISCORD
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
       - libxrandr-dev
       - libopenal-dev
@@ -37,15 +36,8 @@ addons:
       #- libfreetype6-dev
       - git
     sources: &sources
-      - llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
 script:
-  #- mkdir tools
-  #- cd tools
-  #- git clone https://github.com/microsoft/vcpkg
-  #- cd vcpkg
-  #- ./bootstrap-vcpkg.sh
-  #- cd ../..
   - mkdir build
   - cd build
   #- export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
