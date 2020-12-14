@@ -364,10 +364,10 @@ void GLRenderer::fillSates()
 
 #ifdef LINUX
 #include <experimental/filesystem>
-using namespace std::experimental::filesystem;
+using fs = std::experimental::filesystem;
 #else
 #include <filesystem>
-using namespace std::filesystem;
+namespace fs = std::filesystem;
 #endif
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 {
@@ -377,9 +377,9 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 	{
 #ifndef LINUX
 		int cnt = std::count_if(
-        std::experimental::filesystem::directory_iterator::directory_iterator(std::experimental::filesystem::path::path(fx_base)),
-        std::experimental::filesystem::directory_iterator::directory_iterator(),
-			static_cast<bool (*)(const path&)>(is_regular_file));
+        fs::directory_iterator::directory_iterator(fs::path::path(fx_base)),
+        fs::directory_iterator::directory_iterator(),
+			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
 		return cnt;
 #else
     return 0;
@@ -391,7 +391,7 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 #ifndef LINUX
 		int i = 0;
 		static std::string file;
-		for (directory_iterator next(path(fx_base)), end; next != end; ++next, ++i)
+		for (fs::directory_iterator next(fs::path(fx_base)), end; next != end; ++next, ++i)
 		{
 			if (i == nIndex)
 			{

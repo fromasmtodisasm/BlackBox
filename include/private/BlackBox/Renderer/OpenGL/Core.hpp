@@ -8,6 +8,7 @@
 #else
 #ifdef GLEW_LOADER
 #include <GL/glew.h>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #else
 #pragma message(__FILE__ "OPENGL LOADER NOT SETTED")
 //#error OPENGL LOADER NOT SETTED

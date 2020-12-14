@@ -81,6 +81,7 @@ typedef ULONG_PTR DWORD_PTR, *        PDWORD_PTR;
 #define strdup _strdup
 #define strnicmp _strnicmp
 #define strlwr _strlwr
+#define memicmp _memicmp
 
 
 

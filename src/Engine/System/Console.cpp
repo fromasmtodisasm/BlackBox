@@ -1775,10 +1775,6 @@ const char* CXConsole::AutoComplete(const char* substr)
 	{
 		const char* szCmd = cmds[i];
 		const size_t cmdlen = strlen(szCmd);
-#ifdef BB_PLATFORM_WINDOWS
-#define memicmp _memicmp_
-#endif
-    //FIXME
 		if (cmdlen >= substrLen && memicmp(szCmd, substr, substrLen) == 0)
 		{
 			if (substrLen == cmdlen)

@@ -31,16 +31,16 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // //                    "%code requires" blocks.
-#line 11 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
+#line 11 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
 
     #include <string>
 #ifdef VULKAN_SUPPORT
@@ -49,7 +49,7 @@
     class Scanner;
     class Driver;
 
-#line 53 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 53 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -126,7 +126,7 @@
 
 
 namespace yy {
-#line 130 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 130 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -2054,9 +2054,9 @@ namespace yy {
 
 
 } // yy
-#line 2058 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2058 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
 
-#endif // !YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

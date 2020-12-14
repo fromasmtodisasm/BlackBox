@@ -30,7 +30,7 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 // //                    "%code top" blocks.
-#line 25 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
+#line 25 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
 
     #ifdef S_FALSE
     #undef S_FALSE
@@ -59,12 +59,12 @@
         return scanner.ScanToken();
     }
 
-#line 63 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
+#line 63 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 68 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
+#line 68 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -78,7 +78,7 @@
 
 // User implementation prologue.
 
-#line 82 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
+#line 82 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -164,7 +164,7 @@
 
 
 namespace yy {
-#line 168 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
+#line 168 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -601,25 +601,25 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 392 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 392 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { gEnv->pLog->LogWarning("Empty effect"); }
-#line 607 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 607 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 418 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 418 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { CryLog("In PassState"); }
-#line 613 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 613 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 424 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 424 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { CryLog("Creation of PASS");}
-#line 619 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 619 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 22:
-#line 425 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 425 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
   /*
     LOGI("Pass with no name...\n");
@@ -631,53 +631,53 @@ namespace yy {
     lex_pop_state();
 */
 }
-#line 635 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 635 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 23:
-#line 436 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 436 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 641 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 641 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 26:
-#line 443 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 443 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass list\n");}
-#line 647 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 647 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 27:
-#line 449 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 449 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 657 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 657 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 29:
-#line 454 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 454 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("creation of Technique %s...\n", yystack_[0].value.as< std::string > ().c_str() );
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 668 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 668 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 30:
-#line 459 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 459 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
     //lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 677 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 677 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 32:
-#line 469 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 469 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
 /*
     if(!curAnnotations)
@@ -687,46 +687,46 @@ namespace yy {
     delete $4;
 */
     }
-#line 691 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 691 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 33:
-#line 479 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 479 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {CryLog("Begin annotations"); }
-#line 697 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 697 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 37:
-#line 486 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 486 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
 	}
-#line 706 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 706 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 38:
-#line 494 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 494 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
     yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", 10);
 }
-#line 716 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 716 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 39:
-#line 501 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 501 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
       //$$ = VkFormat(10); 
       CryLog("format not implemented");
 
       }
-#line 726 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 726 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 730 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 730 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -1181,8 +1181,8 @@ namespace yy {
 
 
 } // yy
-#line 1185 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
-#line 710 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
+#line 1185 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
+#line 710 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

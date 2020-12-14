@@ -31,18 +31,18 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/denis/code/BlackBox/src/Engine/Renderer/Shaders/stack.hh
+ ** \file /cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/stack.hh
  ** Define the yy::stack class.
  */
 
-#ifndef YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_STACK_HH_INCLUDED
-# define YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_STACK_HH_INCLUDED
+#ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_STACK_HH_INCLUDED
+# define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_STACK_HH_INCLUDED
 
 # include <vector>
 
 
 namespace yy {
-#line 46 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/stack.hh" // stack.hh:132
+#line 46 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/stack.hh" // stack.hh:132
   template <class T, class S = std::vector<T> >
   class stack
   {
@@ -152,6 +152,6 @@ namespace yy {
 
 
 } // yy
-#line 156 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/stack.hh" // stack.hh:132
+#line 156 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/stack.hh" // stack.hh:132
 
-#endif // !YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_STACK_HH_INCLUDED
+#endif // !YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_STACK_HH_INCLUDED
