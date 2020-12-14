@@ -2,10 +2,28 @@ cmake_minimum_required(VERSION 3.10)
 project(Renderer CXX)
 
 add_package(Stb)
-find_package(freetype CONFIG REQUIRED)
+find_package(Freetype CONFIG REQUIRED)
 # ===============> bison
 find_package(BISON)
 find_package(FLEX)
+find_package(Cygwin)
+
+macro(cygwin_bison INPUT OUTPUT)
+	add_custom_command(
+		OUTPUT ${OUTPUT} 
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
+		DEPENDS ${INPUT}
+	  ) 
+endmacro()
+
+macro(cygwin_flex INPUT OUTPUT)
+	add_custom_command(
+		OUTPUT ${OUTPUT} 
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "flex -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
+		DEPENDS ${INPUT}
+	  ) 
+endmacro()
+
 if((NOT BISON_FOUND) OR (NOT FLEX_FOUND))
     message(WARNING "
       No Bison and/or Flex available. FxParser will only use the already generated code.
@@ -19,12 +37,16 @@ endif()
 
 if(BISON_FOUND)
   BISON_TARGET(
-	  ShaderParser Parser.yy ${PROJECT_SOURCE_DIR}/Parser.cpp
-	  DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hh
+	  ShaderParser ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
+	  #DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hpp
   )
+elseif (CYGWIN_INSTALL_PATH)
+	cygwin_bison(${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp)
 endif()
 if(FLEX_FOUND)
-  FLEX_TARGET(ShaderScanner Scanner.yy ${PROJECT_SOURCE_DIR}/Scanner.cpp)
+  FLEX_TARGET(ShaderScanner ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
+elseif (CYGWIN_INSTALL_PATH)
+	cygwin_flex(${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
 endif()
 if(FLEX_FOUND AND BISON_FOUND)
   ADD_FLEX_BISON_DEPENDENCY(ShaderScanner ShaderParser)
@@ -67,6 +89,7 @@ target_sources(${PROJECT_NAME}
 
 target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Effect.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
@@ -74,19 +97,25 @@ target_sources(FxParser
 )
 
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
-target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
+target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
+target_compile_definitions(FxParser PRIVATE "-DYY_NO_UNISTD_H")
+
+#target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
 INSTALL_THIS(FxParser)
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
+target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
 #target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
 
 add_SDL()
 
-find_package(Vulkan REQUIRED)
-target_link_libraries(FxParser PUBLIC Vulkan::Vulkan)
-target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
+find_package(Vulkan)
+if (Vulkan_FOUND)
+	target_link_libraries(FxParser PUBLIC Vulkan::Vulkan)
+	target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 

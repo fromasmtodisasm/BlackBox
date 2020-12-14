@@ -27,6 +27,17 @@ using StackStringT = std::string;
 #endif
 
 using CryCriticalSection = std::mutex;
+namespace MT
+{
+	template<class T, class Alloc> class queue;
+	template<class T> class vector;
+}
+
+namespace stl
+{
+	template<typename T> void free_container(MT::vector<T>& v);
+	template<typename T, class Alloc> void free_container(MT::queue<T, Alloc>& v);
+}
 
 namespace MT
 {
@@ -112,62 +123,30 @@ private:
 
 }
 
+namespace stl
+{
+	template<typename T> void free_container(MT::vector<T>& v)
+	{
+		v.free_memory();
+	}
+	template<typename T, class Alloc> void free_container(MT::queue<T, Alloc>& v)
+	{
+		v.free_memory();
+	}
+}
+
 class CLog : 
 	public ILog
 	, public ISystemEventListener
 {
   public:
 	typedef StackStringT<char, 256> LogStringType;
+	CLog(ISystem* pSystem);
+	~CLog();
 	
-	CLog(ISystem* pSystem)
-		: m_pSystem(pSystem)
-		, m_fLastLoadingUpdateTime(-1.0f)
-		, m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
-	{
-		gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
-
-		m_nMainThreadId = std::this_thread::get_id();
-		// put time into begin of the string if requested by cvar
-		m_pLogIncludeTime = REGISTER_INT("log_IncludeTime", 1, 0,
-		                                 "Toggles time stamping of log entries.\n"
-		                                 "Usage: log_IncludeTime [0/1/2/3/4/5]\n"
-		                                 "  0=off (default)\n"
-		                                 "  1=current time\n"
-		                                 "  2=relative time\n"
-		                                 "  3=current+relative time\n"
-		                                 "  4=absolute time in seconds since this mode was started\n"
-		                                 "  5=current time+server time");
-	}
-
-	~CLog()
-	{
-		if (output)
-		{
-			Shutdown();
-			fclose(output);
-		}
-	}
-
   private:
 	void Shutdown()
 	{
-		for (auto& str : log)
-		{
-			fputs(str.c_str(), output);
-		}
-		bool hasConsole = GetISystem()->GetIConsole() != nullptr;
-		if (hasConsole && gEnv->pConsole->GetCVar("stpo_running"))
-		{
-			fputs("\n\n*****Game stopped*****", output);
-		}
-		else if (hasConsole && gEnv->pConsole->GetCVar("window_closed"))
-		{
-			fputs("\n\n*****Window Closed*****", output);
-		}
-		else
-		{
-			fputs("\n\n*****Unknown stop cause*****", output);
-		}
 	}
 
 	virtual void Release() override;
@@ -217,7 +196,6 @@ class CLog :
 	// logged, or the pointer to the part of the message that should be logged
 	const char* CheckAgainstVerbosity(const char* pText, bool& logtofile, bool& logtoconsole, const uint8 DefaultVerbosity = 2);
 
-	FILE* output;
 	const char* filename = "log.txt";
 	bool inited			 = false;
 	std::vector<std::string> log;

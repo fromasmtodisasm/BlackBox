@@ -32,6 +32,7 @@ struct IWindow;
 struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
+struct IOutputPrintSink;
 struct ITimer;
 struct INetwork;
 struct IWorld;
@@ -57,7 +58,7 @@ struct IRemoteConsole;
 #endif
 
 #if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
-#	define USE_DEDICATED_SERVER_CONSOLE
+//#	define USE_DEDICATED_SERVER_CONSOLE
 #endif
 
 //! System wide events.
@@ -239,6 +240,7 @@ struct SSystemInitParams
 	ISystemUserCallback* pUserCallback; //
 	ILog* pLog;							// You can specify your own ILog to be used by System.
 	IValidator* pValidator;				// You can specify different validator object to use by System.
+	IOutputPrintSink* pPrintSync;		//!< Print Sync which can be used to catch all output from engine.
 	const char* sLogFileName;			// File name to use for log.
 	bool bEditor;						// When runing in Editor mode.
 	bool bPreview;						// When runing in Preview mode (Minimal initialization).
@@ -261,17 +263,18 @@ struct SSystemInitParams
 		hInstance = 0;
 		hWnd	  = 0;
 		memset(szSystemCmdLine, 0, sizeof(szSystemCmdLine));
-		pLog			  = 0;
-		pValidator		  = 0;
-		pUserCallback	  = 0;
-		sLogFileName	  = 0;
+		pLog			  = nullptr;
+		pValidator		  = nullptr;
+		pPrintSync		  = nullptr;
+		pUserCallback	  = nullptr;
+		sLogFileName	  = nullptr;
 		bEditor			  = false;
 		bPreview		  = false;
 		bTestMode		  = false;
 		bDedicatedServer  = false;
 		bManualEngineLoop = true;
-		pSystem			  = 0;
-		pCheckFunc		  = 0;
+		pSystem			  = nullptr;
+		pCheckFunc		  = nullptr;
 	}
 };
 

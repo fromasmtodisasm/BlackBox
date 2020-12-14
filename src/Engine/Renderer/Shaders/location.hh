@@ -31,18 +31,18 @@
 // version 2.2 of Bison.
 
 /**
- ** \file location.hh
+ ** \file /home/denis/code/BlackBox/src/Engine/Renderer/Shaders/location.hh
  ** Define the yy::location class.
  */
 
-#ifndef YY_YY_LOCATION_HH_INCLUDED
-# define YY_YY_LOCATION_HH_INCLUDED
+#ifndef YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
+# define YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
 
 # include "position.hh"
 
 
 namespace yy {
-#line 46 "location.hh" // location.cc:296
+#line 46 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/location.hh" // location.cc:296
   /// Abstract a location.
   class location
   {
@@ -188,5 +188,5 @@ namespace yy {
 
 
 } // yy
-#line 192 "location.hh" // location.cc:296
-#endif // !YY_YY_LOCATION_HH_INCLUDED
+#line 192 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/location.hh" // location.cc:296
+#endif // !YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED

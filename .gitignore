@@ -27,3 +27,5 @@ cmake-build*
 /vcpkg_lin
 /Game.log
 Solutions/*
+out/*
+/history.txt

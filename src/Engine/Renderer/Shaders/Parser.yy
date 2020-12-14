@@ -1,6 +1,7 @@
 %skeleton "lalr1.cc"
 %require "3.0"
 
+%expect  36
 
 %defines
 %define api.token.constructor
@@ -9,7 +10,9 @@
 
 %code requires {
     #include <string>
+#ifdef VULKAN_SUPPORT
     #include <vulkan/vulkan.h>
+#endif
     class Scanner;
     class Driver;
 }
@@ -20,6 +23,9 @@
 %define parse.error verbose
 
 %code top{
+    #ifdef S_FALSE
+    #undef S_FALSE
+    #endif
 	#pragma warning(push, 0)
     #include "Driver.hpp"
     #include "Scanner.hpp"
@@ -38,6 +44,7 @@
     #include "assignments/AssignmentList.h"
     #include "Program.h"
     #endif
+    #include "Effect.hpp"
 
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
         return scanner.ScanToken();
@@ -184,6 +191,7 @@ TODO: New resource types (from D3D)
 %token  READ_WRITE
 
 // VK_FORMATS
+/*
 %token <VkFormat> FORMAT_UNDEFINED
 %token <VkFormat> FORMAT_R4G4_UNORM_PACK8
 %token <VkFormat> FORMAT_R4G4B4A4_UNORM_PACK16
@@ -369,10 +377,12 @@ TODO: New resource types (from D3D)
 %token <VkFormat> FORMAT_ASTC_12x10_SRGB_BLOCK
 %token <VkFormat> FORMAT_ASTC_12x12_UNORM_BLOCK
 %token <VkFormat> FORMAT_ASTC_12x12_SRGB_BLOCK
+*/
 
 %token VERTEXFORMAT
 
-%nterm <VkFormat> format
+/*%nterm <VkFormat> format
+*/
 
 // %printer { yyo << $$; } <*>;
 
@@ -400,10 +410,82 @@ input: %empty { gEnv->pLog->LogWarning("Empty effect"); }
 ;
 
 
-tech: "tech";
+/*------------------------------------------------------------------
+   pass-states
+   TODO: Add the states
+*/
+passstates: %empty
+| IDENTIFIER { CryLog("In PassState"); }
+;
+/*----------------------
+    what a pass can be
+*/
+pass:
+PASS { CryLog("Creation of PASS");}
+  annotations "{" passstates "}"  {
+  /*
+    LOGI("Pass with no name...\n");
+    curAnnotations = NULL;
+    curRState = NULL;
+    curCSState = NULL;
+    curDSTState = NULL;
+    curPRState = NULL;
+    lex_pop_state();
+*/
+}
+| pass error { error(@1, "Error in Pass declaration\n");}
+/*------------------------------------------------------------------
+   passes
+*/
+passes:
+pass
+| passes pass
+| passes error { error(@1, "Error in Pass list\n");}
+;
+/*------------------------------------------------------------------
+   technique
+*/
+tech:
+TECHNIQUE {
+    CryLog("Creation of Technique for NO name\n");
+    //curTechnique = curContainer->createTechnique()->getExInterface();
+    //curAnnotations = curTechnique->annotations()->getExInterface();
+} "{" passes "}" 
+| TECHNIQUE IDENTIFIER {
+    CryLog("creation of Technique %s...\n", $2.c_str() );
+    //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
+    //curAnnotations = curTechnique->annotations()->getExInterface();
+    //delete $2;
+} annotations "{" passes "}" { 
+    //lex_pop_state();
+    //curAnnotations = NULL;
+}
+;
+
+/*
+   ANNOTATIONS - TODO: more types of annotations
+ */
+annotation: /* empty */
+| annotation IDENTIFIER '=' STR ';' {
+/*
+    if(!curAnnotations)
+        curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized
+    if(!curAnnotations->addAnnotation($2->c_str(), $4->c_str()))
+        yyerror("err\n");
+    delete $4;
+*/
+    }
+;
+annotations2: '<' {CryLog("Begin annotations"); } annotation '>'
+;
+annotations: /*empty*/
+| annotations2
+;
+
 glsl: 
 	GLSLSHADER IDENTIFIER "{" CODEBODY { 
-		gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
+		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
+        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$2, $4});
 	}
 ;
 
@@ -412,11 +494,16 @@ vertexformat: VERTEXFORMAT IDENTIFIER "{" IDENTIFIER "=" format ";" "}"
 {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
-    $2.data(), $4.data(), "vkFormat", $6);
+    $2.data(), $4.data(), "vkFormat", 10);
 }
 ;
 
-format:
+format: %empty { 
+      //$$ = VkFormat(10); 
+      CryLog("format not implemented");
+
+      }
+/*
 FORMAT_UNDEFINED { $$ = $1; }
 | FORMAT_R4G4_UNORM_PACK8 { $$ = $1; }
 | FORMAT_R4G4B4A4_UNORM_PACK16 { $$ = $1; }
@@ -602,6 +689,7 @@ FORMAT_UNDEFINED { $$ = $1; }
 | FORMAT_ASTC_12x10_SRGB_BLOCK { $$ = $1; }
 | FORMAT_ASTC_12x12_UNORM_BLOCK { $$ = $1; }
 | FORMAT_ASTC_12x12_SRGB_BLOCK { $$ = $1; }
+*/
 ;
 
 hlsl: "hlsl";

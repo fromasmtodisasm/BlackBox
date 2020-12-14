@@ -6,7 +6,7 @@ enable_testing()
 
 add_executable(${PROJECT_NAME} WIN32
 	Main.cpp
-    #"Resource.rc"
+  "Resource.rc"
 )
 target_link_libraries(Launcher PRIVATE  BlackBox)
 #target_link_libraries(Launcher PRIVATE  System)

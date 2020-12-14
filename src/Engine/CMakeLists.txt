@@ -119,7 +119,7 @@ macro(main)
 
 	#The remote console is useful in development, but it is a potential security vulnerability, therefore opt-in
 	option(OPTION_DEVELOPER_CONSOLE_IN_RELEASE "Enables the developer console in Release builds" ON)
-	option(OPTION_REMOTE_CONSOLE "Allows remote console connection" ON)
+        option(OPTION_REMOTE_CONSOLE "Allows remote console connection" OFF)
 	setup_subsystems()
 	###################################################
 	#set_target_properties(GUI PROPERTIES FOLDER "Engine")

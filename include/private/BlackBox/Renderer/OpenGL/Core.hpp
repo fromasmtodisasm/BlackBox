@@ -41,6 +41,11 @@
 
 #endif
 
+#ifdef LINUX
+#undef APIENTRY
+#define APIENTRY 
+#endif
+
 class OpenglDebuger
 {
 public:

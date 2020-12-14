@@ -104,7 +104,7 @@ bool CSystemConfiguration::ParseSystemConfig()
 
 			if (strKey == "r_DisplayIndex")
 			{
-				CryLog("here");
+				CryLog("here r_DisplayIndex");
 			}
 			m_pSink->OnLoadConfigurationEntry(strKey.c_str(), strValue.c_str(), nullptr);
 		}

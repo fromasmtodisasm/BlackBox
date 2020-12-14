@@ -1,6 +1,11 @@
 #include "SystemThreading.h"
 #include <BlackBox/System/System.hpp>
 
+void DumpThreads(IConsoleCmdArgs* args)
+{
+	static_cast<CThreadManager*>(gEnv->pThreadManager)->Dump();
+}
+
 IThreadConfigManager* CThreadManager::GetThreadConfigManager()
 {
 	return nullptr;
@@ -25,6 +30,10 @@ bool CThreadManager::SpawnThread(IThread* pThreadTask, const char* sThreadName, 
 	{
 		CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "<ThreadInfo>: CSystem::SpawnThread error spawning thread: \"%s\"", strThreadName);
 	}
+	else
+	{
+		CryLog("<ThreadInfo>: CSystem::SpawnThread thread spawned: \"%s\"", strThreadName);
+	}
 
 	va_end(args);
 	return ret;
@@ -44,6 +53,8 @@ bool CThreadManager::UnregisterThread(IThread* pThreadTask)
 	}
 
 	m_spawnedThreads.erase(res);
+
+	CryLog("<ThreadInfo>: UnregisterThread: Unregistered thread <%s>", res->second->m_threadName.data());
 	return true;
 }
 

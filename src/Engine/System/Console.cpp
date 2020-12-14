@@ -597,6 +597,8 @@ CXConsole::CXConsole(CSystem& system)
 	m_currentLoadConfigType = eLoadConfigDefault;
 	m_readOnly				= false;
 
+	m_bUseHistoryFile		= true;
+
 #if 0
 	CNotificationNetworkConsole::Initialize();
 #endif
@@ -1037,9 +1039,7 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 void CXConsole::RemoveCommand(const char* sName)
 {
 	m_mapCommands.erase(sName);
-#if 0
 	UnRegisterAutoComplete(sName);
-#endif
 }
 
 void CXConsole::SetInputLine(const char* szLine)
@@ -1775,8 +1775,11 @@ const char* CXConsole::AutoComplete(const char* substr)
 	{
 		const char* szCmd = cmds[i];
 		const size_t cmdlen = strlen(szCmd);
+#ifdef BB_PLATFORM_WINDOWS
+#define memicmp _memicmp_
+#endif
     //FIXME
-		if (cmdlen >= substrLen && _memicmp(szCmd, substr, substrLen) == 0)
+		if (cmdlen >= substrLen && memicmp(szCmd, substr, substrLen) == 0)
 		{
 			if (substrLen == cmdlen)
 			{
@@ -1880,7 +1883,6 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 
 		if (bProcessAutoCompl)
 		{
-			#if 0
 			const IConsoleArgumentAutoComplete* pArgumentAutoComplete = stl::find_in_map(m_mapArgumentAutoComplete, sVar, 0);
 			if (pArgumentAutoComplete)
 			{
@@ -1896,7 +1898,6 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 					}
 				}
 			}
-			#endif
 		}
 	}
 
@@ -1990,7 +1991,17 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 	return m_sInputBuffer.c_str();
 }
 
+void CXConsole::RegisterAutoComplete(const char* sVarOrCommand, IConsoleArgumentAutoComplete* pArgAutoComplete)
+{
+	m_mapArgumentAutoComplete[sVarOrCommand] = pArgAutoComplete;
+}
 
+void CXConsole::UnRegisterAutoComplete(const char* sVarOrCommand)
+{
+	auto it = m_mapArgumentAutoComplete.find(sVarOrCommand);
+	if (it != m_mapArgumentAutoComplete.end())
+		m_mapArgumentAutoComplete.erase(it);
+}
 
 void CXConsole::ResetAutoCompletion()
 {

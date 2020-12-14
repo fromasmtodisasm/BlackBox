@@ -85,8 +85,6 @@ function init()
 	Console:CreateKeyBind("f7", "#Game:gotoGame()") 
 	Console:CreateKeyBind("ctrl_q", "#Game:Quit()") 
 
-	setvar("MouseSenitivity", 2)
-
 	Console:Show(true)
 	--Console:PrintLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	--Console:ExecuteString("webpage")

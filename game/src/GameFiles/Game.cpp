@@ -29,13 +29,15 @@
 #include <BlackBox/GUI/ControlPanel.hpp>
 
 #include <cctype>
+#include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <cmath>
+#include <stack>
 
 int render_camera = 0;
 
@@ -173,6 +175,47 @@ namespace gui
 
 //float CameraRayLength = 40.f;
 
+void LoadHistory()
+{
+	std::ifstream is("history.txt");
+	std::stack<string> history;
+	if (is.is_open())
+	{
+		std::string line;
+		while (std::getline(is, line))
+		{
+			history.push(line);
+			gEnv->pConsole->AddCommandToHistory(line.data());
+		}
+		/*
+		while (!history.empty())
+		{
+			is << history.top() << std::endl;
+			history.pop();
+		}
+		*/
+	}
+}
+
+void SaveHistory()
+{
+	std::ofstream is("history.txt");
+	std::stack<string> history;
+	if (is.is_open())
+	{
+		while (auto h = gEnv->pConsole->GetHistoryElement(true))
+		{
+			history.push(h);
+		}
+		while (!history.empty())
+		{
+			is << history.top() << std::endl;
+			history.pop();
+		}
+	}
+
+}
+
 void CGame::PreRender()
 {
 	//glCheck(glViewport(0, 0, 1366, 768));
@@ -209,6 +252,7 @@ void CGame::initVariables()
 
 CGame::~CGame()
 {
+	SaveHistory();
 	m_pScriptSystem->BeginCall("Shutdown");
 	m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
@@ -368,7 +412,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_QuadTree = std::make_shared<QuadTree>(8, 10, 0, 0, color3(1, 0, 0));
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
-
+	LoadHistory();
 	return true;
 }
 

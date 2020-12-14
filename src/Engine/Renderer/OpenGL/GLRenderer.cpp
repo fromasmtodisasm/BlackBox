@@ -27,6 +27,7 @@
 #include <SDL2/SDL.h>
 
 #include <sstream>
+#include <BlackBox/Core/Utils.hpp>
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -66,7 +67,8 @@ void TestFx(IConsoleCmdArgs* args)
 	else
 		filename = args->GetArg(1);
 
-	g_FxParser->Parse(filename);
+	PEffect pEffect = nullptr;
+	g_FxParser->Parse(filename, &pEffect);
 }
 
 
@@ -113,7 +115,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	#endif
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
 		return nullptr;
-	gEnv->pLog->Log("window inited");
+    CryLog("window inited");
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();
@@ -360,6 +362,51 @@ void GLRenderer::fillSates()
 #undef STATEMAP
 }
 
+#ifdef LINUX
+#include <experimental/filesystem>
+using namespace std::experimental::filesystem;
+#else
+#include <filesystem>
+using namespace std::filesystem;
+#endif
+struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
+{
+	wchar_t c_file[256];
+#define fx_base "tmp"
+	virtual int GetCount() const
+	{
+#ifndef LINUX
+		int cnt = std::count_if(
+        std::experimental::filesystem::directory_iterator::directory_iterator(std::experimental::filesystem::path::path(fx_base)),
+        std::experimental::filesystem::directory_iterator::directory_iterator(),
+			static_cast<bool (*)(const path&)>(is_regular_file));
+		return cnt;
+#else
+    return 0;
+#endif
+	};
+
+	virtual const char* GetValue(int nIndex) const
+	{
+#ifndef LINUX
+		int i = 0;
+		static std::string file;
+		for (directory_iterator next(path(fx_base)), end; next != end; ++next, ++i)
+		{
+			if (i == nIndex)
+			{
+				//memset((void*)c_file, 0, 256);
+				//memcpy((void*)c_file, , wcslen(next->path().c_str()));
+				file = wstr_to_str(std::wstring(next->path().c_str()));
+				return file.data();
+			}
+		}
+#endif
+		return "!!!";
+	};
+};
+
+static STestFXAutoComplete s_TestFXAutoComplete;
 void GLRenderer::InitConsoleCommands()
 {
 	/*
@@ -371,6 +418,7 @@ void GLRenderer::InitConsoleCommands()
   );
   */
 	gEnv->pConsole->AddCommand("testfx", TestFx, 0, "Test fx parser");
+	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
 CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic /* = false*/)
@@ -757,12 +805,12 @@ void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 bool GLRenderer::InitResourceManagers()
 {
 	//====================================================
-	gEnv->pConsole->PrintLine("Begin loading resources");
+	CryLog("Begin loading resources");
 	if (!gEnv->IsDedicated())
 	{
 		if (!ShaderManager::init())
 			return false;
-		gEnv->pConsole->PrintLine("End loading resources");
+		CryLog("End loading resources");
 	}
 	return true;
 }

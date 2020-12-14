@@ -534,6 +534,8 @@ class CXConsole : public IConsole
 	virtual const char* AutoComplete(const char* substr) override;
 	virtual const char* AutoCompletePrev(const char* substr) override;
 	virtual const char* ProcessCompletion(const char* szInputBuffer) override;
+	virtual void RegisterAutoComplete(const char* sVarOrCommand, IConsoleArgumentAutoComplete* pArgAutoComplete) override;
+	virtual void UnRegisterAutoComplete(const char* sVarOrCommand) override;
 	virtual void ResetAutoCompletion() override;
 	virtual void DumpCommandsVars(char* prefix) override;
 	virtual void GetMemoryUsage(ICrySizer* pSizer) override;
@@ -621,9 +623,7 @@ private: // ----------------------------------------------------------
 	typedef std::deque<string>                                                                                              ConsoleBuffer;
 	typedef std::unordered_map<string, CConsoleCommand>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/               ConsoleCommandsMap;
 	typedef std::unordered_map<string, string>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/                        ConsoleBindsMap;
-	#if 0
-	typedef std::unordered_map<string, IConsoleArgumentAutoComplete*, stl::hash_strcmp<string>, stl::hash_strcmp<string>> ArgumentAutoCompleteMap;
-	#endif
+	typedef std::unordered_map<string, IConsoleArgumentAutoComplete*>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/ ArgumentAutoCompleteMap;
 	typedef std::unordered_map<string, SConfigVar>/*, stl::hash_strcmp<string>, stl::hash_strcmp<string>>*/                    ConfigVars;
 	typedef std::list<SDeferredCommand>                                                                                     TDeferredCommandList;
 	typedef std::list<IConsoleVarSink*>                                                                                     ConsoleVarSinks;
@@ -680,9 +680,7 @@ private:
 	#endif
 	int                            m_blockCounter;            // This counter is incremented whenever a blocker command (VF_BLOCKFRAME) is executed.
 
-	#if 0
 	ArgumentAutoCompleteMap        m_mapArgumentAutoComplete;
-	#endif
 
 	ConsoleVarSinks                m_consoleVarSinks;
 
@@ -733,6 +731,8 @@ private:
 	static int                     con_showonload;
 	static int                     con_debug;
 	static int                     con_restricted;
+
+	bool						   m_bUseHistoryFile;
 
 	friend void Command_SetWaitSeconds(IConsoleCmdArgs* Cmd);
 	friend void Command_SetWaitFrames(IConsoleCmdArgs* Cmd);

@@ -1,7 +1,9 @@
 #pragma warning(push, 0)
 #include <BlackBox/Core/Platform/platform_impl.inl>
-#include "driver.hpp"
+#include "Driver.hpp"
 #include "Scanner.hpp"
+
+#include "Effect.hpp"
 
 #define PARSERDRIVER_EXPORTS
 
@@ -12,7 +14,10 @@ Driver::Driver() :
 }
 
 
-bool Driver::parse(const std::string& f) {
+IEffect* Driver::parse(const char* f)
+{
+	CEffect* pEffect = new CEffect;
+	currentEffect	= pEffect;
     file = f;
     location.initialize(&file);
     scan_begin();
@@ -22,9 +27,14 @@ bool Driver::parse(const std::string& f) {
 	{
 		gEnv->pLog->Log("$3[FX] File %s passed", file.c_str());	
 	}
+	else
+	{
+		delete pEffect;
+		currentEffect = pEffect = nullptr;
+    }
 
     scan_end();
-    return res == 0;
+    return pEffect;
 }
 
 void Driver::scan_begin()
@@ -66,6 +76,7 @@ extern "C" DLL_EXPORT IDriver* CreateParserDriver()
 }
 #pragma warning(pop)
 
+#if !defined(PS2) && !defined(_XBOX) && !defined(LINUX)
 BOOL WINAPI DllMain(
     HINSTANCE hinstDLL,  // handle to DLL module
     DWORD fdwReason,     // reason for calling function
@@ -93,4 +104,4 @@ BOOL WINAPI DllMain(
     }
     return TRUE;  // Successful DLL_PROCESS_ATTACH.
 }
-
+#endif
