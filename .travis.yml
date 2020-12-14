@@ -30,7 +30,7 @@ addons:
       - libogg-dev
       - libgl1-mesa-glx
       - libgl1-mesa-dev
-      - clang++-9
+      - build-essential
       - libtinyxml2-dev
       - libsdl2-dev
       - libsdl2-net-dev
@@ -49,5 +49,5 @@ script:
   - mkdir build
   - cd build
   #- export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
-  - cmake "-DTOOLCHAIN_FILE=toolchain/linux/Linux_Clang.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
+  - cmake -DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake -DUSE_GLM=ON -DGL_RENDERER=ON -DVCPKG_INSTALLER=ON -DCMAKE_BUILD_TYPE=Debug ..
   - cmake --build . -- -j4
