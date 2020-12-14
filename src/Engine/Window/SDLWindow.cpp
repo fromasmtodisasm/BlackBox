@@ -210,7 +210,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 
   struct GlVersion
   {
-	  int maj = 3, min = 3;
+      int maj = 2, min = 1;
 	  GlVersion() = default;
 	  GlVersion(int maj, int min)
 		  : maj(maj), min(min)

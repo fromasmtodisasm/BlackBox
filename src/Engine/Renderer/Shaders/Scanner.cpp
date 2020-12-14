@@ -1,6 +1,6 @@
-#line 2 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 2 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 4 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 4 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -605,8 +605,8 @@ static const flex_int16_t yy_rule_linenum[50] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
-#line 2 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 1 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 2 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -622,21 +622,21 @@ static const flex_int16_t yy_rule_linenum[50] =
     int  bracket_level = 0;
     char  *string_buf_ptr;
 
-#line 626 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 626 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
-#line 26 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 26 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
   // A number symbol corresponding to the value in S.
   yy::parser::symbol_type make_INT(
     const std::string &s,
     const yy::parser::location_type& loc
   );
-#line 634 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 634 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 41 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 41 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
-#line 639 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
-#line 640 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 639 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 640 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define INITIAL 0
 #define fbo 1
@@ -848,10 +848,10 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 44 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 44 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
-#line 47 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 47 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
   // A handy shortcut to the location held by the driver.
   yy::location& loc = driver.location;
   // Code run each time yylex is called.
@@ -861,7 +861,7 @@ YY_DECL
 
 
 
-#line 865 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 865 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -938,7 +938,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 56 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 56 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     //comment_caller  =  INITIAL;
     bracket_level = 0;
@@ -948,7 +948,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 62 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 62 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
@@ -956,7 +956,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 67 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 67 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXFORMAT(loc);
 	YY_BREAK
 /*==================================================================
@@ -964,7 +964,7 @@ return yy::parser::make_VERTEXFORMAT(loc);
     */
 case 4:
 YY_RULE_SETUP
-#line 72 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 72 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
@@ -972,7 +972,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 77 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 77 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment2);
@@ -981,36 +981,36 @@ YY_RULE_SETUP
 
 case 6:
 YY_RULE_SETUP
-#line 83 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 83 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  anything  that's  not  a  '*'  */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 84 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 84 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  up  '*'s  not  followed  by  '/'s  */
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 85 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 85 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step ();
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 87 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 87 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
 
 case 10:
 YY_RULE_SETUP
-#line 91 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 91 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 92 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 92 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step ();//BEGIN(comment_caller);
 	YY_BREAK
 
@@ -1020,7 +1020,7 @@ loc.lines (yyleng); loc.step ();//BEGIN(comment_caller);
 
 case 12:
 YY_RULE_SETUP
-#line 99 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 99 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  saw  closing  quote  -  all  done  */
         yy_pop_state();//BEGIN(INITIAL);
         *string_buf_ptr  =  '\0';
@@ -1030,7 +1030,7 @@ YY_RULE_SETUP
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 104 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 104 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //FIXME:
         //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
@@ -1041,7 +1041,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 111 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 111 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  octal  escape  sequence  */
         int  result;
@@ -1053,7 +1053,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 119 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 119 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  generate  error  -  bad  escape  sequence;  something
         *  like  '\48'  or  '\0777777'
@@ -1062,38 +1062,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 124 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 124 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\n';
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 125 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 125 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\t';
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 126 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 126 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\r';
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 127 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 127 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\b';
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 128 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 128 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\f';
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 129 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 129 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  yytext[1];
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 130 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 130 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1107,7 +1107,7 @@ YY_RULE_SETUP
 
 case 23:
 YY_RULE_SETUP
-#line 140 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 140 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
@@ -1118,7 +1118,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 147 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 147 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         // TODO create and REGISTER the variable in a table
 		return yy::parser::make_IDENTIFIER(yytext, loc);
@@ -1128,7 +1128,7 @@ YY_RULE_SETUP
 
 case 25:
 YY_RULE_SETUP
-#line 153 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 153 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level++;
         *string_buf_ptr++  =  yytext[0];
@@ -1136,7 +1136,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 157 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 157 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level--;
         if((bracket_level) == 0)
@@ -1154,7 +1154,7 @@ YY_RULE_SETUP
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 170 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 170 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1165,7 +1165,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 177 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 177 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1179,7 +1179,7 @@ YY_RULE_SETUP
 
 case 29:
 YY_RULE_SETUP
-#line 187 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 187 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         comment_caller  =  INITIAL;
         yy_push_state(pass);
@@ -1188,14 +1188,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 192 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 192 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return yy::parser::make_LEFTSCOPE(loc);
     }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 195 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 195 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();//BEGIN(INITIAL);
 		return yy::parser::make_RIGHTSCOPE(loc);
@@ -1205,14 +1205,14 @@ YY_RULE_SETUP
 
 case 32:
 YY_RULE_SETUP
-#line 201 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 201 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return yy::parser::make_LEFTSCOPE(loc);
     }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 204 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 204 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return yy::parser::make_RIGHTSCOPE(loc);
     }
@@ -1221,21 +1221,21 @@ YY_RULE_SETUP
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 209 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 209 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.lines (yyleng); loc.step ();
 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 212 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 212 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.step ();
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 216 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 216 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
               std::cout << loc.begin.line << " " << loc.end.line << std::endl;
               return yy::parser::make_MINUS  (loc);
@@ -1243,67 +1243,67 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 220 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 220 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_PLUS   (loc);
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 221 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 221 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_STAR   (loc);
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 222 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 222 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_SLASH  (loc);
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 223 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 223 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_LPAREN (loc);
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 224 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 224 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_RPAREN (loc);
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 225 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 225 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_ASSIGN (loc);
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 226 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 226 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_SEMICOLON(loc);
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 227 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 227 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_LEFTSCOPE(loc);
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 228 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 228 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_RIGHTSCOPE(loc);
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 229 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 229 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_COMMA(loc);
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 231 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 231 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return make_INT(yytext, loc);
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 232 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 232 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_IDENTIFIER(yytext, loc);
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 233 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 233 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 {
                 throw yy::parser::syntax_error(loc, "invalid character: " + std::string(yytext));
            }
@@ -1329,15 +1329,15 @@ case YY_STATE_EOF(color_sample_state):
 case YY_STATE_EOF(rasterization_state):
 case YY_STATE_EOF(resource):
 case YY_STATE_EOF(resource1):
-#line 236 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 236 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_END (loc);
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 241 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 241 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1341 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1341 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2454,7 +2454,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 241 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 241 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
 yy::parser::symbol_type make_INT(

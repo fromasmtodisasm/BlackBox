@@ -10,7 +10,9 @@
 
 %code requires {
     #include <string>
+#ifdef VULKAN_SUPPORT
     #include <vulkan/vulkan.h>
+#endif
     class Scanner;
     class Driver;
 }
@@ -379,7 +381,8 @@ TODO: New resource types (from D3D)
 
 %token VERTEXFORMAT
 
-%nterm <VkFormat> format
+/*%nterm <VkFormat> format
+*/
 
 // %printer { yyo << $$; } <*>;
 
@@ -491,11 +494,15 @@ vertexformat: VERTEXFORMAT IDENTIFIER "{" IDENTIFIER "=" format ";" "}"
 {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
-    $2.data(), $4.data(), "vkFormat", $6);
+    $2.data(), $4.data(), "vkFormat", 10);
 }
 ;
 
-format: %empty { $$ = VkFormat(10); }
+format: %empty { 
+      //$$ = VkFormat(10); 
+      CryLog("format not implemented");
+
+      }
 /*
 FORMAT_UNDEFINED { $$ = $1; }
 | FORMAT_R4G4_UNORM_PACK8 { $$ = $1; }

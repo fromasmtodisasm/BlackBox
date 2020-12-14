@@ -115,7 +115,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	#endif
 	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
 		return nullptr;
-	gEnv->pLog->Log("window inited");
+    CryLog("window inited");
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();

@@ -22,7 +22,7 @@
 #endif
 
 #if !defined(_WIN32) || !defined(_WIN64)
-#define OutputDebugString(str) GetISystem()->Log(str)
+#define OutputDebugString(str) (void)0 /*GetISystem()->Log(str)*/
 #endif
 
 struct ScriptBase

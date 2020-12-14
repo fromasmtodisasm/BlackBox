@@ -31,23 +31,25 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // //                    "%code requires" blocks.
-#line 11 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
+#line 11 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
 
     #include <string>
+#ifdef VULKAN_SUPPORT
     #include <vulkan/vulkan.h>
+#endif
     class Scanner;
     class Driver;
 
-#line 51 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 53 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -124,7 +126,7 @@
 
 
 namespace yy {
-#line 128 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 130 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -291,25 +293,22 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // format
-      char dummy1[sizeof(VkFormat)];
-
       // TRUE
       // FALSE
       // BOOL
-      char dummy2[sizeof(bool)];
+      char dummy1[sizeof(bool)];
 
       // FLOAT
-      char dummy3[sizeof(float)];
+      char dummy2[sizeof(float)];
 
       // INT
-      char dummy4[sizeof(int)];
+      char dummy3[sizeof(int)];
 
       // IDENTIFIER
       // STR
       // CODEBODY
       // VARNAME
-      char dummy5[sizeof(std::string)];
+      char dummy4[sizeof(std::string)];
 };
 
     /// Symbol semantic values.
@@ -463,8 +462,6 @@ namespace yy {
       /// Constructor for valueless symbols, and symbols from each type.
 
   basic_symbol (typename Base::kind_type t, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const VkFormat v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
 
@@ -1220,10 +1217,6 @@ namespace yy {
   {
       switch (other.type_get ())
     {
-      case 114: // format
-        value.copy< VkFormat > (other.value);
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1262,10 +1255,6 @@ namespace yy {
     (void) v;
       switch (this->type_get ())
     {
-      case 114: // format
-        value.copy< VkFormat > (v);
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1299,13 +1288,6 @@ namespace yy {
   parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const location_type& l)
     : Base (t)
     , value ()
-    , location (l)
-  {}
-
-  template <typename Base>
-  parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const VkFormat v, const location_type& l)
-    : Base (t)
-    , value (v)
     , location (l)
   {}
 
@@ -1363,10 +1345,6 @@ namespace yy {
     // Type destructor.
     switch (yytype)
     {
-      case 114: // format
-        value.template destroy< VkFormat > ();
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1411,10 +1389,6 @@ namespace yy {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 114: // format
-        value.move< VkFormat > (s.value);
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -2080,9 +2054,9 @@ namespace yy {
 
 
 } // yy
-#line 2084 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2058 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
 
-#endif // !YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

@@ -31,12 +31,12 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/denis/code/TestEngine/src/Engine/Renderer/Shaders/position.hh
+ ** \file /home/denis/code/BlackBox/src/Engine/Renderer/Shaders/position.hh
  ** Define the yy::position class.
  */
 
-#ifndef YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
-# define YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
+#ifndef YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
+# define YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
 
 # include <algorithm> // std::max
 # include <iostream>
@@ -52,7 +52,7 @@
 
 
 namespace yy {
-#line 56 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
+#line 56 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
   /// Abstract a position.
   class position
   {
@@ -176,5 +176,5 @@ namespace yy {
 
 
 } // yy
-#line 180 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
-#endif // !YY_YY_HOME_DENIS_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
+#line 180 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
+#endif // !YY_YY_HOME_DENIS_CODE_BLACKBOX_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED

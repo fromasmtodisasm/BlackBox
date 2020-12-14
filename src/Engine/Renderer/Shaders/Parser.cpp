@@ -30,7 +30,7 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 // //                    "%code top" blocks.
-#line 23 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
+#line 25 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
 
     #ifdef S_FALSE
     #undef S_FALSE
@@ -59,12 +59,12 @@
         return scanner.ScanToken();
     }
 
-#line 63 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
+#line 63 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 68 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
+#line 68 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -78,7 +78,7 @@
 
 // User implementation prologue.
 
-#line 82 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
+#line 82 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -164,7 +164,7 @@
 
 
 namespace yy {
-#line 168 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
+#line 168 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -277,10 +277,6 @@ namespace yy {
   {
       switch (that.type_get ())
     {
-      case 114: // format
-        value.move< VkFormat > (that.value);
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -317,10 +313,6 @@ namespace yy {
     state = that.state;
       switch (that.type_get ())
     {
-      case 114: // format
-        value.copy< VkFormat > (that.value);
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -570,10 +562,6 @@ namespace yy {
          when using variants.  */
         switch (yyr1_[yyn])
     {
-      case 114: // format
-        yylhs.value.build< VkFormat > ();
-        break;
-
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -613,25 +601,25 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 389 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 392 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { gEnv->pLog->LogWarning("Empty effect"); }
-#line 619 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 607 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 415 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 418 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { CryLog("In PassState"); }
-#line 625 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 613 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 421 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 424 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { CryLog("Creation of PASS");}
-#line 631 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 619 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 22:
-#line 422 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 425 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
   /*
     LOGI("Pass with no name...\n");
@@ -643,53 +631,53 @@ namespace yy {
     lex_pop_state();
 */
 }
-#line 647 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 635 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 23:
-#line 433 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 436 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 653 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 641 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 26:
-#line 440 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 443 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass list\n");}
-#line 659 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 647 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 27:
-#line 446 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 449 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 669 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 657 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 29:
-#line 451 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 454 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("creation of Technique %s...\n", yystack_[0].value.as< std::string > ().c_str() );
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 680 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 668 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 30:
-#line 456 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 459 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
     //lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 689 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 677 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 32:
-#line 466 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 469 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
 /*
     if(!curAnnotations)
@@ -699,42 +687,46 @@ namespace yy {
     delete $4;
 */
     }
-#line 703 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 691 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 33:
-#line 476 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 479 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {CryLog("Begin annotations"); }
-#line 709 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 697 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 37:
-#line 483 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 486 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $2.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
 	}
-#line 718 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 706 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 38:
-#line 491 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 494 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
-    yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", yystack_[2].value.as< VkFormat > ());
+    yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", 10);
 }
-#line 728 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 716 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 39:
-#line 498 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< VkFormat > () = VkFormat(10); }
-#line 734 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 501 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { 
+      //$$ = VkFormat(10); 
+      CryLog("format not implemented");
+
+      }
+#line 726 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 738 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 730 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -1022,16 +1014,16 @@ namespace yy {
   const signed char
   parser::yypgoto_[] =
   {
-     -78,   -78,    43,   -78,   -42,   -78,    -8,   -78,   -78,   -78,
-     -78,   -78,   -78,    -3,   -78,   -78,   -78,   -78,   -78,   -78,
+     -78,    43,   -78,   -42,   -78,    -8,   -78,   -78,   -78,   -78,
+     -78,   -78,    -3,   -78,   -78,   -78,   -78,   -78,   -78,   -78,
      -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,    63,    19,    71,    49,    54,    50,    20,    37,    41,
-      60,    46,    52,    47,    21,    22,    23,    24,    25,    26,
+      -1,    19,    71,    49,    54,    50,    20,    37,    41,    60,
+      46,    52,    47,    21,    22,    63,    23,    24,    25,    26,
       27,    28,    29,    30,    31,    32,    33,    34
   };
 
@@ -1074,23 +1066,23 @@ namespace yy {
   const unsigned char
   parser::yystos_[] =
   {
-       0,    12,   115,     0,    21,    30,    96,   101,   102,   103,
-     104,   105,   106,   107,   108,   109,   110,   111,   112,   115,
-     120,   127,   128,   129,   130,   131,   132,   133,   134,   135,
-     136,   137,   138,   139,   140,    14,    14,   121,    14,     1,
-      10,   122,    10,    10,    32,    99,   124,   126,    31,   117,
-     119,    14,   125,    10,   118,     1,     1,    11,   117,     3,
-     123,   119,   126,   114,    14,   100,    11,    10,    12,    97,
-      14,   116,    11,    20,    11,    98
+       0,    12,   114,     0,    21,    30,    96,   101,   102,   103,
+     104,   105,   106,   107,   108,   109,   110,   111,   112,   114,
+     119,   126,   127,   129,   130,   131,   132,   133,   134,   135,
+     136,   137,   138,   139,   140,    14,    14,   120,    14,     1,
+      10,   121,    10,    10,    32,    99,   123,   125,    31,   116,
+     118,    14,   124,    10,   117,     1,     1,    11,   116,     3,
+     122,   118,   125,   128,    14,   100,    11,    10,    12,    97,
+      14,   115,    11,    20,    11,    98
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,   113,   115,   115,   115,   115,   115,   115,   115,   115,
-     115,   115,   115,   115,   115,   115,   115,   115,   115,   116,
-     116,   118,   117,   117,   119,   119,   119,   121,   120,   122,
-     120,   123,   123,   125,   124,   126,   126,   127,   128,   114,
+       0,   113,   114,   114,   114,   114,   114,   114,   114,   114,
+     114,   114,   114,   114,   114,   114,   114,   114,   114,   115,
+     115,   117,   116,   116,   118,   118,   118,   120,   119,   121,
+     119,   122,   122,   124,   123,   125,   125,   126,   127,   128,
      129,   130,   131,   132,   133,   134,   135,   136,   137,   138,
      139,   140,   140
   };
@@ -1137,10 +1129,10 @@ namespace yy {
   "READ_ONLY", "READ_WRITE", "VERTEXFORMAT", "'='", "';'", "'<'", "'>'",
   "\"hlsl\"", "\"texture\"", "\"resource\"", "\"fbo\"", "\"sstate\"",
   "\"dststate\"", "\"prstate\"", "\"csstate\"", "\"rstate\"",
-  "\"namespace\"", "\"cstbuffer\"", "\"uniforms\"", "$accept", "format",
-  "input", "passstates", "pass", "$@1", "passes", "tech", "$@2", "$@3",
+  "\"namespace\"", "\"cstbuffer\"", "\"uniforms\"", "$accept", "input",
+  "passstates", "pass", "$@1", "passes", "tech", "$@2", "$@3",
   "annotation", "annotations2", "$@4", "annotations", "glsl",
-  "vertexformat", "hlsl", "texture", "resource", "fbo", "sstate",
+  "vertexformat", "format", "hlsl", "texture", "resource", "fbo", "sstate",
   "dststate", "prstate", "csstate", "rstate", "namespace", "cstbuffer",
   "uniforms", YY_NULLPTR
   };
@@ -1149,12 +1141,12 @@ namespace yy {
   const unsigned short int
   parser::yyrline_[] =
   {
-       0,   389,   389,   390,   391,   392,   393,   394,   395,   396,
-     397,   398,   399,   400,   401,   402,   403,   404,   405,   414,
-     415,   421,   421,   433,   438,   439,   440,   446,   446,   451,
-     451,   465,   466,   476,   476,   478,   479,   483,   490,   498,
-     688,   689,   690,   691,   692,   693,   694,   695,   696,   697,
-     698,   699,   700
+       0,   392,   392,   393,   394,   395,   396,   397,   398,   399,
+     400,   401,   402,   403,   404,   405,   406,   407,   408,   417,
+     418,   424,   424,   436,   441,   442,   443,   449,   449,   454,
+     454,   468,   469,   479,   479,   481,   482,   486,   493,   501,
+     695,   696,   697,   698,   699,   700,   701,   702,   703,   704,
+     705,   706,   707
   };
 
   // Print the state stack on the debug stream.
@@ -1189,8 +1181,8 @@ namespace yy {
 
 
 } // yy
-#line 1193 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
-#line 703 "/home/denis/code/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
+#line 1185 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
+#line 710 "/home/denis/code/BlackBox/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

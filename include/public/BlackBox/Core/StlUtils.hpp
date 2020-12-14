@@ -28,7 +28,8 @@ inline mapped_type find_in_map(const Map& mapKeyToValue, key_type key, mapped_ty
 #else
 #if defined(LINUX)
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <ext/hash_map>
+//#include <ext/hash_map>
+#include <unordered_map>
 #else
 #include <hash_map>
 #endif

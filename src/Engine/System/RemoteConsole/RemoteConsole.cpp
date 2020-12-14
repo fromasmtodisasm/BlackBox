@@ -287,7 +287,7 @@ void SRemoteServer::StartServer()
 		CryFatalError("Error spawning \"%s\" thread.", SERVER_THREAD_NAME);
 	}
 #else
-	main_loop = std::thread([this]{static_cast<IThread*>(this)->ThreadEntry();});
+    main_loop = std::thread([this]{ThreadEntry();});
 #endif
 }
 
@@ -333,6 +333,7 @@ void SRemoteServer::SignalStopWork()
 /////////////////////////////////////////////////////////////////////////////////////////////
 void SRemoteServer::ThreadEntry()
 {
+    std::cout << "thread entry" << std::endl;
 	CRYSOCKET sClient;
 	CRYSOCKLEN_T iAddrSize;
 	CRYSOCKADDR_IN local, client;
