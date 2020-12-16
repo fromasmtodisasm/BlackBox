@@ -7,6 +7,8 @@
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
 #include <WindowsConsole.h>
+
+#include "Path.hpp"
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif
@@ -256,16 +258,11 @@ bool CSystem::Init()
 	m_env.SetIsDedicated(m_startupParams.bDedicatedServer);
 	/////////////////////////////////////////////
 	m_pCmdLine = new CCmdLine(m_startupParams.szSystemCmdLine);
-	LogCommandLine();
 	PreprocessCommandLine();
 	ProcessCommandLine();
 #ifdef ENABLE_PROFILER
 	initTimer();
 #endif
-	if (!CreateLog())
-		return false;
-	GetIRemoteConsole()->RegisterConsoleVariables();
-	GetIRemoteConsole()->Update();
 	//====================================================
 #if BB_PLATFORM_DESKTOP
 	#if !defined(_RELEASE)
@@ -360,7 +357,7 @@ bool CSystem::Init()
 		//here we should be good to ask Crypak to do something
 
 		//#define GEN_PAK_CDR_CRC
-#	ifdef GEN_PAK_CDR_CRC
+#ifdef GEN_PAK_CDR_CRC
 
 		const char* filename = m_pCmdLine->GetArg(1)->GetName();
 		gEnv->pCryPak->OpenPack(filename);
@@ -369,7 +366,11 @@ bool CSystem::Init()
 
 		exit(crc);
 #endif
+		GetIRemoteConsole()->RegisterConsoleVariables();
+		GetIRemoteConsole()->Update();
 	}
+	LogCommandLine();
+
 
 #endif // CRY_PLATFORM_DESKTOP
 	if (m_pUserCallback)
@@ -457,7 +458,7 @@ bool CSystem::Init()
 		// Initialize the 2D drawer
 #ifdef ENABLE_PROFILER
 	Log("Initialize Profiling");
-	if (!drawer2D.init(m_Render->GetWidth(), m_Render->GetHeight()))
+	if (!drawer2D.init(m_env.pRenderer->GetWidth(), m_env.pRenderer->GetHeight()))
 	{
 		fprintf(stderr, "*** FAILED initializing the Drawer2D\n");
 		return EXIT_FAILURE;
@@ -466,10 +467,10 @@ bool CSystem::Init()
 	//====================================================
 	//TODO: IMPLEMENT THIS
 #if 0
-  PROFILER_INIT(m_Render->GetWidth(), m_Render->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
+  PROFILER_INIT(m_env.pRenderer->GetWidth(), m_env.pRenderer->GetHeight(), window->getCursorPos().x, window->getCursorPos().y);
 #endif
 	//====================================================
-	//m_pLog->Log("[OK] Window susbsystem inited\n");
+	//m_env.pLog->Log("[OK] Window susbsystem inited\n");
 	//====================================================
 	if (!InitScriptSystem())
 	{
@@ -521,11 +522,11 @@ bool CSystem::Init()
 	return true;
 }
 
-bool CSystem::CreateLog()
+bool CSystem::InitLog()
 {
 	if (m_startupParams.pLog == nullptr)
 	{
-		m_pLog = new CLog(this);
+		m_env.pLog = new CLog(this);
 		string sLogFileName = m_startupParams.sLogFileName != nullptr ? m_startupParams.sLogFileName : DEFAULT_LOG_FILENAME;
 
 		const ICmdLineArg* logfile = m_pCmdLine->FindArg(eCLAT_Pre, "logfile");
@@ -534,12 +535,12 @@ bool CSystem::CreateLog()
 			sLogFileName = logfile->GetValue();
 		}
 
-		m_pLog->SetFileName(m_startupParams.sLogFileName);
-		m_env.pLog = m_pLog;
+		m_env.pLog->SetFileName(m_startupParams.sLogFileName);
+		m_env.pLog = m_env.pLog;
 	}
 	else
 	{
-		m_env.pLog = m_pLog = m_startupParams.pLog;
+		m_env.pLog = m_env.pLog = m_startupParams.pLog;
 	}
 	return true;
 }
@@ -603,8 +604,8 @@ bool CSystem::InitScriptSystem()
 {
 	Log("Creating ScriptSystem");
 	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p) {
-		m_pScriptSystem = p(this, true);
-		return m_pScriptSystem != nullptr;
+		m_env.pScriptSystem = p(this, true);
+		return m_env.pScriptSystem != nullptr;
 	});
 }
 
@@ -682,8 +683,8 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 
 	return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Renderer", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
 		Log("Load Render Library");
-		m_env.pRenderer = m_Render = p(this);
-		if (m_Render == nullptr)
+		m_env.pRenderer = m_env.pRenderer = p(this);
+		if (m_env.pRenderer == nullptr)
 			return false;
 		else
 			return true;
@@ -698,27 +699,24 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 /////////////////////////////////////////////////////////////////////////////////
 bool CSystem::InitFileSystem()
 {
-	//LOADING_TIME_PROFILE_SECTION;
-#ifndef LINUX
-	m_pCryPak = new CCryPak(m_pLog);
-#endif
-
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing File System...");
 
 	bool bLvlRes = false;               // true: all assets since executable start are recorded, false otherwise
 
-#	if !defined(_RELEASE)
+#if !defined(_RELEASE)
 	const ICmdLineArg* pArg = m_pCmdLine->FindArg(eCLAT_Pre, "LvlRes");      // -LvlRes command line option
 
 	if (pArg)
 		bLvlRes = true;
-#	endif // !defined(_RELEASE)
+#endif // !defined(_RELEASE)
 
-#if 0
 	CCryPak* pCryPak;
-	pCryPak = new CCryPak(m_env.pLog, &g_cvars.pakVars, bLvlRes, pGameStartup);
+	pCryPak = new CCryPak(m_env.pLog, &g_cvars.pakVars, bLvlRes);
+	//TODO:
+	#if 0
 	pCryPak->SetGameFolderWritable(m_bGameFolderWritable);
+	#endif
 	m_env.pCryPak = pCryPak;
 
 	// Check if root folder is overridden by command-line
@@ -726,10 +724,14 @@ bool CSystem::InitFileSystem()
 	if (root)
 	{
 		string temp = PathUtil::ToUnixPath(PathUtil::AddSlash(root->GetValue()));
+		#if 0
 		if (pCryPak->MakeDir(temp.c_str()))
 			m_root = temp;
+		#else
+		fs::current_path(fs::path(temp.c_str()));
+		#endif
 	}
-
+#if 0
 	if (m_bEditor || bLvlRes)
 		m_env.pCryPak->RecordFileOpen(ICryPak::RFOM_EngineStartup);
 
@@ -750,10 +752,12 @@ bool CSystem::InitFileSystem()
 		}
 #	endif
 	}
+#endif
 
 	// Now set up the log
 	InitLog();
 
+#if 0
 	LogVersion();
 
 	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);

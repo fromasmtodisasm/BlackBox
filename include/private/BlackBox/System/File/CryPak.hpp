@@ -3,6 +3,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/System/IMiniLog.hpp>
+#include <BlackBox/System/PakVars.h>
 
 class CCryPak : public ICryPak, public ISystemEventListener
 {
@@ -15,7 +16,7 @@ public:
 #endif
 
 public:
-  CCryPak(IMiniLog* pLog);
+  CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes);
   ~CCryPak();
   // Inherited via ICryPak
   virtual bool Init(const char* szBasePath) override;

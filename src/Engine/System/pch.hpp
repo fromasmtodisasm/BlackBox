@@ -14,3 +14,12 @@
 #include <pwd.h>
 #include <sys/types.h>
 #endif
+
+#ifndef BB_PLATFORM_LINUX
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+//#include <experimental/filesystem>
+//namespace fs = std::experimental::filesystem;
+#endif
+

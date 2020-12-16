@@ -10,7 +10,7 @@ void CSystem::Render()
 	{
 		PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
 		{
-			m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
+			m_env.pRenderer->SetState(IRenderer::State::DEPTH_TEST, true);
 			m_env.p3DEngine->SetCamera(GetViewCamera());
 			m_env.p3DEngine->Draw();
 		}
@@ -24,8 +24,8 @@ void CSystem::RenderBegin()
 		return;
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
-	m_Render->SetState(IRenderer::State::DEPTH_TEST, true);
-	m_Render->BeginFrame();
+	m_env.pRenderer->SetState(IRenderer::State::DEPTH_TEST, true);
+	m_env.pRenderer->BeginFrame();
 #if ENABLE_DEBUG_GUI
 	if (m_GuiManager)
 	{
@@ -45,9 +45,9 @@ void CSystem::RenderEnd()
 		//DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
-	if (m_Render)
+	if (m_env.pRenderer)
 	{
-		m_Render->Update();
+		m_env.pRenderer->Update();
 		if (IConsole* pConsole = GetIConsole())
 			pConsole->Draw();
 #if ENABLE_DEBUG_GUI

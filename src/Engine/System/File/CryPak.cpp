@@ -8,7 +8,7 @@
 #include <cstdarg>
 #include <cctype>
 
-CCryPak::CCryPak(IMiniLog* pLog)
+CCryPak::CCryPak(IMiniLog * pLog, PakVars * pPakVars, const bool bLvlRes)
   :
   m_pLog(pLog)
 {

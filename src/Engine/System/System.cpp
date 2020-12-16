@@ -36,13 +36,8 @@
 #include <fstream>
 #include <thread>
 
-#ifndef BB_PLATFORM_LINUX
-#include <filesystem>
-namespace fs = std::filesystem;
-#else
-//#include <experimental/filesystem>
-//namespace fs = std::experimental::filesystem;
-#endif
+// Define global cvars.
+SSystemCVars g_cvars;
 
 namespace utils
 {
@@ -68,13 +63,10 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 #endif
 	  m_startupParams(startupParams),
 	  cvGameName(nullptr),
-	  m_Render(nullptr),
 	  //m_pInput(nullptr),
 	  //m_pFont(nullptr),
 	  m_pGame(nullptr),
-	  m_pLog(nullptr),
 	  m_pWindow(nullptr),
-	  m_pScriptSystem(nullptr),
 	  m_ScriptObjectConsole(nullptr),
 	  m_pTextModeConsole(nullptr)
 #if ENABLE_DEBUG_GUI
@@ -135,12 +127,12 @@ void CSystem::Release()
 
 IRenderer* CSystem::GetIRenderer()
 {
-	return m_Render;
+	return m_env.pRenderer;
 }
 
 ILog* CSystem::GetILog()
 {
-	return m_pLog;
+	return m_env.pLog;
 }
 
 IConsole* CSystem::GetIConsole()
@@ -254,23 +246,23 @@ void CSystem::LoadScreen()
 bool CSystem::InitScripts()
 {
 	m_ScriptObjectConsole = new CScriptObjectConsole();
-	CScriptObjectConsole::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectConsole::InitializeTemplate(m_env.pScriptSystem);
 
 	m_ScriptObjectScript = new CScriptObjectScript();
-	CScriptObjectScript::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectScript::InitializeTemplate(m_env.pScriptSystem);
 
 	m_ScriptObjectRenderer = new CScriptObjectRenderer();
-	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectRenderer::InitializeTemplate(m_env.pScriptSystem);
 
 	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_env.pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
 
-	return m_pScriptSystem->ExecuteFile("scripts/engine.lua");
+	return m_env.pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 
 void CSystem::SetWorkingDirectory(const std::string& path) const
 {
-	//fs::current_path(fs::path(path));
+	fs::current_path(fs::path(path));
 }
 
 void CSystem::LogCommandLine() const
@@ -278,7 +270,7 @@ void CSystem::LogCommandLine() const
 	std::cout << "Log command line" << std::endl;
 	for (int i = 0; i < m_pCmdLine->GetArgCount(); i++)
 	{
-		std::cout << "\t" << m_pCmdLine->GetArg(i)->GetValue() << std::endl;
+		CryLog("CMD: %s", m_pCmdLine->GetArg(i)->GetValue());
 	}
 }
 
@@ -389,14 +381,14 @@ void CSystem::ShutDown()
 	//SAFE_DELETE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_env.pConsole);
-	SAFE_RELEASE(m_Render);
+	SAFE_RELEASE(m_env.pRenderer);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectScript);
 	SAFE_DELETE(m_ScriptObjectRenderer);
-	SAFE_RELEASE(m_pScriptSystem);
+	SAFE_RELEASE(m_env.pScriptSystem);
 
-	SAFE_RELEASE(m_pLog);
+	SAFE_RELEASE(m_env.pLog);
 }
 
 void CSystem::EnableGui(bool enable)
@@ -510,7 +502,7 @@ void CSystem::Log(const char* message)
 IScriptSystem* CSystem::GetIScriptSystem()
 {
 	//2841004695
-	return m_pScriptSystem;
+	return m_env.pScriptSystem;
 }
 
 bool CSystem::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)

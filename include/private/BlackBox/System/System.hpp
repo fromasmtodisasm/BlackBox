@@ -13,6 +13,7 @@
 #include <BlackBox/System/IWindowMessageHandler.h>
 #include <BlackBox/System/Timer.hpp>
 #include <BlackBox/System/Window.hpp>
+#include <BlackBox/System/PakVars.h>
 
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
@@ -27,6 +28,57 @@ struct IWindow;
 class CScriptObjectConsole;
 class CScriptObjectScript;
 class CScriptObjectRenderer;
+
+#if BB_PLATFORM_ANDROID
+	#define USE_ANDROIDCONSOLE
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_MAC
+	#define USE_UNIXCONSOLE
+#elif BB_PLATFORM_IOS
+	#define USE_IOSCONSOLE
+#elif BB_PLATFORM_WINDOWS
+	#define USE_WINDOWSCONSOLE
+#endif
+
+#if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
+	#define USE_DEDICATED_SERVER_CONSOLE
+#endif
+
+struct SSystemCVars
+{
+	int    sys_no_crash_dialog;
+	int    sys_dump_aux_threads;
+	int    sys_keyboard_break;
+	int    sys_dump_type;
+	int    sys_MaxFPS;
+
+#ifdef USE_HTTP_WEBSOCKETS
+	int sys_simple_http_base_port;
+#endif
+
+	int     sys_error_debugbreak;
+
+	int     sys_enable_crash_handler;
+
+	int     sys_intromoviesduringinit;
+	ICVar*  sys_splashscreen;
+
+	int     sys_filesystemCaseSensitivity;
+
+	PakVars pakVars;
+
+#if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO
+	int sys_display_threads;
+#endif
+
+#if CRY_PLATFORM_WINDOWS
+	int sys_highrestimer;
+#endif
+
+	int sys_vr_support;
+};
+extern SSystemCVars g_cvars;
+
+class CSystem;
 
 IThreadManager* CreateThreadManager();
 
@@ -50,7 +102,7 @@ class CSystem final : public ISystem
 
 	// Inherited via ISystem
 	virtual bool Init() override;
-	bool CreateLog();
+	bool InitLog();
 	virtual void Start() override;
 	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
 	virtual void RenderBegin() override;
@@ -181,15 +233,12 @@ class CSystem final : public ISystem
 	CTimer m_Time;		  //!<
 	CCamera m_ViewCamera; //!<
 
-	ILog* m_pLog;
 	//IInput* m_pInput;
 	ICryPak* m_pCryPak;
 	IGame* m_pGame;
 	IFont* m_pFont;
 	IWindow* m_pWindow;
 	IValidator* m_pValidator; //!< Pointer to validator interface.
-	IRenderer* m_Render;
-	IScriptSystem* m_pScriptSystem;
 	IEntitySystem* m_pEntitySystem;
 	INetwork* m_pNetwork;
 	ITextModeConsole* m_pTextModeConsole;
@@ -217,6 +266,10 @@ class CSystem final : public ISystem
 #if ENABLE_DEBUG_GUI
 	IImGuiManager* m_GuiManager = nullptr;
 #endif
+
+	//! global root folder
+	string m_root;
+	int    m_iApplicationInstance;
 
 	//! to hold the values stored in system.cfg
 	//! because editor uses it's own values,

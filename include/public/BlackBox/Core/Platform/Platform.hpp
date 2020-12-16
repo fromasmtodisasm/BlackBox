@@ -169,6 +169,7 @@ void       bbSleep(unsigned int dwMilliseconds);
 class MyString;
 #ifndef MY_STRING
 using string = std::string;
+using wstring = std::wstring;
 #else
 using string = MyString;
 #endif
