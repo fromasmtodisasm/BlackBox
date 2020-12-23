@@ -1,8 +1,9 @@
+#include "Shaders/FxParser.h"
 #include <BlackBox/Renderer/BaseShader.hpp>
 
 #include <sstream>
-using std::stringstream;
 using std::string_view;
+using std::stringstream;
 
 namespace
 {
@@ -53,7 +54,7 @@ CShader* CShader::load(ShaderDesc const& desc)
 {
 	string text;
 	auto path = desc.root + desc.name;
-  gEnv->pLog->Log("Loading %s shader", path.data());
+	gEnv->pLog->Log("Loading %s shader", path.data());
 	if (!loadInternal(path, text))
 		return nullptr;
 
@@ -72,10 +73,10 @@ CShader* CShader::load(ShaderDesc const& desc)
 		}
 	}
 
-	auto shader = new CShader(text, desc.type);
+	auto shader = new CShader(desc.type);
 	if (shader->Create())
 	{
-		shader->Compile();
+		shader->Compile({"", text});
 		shader->m_Empty = false;
 		debuger::shader_label(shader->get(), path);
 	}
@@ -87,10 +88,8 @@ CShader* CShader::load(std::string_view source)
 	return nullptr;
 }
 
-bool CShader::parseLine(std::ifstream& fin, string& buffer)
+bool CShader::parseLine(string& buffer)
 {
-	if (!getline(fin, buffer))
-		return false;
 	size_t pos = 0;
 	if ((pos = buffer.find("#include")) != buffer.npos)
 	{
@@ -110,7 +109,7 @@ bool CShader::parseLine(std::ifstream& fin, string& buffer)
 		buffer.clear();
 		buffer += buff;
 	}
-  else if ((pos = buffer.find("#version")) != buffer.npos)
+	else if ((pos = buffer.find("#version")) != buffer.npos)
 	{
 		buffer = "#version 330";
 	}
@@ -163,6 +162,15 @@ bool CShader::parseLine(std::ifstream& fin, string& buffer)
 	return true;
 }
 
+string grab_line(string& buffer)
+{
+	if (CShader::parseLine(buffer))
+	{
+		return buffer + '\n';
+	}
+	return string();
+}
+
 bool CShader::loadInternal(string const& path, string& buffer)
 {
 	std::ifstream fin(path);
@@ -171,26 +179,38 @@ bool CShader::loadInternal(string const& path, string& buffer)
 	if (!fin.is_open())
 		return false;
 
-	while (parseLine(fin, buff))
+	while (getline(fin, buff))
 	{
-		buffer += buff;
-		buffer += '\n';
+		buffer += grab_line(buff);
 	}
 	fin.close();
 	return true;
 }
 
-ShaderRef CShader::loadFromMemory(string text, IShader::Type type)
+bool CShader::loadFromStream(const std::stringstream stream, string& buffer)
 {
-	auto shader = ShaderRef(new CShader(text, type));
+	return false;
+}
+ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type)
+{
+	auto tech = pEffect->GetTechnique(0);
+	auto pass = tech->GetPass(0);
+	auto code = pass->CommonCode;
+
+	code.push_back(pass->Shaders[type]);
+	return CShader::loadFromMemory(code, type);
+}
+
+ShaderRef CShader::loadFromMemory(const std::vector<std::string_view>& text, IShader::Type type)
+{
+	auto shader = ShaderRef(new CShader(type));
 	if (!shader->Create())
 		return nullptr;
-	shader->Compile();
+	shader->Compile(text);
 	return shader;
 }
 
 IShaderProgram* GetGLSLSandBoxShader()
 {
-
 	return nullptr;
 }

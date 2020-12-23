@@ -37,7 +37,7 @@ struct ShaderProgramStatus
 class CShader : public IShader
 {
 public:
-  CShader(string text, CShader::Type type);
+  CShader(CShader::Type type);
   ~CShader();
   // Inherited via IShader
   virtual void AddRef() override;
@@ -45,12 +45,14 @@ public:
 
   static CShader* load(ShaderDesc const& desc);
   static CShader* load(std::string_view source);
-  static bool parseLine(std::ifstream& fin, string& buffer);
+  static bool parseLine(string& buffer);
   static bool loadInternal(string const& path, string& buffer);
-  static ShaderRef loadFromMemory(string text, CShader::Type type);
+  static bool loadFromStream(const std::stringstream stream, string& buffer);
+  static ShaderRef loadFromMemory(const std::vector<std::string_view>& text, CShader::Type type);
+  static ShaderRef loadFromEffect(struct IEffect* pEffect, CShader::Type type);
   
   virtual bool Create() override;
-  virtual bool Compile() override;
+  virtual bool Compile(std::vector<std::string_view> code) override;
   virtual bool Bind() override;
   virtual bool Empty() override;
   virtual void print() override;
@@ -60,7 +62,6 @@ public:
 
 private:
   GLuint m_Shader;
-  string m_Text;
   ShaderStatus m_Status;
   bool m_Empty;
   int m_Refs = 0;

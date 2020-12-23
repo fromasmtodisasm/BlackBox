@@ -287,7 +287,7 @@ struct IShader
 	virtual int Release() = 0;
 
 	virtual bool Create()			= 0;
-	virtual bool Compile()			= 0;
+	virtual bool Compile(std::vector<std::string_view> code)			= 0;
 	virtual bool Bind()				= 0;
 	virtual bool Empty()			= 0;
 	virtual IShader::Type GetType() = 0;

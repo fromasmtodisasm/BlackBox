@@ -14,6 +14,7 @@
 #include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
@@ -31,6 +32,8 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
+
+static int dump_shaders_on_load = false;
 
 class ShaderMan
 {
@@ -157,6 +160,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_ScreenShader->Unuse();
 
 	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.vs", "auxgeom.frag")))
+	//if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("tmp/auxgeom.fx", 0)))
 	{
 		m_pSystem->Log("Error of loading auxgeom shader");
 	}
@@ -426,6 +430,7 @@ void GLRenderer::InitConsoleCommands()
     "Set size of camera"
   );
   */
+	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
 	gEnv->pConsole->AddCommand("testfx", TestFx, 0, "Test fx parser");
 	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
@@ -630,10 +635,12 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 		{
 			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
 		}
-		auto vs			 = CShader::load(ShaderDesc("test.vs", IShader::E_VERTEX));
-		auto fs			 = CShader::load(ShaderDesc("test.frag", IShader::E_FRAGMENT));
-		auto p			 = new CShaderProgram(ShaderInfo(vs, std::string("test.vs")), ShaderInfo(fs, std::string("test.vs")));
-		p->Create("TestProgram");
+		dump_shaders_on_load = true;
+		auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX);
+		auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT);
+		dump_shaders_on_load = false;
+		auto p	= new CShaderProgram(vs, fs);
+		p->Create(name);
 		m_Shaders.push_back(p);
 		return p;
 	}

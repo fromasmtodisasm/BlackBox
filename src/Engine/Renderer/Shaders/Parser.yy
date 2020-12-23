@@ -19,6 +19,12 @@
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
 
+
+}
+
+%initial-action
+{
+    is_common = false;
 }
 
 // %param { Driver &drv }
@@ -49,6 +55,9 @@
     #include "Program.h"
     #endif
     #include "Effect.hpp"
+
+    std::vector<std::string_view> CommonCode;
+    bool is_common;
 
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
         return scanner.ScanToken();
@@ -212,22 +221,14 @@ input: %empty { gEnv->pLog->LogWarning("Empty effect"); }
 ;
 
 shader_type 
-: VERTEXPROGRAM
-| GEOMETRYPROGRAM
-| FRAGMENTPROGRAM
+: VERTEXPROGRAM {$$ = $1;}
+| GEOMETRYPROGRAM {$$ = $1;}
+| FRAGMENTPROGRAM {$$ = $1;}
 ;
 
 shader_assignment: shader_type '=' IDENTIFIER {
     //$$ = std::make_pair($1, $3);
-    auto tech = driver.currentEffect->m_Techniques.back();
-    auto pass = tech.Passes.back();
-    auto sh_name = $3;
-    for (int i = 0; i < 6; i++)
-    {
-        if (driver.currentEffect->m_shaders[i].name == sh_name)
-            pass.Shaders[$1] = it->data;
-    }
-    CryLog("ident for shader_type: %s", $3.data());
+	driver.currentEffect->shader_assignment($1,$3);
 }
 ;
 shader_assignments:
@@ -264,11 +265,12 @@ PASS {
 | PASS IDENTIFIER {
     SPass pass;
     pass.Name = $2.c_str();
+    pass.CommonCode = CommonCode;
     driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
 
-    CryLog("Creation of PASS %s\n", pass.Name);
+    CryLog("Creation of PASS %s\n", pass.Name.data());
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
@@ -304,7 +306,7 @@ TECHNIQUE {
     CTechnique tech;
     tech.Name =  $2.c_str();
     driver.currentEffect->m_Techniques.push_back(tech);
-    CryLog("creation of Technique %s...\n", tech.Name);
+    CryLog("creation of Technique %s...\n", tech.Name.data());
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
@@ -340,12 +342,15 @@ glsl_header:
     } 
 	| GLSLSHADER {
         $$ = "Common";
+        is_common = true;
     }
 ;
 
 glsl: glsl_header '{' CODEBODY { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
+        if ($1 == "Common")
+            CommonCode.push_back(driver.currentEffect->m_shaders.back().data);
 	}
 ;
 
