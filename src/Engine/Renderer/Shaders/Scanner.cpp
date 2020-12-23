@@ -641,7 +641,7 @@ static const flex_int16_t yy_rule_linenum[42] =
 
     int  bracket_level = 0;
     char  *string_buf_ptr;
-    #define CURRENT_SYMBOL return yy::parser::symbol_type(yy::parser::token::yytokentype(yytext\[0\]), loc)
+    #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext[0]), loc)
 
 #line 646 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
@@ -1134,7 +1134,7 @@ YY_RULE_SETUP
         string_buf_ptr  =  string_buf;
         *string_buf_ptr = '\0';
         yy_push_state(shaderbody);
-		return yy::parser::make_LEFTSCOPE(loc);
+		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 24:
@@ -1211,7 +1211,7 @@ case 30:
 YY_RULE_SETUP
 #line 193 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
-		CURRENT_SYMBOL;
+		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 31:
@@ -1219,17 +1219,17 @@ YY_RULE_SETUP
 #line 196 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();//BEGIN(INITIAL);
-		CURRENT_SYMBOL;
+		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 
 
 /*\{  {
-        CURRENT_SYMBOL;
+        return CURRENT_SYMBOL;
     }
     \} {
         //yy_pop_state();
-        CURRENT_SYMBOL;
+        return CURRENT_SYMBOL;
     }*/
 /*VertexProgram       return VERTEXPROGRAM;*/
 case 32:
@@ -1256,14 +1256,14 @@ case 35:
 YY_RULE_SETUP
 #line 220 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
-		CURRENT_SYMBOL;
+		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 223 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
-		CURRENT_SYMBOL;
+		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 
@@ -1313,11 +1313,11 @@ YY_RULE_SETUP
 #line 254 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
-        CURRENT_SYMBOL;
+        return CURRENT_SYMBOL;
     else {
         CryLog("Warning: line %d : odd character found (%u)...\n", 0xffff, (unsigned char)yytext[0]);
     }
-    CURRENT_SYMBOL;
+    return CURRENT_SYMBOL;
 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):

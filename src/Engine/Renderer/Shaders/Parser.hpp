@@ -346,100 +346,89 @@ namespace yy {
       enum yytokentype
       {
         TOK_END = 0,
-        TOK_ASSIGN = 258,
-        TOK_MINUS = 259,
-        TOK_PLUS = 260,
-        TOK_STAR = 261,
-        TOK_SLASH = 262,
-        TOK_LPAREN = 263,
-        TOK_RPAREN = 264,
-        TOK_LEFTSCOPE = 265,
-        TOK_RIGHTSCOPE = 266,
-        TOK_SEMICOLON = 267,
-        TOK_COMMA = 268,
-        TOK_IDENTIFIER = 269,
-        TOK_TRUE = 270,
-        TOK_FALSE = 271,
-        TOK_FLOAT = 272,
-        TOK_INT = 273,
-        TOK_BOOL = 274,
-        TOK_STR = 275,
-        TOK_GLSLSHADER = 276,
-        TOK_HLSL10SHADER = 277,
-        TOK_HLSL11SHADER = 278,
-        TOK_CGSHADER = 279,
-        TOK_SAMPLER_STATE = 280,
-        TOK_DST_STATE = 281,
-        TOK_PR_STATE = 282,
-        TOK_COLOR_SAMPLE_STATE = 283,
-        TOK_RASTERIZATION_STATE = 284,
-        TOK_TECHNIQUE = 285,
-        TOK_PASS = 286,
-        TOK_CODEBODY = 287,
-        TOK_VARNAME = 288,
-        TOK_TEXTURERESOURCE = 289,
-        TOK_TEXTURERESOURCE1D = 290,
-        TOK_TEXTURERESOURCE2D = 291,
-        TOK_TEXTURERESOURCE3D = 292,
-        TOK_TEXTURERESOURCERECT = 293,
-        TOK_TEXTURERESOURCECUBE = 294,
-        TOK_VOID_TYPE = 295,
-        TOK_UNSIGNED = 296,
-        TOK_HIGHP = 297,
-        TOK_MEDIUMP = 298,
-        TOK_LOWP = 299,
-        TOK_UNIFORM = 300,
-        TOK_CSTBUFFER = 301,
-        TOK_FLOAT_TYPE = 302,
-        TOK_FLOAT2_TYPE = 303,
-        TOK_FLOAT3_TYPE = 304,
-        TOK_FLOAT4_TYPE = 305,
-        TOK_MAT2_TYPE = 306,
-        TOK_MAT3_TYPE = 307,
-        TOK_MAT4_TYPE = 308,
-        TOK_BOOL_TYPE = 309,
-        TOK_BOOL2_TYPE = 310,
-        TOK_BOOL3_TYPE = 311,
-        TOK_BOOL4_TYPE = 312,
-        TOK_INT_TYPE = 313,
-        TOK_INT2_TYPE = 314,
-        TOK_INT3_TYPE = 315,
-        TOK_INT4_TYPE = 316,
-        TOK_TEXTURE1D_TYPE = 317,
-        TOK_TEXTURE2D_TYPE = 318,
-        TOK_TEXTURE2DSHADOW_TYPE = 319,
-        TOK_TEXTURE2DRECT_TYPE = 320,
-        TOK_TEXTURE3D_TYPE = 321,
-        TOK_TEXTURECUBE_TYPE = 322,
-        TOK_SAMPLER1D_TYPE = 323,
-        TOK_SAMPLER2D_TYPE = 324,
-        TOK_SAMPLER2DSHADOW_TYPE = 325,
-        TOK_SAMPLER2DRECT_TYPE = 326,
-        TOK_SAMPLER3D_TYPE = 327,
-        TOK_SAMPLERCUBE_TYPE = 328,
-        TOK_EXTENSION = 329,
-        TOK_SEPARATE_SHADER = 330,
-        TOK_VERTEXPROGRAM = 331,
-        TOK_FRAGMENTPROGRAM = 332,
-        TOK_GEOMETRYPROGRAM = 333,
-        TOK_HULLPROGRAM = 334,
-        TOK_EVALPROGRAM = 335,
-        TOK_SHDPROFILE = 336,
-        TOK_SAMPLERRESOURCE = 337,
-        TOK_SAMPLERTEXUNIT = 338,
-        TOK_SETSAMPLERSTATE = 339,
-        TOK_SETDSTSTATE = 340,
-        TOK_SETRASTERIZATIONSTATE = 341,
-        TOK_SETCOLORSAMPLESTATE = 342,
-        TOK_IMAGERESOURCE = 343,
-        TOK_IMAGEUNIT = 344,
-        TOK_IMAGEACCESS = 345,
-        TOK_IMAGELAYER = 346,
-        TOK_IMAGELAYERED = 347,
-        TOK_WRITE_ONLY = 348,
-        TOK_READ_ONLY = 349,
-        TOK_READ_WRITE = 350,
-        TOK_VERTEXFORMAT = 351
+        TOK_IDENTIFIER = 258,
+        TOK_TRUE = 259,
+        TOK_FALSE = 260,
+        TOK_FLOAT = 261,
+        TOK_INT = 262,
+        TOK_BOOL = 263,
+        TOK_STR = 264,
+        TOK_GLSLSHADER = 265,
+        TOK_HLSL10SHADER = 266,
+        TOK_HLSL11SHADER = 267,
+        TOK_CGSHADER = 268,
+        TOK_SAMPLER_STATE = 269,
+        TOK_DST_STATE = 270,
+        TOK_PR_STATE = 271,
+        TOK_COLOR_SAMPLE_STATE = 272,
+        TOK_RASTERIZATION_STATE = 273,
+        TOK_TECHNIQUE = 274,
+        TOK_PASS = 275,
+        TOK_CODEBODY = 276,
+        TOK_VARNAME = 277,
+        TOK_TEXTURERESOURCE = 278,
+        TOK_TEXTURERESOURCE1D = 279,
+        TOK_TEXTURERESOURCE2D = 280,
+        TOK_TEXTURERESOURCE3D = 281,
+        TOK_TEXTURERESOURCERECT = 282,
+        TOK_TEXTURERESOURCECUBE = 283,
+        TOK_VOID_TYPE = 284,
+        TOK_UNSIGNED = 285,
+        TOK_HIGHP = 286,
+        TOK_MEDIUMP = 287,
+        TOK_LOWP = 288,
+        TOK_UNIFORM = 289,
+        TOK_CSTBUFFER = 290,
+        TOK_FLOAT_TYPE = 291,
+        TOK_FLOAT2_TYPE = 292,
+        TOK_FLOAT3_TYPE = 293,
+        TOK_FLOAT4_TYPE = 294,
+        TOK_MAT2_TYPE = 295,
+        TOK_MAT3_TYPE = 296,
+        TOK_MAT4_TYPE = 297,
+        TOK_BOOL_TYPE = 298,
+        TOK_BOOL2_TYPE = 299,
+        TOK_BOOL3_TYPE = 300,
+        TOK_BOOL4_TYPE = 301,
+        TOK_INT_TYPE = 302,
+        TOK_INT2_TYPE = 303,
+        TOK_INT3_TYPE = 304,
+        TOK_INT4_TYPE = 305,
+        TOK_TEXTURE1D_TYPE = 306,
+        TOK_TEXTURE2D_TYPE = 307,
+        TOK_TEXTURE2DSHADOW_TYPE = 308,
+        TOK_TEXTURE2DRECT_TYPE = 309,
+        TOK_TEXTURE3D_TYPE = 310,
+        TOK_TEXTURECUBE_TYPE = 311,
+        TOK_SAMPLER1D_TYPE = 312,
+        TOK_SAMPLER2D_TYPE = 313,
+        TOK_SAMPLER2DSHADOW_TYPE = 314,
+        TOK_SAMPLER2DRECT_TYPE = 315,
+        TOK_SAMPLER3D_TYPE = 316,
+        TOK_SAMPLERCUBE_TYPE = 317,
+        TOK_EXTENSION = 318,
+        TOK_SEPARATE_SHADER = 319,
+        TOK_VERTEXPROGRAM = 320,
+        TOK_FRAGMENTPROGRAM = 321,
+        TOK_GEOMETRYPROGRAM = 322,
+        TOK_HULLPROGRAM = 323,
+        TOK_EVALPROGRAM = 324,
+        TOK_SHDPROFILE = 325,
+        TOK_SAMPLERRESOURCE = 326,
+        TOK_SAMPLERTEXUNIT = 327,
+        TOK_SETSAMPLERSTATE = 328,
+        TOK_SETDSTSTATE = 329,
+        TOK_SETRASTERIZATIONSTATE = 330,
+        TOK_SETCOLORSAMPLESTATE = 331,
+        TOK_IMAGERESOURCE = 332,
+        TOK_IMAGEUNIT = 333,
+        TOK_IMAGEACCESS = 334,
+        TOK_IMAGELAYER = 335,
+        TOK_IMAGELAYERED = 336,
+        TOK_WRITE_ONLY = 337,
+        TOK_READ_ONLY = 338,
+        TOK_READ_WRITE = 339,
+        TOK_VERTEXFORMAT = 340
       };
     };
 
@@ -557,50 +546,6 @@ namespace yy {
     static inline
     symbol_type
     make_END (const location_type& l);
-
-    static inline
-    symbol_type
-    make_ASSIGN (const location_type& l);
-
-    static inline
-    symbol_type
-    make_MINUS (const location_type& l);
-
-    static inline
-    symbol_type
-    make_PLUS (const location_type& l);
-
-    static inline
-    symbol_type
-    make_STAR (const location_type& l);
-
-    static inline
-    symbol_type
-    make_SLASH (const location_type& l);
-
-    static inline
-    symbol_type
-    make_LPAREN (const location_type& l);
-
-    static inline
-    symbol_type
-    make_RPAREN (const location_type& l);
-
-    static inline
-    symbol_type
-    make_LEFTSCOPE (const location_type& l);
-
-    static inline
-    symbol_type
-    make_RIGHTSCOPE (const location_type& l);
-
-    static inline
-    symbol_type
-    make_SEMICOLON (const location_type& l);
-
-    static inline
-    symbol_type
-    make_COMMA (const location_type& l);
 
     static inline
     symbol_type
@@ -1139,12 +1084,12 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 129,     ///< Last index in yytable_.
+      yylast_ = 123,     ///< Last index in yytable_.
       yynnts_ = 33,  ///< Number of nonterminal symbols.
       yyfinal_ = 3, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 113  ///< Number of tokens.
+      yyntokens_ = 104  ///< Number of tokens.
     };
 
 
@@ -1167,14 +1112,14 @@ namespace yy {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    98,
-      99,    97,   100,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    86,
+      90,    87,    91,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    88,     2,    89,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1196,11 +1141,10 @@ namespace yy {
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
-      85,    86,    87,    88,    89,    90,    91,    92,    93,    94,
-      95,    96,   101,   102,   103,   104,   105,   106,   107,   108,
-     109,   110,   111,   112
+      85,    92,    93,    94,    95,    96,    97,    98,    99,   100,
+     101,   102,   103
     };
-    const unsigned int user_token_number_max_ = 363;
+    const unsigned int user_token_number_max_ = 352;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -1233,35 +1177,35 @@ namespace yy {
   {
       switch (other.type_get ())
     {
-      case 76: // VERTEXPROGRAM
-      case 77: // FRAGMENTPROGRAM
-      case 78: // GEOMETRYPROGRAM
-      case 79: // HULLPROGRAM
-      case 80: // EVALPROGRAM
-      case 115: // shader_type
+      case 65: // VERTEXPROGRAM
+      case 66: // FRAGMENTPROGRAM
+      case 67: // GEOMETRYPROGRAM
+      case 68: // HULLPROGRAM
+      case 69: // EVALPROGRAM
+      case 106: // shader_type
         value.copy< IShader::Type > (other.value);
         break;
 
-      case 15: // TRUE
-      case 16: // FALSE
-      case 19: // BOOL
+      case 4: // TRUE
+      case 5: // FALSE
+      case 8: // BOOL
         value.copy< bool > (other.value);
         break;
 
-      case 17: // FLOAT
+      case 6: // FLOAT
         value.copy< float > (other.value);
         break;
 
-      case 18: // INT
+      case 7: // INT
         value.copy< int > (other.value);
         break;
 
-      case 14: // IDENTIFIER
-      case 20: // STR
-      case 32: // CODEBODY
-      case 33: // VARNAME
-      case 116: // shader_assignment
-      case 130: // glsl_header
+      case 3: // IDENTIFIER
+      case 9: // STR
+      case 21: // CODEBODY
+      case 22: // VARNAME
+      case 107: // shader_assignment
+      case 121: // glsl_header
         value.copy< std::string > (other.value);
         break;
 
@@ -1282,35 +1226,35 @@ namespace yy {
     (void) v;
       switch (this->type_get ())
     {
-      case 76: // VERTEXPROGRAM
-      case 77: // FRAGMENTPROGRAM
-      case 78: // GEOMETRYPROGRAM
-      case 79: // HULLPROGRAM
-      case 80: // EVALPROGRAM
-      case 115: // shader_type
+      case 65: // VERTEXPROGRAM
+      case 66: // FRAGMENTPROGRAM
+      case 67: // GEOMETRYPROGRAM
+      case 68: // HULLPROGRAM
+      case 69: // EVALPROGRAM
+      case 106: // shader_type
         value.copy< IShader::Type > (v);
         break;
 
-      case 15: // TRUE
-      case 16: // FALSE
-      case 19: // BOOL
+      case 4: // TRUE
+      case 5: // FALSE
+      case 8: // BOOL
         value.copy< bool > (v);
         break;
 
-      case 17: // FLOAT
+      case 6: // FLOAT
         value.copy< float > (v);
         break;
 
-      case 18: // INT
+      case 7: // INT
         value.copy< int > (v);
         break;
 
-      case 14: // IDENTIFIER
-      case 20: // STR
-      case 32: // CODEBODY
-      case 33: // VARNAME
-      case 116: // shader_assignment
-      case 130: // glsl_header
+      case 3: // IDENTIFIER
+      case 9: // STR
+      case 21: // CODEBODY
+      case 22: // VARNAME
+      case 107: // shader_assignment
+      case 121: // glsl_header
         value.copy< std::string > (v);
         break;
 
@@ -1390,35 +1334,35 @@ namespace yy {
     // Type destructor.
     switch (yytype)
     {
-      case 76: // VERTEXPROGRAM
-      case 77: // FRAGMENTPROGRAM
-      case 78: // GEOMETRYPROGRAM
-      case 79: // HULLPROGRAM
-      case 80: // EVALPROGRAM
-      case 115: // shader_type
+      case 65: // VERTEXPROGRAM
+      case 66: // FRAGMENTPROGRAM
+      case 67: // GEOMETRYPROGRAM
+      case 68: // HULLPROGRAM
+      case 69: // EVALPROGRAM
+      case 106: // shader_type
         value.template destroy< IShader::Type > ();
         break;
 
-      case 15: // TRUE
-      case 16: // FALSE
-      case 19: // BOOL
+      case 4: // TRUE
+      case 5: // FALSE
+      case 8: // BOOL
         value.template destroy< bool > ();
         break;
 
-      case 17: // FLOAT
+      case 6: // FLOAT
         value.template destroy< float > ();
         break;
 
-      case 18: // INT
+      case 7: // INT
         value.template destroy< int > ();
         break;
 
-      case 14: // IDENTIFIER
-      case 20: // STR
-      case 32: // CODEBODY
-      case 33: // VARNAME
-      case 116: // shader_assignment
-      case 130: // glsl_header
+      case 3: // IDENTIFIER
+      case 9: // STR
+      case 21: // CODEBODY
+      case 22: // VARNAME
+      case 107: // shader_assignment
+      case 121: // glsl_header
         value.template destroy< std::string > ();
         break;
 
@@ -1445,35 +1389,35 @@ namespace yy {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 76: // VERTEXPROGRAM
-      case 77: // FRAGMENTPROGRAM
-      case 78: // GEOMETRYPROGRAM
-      case 79: // HULLPROGRAM
-      case 80: // EVALPROGRAM
-      case 115: // shader_type
+      case 65: // VERTEXPROGRAM
+      case 66: // FRAGMENTPROGRAM
+      case 67: // GEOMETRYPROGRAM
+      case 68: // HULLPROGRAM
+      case 69: // EVALPROGRAM
+      case 106: // shader_type
         value.move< IShader::Type > (s.value);
         break;
 
-      case 15: // TRUE
-      case 16: // FALSE
-      case 19: // BOOL
+      case 4: // TRUE
+      case 5: // FALSE
+      case 8: // BOOL
         value.move< bool > (s.value);
         break;
 
-      case 17: // FLOAT
+      case 6: // FLOAT
         value.move< float > (s.value);
         break;
 
-      case 18: // INT
+      case 7: // INT
         value.move< int > (s.value);
         break;
 
-      case 14: // IDENTIFIER
-      case 20: // STR
-      case 32: // CODEBODY
-      case 33: // VARNAME
-      case 116: // shader_assignment
-      case 130: // glsl_header
+      case 3: // IDENTIFIER
+      case 9: // STR
+      case 21: // CODEBODY
+      case 22: // VARNAME
+      case 107: // shader_assignment
+      case 121: // glsl_header
         value.move< std::string > (s.value);
         break;
 
@@ -1540,10 +1484,9 @@ namespace yy {
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
      315,   316,   317,   318,   319,   320,   321,   322,   323,   324,
      325,   326,   327,   328,   329,   330,   331,   332,   333,   334,
-     335,   336,   337,   338,   339,   340,   341,   342,   343,   344,
-     345,   346,   347,   348,   349,   350,   351,    61,    59,    60,
-      62,   352,   353,   354,   355,   356,   357,   358,   359,   360,
-     361,   362,   363
+     335,   336,   337,   338,   339,   340,    59,    61,   123,   125,
+      60,    62,   341,   342,   343,   344,   345,   346,   347,   348,
+     349,   350,   351,   352
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1552,72 +1495,6 @@ namespace yy {
   parser::make_END (const location_type& l)
   {
     return symbol_type (token::TOK_END, l);
-  }
-
-  parser::symbol_type
-  parser::make_ASSIGN (const location_type& l)
-  {
-    return symbol_type (token::TOK_ASSIGN, l);
-  }
-
-  parser::symbol_type
-  parser::make_MINUS (const location_type& l)
-  {
-    return symbol_type (token::TOK_MINUS, l);
-  }
-
-  parser::symbol_type
-  parser::make_PLUS (const location_type& l)
-  {
-    return symbol_type (token::TOK_PLUS, l);
-  }
-
-  parser::symbol_type
-  parser::make_STAR (const location_type& l)
-  {
-    return symbol_type (token::TOK_STAR, l);
-  }
-
-  parser::symbol_type
-  parser::make_SLASH (const location_type& l)
-  {
-    return symbol_type (token::TOK_SLASH, l);
-  }
-
-  parser::symbol_type
-  parser::make_LPAREN (const location_type& l)
-  {
-    return symbol_type (token::TOK_LPAREN, l);
-  }
-
-  parser::symbol_type
-  parser::make_RPAREN (const location_type& l)
-  {
-    return symbol_type (token::TOK_RPAREN, l);
-  }
-
-  parser::symbol_type
-  parser::make_LEFTSCOPE (const location_type& l)
-  {
-    return symbol_type (token::TOK_LEFTSCOPE, l);
-  }
-
-  parser::symbol_type
-  parser::make_RIGHTSCOPE (const location_type& l)
-  {
-    return symbol_type (token::TOK_RIGHTSCOPE, l);
-  }
-
-  parser::symbol_type
-  parser::make_SEMICOLON (const location_type& l)
-  {
-    return symbol_type (token::TOK_SEMICOLON, l);
-  }
-
-  parser::symbol_type
-  parser::make_COMMA (const location_type& l)
-  {
-    return symbol_type (token::TOK_COMMA, l);
   }
 
   parser::symbol_type
@@ -2121,7 +1998,7 @@ namespace yy {
 
 
 } // yy
-#line 2125 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2002 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 

@@ -13,7 +13,7 @@
 
     int  bracket_level = 0;
     char  *string_buf_ptr;
-    #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext\[0\]), loc)
+    #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext[0]), loc)
 
 %}
 
@@ -142,7 +142,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         string_buf_ptr  =  string_buf;
         *string_buf_ptr = '\0';
         yy_push_state(shaderbody);
-		return yy::parser::make_LEFTSCOPE(loc);
+		return CURRENT_SYMBOL;
     }
     {id} {
         // TODO create and REGISTER the variable in a table

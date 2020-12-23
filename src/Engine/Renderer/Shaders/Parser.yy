@@ -69,17 +69,6 @@
 */
 %token
     END 0 "end of file"
-    ASSIGN "="
-    MINUS "-"
-    PLUS "+"
-    STAR "*"
-    SLASH "/"
-    LPAREN "("
-    RPAREN ")"
-    LEFTSCOPE "{"
-    RIGHTSCOPE "}"
-    SEMICOLON ";"
-    COMMA ","
 ;
 
 %type  <std::string>    glsl_header
@@ -203,7 +192,7 @@ TODO: New resource types (from D3D)
 %start input;
 
 input: %empty { gEnv->pLog->LogWarning("Empty effect"); }
-| ";"
+| ';'
 | input tech
 | input glsl
 | input hlsl
@@ -253,7 +242,7 @@ pass:
 PASS { 
     CryLog("Creation of PASS");
     }
-  annotations "{" passstates "}"  {
+  annotations '{' passstates '}'  {
   /*
     LOGI("Pass with no name...\n");
     curAnnotations = NULL;
@@ -274,7 +263,7 @@ PASS {
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
-  annotations "{" passstates "}"  {
+  annotations '{' passstates '}'  {
     //LOGD("Pass %s...\n", $2->c_str() );
     //delete $2;
     //curAnnotations = NULL;
@@ -301,13 +290,13 @@ TECHNIQUE {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
-} "{" passes "}" 
+} '{' passes '}' 
 | TECHNIQUE IDENTIFIER {
     CryLog("creation of Technique %s...\n", $2.c_str() );
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
-} annotations "{" passes "}" { 
+} annotations '{' passes '}' { 
     //lex_pop_state();
     //curAnnotations = NULL;
 }
@@ -342,14 +331,14 @@ glsl_header:
     }
 ;
 
-glsl: glsl_header "{" CODEBODY { 
+glsl: glsl_header '{' CODEBODY { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
 	}
 ;
 
 
-vertexformat: VERTEXFORMAT IDENTIFIER "{" IDENTIFIER "=" format ";" "}"
+vertexformat: VERTEXFORMAT IDENTIFIER '{' IDENTIFIER '=' format ';' '}'
 {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
