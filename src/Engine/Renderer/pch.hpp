@@ -6,3 +6,4 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
+#include <array>

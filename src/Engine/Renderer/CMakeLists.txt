@@ -116,6 +116,7 @@ if (Vulkan_FOUND)
 	target_link_libraries(FxParser PUBLIC Vulkan::Vulkan)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
 endif()
+target_link_libraries(FxParser PUBLIC Math)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 

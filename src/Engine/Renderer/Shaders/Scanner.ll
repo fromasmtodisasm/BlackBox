@@ -13,6 +13,7 @@
 
     int  bracket_level = 0;
     char  *string_buf_ptr;
+    #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext\[0\]), loc)
 
 %}
 
@@ -88,7 +89,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 
 <comment2>{
     .*
-    \n loc.lines (yyleng); loc.step ();//BEGIN(comment_caller);
+    \n loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 }
 
     /*==================================================================
@@ -189,19 +190,37 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 		return yy::parser::make_PASS(loc);
     }
     \{  {
-		return yy::parser::make_LEFTSCOPE(loc);
+		return CURRENT_SYMBOL;
     }
     \} {
         //yy_pop_state();//BEGIN(INITIAL);
-		return yy::parser::make_RIGHTSCOPE(loc);
+		return CURRENT_SYMBOL;
     }
 }
-<pass,pr_state>{
-    \{  {
-		return yy::parser::make_LEFTSCOPE(loc);
+<INITIAL,pass>{
+    /*\{  {
+        return CURRENT_SYMBOL;
     }
     \} {
-		return yy::parser::make_RIGHTSCOPE(loc);
+        //yy_pop_state();
+        return CURRENT_SYMBOL;
+    }*/
+    
+    /*VertexProgram       return VERTEXPROGRAM;*/
+    VertexShader        return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
+    /*FragmentProgram     return FRAGMENTPROGRAM;*/
+    /*FragmentShader      return FRAGMENTPROGRAM;*/
+    PixelShader         return yy::parser::make_FRAGMENTPROGRAM(IShader::Type::E_FRAGMENT, loc);
+    /*GeometryProgram     return GEOMETRYPROGRAM;*/
+    GeometryShader      return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
+}
+
+<pass,pr_state>{
+    \{  {
+		return CURRENT_SYMBOL;
+    }
+    \} {
+		return CURRENT_SYMBOL;
     }
 }
 
@@ -212,6 +231,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     loc.step ();
 }
 
+    /*
 "-"        {
               std::cout << loc.begin.line << " " << loc.end.line << std::endl;
               return yy::parser::make_MINUS  (loc);
@@ -226,12 +246,18 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 "{"        return yy::parser::make_LEFTSCOPE(loc);
 "}"        return yy::parser::make_RIGHTSCOPE(loc);
 ","        return yy::parser::make_COMMA(loc);
+    */
 
 {int}      return make_INT(yytext, loc);
 <INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1>{id}   return yy::parser::make_IDENTIFIER(yytext, loc);
-.          {
-                throw yy::parser::syntax_error(loc, "invalid character: " + std::string(yytext));
-           }
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1>. {   
+    if((yytext[0] >= 33) && (yytext[0] <= 126))
+        return CURRENT_SYMBOL;
+    else {
+        CryLog("Warning: line %d : odd character found (%u)...\n", 0xffff, (unsigned char)yytext[0]);
+    }
+    return CURRENT_SYMBOL;
+}
 <<EOF>>    return yy::parser::make_END (loc);
 
 

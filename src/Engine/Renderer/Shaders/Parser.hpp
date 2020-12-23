@@ -46,10 +46,14 @@
 #ifdef VULKAN_SUPPORT
     #include <vulkan/vulkan.h>
 #endif
+    #include <BlackBox/Renderer/IRender.hpp>
+    #include <BlackBox/Renderer/IShader.hpp>
     class Scanner;
     class Driver;
+    //using shader_assignment = std::pair<std::string, std::string>
 
-#line 53 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+
+#line 57 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -126,7 +130,7 @@
 
 
 namespace yy {
-#line 130 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 134 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -293,22 +297,32 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // VERTEXPROGRAM
+      // FRAGMENTPROGRAM
+      // GEOMETRYPROGRAM
+      // HULLPROGRAM
+      // EVALPROGRAM
+      // shader_type
+      char dummy1[sizeof(IShader::Type)];
+
       // TRUE
       // FALSE
       // BOOL
-      char dummy1[sizeof(bool)];
+      char dummy2[sizeof(bool)];
 
       // FLOAT
-      char dummy2[sizeof(float)];
+      char dummy3[sizeof(float)];
 
       // INT
-      char dummy3[sizeof(int)];
+      char dummy4[sizeof(int)];
 
       // IDENTIFIER
       // STR
       // CODEBODY
       // VARNAME
-      char dummy4[sizeof(std::string)];
+      // shader_assignment
+      // glsl_header
+      char dummy5[sizeof(std::string)];
 };
 
     /// Symbol semantic values.
@@ -462,6 +476,8 @@ namespace yy {
       /// Constructor for valueless symbols, and symbols from each type.
 
   basic_symbol (typename Base::kind_type t, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const IShader::Type v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
 
@@ -836,23 +852,23 @@ namespace yy {
 
     static inline
     symbol_type
-    make_VERTEXPROGRAM (const location_type& l);
+    make_VERTEXPROGRAM (const IShader::Type& v, const location_type& l);
 
     static inline
     symbol_type
-    make_FRAGMENTPROGRAM (const location_type& l);
+    make_FRAGMENTPROGRAM (const IShader::Type& v, const location_type& l);
 
     static inline
     symbol_type
-    make_GEOMETRYPROGRAM (const location_type& l);
+    make_GEOMETRYPROGRAM (const IShader::Type& v, const location_type& l);
 
     static inline
     symbol_type
-    make_HULLPROGRAM (const location_type& l);
+    make_HULLPROGRAM (const IShader::Type& v, const location_type& l);
 
     static inline
     symbol_type
-    make_EVALPROGRAM (const location_type& l);
+    make_EVALPROGRAM (const IShader::Type& v, const location_type& l);
 
     static inline
     symbol_type
@@ -1124,7 +1140,7 @@ namespace yy {
     {
       yyeof_ = 0,
       yylast_ = 129,     ///< Last index in yytable_.
-      yynnts_ = 28,  ///< Number of nonterminal symbols.
+      yynnts_ = 33,  ///< Number of nonterminal symbols.
       yyfinal_ = 3, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
@@ -1217,6 +1233,15 @@ namespace yy {
   {
       switch (other.type_get ())
     {
+      case 76: // VERTEXPROGRAM
+      case 77: // FRAGMENTPROGRAM
+      case 78: // GEOMETRYPROGRAM
+      case 79: // HULLPROGRAM
+      case 80: // EVALPROGRAM
+      case 115: // shader_type
+        value.copy< IShader::Type > (other.value);
+        break;
+
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1235,6 +1260,8 @@ namespace yy {
       case 20: // STR
       case 32: // CODEBODY
       case 33: // VARNAME
+      case 116: // shader_assignment
+      case 130: // glsl_header
         value.copy< std::string > (other.value);
         break;
 
@@ -1255,6 +1282,15 @@ namespace yy {
     (void) v;
       switch (this->type_get ())
     {
+      case 76: // VERTEXPROGRAM
+      case 77: // FRAGMENTPROGRAM
+      case 78: // GEOMETRYPROGRAM
+      case 79: // HULLPROGRAM
+      case 80: // EVALPROGRAM
+      case 115: // shader_type
+        value.copy< IShader::Type > (v);
+        break;
+
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1273,6 +1309,8 @@ namespace yy {
       case 20: // STR
       case 32: // CODEBODY
       case 33: // VARNAME
+      case 116: // shader_assignment
+      case 130: // glsl_header
         value.copy< std::string > (v);
         break;
 
@@ -1288,6 +1326,13 @@ namespace yy {
   parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const location_type& l)
     : Base (t)
     , value ()
+    , location (l)
+  {}
+
+  template <typename Base>
+  parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const IShader::Type v, const location_type& l)
+    : Base (t)
+    , value (v)
     , location (l)
   {}
 
@@ -1345,6 +1390,15 @@ namespace yy {
     // Type destructor.
     switch (yytype)
     {
+      case 76: // VERTEXPROGRAM
+      case 77: // FRAGMENTPROGRAM
+      case 78: // GEOMETRYPROGRAM
+      case 79: // HULLPROGRAM
+      case 80: // EVALPROGRAM
+      case 115: // shader_type
+        value.template destroy< IShader::Type > ();
+        break;
+
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1363,6 +1417,8 @@ namespace yy {
       case 20: // STR
       case 32: // CODEBODY
       case 33: // VARNAME
+      case 116: // shader_assignment
+      case 130: // glsl_header
         value.template destroy< std::string > ();
         break;
 
@@ -1389,6 +1445,15 @@ namespace yy {
     super_type::move(s);
       switch (this->type_get ())
     {
+      case 76: // VERTEXPROGRAM
+      case 77: // FRAGMENTPROGRAM
+      case 78: // GEOMETRYPROGRAM
+      case 79: // HULLPROGRAM
+      case 80: // EVALPROGRAM
+      case 115: // shader_type
+        value.move< IShader::Type > (s.value);
+        break;
+
       case 15: // TRUE
       case 16: // FALSE
       case 19: // BOOL
@@ -1407,6 +1472,8 @@ namespace yy {
       case 20: // STR
       case 32: // CODEBODY
       case 33: // VARNAME
+      case 116: // shader_assignment
+      case 130: // glsl_header
         value.move< std::string > (s.value);
         break;
 
@@ -1926,33 +1993,33 @@ namespace yy {
   }
 
   parser::symbol_type
-  parser::make_VERTEXPROGRAM (const location_type& l)
+  parser::make_VERTEXPROGRAM (const IShader::Type& v, const location_type& l)
   {
-    return symbol_type (token::TOK_VERTEXPROGRAM, l);
+    return symbol_type (token::TOK_VERTEXPROGRAM, v, l);
   }
 
   parser::symbol_type
-  parser::make_FRAGMENTPROGRAM (const location_type& l)
+  parser::make_FRAGMENTPROGRAM (const IShader::Type& v, const location_type& l)
   {
-    return symbol_type (token::TOK_FRAGMENTPROGRAM, l);
+    return symbol_type (token::TOK_FRAGMENTPROGRAM, v, l);
   }
 
   parser::symbol_type
-  parser::make_GEOMETRYPROGRAM (const location_type& l)
+  parser::make_GEOMETRYPROGRAM (const IShader::Type& v, const location_type& l)
   {
-    return symbol_type (token::TOK_GEOMETRYPROGRAM, l);
+    return symbol_type (token::TOK_GEOMETRYPROGRAM, v, l);
   }
 
   parser::symbol_type
-  parser::make_HULLPROGRAM (const location_type& l)
+  parser::make_HULLPROGRAM (const IShader::Type& v, const location_type& l)
   {
-    return symbol_type (token::TOK_HULLPROGRAM, l);
+    return symbol_type (token::TOK_HULLPROGRAM, v, l);
   }
 
   parser::symbol_type
-  parser::make_EVALPROGRAM (const location_type& l)
+  parser::make_EVALPROGRAM (const IShader::Type& v, const location_type& l)
   {
-    return symbol_type (token::TOK_EVALPROGRAM, l);
+    return symbol_type (token::TOK_EVALPROGRAM, v, l);
   }
 
   parser::symbol_type
@@ -2054,7 +2121,7 @@ namespace yy {
 
 
 } // yy
-#line 2058 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2125 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 

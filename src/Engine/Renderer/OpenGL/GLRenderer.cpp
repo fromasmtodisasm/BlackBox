@@ -68,7 +68,14 @@ void TestFx(IConsoleCmdArgs* args)
 		filename = args->GetArg(1);
 
 	PEffect pEffect = nullptr;
-	g_FxParser->Parse(filename, &pEffect);
+	if (g_FxParser->Parse(filename, &pEffect))
+	{
+		CryLog("Dumping shaders of effect: %s", filename.data());
+		for (int i = 0; i < pEffect->GetNumShaders(); i++)
+		{
+			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
+		}
+	}
 }
 
 
@@ -611,12 +618,24 @@ void GLRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpa
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
 	using ShaderInfo = IShaderProgram::ShaderInfo;
-	auto vs			 = CShader::load(ShaderDesc("test.vs", IShader::E_VERTEX));
-	auto fs			 = CShader::load(ShaderDesc("test.frag", IShader::E_FRAGMENT));
-	auto p			 = new CShaderProgram(ShaderInfo(vs, std::string("test.vs")), ShaderInfo(fs, std::string("test.vs")));
-	p->Create("TestProgram");
-	m_Shaders.push_back(p);
-	return p;
+
+	PEffect pEffect = nullptr;
+	if (g_FxParser->Parse(name, &pEffect))
+	{
+
+		CryLog("Dumping shaders of effect: %s", name);
+		for (int i = 0; i < pEffect->GetNumShaders(); i++)
+		{
+			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
+		}
+		auto vs			 = CShader::load(ShaderDesc("test.vs", IShader::E_VERTEX));
+		auto fs			 = CShader::load(ShaderDesc("test.frag", IShader::E_FRAGMENT));
+		auto p			 = new CShaderProgram(ShaderInfo(vs, std::string("test.vs")), ShaderInfo(fs, std::string("test.vs")));
+		p->Create("TestProgram");
+		m_Shaders.push_back(p);
+		return p;
+	}
+	return nullptr;
 }
 
 IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)

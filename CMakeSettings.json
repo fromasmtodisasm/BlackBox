@@ -1,4 +1,4 @@
-{
+﻿{
   "configurations": [
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Debug_${generator}",
@@ -37,7 +37,7 @@
       "variables": [
         {
           "name": "OPTION_REMOTE_CONSOLE",
-          "value": "False",
+          "value": "True",
           "type": "BOOL"
         }
       ]

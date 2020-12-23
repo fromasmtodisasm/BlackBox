@@ -12,3 +12,12 @@ IShader* CEffect::GetShader(const char* name)
 {
 	return nullptr;
 }
+
+void CTechnique::GetNumPasses()
+{
+}
+
+bool CTechnique::CompilePass(int i)
+{
+	return false;
+}

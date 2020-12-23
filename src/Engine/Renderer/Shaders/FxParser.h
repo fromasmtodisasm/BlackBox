@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 struct IShader;
 struct IPass
 {
@@ -8,6 +9,11 @@ struct IPass
 struct ITechnique : public _i_reference_target_t
 {
 	virtual void GetNumPasses() = 0;
+	virtual bool CompilePass(int i)	= 0;
+};
+
+struct STechnique
+{
 };
 
 struct IEffect : public _i_reference_target_t
