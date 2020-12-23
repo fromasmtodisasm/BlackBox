@@ -198,13 +198,13 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
 }
 <INITIAL,pass>{
-    /*\{  {
+    \{  {
         return CURRENT_SYMBOL;
     }
     \} {
-        //yy_pop_state();
+        yy_pop_state();
         return CURRENT_SYMBOL;
-    }*/
+    }
     
     /*VertexProgram       return VERTEXPROGRAM;*/
     VertexShader        return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
