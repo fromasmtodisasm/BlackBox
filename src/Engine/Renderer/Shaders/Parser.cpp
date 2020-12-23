@@ -683,6 +683,7 @@ namespace yy {
     {
     SPass pass;
     pass.Name = yystack_[0].value.as< std::string > ().c_str();
+    driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
 
@@ -690,11 +691,11 @@ namespace yy {
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
-#line 694 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 695 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 30:
-#line 266 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 267 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     //LOGD("Pass %s...\n", $2->c_str() );
     //delete $2;
@@ -705,53 +706,56 @@ namespace yy {
     //curPRState = NULL;
     //lex_pop_state();
 }
-#line 709 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 710 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 31:
-#line 276 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 277 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 715 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 716 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 34:
-#line 283 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 284 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass list\n");}
-#line 721 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 722 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 35:
-#line 289 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 290 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 731 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 732 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 37:
-#line 294 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 295 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
-    CryLog("creation of Technique %s...\n", yystack_[0].value.as< std::string > ().c_str() );
+    CTechnique tech;
+    tech.Name =  yystack_[0].value.as< std::string > ().c_str();
+    driver.currentEffect->m_Techniques.push_back(tech);
+    CryLog("creation of Technique %s...\n", tech.Name);
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 742 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 746 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 38:
-#line 299 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 303 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
     //lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 751 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 755 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 40:
-#line 309 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 313 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
 /*
     if(!curAnnotations)
@@ -761,62 +765,62 @@ namespace yy {
     delete $4;
 */
     }
-#line 765 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 769 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 41:
-#line 319 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 323 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {CryLog("Begin annotations"); }
-#line 771 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 775 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 45:
-#line 326 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 330 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); 
     }
-#line 779 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 783 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 46:
-#line 329 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 333 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = "Common";
     }
-#line 787 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 791 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 47:
-#line 334 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 338 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
 	}
-#line 796 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 800 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 48:
-#line 342 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 346 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
     yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", 10);
 }
-#line 806 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 810 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 49:
-#line 349 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 353 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
       //$$ = VkFormat(10); 
       CryLog("format not implemented");
 
       }
-#line 816 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 820 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 820 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 824 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -1243,10 +1247,10 @@ namespace yy {
        0,   194,   194,   195,   196,   197,   198,   199,   200,   201,
      202,   203,   204,   205,   206,   207,   208,   209,   210,   215,
      216,   217,   220,   226,   227,   228,   236,   242,   242,   256,
-     256,   276,   281,   282,   283,   289,   289,   294,   294,   308,
-     309,   319,   319,   321,   322,   326,   329,   334,   341,   349,
-     356,   357,   358,   359,   360,   361,   362,   363,   364,   365,
-     366,   367,   368
+     256,   277,   282,   283,   284,   290,   290,   295,   295,   312,
+     313,   323,   323,   325,   326,   330,   333,   338,   345,   353,
+     360,   361,   362,   363,   364,   365,   366,   367,   368,   369,
+     370,   371,   372
   };
 
   // Print the state stack on the debug stream.
@@ -1281,8 +1285,8 @@ namespace yy {
 
 
 } // yy
-#line 1285 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
-#line 371 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
+#line 1289 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
+#line 375 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

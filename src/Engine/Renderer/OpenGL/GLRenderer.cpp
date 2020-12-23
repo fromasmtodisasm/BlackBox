@@ -57,6 +57,7 @@ class ShaderMan
 };
 
 ShaderMan* gShMan;
+FxParser s_FxParser;
 FxParser* g_FxParser;
 
 void TestFx(IConsoleCmdArgs* args)
@@ -136,6 +137,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_pSystem->GetIInput()->AddEventListener(this);
 	//=======================
 	glInit();
+	g_FxParser = &s_FxParser;
 	if (!InitResourceManagers())
 		return nullptr;
 

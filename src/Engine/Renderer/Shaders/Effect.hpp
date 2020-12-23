@@ -31,5 +31,5 @@ public:
 
 public:
 	std::vector<ShaderInfo> m_shaders;
-	std::vector<CTechnique> m_Techniques{};
+	std::vector<CTechnique> m_Techniques;
 };

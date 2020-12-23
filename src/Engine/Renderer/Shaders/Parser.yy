@@ -256,6 +256,7 @@ PASS {
 | PASS IDENTIFIER {
     SPass pass;
     pass.Name = $2.c_str();
+    driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
 
@@ -292,7 +293,10 @@ TECHNIQUE {
     //curAnnotations = curTechnique->annotations()->getExInterface();
 } '{' passes '}' 
 | TECHNIQUE IDENTIFIER {
-    CryLog("creation of Technique %s...\n", $2.c_str() );
+    CTechnique tech;
+    tech.Name =  $2.c_str();
+    driver.currentEffect->m_Techniques.push_back(tech);
+    CryLog("creation of Technique %s...\n", tech.Name);
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;

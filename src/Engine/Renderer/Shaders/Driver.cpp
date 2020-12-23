@@ -18,6 +18,7 @@ IEffect* Driver::parse(const char* f)
 {
 	CEffect* pEffect = new CEffect;
 	currentEffect	= pEffect;
+	pEffect->m_Techniques.clear();
     file = f;
     location.initialize(&file);
     scan_begin();
