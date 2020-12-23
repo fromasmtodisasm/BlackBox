@@ -1,5 +1,6 @@
 #pragma once
 #include "FxParser.h"
+#include <BlackBox/Renderer/IShader.hpp>
 
 struct SPass
 {
@@ -28,6 +29,11 @@ public:
 	virtual int GetNumShaders() override;
 	virtual ShaderInfo GetShader(int i) override;
 	virtual IShader* GetShader(const char* name) override;
+
+	void assign(IShader::Type type, const string& name)
+	{
+	
+	}
 
 public:
 	std::vector<ShaderInfo> m_shaders;

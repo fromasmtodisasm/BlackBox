@@ -219,6 +219,14 @@ shader_type
 
 shader_assignment: shader_type '=' IDENTIFIER {
     //$$ = std::make_pair($1, $3);
+    auto tech = driver.currentEffect->m_Techniques.back();
+    auto pass = tech.Passes.back();
+    auto sh_name = $3;
+    for (int i = 0; i < 6; i++)
+    {
+        if (driver.currentEffect->m_shaders[i].name == sh_name)
+            pass.Shaders[$1] = it->data;
+    }
     CryLog("ident for shader_type: %s", $3.data());
 }
 ;
