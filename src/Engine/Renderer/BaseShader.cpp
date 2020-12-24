@@ -239,8 +239,9 @@ CBaseShaderProgram::CBaseShaderProgram(
 	ShaderRef vs, ShaderRef fs)
 	: CBaseShaderProgram()
 {
-	m_Vertex.shader	  = vs;
-	m_Fragment.shader = fs;
+	
+	m_Vertex   = ShaderInfo(vs, "");
+	m_Fragment = ShaderInfo(fs, "");
 }
 
 CBaseShaderProgram::CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs)

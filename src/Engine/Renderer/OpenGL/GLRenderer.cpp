@@ -150,7 +150,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screenshader.vs", "screenshader.frag")))
+	//if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screenshader.vs", "screenshader.frag")))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen.fx", 0)))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -159,8 +160,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_ScreenShader->Uniform(0, "screenTexture");
 	m_ScreenShader->Unuse();
 
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.vs", "auxgeom.frag")))
-	//if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("tmp/auxgeom.fx", 0)))
+	//if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.vs", "auxgeom.frag")))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.fx", 0)))
 	{
 		m_pSystem->Log("Error of loading auxgeom shader");
 	}
@@ -627,7 +628,9 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 	using ShaderInfo = IShaderProgram::ShaderInfo;
 
 	PEffect pEffect = nullptr;
-	if (g_FxParser->Parse(name, &pEffect))
+	static char path[256] = {0x01};
+	sprintf(path, "res/shaders/fx/%s", name);
+	if (g_FxParser->Parse(path, &pEffect))
 	{
 
 		CryLog("Dumping shaders of effect: %s", name);
