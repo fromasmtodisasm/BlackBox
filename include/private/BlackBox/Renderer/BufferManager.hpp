@@ -2,6 +2,16 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
+
+enum AttributeLocation : GLuint {
+	position = 0,
+	normal = 1,
+	uv = 2,
+	tangent = 3,
+	btangent = 4,
+	color = 5
+};
+
 struct SVertexPoolEntry
 {
 	std::vector<CVertexBuffer*> vertexBuffers;

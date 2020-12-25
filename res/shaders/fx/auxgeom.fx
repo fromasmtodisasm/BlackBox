@@ -1,15 +1,16 @@
 GLSLShader
 {
 	#version 460 core
-
 }
 
 GLSLShader vert
 {
 
+#if 0
     layout (location = 0) in vec3 aPos;
     layout (location = 2) in vec3 aTC;
     layout (location = 5) in vec4 aColor;
+#endif
 	out vec4 v_color;
 
 	uniform mat4 projection;
@@ -39,14 +40,12 @@ Technique AuxGeometry
 
   Pass p0
   {
-	  /*
 	InputLayout
 	{
-		vec3 aPos : POSITION;
-		vec4 aColor : COLOR;
-		vec2 aTC : TEXCOORD;
+		vec3 aPos : POSITION
+		vec4 aColor : COLOR
+		vec2 aTC : TEXCOORD
 	}
-	*/
     VertexShader = vert
     PixelShader = frag
   }

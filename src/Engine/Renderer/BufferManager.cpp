@@ -1,17 +1,9 @@
-#include <BlackBox/Renderer/BufferManager.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/BufferManager.hpp>
 
 namespace
 {
-	enum AttributeLocation : GLuint {
-		position = 0,
-		normal = 1,
-		uv = 2,
-		tangent = 3,
-		btangent = 4,
-		color = 5
-	};
-	struct VertexAttributePointer
+	struct INPUT_ELEMENT_DESC
 	{
 		GLuint index;
 		GLint size;
@@ -20,7 +12,7 @@ namespace
 		GLsizei stride;
 		const void* pointer;
 
-		VertexAttributePointer(
+		INPUT_ELEMENT_DESC(
 			GLuint index,
 			GLint size,
 			GLenum type,
@@ -40,32 +32,32 @@ namespace
 	};
 
 #define OFFSET(m) reinterpret_cast<GLvoid*>(static_cast<INT_PTR>((gBufInfoTable[vertexFormat].m)))
-	inline VertexAttributePointer GetPositionAttributePointer(int vertexFormat)
+	inline INPUT_ELEMENT_DESC GetPositionAttributePointer(int vertexFormat)
 	{
-		return VertexAttributePointer(
+		return INPUT_ELEMENT_DESC(
 			position, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	reinterpret_cast<GLvoid*>(0)
 		);
 	}
-	inline VertexAttributePointer GetNormalAttributePointer(int vertexFormat)
+	inline INPUT_ELEMENT_DESC GetNormalAttributePointer(int vertexFormat)
 	{
-		return VertexAttributePointer(
+		return INPUT_ELEMENT_DESC(
 			normal, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], OFFSET(OffsNormal)
 		);
 	}
-	inline VertexAttributePointer GetColorAttributePointer(int vertexFormat)
+	inline INPUT_ELEMENT_DESC GetColorAttributePointer(int vertexFormat)
 	{
-		return VertexAttributePointer(
+		return INPUT_ELEMENT_DESC(
 			color, 4, GL_UNSIGNED_BYTE, GL_TRUE, gVertexSize[vertexFormat],	OFFSET(OffsColor)
 		);
 	}
-	inline VertexAttributePointer GetUVAttributePointer(int vertexFormat)
+	inline INPUT_ELEMENT_DESC GetUVAttributePointer(int vertexFormat)
 	{
-		return VertexAttributePointer(
+		return INPUT_ELEMENT_DESC(
 			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat],	OFFSET(OffsTC)
 		);
 	}
 
-	void SetAttribPointer(VertexAttributePointer vap)
+	void SetAttribPointer(INPUT_ELEMENT_DESC vap)
 	{
 		gl::EnableVertexAttribArray(vap.index);
 		gl::VertexAttribPointer(

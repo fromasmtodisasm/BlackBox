@@ -48,6 +48,8 @@
 #endif
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
+	#include <BlackBox/Renderer/OpenGL/Core.hpp>
+    #include <BlackBox/Renderer/BufferManager.hpp>
     class Scanner;
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
@@ -56,7 +58,77 @@
     #define lex_pop_state() scanner.pop_state()
 
 
-#line 60 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+    namespace nvFX {
+    /*************************************************************************/ /**
+    ** \brief IUniform Parameter interface
+    **/ /*************************************************************************/ 
+    class IUniform 
+    {
+    protected:
+        IUniform() {}
+    public:
+        virtual ~IUniform() {}
+        enum Type {
+            TUndefined = 0,
+            TInt, TInt2, TInt3, TInt4,
+            //UInt,
+            TBool, TBool2, TBool3, TBool4,
+            TFloat, TVec2, TVec3, TVec4,
+            TMat2, TMat3, TMat4, 
+            TUBO, // Uniform Buffer Object
+            TCB,  // Constant Buffer (D3D)
+            TUniform,
+            TTexture, // a generic texture : for example when the app created this uniform to bind a texture to a sampler
+            // Note: texture==sampler in this type list. D3D uses texture objects, OpenGL will use samplers...
+            // Those typed texture/GL-samplers are when the parser encoutered an external declaration of uniform : it needs to know the type
+            TTexture1D,
+            TTexture2D,
+            TTexture2DShadow,
+            TTexture2DRect,
+            TTexture3D,
+            TTextureCube,
+            TTexUnit, //TODO: check about this... used for the Cg case (can't assign texunit)
+            // TODO : add missing cases
+    #ifndef OGLES2
+            TSubroutineUniform,
+            TSubroutineUniformByID,
+    #endif
+        };
+        enum PrecisionType /// precision is only used for OpenGL ES
+        {
+            PHighP = 0,
+            PMediumP = 1,
+            PLowP = 2,
+        };
+    };
+    inline std::string toString(IUniform::Type type)
+    {
+        switch(type)
+        {
+            case nvFX::IUniform::TFloat: return "float";
+            case nvFX::IUniform::TVec2: return "vec2";
+            case nvFX::IUniform::TVec3: return  "vec3";
+            case nvFX::IUniform::TVec4: return  "vec4";
+            case nvFX::IUniform::TInt: return  "int";
+            case nvFX::IUniform::TInt2: return  "ivec2";
+            case nvFX::IUniform::TInt3: return  "ivec3";
+            case nvFX::IUniform::TInt4: return  "ivec4";
+            case nvFX::IUniform::TBool: return  "bool";
+            case nvFX::IUniform::TBool2: return  "bvec2";
+            case nvFX::IUniform::TBool3: return  "bvec3";
+            case nvFX::IUniform::TBool4: return  "bvec4";
+            case nvFX::IUniform::TMat2: return  "mat2";
+            case nvFX::IUniform::TMat3: return  "mat3";
+            case nvFX::IUniform::TMat4: return  "mat4";
+            default: assert(0); return "unknown_type";
+
+        }
+
+    }
+    }
+
+
+#line 132 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -133,7 +205,7 @@
 
 
 namespace yy {
-#line 137 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 209 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -319,13 +391,18 @@ namespace yy {
       // INT
       char dummy4[sizeof(int)];
 
+      // base_type
+      char dummy5[sizeof(nvFX::IUniform::Type)];
+
       // IDENTIFIER
       // STR
       // CODEBODY
       // VARNAME
       // shader_assignment
+      // var_decl
+      // semantic
       // glsl_header
-      char dummy5[sizeof(std::string)];
+      char dummy6[sizeof(std::string)];
 };
 
     /// Symbol semantic values.
@@ -375,63 +452,64 @@ namespace yy {
         TOK_TEXTURERESOURCE3D = 281,
         TOK_TEXTURERESOURCERECT = 282,
         TOK_TEXTURERESOURCECUBE = 283,
-        TOK_VOID_TYPE = 284,
-        TOK_UNSIGNED = 285,
-        TOK_HIGHP = 286,
-        TOK_MEDIUMP = 287,
-        TOK_LOWP = 288,
-        TOK_UNIFORM = 289,
-        TOK_CSTBUFFER = 290,
-        TOK_FLOAT_TYPE = 291,
-        TOK_FLOAT2_TYPE = 292,
-        TOK_FLOAT3_TYPE = 293,
-        TOK_FLOAT4_TYPE = 294,
-        TOK_MAT2_TYPE = 295,
-        TOK_MAT3_TYPE = 296,
-        TOK_MAT4_TYPE = 297,
-        TOK_BOOL_TYPE = 298,
-        TOK_BOOL2_TYPE = 299,
-        TOK_BOOL3_TYPE = 300,
-        TOK_BOOL4_TYPE = 301,
-        TOK_INT_TYPE = 302,
-        TOK_INT2_TYPE = 303,
-        TOK_INT3_TYPE = 304,
-        TOK_INT4_TYPE = 305,
-        TOK_TEXTURE1D_TYPE = 306,
-        TOK_TEXTURE2D_TYPE = 307,
-        TOK_TEXTURE2DSHADOW_TYPE = 308,
-        TOK_TEXTURE2DRECT_TYPE = 309,
-        TOK_TEXTURE3D_TYPE = 310,
-        TOK_TEXTURECUBE_TYPE = 311,
-        TOK_SAMPLER1D_TYPE = 312,
-        TOK_SAMPLER2D_TYPE = 313,
-        TOK_SAMPLER2DSHADOW_TYPE = 314,
-        TOK_SAMPLER2DRECT_TYPE = 315,
-        TOK_SAMPLER3D_TYPE = 316,
-        TOK_SAMPLERCUBE_TYPE = 317,
-        TOK_EXTENSION = 318,
-        TOK_SEPARATE_SHADER = 319,
-        TOK_VERTEXPROGRAM = 320,
-        TOK_FRAGMENTPROGRAM = 321,
-        TOK_GEOMETRYPROGRAM = 322,
-        TOK_HULLPROGRAM = 323,
-        TOK_EVALPROGRAM = 324,
-        TOK_SHDPROFILE = 325,
-        TOK_SAMPLERRESOURCE = 326,
-        TOK_SAMPLERTEXUNIT = 327,
-        TOK_SETSAMPLERSTATE = 328,
-        TOK_SETDSTSTATE = 329,
-        TOK_SETRASTERIZATIONSTATE = 330,
-        TOK_SETCOLORSAMPLESTATE = 331,
-        TOK_IMAGERESOURCE = 332,
-        TOK_IMAGEUNIT = 333,
-        TOK_IMAGEACCESS = 334,
-        TOK_IMAGELAYER = 335,
-        TOK_IMAGELAYERED = 336,
-        TOK_WRITE_ONLY = 337,
-        TOK_READ_ONLY = 338,
-        TOK_READ_WRITE = 339,
-        TOK_VERTEXFORMAT = 340
+        TOK_INPUTLAYOUT = 284,
+        TOK_VOID_TYPE = 285,
+        TOK_UNSIGNED = 286,
+        TOK_HIGHP = 287,
+        TOK_MEDIUMP = 288,
+        TOK_LOWP = 289,
+        TOK_UNIFORM = 290,
+        TOK_CSTBUFFER = 291,
+        TOK_FLOAT_TYPE = 292,
+        TOK_FLOAT2_TYPE = 293,
+        TOK_FLOAT3_TYPE = 294,
+        TOK_FLOAT4_TYPE = 295,
+        TOK_MAT2_TYPE = 296,
+        TOK_MAT3_TYPE = 297,
+        TOK_MAT4_TYPE = 298,
+        TOK_BOOL_TYPE = 299,
+        TOK_BOOL2_TYPE = 300,
+        TOK_BOOL3_TYPE = 301,
+        TOK_BOOL4_TYPE = 302,
+        TOK_INT_TYPE = 303,
+        TOK_INT2_TYPE = 304,
+        TOK_INT3_TYPE = 305,
+        TOK_INT4_TYPE = 306,
+        TOK_TEXTURE1D_TYPE = 307,
+        TOK_TEXTURE2D_TYPE = 308,
+        TOK_TEXTURE2DSHADOW_TYPE = 309,
+        TOK_TEXTURE2DRECT_TYPE = 310,
+        TOK_TEXTURE3D_TYPE = 311,
+        TOK_TEXTURECUBE_TYPE = 312,
+        TOK_SAMPLER1D_TYPE = 313,
+        TOK_SAMPLER2D_TYPE = 314,
+        TOK_SAMPLER2DSHADOW_TYPE = 315,
+        TOK_SAMPLER2DRECT_TYPE = 316,
+        TOK_SAMPLER3D_TYPE = 317,
+        TOK_SAMPLERCUBE_TYPE = 318,
+        TOK_EXTENSION = 319,
+        TOK_SEPARATE_SHADER = 320,
+        TOK_VERTEXPROGRAM = 321,
+        TOK_FRAGMENTPROGRAM = 322,
+        TOK_GEOMETRYPROGRAM = 323,
+        TOK_HULLPROGRAM = 324,
+        TOK_EVALPROGRAM = 325,
+        TOK_SHDPROFILE = 326,
+        TOK_SAMPLERRESOURCE = 327,
+        TOK_SAMPLERTEXUNIT = 328,
+        TOK_SETSAMPLERSTATE = 329,
+        TOK_SETDSTSTATE = 330,
+        TOK_SETRASTERIZATIONSTATE = 331,
+        TOK_SETCOLORSAMPLESTATE = 332,
+        TOK_IMAGERESOURCE = 333,
+        TOK_IMAGEUNIT = 334,
+        TOK_IMAGEACCESS = 335,
+        TOK_IMAGELAYER = 336,
+        TOK_IMAGELAYERED = 337,
+        TOK_WRITE_ONLY = 338,
+        TOK_READ_ONLY = 339,
+        TOK_READ_WRITE = 340,
+        TOK_VERTEXFORMAT = 341
       };
     };
 
@@ -476,6 +554,8 @@ namespace yy {
   basic_symbol (typename Base::kind_type t, const float v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const nvFX::IUniform::Type v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
 
@@ -653,6 +733,10 @@ namespace yy {
     static inline
     symbol_type
     make_TEXTURERESOURCECUBE (const location_type& l);
+
+    static inline
+    symbol_type
+    make_INPUTLAYOUT (const location_type& l);
 
     static inline
     symbol_type
@@ -1087,12 +1171,12 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 123,     ///< Last index in yytable_.
-      yynnts_ = 33,  ///< Number of nonterminal symbols.
+      yylast_ = 180,     ///< Last index in yytable_.
+      yynnts_ = 38,  ///< Number of nonterminal symbols.
       yyfinal_ = 3, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 104  ///< Number of tokens.
+      yyntokens_ = 106  ///< Number of tokens.
     };
 
 
@@ -1115,14 +1199,14 @@ namespace yy {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    86,
-      90,    87,    91,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    91,    87,
+      92,    88,    93,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    88,     2,    89,     2,     2,     2,     2,
+       2,     2,     2,    89,     2,    90,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1144,10 +1228,10 @@ namespace yy {
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
-      85,    92,    93,    94,    95,    96,    97,    98,    99,   100,
-     101,   102,   103
+      85,    86,    94,    95,    96,    97,    98,    99,   100,   101,
+     102,   103,   104,   105
     };
-    const unsigned int user_token_number_max_ = 352;
+    const unsigned int user_token_number_max_ = 353;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -1180,12 +1264,12 @@ namespace yy {
   {
       switch (other.type_get ())
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         value.copy< IShader::Type > (other.value);
         break;
 
@@ -1203,12 +1287,18 @@ namespace yy {
         value.copy< int > (other.value);
         break;
 
+      case 115: // base_type
+        value.copy< nvFX::IUniform::Type > (other.value);
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         value.copy< std::string > (other.value);
         break;
 
@@ -1229,12 +1319,12 @@ namespace yy {
     (void) v;
       switch (this->type_get ())
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         value.copy< IShader::Type > (v);
         break;
 
@@ -1252,12 +1342,18 @@ namespace yy {
         value.copy< int > (v);
         break;
 
+      case 115: // base_type
+        value.copy< nvFX::IUniform::Type > (v);
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         value.copy< std::string > (v);
         break;
 
@@ -1305,6 +1401,13 @@ namespace yy {
   {}
 
   template <typename Base>
+  parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const nvFX::IUniform::Type v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
   parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l)
     : Base (t)
     , value (v)
@@ -1337,12 +1440,12 @@ namespace yy {
     // Type destructor.
     switch (yytype)
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         value.template destroy< IShader::Type > ();
         break;
 
@@ -1360,12 +1463,18 @@ namespace yy {
         value.template destroy< int > ();
         break;
 
+      case 115: // base_type
+        value.template destroy< nvFX::IUniform::Type > ();
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         value.template destroy< std::string > ();
         break;
 
@@ -1392,12 +1501,12 @@ namespace yy {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         value.move< IShader::Type > (s.value);
         break;
 
@@ -1415,12 +1524,18 @@ namespace yy {
         value.move< int > (s.value);
         break;
 
+      case 115: // base_type
+        value.move< nvFX::IUniform::Type > (s.value);
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         value.move< std::string > (s.value);
         break;
 
@@ -1487,9 +1602,9 @@ namespace yy {
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
      315,   316,   317,   318,   319,   320,   321,   322,   323,   324,
      325,   326,   327,   328,   329,   330,   331,   332,   333,   334,
-     335,   336,   337,   338,   339,   340,    59,    61,   123,   125,
-      60,    62,   341,   342,   343,   344,   345,   346,   347,   348,
-     349,   350,   351,   352
+     335,   336,   337,   338,   339,   340,   341,    59,    61,   123,
+     125,    58,    60,    62,   342,   343,   344,   345,   346,   347,
+     348,   349,   350,   351,   352,   353
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1654,6 +1769,12 @@ namespace yy {
   parser::make_TEXTURERESOURCECUBE (const location_type& l)
   {
     return symbol_type (token::TOK_TEXTURERESOURCECUBE, l);
+  }
+
+  parser::symbol_type
+  parser::make_INPUTLAYOUT (const location_type& l)
+  {
+    return symbol_type (token::TOK_INPUTLAYOUT, l);
   }
 
   parser::symbol_type
@@ -2001,7 +2122,7 @@ namespace yy {
 
 
 } // yy
-#line 2005 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2126 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 

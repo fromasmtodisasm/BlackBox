@@ -197,6 +197,11 @@ ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type)
 	auto pass = tech->GetPass(0);
 	auto code = pass->CommonCode;
 
+	if (type == IShader::E_VERTEX)
+	{
+		for (auto& in : pass->InputLayout)
+			code.push_back(in);
+	}
 	code.push_back(pass->Shaders[type]);
 	return CShader::loadFromMemory(code, type);
 }

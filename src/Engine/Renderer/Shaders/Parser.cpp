@@ -30,7 +30,7 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 // //                    "%code top" blocks.
-#line 37 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
+#line 109 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
 
     #ifdef S_FALSE
     #undef S_FALSE
@@ -62,12 +62,30 @@
         return scanner.ScanToken();
     }
 
-#line 66 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
+    std::string location_from_semantic(std::string semantic)
+    {
+        using namespace std;
+        if (semantic == "POSITION")
+            return to_string(AttributeLocation::position);
+        if (semantic == "NORMAL")
+            return to_string(AttributeLocation::normal);
+        if (semantic == "TEXCOORD")
+            return to_string(AttributeLocation::uv);
+        if (semantic == "TANGENT")
+            return to_string(AttributeLocation::tangent);
+        if (semantic == "COLOR")
+            return to_string(AttributeLocation::color);
+        return "-1";
+    }
+
+    using Type = std::string;
+
+#line 84 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 71 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
+#line 89 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -81,7 +99,7 @@
 
 // User implementation prologue.
 
-#line 85 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
+#line 103 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -167,7 +185,7 @@
 
 
 namespace yy {
-#line 171 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
+#line 189 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -280,12 +298,12 @@ namespace yy {
   {
       switch (that.type_get ())
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         value.move< IShader::Type > (that.value);
         break;
 
@@ -303,12 +321,18 @@ namespace yy {
         value.move< int > (that.value);
         break;
 
+      case 115: // base_type
+        value.move< nvFX::IUniform::Type > (that.value);
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         value.move< std::string > (that.value);
         break;
 
@@ -327,12 +351,12 @@ namespace yy {
     state = that.state;
       switch (that.type_get ())
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         value.copy< IShader::Type > (that.value);
         break;
 
@@ -350,12 +374,18 @@ namespace yy {
         value.copy< int > (that.value);
         break;
 
+      case 115: // base_type
+        value.copy< nvFX::IUniform::Type > (that.value);
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         value.copy< std::string > (that.value);
         break;
 
@@ -500,12 +530,12 @@ namespace yy {
 
 
     // User initialization code.
-    #line 28 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:741
+    #line 100 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:741
 {
     is_common = false;
 }
 
-#line 509 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:741
+#line 539 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:741
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
@@ -595,12 +625,12 @@ namespace yy {
          when using variants.  */
         switch (yyr1_[yyn])
     {
-      case 65: // VERTEXPROGRAM
-      case 66: // FRAGMENTPROGRAM
-      case 67: // GEOMETRYPROGRAM
-      case 68: // HULLPROGRAM
-      case 69: // EVALPROGRAM
-      case 106: // shader_type
+      case 66: // VERTEXPROGRAM
+      case 67: // FRAGMENTPROGRAM
+      case 68: // GEOMETRYPROGRAM
+      case 69: // HULLPROGRAM
+      case 70: // EVALPROGRAM
+      case 108: // shader_type
         yylhs.value.build< IShader::Type > ();
         break;
 
@@ -618,12 +648,18 @@ namespace yy {
         yylhs.value.build< int > ();
         break;
 
+      case 115: // base_type
+        yylhs.value.build< nvFX::IUniform::Type > ();
+        break;
+
       case 3: // IDENTIFIER
       case 9: // STR
       case 21: // CODEBODY
       case 22: // VARNAME
-      case 107: // shader_assignment
-      case 121: // glsl_header
+      case 109: // shader_assignment
+      case 114: // var_decl
+      case 116: // semantic
+      case 128: // glsl_header
         yylhs.value.build< std::string > ();
         break;
 
@@ -645,54 +681,174 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 205 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 302 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { gEnv->pLog->LogWarning("Empty effect"); }
-#line 651 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 687 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 19:
-#line 226 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 323 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 657 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 693 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 227 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 324 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 663 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 699 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 228 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 325 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 669 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 705 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 22:
-#line 231 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 328 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     //$$ = std::make_pair($1, $3);
 	driver.currentEffect->shader_assignment(yystack_[2].value.as< IShader::Type > (),yystack_[0].value.as< std::string > ());
 }
-#line 678 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 714 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
   case 25:
-#line 239 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 336 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in shader_assignment list\n");}
-#line 684 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 720 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 27:
-#line 253 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 26:
+#line 343 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { CryLog("Hi"); }
+#line 726 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 29:
+#line 348 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {
+    { CryLog("slkfjlkj123123123123"); }
+    lex_pop_state();
+}
+#line 735 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 32:
+#line 354 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    {
+    yylhs.value.as< std::string > () = "layout(location = " + location_from_semantic(yystack_[0].value.as< std::string > ()) + ") in " + nvFX::toString(yystack_[2].value.as< nvFX::IUniform::Type > ()) + " " + yystack_[1].value.as< std::string > () + ";";
+    driver.currentEffect->m_Techniques.back().Passes.back().InputLayout.push_back(yylhs.value.as< std::string > ());
+}
+#line 744 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 33:
+#line 361 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TFloat; }
+#line 750 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 34:
+#line 362 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec2; }
+#line 756 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 35:
+#line 363 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec3; }
+#line 762 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 36:
+#line 364 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec4; }
+#line 768 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 37:
+#line 365 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt; }
+#line 774 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 38:
+#line 366 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt2; }
+#line 780 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 39:
+#line 367 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt3; }
+#line 786 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 40:
+#line 368 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt4; }
+#line 792 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 41:
+#line 369 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool; }
+#line 798 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 42:
+#line 370 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool2; }
+#line 804 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 43:
+#line 371 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool3; }
+#line 810 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 44:
+#line 372 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool4; }
+#line 816 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 45:
+#line 373 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat2; }
+#line 822 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 46:
+#line 374 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat3; }
+#line 828 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 47:
+#line 375 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat4; }
+#line 834 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 49:
+#line 381 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+    { yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); }
+#line 840 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 50:
+#line 387 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
     CryLog("Creation of PASS");
     }
-#line 692 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 848 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 28:
-#line 256 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 51:
+#line 390 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
   /*
     LOGI("Pass with no name...\n");
@@ -704,11 +860,11 @@ namespace yy {
 */
     lex_pop_state();
 }
-#line 708 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 864 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 29:
-#line 267 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 52:
+#line 401 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     SPass pass;
     pass.Name = yystack_[0].value.as< std::string > ().c_str();
@@ -721,11 +877,11 @@ namespace yy {
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
-#line 725 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 881 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 30:
-#line 279 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 53:
+#line 413 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     //LOGD("Pass %s...\n", $2->c_str() );
     //delete $2;
@@ -736,33 +892,33 @@ namespace yy {
     //curPRState = NULL;
     lex_pop_state();
 }
-#line 740 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 896 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 31:
-#line 289 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 54:
+#line 423 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 746 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 902 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 34:
-#line 296 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 57:
+#line 430 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass list\n");}
-#line 752 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 908 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 35:
-#line 302 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 58:
+#line 436 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 762 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 918 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 37:
-#line 307 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 60:
+#line 441 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     CTechnique tech;
     tech.Name =  yystack_[0].value.as< std::string > ().c_str();
@@ -772,20 +928,20 @@ namespace yy {
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 776 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 932 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 38:
-#line 315 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 61:
+#line 449 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
     lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 785 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 941 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 40:
-#line 325 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 63:
+#line 459 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
 /*
     if(!curAnnotations)
@@ -795,65 +951,65 @@ namespace yy {
     delete $4;
 */
     }
-#line 799 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 955 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 41:
-#line 335 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 64:
+#line 469 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {CryLog("Begin annotations"); }
-#line 805 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 961 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 45:
-#line 342 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 68:
+#line 476 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); 
     }
-#line 813 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 969 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 46:
-#line 345 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 69:
+#line 479 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = "Common";
         is_common = true;
     }
-#line 822 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 978 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 47:
-#line 351 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 70:
+#line 485 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
         if (yystack_[2].value.as< std::string > () == "Common")
             CommonCode.push_back(driver.currentEffect->m_shaders.back().data);
 	}
-#line 833 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 989 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 48:
-#line 361 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 71:
+#line 495 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
     yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", 10);
 }
-#line 843 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 999 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
-  case 49:
-#line 368 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+  case 72:
+#line 502 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
     { 
       //$$ = VkFormat(10); 
       CryLog("format not implemented");
 
       }
-#line 853 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1009 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 857 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1013 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -1108,119 +1264,139 @@ namespace yy {
   }
 
 
-  const signed char parser::yypact_ninf_ = -78;
+  const signed char parser::yypact_ninf_ = -86;
 
-  const signed char parser::yytable_ninf_ = -34;
+  const signed char parser::yytable_ninf_ = -57;
 
   const signed char
   parser::yypact_[] =
   {
-     -77,   -78,     0,   -78,     8,     9,    11,   -78,   -78,   -78,
-     -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,    19,
-     -78,   -73,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,
-     -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -71,   -65,
-     -78,     3,   -64,     5,    24,   -78,   -78,   -78,   -60,    27,
-       2,    17,   -56,   -78,     5,   -78,   -64,   -78,   -78,   -78,
-      20,   -78,    -2,    34,   -64,   -55,   -54,   -53,   -78,   -78,
-     -52,   -59,   -50,    32,   -59,   -78,   -78,   -78,   -45,   -78,
-       1,   -46,   -78,   -42,   -44,    43,   -78,   -78,   -78,   -78,
-     -78,   -78
+     -85,   -86,     0,   -86,     5,     6,     9,   -86,   -86,   -86,
+     -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,    20,
+     -86,   -83,   -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,
+     -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,   -76,   -73,
+     -86,    -3,   -72,     7,    22,   -86,   -86,   -86,   -63,    25,
+       3,    21,   -59,   -86,     7,   -86,   -72,   -86,   -86,   -86,
+      23,   -86,    -2,    36,   -72,   -57,   -54,   -53,   -86,   -86,
+     -55,   -86,   -52,    27,   -86,   -18,   -86,   -47,   -15,   -45,
+     -86,   -86,   -86,   -86,   -43,   -86,     2,   -86,   -86,   -86,
+     105,    39,   -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,
+     -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,    90,
+     -86,    43,   -86,   -86,   -86,   -44,    51,   -86,   -86
   };
 
   const unsigned char
   parser::yydefact_[] =
   {
-       2,     3,     2,     1,    46,    35,     0,    50,    51,    52,
-      53,    54,    55,    56,    57,    58,    59,    60,    61,     0,
+       2,     3,     2,     1,    69,    58,     0,    73,    74,    75,
+      76,    77,    78,    79,    80,    81,    82,    83,    84,     0,
        4,     0,     5,    18,     6,     7,     8,     9,    10,    11,
-      12,    13,    14,    15,    16,    17,    45,    37,     0,     0,
-      62,     0,    43,     0,     0,    47,    41,    44,     0,    27,
-       0,     0,     0,    39,     0,    29,    43,    31,    34,    36,
-       0,    49,     0,     0,    43,     0,     0,     0,    42,    38,
-       0,     0,     0,     0,     0,    19,    21,    20,     0,    23,
-       0,     0,    48,     0,     0,     0,    25,    24,    28,    40,
-      30,    22
+      12,    13,    14,    15,    16,    17,    68,    60,     0,     0,
+      85,     0,    66,     0,     0,    70,    64,    67,     0,    50,
+       0,     0,     0,    62,     0,    52,    66,    54,    57,    59,
+       0,    72,     0,     0,    66,     0,     0,     0,    65,    61,
+       0,    26,     0,     0,    26,     0,    71,     0,     0,     0,
+      19,    21,    20,    51,     0,    23,     0,    28,    63,    53,
+       0,     0,    25,    24,    33,    34,    35,    36,    45,    46,
+      47,    41,    42,    43,    44,    37,    38,    39,    40,     0,
+      30,     0,    22,    29,    31,    48,     0,    32,    49
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-     -78,    47,   -78,   -32,   -78,   -25,   -47,   -78,   -78,    -4,
-     -78,   -78,   -78,   -78,   -78,   -78,   -51,   -78,   -78,   -78,
-     -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,   -78,
-     -78,   -78,   -78
+     -86,    55,   -86,   -29,   -86,   -16,   -86,   -86,   -50,   -86,
+     -86,   -46,   -86,   -86,     8,   -86,   -86,   -86,   -86,   -86,
+     -86,   -49,   -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86,
+     -86,   -86,   -86,   -86,   -86,   -86,   -86,   -86
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,    19,    78,    79,    80,    81,    50,    56,    64,    51,
-      20,    38,    42,    62,    47,    53,    48,    21,    22,    23,
-      66,    24,    25,    26,    27,    28,    29,    30,    31,    32,
-      33,    34,    35
+      -1,    19,    84,    85,    86,    75,    87,   109,   110,   111,
+     117,    50,    56,    64,    51,    20,    38,    42,    62,    47,
+      53,    48,    21,    22,    23,    66,    24,    25,    26,    27,
+      28,    29,    30,    31,    32,    33,    34,    35
   };
 
   const signed char
   parser::yytable_[] =
   {
-       3,    67,    86,    57,    60,    65,    75,    76,    77,     1,
-       4,    36,    37,    70,    39,    41,    60,    43,    58,     5,
-      40,    57,   -32,    44,    45,    49,    46,    52,    54,     4,
-      55,    61,    72,    71,    73,    58,    74,    49,     5,    82,
-     -33,    83,    85,    88,    89,    90,    91,     2,    87,    84,
-      63,     0,     0,     0,    49,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    75,    76,    77,     0,
+       3,    67,     1,    92,    57,    60,    41,    65,    36,    37,
+       4,    79,    39,    43,    79,    70,    44,    60,    45,     5,
+      46,    40,    58,   -55,    57,    52,    54,    49,    55,    61,
+       4,   -27,    71,    72,    74,    73,    77,    58,    76,     5,
+      88,    49,   112,   -56,    90,    91,   115,   116,    80,    81,
+      82,    80,    81,    82,   118,     2,    49,    93,    78,   114,
+       0,     0,    63,     0,     0,     0,     0,     0,    80,    81,
+      82,     0,    83,     0,     0,    89,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     6,     1,     0,     0,
+       0,    68,   -27,   -55,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,    18,     6,     1,     0,     0,
+       0,    59,     0,   -56,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,    18,    69,    94,    95,    96,
+      97,    98,    99,   100,   101,   102,   103,   104,   105,   106,
+     107,   108,    94,    95,    96,    97,    98,    99,   100,   101,
+     102,   103,   104,   105,   106,   107,   108,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     6,     1,     0,     0,    68,
-     -26,   -32,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,     6,     1,    59,     0,     0,   -33,
-       0,     7,     8,     9,    10,    11,    12,    13,    14,    15,
-      16,    17,    18,    69
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+     113
   };
 
   const signed char
   parser::yycheck_[] =
   {
-       0,     3,     1,     1,    51,    56,    65,    66,    67,    86,
-      10,     3,     3,    64,     3,    88,    63,    88,     1,    19,
-       1,     1,    20,    88,    21,    20,    90,     3,    88,    10,
-       3,    87,    86,    88,    87,     1,    88,    20,    19,    89,
-      20,     9,    87,    89,    86,    89,     3,     0,    80,    74,
-      54,    -1,    -1,    -1,    20,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    65,    66,    67,    -1,
+       0,     3,    87,     1,     1,    51,    89,    56,     3,     3,
+      10,    29,     3,    89,    29,    64,    89,    63,    21,    19,
+      92,     1,     1,    20,     1,     3,    89,    20,     3,    88,
+      10,    29,    89,    87,    89,    88,     9,     1,    90,    19,
+      87,    20,     3,    20,    89,    88,     3,    91,    66,    67,
+      68,    66,    67,    68,     3,     0,    20,    86,    74,   109,
+      -1,    -1,    54,    -1,    -1,    -1,    -1,    -1,    66,    67,
+      68,    -1,    90,    -1,    -1,    90,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    86,    87,    -1,    -1,
+      -1,    93,    90,    90,    94,    95,    96,    97,    98,    99,
+     100,   101,   102,   103,   104,   105,    86,    87,    -1,    -1,
+      -1,    90,    -1,    90,    94,    95,    96,    97,    98,    99,
+     100,   101,   102,   103,   104,   105,    90,    37,    38,    39,
+      40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
+      50,    51,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    85,    86,    -1,    -1,    91,
-      89,    89,    92,    93,    94,    95,    96,    97,    98,    99,
-     100,   101,   102,   103,    85,    86,    89,    -1,    -1,    89,
-      -1,    92,    93,    94,    95,    96,    97,    98,    99,   100,
-     101,   102,   103,    89
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      90
   };
 
   const unsigned char
   parser::yystos_[] =
   {
-       0,    86,   105,     0,    10,    19,    85,    92,    93,    94,
-      95,    96,    97,    98,    99,   100,   101,   102,   103,   105,
-     114,   121,   122,   123,   125,   126,   127,   128,   129,   130,
-     131,   132,   133,   134,   135,   136,     3,     3,   115,     3,
-       1,    88,   116,    88,    88,    21,    90,   118,   120,    20,
-     110,   113,     3,   119,    88,     3,   111,     1,     1,    89,
-     110,    87,   117,   113,   112,   120,   124,     3,    91,    89,
-     120,    88,    86,    87,    88,    65,    66,    67,   106,   107,
-     108,   109,    89,     9,   109,    87,     1,   107,    89,    86,
-      89,     3
+       0,    87,   107,     0,    10,    19,    86,    94,    95,    96,
+      97,    98,    99,   100,   101,   102,   103,   104,   105,   107,
+     121,   128,   129,   130,   132,   133,   134,   135,   136,   137,
+     138,   139,   140,   141,   142,   143,     3,     3,   122,     3,
+       1,    89,   123,    89,    89,    21,    92,   125,   127,    20,
+     117,   120,     3,   126,    89,     3,   118,     1,     1,    90,
+     117,    88,   124,   120,   119,   127,   131,     3,    93,    90,
+     127,    89,    87,    88,    89,   111,    90,     9,   111,    29,
+      66,    67,    68,    90,   108,   109,   110,   112,    87,    90,
+      89,    88,     1,   109,    37,    38,    39,    40,    41,    42,
+      43,    44,    45,    46,    47,    48,    49,    50,    51,   113,
+     114,   115,     3,    90,   114,     3,    91,   116,     3
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,   104,   105,   105,   105,   105,   105,   105,   105,   105,
-     105,   105,   105,   105,   105,   105,   105,   105,   105,   106,
-     106,   106,   107,   108,   108,   108,   109,   111,   110,   112,
-     110,   110,   113,   113,   113,   115,   114,   116,   114,   117,
-     117,   119,   118,   120,   120,   121,   121,   122,   123,   124,
-     125,   126,   127,   128,   129,   130,   131,   132,   133,   134,
-     135,   136,   136
+       0,   106,   107,   107,   107,   107,   107,   107,   107,   107,
+     107,   107,   107,   107,   107,   107,   107,   107,   107,   108,
+     108,   108,   109,   110,   110,   110,   111,   111,   111,   112,
+     113,   113,   114,   115,   115,   115,   115,   115,   115,   115,
+     115,   115,   115,   115,   115,   115,   115,   115,   116,   116,
+     118,   117,   119,   117,   117,   120,   120,   120,   122,   121,
+     123,   121,   124,   124,   126,   125,   127,   127,   128,   128,
+     129,   130,   131,   132,   133,   134,   135,   136,   137,   138,
+     139,   140,   141,   142,   143,   143
   };
 
   const unsigned char
@@ -1228,11 +1404,13 @@ namespace yy {
   {
        0,     2,     0,     1,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     1,
-       1,     1,     3,     1,     2,     2,     1,     0,     6,     0,
-       7,     2,     1,     2,     2,     0,     5,     0,     7,     0,
-       5,     0,     4,     0,     1,     2,     1,     3,     8,     0,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     2
+       1,     1,     3,     1,     2,     2,     0,     2,     2,     4,
+       1,     2,     3,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     0,     2,
+       0,     6,     0,     7,     2,     1,     2,     2,     0,     5,
+       0,     7,     0,     5,     0,     4,     0,     1,     2,     1,
+       3,     8,     0,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     2
   };
 
 
@@ -1248,8 +1426,8 @@ namespace yy {
   "COLOR_SAMPLE_STATE", "RASTERIZATION_STATE", "TECHNIQUE", "PASS",
   "CODEBODY", "VARNAME", "TEXTURERESOURCE", "TEXTURERESOURCE1D",
   "TEXTURERESOURCE2D", "TEXTURERESOURCE3D", "TEXTURERESOURCERECT",
-  "TEXTURERESOURCECUBE", "VOID_TYPE", "UNSIGNED", "HIGHP", "MEDIUMP",
-  "LOWP", "UNIFORM", "CSTBUFFER", "FLOAT_TYPE", "FLOAT2_TYPE",
+  "TEXTURERESOURCECUBE", "INPUTLAYOUT", "VOID_TYPE", "UNSIGNED", "HIGHP",
+  "MEDIUMP", "LOWP", "UNIFORM", "CSTBUFFER", "FLOAT_TYPE", "FLOAT2_TYPE",
   "FLOAT3_TYPE", "FLOAT4_TYPE", "MAT2_TYPE", "MAT3_TYPE", "MAT4_TYPE",
   "BOOL_TYPE", "BOOL2_TYPE", "BOOL3_TYPE", "BOOL4_TYPE", "INT_TYPE",
   "INT2_TYPE", "INT3_TYPE", "INT4_TYPE", "TEXTURE1D_TYPE",
@@ -1262,28 +1440,31 @@ namespace yy {
   "SETDSTSTATE", "SETRASTERIZATIONSTATE", "SETCOLORSAMPLESTATE",
   "IMAGERESOURCE", "IMAGEUNIT", "IMAGEACCESS", "IMAGELAYER",
   "IMAGELAYERED", "WRITE_ONLY", "READ_ONLY", "READ_WRITE", "VERTEXFORMAT",
-  "';'", "'='", "'{'", "'}'", "'<'", "'>'", "\"hlsl\"", "\"texture\"",
-  "\"resource\"", "\"fbo\"", "\"sstate\"", "\"dststate\"", "\"prstate\"",
-  "\"csstate\"", "\"rstate\"", "\"namespace\"", "\"cstbuffer\"",
-  "\"uniforms\"", "$accept", "input", "shader_type", "shader_assignment",
-  "shader_assignments", "passstates", "pass", "$@1", "$@2", "passes",
-  "tech", "$@3", "$@4", "annotation", "annotations2", "$@5", "annotations",
-  "glsl_header", "glsl", "vertexformat", "format", "hlsl", "texture",
-  "resource", "fbo", "sstate", "dststate", "prstate", "csstate", "rstate",
-  "namespace", "cstbuffer", "uniforms", YY_NULLPTR
+  "';'", "'='", "'{'", "'}'", "':'", "'<'", "'>'", "\"hlsl\"",
+  "\"texture\"", "\"resource\"", "\"fbo\"", "\"sstate\"", "\"dststate\"",
+  "\"prstate\"", "\"csstate\"", "\"rstate\"", "\"namespace\"",
+  "\"cstbuffer\"", "\"uniforms\"", "$accept", "input", "shader_type",
+  "shader_assignment", "shader_assignments", "passstates", "input_layout",
+  "var_decls", "var_decl", "base_type", "semantic", "pass", "$@1", "$@2",
+  "passes", "tech", "$@3", "$@4", "annotation", "annotations2", "$@5",
+  "annotations", "glsl_header", "glsl", "vertexformat", "format", "hlsl",
+  "texture", "resource", "fbo", "sstate", "dststate", "prstate", "csstate",
+  "rstate", "namespace", "cstbuffer", "uniforms", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned short int
   parser::yyrline_[] =
   {
-       0,   205,   205,   206,   207,   208,   209,   210,   211,   212,
-     213,   214,   215,   216,   217,   218,   219,   220,   221,   226,
-     227,   228,   231,   237,   238,   239,   247,   253,   253,   267,
-     267,   289,   294,   295,   296,   302,   302,   307,   307,   324,
-     325,   335,   335,   337,   338,   342,   345,   351,   360,   368,
-     375,   376,   377,   378,   379,   380,   381,   382,   383,   384,
-     385,   386,   387
+       0,   302,   302,   303,   304,   305,   306,   307,   308,   309,
+     310,   311,   312,   313,   314,   315,   316,   317,   318,   323,
+     324,   325,   328,   334,   335,   336,   343,   344,   345,   348,
+     353,   353,   354,   361,   362,   363,   364,   365,   366,   367,
+     368,   369,   370,   371,   372,   373,   374,   375,   380,   381,
+     387,   387,   401,   401,   423,   428,   429,   430,   436,   436,
+     441,   441,   458,   459,   469,   469,   471,   472,   476,   479,
+     485,   494,   502,   509,   510,   511,   512,   513,   514,   515,
+     516,   517,   518,   519,   520,   521
   };
 
   // Print the state stack on the debug stream.
@@ -1318,8 +1499,8 @@ namespace yy {
 
 
 } // yy
-#line 1322 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
-#line 390 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
+#line 1503 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
+#line 524 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

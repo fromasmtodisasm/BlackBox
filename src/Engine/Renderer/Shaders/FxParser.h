@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <BlackBox/Renderer/OpenGL/Core.hpp>
 struct IShader;
 struct IPass
 {
@@ -9,6 +10,7 @@ struct IPass
 struct SPass
 {
 	std::string Name;
+	std::vector<std::string> InputLayout;
 	std::vector<std::string_view> CommonCode;
 	std::array<std::string_view, 6> Shaders;
 };

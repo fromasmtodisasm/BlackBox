@@ -1,7 +1,7 @@
 %skeleton "lalr1.cc"
 %require "3.0"
 
-%expect  36
+%expect  39
 
 %defines
 %define api.token.constructor
@@ -15,12 +15,84 @@
 #endif
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
+	#include <BlackBox/Renderer/OpenGL/Core.hpp>
+    #include <BlackBox/Renderer/BufferManager.hpp>
     class Scanner;
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
 
     //extern void lex_pop_state();
     #define lex_pop_state() scanner.pop_state()
+
+
+    namespace nvFX {
+    /*************************************************************************/ /**
+    ** \brief IUniform Parameter interface
+    **/ /*************************************************************************/ 
+    class IUniform 
+    {
+    protected:
+        IUniform() {}
+    public:
+        virtual ~IUniform() {}
+        enum Type {
+            TUndefined = 0,
+            TInt, TInt2, TInt3, TInt4,
+            //UInt,
+            TBool, TBool2, TBool3, TBool4,
+            TFloat, TVec2, TVec3, TVec4,
+            TMat2, TMat3, TMat4, 
+            TUBO, // Uniform Buffer Object
+            TCB,  // Constant Buffer (D3D)
+            TUniform,
+            TTexture, // a generic texture : for example when the app created this uniform to bind a texture to a sampler
+            // Note: texture==sampler in this type list. D3D uses texture objects, OpenGL will use samplers...
+            // Those typed texture/GL-samplers are when the parser encoutered an external declaration of uniform : it needs to know the type
+            TTexture1D,
+            TTexture2D,
+            TTexture2DShadow,
+            TTexture2DRect,
+            TTexture3D,
+            TTextureCube,
+            TTexUnit, //TODO: check about this... used for the Cg case (can't assign texunit)
+            // TODO : add missing cases
+    #ifndef OGLES2
+            TSubroutineUniform,
+            TSubroutineUniformByID,
+    #endif
+        };
+        enum PrecisionType /// precision is only used for OpenGL ES
+        {
+            PHighP = 0,
+            PMediumP = 1,
+            PLowP = 2,
+        };
+    };
+    inline std::string toString(IUniform::Type type)
+    {
+        switch(type)
+        {
+            case nvFX::IUniform::TFloat: return "float";
+            case nvFX::IUniform::TVec2: return "vec2";
+            case nvFX::IUniform::TVec3: return  "vec3";
+            case nvFX::IUniform::TVec4: return  "vec4";
+            case nvFX::IUniform::TInt: return  "int";
+            case nvFX::IUniform::TInt2: return  "ivec2";
+            case nvFX::IUniform::TInt3: return  "ivec3";
+            case nvFX::IUniform::TInt4: return  "ivec4";
+            case nvFX::IUniform::TBool: return  "bool";
+            case nvFX::IUniform::TBool2: return  "bvec2";
+            case nvFX::IUniform::TBool3: return  "bvec3";
+            case nvFX::IUniform::TBool4: return  "bvec4";
+            case nvFX::IUniform::TMat2: return  "mat2";
+            case nvFX::IUniform::TMat3: return  "mat3";
+            case nvFX::IUniform::TMat4: return  "mat4";
+            default: assert(0); return "unknown_type";
+
+        }
+
+    }
+    }
 
 }
 
@@ -64,6 +136,24 @@
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
         return scanner.ScanToken();
     }
+
+    std::string location_from_semantic(std::string semantic)
+    {
+        using namespace std;
+        if (semantic == "POSITION")
+            return to_string(AttributeLocation::position);
+        if (semantic == "NORMAL")
+            return to_string(AttributeLocation::normal);
+        if (semantic == "TEXCOORD")
+            return to_string(AttributeLocation::uv);
+        if (semantic == "TANGENT")
+            return to_string(AttributeLocation::tangent);
+        if (semantic == "COLOR")
+            return to_string(AttributeLocation::color);
+        return "-1";
+    }
+
+    using Type = std::string;
 }
 
 %lex-param { Scanner &scanner }
@@ -85,6 +175,11 @@
 %type  <std::string>    glsl_header
 %type  <std::string>    shader_assignment
 %type  <IShader::Type>  shader_type
+
+%type  <std::string>    semantic
+%type  <nvFX::IUniform::Type>           base_type
+
+%type  <std::string>    var_decl
 
 %token <std::string>    IDENTIFIER
 %token <bool>           TRUE
@@ -122,6 +217,8 @@ TODO: New resource types (from D3D)
 %token              TEXTURE2DMS
 %token              TEXTURE2MSDARRAY
 */
+
+%token              INPUTLAYOUT
 
 /*------------------------------------------------------------------
   token for uniforms declared outside of any shader code
@@ -243,8 +340,45 @@ shader_assignment
    pass-states
    TODO: Add the states
 */
-passstates 
-: shader_assignments 
+passstates: %empty { CryLog("Hi"); } 
+|passstates shader_assignments 
+|passstates input_layout 
+;
+
+input_layout: INPUTLAYOUT '{' var_decls  '}' {
+    { CryLog("slkfjlkj123123123123"); }
+    lex_pop_state();
+};
+
+var_decls: var_decl | var_decls var_decl;
+var_decl: base_type IDENTIFIER semantic {
+    $$ = "layout(location = " + location_from_semantic($3) + ") in " + nvFX::toString($1) + " " + $2 + ";";
+    driver.currentEffect->m_Techniques.back().Passes.back().InputLayout.push_back($$);
+};
+
+
+base_type: 
+   FLOAT_TYPE { $$ = nvFX::IUniform::TFloat; }
+|  FLOAT2_TYPE { $$ = nvFX::IUniform::TVec2; }
+|  FLOAT3_TYPE { $$ = nvFX::IUniform::TVec3; }
+|  FLOAT4_TYPE { $$ = nvFX::IUniform::TVec4; }
+|  INT_TYPE    { $$ = nvFX::IUniform::TInt; }
+|  INT2_TYPE { $$ = nvFX::IUniform::TInt2; }
+|  INT3_TYPE { $$ = nvFX::IUniform::TInt3; }
+|  INT4_TYPE { $$ = nvFX::IUniform::TInt4; }
+|  BOOL_TYPE { $$ = nvFX::IUniform::TBool; }
+|  BOOL2_TYPE { $$ = nvFX::IUniform::TBool2; }
+|  BOOL3_TYPE { $$ = nvFX::IUniform::TBool3; }
+|  BOOL4_TYPE { $$ = nvFX::IUniform::TBool4; }
+|  MAT2_TYPE { $$ = nvFX::IUniform::TMat2; }
+|  MAT3_TYPE { $$ = nvFX::IUniform::TMat3; }
+|  MAT4_TYPE { $$ = nvFX::IUniform::TMat4; }
+
+;
+
+
+semantic: %empty
+| ':' IDENTIFIER { $$ = $2; }
 ;
 /*----------------------
     what a pass can be

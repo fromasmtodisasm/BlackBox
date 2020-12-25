@@ -73,6 +73,7 @@ Technique {
 	return yy::parser::make_TECHNIQUE(loc);
 }
 
+
 <INITIAL,cstbuffer>{
     \{  {
         return CURRENT_SYMBOL;
@@ -117,12 +118,12 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     /*==================================================================
       Comment starting points
     */
-<INITIAL,str,shader,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1>"/*" {
+<INITIAL,str,shader,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout>"/*" {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
 }
 
-<INITIAL,str,shader,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1>"//" {
+<INITIAL,str,shader,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout>"//" {
     comment_caller  =  INITIAL;
     yy_push_state(comment2);
 }
@@ -253,6 +254,11 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         //yy_pop_state();
         return CURRENT_SYMBOL;
     }
+
+    InputLayout {
+        yy_push_state(input_layout);
+        return yy::parser::make_INPUTLAYOUT(loc);
+    }
     
     /*VertexProgram       return VERTEXPROGRAM;*/
     VertexShader        return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
@@ -263,19 +269,21 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     GeometryShader      return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
 }
 
-<pass,pr_state>{
+<pass,pr_state,input_layout>{
     \{  {
+        CryLog("{pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
     }
     \} {
+        CryLog("}pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
     }
 }
 
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,shader,resource,resource1,fbo,fbo1>\n+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,shader,resource,resource1,fbo,fbo1,input_layout>\n+ {
     loc.lines (yyleng); loc.step ();
 }
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,shader,resource,resource1,fbo,fbo1>{blank}+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,shader,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
     loc.step ();
 }
 
@@ -297,8 +305,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     */
 
 {int}      return make_INT(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1>{id}   return yy::parser::make_IDENTIFIER(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1>. {   
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>{id}   return yy::parser::make_IDENTIFIER(yytext, loc);
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>. {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
     else {
