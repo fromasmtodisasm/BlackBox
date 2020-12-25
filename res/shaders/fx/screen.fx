@@ -1,4 +1,3 @@
-
 GLSLShader vert
 {
     #version 330 core

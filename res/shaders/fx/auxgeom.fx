@@ -1,32 +1,8 @@
 GLSLShader
 {
-	#version 330 core
-	#if 0
-	layout(binding = 0) uniform MatrixBlock
-	{
-	  mat4 projection;
-	  mat4 view;
-	  mat4 model;
-	};
-
-	//layout(location = 0) out vec4 v_color;
-	#else
-
-	uniform mat4 projection;
-	uniform mat4 view;
-	uniform mat4 model;
-	#endif
+	#version 460 core
 
 }
-
-/*
-InputLayout
-{
-	vec3 aPos : POSITION;
-	vec3 aColor : COLOR;
-	vec2 aTC : TEXCOORD;
-}
-*/
 
 GLSLShader vert
 {
@@ -35,6 +11,10 @@ GLSLShader vert
     layout (location = 2) in vec3 aTC;
     layout (location = 5) in vec4 aColor;
 	out vec4 v_color;
+
+	uniform mat4 projection;
+	uniform mat4 view;
+	uniform mat4 model;
 
 	void main()
 	{
@@ -56,8 +36,17 @@ GLSLShader frag
 // Default technique for auxiliary geometry rendering
 Technique AuxGeometry
 {
+
   Pass p0
   {
+	  /*
+	InputLayout
+	{
+		vec3 aPos : POSITION;
+		vec4 aColor : COLOR;
+		vec2 aTC : TEXCOORD;
+	}
+	*/
     VertexShader = vert
     PixelShader = frag
   }
