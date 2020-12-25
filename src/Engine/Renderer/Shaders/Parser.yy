@@ -99,6 +99,7 @@
 %initial-action
 {
     is_common = false;
+    CommonCode.clear();
 }
 
 // %param { Driver &drv }

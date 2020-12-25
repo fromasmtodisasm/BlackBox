@@ -6,11 +6,6 @@ GLSLShader
 GLSLShader vert
 {
 
-#if 0
-    layout (location = 0) in vec3 aPos;
-    layout (location = 2) in vec3 aTC;
-    layout (location = 5) in vec4 aColor;
-#endif
 	out vec4 v_color;
 
 	uniform mat4 projection;

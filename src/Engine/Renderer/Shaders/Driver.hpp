@@ -46,6 +46,7 @@ class Driver : public IDriver {
     Scanner* scanner;
     yy::parser parser;
 	CEffect* currentEffect;
+    std::vector<std::string_view> CommonCode;
  private:
     std::ifstream stream;
 
