@@ -19,6 +19,8 @@
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
 
+    //extern void lex_pop_state();
+    #define lex_pop_state() scanner.pop_state()
 
 }
 
@@ -259,8 +261,8 @@ PASS {
     curCSState = NULL;
     curDSTState = NULL;
     curPRState = NULL;
-    lex_pop_state();
 */
+    lex_pop_state();
 }
 | PASS IDENTIFIER {
     SPass pass;
@@ -282,7 +284,7 @@ PASS {
     //curCSState = NULL;
     //curDSTState = NULL;
     //curPRState = NULL;
-    //lex_pop_state();
+    lex_pop_state();
 }
 | pass error { error(@1, "Error in Pass declaration\n");}
 /*------------------------------------------------------------------
@@ -311,7 +313,7 @@ TECHNIQUE {
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 } annotations '{' passes '}' { 
-    //lex_pop_state();
+    lex_pop_state();
     //curAnnotations = NULL;
 }
 ;

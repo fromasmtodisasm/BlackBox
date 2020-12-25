@@ -15,6 +15,15 @@
     char  *string_buf_ptr;
     #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext[0]), loc)
 
+    // we need to do this because yy_pop_state is generated as static
+    //static void yy_pop_state();
+    #if 0
+    void lex_pop_state()
+    {
+        yy_pop_state();
+    }
+    #endif
+
 %}
 
 %option noyywrap nounput noinput batch debug
@@ -36,7 +45,7 @@ int   [0-9]+
 blank [ \t\r]
 
 %option stack
-%x fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1
+%x fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout
 
 %{
   // Code run each time a pattern is matched.
@@ -62,6 +71,45 @@ GLSLShader {
 Technique {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
+}
+
+<INITIAL,cstbuffer>{
+    \{  {
+        return CURRENT_SYMBOL;
+    }
+    \} {
+        //yy_pop_state();
+        return CURRENT_SYMBOL;
+    }
+}
+<INITIAL,cstbuffer,shader,input_layout>{
+    void   return yy::parser::make_VOID_TYPE(loc);
+    unsigned return yy::parser::make_UNSIGNED(loc);
+    float  return yy::parser::make_FLOAT_TYPE(loc);
+    float2 return yy::parser::make_FLOAT2_TYPE(loc);
+    float3 return yy::parser::make_FLOAT3_TYPE(loc);
+    float4 return yy::parser::make_FLOAT4_TYPE(loc);
+    vec2   return yy::parser::make_FLOAT2_TYPE(loc);
+    vec3   return yy::parser::make_FLOAT3_TYPE(loc);
+    vec4   return yy::parser::make_FLOAT4_TYPE(loc);
+    mat2   return yy::parser::make_MAT2_TYPE(loc);
+    mat3   return yy::parser::make_MAT3_TYPE(loc);
+    mat4   return yy::parser::make_MAT4_TYPE(loc);
+    float2x2   return yy::parser::make_MAT2_TYPE(loc);
+    float3x3   return yy::parser::make_MAT3_TYPE(loc);
+    float4x4   return yy::parser::make_MAT4_TYPE(loc);
+    bool   return yy::parser::make_BOOL_TYPE(loc);
+    bvec2  return yy::parser::make_BOOL2_TYPE(loc);
+    bvec3  return yy::parser::make_BOOL3_TYPE(loc);
+    bvec4  return yy::parser::make_BOOL4_TYPE(loc);
+    int    return yy::parser::make_INT_TYPE(loc);
+    int2   return yy::parser::make_INT2_TYPE(loc);
+    int3   return yy::parser::make_INT3_TYPE(loc);
+    int4   return yy::parser::make_INT4_TYPE(loc);
+    ivec2  return yy::parser::make_INT2_TYPE(loc);
+    ivec3  return yy::parser::make_INT3_TYPE(loc);
+    ivec4  return yy::parser::make_INT4_TYPE(loc);
+    uniform return yy::parser::make_UNIFORM(loc);
 }
 
 VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
@@ -202,7 +250,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         return CURRENT_SYMBOL;
     }
     \} {
-        yy_pop_state();
+        //yy_pop_state();
         return CURRENT_SYMBOL;
     }
     

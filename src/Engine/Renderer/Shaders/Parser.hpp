@@ -31,16 +31,16 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // //                    "%code requires" blocks.
-#line 11 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
+#line 11 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
 
     #include <string>
 #ifdef VULKAN_SUPPORT
@@ -52,9 +52,11 @@
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
 
+    //extern void lex_pop_state();
+    #define lex_pop_state() scanner.pop_state()
 
 
-#line 58 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 60 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -131,7 +133,7 @@
 
 
 namespace yy {
-#line 135 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 137 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -1999,9 +2001,9 @@ namespace yy {
 
 
 } // yy
-#line 2003 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2005 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
 
-#endif // !YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

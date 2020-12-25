@@ -31,18 +31,18 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/location.hh
+ ** \file /cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/location.hh
  ** Define the yy::location class.
  */
 
-#ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
-# define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
+#ifndef YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
+# define YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
 
 # include "position.hh"
 
 
 namespace yy {
-#line 46 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/location.hh" // location.cc:296
+#line 46 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/location.hh" // location.cc:296
   /// Abstract a location.
   class location
   {
@@ -188,5 +188,5 @@ namespace yy {
 
 
 } // yy
-#line 192 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/location.hh" // location.cc:296
-#endif // !YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED
+#line 192 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/location.hh" // location.cc:296
+#endif // !YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_LOCATION_HH_INCLUDED

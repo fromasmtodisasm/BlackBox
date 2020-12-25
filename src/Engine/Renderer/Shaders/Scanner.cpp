@@ -1,6 +1,6 @@
-#line 1 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 3 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 3 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -393,8 +393,8 @@ int yyFlexLexer::yylex()
 /* %% [3.0] code to copy yytext_ptr to yytext[] goes here, if %array \ */\
 	(yy_c_buf_p) = yy_cp;
 /* %% [4.0] data tables for the DFA and the user's section 1 definitions go here */
-#define YY_NUM_RULES 44
-#define YY_END_OF_BUFFER 45
+#define YY_NUM_RULES 73
+#define YY_END_OF_BUFFER 74
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -402,27 +402,49 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[177] =
+static const flex_int16_t yy_accept[373] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    6,    6,   10,   10,    0,    0,    0,    0,
+        0,    0,   35,   35,   39,   39,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,   45,   43,   40,   39,   43,   41,   42,   42,
-       42,   42,   42,   32,   33,   44,    6,    8,    7,   10,
-       11,   22,   13,   12,   22,   44,   40,   44,   24,   23,
-       28,   27,   25,   26,   42,   30,   31,   42,   42,   32,
-       33,   37,   38,   40,   39,    4,    5,   41,   42,   42,
-       42,   42,   42,   42,    6,    7,    7,    9,   10,   22,
+        0,    0,    0,    0,   74,   72,   69,   68,   72,   70,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,    3,    4,   73,   35,   37,   36,   39,   40,   51,
+       42,   41,   51,   73,   69,   73,   53,   53,   53,   53,
+       53,   53,   53,   52,   57,   56,   54,   55,    3,    4,
+       71,   59,   60,   71,   71,   61,   62,   66,   67,   73,
 
-        4,    5,   21,   14,   15,   19,   20,   16,   18,   17,
-       24,   28,   42,   42,   42,   42,   42,   42,   42,   14,
-       15,   42,   42,   42,   42,   42,   42,   42,   14,   29,
-       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
-       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
-       42,   42,   42,   42,   42,   42,   42,   42,    2,   42,
-       42,    1,   42,   42,   42,   42,   42,   35,   42,   42,
-       42,    3,   34,   42,   36,    0
+       73,   73,   73,   73,   73,   69,   68,   33,   34,   70,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   35,   36,   36,   38,   39,
+       51,   33,   34,   50,   43,   44,   48,   49,   45,   47,
+       46,   53,   53,   53,   53,   53,   53,   53,   53,   53,
+       53,   57,   71,   71,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,   71,   71,   71,   71,   71,   71,   71,
+       71,   24,   71,   71,   71,   71,   71,   71,   43,   44,
+       53,   53,   53,   24,   53,   53,   53,   53,   53,   53,
+       71,   71,    0,    0,    0,   24,    0,    0,    0,    0,
+
+        0,    0,   71,   71,   71,   71,   71,   20,   71,   71,
+       25,   26,   27,   71,   14,   15,   16,   71,   71,   11,
+       12,   13,    5,   43,   20,   53,   53,   25,   26,   27,
+       53,   14,   15,   16,   53,   53,   11,   12,   13,    5,
+       58,   71,   20,    0,    0,   25,   26,   27,    0,   14,
+       15,   16,    0,    0,   11,   12,   13,    5,   71,   71,
+       71,   71,   71,   21,   22,   23,    7,   28,   29,   30,
+       71,   71,   21,   22,   23,    7,   28,   29,   30,   53,
+       53,   71,   21,   22,   23,    7,   28,   29,   30,    0,
+        0,   71,   71,   71,   71,   71,    8,    9,   10,   71,
+
+       71,    8,    9,   10,   53,   53,   71,    8,    9,   10,
+        0,    0,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   31,   71,   53,   53,   53,   31,   53,    0,    0,
+        0,   31,    0,   71,   71,   71,   71,   71,   71,   17,
+       18,   19,    6,   17,   18,   19,    6,   17,   18,   19,
+        6,   71,   71,   71,    2,   71,   71,    1,   71,   71,
+       71,   71,   71,   64,   71,   71,   71,   32,   63,   71,
+       65,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -431,16 +453,16 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    1,    4,    1,    1,    1,    1,    1,    1,
-        1,    5,    1,    1,    1,    1,    6,    7,    7,    7,
-        7,    7,    7,    7,    7,    8,    8,    1,    1,    1,
-        1,    1,    1,    1,    9,    9,    9,    9,    9,   10,
-       11,    9,    9,    9,    9,   12,    9,    9,    9,   13,
-        9,    9,   14,   15,    9,   16,    9,    9,    9,    9,
-        1,   17,    1,   18,   19,    1,   20,   21,   22,   23,
+        1,    5,    1,    1,    1,    1,    6,    7,    7,    8,
+        9,   10,    7,    7,    7,   11,   11,    1,    1,    1,
+        1,    1,    1,    1,   12,   12,   12,   12,   12,   13,
+       14,   12,   12,   12,   12,   15,   12,   12,   12,   16,
+       12,   12,   17,   18,   12,   19,   12,   12,   12,   12,
+        1,   20,    1,   21,   22,    1,   23,   24,   25,   26,
 
-       24,   25,    9,   26,   27,    9,    9,   28,   29,   30,
-       31,    9,   32,   33,   34,   35,   36,    9,    9,   37,
-       38,    9,   39,    1,   40,    1,    1,    1,    1,    1,
+       27,   28,   29,   30,   31,   12,   12,   32,   33,   34,
+       35,   12,   36,   37,   38,   39,   40,   41,   12,   42,
+       43,   12,   44,    1,   45,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -457,149 +479,253 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[41] =
+static const YY_CHAR yy_meta[46] =
     {   0,
         1,    1,    2,    3,    4,    1,    5,    5,    5,    5,
-        5,    5,    5,    5,    5,    5,    3,    6,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    3,
+        6,    5,    5,    5,    5,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
-        5,    5,    5,    5,    5,    5,    5,    5,    6,    6
+        5,    5,    5,    6,    6
     } ;
 
-static const flex_int16_t yy_base[191] =
+static const flex_int16_t yy_base[386] =
     {   0,
-        0,    0,   34,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,   41,   48,  285,  284,   51,   55,   74,  114,
-       45,   49,    0,    0,   30,   47,   84,   88,    0,    0,
-        0,    0,   25,   63,    0,    0,    0,    0,    0,    0,
-        0,    0,  286,  289,  283,  281,  100,  100,    0,   59,
-      256,  258,  257,  289,  289,  289,    0,  289,  104,    0,
-      289,    0,  289,  289,  106,  148,  278,  120,    0,  289,
-        0,  289,  289,  289,  259,  289,  289,  254,  253,  289,
-      289,  289,  289,  274,  272,  289,  289,  122,    0,  260,
-      242,  235,  249,  237,    0,  129,  131,  289,    0,    0,
+        0,    0,   39,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,   49,   56,  538,  537,   62,   70,   90,    0,
+      133,  135,  157,  179,   44,  121,  125,  129,    0,    0,
+        0,    0,   33,   41,    0,    0,    0,    0,    0,    0,
+        0,    0,  118,  185,  539,  542,  536,  534,  147,  153,
+        0,   54,  505,  508,  507,   21,  501,   30,  509,  497,
+      120,  542,  542,  542,    0,  542,  162,    0,  542,    0,
+      542,  542,  166,  220,  528,  170,    0,  148,  497,  116,
+      505,  493,  157,  542,    0,  542,  542,  542,  542,  542,
+      503,  542,  542,  498,  497,  542,  542,  542,  542,  152,
 
-        0,    0,  289,  131,  133,  289,  289,  289,  289,  289,
-        0,    0,  235,  235,  255,  237,  241,  238,  228,  135,
-      137,  228,  226,  246,  235,  230,  227,  232,  139,    0,
-      231,  225,  205,  225,  206,  190,  186,  201,  149,  154,
-      147,   52,  163,  153,  137,  154,  136,  140,  144,  144,
-      153,  143,  141,  131,  143,  129,  135,  136,    0,  130,
-      135,    0,  137,  119,  131,  126,  126,    0,  113,   65,
-       72,    0,    0,   61,    0,  289,  183,  189,  195,  201,
-      207,  213,   85,  219,  225,  231,  237,  243,   51,  249
+      491,  165,  499,  487,  159,  518,  516,  542,  542,  225,
+        0,  501,  482,  474,  490,  477,  478,  485,  476,  471,
+      482,  469,  173,  482,  475,    0,  190,  209,  542,    0,
+        0,    0,    0,  542,  230,  242,  542,  542,  542,  542,
+      542,    0,  470,  477,  468,  463,  474,  461,  224,  474,
+      467,    0,  459,  459,  460,  467,  458,  453,  464,  451,
+      225,  464,  457,  472,  453,  458,  454,  444,  450,  456,
+      457,  237,  454,  256,  450,  446,  259,  450,  263,  268,
+      443,  449,  450,  272,  447,  275,  443,  439,  278,  443,
+      430,  428,  434,  440,  441,  281,  438,  284,  434,  430,
+
+      287,  434,  442,  431,  425,  422,  428,    0,  290,  415,
+        0,    0,    0,  293,    0,    0,    0,  418,  423,    0,
+        0,    0,    0,  297,    0,  301,  412,    0,    0,    0,
+      304,    0,    0,    0,  415,  420,    0,    0,    0,    0,
+        0,  421,  542,  307,  408,  542,  542,  542,  310,  542,
+      542,  542,  411,  416,  542,  542,  542,  542,  414,  404,
+      425,  410,  398,    0,    0,    0,  313,    0,    0,    0,
+      402,  404,    0,    0,    0,  316,    0,    0,    0,  400,
+      402,  393,  542,  542,  542,  319,  542,  542,  542,  397,
+      399,  409,  394,  400,  393,  204,  386,  385,  384,  392,
+
+      397,  381,  380,  379,  387,  392,  401,  375,  374,  373,
+      381,  386,  386,  368,  387,  369,  373,  377,  398,  396,
+      394,    0,  377,  394,  392,  390,    0,  373,  390,  388,
+      386,  542,  369,  364,  363,  353,  346,  330,  340,    0,
+        0,    0,    0,    0,    0,    0,    0,  542,  542,  542,
+      542,  324,  231,  233,    0,  225,  217,    0,  219,  185,
+      185,  178,  174,    0,  152,  145,  113,    0,    0,   50,
+        0,  542,  329,  335,  341,  347,  353,   70,  359,  365,
+      371,  377,  383,   46,  389
     } ;
 
-static const flex_int16_t yy_def[191] =
+static const flex_int16_t yy_def[386] =
     {   0,
-      176,    1,    1,    3,    3,    3,  177,  177,  177,  177,
-      177,  177,  178,  178,  179,  179,  180,  180,  181,  181,
-      182,  182,    3,    3,    3,    3,    3,    3,    3,    3,
+      372,    1,    1,    3,    3,    3,  373,  373,  373,  373,
+      373,  373,  374,  374,  375,  375,  376,  376,  372,   19,
+      377,  377,    3,    3,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    3,  176,  176,  176,  176,  176,  176,  183,  183,
-      183,  183,  183,  176,  176,  176,  184,  176,  185,  186,
-      176,  187,  176,  176,  187,  188,  176,  176,  189,  176,
-      190,  176,  176,  176,  183,  176,  176,  183,  183,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  183,  183,
-      183,  183,  183,  183,  184,  185,  185,  176,  186,  187,
+        3,    3,  373,  373,  372,  372,  372,  372,  372,  372,
+      378,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  372,  372,  372,  379,  372,  380,  381,  372,  382,
+      372,  372,  382,  383,  372,  372,  384,  384,  384,  384,
+      384,  384,  384,  372,  385,  372,  372,  372,  372,  372,
+      378,  372,  372,  378,  378,  372,  372,  372,  372,  372,
 
-      187,  187,  176,  176,  176,  176,  176,  176,  176,  176,
-      189,  190,  183,  183,  183,  183,  183,  183,  183,  176,
-      176,  183,  183,  183,  183,  183,  183,  183,  176,  183,
-      183,  183,  183,  183,  183,  183,  183,  183,  183,  183,
-      183,  183,  183,  183,  183,  183,  183,  183,  183,  183,
-      183,  183,  183,  183,  183,  183,  183,  183,  183,  183,
-      183,  183,  183,  183,  183,  183,  183,  183,  183,  183,
-      183,  183,  183,  183,  183,    0,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      378,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  378,  378,  379,  380,  380,  372,  381,
+      382,  382,  382,  372,  372,  372,  372,  372,  372,  372,
+      372,  384,  384,  384,  384,  384,  384,  384,  384,  384,
+      384,  385,  378,  378,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  378,  378,  378,  378,  378,  372,  372,
+      384,  384,  384,  384,  384,  384,  384,  384,  384,  384,
+      378,  378,  372,  372,  372,  372,  372,  372,  372,  372,
+
+      372,  372,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  372,  384,  384,  384,  384,  384,  384,
+      384,  384,  384,  384,  384,  384,  384,  384,  384,  384,
+      378,  378,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  378,  378,
+      378,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  384,  384,  384,  384,  384,  384,  384,  384,
+      384,  378,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+
+      378,  384,  384,  384,  384,  384,  378,  372,  372,  372,
+      372,  372,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  384,  384,  384,  384,  384,  372,  372,
+      372,  372,  372,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  384,  384,  384,  384,  372,  372,  372,
+      372,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,  378,  378,  378,  378,  378,  378,  378,  378,  378,
+      378,    0,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372
     } ;
 
-static const flex_int16_t yy_nxt[330] =
+static const flex_int16_t yy_nxt[588] =
     {   0,
-       44,   45,   46,   44,   44,   47,   48,   48,   49,   49,
-       50,   49,   51,   49,   52,   53,   44,   44,   44,   49,
-       49,   49,   49,   49,   49,   49,   49,   49,   49,   49,
-       49,   49,   49,   49,   49,   49,   49,   49,   54,   55,
-       44,   44,   75,   58,   49,   59,   49,   72,   49,   49,
-       58,   72,   59,   63,   64,  111,   65,   63,   64,   75,
-       65,  148,   56,   82,   83,  149,   56,   66,   76,   77,
-       90,   66,   44,   44,   56,   67,   46,   56,   56,   68,
-       56,   56,   91,   73,   74,   76,   77,   73,   74,   89,
-       56,   56,   56,  175,   78,  174,   51,  173,   78,   79,
+       46,   47,   48,   46,   46,   49,   50,   50,   50,   50,
+       50,   51,   51,   52,   51,   53,   51,   54,   55,   46,
+       46,   46,   51,   56,   51,   51,   51,   57,   51,   51,
+       58,   51,   59,   51,   51,   51,   51,   51,   51,   60,
+       61,   51,   51,   62,   63,   46,   46,   46,   46,   46,
+      142,   66,   51,   67,   51,  117,   51,   51,   66,   91,
+       67,  118,   51,  120,   71,   72,   51,   73,  112,   51,
+      121,   51,   71,   72,  111,   73,   98,   99,   51,   51,
+      113,   74,   46,   46,   98,   99,  371,   92,   93,   74,
+       64,   75,   48,   64,   64,   76,   64,   64,   64,   64,
 
-       51,   82,   83,   79,   86,   87,   88,   88,   97,   98,
-      101,  102,   70,   56,   56,   67,   46,   56,   56,   68,
-       56,   56,   80,   81,   86,   87,   80,   81,   88,   88,
-       56,   56,   56,  176,  176,   97,   98,  120,  121,  121,
-      121,  129,  121,  121,  121,  121,  121,  172,  171,  170,
-      169,  168,   70,   56,  104,  105,  167,  166,  165,  164,
-      163,  162,  161,  160,  159,  158,  157,  156,  106,  155,
-      154,  153,  107,  152,  151,  150,  149,  108,  147,  146,
-      109,  145,  110,   56,   56,   56,   56,   56,   56,   57,
-       57,   57,   57,   57,   57,   60,   60,   60,   60,   60,
+       64,   77,   77,   77,   77,   77,   77,   77,   77,   64,
+       64,   64,   77,   78,   77,   77,   77,   79,   77,   77,
+       80,   77,   81,   77,   77,   77,   77,   77,   77,   82,
+       83,   77,   77,   84,   64,   86,   91,   86,   94,  370,
+       53,  100,   94,   95,   53,  101,  124,   95,  102,  146,
+      103,  108,  109,   64,  125,   64,  147,  104,  105,  110,
+      110,  110,  110,  110,   92,   93,  128,  129,   96,   97,
+      132,  133,   96,   97,  108,  109,   87,   88,   87,   88,
+       56,  369,  143,  150,   57,  162,  155,   58,  144,   59,
+      368,  151,  156,  163,  372,  372,   60,   61,  158,  367,
 
-       60,   62,   62,   62,   62,   62,   62,   69,   69,   69,
-       69,   69,   69,   71,   71,   71,   71,   71,   71,   95,
-      144,   95,  143,   95,   95,   96,  142,   96,   96,   96,
-       96,   99,  141,   99,   99,   99,   99,  100,  140,  139,
-      100,  100,  100,  103,  103,  103,  103,  103,  103,  112,
-      138,  112,  112,  112,  137,  136,  135,  134,  133,  132,
-      131,  130,  128,  127,  126,  125,  124,  123,  122,  119,
-      118,  117,  116,  115,   85,   84,  114,   91,  113,   84,
-       94,   93,   92,   85,   84,  176,   61,   61,   43,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+       89,   90,   56,  175,  366,  159,   57,  365,  100,   58,
+      176,   59,  101,  128,  129,  102,  317,  103,   60,   61,
+      318,  364,   89,   90,  104,  105,  135,  135,  135,  135,
+      136,  110,  110,  110,  110,  110,  179,  179,  179,  179,
+      180,  363,  362,  137,  211,  212,  213,  138,  180,  180,
+      180,  180,  180,  139,  187,  199,  140,  361,  141,  360,
+      359,  188,  200,  215,  216,  217,  220,  221,  222,  224,
+      224,  224,  224,  180,  180,  180,  180,  180,  180,  228,
+      229,  230,  232,  233,  234,  237,  238,  239,  246,  247,
+      248,  250,  251,  252,  255,  256,  257,  264,  265,  266,
 
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176
+      268,  269,  270,  180,  180,  180,  180,  180,  273,  274,
+      275,  277,  278,  279,  283,  284,  285,  287,  288,  289,
+      297,  298,  299,  302,  303,  304,  308,  309,  310,   64,
+       64,   64,   64,   64,   64,   65,   65,   65,   65,   65,
+       65,   68,   68,   68,   68,   68,   68,   70,   70,   70,
+       70,   70,   70,   85,   85,   85,   85,   85,   85,  126,
+      358,  126,  357,  126,  126,  127,  356,  127,  127,  127,
+      127,  130,  355,  130,  130,  130,  130,  131,  354,  353,
+      131,  131,  131,  134,  134,  134,  134,  134,  134,  152,
+      352,  152,  152,  152,  351,  350,  349,  348,  347,  346,
+
+      345,  344,  343,  342,  341,  340,  339,  338,  337,  336,
+      335,  334,  333,  332,  331,  330,  329,  318,  328,  327,
+      326,  325,  324,  323,  322,  321,  320,  319,  316,  315,
+      314,  313,  312,  311,  307,  306,  305,  301,  300,  296,
+      295,  294,  293,  292,  291,  290,  286,  282,  281,  280,
+      276,  272,  271,  267,  263,  262,  261,  260,  259,  258,
+      254,  253,  249,  245,  244,  243,  242,  241,  240,  236,
+      235,  231,  227,  226,  225,  223,  219,  218,  214,  210,
+      209,  208,  207,  206,  205,  204,  203,  202,  201,  198,
+      197,  196,  195,  194,  193,  192,  191,  190,  189,  186,
+
+      185,  184,  183,  182,  181,  178,  177,  174,  173,  172,
+      171,  170,  169,  168,  167,  166,  165,  164,  107,  106,
+      161,  160,  157,  154,  113,  153,  149,  148,  145,  106,
+      123,  122,  119,  116,  115,  114,  107,  106,  372,   69,
+       69,   45,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372
     } ;
 
-static const flex_int16_t yy_chk[330] =
+static const flex_int16_t yy_chk[588] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        3,    3,   25,   13,    3,   13,    3,   21,    3,    3,
-       14,   22,   14,   17,   17,  189,   17,   18,   18,   26,
-       18,  142,   21,   33,   33,  142,   22,   17,   25,   25,
-       50,   18,    3,    3,   19,   19,   19,   19,   19,   19,
-       19,   19,   50,   21,   21,   26,   26,   22,   22,  183,
-       19,   19,   19,  174,   27,  171,   27,  170,   28,   27,
+        1,    1,    1,    1,    1,    3,    3,    3,    3,    3,
+      384,   13,    3,   13,    3,   56,    3,    3,   14,   25,
+       14,   56,    3,   58,   17,   17,    3,   17,   52,    3,
+       58,    3,   18,   18,  378,   18,   33,   33,    3,    3,
+       52,   17,    3,    3,   34,   34,  370,   25,   25,   18,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
 
-       28,   34,   34,   28,   47,   47,   48,   48,   59,   59,
-       65,   65,   19,   19,   20,   20,   20,   20,   20,   20,
-       20,   20,   27,   27,   68,   68,   28,   28,   88,   88,
-       20,   20,   20,   96,   96,   97,   97,  104,  104,  105,
-      105,  120,  120,  121,  121,  129,  129,  169,  167,  166,
-      165,  164,   20,   20,   66,   66,  163,  161,  160,  158,
-      157,  156,  155,  154,  153,  152,  151,  150,   66,  149,
-      148,  147,   66,  146,  145,  144,  143,   66,  141,  140,
-       66,  139,   66,  177,  177,  177,  177,  177,  177,  178,
-      178,  178,  178,  178,  178,  179,  179,  179,  179,  179,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   19,   19,   19,   19,   19,   19,   19,
+       19,   19,   19,   19,   19,   21,   26,   22,   27,  367,
+       27,   43,   28,   27,   28,   43,   61,   28,   43,   80,
+       43,   49,   49,   21,   61,   22,   80,   43,   43,   50,
+       50,   50,   50,   50,   26,   26,   67,   67,   27,   27,
+       73,   73,   28,   28,   76,   76,   21,   21,   22,   22,
+       23,  366,   78,   83,   23,  105,  100,   23,   78,   23,
+      365,   83,  100,  105,  127,  127,   23,   23,  102,  363,
 
-      179,  180,  180,  180,  180,  180,  180,  181,  181,  181,
-      181,  181,  181,  182,  182,  182,  182,  182,  182,  184,
-      138,  184,  137,  184,  184,  185,  136,  185,  185,  185,
-      185,  186,  135,  186,  186,  186,  186,  187,  134,  133,
-      187,  187,  187,  188,  188,  188,  188,  188,  188,  190,
-      132,  190,  190,  190,  131,  128,  127,  126,  125,  124,
-      123,  122,  119,  118,  117,  116,  115,  114,  113,   94,
-       93,   92,   91,   90,   85,   84,   79,   78,   75,   67,
-       53,   52,   51,   46,   45,   43,   16,   15,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+       23,   23,   24,  123,  362,  102,   24,  361,   44,   24,
+      123,   24,   44,  128,  128,   44,  296,   44,   24,   24,
+      296,  360,   24,   24,   44,   44,   74,   74,   74,   74,
+       74,  110,  110,  110,  110,  110,  135,  135,  135,  135,
+      135,  359,  357,   74,  172,  172,  172,   74,  136,  136,
+      136,  136,  136,   74,  149,  161,   74,  356,   74,  354,
+      353,  149,  161,  174,  174,  174,  177,  177,  177,  179,
+      179,  179,  179,  179,  180,  180,  180,  180,  180,  184,
+      184,  184,  186,  186,  186,  189,  189,  189,  196,  196,
+      196,  198,  198,  198,  201,  201,  201,  209,  209,  209,
 
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176
+      214,  214,  214,  224,  224,  224,  224,  224,  226,  226,
+      226,  231,  231,  231,  244,  244,  244,  249,  249,  249,
+      267,  267,  267,  276,  276,  276,  286,  286,  286,  373,
+      373,  373,  373,  373,  373,  374,  374,  374,  374,  374,
+      374,  375,  375,  375,  375,  375,  375,  376,  376,  376,
+      376,  376,  376,  377,  377,  377,  377,  377,  377,  379,
+      352,  379,  339,  379,  379,  380,  338,  380,  380,  380,
+      380,  381,  337,  381,  381,  381,  381,  382,  336,  335,
+      382,  382,  382,  383,  383,  383,  383,  383,  383,  385,
+      334,  385,  385,  385,  333,  331,  330,  329,  328,  326,
+
+      325,  324,  323,  321,  320,  319,  318,  317,  316,  315,
+      314,  313,  312,  311,  310,  309,  308,  307,  306,  305,
+      304,  303,  302,  301,  300,  299,  298,  297,  295,  294,
+      293,  292,  291,  290,  282,  281,  280,  272,  271,  263,
+      262,  261,  260,  259,  254,  253,  245,  242,  236,  235,
+      227,  219,  218,  210,  207,  206,  205,  204,  203,  202,
+      200,  199,  197,  195,  194,  193,  192,  191,  190,  188,
+      187,  185,  183,  182,  181,  178,  176,  175,  173,  171,
+      170,  169,  168,  167,  166,  165,  164,  163,  162,  160,
+      159,  158,  157,  156,  155,  154,  153,  151,  150,  148,
+
+      147,  146,  145,  144,  143,  125,  124,  122,  121,  120,
+      119,  118,  117,  116,  115,  114,  113,  112,  107,  106,
+      104,  103,  101,   95,   94,   91,   82,   81,   79,   75,
+       60,   59,   57,   55,   54,   53,   48,   47,   45,   16,
+       15,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372,  372,  372,  372,
+      372,  372,  372,  372,  372,  372,  372
     } ;
 
-static const flex_int16_t yy_rule_linenum[44] =
+static const flex_int16_t yy_rule_linenum[73] =
     {   0,
-       57,   63,   68,   73,   78,   84,   85,   86,   88,   92,
-       93,  100,  105,  112,  120,  125,  126,  127,  128,  129,
-      130,  131,  141,  148,  154,  158,  171,  178,  188,  193,
-      196,  202,  205,  211,  214,  216,  220,  223,  228,  231,
-      252,  253,  254
+       66,   72,   78,   81,   87,   88,   89,   90,   91,   92,
+       93,   94,   95,   96,   97,   98,   99,  100,  101,  102,
+      103,  104,  105,  106,  107,  108,  109,  110,  111,  112,
+      113,  116,  121,  126,  132,  133,  134,  136,  140,  141,
+      148,  153,  160,  168,  173,  174,  175,  176,  177,  178,
+      179,  189,  196,  202,  206,  219,  226,  236,  241,  244,
+      250,  253,  259,  262,  264,  268,  271,  276,  279,  300,
+      301,  302
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -609,8 +735,8 @@ static const flex_int16_t yy_rule_linenum[44] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
-#line 2 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 1 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 2 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -627,21 +753,30 @@ static const flex_int16_t yy_rule_linenum[44] =
     char  *string_buf_ptr;
     #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext[0]), loc)
 
-#line 630 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+    // we need to do this because yy_pop_state is generated as static
+    //static void yy_pop_state();
+    #if 0
+    void lex_pop_state()
+    {
+        yy_pop_state();
+    }
+    #endif
+
+#line 765 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
-#line 27 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 36 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
   // A number symbol corresponding to the value in S.
   yy::parser::symbol_type make_INT(
     const std::string &s,
     const yy::parser::location_type& loc
   );
-#line 638 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 773 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 42 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 51 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
-#line 643 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
-#line 644 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 778 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 779 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define INITIAL 0
 #define fbo 1
@@ -664,6 +799,7 @@ static const flex_int16_t yy_rule_linenum[44] =
 #define rasterization_state 18
 #define resource 19
 #define resource1 20
+#define input_layout 21
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -853,10 +989,10 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 45 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 54 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
-#line 48 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 57 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
   // A handy shortcut to the location held by the driver.
   yy::location& loc = driver.location;
   // Code run each time yylex is called.
@@ -866,7 +1002,7 @@ YY_DECL
 
 
 
-#line 869 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1005 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -895,13 +1031,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 177 )
+				if ( yy_current_state >= 373 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 176 );
+		while ( yy_current_state != 372 );
 		yy_cp = (yy_last_accepting_cpos);
 		yy_current_state = (yy_last_accepting_state);
 
@@ -920,12 +1056,12 @@ do_action:	/* This label is used only to access EOF actions. */
 			{
 			if ( yy_act == 0 )
 				std::cerr << "--scanner backing up\n";
-			else if ( yy_act < 44 )
+			else if ( yy_act < 73 )
 				std::cerr << "--accepting rule at line " << yy_rule_linenum[yy_act] <<
 				         "(\"" << yytext << "\")\n";
-			else if ( yy_act == 44 )
+			else if ( yy_act == 73 )
 				std::cerr << "--accepting default rule (\"" << yytext << "\")\n";
-			else if ( yy_act == 45 )
+			else if ( yy_act == 74 )
 				std::cerr << "--(end of buffer or a NUL)\n";
 			else
 				std::cerr << "--EOF (start condition " << YY_START << ")\n";
@@ -943,7 +1079,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 57 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 66 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     //comment_caller  =  INITIAL;
     bracket_level = 0;
@@ -953,69 +1089,223 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 63 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 72 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
 }
 	YY_BREAK
+
 case 3:
 YY_RULE_SETUP
-#line 68 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 78 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        return CURRENT_SYMBOL;
+    }
+	YY_BREAK
+case 4:
+YY_RULE_SETUP
+#line 81 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+{
+        //yy_pop_state();
+        return CURRENT_SYMBOL;
+    }
+	YY_BREAK
+
+
+case 5:
+YY_RULE_SETUP
+#line 87 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_VOID_TYPE(loc);
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
+#line 88 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_UNSIGNED(loc);
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 89 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT_TYPE(loc);
+	YY_BREAK
+case 8:
+YY_RULE_SETUP
+#line 90 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT2_TYPE(loc);
+	YY_BREAK
+case 9:
+YY_RULE_SETUP
+#line 91 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT3_TYPE(loc);
+	YY_BREAK
+case 10:
+YY_RULE_SETUP
+#line 92 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT4_TYPE(loc);
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 93 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT2_TYPE(loc);
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 94 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT3_TYPE(loc);
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 95 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_FLOAT4_TYPE(loc);
+	YY_BREAK
+case 14:
+YY_RULE_SETUP
+#line 96 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_MAT2_TYPE(loc);
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 97 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_MAT3_TYPE(loc);
+	YY_BREAK
+case 16:
+YY_RULE_SETUP
+#line 98 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_MAT4_TYPE(loc);
+	YY_BREAK
+case 17:
+YY_RULE_SETUP
+#line 99 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_MAT2_TYPE(loc);
+	YY_BREAK
+case 18:
+YY_RULE_SETUP
+#line 100 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_MAT3_TYPE(loc);
+	YY_BREAK
+case 19:
+YY_RULE_SETUP
+#line 101 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_MAT4_TYPE(loc);
+	YY_BREAK
+case 20:
+YY_RULE_SETUP
+#line 102 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_BOOL_TYPE(loc);
+	YY_BREAK
+case 21:
+YY_RULE_SETUP
+#line 103 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_BOOL2_TYPE(loc);
+	YY_BREAK
+case 22:
+YY_RULE_SETUP
+#line 104 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_BOOL3_TYPE(loc);
+	YY_BREAK
+case 23:
+YY_RULE_SETUP
+#line 105 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_BOOL4_TYPE(loc);
+	YY_BREAK
+case 24:
+YY_RULE_SETUP
+#line 106 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT_TYPE(loc);
+	YY_BREAK
+case 25:
+YY_RULE_SETUP
+#line 107 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT2_TYPE(loc);
+	YY_BREAK
+case 26:
+YY_RULE_SETUP
+#line 108 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT3_TYPE(loc);
+	YY_BREAK
+case 27:
+YY_RULE_SETUP
+#line 109 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT4_TYPE(loc);
+	YY_BREAK
+case 28:
+YY_RULE_SETUP
+#line 110 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT2_TYPE(loc);
+	YY_BREAK
+case 29:
+YY_RULE_SETUP
+#line 111 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT3_TYPE(loc);
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
+#line 112 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_INT4_TYPE(loc);
+	YY_BREAK
+case 31:
+YY_RULE_SETUP
+#line 113 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+return yy::parser::make_UNIFORM(loc);
+	YY_BREAK
+
+case 32:
+YY_RULE_SETUP
+#line 116 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXFORMAT(loc);
 	YY_BREAK
 /*==================================================================
       Comment starting points
     */
-case 4:
+case 33:
 YY_RULE_SETUP
-#line 73 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 121 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
 }
 	YY_BREAK
-case 5:
+case 34:
 YY_RULE_SETUP
-#line 78 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 126 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment2);
 }
 	YY_BREAK
 
-case 6:
+case 35:
 YY_RULE_SETUP
-#line 84 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 132 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  anything  that's  not  a  '*'  */
 	YY_BREAK
-case 7:
+case 36:
 YY_RULE_SETUP
-#line 85 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 133 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  up  '*'s  not  followed  by  '/'s  */
 	YY_BREAK
-case 8:
-/* rule 8 can match eol */
+case 37:
+/* rule 37 can match eol */
 YY_RULE_SETUP
-#line 86 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 134 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step ();
 	YY_BREAK
-case 9:
+case 38:
 YY_RULE_SETUP
-#line 88 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 136 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
 
-case 10:
+case 39:
 YY_RULE_SETUP
-#line 92 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 140 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 
 	YY_BREAK
-case 11:
-/* rule 11 can match eol */
+case 40:
+/* rule 40 can match eol */
 YY_RULE_SETUP
-#line 93 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 141 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
@@ -1023,19 +1313,19 @@ loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
       rules for inside a string
     */
 
-case 12:
+case 41:
 YY_RULE_SETUP
-#line 100 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 148 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  saw  closing  quote  -  all  done  */
         yy_pop_state();//BEGIN(INITIAL);
         *string_buf_ptr  =  '\0';
         return yy::parser::make_STR(string_buf, loc);
     }
 	YY_BREAK
-case 13:
-/* rule 13 can match eol */
+case 42:
+/* rule 42 can match eol */
 YY_RULE_SETUP
-#line 105 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 153 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //FIXME:
         //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
@@ -1044,9 +1334,9 @@ YY_RULE_SETUP
 		return yy::parser::make_END (loc);
     }
 	YY_BREAK
-case 14:
+case 43:
 YY_RULE_SETUP
-#line 112 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 160 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  octal  escape  sequence  */
         int  result;
@@ -1056,49 +1346,49 @@ YY_RULE_SETUP
         *string_buf_ptr++  =  result;
     }
 	YY_BREAK
-case 15:
+case 44:
 YY_RULE_SETUP
-#line 120 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 168 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  generate  error  -  bad  escape  sequence;  something
         *  like  '\48'  or  '\0777777'
         */
     }
 	YY_BREAK
-case 16:
+case 45:
 YY_RULE_SETUP
-#line 125 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 173 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\n';
 	YY_BREAK
-case 17:
+case 46:
 YY_RULE_SETUP
-#line 126 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 174 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\t';
 	YY_BREAK
-case 18:
+case 47:
 YY_RULE_SETUP
-#line 127 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 175 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\r';
 	YY_BREAK
-case 19:
+case 48:
 YY_RULE_SETUP
-#line 128 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 176 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\b';
 	YY_BREAK
-case 20:
+case 49:
 YY_RULE_SETUP
-#line 129 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 177 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\f';
 	YY_BREAK
-case 21:
-/* rule 21 can match eol */
+case 50:
+/* rule 50 can match eol */
 YY_RULE_SETUP
-#line 130 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 178 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  yytext[1];
 	YY_BREAK
-case 22:
+case 51:
 YY_RULE_SETUP
-#line 131 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 179 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1110,9 +1400,9 @@ YY_RULE_SETUP
       rules for inside a GLSL section
     */
 
-case 23:
+case 52:
 YY_RULE_SETUP
-#line 141 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 189 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
@@ -1121,9 +1411,9 @@ YY_RULE_SETUP
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
-case 24:
+case 53:
 YY_RULE_SETUP
-#line 148 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 196 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         // TODO create and REGISTER the variable in a table
 		return yy::parser::make_IDENTIFIER(yytext, loc);
@@ -1131,17 +1421,17 @@ YY_RULE_SETUP
 	YY_BREAK
 
 
-case 25:
+case 54:
 YY_RULE_SETUP
-#line 154 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 202 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level++;
         *string_buf_ptr++  =  yytext[0];
     }
 	YY_BREAK
-case 26:
+case 55:
 YY_RULE_SETUP
-#line 158 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 206 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level--;
         if((bracket_level) == 0)
@@ -1156,10 +1446,10 @@ YY_RULE_SETUP
         }
     }
 	YY_BREAK
-case 27:
-/* rule 27 can match eol */
+case 56:
+/* rule 56 can match eol */
 YY_RULE_SETUP
-#line 171 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 219 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1168,9 +1458,9 @@ YY_RULE_SETUP
 		loc.lines (yyleng); loc.step ();
     }
 	YY_BREAK
-case 28:
+case 57:
 YY_RULE_SETUP
-#line 178 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 226 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1182,25 +1472,25 @@ YY_RULE_SETUP
       rules for inside a  section
     */
 
-case 29:
+case 58:
 YY_RULE_SETUP
-#line 188 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 236 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         comment_caller  =  INITIAL;
         yy_push_state(pass);
 		return yy::parser::make_PASS(loc);
     }
 	YY_BREAK
-case 30:
+case 59:
 YY_RULE_SETUP
-#line 193 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 241 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
-case 31:
+case 60:
 YY_RULE_SETUP
-#line 196 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 244 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();//BEGIN(INITIAL);
 		return CURRENT_SYMBOL;
@@ -1208,68 +1498,68 @@ YY_RULE_SETUP
 	YY_BREAK
 
 
-case 32:
+case 61:
 YY_RULE_SETUP
-#line 202 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 250 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
-case 33:
+case 62:
 YY_RULE_SETUP
-#line 205 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 253 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
-        yy_pop_state();
+        //yy_pop_state();
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 /*VertexProgram       return VERTEXPROGRAM;*/
-case 34:
+case 63:
 YY_RULE_SETUP
-#line 211 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 259 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
 	YY_BREAK
 /*FragmentProgram     return FRAGMENTPROGRAM;*/
 /*FragmentShader      return FRAGMENTPROGRAM;*/
-case 35:
+case 64:
 YY_RULE_SETUP
-#line 214 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 262 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FRAGMENTPROGRAM(IShader::Type::E_FRAGMENT, loc);
 	YY_BREAK
 /*GeometryProgram     return GEOMETRYPROGRAM;*/
-case 36:
+case 65:
 YY_RULE_SETUP
-#line 216 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 264 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
 	YY_BREAK
 
 
-case 37:
+case 66:
 YY_RULE_SETUP
-#line 220 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 268 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
-case 38:
+case 67:
 YY_RULE_SETUP
-#line 223 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 271 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 
-case 39:
-/* rule 39 can match eol */
+case 68:
+/* rule 68 can match eol */
 YY_RULE_SETUP
-#line 228 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 276 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.lines (yyleng); loc.step ();
 }
 	YY_BREAK
-case 40:
+case 69:
 YY_RULE_SETUP
-#line 231 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 279 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.step ();
 }
@@ -1290,19 +1580,19 @@ YY_RULE_SETUP
 "}"        return yy::parser::make_RIGHTSCOPE(loc);
 ","        return yy::parser::make_COMMA(loc);
     */
-case 41:
+case 70:
 YY_RULE_SETUP
-#line 252 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 300 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return make_INT(yytext, loc);
 	YY_BREAK
-case 42:
+case 71:
 YY_RULE_SETUP
-#line 253 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 301 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_IDENTIFIER(yytext, loc);
 	YY_BREAK
-case 43:
+case 72:
 YY_RULE_SETUP
-#line 254 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 302 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
@@ -1333,15 +1623,16 @@ case YY_STATE_EOF(color_sample_state):
 case YY_STATE_EOF(rasterization_state):
 case YY_STATE_EOF(resource):
 case YY_STATE_EOF(resource1):
-#line 262 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+case YY_STATE_EOF(input_layout):
+#line 310 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_END (loc);
 	YY_BREAK
-case 44:
+case 73:
 YY_RULE_SETUP
-#line 267 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 315 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1344 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1635 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1779,7 +2070,7 @@ int yyFlexLexer::yy_get_next_buffer()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 177 )
+			if ( yy_current_state >= 373 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1812,11 +2103,11 @@ int yyFlexLexer::yy_get_next_buffer()
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 177 )
+		if ( yy_current_state >= 373 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 176);
+	yy_is_jam = (yy_current_state == 372);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2458,7 +2749,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 267 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 315 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
 yy::parser::symbol_type make_INT(

@@ -50,11 +50,18 @@ Technique AuxGeometry
     VertexShader = vert
     PixelShader = frag
   }
-  /*
   Pass p1
   {
     VertexShader = vert
     PixelShader = frag
   }
-  */
+}
+
+Technique Test
+{
+  Pass p0
+  {
+    VertexShader = vert
+    PixelShader = frag
+  }
 }
