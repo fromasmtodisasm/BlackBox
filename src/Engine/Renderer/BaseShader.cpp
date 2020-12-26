@@ -234,6 +234,13 @@ CBaseShaderProgram::CBaseShaderProgram() : m_Status(this)
 	created	  = true;
 	buffer	  = new char[BUFFER_SIZE];
 }
+CBaseShaderProgram::CBaseShaderProgram(uint binary) : m_Status(this)
+{
+	m_Vertex   = ShaderInfo(nullptr, "binary");
+	m_Fragment = ShaderInfo(nullptr, "binary");
+	created	  = true;
+	buffer	  = new char[BUFFER_SIZE];
+}
 
 CBaseShaderProgram::CBaseShaderProgram(
 	ShaderRef vs, ShaderRef fs)
@@ -285,6 +292,7 @@ bool CBaseShaderProgram::Create(const char* label)
 	Attach(m_Fragment);
 	Attach(m_Geometry);
 	Attach(m_Compute);
+	glProgramParameteri(m_Program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	auto status = Link();
 	Detach(m_Vertex);
 	Detach(m_Fragment);

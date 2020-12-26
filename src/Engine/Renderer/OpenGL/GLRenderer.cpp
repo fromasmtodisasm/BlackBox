@@ -52,15 +52,33 @@ class ShaderMan
 	}
 	IShaderProgram* Sh_Load(const char* name, int flags)
 	{
+		IShaderProgram* p = nullptr;
+		if (!(p = Sh_LoadBinary(name, flags)))
+		{
+			if (p = Compile(name, flags))
+			{
+				SaveBinaryShader(name, p, flags);
+			}
+		}
+		return p;
+	}
+	IShaderProgram* Sh_LoadBinary(const char* name, int flags)
+	{
+		auto path = string(string("bin/shadercache/") + name);
+		return LoadBinaryShader(path.c_str(), flags);
+	}
+
+	IShaderProgram* Compile(std::string_view name, int flags)
+	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
 
 		PEffect pEffect = nullptr;
 		static char path[256] = {0x01};
-		sprintf(path, "res/shaders/fx/%s", name);
+		sprintf(path, "res/shaders/fx/%s", name.data());
 		if (g_FxParser->Parse(path, &pEffect))
 		{
 
-			CryLog("Dumping shaders of effect: %s", name);
+			CryLog("Dumping shaders of effect: %s", name.data());
 			for (int i = 0; i < pEffect->GetNumShaders(); i++)
 			{
 				CryLog("[%s]", pEffect->GetShader(i).name.c_str());
@@ -70,11 +88,12 @@ class ShaderMan
 			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT);
 			dump_shaders_on_load = false;
 			auto p	= new CShaderProgram(vs, fs);
-			p->Create(name);
+			p->Create(name.data());
 			m_Shaders.push_back(p);
 			return p;
 		}
 		return nullptr;
+
 	}
 	void ReloadAll()
 	{

@@ -9,6 +9,10 @@ CShaderProgram::CShaderProgram() : CBaseShaderProgram()
 {
 }
 
+CShaderProgram::CShaderProgram(uint binary) : CBaseShaderProgram()
+{
+}
+
 CShaderProgram::CShaderProgram(ShaderRef vs, ShaderRef fs) : CBaseShaderProgram(vs, fs)
 {
 }

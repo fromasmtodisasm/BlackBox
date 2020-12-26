@@ -11,6 +11,7 @@ class CShaderProgram;
 class CShaderProgram : public CBaseShaderProgram {
 public:
   CShaderProgram();
+  CShaderProgram(uint binary);
   CShaderProgram(ShaderRef vs, ShaderRef fs);
   CShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs);
   CShaderProgram(ShaderInfo& vs, ShaderInfo& fs, ShaderInfo& gs);

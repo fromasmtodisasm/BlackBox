@@ -353,6 +353,7 @@ bool CSystem::Init()
 		if (m_pUserCallback == NULL && m_env.IsDedicated())
 			m_pUserCallback = pConsole;
 	}
+	#endif
 	//////////////////////////////////////////////////////////////////////////
 	// LOAD GAME PROJECT CONFIGURATION
 	//////////////////////////////////////////////////////////////////////////
@@ -360,8 +361,6 @@ bool CSystem::Init()
 
 	// Load project directory early, since it relies on overriding current working folder
 	m_env.pProjectManager = new CProjectManager();
-
-	#endif
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// File system, must be very early

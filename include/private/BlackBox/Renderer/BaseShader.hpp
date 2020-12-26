@@ -1,12 +1,12 @@
 #pragma once
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
 
 struct ICVar;
 
@@ -16,144 +16,152 @@ class CShaderProgram;
 
 struct ShaderStatus
 {
-  char m_InfoLog[512] = {0};
-  int m_Status = GL_FALSE;
-  CShader* m_Shader = nullptr;
+	char m_InfoLog[512] = {0};
+	int m_Status		= GL_FALSE;
+	CShader* m_Shader	= nullptr;
 
-  ShaderStatus(CShader* shader);
-  bool get(GLenum statusType);
+	ShaderStatus(CShader* shader);
+	bool get(GLenum statusType);
 };
+
+bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags);
+IShaderProgram* LoadBinaryShader(const char* name, int flags);
 
 struct ShaderProgramStatus
 {
-  char m_InfoLog[1024];
-  int m_Status;
-  CBaseShaderProgram* m_Program;
+	char m_InfoLog[1024];
+	int m_Status;
+	CBaseShaderProgram* m_Program;
 
-  ShaderProgramStatus(CBaseShaderProgram* program);
-  bool get(GLenum statusType);
+	ShaderProgramStatus(CBaseShaderProgram* program);
+	bool get(GLenum statusType);
 };
 
 class CShader : public IShader
 {
-public:
-  CShader(CShader::Type type);
-  ~CShader();
-  // Inherited via IShader
-  virtual void AddRef() override;
-  virtual int Release() override;
+  public:
+	CShader(CShader::Type type);
+	~CShader();
+	// Inherited via IShader
+	virtual void AddRef() override;
+	virtual int Release() override;
 
-  static CShader* load(ShaderDesc const& desc);
-  static CShader* load(std::string_view source);
-  static bool parseLine(string& buffer);
-  static bool loadInternal(string const& path, string& buffer);
-  static bool loadFromStream(const std::stringstream stream, string& buffer);
-  static ShaderRef loadFromMemory(const std::vector<std::string_view>& text, CShader::Type type);
-  static ShaderRef loadFromEffect(struct IEffect* pEffect, CShader::Type type);
-  
-  virtual bool Create() override;
-  virtual bool Compile(std::vector<std::string_view> code) override;
-  virtual bool Bind() override;
-  virtual bool Empty() override;
-  virtual void print() override;
-  virtual const char* typeToStr() override;
-  virtual const char* getName() override;
-  virtual uint get() override;
+	static CShader* load(ShaderDesc const& desc);
+	static CShader* load(std::string_view source);
+	static bool parseLine(string& buffer);
+	static bool loadInternal(string const& path, string& buffer);
+	static bool loadFromStream(const std::stringstream stream, string& buffer);
+	static ShaderRef loadFromMemory(const std::vector<std::string_view>& text, CShader::Type type);
+	static ShaderRef loadFromEffect(struct IEffect* pEffect, CShader::Type type);
 
-private:
-  GLuint m_Shader;
-  ShaderStatus m_Status;
-  bool m_Empty;
-  int m_Refs = 0;
-public:
-  string m_Path;
-  IShader::Type m_Type;
-  virtual IShader::Type GetType() override;
+	virtual bool Create() override;
+	virtual bool Compile(std::vector<std::string_view> code) override;
+	virtual bool Bind() override;
+	virtual bool Empty() override;
+	virtual void print() override;
+	virtual const char* typeToStr() override;
+	virtual const char* getName() override;
+	virtual uint get() override;
+
+  private:
+	GLuint m_Shader;
+	ShaderStatus m_Status;
+	bool m_Empty;
+	int m_Refs = 0;
+
+  public:
+	string m_Path;
+	IShader::Type m_Type;
+	virtual IShader::Type GetType() override;
 };
 
-class CBaseShaderProgram : public IShaderProgram {
+class CBaseShaderProgram : public IShaderProgram
+{
 public:
-  CBaseShaderProgram();
-  CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
-  CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs);
-  CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs);
-  CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs, const ShaderInfo& cs);
-  ~CBaseShaderProgram();
+	CBaseShaderProgram();
+	CBaseShaderProgram(uint binary);
+	CBaseShaderProgram(ShaderRef vs, ShaderRef fs);
+	CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs);
+	CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs);
+	CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs, const ShaderInfo& cs);
+	~CBaseShaderProgram();
 
-  virtual void AddRef() override;
-  virtual int Release() override;
+	virtual void AddRef() override;
+	virtual int Release() override;
 
-  virtual bool Create(const char* label) override;
-  virtual void Attach(ShaderInfo& shader) override;
-  virtual ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst) override;
-  virtual void Detach(ShaderInfo& shader) override;
-  virtual bool Dispatch(int x, int y, int z, GLbitfield barriers) override;
-  virtual bool DispatchInderect() override;
-  virtual bool Link() override;
-  virtual void Use() override;
-  virtual void Unuse() override;
-  virtual void DeleteProgram() override;
-  virtual GLint GetUniformLocation(const char* format, ...) override;
-  virtual GLint GetUniformLocation(string& name) override;
-  UniformValue GetUniformValue(const char* name);
-  void Uniform(bool value, const char* format, ...) { Uniform((int)value, format);}
-  virtual void Uniform(const int value, const char* format, ...) override;
-  virtual void Uniform(const unsigned int value, const char* format, ...) override;
-  virtual void Uniform(const float value, const char* format, ...) override;
-  virtual void Uniform(const Vec1 value, const char* format, ...) override;
-  virtual void Uniform(const Vec2 value, const char* format, ...) override;
-  virtual void Uniform(const Vec3 value, const char* format, ...) override;
-  virtual void Uniform(const Vec4 value, const char* format, ...) override;
-  virtual void Uniform(const Mat2 value, const char* format, ...) override;
-  virtual void Uniform(const Mat3 value, const char* format, ...) override;
-  virtual void Uniform(const Mat4 value, const char* format, ...) override;
-  virtual void Uniform(const glm::ivec4 value, const char* format, ...) override;
-  virtual void Uniform(const ITexture* texture, const char* format, ...) override;
+	virtual bool Create(const char* label) override;
+	virtual void Attach(ShaderInfo& shader) override;
+	virtual ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst) override;
+	virtual void Detach(ShaderInfo& shader) override;
+	virtual bool Dispatch(int x, int y, int z, GLbitfield barriers) override;
+	virtual bool DispatchInderect() override;
+	virtual bool Link() override;
+	virtual void Use() override;
+	virtual void Unuse() override;
+	virtual void DeleteProgram() override;
+	virtual GLint GetUniformLocation(const char* format, ...) override;
+	virtual GLint GetUniformLocation(string& name) override;
+	UniformValue GetUniformValue(const char* name);
+	void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
+	virtual void Uniform(const int value, const char* format, ...) override;
+	virtual void Uniform(const unsigned int value, const char* format, ...) override;
+	virtual void Uniform(const float value, const char* format, ...) override;
+	virtual void Uniform(const Vec1 value, const char* format, ...) override;
+	virtual void Uniform(const Vec2 value, const char* format, ...) override;
+	virtual void Uniform(const Vec3 value, const char* format, ...) override;
+	virtual void Uniform(const Vec4 value, const char* format, ...) override;
+	virtual void Uniform(const Mat2 value, const char* format, ...) override;
+	virtual void Uniform(const Mat3 value, const char* format, ...) override;
+	virtual void Uniform(const Mat4 value, const char* format, ...) override;
+	virtual void Uniform(const glm::ivec4 value, const char* format, ...) override;
+	virtual void Uniform(const ITexture* texture, const char* format, ...) override;
 
-  template<typename T>
-  void Uniform(const T value, string name) { Uniform(value, name.c_str()); }
+	template<typename T>
+	void Uniform(const T value, string name)
+	{
+		Uniform(value, name.c_str());
+	}
 
-  //virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
+	//virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
 
-  virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
-  virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
-  virtual uint Get() override;
-  virtual void setup() override {};
-  virtual void Dump() override;
-private:
-  void reset(ShaderInfo src);
-  const char* buildName(const char* format, va_list args);
-public:
-  const size_t BUFFER_SIZE = 1024;
-  ShaderInfo m_Vertex;
-  ShaderInfo m_Fragment;
-  ShaderInfo m_Geometry;
-  ShaderInfo m_Compute;
+	virtual void BindTexture2D(GLuint texture, GLint unit, const char* sampler) override;
+	virtual void BindTextureUnit2D(GLuint texture, GLint unit) override;
+	virtual uint Get() override;
+	virtual void setup() override{};
+	virtual void Dump() override;
 
-  uint m_Program;
-  char infoLog[512];
-  ShaderProgramStatus m_Status;
+  private:
+	void reset(ShaderInfo src);
+	const char* buildName(const char* format, va_list args);
 
-  bool created = false;
-  std::map<string, GLint> m_Cache;
-  static char* buffer;
-  string name;
-  static ICVar* print_loc_name;
-  static ICVar* use_cache;
+  public:
+	const size_t BUFFER_SIZE = 1024;
+	ShaderInfo m_Vertex;
+	ShaderInfo m_Fragment;
+	ShaderInfo m_Geometry;
+	ShaderInfo m_Compute;
 
-  int m_Refs = 0;
+	uint m_Program;
+	char infoLog[512];
+	ShaderProgramStatus m_Status;
 
+	bool created = false;
+	std::map<string, GLint> m_Cache;
+	static char* buffer;
+	string name;
+	static ICVar* print_loc_name;
+	static ICVar* use_cache;
 
-  // Inherited via IShaderProgram
-  virtual const char* GetShaderName(IShader::Type type) override;
+	int m_Refs = 0;
 
+	// Inherited via IShaderProgram
+	virtual const char* GetShaderName(IShader::Type type) override;
 
-  // Inherited via IShaderProgram
-  virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
+	// Inherited via IShaderProgram
+	virtual void Reload(ShaderRef& v, ShaderRef& f, ShaderRef& g, ShaderRef& c, const char* label) override;
 
-
-// Inherited via IShaderProgram
-  virtual int Reload() override;
+	// Inherited via IShaderProgram
+	virtual int Reload() override;
 };
 
 CShader::Type str2typ(string type);

@@ -1,5 +1,5 @@
 #include "Shaders/FxParser.h"
-#include <BlackBox/Renderer/BaseShader.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
 
 #include <sstream>
 using std::string_view;
@@ -218,4 +218,187 @@ ShaderRef CShader::loadFromMemory(const std::vector<std::string_view>& text, ISh
 IShaderProgram* GetGLSLSandBoxShader()
 {
 	return nullptr;
+}
+
+
+namespace GlslProgram
+{
+	struct Data
+	{
+		void* ptr = nullptr;
+		uint length = 0;
+		const char* tag = nullptr;
+		Data(void* ptr, uint length) : ptr(ptr), length(length) {}
+		Data(const char* t) : tag(t) {}
+
+		void saveToFile(const char* name)
+		{
+			std::ofstream fo(name, std::ios::binary);	
+			if (fo.is_open())
+			{
+				fo.write((char*)ptr, length);
+			}
+		}
+	};
+	bool getLinkStatus(GLuint program)
+	{
+		GLint linked;
+
+		glGetProgramiv(program, GL_OBJECT_LINK_STATUS_ARB, &linked);
+
+		if (!linked)
+			return false;
+
+		return true;
+	}
+
+	Data* getBinary(GLuint program, GLenum* binaryFormat)
+	{
+		if (program == 0 || !getLinkStatus(program))
+			return NULL;
+
+		if (glGetProgramBinary == NULL || glProgramBinary == NULL || glProgramParameteri == NULL)
+			return NULL;
+
+		GLint binaryLength;
+		void* binary;
+
+		glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+
+		if (binaryLength < 1)
+			return NULL;
+
+		binary = (GLvoid*)malloc(binaryLength);
+
+		if (binary == NULL)
+			return NULL;
+
+		glGetProgramBinary(program, binaryLength, NULL, binaryFormat, binary);
+
+		return new Data(binary, binaryLength);
+	}
+	bool saveBinary(GLuint program, const char* fileName, GLenum* binaryFormat)
+	{
+		Data* data = getBinary(program, binaryFormat);
+
+		if (data == NULL)
+			return false;
+
+		data->saveToFile(fileName);
+
+		delete data;
+
+		return true;
+	}
+
+	bool loadBinary(GLuint& program, Data* data, GLenum binaryFormat)
+	{
+		if (program == 0)
+			return false;
+
+		if (glGetProgramBinary == NULL || glProgramBinary == NULL || glProgramParameteri == NULL)
+			return false;
+
+		if (data == NULL || data->length < 1)
+			return false;
+
+		glProgramBinary(program, binaryFormat, data->ptr, data->length);
+
+		return getLinkStatus(program);
+	}
+
+	IShaderProgram* loadBinary(const char* fileName, GLenum binaryFormat)
+	{
+		Data* data = new Data(fileName);
+		uint binary;
+		CShaderProgram* program{};
+		if (bool res   = loadBinary(binary, data, binaryFormat); res)
+		{
+			program = new CShaderProgram(binary);	
+		}
+
+		delete data;
+
+		return program;
+	}
+} // namespace GlslProgram
+
+template<typename T>
+std::ostream& binary_write(std::ostream& stream, const T& value)
+{
+	return stream.write(reinterpret_cast<const char*>(&value), sizeof(T));
+}
+
+template<typename T>
+std::istream& binary_read(std::istream& stream, T& value)
+{
+	return stream.read(reinterpret_cast<char*> (&value), sizeof(T));
+}
+
+bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags){
+	GLint formats = 0;
+	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
+	if (formats < 1)
+	{
+		CryError("Driver does not support any binary formats.");
+		return false;
+	}
+	// Get the binary length
+	GLint length = 0;
+	glGetProgramiv(program->Get(), GL_PROGRAM_BINARY_LENGTH, &length);
+
+	// Retrieve the binary code
+	std::vector<GLubyte> buffer(length);
+	GLenum format = 0;
+	glGetProgramBinary(program->Get(), length, NULL, &format, buffer.data());
+
+	// Write the binary to a file.
+	std::string fName(std::string("bin/shadercache/") + (name));
+	CryLog("Writing to %s , binary format = %d", fName.c_str(), format);
+	std::ofstream out(fName.c_str(), std::ios::binary);
+	out.write(reinterpret_cast<char*>(&format), sizeof(format));
+	out.write(reinterpret_cast<char*>(&length), sizeof(length));
+	out.write(reinterpret_cast<char*>(buffer.data()), length);
+	out.close();
+	return true;
+}
+IShaderProgram* LoadBinaryShader(const char* name, int flags)
+{
+	//GLuint program = glCreateProgram();
+	CShaderProgram* program = new CShaderProgram();
+
+	ShaderProgramStatus st(program);
+
+	// Load binary from file
+	std::ifstream inputStream(name, std::ios::binary);
+	if (!inputStream.is_open())
+	{
+		return nullptr;
+	}
+	std::istreambuf_iterator<char> startIt(inputStream), endIt;
+
+	GLenum format = 0;
+	uint length	  = 0;
+	binary_read(inputStream, format);
+	binary_read(inputStream, length);
+	CryLog("Loading binary shader %s , binary format = %d, binary length = %d", name, format, length);
+	std::vector<char> buffer(startIt, endIt); // Load file
+	inputStream.close();
+
+	// Install shader binary
+	glProgramBinary(program->Get(), format, buffer.data(), length);
+
+	// Check for success/failure
+	#if 0
+	GLint status;
+	glGetProgramiv(program->Get(), GL_LINK_STATUS, &status);
+	if (GL_FALSE == status)
+	{
+		CryError("Cannot link binary program.");
+		delete program;
+		program = nullptr;
+	}
+	#endif
+	st.get(GL_LINK_STATUS);
+	return program;
 }
