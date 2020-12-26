@@ -78,7 +78,7 @@ GLSLShader {
     yy_push_state(shader);
 	return yy::parser::make_GLSLSHADER(loc);
 }
-Technique {
+[Tt]echnique {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
 }
@@ -243,7 +243,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
       rules for inside a  section
     */
 <technique>{
-    Pass {
+    [Pp]ass {
         comment_caller  =  INITIAL;
         yy_push_state(pass);
 		return yy::parser::make_PASS(loc);

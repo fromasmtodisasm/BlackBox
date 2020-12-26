@@ -37,9 +37,9 @@ GLSLShader frag
 
 }
 
-Technique main
+technique main
 {
-    Pass p0
+    pass p0
     {
         InputLayout
         {

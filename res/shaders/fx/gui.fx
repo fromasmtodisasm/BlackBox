@@ -27,10 +27,10 @@ GLSLShader vert
 
 }
 
-Technique AuxGeometry
+technique Main
 {
 
-  Pass p0
+  pass p0
   {
 	InputLayout
 	{
