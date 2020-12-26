@@ -127,7 +127,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
-	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb.fx", 0);
+	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
 
 	REGISTER_CVAR(dbg_mode, 3, 0, "");
 	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");

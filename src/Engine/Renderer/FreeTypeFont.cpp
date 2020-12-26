@@ -159,7 +159,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	m_Height = static_cast<float>(h);
 	std::set<test_size> test;
-	shader = gEnv->pRenderer->Sh_Load("sprite.fx", 0);
+	shader = gEnv->pRenderer->Sh_Load("sprite", 0);
 	if (!shader)
 		return false;
 

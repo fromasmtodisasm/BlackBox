@@ -353,9 +353,10 @@ bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags){
 	glGetProgramBinary(program->Get(), length, NULL, &format, buffer.data());
 
 	// Write the binary to a file.
-	std::string fName(std::string("bin/shadercache/") + (name));
-	CryLog("Writing to %s , binary format = %d", fName.c_str(), format);
-	std::ofstream out(fName.c_str(), std::ios::binary);
+	std::stringstream path;
+	path << "bin/shadercache/" << name << ".fxb";
+	CryLog("Writing to %s , binary format = %d", path.str().c_str(), format);
+	std::ofstream out(path.str().c_str(), std::ios::binary);
 	out.write(reinterpret_cast<char*>(&format), sizeof(format));
 	out.write(reinterpret_cast<char*>(&length), sizeof(length));
 	out.write(reinterpret_cast<char*>(buffer.data()), length);

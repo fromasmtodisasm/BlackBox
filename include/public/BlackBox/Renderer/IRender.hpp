@@ -542,7 +542,6 @@ struct IRenderer
 
 	////////////////////////////////////////////////////////////////////////////////
 	virtual IShaderProgram* Sh_Load(const char* name, int flags)			  = 0;
-	virtual IShaderProgram* Sh_Load(const char* vertex, const char* fragment) = 0;
 	virtual void Sh_Reload() = 0;
 	// Loading of the texture for name(nameTex)
 	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;

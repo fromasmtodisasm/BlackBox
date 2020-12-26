@@ -64,8 +64,9 @@ class ShaderMan
 	}
 	IShaderProgram* Sh_LoadBinary(const char* name, int flags)
 	{
-		auto path = string(string("bin/shadercache/") + name);
-		return LoadBinaryShader(path.c_str(), flags);
+		std::stringstream path;
+		path << "bin/shadercache/" << name << ".fxb";
+		return LoadBinaryShader(path.str().data(), flags);
 	}
 
 	IShaderProgram* Compile(std::string_view name, int flags)
@@ -73,9 +74,9 @@ class ShaderMan
 		using ShaderInfo = IShaderProgram::ShaderInfo;
 
 		PEffect pEffect = nullptr;
-		static char path[256] = {0x01};
-		sprintf(path, "res/shaders/fx/%s", name.data());
-		if (g_FxParser->Parse(path, &pEffect))
+		std::stringstream path;
+		path << "res/shaders/fx/" << name << ".fx";
+		if (g_FxParser->Parse(path.str().data(), &pEffect))
 		{
 
 			CryLog("Dumping shaders of effect: %s", name.data());
@@ -201,8 +202,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	//if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screenshader.vs", "screenshader.frag")))
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen.fx", 0)))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen", 0)))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -211,8 +211,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_ScreenShader->Uniform(0, "screenTexture");
 	m_ScreenShader->Unuse();
 
-	//if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.vs", "auxgeom.frag")))
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom.fx", 0)))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0)))
 	{
 		m_pSystem->Log("Error of loading auxgeom shader");
 	}
@@ -678,12 +677,6 @@ IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
 	gEnv->pLog->Log("load shader: %s", name);
 	return gShMan->Sh_Load(name, flags);
-}
-
-IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)
-{
-	gEnv->pLog->Log("load shader: %s_%s", vertex, fragment);
-	return gShMan->Sh_Load(vertex, fragment);
 }
 
 void GLRenderer::DrawFullscreenQuad()
