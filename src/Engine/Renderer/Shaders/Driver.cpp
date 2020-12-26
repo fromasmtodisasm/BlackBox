@@ -20,9 +20,7 @@ IEffect* Driver::parse(const char* f)
 	currentEffect	= pEffect;
 	pEffect->m_Techniques.clear();
 	CommonCode.clear();
-    file = f;
-    location.initialize(&file);
-    scan_begin();
+    scan_begin(f);
     parser.set_debug_level(trace_parsing);
     int res = parser.parse();
 	if (res == 0)
@@ -39,8 +37,10 @@ IEffect* Driver::parse(const char* f)
     return pEffect;
 }
 
-void Driver::scan_begin()
+void Driver::scan_begin(const char* _file)
 {
+	file = _file;	
+    location.initialize(&file);
 	scanner->set_debug(trace_scanning);
 	if (file.empty() || file == "-")
 	{

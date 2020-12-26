@@ -146,6 +146,7 @@ class CSystem final : public ISystem
 	virtual IStreamEngine* GetStreamEngine() override;
 	IRemoteConsole* GetIRemoteConsole() override;
 	virtual ITextModeConsole* GetITextModeConsole() override;
+	virtual IProjectManager* GetIProjectManager() override; 
 
 	virtual IGame* CreateGame(IGame* game) override;
 
@@ -169,6 +170,7 @@ class CSystem final : public ISystem
 
 	virtual const SFileVersion& GetFileVersion() override;
 	virtual const SFileVersion& GetProductVersion() override;
+	virtual const char* GetRootFolder() const override;
 
 	// Унаследовано через ISystem
 
@@ -295,6 +297,8 @@ class CSystem final : public ISystem
 	int m_rTonemap;
 
 	bool m_bIsActive = true;
+	
+	string m_RootFolder;
 
 	// Inherited via ISystem
 	virtual void EnableGui(bool enable) override;

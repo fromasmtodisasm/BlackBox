@@ -13,6 +13,7 @@
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
 #include "RemoteConsole/RemoteConsole.h"
+#include <BlackBox/System/IProjectManager.hpp>
 
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
@@ -422,6 +423,11 @@ const SFileVersion& CSystem::GetFileVersion()
 const SFileVersion& CSystem::GetProductVersion()
 {
 	return m_ProductVersion;
+}
+
+const char * CSystem::GetRootFolder() const
+{
+	return m_RootFolder.c_str();
 }
 
 IEntitySystem* CSystem::GetIEntitySystem()
@@ -870,6 +876,12 @@ ITextModeConsole* CSystem::GetITextModeConsole()
 		return m_pTextModeConsole;
 	return 0;
 }
+
+IProjectManager* CSystem::GetIProjectManager()
+{
+	return m_env.pProjectManager;
+}
+
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {

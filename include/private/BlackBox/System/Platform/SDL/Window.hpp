@@ -23,7 +23,7 @@ public:
   ~CSDLWindow();
 
   // IWindow interface
-  virtual bool init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen) override;
+  virtual bool init(SInitParams* pInitParams) override;
   virtual void update() override;
   virtual void clear() override;
   virtual bool closed() override;

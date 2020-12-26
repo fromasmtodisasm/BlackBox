@@ -782,5 +782,10 @@ inline /*void*/ UnifyFilePath(TString& path)
 	path.replace('\\', '/');
 	path.MakeLower();
 }
+
+inline string GetProjectFile()
+{
+	return string();
+}
 }
 

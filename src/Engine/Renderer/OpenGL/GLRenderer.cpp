@@ -15,6 +15,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
+#include <BlackBox/System/IProjectManager.hpp>
 
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
@@ -34,6 +35,7 @@
 #pragma warning(disable : 4244)
 
 static int dump_shaders_on_load = false;
+FxParser* g_FxParser;
 
 class ShaderMan
 {
@@ -48,6 +50,32 @@ class ShaderMan
 		m_Shaders.push_back(p);
 		return p;
 	}
+	IShaderProgram* Sh_Load(const char* name, int flags)
+	{
+		using ShaderInfo = IShaderProgram::ShaderInfo;
+
+		PEffect pEffect = nullptr;
+		static char path[256] = {0x01};
+		sprintf(path, "res/shaders/fx/%s", name);
+		if (g_FxParser->Parse(path, &pEffect))
+		{
+
+			CryLog("Dumping shaders of effect: %s", name);
+			for (int i = 0; i < pEffect->GetNumShaders(); i++)
+			{
+				CryLog("[%s]", pEffect->GetShader(i).name.c_str());
+			}
+			dump_shaders_on_load = true;
+			auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX);
+			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT);
+			dump_shaders_on_load = false;
+			auto p	= new CShaderProgram(vs, fs);
+			p->Create(name);
+			m_Shaders.push_back(p);
+			return p;
+		}
+		return nullptr;
+	}
 	void ReloadAll()
 	{
 		for (auto& s : m_Shaders)
@@ -61,7 +89,6 @@ class ShaderMan
 
 ShaderMan* gShMan;
 FxParser s_FxParser;
-FxParser* g_FxParser;
 
 void TestFx(IConsoleCmdArgs* args)
 {
@@ -124,7 +151,12 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	else
 	glContextType = AttributeType::Core;
 	#endif
-	if (!m_Window->init(x, y, width, height, cbpp, zbpp, sbits, fullscreen))
+	const char* sGameName = gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName();
+	strcpy(m_WinTitle, sGameName);
+
+	CryLog("Creating window called '%s' (%dx%d)", m_WinTitle, width, height);
+	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen};
+	if (!m_Window->init(&wp))
 		return nullptr;
     CryLog("window inited");
 	if (!OpenGLLoader())
@@ -625,29 +657,8 @@ void GLRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpa
 
 IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
 {
-	using ShaderInfo = IShaderProgram::ShaderInfo;
-
-	PEffect pEffect = nullptr;
-	static char path[256] = {0x01};
-	sprintf(path, "res/shaders/fx/%s", name);
-	if (g_FxParser->Parse(path, &pEffect))
-	{
-
-		CryLog("Dumping shaders of effect: %s", name);
-		for (int i = 0; i < pEffect->GetNumShaders(); i++)
-		{
-			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
-		}
-		dump_shaders_on_load = true;
-		auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX);
-		auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT);
-		dump_shaders_on_load = false;
-		auto p	= new CShaderProgram(vs, fs);
-		p->Create(name);
-		m_Shaders.push_back(p);
-		return p;
-	}
-	return nullptr;
+	gEnv->pLog->Log("load shader: %s", name);
+	return gShMan->Sh_Load(name, flags);
 }
 
 IShaderProgram* GLRenderer::Sh_Load(const char* vertex, const char* fragment)

@@ -36,13 +36,14 @@ class Driver : public IDriver {
     std::string file;
     bool trace_parsing;
 
-    void scan_begin();
+    void scan_begin(const char* file);
     void scan_end();
 
     bool trace_scanning;
     yy::location location;
 
     friend class Scanner;
+
     Scanner* scanner;
     yy::parser parser;
 	CEffect* currentEffect;

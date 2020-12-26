@@ -13,7 +13,17 @@
 
     int  bracket_level = 0;
     char  *string_buf_ptr;
-    #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(yytext[0]), loc)
+    #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc)
+
+    struct IncludeData {
+        IncludeData(YY_BUFFER_STATE s, int ln, const char *fname, FILE *fd=NULL) :
+            state(s), line_num(ln), file_name(fname), fileToClose(fd) {}
+        YY_BUFFER_STATE state;
+        int             line_num;
+        std::string     file_name; // the name of the current file (when in #include, for example)
+        std::ifstream   fileToClose; // keep track of the file descriptor to make sure we will close it
+    };
+    std::stack<IncludeData> include_stack;
 
     // we need to do this because yy_pop_state is generated as static
     //static void yy_pop_state();
@@ -314,7 +324,35 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
     return CURRENT_SYMBOL;
 }
-<<EOF>>    return yy::parser::make_END (loc);
+
+    /*==================================================================
+      ==================================================================
+      !! SIMPLIFIED PREPROCESSOR !!
+      More complex preprocessor would require a complete parser that would
+      pre-process the code. Here we avoid doing so : directly loading nested 
+      includes : Not even using the grammar analyzer !
+      ==================================================================
+      ==================================================================
+    */
+#include BEGIN(incl);
+<incl>[<" \t]* /*  eat  the  whitespace and " or < as often in #include */
+<incl>[^ \t\n]+     {  /*  got  the  include  file  name  */
+    gEnv->pLog->LogError("WTF???");
+    char * s = strchr(yytext, '\"'); // get rid of the quote or >
+    if(!s) s = strchr(yytext, '>');
+    if(s)
+        *s = '\0';
+    make_include(yytext);
+    BEGIN(INITIAL);
+}
+<<EOF>> {
+    if(include_stack.empty())//(  --include_stack_ptr  <  0  )
+    {
+        //yyterminate();
+        return yy::parser::make_END(driver.location);
+    }
+    eof();
+}
 
 
 
@@ -331,5 +369,7 @@ yy::parser::symbol_type make_INT(
     throw yy::parser::syntax_error(loc, "integer is out of range: " + s);
   return yy::parser::make_INT((int) n, loc);
 }
+
+#include "ScannerHelpers.cpp"
 
 #pragma warning(pop)

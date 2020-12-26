@@ -94,7 +94,8 @@ target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
-)
+#  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/ScannerHelpers.cpp
+ )
 
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)

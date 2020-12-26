@@ -28,6 +28,8 @@
 #define GET_SEVERITY(v) TO_STR(v, "Severity: ")
 #define DEBUG_GROUP(message) CDebugSection debugSection(sizeof(message), message)
 
+#define GL_LOG(fmt, ...) CryLog("[GL] " fmt, __VA_ARGS__)
+
 #if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
 
 // In debug mode, perform a test on every OpenGL call

@@ -42,6 +42,7 @@ struct IStreamEngine;
 struct ITextModeConsole;
 struct IThreadManager;
 struct IRemoteConsole;
+struct IProjectManager;
 
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_GAME_PATH "TestGame"
@@ -280,19 +281,20 @@ struct SSystemInitParams
 
 struct SSystemGlobalEnvironment
 {
-	INetwork* pNetwork			   = nullptr;
-	I3DEngine* p3DEngine		   = nullptr;
-	IScriptSystem* pScriptSystem   = nullptr;
-	IInput* pInput				   = nullptr;
-	ICryPak* pCryPak			   = nullptr;
-	ITimer* pTimer				   = nullptr;
-	IConsole* pConsole			   = nullptr;
-	ISystem* pSystem			   = nullptr;
-	ILog* pLog					   = nullptr;
-	IRenderer* pRenderer		   = nullptr;
-	IHardwareMouse* pHardwareMouse = nullptr;
-	IPlatform* pPlatform		   = nullptr;
-	IThreadManager* pThreadManager = nullptr;
+	INetwork* pNetwork				 = nullptr;
+	I3DEngine* p3DEngine			 = nullptr;
+	IScriptSystem* pScriptSystem	 = nullptr;
+	IInput* pInput					 = nullptr;
+	ICryPak* pCryPak				 = nullptr;
+	ITimer* pTimer					 = nullptr;
+	IConsole* pConsole				 = nullptr;
+	ISystem* pSystem				 = nullptr;
+	ILog* pLog						 = nullptr;
+	IRenderer* pRenderer			 = nullptr;
+	IHardwareMouse* pHardwareMouse	 = nullptr;
+	IPlatform* pPlatform			 = nullptr;
+	IThreadManager* pThreadManager	 = nullptr;
+	IProjectManager* pProjectManager = nullptr;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{
@@ -370,29 +372,26 @@ struct ISystem
 	virtual ISystemUserCallback* GetUserCallback() const				  = 0;
 	virtual IGame* CreateGame(IGame* game)								  = 0;
 
-	virtual IRenderer* GetIRenderer()			= 0;
-	virtual ILog* GetILog()						= 0;
-	virtual IStreamEngine* GetStreamEngine()	= 0;
-	virtual IRemoteConsole* GetIRemoteConsole() = 0;
-	virtual ICmdLine* GetICmdLine()				= 0;
-	virtual IConsole* GetIConsole()				= 0;
-	virtual IInput* GetIInput()					= 0;
-	virtual IGame* GetIGame()					= 0;
-	virtual IFont* GetIFont()					= 0;
-	virtual INetwork* GetINetwork()				= 0;
-	virtual IWindow* GetIWindow()				= 0;
-	virtual IValidator* GetIValidator()			= 0;
-	virtual IEntitySystem* GetIEntitySystem()	= 0;
-	virtual ICryPak* GetIPak()					= 0;
-	virtual IHardwareMouse* GetIHardwareMouse() = 0;
-#if 0
-  virtual IInputHandler* GetIInputHandler() = 0;
-#endif
+	virtual IRenderer* GetIRenderer()							= 0;
+	virtual ILog* GetILog()										= 0;
+	virtual IStreamEngine* GetStreamEngine()					= 0;
+	virtual IRemoteConsole* GetIRemoteConsole()					= 0;
+	virtual ICmdLine* GetICmdLine()								= 0;
+	virtual IConsole* GetIConsole()								= 0;
+	virtual IInput* GetIInput()									= 0;
+	virtual IGame* GetIGame()									= 0;
+	virtual IFont* GetIFont()									= 0;
+	virtual INetwork* GetINetwork()								= 0;
+	virtual IWindow* GetIWindow()								= 0;
+	virtual IValidator* GetIValidator()							= 0;
+	virtual IEntitySystem* GetIEntitySystem()					= 0;
+	virtual ICryPak* GetIPak()									= 0;
+	virtual IHardwareMouse* GetIHardwareMouse()					= 0;
 	virtual IScriptSystem* GetIScriptSystem()					= 0;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
-
-	virtual ITimer* GetITimer()						= 0;
-	virtual ITextModeConsole* GetITextModeConsole() = 0;
+	virtual ITimer* GetITimer()									= 0;
+	virtual ITextModeConsole* GetITextModeConsole()				= 0;
+	virtual IProjectManager* GetIProjectManager()				= 0; 
 
 	// Quit the appliacation
 	virtual void Quit() = 0;
@@ -470,6 +469,8 @@ struct ISystem
 	//! \param bQuiet when set to true will suppress warning message if config file is not found.
 	virtual void LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
 	                               ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) = 0;
+
+	virtual const char* GetRootFolder() const = 0;
 };
 
 // Global environment variable.

@@ -6,6 +6,7 @@
 #include <BlackBox/System/CryLibrary.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
+#include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
 #include "Path.hpp"
@@ -16,6 +17,14 @@
 //#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_LOG_FILENAME    "Log.txt"
+
+//////////////////////////////////////////////////////////////////////////
+static inline void InlineInitializationProcessing(const char* sDescription)
+{
+	if (gEnv->pLog)
+		gEnv->pLog->UpdateLoadingScreen(0);
+}
+
 
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,
@@ -172,11 +181,11 @@ namespace
 		auto L = CryLoadLibrary(lib_name);
 		if (L)
 		{
-			gEnv->pSystem->Log("Library found");
+			CryComment("Library found");
 			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
 			if (P)
 			{
-				gEnv->pLog->Log("Entrypoint [%s] found", proc_name);
+				CryComment("Entrypoint [%s] found", proc_name);
 				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
 				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
 				if (pfnModuleInitISystem)
@@ -187,7 +196,7 @@ namespace
 			}
 			else
 			{
-				gEnv->pLog->Log("Entrypoint %s not found", proc_name);
+				CryError("Entrypoint %s not found", proc_name);
 			}
 			return false;
 		}
@@ -344,15 +353,22 @@ bool CSystem::Init()
 		if (m_pUserCallback == NULL && m_env.IsDedicated())
 			m_pUserCallback = pConsole;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	// LOAD GAME PROJECT CONFIGURATION
+	//////////////////////////////////////////////////////////////////////////
+	InlineInitializationProcessing("CSystem::Init Load project configuration");
+
+	// Load project directory early, since it relies on overriding current working folder
+	m_env.pProjectManager = new CProjectManager();
+
 	#endif
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// File system, must be very early
 		//////////////////////////////////////////////////////////////////////////
 		InitFileSystem(/*startupParams*/);
-
 		//////////////////////////////////////////////////////////////////////////
-		//InlineInitializationProcessing("CSystem::Init InitFileSystem");
+		InlineInitializationProcessing("CSystem::Init InitFileSystem");
 
 		//here we should be good to ask Crypak to do something
 
@@ -701,6 +717,7 @@ bool CSystem::InitFileSystem()
 {
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing File System...");
+	m_RootFolder = string(fs::current_path().u8string());
 
 	bool bLvlRes = false;               // true: all assets since executable start are recorded, false otherwise
 
@@ -770,13 +787,22 @@ bool CSystem::InitFileSystem()
 #	else
 	LoadConfiguration("system.cfg", pCVarsWhiteListConfigSink, eLoadConfigInit);
 #	endif
+#endif
 
-	if (!m_pProjectManager->ParseProjectFile())
+	// Initialize console before the project system
+	// This ensures that "exec" and other early commands can be executed immediately on parsing
+	if (m_env.pConsole != nullptr)
+	{
+		static_cast<CXConsole*>(m_env.pConsole)->PreProjectSystemInit();
+	}
+
+	if (!m_env.pProjectManager->ParseProjectFile())
 	{
 		return false;
 	}
 
 	bool bRes = m_env.pCryPak->Init("");
+#if 0
 
 	if (bRes)
 	{
@@ -804,12 +830,6 @@ bool CSystem::InitFileSystem()
 
 	return (bRes);
 #endif
-	// Initialize console before the project system
-	// This ensures that "exec" and other early commands can be executed immediately on parsing
-	if (m_env.pConsole != nullptr)
-	{
-		static_cast<CXConsole*>(m_env.pConsole)->PreProjectSystemInit();
-	}
 	return true;
 }
 

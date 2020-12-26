@@ -120,6 +120,14 @@ class GLRenderer : public CRenderer
 
 	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) override;
 	virtual IFont* GetIFont() override;
+	virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) override;
+	virtual ITechniqueManager* GetITechniqueManager() override;
+	virtual float GetDepthValue(int x, int y) override;
+	virtual void Sh_Reload() override;
+	virtual int CreateRenderTarget() override;
+	virtual void SetRenderCallback(IRenderCallback* pCallback) override;
+	virtual void Flush() override;
+	virtual void ShareResources(IRenderer* renderer) override;
 
   private:
 	void glInit();
@@ -199,29 +207,18 @@ class GLRenderer : public CRenderer
 	bool transit_to_FS = false;
 	bool bIsActive	   = true;
 
-	// Inherited via CRenderer
-	virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) override;
+	// Windows context
+	char     m_WinTitle[80];
+	WIN_HWND m_hWnd;                  // The main app window
+	WIN_HWND m_hWndDesktop;           // The desktop window
+	WIN_HWND m_hWndActive;            // The active window
+#if BB_PLATFORM_WINDOWS
+	HICON    m_hIconBig;              // Icon currently being used on the taskbar
+	HICON    m_hIconSmall;            // Icon currently being used on the window
+	HCURSOR  m_hCursor;               // Cursor currently being used on the window
+	string   m_iconPath;              // Path to the icon currently loaded
+#endif
 
-	// Inherited via CRenderer
-	virtual ITechniqueManager* GetITechniqueManager() override;
-
-	// Унаследовано через CRenderer
-	virtual float GetDepthValue(int x, int y) override;
-
-	// Inherited via CRenderer
-	virtual void Sh_Reload() override;
-
-	// Inherited via CRenderer
-	virtual int CreateRenderTarget() override;
-
-	// Inherited via CRenderer
-	virtual void SetRenderCallback(IRenderCallback* pCallback) override;
-
-	// Inherited via CRenderer
-	virtual void Flush() override;
-
-	// Inherited via CRenderer
-	virtual void ShareResources(IRenderer* renderer) override;
 };
 
 extern class ShaderMan* gShMan;

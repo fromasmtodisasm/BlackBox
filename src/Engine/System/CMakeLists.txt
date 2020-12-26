@@ -56,7 +56,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectConsole.cpp
   PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectRenderer.cpp
   PRIVATE ${ENGINE_DIR}/System/ScriptBinds/ScriptObjectScript.cpp
-)
+ "ProjectManager/ProjectManager.cpp")
 
 if (OPTION_USE_LINUXINPUT)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)

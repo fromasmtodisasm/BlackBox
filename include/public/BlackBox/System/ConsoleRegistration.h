@@ -44,8 +44,8 @@ struct ConsoleRegistrationHelper
 		if (CRY_VERIFY(gEnv && gEnv->pConsole))
 		{
 			MODULE_REGISTER_CVAR(szName);
-			//return gEnv->pConsole->RegisterString(szName, szValue, flags, szHelp, pChangeFunc);
-			//return gEnv->pConsole->RegisterInternal((szName), &(szValue), flags, (szHelp), pChangeFunc);
+			return gEnv->pConsole->CreateVariable(szName, szValue, flags, szHelp/*, pChangeFunc*/);
+			//return gEnv->pConsole->RegisterInternal((szName), &(szValue), flags, (szHelp));
 			return nullptr;
 		}
 		else
