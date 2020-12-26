@@ -46,10 +46,6 @@ bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, b
 {
 	if (gEnv->pRenderer)
 	{
-		m_Programs.push_back(gEnv->pRenderer->Sh_Load("test.vs", "test.frag"));
-		m_Programs.push_back(gEnv->pRenderer->Sh_Load("test.vs", "radar.frag"));
-		m_Programs.push_back(gEnv->pRenderer->Sh_Load("test.vs", "demo.frag"));
-		m_Programs.push_back(gEnv->pRenderer->Sh_Load("test.vs", "arch.frag"));
 		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(m_Qubes.min, m_Qubes.max);
 	}
 
