@@ -809,6 +809,11 @@ void CXConsole::Copy()
 
 void CXConsole::Paste()
 {
+	// FIX: This is ugly hack, event twice for frame sended
+	static auto last_frame = 0;
+	if (last_frame == gEnv->pRenderer->GetFrameID())
+		return;
+	last_frame			   = gEnv->pRenderer->GetFrameID();
 #if BB_PLATFORM_WINDOWS
 	const BOOL hasANSI = IsClipboardFormatAvailable(CF_TEXT);
 	const BOOL hasUnicode = IsClipboardFormatAvailable(CF_UNICODETEXT);
