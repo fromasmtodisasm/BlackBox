@@ -8,9 +8,11 @@ GLSLShader vert
 
 	out layout(location = 0) vec4 v_color;
 
-	uniform layout(location = 0) mat4 projection;
-	uniform layout(location = 1) mat4 view;
-	uniform layout(location = 2) mat4 model;
+	layout(binding = 0) uniform Matricies {
+		mat4 projection;
+		mat4 view;
+		mat4 model;
+	};
 
 	void main()
 	{

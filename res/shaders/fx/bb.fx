@@ -67,27 +67,24 @@ GLSLShader vert
     uniform layout(location = 8) mat4 view;
     uniform layout(location = 16) mat4 model;
 
-    layout(location = 0) out VS_OUT
+    layout(location = 0) out  VS_OUT
     {
         vec3 fragPos;
         vec3 N;
-    }vs_out;
+    };
 
     void main()
     {
         gl_Position = projection * view * model * vec4(aPos, 1.0);
-        vs_out.fragPos = vec3(model * vec4(aPos, 1.0));
-        vs_out.N = mat3(transpose(inverse(model))) * aN;
+        fragPos = vec3(model * vec4(aPos, 1.0));
+        N = mat3(transpose(inverse(model))) * aN;
     }
 
 }
 
 GLSLShader frag
 {
-    out vec4 FragColor;
-    #if 0
-    #include "lighting.h"
-    #endif
+    out layout(location = 0) vec4 FragColor;
 
     uniform layout(location = 20) float alpha;
     uniform  layout(location = 1) vec4 color;
@@ -108,7 +105,7 @@ GLSLShader frag
     {
         vec3 fragPos;
         vec3 N;
-    }vs_out;
+    };
 
     struct OutColor
     {
@@ -120,7 +117,7 @@ GLSLShader frag
     
     void main()
     { 
-        struct OutColor outColor;
+        OutColor outColor;
         outColor.ambient = vec3(0);
         outColor.diffuse = vec3(0);
         outColor.specular = vec3(0);
@@ -130,8 +127,8 @@ GLSLShader frag
 
 
         outColor.ambient = ambient()*_color;
-        outColor.diffuse = vec3(diffuse(lightPos, vs_out.fragPos, vs_out.N));//*_color;
-        outColor.specular = 0.8*_color*specular(lightPos, vs_out.fragPos, eye, vs_out.N);
+        outColor.diffuse = vec3(diffuse(lightPos, fragPos, N));//*_color;
+        outColor.specular = 0.8*_color*specular(lightPos, fragPos, eye, N);
 
         vec3 result = outColor.ambient + outColor.diffuse + outColor.specular;
 
@@ -144,7 +141,7 @@ GLSLShader frag
             result = outColor.diffuse + ambient();	
             break;
         case dbgNORMAL:
-            result = 0.5*(normalize(vs_out.N) + 1);	
+            result = 0.5*(normalize(N) + 1);	
             break;
         case dbgSPECULAR:
             result = outColor.specular;	

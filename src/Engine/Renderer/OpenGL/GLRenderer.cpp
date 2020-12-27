@@ -89,7 +89,7 @@ class ShaderMan
 			}
 			dump_shaders_on_load = true;
 			auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX, true);
-			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT, false);
+			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT, true);
 			dump_shaders_on_load = false;
 			auto p	= new CShaderProgram(vs, fs);
 			p->Create(name.data());
