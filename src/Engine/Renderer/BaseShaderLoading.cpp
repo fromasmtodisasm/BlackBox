@@ -338,7 +338,7 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 #define OUTPUT_SPIRV_FORMAT                  ".out"
 bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string_view>& code, IShader::Type type)
 {
-	std::ofstream output_file("tmp.glsl");
+	std::ofstream output_file("tmp/tmp.glsl");
 	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
 	std::copy(code.begin(), code.end(), output_iterator);
 	output_file.close();
@@ -349,9 +349,9 @@ bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector
 		//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
 
 		char params[1001];
-		sprintf(params, "%s%s -o %s%s -G --target-env %s -S %s -e %s",
+		sprintf(params, "%s%s -o %s%s%s -G --target-env %s -S %s -e %s",
 					"tmp", ".glsl",
-					name, OUTPUT_SPIRV_FORMAT,
+					"tmp/", name, OUTPUT_SPIRV_FORMAT,
 					targetEnv.c_str(),
 					GetGLSLANGTargetName(type),
 					pEntrypoint);
