@@ -1,5 +1,5 @@
 #include "ProjectManager.hpp"
-#include "Path.hpp"
+#include <BlackBox/Core/Path.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 
 CProjectManager::CProjectManager()

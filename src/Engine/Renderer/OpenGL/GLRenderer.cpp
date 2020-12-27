@@ -36,6 +36,8 @@
 
 static int dump_shaders_on_load = false;
 FxParser* g_FxParser;
+void LoadSPIRV(IConsoleCmdArgs* args);
+IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen);
 
 class ShaderMan
 {
@@ -50,26 +52,27 @@ class ShaderMan
 		m_Shaders.push_back(p);
 		return p;
 	}
-	IShaderProgram* Sh_Load(const char* name, int flags)
+	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	{
 		IShaderProgram* p = nullptr;
-		if (!(p = Sh_LoadBinary(name, flags)))
+		std::stringstream path;
+		path << "bin/shadercache/" << name << "(" << nMaskGen << ").fxb";
+		auto bin_path = path.str();
+		if (!(p = Sh_LoadBinary(bin_path.c_str(), flags, nMaskGen)))
 		{
-			if (p = Compile(name, flags))
+			if (p = Compile(name, flags, nMaskGen))
 			{
-				SaveBinaryShader(name, p, flags);
+				SaveBinaryShader(bin_path.c_str(), p, flags);
 			}
 		}
 		return p;
 	}
-	IShaderProgram* Sh_LoadBinary(const char* name, int flags)
+	IShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen)
 	{
-		std::stringstream path;
-		path << "bin/shadercache/" << name << ".fxb";
-		return LoadBinaryShader(path.str().data(), flags);
+		return LoadBinaryShader(name, flags, nMaskGen);
 	}
 
-	IShaderProgram* Compile(std::string_view name, int flags)
+	IShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
 	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
 
@@ -85,8 +88,8 @@ class ShaderMan
 				CryLog("[%s]", pEffect->GetShader(i).name.c_str());
 			}
 			dump_shaders_on_load = true;
-			auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX);
-			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT);
+			auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX, true);
+			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT, false);
 			dump_shaders_on_load = false;
 			auto p	= new CShaderProgram(vs, fs);
 			p->Create(name.data());
@@ -202,7 +205,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen", 0)))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen", 0x0800)))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -211,7 +214,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_ScreenShader->Uniform(0, "screenTexture");
 	m_ScreenShader->Unuse();
 
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0)))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0x100)))
 	{
 		m_pSystem->Log("Error of loading auxgeom shader");
 	}
@@ -482,7 +485,8 @@ void GLRenderer::InitConsoleCommands()
   );
   */
 	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
-	gEnv->pConsole->AddCommand("testfx", TestFx, 0, "Test fx parser");
+	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
+	REGISTER_COMMAND("load_spirv", LoadSPIRV, 0, "Test fx parser");
 	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
@@ -673,10 +677,10 @@ void GLRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpa
 	}
 }
 
-IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags)
+IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 {
 	gEnv->pLog->Log("load shader: %s", name);
-	return gShMan->Sh_Load(name, flags);
+	return gShMan->Sh_Load(name, flags, nMaskGen);
 }
 
 void GLRenderer::DrawFullscreenQuad()

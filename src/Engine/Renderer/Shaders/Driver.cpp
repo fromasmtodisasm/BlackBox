@@ -1,5 +1,6 @@
 #pragma warning(push, 0)
 #include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Path.hpp>
 #include "Driver.hpp"
 #include "Scanner.hpp"
 
@@ -16,7 +17,7 @@ Driver::Driver() :
 
 IEffect* Driver::parse(const char* f)
 {
-	CEffect* pEffect = new CEffect;
+	CEffect* pEffect = new CEffect(PathUtil::GetFileName(f));
 	currentEffect	= pEffect;
 	pEffect->m_Techniques.clear();
 	CommonCode.clear();

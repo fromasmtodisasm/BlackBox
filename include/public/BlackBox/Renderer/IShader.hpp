@@ -270,6 +270,13 @@ class BasicIncluder : public IIncluder
 	}
 };
 
+// SShader::m_Flags
+// Different useful flags
+#define EF_RELOAD                        1 // Shader needs tangent vectors array.
+#define EF_FORCE_RELOAD                  2
+#define EF_RELOADED                      4
+
+
 struct IShader
 {
 	enum Type : int

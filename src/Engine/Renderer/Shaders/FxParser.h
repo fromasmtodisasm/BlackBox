@@ -34,12 +34,12 @@ struct IEffect : public _i_reference_target_t
 		string name;
 		string data;
 	};
-	virtual int GetNumShaders() = 0;
-	virtual ShaderInfo GetShader(int i) = 0;
+	virtual const char* GetName()				 = 0;
+	virtual int GetNumShaders()					 = 0;
+	virtual ShaderInfo GetShader(int i)			 = 0;
 	virtual IShader* GetShader(const char* name) = 0;
-
-	virtual int GetNumTechniques() = 0;
-	virtual ITechnique* GetTechnique(int i) = 0;
+	virtual int GetNumTechniques()				 = 0;
+	virtual ITechnique* GetTechnique(int i)		 = 0;
 };
 
 typedef struct IEffect* PEffect;

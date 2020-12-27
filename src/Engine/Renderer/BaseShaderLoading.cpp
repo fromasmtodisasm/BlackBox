@@ -1,5 +1,7 @@
 #include "Shaders/FxParser.h"
 #include <BlackBox/Renderer/Shader.hpp>
+#if BB_PLATFORM_WINDOWS
+#endif
 
 #include <sstream>
 using std::string_view;
@@ -191,7 +193,175 @@ bool CShader::loadFromStream(const std::stringstream stream, string& buffer)
 {
 	return false;
 }
-ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type)
+
+const char* GetGLSLANGTargetName(IShader::Type target)
+{
+	switch (target)
+	{
+	case IShader::E_VERTEX:
+		return "vert";
+		
+	case IShader::E_TESSELATION_CONTROL:
+		return "tesc";
+		
+	case IShader::E_TESSELATION_EVALUATION:
+		return "tese";
+		
+	case IShader::E_GEOMETRY:
+		return "geom";
+		
+	case IShader::E_FRAGMENT:
+		return "frag";
+		
+	case IShader::E_COMPUTE:
+		return "comp";
+	default:
+		return "1111";
+	}
+
+} 
+
+void DumpWarning(const char* str)
+{
+	CryLogAlways("[Vk Compiler] Warning: %s", str);
+	fwrite(str, sizeof(char), strlen(str), stderr);
+}
+
+void DumpError(const char* str)
+{
+	CRY_ASSERT(false, "[Vk Compiler] ERROR: %s", str);
+	CryLogAlways("[Vk Compiler] ERROR: %s", str);
+	fwrite(str, sizeof(char), strlen(str), stderr);
+}
+
+bool ShellExecute(const std::string& file, const std::string& parameters, const std::string& workingDir = "")
+{
+#ifdef WIN32
+	HANDLE childStdInRead;
+	HANDLE childStdInWrite;
+	HANDLE childStdOutRead;
+	HANDLE childStdOutWrite;
+
+	SECURITY_ATTRIBUTES securityAttributes;
+	securityAttributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+	securityAttributes.bInheritHandle = true;
+	securityAttributes.lpSecurityDescriptor = nullptr;
+
+	CreatePipe(&childStdInRead, &childStdInWrite, &securityAttributes, 0);
+	SetHandleInformation(childStdInWrite, HANDLE_FLAG_INHERIT, 0);
+
+	CreatePipe(&childStdOutRead, &childStdOutWrite, &securityAttributes, 0);
+	SetHandleInformation(childStdOutRead, HANDLE_FLAG_INHERIT, 0);
+
+	PROCESS_INFORMATION processInfo = { 0 };
+	STARTUPINFO startUpInfo = { 0 };
+
+	startUpInfo.cb = sizeof(STARTUPINFO);
+	startUpInfo.hStdInput = childStdInRead;
+	startUpInfo.hStdOutput = childStdOutWrite;
+	startUpInfo.hStdError = childStdOutWrite;
+	startUpInfo.dwFlags |= STARTF_USESTDHANDLES;
+
+	char parametersTemp[4096];
+	sprintf_s(parametersTemp, 4096, "%s %s", file.c_str(), parameters.c_str());
+
+	std::string output;
+
+	CreateProcess(nullptr, parametersTemp, nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, workingDir.size() == 0 ? nullptr : workingDir.c_str(), &startUpInfo, &processInfo);
+	while (WaitForSingleObject(processInfo.hProcess, 100) == WAIT_TIMEOUT)
+	{
+		unsigned long size = GetFileSize(childStdOutRead, nullptr);
+
+		if (size != 0)
+		{
+			std::string outputTemp;
+			outputTemp.resize(size);
+
+			unsigned long readBytes;
+			ReadFile(childStdOutRead, &outputTemp[0], size, &readBytes, nullptr);
+
+			output += outputTemp;
+		}
+	}
+
+	unsigned long size = GetFileSize(childStdOutRead, nullptr);
+
+	if (size != 0)
+	{
+		std::string outputTemp;
+		outputTemp.resize(size);
+
+		unsigned long readBytes;
+		ReadFile(childStdOutRead, &outputTemp[0], size, &readBytes, nullptr);
+
+		output += outputTemp;
+	}
+
+	unsigned long exitCode;
+	GetExitCodeProcess(processInfo.hProcess, &exitCode);
+
+	if (exitCode != 0)
+	{
+		// convert 'ERROR' to 'error' as remote compiler 
+		// doesn't report upper case version
+		size_t curPos = output.find("ERROR:", 0);
+		while (curPos != std::string::npos)
+		{
+			output.replace(curPos, 5, "error");
+			curPos = output.find("ERROR:", curPos + 1);
+		}
+
+		DumpError(output.c_str());
+	}
+	else
+	{
+		if (output.size() > 0)
+			DumpWarning(output.c_str());
+	}
+
+	CloseHandle(processInfo.hProcess);
+	CloseHandle(processInfo.hThread);
+
+	CloseHandle(childStdInRead);
+	CloseHandle(childStdInWrite);
+	CloseHandle(childStdOutRead);
+	CloseHandle(childStdOutWrite);
+
+	return exitCode == 0;
+#else
+	CryFatalError("Cannot run the process! ShellExecute is implemented ONLY for Windows Platform.");
+	return false;
+#endif
+}
+
+
+#define OUTPUT_SPIRV_FORMAT                  ".out"
+bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string_view>& code, IShader::Type type)
+{
+	std::ofstream output_file("tmp.glsl");
+	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
+	std::copy(code.begin(), code.end(), output_iterator);
+	output_file.close();
+	//else if (vkShaderCompiler == STR_VK_SHADER_COMPILER_GLSLANG)
+	{
+		std::string targetEnv = "opengl";
+		
+		//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
+
+		char params[1001];
+		sprintf(params, "%s%s -o %s%s -G --target-env %s -S %s -e %s",
+					"tmp", ".glsl",
+					name, OUTPUT_SPIRV_FORMAT,
+					targetEnv.c_str(),
+					GetGLSLANGTargetName(type),
+					pEntrypoint);
+
+		ShellExecute("glslangValidator.exe", params, gEnv->pSystem->GetRootFolder());
+	}
+	return true;
+}
+
+ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type, bool compile_to_spirv)
 {
 	auto tech = pEffect->GetTechnique(0);
 	auto pass = tech->GetPass(0);
@@ -203,7 +373,14 @@ ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type)
 			code.push_back(in);
 	}
 	code.push_back(pass->Shaders[type]);
-	return CShader::loadFromMemory(code, type);
+	if (compile_to_spirv)
+	{
+		CompileToSpirv(pEffect->GetName(), "main", code, type);
+	}
+	//else
+	{
+		return CShader::loadFromMemory(code, type);
+	}
 }
 
 ShaderRef CShader::loadFromMemory(const std::vector<std::string_view>& text, IShader::Type type)
@@ -335,6 +512,16 @@ std::istream& binary_read(std::istream& stream, T& value)
 	return stream.read(reinterpret_cast<char*> (&value), sizeof(T));
 }
 
+bool ComileSPIRV()
+{
+	return false;
+}
+
+bool SaveNativeBinary(const char* name, IShaderProgram* program, int flags)
+{
+	return false;
+}
+
 bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags){
 	GLint formats = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
@@ -353,23 +540,112 @@ bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags){
 	glGetProgramBinary(program->Get(), length, NULL, &format, buffer.data());
 
 	// Write the binary to a file.
-	std::stringstream path;
-	path << "bin/shadercache/" << name << ".fxb";
-	CryLog("Writing to %s , binary format = %d", path.str().c_str(), format);
-	std::ofstream out(path.str().c_str(), std::ios::binary);
+	CryLog("Writing to %s , binary format = %d", name, format);
+	std::ofstream out(name, std::ios::binary);
 	out.write(reinterpret_cast<char*>(&format), sizeof(format));
 	out.write(reinterpret_cast<char*>(&length), sizeof(length));
 	out.write(reinterpret_cast<char*>(buffer.data()), length);
 	out.close();
 	return true;
 }
-IShaderProgram* LoadBinaryShader(const char* name, int flags)
+
+spirv_bin GetSPIRV(const char* name)
+{
+	std::ifstream code(name, std::ios::binary);
+	if (!code.is_open())
+	{
+		return spirv_bin();
+	}
+	std::istreambuf_iterator<char> startIt(code), endIt;
+
+	CryLog("Loading SPIRV shader %s", name);
+	spirv_bin buffer(startIt, endIt); // Load file
+	return buffer;
+}
+
+CShader * CShader::load_spirv(const char* name, const char* entry, const spirv_bin& code, IShader::Type stage)
+{
+	auto shader = new CShader(stage);
+	if (shader->Create())
+	{
+		glShaderBinary(1, &shader->m_Shader, GL_SHADER_BINARY_FORMAT_SPIR_V, code.data(), code.size());
+
+		// Specialize the vertex shader.
+		//std::string vsEntrypoint = "main"; // Get VS entry point name
+		glSpecializeShader(shader->m_Shader, entry, 0, nullptr, nullptr);
+
+		// Specialization is equivalent to compilation.
+		GLint isCompiled = 0;
+		glGetShaderiv(shader->m_Shader, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
+		{
+			GLint maxLength = 0;
+			glGetShaderiv(shader->m_Shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+			// The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(shader->m_Shader, maxLength, &maxLength, &infoLog[0]);
+
+			// We don't need the shader anymore.
+			glDeleteShader(shader->m_Shader);
+
+			// Use the infoLog as you see fit.
+			CryError("Loading of SPIRV FAILED)");
+			gEnv->pLog->LogToFile(infoLog.data());
+
+			// In this simple program, we'll just leave
+			return nullptr;
+		}
+		CryLog("$3SPIRV module accepted by OpenGL");
+
+		shader->m_Empty = false;
+		debuger::shader_label(shader->get(), name);
+	}
+	return shader;
+}
+
+void LoadSPIRV(IConsoleCmdArgs* args)
+{
+	if (args->GetArgCount() > 1)
+	{
+		//LoadSPIRV(args->GetArg(1), 0);	
+	}
+}
+
+IShaderProgram* LoadSpirvProgram(const char* name, const spirv_bin& code)
+{
+	auto vs = CShader::load_spirv(name, "main", code, IShader::E_VERTEX);
+	auto fs = CShader::load_spirv(name, "main", code, IShader::E_VERTEX);
+
+	CShaderProgram* program = new CShaderProgram(vs, fs);
+	return program;
+}
+
+IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uint length)
 {
 	//GLuint program = glCreateProgram();
 	CShaderProgram* program = new CShaderProgram();
 
 	ShaderProgramStatus st(program);
 
+	// Install shader binary
+	glProgramBinary(program->Get(), format, code, length);
+
+	// Check for success/failure
+	GLint status;
+	glGetProgramiv(program->Get(), GL_LINK_STATUS, &status);
+	if (GL_FALSE == status)
+	{
+		CryError("Cannot link binary program.");
+		delete program;
+		program = nullptr;
+	}
+	st.get(GL_LINK_STATUS);
+	return program;
+
+}
+IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen)
+{
 	// Load binary from file
 	std::ifstream inputStream(name, std::ios::binary);
 	if (!inputStream.is_open())
@@ -380,26 +656,29 @@ IShaderProgram* LoadBinaryShader(const char* name, int flags)
 
 	GLenum format = 0;
 	uint length	  = 0;
-	binary_read(inputStream, format);
-	binary_read(inputStream, length);
-	CryLog("Loading binary shader %s , binary format = %d, binary length = %d", name, format, length);
-	std::vector<char> buffer(startIt, endIt); // Load file
-	inputStream.close();
 
-	// Install shader binary
-	glProgramBinary(program->Get(), format, buffer.data(), length);
-
-	// Check for success/failure
-	#if 0
-	GLint status;
-	glGetProgramiv(program->Get(), GL_LINK_STATUS, &status);
-	if (GL_FALSE == status)
+	flags = 1;
+	switch (1)
 	{
-		CryError("Cannot link binary program.");
-		delete program;
-		program = nullptr;
+	case 0:
+	{
+		binary_read(inputStream, format);
+		binary_read(inputStream, length);
+		spirv_bin buffer(startIt, endIt); // Load file
+		inputStream.close();
+		return LoadSpirvProgram(name, buffer/*, length*/);
 	}
-	#endif
-	st.get(GL_LINK_STATUS);
-	return program;
+	case 1:
+	{
+		binary_read(inputStream, format);
+		binary_read(inputStream, length);
+		spirv_bin buffer(startIt, endIt); // Load file
+		inputStream.close();
+		CryLog("Loading binary shader %s , binary format = %d, binary length = %d", name, format, length);
+		return LoadNativeBinary(name, (uint8*)(buffer.data()), format, length);
+	}
+	default:
+		return nullptr;
+		break;
+	}
 }

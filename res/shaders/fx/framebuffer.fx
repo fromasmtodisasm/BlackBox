@@ -1,6 +1,6 @@
 GLSLShader
 {
-    #version 330 core
+    #version 460 core
 }
 
 GLSLShader vert
@@ -28,8 +28,8 @@ GLSLShader frag
     }
 }
 
-Technique main {
-    Pass p0
+technique main {
+    pass p0
     {
         InputLayout
         {

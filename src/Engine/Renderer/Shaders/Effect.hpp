@@ -21,7 +21,7 @@ public:
 class CEffect: public IEffect
 {
 public:
-	// Inherited via IEffect
+	CEffect(std::string_view name) : m_name(name) {}
 	virtual int GetNumShaders() override;
 	virtual ShaderInfo GetShader(int i) override;
 	virtual IShader* GetShader(const char* name) override;
@@ -47,6 +47,10 @@ public:
 	}
 
 public:
+	std::string m_name;
 	std::vector<ShaderInfo> m_shaders;
 	std::vector<CTechnique> m_Techniques;
+
+	// Inherited via IEffect
+	virtual const char* GetName() override;
 };

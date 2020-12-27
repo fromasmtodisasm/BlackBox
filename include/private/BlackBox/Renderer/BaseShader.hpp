@@ -8,6 +8,12 @@
 #include <memory>
 #include <string>
 
+enum class ShaderBinaryFormat
+{
+	SPIRV = 1,
+	VENDOR = 1 << 2
+};
+
 struct ICVar;
 
 class CShader;
@@ -37,6 +43,7 @@ struct ShaderProgramStatus
 	bool get(GLenum statusType);
 };
 
+using spirv_bin = std::vector<uint8>;
 class CShader : public IShader
 {
   public:
@@ -48,11 +55,12 @@ class CShader : public IShader
 
 	static CShader* load(ShaderDesc const& desc);
 	static CShader* load(std::string_view source);
+	static CShader* load_spirv(const char * name, const char * entry, const spirv_bin& code, IShader::Type stage);
 	static bool parseLine(string& buffer);
 	static bool loadInternal(string const& path, string& buffer);
 	static bool loadFromStream(const std::stringstream stream, string& buffer);
 	static ShaderRef loadFromMemory(const std::vector<std::string_view>& text, CShader::Type type);
-	static ShaderRef loadFromEffect(struct IEffect* pEffect, CShader::Type type);
+	static ShaderRef loadFromEffect(struct IEffect* pEffect, CShader::Type type, bool compile_to_spirv);
 
 	virtual bool Create() override;
 	virtual bool Compile(std::vector<std::string_view> code) override;

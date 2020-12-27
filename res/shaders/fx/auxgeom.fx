@@ -6,11 +6,11 @@ GLSLShader
 GLSLShader vert
 {
 
-	out vec4 v_color;
+	out layout(location = 0) vec4 v_color;
 
-	uniform mat4 projection;
-	uniform mat4 view;
-	uniform mat4 model;
+	uniform layout(location = 0) mat4 projection;
+	uniform layout(location = 1) mat4 view;
+	uniform layout(location = 2) mat4 model;
 
 	void main()
 	{
@@ -21,8 +21,8 @@ GLSLShader vert
 
 GLSLShader frag
 {
-	out vec4 FragColor;
-	in vec4 v_color;
+	out layout(location = 0) vec4 FragColor;
+	in layout(location = 0) vec4 v_color;
 	void main()
 	{ 
 		FragColor = vec4(v_color);
@@ -30,10 +30,10 @@ GLSLShader frag
 }
 
 // Default technique for auxiliary geometry rendering
-Technique AuxGeometry
+technique AuxGeometry
 {
 
-  Pass p0
+  pass p0
   {
 	InputLayout
 	{
@@ -44,16 +44,16 @@ Technique AuxGeometry
     VertexShader = vert
     PixelShader = frag
   }
-  Pass p1
+  pass p1
   {
     VertexShader = vert
     PixelShader = frag
   }
 }
 
-Technique Test
+technique Test
 {
-  Pass p0
+  pass p0
   {
     VertexShader = vert
     PixelShader = frag

@@ -9,7 +9,7 @@
 #include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
-#include "Path.hpp"
+#include <BlackBox/Core/Path.hpp>
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
 #endif

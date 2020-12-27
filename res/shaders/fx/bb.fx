@@ -1,6 +1,6 @@
 GLSLShader 
 {
-    #version 330 core
+    #version 460 core
     #define TM_UNREAL
 }
 
@@ -63,11 +63,11 @@ GLSLShader
 
 GLSLShader vert
 {
-    uniform mat4 projection;
-    uniform mat4 view;
-    uniform mat4 model;
+    uniform layout(location = 0) mat4 projection;
+    uniform layout(location = 8) mat4 view;
+    uniform layout(location = 16) mat4 model;
 
-    out VS_OUT
+    layout(location = 0) out VS_OUT
     {
         vec3 fragPos;
         vec3 N;
@@ -89,22 +89,22 @@ GLSLShader frag
     #include "lighting.h"
     #endif
 
-    uniform float alpha;
-    uniform vec4 color;
-    uniform vec3 lightPos;
-    uniform vec3 eye;
-    uniform int fid;
-    uniform mat4 projection;
+    uniform layout(location = 20) float alpha;
+    uniform  layout(location = 1) vec4 color;
+    uniform  layout(location = 2) vec3 lightPos;
+    uniform  layout(location = 3) vec3 eye;
+    uniform  layout(location = 4) int fid;
+    uniform  layout(location = 0) mat4 projection;
 
-    uniform bool bTonemap;
+    uniform layout(location = 6)bool bTonemap;
 
     #define dbgDIFFUSE 1
     #define dbgSPECULAR 2
     #define dbgNORMAL 3
 
-    uniform int dbgmode = 0;
+    uniform layout(location = 7) int dbgmode = 0;
 
-    in VS_OUT
+    layout(location = 0) in VS_OUT
     {
         vec3 fragPos;
         vec3 N;

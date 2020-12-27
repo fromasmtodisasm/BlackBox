@@ -1,15 +1,15 @@
 GLSLShader 
 {
-    #version 330 core
+    #version 460 core
 }
 
 GLSLShader vert
 {
-    out vec2 TexCoords;
+    out layout(location = 10) vec2 TexCoords;
 
-    uniform mat4 projection;
-    uniform mat4 model;
-    uniform mat4 uv_projection;
+    uniform layout(location = 0) mat4 projection;
+    uniform layout(location = 1) mat4 model;
+    uniform layout(location = 2) mat4 uv_projection;
 
     void main()
     {
@@ -20,11 +20,11 @@ GLSLShader vert
 
 GLSLShader frag
 {
-    in vec2 TexCoords;
-    out vec4 color;
+    in layout(location = 10) vec2 TexCoords;
+    out layout(location = 0) vec4 color;
 
     uniform sampler2D text;
-    uniform vec3 textColor;
+    uniform layout(location = 3) vec3 textColor;
 
     void main()
     {    

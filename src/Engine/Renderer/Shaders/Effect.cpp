@@ -25,6 +25,11 @@ ITechnique* CEffect::GetTechnique(int i)
 	return &m_Techniques[i];
 }
 
+const char* CEffect::GetName()
+{
+	return m_name.data();
+}
+
 int CTechnique::GetNumPasses()
 {
 	return Passes.size();
