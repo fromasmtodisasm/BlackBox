@@ -113,6 +113,17 @@ class ShaderMan
 ShaderMan* gShMan;
 FxParser s_FxParser;
 
+struct PerViewConstantBuffer
+{
+	Mat4 Projection;
+	Mat4 View;
+};
+
+using PerViewBuffer = gl::ConstantBuffer<PerViewConstantBuffer>;
+using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
+
+ PerViewBufferPtr  perViewBuffer;
+
 void TestFx(IConsoleCmdArgs* args)
 {
 	string filename;
@@ -237,6 +248,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
+	perViewBuffer = std::move(PerViewBuffer::Create(2));
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
 	return result;
@@ -893,7 +905,7 @@ void GLRenderer::CreateQuad()
 
 IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)
 {
-	return nullptr;
+	return m_BufferManager->CreateConstantBuffer(size);
 }
 
 ITechniqueManager* GLRenderer::GetITechniqueManager()
@@ -933,9 +945,13 @@ void GLRenderer::SetRenderCallback(IRenderCallback* pCallback)
 void GLRenderer::Flush()
 {
 	DEBUG_GROUP("AUX");
+
+	auto pvb		= perViewBuffer.get();
+	pvb->Projection = m_Camera.getProjectionMatrix();
+	pvb->View		= m_Camera.GetViewMatrix();
+
+	pvb->Update();
 	m_AuxGeomShader->Use();
-	m_AuxGeomShader->Uniform(m_Camera.getProjectionMatrix(), "projection");
-	m_AuxGeomShader->Uniform(m_Camera.GetViewMatrix(), "view");
 	m_RenderAuxGeom->Flush();
 	m_AuxGeomShader->Unuse();
 }

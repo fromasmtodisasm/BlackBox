@@ -339,7 +339,7 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string_view>& code, IShader::Type type)
 {
 	string stage(GetGLSLANGTargetName(type));
-	std::ofstream output_file(string("tmp/shader_") + stage +  ".glsl");
+	std::ofstream output_file(string("bin/shadercache/shader_") + stage +  ".glsl");
 	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
 	std::copy(code.begin(), code.end(), output_iterator);
 	output_file.close();
@@ -351,8 +351,8 @@ bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector
 
 		char params[1001];
 		sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s",
-					"tmp/shader_", stage.data(), ".glsl",
-					"tmp/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
+					"bin/shadercache/shader_", stage.data(), ".glsl",
+					"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
 					targetEnv.c_str(),
 					stage.data(),
 					pEntrypoint);

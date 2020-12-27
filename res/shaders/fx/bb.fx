@@ -63,8 +63,12 @@ GLSLShader
 
 GLSLShader vert
 {
-    uniform layout(location = 0) mat4 projection;
-    uniform layout(location = 8) mat4 view;
+    
+	layout(std140, binding = 2) uniform Matricies {
+		mat4 projection;
+		mat4 view;
+	};
+
     uniform layout(location = 16) mat4 model;
 
     layout(location = 0) out  VS_OUT
@@ -86,20 +90,19 @@ GLSLShader frag
 {
     out layout(location = 0) vec4 FragColor;
 
-    uniform layout(location = 20) float alpha;
-    uniform  layout(location = 1) vec4 color;
-    uniform  layout(location = 2) vec3 lightPos;
-    uniform  layout(location = 3) vec3 eye;
-    uniform  layout(location = 4) int fid;
-    uniform  layout(location = 0) mat4 projection;
-
+    uniform layout(location = 2) vec3 lightPos;
     uniform layout(location = 6)bool bTonemap;
+    uniform layout(location = 7) int dbgmode = 0;
+
+    uniform layout(location = 20) float alpha;
+    uniform layout(location = 1) vec4 color;
+    uniform layout(location = 3) vec3 eye;
+
 
     #define dbgDIFFUSE 1
     #define dbgSPECULAR 2
     #define dbgNORMAL 3
 
-    uniform layout(location = 7) int dbgmode = 0;
 
     layout(location = 0) in VS_OUT
     {

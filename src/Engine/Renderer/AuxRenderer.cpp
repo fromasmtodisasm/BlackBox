@@ -140,6 +140,11 @@ CRenderAuxGeom::~CRenderAuxGeom()
 	SAFE_DELETE(m_HardwareVB);
 }
 
+struct AABBInstanceData
+{
+	
+};
+
 //TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
@@ -155,15 +160,12 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	Vec4 color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
 	shader->Use();
 	shader->Uniform(transform, "model");
-	shader->Uniform(cam.GetViewMatrix(), "view");
-	shader->Uniform(cam.getProjectionMatrix(), "projection");
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");
 	//shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
 	shader->Uniform(this->dbg_mode, "dbgmode");
 	shader->Uniform(0, "bTonemap");
 	shader->Uniform(Vec3(300), "lightPos");
-	shader->Uniform(gEnv->pRenderer->GetFrameID(), "fid");
 	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");
 
 	{
