@@ -515,14 +515,26 @@ namespace gl
 		glGetFloatv(name, data);
 	}
 
-	// Helper function to convert GLSL types to storage sizes
-	inline size_t TypeSize(GLenum type)
+	struct SGlslTypeInfo
 	{
+		GLenum id;
+		uint num_components;
 		size_t size;
+		size_t num_locations;
+	};
+
+#if 0
+	// Helper function to convert GLSL types to storage sizes
+	inline SGlslTypeInfo TypeInfo(GLenum type)
+	{
+		SGlslTypeInfo typeInfo;
 #define CASE(Enum, Count, Type)      \
 	case Enum:                       \
-		size = Count * sizeof(Type); \
-		break
+		typeInfo.id				= Enum;                                \
+		typeInfo.size			= (Count) * sizeof(Type);              \
+		typeInfo.num_components = Count;                               \
+		typeInfo.num_locations	= ceil((Count) * size_t(sizeof(Type) / 16.f)); \
+		break;
 		switch (type)
 		{
 			CASE(GL_FLOAT, 1, GLfloat);
@@ -558,7 +570,7 @@ namespace gl
 		}
 		return size;
 	}
-
+#endif
 	struct ConstantBinderDynamicBuffer
 	{
 		constexpr static GLenum target = GL_UNIFORM_BUFFER;

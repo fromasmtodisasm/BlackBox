@@ -9,7 +9,7 @@ GLSLShader vert
 
     void main()
     {
-        gl_Position = GetOrthoProj() * model * vec4(aPos, 1.0f); 
+        gl_Position = GetOrthoProjMat() * model * vec4(aPos, 1.0f); 
         TexCoords = (uv_projection * vec4(aTexCoords, 1.0, 1.0)).xy;
     }
 }

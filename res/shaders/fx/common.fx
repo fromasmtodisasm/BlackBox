@@ -16,11 +16,6 @@ GLSLShader
 		mat4 view_proj;
 	}perViewCB;
 
-#if 0
-	layout(std140, binding = 3) uniform Lights {
-        Light l[16];
-	}lights;
-#endif
 	mat4 GetOrthoProjMat()
 	{
 		return perViewCB.ortho_projection;

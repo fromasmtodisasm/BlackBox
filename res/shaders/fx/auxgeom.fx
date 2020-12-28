@@ -2,7 +2,6 @@
 
 GLSLShader vert
 {
-
 	out layout(location = 0) vec4 v_color;
 
 	void main()
@@ -14,8 +13,10 @@ GLSLShader vert
 
 GLSLShader frag
 {
-	out layout(location = 0) vec4 FragColor;
 	in layout(location = 0) vec4 v_color;
+
+	out layout(location = 0) vec4 FragColor;
+
 	void main()
 	{ 
 		FragColor = vec4(v_color);
@@ -25,7 +26,6 @@ GLSLShader frag
 // Default technique for auxiliary geometry rendering
 technique AuxGeometry
 {
-
   pass p0
   {
 	InputLayout

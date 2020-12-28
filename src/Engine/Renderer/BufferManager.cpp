@@ -29,6 +29,52 @@ namespace
 		}
 	};
 
+	struct ShaderInputInterface
+	{
+		const char* semantic;
+		GLenum type;
+	};
+	enum D3D11_INPUT_CLASSIFICATION
+	{
+		D3D11_INPUT_PER_VERTEX_DATA,
+		D3D11_INPUT_PER_INSTANCE_DATA
+	};
+	typedef struct D3D11_INPUT_ELEMENT_DESC
+	{
+		LPCSTR SemanticName;
+		UINT SemanticIndex;
+		GLenum Format;
+		UINT InputSlot;
+		UINT AlignedByteOffset;
+		D3D11_INPUT_CLASSIFICATION InputSlotClass;
+		UINT InstanceDataStepRate;
+	} D3D11_INPUT_ELEMENT_DESC;
+
+	ShaderInputInterface testInterface[] = {
+		{"POSITION", GL_FLOAT_VEC4},
+		{"TEXCOORD", GL_FLOAT_VEC2},
+		{"COLOR", GL_FLOAT_VEC4}
+	};
+
+	struct SVF_P3F_T2F_T3F
+	{
+		glm::vec3 p;		
+		glm::vec2 st0;		
+		glm::vec3 st1;		
+	};
+
+	static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_T2F_T3F[] =
+		{
+			{"POSITION", 0, GL_FLOAT_VEC3, 0, offsetof(SVF_P3F_T2F_T3F, p), D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, GL_FLOAT_VEC2, 0, offsetof(SVF_P3F_T2F_T3F, st0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 1, GL_FLOAT_VEC4, 0, offsetof(SVF_P3F_T2F_T3F, st1), D3D11_INPUT_PER_VERTEX_DATA, 0}
+		};
+
+	void BindAttributes(ShaderInputInterface* shader)
+	{
+			
+	}
+
 #define OFFSET(m) reinterpret_cast<GLvoid*>(static_cast<INT_PTR>((gBufInfoTable[vertexFormat].m)))
 	INPUT_ELEMENT_DESC GetPositionAttributePointer(int vertexFormat)
 	{

@@ -138,7 +138,7 @@
         return scanner.ScanToken();
     }
 
-    std::string location_from_semantic(std::string semantic)
+    std::string location_from_semantic(const std::string& semantic)
     {
         using namespace std;
         if (semantic == "POSITION")
