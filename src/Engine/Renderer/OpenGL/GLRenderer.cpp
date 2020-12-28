@@ -118,6 +118,7 @@ struct SPerViewConstantBuffer
 	Mat4 Projection;
 	Mat4 OrthoProjection;
 	Mat4 View;
+	Mat4 ViewProjection;
 };
 
 using PerViewBuffer = gl::ConstantBuffer<SPerViewConstantBuffer>;
@@ -945,10 +946,11 @@ void GLRenderer::Flush()
 {
 	DEBUG_GROUP("AUX");
 
-	auto pvb		= perViewBuffer.get();
-	pvb->Projection = m_Camera.getProjectionMatrix();
+	auto* pvb			 = perViewBuffer.get();
+	pvb->Projection		 = m_Camera.getProjectionMatrix();
+	pvb->View			 = m_Camera.GetViewMatrix();
 	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
-	pvb->View		= m_Camera.GetViewMatrix();
+	pvb->ViewProjection	 = pvb->Projection * pvb->View;
 
 	pvb->Update();
 	m_AuxGeomShader->Use();

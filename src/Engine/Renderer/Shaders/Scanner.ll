@@ -324,8 +324,6 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
     return CURRENT_SYMBOL;
 }
-<*>FatalToken { CryFatalError("FatalToken!!!"); }
-
     /*==================================================================
       ==================================================================
       !! SIMPLIFIED PREPROCESSOR !!

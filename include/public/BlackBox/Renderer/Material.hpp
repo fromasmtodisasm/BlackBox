@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 
-class CShader;
+class CShaderT;
 class CBaseShaderProgram;
 class Object;
 

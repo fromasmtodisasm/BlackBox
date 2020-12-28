@@ -14,7 +14,7 @@ struct IBaseShaderProgram;
 struct IShaderProgram;
 
 using BaseShaderProgramRef = _smart_ptr<IShaderProgram>;
-using ShaderProgramRef	 = _smart_ptr<IShaderProgram>;
+using ShaderProgramRef	   = _smart_ptr<IShaderProgram>;
 using ShaderRef			   = _smart_ptr<IShader>;
 
 //////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ struct UniformValue
 		Samp_VAL,
 		CAMERA_VAL
 	};
-	union value {
+	union value
+	{
 		int i;
 		float f;
 		glm::vec1 v1;
@@ -260,7 +261,7 @@ struct UniformValue
 
 struct IIncluder
 {
-	virtual ~IIncluder() = default;
+	virtual ~IIncluder()									  = default;
 	virtual std::string_view OnInclude(std::string_view file) = 0;
 };
 
@@ -268,19 +269,22 @@ class BasicIncluder final : public IIncluder
 {
 	std::string_view OnInclude(std::string_view file) override
 	{
-        return "";
+		return "";
 	}
 };
 
 // SShader::m_Flags
 // Different useful flags
-#define EF_RELOAD                        1 // Shader needs tangent vectors array.
-#define EF_FORCE_RELOAD                  2
-#define EF_RELOADED                      4
-
+#define EF_RELOAD 1 // Shader needs tangent vectors array.
+#define EF_FORCE_RELOAD 2
+#define EF_RELOADED 4
 
 struct IShader
 {
+  protected:
+	~IShader() = default;
+
+  public:
 	enum Type : int
 	{
 		E_VERTEX,
@@ -295,15 +299,15 @@ struct IShader
 	virtual void AddRef() = 0;
 	virtual int Release() = 0;
 
-	virtual bool Create()			= 0;
-	virtual bool Compile(std::vector<std::string_view> code)			= 0;
-	virtual bool Bind()				= 0;
-	virtual bool Empty()			= 0;
-	virtual IShader::Type GetType() = 0;
-	virtual void Print()			= 0;
-	virtual const char* TypeToStr() = 0;
+	virtual bool Create()								= 0;
+	virtual bool Compile(std::vector<std::string> code) = 0;
+	virtual bool Bind()									= 0;
+	virtual bool Empty()								= 0;
+	virtual IShader::Type GetType()						= 0;
+	virtual void Print()								= 0;
+	virtual const char* TypeToStr()						= 0;
 	virtual const char* GetName();
-	virtual uint Get()				= 0;
+	virtual uint Get() = 0;
 };
 
 struct IShaderProgram
@@ -332,7 +336,7 @@ struct IShaderProgram
 
 	virtual void AddRef() = 0;
 	virtual int Release() = 0;
-	virtual int Reload() = 0;
+	virtual int Reload()  = 0;
 
 	virtual bool Create(const char* label)								 = 0;
 	virtual void Attach(ShaderInfo& shader)								 = 0;
@@ -362,8 +366,8 @@ struct IShaderProgram
 	virtual void Uniform(const Mat2 value, const char* format, ...)			= 0;
 	virtual void Uniform(const Mat3 value, const char* format, ...)			= 0;
 	virtual void Uniform(const Mat4 value, const char* format, ...)			= 0;
-	virtual void Uniform(const glm::ivec4 value, const char* format, ...)   = 0;
-	virtual void Uniform(const ITexture* texture, const char* format, ...)  = 0;
+	virtual void Uniform(const glm::ivec4 value, const char* format, ...)	= 0;
+	virtual void Uniform(const ITexture* texture, const char* format, ...)	= 0;
 
 	template<typename T>
 	void Uniform(const T value, string name)
@@ -415,4 +419,3 @@ struct ProgramDesc
 };
 
 IShaderProgram* GetGLSLSandBoxShader();
-

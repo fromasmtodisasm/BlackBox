@@ -1,6 +1,6 @@
+#include "common.fx"
 GLSLShader 
 {
-    #version 460 core
     #define TM_UNREAL
 }
 
@@ -64,12 +64,6 @@ GLSLShader
 GLSLShader vert
 {
     
-	layout(std140, binding = 2) uniform Matricies {
-		mat4 projection;
-        mat4 ortho_projection;
-		mat4 view;
-	};
-
     uniform layout(location = 16) mat4 model;
 
     layout(location = 0) out  VS_OUT
@@ -80,7 +74,7 @@ GLSLShader vert
 
     void main()
     {
-        gl_Position = projection * view * model * vec4(aPos, 1.0);
+        gl_Position = GetViewProjMat() * model * vec4(aPos, 1.0);
         fragPos = vec3(model * vec4(aPos, 1.0));
         N = mat3(transpose(inverse(model))) * aN;
     }

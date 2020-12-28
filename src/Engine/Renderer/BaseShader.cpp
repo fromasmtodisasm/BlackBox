@@ -128,7 +128,7 @@ bool CShader::Create()
 	// return m_Status.get(GL_VALIDATE_STATUS);
 }
 
-bool CShader::Compile(std::vector<std::string_view> code)
+bool CShader::Compile(std::vector<std::string> code)
 {
 	//assert(code.size() == 2);
 	auto text_size	   = sizeof(char*) * code.size();

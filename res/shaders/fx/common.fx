@@ -1,4 +1,3 @@
-FatalToken
 GLSLShader
 {
 	#version 460 core
@@ -14,24 +13,26 @@ GLSLShader
 		mat4 projection;
 		mat4 ortho_projection;
 		mat4 view;
+		mat4 view_proj;
 	}perViewCB;
 
-    struct Light
-    {
-        vec4 position;
-    }
-
+#if 0
 	layout(std140, binding = 3) uniform Lights {
         Light l[16];
 	}lights;
-}
+#endif
+	mat4 GetOrthoProjMat()
+	{
+		return perViewCB.ortho_projection;
+	}
 
+	mat4 GetProjMat()
+	{
+		return perViewCB.projection;
+	}
 
-technique Common
-{
-  pass p0
-  {
-    VertexShader = vert
-    PixelShader = frag
-  }
+	mat4 GetViewProjMat()
+	{
+		return perViewCB.view_proj;
+	}
 }

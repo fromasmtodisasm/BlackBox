@@ -4,6 +4,7 @@
 
 #include <map>
 #include <string>
+class CShader;
 
 class ShaderManager : public IShaderManager
 {

@@ -85,7 +85,7 @@ CShader* CShader::Load(ShaderDesc const& desc)
 	return shader;
 }
 
-CShader* CShader::Load(std::string_view source)
+CShader* CShader::Load(std::string source)
 {
 	return nullptr;
 }
@@ -378,13 +378,15 @@ ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool com
 	{
 		return CShader::LoadFromMemory(code, type);
 	}
+#if 0
 	if (compile_to_spirv)
 	{
 		CompileToSpirv(pEffect->GetName(), "main", code, type);
 	}
+#endif
 }
 
-ShaderRef CShader::LoadFromMemory(const std::vector<std::string_view>& text, IShader::Type type)
+ShaderRef CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type)
 {
 	auto shader = ShaderRef(new CShader(type));
 	if (!shader->Create())
@@ -646,10 +648,10 @@ IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uin
 	if (GL_FALSE == status)
 	{
 		CryError("Cannot link binary program.");
+		st.Get(GL_LINK_STATUS);
 		delete program;
 		program = nullptr;
 	}
-	st.Get(GL_LINK_STATUS);
 	return program;
 
 }

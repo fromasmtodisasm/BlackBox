@@ -1,24 +1,13 @@
 #include "common.fx"
-GLSLShader
-{
-}
 
 GLSLShader vert
 {
 
 	out layout(location = 0) vec4 v_color;
 
-#if 0
-	layout(std140, binding = 2) uniform Matricies {
-		mat4 projection;
-        mat4 ortho_projection;
-		mat4 view;
-	};
-#endif
-
 	void main()
 	{
-		gl_Position = projection * view * vec4(aPos, 1.0);
+		gl_Position = GetViewProjMat() * vec4(aPos, 1.0);
 		v_color = vec4(aColor);
 	} 
 }

@@ -1,8 +1,4 @@
-GLSLShader 
-{
-    #version 460 core
-}
-
+#include "common.fx"
 GLSLShader vert
 {
     out layout(location = 10) vec2 TexCoords;

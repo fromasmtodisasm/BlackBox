@@ -11,8 +11,8 @@ struct SPass
 {
 	std::string Name;
 	std::vector<std::string> InputLayout;
-	std::vector<std::string_view> CommonCode;
-	std::array<std::string_view, 6> Shaders;
+	std::vector<std::string> CommonCode;
+	std::array<std::string, 6> Shaders;
 };
 
 
