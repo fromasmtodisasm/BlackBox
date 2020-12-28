@@ -32,10 +32,9 @@ public:
   CBufferManager();
   ~CBufferManager();
   bool Preallocate();
-  CVertexBuffer* Create(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false);
-  void Release(CVertexBuffer* pVertexBuffer);
-  CVertexBuffer* New(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false);
-  void Create(SVertexStream* dest, const void* src, int indexcount);
+  static CVertexBuffer* Create(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false);
+  static void Release(CVertexBuffer* pVertexBuffer);
+  static void Create(SVertexStream* dest, const void* src, int indexcount);
   void Release(SVertexStream* pVertexStream);
   void Draw(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_sto = 0, CMatInfo* mi = NULL);
   void Update(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs/* = 0*/, int Type/* = 0*/);

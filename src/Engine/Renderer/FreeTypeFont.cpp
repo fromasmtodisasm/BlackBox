@@ -135,43 +135,43 @@ float FreeTypeFont::TextWidth(const std::string& text)
 
 float FreeTypeFont::CharWidth(char symbol)
 {
-	float scale  = 1.0;
-	Character ch = Characters[symbol];
+	const float scale  = 1.0;
+	const Character ch = Characters[symbol];
 
-	GLfloat w = (/*ch.Bearing.x + ch.Size.x + */ (ch.Advance >> 6)) * scale;
+	const GLfloat w = (/*ch.Bearing.x + ch.Size.x + */ (ch.Advance >> 6)) * scale;
 	//GLfloat h = (ch.Size.y - ch.Bearing.y + ch.Size.y) * scale;
 	return w;
 }
 
-struct test_size
+struct STestSize
 {
 	int width, height;	
-	test_size(int w, int h)
+	STestSize(const int w, const int h)
 		: width(w), height(h)
 	{
 	}
 };
-bool operator< (const test_size& a, const test_size& b) {
+bool operator< (const STestSize& a, const STestSize& b) {
 	if (a.width != b.width) return (a.width < b.width);
 	return (a.height < b.height);
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	m_Height = static_cast<float>(h);
-	std::set<test_size> test;
+	std::set<STestSize> test;
 	shader = gEnv->pRenderer->Sh_Load("sprite", 0);
 	if (!shader)
 		return false;
 
 	if (FT_Init_FreeType(&ft))
 	{
-		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+		CryError("ERROR::FREETYPE: Could not init FreeType Library");
 		return false;
 	}
 
 	if (FT_New_Face(ft, (std::string("res/fonts/") + font).c_str(), 0, &face))
 	{
-		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+		CryError("ERROR::FREETYPE: Failed to load font");
 		return false;
 	}
 
@@ -184,7 +184,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		GLuint c = ch;
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
-			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+			CryError("ERROR::FREETYTPE: Failed to load Glyph");
 			continue;
 		}
 		// Generate texture
@@ -202,7 +202,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 			GL_UNSIGNED_BYTE,
 			face->glyph->bitmap.buffer);
 		test.insert(
-			test_size(
+			STestSize(
 				face->glyph->bitmap.width,
 				face->glyph->bitmap.rows));
 		// Set texture options

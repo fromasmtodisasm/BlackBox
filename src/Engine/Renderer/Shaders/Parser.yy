@@ -488,6 +488,7 @@ glsl: glsl_header '{' CODEBODY {
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
         if ($1 == "Common")
             CommonCode.push_back(driver.currentEffect->m_shaders.back().data);
+            CryLog("Current common code in file %s:\n%s", driver.file.data(), CommonCode.back().data());
 	}
 ;
 

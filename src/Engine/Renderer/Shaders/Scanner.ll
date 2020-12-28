@@ -16,12 +16,12 @@
     #define CURRENT_SYMBOL yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc)
 
     struct IncludeData {
-        IncludeData(YY_BUFFER_STATE s, int ln, const char *fname, FILE *fd=NULL) :
-            state(s), line_num(ln), file_name(fname), fileToClose(fd) {}
+        IncludeData(YY_BUFFER_STATE s, yy::location ln, const char *fname, std::unique_ptr<std::ifstream> fd = nullptr) :
+            state(s), location(ln), file_name(fname), fileToClose(std::move(fd)) {}
         YY_BUFFER_STATE state;
-        int             line_num;
+        yy::location    location;
         std::string     file_name; // the name of the current file (when in #include, for example)
-        std::ifstream   fileToClose; // keep track of the file descriptor to make sure we will close it
+        std::unique_ptr<std::ifstream>   fileToClose; // keep track of the file descriptor to make sure we will close it
     };
     std::stack<IncludeData> include_stack;
 
@@ -324,6 +324,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
     return CURRENT_SYMBOL;
 }
+<*>FatalToken { CryFatalError("FatalToken!!!"); }
 
     /*==================================================================
       ==================================================================
@@ -337,25 +338,65 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 #include BEGIN(incl);
 <incl>[<" \t]* /*  eat  the  whitespace and " or < as often in #include */
 <incl>[^ \t\n]+     {  /*  got  the  include  file  name  */
-    gEnv->pLog->LogError("WTF???");
-    char * s = strchr(yytext, '\"'); // get rid of the quote or >
-    if(!s) s = strchr(yytext, '>');
+    char * s = (char*)strchr(YYText(), '\"'); // get rid of the quote or >
+    if(!s) s = (char*)strchr(YYText(), '>');
     if(s)
         *s = '\0';
-    make_include(yytext);
-    BEGIN(INITIAL);
+    include_stack.push(IncludeData(YY_CURRENT_BUFFER, driver.location, driver.file.c_str()));
+    driver.file = "res/shaders/fx/" + std::string(YYText());
+    driver.location.initialize(&driver.file);
+    //line_num  = 1;
+    //FILE *fd = NULL;
+    std::unique_ptr<std::ifstream> fd;
+    const char *buf = NULL;
+    #if 0
+    if(nvFX::g_includeCb)
+        nvFX::g_includeCb(YYText(), fd, buf);
+    if(buf)
+        yy_switch_to_buffer(yy_scan_string(buf) );
+    else if(fd)
+        yy_switch_to_buffer(yy_create_buffer(fd, YY_BUF_SIZE));
+    else 
+    #else
+    {
+        fd  =  std::make_unique<std::ifstream>(driver.file);
+        if(!fd->is_open())
+        {
+            CryError("err loading file %s", YYText());
+        } else {
+            CryLog("Including file %s", YYText());
+            yy_switch_to_buffer( yy_create_buffer(fd.get(), YY_BUF_SIZE));
+        }
+    }
+    #endif
+    if(fd->is_open())
+    {
+        // let's keep track of this newly opened file : when poping, we will have to close it
+        IncludeData &incData = include_stack.top();
+        incData.fileToClose = std::move(fd);
+        BEGIN(INITIAL);
+    } else {
+        YY_FATAL_ERROR( "failure in including a file" );
+    }
 }
 <<EOF>> {
-    if(include_stack.empty())//(  --include_stack_ptr  <  0  )
+	if(include_stack.empty())//(  --include_stack_ptr  <  0  )
     {
+        return yy::parser::make_END(loc);
         //yyterminate();
-        return yy::parser::make_END(driver.location);
     }
-    eof();
+    else
+    {
+        yy_delete_buffer(  YY_CURRENT_BUFFER  );
+        IncludeData &incData = include_stack.top();
+        yy_switch_to_buffer(incData.state);//[include_stack_ptr]);
+        driver.location = incData.location;
+        driver.file = incData.file_name;
+        if(incData.fileToClose->is_open())
+            incData.fileToClose->close();
+        include_stack.pop();
+    }
 }
-
-
-
 
 %%
 

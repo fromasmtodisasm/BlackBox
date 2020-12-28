@@ -46,6 +46,7 @@ typedef float vec2_t[2];
 // Interface to the graphics constant buffers
 struct IGraphicsDeviceConstantBuffer
 {
+	virtual ~IGraphicsDeviceConstantBuffer() = default;
 	// Set contents of the device buffer
 	virtual void SetData(const uint8* data, size_t size) = 0;
 };

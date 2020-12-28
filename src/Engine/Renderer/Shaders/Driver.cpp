@@ -21,7 +21,7 @@ IEffect* Driver::parse(const char* f)
 	currentEffect	= pEffect;
 	pEffect->m_Techniques.clear();
 	CommonCode.clear();
-    scan_begin(f);
+    ScanBegin(f);
     parser.set_debug_level(trace_parsing);
     int res = parser.parse();
 	if (res == 0)
@@ -34,11 +34,21 @@ IEffect* Driver::parse(const char* f)
 		currentEffect = pEffect = nullptr;
     }
 
-    scan_end();
+    ScanEnd();
     return pEffect;
 }
 
-void Driver::scan_begin(const char* _file)
+bool Driver::LoadEffectFromFile(IEffect* pEffect, const char* filename)
+{
+	return false;
+}
+
+bool Driver::LoadEffect(IEffect* pEffect, const char* str)
+{
+	return false;
+}
+
+void Driver::ScanBegin(const char* _file)
 {
 	file = _file;	
     location.initialize(&file);
@@ -63,7 +73,7 @@ void Driver::scan_begin(const char* _file)
 	}
 }
 
-void Driver::scan_end()
+void Driver::ScanEnd()
 {
     stream.close();
 }

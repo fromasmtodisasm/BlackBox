@@ -33,14 +33,17 @@ class Driver : public IDriver {
     Driver();
     //bool parse(const std::string& f) override;
     IEffect* parse(const char* f) override;
-    std::string file;
-    bool trace_parsing;
 
-    void scan_begin(const char* file);
-    void scan_end();
+    bool        LoadEffectFromFile(IEffect* pEffect, const char * filename);
+    bool        LoadEffect(IEffect* pEffect, const char * str);
+
+    void ScanBegin(const char* file);
+    void ScanEnd();
 
     bool trace_scanning;
     yy::location location;
+    std::string file;
+    bool trace_parsing;
 
     friend class Scanner;
 

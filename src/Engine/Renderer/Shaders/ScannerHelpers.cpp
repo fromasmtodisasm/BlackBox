@@ -1,38 +1,37 @@
+#include <stack>
+
 #include "Scanner.hpp"
 
-void Scanner::make_include(const char* file_name)
+std::stack<std::shared_ptr<std::ifstream>> includes;
+bool Scanner::MakeInclude(const char* file_name)
 {
+	bool result = false;
+	CryLog("include <%s>", file_name);
 	//include_stack.push(IncludeData(YY_CURRENT_BUFFER, lineno(), driver.file.c_str()));
-    const char *buf = NULL;
-    {
-        driver.stream.open(file_name);
-        if (!driver.stream.is_open())
+	auto includeFile = std::make_shared<std::ifstream>(std::ifstream((std::string("res/shaders/fx/") + file_name)));
+	const char* buf	 = nullptr;
+	{
+		//driver.stream = std::ifstream(file_name);
+		if (!includeFile->is_open())
 		{
 			gEnv->pLog->LogError("[FX] File %s not found", file_name);
+			LexerError("failure in including a file");
+			return result;
 		}
-		else
-		{
-			gEnv->pLog->Log("$3[FX] File %s opened", file_name);
-            yypush_buffer_state( yy_create_buffer(  driver.stream,  YY_BUF_SIZE  )  );
-		}
-
-
-    }
-    if(driver.stream.is_open())
-    {
-        // let's keep track of this newly opened file : when poping, we will have to close it
-        //IncludeData &incData = include_stack.top();
-        //incData.fileToClose = driver.stream;
-		yyrestart(driver.stream);
-    } else {
-        LexerError( "failure in including a file" );
-    }	
+		includes.emplace(includeFile);
+		gEnv->pLog->Log("$3[FX] File %s opened", file_name);
+		yypush_buffer_state(yy_create_buffer(includes.top().get(), YY_BUF_SIZE));
+		//yyrestart(includeFile);
+		result = true;
+	}
+	return result;
 }
 
 void Scanner::eof()
 {
-	gEnv->pLog->LogError("$3[FX] File %s ended", driver.file.c_str());
 	yypop_buffer_state();
+	gEnv->pLog->LogError("$3[FX] File %s ended", driver.file.c_str());
+	//yypop_buffer_state();
 	//driver.file = incData.file_name;
 	//driver.location.initialize(&driver.file);
 
@@ -40,5 +39,5 @@ void Scanner::eof()
 	if(incData.fileToClose)
 		fclose(incData.fileToClose);
 #endif
-	include_stack.pop();
+	//include_stack.pop();
 }

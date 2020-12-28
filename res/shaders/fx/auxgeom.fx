@@ -1,6 +1,6 @@
+#include "common.fx"
 GLSLShader
 {
-	#version 460 core
 }
 
 GLSLShader vert
@@ -8,11 +8,13 @@ GLSLShader vert
 
 	out layout(location = 0) vec4 v_color;
 
+#if 0
 	layout(std140, binding = 2) uniform Matricies {
 		mat4 projection;
         mat4 ortho_projection;
 		mat4 view;
 	};
+#endif
 
 	void main()
 	{

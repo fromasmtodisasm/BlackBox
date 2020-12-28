@@ -374,13 +374,13 @@ ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool com
 			code.push_back(in);
 	}
 	code.push_back(pass->Shaders[type]);
-	if (compile_to_spirv)
-	{
-		CompileToSpirv(pEffect->GetName(), "main", code, type);
-	}
 	//else
 	{
 		return CShader::LoadFromMemory(code, type);
+	}
+	if (compile_to_spirv)
+	{
+		CompileToSpirv(pEffect->GetName(), "main", code, type);
 	}
 }
 
@@ -395,6 +395,7 @@ ShaderRef CShader::LoadFromMemory(const std::vector<std::string_view>& text, ISh
 
 const char* IShader::GetName()
 {
+	return "a";
 }
 
 ShaderDesc::ShaderDesc(std::string name, const IShader::Type type): name(std::move(name)), type(type)

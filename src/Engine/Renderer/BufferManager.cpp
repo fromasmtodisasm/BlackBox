@@ -30,22 +30,22 @@ namespace
 	};
 
 #define OFFSET(m) reinterpret_cast<GLvoid*>(static_cast<INT_PTR>((gBufInfoTable[vertexFormat].m)))
-	inline INPUT_ELEMENT_DESC GetPositionAttributePointer(int vertexFormat)
+	INPUT_ELEMENT_DESC GetPositionAttributePointer(int vertexFormat)
 	{
 		return INPUT_ELEMENT_DESC(
 			position, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], reinterpret_cast<GLvoid*>(0));
 	}
-	inline INPUT_ELEMENT_DESC GetNormalAttributePointer(int vertexFormat)
+	INPUT_ELEMENT_DESC GetNormalAttributePointer(int vertexFormat)
 	{
 		return INPUT_ELEMENT_DESC(
 			normal, 3, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], OFFSET(OffsNormal));
 	}
-	inline INPUT_ELEMENT_DESC GetColorAttributePointer(int vertexFormat)
+	INPUT_ELEMENT_DESC GetColorAttributePointer(int vertexFormat)
 	{
 		return INPUT_ELEMENT_DESC(
 			color, 4, GL_UNSIGNED_BYTE, GL_TRUE, gVertexSize[vertexFormat], OFFSET(OffsColor));
 	}
-	inline INPUT_ELEMENT_DESC GetUVAttributePointer(int vertexFormat)
+	INPUT_ELEMENT_DESC GetUVAttributePointer(int vertexFormat)
 	{
 		return INPUT_ELEMENT_DESC(
 			uv, 2, GL_FLOAT, GL_FALSE, gVertexSize[vertexFormat], OFFSET(OffsTC));
@@ -59,7 +59,7 @@ namespace
 	}
 	void DisableAttributes(CVertexBuffer* vb)
 	{
-		SVertBufComps vbc;
+		SVertBufComps vbc{};
 		GetVertBufComps(&vbc, vb->m_vertexformat);
 
 		gl::DisableVertexAttribArray(position);
@@ -78,7 +78,7 @@ namespace
 	}
 	void EnableAttributes(CVertexBuffer* vb)
 	{
-		SVertBufComps vbc;
+		SVertBufComps vbc{};
 		auto& vf = vb->m_vertexformat;
 		GetVertBufComps(&vbc, vf);
 
@@ -97,7 +97,7 @@ namespace
 		}
 	}
 
-	GLenum toGlPrimitive(RenderPrimitive rp)
+	GLenum ToGlPrimitive(RenderPrimitive rp)
 	{
 		switch (rp)
 		{
@@ -111,11 +111,9 @@ namespace
 			return GL_TRIANGLES;
 		case RenderPrimitive::TRIANGLE_STRIP:
 			return GL_TRIANGLE_STRIP;
-		default:
-			return -1;
 		}
+		return -1;
 	}
-
 } // namespace
 
 CBufferManager::CBufferManager()
@@ -153,7 +151,7 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
   m_VertexBufferPool.insert(std::make_pair((eVertexFormat)vertexformat, vpe));
 #endif
 	SVertexStream stream;
-	CVertexBuffer* buffer = new CVertexBuffer;
+	auto buffer = new CVertexBuffer;
 	stream.m_bDynamic	  = bDynamic;
 	stream.m_VData		  = CreateVertexBuffer(vertexformat, vertexcount);
 
@@ -183,16 +181,12 @@ void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
 	glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
 }
 
-CVertexBuffer* CBufferManager::New(int vertexcount, int vertexformat, const char* szSource, bool bDynamic)
-{
-}
-
 void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount)
 {
 	assert(dest != nullptr);
 	assert(src != nullptr);
 
-	SVertexStream* stream = new SVertexStream;
+	auto stream = new SVertexStream;
 	stream->m_bDynamic	  = false;
 	stream->m_nBufOffset  = 0;
 	stream->m_nItems	  = indexcount;
@@ -219,7 +213,7 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
 	auto to_draw = vert_stop - vert_start;
 	gl::BindVertexArray(src->m_Container);
 
-	auto gl_mode		  = toGlPrimitive(static_cast<RenderPrimitive>(prmode));
+	auto gl_mode		  = ToGlPrimitive(static_cast<RenderPrimitive>(prmode));
 	auto offset_in_buffer = src->m_VS[VSF_GENERAL].m_nBufOffset;
 	if (indicies != nullptr)
 	{
