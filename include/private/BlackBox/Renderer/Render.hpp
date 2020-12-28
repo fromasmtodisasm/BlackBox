@@ -96,7 +96,7 @@ class GLRenderer : public CRenderer
 	virtual void DrawFullscreenQuad() override;
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) override;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
-	virtual CVertexBuffer* CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false) override;
+	virtual CVertexBuffer* CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic = false) override;
 	virtual void ReleaseBuffer(CVertexBuffer* bufptr) override;
 	virtual void DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_stop = 0, CMatInfo* mi = NULL) override;
 	virtual void UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs = 0, int Type = 0) override;
@@ -129,10 +129,10 @@ class GLRenderer : public CRenderer
 	virtual void ShareResources(IRenderer* renderer) override;
 
   private:
-	void glInit();
-	void fillSates();
-	void InitConsoleCommands();
-	void printHardware();
+	void GlInit();
+	void FillSates();
+	void InitConsoleCommands() const;
+	void PrintHardware();
 	void AquireVB();
 	bool VBF_InPool(int format);
 	bool InitResourceManagers();
@@ -183,9 +183,6 @@ class GLRenderer : public CRenderer
 		0.2, 0.2, 0.2
 		//0.0, 0.0, 0.0
 	};
-	float m_clearDepth;
-
-	int m_CurrentTarget;
 
 	Hardware m_Hardware;
 
@@ -200,7 +197,7 @@ class GLRenderer : public CRenderer
 	std::vector<CShaderProgram*> m_Shaders;
 	FrameBufferObject* m_MainMSAAFrameBuffer;
 	FrameBufferObject* m_MainReslovedFrameBuffer;
-	IRenderCallback* m_pRenerCallback = nullptr;
+	IRenderCallback* m_pRenderCallback = nullptr;
 	std::vector<Texture*> m_RenderTargets;
 
 	bool transit_to_FS = false;

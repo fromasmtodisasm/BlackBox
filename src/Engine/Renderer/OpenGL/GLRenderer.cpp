@@ -45,11 +45,11 @@ class ShaderMan
 	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
 	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
-		auto vs			 = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
-		auto fs			 = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
-		auto p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
+		auto* vs			 = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
+		auto* fs			 = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
 		p->Create((std::string(vertex) + std::string(fragment)).data());
-		m_Shaders.push_back(p);
+		m_Shaders.emplace_back(p);
 		return p;
 	}
 	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
@@ -67,7 +67,7 @@ class ShaderMan
 		}
 		return p;
 	}
-	IShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen)
+	IShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
 	{
 		return LoadBinaryShader(name, flags, nMaskGen);
 	}
@@ -83,17 +83,17 @@ class ShaderMan
 		{
 
 			CryLog("Dumping shaders of effect: %s", name.data());
-			for (int i = 0; i < pEffect->GetNumShaders(); i++)
+			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
 			{
 				CryLog("[%s]", pEffect->GetShader(i).name.c_str());
 			}
 			dump_shaders_on_load = true;
-			auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX, true);
-			auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT, true);
+			const auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX, true);
+			const auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT, true);
 			dump_shaders_on_load = false;
-			auto p	= new CShaderProgram(vs, fs);
+			auto* p	= new CShaderProgram(vs, fs);
 			p->Create(name.data());
-			m_Shaders.push_back(p);
+			m_Shaders.emplace_back(p);
 			return p;
 		}
 		return nullptr;
@@ -113,14 +113,14 @@ class ShaderMan
 ShaderMan* gShMan;
 FxParser s_FxParser;
 
-struct PerViewConstantBuffer
+struct SPerViewConstantBuffer
 {
 	Mat4 Projection;
 	Mat4 OrthoProjection;
 	Mat4 View;
 };
 
-using PerViewBuffer = gl::ConstantBuffer<PerViewConstantBuffer>;
+using PerViewBuffer = gl::ConstantBuffer<SPerViewConstantBuffer>;
 using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
 
  PerViewBufferPtr  perViewBuffer;
@@ -158,7 +158,7 @@ GLRenderer::~GLRenderer()
 	SAFE_DELETE(m_BufferManager);
 	SAFE_DELETE(m_VertexBuffer);
 
-	for (auto t : m_RenderTargets)
+	for (auto* t : m_RenderTargets)
 	{
 		SAFE_RELEASE(t);
 	}
@@ -206,12 +206,12 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	m_pSystem->GetIInput()->AddEventListener(this);
 	//=======================
-	glInit();
+	GlInit();
 	g_FxParser = &s_FxParser;
 	if (!InitResourceManagers())
 		return nullptr;
 
-	printHardware();
+	PrintHardware();
 	m_BufferManager = new CBufferManager();
 	CreateQuad();
 	gShMan = new ShaderMan;
@@ -234,13 +234,13 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
 	CreateRenderTarget();
 
-	auto dm				  = reinterpret_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+	auto* dm				  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
 	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	{
 		char buffer[32];
 		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
-		auto dm = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
+		dm = static_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
 		m_RenderTargets.push_back(Texture::create(
 			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),  
 			TextureType::LDR_RENDER_TARGET, buffer)
@@ -249,7 +249,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
-	perViewBuffer = std::move(PerViewBuffer::Create(2));
+	perViewBuffer = PerViewBuffer::Create(2);
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
 	return result;
@@ -268,8 +268,8 @@ void GLRenderer::Release()
 void GLRenderer::BeginFrame(void)
 {
 	Vec4d vp(0, 0, GetWidth(), GetHeight());
-	if (m_pRenerCallback)
-		m_pRenerCallback->CallBack(IRenderCallback::eOnRender);
+	if (m_pRenderCallback)
+		m_pRenderCallback->CallBack(IRenderCallback::eOnRender);
 	//GetViewport(&vp[0], &vp[1], &vp[2], &vp[3]);
 
 	m_MainMSAAFrameBuffer->bind({vp[0], vp[1], vp[2], vp[3]});
@@ -285,9 +285,9 @@ void GLRenderer::Update(void)
 			//std::cout << " aux " << std::endl;
 			Flush();
 		}
-		m_MainMSAAFrameBuffer->bindDefault({0, 0, GetWidth(), GetHeight()});
-		if (m_pRenerCallback)
-			m_pRenerCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
+		FrameBufferObject::bindDefault({0, 0, GetWidth(), GetHeight()});
+		if (m_pRenderCallback)
+			m_pRenderCallback->CallBack(IRenderCallback::eBeforeSwapBuffers);
 		m_MainMSAAFrameBuffer->DrawTo(
 			m_MainReslovedFrameBuffer,
 			m_MainReslovedFrameBuffer->viewPort);
@@ -398,10 +398,10 @@ void GLRenderer::RenderToViewport(const CCamera& cam, float x, float y, float wi
 {
 }
 
-void GLRenderer::glInit()
+void GLRenderer::GlInit()
 {
 	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
-	fillSates();
+	FillSates();
 	if (glContextType == (int)AttributeType::Debug || gEnv->pConsole->GetCVar("r_Debug")->GetIVal() == 1)
 	{
 		m_pSystem->Log("Create debug render context");
@@ -424,7 +424,7 @@ void GLRenderer::glInit()
 	m_Hardware.glsl_version = gl::GetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
-void GLRenderer::fillSates()
+void GLRenderer::FillSates()
 {
 #define STATEMAP(k, v) stateMap.insert(std::make_pair(k, v))
 	STATEMAP(State::DEPTH_TEST, GL_DEPTH_TEST);
@@ -452,12 +452,12 @@ namespace fs = std::filesystem;
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 {
 	wchar_t c_file[256];
-#define fx_base "tmp"
-	virtual int GetCount() const
+#define FX_BASE "tmp"
+	[[nodiscard]] int GetCount() const override
 	{
 #ifndef LINUX
 		int cnt = std::count_if(
-        fs::directory_iterator::directory_iterator(fs::path::path(fx_base)),
+        fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
         fs::directory_iterator::directory_iterator(),
 			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
 		return cnt;
@@ -466,12 +466,12 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 #endif
 	};
 
-	virtual const char* GetValue(int nIndex) const
+	const char* GetValue(int nIndex) const override
 	{
 #ifndef LINUX
 		int i = 0;
 		static std::string file;
-		for (fs::directory_iterator next(fs::path(fx_base)), end; next != end; ++next, ++i)
+		for (fs::directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next, ++i)
 		{
 			if (i == nIndex)
 			{
@@ -487,7 +487,7 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 };
 
 static STestFXAutoComplete s_TestFXAutoComplete;
-void GLRenderer::InitConsoleCommands()
+void GLRenderer::InitConsoleCommands() const
 {
 	/*
   REGISTER_COMMAND(
@@ -503,9 +503,9 @@ void GLRenderer::InitConsoleCommands()
 	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
-CVertexBuffer* GLRenderer::CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic /* = false*/)
+CVertexBuffer* GLRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
 {
-	return m_BufferManager->Create(vertexcount, vertexformat, szSource, bDynamic);
+	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
 }
 
 void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
@@ -592,7 +592,7 @@ int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)
 	return m_FrameID;
 }
 
-void GLRenderer::printHardware()
+void GLRenderer::PrintHardware()
 {
 	std::stringstream hardware_info;
 	hardware_info << "Hardware render info\n"
@@ -938,7 +938,7 @@ int GLRenderer::CreateRenderTarget()
 
 void GLRenderer::SetRenderCallback(IRenderCallback* pCallback)
 {
-	m_pRenerCallback = pCallback;
+	m_pRenderCallback = pCallback;
 }
 
 void GLRenderer::Flush()

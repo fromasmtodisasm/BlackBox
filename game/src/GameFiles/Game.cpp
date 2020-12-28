@@ -246,7 +246,7 @@ CGame::CGame()
 	//srand(stime);
 }
 
-void CGame::initVariables()
+void CGame::InitVariables()
 {
 }
 
@@ -320,7 +320,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 #endif
 
 	InitConsoleVars();
-	initCommands();
+	InitCommands();
 	InitScripts();
 	m_pDevMode = std::make_unique<CDevMode>();	
 
@@ -376,7 +376,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	//DevModeInit();
 
-	initPlayer();
+	InitPlayer();
 	//m_pInput->ShowCursor(false);
 	//m_pInput->GrabInput(true);
 
@@ -663,7 +663,7 @@ bool CGame::Run(bool& bRelaunch)
 	return true;
 }
 
-bool CGame::loadScene(std::string name)
+bool CGame::LoadScene(std::string name)
 {
 	GetISystem()->Log("Scene loading");
 	std::string& path = name;
@@ -678,7 +678,7 @@ bool CGame::loadScene(std::string name)
 			{
 				//player->attachCamera(scene->getCurrentCamera());
 				//player->setGame(this);
-				this->setPlayer(player);
+				this->SetPlayer(player);
 			}
 			m_pClient->OnLoadScene();
 		}
@@ -688,7 +688,7 @@ bool CGame::loadScene(std::string name)
 	return false;
 }
 
-void CGame::saveScene(std::string name, std::string as)
+void CGame::SaveScene(std::string name, std::string as)
 {
 	// TODO: Fix it
 	// Need implement custom save file format to save needed state
@@ -719,12 +719,12 @@ void CGame::SetRenderState()
 #endif
 }
 
-void CGame::setPlayer(CPlayer* player)
+void CGame::SetPlayer(CPlayer* player)
 {
 	m_player = player;
 }
 
-void CGame::setCamera(CCamera* camera)
+void CGame::SetCamera(CCamera* camera)
 {
 	//m_active_camera = camera;
 	//m_World->setCamera(camera);
@@ -802,7 +802,7 @@ void CGame::PersistentHandler(const SInputEvent& event)
 	}
 }
 
-void CGame::gotoGame()
+void CGame::GotoGame()
 {
 	//if (m_player != nullptr)
 	{
@@ -817,21 +817,21 @@ void CGame::gotoGame()
 	}
 }
 
-void CGame::gotoFly()
+void CGame::GotoFly()
 {
 	m_Mode = FLY;
 }
 
-void CGame::gotoEdit()
+void CGame::GotoEdit()
 {
 	m_Mode = EDIT;
 }
 
-void CGame::showMenu()
+void CGame::ShowMenu()
 {
 }
 
-bool CGame::initPlayer()
+bool CGame::InitPlayer()
 {
 	// TODO: rewirte it
 #if 0
@@ -907,7 +907,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 		}
 		#endif
 		case eKI_Escape:
-			gotoMenu();
+			GotoMenu();
 			return true;
 		case eKI_P:
 			camera.MovementSpeed += 5.0f;
@@ -931,7 +931,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			return true;
 		case eKI_Enter:
 			if (alt == true)
-				gotoFullscreen();
+				GotoFullscreen();
 			return true;
 		default:
 			return false;
@@ -959,7 +959,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 		case eKI_Backspace:
 			return true;
 		case eKI_Space:
-			gotoGame();
+			GotoGame();
 			return true;
 		case eKI_Escape:
 			//TODO: FIX IT
@@ -992,7 +992,7 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 			//Stop();
 			return true;
 		case eKI_Enter:
-			gotoGame();
+			GotoGame();
 			return true;
 		case eKI_J:
 			return true;
@@ -1157,7 +1157,7 @@ void CGame::PostRender()
 {
 }
 
-void CGame::gotoMenu()
+void CGame::GotoMenu()
 {
 	m_Mode	 = MENU;
 	m_bInPause = true;
@@ -1166,7 +1166,7 @@ void CGame::gotoMenu()
 	m_pSystem->EnableGui(true);
 }
 
-void CGame::gotoFullscreen()
+void CGame::GotoFullscreen()
 {
 	isFullScreen = !isFullScreen;
 }

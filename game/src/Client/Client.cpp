@@ -423,7 +423,7 @@ void CClient::IntersectionByRayCasting()
 
 	const auto lastPos = m_IntersectionState.m_LastPickedPos; 
 	for (size_t i = 0; i < m_testObjects.size(); i++){
-		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
+		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.IntersectBox(eyeRay);
 		if (tMinMax.x < 0 || tMinMax.y < 0)
 			continue;
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {

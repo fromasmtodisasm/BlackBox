@@ -561,7 +561,7 @@ private:
 };
 //*******************************************************
 #endif
-void CGame::initCommands()
+void CGame::InitCommands()
 {
 #if 0
   m_Console->AddCommand("last", new LastCommand(this));

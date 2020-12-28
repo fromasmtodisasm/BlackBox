@@ -174,37 +174,37 @@ int CScriptObjectGame::Stop(IFunctionHandler* pH)
 
 int CScriptObjectGame::gotoMenu(IFunctionHandler* pH)
 {
-  m_pGame->gotoMenu();
+  m_pGame->GotoMenu();
   return pH->EndFunction();
 }
 
 int CScriptObjectGame::gotoFullscreen(IFunctionHandler* pH)
 {
-  m_pGame->gotoFullscreen();
+  m_pGame->GotoFullscreen();
   return pH->EndFunction();
 }
 
 int CScriptObjectGame::gotoGame(IFunctionHandler* pH)
 {
-  m_pGame->gotoGame();
+  m_pGame->GotoGame();
   return pH->EndFunction();
 }
 
 int CScriptObjectGame::gotoFly(IFunctionHandler* pH)
 {
-  m_pGame->gotoFly();
+  m_pGame->GotoFly();
   return pH->EndFunction();
 }
 
 int CScriptObjectGame::gotoEdit(IFunctionHandler* pH)
 {
-  m_pGame->gotoEdit();
+  m_pGame->GotoEdit();
   return pH->EndFunction();
 }
 
 int CScriptObjectGame::showMenu(IFunctionHandler* pH)
 {
-  m_pGame->showMenu();
+  m_pGame->ShowMenu();
   return pH->EndFunction();
 }
 
@@ -586,7 +586,7 @@ int CScriptObjectGame::LoadLevel(IFunctionHandler* pH)
 
   if (pH->GetParam(1, szLevelName))
   {
-    return pH->EndFunction(m_pGame->loadScene(szLevelName));
+    return pH->EndFunction(m_pGame->LoadScene(szLevelName));
   }
   return pH->EndFunctionNull();
 

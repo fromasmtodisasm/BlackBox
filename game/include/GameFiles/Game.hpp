@@ -159,6 +159,7 @@ struct Ray
 };
 
 
+// ReSharper disable once CppInconsistentNaming
 struct AABB
 {
 	Vec3 min;
@@ -169,7 +170,7 @@ struct AABB
 	{
 	}
 	// Check two bounding boxes for intersection.
-	inline bool IsIntersectBox(const AABB& b) const
+	bool IsIntersectBox(const AABB& b) const
 	{
 		// Check for intersection on X axis.
 		if ((min.x > b.max.x) || (b.min.x > max.x))
@@ -184,7 +185,8 @@ struct AABB
 		return true;
 	}
 
-	glm::vec2 intersectBox(const Ray& ray) {
+	glm::vec2 IntersectBox(const Ray& ray) const
+	{
 		glm::vec3 inv_dir = 1.0f/ray.direction;
 		glm::vec3 tMin = (min - ray.origin) * inv_dir;
 		glm::vec3 tMax = (max - ray.origin) * inv_dir;
@@ -267,11 +269,11 @@ class CGame final
 	void AllowQuicksave(bool bAllow) {m_bAllowQuicksave = bAllow;};
 	bool IsQuicksaveAllowed(void) {return m_bAllowQuicksave;}
 
-	bool loadScene(std::string name);
-	void saveScene(std::string name, std::string as);
+	bool LoadScene(std::string name);
+	void SaveScene(std::string name, std::string as);
 	void SetRenderState();
-	void setPlayer(CPlayer* player);
-	void setCamera(CCamera* camera);
+	void SetPlayer(CPlayer* player);
+	void SetCamera(CCamera* camera);
 
 	void Render();
 
@@ -296,7 +298,7 @@ class CGame final
 	void Save(string sFileName, Vec3 *pos, Vec3 *angles,bool bFirstCheckpoint=false );
 	bool Load(string sFileName);
 	void LoadConfiguration(const string &sSystemCfg,const string &sGameCfg);
-	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile);
+	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile) override;
 	void RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfile);
 
 	virtual void ReloadScripts() override;
@@ -305,12 +307,12 @@ class CGame final
 	virtual IXAreaMgr* GetAreaManager() override;
 	virtual ITagPointManager* GetTagPointManager() override;
     void Stop() override;
-	void gotoMenu();
-	void gotoFullscreen();
-	void gotoGame();
-	void gotoFly();
-	void gotoEdit();
-	void showMenu();
+	void GotoMenu();
+	void GotoFullscreen();
+	void GotoGame();
+	void GotoFly();
+	void GotoEdit();
+	void ShowMenu();
 	virtual void SendMessage(const char* str) override
 	{
 		m_qMessages.push(str);
@@ -331,7 +333,7 @@ private: // ------------------------------------------------------------
 	char										m_szLoadMsg[512];
 	bool										m_bAllowQuicksave = true;
 
-	bool initPlayer();
+	bool InitPlayer();
 	bool FpsInputEvent(const SInputEvent& event);
 	bool FlyInputEvent(const SInputEvent& event);
 	bool MenuInputEvent(const SInputEvent& event);
@@ -347,8 +349,8 @@ private: // ------------------------------------------------------------
   public:
 	virtual void PostRender() override;
 
-	void initCommands();
-	void initVariables();
+	void InitCommands();
+	void InitVariables();
 
 	virtual void PreRender() override;
 	// tagpoint management functions
@@ -364,15 +366,15 @@ private: // ------------------------------------------------------------
 	CVehicleSystem *GetVehicleSystem(){ return m_pVehicleSystem; }
 	CPlayerSystem *GetPlayerSystem(){ return m_pPlayerSystem; }
 
-	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
+	IClient* CreateClient(IClientSink* pSink, bool bLocal = false) const
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
 	}
-	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen)
+	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen) const
 	{
 		return m_pNetwork->CreateServer(pSink, nPort, listen);
 	}
-	IActionMapManager* GetActionMapManager()
+	IActionMapManager* GetActionMapManager() const
 	{
 		return m_pIActionMapManager;
 	}
@@ -414,8 +416,8 @@ private: // ------------------------------------------------------------
 	bool StartupLocalClient();
 	void ShutdownClient();
 	void MarkClientForDestruct();
-    void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
-    void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
+    void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping) override;
+    void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping) override;
     void OnNETServerTimeout(const CIPAddress& ip) override;
 	void RefreshServerList();
 	//////////////////////////////////////////////////////////////////////////
