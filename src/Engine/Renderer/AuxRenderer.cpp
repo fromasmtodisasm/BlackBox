@@ -1,7 +1,7 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 
@@ -20,6 +20,11 @@ namespace
 				((uint8)(col.bcolor[3])));
 	}
 } // namespace
+
+using AAABuffer = gl::ConstantBuffer<SAABBBuffer>;
+using AAABufferPtr = std::shared_ptr<AAABuffer>;
+
+AAABufferPtr  perViewBuffer;
 
 CRenderAuxGeom::CRenderAuxGeom()
 {
@@ -162,7 +167,6 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	shader->Uniform(transform, "model");
 	shader->Uniform(0.1f, "alpha");
 	shader->Uniform(color, "color");
-	//shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
 	shader->Uniform(this->dbg_mode, "dbgmode");
 	shader->Uniform(0, "bTonemap");
 	shader->Uniform(Vec3(300), "lightPos");

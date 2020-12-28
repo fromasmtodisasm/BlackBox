@@ -559,61 +559,86 @@ namespace gl
 		return size;
 	}
 
-	template<typename CB>
-	struct ConstantBuffer : public CB
+	struct ConstantBinderDynamicBuffer
+	{
+		constexpr static GLenum target = GL_UNIFORM_BUFFER;
+		constexpr static GLenum usage = GL_DYNAMIC_DRAW;
+	};
+
+	struct ConstantBinderStaticBuffer
+	{
+		constexpr static GLenum target = GL_UNIFORM_BUFFER;
+		constexpr static GLenum usage = GL_STATIC_DRAW;
+	};
+
+	struct StructuredBinderStaticBuffer
+	{
+		constexpr static GLenum target = GL_SHADER_STORAGE_BUFFER;
+		constexpr static GLenum usage = GL_STATIC_DRAW;
+	};
+
+	struct StructuredBinderDynamicBuffer
+	{
+		constexpr static GLenum target = GL_SHADER_STORAGE_BUFFER;
+		constexpr static GLenum usage = GL_DYNAMIC_COPY;
+	};
+
+	template<typename Data, typename Binder>
+	struct Buffer : public Data
 	{
 		GLuint uniform_buffer;
-		//CB cb;
-		using Buf = ConstantBuffer<CB>;
+		using Buf = Buffer<Data, Binder>;
 		using Ptr = std::shared_ptr<Buf>;
 		static Ptr Create(int binding)
 		{
 			Ptr c = std::make_shared<Buf>();
 			c->uniform_buffer;
 			GenBuffers(1, &c->uniform_buffer);
-			BindBuffer(GL_UNIFORM_BUFFER, c->uniform_buffer);
-			BufferData(GL_UNIFORM_BUFFER, sizeof(CB), NULL, GL_DYNAMIC_DRAW); // выделяем 150 байт памяти
-			BindBuffer(GL_UNIFORM_BUFFER, 0);		
-			glCheck(glBindBufferBase(GL_UNIFORM_BUFFER, binding, c->uniform_buffer));
+			BindBuffer(Binder::target, c->uniform_buffer);
+			BufferData(Binder::target, sizeof(Data), NULL, Binder::usage);
+			BindBuffer(Binder::target, 0);		
+			glCheck(glBindBufferBase(Binder::target, binding, c->uniform_buffer));
 
 			return c;
 		}
 
 		void Update()
 		{
-			NamedBufferSubData(uniform_buffer, 0, sizeof(CB), static_cast<CB*>(this));
+			NamedBufferSubData(uniform_buffer, 0, sizeof(Data), static_cast<Data*>(this));
 		}
 
-		~ConstantBuffer()
+		~Buffer()
 		{
 			glDeleteBuffers(1, &uniform_buffer);	
 		}
 
-		ConstantBuffer(ConstantBuffer<CB>&& cb)
+		Buffer(Buffer<Data, Binder>&& Data)
 		{
-			uniform_buffer = cb.uniform_buffer;
-			cb.uniform_buffer	  = -1;
+			uniform_buffer = Data.uniform_buffer;
+			Data.uniform_buffer	  = -1;
 		}
 
-		// Оператор присваивания перемещением, который передает право собственности на x.m_ptr в m_ptr
-		ConstantBuffer& operator=(ConstantBuffer&& cb)
+		Buffer& operator=(Buffer&& Data)
 		{
-			// Проверка на самоприсваивание
-			if (&cb == this)
+			if (&Data == this)
 				return *this;
 
-
-			uniform_buffer = cb.uniform_buffer;
-			cb.uniform_buffer	  = -1;
+			uniform_buffer = Data.uniform_buffer;
+			Data.uniform_buffer	  = -1;
 
 			return *this;
 		}
 
-		ConstantBuffer() = default;
+		Buffer() = default;
 	private:
-		ConstantBuffer(const ConstantBuffer<CB>& cb) = default;
-
+		Buffer(const Buffer<Data, Binder>& Data) = default;
 	};
+
+	template<typename Data>
+	using ConstantBuffer = Buffer<Data, ConstantBinderDynamicBuffer>;
+
+	template<typename Data>
+	using StructuredBuffer = Buffer<Data, StructuredBinderDynamicBuffer>;
 
 	/*
 	template<typename T>

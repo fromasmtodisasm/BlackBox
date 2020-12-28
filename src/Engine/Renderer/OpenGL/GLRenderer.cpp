@@ -116,6 +116,7 @@ FxParser s_FxParser;
 struct PerViewConstantBuffer
 {
 	Mat4 Projection;
+	Mat4 OrthoProjection;
 	Mat4 View;
 };
 
@@ -832,7 +833,6 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 
 	glm::mat4 model(1.0);
 	auto uv_projection	 = glm::mat4(1.0);
-	glm::mat4 projection = glm::ortho(0.f, width, height, 0.f);
 
 	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
@@ -841,7 +841,6 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, t0, 0.f));
 
 	{
-		m_ScreenShader->Uniform(projection, "projection");
 		m_ScreenShader->Uniform(uv_projection, "uv_projection");
 		m_ScreenShader->Uniform(model, "model");
 		m_ScreenShader->Uniform(Vec4(GetWidth(), GetHeight(), 1.f / GetWidth(), -1.f / GetHeight()), "screen");
@@ -948,6 +947,7 @@ void GLRenderer::Flush()
 
 	auto pvb		= perViewBuffer.get();
 	pvb->Projection = m_Camera.getProjectionMatrix();
+	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
 	pvb->View		= m_Camera.GetViewMatrix();
 
 	pvb->Update();

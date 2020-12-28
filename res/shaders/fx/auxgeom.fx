@@ -10,6 +10,7 @@ GLSLShader vert
 
 	layout(std140, binding = 2) uniform Matricies {
 		mat4 projection;
+        mat4 ortho_projection;
 		mat4 view;
 	};
 
