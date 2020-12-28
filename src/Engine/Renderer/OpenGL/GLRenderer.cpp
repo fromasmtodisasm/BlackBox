@@ -45,8 +45,8 @@ class ShaderMan
 	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
 	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
-		auto* vs			 = CShader::load(ShaderDesc(vertex, IShader::E_VERTEX));
-		auto* fs			 = CShader::load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+		auto* vs			 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
+		auto* fs			 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
 		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
 		p->Create((std::string(vertex) + std::string(fragment)).data());
 		m_Shaders.emplace_back(p);
@@ -88,8 +88,8 @@ class ShaderMan
 				CryLog("[%s]", pEffect->GetShader(i).name.c_str());
 			}
 			dump_shaders_on_load = true;
-			const auto vs = CShader::loadFromEffect(pEffect, IShader::E_VERTEX, true);
-			const auto fs = CShader::loadFromEffect(pEffect, IShader::E_FRAGMENT, true);
+			const auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
+			const auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
 			dump_shaders_on_load = false;
 			auto* p	= new CShaderProgram(vs, fs);
 			p->Create(name.data());

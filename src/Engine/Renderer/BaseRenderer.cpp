@@ -7,7 +7,7 @@ int RenderCVars::CV_r_GetScreenShot;
 
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 {
-	static int display_in_use = 0; /* Only using first display */
+	static int displayInUse = 0; /* Only using first display */
 	int numModes			  = 0;
 	int i					  = 0;
 	//TODO: FIX IT
@@ -32,7 +32,7 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 
 	gEnv->pLog->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
 
-	numModes = SDL_GetNumDisplayModes(display_in_use);
+	numModes = SDL_GetNumDisplayModes(displayInUse);
 	if (numModes < 1)
 	{
 		gEnv->pLog->Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
@@ -44,7 +44,7 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 	{
 		for (i = 0; i < numModes; ++i)
 		{
-			if (SDL_GetDisplayMode(display_in_use, i, &mode) != 0)
+			if (SDL_GetDisplayMode(displayInUse, i, &mode) != 0)
 			{
 				gEnv->pLog->Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 				return 1;

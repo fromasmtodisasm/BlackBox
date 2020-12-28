@@ -52,12 +52,12 @@ namespace
 	}
 } // namespace
 
-CShader* CShader::load(ShaderDesc const& desc)
+CShader* CShader::Load(ShaderDesc const& desc)
 {
 	string text;
 	auto path = desc.root + desc.name;
 	gEnv->pLog->Log("Loading %s shader", path.data());
-	if (!loadInternal(path, text))
+	if (!LoadInternal(path, text))
 		return nullptr;
 
 	if (desc.macro.size() > 0)
@@ -80,17 +80,17 @@ CShader* CShader::load(ShaderDesc const& desc)
 	{
 		shader->Compile({"", text});
 		shader->m_Empty = false;
-		debuger::shader_label(shader->get(), path);
+		debuger::shader_label(shader->Get(), path);
 	}
 	return shader;
 }
 
-CShader* CShader::load(std::string_view source)
+CShader* CShader::Load(std::string_view source)
 {
 	return nullptr;
 }
 
-bool CShader::parseLine(string& buffer)
+bool CShader::ParseLine(string& buffer)
 {
 	size_t pos = 0;
 	if ((pos = buffer.find("#include")) != buffer.npos)
@@ -106,7 +106,7 @@ bool CShader::parseLine(string& buffer)
 		string file(buffer.substr(begin + 1, end - begin - 1));
 		string buff;
 
-		if (!loadInternal(string("res/shaders/") + file, buff))
+		if (!LoadInternal(string("res/shaders/") + file, buff))
 			return false;
 		buffer.clear();
 		buffer += buff;
@@ -166,14 +166,14 @@ bool CShader::parseLine(string& buffer)
 
 string grab_line(string& buffer)
 {
-	if (CShader::parseLine(buffer))
+	if (CShader::ParseLine(buffer))
 	{
 		return buffer + '\n';
 	}
 	return string();
 }
 
-bool CShader::loadInternal(string const& path, string& buffer)
+bool CShader::LoadInternal(string const& path, string& buffer)
 {
 	std::ifstream fin(path);
 	string buff;
@@ -189,7 +189,7 @@ bool CShader::loadInternal(string const& path, string& buffer)
 	return true;
 }
 
-bool CShader::loadFromStream(const std::stringstream stream, string& buffer)
+bool CShader::LoadFromStream(const std::stringstream stream, string& buffer)
 {
 	return false;
 }
@@ -362,7 +362,7 @@ bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector
 	return true;
 }
 
-ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type, bool compile_to_spirv)
+ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool compile_to_spirv)
 {
 	auto tech = pEffect->GetTechnique(0);
 	auto pass = tech->GetPass(0);
@@ -380,17 +380,25 @@ ShaderRef CShader::loadFromEffect(IEffect* pEffect, CShader::Type type, bool com
 	}
 	//else
 	{
-		return CShader::loadFromMemory(code, type);
+		return CShader::LoadFromMemory(code, type);
 	}
 }
 
-ShaderRef CShader::loadFromMemory(const std::vector<std::string_view>& text, IShader::Type type)
+ShaderRef CShader::LoadFromMemory(const std::vector<std::string_view>& text, IShader::Type type)
 {
 	auto shader = ShaderRef(new CShader(type));
 	if (!shader->Create())
 		return nullptr;
 	shader->Compile(text);
 	return shader;
+}
+
+const char* IShader::GetName()
+{
+}
+
+ShaderDesc::ShaderDesc(std::string name, const IShader::Type type): name(std::move(name)), type(type)
+{
 }
 
 IShaderProgram* GetGLSLSandBoxShader()
@@ -502,13 +510,13 @@ namespace GlslProgram
 } // namespace GlslProgram
 
 template<typename T>
-std::ostream& binary_write(std::ostream& stream, const T& value)
+std::ostream& BinaryWrite(std::ostream& stream, const T& value)
 {
 	return stream.write(reinterpret_cast<const char*>(&value), sizeof(T));
 }
 
 template<typename T>
-std::istream& binary_read(std::istream& stream, T& value)
+std::istream& BinaryRead(std::istream& stream, T& value)
 {
 	return stream.read(reinterpret_cast<char*> (&value), sizeof(T));
 }
@@ -564,7 +572,7 @@ spirv_bin GetSPIRV(const char* name)
 	return buffer;
 }
 
-CShader * CShader::load_spirv(const char* name, const char* entry, const spirv_bin& code, IShader::Type stage)
+CShader * CShader::LoadSpirv(const char* name, const char* entry, const spirv_bin& code, IShader::Type stage)
 {
 	auto shader = new CShader(stage);
 	if (shader->Create())
@@ -600,7 +608,7 @@ CShader * CShader::load_spirv(const char* name, const char* entry, const spirv_b
 		CryLog("$3SPIRV module accepted by OpenGL");
 
 		shader->m_Empty = false;
-		debuger::shader_label(shader->get(), name);
+		debuger::shader_label(shader->Get(), name);
 	}
 	return shader;
 }
@@ -615,17 +623,16 @@ void LoadSPIRV(IConsoleCmdArgs* args)
 
 IShaderProgram* LoadSpirvProgram(const char* name, const spirv_bin& code)
 {
-	auto vs = CShader::load_spirv(name, "main", code, IShader::E_VERTEX);
-	auto fs = CShader::load_spirv(name, "main", code, IShader::E_VERTEX);
+	auto* vs = CShader::LoadSpirv(name, "main", code, IShader::E_VERTEX);
+	auto* fs = CShader::LoadSpirv(name, "main", code, IShader::E_VERTEX);
 
-	CShaderProgram* program = new CShaderProgram(vs, fs);
-	return program;
+	return new CShaderProgram(vs, fs);
 }
 
 IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uint length)
 {
 	//GLuint program = glCreateProgram();
-	CShaderProgram* program = new CShaderProgram();
+	auto program = new CShaderProgram();
 
 	ShaderProgramStatus st(program);
 
@@ -641,7 +648,7 @@ IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uin
 		delete program;
 		program = nullptr;
 	}
-	st.get(GL_LINK_STATUS);
+	st.Get(GL_LINK_STATUS);
 	return program;
 
 }
@@ -663,16 +670,16 @@ IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen)
 	{
 	case 0:
 	{
-		binary_read(inputStream, format);
-		binary_read(inputStream, length);
-		spirv_bin buffer(startIt, endIt); // Load file
+		BinaryRead(inputStream, format);
+		BinaryRead(inputStream, length);
+		const spirv_bin buffer(startIt, endIt); // Load file
 		inputStream.close();
 		return LoadSpirvProgram(name, buffer/*, length*/);
 	}
 	case 1:
 	{
-		binary_read(inputStream, format);
-		binary_read(inputStream, length);
+		BinaryRead(inputStream, format);
+		BinaryRead(inputStream, length);
 		spirv_bin buffer(startIt, endIt); // Load file
 		inputStream.close();
 		CryLog("Loading binary shader %s , binary format = %d, binary length = %d", name, format, length);
@@ -680,6 +687,5 @@ IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen)
 	}
 	default:
 		return nullptr;
-		break;
 	}
 }

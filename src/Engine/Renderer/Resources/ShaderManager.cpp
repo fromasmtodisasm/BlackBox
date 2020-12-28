@@ -201,7 +201,7 @@ ShaderRef  ShaderManager::getShader(ShaderDesc const& desc, bool isReload)
 ShaderRef ShaderManager::addShader(const ShaderDesc& desc)
 {
   //result = std::make_shared<CShader>(static_cast<CShader*>(CShader::load(desc)));
-  auto result = CShader::load(desc);
+  auto result = CShader::Load(desc);
   auto Path = root + desc.name;
   result->m_Path = Path;
   if (result)

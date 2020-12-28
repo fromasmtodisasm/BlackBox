@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <utility>
 
 struct ITexture;
 class CCamera;
@@ -259,10 +260,11 @@ struct UniformValue
 
 struct IIncluder
 {
+	virtual ~IIncluder() = default;
 	virtual std::string_view OnInclude(std::string_view file) = 0;
 };
 
-class BasicIncluder : public IIncluder
+class BasicIncluder final : public IIncluder
 {
 	std::string_view OnInclude(std::string_view file) override
 	{
@@ -298,10 +300,10 @@ struct IShader
 	virtual bool Bind()				= 0;
 	virtual bool Empty()			= 0;
 	virtual IShader::Type GetType() = 0;
-	virtual void print()			= 0;
-	virtual const char* typeToStr() = 0;
-	virtual const char* getName()   = 0;
-	virtual uint get()				= 0;
+	virtual void Print()			= 0;
+	virtual const char* TypeToStr() = 0;
+	virtual const char* GetName();
+	virtual uint Get()				= 0;
 };
 
 struct IShaderProgram
@@ -314,9 +316,9 @@ struct IShaderProgram
 			  used(false)
 		{
 		}
-		ShaderInfo(IShader* shader, const std::string& name)
+		ShaderInfo(IShader* shader, std::string name)
 			: shader(shader),
-			  name(name),
+			  name(std::move(name)),
 			  attached(false),
 			  used(true)
 		{
@@ -334,19 +336,19 @@ struct IShaderProgram
 
 	virtual bool Create(const char* label)								 = 0;
 	virtual void Attach(ShaderInfo& shader)								 = 0;
-	virtual ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst) = 0;
+	virtual ShaderInfo& AttachInternal(ShaderInfo& src, ShaderInfo& dst) = 0;
 	virtual void Detach(ShaderInfo& shader)								 = 0;
 	virtual bool Dispatch(int x, int y, int z, uint barriers)			 = 0;
-	virtual bool DispatchInderect()										 = 0;
+	virtual bool DispatchIndirect()										 = 0;
 	virtual bool Link()													 = 0;
 	virtual void Use()													 = 0;
 	virtual void Unuse()												 = 0;
 	virtual void DeleteProgram()										 = 0;
 	virtual int GetUniformLocation(const char* format, ...)				 = 0;
-	virtual int GetUniformLocation(string& name)					 = 0;
+	virtual int GetUniformLocation(string& name)						 = 0;
 	virtual const char* GetShaderName(IShader::Type type)				 = 0;
 	//UniformValue GetUniformValue(const char* name);
-	void Uniform(bool value, const char* format, ...)
+	virtual void Uniform(bool value, const char* format, ...)
 	{
 		Uniform((int)value, format);
 	}
@@ -385,13 +387,11 @@ struct ShaderDesc
 	{
 	}
 	ShaderDesc(std::string name)
-		: name(name)
+		: name(std::move(name))
 	{
 	}
-	ShaderDesc(std::string name, IShader::Type type)
-		: type(type), name(name)
-	{
-	}
+
+	ShaderDesc(std::string name, IShader::Type type);
 
 	inline void AddMacro(const std::string& key, const std::string& value)
 	{

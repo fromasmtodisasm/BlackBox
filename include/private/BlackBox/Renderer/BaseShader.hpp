@@ -27,7 +27,7 @@ struct ShaderStatus
 	CShader* m_Shader	= nullptr;
 
 	ShaderStatus(CShader* shader);
-	bool get(GLenum statusType);
+	bool Get(GLenum statusType);
 };
 
 bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags);
@@ -35,12 +35,12 @@ IShaderProgram* LoadBinaryShader(const char* name, int flags);
 
 struct ShaderProgramStatus
 {
-	char m_InfoLog[1024];
-	int m_Status;
+	char m_InfoLog[1024]{};
+	int m_Status{};
 	CBaseShaderProgram* m_Program;
 
 	ShaderProgramStatus(CBaseShaderProgram* program);
-	bool get(GLenum statusType);
+	bool Get(GLenum statusType);
 };
 
 using spirv_bin = std::vector<uint8>;
@@ -53,23 +53,23 @@ class CShader : public IShader
 	virtual void AddRef() override;
 	virtual int Release() override;
 
-	static CShader* load(ShaderDesc const& desc);
-	static CShader* load(std::string_view source);
-	static CShader* load_spirv(const char * name, const char * entry, const spirv_bin& code, IShader::Type stage);
-	static bool parseLine(string& buffer);
-	static bool loadInternal(string const& path, string& buffer);
-	static bool loadFromStream(const std::stringstream stream, string& buffer);
-	static ShaderRef loadFromMemory(const std::vector<std::string_view>& text, CShader::Type type);
-	static ShaderRef loadFromEffect(struct IEffect* pEffect, CShader::Type type, bool compile_to_spirv);
+	static CShader* Load(ShaderDesc const& desc);
+	static CShader* Load(std::string_view source);
+	static CShader* LoadSpirv(const char * name, const char * entry, const spirv_bin& code, IShader::Type stage);
+	static bool ParseLine(string& buffer);
+	static bool LoadInternal(string const& path, string& buffer);
+	static bool LoadFromStream(const std::stringstream stream, string& buffer);
+	static ShaderRef LoadFromMemory(const std::vector<std::string_view>& text, CShader::Type type);
+	static auto LoadFromEffect(struct IEffect* pEffect, CShader::Type type, bool compile_to_spirv) -> ShaderRef;
 
 	virtual bool Create() override;
 	virtual bool Compile(std::vector<std::string_view> code) override;
 	virtual bool Bind() override;
 	virtual bool Empty() override;
-	virtual void print() override;
-	virtual const char* typeToStr() override;
-	virtual const char* getName() override;
-	virtual uint get() override;
+	virtual void Print() override;
+	virtual const char* TypeToStr() override;
+	virtual const char* GetName() override;
+	virtual uint Get() override;
 
   private:
 	GLuint m_Shader;
@@ -92,17 +92,17 @@ public:
 	CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs);
 	CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs);
 	CBaseShaderProgram(const ShaderInfo& vs, const ShaderInfo& fs, const ShaderInfo& gs, const ShaderInfo& cs);
-	~CBaseShaderProgram();
+	virtual ~CBaseShaderProgram();
 
 	virtual void AddRef() override;
 	virtual int Release() override;
 
 	virtual bool Create(const char* label) override;
 	virtual void Attach(ShaderInfo& shader) override;
-	virtual ShaderInfo& attachInternal(ShaderInfo& src, ShaderInfo& dst) override;
+	virtual ShaderInfo& AttachInternal(ShaderInfo& src, ShaderInfo& dst) override;
 	virtual void Detach(ShaderInfo& shader) override;
 	virtual bool Dispatch(int x, int y, int z, GLbitfield barriers) override;
-	virtual bool DispatchInderect() override;
+	virtual bool DispatchIndirect() override;
 	virtual bool Link() override;
 	virtual void Use() override;
 	virtual void Unuse() override;
@@ -110,7 +110,7 @@ public:
 	virtual GLint GetUniformLocation(const char* format, ...) override;
 	virtual GLint GetUniformLocation(string& name) override;
 	UniformValue GetUniformValue(const char* name);
-	void Uniform(bool value, const char* format, ...) { Uniform((int)value, format); }
+	virtual void Uniform(bool value, const char* format, ...) override { Uniform((int)value, format); }
 	virtual void Uniform(const int value, const char* format, ...) override;
 	virtual void Uniform(const unsigned int value, const char* format, ...) override;
 	virtual void Uniform(const float value, const char* format, ...) override;
@@ -139,8 +139,8 @@ public:
 	virtual void Dump() override;
 
   private:
-	void reset(ShaderInfo src);
-	const char* buildName(const char* format, va_list args);
+	void Reset(ShaderInfo src);
+	static const char* BuildName(const char* format, va_list args);
 
   public:
 	const size_t BUFFER_SIZE = 1024;

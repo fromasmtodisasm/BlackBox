@@ -183,6 +183,10 @@ void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
 	glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
 }
 
+CVertexBuffer* CBufferManager::New(int vertexcount, int vertexformat, const char* szSource, bool bDynamic)
+{
+}
+
 void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount)
 {
 	assert(dest != nullptr);

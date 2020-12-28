@@ -155,14 +155,14 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
 	auto& shader = m_BoundingBoxShader;
 
-	auto angle = !stop ? float(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
-	glm::vec3 size		= glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
-	glm::vec3 center	= glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
-	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(
+	const auto angle = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
+	const auto size		= glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
+	const auto center	= glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
+	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(
 		glm::mat4(1), angle, {0,1,0});
 
 	const auto& cam = gEnv->pRenderer->GetCamera();
-	Vec4 color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
+	const auto color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
 	shader->Use();
 	shader->Uniform(transform, "model");
 	shader->Uniform(0.1f, "alpha");

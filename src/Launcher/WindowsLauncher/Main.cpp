@@ -8,14 +8,6 @@
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
-#include <iostream>
-#include <ctime>
-#include <iomanip>
-#include <sstream>
-#include <filesystem>
-
-namespace fs = std::filesystem;
-
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
 extern "C"
 {
@@ -26,13 +18,13 @@ extern "C"
 }
 
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, [[maybe_unused]] int nShowCmd)
 {
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
 
 	// Note: lpCmdLine does not contain the filename.
-	string cmdLine = GetCommandLineA();
+	const string cmdLine = GetCommandLineA();
 	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
 
 	if (InitializeEngine(startupParams))
