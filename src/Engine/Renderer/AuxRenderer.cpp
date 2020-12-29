@@ -2,12 +2,12 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
+#include <BlackBox/System/IConsole.hpp>
 
 #include <array>
 
-using P3F	= SVF_P3F_N;
+using P3F	 = SVF_P3F_N;
 using VecPos = std::vector<P3F>;
 
 namespace
@@ -24,19 +24,17 @@ namespace
 CRenderAuxGeom::CRenderAuxGeom()
 {
 	std::vector<P3F> reference = {
-		
-    // front
-		P3F{{-1.0, -1.0, 1.0},{0, 0, 0}},
-		P3F{{1.0, -1.0,  1.0},{0,0,0}},
-		P3F{{1.0,  1.0,  1.0},{0,0,0}},
-    P3F{{-1.0,  1.0,  1.0},{0,0,0}},
-    // back
-    P3F{{-1.0, -1.0, -1.0},{0,0,0}},
-    P3F{{1.0, -1.0, -1.0},{0,0,0}},
-    P3F{{1.0,  1.0, -1.0},{0,0,0}},
-    P3F{{-1.0,  1.0, -1.},{0,0,0}}
-	};
 
+		// front
+		P3F{{-1.0, -1.0, 1.0}, {0, 0, 0}},
+		P3F{{1.0, -1.0, 1.0}, {0, 0, 0}},
+		P3F{{1.0, 1.0, 1.0}, {0, 0, 0}},
+		P3F{{-1.0, 1.0, 1.0}, {0, 0, 0}},
+		// back
+		P3F{{-1.0, -1.0, -1.0}, {0, 0, 0}},
+		P3F{{1.0, -1.0, -1.0}, {0, 0, 0}},
+		P3F{{1.0, 1.0, -1.0}, {0, 0, 0}},
+		P3F{{-1.0, 1.0, -1.}, {0, 0, 0}}};
 
 	std::vector<P3F> vertices(24);
 	auto get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16 {
@@ -45,13 +43,13 @@ CRenderAuxGeom::CRenderAuxGeom()
 		{
 			if (vertices[i].xyz == pos && vertices[i].normal == n)
 			{
-				idx = i;	
+				idx = i;
 				break;
 			}
 		}
 		return idx;
 	};
-	
+
 	std::vector<glm::u16vec3> reference_elements = {
 #if 0
 		0,
@@ -91,13 +89,12 @@ CRenderAuxGeom::CRenderAuxGeom()
 		{6, 7, 3}
 #endif
 	};
-	for (int i = 0, j = 0; i < reference_elements.size(); i+=2, j+=4)
+	for (int i = 0, j = 0; i < reference_elements.size(); i += 2, j += 4)
 	{
-		auto n = glm::normalize(glm::cross(
-			reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz, 
-			reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz)
-		);
-		vertices[j		]	= P3F{reference[reference_elements[i][0]].xyz, n};
+		auto n			= glm::normalize(glm::cross(
+			 reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz,
+			 reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz));
+		vertices[j]		= P3F{reference[reference_elements[i][0]].xyz, n};
 		vertices[j + 1] = P3F{reference[reference_elements[i][1]].xyz, n};
 		vertices[j + 2] = P3F{reference[reference_elements[i][2]].xyz, n};
 		vertices[j + 3] = P3F{reference[reference_elements[i + 1][1]].xyz, n};
@@ -109,14 +106,13 @@ CRenderAuxGeom::CRenderAuxGeom()
 		elements[i] = {
 			(get_idx(reference[reference_elements[i][0]].xyz, vertices[2 * i].normal)),
 			(get_idx(reference[reference_elements[i][1]].xyz, vertices[2 * i].normal)),
-			(get_idx(reference[reference_elements[i][2]].xyz, vertices[2 * i].normal))
-		};
+			(get_idx(reference[reference_elements[i][2]].xyz, vertices[2 * i].normal))};
 		std::cout << elements[i][0] << ", " << elements[i][1] << ", " << elements[i][2] << std::endl;
 	}
 	std::cout << std::endl;
 	for (int i = 0; i < 24; i++)
 	{
-		vertices[i].xyz *= 0.5;		
+		vertices[i].xyz *= 0.5;
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	//int cnt		  = sizeof vertices / sizeof P3F;
@@ -144,7 +140,6 @@ CRenderAuxGeom::~CRenderAuxGeom()
 
 struct AABBInstanceData
 {
-	
 };
 
 //TODO: Довести до ума, нужно учитывать трансформации объекта
@@ -152,11 +147,10 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
 	auto& shader = m_BoundingBoxShader;
 
-	const auto angle = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
-	const auto size		= glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
-	const auto center	= glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
-	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(
-		glm::mat4(1), angle, {0,1,0});
+	const auto angle	 = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
+	const auto size		 = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
+	const auto center	 = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
+	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(glm::mat4(1), angle, {0, 1, 0});
 
 	m_aabbBufferPtr->Model	  = transform;
 	m_aabbBufferPtr->Alpha	  = 0.1f;
@@ -171,14 +165,14 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 		RSS(gEnv->pRenderer, BLEND, true);
 		RSS(gEnv->pRenderer, CULL_FACE, false);
 		shader->Use();
-		#if 0
+#if 0
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
-		#else
+#else
 
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, m_BB_IndexBuffer->m_nItems, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
-		#endif
+#endif
 	}
 	shader->Unuse();
 	//gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));
