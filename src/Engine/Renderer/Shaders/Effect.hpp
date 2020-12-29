@@ -45,12 +45,23 @@ public:
 		}
 		CryLog("ident for shader_type: %s", name.data());
 	}
+	bool SetLang(ShaderLangId id)
+	{
+		if (m_LangId != ShaderLangId::None)
+			return false;
+		m_LangId = id;
+		return true;
+	}
 
 public:
 	std::string m_name;
 	std::vector<ShaderInfo> m_shaders;
 	std::vector<CTechnique> m_Techniques;
+	ShaderLangId m_LangId = ShaderLangId::None;
 
 	// Inherited via IEffect
 	virtual const char* GetName() override;
+
+	// Inherited via IEffect
+	virtual ShaderLangId GetLangId() override;
 };

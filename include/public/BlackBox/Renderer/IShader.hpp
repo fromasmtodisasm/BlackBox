@@ -279,6 +279,13 @@ class BasicIncluder final : public IIncluder
 #define EF_FORCE_RELOAD 2
 #define EF_RELOADED 4
 
+enum class ShaderLangId
+{
+	None,
+	Glsl,
+	Hlsl
+};
+
 struct IShader
 {
   protected:

@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
 struct IShader;
 struct IPass
 {
@@ -40,6 +41,7 @@ struct IEffect : public _i_reference_target_t
 	virtual IShader* GetShader(const char* name) = 0;
 	virtual int GetNumTechniques()				 = 0;
 	virtual ITechnique* GetTechnique(int i)		 = 0;
+	virtual ShaderLangId GetLangId()			 = 0;
 };
 
 typedef struct IEffect* PEffect;

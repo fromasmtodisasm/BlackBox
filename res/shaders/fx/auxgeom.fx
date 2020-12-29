@@ -1,25 +1,72 @@
-#include "common.fx"
+Language HLSL
+//#include "common.fx"
 
-GLSLShader vert
+HLSLShader
 {
-	out layout(location = 0) vec4 v_color;
 
-	void main()
+	cbuffer perFrameCB : register(b0)
 	{
-		gl_Position = GetViewProjMat() * vec4(aPos, 1.0);
-		v_color = vec4(aColor);
-	} 
+		float deltaTime;
+	}
+	cbuffer perViewCB : register(b2)
+	{
+		struct PerViewCB
+		{
+			float4x4 projection;
+			float4x4 ortho_projection;
+			float4x4 view;
+			float4x4 view_proj;
+		}perViewCB;
+	}
+
+	float4x4 GetOrthoProjMat()
+	{
+		return perViewCB.ortho_projection;
+	}
+
+	float4x4 GetProjMat()
+	{
+		return perViewCB.projection;
+	}
+
+	float4x4 GetViewProjMat()
+	{
+		return perViewCB.view_proj;
+	}
+}
+HLSLShader
+{
+	struct VsOutput
+	{
+		float4 pos : SV_POSITION;
+		[[vk::location(0)]] float4 color: COLOR;
+	};
 }
 
-GLSLShader frag
+HLSLShader vert
 {
-	in layout(location = 0) vec4 v_color;
+	struct VsInput
+	{
+		[[vk::location(0)]]	float3 Pos : POSITION;
+		[[vk::location(5)]] float4 Color : COLOR0;
+		[[vk::location(2)]] float2 TC : TEXCOORD0;
+	};
 
-	out layout(location = 0) vec4 FragColor;
+	VsOutput main(VsInput IN)
+	{
+		VsOutput OUT;
+		OUT.pos = mul(GetProjMat(), float4(IN.Pos, 1.0));
+		OUT.color = float4(IN.Color);
+		return OUT;
+	}
+ 
+}
 
-	void main()
+HLSLShader frag
+{
+	float4 main(VsOutput IN) : SV_Target0
 	{ 
-		FragColor = vec4(v_color);
+		return float4(IN.color);
 	}
 }
 
@@ -28,12 +75,15 @@ technique AuxGeometry
 {
   pass p0
   {
+	/*
 	InputLayout
 	{
 		vec3 aPos : POSITION
 		vec4 aColor : COLOR
 		vec2 aTC : TEXCOORD
 	}
+	*/
+	
     VertexShader = vert
     PixelShader = frag
   }

@@ -14,6 +14,12 @@ inline std::string GetBinaryPath(const char* name, uint64 mask)
 	return path.str();
 }
 
+auto GetSpirvEntry(ShaderLangId id, IShader::Type type)
+{
+	//return /*id == ShaderLangId::Glsl ? "main" : */type == CShader::E_VERTEX ? "VSMain" : CShader::E_FRAGMENT ? "PSMain" : "GSMain";
+	return "main";
+}
+
 namespace
 {
 	bool match(std::string_view input, std::string_view with, size_t& offset)
@@ -342,8 +348,8 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 }
 
 
-#define OUTPUT_SPIRV_FORMAT                  ".out"
-bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string>& code, IShader::Type type)
+#define OUTPUT_SPIRV_FORMAT                  ".spv"
+bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string>& code, IShader::Type type, ShaderLangId langId)
 {
 	string stage(GetGLSLANGTargetName(type));
 	std::ofstream output_file(string("bin/shadercache/shader_") + stage +  ".glsl");
@@ -356,12 +362,17 @@ bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector
 	//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
 
 	char params[1001];
-	sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s",
+	const char* extra = nullptr;
+	extra			  = langId == ShaderLangId::Hlsl ? "-D -V " : "";
+	sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s %s",
 				"bin/shadercache/shader_", stage.data(), ".glsl",
 				"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
 				targetEnv.c_str(),
 				stage.data(),
-				pEntrypoint);
+				pEntrypoint,
+				extra);
+
+	CryLog("compiler string: %s", params);
 
 	return ShellExecute("glslangValidator.exe", params, gEnv->pSystem->GetRootFolder());
 }
@@ -403,9 +414,10 @@ ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool com
 	code.push_back(pass->Shaders[type]);
 	if (compile_to_spirv)
 	{
-		if (CompileToSpirv(pEffect->GetName(), "main", code, type))
+		auto entry = GetSpirvEntry(pEffect->GetLangId(), type);
+		if (CompileToSpirv(pEffect->GetName(), entry, code, type, pEffect->GetLangId()))
 		{
-			return LoadSpirvFromFile(pEffect->GetName(), "main", type);
+			return LoadSpirvFromFile(pEffect->GetName(), entry, type);
 		}
 		return nullptr;
 	}
@@ -664,10 +676,12 @@ void LoadSPIRV(IConsoleCmdArgs* args)
 
 IShaderProgram* LoadSpirvProgram(const char* name)
 {
-	ShaderRef vs = CShader::LoadSpirvFromFile(name, "main", IShader::E_VERTEX);
+	
+	//auto entry = GetSpirvEntry(pEffect->GetLangId(), type);
+	ShaderRef vs = CShader::LoadSpirvFromFile(name, "VSMain", IShader::E_VERTEX);
 	if (!vs)
 		return nullptr;
-	ShaderRef fs = CShader::LoadSpirvFromFile(name, "main", IShader::E_FRAGMENT);
+	ShaderRef fs = CShader::LoadSpirvFromFile(name, "PSMain", IShader::E_FRAGMENT);
 	if (!fs)
 		return nullptr;
 

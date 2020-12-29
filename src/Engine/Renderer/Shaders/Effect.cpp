@@ -30,6 +30,11 @@ const char* CEffect::GetName()
 	return m_name.data();
 }
 
+ShaderLangId CEffect::GetLangId()
+{
+	return m_LangId;
+}
+
 int CTechnique::GetNumPasses()
 {
 	return Passes.size();

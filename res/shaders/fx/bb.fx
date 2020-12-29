@@ -1,3 +1,4 @@
+Language GLSL
 #include "common.fx"
 GLSLShader 
 {
