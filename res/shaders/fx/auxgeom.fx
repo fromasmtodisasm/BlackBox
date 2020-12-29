@@ -55,7 +55,7 @@ HLSLShader vert
 	VsOutput main(VsInput IN)
 	{
 		VsOutput OUT;
-		OUT.pos = mul(GetProjMat(), float4(IN.Pos, 1.0));
+		OUT.pos = mul(perViewCB.view_proj, float4(IN.Pos, 1.0));
 		OUT.color = float4(IN.Color);
 		return OUT;
 	}
