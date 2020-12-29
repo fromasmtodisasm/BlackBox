@@ -30,7 +30,7 @@ struct ShaderStatus
 	bool Get(GLenum statusType);
 };
 
-bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags);
+bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint64 nMaskGen);
 IShaderProgram* LoadBinaryShader(const char* name, int flags);
 
 struct ShaderProgramStatus
@@ -56,7 +56,8 @@ public:
 
 	static CShader* Load(ShaderDesc const& desc);
 	static CShader* Load(std::string source);
-	static CShader* LoadSpirv(const char * name, const char * entry, const spirv_bin& code, IShader::Type stage);
+	static CShader* LoadSpirvFromMemory(const char * name, const char * entry, const spirv_bin& code, IShader::Type stage);
+	static CShader* LoadSpirvFromFile(const char * name, const char * entry, IShader::Type stage);
 	static bool ParseLine(string& buffer);
 	static bool LoadInternal(string const& path, string& buffer);
 	static bool LoadFromStream(const std::stringstream stream, string& buffer);

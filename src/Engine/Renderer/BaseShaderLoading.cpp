@@ -7,6 +7,13 @@
 using std::string_view;
 using std::stringstream;
 
+inline std::string GetBinaryPath(const char* name, uint64 mask)
+{
+	std::stringstream path;
+	path << "bin/shadercache/" << name << "(" << mask << ").fxb";
+	return path.str();
+}
+
 namespace
 {
 	bool match(std::string_view input, std::string_view with, size_t& offset)
@@ -336,7 +343,7 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 
 
 #define OUTPUT_SPIRV_FORMAT                  ".out"
-bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string_view>& code, IShader::Type type)
+bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string>& code, IShader::Type type)
 {
 	string stage(GetGLSLANGTargetName(type));
 	std::ofstream output_file(string("bin/shadercache/shader_") + stage +  ".glsl");
@@ -344,23 +351,43 @@ bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector
 	std::copy(code.begin(), code.end(), output_iterator);
 	output_file.close();
 	//else if (vkShaderCompiler == STR_VK_SHADER_COMPILER_GLSLANG)
-	{
-		std::string targetEnv = "opengl";
-		
-		//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
+	std::string targetEnv = "opengl";
+	
+	//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
 
-		char params[1001];
-		sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s",
-					"bin/shadercache/shader_", stage.data(), ".glsl",
-					"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
-					targetEnv.c_str(),
-					stage.data(),
-					pEntrypoint);
+	char params[1001];
+	sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s",
+				"bin/shadercache/shader_", stage.data(), ".glsl",
+				"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
+				targetEnv.c_str(),
+				stage.data(),
+				pEntrypoint);
 
-		ShellExecute("glslangValidator.exe", params, gEnv->pSystem->GetRootFolder());
-	}
-	return true;
+	return ShellExecute("glslangValidator.exe", params, gEnv->pSystem->GetRootFolder());
 }
+
+CShader* CShader::LoadSpirvFromFile(const char* name, const char* entry, IShader::Type type)
+{
+	string stage(GetGLSLANGTargetName(type));
+	char file[1001];
+	sprintf(file, "%s%s_%s%s",
+			"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT);
+	// Load binary from file
+	std::ifstream inputStream(file, std::ios::binary);
+	if (!inputStream.is_open())
+	{
+		CryError("Could not load SPIRV file: [%s]", file);
+		return nullptr;
+	}
+	std::istreambuf_iterator<char> startIt(inputStream), endIt;
+
+	spirv_bin buffer(startIt, endIt); // Load file
+	inputStream.close();
+
+	return LoadSpirvFromMemory(name, entry, buffer, type);
+
+}
+
 
 ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool compile_to_spirv)
 {
@@ -374,16 +401,18 @@ ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool com
 			code.push_back(in);
 	}
 	code.push_back(pass->Shaders[type]);
-	//else
+	if (compile_to_spirv)
+	{
+		if (CompileToSpirv(pEffect->GetName(), "main", code, type))
+		{
+			return LoadSpirvFromFile(pEffect->GetName(), "main", type);
+		}
+		return nullptr;
+	}
+	else
 	{
 		return CShader::LoadFromMemory(code, type);
 	}
-#if 0
-	if (compile_to_spirv)
-	{
-		CompileToSpirv(pEffect->GetName(), "main", code, type);
-	}
-#endif
 }
 
 ShaderRef CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type)
@@ -534,7 +563,15 @@ bool SaveNativeBinary(const char* name, IShaderProgram* program, int flags)
 	return false;
 }
 
-bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags){
+bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint64 nMaskGen){
+
+	switch (static_cast<ShaderBinaryFormat>(flags))
+	{
+		case ShaderBinaryFormat::SPIRV:
+		{
+			return true;
+		}
+	}
 	GLint formats = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
 	if (formats < 1)
@@ -552,8 +589,9 @@ bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags){
 	glGetProgramBinary(program->Get(), length, NULL, &format, buffer.data());
 
 	// Write the binary to a file.
-	CryLog("Writing to %s , binary format = %d", name, format);
-	std::ofstream out(name, std::ios::binary);
+	auto const path = GetBinaryPath(name, nMaskGen);
+	CryLog("Writing to %s , binary format = %d", path.data(), format);
+	std::ofstream out(path.data(), std::ios::binary);
 	out.write(reinterpret_cast<char*>(&format), sizeof(format));
 	out.write(reinterpret_cast<char*>(&length), sizeof(length));
 	out.write(reinterpret_cast<char*>(buffer.data()), length);
@@ -575,7 +613,7 @@ spirv_bin GetSPIRV(const char* name)
 	return buffer;
 }
 
-CShader * CShader::LoadSpirv(const char* name, const char* entry, const spirv_bin& code, IShader::Type stage)
+CShader * CShader::LoadSpirvFromMemory(const char* name, const char* entry, const spirv_bin& code, IShader::Type stage)
 {
 	auto shader = new CShader(stage);
 	if (shader->Create())
@@ -624,10 +662,14 @@ void LoadSPIRV(IConsoleCmdArgs* args)
 	}
 }
 
-IShaderProgram* LoadSpirvProgram(const char* name, const spirv_bin& code)
+IShaderProgram* LoadSpirvProgram(const char* name)
 {
-	auto* vs = CShader::LoadSpirv(name, "main", code, IShader::E_VERTEX);
-	auto* fs = CShader::LoadSpirv(name, "main", code, IShader::E_VERTEX);
+	ShaderRef vs = CShader::LoadSpirvFromFile(name, "main", IShader::E_VERTEX);
+	if (!vs)
+		return nullptr;
+	ShaderRef fs = CShader::LoadSpirvFromFile(name, "main", IShader::E_VERTEX);
+	if (!fs)
+		return nullptr;
 
 	return new CShaderProgram(vs, fs);
 }
@@ -657,36 +699,32 @@ IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uin
 }
 IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen)
 {
-	// Load binary from file
-	std::ifstream inputStream(name, std::ios::binary);
-	if (!inputStream.is_open())
+	switch (static_cast<ShaderBinaryFormat>(flags))
 	{
-		return nullptr;
+	case ShaderBinaryFormat::SPIRV:
+	{
+		return LoadSpirvProgram(name);
 	}
-	std::istreambuf_iterator<char> startIt(inputStream), endIt;
+	case ShaderBinaryFormat::VENDOR:
+	{
+		// Load binary from file
+		std::ifstream inputStream(name, std::ios::binary);
+		if (!inputStream.is_open())
+		{
+			return nullptr;
+		}
+		std::istreambuf_iterator<char> startIt(inputStream), endIt;
 
-	GLenum format = 0;
-	uint length	  = 0;
+		GLenum format = 0;
+		uint length	  = 0;
 
-	flags = 1;
-	switch (1)
-	{
-	case 0:
-	{
-		BinaryRead(inputStream, format);
-		BinaryRead(inputStream, length);
-		const spirv_bin buffer(startIt, endIt); // Load file
-		inputStream.close();
-		return LoadSpirvProgram(name, buffer/*, length*/);
-	}
-	case 1:
-	{
 		BinaryRead(inputStream, format);
 		BinaryRead(inputStream, length);
 		spirv_bin buffer(startIt, endIt); // Load file
 		inputStream.close();
 		CryLog("Loading binary shader %s , binary format = %d, binary length = %d", name, format, length);
-		return LoadNativeBinary(name, (uint8*)(buffer.data()), format, length);
+		const auto path = GetBinaryPath(name, nMaskGen);
+		return LoadNativeBinary(path.c_str(), (uint8*)(buffer.data()), format, length);
 	}
 	default:
 		return nullptr;
