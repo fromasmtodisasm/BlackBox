@@ -1,39 +1,6 @@
 Language HLSL
-//#include "common.fx"
+#include "hlsl_common.fx"
 
-HLSLShader
-{
-
-	cbuffer perFrameCB : register(b0)
-	{
-		float deltaTime;
-	}
-	cbuffer perViewCB : register(b2)
-	{
-		struct PerViewCB
-		{
-			float4x4 projection;
-			float4x4 ortho_projection;
-			float4x4 view;
-			float4x4 view_proj;
-		}perViewCB;
-	}
-
-	float4x4 GetOrthoProjMat()
-	{
-		return perViewCB.ortho_projection;
-	}
-
-	float4x4 GetProjMat()
-	{
-		return perViewCB.projection;
-	}
-
-	float4x4 GetViewProjMat()
-	{
-		return perViewCB.view_proj;
-	}
-}
 HLSLShader
 {
 	struct VsOutput
@@ -55,7 +22,7 @@ HLSLShader vert
 	VsOutput main(VsInput IN)
 	{
 		VsOutput OUT;
-		OUT.pos = mul(perViewCB.view_proj, float4(IN.Pos, 1.0));
+		OUT.pos = mul(GetViewProjMat(), float4(IN.Pos, 1.0));
 		OUT.color = float4(IN.Color);
 		return OUT;
 	}
@@ -88,15 +55,6 @@ technique AuxGeometry
     PixelShader = frag
   }
   pass p1
-  {
-    VertexShader = vert
-    PixelShader = frag
-  }
-}
-
-technique Test
-{
-  pass p0
   {
     VertexShader = vert
     PixelShader = frag

@@ -62,11 +62,24 @@ GLSLShader
 
 }
 
+GLSLShader
+{
+	layout(std140, binding = 10) uniform BoundingBoxParams {
+        mat4 model;
+        vec3 lightPos;
+        bool bTonemap;
+        int dbgmode;
+        float alpha;
+        vec4 color;
+        vec3 eye;
+	};
+
+
+}
+
 GLSLShader vert
 {
     
-    uniform layout(location = 16) mat4 model;
-
     layout(location = 0) out  VS_OUT
     {
         vec3 fragPos;
@@ -85,15 +98,6 @@ GLSLShader vert
 GLSLShader frag
 {
     out layout(location = 0) vec4 FragColor;
-
-    uniform layout(location = 2) vec3 lightPos;
-    uniform layout(location = 6)bool bTonemap;
-    uniform layout(location = 7) int dbgmode = 0;
-
-    uniform layout(location = 20) float alpha;
-    uniform layout(location = 1) vec4 color;
-    uniform layout(location = 3) vec3 eye;
-
 
     #define dbgDIFFUSE 1
     #define dbgSPECULAR 2

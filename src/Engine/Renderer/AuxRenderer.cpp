@@ -21,11 +21,6 @@ namespace
 	}
 } // namespace
 
-using AAABuffer = gl::ConstantBuffer<SAABBBuffer>;
-using AAABufferPtr = std::shared_ptr<AAABuffer>;
-
-AAABufferPtr  perViewBuffer;
-
 CRenderAuxGeom::CRenderAuxGeom()
 {
 	std::vector<P3F> reference = {
@@ -134,6 +129,8 @@ CRenderAuxGeom::CRenderAuxGeom()
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
 
+	m_aabbBufferPtr = SAABBBuffer::Create(10);
+
 	REGISTER_CVAR(dbg_mode, 3, 0, "");
 	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");
 }
@@ -161,20 +158,19 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(
 		glm::mat4(1), angle, {0,1,0});
 
-	const auto& cam = gEnv->pRenderer->GetCamera();
-	const auto color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
-	shader->Use();
-	shader->Uniform(transform, "model");
-	shader->Uniform(0.1f, "alpha");
-	shader->Uniform(color, "color");
-	shader->Uniform(this->dbg_mode, "dbgmode");
-	shader->Uniform(0, "bTonemap");
-	shader->Uniform(Vec3(300), "lightPos");
-	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");
+	m_aabbBufferPtr->Model	  = transform;
+	m_aabbBufferPtr->Alpha	  = 0.1f;
+	m_aabbBufferPtr->Color	  = Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
+	m_aabbBufferPtr->dbgmode  = dbg_mode;
+	m_aabbBufferPtr->bTonemap = 0;
+	m_aabbBufferPtr->LightPos = Vec3(300);
+	m_aabbBufferPtr->Eye	  = gEnv->pSystem->GetViewCamera().GetPos();
+	m_aabbBufferPtr->Update();
 
 	{
 		RSS(gEnv->pRenderer, BLEND, true);
 		RSS(gEnv->pRenderer, CULL_FACE, false);
+		shader->Use();
 		#if 0
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
