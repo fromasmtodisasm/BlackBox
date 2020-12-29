@@ -667,11 +667,13 @@ IShaderProgram* LoadSpirvProgram(const char* name)
 	ShaderRef vs = CShader::LoadSpirvFromFile(name, "main", IShader::E_VERTEX);
 	if (!vs)
 		return nullptr;
-	ShaderRef fs = CShader::LoadSpirvFromFile(name, "main", IShader::E_VERTEX);
+	ShaderRef fs = CShader::LoadSpirvFromFile(name, "main", IShader::E_FRAGMENT);
 	if (!fs)
 		return nullptr;
 
-	return new CShaderProgram(vs, fs);
+	auto p =  new CShaderProgram(vs, fs);
+	p->Create(name);
+	return p;
 }
 
 IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uint length)
