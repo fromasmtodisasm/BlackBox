@@ -6,7 +6,7 @@ HLSLShader
 	struct VsOutput
 	{
 		float4 pos : SV_POSITION;
-		[[vk::location(0)]] float4 color: COLOR;
+		float4 color: COLOR;
 	};
 }
 
