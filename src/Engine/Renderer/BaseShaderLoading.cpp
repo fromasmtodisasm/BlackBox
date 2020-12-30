@@ -363,7 +363,7 @@ bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector
 
 	char params[1001];
 	const char* extra = nullptr;
-	extra			  = langId == ShaderLangId::Hlsl ? "-D -V " : "";
+	extra			  = langId == ShaderLangId::Hlsl ? "-D" : "";
 	sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s %s",
 				"bin/shadercache/shader_", stage.data(), ".glsl",
 				"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,

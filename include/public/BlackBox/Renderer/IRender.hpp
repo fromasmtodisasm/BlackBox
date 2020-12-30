@@ -203,6 +203,11 @@ struct ITexture
 	virtual int getId() const					  = 0;
 };
 
+struct ISammplerState
+{
+	
+};
+
 //////////////////////////////////////////////////////////////////////////
 //! This structure used in DrawText method of renderer.
 //! It provide all necesarry information of how to render text on screen.

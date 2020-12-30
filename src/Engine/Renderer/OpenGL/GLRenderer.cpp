@@ -142,6 +142,18 @@ void TestFx(IConsoleCmdArgs* args)
 	}
 }
 
+enum class Samplers : int
+{
+	Default = 0,
+	Nearest_Nearest,
+	Linear_Nearest,
+	Nearest_Linear,
+	Linear_Linear,
+	Count
+};
+
+
+GLuint g_Samplers[Samplers::Count];
 
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
@@ -250,6 +262,8 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	perViewBuffer = PerViewBuffer::Create(2);
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
+	glCreateSamplers((int)Samplers::Count, g_Samplers);
+	glBindSampler(0, g_Samplers[(int)Samplers::Default]);
 	return result;
 }
 
@@ -845,6 +859,15 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 		m_ScreenShader->Uniform(Vec4(GetWidth(), GetHeight(), 1.f / GetWidth(), -1.f / GetHeight()), "screen");
 	}
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
+	glBindSampler(0, g_Samplers[(int)Samplers::Default]);
+	if (glIsSampler(g_Samplers[(int)Samplers::Default]))
+	{
+		CryLog("is sampler");
+	}
+	else
+	{
+		CryError("is not sampler");
+	}
 	DrawFullscreenQuad();
 }
 
