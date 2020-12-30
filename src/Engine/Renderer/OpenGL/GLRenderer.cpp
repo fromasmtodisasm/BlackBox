@@ -859,6 +859,8 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 		m_ScreenShader->Uniform(Vec4(GetWidth(), GetHeight(), 1.f / GetWidth(), -1.f / GetHeight()), "screen");
 	}
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
+
+	#if 0
 	glBindSampler(0, g_Samplers[(int)Samplers::Default]);
 	if (glIsSampler(g_Samplers[(int)Samplers::Default]))
 	{
@@ -868,6 +870,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	{
 		CryError("is not sampler");
 	}
+	#endif
 	DrawFullscreenQuad();
 }
 

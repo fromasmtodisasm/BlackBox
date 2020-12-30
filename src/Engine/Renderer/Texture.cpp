@@ -20,7 +20,8 @@ uint UploadDDS(const Image& img)
   // bind the texture
   // make it complete by specifying all needed parameters and ensuring all mipmaps are filled
 	glBindTexture(GL_TEXTURE_2D, tid);
-	#if USE_OLD_TEXTURE_PARAMETERS
+	#define USE_OLD_TEXTURE_PARAMETERS
+	#ifdef USE_OLD_TEXTURE_PARAMETERS
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount-1); // opengl likes array length of mipmaps
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -50,7 +51,7 @@ uint UploadDDS(const Image& img)
 			h /= 2;
 		}
 	    // discard any odd mipmaps, ensure a complete texture
-	#if USE_OLD_TEXTURE_PARAMETERS
+	#ifdef USE_OLD_TEXTURE_PARAMETERS
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount-1);
 	#endif
     // unbind
