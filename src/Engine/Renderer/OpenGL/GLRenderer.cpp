@@ -110,19 +110,19 @@ class ShaderMan
 ShaderMan* gShMan;
 FxParser s_FxParser;
 
-struct SPerViewConstantBuffer
+struct alignas(16) SPerViewConstantBuffer
 {
 	Mat4 Projection;
 	Mat4 OrthoProjection;
 	Mat4 View;
 	Mat4 ViewProjection;
 };
-struct SScreenConstantBuffer
+struct alignas(16) SScreenConstantBuffer
 {
-	Mat4 Projection;
-	Mat4 OrthoProjection;
-	Mat4 View;
-	Mat4 ViewProjection;
+	glm::mat4 Model;
+	glm::mat4 UvProjection;
+	glm::vec4 Color;
+	float Alpha;
 };
 
 using PerViewBuffer = gl::ConstantBuffer<SPerViewConstantBuffer>;
@@ -852,8 +852,6 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	RSS(this, CULL_FACE, false);
 	RSS(this, DEPTH_TEST, false);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	m_ScreenShader->Use();
-	m_ScreenShader->Uniform(Vec4(r, g, b, a), "color");
 
 	glm::mat4 model(1.0);
 	auto uv_projection	 = glm::mat4(1.0);
@@ -865,10 +863,13 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, t0, 0.f));
 
 	{
-		m_ScreenShader->Uniform(uv_projection, "uv_projection");
-		m_ScreenShader->Uniform(model, "model");
-		m_ScreenShader->Uniform(Vec4(GetWidth(), GetHeight(), 1.f / GetWidth(), -1.f / GetHeight()), "screen");
+		auto sb = screenBuffer.get();
+		sb->Color = Vec4(r, g, b, a);
+		sb->UvProjection = uv_projection;
+		sb->Model = model;
+		sb->Update();
 	}
+	m_ScreenShader->Use();
 	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
 
 	#if 0

@@ -41,14 +41,15 @@ HLSLShader vert
 HLSLShader frag
 {
     //uniform sampler2D screenTexture;
-    //Texture2D screenTexture : register(t0);
-    //SamplerState linearSampler : register(s0)
-    sampler2D screenTexture;
+    Texture2D screenTexture : register(t1);
+    SamplerState linearSampler : register(s1);
+
+    //sampler2D screenTexture;
     float4 main(VsOutput IN) : SV_Target0
     { 
         float2 uv = IN.tc; 
-        //return screenTexture.Sample(linearSampler, IN.tc)*color;
-        return tex2D(screenTexture, float2(0.5,0.5))*color;
+        return screenTexture.Sample(linearSampler, IN.tc);//*color;
+        //return tex2D(screenTexture, float2(0.5,0.5))*color;
         return float4(color);
     }
 }
