@@ -117,11 +117,21 @@ struct SPerViewConstantBuffer
 	Mat4 View;
 	Mat4 ViewProjection;
 };
+struct SScreenConstantBuffer
+{
+	Mat4 Projection;
+	Mat4 OrthoProjection;
+	Mat4 View;
+	Mat4 ViewProjection;
+};
 
 using PerViewBuffer = gl::ConstantBuffer<SPerViewConstantBuffer>;
 using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
+PerViewBufferPtr  perViewBuffer;
 
- PerViewBufferPtr  perViewBuffer;
+using ScreenBuffer = gl::ConstantBuffer<SScreenConstantBuffer>;
+using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
+ScreenBufferPtr  screenBuffer;
 
 void TestFx(IConsoleCmdArgs* args)
 {
@@ -260,10 +270,11 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	perViewBuffer = PerViewBuffer::Create(2);
+	screenBuffer = ScreenBuffer::Create(11);
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
-	glCreateSamplers((int)Samplers::Count, g_Samplers);
-	glBindSampler(0, g_Samplers[(int)Samplers::Default]);
+	//glCreateSamplers((int)Samplers::Count, g_Samplers);
+	//glBindSampler(0, g_Samplers[(int)Samplers::Default]);
 	return result;
 }
 

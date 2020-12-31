@@ -77,7 +77,7 @@ HLSLShader
     struct VS_OUT
     {
         float4 pos : SV_Position;
-        float3 fragPos : FRAGPOS;
+        float3 fragPos : POSITION;
         float3 N : NORMAL;
     };
 
@@ -88,16 +88,16 @@ HLSLShader vert
 {
     struct VsInput
 	{
-		float3 Pos : POSITION;
-		float3 Normal : NORMAL;
+		float3 pos : POSITION;
+		float3 normal : NORMAL;
 	};
     
     VS_OUT main(VsInput IN)
     {
         VS_OUT OUT;
-        OUT.pos = mul(mul(GetViewProjMat(), model), float4(IN.Pos, 1.0));
-        OUT.fragPos = (float3)mul(model, float4(IN.Pos, 1.0));
-        OUT.N = mul(((float3x3)model), IN.Normal);
+        OUT.pos = mul(mul(GetViewProjMat(), model), float4(IN.pos, 1.0));
+        OUT.fragPos = (float3)(model * float4(IN.pos, 1.0));
+        OUT.N = mul(((float3x3)model), IN.normal);
         return OUT;
     }
 }

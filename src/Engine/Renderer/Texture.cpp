@@ -50,10 +50,6 @@ uint UploadDDS(const Image& img)
 			w /= 2;
 			h /= 2;
 		}
-	    // discard any odd mipmaps, ensure a complete texture
-	#ifdef USE_OLD_TEXTURE_PARAMETERS
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount-1);
-	#endif
     // unbind
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
@@ -267,8 +263,8 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 			filterMin = filterMag = GL_LINEAR;
 			wrapS = wrapT = GL_CLAMP_TO_EDGE;
 			inputDataType = GL_UNSIGNED_BYTE;
-			gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			//gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			//gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			if (img.bpp == 4)
 			{
@@ -286,8 +282,6 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 	}
 	else
 	{
-		//gl::TextureParameteri(t->id, GL_TEXTURE_MIN_FILTER, filterMin);
-		//gl::TextureParameteri(t->id, GL_TEXTURE_MAG_FILTER, filterMag);
 		if (img.compressed)
 		{
 			t->id = UploadDDS(img);	
