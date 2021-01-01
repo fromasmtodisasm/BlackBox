@@ -402,6 +402,10 @@ bool CSystem::Init()
 	if (!ConfigLoad("system.cfg"))
 		return false;
 	CreateRendererVars(m_startupParams);
+	if (auto ovr = m_pCmdLine->FindArg(eCLAT_Pre, "override"); ovr)
+	{
+		LoadConfiguration(ovr->GetValue());
+	}
 	//====================================================
 	if (!OpenRenderLibrary("OpenGL"))
 	{

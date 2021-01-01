@@ -4,6 +4,8 @@
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
+#include <memory>
+
 using ColorB = glm::u8vec3;
 
 struct ColorTable
@@ -34,8 +36,19 @@ void PrintColorTable(IConsoleCmdArgs*)
 }
 
 bool FreeTypeFont::printColorTableRegistered = false;
+struct alignas(16) SpriteConstantBuffer
+{
+	Mat4 projection;
+	Mat4 model;
+	Mat4 uv_projection;
+	Vec3 textColor;
+};
 
-void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, float color[4])
+using SpriteBuffer = gl::ConstantBuffer<SpriteConstantBuffer>;
+using SpriteBufferPtr = std::shared_ptr<SpriteBuffer>;
+SpriteBufferPtr  spriteBuffer;
+
+void FreeTypeFont::RenderText(const std::string& text, float x, float y, float scale, float color[4])
 {
 	// Activate corresponding render state
 	shader->Use();
@@ -52,9 +65,10 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 
 	{
 		auto c = color;
-		shader->Uniform(projection, "projection");
-		shader->Uniform(uv_projection, "uv_projection");
-		shader->Uniform(Vec3(c[0], c[1], c[2]), "textColor");
+		auto sb = spriteBuffer;
+		sb->projection = projection;
+		sb->uv_projection = uv_projection;
+		sb->textColor = Vec3(c[0], c[1], c[2]);
 	}
 
 	// Iterate through all characters
@@ -81,7 +95,8 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 					color[0] = newColor.r;
 					color[1] = newColor.g;
 					color[2] = newColor.b;
-					shader->Uniform(Vec3(color[0], color[1], color[2]), "textColor");
+					auto sb = spriteBuffer;
+					sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
 					continue;
 				}
 			}
@@ -107,7 +122,9 @@ void FreeTypeFont::RenderText(std::string text, float x, float y, float scale, f
 			P3F_T2F{Vec3{xpos, ypos, 0}, 0.0, 1.0},
 			P3F_T2F{Vec3{xpos + w, ypos, 0}, 1.0, 1.0},
 			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, 1.0, 0.0}};
-		shader->Uniform(model, "model");
+		auto sb = spriteBuffer;
+		sb->model = model;
+		sb->Update();
 		// Render glyph texture over quad
 		gl::BindTexture2D(GL_TEXTURE_2D, ch.TextureID);
 		// Update content of VBO memory
@@ -234,6 +251,10 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 
 	m_IB = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
+	static bool UB_created = false;
+
+	if (!UB_created)
+		spriteBuffer = SpriteBuffer::Create(15);
 
 	return true;
 }

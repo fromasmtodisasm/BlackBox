@@ -1,12 +1,19 @@
 Language GLSL
 #include "common.fx"
+GLSLShader
+{
+    uniform layout(std140, binding = 15) SpriteBuffer
+    {
+        mat4 projection;
+        mat4 model;
+        mat4 uv_projection;
+        vec3 textColor;
+    };
+
+}
 GLSLShader vert
 {
     out layout(location = 10) vec2 TexCoords;
-
-    uniform layout(location = 0) mat4 projection;
-    uniform layout(location = 1) mat4 model;
-    uniform layout(location = 2) mat4 uv_projection;
 
     void main()
     {
@@ -20,8 +27,7 @@ GLSLShader frag
     in layout(location = 10) vec2 TexCoords;
     out layout(location = 0) vec4 color;
 
-    uniform sampler2D text;
-    uniform layout(location = 3) vec3 textColor;
+    uniform layout(binding = 0) sampler2D text;
 
     void main()
     {    

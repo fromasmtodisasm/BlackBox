@@ -19,9 +19,12 @@ public:
   int DrawImage(IFunctionHandler* pH);
   int LoadTexture(IFunctionHandler* pH);
   int Log(IFunctionHandler* pH);
+  int Print(const char* text, float x, float y, float scale, float r, float g, float b, float a);
+
 private:
   ISystem* m_pSystem;
   ILog* m_pLog;
   IRenderer* m_pRenderer;
   IConsole* m_pConsole;
+  IFont* m_pFont;
 };

@@ -1,13 +1,20 @@
 Language GLSL
 #include "common.fx"
 
+GLSLShader{
+	layout(std140, binding = 11) uniform ScreenBuffer
+    {
+        mat4 model;
+        mat4 uv_projection;
+        vec4 color;
+        float alpha;
+	};
+
+}
+
 GLSLShader vert
 {
     out  layout(location = 10) vec2 TexCoords;
-
-    uniform layout(location = 1) mat4 model = mat4(1.0);
-    uniform layout(location = 2) mat4 uv_projection = mat4(1.0);
-
     void main()
     {
         gl_Position = GetOrthoProjMat() * model * vec4(aPos, 1.0f); 
@@ -17,19 +24,15 @@ GLSLShader vert
 
 GLSLShader frag
 {
-    out layout(location = 0) vec4 FragColor;
-    
     in layout(location = 10) vec2 TexCoords;
+    out layout(location = 0) vec4 FragColor;
 
     uniform sampler2D screenTexture;
-
-    uniform layout(location = 3) float alpha = 0.9;
-    uniform layout(location = 4) vec4 color;
 
     void main()
     { 
         vec2 uv = TexCoords; 
-        FragColor = vec4(texture(screenTexture, uv)*color);
+        FragColor = vec4(texture(screenTexture, uv))*vec4(color.rgb, alpha);
     }
 }
 

@@ -295,6 +295,8 @@ class CSystem final : public ISystem
 	int m_rDisplayInfo;
 	int m_rDebug;
 	int m_rTonemap;
+	int m_rSkipShaderCache;
+	const char* r_ScreenShader = "screen_hlsl";
 
 	bool m_bIsActive = true;
 	

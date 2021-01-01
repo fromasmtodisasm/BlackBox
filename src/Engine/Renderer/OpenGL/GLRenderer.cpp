@@ -66,7 +66,10 @@ class ShaderMan
 	}
 	IShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
 	{
-		return LoadBinaryShader(name, flags, nMaskGen);
+
+		return 
+		gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr :
+		LoadBinaryShader(name, flags, nMaskGen);
 	}
 
 	IShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
@@ -237,7 +240,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load(r_ScreenShader, int(ShaderBinaryFormat::SPIRV))))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load(gEnv->pConsole->GetCVar("r_ScreenShader")->GetString(), int(ShaderBinaryFormat::SPIRV))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -863,10 +866,11 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, t0, 0.f));
 
 	{
-		auto sb = screenBuffer.get();
-		sb->Color = Vec4(r, g, b, a);
+		auto sb			 = screenBuffer.get();
+		sb->Color		 = Vec4(r, g, b, a);
 		sb->UvProjection = uv_projection;
-		sb->Model = model;
+		sb->Model		 = model;
+		sb->Alpha		 = 0.8;
 		sb->Update();
 	}
 	m_ScreenShader->Use();
@@ -884,6 +888,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 	}
 	#endif
 	DrawFullscreenQuad();
+	m_ScreenShader->Unuse();
 }
 
 void GLRenderer::PrintLine(const char* szText, SDrawTextInfo& info)

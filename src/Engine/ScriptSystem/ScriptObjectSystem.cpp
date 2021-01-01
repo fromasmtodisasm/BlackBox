@@ -3,6 +3,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
 #include <iostream>
@@ -21,6 +22,9 @@ CScriptObjectSystem::CScriptObjectSystem(ISystem* pSystem, IScriptSystem* pSS)
   m_pRenderer = m_pSystem->GetIRenderer();
   m_pConsole = m_pSystem->GetIConsole();
   InitializeTemplate(pSS);
+#undef SCRIPT_REG_CLASSNAME
+#define SCRIPT_REG_CLASSNAME CScriptObjectSystem
+  SCRIPT_REG_TEMPLFUNC(Print, "string, float, float, float, float, float g, float b, float a");
   Init(pSS, pSystem);
 }
 
@@ -49,6 +53,8 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
   m_pSystem = pSystem;
   InitGlobal(pScriptSystem, "System", this);
+  m_pFont = gEnv->pRenderer->GetIFont();
+  m_pFont->Init("arial.ttf", 14,14);
 
 }
 
@@ -175,4 +181,11 @@ int CScriptObjectSystem::Log(IFunctionHandler* pH)
   m_pSystem->Log(string);
   //m_pConsole->PrintLine(string);
   return pH->EndFunction();
+}
+
+int CScriptObjectSystem::Print(const char* text, float x, float y, float scale, float r, float g, float b, float a)
+{
+	float color[] = {r, g, b, a};
+	m_pFont->RenderText(text, x, y, scale, color);
+	return 0;
 }
