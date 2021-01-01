@@ -24,6 +24,8 @@ class RenderCVars
 	int r_Vsync		   = true;
 	int r_DisplayIndex = 0;
 
+	const char* r_ScreenShader = "screen_hlsl";
+
 	static int CV_r_GetScreenShot;
 };
 

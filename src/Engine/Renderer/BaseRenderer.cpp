@@ -79,6 +79,7 @@ void RenderCVars::InitCVars()
 	REGISTER_CVAR3("r_getscreenshot", CV_r_GetScreenShot, 0, VF_NULL,
 				   "To capture one screenshot (variable is set to 0 after capturing)\n"
 				   "0=do not take a screenshot (default), 1=save a screenshot (together with .HDR if enabled), 2=save a screenshot");
+	REGISTER_CVAR(r_ScreenShader, r_ScreenShader, VF_DUMPTODISK, "screen shader");
 }
 
 RenderCVars::~RenderCVars()

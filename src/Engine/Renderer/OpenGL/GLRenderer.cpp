@@ -237,7 +237,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load(r_ScreenShader, int(ShaderBinaryFormat::SPIRV))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
