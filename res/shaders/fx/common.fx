@@ -1,6 +1,8 @@
 GLSLShader
 {
 	#version 460 core
+	// This extension not supported by SPIRV!!!
+	//#extension GL_ARB_bindless_texture : require
 }
 
 GLSLShader

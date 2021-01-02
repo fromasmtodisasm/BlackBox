@@ -564,19 +564,12 @@ std::istream& BinaryRead(std::istream& stream, T& value)
 {
 	return stream.read(reinterpret_cast<char*> (&value), sizeof(T));
 }
-
-bool ComileSPIRV()
+bool CShader::SaveNativeBinary(const char* name, IShaderProgram* program, int flags)
 {
 	return false;
 }
-
-bool SaveNativeBinary(const char* name, IShaderProgram* program, int flags)
+bool CBaseShaderProgram::SaveBinaryShader(const char* name, int flags, uint64 nMaskGen)
 {
-	return false;
-}
-
-bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint64 nMaskGen){
-
 	switch (static_cast<ShaderBinaryFormat>(flags))
 	{
 		case ShaderBinaryFormat::SPIRV:
@@ -593,12 +586,12 @@ bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint
 	}
 	// Get the binary length
 	GLint length = 0;
-	glGetProgramiv(program->Get(), GL_PROGRAM_BINARY_LENGTH, &length);
+	glGetProgramiv(Get(), GL_PROGRAM_BINARY_LENGTH, &length);
 
 	// Retrieve the binary code
 	std::vector<GLubyte> buffer(length);
 	GLenum format = 0;
-	glGetProgramBinary(program->Get(), length, NULL, &format, buffer.data());
+	glGetProgramBinary(Get(), length, NULL, &format, buffer.data());
 
 	// Write the binary to a file.
 	auto const path = GetBinaryPath(name, nMaskGen);
@@ -610,8 +603,7 @@ bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint
 	out.close();
 	return true;
 }
-
-spirv_bin GetSPIRV(const char* name)
+spirv_bin CShader::GetSPIRV(const char* name)
 {
 	std::ifstream code(name, std::ios::binary);
 	if (!code.is_open())
@@ -624,7 +616,6 @@ spirv_bin GetSPIRV(const char* name)
 	spirv_bin buffer(startIt, endIt); // Load file
 	return buffer;
 }
-
 CShader * CShader::LoadSpirvFromMemory(const char* name, const char* entry, const spirv_bin& code, IShader::Type stage)
 {
 	auto shader = new CShader(stage);
@@ -665,16 +656,7 @@ CShader * CShader::LoadSpirvFromMemory(const char* name, const char* entry, cons
 	}
 	return shader;
 }
-
-void LoadSPIRV(IConsoleCmdArgs* args)
-{
-	if (args->GetArgCount() > 1)
-	{
-		//LoadSPIRV(args->GetArg(1), 0);	
-	}
-}
-
-IShaderProgram* LoadSpirvProgram(const char* name)
+CBaseShaderProgram* CBaseShaderProgram::LoadSpirvProgram(const char* name)
 {
 	
 	//auto entry = GetSpirvEntry(pEffect->GetLangId(), type);
@@ -689,8 +671,7 @@ IShaderProgram* LoadSpirvProgram(const char* name)
 	p->Create(name);
 	return p;
 }
-
-IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uint length)
+CBaseShaderProgram* CBaseShaderProgram::LoadNativeBinary(const char* name, uint8* code, uint format, uint length)
 {
 	//GLuint program = glCreateProgram();
 	auto program = new CShaderProgram();
@@ -713,7 +694,7 @@ IShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uin
 	return program;
 
 }
-IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen)
+CBaseShaderProgram* CBaseShaderProgram::LoadBinaryShader(const char* name, int flags, uint64 nMaskGen)
 {
 	switch (static_cast<ShaderBinaryFormat>(flags))
 	{

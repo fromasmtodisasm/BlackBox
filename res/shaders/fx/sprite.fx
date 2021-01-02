@@ -1,4 +1,10 @@
 Language GLSL
+#if 0
+Extension
+{
+    GL_ARB_bindless_texture : require
+}
+#endif
 #include "common.fx"
 GLSLShader
 {

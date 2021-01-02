@@ -10,6 +10,46 @@
 struct IWindow;
 class World;
 
+enum class Samplers : int
+{
+	Default = 0,
+	Nearest_Nearest,
+	Linear_Nearest,
+	Nearest_Linear,
+	Linear_Linear,
+
+	Font_Sampler,
+	Count
+};
+
+struct D3D11_SAMPLER_DESC
+{
+	GLenum Filter		  = GL_NONE;
+	GLenum AddressU		  = GL_CLAMP_TO_EDGE;
+	GLenum AddressV		  = GL_CLAMP_TO_EDGE;
+	GLenum AddressW		  = GL_CLAMP_TO_EDGE;
+	FLOAT MipLODBias	  = 0.f;
+	UINT MaxAnisotropy	  = 2;
+	GLenum ComparisonFunc = GL_NONE;
+	FLOAT BorderColor[4]  = {0, 0, 0, 0};
+	FLOAT MinLOD		  = 0.f;
+	FLOAT MaxLOD		  = 0.f;
+
+	static D3D11_SAMPLER_DESC Create_Default()
+	{
+		return D3D11_SAMPLER_DESC();
+	}
+
+	static D3D11_SAMPLER_DESC Create_Font()
+	{
+		return Create_Default();
+	}
+
+};
+
+
+extern GLuint g_Samplers[Samplers::Count];
+
 typedef int glContextAttribute;
 
 enum class AttributeType : int

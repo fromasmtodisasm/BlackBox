@@ -30,9 +30,6 @@ struct ShaderStatus
 	bool Get(GLenum statusType);
 };
 
-bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint64 nMaskGen);
-IShaderProgram* LoadBinaryShader(const char* name, int flags);
-
 struct ShaderProgramStatus
 {
 	char m_InfoLog[1024]{};
@@ -72,6 +69,11 @@ public:
 	const char* TypeToStr() override;
 	const char* GetName() override;
 	uint Get() override;
+
+	static bool ComileSPIRV();
+	static bool SaveNativeBinary(const char* name, IShaderProgram* program, int flags);
+	static bool SaveBinaryShader(const char* name, IShaderProgram* program, int flags, uint64 nMaskGen);
+	spirv_bin GetSPIRV(const char* name);
 
   private:
 	GLuint m_Shader;
@@ -139,6 +141,12 @@ public:
 	uint Get() override;
 	void setup() override{};
 	void Dump() override;
+
+	bool SaveBinaryShader(const char* name, int flags, uint64 nMaskGen);
+	static CBaseShaderProgram* LoadSpirvProgram(const char* name);
+	static CBaseShaderProgram* LoadNativeBinary(const char* name, uint8* code, uint format, uint length);
+	static CBaseShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen);
+
 
   private:
 	void Reset(ShaderInfo src);

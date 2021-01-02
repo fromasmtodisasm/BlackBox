@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifdef GLAD_LOADER
 //#define _WINDOWS_
 #	pragma warning(push)
@@ -309,6 +309,11 @@ namespace gl
 	inline void Clear(GLbitfield mask)
 	{
 		glCheck(glClear(mask));
+	}
+
+	inline void SamplerParameteri(GLuint sampler, GLenum pname, GLint param)
+	{
+		glCheck(glSamplerParameteri(sampler, pname, param));
 	}
 
 	// Texture

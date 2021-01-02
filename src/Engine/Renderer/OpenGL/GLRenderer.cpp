@@ -36,8 +36,6 @@
 
 static int dump_shaders_on_load = false;
 FxParser* g_FxParser;
-void LoadSPIRV(IConsoleCmdArgs* args);
-IShaderProgram* LoadBinaryShader(const char* name, int flags, uint64 nMaskGen);
 
 class ShaderMan
 {
@@ -54,25 +52,25 @@ class ShaderMan
 	}
 	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	{
-		IShaderProgram* p = nullptr;
+		CBaseShaderProgram* p = nullptr;
 		if (!(p = Sh_LoadBinary(name, flags, nMaskGen)))
 		{
 			if (p = Compile(name, flags, nMaskGen))
 			{
-				SaveBinaryShader(name, p, flags, nMaskGen);
+				p->SaveBinaryShader(name, flags, nMaskGen);
 			}
 		}
 		return p;
 	}
-	IShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
+	CBaseShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
 	{
 
 		return 
 		gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr :
-		LoadBinaryShader(name, flags, nMaskGen);
+		CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
 	}
 
-	IShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
+	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
 	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
 
@@ -155,18 +153,46 @@ void TestFx(IConsoleCmdArgs* args)
 	}
 }
 
-enum class Samplers : int
-{
-	Default = 0,
-	Nearest_Nearest,
-	Linear_Nearest,
-	Nearest_Linear,
-	Linear_Linear,
-	Count
+D3D11_SAMPLER_DESC g_SamplerDescs[Samplers::Count] = {
+	D3D11_SAMPLER_DESC::Create_Default(),
+	D3D11_SAMPLER_DESC::Create_Default(),
+	D3D11_SAMPLER_DESC::Create_Default(),
+	D3D11_SAMPLER_DESC::Create_Default(),
+	D3D11_SAMPLER_DESC::Create_Default(),
+	D3D11_SAMPLER_DESC::Create_Font(),
 };
 
-
 GLuint g_Samplers[Samplers::Count];
+
+GLuint CreateSampler(const D3D11_SAMPLER_DESC& desc, int i)
+{
+	GLenum Filter		  = GL_NONE;
+	GLenum AddressU		  = GL_CLAMP_TO_EDGE;
+	GLenum AddressV		  = GL_CLAMP_TO_EDGE;
+	GLenum AddressW		  = GL_CLAMP_TO_EDGE;
+	FLOAT MipLODBias	  = 0.f;
+	UINT MaxAnisotropy	  = 2;
+	GLenum ComparisonFunc = GL_NONE;
+	FLOAT BorderColor[4]  = {0, 0, 0, 0};
+	FLOAT MinLOD		  = 0.f;
+	FLOAT MaxLOD		  = 0.f;
+	glSamplerParameteri(g_Samplers[i], GL_TEXTURE_WRAP_S, desc.AddressU);
+	glSamplerParameteri(g_Samplers[i], GL_TEXTURE_WRAP_T, desc.AddressU);
+	//glSamplerParameterf(g_Samplers[i], GL_TEXTURE_WRAP_S, desc.AddressU);
+	return 0;
+}	
+
+void InitSamplers()
+{
+	glCreateSamplers((int)Samplers::Count, g_Samplers);
+	//glBindSampler(0, g_Samplers[(int)Samplers::Default]);
+	int i = 0;
+	for (const auto s : g_SamplerDescs)
+	{
+		CreateSampler(s, i);
+		i++;
+	}
+}
 
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
@@ -276,8 +302,6 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	screenBuffer = ScreenBuffer::Create(11);
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
-	//glCreateSamplers((int)Samplers::Count, g_Samplers);
-	//glBindSampler(0, g_Samplers[(int)Samplers::Default]);
 	return result;
 }
 
@@ -525,7 +549,6 @@ void GLRenderer::InitConsoleCommands() const
   */
 	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
 	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
-	REGISTER_COMMAND("load_spirv", LoadSPIRV, 0, "Test fx parser");
 	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
