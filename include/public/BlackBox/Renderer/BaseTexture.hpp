@@ -1,50 +1,50 @@
 #ifndef BASETEXTUREXTURE_HPP
 #define BASETEXTUREXTURE_HPP
 
-#include <string>
-#include <memory>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <memory>
+#include <string>
 #ifdef NVTT
-#include <nvtt/nvtt.h>
+#	include <nvtt/nvtt.h>
 #endif
 
 class Image
 {
-public:
-  int width;
-  int height;
-  int bpp;
-  std::vector<uint8_t> data;
-  bool compressed = false;
-  int format;
-  uint blockSize = 0;
-  uint mipMapCount = 0;
+  public:
+	int width;
+	int height;
+	int bpp;
+	std::vector<uint8_t> data;
+	bool compressed = false;
+	int format;
+	uint blockSize	 = 0;
+	uint mipMapCount = 0;
 
+	Image() : width(0), height(0), bpp(0) {}
+	Image(int w, int h, int bpp, std::vector<uint8_t>&& data, bool compressed = false, int format = 0, uint bs = 0, uint mMC = 0)
+		: width(w), height(h), bpp(bpp), data(data), compressed(compressed), format(format), blockSize(bs), mipMapCount(mMC)
+	{
+	}
+	~Image();
+	bool load(const char* name, bool* hasAlpha);
 
-  Image() : width(0), height(0), bpp(0)  {}
-  Image(int w, int h, int bpp, std::vector<uint8_t>&& data, bool compressed = false, int format = 0, uint bs = 0, uint mMC = 0)
-	  : width(w), height(h), bpp(bpp), data(data), compressed(compressed), format(format), blockSize(bs), mipMapCount(mMC)
-  {
-  }
-  ~Image();
-  bool load(const char* name, bool* hasAlpha);
-private:
-  void free();
+  private:
+	void free();
 };
 
 enum TextureType
 {
-  DIFFUSE,
-  SPECULAR,
-  BUMP,
-  NORMAL,
-  MASK,
-  EMISSIVE,
+	DIFFUSE,
+	SPECULAR,
+	BUMP,
+	NORMAL,
+	MASK,
+	EMISSIVE,
 
-  HDR_RENDER_TARGET,
-  LDR_RENDER_TARGET,
+	HDR_RENDER_TARGET,
+	LDR_RENDER_TARGET,
 	DEPTH,
-  UNKNOWN
+	UNKNOWN
 };
 
 class BaseTexture : public ITexture
@@ -54,6 +54,7 @@ class BaseTexture : public ITexture
 	int height;
 	TextureType type;
 	uint id;
+	uint64 bindless_id;
 	int unit = 0;
 	std::shared_ptr<std::string> path;
 	std::string name;
@@ -74,20 +75,21 @@ class BaseTexture : public ITexture
 		  type(type),
 		  name(name)
 	{
-	
 	}
 #ifdef NVTT
-  void GetMipMapLevel(int level, nvtt::Surface& surface);
-  void SaveMipMaps();
+	void GetMipMapLevel(int level, nvtt::Surface& surface);
+	void SaveMipMaps();
 #endif
 
-  virtual int getWidth() const override;
-  virtual int getHeight() const override;
-  virtual int getId() const override;
+	virtual int getWidth() const override;
+	virtual int getHeight() const override;
+	virtual int getId() const override;
+	virtual uint64 getBindlesId() const override;
 	virtual uint getUnit() const override
 	{
 		return unit;
 	}
+	virtual void bind() const override;
 };
 
 #endif // BASETEXTUREXTURE_HPP

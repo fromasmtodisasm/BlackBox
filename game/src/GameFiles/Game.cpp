@@ -648,6 +648,9 @@ void CGame::DisplayInfo(float fps)
 bool CGame::Run(bool& bRelaunch)
 {
 	//splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
+	typedef ITexPic ITexture;
+	//auto bg = gEnv->pRenderer->LoadTexture("console_background.png", 0, 0);
+	//gEnv->pConsole->SetImage((ITexPic*)bg, true);
 	m_pLog->Log("[OK] Game started");
 	StartupServer(true, "test_server");
 

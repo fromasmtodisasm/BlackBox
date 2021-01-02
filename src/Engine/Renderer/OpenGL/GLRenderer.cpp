@@ -83,7 +83,8 @@ class ShaderMan
 			CryLog("Dumping shaders of effect: %s", name.data());
 			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
 			{
-				CryLog("[%s]", pEffect->GetShader(i).name.c_str());
+				auto& str = pEffect->GetShader(i).name;
+				CryLog("[%s]", str.c_str());
 			}
 			dump_shaders_on_load = true;
 			const auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
@@ -248,8 +249,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	context = SDL_GL_GetCurrentContext();
 	m_HWND	= (HWND)window->getHandle();
 	// now you can make GL calls.
-	gl::ClearColor({m_clearColor, 1});
-	gl::Clear(GL_COLOR_BUFFER_BIT);
+	ClearColorBuffer(m_clearColor);
 	m_Window->swap();
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
@@ -271,9 +271,6 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
 	}
-	m_ScreenShader->Use();
-	m_ScreenShader->Uniform(0, "screenTexture");
-	m_ScreenShader->Unuse();
 
 	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", int(ShaderBinaryFormat::SPIRV))))
 	{
@@ -324,7 +321,10 @@ void GLRenderer::BeginFrame(void)
 
 	m_MainMSAAFrameBuffer->bind({vp[0], vp[1], vp[2], vp[3]});
 	//m_MainMSAAFrameBuffer->clear({m_clearColor, 1});
-	gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	float depth = 1.f;
+	glClearBufferfv(GL_COLOR, 0, &m_clearColor[0]);
+	glClearBufferfv(GL_DEPTH, 0, &depth);
+	//gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GLRenderer::Update(void)
@@ -801,8 +801,7 @@ int GLRenderer::GetCurrentContextViewportWidth() const
 
 void GLRenderer::SetClearColor(const Vec3& vColor)
 {
-	m_clearColor = vColor;
-	gl::ClearColor(Vec4(vColor, 1));
+	m_clearColor = Vec4(vColor, 1.f);
 }
 
 void GLRenderer::ClearDepthBuffer()
@@ -868,7 +867,7 @@ void GLRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
 {
 }
 
-void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
+void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
 	float
 		width  = GetWidth(),
@@ -893,11 +892,11 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, int texture
 		sb->Color		 = Vec4(r, g, b, a);
 		sb->UvProjection = uv_projection;
 		sb->Model		 = model;
-		sb->Alpha		 = 0.8;
+		sb->Alpha		 = a;
 		sb->Update();
 	}
 	m_ScreenShader->Use();
-	m_ScreenShader->BindTextureUnit2D(texture_id, 0);
+	glProgramUniformHandleui64ARB(m_ScreenShader->Get(), glGetUniformLocation(m_ScreenShader->Get(), "screenTexture"), texture_id);
 
 	#if 0
 	glBindSampler(0, g_Samplers[(int)Samplers::Default]);

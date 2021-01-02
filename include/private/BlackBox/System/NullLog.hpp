@@ -199,7 +199,7 @@ class CLog :
 	const char* filename = "log.txt";
 	bool inited			 = false;
 	std::vector<std::string> log;
-	char buf[4096] = {0};
+	char buf[10*1024] = {0};
 
 
 	ICVar* m_pLogVerbosity					   = nullptr; //

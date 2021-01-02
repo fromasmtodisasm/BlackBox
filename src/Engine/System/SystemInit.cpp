@@ -433,7 +433,7 @@ bool CSystem::Init()
 				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
 				(float)splash->getWidth(),
 				(float)splash->getHeight(),
-				splash->getId(),
+				splash->getBindlesId(),
 				0, 0, 1, 1, 1, 1, 1, 1);
 			RenderEnd();
 		}

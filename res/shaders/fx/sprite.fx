@@ -1,10 +1,12 @@
 Language GLSL
+/*
 #if 0
 Extension
 {
     GL_ARB_bindless_texture : require
 }
 #endif
+*/
 #include "common.fx"
 GLSLShader
 {
@@ -14,6 +16,7 @@ GLSLShader
         mat4 model;
         mat4 uv_projection;
         vec3 textColor;
+        vec2 uv;
     };
 
 }

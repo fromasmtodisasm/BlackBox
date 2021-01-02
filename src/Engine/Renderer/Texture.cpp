@@ -314,6 +314,9 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 		glCheck(glGenerateMipmap(textureTarget));
 	}
 
+	t->bindless_id = glGetTextureHandleARB(t->id);
+	glMakeTextureHandleResidentARB(t->bindless_id);
+
 	debuger::texture_label(t->id, name);
 	return t;
 }

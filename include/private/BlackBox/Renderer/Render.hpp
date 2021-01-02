@@ -114,7 +114,7 @@ class GLRenderer : public CRenderer
 	virtual int GetHeight() override;
 	virtual void ScreenShot(const char* filename = nullptr) override;
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) override;
-	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
+	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
 	virtual void SetState(State state, bool enable) override;
 	virtual void DrawFullScreenImage(int texture_id) override;
@@ -219,8 +219,8 @@ class GLRenderer : public CRenderer
 	HWND m_HWND;
 	void* context;
 
-	Vec3 m_clearColor = {
-		0.2, 0.2, 0.2
+	Vec4 m_clearColor = {
+		0.2, 0.2, 0.2, 1.0
 		//0.0, 0.0, 0.0
 	};
 

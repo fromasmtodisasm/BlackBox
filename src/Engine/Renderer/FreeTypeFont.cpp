@@ -42,6 +42,7 @@ struct alignas(16) SpriteConstantBuffer
 	Mat4 model;
 	Mat4 uv_projection;
 	Vec3 textColor;
+	Vec2 uv;
 };
 
 using SpriteBuffer = gl::ConstantBuffer<SpriteConstantBuffer>;
@@ -117,11 +118,13 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		GLfloat h = ch.Size.y * scale;
 		// Update VBO for each character
 		using P3F_T2F		= SVF_P3F_T2F;
+		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
+		Vec2 uv_size		= Vec2(ch.Size) / 4096.f;
 		P3F_T2F vertices[4] = {
-			P3F_T2F{Vec3{xpos, ypos - h, 0}, 0.0, 0.0},
-			P3F_T2F{Vec3{xpos, ypos, 0}, 0.0, 1.0},
-			P3F_T2F{Vec3{xpos + w, ypos, 0}, 1.0, 1.0},
-			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, 1.0, 0.0}};
+			P3F_T2F{Vec3{xpos, ypos - h, 0}, uv_pos.x, uv_pos.y},
+			P3F_T2F{Vec3{xpos, ypos, 0}, uv_pos.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3{xpos + w, ypos, 0}, uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, uv_pos.x + uv_size.x, uv_pos.y}};
 		auto sb = spriteBuffer;
 		sb->model = model;
 		sb->Update();
@@ -195,6 +198,27 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	FT_Set_Pixel_Sizes(face, 0, h);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
+	glm::uvec2 t_size(4096);
+	glm::uvec2 cur_pos(0,0);
+
+	// Generate texture
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		GL_RED,
+		t_size.x,//face->glyph->bitmap.width,
+		t_size.y,//face->glyph->bitmap.rows,
+		0,
+		GL_RED,
+		GL_UNSIGNED_BYTE,
+		face->glyph->bitmap.buffer);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	for (GLubyte ch = 0; ch < 255; ch++)
 	{
 		// Load character glyph
@@ -204,38 +228,50 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 			CryError("ERROR::FREETYTPE: Failed to load Glyph");
 			continue;
 		}
-		// Generate texture
-		GLuint texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0,
-			GL_RED,
-			face->glyph->bitmap.width,
-			face->glyph->bitmap.rows,
-			0,
-			GL_RED,
-			GL_UNSIGNED_BYTE,
-			face->glyph->bitmap.buffer);
+		#if 0
 		test.insert(
 			STestSize(
 				face->glyph->bitmap.width,
 				face->glyph->bitmap.rows));
-		// Set texture options
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// Now store character for later use
+		#endif
+		auto& c_with = face->glyph->bitmap.width;
+		auto& c_rows = face->glyph->bitmap.rows;
+		if ((t_size.x - cur_pos.x) < c_with)
 		{
+			cur_pos.x = 0;
+			cur_pos.y += h;	
+		}
+		//glTexImage2D(
+		//	GL_TEXTURE_2D,
+		//	0,
+		//	GL_RED,
+		//	t_size.x,//face->glyph->bitmap.width,
+		//	t_size.y,//face->glyph->bitmap.rows,
+		//	0,
+		//	GL_RED,
+		//	GL_UNSIGNED_BYTE,
+		//	face->glyph->bitmap.buffer);
+		//void (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+		glTexSubImage2D(GL_TEXTURE_2D,
+							 0,
+							 cur_pos.x,
+							 cur_pos.y,
+							 face->glyph->bitmap.width,
+							 face->glyph->bitmap.rows,
+							 GL_RED,
+							 GL_UNSIGNED_BYTE,
+							 face->glyph->bitmap.buffer);
+
+		// Set texture options
+		// Now store character for later use
 			Character character = {
 				texture,
+				cur_pos,
 				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 				face->glyph->advance.x};
 			Characters.insert(std::pair<GLchar, Character>(ch, character));
-		}
+			cur_pos.x += character.Size.x;
 	}
 
 	FT_Done_Face(face);

@@ -54,6 +54,27 @@ void OpenglDebuger::checkError(const char* file, int line, const char* expr)
 	}
 }
 
+EValidatorSeverity glSeverityToEngine(GLenum severity)
+{
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:
+		return EValidatorSeverity::VALIDATOR_ERROR_DBGBRK;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		return EValidatorSeverity::VALIDATOR_WARNING;
+		return EValidatorSeverity::VALIDATOR_WARNING;
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		return EValidatorSeverity::VALIDATOR_COMMENT;
+	default:
+		return EValidatorSeverity::VALIDATOR_ERROR_DBGBRK;
+	}
+}
+
+void LogMessage(GLenum severity, const char* message)
+{
+	CryWarning(EValidatorModule::VALIDATOR_MODULE_RENDERER, glSeverityToEngine(severity), message);
+}
+
 void OpenglDebuger::callBack(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 	std::ostream* df = const_cast<std::ostream*>(reinterpret_cast<const std::ostream*>(userParam));
@@ -70,7 +91,7 @@ void OpenglDebuger::callBack(GLenum source, GLenum type, GLuint id, GLenum sever
 	   << SEVERITY_TO_STRING(severity) << std::endl
 	   << "Message: " << std::string(message, message + length);
 	//std::cerr << ss.str().c_str() << std::endl << std::endl;
-	CryError(ss.str().data());
+	LogMessage(severity, ss.str().data());
 	*df << ss.str();
 	//}
 }

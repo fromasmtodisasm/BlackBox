@@ -201,6 +201,9 @@ struct ITexture
 	virtual int getWidth() const				  = 0;
 	virtual int getHeight() const				  = 0;
 	virtual int getId() const					  = 0;
+	virtual uint64 getBindlesId() const			  = 0;
+	virtual void bind() const					  = 0;
+
 };
 
 struct ISammplerState
@@ -426,7 +429,7 @@ struct IRenderer
 	virtual void Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info) = 0;
 
 	//! Draw a image using the current matrix
-	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
+	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
 
 	virtual void DrawFullScreenImage(int texture_id) = 0;
 

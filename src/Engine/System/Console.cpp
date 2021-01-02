@@ -753,10 +753,12 @@ void CXConsole::PostRendererInit()
 
 	if (m_pRenderer)
 	{
-		const char* texture_path = ""; //"console/defaultconsole.dds";
+		const char* texture_path = "console/defaultconsole.dds";
 		ICVar* background		 = GetCVar("console_background");
+		#if 0
 		if (background != nullptr)
 			texture_path = background->GetString();
+		#endif
 		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
 		ITexture* pTex = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
 		m_nWhiteTexID = pTex ? pTex->getId() : 0;
@@ -1527,7 +1529,7 @@ void CXConsole::Draw()
 		{
 			if (m_bStaticBackground)
 			{
-				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,1);
+				m_pRenderer->DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getBindlesId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,0.8);
 			}
 			else
 			{
