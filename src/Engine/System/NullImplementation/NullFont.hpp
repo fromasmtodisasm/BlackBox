@@ -13,4 +13,5 @@ public:
 
   float TextWidth(const std::string& text) override { return 0.f; };
   float CharWidth(char ch) override { return 0.f; };
+  void Submit() override {}
 };

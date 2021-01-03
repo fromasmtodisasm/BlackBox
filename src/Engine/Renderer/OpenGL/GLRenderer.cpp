@@ -406,6 +406,7 @@ void GLRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int wid
 void GLRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
 {
 	info.font->RenderText(szText, posX, posY, 1.0, info.color);
+	info.font->Submit();
 }
 
 int GLRenderer::SetPolygonMode(int mode)
@@ -673,7 +674,8 @@ ITexture* GLRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
 
 IFont* GLRenderer::GetIFont()
 {
-	return CreateIFont();
+	m_Fonts.push_back(CreateIFont());
+	return m_Fonts.back();
 }
 
 void GLRenderer::PushProfileMarker(char* label)

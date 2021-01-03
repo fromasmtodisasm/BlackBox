@@ -2545,6 +2545,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			++nScroll;
 			++ritor;
 		}
+		m_pFont->Submit();
 	}
 }
 

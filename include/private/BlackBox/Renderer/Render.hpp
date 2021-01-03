@@ -255,6 +255,7 @@ class GLRenderer : public CRenderer
 	string   m_iconPath;              // Path to the icon currently loaded
 #endif
 
+	std::vector<IFont*> m_Fonts;
 };
 
 extern class ShaderMan* gShMan;

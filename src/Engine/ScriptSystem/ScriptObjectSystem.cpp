@@ -187,5 +187,6 @@ int CScriptObjectSystem::Print(const char* text, float x, float y, float scale, 
 {
 	float color[] = {r, g, b, a};
 	m_pFont->RenderText(text, x, y, scale, color);
+	m_pFont->Submit();
 	return 0;
 }

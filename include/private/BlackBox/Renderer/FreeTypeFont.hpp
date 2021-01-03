@@ -16,7 +16,6 @@ class FreeTypeFont : public IFont
 public:
 	struct Character
 	{
-		uint TextureID;		// ID handle of the glyph texture
 		glm::ivec2 Pos;		// Position in atlas
 		glm::ivec2 Size;	// Size of glyph
 		glm::ivec2 Bearing; // Offset from baseline to left/top of glyph
@@ -45,6 +44,7 @@ public:
 	float GetYPos() override;
 	void SetXPos(float x) override;
 	void SetYPos(float y) override;
+	void Submit() override;
 
 private:
 	FT_Library ft;
@@ -54,6 +54,7 @@ private:
 	CVertexBuffer* m_VB = nullptr;
 	SVertexStream* m_IB = nullptr;
 	BaseShaderProgramRef shader;
+	uint texture;
 
 	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;
 

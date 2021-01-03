@@ -35,18 +35,6 @@ void PrintColorTable(IConsoleCmdArgs*)
 }
 
 bool FreeTypeFont::printColorTableRegistered = false;
-struct alignas(16) SpriteConstantBuffer
-{
-	Mat4 projection;
-	Mat4 model;
-	Mat4 uv_projection;
-	Vec3 textColor;
-	Vec2 uv;
-};
-
-using SpriteBuffer = gl::ConstantBuffer<SpriteConstantBuffer>;
-using SpriteBufferPtr = std::shared_ptr<SpriteBuffer>;
-SpriteBufferPtr  spriteBuffer;
 
 void FreeTypeFont::RenderText(const std::string& text, float x, float y, float scale, float color[4])
 {
@@ -62,16 +50,9 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 	RSS(render, DEPTH_TEST, false);
 	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gl::BindTexture2D(GL_TEXTURE_2D, texture);
 
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
-
-	{
-		auto c = color;
-		auto sb = spriteBuffer;
-		sb->projection = projection;
-		sb->uv_projection = uv_projection;
-		sb->textColor = Vec3(c[0], c[1], c[2]);
-	}
 
 	// Iterate through all characters
 	const char* c;
@@ -97,7 +78,6 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 					color[0] = newColor.r;
 					color[1] = newColor.g;
 					color[2] = newColor.b;
-					auto sb = spriteBuffer;
 					//sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
 					cur_c = Vec4(Vec3(Vec3(color[0], color[1], color[2]) / 255.f),1);
 					continue;
@@ -131,11 +111,8 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
 			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
 		};
-		auto sb = spriteBuffer;
-		sb->model = model;
-		sb->Update();
+		m_CharBuffer.push_back(vertices);
 		// Render glyph texture over quad
-		gl::BindTexture2D(GL_TEXTURE_2D, ch.TextureID);
 		// Update content of VBO memory
 		gEnv->pRenderer->UpdateBuffer(m_VB, vertices.data(), 6, false);
 
@@ -209,7 +186,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	glm::uvec2 cur_pos(0,0);
 
 	// Generate texture
-	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(
@@ -272,7 +248,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		// Set texture options
 		// Now store character for later use
 			Character character = {
-				texture,
 				cur_pos,
 				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
@@ -296,8 +271,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 	static bool UB_created = false;
 
-	if (!UB_created)
-		spriteBuffer = SpriteBuffer::Create(15);
 
 	return true;
 }
@@ -333,4 +306,12 @@ void RegisterColorTable()
 	{
 		gEnv->pConsole->AddCommand("printcb", PrintColorTable, 0, "Print color font encoding");
 	}
+}
+
+void FreeTypeFont::Submit()
+{
+	if (m_CharBuffer.size() == 0)
+		return;
+
+	m_CharBuffer.clear();
 }
