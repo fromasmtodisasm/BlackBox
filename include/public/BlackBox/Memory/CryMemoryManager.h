@@ -143,6 +143,21 @@ struct CryModuleMemoryInfo
 #endif // USE_NEWPOOL
 
 #endif // _DEBUG
+#if defined USE_DEBUG_NEW
+#	if defined(_DEBUG) && !defined(LINUX)
+#		error WTF??????????????/
+#		include <crtdbg.h>
+#		define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+#		define new DEBUG_CLIENTBLOCK
+#	endif
+#endif
+#if defined(_DEBUG) && !defined(LINUX)
+#	define _CRTDBG_MAP_ALLOC
+#	include <crtdbg.h>
+#	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+#	define new DEBUG_CLIENTBLOCK
+#endif
+
 
 //#endif // CRYSYSTEM_EXPORTS
 //#endif //LINUX

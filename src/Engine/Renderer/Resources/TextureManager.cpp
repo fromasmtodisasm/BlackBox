@@ -63,3 +63,12 @@ BaseTexture* TextureManager::getTexture(std::string name, bool isSkyBox)
   }
   return texture;
 }
+
+TextureManager::~TextureManager()
+{
+	for (auto c : cache)
+	{
+		delete c.second;	
+    }
+	cache.clear();
+}

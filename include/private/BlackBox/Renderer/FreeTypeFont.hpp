@@ -46,6 +46,8 @@ public:
 	void SetYPos(float y) override;
 	void Submit() override;
 
+	~FreeTypeFont();
+
 private:
 	FT_Library ft;
 	FT_Face face;

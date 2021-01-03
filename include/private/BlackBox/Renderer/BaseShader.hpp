@@ -153,7 +153,7 @@ public:
 	static const char* BuildName(const char* format, va_list args);
 
   public:
-	const size_t BUFFER_SIZE = 1024;
+	static constexpr size_t BUFFER_SIZE = 20*1024;
 	ShaderInfo m_Vertex;
 	ShaderInfo m_Fragment;
 	ShaderInfo m_Geometry;
@@ -165,7 +165,8 @@ public:
 
 	bool created = false;
 	std::map<string, GLint> m_Cache;
-	static char* buffer;
+	//static char* buffer;
+	static std::array<char, CBaseShaderProgram::BUFFER_SIZE> buffer;
 	string name;
 	static ICVar* print_loc_name;
 	static ICVar* use_cache;

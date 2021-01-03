@@ -9,12 +9,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-char* CBaseShaderProgram::buffer = nullptr;
+std::array<char, CBaseShaderProgram::BUFFER_SIZE> CBaseShaderProgram::buffer;
 
 const char* CBaseShaderProgram::BuildName(const char* format, va_list args)
 {
-	vsprintf(buffer, format, args);
-	return buffer;
+	vsprintf(buffer.data(), format, args);
+	return buffer.data();
 }
 
 #define BUILD_NAME(a, b) format
@@ -232,14 +232,12 @@ CBaseShaderProgram::CBaseShaderProgram() : m_Status(this)
 {
 	m_Program = glCreateProgram();
 	created	  = true;
-	buffer	  = new char[BUFFER_SIZE];
 }
 CBaseShaderProgram::CBaseShaderProgram(uint binary) : m_Status(this)
 {
 	m_Vertex   = ShaderInfo(nullptr, "binary");
 	m_Fragment = ShaderInfo(nullptr, "binary");
 	created	  = true;
-	buffer	  = new char[BUFFER_SIZE];
 }
 
 CBaseShaderProgram::CBaseShaderProgram(

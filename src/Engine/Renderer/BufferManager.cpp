@@ -225,6 +225,10 @@ void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
 {
 	glDeleteBuffers(1, &pVertexBuffer->m_VS[0].m_VertBuf.m_nID);
 	glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
+	for (int i = 0; i < VSF_NUM; i++)
+	{
+		SAFE_DELETE(pVertexBuffer->m_VS[i].m_VData);
+	}
 }
 
 void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount)

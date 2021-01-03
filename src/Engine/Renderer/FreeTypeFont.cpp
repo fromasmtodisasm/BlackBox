@@ -38,21 +38,9 @@ bool FreeTypeFont::printColorTableRegistered = false;
 
 void FreeTypeFont::RenderText(const std::string& text, float x, float y, float scale, float color[4])
 {
-	// Activate corresponding render state
-	shader->Use();
-	auto render				= GetISystem()->GetIRenderer();
-	glm::mat4 uv_projection = glm::mat4(1.0);
-	//uv_projection = glm::scale(uv_projection, glm::vec3(1.0f, -1.0f, 1.0f));
-	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
-	gl::ActiveTexture(GL_TEXTURE0);
-	RSS(render, BLEND, true);
-	RSS(render, CULL_FACE, false);
-	RSS(render, DEPTH_TEST, false);
-	glDepthMask(GL_FALSE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	gl::BindTexture2D(GL_TEXTURE_2D, texture);
-
+	auto render = GetISystem()->GetIRenderer();
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
+	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 
 	// Iterate through all characters
 	const char* c;
@@ -112,17 +100,9 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
 		};
 		m_CharBuffer.push_back(vertices);
-		// Render glyph texture over quad
-		// Update content of VBO memory
-		gEnv->pRenderer->UpdateBuffer(m_VB, vertices.data(), 6, false);
-
-		//gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
-		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 6);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
-	gl::BindTexture2D(GL_TEXTURE_2D, 0);
-	glDepthMask(GL_TRUE);
 }
 
 float FreeTypeFont::TextWidth(const std::string& text)
@@ -312,6 +292,34 @@ void FreeTypeFont::Submit()
 {
 	if (m_CharBuffer.size() == 0)
 		return;
+	// Activate corresponding render state
+	shader->Use();
+	auto render				= GetISystem()->GetIRenderer();
+	gl::ActiveTexture(GL_TEXTURE0);
+	RSS(render, BLEND, true);
+	RSS(render, CULL_FACE, false);
+	RSS(render, DEPTH_TEST, false);
+	glDepthMask(GL_FALSE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gl::BindTexture2D(GL_TEXTURE_2D, texture);
+	gEnv->pRenderer->ReleaseBuffer(m_VB);
+	auto vertex_cnt = 6 * m_CharBuffer.size();
+	m_VB = gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
 
+
+	// Render glyph texture over quad
+	// Update content of VBO memory
+	gEnv->pRenderer->UpdateBuffer(m_VB, m_CharBuffer.data(), vertex_cnt, false);
+
+	//gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+	gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+
+	gl::BindTexture2D(GL_TEXTURE_2D, 0);
+	glDepthMask(GL_TRUE);
 	m_CharBuffer.clear();
+}
+
+FreeTypeFont::~FreeTypeFont()
+{
+	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
 }

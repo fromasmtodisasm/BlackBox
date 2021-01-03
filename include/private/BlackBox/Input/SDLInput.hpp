@@ -17,6 +17,7 @@ class CLinuxInput : public CBaseInput
 {
 public:
   CLinuxInput(ISystem* pSystem);
+  ~CLinuxInput();
 
   virtual bool Init() override;
   virtual void ShutDown() override;

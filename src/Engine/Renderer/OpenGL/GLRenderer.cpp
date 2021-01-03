@@ -40,6 +40,9 @@ FxParser* g_FxParser;
 class ShaderMan
 {
   public:
+	~ShaderMan()
+	{
+	}
 	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
 	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
@@ -217,6 +220,7 @@ GLRenderer::~GLRenderer()
 	SAFE_DELETE(m_MainReslovedFrameBuffer);
 
 	SAFE_DELETE(gShMan);
+	gEnv->pConsole->RemoveConsoleVarSink(this);
 }
 
 IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
@@ -560,6 +564,7 @@ CVertexBuffer* GLRenderer::CreateBuffer(int vertexCount, int vertexFormat, const
 
 void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 {
+	m_BufferManager->Release(bufptr);
 }
 
 void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)

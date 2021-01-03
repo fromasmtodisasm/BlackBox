@@ -22,6 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	// Note: lpCmdLine does not contain the filename.
 	const string cmdLine = GetCommandLineA();

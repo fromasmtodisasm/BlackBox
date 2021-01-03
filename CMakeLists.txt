@@ -13,6 +13,7 @@ endif()
 # Part of the setup is split into the InitialSetup file so projects created by cryrun can include it.
 # This needs to be re-visited after the toolchain files are cleaned up.
 include(Tools/CMake/InitialSetup.cmake)
+#add_compile_definitions(-DUSE_DEBUG_NEW)
 
 # Setting the project version
 if (NOT VERSION)

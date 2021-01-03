@@ -385,7 +385,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_pGame);
 	//SAFE_DELETE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
-	SAFE_RELEASE(m_env.pConsole);
+	SAFE_RELEASE(m_env.p3DEngine);
 	SAFE_RELEASE(m_env.pRenderer);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
@@ -393,7 +393,9 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_ScriptObjectRenderer);
 	SAFE_RELEASE(m_env.pScriptSystem);
 
+	SAFE_DELETE(m_env.pInput);
 	SAFE_RELEASE(m_env.pLog);
+	SAFE_RELEASE(m_env.pConsole);
 }
 
 void CSystem::EnableGui(bool enable)

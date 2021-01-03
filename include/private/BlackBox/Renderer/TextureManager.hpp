@@ -14,4 +14,6 @@ class TextureManager
 public:
   static TextureManager* instance();
   BaseTexture* getTexture(std::string name, bool isSkyBox);
+
+  ~TextureManager();
 };

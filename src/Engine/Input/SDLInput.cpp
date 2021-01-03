@@ -40,6 +40,9 @@ CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
 {
   m_pSystem = pSystem;
   m_pLog = pSystem->GetILog();
+}
+CLinuxInput::~CLinuxInput(){
+    
 };
 
 bool CLinuxInput::Init()
