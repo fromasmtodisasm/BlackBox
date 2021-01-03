@@ -64,6 +64,8 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	Vec4 cur_c(color[0], color[1], color[2], color[3]);
+
 	{
 		auto c = color;
 		auto sb = spriteBuffer;
@@ -97,7 +99,8 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 					color[1] = newColor.g;
 					color[2] = newColor.b;
 					auto sb = spriteBuffer;
-					sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
+					//sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
+					cur_c = Vec4(Vec3(Vec3(color[0], color[1], color[2]) / 255.f),1);
 					continue;
 				}
 			}
@@ -117,23 +120,28 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 		// Update VBO for each character
-		using P3F_T2F		= SVF_P3F_T2F;
+		using P3F_T2F		= SVF_P3F_C4B_T2F;
 		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
 		Vec2 uv_size		= Vec2(ch.Size) / 4096.f;
-		P3F_T2F vertices[4] = {
-			P3F_T2F{Vec3{xpos, ypos - h, 0}, uv_pos.x, uv_pos.y},
-			P3F_T2F{Vec3{xpos, ypos, 0}, uv_pos.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3{xpos + w, ypos, 0}, uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, uv_pos.x + uv_size.x, uv_pos.y}};
+		P3F_T2F vertices[6] = {
+			P3F_T2F{Vec3{xpos, ypos - h, 0}, UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
+			P3F_T2F{Vec3{xpos, ypos, 0}, UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3{xpos + w, ypos, 0}, UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+
+			P3F_T2F{Vec3{xpos + w, ypos, 0}, UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
+			P3F_T2F{Vec3{xpos, ypos - h, 0}, UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
+		};
 		auto sb = spriteBuffer;
 		sb->model = model;
 		sb->Update();
 		// Render glyph texture over quad
 		gl::BindTexture2D(GL_TEXTURE_2D, ch.TextureID);
 		// Update content of VBO memory
-		gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 4, false);
+		gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 6, false);
 
-		gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+		//gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 6);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
@@ -283,7 +291,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		1, 2, 3  // Second Triangle
 	};
 
-	m_VB = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "BoundingBox", false);
+	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
 
 	m_IB = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
