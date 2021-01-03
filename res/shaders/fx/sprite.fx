@@ -27,8 +27,8 @@ GLSLShader vert
 
     void main()
     {
-        gl_Position = projection * model * vec4(aPos, 1.0);
-        TexCoords = (uv_projection * vec4(aTex, 0.f, 1.0)).xy;
+        gl_Position = vec4(aPos, 1.0);
+        TexCoords = vec4(aTex, 0.f, 1.0).xy;
         Color = aCol;
     }  
 }

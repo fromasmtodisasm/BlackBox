@@ -3,6 +3,7 @@
 #include FT_FREETYPE_H
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <glm/glm.hpp>
 #include <map>
@@ -53,6 +54,8 @@ private:
 	CVertexBuffer* m_VB = nullptr;
 	SVertexStream* m_IB = nullptr;
 	BaseShaderProgramRef shader;
+
+	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;
 
 	static bool printColorTableRegistered;
 };

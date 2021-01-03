@@ -2,7 +2,6 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <memory>
 
@@ -123,14 +122,14 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		using P3F_T2F		= SVF_P3F_C4B_T2F;
 		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
 		Vec2 uv_size		= Vec2(ch.Size) / 4096.f;
-		P3F_T2F vertices[6] = {
-			P3F_T2F{Vec3{xpos, ypos - h, 0}, UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
-			P3F_T2F{Vec3{xpos, ypos, 0}, UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3{xpos + w, ypos, 0}, UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+		std::array<P3F_T2F, 6> vertices = {
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
 
-			P3F_T2F{Vec3{xpos + w, ypos, 0}, UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3{xpos + w, ypos - h, 0}, UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
-			P3F_T2F{Vec3{xpos, ypos - h, 0}, UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
 		};
 		auto sb = spriteBuffer;
 		sb->model = model;
@@ -138,7 +137,7 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		// Render glyph texture over quad
 		gl::BindTexture2D(GL_TEXTURE_2D, ch.TextureID);
 		// Update content of VBO memory
-		gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 6, false);
+		gEnv->pRenderer->UpdateBuffer(m_VB, vertices.data(), 6, false);
 
 		//gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 6);
