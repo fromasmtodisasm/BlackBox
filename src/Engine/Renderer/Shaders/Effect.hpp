@@ -34,16 +34,7 @@ public:
 	{
 		auto &tech = m_Techniques.back();
 		auto &pass = tech.Passes.back();
-		auto &sh_name = name;
-		for (int i = 0; i < m_shaders.size(); i++)
-		{
-			if (m_shaders[i].name == sh_name)
-			{
-				pass.Shaders[type] = m_shaders[i].data;
-				break;
-			}
-		}
-		CryLog("ident for shader_type: %s", name.data());
+		pass.EntryPoints[type] = name;
 	}
 	bool SetLang(ShaderLangId id)
 	{

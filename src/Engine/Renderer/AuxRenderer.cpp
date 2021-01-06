@@ -1,4 +1,5 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
+#include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
@@ -7,8 +8,7 @@
 
 #include <array>
 
-using P3F	 = SVF_P3F_N;
-using VecPos = std::vector<P3F>;
+using VecPos = std::vector<BB_VERTEX>;
 
 namespace
 {
@@ -23,20 +23,20 @@ namespace
 
 CRenderAuxGeom::CRenderAuxGeom()
 {
-	std::vector<P3F> reference = {
+	std::vector<BB_VERTEX> reference = {
 
 		// front
-		P3F{{-1.0, -1.0, 1.0}, {0, 0, 0}},
-		P3F{{1.0, -1.0, 1.0}, {0, 0, 0}},
-		P3F{{1.0, 1.0, 1.0}, {0, 0, 0}},
-		P3F{{-1.0, 1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{-1.0, -1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, -1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, 1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{-1.0, 1.0, 1.0}, {0, 0, 0}},
 		// back
-		P3F{{-1.0, -1.0, -1.0}, {0, 0, 0}},
-		P3F{{1.0, -1.0, -1.0}, {0, 0, 0}},
-		P3F{{1.0, 1.0, -1.0}, {0, 0, 0}},
-		P3F{{-1.0, 1.0, -1.}, {0, 0, 0}}};
+		BB_VERTEX{{-1.0, -1.0, -1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, -1.0, -1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, 1.0, -1.0}, {0, 0, 0}},
+		BB_VERTEX{{-1.0, 1.0, -1.}, {0, 0, 0}}};
 
-	std::vector<P3F> vertices(24);
+	std::vector<BB_VERTEX> vertices(24);
 	auto get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16 {
 		int idx = 0;
 		for (int i = 0; i < 24; i++)
@@ -94,10 +94,10 @@ CRenderAuxGeom::CRenderAuxGeom()
 		auto n			= glm::normalize(glm::cross(
 			 reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz,
 			 reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz));
-		vertices[j]		= P3F{reference[reference_elements[i][0]].xyz, n};
-		vertices[j + 1] = P3F{reference[reference_elements[i][1]].xyz, n};
-		vertices[j + 2] = P3F{reference[reference_elements[i][2]].xyz, n};
-		vertices[j + 3] = P3F{reference[reference_elements[i + 1][1]].xyz, n};
+		vertices[j]		= BB_VERTEX{reference[reference_elements[i][0]].xyz, n};
+		vertices[j + 1] = BB_VERTEX{reference[reference_elements[i][1]].xyz, n};
+		vertices[j + 2] = BB_VERTEX{reference[reference_elements[i][2]].xyz, n};
+		vertices[j + 3] = BB_VERTEX{reference[reference_elements[i + 1][1]].xyz, n};
 	}
 	std::vector<glm::u16vec3> elements(12);
 	std::cout << "elments:" << std::endl;
@@ -115,8 +115,8 @@ CRenderAuxGeom::CRenderAuxGeom()
 		vertices[i].xyz *= 0.5;
 	}
 	///////////////////////////////////////////////////////////////////////////////
-	//int cnt		  = sizeof vertices / sizeof P3F;
-	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), VERTEX_FORMAT_P3F_N, "BoundingBox", false);
+	//int cnt		  = sizeof vertices / sizeof BB_VERTEX;
+	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), VERTEX_FORMAT_P3F_N_C4B, "BoundingBox", false);
 	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
 
 	m_BB_IndexBuffer = new SVertexStream;
@@ -124,6 +124,10 @@ CRenderAuxGeom::CRenderAuxGeom()
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", int(ShaderBinaryFormat::SPIRV))))
+	{
+		gEnv->pLog->Log("Error of loading auxgeom shader");
+	}
 
 	m_aabbBufferPtr = SAABBBuffer::Create(10);
 
@@ -153,10 +157,7 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(glm::mat4(1), angle, {0, 1, 0});
 
 	m_aabbBufferPtr->Model	  = transform;
-	m_aabbBufferPtr->Alpha	  = 0.1f;
 	m_aabbBufferPtr->Color	  = Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
-	m_aabbBufferPtr->dbgmode  = dbg_mode;
-	m_aabbBufferPtr->bTonemap = 0;
 	m_aabbBufferPtr->LightPos = Vec3(300);
 	m_aabbBufferPtr->Eye	  = gEnv->pSystem->GetViewCamera().GetPos();
 	m_aabbBufferPtr->Update();
@@ -170,7 +171,6 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
 #else
-
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, m_BB_IndexBuffer->m_nItems, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 #endif
 	}
@@ -241,6 +241,7 @@ void CRenderAuxGeom::Flush()
 	RSS(gEnv->pRenderer, CULL_FACE, false);
 	//RSS(gEnv->pRenderer, BLEND, true);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_AuxGeomShader->Use();
 	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
 	for (auto& pb : m_auxPushBuffer)
@@ -248,6 +249,7 @@ void CRenderAuxGeom::Flush()
 		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
 		offset += pb.m_numVertices;
 	}
+	m_AuxGeomShader->Unuse();
 	m_VB.resize(0);
 	m_auxPushBuffer.resize(0);
 }

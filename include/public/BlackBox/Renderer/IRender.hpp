@@ -43,6 +43,10 @@ typedef float vec4_t[4];
 typedef unsigned char byte;
 typedef float vec2_t[2];
 
+// Uncomment one of the two following typedefs:
+typedef uint32 vtx_idx;
+//typedef uint16 vtx_idx;
+
 // Interface to the graphics constant buffers
 struct IGraphicsDeviceConstantBuffer
 {

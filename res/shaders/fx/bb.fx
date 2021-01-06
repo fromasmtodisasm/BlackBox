@@ -3,10 +3,6 @@ Language HLSL
 HLSLShader 
 {
     #define TM_UNREAL
-}
-
-HLSLShader
-{
     // Unreal 3, Documentation: "Color Grading"
     // Adapted to be close to Tonemap_ACES, with similar range
     // Gamma 2.2 correction is baked in, don't use with sRGB conversion!
@@ -20,10 +16,6 @@ HLSLShader
 
     #pragma glslify: export(unreal)
 
-}
-
-HLSLShader
-{
     struct Light
     {
         float3 Position;
@@ -59,17 +51,10 @@ HLSLShader
     #define tonemap wo_tonemap
     #endif
 
-}
-
-HLSLShader
-{
 	cbuffer BoundingBoxParams : register(b10)
     {
         float4x4 model;
         float3 lightPos;
-        bool bTonemap;
-        int dbgmode;
-        float alpha;
         float4 color;
         float3 eye;
 	};
@@ -78,35 +63,25 @@ HLSLShader
     {
         float4 pos : SV_Position;
         float3 fragPos : POSITION;
-        float3 N : NORMAL;
+        float3 normal : NORMAL;
     };
 
 
-}
-
-HLSLShader vert
-{
     struct VsInput
 	{
-		float3 pos : POSITION;
-		float3 normal : NORMAL;
+		[[vk::location(0)]] float3 pos : POSITION;
+		[[vk::location(1)]] float3 normal : NORMAL;
+		[[vk::location(5)]] float2 color : COLOR;
 	};
     
-    VS_OUT main(VsInput IN)
+    VS_OUT VSMain(VsInput IN)
     {
         VS_OUT OUT;
         OUT.pos = mul(mul(GetViewProjMat(), model), float4(IN.pos, 1.0));
         OUT.fragPos = (float3)(model * float4(IN.pos, 1.0));
-        OUT.N = mul(((float3x3)model), IN.normal);
+        OUT.normal = mul(((float3x3)model), IN.normal);
         return OUT;
     }
-}
-
-HLSLShader frag
-{
-    #define dbgDIFFUSE 1
-    #define dbgSPECULAR 2
-    #define dbgNORMAL 3
 
     struct OutColor
     {
@@ -116,7 +91,7 @@ HLSLShader frag
         float3 normal;
     };
     
-    float4 main(VS_OUT IN) : SV_Target0
+    float4 PSMain(VS_OUT IN) : SV_Target0
     { 
         OutColor outColor;
         outColor.ambient = float3(0);
@@ -127,35 +102,16 @@ HLSLShader frag
 
 
         outColor.ambient = ambient()*_color;
-        outColor.diffuse = (float3)diffuse(lightPos, IN.fragPos, IN.N);//*_color;
-        outColor.specular = 0.8*_color*specular(lightPos, IN.fragPos, eye, IN.N);
+        outColor.diffuse = (float3)diffuse(lightPos, IN.fragPos, IN.normal);//*_color;
+        outColor.specular = 0.8*_color*specular(lightPos, IN.fragPos, eye, IN.normal);
 
         float3 result = outColor.ambient + outColor.diffuse + outColor.specular;
 
-        switch (dbgmode)
-        {
-        case 0:
+        //result = outColor.diffuse + ambient();	
 
-            break;
-        case dbgDIFFUSE:
-            result = outColor.diffuse + ambient();	
-            break;
-        case dbgNORMAL:
-            result = 0.5*(normalize(IN.N) + 1);	
-            break;
-        case dbgSPECULAR:
-            result = outColor.specular;	
-            break;
-        }
+        //return float4(tonemap(result), 1);
+        return float4(result, 1);
 
-        if (bTonemap)
-        {
-            return float4(tonemap(result), 1);
-        }
-        else
-        {
-            return float4(result, 1);
-        }
     }
 
 }
@@ -173,7 +129,7 @@ technique main
         }
         */
 
-        VertexShader = vert
-        PixelShader = frag
+        VertexShader = VSMain
+        PixelShader = PSMain
     }
 }

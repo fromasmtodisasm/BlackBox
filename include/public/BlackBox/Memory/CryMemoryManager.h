@@ -152,6 +152,10 @@ struct CryModuleMemoryInfo
 #	endif
 #endif
 #if defined(_DEBUG) && !defined(LINUX)
+#	undef malloc
+#	undef realloc
+#	undef free
+
 #	define _CRTDBG_MAP_ALLOC
 #	include <crtdbg.h>
 #	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)

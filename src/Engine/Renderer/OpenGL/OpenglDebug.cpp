@@ -42,6 +42,7 @@ void OpenglDebuger::checkError(const char* file, int line, const char* expr)
 	{
 		isError = false;
 
+		#if 0
 		// Log the error
 		ss << "An internal OpenGL call failed in "
 		   << file << "(" << line << ")."
@@ -49,6 +50,7 @@ void OpenglDebuger::checkError(const char* file, int line, const char* expr)
 		   << "\n-*-*-*-*-*"
 		   << std::endl;
 		CryError(ss.str().data());
+		#endif
 		if (break_on_gl_error)
 			__debugbreak();
 	}

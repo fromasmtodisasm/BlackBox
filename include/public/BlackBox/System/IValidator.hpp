@@ -22,7 +22,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#define MAX_WARNING_LENGTH	4096
+#define MAX_WARNING_LENGTH	16 * 1024
 
 ////////////////////////////////////////////////////////////////////////////
 enum EValidatorSeverity

@@ -12,8 +12,8 @@ struct SPass
 {
 	std::string Name;
 	std::vector<std::string> InputLayout;
-	std::vector<std::string> CommonCode;
-	std::array<std::string, 6> Shaders;
+	std::vector<std::string> Code;
+	std::array<std::string, 6> EntryPoints;
 };
 
 
@@ -35,6 +35,7 @@ struct IEffect : public _i_reference_target_t
 		string name;
 		string data;
 	};
+	virtual ~IEffect() = default;
 	virtual const char* GetName()				 = 0;
 	virtual int GetNumShaders()					 = 0;
 	virtual ShaderInfo GetShader(int i)			 = 0;

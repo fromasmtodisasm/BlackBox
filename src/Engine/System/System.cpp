@@ -355,7 +355,6 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 	REGISTER_CVAR2("r_SkipShaderCache", &m_rSkipShaderCache, 1, VF_DUMPTODISK,
 				   "Skip loading binary shader from disk.\n"
 				   "Usage: r_SkipShaderCache [0=off/1=on]");
-	REGISTER_CVAR(r_ScreenShader, r_ScreenShader, VF_DUMPTODISK, "screen shader");
 }
 
 void CSystem::CreateSystemVars()
@@ -396,6 +395,10 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_env.pInput);
 	SAFE_RELEASE(m_env.pLog);
 	SAFE_RELEASE(m_env.pConsole);
+	SAFE_DELETE(m_pSystemEventDispatcher);
+	SAFE_DELETE(m_pCmdLine);
+	SAFE_DELETE(m_env.pProjectManager);
+	//SAFE_RELEASE(m_pCryPak);
 }
 
 void CSystem::EnableGui(bool enable)

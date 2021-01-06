@@ -281,10 +281,8 @@ void CSystem::WarningV(EValidatorModule module, EValidatorSeverity severity, int
 	#endif
 
 #if !defined(_RELEASE)
-	#if 0
 	if (bDbgBreak && g_cvars.sys_error_debugbreak)
 		__debugbreak();
-	#endif
 #endif
 
 }

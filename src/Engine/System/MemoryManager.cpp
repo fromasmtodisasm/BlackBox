@@ -2,11 +2,18 @@
 #include <BlackBox/System/ISystem.hpp>
 
 // Undefine malloc for memory manager itself..
+#if 0
 #undef malloc
 #undef realloc
 #undef free
+#endif
 
-#include <crtdbg.h>
+#if defined(_DEBUG) && !defined(LINUX)
+#	define _CRTDBG_MAP_ALLOC
+#	include <crtdbg.h>
+#	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+#	define new DEBUG_CLIENTBLOCK
+#endif
 
 CRYMEMORYMANAGER_API void* CrySystemCrtMalloc(size_t size)
 {

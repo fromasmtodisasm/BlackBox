@@ -64,6 +64,8 @@ struct SSystemCVars
 
 	int     sys_filesystemCaseSensitivity;
 
+	int sys_stop_at;
+
 	PakVars pakVars;
 
 #if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO
@@ -296,7 +298,6 @@ class CSystem final : public ISystem
 	int m_rDebug;
 	int m_rTonemap;
 	int m_rSkipShaderCache;
-	const char* r_ScreenShader = "screen_hlsl";
 
 	bool m_bIsActive = true;
 	

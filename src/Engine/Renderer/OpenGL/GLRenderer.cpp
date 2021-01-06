@@ -12,10 +12,10 @@
 #include <BlackBox/Renderer/ShaderManager.hpp>
 #include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IProjectManager.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IWindow.hpp>
 
 #include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/VertexBuffer.hpp>
@@ -28,8 +28,8 @@
 
 #include <SDL2/SDL.h>
 
-#include <sstream>
 #include <BlackBox/Core/Utils.hpp>
+#include <sstream>
 
 #pragma warning(push)
 #pragma warning(disable : 4244)
@@ -46,8 +46,8 @@ class ShaderMan
 	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
 	{
 		using ShaderInfo = IShaderProgram::ShaderInfo;
-		auto* vs			 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
-		auto* fs			 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
+		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
 		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
 		p->Create((std::string(vertex) + std::string(fragment)).data());
 		m_Shaders.emplace_back(p);
@@ -67,10 +67,7 @@ class ShaderMan
 	}
 	CBaseShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
 	{
-
-		return 
-		gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr :
-		CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
+		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
 	}
 
 	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
@@ -82,7 +79,6 @@ class ShaderMan
 		path << "res/shaders/fx/" << name << ".fx";
 		if (g_FxParser->Parse(path.str().data(), &pEffect))
 		{
-
 			CryLog("Dumping shaders of effect: %s", name.data());
 			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
 			{
@@ -90,16 +86,16 @@ class ShaderMan
 				CryLog("[%s]", str.c_str());
 			}
 			dump_shaders_on_load = true;
-			const auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
-			const auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
+			const auto vs		 = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
+			const auto fs		 = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
 			dump_shaders_on_load = false;
-			auto* p	= new CShaderProgram(vs, fs);
+			auto* p				 = new CShaderProgram(vs, fs);
 			p->Create(name.data());
+			delete pEffect;
 			m_Shaders.emplace_back(p);
 			return p;
 		}
 		return nullptr;
-
 	}
 	void ReloadAll()
 	{
@@ -130,13 +126,13 @@ struct alignas(16) SScreenConstantBuffer
 	float Alpha;
 };
 
-using PerViewBuffer = gl::ConstantBuffer<SPerViewConstantBuffer>;
+using PerViewBuffer	   = gl::ConstantBuffer<SPerViewConstantBuffer>;
 using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
-PerViewBufferPtr  perViewBuffer;
+PerViewBufferPtr perViewBuffer;
 
-using ScreenBuffer = gl::ConstantBuffer<SScreenConstantBuffer>;
+using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
 using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
-ScreenBufferPtr  screenBuffer;
+ScreenBufferPtr screenBuffer;
 
 void TestFx(IConsoleCmdArgs* args)
 {
@@ -184,7 +180,7 @@ GLuint CreateSampler(const D3D11_SAMPLER_DESC& desc, int i)
 	glSamplerParameteri(g_Samplers[i], GL_TEXTURE_WRAP_T, desc.AddressU);
 	//glSamplerParameterf(g_Samplers[i], GL_TEXTURE_WRAP_S, desc.AddressU);
 	return 0;
-}	
+}
 
 void InitSamplers()
 {
@@ -201,7 +197,6 @@ void InitSamplers()
 GLRenderer::GLRenderer(ISystem* engine)
 	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
 {
-
 	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "GLRenderer");
 }
 
@@ -228,18 +223,18 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	InitCVars();
 	//m_Camera.InitCVars();
 	IWindow* result = m_Window = window;
-	bInFullScreen = fullscreen;
+	bInFullScreen			   = fullscreen;
 	if (window == nullptr)
 		return nullptr;
 	//=======================
 	InitConsoleCommands();
 	//=======================
 	glContextType = (int)AttributeType::Debug;
-	#if 0
+#if 0
 	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
 	else
 	glContextType = AttributeType::Core;
-	#endif
+#endif
 	const char* sGameName = gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName();
 	strcpy(m_WinTitle, sGameName);
 
@@ -247,7 +242,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen};
 	if (!m_Window->init(&wp))
 		return nullptr;
-    CryLog("window inited");
+	CryLog("window inited");
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();
@@ -270,21 +265,17 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load(gEnv->pConsole->GetCVar("r_ScreenShader")->GetString(), int(ShaderBinaryFormat::SPIRV))))
+	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
 	}
 
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", int(ShaderBinaryFormat::SPIRV))))
-	{
-		m_pSystem->Log("Error of loading auxgeom shader");
-	}
 	m_RenderAuxGeom = new CRenderAuxGeom();
 
 	CreateRenderTarget();
 
-	auto* dm				  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+	auto* dm			  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
 	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	{
@@ -292,15 +283,14 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 		dm = static_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
 		m_RenderTargets.push_back(Texture::create(
-			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),  
-			TextureType::LDR_RENDER_TARGET, buffer)
-		);
+			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),
+			TextureType::LDR_RENDER_TARGET, buffer));
 	}
 
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	perViewBuffer = PerViewBuffer::Create(2);
-	screenBuffer = ScreenBuffer::Create(11);
+	screenBuffer  = ScreenBuffer::Create(11);
 	//cam_width->Set(GetWidth());
 	//cam_height->Set(GetHeight());
 	return result;
@@ -346,13 +336,13 @@ void GLRenderer::Update(void)
 			m_MainReslovedFrameBuffer,
 			m_MainReslovedFrameBuffer->viewPort);
 		m_MainReslovedFrameBuffer->DrawToBackbuffer(
-	#if 0
+#if 0
 			[&]() -> Vec4 {
 				Vec4d r;
 				GetViewport(&r.x, &r.y, &r.z, &r.w);
 				return r;
 			}()
-	#endif
+#endif
 			Vec4(0, 0, GetWidth(), GetHeight()));
 	}
 	// Disable screenshot code path for pure release builds on consoles
@@ -498,10 +488,10 @@ void GLRenderer::FillSates()
 }
 
 #ifdef LINUX
-#include <experimental/filesystem>
+#	include <experimental/filesystem>
 using fs = std::experimental::filesystem;
 #else
-#include <filesystem>
+#	include <filesystem>
 namespace fs = std::filesystem;
 #endif
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
@@ -512,12 +502,12 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 	{
 #ifndef LINUX
 		int cnt = std::count_if(
-        fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
-        fs::directory_iterator::directory_iterator(),
+			fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
+			fs::directory_iterator::directory_iterator(),
 			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
 		return cnt;
 #else
-    return 0;
+		return 0;
 #endif
 	};
 
@@ -886,7 +876,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glm::mat4 model(1.0);
-	auto uv_projection	 = glm::mat4(1.0);
+	auto uv_projection = glm::mat4(1.0);
 
 	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
 	model = glm::scale(model, {w, h, 1.f});
@@ -905,7 +895,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 	m_ScreenShader->Use();
 	glProgramUniformHandleui64ARB(m_ScreenShader->Get(), glGetUniformLocation(m_ScreenShader->Get(), "screenTexture"), texture_id);
 
-	#if 0
+#if 0
 	glBindSampler(0, g_Samplers[(int)Samplers::Default]);
 	if (glIsSampler(g_Samplers[(int)Samplers::Default]))
 	{
@@ -915,7 +905,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 	{
 		CryError("is not sampler");
 	}
-	#endif
+#endif
 	DrawFullscreenQuad();
 	m_ScreenShader->Unuse();
 }
@@ -965,10 +955,10 @@ void GLRenderer::ShareWith(GLRenderer* renderer)
 void GLRenderer::CreateQuad()
 {
 	SVF_P3F_T2F verts[] = {
-		{{0, 1, 0}, {0,1}},
-		{{0, 0, 0}, {0,0}},
-		{{1, 1, 0}, {1,1}},
-		{{1, 0, 0}, {1,0}}};
+		{{0, 1, 0}, {0, 1}},
+		{{0, 0, 0}, {0, 0}},
+		{{1, 1, 0}, {1, 1}},
+		{{1, 0, 0}, {1, 0}}};
 	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
 	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
@@ -1001,9 +991,8 @@ int GLRenderer::CreateRenderTarget()
 	snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 	auto dm = reinterpret_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
 	m_RenderTargets.push_back(Texture::create(
-		Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),  
-		TextureType::LDR_RENDER_TARGET, buffer, false, true)
-	);
+		Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),
+		TextureType::LDR_RENDER_TARGET, buffer, false, true));
 	return m_RenderTargets.back()->getId();
 }
 
@@ -1023,9 +1012,7 @@ void GLRenderer::Flush()
 	pvb->ViewProjection	 = pvb->Projection * pvb->View;
 
 	pvb->Update();
-	m_AuxGeomShader->Use();
 	m_RenderAuxGeom->Flush();
-	m_AuxGeomShader->Unuse();
 }
 
 void GLRenderer::ShareResources(IRenderer* renderer)

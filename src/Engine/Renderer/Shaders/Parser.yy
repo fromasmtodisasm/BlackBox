@@ -100,7 +100,7 @@
 %initial-action
 {
     is_common = false;
-    CommonCode.clear();
+    Code.clear();
 }
 
 // %param { Driver &drv }
@@ -119,20 +119,9 @@
 
     #define GreenLog(...) gEnv->pLog->Log(__VA_ARGS__)
 
-    #if 0
-    #include "expressions/NumberExpression.h"
-    #include "expressions/AddExpression.h"
-    #include "expressions/MulExpression.h"
-    #include "expressions/DivExpression.h"
-    #include "expressions/SubstractExpression.h"
-    #include "expressions/IdentExpression.h"
-    #include "assignments/Assignment.h"
-    #include "assignments/AssignmentList.h"
-    #include "Program.h"
-    #endif
     #include "Effect.hpp"
 
-    std::vector<std::string> CommonCode;
+    std::vector<std::string> Code;
     bool is_common;
 
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
@@ -417,7 +406,7 @@ PASS {
 | PASS IDENTIFIER {
     SPass pass;
     pass.Name = $2.c_str();
-    pass.CommonCode = CommonCode;
+    pass.Code = Code;
     driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
@@ -514,7 +503,7 @@ glsl: shader_header '{' CODEBODY {
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
         if ($1 == "Common")
         {
-            CommonCode.push_back(driver.currentEffect->m_shaders.back().data);
+            Code.push_back(driver.currentEffect->m_shaders.back().data);
             is_common = false;
         }
         CryLog("Current shader[%s] code in file %s:\n%s", $1.data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());

@@ -31,6 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (InitializeEngine(startupParams))
 	{
 		startupParams.pSystem->Start();
+		startupParams.pSystem->Release();
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;

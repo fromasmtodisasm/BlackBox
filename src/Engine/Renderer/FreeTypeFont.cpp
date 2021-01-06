@@ -67,7 +67,7 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 					color[1] = newColor.g;
 					color[2] = newColor.b;
 					//sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
-					cur_c = Vec4(Vec3(Vec3(color[0], color[1], color[2]) / 255.f),1);
+					cur_c = Vec4(1.f, Vec3(color[2], color[1], color[0]) / 255.f);
 					continue;
 				}
 			}
@@ -91,13 +91,13 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
 		Vec2 uv_size		= Vec2(ch.Size) / 4096.f;
 		std::array<P3F_T2F, 6> vertices = {
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
 
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol(Vec4(cur_c)), uv_pos.x, uv_pos.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
+			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y},
 		};
 		m_CharBuffer.push_back(vertices);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
@@ -303,6 +303,7 @@ void FreeTypeFont::Submit()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gl::BindTexture2D(GL_TEXTURE_2D, texture);
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
+	SAFE_DELETE(m_VB);
 	auto vertex_cnt = 6 * m_CharBuffer.size();
 	m_VB = gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
 
@@ -316,7 +317,7 @@ void FreeTypeFont::Submit()
 
 	gl::BindTexture2D(GL_TEXTURE_2D, 0);
 	glDepthMask(GL_TRUE);
-	m_CharBuffer.clear();
+	m_CharBuffer.resize(0);
 }
 
 FreeTypeFont::~FreeTypeFont()

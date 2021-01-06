@@ -17,6 +17,20 @@
 #undef CryLog
 #define CryLog(format, ...) ScriptWarning(format, __VA_ARGS__)
 
+// Undefine malloc for memory manager itself..
+#undef malloc
+#undef realloc
+#undef free
+
+#if defined(_DEBUG) && !defined(LINUX)
+#	undef _CRTDBG_MAP_ALLOC
+#	define _CRTDBG_MAP_ALLOC
+#	include <stdlib.h>
+#	include <crtdbg.h>
+#	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+#	define new DEBUG_CLIENTBLOCK
+#endif
+
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
 static ISystem* gISystem = nullptr;
@@ -88,11 +102,24 @@ CScriptSystem::~CScriptSystem()
   }
 }
 
+void* luaAlloc(void* userData, void* ptr, size_t oldSize, size_t newSize)
+{
+	if (newSize == 0)
+	{
+		//CryModuleFree(ptr);
+		free(ptr);
+		return 0;
+	}
+	else
+		//return CryModuleRealloc(ptr, newSize);
+		return realloc(ptr, newSize);
+}
+
 bool CScriptSystem::Init(ISystem* pSystem)
 {
   gISystem = pSystem;
   m_pSystem = pSystem;
-  L = luaL_newstate();
+  L = lua_newstate(luaAlloc, nullptr);
   luaL_openlibs(L);
   CScriptObject::L = L; // Set lua state for script table class.
   CScriptObject::m_pSS = this;

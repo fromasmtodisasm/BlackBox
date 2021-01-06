@@ -460,7 +460,8 @@ static ITexture* splash = nullptr;
 bool CGame::Update()
 {
 	static const auto& render_game = true;
-	const bool bRenderFrame			   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
+	const bool bRenderFrame		   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
+	static int num_frames = 0x0ffffff;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	#ifdef USE_STEAM
@@ -533,7 +534,9 @@ bool CGame::Update()
 	if (bRenderFrame)
 		m_pSystem->RenderEnd();
 
-	return m_bUpdateRet;
+	num_frames--;
+
+	return m_bUpdateRet && num_frames;
 }
 
 void CGame::ExecScripts()

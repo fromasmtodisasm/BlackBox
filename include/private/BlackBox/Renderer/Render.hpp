@@ -201,7 +201,6 @@ class GLRenderer : public CRenderer
 	CCamera m_Camera;
 	// Shaders
 	BaseShaderProgramRef m_ScreenShader;
-	BaseShaderProgramRef m_AuxGeomShader;
 #if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
 	bool isDebug = true;
 #else

@@ -1,35 +1,44 @@
-Language GLSL
-#include "common.fx"
+Language HLSL
+#include "hlsl_common.fx"
 
-GLSLShader vert
+HLSLShader
 {
-    out  layout(location = 10) vec2 TexCoords;
+	struct VsOutput
+	{
+		float4 pos : SV_POSITION;
+		float2 tc: TEXCOORD0;
+	};
 
-    uniform layout(location = 1) mat4 model = mat4(1.0);
-    uniform layout(location = 2) mat4 uv_projection = mat4(1.0);
-
-    void main()
+	cbuffer ScreenBuffer : register(b11)
     {
-        gl_Position = GetOrthoProjMat() * model * vec4(aPos, 1.0f); 
-        TexCoords = (uv_projection * vec4(aTexCoords, 1.0, 1.0)).xy;
+        float4x4 model;
+        float4x4 uv_projection;
+        float4 color;
+        float alpha;
+	};
+
+    struct VsInput
+	{
+		[[vk::location(0)]]	float3 Pos : POSITION;
+		[[vk::location(2)]] float2 TC : TEXCOORD0;
+	};
+
+
+    VsOutput VSMain(VsInput IN)
+    {
+		VsOutput OUT;
+        OUT.pos = mul(mul(GetOrthoProjMat(), model), float4(IN.Pos, 1.0));
+        OUT.tc = mul(uv_projection, float4(IN.TC, 1.0, 1.0)).xy;
+    	return OUT;
     }
-}
 
-GLSLShader frag
-{
-    out layout(location = 0) vec4 FragColor;
-    
-    in layout(location = 10) vec2 TexCoords;
+    Texture2D screenTexture : register(t0);
+    SamplerState linearSampler : register(s0);
 
-    uniform sampler2D screenTexture;
-
-    uniform layout(location = 3) float alpha = 0.9;
-    uniform layout(location = 4) vec4 color;
-
-    void main()
+    float4 PSMain(VsOutput IN) : SV_Target0
     { 
-        vec2 uv = TexCoords; 
-        FragColor = vec4(texture(screenTexture, uv)*color);
+        float2 uv = IN.tc; 
+        return screenTexture.Sample(linearSampler, IN.tc)*float4(color.rgb, alpha);
     }
 }
 
@@ -37,13 +46,15 @@ technique main
 {
     pass p0
     {
+        /*
         InputLayout
         {
             vec3 aPos : POSITION
             vec2 aTexCoords : TEXCOORD
         }
+        */
 
-        VertexShader = vert
-        PixelShader = frag
+        VertexShader = VSMain
+        PixelShader = PSMain
     }
 }

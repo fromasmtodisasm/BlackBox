@@ -1,63 +1,52 @@
-Language GLSL
-/*
-#if 0
-Extension
+Language HLSL
+
+#include "hlsl_common.fx"
+
+HLSLShader
 {
-    GL_ARB_bindless_texture : require
-}
-#endif
-*/
-#include "common.fx"
-GLSLShader
-{
-    uniform layout(std140, binding = 15) SpriteBuffer
+    struct VsOutput
     {
-        mat4 projection;
-        mat4 model;
-        mat4 uv_projection;
-        vec3 textColor;
-        vec2 uv;
+        float4 Position : SV_Position;
+        float2 TexCoords : TEXCOORD;
+        float4 Color : COLOR;
     };
 
-}
-GLSLShader vert
-{
-    out layout(location = 0) vec2 TexCoords;
-    out layout(location = 1) vec4 Color;
+	struct VsInput
+	{
+		[[vk::location(0)]]	float3 Pos : POSITION;
+		[[vk::location(5)]] float4 Color : COLOR0;
+		[[vk::location(2)]] float2 TC : TEXCOORD0;
+	};
 
-    void main()
+    VsOutput VSMain(VsInput IN)
     {
-        gl_Position = vec4(aPos, 1.0);
-        TexCoords = vec4(aTex, 0.f, 1.0).xy;
-        Color = aCol;
+        VsOutput Output;
+        Output.Position = float4(IN.Pos, 1.0);
+        Output.TexCoords = IN.TC;
+        Output.Color = IN.Color;
+        return Output;
     }  
-}
+    Texture2D text : register(t0);
+    SamplerState textSampler : register(s0);
 
-GLSLShader frag
-{
-    in layout(location = 0) vec2 TexCoords;
-    in layout(location = 1) vec4 Color;
-    out layout(location = 0) vec4 color;
-
-    uniform layout(binding = 0) sampler2D text;
-
-    void main()
+    float4 PSMain(VsOutput IN) : SV_Target0
     {    
-        vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
-        color = vec4(Color) * sampled;
+        return IN.Color * float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
     }
 }
 
 Technique main {
     Pass p0
     {
+        /*
         InputLayout
         {
             vec3 aPos : POSITION
             vec4 aCol : COLOR
             vec2 aTex : TEXCOORD
         }
-        VertexShader = vert
-        PixelShader = frag
+        */
+        VertexShader = VSMain
+        PixelShader = PSMain
     }
 }

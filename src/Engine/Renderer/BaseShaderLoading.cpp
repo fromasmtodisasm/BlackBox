@@ -347,25 +347,30 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 #endif
 }
 
-
-#define OUTPUT_SPIRV_FORMAT                  ".spv"
-bool CompileToSpirv(const char* name, const char* pEntrypoint, const std::vector<std::string>& code, IShader::Type type, ShaderLangId langId)
+void SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type)
 {
 	string stage(GetGLSLANGTargetName(type));
-	std::ofstream output_file(string("bin/shadercache/shader_") + stage +  ".glsl");
+	std::ofstream output_file(string("bin/shadercache/shader_") + stage +  ".hlsl");
 	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
 	std::copy(code.begin(), code.end(), output_iterator);
 	output_file.close();
+}
+
+#define OUTPUT_SPIRV_FORMAT                  ".spv"
+bool CompileToSpirv(const char* name, const char* pEntrypoint, IShader::Type type, ShaderLangId langId)
+{
 	//else if (vkShaderCompiler == STR_VK_SHADER_COMPILER_GLSLANG)
 	std::string targetEnv = "opengl";
+	string stage(GetGLSLANGTargetName(type));
 	
 	//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
 
 	char params[1001];
 	const char* extra = nullptr;
 	extra			  = langId == ShaderLangId::Hlsl ? "-D" : "";
+	const char *ext	  = langId == ShaderLangId::Hlsl ? ".hlsl" : ".glsl";
 	sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s %s",
-				"bin/shadercache/shader_", stage.data(), ".glsl",
+				"bin/shadercache/shader_", stage.data(), ext,
 				"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
 				targetEnv.c_str(),
 				stage.data(),
@@ -399,25 +404,58 @@ CShader* CShader::LoadSpirvFromFile(const char* name, const char* entry, IShader
 
 }
 
+bool CompileToGlsl(const char* name, IShader::Type type, ShaderLangId langId)
+{	
+	string stage(GetGLSLANGTargetName(type));
+	std::string targetEnv = "opengl";
+	
+	//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
+
+	char params[1001];
+	const char* extra = nullptr;
+	extra			  = langId == ShaderLangId::Hlsl ? "-D" : "";
+	sprintf(params, "--no-es --version 460 core --output %s%s%s %s%s_%s%s",
+				"bin/shadercache/shader_", stage.data(), ".glsl",
+				"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT
+				);
+
+	CryLog("compiler string: %s", params);
+
+	return ShellExecute("spirv-cross.exe", params, gEnv->pSystem->GetRootFolder());
+
+
+}
 
 ShaderRef CShader::LoadFromEffect(IEffect* pEffect, CShader::Type type, bool compile_to_spirv)
 {
 	auto tech = pEffect->GetTechnique(0);
 	auto pass = tech->GetPass(0);
-	auto code = pass->CommonCode;
+	auto code = pass->Code;
 
 	if (type == IShader::E_VERTEX)
 	{
 		for (auto& in : pass->InputLayout)
 			code.push_back(in);
 	}
-	code.push_back(pass->Shaders[type]);
 	if (compile_to_spirv)
 	{
-		auto entry = GetSpirvEntry(pEffect->GetLangId(), type);
-		if (CompileToSpirv(pEffect->GetName(), entry, code, type, pEffect->GetLangId()))
+		auto entry = pass->EntryPoints[type].data();
+		SaveHlslToDisk(code, type);
+		if (CompileToSpirv(pEffect->GetName(), entry, type, pEffect->GetLangId()))
 		{
-			return LoadSpirvFromFile(pEffect->GetName(), entry, type);
+			if (pEffect->GetLangId() == ShaderLangId::Hlsl)
+			{
+				CompileToGlsl(pEffect->GetName(), type, pEffect->GetLangId());
+				if (CompileToSpirv(pEffect->GetName(), "main", type, ShaderLangId::Glsl))
+				{
+					return LoadSpirvFromFile(pEffect->GetName(), "main", type);
+				}
+			}
+			else
+			{
+				return LoadSpirvFromFile(pEffect->GetName(), entry, type);
+			}
+			return nullptr;
 		}
 		return nullptr;
 	}
@@ -621,11 +659,11 @@ CShader * CShader::LoadSpirvFromMemory(const char* name, const char* entry, cons
 	auto shader = new CShader(stage);
 	if (shader->Create())
 	{
-		glShaderBinary(1, &shader->m_Shader, GL_SHADER_BINARY_FORMAT_SPIR_V, code.data(), code.size());
+		glCheck(glShaderBinary(1, &shader->m_Shader, GL_SHADER_BINARY_FORMAT_SPIR_V, code.data(), code.size()));
 
 		// Specialize the vertex shader.
 		//std::string vsEntrypoint = "main"; // Get VS entry point name
-		glSpecializeShader(shader->m_Shader, entry, 0, nullptr, nullptr);
+		glCheck(glSpecializeShader(shader->m_Shader, entry, 0, nullptr, nullptr));
 
 		// Specialization is equivalent to compilation.
 		GLint isCompiled = 0;

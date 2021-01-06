@@ -4,6 +4,8 @@
 #include <BlackBox/Renderer/VertexFormats.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 
+using BB_VERTEX	 = SVF_P3F_N_C4B;
+
 struct SAuxPushBufferEntry
 {
 	SAuxPushBufferEntry() = default;
@@ -19,9 +21,6 @@ struct alignas(16) SAABBConstantBuffer
 {
 	Mat4 Model;
 	Vec3 LightPos;
-	bool bTonemap;
-	int dbgmode = 0;
-	float Alpha;
 	Vec4 Color;
 	Vec3 Eye;
 };
@@ -32,6 +31,8 @@ using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
 
 using AuxPushBuffer	  = std::vector<SAuxPushBufferEntry>;
 using AuxVertexBuffer = std::vector<SAuxVertex>;
+using AuxIndexBuffer = std::vector<vtx_idx>;
+
 
 class CRenderAuxGeom : public IRenderAuxGeom
 {
@@ -56,8 +57,11 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	AuxVertexBuffer m_VB;
 	CVertexBuffer* m_HardwareVB = nullptr;
 	ShaderProgramRef m_BoundingBoxShader;
+	BaseShaderProgramRef m_AuxGeomShader;
 
 	SAABBBufferPtr  m_aabbBufferPtr;
+
+	std::vector<BB_VERTEX> m_BBVerts;
 
 	int m_CurrentVB_Size = INIT_VB_SIZE;
 	int dbg_mode		 = 0;

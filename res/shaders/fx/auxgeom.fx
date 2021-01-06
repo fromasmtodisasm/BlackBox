@@ -8,10 +8,7 @@ HLSLShader
 		float4 pos : SV_POSITION;
 		float4 color: COLOR;
 	};
-}
 
-HLSLShader vert
-{
 	struct VsInput
 	{
 		[[vk::location(0)]]	float3 Pos : POSITION;
@@ -19,7 +16,7 @@ HLSLShader vert
 		[[vk::location(2)]] float2 TC : TEXCOORD0;
 	};
 
-	VsOutput main(VsInput IN)
+	VsOutput VSMain(VsInput IN)
 	{
 		VsOutput OUT;
 		OUT.pos = mul(GetViewProjMat(), float4(IN.Pos, 1.0));
@@ -27,11 +24,7 @@ HLSLShader vert
 		return OUT;
 	}
  
-}
-
-HLSLShader frag
-{
-	float4 main(VsOutput IN) : SV_Target0
+	float4 PSMain(VsOutput IN) : SV_Target0
 	{ 
 		return float4(IN.color);
 	}
@@ -51,8 +44,8 @@ technique AuxGeometry
 	}
 	*/
 	
-    VertexShader = vert
-    PixelShader = frag
+    VertexShader = VSMain
+    PixelShader = PSMain
   }
   pass p1
   {
