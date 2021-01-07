@@ -117,6 +117,7 @@ struct alignas(16) SPerViewConstantBuffer
 	Mat4 OrthoProjection;
 	Mat4 View;
 	Mat4 ViewProjection;
+	Vec3 Eye;
 };
 struct alignas(16) SScreenConstantBuffer
 {
@@ -1010,6 +1011,7 @@ void GLRenderer::Flush()
 	pvb->View			 = m_Camera.GetViewMatrix();
 	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
 	pvb->ViewProjection	 = pvb->Projection * pvb->View;
+	pvb->Eye			 = gEnv->pSystem->GetViewCamera().GetPos();
 
 	pvb->Update();
 	m_RenderAuxGeom->Flush();

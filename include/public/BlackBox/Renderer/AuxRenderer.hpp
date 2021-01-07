@@ -21,8 +21,6 @@ struct alignas(16) SAABBConstantBuffer
 {
 	Mat4 Model;
 	Vec3 LightPos;
-	Vec4 Color;
-	Vec3 Eye;
 };
 
 using SAABBBuffer = gl::ConstantBuffer<SAABBConstantBuffer>;
@@ -37,6 +35,7 @@ using AuxIndexBuffer = std::vector<vtx_idx>;
 class CRenderAuxGeom : public IRenderAuxGeom
 {
 	const int INIT_VB_SIZE = 1024 * 4;
+	using BoundingBox = std::array<BB_VERTEX, 36>;
 
   public:
 	CRenderAuxGeom();
@@ -49,6 +48,8 @@ class CRenderAuxGeom : public IRenderAuxGeom
 
   private:
 	void AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive);
+	void DrawAABBs();
+	void DrawLines();
 
   private:
 	CVertexBuffer* m_BoundingBox	= nullptr;
@@ -61,7 +62,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 
 	SAABBBufferPtr  m_aabbBufferPtr;
 
-	std::vector<BB_VERTEX> m_BBVerts;
+	std::vector<BoundingBox> m_BBVerts;
 
 	int m_CurrentVB_Size = INIT_VB_SIZE;
 	int dbg_mode		 = 0;

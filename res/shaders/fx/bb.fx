@@ -55,8 +55,6 @@ HLSLShader
     {
         float4x4 model;
         float3 lightPos;
-        float4 color;
-        float3 eye;
 	};
 
     struct VS_OUT
@@ -64,6 +62,7 @@ HLSLShader
         float4 pos : SV_Position;
         float3 fragPos : POSITION;
         float3 normal : NORMAL;
+        float4 color : COLOR;
     };
 
 
@@ -71,7 +70,7 @@ HLSLShader
 	{
 		[[vk::location(0)]] float3 pos : POSITION;
 		[[vk::location(1)]] float3 normal : NORMAL;
-		[[vk::location(5)]] float2 color : COLOR;
+		[[vk::location(5)]] float4 color : COLOR;
 	};
     
     VS_OUT VSMain(VsInput IN)
@@ -80,6 +79,7 @@ HLSLShader
         OUT.pos = mul(mul(GetViewProjMat(), model), float4(IN.pos, 1.0));
         OUT.fragPos = (float3)(model * float4(IN.pos, 1.0));
         OUT.normal = mul(((float3x3)model), IN.normal);
+        OUT.color = IN.color;
         return OUT;
     }
 
@@ -98,12 +98,12 @@ HLSLShader
         outColor.diffuse = float3(0);
         outColor.specular = float3(0);
 
-        float3 _color = (float3)color;
+        float3 _color = IN.color.xyz;
 
 
         outColor.ambient = ambient()*_color;
         outColor.diffuse = (float3)diffuse(lightPos, IN.fragPos, IN.normal);//*_color;
-        outColor.specular = 0.8*_color*specular(lightPos, IN.fragPos, eye, IN.normal);
+        outColor.specular = 0.8*_color*specular(lightPos, IN.fragPos, perViewCB.eye, IN.normal);
 
         float3 result = outColor.ambient + outColor.diffuse + outColor.specular;
 

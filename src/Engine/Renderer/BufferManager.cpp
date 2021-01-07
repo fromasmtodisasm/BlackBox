@@ -281,7 +281,14 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
 
 void CBufferManager::Update(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs, int Type)
 {
-	gl::NamedBufferSubData(dest->m_VS[VSF_GENERAL].m_VertBuf.m_nID, nOffs + dest->m_VS[VSF_GENERAL].m_nBufOffset, vertexcount * gVertexSize[dest->m_vertexformat], src);
+	if (vertexcount <= dest->m_NumVerts)
+	{
+		gl::NamedBufferSubData(dest->m_VS[VSF_GENERAL].m_VertBuf.m_nID, nOffs + dest->m_VS[VSF_GENERAL].m_nBufOffset, vertexcount * gVertexSize[dest->m_vertexformat], src);
+	}
+	else
+	{
+		gl::NamedBufferData(dest->m_VS[VSF_GENERAL].m_VertBuf.m_nID, vertexcount * gVertexSize[dest->m_vertexformat], src, GL_DYNAMIC_DRAW);
+	}
 }
 
 void CBufferManager::Update(SVertexStream* dest, const void* src, int indexcount, bool bUnLock)

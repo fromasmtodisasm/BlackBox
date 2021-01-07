@@ -146,6 +146,8 @@ struct AABBInstanceData
 {
 };
 
+bool first_draw = true;
+
 //TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
@@ -154,28 +156,82 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	const auto angle	 = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
 	const auto size		 = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
 	const auto center	 = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
-	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size) * glm::rotate(glm::mat4(1), angle, {0, 1, 0});
+	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
-	m_aabbBufferPtr->Model	  = transform;
-	m_aabbBufferPtr->Color	  = Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
-	m_aabbBufferPtr->LightPos = Vec3(300);
-	m_aabbBufferPtr->Eye	  = gEnv->pSystem->GetViewCamera().GetPos();
-	m_aabbBufferPtr->Update();
-
+	if (first_draw)
 	{
-		RSS(gEnv->pRenderer, BLEND, true);
-		RSS(gEnv->pRenderer, CULL_FACE, false);
-		shader->Use();
-#if 0
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
-#else
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, m_BB_IndexBuffer->m_nItems, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
-#endif
+		m_aabbBufferPtr->Model	  = transform;
+		m_aabbBufferPtr->LightPos = Vec3(300);
+		m_aabbBufferPtr->Update();
 	}
-	shader->Unuse();
-	//gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));
+	
+	std::array<BB_VERTEX, 36> verts = {
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{ 0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f,  0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f,  0.5f, -0.5f, 1.f}), Vec3{}, UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+	};
+	m_BBVerts.emplace_back(verts);
+}
+void CRenderAuxGeom::DrawAABBs()
+{
+
+	m_BoundingBoxShader->Use();
+	gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
+	auto size	  = m_BBVerts.size() * 36;
+	m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, VERTEX_FORMAT_P3F_N_C4B, "BoundingBox", false);
+	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+	gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+	m_BoundingBoxShader->Unuse();
+
+	m_BBVerts.resize(0);
+}
+
+void CRenderAuxGeom::DrawLines()
+{
+	m_AuxGeomShader->Use();
+	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
+	int offset = 0;
+	for (auto& pb : m_auxPushBuffer)
+	{
+		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
+		offset += pb.m_numVertices;
+	}
+	m_AuxGeomShader->Unuse();
+	m_VB.resize(0);
+	m_auxPushBuffer.resize(0);
 }
 
 void CRenderAuxGeom::DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2)
@@ -237,19 +293,11 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 
 void CRenderAuxGeom::Flush()
 {
-	//RSS(gEnv->pRenderer, DEPTH_TEST, false);
 	RSS(gEnv->pRenderer, CULL_FACE, false);
-	//RSS(gEnv->pRenderer, BLEND, true);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	m_AuxGeomShader->Use();
-	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
-	int offset = 0;
-	for (auto& pb : m_auxPushBuffer)
+	DrawLines();
 	{
-		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
-		offset += pb.m_numVertices;
+		RSS(gEnv->pRenderer, DEPTH_TEST, true);
+		DrawAABBs();
 	}
-	m_AuxGeomShader->Unuse();
-	m_VB.resize(0);
-	m_auxPushBuffer.resize(0);
+	//first_draw = true;
 }

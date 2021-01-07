@@ -12,6 +12,7 @@ HLSLShader
 			float4x4 ortho_projection;
 			float4x4 view;
 			float4x4 view_proj;
+			float3 eye;
 		}perViewCB;
 	}
 
