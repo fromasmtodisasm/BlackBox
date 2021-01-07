@@ -175,6 +175,8 @@ namespace gui
 
 //float CameraRayLength = 40.f;
 
+int g_bRenderGame = true;
+
 void LoadHistory()
 {
 	std::ifstream is("history.txt");
@@ -490,8 +492,11 @@ bool CGame::Update()
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 				m_pClient->Update();
 				
+				if (g_bRenderGame)
+				{
+					Render();
+				}
 
-				Render();
 
 			}
 
