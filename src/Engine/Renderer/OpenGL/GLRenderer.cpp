@@ -203,10 +203,6 @@ GLRenderer::GLRenderer(ISystem* engine)
 
 GLRenderer::~GLRenderer()
 {
-	SAFE_DELETE(m_RenderAuxGeom);
-	SAFE_DELETE(m_BufferManager);
-	SAFE_DELETE(m_VertexBuffer);
-
 	for (auto* t : m_RenderTargets)
 	{
 		SAFE_RELEASE(t);
@@ -546,40 +542,6 @@ void GLRenderer::InitConsoleCommands() const
 	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
 	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
 	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
-}
-
-CVertexBuffer* GLRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
-{
-	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
-}
-
-void GLRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
-{
-	m_BufferManager->Release(bufptr);
-}
-
-void GLRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)
-{
-	m_BufferManager->Draw(src, indicies, numindices, offsindex, prmode, vert_start, vert_stop, mi);
-}
-
-void GLRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs /* = 0*/, int Type /* = 0*/)
-{
-	m_BufferManager->Update(dest, src, vertexcount, bUnLock, nOffs, Type);
-}
-
-void GLRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
-{
-	m_BufferManager->Create(dest, src, indexcount);
-}
-
-void GLRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock /* = true*/)
-{
-	m_BufferManager->Update(dest, src, indexcount, bUnLock);
-}
-
-void GLRenderer::ReleaseIndexBuffer(SVertexStream* dest)
-{
 }
 
 void GLRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)

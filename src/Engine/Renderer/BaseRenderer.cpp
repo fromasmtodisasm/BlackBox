@@ -5,6 +5,13 @@
 
 int RenderCVars::CV_r_GetScreenShot;
 
+CRenderer::~CRenderer()
+{
+	SAFE_DELETE(m_RenderAuxGeom);
+	SAFE_DELETE(m_BufferManager);
+	SAFE_DELETE(m_VertexBuffer);
+}
+
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 {
 	static int displayInUse = 0; /* Only using first display */
@@ -84,3 +91,39 @@ void RenderCVars::InitCVars()
 RenderCVars::~RenderCVars()
 {
 }
+
+CVertexBuffer* CRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
+{
+	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
+}
+
+void CRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
+{
+	m_BufferManager->Release(bufptr);
+}
+
+void CRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)
+{
+	m_BufferManager->Draw(src, indicies, numindices, offsindex, prmode, vert_start, vert_stop, mi);
+}
+
+void CRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs /* = 0*/, int Type /* = 0*/)
+{
+	m_BufferManager->Update(dest, src, vertexcount, bUnLock, nOffs, Type);
+}
+
+void CRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
+{
+	m_BufferManager->Create(dest, src, indexcount);
+}
+
+void CRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock /* = true*/)
+{
+	m_BufferManager->Update(dest, src, indexcount, bUnLock);
+}
+
+void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
+{
+
+}
+

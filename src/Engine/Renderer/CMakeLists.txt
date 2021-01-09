@@ -85,7 +85,7 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
-)
+ "D3DRenderer.h" "D3DRenderer.cpp")
 
 target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp

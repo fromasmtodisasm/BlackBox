@@ -76,9 +76,9 @@ struct Hardware
 };
 
 class GLRenderer : public CRenderer
-	, public IConsoleVarSink
+	/*, public IConsoleVarSink
 	, public IInputEventListener
-	, public ISystemEventListener
+	, public ISystemEventListener*/
 {
   public:
 	GLRenderer(ISystem* engine);
@@ -136,13 +136,6 @@ class GLRenderer : public CRenderer
 	virtual void DrawFullscreenQuad() override;
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) override;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
-	virtual CVertexBuffer* CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic = false) override;
-	virtual void ReleaseBuffer(CVertexBuffer* bufptr) override;
-	virtual void DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_stop = 0, CMatInfo* mi = NULL) override;
-	virtual void UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs = 0, int Type = 0) override;
-	virtual void CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount) override;
-	virtual void UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) override;
-	virtual void ReleaseIndexBuffer(SVertexStream* dest) override;
 	virtual void ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) override;
 	virtual int UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) override;
 	virtual int UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) override;
@@ -228,10 +221,6 @@ class GLRenderer : public CRenderer
 	//std::vector<SVertexPoolEntry> m_VertexBufferPool;
 	int m_FrameID = 0;
 
-	CRenderAuxGeom* m_RenderAuxGeom;
-	CBufferManager* m_BufferManager;
-
-	CVertexBuffer* m_VertexBuffer = nullptr;
 
 	std::vector<CShaderProgram*> m_Shaders;
 	FrameBufferObject* m_MainMSAAFrameBuffer;

@@ -1,6 +1,8 @@
 #pragma once
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/Renderer/AuxRenderer.hpp>
+#include <BlackBox/Renderer/BufferManager.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -24,13 +26,17 @@ class RenderCVars
 	int r_Vsync		   = true;
 	int r_DisplayIndex = 0;
 
-
 	static int CV_r_GetScreenShot;
 };
 
 class CRenderer : public RenderCVars
 	, public IRenderer
+	, public IConsoleVarSink
+	, public IInputEventListener
+	, public ISystemEventListener
 {
+  public:
+	~CRenderer();
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) = 0;
 
@@ -49,6 +55,23 @@ class CRenderer : public RenderCVars
 	virtual void GetViewport(int* x, int* y, int* width, int* height)			  = 0;
 	virtual void SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) = 0;
 	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0)  = 0;
+
+	//! Create a vertex buffer
+	virtual CVertexBuffer* CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false) final;
+
+	//! Release a vertex buffer
+	virtual void ReleaseBuffer(CVertexBuffer* bufptr) final;
+
+	//! Draw a vertex buffer
+	virtual void DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_stop = 0, CMatInfo* mi = NULL) final;
+
+	//! Update a vertex buffer
+	virtual void UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs = 0, int Type = 0) final;
+
+	virtual void CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount) final;
+	//! Update indicies
+	virtual void UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) final;
+	virtual void ReleaseIndexBuffer(SVertexStream* dest) final;
 
 	//! Draw a bbox specified by mins/maxs (debug puprposes)
 	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) = 0;
@@ -121,4 +144,12 @@ class CRenderer : public RenderCVars
 
 	//virtual IShaderProgram* Sh_Load(ShaderDesc const& desc) = 0;
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
+
+	//private:
+
+	CRenderAuxGeom* m_RenderAuxGeom;
+	CBufferManager* m_BufferManager;
+
+	CVertexBuffer* m_VertexBuffer = nullptr;
+
 };

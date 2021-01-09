@@ -363,6 +363,39 @@ struct IRenderCallback
 	virtual void CallBack(Type type) = 0;
 };
 
+//! \cond INTERNAL
+//! Describes rendering viewport dimensions
+struct SRenderViewport
+{
+	int   x      = 0;
+	int   y      = 0;
+	int   width  = 0;
+	int   height = 0;
+	float zmin   = 0.f;
+	float zmax   = 1.f;
+
+	SRenderViewport() {}
+
+	SRenderViewport(int newX, int newY, int newWidth, int newHeight)
+		: x(newX)
+		, y(newY)
+		, width(newWidth)
+		, height(newHeight)
+		, zmin(0.0f)
+		, zmax(1.0f)
+	{}
+
+	bool operator==(const SRenderViewport& v)
+	{
+		return x == v.x && y == v.y && width == v.width && height == v.height && zmin == v.zmin && zmax == v.zmax;
+	}
+	bool operator!=(const SRenderViewport& v)
+	{
+		return !(*this == v);
+	}
+};
+//! \endcond
+
 struct IRenderer
 {
 	enum class State
