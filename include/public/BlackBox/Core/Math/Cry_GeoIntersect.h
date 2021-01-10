@@ -21,7 +21,7 @@
 # pragma once
 #endif
 
-#include <Cry_Geo.h>
+#include <BlackBox/Core/Math/Cry_Geo.h>
 
 //////////////////////////////////////////////////////////////////////
 namespace Intersect 

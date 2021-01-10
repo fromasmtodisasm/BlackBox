@@ -142,7 +142,7 @@ namespace Cry
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
 #if !defined(_DEBUG) && !defined(CRY_UBSAN)
-#define ILINE
+#define ILINE __forceinline
 #else
 #define ILINE inline
 #endif

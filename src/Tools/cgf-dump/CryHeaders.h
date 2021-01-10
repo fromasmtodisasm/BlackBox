@@ -14,7 +14,7 @@
 #ifndef __CS_HEADERS_H__
 #define __CS_HEADERS_H__
 
-#include "Cry_Math.h"
+#include "BlackBox/Core/Math/Cry_Math.h"
 
 enum ChunkTypes
 {
@@ -636,12 +636,12 @@ struct MTL_CHUNK_DESC_0744
 			float Dyn_Bounce;
 			float Dyn_StaticFriction;
 			float Dyn_SlidingFriction;
-		} std;
+		}Std;
 
 		struct
 		{
 			int nChildren;
-		} multi;
+		}multi;
 	};
 };
 
@@ -684,12 +684,12 @@ struct MTL_CHUNK_DESC_0745
 			float Dyn_Bounce;
 			float Dyn_StaticFriction;
 			float Dyn_SlidingFriction;
-		} std;
+		}Std;
 
 		struct
 		{
 			int nChildren;
-		} multi;
+		}multi;
 	};
 };
 
@@ -733,12 +733,12 @@ struct MTL_CHUNK_DESC_0746
 			float Dyn_Bounce;
 			float Dyn_StaticFriction;
 			float Dyn_SlidingFriction;
-		} std;
+		}Std;
 
 		struct
 		{
 			int nChildren;
-		} multi;
+		}multi;
 	};
 };
 
