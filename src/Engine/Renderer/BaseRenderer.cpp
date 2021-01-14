@@ -129,17 +129,11 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	strcpy(m_WinTitle, sGameName);
 
 	CryLog("Creating window called '%s' (%dx%d)", m_WinTitle, width, height);
-	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen};
+	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen, RenderBackend::GL};
 	if (!m_Window->init(&wp))
 		return nullptr;
 	CryLog("window inited");
 	#ifdef GL_RENDERER
-#if 0
-	glContextType = (int)AttributeType::Debug;
-	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
-	else
-	glContextType = AttributeType::Core;
-#endif
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();

@@ -21,6 +21,12 @@ typedef void* Params;
 typedef void* GLContext;
 typedef void* DisplayMode;
 
+enum class RenderBackend
+{
+	GL,
+	DX
+};
+
 struct IWindow
 {
 	struct SInitParams
@@ -34,6 +40,7 @@ struct IWindow
 		int zbpp;
 		int sbits;
 		bool fullscreen;
+		RenderBackend backend;
 	};
 	virtual void Release()						= 0;
 	virtual bool create(Params params)			= 0;

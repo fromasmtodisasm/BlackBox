@@ -22,7 +22,7 @@ public:
   CSDLWindow(std::string = DEFAULT_TITLE, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
   ~CSDLWindow();
 
-  // IWindow interface
+  //symotion-prefix) IWindow interface
   virtual bool init(SInitParams* pInitParams) override;
   virtual void update() override;
   virtual void clear() override;
@@ -41,7 +41,9 @@ public:
 public:
   virtual void* getHandle() override;
 private:
-  bool Create(int width, int height, bool fullscreen);
+  bool Create(int width, int height, bool fullscreen, RenderBackend backend);
+  bool CreateDx(int width, int height, bool fullscreen);
+  bool InitForGl();
   void SelectDisplay(int &x, int &y, int w, int h);
   void handleEvent(SDL_Event& event);
   void SetIcon(char* path);
