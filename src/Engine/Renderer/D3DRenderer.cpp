@@ -34,10 +34,6 @@ void CD3DRenderer::DrawFullscreenQuad()
 {
 }
 
-void CD3DRenderer::Set2DMode(bool enable, int ortox, int ortoy)
-{
-}
-
 ITechniqueManager* CD3DRenderer::GetITechniqueManager()
 {
 	return nullptr;

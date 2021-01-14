@@ -10,6 +10,7 @@
 #include <BlackBox/System/IConsole.hpp>
 
 #include "Shaders/FxParser.h"
+#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
 
@@ -120,6 +121,7 @@ class CRenderer : public RenderCVars
 	~CRenderer();
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) = 0;
+	virtual bool InitOverride()																													   = 0;
 
 	//! Changes resolution of the window/device (doen't require to reload the level
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) = 0;
@@ -163,7 +165,9 @@ class CRenderer : public RenderCVars
 	//! Get the renderer camera
 	virtual const CCamera& GetCamera() final;
 
-	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen) final;
+	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen = 0) final;
+
+	void Set2DMode(bool enable, int ortox, int ortoy) final;
 
 	//! Change display size
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) = 0;
@@ -241,6 +245,31 @@ class CRenderer : public RenderCVars
 	void CreateQuad();
 
 protected:
+
+	struct alignas(16) SPerViewConstantBuffer
+	{
+		Mat4 Projection;
+		Mat4 OrthoProjection;
+		Mat4 View;
+		Mat4 ViewProjection;
+		Vec3 Eye;
+	};
+	struct alignas(16) SScreenConstantBuffer
+	{
+		glm::mat4 Model;
+		glm::mat4 UvProjection;
+		glm::vec4 Color;
+		float Alpha;
+	};
+
+	using PerViewBuffer	   = gl::ConstantBuffer<SPerViewConstantBuffer>;
+	using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
+	PerViewBufferPtr perViewBuffer;
+
+	using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
+	using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
+	ScreenBufferPtr screenBuffer;
+
 	void InitConsoleCommands() const;
 
 	//private:
@@ -262,6 +291,13 @@ protected:
 	CBufferManager* m_BufferManager;
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
+	BaseShaderProgramRef m_ScreenShader;
+
+	FrameBufferObject* m_MainMSAAFrameBuffer;
+	FrameBufferObject* m_MainReslovedFrameBuffer;
+
+	std::vector<Texture*> m_RenderTargets;
+	void* context;
 
 	bool transit_to_FS = false;
 	bool bIsActive	   = true;

@@ -115,7 +115,6 @@ class GLRenderer : public CRenderer
 	virtual void ClearColorBuffer(const Vec3 vColor) override;
 
 	virtual void DrawFullscreenQuad() override;
-	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
 
 	virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
 
@@ -132,7 +131,7 @@ class GLRenderer : public CRenderer
 	virtual void ShareResources(IRenderer* renderer) override;
 
   private:
-	void GlInit();
+	bool InitOverride() override;
 	void FillSates();
 	void PrintHardware();
 	void AquireVB();
@@ -145,7 +144,6 @@ class GLRenderer : public CRenderer
 	const int antialiassing	  = 8;
 	std::shared_ptr<OpenglDebuger> glDebug;
 	// Shaders
-	BaseShaderProgramRef m_ScreenShader;
 #if defined(_DEBUG) || defined(GL_DEBUG) || !defined(NDEBUG)
 	bool isDebug = true;
 #else
@@ -160,9 +158,6 @@ class GLRenderer : public CRenderer
 
 	std::map<State, GLenum> stateMap;
 
-	HWND m_HWND;
-	void* context;
-
 	Vec4 m_clearColor = {
 		0.2, 0.2, 0.2, 1.0
 		//0.0, 0.0, 0.0
@@ -170,12 +165,8 @@ class GLRenderer : public CRenderer
 
 	Hardware m_Hardware;
 
-	//std::vector<SVertexPoolEntry> m_VertexBufferPool;
 	std::vector<CShaderProgram*> m_Shaders;
-	FrameBufferObject* m_MainMSAAFrameBuffer;
-	FrameBufferObject* m_MainReslovedFrameBuffer;
 	IRenderCallback* m_pRenderCallback = nullptr;
-	std::vector<Texture*> m_RenderTargets;
 
 };
 

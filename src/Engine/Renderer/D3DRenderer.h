@@ -14,7 +14,6 @@ public:
 	virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
 	virtual int CreateRenderTarget() override;
 	virtual void DrawFullscreenQuad() override;
-	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
 	virtual ITechniqueManager* GetITechniqueManager() override;
 	virtual IFont* GetIFont() override;
 	virtual float GetDepthValue(int x, int y) override;

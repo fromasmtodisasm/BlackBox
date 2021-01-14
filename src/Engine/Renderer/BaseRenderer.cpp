@@ -2,6 +2,7 @@
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
+#include <BlackBox/System/IProjectManager.hpp>
 
 #include <SDL2/SDL.h>
 #include <BlackBox/Renderer/TextureManager.hpp>
@@ -13,7 +14,6 @@ static int dump_shaders_on_load = false;
 FxParser* g_FxParser;
 ShaderMan* gShMan;
 FxParser s_FxParser;
-
 
 void TestFx(IConsoleCmdArgs* args)
 {
@@ -117,7 +117,6 @@ CRenderer::~CRenderer()
 
 IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
-	#if 0
 	InitCVars();
 	IWindow* result = m_Window = window;
 	bInFullScreen			   = fullscreen;
@@ -126,12 +125,6 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	//=======================
 	InitConsoleCommands();
 	//=======================
-	glContextType = (int)AttributeType::Debug;
-#if 0
-	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
-	else
-	glContextType = AttributeType::Core;
-#endif
 	const char* sGameName = gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName();
 	strcpy(m_WinTitle, sGameName);
 
@@ -140,22 +133,29 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	if (!m_Window->init(&wp))
 		return nullptr;
 	CryLog("window inited");
+	#ifdef GL_RENDERER
+#if 0
+	glContextType = (int)AttributeType::Debug;
+	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
+	else
+	glContextType = AttributeType::Core;
+#endif
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();
-	m_HWND	= (HWND)window->getHandle();
+	m_hWnd	= (HWND)window->getHandle();
 	// now you can make GL calls.
-	ClearColorBuffer(m_clearColor);
 	m_Window->swap();
-	//=======================
-	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
-	//=======================
-	GlInit();
+	InitOverride();
+	#endif
 	g_FxParser = &s_FxParser;
+	#if 0
 	if (!InitResourceManagers())
 		return nullptr;
-
 	PrintHardware();
+	#endif
+
+	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	m_BufferManager = new CBufferManager();
 	CRenderer::CreateQuad();
 	gShMan = new ShaderMan;
@@ -187,9 +187,8 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 
 	perViewBuffer = PerViewBuffer::Create(2);
 	screenBuffer  = ScreenBuffer::Create(11);
-	return result;
-	#endif
 
+	return result;
 }
 
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
@@ -422,7 +421,9 @@ IShaderProgram* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	return gShMan->Sh_Load(name, flags, nMaskGen);
 }
 
-
+void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
+{
+}
 
 #ifdef LINUX
 #	include <experimental/filesystem>

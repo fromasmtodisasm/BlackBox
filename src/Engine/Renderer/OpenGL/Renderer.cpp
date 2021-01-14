@@ -13,7 +13,6 @@
 #include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
-#include <BlackBox/System/IProjectManager.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
@@ -35,30 +34,7 @@
 #pragma warning(disable : 4244)
 
 extern FxParser* g_FxParser;
-
-struct alignas(16) SPerViewConstantBuffer
-{
-	Mat4 Projection;
-	Mat4 OrthoProjection;
-	Mat4 View;
-	Mat4 ViewProjection;
-	Vec3 Eye;
-};
-struct alignas(16) SScreenConstantBuffer
-{
-	glm::mat4 Model;
-	glm::mat4 UvProjection;
-	glm::vec4 Color;
-	float Alpha;
-};
-
-using PerViewBuffer	   = gl::ConstantBuffer<SPerViewConstantBuffer>;
-using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
-PerViewBufferPtr perViewBuffer;
-
-using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
-using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
-ScreenBufferPtr screenBuffer;
+extern FxParser s_FxParser;
 
 GLRenderer::GLRenderer(ISystem* engine) : CRenderer(engine)
 {
@@ -81,76 +57,7 @@ GLRenderer::~GLRenderer()
 
 IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
-	InitCVars();
-	IWindow* result = m_Window = window;
-	bInFullScreen			   = fullscreen;
-	if (window == nullptr)
-		return nullptr;
-	//=======================
-	InitConsoleCommands();
-	//=======================
-	glContextType = (int)AttributeType::Debug;
-#if 0
-	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
-	else
-	glContextType = AttributeType::Core;
-#endif
-	const char* sGameName = gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName();
-	strcpy(m_WinTitle, sGameName);
-
-	CryLog("Creating window called '%s' (%dx%d)", m_WinTitle, width, height);
-	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen};
-	if (!m_Window->init(&wp))
-		return nullptr;
-	CryLog("window inited");
-	if (!OpenGLLoader())
-		return nullptr;
-	context = SDL_GL_GetCurrentContext();
-	m_HWND	= (HWND)window->getHandle();
-	// now you can make GL calls.
-	ClearColorBuffer(m_clearColor);
-	m_Window->swap();
-	//=======================
-	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
-	//=======================
-	GlInit();
-	g_FxParser = &s_FxParser;
-	if (!InitResourceManagers())
-		return nullptr;
-
-	PrintHardware();
-	m_BufferManager = new CBufferManager();
-	CRenderer::CreateQuad();
-	gShMan = new ShaderMan;
-	//=======================
-	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
-	{
-		m_pSystem->Log("Error of loading screen shader");
-		return nullptr;
-	}
-
-	m_RenderAuxGeom = new CRenderAuxGeom();
-
-	CreateRenderTarget();
-
-	auto* dm			  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
-	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
-
-	{
-		char buffer[32];
-		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
-		dm = static_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
-		m_RenderTargets.push_back(Texture::create(
-			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),
-			TextureType::LDR_RENDER_TARGET, buffer));
-	}
-
-	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
-
-	perViewBuffer = PerViewBuffer::Create(2);
-	screenBuffer  = ScreenBuffer::Create(11);
-	return result;
+	return CRenderer::Init(x,y,width, height, cbpp, zbpp, sbits, fullscreen, window);
 }
 
 bool GLRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
@@ -269,7 +176,7 @@ void GLRenderer::RenderToViewport(const CCamera& cam, float x, float y, float wi
 {
 }
 
-void GLRenderer::GlInit()
+bool GLRenderer::InitOverride()
 {
 	CBaseShaderProgram::use_cache = GetISystem()->GetIConsole()->GetCVar("sh_use_cache");
 	FillSates();
@@ -293,6 +200,8 @@ void GLRenderer::GlInit()
 	m_Hardware.render		= gl::GetString(GL_RENDERER);
 	m_Hardware.version		= gl::GetString(GL_VERSION);
 	m_Hardware.glsl_version = gl::GetString(GL_SHADING_LANGUAGE_VERSION);
+	
+	return true;
 }
 
 void GLRenderer::FillSates()
@@ -406,7 +315,7 @@ void GLRenderer::MakeMainContextActive()
 
 WIN_HWND GLRenderer::GetCurrentContextHWND()
 {
-	return m_HWND;
+	return m_hWnd;
 }
 
 bool GLRenderer::IsCurrentContextMainVP()
@@ -484,7 +393,7 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 	uv_projection = glm::translate(uv_projection, glm::vec3(s0, t0, 0.f));
 
 	{
-		auto sb			 = screenBuffer.get();
+		auto sb			 = CRenderer::screenBuffer.get();
 		sb->Color		 = Vec4(r, g, b, a);
 		sb->UvProjection = uv_projection;
 		sb->Model		 = model;
@@ -496,10 +405,6 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 
 	DrawFullscreenQuad();
 	m_ScreenShader->Unuse();
-}
-
-void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
-{
 }
 
 bool GLRenderer::InitResourceManagers()
