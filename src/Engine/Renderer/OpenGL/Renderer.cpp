@@ -36,9 +36,6 @@
 
 extern FxParser* g_FxParser;
 
-ShaderMan* gShMan;
-FxParser s_FxParser;
-
 struct alignas(16) SPerViewConstantBuffer
 {
 	Mat4 Projection;
@@ -63,47 +60,6 @@ using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
 using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
 ScreenBufferPtr screenBuffer;
 
-D3D11_SAMPLER_DESC g_SamplerDescs[Samplers::Count] = {
-	D3D11_SAMPLER_DESC::Create_Default(),
-	D3D11_SAMPLER_DESC::Create_Default(),
-	D3D11_SAMPLER_DESC::Create_Default(),
-	D3D11_SAMPLER_DESC::Create_Default(),
-	D3D11_SAMPLER_DESC::Create_Default(),
-	D3D11_SAMPLER_DESC::Create_Font(),
-};
-
-GLuint g_Samplers[Samplers::Count];
-
-GLuint CreateSampler(const D3D11_SAMPLER_DESC& desc, int i)
-{
-	GLenum Filter		  = GL_NONE;
-	GLenum AddressU		  = GL_CLAMP_TO_EDGE;
-	GLenum AddressV		  = GL_CLAMP_TO_EDGE;
-	GLenum AddressW		  = GL_CLAMP_TO_EDGE;
-	FLOAT MipLODBias	  = 0.f;
-	UINT MaxAnisotropy	  = 2;
-	GLenum ComparisonFunc = GL_NONE;
-	FLOAT BorderColor[4]  = {0, 0, 0, 0};
-	FLOAT MinLOD		  = 0.f;
-	FLOAT MaxLOD		  = 0.f;
-	glSamplerParameteri(g_Samplers[i], GL_TEXTURE_WRAP_S, desc.AddressU);
-	glSamplerParameteri(g_Samplers[i], GL_TEXTURE_WRAP_T, desc.AddressU);
-	//glSamplerParameterf(g_Samplers[i], GL_TEXTURE_WRAP_S, desc.AddressU);
-	return 0;
-}
-
-void InitSamplers()
-{
-	glCreateSamplers((int)Samplers::Count, g_Samplers);
-	//glBindSampler(0, g_Samplers[(int)Samplers::Default]);
-	int i = 0;
-	for (const auto s : g_SamplerDescs)
-	{
-		CreateSampler(s, i);
-		i++;
-	}
-}
-
 GLRenderer::GLRenderer(ISystem* engine) : CRenderer(engine)
 {
 	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "GLRenderer");
@@ -126,7 +82,6 @@ GLRenderer::~GLRenderer()
 IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
 	InitCVars();
-	//m_Camera.InitCVars();
 	IWindow* result = m_Window = window;
 	bInFullScreen			   = fullscreen;
 	if (window == nullptr)
@@ -169,7 +124,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = gEnv->pRenderer->Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
+	if (!(m_ScreenShader = Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -416,13 +371,6 @@ void GLRenderer::SetRenderTarget(int nHandle)
 	}
 }
 
-IShaderProgram* GLRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
-{
-	flags = int(ShaderBinaryFormat::SPIRV);
-	gEnv->pLog->Log("load shader: %s", name);
-	return gShMan->Sh_Load(name, flags, nMaskGen);
-}
-
 void GLRenderer::DrawFullscreenQuad()
 {
 	DrawBuffer(m_VertexBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLE_STRIP));
@@ -546,17 +494,6 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 	m_ScreenShader->Use();
 	glProgramUniformHandleui64ARB(m_ScreenShader->Get(), glGetUniformLocation(m_ScreenShader->Get(), "screenTexture"), texture_id);
 
-#if 0
-	glBindSampler(0, g_Samplers[(int)Samplers::Default]);
-	if (glIsSampler(g_Samplers[(int)Samplers::Default]))
-	{
-		CryLog("is sampler");
-	}
-	else
-	{
-		CryError("is not sampler");
-	}
-#endif
 	DrawFullscreenQuad();
 	m_ScreenShader->Unuse();
 }

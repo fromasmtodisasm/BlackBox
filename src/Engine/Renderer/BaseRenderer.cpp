@@ -11,6 +11,9 @@
 int RenderCVars::CV_r_GetScreenShot;
 static int dump_shaders_on_load = false;
 FxParser* g_FxParser;
+ShaderMan* gShMan;
+FxParser s_FxParser;
+
 
 void TestFx(IConsoleCmdArgs* args)
 {
@@ -110,6 +113,83 @@ CRenderer::~CRenderer()
 	SAFE_DELETE(m_RenderAuxGeom);
 	SAFE_DELETE(m_BufferManager);
 	SAFE_DELETE(m_VertexBuffer);
+}
+
+IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
+{
+	#if 0
+	InitCVars();
+	IWindow* result = m_Window = window;
+	bInFullScreen			   = fullscreen;
+	if (window == nullptr)
+		return nullptr;
+	//=======================
+	InitConsoleCommands();
+	//=======================
+	glContextType = (int)AttributeType::Debug;
+#if 0
+	if (isDebug && GET_CVAR("r_Debug")->GetIVal() == 1)
+	else
+	glContextType = AttributeType::Core;
+#endif
+	const char* sGameName = gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName();
+	strcpy(m_WinTitle, sGameName);
+
+	CryLog("Creating window called '%s' (%dx%d)", m_WinTitle, width, height);
+	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen};
+	if (!m_Window->init(&wp))
+		return nullptr;
+	CryLog("window inited");
+	if (!OpenGLLoader())
+		return nullptr;
+	context = SDL_GL_GetCurrentContext();
+	m_HWND	= (HWND)window->getHandle();
+	// now you can make GL calls.
+	ClearColorBuffer(m_clearColor);
+	m_Window->swap();
+	//=======================
+	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
+	//=======================
+	GlInit();
+	g_FxParser = &s_FxParser;
+	if (!InitResourceManagers())
+		return nullptr;
+
+	PrintHardware();
+	m_BufferManager = new CBufferManager();
+	CRenderer::CreateQuad();
+	gShMan = new ShaderMan;
+	//=======================
+	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
+	if (!(m_ScreenShader = Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
+	{
+		m_pSystem->Log("Error of loading screen shader");
+		return nullptr;
+	}
+
+	m_RenderAuxGeom = new CRenderAuxGeom();
+
+	CreateRenderTarget();
+
+	auto* dm			  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
+
+	{
+		char buffer[32];
+		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
+		dm = static_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
+		m_RenderTargets.push_back(Texture::create(
+			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),
+			TextureType::LDR_RENDER_TARGET, buffer));
+	}
+
+	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
+
+	perViewBuffer = PerViewBuffer::Create(2);
+	screenBuffer  = ScreenBuffer::Create(11);
+	return result;
+	#endif
+
 }
 
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
@@ -333,6 +413,13 @@ void CRenderer::SetCamera(const CCamera& cam)
 const CCamera& CRenderer::GetCamera()
 {
 	return m_Camera;
+}
+
+IShaderProgram* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
+{
+	flags = int(ShaderBinaryFormat::SPIRV);
+	gEnv->pLog->Log("load shader: %s", name);
+	return gShMan->Sh_Load(name, flags, nMaskGen);
 }
 
 

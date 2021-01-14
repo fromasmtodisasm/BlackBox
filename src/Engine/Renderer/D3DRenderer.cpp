@@ -57,11 +57,6 @@ void CD3DRenderer::Flush()
 {
 }
 
-IShaderProgram* CD3DRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
-{
-	return nullptr;
-}
-
 void CD3DRenderer::Sh_Reload()
 {
 }

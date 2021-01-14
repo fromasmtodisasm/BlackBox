@@ -56,7 +56,6 @@ private:
   BaseShaderProgramRef m_DownsampleComputeShader;
   BaseShaderProgramRef m_UpsampleShader;
   BaseShaderProgramRef m_UpsampleShaderComputeShader;
-  //Quad m_ScreenQuad;
   FrameBufferObject* m_HdrBuffer;
   std::vector<FrameBufferObject*> m_DownsampleBuffer;
   std::vector<FrameBufferObject*> m_UpsampleBuffer;

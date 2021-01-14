@@ -163,6 +163,8 @@ class CRenderer : public RenderCVars
 	//! Get the renderer camera
 	virtual const CCamera& GetCamera() final;
 
+	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen) final;
+
 	//! Change display size
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) = 0;
 

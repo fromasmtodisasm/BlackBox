@@ -114,8 +114,6 @@ class GLRenderer : public CRenderer
 	virtual void ClearDepthBuffer() override;
 	virtual void ClearColorBuffer(const Vec3 vColor) override;
 
-	virtual IShaderProgram* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) override;
-
 	virtual void DrawFullscreenQuad() override;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
 

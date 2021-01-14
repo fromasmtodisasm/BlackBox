@@ -19,7 +19,6 @@ public:
 	virtual IFont* GetIFont() override;
 	virtual float GetDepthValue(int x, int y) override;
 	virtual void Flush() override;
-	virtual IShaderProgram* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) override;
 	virtual void Sh_Reload() override;
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) override;
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) override;
