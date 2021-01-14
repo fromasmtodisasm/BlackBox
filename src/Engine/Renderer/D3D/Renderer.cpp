@@ -84,7 +84,7 @@ void CD3DRenderer::Update(void)
 	m_pd3dDevice->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
 	// Отображение геометрии на рендер-таргете
 	// Вывод содержимого рендер-таргета на экран
-	m_pSwapChain->Present( 0, 0 );
+	m_pSwapChain->Present( 1, 0 );
 }
 
 void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
