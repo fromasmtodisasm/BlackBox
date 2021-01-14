@@ -4,8 +4,14 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/BufferManager.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
+#include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/IConsole.hpp>
+
+#include "Shaders/FxParser.h"
+
+extern FxParser* g_FxParser;
 
 class RenderCVars
 {
@@ -29,13 +35,88 @@ class RenderCVars
 	static int CV_r_GetScreenShot;
 };
 
+class ShaderMan
+{
+  public:
+	~ShaderMan()
+	{
+	}
+	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
+	{
+		using ShaderInfo = IShaderProgram::ShaderInfo;
+		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
+		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
+		p->Create((std::string(vertex) + std::string(fragment)).data());
+		m_Shaders.emplace_back(p);
+		return p;
+	}
+	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
+	{
+		CBaseShaderProgram* p = nullptr;
+		if (!(p = Sh_LoadBinary(name, flags, nMaskGen)))
+		{
+			if (p = Compile(name, flags, nMaskGen))
+			{
+				p->SaveBinaryShader(name, flags, nMaskGen);
+			}
+		}
+		return p;
+	}
+	CBaseShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
+	{
+		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
+	}
+
+	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
+	{
+		using ShaderInfo = IShaderProgram::ShaderInfo;
+
+		PEffect pEffect = nullptr;
+		std::stringstream path;
+		path << "res/shaders/fx/" << name << ".fx";
+		if (g_FxParser->Parse(path.str().data(), &pEffect))
+		{
+			CryLog("Dumping shaders of effect: %s", name.data());
+			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
+			{
+				auto& str = pEffect->GetShader(i).name;
+				CryLog("[%s]", str.c_str());
+			}
+			const auto vs		 = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
+			const auto fs		 = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
+			auto* p				 = new CShaderProgram(vs, fs);
+			p->Create(name.data());
+			delete pEffect;
+			m_Shaders.emplace_back(p);
+			return p;
+		}
+		return nullptr;
+	}
+	void ReloadAll()
+	{
+		for (auto& s : m_Shaders)
+		{
+			s->Reload();
+		}
+	}
+
+	std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
+};
+
 class CRenderer : public RenderCVars
 	, public IRenderer
 	, public IConsoleVarSink
-	, public IInputEventListener
 	, public ISystemEventListener
 {
   public:
+	// Inherited via IConsoleVarSink
+	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) final;
+	virtual void OnAfterVarChange(ICVar* pVar) final;
+	virtual void OnVarUnregister(ICVar* pVar) final;
+	// Inherited via ISystemEventListener
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) final;
+	CRenderer(ISystem* engine);
 	~CRenderer();
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) = 0;
@@ -44,7 +125,7 @@ class CRenderer : public RenderCVars
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) = 0;
 
 	//! Shut down the renderer
-	virtual void Release() = 0;
+	virtual void Release() final;
 
 	//! Should be called at the beginning of every frame
 	virtual void BeginFrame(void) = 0;
@@ -77,10 +158,10 @@ class CRenderer : public RenderCVars
 	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) = 0;
 
 	//! Set the renderer camera
-	virtual void SetCamera(const CCamera& cam) = 0;
+	virtual void SetCamera(const CCamera& cam) final;
 
 	//! Get the renderer camera
-	virtual const CCamera& GetCamera() = 0;
+	virtual const CCamera& GetCamera() final;
 
 	//! Change display size
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) = 0;
@@ -90,7 +171,7 @@ class CRenderer : public RenderCVars
 
 	//! Write a message on the screen with additional flags.
 	//! for flags @see
-	virtual void Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info) = 0;
+	virtual void Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info) final;
 
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
@@ -101,17 +182,19 @@ class CRenderer : public RenderCVars
 	virtual int SetPolygonMode(int mode) = 0;
 
 	//! Get screen width
-	virtual int GetWidth() = 0;
+	virtual int GetWidth() final;
 
 	//! Get screen height
-	virtual int GetHeight() = 0;
+	virtual int GetHeight() final;
 
 	//! Get a screenshot and save to a file
 	virtual void ScreenShot(const char* filename = nullptr) = 0;
 
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
 
-	virtual void PrintLine(const char* szText, SDrawTextInfo& info) = 0;
+	virtual void PrintLine(const char* szText, SDrawTextInfo& info) final;
+
+	ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) final;
 
 	virtual int EnumDisplayFormats(SDispFormat* formats);
 
@@ -142,14 +225,58 @@ class CRenderer : public RenderCVars
 
 	virtual void SetRenderTarget(int nHandle) = 0;
 
-	//virtual IShaderProgram* Sh_Load(ShaderDesc const& desc) = 0;
-	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
+	virtual void ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
+	virtual int UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
+	virtual int UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
+	virtual void GetModelViewMatrix(float* mat) final;
+	virtual void GetModelViewMatrix(double* mat) final;
+	virtual void GetProjectionMatrix(double* mat) final;
+	virtual void GetProjectionMatrix(float* mat) final;
+	virtual Vec3 GetUnProject(const Vec3& WindowCoords, const CCamera& cam) final;
+	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) final;
+	IGraphicsDeviceConstantBuffer * CreateConstantBuffer(int size) final;
+
+	void CreateQuad();
+
+protected:
+	void InitConsoleCommands() const;
 
 	//private:
+	IWindow* m_Window  = nullptr;
+	ISystem* m_pSystem = nullptr;
+
+	bool is_fullscreen = false;
+	Vec4 m_viewPort;
+	unsigned int cbpp = 0;
+	int zbpp		  = 0;
+	int sbits		  = 0;
+
+	bool bInFullScreen = false;
+	//============
+	CCamera m_Camera;
+	//============
 
 	CRenderAuxGeom* m_RenderAuxGeom;
 	CBufferManager* m_BufferManager;
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
 
+	bool transit_to_FS = false;
+	bool bIsActive	   = true;
+
+	int m_FrameID = 0;
+
+	// Windows context
+	char     m_WinTitle[80];
+	WIN_HWND m_hWnd;                  // The main app window
+	WIN_HWND m_hWndDesktop;           // The desktop window
+	WIN_HWND m_hWndActive;            // The active window
+#if BB_PLATFORM_WINDOWS
+	HICON    m_hIconBig;              // Icon currently being used on the taskbar
+	HICON    m_hIconSmall;            // Icon currently being used on the window
+	HCURSOR  m_hCursor;               // Cursor currently being used on the window
+	string   m_iconPath;              // Path to the icon currently loaded
+#endif
+
+	std::vector<IFont*> m_Fonts;
 };

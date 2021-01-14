@@ -8,7 +8,7 @@
 #include <BlackBox/Renderer/MaterialManager.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
-#include <BlackBox/Renderer/Render.hpp>
+#include "Renderer.hpp"
 #include <BlackBox/Renderer/ShaderManager.hpp>
 #include <BlackBox/Renderer/TechniqueManager.hpp>
 #include <BlackBox/Renderer/TextureManager.hpp>
@@ -34,79 +34,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
-static int dump_shaders_on_load = false;
-FxParser* g_FxParser;
-
-class ShaderMan
-{
-  public:
-	~ShaderMan()
-	{
-	}
-	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
-	{
-		using ShaderInfo = IShaderProgram::ShaderInfo;
-		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
-		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
-		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
-		p->Create((std::string(vertex) + std::string(fragment)).data());
-		m_Shaders.emplace_back(p);
-		return p;
-	}
-	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
-	{
-		CBaseShaderProgram* p = nullptr;
-		if (!(p = Sh_LoadBinary(name, flags, nMaskGen)))
-		{
-			if (p = Compile(name, flags, nMaskGen))
-			{
-				p->SaveBinaryShader(name, flags, nMaskGen);
-			}
-		}
-		return p;
-	}
-	CBaseShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
-	{
-		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
-	}
-
-	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
-	{
-		using ShaderInfo = IShaderProgram::ShaderInfo;
-
-		PEffect pEffect = nullptr;
-		std::stringstream path;
-		path << "res/shaders/fx/" << name << ".fx";
-		if (g_FxParser->Parse(path.str().data(), &pEffect))
-		{
-			CryLog("Dumping shaders of effect: %s", name.data());
-			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
-			{
-				auto& str = pEffect->GetShader(i).name;
-				CryLog("[%s]", str.c_str());
-			}
-			dump_shaders_on_load = true;
-			const auto vs		 = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
-			const auto fs		 = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
-			dump_shaders_on_load = false;
-			auto* p				 = new CShaderProgram(vs, fs);
-			p->Create(name.data());
-			delete pEffect;
-			m_Shaders.emplace_back(p);
-			return p;
-		}
-		return nullptr;
-	}
-	void ReloadAll()
-	{
-		for (auto& s : m_Shaders)
-		{
-			s->Reload();
-		}
-	}
-
-	std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
-};
+extern FxParser* g_FxParser;
 
 ShaderMan* gShMan;
 FxParser s_FxParser;
@@ -134,25 +62,6 @@ PerViewBufferPtr perViewBuffer;
 using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
 using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
 ScreenBufferPtr screenBuffer;
-
-void TestFx(IConsoleCmdArgs* args)
-{
-	string filename;
-	if (args->GetArgCount() < 2)
-		filename = "tmp/test.fx";
-	else
-		filename = args->GetArg(1);
-
-	PEffect pEffect = nullptr;
-	if (g_FxParser->Parse(filename, &pEffect))
-	{
-		CryLog("Dumping shaders of effect: %s", filename.data());
-		for (int i = 0; i < pEffect->GetNumShaders(); i++)
-		{
-			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
-		}
-	}
-}
 
 D3D11_SAMPLER_DESC g_SamplerDescs[Samplers::Count] = {
 	D3D11_SAMPLER_DESC::Create_Default(),
@@ -195,8 +104,7 @@ void InitSamplers()
 	}
 }
 
-GLRenderer::GLRenderer(ISystem* engine)
-	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
+GLRenderer::GLRenderer(ISystem* engine) : CRenderer(engine)
 {
 	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "GLRenderer");
 }
@@ -249,7 +157,6 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 	m_Window->swap();
 	//=======================
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
-	m_pSystem->GetIInput()->AddEventListener(this);
 	//=======================
 	GlInit();
 	g_FxParser = &s_FxParser;
@@ -258,7 +165,7 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
 	PrintHardware();
 	m_BufferManager = new CBufferManager();
-	CreateQuad();
+	CRenderer::CreateQuad();
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
@@ -288,19 +195,12 @@ IWindow* GLRenderer::Init(int x, int y, int width, int height, unsigned int cbpp
 
 	perViewBuffer = PerViewBuffer::Create(2);
 	screenBuffer  = ScreenBuffer::Create(11);
-	//cam_width->Set(GetWidth());
-	//cam_height->Set(GetHeight());
 	return result;
 }
 
 bool GLRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
 {
 	return false;
-}
-
-void GLRenderer::Release()
-{
-	delete this;
 }
 
 void GLRenderer::BeginFrame(void)
@@ -375,16 +275,6 @@ void GLRenderer::SetScissor(int x, int y, int width, int height)
 	gl::Scissor(x, y, width, height);
 }
 
-void GLRenderer::SetCamera(const CCamera& cam)
-{
-	m_Camera = cam;
-}
-
-const CCamera& GLRenderer::GetCamera()
-{
-	return m_Camera;
-}
-
 bool GLRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)
 {
 	return false;
@@ -394,25 +284,9 @@ void GLRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int wid
 {
 }
 
-void GLRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
-{
-	info.font->RenderText(szText, posX, posY, 1.0, info.color);
-	info.font->Submit();
-}
-
 int GLRenderer::SetPolygonMode(int mode)
 {
 	return 0;
-}
-
-int GLRenderer::GetWidth()
-{
-	return m_Window->getWidth();
-}
-
-int GLRenderer::GetHeight()
-{
-	return m_Window->getHeight();
 }
 
 void GLRenderer::ScreenShot(const char* filename)
@@ -484,122 +358,6 @@ void GLRenderer::FillSates()
 #undef STATEMAP
 }
 
-#ifdef LINUX
-#	include <experimental/filesystem>
-using fs = std::experimental::filesystem;
-#else
-#	include <filesystem>
-namespace fs = std::filesystem;
-#endif
-struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
-{
-	wchar_t c_file[256];
-#define FX_BASE "tmp"
-	[[nodiscard]] int GetCount() const override
-	{
-#ifndef LINUX
-		int cnt = std::count_if(
-			fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
-			fs::directory_iterator::directory_iterator(),
-			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
-		return cnt;
-#else
-		return 0;
-#endif
-	};
-
-	const char* GetValue(int nIndex) const override
-	{
-#ifndef LINUX
-		int i = 0;
-		static std::string file;
-		for (fs::directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next, ++i)
-		{
-			if (i == nIndex)
-			{
-				//memset((void*)c_file, 0, 256);
-				//memcpy((void*)c_file, , wcslen(next->path().c_str()));
-				file = wstr_to_str(std::wstring(next->path().c_str()));
-				return file.data();
-			}
-		}
-#endif
-		return "!!!";
-	};
-};
-
-static STestFXAutoComplete s_TestFXAutoComplete;
-void GLRenderer::InitConsoleCommands() const
-{
-	/*
-  REGISTER_COMMAND(
-    "set_ws",
-    R"(set2dvec("r_cam_w", "r_cam_h", %1, %2))",
-    VF_NULL,
-    "Set size of camera"
-  );
-  */
-	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
-	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
-	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
-}
-
-void GLRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
-{
-	auto s = glm::project(Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), Vec4(0, 0, GetWidth(), GetHeight()));
-
-	*sx = s.x;
-	*sy = s.y;
-	*sz = s.z;
-}
-
-int GLRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4])
-{
-	return 0;
-}
-
-int GLRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
-{
-	Vec4d vp;							// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
-	auto p = glm::unProject(
-		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
-	*px = p.x;
-	*py = p.y;
-	*pz = p.z;
-
-	return 0;
-}
-
-void GLRenderer::GetModelViewMatrix(float* mat)
-{
-}
-
-void GLRenderer::GetModelViewMatrix(double* mat)
-{
-}
-
-void GLRenderer::GetProjectionMatrix(double* mat)
-{
-}
-
-void GLRenderer::GetProjectionMatrix(float* mat)
-{
-	mat = &m_Camera.getProjectionMatrix()[0][0];
-}
-
-Vec3 GLRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
-{
-	auto& c = WindowCoords;
-	return glm::unProject(
-		glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
-}
-
-int GLRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)
-{
-	return m_FrameID;
-}
-
 void GLRenderer::PrintHardware()
 {
 	std::stringstream hardware_info;
@@ -623,11 +381,6 @@ void GLRenderer::AquireVB()
 bool GLRenderer::VBF_InPool(int format)
 {
 	return false;
-}
-
-ITexture* GLRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
-{
-	return TextureManager::instance()->getTexture(nameTex, eTT);
 }
 
 IFont* GLRenderer::GetIFont()
@@ -660,42 +413,6 @@ void GLRenderer::SetRenderTarget(int nHandle)
 		m_MainMSAAFrameBuffer->bind();
 		m_MainMSAAFrameBuffer->attach(*it);
 		m_MainMSAAFrameBuffer->bindDefault(Vec4(0, 0, GetWidth(), GetHeight()));
-	}
-}
-
-void GLRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
-{
-	switch (event)
-	{
-	case ESYSTEM_EVENT_CHANGE_FOCUS:
-		break;
-	case ESYSTEM_EVENT_MOVE:
-		break;
-	case ESYSTEM_EVENT_RESIZE:
-		if (!transit_to_FS)
-			m_Window->changeSize(wparam, lparam);
-		transit_to_FS = false;
-		break;
-	case ESYSTEM_EVENT_ACTIVATE:
-		bIsActive = bool(wparam);
-		break;
-	case ESYSTEM_EVENT_LEVEL_LOAD_START:
-		break;
-	case ESYSTEM_EVENT_LEVEL_GAMEPLAY_START:
-		break;
-	case ESYSTEM_EVENT_LEVEL_POST_UNLOAD:
-		break;
-	case ESYSTEM_EVENT_LANGUAGE_CHANGE:
-		break;
-	case ESYSTEM_EVENT_TOGGLE_FULLSCREEN:
-		bInFullScreen = bool(wparam);
-		m_Window->EnterFullscreen(bInFullScreen);
-		break;
-	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
-		bIsActive = bool(wparam);
-		break;
-	default:
-		break;
 	}
 }
 
@@ -794,35 +511,6 @@ void GLRenderer::DrawFullScreenImage(int texture_id)
 	DrawImage(0, 0, GetWidth(), GetHeight(), texture_id, 0, 0, 1, 1, 1, 1, 1, 1);
 }
 
-bool GLRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
-{
-	if (!strcmp(pVar->GetName(), "r_Width"))
-	{
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
-	}
-	else if (!strcmp(pVar->GetName(), "r_Height"))
-	{
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
-	}
-	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
-	{
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
-	}
-	else if (!strcmp(pVar->GetName(), "r_debug"))
-	{
-		OpenglDebuger::SetIgnore(!(bool)std::stoi(sNewValue));
-	}
-	return true;
-}
-
-void GLRenderer::OnAfterVarChange(ICVar* pVar)
-{
-}
-
-void GLRenderer::OnVarUnregister(ICVar* pVar)
-{
-}
-
 void GLRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
 {
 }
@@ -873,24 +561,6 @@ void GLRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 text
 	m_ScreenShader->Unuse();
 }
 
-void GLRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
-{
-	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
-}
-
-bool GLRenderer::OnInputEvent(const SInputEvent& event)
-{
-#if 0
-  switch (event.deviceType)
-  {
-    break;
-  default:
-    break;
-  }
-#endif
-	return false;
-}
-
 void GLRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 {
 }
@@ -906,29 +576,6 @@ bool GLRenderer::InitResourceManagers()
 		CryLog("End loading resources");
 	}
 	return true;
-}
-
-void GLRenderer::ShareWith(GLRenderer* renderer)
-{
-	if (renderer != nullptr)
-	{
-	}
-}
-
-void GLRenderer::CreateQuad()
-{
-	SVF_P3F_T2F verts[] = {
-		{{0, 1, 0}, {0, 1}},
-		{{0, 0, 0}, {0, 0}},
-		{{1, 1, 0}, {1, 1}},
-		{{1, 0, 0}, {1, 0}}};
-	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
-	UpdateBuffer(m_VertexBuffer, verts, 4, false);
-}
-
-IGraphicsDeviceConstantBuffer* GLRenderer::CreateConstantBuffer(int size)
-{
-	return m_BufferManager->CreateConstantBuffer(size);
 }
 
 ITechniqueManager* GLRenderer::GetITechniqueManager()
@@ -981,7 +628,6 @@ void GLRenderer::Flush()
 
 void GLRenderer::ShareResources(IRenderer* renderer)
 {
-	ShareWith(dynamic_cast<GLRenderer*>(renderer));
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

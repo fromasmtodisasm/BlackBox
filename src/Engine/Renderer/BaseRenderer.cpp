@@ -1,9 +1,109 @@
-#include <BlackBox/Renderer/BaseRenderer.hpp>
+#include "BaseRenderer.hpp"
+#include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 
 #include <SDL2/SDL.h>
+#include <BlackBox/Renderer/TextureManager.hpp>
+#pragma warning(push)
+#pragma warning(disable : 4244)
 
 int RenderCVars::CV_r_GetScreenShot;
+static int dump_shaders_on_load = false;
+FxParser* g_FxParser;
+
+void TestFx(IConsoleCmdArgs* args)
+{
+	string filename;
+	if (args->GetArgCount() < 2)
+		filename = "tmp/test.fx";
+	else
+		filename = args->GetArg(1);
+
+	PEffect pEffect = nullptr;
+	if (g_FxParser->Parse(filename, &pEffect))
+	{
+		CryLog("Dumping shaders of effect: %s", filename.data());
+		for (int i = 0; i < pEffect->GetNumShaders(); i++)
+		{
+			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
+		}
+	}
+}
+
+
+CRenderer::CRenderer(ISystem* engine)
+	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
+{
+}
+
+void CRenderer::Release()
+{
+	delete this;
+}
+
+bool CRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
+{
+	if (!strcmp(pVar->GetName(), "r_Width"))
+	{
+		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
+	}
+	else if (!strcmp(pVar->GetName(), "r_Height"))
+	{
+		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
+	}
+	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
+	{
+		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
+	}
+	return true;
+}
+
+void CRenderer::OnAfterVarChange(ICVar* pVar)
+{
+}
+
+void CRenderer::OnVarUnregister(ICVar* pVar)
+{
+}
+
+void CRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
+{
+	switch (event)
+	{
+	case ESYSTEM_EVENT_CHANGE_FOCUS:
+		break;
+	case ESYSTEM_EVENT_MOVE:
+		break;
+	case ESYSTEM_EVENT_RESIZE:
+		if (!transit_to_FS)
+			m_Window->changeSize(wparam, lparam);
+		transit_to_FS = false;
+		break;
+	case ESYSTEM_EVENT_ACTIVATE:
+		bIsActive = bool(wparam);
+		break;
+	case ESYSTEM_EVENT_LEVEL_LOAD_START:
+		break;
+	case ESYSTEM_EVENT_LEVEL_GAMEPLAY_START:
+		break;
+	case ESYSTEM_EVENT_LEVEL_POST_UNLOAD:
+		break;
+	case ESYSTEM_EVENT_LANGUAGE_CHANGE:
+		break;
+	case ESYSTEM_EVENT_TOGGLE_FULLSCREEN:
+		bInFullScreen = bool(wparam);
+		m_Window->EnterFullscreen(bInFullScreen);
+		break;
+	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
+		bIsActive = bool(wparam);
+		break;
+	default:
+		break;
+	}
+}
+
+
 
 CRenderer::~CRenderer()
 {
@@ -127,3 +227,178 @@ void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 
 }
 
+void CRenderer::CreateQuad()
+{
+	SVF_P3F_T2F verts[] = {
+		{{0, 1, 0}, {0, 1}},
+		{{0, 0, 0}, {0, 0}},
+		{{1, 1, 0}, {1, 1}},
+		{{1, 0, 0}, {1, 0}}};
+	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
+	UpdateBuffer(m_VertexBuffer, verts, 4, false);
+}
+
+void CRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
+{
+	info.font->RenderText(szText, posX, posY, 1.0, info.color);
+	info.font->Submit();
+}
+
+int CRenderer::GetWidth()
+{
+	return m_Window->getWidth();
+}
+
+int CRenderer::GetHeight()
+{
+	return m_Window->getHeight();
+}
+
+IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
+{
+	return m_BufferManager->CreateConstantBuffer(size);
+}
+
+void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
+{
+	auto s = glm::project(Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), Vec4(0, 0, GetWidth(), GetHeight()));
+
+	*sx = s.x;
+	*sy = s.y;
+	*sz = s.z;
+}
+
+int CRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4])
+{
+	return 0;
+}
+
+int CRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
+{
+	Vec4d vp;							// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
+	auto p = glm::unProject(
+		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+	*px = p.x;
+	*py = p.y;
+	*pz = p.z;
+
+	return 0;
+}
+
+void CRenderer::GetModelViewMatrix(float* mat)
+{
+}
+
+void CRenderer::GetModelViewMatrix(double* mat)
+{
+}
+
+void CRenderer::GetProjectionMatrix(double* mat)
+{
+}
+
+void CRenderer::GetProjectionMatrix(float* mat)
+{
+	mat = &m_Camera.getProjectionMatrix()[0][0];
+}
+
+Vec3 CRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
+{
+	auto& c = WindowCoords;
+	return glm::unProject(
+		glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+}
+
+int CRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)
+{
+	return m_FrameID;
+}
+
+void CRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
+{
+	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
+}
+
+ITexture* CRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
+{
+	return TextureManager::instance()->getTexture(nameTex, eTT);
+}
+
+void CRenderer::SetCamera(const CCamera& cam)
+{
+	m_Camera = cam;
+}
+
+const CCamera& CRenderer::GetCamera()
+{
+	return m_Camera;
+}
+
+
+
+#ifdef LINUX
+#	include <experimental/filesystem>
+using fs = std::experimental::filesystem;
+#else
+#	include <filesystem>
+namespace fs = std::filesystem;
+#endif
+#include <BlackBox/Core/Utils.hpp>
+struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
+{
+	wchar_t c_file[256];
+#define FX_BASE "tmp"
+	[[nodiscard]] int GetCount() const override
+	{
+#ifndef LINUX
+		int cnt = std::count_if(
+			fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
+			fs::directory_iterator::directory_iterator(),
+			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
+		return cnt;
+#else
+		return 0;
+#endif
+	};
+
+	const char* GetValue(int nIndex) const override
+	{
+#ifndef LINUX
+		int i = 0;
+		static std::string file;
+		for (fs::directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next, ++i)
+		{
+			if (i == nIndex)
+			{
+				//memset((void*)c_file, 0, 256);
+				//memcpy((void*)c_file, , wcslen(next->path().c_str()));
+				file = wstr_to_str(std::wstring(next->path().c_str()));
+				return file.data();
+			}
+		}
+#endif
+		return "!!!";
+	};
+};
+
+static STestFXAutoComplete s_TestFXAutoComplete;
+void CRenderer::InitConsoleCommands() const
+{
+	/*
+  REGISTER_COMMAND(
+    "set_ws",
+    R"(set2dvec("r_cam_w", "r_cam_h", %1, %2))",
+    VF_NULL,
+    "Set size of camera"
+  );
+  */
+	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
+	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
+	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
+}
+
+
+
+
+#pragma warning(pop)

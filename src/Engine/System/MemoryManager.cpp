@@ -2,12 +2,12 @@
 #include <BlackBox/System/ISystem.hpp>
 
 
-#if !defined USE_DEBUG_NEW && !(defined(_DEBUG) && !defined(LINUX))
+//#if !defined USE_DEBUG_NEW && !(defined(_DEBUG) && !defined(LINUX))
 // Undefine malloc for memory manager itself..
 #	undef malloc
 #	undef realloc
 #	undef free
-#endif
+//#endif
 
 CRYMEMORYMANAGER_API void* CrySystemCrtMalloc(size_t size)
 {

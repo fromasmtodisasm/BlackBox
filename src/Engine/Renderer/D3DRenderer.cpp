@@ -12,41 +12,6 @@ void CD3DRenderer::SetRenderCallback(IRenderCallback* pCallback)
 {
 }
 
-void CD3DRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
-{
-}
-
-int CD3DRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4])
-{
-	return 0;
-}
-
-int CD3DRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
-{
-	return 0;
-}
-
-void CD3DRenderer::GetModelViewMatrix(float* mat)
-{
-}
-
-void CD3DRenderer::GetModelViewMatrix(double* mat)
-{
-}
-
-void CD3DRenderer::GetProjectionMatrix(double* mat)
-{
-}
-
-void CD3DRenderer::GetProjectionMatrix(float* mat)
-{
-}
-
-Vec3 CD3DRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
-{
-	return Vec3();
-}
-
 void CD3DRenderer::PushProfileMarker(char* label)
 {
 }
@@ -83,11 +48,6 @@ IFont* CD3DRenderer::GetIFont()
 	return nullptr;
 }
 
-IGraphicsDeviceConstantBuffer* CD3DRenderer::CreateConstantBuffer(int size)
-{
-	return nullptr;
-}
-
 float CD3DRenderer::GetDepthValue(int x, int y)
 {
 	return 0.0f;
@@ -106,33 +66,6 @@ void CD3DRenderer::Sh_Reload()
 {
 }
 
-ITexture* CD3DRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
-{
-	return nullptr;
-}
-
-bool CD3DRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
-{
-	return false;
-}
-
-void CD3DRenderer::OnAfterVarChange(ICVar* pVar)
-{
-}
-
-void CD3DRenderer::OnVarUnregister(ICVar* pVar)
-{
-}
-
-bool CD3DRenderer::OnInputEvent(const SInputEvent& event)
-{
-	return false;
-}
-
-void CD3DRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
-{
-}
-
 IWindow* CD3DRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
 	return nullptr;
@@ -141,10 +74,6 @@ IWindow* CD3DRenderer::Init(int x, int y, int width, int height, unsigned int cb
 bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
 {
 	return false;
-}
-
-void CD3DRenderer::Release()
-{
 }
 
 void CD3DRenderer::BeginFrame(void)
@@ -171,26 +100,12 @@ void CD3DRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
 {
 }
 
-void CD3DRenderer::SetCamera(const CCamera& cam)
-{
-}
-
-const CCamera& CD3DRenderer::GetCamera()
-{
-	// TODO: insert return statement here
-	return m_Camera;
-}
-
 bool CD3DRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)
 {
 	return false;
 }
 
 void CD3DRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
-{
-}
-
-void CD3DRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
 {
 }
 
@@ -207,25 +122,11 @@ int CD3DRenderer::SetPolygonMode(int mode)
 	return 0;
 }
 
-int CD3DRenderer::GetWidth()
-{
-	return 0;
-}
-
-int CD3DRenderer::GetHeight()
-{
-	return 0;
-}
-
 void CD3DRenderer::ScreenShot(const char* filename)
 {
 }
 
 void CD3DRenderer::RenderToViewport(const CCamera& cam, float x, float y, float width, float height)
-{
-}
-
-void CD3DRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
 {
 }
 
@@ -290,9 +191,4 @@ void CD3DRenderer::ClearColorBuffer(const Vec3 vColor)
 
 void CD3DRenderer::SetRenderTarget(int nHandle)
 {
-}
-
-int CD3DRenderer::GetFrameID(bool bIncludeRecursiveCalls)
-{
-	return 0;
 }

@@ -1,6 +1,5 @@
 #pragma once
-#include "BaseRenderer.hpp"
-
+#include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/BufferManager.hpp>
@@ -88,22 +87,18 @@ class GLRenderer : public CRenderer
 
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) override;
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) override;
-	virtual void Release() override;
 	virtual void BeginFrame(void) override;
 	virtual void Update(void) override;
 	virtual void GetViewport(int* x, int* y, int* width, int* height) override;
 	virtual void SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) override;
 	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0) override;
 	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) override;
-	virtual void SetCamera(const CCamera& cam) override;
-	virtual const CCamera& GetCamera() override;
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) override;
 	virtual void ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 	virtual int SetPolygonMode(int mode) override;
 	virtual void ScreenShot(const char* filename = nullptr) override;
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) override;
 	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
-	virtual void PrintLine(const char* szText, SDrawTextInfo& info) override;
 	virtual void SetState(State state, bool enable) override;
 	virtual void DrawFullScreenImage(int texture_id) override;
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) override;
@@ -122,7 +117,6 @@ class GLRenderer : public CRenderer
 	virtual IShaderProgram* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) override;
 
 	virtual void DrawFullscreenQuad() override;
-	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) override;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) override;
 
 	virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
@@ -130,7 +124,6 @@ class GLRenderer : public CRenderer
 	virtual void PushProfileMarker(char* label) override;
 	virtual void PopProfileMarker(char* label) override;
 
-	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) override;
 	virtual IFont* GetIFont() override;
 	virtual ITechniqueManager* GetITechniqueManager() override;
 	virtual float GetDepthValue(int x, int y) override;
@@ -147,9 +140,6 @@ class GLRenderer : public CRenderer
 	void AquireVB();
 	bool VBF_InPool(int format);
 	bool InitResourceManagers();
-	void ShareWith(GLRenderer* renderer);
-
-	void CreateQuad();
 
   private:
 	const GLuint majorVersion = 4;

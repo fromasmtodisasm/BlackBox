@@ -7,3 +7,4 @@
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <array>
+#include <sstream>

@@ -26,7 +26,7 @@ message(STATUS "lskdfjslkdfj")
 install_this(OpenGlBackend)
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${GL_DIR}/GLRenderer.cpp
+  PRIVATE ${GL_DIR}/Renderer.cpp
   PRIVATE ${GL_DIR}/OpenglDebug.cpp
 )
 
