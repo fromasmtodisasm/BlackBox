@@ -4,15 +4,17 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/BufferManager.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/Shader.hpp>
+//#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
 #include "Shaders/FxParser.h"
-#include <BlackBox/Renderer/FrameBufferObject.hpp>
+//#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
+class Texture;
+struct IFont;
 
 class RenderCVars
 {
@@ -35,7 +37,7 @@ class RenderCVars
 
 	static int CV_r_GetScreenShot;
 };
-
+struct CBaseShaderProgram;
 class ShaderMan
 {
   public:
@@ -44,6 +46,7 @@ class ShaderMan
 	}
 	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
 	{
+		#if 0
 		using ShaderInfo = IShaderProgram::ShaderInfo;
 		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
 		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
@@ -51,9 +54,13 @@ class ShaderMan
 		p->Create((std::string(vertex) + std::string(fragment)).data());
 		m_Shaders.emplace_back(p);
 		return p;
+		#else
+		return nullptr;
+		#endif
 	}
 	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	{
+		#if 0
 		CBaseShaderProgram* p = nullptr;
 		if (!(p = Sh_LoadBinary(name, flags, nMaskGen)))
 		{
@@ -63,10 +70,17 @@ class ShaderMan
 			}
 		}
 		return p;
+		#else
+		return nullptr;
+		#endif
 	}
 	CBaseShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
 	{
+		#if 0
 		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
+		#else
+		return nullptr;
+		#endif
 	}
 
 	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
@@ -84,6 +98,7 @@ class ShaderMan
 				auto& str = pEffect->GetShader(i).name;
 				CryLog("[%s]", str.c_str());
 			}
+			#if 0
 			const auto vs		 = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
 			const auto fs		 = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
 			auto* p				 = new CShaderProgram(vs, fs);
@@ -91,18 +106,23 @@ class ShaderMan
 			delete pEffect;
 			m_Shaders.emplace_back(p);
 			return p;
+			#else
+			return nullptr;
+			#endif
 		}
 		return nullptr;
 	}
 	void ReloadAll()
 	{
+		#if 0
 		for (auto& s : m_Shaders)
 		{
 			s->Reload();
 		}
+		#endif
 	}
 
-	std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
+	//std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
 };
 
 class CRenderer : public RenderCVars
@@ -243,6 +263,8 @@ class CRenderer : public RenderCVars
 	IGraphicsDeviceConstantBuffer * CreateConstantBuffer(int size) final;
 
 	void CreateQuad();
+	IFont* GetIFont() final;
+	IRenderAuxGeom* GetIRenderAuxGeom() final;
 
 protected:
 
@@ -262,6 +284,7 @@ protected:
 		float Alpha;
 	};
 
+	#if 0
 	using PerViewBuffer	   = gl::ConstantBuffer<SPerViewConstantBuffer>;
 	using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
 	PerViewBufferPtr perViewBuffer;
@@ -269,6 +292,7 @@ protected:
 	using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
 	using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
 	ScreenBufferPtr screenBuffer;
+	#endif
 
 	void InitConsoleCommands() const;
 
@@ -287,14 +311,16 @@ protected:
 	CCamera m_Camera;
 	//============
 
-	CRenderAuxGeom* m_RenderAuxGeom;
+	IRenderAuxGeom* m_RenderAuxGeom;
 	CBufferManager* m_BufferManager;
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
 	BaseShaderProgramRef m_ScreenShader;
 
+	#if 0
 	FrameBufferObject* m_MainMSAAFrameBuffer;
 	FrameBufferObject* m_MainReslovedFrameBuffer;
+	#endif
 
 	std::vector<Texture*> m_RenderTargets;
 	void* context;
@@ -317,4 +343,5 @@ protected:
 #endif
 
 	std::vector<IFont*> m_Fonts;
+	RenderBackend m_Backend;
 };

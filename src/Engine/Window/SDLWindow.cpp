@@ -8,6 +8,8 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <SDL.h>
+#include <SDL_platform.h>
+#include <SDL_syswm.h>
 
 #include <cstdio>
 #include <iostream>
@@ -22,6 +24,12 @@ CSDLWindow::CSDLWindow(std::string, int width, int height)
 
 CSDLWindow::~CSDLWindow()
 {
+	close();
+}
+
+void CSDLWindow::close()
+{
+	SDL_DestroyWindow(m_MainWindow);
 }
 
 bool CSDLWindow::init(SInitParams* pInitParams)
@@ -183,6 +191,13 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 
 void* CSDLWindow::getHandle()
 {
+	if (m_RendererBackend == RenderBackend::DX)
+	{
+		SDL_SysWMinfo wmInfo;
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWindowWMInfo(m_MainWindow, &wmInfo);
+		return wmInfo.info.win.window;
+	}
 	return m_MainWindow;
 }
 
@@ -259,6 +274,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 	}
 	//  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
 	// Create window
+	m_RendererBackend = backend;
 	if (backend == RenderBackend::GL)
 	{
 		flags |= SDL_WINDOW_OPENGL;

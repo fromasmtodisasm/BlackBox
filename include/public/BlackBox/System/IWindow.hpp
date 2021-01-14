@@ -21,12 +21,6 @@ typedef void* Params;
 typedef void* GLContext;
 typedef void* DisplayMode;
 
-enum class RenderBackend
-{
-	GL,
-	DX
-};
-
 struct IWindow
 {
 	struct SInitParams
@@ -60,6 +54,7 @@ struct IWindow
 	virtual GLContext getContext()				= 0;
 	virtual DisplayMode GetDesktopMode()		= 0;
 	virtual void EnterFullscreen(bool mode)		= 0;
+	virtual void close()						= 0;
 };
 
 extern "C"

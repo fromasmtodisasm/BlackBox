@@ -1,7 +1,7 @@
 #include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/MaterialManager.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
+//#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 #include <memory>
 
@@ -81,11 +81,11 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		glm::mat4 model(1.0);
 		Character ch = Characters[*c];
 
-		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y + (ch.Size.y - ch.Bearing.y) * scale;
+		float xpos = x + ch.Bearing.x * scale;
+		float ypos = y + (ch.Size.y - ch.Bearing.y) * scale;
 
-		GLfloat w = ch.Size.x * scale;
-		GLfloat h = ch.Size.y * scale;
+		float w = ch.Size.x * scale;
+		float h = ch.Size.y * scale;
 		// Update VBO for each character
 		using P3F_T2F		= SVF_P3F_C4B_T2F;
 		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
@@ -122,8 +122,8 @@ float FreeTypeFont::CharWidth(char symbol)
 	const float scale  = 1.0;
 	const Character ch = Characters[symbol];
 
-	const GLfloat w = (/*ch.Bearing.x + ch.Size.x + */ (ch.Advance >> 6)) * scale;
-	//GLfloat h = (ch.Size.y - ch.Bearing.y + ch.Size.y) * scale;
+	const float w = (/*ch.Bearing.x + ch.Size.x + */ (ch.Advance >> 6)) * scale;
+	//float h = (ch.Size.y - ch.Bearing.y + ch.Size.y) * scale;
 	return w;
 }
 
@@ -158,7 +158,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		CryError("ERROR::FREETYPE: Failed to load font");
 		return false;
 	}
-
+#if 0
 	FT_Set_Pixel_Sizes(face, 0, h);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
@@ -250,7 +250,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	m_IB = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 	static bool UB_created = false;
-
+#endif
 
 	return true;
 }
@@ -295,13 +295,13 @@ void FreeTypeFont::Submit()
 	// Activate corresponding render state
 	shader->Use();
 	auto render				= GetISystem()->GetIRenderer();
-	gl::ActiveTexture(GL_TEXTURE0);
+	//gl::ActiveTexture(GL_TEXTURE0);
 	RSS(render, BLEND, true);
 	RSS(render, CULL_FACE, false);
 	RSS(render, DEPTH_TEST, false);
-	glDepthMask(GL_FALSE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	gl::BindTexture2D(GL_TEXTURE_2D, texture);
+	//glDepthMask(GL_FALSE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//gl::BindTexture2D(GL_TEXTURE_2D, texture);
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
 	SAFE_DELETE(m_VB);
 	auto vertex_cnt = 6 * m_CharBuffer.size();
@@ -315,8 +315,8 @@ void FreeTypeFont::Submit()
 	//gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 	gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 
-	gl::BindTexture2D(GL_TEXTURE_2D, 0);
-	glDepthMask(GL_TRUE);
+	//gl::BindTexture2D(GL_TEXTURE_2D, 0);
+	//glDepthMask(GL_TRUE);
 	m_CharBuffer.resize(0);
 }
 

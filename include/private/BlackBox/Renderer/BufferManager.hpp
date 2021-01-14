@@ -3,7 +3,7 @@
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
 
-enum AttributeLocation : GLuint {
+enum AttributeLocation : uint {
 	position = 0,
 	normal = 1,
 	uv = 2,

@@ -293,7 +293,7 @@ class CSystem final : public ISystem
 	int m_rFullscreen;
 	//ICVar* m_rFullsceenNativeRes;
 	//ICVar* m_rWindowState;
-	//ICVar* m_rDriver;
+	ICVar* m_rDriver;
 	int m_rDisplayInfo;
 	int m_rDebug;
 	int m_rTonemap;

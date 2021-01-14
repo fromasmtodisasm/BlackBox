@@ -296,6 +296,9 @@ void CSystem::PollEvents()
 
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {
+	m_rDriver = REGISTER_STRING("r_Driver", "GL", VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+		"Sets the renderer driver ( DX11/DX12/GL/VK/AUTO ).\n"
+		"Specify in system.cfg like this: r_Driver = \"DX11\"");
 	REGISTER_CVAR2("r_InitialWindowSizeRatio", &m_rIntialWindowSizeRatio, 0.666f, VF_DUMPTODISK,
 				   "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
 				   "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");

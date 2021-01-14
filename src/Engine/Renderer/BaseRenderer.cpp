@@ -4,6 +4,8 @@
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IProjectManager.hpp>
 
+#include "AuxRendererNull.hpp"
+
 #include <SDL2/SDL.h>
 #include <BlackBox/Renderer/TextureManager.hpp>
 #pragma warning(push)
@@ -13,7 +15,7 @@ int RenderCVars::CV_r_GetScreenShot;
 static int dump_shaders_on_load = false;
 FxParser* g_FxParser;
 ShaderMan* gShMan;
-FxParser s_FxParser;
+//FxParser s_FxParser;
 
 void TestFx(IConsoleCmdArgs* args)
 {
@@ -24,6 +26,7 @@ void TestFx(IConsoleCmdArgs* args)
 		filename = args->GetArg(1);
 
 	PEffect pEffect = nullptr;
+	#if 0
 	if (g_FxParser->Parse(filename, &pEffect))
 	{
 		CryLog("Dumping shaders of effect: %s", filename.data());
@@ -32,6 +35,7 @@ void TestFx(IConsoleCmdArgs* args)
 			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
 		}
 	}
+	#endif
 }
 
 
@@ -111,7 +115,9 @@ void CRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpar
 CRenderer::~CRenderer()
 {
 	SAFE_DELETE(m_RenderAuxGeom);
+	#if 0
 	SAFE_DELETE(m_BufferManager);
+	#endif
 	SAFE_DELETE(m_VertexBuffer);
 }
 
@@ -129,7 +135,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	strcpy(m_WinTitle, sGameName);
 
 	CryLog("Creating window called '%s' (%dx%d)", m_WinTitle, width, height);
-	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen, RenderBackend::GL};
+	IWindow::SInitParams wp{m_WinTitle, x, y, width, height, cbpp, zbpp, sbits, fullscreen, m_Backend};
 	if (!m_Window->init(&wp))
 		return nullptr;
 	CryLog("window inited");
@@ -137,12 +143,17 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();
-	m_hWnd	= (HWND)window->getHandle();
 	// now you can make GL calls.
 	m_Window->swap();
-	InitOverride();
 	#endif
+	m_hWnd	= (HWND)window->getHandle();
+	if (!InitOverride())
+		return false;
+	#if 0
 	g_FxParser = &s_FxParser;
+	#else
+	g_FxParser = nullptr;
+	#endif
 	#if 0
 	if (!InitResourceManagers())
 		return nullptr;
@@ -150,37 +161,49 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	#endif
 
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
-	m_BufferManager = new CBufferManager();
-	CRenderer::CreateQuad();
+	//m_BufferManager = new CBufferManager();
+	CreateQuad();
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
+	#if 0
 	if (!(m_ScreenShader = Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
 	}
+	#endif
 
+	#if 0
 	m_RenderAuxGeom = new CRenderAuxGeom();
+	#else
+	m_RenderAuxGeom = new CRenderAuxGeomNull();
+	#endif
 
 	CreateRenderTarget();
 
 	auto* dm			  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+	#if 0
 	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
+	#endif
 
 	{
+		#if 0
 		char buffer[32];
 		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 		dm = static_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
 		m_RenderTargets.push_back(Texture::create(
 			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),
 			TextureType::LDR_RENDER_TARGET, buffer));
+		#endif
 	}
 
+	#if 0
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	perViewBuffer = PerViewBuffer::Create(2);
 	screenBuffer  = ScreenBuffer::Create(11);
+	#endif
 
 	return result;
 }
@@ -267,32 +290,46 @@ RenderCVars::~RenderCVars()
 
 CVertexBuffer* CRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
 {
+	#if 0
 	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
+	#else
+	return nullptr;
+	#endif
 }
 
 void CRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 {
+	#if 0
 	m_BufferManager->Release(bufptr);
+	#endif
 }
 
 void CRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)
 {
+	#if 0
 	m_BufferManager->Draw(src, indicies, numindices, offsindex, prmode, vert_start, vert_stop, mi);
+	#endif
 }
 
 void CRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs /* = 0*/, int Type /* = 0*/)
 {
+	#if 0
 	m_BufferManager->Update(dest, src, vertexcount, bUnLock, nOffs, Type);
+	#endif
 }
 
 void CRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
 {
+	#if 0
 	m_BufferManager->Create(dest, src, indexcount);
+	#endif
 }
 
 void CRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock /* = true*/)
 {
+	#if 0
 	m_BufferManager->Update(dest, src, indexcount, bUnLock);
+	#endif
 }
 
 void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
@@ -329,7 +366,11 @@ int CRenderer::GetHeight()
 
 IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
 {
+	#if 0
 	return m_BufferManager->CreateConstantBuffer(size);
+	#else
+	return nullptr;
+	#endif
 }
 
 void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
@@ -348,8 +389,10 @@ int CRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, flo
 
 int CRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
 {
+	#if 0
 	Vec4d vp;							// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
+	#endif
 	auto p = glm::unProject(
 		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
@@ -395,7 +438,12 @@ void CRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
 
 ITexture* CRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
 {
+	#if 0
 	return TextureManager::instance()->getTexture(nameTex, eTT);
+	#else
+	return new CTextureNull();
+	//return nullptr;
+	#endif
 }
 
 void CRenderer::SetCamera(const CCamera& cam)
@@ -410,14 +458,29 @@ const CCamera& CRenderer::GetCamera()
 
 IShaderProgram* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 {
+	#if 0
 	flags = int(ShaderBinaryFormat::SPIRV);
+	#endif
 	gEnv->pLog->Log("load shader: %s", name);
+	return new CShaderNull();
 	return gShMan->Sh_Load(name, flags, nMaskGen);
 }
 
 void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 {
 }
+
+IFont* CRenderer::GetIFont()
+{
+	m_Fonts.push_back(CreateIFont());
+	return m_Fonts.back();
+}
+
+IRenderAuxGeom* CRenderer::GetIRenderAuxGeom()
+{
+	return m_RenderAuxGeom;
+}
+
 
 #ifdef LINUX
 #	include <experimental/filesystem>

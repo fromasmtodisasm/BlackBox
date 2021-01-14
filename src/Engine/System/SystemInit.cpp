@@ -407,7 +407,7 @@ bool CSystem::Init()
 		LoadConfiguration(ovr->GetValue());
 	}
 	//====================================================
-	if (!OpenRenderLibrary("OpenGL"))
+	if (!OpenRenderLibrary(gEnv->pConsole->GetCVar("r_Driver")->GetString()))
 	{
 		return false;
 	}
@@ -428,6 +428,7 @@ bool CSystem::Init()
 		{
 			RenderBegin();
 			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
+			#if 0
 			gEnv->pRenderer->DrawImage(
 				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
 				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
@@ -435,6 +436,7 @@ bool CSystem::Init()
 				(float)splash->getHeight(),
 				splash->getBindlesId(),
 				0, 0, 1, 1, 1, 1, 1, 1);
+			#endif
 			RenderEnd();
 		}
 	}
@@ -700,7 +702,12 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	}
 	//====================================================
 
-	return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Renderer", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
+	const char* RenderLibrary = "RendererGL";
+	if (render == "DX11")
+	{
+		RenderLibrary = "RendererDX";
+	}
+	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
 		Log("Load Render Library");
 		m_env.pRenderer = m_env.pRenderer = p(this);
 		if (m_env.pRenderer == nullptr)

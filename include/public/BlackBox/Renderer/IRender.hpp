@@ -43,6 +43,12 @@ typedef float vec4_t[4];
 typedef unsigned char byte;
 typedef float vec2_t[2];
 
+enum class RenderBackend
+{
+	GL,
+	DX
+};
+
 // Uncomment one of the two following typedefs:
 typedef uint32 vtx_idx;
 //typedef uint16 vtx_idx;
@@ -243,12 +249,9 @@ struct SDrawTextInfo
 
 struct SDispFormat
 {
-	int m_Width;
-	int m_Height;
-	int m_BPP;
-	SDispFormat()
-	{
-	}
+	int m_Width = 0;
+	int m_Height = 0;
+	int m_BPP = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -601,7 +604,7 @@ extern "C"
 struct SRenderParams
 {
 	IShaderProgram* Shader;
-	std::vector<UniformValue> uniforms;
+//	std::vector<UniformValue> uniforms;
 	Material* material;
 	CCamera* Camera;
 	DirectionLight* directionLight;

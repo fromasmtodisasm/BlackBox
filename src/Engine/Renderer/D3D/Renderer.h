@@ -1,21 +1,21 @@
 #pragma once
-#include "BaseRenderer.hpp"
+#include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
+#include <d3d10.h>
 
 class CD3DRenderer : public CRenderer
 {
 public:
+	CD3DRenderer(ISystem* pSystem);
 	~CD3DRenderer();
 	// Inherited via CRenderer
 	virtual void ShareResources(IRenderer* renderer) override;
 	virtual void SetRenderCallback(IRenderCallback* pCallback) override;
 	virtual void PushProfileMarker(char* label) override;
 	virtual void PopProfileMarker(char* label) override;
-	virtual IRenderAuxGeom* GetIRenderAuxGeom() override;
 	virtual int CreateRenderTarget() override;
 	virtual void DrawFullscreenQuad() override;
 	virtual ITechniqueManager* GetITechniqueManager() override;
-	virtual IFont* GetIFont() override;
 	virtual float GetDepthValue(int x, int y) override;
 	virtual void Flush() override;
 	virtual void Sh_Reload() override;
@@ -48,6 +48,11 @@ public:
 	virtual void ClearDepthBuffer() override;
 	virtual void ClearColorBuffer(const Vec3 vColor) override;
 	virtual void SetRenderTarget(int nHandle) override;
+	// Inherited via CRenderer
+	virtual bool InitOverride() override;
 private:
 
+	ID3D10Device* m_pd3dDevice					= NULL;
+	IDXGISwapChain* m_pSwapChain				= NULL;
+	ID3D10RenderTargetView* m_pRenderTargetView = NULL;
 };

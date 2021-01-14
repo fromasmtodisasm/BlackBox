@@ -247,12 +247,6 @@ bool GLRenderer::VBF_InPool(int format)
 	return false;
 }
 
-IFont* GLRenderer::GetIFont()
-{
-	m_Fonts.push_back(CreateIFont());
-	return m_Fonts.back();
-}
-
 void GLRenderer::PushProfileMarker(char* label)
 {
 	OpenglDebuger::PushGroup(0, std::strlen(label), label);
@@ -261,11 +255,6 @@ void GLRenderer::PushProfileMarker(char* label)
 void GLRenderer::PopProfileMarker(char* label)
 {
 	OpenglDebuger::EndGroup();
-}
-
-IRenderAuxGeom* GLRenderer::GetIRenderAuxGeom()
-{
-	return m_RenderAuxGeom;
 }
 
 void GLRenderer::SetRenderTarget(int nHandle)

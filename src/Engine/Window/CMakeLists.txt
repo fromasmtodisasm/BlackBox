@@ -36,15 +36,17 @@ elseif(USE_GLFW)
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif()
 
+if (0) 
 target_include_directories(
 ${PROJECT_NAME}
 	PRIVATE $<TARGET_PROPERTY:OpenGlBackend,INTERFACE_INCLUDE_DIRECTORIES>
 	#PRIVATE $<TARGET_PROPERTY:SDL2::SDL2,INTERFACE_INCLUDE_DIRECTORIES>
 )
+endif()
 
 ###################################################
 target_link_libraries(${PROJECT_NAME} PUBLIC Math)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
+#target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
 
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
