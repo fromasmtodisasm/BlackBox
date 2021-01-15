@@ -50,9 +50,15 @@ public:
 	virtual void SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
 	virtual bool InitOverride() override;
-private:
+	static auto GetDevice(IRenderer* pThis) { return static_cast<CD3DRenderer*>(pThis)->m_pd3dDevice; }
+  private:
 
 	ID3D10Device* m_pd3dDevice					= NULL;
 	IDXGISwapChain* m_pSwapChain				= NULL;
 	ID3D10RenderTargetView* m_pRenderTargetView = NULL;
 };
+
+inline auto GetDevice()
+{
+	return CD3DRenderer::GetDevice(gEnv->pRenderer);
+}

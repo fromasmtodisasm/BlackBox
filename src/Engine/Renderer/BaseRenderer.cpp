@@ -290,46 +290,32 @@ RenderCVars::~RenderCVars()
 
 CVertexBuffer* CRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
 {
-	#if 0
 	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
-	#else
-	return nullptr;
-	#endif
 }
 
 void CRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 {
-	#if 0
 	m_BufferManager->Release(bufptr);
-	#endif
 }
 
 void CRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)
 {
-	#if 0
 	m_BufferManager->Draw(src, indicies, numindices, offsindex, prmode, vert_start, vert_stop, mi);
-	#endif
 }
 
 void CRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs /* = 0*/, int Type /* = 0*/)
 {
-	#if 0
 	m_BufferManager->Update(dest, src, vertexcount, bUnLock, nOffs, Type);
-	#endif
 }
 
 void CRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
 {
-	#if 0
 	m_BufferManager->Create(dest, src, indexcount);
-	#endif
 }
 
 void CRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock /* = true*/)
 {
-	#if 0
 	m_BufferManager->Update(dest, src, indexcount, bUnLock);
-	#endif
 }
 
 void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
