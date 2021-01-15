@@ -210,7 +210,7 @@ bool CD3DRenderer::InitOverride()
 
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount						  = 1;
+	sd.BufferCount						  = 2;
 	sd.BufferDesc.Width					  = GetWidth();
 	sd.BufferDesc.Height				  = GetHeight();
 	sd.BufferDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -221,12 +221,13 @@ bool CD3DRenderer::InitOverride()
 	sd.SampleDesc.Count					  = 1;
 	sd.SampleDesc.Quality				  = 0;
 	sd.Windowed							  = TRUE;
+	sd.SwapEffect						  = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 
 	if (FAILED(D3D10CreateDeviceAndSwapChain(
 		NULL,
 		D3D10_DRIVER_TYPE::D3D10_DRIVER_TYPE_HARDWARE,
 		NULL,
-		D3D10_CREATE_DEVICE_SINGLETHREADED,
+		D3D10_CREATE_DEVICE_SINGLETHREADED | D3D10_CREATE_DEVICE_DEBUG,
 		D3D10_SDK_VERSION,
 		&sd,
 		&m_pSwapChain,

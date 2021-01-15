@@ -239,6 +239,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 
+#endif
 	uint16 indices[] = {
 		// Note that we start from 0!
 		0, 1, 3, // First Triangle
@@ -250,7 +251,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	m_IB = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 	static bool UB_created = false;
-#endif
 
 	return true;
 }
