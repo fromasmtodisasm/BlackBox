@@ -2,7 +2,6 @@
 #include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
-#include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IConsole.hpp>
 //#include <BlackBox/Renderer/OpenGL/Core.hpp>

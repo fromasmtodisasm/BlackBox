@@ -27,7 +27,7 @@ struct Material
   std::vector<BaseTexture*> diffuse;
 
   //BaseShaderProgramRef program;
-  IShaderProgram *program;
+  IShader *program;
   std::string program_name;
   std::shared_ptr<std::string> name;
   bool hasTexture = false;

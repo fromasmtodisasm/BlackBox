@@ -119,6 +119,8 @@ CRenderer::~CRenderer()
 	SAFE_DELETE(m_BufferManager);
 	#endif
 	SAFE_DELETE(m_VertexBuffer);
+
+	gEnv->pConsole->RemoveConsoleVarSink(this);
 }
 
 IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
@@ -442,13 +444,12 @@ const CCamera& CRenderer::GetCamera()
 	return m_Camera;
 }
 
-IShaderProgram* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
+IShader* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 {
 	#if 0
 	flags = int(ShaderBinaryFormat::SPIRV);
 	#endif
 	gEnv->pLog->Log("load shader: %s", name);
-	return new CShaderNull();
 	return gShMan->Sh_Load(name, flags, nMaskGen);
 }
 

@@ -16,6 +16,7 @@
 
 using namespace tinyxml2;
 
+#if 0
 Scene::Serializator::Serializator(Scene* scene)
   :
   m_Scene(scene)
@@ -545,3 +546,4 @@ void Scene::Serializator::loadCamera(tinyxml2::XMLElement* element)
 void Scene::Serializator::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
+#endif

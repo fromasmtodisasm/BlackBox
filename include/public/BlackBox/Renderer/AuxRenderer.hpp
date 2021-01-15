@@ -58,8 +58,8 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	AuxPushBuffer m_auxPushBuffer;
 	AuxVertexBuffer m_VB;
 	CVertexBuffer* m_HardwareVB = nullptr;
-	ShaderProgramRef m_BoundingBoxShader;
-	BaseShaderProgramRef m_AuxGeomShader;
+	_smart_ptr<IShader> m_BoundingBoxShader;
+	_smart_ptr<IShader> m_AuxGeomShader;
 
 	//SAABBBufferPtr  m_aabbBufferPtr;
 

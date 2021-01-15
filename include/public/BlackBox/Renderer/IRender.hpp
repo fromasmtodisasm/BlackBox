@@ -148,41 +148,6 @@ struct Transform
 #define GS_DEPTHFUNC_GREAT 0x00200000
 #define GS_STENCIL 0x00400000
 
-union UCol
-{
-	uint dcolor;
-	bvec4 bcolor;
-	/*
-	UCol& operator=(Vec4& v)
-	{
-		UCol c;
-		c.bcolor[0] = static_cast<char>(v[0] * 255);
-		c.bcolor[1] = static_cast<char>(v[1] * 255);
-		c.bcolor[2] = static_cast<char>(v[2] * 255);
-		c.bcolor[3] = static_cast<char>(v[3] * 255);
-		return c;
-	};
-	*/
-	UCol() = default;
-	UCol(const Vec4& v)
-	{
-		bcolor[0] = static_cast<char>(v[3] * 255.f);
-		bcolor[1] = static_cast<char>(v[1] * 255.f);
-		bcolor[2] = static_cast<char>(v[2] * 255.f);
-		bcolor[3] = static_cast<char>(v[0] * 255.f);
-	}
-	UCol(const Vec3& v)
-		: UCol(Vec4(v, 1))
-	{
-	}
-	UCol(const bvec4 v) : bcolor{v[0], v[1], v[2], v[3]}
-	{
-	}
-	UCol(uint8 v0, uint8 v1, uint8 v2, uint8 v3) : bcolor{v0, v1, v2, v3}
-	{
-	}
-};
-
 enum class RenderPrimitive
 {
 	LINES,
@@ -347,15 +312,6 @@ class CVertexBuffer
 
 	int Size(int Flags, int nVerts);
 };
-//////////////////////////////////////////////////////////////////////
-struct SVertBufComps
-{
-	bool m_bHasTC;
-	bool m_bHasColors;
-	bool m_bHasSecColors;
-	bool m_bHasNormals;
-};
-
 struct IRenderCallback
 {
 	enum Type
@@ -589,7 +545,7 @@ struct IRenderer
 	virtual void Flush() = 0;
 
 	////////////////////////////////////////////////////////////////////////////////
-	virtual IShaderProgram* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) = 0;
+	virtual IShader* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) = 0;
 	virtual void Sh_Reload()															  = 0;
 	// Loading of the texture for name(nameTex)
 	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
@@ -603,7 +559,7 @@ extern "C"
 
 struct SRenderParams
 {
-	IShaderProgram* Shader;
+	IShader* Shader;
 //	std::vector<UniformValue> uniforms;
 	Material* material;
 	CCamera* Camera;

@@ -10,6 +10,7 @@
 #include <BlackBox/System/IConsole.hpp>
 
 #include "Shaders/FxParser.h"
+#include "D3D/Shader.hpp"
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
@@ -37,14 +38,13 @@ class RenderCVars
 
 	static int CV_r_GetScreenShot;
 };
-struct CBaseShaderProgram;
 class ShaderMan
 {
   public:
 	~ShaderMan()
 	{
 	}
-	IShaderProgram* Sh_Load(const char* vertex, const char* fragment)
+	IShader* Sh_Load(const char* vertex, const char* fragment)
 	{
 		#if 0
 		using ShaderInfo = IShaderProgram::ShaderInfo;
@@ -58,7 +58,7 @@ class ShaderMan
 		return nullptr;
 		#endif
 	}
-	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen)
+	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	{
 		#if 0
 		CBaseShaderProgram* p = nullptr;
@@ -85,8 +85,6 @@ class ShaderMan
 
 	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
 	{
-		using ShaderInfo = IShaderProgram::ShaderInfo;
-
 		PEffect pEffect = nullptr;
 		std::stringstream path;
 		path << "res/shaders/fx/" << name << ".fx";
@@ -185,7 +183,7 @@ class CRenderer : public RenderCVars
 	//! Get the renderer camera
 	virtual const CCamera& GetCamera() final;
 
-	IShaderProgram* Sh_Load(const char* name, int flags, uint64 nMaskGen = 0) final;
+	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen = 0) final;
 
 	void Set2DMode(bool enable, int ortox, int ortoy) final;
 
@@ -315,7 +313,7 @@ protected:
 	CBufferManager* m_BufferManager;
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
-	BaseShaderProgramRef m_ScreenShader;
+	_smart_ptr<CShader> m_ScreenShader;
 
 	#if 0
 	FrameBufferObject* m_MainMSAAFrameBuffer;

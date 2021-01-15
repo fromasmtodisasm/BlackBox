@@ -55,7 +55,7 @@ private:
 
 	CVertexBuffer* m_VB = nullptr;
 	SVertexStream* m_IB = nullptr;
-	BaseShaderProgramRef shader;
+	std::vector<_smart_ptr<IShader>> shader;
 	uint texture;
 
 	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;

@@ -9,6 +9,7 @@ install_this(D3DBackend)
 target_sources(${PROJECT_NAME}
   PRIVATE ${D3D_DIR}/Renderer.cpp
   PRIVATE ${D3D_DIR}/BufferManager.cpp
+  PRIVATE ${D3D_DIR}/Shader.cpp
 )
 
 target_link_libraries(D3DBackend INTERFACE d3d10)

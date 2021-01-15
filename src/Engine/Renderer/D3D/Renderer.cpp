@@ -8,6 +8,9 @@
 
 struct ITechniqueManager;
 
+D3D10_DRIVER_TYPE g_driverType = D3D10_DRIVER_TYPE_NULL;
+ID3D10Buffer* g_pVertexBuffer  = NULL;
+
 CD3DRenderer::CD3DRenderer(ISystem* pSystem) : CRenderer(pSystem)
 {
 	CRenderer::m_Backend = RenderBackend::DX;
@@ -43,11 +46,6 @@ int CD3DRenderer::CreateRenderTarget()
 
 void CD3DRenderer::DrawFullscreenQuad()
 {
-}
-
-ITechniqueManager* CD3DRenderer::GetITechniqueManager()
-{
-	return nullptr;
 }
 
 float CD3DRenderer::GetDepthValue(int x, int y)
@@ -198,57 +196,69 @@ void CD3DRenderer::SetRenderTarget(int nHandle)
 
 bool CD3DRenderer::InitOverride()
 {
-	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount						  = 2;
-	sd.BufferDesc.Width					  = GetWidth();
-	sd.BufferDesc.Height				  = GetHeight();
-	sd.BufferDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator	  = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferUsage						  = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow						  = (HWND)m_hWnd;
-	sd.SampleDesc.Count					  = 1;
-	sd.SampleDesc.Quality				  = 0;
-	sd.Windowed							  = TRUE;
-	sd.SwapEffect						  = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+    HRESULT hr = S_OK;
 
-	if (FAILED(D3D10CreateDeviceAndSwapChain(
-		NULL,
-		D3D10_DRIVER_TYPE::D3D10_DRIVER_TYPE_HARDWARE,
-		NULL,
-		D3D10_CREATE_DEVICE_SINGLETHREADED | D3D10_CREATE_DEVICE_DEBUG,
-		D3D10_SDK_VERSION,
-		&sd,
-		&m_pSwapChain,
-		&m_pd3dDevice
-	)))
-	{
-		gEnv->pSystem->FatalError("Cannot create d3d device");	
-		return false;
-	}
+    UINT createDeviceFlags = 0;
+#ifdef _DEBUG
+    createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
+#endif
 
-	gEnv->pLog->Log("Created d3d device");
+    D3D10_DRIVER_TYPE driverTypes[] =
+    {
+        D3D10_DRIVER_TYPE_HARDWARE,
+        D3D10_DRIVER_TYPE_REFERENCE,
+    };
+    UINT numDriverTypes = sizeof( driverTypes ) / sizeof( driverTypes[0] );
 
-	// Создание рендер-таргет
-	ID3D10Texture2D* pBackBuffer;
-	auto hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&pBackBuffer);
-	if (FAILED(hr))
-		return hr;
+    DXGI_SWAP_CHAIN_DESC sd;
+    ZeroMemory( &sd, sizeof( sd ) );
+    sd.BufferCount = 1;
+    sd.BufferDesc.Width = GetWidth();
+    sd.BufferDesc.Height = GetHeight();
+    sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    sd.BufferDesc.RefreshRate.Numerator = 60;
+    sd.BufferDesc.RefreshRate.Denominator = 1;
+    sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    sd.OutputWindow = (HWND)m_hWnd;
+    sd.SampleDesc.Count = 1;
+    sd.SampleDesc.Quality = 0;
+    sd.Windowed = TRUE;
 
-	hr = m_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView);
-	//pBackBuffer->Release();
+    for( UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++ )
+    {
+        g_driverType = driverTypes[driverTypeIndex];
+        hr = D3D10CreateDeviceAndSwapChain( NULL, g_driverType, NULL, createDeviceFlags,
+                                            D3D10_SDK_VERSION, &sd, &m_pSwapChain, &m_pd3dDevice );
+        if( SUCCEEDED( hr ) )
+            break;
+    }
+    if( FAILED( hr ) )
+        return false;
 
-	m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
-	D3D10_VIEWPORT vp;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	vp.Width	= sd.BufferDesc.Width;
-	vp.Height	= sd.BufferDesc.Height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	m_pd3dDevice->RSSetViewports(1, &vp);
-	return true;
+    // Create a render target view
+    ID3D10Texture2D* pBuffer;
+    hr = m_pSwapChain->GetBuffer( 0, __uuidof( ID3D10Texture2D ), ( LPVOID* )&pBuffer );
+    if( FAILED( hr ) )
+        return false;
+
+    hr = m_pd3dDevice->CreateRenderTargetView( pBuffer, NULL, &m_pRenderTargetView );
+    pBuffer->Release();
+    if( FAILED( hr ) )
+        return false;
+
+    m_pd3dDevice->OMSetRenderTargets( 1, &m_pRenderTargetView, NULL );
+
+    // Setup the viewport
+    D3D10_VIEWPORT vp;
+    vp.Width = GetWidth();
+    vp.Height = GetHeight();
+    vp.MinDepth = 0.0f;
+    vp.MaxDepth = 1.0f;
+    vp.TopLeftX = 0;
+    vp.TopLeftY = 0;
+    m_pd3dDevice->RSSetViewports( 1, &vp );
+
+    return true;
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

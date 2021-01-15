@@ -112,26 +112,26 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 {
 	bDynamic = true;
 	assert(vertexformat >= VERTEX_FORMAT_P3F && vertexformat < VERTEX_FORMAT_NUMS);
-	SVertexStream stream;
 	auto buffer = new CVertexBuffer;
+	SVertexStream& stream = buffer->m_VS[VSF_GENERAL];
+	buffer->m_VS[VSF_GENERAL] = stream;
 	stream.m_bDynamic	  = bDynamic;
 	stream.m_VData		  = CreateVertexBuffer(vertexformat, vertexcount);
 
 	D3D10_BUFFER_DESC bufferDesc;
-	//bufferDesc.Usage		  = bDynamic ? D3D10_USAGE_DYNAMIC : D3D10_USAGE_DEFAULT;
-    bufferDesc.Usage = D3D10_USAGE_DEFAULT;
+	bufferDesc.Usage		  = bDynamic ? D3D10_USAGE_DYNAMIC : D3D10_USAGE_DEFAULT;
 	bufferDesc.ByteWidth	  = vertexcount * gVertexSize[vertexformat];
 	bufferDesc.BindFlags	  = D3D10_BIND_VERTEX_BUFFER;
-	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.CPUAccessFlags = bDynamic ? D3D10_CPU_ACCESS_WRITE : 0;
 	bufferDesc.MiscFlags	  = 0;
 
-	ID3D10Buffer*  p_VB	   = nullptr;
+	ID3D10Buffer**  p_VB	   = reinterpret_cast<ID3D10Buffer**>(&buffer->m_VS[0].m_VertBuf.m_pPtr);
 
 	D3D10_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem		  = stream.m_VData;
 	InitData.SysMemPitch	  = 0;
 	InitData.SysMemSlicePitch = 0;
-	auto hr					  = GetDevice()->CreateBuffer(&bufferDesc, &InitData, &p_VB);
+	auto hr					  = GetDevice()->CreateBuffer(&bufferDesc, &InitData, p_VB);
 	if (FAILED(hr))
 	{
 		CryFatalError("Cannot create vertex buffer");	
@@ -141,12 +141,11 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 	UINT stride = gVertexSize[vertexformat];
     UINT offset = 0;
 
-	GetDevice()->IASetVertexBuffers(0, 1, (ID3D10Buffer*const*)p_VB, &stride, &offset);
+	GetDevice()->IASetVertexBuffers(0, 1, p_VB, &stride, &offset);
 
 	buffer->m_bDynamic		  = bDynamic;
 	buffer->m_NumVerts		  = vertexcount;
 	buffer->m_vertexformat	  = vertexformat;
-	buffer->m_VS[VSF_GENERAL] = stream;
 	//EnableAttributes(buffer);
 	//debuger::vertex_array_label(buffer->m_Container, szSource);
 
@@ -207,7 +206,7 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
 	UINT stride = gVertexSize[src->m_vertexformat];
     UINT offset = 0;
 
-	GetDevice()->IASetVertexBuffers(0, 1, reinterpret_cast<ID3D10Buffer* const*>(src->m_VS[0].m_VertBuf.m_pPtr), &stride, &offset);
+	GetDevice()->IASetVertexBuffers(0, 1, reinterpret_cast<ID3D10Buffer* const*>(&src->m_VS[0].m_VertBuf.m_pPtr), &stride, &offset);
 	GetDevice()->IASetPrimitiveTopology(ToDxPrimitive(static_cast<RenderPrimitive>(prmode)));
 
 	if (indicies != nullptr)
