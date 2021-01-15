@@ -80,7 +80,7 @@ void CD3DRenderer::BeginFrame(void)
 void CD3DRenderer::Update(void)
 {
 	// Очистка рендер-таргета
-	float ClearColor[4] = { 0.0f, 0.9f, 0.5f, 1.0f }; //red,green,blue,alpha
+	float ClearColor[4] = { 0.3f, 0.3f, 0.5f, 1.0f }; //red,green,blue,alpha
 	m_pd3dDevice->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
 	// Отображение геометрии на рендер-таргете
 	// Вывод содержимого рендер-таргета на экран
@@ -198,16 +198,6 @@ void CD3DRenderer::SetRenderTarget(int nHandle)
 
 bool CD3DRenderer::InitOverride()
 {
-	#if 0
-	m_Window->close();
-
-	auto g_hInst = GetModuleHandle(0);
-	RECT rc = {0, 0, 640, 480};
-	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	m_hWnd = CreateWindow(LWCaption, LWName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
-	#endif
-
-
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.BufferCount						  = 1;
@@ -249,6 +239,14 @@ bool CD3DRenderer::InitOverride()
 	//pBackBuffer->Release();
 
 	m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+	D3D10_VIEWPORT vp;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	vp.Width	= sd.BufferDesc.Width;
+	vp.Height	= sd.BufferDesc.Height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	m_pd3dDevice->RSSetViewports(1, &vp);
 	return true;
 }
 
