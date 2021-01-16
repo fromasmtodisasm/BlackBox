@@ -11,10 +11,12 @@ function Player:OnInit()
 	--Console:Show(true)
 	--Game:gotoMenu(true)
 
+	--[[
 	local formats = System:EnumDisplayFormats()
 	for i=1, #formats do
 		Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
 	end
+	]]
 
 end
 

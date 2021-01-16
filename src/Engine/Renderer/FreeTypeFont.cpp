@@ -11,19 +11,18 @@ struct ColorTable
 {
 	ColorB color;
 	string name;
-}  ColorTable[10] =
-{
-	ColorB(0x00, 0x00, 0x00), "black",
-	ColorB(0xff, 0xff, 0xff), "white",
-	ColorB(0x00, 0x00, 0xff), "blue",
-	ColorB(0x00, 0xff, 0x00), "green",
-	ColorB(0xff, 0x00, 0x00), "red",
-	ColorB(0x00, 0xff, 0xff), "cyan",
-	ColorB(0xff, 0xff, 0x00), "yellow",
-	ColorB(0xff, 0x00, 0xff), "purple",
-	ColorB(0xff, 0x80, 0x00), "orange",
-	ColorB(0x8f, 0x8f, 0x8f), "grey"
-};
+} ColorTable[10] =
+	{
+		ColorB(0x00, 0x00, 0x00), "black",
+		ColorB(0xff, 0xff, 0xff), "white",
+		ColorB(0x00, 0x00, 0xff), "blue",
+		ColorB(0x00, 0xff, 0x00), "green",
+		ColorB(0xff, 0x00, 0x00), "red",
+		ColorB(0x00, 0xff, 0xff), "cyan",
+		ColorB(0xff, 0xff, 0x00), "yellow",
+		ColorB(0xff, 0x00, 0xff), "purple",
+		ColorB(0xff, 0x80, 0x00), "orange",
+		ColorB(0x8f, 0x8f, 0x8f), "grey"};
 
 void PrintColorTable(IConsoleCmdArgs*)
 {
@@ -61,11 +60,11 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 			{
 				if (isdigit(*(++c)))
 				{
-					int colorIndex = *c - '0';
+					int colorIndex	= *c - '0';
 					ColorB newColor = ColorTable[colorIndex].color;
-					color[0] = newColor.r;
-					color[1] = newColor.g;
-					color[2] = newColor.b;
+					color[0]		= newColor.r;
+					color[1]		= newColor.g;
+					color[2]		= newColor.b;
 					//sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
 					cur_c = Vec4(1.f, Vec3(color[2], color[1], color[0]) / 255.f);
 					continue;
@@ -87,9 +86,9 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
 		// Update VBO for each character
-		using P3F_T2F		= SVF_P3F_C4B_T2F;
-		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
-		Vec2 uv_size		= Vec2(ch.Size) / 4096.f;
+		using P3F_T2F					= SVF_P3F_C4B_T2F;
+		Vec2 uv_pos						= Vec2(ch.Pos) / 4096.f;
+		Vec2 uv_size					= Vec2(ch.Size) / 4096.f;
 		std::array<P3F_T2F, 6> vertices = {
 			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y},
 			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
@@ -129,14 +128,16 @@ float FreeTypeFont::CharWidth(char symbol)
 
 struct STestSize
 {
-	int width, height;	
+	int width, height;
 	STestSize(const int w, const int h)
 		: width(w), height(h)
 	{
 	}
 };
-bool operator< (const STestSize& a, const STestSize& b) {
-	if (a.width != b.width) return (a.width < b.width);
+bool operator<(const STestSize& a, const STestSize& b)
+{
+	if (a.width != b.width)
+		return (a.width < b.width);
 	return (a.height < b.height);
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
@@ -191,12 +192,12 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 			CryError("ERROR::FREETYTPE: Failed to load Glyph");
 			continue;
 		}
-		#if 0
+#	if 0
 		test.insert(
 			STestSize(
 				face->glyph->bitmap.width,
 				face->glyph->bitmap.rows));
-		#endif
+#	endif
 		auto& c_with = face->glyph->bitmap.width;
 		auto& c_rows = face->glyph->bitmap.rows;
 		if ((t_size.x - cur_pos.x) < c_with)
@@ -243,7 +244,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	uint16 indices[] = {
 		// Note that we start from 0!
 		0, 1, 3, // First Triangle
-		1, 2, 3  // Second Triangle
+		1, 2, 3	 // Second Triangle
 	};
 
 	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
@@ -290,11 +291,13 @@ void RegisterColorTable()
 
 void FreeTypeFont::Submit()
 {
+	if (!shader)
+		return;
 	if (m_CharBuffer.size() == 0)
 		return;
 	// Activate corresponding render state
-	shader->Use();
-	auto render				= GetISystem()->GetIRenderer();
+	//shader->Use();
+	auto render = GetISystem()->GetIRenderer();
 	//gl::ActiveTexture(GL_TEXTURE0);
 	RSS(render, BLEND, true);
 	RSS(render, CULL_FACE, false);
@@ -305,8 +308,7 @@ void FreeTypeFont::Submit()
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
 	SAFE_DELETE(m_VB);
 	auto vertex_cnt = 6 * m_CharBuffer.size();
-	m_VB = gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
-
+	m_VB			= gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
 
 	// Render glyph texture over quad
 	// Update content of VBO memory

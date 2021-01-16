@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <map>
+#include <BlackBox/Utils/smartptr.hpp>
 
 void RegisterColorTable();
 
@@ -25,14 +26,12 @@ public:
 	float m_Height = 0;
 
 	FreeTypeFont() : face(nullptr),
-					 ft(nullptr),
-					 shader(nullptr)
+					 ft(nullptr)
 	{
 		RegisterColorTable();
 	}
 	FreeTypeFont(const char* font, int w, int h) : face(nullptr),
-												   ft(nullptr),
-												   shader(nullptr)
+												   ft(nullptr)
 	{
 		RegisterColorTable();
 	}
@@ -55,7 +54,7 @@ private:
 
 	CVertexBuffer* m_VB = nullptr;
 	SVertexStream* m_IB = nullptr;
-	std::vector<_smart_ptr<IShader>> shader;
+	_smart_ptr<IShader> shader;
 	uint texture;
 
 	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;
