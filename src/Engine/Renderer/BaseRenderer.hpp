@@ -309,8 +309,8 @@ protected:
 	CCamera m_Camera;
 	//============
 
-	IRenderAuxGeom* m_RenderAuxGeom;
-	CBufferManager* m_BufferManager;
+	IRenderAuxGeom* m_RenderAuxGeom = nullptr;
+	CBufferManager* m_BufferManager = nullptr;
 
 	CVertexBuffer* m_VertexBuffer = nullptr;
 	_smart_ptr<CShader> m_ScreenShader;

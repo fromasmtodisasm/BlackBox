@@ -223,8 +223,10 @@ class CSystem final : public ISystem
 
 	void ShutDown();
 
+	void UnloadSubsystems();
+
   protected:
-	CCmdLine* m_pCmdLine;
+	CCmdLine* m_pCmdLine = nullptr;
 
   private:
 	// System environment.
@@ -238,23 +240,23 @@ class CSystem final : public ISystem
 	CCamera m_ViewCamera; //!<
 
 	//IInput* m_pInput;
-	ICryPak* m_pCryPak;
-	IGame* m_pGame;
-	IFont* m_pFont;
-	IWindow* m_pWindow;
+	ICryPak* m_pCryPak = nullptr;
+	IGame* m_pGame = nullptr;
+	IFont* m_pFont = nullptr;
+	IWindow* m_pWindow = nullptr;
 	IValidator* m_pValidator; //!< Pointer to validator interface.
-	IEntitySystem* m_pEntitySystem;
-	INetwork* m_pNetwork;
-	ITextModeConsole* m_pTextModeConsole;
+	IEntitySystem* m_pEntitySystem = nullptr;
+	INetwork* m_pNetwork = nullptr;
+	ITextModeConsole* m_pTextModeConsole = nullptr;
 	//! system event dispatcher
-	ISystemEventDispatcher* m_pSystemEventDispatcher;
+	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
 
-	CScriptObjectConsole* m_ScriptObjectConsole;
-	CScriptObjectScript* m_ScriptObjectScript;
-	CScriptObjectRenderer* m_ScriptObjectRenderer;
+	CScriptObjectConsole* m_ScriptObjectConsole = nullptr;
+	CScriptObjectScript* m_ScriptObjectScript = nullptr;
+	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
 
   private:
-	ICVar* cvGameName;
+	ICVar* cvGameName = nullptr;
 	//////////////////////////////////////////////////////////////////////////
 	//! User define callback for system events.
 	ISystemUserCallback* m_pUserCallback = nullptr;

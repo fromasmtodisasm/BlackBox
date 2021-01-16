@@ -7,6 +7,7 @@
 #include <BlackBox/Core/Platform/CryLibrary.h>
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
+#include <crtdbg.h>
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
 extern "C"
@@ -28,12 +29,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	const string cmdLine = GetCommandLineA();
 	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
 
+	auto result = EXIT_FAILURE;
+	_CrtMemState s1, s2, s3;
+	_CrtMemCheckpoint(&s1);
 	if (InitializeEngine(startupParams))
 	{
 		startupParams.pSystem->Start();
 		startupParams.pSystem->Release();
-		return EXIT_SUCCESS;
+		_CrtMemCheckpoint(&s1);
+		result = EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE;
+	_CrtMemCheckpoint(&s2);
+	if (_CrtMemDifference(&s3, &s1, &s2))
+	{
+		printf("leak detected\n");
+		_CrtMemDumpStatistics(&s3);
+	}
+	return result;
 }
 

@@ -54,7 +54,6 @@ bool CSDLWindow::init(SInitParams* pInitParams)
 		gEnv->pLog->Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 		return 1;
 	}
-
 	return true;
 }
 

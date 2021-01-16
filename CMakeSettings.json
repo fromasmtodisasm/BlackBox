@@ -18,7 +18,8 @@
     },
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Profile_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      //"cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "configurationType": "Profile",
       "generator": "Ninja",
@@ -73,7 +74,8 @@
       "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\Solutions\\Win64_Release_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      //"cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": []

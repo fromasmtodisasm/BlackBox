@@ -3,9 +3,9 @@
 #include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
-#include <BlackBox/System/CryLibrary.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
+#include <BlackBox/Core/Platform/CryLibrary.h>
 #include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
@@ -25,7 +25,40 @@ static inline void InlineInitializationProcessing(const char* sDescription)
 		gEnv->pLog->UpdateLoadingScreen(0);
 }
 
+struct SubsystemWrapper : public _i_reference_target_t
+{
+	HMODULE m_Handle;
+	char m_Name[64];
 
+	SubsystemWrapper(HMODULE handle, const char* name) : m_Handle(handle)
+	{
+		strncpy(m_Name, name, std::min(strlen(name) + 1, size_t(64)));
+	}
+
+	~SubsystemWrapper()
+	{
+		CryFreeLibrary(m_Handle);	
+	}
+};
+
+std::vector<_smart_ptr<SubsystemWrapper>> g_Subsystems;
+
+void CSystem::UnloadSubsystems()
+{
+	auto num = 3;
+	/*while (!g_Subsystems.empty() && num)
+	{
+
+		g_Subsystems.pop();
+		num--;
+	}
+	auto& t = g_Subsystems.top();*/
+	for (size_t i = 0; i < g_Subsystems.size(); i++)
+	{
+		if (i < 2 && i != 4 && i != 3 && i != 5 && i != 6 && i != 7)
+			g_Subsystems[i]->Release();
+	}
+}
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,
 	                   public ITextModeConsole
@@ -159,6 +192,7 @@ namespace
 		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
 	}
 
+
 	template<typename Proc>
 	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
@@ -192,6 +226,8 @@ namespace
 				{
 					pfnModuleInitISystem(gEnv->pSystem, lib_name);
 				}
+				auto subsystem = _smart_ptr(new SubsystemWrapper(L, lib_name));
+				g_Subsystems.push_back(subsystem);
 				return f(P);
 			}
 			else
@@ -223,6 +259,7 @@ namespace
 		return false;
 	}
 } // namespace
+
 
 void CSystem::PreprocessCommandLine()
 {
@@ -284,7 +321,6 @@ bool CSystem::Init()
 
 		#if !defined(_RELEASE)
 	bool isSimpleConsole = (m_pCmdLine->FindArg(eCLAT_Pre, "simple_console") != 0);
-
 	if (!(isDaemonMode || isSimpleConsole))
 		#endif // !defined(_RELEASE)
 	{

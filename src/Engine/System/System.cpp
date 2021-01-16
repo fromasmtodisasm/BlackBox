@@ -382,6 +382,8 @@ void CSystem::ShutDown()
 	GetIRemoteConsole()->Stop();
 	GetIRemoteConsole()->UnregisterConsoleVariables();
 
+	ShutDownThreadSystem();
+
 	SAFE_DELETE(m_pTextModeConsole);
 
 	SAFE_RELEASE(m_pGame);
@@ -395,13 +397,17 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_ScriptObjectRenderer);
 	SAFE_RELEASE(m_env.pScriptSystem);
 
-	m_env.pInput->ShutDown();
-	SAFE_RELEASE(m_env.pLog);
+	if (m_env.pInput)
+		m_env.pInput->ShutDown();
 	SAFE_RELEASE(m_env.pConsole);
 	SAFE_DELETE(m_pSystemEventDispatcher);
 	SAFE_DELETE(m_pCmdLine);
 	SAFE_DELETE(m_env.pProjectManager);
+	SAFE_RELEASE(m_env.pLog);
+	SAFE_RELEASE(m_env.pCryPak);
 	//SAFE_RELEASE(m_pCryPak);
+	SDL_Quit();
+	UnloadSubsystems();
 }
 
 void CSystem::EnableGui(bool enable)
@@ -908,9 +914,9 @@ ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 #endif
 	if (!pSystem->Init())
 	{
-		pSystem.release();
+		//pSystem.release();
 		initParams.pSystem = nullptr;
-		gEnv->pSystem	   = nullptr;
+		//gEnv->pSystem	   = nullptr;
 		return nullptr;
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);

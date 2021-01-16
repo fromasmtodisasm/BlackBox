@@ -463,7 +463,7 @@ bool CGame::Update()
 {
 	static const auto& render_game = true;
 	const bool bRenderFrame		   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
-	static int num_frames = 0x0ffffff;
+	static int num_frames = 0x02;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	#ifdef USE_STEAM
