@@ -154,11 +154,15 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 
 void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
 {
-	reinterpret_cast<ID3D10Buffer*>(pVertexBuffer->m_VS[0].m_VertBuf.m_pPtr)->Release();
-	//glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
-	for (int i = 0; i < VSF_NUM; i++)
+	if (pVertexBuffer)
 	{
-		SAFE_DELETE(pVertexBuffer->m_VS[i].m_VData);
+		auto VB = reinterpret_cast<ID3D10Buffer*>(pVertexBuffer->m_VS[0].m_VertBuf.m_pPtr);
+		SAFE_RELEASE(VB);
+		//glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
+		for (int i = 0; i < VSF_NUM; i++)
+		{
+			SAFE_DELETE(pVertexBuffer->m_VS[i].m_VData);
+		}
 	}
 }
 

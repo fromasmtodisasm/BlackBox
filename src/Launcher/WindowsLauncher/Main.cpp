@@ -23,7 +23,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	// Note: lpCmdLine does not contain the filename.
 	const string cmdLine = GetCommandLineA();
@@ -36,7 +36,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		startupParams.pSystem->Start();
 		startupParams.pSystem->Release();
-		_CrtMemCheckpoint(&s1);
 		result = EXIT_SUCCESS;
 	}
 	_CrtMemCheckpoint(&s2);
@@ -44,6 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		printf("leak detected\n");
 		_CrtMemDumpStatistics(&s3);
+		_CrtDumpMemoryLeaks();
 	}
 	return result;
 }

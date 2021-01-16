@@ -325,4 +325,10 @@ void FreeTypeFont::Submit()
 FreeTypeFont::~FreeTypeFont()
 {
 	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
+	gEnv->pRenderer->ReleaseBuffer(m_VB);
+}
+
+void FreeTypeFont::Release()
+{
+	delete this;
 }

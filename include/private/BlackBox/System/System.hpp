@@ -204,6 +204,7 @@ class CSystem final : public ISystem
 	void ParseCMD();
 	void LoadScreen();
 	bool InitScripts();
+	void ReleaseScripts();
 	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
 	void SetWorkingDirectory(const std::string& path) const;
 	void LogCommandLine() const;

@@ -45,19 +45,17 @@ std::vector<_smart_ptr<SubsystemWrapper>> g_Subsystems;
 
 void CSystem::UnloadSubsystems()
 {
-	auto num = 3;
-	/*while (!g_Subsystems.empty() && num)
-	{
-
-		g_Subsystems.pop();
-		num--;
-	}
-	auto& t = g_Subsystems.top();*/
 	for (size_t i = 0; i < g_Subsystems.size(); i++)
 	{
-		if (i < 2 && i != 4 && i != 3 && i != 5 && i != 6 && i != 7)
-			g_Subsystems[i]->Release();
+		/*if (i < 2 && i != 4 && i != 3 && i != 5 && i != 6 && i != 7)
+			g_Subsystems[i]->Release();*/
+		auto CleanupModuleCVars = (void (*)())CryGetProcAddress(g_Subsystems[i]->m_Handle, "CleanupModuleCVars");
+		if (CleanupModuleCVars)
+		{
+			CleanupModuleCVars();
+		}
 	}
+	// CVars should be unregistered earlier than owning objects/modules are destroyed.
 }
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,

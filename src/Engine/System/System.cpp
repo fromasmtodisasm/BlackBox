@@ -261,6 +261,13 @@ bool CSystem::InitScripts()
 	return m_env.pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 
+void CSystem::ReleaseScripts()
+{
+	CScriptObjectConsole::ReleaseTemplate();
+	CScriptObjectScript::ReleaseTemplate();
+	CScriptObjectRenderer::ReleaseTemplate();
+}
+
 void CSystem::SetWorkingDirectory(const std::string& path) const
 {
 	fs::current_path(fs::path(path));
@@ -395,10 +402,14 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectScript);
 	SAFE_DELETE(m_ScriptObjectRenderer);
+	ReleaseScripts();
 	SAFE_RELEASE(m_env.pScriptSystem);
 
+	SAFE_RELEASE(m_env.pHardwareMouse);
 	if (m_env.pInput)
 		m_env.pInput->ShutDown();
+	SAFE_RELEASE(m_pEntitySystem);
+	SAFE_RELEASE(m_pNetwork);
 	SAFE_RELEASE(m_env.pConsole);
 	SAFE_DELETE(m_pSystemEventDispatcher);
 	SAFE_DELETE(m_pCmdLine);
@@ -406,8 +417,8 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pLog);
 	SAFE_RELEASE(m_env.pCryPak);
 	//SAFE_RELEASE(m_pCryPak);
-	SDL_Quit();
 	UnloadSubsystems();
+	SDL_Quit();
 }
 
 void CSystem::EnableGui(bool enable)

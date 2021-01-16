@@ -47,6 +47,7 @@ public:
 
 	~FreeTypeFont();
 
+	void Release() override;
 private:
 	FT_Library ft;
 	FT_Face face;

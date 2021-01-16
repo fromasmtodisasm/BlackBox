@@ -17,6 +17,12 @@ CClient::CClient(CGame *pGame)
 {
 }
 
+CClient::~CClient()
+{
+	SAFE_RELEASE(m_CrossHair);
+	SAFE_RELEASE(m_pClient);
+}
+
 void CClient::Update()
 {
 	//m_pClient->Update(16);

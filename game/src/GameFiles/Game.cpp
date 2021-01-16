@@ -1,6 +1,7 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <Game.hpp>
 #include <GameObject.hpp>
+#include <TagPoint.hpp>
 
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
@@ -272,6 +273,65 @@ CGame::~CGame()
 	if (g_SteamAchievements)
 		delete g_SteamAchievements;
 	#endif
+	CScriptObjectGame::ReleaseTemplate();
+	CScriptObjectInput::ReleaseTemplate();
+	CScriptObjectTest::ReleaseTemplate();
+	CScriptObjectClient::ReleaseTemplate();
+	CScriptObjectServer::ReleaseTemplate();
+//	CScriptObjectStream::ReleaseTemplate();
+#if 0
+	g_scene->Release();
+	r_displayinfo->Release();
+	r_profile->Release();
+	r_cap_profile->Release();
+	m_pCVarCheatMode->Release();
+
+	g_LevelName->Release();
+	g_MissionName->Release();
+	g_StartMission->Release();
+
+	sv_port->Release();
+	sv_mapcyclefile->Release();
+	sv_cheater_kick->Release();
+	sv_cheater_ban->Release();
+
+	sv_timeout->Release();
+	cl_timeout->Release();
+	cl_loadtimeout->Release();
+	cl_snooptimeout->Release();
+	cl_snoopretries->Release();
+	cl_snoopcount->Release();
+
+	g_playerprofile->Release();
+
+	cv_game_Difficulty->Release();
+	cv_game_Aggression->Release();
+	cv_game_Accuracy->Release();
+	cv_game_Health->Release();
+	cv_game_AllowAIMovement->Release();
+	cv_game_AllAIInvulnerable->Release();
+	cv_game_GliderGravity->Release();
+	cv_game_GliderBackImpulse->Release();
+	cv_game_GliderDamping->Release();
+	cv_game_GliderStartGravity->Release();
+	cv_game_physics_quality->Release();
+#endif
+
+	SAFE_DELETE(m_pVehicleSystem);
+	SAFE_DELETE(m_pPlayerSystem);
+	//shutdown script stuff
+	SAFE_DELETE(m_pScriptObjectGame);	
+	SAFE_DELETE(m_pScriptObjectInput);
+
+	// Release the action map
+	SAFE_RELEASE(m_pIActionMapManager);
+	// release the tags
+	if (!m_mapTagPoints.empty())
+	{
+		TagPointMap::iterator ti;
+		for (ti=m_mapTagPoints.begin();ti!=m_mapTagPoints.end();ti++)
+			delete ti->second;
+	}
 }
 #ifdef  USE_STEAM
 static GLSLEditor* glslEditor = nullptr;
@@ -1193,6 +1253,9 @@ bool CGame::InitScripts()
 	auto SOT = new CScriptObjectTest();
 	SOT->InitializeTemplate(m_pScriptSystem);
 	SOT->Init(m_pScriptSystem, this);
+	CScriptObjectTest::ReleaseTemplate();
+	SAFE_DELETE(SOT);
+
 
 #if 0
   m_pScriptClient = new CScriptObjectClient();

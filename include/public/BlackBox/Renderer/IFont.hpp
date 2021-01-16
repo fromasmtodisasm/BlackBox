@@ -3,6 +3,7 @@
 struct IFont
 {
 	virtual bool Init(const char* font, unsigned int w, unsigned int h)								= 0;
+	virtual void Release()																			= 0;
 	virtual void RenderText(const std::string& text, float x, float y, float scale, float color[4]) = 0;
 	virtual float GetXPos()																			= 0;
 	virtual float GetYPos()																			= 0;
