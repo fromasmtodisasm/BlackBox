@@ -296,7 +296,7 @@ void CSystem::PollEvents()
 
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {
-	m_rDriver = REGISTER_STRING("r_Driver", "GL", VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+	m_rDriver = REGISTER_STRING("r_Driver", "DX11", VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
 		"Sets the renderer driver ( DX11/DX12/GL/VK/AUTO ).\n"
 		"Specify in system.cfg like this: r_Driver = \"DX11\"");
 	REGISTER_CVAR2("r_InitialWindowSizeRatio", &m_rIntialWindowSizeRatio, 0.666f, VF_DUMPTODISK,
@@ -395,7 +395,7 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_ScriptObjectRenderer);
 	SAFE_RELEASE(m_env.pScriptSystem);
 
-	SAFE_DELETE(m_env.pInput);
+	m_env.pInput->ShutDown();
 	SAFE_RELEASE(m_env.pLog);
 	SAFE_RELEASE(m_env.pConsole);
 	SAFE_DELETE(m_pSystemEventDispatcher);

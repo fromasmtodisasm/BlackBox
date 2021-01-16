@@ -25,6 +25,7 @@ CSDLWindow::CSDLWindow(std::string, int width, int height)
 CSDLWindow::~CSDLWindow()
 {
 	close();
+	SDL_VideoQuit();
 }
 
 void CSDLWindow::close()
