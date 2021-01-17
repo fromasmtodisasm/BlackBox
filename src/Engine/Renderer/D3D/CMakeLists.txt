@@ -16,5 +16,5 @@ target_sources(${PROJECT_NAME}
  )
 
 add_compile_definitions("DX_RENDERER")
-target_link_libraries(D3DBackend INTERFACE d3d10 d3dcompiler)
+target_link_libraries(D3DBackend INTERFACE d3d10 d3dcompiler dxguid)
 target_link_libraries(${PROJECT_NAME} PUBLIC D3DBackend)

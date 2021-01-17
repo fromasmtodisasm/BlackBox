@@ -83,6 +83,7 @@ struct IShader
 	virtual IShader::Type GetType()				= 0;
 	virtual const char* GetName()				= 0;
 	virtual eVertexFormat GetVertexFormat(void) = 0;
+	virtual void Bind()							= 0;
 };
 
 //////////////////////////////////////////////////////////////////////

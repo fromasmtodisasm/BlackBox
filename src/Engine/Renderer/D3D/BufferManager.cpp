@@ -1,4 +1,5 @@
-#include <BlackBox/Renderer/BufferManager.hpp>
+#include "../BufferManager.hpp"
+
 #include "Renderer.h"
 
 #if 0
@@ -95,6 +96,15 @@ D3D_PRIMITIVE_TOPOLOGY  ToDxPrimitive(RenderPrimitive rp)
 	}
 	return D3D_PRIMITIVE_TOPOLOGY(-1);
 }
+
+CConstantBuffer::CConstantBuffer(uint32 handle)
+{
+}
+
+CConstantBuffer::~CConstantBuffer()
+{
+}
+
 CBufferManager::CBufferManager()
 {
 }
@@ -274,6 +284,8 @@ IGraphicsDeviceConstantBuffer* CBufferManager::CreateConstantBuffer(int size)
 	return nullptr;
 }
 
+#if 0
 void CGraphicsDeviceConstantBuffer::SetData(const uint8* data, size_t size)
 {
 }
+#endif

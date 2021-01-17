@@ -10,6 +10,7 @@
 #include <BlackBox/Utils/smartptr.hpp>
 
 void RegisterColorTable();
+class CShader;
 
 class FreeTypeFont : public IFont
 {
@@ -55,8 +56,13 @@ private:
 
 	CVertexBuffer* m_VB = nullptr;
 	SVertexStream* m_IB = nullptr;
-	_smart_ptr<IShader> shader;
-	uint texture;
+	_smart_ptr<CShader> shader;
+	ID3D10Texture2D *m_pTexture = NULL;
+	ID3D10ShaderResourceView* pTexDepSurface = NULL;
+	
+	static ID3D10SamplerState* m_Sampler;
+	static ID3D10InputLayout* m_pFontLayout;
+	static bool first_init;
 
 	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;
 

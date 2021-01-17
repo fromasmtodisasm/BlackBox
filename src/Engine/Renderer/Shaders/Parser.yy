@@ -16,7 +16,7 @@
 #endif
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
-    #include <BlackBox/Renderer/BufferManager.hpp>
+    #include "../BufferManager.hpp"
     class Scanner;
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>

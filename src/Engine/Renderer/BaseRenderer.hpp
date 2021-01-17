@@ -2,7 +2,7 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/AuxRenderer.hpp>
-#include <BlackBox/Renderer/BufferManager.hpp>
+#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IRender.hpp>
 //#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
@@ -11,11 +11,13 @@
 
 #include "Shaders/FxParser.h"
 #include "D3D/Shader.hpp"
+#include "TypedConstantBuffer.hpp"
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
 class Texture;
 struct IFont;
+
 
 class RenderCVars
 {
@@ -100,6 +102,7 @@ class ShaderMan
 			p->m_Shaders[IShader::E_VERTEX]	  = vs;
 			p->m_Shaders[IShader::E_FRAGMENT] = fs;
 			m_Shaders.emplace_back(p);
+			p->Bind();
 
 			delete pEffect;
 			return p;
@@ -276,15 +279,8 @@ protected:
 		float Alpha;
 	};
 
-	#if 0
-	using PerViewBuffer	   = gl::ConstantBuffer<SPerViewConstantBuffer>;
-	using PerViewBufferPtr = std::shared_ptr<PerViewBuffer>;
-	PerViewBufferPtr perViewBuffer;
-
-	using ScreenBuffer	  = gl::ConstantBuffer<SScreenConstantBuffer>;
-	using ScreenBufferPtr = std::shared_ptr<ScreenBuffer>;
-	ScreenBufferPtr screenBuffer;
-	#endif
+	CTypedConstantBuffer<SPerViewConstantBuffer> perViewBuffer;
+	CTypedConstantBuffer<SScreenConstantBuffer> screenBuffer;
 
 	void InitConsoleCommands() const;
 

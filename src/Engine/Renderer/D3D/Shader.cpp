@@ -7,12 +7,10 @@
 
 CShader::~CShader()
 {
-#if 0
 	for (auto s : m_Shaders)
 	{
 		s->m_D3DShader->Release();
 	}
-#endif
 }
 
 int CShader::GetID()
@@ -47,6 +45,61 @@ eVertexFormat CShader::GetVertexFormat(void)
 bool CShader::Reload()
 {
 	return false;
+}
+
+void CShader::Bind()
+{
+	
+	for (int type = Type::E_VERTEX; type < 3; type++)
+	{
+		if (true)
+		{
+			switch (type)
+			{
+			case E_VERTEX:
+				{
+					VertexShader* v{};
+					if (SUCCEEDED(m_Shaders[type]->m_D3DShader->QueryInterface(IID_ID3D10VertexShader, (void**)&v)))
+					{
+						ID3D10Device* d;
+						v->GetDevice(&d);
+						d->VSSetShader(v);
+					}
+					
+				}
+
+				break;
+			case E_GEOMETRY:
+				
+#if 0
+				VertexShader* v;
+				if (SUCCEEDED(s->m_D3DShader->QueryInterface(__uuidof(ID3D10VertexShader), (void**)&v)))
+				{
+					ID3D10Device* d;
+					v->GetDevice(&d);
+					d->VSSetShader(v);
+				}
+#endif
+
+				break;
+			case E_FRAGMENT:
+				{
+					PixelShader* v;
+					if (SUCCEEDED(m_Shaders[type]->m_D3DShader->QueryInterface(__uuidof(ID3D10PixelShader), (void**)&v)))
+					{
+						ID3D10Device* d;
+						v->GetDevice(&d);
+						d->PSSetShader(v);
+					}
+					
+				}
+
+				break;
+			default:;
+				assert(0);
+			}
+		}
+	}
 }
 
 void CShader::SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen)
@@ -167,5 +220,6 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 	else if (type == E_FRAGMENT)
 		hr = GetDevice()->CreatePixelShader((DWORD*)shader->GetBufferPointer(),
 											 shader->GetBufferSize(), &pPixelShader);
-	return new CHWShader(pVertexShader);
+
+	return new CHWShader(pVertexShader, shader, type);
 }

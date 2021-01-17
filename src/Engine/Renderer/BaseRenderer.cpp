@@ -121,9 +121,7 @@ CRenderer::~CRenderer()
 	}
 	ReleaseBuffer(m_VertexBuffer);
 	SAFE_DELETE(m_RenderAuxGeom);
-	#if 0
 	SAFE_DELETE(m_BufferManager);
-	#endif
 	SAFE_DELETE(m_VertexBuffer);
 
 	delete gShMan;
@@ -359,11 +357,7 @@ int CRenderer::GetHeight()
 
 IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
 {
-	#if 0
 	return m_BufferManager->CreateConstantBuffer(size);
-	#else
-	return nullptr;
-	#endif
 }
 
 void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)

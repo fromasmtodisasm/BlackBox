@@ -110,7 +110,7 @@ target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
 target_compile_definitions(FxParser PRIVATE "-DYY_NO_UNISTD_H")
 
-target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
+#target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
 INSTALL_THIS(FxParser)
 
 

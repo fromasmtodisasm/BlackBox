@@ -4,6 +4,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
+#include <d3d10.h>
 #include "../Shaders/Effect.hpp"
 
 enum class ShaderBinaryFormat
@@ -14,13 +15,24 @@ enum class ShaderBinaryFormat
 
 struct ICVar;
 
-class CHWShader
+using VertexShader = ID3D10VertexShader;
+using GeometryShader = ID3D10GeometryShader;
+using PixelShader = ID3D10PixelShader;
+
+class CHWShader : public NoCopy
 {
 public:
 	IUnknown* m_D3DShader;
-	CHWShader(IUnknown* pShader) : m_D3DShader(pShader)
+	_smart_ptr<ID3DBlob> m_Bytecode;
+	IShader::Type m_Type;
+	CHWShader(IUnknown* pShader, _smart_ptr<ID3DBlob> pCode, IShader::Type type) : m_D3DShader(pShader), m_Bytecode(pCode), m_Type(type)
 	{
-		auto r = m_D3DShader->Release();
+		//auto r = m_D3DShader->Release();
+	}
+
+	void Bind()
+	{
+		
 	}
 };
 
@@ -36,6 +48,7 @@ public:
 	virtual const char* GetName() override;
 	virtual eVertexFormat GetVertexFormat(void) override;
 	virtual bool Reload() override;
+	virtual void Bind() override;
 
 	void SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen);
 	static CShader* LoadBinaryShader(std::string_view name, int flags, uint64 nMaskGen);

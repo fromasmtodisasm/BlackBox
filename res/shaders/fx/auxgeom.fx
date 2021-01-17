@@ -11,9 +11,9 @@ HLSLShader
 
 	struct VsInput
 	{
-		[[vk::location(0)]]	float3 Pos : POSITION;
-		[[vk::location(5)]] float4 Color : COLOR0;
-		[[vk::location(2)]] float2 TC : TEXCOORD0;
+		/*[[vk::location(0)]]*/	float3 Pos : POSITION;
+		/*[[vk::location(5)]]*/ float4 Color : COLOR0;
+		/*[[vk::location(2)]]*/ float2 TC : TEXCOORD0;
 	};
 
 	VsOutput VSMain(VsInput IN)
