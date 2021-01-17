@@ -168,7 +168,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	#endif
 
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
-	//m_BufferManager = new CBufferManager();
+	m_BufferManager = new CBufferManager();
 	CreateQuad();
 	gShMan = new ShaderMan;
 	//=======================
@@ -343,6 +343,44 @@ void CRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawText
 {
 	info.font->RenderText(szText, posX, posY, 1.0, info.color);
 	info.font->Submit();
+}
+
+void CRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
+{
+	//TODO: implement draw image via aux render. Need extend it, to draw arbitary colored or textured primitves. In this terms, drawimage - simple drawing of textured quad. Aux Render must collect all draw request and batch it.
+	#if 0
+	float
+		width  = GetWidth(),
+		height = GetHeight();
+	//gl::BindFramebuffer(0);
+	RSS(this, BLEND, true);
+	RSS(this, CULL_FACE, false);
+	RSS(this, DEPTH_TEST, false);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glm::mat4 model(1.0);
+	auto uv_projection = glm::mat4(1.0);
+
+	model = glm::translate(model, glm::vec3(xpos, ypos, 0.f));
+	model = glm::scale(model, {w, h, 1.f});
+
+	uv_projection = glm::scale(glm::mat4(1.0), glm::vec3(s1 - s0, t1 - t0, 1.0f));
+	uv_projection = glm::translate(uv_projection, glm::vec3(s0, t0, 0.f));
+
+	{
+		auto sb			 = CRenderer::screenBuffer;
+		sb->Color		 = Vec4(r, g, b, a);
+		sb->UvProjection = uv_projection;
+		sb->Model		 = model;
+		sb->Alpha		 = a;
+		//sb->CopyToDevice();
+	}
+	//m_ScreenShader->Use();
+	glProgramUniformHandleui64ARB(m_ScreenShader->Get(), glGetUniformLocation(m_ScreenShader->Get(), "screenTexture"), texture_id);
+
+	DrawFullscreenQuad();
+	m_ScreenShader->Unuse();
+	#endif
 }
 
 int CRenderer::GetWidth()

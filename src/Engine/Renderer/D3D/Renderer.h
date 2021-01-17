@@ -31,7 +31,6 @@ public:
 	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) override;
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) override;
 	virtual void ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
-	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) override;
 	virtual void DrawFullScreenImage(int texture_id) override;
 	virtual int SetPolygonMode(int mode) override;
 	virtual void ScreenShot(const char* filename = nullptr) override;

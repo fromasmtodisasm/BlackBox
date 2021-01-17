@@ -561,9 +561,11 @@ bool CGame::Update()
 			}
 
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+			#if 0
 			m_pScriptSystem->BeginCall(Gui, "OnDraw");
 			m_pScriptSystem->PushFuncParam(Gui);
 			m_pScriptSystem->EndCall();
+			#endif
 
 			//DrawHud(fps);
 			#ifdef uSE_GUI

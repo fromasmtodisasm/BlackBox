@@ -10,6 +10,7 @@
 #include <crtdbg.h>
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
+#if 0
 extern "C"
 {
 	// nVidia
@@ -17,6 +18,7 @@ extern "C"
 	// AMD
 	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
 }
+#endif
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, [[maybe_unused]] int nShowCmd)

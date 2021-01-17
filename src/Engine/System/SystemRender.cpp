@@ -47,14 +47,14 @@ void CSystem::RenderEnd()
 	}
 	if (m_env.pRenderer)
 	{
-		m_env.pRenderer->Update();
 		if (IConsole* pConsole = GetIConsole())
 			pConsole->Draw();
+		m_env.pRenderer->Update();
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)
 			m_GuiManager->Render();
 #endif
 		//if (m_bIsActive)
-		m_pWindow->swap();
+		//m_pWindow->swap();
 	}
 }

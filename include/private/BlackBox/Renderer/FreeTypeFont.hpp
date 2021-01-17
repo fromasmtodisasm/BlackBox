@@ -46,6 +46,10 @@ public:
 	void SetYPos(float y) override;
 	void Submit() override;
 
+	void CreateRasterState();
+	void CreateDSState();
+	void CreateBlendState();
+
 	~FreeTypeFont();
 
 	void Release() override;
@@ -62,6 +66,9 @@ private:
 	
 	static ID3D10SamplerState* m_Sampler;
 	static ID3D10InputLayout* m_pFontLayout;
+	static ID3D10RasterizerState* m_pRasterizerState;
+	static ID3D10DepthStencilState* m_pDSState;
+	static ID3D10BlendState* m_pBlendState;
 	static bool first_init;
 
 	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;

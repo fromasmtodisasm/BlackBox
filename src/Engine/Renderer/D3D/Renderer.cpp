@@ -112,10 +112,6 @@ void CD3DRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int w
 {
 }
 
-void CD3DRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
-{
-}
-
 void CD3DRenderer::DrawFullScreenImage(int texture_id)
 {
 }
