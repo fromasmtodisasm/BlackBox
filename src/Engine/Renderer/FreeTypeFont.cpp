@@ -47,6 +47,7 @@ bool FreeTypeFont::printColorTableRegistered = false;
 
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
+	return;
 	auto render = GetISystem()->GetIRenderer();
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -154,7 +155,11 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	m_Height = static_cast<float>(h);
 	std::set<STestSize> test;
+#if 0
 	shader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 0);
+#else
+	shader = (CShader*)gEnv->pRenderer->Sh_Load("primitive", 0);
+#endif
 	if (!shader)
 		return false;
 
@@ -226,12 +231,12 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 			//VERTEX_FORMAT_P3F_C4B_T2F
 			D3D10_INPUT_ELEMENT_DESC layout[] = {
 				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-				{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0}
+				//{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
+				//{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0}
 			};
 			auto hr = GetDevice()->CreateInputLayout(
 				layout,
-				3, 
+				1, 
 				shader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferPointer(),
 				shader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferSize(),
 				&m_pFontLayout
@@ -245,12 +250,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		first_init = false;
 	}
 
-#if 0
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-#endif
 	for (uint8 ch = 0; ch < 255; ch++)
 	{
 		// Load character glyph
@@ -311,7 +310,15 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		1, 2, 3	 // Second Triangle
 	};
 
-	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
+	//m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
+	m_VB = gEnv->pRenderer->CreateBuffer(3, VERTEX_FORMAT_P3F, "BoundingBox", false);
+    Vec3 vertices[] =
+    {
+        Vec3( 0.0f, 0.5f, 0.5f ),
+        Vec3( 0.5f, -0.5f, 0.5f ),
+        Vec3( -0.5f, -0.5f, 0.5f ),
+    };
+	gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 3, false);
 
 	m_IB = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
@@ -371,6 +378,7 @@ void FreeTypeFont::Submit()
 	//glDepthMask(GL_FALSE);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//gl::BindTexture2D(GL_TEXTURE_2D, texture);
+#if 0
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
 	SAFE_DELETE(m_VB);
 	auto vertex_cnt = 6 * m_CharBuffer.size();
@@ -379,7 +387,9 @@ void FreeTypeFont::Submit()
 	// Render glyph texture over quad
 	// Update content of VBO memory
 	gEnv->pRenderer->UpdateBuffer(m_VB, m_CharBuffer.data(), vertex_cnt, false);
+#endif
 
+	auto vertex_cnt = 3;
 	//gEnv->pRenderer->DrawBuffer(m_VB, m_IB, 6, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 	shader->Bind();
 	GetDevice()->PSSetSamplers(0, 1, &m_Sampler);

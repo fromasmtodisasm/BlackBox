@@ -75,13 +75,13 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 
 void CD3DRenderer::BeginFrame(void)
 {
+	// Очистка рендер-таргета
+	float ClearColor[4] = {0.3f, 0.3f, 0.5f, 1.0f}; //red,green,blue,alpha
+	m_pd3dDevice->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
 }
 
 void CD3DRenderer::Update(void)
 {
-	// Очистка рендер-таргета
-	float ClearColor[4] = { 0.3f, 0.3f, 0.5f, 1.0f }; //red,green,blue,alpha
-	m_pd3dDevice->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
 	// Отображение геометрии на рендер-таргете
 	// Вывод содержимого рендер-таргета на экран
 	m_pSwapChain->Present( 1, 0 );
@@ -259,6 +259,23 @@ bool CD3DRenderer::InitOverride()
     vp.TopLeftX = 0;
     vp.TopLeftY = 0;
     m_pd3dDevice->RSSetViewports( 1, &vp );
+
+    // Set up rasterizer
+	D3D10_RASTERIZER_DESC rasterizerDesc;
+	rasterizerDesc.CullMode				 = D3D10_CULL_NONE;
+	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
+	rasterizerDesc.FrontCounterClockwise = true;
+	rasterizerDesc.DepthBias			 = false;
+	rasterizerDesc.DepthBiasClamp		 = 0;
+	rasterizerDesc.SlopeScaledDepthBias	 = 0;
+	rasterizerDesc.DepthClipEnable		 = true;
+	rasterizerDesc.ScissorEnable		 = false;
+	rasterizerDesc.MultisampleEnable	 = false;
+	rasterizerDesc.AntialiasedLineEnable = true;
+
+	ID3D10RasterizerState* rasterizerState;
+	m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+	m_pd3dDevice->RSSetState(rasterizerState);
 
     return true;
 }

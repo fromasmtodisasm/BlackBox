@@ -176,6 +176,8 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 	const char* code = bFromMemory ? text.data() : nullptr;
 	const char* file = bFromMemory ? nullptr : text.data();
 	auto size		 = text.size();
+
+	auto flags1 = D3DCOMPILE_DEBUG;
 	auto hr = D3DCompile(
 		code,
 		size,
@@ -184,7 +186,7 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 		nullptr,
 		pEntry,
 		profile,
-		0,
+		flags1,
 		0,
 		&pShaderBlob,
 		&pErrorBlob);
