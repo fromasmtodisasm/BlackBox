@@ -31,12 +31,12 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/position.hh
+ ** \file /cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/position.hh
  ** Define the yy::position class.
  */
 
-#ifndef YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
-# define YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
+#ifndef YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
+# define YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
 
 # include <algorithm> // std::max
 # include <iostream>
@@ -52,7 +52,7 @@
 
 
 namespace yy {
-#line 56 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
+#line 56 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
   /// Abstract a position.
   class position
   {
@@ -176,5 +176,5 @@ namespace yy {
 
 
 } // yy
-#line 180 "/cygdrive/c/Users/HackMan/code/TestEngine/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
-#endif // !YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED
+#line 180 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/position.hh" // location.cc:296
+#endif // !YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_POSITION_HH_INCLUDED

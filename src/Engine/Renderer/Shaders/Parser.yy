@@ -16,7 +16,6 @@
 #endif
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
-	#include <BlackBox/Renderer/OpenGL/Core.hpp>
     #include <BlackBox/Renderer/BufferManager.hpp>
     class Scanner;
     class Driver;

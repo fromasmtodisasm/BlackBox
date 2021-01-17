@@ -19,8 +19,8 @@ HLSLShader
 
     struct VsInput
 	{
-		[[vk::location(0)]]	float3 Pos : POSITION;
-		[[vk::location(2)]] float2 TC : TEXCOORD0;
+		/*[[vk::location(0)]]*/	float3 Pos : POSITION;
+		/*[[vk::location(2)]]*/ float2 TC : TEXCOORD0;
 	};
 
 

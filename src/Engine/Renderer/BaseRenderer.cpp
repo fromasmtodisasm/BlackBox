@@ -175,13 +175,11 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	#if 0
-	if (!(m_ScreenShader = Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))
+	if (!(m_ScreenShader = _smart_ptr(dynamic_cast<CShader*>(Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
 	}
-	#endif
 
 	#if 0
 	m_RenderAuxGeom = new CRenderAuxGeom();

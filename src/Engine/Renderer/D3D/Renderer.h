@@ -2,6 +2,8 @@
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
 #include <d3d10.h>
+class CD3DRenderer;
+extern CD3DRenderer* gD3DRender;
 
 class CD3DRenderer : public CRenderer
 {
@@ -62,3 +64,4 @@ inline auto GetDevice()
 {
 	return CD3DRenderer::GetDevice(gEnv->pRenderer);
 }
+

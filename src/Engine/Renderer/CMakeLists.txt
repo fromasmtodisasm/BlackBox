@@ -91,35 +91,33 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
 ]]
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
  )
 
 target_sources(FxParser
-#[[
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Effect.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
-  ]]
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/dummy.cpp
-#  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/ScannerHelpers.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/ScannerHelpers.cpp
  )
 
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
 target_compile_definitions(FxParser PRIVATE "-DYY_NO_UNISTD_H")
 
-#target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
+target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
 INSTALL_THIS(FxParser)
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
-#target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
+target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
 
 add_SDL()
 
@@ -146,9 +144,7 @@ target_precompile_headers(${PROJECT_NAME}
   "pch.hpp"
 )
 
-#[[
 target_precompile_headers(FxParser
   PRIVATE 
   "pch.hpp"
 )
-]]

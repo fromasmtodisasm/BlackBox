@@ -10,9 +10,11 @@ struct ITechniqueManager;
 
 D3D10_DRIVER_TYPE g_driverType = D3D10_DRIVER_TYPE_NULL;
 ID3D10Buffer* g_pVertexBuffer  = NULL;
+CD3DRenderer* gD3DRender;
 
 CD3DRenderer::CD3DRenderer(ISystem* pSystem) : CRenderer(pSystem)
 {
+	gD3DRender			 = this;
 	CRenderer::m_Backend = RenderBackend::DX;
 }
 
@@ -200,7 +202,7 @@ bool CD3DRenderer::InitOverride()
 
     UINT createDeviceFlags = 0;
 #ifdef _DEBUG
-    //createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
+    createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
 #endif
 
     D3D10_DRIVER_TYPE driverTypes[] =

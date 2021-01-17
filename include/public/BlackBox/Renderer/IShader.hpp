@@ -71,17 +71,15 @@ struct IShader
 	enum Type : int
 	{
 		E_VERTEX,
-		E_TESSELATION_CONTROL,
-		E_TESSELATION_EVALUATION,
 		E_GEOMETRY,
 		E_FRAGMENT,
-		E_COMPUTE,
-		E_UNKNOWN = -1
+		E_NUM
 	};
 	virtual ~IShader() {}
 	virtual int GetID()							= 0;
 	virtual void AddRef()						= 0;
 	virtual int Release()						= 0;
+	virtual bool Reload()						= 0;
 	virtual IShader::Type GetType()				= 0;
 	virtual const char* GetName()				= 0;
 	virtual eVertexFormat GetVertexFormat(void) = 0;

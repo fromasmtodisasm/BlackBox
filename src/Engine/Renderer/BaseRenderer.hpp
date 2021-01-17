@@ -60,8 +60,7 @@ class ShaderMan
 	}
 	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	{
-		#if 0
-		CBaseShaderProgram* p = nullptr;
+		CShader* p = nullptr;
 		if (!(p = Sh_LoadBinary(name, flags, nMaskGen)))
 		{
 			if (p = Compile(name, flags, nMaskGen))
@@ -70,20 +69,13 @@ class ShaderMan
 			}
 		}
 		return p;
-		#else
-		return nullptr;
-		#endif
 	}
-	CBaseShaderProgram* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
+	CShader* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
 	{
-		#if 0
-		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CBaseShaderProgram::LoadBinaryShader(name, flags, nMaskGen);
-		#else
-		return nullptr;
-		#endif
+		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
 	}
 
-	CBaseShaderProgram* Compile(std::string_view name, int flags, uint64 nMaskGen)
+	CShader* Compile(std::string_view name, int flags, uint64 nMaskGen)
 	{
 		PEffect pEffect = nullptr;
 		std::stringstream path;
@@ -96,31 +88,33 @@ class ShaderMan
 				auto& str = pEffect->GetShader(i).name;
 				CryLog("[%s]", str.c_str());
 			}
-			#if 0
-			const auto vs		 = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, true);
-			const auto fs		 = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, true);
-			auto* p				 = new CShaderProgram(vs, fs);
-			p->Create(name.data());
-			delete pEffect;
+			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX);
+			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT);
+			if (!vs || !fs)
+			{
+				SAFE_DELETE(vs);	
+				SAFE_DELETE(fs);	
+				return nullptr;
+			}
+			auto* p							  = new CShader;
+			p->m_Shaders[IShader::E_VERTEX]	  = vs;
+			p->m_Shaders[IShader::E_FRAGMENT] = fs;
 			m_Shaders.emplace_back(p);
+
+			delete pEffect;
 			return p;
-			#else
-			return nullptr;
-			#endif
 		}
 		return nullptr;
 	}
 	void ReloadAll()
 	{
-		#if 0
 		for (auto& s : m_Shaders)
 		{
 			s->Reload();
 		}
-		#endif
 	}
 
-	//std::vector<_smart_ptr<CShaderProgram>> m_Shaders;
+	std::vector<_smart_ptr<CShader>> m_Shaders;
 };
 
 class CRenderer : public RenderCVars
