@@ -35,7 +35,7 @@ void PrintColorTable(IConsoleCmdArgs*)
 
 bool FreeTypeFont::printColorTableRegistered = false;
 
-void FreeTypeFont::RenderText(const std::string& text, float x, float y, float scale, float color[4])
+void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
 	auto render = GetISystem()->GetIRenderer();
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
@@ -104,7 +104,7 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 	}
 }
 
-float FreeTypeFont::TextWidth(const std::string& text)
+float FreeTypeFont::TextWidth(const std::string_view text)
 {
 	const char* c;
 	const char* end = text.data() + text.size();
@@ -292,9 +292,10 @@ void RegisterColorTable()
 void FreeTypeFont::Submit()
 {
 	if (!shader)
+	{
+		m_CharBuffer.clear();
 		return;
-	if (m_CharBuffer.size() == 0)
-		return;
+	}
 	// Activate corresponding render state
 	//shader->Use();
 	auto render = GetISystem()->GetIRenderer();

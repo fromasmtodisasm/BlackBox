@@ -5,7 +5,6 @@
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
-#include <BlackBox/Core/Platform/CryLibrary.h>
 #include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
@@ -25,36 +24,17 @@ static inline void InlineInitializationProcessing(const char* sDescription)
 		gEnv->pLog->UpdateLoadingScreen(0);
 }
 
-struct SubsystemWrapper : public _i_reference_target_t
-{
-	HMODULE m_Handle;
-	char m_Name[64];
-
-	SubsystemWrapper(HMODULE handle, const char* name) : m_Handle(handle)
-	{
-		strncpy(m_Name, name, std::min(strlen(name) + 1, size_t(64)));
-	}
-
-	~SubsystemWrapper()
-	{
-		CryFreeLibrary(m_Handle);	
-	}
-};
-
-std::vector<_smart_ptr<SubsystemWrapper>> g_Subsystems;
-
 void CSystem::UnloadSubsystems()
 {
-	for (size_t i = 0; i < g_Subsystems.size(); i++)
+	for (size_t i = 0; i < m_Subsystems.size(); i++)
 	{
-		/*if (i < 2 && i != 4 && i != 3 && i != 5 && i != 6 && i != 7)
-			g_Subsystems[i]->Release();*/
-		auto CleanupModuleCVars = (void (*)())CryGetProcAddress(g_Subsystems[i]->m_Handle, "CleanupModuleCVars");
+		auto CleanupModuleCVars = (void (*)())CryGetProcAddress(m_Subsystems[i]->m_Handle, "CleanupModuleCVars");
 		if (CleanupModuleCVars)
 		{
 			CleanupModuleCVars();
 		}
 	}
+	m_Subsystems.clear();
 	// CVars should be unregistered earlier than owning objects/modules are destroyed.
 }
 class CNULLConsole : public IOutputPrintSink,
@@ -184,78 +164,6 @@ void CNULLConsole::PutText(int x, int y, const char* msg)
 
 namespace
 {
-	template<typename L, typename P>
-	inline P GetProcedure(L lib, const char* name)
-	{
-		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
-	}
-
-
-	template<typename Proc>
-	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
-	{
-		//gEnv->pSystem->Log("Loading...");
-		string msg;
-		msg = "Loading Module ";
-		msg += lib_name;
-		msg += "...";
-
-		if (gEnv->pSystem->GetUserCallback())
-		{
-			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
-		}
-
-		if (true)
-		{
-			CryLog("%s", msg.c_str());
-		}
-
-		auto L = CryLoadLibrary(lib_name);
-		if (L)
-		{
-			CryComment("Library found");
-			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
-			if (P)
-			{
-				CryComment("Entrypoint [%s] found", proc_name);
-				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
-				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
-				if (pfnModuleInitISystem)
-				{
-					pfnModuleInitISystem(gEnv->pSystem, lib_name);
-				}
-				auto subsystem = _smart_ptr(new SubsystemWrapper(L, lib_name));
-				g_Subsystems.push_back(subsystem);
-				return f(P);
-			}
-			else
-			{
-				CryError("Entrypoint %s not found", proc_name);
-			}
-			return false;
-		}
-		else
-		{
-			#if 0
-			if (bQuitIfNotFound)
-			#endif
-			{
-	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
-				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
-                fprintf(stderr, "dlopen failed: %s\n", dlerror());
-	#else
-				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
-				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());
-	#endif
-
-				gEnv->pSystem->Quit();
-			}
-
-		return false;
-			gEnv->pSystem->Log("Library not found");
-		}
-		return false;
-	}
 } // namespace
 
 

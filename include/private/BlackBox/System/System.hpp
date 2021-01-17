@@ -19,6 +19,8 @@
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 
+#include <BlackBox/Core/Platform/CryLibrary.h>
+
 #define DEFAULT_APP_NAME "BlackBox"
 
 #define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
@@ -83,6 +85,21 @@ extern SSystemCVars g_cvars;
 class CSystem;
 
 IThreadManager* CreateThreadManager();
+struct SubsystemWrapper : public _i_reference_target_t
+{
+	HMODULE m_Handle;
+	char m_Name[64];
+
+	SubsystemWrapper(HMODULE handle, const char* name) : m_Handle(handle)
+	{
+		strncpy(m_Name, name, std::min(strlen(name) + 1, size_t(64)));
+	}
+
+	~SubsystemWrapper()
+	{
+		CryFreeLibrary(m_Handle);	
+	}
+};
 
 /*
    ===========================================
@@ -227,6 +244,7 @@ class CSystem final : public ISystem
 	void UnloadSubsystems();
 
   protected:
+	std::vector<_smart_ptr<SubsystemWrapper>> m_Subsystems;
 	CCmdLine* m_pCmdLine = nullptr;
 
   private:
@@ -344,6 +362,78 @@ class CSystem final : public ISystem
 
 	// Inherited via ISystem
 	virtual bool IsCVarWhitelisted(const char* szName, bool silent) const override;
+
+	template<typename L, typename P>
+	inline P GetProcedure(L lib, const char* name)
+	{
+		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
+	}
+
+	template<typename Proc>
+	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
+	{
+		//gEnv->pSystem->Log("Loading...");
+		string msg;
+		msg = "Loading Module ";
+		msg += lib_name;
+		msg += "...";
+
+		if (gEnv->pSystem->GetUserCallback())
+		{
+			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
+		}
+
+		if (true)
+		{
+			CryLog("%s", msg.c_str());
+		}
+
+		auto L = CryLoadLibrary(lib_name);
+		if (L)
+		{
+			CryComment("Library found");
+			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
+			if (P)
+			{
+				CryComment("Entrypoint [%s] found", proc_name);
+				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
+				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
+				if (pfnModuleInitISystem)
+				{
+					pfnModuleInitISystem(gEnv->pSystem, lib_name);
+				}
+				auto subsystem = _smart_ptr(new SubsystemWrapper(L, lib_name));
+				m_Subsystems.push_back(subsystem);
+				return f(P);
+			}
+			else
+			{
+				CryError("Entrypoint %s not found", proc_name);
+			}
+			return false;
+		}
+		else
+		{
+			#if 0
+			if (bQuitIfNotFound)
+			#endif
+			{
+	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
+				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
+                fprintf(stderr, "dlopen failed: %s\n", dlerror());
+	#else
+				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
+				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());
+	#endif
+
+				gEnv->pSystem->Quit();
+			}
+
+		return false;
+			gEnv->pSystem->Log("Library not found");
+		}
+		return false;
+	}
 };
 
 void AddInternalCommands(ISystem* pSystem);

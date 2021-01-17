@@ -376,7 +376,7 @@ CNetwork::~CNetwork()
 {
 	for (int i = 0; i < m_Servers.size(); i++)
 	{
-		delete m_Servers[i];
+		m_Servers[i]->Release();
 	}
 	for (int i = 0; i < m_Clients.size(); i++)
 	{

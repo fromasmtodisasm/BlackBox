@@ -35,8 +35,8 @@ public:
 	{
 		RegisterColorTable();
 	}
-	void RenderText(const std::string& text, float x, float y, float scale, float color[4]) override;
-	float TextWidth(const std::string& text) override;
+	void RenderText(const std::string_view text, float x, float y, float scale, float color[4]) override;
+	float TextWidth(const std::string_view text) override;
 	float CharWidth(char ch) override;
 	bool Init(const char* font, unsigned int w, unsigned int h) override;
 	float GetXPos() override;

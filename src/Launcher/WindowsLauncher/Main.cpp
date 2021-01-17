@@ -30,14 +30,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
 
 	auto result = EXIT_FAILURE;
-	_CrtMemState s1, s2, s3;
-	_CrtMemCheckpoint(&s1);
-	if (InitializeEngine(startupParams))
+	//_CrtMemState s1, s2, s3;
+	//_CrtMemCheckpoint(&s1);
+	for (int i = 0; i < 1; i++)
 	{
-		startupParams.pSystem->Start();
-		startupParams.pSystem->Release();
-		result = EXIT_SUCCESS;
+		if (InitializeEngine(startupParams))
+		{
+			startupParams.pSystem->Start();
+			startupParams.pSystem->Release();
+			result = EXIT_SUCCESS;
+		}
+		
 	}
+#if 0
 	_CrtMemCheckpoint(&s2);
 	if (_CrtMemDifference(&s3, &s1, &s2))
 	{
@@ -45,6 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		_CrtMemDumpStatistics(&s3);
 		_CrtDumpMemoryLeaks();
 	}
+#endif
 	return result;
 }
 
