@@ -54,7 +54,7 @@ enum
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
-#include "Player.h"
+//#include "Player.h"
 #include "EntityClassRegistry.h"
 #include <Network/XNetwork.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
@@ -75,6 +75,7 @@ class CScriptObjectInput;
 class CScriptObjectStream;
 class CPlayerSystem;
 class CVehicleSystem;
+class CPlayer;
 
 struct TextRenderInfo
 {

@@ -45,6 +45,9 @@ class ShaderMan
   public:
 	~ShaderMan()
 	{
+		std::for_each(m_Shaders.begin(), m_Shaders.end(), [] (CShader* pShader){
+			delete pShader;
+		});
 	}
 	IShader* Sh_Load(const char* vertex, const char* fragment)
 	{

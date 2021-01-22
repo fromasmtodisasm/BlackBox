@@ -13,7 +13,6 @@
 
 struct ICrySizer;
 struct IWeakScriptObject;
-struct IScriptObject;
 struct ISystem;
 struct IScriptObject;
 struct IScriptSystem;

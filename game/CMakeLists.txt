@@ -55,7 +55,7 @@ target_sources(
 	PRIVATE ${SOURCE_DIR}/Network/XEntityProcessingCmd.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XNetwork.cpp
 	PRIVATE ${SOURCE_DIR}/Network/XNetworkStats.cpp
-	PRIVATE ${SOURCE_DIR}/Player.cpp
+	#PRIVATE ${SOURCE_DIR}/Player.cpp
 	PRIVATE ${SOURCE_DIR}/Player/XPlayer.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectClient.cpp
 	PRIVATE ${SOURCE_DIR}/ScriptObjects/ScriptObjectGame.cpp
