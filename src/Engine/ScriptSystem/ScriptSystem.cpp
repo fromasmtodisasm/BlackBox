@@ -106,13 +106,13 @@ void* luaAlloc(void* userData, void* ptr, size_t oldSize, size_t newSize)
 {
 	if (newSize == 0)
 	{
-		//CryModuleFree(ptr);
-		free(ptr);
+		CryModuleFree(ptr);
+		//free(ptr);
 		return 0;
 	}
 	else
-		//return CryModuleRealloc(ptr, newSize);
-		return realloc(ptr, newSize);
+		return CryModuleRealloc(ptr, newSize);
+		//return realloc(ptr, newSize);
 }
 
 bool CScriptSystem::Init(ISystem* pSystem)

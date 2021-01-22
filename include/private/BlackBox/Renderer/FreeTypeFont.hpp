@@ -63,6 +63,8 @@ private:
 	_smart_ptr<CShader> shader;
 	ID3D10Texture2D *m_pTexture = NULL;
 	ID3D10ShaderResourceView* pTexDepSurface = NULL;
+
+	ID3D10Buffer* m_pConstantBuffer;
 	
 	static ID3D10SamplerState* m_Sampler;
 	static ID3D10InputLayout* m_pFontLayout;
