@@ -94,6 +94,56 @@ struct SBufInfoTable
   INT_PTR OffsSecColor;
   INT_PTR OffsNormal;
 };
+//////////////////////////////////////////////////////////////////////
+//struct SVertBufComps
+//{
+//	bool m_bHasTC;
+//	bool m_bHasColors;
+//	bool m_bHasSecColors;
+//	bool m_bHasNormals;
+//};
+
+
+//union UCol
+//{
+//	union
+//	{
+//		uint32 dcolor;
+//		uint8  bcolor[4];
+//
+//		struct { uint8 b, g, r, a; };
+//		struct { uint8 z, y, x, w; };
+//	};
+//	/*
+//	UCol& operator=(Vec4& v)
+//	{
+//		UCol c;
+//		c.bcolor[0] = static_cast<char>(v[0] * 255);
+//		c.bcolor[1] = static_cast<char>(v[1] * 255);
+//		c.bcolor[2] = static_cast<char>(v[2] * 255);
+//		c.bcolor[3] = static_cast<char>(v[3] * 255);
+//		return c;
+//	};
+//	*/
+//	UCol() = default;
+//	UCol(const Vec4& v)
+//	{
+//		bcolor[0] = static_cast<char>(v[3] * 255.f);
+//		bcolor[1] = static_cast<char>(v[1] * 255.f);
+//		bcolor[2] = static_cast<char>(v[2] * 255.f);
+//		bcolor[3] = static_cast<char>(v[0] * 255.f);
+//	}
+//	UCol(const Vec3& v)
+//		: UCol(Vec4(v, 1))
+//	{
+//	}
+//	UCol(const uint8 v[4]) : bcolor{v[0], v[1], v[2], v[3]}
+//	{
+//	}
+//	UCol(uint8 v0, uint8 v1, uint8 v2, uint8 v3) : bcolor{v0, v1, v2, v3}
+//	{
+//	}
+//};
 
 //////////////////////////////////////////////////////////////////////////
 struct SVF_P3F // 12 bytes
@@ -112,7 +162,7 @@ struct SVF_P3F_N // 24 bytes
 };
 struct SVF_T2F // 8 bytes
 {
-  float st[2];
+  Vec2 st;
 };
 
 struct SVF_P3F_N_C4B
@@ -125,27 +175,27 @@ struct SVF_P3F_N_C4B
 struct SVF_P3F_T2F
 {
   Vec3 xyz;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_N_T2F
 {
   Vec3 xyz;
   Vec3 normal;
-  float st[2];
+  Vec2 st;
 };
 
 struct SVF_P3F_C4B_T2F
 {
   Vec3 xyz;
   UCol color;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_C4B_C4B_T2F
 {
 	Vec3 xyz;
   UCol color;
   UCol seccolor;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_N_C4B_C4B_T2F
 {
@@ -153,14 +203,14 @@ struct SVF_P3F_N_C4B_C4B_T2F
   Vec3 normal;
   UCol color;
   UCol seccolor;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_C4B_T2F_T2F
 {
   Vec3 xyz;
   UCol color;
-  float st0[2];
-  float st1[2];
+  Vec2 st0[2];
+  Vec2 st1[2];
 };
 
 struct SVF_P3F_N_C4B_T2F
@@ -168,7 +218,7 @@ struct SVF_P3F_N_C4B_T2F
   Vec3 xyz;
   Vec3 normal;
   UCol color;
-  float st[2];
+  Vec2 st;
 
   bool operator == (SVF_P3F_N_C4B_T2F & other);
 };
@@ -177,7 +227,7 @@ struct SVF_TRP3F_C4B_T2F
 {
   float x,y,z,rhw;
   UCol color;
-  float st[2];
+  Vec2 st;
 };
 
 struct SVF_P3F_C4B_C4B

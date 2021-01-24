@@ -4,6 +4,7 @@
 #include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 #include <memory>
+#include <stb_image_write.h>
 
 using ColorB = glm::u8vec3;
 
@@ -34,13 +35,63 @@ void PrintColorTable(IConsoleCmdArgs*)
 	}
 }
 
+void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<uint8>& image)
+{
+	// Load character glyph
+	uint c = ch;
+	auto h = m_Height;
+	if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+	{
+		CryError("ERROR::FREETYTPE: Failed to load Glyph");
+		return;
+	}
+	auto& c_with = face->glyph->bitmap.width;
+	auto& c_rows = face->glyph->bitmap.rows;
+	static int num_rows = 0;
+	if (t_size.x < (c_with  + cur_pos.x))
+	{
+		cur_pos.x = 0;
+		cur_pos.y += (int)h;
+		static char name[256];
+		num_rows++;
+		sprintf(name, "atlas_%d.png", (int)((cur_pos.y) / m_Height));
+		//stbi_write_png(name, atlas_size, (int)m_Height, 1, _test.data() + ((int)m_Height - cur_pos.y)*atlas_size, atlas_size);
+
+	}
+
+	//UCHAR* pTexels = (UCHAR*)mappedTex.pData;
+	auto pTexels = image.data();
+	int pos		 = 0;
+	for (UINT row = 0; row < face->glyph->bitmap.rows; row++)
+	{
+		UINT rowStart = (row + cur_pos.y) * atlas_size; // * mappedTex.RowPitch;
+		for (UINT col = 0; col < face->glyph->bitmap.width; col++, pos++)
+		{
+			UINT colStart = col * 1 + cur_pos.x;
+			assert(rowStart + colStart < image.size());
+			pTexels[rowStart + colStart + 0] = face->glyph->bitmap.buffer[pos]; // / 255.0f; // Red
+			//_test[rowStart + colStart + 0]	 = face->glyph->bitmap.buffer[pos]; // Red
+		}
+	}
+	// Set texture options
+	// Now store character for later use
+	Character character = {
+		cur_pos,
+		glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+		glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+		face->glyph->advance.x};
+	Characters.insert(std::pair<char, Character>(ch, character));
+	cur_pos.x += character.Size.x + symbol_padding;
+
+}
+
 bool FreeTypeFont::printColorTableRegistered = false;
 
 void FreeTypeFont::RenderText(const std::string& text, float x, float y, float scale, float color[4])
 {
-	auto render = GetISystem()->GetIRenderer();
+	auto pRenderer = GetISystem()->GetIRenderer();
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
-	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
+	glm::mat4 projection = glm::ortho(0.0f, (float)pRenderer->GetWidth(), (float)pRenderer->GetHeight(), 0.0f);
 
 	// Iterate through all characters
 	const char* c;
@@ -78,6 +129,14 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		}
 		if ((*c >= 0 && *c <= 255 && iscntrl(*c)))
 			continue;
+		if (auto it = Characters.find(*c); it == Characters.end())	
+		{
+			#if 0
+			auto old_pos = cur_pos;
+			RenderGlyph(*c, cur_pos, glm::uvec2{atlas_size}, image);	
+			UpdateAtlas(glm::uvec4{old_pos, glm::uvec2{cur_pos - old_pos}}, image.data());
+			#endif
+		}
 		glm::mat4 model(1.0);
 		Character ch = Characters[*c];
 
@@ -87,19 +146,31 @@ void FreeTypeFont::RenderText(const std::string& text, float x, float y, float s
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 		// Update VBO for each character
-		using P3F_T2F		= SVF_P3F_C4B_T2F;
-		Vec2 uv_pos			= Vec2(ch.Pos) / 4096.f;
-		Vec2 uv_size		= Vec2(ch.Size) / 4096.f;
-		std::array<P3F_T2F, 6> vertices = {
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+		using P3F_T2F					= SVF_P3F_C4B_T2F;
+		Vec2 uv_pos						= Vec2(ch.Pos) / (float)atlas_size;
+		Vec2 uv_size					= Vec2(ch.Size) / (float)atlas_size;
 
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos, 0}, 1.f)), UCol((cur_c)), uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x + uv_size.x, uv_pos.y},
-			P3F_T2F{Vec3(projection * Vec4(Vec3{xpos, ypos - h, 0}, 1.f)), UCol((cur_c)), uv_pos.x, uv_pos.y},
-		};
-		m_CharBuffer.push_back(vertices);
+		Vec4 pA, pB, pC, pD;
+		pA								= Vec4(Vec3{xpos, ypos - h, 0}, 1.f);
+		pB								= Vec4(Vec3{xpos, ypos, 0}, 1.f);
+		pC								= Vec4(Vec3{xpos + w, ypos, 0}, 1.f);
+		pD								= Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f);
+
+		Vec2 tA, tB, tC, tD;
+		tA								= {uv_pos.x, uv_pos.y};
+		tB								= {uv_pos.x, uv_pos.y + uv_size.y};
+		tC								= {uv_pos.x + uv_size.x, uv_pos.y + uv_size.y};
+		tD								= {uv_pos.x + uv_size.x, uv_pos.y};
+
+		std::array<P3F_T2F, 6> vertices = {
+			P3F_T2F{Vec3(projection * pA), UCol((cur_c)), tA},
+			P3F_T2F{Vec3(projection * pB), UCol((cur_c)), tB},
+			P3F_T2F{Vec3(projection * pC), UCol((cur_c)), tC},
+
+			P3F_T2F{Vec3(projection * pC), UCol((cur_c)), tC},
+			P3F_T2F{Vec3(projection * pD), UCol((cur_c)), tD},
+			P3F_T2F{Vec3(projection * pA), UCol((cur_c)), tA},
+		};		m_CharBuffer.push_back(vertices);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
@@ -139,6 +210,11 @@ bool operator< (const STestSize& a, const STestSize& b) {
 	if (a.width != b.width) return (a.width < b.width);
 	return (a.height < b.height);
 }
+void FreeTypeFont::UpdateAtlas(const glm::uvec4 region, void* data)
+{
+	glTextureSubImage2D(this->texture, 0, region.x, region.y, region.z, region.w, GL_RED, GL_UNSIGNED_BYTE, data);
+}
+
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	m_Height = static_cast<float>(h);
@@ -162,82 +238,22 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	FT_Set_Pixel_Sizes(face, 0, h);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
-	glm::uvec2 t_size(4096);
-	glm::uvec2 cur_pos(0,0);
+	glm::uvec2 t_size(atlas_size);
 
 	// Generate texture
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_RED,
-		t_size.x,//face->glyph->bitmap.width,
-		t_size.y,//face->glyph->bitmap.rows,
-		0,
-		GL_RED,
-		GL_UNSIGNED_BYTE,
-		face->glyph->bitmap.buffer);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	for (GLubyte ch = 0; ch < 255; ch++)
+	gl::CreateTextures2D(GL_TEXTURE_2D, 1, &texture);
+	glTextureStorage2D(texture, 1, GL_R8, atlas_size, atlas_size);
+
+	//std::vector<float> image(atlas_size * atlas_size);
+
+	uint8 ch = 0;
+	RenderGlyph(ch, cur_pos, t_size, image);
+	for (ch = 32; ch < num_glyphs; ch++)
 	{
-		// Load character glyph
-		GLuint c = ch;
-		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-		{
-			CryError("ERROR::FREETYTPE: Failed to load Glyph");
-			continue;
-		}
-		#if 0
-		test.insert(
-			STestSize(
-				face->glyph->bitmap.width,
-				face->glyph->bitmap.rows));
-		#endif
-		auto& c_with = face->glyph->bitmap.width;
-		auto& c_rows = face->glyph->bitmap.rows;
-		if ((t_size.x - cur_pos.x) < c_with)
-		{
-			cur_pos.x = 0;
-			cur_pos.y += h;	
-		}
-		//glTexImage2D(
-		//	GL_TEXTURE_2D,
-		//	0,
-		//	GL_RED,
-		//	t_size.x,//face->glyph->bitmap.width,
-		//	t_size.y,//face->glyph->bitmap.rows,
-		//	0,
-		//	GL_RED,
-		//	GL_UNSIGNED_BYTE,
-		//	face->glyph->bitmap.buffer);
-		//void (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
-		glTexSubImage2D(GL_TEXTURE_2D,
-							 0,
-							 cur_pos.x,
-							 cur_pos.y,
-							 face->glyph->bitmap.width,
-							 face->glyph->bitmap.rows,
-							 GL_RED,
-							 GL_UNSIGNED_BYTE,
-							 face->glyph->bitmap.buffer);
-
-		// Set texture options
-		// Now store character for later use
-			Character character = {
-				cur_pos,
-				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				face->glyph->advance.x};
-			Characters.insert(std::pair<GLchar, Character>(ch, character));
-			cur_pos.x += character.Size.x;
+		RenderGlyph(ch, cur_pos, t_size, image);
 	}
-
-	FT_Done_Face(face);
-	FT_Done_FreeType(ft);
+	UpdateAtlas({0, 0, atlas_size, atlas_size}, image.data());
+	stbi_write_png("atlas.png", atlas_size, atlas_size, 1, image.data(), atlas_size);
 
 	uint16 indices[] = {
 		// Note that we start from 0!
@@ -250,7 +266,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	m_IB = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 	static bool UB_created = false;
-
 
 	return true;
 }
@@ -292,7 +307,7 @@ void FreeTypeFont::Submit()
 {
 	if (m_CharBuffer.size() == 0)
 		return;
-	// Activate corresponding render state
+	// Activate corresponding pRenderer state
 	shader->Use();
 	auto render				= GetISystem()->GetIRenderer();
 	gl::ActiveTexture(GL_TEXTURE0);
@@ -322,5 +337,7 @@ void FreeTypeFont::Submit()
 
 FreeTypeFont::~FreeTypeFont()
 {
+	FT_Done_Face(face);
+	FT_Done_FreeType(ft);
 	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
 }

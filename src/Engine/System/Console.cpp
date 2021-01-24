@@ -3334,7 +3334,7 @@ IFont* CXConsole::GetFont(const char* name, float w, float h)
 		auto var  = GetCVar("s_font");
 		if (var)
 			font = var->GetString();
-		m_pFont->Init(font, static_cast<unsigned int>(w), static_cast<unsigned int>(h));
+		m_pFont->Init(font, static_cast<unsigned int>(9), static_cast<unsigned int>(9));
 		//return m_pFont;
 	}
 	return m_pFont;

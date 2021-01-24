@@ -327,18 +327,18 @@ namespace gl
 		glCheck(glBindTexture(target, texture));
 	}
 	inline void TextureImage2D(
-		GLint texture,
+		GLuint texture,
 		GLint level,
-		GLint internalformat,
+		GLint xoffset,
+		GLint yoffset,
 		GLsizei width,
 		GLsizei height,
-		GLint border,
 		GLenum format,
 		GLenum type,
 		const void* pixels)
 	{
 		glCheck(glTextureSubImage2D(texture,
-									level, internalformat, width, height, border, format, type, pixels));
+									level, xoffset, yoffset, width, height, format, type, pixels));
 	}
 
 	inline void TexImage2DMS(

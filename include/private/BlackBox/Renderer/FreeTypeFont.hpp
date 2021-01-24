@@ -10,6 +10,11 @@
 
 void RegisterColorTable();
 
+constexpr static uint atlas_size{160};
+constexpr static uint num_glyphs{127};
+constexpr static uint symbol_padding = 2;
+
+
 class FreeTypeFont : public IFont
 {
 	friend void RegisterColorTable();
@@ -26,13 +31,15 @@ public:
 
 	FreeTypeFont() : face(nullptr),
 					 ft(nullptr),
-					 shader(nullptr)
+					 shader(nullptr),
+					 image(std::vector<uint8>(atlas_size * atlas_size))
 	{
 		RegisterColorTable();
 	}
 	FreeTypeFont(const char* font, int w, int h) : face(nullptr),
 												   ft(nullptr),
-												   shader(nullptr)
+												   shader(nullptr),
+												   image(std::vector<uint8>(atlas_size * atlas_size))
 	{
 		RegisterColorTable();
 	}
@@ -45,6 +52,8 @@ public:
 	void SetXPos(float x) override;
 	void SetYPos(float y) override;
 	void Submit() override;
+	void RenderGlyph(uint ch, glm::uvec2 & cur_pos, const glm::uvec2 & t_size, std::vector<uint8>& image);
+	void UpdateAtlas(const glm::uvec4 region, void* data);
 
 	~FreeTypeFont();
 
@@ -57,6 +66,8 @@ private:
 	SVertexStream* m_IB = nullptr;
 	BaseShaderProgramRef shader;
 	uint texture;
+	glm::uvec2 cur_pos{0, 0};
+	std::vector<uint8> image;
 
 	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;
 
