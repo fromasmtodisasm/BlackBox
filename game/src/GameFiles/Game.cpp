@@ -445,7 +445,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	if (m_pRender)
 	{
 		m_Font = gEnv->pRenderer->GetIFont();
-		m_Font->Init("arial.ttf", 16, 18);
+		//m_Font->Init("arial.ttf", 16, 18);
 	}
 
 	// other

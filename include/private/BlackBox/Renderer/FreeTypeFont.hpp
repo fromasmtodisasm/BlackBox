@@ -46,6 +46,8 @@ public:
 	void SetYPos(float y) override;
 	void Submit() override;
 
+	void RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image,  std::vector<uint8>& _test);
+
 	void CreateRasterState();
 	void CreateDSState();
 	void CreateBlendState();
