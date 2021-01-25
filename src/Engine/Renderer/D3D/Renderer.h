@@ -19,7 +19,6 @@ public:
 	virtual void DrawFullscreenQuad() override;
 	virtual ITechniqueManager* GetITechniqueManager() { return nullptr; };
 	virtual float GetDepthValue(int x, int y) override;
-	virtual void Flush() override;
 	virtual void Sh_Reload() override;
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) override;
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) override;

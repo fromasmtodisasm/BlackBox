@@ -3,7 +3,6 @@
 //#include <BlackBox/Geometry/ObjLoader.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/Material.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <fstream>
 #include <iostream>

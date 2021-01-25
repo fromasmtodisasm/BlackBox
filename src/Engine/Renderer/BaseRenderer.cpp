@@ -179,7 +179,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 		return nullptr;
 	}
 
-	#if 0
+	#if 1
 	m_RenderAuxGeom = new CRenderAuxGeom();
 	#else
 	m_RenderAuxGeom = new CRenderAuxGeomNull();
@@ -565,6 +565,60 @@ void CRenderer::InitConsoleCommands() const
 	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
 	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
 	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
+}
+
+void CRenderer::ShareResources(IRenderer* renderer)
+{
+}
+
+void CRenderer::SetRenderCallback(IRenderCallback* pCallback)
+{
+}
+
+void CRenderer::PushProfileMarker(char* label)
+{
+}
+
+void CRenderer::PopProfileMarker(char* label)
+{
+}
+
+int CRenderer::CreateRenderTarget()
+{
+	return 0;
+}
+
+void CRenderer::DrawFullscreenQuad()
+{
+}
+
+ITechniqueManager* CRenderer::GetITechniqueManager()
+{
+	return nullptr;
+}
+
+float CRenderer::GetDepthValue(int x, int y)
+{
+	return 0.0f;
+}
+
+void CRenderer::Flush()
+{
+	DEBUG_GROUP("AUX");
+
+	auto pvb			 = perViewBuffer;
+	pvb->Projection		 = m_Camera.getProjectionMatrix();
+	pvb->View			 = m_Camera.GetViewMatrix();
+	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
+	pvb->ViewProjection	 = pvb->Projection * pvb->View;
+	pvb->Eye			 = gEnv->pSystem->GetViewCamera().GetPos();
+
+	pvb.CopyToDevice();
+	m_RenderAuxGeom->Flush();
+}
+
+void CRenderer::Sh_Reload()
+{
 }
 
 

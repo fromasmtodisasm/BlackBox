@@ -3,11 +3,12 @@
 #include FT_FREETYPE_H
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 
 #include <glm/glm.hpp>
+
 #include <map>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <string_view>
 
 void RegisterColorTable();
 class CShader;

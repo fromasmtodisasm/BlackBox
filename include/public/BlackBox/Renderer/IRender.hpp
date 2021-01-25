@@ -15,7 +15,6 @@ typedef unsigned short ushort;
 #endif
 
 #include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/Renderer/Light.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
@@ -557,6 +556,8 @@ extern "C"
 	typedef IRenderer* (*PFNCREATERENDERERINTERFACE)(ISystem* pSystem);
 }
 
+#include "VertexFormats.hpp"
+
 struct SRenderParams
 {
 	IShader* Shader;
@@ -565,11 +566,6 @@ struct SRenderParams
 	CCamera* Camera;
 	DirectionLight* directionLight;
 	Mat4 Transform;
-};
-
-struct IDrawable
-{
-	virtual void draw(SRenderParams& renderParams) = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

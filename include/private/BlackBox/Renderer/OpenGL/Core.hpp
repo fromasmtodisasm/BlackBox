@@ -142,24 +142,6 @@ class OpenglDebuger
 	static bool ignore;
 };
 
-//////////////////////////////////////////////////////////////////////////
-//! CFrameProfilerSection is an auto class placed where code block need to be profiled.
-//! Every time this object is constructed and destruted the time between constructor
-//! and destructur is merged into the referenced CFrameProfiler instance.
-//!
-class CDebugSection
-{
-  public:
-	inline CDebugSection(size_t length, const char* message)
-	{
-		OpenglDebuger::PushGroup(0, static_cast<GLsizei>(length), message);
-	}
-	inline ~CDebugSection()
-	{
-		OpenglDebuger::EndGroup();
-	}
-};
-
 namespace debuger
 {
 	inline void object_label(GLenum id, GLuint object, const char* label)

@@ -119,7 +119,9 @@ bool CScriptSystem::Init(ISystem* pSystem)
 {
 	gISystem  = pSystem;
 	m_pSystem = pSystem;
-	L		  = lua_newstate(luaAlloc, nullptr);
+	//L		  = lua_newstate(luaAlloc, nullptr);
+	//L		  = lua_newstate(nullptr, nullptr);
+	L = luaL_newstate();
 	luaL_openlibs(L);
 	CScriptObject::L	 = L; // Set lua state for script table class.
 	CScriptObject::m_pSS = this;

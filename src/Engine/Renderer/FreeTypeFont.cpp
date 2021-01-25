@@ -229,6 +229,7 @@ bool operator<(const STestSize& a, const STestSize& b)
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
+	return true;
 	m_Height = static_cast<float>(h);
 	std::set<STestSize> test;
 #if 1

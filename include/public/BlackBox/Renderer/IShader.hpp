@@ -6,8 +6,6 @@
 #include <string_view>
 #include <utility>
 
-#include <BlackBox/Renderer/VertexFormats.hpp>
-
 struct ITexture;
 class CCamera;
 

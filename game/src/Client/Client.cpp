@@ -75,7 +75,7 @@ void CClient::Update()
 
 	auto pos = m_CameraController.CurrentCamera()->GetPos();
 	auto cam = m_CameraController.CurrentCamera();
-	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Vec3(2, -0.5, -1), pos + cam->Front*Vec3(3, 0, 1), UCol(0,0,1,1));
+	gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Vec3(2, -0.5, -1), pos + cam->Front*Vec3(3, 0, 1), UCol(0,0,1,1));
 
 	m_CameraController.SetRenderCamera(0);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());

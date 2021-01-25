@@ -1,7 +1,7 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
-#include <BlackBox/Renderer/BaseShader.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
+//#include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IConsole.hpp>
 //#include <BlackBox/Renderer/OpenGL/Core.hpp>
@@ -124,12 +124,12 @@ CRenderAuxGeom::CRenderAuxGeom()
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", int(ShaderBinaryFormat::SPIRV))))
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0)))
 	{
 		gEnv->pLog->Log("Error of loading auxgeom shader");
 	}
 
-	m_aabbBufferPtr = SAABBBuffer::Create(10);
+	//m_aabbBufferPtr = SAABBBuffer::Create(10);
 
 	REGISTER_CVAR(dbg_mode, 3, 0, "");
 	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");
@@ -160,9 +160,11 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 
 	if (first_draw)
 	{
+		#if 0
 		m_aabbBufferPtr->Model	  = transform;
 		m_aabbBufferPtr->LightPos = Vec3(300);
 		m_aabbBufferPtr->Update();
+		#endif
 	}
 	
 	std::array<BB_VERTEX, 36> verts = {
@@ -208,20 +210,20 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 void CRenderAuxGeom::DrawAABBs()
 {
 
-	m_BoundingBoxShader->Use();
+	m_BoundingBoxShader->Bind();
 	gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
 	auto size	  = m_BBVerts.size() * 36;
 	m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, VERTEX_FORMAT_P3F_N_C4B, "BoundingBox", false);
 	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
 	gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
-	m_BoundingBoxShader->Unuse();
+	//m_BoundingBoxShader->Unuse();
 
 	m_BBVerts.resize(0);
 }
 
 void CRenderAuxGeom::DrawLines()
 {
-	m_AuxGeomShader->Use();
+	m_AuxGeomShader->Bind();
 	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
 	for (auto& pb : m_auxPushBuffer)
@@ -229,7 +231,7 @@ void CRenderAuxGeom::DrawLines()
 		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
 		offset += pb.m_numVertices;
 	}
-	m_AuxGeomShader->Unuse();
+	//m_AuxGeomShader->Unuse();
 	m_VB.resize(0);
 	m_auxPushBuffer.resize(0);
 }
@@ -293,10 +295,10 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 
 void CRenderAuxGeom::Flush()
 {
-	RSS(gEnv->pRenderer, CULL_FACE, false);
+	//RSS(gEnv->pRenderer, CULL_FACE, false);
 	DrawLines();
 	{
-		RSS(gEnv->pRenderer, DEPTH_TEST, true);
+		//RSS(gEnv->pRenderer, DEPTH_TEST, true);
 		DrawAABBs();
 	}
 	//first_draw = true;

@@ -11,7 +11,6 @@
 #endif
 
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
 #include "DeviceManager/DeviceResources.hpp"
 
 enum AttributeLocation : uint {
