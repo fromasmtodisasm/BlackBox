@@ -17,7 +17,7 @@ public:
 	virtual void PopProfileMarker(char* label) override;
 	virtual int CreateRenderTarget() override;
 	virtual void DrawFullscreenQuad() override;
-	virtual struct ITechniqueManager* GetITechniqueManager() { return nullptr; };
+	virtual ITechniqueManager* GetITechniqueManager() { return nullptr; };
 	virtual float GetDepthValue(int x, int y) override;
 	virtual void Sh_Reload() override;
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) override;
