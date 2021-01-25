@@ -98,6 +98,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <string>
 #include <algorithm>
 #include <memory>
+#include <queue>
 
 #if 0
 #if defined USE_DEBUG_NEW

@@ -1,7 +1,6 @@
 #pragma once
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
 
 using BB_VERTEX	 = SVF_P3F_N_C4B;
 

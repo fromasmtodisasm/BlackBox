@@ -10,7 +10,7 @@
 #include <crtdbg.h>
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
-#if 0
+#if 1
 extern "C"
 {
 	// nVidia

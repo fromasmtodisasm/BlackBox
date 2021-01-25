@@ -9,7 +9,11 @@ CShader::~CShader()
 {
 	for (auto s : m_Shaders)
 	{
-		s->m_D3DShader->Release();
+		if (s)
+		{
+			auto sh = s->m_D3DShader;
+			SAFE_RELEASE(sh);
+		}
 	}
 }
 

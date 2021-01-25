@@ -106,20 +106,22 @@ void* luaAlloc(void* userData, void* ptr, size_t oldSize, size_t newSize)
 {
 	if (newSize == 0)
 	{
-		//CryModuleFree(ptr);
-		free(ptr);
+		CryModuleFree(ptr);
+		//free(ptr);
 		return 0;
 	}
 	else
-		//return CryModuleRealloc(ptr, newSize);
-		return realloc(ptr, newSize);
+		return CryModuleRealloc(ptr, newSize);
+		//return realloc(ptr, newSize);
 }
 
 bool CScriptSystem::Init(ISystem* pSystem)
 {
 	gISystem  = pSystem;
 	m_pSystem = pSystem;
-	L		  = lua_newstate(luaAlloc, nullptr);
+	//L		  = lua_newstate(luaAlloc, nullptr);
+	//L		  = lua_newstate(nullptr, nullptr);
+	L = luaL_newstate();
 	luaL_openlibs(L);
 	CScriptObject::L	 = L; // Set lua state for script table class.
 	CScriptObject::m_pSS = this;

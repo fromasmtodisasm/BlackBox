@@ -18,6 +18,116 @@ extern FxParser* g_FxParser;
 class Texture;
 struct IFont;
 
+class RenderDebugger
+{
+public:
+	RenderDebugger() = default;
+	RenderDebugger(const char* file);
+	~RenderDebugger();
+
+	static inline void SetIgnore(bool v)
+	{
+		ignore = v;
+	}
+	static void checkError(const char* file, int line, const char* expr);
+
+	static inline void PushGroup(uint id, int length, const char* message)
+	{
+		//glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, id, length, message);
+	}
+
+	static inline void EndGroup()
+	{
+		//glPopDebugGroup();
+	}
+
+  private:
+	  #if 0
+	static void APIENTRY callBack(GLenum source, GLenum type, GLuint id,
+								  GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+	#endif
+
+	static inline const char* SOURCE_TO_STRING(int s)
+	{
+		#if 0
+		switch (s)
+		{
+			GET_SOURCE(DEBUG_SOURCE_API);
+			GET_SOURCE(DEBUG_SOURCE_WINDOW_SYSTEM);
+			GET_SOURCE(DEBUG_SOURCE_SHADER_COMPILER);
+			GET_SOURCE(DEBUG_SOURCE_THIRD_PARTY);
+			GET_SOURCE(DEBUG_SOURCE_APPLICATION);
+			GET_SOURCE(DEBUG_SOURCE_OTHER);
+		default:
+		#endif
+			return "Unknown source";
+		#if 0
+		}
+		#endif
+	}
+
+	static inline const char* TYPE_TO_STRING(int t)
+	{
+		#if 0
+		switch (t)
+		{
+			GET_TYPE(DEBUG_TYPE_ERROR);
+			GET_TYPE(DEBUG_TYPE_DEPRECATED_BEHAVIOR);
+			GET_TYPE(DEBUG_TYPE_UNDEFINED_BEHAVIOR);
+			GET_TYPE(DEBUG_TYPE_PORTABILITY);
+			GET_TYPE(DEBUG_TYPE_PERFORMANCE);
+			GET_TYPE(DEBUG_TYPE_MARKER);
+			GET_TYPE(DEBUG_TYPE_PUSH_GROUP);
+			GET_TYPE(DEBUG_TYPE_POP_GROUP);
+			GET_TYPE(DEBUG_TYPE_OTHER);
+		default:
+			return "Unknown type";
+		}
+		#endif
+			return "Unknown type";
+	}
+
+	static inline const char* SEVERITY_TO_STRING(int s)
+	{
+		#if 0
+		switch (s)
+		{
+			GET_SEVERITY(DEBUG_SEVERITY_HIGH);
+			GET_SEVERITY(DEBUG_SEVERITY_MEDIUM);
+			GET_SEVERITY(DEBUG_SEVERITY_LOW);
+			GET_SEVERITY(DEBUG_SEVERITY_NOTIFICATION);
+		default:
+			return "Unknown severity";
+		}
+		#endif
+		return "Unknown severity";
+	}
+
+  private:
+	//std::ofstream debug_file;
+	static bool isError;
+	static bool ignore;
+};
+
+//////////////////////////////////////////////////////////////////////////
+//! CFrameProfilerSection is an auto class placed where code block need to be profiled.
+//! Every time this object is constructed and destruted the time between constructor
+//! and destructur is merged into the referenced CFrameProfiler instance.
+//!
+class CDebugSection
+{
+  public:
+	inline CDebugSection(size_t length, const char* message)
+	{
+		RenderDebugger::PushGroup(0, static_cast<int>(length), message);
+	}
+	inline ~CDebugSection()
+	{
+		RenderDebugger::EndGroup();
+	}
+};
+
+#define DEBUG_GROUP(message) CDebugSection debugSection(sizeof(message), message)
 
 class RenderCVars
 {
@@ -43,9 +153,6 @@ class RenderCVars
 class ShaderMan
 {
   public:
-	~ShaderMan()
-	{
-	}
 	IShader* Sh_Load(const char* vertex, const char* fragment)
 	{
 		#if 0
@@ -332,4 +439,16 @@ protected:
 
 	std::vector<IFont*> m_Fonts;
 	RenderBackend m_Backend;
+
+	// Inherited via IRenderer
+	virtual void ShareResources(IRenderer* renderer) override;
+	virtual void SetRenderCallback(IRenderCallback* pCallback) override;
+	virtual void PushProfileMarker(char* label) override;
+	virtual void PopProfileMarker(char* label) override;
+	virtual int CreateRenderTarget() override;
+	virtual void DrawFullscreenQuad() override;
+	virtual ITechniqueManager* GetITechniqueManager() override;
+	virtual float GetDepthValue(int x, int y) override;
+	virtual void Flush() final;
+	virtual void Sh_Reload() override;
 };

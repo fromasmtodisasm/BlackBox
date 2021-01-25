@@ -3,11 +3,12 @@
 #include FT_FREETYPE_H
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 
 #include <glm/glm.hpp>
+
 #include <map>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <string_view>
 
 void RegisterColorTable();
 class CShader;
@@ -46,6 +47,8 @@ public:
 	void SetYPos(float y) override;
 	void Submit() override;
 
+	void RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image,  std::vector<uint8>& _test);
+
 	void CreateRasterState();
 	void CreateDSState();
 	void CreateBlendState();
@@ -63,6 +66,8 @@ private:
 	_smart_ptr<CShader> shader;
 	ID3D10Texture2D *m_pTexture = NULL;
 	ID3D10ShaderResourceView* pTexDepSurface = NULL;
+
+	ID3D10Buffer* m_pConstantBuffer;
 	
 	static ID3D10SamplerState* m_Sampler;
 	static ID3D10InputLayout* m_pFontLayout;

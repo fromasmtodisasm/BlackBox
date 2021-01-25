@@ -445,7 +445,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	if (m_pRender)
 	{
 		m_Font = gEnv->pRenderer->GetIFont();
-		m_Font->Init("arial.ttf", 16, 18);
+		//m_Font->Init("arial.ttf", 16, 18);
 	}
 
 	// other
@@ -539,12 +539,14 @@ bool CGame::Update()
 
 		if (bRenderFrame)
 		{
+			#if 0
 			SmartScriptObject Gui(m_pScriptSystem,true);
 			if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
 			{
 				CryError("Cannot find Gui table in scripts (wrong working folder?)");
 				return false;
 			}
+			#endif
 
 			SetRenderState();
 			m_pSystem->RenderBegin();

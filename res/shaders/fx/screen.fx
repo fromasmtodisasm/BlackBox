@@ -19,8 +19,8 @@ HLSLShader
 
     struct VsInput
 	{
-		/*[[vk::location(0)]]*/	float3 Pos : POSITION;
-		/*[[vk::location(2)]]*/ float2 TC : TEXCOORD0;
+		float3 Pos : POSITION;
+		float2 TC : TEXCOORD0;
 	};
 
 
@@ -38,7 +38,8 @@ HLSLShader
     float4 PSMain(VsOutput IN) : SV_Target0
     { 
         float2 uv = IN.tc; 
-        return screenTexture.Sample(linearSampler, IN.tc)*float4(color.rgb, alpha);
+        //return screenTexture.Sample(linearSampler, IN.tc)*float4(color.rgb, alpha);
+        return float4(1,1,1,1);
     }
 }
 
@@ -46,14 +47,6 @@ technique main
 {
     pass p0
     {
-        /*
-        InputLayout
-        {
-            vec3 aPos : POSITION
-            vec2 aTexCoords : TEXCOORD
-        }
-        */
-
         VertexShader = VSMain
         PixelShader = PSMain
     }

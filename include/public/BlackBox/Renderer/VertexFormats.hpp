@@ -162,7 +162,7 @@ struct SVF_P3F_N // 24 bytes
 };
 struct SVF_T2F // 8 bytes
 {
-  float st[2];
+  Vec2 st;
 };
 
 struct SVF_P3F_N_C4B
@@ -175,27 +175,27 @@ struct SVF_P3F_N_C4B
 struct SVF_P3F_T2F
 {
   Vec3 xyz;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_N_T2F
 {
   Vec3 xyz;
   Vec3 normal;
-  float st[2];
+  Vec2 st;
 };
 
 struct SVF_P3F_C4B_T2F
 {
   Vec3 xyz;
   UCol color;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_C4B_C4B_T2F
 {
 	Vec3 xyz;
   UCol color;
   UCol seccolor;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_N_C4B_C4B_T2F
 {
@@ -203,14 +203,14 @@ struct SVF_P3F_N_C4B_C4B_T2F
   Vec3 normal;
   UCol color;
   UCol seccolor;
-  float st[2];
+  Vec2 st;
 };
 struct SVF_P3F_C4B_T2F_T2F
 {
   Vec3 xyz;
   UCol color;
-  float st0[2];
-  float st1[2];
+  Vec2 st0[2];
+  Vec2 st1[2];
 };
 
 struct SVF_P3F_N_C4B_T2F
@@ -218,7 +218,7 @@ struct SVF_P3F_N_C4B_T2F
   Vec3 xyz;
   Vec3 normal;
   UCol color;
-  float st[2];
+  Vec2 st;
 
   bool operator == (SVF_P3F_N_C4B_T2F & other);
 };
@@ -227,7 +227,7 @@ struct SVF_TRP3F_C4B_T2F
 {
   float x,y,z,rhw;
   UCol color;
-  float st[2];
+  Vec2 st;
 };
 
 struct SVF_P3F_C4B_C4B

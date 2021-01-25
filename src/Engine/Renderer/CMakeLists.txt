@@ -68,9 +68,7 @@ elseif(VULKAN_RENDERER)
 endif()
 
 target_sources(${PROJECT_NAME}
-#[[
   PRIVATE ${PROJECT_SOURCE_DIR}/AuxRenderer.cpp
-]]
   PRIVATE ${PROJECT_SOURCE_DIR}/AuxRendererNull.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
