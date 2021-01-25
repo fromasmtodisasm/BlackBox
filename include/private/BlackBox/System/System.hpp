@@ -383,19 +383,12 @@ class CSystem final : public ISystem
 			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
 		}
 
-		if (true)
-		{
-			CryLog("%s", msg.c_str());
-		}
-
 		auto L = CryLoadLibrary(lib_name);
 		if (L)
 		{
-			CryComment("Library found");
 			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
 			if (P)
 			{
-				CryComment("Entrypoint [%s] found", proc_name);
 				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
 				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
 				if (pfnModuleInitISystem)
