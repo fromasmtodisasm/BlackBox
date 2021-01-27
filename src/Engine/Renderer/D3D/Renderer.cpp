@@ -6,11 +6,158 @@
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
+//--------------------------------------------------------------------------------------
+// Structures
+//--------------------------------------------------------------------------------------
+struct SimpleVertex
+{
+    D3DXVECTOR3 Pos;
+    D3DXVECTOR4 Color;
+};
+
+struct CBChangesEveryFrame
+{
+	D3DXMATRIX World;
+	D3DXMATRIX View;
+	D3DXMATRIX Projection;
+};
+
 struct ITechniqueManager;
 
+//--------------------------------------------------------------------------------------
+// Global Variables
+//--------------------------------------------------------------------------------------
 D3D10_DRIVER_TYPE g_driverType = D3D10_DRIVER_TYPE_NULL;
-ID3D10Buffer* g_pVertexBuffer  = NULL;
 CD3DRenderer* gD3DRender;
+
+//ID3D10Effect*               g_pEffect = NULL;
+//ID3D10EffectTechnique*      g_pTechnique = NULL;
+ID3D10InputLayout*          g_pVertexLayout = NULL;
+ID3D10Buffer*               g_pVertexBuffer = NULL;
+ID3D10Buffer*               g_pIndexBuffer = NULL;
+ID3D10Buffer*               g_pCBChangesEveryFrame = NULL;
+//ID3D10EffectMatrixVariable* g_pWorldVariable = NULL;
+//ID3D10EffectMatrixVariable* g_pViewVariable = NULL;
+//ID3D10EffectMatrixVariable* g_pProjectionVariable = NULL;
+CShader*                    g_pCubeShader = NULL;
+
+D3DXMATRIX                  g_World;
+D3DXMATRIX                  g_View;
+D3DXMATRIX                  g_Projection;
+
+HRESULT CD3DRenderer::InitCube()
+{
+    // Create the effect
+    DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+    // Set the D3D10_SHADER_DEBUG flag to embed debug information in the shaders.
+    // Setting this flag improves the shader debugging experience, but still allows 
+    // the shaders to be optimized and to run exactly the way they will run in 
+    // the release configuration of this program.
+    dwShaderFlags |= D3D10_SHADER_DEBUG;
+    #endif
+
+    g_pCubeShader = (CShader*)gD3DRender->Sh_Load("cube", 0, 0);
+	if (!g_pCubeShader)
+		return S_FALSE;
+
+    // Define the input layout
+    D3D10_INPUT_ELEMENT_DESC layout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+    };
+    UINT numElements = sizeof( layout ) / sizeof( layout[0] );
+
+    // Create the input layout
+	auto bytecode = g_pCubeShader->m_Shaders[IShader::E_VERTEX]->m_Bytecode;
+    auto hr = ::GetDevice()->CreateInputLayout( layout, numElements, bytecode->GetBufferPointer(),
+                                          bytecode->GetBufferSize(), &g_pVertexLayout );
+    if( FAILED( hr ) )
+        return hr;
+
+    // Set the input layout
+    ::GetDevice()->IASetInputLayout( g_pVertexLayout );
+
+    // Create vertex buffer
+    SimpleVertex vertices[] =
+    {
+        { D3DXVECTOR3( -1.0f, 1.0f, -1.0f ), D3DXVECTOR4( 1.0f, 0.0f, 1.0f, 1.0f ) },
+        { D3DXVECTOR3( 1.0f, 1.0f, -1.0f ), D3DXVECTOR4( 1.0f, 1.0f, 0.0f, 1.0f ) },
+        { D3DXVECTOR3( 1.0f, 1.0f, 1.0f ), D3DXVECTOR4( 1.0f, 1.0f, 1.0f, 1.0f ) },
+        { D3DXVECTOR3( -1.0f, 1.0f, 1.0f ), D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) },
+        { D3DXVECTOR3( -1.0f, -1.0f, -1.0f ), D3DXVECTOR4( 1.0f, 0.0f, 1.0f, 1.0f ) },
+        { D3DXVECTOR3( 1.0f, -1.0f, -1.0f ), D3DXVECTOR4( 1.0f, 1.0f, 0.0f, 1.0f ) },
+        { D3DXVECTOR3( 1.0f, -1.0f, 1.0f ), D3DXVECTOR4( 1.0f, 1.0f, 1.0f, 1.0f ) },
+        { D3DXVECTOR3( -1.0f, -1.0f, 1.0f ), D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) },
+    };
+    D3D10_BUFFER_DESC bd;
+    bd.Usage = D3D10_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof( SimpleVertex ) * 8;
+    bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    D3D10_SUBRESOURCE_DATA InitData;
+    InitData.pSysMem = vertices;
+    hr = ::GetDevice()->CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
+    if( FAILED( hr ) )
+        return hr;
+
+    // Set vertex buffer
+    UINT stride = sizeof( SimpleVertex );
+    UINT offset = 0;
+    ::GetDevice()->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
+
+    // Create index buffer
+    DWORD indices[] =
+    {
+        3,1,0,
+        2,1,3,
+
+        0,5,4,
+        1,5,0,
+
+        3,4,7,
+        0,4,3,
+
+        1,6,5,
+        2,6,1,
+
+        2,7,6,
+        3,7,2,
+
+        6,4,5,
+        7,4,6,
+    };
+    bd.Usage = D3D10_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof( DWORD ) * 36;        // 36 vertices needed for 12 triangles in a triangle list
+    bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    InitData.pSysMem = indices;
+    hr = ::GetDevice()->CreateBuffer( &bd, &InitData, &g_pIndexBuffer );
+    if( FAILED( hr ) )
+        return hr;
+
+    // Set index buffer
+    ::GetDevice()->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
+
+    // Set primitive topology
+    ::GetDevice()->IASetPrimitiveTopology( D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+	// Create the constant buffers
+	bd.Usage	 = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(CBChangesEveryFrame);
+	bd.BindFlags = D3D10_BIND_CONSTANT_BUFFER;
+
+	hr			 = m_pd3dDevice->CreateBuffer(&bd, NULL, &g_pCBChangesEveryFrame);
+	if (FAILED(hr))
+		return hr;
+
+
+    return S_OK;
+}
+
 
 CD3DRenderer::CD3DRenderer(ISystem* pSystem) : CRenderer(pSystem)
 {
@@ -78,9 +225,77 @@ void CD3DRenderer::BeginFrame(void)
 
 void CD3DRenderer::Update(void)
 {
-	// Отображение геометрии на рендер-таргете
-	// Вывод содержимого рендер-таргета на экран
-	m_pSwapChain->Present( 1, 0 );
+	
+    // Update our time
+    static float t = 0.0f;
+    if( g_driverType == D3D10_DRIVER_TYPE_REFERENCE )
+    {
+        t += ( float )D3DX_PI * 0.0125f;
+    }
+    else
+    {
+        static DWORD dwTimeStart = 0;
+        DWORD dwTimeCur = GetTickCount();
+        if( dwTimeStart == 0 )
+            dwTimeStart = dwTimeCur;
+        t = ( dwTimeCur - dwTimeStart ) / 1000.0f;
+    }
+
+    //
+    // Animate the cube
+    //
+    D3DXMatrixRotationY( &g_World, t );
+
+    //
+    // Clear the back buffer
+    //
+    float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+    m_pd3dDevice->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
+
+    g_pCubeShader->Bind();
+    //
+    // Update variables
+    //
+	//
+	// Update variables that change once per frame
+	//
+	CBChangesEveryFrame cb;
+	D3DXMatrixTranspose(&g_World, &cb.World);
+	D3DXMatrixTranspose(&g_View, &cb.View);
+	D3DXMatrixTranspose(&g_Projection, &cb.Projection);
+    #if 0
+	cb.World	  = g_World;
+	cb.View		  = g_View;
+	cb.Projection = g_Projection;
+    #endif
+	m_pd3dDevice->UpdateSubresource(g_pCBChangesEveryFrame, 0, NULL, &cb, 0, 0);
+    m_pd3dDevice->VSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
+
+
+    // Set vertex buffer
+    UINT stride = sizeof( SimpleVertex );
+    UINT offset = 0;
+	::GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+	::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    
+    //
+    // Render the cube
+    //
+    D3D10_TECHNIQUE_DESC techDesc;
+	techDesc.Passes = 1;
+    //g_pTechnique->GetDesc( &techDesc );
+    for( UINT p = 0; p < techDesc.Passes; ++p )
+    {
+        //g_pTechnique->GetPassByIndex( p )->Apply( 0 );
+        m_pd3dDevice->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
+    }
+
+    //
+    // Present our back buffer to our front buffer
+    //
+    m_pSwapChain->Present( 0, 0 );
 }
 
 void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
@@ -199,6 +414,7 @@ bool CD3DRenderer::InitOverride()
 
     D3D10_DRIVER_TYPE driverTypes[] =
     {
+		D3D10_DRIVER_TYPE_WARP,
         D3D10_DRIVER_TYPE_HARDWARE,
         D3D10_DRIVER_TYPE_REFERENCE,
     };
@@ -254,7 +470,7 @@ bool CD3DRenderer::InitOverride()
 
     // Set up rasterizer
 	D3D10_RASTERIZER_DESC rasterizerDesc;
-	rasterizerDesc.CullMode				 = D3D10_CULL_NONE;
+	rasterizerDesc.CullMode				 = D3D10_CULL_FRONT;
 	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
 	rasterizerDesc.FrontCounterClockwise = true;
 	rasterizerDesc.DepthBias			 = false;
@@ -268,6 +484,23 @@ bool CD3DRenderer::InitOverride()
 	ID3D10RasterizerState* rasterizerState;
 	m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
 	m_pd3dDevice->RSSetState(rasterizerState);
+
+    hr = InitCube();
+    if (FAILED(hr))
+        return false;
+    
+    // Initialize the world matrix
+    D3DXMatrixIdentity( &g_World );
+
+    // Initialize the view matrix
+    D3DXVECTOR3 Eye( 0.0f, 1.0f, -5.0f );
+    D3DXVECTOR3 At( 0.0f, 0.0f, 0.0f );
+    D3DXVECTOR3 Up( 0.0f, 1.0f, 0.0f );
+    D3DXMatrixLookAtLH( &g_View, &Eye, &At, &Up );
+
+    // Initialize the projection matrix
+    D3DXMatrixPerspectiveFovLH( &g_Projection, ( float )D3DX_PI * 0.5f, GetWidth() / ( FLOAT )GetHeight(), 0.1f, 100.0f );
+
 
     return true;
 }

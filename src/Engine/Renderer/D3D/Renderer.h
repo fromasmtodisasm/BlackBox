@@ -11,6 +11,7 @@ extern CD3DRenderer* gD3DRender;
 class CD3DRenderer : public CRenderer
 {
 public:
+	HRESULT InitCube();
 	CD3DRenderer(ISystem* pSystem);
 	~CD3DRenderer();
 	// Inherited via CRenderer

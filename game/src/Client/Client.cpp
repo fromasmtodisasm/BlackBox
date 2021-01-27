@@ -317,6 +317,7 @@ void CClient::OnLoadScene()
 
 void CClient::DrawAux()
 {
+	return;
 	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
 	auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col) {
 		auto render = gEnv->pRenderer->GetIRenderAuxGeom();

@@ -205,10 +205,11 @@ class ShaderMan
 				SAFE_DELETE(fs);	
 				return nullptr;
 			}
-			auto* p							  = new CShader;
+			auto p							  = _smart_ptr<CShader>(new CShader);
 			p->m_Shaders[IShader::E_VERTEX]	  = vs;
 			p->m_Shaders[IShader::E_FRAGMENT] = fs;
-			m_Shaders.emplace_back(p);
+			p->AddRef();
+			//m_Shaders.push_back(p);
 			p->Bind();
 
 			delete pEffect;
