@@ -30,15 +30,15 @@ struct ITechniqueManager;
 D3D10_DRIVER_TYPE g_driverType = D3D10_DRIVER_TYPE_NULL;
 CD3DRenderer* gD3DRender;
 
-//ID3D10Effect*               g_pEffect = NULL;
-//ID3D10EffectTechnique*      g_pTechnique = NULL;
+ID3D10Effect*               g_pEffect = NULL;
+ID3D10EffectTechnique*      g_pTechnique = NULL;
 ID3D10InputLayout*          g_pVertexLayout = NULL;
 ID3D10Buffer*               g_pVertexBuffer = NULL;
 ID3D10Buffer*               g_pIndexBuffer = NULL;
 ID3D10Buffer*               g_pCBChangesEveryFrame = NULL;
-//ID3D10EffectMatrixVariable* g_pWorldVariable = NULL;
-//ID3D10EffectMatrixVariable* g_pViewVariable = NULL;
-//ID3D10EffectMatrixVariable* g_pProjectionVariable = NULL;
+ID3D10EffectMatrixVariable* g_pWorldVariable = NULL;
+ID3D10EffectMatrixVariable* g_pViewVariable = NULL;
+ID3D10EffectMatrixVariable* g_pProjectionVariable = NULL;
 CShader*                    g_pCubeShader = NULL;
 
 D3DXMATRIX                  g_World;
@@ -57,9 +57,22 @@ HRESULT CD3DRenderer::InitCube()
     dwShaderFlags |= D3D10_SHADER_DEBUG;
     #endif
 
-    g_pCubeShader = (CShader*)gD3DRender->Sh_Load("cube", 0, 0);
-	if (!g_pCubeShader)
-		return S_FALSE;
+    auto hr = D3DX10CreateEffectFromFile( "res/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, m_pd3dDevice, NULL,
+                                         NULL, &g_pEffect, NULL, NULL );
+    if( FAILED( hr ) )
+    {
+        MessageBox( NULL,
+                    "The FX file cannot be located.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK );
+        return hr;
+    }
+
+    // Obtain the technique
+    g_pTechnique = g_pEffect->GetTechniqueByName( "Render" );
+
+    // Obtain the variables
+    g_pWorldVariable = g_pEffect->GetVariableByName( "World" )->AsMatrix();
+    g_pViewVariable = g_pEffect->GetVariableByName( "View" )->AsMatrix();
+    g_pProjectionVariable = g_pEffect->GetVariableByName( "Projection" )->AsMatrix();
 
     // Define the input layout
     D3D10_INPUT_ELEMENT_DESC layout[] =
@@ -70,14 +83,15 @@ HRESULT CD3DRenderer::InitCube()
     UINT numElements = sizeof( layout ) / sizeof( layout[0] );
 
     // Create the input layout
-	auto bytecode = g_pCubeShader->m_Shaders[IShader::E_VERTEX]->m_Bytecode;
-    auto hr = ::GetDevice()->CreateInputLayout( layout, numElements, bytecode->GetBufferPointer(),
-                                          bytecode->GetBufferSize(), &g_pVertexLayout );
+    D3D10_PASS_DESC PassDesc;
+    g_pTechnique->GetPassByIndex( 0 )->GetDesc( &PassDesc );
+    hr = m_pd3dDevice->CreateInputLayout( layout, numElements, PassDesc.pIAInputSignature,
+                                          PassDesc.IAInputSignatureSize, &g_pVertexLayout );
     if( FAILED( hr ) )
         return hr;
 
     // Set the input layout
-    ::GetDevice()->IASetInputLayout( g_pVertexLayout );
+    m_pd3dDevice->IASetInputLayout( g_pVertexLayout );
 
     // Create vertex buffer
     SimpleVertex vertices[] =
@@ -99,14 +113,14 @@ HRESULT CD3DRenderer::InitCube()
     bd.MiscFlags = 0;
     D3D10_SUBRESOURCE_DATA InitData;
     InitData.pSysMem = vertices;
-    hr = ::GetDevice()->CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
+    hr = m_pd3dDevice->CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
     if( FAILED( hr ) )
         return hr;
 
     // Set vertex buffer
     UINT stride = sizeof( SimpleVertex );
     UINT offset = 0;
-    ::GetDevice()->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
+    m_pd3dDevice->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
 
     // Create index buffer
     DWORD indices[] =
@@ -135,25 +149,15 @@ HRESULT CD3DRenderer::InitCube()
     bd.CPUAccessFlags = 0;
     bd.MiscFlags = 0;
     InitData.pSysMem = indices;
-    hr = ::GetDevice()->CreateBuffer( &bd, &InitData, &g_pIndexBuffer );
+    hr = m_pd3dDevice->CreateBuffer( &bd, &InitData, &g_pIndexBuffer );
     if( FAILED( hr ) )
         return hr;
 
     // Set index buffer
-    ::GetDevice()->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
+    m_pd3dDevice->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
 
     // Set primitive topology
-    ::GetDevice()->IASetPrimitiveTopology( D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
-	// Create the constant buffers
-	bd.Usage	 = D3D10_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(CBChangesEveryFrame);
-	bd.BindFlags = D3D10_BIND_CONSTANT_BUFFER;
-
-	hr			 = m_pd3dDevice->CreateBuffer(&bd, NULL, &g_pCBChangesEveryFrame);
-	if (FAILED(hr))
-		return hr;
-
+    m_pd3dDevice->IASetPrimitiveTopology( D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
     return S_OK;
 }
@@ -225,7 +229,6 @@ void CD3DRenderer::BeginFrame(void)
 
 void CD3DRenderer::Update(void)
 {
-	
     // Update our time
     static float t = 0.0f;
     if( g_driverType == D3D10_DRIVER_TYPE_REFERENCE )
@@ -252,43 +255,21 @@ void CD3DRenderer::Update(void)
     float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
     m_pd3dDevice->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
 
-    g_pCubeShader->Bind();
     //
     // Update variables
     //
-	//
-	// Update variables that change once per frame
-	//
-	CBChangesEveryFrame cb;
-	D3DXMatrixTranspose(&g_World, &cb.World);
-	D3DXMatrixTranspose(&g_View, &cb.View);
-	D3DXMatrixTranspose(&g_Projection, &cb.Projection);
-    #if 0
-	cb.World	  = g_World;
-	cb.View		  = g_View;
-	cb.Projection = g_Projection;
-    #endif
-	m_pd3dDevice->UpdateSubresource(g_pCBChangesEveryFrame, 0, NULL, &cb, 0, 0);
-    m_pd3dDevice->VSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
+    g_pWorldVariable->SetMatrix( ( float* )&g_World );
+    g_pViewVariable->SetMatrix( ( float* )&g_View );
+    g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
 
-
-    // Set vertex buffer
-    UINT stride = sizeof( SimpleVertex );
-    UINT offset = 0;
-	::GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-	::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    
     //
-    // Render the cube
+    // Renders a triangle
     //
     D3D10_TECHNIQUE_DESC techDesc;
-	techDesc.Passes = 1;
-    //g_pTechnique->GetDesc( &techDesc );
+    g_pTechnique->GetDesc( &techDesc );
     for( UINT p = 0; p < techDesc.Passes; ++p )
     {
-        //g_pTechnique->GetPassByIndex( p )->Apply( 0 );
+        g_pTechnique->GetPassByIndex( p )->Apply( 0 );
         m_pd3dDevice->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
     }
 
@@ -297,6 +278,7 @@ void CD3DRenderer::Update(void)
     //
     m_pSwapChain->Present( 0, 0 );
 }
+
 
 void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
 {
