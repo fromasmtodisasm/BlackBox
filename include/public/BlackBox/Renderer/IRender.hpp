@@ -35,6 +35,7 @@ struct IShader;
 struct ISystem;
 struct IWindow;
 struct Material;
+struct ITechniqueManager;
 
 //////////////////////////////////////////////////////////////////////
 typedef unsigned char bvec4[4];
@@ -534,7 +535,7 @@ struct IRenderer
 	virtual void UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) = 0;
 	virtual void ReleaseIndexBuffer(SVertexStream* dest)													  = 0;
 
-	virtual struct ITechniqueManager* GetITechniqueManager() = 0;
+	virtual ITechniqueManager* GetITechniqueManager() = 0;
 	virtual struct IFont* GetIFont()						 = 0;
 
 	virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) = 0;

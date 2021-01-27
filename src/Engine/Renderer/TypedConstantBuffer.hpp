@@ -48,7 +48,9 @@ public:
 	
 	void CopyToDevice()
 	{
+		#if 0
 		m_constantBuffer->UpdateBuffer(&m_hostBuffer, Align(sizeof(m_hostBuffer), Alignment));
+		#endif
 	}
 
 	void UploadZeros()

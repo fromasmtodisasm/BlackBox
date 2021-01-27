@@ -447,7 +447,7 @@ protected:
 	virtual void PopProfileMarker(char* label) override;
 	virtual int CreateRenderTarget() override;
 	virtual void DrawFullscreenQuad() override;
-	virtual ITechniqueManager* GetITechniqueManager() override;
+	virtual ITechniqueManager* GetITechniqueManager() final;
 	virtual float GetDepthValue(int x, int y) override;
 	virtual void Flush() final;
 	virtual void Sh_Reload() override;
