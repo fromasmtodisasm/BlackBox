@@ -603,8 +603,10 @@ bool CGame::Update()
 	if (bRenderFrame)
 		m_pSystem->RenderEnd();
 
-	num_frames--;
+	//num_frames--;
 
+	if (!num_frames)
+		CryFatalError("Game Over!");
 	return m_bUpdateRet && num_frames > 0;
 }
 

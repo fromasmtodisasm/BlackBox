@@ -11,7 +11,7 @@ extern CD3DRenderer* gD3DRender;
 class CD3DRenderer : public CRenderer
 {
 public:
-	HRESULT InitCube();
+	//HRESULT InitCube();
 	CD3DRenderer(ISystem* pSystem);
 	~CD3DRenderer();
 	// Inherited via CRenderer
@@ -54,15 +54,21 @@ public:
 	// Inherited via CRenderer
 	virtual bool InitOverride() override;
 	static auto GetDevice(IRenderer* pThis) { return static_cast<CD3DRenderer*>(pThis)->m_pd3dDevice; }
+
+	bool OnResizeSwapchain(int newWidth, int newHeight);
+
   private:
 
 	ID3D10Device* m_pd3dDevice					= NULL;
 	IDXGISwapChain* m_pSwapChain				= NULL;
 	ID3D10RenderTargetView* m_pRenderTargetView = NULL;
+
+	ID3D10Texture2D* m_DepthStencilBuffer{};
+	ID3D10DepthStencilView* m_pDepthStencilView{};
+
+	ID3D10RasterizerState* m_pRasterizerState{};
+	ID3D10DepthStencilState* m_pDepthStencilState{};
 };
 
-inline auto GetDevice()
-{
-	return CD3DRenderer::GetDevice(gEnv->pRenderer);
-}
+ID3D10Device* GetDevice();
 

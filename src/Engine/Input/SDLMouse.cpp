@@ -32,6 +32,8 @@
 #else
 #undef LINUXINPUT_AUTOGRAB
 #endif
+#define LINUXINPUT_AUTOGRAB 1
+#define HIDE_MOUSE_POINTER
 
 static uint KeyboardEvent = 0;
 

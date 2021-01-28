@@ -41,6 +41,7 @@ class CSDLWindow final : public IWindow
 
   public:
 	virtual void* getHandle() override;
+	virtual void* getNativeHandle() override;
 
   private:
 	bool Create(int width, int height, bool fullscreen, RenderBackend backend);

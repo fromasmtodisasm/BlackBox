@@ -48,6 +48,7 @@ struct IWindow
 	virtual int getWidth()						= 0;
 	virtual int getHeight()						= 0;
 	virtual void* getHandle()					= 0;
+	virtual void* getNativeHandle()				= 0;
 	virtual void setFlags(int flags)			= 0;
 	virtual Rect& getViewPort()					= 0;
 	virtual void changeSize(int w, int h)		= 0;

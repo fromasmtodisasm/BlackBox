@@ -370,6 +370,7 @@ class CRenderer : public RenderCVars
 	IRenderAuxGeom* GetIRenderAuxGeom() final;
 
 protected:
+protected:
 
 	struct alignas(16) SPerViewConstantBuffer
 	{

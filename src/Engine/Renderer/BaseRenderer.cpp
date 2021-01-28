@@ -84,7 +84,10 @@ void CRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpar
 		break;
 	case ESYSTEM_EVENT_RESIZE:
 		if (!transit_to_FS)
+		{
 			m_Window->changeSize(wparam, lparam);
+			ChangeViewport(0, 0, wparam, lparam);
+		}
 		transit_to_FS = false;
 		break;
 	case ESYSTEM_EVENT_ACTIVATE:
@@ -168,6 +171,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	#endif
 
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
+	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "Renderer");
 	m_BufferManager = new CBufferManager();
 	CreateQuad();
 	gShMan = new ShaderMan;
