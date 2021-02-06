@@ -34,6 +34,7 @@ struct IWindow
 		int zbpp;
 		int sbits;
 		bool fullscreen;
+		RenderBackend backend;
 	};
 	virtual void Release()						= 0;
 	virtual bool create(Params params)			= 0;
@@ -47,12 +48,14 @@ struct IWindow
 	virtual int getWidth()						= 0;
 	virtual int getHeight()						= 0;
 	virtual void* getHandle()					= 0;
+	virtual void* getNativeHandle()				= 0;
 	virtual void setFlags(int flags)			= 0;
 	virtual Rect& getViewPort()					= 0;
 	virtual void changeSize(int w, int h)		= 0;
 	virtual GLContext getContext()				= 0;
 	virtual DisplayMode GetDesktopMode()		= 0;
 	virtual void EnterFullscreen(bool mode)		= 0;
+	virtual void close()						= 0;
 };
 
 extern "C"

@@ -41,6 +41,7 @@ using CameraList = std::map<std::string, CCamera*>;
 using CameraListIt = std::map<std::string, CCamera*>::iterator;
 //////////////////////////////////////////////////////////////////
 
+#if 0
 class Scene : public IScene
 {
   friend class GameGUI;
@@ -126,5 +127,5 @@ private:
   ICVar* texture_speed = nullptr;
 #pragma endregion Fields
 };
-
+#endif
 #endif // SCENE_H

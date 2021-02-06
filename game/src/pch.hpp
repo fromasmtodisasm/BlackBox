@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
-
 #if defined(LINUX)
 #	include <stdarg.h>
 //#	include "platform.h"
@@ -100,6 +98,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <string>
 #include <algorithm>
 #include <memory>
+#include <queue>
 
 #if 0
 #if defined USE_DEBUG_NEW

@@ -31,16 +31,16 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_D3D11_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_D3D11_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // //                    "%code requires" blocks.
-#line 11 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
+#line 11 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:377
 
 	#undef new
     #include <string>
@@ -49,8 +49,7 @@
 #endif
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
-	#include <BlackBox/Renderer/OpenGL/Core.hpp>
-    #include <BlackBox/Renderer/BufferManager.hpp>
+    #include "../BufferManager.hpp"
     class Scanner;
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
@@ -129,7 +128,7 @@
     }
 
 
-#line 133 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 132 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -206,7 +205,7 @@
 
 
 namespace yy {
-#line 210 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 209 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
@@ -2188,9 +2187,9 @@ namespace yy {
 
 
 } // yy
-#line 2192 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
+#line 2191 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.hpp" // lalr1.cc:377
 
 
 
 
-#endif // !YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_CYGDRIVE_E_CODE_FROMASMTODISASM_TESTENGINE_D3D11_SRC_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

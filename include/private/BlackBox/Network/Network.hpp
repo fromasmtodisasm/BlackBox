@@ -4,6 +4,8 @@
 
 //#include <SDL2/SDL_net.h>
 
+class CCompressionHelper;
+
 class CNetwork : public INetwork
 {
 public:
@@ -42,5 +44,5 @@ private:
   std::vector<IServer*> m_Servers;
   std::vector<IClient*> m_Clients;
 
-  ICompressionHelper* m_pCompressionHelper{};
+  CCompressionHelper* m_pCompressionHelper{};
 };

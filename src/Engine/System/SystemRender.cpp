@@ -1,6 +1,7 @@
 #include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/System.hpp>
 
@@ -47,14 +48,14 @@ void CSystem::RenderEnd()
 	}
 	if (m_env.pRenderer)
 	{
-		m_env.pRenderer->Update();
 		if (IConsole* pConsole = GetIConsole())
 			pConsole->Draw();
+		m_env.pRenderer->Update();
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)
 			m_GuiManager->Render();
 #endif
 		//if (m_bIsActive)
-		m_pWindow->swap();
+		//m_pWindow->swap();
 	}
 }

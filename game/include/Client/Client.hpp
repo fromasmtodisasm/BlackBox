@@ -36,6 +36,7 @@ class CClient : public IClientSink
 {
   public:
 	CClient(CGame* pGame);
+	~CClient();
 	void Update();
 	bool Init();
 
@@ -115,7 +116,7 @@ class CClient : public IClientSink
 	IActionMapManager* m_pIActionMapManager{};
 	SmartScriptObject m_PlayerScript;
 
-	IClient* m_pClient;
+	IClient* m_pClient = nullptr;
 
 	std::vector<TestObject> m_testObjects;
 	size_t m_SelectedBox = 0;

@@ -157,6 +157,10 @@ void CGame::InitConsoleVars()
 			"Usage: game_GliderStartGravity -0.8");
 	}
 
+	extern int g_bRenderGame;
+	REGISTER_CVAR(g_bRenderGame, 1, VF_NULL, "render game?");
+
+
 }
 
 void  CGame::ResetInputMap()

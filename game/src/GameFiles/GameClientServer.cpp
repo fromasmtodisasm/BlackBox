@@ -2,6 +2,8 @@
 #include <Client/XClient.hpp>
 #include <Server/XServer.hpp>
 
+#include <Client/Client.hpp>
+
 #include <BlackBox/System/IConsole.hpp>
 //////////////////////////////////////////////////////////////////////
 //! create the server
@@ -124,6 +126,8 @@ void CGame::ShutdownClient()
   m_pClient->MarkForDestruct();
   m_pClient->DestructIfMarked();
   m_pClient = NULL;
+#else
+	SAFE_DELETE(m_pClient);
   #endif
 }
 

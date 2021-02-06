@@ -9,6 +9,7 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
@@ -261,6 +262,13 @@ bool CSystem::InitScripts()
 	return m_env.pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 
+void CSystem::ReleaseScripts()
+{
+	CScriptObjectConsole::ReleaseTemplate();
+	CScriptObjectScript::ReleaseTemplate();
+	CScriptObjectRenderer::ReleaseTemplate();
+}
+
 void CSystem::SetWorkingDirectory(const std::string& path) const
 {
 	fs::current_path(fs::path(path));
@@ -296,6 +304,9 @@ void CSystem::PollEvents()
 
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {
+	m_rDriver = REGISTER_STRING("r_Driver", "DX11", VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
+		"Sets the renderer driver ( DX11/DX12/GL/VK/AUTO ).\n"
+		"Specify in system.cfg like this: r_Driver = \"DX11\"");
 	REGISTER_CVAR2("r_InitialWindowSizeRatio", &m_rIntialWindowSizeRatio, 0.666f, VF_DUMPTODISK,
 				   "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
 				   "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
@@ -379,6 +390,8 @@ void CSystem::ShutDown()
 	GetIRemoteConsole()->Stop();
 	GetIRemoteConsole()->UnregisterConsoleVariables();
 
+	ShutDownThreadSystem();
+
 	SAFE_DELETE(m_pTextModeConsole);
 
 	SAFE_RELEASE(m_pGame);
@@ -390,15 +403,23 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectScript);
 	SAFE_DELETE(m_ScriptObjectRenderer);
+	ReleaseScripts();
 	SAFE_RELEASE(m_env.pScriptSystem);
 
-	SAFE_DELETE(m_env.pInput);
-	SAFE_RELEASE(m_env.pLog);
+	SAFE_RELEASE(m_env.pHardwareMouse);
+	if (m_env.pInput)
+		m_env.pInput->ShutDown();
+	SAFE_RELEASE(m_pEntitySystem);
+	SAFE_RELEASE(m_pNetwork);
 	SAFE_RELEASE(m_env.pConsole);
 	SAFE_DELETE(m_pSystemEventDispatcher);
 	SAFE_DELETE(m_pCmdLine);
 	SAFE_DELETE(m_env.pProjectManager);
+	SAFE_RELEASE(m_env.pLog);
+	SAFE_RELEASE(m_env.pCryPak);
 	//SAFE_RELEASE(m_pCryPak);
+	UnloadSubsystems();
+	SDL_Quit();
 }
 
 void CSystem::EnableGui(bool enable)
@@ -905,9 +926,9 @@ ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 #endif
 	if (!pSystem->Init())
 	{
-		pSystem.release();
+		//pSystem.release();
 		initParams.pSystem = nullptr;
-		gEnv->pSystem	   = nullptr;
+		//gEnv->pSystem	   = nullptr;
 		return nullptr;
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);

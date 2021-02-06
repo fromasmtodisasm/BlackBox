@@ -104,6 +104,8 @@ void C3DEngine::Draw()
 	draw(m_Programs[2], Vec4d(0, h, w, h));
 	draw(m_Programs[3], Vec4d(w, 0, w, h));
 #endif
+	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
+	gEnv->pRenderer->SetCamera(m_Camera);
 
 	#if 0
 	if (m_pRenderCallback)

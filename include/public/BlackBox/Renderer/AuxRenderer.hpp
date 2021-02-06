@@ -1,10 +1,8 @@
 #pragma once
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
-using BB_VERTEX	 = SVF_P3F_N_C4B;
+using BB_VERTEX	 = SVF_P3F_C4B;
 
 struct SAuxPushBufferEntry
 {
@@ -23,8 +21,10 @@ struct alignas(16) SAABBConstantBuffer
 	Vec3 LightPos;
 };
 
+#if 0
 using SAABBBuffer = gl::ConstantBuffer<SAABBConstantBuffer>;
 using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
+#endif
 
 
 using AuxPushBuffer	  = std::vector<SAuxPushBufferEntry>;
@@ -57,10 +57,10 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	AuxPushBuffer m_auxPushBuffer;
 	AuxVertexBuffer m_VB;
 	CVertexBuffer* m_HardwareVB = nullptr;
-	ShaderProgramRef m_BoundingBoxShader;
-	BaseShaderProgramRef m_AuxGeomShader;
+	_smart_ptr<IShader> m_BoundingBoxShader;
+	_smart_ptr<IShader> m_AuxGeomShader;
 
-	SAABBBufferPtr  m_aabbBufferPtr;
+	//SAABBBufferPtr  m_aabbBufferPtr;
 
 	std::vector<BoundingBox> m_BBVerts;
 

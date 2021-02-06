@@ -1,6 +1,6 @@
-#line 1 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 3 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 3 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -747,8 +747,8 @@ static const flex_int16_t yy_rule_linenum[81] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
-#line 2 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 1 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 2 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -784,21 +784,21 @@ static const flex_int16_t yy_rule_linenum[81] =
     }
     #endif
 
-#line 787 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 787 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
-#line 46 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 46 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
   // A number symbol corresponding to the value in S.
   yy::parser::symbol_type make_INT(
     const std::string &s,
     const yy::parser::location_type& loc
   );
-#line 795 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 795 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 61 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 61 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
-#line 800 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
-#line 801 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 800 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 801 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define INITIAL 0
 #define fbo 1
@@ -1012,10 +1012,10 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 64 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 64 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
-#line 67 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 67 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
   // A handy shortcut to the location held by the driver.
   yy::location& loc = driver.location;
   // Code run each time yylex is called.
@@ -1025,7 +1025,7 @@ YY_DECL
 
 
 
-#line 1028 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1028 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1102,7 +1102,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 76 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 76 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     yy_push_state(lang);
 	return yy::parser::make_LANGUAGE(loc);
@@ -1111,18 +1111,18 @@ YY_RULE_SETUP
 
 case 2:
 YY_RULE_SETUP
-#line 81 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 81 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_LANG_ID(ShaderLangId::Hlsl, loc); 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 82 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 82 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_LANG_ID(ShaderLangId::Glsl, loc); 
 	YY_BREAK
 
 case 4:
 YY_RULE_SETUP
-#line 85 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 85 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     //comment_caller  =  INITIAL;
     bracket_level = 0;
@@ -1132,7 +1132,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 91 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 91 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     //comment_caller  =  INITIAL;
     bracket_level = 0;
@@ -1143,7 +1143,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 98 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 98 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
@@ -1152,14 +1152,14 @@ YY_RULE_SETUP
 
 case 7:
 YY_RULE_SETUP
-#line 105 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 105 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 108 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 108 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();
         return CURRENT_SYMBOL;
@@ -1169,143 +1169,143 @@ YY_RULE_SETUP
 
 case 9:
 YY_RULE_SETUP
-#line 114 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 114 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VOID_TYPE(loc);
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 115 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 115 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_UNSIGNED(loc);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 116 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 116 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT_TYPE(loc);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 117 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 117 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT2_TYPE(loc);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 118 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 118 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT3_TYPE(loc);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 119 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 119 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT4_TYPE(loc);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 120 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 120 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT2_TYPE(loc);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 121 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 121 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT3_TYPE(loc);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 122 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 122 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT4_TYPE(loc);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 123 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 123 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2_TYPE(loc);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 124 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 124 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT3_TYPE(loc);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 125 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 125 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT4_TYPE(loc);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 126 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 126 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2_TYPE(loc);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 127 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT3_TYPE(loc);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 128 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 128 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT4_TYPE(loc);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 129 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 129 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL_TYPE(loc);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 130 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 130 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL2_TYPE(loc);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 131 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 131 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL3_TYPE(loc);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 132 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 132 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL4_TYPE(loc);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 133 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 133 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT_TYPE(loc);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 134 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 134 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT2_TYPE(loc);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 135 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 135 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT3_TYPE(loc);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 136 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 136 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT4_TYPE(loc);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 137 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 137 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT2_TYPE(loc);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 138 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 138 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT3_TYPE(loc);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 139 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 139 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT4_TYPE(loc);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 140 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 140 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_UNIFORM(loc);
 	YY_BREAK
 
 case 36:
 YY_RULE_SETUP
-#line 143 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 143 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXFORMAT(loc);
 	YY_BREAK
 /*==================================================================
@@ -1313,7 +1313,7 @@ return yy::parser::make_VERTEXFORMAT(loc);
     */
 case 37:
 YY_RULE_SETUP
-#line 148 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 148 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
@@ -1321,7 +1321,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 153 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 153 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment2);
@@ -1330,36 +1330,36 @@ YY_RULE_SETUP
 
 case 39:
 YY_RULE_SETUP
-#line 159 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 159 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  anything  that's  not  a  '*'  */
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 160 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 160 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  up  '*'s  not  followed  by  '/'s  */
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 161 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 161 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step ();
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 163 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 163 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
 
 case 43:
 YY_RULE_SETUP
-#line 167 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 167 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 
 	YY_BREAK
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 168 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 168 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
@@ -1369,7 +1369,7 @@ loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 
 case 45:
 YY_RULE_SETUP
-#line 175 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 175 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  saw  closing  quote  -  all  done  */
         yy_pop_state();//BEGIN(INITIAL);
         *string_buf_ptr  =  '\0';
@@ -1379,7 +1379,7 @@ YY_RULE_SETUP
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 180 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 180 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //FIXME:
         //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
@@ -1390,7 +1390,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 187 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 187 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  octal  escape  sequence  */
         int  result;
@@ -1402,7 +1402,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 195 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 195 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  generate  error  -  bad  escape  sequence;  something
         *  like  '\48'  or  '\0777777'
@@ -1411,38 +1411,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 200 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 200 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\n';
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 201 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 201 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\t';
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 202 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 202 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\r';
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 203 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 203 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\b';
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 204 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 204 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\f';
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 205 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 205 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  yytext[1];
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 206 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 206 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1456,7 +1456,7 @@ YY_RULE_SETUP
 
 case 56:
 YY_RULE_SETUP
-#line 216 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 216 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
@@ -1467,7 +1467,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 223 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 223 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         // TODO create and REGISTER the variable in a table
 		return yy::parser::make_IDENTIFIER(yytext, loc);
@@ -1477,7 +1477,7 @@ YY_RULE_SETUP
 
 case 58:
 YY_RULE_SETUP
-#line 229 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 229 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level++;
         *string_buf_ptr++  =  yytext[0];
@@ -1485,7 +1485,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 233 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 233 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level--;
         if((bracket_level) == 0)
@@ -1503,7 +1503,7 @@ YY_RULE_SETUP
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 246 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 246 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1514,7 +1514,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 253 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 253 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1528,7 +1528,7 @@ YY_RULE_SETUP
 
 case 62:
 YY_RULE_SETUP
-#line 263 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 263 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         comment_caller  =  INITIAL;
         yy_push_state(pass);
@@ -1537,14 +1537,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 268 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 268 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 271 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 271 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();//BEGIN(INITIAL);
 		return CURRENT_SYMBOL;
@@ -1554,14 +1554,14 @@ YY_RULE_SETUP
 
 case 65:
 YY_RULE_SETUP
-#line 277 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 277 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 280 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 280 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();
         return CURRENT_SYMBOL;
@@ -1569,7 +1569,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 285 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 285 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         yy_push_state(input_layout);
         return yy::parser::make_INPUTLAYOUT(loc);
@@ -1578,27 +1578,27 @@ YY_RULE_SETUP
 /*VertexProgram       return VERTEXPROGRAM;*/
 case 68:
 YY_RULE_SETUP
-#line 291 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 291 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
 	YY_BREAK
 /*FragmentProgram     return FRAGMENTPROGRAM;*/
 /*FragmentShader      return FRAGMENTPROGRAM;*/
 case 69:
 YY_RULE_SETUP
-#line 294 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 294 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FRAGMENTPROGRAM(IShader::Type::E_FRAGMENT, loc);
 	YY_BREAK
 /*GeometryProgram     return GEOMETRYPROGRAM;*/
 case 70:
 YY_RULE_SETUP
-#line 296 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 296 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
 	YY_BREAK
 
 
 case 71:
 YY_RULE_SETUP
-#line 300 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 300 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         CryLog("{pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
@@ -1606,7 +1606,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 304 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 304 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
         CryLog("}pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
@@ -1616,14 +1616,14 @@ YY_RULE_SETUP
 case 73:
 /* rule 73 can match eol */
 YY_RULE_SETUP
-#line 310 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 310 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.lines (yyleng); loc.step ();
 }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 313 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 313 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.step ();
 }
@@ -1646,17 +1646,17 @@ YY_RULE_SETUP
     */
 case 75:
 YY_RULE_SETUP
-#line 334 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 334 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return make_INT(yytext, loc);
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 335 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 335 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_IDENTIFIER(yytext, loc);
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 336 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 336 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
@@ -1677,17 +1677,17 @@ YY_RULE_SETUP
     */
 case 78:
 YY_RULE_SETUP
-#line 353 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 353 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 BEGIN(incl);
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 354 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 354 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  the  whitespace and " or < as often in #include */
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 355 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 355 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  got  the  include  file  name  */
     char * s = (char*)strchr(YYText(), '\"'); // get rid of the quote or >
     if(!s) s = (char*)strchr(YYText(), '>');
@@ -1754,7 +1754,7 @@ case YY_STATE_EOF(resource):
 case YY_STATE_EOF(resource1):
 case YY_STATE_EOF(input_layout):
 case YY_STATE_EOF(lang):
-#line 397 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 397 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 {
 	if(include_stack.empty())//(  --include_stack_ptr  <  0  )
     {
@@ -1776,10 +1776,10 @@ case YY_STATE_EOF(lang):
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 416 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 416 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1782 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1782 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2896,7 +2896,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 416 "/cygdrive/e/code/fromasmtodisasm/TestEngine/src/Engine/Renderer/Shaders/Scanner.ll"
+#line 416 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Scanner.ll"
 
 
 yy::parser::symbol_type make_INT(
@@ -2910,7 +2910,53 @@ yy::parser::symbol_type make_INT(
   return yy::parser::make_INT((int) n, loc);
 }
 
-#include "ScannerHelpers.cpp"
+#include <stack>
+#include <fstream>
+#include <BlackBox/System/ISystem.hpp>
+
+//#include "Parser.hpp"
+//#include "Scanner.hpp"
+
+std::stack<std::shared_ptr<std::ifstream>> includes;
+bool Scanner::MakeInclude(const char* file_name)
+{
+	bool result = false;
+	CryLog("include <%s>", file_name);
+	//include_stack.push(IncludeData(YY_CURRENT_BUFFER, lineno(), driver.file.c_str()));
+	auto includeFile = std::make_shared<std::ifstream>(std::ifstream((std::string("res/shaders/fx/") + file_name)));
+	const char* buf	 = nullptr;
+	{
+		//driver.stream = std::ifstream(file_name);
+		if (!includeFile->is_open())
+		{
+			gEnv->pLog->LogError("[FX] File %s not found", file_name);
+			LexerError("failure in including a file");
+			return result;
+		}
+		includes.emplace(includeFile);
+		gEnv->pLog->Log("$3[FX] File %s opened", file_name);
+		yypush_buffer_state(yy_create_buffer(includes.top().get(), YY_BUF_SIZE));
+		//yyrestart(includeFile);
+		result = true;
+	}
+	return result;
+}
+
+void Scanner::eof()
+{
+	yypop_buffer_state();
+	gEnv->pLog->LogError("$3[FX] File %s ended", driver.file.c_str());
+	//yypop_buffer_state();
+	//driver.file = incData.file_name;
+	//driver.location.initialize(&driver.file);
+
+#if 0
+	if(incData.fileToClose)
+		fclose(incData.fileToClose);
+#endif
+	//include_stack.pop();
+}
+
 
 #pragma warning(pop)
 

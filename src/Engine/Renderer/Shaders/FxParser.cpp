@@ -1,5 +1,4 @@
 #include <BlackBox/Core/Platform/CryLibrary.h>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 #include "FxParser.h"
 #include "Driver.hpp"

@@ -11,6 +11,7 @@
 #include <BlackBox/World/World.hpp>
 
 #include <algorithm>
+#if 0
 Scene::Scene(std::string name)
 	: lighting(true),
 	  name(name),
@@ -185,3 +186,4 @@ const SpotLightList& Scene::GetSpotLights()
 	return m_SpotLights;
 
 }
+#endif

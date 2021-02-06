@@ -17,6 +17,12 @@ CClient::CClient(CGame *pGame)
 {
 }
 
+CClient::~CClient()
+{
+	SAFE_RELEASE(m_CrossHair);
+	SAFE_RELEASE(m_pClient);
+}
+
 void CClient::Update()
 {
 	//m_pClient->Update(16);
@@ -69,9 +75,9 @@ void CClient::Update()
 
 	auto pos = m_CameraController.CurrentCamera()->GetPos();
 	auto cam = m_CameraController.CurrentCamera();
-	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Vec3(2, -0.5, -1), pos + cam->Front*Vec3(3, 0, 1), UCol(0,0,1,1));
+	gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Vec3(2, -0.5, -1), pos + cam->Front*Vec3(3, 0, 1), UCol(0,0,1,1));
 
-	m_CameraController.SetRenderCamera(0);
+	//m_CameraController.SetRenderCamera(0);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_PlayerProcessingCmd.Reset();
 }
@@ -96,7 +102,7 @@ bool CClient::Init()
 	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 10, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
+	//m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
 
 
 	srand(static_cast<unsigned int>(time(0)));
@@ -303,9 +309,9 @@ void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 
 void CClient::OnLoadScene()
 {
-	m_CameraController.AddCamera(new CCamera(Vec3(0,0,0)));
-	m_CameraController.AddCamera(new CCamera(Vec3(10,10,10)));
-	m_CameraController.SetRenderCamera(1);
+	m_CameraController.AddCamera(new CCamera(/*Vec3(0,0,0)*/));
+	//m_CameraController.AddCamera(new CCamera(/*Vec3(10,10,10)*/));
+	//m_CameraController.SetRenderCamera(1);
 	m_CameraController.InitCVars();
 }
 

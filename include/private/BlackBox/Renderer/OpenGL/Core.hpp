@@ -142,24 +142,6 @@ class OpenglDebuger
 	static bool ignore;
 };
 
-//////////////////////////////////////////////////////////////////////////
-//! CFrameProfilerSection is an auto class placed where code block need to be profiled.
-//! Every time this object is constructed and destruted the time between constructor
-//! and destructur is merged into the referenced CFrameProfiler instance.
-//!
-class CDebugSection
-{
-  public:
-	inline CDebugSection(size_t length, const char* message)
-	{
-		OpenglDebuger::PushGroup(0, static_cast<GLsizei>(length), message);
-	}
-	inline ~CDebugSection()
-	{
-		OpenglDebuger::EndGroup();
-	}
-};
-
 namespace debuger
 {
 	inline void object_label(GLenum id, GLuint object, const char* label)
@@ -576,87 +558,6 @@ namespace gl
 		return size;
 	}
 #endif
-	struct ConstantBinderDynamicBuffer
-	{
-		constexpr static GLenum target = GL_UNIFORM_BUFFER;
-		constexpr static GLenum usage = GL_DYNAMIC_DRAW;
-	};
-
-	struct ConstantBinderStaticBuffer
-	{
-		constexpr static GLenum target = GL_UNIFORM_BUFFER;
-		constexpr static GLenum usage = GL_STATIC_DRAW;
-	};
-
-	struct StructuredBinderStaticBuffer
-	{
-		constexpr static GLenum target = GL_SHADER_STORAGE_BUFFER;
-		constexpr static GLenum usage = GL_STATIC_DRAW;
-	};
-
-	struct StructuredBinderDynamicBuffer
-	{
-		constexpr static GLenum target = GL_SHADER_STORAGE_BUFFER;
-		constexpr static GLenum usage = GL_DYNAMIC_COPY;
-	};
-
-	template<typename Data, typename Binder>
-	struct Buffer : public Data
-	{
-		GLuint uniform_buffer;
-		using Buf = Buffer<Data, Binder>;
-		using Ptr = std::shared_ptr<Buf>;
-		static Ptr Create(int binding)
-		{
-			Ptr c = std::make_shared<Buf>();
-			c->uniform_buffer;
-			GenBuffers(1, &c->uniform_buffer);
-			BindBuffer(Binder::target, c->uniform_buffer);
-			BufferData(Binder::target, sizeof(Data), NULL, Binder::usage);
-			BindBuffer(Binder::target, 0);		
-			glCheck(glBindBufferBase(Binder::target, binding, c->uniform_buffer));
-
-			return c;
-		}
-
-		void Update()
-		{
-			NamedBufferSubData(uniform_buffer, 0, sizeof(Data), static_cast<Data*>(this));
-		}
-
-		~Buffer()
-		{
-			glDeleteBuffers(1, &uniform_buffer);	
-		}
-
-		Buffer(Buffer<Data, Binder>&& Data)
-		{
-			uniform_buffer = Data.uniform_buffer;
-			Data.uniform_buffer	  = -1;
-		}
-
-		Buffer& operator=(Buffer&& Data)
-		{
-			if (&Data == this)
-				return *this;
-
-			uniform_buffer = Data.uniform_buffer;
-			Data.uniform_buffer	  = -1;
-
-			return *this;
-		}
-
-		Buffer() = default;
-	private:
-		Buffer(const Buffer<Data, Binder>& Data) = default;
-	};
-
-	template<typename Data>
-	using ConstantBuffer = Buffer<Data, ConstantBinderDynamicBuffer>;
-
-	template<typename Data>
-	using StructuredBuffer = Buffer<Data, StructuredBinderDynamicBuffer>;
-
 	/*
 	template<typename T>
 	struct SAutoBindProgram

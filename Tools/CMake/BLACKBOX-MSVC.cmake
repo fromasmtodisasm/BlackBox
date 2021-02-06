@@ -17,6 +17,7 @@ set(MSVC_COMMON_FLAGS
 	/wd4961     # No profile data was merged into '', profile-guided optimizations disabled
 	/wd4068     # 'Unknown pragma' - sometimes need these in code to prevent global suppression.
 	/wd4554     
+	/wd4005     
 )
 string(REPLACE ";" " " MSVC_COMMON_FLAGS "${MSVC_COMMON_FLAGS}")
 

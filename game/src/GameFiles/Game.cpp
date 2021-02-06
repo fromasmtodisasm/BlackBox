@@ -1,6 +1,7 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <Game.hpp>
 #include <GameObject.hpp>
+#include <TagPoint.hpp>
 
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
@@ -175,6 +176,8 @@ namespace gui
 
 //float CameraRayLength = 40.f;
 
+int g_bRenderGame = true;
+
 void LoadHistory()
 {
 	std::ifstream is("history.txt");
@@ -270,6 +273,65 @@ CGame::~CGame()
 	if (g_SteamAchievements)
 		delete g_SteamAchievements;
 	#endif
+	CScriptObjectGame::ReleaseTemplate();
+	CScriptObjectInput::ReleaseTemplate();
+	CScriptObjectTest::ReleaseTemplate();
+	CScriptObjectClient::ReleaseTemplate();
+	CScriptObjectServer::ReleaseTemplate();
+//	CScriptObjectStream::ReleaseTemplate();
+#if 0
+	g_scene->Release();
+	r_displayinfo->Release();
+	r_profile->Release();
+	r_cap_profile->Release();
+	m_pCVarCheatMode->Release();
+
+	g_LevelName->Release();
+	g_MissionName->Release();
+	g_StartMission->Release();
+
+	sv_port->Release();
+	sv_mapcyclefile->Release();
+	sv_cheater_kick->Release();
+	sv_cheater_ban->Release();
+
+	sv_timeout->Release();
+	cl_timeout->Release();
+	cl_loadtimeout->Release();
+	cl_snooptimeout->Release();
+	cl_snoopretries->Release();
+	cl_snoopcount->Release();
+
+	g_playerprofile->Release();
+
+	cv_game_Difficulty->Release();
+	cv_game_Aggression->Release();
+	cv_game_Accuracy->Release();
+	cv_game_Health->Release();
+	cv_game_AllowAIMovement->Release();
+	cv_game_AllAIInvulnerable->Release();
+	cv_game_GliderGravity->Release();
+	cv_game_GliderBackImpulse->Release();
+	cv_game_GliderDamping->Release();
+	cv_game_GliderStartGravity->Release();
+	cv_game_physics_quality->Release();
+#endif
+
+	SAFE_DELETE(m_pVehicleSystem);
+	SAFE_DELETE(m_pPlayerSystem);
+	//shutdown script stuff
+	SAFE_DELETE(m_pScriptObjectGame);	
+	SAFE_DELETE(m_pScriptObjectInput);
+
+	// Release the action map
+	SAFE_RELEASE(m_pIActionMapManager);
+	// release the tags
+	if (!m_mapTagPoints.empty())
+	{
+		TagPointMap::iterator ti;
+		for (ti=m_mapTagPoints.begin();ti!=m_mapTagPoints.end();ti++)
+			delete ti->second;
+	}
 }
 #ifdef  USE_STEAM
 static GLSLEditor* glslEditor = nullptr;
@@ -383,7 +445,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	if (m_pRender)
 	{
 		m_Font = gEnv->pRenderer->GetIFont();
-		m_Font->Init("arial.ttf", 16, 18);
+		//m_Font->Init("arial.ttf", 16, 18);
 	}
 
 	// other
@@ -461,7 +523,7 @@ bool CGame::Update()
 {
 	static const auto& render_game = true;
 	const bool bRenderFrame		   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
-	static int num_frames = 0x0ffffff;
+	static int num_frames = 0xffff;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
 	#ifdef USE_STEAM
@@ -477,12 +539,14 @@ bool CGame::Update()
 
 		if (bRenderFrame)
 		{
+			#if 0
 			SmartScriptObject Gui(m_pScriptSystem,true);
 			if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
 			{
 				CryError("Cannot find Gui table in scripts (wrong working folder?)");
 				return false;
 			}
+			#endif
 
 			SetRenderState();
 			m_pSystem->RenderBegin();
@@ -490,15 +554,20 @@ bool CGame::Update()
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 				m_pClient->Update();
 				
+				if (g_bRenderGame)
+				{
+					Render();
+				}
 
-				Render();
 
 			}
 
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+			#if 0
 			m_pScriptSystem->BeginCall(Gui, "OnDraw");
 			m_pScriptSystem->PushFuncParam(Gui);
 			m_pScriptSystem->EndCall();
+			#endif
 
 			//DrawHud(fps);
 			#ifdef uSE_GUI
@@ -534,9 +603,11 @@ bool CGame::Update()
 	if (bRenderFrame)
 		m_pSystem->RenderEnd();
 
-	num_frames--;
+	//num_frames--;
 
-	return m_bUpdateRet && num_frames;
+	if (!num_frames)
+		CryFatalError("Game Over!");
+	return m_bUpdateRet && num_frames > 0;
 }
 
 void CGame::ExecScripts()
@@ -1188,6 +1259,9 @@ bool CGame::InitScripts()
 	auto SOT = new CScriptObjectTest();
 	SOT->InitializeTemplate(m_pScriptSystem);
 	SOT->Init(m_pScriptSystem, this);
+	CScriptObjectTest::ReleaseTemplate();
+	SAFE_DELETE(SOT);
+
 
 #if 0
   m_pScriptClient = new CScriptObjectClient();

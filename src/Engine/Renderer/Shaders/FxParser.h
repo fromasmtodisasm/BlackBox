@@ -1,6 +1,5 @@
 #pragma once
 #include <array>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
 #include <BlackBox/Renderer/IShader.hpp>
 struct IShader;
 struct IPass

@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
-project(Renderer CXX)
+if(GL_RENDERER)
+	project(RendererGL CXX)
+elseif(DX_RENDERER)
+	project(RendererDX CXX)
+endif()
 
 add_package(Stb)
 find_package(Freetype CONFIG REQUIRED)
@@ -55,7 +59,9 @@ endif()
 add_library(${PROJECT_NAME})
 add_library(FxParser SHARED)
 
-if (DEFINED GL_RENDERER)
+if (DEFINED DX_RENDERER)
+	include(${PROJECT_SOURCE_DIR}/D3D/CMakeLists.txt)
+elseif (DEFINED GL_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
 elseif(VULKAN_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
@@ -63,29 +69,29 @@ endif()
 
 target_sources(${PROJECT_NAME}
   PRIVATE ${PROJECT_SOURCE_DIR}/AuxRenderer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/AuxRendererNull.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
+#[[
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseShaderLoading.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/BufferManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Camera.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/FrameBufferObject.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/HdrTechnique.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/IndexBuffer.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Material.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ShaderManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Resources/TextureManager.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shader.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/TechniqueManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Terrain.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Texture.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
 
+]]
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
-)
+ )
 
 target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
@@ -94,7 +100,8 @@ target_sources(FxParser
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
   PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
-#  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/ScannerHelpers.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/dummy.cpp
+  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/ScannerHelpers.cpp
  )
 
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
@@ -108,7 +115,7 @@ INSTALL_THIS(FxParser)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
-#target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
+target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
 
 add_SDL()
 
@@ -118,7 +125,7 @@ if (Vulkan_FOUND)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
 endif()
 target_link_libraries(FxParser PUBLIC Math)
-target_link_libraries(FxParser PUBLIC OpenGlBackend)
+#target_link_libraries(FxParser PUBLIC OpenGlBackend)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 

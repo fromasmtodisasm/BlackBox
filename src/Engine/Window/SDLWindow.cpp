@@ -8,6 +8,8 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <SDL.h>
+#include <SDL_platform.h>
+#include <SDL_syswm.h>
 
 #include <cstdio>
 #include <iostream>
@@ -22,6 +24,13 @@ CSDLWindow::CSDLWindow(std::string, int width, int height)
 
 CSDLWindow::~CSDLWindow()
 {
+	close();
+	SDL_VideoQuit();
+}
+
+void CSDLWindow::close()
+{
+	SDL_DestroyWindow(m_MainWindow);
 }
 
 bool CSDLWindow::init(SInitParams* pInitParams)
@@ -36,7 +45,7 @@ bool CSDLWindow::init(SInitParams* pInitParams)
 		//return false;
 	}
 
-	if (!Create(p->width, p->height, p->fullscreen))
+	if (!Create(p->width, p->height, p->fullscreen, pInitParams->backend))
 	{
 		return false;
 	}
@@ -45,8 +54,6 @@ bool CSDLWindow::init(SInitParams* pInitParams)
 		gEnv->pLog->Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 		return 1;
 	}
-	//SetIcon(nullptr);
-
 	return true;
 }
 
@@ -187,6 +194,14 @@ void* CSDLWindow::getHandle()
 	return m_MainWindow;
 }
 
+void* CSDLWindow::getNativeHandle()
+{
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(m_MainWindow, &wmInfo);
+	return wmInfo.info.win.window;
+}
+
 int CSDLWindow::getWidth()
 {
 	int w = 0;
@@ -204,8 +219,11 @@ int CSDLWindow::getHeight()
 void CSDLWindow::setFlags(int flags)
 {
 }
-
-bool CSDLWindow::Create(int width, int height, bool fullscreen)
+bool CSDLWindow::CreateDx(int width, int height, bool fullscreen)
+{
+	return true;
+}
+bool CSDLWindow::InitForGl()
 {
 	/* Request opengl 3.2 context.
      * SDL doesn't have the ability to choose which profile at this time of writing,
@@ -242,7 +260,11 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,8);
 
-	int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_HIDDEN*/;
+	return true;
+}
+bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend backend)
+{
+	int flags = SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_HIDDEN*/;
 	int posx  = 0;
 	int posy  = 0;
 	if (fullscreen)
@@ -253,6 +275,12 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 	}
 	//  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
 	// Create window
+	m_RendererBackend = backend;
+	if (backend == RenderBackend::GL)
+	{
+		flags |= SDL_WINDOW_OPENGL;
+		InitForGl();
+	}
 	SelectDisplay(posx, posy, width, height);
 	m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
 	if (m_MainWindow == NULL)
@@ -264,31 +292,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen)
 //SDL_HideWindow(m_MainWindow);
 
 // Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint
-#if 0
-  char addres[32];
-  sprintf(addres, "%p", m_MainWindow);
-  SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, addres);
-
-  m_SecondaryWindow = SDL_CreateWindowFrom(childWindow.m_hWnd);
-
-  if (m_SecondaryWindow == NULL)
-  {
-    printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-    return false;
-  }
-  // Create an OpenGL context associated with the window.
-  //glThreadContext = SDL_GL_CreateContext(m_Window);
-#endif
 	glRenderContext = SDL_GL_CreateContext(m_MainWindow);
-#if 0
-  if (SDL_GL_MakeCurrent(m_SecondaryWindow, glRenderContext) != 0)
-  {
-    printf("Can't create context current! SDL_Error: %s\n", SDL_GetError());
-
-  }
-#endif
-	//SDL_DestroyWindow(m_MainWindow);
-	//std::swap(m_MainWindow, m_SecondaryWindow);
 	if (fullscreen)
 	{
 		SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);

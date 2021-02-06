@@ -3,7 +3,6 @@
 #include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
-#include <BlackBox/System/CryLibrary.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
 #include "ProjectManager/ProjectManager.hpp"
@@ -25,7 +24,19 @@ static inline void InlineInitializationProcessing(const char* sDescription)
 		gEnv->pLog->UpdateLoadingScreen(0);
 }
 
-
+void CSystem::UnloadSubsystems()
+{
+	for (size_t i = 0; i < m_Subsystems.size(); i++)
+	{
+		auto CleanupModuleCVars = (void (*)())CryGetProcAddress(m_Subsystems[i]->m_Handle, "CleanupModuleCVars");
+		if (CleanupModuleCVars)
+		{
+			CleanupModuleCVars();
+		}
+	}
+	m_Subsystems.clear();
+	// CVars should be unregistered earlier than owning objects/modules are destroyed.
+}
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,
 	                   public ITextModeConsole
@@ -153,76 +164,8 @@ void CNULLConsole::PutText(int x, int y, const char* msg)
 
 namespace
 {
-	template<typename L, typename P>
-	inline P GetProcedure(L lib, const char* name)
-	{
-		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
-	}
-
-	template<typename Proc>
-	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
-	{
-		//gEnv->pSystem->Log("Loading...");
-		string msg;
-		msg = "Loading Module ";
-		msg += lib_name;
-		msg += "...";
-
-		if (gEnv->pSystem->GetUserCallback())
-		{
-			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
-		}
-
-		if (true)
-		{
-			CryLog("%s", msg.c_str());
-		}
-
-		auto L = CryLoadLibrary(lib_name);
-		if (L)
-		{
-			CryComment("Library found");
-			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
-			if (P)
-			{
-				CryComment("Entrypoint [%s] found", proc_name);
-				typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
-				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
-				if (pfnModuleInitISystem)
-				{
-					pfnModuleInitISystem(gEnv->pSystem, lib_name);
-				}
-				return f(P);
-			}
-			else
-			{
-				CryError("Entrypoint %s not found", proc_name);
-			}
-			return false;
-		}
-		else
-		{
-			#if 0
-			if (bQuitIfNotFound)
-			#endif
-			{
-	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
-				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
-                fprintf(stderr, "dlopen failed: %s\n", dlerror());
-	#else
-				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
-				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());
-	#endif
-
-				gEnv->pSystem->Quit();
-			}
-
-		return false;
-			gEnv->pSystem->Log("Library not found");
-		}
-		return false;
-	}
 } // namespace
+
 
 void CSystem::PreprocessCommandLine()
 {
@@ -284,7 +227,6 @@ bool CSystem::Init()
 
 		#if !defined(_RELEASE)
 	bool isSimpleConsole = (m_pCmdLine->FindArg(eCLAT_Pre, "simple_console") != 0);
-
 	if (!(isDaemonMode || isSimpleConsole))
 		#endif // !defined(_RELEASE)
 	{
@@ -407,7 +349,7 @@ bool CSystem::Init()
 		LoadConfiguration(ovr->GetValue());
 	}
 	//====================================================
-	if (!OpenRenderLibrary("OpenGL"))
+	if (!OpenRenderLibrary(gEnv->pConsole->GetCVar("r_Driver")->GetString()))
 	{
 		return false;
 	}
@@ -428,6 +370,7 @@ bool CSystem::Init()
 		{
 			RenderBegin();
 			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
+			#if 0
 			gEnv->pRenderer->DrawImage(
 				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
 				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
@@ -435,6 +378,7 @@ bool CSystem::Init()
 				(float)splash->getHeight(),
 				splash->getBindlesId(),
 				0, 0, 1, 1, 1, 1, 1, 1);
+			#endif
 			RenderEnd();
 		}
 	}
@@ -700,7 +644,12 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	}
 	//====================================================
 
-	return LoadSubsystem<PFNCREATERENDERERINTERFACE>("Renderer", "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
+	const char* RenderLibrary = "RendererGL";
+	if (render == "DX11")
+	{
+		RenderLibrary = "RendererDX";
+	}
+	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
 		Log("Load Render Library");
 		m_env.pRenderer = m_env.pRenderer = p(this);
 		if (m_env.pRenderer == nullptr)
