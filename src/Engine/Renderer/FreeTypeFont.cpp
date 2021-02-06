@@ -24,9 +24,6 @@ ID3D10RasterizerState* FreeTypeFont::m_pRasterizerState;
 ID3D10DepthStencilState* FreeTypeFont::m_pDSState;
 ID3D10BlendState* FreeTypeFont::m_pBlendState;
 
-constexpr static uint atlas_size{128};
-constexpr static uint num_glyphs{127};
-constexpr static uint symbol_padding = 2;
 struct ColorTable
 {
 	ColorB color;
