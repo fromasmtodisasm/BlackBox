@@ -2,7 +2,7 @@
   "configurations": [
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Debug_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "configurationType": "Debug",
       "generator": "Ninja",
@@ -13,12 +13,17 @@
           "name": "OPTION_REMOTE_CONSOLE",
           "value": "False",
           "type": "BOOL"
+        },
+        {
+          "name": "OPTION_DX_RENDERER",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Profile_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "configurationType": "Profile",
       "generator": "Ninja",
@@ -28,7 +33,7 @@
     },
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Release_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "configurationType": "Release",
       "generator": "Ninja",
@@ -47,12 +52,17 @@
       "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Solutions\\Win64_Debug_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake ",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
         {
           "name": "OPTION_REMOTE_CONSOLE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "OPTION_DX_RENDERER",
           "value": "True",
           "type": "BOOL"
         }
@@ -63,7 +73,7 @@
       "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Profile",
       "buildRoot": "${projectDir}\\Solutions\\Win64_Profile_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [],
       "variables": []
@@ -73,7 +83,7 @@
       "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\Solutions\\Win64_Release_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DGL_RENDERER=OFF -DDX_RENDERER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": []

@@ -1,9 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-if(GL_RENDERER)
-	project(RendererGL CXX)
-elseif(DX_RENDERER)
-	project(RendererDX CXX)
-endif()
 
 add_package(Stb)
 find_package(Freetype CONFIG REQUIRED)
@@ -56,79 +51,73 @@ if(FLEX_FOUND AND BISON_FOUND)
   ADD_FLEX_BISON_DEPENDENCY(ShaderScanner ShaderParser)
 endif()
 
-add_library(${PROJECT_NAME})
-add_library(FxParser SHARED)
+#add_library(FxParser SHARED)
 
-if (DEFINED DX_RENDERER)
-	include(${PROJECT_SOURCE_DIR}/D3D/CMakeLists.txt)
-elseif (DEFINED GL_RENDERER)
+if (OPTION_DX_RENDERER)
+	include("D3D/CMakeLists.txt")
+endif()
+if (OPTION_GL_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
-elseif(VULKAN_RENDERER)
+endif()
+if(OPTION_VK_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
 endif()
 
-target_sources(${PROJECT_NAME}
-  PRIVATE ${PROJECT_SOURCE_DIR}/AuxRenderer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/AuxRendererNull.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
+add_subdirectory(Shaders)
+
+sources_platform(ALL)
+add_sources("NoUberFile"
+	PROJECTS RendererDX RendererGL RendererVK
+	SOURCE_GROUP "Common"
+		"AuxRenderer.cpp"
+		"AuxRendererNull.cpp"
+		"BaseRenderer.cpp"
+		"FreeTypeFont.cpp"
+		"Shaders/FxParser.cpp"
+ )
+
+add_sources("NoUberFile"
+	PROJECTS RendererDX
+	SOURCE_GROUP "D3D"
+		"D3D/Renderer.cpp"
+		"D3D/BufferManager.cpp"
+		"D3D/Shader.cpp"
+		"D3D/AuxRenderer.h"
+		"D3D/AuxRenderer.cpp"
+)
+
+macro(add_common_libs)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Math)
+	target_link_libraries(${THIS_PROJECT} PRIVATE freetype)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
+	target_link_libraries(${THIS_PROJECT} PRIVATE FxParser)
+	set(PROJECT_NAME ${THIS_PROJECT})
+	add_SDL()
+	target_precompile_headers(${THIS_PROJECT}
+	  PRIVATE 
+	  "pch.hpp"
+	)
+endmacro()
+
+macro(add_common_includes)
+	target_include_directories(${THIS_PROJECT} PRIVATE ${Stb_INCLUDE_DIR})
+endmacro()
+
+if(OPTION_DX_RENDERER)
+	EngineModule(RendererDX FORCE_SHARED_WIN SOLUTION_FOLDER "Engine")
+	add_common_libs()
+	add_common_includes()
+
+	target_link_libraries(${THIS_PROJECT} PRIVATE D3DBackend)
+	target_include_directories(${THIS_PROJECT} PRIVATE ${D3D10_INCLUDE_DIRS})
+endif()
+
 #[[
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseShaderLoading.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BufferManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Camera.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/FrameBufferObject.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Material.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ShaderManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/TextureManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/TechniqueManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Texture.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
-
-]]
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/FxParser.cpp
- )
-
-target_sources(FxParser
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Effect.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Driver.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/dummy.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shaders/ScannerHelpers.cpp
- )
-
-target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
-target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
-target_compile_definitions(FxParser PRIVATE "-DYY_NO_UNISTD_H")
-
-#target_include_directories(FxParser PRIVATE ${FLEX_INCLUDE_DIRS})
-INSTALL_THIS(FxParser)
-
-
-target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
-target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
-target_link_libraries(${PROJECT_NAME} PRIVATE FxParser)
-
-add_SDL()
-
 find_package(Vulkan)
 if (Vulkan_FOUND)
 	target_link_libraries(FxParser PUBLIC Vulkan::Vulkan)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
 endif()
-target_link_libraries(FxParser PUBLIC Math)
-#target_link_libraries(FxParser PUBLIC OpenGlBackend)
-target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
-target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
-
 
 source_group(
 	TREE ${PROJECT_SOURCE_DIR}
@@ -136,13 +125,5 @@ source_group(
 	FILES
 	${SOURCES}
 )
-add_private_headers()
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
-)
-
-target_precompile_headers(FxParser
-  PRIVATE 
-  "pch.hpp"
-)
+]]
+#add_private_headers()

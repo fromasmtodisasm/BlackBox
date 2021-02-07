@@ -23,6 +23,10 @@ option(OPTION_BUILD_TOOLS "Build Tools" ON)
 
 option(OPTION_VCPKG "Use vcpkg for libraries" ON)
 
+option(OPTION_GL_RENDERER "Compile OpenGL library" OFF)
+option(OPTION_DX_RENDERER "Compile D3D library" OFF)
+option(OPTION_VK_RENDERER "Compile Vulkan library" OFF)
+
 if(ANDROID)
 	set(OPTION_STATIC_LINKING TRUE)
 else()
