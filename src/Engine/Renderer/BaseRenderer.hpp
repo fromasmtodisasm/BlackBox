@@ -1,6 +1,6 @@
 #pragma once
 #include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/Input/IInput.hpp>
+//#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 //#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IRender.hpp>

@@ -3,6 +3,7 @@
 #include "Renderer.h"
 
 #include <BlackBox/System/IWindow.hpp>
+#include <BlackBox/System/IProjectManager.hpp>
 
 CVKRenderer* gD3DRender;
 
@@ -187,8 +188,51 @@ bool CVKRenderer::InitOverride()
 	VK_LOG("Dump %d extensions", extensions_count);
 	for (const auto& ext : available_extensions)
 	{
-		VK_LOG("%s", ext.extensionName);	
+		VK_LOG("%s", ext.extensionName);
 	}
+
+	std::vector<char*> desired_extensions{
+		VK_KHR_SURFACE_EXTENSION_NAME,
+		VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+#ifndef NDEBUG
+		VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
+		VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+#endif // !NDEBUG
+	};
+
+	auto ext_supported = [&]() -> auto
+	{
+		VkResult res = VK_SUCCESS;
+		for (const auto ext : desired_extensions)
+		{
+			if (auto it = std::find(available_extensions.begin(), available_extensions.end(), [=](const char* str) {return strcmp(ext, str);}); 
+				it == available_extensions.end())
+			{
+				VK_ERROR("Extension %s not supported", ext);
+				res = VK_ERROR_UNKNOWN;
+			}
+		}
+		return res;
+	};
+	RETURN_B_IF_FAILED(ext_supported(), "Extensions not supported");
+
+	VkApplicationInfo application_info{};
+	application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	application_info.pNext = nullptr;
+	application_info.pApplicationName = gEnv->pProjectManager->GetCurrentProjectName();
+	application_info.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
+	application_info.pEngineName		= "BlackBox";
+	application_info.engineVersion		= VK_MAKE_VERSION(0, 0, 1);
+
+	VkInstanceCreateInfo instance_create_info{};
+	instance_create_info.sType					 = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	instance_create_info.pNext					 = nullptr;
+	instance_create_info.flags					 = 0;
+	instance_create_info.pApplicationInfo		 = &application_info;
+	instance_create_info.enabledLayerCount		 = 0;
+	instance_create_info.ppEnabledLayerNames	 = nullptr;
+	instance_create_info.enabledExtensionCount	 = desired_extensions.size();
+	instance_create_info.ppEnabledExtensionNames = desired_extensions.data();
 
 	return true;
 }

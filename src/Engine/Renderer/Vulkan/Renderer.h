@@ -1,6 +1,9 @@
 #pragma once
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
+#ifdef BB_PLATFORM_WINDOWS
+#include <vulkan/vulkan_win32.h>
+#endif
 #include <vulkan/vulkan.hpp>
 class CVKRenderer;
 extern CVKRenderer* gD3DRender;
