@@ -1,3 +1,4 @@
+#ifndef VK_RENDERER
 #include "D3D/Shader.hpp"
 #include <BlackBox/Renderer/FreeTypeFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
@@ -509,3 +510,4 @@ void FreeTypeFont::CreateBlendState()
 
 	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);
 }
+#endif

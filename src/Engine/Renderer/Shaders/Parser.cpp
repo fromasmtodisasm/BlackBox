@@ -30,7 +30,7 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 // //                    "%code top" blocks.
-#line 110 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:397
+#line 110 "Parser.yy" // lalr1.cc:397
 
     #ifdef S_FALSE
     #undef S_FALSE
@@ -51,30 +51,14 @@
         return scanner.ScanToken();
     }
 
-    std::string location_from_semantic(const std::string& semantic)
-    {
-        using namespace std;
-        if (semantic == "POSITION")
-            return to_string(AttributeLocation::position);
-        if (semantic == "NORMAL")
-            return to_string(AttributeLocation::normal);
-        if (semantic == "TEXCOORD")
-            return to_string(AttributeLocation::uv);
-        if (semantic == "TANGENT")
-            return to_string(AttributeLocation::tangent);
-        if (semantic == "COLOR")
-            return to_string(AttributeLocation::color);
-        return "-1";
-    }
-
     using Type = std::string;
 
-#line 73 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:397
+#line 57 "Parser.cpp" // lalr1.cc:397
 
 
 // First part of user declarations.
 
-#line 78 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:404
+#line 62 "Parser.cpp" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -88,7 +72,7 @@
 
 // User implementation prologue.
 
-#line 92 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:412
+#line 76 "Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -174,7 +158,7 @@
 
 
 namespace yy {
-#line 178 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:479
+#line 162 "Parser.cpp" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -533,13 +517,13 @@ namespace yy {
 
 
     // User initialization code.
-    #line 100 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:741
+    #line 100 "Parser.yy" // lalr1.cc:741
 {
     is_common = false;
     Code.clear();
 }
 
-#line 543 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:741
+#line 527 "Parser.cpp" // lalr1.cc:741
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
@@ -692,13 +676,13 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 297 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 281 "Parser.yy" // lalr1.cc:859
     { gEnv->pLog->LogWarning("Empty effect"); }
-#line 698 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 682 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 318 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 302 "Parser.yy" // lalr1.cc:859
     { 
     lex_pop_state();
     if (!driver.currentEffect->SetLang(yystack_[0].value.as< ShaderLangId > ())) 
@@ -706,172 +690,173 @@ namespace yy {
         { error(yystack_[1].location, "Error, shader language already setted\n");}
     }
 }
-#line 710 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 694 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 327 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 311 "Parser.yy" // lalr1.cc:859
     {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 716 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 700 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 22:
-#line 328 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 312 "Parser.yy" // lalr1.cc:859
     {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 722 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 706 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 23:
-#line 329 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 313 "Parser.yy" // lalr1.cc:859
     {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 728 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 712 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 24:
-#line 332 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 316 "Parser.yy" // lalr1.cc:859
     {
     //$$ = std::make_pair($1, $3);
 	driver.currentEffect->shader_assignment(yystack_[2].value.as< IShader::Type > (),yystack_[0].value.as< std::string > ());
 }
-#line 737 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 721 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 27:
-#line 340 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 324 "Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in shader_assignment list\n");}
-#line 743 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 727 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 28:
-#line 347 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 331 "Parser.yy" // lalr1.cc:859
     { CryLog("Hi"); }
-#line 749 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 733 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 31:
-#line 352 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 336 "Parser.yy" // lalr1.cc:859
     {
     { CryLog("slkfjlkj123123123123"); }
     lex_pop_state();
 }
-#line 758 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 742 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 34:
-#line 358 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 342 "Parser.yy" // lalr1.cc:859
     {
-    yylhs.value.as< std::string > () = "layout(location = " + location_from_semantic(yystack_[0].value.as< std::string > ()) + ") in " + nvFX::toString(yystack_[2].value.as< nvFX::IUniform::Type > ()) + " " + yystack_[1].value.as< std::string > () + ";";
+    //$$ = "layout(location = " + location_from_semantic($3) + ") in " + nvFX::toString($1) + " " + $2 + ";";
+    yylhs.value.as< std::string > () = "";
     driver.currentEffect->m_Techniques.back().Passes.back().InputLayout.push_back(yylhs.value.as< std::string > ());
 }
-#line 767 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 752 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 35:
-#line 365 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 350 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TFloat; }
-#line 773 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 758 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 36:
-#line 366 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 351 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec2; }
-#line 779 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 764 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 37:
-#line 367 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 352 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec3; }
-#line 785 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 770 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 38:
-#line 368 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 353 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec4; }
-#line 791 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 776 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 39:
-#line 369 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 354 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt; }
-#line 797 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 782 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 40:
-#line 370 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 355 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt2; }
-#line 803 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 788 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 41:
-#line 371 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 356 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt3; }
-#line 809 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 794 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 42:
-#line 372 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 357 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt4; }
-#line 815 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 800 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 43:
-#line 373 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 358 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool; }
-#line 821 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 806 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 44:
-#line 374 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 359 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool2; }
-#line 827 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 812 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 45:
-#line 375 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 360 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool3; }
-#line 833 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 818 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 46:
-#line 376 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 361 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool4; }
-#line 839 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 824 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 47:
-#line 377 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 362 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat2; }
-#line 845 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 830 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 48:
-#line 378 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 363 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat3; }
-#line 851 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 836 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 49:
-#line 379 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 364 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat4; }
-#line 857 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 842 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 51:
-#line 385 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 370 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); }
-#line 863 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 848 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 52:
-#line 391 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 376 "Parser.yy" // lalr1.cc:859
     { 
     CryLog("Creation of PASS");
     }
-#line 871 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 856 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 53:
-#line 394 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 379 "Parser.yy" // lalr1.cc:859
     {
   /*
     LOGI("Pass with no name...\n");
@@ -883,11 +868,11 @@ namespace yy {
 */
     lex_pop_state();
 }
-#line 887 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 872 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 54:
-#line 405 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 390 "Parser.yy" // lalr1.cc:859
     {
     SPass pass;
     pass.Name = yystack_[0].value.as< std::string > ().c_str();
@@ -900,11 +885,11 @@ namespace yy {
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
-#line 904 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 889 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 55:
-#line 417 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 402 "Parser.yy" // lalr1.cc:859
     {
     //LOGD("Pass %s...\n", $2->c_str() );
     //delete $2;
@@ -915,33 +900,33 @@ namespace yy {
     //curPRState = NULL;
     lex_pop_state();
 }
-#line 919 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 904 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 56:
-#line 427 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 412 "Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 925 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 910 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 59:
-#line 434 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 419 "Parser.yy" // lalr1.cc:859
     { error(yystack_[1].location, "Error in Pass list\n");}
-#line 931 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 916 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 60:
-#line 440 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 425 "Parser.yy" // lalr1.cc:859
     {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 941 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 926 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 62:
-#line 445 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 430 "Parser.yy" // lalr1.cc:859
     {
     CTechnique tech;
     tech.Name =  yystack_[0].value.as< std::string > ().c_str();
@@ -951,20 +936,20 @@ namespace yy {
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 955 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 940 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 63:
-#line 453 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 438 "Parser.yy" // lalr1.cc:859
     { 
     lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 964 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 949 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 65:
-#line 463 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 448 "Parser.yy" // lalr1.cc:859
     {
 /*
     if(!curAnnotations)
@@ -974,51 +959,51 @@ namespace yy {
     delete $4;
 */
     }
-#line 978 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 963 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 66:
-#line 473 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 458 "Parser.yy" // lalr1.cc:859
     {CryLog("Begin annotations"); }
-#line 984 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 969 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 70:
-#line 481 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 466 "Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); 
     }
-#line 992 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 977 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 71:
-#line 484 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 469 "Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = "Common";
         is_common = true;
     }
-#line 1001 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 986 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 72:
-#line 491 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 476 "Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); 
     }
-#line 1009 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 994 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 73:
-#line 494 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 479 "Parser.yy" // lalr1.cc:859
     {
         yylhs.value.as< std::string > () = "Common";
         is_common = true;
     }
-#line 1018 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1003 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 74:
-#line 500 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 485 "Parser.yy" // lalr1.cc:859
     { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
         driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
@@ -1030,43 +1015,43 @@ namespace yy {
         CryLog("Current shader[%s] code in file %s:\n%s", yystack_[2].value.as< std::string > ().data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
 
 	}
-#line 1034 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1019 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 75:
-#line 513 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 498 "Parser.yy" // lalr1.cc:859
     {yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();}
-#line 1040 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1025 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 76:
-#line 514 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 499 "Parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); }
-#line 1046 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1031 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 77:
-#line 519 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 504 "Parser.yy" // lalr1.cc:859
     {
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
     yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", 10);
 }
-#line 1056 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1041 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 78:
-#line 526 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:859
+#line 511 "Parser.yy" // lalr1.cc:859
     { 
       //$$ = VkFormat(10); 
       CryLog("format not implemented");
 
       }
-#line 1066 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1051 "Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 1070 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:859
+#line 1055 "Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -1521,16 +1506,16 @@ namespace yy {
   const unsigned short int
   parser::yyrline_[] =
   {
-       0,   297,   297,   298,   299,   300,   301,   302,   303,   304,
-     305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
-     318,   327,   328,   329,   332,   338,   339,   340,   347,   348,
-     349,   352,   357,   357,   358,   365,   366,   367,   368,   369,
-     370,   371,   372,   373,   374,   375,   376,   377,   378,   379,
-     384,   385,   391,   391,   405,   405,   427,   432,   433,   434,
-     440,   440,   445,   445,   462,   463,   473,   473,   475,   476,
-     481,   484,   491,   494,   500,   513,   514,   518,   526,   533,
-     534,   535,   536,   537,   538,   539,   540,   541,   542,   543,
-     544,   545
+       0,   281,   281,   282,   283,   284,   285,   286,   287,   288,
+     289,   290,   291,   292,   293,   294,   295,   296,   297,   298,
+     302,   311,   312,   313,   316,   322,   323,   324,   331,   332,
+     333,   336,   341,   341,   342,   350,   351,   352,   353,   354,
+     355,   356,   357,   358,   359,   360,   361,   362,   363,   364,
+     369,   370,   376,   376,   390,   390,   412,   417,   418,   419,
+     425,   425,   430,   430,   447,   448,   458,   458,   460,   461,
+     466,   469,   476,   479,   485,   498,   499,   503,   511,   518,
+     519,   520,   521,   522,   523,   524,   525,   526,   527,   528,
+     529,   530
   };
 
   // Print the state stack on the debug stream.
@@ -1565,8 +1550,8 @@ namespace yy {
 
 
 } // yy
-#line 1569 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.cpp" // lalr1.cc:1167
-#line 548 "/cygdrive/e/code/fromasmtodisasm/TestEngine_D3D11/src/Engine/Renderer/Shaders/Parser.yy" // lalr1.cc:1168
+#line 1554 "Parser.cpp" // lalr1.cc:1167
+#line 533 "Parser.yy" // lalr1.cc:1168
 
 
 #include <sstream>

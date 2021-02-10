@@ -2,7 +2,7 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/AuxRenderer.hpp>
-#include "BufferManager.hpp"
+//#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IRender.hpp>
 //#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Quad.hpp>
@@ -10,13 +10,21 @@
 #include <BlackBox/System/IConsole.hpp>
 
 #include "Shaders/FxParser.h"
+#ifdef VK_RENDERER
+#include "Vulkan/Shader.hpp"
+#elif DX_RENDERER
 #include "D3D/Shader.hpp"
+#endif
+#ifndef VK_RENDERER
 #include "TypedConstantBuffer.hpp"
+#endif
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
 class Texture;
 struct IFont;
+
+struct CBufferManager;
 
 class RenderDebugger
 {
@@ -251,7 +259,7 @@ class CRenderer : public RenderCVars
 	CRenderer(ISystem* engine);
 	~CRenderer();
 	//! Init the renderer, params are self-explanatory
-	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) = 0;
+	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) final;
 	virtual bool InitOverride()																													   = 0;
 
 	//! Changes resolution of the window/device (doen't require to reload the level
@@ -396,8 +404,10 @@ protected:
 		float Alpha;
 	};
 
+	#ifndef VK_RENDERER
 	CTypedConstantBuffer<SPerViewConstantBuffer> perViewBuffer;
 	CTypedConstantBuffer<SScreenConstantBuffer> screenBuffer;
+	#endif
 
 	void InitConsoleCommands() const;
 

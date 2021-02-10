@@ -649,6 +649,10 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	{
 		RenderLibrary = "RendererDX";
 	}
+	else if (render == "VK")
+	{
+		RenderLibrary = "RendererVK";
+	}
 	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
 		Log("Load Render Library");
 		m_env.pRenderer = m_env.pRenderer = p(this);

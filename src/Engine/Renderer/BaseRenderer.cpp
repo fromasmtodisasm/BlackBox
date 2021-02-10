@@ -8,6 +8,8 @@
 
 #include <SDL2/SDL.h>
 #include <BlackBox/Renderer/TextureManager.hpp>
+
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
@@ -124,7 +126,9 @@ CRenderer::~CRenderer()
 	}
 	ReleaseBuffer(m_VertexBuffer);
 	SAFE_DELETE(m_RenderAuxGeom);
+	#ifndef VK_RENDERER
 	SAFE_DELETE(m_BufferManager);
+	#endif
 	SAFE_DELETE(m_VertexBuffer);
 
 	delete gShMan;
@@ -172,12 +176,14 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "Renderer");
+	#ifndef VK_RENDERER
 	m_BufferManager = new CBufferManager();
+	#endif
 	CreateQuad();
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = _smart_ptr(dynamic_cast<CShader*>(Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))))
+	if (!(m_ScreenShader = _smart_ptr((CShader*)(Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -299,32 +305,46 @@ RenderCVars::~RenderCVars()
 
 CVertexBuffer* CRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
 {
+	#ifndef VK_RENDERER
 	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
+	#else
+	return nullptr;
+	#endif
 }
 
 void CRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 {
+	#ifndef VK_RENDERER
 	m_BufferManager->Release(bufptr);
+	#endif
 }
 
 void CRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)
 {
+	#ifndef VK_RENDERER
 	m_BufferManager->Draw(src, indicies, numindices, offsindex, prmode, vert_start, vert_stop, mi);
+	#endif
 }
 
 void CRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs /* = 0*/, int Type /* = 0*/)
 {
+	#ifndef VK_RENDERER
 	m_BufferManager->Update(dest, src, vertexcount, bUnLock, nOffs, Type);
+	#endif
 }
 
 void CRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
 {
+	#ifndef VK_RENDERER
 	m_BufferManager->Create(dest, src, indexcount);
+	#endif
 }
 
 void CRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock /* = true*/)
 {
+	#ifndef VK_RENDERER
 	m_BufferManager->Update(dest, src, indexcount, bUnLock);
+	#endif
 }
 
 void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
@@ -399,7 +419,11 @@ int CRenderer::GetHeight()
 
 IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
 {
+	#ifndef VK_RENDERER
 	return m_BufferManager->CreateConstantBuffer(size);
+	#else
+	return nullptr;
+	#endif
 }
 
 void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
@@ -496,6 +520,11 @@ IShader* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 
 void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 {
+}
+
+IFont* CreateIFont()
+{
+	return nullptr;
 }
 
 IFont* CRenderer::GetIFont()
@@ -612,6 +641,7 @@ void CRenderer::Flush()
 {
 	DEBUG_GROUP("AUX");
 
+	#ifndef VK_RENDERER
 	auto pvb			 = perViewBuffer;
 	pvb->Projection		 = m_Camera.getProjectionMatrix();
 	pvb->View			 = m_Camera.GetViewMatrix();
@@ -620,6 +650,7 @@ void CRenderer::Flush()
 	pvb->Eye			 = gEnv->pSystem->GetViewCamera().GetPos();
 
 	pvb.CopyToDevice();
+	#endif
 	m_RenderAuxGeom->Flush();
 }
 

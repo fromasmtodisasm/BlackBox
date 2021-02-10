@@ -12,6 +12,9 @@
 #define __IFont_INTERFACE_DEFINED__
 #include <d3d10.h>
 #endif
+#ifdef VK_RENDERER
+#include <vulkan/vulkan.h>
+#endif
 
 #include <array>
 #include <sstream>

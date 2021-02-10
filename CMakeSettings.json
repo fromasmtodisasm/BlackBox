@@ -20,6 +20,11 @@
           "type": "BOOL"
         },
         {
+          "name": "OPTION_VK_RENDERER",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
           "name": "DX_RENDERER",
           "value": "OFF",
           "type": "UNINITIALIZED"
@@ -80,6 +85,11 @@
           "name": "DX_RENDERER",
           "value": "OFF",
           "type": "UNINITIALIZED"
+        },
+        {
+          "name": "OPTION_VK_RENDERER",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },

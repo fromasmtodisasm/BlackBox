@@ -57,10 +57,10 @@ if (OPTION_DX_RENDERER)
 	include("D3D/CMakeLists.txt")
 endif()
 if(OPTION_VK_RENDERER)
-	include(${PROJECT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
+	include(${CMAKE_CURRENT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
 endif()
 
-#add_subdirectory(Shaders)
+add_subdirectory(Shaders)
 
 start_sources()
 sources_platform(ALL)
@@ -93,6 +93,13 @@ add_sources("NoUberFile"
 		"OpenGL/Renderer.cpp"
 		"OpenGL/Renderer.hpp"
 )
+add_sources("NoUberFile"
+	PROJECTS RendererVK
+	SOURCE_GROUP "Vulkan"
+		"Vulkan/Renderer.cpp"
+		"Vulkan/Shader.cpp"
+		"Vulkan/Renderer.h"
+)
 end_sources()
 
 macro(add_common_libs)
@@ -117,6 +124,18 @@ if(OPTION_DX_RENDERER)
 
 	message(STATUS "renderer sources")
 endif()
+if(OPTION_VK_RENDERER)
+	EngineModule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+	add_common_libs()
+	add_common_includes()
+
+	find_package(Vulkan REQUIRED)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Vulkan::Vulkan)
+	target_compile_definitions(${THIS_PROJECT} PUBLIC VK_RENDERER)
+	target_include_directories(${THIS_PROJECT} PUBLIC "Vulkan")
+
+	message(STATUS "renderer sources")
+endif()
 
 	#EngineModule(RendererGL FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 	#add_common_libs()
@@ -125,11 +144,6 @@ endif()
 	#target_link_libraries(${THIS_PROJECT} PUBLIC OpenGlBackend)
 
 #[[
-find_package(Vulkan)
-if (Vulkan_FOUND)
-	target_link_libraries(FxParser PUBLIC Vulkan::Vulkan)
-	target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
-endif()
 
 source_group(
 	TREE ${PROJECT_SOURCE_DIR}

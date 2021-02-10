@@ -117,6 +117,7 @@ HRESULT InitCube()
     dwShaderFlags |= D3D10_SHADER_DEBUG;
     #endif
 
+	#ifndef VK_RENDERER
     auto hr = D3DX10CreateEffectFromFile( "res/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, NULL, NULL );
     if( FAILED( hr ) )
     {
@@ -221,12 +222,14 @@ HRESULT InitCube()
 
     // Set primitive topology
     GetDevice()->IASetPrimitiveTopology( D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	#endif
 
     return S_OK;
 }
 
 void DrawCube(CVertexBuffer* m_BoundingBox)
 {
+	#ifndef VK_RENDERER
     // Update our time
     static float t = 0.0f;
 	static DWORD dwTimeStart = 0;
@@ -294,6 +297,7 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
         //GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
     }
+	#endif
 }
 
 CRenderAuxGeom::CRenderAuxGeom()

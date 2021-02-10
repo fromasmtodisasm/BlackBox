@@ -16,7 +16,7 @@
 #endif
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
-    #include "../BufferManager.hpp"
+    //#include "../BufferManager.hpp"
     class Scanner;
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
@@ -125,22 +125,6 @@
 
     static yy::parser::symbol_type yylex(Scanner &scanner, Driver& driver) {
         return scanner.ScanToken();
-    }
-
-    std::string location_from_semantic(const std::string& semantic)
-    {
-        using namespace std;
-        if (semantic == "POSITION")
-            return to_string(AttributeLocation::position);
-        if (semantic == "NORMAL")
-            return to_string(AttributeLocation::normal);
-        if (semantic == "TEXCOORD")
-            return to_string(AttributeLocation::uv);
-        if (semantic == "TANGENT")
-            return to_string(AttributeLocation::tangent);
-        if (semantic == "COLOR")
-            return to_string(AttributeLocation::color);
-        return "-1";
     }
 
     using Type = std::string;
@@ -356,7 +340,8 @@ input_layout: INPUTLAYOUT '{' var_decls  '}' {
 
 var_decls: var_decl | var_decls var_decl;
 var_decl: base_type IDENTIFIER semantic {
-    $$ = "layout(location = " + location_from_semantic($3) + ") in " + nvFX::toString($1) + " " + $2 + ";";
+    //$$ = "layout(location = " + location_from_semantic($3) + ") in " + nvFX::toString($1) + " " + $2 + ";";
+    $$ = "";
     driver.currentEffect->m_Techniques.back().Passes.back().InputLayout.push_back($$);
 };
 

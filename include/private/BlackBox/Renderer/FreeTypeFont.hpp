@@ -1,4 +1,5 @@
 #pragma once
+#ifndef VK_RENDERER
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <BlackBox/Renderer/IFont.hpp>
@@ -87,3 +88,4 @@ private:
 
 	static bool printColorTableRegistered;
 };
+#endif

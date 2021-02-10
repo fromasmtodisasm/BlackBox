@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BufferManager.hpp"
+//#include "BufferManager.hpp"
 //#include "D3D/Renderer.h"
 
 class CD3DRenderer;
@@ -8,6 +8,7 @@ class CD3DRenderer;
 template<typename T, size_t Alignment=16>
 class CTypedConstantBuffer : private NoCopy
 {
+	#ifdef VK_RENDERER
 protected:
 	T&                 m_hostBuffer;
 	CConstantBufferPtr m_constantBuffer;
@@ -66,4 +67,5 @@ public:
 	{
 		return m_hostBuffer = hostData;
 	}
+	#endif
 };
