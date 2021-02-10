@@ -35,6 +35,10 @@ public:
 	{
 		//glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, id, length, message);
 	}
+	static inline void PushGroup(uint id, std::string_view message)
+	{
+		PushGroup(id, message.size(), message.data());
+	}
 
 	static inline void EndGroup()
 	{
@@ -120,6 +124,10 @@ class CDebugSection
 	inline CDebugSection(size_t length, const char* message)
 	{
 		RenderDebugger::PushGroup(0, static_cast<int>(length), message);
+	}
+	inline CDebugSection(std::string_view message)
+	{
+		RenderDebugger::PushGroup(0, static_cast<int>(message.size()), message.data());
 	}
 	inline ~CDebugSection()
 	{
