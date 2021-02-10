@@ -280,8 +280,8 @@ macro(read_settings)
 	set(multiValueArgs FILE_LIST INCLUDES LIBS DEFINES)
 	cmake_parse_arguments(MODULE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 	if (MODULE_PCH)
-		string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
-		get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
+		#string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
+		#get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
 	endif()
 	if (MODULE_FORCE_SHARED_WIN AND WINDOWS)
 		set(MODULE_FORCE_SHARED TRUE)
@@ -410,7 +410,11 @@ macro(apply_compile_settings)
 	if (MODULE_PCH)
 		#CryQt defines incompatible DLLExport in stdafx, temporarily disable PCH for CryQt now
 		if (NOT "${THIS_PROJECT}" STREQUAL "CryQt")
-			USE_MSVC_PRECOMPILED_HEADER( ${THIS_PROJECT} ${MODULE_PCH_H} ${MODULE_PCH} )
+			#USE_MSVC_PRECOMPILED_HEADER( ${THIS_PROJECT} ${MODULE_PCH_H} ${MODULE_PCH} )
+			target_precompile_headers(${THIS_PROJECT}
+			  PRIVATE 
+			  ${MODULE_PCH_H}
+			)
 		endif()
 		set_property(TARGET ${THIS_PROJECT} APPEND PROPERTY AUTOMOC_MOC_OPTIONS -b${MODULE_PCH_H})
 	endif()

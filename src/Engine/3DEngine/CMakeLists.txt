@@ -1,37 +1,38 @@
 
-project(3DEngine CXX)
 ###################################################
-add_library(${PROJECT_NAME})
-target_sources(${PROJECT_NAME}
-  #Render folder
-  PRIVATE ${PROJECT_SOURCE_DIR}/3DEngine.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/MaterialManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/ObjectManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/SceneManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Main.cpp
+start_sources()
+add_sources("NoUberFile"
+	PROJECTS 3DEngine
+	SOURCE_GROUP ""
+	#Render folder
+	"3DEngine.cpp"
+	"MaterialManager.cpp"
+	"ObjectManager.cpp"
+	"SceneManager.cpp"
+	"Main.cpp"
 
+	"Geometry/Geometry.cpp"
+	"Geometry/ObjLoader.cpp"
+	"Geometry/StatObj.cpp"
+	"Geometry/Plane.cpp"
+	"Geometry/Primitives.cpp"
+	"Geometry/Quad.cpp"
 
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Geometry.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/ObjLoader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/StatObj.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Plane.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Primitives.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Geometry/Quad.cpp
+	"Scene/Scene.cpp"
+	"Scene/SceneSerialization.cpp"
+	"Scene/XmlSerialization.cpp"
+	"World/World.cpp"
 )
+end_sources()
+EngineModule(3DEngine FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Math)
+target_link_libraries(${THIS_PROJECT} PRIVATE Math)
+target_link_libraries(${THIS_PROJECT} PUBLIC tinyxml2::tinyxml2)
 #add_package(assimp)
 if (USE_ASSIMP)
 	find_package(assimp CONFIG REQUIRED)
-	target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
+	target_link_libraries(${THIS_PROJECT} PRIVATE assimp::assimp)
 endif()
-include(Scene/CMakeLists.txt)
-include(World/CMakeLists.txt)
 
-add_private_headers()
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
-)
-
+#add_private_headers()
 #add_subdirectory(Tools/xml_scene_to_lua)

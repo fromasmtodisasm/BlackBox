@@ -3,34 +3,13 @@ project(Input CXX)
 ###################################################
 add_library(${PROJECT_NAME})
 ###################################################
-if (OPTION_USE_SDL)
-	if (OPTION_USE_LINUXINPUT)
-		target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)
-	endif()
-	message(STATUS "Using sdl for Input System")
-	#################################################################
-  add_SDL()
-	#################################################################
-elseif (USE_SFML)
-	find_package(SFML 2 REQUIRED audio graphics window system)
-	include_directories(${SFML_INCLUDE_DIR})
-	target_link_libraries(${PROJECT_NAME} PUBLIC sfml-audio sfml-graphics sfml-window sfml-system)
-	target_sources(
-	${PROJECT_NAME}
-	PRIVATE ${SOURCE_DIR}/Engine/Window/SFMLWindow.cpp
-	)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC -DSFML_WINDOW)
-elseif(USE_GLFW)
-	target_sources(
-		${PROJECT_NAME}
-		PRIVATE ${SOURCE_DIR}/Engine/Window/GLFWWindow.cpp
-	)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC -DGLFW_WINDOW)
-	set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-	set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-	set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+if (OPTION_USE_LINUXINPUT)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_LINUXINPUT)
 endif()
-
+message(STATUS "Using sdl for Input System")
+#################################################################
+add_SDL()
+#################################################################
 #target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
@@ -42,19 +21,20 @@ ${PROJECT_NAME}
 	#PRIVATE $<TARGET_PROPERTY:SDL2,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
+start_sources()
 target_sources(${PROJECT_NAME}
-	PRIVATE ${SOURCE_DIR}/Engine/Input/Input.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/ActionMap.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/ActionMapManager.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/BaseInput.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/InputActionMap.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/InputCVars.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/InputDevice.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/InputHandler.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLInput.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLKeyboard.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLMouse.cpp
-	PRIVATE ${SOURCE_DIR}/Engine/Input/SDLPad.cpp
+	Input.cpp
+	ActionMap.cpp
+	ActionMapManager.cpp
+	BaseInput.cpp
+	InputActionMap.cpp
+	InputCVars.cpp
+	InputDevice.cpp
+	InputHandler.cpp
+	SDLInput.cpp
+	SDLKeyboard.cpp
+	SDLMouse.cpp
+	SDLPad.cpp
 )
 
 add_private_headers()
