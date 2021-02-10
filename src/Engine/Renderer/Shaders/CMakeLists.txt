@@ -14,7 +14,7 @@ add_sources("NoUberFile"
  )
  end_sources()
 
-EngineModule(FxParser FORCE_SHARED_WIN SOLUTION_FOLDER "Engine")
+EngineModule(FxParser FORCE_SHARED_WIN PCH "../pch.hpp" SOLUTION_FOLDER "Engine")
 
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)

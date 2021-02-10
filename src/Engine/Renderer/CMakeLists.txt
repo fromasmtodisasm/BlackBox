@@ -56,19 +56,17 @@ endif()
 if (OPTION_DX_RENDERER)
 	include("D3D/CMakeLists.txt")
 endif()
-if (OPTION_GL_RENDERER)
-	include(${PROJECT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
-endif()
 if(OPTION_VK_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
 endif()
 
 add_subdirectory(Shaders)
 
+start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS RendererDX RendererGL RendererVK
-	SOURCE_GROUP "Common"
+	SOURCE_GROUP "Source Files"
 		"AuxRenderer.cpp"
 		"AuxRendererNull.cpp"
 		"BaseRenderer.cpp"
@@ -86,17 +84,23 @@ add_sources("NoUberFile"
 		"D3D/AuxRenderer.cpp"
 )
 
+add_sources("NoUberFile"
+	PROJECTS RendererGL
+	SOURCE_GROUP "OpenGL"
+		"OpenGL/GladLoader.cpp"
+		"OpenGL/GlewLoader.cpp"
+		"OpenGL/OpenglDebug.cpp"
+		"OpenGL/Renderer.cpp"
+		"OpenGL/Renderer.hpp"
+)
+end_sources()
+
 macro(add_common_libs)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 	target_link_libraries(${THIS_PROJECT} PRIVATE freetype)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
 	target_link_libraries(${THIS_PROJECT} PRIVATE FxParser)
-	set(PROJECT_NAME ${THIS_PROJECT})
-	add_SDL()
-	target_precompile_headers(${THIS_PROJECT}
-	  PRIVATE 
-	  "pch.hpp"
-	)
+	add_SDL(${THIS_PROJECT})
 endmacro()
 
 macro(add_common_includes)
@@ -104,13 +108,21 @@ macro(add_common_includes)
 endmacro()
 
 if(OPTION_DX_RENDERER)
-	EngineModule(RendererDX FORCE_SHARED_WIN SOLUTION_FOLDER "Engine")
+	EngineModule(RendererDX FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 	add_common_libs()
 	add_common_includes()
 
 	target_link_libraries(${THIS_PROJECT} PRIVATE D3DBackend)
 	target_include_directories(${THIS_PROJECT} PRIVATE ${D3D10_INCLUDE_DIRS})
+
+	message(STATUS "renderer sources")
 endif()
+
+	#EngineModule(RendererGL FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+	#add_common_libs()
+	#add_common_includes()
+	#include(${CMAKE_CURRENT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
+	#target_link_libraries(${THIS_PROJECT} PUBLIC OpenGlBackend)
 
 #[[
 find_package(Vulkan)

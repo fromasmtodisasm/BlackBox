@@ -22,7 +22,7 @@ if (OPTION_USE_GUI)
 	target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 endif()
 
-add_SDL()
+add_SDL(${PROJECT_NAME})
 
 if (UNIX_OR_CYGWIN)
   target_sources(

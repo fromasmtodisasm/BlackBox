@@ -2,8 +2,6 @@
 add_library(OpenGlBackend INTERFACE)
 ###################################################
 
-set(GL_DIR ${PROJECT_SOURCE_DIR}/OpenGL)
-
 if (OPTION_GLAD_LOADER AND NOT Linux)
   message(STATUS "Using Glad OpenGL loader")
   add_subdirectory(${CMAKE_SOURCE_DIR}/lib/glad glad EXCLUDE_FROM_ALL)
@@ -22,22 +20,4 @@ elseif(OPTION_GLEW_LOADER)
 	  target_link_libraries(OpenGlBackend INTERFACE OpenGL)
   endif()
 endif()
-message(STATUS "lskdfjslkdfj")
 install_this(OpenGlBackend)
-
-target_sources(${PROJECT_NAME}
-  PRIVATE ${GL_DIR}/Renderer.cpp
-  PRIVATE ${GL_DIR}/OpenglDebug.cpp
-)
-
-if (OPTION_GLAD_LOADER AND Linux)
-  message(FATAL_ERROR "WTF????????")
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${GL_DIR}/GladLoader.cpp
-  )
-elseif (OPTION_GLEW_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${GL_DIR}/GlewLoader.cpp
-  )
-endif()
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)

@@ -6,6 +6,7 @@
 
 #include <d3d10.h>
 #include "../Shaders/Effect.hpp"
+#include <d3dcompiler.h>
 
 enum class ShaderBinaryFormat
 {

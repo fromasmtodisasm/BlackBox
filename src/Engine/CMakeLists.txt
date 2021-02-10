@@ -16,7 +16,7 @@ macro(setup_subsystems)
 	add_subsystem(Utils)
 	add_subsystem(3DEngine)
 	add_subsystem(Input)
-	add_subdirectory(Renderer)
+	add_subsystem(Renderer)
 	add_subsystem(ScriptSystem)
 	if (OPTION_USE_GUI)
 		add_subsystem(GUI)
@@ -30,9 +30,6 @@ macro(setup_subsystems)
 
 	foreach(system IN LISTS ALL_PROJECT_SYSTEMS)
 		add_dependencies(${BLACKBOX_PROJECT} ${system})
-		set_target_properties(${subsystem} 
-			PROPERTIES
-			RUNTIME_OUTPUT_NAME_<CONFIG> "bb${system}")
 		message(STATUS "sub: ${system}")
 	endforeach()
 endmacro()

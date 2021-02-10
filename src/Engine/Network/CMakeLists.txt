@@ -12,7 +12,7 @@ if (DEFINED LINUX AND NOT DEFINED VCPKG_INSTALLER)
 else()
 endif()
 ]]
-add_SDL()
+add_SDL(${PROJECT_NAME})
 add_SDL_net()
 target_link_libraries(${PROJECT_NAME} PRIVATE Math)
 target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
