@@ -230,7 +230,7 @@ bool CD3DRenderer::InitOverride()
 
     UINT createDeviceFlags = 0;
 #ifdef _DEBUG
-    //createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
+    createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
 #endif
 
     D3D10_DRIVER_TYPE driverTypes[] =

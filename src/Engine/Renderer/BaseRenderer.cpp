@@ -581,10 +581,12 @@ void CRenderer::SetRenderCallback(IRenderCallback* pCallback)
 
 void CRenderer::PushProfileMarker(char* label)
 {
+	RenderDebugger::PushGroup(0, label);
 }
 
 void CRenderer::PopProfileMarker(char* label)
 {
+	RenderDebugger::EndGroup();
 }
 
 int CRenderer::CreateRenderTarget()

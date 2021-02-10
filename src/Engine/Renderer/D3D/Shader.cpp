@@ -161,8 +161,9 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 	}
 	if (FAILED(hr))
 	{
-		MessageBox(NULL,
-				   "The FX file cannot be located.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK);
+		char tmp[256];
+		sprintf(tmp, "The FX file <%s> cannot be located.  Please run this executable from the directory that contains the FX file.", file ? file : "MemoryStream");
+		MessageBox(NULL, tmp, "Error", MB_OK);
 		return nullptr;
 	}
 

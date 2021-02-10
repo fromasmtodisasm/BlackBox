@@ -30,6 +30,7 @@ typedef void* WIN_HGLRC;
 class CCamera;
 class CMatInfo;
 struct IRenderAuxGeom;
+struct ITechniqueManager;
 struct IFont;
 struct IShader;
 struct ISystem;
