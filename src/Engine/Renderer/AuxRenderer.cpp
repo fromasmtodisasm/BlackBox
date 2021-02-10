@@ -8,7 +8,7 @@
 
 #define V_RETURN(cond) if (!(cond)) return;
 
-#include <d3dx10.h>
+#include <d3d10.h>
 
 ID3D10Device* GetDevice();
 

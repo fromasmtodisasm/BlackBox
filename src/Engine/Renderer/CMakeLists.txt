@@ -60,7 +60,7 @@ if(OPTION_VK_RENDERER)
 	include(${PROJECT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
 endif()
 
-add_subdirectory(Shaders)
+#add_subdirectory(Shaders)
 
 start_sources()
 sources_platform(ALL)

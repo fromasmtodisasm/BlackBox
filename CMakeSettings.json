@@ -16,8 +16,13 @@
         },
         {
           "name": "OPTION_DX_RENDERER",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
+        },
+        {
+          "name": "DX_RENDERER",
+          "value": "OFF",
+          "type": "UNINITIALIZED"
         }
       ]
     },
@@ -44,6 +49,11 @@
           "name": "OPTION_REMOTE_CONSOLE",
           "value": "True",
           "type": "BOOL"
+        },
+        {
+          "name": "DX_RENDERER",
+          "value": "OFF",
+          "type": "UNINITIALIZED"
         }
       ]
     },
@@ -63,8 +73,13 @@
         },
         {
           "name": "OPTION_DX_RENDERER",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
+        },
+        {
+          "name": "DX_RENDERER",
+          "value": "OFF",
+          "type": "UNINITIALIZED"
         }
       ]
     },
@@ -86,7 +101,13 @@
       "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "variables": [
+        {
+          "name": "DX_RENDERER",
+          "value": "OFF",
+          "type": "UNINITIALIZED"
+        }
+      ]
     }
   ]
 }
