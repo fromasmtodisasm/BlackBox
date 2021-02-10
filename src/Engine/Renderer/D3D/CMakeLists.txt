@@ -15,6 +15,11 @@ target_sources(${PROJECT_NAME}
   ${D3D_DIR}/AuxRenderer.cpp
  )
 
+
+find_package(D3D10 REQUIRED)
+
 add_compile_definitions("DX_RENDERER")
-target_link_libraries(D3DBackend INTERFACE d3d10 d3dcompiler dxguid)
-target_link_libraries(${PROJECT_NAME} PUBLIC D3DBackend)
+target_link_libraries(D3DBackend INTERFACE ${D3D10_LIBRARIES} d3dcompiler dxguid)
+#target_link_libraries(D3DBackend INTERFACE D3D10::D3D10 d3dcompiler dxguid)
+target_link_libraries(${PROJECT_NAME} PRIVATE D3DBackend)
+target_include_directories(${PROJECT_NAME} PRIVATE ${D3D10_INCLUDE_DIRS})

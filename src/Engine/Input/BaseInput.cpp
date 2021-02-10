@@ -92,7 +92,7 @@ void CBaseInput::ShutDown()
 {
 	for (auto dev : m_inputDevices)
 	{
-		delete dev;
+		SAFE_DELETE(dev);
 	}
 	m_inputDevices.clear();
 }

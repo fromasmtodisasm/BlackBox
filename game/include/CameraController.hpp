@@ -98,16 +98,16 @@ class CCameraController : public IInputEventListener
 		if (direction == Movement::BACKWARD)
 			CurrentCamera()->transform.position -= glm::vec3(CurrentCamera()->Front.x, CurrentCamera()->mode == CCamera::Mode::FPS ? 0 : CurrentCamera()->Front.y, CurrentCamera()->Front.z) * velocity;
 		if (direction == Movement::LEFT)
-			CurrentCamera()->transform.position -= CurrentCamera()->Right * velocity;
-		if (direction == Movement::RIGHT)
 			CurrentCamera()->transform.position += CurrentCamera()->Right * velocity;
+		if (direction == Movement::RIGHT)
+			CurrentCamera()->transform.position -= CurrentCamera()->Right * velocity;
 	}
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
 	{
-		CurrentCamera()->transform.rotation.y += xoffset;
+		CurrentCamera()->transform.rotation.y -= xoffset;
 		CurrentCamera()->transform.rotation.x += yoffset;
 
 		// Make sure that when pitch is out of bounds, screen doesn't get flipped

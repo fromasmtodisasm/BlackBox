@@ -36,6 +36,7 @@ struct IShader;
 struct ISystem;
 struct IWindow;
 struct Material;
+struct ITechniqueManager;
 
 //////////////////////////////////////////////////////////////////////
 typedef unsigned char bvec4[4];

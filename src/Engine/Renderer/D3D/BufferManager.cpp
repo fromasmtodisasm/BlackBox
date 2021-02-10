@@ -145,6 +145,8 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 	if (FAILED(hr))
 	{
 		CryFatalError("Cannot create vertex buffer");	
+		delete buffer;
+		return nullptr;
 	}
 
 

@@ -19,13 +19,17 @@ using VertexShader = ID3D10VertexShader;
 using GeometryShader = ID3D10GeometryShader;
 using PixelShader = ID3D10PixelShader;
 
+using PVertexShader = ID3D10VertexShader*;
+using PGeometryShader = ID3D10GeometryShader*;
+using PPixelShader = ID3D10PixelShader*;
+
 class CHWShader : public NoCopy
 {
 public:
-	IUnknown* m_D3DShader;
+	ID3D10Resource* m_D3DShader;
 	_smart_ptr<ID3DBlob> m_Bytecode;
 	IShader::Type m_Type;
-	CHWShader(IUnknown* pShader, _smart_ptr<ID3DBlob> pCode, IShader::Type type) : m_D3DShader(pShader), m_Bytecode(pCode), m_Type(type)
+	CHWShader(ID3D10Resource* pShader, _smart_ptr<ID3DBlob> pCode, IShader::Type type) : m_D3DShader(pShader), m_Bytecode(pCode), m_Type(type)
 	{
 		//auto r = m_D3DShader->Release();
 	}

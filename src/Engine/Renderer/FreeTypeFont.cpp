@@ -103,6 +103,7 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
+	return;
 	auto render = GetISystem()->GetIRenderer();
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -423,6 +424,7 @@ void RegisterColorTable()
 
 void FreeTypeFont::Submit()
 {
+	return;
 	if (!shader)
 	{
 		m_CharBuffer.clear();

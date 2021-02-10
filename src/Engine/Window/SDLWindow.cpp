@@ -191,14 +191,15 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 
 void* CSDLWindow::getHandle()
 {
-	if (m_RendererBackend == RenderBackend::DX)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWindowWMInfo(m_MainWindow, &wmInfo);
-		return wmInfo.info.win.window;
-	}
 	return m_MainWindow;
+}
+
+void* CSDLWindow::getNativeHandle()
+{
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(m_MainWindow, &wmInfo);
+	return wmInfo.info.win.window;
 }
 
 int CSDLWindow::getWidth()

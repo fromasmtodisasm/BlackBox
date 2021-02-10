@@ -6,10 +6,17 @@
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
-struct ITechniqueManager;
 
+struct ITechniqueManager;
+ID3D10Device* GetDevice()
+{
+	return CD3DRenderer::GetDevice(gEnv->pRenderer);
+}
+
+//--------------------------------------------------------------------------------------
+// Global Variables
+//--------------------------------------------------------------------------------------
 D3D10_DRIVER_TYPE g_driverType = D3D10_DRIVER_TYPE_NULL;
-ID3D10Buffer* g_pVertexBuffer  = NULL;
 CD3DRenderer* gD3DRender;
 
 CD3DRenderer::CD3DRenderer(ISystem* pSystem) : CRenderer(pSystem)
@@ -74,17 +81,36 @@ void CD3DRenderer::BeginFrame(void)
 	// Очистка рендер-таргета
 	float ClearColor[4] = {0.3f, 0.3f, 0.5f, 1.0f}; //red,green,blue,alpha
 	m_pd3dDevice->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
+	m_pd3dDevice->ClearDepthStencilView(m_pDepthStencilView, D3D10_CLEAR_DEPTH, 1.f, 0);
 }
 
 void CD3DRenderer::Update(void)
 {
-	// Отображение геометрии на рендер-таргете
-	// Вывод содержимого рендер-таргета на экран
-	m_pSwapChain->Present( 1, 0 );
+	
+    //
+    // Clear the back buffer
+    //
+    //float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+    //GetDevice()->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
+
+	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+    Flush();
+
+    //
+    // Present our back buffer to our front buffer
+    //
+    m_pSwapChain->Present( 0, 0 );
 }
 
 void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
 {
+	uint n = 1;
+	D3D10_VIEWPORT viewports;
+	m_pd3dDevice->RSGetViewports(&n, &viewports);
+	*x = viewports.TopLeftX;
+	*y = viewports.TopLeftY;
+	*width = viewports.Width;
+	*height = viewports.Height;
 }
 
 void CD3DRenderer::SetViewport(int x, int y, int width, int height)
@@ -106,6 +132,16 @@ bool CD3DRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsign
 
 void CD3DRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 {
+    // Setup the viewport
+    D3D10_VIEWPORT vp;
+    vp.Width = width;
+    vp.Height = height;
+    vp.MinDepth = 0.0f;
+    vp.MaxDepth = 1.0f;
+    vp.TopLeftX = x;
+    vp.TopLeftY = y;
+    m_pd3dDevice->RSSetViewports( 1, &vp );
+	OnResizeSwapchain(width - x, height - y);	
 }
 
 void CD3DRenderer::DrawFullScreenImage(int texture_id)
@@ -154,7 +190,7 @@ void CD3DRenderer::MakeMainContextActive()
 
 WIN_HWND CD3DRenderer::GetCurrentContextHWND()
 {
-	return WIN_HWND();
+	return m_hWnd;
 }
 
 bool CD3DRenderer::IsCurrentContextMainVP()
@@ -206,14 +242,14 @@ bool CD3DRenderer::InitOverride()
 
     DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory( &sd, sizeof( sd ) );
-    sd.BufferCount = 1;
+    sd.BufferCount = 2;
     sd.BufferDesc.Width = GetWidth();
     sd.BufferDesc.Height = GetHeight();
     sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     sd.BufferDesc.RefreshRate.Numerator = 60;
     sd.BufferDesc.RefreshRate.Denominator = 1;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    sd.OutputWindow = (HWND)m_hWnd;
+    sd.OutputWindow = (HWND)m_Window->getNativeHandle();
     sd.SampleDesc.Count = 1;
     sd.SampleDesc.Quality = 0;
     sd.Windowed = TRUE;
@@ -229,28 +265,6 @@ bool CD3DRenderer::InitOverride()
     if( FAILED( hr ) )
         return false;
 
-    // Create a render target view
-    ID3D10Texture2D* pBuffer;
-    hr = m_pSwapChain->GetBuffer( 0, __uuidof( ID3D10Texture2D ), ( LPVOID* )&pBuffer );
-    if( FAILED( hr ) )
-        return false;
-
-    hr = m_pd3dDevice->CreateRenderTargetView( pBuffer, NULL, &m_pRenderTargetView );
-    pBuffer->Release();
-    if( FAILED( hr ) )
-        return false;
-
-    m_pd3dDevice->OMSetRenderTargets( 1, &m_pRenderTargetView, NULL );
-
-    // Setup the viewport
-    D3D10_VIEWPORT vp;
-    vp.Width = GetWidth();
-    vp.Height = GetHeight();
-    vp.MinDepth = 0.0f;
-    vp.MaxDepth = 1.0f;
-    vp.TopLeftX = 0;
-    vp.TopLeftY = 0;
-    m_pd3dDevice->RSSetViewports( 1, &vp );
 
     // Set up rasterizer
 	D3D10_RASTERIZER_DESC rasterizerDesc;
@@ -265,11 +279,74 @@ bool CD3DRenderer::InitOverride()
 	rasterizerDesc.MultisampleEnable	 = false;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
-	ID3D10RasterizerState* rasterizerState;
-	m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-	m_pd3dDevice->RSSetState(rasterizerState);
+	m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
+	m_pd3dDevice->RSSetState(m_pRasterizerState);
+
+    {
+		D3D10_DEPTH_STENCIL_DESC desc;
+		//desc.BackFace
+		desc.DepthEnable	= true;
+		desc.StencilEnable	= false;
+		desc.DepthWriteMask = D3D10_DEPTH_WRITE_MASK_ALL;
+		desc.DepthFunc		= D3D10_COMPARISON_LESS ;
+
+		::GetDevice()->CreateDepthStencilState(&desc, &m_pDepthStencilState);
+		::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+	
+    }
+
+	/*if (!OnResizeSwapchain(GetWidth(), GetHeight()))
+		return false;*/
+	ChangeViewport(0, 0, GetWidth(), GetHeight());
+
+    m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+    //m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 
     return true;
+}
+
+bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
+{
+	m_pSwapChain->ResizeBuffers(0, newWidth, newHeight, DXGI_FORMAT_UNKNOWN, 0);
+	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pDepthStencilView);
+
+    // Create a render target view
+    ID3D10Texture2D* pBuffer;
+    auto hr = m_pSwapChain->GetBuffer( 0, __uuidof( ID3D10Texture2D ), ( LPVOID* )&pBuffer );
+    if( FAILED( hr ) )
+        return false;
+
+    hr = m_pd3dDevice->CreateRenderTargetView( pBuffer, NULL, &m_pRenderTargetView );
+    pBuffer->Release();
+    if( FAILED( hr ) )
+        return false;
+
+    D3D10_TEXTURE2D_DESC depthStencilDesc;
+	depthStencilDesc.Width				= newWidth;
+	depthStencilDesc.Height				= newHeight;
+	depthStencilDesc.MipLevels			= 1;
+	depthStencilDesc.ArraySize			= 1;
+	depthStencilDesc.Format				= DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count	= 1; // multisampling must match
+	depthStencilDesc.SampleDesc.Quality = 0; // swap chain values.
+	depthStencilDesc.Usage				= D3D10_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags			= D3D10_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags		= 0;
+	depthStencilDesc.MiscFlags			= 0;
+
+	hr = (m_pd3dDevice->CreateTexture2D(
+		&depthStencilDesc, 0, &m_DepthStencilBuffer));
+    if( FAILED( hr ) )
+        return false;
+	hr = (m_pd3dDevice->CreateDepthStencilView(
+		m_DepthStencilBuffer, 0, &m_pDepthStencilView));
+    if( FAILED( hr ) )
+        return false;
+
+    m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+	return true;
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

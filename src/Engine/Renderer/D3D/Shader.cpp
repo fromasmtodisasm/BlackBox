@@ -24,11 +24,16 @@ int CShader::GetID()
 
 void CShader::AddRef()
 {
+	m_NumRefs++;
 }
 
 int CShader::Release()
 {
-	return 0;
+	m_NumRefs--;
+	auto refs = m_NumRefs;
+	if (m_NumRefs <= 0)
+		delete this;
+	return refs;
 }
 
 IShader::Type CShader::GetType()
@@ -53,57 +58,11 @@ bool CShader::Reload()
 
 void CShader::Bind()
 {
-	
-	for (int type = Type::E_VERTEX; type < 3; type++)
-	{
-		if (true)
-		{
-			switch (type)
-			{
-			case E_VERTEX:
-				{
-					VertexShader* v{};
-					if (SUCCEEDED(m_Shaders[type]->m_D3DShader->QueryInterface(IID_ID3D10VertexShader, (void**)&v)))
-					{
-						ID3D10Device* d;
-						v->GetDevice(&d);
-						d->VSSetShader(v);
-					}
-					
-				}
+	auto d = GetDevice();
 
-				break;
-			case E_GEOMETRY:
-				
-#if 0
-				VertexShader* v;
-				if (SUCCEEDED(s->m_D3DShader->QueryInterface(__uuidof(ID3D10VertexShader), (void**)&v)))
-				{
-					ID3D10Device* d;
-					v->GetDevice(&d);
-					d->VSSetShader(v);
-				}
-#endif
-
-				break;
-			case E_FRAGMENT:
-				{
-					PixelShader* v;
-					if (SUCCEEDED(m_Shaders[type]->m_D3DShader->QueryInterface(__uuidof(ID3D10PixelShader), (void**)&v)))
-					{
-						ID3D10Device* d;
-						v->GetDevice(&d);
-						d->PSSetShader(v);
-					}
-					
-				}
-
-				break;
-			default:;
-				assert(0);
-			}
-		}
-	}
+	if (auto s = m_Shaders[E_VERTEX]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s); }
+	//if (auto s = m_Shaders[E_GEOMETRY]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s); }
+	if (auto s = m_Shaders[E_FRAGMENT]->m_D3DShader; s) { d->PSSetShader((PPixelShader)s); }
 }
 
 void CShader::SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen)
@@ -194,7 +153,7 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 		0,
 		&pShaderBlob,
 		&pErrorBlob);
-	auto shader = _smart_ptr(pShaderBlob);
+	auto pBlob = _smart_ptr(pShaderBlob);
 	auto error	= _smart_ptr(pErrorBlob);
 	if (pErrorBlob && pErrorBlob->GetBufferPointer())
 	{
@@ -208,25 +167,29 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 		return nullptr;
 	}
 
+	#if 0
 	union
 	{
 		ID3D10VertexShader* pVertexShader;
 		ID3D10GeometryShader* pGeometryShader;
 		ID3D10PixelShader* pPixelShader;
 	};
+	#else
+	ID3D10Resource* pShader;
+	#endif
 
-	pVertexShader = nullptr;
+	//pVertexShader = nullptr;
 
 	// Create the vertex shader
 	if (type == E_VERTEX)
-		hr = GetDevice()->CreateVertexShader((DWORD*)shader->GetBufferPointer(),
-											 shader->GetBufferSize(), &pVertexShader);
+		hr = GetDevice()->CreateVertexShader((DWORD*)pBlob->GetBufferPointer(),
+											 pBlob->GetBufferSize(), (ID3D10VertexShader**)&pShader);
 	else if (type == E_GEOMETRY)
-		hr = GetDevice()->CreateGeometryShader((DWORD*)shader->GetBufferPointer(),
-											 shader->GetBufferSize(), &pGeometryShader);
+		hr = GetDevice()->CreateGeometryShader((DWORD*)pBlob->GetBufferPointer(),
+											 pBlob->GetBufferSize(), (ID3D10GeometryShader**)&pShader);
 	else if (type == E_FRAGMENT)
-		hr = GetDevice()->CreatePixelShader((DWORD*)shader->GetBufferPointer(),
-											 shader->GetBufferSize(), &pPixelShader);
+		hr = GetDevice()->CreatePixelShader((DWORD*)pBlob->GetBufferPointer(),
+											 pBlob->GetBufferSize(), (ID3D10PixelShader**)&pShader);
 
-	return new CHWShader(pVertexShader, shader, type);
+	return new CHWShader(pShader, pBlob, type);
 }
