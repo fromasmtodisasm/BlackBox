@@ -1070,16 +1070,14 @@ bool CWindowsConsole::CCellBuffer::IsScrolledUp()
 
 void CWindowsConsole::CCellBuffer::FmtScrollStatus(uint32 size, char* pBuffer)
 {
-	#if 0
 	if (m_position.scroll)
 	{
-		sprintf(pBuffer, size, "| SCROLL: %.1f%%", (100.0f * m_position.scroll) / (m_position.lines - (m_screenArea.Bottom - m_screenArea.Top + 1)));
+		snprintf(pBuffer, size, "| SCROLL: %.1f%%", (100.0f * m_position.scroll) / (m_position.lines - (m_screenArea.Bottom - m_screenArea.Top + 1)));
 	}
 	else
 	{
-		strcpy(pBuffer, size, "| SCROLL:TOP ");
+		strcpy(pBuffer/*, size*/, "| SCROLL:TOP ");
 	}
-	#endif
 }
 
 void CWindowsConsole::CCellBuffer::Clear()

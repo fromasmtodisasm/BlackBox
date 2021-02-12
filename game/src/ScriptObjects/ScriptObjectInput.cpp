@@ -152,7 +152,7 @@ int CScriptObjectInput::BindAction(IFunctionHandler *pH)
 		pH->GetParam(3,sActionMap);
 	if (nNumOfParams>3)
 		pH->GetParam(4, iKeyPos);
-	TRACE("BindAction %s %s %s",sAction,sKeys,(nCheckPressed)?"true":"false");
+	//TRACE("BindAction %s %s %s",sAction,sKeys,(nCheckPressed)?"true":"false");
 	m_pGame->BindAction(sAction,sKeys,sActionMap, iKeyPos);
 
 	return pH->EndFunction();

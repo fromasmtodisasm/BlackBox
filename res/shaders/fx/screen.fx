@@ -43,7 +43,7 @@ HLSLShader
     }
 }
 
-technique main
+Technique main
 {
     pass p0
     {

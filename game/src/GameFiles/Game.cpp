@@ -14,6 +14,7 @@
 
 #include <ScriptObjects/ScriptObjectInput.hpp>
 #include <ScriptObjects/ScriptObjectTest.hpp>
+#include <ScriptObjects/ScriptObjectStream.hpp>
 
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
@@ -278,7 +279,7 @@ CGame::~CGame()
 	CScriptObjectTest::ReleaseTemplate();
 	CScriptObjectClient::ReleaseTemplate();
 	CScriptObjectServer::ReleaseTemplate();
-//	CScriptObjectStream::ReleaseTemplate();
+	CScriptObjectStream::ReleaseTemplate();
 #if 0
 	g_scene->Release();
 	r_displayinfo->Release();
@@ -558,8 +559,6 @@ bool CGame::Update()
 				{
 					Render();
 				}
-
-
 			}
 
 			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
@@ -576,7 +575,7 @@ bool CGame::Update()
 			gui::update();
 			#endif
 			//PROFILER_POP_CPU_MARKER();
-			if (!m_isActive)
+			if (!m_isActive || true)
 			{
 #ifndef BB_PLATFORM_LINUX
 				Sleep(40);
@@ -1277,6 +1276,8 @@ bool CGame::InitScripts()
   m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
   m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
 #endif
+
+	CScriptObjectStream::InitializeTemplate(m_pScriptSystem);
 
 	InitClassRegistry();
 

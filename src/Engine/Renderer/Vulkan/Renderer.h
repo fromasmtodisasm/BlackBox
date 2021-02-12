@@ -2,7 +2,7 @@
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
 #ifdef BB_PLATFORM_WINDOWS
-#include <vulkan/vulkan_win32.h>
+#	include <vulkan/vulkan_win32.h>
 #endif
 #include <vulkan/vulkan.hpp>
 class CVKRenderer;
@@ -21,13 +21,36 @@ inline bool FAILED_VK(VkResult result)
 #define VK_LOG(fmt, ...) CryLog("[VK] " fmt, __VA_ARGS__)
 #define VK_ERROR(fmt, ...) CryError("[VK] " fmt, __VA_ARGS__)
 
-#define RETURN_B_IF_FAILED(result, msg, ...) if (FAILED_VK((result))) { VK_ERROR(msg, __VA_ARGS__); return false; }
+#define RETURN_B_IF_FAILED(result, msg, ...) \
+	if (FAILED_VK((result)))                 \
+	{                                        \
+		VK_ERROR(msg, __VA_ARGS__);          \
+		return {};                           \
+	}
 
-#define RETURN_IF_FAILED(result, msg, ...) if (FAILED_VK((result))) { VK_ERROR(msg, __VA_ARGS__); return; }
+#define RETURN_IF_FALSE(result, msg, ...) \
+	if (!(result))                        \
+	{                                     \
+		VK_ERROR(msg, __VA_ARGS__);       \
+		return {};                        \
+	}
+
+#define VK_VERIFY(result, msg, ...) \
+	if (!(result))                  \
+	{                               \
+		VK_ERROR(msg, __VA_ARGS__); \
+	}
+
+#define RETURN_IF_FAILED(result, msg, ...) \
+	if (FAILED_VK((result)))               \
+	{                                      \
+		VK_ERROR(msg, __VA_ARGS__);        \
+		return;                            \
+	}
 
 class CVKRenderer : public CRenderer
 {
-public:
+  public:
 	//HRESULT InitCube();
 	CVKRenderer(ISystem* pSystem);
 	~CVKRenderer();
@@ -69,14 +92,42 @@ public:
 	virtual void SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
 	virtual bool InitOverride() override;
-	static auto GetDevice(IRenderer* pThis) { return static_cast<CVKRenderer*>(pThis)->m_pVkDevice; }
+	bool CreateInstance(bool& retflag);
+	static auto GetDevice(IRenderer* pThis) { return static_cast<CVKRenderer*>(pThis)->m_Device; }
 
 	bool OnResizeSwapchain(int newWidth, int newHeight);
 
-  private:
-	VkDevice m_pVkDevice;
+	void PrintProperties(const VkPhysicalDeviceProperties& properties);
+	void PrintLimits(const VkPhysicalDeviceLimits& limits);
+	void PrintQueueFamilyProperties(const VkQueueFamilyProperties& properties);
 
+	bool CreateDevice();
+
+	void setupDebugMessenger();
+	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData);
+	void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+
+	struct QueueInfo
+	{
+		uint32_t FamilyIndex;
+		std::vector<float> Priorities;
+	};
+
+	//=====================================
+	std::vector<VkPhysicalDevice> EnumeratePhysicalDevices();
+
+  private:
+	VkInstance m_Instance;
+	VkDebugUtilsMessengerEXT debugMessenger;
+	VkDevice m_Device;
+	VkQueue m_GraphicsQueue{VK_NULL_HANDLE};
+	VkQueue m_ComputeQueue{VK_NULL_HANDLE};
 };
 
 VkDevice GetDevice();
-
