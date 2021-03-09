@@ -4,7 +4,8 @@
 #ifdef BB_PLATFORM_WINDOWS
 #	include <vulkan/vulkan_win32.h>
 #endif
-#include <vulkan/vulkan.hpp>
+#define VK_USE_PLATFORM_WIN32_KHR 1
+#include <vulkan/vulkan.h>
 class CVKRenderer;
 extern CVKRenderer* gD3DRender;
 
@@ -128,6 +129,8 @@ class CVKRenderer : public CRenderer
 	VkDevice m_Device;
 	VkQueue m_GraphicsQueue{VK_NULL_HANDLE};
 	VkQueue m_ComputeQueue{VK_NULL_HANDLE};
+	VkQueue m_PresentationQueue{VK_NULL_HANDLE};
+	VkSurfaceKHR m_PresentationSurface{VK_NULL_HANDLE};
 };
 
 VkDevice GetDevice();

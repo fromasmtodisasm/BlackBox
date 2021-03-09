@@ -1,13 +1,15 @@
 #include "Shader.hpp"
 #include "Renderer.h"
-#include <fstream>
 #include <BlackBox/Core/Utils.hpp>
+#include <fstream>
 
-static string SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type);
+#include <shaderc/shaderc.hpp>
+
+static string SaveHlslToDisk(std::string_view name, const std::vector<std::string>& code, IShader::Type type);
 
 CShader::~CShader()
 {
-	#if 0
+#if 0
 	for (auto s : m_Shaders)
 	{
 		if (s)
@@ -16,7 +18,7 @@ CShader::~CShader()
 			SAFE_RELEASE(sh);
 		}
 	}
-	#endif
+#endif
 }
 
 int CShader::GetID()
@@ -62,11 +64,11 @@ void CShader::Bind()
 {
 	auto d = GetDevice();
 
-	#if 0
+#if 0
 	if (auto s = m_Shaders[E_VERTEX]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s); }
 	//if (auto s = m_Shaders[E_GEOMETRY]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s); }
 	if (auto s = m_Shaders[E_FRAGMENT]->m_D3DShader; s) { d->PSSetShader((PPixelShader)s); }
-	#endif
+#endif
 }
 
 void CShader::SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen)
@@ -92,8 +94,9 @@ CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type)
 
 	auto entry = pass->EntryPoints[type].data();
 	//return LoadFromMemory(code, type, entry);
-	SaveHlslToDisk(code, type);
-	return LoadFromFile("shader", type, entry);
+	auto effectName = pEffect->GetName();
+	SaveHlslToDisk(effectName, code, type);
+	return LoadFromFile(effectName, type, entry);
 }
 
 CHWShader* CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry)
@@ -115,18 +118,17 @@ const char* GetGLSLANGTargetName(IShader::Type target)
 	{
 	case IShader::E_VERTEX:
 		return "vert";
-		
+
 	case IShader::E_GEOMETRY:
 		return "geom";
-		
+
 	case IShader::E_FRAGMENT:
 		return "frag";
-		
+
 	default:
 		return "1111";
 	}
-
-} 
+}
 
 void DumpWarning(const char* str)
 {
@@ -150,8 +152,8 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 	HANDLE childStdOutWrite;
 
 	SECURITY_ATTRIBUTES securityAttributes;
-	securityAttributes.nLength = sizeof(SECURITY_ATTRIBUTES);
-	securityAttributes.bInheritHandle = true;
+	securityAttributes.nLength				= sizeof(SECURITY_ATTRIBUTES);
+	securityAttributes.bInheritHandle		= true;
 	securityAttributes.lpSecurityDescriptor = nullptr;
 
 	CreatePipe(&childStdInRead, &childStdInWrite, &securityAttributes, 0);
@@ -160,13 +162,13 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 	CreatePipe(&childStdOutRead, &childStdOutWrite, &securityAttributes, 0);
 	SetHandleInformation(childStdOutRead, HANDLE_FLAG_INHERIT, 0);
 
-	PROCESS_INFORMATION processInfo = { 0 };
-	STARTUPINFO startUpInfo = { 0 };
+	PROCESS_INFORMATION processInfo = {0};
+	STARTUPINFO startUpInfo			= {0};
 
-	startUpInfo.cb = sizeof(STARTUPINFO);
-	startUpInfo.hStdInput = childStdInRead;
+	startUpInfo.cb		   = sizeof(STARTUPINFO);
+	startUpInfo.hStdInput  = childStdInRead;
 	startUpInfo.hStdOutput = childStdOutWrite;
-	startUpInfo.hStdError = childStdOutWrite;
+	startUpInfo.hStdError  = childStdOutWrite;
 	startUpInfo.dwFlags |= STARTF_USESTDHANDLES;
 
 	char parametersTemp[4096];
@@ -209,7 +211,7 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 
 	if (exitCode != 0)
 	{
-		// convert 'ERROR' to 'error' as remote compiler 
+		// convert 'ERROR' to 'error' as remote compiler
 		// doesn't report upper case version
 		size_t curPos = output.find("ERROR:", 0);
 		while (curPos != std::string::npos)
@@ -241,8 +243,9 @@ bool ShellExecute(const std::string& file, const std::string& parameters, const 
 #endif
 }
 
-string SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type){
-	string file_name = {"shader_" + string{GetGLSLANGTargetName(type)} + ".hlsl"};
+string SaveHlslToDisk(std::string_view name, const std::vector<std::string>& code, IShader::Type type)
+{
+	string file_name = {name.data() + string("_") + string{GetGLSLANGTargetName(type)} + ".hlsl"};
 	std::ofstream output_file{string{"bin/shadercache/"} + file_name};
 	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
 	std::copy(code.begin(), code.end(), output_iterator);
@@ -250,30 +253,56 @@ string SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type){
 	return file_name;
 }
 
-#define OUTPUT_SPIRV_FORMAT                  ".spv"
+#define OUTPUT_SPIRV_FORMAT ".spv"
+const char* CompileToSpirv_Glslangvalidator(const char* name, const char* pEntrypoint, IShader::Type type, ShaderLangId langId, const string& stage, const char* ext, char* params);
+
+const char* CompileToSpirv_Glslc(const char* name, const char* pEntrypoint, IShader::Type type, ShaderLangId langId, const string& stage, const char* ext, char* params);
+
 bool CompileToSpirv(const char* name, const char* pEntrypoint, IShader::Type type, ShaderLangId langId)
 {
 	//else if (vkShaderCompiler == STR_VK_SHADER_COMPILER_GLSLANG)
-	std::string targetEnv = "vulkan1.2";
 	string stage(GetGLSLANGTargetName(type));
-	
+
 	//const bool needsInvertingY = strncmp(pTarget, "vs", 2) == 0 || strncmp(pTarget, "ds", 2) == 0 || strncmp(pTarget, "gs", 2) == 0;
 
 	char params[1001];
-	const char* extra = nullptr;
-	extra			  = langId == ShaderLangId::Hlsl ? "-D" : "";
-	const char *ext	  = langId == ShaderLangId::Hlsl ? ".hlsl" : ".glsl";
-	sprintf(params, "%s%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s %s",
-				"bin/shadercache/shader_", stage.data(), ext,
-				"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
-				targetEnv.c_str(),
-				stage.data(),
-				pEntrypoint,
-				extra);
+	const char* ext = langId == ShaderLangId::Hlsl ? ".hlsl" : ".glsl";
+
+	//CompileToSpirv_Glslangvalidator(name, pEntrypoint, type, langId, stage.data(), ext, params);
+	;
+
+	auto file	= CompileToSpirv_Glslc(name, pEntrypoint, type, langId, stage.data(), ext, params);
+	auto result = ShellExecute(file, params, gEnv->pSystem->GetRootFolder());
 
 	CryLog("compiler string: %s", params);
 
-	return ShellExecute("glslangValidator.exe", params, gEnv->pSystem->GetRootFolder());
+	return result;
+}
+
+const char* CompileToSpirv_Glslangvalidator(const char* name, const char* pEntrypoint, IShader::Type type, ShaderLangId langId, const string& stage, const char* ext, char* params)
+{
+	std::string targetEnv = "vulkan1.2";
+	const char* extra	  = nullptr;
+	extra				  = langId == ShaderLangId::Hlsl ? "-D" : "";
+
+	sprintf(params, "%s%s_%s%s -o %s%s_%s%s -G --target-env %s -S %s -e %s %s",
+			"bin/shadercache/", name, stage.data(), ext,
+			"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT,
+			targetEnv.c_str(),
+			stage.data(),
+			pEntrypoint,
+			extra);
+	return "glslangValidator.exe";
+}
+const char* CompileToSpirv_Glslc(const char* name, const char* pEntrypoint, IShader::Type type, ShaderLangId langId, const string& stage, const char* ext, char* params)
+{
+	sprintf(params, "-fshader-stage=%s  -fentry-point=%s --target-env=vulkan %s%s_%s%s -o %s%s_%s%s",
+			stage.data(),
+			pEntrypoint,
+			"bin/shadercache/", name, stage.data(), ext,
+			"bin/shadercache/", name, stage.data(), OUTPUT_SPIRV_FORMAT
+			);
+	return "glslc";
 }
 
 CHWShader* LoadSpirvFromFile(const char* name, const char* entry, IShader::Type type)
@@ -299,17 +328,18 @@ CHWShader* LoadSpirvFromFile(const char* name, const char* entry, IShader::Type 
 		VkShaderModuleCreateInfo ci{};
 		ci.sType	= VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		ci.codeSize = buffer.size();
-		ci.flags	= VK_SHADER_MODULE_CREATE_FLAG_BITS_MAX_ENUM;
+		ci.flags	= 0;
 		ci.pCode	= buffer.data();
 		vkCreateShaderModule(GetDevice(), &ci, nullptr, &hShader);
 	}
 
 	return new CHWShader(hShader, std::move(buffer), type);
-
 }
 
 CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory)
 {
+	if (bFromMemory)
+		return {};
 	CompileToSpirv(text.data(), pEntry, type, ShaderLangId::Hlsl);
-	return LoadSpirvFromFile("shader", pEntry, type);
+	return LoadSpirvFromFile(text.data(), pEntry, type);
 }

@@ -58,6 +58,12 @@ CVKRenderer::CVKRenderer(ISystem* pSystem)
 
 CVKRenderer::~CVKRenderer()
 {
+	if (m_Device)
+	{
+		vkDestroyDevice(m_Device, nullptr);
+		m_Device = VK_NULL_HANDLE;
+	}
+
 	if (enableValidationLayers)
 	{
 		DestroyDebugUtilsMessengerEXT(m_Instance, debugMessenger, nullptr);
@@ -227,8 +233,19 @@ bool CVKRenderer::InitOverride()
 		return retval;
 	setupDebugMessenger();
 
-	return CreateDevice();
+#ifdef VK_USE_PLATFORM_WIN32_KHR
 
+	VkWin32SurfaceCreateInfoKHR surface_create_info = {
+		VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+		nullptr,
+		0,
+		GetModuleHandle(0),
+		(HWND)m_hWnd};
+
+	RETURN_B_IF_FAILED(vkCreateWin32SurfaceKHR(m_Instance, &surface_create_info, nullptr, &m_PresentationSurface), "Could not create surface");
+#endif
+
+	return CreateDevice();
 }
 
 bool CVKRenderer::CreateInstance(bool& retflag)
@@ -420,7 +437,6 @@ bool CVKRenderer::CreateDevice()
 	uint32 queue_familiy_index{0};
 
 	{
-
 		RETURN_IF_FALSE((available_devices = EnumeratePhysicalDevices()).size() != 0, "");
 		physical_device = available_devices[0];
 		RETURN_B_IF_FAILED(vkEnumerateDeviceExtensionProperties(available_devices[0], nullptr, &extensions_count, nullptr), "Could not get count of physical deivces Extension Properties");
@@ -462,6 +478,29 @@ bool CVKRenderer::CreateDevice()
 				break;
 			}
 		}
+		VkBool32 isSupported;
+		if (vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, 0, m_PresentationSurface, &isSupported) != VkResult::VK_SUCCESS || isSupported == VK_FALSE)
+		{
+			VK_ERROR("Surface not supported");
+			return false;
+		}
+	}
+
+	std::vector<VkSurfaceFormatKHR> vk_surfaceFormats;
+	{
+		uint32_t vk_surfaceFormatsCount;
+		if (vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, m_PresentationSurface, &vk_surfaceFormatsCount, nullptr) != VkResult::VK_SUCCESS)
+		{
+			VK_ERROR("failed to get surface formats count");
+			return false;
+		}
+
+		vk_surfaceFormats.resize(vk_surfaceFormatsCount);
+		if (vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, m_PresentationSurface, &vk_surfaceFormatsCount, vk_surfaceFormats.data()) != VkResult::VK_SUCCESS)
+		{
+			VK_ERROR("failed to get surface formats");
+			return false;
+		}
 	}
 
 	std::vector<const char*> extensions;
@@ -492,8 +531,8 @@ bool CVKRenderer::CreateDevice()
 	device_create_info.pQueueCreateInfos	   = &queue_create_infos[0];
 	device_create_info.enabledLayerCount	   = 0;
 	device_create_info.ppEnabledLayerNames	   = nullptr;
-	device_create_info.enabledExtensionCount   = 0;//extensions.size();
-	device_create_info.ppEnabledExtensionNames = nullptr;//&extensions[0];
+	device_create_info.enabledExtensionCount   = 0;		  //extensions.size();
+	device_create_info.ppEnabledExtensionNames = nullptr; //&extensions[0];
 	device_create_info.pEnabledFeatures		   = &device_features;
 
 	RETURN_B_IF_FAILED(vkCreateDevice(physical_device, &device_create_info, nullptr, &m_Device), "Could not create device");
@@ -501,10 +540,9 @@ bool CVKRenderer::CreateDevice()
 	vkGetDeviceQueue(m_Device, queue_familiy_index, 0, &m_GraphicsQueue);
 
 	uint32 code[] = {
-		1,2,3,4,5,6
-	};
+		1, 2, 3, 4, 5, 6};
 
-	#if 0
+#if 0
 	VkShaderModuleCreateInfo shader_module_create_info;
 	shader_module_create_info.sType	   = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	shader_module_create_info.pNext	   = nullptr;
@@ -515,7 +553,7 @@ bool CVKRenderer::CreateDevice()
 	VkShaderModule shader;
 
 	vkCreateShaderModule(m_Device, &shader_module_create_info, nullptr, &shader);
-	#endif
+#endif
 
 	return true;
 }
