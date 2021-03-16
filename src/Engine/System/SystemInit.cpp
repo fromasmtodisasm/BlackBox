@@ -482,6 +482,7 @@ bool CSystem::Init()
 	ExecuteCommandLine();
 	Tests();
 
+	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
 	return true;
 }
 

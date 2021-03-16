@@ -171,7 +171,16 @@ void CSystem::Quit()
 
 	Release();
 
-	exit(0);
+	
+#if BB_PLATFORM_WINDOWS
+		TerminateProcess(GetCurrentProcess(), 0);
+#else
+		_exit(0);
+#endif
+#if !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_APPLE && !BB_PLATFORM_DURANGO && !BB_PLATFORM_ORBIS
+	PostQuitMessage(0);
+#endif
+
 }
 
 IFont* CSystem::GetIFont()
@@ -212,9 +221,17 @@ void CSystem::RunMainLoop()
 	}
 }
 
-bool CSystem::DoFrame()
+bool CSystem::DoFrame(int updateFlags)
 {
-	return Update();
+	bool continueRunning = true;
+	int pauseMode{};
+
+	if (!Update(updateFlags, pauseMode))
+	{
+		continueRunning = false;
+	}
+
+	return continueRunning;
 }
 
 void CSystem::ParseCMD()

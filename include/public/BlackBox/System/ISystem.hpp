@@ -471,6 +471,9 @@ struct ISystem
 	                               ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) = 0;
 
 	virtual const char* GetRootFolder() const = 0;
+	//! Starts a new frame, updates engine systems, game logic and finally renders.
+	//! \return Returns true if the engine should continue running, false to quit.
+	virtual bool DoFrame(int updateFlags = 0) = 0;
 };
 
 // Global environment variable.

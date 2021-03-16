@@ -204,7 +204,7 @@ class CSystem final : public ISystem
 
   public:
 	void RunMainLoop();
-	bool DoFrame();
+	bool DoFrame(int updateFlags = 0) override;
 
   private:
 	bool InitConsole();

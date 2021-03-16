@@ -116,6 +116,7 @@ void CVKRenderer::BeginFrame(void)
 
 void CVKRenderer::Update(void)
 {
+	Flush();
 }
 
 void CVKRenderer::GetViewport(int* x, int* y, int* width, int* height)

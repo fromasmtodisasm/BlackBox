@@ -203,6 +203,7 @@ void CWindowsConsole::OnInitProgress(const char* sProgressMsg)
 
 static BOOL WINAPI CtrlHandler(DWORD evt)
 {
+	gEnv->pLog->Log("ctrl_handler thread id: %d", std::this_thread::get_id());
 	switch (evt)
 	{
 	case CTRL_C_EVENT:
