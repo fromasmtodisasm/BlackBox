@@ -412,6 +412,20 @@ endmacro()
 macro(end_sources)
 endmacro()
 
+macro(remove_files_from_list filelist filepattern)
+	#message(STATUS " remove_files_from_list ${filelist} ${filepattern}")
+	set(FilesToRemove "")
+	foreach (sourcefile ${${filelist}})
+		if ("${sourcefile}" MATCHES ${filepattern})
+			list(APPEND FilesToRemove "${sourcefile}" )
+			#message(STATUS " FILE TO REMOVE: ${sourcefile}")
+		endif()
+	endforeach()
+	foreach (sourcefile ${FilesToRemove}) 
+		list(REMOVE_ITEM ${filelist} "${sourcefile}" )
+	endforeach() 
+endmacro()
+
 macro(apply_compile_settings)
 	if (MODULE_PCH)
 		#CryQt defines incompatible DLLExport in stdafx, temporarily disable PCH for CryQt now
@@ -575,6 +589,23 @@ function(Launcher target)
 		endif()
 	endif()
 endfunction()
+
+function(CryFileContainer target)
+	set(THIS_PROJECT ${target} PARENT_SCOPE)
+	set(THIS_PROJECT ${target})
+	project(${target})
+
+	read_settings(${ARGN})
+	if(NOT ${THIS_PROJECT}_SOURCES)
+		set(${THIS_PROJECT}_SOURCES ${SOURCES})
+	endif()	
+
+	add_custom_target( ${THIS_PROJECT} SOURCES ${${THIS_PROJECT}_SOURCES})
+	if(MODULE_SOLUTION_FOLDER)
+		set_solution_folder("${MODULE_SOLUTION_FOLDER}" ${THIS_PROJECT})
+	endif()
+endfunction()
+
 
 
 CommonMacrosInit()

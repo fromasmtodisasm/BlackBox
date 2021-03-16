@@ -20,7 +20,7 @@ install(
   RUNTIME DESTINATION bin
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Launcher)
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER BlackBox/Launcher)
 set_solution_startup_target(Launcher)
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 

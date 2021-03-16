@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
-project(AppMain CXX)
-###################################################
-add_library(${PROJECT_NAME} OBJECT
-	Main.cpp
-)
-target_link_libraries(AppMain PUBLIC  BlackBox)
-target_link_libraries(AppMain PUBLIC  System)
-target_link_libraries(${PROJECT_NAME} PUBLIC GUI)
 
-add_private_headers()
-set_target_properties(AppMain PROPERTIES FOLDER "Engine/Utils")
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
-)
+start_sources()
+sources_platform(ALL)
+add_sources("NoUberFile"
+	PROJECTS AppMain
+	SOURCE_GROUP "Source Files"
+		"Main.cpp"
+ )
+EngineModule(AppMain FORCE_STATIC PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+
+target_link_libraries(${THIS_PROJECT} PUBLIC  BlackBox)
+target_link_libraries(${THIS_PROJECT} PUBLIC  System)
+target_link_libraries(${THIS_PROJECT} PUBLIC GUI)
+
+ end_sources()
