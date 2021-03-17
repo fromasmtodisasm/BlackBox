@@ -221,8 +221,10 @@ ILINE bool IsAligned(T nData, size_t nAlign)
 
 #define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 
+#if 0
 #ifdef SendMessage
 #undef SendMessage
+#endif
 #endif
 
 #if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT

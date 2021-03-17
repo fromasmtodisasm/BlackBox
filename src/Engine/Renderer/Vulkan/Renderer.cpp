@@ -1,5 +1,6 @@
 ﻿#include "Renderer.h"
 #include <BlackBox/Core/Platform/Platform.hpp>
+#define BB_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
 #include <BlackBox/Core/Platform/Windows.hpp>
 
 #include <BlackBox/System/IProjectManager.hpp>
@@ -17,6 +18,102 @@ const bool enableValidationLayers = false;
 #else
 const bool enableValidationLayers = true;
 #endif
+
+#pragma region DeviceDialog
+#include "resource.h"
+#include <CommCtrl.h>
+#include <objbase.h>
+
+HWND hCombo;
+HWND hList;
+HWND selectWindow;
+
+
+static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+
+	switch (uMsg)
+	{
+	case WM_CREATE:
+	{
+		//hCombo = GetDlgItem(hwnd, IDC_DEVICE_LIST);
+		//SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)("TestDevice"));
+		int xpos		= 100;	  // Horizontal position of the window.
+		int ypos		= 100;	  // Vertical position of the window.
+		int nwidth		= 200;	  // Width of the window
+		int nheight		= 200;	  // Height of the window
+		HWND hwndParent = hwnd; // Handle to the parent window
+
+		HWND hWndComboBox = CreateWindow(WC_COMBOBOX, TEXT(""),
+										 CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+										 xpos, ypos, nwidth, nheight, hwndParent, NULL, GetModuleHandle(0),
+										 NULL);
+		{
+			// load the combobox with item list.
+			// Send a CB_ADDSTRING message to load each item
+
+			for (const auto prop : gD3DRender->device_properties)
+			{
+				// Add string to combobox.
+				SendMessage(hWndComboBox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)prop.deviceName);
+			}
+
+			// Send the CB_SETCURSEL message to display an initial item
+			//  in the selection field
+			SendMessage(hWndComboBox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
+		}
+		return true;
+	}
+	case WM_COMMAND:
+
+		if (HIWORD(wParam) == CBN_SELCHANGE)
+		// If the user makes a selection from the list:
+		//   Send CB_GETCURSEL message to get the index of the selected list item.
+		//   Send CB_GETLBTEXT message to get the item.
+		//   Display the item in a messagebox.
+		{
+			gD3DRender->m_DeviceId = SendMessage((HWND)lParam, (UINT)CB_GETCURSEL,
+										(WPARAM)0, (LPARAM)0);
+			TCHAR ListItem[256];
+			(TCHAR) SendMessage((HWND)lParam, (UINT)CB_GETLBTEXT,
+								(WPARAM)gD3DRender->m_DeviceId, (LPARAM)ListItem);
+			//MessageBox(hwnd, (LPCSTR)ListItem, TEXT("Item Selected"), MB_OK);
+		}
+
+		return true;
+	case WM_CLOSE:
+		//CloseWindow(selectWindow);
+		DestroyWindow(selectWindow);
+		PostQuitMessage(0);
+		return true;
+	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+void SelectDeviceWindow()
+{
+	MSG msg;
+	WNDCLASS w{};
+	memset(&w, 0, sizeof(WNDCLASS));
+	w.style			= CS_HREDRAW | CS_VREDRAW;
+	w.lpfnWndProc	= SelectDeviceProc;
+	w.hInstance		= GetModuleHandle(0);
+	//w.hbrBackground = GetStockBrush(WHITE_BRUSH);
+	w.lpszClassName = "C Windows";
+	RegisterClass(&w);
+	selectWindow = CreateWindow("C Windows", "C Windows", WS_OVERLAPPEDWINDOW,
+						10, 10, 600, 480, NULL, NULL, 0, NULL);
+	ShowWindow(selectWindow, SW_SHOW);
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
+
+#pragma endregion
 
 bool checkValidationLayerSupport()
 {
@@ -444,8 +541,6 @@ bool CVKRenderer::CreateDevice()
 	uint32 extensions_count{0};
 	std::vector<VkExtensionProperties> available_extensions;
 
-	VkPhysicalDeviceFeatures device_features;
-	VkPhysicalDeviceProperties device_properties;
 
 	std::vector<VkQueueFamilyProperties> queue_families;
 	uint32 queue_familiy_index{0};
@@ -465,9 +560,25 @@ bool CVKRenderer::CreateDevice()
 		}
 
 		{
-			vkGetPhysicalDeviceFeatures(available_devices[0], &device_features);
-			vkGetPhysicalDeviceProperties(available_devices[0], &device_properties);
-			PrintProperties(device_properties);
+			//auto res = DialogBoxParam(NULL, MAKEINTRESOURCE(IDD_FORMVIEW), (HWND)m_Window->getNativeHandle(), SelectDeviceProc, 0);
+			device_features.resize(available_devices.size());
+			device_properties.resize(available_devices.size());
+			int i = 0;
+			for (const auto device : available_devices)
+			{
+				vkGetPhysicalDeviceFeatures(device, &device_features[i]);
+				vkGetPhysicalDeviceProperties(device, &device_properties[i]);
+				i++;
+			}
+			m_DeviceId = r_GraphicsDeviceId;
+			if ((m_DeviceId == -1))
+			{
+				SelectDeviceWindow();
+				r_GraphicsDeviceId = m_DeviceId;
+			}
+			assert(m_DeviceId > 0 && m_DeviceId < available_devices.size());
+			physical_device = available_devices[m_DeviceId];
+			//PrintProperties(device_properties);
 		}
 
 		uint32 queue_families_count{0};
@@ -547,7 +658,7 @@ bool CVKRenderer::CreateDevice()
 	device_create_info.ppEnabledLayerNames	   = nullptr;
 	device_create_info.enabledExtensionCount   = 0;		  //extensions.size();
 	device_create_info.ppEnabledExtensionNames = nullptr; //&extensions[0];
-	device_create_info.pEnabledFeatures		   = &device_features;
+	device_create_info.pEnabledFeatures		   = &device_features[m_DeviceId];
 
 	RETURN_B_IF_FAILED(vkCreateDevice(physical_device, &device_create_info, nullptr, &m_Device), "Could not create device");
 

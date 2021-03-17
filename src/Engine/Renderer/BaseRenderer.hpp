@@ -163,6 +163,7 @@ class RenderCVars
 
 	int r_Vsync		   = true;
 	int r_DisplayIndex = 0;
+	int r_GraphicsDeviceId = -1;
 
 	static int CV_r_GetScreenShot;
 };

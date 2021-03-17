@@ -124,6 +124,7 @@ class CVKRenderer : public CRenderer
 	//=====================================
 	std::vector<VkPhysicalDevice> EnumeratePhysicalDevices();
 
+	friend INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   private:
 	VkInstance m_Instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
@@ -132,6 +133,12 @@ class CVKRenderer : public CRenderer
 	VkQueue m_ComputeQueue{VK_NULL_HANDLE};
 	VkQueue m_PresentationQueue{VK_NULL_HANDLE};
 	VkSurfaceKHR m_PresentationSurface{VK_NULL_HANDLE};
+
+	std::vector<VkPhysicalDeviceFeatures> device_features;
+	std::vector<VkPhysicalDeviceProperties> device_properties;
+
+	size_t m_DeviceId{0};
+
 };
 
 VkDevice GetDevice();

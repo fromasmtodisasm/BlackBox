@@ -6,7 +6,6 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
 
 #ifdef DX_RENDERER
 #define __IFont_INTERFACE_DEFINED__

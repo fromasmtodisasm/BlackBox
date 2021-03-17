@@ -8,6 +8,7 @@
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <crtdbg.h>
+#include "resource.h"
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
 #if 1
@@ -20,9 +21,34 @@ extern "C"
 }
 #endif
 
+static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+	{
+		//hCombo = GetDlgItem(hwnd, IDC_DEVICE_LIST);
+		//SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)("TestDevice"));
+		return true;
+	}
+	case WM_COMMAND:
+	{
+		break;
+	}
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		return false;
+	}
+
+	return false;
+}
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, [[maybe_unused]] int nShowCmd)
 {
+	//DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), 0, SelectDeviceProc, 0);
+
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
