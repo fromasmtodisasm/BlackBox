@@ -91,6 +91,7 @@ class CVKRenderer : public CRenderer
 	virtual void ClearDepthBuffer() override;
 	virtual void ClearColorBuffer(const Vec3 vColor) override;
 	virtual void SetRenderTarget(int nHandle) override;
+	VkResult CreateSurface();
 	// Inherited via CRenderer
 	virtual bool InitOverride() override;
 	bool CreateInstance(bool& retflag);

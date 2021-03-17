@@ -5,9 +5,11 @@
 #include <BlackBox/System/IProjectManager.hpp>
 #include <BlackBox/System/IWindow.hpp>
 
+#include <array>
+
 CVKRenderer* gD3DRender;
 
-const std::vector<const char*> validationLayers = {
+const std::array<const char*,1> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"};
 
 #ifdef NDEBUG
@@ -68,6 +70,7 @@ CVKRenderer::~CVKRenderer()
 	{
 		DestroyDebugUtilsMessengerEXT(m_Instance, debugMessenger, nullptr);
 	}
+	vkDestroySurfaceKHR(m_Instance, m_PresentationSurface, nullptr);
 	vkDestroyInstance(m_Instance, nullptr);
 }
 
@@ -224,16 +227,8 @@ void CVKRenderer::SetRenderTarget(int nHandle)
 {
 }
 
-bool CVKRenderer::InitOverride()
+VkResult CVKRenderer::CreateSurface()
 {
-	VK_LOG("Initialize");
-
-	bool retflag;
-	bool retval = CreateInstance(retflag);
-	if (retflag)
-		return retval;
-	setupDebugMessenger();
-
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 	VkWin32SurfaceCreateInfoKHR surface_create_info = {
@@ -243,9 +238,20 @@ bool CVKRenderer::InitOverride()
 		GetModuleHandle(0),
 		(HWND)m_hWnd};
 
-	RETURN_B_IF_FAILED(vkCreateWin32SurfaceKHR(m_Instance, &surface_create_info, nullptr, &m_PresentationSurface), "Could not create surface");
+	return vkCreateWin32SurfaceKHR(m_Instance, &surface_create_info, nullptr, &m_PresentationSurface);
 #endif
+}
 
+bool CVKRenderer::InitOverride()
+{
+	VK_LOG("Initialize");
+
+	bool retflag;
+	bool retval = CreateInstance(retflag);
+	if (retflag)
+		return retval;
+
+	RETURN_B_IF_FAILED(CreateSurface(), "Could not create surface")
 	return CreateDevice();
 }
 
@@ -264,7 +270,13 @@ bool CVKRenderer::CreateInstance(bool& retflag)
 		VK_LOG("%s", ext.extensionName);
 	}
 
-	std::vector<char*> desired_extensions{
+	std::array<char*,
+#ifndef NDEBUG
+		4
+#else
+		2
+#endif
+	> desired_extensions{
 		VK_KHR_SURFACE_EXTENSION_NAME,
 		VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
 #ifndef NDEBUG
@@ -327,6 +339,7 @@ bool CVKRenderer::CreateInstance(bool& retflag)
 
 		RETURN_B_IF_FAILED(vkCreateInstance(&instance_create_info, nullptr, &m_Instance), "Could not create VkInstance");
 		VK_LOG("Instance Created");
+		setupDebugMessenger();
 	}
 	retflag = false;
 	return {};

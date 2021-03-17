@@ -242,25 +242,8 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 {
 	static int displayInUse = 0; /* Only using first display */
-	int numModes			  = 0;
-	int i					  = 0;
-	//TODO: FIX IT
-#if SFML_WINDOW
-	auto videoModes = sf::VideoMode::getFullscreenModes();
-
-	numModes = static_cast<int>(videoModes.size());
-	if (formats != nullptr)
-	{
-		for (auto& mode : videoModes)
-		{
-			formats[i].m_BPP	= mode.bitsPerPixel;
-			formats[i].m_Width	= mode.width;
-			formats[i].m_Height = mode.height;
-			i++;
-		}
-	}
-#endif
-	//#elif SDL_WINDOW
+	int numModes			= 0;
+	int i					= 0;
 	SDL_DisplayMode mode;
 	Uint32 f;
 
@@ -290,8 +273,6 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 			formats[i].m_Height = mode.h;
 		}
 	}
-
-	//#endif
 
 	return numModes;
 }
