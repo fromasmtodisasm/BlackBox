@@ -4,7 +4,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS AppMain
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		"Main.cpp"
  )
 EngineModule(AppMain FORCE_STATIC PCH "pch.hpp" SOLUTION_FOLDER "Engine")

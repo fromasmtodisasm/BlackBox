@@ -2,7 +2,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS FxParser
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		"Parser.cpp"
 		"Effect.cpp"
 		"Scanner.cpp"

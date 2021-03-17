@@ -56,9 +56,6 @@ endif()
 if (OPTION_DX_RENDERER)
 	include("D3D/CMakeLists.txt")
 endif()
-if(OPTION_VK_RENDERER)
-	include(${CMAKE_CURRENT_SOURCE_DIR}/Vulkan/CMakeLists.txt)
-endif()
 
 add_subdirectory(Shaders)
 
@@ -66,7 +63,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS RendererDX RendererGL RendererVK
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "Source"
 		"AuxRenderer.cpp"
 		"AuxRendererNull.cpp"
 		"BaseRenderer.cpp"
@@ -100,6 +97,13 @@ add_sources("NoUberFile"
 		"Vulkan/Shader.cpp"
 		"Vulkan/Renderer.h"
 )
+sources_platform(WINDOWS)
+add_sources("NoUberFile"
+	PROJECTS RendererVK
+	SOURCE_GROUP "Vulkan\\\\Resource Files"
+		"Vulkan/RendererVK.rc"
+)
+
 end_sources()
 
 macro(add_common_libs)
@@ -123,6 +127,8 @@ if(OPTION_DX_RENDERER)
 	target_include_directories(${THIS_PROJECT} PRIVATE ${D3D10_INCLUDE_DIRS})
 
 	message(STATUS "renderer sources")
+else()
+	CryFileContainer(RendererDX SOLUTION_FOLDER "Engine")
 endif()
 if(OPTION_VK_RENDERER)
 	EngineModule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
@@ -135,6 +141,8 @@ if(OPTION_VK_RENDERER)
 	target_include_directories(${THIS_PROJECT} PUBLIC "Vulkan")
 
 	message(STATUS "renderer sources")
+else()
+	CryFileContainer(RendererVK SOLUTION_FOLDER "Engine")
 endif()
 
 	#EngineModule(RendererGL FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")

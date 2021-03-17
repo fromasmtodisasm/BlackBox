@@ -5,7 +5,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS Input
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		"Input.cpp"
 		"ActionMap.cpp"
 		"ActionMapManager.cpp"

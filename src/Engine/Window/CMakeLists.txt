@@ -3,7 +3,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS Window
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		"SDLWindow.cpp"
  )
 

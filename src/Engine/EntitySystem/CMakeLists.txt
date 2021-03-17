@@ -2,7 +2,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS EntitySystem
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		"EntitySystem.cpp"
 		"Entity.cpp"
  )

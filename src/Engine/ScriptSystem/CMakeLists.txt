@@ -2,7 +2,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS ScriptSystem
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		
 		"LibScriptSystem.cpp"
 		"FunctionHandler.cpp"

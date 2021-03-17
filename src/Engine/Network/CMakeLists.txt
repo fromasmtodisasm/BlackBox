@@ -2,7 +2,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS Network
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "SourceFiles"
 		"Client.cpp"
 		"Network.cpp"
 		"Server.cpp"
