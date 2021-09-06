@@ -10,6 +10,7 @@ set(MSVC_COMMON_FLAGS
 	/Wv:18      # Disable warnings until SDK depedencies switch to UTF-8/ASCII.
 	/MP         # Build with multiple processes
 	/bigobj     # Allow larger .obj files
+	/Zi
 
 	/WX         # Treat warnings as errors
 	/wd4653     # Ignore PCH for any individual file that has different optimization settings
@@ -18,27 +19,38 @@ set(MSVC_COMMON_FLAGS
 	/wd4068     # 'Unknown pragma' - sometimes need these in code to prevent global suppression.
 	/wd4554     
 	/wd4005     
+	/wd4100
+	/wd4201
+	/wd4458
+	/wd4127
+
+	/EHsc
 )
+if (OPTION_EDIT_AND_CONTINUE)
+	string(REPLACE "/Zi" "/ZI" MSVC_COMMON_FLAGS "${MSVC_COMMON_FLAGS}")
+	message(STATUS "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!____${CMAKE_CXX_FLAGS}")
+endif()
 string(REPLACE ";" " " MSVC_COMMON_FLAGS "${MSVC_COMMON_FLAGS}")
+
 
 set(CMAKE_RC_FLAGS /nologo)
 
 # Override cxx flags
 set(CMAKE_CXX_FLAGS "${MSVC_COMMON_FLAGS}" CACHE STRING "C++ Common Flags" FORCE)
 
-set(CMAKE_C_FLAGS_DEBUG "/MDd /Zi /Zo /Od /Ob0 /Oy- /RTC1 /GS /DDEBUG /D_DEBUG" CACHE STRING "C Flags" FORCE)
-set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Zi /Zo /Od /Ob0 /Oy- /RTC1 /GS /DDEBUG /D_DEBUG" CACHE STRING "C++ Flags" FORCE)
+set(CMAKE_C_FLAGS_DEBUG "${MSVC_COMMON_FLAGS} /MDd /Od /Ob0 /Oy- /RTC1 /GS /DDEBUG /D_DEBUG" CACHE STRING "C Flags" FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "${MSVC_COMMON_FLAGS} /MDd /Od /Ob0 /Oy- /RTC1 /GS /DDEBUG /D_DEBUG" CACHE STRING "C++ Flags" FORCE)
 
-# Create PDBs (/Zi)
+# Create PDBs ()
 # Create better debug info (/Zo)
 # Enable full optimization (/Ox) Same as /Ob2 /Oi /Ot /Oy
 # Don't omit frame pointer (/Oy-)
 # Disable buffer security checks (/GS-)
-set(CMAKE_C_FLAGS_PROFILE "/Zi /Zo /MD /Ox /Oy- /GS- /DNDEBUG /D_PROFILE" CACHE STRING "C Flags" FORCE)
-set(CMAKE_CXX_FLAGS_PROFILE "/Zi /Zo /MD /Ox /Oy- /GS- /DNDEBUG /D_PROFILE" CACHE STRING "C++ Flags" FORCE)
+set(CMAKE_C_FLAGS_PROFILE "${MSVC_COMMON_FLAGS} /Zo /MD /Ox /Oy- /GS- /DNDEBUG /D_PROFILE" CACHE STRING "C Flags" FORCE)
+set(CMAKE_CXX_FLAGS_PROFILE "${MSVC_COMMON_FLAGS} /Zo /MD /Ox /Oy- /GS- /DNDEBUG /D_PROFILE" CACHE STRING "C++ Flags" FORCE)
 
-set(CMAKE_C_FLAGS_RELEASE "/Zi /Zo /MD /Ox /GS- /DNDEBUG /D_RELEASE" CACHE STRING "C Flags" FORCE)
-set(CMAKE_CXX_FLAGS_RELEASE "/Zi /Zo /MD /Ox /GS- /DNDEBUG /D_RELEASE" CACHE STRING "C++ Flags" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "${MSVC_COMMON_FLAGS} /Zo /MD /Ox /GS- /DNDEBUG /D_RELEASE" CACHE STRING "C Flags" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "${MSVC_COMMON_FLAGS} /Zo /MD /Ox /GS- /DNDEBUG /D_RELEASE" CACHE STRING "C++ Flags" FORCE)
 
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "/debug" CACHE STRING "Profile link flags" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_PROFILE    "/debug" CACHE STRING "Profile link flags" FORCE)
@@ -47,6 +59,7 @@ set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "/debug /INCREMENTAL" CACHE STRING "Profil
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/debug" CACHE STRING "Release link flags" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "/debug" CACHE STRING "Release link flags" FORCE)
 set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "/debug  /OPT:REF /OPT:ICF" CACHE STRING "Release link flags" FORCE)
+
 
 function (wrap_whole_archive project target source)
 	set(${target} "${${source}}" PARENT_SCOPE)
@@ -66,3 +79,6 @@ endfunction()
 
 message(STATUS "MSVC_VERSION = ${MSVC_VERSION}")
 message(STATUS "MSVC_TOOLSET_VERSION = ${MSVC_TOOLSET_VERSION}")
+
+message(STATUS "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!____${CMAKE_CXX_FLAGS_DEBUG}")
+message(STATUS "############################################################____${CMAKE_CXX_FLAGS}")

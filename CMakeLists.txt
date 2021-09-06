@@ -35,3 +35,5 @@ project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 include(Tools/CMake/Configure.cmake)
 ###################################################
 add_subdirectory(res)
+message(STATUS "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!____${CMAKE_CXX_FLAGS_DEBUG}")
+

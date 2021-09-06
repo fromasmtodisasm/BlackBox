@@ -27,6 +27,7 @@ void CGame::DevModeInit()
 void CGame::DevModeUpdate()
 {
 #ifdef WIN32
+	m_currentLevelFolder = ".";
 
 #	if 0
   m_pTimeDemoRecorder->Update();

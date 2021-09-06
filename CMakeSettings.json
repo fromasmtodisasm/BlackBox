@@ -21,7 +21,7 @@
         },
         {
           "name": "OPTION_VK_RENDERER",
-          "value": "True",
+          "value": "OFF",
           "type": "BOOL"
         },
         {
@@ -87,7 +87,7 @@
         },
         {
           "name": "OPTION_VK_RENDERER",
-          "value": "True",
+          "value": "OFF",
           "type": "BOOL"
         }
       ]

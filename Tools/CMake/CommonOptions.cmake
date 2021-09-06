@@ -27,6 +27,8 @@ option(OPTION_GL_RENDERER "Compile OpenGL library" OFF)
 option(OPTION_DX_RENDERER "Compile D3D library" OFF)
 option(OPTION_VK_RENDERER "Compile Vulkan library" OFF)
 
+option(OPTION_EDIT_AND_CONTINUE "Edit and continue MSVC feature" ON)
+
 if(ANDROID)
 	set(OPTION_STATIC_LINKING TRUE)
 else()
