@@ -38,8 +38,7 @@
       "configurationType": "Profile",
       "generator": "Ninja",
       "name": "Windows x64 Profile Ninja",
-      "inheritEnvironments": [],
-      "variables": []
+      "inheritEnvironments": []
     },
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Release_${generator}",
@@ -78,7 +77,7 @@
         },
         {
           "name": "OPTION_DX_RENDERER",
-          "value": "False",
+          "value": "True",
           "type": "BOOL"
         },
         {
@@ -100,8 +99,7 @@
       "buildRoot": "${projectDir}\\Solutions\\Win64_Profile_${generator}",
       "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-      "inheritEnvironments": [],
-      "variables": []
+      "inheritEnvironments": []
     },
     {
       "name": "Windows x64 Release  Msbuild",

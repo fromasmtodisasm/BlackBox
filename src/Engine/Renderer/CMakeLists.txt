@@ -119,12 +119,13 @@ macro(add_common_includes)
 endmacro()
 
 if(OPTION_DX_RENDERER)
-	EngineModule(RendererDX FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+	EngineModule(RendererDX FORCE_SHARED_WIN PCH "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp" SOLUTION_FOLDER "Engine")
 	add_common_libs()
 	add_common_includes()
 
-	target_link_libraries(${THIS_PROJECT} PRIVATE D3DBackend)
-	target_include_directories(${THIS_PROJECT} PRIVATE ${D3D10_INCLUDE_DIRS})
+	find_package(D3D11 REQUIRED)
+	add_compile_definitions("DX_RENDERER")
+	target_link_libraries(${THIS_PROJECT} PRIVATE D3D11::D3D11 d3dcompiler dxguid)
 
 	message(STATUS "renderer sources")
 else()
