@@ -5,18 +5,18 @@
 //#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IRender.hpp>
 //#include <BlackBox/Renderer/Shader.hpp>
-#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
 #include "Shaders/FxParser.h"
 #ifdef VK_RENDERER
-#include "Vulkan/Shader.hpp"
+#	include "Vulkan/Shader.hpp"
 #elif DX_RENDERER
-#include "D3D/Shader.hpp"
+#	include "D3D/Shader.hpp"
 #endif
 #ifndef VK_RENDERER
-#include "TypedConstantBuffer.hpp"
+#	include "TypedConstantBuffer.hpp"
 #endif
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
@@ -24,11 +24,11 @@ extern FxParser* g_FxParser;
 class Texture;
 struct IFont;
 
-struct CBufferManager;
+class CBufferManager;
 
 class RenderDebugger
 {
-public:
+  public:
 	RenderDebugger() = default;
 	RenderDebugger(const char* file);
 	~RenderDebugger();
@@ -54,14 +54,14 @@ public:
 	}
 
   private:
-	  #if 0
+#if 0
 	static void APIENTRY callBack(GLenum source, GLenum type, GLuint id,
 								  GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
-	#endif
+#endif
 
 	static inline const char* SOURCE_TO_STRING(int s)
 	{
-		#if 0
+#if 0
 		switch (s)
 		{
 			GET_SOURCE(DEBUG_SOURCE_API);
@@ -71,16 +71,16 @@ public:
 			GET_SOURCE(DEBUG_SOURCE_APPLICATION);
 			GET_SOURCE(DEBUG_SOURCE_OTHER);
 		default:
-		#endif
-			return "Unknown source";
-		#if 0
+#endif
+		return "Unknown source";
+#if 0
 		}
-		#endif
+#endif
 	}
 
 	static inline const char* TYPE_TO_STRING(int t)
 	{
-		#if 0
+#if 0
 		switch (t)
 		{
 			GET_TYPE(DEBUG_TYPE_ERROR);
@@ -95,13 +95,13 @@ public:
 		default:
 			return "Unknown type";
 		}
-		#endif
-			return "Unknown type";
+#endif
+		return "Unknown type";
 	}
 
 	static inline const char* SEVERITY_TO_STRING(int s)
 	{
-		#if 0
+#if 0
 		switch (s)
 		{
 			GET_SEVERITY(DEBUG_SEVERITY_HIGH);
@@ -111,7 +111,7 @@ public:
 		default:
 			return "Unknown severity";
 		}
-		#endif
+#endif
 		return "Unknown severity";
 	}
 
@@ -161,8 +161,8 @@ class RenderCVars
 	int r_MSAA		   = 1;
 	int r_MSAA_samples = 2;
 
-	int r_Vsync		   = true;
-	int r_DisplayIndex = 0;
+	int r_Vsync			   = true;
+	int r_DisplayIndex	   = 0;
 	int r_GraphicsDeviceId = -1;
 
 	static int CV_r_GetScreenShot;
@@ -172,7 +172,7 @@ class ShaderMan
   public:
 	IShader* Sh_Load(const char* vertex, const char* fragment)
 	{
-		#if 0
+#if 0
 		using ShaderInfo = IShaderProgram::ShaderInfo;
 		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
 		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
@@ -180,9 +180,9 @@ class ShaderMan
 		p->Create((std::string(vertex) + std::string(fragment)).data());
 		m_Shaders.emplace_back(p);
 		return p;
-		#else
+#else
 		return nullptr;
-		#endif
+#endif
 	}
 	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen)
 	{
@@ -203,7 +203,7 @@ class ShaderMan
 
 	CShader* Compile(std::string_view name, int flags, uint64 nMaskGen)
 	{
-		PEffect pEffect = nullptr;
+		PEffect			  pEffect = nullptr;
 		std::stringstream path;
 		path << "res/shaders/fx/" << name << ".fx";
 		if (g_FxParser->Parse(path.str().data(), &pEffect))
@@ -218,8 +218,8 @@ class ShaderMan
 			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT);
 			if (!vs || !fs)
 			{
-				SAFE_DELETE(vs);	
-				SAFE_DELETE(fs);	
+				SAFE_DELETE(vs);
+				SAFE_DELETE(fs);
 				return nullptr;
 			}
 			auto p							  = _smart_ptr<CShader>(new CShader);
@@ -260,8 +260,8 @@ class CRenderer : public RenderCVars
 	CRenderer(ISystem* engine);
 	~CRenderer();
 	//! Init the renderer, params are self-explanatory
-	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) final;
-	virtual bool InitOverride()																													   = 0;
+	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) /* final*/;
+	virtual bool	 InitOverride() = 0;
 
 	//! Changes resolution of the window/device (doen't require to reload the level
 	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) = 0;
@@ -350,12 +350,12 @@ class CRenderer : public RenderCVars
 	/////////////////////////////////////////////////////////////////////////////////
 	// Render-context management
 	/////////////////////////////////////////////////////////////////////////////////
-	virtual bool DeleteContext(WIN_HWND hWnd)												= 0;
-	virtual bool CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) = 0;
-	virtual bool SetCurrentContext(WIN_HWND hWnd)											= 0;
-	virtual void MakeMainContextActive()													= 0;
-	virtual WIN_HWND GetCurrentContextHWND()												= 0;
-	virtual bool IsCurrentContextMainVP()													= 0;
+	virtual bool	 DeleteContext(WIN_HWND hWnd)												= 0;
+	virtual bool	 CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) = 0;
+	virtual bool	 SetCurrentContext(WIN_HWND hWnd)											= 0;
+	virtual void	 MakeMainContextActive()													= 0;
+	virtual WIN_HWND GetCurrentContextHWND()													= 0;
+	virtual bool	 IsCurrentContextMainVP()													= 0;
 
 	//! Gets height of the current viewport.
 	virtual int GetCurrentContextViewportHeight() const = 0;
@@ -371,24 +371,23 @@ class CRenderer : public RenderCVars
 
 	virtual void SetRenderTarget(int nHandle) = 0;
 
-	virtual void ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
-	virtual int UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
-	virtual int UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
-	virtual void GetModelViewMatrix(float* mat) final;
-	virtual void GetModelViewMatrix(double* mat) final;
-	virtual void GetProjectionMatrix(double* mat) final;
-	virtual void GetProjectionMatrix(float* mat) final;
-	virtual Vec3 GetUnProject(const Vec3& WindowCoords, const CCamera& cam) final;
-	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) final;
-	IGraphicsDeviceConstantBuffer * CreateConstantBuffer(int size) final;
+	virtual void				   ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
+	virtual int					   UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
+	virtual int					   UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
+	virtual void				   GetModelViewMatrix(float* mat) final;
+	virtual void				   GetModelViewMatrix(double* mat) final;
+	virtual void				   GetProjectionMatrix(double* mat) final;
+	virtual void				   GetProjectionMatrix(float* mat) final;
+	virtual Vec3				   GetUnProject(const Vec3& WindowCoords, const CCamera& cam) final;
+	virtual int					   GetFrameID(bool bIncludeRecursiveCalls = true) final;
+	IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) final;
 
-	void CreateQuad();
-	IFont* GetIFont() final;
+	void			CreateQuad();
+	IFont*			GetIFont() final;
 	IRenderAuxGeom* GetIRenderAuxGeom() final;
 
-protected:
-protected:
-
+  protected:
+  protected:
 	struct alignas(16) SPerViewConstantBuffer
 	{
 		Mat4 Projection;
@@ -402,13 +401,13 @@ protected:
 		glm::mat4 Model;
 		glm::mat4 UvProjection;
 		glm::vec4 Color;
-		float Alpha;
+		float	  Alpha;
 	};
 
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	CTypedConstantBuffer<SPerViewConstantBuffer> perViewBuffer;
-	CTypedConstantBuffer<SScreenConstantBuffer> screenBuffer;
-	#endif
+	CTypedConstantBuffer<SScreenConstantBuffer>	 screenBuffer;
+#endif
 
 	void InitConsoleCommands() const;
 
@@ -416,11 +415,11 @@ protected:
 	IWindow* m_Window  = nullptr;
 	ISystem* m_pSystem = nullptr;
 
-	bool is_fullscreen = false;
-	Vec4 m_viewPort;
-	unsigned int cbpp = 0;
-	int zbpp		  = 0;
-	int sbits		  = 0;
+	bool		 is_fullscreen = false;
+	Vec4		 m_viewPort;
+	unsigned int cbpp  = 0;
+	int			 zbpp  = 0;
+	int			 sbits = 0;
 
 	bool bInFullScreen = false;
 	//============
@@ -430,16 +429,16 @@ protected:
 	IRenderAuxGeom* m_RenderAuxGeom = nullptr;
 	CBufferManager* m_BufferManager = nullptr;
 
-	CVertexBuffer* m_VertexBuffer = nullptr;
+	CVertexBuffer*		m_VertexBuffer = nullptr;
 	_smart_ptr<CShader> m_ScreenShader;
 
-	#if 0
+#if 0
 	FrameBufferObject* m_MainMSAAFrameBuffer;
 	FrameBufferObject* m_MainReslovedFrameBuffer;
-	#endif
+#endif
 
 	std::vector<Texture*> m_RenderTargets;
-	void* context;
+	void*				  context;
 
 	bool transit_to_FS = false;
 	bool bIsActive	   = true;
@@ -447,29 +446,29 @@ protected:
 	int m_FrameID = 0;
 
 	// Windows context
-	char     m_WinTitle[80];
-	WIN_HWND m_hWnd;                  // The main app window
-	WIN_HWND m_hWndDesktop;           // The desktop window
-	WIN_HWND m_hWndActive;            // The active window
+	char	 m_WinTitle[80];
+	WIN_HWND m_hWnd;		// The main app window
+	WIN_HWND m_hWndDesktop; // The desktop window
+	WIN_HWND m_hWndActive;	// The active window
 #if BB_PLATFORM_WINDOWS
-	HICON    m_hIconBig;              // Icon currently being used on the taskbar
-	HICON    m_hIconSmall;            // Icon currently being used on the window
-	HCURSOR  m_hCursor;               // Cursor currently being used on the window
-	string   m_iconPath;              // Path to the icon currently loaded
+	HICON	m_hIconBig;	  // Icon currently being used on the taskbar
+	HICON	m_hIconSmall; // Icon currently being used on the window
+	HCURSOR m_hCursor;	  // Cursor currently being used on the window
+	string	m_iconPath;	  // Path to the icon currently loaded
 #endif
 
 	std::vector<IFont*> m_Fonts;
-	RenderBackend m_Backend;
+	RenderBackend		m_Backend;
 
 	// Inherited via IRenderer
-	virtual void ShareResources(IRenderer* renderer) override;
-	virtual void SetRenderCallback(IRenderCallback* pCallback) override;
-	virtual void PushProfileMarker(char* label) override;
-	virtual void PopProfileMarker(char* label) override;
-	virtual int CreateRenderTarget() override;
-	virtual void DrawFullscreenQuad() override;
+	virtual void			   ShareResources(IRenderer* renderer) override;
+	virtual void			   SetRenderCallback(IRenderCallback* pCallback) override;
+	virtual void			   PushProfileMarker(char* label) override;
+	virtual void			   PopProfileMarker(char* label) override;
+	virtual int				   CreateRenderTarget() override;
+	virtual void			   DrawFullscreenQuad() override;
 	virtual ITechniqueManager* GetITechniqueManager() final;
-	virtual float GetDepthValue(int x, int y) override;
-	virtual void Flush() final;
-	virtual void Sh_Reload() override;
+	virtual float			   GetDepthValue(int x, int y) override;
+	virtual void			   Flush() final;
+	virtual void			   Sh_Reload() override;
 };

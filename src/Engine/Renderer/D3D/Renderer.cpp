@@ -4,9 +4,6 @@
 
 #include <BlackBox/System/IWindow.hpp>
 
-#include <BlackBox/Core/Platform/platform_impl.inl>
-
-
 struct ITechniqueManager;
 ID3D10Device* GetDevice()
 {

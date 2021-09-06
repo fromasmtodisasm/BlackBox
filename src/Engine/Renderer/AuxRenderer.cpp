@@ -1,15 +1,11 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
-#include <BlackBox/Renderer/IShader.hpp>
-//#include <BlackBox/Renderer/BaseShader.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IConsole.hpp>
-//#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 #define V_RETURN(cond) \
 	if (!(cond)) return;
-
-#include <d3dx10.h>
 
 ID3D10Device* GetDevice();
 

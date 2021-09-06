@@ -408,10 +408,12 @@ void FreeTypeFont::SetYPos(float y)
 	posY = y;
 }
 
+#if 0
 IFont* CreateIFont()
 {
 	return new FreeTypeFont();
 }
+#endif
 
 void RegisterColorTable()
 {

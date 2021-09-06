@@ -12,6 +12,7 @@
 #	include <BlackBox/Core/Platform/Windows.hpp>
 #	define __IFont_INTERFACE_DEFINED__
 #	include <d3d10.h>
+#	include <d3dx10.h>
 #endif
 #ifdef VK_RENDERER
 #	include <vulkan/vulkan.h>

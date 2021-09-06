@@ -123,9 +123,9 @@ if(OPTION_DX_RENDERER)
 	add_common_libs()
 	add_common_includes()
 
-	find_package(D3D11 REQUIRED)
-	add_compile_definitions("DX_RENDERER")
-	target_link_libraries(${THIS_PROJECT} PRIVATE D3D11::D3D11 d3dcompiler dxguid)
+	find_package(D3D10 REQUIRED)
+	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
+	target_link_libraries(${THIS_PROJECT} PRIVATE D3D10 d3dcompiler dxguid)
 
 	message(STATUS "renderer sources")
 else()

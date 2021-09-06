@@ -1,38 +1,39 @@
 #include "BaseRenderer.hpp"
+#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IFont.hpp>
-#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IProjectManager.hpp>
+#include <BlackBox/System/IWindow.hpp>
 
 #include "AuxRendererNull.hpp"
 
-#include <SDL2/SDL.h>
 #include <BlackBox/Renderer/TextureManager.hpp>
+#include <SDL2/SDL.h>
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
-int RenderCVars::CV_r_GetScreenShot;
+int		   RenderCVars::CV_r_GetScreenShot;
 static int dump_shaders_on_load = false;
-FxParser* g_FxParser;
+FxParser*  g_FxParser;
 ShaderMan* gShMan;
 //FxParser s_FxParser;
 
 class CNullFont : public IFont
 {
-public:
-  bool Init(const char* font, unsigned int w, unsigned int h) override { return true; };
-  void RenderText(const std::string_view text, float x, float y, float scale, float color[4]) override {};
-  float GetXPos() override { return 0.f; };
-  float GetYPos() override { return 0.f; };
-  void SetXPos(float x) override {};
-  void SetYPos(float y) override {};
+  public:
+	bool  Init(const char* font, unsigned int w, unsigned int h) override { return true; };
+	void  RenderText(const std::string_view text, float x, float y, float scale, float color[4]) override{};
+	float GetXPos() override { return 0.f; };
+	float GetYPos() override { return 0.f; };
+	void  SetXPos(float x) override{};
+	void  SetYPos(float y) override{};
 
-  float TextWidth(const std::string_view text) override { return 0.f; };
-  float CharWidth(char ch) override { return 0.f; };
-  void Submit() override {}
-  void Release() override{};
+	float TextWidth(const std::string_view text) override { return 0.f; };
+	float CharWidth(char ch) override { return 0.f; };
+	void  Submit() override {}
+	void  Release() override{};
 };
 
 void TestFx(IConsoleCmdArgs* args)
@@ -44,7 +45,7 @@ void TestFx(IConsoleCmdArgs* args)
 		filename = args->GetArg(1);
 
 	PEffect pEffect = nullptr;
-	#if 0
+#if 0
 	if (g_FxParser->Parse(filename, &pEffect))
 	{
 		CryLog("Dumping shaders of effect: %s", filename.data());
@@ -53,12 +54,12 @@ void TestFx(IConsoleCmdArgs* args)
 			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
 		}
 	}
-	#endif
+#endif
 }
 
-
 CRenderer::CRenderer(ISystem* engine)
-	: m_pSystem(engine), m_viewPort(0, 0, 0, 0)
+	: m_pSystem(engine)
+	, m_viewPort(0, 0, 0, 0)
 {
 }
 
@@ -131,8 +132,6 @@ void CRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpar
 	}
 }
 
-
-
 CRenderer::~CRenderer()
 {
 	gEnv->pConsole->RemoveConsoleVarSink(this);
@@ -142,13 +141,12 @@ CRenderer::~CRenderer()
 	}
 	ReleaseBuffer(m_VertexBuffer);
 	SAFE_DELETE(m_RenderAuxGeom);
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	SAFE_DELETE(m_BufferManager);
-	#endif
+#endif
 	SAFE_DELETE(m_VertexBuffer);
 
 	delete gShMan;
-
 }
 
 IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
@@ -169,32 +167,32 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	if (!m_Window->init(&wp))
 		return nullptr;
 	CryLog("window inited");
-	#ifdef GL_RENDERER
+#ifdef GL_RENDERER
 	if (!OpenGLLoader())
 		return nullptr;
 	context = SDL_GL_GetCurrentContext();
 	// now you can make GL calls.
 	m_Window->swap();
-	#endif
-	m_hWnd	= (HWND)window->getHandle();
+#endif
+	m_hWnd = (HWND)window->getHandle();
 	if (!InitOverride())
 		return false;
-	#if 0
+#if 0
 	g_FxParser = &s_FxParser;
-	#else
-	g_FxParser = nullptr;
-	#endif
-	#if 0
+#else
+	g_FxParser		= nullptr;
+#endif
+#if 0
 	if (!InitResourceManagers())
 		return nullptr;
 	PrintHardware();
-	#endif
+#endif
 
 	m_pSystem->GetIConsole()->AddConsoleVarSink(this);
 	m_pSystem->GetISystemEventDispatcher()->RegisterListener(this, "Renderer");
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	m_BufferManager = new CBufferManager();
-	#endif
+#endif
 	CreateQuad();
 	gShMan = new ShaderMan;
 	//=======================
@@ -205,47 +203,47 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 		return nullptr;
 	}
 
-	#if 1
+#if 1
 	m_RenderAuxGeom = new CRenderAuxGeom();
-	#else
+#else
 	m_RenderAuxGeom = new CRenderAuxGeomNull();
-	#endif
+#endif
 
 	CreateRenderTarget();
 
-	auto* dm			  = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
-	#if 0
+	auto* dm = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
+#if 0
 	m_MainMSAAFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
-	#endif
+#endif
 
 	{
-		#if 0
+#if 0
 		char buffer[32];
 		snprintf(buffer, 32, "rt_%zd", m_RenderTargets.size());
 		dm = static_cast<SDL_DisplayMode*>(m_Window->GetDesktopMode());
 		m_RenderTargets.push_back(Texture::create(
 			Image(dm->w, dm->h, 3, std::vector<uint8_t>(), false),
 			TextureType::LDR_RENDER_TARGET, buffer));
-		#endif
+#endif
 	}
 
-	#if 0
+#if 0
 	m_MainReslovedFrameBuffer = FrameBufferObject::create(dm->w, dm->h, m_RenderTargets.back(), false);
 
 	perViewBuffer = PerViewBuffer::Create(2);
 	screenBuffer  = ScreenBuffer::Create(11);
-	#endif
+#endif
 
 	return result;
 }
 
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 {
-	static int displayInUse = 0; /* Only using first display */
-	int numModes			= 0;
-	int i					= 0;
+	static int		displayInUse = 0; /* Only using first display */
+	int				numModes	 = 0;
+	int				i			 = 0;
 	SDL_DisplayMode mode;
-	Uint32 f;
+	Uint32			f;
 
 	gEnv->pLog->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
 
@@ -295,7 +293,6 @@ void RenderCVars::InitCVars()
 				   "To capture one screenshot (variable is set to 0 after capturing)\n"
 				   "0=do not take a screenshot (default), 1=save a screenshot (together with .HDR if enabled), 2=save a screenshot");
 	REGISTER_CVAR(r_GraphicsDeviceId, r_GraphicsDeviceId, VF_DUMPTODISK, "");
-	
 }
 
 RenderCVars::~RenderCVars()
@@ -304,51 +301,50 @@ RenderCVars::~RenderCVars()
 
 CVertexBuffer* CRenderer::CreateBuffer(int vertexCount, int vertexFormat, const char* szSource, bool bDynamic /* = false*/)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	return m_BufferManager->Create(vertexCount, vertexFormat, szSource, bDynamic);
-	#else
+#else
 	return nullptr;
-	#endif
+#endif
 }
 
 void CRenderer::ReleaseBuffer(CVertexBuffer* bufptr)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	m_BufferManager->Release(bufptr);
-	#endif
+#endif
 }
 
 void CRenderer::DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start /* = 0*/, int vert_stop /* = 0*/, CMatInfo* mi /* = NULL*/)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	m_BufferManager->Draw(src, indicies, numindices, offsindex, prmode, vert_start, vert_stop, mi);
-	#endif
+#endif
 }
 
 void CRenderer::UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs /* = 0*/, int Type /* = 0*/)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	m_BufferManager->Update(dest, src, vertexcount, bUnLock, nOffs, Type);
-	#endif
+#endif
 }
 
 void CRenderer::CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	m_BufferManager->Create(dest, src, indexcount);
-	#endif
+#endif
 }
 
 void CRenderer::UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock /* = true*/)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	m_BufferManager->Update(dest, src, indexcount, bUnLock);
-	#endif
+#endif
 }
 
 void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 {
-
 }
 
 void CRenderer::CreateQuad()
@@ -370,8 +366,8 @@ void CRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawText
 
 void CRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)
 {
-	//TODO: implement draw image via aux render. Need extend it, to draw arbitary colored or textured primitves. In this terms, drawimage - simple drawing of textured quad. Aux Render must collect all draw request and batch it.
-	#if 0
+//TODO: implement draw image via aux render. Need extend it, to draw arbitary colored or textured primitves. In this terms, drawimage - simple drawing of textured quad. Aux Render must collect all draw request and batch it.
+#if 0
 	float
 		width  = GetWidth(),
 		height = GetHeight();
@@ -403,7 +399,7 @@ void CRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 textu
 
 	DrawFullscreenQuad();
 	m_ScreenShader->Unuse();
-	#endif
+#endif
 }
 
 int CRenderer::GetWidth()
@@ -418,11 +414,11 @@ int CRenderer::GetHeight()
 
 IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
 {
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	return m_BufferManager->CreateConstantBuffer(size);
-	#else
+#else
 	return nullptr;
-	#endif
+#endif
 }
 
 void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
@@ -441,10 +437,10 @@ int CRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, flo
 
 int CRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
 {
-	#if 0
+#if 0
 	Vec4d vp;							// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
-	#endif
+#endif
 	auto p = glm::unProject(
 		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
@@ -490,12 +486,12 @@ void CRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
 
 ITexture* CRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
 {
-	#if 0
+#if 0
 	return TextureManager::instance()->getTexture(nameTex, eTT);
-	#else
+#else
 	return new CTextureNull();
-	//return nullptr;
-	#endif
+//return nullptr;
+#endif
 }
 
 void CRenderer::SetCamera(const CCamera& cam)
@@ -510,9 +506,9 @@ const CCamera& CRenderer::GetCamera()
 
 IShader* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 {
-	#if 0
+#if 0
 	flags = int(ShaderBinaryFormat::SPIRV);
-	#endif
+#endif
 	gEnv->pLog->Log("load shader: %s", name);
 	return gShMan->Sh_Load(name, flags, nMaskGen);
 }
@@ -536,7 +532,6 @@ IRenderAuxGeom* CRenderer::GetIRenderAuxGeom()
 {
 	return m_RenderAuxGeom;
 }
-
 
 #ifdef LINUX
 #	include <experimental/filesystem>
@@ -566,7 +561,7 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 	const char* GetValue(int nIndex) const override
 	{
 #ifndef LINUX
-		int i = 0;
+		int				   i = 0;
 		static std::string file;
 		for (fs::directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next, ++i)
 		{
@@ -584,7 +579,7 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 };
 
 static STestFXAutoComplete s_TestFXAutoComplete;
-void CRenderer::InitConsoleCommands() const
+void					   CRenderer::InitConsoleCommands() const
 {
 	/*
   REGISTER_COMMAND(
@@ -640,7 +635,7 @@ void CRenderer::Flush()
 {
 	DEBUG_GROUP("AUX");
 
-	#ifndef VK_RENDERER
+#ifndef VK_RENDERER
 	auto pvb			 = perViewBuffer;
 	pvb->Projection		 = m_Camera.getProjectionMatrix();
 	pvb->View			 = m_Camera.GetViewMatrix();
@@ -649,15 +644,12 @@ void CRenderer::Flush()
 	pvb->Eye			 = gEnv->pSystem->GetViewCamera().GetPos();
 
 	pvb.CopyToDevice();
-	#endif
+#endif
 	m_RenderAuxGeom->Flush();
 }
 
 void CRenderer::Sh_Reload()
 {
 }
-
-
-
 
 #pragma warning(pop)
