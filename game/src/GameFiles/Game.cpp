@@ -13,8 +13,8 @@
 #include <BlackBox/Renderer/Texture.hpp>
 
 #include <ScriptObjects/ScriptObjectInput.hpp>
-#include <ScriptObjects/ScriptObjectTest.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
+#include <ScriptObjects/ScriptObjectTest.hpp>
 
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
@@ -22,8 +22,8 @@
 #include <Client/Client.hpp>
 
 #ifdef USE_GUI
-#include <imgui.h>
-#include <imgui_internal.h>
+#	include <imgui.h>
+#	include <imgui_internal.h>
 #endif
 
 #include "TextEditorDemo.hpp"
@@ -37,9 +37,9 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <stack>
 #include <string>
 #include <vector>
-#include <stack>
 
 int render_camera = 0;
 
@@ -83,33 +83,33 @@ namespace ImGui
 
 namespace
 {
-	#ifdef USE_STEAM
+#ifdef USE_STEAM
 	// определяем достижения
 	enum EAchievements
 	{
 		TEST_ACHIEVEMENT_1_0 = 0,
-		#if 0
+#	if 0
 		ACH_WIN_100_GAMES = 1,
 		ACH_TRAVEL_FAR_ACCUM = 2,
 		ACH_TRAVEL_FAR_SINGLE = 3,
-		#endif
+#	endif
 	};
 
 	// массив достижений, содержащий данные о достижениях и их состоянии
 	Achievement_t g_Achievements[] =
-	{
-		_ACH_ID( TEST_ACHIEVEMENT_1_0, "10 Hits To Box" ),
-		#if 0
+		{
+			_ACH_ID(TEST_ACHIEVEMENT_1_0, "10 Hits To Box"),
+#	if 0
 		_ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
 		_ACH_ID( ACH_TRAVEL_FAR_ACCUM, "Interstellar" ),
 		_ACH_ID( ACH_TRAVEL_FAR_SINGLE, "Orbiter" ),
-		#endif
+#	endif
 	};
 
 	// глобальный доступ к объекту Achievements
-	CSteamAchievements*	g_SteamAchievements = NULL;
-	#endif
-}
+	CSteamAchievements* g_SteamAchievements = NULL;
+#endif
+} // namespace
 
 #if 0
 class CRender : public IQuadTreeRender {
@@ -181,7 +181,7 @@ int g_bRenderGame = true;
 
 void LoadHistory()
 {
-	std::ifstream is("history.txt");
+	std::ifstream	   is("history.txt");
 	std::stack<string> history;
 	if (is.is_open())
 	{
@@ -203,7 +203,7 @@ void LoadHistory()
 
 void SaveHistory()
 {
-	std::ofstream is("history.txt");
+	std::ofstream	   is("history.txt");
 	std::stack<string> history;
 	if (is.is_open())
 	{
@@ -217,7 +217,6 @@ void SaveHistory()
 			history.pop();
 		}
 	}
-
 }
 
 void CGame::PreRender()
@@ -226,25 +225,24 @@ void CGame::PreRender()
 }
 
 CGame::CGame()
-	:
-	m_pSystem(nullptr),
-	m_pScriptSystem(nullptr),
-	m_pRender(nullptr),
-	m_pInput(nullptr),
-	m_inputHandler(nullptr),
-	m_3DEngine(nullptr), m_pLog(nullptr),
-	m_lastTime(0),
-	listener(nullptr),
-	m_Font(nullptr),
-	m_Console(nullptr),
-	g_scene(nullptr),
-	r_displayinfo(nullptr),
-	r_profile(nullptr),
-	r_cap_profile(nullptr),
-	m_pCVarCheatMode(nullptr),
-	m_pScriptObjectGame(nullptr)
+	: m_pSystem(nullptr)
+	, m_pScriptSystem(nullptr)
+	, m_pRender(nullptr)
+	, m_pInput(nullptr)
+	, m_inputHandler(nullptr)
+	, m_3DEngine(nullptr)
+	, m_pLog(nullptr)
+	, m_lastTime(0)
+	, listener(nullptr)
+	, m_Font(nullptr)
+	, m_Console(nullptr)
+	, g_scene(nullptr)
+	, r_displayinfo(nullptr)
+	, r_profile(nullptr)
+	, r_cap_profile(nullptr)
+	, m_pCVarCheatMode(nullptr)
+	, m_pScriptObjectGame(nullptr)
 {
-
 	//const auto ltime = time (NULL);
 	//auto stime = (unsigned int) ltime/2;
 	//srand(stime);
@@ -267,13 +265,13 @@ CGame::~CGame()
 	// shutdown the server if there is one
 	ShutdownServer();
 
-	#ifdef USE_STEAM
+#ifdef USE_STEAM
 	// Выключаем Steam
 	SteamAPI_Shutdown();
 	// Удаляем SteamAchievements
 	if (g_SteamAchievements)
 		delete g_SteamAchievements;
-	#endif
+#endif
 	CScriptObjectGame::ReleaseTemplate();
 	CScriptObjectInput::ReleaseTemplate();
 	CScriptObjectTest::ReleaseTemplate();
@@ -321,7 +319,7 @@ CGame::~CGame()
 	SAFE_DELETE(m_pVehicleSystem);
 	SAFE_DELETE(m_pPlayerSystem);
 	//shutdown script stuff
-	SAFE_DELETE(m_pScriptObjectGame);	
+	SAFE_DELETE(m_pScriptObjectGame);
 	SAFE_DELETE(m_pScriptObjectInput);
 
 	// Release the action map
@@ -330,11 +328,11 @@ CGame::~CGame()
 	if (!m_mapTagPoints.empty())
 	{
 		TagPointMap::iterator ti;
-		for (ti=m_mapTagPoints.begin();ti!=m_mapTagPoints.end();ti++)
+		for (ti = m_mapTagPoints.begin(); ti != m_mapTagPoints.end(); ti++)
 			delete ti->second;
 	}
 }
-#ifdef  USE_STEAM
+#ifdef USE_STEAM
 static GLSLEditor* glslEditor = nullptr;
 #endif //  USE_STEAM
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
@@ -345,7 +343,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_bDedicatedServer = bDedicatedSrv;
 	m_pRender		   = m_pSystem->GetIRenderer();
 	m_pInput		   = m_pSystem->GetIInput();
-	m_pScriptSystem	= m_pSystem->GetIScriptSystem();
+	m_pScriptSystem	   = m_pSystem->GetIScriptSystem();
 	m_pLog			   = m_pSystem->GetILog();
 	m_Console		   = m_pSystem->GetIConsole();
 	m_3DEngine		   = gEnv->p3DEngine;
@@ -362,11 +360,11 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
 
 	m_pVehicleSystem = new CVehicleSystem();
-	m_pPlayerSystem = new CPlayerSystem();
+	m_pPlayerSystem	 = new CPlayerSystem();
 
-	#ifdef USE_GUI
+#ifdef USE_GUI
 	glslEditor = new GLSLEditor;
-	#endif
+#endif
 	gui::init();
 
 #if 0
@@ -385,10 +383,10 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	InitConsoleVars();
 	InitCommands();
 	InitScripts();
-	m_pDevMode = std::make_unique<CDevMode>();	
+	m_pDevMode = std::make_unique<CDevMode>();
 
-	SmartScriptObject Gui(m_pScriptSystem,true);
-	if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
+	SmartScriptObject Gui(m_pScriptSystem, true);
+	if (!m_pScriptSystem->GetGlobalValue("Gui", *Gui))
 	{
 		CryError("Cannot find Gui table in scripts (wrong working folder?)");
 		return false;
@@ -399,12 +397,11 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	}
 	//m_Console->ExecuteString("@Player:OnInit()");
 
-	
 	// init key-bindings
 	if (!m_bDedicatedServer)
 		InitInputMap();
 
-	LoadConfiguration("","game.cfg");
+	LoadConfiguration("", "game.cfg");
 
 	if (!m_bDedicatedServer)
 	{
@@ -437,7 +434,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	InitConsoleCommands();
 
-	//DevModeInit();
+	DevModeInit();
 
 	InitPlayer();
 	//m_pInput->ShowCursor(false);
@@ -461,11 +458,11 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 #endif
 
 	m_pClient = new CClient(this);
-	#if 0
+#if 0
 	m_Console->ExecuteFile("res/scripts/postinit.cfg");
-	#else
+#else
 	m_Console->ExecuteString("@Player:PostInit()");
-	#endif
+#endif
 	m_pClient->Init();
 	if (m_Console->GetCVar("nsightDebug"))
 	{
@@ -482,114 +479,104 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 //////////////////////////////////////////////////////////////////////
 bool CGame::InitClassRegistry()
 {
-	m_EntityClassRegistry.Init( m_pSystem );
-	CPlayerSystem *pPlayerSystem = GetPlayerSystem();
-	CVehicleSystem *pVehicleSystem = GetVehicleSystem();
+	m_EntityClassRegistry.Init(m_pSystem);
+	CPlayerSystem*	pPlayerSystem  = GetPlayerSystem();
+	CVehicleSystem* pVehicleSystem = GetVehicleSystem();
 	//CWeaponSystemEx *pWeaponSystemEx = GetWeaponSystemEx();	// m10
 
-	assert( pPlayerSystem );
-	assert( pVehicleSystem );
+	assert(pPlayerSystem);
+	assert(pVehicleSystem);
 	//assert( pWeaponSystemEx );
 
 	// Enumerate entity classes.
-	EntityClass *entCls = NULL;
+	EntityClass* entCls = NULL;
 	m_EntityClassRegistry.MoveFirst();
 	do {
 		entCls = m_EntityClassRegistry.Next();
 		if (entCls)
 		{
-			const char* entity_type = entCls->strGameType.c_str();
-			EntityClassId ClassId = entCls->ClassId;
-			if(strcmp("Player",entity_type)==0)
+			const char*	  entity_type = entCls->strGameType.c_str();
+			EntityClassId ClassId	  = entCls->ClassId;
+			if (strcmp("Player", entity_type) == 0)
 				pPlayerSystem->AddPlayerClass(ClassId);
 
-			if(strcmp("Vehicle",entity_type)==0)
+			if (strcmp("Vehicle", entity_type) == 0)
 				pVehicleSystem->AddVehicleClass(ClassId);
 
-			#if 0
+#if 0
 			if(strcmp("Projectile",entity_type)==0)
 			{
 				// cannot be loaded at that point - other scripts must be loaded before
 				pWeaponSystemEx->AddProjectileClass(ClassId);
 			}
-			#endif
+#endif
 		}
 	} while (entCls);
 	return true;
 }
 
-
 static ITexture* splash = nullptr;
-bool CGame::Update()
+bool			 CGame::Update()
 {
-	static const auto& render_game = true;
-	const bool bRenderFrame		   = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
-	static int num_frames = 0xffff;
+	static const auto& render_game	= true;
+	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
+	static int		   num_frames	= 0xffff;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
-	#ifdef USE_STEAM
+#ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
-	#endif
+#endif
 	{
 		// TODO: FIX IT
 		m_deltaTime = m_pSystem->GetDeltaTime();
 		m_time += m_deltaTime;
 		fps = 1.0f / m_deltaTime;
 		ExecScripts();
-		
 
 		if (bRenderFrame)
 		{
-			#if 0
+#if 0
 			SmartScriptObject Gui(m_pScriptSystem,true);
 			if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
 			{
 				CryError("Cannot find Gui table in scripts (wrong working folder?)");
 				return false;
 			}
-			#endif
+#endif
 
 			SetRenderState();
 			m_pSystem->RenderBegin();
 			{
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 				m_pClient->Update();
-				
+
 				if (g_bRenderGame)
 				{
 					Render();
 				}
 			}
 
-			//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-			#if 0
+//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
+#if 0
 			m_pScriptSystem->BeginCall(Gui, "OnDraw");
 			m_pScriptSystem->PushFuncParam(Gui);
 			m_pScriptSystem->EndCall();
-			#endif
+#endif
 
-			//DrawHud(fps);
-			#ifdef uSE_GUI
+//DrawHud(fps);
+#ifdef uSE_GUI
 			glslEditor->Update();
 			m_Gui.Update();
 			gui::update();
-			#endif
-			//PROFILER_POP_CPU_MARKER();
-			if (!m_isActive || true)
-			{
-#ifndef BB_PLATFORM_LINUX
-				Sleep(40);
 #endif
-			}
+			//PROFILER_POP_CPU_MARKER();
 		}
 	}
-	#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// Special update function for developers mode.
 	//////////////////////////////////////////////////////////////////////////
 	if (IsDevModeEnable() && false)
 		DevModeUpdate();
-	#endif
 	//////////////////////////////////////////////////////////////////////////
 	while (!m_qMessages.empty())
 	{
@@ -626,18 +613,18 @@ void CGame::DisplayInfo(float fps)
 {
 	size_t num_objects;
 	num_objects = m_3DEngine->GetLoadedObjectCount();
-	auto line   = m_pRender->GetHeight();
-	auto step   = 18;
+	auto line	= m_pRender->GetHeight();
+	auto step	= 18;
 
-	const std::string mode = m_Mode == MENU ? "MENU"
-								 : m_Mode == FPS ? "FPS"
-								 : m_Mode == FLY ? "FLY"
-								 : "EDIT";
+	const std::string mode = m_Mode == MENU	 ? "MENU"
+							 : m_Mode == FPS ? "FPS"
+							 : m_Mode == FLY ? "FLY"
+											 : "EDIT";
 
 	// Info
 	TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
-	SDrawTextInfo dti = info.getDTI();
-	SDrawTextInfo MenuDTI;
+	SDrawTextInfo  dti = info.getDTI();
+	SDrawTextInfo  MenuDTI;
 	MenuDTI.color[0] = 0;
 	MenuDTI.color[0] = 1;
 	MenuDTI.color[0] = 0;
@@ -651,7 +638,7 @@ void CGame::DisplayInfo(float fps)
 
 	m_Font->SetXPos(0);
 	m_Font->SetYPos(18);
-	auto& text  = info.m_Text;
+	auto& text	= info.m_Text;
 	auto& color = info.m_Color;
 	//auto camera = m_World->getActiveScene()->getCurrentCamera();
 
@@ -706,14 +693,14 @@ void CGame::DisplayInfo(float fps)
 		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */ c.y)).c_str(), info.getDTI());
 		m_Font->SetYPos((float)m_pRender->GetHeight() / 2);
 		{
-			#if 0
+#if 0
 			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
 			auto pos = std::to_string(lpp.x) + ",";
 			pos += std::to_string(lpp.y) + ",";
 			pos += std::to_string(lpp.z) + ";\n";
 			render->PrintLine((std::string("Last picking pos: ") + pos).data(), info.getDTI());
 			render->PrintLine((std::string("Current distant: ") + std::to_string(m_IntersectionState.m_CurrentDistant)).data(), info.getDTI());
-			#endif
+#endif
 		}
 	}
 }
@@ -821,7 +808,7 @@ IGAME_API IGame* CreateIGame()
 bool CGame::OnInputEvent(const SInputEvent& event)
 {
 	{
-		bool retflag;
+		bool	   retflag;
 		const bool retval = ShouldHandleEvent(event, retflag);
 		if (retflag)
 			return retval;
@@ -837,10 +824,10 @@ void CGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	////////////////////////
-	const bool keyPressed = (event.deviceType == eIDT_Keyboard  || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
-	const bool control	= event.modifiers & eMM_Ctrl;
-	const bool shift		= event.modifiers & eMM_Shift;
-	bool alt		= event.modifiers & eMM_Alt;
+	const bool keyPressed = (event.deviceType == eIDT_Keyboard || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
+	const bool control	  = event.modifiers & eMM_Ctrl;
+	const bool shift	  = event.modifiers & eMM_Shift;
+	bool	   alt		  = event.modifiers & eMM_Alt;
 	////////////////////////
 	if (keyPressed)
 	{
@@ -885,7 +872,7 @@ void CGame::GotoGame()
 		//m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
 
 		m_bInPause = false;
-		m_Mode = FPS;
+		m_Mode	   = FPS;
 		m_pInput->ShowCursor(false);
 		m_pInput->GrabInput(true);
 		m_Console->ShowConsole(false);
@@ -934,9 +921,9 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 
 	////////////////////////
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	const bool control	= event.modifiers & eMM_Ctrl;
-	const bool shift		= event.modifiers & eMM_Shift;
-	const bool alt		= event.modifiers & eMM_Alt;
+	const bool control	  = event.modifiers & eMM_Ctrl;
+	const bool shift	  = event.modifiers & eMM_Shift;
+	const bool alt		  = event.modifiers & eMM_Alt;
 	////////////////////////
 	auto camera = gEnv->pRenderer->GetCamera();
 	if (keyPressed)
@@ -952,10 +939,10 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			//m_SelectedBox = ++m_SelectedBox % m_testObjects.size();
 			return true;
 		case eKI_M:
-			camera.mode						  = CCamera::Mode::FLY;
-			m_Mode							  = Mode::FLY;
+			camera.mode = CCamera::Mode::FLY;
+			m_Mode		= Mode::FLY;
 			return true;
-			#if 0
+#if 0
 		case eKI_H:
 			m_IntersectionState.picked->m_AABB.min.x += 1;
 			m_IntersectionState.picked->m_AABB.max.x += 1;
@@ -981,7 +968,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 			m_IntersectionState.picked->m_AABB.max.y += module;
 			return true;
 		}
-		#endif
+#endif
 		case eKI_Escape:
 			GotoMenu();
 			return true;
@@ -1021,9 +1008,9 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 {
 	////////////////////////
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
-	bool alt		= event.modifiers & eMM_Alt;
+	bool	   control	  = event.modifiers & eMM_Ctrl;
+	bool	   shift	  = event.modifiers & eMM_Shift;
+	bool	   alt		  = event.modifiers & eMM_Alt;
 	////////////////////////
 	if (keyPressed)
 	{
@@ -1054,9 +1041,9 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 {
 	////////////////////////
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
-	bool alt		= event.modifiers & eMM_Alt;
+	bool	   control	  = event.modifiers & eMM_Ctrl;
+	bool	   shift	  = event.modifiers & eMM_Shift;
+	bool	   alt		  = event.modifiers & eMM_Alt;
 	////////////////////////
 	if (keyPressed)
 	{
@@ -1163,10 +1150,10 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool control	= event.modifiers & eMM_Ctrl;
-	bool shift		= event.modifiers & eMM_Shift;
-	bool alt		= event.modifiers & eMM_Alt;
-	retflag			= true;
+	bool	   control	  = event.modifiers & eMM_Ctrl;
+	bool	   shift	  = event.modifiers & eMM_Shift;
+	bool	   alt		  = event.modifiers & eMM_Alt;
+	retflag				  = true;
 
 	if (keyPressed)
 	{
@@ -1197,23 +1184,22 @@ void CGame::ProcessPMessages(const char* szMsg)
 		m_bUpdateRet = false;
 		return;
 	}
-	else
-	if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
+	else if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
 	{
-		m_bRelaunch  = true;
+		m_bRelaunch	 = true;
 		m_bUpdateRet = false;
 		return;
 	}
-	else
-	if (strnicmp(szMsg,"SaveGame", 8)==0)		// save current game
+	else if (strnicmp(szMsg, "SaveGame", 8) == 0) // save current game
 	{
-		if(!m_bEditor)
+		if (!m_bEditor)
 		{
-			const char *sname="quicksave";
-			if(strlen(szMsg)>8) { 
-				sname=szMsg+9;
+			const char* sname = "quicksave";
+			if (strlen(szMsg) > 8)
+			{
+				sname = szMsg + 9;
 			}
-			Save(sname, NULL, NULL);			
+			Save(sname, NULL, NULL);
 		}
 	}
 }
@@ -1235,7 +1221,7 @@ void CGame::PostRender()
 
 void CGame::GotoMenu()
 {
-	m_Mode	 = MENU;
+	m_Mode	   = MENU;
 	m_bInPause = true;
 	m_pInput->ShowCursor(true);
 	m_pInput->GrabInput(false);
@@ -1252,7 +1238,7 @@ bool CGame::InitScripts()
 	m_pScriptObjectGame = new CScriptObjectGame();
 	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
 
-	m_pScriptObjectInput=new CScriptObjectInput;
+	m_pScriptObjectInput = new CScriptObjectInput;
 	CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
 
 	auto SOT = new CScriptObjectTest();
@@ -1260,7 +1246,6 @@ bool CGame::InitScripts()
 	SOT->Init(m_pScriptSystem, this);
 	CScriptObjectTest::ReleaseTemplate();
 	SAFE_DELETE(SOT);
-
 
 #if 0
   m_pScriptClient = new CScriptObjectClient();
@@ -1271,7 +1256,7 @@ bool CGame::InitScripts()
 #endif
 
 	m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
-	m_pScriptObjectInput->Init(m_pScriptSystem,this,m_pSystem);
+	m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
 #if 0
   m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
   m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
@@ -1337,7 +1322,7 @@ bool CGame::TestScriptSystem(bool& retflag)
 		return false;
 	}
 	const char* name;
-	int age;
+	int			age;
 	m_playerObject->GetValue("name", name);
 	m_playerObject->GetValue("age", age);
 	CryLogAlways("Player name: %s", name);
@@ -1446,7 +1431,7 @@ bool CGame::SteamInit()
 	{
 		g_SteamAchievements = new CSteamAchievements(g_Achievements, 1);
 		// Получить имена профилей Steam текущих пользователей.
-		const char *name = SteamFriends()->GetPersonaName();
+		const char* name = SteamFriends()->GetPersonaName();
 		gEnv->pLog->Log("person name: %s", name);
 	}
 
@@ -1466,7 +1451,7 @@ void CGame::Gui::Graphics::Draw()
 	if (ImGui::TreeNode("Graphics"))
 	{
 		auto cnt = gEnv->pRenderer->EnumDisplayFormats(nullptr);
-		ImGui::TreePop();	
+		ImGui::TreePop();
 	}
 }
 
@@ -1474,7 +1459,7 @@ void CGame::Gui::Input::Draw()
 {
 	if (ImGui::TreeNode("Input"))
 	{
-		ImGui::TreePop();	
+		ImGui::TreePop();
 	}
 }
 
@@ -1500,14 +1485,14 @@ void CGame::Gui::Windows::Draw()
 		}
 	}
 	ImGui::EndMainMenuBar();
-	ControlPanel::AddEntry([&] {
-		for (const auto w : widgets)
-		{
-			w->Draw();
-			ImGui::Separator();
-		}
-
-	});
+	ControlPanel::AddEntry([&]
+						   {
+							   for (const auto w : widgets)
+							   {
+								   w->Draw();
+								   ImGui::Separator();
+							   }
+						   });
 }
 
 void CGame::Gui::Common::Draw()
@@ -1515,15 +1500,16 @@ void CGame::Gui::Common::Draw()
 	static char var_buffer[256];
 	union CVarValue
 	{
-		bool b;
-		int i;	
-		float f;	
-		const char* s;	
+		bool		b;
+		int			i;
+		float		f;
+		const char* s;
 	};
 	static CVarValue cvv;
-	static ICVar* cur_var	  = nullptr;
+	static ICVar*	 cur_var = nullptr;
 
-	auto change_value = [&](ICVar* v) {
+	auto change_value = [&](ICVar* v)
+	{
 		switch (v->GetType())
 		{
 		case CVAR_INT:
@@ -1542,18 +1528,17 @@ void CGame::Gui::Common::Draw()
 			auto l = strlen(s);
 			strncpy(var_buffer, s, l);
 			var_buffer[l] = 0;
-			cvv.s = var_buffer;
+			cvv.s		  = var_buffer;
 			break;
 		}
 		default:
 			break;
 		}
-
 	};
 
 	if (ImGui::TreeNode("Common"))
 	{
-		static char search_pattern[256] = "sv"; 
+		static char search_pattern[256] = "sv";
 		static bool need_dump			= true;
 		ImGui::Button("Test");
 		if (ImGui::Button("Quit"))
@@ -1588,7 +1573,7 @@ void CGame::Gui::Common::Draw()
 			}
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Help:\n%s", cur_var->GetHelp());
-			auto v = cur_var;
+			auto v	  = cur_var;
 			auto name = cur_var->GetName();
 
 			switch (v->GetType())
@@ -1614,6 +1599,5 @@ void CGame::Gui::Common::Draw()
 		}
 		ImGui::TreePop();
 	}
-
 }
 #endif
