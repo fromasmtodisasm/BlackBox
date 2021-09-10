@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-lua_State* CScriptObject::L			= nullptr;
+lua_State*	   CScriptObject::L		= nullptr;
 CScriptSystem* CScriptObject::m_pSS = nullptr;
 
 ///////////////////////////////////////////////////////////////////
@@ -464,9 +464,9 @@ bool CScriptObject::GetAt(int nIdx, IScriptObject* Val)
 bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
 {
 	UserDataInfo* ud;
-	auto result = GetAtAny(this, nIdx, (USER_DATA&)ud);
-	nValue		= (USER_DATA&)ud->ptr;
-	nCookie		= ud->cookie;
+	auto		  result = GetAtAny(this, nIdx, (USER_DATA&)ud);
+	nValue				 = (USER_DATA&)ud->ptr;
+	nCookie				 = ud->cookie;
 	return result;
 }
 
@@ -589,7 +589,7 @@ int CScriptObject::Count()
 
 bool CScriptObject::Clone(IScriptObject* pObj)
 {
-	int top				  = lua_gettop(L);
+	int	 top			  = lua_gettop(L);
 	bool bDeepCopy		  = true;
 	bool bCopyByReference = false;
 
@@ -824,6 +824,7 @@ bool CScriptObject::AddSetGetHandlers(SCRIPT_FUNCTION pSetThunk, SCRIPT_FUNCTION
 
 void CScriptObject::RegisterParent(IScriptObjectSink* pSink)
 {
+	m_pParent = pSink;
 }
 
 void CScriptObject::Detach()
@@ -832,6 +833,8 @@ void CScriptObject::Detach()
 
 void CScriptObject::Release()
 {
+	if (m_pParent)
+		m_pParent->OnRelease();
 	delete this;
 }
 
