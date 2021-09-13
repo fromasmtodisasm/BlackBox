@@ -4,6 +4,7 @@
 //
 #define IDD_DIALOGBAR                   103
 #define IDC_STATIC                      -1
+#define MAIN_ICO						1
 
 // Next default values for new objects
 // 

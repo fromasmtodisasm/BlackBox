@@ -281,6 +281,7 @@ void  CGame::ResetInputMap()
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   //jump (outside common key bindings because space is reserved for hold the breath
   //in zoom mode)
@@ -342,6 +343,7 @@ void  CGame::ResetInputMap()
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   //hold the breath
   pMap->BindAction(ACTION_HOLDBREATH, eKI_Space);
@@ -419,6 +421,7 @@ void  CGame::ResetInputMap()
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   // breaks (actually use - to jump out of the car)
   pMap->BindAction(ACTION_JUMP, eKI_Space);
@@ -438,6 +441,7 @@ void  CGame::ResetInputMap()
   pMap = m_pIActionMapManager->CreateActionMap("player_dead");
 
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_Left);
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_Right);
@@ -462,17 +466,21 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_A);
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_NP_4);
   pMap->BindAction(ACTION_MOVE_LEFT,eKI_XI_DPadLeft);
+  pMap->BindAction(ACTION_MOVE_LEFT, eKI_XI_ThumbRLeft);
 
   //strafe right
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_D);
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_NP_6);
   pMap->BindAction(ACTION_MOVE_RIGHT,eKI_XI_DPadRight);
+  pMap->BindAction(ACTION_MOVE_RIGHT, eKI_XI_ThumbRRight);
 
   //run forward
   pMap->BindAction(ACTION_MOVE_FORWARD, eKI_W);
   pMap->BindAction(ACTION_MOVE_FORWARD,eKI_NP_8);
   pMap->BindAction(ACTION_MOVE_FORWARD, eKI_NP_5);
   pMap->BindAction(ACTION_MOVE_FORWARD,eKI_XI_DPadUp);
+  pMap->BindAction(ACTION_MOVE_FORWARD,eKI_XI_TriggerLBtn);
+
 
 #if 0
   pMap->BindAction(ACTION_MOVELR, eKI_J_AXIS_1);
@@ -484,6 +492,7 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_NP_5);
   pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_NP_2);
   pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_XI_DPadDown);
+  pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_XI_TriggerRBtn);
 
   //look around
   pMap->BindAction(ACTION_TURNLR,eKI_MouseX);

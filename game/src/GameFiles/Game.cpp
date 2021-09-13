@@ -332,7 +332,7 @@ CGame::~CGame()
 			delete ti->second;
 	}
 }
-#ifdef USE_STEAM
+#if defined USE_STEAM && defined GLSL_EDITOR
 static GLSLEditor* glslEditor = nullptr;
 #endif //  USE_STEAM
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)

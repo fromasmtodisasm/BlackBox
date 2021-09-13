@@ -117,6 +117,23 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Set the METADATA fields used by `add_metadata` macro from CommonMacros
+if(WINDOWS)
+	if (NOT METADATA_COMPANY)
+		set(METADATA_COMPANY "Crytek GmbH")
+	endif()
+	set(METADATA_COMPANY "${METADATA_COMPANY}" CACHE STRING "Company name for executable metadata")
+
+	if (NOT METADATA_COPYRIGHT)
+		string(TIMESTAMP year "%Y")
+		set(METADATA_COPYRIGHT "(C) ${year} ${METADATA_COMPANY}")
+	endif()
+	set(METADATA_COPYRIGHT "${METADATA_COPYRIGHT}" CACHE STRING "Copyright string for executable metadata")	
+
+	string(REPLACE . , METADATA_VERSION_COMMA ${METADATA_VERSION})
+	set(METADATA_VERSION_COMMA ${METADATA_VERSION_COMMA} CACHE INTERNAL "" FORCE)
+endif(WINDOWS)
+
 include("${TOOLS_CMAKE_DIR}/ClangFormat.cmake")
 include("${TOOLS_CMAKE_DIR}/Build.cmake")
 

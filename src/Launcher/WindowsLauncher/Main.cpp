@@ -11,7 +11,6 @@
 #include "resource.h"
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
-#if 1
 extern "C"
 {
 	// nVidia
@@ -19,7 +18,6 @@ extern "C"
 	// AMD
 	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
 }
-#endif
 
 static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

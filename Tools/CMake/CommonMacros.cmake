@@ -396,7 +396,6 @@ macro(add_sources name)
 				#if (EXISTS ${ARG})
 				if (TRUE)
 					#set_source_files_properties(${ARG} PROPERTIES HEADER_FILE_ONLY TRUE)
-					message(STATUS "adding SOURCE: ${ARG}")
 					add_files(${ARG})
 				else()
 					message(STATUS "this file not exist!!!: ${ARG}")	
@@ -431,9 +430,10 @@ macro(apply_compile_settings)
 		#CryQt defines incompatible DLLExport in stdafx, temporarily disable PCH for CryQt now
 		if (NOT "${THIS_PROJECT}" STREQUAL "CryQt")
 			#USE_MSVC_PRECOMPILED_HEADER( ${THIS_PROJECT} ${MODULE_PCH_H} ${MODULE_PCH} )
+			message(STATUS "target precompiled header = ${MODULE_PCH}")
 			target_precompile_headers(${THIS_PROJECT}
 			  PRIVATE 
-			  ${MODULE_PCH_H}
+			  ${MODULE_PCH}
 			)
 		endif()
 		set_property(TARGET ${THIS_PROJECT} APPEND PROPERTY AUTOMOC_MOC_OPTIONS -b${MODULE_PCH_H})
@@ -487,9 +487,9 @@ function(EngineModule target)
 		)
 	endif()
 
-	message(STATUS "Adding sources for target ${THIS_PROJECT}")
+	#message(STATUS "Adding sources for target ${THIS_PROJECT}")
 	foreach(src include ${${THIS_PROJECT}_SOURCES})
-		message(STATUS "!!!: ${src}")
+		#message(STATUS "!!!: ${src}")
 	endforeach()
 
 	if (MODULE_EDITOR_COMPILE_SETTINGS)
@@ -511,7 +511,7 @@ function(EngineModule target)
 	if ((OPTION_STATIC_LINKING OR MODULE_FORCE_STATIC) AND NOT MODULE_FORCE_SHARED)
 		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
 	endif()
-	#add_metadata()
+	add_metadata()
 	if (ANDROID AND NOT OPTION_STATIC_LINKING AND NOT MODULE_FORCE_STATIC) 
 		set(SHARED_MODULES ${SHARED_MODULES} ${THIS_PROJECT} CACHE INTERNAL "Shared modules for APK creation" FORCE)
 		target_link_libraries(${THIS_PROJECT} PRIVATE m log c android)
@@ -528,6 +528,81 @@ function(EngineModule target)
 	#apply_ltcg_if_enabled()
 
 endfunction()
+
+function(GameModule target)
+	prepare_project(${ARGN})
+	if (OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+		add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
+	else()
+		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
+	endif()
+	apply_compile_settings()
+	set(game_folder ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "Game folder used for resource files on Windows" FORCE)
+	set(GAME_MODULES ${GAME_MODULES} ${THIS_PROJECT} CACHE INTERNAL "List of game modules being built" FORCE)
+	list(LENGTH GAME_MODULES NUM_GAME_MODULES)
+	if (NUM_GAME_MODULES GREATER 1 AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
+		message(FATAL_ERROR " OPTION_RUNTIME_CVAR_OVERRIDES should be enabled when having more than one project enabled. Add sys_cvar_overrides_path = <path to CVarOverrides.h> e.g. Code/GameSDK/GameDLL/CVarOverrides.h to your system.cfg")
+	endif()
+
+	if (OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+	elseif(ANDROID)
+		set(SHARED_MODULES ${SHARED_MODULES} ${THIS_PROJECT} CACHE INTERNAL "Shared modules for APK creation" FORCE)
+		target_link_libraries(${THIS_PROJECT} PRIVATE m log c android)
+	endif()
+
+	add_metadata()
+
+	if(OPTION_DEDICATED_SERVER)
+		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER")
+	endif()
+
+	if (NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
+		install(TARGETS ${target} LIBRARY DESTINATION bin RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
+	endif()
+
+	file(READ "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h" project_cvar_overrides_h_content)
+	if(EXISTS "${game_folder}/CVarOverrides.h" AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
+		if(NOT project_cvar_overrides_h_content STREQUAL "#include \"${game_folder}/CVarOverrides.h\"")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h" "#include \"${game_folder}/CVarOverrides.h\"")
+		endif()
+	else()
+		if(NOT project_cvar_overrides_h_content STREQUAL "")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h" "")
+		endif()
+	endif()
+
+	file(READ "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h" project_cvar_whitelist_h_content)
+	if(EXISTS "${game_folder}/CVarWhitelist.h" AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
+		if(NOT project_cvar_whitelist_h_content STREQUAL "#include \"${game_folder}/CVarWhitelist.h\"")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h" "#include \"${game_folder}/CVarWhitelist.h\"")
+		endif()
+	else()
+		if(NOT project_cvar_overrides_h_content STREQUAL "")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h" "")
+		endif()
+	endif()
+
+	file(READ "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h" project_engine_define_overrides_h_content)
+	if(EXISTS "${game_folder}/EngineDefineOverrides.h" AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
+		if(NOT project_engine_define_overrides_h_content STREQUAL "#include \"${game_folder}/EngineDefineOverrides.h\"")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h" "#include \"${game_folder}/EngineDefineOverrides.h\"")
+		endif()
+	else()
+		if(NOT project_engine_define_overrides_h_content STREQUAL "")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h" "")
+		endif()
+	endif()
+
+	if(EXISTS "${game_folder}/EngineDefineOverrides.h" AND OPTION_RUNTIME_CVAR_OVERRIDES)
+		MESSAGE(WARNING "Disabling project engine define overrides because OPTION_RUNTIME_CVAR_OVERRIDES was enabled!")
+	endif()
+
+#	apply_ltcg_if_enabled()
+
+endfunction()
+
+
 function(add_SDL_net)
 	if (DEFINED LINUX OR DEFINED MINGW)
 		if (NOT DEFINED VCPKG_INSTALLER)
@@ -546,6 +621,7 @@ function(add_SDL_net)
 endfunction()
 
 function(Launcher target)
+	message(STATUS "Launcher target: ${target}")
 	prepare_project(${ARGN})
 	if(ANDROID)
 		add_library(${target} SHARED ${${THIS_PROJECT}_SOURCES})
@@ -606,6 +682,177 @@ function(CryFileContainer target)
 	endif()
 endfunction()
 
+# For Windows, an argument may be provided to specify the location of an icon for the executable
+function(add_metadata)
+	if (WINDOWS)
+		get_target_property(project_type ${THIS_PROJECT} TYPE)
+		set(valid_types EXECUTABLE MODULE_LIBRARY SHARED_LIBRARY)
+		if(NOT ${project_type} IN_LIST valid_types)
+			return()
+		endif()
+		
+		set(icon_name ${ARGN})
+		if (NOT PRODUCT_NAME)
+			set(PRODUCT_NAME ${THIS_PROJECT})
+		endif()
+		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+			"// Microsoft Visual C++ generated resource script.\n"
+			"//\n"
+			"#include \"resource.h\"\n"
+			"\n"
+			"#define APSTUDIO_READONLY_SYMBOLS\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"//\n"
+			"// Generated from the TEXTINCLUDE 2 resource.\n"
+			"//\n"
+			"#include \"winres.h\"\n"
+			"\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"#undef APSTUDIO_READONLY_SYMBOLS\n"
+			"\n"
+			)
+		if (FALSE)
+			file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+				"/////////////////////////////////////////////////////////////////////////////\n"
+				"// Neutral resources\n"
+				"\n"
+				"#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)\n"
+				"LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL\n"
+				"#pragma code_page(1252)\n"
+				"\n"
+				"/////////////////////////////////////////////////////////////////////////////\n"
+				"//\n"
+				"// Cursor\n"
+				"//\n"
+				"\n"
+				"\"${project.cursor_resource_name}\"   CURSOR                  \"${project.cursor_name}\"\n"
+				"\n"
+				"#endif    // Neutral resources\n"
+				"/////////////////////////////////////////////////////////////////////////////\n"
+			)
+		endif()
+		file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+			"		"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"// English (United States) resources\n"
+			"\n"
+			"#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\n"
+			"LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US\n"
+			"#pragma code_page(1252)\n"
+			"\n"
+			"#ifdef APSTUDIO_INVOKED\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"//\n"
+			"// TEXTINCLUDE\n"
+			"//\n"
+			"\n"
+			"1 TEXTINCLUDE \n"
+			"BEGIN\n"
+			"    \"resource.h\\0\"\n"
+			"END\n"
+			"\n"
+			"2 TEXTINCLUDE \n"
+			"BEGIN\n"
+			"    \"#include \"\"winres.h\"\"\\r\\n\"\n"
+			"    \"\\0\"\n"
+			"END\n"
+			"\n"
+			"3 TEXTINCLUDE \n"
+			"BEGIN\n"
+			"    \"\\r\\n\"\n"
+			"    \"\\0\"\n"
+			"END\n"
+			"\n"
+			"#endif    // APSTUDIO_INVOKED\n"
+			"\n"
+		)
+		if (icon_name AND EXISTS "${game_folder}/../Resources/${icon_name}")
+			file(COPY "${game_folder}/../Resources/${icon_name}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+			file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+				"// Icon with lowest ID value placed first to ensure application icon\n"
+				"// remains consistent on all systems.\n"
+				"IDI_ICON                ICON                    \"${icon_name}\"\n"
+			)
+		else()
+			message(STATUS "icon [${game_folder}/../Resources/${icon_name}] not exists")
+		endif()
+		file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+			"#endif    // English (United States) resources\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"\n"
+			"\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"// German (Germany) resources\n"
+			"\n"
+			"#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)\n"
+			"LANGUAGE LANG_GERMAN, SUBLANG_GERMAN\n"
+			"#pragma code_page(1252)\n"
+			"\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"//\n"
+			"// Version\n"
+			"//\n"
+			"\n"
+			"VS_VERSION_INFO VERSIONINFO\n"
+			" FILEVERSION ${METADATA_VERSION_COMMA}\n"
+			" PRODUCTVERSION ${METADATA_VERSION}\n"
+			" FILEFLAGSMASK 0x17L\n"
+			"#ifdef _DEBUG\n"
+			" FILEFLAGS 0x1L\n"
+			"#else\n"
+			" FILEFLAGS 0x0L\n"
+			"#endif\n"
+			" FILEOS 0x4L\n"
+			" FILETYPE 0x2L\n"
+			" FILESUBTYPE 0x0L\n"
+			"BEGIN\n"
+			"    BLOCK \"StringFileInfo\"\n"
+			"    BEGIN\n"
+			"        BLOCK \"000904b0\"\n"
+			"        BEGIN\n"
+			"            VALUE \"CompanyName\", \"${METADATA_COMPANY}\"\n"
+			"            VALUE \"FileVersion\", \"${METADATA_VERSION_COMMA}\"\n"
+			"            VALUE \"LegalCopyright\", \"${METADATA_COPYRIGHT}\"\n"
+			"            VALUE \"ProductName\", \"${PRODUCT_NAME}\"\n"
+			"            VALUE \"ProductVersion\", \"${METADATA_VERSION}\"\n"
+			"        END\n"
+			"    END\n"
+			"    BLOCK \"VarFileInfo\"\n"
+			"    BEGIN\n"
+			"        VALUE \"Translation\", 0x9, 1200\n"
+			"    END\n"
+			"END\n"
+			"\n"
+			"#endif    // German (Germany) resources\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"\n"
+			"\n"
+			"\n"
+			"#ifndef APSTUDIO_INVOKED\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"//\n"
+			"// Generated from the TEXTINCLUDE 3 resource.\n"
+			"//\n"
+			"\n"
+			"\n"
+			"/////////////////////////////////////////////////////////////////////////////\n"
+			"#endif    // not APSTUDIO_INVOKED\n"
+		)
+		target_sources(${THIS_PROJECT} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc")
+		source_group("Resource Files" FILES "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc")
+	elseif(METADATA_VERSION)
+		string(REPLACE "." ";" VERSION_LIST ${METADATA_VERSION}) 
+		list(GET VERSION_LIST 0 VERSION_MAJOR) 
+		list(GET VERSION_LIST 1 VERSION_MINOR) 
+		list(GET VERSION_LIST 2 VERSION_REVISION) 
+		list(GET VERSION_LIST 3 VERSION_BUILD) 
+
+		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_0=${VERSION_MAJOR}) 
+		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_1=${VERSION_MINOR}) 
+		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_2=${VERSION_REVISION}) 
+		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_3=${VERSION_BUILD})
+	endif()
+endfunction()
 
 
 CommonMacrosInit()

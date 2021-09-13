@@ -123,10 +123,11 @@ bool CSDLPad::Init()
 	MapSymbol(SDL_GAMEPAD_LEFT_THUMB_X, eKI_XI_ThumbLX, "xi_thumblx", SInputSymbol::Axis);
 	MapSymbol(SDL_GAMEPAD_LEFT_THUMB_Y, eKI_XI_ThumbLY, "xi_thumbly", SInputSymbol::Axis);
 	// Map left thumb dpad button events to corresponing dpad hat events
-	/*MapSymbol(SDL_GAMEPAD_LEFT_THUMB_UP, eKI_XI_DPadUp, "xi_dpad_up");
-     MapSymbol(SDL_GAMEPAD_LEFT_THUMB_DOWN, eKI_XI_DPadDown, "xi_dpad_down");
-     MapSymbol(SDL_GAMEPAD_LEFT_THUMB_LEFT, eKI_XI_DPadLeft, "xi_dpad_left");
-     MapSymbol(SDL_GAMEPAD_LEFT_THUMB_RIGHT, eKI_XI_DPadRight, "xi_dpad_right");*/
+	MapSymbol(SDL_GAMEPAD_LEFT_THUMB_UP, eKI_XI_DPadUp, "xi_dpad_up");
+    MapSymbol(SDL_GAMEPAD_LEFT_THUMB_DOWN, eKI_XI_DPadDown, "xi_dpad_down");
+    MapSymbol(SDL_GAMEPAD_LEFT_THUMB_LEFT, eKI_XI_DPadLeft, "xi_dpad_left");
+    MapSymbol(SDL_GAMEPAD_LEFT_THUMB_RIGHT, eKI_XI_DPadRight, "xi_dpad_right");
+
 	MapSymbol(SDL_GAMEPAD_RIGHT_THUMB_X, eKI_XI_ThumbRX, "xi_thumbrx", SInputSymbol::Axis);
 	MapSymbol(SDL_GAMEPAD_RIGHT_THUMB_Y, eKI_XI_ThumbRY, "xi_thumbry", SInputSymbol::Axis);
 	/*MapSymbol(SDL_GAMEPAD_RIGHT_THUMB_UP, eKI_XI_ThumbRUp, "xi_thumbr_up");

@@ -749,7 +749,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 	#endif
 	}
 
-	#if !defined(_RELEASE)
+	#if !defined(_RELEASE) && !defined(DISABLE_OUTPUTDEBUGSTRING)
 	// Note: OutputDebugString(A) only accepts current ANSI code-page, and the W variant will call the A variant internally.
 	// Here we replace non-ASCII characters with '?', which is the same as OutputDebugStringW will do for non-ANSI.
 	// Thus, we discard slightly more characters (ie, those inside the current ANSI code-page, but outside ASCII).

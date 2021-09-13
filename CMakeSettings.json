@@ -89,6 +89,11 @@
           "name": "OPTION_VK_RENDERER",
           "value": "OFF",
           "type": "BOOL"
+        },
+        {
+          "name": "USE_STEAM",
+          "value": "ON",
+          "type": "BOOL"
         }
       ]
     },
@@ -111,11 +116,32 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
         {
+          "name": "OPTION_REMOTE_CONSOLE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "OPTION_DX_RENDERER",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
           "name": "DX_RENDERER",
-          "value": "OFF",
+          "value": "ON",
           "type": "UNINITIALIZED"
+        },
+        {
+          "name": "OPTION_VK_RENDERER",
+          "value": "OFF",
+          "type": "BOOL"
+        },
+        {
+          "name": "USE_STEAM",
+          "value": "ON",
+          "type": "BOOL"
         }
       ]
+
     }
   ]
 }

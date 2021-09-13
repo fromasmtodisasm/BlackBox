@@ -1,28 +1,22 @@
-cmake_minimum_required(VERSION 3.10)
-
-project(Launcher CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-enable_testing()
 
-add_executable(${PROJECT_NAME} WIN32
-	Main.cpp
-  "Resource.rc"
+start_sources()
+# -- launcher.waf_files --
+sources_platform(WINDOWS)
+add_sources("NoUberFile"
+	SOURCE_GROUP "Header Files"
+		"pch.hpp"
+	SOURCE_GROUP "Resource Files"
+		"resource.h"
+	SOURCE_GROUP "Source Files"
+		"Main.cpp"
 )
-target_link_libraries(Launcher PRIVATE  BlackBox)
-#target_link_libraries(Launcher PRIVATE  System)
-add_dependencies(Launcher Game)
-
-add_test(NAME mytest COMMAND ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
-install(
-  TARGETS ${PROJECT_NAME} 
-  RUNTIME DESTINATION bin
-)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER BlackBox/Launcher)
-set_solution_startup_target(Launcher)
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
-)
+end_sources()
+if(WINDOWS AND NOT OPTION_DEDICATED_SERVER)
+	Launcher(WindowsLauncher SOLUTION_FOLDER "Launcher")
+	target_link_libraries(${THIS_PROJECT} PRIVATE Shell32)
+	target_link_libraries(${THIS_PROJECT} PRIVATE  BlackBox)
+else()
+	CryFileContainer(WindowsLauncher SOLUTION_FOLDER "Launcher")
+endif()
