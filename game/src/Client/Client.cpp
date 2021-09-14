@@ -33,19 +33,19 @@ void CClient::Update()
 		m_pGame->GetActionMapManager()->Update(16);
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
-		m_CameraController.ProcessKeyboard(Movement::LEFT, m_pGame->m_deltaTime);	
+		m_CameraController.ProcessKeyboard(Movement::LEFT, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveLeft());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_RIGHT))
 	{
-		m_CameraController.ProcessKeyboard(Movement::RIGHT, m_pGame->m_deltaTime);	
+		m_CameraController.ProcessKeyboard(Movement::RIGHT, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveRight());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_FORWARD))
 	{
-		m_CameraController.ProcessKeyboard(Movement::FORWARD, m_pGame->m_deltaTime);	
+		m_CameraController.ProcessKeyboard(Movement::FORWARD, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveFwd());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_BACKWARD))
 	{
-		m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime);	
+		m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveBack());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNLR))
 	{
@@ -176,28 +176,28 @@ bool CClient::DestructIfMarked()
 //////////////////////////////////////////////////////////////////////
 void CClient::TriggerMoveLeft(float fValue,XActivationEvent ae)
 {
-	m_PlayerProcessingCmd.SetMoveLeft(1);
+	m_PlayerProcessingCmd.SetMoveLeft(fValue);
 	m_PlayerProcessingCmd.AddAction(ACTION_MOVE_LEFT);
 }
 
 //////////////////////////////////////////////////////////////////////
 void CClient::TriggerMoveRight(float fValue,XActivationEvent ae)
 {
-	m_PlayerProcessingCmd.SetMoveRight(1);
+	m_PlayerProcessingCmd.SetMoveRight(fValue);
 	m_PlayerProcessingCmd.AddAction(ACTION_MOVE_RIGHT);
 }
 
 //////////////////////////////////////////////////////////////////////
 void CClient::TriggerMoveForward(float fValue,XActivationEvent ae)
 {
-	m_PlayerProcessingCmd.SetMoveFwd(1);
+	m_PlayerProcessingCmd.SetMoveFwd(fValue);
 	m_PlayerProcessingCmd.AddAction(ACTION_MOVE_FORWARD);
 }
 
 //////////////////////////////////////////////////////////////////////
 void CClient::TriggerMoveBackward(float fValue,XActivationEvent ae)
 {
-	m_PlayerProcessingCmd.SetMoveBack(1);
+	m_PlayerProcessingCmd.SetMoveBack(fValue);
 	m_PlayerProcessingCmd.AddAction(ACTION_MOVE_BACKWARD);
 }
 

@@ -90,9 +90,9 @@ class CCameraController : public IInputEventListener
 	}
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	void ProcessKeyboard(Movement direction, float deltaTime)
+	void ProcessKeyboard(Movement direction, float deltaTime, float value = 1.0f)
 	{
-		float velocity = CurrentCamera()->MovementSpeed * deltaTime;
+		float velocity = CurrentCamera()->MovementSpeed * deltaTime * value;
 		if (direction == Movement::FORWARD)
 			CurrentCamera()->transform.position += glm::vec3(CurrentCamera()->Front.x, CurrentCamera()->mode == CCamera::Mode::FPS ? 0 : CurrentCamera()->Front.y, CurrentCamera()->Front.z) * velocity;
 		if (direction == Movement::BACKWARD)

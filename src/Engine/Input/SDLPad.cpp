@@ -208,7 +208,7 @@ void CSDLPad::HandleAxisEvent(const SDL_JoyAxisEvent& axisEvt)
 
 	SInputSymbol* pSymbol = NULL;
 	SInputEvent inputEvt;
-	//CryLogAlways("CSDLPad - AXIS requested(%d) %d on Gamepad [%d]", axisEvt.axis, axisEvt.value, m_deviceNo);
+	CryLogAlways("CSDLPad - AXIS requested(%d) %d on Gamepad [%d]", axisEvt.axis, axisEvt.value, m_deviceNo);
 	const int id = SDL_GAMEPAD_AXIS(axisEvt.axis);
 	pSymbol		 = DevSpecIdToSymbol(id);
 	if (pSymbol)
@@ -247,6 +247,7 @@ void CSDLPad::HandleAxisEvent(const SDL_JoyAxisEvent& axisEvt)
 					else
 						btnSymbol->state = eIS_Released;
 
+					btnSymbol->value = pSymbol->value;
 					btnSymbol->AssignTo(inputEvt);
 					GetLinuxInput().PostInputEvent(inputEvt);
 				}
