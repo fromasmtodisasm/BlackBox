@@ -1,14 +1,11 @@
-#################################################################
+# ##############################################################################
 start_sources()
 sources_platform(ALL)
-add_sources("NoUberFile"
-	PROJECTS Window
-	SOURCE_GROUP "SourceFiles"
-		"SDLWindow.cpp"
- )
+add_sources("NoUberFile" PROJECTS Window SOURCE_GROUP "Source Files"
+						"SDLWindow.cpp")
 
-EngineModule(Window FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+enginemodule(Window FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 target_compile_definitions(${THIS_PROJECT} PUBLIC -DSDL_WINDOW)
 target_link_libraries(${THIS_PROJECT} PUBLIC Math)
-add_SDL(${THIS_PROJECT})
-###################################################
+add_sdl(${THIS_PROJECT})
+# ##############################################################################

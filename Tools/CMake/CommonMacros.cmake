@@ -1,81 +1,76 @@
 if(NOT WIN32)
-  string(ASCII 27 Esc)
-  set(ColourReset "${Esc}[m")
-  set(ColourBold  "${Esc}[1m")
-  set(Red         "${Esc}[31m")
-  set(Green       "${Esc}[32m")
-  set(Yellow      "${Esc}[33m")
-  set(Blue        "${Esc}[34m")
-  set(Magenta     "${Esc}[35m")
-  set(Cyan        "${Esc}[36m")
-  set(White       "${Esc}[37m")
-  set(BoldRed     "${Esc}[1;31m")
-  set(BoldGreen   "${Esc}[1;32m")
-  set(BoldYellow  "${Esc}[1;33m")
-  set(BoldBlue    "${Esc}[1;34m")
-  set(BoldMagenta "${Esc}[1;35m")
-  set(BoldCyan    "${Esc}[1;36m")
-  set(BoldWhite   "${Esc}[1;37m")
+	string(ASCII 27 Esc)
+	set(ColourReset "${Esc}[m")
+	set(ColourBold "${Esc}[1m")
+	set(Red "${Esc}[31m")
+	set(Green "${Esc}[32m")
+	set(Yellow "${Esc}[33m")
+	set(Blue "${Esc}[34m")
+	set(Magenta "${Esc}[35m")
+	set(Cyan "${Esc}[36m")
+	set(White "${Esc}[37m")
+	set(BoldRed "${Esc}[1;31m")
+	set(BoldGreen "${Esc}[1;32m")
+	set(BoldYellow "${Esc}[1;33m")
+	set(BoldBlue "${Esc}[1;34m")
+	set(BoldMagenta "${Esc}[1;35m")
+	set(BoldCyan "${Esc}[1;36m")
+	set(BoldWhite "${Esc}[1;37m")
 endif()
 
 function(message)
-  list(GET ARGV 0 MessageType)
-  if(MessageType STREQUAL FATAL_ERROR OR MessageType STREQUAL SEND_ERROR)
-    list(REMOVE_AT ARGV 0)
-    _message(${MessageType} "${BoldRed}${ARGV}${ColourReset}")
-  elseif(MessageType STREQUAL WARNING)
-    list(REMOVE_AT ARGV 0)
-    _message(${MessageType} "${BoldYellow}${ARGV}${ColourReset}")
-  elseif(MessageType STREQUAL AUTHOR_WARNING)
-    list(REMOVE_AT ARGV 0)
-    _message(${MessageType} "${BoldCyan}${ARGV}${ColourReset}")
-  elseif(MessageType STREQUAL STATUS)
-    list(REMOVE_AT ARGV 0)
-    _message(${MessageType} "${Green}${ARGV}${ColourReset}")
-  else()
-    _message("${ARGV}")
-  endif()
+	list(GET ARGV 0 MessageType)
+	if(MessageType STREQUAL FATAL_ERROR OR MessageType STREQUAL SEND_ERROR)
+		list(REMOVE_AT ARGV 0)
+		_message(${MessageType} "${BoldRed}${ARGV}${ColourReset}")
+	elseif(MessageType STREQUAL WARNING)
+		list(REMOVE_AT ARGV 0)
+		_message(${MessageType} "${BoldYellow}${ARGV}${ColourReset}")
+	elseif(MessageType STREQUAL AUTHOR_WARNING)
+		list(REMOVE_AT ARGV 0)
+		_message(${MessageType} "${BoldCyan}${ARGV}${ColourReset}")
+	elseif(MessageType STREQUAL STATUS)
+		list(REMOVE_AT ARGV 0)
+		_message(${MessageType} "${Green}${ARGV}${ColourReset}")
+	else()
+		_message("${ARGV}")
+	endif()
 endfunction()
 
 function(add_private_headers)
-	file(GLOB_RECURSE INCLUDE_FILES ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}/*.hpp ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}/*.h)
-	file(GLOB_RECURSE INCLUDE_FILES1 ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-	target_sources(${PROJECT_NAME}
-		PRIVATE
-		${INCLUDE_FILES}
-		${INCLUDE_FILES1}
-	)
+	file(GLOB_RECURSE INCLUDE_FILES
+			 ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}/*.hpp
+			 ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}/*.h)
+	file(GLOB_RECURSE INCLUDE_FILES1 ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
+			 ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+	target_sources(${PROJECT_NAME} PRIVATE ${INCLUDE_FILES} ${INCLUDE_FILES1})
 	source_group(
 		TREE ${BLACKBOX_PRIVATE_INCLUDE_DIRS}/${PROJECT_NAME}
 		PREFIX "Header Files"
-		FILES
-		${INCLUDE_FILES}
-	)
+		FILES ${INCLUDE_FILES})
 	source_group(
 		TREE ${CMAKE_CURRENT_SOURCE_DIR}
 		PREFIX "Header Files"
-		FILES
-		${INCLUDE_FILES1}
-	)
+		FILES ${INCLUDE_FILES1})
 endfunction()
 
 function(install_package Package Result)
 
-  #set(ToInstall "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}")
-  set(ToInstall "${Package}:${VCPKG_TARGET_TRIPLET}")
-  set(CMD "vcpkg")
-  set(ARGS " install ${ToInstall}")
-  message(STATUS "Trying install package [${ToInstall}]")
-  execute_process(
-    COMMAND ${VCPKG} install "${ToInstall}"
-    RESULT_VARIABLE result
-  )
-  set(${Result} ${result} PARENT_SCOPE)
+	# set(ToInstall "${Package}:${CMAKE_GENERATOR_PLATFORM}-${BB_PLATFORM}")
+	set(ToInstall "${Package}:${VCPKG_TARGET_TRIPLET}")
+	set(CMD "vcpkg")
+	set(ARGS " install ${ToInstall}")
+	message(STATUS "Trying install package [${ToInstall}]")
+	execute_process(COMMAND ${VCPKG} install "${ToInstall}"
+									RESULT_VARIABLE result)
+	set(${Result}
+			${result}
+			PARENT_SCOPE)
 endfunction()
 
 macro(FindGit)
 	find_package(Git)
-	if (NOT GIT_FOUND)
+	if(NOT GIT_FOUND)
 		message(FATAL_ERROR "Git not found")
 	else()
 		message(STATUS "Git FOUND at ${GIT_EXECUTABLE}")
@@ -83,12 +78,15 @@ macro(FindGit)
 endmacro()
 
 macro(InstallVcpkg)
-	find_program(VCPKG NAMES vcpkg PATHS ${CMAKE_SOURCE_DIR}/vcpkg)
-	if (NOT VCPKG)
-    include(${TOOLS_CMAKE_DIR}/PrepareVcpkg.cmake)
-    #PrepareVcpkg()
+	find_program(
+		VCPKG
+		NAMES vcpkg
+		PATHS ${CMAKE_SOURCE_DIR}/vcpkg)
+	if(NOT VCPKG)
+		include(${TOOLS_CMAKE_DIR}/PrepareVcpkg.cmake)
+		# PrepareVcpkg()
 		find_program(VCPKG NAMES vcpkg)
-		if (NOT VCPKG)
+		if(NOT VCPKG)
 			message(FATAL_ERROR "vcpkg not found, var: ${VCPKG}")
 		endif()
 	else()
@@ -98,22 +96,21 @@ endmacro()
 
 macro(CommonMacrosInit)
 	message(STATUS "INITIALIZE COMMON MACROS")
-	if ((DEFINED LINUX OR MINGW) AND (NOT DEFINED VCPKG_INSTALLER))
+	if((DEFINED LINUX OR MINGW) AND (NOT DEFINED VCPKG_INSTALLER))
 		include(FindPkgConfig)
 	elseif(DEFINED LINUX AND (DEFINED VCPKG_INSTALLER))
 		set(BB_PLATFORM linux)
 	else()
 		set(BB_PLATFORM windows)
 	endif()
-  #InstallVcpkg()
+	# InstallVcpkg()
 endmacro()
 
 function(dump_vars)
 	message(STATUS ==============)
 	message(STATUS "Dumping ${ARGC} variables:")
 	foreach(VAR_NAME ${ARGN})
-		message(
-		STATUS " ${VAR_NAME} == \"${${VAR_NAME}}\"")
+		message(STATUS " ${VAR_NAME} == \"${${VAR_NAME}}\"")
 	endforeach()
 	message(STATUS ==============)
 endfunction()
@@ -123,23 +120,25 @@ function(add_package_unix_or_cygwin Package)
 endfunction()
 
 function(add_package_msvc Package)
-  if (NOT DEFINED VCPKG_INSTALLER)
-    find_package(${Package} REQUIRED)
-  else (NOT ${Package}_FOUND)
+	if(NOT DEFINED VCPKG_INSTALLER)
+		find_package(${Package} REQUIRED)
+	else(NOT ${Package}_FOUND)
 		set(result OFF)
-		if (NOT ${Package}_INSTALLED)
+		if(NOT ${Package}_INSTALLED)
 			message(STATUS "${Package} yet not installed")
 			install_package("${Package}" result)
-			if (NOT ${result} EQUAL 0)
-				message(FATAL_ERROR "could not install ${Package}") 
+			if(NOT ${result} EQUAL 0)
+				message(FATAL_ERROR "could not install ${Package}")
 			else()
-				set(${Package}_INSTALLED ON CACHE STRING "Installed package" FORCE)
+				set(${Package}_INSTALLED
+						ON
+						CACHE STRING "Installed package" FORCE)
 			endif()
 		endif()
-    message(STATUS "FIND CONFIG PACKAGE: ${Package}")
+		message(STATUS "FIND CONFIG PACKAGE: ${Package}")
 		find_package(${Package} CONFIG)
-		if (NOT ${Package}_FOUND)
-      message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+		if(NOT ${Package}_FOUND)
+			message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 			find_package(${Package} REQUIRED)
 		endif()
 	endif()
@@ -147,18 +146,23 @@ endfunction()
 
 function(add_package Package)
 	find_package(${ARGV})
-  if (0 AND (MINGW OR UNIX OR CYGWIN))
-    add_package_unix_or_cygwin(${Package})
-  else()
-    add_package_msvc(${Package})
-  endif()
+	if(0
+		 AND (MINGW
+					OR UNIX
+					OR CYGWIN))
+		add_package_unix_or_cygwin(${Package})
+	else()
+		add_package_msvc(${Package})
+	endif()
 endfunction()
 
 # Organize projects into solution folders
 macro(set_solution_folder folder target)
 	if(TARGET ${target})
-		if (NOT "${folder}" MATCHES "^Projects" AND NOT "${folder}" MATCHES "^Project")
-			set_property(TARGET ${target} PROPERTY FOLDER "${VS_FOLDER_PREFIX}/${folder}")
+		if(NOT "${folder}" MATCHES "^Projects" AND NOT "${folder}" MATCHES
+																							 "^Project")
+			set_property(TARGET ${target} PROPERTY FOLDER
+																						 "${VS_FOLDER_PREFIX}/${folder}")
 		else()
 			set_property(TARGET ${target} PROPERTY FOLDER "${folder}")
 		endif()
@@ -167,35 +171,38 @@ endmacro()
 
 # Helper macro to set default StartUp Project in Visual Studio
 macro(set_solution_startup_target target)
-	if ("${CMAKE_GENERATOR}" MATCHES "^Visual Studio")
+	if("${CMAKE_GENERATOR}" MATCHES "^Visual Studio")
 		# Set startup project to launch Game.exe with this project
-		set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${target})
+		set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+								 PROPERTY VS_STARTUP_PROJECT ${target})
 	endif()
 endmacro()
 
-MACRO(SET_PLATFORM_TARGET_PROPERTIES THIS_PROJECT)
-	target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DCODE_BASE_FOLDER=\"${CRYENGINE_DIR}/Code/\"")
-	target_link_libraries( ${THIS_PROJECT} PRIVATE ${COMMON_LIBS} )
+macro(SET_PLATFORM_TARGET_PROPERTIES THIS_PROJECT)
+	target_compile_definitions(
+		${THIS_PROJECT} PRIVATE "-DCODE_BASE_FOLDER=\"${CRYENGINE_DIR}/Code/\"")
+	target_link_libraries(${THIS_PROJECT} PRIVATE ${COMMON_LIBS})
 
 	if(OPTION_DEVELOPER_CONSOLE_IN_RELEASE)
-		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DENABLE_DEVELOPER_CONSOLE_IN_RELEASE")
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE "-DENABLE_DEVELOPER_CONSOLE_IN_RELEASE")
 	endif()
 
-	if (OPTION_REMOTE_CONSOLE)
-		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DUSE_REMOTE_CONSOLE")
+	if(OPTION_REMOTE_CONSOLE)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE "-DUSE_REMOTE_CONSOLE")
 	endif()
-ENDMACRO()
+endmacro()
 function(add_subsystem subsystem)
 	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})
-	#target_link_libraries(${BLACKBOX_PROJECT} INTERFACE ${subsystem})
-	#set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
+	# target_link_libraries(${BLACKBOX_PROJECT} INTERFACE ${subsystem})
+	# set_target_properties(${subsystem} PROPERTIES FOLDER "Engine")
 
-	#get_target_property(SOURCE_FILES ${subsystem} SOURCES)
-	#apply_compile_settings(${subsystem})
+	# get_target_property(SOURCE_FILES ${subsystem} SOURCES)
+	# apply_compile_settings(${subsystem})
 
 	list(APPEND ALL_PROJECT_SOURCES ${SOURCE_FILES})
 	list(APPEND ALL_PROJECT_SYSTEMS ${subsystem})
-	#install_this(${subsystem})
+	# install_this(${subsystem})
 endfunction()
 
 macro(export_subsystem subsystem)
@@ -203,26 +210,25 @@ macro(export_subsystem subsystem)
 endmacro()
 
 macro(install_this THIS_PROJECT)
-	###################################################
-	install (
-	  TARGETS  ${THIS_PROJECT}
-	  EXPORT ${THIS_PROJECT}Config
-	  #RUNTIME DESTINATION bin
-	  #LIBRARY DESTINATION lib
-	  #ARCHIVE DESTINATION lib/static
+	# ############################################################################
+	install(
+		TARGETS ${THIS_PROJECT}
+		EXPORT ${THIS_PROJECT}Config
+		# RUNTIME DESTINATION bin
+		# LIBRARY DESTINATION lib
+		# ARCHIVE DESTINATION lib/static
 	)
 
-	# This makes the project importable from the install directory
-	# Put config file in per-project dir (name MUST match), can also
-	# just go into 'cmake'.
-	#install(EXPORT ${THIS_PROJECT}Config DESTINATION .)
+	# This makes the project importable from the install directory Put config file
+	# in per-project dir (name MUST match), can also just go into 'cmake'.
+	# install(EXPORT ${THIS_PROJECT}Config DESTINATION .)
 
 	# This makes the project importable from the build directory
 	export(TARGETS ${THIS_PROJECT} FILE ${THIS_PROJECT}Config.cmake)
 endmacro()
 
 #[[
-  function(target_precompile_headers _target)
+	function(target_precompile_headers _target)
 	if (${CMAKE_VERSION} VERSION_LESS "3.16.0")
 		cmake_parse_arguments(
 		  _ARGS
@@ -245,67 +251,69 @@ endmacro()
 		_target_precompile_headers(${ARGV})
 	endif()
 
-  endfunction()
-  ]]
+	endfunction()
+	]]
 
 function(add_sdl target)
-  if (DEFINED LINUX OR DEFINED MINGW)
-    if (NOT DEFINED VCPKG_INSTALLER)
-      pkg_check_modules(SDL2 SDL2)
-      target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
-      target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
-      message(STATUS "SDL2 include ${SDL2_INCLUDE_DIRS}")
+	if(DEFINED LINUX OR DEFINED MINGW)
+		if(NOT DEFINED VCPKG_INSTALLER)
+			pkg_check_modules(SDL2 SDL2)
+			target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
+			target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
+			message(STATUS "SDL2 include ${SDL2_INCLUDE_DIRS}")
 
-      #[[
-      find_package(SDL2 CONFIG REQUIRED)
-      target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
+			#[[
+			find_package(SDL2 CONFIG REQUIRED)
+			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 
-      target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARY})
-      target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
-      ]]
+			target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARY})
+			target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
+			]]
 
-    else()
-      add_package(SDL2)
-      target_link_libraries(${target} PRIVATE SDL2::SDL2)
-    endif()
+		else()
+			add_package(SDL2)
+			target_link_libraries(${target} PRIVATE SDL2::SDL2)
+		endif()
 	else()
-    add_package(SDL2)
-    target_link_libraries(${target} PRIVATE SDL2::SDL2)
+		add_package(SDL2)
+		target_link_libraries(${target} PRIVATE SDL2::SDL2)
 	endif()
 endfunction()
 
 macro(read_settings)
-	set(options DISABLE_MFC FORCE_STATIC FORCE_SHARED FORCE_SHARED_WIN EDITOR_COMPILE_SETTINGS MSVC_PERMISSIVE)
+	set(options DISABLE_MFC FORCE_STATIC FORCE_SHARED FORCE_SHARED_WIN
+							EDITOR_COMPILE_SETTINGS MSVC_PERMISSIVE)
 	set(oneValueArgs SOLUTION_FOLDER PCH OUTDIR)
 	set(multiValueArgs FILE_LIST INCLUDES LIBS DEFINES)
-	cmake_parse_arguments(MODULE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-	if (MODULE_PCH)
-		#string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
-		#get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
-		#target_precompile_headers()
-		#target_precompile_headers(${THIS_PROJECT}
-		#  PRIVATE 
-		#  ${MODULE_PCH}
-		#)
+	cmake_parse_arguments(MODULE "${options}" "${oneValueArgs}"
+												"${multiValueArgs}" ${ARGN})
+	if(MODULE_PCH)
+		# string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
+		# get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
+		# target_precompile_headers() target_precompile_headers(${THIS_PROJECT}
+		# PRIVATE ${MODULE_PCH} )
 	endif()
-	if (MODULE_FORCE_SHARED_WIN AND WINDOWS)
+	if(MODULE_FORCE_SHARED_WIN AND WINDOWS)
 		set(MODULE_FORCE_SHARED TRUE)
 	endif()
-	if (MODULE_FORCE_SHARED AND (ORBIS))
+	if(MODULE_FORCE_SHARED AND (ORBIS))
 		set(MODULE_FORCE_SHARED FALSE)
 	endif()
 endmacro()
 macro(prepare_project)
-	set(THIS_PROJECT ${target} PARENT_SCOPE)
+	set(THIS_PROJECT
+			${target}
+			PARENT_SCOPE)
 	set(THIS_PROJECT ${target})
-	include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" )
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 	project(${target})
 	read_settings(${ARGN})
-	#generate_uber_files()
+	# generate_uber_files()
 	if(NOT ${THIS_PROJECT}_SOURCES)
 		set(${THIS_PROJECT}_SOURCES ${SOURCES})
 	else()
-	endif()	
+
+	endif()
 endmacro()
 # Process source files
 macro(start_sources)
@@ -314,10 +322,12 @@ macro(start_sources)
 	set(UBERFILES)
 endmacro()
 
-#Specifies a set of platforms that should build source files provided after this point. Specify ALL to build for all platforms.
-#Syntax: sources_platform([OR] X Y Z [AND A B C])
-#Subsequent source files will be built if "if(T)" is true for at least one token T in OR and all tokens T in AND.
-#Example: sources_platform(WINDOWS ANDROID AND HAS_FOO) = build if target is Windows or Android, and HAS_FOO is true.
+# Specifies a set of platforms that should build source files provided after
+# this point. Specify ALL to build for all platforms. Syntax:
+# sources_platform([OR] X Y Z [AND A B C]) Subsequent source files will be built
+# if "if(T)" is true for at least one token T in OR and all tokens T in AND.
+# Example: sources_platform(WINDOWS ANDROID AND HAS_FOO) = build if target is
+# Windows or Android, and HAS_FOO is true.
 macro(sources_platform)
 	set(PLATFORM_CONDITION)
 	set(multiValueArgs OR AND)
@@ -339,7 +349,7 @@ macro(sources_platform)
 		if(NOT ${c})
 			set(PLATFORM_CONDITION FALSE)
 		endif()
-	endforeach()	
+	endforeach()
 endmacro()
 
 macro(add_files)
@@ -349,10 +359,14 @@ macro(add_files)
 	list(APPEND SOURCES ${ARGN})
 endmacro()
 
-#Usage: add_sources(uberFileName [PROJECTS proj1 proj2 ...] (SOURCE_GROUP "GroupName" file1 file2...)+
-#Use "NoUberFile" to signify source files which should not be compiled with others.
-#PROJECTS is optional, but should be used when building multiple projects with distinct sets of source files from one directory. If a project is never referenced in PROJECTS, it will use all sources given in this directory.
-#Added files will be built if building for a platform matching the latest sources_platform call. If the files should not be built, they are allowed to be missing on the filesystem.
+# Usage: add_sources(uberFileName [PROJECTS proj1 proj2 ...] (SOURCE_GROUP
+# "GroupName" file1 file2...)+ Use "NoUberFile" to signify source files which
+# should not be compiled with others. PROJECTS is optional, but should be used
+# when building multiple projects with distinct sets of source files from one
+# directory. If a project is never referenced in PROJECTS, it will use all
+# sources given in this directory. Added files will be built if building for a
+# platform matching the latest sources_platform call. If the files should not be
+# built, they are allowed to be missing on the filesystem.
 macro(add_sources name)
 	set(multiValueArgs PROJECTS SOURCE_GROUP)
 	cmake_parse_arguments(UB "" "" "${multiValueArgs}" ${ARGN})
@@ -362,7 +376,7 @@ macro(add_sources name)
 		set(${name}_PROJECTS ${UB_PROJECTS})
 	endif()
 
-	#Parse source groups manually to avoid conflating multiple groups
+	# Parse source groups manually to avoid conflating multiple groups
 	set(CURRENT_SOURCE_GROUP)
 	set(EXPECTING_FILE FALSE)
 	set(EXPECTING_GROUP_NAME FALSE)
@@ -374,7 +388,7 @@ macro(add_sources name)
 		elseif(EXPECTING_GROUP_NAME)
 			set(CURRENT_SOURCE_GROUP ${ARG})
 			string(REPLACE " " "_" CURRENT_SOURCE_GROUP_VAR ${CURRENT_SOURCE_GROUP})
-			list(FIND SOURCE_GROUPS ${CURRENT_SOURCE_GROUP_VAR} GROUP_INDEX)			
+			list(FIND SOURCE_GROUPS ${CURRENT_SOURCE_GROUP_VAR} GROUP_INDEX)
 			if(GROUP_INDEX EQUAL -1)
 				list(APPEND SOURCE_GROUPS ${CURRENT_SOURCE_GROUP_VAR})
 				set(SOURCE_GROUP_${CURRENT_SOURCE_GROUP_VAR})
@@ -391,116 +405,163 @@ macro(add_sources name)
 			else()
 				source_group("" FILES ${ARG})
 			endif()
-			# .mm files are Objective-C; disable those from build on non-Apple
-			#if(NOT (${PLATFORM_CONDITION}) OR (NOT APPLE AND ${ARG} MATCHES ".*\\.\\mm$"))
-				#if (EXISTS ${ARG})
-				if (TRUE)
-					#set_source_files_properties(${ARG} PROPERTIES HEADER_FILE_ONLY TRUE)
-					add_files(${ARG})
-				else()
-					message(STATUS "this file not exist!!!: ${ARG}")	
-				endif()
-			#else()
-				#message(STATUS "adding UBERFILE: ${ARG}")
-				#add_to_uberfile(${name} ${ARG})
-			#endif()
+			# .mm files are Objective-C; disable those from build on non-Apple if(NOT
+			# (${PLATFORM_CONDITION}) OR (NOT APPLE AND ${ARG} MATCHES ".*\\.\\mm$"))
+			# if (EXISTS ${ARG})
+			if(TRUE)
+				# set_source_files_properties(${ARG} PROPERTIES HEADER_FILE_ONLY TRUE)
+				add_files(${ARG})
+			else()
+				message(STATUS "this file not exist!!!: ${ARG}")
+			endif()
+			# else()
+			# message(STATUS "adding UBERFILE: ${ARG}") add_to_uberfile(${name}
+			# ${ARG})
+			# endif()
 		endif()
 	endforeach()
 endmacro()
 
 macro(end_sources)
+
+endmacro()
+
+# Automatically add sources in current CMakeLists directory, respecting
+# directory structure
+macro(add_sources_recursive_search)
+	set(_src_root_path "${CMAKE_CURRENT_SOURCE_DIR}")
+	file(
+		GLOB_RECURSE _source_list
+		LIST_DIRECTORIES false
+		"${_src_root_path}/*.cpp" "${_src_root_path}/*.h" "${_src_root_path}/*.hpp")
+
+	foreach(_source IN ITEMS ${_source_list})
+		get_filename_component(_source_path "${_source}" PATH)
+		file(RELATIVE_PATH _source_path_rel "${_src_root_path}" "${_source_path}")
+		string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
+		source_group("${_group_path}" FILES "${_source}")
+		file(RELATIVE_PATH _source_rel "${_src_root_path}" "${_source}")
+
+		if(_group_path STREQUAL "")
+			set(_group_path "Root")
+		endif()
+
+		string(REPLACE "\\" "_" _group_path "${_group_path}")
+
+		set(_group_path "${_group_path}.cpp")
+
+		list(FIND UBERFILES ${_group_path} GROUP_INDEX)
+		if(GROUP_INDEX EQUAL -1)
+			list(APPEND UBERFILES "${_group_path}")
+			set(${_group_path}_PROJECTS ${UB_PROJECTS})
+		endif()
+
+		# add_to_uberfile(${_group_path} ${_source_rel})
+	endforeach()
 endmacro()
 
 macro(remove_files_from_list filelist filepattern)
-	#message(STATUS " remove_files_from_list ${filelist} ${filepattern}")
+	# message(STATUS " remove_files_from_list ${filelist} ${filepattern}")
 	set(FilesToRemove "")
-	foreach (sourcefile ${${filelist}})
-		if ("${sourcefile}" MATCHES ${filepattern})
-			list(APPEND FilesToRemove "${sourcefile}" )
-			#message(STATUS " FILE TO REMOVE: ${sourcefile}")
+	foreach(sourcefile ${${filelist}})
+		if("${sourcefile}" MATCHES ${filepattern})
+			list(APPEND FilesToRemove "${sourcefile}")
+			# message(STATUS " FILE TO REMOVE: ${sourcefile}")
 		endif()
 	endforeach()
-	foreach (sourcefile ${FilesToRemove}) 
-		list(REMOVE_ITEM ${filelist} "${sourcefile}" )
-	endforeach() 
+	foreach(sourcefile ${FilesToRemove})
+		list(REMOVE_ITEM ${filelist} "${sourcefile}")
+	endforeach()
 endmacro()
 
 macro(apply_compile_settings)
-	if (MODULE_PCH)
-		#CryQt defines incompatible DLLExport in stdafx, temporarily disable PCH for CryQt now
-		if (NOT "${THIS_PROJECT}" STREQUAL "CryQt")
-			#USE_MSVC_PRECOMPILED_HEADER( ${THIS_PROJECT} ${MODULE_PCH_H} ${MODULE_PCH} )
+	if(MODULE_PCH)
+		# CryQt defines incompatible DLLExport in stdafx, temporarily disable PCH
+		# for CryQt now
+		if(NOT "${THIS_PROJECT}" STREQUAL "CryQt")
+			# USE_MSVC_PRECOMPILED_HEADER( ${THIS_PROJECT} ${MODULE_PCH_H}
+			# ${MODULE_PCH} )
 			message(STATUS "target precompiled header = ${MODULE_PCH}")
-			target_precompile_headers(${THIS_PROJECT}
-			  PRIVATE 
-			  ${MODULE_PCH}
-			)
+			target_precompile_headers(${THIS_PROJECT} PRIVATE ${MODULE_PCH})
 		endif()
-		set_property(TARGET ${THIS_PROJECT} APPEND PROPERTY AUTOMOC_MOC_OPTIONS -b${MODULE_PCH_H})
+		set_property(
+			TARGET ${THIS_PROJECT}
+			APPEND
+			PROPERTY AUTOMOC_MOC_OPTIONS -b${MODULE_PCH_H})
 	endif()
-	if (MODULE_OUTDIR)
-		set_property(TARGET ${THIS_PROJECT} PROPERTY LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${MODULE_OUTDIR}")
-		set_property(TARGET ${THIS_PROJECT} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${MODULE_OUTDIR}") 
+	if(MODULE_OUTDIR)
+		set_property(
+			TARGET ${THIS_PROJECT}
+			PROPERTY LIBRARY_OUTPUT_DIRECTORY
+							 "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${MODULE_OUTDIR}")
+		set_property(
+			TARGET ${THIS_PROJECT}
+			PROPERTY RUNTIME_OUTPUT_DIRECTORY
+							 "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${MODULE_OUTDIR}")
 	endif()
-	SET_PLATFORM_TARGET_PROPERTIES( ${THIS_PROJECT} )	
+	set_platform_target_properties(${THIS_PROJECT})
 	if(MODULE_SOLUTION_FOLDER)
 		set_solution_folder("${MODULE_SOLUTION_FOLDER}" ${THIS_PROJECT})
 	endif()
 
-	if (WINDOWS AND NOT OPTION_DEDICATED_SERVER)
-		target_compile_options(${THIS_PROJECT} PRIVATE $<$<CONFIG:Release>:-DPURE_CLIENT>)
+	if(WINDOWS AND NOT OPTION_DEDICATED_SERVER)
+		target_compile_options(${THIS_PROJECT}
+													 PRIVATE $<$<CONFIG:Release>:-DPURE_CLIENT>)
 	endif()
-	
-	if (DEFINED PROJECT_BUILD_CRYENGINE AND NOT PROJECT_BUILD_CRYENGINE)
-		# If option to not build engine modules is selected they are excluded from the build
+
+	if(DEFINED PROJECT_BUILD_CRYENGINE AND NOT PROJECT_BUILD_CRYENGINE)
+		# If option to not build engine modules is selected they are excluded from
+		# the build
 		set_target_properties(${THIS_PROJECT} PROPERTIES EXCLUDE_FROM_ALL TRUE)
-		set_target_properties(${THIS_PROJECT} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD TRUE)
+		set_target_properties(${THIS_PROJECT} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD
+																										 TRUE)
 	endif()
 
 	get_target_property(target_type ${THIS_PROJECT} TYPE)
-	if (target_type MATCHES "EXECUTABLE")
+	if(target_type MATCHES "EXECUTABLE")
 		target_compile_options(${THIS_PROJECT} PRIVATE -DCRY_IS_APPLICATION)
 	endif()
 endmacro()
 function(EngineModule target)
 	prepare_project(${ARGN})
 
-	if ((OPTION_STATIC_LINKING OR MODULE_FORCE_STATIC) AND NOT MODULE_FORCE_SHARED)
+	if((OPTION_STATIC_LINKING OR MODULE_FORCE_STATIC) AND NOT MODULE_FORCE_SHARED)
 		# Static modules must not contain resource files
-		remove_files_from_list( ${THIS_PROJECT}_SOURCES ".*\\.rc$")
+		remove_files_from_list(${THIS_PROJECT}_SOURCES ".*\\.rc$")
 	endif()
 
-	if (MODULE_FORCE_SHARED)
+	if(MODULE_FORCE_SHARED)
 		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
-	elseif (MODULE_FORCE_STATIC)
+	elseif(MODULE_FORCE_STATIC)
 		add_library(${THIS_PROJECT} STATIC ${${THIS_PROJECT}_SOURCES})
 	else()
 		add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
 	endif()
-	if (MODULE_PCH)
-		#string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
-		#get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
-		#target_precompile_headers()
-		target_precompile_headers(${THIS_PROJECT}
-		  PRIVATE 
-		  ${MODULE_PCH}
-		)
+	if(MODULE_PCH)
+		# string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
+		# get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
+		# target_precompile_headers()
+		target_precompile_headers(${THIS_PROJECT} PRIVATE ${MODULE_PCH})
 	endif()
 
-	#message(STATUS "Adding sources for target ${THIS_PROJECT}")
+	# message(STATUS "Adding sources for target ${THIS_PROJECT}")
 	foreach(src include ${${THIS_PROJECT}_SOURCES})
-		#message(STATUS "!!!: ${src}")
+		# message(STATUS "!!!: ${src}")
 	endforeach()
 
-	if (MODULE_EDITOR_COMPILE_SETTINGS)
+	if(MODULE_EDITOR_COMPILE_SETTINGS)
 		set_editor_module_flags()
 	elseif(NOT MODULE_FORCE_SHARED)
-		set(MODULES ${MODULES} ${THIS_PROJECT} CACHE INTERNAL "List of engine being built" FORCE)	
+		set(MODULES
+				${MODULES} ${THIS_PROJECT}
+				CACHE INTERNAL "List of engine being built" FORCE)
 	endif()
 
-	if (MSVC)
-		if (${THIS_PROJECT} STREQUAL "EditorCommon" OR ${THIS_PROJECT} STREQUAL "MFCToolsPlugin")
-			# These editor plugins are built using EngineModule, but need to have RTTI enabled.
+	if(MSVC)
+		if(${THIS_PROJECT} STREQUAL "EditorCommon" OR ${THIS_PROJECT} STREQUAL
+																									"MFCToolsPlugin")
+			# These editor plugins are built using EngineModule, but need to have RTTI
+			# enabled.
 			target_compile_options(${THIS_PROJECT} PRIVATE /GR)
 		else()
 			target_compile_options(${THIS_PROJECT} PRIVATE /GR-)
@@ -508,63 +569,90 @@ function(EngineModule target)
 	endif()
 
 	apply_compile_settings()
-	if ((OPTION_STATIC_LINKING OR MODULE_FORCE_STATIC) AND NOT MODULE_FORCE_SHARED)
-		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
+	if((OPTION_STATIC_LINKING OR MODULE_FORCE_STATIC) AND NOT MODULE_FORCE_SHARED)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB
+																											 -DIS_MONOLITHIC_BUILD)
 	endif()
 	add_metadata()
-	if (ANDROID AND NOT OPTION_STATIC_LINKING AND NOT MODULE_FORCE_STATIC) 
-		set(SHARED_MODULES ${SHARED_MODULES} ${THIS_PROJECT} CACHE INTERNAL "Shared modules for APK creation" FORCE)
+	if(ANDROID
+		 AND NOT OPTION_STATIC_LINKING
+		 AND NOT MODULE_FORCE_STATIC)
+		set(SHARED_MODULES
+				${SHARED_MODULES} ${THIS_PROJECT}
+				CACHE INTERNAL "Shared modules for APK creation" FORCE)
 		target_link_libraries(${THIS_PROJECT} PRIVATE m log c android)
 	endif()
 
 	if(OPTION_DEDICATED_SERVER)
-		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER")
+		target_compile_definitions(${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER")
 	endif()
 
-	if (NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
-		install(TARGETS ${target} LIBRARY DESTINATION bin RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
+	if(NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
+		install(
+			TARGETS ${target}
+			LIBRARY DESTINATION bin
+			RUNTIME DESTINATION bin
+			ARCHIVE DESTINATION lib)
 	endif()
 
-	#apply_ltcg_if_enabled()
+	# apply_ltcg_if_enabled()
 
 endfunction()
 
 function(GameModule target)
 	prepare_project(${ARGN})
-	if (OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+	if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
 		add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
 	else()
 		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
 	endif()
 	apply_compile_settings()
-	set(game_folder ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "Game folder used for resource files on Windows" FORCE)
-	set(GAME_MODULES ${GAME_MODULES} ${THIS_PROJECT} CACHE INTERNAL "List of game modules being built" FORCE)
+	set(game_folder
+			${CMAKE_CURRENT_SOURCE_DIR}
+			CACHE INTERNAL "Game folder used for resource files on Windows" FORCE)
+	set(GAME_MODULES
+			${GAME_MODULES} ${THIS_PROJECT}
+			CACHE INTERNAL "List of game modules being built" FORCE)
 	list(LENGTH GAME_MODULES NUM_GAME_MODULES)
-	if (NUM_GAME_MODULES GREATER 1 AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
-		message(FATAL_ERROR " OPTION_RUNTIME_CVAR_OVERRIDES should be enabled when having more than one project enabled. Add sys_cvar_overrides_path = <path to CVarOverrides.h> e.g. Code/GameSDK/GameDLL/CVarOverrides.h to your system.cfg")
+	if(NUM_GAME_MODULES GREATER 1 AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
+		message(
+			FATAL_ERROR
+				" OPTION_RUNTIME_CVAR_OVERRIDES should be enabled when having more than one project enabled. Add sys_cvar_overrides_path = <path to CVarOverrides.h> e.g. Code/GameSDK/GameDLL/CVarOverrides.h to your system.cfg"
+		)
 	endif()
 
-	if (OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
-		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+	if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
 	elseif(ANDROID)
-		set(SHARED_MODULES ${SHARED_MODULES} ${THIS_PROJECT} CACHE INTERNAL "Shared modules for APK creation" FORCE)
+		set(SHARED_MODULES
+				${SHARED_MODULES} ${THIS_PROJECT}
+				CACHE INTERNAL "Shared modules for APK creation" FORCE)
 		target_link_libraries(${THIS_PROJECT} PRIVATE m log c android)
 	endif()
 
 	add_metadata()
 
 	if(OPTION_DEDICATED_SERVER)
-		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER")
+		target_compile_definitions(${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER")
 	endif()
 
-	if (NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
-		install(TARGETS ${target} LIBRARY DESTINATION bin RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
+	if(NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
+		install(
+			TARGETS ${target}
+			LIBRARY DESTINATION bin
+			RUNTIME DESTINATION bin
+			ARCHIVE DESTINATION lib)
 	endif()
 
-	file(READ "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h" project_cvar_overrides_h_content)
-	if(EXISTS "${game_folder}/CVarOverrides.h" AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
-		if(NOT project_cvar_overrides_h_content STREQUAL "#include \"${game_folder}/CVarOverrides.h\"")
-			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h" "#include \"${game_folder}/CVarOverrides.h\"")
+	file(READ "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h"
+			 project_cvar_overrides_h_content)
+	if(EXISTS "${game_folder}/CVarOverrides.h" AND NOT
+																								 OPTION_RUNTIME_CVAR_OVERRIDES)
+		if(NOT project_cvar_overrides_h_content STREQUAL
+			 "#include \"${game_folder}/CVarOverrides.h\"")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h"
+					 "#include \"${game_folder}/CVarOverrides.h\"")
 		endif()
 	else()
 		if(NOT project_cvar_overrides_h_content STREQUAL "")
@@ -572,10 +660,14 @@ function(GameModule target)
 		endif()
 	endif()
 
-	file(READ "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h" project_cvar_whitelist_h_content)
-	if(EXISTS "${game_folder}/CVarWhitelist.h" AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
-		if(NOT project_cvar_whitelist_h_content STREQUAL "#include \"${game_folder}/CVarWhitelist.h\"")
-			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h" "#include \"${game_folder}/CVarWhitelist.h\"")
+	file(READ "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h"
+			 project_cvar_whitelist_h_content)
+	if(EXISTS "${game_folder}/CVarWhitelist.h" AND NOT
+																								 OPTION_RUNTIME_CVAR_OVERRIDES)
+		if(NOT project_cvar_whitelist_h_content STREQUAL
+			 "#include \"${game_folder}/CVarWhitelist.h\"")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h"
+					 "#include \"${game_folder}/CVarWhitelist.h\"")
 		endif()
 	else()
 		if(NOT project_cvar_overrides_h_content STREQUAL "")
@@ -583,10 +675,14 @@ function(GameModule target)
 		endif()
 	endif()
 
-	file(READ "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h" project_engine_define_overrides_h_content)
-	if(EXISTS "${game_folder}/EngineDefineOverrides.h" AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
-		if(NOT project_engine_define_overrides_h_content STREQUAL "#include \"${game_folder}/EngineDefineOverrides.h\"")
-			file(WRITE "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h" "#include \"${game_folder}/EngineDefineOverrides.h\"")
+	file(READ "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h"
+			 project_engine_define_overrides_h_content)
+	if(EXISTS "${game_folder}/EngineDefineOverrides.h"
+		 AND NOT OPTION_RUNTIME_CVAR_OVERRIDES)
+		if(NOT project_engine_define_overrides_h_content STREQUAL
+			 "#include \"${game_folder}/EngineDefineOverrides.h\"")
+			file(WRITE "${CMAKE_BINARY_DIR}/ProjectEngineDefineOverrides.h"
+					 "#include \"${game_folder}/EngineDefineOverrides.h\"")
 		endif()
 	else()
 		if(NOT project_engine_define_overrides_h_content STREQUAL "")
@@ -594,29 +690,33 @@ function(GameModule target)
 		endif()
 	endif()
 
-	if(EXISTS "${game_folder}/EngineDefineOverrides.h" AND OPTION_RUNTIME_CVAR_OVERRIDES)
-		MESSAGE(WARNING "Disabling project engine define overrides because OPTION_RUNTIME_CVAR_OVERRIDES was enabled!")
+	if(EXISTS "${game_folder}/EngineDefineOverrides.h"
+		 AND OPTION_RUNTIME_CVAR_OVERRIDES)
+		message(
+			WARNING
+				"Disabling project engine define overrides because OPTION_RUNTIME_CVAR_OVERRIDES was enabled!"
+		)
 	endif()
 
-#	apply_ltcg_if_enabled()
+	# apply_ltcg_if_enabled()
 
 endfunction()
 
-
 function(add_SDL_net)
-	if (DEFINED LINUX OR DEFINED MINGW)
-		if (NOT DEFINED VCPKG_INSTALLER)
+	if(DEFINED LINUX OR DEFINED MINGW)
+		if(NOT DEFINED VCPKG_INSTALLER)
 			pkg_check_modules(SDL2_NET SDL2_net)
 			target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_NET_LIBRARIES})
-			target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_NET_INCLUDE_DIRS})
+			target_include_directories(${PROJECT_NAME}
+																 PRIVATE ${SDL2_NET_INCLUDE_DIRS})
 			message(STATUS "SDL2 net include ${SDL2_NET_INCLUDE_DIRS}")
 		else()
-                        add_package(SDL2-net)
-                        target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
+			add_package(SDL2-net)
+			target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 		endif()
 	else()
 		add_package(SDL2-net)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
+		target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_net)
 	endif()
 endfunction()
 
@@ -626,29 +726,38 @@ function(Launcher target)
 	if(ANDROID)
 		add_library(${target} SHARED ${${THIS_PROJECT}_SOURCES})
 		target_link_libraries(${THIS_PROJECT} PRIVATE m log c android)
-		configure_android_launcher(${target})		
+		configure_android_launcher(${target})
 	elseif(WINDOWS)
 		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES})
 	else()
 		add_executable(${target} ${${THIS_PROJECT}_SOURCES})
 	endif()
 	if(ORBIS)
-		set_property(TARGET ${target} PROPERTY OUTPUT_NAME "${OPTION_LAUNCHER_EXECUTABLE}.elf")	
+		set_property(TARGET ${target} PROPERTY OUTPUT_NAME
+																					 "${OPTION_LAUNCHER_EXECUTABLE}.elf")
 	elseif(NOT ANDROID)
-		set_property(TARGET ${THIS_PROJECT} PROPERTY OUTPUT_NAME "${OPTION_LAUNCHER_EXECUTABLE}")	
+		set_property(TARGET ${THIS_PROJECT}
+								 PROPERTY OUTPUT_NAME "${OPTION_LAUNCHER_EXECUTABLE}")
 	endif()
-	if (DURANGO)
+	if(DURANGO)
 		# Set empty so the output directory will default to the solution directory
-		set_property(TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY "")	
+		set_property(TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY "")
 	endif()
 	if(OPTION_STATIC_LINKING)
 		use_scaleform()
-		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
-		if (WINDOWS)
-			set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS_PROFILE " /NODEFAULTLIB:libcpmt.lib")
-			set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /NODEFAULTLIB:libcpmt.lib")
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+		if(WINDOWS)
+			set_property(
+				TARGET ${THIS_PROJECT}
+				APPEND_STRING
+				PROPERTY LINK_FLAGS_PROFILE " /NODEFAULTLIB:libcpmt.lib")
+			set_property(
+				TARGET ${THIS_PROJECT}
+				APPEND_STRING
+				PROPERTY LINK_FLAGS_RELEASE " /NODEFAULTLIB:libcpmt.lib")
 		endif()
-		if (OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+		if(OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
 			set(MODULES_LIST ${MODULES})
 		else()
 			set(MODULES_LIST ${GAME_MODULES} ${MODULES})
@@ -657,45 +766,52 @@ function(Launcher target)
 		target_link_libraries(${THIS_PROJECT} PRIVATE ${WRAPPED_MODULES})
 	endif()
 	add_metadata(WindowsIcon.ico)
-	apply_compile_settings()	
+	apply_compile_settings()
 
 	if(NOT ANDROID)
-		if (NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
-			install(TARGETS ${target} RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)
+		if(NOT DEFINED PROJECT_BUILD_CRYENGINE OR PROJECT_BUILD_CRYENGINE)
+			install(
+				TARGETS ${target}
+				RUNTIME DESTINATION bin
+				ARCHIVE DESTINATION lib)
 		endif()
 	endif()
 endfunction()
 
 function(CryFileContainer target)
-	set(THIS_PROJECT ${target} PARENT_SCOPE)
+	set(THIS_PROJECT
+			${target}
+			PARENT_SCOPE)
 	set(THIS_PROJECT ${target})
 	project(${target})
 
 	read_settings(${ARGN})
 	if(NOT ${THIS_PROJECT}_SOURCES)
 		set(${THIS_PROJECT}_SOURCES ${SOURCES})
-	endif()	
+	endif()
 
-	add_custom_target( ${THIS_PROJECT} SOURCES ${${THIS_PROJECT}_SOURCES})
+	add_custom_target(${THIS_PROJECT} SOURCES ${${THIS_PROJECT}_SOURCES})
 	if(MODULE_SOLUTION_FOLDER)
 		set_solution_folder("${MODULE_SOLUTION_FOLDER}" ${THIS_PROJECT})
 	endif()
 endfunction()
 
-# For Windows, an argument may be provided to specify the location of an icon for the executable
+# For Windows, an argument may be provided to specify the location of an icon
+# for the executable
 function(add_metadata)
-	if (WINDOWS)
+	if(WINDOWS)
 		get_target_property(project_type ${THIS_PROJECT} TYPE)
 		set(valid_types EXECUTABLE MODULE_LIBRARY SHARED_LIBRARY)
 		if(NOT ${project_type} IN_LIST valid_types)
 			return()
 		endif()
-		
+
 		set(icon_name ${ARGN})
-		if (NOT PRODUCT_NAME)
+		if(NOT PRODUCT_NAME)
 			set(PRODUCT_NAME ${THIS_PROJECT})
 		endif()
-		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+		file(
+			WRITE "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
 			"// Microsoft Visual C++ generated resource script.\n"
 			"//\n"
 			"#include \"resource.h\"\n"
@@ -709,10 +825,10 @@ function(add_metadata)
 			"\n"
 			"/////////////////////////////////////////////////////////////////////////////\n"
 			"#undef APSTUDIO_READONLY_SYMBOLS\n"
-			"\n"
-			)
-		if (FALSE)
-			file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+			"\n")
+		if(FALSE)
+			file(
+				APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
 				"/////////////////////////////////////////////////////////////////////////////\n"
 				"// Neutral resources\n"
 				"\n"
@@ -731,7 +847,8 @@ function(add_metadata)
 				"/////////////////////////////////////////////////////////////////////////////\n"
 			)
 		endif()
-		file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+		file(
+			APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
 			"		"
 			"/////////////////////////////////////////////////////////////////////////////\n"
 			"// English (United States) resources\n"
@@ -764,19 +881,21 @@ function(add_metadata)
 			"END\n"
 			"\n"
 			"#endif    // APSTUDIO_INVOKED\n"
-			"\n"
-		)
-		if (icon_name AND EXISTS "${game_folder}/../Resources/${icon_name}")
-			file(COPY "${game_folder}/../Resources/${icon_name}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-			file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+			"\n")
+		if(icon_name AND EXISTS "${game_folder}/../Resources/${icon_name}")
+			file(COPY "${game_folder}/../Resources/${icon_name}"
+					 DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+			file(
+				APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
 				"// Icon with lowest ID value placed first to ensure application icon\n"
 				"// remains consistent on all systems.\n"
-				"IDI_ICON                ICON                    \"${icon_name}\"\n"
-			)
+				"IDI_ICON                ICON                    \"${icon_name}\"\n")
 		else()
-			message(STATUS "icon [${game_folder}/../Resources/${icon_name}] not exists")
+			message(
+				STATUS "icon [${game_folder}/../Resources/${icon_name}] not exists")
 		endif()
-		file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
+		file(
+			APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"
 			"#endif    // English (United States) resources\n"
 			"/////////////////////////////////////////////////////////////////////////////\n"
 			"\n"
@@ -836,23 +955,28 @@ function(add_metadata)
 			"\n"
 			"\n"
 			"/////////////////////////////////////////////////////////////////////////////\n"
-			"#endif    // not APSTUDIO_INVOKED\n"
-		)
-		target_sources(${THIS_PROJECT} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc")
-		source_group("Resource Files" FILES "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc")
+			"#endif    // not APSTUDIO_INVOKED\n")
+		target_sources(
+			${THIS_PROJECT}
+			PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc")
+		source_group("Resource Files"
+								 FILES "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc")
 	elseif(METADATA_VERSION)
-		string(REPLACE "." ";" VERSION_LIST ${METADATA_VERSION}) 
-		list(GET VERSION_LIST 0 VERSION_MAJOR) 
-		list(GET VERSION_LIST 1 VERSION_MINOR) 
-		list(GET VERSION_LIST 2 VERSION_REVISION) 
-		list(GET VERSION_LIST 3 VERSION_BUILD) 
+		string(REPLACE "." ";" VERSION_LIST ${METADATA_VERSION})
+		list(GET VERSION_LIST 0 VERSION_MAJOR)
+		list(GET VERSION_LIST 1 VERSION_MINOR)
+		list(GET VERSION_LIST 2 VERSION_REVISION)
+		list(GET VERSION_LIST 3 VERSION_BUILD)
 
-		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_0=${VERSION_MAJOR}) 
-		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_1=${VERSION_MINOR}) 
-		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_2=${VERSION_REVISION}) 
-		target_compile_definitions(${THIS_PROJECT} PRIVATE EXE_VERSION_INFO_3=${VERSION_BUILD})
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE EXE_VERSION_INFO_0=${VERSION_MAJOR})
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE EXE_VERSION_INFO_1=${VERSION_MINOR})
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE EXE_VERSION_INFO_2=${VERSION_REVISION})
+		target_compile_definitions(${THIS_PROJECT}
+															 PRIVATE EXE_VERSION_INFO_3=${VERSION_BUILD})
 	endif()
 endfunction()
 
-
-CommonMacrosInit()
+commonmacrosinit()

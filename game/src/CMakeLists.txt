@@ -1,18 +1,25 @@
-###################################################
+# ##############################################################################
 set(INCLUDE_ROOT ${CMAKE_CURRENT_LIST_DIR}/../include)
-###################################################
+# ##############################################################################
 
 start_sources()
 sources_platform(ALL)
-add_sources("NoUberFile"
-	PROJECTS Game
-	SOURCE_GROUP "SourceFiles"
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	Game
+	SOURCE_GROUP
+	"Source Files"
 	Main.cpp
-	#GameFiles/GameGUI.cpp
-	Client/Client.cpp
-	Client/XClient.cpp
 	Commands.cpp
 	GUI/TextEditorDemo.cpp
+	# GameFiles/GameGUI.cpp
+	SOURCE_GROUP
+	"Client"
+	Client/Client.cpp
+	Client/XClient.cpp
+	SOURCE_GROUP
+	"GameFiles"
 	GameFiles/EntityClassRegistry.cpp
 	GameFiles/DevMode.cpp
 	GameFiles/Game.cpp
@@ -25,10 +32,16 @@ add_sources("NoUberFile"
 	GameFiles/GameTagPoints.cpp
 	GameFiles/SteamHelper.cpp
 	GameFiles/XVehicleSystem.cpp
+	SOURCE_GROUP
+	"Network"
 	Network/XEntityProcessingCmd.cpp
 	Network/XNetwork.cpp
 	Network/XNetworkStats.cpp
+	SOURCE_GROUP
+	"Player"
 	Player/XPlayer.cpp
+	SOURCE_GROUP
+	"ScriptObjects"
 	ScriptObjects/ScriptObjectClient.cpp
 	ScriptObjects/ScriptObjectGame.cpp
 	ScriptObjects/ScriptObjectInput.cpp
@@ -37,11 +50,12 @@ add_sources("NoUberFile"
 	ScriptObjects/ScriptObjectStream.cpp
 	ScriptObjects/ScriptObjectTest.cpp
 	ScriptObjects/ScriptTimerMgr.cpp
+	SOURCE_GROUP
+	"Server"
 	Server/Server.cpp
 	Server/XServer.cpp
 	Server/XServerRules.cpp
 	Server/XServerSlot.cpp
-
 	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.h
@@ -77,43 +91,37 @@ add_sources("NoUberFile"
 	PRIVATE ${SOURCE_DIR}/UI/UIWidget.cpp
 	PRIVATE ${SOURCE_DIR}/UI/UIWidget.h
 	]]
-
- )
+)
 end_sources()
-GameModule(Game FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Game")
+gamemodule(Game FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Game")
 
 add_subdirectory(../thirdparty 3rdparty)
 
 target_link_libraries(${THIS_PROJECT} PRIVATE BlackBox)
-if (OPTION_USE_GUI)
-	#target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
-	#target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
-	#target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
+if(OPTION_USE_GUI)
+	# target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
+	# target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
+	# target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
 endif()
-if (WINDOWS)
+if(WINDOWS)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Ws2_32)
 	target_link_libraries(${THIS_PROJECT} PRIVATE dbghelp)
 endif()
-if (USE_STEAM)
+if(USE_STEAM)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Steam)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE USE_STEAM)
 endif()
-target_include_directories(${THIS_PROJECT}
+target_include_directories(
+	${THIS_PROJECT}
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"
-	PRIVATE "${INCLUDE_ROOT}/GUI"
-)
+	PRIVATE "${INCLUDE_ROOT}/GUI")
 
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)
 
-target_sources(${THIS_PROJECT}
-  PRIVATE
-  ${INCLUDE_FILES}
-  )
+target_sources(${THIS_PROJECT} PRIVATE ${INCLUDE_FILES})
 
 source_group(
-  TREE ${INCLUDE_ROOT}
-  PREFIX "Header Files" 
-  FILES
-  ${INCLUDE_FILES}
-)
+	TREE ${INCLUDE_ROOT}
+	PREFIX "Header Files"
+	FILES ${INCLUDE_FILES})

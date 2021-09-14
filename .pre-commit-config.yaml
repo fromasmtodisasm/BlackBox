@@ -1,16 +1,17 @@
 repos:
   - repo: https://github.com/doublify/pre-commit-clang-format.git
-    rev: '62302476d0da01515660132d76902359bed0f782' # 2020-05-08
+    rev: "62302476d0da01515660132d76902359bed0f782" # 2020-05-08
     hooks:
       - id: clang-format
         files: \.(h|hpp|c|cpp|glsl|vert|geom|frag|comp)$
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: 'a99a3fbe79a9d346cabd02a5e167ad0edafe616b' # v2.3.0
+    rev: "a99a3fbe79a9d346cabd02a5e167ad0edafe616b" # v2.3.0
     hooks:
       - id: prettier
-        types_or: [json, yaml, css, html, xml]
+        types_or: [json, css, html, xml]
   - repo: https://github.com/cheshirekow/cmake-format-precommit
-    rev: 'e2c2116d86a80e72e7146a06e68b7c228afc6319' # v0.6.13
+    rev: "e2c2116d86a80e72e7146a06e68b7c228afc6319" # v0.6.13
     hooks:
       - id: cmake-format
-        additional_dependencies: ['pyyaml']
+        additional_dependencies: ["pyyaml"]
+      - id: cmake-lint

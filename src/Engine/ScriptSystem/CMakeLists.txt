@@ -1,17 +1,18 @@
 start_sources()
 sources_platform(ALL)
-add_sources("NoUberFile"
-	PROJECTS ScriptSystem
-	SOURCE_GROUP "SourceFiles"
-		
-		"LibScriptSystem.cpp"
-		"FunctionHandler.cpp"
-		"ScriptBinding.cpp"
-		"ScriptObject.cpp"
-		"ScriptObjectSystem.cpp"
-		"ScriptSystem.cpp"
-
-		#[[
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	ScriptSystem
+	SOURCE_GROUP
+	"Source Files"
+	"LibScriptSystem.cpp"
+	"FunctionHandler.cpp"
+	"ScriptBinding.cpp"
+	"ScriptObject.cpp"
+	"ScriptObjectSystem.cpp"
+	"ScriptSystem.cpp"
+	#[[
 		"LuaDebugger/AboutWnd.h"
 		"LuaDebugger/Coverage.cpp"
 		"LuaDebugger/Coverage.h"
@@ -34,20 +35,20 @@ add_sources("NoUberFile"
 		"LuaDebugger/_TinyTreeList.h"
 		"LuaDebugger/_TinyWindow.h"
 		]]
-
- )
+)
 end_sources()
 
-EngineModule(ScriptSystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
-###################################################
+enginemodule(ScriptSystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
+						 "Engine")
+# ##############################################################################
 include(FindLua)
-###################################################
+# ##############################################################################
 add_package(Lua)
 target_include_directories(${THIS_PROJECT} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${THIS_PROJECT} PRIVATE ${LUA_LIBRARIES})
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
-###################################################
+# ##############################################################################
 
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 

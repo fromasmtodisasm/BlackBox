@@ -1,27 +1,29 @@
 set(CMAKE_CXX_STANDARD 17)
 
-##################################################
-## Define the two required variables before including
-# the source code for watching a git repository.
+# ##############################################################################
+# Define the two required variables before including the source code for
+# watching a git repository.
 
-if (NEED_VC)
+if(NEED_VC)
 	set(PRE_CONFIGURE_FILE "VersionControl.cpp.in")
 	set(POST_CONFIGURE_FILE ${CMAKE_BINARY_DIR}/VersionControl.cpp)
 	include(${CMAKE_SOURCE_DIR}/Tools/CMake/GitWatcher.cmake)
 endif()
-##################################################
+# ##############################################################################
 
 start_sources()
 sources_platform(ALL)
-add_sources("NoUberFile"
-	PROJECTS System
-	SOURCE_GROUP "SourceFiles"
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	System
+	SOURCE_GROUP
+	"Source Files"
 	"CmdLine.cpp"
 	"CmdLineArg.cpp"
 	"Commands.cpp"
 	"Console.cpp"
 	"ConsoleBatchFile.cpp"
-	"File/CryPak.cpp"
 	"HardwareMouse.cpp"
 	"Linux/Runtime.cpp"
 	"NullLog.cpp"
@@ -36,37 +38,42 @@ add_sources("NoUberFile"
 	"Timer.cpp"
 	"WindowsConsole.cpp"
 	"XConsoleVariable.cpp"
-
+	SOURCE_GROUP
+	"File"
+	"File/CryPak.cpp"
+	SOURCE_GROUP
+	"ScriptBinds"
 	"ScriptBinds/ScriptObjectConsole.cpp"
 	"ScriptBinds/ScriptObjectRenderer.cpp"
 	"ScriptBinds/ScriptObjectScript.cpp"
-	"ProjectManager/ProjectManager.cpp"
- )
+	SOURCE_GROUP
+	"ProjectManager"
+	"ProjectManager/ProjectManager.cpp")
 end_sources()
 
-EngineModule(System FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+enginemodule(System FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
-if (OPTION_USE_GUI)
+if(OPTION_USE_GUI)
 	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
 endif()
 
-add_SDL(${THIS_PROJECT})
+add_sdl(${THIS_PROJECT})
 
-
-if (OPTION_USE_LINUXINPUT)
+if(OPTION_USE_LINUXINPUT)
 	target_compile_definitions(${THIS_PROJECT} PUBLIC -DUSE_LINUXINPUT)
 endif()
 
-if (NOT OPTION_STREAM_COOKIEFIED)
+if(NOT OPTION_STREAM_COOKIEFIED)
 	target_compile_definitions(${THIS_PROJECT} PUBLIC -DNOT_COOKIEFIED)
 endif()
-if (OPTION_STREAM_ACTIVETYPECHECK)
+if(OPTION_STREAM_ACTIVETYPECHECK)
 	target_compile_definitions(${THIS_PROJECT} PUBLIC -DSTREAM_ACTIVETYPECHECK)
 endif()
-target_include_directories(${THIS_PROJECT} PRIVATE ${BLACKBOX_ROOT}/include/System)
-if (NEED_VC)
+target_include_directories(${THIS_PROJECT}
+													 PRIVATE ${BLACKBOX_ROOT}/include/System)
+if(NEED_VC)
 	set_target_properties(check_git_repository PROPERTIES FOLDER Tools)
 endif()
 

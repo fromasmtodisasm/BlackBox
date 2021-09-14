@@ -1,13 +1,16 @@
 start_sources()
 sources_platform(ALL)
-add_sources("NoUberFile"
-	PROJECTS EntitySystem
-	SOURCE_GROUP "SourceFiles"
-		"EntitySystem.cpp"
-		"Entity.cpp"
- )
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	EntitySystem
+	SOURCE_GROUP
+	"Source Files"
+	"EntitySystem.cpp"
+	"Entity.cpp")
 end_sources()
 
-EngineModule(EntitySystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+enginemodule(EntitySystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
+						 "Engine")
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
