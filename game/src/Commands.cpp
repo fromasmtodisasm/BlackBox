@@ -1,12 +1,3 @@
-#include <Game.hpp>
-
-#include <BlackBox/Core/IMarkers.hpp>
-#include <BlackBox/Core/Utils.hpp>
-//#include <BlackBox/Renderer/SceneManager.hpp>
-#include <BlackBox/Scene/IScene.hpp>
-#include <BlackBox/System/ConsoleCommands.hpp>
-#include <BlackBox/World/IWorld.hpp>
-
 #if 0
 #ifdef _WIN32
 #include <process.h>
@@ -561,7 +552,7 @@ private:
 };
 //*******************************************************
 #endif
-void CGame::initCommands()
+void CGame::InitCommands()
 {
 #if 0
   m_Console->AddCommand("last", new LastCommand(this));

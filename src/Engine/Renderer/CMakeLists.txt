@@ -1,90 +1,164 @@
 cmake_minimum_required(VERSION 3.10)
-project(Renderer CXX)
-###################################################
-add_library(OpenGlBackend INTERFACE)
-###################################################
-
-if (OPTION_GLAD_LOADER)
-  message(STATUS "Using Glad OpenGL loader")
-  add_subdirectory(${CMAKE_SOURCE_DIR}/lib/glad glad EXCLUDE_FROM_ALL)
-  target_link_libraries(OpenGlBackend INTERFACE glad)
-###################################################
-  get_property(includes TARGET glad PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-  set_property(TARGET OpenGlBackend PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${includes})
-###################################################
-  target_compile_definitions(OpenGlBackend INTERFACE -DGLAD_LOADER)
-  target_compile_definitions(OpenGlBackend INTERFACE -DGLAD_GLAPI_EXPORT_BUILD)
-elseif(GLEW_LOADER)                          
-  find_package(GLEW REQUIRED)                
-  target_compile_definitions(OpenGlBackend INTERFACE -DGLEW_LOADER)
-endif()
-install_this(OpenGlBackend)
 
 add_package(Stb)
-add_library(${PROJECT_NAME})
-target_sources(${PROJECT_NAME}
-  #Render folder
-  PRIVATE ${PROJECT_SOURCE_DIR}/AuxRenderer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseRenderer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseShader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseShaderLoading.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BaseTexture.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/BufferManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Camera.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/FrameBufferObject.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/FreeTypeFont.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/GBuffer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/GLRenderer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/HdrTechnique.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/IndexBuffer.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Light.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Material.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/OpenglDebug.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Particles.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Pipeline.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/PostProcessor.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/ReflectShader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/ScreenShader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Shader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/ShadowMapShader.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/ShadowMapTechnique.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/TechniqueManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Terrain.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Texture.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/TextureCube.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/VertexArrayObject.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/VertexBuffer.cpp
+find_package(Freetype CONFIG REQUIRED)
+# ===============> bison
+find_package(BISON)
+find_package(FLEX)
+find_package(Cygwin)
 
+macro(cygwin_bison INPUT OUTPUT)
+	add_custom_command(
+		OUTPUT ${OUTPUT} 
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
+		DEPENDS ${INPUT}
+	  ) 
+endmacro()
 
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/ShaderManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/TextureManager.cpp
-  PRIVATE ${PROJECT_SOURCE_DIR}/Resources/Main.cpp
-)
+macro(cygwin_flex INPUT OUTPUT)
+	add_custom_command(
+		OUTPUT ${OUTPUT} 
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "flex -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
+		DEPENDS ${INPUT}
+	  ) 
+endmacro()
 
-if (OPTION_GLAD_LOADER)
-  target_sources(${PROJECT_NAME}
-    PRIVATE ${PROJECT_SOURCE_DIR}/GladLoader.cpp
+if((NOT BISON_FOUND) OR (NOT FLEX_FOUND))
+    message(WARNING "
+      No Bison and/or Flex available. FxParser will only use the already generated code.
+      You can try to set BISON_EXECUTABLE & FLEX_EXECUTABLE"
+    )
+  set(BISON_EXECUTABLE "" CACHE PATHFILE "bison")
+  set(FLEX_EXECUTABLE "" CACHE PATHFILE "flex")
+  MARK_AS_ADVANCED(CLEAR BISON_EXECUTABLE)
+  MARK_AS_ADVANCED(CLEAR FLEX_EXECUTABLE)
+endif()
+
+if(BISON_FOUND)
+  BISON_TARGET(
+	  ShaderParser ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
+	  #DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hpp
   )
+elseif (CYGWIN_INSTALL_PATH)
+	cygwin_bison(${PROJECT_SOURCE_DIR}/Shaders/Parser.yy ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp)
+endif()
+if(FLEX_FOUND)
+  FLEX_TARGET(ShaderScanner ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
+elseif (CYGWIN_INSTALL_PATH)
+	cygwin_flex(${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll ${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
+endif()
+if(FLEX_FOUND AND BISON_FOUND)
+  ADD_FLEX_BISON_DEPENDENCY(ShaderScanner ShaderParser)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenGlBackend)
-target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-if (LINUX)
-	target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
-else()
-	target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
+#add_library(FxParser SHARED)
+
+if (OPTION_DX_RENDERER)
+	include("D3D/CMakeLists.txt")
 endif()
 
-add_SDL()
+add_subdirectory(Shaders)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
-#target_include_directories(${OpenGlBackend} 
-#	INTERFACE $<TARGET_PROPERTY:glad,INTERFACE_INCLUDE_DIRECTORIES>
-#)
+start_sources()
+sources_platform(ALL)
+add_sources("NoUberFile"
+	PROJECTS RendererDX RendererGL RendererVK
+	SOURCE_GROUP "Source"
+		"AuxRenderer.cpp"
+		"AuxRendererNull.cpp"
+		"BaseRenderer.cpp"
+		"FreeTypeFont.cpp"
+		"Shaders/FxParser.cpp"
+ )
 
-add_private_headers()
-#set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Projects/Game")
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
+add_sources("NoUberFile"
+	PROJECTS RendererDX
+	SOURCE_GROUP "D3D"
+		"D3D/Renderer.cpp"
+		"D3D/BufferManager.cpp"
+		"D3D/Shader.cpp"
+		"D3D/AuxRenderer.h"
+		"D3D/AuxRenderer.cpp"
 )
+
+add_sources("NoUberFile"
+	PROJECTS RendererGL
+	SOURCE_GROUP "OpenGL"
+		"OpenGL/GladLoader.cpp"
+		"OpenGL/GlewLoader.cpp"
+		"OpenGL/OpenglDebug.cpp"
+		"OpenGL/Renderer.cpp"
+		"OpenGL/Renderer.hpp"
+)
+add_sources("NoUberFile"
+	PROJECTS RendererVK
+	SOURCE_GROUP "Vulkan"
+		"Vulkan/Renderer.cpp"
+		"Vulkan/Shader.cpp"
+		"Vulkan/Renderer.h"
+)
+sources_platform(WINDOWS)
+add_sources("NoUberFile"
+	PROJECTS RendererVK
+	SOURCE_GROUP "Vulkan\\\\Resource Files"
+		"Vulkan/RendererVK.rc"
+)
+
+end_sources()
+
+macro(add_common_libs)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Math)
+	target_link_libraries(${THIS_PROJECT} PRIVATE freetype)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
+	target_link_libraries(${THIS_PROJECT} PRIVATE FxParser)
+	add_SDL(${THIS_PROJECT})
+endmacro()
+
+macro(add_common_includes)
+	target_include_directories(${THIS_PROJECT} PRIVATE ${Stb_INCLUDE_DIR})
+endmacro()
+
+if(OPTION_DX_RENDERER)
+	EngineModule(RendererDX FORCE_SHARED_WIN PCH "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp" SOLUTION_FOLDER "Engine")
+	add_common_libs()
+	add_common_includes()
+
+	find_package(D3D10 REQUIRED)
+	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
+	target_link_libraries(${THIS_PROJECT} PRIVATE D3D10 d3dcompiler dxguid)
+
+	message(STATUS "renderer sources")
+else()
+	CryFileContainer(RendererDX SOLUTION_FOLDER "Engine")
+endif()
+if(OPTION_VK_RENDERER)
+	EngineModule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+	add_common_libs()
+	add_common_includes()
+
+	find_package(Vulkan REQUIRED)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Vulkan::Vulkan)
+	target_compile_definitions(${THIS_PROJECT} PUBLIC VK_RENDERER)
+	target_include_directories(${THIS_PROJECT} PUBLIC "Vulkan")
+
+	message(STATUS "renderer sources")
+else()
+	CryFileContainer(RendererVK SOLUTION_FOLDER "Engine")
+endif()
+
+	#EngineModule(RendererGL FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+	#add_common_libs()
+	#add_common_includes()
+	#include(${CMAKE_CURRENT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
+	#target_link_libraries(${THIS_PROJECT} PUBLIC OpenGlBackend)
+
+#[[
+
+source_group(
+	TREE ${PROJECT_SOURCE_DIR}
+	#PREFIX "Header Files"
+	FILES
+	${SOURCES}
+)
+]]
+#add_private_headers()

@@ -17,13 +17,7 @@
 
 *************************************************************************/
 
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/HardwareMouse.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/ITimer.hpp>
 //#include <BlackBox/Core/Platform/WindowsUtils.hpp>
 
 //#include <BlackBox/Core/Platform/CryLibrary.hpp>
@@ -160,7 +154,7 @@ void CHardwareMouse::ShowHardwareMouse(bool bShow)
 
 	if (m_debugHardwareMouse)
 	{
-		LogAlways("HM: ShowHardwareMouse = %d", bShow);
+		CryLogAlways("HM: ShowHardwareMouse = %d", bShow);
 	}
 
 	if (bShow)
@@ -187,7 +181,7 @@ void CHardwareMouse::ShowHardwareMouse(bool bShow)
 void CHardwareMouse::ConfineCursor(bool confine)
 {
 	if (m_debugHardwareMouse)
-		LogAlways("HM: ConfineCursor = %d", confine);
+		CryLogAlways("HM: ConfineCursor = %d", confine);
 
 	if (!gEnv || gEnv->pRenderer == NULL || m_allowConfine == false || !m_bFocus)
 		return;
@@ -438,7 +432,7 @@ void CHardwareMouse::OnPreInitRenderer()
 
 void CHardwareMouse::OnPostInitInput()
 {
-	ASSERT(gEnv->pInput);
+	CRY_ASSERT(gEnv->pInput);
 
 	if (gEnv->pInput)
 		gEnv->pInput->AddEventListener(this);
@@ -503,8 +497,8 @@ void CHardwareMouse::IncrementCounter()
 	m_iReferenceCounter++;
 
 	if (m_debugHardwareMouse)
-		LogAlways("HM: IncrementCounter = %d", m_iReferenceCounter);
-	ASSERT(m_iReferenceCounter >= 0);
+		CryLogAlways("HM: IncrementCounter = %d", m_iReferenceCounter);
+	CRY_ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
 	EvaluateCursorConfinement();
@@ -517,8 +511,8 @@ void CHardwareMouse::DecrementCounter()
 	m_iReferenceCounter--;
 
 	if (m_debugHardwareMouse)
-		LogAlways("HM: DecrementCounter = %d", m_iReferenceCounter);
-	ASSERT(m_iReferenceCounter >= 0);
+		CryLogAlways("HM: DecrementCounter = %d", m_iReferenceCounter);
+	CRY_ASSERT(m_iReferenceCounter >= 0);
 
 	ShowHardwareMouse(m_iReferenceCounter > 0);
 	EvaluateCursorConfinement();

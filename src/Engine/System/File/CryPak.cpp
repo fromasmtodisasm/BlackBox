@@ -8,7 +8,7 @@
 #include <cstdarg>
 #include <cctype>
 
-CCryPak::CCryPak(IMiniLog* pLog)
+CCryPak::CCryPak(IMiniLog * pLog, PakVars * pPakVars, const bool bLvlRes)
   :
   m_pLog(pLog)
 {
@@ -232,5 +232,13 @@ void CCryPak::EnumerateRecordedFiles(RecordedFilesEnumCallback enumCallback)
 
 void CCryPak::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
+}
+FILE* CCryPak::FOpenRaw(const char* pName, const char* mode)
+{
+	return nullptr;
+}
+size_t CCryPak::FReadRaw(void* data, size_t length, size_t elems, FILE* handle)
+{
+	return FRead(data, length, elems, handle);
 }
 #endif

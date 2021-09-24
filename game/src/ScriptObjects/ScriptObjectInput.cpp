@@ -15,7 +15,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Game.hpp"
 #include "ScriptObjects/ScriptObjectInput.hpp"
 
 //////////////////////////////////////////////////////////////////////
@@ -122,7 +121,7 @@ int CScriptObjectInput::BindCommandToKey(IFunctionHandler *pH)
 		return pH->EndFunction();
 	 
 	char sTemp[256];strcpy(sTemp,sRes);
-	m_pConsole->CreateKeyBind(sCmd,_strlwr(sTemp));
+	m_pConsole->CreateKeyBind(sCmd,_strlwr(sTemp), false);
 	
 	return pH->EndFunction();
 }
@@ -152,7 +151,7 @@ int CScriptObjectInput::BindAction(IFunctionHandler *pH)
 		pH->GetParam(3,sActionMap);
 	if (nNumOfParams>3)
 		pH->GetParam(4, iKeyPos);
-	TRACE("BindAction %s %s %s\n",sAction,sKeys,(nCheckPressed)?"true":"false");
+	//TRACE("BindAction %s %s %s",sAction,sKeys,(nCheckPressed)?"true":"false");
 	m_pGame->BindAction(sAction,sKeys,sActionMap, iKeyPos);
 
 	return pH->EndFunction();

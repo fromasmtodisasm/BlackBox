@@ -15,7 +15,6 @@ typedef unsigned short ushort;
 #endif
 
 #include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/Renderer/Light.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
@@ -31,11 +30,13 @@ typedef void* WIN_HGLRC;
 class CCamera;
 class CMatInfo;
 struct IRenderAuxGeom;
+struct ITechniqueManager;
 struct IFont;
 struct IShader;
 struct ISystem;
 struct IWindow;
 struct Material;
+struct ITechniqueManager;
 
 //////////////////////////////////////////////////////////////////////
 typedef unsigned char bvec4[4];
@@ -43,9 +44,20 @@ typedef float vec4_t[4];
 typedef unsigned char byte;
 typedef float vec2_t[2];
 
+enum class RenderBackend
+{
+	GL,
+	DX
+};
+
+// Uncomment one of the two following typedefs:
+typedef uint32 vtx_idx;
+//typedef uint16 vtx_idx;
+
 // Interface to the graphics constant buffers
 struct IGraphicsDeviceConstantBuffer
 {
+	virtual ~IGraphicsDeviceConstantBuffer() = default;
 	// Set contents of the device buffer
 	virtual void SetData(const uint8* data, size_t size) = 0;
 };
@@ -137,43 +149,6 @@ struct Transform
 #define GS_DEPTHFUNC_GREAT 0x00200000
 #define GS_STENCIL 0x00400000
 
-union UCol {
-	uint dcolor;
-	bvec4 bcolor;
-	/*
-	UCol& operator=(Vec4& v)
-	{
-		UCol c;
-		c.bcolor[0] = static_cast<char>(v[0] * 255);
-		c.bcolor[1] = static_cast<char>(v[1] * 255);
-		c.bcolor[2] = static_cast<char>(v[2] * 255);
-		c.bcolor[3] = static_cast<char>(v[3] * 255);
-		return c;
-	};
-	*/
-	UCol() = default;
-	UCol(const Vec4& v)
-	{
-		bcolor[0] = static_cast<char>(v[3] * 255.f);
-		bcolor[1] = static_cast<char>(v[1] * 255.f);
-		bcolor[2] = static_cast<char>(v[2] * 255.f);
-		bcolor[3] = static_cast<char>(v[0] * 255.f);
-	}
-	UCol(const Vec3& v)
-		: UCol(Vec4(v, 1))
-	{
-	}
-	UCol(const bvec4 v): 
-		 bcolor{v[0], v[1], v[2], v[3]}
-	{
-	}
-	UCol(uint8 v0, uint8 v1, uint8 v2, uint8 v3): 
-		 bcolor{v0, v1, v2, v3}
-	{
-	}
-			
-};
-
 enum class RenderPrimitive
 {
 	LINES,
@@ -202,6 +177,14 @@ struct ITexture
 	virtual int getWidth() const				  = 0;
 	virtual int getHeight() const				  = 0;
 	virtual int getId() const					  = 0;
+	virtual uint64 getBindlesId() const			  = 0;
+	virtual void bind() const					  = 0;
+
+};
+
+struct ISammplerState
+{
+	
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -222,7 +205,7 @@ struct SDrawTextInfo
 	SDrawTextInfo()
 		: xscale(1.0), yscale(1.0)
 	{
-		flags	= 0;
+		flags	 = 0;
 		color[0] = color[1] = color[2] = color[3] = 1;
 		font									  = 0;
 	}
@@ -232,12 +215,9 @@ struct SDrawTextInfo
 
 struct SDispFormat
 {
-	int m_Width;
-	int m_Height;
-	int m_BPP;
-	SDispFormat()
-	{
-	}
+	int m_Width = 0;
+	int m_Height = 0;
+	int m_BPP = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -255,7 +235,8 @@ enum EStreamID
 #define VSM_TANGENTS (1 << VSF_TANGENTS)
 
 //////////////////////////////////////////////////////////////////////////
-union UHWBuf {
+union UHWBuf
+{
 	void* m_pPtr;
 	uint m_nID;
 };
@@ -263,7 +244,7 @@ union UHWBuf {
 //////////////////////////////////////////////////////////////////////////
 struct SVertexStream
 {
-	void* m_VData;	// pointer to buffer data
+	void* m_VData;	  // pointer to buffer data
 	UHWBuf m_VertBuf; // HW buffer descriptor
 	int m_nItems;
 	bool m_bLocked; // Used in Direct3D only
@@ -273,7 +254,7 @@ struct SVertexStream
 	SVertexStream()
 	{
 		Reset();
-		m_bDynamic   = false;
+		m_bDynamic	 = false;
 		m_nBufOffset = 0;
 		m_pPool		 = NULL;
 	}
@@ -282,7 +263,7 @@ struct SVertexStream
 	{
 		m_VData			 = NULL;
 		m_VertBuf.m_pPtr = NULL;
-        m_nItems		 = 0;
+		m_nItems		 = 0;
 		m_bLocked		 = false;
 	}
 };
@@ -299,8 +280,8 @@ class CVertexBuffer
 			m_VS[i].Reset();
 		}
 		m_fence		   = 0;
-		m_bFenceSet	= 0;
-		m_NumVerts	 = 0;
+		m_bFenceSet	   = 0;
+		m_NumVerts	   = 0;
 		m_vertexformat = 0;
 	}
 
@@ -332,15 +313,6 @@ class CVertexBuffer
 
 	int Size(int Flags, int nVerts);
 };
-//////////////////////////////////////////////////////////////////////
-struct SVertBufComps
-{
-	bool m_bHasTC;
-	bool m_bHasColors;
-	bool m_bHasSecColors;
-	bool m_bHasNormals;
-};
-
 struct IRenderCallback
 {
 	enum Type
@@ -350,6 +322,39 @@ struct IRenderCallback
 	};
 	virtual void CallBack(Type type) = 0;
 };
+
+//! \cond INTERNAL
+//! Describes rendering viewport dimensions
+struct SRenderViewport
+{
+	int   x      = 0;
+	int   y      = 0;
+	int   width  = 0;
+	int   height = 0;
+	float zmin   = 0.f;
+	float zmax   = 1.f;
+
+	SRenderViewport() {}
+
+	SRenderViewport(int newX, int newY, int newWidth, int newHeight)
+		: x(newX)
+		, y(newY)
+		, width(newWidth)
+		, height(newHeight)
+		, zmin(0.0f)
+		, zmax(1.0f)
+	{}
+
+	bool operator==(const SRenderViewport& v)
+	{
+		return x == v.x && y == v.y && width == v.width && height == v.height && zmin == v.zmin && zmax == v.zmax;
+	}
+	bool operator!=(const SRenderViewport& v)
+	{
+		return !(*this == v);
+	}
+};
+//! \endcond
 
 struct IRenderer
 {
@@ -393,7 +398,7 @@ struct IRenderer
 
 	//! This renderer will share resources (textures) with specified renderer.
 	//! Specified renderer must be of same type as this renderer.
-	virtual void  ShareResources( IRenderer *renderer )=0;
+	virtual void ShareResources(IRenderer* renderer) = 0;
 
 	virtual void SetRenderCallback(IRenderCallback* pCallback) = 0;
 
@@ -421,7 +426,7 @@ struct IRenderer
 	virtual void Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info) = 0;
 
 	//! Draw a image using the current matrix
-	virtual void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
+	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
 
 	virtual void DrawFullScreenImage(int texture_id) = 0;
 
@@ -477,7 +482,7 @@ struct IRenderer
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
 	virtual void PushProfileMarker(char* label) = 0;
-	virtual void PopProfileMarker(char* label)  = 0;
+	virtual void PopProfileMarker(char* label)	= 0;
 
 	//////////////////////////////////////////////////////////////////////
 	//! Interface for auxiliary geometry (for debugging, editor purposes, etc.)
@@ -502,14 +507,14 @@ struct IRenderer
 	/////////////////////////////////////////////////////////////////////////////////
 
 	// 3d engine set this color to fog color
-	virtual void SetClearColor(const Vec3& vColor)   = 0;
+	virtual void SetClearColor(const Vec3& vColor)	 = 0;
 	virtual void ClearDepthBuffer()					 = 0;
 	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
 
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
 
 	virtual void SetRenderTarget(int nHandle) = 0;
-  virtual int CreateRenderTarget() = 0;
+	virtual int CreateRenderTarget()		  = 0;
 
 	virtual void DrawFullscreenQuad()						  = 0;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) = 0;
@@ -531,7 +536,7 @@ struct IRenderer
 	virtual void UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) = 0;
 	virtual void ReleaseIndexBuffer(SVertexStream* dest)													  = 0;
 
-	virtual struct ITechniqueManager* GetITechniqueManager() = 0;
+	virtual ITechniqueManager* GetITechniqueManager() = 0;
 	virtual struct IFont* GetIFont()						 = 0;
 
 	virtual IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) = 0;
@@ -541,9 +546,8 @@ struct IRenderer
 	virtual void Flush() = 0;
 
 	////////////////////////////////////////////////////////////////////////////////
-	virtual IShaderProgram* Sh_Load(const char* name, int flags)			  = 0;
-	virtual IShaderProgram* Sh_Load(const char* vertex, const char* fragment) = 0;
-	virtual void Sh_Reload() = 0;
+	virtual IShader* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) = 0;
+	virtual void Sh_Reload()															  = 0;
 	// Loading of the texture for name(nameTex)
 	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
 };
@@ -554,19 +558,16 @@ extern "C"
 	typedef IRenderer* (*PFNCREATERENDERERINTERFACE)(ISystem* pSystem);
 }
 
+#include "VertexFormats.hpp"
+
 struct SRenderParams
 {
-	IShaderProgram* Shader;
-	std::vector<UniformValue> uniforms;
-	Material* Material;
+	IShader* Shader;
+//	std::vector<UniformValue> uniforms;
+	Material* material;
 	CCamera* Camera;
-	DirectionLight* DirectionLight;
+	DirectionLight* directionLight;
 	Mat4 Transform;
-};
-
-struct IDrawable
-{
-	virtual void draw(SRenderParams& renderParams) = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

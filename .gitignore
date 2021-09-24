@@ -6,7 +6,6 @@ build/*
 *.swo
 *.lnk
 CMakeLists.txt.user*
-/CMakeSettings.json
 res/tmp/*
 res/geom/tmp/
 imgui.ini
@@ -24,3 +23,9 @@ vcpkg/
 /.vscode
 /out/kate
 cmake-build*
+/msvc
+/vcpkg_lin
+/Game.log
+Solutions/*
+out/*
+/history.txt

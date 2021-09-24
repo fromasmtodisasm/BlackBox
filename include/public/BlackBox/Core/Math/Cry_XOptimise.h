@@ -21,7 +21,7 @@
 # pragma once
 #endif
 
-#include "TArray.h"
+#include "BlackBox/Core/Tarray.h"
 #include "platform.h"
 
 extern int g_CpuFlags;

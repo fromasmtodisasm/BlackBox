@@ -1,6 +1,5 @@
-#include <Client\Client.hpp>
-
-#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
+#include <algorithm>
+#include <Client/Client.hpp>
 
 #define YAW		(0)  
 #define PITCH	(1)    
@@ -14,6 +13,12 @@ CClient::CClient(CGame *pGame)
 	m_CameraController(),
 	m_IntersectionState()
 {
+}
+
+CClient::~CClient()
+{
+	SAFE_RELEASE(m_CrossHair);
+	SAFE_RELEASE(m_pClient);
 }
 
 void CClient::Update()
@@ -70,7 +75,7 @@ void CClient::Update()
 	auto cam = m_CameraController.CurrentCamera();
 	gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Vec3(2, -0.5, -1), pos + cam->Front*Vec3(3, 0, 1), UCol(0,0,1,1));
 
-	m_CameraController.SetRenderCamera(0);
+	//m_CameraController.SetRenderCamera(0);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_PlayerProcessingCmd.Reset();
 }
@@ -80,14 +85,22 @@ bool CClient::Init()
 	m_pIActionMapManager = m_pGame->GetActionMapManager();
 	if(m_pIActionMapManager)
 		m_pIActionMapManager->SetSink(this);
-	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
+	if (!gEnv->IsDedicated())
+		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
+
+	m_PlayerScript.Create(gEnv->pScriptSystem);
+	if (!gEnv->pScriptSystem->GetGlobalValue("Player",*m_PlayerScript))
+	{
+		CryError("Player Error");
+		return false;
+	}
 
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 
 	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 0, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
+	//m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
 
 
 	srand(static_cast<unsigned int>(time(0)));
@@ -111,8 +124,10 @@ bool CClient::Init()
 	//m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
-	m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
-	return true;
+	if (gEnv->pRenderer)
+		m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
+
+	return Script::CallMethod(m_PlayerScript, "OnInit");
 }
 
 void CClient::OnXConnect()
@@ -292,9 +307,9 @@ void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 
 void CClient::OnLoadScene()
 {
-	m_CameraController.AddCamera(new CCamera(Vec3(0,0,0)));
-	m_CameraController.AddCamera(new CCamera(Vec3(10,10,10)));
-	m_CameraController.SetRenderCamera(1);
+	m_CameraController.AddCamera(new CCamera(/*Vec3(0,0,0)*/));
+	//m_CameraController.AddCamera(new CCamera(/*Vec3(10,10,10)*/));
+	//m_CameraController.SetRenderCamera(1);
 	m_CameraController.InitCVars();
 }
 
@@ -356,7 +371,8 @@ void CClient::DrawAux()
 	//m_pRender->DrawFullScreenImage(m_CrossHair->getId());
 	size_t ch_w = 20;
 	size_t ch_h = 20;
-	gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5 * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5 * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
+	if (gEnv->pRenderer)
+		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
 }
 
 void CClient::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
@@ -411,7 +427,7 @@ void CClient::IntersectionByRayCasting()
 
 	const auto lastPos = m_IntersectionState.m_LastPickedPos; 
 	for (size_t i = 0; i < m_testObjects.size(); i++){
-		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.intersectBox(eyeRay);
+		const glm::vec2 tMinMax = m_testObjects[i].m_AABB.IntersectBox(eyeRay);
 		if (tMinMax.x < 0 || tMinMax.y < 0)
 			continue;
 		if(tMinMax.x<tMinMax.y && tMinMax.x<tMin) {
@@ -426,8 +442,10 @@ void CClient::IntersectionByRayCasting()
 				auto nh = num_hits->GetIVal();
 				if (nh == 100)
 				{
-					//if (g_SteamAchievements)
-						m_pGame->SteamAchivements()->SetAchievement("achievement_100_hits");
+					#ifdef USE_STEM
+					if (auto steamAchievements = m_pGame->SteamAchivements(); steamAchievements)
+						steamAchievements->SetAchievement("achievement_100_hits");
+					#endif
 				}
 				num_hits->Set(nh + 1);
 			}

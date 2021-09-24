@@ -14,5 +14,5 @@ if (OPTION_ENGINE)
 endif()
 
 add_subdirectory(${LAUNCHER_DIR})
-set_solution_startup_target(Launcher)
-set_property(TARGET Launcher PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+#set_solution_startup_target(Launcher)
+#set_property(TARGET Launcher PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

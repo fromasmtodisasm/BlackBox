@@ -1,15 +1,15 @@
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Input/InputDevice.hpp>
 
 #if !defined(RELEASE)
-//#include "InputCVars.h"
-//extern CInputCVars* g_pInputCVars;
+	#include <BlackBox/Input/InputCVars.hpp>
+	extern CInputCVars* g_pInputCVars;
 #endif
 
 #include <BlackBox/System/ISystem.hpp>
 
 #include <string>
 
-using namespace std;
 using ColorF = Vec4;
 
 CInputDevice::CInputDevice(IInput& input, const char* deviceName)
@@ -81,7 +81,7 @@ const char* CInputDevice::GetKeyName(const EKeyId keyId) const
     return NULL;
 
   const SInputSymbol* pInputSymbol = iter->second;
-  ASSERT(pInputSymbol != NULL);
+  CRY_ASSERT(pInputSymbol != NULL);
 
   return pInputSymbol->name.c_str();
 }
@@ -254,7 +254,6 @@ CInputDevice::CDebugPressedButtons::SData::SData(const SInputSymbol* pSymbol_, u
 // ------------------------------------------------------------------------
 void CInputDevice::CDebugPressedButtons::Add(const SInputSymbol* pSymbol)
 {
-#if INPUT_CVARS_IMPLEMENTED
   if (g_pInputCVars->i_debugDigitalButtons && pSymbol)
   {
     if (pSymbol->state != eIS_Changed || ((g_pInputCVars->i_debugDigitalButtons & eDF_LogChangeState) != 0))
@@ -266,15 +265,13 @@ void CInputDevice::CDebugPressedButtons::Add(const SInputSymbol* pSymbol)
       }
     }
   }
-#endif
 }
 
-//#include <CryRenderer/IRenderAuxGeom.h>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 
 // ------------------------------------------------------------------------
 void CInputDevice::CDebugPressedButtons::DebugRender()
 {
-#if 0
   if (g_pInputCVars->i_debugDigitalButtons)
   {
     static float deltaY = 15.f;
@@ -285,6 +282,8 @@ void CInputDevice::CDebugPressedButtons::DebugRender()
     ColorF colDefault(1.f, 1.f, 0.f, 1.f);
     m_textPos2d.x = startX;
     m_textPos2d.y = startY;
+    //TODO: Implement this
+    #if 0
     IRenderAuxText::Draw2dLabel(m_textPos2d.x, m_textPos2d.y, 1.1f, ColorF(0.f, 1.f, 0.f, 1.f), false, "Controller's Digital Buttons Activity");
     m_textPos2d.y += deltaY;
     IRenderAuxText::Draw2dLabel(m_textPos2d.x, m_textPos2d.y, 1.1f, ColorF(1.f, 1.f, 1.f, 1.f), false, "CurrentFrame:[%u]", m_frameCnt);
@@ -295,8 +294,8 @@ void CInputDevice::CDebugPressedButtons::DebugRender()
       IRenderAuxText::Draw2dLabel(m_textPos2d.x, m_textPos2d.y, fontSize, m_history[i].color, false, "[%u] %s [%s]", m_history[i].frame, m_history[i].key.c_str(), m_history[i].state.c_str());
       m_textPos2d.y += deltaY;
     }
+    #endif
     ++m_frameCnt;
   }
-#endif
 }
 #endif

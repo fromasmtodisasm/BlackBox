@@ -1,10 +1,51 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
+#include <BlackBox/Renderer/IShader.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
+#include <BlackBox/System/IConsole.hpp>
 
-using P3F	= SVF_P3F_N;
-using VecPos = std::vector<P3F>;
+#include <array>
+
+#define V_RETURN(cond) \
+	if (!(cond)) return;
+
+ID3D10Device* GetDevice();
+
+//--------------------------------------------------------------------------------------
+// Structures
+//--------------------------------------------------------------------------------------
+struct SimpleVertex
+{
+	D3DXVECTOR3 Pos;
+	D3DXVECTOR4 Color;
+};
+
+struct CBChangesEveryFrame
+{
+	D3DXMATRIX World;
+	D3DXMATRIX View;
+	D3DXMATRIX Projection;
+	D3DXMATRIX MVP;
+};
+
+ID3D10RenderTargetView*		g_pRenderTargetView	  = NULL;
+ID3D10Effect*				g_pEffect			  = NULL;
+ID3D10EffectTechnique*		g_pTechnique		  = NULL;
+ID3D10InputLayout*			g_pVertexLayout		  = NULL;
+ID3D10Buffer*				g_pVertexBuffer		  = NULL;
+ID3D10Buffer*				g_pIndexBuffer		  = NULL;
+ID3D10EffectMatrixVariable* g_pMVP				  = NULL;
+ID3D10EffectMatrixVariable* g_pWorldVariable	  = NULL;
+ID3D10EffectMatrixVariable* g_pViewVariable		  = NULL;
+ID3D10EffectMatrixVariable* g_pProjectionVariable = NULL;
+D3DXMATRIX					g_MVP;
+D3DXMATRIX					g_World;
+D3DXMATRIX					g_View;
+D3DXMATRIX					g_Projection;
+
+ID3D10EffectConstantBuffer* g_pConstantBuffer;
+
+using VecPos = std::vector<BB_VERTEX>;
 
 namespace
 {
@@ -17,37 +58,260 @@ namespace
 	}
 } // namespace
 
+HRESULT InitCube()
+{
+	// Create the effect
+	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+#if defined(DEBUG) || defined(_DEBUG)
+	// Set the D3D10_SHADER_DEBUG flag to embed debug information in the shaders.
+	// Setting this flag improves the shader debugging experience, but still allows
+	// the shaders to be optimized and to run exactly the way they will run in
+	// the release configuration of this program.
+	dwShaderFlags |= D3D10_SHADER_DEBUG;
+#endif
+
+#ifndef VK_RENDERER
+	auto hr = D3DX10CreateEffectFromFile("res/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, NULL, NULL);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL,
+				   "The FX file cannot be located.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK);
+		return hr;
+	}
+
+	// Obtain the technique
+	g_pTechnique	  = g_pEffect->GetTechniqueByName("Render");
+	g_pConstantBuffer = g_pEffect->GetConstantBufferByName("cbChangesEveryFrame");
+
+// Obtain the variables
+#	if 1
+	g_pMVP				  = g_pEffect->GetVariableByName("MVP")->AsMatrix();
+	g_pWorldVariable	  = g_pEffect->GetVariableByName("World")->AsMatrix();
+	g_pViewVariable		  = g_pEffect->GetVariableByName("View")->AsMatrix();
+	g_pProjectionVariable = g_pEffect->GetVariableByName("Projection")->AsMatrix();
+#	endif
+
+	// Define the input layout
+	D3D10_INPUT_ELEMENT_DESC layout[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
+			{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
+		};
+	UINT numElements = sizeof(layout) / sizeof(layout[0]);
+
+	// Create the input layout
+	D3D10_PASS_DESC PassDesc;
+	g_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
+	hr = GetDevice()->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
+										PassDesc.IAInputSignatureSize, &g_pVertexLayout);
+	if (FAILED(hr))
+		return hr;
+
+	// Set the input layout
+	GetDevice()->IASetInputLayout(g_pVertexLayout);
+
+	// Create vertex buffer
+	SimpleVertex vertices[] =
+		{
+			{D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR4(1.0f, 0.0f, 1.0f, 1.0f)},
+			{D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f)},
+			{D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f)},
+			{D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f)},
+			{D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR4(1.0f, 0.0f, 1.0f, 1.0f)},
+			{D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f)},
+			{D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f)},
+			{D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f)},
+		};
+	D3D10_BUFFER_DESC bd;
+	bd.Usage		  = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth	  = sizeof(SimpleVertex) * 8;
+	bd.BindFlags	  = D3D10_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags	  = 0;
+	D3D10_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = vertices;
+	hr				 = GetDevice()->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
+	if (FAILED(hr))
+		return hr;
+
+	// Set vertex buffer
+	UINT stride = sizeof(SimpleVertex);
+	UINT offset = 0;
+	GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+
+	// Create index buffer
+	DWORD indices[] =
+		{
+			3,
+			1,
+			0,
+			2,
+			1,
+			3,
+
+			0,
+			5,
+			4,
+			1,
+			5,
+			0,
+
+			3,
+			4,
+			7,
+			0,
+			4,
+			3,
+
+			1,
+			6,
+			5,
+			2,
+			6,
+			1,
+
+			2,
+			7,
+			6,
+			3,
+			7,
+			2,
+
+			6,
+			4,
+			5,
+			7,
+			4,
+			6,
+		};
+	bd.Usage		  = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth	  = sizeof(DWORD) * 36; // 36 vertices needed for 12 triangles in a triangle list
+	bd.BindFlags	  = D3D10_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags	  = 0;
+	InitData.pSysMem  = indices;
+	hr				  = GetDevice()->CreateBuffer(&bd, &InitData, &g_pIndexBuffer);
+	if (FAILED(hr))
+		return hr;
+
+	// Set index buffer
+	GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set primitive topology
+	GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+#endif
+
+	return S_OK;
+}
+
+void DrawCube(CVertexBuffer* m_BoundingBox)
+{
+#ifndef VK_RENDERER
+	// Update our time
+	static float t			 = 0.0f;
+	static DWORD dwTimeStart = 0;
+	DWORD		 dwTimeCur	 = GetTickCount();
+	if (dwTimeStart == 0)
+		dwTimeStart = dwTimeCur;
+	t = (dwTimeCur - dwTimeStart) / 1000.0f;
+
+	//
+	// Animate the cube
+	//
+	D3DXMatrixRotationY(&g_World, t);
+	//g_World = glm::rotate(glm::mat4(1), t, glm::vec3(0, 1, 0));
+
+	//
+	// Update variables
+	//
+	//D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
+	//g_MVP = g_World * g_View * g_Projection;
+	//g_MVP = g_Projection * g_View * g_World;
+	auto m_Camera = gEnv->pSystem->GetViewCamera();
+	g_MVP		  = m_Camera.getProjectionMatrix() * m_Camera.GetViewMatrix() * g_World;
+	g_View		  = m_Camera.GetViewMatrix();
+	g_Projection  = m_Camera.getProjectionMatrix();
+#	if 1
+//ng_pMVP->SetMatrix( ( float* )&g_MVP );
+//g_pWorldVariable->SetMatrix( ( float* )&g_World );
+//g_pViewVariable->SetMatrix( ( float* )&g_View );
+//g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
+#	endif
+	ID3D10Buffer* pEveryFrameBuffer;
+	g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);
+	CBChangesEveryFrame cb;
+#	if 0
+	cb.World	  = g_World;
+	cb.View		  = g_View;
+	cb.Projection = g_Projection;
+#	else
+	//D3DXMatrixTranspose(&cb.World, &g_World);
+	D3DXMatrixTranspose(&cb.View, &g_View);
+	D3DXMatrixTranspose(&cb.Projection, &g_Projection);
+#	endif
+	//cb.MVP		  = g_MVP;
+	D3DXMatrixTranspose(&cb.MVP, &g_MVP);
+	//::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, 192, 0);
+
+	//g_pConstantBuffer->SetRawValue();
+
+	// Set vertex buffer
+	UINT stride = sizeof(SimpleVertex);
+	UINT offset = 0;
+	::GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+	::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//
+	// Renders a triangle
+	//
+	D3D10_TECHNIQUE_DESC techDesc;
+	g_pTechnique->GetDesc(&techDesc);
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		g_pTechnique->GetPassByIndex(p)->Apply(0);
+		::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, sizeof(cb), 0);
+		//GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
+		gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+	}
+#endif
+}
+
 CRenderAuxGeom::CRenderAuxGeom()
 {
-	std::vector<P3F> reference = {
-		
-    // front
-		P3F{{-1.0, -1.0, 1.0},{0, 0, 0}},
-		P3F{{1.0, -1.0,  1.0},{0,0,0}},
-		P3F{{1.0,  1.0,  1.0},{0,0,0}},
-    P3F{{-1.0,  1.0,  1.0},{0,0,0}},
-    // back
-    P3F{{-1.0, -1.0, -1.0},{0,0,0}},
-    P3F{{1.0, -1.0, -1.0},{0,0,0}},
-    P3F{{1.0,  1.0, -1.0},{0,0,0}},
-    P3F{{-1.0,  1.0, -1.},{0,0,0}}
+	std::vector<BB_VERTEX> reference = {
+
+// front
+#if 0
+		BB_VERTEX{{-1.0, -1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, -1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, 1.0, 1.0}, {0, 0, 0}},
+		BB_VERTEX{{-1.0, 1.0, 1.0}, {0, 0, 0}},
+		// back
+		BB_VERTEX{{-1.0, -1.0, -1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, -1.0, -1.0}, {0, 0, 0}},
+		BB_VERTEX{{1.0, 1.0, -1.0}, {0, 0, 0}},
+		BB_VERTEX{{-1.0, 1.0, -1.}, {0, 0, 0}}
+#endif
 	};
 
-
-	std::vector<P3F> vertices(24);
-	auto get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16 {
+	std::vector<BB_VERTEX> vertices(24);
+	auto				   get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16
+	{
 		int idx = 0;
+#if 0
 		for (int i = 0; i < 24; i++)
 		{
 			if (vertices[i].xyz == pos && vertices[i].normal == n)
 			{
-				idx = i;	
+				idx = i;
 				break;
 			}
 		}
+#endif
 		return idx;
 	};
-	
+
 	std::vector<glm::u16vec3> reference_elements = {
 #if 0
 		0,
@@ -85,61 +349,69 @@ CRenderAuxGeom::CRenderAuxGeom()
 		// top
 		{3, 2, 6},
 		{6, 7, 3}
-#endif
 	};
-	for (int i = 0, j = 0; i < reference_elements.size(); i+=2, j+=4)
+#endif
+#if 0
+	for (int i = 0, j = 0; i < reference_elements.size(); i += 2, j += 4)
 	{
-		auto n = glm::normalize(glm::cross(
-			reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz, 
-			reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz)
-		);
-		vertices[j		]	= P3F{reference[reference_elements[i][0]].xyz, n};
-		vertices[j + 1] = P3F{reference[reference_elements[i][1]].xyz, n};
-		vertices[j + 2] = P3F{reference[reference_elements[i][2]].xyz, n};
-		vertices[j + 3] = P3F{reference[reference_elements[i + 1][1]].xyz, n};
+		auto n			= glm::normalize(glm::cross(
+			 reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz,
+			 reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz));
+		vertices[j]		= BB_VERTEX{reference[reference_elements[i][0]].xyz, n};
+		vertices[j + 1] = BB_VERTEX{reference[reference_elements[i][1]].xyz, n};
+		vertices[j + 2] = BB_VERTEX{reference[reference_elements[i][2]].xyz, n};
+		vertices[j + 3] = BB_VERTEX{reference[reference_elements[i + 1][1]].xyz, n};
 	}
-	std::vector<glm::u16vec3> elements(12);
+#endif
+		std::vector<glm::u16vec3> elements(12);
 	std::cout << "elments:" << std::endl;
+#if 0
 	for (int i = 0; i < 12; i++)
 	{
 		elements[i] = {
 			(get_idx(reference[reference_elements[i][0]].xyz, vertices[2 * i].normal)),
 			(get_idx(reference[reference_elements[i][1]].xyz, vertices[2 * i].normal)),
-			(get_idx(reference[reference_elements[i][2]].xyz, vertices[2 * i].normal))
-		};
+			(get_idx(reference[reference_elements[i][2]].xyz, vertices[2 * i].normal))};
 		std::cout << elements[i][0] << ", " << elements[i][1] << ", " << elements[i][2] << std::endl;
 	}
 	std::cout << std::endl;
 	for (int i = 0; i < 24; i++)
 	{
-		vertices[i].xyz *= 0.5;		
+		vertices[i].xyz *= 0.5;
 	}
+#endif
 	///////////////////////////////////////////////////////////////////////////////
-	//int cnt		  = sizeof vertices / sizeof P3F;
-	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), VERTEX_FORMAT_P3F_N, "BoundingBox", false);
+	//int cnt		  = sizeof vertices / sizeof BB_VERTEX;
+	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), VERTEX_FORMAT_P3F_C4B, "BoundingBox", false);
 	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
 
 	m_BB_IndexBuffer = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
 	///////////////////////////////////////////////////////////////////////////////
 	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
-	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb.vs", "bb.frag");
+	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
+	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0)))
+	{
+		gEnv->pLog->Log("Error of loading auxgeom shader");
+	}
 
-	auto r = gEnv->pRenderer;
+	//m_aabbBufferPtr = SAABBBuffer::Create(10);
 
-    albedo    = r->LoadTexture("pbr/rusted_iron/albedo.png", 0, 0);
-    normal    = r->LoadTexture("pbr/rusted_iron/normal.png", 0, 0);
-    metallic  = r->LoadTexture("pbr/rusted_iron/metallic.png", 0, 0);
-    roughness = r->LoadTexture("pbr/rusted_iron/roughness.png", 0, 0);
-    ao        = r->LoadTexture("pbr/rusted_iron/ao.png", 0, 0);
+	REGISTER_CVAR(dbg_mode, 3, 0, "");
+	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");
 
-    m_BoundingBoxShader->Use();
-    m_BoundingBoxShader->Uniform(0, "albedoMap");
-    m_BoundingBoxShader->Uniform(1, "normalMap");
-    m_BoundingBoxShader->Uniform(2, "metallicMap");
-    m_BoundingBoxShader->Uniform(3, "roughnessMap");
-    m_BoundingBoxShader->Uniform(4, "aoMap");
+	InitCube();
+	// Initialize the world matrix
+	D3DXMatrixIdentity(&g_World);
 
+	// Initialize the view matrix
+	D3DXVECTOR3 Eye(0.0f, 1.0f, -5.0f);
+	D3DXVECTOR3 At(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 Up(0.0f, 1.0f, 0.0f);
+	D3DXMatrixLookAtLH(&g_View, &Eye, &At, &Up);
+
+	// Initialize the projection matrix
+	D3DXMatrixPerspectiveFovLH(&g_Projection, (float)D3DX_PI * 0.5f, gEnv->pRenderer->GetWidth() / (FLOAT)gEnv->pRenderer->GetHeight(), 0.1f, 100.0f);
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -149,77 +421,98 @@ CRenderAuxGeom::~CRenderAuxGeom()
 	SAFE_DELETE(m_HardwareVB);
 }
 
+struct AABBInstanceData
+{
+};
+
+bool first_draw = true;
+
 //TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
 	auto& shader = m_BoundingBoxShader;
 
-	glm::vec3 size		= glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
-	glm::vec3 center	= glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
-	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
+	const auto angle	 = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
+	const auto size		 = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
+	const auto center	 = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
+	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
-	const auto& cam = gEnv->pRenderer->GetCamera();
-	Vec4 color		= Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3]);
-	shader->Use();
-	shader->Uniform(transform, "model");
-	shader->Uniform(cam.GetViewMatrix(), "view");
-	shader->Uniform(cam.getProjectionMatrix(), "projection");
-	#if 0
-	shader->Uniform(0.1f, "alpha");
-	shader->Uniform(color, "color");
-	shader->Uniform(gEnv->pConsole->GetCVar("r_Tonemap")->GetIVal(), "bTonemap");
-	shader->Uniform(Vec3(300), "lightPos");
-	shader->Uniform(gEnv->pRenderer->GetFrameID(), "fid");
-	shader->Uniform(gEnv->pSystem->GetViewCamera().GetPos(), "eye");
-	#endif
-
-    // lights
-    // ------
-    glm::vec3 lightPositions[] = {
-        glm::vec3(-10.0f,  10.0f, 10.0f),
-        glm::vec3( 10.0f,  10.0f, 10.0f),
-        glm::vec3(-10.0f, -10.0f, 10.0f),
-        glm::vec3( 10.0f, -10.0f, 10.0f),
-    };
-    glm::vec3 lightColors[] = {
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f)
-    };
-
-	shader->Uniform(cam.GetPos(), "camPos");
-	shader->Uniform(lightPositions[0], "lightPositions[0]");
-	shader->Uniform(lightPositions[1], "lightPositions[1]");
-	shader->Uniform(lightPositions[2], "lightPositions[2]");
-	shader->Uniform(lightPositions[3], "lightPositions[3]");
-
-	shader->Uniform(lightColors[0], "lightColors[0]");
-	shader->Uniform(lightColors[1], "lightColors[1]");
-	shader->Uniform(lightColors[2], "lightColors[2]");
-	shader->Uniform(lightColors[3], "lightColors[3]");
-
-	shader->Uniform(0.9f, "metallic");
-	shader->Uniform(0.1f, "roughness");
-    shader->Uniform(glm::vec3(0.5f, 0.0f, 0.1f), "albedo");
-    //shader->Uniform(Vec3(color), "albedo");
-    shader->Uniform(1.0f, "ao");
-
-
+	if (first_draw)
 	{
-		RSS(gEnv->pRenderer, BLEND, true);
-		RSS(gEnv->pRenderer, CULL_FACE, false);
-		#if 0
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 0, static_cast<int>(RenderPrimitive::LINE_LOOP));
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 4, static_cast<int>(RenderPrimitive::LINE_LOOP));
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 8, 8, static_cast<int>(RenderPrimitive::LINES));
-		#else
-
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, m_BB_IndexBuffer->m_nItems, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
-		#endif
+#if 0
+		m_aabbBufferPtr->Model	  = transform;
+		m_aabbBufferPtr->LightPos = Vec3(300);
+		m_aabbBufferPtr->Update();
+#endif
 	}
-	shader->Unuse();
-	//gEnv->pRenderer->DrawBuffer(m_BoundingBox, m_BB_IndexBuffer, 4, 18, static_cast<int>(RenderPrimitive::LINES));
+
+	std::array<BB_VERTEX, 36> verts = {
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}},
+	};
+	m_BBVerts.emplace_back(verts);
+}
+void CRenderAuxGeom::DrawAABBs()
+{
+	V_RETURN(m_BBVerts.size() > 0);
+	//m_BoundingBoxShader->Bind();
+	gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
+	auto size	  = m_BBVerts.size() * 36;
+	m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, VERTEX_FORMAT_P3F_C4B, "BoundingBox", false);
+	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+	DrawCube(m_BoundingBox);
+	//gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+
+	m_BBVerts.resize(0);
+}
+
+void CRenderAuxGeom::DrawLines()
+{
+	//m_AuxGeomShader->Bind();
+	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
+	int offset = 0;
+	for (auto& pb : m_auxPushBuffer)
+	{
+		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
+		offset += pb.m_numVertices;
+	}
+	//m_AuxGeomShader->Unuse();
+	m_VB.resize(0);
+	m_auxPushBuffer.resize(0);
 }
 
 void CRenderAuxGeom::DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2)
@@ -273,7 +566,7 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 		m_auxPushBuffer.emplace_back(AuxPushBuffer::value_type(numVertices, primitive));
 	}
 	// get vertex ptr
-	AuxVertexBuffer& auxVertexBuffer(m_VB);
+	AuxVertexBuffer&		   auxVertexBuffer(m_VB);
 	AuxVertexBuffer::size_type oldVBSize(auxVertexBuffer.size());
 	auxVertexBuffer.resize(oldVBSize + numVertices);
 	pVertices = &auxVertexBuffer[oldVBSize];
@@ -281,17 +574,11 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 
 void CRenderAuxGeom::Flush()
 {
-	//RSS(gEnv->pRenderer, DEPTH_TEST, false);
-	RSS(gEnv->pRenderer, CULL_FACE, false);
-	//RSS(gEnv->pRenderer, BLEND, true);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
-	int offset = 0;
-	for (auto& pb : m_auxPushBuffer)
+	//RSS(gEnv->pRenderer, CULL_FACE, false);
+	DrawAABBs();
+	DrawLines();
 	{
-		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
-		offset += pb.m_numVertices;
+		//RSS(gEnv->pRenderer, DEPTH_TEST, true);
 	}
-	m_VB.resize(0);
-	m_auxPushBuffer.resize(0);
+	//first_draw = true;
 }

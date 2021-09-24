@@ -2,12 +2,11 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/3DEngine/ObjLoader.hpp>
-#include <BlackBox/Renderer/ITechniqueManager.hpp>
-#include <BlackBox/Renderer/AuxRenderer.hpp>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
-#if 1
+#if 0
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -30,7 +29,7 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 
 void loadModel(string path)
 {
-#if 1
+#if 0
     Assimp::Importer import;
     const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 	
@@ -44,11 +43,11 @@ void loadModel(string path)
 
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
-	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "test.frag"));
-	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "radar.frag"));
-	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "demo.frag"));
-	m_Programs.push_back( gEnv->pRenderer->Sh_Load("test.vs", "arch.frag"));
-	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(m_Qubes.min, m_Qubes.max);
+	if (gEnv->pRenderer)
+	{
+		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(m_Qubes.min, m_Qubes.max);
+	}
+
 	return true;
 }
 
@@ -104,6 +103,8 @@ void C3DEngine::Draw()
 	draw(m_Programs[2], Vec4d(0, h, w, h));
 	draw(m_Programs[3], Vec4d(w, 0, w, h));
 #endif
+	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
+	gEnv->pRenderer->SetCamera(m_Camera);
 
 	#if 0
 	if (m_pRenderCallback)

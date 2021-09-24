@@ -7,11 +7,10 @@
 #include <BlackBox/System/ISystem.hpp>
 
 #include <iostream>
-using	namespace std;
 
 Scene* defaultScene = nullptr;
 ICVar* SceneManager::scene_path = nullptr;
-
+#if 0
 #if 0
 SceneManager* SceneManager::instance()
 {
@@ -104,4 +103,5 @@ bool SceneManager::exist(std::string scene)
 {
   return cache.find("res/scenes/" + scene) != cache.end();
 }
+#endif
 #endif

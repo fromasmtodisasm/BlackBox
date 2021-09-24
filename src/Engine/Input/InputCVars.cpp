@@ -1,11 +1,14 @@
 // Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 #include <BlackBox/Input/InputCVars.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 CInputCVars* g_pInputCVars = 0;
 
+#pragma warning(push)
+#pragma warning (disable : 4305 4309)
 CInputCVars::CInputCVars()
 {
   REGISTER_CVAR(i_debug, 0, 0,
@@ -13,14 +16,14 @@ CInputCVars::CInputCVars()
     "Usage: i_debug [0/1]\n"
     "Default is 0 (off). Set to 1 to spam console with key events (only press and release).");
   REGISTER_CVAR(i_forcefeedback, 1, 0, "Enable/Disable force feedback output.");
-  REGISTER_CVAR(i_grab_input, 0, VF_DUMPTODISK, "Enable/Disable grab input.");
+  REGISTER_CVAR(i_grab_input, 0, VF_DUMPTODISK | VF_BOOL, "Enable/Disable grab input.");
 
   // mouse
   REGISTER_CVAR(i_mouse_buffered, 0, 0,
     "Toggles mouse input buffering.\n"
     "Usage: i_mouse_buffered [0/1]\n"
     "Default is 0 (off). Set to 1 to process buffered mouse input.");
-  REGISTER_CVAR(i_mouse_sensitivity, 0.2f, VF_DUMPTODISK,
+  REGISTER_CVAR(i_mouse_sensitivity, 1.f, VF_DUMPTODISK,
     "Changes mouse sensitivity.\n"
     "Usage: i_mouse_sensitivity [float number]\n"
     "Default is 1 (raw movement), Set to 0 for no movement, [0/1] for slower movement and [1/n] for faster movement");
@@ -120,6 +123,7 @@ CInputCVars::CInputCVars()
     "Default is \"Console\"");
 #endif
 }
+#pragma warning(pop)
 
 CInputCVars::~CInputCVars()
 {

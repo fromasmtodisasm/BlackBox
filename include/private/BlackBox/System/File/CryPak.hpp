@@ -3,6 +3,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/System/IMiniLog.hpp>
+#include <BlackBox/System/PakVars.h>
 
 class CCryPak : public ICryPak, public ISystemEventListener
 {
@@ -15,7 +16,7 @@ public:
 #endif
 
 public:
-  CCryPak(IMiniLog* pLog);
+  CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes);
   ~CCryPak();
   // Inherited via ICryPak
   virtual bool Init(const char* szBasePath) override;
@@ -64,4 +65,8 @@ private:
 	// this is the list of MOD subdirectories that will be prepended to the actual relative file path
 	// they all have trailing forward slash. "" means the root dir
 	std::vector<std::string> m_arrMods;
+
+  // Inherited via ICryPak
+  virtual FILE* FOpenRaw(const char* pName, const char* mode) override;
+	virtual size_t FReadRaw(void* data, size_t length, size_t elems, FILE* handle) override;
 };

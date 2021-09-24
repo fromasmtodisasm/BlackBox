@@ -21,12 +21,15 @@ uint UploadDDS(const Image& img)
   // bind the texture
   // make it complete by specifying all needed parameters and ensuring all mipmaps are filled
 	glBindTexture(GL_TEXTURE_2D, tid);
+	#define USE_OLD_TEXTURE_PARAMETERS
+	#ifdef USE_OLD_TEXTURE_PARAMETERS
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount-1); // opengl likes array length of mipmaps
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // don't forget to enable mipmaping
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	#endif
 	  
     // prepare some variables
 		uint offset = 0;
@@ -48,8 +51,6 @@ uint UploadDDS(const Image& img)
 			w /= 2;
 			h /= 2;
 		}
-	    // discard any odd mipmaps, ensure a complete texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount-1);
     // unbind
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
@@ -127,9 +128,6 @@ Image loadDDS(const char* path)
 	
 	uint blockSize;
 	int format;
-	
-	uint w;
-	uint h;
 	
 	std::vector<uint8_t> buffer;
 	
@@ -269,8 +267,8 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 			filterMin = filterMag = GL_LINEAR;
 			wrapS = wrapT = GL_CLAMP_TO_EDGE;
 			inputDataType = GL_UNSIGNED_BYTE;
-			gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			//gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			//gl::TextureParameteri(t->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			if (img.channels == 4)
 			{
@@ -288,8 +286,6 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 	}
 	else
 	{
-		//gl::TextureParameteri(t->id, GL_TEXTURE_MIN_FILTER, filterMin);
-		//gl::TextureParameteri(t->id, GL_TEXTURE_MAG_FILTER, filterMag);
 		if (img.compressed)
 		{
 			t->id = UploadDDS(img);	
@@ -321,6 +317,9 @@ Texture* Texture::create(const Image& img, TextureType type, const std::string& 
 	{
 		glCheck(glGenerateMipmap(textureTarget));
 	}
+
+	t->bindless_id = glGetTextureHandleARB(t->id);
+	glMakeTextureHandleResidentARB(t->bindless_id);
 
 	debuger::texture_label(t->id, name);
 	return t;

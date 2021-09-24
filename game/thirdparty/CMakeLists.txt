@@ -1,2 +1,4 @@
 message(STATUS "Thirdparty libs adding...")
-add_subdirectory(Steam)
+if (USE_STEAM)
+	add_subdirectory(Steam)
+endif()

@@ -28,7 +28,7 @@ function setvar(n,v)
 end
 
 function addcommand( name, src, help )
-	System:Log("Adding command: "..name.."cmd: "..src)
+	System:Log("$3Adding command: "..name.."$6cmd: "..src)
 	Game:AddCommand(name, src, help, 0)
 end
 
@@ -57,7 +57,7 @@ function init()
 	--Console:CreateKeyBind("c", "Console:Show(false)")  
 
 	Console:CreateKeyBind("xi_b", "quit")  
-	--Console:CreateKeyBind("xi_back", "#Game:gotoMenu()")  
+	Console:CreateKeyBind("xi_back", "#Game:gotoMenu()")  
 
 
 	--addcommand("set_cs", [[set2dvec("r_cam_w", "r_cam_h", %1, %2)]], "Set size of camera")
@@ -84,8 +84,6 @@ function init()
 	--Console:CreateKeyBind("ctrl_c", "#Game:gotoMenu()") 
 	Console:CreateKeyBind("f7", "#Game:gotoGame()") 
 	Console:CreateKeyBind("ctrl_q", "#Game:Quit()") 
-
-	setvar("MouseSenitivity", 2)
 
 	Console:Show(true)
 	--Console:PrintLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

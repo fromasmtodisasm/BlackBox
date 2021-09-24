@@ -1,6 +1,3 @@
-#include "Game.hpp"
-
-#include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
 
 #if !defined(LINUX)
@@ -166,7 +163,7 @@ void CGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,c
 //////////////////////////////////////////////////////////////////////////
 void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 {			
-	m_pSystem->LoadConfiguration(sSystemCfg);
+	m_pSystem->LoadConfiguration(sSystemCfg.data());
 
 	FILE *pFile=fopen(sGameCfg.c_str(), "rb");
 	if (!pFile)
@@ -226,7 +223,7 @@ void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 		}
 		else
 		{
-			m_pSystem->GetILog()->Log("Invalid game cfg:%s",szLine);
+			gEnv->pLog->LogError("Invalid game cfg:%s",szLine);
 		}
 	}
 

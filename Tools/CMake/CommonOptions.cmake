@@ -15,11 +15,19 @@ option(OPTION_USE_GLFW "Build with GLFW" OFF)
 option(OPTION_USE_GLM "Build with GLM Math library" ON)
 option(OPTION_USE_GUI "Build GUI library" OFF)
 option(OPTION_USE_LINUXINPUT "Build GUI library" ON)
-option(OPTION_GLAD_LOADER "Build with GLAD opengl loading library" ON)
-option(OPTION_EDITOR "Build editor" ON)
-option(OPTION_CONFIGURATOR "Build configurator" ON)
+option(OPTION_GLAD_LOADER "Build with GLAD opengl loading library" OFF)
+option(OPTION_GLEW_LOADER "Build with GLEW opengl loading library" ON)
+option(OPTION_EDITOR "Build editor" OFF)
+
+option(OPTION_BUILD_TOOLS "Build Tools" ON)
 
 option(OPTION_VCPKG "Use vcpkg for libraries" ON)
+
+option(OPTION_GL_RENDERER "Compile OpenGL library" OFF)
+option(OPTION_DX_RENDERER "Compile D3D library" OFF)
+option(OPTION_VK_RENDERER "Compile Vulkan library" OFF)
+
+option(OPTION_EDIT_AND_CONTINUE "Edit and continue MSVC feature" ON)
 
 if(ANDROID)
 	set(OPTION_STATIC_LINKING TRUE)

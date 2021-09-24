@@ -131,8 +131,6 @@ public:
 
   void visit_recursive(ITreeVisitorCallback *callback, double ox, double oy,
                        int level, bool is_last) {
-    using namespace std;
-
     if (m_children.size() == 0) {
       callback->OnLeaf((this), is_last, level);
     } else {

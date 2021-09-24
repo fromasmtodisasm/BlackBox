@@ -116,7 +116,7 @@ struct CryModuleMemoryInfo
 #endif
 
 #ifdef __cplusplus
-#include <new.h>
+#include <new>
 #endif
 
 
@@ -135,14 +135,21 @@ struct CryModuleMemoryInfo
 	#ifndef GAMECUBE //I don't know how to compile this on GC
 		inline void * __cdecl operator new   (size_t  size) { return CryModuleMalloc(size); } 
 		inline void * __cdecl operator new[](size_t size) { return CryModuleMalloc(size); }; 
-		inline void __cdecl operator delete  (void *p) { CryModuleFree(p); };
-		inline void __cdecl operator delete[](void *p) { CryModuleFree(p); };
+		inline void __cdecl operator delete  (void *p) noexcept { CryModuleFree(p); };
+		inline void __cdecl operator delete[](void *p) noexcept { CryModuleFree(p); };
 	#endif //GAMECUBE
 #endif //__cplusplus
 
 #endif // USE_NEWPOOL
 
 #endif // _DEBUG
+#if defined USE_DEBUG_NEW
+#	if defined(_DEBUG) && !defined(LINUX)
+#		include <crtdbg.h>
+#		define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+#		define new DEBUG_CLIENTBLOCK
+#	endif
+#endif
 
 //#endif // CRYSYSTEM_EXPORTS
 //#endif //LINUX

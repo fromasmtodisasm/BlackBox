@@ -1,4 +1,3 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Input/SDLInput.hpp>
 
 #include <math.h>
@@ -41,6 +40,9 @@ CLinuxInput::CLinuxInput(ISystem* pSystem) : CBaseInput()
 {
   m_pSystem = pSystem;
   m_pLog = pSystem->GetILog();
+}
+CLinuxInput::~CLinuxInput(){
+    
 };
 
 bool CLinuxInput::Init()

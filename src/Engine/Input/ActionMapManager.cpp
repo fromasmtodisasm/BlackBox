@@ -6,9 +6,10 @@
 CActionMapManager::CActionMapManager(IInput* pInput)
 {
 	pInput->SetExclusiveListener(static_cast<IInputEventListener*>(this));
-	for (auto k : m_Keys)
+	for (auto& k : m_Keys)
 	{
-		k.empty = true;
+		k;
+		//k.empty = true;
 	}
 }
 
@@ -112,8 +113,10 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 				return;
 			if (bind.bind.nKey ==  event && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
 			{
+				#if 0
 				if ((m_Modifires != eMM_None) && (bind.bind.nModifier == eMM_None))
 					;
+				#endif
 				//continue;
 				for (std::size_t i = 0; i < m_ActionList.size(); i++)
 				{
@@ -182,7 +185,7 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 		ebe.modifires = event.modifiers;
 		ebe.value	  = event.value;
 		ebe.empty	  = false;
-		if (m_Keys[event.keyId].empty)
+		if (auto it = m_Keys.find(event.keyId); it != m_Keys.end())
 		{
 			m_Keys[event.keyId] = ebe;
 		}
@@ -198,7 +201,11 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 	break;
 	case EInputState::eIS_Released:
 	{
-		m_Keys[event.keyId].empty = true;
+		//m_Keys[event.keyId].empty = true;
+		if (auto it = m_Keys.find(event.keyId); it != m_Keys.end())
+		{
+			m_Keys.erase(it);
+		}
 		m_Queue.erase(event.keyId);
 		/*
 		EvnetBufferEntry ebe;

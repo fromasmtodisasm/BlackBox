@@ -1,10 +1,8 @@
 #include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 //#include <BlackBox/Geometry/ObjLoader.hpp>
-#include <BlackBox/Renderer/Renderer.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/Material.hpp>
-#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -14,7 +12,6 @@
 #include <memory>
 
 #if 0
-using namespace std;
 int CStatObj::refs = 0;
 
 CStatObj::CStatObj() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)), velocity(glm::vec3(0))

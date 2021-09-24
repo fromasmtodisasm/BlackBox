@@ -7,7 +7,7 @@ add_executable(${PROJECT_NAME}
     #"Resource.rc"
 )
 target_link_libraries(Editor PRIVATE  BlackBox)
-target_link_libraries(Editor PRIVATE  System)
+#target_link_libraries(Editor PRIVATE  System)
 add_dependencies(Editor Game)
 if (OPTION_USE_GUI)
 	target_link_libraries(${PROJECT_NAME} PRIVATE GUI)

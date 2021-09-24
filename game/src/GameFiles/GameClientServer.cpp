@@ -1,8 +1,7 @@
-#include <Game.hpp>
 #include <Client/XClient.hpp>
 #include <Server/XServer.hpp>
+#include <Client/Client.hpp>
 
-#include <BlackBox/System/IConsole.hpp>
 //////////////////////////////////////////////////////////////////////
 //! create the server
 bool CGame::StartupServer(bool listen, const char* szName)
@@ -124,6 +123,8 @@ void CGame::ShutdownClient()
   m_pClient->MarkForDestruct();
   m_pClient->DestructIfMarked();
   m_pClient = NULL;
+#else
+	SAFE_DELETE(m_pClient);
   #endif
 }
 
@@ -208,7 +209,9 @@ void CGame::OnNETServerTimeout(const CIPAddress& ip)
 void CGame::RefreshServerList()
 {
   m_ServersInfos.clear();
+#if 0
   if (m_pServerSnooper)
     m_pServerSnooper->SearchForLANServers(GetCurrentTime());
+#endif
   TRACE("Refresh for lan");
 }

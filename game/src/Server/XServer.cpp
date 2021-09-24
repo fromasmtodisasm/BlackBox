@@ -1,5 +1,3 @@
-#include <Game.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <Server/XServer.hpp>
 #include <IXSystem.hpp>
 #include <Server/XServerSlot.hpp>

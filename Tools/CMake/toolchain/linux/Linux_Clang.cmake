@@ -10,6 +10,7 @@ set(OUTPUT_DIRECTORY_NAME "linux_x64_clang")
 
 set(CMAKE_C_COMPILER cc)
 set(CMAKE_CXX_COMPILER c++)
+set(CMAKE_MAKE_PROGRAM make)
 
 add_definitions(-DLINUX64)
 
@@ -17,6 +18,6 @@ message(STATUS "BUILD_CPU_ARCHITECTURE = ${BUILD_CPU_ARCHITECTURE}")
 
 #include ("${CMAKE_CURRENT_LIST_DIR}/../../CRYENGINE-CLANG.cmake")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLINUX -D__linux__ -DOPENGL -fPIC -Wno-reorder-ctor -Wno-unused-private-field -Wno-unused-variable -Wno-unknown-pragmas" CACHE STRING "C Common Flags" FORCE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DLINUX -D__linux__ -DOPENGL -fPIC -Wno-reorder-ctor -Wno-unused-private-field -Wno-unused-variable -Wno-unknown-pragmas" CACHE STRING "C++ Common Flags" FORCE)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLINUX -D__linux__ -DOPENGL -fPIC -Wno-unused-variable -Wno-unknown-pragmas" CACHE STRING "C Common Flags" FORCE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DLINUX -D__linux__ -DOPENGL -fPIC  -Wno-inline-new-delete -Wno-unused-private-field -Wno-unused-variable -Wno-unknown-pragmas" CACHE STRING "C++ Common Flags" FORCE)
 

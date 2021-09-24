@@ -52,7 +52,7 @@
 typedef long                          LONG;
 typedef unsigned char                 BYTE;
 typedef unsigned long                 threadID;
-typedef unsigned long                 DWORD;
+typedef unsigned long int             DWORD;
 typedef double                        real; //!< Biggest float-type on this machine.
 
 typedef void*                         THREAD_HANDLE;
@@ -81,6 +81,7 @@ typedef ULONG_PTR DWORD_PTR, *        PDWORD_PTR;
 #define strdup _strdup
 #define strnicmp _strnicmp
 #define strlwr _strlwr
+#define memicmp _memicmp
 
 
 

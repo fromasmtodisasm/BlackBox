@@ -1,30 +1,16 @@
-cmake_minimum_required(VERSION 3.10)
-project(Network CXX)
-###################################################
-add_library(${PROJECT_NAME})
-
-###################################################
-
-#[[
-if (DEFINED LINUX AND NOT DEFINED VCPKG_INSTALLER)
-	find_package(sdl2-net CONFIG REQUIRED)
-	find_package(SDL2 CONFIG REQUIRED)
-else()
-endif()
-]]
-add_SDL()
+start_sources()
+sources_platform(ALL)
+add_sources("NoUberFile"
+	PROJECTS Network
+	SOURCE_GROUP "SourceFiles"
+		"Client.cpp"
+		"Network.cpp"
+		"Server.cpp"
+ )
+end_sources()
+EngineModule(Network FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+add_SDL(${THIS_PROJECT})
+set(PROJECT_NAME ${THIS_PROJECT})
 add_SDL_net()
-target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE Utils)
-
-target_sources(${PROJECT_NAME}
-  PRIVATE ${SOURCE_DIR}/Engine/Network/Client.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Network/Network.cpp
-  PRIVATE ${SOURCE_DIR}/Engine/Network/Server.cpp
-)
-
-add_private_headers()
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
-)
+target_link_libraries(${THIS_PROJECT} PRIVATE Math)
+target_link_libraries(${THIS_PROJECT} PRIVATE Utils)

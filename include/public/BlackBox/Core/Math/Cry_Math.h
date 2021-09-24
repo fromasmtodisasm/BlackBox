@@ -22,7 +22,7 @@
 #endif
 
 #include <math.h>
-#include "platform.h"
+#include <BlackBox/Core/Platform/Platform.hpp>
 #if !defined(LINUX)
 #include <assert.h>
 #endif
@@ -68,15 +68,14 @@ const real sqrt3	= (real)1.7320508075688772935274463415059;
 
 //////////////////////////////////////////////////////////////////////
 //the portability functions for AMD64
-#if defined(WIN64) &&  defined(_CPU_AMD64) && !defined(LINUX)
+#if defined(WIN64) &&  !defined(LINUX)
 #define ILINE __forceinline
 
 //////////////////////////////////////////////////////////////////////
-extern "C" void fastsincosf(float x, float * sincosfx);
-extern "C" float fastsinf(float x);
-extern "C" float fastcosf(float x);
+#	define fastsinf(x) (float)sin(x)
+#	define fastcosf(x) (float)cos(x)
 
-ILINE void cry_sincosf (float angle, float* pCosSin) {	fastsincosf(angle,pCosSin);	}
+ILINE void cry_sincosf (float angle, float* pCosSin) {	pCosSin[0] = (float)cos(angle);	pCosSin[1] = (float)sin(angle); }
 ILINE void cry_sincos  (double angle, double* pCosSin) {	pCosSin[0] = cos(angle);	pCosSin[1] = sin(angle); }
 ILINE float cry_sinf(float x) {return fastsinf(x); }
 ILINE float cry_cosf(float x) {return fastcosf(x); }

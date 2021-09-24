@@ -13,10 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
-
 #if defined(LINUX)
-//#	include <stdarg.h>
+#	include <stdarg.h>
 //#	include "platform.h"
 //#	include "IGame.h"
 //#	include "string.h"
@@ -93,14 +91,24 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 // STL //////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 #pragma warning (disable : 4786)
-#include <vector>
+#include <algorithm>
+#include <cctype>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
 #include <list>
 #include <map>	
-#include <set>
-#include <string>
-#include <algorithm>
 #include <memory>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <vector>
 
+#if 0
 #if defined USE_DEBUG_NEW
     #if defined(_DEBUG) && !defined(LINUX)
         #include <crtdbg.h>
@@ -108,19 +116,32 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
         #define new DEBUG_CLIENTBLOCK
     #endif
 #endif
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Interfaces ///////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+
+#include <BlackBox/3DEngine/I3DEngine.hpp>
+#include <BlackBox/Core/IMarkers.hpp>
+#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/EntitySystem/EntityDesc.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/Input/IHardwareMouse.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Network/INetwork.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/EntitySystem/EntityDesc.hpp>
+#include <BlackBox/World/IWorld.hpp>
+
 
 /////////////////////////////////////////////////////////////////////////////
 #include "Game.hpp"
@@ -141,3 +162,4 @@ inline void GameWarning( const char *format,... )
 	CryWarning( VALIDATOR_MODULE_GAME,VALIDATOR_WARNING,buffer );
 }
 
+using CXGame = CGame;

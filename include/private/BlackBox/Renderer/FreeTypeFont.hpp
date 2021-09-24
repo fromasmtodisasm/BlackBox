@@ -1,61 +1,91 @@
-﻿#pragma once
+#pragma once
+#ifndef VK_RENDERER
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
+
+#include <glm/glm.hpp>
 
 #include <map>
-#include <iostream>
-#include <glm/glm.hpp>
+#include <string_view>
+
+void RegisterColorTable();
+class CShader;
+
+constexpr static uint atlas_size{160};
+constexpr static uint num_glyphs{127};
+constexpr static uint symbol_padding = 2;
+
 
 class FreeTypeFont : public IFont
 {
+	friend void RegisterColorTable();
 public:
-  struct Character {
-    uint     TextureID;  // ID handle of the glyph texture
-    glm::ivec2 Size;       // Size of glyph
-    glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
-    FT_Pos     Advance;    // Offset to advance to next glyph
-  };
-  float posX = 0, posY = 0;
-  float m_Height = 0;
+	struct Character
+	{
+		glm::ivec2 Pos;		// Position in atlas
+		glm::ivec2 Size;	// Size of glyph
+		glm::ivec2 Bearing; // Offset from baseline to left/top of glyph
+		FT_Pos Advance;		// Offset to advance to next glyph
+	};
+	float posX = 0, posY = 0;
+	float m_Height = 0;
 
-  FreeTypeFont() :
-    face(nullptr),
-    ft(nullptr),
-    shader(nullptr)
-  {
-  }
-  FreeTypeFont(const char* font, int w, int h) :
-    face(nullptr),
-    ft(nullptr),
-    shader(nullptr)
-  {
-  }
-  void RenderText(std::string text, float x, float y, float scale, float color[4]) override;
-  virtual float TextWidth(const std::string& text) override;
-  virtual float CharWidth(char ch) override;
+	FreeTypeFont() : face(nullptr),
+					 ft(nullptr)
+	{
+		RegisterColorTable();
+	}
+	FreeTypeFont(const char* font, int w, int h) : face(nullptr),
+												   ft(nullptr)
+	{
+		RegisterColorTable();
+	}
+	void RenderText(const std::string_view text, float x, float y, float scale, float color[4]) override;
+	float TextWidth(const std::string_view text) override;
+	float CharWidth(char ch) override;
+	bool Init(const char* font, unsigned int w, unsigned int h) override;
+	float GetXPos() override;
+	float GetYPos() override;
+	void SetXPos(float x) override;
+	void SetYPos(float y) override;
+	void Submit() override;
+	void RenderGlyph(uint ch, glm::uvec2 & cur_pos, const glm::uvec2 & t_size, std::vector<uint8>& image);
+	void UpdateAtlas(const glm::uvec4 region, void* data);
 
+	void RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image,  std::vector<uint8>& _test);
+
+	void CreateRasterState();
+	void CreateDSState();
+	void CreateBlendState();
+
+	~FreeTypeFont();
+
+	void Release() override;
 private:
-  FT_Library ft;
-  FT_Face face;
-  std::map<char, Character> Characters;
+	FT_Library ft;
+	FT_Face face;
+	std::map<char, Character> Characters;
 
-  CVertexBuffer* m_VB = nullptr;
-  SVertexStream* m_IB = nullptr;
-  BaseShaderProgramRef shader;
+	CVertexBuffer* m_VB = nullptr;
+	SVertexStream* m_IB = nullptr;
+	_smart_ptr<CShader> shader;
+	ID3D10Texture2D *m_pTexture = NULL;
+	ID3D10ShaderResourceView* pTexDepSurface = NULL;
 
-public:
-  // Унаследовано через IFont
-  virtual bool Init(const char* font, unsigned int w, unsigned int h) override;
+	ID3D10Buffer* m_pConstantBuffer;
+	
+	static ID3D10SamplerState* m_Sampler;
+	static ID3D10InputLayout* m_pFontLayout;
+	static ID3D10RasterizerState* m_pRasterizerState;
+	static ID3D10DepthStencilState* m_pDSState;
+	static ID3D10BlendState* m_pBlendState;
+	static bool first_init;
 
-  // Унаследовано через IFont
-  virtual float GetXPos() override;
+	std::vector<std::array<SVF_P3F_C4B_T2F, 6>> m_CharBuffer;
 
-  virtual float GetYPos() override;
-
-  // Унаследовано через IFont
-  virtual void SetXPos(float x) override;
-
-  virtual void SetYPos(float y) override;
+	static bool printColorTableRegistered;
 };
+#endif

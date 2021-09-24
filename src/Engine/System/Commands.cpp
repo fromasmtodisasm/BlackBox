@@ -1,7 +1,5 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/System.hpp>
 #include <BlackBox/System/ConsoleCommands.hpp>
-#include <BlackBox/Core/Utils.hpp>
 
 class SystemCommand : public BaseCommand
 {

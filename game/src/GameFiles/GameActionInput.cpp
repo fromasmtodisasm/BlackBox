@@ -1,5 +1,4 @@
-#include <Game.hpp>
-#include <GameShared.hpp>
+#include <BlackBox/System/ConsoleRegistration.h>
 
 //////////////////////////////////////////
 //small utility macro
@@ -53,8 +52,6 @@ void CGame::InitInputMap()
   IInput* pInput = m_pSystem->GetIInput();
 
   m_pIActionMapManager = pInput->CreateActionMapManager();
-  if (m_pIActionMapManager)
-	  ;
   //m_pIActionMapManager->SetSink(this);
 
   ResetInputMap();
@@ -102,12 +99,12 @@ void CGame::InitConsoleCommands()
 void CGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
-  r_displayinfo = CREATE_CVAR("r_displayinfo", 1, 0, "Display info [1/0]");
-  r_profile = CREATE_CVAR("r_profile", 1, 0, "Profile [1/0]");
-  r_cap_profile = CREATE_CVAR("r_cap_profile", 1, 0, "Capture frame [1/0]");
-  m_pCVarCheatMode = CREATE_CVAR("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
+  r_displayinfo = REGISTER_INT("r_displayinfo", 1, 0, "Display info [1/0]");
+  r_profile = REGISTER_INT("r_profile", 1, 0, "Profile [1/0]");
+  r_cap_profile = REGISTER_INT("r_cap_profile", 1, 0, "Capture frame [1/0]");
+  m_pCVarCheatMode = REGISTER_STRING("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 
-  g_NonSteam = CREATE_CVAR("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
+  g_NonSteam = REGISTER_INT("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
 
   REGISTER_CVAR(g_DrawUI, 0, VF_DUMPTODISK, "[enable/disable] UI");
   REGISTER_CVAR(g_Render, 0, VF_DUMPTODISK, "[enable/disable] Rendering");
@@ -159,6 +156,10 @@ void CGame::InitConsoleVars()
 			"Sets initial paraglider's gravity.\n"
 			"Usage: game_GliderStartGravity -0.8");
 	}
+
+	extern int g_bRenderGame;
+	REGISTER_CVAR(g_bRenderGame, 1, VF_NULL, "render game?");
+
 
 }
 
@@ -243,7 +244,7 @@ void  CGame::ResetInputMap()
   ADD_ACTION(MOVEMODE_TOGGLE, aamOnPress, "@CrouchToggle", ACTIONTYPE_MOVEMENT, true) SetConfigToActionMap("MOVEMODE_TOGGLE", ACTIONMAPS_NODEAD);
   ADD_ACTION(AIM_TOGGLE, aamOnPress, "@ToggleAim", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("AIM_TOGGLE", "default", "zoom", "");
 
-  ADD_ACTION(CAMERA_MODE, aamOnPress, "@CameraMode", ACTIONTYPE_GAME, true) SetConfigToActionMap("CAMERA_MODE", ACTIONMAPS_ALL);
+  //ADD_ACTION(CAMERA_MODE, aamOnPress, "@CameraMode", ACTIONTYPE_GAME, true) SetConfigToActionMap("CAMERA_MODE", ACTIONMAPS_ALL);
 
 	
 
@@ -280,6 +281,7 @@ void  CGame::ResetInputMap()
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   //jump (outside common key bindings because space is reserved for hold the breath
   //in zoom mode)
@@ -341,6 +343,7 @@ void  CGame::ResetInputMap()
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   //hold the breath
   pMap->BindAction(ACTION_HOLDBREATH, eKI_Space);
@@ -418,13 +421,14 @@ void  CGame::ResetInputMap()
 
   //fire (outside common key bindings because is not possible in binozoom)
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   // breaks (actually use - to jump out of the car)
   pMap->BindAction(ACTION_JUMP, eKI_Space);
   pMap->BindAction(ACTION_JUMP, eKI_NP_Enter);
 
   //accellerate
-  pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
+  //pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
 
   // switch between 1st and 3rd pesron while driving
   //pMap->BindAction(ACTION_CHANGE_VIEW,eKI_RMB);
@@ -437,6 +441,7 @@ void  CGame::ResetInputMap()
   pMap = m_pIActionMapManager->CreateActionMap("player_dead");
 
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
+  pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_Left);
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_Right);
@@ -461,17 +466,21 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_A);
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_NP_4);
   pMap->BindAction(ACTION_MOVE_LEFT,eKI_XI_DPadLeft);
+  pMap->BindAction(ACTION_MOVE_LEFT, eKI_XI_ThumbRLeft);
 
   //strafe right
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_D);
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_NP_6);
   pMap->BindAction(ACTION_MOVE_RIGHT,eKI_XI_DPadRight);
+  pMap->BindAction(ACTION_MOVE_RIGHT, eKI_XI_ThumbRRight);
 
   //run forward
   pMap->BindAction(ACTION_MOVE_FORWARD, eKI_W);
   pMap->BindAction(ACTION_MOVE_FORWARD,eKI_NP_8);
   pMap->BindAction(ACTION_MOVE_FORWARD, eKI_NP_5);
   pMap->BindAction(ACTION_MOVE_FORWARD,eKI_XI_DPadUp);
+  pMap->BindAction(ACTION_MOVE_FORWARD,eKI_XI_TriggerLBtn);
+
 
 #if 0
   pMap->BindAction(ACTION_MOVELR, eKI_J_AXIS_1);
@@ -483,6 +492,7 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_NP_5);
   pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_NP_2);
   pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_XI_DPadDown);
+  pMap->BindAction(ACTION_MOVE_BACKWARD,eKI_XI_TriggerRBtn);
 
   //look around
   pMap->BindAction(ACTION_TURNLR,eKI_MouseX);
@@ -552,7 +562,7 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
   //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);
   //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_RAlt);
 
-  pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
+  //pMap->BindAction(ACTION_CAMERA_MODE, eKI_M);
 
 #ifdef _DEBUG
   // <<FIXME>> Hack only in debug mode

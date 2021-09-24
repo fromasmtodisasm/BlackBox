@@ -15,7 +15,6 @@
 
 #include <BlackBox/EntitySystem/EntityDesc.hpp>
 #include <ScriptObjects/ScriptTimerMgr.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -1,11 +1,4 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ILog.hpp>
-#include <BlackBox/System/ISystem.hpp>
-
-#include <iostream>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -21,6 +14,9 @@ CScriptObjectSystem::CScriptObjectSystem(ISystem* pSystem, IScriptSystem* pSS)
   m_pRenderer = m_pSystem->GetIRenderer();
   m_pConsole = m_pSystem->GetIConsole();
   InitializeTemplate(pSS);
+#undef SCRIPT_REG_CLASSNAME
+#define SCRIPT_REG_CLASSNAME CScriptObjectSystem
+  SCRIPT_REG_TEMPLFUNC(Print, "string, float, float, float, float, float g, float b, float a");
   Init(pSS, pSystem);
 }
 
@@ -41,14 +37,16 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_FUNC(ShowConsole);
   SCRIPT_REG_FUNC(Log);
 
-	SCRIPT_REG_FUNC(DrawImage);
-	SCRIPT_REG_FUNC(LoadTexture);
+  SCRIPT_REG_FUNC(DrawImage);
+  SCRIPT_REG_FUNC(LoadTexture);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
   m_pSystem = pSystem;
   InitGlobal(pScriptSystem, "System", this);
+  m_pFont = gEnv->pRenderer->GetIFont();
+  m_pFont->Init("arial.ttf", 14,14);
 
 }
 
@@ -61,7 +59,7 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
   {
     return pH->EndFunction();
   }
-  m_pConsole->PrintLine("Enumerating display settings...");
+  CryLog("Enumerating display settings...");
   SmartScriptObject pDispArray(m_pSS);
   SDispFormat* Formats = NULL;
   unsigned int i;
@@ -142,10 +140,10 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 {
   SCRIPT_CHECK_PARAMETERS(6);
 	int id;
-	int xpos;
-	int ypos;
-	int w;
-	int h;
+	float xpos;
+	float ypos;
+	float w;
+	float h;
 	int blending_mode;
 	pH->GetParams(id, xpos, ypos, w, h, blending_mode);
 	gEnv->pRenderer->DrawImage(xpos, ypos, w, h, id, 0, 0, 1, 1, 0, 1, 0, 1);
@@ -172,7 +170,15 @@ int CScriptObjectSystem::Log(IFunctionHandler* pH)
 	const char* string;
 
   pH->GetParam(1, string);
-	m_pSystem->Log(string);
-  m_pConsole->PrintLine(string);
+  m_pSystem->Log(string);
+  //m_pConsole->PrintLine(string);
   return pH->EndFunction();
+}
+
+int CScriptObjectSystem::Print(const char* text, float x, float y, float scale, float r, float g, float b, float a)
+{
+	float color[] = {r, g, b, a};
+	m_pFont->RenderText(text, x, y, scale, color);
+	m_pFont->Submit();
+	return 0;
 }

@@ -40,4 +40,7 @@ add_private_headers()
 target_precompile_headers(${PROJECT_NAME}
   PRIVATE 
 	<BlackBox/Core/Platform/Platform.hpp>
+	<BlackBox/Core/Platform/Platform.hpp>
+	<BlackBox/System/ISystem.hpp>
+	<BlackBox/System/IConsole.hpp>
 )

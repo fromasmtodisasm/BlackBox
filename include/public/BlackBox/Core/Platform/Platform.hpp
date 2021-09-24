@@ -84,6 +84,25 @@ inline auto SAFE_DELETE(T*& t)
 #define SAFE_RELEASE_FORCE(p) { if (p) { (p)->ReleaseForce(); (p) = nullptr; } }
 #endif
 
+//! Use NoCopy as a base class to easily prevent copy ctor & operator for any class.
+struct NoCopy
+{
+	NoCopy() = default;
+	NoCopy(const NoCopy&) = delete;
+	NoCopy& operator=(const NoCopy&) = delete;
+	NoCopy(NoCopy&&) = default;
+	NoCopy& operator=(NoCopy&&) = default;
+};
+
+//! Use NoMove as a base class to easily prevent move ctor & operator for any class.
+struct NoMove
+{
+	NoMove() = default;
+	NoMove(const NoMove&) = default;
+	NoMove& operator=(const NoMove&) = default;
+	NoMove(NoMove&&) = delete;
+	NoMove& operator=(NoMove&&) = delete;
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,9 +115,14 @@ typedef unsigned int        UINT;
 typedef unsigned int        *PUINT;
 
 
-#if defined(WIN32) && defined(__GNUC__)
-	#define DLL_EXPORT __attribute__ ((dllexport))
-	#define DLL_IMPORT __attribute__ ((dllimport))
+#if defined(WIN32) && defined(__GNUC__) || defined(BB_PLATFORM_LINUX)
+#if 0
+	#define DLL_EXPORT [[gnu::dllexport]]
+	#define DLL_IMPORT [[gnu::dllimport]]
+#else
+	#define DLL_EXPORT
+	#define DLL_IMPORT
+#endif
 #else
 	#define DLL_EXPORT __declspec(dllexport)
 	#define DLL_IMPORT __declspec(dllimport)
@@ -109,15 +133,35 @@ typedef unsigned int        *PUINT;
 #define MASK(x)   (BIT(x) - 1U)
 #define MASK64(x) (BIT64(x) - 1ULL)
 
-#define ASSERT(msg) assert(msg)
 #define FUNCTION_PROFILER(...)
-#define LogAlways(...) void(0);
 
+#if defined(USE_CRY_ASSERT)
+#else
+	//! Use the platform's default assert.
+	#include <assert.h>
+	#define CRY_ASSERT_TRACE(condition, parenthese_message) assert(condition)
+	#define CRY_ASSERT_MESSAGE_IMPL(condition, szCondition, file, line, ...) assert(condition)
+	#define CRY_ASSERT_MESSAGE(condition, ... )             assert(condition)
+	#define CRY_ASSERT(condition, ...)                      assert(condition)
+#endif
+namespace Cry
+{
+	template<typename T, typename ... Args>
+	inline T const& VerifyWithMessage(T const& expr, const char* szExpr, const char* szFile, int line, Args&& ... args)
+	{
+		CRY_ASSERT_MESSAGE_IMPL(expr, szExpr, szFile, line, std::forward<Args>(args) ...);
+		return expr;
+	}
+}
+
+#define CRY_VERIFY(expr, ...)              Cry::VerifyWithMessage(expr, # expr, __FILE__, __LINE__, ##__VA_ARGS__)
+
+#define CRY_FUNCTION_NOT_IMPLEMENTED       CRY_ASSERT(false, "Call to not implemented function: %s", __func__)
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
 #if !defined(_DEBUG) && !defined(CRY_UBSAN)
-#define ILINE
+#define ILINE __forceinline
 #else
 #define ILINE inline
 #endif
@@ -141,10 +185,46 @@ void       bbSleep(unsigned int dwMilliseconds);
 #include <cassert>
 #include <cstdint>
 
+class MyString;
+#ifndef MY_STRING
 using string = std::string;
+using wstring = std::wstring;
+#else
+using string = MyString;
+#endif
 
+
+namespace Detail
+{
+template<typename T, size_t size>
+char (&ArrayCountHelper(T(&)[size]))[size];
+}
+
+template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
+
+//! Align function works on integer or pointer values. Only supports power-of-two alignment.
+template<typename T>
+ILINE T Align(T nData, size_t nAlign)
+{
+	assert((nAlign & (nAlign - 1)) == 0);
+	size_t size = ((size_t)nData + (nAlign - 1)) & ~(nAlign - 1);
+	return T(size);
+}
+
+template<typename T>
+ILINE bool IsAligned(T nData, size_t nAlign)
+{
+	assert((nAlign & (nAlign - 1)) == 0);
+	return (size_t(nData) & (nAlign - 1)) == 0;
+}
+
+
+#define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
+
+#if 0
 #ifdef SendMessage
 #undef SendMessage
+#endif
 #endif
 
 #if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT
@@ -187,6 +267,11 @@ inline int IsHeapValid()
 // Use something higher level, like CryString
 //#undef strdup
 //#define strdup dont_use_strdup
+
+//! Loads System from disk and initializes the engine, commonly called from the Launcher implementation
+//! \param bManualEngineLoop Whether or not the caller will start and maintain the engine loop themselves. Otherwise the loop is started and engine shut down automatically inside the function.
+bool			InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
+
 
 #undef STATIC_CHECK
 #define STATIC_CHECK(expr, msg) static_assert((expr) != 0, # msg)

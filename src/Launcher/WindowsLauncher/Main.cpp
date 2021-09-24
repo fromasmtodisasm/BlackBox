@@ -1,18 +1,14 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
+#include <BlackBox/Core/Platform/CryLibrary.h>
+
 #include <BlackBox/Core/Platform/platform_impl.inl>
-
-#include <iostream>
-#include <ctime>
-#include <iomanip>
-#include <sstream>
-#include <filesystem>
-
-using namespace std;
-namespace fs = std::filesystem;
+#include <crtdbg.h>
+#include "resource.h"
 
 // Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
 extern "C"
@@ -23,35 +19,64 @@ extern "C"
 	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
 }
 
+static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
 
-int main(int argc, char* argv[]) {
-  int status = EXIT_FAILURE;
-  string path;
-  std::string cmdline;
-  for (int i = 0; i < argc; i++)
-  {
-		cmdline = cmdline + " " + argv[i];
-  }
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+	{
+		//hCombo = GetDlgItem(hwnd, IDC_DEVICE_LIST);
+		//SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)("TestDevice"));
+		return true;
+	}
+	case WM_COMMAND:
+	{
+		break;
+	}
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		return false;
+	}
 
-  SSystemInitParams params;
-
-  std::cout << "Current path is " << fs::current_path() << '\n';
-
-  time_t t = time(nullptr);
-  std::stringstream ss;
-  ss << "logs/" << std::put_time(std::localtime(&t), "%H-%M-%S") << ".txt";
-  params.sLogFileName = strdup(ss.str().c_str());
-
-  snprintf(params.szSystemCmdLine, 512, "%s", cmdline.c_str());
-  ISystem* pSystem = CreateSystemInterface(params);
-  if (pSystem)
-  {
-		pSystem->GetILog()->Log("ISystem created");
-		pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
-		pSystem->Start();
-		status = EXIT_SUCCESS;
-  }
-  pSystem->Release();
-
-  return status;
+	return false;
 }
+
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, [[maybe_unused]] int nShowCmd)
+{
+	//DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), 0, SelectDeviceProc, 0);
+
+	SSystemInitParams startupParams;
+	startupParams.sLogFileName = "Game.log";
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// Note: lpCmdLine does not contain the filename.
+	const string cmdLine = GetCommandLineA();
+	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
+
+	auto result = EXIT_FAILURE;
+	//_CrtMemState s1, s2, s3;
+	//_CrtMemCheckpoint(&s1);
+	for (int i = 0; i < 1; i++)
+	{
+		if (InitializeEngine(startupParams))
+		{
+			startupParams.pSystem->Start();
+			startupParams.pSystem->Release();
+			result = EXIT_SUCCESS;
+		}
+		
+	}
+#if 0
+	_CrtMemCheckpoint(&s2);
+	if (_CrtMemDifference(&s3, &s1, &s2))
+	{
+		printf("leak detected\n");
+		_CrtMemDumpStatistics(&s3);
+		_CrtDumpMemoryLeaks();
+	}
+#endif
+	return result;
+}
+

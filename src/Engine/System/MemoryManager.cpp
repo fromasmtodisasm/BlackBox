@@ -1,10 +1,9 @@
-#include  <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/System/ISystem.hpp>
-
+//#if !defined USE_DEBUG_NEW && !(defined(_DEBUG) && !defined(LINUX))
 // Undefine malloc for memory manager itself..
-#undef malloc
-#undef realloc
-#undef free
+#	undef malloc
+#	undef realloc
+#	undef free
+//#endif
 
 CRYMEMORYMANAGER_API void* CrySystemCrtMalloc(size_t size)
 {

@@ -115,7 +115,7 @@ private:
 		Vec3 max;
 	}m_Qubes;
 
-	std::vector<IShaderProgram*> m_Programs;
+	std::vector<_smart_ptr<IShader>> m_Programs;
 
 	RenderCallback* m_pRenderCallback;
 	void*			m_RenderCallbackParams;

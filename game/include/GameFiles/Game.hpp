@@ -54,7 +54,7 @@ enum
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
-#include "Player.h"
+//#include "Player.h"
 #include "EntityClassRegistry.h"
 #include <Network/XNetwork.hpp>
 #include <ScriptObjects/ScriptObjectClient.hpp>
@@ -63,8 +63,11 @@ enum
 
 #include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
+#include <DevMode.hpp>
 
+#ifdef USE_STEAM
 #include <SteamHelper.hpp>
+#endif
 
 
 #include "GameShared.hpp"
@@ -74,6 +77,7 @@ class CScriptObjectInput;
 class CScriptObjectStream;
 class CPlayerSystem;
 class CVehicleSystem;
+class CPlayer;
 
 struct TextRenderInfo
 {
@@ -104,7 +108,7 @@ struct TextRenderInfo
 
 //forward declarations
 //////////////////////////////////////////////////////////////////////
-using string = std::string;
+//using string = std::string;
 class EventListener;
 class GameGUI;
 struct IScene;
@@ -158,6 +162,7 @@ struct Ray
 };
 
 
+// ReSharper disable once CppInconsistentNaming
 struct AABB
 {
 	Vec3 min;
@@ -168,7 +173,7 @@ struct AABB
 	{
 	}
 	// Check two bounding boxes for intersection.
-	inline bool IsIntersectBox(const AABB& b) const
+	bool IsIntersectBox(const AABB& b) const
 	{
 		// Check for intersection on X axis.
 		if ((min.x > b.max.x) || (b.min.x > max.x))
@@ -183,7 +188,8 @@ struct AABB
 		return true;
 	}
 
-	glm::vec2 intersectBox(const Ray& ray) {
+	glm::vec2 IntersectBox(const Ray& ray) const
+	{
 		glm::vec3 inv_dir = 1.0f/ray.direction;
 		glm::vec3 tMin = (min - ray.origin) * inv_dir;
 		glm::vec3 tMax = (max - ray.origin) * inv_dir;
@@ -266,11 +272,11 @@ class CGame final
 	void AllowQuicksave(bool bAllow) {m_bAllowQuicksave = bAllow;};
 	bool IsQuicksaveAllowed(void) {return m_bAllowQuicksave;}
 
-	bool loadScene(std::string name);
-	void saveScene(std::string name, std::string as);
+	bool LoadScene(std::string name);
+	void SaveScene(std::string name, std::string as);
 	void SetRenderState();
-	void setPlayer(CPlayer* player);
-	void setCamera(CCamera* camera);
+	void SetPlayer(CPlayer* player);
+	void SetCamera(CCamera* camera);
 
 	void Render();
 
@@ -295,7 +301,7 @@ class CGame final
 	void Save(string sFileName, Vec3 *pos, Vec3 *angles,bool bFirstCheckpoint=false );
 	bool Load(string sFileName);
 	void LoadConfiguration(const string &sSystemCfg,const string &sGameCfg);
-	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile);
+	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile) override;
 	void RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfile);
 
 	virtual void ReloadScripts() override;
@@ -304,12 +310,12 @@ class CGame final
 	virtual IXAreaMgr* GetAreaManager() override;
 	virtual ITagPointManager* GetTagPointManager() override;
     void Stop() override;
-	void gotoMenu();
-	void gotoFullscreen();
-	void gotoGame();
-	void gotoFly();
-	void gotoEdit();
-	void showMenu();
+	void GotoMenu();
+	void GotoFullscreen();
+	void GotoGame();
+	void GotoFly();
+	void GotoEdit();
+	void ShowMenu();
 	virtual void SendMessage(const char* str) override
 	{
 		m_qMessages.push(str);
@@ -319,7 +325,9 @@ class CGame final
 	bool OpenPacks(const char* szFolder);
 	bool ClosePacks(const char* szFolder);
 
+	#ifdef USE_STEAM
 	CSteamAchievements* SteamAchivements();
+	#endif
 private: // ------------------------------------------------------------
 
 	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);
@@ -330,7 +338,7 @@ private: // ------------------------------------------------------------
 	char										m_szLoadMsg[512];
 	bool										m_bAllowQuicksave = true;
 
-	bool initPlayer();
+	bool InitPlayer();
 	bool FpsInputEvent(const SInputEvent& event);
 	bool FlyInputEvent(const SInputEvent& event);
 	bool MenuInputEvent(const SInputEvent& event);
@@ -346,8 +354,8 @@ private: // ------------------------------------------------------------
   public:
 	virtual void PostRender() override;
 
-	void initCommands();
-	void initVariables();
+	void InitCommands();
+	void InitVariables();
 
 	virtual void PreRender() override;
 	// tagpoint management functions
@@ -363,15 +371,15 @@ private: // ------------------------------------------------------------
 	CVehicleSystem *GetVehicleSystem(){ return m_pVehicleSystem; }
 	CPlayerSystem *GetPlayerSystem(){ return m_pPlayerSystem; }
 
-	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
+	IClient* CreateClient(IClientSink* pSink, bool bLocal = false) const
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
 	}
-	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen)
+	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen) const
 	{
 		return m_pNetwork->CreateServer(pSink, nPort, listen);
 	}
-	IActionMapManager* GetActionMapManager()
+	IActionMapManager* GetActionMapManager() const
 	{
 		return m_pIActionMapManager;
 	}
@@ -436,6 +444,7 @@ private: // ------------------------------------------------------------
 
 
 	void MainMenu();
+	#ifdef USE_GUI
 	class Gui
 	{
 	public:
@@ -443,10 +452,16 @@ private: // ------------------------------------------------------------
 		{
 			void OnElementFound(ICVar* pCVar) override 
 			{
-				vars.push_back(pCVar->GetName());	
+				if (strstr(pCVar->GetName(), substr))
+					vars.push_back(pCVar->GetName());	
+			}
+			void SetSubstr(const char* substr)
+			{
+				this->substr = substr;
 			}
 			std::vector<const char*> vars;
-				
+			const char* substr = "";
+
 		};
 		struct Widget
 		{
@@ -479,8 +494,7 @@ private: // ------------------------------------------------------------
 	public:
 		Windows windows;
 	}m_Gui;
-
-
+	#endif
 public:
 	float m_deltaTime = 0.f;
 
@@ -539,16 +553,16 @@ public:
 	IServerSnooper* m_pServerSnooper{};		//!< used for LAN Multiplayer, to remove control servers
 	INETServerSnooper* m_pNETServerSnooper{}; //!< used for Internet Multiplayer, to remove control servers
 	IRConSystem* m_pRConSystem = nullptr;   //!< used for Multiplayer, to remote control servers
-	std::string m_szLastAddress;
+	string m_szLastAddress;
 	bool m_bLastDoLateSwitch{};
 	bool m_bLastCDAuthentication{};
 
 	//CUIHud* m_pUIHud;									//!< Hud
 	//CUIHud* m_pCurrentUI;							//!< for the current ui
 
-	std::string m_currentLevel;		  //!< Name of current level.
-	std::string m_currentMission;	 //!< Name of current mission.
-	std::string m_currentLevelFolder; //!< Folder of the current level.
+	string m_currentLevel;		  //!< Name of current level.
+	string m_currentMission;	 //!< Name of current mission.
+	string m_currentLevelFolder; //!< Folder of the current level.
 
 	// console variables -----------------------------------------------------------
 	//=======================
@@ -596,7 +610,7 @@ public:
 	int st_achivements_numHits = 0;
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
-	std::string m_strLastSaveGame;
+	string m_strLastSaveGame;
 	bool m_bEditor{};
 	//tPlayerPersistentData			m_tPlayerPersistentData;
 
@@ -667,6 +681,8 @@ public:
 	// Intersection
 
 	bool m_isActive = false;
+	// developer mode
+	std::unique_ptr<CDevMode> m_pDevMode;
 
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;

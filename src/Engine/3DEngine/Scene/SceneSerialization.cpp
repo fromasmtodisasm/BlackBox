@@ -7,6 +7,8 @@
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Scene/XmlSerialization.hpp>
 
+#include <BlackBox/System/ConsoleRegistration.h>
+
 #include <sstream>
 #ifndef XMLCheckResult
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }
@@ -14,6 +16,7 @@
 
 using namespace tinyxml2;
 
+#if 0
 Scene::Serializator::Serializator(Scene* scene)
   :
   m_Scene(scene)
@@ -543,3 +546,4 @@ void Scene::Serializator::loadCamera(tinyxml2::XMLElement* element)
 void Scene::Serializator::loadTagPoint(tinyxml2::XMLElement* element)
 {
 }
+#endif

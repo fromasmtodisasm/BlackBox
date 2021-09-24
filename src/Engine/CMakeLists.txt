@@ -30,9 +30,6 @@ macro(setup_subsystems)
 
 	foreach(system IN LISTS ALL_PROJECT_SYSTEMS)
 		add_dependencies(${BLACKBOX_PROJECT} ${system})
-		set_target_properties(${subsystem} 
-			PROPERTIES
-			RUNTIME_OUTPUT_NAME_<CONFIG> "bb${system}")
 		message(STATUS "sub: ${system}")
 	endforeach()
 endmacro()
@@ -108,8 +105,6 @@ macro(main)
 
 	set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 	###################################################
-	configure_file(${BLACKBOX_PUBLIC_INCLUDE_DIRS}/Profiler/Config.h.in ${CMAKE_BINARY_DIR}/Config.h @ONLY)
-	###################################################
 	if (BB_TESET_ENABLE)
 	  target_compile_definitions(${BLACKBOX_PROJECT} INTERFACE -DTEST)
 	  target_compile_definitions(${BLACKBOX_PROJECT} INTERFACE -DSINGLE_PASS)
@@ -117,6 +112,11 @@ macro(main)
 	add_package(tinyxml2)
 	add_package(freetype)
 	###################################################
+
+
+	#The remote console is useful in development, but it is a potential security vulnerability, therefore opt-in
+	option(OPTION_DEVELOPER_CONSOLE_IN_RELEASE "Enables the developer console in Release builds" ON)
+        option(OPTION_REMOTE_CONSOLE "Allows remote console connection" OFF)
 	setup_subsystems()
 	###################################################
 	#set_target_properties(GUI PROPERTIES FOLDER "Engine")

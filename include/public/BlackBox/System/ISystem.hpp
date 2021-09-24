@@ -1,22 +1,20 @@
 #pragma once
-#include <BlackBox/Core/Platform/Platform.hpp> 
-#include <BlackBox/Core/Version.hpp> 
-#include <BlackBox/System/ILog.hpp> 
-#include <BlackBox/System/IValidator.hpp> 
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Version.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/IValidator.hpp>
 #include <cstdarg>
 
 #ifdef SYSTEM_EXPORTS
-  #define ISYSTEM_API DLL_EXPORT
+#	define ISYSTEM_API DLL_EXPORT
 #else
-  #define ISYSTEM_API DLL_IMPORT
+#	define ISYSTEM_API DLL_IMPORT
 #endif
 
 //! Static branch-prediction helpers
-#define IF(condition, hint)    if (condition)
+#define IF(condition, hint) if (condition)
 //! Compiler-supported type-checking helper
 #define PRINTF_PARAMS(...)
-
-
 
 struct ISystem;
 struct ILog;
@@ -34,15 +32,35 @@ struct IWindow;
 struct IInputHandler;
 struct IScriptSystem;
 struct IValidator;
+struct IOutputPrintSink;
 struct ITimer;
 struct INetwork;
 struct IWorld;
 struct IPlatform;
 struct ICryPak;
+struct IStreamEngine;
+struct ITextModeConsole;
+struct IThreadManager;
+struct IRemoteConsole;
+struct IProjectManager;
 
 //////////////////////////////////////////////////////////////////////////
-#define DEFAULT_GAME_PATH	"TestGame"
+#define DEFAULT_GAME_PATH "TestGame"
 #define DATA_FOLDER "res"
+
+#if BB_PLATFORM_ANDROID
+#	define USE_ANDROIDCONSOLE
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_MAC
+#	define USE_UNIXCONSOLE
+#elif BB_PLATFORM_IOS
+#	define USE_IOSCONSOLE
+#elif BB_PLATFORM_WINDOWS
+#	define USE_WINDOWSCONSOLE
+#endif
+
+#if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
+//#	define USE_DEDICATED_SERVER_CONSOLE
+#endif
 
 //! System wide events.
 enum ESystemEvent : uint
@@ -55,9 +73,9 @@ enum ESystemEvent : uint
 	//! wparam=x, lparam=y.
 	ESYSTEM_EVENT_MOVE = 11,
 
-  //! Resizes of the main window.
-  //! wparam=width, lparam=height.
-  ESYSTEM_EVENT_RESIZE = 12,
+	//! Resizes of the main window.
+	//! wparam=width, lparam=height.
+	ESYSTEM_EVENT_RESIZE = 12,
 
 	//! Activation of the main window.
 	//! wparam=1/0, 1=active 0=inactive.
@@ -81,6 +99,9 @@ enum ESystemEvent : uint
 	//! wparam is 1 means we switched to fullscreen, 0 if for windowed.
 	ESYSTEM_EVENT_TOGGLE_FULLSCREEN,
 
+	//! Sent if the System module initialized successfully.
+	ESYSTEM_EVENT_SYSTEM_INIT_DONE,
+
 	//! Sent before initializing the renderer.
 	ESYSTEM_EVENT_PRE_RENDERER_INIT,
 
@@ -90,51 +111,94 @@ enum ESystemEvent : uint
 	ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE,
 };
 
-//////////////////////////////////////////////////////////////////////////
-// User defined callback, which can be passed to ISystem.
+//! User defined callback, which can be passed to ISystem.
 struct ISystemUserCallback
 {
-  /** Signals to User that engine error occured.
-      @return true to Halt execution or false to ignore this error.
-  */
-  virtual bool OnError(const char* szErrorString) = 0;
-  /** If working in Editor environment notify user that engine want to Save current document.
-      This happens if critical error have occured and engine gives a user way to save data and not lose it
-      due to crash.
-  */
-  virtual void OnSaveDocument() = 0;
+	// <interfuscator:shuffle>
+	virtual ~ISystemUserCallback()
+	{
+	}
 
-  /** Notify user that system wants to switch out of current process.
-      (For ex. Called when pressing ESC in game mode to go to Menu).
-  */
-  virtual void OnProcessSwitch() = 0;
+	//! This method is called at the earliest point the ISystem pointer can be used the log might not be yet there.
+	virtual void OnSystemConnect(ISystem* pSystem)
+	{
+	}
+
+	//! If working in Editor environment notify user that engine want to Save current document.
+	//! This happens if critical error have occurred and engine gives a user way to save data and not lose it due to crash.
+#if BB_PLATFORM_WINDOWS
+	virtual bool OnSaveDocument() = 0;
+#endif
+
+	//! Notifies user that system wants to switch out of current process.
+	//! Example: Called when pressing ESC in game mode to go to Menu.
+	virtual void OnProcessSwitch() = 0;
+
+	//! Notifies user, usually editor, about initialization progress in system.
+	virtual void OnInitProgress(const char* sProgressMsg) = 0;
+
+	//! Initialization callback.
+	//! This is called early in CSystem::Init(), before any of the other callback methods is called.
+	virtual void OnInit(ISystem*)
+	{
+	}
+
+	//! Shutdown callback.
+	virtual void OnShutdown()
+	{
+	}
+
+	//! Quit callback.
+	virtual void OnQuit()
+	{
+	}
+
+	//! Notify user of an update iteration. Called in the update loop.
+	virtual void OnUpdate()
+	{
+	}
+
+#if 0
+	//! Show message by provider.
+	virtual EQuestionResult ShowMessage(const char* text, const char* caption, EMessageBox uType) { return eQR_None; }
+#endif
+
+	//! Collects the memory information in the user program/application.
+	virtual void GetMemoryUsage(struct ICrySizer* pSizer) = 0;
+	// </interfuscator:shuffle>
 };
 
 //! Interface used for getting notified when a system event occurs.
 struct ISystemEventListener
 {
-  // <interfuscator:shuffle>
-  virtual ~ISystemEventListener() {}
-  virtual void OnSystemEventAnyThread(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) {}
-  virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) = 0;
-  // </interfuscator:shuffle>
+	// <interfuscator:shuffle>
+	virtual ~ISystemEventListener()
+	{
+	}
+	virtual void OnSystemEventAnyThread(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
+	{
+	}
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) = 0;
+	// </interfuscator:shuffle>
 };
 
 //! Structure used for getting notified when a system event occurs.
 struct ISystemEventDispatcher
 {
-  // <interfuscator:shuffle>
-  virtual ~ISystemEventDispatcher() {}
-  virtual bool RegisterListener(ISystemEventListener* pListener, const char* szName) = 0;
-  virtual bool RemoveListener(ISystemEventListener* pListener) = 0;
+	// <interfuscator:shuffle>
+	virtual ~ISystemEventDispatcher()
+	{
+	}
+	virtual bool RegisterListener(ISystemEventListener* pListener, const char* szName) = 0;
+	virtual bool RemoveListener(ISystemEventListener* pListener)					   = 0;
 
-  virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam, bool force_queue = false) = 0;
-  virtual void Update() = 0;
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam, bool force_queue = false) = 0;
+	virtual void Update()																					   = 0;
 
-  virtual uint RegisterEvent(const string& EventName) = 0;
+	virtual uint RegisterEvent(const string& EventName) = 0;
 
-  //virtual void OnLocaleChange() = 0;
-  // </interfuscator:shuffle>
+	//virtual void OnLocaleChange() = 0;
+	// </interfuscator:shuffle>
 };
 
 //! \cond INTERNAL
@@ -142,81 +206,109 @@ struct ISystemEventDispatcher
 struct ILoadConfigurationEntrySink
 {
 	// <interfuscator:shuffle>
-	virtual ~ILoadConfigurationEntrySink(){}
+	virtual ~ILoadConfigurationEntrySink()
+	{
+	}
 	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) = 0;
-	virtual void OnLoadConfigurationEntry_End() {}
+	virtual void OnLoadConfigurationEntry_End()
+	{
+	}
 	// </interfuscator:shuffle>
 };
 //! \endcond
+enum ELoadConfigurationType
+{
+	eLoadConfigDefault,
+	eLoadConfigInit,
+	eLoadConfigSystemSpec,
+	eLoadConfigGame,
+	eLoadConfigLevel
+};
+
+enum class ELoadConfigurationFlags : uint32
+{
+	None                          = 0,
+	SuppressConfigNotFoundWarning = BIT(0)
+};
 
 //////////////////////////////////////////////////////////////////////////
 // Structure passed to Init method of ISystem interface.
 struct SSystemInitParams
 {
-  void* hInstance;											//
-  void* hWnd;														//
-  char szSystemCmdLine[512];						// command line, used to execute the early commands e.g. -DEVMODE "g_gametype ASSAULT"
-  ISystemUserCallback* pUserCallback;		//
-  ILog* pLog;														// You can specify your own ILog to be used by System.
-  IValidator* pValidator;								// You can specify different validator object to use by System.
-  const char* sLogFileName;							// File name to use for log.
-  bool bEditor;													// When runing in Editor mode.
-  bool bPreview;												// When runing in Preview mode (Minimal initialization).
-  bool bTestMode;												// When runing in Automated testing mode.
-  bool bDedicatedServer;								// When runing a dedicated server.
-	bool bMinimal;                        //!< Don't load banks.
-  ISystem* pSystem;											// Pointer to existing ISystem interface, it will be reused if not NULL.
+	void* hInstance;					//
+	void* hWnd;							//
+	char szSystemCmdLine[512];			// command line, used to execute the early commands e.g. -DEVMODE "g_gametype ASSAULT"
+	ISystemUserCallback* pUserCallback; //
+	ILog* pLog;							// You can specify your own ILog to be used by System.
+	IValidator* pValidator;				// You can specify different validator object to use by System.
+	IOutputPrintSink* pPrintSync;		//!< Print Sync which can be used to catch all output from engine.
+	const char* sLogFileName;			// File name to use for log.
+	bool bEditor;						// When runing in Editor mode.
+	bool bPreview;						// When runing in Preview mode (Minimal initialization).
+	bool bTestMode;						// When runing in Automated testing mode.
+	bool bDedicatedServer;				// When runing a dedicated server.
+	bool bMinimal;						//!< Don't load banks.
+	bool bManualEngineLoop;
+
+	ISystem* pSystem; // Pointer to existing ISystem interface, it will be reused if not NULL.
 
 #if defined(LINUX)
-  void (*pCheckFunc)(void*);							// authentication function (must be set).
+	void (*pCheckFunc)(void*); // authentication function (must be set).
 #else
-  void* pCheckFunc;											// authentication function (must be set).
+	void* pCheckFunc; // authentication function (must be set).
 #endif
 
-  // Initialization defaults.
-  SSystemInitParams()
-  {
-    hInstance = 0;
-    hWnd = 0;
-    memset(szSystemCmdLine, 0, sizeof(szSystemCmdLine));
-    pLog = 0;
-    pValidator = 0;
-    pUserCallback = 0;
-    sLogFileName = 0;
-    bEditor = false;
-    bPreview = false;
-    bTestMode = false;
-    bDedicatedServer = false;
-    pSystem = 0;
-    pCheckFunc = 0;
-  }
+	// Initialization defaults.
+	SSystemInitParams()
+	{
+		hInstance = 0;
+		hWnd	  = 0;
+		memset(szSystemCmdLine, 0, sizeof(szSystemCmdLine));
+		pLog			  = nullptr;
+		pValidator		  = nullptr;
+		pPrintSync		  = nullptr;
+		pUserCallback	  = nullptr;
+		sLogFileName	  = nullptr;
+		bEditor			  = false;
+		bPreview		  = false;
+		bTestMode		  = false;
+		bDedicatedServer  = false;
+		bManualEngineLoop = true;
+		pSystem			  = nullptr;
+		pCheckFunc		  = nullptr;
+	}
 };
 
 struct SSystemGlobalEnvironment
 {
-  INetwork* pNetwork = nullptr;
-  I3DEngine* p3DEngine = nullptr;
-  IScriptSystem* pScriptSystem = nullptr;
-  IInput* pInput = nullptr;
-  ICryPak* pCryPak = nullptr;
-  ITimer* pTimer = nullptr;
-  IConsole* pConsole = nullptr;
-  ISystem* pSystem = nullptr;
-  ILog* pLog = nullptr;
-  IRenderer* pRenderer = nullptr;
-  IHardwareMouse* pHardwareMouse = nullptr;
-  IPlatform* pPlatform;
+	INetwork* pNetwork				 = nullptr;
+	I3DEngine* p3DEngine			 = nullptr;
+	IScriptSystem* pScriptSystem	 = nullptr;
+	IInput* pInput					 = nullptr;
+	ICryPak* pCryPak				 = nullptr;
+	ITimer* pTimer					 = nullptr;
+	IConsole* pConsole				 = nullptr;
+	ISystem* pSystem				 = nullptr;
+	ILog* pLog						 = nullptr;
+	IRenderer* pRenderer			 = nullptr;
+	IHardwareMouse* pHardwareMouse	 = nullptr;
+	IPlatform* pPlatform			 = nullptr;
+	IThreadManager* pThreadManager	 = nullptr;
+	IProjectManager* pProjectManager = nullptr;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{
-	#if defined(DEDICATED_SERVER)
+#if defined(DEDICATED_SERVER)
 		bDedicated = true;
-	#else
+#else
 		bDedicated = isDedicated;
-	#endif
+#endif
 	}
 
-  ILINE bool IsEditor() { return false; }
+	ILINE bool IsEditor()
+	{
+		return false;
+	}
 	ILINE const bool IsEditing() const
 	{
 #if BB_PLATFORM_DESKTOP
@@ -239,80 +331,85 @@ struct SSystemGlobalEnvironment
 #if BB_PLATFORM_DESKTOP
 	bool bDedicatedArbitrator;
 
-private:
+  private:
 	bool bClient;
-	bool bEditor;          //!< Engine is running under editor.
-	bool bEditorGameMode;  //!< Engine is in editor game mode.
-	bool bDedicated;       //!< Engine is in dedicated.
+	bool bEditor;		  //!< Engine is running under editor.
+	bool bEditorGameMode; //!< Engine is in editor game mode.
+	bool bDedicated;	  //!< Engine is in dedicated.
 #endif
 };
 
 struct ISystem
 {
-	enum MessageType {
+	enum MessageType
+	{
 		M_ERROR,
 		M_WARNING
 	};
 
 	// Begin rendering frame.
-	virtual void	RenderBegin() = 0;
+	virtual void RenderBegin() = 0;
 	// Render subsystems.
-	virtual void	Render() = 0;
+	virtual void Render() = 0;
 	// End rendering frame and swap back buffer.
-	virtual void	RenderEnd() = 0;
+	virtual void RenderEnd() = 0;
 
-	// Renders the statistics; this is called from RenderEnd, but if the 
+	// Renders the statistics; this is called from RenderEnd, but if the
 	// Host application (Editor) doesn't employ the Render cycle in ISystem,
 	// it may call this method to render the essencial statistics
-	virtual void RenderStatistics () = 0;
+	virtual void RenderStatistics() = 0;
 
 	// Retrieve the name of the user currently logged in to the computer
-	virtual const char *GetUserName() = 0;
+	virtual const char* GetUserName() = 0;
 
-
-
-
-  virtual bool Init() = 0;
-  virtual void Start() = 0;
-  virtual bool Update(int updateFlags = 0, int nPauseMode = 0) = 0;
-  virtual void Release() = 0;
+	virtual bool Init()											 = 0;
+	virtual void Start()										 = 0;
+	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) = 0;
+	virtual void Release()										 = 0;
 	//! Returns pointer to the global environment structure.
-	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() = 0;
-  virtual IGame* CreateGame(IGame* game) = 0;
+	virtual SSystemGlobalEnvironment* GetGlobalEnvironment()			  = 0;
+	virtual bool IsCVarWhitelisted(const char* szName, bool silent) const = 0;
+	virtual ISystemUserCallback* GetUserCallback() const				  = 0;
+	virtual IGame* CreateGame(IGame* game)								  = 0;
 
-  virtual IRenderer*              GetIRenderer() = 0;
-  virtual ILog*                   GetILog() = 0;
-	virtual ICmdLine*               GetICmdLine() = 0;
-  virtual IConsole*               GetIConsole() = 0;
-  virtual IInput*                 GetIInput() = 0;
-  virtual IGame*                  GetIGame() = 0;
-  virtual IFont*                  GetIFont() = 0;
-  virtual INetwork*               GetINetwork() = 0;
-  virtual IWindow*                GetIWindow() = 0;
-	virtual IEntitySystem		*       GetIEntitySystem() = 0;
-  virtual ICryPak*                GetIPak() = 0;
-  virtual IHardwareMouse*         GetIHardwareMouse() = 0;
-#if 0
-  virtual IInputHandler* GetIInputHandler() = 0;
-#endif
-  virtual IScriptSystem* GetIScriptSystem() = 0;
-  virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
+	virtual IRenderer* GetIRenderer()							= 0;
+	virtual ILog* GetILog()										= 0;
+	virtual IStreamEngine* GetStreamEngine()					= 0;
+	virtual IRemoteConsole* GetIRemoteConsole()					= 0;
+	virtual ICmdLine* GetICmdLine()								= 0;
+	virtual IConsole* GetIConsole()								= 0;
+	virtual IInput* GetIInput()									= 0;
+	virtual IGame* GetIGame()									= 0;
+	virtual IFont* GetIFont()									= 0;
+	virtual INetwork* GetINetwork()								= 0;
+	virtual IWindow* GetIWindow()								= 0;
+	virtual IValidator* GetIValidator()							= 0;
+	virtual IEntitySystem* GetIEntitySystem()					= 0;
+	virtual ICryPak* GetIPak()									= 0;
+	virtual IHardwareMouse* GetIHardwareMouse()					= 0;
+	virtual IScriptSystem* GetIScriptSystem()					= 0;
+	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
+	virtual ITimer* GetITimer()									= 0;
+	virtual ITextModeConsole* GetITextModeConsole()				= 0;
+	virtual IProjectManager* GetIProjectManager()				= 0; 
 
-  virtual ITimer* GetITimer() = 0;
-
-  
 	// Quit the appliacation
-	virtual void	Quit() = 0;
+	virtual void Quit() = 0;
 	// Tells the system if it is relaunching or not
-	virtual void	Relaunch(bool bRelaunch) = 0;
+	virtual void Relaunch(bool bRelaunch) = 0;
 	// return true if the application is in the shutdown phase
-	virtual bool	IsQuitting() = 0;
+	virtual bool IsQuitting() = 0;
+
+	//! Displays error message.
+	//! Logs it to console and file and error message box then terminates execution.
+	virtual void FatalError(const char* sFormat, ...) PRINTF_PARAMS(2, 3) = 0;
 
 	// Display error message.
 	// Logs it to console and file and error message box.
 	// Then terminates execution.
-	virtual void Error( const char *sFormat,... ) = 0;
-	
+	virtual void Error(const char* sFormat, ...) = 0;
+
+	virtual void WarningV(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, va_list args) = 0;
 	//DOC-IGNORE-BEGIN
 	//[Timur] DEPRECATED! Use Validator Warning instead.
 	// Display warning message.
@@ -323,37 +420,42 @@ struct ISystem
 
 	// Report warning to current Validator object.
 	// Not terminates execution.
-	virtual void Warning( EValidatorModule module,EValidatorSeverity severity,int flags,const char *file,const char *format,... ) = 0;
+	virtual void Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...) = 0;
 	// Compare specified verbosity level to the one currently set.
-	virtual bool CheckLogVerbosity( int verbosity ) = 0;
+	virtual bool CheckLogVerbosity(int verbosity) = 0;
 
 	// returns true if this is dedicated server application
-	virtual bool IsDedicated() {return false;}
+	virtual bool IsDedicated()
+	{
+		return false;
+	}
 
-	virtual void Log(const char* message) = 0;
+	virtual void Log(const char* message)	= 0;
 	virtual void Error(const char* message) = 0;
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) = 0;
-	virtual bool IsDevMode() = 0;
+	virtual bool IsDevMode()																	= 0;
 
 	virtual float GetDeltaTime() = 0;
 
-	virtual void SetViewCamera(class CCamera &Camera) = 0;
-	virtual CCamera& GetViewCamera() = 0;
+	virtual void ExecuteCommandLine() = 0;
+
+	virtual void SetViewCamera(class CCamera& Camera) = 0;
+	virtual CCamera& GetViewCamera()				  = 0;
 
 	//////////////////////////////////////////////////////////////////////////
 	// File version.
 	//////////////////////////////////////////////////////////////////////////
-	
-	virtual const SFileVersion& GetFileVersion() = 0;
+
+	virtual const SFileVersion& GetFileVersion()	= 0;
 	virtual const SFileVersion& GetProductVersion() = 0;
 
 	virtual void EnableGui(bool enable) = 0;
 
 	// Compressed file read & write
-	virtual bool WriteCompressedFile(char *filename, void *data, unsigned int bitlen) = 0;
-	virtual unsigned int ReadCompressedFile(char *filename, void *data, unsigned int maxbitlen) = 0;
-	virtual unsigned int GetCompressedFileSize(char *filename)=0;
+	virtual bool WriteCompressedFile(char* filename, void* data, unsigned int bitlen)			= 0;
+	virtual unsigned int ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen) = 0;
+	virtual unsigned int GetCompressedFileSize(char* filename)									= 0;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Configuration.
@@ -361,15 +463,24 @@ struct ISystem
 	// Saves system configuration.
 	virtual void SaveConfiguration() = 0;
 	// Loads system configuration
-	virtual void LoadConfiguration(const string &sFilename)=0;
+	
+	//! Loads system configuration
+	//! \param pCallback 0 means normal LoadConfigVar behavior is used.
+	//! \param bQuiet when set to true will suppress warning message if config file is not found.
+	virtual void LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
+	                               ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) = 0;
 
+	virtual const char* GetRootFolder() const = 0;
+	//! Starts a new frame, updates engine systems, game logic and finally renders.
+	//! \return Returns true if the engine should continue running, false to quit.
+	virtual bool DoFrame(int updateFlags = 0) = 0;
 };
 
 // Global environment variable.
 #if defined(SYS_ENV_AS_STRUCT)
-  extern SSystemGlobalEnvironment gEnv;
+extern SSystemGlobalEnvironment gEnv;
 #else
-  extern SSystemGlobalEnvironment* gEnv;
+extern SSystemGlobalEnvironment* gEnv;
 #endif
 
 //! Gets the system interface.
@@ -378,65 +489,79 @@ inline ISystem* GetISystem()
 	return gEnv->pSystem;
 };
 
+// System DLL Exports.
+typedef ISystem* (*PFNCREATESYSTEMINTERFACE)(SSystemInitParams& initParams /*, bool bManualEngineLoop*/);
+
 // interface of the DLL
 extern "C"
 {
-  ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams);
+	ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams);
 }
 
-#define FatalError(...) void(0)
-#define CryFatalError(...) FatalError(__VA_ARGS__)
-
-//////////////////////////////////////////////////////////////////////////
-// Display error message.
-// Logs it to console and file and error message box.
-// Then terminates execution.
-inline void CryError( const char *format,... )
-{ 
-	if (!GetISystem())
+//! Displays error message, logs it to console and file and error message box, tThen terminates execution.
+void CryFatalError(const char*, ...) PRINTF_PARAMS(1, 2);
+inline void CryFatalError(const char* format, ...)
+{
+	if (!gEnv || !gEnv->pSystem)
 		return;
 
-	va_list	ArgList;
+	va_list ArgList;
 	char szBuffer[MAX_WARNING_LENGTH];
 	va_start(ArgList, format);
 	vsprintf(szBuffer, format, ArgList);
 	va_end(ArgList);
 
-	GetISystem()->Error( "%s",szBuffer );
+	gEnv->pSystem->FatalError("%s", szBuffer);
 }
+//////////////////////////////////////////////////////////////////////////
+// Display error message.
+// Logs it to console and file and error message box.
+// Then terminates execution.
+inline void CryError(const char* format, ...)
+{
+	if (!GetISystem())
+		return;
 
+	va_list ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	va_start(ArgList, format);
+	vsprintf(szBuffer, format, ArgList);
+	va_end(ArgList);
+
+	GetISystem()->Error("%s", szBuffer);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Display warning message.
 // Logs it to console and file and display a warning message box.
 // Not terminates execution.
-inline void CryWarning( EValidatorModule module,EValidatorSeverity severity,const char *format,... )
+inline void CryWarning(EValidatorModule module, EValidatorSeverity severity, const char* format, ...)
 {
 	if (!GetISystem() || !format)
 		return;
-	va_list	ArgList;
-	char		szBuffer[MAX_WARNING_LENGTH];
+	va_list ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
 	va_start(ArgList, format);
 	vsprintf(szBuffer, format, ArgList);
 	va_end(ArgList);
-	GetISystem()->Warning( module,severity,0,0,szBuffer );
+	GetISystem()->Warning(module, severity, 0, 0, szBuffer);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Simple log of data with low verbosity.
-inline void CryLog( const char *format,... )
+inline void CryLog(const char* format, ...)
 {
 	if (GetISystem() && GetISystem()->CheckLogVerbosity(8))
 	{
 		va_list args;
-		va_start(args,format);
-		GetISystem()->GetILog()->LogV( ILog::eMessage,format,args );
+		va_start(args, format);
+		GetISystem()->GetILog()->LogV(ILog::eMessage, format, args);
 		va_end(args);
 	}
 }
 
 //! Very rarely used log comment.
-void        CryComment(const char*, ...) PRINTF_PARAMS(1, 2);
+void CryComment(const char*, ...) PRINTF_PARAMS(1, 2);
 inline void CryComment(const char* format, ...)
 {
 	// Fran: we need these guards for the testing framework to work
@@ -451,26 +576,26 @@ inline void CryComment(const char* format, ...)
 
 //////////////////////////////////////////////////////////////////////////
 // Very rarely used log comment.
-inline void CryLogComment( const char *format,... )
+inline void CryLogComment(const char* format, ...)
 {
 	if (GetISystem() && GetISystem()->CheckLogVerbosity(9))
 	{
 		va_list args;
-		va_start(args,format);
-		GetISystem()->GetILog()->LogV( ILog::eMessage,format,args );
+		va_start(args, format);
+		GetISystem()->GetILog()->LogV(ILog::eMessage, format, args);
 		va_end(args);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Logs important data that must be printed regardless verbosity.
-inline void CryLogAlways( const char *format,... )
+inline void CryLogAlways(const char* format, ...)
 {
 	if (GetISystem())
 	{
 		va_list args;
-		va_start(args,format);
-		GetISystem()->GetILog()->LogV( ILog::eAlways,format,args );
+		va_start(args, format);
+		GetISystem()->GetILog()->LogV(ILog::eAlways, format, args);
 		va_end(args);
 	}
 }

@@ -45,7 +45,7 @@
 		#undef DrawText
 		#undef GetCharWidth
 		#undef GetUserName
-    #undef SendMessage
+		//#undef SendMessage
 		//#undef LoadLibrary
 	#endif
 	#undef GetCompressedFileSize
@@ -59,18 +59,8 @@
 		#undef OutputDebugString
 		#define OutputDebugString(...) (void) 0
 	#else
-		#undef OutputDebugString
-		#define OutputDebugString(...) (void) 0
+		//#undef OutputDebugString
+		//#define OutputDebugString(...) (void) 0
 	#endif
-
-  inline int64_t  bbGetTicks()
-  {
-    return 0;
-  }
-
-  inline void bbSleep(unsigned int dwMilliseconds)
-  {
-
-  }
 
 #endif

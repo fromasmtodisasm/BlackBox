@@ -112,6 +112,8 @@ typedef int							LONG;
 typedef unsigned int 		ULONG;
 typedef int 						HRESULT;
 
+typedef unsigned long int threadID;
+
 
 #define TRUE 1
 #define FALSE 0
@@ -213,10 +215,12 @@ typedef struct in_addr_windows
 
 //
 unsigned int GetCurrentTimeInternal();
+#if 0
 inline unsigned int GetCurrentTime()
 {
   return GetCurrentTimeInternal();
 }
+#endif
 
 extern "C" inline char *strlwr(char *str)
 {
@@ -391,5 +395,7 @@ typedef struct _SECURITY_ATTRIBUTES
 	typedef CHandle<int, (int)-1l> HANDLE;
 
 #endif //__cplusplus
+
+#define __debugbreak()
 
 #endif //_CRY_COMMON_LINUX_SPECIFIC_HDR_

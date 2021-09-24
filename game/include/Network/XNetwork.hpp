@@ -184,10 +184,10 @@ struct SXServerInfos
 		FLAG_PUNKBUSTER = 1 << 3,
 	};
 
-	std::string		strName;							//!< e.g. "Jack's Server"
-	std::string		strMap;								//!< e.g. "MP_Airstrip"
-	std::string		strGameType;					//!< e.g. "ASSAULT", "FFA", "TDM"
-	std::string		strMod;								//!< e.g. "FarCry", "Counterstrike"  current TCM(Total Conversion Mod), specified with -MOD ...
+	string		strName;							//!< e.g. "Jack's Server"
+	string		strMap;								//!< e.g. "MP_Airstrip"
+	string		strGameType;					//!< e.g. "ASSAULT", "FFA", "TDM"
+	string		strMod;								//!< e.g. "FarCry", "Counterstrike"  current TCM(Total Conversion Mod), specified with -MOD ...
 	BYTE					nPlayers;							//!< current player count
 	BYTE					nMaxPlayers;					//!< max player count
 	uint16_t			nPort;								//!<

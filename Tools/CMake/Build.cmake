@@ -18,19 +18,25 @@ endif()
 if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	# 2. Games
 	#add_subdirectories_glob("Code/Game*")
+	add_subdirectory(${CMAKE_SOURCE_DIR}/game)
 endif()
 	
 if (OPTION_EDITOR)
 	include ("${TOOLS_CMAKE_DIR}/BuildEditor.cmake")
 endif()
+
 if (OPTION_CONFIGURATOR)
   include ("${TOOLS_CMAKE_DIR}/BuildConfigurator.cmake")
 endif()
+
 # 5. Launchers
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
-add_subdirectory("${BLACKBOX_DIR}/src/Tools/")
+
+if(OPTION_BUILD_TOOLS)
+	add_subdirectory("${BLACKBOX_DIR}/src/Tools/")
+endif()
 
 
-message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")
+#message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")
 
-clang_format("${ALL_PROJECT_SOURCES}")
+#clang_format("${ALL_PROJECT_SOURCES}")

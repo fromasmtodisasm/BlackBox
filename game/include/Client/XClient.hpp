@@ -29,9 +29,10 @@
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/IConsole.hpp>
 //#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
-//#include "XClientSnapshot.h"
-//#include <Network/XEntityProcessingCmd.hpp>
+#include <Client/XClientSnapshot.hpp>
+#include <Network/XEntityProcessingCmd.hpp>
 #include <Network/XNetwork.hpp>	
+#include <Network/XNetworkStats.hpp>	
 //#include "XNetworkStats.h"						// CXNetworkStats
 //#include <BlackBox/ScriptObjectVector.hpp>						// CXNetworkStats
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>						// CXNetworkStats
@@ -81,7 +82,7 @@ private:
 
 public:
 	//!
-	bool Init(CGame *pGame,bool bLocal=false);
+	bool Init(CXGame *pGame,bool bLocal=false);
 	//!
 	void Reset();
 	//!
@@ -271,13 +272,13 @@ public:
 		REGISTER_INPUTACTIONMAP(ACTION_MOVEMODE, TriggerMoveMode)
 		REGISTER_INPUTACTIONMAP(ACTION_MOVEMODE2, TriggerMoveMode2)
 		REGISTER_INPUTACTIONMAP(ACTION_LEANLEFT, TriggerLeanLeft)
-		//REGISTER_INPUTACTIONMAP(ACTION_LEANRIGHT, TriggerLeanRight)
+		REGISTER_INPUTACTIONMAP(ACTION_LEANRIGHT, TriggerLeanRight)
 		REGISTER_INPUTACTIONMAP(ACTION_HOLDBREATH, TriggerHoldBreath)
 		REGISTER_INPUTACTIONMAP(ACTION_FIREMODE, TriggerFireMode)
 		REGISTER_INPUTACTIONMAP(ACTION_FIRE0, TriggerFire0)
 		REGISTER_INPUTACTIONMAP(ACTION_FIRECANCEL, TriggerFireCancel)
-		//REGISTER_INPUTACTIONMAP(ACTION_FIRE_GRENADE, TriggerFireGrenade)
-		//REGISTER_INPUTACTIONMAP(ACTION_VEHICLE_BOOST, TriggerVehicleBoost)
+		REGISTER_INPUTACTIONMAP(ACTION_FIRE_GRENADE, TriggerFireGrenade)
+		REGISTER_INPUTACTIONMAP(ACTION_VEHICLE_BOOST, TriggerVehicleBoost)
 		REGISTER_INPUTACTIONMAP(ACTION_RELOAD, TriggerReload)
 		REGISTER_INPUTACTIONMAP(ACTION_USE, TriggerUse)
 		REGISTER_INPUTACTIONMAP(ACTION_TURNLR, TriggerTurnLR)
@@ -370,7 +371,7 @@ public:
 	CStream	*						m_pSavedConsoleVars;			//!< saved console variable state (to restore the VF_REQUIRE_NET_SYNC marked vars), 0 when not used
 
 	bool								m_bLocalHost;							//!< this client is the local host ?
-	class CXGame *			m_pGame;									//!< The game
+	class CGame *			m_pGame;									//!< The game
 	bool								m_bLinkListenerToCamera;	//!<
 	struct IXSystem *		m_pISystem;								//!< The system interface
 	IScriptSystem *			m_pScriptSystem;					//!<
@@ -380,8 +381,8 @@ public:
 
 
 	// Player
-	//CXEntityProcessingCmd m_PlayerProcessingCmd;
-	//CXEntityProcessingCmd m_PrevPlayerProcessingCmd;
+	CXEntityProcessingCmd m_PlayerProcessingCmd;
+	CXEntityProcessingCmd m_PrevPlayerProcessingCmd;
 
 	// The current game context
 	SXGameContext				m_GameContext;
@@ -404,7 +405,7 @@ public:
 
 	unsigned int				m_nDiscardedPackets;			//!<
 	
-	//CXClientSnapshot		m_Snapshot;								//!< Snapshot
+	CXClientSnapshot		m_Snapshot;								//!< Snapshot
 	bool								m_bSelfDestruct;					//!< usually false, to make sure the client is only released in one place
 
 	// Client console variables
@@ -439,7 +440,7 @@ public:
 private: 
 
 	string									m_sClientString;				//!< XSERVERMSG_CLIENTSTRING
-	//CXNetworkStats					m_NetStats;							//!< for network statistics (count and size per packet type)
+	CXNetworkStats					m_NetStats;							//!< for network statistics (count and size per packet type)
 	CStream									m_stmVehicle;						//!<
 	bool										m_bConnected;						//!< is the client fully connected to the game ? (connection established, map loaded, setup complete, ...)
 
@@ -455,5 +456,4 @@ private:
 	//! restore VF_REQUIRE_NET_SYNC marked console vars
 	void RestoreServerSyncedVars();
 };
-
 #endif // GAME_XCLIENT_H

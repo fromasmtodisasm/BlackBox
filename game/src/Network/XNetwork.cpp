@@ -11,9 +11,8 @@
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////////
-
+#if 1
 #include "Network/XNetwork.hpp"
-#include "Game.hpp"
 
 //////////////////////////////////////////////////////////////////////////
 // SXServerInfos implementation.
@@ -196,3 +195,4 @@ bool SXGameContext::Read(CStream& stm)
 
   return true;
 }
+#endif
