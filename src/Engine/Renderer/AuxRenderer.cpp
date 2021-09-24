@@ -430,7 +430,8 @@ bool first_draw = true;
 //TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 {
-	auto& shader = m_BoundingBoxShader;
+	// #unreferenced
+	// auto& shader = m_BoundingBoxShader;
 
 	const auto angle	 = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
 	const auto size		 = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);

@@ -128,18 +128,18 @@ DLL_EXPORT std::string wstr_to_str(const std::wstring& ws)
 DLL_EXPORT std::wstring str_to_wstr(const std::string& str)
 {
   std::wstring result;
-  try
-  {
+  //try
+  //{
 	  if (str.length() == 0)
 		return L"";
 	  result.resize(str.length());
 	  auto r_it = result.begin();
 	  std::mbstowcs(&r_it++[0], str.data(), str.length());
-  }
-  catch (std::exception e)
-  {
-	  CryError("str_to_wstr exception: %s", e.what());
-  }
+  //}
+  //catch (std::exception e)
+  //{
+  //    CryError("str_to_wstr exception: %s", e.what());
+  //}
   return result;
 }
 

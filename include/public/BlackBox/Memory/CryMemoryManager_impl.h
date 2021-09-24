@@ -47,7 +47,6 @@ struct _CryMemoryManagerPoolHelper
 		numAllocations = 0;
 		// On first iteration check ourself
 		HMODULE hMod = CryGetCurrentModule();
-		DWORD err = 0;
 		for (int i = 0; i < 2; i++)
 		{
 			if (hMod)

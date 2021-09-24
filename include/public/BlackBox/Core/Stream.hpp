@@ -519,7 +519,8 @@ inline bool CStream::SetBits(BYTE* pBits, size_t nPos, size_t nSize)
 	BYTE cLastMask	  = 0xFF << (7 - MODULO8((nPos + nSize - 1)));
 	BYTE cStartMask	  = 0xFF << nDownShift;
 	BYTE cCurrent	  = *pSrc++;
-	BYTE end		  = *pEnd;
+	// #unreferenced
+	//BYTE end		  = *pEnd;
 	*pStart			  = (cCurrent >> nUpShift) | (*pStart & cStartMask);
 	pStart++;
 	while (pStart <= pEnd)

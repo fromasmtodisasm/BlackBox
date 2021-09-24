@@ -464,6 +464,7 @@ struct IBaseConsole
 struct IConsole : public IBaseConsole
 {
 	virtual void AddCommand(const char* sCommand, ConsoleCommandFunc func, int nFlags = 0, const char* sHelp = NULL, bool bIsManagedExternally = false) = 0;
+	virtual void AddCommand(const char *sName, const char *sScriptFunc, const DWORD indwFlags=0, const char *help = "") = 0;
 	//! Sets the value of a CVar as loaded from a config
 	//! Will defer setting of the value until the CVar is registered if it hasn't been already
 	virtual void LoadConfigVar(const char* sVariable, const char* sValue) = 0;

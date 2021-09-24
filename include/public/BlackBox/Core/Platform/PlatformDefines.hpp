@@ -125,3 +125,47 @@
 #else
 #define BB_PLATFORM_ALIGNMENT 1U
 #endif
+
+// Validation
+
+#if defined(BB_PLATFORM_X64) && BB_PLATFORM_X64 != 1
+#	error Wrong value of BB_PLATFORM_X64.
+#endif
+
+#if defined(BB_PLATFORM_ARM) && BB_PLATFORM_ARM != 1
+#	error Wrong value of BB_PLATFORM_ARM.
+#endif
+
+#if defined(BB_PLATFORM_UNKNOWN_CPU) && BB_PLATFORM_UNKNOWN_CPU != 1
+#	error Wrong value of BB_PLATFORM_UNKNOWN_CPU.
+#endif
+
+#if BB_PLATFORM_X64 + BB_PLATFORM_ARM + BB_PLATFORM_UNKNOWNCPU != 1
+#	error Invalid CPU type.
+#endif
+
+#if defined(BB_PLATFORM_DESKTOP) && BB_PLATFORM_DESKTOP != 1
+#	error Wrong value of BB_PLATFORM_DESKTOP.
+#endif
+
+#if defined(BB_PLATFORM_MOBILE) && BB_PLATFORM_MOBILE != 1
+#	error Wrong value of BB_PLATFORM_MOBILE.
+#endif
+
+#if defined(BB_PLATFORM_CONSOLE) && BB_PLATFORM_CONSOLE != 1
+#	error Wrong value of BB_PLATFORM_CONSOLE.
+#endif
+
+#if BB_PLATFORM_DESKTOP + BB_PLATFORM_CONSOLE + BB_PLATFORM_MOBILE != 1
+#	error Invalid BB_PLATFORM_(DESKTOP/CONSOLE/MOBILE)
+#endif
+
+#if defined(__clang__)
+#	include <CryCore/Compiler/Clangspecific.h>
+#elif defined(__GNUC__)
+#	include <CryCore/Compiler/GCCspecific.h>
+#elif defined(_MSC_VER)
+#	include <BlackBox/Core/Compiler/MSVCspecific.h>
+#else
+#	error Unsupported compiler was used.
+#endif

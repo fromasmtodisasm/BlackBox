@@ -47,9 +47,12 @@ class CCameraController : public IInputEventListener
 		////////////////////////
 		bool keyPressed	 = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 		bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
-		bool control	 = event.modifiers & eMM_Ctrl;
-		bool shift		 = event.modifiers & eMM_Shift;
-		bool alt		 = event.modifiers & eMM_Alt;
+		// #unreferenced
+		//bool control	 = event.modifiers & eMM_Ctrl;
+		// #unreferenced
+		//bool shift		 = event.modifiers & eMM_Shift;
+		// #unreferenced
+		//bool alt		 = event.modifiers & eMM_Alt;
 		////////////////////////
 		if (rotated)
 		{
@@ -131,11 +134,14 @@ class CCameraController : public IInputEventListener
 		}
 
 		//ImGui
-		float mult			 = m_keys.find(eKI_LShift) != m_keys.end() ? 3.f : 1.f;
-		float rotation_speed = 15.f * deltatime * mult;
+		// #unreferenced
+		//float mult			 = m_keys.find(eKI_LShift) != m_keys.end() ? 3.f : 1.f;
+		// #unreferenced
+		//float rotation_speed = 15.f * deltatime * mult;
 		//float rotSpeed = deltatime * 5.f;//m_rotAngle;
 		static Vec3 impulse = Vec3(0.f, 10.f, 0.f);
-		float move_speed	= deltatime * mult;
+		// #unreferenced
+		//float move_speed	= deltatime * mult;
 		for (auto& key : m_keys)
 		{
 			switch (key)
