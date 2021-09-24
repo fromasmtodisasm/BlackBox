@@ -1,9 +1,6 @@
 // Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 #include <BlackBox/Input/InputCVars.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ConsoleRegistration.h>
 
 CInputCVars* g_pInputCVars = 0;
 
