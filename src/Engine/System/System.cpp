@@ -3,27 +3,19 @@
 #include <BlackBox/System/System.hpp>
 
 #include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Network/INetwork.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/3DEngine.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
 #include "RemoteConsole/RemoteConsole.h"
 #include <BlackBox/System/IProjectManager.hpp>
 
-#ifndef LINUX
-#	include <BlackBox/System/File/CryPak.hpp>
-#endif
 #include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/System/HardwareMouse.hpp>
-#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/IWindow.hpp>
-//#include <BlackBox/System/NullLog.hpp>
 #include <BlackBox/System/SystemEventDispatcher.hpp>
 #include <BlackBox/System/VersionControl.hpp>
 #include <BlackBox/World/IWorld.hpp>
@@ -34,9 +26,6 @@
 
 #include "WindowsConsole.h"
 
-#include <cstdlib>
-#include <fstream>
-#include <thread>
 
 // Define global cvars.
 SSystemCVars g_cvars;

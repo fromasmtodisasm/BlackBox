@@ -1,8 +1,5 @@
 #include <GameObject.hpp>
 
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ISystem.hpp>
-
 #if 0
 void GameObject::update(float deltatime)
 {

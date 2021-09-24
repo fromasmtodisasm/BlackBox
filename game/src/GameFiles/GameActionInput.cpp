@@ -1,6 +1,3 @@
-#include <Game.hpp>
-#include <GameShared.hpp>
-
 #include <BlackBox/System/ConsoleRegistration.h>
 
 //////////////////////////////////////////

@@ -1,4 +1,3 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 #ifndef	_XBOX

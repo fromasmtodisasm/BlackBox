@@ -1,10 +1,7 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 #include <BlackBox/ScriptSystem/ScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
-#include <BlackBox/System/ISystem.hpp>
 
-#include <cassert>
 
 lua_State*	   CScriptObject::L		= nullptr;
 CScriptSystem* CScriptObject::m_pSS = nullptr;

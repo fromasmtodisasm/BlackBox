@@ -1,5 +1,4 @@
 #include <BlackBox/System/CmdLineArg.hpp>
-#include <cstdlib>
 
 CCmdLineArg::CCmdLineArg(const char* name, const char* value, ECmdLineArgType type)
 {

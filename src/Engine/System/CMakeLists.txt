@@ -15,7 +15,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS System
-	SOURCE_GROUP "SourceFiles"
+	SOURCE_GROUP "Source Files"
 	"CmdLine.cpp"
 	"CmdLineArg.cpp"
 	"Commands.cpp"

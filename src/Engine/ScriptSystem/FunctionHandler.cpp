@@ -1,9 +1,5 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/FunctionHandler.hpp>
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
-#include <BlackBox/System/ISystem.hpp>
-
-#include <cassert>
 
 #define NOT_IMPL() assert(0 && __FUNCTION__" not implemented")
 

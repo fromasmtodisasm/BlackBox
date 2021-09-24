@@ -6,7 +6,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	PROJECTS Game
-	SOURCE_GROUP "SourceFiles"
+	SOURCE_GROUP "Source Files"
 	Main.cpp
 	#GameFiles/GameGUI.cpp
 	Client/Client.cpp

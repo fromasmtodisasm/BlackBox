@@ -3,8 +3,6 @@
 #include "XConsole.h"
 #include "XConsoleVariable.h"
 
-#include <BlackBox/System/ISystem.hpp>
-
 #if 0
 void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup)
 {

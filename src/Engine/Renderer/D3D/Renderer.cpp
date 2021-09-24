@@ -1,8 +1,5 @@
-﻿#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
-#include "Renderer.h"
+﻿#include "Renderer.h"
 
-#include <BlackBox/System/IWindow.hpp>
 
 struct ITechniqueManager;
 ID3D10Device* GetDevice()

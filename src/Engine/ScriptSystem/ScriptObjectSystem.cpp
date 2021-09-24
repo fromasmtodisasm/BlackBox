@@ -1,12 +1,4 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Renderer/IFont.hpp>
-#include <BlackBox/System/ISystem.hpp>
-
-#include <iostream>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -45,8 +37,8 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_FUNC(ShowConsole);
   SCRIPT_REG_FUNC(Log);
 
-	SCRIPT_REG_FUNC(DrawImage);
-	SCRIPT_REG_FUNC(LoadTexture);
+  SCRIPT_REG_FUNC(DrawImage);
+  SCRIPT_REG_FUNC(LoadTexture);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)

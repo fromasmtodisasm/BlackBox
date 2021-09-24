@@ -1,14 +1,8 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <Game.hpp>
 #include <GameObject.hpp>
 #include <TagPoint.hpp>
 
-#include <BlackBox/3DEngine/I3DEngine.hpp>
-#include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/IFont.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
 
@@ -29,17 +23,6 @@
 #include "TextEditorDemo.hpp"
 
 #include <BlackBox/GUI/ControlPanel.hpp>
-
-#include <cctype>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <vector>
 
 int render_camera = 0;
 

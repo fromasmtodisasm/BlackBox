@@ -1,11 +1,7 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 #include "ConsoleBatchFile.h"
-#include <BlackBox/System/ConsoleRegistration.h>
-#include <BlackBox/System/ISystem.hpp>
 #include "BlackBox/System/Console.hpp"
-//#include <CryString/CryPath.h>
-#include <stdio.h>
 #include "BlackBox/System/System.hpp"
 #include "BlackBox/System/File/CryFile.h"
 #include "SystemCFG.hpp"

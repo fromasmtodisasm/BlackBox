@@ -1,7 +1,3 @@
-#include <Game.hpp>
-
-#include <BlackBox/Scene/IScene.hpp>
-
 bool CGame::IsDevModeEnable()
 {
 #if 0

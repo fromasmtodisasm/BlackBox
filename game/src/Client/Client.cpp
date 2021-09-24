@@ -1,8 +1,6 @@
 #include <algorithm>
 #include <Client/Client.hpp>
 
-#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-
 #define YAW		(0)  
 #define PITCH	(1)    
 #define ROLL	(0)   

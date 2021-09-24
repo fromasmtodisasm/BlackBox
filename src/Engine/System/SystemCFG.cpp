@@ -1,28 +1,24 @@
 #include "pch.hpp"
 #include <BlackBox/System/System.hpp>
-#include <BlackBox/System/ILog.hpp>
 #include "SystemCFG.hpp"
 
-#include <string>
-#include <fstream>
-#include <streambuf>
 
-string Trim(string& str)
-{
-	int begin = 0;
-	int end = 0;
-	for (int i = 0; i < str.size() && isspace(str[i]); i++)
-	{
-		begin++;
-	}
-	for (int i = str.size() - 1; i >= 0 && isspace(str[i]); i--)
-	{
-		end++;
-	}
-	str.resize(str.size() - end);
-	str.erase(0, begin);
-	return str;
-}
+//string Trim(string& str)
+//{
+//	int begin = 0;
+//	int end = 0;
+//	for (int i = 0; i < str.size() && isspace(str[i]); i++)
+//	{
+//		begin++;
+//	}
+//	for (int i = str.size() - 1; i >= 0 && isspace(str[i]); i--)
+//	{
+//		end++;
+//	}
+//	str.resize(str.size() - end);
+//	str.erase(0, begin);
+//	return str;
+//}
 
 CSystemConfiguration::CSystemConfiguration(const string& strSysConfigFilePath, CSystem* pSystem, ILoadConfigurationEntrySink* pSink)
 	: 

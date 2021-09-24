@@ -1,6 +1,5 @@
 #include <Server/XServerSlot.hpp>
 #include <Server/XServer.hpp>
-#include <Game.hpp>
 //#include <Server/XSystemServer.hpp>
 
 #if 0

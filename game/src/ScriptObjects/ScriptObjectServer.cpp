@@ -14,8 +14,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <IXSystem.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
