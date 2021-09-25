@@ -44,6 +44,10 @@ typedef float vec4_t[4];
 typedef unsigned char byte;
 typedef float vec2_t[2];
 
+using ColorB = glm::u8vec3;
+using ColorF = glm::f32vec4;
+
+
 enum class RenderBackend
 {
 	GL,

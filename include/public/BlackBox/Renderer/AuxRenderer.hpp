@@ -44,6 +44,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2) override;
 	void DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, float thickness = 1.0f) override;
 	void DrawLines(const Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
+	void PushImage(const SRender2DImageDescription& image) override;
 	void Flush() override;
 
   private:
@@ -59,6 +60,8 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	CVertexBuffer* m_HardwareVB = nullptr;
 	_smart_ptr<IShader> m_BoundingBoxShader;
 	_smart_ptr<IShader> m_AuxGeomShader;
+
+	std::vector<SRender2DImageDescription> m_Images;
 
 	//SAABBBufferPtr  m_aabbBufferPtr;
 

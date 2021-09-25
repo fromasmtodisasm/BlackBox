@@ -22,6 +22,7 @@ struct IEntitySystem;
 struct IGame;
 struct IShaderManager;
 struct IRenderer;
+struct IRenderAuxGeom;
 struct I3DEngine;
 struct ICmdLine;
 struct IConsole;
@@ -281,20 +282,21 @@ struct SSystemInitParams
 
 struct SSystemGlobalEnvironment
 {
-	INetwork* pNetwork				 = nullptr;
-	I3DEngine* p3DEngine			 = nullptr;
-	IScriptSystem* pScriptSystem	 = nullptr;
-	IInput* pInput					 = nullptr;
-	ICryPak* pCryPak				 = nullptr;
-	ITimer* pTimer					 = nullptr;
-	IConsole* pConsole				 = nullptr;
-	ISystem* pSystem				 = nullptr;
-	ILog* pLog						 = nullptr;
-	IRenderer* pRenderer			 = nullptr;
-	IHardwareMouse* pHardwareMouse	 = nullptr;
-	IPlatform* pPlatform			 = nullptr;
-	IThreadManager* pThreadManager	 = nullptr;
-	IProjectManager* pProjectManager = nullptr;
+	INetwork*		 pNetwork		  = nullptr;
+	I3DEngine*		 p3DEngine		  = nullptr;
+	IScriptSystem*	 pScriptSystem	  = nullptr;
+	IInput*			 pInput			  = nullptr;
+	ICryPak*		 pCryPak		  = nullptr;
+	ITimer*			 pTimer			  = nullptr;
+	IConsole*		 pConsole		  = nullptr;
+	ISystem*		 pSystem		  = nullptr;
+	ILog*			 pLog			  = nullptr;
+	IRenderer*		 pRenderer		  = nullptr;
+	IRenderAuxGeom*	 pAuxGeomRenderer = nullptr;
+	IHardwareMouse*	 pHardwareMouse	  = nullptr;
+	IPlatform*		 pPlatform		  = nullptr;
+	IThreadManager*	 pThreadManager	  = nullptr;
+	IProjectManager* pProjectManager  = nullptr;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{

@@ -2,8 +2,11 @@
 #include "Renderer.h"
 #include <fstream>
 #include <BlackBox/Core/Utils.hpp>
+#include <filesystem>
 
 #include <d3dcompiler.h>
+
+namespace fs = std::filesystem;
 
 CShader::~CShader()
 {
@@ -125,7 +128,7 @@ const char* GetGLSLANGTargetName(IShader::Type target)
 void SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type)
 {
 	string stage(GetGLSLANGTargetName(type));
-	std::ofstream output_file(string("bin/shadercache/shader_") + stage +  ".hlsl");
+	std::ofstream output_file(string("bin/shadercache/shader_") + stage + ".hlsl");
 	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
 	std::copy(code.begin(), code.end(), output_iterator);
 	output_file.close();

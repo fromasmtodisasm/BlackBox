@@ -16,8 +16,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-using ColorB = glm::u8vec3;
-
 bool FreeTypeFont::first_init = true;
 ID3D10SamplerState* FreeTypeFont::m_Sampler;
 ID3D10InputLayout* FreeTypeFont::m_pFontLayout;

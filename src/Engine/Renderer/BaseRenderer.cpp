@@ -11,6 +11,8 @@
 #include <SDL2/SDL.h>
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
+
+#include <filesystem>
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
@@ -233,6 +235,11 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	perViewBuffer = PerViewBuffer::Create(2);
 	screenBuffer  = ScreenBuffer::Create(11);
 #endif
+	auto path = string("bin/shadercache");
+	if (!std::filesystem::exists(path))
+	{
+		std::filesystem::create_directories(path);
+	}
 
 	return result;
 }

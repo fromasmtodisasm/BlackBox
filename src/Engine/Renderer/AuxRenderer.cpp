@@ -572,6 +572,13 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 	pVertices = &auxVertexBuffer[oldVBSize];
 }
 
+void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image) 
+{
+
+}
+
+
+
 void CRenderAuxGeom::Flush()
 {
 	//RSS(gEnv->pRenderer, CULL_FACE, false);
@@ -579,6 +586,27 @@ void CRenderAuxGeom::Flush()
 	DrawLines();
 	{
 		//RSS(gEnv->pRenderer, DEPTH_TEST, true);
+	}
+
+	for (auto img : m_Images)
+	{
+		img.angle;
+		D3D10_TEXTURE2D_DESC desc;
+		desc.Width;
+		desc.Height;
+		desc.MipLevels;
+		desc.ArraySize;
+		desc.Format;
+		desc.SampleDesc;
+		desc.Usage;
+		desc.BindFlags;
+		desc.CPUAccessFlags;
+		desc.MiscFlags;
+
+		//D3D10_SUBRESOURCE_DATA sd;
+		//sd.
+
+		//GetDevice()->CreateTexture2D(&desc, )
 	}
 	//first_draw = true;
 }
