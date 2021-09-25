@@ -1,7 +1,9 @@
 #include <ScriptObjects/ScriptObjectStream.hpp>
+#include <BlackBox/System/IConsole.hpp>
 
 #if !defined(LINUX)
-#	include <dbghelp.h>
+//#	include <Windows.h>
+//#	include <dbghelp.h>
 //#	pragma comment(lib, "dbghelp.lib")
 #else
 #	include <stdio.h>

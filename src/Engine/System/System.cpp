@@ -925,17 +925,24 @@ IProjectManager* CSystem::GetIProjectManager()
 
 LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 {
+	static char msg[1024];
+
+	sprintf(msg, 
+		"Code: %x\nAddress: 0x%p",
+		pExceptionPtrs->ExceptionRecord->ExceptionCode,
+		pExceptionPtrs->ExceptionRecord->ExceptionAddress
+	);
 	// Do something, for example generate error report
+	MessageBox(NULL, msg, "Exception", 0);
 
 	//..
 
 	// Execute default exception handler next
-	MessageBox(NULL, "Exception", "Exception", 0);
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
 
-ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
+ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
 	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
 	initParams.pSystem				 = pSystem.get();

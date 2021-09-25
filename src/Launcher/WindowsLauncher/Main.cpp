@@ -42,10 +42,6 @@ static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return false;
 }
 
-int test(int div) {
-	return 5 / div;
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, [[maybe_unused]] int nShowCmd)
 {
 	//DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), 0, SelectDeviceProc, 0);
@@ -65,7 +61,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		if (InitializeEngine(startupParams))
 		{
-			test(NULL);
 			startupParams.pSystem->Start();
 			startupParams.pSystem->Release();
 			result = EXIT_SUCCESS;

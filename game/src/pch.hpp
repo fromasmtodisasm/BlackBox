@@ -12,7 +12,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <filesystem>
 
+namespace fs = std::filesystem;
 #if defined(LINUX)
 #	include <stdarg.h>
 //#	include "platform.h"
@@ -40,7 +42,14 @@ inline void GetLocalTime(LPSYSTEMTIME lpSystemTime)
 {
     ZeroStruct(lpSystemTime);
 }
-
+#else
+inline bool MakeSureDirectoryPathExists(string path)
+{
+	if (!fs::exists(path)) {
+		fs::create_directories(path);
+	}
+	return fs::exists(path);
+}
 #endif
 
 #if defined(_AMD64_) && !defined(LINUX)
