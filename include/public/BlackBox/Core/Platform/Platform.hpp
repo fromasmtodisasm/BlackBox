@@ -2,6 +2,7 @@
 
 //#include <BlackBox/Core/Platform/PlatformDefines.hpp>
 #include "PlatformDefines.hpp"
+#include "StlConfig.h"
 
 #ifdef _WINDOWS_
 #error windows.h should not be included prior to platform.h

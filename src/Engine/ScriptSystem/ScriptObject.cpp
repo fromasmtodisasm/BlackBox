@@ -20,7 +20,8 @@ namespace
 			pSO->PushRef();
 		lua_pushstring(L, sKey);
 		lua_gettable(L, -2);
-		bool res = CScriptObject::m_pSS->PopAny(Val);
+		// #unreferenced
+		// bool res = CScriptObject::m_pSS->PopAny(Val);
 		lua_settop(L, top);
 		return true;
 	}

@@ -6,10 +6,6 @@
 	extern CInputCVars* g_pInputCVars;
 #endif
 
-#include <BlackBox/System/ISystem.hpp>
-
-#include <string>
-
 using ColorF = Vec4;
 
 CInputDevice::CInputDevice(IInput& input, const char* deviceName)

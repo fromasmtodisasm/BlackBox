@@ -49,7 +49,8 @@ extern "C"
 			const char* slevel = "";
 			if (level == 1)
 				slevel = "  ";
-			int nRes = lua_getinfo(L, "lnS", &ar);
+			// #unreferenced
+			//int nRes = lua_getinfo(L, "lnS", &ar);
 			if (ar.name)
 				CryLog("$6%s    > %s, (%s: %d)", slevel, ar.name, ar.short_src, ar.currentline);
 			else

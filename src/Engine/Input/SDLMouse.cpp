@@ -1,9 +1,5 @@
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/Input/Events.h>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/InputCVars.hpp>
 
 #include <SDL2/SDL.h>

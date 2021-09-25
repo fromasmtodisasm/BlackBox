@@ -1,11 +1,6 @@
 #include <BlackBox/Input/BaseInput.hpp>
-
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Utils.hpp>
-#include <BlackBox/Input/BaseInput.hpp>
 #include <BlackBox/Input/InputCVars.hpp>
 #include <BlackBox/Input/InputDevice.hpp>
-#include <BlackBox/System/ILog.hpp>
 
 bool compareInputListener(const IInputEventListener* pListenerA, const IInputEventListener* pListenerB)
 {

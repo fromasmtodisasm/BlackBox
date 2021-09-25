@@ -1,14 +1,4 @@
 #include <BlackBox/Input/SDLInput.hpp>
-
-#include <math.h>
-
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ILog.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-
-#include <SDL2/SDL.h>
-
 #include <BlackBox/Input/SDLKeyboard.hpp>
 #include <BlackBox/Input/SDLMouse.hpp>
 #include <BlackBox/Input/SDLPad.hpp>

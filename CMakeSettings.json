@@ -11,12 +11,17 @@
       "variables": [
         {
           "name": "OPTION_REMOTE_CONSOLE",
-          "value": "False",
+          "value": "True",
           "type": "BOOL"
         },
         {
           "name": "OPTION_DX_RENDERER",
-          "value": "False",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "DX_RENDERER",
+          "value": "OFF",
           "type": "BOOL"
         },
         {
@@ -25,9 +30,9 @@
           "type": "BOOL"
         },
         {
-          "name": "DX_RENDERER",
-          "value": "OFF",
-          "type": "UNINITIALIZED"
+          "name": "USE_STEAM",
+          "value": "ON",
+          "type": "BOOL"
         }
       ]
     },
@@ -57,7 +62,7 @@
         {
           "name": "DX_RENDERER",
           "value": "OFF",
-          "type": "UNINITIALIZED"
+          "type": "BOOL"
         }
       ]
     },
@@ -83,7 +88,7 @@
         {
           "name": "DX_RENDERER",
           "value": "OFF",
-          "type": "UNINITIALIZED"
+          "type": "BOOL"
         },
         {
           "name": "OPTION_VK_RENDERER",
@@ -128,7 +133,7 @@
         {
           "name": "DX_RENDERER",
           "value": "ON",
-          "type": "UNINITIALIZED"
+          "type": "BOOL"
         },
         {
           "name": "OPTION_VK_RENDERER",

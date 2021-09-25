@@ -923,12 +923,27 @@ IProjectManager* CSystem::GetIProjectManager()
 	return m_env.pProjectManager;
 }
 
+LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
+{
+	// Do something, for example generate error report
+
+	//..
+
+	// Execute default exception handler next
+	MessageBox(NULL, "Exception", "Exception", 0);
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
 
 ISYSTEM_API ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
 	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
 	initParams.pSystem				 = pSystem.get();
 	ModuleInitISystem(pSystem.get(), "System");
+#if BB_PLATFORM_WINDOWS
+	SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
+#endif
+
 #if CRY_PLATFORM_DURANGO
 #	if !defined(_LIB)
 	m_env = pSystem->GetGlobalEnvironment();

@@ -1,4 +1,3 @@
-#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Input/ActionMap.hpp>
 #include <BlackBox/Input/ActionMapManager.hpp>
 

@@ -62,7 +62,6 @@ void CSDLWindow::update()
 	SDL_Event eventList[WINDOW_MAX_PEEP];
 
 	int nEvents;
-	unsigned type = 0;
 	//EInputState newState;
 
 	// Assuming that SDL_PumpEvents is called from CLinuxInput
@@ -402,7 +401,6 @@ void CSDLWindow::SetIcon(char* path)
 int CSDLWindow::EventWatcher(void* self, SDL_Event* event)
 {
 	using namespace std;
-	CSDLWindow*& w = reinterpret_cast<CSDLWindow*&>(self);
 	cout << "Event: " << event->type << endl;
 	return 1;
 }
