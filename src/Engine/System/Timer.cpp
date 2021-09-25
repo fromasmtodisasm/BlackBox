@@ -1,10 +1,7 @@
-#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/Timer.hpp>
-#include <time.h>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ILog.hpp>
-/////////////////////////////////////////////////////
 #include <BlackBox/Core/Platform/Windows.hpp>
+
+#include <time.h>
 
 #if BB_PLATFORM_WINDOWS
 //#include <Mmsystem.h> // needs <windows.h>

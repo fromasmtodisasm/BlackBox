@@ -92,14 +92,14 @@ class CCamera
 		}
 	}
 
-	Vec3 GetPos()
-	{
-		return transform.position;
-	}
-	Vec3 GetAngles()
-	{
-		return transform.rotation;
-	}
+  Vec3 GetPos() const
+  {
+    return transform.position;
+  }
+  Vec3 GetAngles() const
+  {
+    return transform.rotation;
+  }
 
 	void SetPos(glm::vec3 pos)
 	{

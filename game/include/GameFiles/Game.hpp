@@ -604,6 +604,9 @@ public:
 
 	ICVar* g_NonSteam{};
 
+	int g_DrawUI{};
+	int g_Render{};
+
 	int st_achivements_numHits = 0;
 
 	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers

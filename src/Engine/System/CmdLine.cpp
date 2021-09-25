@@ -1,5 +1,3 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/System/CmdLine.hpp>
 #include <cstring>
 

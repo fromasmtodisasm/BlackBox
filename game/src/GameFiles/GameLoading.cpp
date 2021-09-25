@@ -1,6 +1,3 @@
-#include "Game.hpp"
-
-#include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
 
 #if !defined(LINUX)

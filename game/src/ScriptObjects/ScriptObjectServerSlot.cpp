@@ -16,7 +16,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #if 0
-#include "Game.hpp"
 #include <ScriptObjects/ScriptObjectServerSlot.hpp>
 //#include <XSystemBase.hpp>
 #include <Server/XServerSlot.hpp>

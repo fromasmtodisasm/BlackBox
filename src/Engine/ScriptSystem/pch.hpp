@@ -15,9 +15,6 @@
 #define CRYSCRIPTSYSTEM_EXPORTS
 #include <BlackBox/Core/Platform/Platform.hpp>
 
-#include <functional>
-
-
 #define MY_STRING
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
@@ -77,14 +74,23 @@ class MyString : public std::string
 	}
 };
 
-#include <vector>
+#include <cassert>
+#include <cstdarg>
+#include <fstream>
+#include <functional>
+#include <iostream>
 #include <map>
+#include <string>
+#include <vector>
 
 //#define DEBUG_LUA_STATE
 
-#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/StlUtils.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ILog.hpp>
+#include <BlackBox/System/ISystem.hpp>
 //#include <CryCore/StlUtils.h>
 //#include <CryMemory/CrySizer.h>
 //#include <CryMemory/PoolAllocator.h>

@@ -1,8 +1,5 @@
 #include <BlackBox/3DEngine/3DEngine.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Renderer/IShader.hpp>
-#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/System.hpp>
 
 void CSystem::Render()

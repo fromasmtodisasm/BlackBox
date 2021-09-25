@@ -17,14 +17,7 @@
 
 *************************************************************************/
 
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/HardwareMouse.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/ITimer.hpp>
-#include <BlackBox/System/ConsoleRegistration.h>
 //#include <BlackBox/Core/Platform/WindowsUtils.hpp>
 
 //#include <BlackBox/Core/Platform/CryLibrary.hpp>

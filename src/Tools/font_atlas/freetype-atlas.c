@@ -4,7 +4,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#define NUM_GLYPHS 128
+#define NUM_GLYPHS 0x4ff - 0x400
+#define BEGIN_GLYPH 0x400
 
 struct glyph_info {
 	int x0, y0, x1, y1;	// coords of glyph in the texture atlas
@@ -13,6 +14,7 @@ struct glyph_info {
 } info[NUM_GLYPHS];
 
 int main(int argc, char** argv){
+	argc = 3;
 	if(argc < 3){
 		printf("usage: %s <font> <size>\n", argv[0]);
 		return 1;
@@ -37,7 +39,7 @@ int main(int argc, char** argv){
 	char* pixels = (char*)calloc(tex_width * tex_height, 1);
 	int pen_x = 0, pen_y = 0;
 
-	for(int i = 0; i < NUM_GLYPHS; ++i){
+	for(int i = BEGIN_GLYPH; i < (BEGIN_GLYPH + NUM_GLYPHS); ++i){
 		FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
 		FT_Bitmap* bmp = &face->glyph->bitmap;
 

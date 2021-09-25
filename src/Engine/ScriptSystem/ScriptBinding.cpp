@@ -1,4 +1,3 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
 

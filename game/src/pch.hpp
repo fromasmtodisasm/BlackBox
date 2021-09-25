@@ -91,14 +91,22 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 // STL //////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 #pragma warning (disable : 4786)
-#include <vector>
+#include <algorithm>
+#include <cctype>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
 #include <list>
 #include <map>	
-#include <set>
-#include <string>
-#include <algorithm>
 #include <memory>
 #include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <vector>
 
 #if 0
 #if defined USE_DEBUG_NEW
@@ -113,15 +121,27 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 /////////////////////////////////////////////////////////////////////////////
 // Interfaces ///////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Renderer/IRender.hpp>
+
+#include <BlackBox/3DEngine/I3DEngine.hpp>
+#include <BlackBox/Core/IMarkers.hpp>
+#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/EntitySystem/EntityDesc.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/Input/IHardwareMouse.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Network/INetwork.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/EntitySystem/EntityDesc.hpp>
+#include <BlackBox/World/IWorld.hpp>
+
 
 /////////////////////////////////////////////////////////////////////////////
 #include "Game.hpp"

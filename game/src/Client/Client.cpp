@@ -1,8 +1,6 @@
 #include <algorithm>
 #include <Client/Client.hpp>
 
-#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-
 #define YAW		(0)  
 #define PITCH	(1)    
 #define ROLL	(0)   
@@ -99,7 +97,7 @@ bool CClient::Init()
 
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 
-	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 10, 10)));
+	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 0, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
 	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
 	//m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));

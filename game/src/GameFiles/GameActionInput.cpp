@@ -1,6 +1,3 @@
-#include <Game.hpp>
-#include <GameShared.hpp>
-
 #include <BlackBox/System/ConsoleRegistration.h>
 
 //////////////////////////////////////////
@@ -108,6 +105,9 @@ void CGame::InitConsoleVars()
   m_pCVarCheatMode = REGISTER_STRING("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 
   g_NonSteam = REGISTER_INT("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
+
+  REGISTER_CVAR(g_DrawUI, 0, VF_DUMPTODISK, "[enable/disable] UI");
+  REGISTER_CVAR(g_Render, 0, VF_DUMPTODISK, "[enable/disable] Rendering");
 
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 

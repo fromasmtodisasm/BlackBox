@@ -18,11 +18,8 @@
 #else
 #	include <io.h>
 #endif
-#include <stdlib.h>
-
 #include "GameMods.hpp"
 #include <BlackBox/System/File/ICryPak.hpp>
-#include "Game.hpp"
 
 // TODO: Rewrite it
 #define RemoveCRLF(...)

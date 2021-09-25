@@ -6,6 +6,7 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
 #ifdef DX_RENDERER

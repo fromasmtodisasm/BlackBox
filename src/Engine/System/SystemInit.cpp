@@ -1,17 +1,11 @@
 #include <BlackBox/System/System.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
-#include <BlackBox/Core/Utils.hpp>
-#include <BlackBox/System/Console.hpp>
-#include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
 #include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
 #include <BlackBox/Core/Path.hpp>
-#ifndef LINUX
-#	include <BlackBox/System/File/CryPak.hpp>
-#endif
 
 //#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////

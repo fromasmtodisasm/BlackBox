@@ -1,8 +1,4 @@
-#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
-#include <BlackBox/System/IConsole.hpp>
-
-#include <iostream>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

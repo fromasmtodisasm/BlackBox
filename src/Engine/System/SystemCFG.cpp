@@ -1,27 +1,26 @@
 #include "pch.hpp"
 #include <BlackBox/System/System.hpp>
-#include <BlackBox/System/ILog.hpp>
 #include "SystemCFG.hpp"
 
-#include <string>
-#include <fstream>
-#include <streambuf>
 
-string Trim(string& str)
+namespace detail
 {
-	int begin = 0;
-	int end = 0;
-	for (int i = 0; i < str.size() && isspace(str[i]); i++)
+	string Trim(string& str)
 	{
-		begin++;
+		int begin = 0;
+		int end	  = 0;
+		for (int i = 0; i < str.size() && isspace(str[i]); i++)
+		{
+			begin++;
+		}
+		for (int i = str.size() - 1; i >= 0 && isspace(str[i]); i--)
+		{
+			end++;
+		}
+		str.resize(str.size() - end);
+		str.erase(0, begin);
+		return str;
 	}
-	for (int i = str.size() - 1; i >= 0 && isspace(str[i]); i--)
-	{
-		end++;
-	}
-	str.resize(str.size() - end);
-	str.erase(0, begin);
-	return str;
 }
 
 CSystemConfiguration::CSystemConfiguration(const string& strSysConfigFilePath, CSystem* pSystem, ILoadConfigurationEntrySink* pSink)
@@ -58,7 +57,7 @@ bool CSystemConfiguration::ParseSystemConfig()
 
 		//trim all whitespace characters at the beginning and the end of the current line
 		string strLine = szLineStart;
-		strLine = Trim(strLine);
+		strLine = detail::Trim(strLine);
 
 		//skip empty lines
 		if (strLine.empty())
@@ -87,11 +86,11 @@ bool CSystemConfiguration::ParseSystemConfig()
 		if (string::npos != posEq)
 		{
 			string strKey(strLine, 0, posEq);
-			strKey = Trim(strKey);
+			strKey = detail::Trim(strKey);
 
 			// extract value and remove surrounding quotes, if present
 			string strValue(strLine, posEq + 1, strLine.size() - (posEq + 1));
-			strValue = Trim(strValue);
+			strValue = detail::Trim(strValue);
 			if (strValue.front() == '"' && strValue.back() == '"')
 			{
 				strValue.pop_back();
