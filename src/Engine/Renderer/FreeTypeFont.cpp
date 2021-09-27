@@ -100,7 +100,7 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
-	return;
+	//return;
 	auto render = GetISystem()->GetIRenderer();
 	Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -227,7 +227,6 @@ bool operator<(const STestSize& a, const STestSize& b)
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-	return true;
 	m_Height = static_cast<float>(h);
 	std::set<STestSize> test;
 #if 1
@@ -423,7 +422,6 @@ void RegisterColorTable()
 
 void FreeTypeFont::Submit()
 {
-	return;
 	if (!shader)
 	{
 		m_CharBuffer.clear();
@@ -455,8 +453,10 @@ void FreeTypeFont::Submit()
 
 FreeTypeFont::~FreeTypeFont()
 {
+	#if 0
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
+	#endif
 	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
 }
@@ -503,9 +503,9 @@ void FreeTypeFont::CreateBlendState()
 	BlendState.SrcBlend					= D3D10_BLEND_SRC_ALPHA;
 	BlendState.DestBlend				= D3D10_BLEND_INV_SRC_ALPHA;
 	BlendState.BlendOp					= D3D10_BLEND_OP_ADD;
-	BlendState.SrcBlendAlpha			= D3D10_BLEND_SRC_ALPHA;
-	BlendState.DestBlendAlpha			= D3D10_BLEND_ZERO;
-	BlendState.BlendOpAlpha				= D3D10_BLEND_OP_ADD;
+	//BlendState.SrcBlendAlpha			= D3D10_BLEND_SRC_ALPHA;
+	//BlendState.DestBlendAlpha			= D3D10_BLEND_ZERO;
+	//BlendState.BlendOpAlpha				= D3D10_BLEND_OP_ADD;
 	BlendState.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
 
 	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);

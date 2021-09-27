@@ -31,12 +31,12 @@
         },
         {
           "name": "USE_STEAM",
-          "value": "ON",
+          "value": "OFF",
           "type": "BOOL"
         },
         {
           "name": "OPTION_DEDICATED_SERVER",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
         }
       ]
@@ -92,7 +92,7 @@
         },
         {
           "name": "DX_RENDERER",
-          "value": "OFF",
+          "value": "True",
           "type": "BOOL"
         },
         {

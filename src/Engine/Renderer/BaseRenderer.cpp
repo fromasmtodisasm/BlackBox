@@ -4,6 +4,7 @@
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IProjectManager.hpp>
 #include <BlackBox/System/IWindow.hpp>
+#include <BlackBox/Renderer/FreeTypeFont.hpp>
 
 #include "AuxRendererNull.hpp"
 
@@ -526,7 +527,7 @@ void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 
 IFont* CreateIFont()
 {
-	return new CNullFont;
+	return new FreeTypeFont();
 }
 
 IFont* CRenderer::GetIFont()

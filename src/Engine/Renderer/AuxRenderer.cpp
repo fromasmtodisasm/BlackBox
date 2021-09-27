@@ -261,6 +261,7 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
 	::GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 	::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	::GetDevice()->IASetInputLayout(g_pVertexLayout);
 
 	//
 	// Renders a triangle
