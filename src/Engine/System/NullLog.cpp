@@ -52,7 +52,7 @@ CLog::CLog(ISystem* pSystem)
 	#define DEFAULT_VERBOSITY 3
 #endif
 
-#if defined(DEDICATED_SERVER) && defined(CRY_PLATFORM_LINUX)
+#if defined(DEDICATED_SERVER) && defined(BB_PLATFORM_LINUX)
 	#define DEFAULT_LOG_INCLUDE_TIME (0)
 #else
 	#define DEFAULT_LOG_INCLUDE_TIME (1)
@@ -868,3 +868,10 @@ const char* CLog::CheckAgainstVerbosity(const char* pText, bool& logtofile, bool
 void CLog::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
 }
+
+#if KEEP_LOG_FILE_OPEN
+void CLog::LogFlushFile(IConsoleCmdArgs* pArgs)
+{
+	//gEnv->pLog->Flush();
+}
+#endif

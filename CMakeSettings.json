@@ -33,6 +33,11 @@
           "name": "USE_STEAM",
           "value": "ON",
           "type": "BOOL"
+        },
+        {
+          "name": "OPTION_DEDICATED_SERVER",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },
@@ -99,6 +104,11 @@
           "name": "USE_STEAM",
           "value": "ON",
           "type": "BOOL"
+        },
+        {
+          "name": "OPTION_DEDICATED_SERVER",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },
@@ -146,7 +156,6 @@
           "type": "BOOL"
         }
       ]
-
     }
   ]
 }

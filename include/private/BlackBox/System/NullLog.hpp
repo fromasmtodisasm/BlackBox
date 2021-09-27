@@ -20,7 +20,7 @@ using StackStringT = std::string;
 
 #define MAX_FILENAME_SIZE 256
 
-#if defined(DEDICATED_SERVER)
+#if defined(DEDICATED_SERVER) && 0
 	#define KEEP_LOG_FILE_OPEN 1
 #else
 	#define KEEP_LOG_FILE_OPEN 0
@@ -223,4 +223,10 @@ class CLog :
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 	// Module filter for log
+#if KEEP_LOG_FILE_OPEN
+	static void LogFlushFile(IConsoleCmdArgs* pArgs);
+
+	bool m_bFirstLine = true;
+	char m_logBuffer[256 * 1024];
+#endif
 };

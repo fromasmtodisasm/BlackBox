@@ -778,6 +778,36 @@ function(Launcher target)
 	endif()
 endfunction()
 
+function(DedicatedServer target)
+	prepare_project(${ARGN})
+	if(WINDOWS)
+		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES})
+		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:WINDOWS")
+	else()
+		add_executable(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
+	endif()
+	set_property(TARGET ${THIS_PROJECT} PROPERTY OUTPUT_NAME "Game_Server")
+	add_metadata(WindowsServerIcon.ico)
+
+	if(OPTION_STATIC_LINKING)
+		use_scaleform()
+		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+		if (WINDOWS)
+			set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS_PROFILE " /NODEFAULTLIB:libcpmt.lib")
+			set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /NODEFAULTLIB:libcpmt.lib")
+		endif()
+		set(MODULES_LIST ${GAME_MODULES} ${MODULES})
+		wrap_whole_archive(${target} WRAPPED_MODULES MODULES_LIST)
+		target_link_libraries(${THIS_PROJECT} PRIVATE ${WRAPPED_MODULES})
+	endif()
+
+	if(OPTION_DEDICATED_SERVER) 
+		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER") 
+	endif() 
+	
+	apply_compile_settings()	
+endfunction()
+
 function(CryFileContainer target)
 	set(THIS_PROJECT
 			${target}

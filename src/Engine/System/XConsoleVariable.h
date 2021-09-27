@@ -94,7 +94,7 @@ public:
 
 	//virtual int  GetRealIVal() const override { return GetIVal(); }
 	virtual bool IsConstCVar() const override { return (m_flags & VF_CONST_CVAR) != 0; }
-#if defined(DEDICATED_SERVER)
+#if defined(DEDICATED_SERVER) && 0
 	virtual void SetDataProbeString(const char* pDataProbeString) override
 	{
 		CRY_ASSERT(m_dataProbeString.IsEmpty());

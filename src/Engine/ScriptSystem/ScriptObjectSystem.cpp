@@ -45,8 +45,11 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
   m_pSystem = pSystem;
   InitGlobal(pScriptSystem, "System", this);
-  m_pFont = gEnv->pRenderer->GetIFont();
-  m_pFont->Init("arial.ttf", 14,14);
+  if (gEnv->pRenderer)
+  {
+	  m_pFont = gEnv->pRenderer->GetIFont();
+	  m_pFont->Init("arial.ttf", 14,14);
+  }
 
 }
 

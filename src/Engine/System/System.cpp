@@ -684,7 +684,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		m_env.p3DEngine->Update();
 	}
 
-	if (m_env.pInput->GetModifiers() & eMM_Ctrl)
+	if (m_env.pInput && m_env.pInput->GetModifiers() & eMM_Ctrl)
 	{
 		return false;
 	}

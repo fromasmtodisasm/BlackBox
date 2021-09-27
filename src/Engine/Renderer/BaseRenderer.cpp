@@ -531,7 +531,11 @@ IFont* CreateIFont()
 
 IFont* CRenderer::GetIFont()
 {
+#ifdef DEDICATED_SERVER
+	m_Fonts.push_back(new CNullFont());
+#else
 	m_Fonts.push_back(CreateIFont());
+#endif // DEDICATED_SERVER
 	return m_Fonts.back();
 }
 
