@@ -45,8 +45,6 @@ void CSystem::RenderEnd()
 	}
 	if (m_env.pRenderer)
 	{
-		if (IConsole* pConsole = GetIConsole())
-			pConsole->Draw();
 		m_env.pRenderer->Update();
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)

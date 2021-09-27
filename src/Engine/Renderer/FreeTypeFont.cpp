@@ -143,6 +143,7 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 			continue;
 		glm::mat4 model(1.0);
 		Character ch = Characters[*c < 32 ? 0 : *c];
+		//Character ch = Characters['%'];
 
 		float xpos = x + ch.Bearing.x * scale;
 		float ypos = y + (ch.Size.y - ch.Bearing.y) * scale;
@@ -446,7 +447,14 @@ void FreeTypeFont::Submit()
 	GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	//GetDevice()->OMSetDepthStencilState(m_pDSState, 0);
 
+	#if 1
 	gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+	#else
+	for (int i = 0; i < vertex_cnt; i++)
+	{
+		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), i, i+1);
+	}
+	#endif
 
 	m_CharBuffer.resize(0);
 }
@@ -470,7 +478,7 @@ void FreeTypeFont::CreateRasterState()
     // Set up rasterizer
 	D3D10_RASTERIZER_DESC rasterizerDesc;
 	rasterizerDesc.CullMode				 = D3D10_CULL_NONE;
-	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
+	rasterizerDesc.FillMode				 = D3D10_FILL_WIREFRAME;
 	rasterizerDesc.FrontCounterClockwise = true;
 	rasterizerDesc.DepthBias			 = false;
 	rasterizerDesc.DepthBiasClamp		 = 0;
@@ -503,9 +511,9 @@ void FreeTypeFont::CreateBlendState()
 	BlendState.SrcBlend					= D3D10_BLEND_SRC_ALPHA;
 	BlendState.DestBlend				= D3D10_BLEND_INV_SRC_ALPHA;
 	BlendState.BlendOp					= D3D10_BLEND_OP_ADD;
-	//BlendState.SrcBlendAlpha			= D3D10_BLEND_SRC_ALPHA;
-	//BlendState.DestBlendAlpha			= D3D10_BLEND_ZERO;
-	//BlendState.BlendOpAlpha				= D3D10_BLEND_OP_ADD;
+	BlendState.SrcBlendAlpha			= D3D10_BLEND_ONE;
+	BlendState.DestBlendAlpha			= D3D10_BLEND_ZERO;
+	BlendState.BlendOpAlpha				= D3D10_BLEND_OP_ADD;
 	BlendState.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
 
 	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);

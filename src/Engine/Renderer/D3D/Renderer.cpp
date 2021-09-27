@@ -93,6 +93,8 @@ void CD3DRenderer::Update(void)
     //
     // Present our back buffer to our front buffer
     //
+	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+		pConsole->Draw();
     m_pSwapChain->Present( 0, 0 );
 }
 
