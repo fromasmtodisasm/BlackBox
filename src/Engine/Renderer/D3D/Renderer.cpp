@@ -1,5 +1,8 @@
 ﻿#include "Renderer.h"
 
+// Globals
+ID3D10ShaderResourceView* g_FontAtlasRV;
+ID3D10SamplerState*		 g_LinearSampler;
 
 struct ITechniqueManager;
 ID3D10Device* GetDevice()
@@ -73,7 +76,8 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 void CD3DRenderer::BeginFrame(void)
 {
 	// Очистка рендер-таргета
-	float ClearColor[4] = {0.3f, 0.3f, 0.5f, 1.0f}; //red,green,blue,alpha
+	//float ClearColor[4] = {0.3f, 0.3f, 0.5f, 1.0f}; //red,green,blue,alpha
+	float ClearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f}; //red,green,blue,alpha
 	m_pd3dDevice->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
 	m_pd3dDevice->ClearDepthStencilView(m_pDepthStencilView, D3D10_CLEAR_DEPTH, 1.f, 0);
 }

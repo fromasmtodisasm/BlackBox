@@ -64,3 +64,5 @@ inline D3DXMATRIX* D3DXMatrixTranspose(D3DXMATRIX* pOut, CONST D3DXMATRIX* pM)
 
 #include <array>
 #include <sstream>
+
+#include "RendererCommon.hpp"

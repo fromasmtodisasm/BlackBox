@@ -2,7 +2,11 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 
+#if 0
 using BB_VERTEX	 = SVF_P3F_C4B;
+#else
+using BB_VERTEX	 = SVF_P3F_C4B_T2F;
+#endif
 
 struct SAuxPushBufferEntry
 {

@@ -21,12 +21,20 @@ struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
     float4 Color : COLOR0;
+    float2 TC : TEXCOORD0;
 };
+
+Texture2D g_FontAtlas : register(t0);
+SamplerState g_LinearSampler : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR)
+VS_OUTPUT VS(
+    float4 Pos : POSITION
+    , float4 Color : COLOR
+    , float2 TC: TEXCOORD0 
+)
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
     //output.Pos = mul( Pos, World );
@@ -35,6 +43,8 @@ VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR)
     output.Pos = mul(output.Pos, Projection);
     //output.Pos = mul( Pos, MVP );
     output.Color = Color;
+    output.TC = TC;
+
     return output;
 }
 
@@ -44,7 +54,8 @@ VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR)
 //--------------------------------------------------------------------------------------
 float4 PS(VS_OUTPUT input) : SV_Target
 {
-    return input.Color;
+    //return input.Color;
+    return g_FontAtlas.Sample(g_LinearSampler, input.TC);
 }
 
 

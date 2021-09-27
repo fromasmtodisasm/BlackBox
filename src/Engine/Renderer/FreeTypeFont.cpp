@@ -15,6 +15,7 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+#include <BlackBox\System\ConsoleRegistration.h>
 
 bool FreeTypeFont::first_init = true;
 ID3D10SamplerState* FreeTypeFont::m_Sampler;
@@ -169,17 +170,22 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 		pC								= Vec4(Vec3{xpos + w, ypos, 0}, 1.f);
 		pD								= Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f);
 
-		Vec2 tA, tB, tC, tD;
+		Vec2 tA{0.f / 160, 14.f / 127},
+			tB{0.f / 160, 23.f / 127},
+			tD{6.f / 160, 14.f / 127},
+			tC{6.f / 160, 23.f / 127};
+		#if 1 
 		tA								= {uv_pos.x, uv_pos.y};
 		tB								= {uv_pos.x, uv_pos.y + uv_size.y};
 		tC								= {uv_pos.x + uv_size.x, uv_pos.y + uv_size.y};
 		tD								= {uv_pos.x + uv_size.x, uv_pos.y};
+		#endif
 
 		std::array<P3F_T2F, 6> vertices = {
 			P3F_T2F{Vec3(projection * pA), UCol((cur_c)), tA},
 			P3F_T2F{Vec3(projection * pB), UCol((cur_c)), tB},
 			P3F_T2F{Vec3(projection * pC), UCol((cur_c)), tC},
-
+                                                
 			P3F_T2F{Vec3(projection * pC), UCol((cur_c)), tC},
 			P3F_T2F{Vec3(projection * pD), UCol((cur_c)), tD},
 			P3F_T2F{Vec3(projection * pA), UCol((cur_c)), tA},
@@ -258,10 +264,10 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	{
 		D3D10_SAMPLER_DESC desc;
 		ZeroStruct(desc);
-		desc.AddressU = D3D10_TEXTURE_ADDRESS_CLAMP;
-		desc.AddressV = D3D10_TEXTURE_ADDRESS_CLAMP;
-		desc.AddressW = D3D10_TEXTURE_ADDRESS_CLAMP;
-		desc.Filter	  = D3D10_FILTER_MIN_MAG_MIP_LINEAR;
+		desc.AddressU = D3D10_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D10_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D10_TEXTURE_ADDRESS_WRAP;
+		desc.Filter	  = D3D10_FILTER(D3D10_FILTER_ANISOTROPIC | D3D10_FILTER_MIN_MAG_MIP_LINEAR);
 		auto hr		  = GetDevice()->CreateSamplerState(&desc, &m_Sampler);
 		if (FAILED(hr))
 		{
@@ -272,12 +278,14 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 			//VERTEX_FORMAT_P3F_C4B_T2F
 			D3D10_INPUT_ELEMENT_DESC layout[] = {
 				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-				{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0}
+				{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
+				//{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0}
+				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D10_INPUT_PER_VERTEX_DATA, 0}
 			};
+			UINT numElements = sizeof(layout) / sizeof(layout[0]);
 			auto hr = GetDevice()->CreateInputLayout(
 				layout,
-				3,
+				numElements,
 				shader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferPointer(),
 				shader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferSize(),
 				&m_pFontLayout);
@@ -290,6 +298,8 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		CreateRasterState();
 		CreateDSState();
 		CreateBlendState();
+		g_FontAtlasRV = m_pTextureRV;
+		g_LinearSampler = m_Sampler;
 		first_init = false;
 	}
 
@@ -337,12 +347,12 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		srvDesc.ViewDimension			  = D3D10_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels		  = desc.MipLevels;
 		srvDesc.Texture2D.MostDetailedMip = desc.MipLevels - 1;
-		auto hr							  = GetDevice()->CreateShaderResourceView(m_pTexture, &srvDesc, &pTexDepSurface);
+		auto hr							  = GetDevice()->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pTextureRV);
 		if (FAILED(hr))
 		{
 			CryError("Failed to create texture view");
 		}
-		//GetDevice()->PSSetShaderResources(0, 1, &pTexDepSurface);
+		//GetDevice()->PSSetShaderResources(0, 1, &m_pTextureRV);
 		{
 		}
 	}
@@ -366,8 +376,11 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		1, 2, 3	 // Second Triangle
 	};
 
-	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
-//m_VB = gEnv->pRenderer->CreateBuffer(3, VERTEX_FORMAT_P3F, "BoundingBox", false);
+	#if 1
+	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
+	#else
+	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
+	#endif
 #if 0
     Vec3 vertices[] =
     {
@@ -383,6 +396,9 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	static bool UB_created = false;
 
 	first_init = false;
+
+	g_FontAtlasRV = m_pTextureRV;
+	g_LinearSampler = m_Sampler;
 	return true;
 }
 
@@ -433,7 +449,15 @@ void FreeTypeFont::Submit()
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
 	SAFE_DELETE(m_VB);
 	auto vertex_cnt = 6 * m_CharBuffer.size();
-	m_VB			= gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "BoundingBox", false);
+	
+	#if 1
+	m_VB = gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
+	#else
+	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
+	#endif
+
+
+
 
 	// Render glyph texture over quad
 	// Update content of VBO memory
@@ -441,20 +465,32 @@ void FreeTypeFont::Submit()
 
 	shader->Bind();
 	GetDevice()->PSSetSamplers(0, 1, &m_Sampler);
-	GetDevice()->PSSetShaderResources(0, 1, &pTexDepSurface);
+	GetDevice()->PSSetShaderResources(0, 1, &m_pTextureRV);
 	GetDevice()->IASetInputLayout(m_pFontLayout);
 	GetDevice()->RSSetState(m_pRasterizerState);
 	GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	//GetDevice()->OMSetDepthStencilState(m_pDSState, 0);
 
-	#if 1
-	gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
-	#else
-	for (int i = 0; i < vertex_cnt; i++)
+	static int font_method = 1;
+	static bool registered	= false;
+	if (!registered)
 	{
-		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), i, i+1);
+		REGISTER_CVAR(font_method, font_method, 0, "font_method");
+		registered = true;
 	}
-	#endif
+	switch (font_method)
+	{
+	case 1:
+		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+		break;
+	default:
+		for (int i = 0; i < vertex_cnt; i++)
+		{
+			gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), i, i+1);
+		}
+		break;
+	}
+
 
 	m_CharBuffer.resize(0);
 }
@@ -478,7 +514,7 @@ void FreeTypeFont::CreateRasterState()
     // Set up rasterizer
 	D3D10_RASTERIZER_DESC rasterizerDesc;
 	rasterizerDesc.CullMode				 = D3D10_CULL_NONE;
-	rasterizerDesc.FillMode				 = D3D10_FILL_WIREFRAME;
+	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
 	rasterizerDesc.FrontCounterClockwise = true;
 	rasterizerDesc.DepthBias			 = false;
 	rasterizerDesc.DepthBiasClamp		 = 0;
