@@ -52,7 +52,7 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 #if defined(SYS_ENV_AS_STRUCT)
 	  m_env(m_env),
 #endif
-	  m_startupParams(startupParams),
+	  //m_startupParams(startupParams),
 	  cvGameName(nullptr),
 	  //m_pInput(nullptr),
 	  //m_pFont(nullptr),
@@ -63,6 +63,7 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 #if ENABLE_DEBUG_GUI
 #endif
 {
+	m_startupParams			 = startupParams;
 	m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
 	if (m_pSystemEventDispatcher)
 	{
@@ -804,7 +805,7 @@ void CSystem::FatalError(const char* format, ...)
 		CryLogAlways("<System> Last System Error: %s", szSysErrorMessage);
 
 	assert(szBuffer[0] >= ' ');
-	strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
+	//strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
 
 	//LogSystemInfo();
 

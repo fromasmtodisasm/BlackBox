@@ -42,7 +42,7 @@ CCmdLine::CCmdLine(const char* commandLine)
 		{
 			// this is the filename, convert backslash to forward slash
 			//arg.replace('\\', '/');
-			findAndReplaceAll(arg, "\\", "/");
+			//findAndReplaceAll(arg, "\\", "/");
 			//arg.replace(arg.begin(), arg.end(), '\\', '/');
 			m_args.push_back(CCmdLineArg("filename", arg.c_str(), eCLAT_Executable));
 		}

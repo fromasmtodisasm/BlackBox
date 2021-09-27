@@ -280,7 +280,8 @@ class CSystem final : public ISystem
 	//! User define callback for system events.
 	ISystemUserCallback* m_pUserCallback = nullptr;
 
-	SSystemInitParams& m_startupParams;
+	//SSystemInitParams& m_startupParams;
+	SSystemInitParams m_startupParams;
 	SFileVersion m_FileVersion;
 	SFileVersion m_ProductVersion;
 
