@@ -929,6 +929,7 @@ function(add_metadata)
 			"    BEGIN\n"
 			"        BLOCK \"000904b0\"\n"
 			"        BEGIN\n"
+			"            VALUE \"FileDescription\", \"${METADATA_VERSION_COMMA}\"\n"
 			"            VALUE \"CompanyName\", \"${METADATA_COMPANY}\"\n"
 			"            VALUE \"FileVersion\", \"${METADATA_VERSION_COMMA}\"\n"
 			"            VALUE \"LegalCopyright\", \"${METADATA_COPYRIGHT}\"\n"

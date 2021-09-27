@@ -78,7 +78,7 @@ struct _CryMemoryManagerPoolHelper
 #endif
 			}
 
-			//CryMessageBox(errMsg, "Memory Manager", eMB_Error);
+			CryMessageBox(errMsg, "Memory Manager", eMB_Error);
 			__debugbreak();
 			abort();
 		}

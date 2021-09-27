@@ -47,7 +47,7 @@ class CScriptObjectRenderer;
 
 struct SSystemCVars
 {
-	int    sys_no_crash_dialog;
+	int    sys_no_crash_dialog = 0;
 	int    sys_dump_aux_threads;
 	int    sys_keyboard_break;
 	int    sys_dump_type;

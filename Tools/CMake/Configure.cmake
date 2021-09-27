@@ -120,7 +120,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set the METADATA fields used by `add_metadata` macro from CommonMacros
 if(WINDOWS)
 	if (NOT METADATA_COMPANY)
-		set(METADATA_COMPANY "Crytek GmbH")
+		set(METADATA_COMPANY "3D Space")
 	endif()
 	set(METADATA_COMPANY "${METADATA_COMPANY}" CACHE STRING "Company name for executable metadata")
 

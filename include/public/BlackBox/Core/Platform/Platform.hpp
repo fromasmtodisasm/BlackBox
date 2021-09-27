@@ -201,6 +201,46 @@ template<typename T, size_t size>
 char (&ArrayCountHelper(T(&)[size]))[size];
 }
 
+enum EQuestionResult
+{
+	eQR_None,
+	eQR_Cancel,
+	eQR_Yes,
+	eQR_No,
+	eQR_Abort,
+	eQR_Retry,
+	eQR_Ignore
+};
+
+enum EMessageBox
+{
+	eMB_Info,
+	eMB_YesCancel,
+	eMB_YesNoCancel,
+	eMB_Error,
+	eMB_AbortRetryIgnore
+};
+
+//! Loads CrySystem from disk and initializes the engine, commonly called from the Launcher implementation
+//! \param bManualEngineLoop Whether or not the caller will start and maintain the engine loop themselves. Otherwise the loop is started and engine shut down automatically inside the function.
+bool			CryInitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
+
+void            CrySleep(unsigned int dwMilliseconds);
+void            CryLowLatencySleep(unsigned int dwMilliseconds);
+EQuestionResult CryMessageBox(const char* lpText, const char* lpCaption, EMessageBox uType = eMB_Info);
+EQuestionResult CryMessageBox(const wchar_t* lpText, const wchar_t* lpCaption, EMessageBox uType = eMB_Info);
+bool            CryCreateDirectory(const char* lpPathName);
+bool            CryDirectoryExists(const char* szPath);
+void            CryGetCurrentDirectory(unsigned int pathSize, char* szOutPath);
+short           CryGetAsyncKeyState(int vKey);
+unsigned int    CryGetFileAttributes(const char* lpFileName);
+int             CryGetWritableDirectory(unsigned int pathSize, char* szOutPath);
+
+void            CryGetExecutableFolder(unsigned int pathSize, char* szOutPath);
+void            CryFindEngineRootFolder(unsigned int pathSize, char* szOutPath);
+void            CrySetCurrentWorkingDirectory(const char* szWorkingDirectory);
+void            CryFindRootFolderAndSetAsCurrentWorkingDirectory();
+
 template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
 
 //! Align function works on integer or pointer values. Only supports power-of-two alignment.

@@ -792,8 +792,7 @@ void CSystem::FatalError(const char* format, ...)
 
 	#
 	// get system error message before any attempt to write into log
-	const char* szSysErrorMessage = 0;
-	//CryGetLastSystemErrorMessage();
+	const char* szSysErrorMessage = CryGetLastSystemErrorMessage();
 
 	CryLogAlways("=============================================================================");
 	CryLogAlways("*ERROR");
@@ -802,10 +801,10 @@ void CSystem::FatalError(const char* format, ...)
 	CryLogAlways("%s", szBuffer);
 
 	if (szSysErrorMessage)
-		CryLogAlways("<CrySystem> Last System Error: %s", szSysErrorMessage);
+		CryLogAlways("<System> Last System Error: %s", szSysErrorMessage);
 
 	assert(szBuffer[0] >= ' ');
-	//	strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
+	strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
 
 	//LogSystemInfo();
 
@@ -814,16 +813,14 @@ void CSystem::FatalError(const char* format, ...)
 	OutputDebugString(szBuffer);
 	//OnFatalError(szBuffer);
 
-	#if 0
 	if (!g_cvars.sys_no_crash_dialog)
 	{
-		CryMessageBox(szBuffer,"CRYENGINE FATAL ERROR", eMB_Error);
+		CryMessageBox(szBuffer,"ENGINE FATAL ERROR", eMB_Error);
 	}
-	#endif
 
-	//GetITextModeConsole()->OnShutdown
-	//DebugBreak();
-	__debugbreak();
+	//GetITextModeConsole()->OnShutdown();
+	DebugBreak();
+	//__debugbreak();
 
 }
 
@@ -934,7 +931,6 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 	);
 	// Do something, for example generate error report
 	MessageBox(NULL, msg, "Exception", 0);
-
 	//..
 
 	// Execute default exception handler next
