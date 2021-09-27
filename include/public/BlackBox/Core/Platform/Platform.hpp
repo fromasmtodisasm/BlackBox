@@ -219,14 +219,7 @@ ILINE bool IsAligned(T nData, size_t nAlign)
 	return (size_t(nData) & (nAlign - 1)) == 0;
 }
 
-
 #define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
-
-#if 0
-#ifdef SendMessage
-#undef SendMessage
-#endif
-#endif
 
 #if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT
 #include <BlackBox/Core/Platform/WindowsSpecific.hpp>
@@ -266,8 +259,8 @@ inline int IsHeapValid()
 
 // Memory manager breaks strdup
 // Use something higher level, like CryString
-//#undef strdup
-//#define strdup dont_use_strdup
+#undef strdup
+#define strdup dont_use_strdup
 
 //! Loads System from disk and initializes the engine, commonly called from the Launcher implementation
 //! \param bManualEngineLoop Whether or not the caller will start and maintain the engine loop themselves. Otherwise the loop is started and engine shut down automatically inside the function.
