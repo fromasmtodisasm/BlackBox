@@ -47,7 +47,6 @@ public:
 	virtual bool IsCurrentContextMainVP() override;
 	virtual int GetCurrentContextViewportHeight() const override;
 	virtual int GetCurrentContextViewportWidth() const override;
-	virtual void SetClearColor(const Vec3& vColor) override;
 	virtual void ClearDepthBuffer() override;
 	virtual void ClearColorBuffer(const Vec3 vColor) override;
 	virtual void SetRenderTarget(int nHandle) override;

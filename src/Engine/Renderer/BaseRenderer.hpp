@@ -365,7 +365,10 @@ class CRenderer : public RenderCVars
 	/////////////////////////////////////////////////////////////////////////////////
 
 	// 3d engine set this color to fog color
-	virtual void SetClearColor(const Vec3& vColor)	 = 0;
+	void SetClearColor(const Vec3& vColor)
+	{
+		m_ClearColor = Vec4(vColor, 1.f);	
+	}
 	virtual void ClearDepthBuffer()					 = 0;
 	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
 
@@ -459,6 +462,7 @@ class CRenderer : public RenderCVars
 
 	std::vector<IFont*> m_Fonts;
 	RenderBackend		m_Backend;
+	Vec4				m_ClearColor{};
 
 	// Inherited via IRenderer
 	virtual void			   ShareResources(IRenderer* renderer) override;

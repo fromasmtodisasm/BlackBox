@@ -1,8 +1,8 @@
 ﻿#include "Renderer.h"
 
 // Globals
-ID3D10ShaderResourceView* g_FontAtlasRV;
-ID3D10SamplerState*		 g_LinearSampler;
+ID3D10ShaderResourceView* GlobalResources::FontAtlasRV{};
+ID3D10SamplerState*		  GlobalResources::LinearSampler{};
 
 struct ITechniqueManager;
 ID3D10Device* GetDevice()
@@ -75,10 +75,7 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 
 void CD3DRenderer::BeginFrame(void)
 {
-	// Очистка рендер-таргета
-	//float ClearColor[4] = {0.3f, 0.3f, 0.5f, 1.0f}; //red,green,blue,alpha
-	float ClearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f}; //red,green,blue,alpha
-	m_pd3dDevice->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
+	m_pd3dDevice->ClearRenderTargetView(m_pRenderTargetView, &m_ClearColor[0]);
 	m_pd3dDevice->ClearDepthStencilView(m_pDepthStencilView, D3D10_CLEAR_DEPTH, 1.f, 0);
 }
 
@@ -208,10 +205,6 @@ int CD3DRenderer::GetCurrentContextViewportWidth() const
 	return 0;
 }
 
-void CD3DRenderer::SetClearColor(const Vec3& vColor)
-{
-}
-
 void CD3DRenderer::ClearDepthBuffer()
 {
 }
@@ -230,7 +223,7 @@ bool CD3DRenderer::InitOverride()
 
     UINT createDeviceFlags = 0;
 #ifdef _DEBUG
-    createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
+    //createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
 #endif
 
     D3D10_DRIVER_TYPE driverTypes[] =
@@ -263,7 +256,10 @@ bool CD3DRenderer::InitOverride()
             break;
     }
     if( FAILED( hr ) )
+	{
+		CryLog("Failed create D3D10 device");
         return false;
+	}
 
 
     // Set up rasterizer
@@ -301,6 +297,8 @@ bool CD3DRenderer::InitOverride()
 
     m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
     //m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+
+	SetClearColor({.1, .1, .1});
 
     return true;
 }

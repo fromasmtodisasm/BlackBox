@@ -285,8 +285,8 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
 		::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		::GetDevice()->IASetInputLayout(g_pVertexLayout);
 
-		::GetDevice()->PSSetShaderResources(0, 1, &g_FontAtlasRV);
-		::GetDevice()->PSSetSamplers(0, 1, &g_LinearSampler);
+		::GetDevice()->PSSetShaderResources(0, 1, &GlobalResources::FontAtlasRV);
+		::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
 		//GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 	}

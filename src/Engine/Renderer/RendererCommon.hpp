@@ -1,2 +1,5 @@
-extern ID3D10ShaderResourceView* g_FontAtlasRV;
-extern ID3D10SamplerState*		 g_LinearSampler;
+struct GlobalResources
+{
+	static ID3D10ShaderResourceView* FontAtlasRV;
+	static ID3D10SamplerState*		 LinearSampler;
+};
