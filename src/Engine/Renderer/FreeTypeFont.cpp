@@ -298,8 +298,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		CreateRasterState();
 		CreateDSState();
 		CreateBlendState();
-		GlobalResources::FontAtlasRV = m_pTextureRV;
-		GlobalResources::LinearSampler = m_Sampler;
 		first_init = false;
 	}
 
@@ -397,8 +395,8 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 
 	first_init = false;
 
-	//GlobalResources::FontAtlasRV = m_pTextureRV;
-	//GlobalResources::LinearSampler = m_Sampler;
+	GlobalResources::FontAtlasRV = m_pTextureRV;
+	GlobalResources::LinearSampler = m_Sampler;
 	return true;
 }
 
