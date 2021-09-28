@@ -251,6 +251,10 @@ class CRenderer : public RenderCVars
 	, public ISystemEventListener
 {
   public:
+	// Inherited via IRendererCallbackServer
+	void RegisterCallbackClient(IRendererCallbackClient* pClient) override;
+	void UnregisterCallbackClient(IRendererCallbackClient* pClient) override;
+
 	// Inherited via IConsoleVarSink
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) final;
 	virtual void OnAfterVarChange(ICVar* pVar) final;
@@ -389,6 +393,18 @@ class CRenderer : public RenderCVars
 	IFont*			GetIFont() final;
 	IRenderAuxGeom* GetIRenderAuxGeom() final;
 
+	// Inherited via IRenderer
+	virtual void			   ShareResources(IRenderer* renderer) override;
+	virtual void			   SetRenderCallback(IRenderCallback* pCallback) override;
+	virtual void			   PushProfileMarker(char* label) override;
+	virtual void			   PopProfileMarker(char* label) override;
+	virtual int				   CreateRenderTarget() override;
+	virtual void			   DrawFullscreenQuad() override;
+	virtual ITechniqueManager* GetITechniqueManager() final;
+	virtual float			   GetDepthValue(int x, int y) override;
+	virtual void			   Flush() final;
+	virtual void			   Sh_Reload() override;
+
   protected:
   protected:
 	struct alignas(16) SPerViewConstantBuffer
@@ -464,15 +480,5 @@ class CRenderer : public RenderCVars
 	RenderBackend		m_Backend;
 	Vec4				m_ClearColor{};
 
-	// Inherited via IRenderer
-	virtual void			   ShareResources(IRenderer* renderer) override;
-	virtual void			   SetRenderCallback(IRenderCallback* pCallback) override;
-	virtual void			   PushProfileMarker(char* label) override;
-	virtual void			   PopProfileMarker(char* label) override;
-	virtual int				   CreateRenderTarget() override;
-	virtual void			   DrawFullscreenQuad() override;
-	virtual ITechniqueManager* GetITechniqueManager() final;
-	virtual float			   GetDepthValue(int x, int y) override;
-	virtual void			   Flush() final;
-	virtual void			   Sh_Reload() override;
+	std::vector<IRendererCallbackClient*> m_RenderCallbackClients;
 };

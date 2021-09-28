@@ -360,7 +360,35 @@ struct SRenderViewport
 };
 //! \endcond
 
-struct IRenderer
+// The following may be (and sometimes is) used for testing. Please don't remove.
+struct IRenderer;
+class IRendererCallbackServer;
+
+// Renderer callback client.
+// Derive your class (a renderer client) from this one in order to register its instances
+// with the renderer.
+class IRendererCallbackClient
+{
+public:
+	// within this function, you can render your stuff and it won't flicker in the viewport
+	virtual void OnRenderer_BeforeEndFrame () {}
+	// unregisters itsef from the server
+	virtual void Renderer_SelfUnregister() {}
+};
+
+// renderer callback server.
+// Derive your renderer (server) from this one in order for it to be able to serve
+// renderer callback client requests
+class IRendererCallbackServer
+{
+public:
+	// registers the given client  - do nothing by default
+	virtual void RegisterCallbackClient (IRendererCallbackClient* pClient) {}
+	// unregisters the given client - do nothing by default
+	virtual void UnregisterCallbackClient (IRendererCallbackClient* pClient) {}
+};
+
+struct IRenderer : public IRendererCallbackServer
 {
 	enum class State
 	{

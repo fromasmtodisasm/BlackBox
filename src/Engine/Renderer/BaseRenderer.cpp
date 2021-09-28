@@ -71,6 +71,19 @@ void CRenderer::Release()
 	delete this;
 }
 
+void CRenderer::RegisterCallbackClient(IRendererCallbackClient* pClient)
+{
+	m_RenderCallbackClients.push_back(pClient);
+}
+
+void CRenderer::UnregisterCallbackClient(IRendererCallbackClient* pClient)
+{
+	if (auto cl = std::find(m_RenderCallbackClients.begin(), m_RenderCallbackClients.end(), pClient); cl != m_RenderCallbackClients.end())
+	{
+		m_RenderCallbackClients.erase(cl);
+	}
+}
+
 bool CRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 	if (!strcmp(pVar->GetName(), "r_Width"))

@@ -7,12 +7,12 @@
 
 std::vector<Vec3> lineBuffer;
 
-CClient::CClient(CGame *pGame)
-	: 
-	m_pGame(pGame),
-	m_CameraController(),
-	m_IntersectionState()
+CClient::CClient(CGame* pGame)
+	: m_pGame(pGame)
+	, m_CameraController()
+	, m_IntersectionState()
 {
+	gEnv->pRenderer->RegisterCallbackClient(this);
 }
 
 CClient::~CClient()
@@ -460,4 +460,8 @@ void CClient::IntersectionByRayCasting()
 void CClient::Render()
 {
 	DrawAux();
+}
+
+void CClient::OnRenderer_BeforeEndFrame() 
+{
 }

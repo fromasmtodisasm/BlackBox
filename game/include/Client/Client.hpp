@@ -31,8 +31,10 @@ namespace
 	}
 } // namespace
 
-class CClient : public IClientSink
+class CClient : 
+	public IClientSink
 	, public IActionMapSink
+	, public IRendererCallbackClient
 {
   public:
 	CClient(CGame* pGame);
@@ -40,16 +42,18 @@ class CClient : public IClientSink
 	void Update();
 	bool Init();
 
+	void OnRenderer_BeforeEndFrame() override;
+
 	// Inherited via IClientSink
-	virtual void OnXConnect() override;
-	virtual void OnXClientDisconnect(const char* szCause) override;
-	virtual void OnXContextSetup(CStream& stmContext) override;
-	virtual void OnXData(CStream& stm) override;
-	virtual void OnXServerTimeout() override;
-	virtual void OnXServerRessurect() override;
-	virtual unsigned int GetTimeoutCompensation() override;
-	virtual void MarkForDestruct() override;
-	virtual bool DestructIfMarked() override;
+	void OnXConnect() override;
+	void OnXClientDisconnect(const char* szCause) override;
+	void OnXContextSetup(CStream& stmContext) override;
+	void OnXData(CStream& stm) override;
+	void OnXServerTimeout() override;
+	void OnXServerRessurect() override;
+	unsigned int GetTimeoutCompensation() override;
+	void MarkForDestruct() override;
+	bool DestructIfMarked() override;
 
 	// Triggers function
 	void TriggerMoveLeft(float fValue, XActivationEvent ae);

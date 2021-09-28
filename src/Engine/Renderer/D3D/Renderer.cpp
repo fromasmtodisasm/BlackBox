@@ -91,11 +91,16 @@ void CD3DRenderer::Update(void)
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
     Flush();
 
+	for (const auto& rcl : m_RenderCallbackClients)
+	{
+		rcl->OnRenderer_BeforeEndFrame();	
+	}
+
+	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+		pConsole->Draw();
     //
     // Present our back buffer to our front buffer
     //
-	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
-		pConsole->Draw();
     m_pSwapChain->Present( 0, 0 );
 }
 
