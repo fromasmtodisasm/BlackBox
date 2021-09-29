@@ -14,6 +14,7 @@
 #include "XVehicleSystem.h"
 
 #include <Client/Client.hpp>
+#include <thread>
 
 #ifdef USE_GUI
 #	include <imgui.h>
@@ -427,6 +428,9 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	{
 		m_Font = gEnv->pRenderer->GetIFont();
 		m_Font->Init("arial.ttf", 32,32);
+
+		m_SelectedEntryFont = gEnv->pRenderer->GetIFont();
+		m_SelectedEntryFont->Init("arial.ttf", 60,60);
 	}
 
 	// other
@@ -540,6 +544,8 @@ bool			 CGame::Update()
 				if (m_CurrentMenuEntry == currentEntry)
 				{
 					active = true;
+					info.font = m_SelectedEntryFont;
+					posY += 30;
 				}
 				if (active) menuColor = activeColor;
 				color[0] = menuColor.g; //green
@@ -577,6 +583,13 @@ bool			 CGame::Update()
 						if (PrintMenuEntry("Credits"))
 						{
 							CryLogAlways("Credits activated");
+						}
+						if (PrintMenuEntry("Editor"))
+						{
+							std::thread notepad([]{ gEnv->pConsole->ExecuteString(R"(#os.execute("code"))"); });
+
+							notepad.detach();
+							
 						}
 						if (PrintMenuEntry("Quit"))
 						{

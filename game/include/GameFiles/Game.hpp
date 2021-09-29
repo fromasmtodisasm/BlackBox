@@ -535,6 +535,7 @@ public:
 	bool isDrawingGui = false;
 
 	IFont* m_Font;
+	IFont* m_SelectedEntryFont;
 	//EDIT MODE
 	//==========
 	IConsole* m_Console;
