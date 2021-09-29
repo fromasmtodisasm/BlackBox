@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <Client/Client.hpp>
+#include <BlackBox\System\ConsoleRegistration.h>
 
 #define YAW		(0)  
 #define PITCH	(1)    
@@ -13,6 +14,17 @@ CClient::CClient(CGame* pGame)
 	, m_IntersectionState()
 {
 	gEnv->pRenderer->RegisterCallbackClient(this);
+
+	struct cmds
+	{
+		[[ConsoleCommand]] static void clear(IConsoleCmdArgs*) { lineBuffer.clear(); }
+	};
+
+	REGISTER_COMMAND(
+		"cl_clear_lines", [](IConsoleCmdArgs*)
+		{ lineBuffer.clear(); },
+		0,
+		"");
 }
 
 CClient::~CClient()
