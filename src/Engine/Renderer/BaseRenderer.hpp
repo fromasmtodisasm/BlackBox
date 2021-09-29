@@ -262,7 +262,7 @@ class CRenderer : public RenderCVars
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) final;
 	CRenderer(ISystem* engine);
-	~CRenderer();
+	virtual ~CRenderer();
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) /* final*/;
 	virtual bool	 InitOverride() = 0;
@@ -404,6 +404,8 @@ class CRenderer : public RenderCVars
 	virtual float			   GetDepthValue(int x, int y) override;
 	virtual void			   Flush() final;
 	virtual void			   Sh_Reload() override;
+
+	void ShutDown();
 
   protected:
   protected:

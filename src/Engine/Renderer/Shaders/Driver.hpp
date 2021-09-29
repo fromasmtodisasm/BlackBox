@@ -31,6 +31,7 @@ struct IDriver
 class Driver : public IDriver {
  public:
     Driver();
+   ~Driver();
     //bool parse(const std::string& f) override;
     IEffect* parse(const char* f) override;
 

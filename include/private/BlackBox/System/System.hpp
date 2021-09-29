@@ -353,23 +353,24 @@ class CSystem final : public ISystem
 #else
 	SSystemGlobalEnvironment m_env;
 #endif
-	CTimer m_Time;		  //!<
-	CCamera m_ViewCamera; //!<
+	CTimer		  m_Time;		  //!<
+	CCamera		  m_ViewCamera;	  //!<
+	volatile bool m_bQuit{false}; //!< if is true the system is quitting. Volatile as it may be polled from multiple threads.
 
 	//IInput* m_pInput;
-	ICryPak* m_pCryPak = nullptr;
-	IGame* m_pGame = nullptr;
-	IFont* m_pFont = nullptr;
-	IWindow* m_pWindow = nullptr;
-	IValidator* m_pValidator; //!< Pointer to validator interface.
-	IEntitySystem* m_pEntitySystem = nullptr;
-	INetwork* m_pNetwork = nullptr;
+	ICryPak*		  m_pCryPak = nullptr;
+	IGame*			  m_pGame	= nullptr;
+	IFont*			  m_pFont	= nullptr;
+	IWindow*		  m_pWindow = nullptr;
+	IValidator*		  m_pValidator; //!< Pointer to validator interface.
+	IEntitySystem*	  m_pEntitySystem	 = nullptr;
+	INetwork*		  m_pNetwork		 = nullptr;
 	ITextModeConsole* m_pTextModeConsole = nullptr;
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
 
-	CScriptObjectConsole* m_ScriptObjectConsole = nullptr;
-	CScriptObjectScript* m_ScriptObjectScript = nullptr;
+	CScriptObjectConsole*  m_ScriptObjectConsole  = nullptr;
+	CScriptObjectScript*   m_ScriptObjectScript	  = nullptr;
 	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
 
   private:
@@ -380,12 +381,12 @@ class CSystem final : public ISystem
 
 	//SSystemInitParams& m_startupParams;
 	SSystemInitParams m_startupParams;
-	SFileVersion m_FileVersion;
-	SFileVersion m_ProductVersion;
+	SFileVersion	  m_FileVersion;
+	SFileVersion	  m_ProductVersion;
 
 	uint64_t NOW;
 	uint64_t LAST;
-	double m_DeltaTime = 0.0;
+	double	 m_DeltaTime = 0.0;
 
 #if ENABLE_DEBUG_GUI
 	IImGuiManager* m_GuiManager = nullptr;
@@ -393,7 +394,7 @@ class CSystem final : public ISystem
 
 	//! global root folder
 	string m_root;
-	int    m_iApplicationInstance;
+	int	   m_iApplicationInstance;
 
 	//! to hold the values stored in system.cfg
 	//! because editor uses it's own values,
@@ -405,19 +406,19 @@ class CSystem final : public ISystem
 	// System console variables.
 	//////////////////////////////////////////////////////////////////////////
 	float m_rIntialWindowSizeRatio;
-	int m_rWidth;
-	int m_rHeight;
-	int m_rColorBits;
-	int m_rDepthBits;
-	int m_rStencilBits;
-	int m_rFullscreen;
+	int	  m_rWidth;
+	int	  m_rHeight;
+	int	  m_rColorBits;
+	int	  m_rDepthBits;
+	int	  m_rStencilBits;
+	int	  m_rFullscreen;
 	//ICVar* m_rFullsceenNativeRes;
 	//ICVar* m_rWindowState;
 	ICVar* m_rDriver;
-	int m_rDisplayInfo;
-	int m_rDebug;
-	int m_rTonemap;
-	int m_rSkipShaderCache;
+	int	   m_rDisplayInfo;
+	int	   m_rDebug;
+	int	   m_rTonemap;
+	int	   m_rSkipShaderCache;
 
 	bool m_bIsActive = true;
 	

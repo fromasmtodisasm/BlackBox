@@ -13,7 +13,7 @@ class CD3DRenderer : public CRenderer
 public:
 	//HRESULT InitCube();
 	CD3DRenderer(ISystem* pSystem);
-	~CD3DRenderer();
+	~CD3DRenderer() override;
 	// Inherited via CRenderer
 	virtual void ShareResources(IRenderer* renderer) override;
 	virtual void SetRenderCallback(IRenderCallback* pCallback) override;

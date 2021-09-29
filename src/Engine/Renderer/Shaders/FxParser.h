@@ -49,6 +49,7 @@ typedef struct IEffect* PEffect;
 struct FxParser
 {
 	FxParser();
+	~FxParser();
 	bool Parse(const std::string& f, PEffect* pEffect);
 };
 

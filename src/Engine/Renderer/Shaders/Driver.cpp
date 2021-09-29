@@ -14,6 +14,11 @@ Driver::Driver() :
     scanner(new Scanner(*this)), parser(*scanner, *this) {
 }
 
+Driver::~Driver()
+{
+	delete scanner;
+}
+
 
 IEffect* Driver::parse(const char* f)
 {

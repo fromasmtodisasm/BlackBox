@@ -27,6 +27,8 @@ CD3DRenderer::~CD3DRenderer()
 	SAFE_RELEASE(m_pRenderTargetView);
 	SAFE_RELEASE(m_pSwapChain);
 	SAFE_RELEASE(m_pd3dDevice);
+
+	CRenderer::~CRenderer();
 }
 
 void CD3DRenderer::ShareResources(IRenderer* renderer)

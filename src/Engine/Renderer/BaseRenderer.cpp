@@ -150,19 +150,7 @@ void CRenderer::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpar
 
 CRenderer::~CRenderer()
 {
-	gEnv->pConsole->RemoveConsoleVarSink(this);
-	for (size_t i = 0; i < m_Fonts.size(); i++)
-	{
-		m_Fonts[i]->Release();
-	}
-	ReleaseBuffer(m_VertexBuffer);
-	SAFE_DELETE(m_RenderAuxGeom);
-#ifndef VK_RENDERER
-	SAFE_DELETE(m_BufferManager);
-#endif
-	SAFE_DELETE(m_VertexBuffer);
-
-	delete gShMan;
+	ShutDown();
 }
 
 IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
@@ -680,6 +668,24 @@ void CRenderer::Flush()
 
 void CRenderer::Sh_Reload()
 {
+}
+
+void CRenderer::ShutDown()
+{
+	gEnv->pConsole->RemoveConsoleVarSink(this);
+	for (size_t i = 0; i < m_Fonts.size(); i++)
+	{
+		m_Fonts[i]->Release();
+	}
+	ReleaseBuffer(m_VertexBuffer);
+	SAFE_DELETE(m_RenderAuxGeom);
+#ifndef VK_RENDERER
+	SAFE_DELETE(m_BufferManager);
+#endif
+	SAFE_DELETE(m_VertexBuffer);
+	SAFE_DELETE(g_FxParser);
+
+	SAFE_DELETE(gShMan);
 }
 
 #pragma warning(pop)

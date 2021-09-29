@@ -142,8 +142,179 @@ IGame* CSystem::GetIGame()
 	return m_pGame;
 }
 
+void CSystem::Relaunch(bool bRelaunch)
+{
+}
+
+void CSystem::Error(const char* sFormat, ...)
+{
+	va_list	ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	va_start(ArgList, sFormat);
+	vsprintf(szBuffer, sFormat, ArgList);
+	va_end(ArgList);
+	gEnv->pLog->LogError(szBuffer);
+}
+
+void CSystem::Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	WarningV(module, severity, flags, file, format, args);
+	va_end(args);
+}
+
+inline const char* ValidatorModuleToString(EValidatorModule module)
+{
+	switch (module)
+	{
+	case VALIDATOR_MODULE_RENDERER:
+		return "Renderer";
+	case VALIDATOR_MODULE_3DENGINE:
+		return "3DEngine";
+	case VALIDATOR_MODULE_ASSETS:
+		return "Assets";
+	case VALIDATOR_MODULE_AI:
+		return "AI";
+	case VALIDATOR_MODULE_ANIMATION:
+		return "Animation";
+	case VALIDATOR_MODULE_ENTITYSYSTEM:
+		return "EntitySystem";
+	case VALIDATOR_MODULE_SCRIPTSYSTEM:
+		return "Script";
+	case VALIDATOR_MODULE_SYSTEM:
+		return "System";
+	case VALIDATOR_MODULE_AUDIO:
+		return "Audio";
+	case VALIDATOR_MODULE_GAME:
+		return "Game";
+	case VALIDATOR_MODULE_MOVIE:
+		return "Movie";
+	case VALIDATOR_MODULE_EDITOR:
+		return "Editor";
+	case VALIDATOR_MODULE_NETWORK:
+		return "Network";
+	case VALIDATOR_MODULE_PHYSICS:
+		return "Physics";
+	case VALIDATOR_MODULE_FLOWGRAPH:
+		return "FlowGraph";
+	case VALIDATOR_MODULE_ONLINE:
+		return "Online";
+	case VALIDATOR_MODULE_DRS:
+		return "DynamicResponseSystem";
+	default:
+		break;
+	}
+	return "";
+}
+
+void CSystem::WarningV(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, va_list args)
+{
+	// Fran: No logging in a testing environment
+	if (m_env.pLog == 0)
+	{
+		return;
+	}
+
+	#if 0
+	const char* sModuleFilter = m_env.pLog->GetModuleFilter();
+	if (sModuleFilter && *sModuleFilter != 0)
+	{
+		const char* sModule = ValidatorModuleToString(module);
+		if (strlen(sModule) > 1 || CryStringUtils::stristr(sModule, sModuleFilter) == 0)
+		{
+			// Filter out warnings from other modules.
+			return;
+		}
+	}
+	#endif
+
+	bool bDbgBreak = false;
+	if (severity == VALIDATOR_ERROR_DBGBRK)
+	{
+		bDbgBreak = true;
+		severity = VALIDATOR_ERROR; // change it to a standard VALIDATOR_ERROR for simplicity in the rest of the system
+	}
+
+	IMiniLog::ELogType ltype = ILog::eComment;
+	switch (severity)
+	{
+	case VALIDATOR_ERROR:
+		ltype = ILog::eError;
+		break;
+	case VALIDATOR_WARNING:
+		ltype = ILog::eWarning;
+		break;
+	case VALIDATOR_COMMENT:
+		ltype = ILog::eComment;
+		break;
+	case VALIDATOR_ASSERT:
+		ltype = ILog::eAssert;
+		break;
+	default:
+		break;
+	}
+	char szBuffer[MAX_WARNING_LENGTH];
+	vsprintf(szBuffer, format, args);
+
+	if (file && *file)
+	{
+		string fmt = szBuffer;
+		fmt += " [File=";
+		fmt += file;
+		fmt += "]";
+
+		m_env.pLog->LogWithType(ltype, flags | VALIDATOR_FLAG_SKIP_VALIDATOR, "%s", fmt.c_str());
+	}
+	else
+	{
+		m_env.pLog->LogWithType(ltype, flags | VALIDATOR_FLAG_SKIP_VALIDATOR, "%s", szBuffer);
+	}
+
+	//if(file)
+	//m_env.pLog->LogWithType( ltype, "  ... caused by file '%s'",file);
+
+	#if 0
+	if (m_pValidator && (flags & VALIDATOR_FLAG_SKIP_VALIDATOR) == 0)
+	{
+		SValidatorRecord record;
+		record.file = file;
+		record.text = szBuffer;
+		record.module = module;
+		record.severity = severity;
+		record.flags = flags;
+		record.assetScope = m_env.pLog->GetAssetScopeString();
+		m_pValidator->Report(record);
+	}
+	#endif
+
+#if !defined(_RELEASE)
+	if (bDbgBreak && g_cvars.sys_error_debugbreak)
+		__debugbreak();
+#endif
+
+}
+
+bool CSystem::CheckLogVerbosity(int verbosity)
+{
+	//FIXME: fix
+	//return false;
+	return true;
+}
+
+bool CSystem::IsQuitting()
+{
+	return m_bQuit;
+}
+
 void CSystem::Quit()
 {
+	//CryLog("CSystem::Quit invoked from thread %" PRI_THREADID " (main is %" PRI_THREADID ")", GetCurrentThreadId(), gEnv->mMainThreadId);
+
+	if (m_bQuit)
+		return;
+	m_bQuit = true;
+
 	// clean up properly the console
 	if (m_pTextModeConsole)
 		m_pTextModeConsole->OnShutdown();
@@ -154,21 +325,26 @@ void CSystem::Quit()
 
     extern std::vector<const char*> g_moduleCVars;
     printf("vars size: %d", g_moduleCVars.size());
+	#if 0
     for (auto& var : g_moduleCVars)
     {
         printf("var: %s", var);
     }
+	#endif
 
-	Release();
+	//Release();
 
 	
+	if (0)
+	{
 #if BB_PLATFORM_WINDOWS
 		TerminateProcess(GetCurrentProcess(), 0);
 #else
 		_exit(0);
 #endif
+	}
 #if !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_APPLE && !BB_PLATFORM_DURANGO && !BB_PLATFORM_ORBIS
-	PostQuitMessage(0);
+	//PostQuitMessage(0);
 #endif
 
 }
@@ -663,6 +839,10 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	GetIRemoteConsole()->Update();
 #endif
 
+	//check if we are quitting from the game
+	if (IsQuitting())
+		return (false);
+
 	m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
@@ -673,6 +853,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	}
 	if (m_pWindow)
 		m_pWindow->update();
+
 	if (m_env.pConsole)
 		m_env.pConsole->Update();
 	if (m_pNetwork)
@@ -691,7 +872,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		return false;
 	}
 
-	return true;
+	return m_bQuit;
 }
 
 bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
