@@ -426,7 +426,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	if (m_pRender)
 	{
 		m_Font = gEnv->pRenderer->GetIFont();
-		//m_Font->Init("arial.ttf", 16, 18);
+		m_Font->Init("arial.ttf", 32,32);
 	}
 
 	// other
@@ -526,6 +526,20 @@ bool			 CGame::Update()
 				return false;
 			}
 #endif
+			auto posY	   = 200.f;
+			auto PrintMenu = [&,this](const char* szText)
+			{
+				SDrawTextInfo info;
+				float		  rightMargin = 60;
+				info.font				  = m_Font;
+			auto& color = info.color;
+			color[0]	= 1.0; //green
+			color[1]	= 1.0;
+			color[2]	= 1.0; //alpha
+			color[3]	= 0.0; //red
+				gEnv->pRenderer->Draw2dText(rightMargin, posY, szText, info);
+				posY += 64;
+			};
 
 			SetRenderState();
 			m_pSystem->RenderBegin();
@@ -536,6 +550,27 @@ bool			 CGame::Update()
 				if (g_bRenderGame)
 				{
 					Render();
+
+					switch (m_Mode)
+					{
+					case CGame::FPS:
+						break;
+					case CGame::MENU:
+						PrintMenu("Campaign");
+						PrintMenu("Multiplayer");
+						PrintMenu("Options");
+						PrintMenu("Mods");
+						PrintMenu("Demo Loop");
+						PrintMenu("Credits");
+						PrintMenu("Quit");
+						break;
+					case CGame::FLY:
+						break;
+					case CGame::EDIT:
+						break;
+					default:
+						break;
+					}
 				}
 			}
 
@@ -549,14 +584,15 @@ bool			 CGame::Update()
 #if USE_UI
 			if (g_DrawUI)
 			{
-				DrawHud(fps);
 				glslEditor->Update();
 				m_Gui.Update();
 				gui::update();
 			}
 #endif
+			//DrawHud(fps);
 
 			//PROFILER_POP_CPU_MARKER();
+
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -612,9 +648,9 @@ void CGame::DisplayInfo(float fps)
 	TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
 	SDrawTextInfo  dti = info.getDTI();
 	SDrawTextInfo  MenuDTI;
-	MenuDTI.color[0] = 0;
 	MenuDTI.color[0] = 1;
-	MenuDTI.color[0] = 0;
+	MenuDTI.color[0] = 1;
+	MenuDTI.color[0] = 1;
 	MenuDTI.color[0] = 1;
 	MenuDTI.font	 = m_Font;
 
@@ -801,7 +837,7 @@ bool CGame::OnInputEvent(const SInputEvent& event)
 			return retval;
 	}
 	const bool result = false;
-	if (!IsInPause())
+	//if (!IsInPause())
 		OnInputEventProxy(event);
 	PersistentHandler(event);
 	return result;

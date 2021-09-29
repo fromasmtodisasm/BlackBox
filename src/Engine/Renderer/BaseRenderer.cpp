@@ -373,7 +373,7 @@ void CRenderer::Draw2dText(float posX, float posY, const char* szText, const SDr
 {
 	if (info.font)
 	{
-		info.font->RenderText(szText, posX, posY, 1.0, (float*)info.color);
+		info.font->RenderText(szText, posX, posY, 1.f, (float*)info.color);
 		info.font->Submit();
 	}
 }

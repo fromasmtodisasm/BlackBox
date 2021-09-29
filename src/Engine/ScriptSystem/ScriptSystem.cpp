@@ -900,6 +900,50 @@ BreakState CScriptSystem::GetBreakState()
 
 void CScriptSystem::GetMemoryStatistics(ICrySizer* pSizer)
 {
+	{
+		SIZER_COMPONENT_NAME(pSizer, "Self");
+		pSizer->AddObject(this, sizeof(*this));
+		//pSizer->AddObject(m_pScriptTimerMgr);
+		#if 0
+		pSizer->AddObject(m_dqLoadedFiles);
+		pSizer->AddObject(m_vecPreCached);
+		#else
+		pSizer->AddContainer(m_dqLoadedFiles);
+		pSizer->AddContainer(m_vecPreCached);
+		#endif
+	}
+
+#ifndef _LIB // Only when compiling as dynamic library
+	{
+		#if 0
+		SIZER_COMPONENT_NAME(pSizer, "Strings");
+		pSizer->AddObject((this + 1), string::_usedMemory(0));
+		#endif
+	}
+	{
+		#if 0
+		SIZER_COMPONENT_NAME(pSizer, "STL Allocator Waste");
+		CryModuleMemoryInfo meminfo;
+		ZeroStruct(meminfo);
+		CryGetMemoryInfoForModule(&meminfo);
+		pSizer->AddObject((this + 2), (size_t)meminfo.STL_wasted);
+		#endif
+	}
+#endif
+	{
+#if USE_RAW_LUA_ALLOCS
+		// Nothing to do.
+#else
+		SIZER_COMPONENT_NAME(pSizer, "Lua");
+#	ifdef _LIB
+		pSizer->AddObject(&gLuaAlloc, gLuaAlloc.get_alloc_size());
+#	else
+		#if 0
+		pSizer->AddObject(&gLuaAlloc, gLuaAlloc.get_alloc_size() + gLuaAlloc.get_wasted_in_blocks() + gLuaAlloc.get_wasted_in_allocation());
+		#endif
+#	endif
+#endif // USE_RAW_LUA_ALLOCS
+	}
 }
 
 void CScriptSystem::GetScriptHash(const char* sPath, const char* szKey, unsigned int& dwHash)

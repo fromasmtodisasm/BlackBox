@@ -21,7 +21,7 @@ HLSLShader
     VsOutput VSMain(VsInput IN)
     {
         VsOutput Output;
-        Output.Position = float4(IN.Pos, 1.0);
+        Output.Position = float4(IN.Pos.x,IN.Pos.y, 0.0, 1.0);
         Output.TexCoords = IN.TC;
         Output.Color = IN.Color;
         return Output;

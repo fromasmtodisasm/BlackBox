@@ -56,6 +56,8 @@ public:
 
 	bool OnResizeSwapchain(int newWidth, int newHeight);
 
+	virtual void GetMemoryUsage(ICrySizer* Sizer) override;
+
   private:
 
 	ID3D10Device* m_pd3dDevice					= NULL;

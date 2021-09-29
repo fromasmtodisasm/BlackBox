@@ -354,6 +354,11 @@ bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 	return true;
 }
 
+void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer)
+{
+	Sizer->AddObject(this, sizeof(*this));
+}
+
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
 	pSystem->Log("Loading...");

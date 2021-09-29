@@ -45,46 +45,48 @@ void CSystem::RenderEnd()
 		//DEBUG_GROUP("DRAW_PROFILE");
 		PROFILER_DRAW();
 	}
-	if (m_env.pRenderer)
+	if (m_env.pRenderer && m_pFont)
 	{
+		float px = 20;
+		float py = 20;
+		auto  dy = 30;
+
+		PrintRightAlignedText(py, "CamPos = 0 0 0 Angl = 0 0 0");
+		py += dy;
+		PrintRightAlignedText(py, "Ver = 1.0.0.0");
+		py += dy;
+		PrintRightAlignedText(py, "Polygons 0,000");
+		py += dy;
+		PrintRightAlignedText(py, "...");
+		py += dy;
+		PrintRightAlignedText(py, "FPS 60 ( 60.. 50) / 60");
+		py += dy;
+		PrintRightAlignedText(py, "ViewDist = 1024/0.0");
+		py += dy;
+		PrintRightAlignedText(py, "Render path = ...");
+		py += dy;
+
+		dy = 15;
 		if (sys_dump_memstats)
 		{
-			auto py = 100;
-			const auto dy = 15;
 
-			SDrawTextInfo dti;
-			dti.font = m_pFont;
-			auto& color = dti.color;
-			color[0]	= 1.0; //green
-			color[1]	= 1.0;
-			color[2]	= 1.0; //alpha
-			color[3]	= 0.0; //red
+			auto PrintMemoryUsage = [&,this](const char* name, typename auto fn, auto This) {
+				py += dy;
+				PrintMemoryUsageForName(name, fn, This, px, py);
+			};
+
+			PrintMemoryUsage("Game", &IGame::GetMemoryStatistics, m_pGame);
+			PrintMemoryUsage("System", &CSystem::GetMemoryStatistics, this);
+			PrintMemoryUsage("Renderer", &IRenderer::GetMemoryUsage, m_env.pRenderer);
+			PrintMemoryUsage("ScriptSsystem", &IScriptSystem::GetMemoryStatistics, m_env.pScriptSystem);
+			#if 0
 			static char stats[256];
-			{
-				CrySizerImpl sizer;
-				SIZER_COMPONENT_NAME(&sizer, "Game");
-				m_pGame->GetMemoryStatistics(&sizer);
-				auto		len = sprintf(stats, "Game memory usage: %d", sizer.GetTotalSize());
-				stats[len]		= 0;
-				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
-			}
-			py += dy;
-			{
-				CrySizerImpl sizer;
-				SIZER_COMPONENT_NAME(&sizer, "System");
-				sizer.AddObject(this, sizeof(*this));
-				//sizer.
-
-				auto		len = sprintf(stats, "System memory usage: %d", sizer.GetTotalSize());
-				stats[len]		= 0;
-				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
-			}
-			py += dy;
 			{
 				auto		len = sprintf(stats, "Frame rate: %f\n                        Frame time: %f", m_env.pTimer->GetFrameRate(), m_env.pTimer->GetRealFrameTime());
 				stats[len]		= 0;
 				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
 			}
+			#endif
 		}
 
 		m_env.pRenderer->Update();
@@ -97,3 +99,4 @@ void CSystem::RenderEnd()
 		//m_pWindow->swap();
 	}
 }
+

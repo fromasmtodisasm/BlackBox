@@ -73,4 +73,6 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	int m_CurrentVB_Size = INIT_VB_SIZE;
 	int dbg_mode		 = 0;
 	int stop			 = 0;
+
+	static ID3D10DepthStencilState* m_pDSState;
 };

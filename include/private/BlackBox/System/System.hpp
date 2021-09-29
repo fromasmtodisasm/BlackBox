@@ -340,6 +340,56 @@ class CSystem final : public ISystem
 		return false;
 	}
 
+	template<class T>
+	struct Sizer
+	{
+		typedef void (T::*Func)(ICrySizer*);
+	};
+
+	void GetMemoryStatistics(ICrySizer* pSizer)
+	{
+		pSizer->AddObject(this, sizeof(*this));
+	}
+
+	enum class Align
+	{
+		Left,
+		Right,
+		Center,
+		Bottom,
+		Up,
+	};
+
+	void PrintRightAlignedText(float posY, const char* szText)
+	{
+		SDrawTextInfo info;
+		float		  rightMargin = 20;
+		info.font	= m_pFont;
+		#if 0
+		auto& color = info.color;
+		color[0]	= 1.0; //green
+		color[1]	= 1.0;
+		color[2]	= 1.0; //alpha
+		color[3]	= 0.0; //red
+		#endif
+		m_env.pRenderer->Draw2dText(m_env.pRenderer->GetWidth() - m_pFont->TextWidth(szText) - rightMargin, posY, szText, info);
+	}
+	
+	template<class T>
+	void PrintMemoryUsageForName(const char* name, typename Sizer<T>::Func fn, T* This, float px, float py)
+	{
+
+		static char	 stats[256];
+		CrySizerImpl sizer;
+		SIZER_COMPONENT_NAME(&sizer, name);
+		(This->*fn)(&sizer);
+		auto len   = sprintf(stats, "%s memory usage: %d", name, sizer.GetTotalSize());
+		stats[len] = 0;
+
+		PrintRightAlignedText(py, stats);
+	}
+
+
 
   protected:
 	std::vector<_smart_ptr<SubsystemWrapper>> m_Subsystems;

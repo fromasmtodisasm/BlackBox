@@ -10,6 +10,7 @@
 	if (!(cond)) return;
 
 ID3D10Device* GetDevice();
+ID3D10DepthStencilState* CRenderAuxGeom::m_pDSState;
 
 auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 
@@ -287,6 +288,7 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
 
 		::GetDevice()->PSSetShaderResources(0, 1, &GlobalResources::FontAtlasRV);
 		::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+		::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
 		//GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 	}
@@ -428,6 +430,15 @@ CRenderAuxGeom::CRenderAuxGeom()
 
 	// Initialize the projection matrix
 	D3DXMatrixPerspectiveFovLH(&g_Projection, (float)D3DX_PI * 0.5f, gEnv->pRenderer->GetWidth() / (FLOAT)gEnv->pRenderer->GetHeight(), 0.1f, 100.0f);
+
+
+	D3D10_DEPTH_STENCIL_DESC desc;
+	//desc.BackFace
+	desc.DepthEnable = true;
+	desc.StencilEnable = false;
+	desc.DepthWriteMask = D3D10_DEPTH_WRITE_MASK_ZERO;
+
+	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
