@@ -14,7 +14,7 @@
 void RegisterColorTable();
 class CShader;
 
-constexpr static uint atlas_size{160};
+constexpr static uint atlas_size{512};
 constexpr static uint num_glyphs{127};
 constexpr static uint symbol_padding = 2;
 

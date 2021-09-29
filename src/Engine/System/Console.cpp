@@ -546,7 +546,7 @@ void Command_DumpVars(IConsoleCmdArgs* Cmd)
 //////////////////////////////////////////////////////////////////////////
 int CXConsole::con_display_last_messages = 0;
 int CXConsole::con_line_buffer_size = 500;
-float CXConsole::con_font_size = 14;
+float CXConsole::con_font_size = 36;
 int CXConsole::con_showonload = 0;
 int CXConsole::con_debug = 0;
 int CXConsole::con_restricted = 0;
@@ -2484,8 +2484,10 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 	{
 		//const int flags = eDrawText_Monospace | eDrawText_CenterV | eDrawText_2D;
 		const float fontSize = con_font_size;
-		const float csize = 1.16f * fontSize;
-		const float fCharWidth = 0.5f * fontSize;
+		const float fontScale = 0.5;
+		//const float csize = 1.16f * fontSize;
+		const float csize = fontSize * fontScale;
+		const float fCharWidth = 0.5f * csize;
 
 		float yPos = nScrollPos - csize - 3.0f;
 		const float xPos = LINE_BORDER;
@@ -2495,25 +2497,29 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 		{
 			m_pFont->RenderText(
 				">",
-				xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+				//xPos - fCharWidth, yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
+				xPos - fCharWidth, yPos, fontScale, &glm::vec4(1)[0]);
 			m_pFont->RenderText(
 				m_sInputBuffer.c_str(),
-				xPos, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+				//xPos, yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
+				xPos, yPos, fontScale, &glm::vec4(1)[0]);
 			#if 0
-			IRenderAuxText::DrawText(Vec3(xPos - fCharWidth, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, ">");
-			IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
+			IRenderAuxText::DrawText(Vec3(xPos - fCharWidth, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, ">");
+			IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
 			#endif
 
 			if (m_bDrawCursor)
 			{
 				string szCursorLeft(m_sInputBuffer.c_str(), m_sInputBuffer.c_str() + m_nCursorPos);
 				//int n = m_pFont->GetTextLength(szCursorLeft.c_str(), false);
-				float n = 1.16f * m_pFont->TextWidth(szCursorLeft);
+				//float n = 1.16f * m_pFont->TextWidth(szCursorLeft);
+				float n = fontScale * m_pFont->TextWidth(szCursorLeft);
 
-				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontSize * 1.16f / 14, nullptr, flags, "_");
+				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontScale * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
 					"_",
-					xPos + (/*fCharWidth **/ n), yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+					//xPos + (/*fCharWidth **/ n), yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
+					xPos + (/*fCharWidth **/ n), yPos, fontScale, &glm::vec4(1)[0]);
 			}
 		}
 
@@ -2533,11 +2539,12 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				if (yPos + csize > 0)
 				{
 					#if 0
-					IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontSize * 1.16f / 14, nullptr, flags, buf);
+					IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, buf);
 					#else
 					m_pFont->RenderText(
 						buf,
-						xPos - fCharWidth, yPos, fontSize * 1.16f / 14, &glm::vec4(1)[0]);
+						//xPos - fCharWidth, yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
+						xPos - fCharWidth, yPos, fontScale, &glm::vec4(1)[0]);
 					#endif
 
 				}
@@ -3335,7 +3342,7 @@ IFont* CXConsole::GetFont(const char* name, float w, float h)
 		auto var  = GetCVar("s_font");
 		if (var)
 			font = var->GetString();
-		m_pFont->Init(font, static_cast<unsigned int>(9), static_cast<unsigned int>(9));
+		m_pFont->Init(font, (int)con_font_size, (int)con_font_size);
 		//return m_pFont;
 	}
 	return m_pFont;

@@ -125,13 +125,23 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 			{
 				if (isdigit(*(++c)))
 				{
-					int colorIndex	= *c - '0';
-					ColorB newColor = ColorTable[colorIndex].color;
-					color[0]		= newColor.r;
-					color[1]		= newColor.g;
-					color[2]		= newColor.b;
+					int	   colorIndex = *c - '0';
+					ColorB newColor	  = ColorTable[colorIndex].color;
+					color[0]		  = newColor.g / 255.f;
+					color[1]		  = newColor.b / 255.f;
+					color[2]		  = 1.f;
+					color[3]		  = newColor.r /255.f;
 					//sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
-					cur_c = Vec4(1.f, Vec3(color[2], color[1], color[0]) / 255.f);
+					cur_c = Vec4(
+						#if 1
+						color[0], // green 
+						color[1], // blue
+						color[2], //alpha 
+						color[3] // red
+						#else
+						//1.f,0.f,255.f,0.f
+						#endif
+					);
 					continue;
 				}
 			}

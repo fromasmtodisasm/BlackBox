@@ -49,15 +49,34 @@ void CSystem::RenderEnd()
 	{
 		if (sys_dump_memstats)
 		{
-			CrySizerImpl sizer;
-			SIZER_COMPONENT_NAME(&sizer, "Game");
-			m_pGame->GetMemoryStatistics(&sizer);
+			auto py = 100;
+			const auto dy = 15;
+
 			SDrawTextInfo dti;
 			dti.font = m_pFont;
+			auto& color = dti.color;
+			color[1]	= 0.0;
+			color[2]	= 0.0;
 			static char stats[256];
-			auto		len = sprintf(stats, "Game memory usage: %d", sizer.GetTotalSize());
-			stats[len]		= 0;
-			m_env.pRenderer->Draw2dText(100, 100, stats, dti);
+			{
+				CrySizerImpl sizer;
+				SIZER_COMPONENT_NAME(&sizer, "Game");
+				m_pGame->GetMemoryStatistics(&sizer);
+				auto		len = sprintf(stats, "Game memory usage: %d", sizer.GetTotalSize());
+				stats[len]		= 0;
+				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
+			}
+			py += dy;
+			{
+				CrySizerImpl sizer;
+				SIZER_COMPONENT_NAME(&sizer, "System");
+				sizer.AddObject(this, sizeof(*this));
+				//sizer.
+
+				auto		len = sprintf(stats, "System memory usage: %d", sizer.GetTotalSize());
+				stats[len]		= 0;
+				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
+			}
 		}
 
 		m_env.pRenderer->Update();

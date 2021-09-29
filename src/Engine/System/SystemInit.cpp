@@ -478,7 +478,7 @@ bool CSystem::Init()
 	Tests();
 
 	m_pFont = m_env.pRenderer->GetIFont();
-	m_pFont->Init("arial.ttf", 14, 14);
+	m_pFont->Init("arial.ttf", 16,16);
 
 	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
 	return true;
