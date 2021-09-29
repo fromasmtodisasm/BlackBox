@@ -47,3 +47,5 @@ namespace fs = std::filesystem;
 //namespace fs = std::experimental::filesystem;
 #endif
 
+template<typename T>
+using DynArray = std::vector<T>;

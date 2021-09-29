@@ -165,7 +165,7 @@ struct ISystemUserCallback
 #endif
 
 	//! Collects the memory information in the user program/application.
-	virtual void GetMemoryUsage(struct ICrySizer* pSizer) = 0;
+	virtual void GetMemoryUsage(class ICrySizer* pSizer) = 0;
 	// </interfuscator:shuffle>
 };
 

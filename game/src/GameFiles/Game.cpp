@@ -1405,6 +1405,78 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 	}
 }
 
+void CGame::GetMemoryStatistics(ICrySizer* pSizer)
+{
+	unsigned size;
+
+	pSizer->AddObject(this, sizeof *this);
+	pSizer->AddObject(&m_EntityClassRegistry, m_EntityClassRegistry.MemStats());
+	//pSizer->AddObject(&m_XAreaMgr, m_XAreaMgr.MemStat());
+	//pSizer->AddObject(&m_XDemoMgr, sizeof(m_XDemoMgr));
+
+	TagPointMap::iterator tpItr = m_mapTagPoints.begin();
+	for (size = 0; tpItr != m_mapTagPoints.end(); tpItr++)
+	{
+		size += (tpItr->first).capacity();
+		size += (tpItr->second)->MemStats();
+	}
+	pSizer->AddObject(&m_mapTagPoints, size);
+	//pSizer->AddObject(&m_XSurfaceMgr, m_XSurfaceMgr.MemStat());
+	#if 0
+	if (m_pServer)
+		pSizer->AddObject(m_pServer, m_pServer->MemStats());
+	#endif
+	if (m_pClient)
+	#if 0
+		pSizer->AddObject(m_pClient, sizeof(*m_pClient));
+	#else
+		m_pClient->GetMemoryUsage(pSizer);
+	#endif
+
+	pSizer->AddObject(m_pScriptObjectGame, sizeof *m_pScriptObjectGame);
+	pSizer->AddObject(m_pScriptObjectInput, sizeof *m_pScriptObjectInput);
+
+	//pSizer->AddObject(m_pScriptObjectBoids, sizeof *m_pScriptObjectBoids);
+	//pSizer->AddObject(m_pScriptObjectLanguage, sizeof *m_pScriptObjectLanguage);
+	//pSizer->AddObject(m_pScriptObjectAI, sizeof *m_pScriptObjectAI);
+
+	size = 0;
+	for (ActionsEnumMap::iterator aItr = m_mapActionsEnum.begin(); aItr != m_mapActionsEnum.end(); aItr++)
+	{
+		size += (aItr->first).capacity();
+		size += sizeof(ActionInfo);
+		ActionInfo* curA = &(aItr->second);
+		size += curA->sDesc.capacity();
+		for (unsigned int i = 0; i < curA->vecSetToActionMap.size(); i++)
+			size += curA->vecSetToActionMap[i].capacity();
+	}
+	pSizer->AddObject(&m_mapActionsEnum, size);
+
+	//if (m_pWeaponSystemEx)
+	//	pSizer->AddObject(m_pWeaponSystemEx, m_pWeaponSystemEx->MemStats());
+
+	size			= 0;
+	#if 0
+	IEntityIt* eItr = m_pSystem->GetIEntitySystem()->GetEntityIterator();
+	IEntity*   ent;
+	while ((ent = eItr->Next()) != NULL)
+	{
+		IEntityContainer* pCnt	  = ent->GetContainer();
+		CPlayer*		  pPlayer = NULL;
+
+		if (pCnt)
+		{
+			pCnt->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer);
+			if (pPlayer)
+				size += pPlayer->MemStats();
+		}
+	}
+
+	pSizer->AddObject("players from entSystem", size);
+	#endif
+
+}
+
 bool CGame::SteamInit()
 {
 #ifndef USE_STEAM
@@ -1413,6 +1485,13 @@ bool CGame::SteamInit()
 
 	// инициализируем Steam
 	bool bRet = SteamAPI_Init();
+	if (!bRet)
+	{
+		if (!SteamAPI_IsSteamRunning()) {
+			MessageBox(NULL, "Steam not running", "Error", MB_OK);
+		}
+	}
+
 	// создаем объект SteamAchievements, если инициализация Steam удалась
 	if (bRet)
 	{

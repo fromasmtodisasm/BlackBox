@@ -103,12 +103,14 @@ class CClient :
 	END_INPUTACTIONMAP()
 
 	void Render();
+	void GetMemoryUsage(ICrySizer* pSizer);
 
   private:
 	void DrawAux();
 	void DrawAxis(IRenderAuxGeom* render, Vec3 axis);
 	void IntersectionTest();
 	void IntersectionByRayCasting();
+
 
   private:
 	CGame* m_pGame{};

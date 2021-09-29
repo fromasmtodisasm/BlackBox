@@ -319,6 +319,7 @@ bool CSystem::Init()
 #endif
 		GetIRemoteConsole()->RegisterConsoleVariables();
 		GetIRemoteConsole()->Update();
+		CreateSystemVars();
 	}
 	LogCommandLine();
 
@@ -475,6 +476,9 @@ bool CSystem::Init()
 	}
 	ExecuteCommandLine();
 	Tests();
+
+	m_pFont = m_env.pRenderer->GetIFont();
+	m_pFont->Init("arial.ttf", 14, 14);
 
 	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
 	return true;
@@ -668,7 +672,9 @@ bool CSystem::InitFileSystem()
 {
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing File System...");
-	m_RootFolder = string(fs::current_path().u8string());
+	#if 0
+	m_RootFolder = string(fs::current_path().u8string().c_str());
+	#endif
 
 	bool bLvlRes = false;               // true: all assets since executable start are recorded, false otherwise
 

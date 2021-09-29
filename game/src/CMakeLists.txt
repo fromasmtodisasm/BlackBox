@@ -30,6 +30,7 @@ add_sources(
 	GameFiles/GameMods.cpp
 	GameFiles/GameObject.cpp
 	GameFiles/GameTagPoints.cpp
+	GameFiles/GameMemStats.cpp
 	GameFiles/SteamHelper.cpp
 	GameFiles/XVehicleSystem.cpp
 	SOURCE_GROUP

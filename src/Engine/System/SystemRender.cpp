@@ -2,6 +2,8 @@
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/System/System.hpp>
 
+#include "CrySizerImpl.h"
+
 void CSystem::Render()
 {
 	if (m_env.pRenderer)
@@ -45,7 +47,21 @@ void CSystem::RenderEnd()
 	}
 	if (m_env.pRenderer)
 	{
+		if (sys_dump_memstats)
+		{
+			CrySizerImpl sizer;
+			SIZER_COMPONENT_NAME(&sizer, "Game");
+			m_pGame->GetMemoryStatistics(&sizer);
+			SDrawTextInfo dti;
+			dti.font = m_pFont;
+			static char stats[256];
+			auto		len = sprintf(stats, "Game memory usage: %d", sizer.GetTotalSize());
+			stats[len]		= 0;
+			m_env.pRenderer->Draw2dText(100, 100, stats, dti);
+		}
+
 		m_env.pRenderer->Update();
+
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)
 			m_GuiManager->Render();

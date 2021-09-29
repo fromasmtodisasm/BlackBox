@@ -686,4 +686,7 @@ public:
 
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+
+	// Inherited via IGame
+	virtual void GetMemoryStatistics(ICrySizer* pSizer) override;
 };

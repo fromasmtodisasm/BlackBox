@@ -12,8 +12,18 @@
 #ifdef DX_RENDERER
 #	include <BlackBox/Core/Platform/Windows.hpp>
 #	define __IFont_INTERFACE_DEFINED__
-#	include <d3d10.h>
+
+#	include <d3d11.h>
+//#	include <d3dx11.h>
 #	include <d3dx10.h>
+
+#	define ID3DDevice ID3D11Device
+#	define ID3DRenderTargetView ID3D11RenderTargetView
+#	define ID3DTexture2D ID3D11Texture2D
+#	define ID3DDepthStencilView ID3D11DepthStencilView
+#	define ID3DRasterizerState ID3D11RasterizerState
+#	define ID3DDepthStencilState ID3D11DepthStencilState
+
 using D3DXMATRIX_  = glm::mat4;
 using D3DXVECTOR3_ = glm::vec3;
 using D3DXVECTOR4_ = glm::vec4;

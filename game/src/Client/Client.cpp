@@ -457,6 +457,14 @@ void CClient::IntersectionByRayCasting()
 	}
 }
 
+void CClient::GetMemoryUsage(ICrySizer* pSizer)
+{
+	pSizer->AddObject(this, sizeof(*this));
+	pSizer->AddContainer(m_testObjects);
+	pSizer->AddContainer(m_LineList);
+	pSizer->AddContainer(lineBuffer);
+}
+
 void CClient::Render()
 {
 	DrawAux();

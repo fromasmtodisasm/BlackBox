@@ -242,99 +242,10 @@ class CSystem final : public ISystem
 	void ShutDown();
 
 	void UnloadSubsystems();
-
-  protected:
-	std::vector<_smart_ptr<SubsystemWrapper>> m_Subsystems;
-	CCmdLine* m_pCmdLine = nullptr;
-
-  private:
-	// System environment.
-#if defined(SYS_ENV_AS_STRUCT)
-	//since gEnv is a global var, this should just be a reference for code consistency
-	SSystemGlobalEnvironment& m_env;
-#else
-	SSystemGlobalEnvironment m_env;
-#endif
-	CTimer m_Time;		  //!<
-	CCamera m_ViewCamera; //!<
-
-	//IInput* m_pInput;
-	ICryPak* m_pCryPak = nullptr;
-	IGame* m_pGame = nullptr;
-	IFont* m_pFont = nullptr;
-	IWindow* m_pWindow = nullptr;
-	IValidator* m_pValidator; //!< Pointer to validator interface.
-	IEntitySystem* m_pEntitySystem = nullptr;
-	INetwork* m_pNetwork = nullptr;
-	ITextModeConsole* m_pTextModeConsole = nullptr;
-	//! system event dispatcher
-	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
-
-	CScriptObjectConsole* m_ScriptObjectConsole = nullptr;
-	CScriptObjectScript* m_ScriptObjectScript = nullptr;
-	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
-
-  private:
-	ICVar* cvGameName = nullptr;
-	//////////////////////////////////////////////////////////////////////////
-	//! User define callback for system events.
-	ISystemUserCallback* m_pUserCallback = nullptr;
-
-	//SSystemInitParams& m_startupParams;
-	SSystemInitParams m_startupParams;
-	SFileVersion m_FileVersion;
-	SFileVersion m_ProductVersion;
-
-	uint64_t NOW;
-	uint64_t LAST;
-	double m_DeltaTime = 0.0;
-
-#if ENABLE_DEBUG_GUI
-	IImGuiManager* m_GuiManager = nullptr;
-#endif
-
-	//! global root folder
-	string m_root;
-	int    m_iApplicationInstance;
-
-	//! to hold the values stored in system.cfg
-	//! because editor uses it's own values,
-	//! and then saves them to file, overwriting the user's resolution.
-	int m_iHeight	 = 0;
-	int m_iWidth	 = 0;
-	int m_iColorBits = 0;
-
-	// System console variables.
-	//////////////////////////////////////////////////////////////////////////
-	float m_rIntialWindowSizeRatio;
-	int m_rWidth;
-	int m_rHeight;
-	int m_rColorBits;
-	int m_rDepthBits;
-	int m_rStencilBits;
-	int m_rFullscreen;
-	//ICVar* m_rFullsceenNativeRes;
-	//ICVar* m_rWindowState;
-	ICVar* m_rDriver;
-	int m_rDisplayInfo;
-	int m_rDebug;
-	int m_rTonemap;
-	int m_rSkipShaderCache;
-
-	bool m_bIsActive = true;
-	
-	string m_RootFolder;
-
-	// Inherited via ISystem
 	virtual void EnableGui(bool enable) override;
-
-	// Inherited via ISystem
 	virtual void SaveConfiguration() override;
 	virtual void              LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
 	                                            ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) override;
-
-
-	// Inherited via ILoadConfigurationEntrySink
 	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;
 
 	virtual void Relaunch(bool bRelaunch) override;
@@ -428,6 +339,92 @@ class CSystem final : public ISystem
 		}
 		return false;
 	}
+
+
+  protected:
+	std::vector<_smart_ptr<SubsystemWrapper>> m_Subsystems;
+	CCmdLine* m_pCmdLine = nullptr;
+
+  private:
+	// System environment.
+#if defined(SYS_ENV_AS_STRUCT)
+	//since gEnv is a global var, this should just be a reference for code consistency
+	SSystemGlobalEnvironment& m_env;
+#else
+	SSystemGlobalEnvironment m_env;
+#endif
+	CTimer m_Time;		  //!<
+	CCamera m_ViewCamera; //!<
+
+	//IInput* m_pInput;
+	ICryPak* m_pCryPak = nullptr;
+	IGame* m_pGame = nullptr;
+	IFont* m_pFont = nullptr;
+	IWindow* m_pWindow = nullptr;
+	IValidator* m_pValidator; //!< Pointer to validator interface.
+	IEntitySystem* m_pEntitySystem = nullptr;
+	INetwork* m_pNetwork = nullptr;
+	ITextModeConsole* m_pTextModeConsole = nullptr;
+	//! system event dispatcher
+	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
+
+	CScriptObjectConsole* m_ScriptObjectConsole = nullptr;
+	CScriptObjectScript* m_ScriptObjectScript = nullptr;
+	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
+
+  private:
+	ICVar* cvGameName = nullptr;
+	//////////////////////////////////////////////////////////////////////////
+	//! User define callback for system events.
+	ISystemUserCallback* m_pUserCallback = nullptr;
+
+	//SSystemInitParams& m_startupParams;
+	SSystemInitParams m_startupParams;
+	SFileVersion m_FileVersion;
+	SFileVersion m_ProductVersion;
+
+	uint64_t NOW;
+	uint64_t LAST;
+	double m_DeltaTime = 0.0;
+
+#if ENABLE_DEBUG_GUI
+	IImGuiManager* m_GuiManager = nullptr;
+#endif
+
+	//! global root folder
+	string m_root;
+	int    m_iApplicationInstance;
+
+	//! to hold the values stored in system.cfg
+	//! because editor uses it's own values,
+	//! and then saves them to file, overwriting the user's resolution.
+	int m_iHeight	 = 0;
+	int m_iWidth	 = 0;
+	int m_iColorBits = 0;
+
+	// System console variables.
+	//////////////////////////////////////////////////////////////////////////
+	float m_rIntialWindowSizeRatio;
+	int m_rWidth;
+	int m_rHeight;
+	int m_rColorBits;
+	int m_rDepthBits;
+	int m_rStencilBits;
+	int m_rFullscreen;
+	//ICVar* m_rFullsceenNativeRes;
+	//ICVar* m_rWindowState;
+	ICVar* m_rDriver;
+	int m_rDisplayInfo;
+	int m_rDebug;
+	int m_rTonemap;
+	int m_rSkipShaderCache;
+
+	bool m_bIsActive = true;
+	
+	string m_RootFolder;
+
+	int sys_dump_memstats = false;
+
 };
 
 void AddInternalCommands(ISystem* pSystem);

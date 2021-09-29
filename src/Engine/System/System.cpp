@@ -377,6 +377,7 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 
 void CSystem::CreateSystemVars()
 {
+	REGISTER_CVAR2("sys_dump_memstats", &sys_dump_memstats, 0, VF_NULL, "");
 }
 
 void CSystem::ShutDown()

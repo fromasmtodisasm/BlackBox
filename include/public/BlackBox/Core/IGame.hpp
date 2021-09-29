@@ -16,7 +16,8 @@ typedef unsigned short EntityClassId;			//< unique identifier for the entity cla
 struct ISystem;
 struct IInputHandler;
 struct ITagPoint;
-struct	IXAreaMgr;
+struct IXAreaMgr;
+struct ICrySizer;
 
 /*
 This structure stores the informations to identify an entity type
@@ -172,30 +173,32 @@ enum EGameCapability
 };
 
 //	Exposes the basic functionality to initialize and run the game.
-struct IGame {
-  virtual bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) = 0;
-  virtual bool Update() = 0;
-  virtual bool Run(bool& bRelaunch) = 0;
-  virtual void Stop() = 0;
-  virtual void SendMessage(const char* s) = 0;
-  //Shutdown and destroy the module (delete this)
-  virtual void Release() = 0;
+struct IGame
+{
+	virtual bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) = 0;
+	virtual bool Update()																				  = 0;
+	virtual bool Run(bool& bRelaunch)																	  = 0;
+	virtual void Stop()																					  = 0;
+	virtual void SendMessage(const char* s)																  = 0;
+	virtual void GetMemoryStatistics(ICrySizer* pSizer)													  = 0;
+	//Shutdown and destroy the module (delete this)
+	virtual void Release() = 0;
 
-  // saves player configuration
-  virtual void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) = 0;
+	// saves player configuration
+	virtual void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) = 0;
 
-  // This is used by editor for changing properties from scripts (no restart).
-  virtual void ReloadScripts() = 0;
+	// This is used by editor for changing properties from scripts (no restart).
+	virtual void ReloadScripts() = 0;
 
-  virtual bool GetModuleState(EGameCapability eCap) = 0;
+	virtual bool GetModuleState(EGameCapability eCap) = 0;
 
-  // is called from time to time during loading (usually network updates)
-  // currently only called for server map loading
-  virtual void UpdateDuringLoading() = 0;
+	// is called from time to time during loading (usually network updates)
+	// currently only called for server map loading
+	virtual void UpdateDuringLoading() = 0;
 
-  //virtual ITagPointManager* GetTagPointManager();
-  virtual IXAreaMgr* GetAreaManager() = 0;
-  virtual ITagPointManager* GetTagPointManager() = 0;
+	//virtual ITagPointManager* GetTagPointManager();
+	virtual IXAreaMgr*		  GetAreaManager()	   = 0;
+	virtual ITagPointManager* GetTagPointManager() = 0;
 };
 
 extern IGame* p_gIGame;

@@ -21,6 +21,7 @@ add_sources(
 	"Source Files"
 	"CmdLine.cpp"
 	"CmdLineArg.cpp"
+	"CrySizerImpl.cpp"
 	"Commands.cpp"
 	"Console.cpp"
 	"ConsoleBatchFile.cpp"

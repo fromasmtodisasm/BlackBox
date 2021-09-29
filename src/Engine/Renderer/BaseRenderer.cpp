@@ -381,10 +381,13 @@ void CRenderer::CreateQuad()
 	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
 
-void CRenderer::Draw2dText(float posX, float posY, const char* szText, SDrawTextInfo& info)
+void CRenderer::Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info)
 {
-	info.font->RenderText(szText, posX, posY, 1.0, info.color);
-	info.font->Submit();
+	if (info.font)
+	{
+		info.font->RenderText(szText, posX, posY, 1.0, (float*)info.color);
+		info.font->Submit();
+	}
 }
 
 void CRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a)

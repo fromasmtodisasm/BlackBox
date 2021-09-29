@@ -1,4 +1,3 @@
-
 //////////////////////////////////////////////////////////////////////////
 //
 //	Crytek Source code 
@@ -68,8 +67,9 @@ enum ICrySizerFlagsEnum
 //
 // WARNING:
 //   If you have an array (pointer), you should Add its size with addArray
-struct ICrySizer
+class ICrySizer
 {
+public:
 	// this class is used to push/pop the name to/from the stack automatically
 	// (to exclude stack overruns or underruns at runtime)
 	friend class CrySizerComponentNameHelper;
@@ -86,7 +86,7 @@ struct ICrySizer
 	// but it must be unique throughout the system and unchanging for this object)
 	// RETURNS: true if the object has actually been added (for the first time)
 	//          and calculated
-	virtual bool AddObject (const void* pIdentifier, size_t nSizeBytes) = 0;
+	virtual bool AddObject (const void* pIdentifier, size_t nSizeBytes, int nCount = 1) = 0;
 
 	template <typename T>
 	bool Add (const T* pId, size_t num)
