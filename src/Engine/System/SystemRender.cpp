@@ -55,8 +55,10 @@ void CSystem::RenderEnd()
 			SDrawTextInfo dti;
 			dti.font = m_pFont;
 			auto& color = dti.color;
-			color[1]	= 0.0;
-			color[2]	= 0.0;
+			color[0]	= 1.0; //green
+			color[1]	= 1.0;
+			color[2]	= 1.0; //alpha
+			color[3]	= 0.0; //red
 			static char stats[256];
 			{
 				CrySizerImpl sizer;
