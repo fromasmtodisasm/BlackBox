@@ -79,6 +79,12 @@ void CSystem::RenderEnd()
 				stats[len]		= 0;
 				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
 			}
+			py += dy;
+			{
+				auto		len = sprintf(stats, "Frame rate: %f\n                        Frame time: %f", m_env.pTimer->GetFrameRate(), m_env.pTimer->GetRealFrameTime());
+				stats[len]		= 0;
+				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
+			}
 		}
 
 		m_env.pRenderer->Update();

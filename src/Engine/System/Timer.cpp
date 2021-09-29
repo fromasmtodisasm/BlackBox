@@ -20,7 +20,7 @@ static const float fDEFAULT_PROFILE_SMOOTHING = 1.0f;
 
 #define DEFAULT_FRAME_SMOOTHING 1
 #if BB_PLATFORM_LINUX || !defined(QWERTY)
-#define	  bbGetTicks() 0
+inline uint64 CryGetTicks() { return __rdtsc(); }
 #endif
 
 /////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ void CTimer::ClearTimeScales()
 /////////////////////////////////////////////////////
 float CTimer::GetAsyncCurTime()
 {
-  int64_t llNow = bbGetTicks() - m_lBaseTime;
+  int64_t llNow = CryGetTicks() - m_lBaseTime;
   return TicksToSeconds(llNow);
 }
 
@@ -322,7 +322,7 @@ void CTimer::UpdateOnFrameStart()
 	if (m_fixed_time_step < 0.0f)
 	{
 		// Enforce real framerate by sleeping.
-		const int64 elapsedTicks = bbGetTicks() - m_lBaseTime - m_lLastTime;
+		const int64 elapsedTicks = CryGetTicks() - m_lBaseTime - m_lLastTime;
 		const int64 minTicks = SecondsToTicks(-m_fixed_time_step);
 		if (elapsedTicks < minTicks)
 		{
@@ -332,7 +332,7 @@ void CTimer::UpdateOnFrameStart()
 		}
 	}
 
-  const int64_t now = bbGetTicks();
+  const int64_t now = CryGetTicks();
   CRY_ASSERT(now + 1 >= m_lBaseTime && "Invalid base time"); //+1 margin because QPC may be one off across cores
 
 	m_fRealFrameTime = TicksToSeconds(now - m_lBaseTime - m_lLastTime);
@@ -438,7 +438,7 @@ float CTimer::GetAverageFrameTime()
 /////////////////////////////////////////////////////
 void CTimer::ResetTimer()
 {
-  m_lBaseTime = bbGetTicks();
+  m_lBaseTime = CryGetTicks();
   m_lLastTime = 0;
   m_lOffsetTime = 0;
 
@@ -467,7 +467,7 @@ bool CTimer::IsTimerEnabled() const
 /////////////////////////////////////////////////////
 CTimeValue CTimer::GetAsyncTime() const
 {
-  int64_t llNow = bbGetTicks();
+  int64_t llNow = CryGetTicks();
   double fConvert = CTimeValue::TIMEVALUE_PRECISION * m_fSecsPerTick;
   return CTimeValue(int64_t(llNow * fConvert));
 }

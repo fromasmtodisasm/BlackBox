@@ -643,6 +643,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 {
 	//PROFILER_SYNC_FRAME();
 	// Update input
+	m_env.pTimer->UpdateOnFrameStart();
 	LAST = NOW;
 	NOW	 = SDL_GetPerformanceCounter();
 

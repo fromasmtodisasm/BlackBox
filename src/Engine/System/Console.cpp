@@ -1516,7 +1516,7 @@ void CXConsole::Draw()
 			m_fCursorBlinkTimer += gEnv->pTimer->GetRealFrameTime();                      // works even when time is manipulated
 			//	m_fCursorBlinkTimer += gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);					// can be used once ETIMER_UI works even with t_FixedTime
 
-			const float fCursorBlinkDelay = 0.5f;           // in sec (similar to Windows default but might differ from actual setting)
+			const float fCursorBlinkDelay = 100.f;           // in sec (similar to Windows default but might differ from actual setting)
 
 			if (m_fCursorBlinkTimer > fCursorBlinkDelay)
 			{
