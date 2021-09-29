@@ -684,6 +684,10 @@ public:
 	// developer mode
 	std::unique_ptr<CDevMode> m_pDevMode;
 
+	size_t m_CurrentMenuEntry = 0;
+	size_t m_MenuEnries		  = 0;
+	bool   m_MenuActived	  = false;
+
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 

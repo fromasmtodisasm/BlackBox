@@ -413,7 +413,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 #endif
 	}
 	else
-		m_pSystem->GetIConsole()->ShowConsole(true);
+		m_pSystem->GetIConsole()->ShowConsole(false);
 
 	InitConsoleCommands();
 
@@ -421,7 +421,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 
 	InitPlayer();
 	//m_pInput->ShowCursor(false);
-	//m_pInput->GrabInput(true);
+	m_pInput->GrabInput(true);
 
 	if (m_pRender)
 	{
@@ -526,19 +526,32 @@ bool			 CGame::Update()
 				return false;
 			}
 #endif
-			auto posY	   = 200.f;
-			auto PrintMenu = [&,this](const char* szText)
+			auto posY			= 200.f;
+			size_t currentEntry	= 0;
+			auto PrintMenuEntry = [&,this](const char* szText, bool active = false) -> bool
 			{
 				SDrawTextInfo info;
 				float		  rightMargin = 60;
 				info.font				  = m_Font;
-			auto& color = info.color;
-			color[0]	= 1.0; //green
-			color[1]	= 1.0;
-			color[2]	= 1.0; //alpha
-			color[3]	= 0.0; //red
+				auto& color				  = info.color;
+				Vec3  activeColor		  = Vec3(174, 237, 181) / 255.f;
+				Vec3  menuColor			  = Vec3(73, 92, 79) / 255.f;
+
+				if (m_CurrentMenuEntry == currentEntry)
+				{
+					active = true;
+				}
+				if (active) menuColor = activeColor;
+				color[0] = menuColor.g; //green
+				color[1] = menuColor.b;
+				color[2] = 1.0; //alpha
+				color[3] = menuColor.r; //red
 				gEnv->pRenderer->Draw2dText(rightMargin, posY, szText, info);
 				posY += 64;
+				currentEntry++;
+				m_MenuEnries = currentEntry;
+
+				return active && m_MenuActived;
 			};
 
 			SetRenderState();
@@ -556,13 +569,19 @@ bool			 CGame::Update()
 					case CGame::FPS:
 						break;
 					case CGame::MENU:
-						PrintMenu("Campaign");
-						PrintMenu("Multiplayer");
-						PrintMenu("Options");
-						PrintMenu("Mods");
-						PrintMenu("Demo Loop");
-						PrintMenu("Credits");
-						PrintMenu("Quit");
+						PrintMenuEntry("Campaign");
+						PrintMenuEntry("Multiplayer");
+						PrintMenuEntry("Options");
+						PrintMenuEntry("Mods");
+						PrintMenuEntry("Demo Loop");
+						if (PrintMenuEntry("Credits"))
+						{
+							CryLogAlways("Credits activated");
+						}
+						if (PrintMenuEntry("Quit"))
+						{
+							gEnv->pSystem->Quit();
+						}
 						break;
 					case CGame::FLY:
 						break;
@@ -897,7 +916,7 @@ void CGame::GotoGame()
 		m_bInPause = false;
 		m_Mode	   = FPS;
 		m_pInput->ShowCursor(false);
-		m_pInput->GrabInput(true);
+		//m_pInput->GrabInput(true);
 		m_Console->ShowConsole(false);
 		m_pSystem->EnableGui(false);
 	}
@@ -1067,23 +1086,39 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 	bool	   control	  = event.modifiers & eMM_Ctrl;
 	bool	   shift	  = event.modifiers & eMM_Shift;
 	bool	   alt		  = event.modifiers & eMM_Alt;
+	static int activatedFrame = 0;
+	if (m_MenuActived && gEnv->pRenderer->GetFrameID() > activatedFrame)
+	{
+		m_MenuActived = false;
+		activatedFrame = 0;
+	}
 	////////////////////////
 	if (keyPressed)
 	{
 		switch (event.keyId)
 		{
+		case eKI_Enter:
+			m_MenuActived = true;
+			activatedFrame = gEnv->pRenderer->GetFrameID();
+			return true;
 		case eKI_Escape:
 			//m_inputHandler->mouseLock(false);
 			//m_Mode = Mode::MENU;
 			//Stop();
-			return true;
-		case eKI_Enter:
 			GotoGame();
 			return true;
 		case eKI_J:
 			return true;
 		case eKI_K:
 			return true;
+
+		case eKI_Up:
+			m_CurrentMenuEntry = std::max(1ULL, m_CurrentMenuEntry) - 1;
+			return true;
+		case eKI_Down:
+			m_CurrentMenuEntry = std::min(m_MenuEnries - 1, m_CurrentMenuEntry) + 1;
+			return true;
+
 		default:
 			return false;
 		}

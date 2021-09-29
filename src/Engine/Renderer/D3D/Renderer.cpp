@@ -83,7 +83,7 @@ void CD3DRenderer::BeginFrame(void)
 
 void CD3DRenderer::Update(void)
 {
-	
+	m_FrameID++;	
     //
     // Clear the back buffer
     //
@@ -305,7 +305,8 @@ bool CD3DRenderer::InitOverride()
     m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
     //m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 
-	SetClearColor({.1, .1, .1});
+	Vec3 c = Vec3(2, 162, 246) / 255.f;
+	SetClearColor(c);
 
     return true;
 }

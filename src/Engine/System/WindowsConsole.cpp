@@ -151,6 +151,8 @@ void CWindowsConsole::Print(const char* pInszText)
 	const char* pInszTextPtr = pInszText;
 	const char* pLogLinePtr = m_logLine.c_str();
 
+	// FIXME: very strange code
+	#if 0
 	while (*pLogLinePtr && isContinue)
 	{
 		if (*pInszTextPtr != *pLogLinePtr)
@@ -161,6 +163,7 @@ void CWindowsConsole::Print(const char* pInszText)
 		++pInszTextPtr;
 		++pLogLinePtr;
 	}
+	#endif
 
 	// Do not treat lines as equal if the new line starts the same as the previous line
 	isContinue = isContinue && (*pInszTextPtr == 0 || m_logLine.empty());
