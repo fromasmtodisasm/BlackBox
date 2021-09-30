@@ -4,6 +4,9 @@
 ID3D10ShaderResourceView* GlobalResources::FontAtlasRV{};
 ID3D10SamplerState*		  GlobalResources::LinearSampler{};
 
+ID3D10ShaderResourceView* GlobalResources::WiteTextureRV;
+ID3D10ShaderResourceView* GlobalResources::GreyTextureRV;
+
 struct ITechniqueManager;
 ID3D10Device* GetDevice()
 {

@@ -73,6 +73,10 @@ private:
 	SVertexStream* m_IB = nullptr;
 	_smart_ptr<CShader> shader;
 	ID3D10Texture2D *m_pTexture = NULL;
+
+	ID3D10Texture2D *m_pWightTexture = NULL;
+	ID3D10Texture2D *m_pGreyTexture = NULL;
+
 	ID3D10ShaderResourceView* m_pTextureRV = NULL;
 
 	ID3D10Buffer* m_pConstantBuffer;

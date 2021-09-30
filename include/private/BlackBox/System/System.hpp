@@ -364,11 +364,11 @@ class CSystem final : public ISystem
 		Up,
 	};
 
-	void PrintRightAlignedText(float posY, const char* szText)
+	void PrintRightAlignedText(float posY, const char* szText, IFont* pFont = nullptr)
 	{
 		SDrawTextInfo info;
 		float		  rightMargin = 20;
-		info.font	= m_pFont;
+		info.font	= pFont ? pFont : m_pFont;
 		#if 0
 		auto& color = info.color;
 		color[0]	= 1.0; //green
@@ -376,7 +376,7 @@ class CSystem final : public ISystem
 		color[2]	= 1.0; //alpha
 		color[3]	= 0.0; //red
 		#endif
-		m_env.pRenderer->Draw2dText(m_env.pRenderer->GetWidth() - m_pFont->TextWidth(szText) - rightMargin, posY, szText, info);
+		m_env.pRenderer->Draw2dText(m_env.pRenderer->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
 	}
 	
 	template<class T>
@@ -414,10 +414,11 @@ class CSystem final : public ISystem
 	volatile bool m_bQuit{false}; //!< if is true the system is quitting. Volatile as it may be polled from multiple threads.
 
 	//IInput* m_pInput;
-	ICryPak*		  m_pCryPak = nullptr;
-	IGame*			  m_pGame	= nullptr;
-	IFont*			  m_pFont	= nullptr;
-	IWindow*		  m_pWindow = nullptr;
+	ICryPak*		  m_pCryPak		  = nullptr;
+	IGame*			  m_pGame		  = nullptr;
+	IFont*			  m_pFont		  = nullptr;
+	IFont*			  m_pBlackBoxFont = nullptr;
+	IWindow*		  m_pWindow		  = nullptr;
 	IValidator*		  m_pValidator; //!< Pointer to validator interface.
 	IEntitySystem*	  m_pEntitySystem	 = nullptr;
 	INetwork*		  m_pNetwork		 = nullptr;

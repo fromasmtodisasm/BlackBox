@@ -85,6 +85,7 @@ void CSystem::RenderStats()
 			}
 			#endif
 		}
+		PrintRightAlignedText(gEnv->pRenderer->GetHeight() - 64.f, "$0BLACKBOX $8ENGINE", m_pBlackBoxFont);
 
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)

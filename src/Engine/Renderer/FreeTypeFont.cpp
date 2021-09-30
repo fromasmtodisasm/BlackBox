@@ -347,6 +347,102 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 
 			GetDevice()->CreateTexture2D(&desc, &srd, &m_pTexture);
 		}
+
+		struct Texel
+		{
+			using Type = Vec4;
+			//DXGI_FORMAT Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		};
+
+		{
+			std::vector<Texel::Type> image(16*16);
+			D3D10_TEXTURE2D_DESC desc;
+			ZeroMemory(&desc, sizeof(desc));
+			desc.Width			  = 16;
+			desc.Height			  = 16;
+			desc.MipLevels		  = 1;
+			desc.ArraySize		  = 1;
+			desc.Format			  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			desc.SampleDesc.Count = 1;
+			desc.Usage			  = D3D10_USAGE_DEFAULT;
+			desc.BindFlags		  = D3D10_BIND_SHADER_RESOURCE;
+			desc.CPUAccessFlags	  = 0;//D3D10_CPU_ACCESS_WRITE;
+
+			D3D10_MAPPED_TEXTURE2D mappedTex;
+			mappedTex.RowPitch = 16 * sizeof(Texel::Type);
+
+			for (auto &texel : image)
+			{
+				texel = Texel::Type(1.f, 1.f, 1.f, 1.f);
+			}
+
+			D3D10_SUBRESOURCE_DATA srd;
+			srd.pSysMem = image.data();
+			srd.SysMemPitch = mappedTex.RowPitch;
+
+
+			GetDevice()->CreateTexture2D(&desc, &srd, &m_pWightTexture);
+			{
+				// SEND TO SHADER
+				D3D10_SHADER_RESOURCE_VIEW_DESC srvDesc;
+				D3D10_TEXTURE2D_DESC			desc;
+				m_pWightTexture->GetDesc(&desc);
+				srvDesc.Format					  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				srvDesc.ViewDimension			  = D3D10_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MipLevels		  = desc.MipLevels;
+				srvDesc.Texture2D.MostDetailedMip = desc.MipLevels - 1;
+				auto hr							  = GetDevice()->CreateShaderResourceView(m_pWightTexture, &srvDesc, &GlobalResources::WiteTextureRV);
+				if (FAILED(hr))
+				{
+					CryError("Failed to create texture view");
+				}
+			}
+		}
+		{
+			std::vector<Texel::Type> image(16*16);
+			D3D10_TEXTURE2D_DESC desc;
+			ZeroMemory(&desc, sizeof(desc));
+			desc.Width			  = 16;
+			desc.Height			  = 16;
+			desc.MipLevels		  = 1;
+			desc.ArraySize		  = 1;
+			desc.Format			  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			desc.SampleDesc.Count = 1;
+			desc.Usage			  = D3D10_USAGE_DEFAULT;
+			desc.BindFlags		  = D3D10_BIND_SHADER_RESOURCE;
+			desc.CPUAccessFlags	  = 0;//D3D10_CPU_ACCESS_WRITE;
+
+			D3D10_MAPPED_TEXTURE2D mappedTex;
+			mappedTex.RowPitch = 16 * sizeof(Texel::Type);
+
+			for (auto &texel : image)
+			{
+				texel = Texel::Type(1.f, 1.f, 1.f, 1.f) * 0.3f;
+				texel.a = 1.f;
+			}
+
+			D3D10_SUBRESOURCE_DATA srd;
+			srd.pSysMem = image.data();
+			srd.SysMemPitch = mappedTex.RowPitch;
+
+
+			GetDevice()->CreateTexture2D(&desc, &srd, &m_pWightTexture);
+			{
+				// SEND TO SHADER
+				D3D10_SHADER_RESOURCE_VIEW_DESC srvDesc;
+				D3D10_TEXTURE2D_DESC			desc;
+				m_pWightTexture->GetDesc(&desc);
+				srvDesc.Format					  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				srvDesc.ViewDimension			  = D3D10_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MipLevels		  = desc.MipLevels;
+				srvDesc.Texture2D.MostDetailedMip = desc.MipLevels - 1;
+				auto hr							  = GetDevice()->CreateShaderResourceView(m_pWightTexture, &srvDesc, &GlobalResources::GreyTextureRV);
+				if (FAILED(hr))
+				{
+					CryError("Failed to create texture view");
+				}
+			}
+		}
 		// SEND TO SHADER
 		D3D10_SHADER_RESOURCE_VIEW_DESC srvDesc;
 		D3D10_TEXTURE2D_DESC desc;

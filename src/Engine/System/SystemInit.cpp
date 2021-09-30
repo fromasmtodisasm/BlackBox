@@ -482,6 +482,9 @@ bool CSystem::Init()
 	m_pFont = m_env.pRenderer->GetIFont();
 	m_pFont->Init("arial.ttf", 16,16);
 
+	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
+	m_pBlackBoxFont->Init("arial.ttf", 24,24);
+
 	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
 	return true;
 }
