@@ -511,7 +511,7 @@ bool CGame::InitClassRegistry()
 
 void CGame::OnRenderer_BeforeEndFrame()
 {
-	auto   posY			  = 200.f;
+	auto   posY			  = 150.f;
 	size_t currentEntry	  = 0;
 	auto   PrintMenuEntry = [&, this](const char* szText, bool skip = false) -> bool
 	{
@@ -705,9 +705,11 @@ void CGame::OnRenderer_BeforeEndFrame()
 						
 					}
 
-					static char MOD[256];
-					sprintf(MOD, "$7Current MOD: %s", mods_str[selected_mod]);
-					PrintMenuEntry(MOD);
+					static char buffer[256];
+					sprintf(buffer, "USER: %s", gEnv->pSystem->GetUserName());
+					PrintMenuEntry(buffer);
+					sprintf(buffer, "$7Current buffer: %s", mods_str[selected_mod]);
+					PrintMenuEntry(buffer);
 					if (PrintMenuEntry("Return to Game"))
 					{
 						GotoGame();
