@@ -559,7 +559,10 @@ bool			 CGame::Update()
 					color[1] = menuColor.b;
 					color[2] = 1.0; //alpha
 					color[3] = menuColor.r; //red
-					gEnv->pRenderer->Draw2dText(rightMargin, posY, szText, info);
+					auto px	 = rightMargin;
+					if (active)
+						px += 40;
+					gEnv->pRenderer->Draw2dText(px, posY, szText, info);
 					posY += 48;
 				
 				}
@@ -575,6 +578,7 @@ bool			 CGame::Update()
 			static bool optionsOpened = false;
 			static bool graphicsOpened = false;
 			static bool inputOpened = false;
+			static bool help		   = false;
 			{
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 				m_pClient->Update();
@@ -608,6 +612,23 @@ bool			 CGame::Update()
 								}
 								goto end;
 							}
+							else if (help)
+							{
+								menuOnTopLevel	   = false;
+								m_CurrentMenuEntry = 0;
+								PrintMenuEntry(R"(
+Movements - WASD
+Orientation - Mouse
+Console - ~
+)");
+
+								auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+								{
+									help = false;
+								}
+								goto end;
+							}
 							if (PrintMenuEntry("Return to Game"))
 							{
 								GotoGame();
@@ -632,6 +653,8 @@ bool			 CGame::Update()
 
 								notepad.detach();
 							}
+							help = PrintMenuEntry("Help");
+							PrintMenuEntry(" ", true);
 							if (PrintMenuEntry("Quit"))
 							{
 								gEnv->pSystem->Quit();
