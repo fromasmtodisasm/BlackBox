@@ -85,7 +85,7 @@ function init()
 	Console:CreateKeyBind("f7", "#Game:gotoGame()") 
 	Console:CreateKeyBind("ctrl_q", "#Game:Quit()") 
 
-	Console:Show(true)
+	--Console:Show(true)
 	--Console:PrintLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	--Console:ExecuteString("webpage")
 	--Console:ExecuteString([[os_execute "calc"]])

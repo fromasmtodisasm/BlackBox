@@ -417,7 +417,7 @@ void CSystem::LoadScreen()
 	}
 	//m_pConsole->Clear();
 	m_env.pConsole->SetScrollMax(600);
-	m_env.pConsole->ShowConsole(true);
+	m_env.pConsole->ShowConsole(false);
 
 	string sLoadingScreenTexture = string("loading.png");
 

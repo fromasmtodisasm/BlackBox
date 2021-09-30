@@ -99,7 +99,7 @@ void CGame::InitConsoleCommands()
 void CGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
-  r_displayinfo = REGISTER_INT("r_displayinfo", 1, 0, "Display info [1/0]");
+  r_displayinfo = REGISTER_INT("r_displayinfo", 0, 0, "Display info [1/0]");
   r_profile = REGISTER_INT("r_profile", 1, 0, "Profile [1/0]");
   r_cap_profile = REGISTER_INT("r_cap_profile", 1, 0, "Capture frame [1/0]");
   m_pCVarCheatMode = REGISTER_STRING("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");

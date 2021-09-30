@@ -575,7 +575,6 @@ bool			 CGame::Update()
 			static bool optionsOpened = false;
 			static bool graphicsOpened = false;
 			static bool inputOpened = false;
-			static bool demoLoop	   = false;
 			{
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 				m_pClient->Update();
@@ -591,7 +590,7 @@ bool			 CGame::Update()
 					case CGame::MENU:
 						if (!optionsOpened)
 						{
-							if (demoLoop)
+							if (m_playDemo)
 							{
 								m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.1f) * 0.8f , sin(gEnv->pTimer->GetCurrTime()*0.1f) * 0.5f);
 								//m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.001f) * 0.1f , 0);
@@ -605,7 +604,7 @@ bool			 CGame::Update()
 								auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
 								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
 								{
-									demoLoop = false;
+									m_playDemo = false;
 								}
 								goto end;
 							}
@@ -621,7 +620,7 @@ bool			 CGame::Update()
 								m_CurrentMenuEntry = 0;
 							}
 							PrintMenuEntry("Mods");
-							demoLoop = PrintMenuEntry("Demo Loop");
+							m_playDemo = PrintMenuEntry("Demo Loop");
 							if (PrintMenuEntry("Credits"))
 							{
 								CryLogAlways("Credits activated");
@@ -873,6 +872,8 @@ bool CGame::Run(bool& bRelaunch)
 	StartupServer(true, "test_server");
 
 	m_bRelaunch = false;
+	GotoMenu();
+	gEnv->pConsole->ShowConsole(false);
 	while (1)
 	{
 		if (!Update())

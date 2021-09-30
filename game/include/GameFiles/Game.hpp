@@ -690,6 +690,8 @@ public:
 	bool   m_MenuActived	  = false;
 	bool   m_CanBackStep	  = false;
 
+	bool m_playDemo = false;
+
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 
