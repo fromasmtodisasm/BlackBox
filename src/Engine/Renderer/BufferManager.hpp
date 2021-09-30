@@ -160,4 +160,6 @@ public:
   IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size);
   
   std::map<eVertexFormat, SVertexPoolEntry> m_VertexBufferPool;
+
+  void MemoryUsage(ICrySizer* pSizer);
 };

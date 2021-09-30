@@ -112,12 +112,15 @@ class CSystem final : public ISystem
 	, public ISystemEventListener
 	, public IWindowMessageHandler
 	, public ILoadConfigurationEntrySink
+	, IRendererCallbackClient
 {
   public:
 	CSystem(SSystemInitParams& initParams);
 	~CSystem();
 	void PreprocessCommandLine();
 	void ProcessCommandLine();
+
+	void OnRenderer_BeforeEndFrame() override;
 
 	// Inherited via ISystem
 	virtual bool Init() override;
@@ -389,6 +392,8 @@ class CSystem final : public ISystem
 
 		PrintRightAlignedText(py, stats);
 	}
+
+	void RenderStats();
 
 
 

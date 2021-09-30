@@ -477,6 +477,8 @@ bool CSystem::Init()
 	ExecuteCommandLine();
 	Tests();
 
+	m_env.pRenderer->RegisterCallbackClient(this);
+
 	m_pFont = m_env.pRenderer->GetIFont();
 	m_pFont->Init("arial.ttf", 16,16);
 

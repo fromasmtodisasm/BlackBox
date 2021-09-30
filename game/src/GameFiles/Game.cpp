@@ -28,6 +28,8 @@
 int render_camera = 0;
 
 static bool menuOnTopLevel = false;
+char*		mods_str[]	   = {"$0BlackBox", "$1WightBox", "$9GreyBox"};
+int			selected_mod	   = 0;
 
 std::string vec_to_string(Vec3 vec)
 {
@@ -462,6 +464,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
 	//TreeRender treeRender(m_QuadTreeRender.get());
 	LoadHistory();
+	gEnv->pRenderer->RegisterCallbackClient(this);
 	return true;
 }
 
@@ -506,6 +509,323 @@ bool CGame::InitClassRegistry()
 
 #include "CameraController.hpp"
 
+void CGame::OnRenderer_BeforeEndFrame()
+{
+	auto   posY			  = 200.f;
+	size_t currentEntry	  = 0;
+	auto   PrintMenuEntry = [&, this](const char* szText, bool skip = false) -> bool
+	{
+		SDrawTextInfo info;
+		float		  rightMargin = 60;
+		info.font				  = m_Font;
+		auto& color				  = info.color;
+		Vec3  activeColor		  = Vec3(174, 237, 181) / 255.f;
+		Vec3  menuColor			  = Vec3(73, 92, 79) / 255.f;
+		bool  active			  = false;
+
+		{
+			if (m_CurrentMenuEntry == currentEntry)
+			{
+				active	  = true;
+				info.font = m_SelectedEntryFont;
+				posY += 24;
+			}
+			if (active) menuColor = activeColor;
+			color[0] = menuColor.g; //green
+			color[1] = menuColor.b;
+			color[2] = 1.0;			//alpha
+			color[3] = menuColor.r; //red
+			auto px	 = rightMargin;
+			if (active)
+				px += 40;
+			gEnv->pRenderer->Draw2dText(px, posY, szText, info);
+			posY += 48;
+		}
+		m_MenuEnries = currentEntry;
+		currentEntry++;
+		if (skip) currentEntry--;
+
+		return active && m_MenuActived;
+	};
+	static bool optionsOpened  = false;
+	static bool graphicsOpened = false;
+	static bool inputOpened	   = false;
+	static bool help		   = false;
+	static bool campaign	   = false;
+	static bool multiplayer	   = false;
+	static bool mods		   = false;
+	static bool quitRequested  = false;
+	{
+		//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+
+		if (g_bRenderGame)
+		{
+			switch (m_Mode)
+			{
+			case CGame::FPS:
+				break;
+			case CGame::MENU:
+				if (!optionsOpened)
+				{
+					if (m_playDemo)
+					{
+						menuOnTopLevel	   = false;
+						auto t		   = gEnv->pTimer->GetCurrTime();
+						auto r		   = cos(t);
+						auto g		   = sin(t);
+						auto b		   = 1.f;
+						gEnv->pRenderer->SetClearColor((Vec3{r, g, b} + 1.f) * 0.5f);
+						m_CurrentMenuEntry = 0;
+						m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime() * 0.1f) * 0.8f, sin(gEnv->pTimer->GetCurrTime() * 0.1f) * 0.5f);
+						//m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.001f) * 0.1f , 0);
+						m_pClient->m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
+
+#if 0
+								auto ang = cam->GetAngles();
+								cam->SetAngles({ang.x, cos(gEnv->pTimer->GetCurrTime()), ang.z});
+#endif
+						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							m_playDemo = false;
+						}
+						goto end;
+					}
+					else if (help)
+					{
+						menuOnTopLevel	   = false;
+						//m_CurrentMenuEntry = 0;
+						PrintMenuEntry("Movements - WASD");
+						PrintMenuEntry("Orientation - Mouse");
+						PrintMenuEntry("Console - ~");
+						PrintMenuEntry("(c) BlackBox");
+
+						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							help = false;
+							m_CurrentMenuEntry = 0;
+						}
+						goto end;
+					}
+					else if (campaign)
+					{
+
+						menuOnTopLevel	   = false;
+						auto selected = m_CurrentMenuEntry == currentEntry;
+						if (PrintMenuEntry("New Game"))
+						{
+						}
+						if (PrintMenuEntry("Save Game"))
+						{
+						}
+
+						selected = m_CurrentMenuEntry == currentEntry;
+						if (PrintMenuEntry("Load Game"))
+						{
+						}
+						if (selected)
+						{
+							PrintMenuEntry("$4Saved games not found");
+						}
+
+						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							campaign = false;
+						}
+						goto end;
+					}
+					else if (multiplayer)
+					{
+						static bool findServer = false;
+						menuOnTopLevel	   = false;
+						if (findServer)
+						{
+							PrintMenuEntry("$4Servers not founds");
+						}
+						else
+						{
+							if (findServer = PrintMenuEntry("Find server"))
+							{
+								m_CurrentMenuEntry = 0;
+							}
+							if (PrintMenuEntry("Create server"))
+							{
+							}
+						}
+
+
+
+						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							multiplayer = false;
+						}
+						goto end;
+					}
+					else if (mods)
+					{
+						menuOnTopLevel		   = false;
+						int	 n				   = 0;
+						for (const auto& mod : mods_str)
+						{
+							if (PrintMenuEntry(mod))
+							{
+								selected_mod = n;	
+							}
+							n++;
+						}
+						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							mods = false;
+						}
+						goto end;
+						
+					}
+					else if (quitRequested)
+					{
+						menuOnTopLevel		   = false;
+						int	 n				   = 0;
+						if (PrintMenuEntry("$4Yes"))
+						{
+							gEnv->pSystem->Quit();
+						}
+						if (PrintMenuEntry("$3No"))
+						{
+							quitRequested = false;
+						}
+						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							quitRequested = false;
+						}
+						goto end;
+						
+					}
+
+					static char MOD[256];
+					sprintf(MOD, "$7Current MOD: %s", mods_str[selected_mod]);
+					PrintMenuEntry(MOD);
+					if (PrintMenuEntry("Return to Game"))
+					{
+						GotoGame();
+					}
+					PrintMenuEntry(" ", true);
+					if (campaign = PrintMenuEntry("Campaign"))
+					{
+						menuOnTopLevel	   = false;
+						m_CurrentMenuEntry = 0;
+					}
+
+					if (multiplayer = PrintMenuEntry("Multiplayer"))
+					{
+						menuOnTopLevel	   = false;
+						m_CurrentMenuEntry = 0;
+					}
+					if (optionsOpened = PrintMenuEntry("Options"))
+					{
+						menuOnTopLevel	   = false;
+						m_CurrentMenuEntry = 0;
+					}
+					if (mods = PrintMenuEntry("Mods"))
+					{
+						menuOnTopLevel	   = false;
+						m_CurrentMenuEntry = 0;
+					}
+					m_playDemo = PrintMenuEntry("Demo Loop");
+					if (PrintMenuEntry("Credits"))
+					{
+						CryLogAlways("Credits activated");
+					}
+					if (PrintMenuEntry("Editor"))
+					{
+						std::thread notepad([]
+											{ gEnv->pConsole->ExecuteString(R"(#os.execute("code"))"); });
+
+						notepad.detach();
+					}
+					if (help = PrintMenuEntry("Help"))
+					{
+						menuOnTopLevel	   = false;
+						m_CurrentMenuEntry = 0;
+					}
+					PrintMenuEntry(" ", true);
+					if (quitRequested = PrintMenuEntry("Quit"))
+					{
+						menuOnTopLevel	   = false;
+						m_CurrentMenuEntry = 0;
+						//gEnv->pSystem->Quit();
+					}
+					menuOnTopLevel = true;
+				}
+				else
+				{
+					menuOnTopLevel = false;
+					auto k		   = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+					if (graphicsOpened)
+					{
+						static char grphics[256];
+						sprintf(grphics, "Width: %d", gEnv->pRenderer->GetWidth());
+						PrintMenuEntry(grphics);
+
+						sprintf(grphics, "Height: %d", gEnv->pRenderer->GetHeight());
+						PrintMenuEntry(grphics);
+
+						sprintf(grphics, "Display info: %c", r_displayinfo->GetIVal() ? '+' : '-');
+						if (PrintMenuEntry(grphics))
+						{
+							r_displayinfo->Set(!r_displayinfo->GetIVal());
+						}
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							graphicsOpened = false;
+							CryLogAlways("Graphics closed on frame: %d", gEnv->pRenderer->GetFrameID());
+							CryLogAlways("_____________________");
+						}
+					}
+					else if (inputOpened)
+					{
+						static char grphics[256];
+						auto		i_d = gEnv->pConsole->GetCVar("i_debug");
+						sprintf(grphics, "Debug: %c", i_d->GetIVal() ? '+' : '-');
+						if (PrintMenuEntry(grphics))
+						{
+							i_d->Set(!i_d->GetIVal());
+						}
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							inputOpened = false;
+						}
+					}
+					else
+					{
+						// Print options
+						graphicsOpened = PrintMenuEntry("Graphics");
+						inputOpened	   = PrintMenuEntry("Input");
+						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+						{
+							optionsOpened = false;
+						}
+					}
+					m_CanBackStep = false;
+				}
+			end:
+				break;
+			case CGame::FLY:
+				break;
+			case CGame::EDIT:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	DrawHud(fps);
+}
+
+
 static ITexture* splash = nullptr;
 bool			 CGame::Update()
 {
@@ -534,201 +854,13 @@ bool			 CGame::Update()
 				return false;
 			}
 #endif
-			auto posY			= 200.f;
-			size_t currentEntry	= 0;
-			auto PrintMenuEntry = [&,this](const char* szText, bool skip = false) -> bool
-			{
-				SDrawTextInfo info;
-				float		  rightMargin = 60;
-				info.font				  = m_Font;
-				auto& color				  = info.color;
-				Vec3  activeColor		  = Vec3(174, 237, 181) / 255.f;
-				Vec3  menuColor			  = Vec3(73, 92, 79) / 255.f;
-				bool  active			  = false;
-
-
-				{
-					if (m_CurrentMenuEntry == currentEntry)
-					{
-						active = true;
-						info.font = m_SelectedEntryFont;
-						posY += 24;
-					}
-					if (active) menuColor = activeColor;
-					color[0] = menuColor.g; //green
-					color[1] = menuColor.b;
-					color[2] = 1.0; //alpha
-					color[3] = menuColor.r; //red
-					auto px	 = rightMargin;
-					if (active)
-						px += 40;
-					gEnv->pRenderer->Draw2dText(px, posY, szText, info);
-					posY += 48;
-				
-				}
-				currentEntry++;
-				if (skip) currentEntry--;
-				m_MenuEnries = currentEntry;
-
-				return active && m_MenuActived;
-			};
-
 			SetRenderState();
 			m_pSystem->RenderBegin();
-			static bool optionsOpened = false;
-			static bool graphicsOpened = false;
-			static bool inputOpened = false;
-			static bool help		   = false;
+			m_pClient->Update();
+
+			if (g_bRenderGame)
 			{
-				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
-				m_pClient->Update();
-
-				if (g_bRenderGame)
-				{
-					Render();
-
-					switch (m_Mode)
-					{
-					case CGame::FPS:
-						break;
-					case CGame::MENU:
-						if (!optionsOpened)
-						{
-							if (m_playDemo)
-							{
-								m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.1f) * 0.8f , sin(gEnv->pTimer->GetCurrTime()*0.1f) * 0.5f);
-								//m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.001f) * 0.1f , 0);
-								m_pClient->m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
-
-
-								#if 0
-								auto ang = cam->GetAngles();
-								cam->SetAngles({ang.x, cos(gEnv->pTimer->GetCurrTime()), ang.z});
-								#endif
-								auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-								{
-									m_playDemo = false;
-								}
-								goto end;
-							}
-							else if (help)
-							{
-								menuOnTopLevel	   = false;
-								m_CurrentMenuEntry = 0;
-								PrintMenuEntry(R"(
-Movements - WASD
-Orientation - Mouse
-Console - ~
-)");
-
-								auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-								{
-									help = false;
-								}
-								goto end;
-							}
-							if (PrintMenuEntry("Return to Game"))
-							{
-								GotoGame();
-							}
-							PrintMenuEntry(" ", true);
-							PrintMenuEntry("Campaign");
-							PrintMenuEntry("Multiplayer");
-							if (optionsOpened = PrintMenuEntry("Options"))
-							{
-								m_CurrentMenuEntry = 0;
-							}
-							PrintMenuEntry("Mods");
-							m_playDemo = PrintMenuEntry("Demo Loop");
-							if (PrintMenuEntry("Credits"))
-							{
-								CryLogAlways("Credits activated");
-							}
-							if (PrintMenuEntry("Editor"))
-							{
-								std::thread notepad([]
-													{ gEnv->pConsole->ExecuteString(R"(#os.execute("code"))"); });
-
-								notepad.detach();
-							}
-							help = PrintMenuEntry("Help");
-							PrintMenuEntry(" ", true);
-							if (PrintMenuEntry("Quit"))
-							{
-								gEnv->pSystem->Quit();
-							}
-							menuOnTopLevel = true;
-						}
-						else
-						{
-							menuOnTopLevel = false;
-							auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-							if (graphicsOpened)
-							{
-
-								static char grphics[256];
-								sprintf(grphics, "Width: %d", gEnv->pRenderer->GetWidth());
-								PrintMenuEntry(grphics);
-
-								sprintf(grphics, "Height: %d", gEnv->pRenderer->GetHeight());
-								PrintMenuEntry(grphics);
-
-								sprintf(grphics, "Display info: %c", r_displayinfo->GetIVal() ? '+' : '-');
-								if (PrintMenuEntry(grphics))
-								{
-									r_displayinfo->Set(!r_displayinfo->GetIVal());
-								}
-								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-								{
-									graphicsOpened = false;
-									CryLogAlways("Graphics closed on frame: %d", gEnv->pRenderer->GetFrameID());
-									CryLogAlways("_____________________");
-								}
-							}
-							else if (inputOpened)
-							{
-								static char grphics[256];
-								auto		i_d = gEnv->pConsole->GetCVar("i_debug");
-								sprintf(grphics, "Debug: %c", i_d->GetIVal() ? '+' : '-');
-								if (PrintMenuEntry(grphics))
-								{
-									i_d->Set(!i_d->GetIVal());
-								}
-								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-								{
-									CryLogAlways("Options closed on frame: %d", gEnv->pRenderer->GetFrameID());
-									CryLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!");
-									inputOpened = false;
-								}
-								
-							}
-							else
-							{
-								// Print options
-								graphicsOpened = PrintMenuEntry("Graphics");
-								inputOpened = PrintMenuEntry("Input");
-								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-								{
-									CryLogAlways("Options closed on frame: %d", gEnv->pRenderer->GetFrameID());
-									CryLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!");
-									optionsOpened = false;
-								}
-
-							}
-							m_CanBackStep = false;
-						}
-						end:
-						break;
-					case CGame::FLY:
-						break;
-					case CGame::EDIT:
-						break;
-					default:
-						break;
-					}
-				}
+				Render();
 			}
 
 //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
@@ -746,7 +878,6 @@ Console - ~
 				gui::update();
 			}
 #endif
-			DrawHud(fps);
 
 			//PROFILER_POP_CPU_MARKER();
 
@@ -802,7 +933,7 @@ void CGame::DisplayInfo(float fps)
 											 : "EDIT";
 
 	// Info
-	TextRenderInfo info(m_Font, Vec4(0.5, 1.0f, 0.6f, 1.0));
+	TextRenderInfo info(m_Font, Vec4(1.f, 1.f, 0.6f, 1.0));
 	SDrawTextInfo  dti = info.getDTI();
 	SDrawTextInfo  MenuDTI;
 	MenuDTI.color[0] = 1;

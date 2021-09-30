@@ -242,6 +242,7 @@ class CGame final
 	, public INETServerSnooperSink
 	//, public IActionMapSink
 	, public ISystemEventListener
+	, public IRendererCallbackClient
 {
 	class EventListener;
 	friend class GameGUI;
@@ -257,6 +258,7 @@ class CGame final
 
 	CGame();
 	~CGame();
+	void OnRenderer_BeforeEndFrame() override;
 
 	const char* IsMODLoaded();
 	IGameMods* GetModsInterface();

@@ -286,6 +286,11 @@ IGraphicsDeviceConstantBuffer* CBufferManager::CreateConstantBuffer(int size)
 	return nullptr;
 }
 
+void CBufferManager::MemoryUsage(ICrySizer* pSizer)
+{
+	pSizer->Add(this);
+}
+
 #if 0
 void CGraphicsDeviceConstantBuffer::SetData(const uint8* data, size_t size)
 {

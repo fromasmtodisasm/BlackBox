@@ -38,6 +38,13 @@ void CClient::Update()
 	//m_pClient->Update(16);
 	if (!m_pGame->m_playDemo && m_pGame->m_Mode == CGame::Mode::MENU)
 		return;
+
+	m_testObjects;
+	for (auto& o : m_testObjects)
+	{
+		o.m_Position.y += o.m_Position.y * cos(gEnv->pTimer->GetCurrTime());
+	}
+
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
 	m_NumHitsInFrame = 0;
 	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));

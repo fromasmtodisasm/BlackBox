@@ -35,17 +35,14 @@ void CSystem::RenderBegin()
 	//m_GuiManager.ShowNodeEditor();
 #endif
 }
-
-void CSystem::RenderEnd()
+void CSystem::OnRenderer_BeforeEndFrame()
 {
-	if (!m_env.pRenderer)
-		return;
-	PROFILER_POP_CPU_MARKER();
-	{
-		//DEBUG_GROUP("DRAW_PROFILE");
-		PROFILER_DRAW();
-	}
-	if (m_env.pRenderer && m_pFont)
+	RenderStats();
+}
+
+void CSystem::RenderStats()
+{
+	if (m_pFont)
 	{
 		float px = 20;
 		float py = 20;
@@ -89,14 +86,28 @@ void CSystem::RenderEnd()
 			#endif
 		}
 
-		m_env.pRenderer->Update();
-
 #if ENABLE_DEBUG_GUI
 		if (m_GuiManager)
 			m_GuiManager->Render();
 #endif
 		//if (m_bIsActive)
 		//m_pWindow->swap();
+	}
+
+}
+
+void CSystem::RenderEnd()
+{
+	if (!m_env.pRenderer)
+		return;
+	PROFILER_POP_CPU_MARKER();
+	{
+		//DEBUG_GROUP("DRAW_PROFILE");
+		PROFILER_DRAW();
+	}
+	if (m_env.pRenderer)
+	{
+		m_env.pRenderer->Update();	
 	}
 }
 
