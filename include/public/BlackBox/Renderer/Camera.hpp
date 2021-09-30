@@ -28,7 +28,7 @@ class CCamera
 	{
 		FPS,
 		FLY
-	} mode = CCamera::Mode::FPS;
+	} mode = CCamera::Mode::FLY;
 	enum class Type
 	{
 		Perspective,

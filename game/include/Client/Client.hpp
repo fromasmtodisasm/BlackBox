@@ -112,7 +112,7 @@ class CClient :
 	void IntersectionByRayCasting();
 
 
-  private:
+  public:
 	CGame* m_pGame{};
 
 	// Player

@@ -117,14 +117,14 @@ bool CClient::Init()
 
 	srand(static_cast<unsigned int>(time(0)));
 
-	Vec3 left(-40, -40, -40);
-	Vec3 right(40, 40, 40);
+	Vec3 left = Vec3(-40, -40, -40) * 5.f;
+	Vec3 right = Vec3(40, 40, 40) * 5.f;
 	auto create_obj = [&]()->auto {
 		const auto rand_pos = RandomVector(left, right);
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		m_testObjects.emplace_back(
 			create_obj()

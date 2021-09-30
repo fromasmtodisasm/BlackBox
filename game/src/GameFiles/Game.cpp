@@ -27,6 +27,8 @@
 
 int render_camera = 0;
 
+static bool menuOnTopLevel = false;
+
 std::string vec_to_string(Vec3 vec)
 {
 	auto result = "{ x: " + std::to_string(vec.x);
@@ -502,6 +504,8 @@ bool CGame::InitClassRegistry()
 	return true;
 }
 
+#include "CameraController.hpp"
+
 static ITexture* splash = nullptr;
 bool			 CGame::Update()
 {
@@ -532,7 +536,7 @@ bool			 CGame::Update()
 #endif
 			auto posY			= 200.f;
 			size_t currentEntry	= 0;
-			auto PrintMenuEntry = [&,this](const char* szText, bool active = false) -> bool
+			auto PrintMenuEntry = [&,this](const char* szText, bool skip = false) -> bool
 			{
 				SDrawTextInfo info;
 				float		  rightMargin = 60;
@@ -540,21 +544,27 @@ bool			 CGame::Update()
 				auto& color				  = info.color;
 				Vec3  activeColor		  = Vec3(174, 237, 181) / 255.f;
 				Vec3  menuColor			  = Vec3(73, 92, 79) / 255.f;
+				bool  active			  = false;
 
-				if (m_CurrentMenuEntry == currentEntry)
+
 				{
-					active = true;
-					info.font = m_SelectedEntryFont;
-					posY += 30;
+					if (m_CurrentMenuEntry == currentEntry)
+					{
+						active = true;
+						info.font = m_SelectedEntryFont;
+						posY += 24;
+					}
+					if (active) menuColor = activeColor;
+					color[0] = menuColor.g; //green
+					color[1] = menuColor.b;
+					color[2] = 1.0; //alpha
+					color[3] = menuColor.r; //red
+					gEnv->pRenderer->Draw2dText(rightMargin, posY, szText, info);
+					posY += 48;
+				
 				}
-				if (active) menuColor = activeColor;
-				color[0] = menuColor.g; //green
-				color[1] = menuColor.b;
-				color[2] = 1.0; //alpha
-				color[3] = menuColor.r; //red
-				gEnv->pRenderer->Draw2dText(rightMargin, posY, szText, info);
-				posY += 64;
 				currentEntry++;
+				if (skip) currentEntry--;
 				m_MenuEnries = currentEntry;
 
 				return active && m_MenuActived;
@@ -562,6 +572,10 @@ bool			 CGame::Update()
 
 			SetRenderState();
 			m_pSystem->RenderBegin();
+			static bool optionsOpened = false;
+			static bool graphicsOpened = false;
+			static bool inputOpened = false;
+			static bool demoLoop	   = false;
 			{
 				//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 				m_pClient->Update();
@@ -575,26 +589,115 @@ bool			 CGame::Update()
 					case CGame::FPS:
 						break;
 					case CGame::MENU:
-						PrintMenuEntry("Campaign");
-						PrintMenuEntry("Multiplayer");
-						PrintMenuEntry("Options");
-						PrintMenuEntry("Mods");
-						PrintMenuEntry("Demo Loop");
-						if (PrintMenuEntry("Credits"))
+						if (!optionsOpened)
 						{
-							CryLogAlways("Credits activated");
-						}
-						if (PrintMenuEntry("Editor"))
-						{
-							std::thread notepad([]{ gEnv->pConsole->ExecuteString(R"(#os.execute("code"))"); });
+							if (demoLoop)
+							{
+								m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.1f) * 0.8f , sin(gEnv->pTimer->GetCurrTime()*0.1f) * 0.5f);
+								//m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.001f) * 0.1f , 0);
+								m_pClient->m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
 
-							notepad.detach();
-							
+
+								#if 0
+								auto ang = cam->GetAngles();
+								cam->SetAngles({ang.x, cos(gEnv->pTimer->GetCurrTime()), ang.z});
+								#endif
+								auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+								{
+									demoLoop = false;
+								}
+								goto end;
+							}
+							if (PrintMenuEntry("Return to Game"))
+							{
+								GotoGame();
+							}
+							PrintMenuEntry(" ", true);
+							PrintMenuEntry("Campaign");
+							PrintMenuEntry("Multiplayer");
+							if (optionsOpened = PrintMenuEntry("Options"))
+							{
+								m_CurrentMenuEntry = 0;
+							}
+							PrintMenuEntry("Mods");
+							demoLoop = PrintMenuEntry("Demo Loop");
+							if (PrintMenuEntry("Credits"))
+							{
+								CryLogAlways("Credits activated");
+							}
+							if (PrintMenuEntry("Editor"))
+							{
+								std::thread notepad([]
+													{ gEnv->pConsole->ExecuteString(R"(#os.execute("code"))"); });
+
+								notepad.detach();
+							}
+							if (PrintMenuEntry("Quit"))
+							{
+								gEnv->pSystem->Quit();
+							}
+							menuOnTopLevel = true;
 						}
-						if (PrintMenuEntry("Quit"))
+						else
 						{
-							gEnv->pSystem->Quit();
+							menuOnTopLevel = false;
+							auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+							if (graphicsOpened)
+							{
+
+								static char grphics[256];
+								sprintf(grphics, "Width: %d", gEnv->pRenderer->GetWidth());
+								PrintMenuEntry(grphics);
+
+								sprintf(grphics, "Height: %d", gEnv->pRenderer->GetHeight());
+								PrintMenuEntry(grphics);
+
+								sprintf(grphics, "Display info: %c", r_displayinfo->GetIVal() ? '+' : '-');
+								if (PrintMenuEntry(grphics))
+								{
+									r_displayinfo->Set(!r_displayinfo->GetIVal());
+								}
+								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+								{
+									graphicsOpened = false;
+									CryLogAlways("Graphics closed on frame: %d", gEnv->pRenderer->GetFrameID());
+									CryLogAlways("_____________________");
+								}
+							}
+							else if (inputOpened)
+							{
+								static char grphics[256];
+								auto		i_d = gEnv->pConsole->GetCVar("i_debug");
+								sprintf(grphics, "Debug: %c", i_d->GetIVal() ? '+' : '-');
+								if (PrintMenuEntry(grphics))
+								{
+									i_d->Set(!i_d->GetIVal());
+								}
+								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+								{
+									CryLogAlways("Options closed on frame: %d", gEnv->pRenderer->GetFrameID());
+									CryLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!");
+									inputOpened = false;
+								}
+								
+							}
+							else
+							{
+								// Print options
+								graphicsOpened = PrintMenuEntry("Graphics");
+								inputOpened = PrintMenuEntry("Input");
+								if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
+								{
+									CryLogAlways("Options closed on frame: %d", gEnv->pRenderer->GetFrameID());
+									CryLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!");
+									optionsOpened = false;
+								}
+
+							}
+							m_CanBackStep = false;
 						}
+						end:
 						break;
 					case CGame::FLY:
 						break;
@@ -621,7 +724,7 @@ bool			 CGame::Update()
 				gui::update();
 			}
 #endif
-			//DrawHud(fps);
+			DrawHud(fps);
 
 			//PROFILER_POP_CPU_MARKER();
 
@@ -1100,7 +1203,11 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 	bool	   shift	  = event.modifiers & eMM_Shift;
 	bool	   alt		  = event.modifiers & eMM_Alt;
 	static int activatedFrame = 0;
-	if (m_MenuActived && gEnv->pRenderer->GetFrameID() > activatedFrame)
+	static int backStepFrame  = 0;
+	int		   currentFrame	  = gEnv->pRenderer->GetFrameID();
+
+			//backStepFrame = currentFrame;
+	if (m_MenuActived && currentFrame > activatedFrame)
 	{
 		m_MenuActived = false;
 		activatedFrame = 0;
@@ -1108,17 +1215,34 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 	////////////////////////
 	if (keyPressed)
 	{
+		m_CanBackStep = false;
 		switch (event.keyId)
 		{
 		case eKI_Enter:
 			m_MenuActived = true;
-			activatedFrame = gEnv->pRenderer->GetFrameID();
+			activatedFrame = currentFrame;
 			return true;
 		case eKI_Escape:
 			//m_inputHandler->mouseLock(false);
 			//m_Mode = Mode::MENU;
 			//Stop();
-			GotoGame();
+
+			CryLogAlways("Backspace");
+			if (currentFrame > (backStepFrame))
+			{
+				CryLog("_%d", backStepFrame);
+				CryLog("__%d", currentFrame);
+				CryLog("%d", currentFrame - backStepFrame);
+				m_CanBackStep = true;
+			}
+			else
+			{
+				m_CanBackStep = false;
+			}
+			backStepFrame = currentFrame;
+
+			if (menuOnTopLevel)
+				GotoGame();
 			return true;
 		case eKI_J:
 			return true;
