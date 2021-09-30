@@ -898,19 +898,14 @@ BreakState CScriptSystem::GetBreakState()
 	return BreakState();
 }
 
-void CScriptSystem::GetMemoryStatistics(ICrySizer* pSizer)
+void CScriptSystem::GetMemoryUsage(ICrySizer* pSizer) const
 {
 	{
 		SIZER_COMPONENT_NAME(pSizer, "Self");
 		pSizer->AddObject(this, sizeof(*this));
 		//pSizer->AddObject(m_pScriptTimerMgr);
-		#if 0
 		pSizer->AddObject(m_dqLoadedFiles);
 		pSizer->AddObject(m_vecPreCached);
-		#else
-		pSizer->AddContainer(m_dqLoadedFiles);
-		pSizer->AddContainer(m_vecPreCached);
-		#endif
 	}
 
 #ifndef _LIB // Only when compiling as dynamic library

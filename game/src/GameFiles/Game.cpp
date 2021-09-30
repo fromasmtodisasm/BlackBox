@@ -1637,20 +1637,20 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 	}
 }
 
-void CGame::GetMemoryStatistics(ICrySizer* pSizer)
+void CGame::GetMemoryUsage(ICrySizer* pSizer) const
 {
-	unsigned size;
+	unsigned size = 0;
 
 	pSizer->AddObject(this, sizeof *this);
 	pSizer->AddObject(&m_EntityClassRegistry, m_EntityClassRegistry.MemStats());
 	//pSizer->AddObject(&m_XAreaMgr, m_XAreaMgr.MemStat());
 	//pSizer->AddObject(&m_XDemoMgr, sizeof(m_XDemoMgr));
 
-	TagPointMap::iterator tpItr = m_mapTagPoints.begin();
-	for (size = 0; tpItr != m_mapTagPoints.end(); tpItr++)
+	const auto tpItr = m_mapTagPoints.begin();
+	for (const auto &tpItr : m_mapTagPoints)
 	{
-		size += (tpItr->first).capacity();
-		size += (tpItr->second)->MemStats();
+		size += (tpItr.first).capacity();
+		size += (tpItr.second)->MemStats();
 	}
 	pSizer->AddObject(&m_mapTagPoints, size);
 	//pSizer->AddObject(&m_XSurfaceMgr, m_XSurfaceMgr.MemStat());
@@ -1673,11 +1673,12 @@ void CGame::GetMemoryStatistics(ICrySizer* pSizer)
 	//pSizer->AddObject(m_pScriptObjectAI, sizeof *m_pScriptObjectAI);
 
 	size = 0;
-	for (ActionsEnumMap::iterator aItr = m_mapActionsEnum.begin(); aItr != m_mapActionsEnum.end(); aItr++)
+	//for (ActionsEnumMap::iterator aItr = m_mapActionsEnum.begin(); aItr != m_mapActionsEnum.end(); aItr++)
+	for (const auto aItr : m_mapActionsEnum)
 	{
-		size += (aItr->first).capacity();
+		size += (aItr.first).capacity();
 		size += sizeof(ActionInfo);
-		ActionInfo* curA = &(aItr->second);
+		const auto* curA = &(aItr.second);
 		size += curA->sDesc.capacity();
 		for (unsigned int i = 0; i < curA->vecSetToActionMap.size(); i++)
 			size += curA->vecSetToActionMap[i].capacity();

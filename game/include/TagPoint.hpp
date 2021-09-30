@@ -31,5 +31,5 @@ class CTagPoint : public ITagPoint
 
 	void Release() { delete this; }
 
-	unsigned MemStats();
+	unsigned MemStats() const;
 };

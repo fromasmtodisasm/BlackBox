@@ -180,7 +180,7 @@ struct IGame
 	virtual bool Run(bool& bRelaunch)																	  = 0;
 	virtual void Stop()																					  = 0;
 	virtual void SendMessage(const char* s)																  = 0;
-	virtual void GetMemoryStatistics(ICrySizer* pSizer)													  = 0;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const												  = 0;
 	//Shutdown and destroy the module (delete this)
 	virtual void Release() = 0;
 

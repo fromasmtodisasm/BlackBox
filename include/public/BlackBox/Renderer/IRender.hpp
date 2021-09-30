@@ -472,7 +472,7 @@ struct IRenderer : public IRendererCallbackServer
 	virtual int GetHeight() = 0;
 	
 	//! Memory status information
-	virtual void GetMemoryUsage(ICrySizer* Sizer)=0;
+	virtual void GetMemoryUsage(ICrySizer* Sizer) const=0;
 
 	//! Get a screenshot and save to a file
 	virtual void ScreenShot(const char* filename = NULL) = 0;

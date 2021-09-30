@@ -43,7 +43,7 @@ public:
 	//virtual void OnGameplayCommand(const char* cmd);
 	// ~IRemoteConsoleListener
 
-	//void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	//void GetMemoryUsage(ICrySizer* s) { s->Add(*this); }
 
 private:
 	bool m_bSlowDownGameSpeed;

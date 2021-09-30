@@ -75,10 +75,10 @@ void CSystem::RenderEnd()
 				PrintMemoryUsageForName(name, fn, This, px, py);
 			};
 
-			PrintMemoryUsage("Game", &IGame::GetMemoryStatistics, m_pGame);
+			PrintMemoryUsage("Game", &IGame::GetMemoryUsage, m_pGame);
 			PrintMemoryUsage("System", &CSystem::GetMemoryStatistics, this);
 			PrintMemoryUsage("Renderer", &IRenderer::GetMemoryUsage, m_env.pRenderer);
-			PrintMemoryUsage("ScriptSsystem", &IScriptSystem::GetMemoryStatistics, m_env.pScriptSystem);
+			PrintMemoryUsage("ScriptSsystem", &IScriptSystem::GetMemoryUsage, m_env.pScriptSystem);
 			#if 0
 			static char stats[256];
 			{

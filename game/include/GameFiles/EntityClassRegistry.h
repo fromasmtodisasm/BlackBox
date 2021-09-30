@@ -50,7 +50,7 @@ public:
 	virtual bool LoadRegistryEntry(EntityClass * pClass, bool bForceReload=false);
 	virtual void Debug();
 
-	unsigned MemStats();
+	unsigned MemStats() const;
 
 private:
 	//!

@@ -355,7 +355,7 @@ bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 	return true;
 }
 
-void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer)
+void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 {
 	Sizer->AddObject(this, sizeof(*this));
 }

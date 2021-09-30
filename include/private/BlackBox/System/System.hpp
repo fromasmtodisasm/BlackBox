@@ -343,12 +343,13 @@ class CSystem final : public ISystem
 	template<class T>
 	struct Sizer
 	{
-		typedef void (T::*Func)(ICrySizer*);
+		typedef void (T::*Func)(ICrySizer*) const;
 	};
 
-	void GetMemoryStatistics(ICrySizer* pSizer)
+	void GetMemoryStatistics(ICrySizer* pSizer) const
 	{
 		pSizer->AddObject(this, sizeof(*this));
+		pSizer->AddObject(m_env.pConsole);
 	}
 
 	enum class Align

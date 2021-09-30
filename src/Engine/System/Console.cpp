@@ -2054,8 +2054,15 @@ void CXConsole::DumpCommandsVars(char* prefix)
 
 
 
-void CXConsole::GetMemoryUsage(ICrySizer* pSizer)
+void CXConsole::GetMemoryUsage(ICrySizer* pSizer) const
 {
+	pSizer->AddObject(this, sizeof(*this));
+	pSizer->AddObject(m_sInputBuffer);
+	pSizer->AddObject(m_sPrevTab);
+	pSizer->AddObject(m_dqConsoleBuffer);
+	pSizer->AddObject(m_dqHistory);
+	pSizer->AddObject(m_mapCommands);
+	pSizer->AddObject(m_mapBinds);
 }
 
 void CXConsole::ResetProgressBar(int nProgressBarRange)

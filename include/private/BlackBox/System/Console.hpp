@@ -538,7 +538,7 @@ class CXConsole : public IConsole
 	virtual void UnRegisterAutoComplete(const char* sVarOrCommand) override;
 	virtual void ResetAutoCompletion() override;
 	virtual void DumpCommandsVars(char* prefix) override;
-	virtual void GetMemoryUsage(ICrySizer* pSizer) override;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const override;
 	virtual void ResetProgressBar(int nProgressRange) override;
 	virtual void TickProgressBar() override;
 	virtual void DumpKeyBinds(IKeyBindDumpSink* pCallback) override;

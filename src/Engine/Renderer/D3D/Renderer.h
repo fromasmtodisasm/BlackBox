@@ -56,7 +56,7 @@ public:
 
 	bool OnResizeSwapchain(int newWidth, int newHeight);
 
-	virtual void GetMemoryUsage(ICrySizer* Sizer) override;
+	virtual void GetMemoryUsage(ICrySizer* Sizer) const override;
 
   private:
 

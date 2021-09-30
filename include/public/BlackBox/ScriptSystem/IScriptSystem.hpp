@@ -338,7 +338,7 @@ struct IScriptSystem
 	virtual void DebugDisable()			   = 0;
 	virtual BreakState GetBreakState()	   = 0;
 	//##@}
-	virtual void GetMemoryStatistics(ICrySizer* pSizer) = 0;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const = 0;
 	//! Is not recusive but combines the hash values of the whole table when the specifies variable is a table
 	//! otherwise is has to be a lua function
 	//!	@param sPath zero terminated path to the variable (e.g. _localplayer.cnt), max 255 characters

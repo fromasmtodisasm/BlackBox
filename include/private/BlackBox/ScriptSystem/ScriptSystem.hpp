@@ -119,7 +119,7 @@ class CScriptSystem : public IScriptSystem
 	virtual void DebugStepInto() override;
 	virtual void DebugDisable() override;
 	virtual BreakState GetBreakState() override;
-	virtual void GetMemoryStatistics(ICrySizer* pSizer) override;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const override;
 	virtual void GetScriptHash(const char* sPath, const char* szKey, unsigned int& dwHash) override;
 	virtual void PostInit() override;
 

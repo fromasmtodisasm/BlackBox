@@ -338,7 +338,7 @@ class CRenderer : public RenderCVars
 	virtual int GetHeight() final;
 
 	//! Memory status information
-	virtual void GetMemoryUsage(ICrySizer* Sizer) = 0;
+	virtual void GetMemoryUsage(ICrySizer* Sizer) const =  0;
 
 	//! Get a screenshot and save to a file
 	virtual void ScreenShot(const char* filename = nullptr) = 0;
