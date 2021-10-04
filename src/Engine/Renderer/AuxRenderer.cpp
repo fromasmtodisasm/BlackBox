@@ -531,7 +531,7 @@ void CRenderAuxGeom::DrawAABBs()
 		DrawCube(m_Meshes[0]);
 	}
 	#endif
-	//DrawCube(m_BoundingBox);
+	DrawCube(m_BoundingBox);
 
 	m_Meshes.resize(0);
 	m_BBVerts.resize(0);
