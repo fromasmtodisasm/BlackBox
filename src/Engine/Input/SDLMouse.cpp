@@ -213,7 +213,7 @@ void CSDLMouse::Update(bool focus)
       //newX = (int)rintf(motionEvent->x * 800.f / m_pRenderer->GetWidth());
       //newY = (int)rintf(motionEvent->y * 600.f / m_pRenderer->GetHeight());
 
-#if 0
+#if 1
       float inertia = g_pInputCVars->i_mouse_inertia;
 
       if (inertia > 0.0f)
