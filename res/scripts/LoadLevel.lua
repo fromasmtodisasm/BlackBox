@@ -1,11 +1,11 @@
 objects = {
-	terrain = {
+	bmw = {
 		mesh =  "res/geom/bmw.obj",
 		transform =  {position = { x = 0, y = 0, z = 0}, rotation = { x = 0, y = 0, z = 0}, scale = { x = 0, y = 0, z = 0}},
 		type =  "object",
-		material =  "terrain",
+		material =  "dx_box",
 		visible =  "1",
-		transparent =  "1"
+		transparent =  "0"
 	},
 	--[[
 	MyPlayer = {
@@ -15,6 +15,14 @@ objects = {
 		material =  "player",
 		visible =  "1",
 		transparent =  "0"
+	},
+	terrain = {
+		mesh =  "res/geom/terrain.obj",
+		transform =  {position = { x = 0, y = 0, z = 0}, rotation = { x = 0, y = 0, z = 0}, scale = { x = 0, y = 0, z = 0}},
+		type =  "object",
+		material =  "terrain",
+		visible =  "1",
+		transparent =  "1"
 	},
 	dx_box = {
 		mesh =  "res/geom/box.obj",
@@ -67,4 +75,11 @@ objects = {
 	]]
 }
 
-return objects
+
+function LoadLevel(level)
+	System:Log("Loading Level: "..level)
+	for k, v in pairs(objects) do
+		System:Log(v.mesh)
+		Game:LoadObject(v.mesh)
+	end
+end

@@ -18,6 +18,8 @@ struct IRenderAuxGeom
 	{
 		return gEnv->pRenderer ? gEnv->pRenderer->GetIRenderAuxGeom() : gEnv->pAuxGeomRenderer;
 	}
+
+	virtual void DrawMesh(CVertexBuffer* pVertexBuffer) = 0;
 	virtual void Flush() = 0;
 };
 

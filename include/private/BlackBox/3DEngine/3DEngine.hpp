@@ -3,6 +3,9 @@
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/3DEngine/SceneManager.hpp>
 #include <BlackBox/World/World.hpp>
+
+#include <BlackBox/3DEngine/StatObject.hpp>
+
 class C3DEngine : public I3DEngine
 {
 	typedef void(*RenderCallback)(void* pParams);
@@ -27,6 +30,7 @@ public:
 	virtual void ShutDown(bool bEditorMode = false) override;
 	virtual void Release() override;
 	virtual void ActivateLight(const char* szName, bool bActivate) override;
+	virtual void GetMemoryUsage(class ICrySizer * pSizer) const override;
 	virtual IStatObj* MakeObject(const char* szFileName, const char* szGeomName = 0, EVertsSharing eVertsSharing = evs_ShareAndSortForCache, bool bLoadAdditinalInfo = true, bool bKeepInLocalSpace = false) override;
 	virtual bool ReleaseObject(IStatObj* pObject) override;
 	virtual IStatObj* MakeObject() override;
@@ -108,6 +112,8 @@ private:
 
 	CVertexBuffer*			m_TestScene;
 	CVertexBuffer*			m_Quad;
+
+	std::vector<CStatObj*>	m_Objects;
 
 	struct AABB
 	{

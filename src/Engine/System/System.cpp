@@ -593,7 +593,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pHardwareMouse);
 	if (m_env.pInput)
 		m_env.pInput->ShutDown();
-	SAFE_RELEASE(m_pEntitySystem);
+	SAFE_RELEASE(m_env.pEntitySystem);
 	SAFE_RELEASE(m_pNetwork);
 	SAFE_RELEASE(m_env.pConsole);
 	SAFE_DELETE(m_pSystemEventDispatcher);

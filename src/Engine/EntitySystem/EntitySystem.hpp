@@ -1,8 +1,8 @@
 #pragma once
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
+
+#include "Entity.hpp"
 
 struct ICrySizer;
 
@@ -10,9 +10,8 @@ class CEntitySystem : public IEntitySystem
 {
 public:
 	CEntitySystem(ISystem* pSystem)
-	  : m_pSystem(pSystem)
 	{
-	
+		m_Entities.resize(100);
 	}
 
 	virtual void Update() override;
@@ -37,7 +36,7 @@ public:
 	virtual void Release() override;
 	virtual bool IsIDUsed(EntityId nID) override;
 	virtual void ResetEntities() override;
-	virtual void GetMemoryStatistics(ICrySizer* pSizer) override;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const override;
 	virtual void SetDynamicEntityIdMode(const bool bActivate) override;
 	virtual void SetDefaultEntityUpdateLevel(EEntityUpdateVisLevel eDefault) override;
 	virtual void SetPrecacheResourcesMode(bool bPrecaching) override;
@@ -45,5 +44,6 @@ public:
 	virtual void MarkId(EntityId id) override;
 	virtual void ClearId(EntityId id) override;
 
-	ISystem* m_pSystem{};
+	std::vector<CEntity> m_Entities;
+
 };

@@ -288,6 +288,7 @@ struct SSystemGlobalEnvironment
 	IInput*			 pInput			  = nullptr;
 	ICryPak*		 pCryPak		  = nullptr;
 	ITimer*			 pTimer			  = nullptr;
+	IEntitySystem*	 pEntitySystem	  = nullptr;
 	IConsole*		 pConsole		  = nullptr;
 	ISystem*		 pSystem		  = nullptr;
 	ILog*			 pLog			  = nullptr;

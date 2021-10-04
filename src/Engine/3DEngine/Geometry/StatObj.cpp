@@ -3,6 +3,12 @@
 //#include <BlackBox/Geometry/ObjLoader.hpp>
 #include <BlackBox/Renderer/Pipeline.hpp>
 #include <BlackBox/Renderer/Material.hpp>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 
 #include <fstream>
 #include <iostream>
@@ -11,265 +17,289 @@
 #include <sstream>
 #include <memory>
 
-#if 0
-int CStatObj::refs = 0;
+#define NOT_IMPLEMENTED                                         \
+	CryFatalError("Method [%s] not implemented", __FUNCTION__); \
+	//return {};
 
-CStatObj::CStatObj() : m_transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)), velocity(glm::vec3(0))
+CStatObj::CStatObj(CIndexedMesh IndexedMesh)
+	: m_IndexedMesh(IndexedMesh)
 {
+
 }
 
-CStatObj::CStatObj(MeshList mesh) : m_Mesh(mesh)
+CIndexedMesh* CStatObj::GetTriData()
 {
+	NOT_IMPLEMENTED;
+	return {};
+}
+CLeafBuffer* CStatObj::GetLeafBuffer()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::SetLeafBuffer(CLeafBuffer* buf)
+{
+	NOT_IMPLEMENTED;
+}
+bool CStatObj::EnableLightamapSupport()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+phys_geometry* CStatObj::GetPhysGeom(int nType)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+const char* CStatObj::GetScriptMaterialName(int Id)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+Vec3 CStatObj::GetBoxMin()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+Vec3 CStatObj::GetBoxMax()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::SetBBoxMin(const Vec3& vBBoxMin)
+{
+	NOT_IMPLEMENTED;
+}
+void CStatObj::SetBBoxMax(const Vec3& vBBoxMax)
+{
+	NOT_IMPLEMENTED;
+}
+float CStatObj::GetRadius()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::SetShaderFloat(const char* Name, float Val)
+{
+	NOT_IMPLEMENTED;
+}
+void CStatObj::SetColor(const char* Name, float fR, float fG, float fB, float fA)
+{
+	NOT_IMPLEMENTED;
+}
+void CStatObj::Refresh(int nFlags)
+{
+	NOT_IMPLEMENTED;
+}
+void CStatObj::Render(const struct SRendParams& rParams, const Vec3& t, int nLodLevel)
+{
+	if (!m_VertexBuffer)
+	{
+		m_VertexBuffer = gEnv->pRenderer->CreateBuffer(m_IndexedMesh.m_nVertCount, m_IndexedMesh.m_VertexFormat, "stat_obj", false);	
+		gEnv->pRenderer->UpdateBuffer(m_VertexBuffer, m_IndexedMesh.m_VertexBuffer, m_IndexedMesh.m_nVertCount, false);
+
+		m_IndexBuffer = SVertexStream();
+		gEnv->pRenderer->CreateIndexBuffer(&m_IndexBuffer, m_IndexedMesh.m_Indices.data(), m_IndexedMesh.m_Indices.size());
+	}
+
+	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer);
+	//GlobalResources::Bo
+
+
+}
+IStatObj* CStatObj::GetLodObject(int nLodLevel)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::RenderShadowVolumes(const struct SRendParams* pParams, int nLimitLod)
+{
+	NOT_IMPLEMENTED;
+}
+const CDLight* CStatObj::GetLightSources(int nId)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+const char* CStatObj::GetFolderName()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+const char* CStatObj::GetFileName()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+const char* CStatObj::GetGeoName()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+bool CStatObj::IsSameObject(const char* szFileName, const char* szGeomName)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+Vec3 CStatObj::GetHelperPos(const char* szHelperName)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+const char* CStatObj::GetHelperById(int nId, Vec3& vPos, Matrix44* pMat, int* pnType)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+const Matrix44* CStatObj::GetHelperMatrixByName(const char* szHelperName)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::RegisterUser()
+{
+	NOT_IMPLEMENTED;
+}
+void CStatObj::UnregisterUser()
+{
+	NOT_IMPLEMENTED;
+}
+bool CStatObj::IsDefaultObject()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+bool CStatObj::MakeObjectPicture(unsigned char* pRGBAData, int nWidth)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+ItShadowVolume* CStatObj::GetShadowVolume()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::SetShadowVolume(ItShadowVolume* pSvObj)
+{
+	NOT_IMPLEMENTED;
+}
+bool CStatObj::GetOcclusionVolume(list2<Vec3>*& plstOcclVolVerts, list2<int>*& plstOcclVolInds)
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::FreeTriData()
+{
+	NOT_IMPLEMENTED;
+}
+void CStatObj::GetMemoryUsage(struct ICrySizer* pSizer) const
+{
+	pSizer->AddObject(this, sizeof(*this),1);
+}
+bool CStatObj::CheckValidVegetation()
+{
+	NOT_IMPLEMENTED;
+	return {};
+}
+float& CStatObj::GetRadiusVert()
+{
+	return m_RadiusVert;
+}
+float& CStatObj::GetRadiusHors()
+{
+	return m_RadiusHors;
 }
 
-CStatObj::CStatObj(const CStatObj* obj) :
-  m_transform(obj->m_transform.position, obj->m_transform.rotation, obj->m_transform.scale),
-  m_Mesh(obj->m_Mesh), m_Shader(obj->m_Shader),
-  velocity(glm::vec3(0)),
-  m_path(obj->m_path),
-  type(obj->type)
+bool CStatObj::IsPhysicsExist()
 {
-  refs++;
+	NOT_IMPLEMENTED;
+	return {};
+}
+void CStatObj::PreloadResources(float fDist, float fTime, int dwFlags)
+{
+	NOT_IMPLEMENTED;
 }
 
-void CStatObj::Render(SRenderParams& renderParams)
+CStatObj* CStatObj::Load(const char* szFileName, const char* szGeomName)
 {
-  //DEBUG_GROUP(__FUNCTION__);
-  //gEnv->pRenderer->PushProfileMarker(__FUNCTION__);
-  glm::mat3 NormalMatrix(1.0);
+	CIndexedMesh im;
+	if (im.LoadCGF(szFileName, szGeomName))
+	{
+		return new CStatObj(im);
+	}
 
-	add_uniform(renderParams, "NormalMatrix", glm::mat3(glm::transpose(glm::inverse(getTransform()))));
-	auto &p = m_Material->program;
-	p->Use();
-  for (auto& mesh : *m_Mesh)
-  {
-		for (auto& uv : renderParams.uniforms)
+	return nullptr;
+}
+
+bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
+{
+	Assimp::Importer import;
+	const aiScene*	 scene = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		CryError("[ASSIMP] %s", import.GetErrorString());
+		return {};
+	}
+
+	m_Name = szFileName;
+	if (scene->HasMeshes())
+	{
+		for (size_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			switch (uv.type)
+			auto mesh		  = scene->mMeshes[i];
+
+			bool bNeedCol	  = mesh->HasVertexColors(i);
+			bool bNeedNormals = mesh->HasNormals();
+			bool bHasTC		  = mesh->HasTextureCoords(i);
+
+			m_VertexFormat = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
+			if (m_VertexFormat != 9) return false;
+
+			char* vb = (char*)(m_VertexBuffer = CreateVertexBuffer(m_VertexFormat, mesh->mNumVertices));
+			
+
+			auto stride = gVertexSize[m_VertexFormat];
+
+			auto TCOffset = gBufInfoTable[m_VertexFormat].OffsTC;
+			auto NormalsOffset = gBufInfoTable[m_VertexFormat].OffsNormal;
+			auto vertexSize	   = gVertexSize[m_VertexFormat];
+
+			auto UVs = mesh->mTextureCoords[0];
+			m_nVertCount = mesh->mNumVertices;
+			for (size_t i = 0; i < m_nVertCount; i++)
 			{
-			case UniformValue::Type::FLOAT_VAL:
-				p->Uniform(uv.val.f, uv.name.data());
-				break;
-			case UniformValue::Type::INT_VAL:
-				p->Uniform(uv.val.i, uv.name.data());
-				break;
-			case UniformValue::Type::V1_VAL:
-				p->Uniform(uv.val.v1, uv.name.data());
-				break;
-			case UniformValue::Type::V2_VAL:
-				p->Uniform(uv.val.v2, uv.name.data());
-				break;
-			case UniformValue::Type::V3_VAL:
-				p->Uniform(uv.val.v3, uv.name.data());
-				break;
-			case UniformValue::Type::V4_VAL:
-				p->Uniform(uv.val.v4, uv.name.data());
-				break;
-			case UniformValue::Type::M2_VAL:
-				p->Uniform(uv.val.m2, uv.name.data());
-				break;
-			case UniformValue::Type::M3_VAL:
-				p->Uniform(uv.val.m3, uv.name.data());
-				break;
-			case UniformValue::Type::M4_VAL:
-				p->Uniform(uv.val.m4, uv.name.data());
-				break;
-			case UniformValue::Type::Samp_VAL:
-				p->Uniform(static_cast<const ITexture*>(uv.val.t), uv.name.data());
-				break;
-			case UniformValue::Type::CAMERA_VAL:
-			{
-				CCamera *c = uv.val.c;
-				p->Uniform(c->GetViewMatrix(), "view");
-				p->Uniform(c->getProjectionMatrix(), "projection");
-				p->Uniform(c->getProjectionMatrix(), "viewPos");
-				break;
+				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Vec3));
+				if (TCOffset != -1) {
+					auto _uv = UVs[i];
+					Vec2 uv	 = Vec2(_uv.x, _uv.y);
+					memcpy(&vb[i * stride + g_VertFormatUVOffsets[m_VertexFormat]], &uv, sizeof(Vec2));
+
+				}
+				if (NormalsOffset != -1) {
+					auto _N = mesh->mNormals[i];
+					Vec3 N	 = Vec3(_N.x, _N.y, _N.z);
+					memcpy(&vb[i * stride + g_VertFormatNormalOffsets[m_VertexFormat]], &N, sizeof(Vec3));
+
+				}
 			}
-				break;
-			default:
-				break;
+			for (int i = 0; i < mesh->mNumFaces; i++)
+			{
+				const aiFace& Face = mesh->mFaces[i];
+				if (Face.mNumIndices == 3)
+				{
+					m_Indices.push_back(Face.mIndices[0]);
+					m_Indices.push_back(Face.mIndices[1]);
+					m_Indices.push_back(Face.mIndices[2]);
+				}
 			}
 		}
-		m_Material->apply(this);
-		gEnv->pRenderer->DrawBuffer(mesh.m_Verts, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
-  }
+	}
+	return true;
+
 }
 
-void CStatObj::draw(SRenderParams& renderParams) {
-  Render(renderParams);
-}
-
-glm::mat4 CStatObj::getTransform()
+CIndexedMesh::CIndexedMesh()
 {
-  glm::mat4x4 translate(1.0f), rotate(1.0f), scale(1.0f);
-  scale = glm::scale(scale, m_transform.scale);
-  translate = glm::translate(translate, m_transform.position);
-  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.x), glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
-  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.y), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-  rotate = glm::rotate(rotate, glm::radians(m_transform.rotation.z), glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
-  return translate * rotate * scale;
+
 }
-
-void CStatObj::updateVectors()
-{
-  // Calculate the new Front vector
-  glm::vec3 front;
-  front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
-  front.y = sin(glm::radians(this->Pitch));
-  front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
-  this->Front = glm::normalize(front);
-  // Also re-calculate the Right and Up vector
-  this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-  this->Up = glm::normalize(glm::cross(this->Right, this->Front));
-}
-
-bool CStatObj::visible()
-{
-  return m_visible;
-}
-
-void CStatObj::setVisibility(bool v)
-{
-  m_visible = v;
-}
-
-void CStatObj::update(float deltatime)
-{
-  /*
-  if (m_transform.position.y < 0)
-    velocity.y = - velocity.y*friction;
-  m_transform.position += velocity * deltatime;
-  */
-  updateVectors();
-}
-
-void CStatObj::setTexture(Texture* texture, const char* type)
-{
-  m_Material->setTexture(texture, type);
-}
-
-CStatObj CStatObj::operator=(CStatObj& that)
-{
-  CStatObj obj;
-  obj.m_Mesh = that.m_Mesh;
-  return obj;
-}
-
-CStatObj* CStatObj::clone()
-{
-  CStatObj* obj = new CStatObj;
-  obj->m_Mesh = this->m_Mesh;
-  return obj;
-}
-
-Material* CStatObj::getMaterial()
-{
-  return m_Material;
-}
-
-void CStatObj::setMaterial(Material* material)
-{
-  if (m_Material != nullptr)
-    delete m_Material;
-  m_Material = material;
-}
-
-void CStatObj::setRenderMode(int mode)
-{
-  m_RenderMode = mode;
-}
-
-int CStatObj::getRenderMode()
-{
-  return m_RenderMode;
-}
-
-void CStatObj::rotateX(float angle)
-{
-  m_transform.rotation.x = angle;
-}
-
-void CStatObj::rotateY(float angle)
-{
-  m_transform.rotation.y = angle;
-}
-
-void CStatObj::rotateZ(float angle)
-{
-  m_transform.rotation.z = angle;
-}
-
-void CStatObj::SetScriptObject(IScriptObject* pObject)
-{
-  m_pScript = pObject;
-}
-
-IScriptObject* CStatObj::GetScriptObject()
-{
-  return m_pScript;
-}
-
-void CStatObj::move(Movement direction) {
-  float velocity = this->MovementSpeed;
-  if (direction == FORWARD)
-    this->m_transform.position += glm::vec3(this->Front.x, this->Front.y, this->Front.z) * velocity;
-  if (direction == BACKWARD)
-    this->m_transform.position -= glm::vec3(this->Front.x, this->Front.y, this->Front.z) * velocity;
-  if (direction == LEFT)
-    this->m_transform.position -= this->Right * velocity;
-  if (direction == RIGHT)
-    this->m_transform.position += this->Right * velocity;
-  if (direction == UP)
-    this->m_transform.position += this->Up * velocity;
-  if (direction == DOWN)
-    this->m_transform.position -= this->Up * velocity;
-}
-
-void CStatObj::move(glm::vec3 v)
-{
-  this->m_transform.position += v;
-}
-
-void CStatObj::moveTo(glm::vec3 v)
-{
-  m_transform.position = v;
-}
-
-void CStatObj::rotate(float angle, glm::vec3 v) {
-  if (v.x != 0.0) m_transform.rotation.x = angle;
-  if (v.y != 0.0) m_transform.rotation.y = angle;
-  if (v.z != 0.0) m_transform.rotation.z = angle;
-}
-
-void CStatObj::scale(glm::vec3 v)
-{
-  m_transform.scale = v;
-}
-
-CStatObj* CStatObj::load(string path)
-{
-  CStatObj* obj = nullptr;
-  MeshList mesh;
-  CVertexBuffer* vb = nullptr;
-  VerteciesInfo vertecies;
-  BoundingBox bb;
-  ObjLoader OBJ;
-
-  if (!OBJ.load(path.c_str(), vertecies, bb))
-    return nullptr;
-
-  if (!gEnv->IsDedicated())
-  {
-		vb = gEnv->pRenderer->CreateBuffer(vertecies.data.size(), VERTEX_FORMAT_P3F_N_T2F, ("model: " + path).c_str());
-		gEnv->pRenderer->UpdateBuffer(vb, vertecies.data.data(), static_cast<int>(vertecies.data.size()), false);
-  }
-  mesh = std::make_shared<std::vector<Mesh>>();
-  Mesh _mesh(vb);
-  _mesh.bb = bb;
-  mesh->push_back(_mesh);
-  obj = new CStatObj();
-  obj->m_Mesh = mesh;
-  obj->m_path = path;
-  return obj;
-}
-#endif

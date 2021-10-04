@@ -7,6 +7,9 @@ ID3D10SamplerState*		  GlobalResources::LinearSampler{};
 ID3D10ShaderResourceView* GlobalResources::WiteTextureRV;
 ID3D10ShaderResourceView* GlobalResources::GreyTextureRV;
 
+ID3D10EffectTechnique* GlobalResources::BoxTechnique;
+ID3D10EffectTechnique* GlobalResources::MeshTechnique;
+
 struct ITechniqueManager;
 ID3D10Device* GetDevice()
 {

@@ -5,7 +5,9 @@
 #if 0
 using BB_VERTEX	 = SVF_P3F_C4B;
 #else
-using BB_VERTEX	 = SVF_P3F_C4B_T2F;
+//using BB_VERTEX	 = SVF_P3F_C4B_T2F;
+using BB_VERTEX	 = SVF_P3F_N_T2F;
+
 #endif
 
 struct SAuxPushBufferEntry
@@ -50,6 +52,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawLines(const Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
 	void PushImage(const SRender2DImageDescription& image) override;
 	void Flush() override;
+	void DrawMesh(CVertexBuffer* pVertexBuffer) override;
 
   private:
 	void AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive);
@@ -68,6 +71,8 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	std::vector<SRender2DImageDescription> m_Images;
 
 	//SAABBBufferPtr  m_aabbBufferPtr;
+
+	std::vector<CVertexBuffer*> m_Meshes;
 
 	std::vector<BoundingBox> m_BBVerts;
 

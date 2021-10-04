@@ -580,8 +580,8 @@ bool CSystem::InitEntitySystem()
 {
 	Log("Creating EntitySystem");
 	return LoadSubsystem<PFNCREATEENTITYSYSTEM>("EntitySystem", "CreateEntitySystem", [&](PFNCREATEENTITYSYSTEM p) {
-		m_pEntitySystem = p(this);
-		return m_pEntitySystem != nullptr;
+		m_env.pEntitySystem = p(this);
+		return m_env.pEntitySystem != nullptr;
 	});
 }
 

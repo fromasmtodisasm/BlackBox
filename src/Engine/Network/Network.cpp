@@ -469,7 +469,7 @@ void CNetwork::Release()
 	delete this;
 }
 
-void CNetwork::GetMemoryStatistics(ICrySizer* pSizer)
+void CNetwork::GetMemoryUsage(ICrySizer* pSizer)
 {
 }
 

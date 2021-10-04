@@ -1,4 +1,6 @@
-#include <BlackBox/EntitySystem/EntitySystem.hpp>
+#include "EntitySystem.hpp"
+
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
 
 void CEntitySystem::Update()
@@ -45,7 +47,7 @@ void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 
 int CEntitySystem::GetNumEntities() const
 {
-	return 0;
+	return m_Entities.size();
 }
 
 IEntityIt* CEntitySystem::GetEntityIterator()
@@ -89,6 +91,7 @@ void CEntitySystem::EnableServer(bool bEnable)
 
 void CEntitySystem::Release()
 {
+	delete this;
 }
 
 bool CEntitySystem::IsIDUsed(EntityId nID)
@@ -98,10 +101,14 @@ bool CEntitySystem::IsIDUsed(EntityId nID)
 
 void CEntitySystem::ResetEntities()
 {
+	m_Entities.clear();
 }
 
-void CEntitySystem::GetMemoryStatistics(ICrySizer* pSizer)
+void CEntitySystem::GetMemoryUsage(ICrySizer* pSizer) const
 {
+	pSizer->AddObject(this, sizeof(*this));
+	pSizer->AddObject(m_Entities);
+
 }
 
 void CEntitySystem::SetDynamicEntityIdMode(const bool bActivate)

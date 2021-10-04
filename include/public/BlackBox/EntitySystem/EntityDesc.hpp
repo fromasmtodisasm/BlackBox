@@ -105,6 +105,10 @@ public:
 	bool Read( IBitStream *pIBitStream, CStream &stm);
 
 	bool IsDirty();
+
+	void GetMemoryUsage(ICrySizer* pSizer) const {
+		pSizer->Add(this, sizeof(*this));
+	}
 };
 
 //////////////////////////////////////////////////////////////////////////
