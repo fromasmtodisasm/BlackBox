@@ -287,6 +287,7 @@ void  CGame::ResetInputMap()
   //in zoom mode)
   pMap->BindAction(ACTION_JUMP, eKI_Space);
   pMap->BindAction(ACTION_JUMP, eKI_NP_Enter);
+  pMap->BindAction(ACTION_JUMP, eKI_XI_A);
 
   //scroll up/down through weapons
   //mouse wheel up/down is reserved for zoom in other zoom mode

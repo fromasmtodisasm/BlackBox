@@ -153,4 +153,10 @@ class CClient :
 
 	int m_CurrentFrameID = 0;
 	int m_NumHitsInFrame = 0;
+
+	//###########################################
+	float m_CamSpeed	= 0.f;
+	bool  m_OnGround	= true;
+	bool  m_JumpPressed = false;
+
 };

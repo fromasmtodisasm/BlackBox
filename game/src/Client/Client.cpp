@@ -8,6 +8,11 @@
 
 std::vector<Vec3> lineBuffer;
 
+float gGravity  = 0.00001;
+int interval = 9000;
+
+int intervalLeft = interval;
+
 CClient::CClient(CGame* pGame)
 	: m_pGame(pGame)
 	, m_CameraController()
@@ -44,6 +49,37 @@ void CClient::Update()
 	{
 		o.m_Position.y += o.m_Position.y * cos(gEnv->pTimer->GetCurrTime());
 	}
+	
+	const float FloorLevel = 2;
+	auto CamPos = Vec3(m_CameraController.CurrentCamera()->GetPos());
+
+	m_CamSpeed -= gGravity;
+	CamPos.y += m_CamSpeed;
+	CamPos.y = std::max(CamPos.y, FloorLevel);
+
+	m_CameraController.CurrentCamera()->SetPos(CamPos);
+
+	if (!m_JumpPressed)
+	{
+		SDrawTextInfo dti;
+		dti.font = m_pGame->m_Font;
+		dti.color[0] = 1;
+		dti.color[0] = 1;
+		dti.color[0] = 1;
+		dti.color[0] = 1;
+		gEnv->pRenderer->Draw2dText(100, 40, "Press 'Jump' to Jump", dti);
+	}
+	else if (intervalLeft > 0)
+	{
+		SDrawTextInfo dti;
+		dti.font = m_pGame->m_Font;
+		dti.color[0] = 1.f;
+		dti.color[1] = 1.f;
+		dti.color[2] = (float)intervalLeft / interval;
+		dti.color[3] = 1.f;
+		gEnv->pRenderer->Draw2dText(100, 40, "Press 'Jump' to Jump", dti);
+		intervalLeft--;
+	}
 
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
 	m_NumHitsInFrame = 0;
@@ -79,6 +115,15 @@ void CClient::Update()
 		//ang *= 0.01;
 		m_CameraController.ProcessMouseMovement(0, -ang);
 		//m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime);	
+	}
+
+	if (m_PlayerProcessingCmd.CheckAction(ACTION_JUMP))
+	{
+		auto pos = m_CameraController.CurrentCamera()->GetPos();
+		if (CamPos.y <= FloorLevel) m_CamSpeed = 0.01;
+		m_JumpPressed = true;
+		//m_CameraController.CurrentCamera()->SetPos(pos + Vec3(0, 0.01,0));
+
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
 	{
