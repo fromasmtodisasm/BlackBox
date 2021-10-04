@@ -1108,7 +1108,7 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 {
 	static char msg[1024];
 
-	sprintf(msg, 
+	CryError(
 		"Code: %x\nAddress: 0x%p",
 		pExceptionPtrs->ExceptionRecord->ExceptionCode,
 		pExceptionPtrs->ExceptionRecord->ExceptionAddress
