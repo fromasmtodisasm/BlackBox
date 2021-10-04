@@ -10,16 +10,14 @@ find_package(Cygwin)
 macro(cygwin_bison INPUT OUTPUT)
 	add_custom_command(
 		OUTPUT ${OUTPUT}
-		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c
-						"bison `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
 		DEPENDS ${INPUT})
 endmacro()
 
 macro(cygwin_flex INPUT OUTPUT)
 	add_custom_command(
 		OUTPUT ${OUTPUT}
-		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c
-						"flex -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "flex `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
 		DEPENDS ${INPUT})
 endmacro()
 
@@ -39,26 +37,7 @@ if((NOT BISON_FOUND) OR (NOT FLEX_FOUND))
 	mark_as_advanced(CLEAR FLEX_EXECUTABLE)
 endif()
 
-if(BISON_FOUND)
-	bison_target(
-		ShaderParser ${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
-		${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp
-		# DEFINES_FILE ${PROJECT_SOURCE_DIR}/parser.hpp
-	)
-elseif(CYGWIN_INSTALL_PATH)
-	cygwin_bison(${PROJECT_SOURCE_DIR}/Shaders/Parser.yy
-							 ${PROJECT_SOURCE_DIR}/Shaders/Parser.cpp)
-endif()
-if(FLEX_FOUND)
-	flex_target(ShaderScanner ${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
-							${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
-elseif(CYGWIN_INSTALL_PATH)
-	cygwin_flex(${PROJECT_SOURCE_DIR}/Shaders/Scanner.ll
-							${PROJECT_SOURCE_DIR}/Shaders/Scanner.cpp)
-endif()
-if(FLEX_FOUND AND BISON_FOUND)
-	add_flex_bison_dependency(ShaderScanner ShaderParser)
-endif()
+
 
 # add_library(FxParser SHARED)
 
@@ -89,8 +68,7 @@ add_sources(
 	"D3D/Renderer.cpp"
 	"D3D/BufferManager.cpp"
 	"D3D/Shader.cpp"
-	"D3D/AuxRenderer.h"
-	"D3D/AuxRenderer.cpp")
+	)
 
 add_sources(
 	"NoUberFile"
@@ -140,8 +118,6 @@ if(OPTION_DX_RENDERER)
 	find_package(D3D10 REQUIRED)
 	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
 	target_link_libraries(${THIS_PROJECT} PRIVATE D3D11 D3D10 d3dcompiler dxguid)
-
-	message(STATUS "renderer sources")
 else()
 	cryfilecontainer(RendererDX SOLUTION_FOLDER "Engine")
 endif()
@@ -155,24 +131,29 @@ if(OPTION_VK_RENDERER)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Vulkan::Vulkan)
 	target_compile_definitions(${THIS_PROJECT} PUBLIC VK_RENDERER)
 	target_include_directories(${THIS_PROJECT} PUBLIC "Vulkan")
-
-	message(STATUS "renderer sources")
 else()
 	cryfilecontainer(RendererVK SOLUTION_FOLDER "Engine")
 endif()
 
-# EngineModule(RendererGL FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
-# "Engine") add_common_libs() add_common_includes()
-# include(${CMAKE_CURRENT_SOURCE_DIR}/OpenGL/CMakeLists.txt)
-# target_link_libraries(${THIS_PROJECT} PUBLIC OpenGlBackend)
-
-#[[
-
-source_group(
-	TREE ${PROJECT_SOURCE_DIR}
-	#PREFIX "Header Files"
-	FILES
-	${SOURCES}
-)
-]]
-# add_private_headers()
+if(BISON_FOUND)
+	bison_target(
+		ShaderParser ${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Parser.yy
+		${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Parser.cpp
+		# DEFINES_FILE ${CMAKE_CURRENT_SOURCE_DIR}/parser.hpp
+	)
+elseif(CYGWIN_INSTALL_PATH)
+	message(STATUS "CYGWIN_INSTALL_PATH: ${CYGWIN_INSTALL_PATH}")
+	cygwin_bison(${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Parser.yy
+							 ${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Parser.cpp)
+endif()
+if(FLEX_FOUND)
+	flex_target(ShaderScanner ${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Scanner.ll
+							${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Scanner.cpp)
+elseif(CYGWIN_INSTALL_PATH)
+	message(STATUS "CYGWIN_INSTALL_PATH: ${CYGWIN_INSTALL_PATH}")
+	cygwin_flex(${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Scanner.ll
+							${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Scanner.cpp)
+endif()
+if(FLEX_FOUND AND BISON_FOUND)
+	add_flex_bison_dependency(ShaderScanner ShaderParser)
+endif()

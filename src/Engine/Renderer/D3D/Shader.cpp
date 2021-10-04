@@ -3,6 +3,7 @@
 #include <fstream>
 #include <BlackBox/Core/Utils.hpp>
 #include <filesystem>
+#include <string_view>
 
 #include <d3dcompiler.h>
 
@@ -158,15 +159,25 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 		&pErrorBlob);
 	auto pBlob = _smart_ptr(pShaderBlob);
 	auto error	= _smart_ptr(pErrorBlob);
-	if (pErrorBlob && pErrorBlob->GetBufferPointer())
-	{
-		CryError("Error and warning from compilation:\n%s", wstr_to_str(wstring((const wchar_t*)pErrorBlob->GetBufferPointer())));
-	}
 	if (FAILED(hr))
 	{
-		char tmp[256];
-		sprintf(tmp, "The FX file <%s> cannot be located.  Please run this executable from the directory that contains the FX file.", file ? file : "MemoryStream");
-		MessageBox(NULL, tmp, "Error", MB_OK);
+		if (pErrorBlob && pErrorBlob->GetBufferPointer())
+		{
+			auto log = std::string_view((const char*)pErrorBlob->GetBufferPointer());
+			auto severity = VALIDATOR_WARNING;
+			if (auto pos = log.find("warning"))
+			{
+				severity = VALIDATOR_WARNING;
+			}
+			else
+			{
+				severity = VALIDATOR_ERROR_DBGBRK;
+			}
+			CryWarning(VALIDATOR_MODULE_RENDERER, severity, "Error and warning from compilation:\n%s", log.data());
+		}
+		//char tmp[256];
+		//sprintf(tmp, "The FX file <%s> cannot be located.  Please run this executable from the directory that contains the FX file.", file ? file : "MemoryStream");
+		//MessageBox(NULL, tmp, "Error", MB_OK);
 		return nullptr;
 	}
 

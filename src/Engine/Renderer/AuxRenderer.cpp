@@ -5,7 +5,6 @@
 #include <BlackBox/System/IConsole.hpp>
 
 #include <array>
-#include "D3D\AuxRenderer.h"
 
 #define V_RETURN(cond) \
 	if (!(cond)) return;
@@ -13,10 +12,28 @@
 ID3D10Device* GetDevice();
 ID3D10DepthStencilState* CRenderAuxGeom::m_pDSState;
 ID3D10RasterizerState*	 g_pRasterizerState{};
+ID3D10BlendState* m_pBlendState;
 
 //auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_N_T2F;
 
+void CreateBlendState()
+{
+
+	D3D10_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D10_BLEND_DESC));
+
+	BlendState.BlendEnable[0]			= TRUE;
+	BlendState.SrcBlend					= D3D10_BLEND_SRC_ALPHA;
+	BlendState.DestBlend				= D3D10_BLEND_INV_SRC_ALPHA;
+	BlendState.BlendOp					= D3D10_BLEND_OP_ADD;
+	BlendState.SrcBlendAlpha			= D3D10_BLEND_ONE;
+	BlendState.DestBlendAlpha			= D3D10_BLEND_ZERO;
+	BlendState.BlendOpAlpha				= D3D10_BLEND_OP_ADD;
+	BlendState.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
+
+	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);
+}
 
 //--------------------------------------------------------------------------------------
 // Structures
@@ -216,6 +233,7 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
 		::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
 		::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
 		GetDevice()->RSSetState(g_pRasterizerState);
+		GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 		//GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 		gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 	}
@@ -224,6 +242,7 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
 
 CRenderAuxGeom::CRenderAuxGeom()
 {
+	CreateBlendState();
 	std::vector<BB_VERTEX> reference = {
 
 // front
@@ -502,6 +521,7 @@ void CRenderAuxGeom::DrawAABBs()
 	auto size	  = m_BBVerts.size() * 36;
 	m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
 	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+	#if 1
 	if (m_Meshes.size())
 	{
 		//ng_pMVP->SetMatrix( ( float* )&g_MVP );
@@ -510,8 +530,8 @@ void CRenderAuxGeom::DrawAABBs()
 		//g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
 		DrawCube(m_Meshes[0]);
 	}
+	#endif
 	//DrawCube(m_BoundingBox);
-	//gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
 
 	m_Meshes.resize(0);
 	m_BBVerts.resize(0);

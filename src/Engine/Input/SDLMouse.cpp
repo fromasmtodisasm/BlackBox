@@ -71,7 +71,6 @@ bool CSDLMouse::Init()
 
 #if defined(LINUXINPUT_AUTOGRAB)
   GrabInput();
-  SDL_SetWindowGrab(static_cast<SDL_Window*>(gEnv->pRenderer->GetCurrentContextHWND()),SDL_TRUE);
   m_bGrabInput = true;
 #endif
   return true;
@@ -121,7 +120,7 @@ void CSDLMouse::Update(bool focus)
         pSymbol->value = 1.f;
         CLinuxInputDevice::PostEvent(pSymbol);
 #if defined(LINUXINPUT_AUTOGRAB)
-        GrabInput();
+        //GrabInput();
 #endif
         // Update flashUI mouse button
         if (bFlashUI)

@@ -118,22 +118,22 @@ bool CClient::Init()
 
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 
-	m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 0, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
-	m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
+	//m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 0, 10)));
+	//m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
+	//m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
 	//m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
 
 
 	srand(static_cast<unsigned int>(time(0)));
 
-	Vec3 left = Vec3(-40, -40, -40) * 5.f;
-	Vec3 right = Vec3(40, 40, 40) * 5.f;
+	Vec3 left = Vec3(-40, -40, -40);
+	Vec3 right = Vec3(40, 40, 40);
 	auto create_obj = [&]()->auto {
 		const auto rand_pos = RandomVector(left, right);
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		m_testObjects.emplace_back(
 			create_obj()
@@ -349,7 +349,7 @@ void CClient::DrawAux()
 	float x = 40, y = 0, z = -40;
 	{
 		const UCol col1(50, 125, 0, 100);
-		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
+		//draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 
 	UCol selected_color(0,1,0,1);

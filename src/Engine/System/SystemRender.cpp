@@ -48,6 +48,7 @@ void CSystem::RenderStats()
 		float py = 20;
 		auto  dy = 30;
 
+		# if 0
 		PrintRightAlignedText(py, "CamPos = 0 0 0 Angl = 0 0 0");
 		py += dy;
 		PrintRightAlignedText(py, "Ver = 1.0.0.0");
@@ -62,6 +63,7 @@ void CSystem::RenderStats()
 		py += dy;
 		PrintRightAlignedText(py, "Render path = ...");
 		py += dy;
+		#endif
 
 		dy = 15;
 		if (sys_dump_memstats)

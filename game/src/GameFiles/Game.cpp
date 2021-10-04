@@ -16,6 +16,8 @@
 #include <Client/Client.hpp>
 #include <thread>
 
+static int g_FontSize = 32;
+
 #ifdef USE_GUI
 #	include <imgui.h>
 #	include <imgui_internal.h>
@@ -38,6 +40,9 @@ std::string vec_to_string(Vec3 vec)
 	result += ", z: " + std::to_string(vec.z) + "}";
 	return result;
 }
+
+static IVec4 currentQuad{};
+static bool	 mouseClicked{};
 
 #ifdef USE_GUI
 namespace ImGui
@@ -431,7 +436,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	if (m_pRender)
 	{
 		m_Font = gEnv->pRenderer->GetIFont();
-		m_Font->Init("arial.ttf", 32,32);
+		m_Font->Init("arial.ttf", g_FontSize,g_FontSize);
 
 		m_SelectedEntryFont = gEnv->pRenderer->GetIFont();
 		m_SelectedEntryFont->Init("arial.ttf", 60,60);
@@ -515,6 +520,19 @@ bool CGame::InitClassRegistry()
 
 #include "CameraController.hpp"
 
+bool MouseInQuad(int x, int y, int w, int h)
+{
+	float mx, my;
+	float fx = (float)x;
+	float fy = (float)y;
+	float fw = (float)w;
+	float fh = (float)h;
+	gEnv->pHardwareMouse->GetHardwareMousePosition(&mx, &my);
+
+	return (mx >= fx && mx <= (fx + fw)) && (my >= fy - fh && my <= (fy));
+}
+
+
 void CGame::OnRenderer_BeforeEndFrame()
 {
 	auto   posY			  = 150.f;
@@ -530,20 +548,70 @@ void CGame::OnRenderer_BeforeEndFrame()
 		bool  active			  = false;
 
 		{
+			auto cq = currentQuad;
+			if (MouseInQuad((int)rightMargin, (int)posY, (int)m_Font->TextWidth(szText), g_FontSize))
+			{
+				m_CurrentMenuEntry = currentEntry;
+				m_MenuActived	   = mouseClicked;
+				mouseClicked	   = false;
+			}
+
 			if (m_CurrentMenuEntry == currentEntry)
 			{
+				UCol col({1,
+						  0,
+						  0,
+						  1});
+				currentQuad = Vec4((int)rightMargin,(int)posY, (int)m_Font->TextWidth(szText), g_FontSize);
+				Vec4 q = currentQuad; 
+				//float dummy;
+				//gEnv->pRenderer->UnProjectFromScreen((float)currentQuad.x, (float)currentQuad.y, 0.f, &q.x, &q.y, &dummy);
+				//gEnv->pRenderer->UnProjectFromScreen((float)currentQuad.z, (float)currentQuad.w, 0.f, &q.z, &q.w, &dummy);
+				auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col)
+				{
+					auto render = gEnv->pRenderer->GetIRenderAuxGeom();
+					render->DrawTriangle(p1, col, p2, col, p3, col);
+					render->DrawTriangle(p3, col, p4, col, p1, col);
+				};
+				float x = 40, y = 0, z = -40;
+				{
+					const UCol col1(50, 125, 0, 20);
+					draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
+				}
+
+				#if 0
+				#define Unproject(a,b) gEnv->pRenderer->UnProjectFromScreen(a.x, a.y, a.z, &b.x, &b.y, &b.z);
+				Vec3 A;
+				Vec3 _A(q.x, posY, 0);
+				Unproject(_A, A);
+				Vec3 B;
+				Vec3 _B(q.x + q.z, posY, 0);
+				Unproject(_B, B);
+				Vec3 C;
+				Vec3 _C(q.x + q.z, posY + g_FontSize, 0);
+				Unproject(_C, C);
+				Vec3 D;
+				Vec3 _D(q.x, posY + g_FontSize, 0);
+				Unproject(_D, D);
+				gEnv->pAuxGeomRenderer->DrawQuad(
+					A, col,
+					B, col,
+					C, col,
+					D, col
+					);
+				#endif
+					
 				active	  = true;
-				info.font = m_SelectedEntryFont;
-				posY += 24;
+				//info.font = m_SelectedEntryFont;
+				//posY += 24;
 			}
+			//auto font = 
 			if (active) menuColor = activeColor;
 			color[0] = menuColor.g; //green
 			color[1] = menuColor.b;
 			color[2] = 1.0;			//alpha
 			color[3] = menuColor.r; //red
 			auto px	 = rightMargin;
-			if (active)
-				px += 40;
 			gEnv->pRenderer->Draw2dText(px, posY, szText, info);
 			posY += 48;
 		}
@@ -575,6 +643,7 @@ void CGame::OnRenderer_BeforeEndFrame()
 				{
 					if (m_playDemo)
 					{
+						auto stop = PrintMenuEntry("Back");
 						menuOnTopLevel	   = false;
 						auto t		   = gEnv->pTimer->GetCurrTime();
 						auto r		   = cos(t);
@@ -595,10 +664,12 @@ void CGame::OnRenderer_BeforeEndFrame()
 						{
 							m_playDemo = false;
 						}
+						m_playDemo = !stop;
 						goto end;
 					}
 					else if (help)
 					{
+						auto stop = PrintMenuEntry("Back");
 						menuOnTopLevel	   = false;
 						//m_CurrentMenuEntry = 0;
 						PrintMenuEntry("Movements - WASD");
@@ -612,6 +683,7 @@ void CGame::OnRenderer_BeforeEndFrame()
 							help = false;
 							m_CurrentMenuEntry = 0;
 						}
+						help = !stop;
 						goto end;
 					}
 					else if (campaign)
@@ -694,11 +766,11 @@ void CGame::OnRenderer_BeforeEndFrame()
 					{
 						menuOnTopLevel		   = false;
 						int	 n				   = 0;
-						if (PrintMenuEntry("$4Yes"))
+						if (PrintMenuEntry("Yes"))
 						{
 							gEnv->pSystem->Quit();
 						}
-						if (PrintMenuEntry("$3No"))
+						if (PrintMenuEntry("No"))
 						{
 							quitRequested = false;
 						}
@@ -720,7 +792,6 @@ void CGame::OnRenderer_BeforeEndFrame()
 					{
 						GotoGame();
 					}
-					PrintMenuEntry(" ", true);
 					if (campaign = PrintMenuEntry("Campaign"))
 					{
 						menuOnTopLevel	   = false;
@@ -759,7 +830,6 @@ void CGame::OnRenderer_BeforeEndFrame()
 						menuOnTopLevel	   = false;
 						m_CurrentMenuEntry = 0;
 					}
-					PrintMenuEntry(" ", true);
 					if (quitRequested = PrintMenuEntry("Quit"))
 					{
 						menuOnTopLevel	   = false;
@@ -820,6 +890,13 @@ void CGame::OnRenderer_BeforeEndFrame()
 					m_CanBackStep = false;
 				}
 			end:
+				static char mouse[256];
+				float		mx, my;
+				gEnv->pHardwareMouse->GetHardwareMousePosition(&mx, &my);
+				sprintf(mouse, "MouseX: %f MouseY: %f", mx, my);
+				PrintMenuEntry(mouse);
+				sprintf(mouse, "Button quad: x: %d y: %d w: %d h %d", currentQuad.x, currentQuad.y, currentQuad.z, currentQuad.w);
+				PrintMenuEntry(mouse);
 				break;
 			case CGame::FLY:
 				break;
@@ -1361,7 +1438,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 bool CGame::MenuInputEvent(const SInputEvent& event)
 {
 	////////////////////////
-	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+	const bool keyPressed = (event.deviceType == eIDT_Keyboard || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
 	bool	   control	  = event.modifiers & eMM_Ctrl;
 	bool	   shift	  = event.modifiers & eMM_Shift;
 	bool	   alt		  = event.modifiers & eMM_Alt;
@@ -1381,6 +1458,9 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 		m_CanBackStep = false;
 		switch (event.keyId)
 		{
+		case eKI_Mouse1: 
+			mouseClicked = true;
+			return true;
 		case eKI_Enter:
 			m_MenuActived = true;
 			activatedFrame = currentFrame;

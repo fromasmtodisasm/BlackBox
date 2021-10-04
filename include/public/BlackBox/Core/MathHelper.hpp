@@ -8,6 +8,7 @@ using Vec2 = glm::vec2;
 using IVec2 = glm::ivec2;
 using Vec3 = glm::vec3;
 using Vec4 = glm::vec4;
+using IVec4 = glm::ivec4;
 
 using Mat2 = glm::mat2;
 using Mat3 = glm::mat3;

@@ -18,6 +18,11 @@ struct IRenderAuxGeom
 	{
 		return gEnv->pRenderer ? gEnv->pRenderer->GetIRenderAuxGeom() : gEnv->pAuxGeomRenderer;
 	}
+	void DrawQuad(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2, const Vec3& v3, const UCol& colV3)
+	{
+		DrawTriangle(v0, colV0, v1, colV1, v2, colV2);
+		DrawTriangle(v0, colV0, v2, colV2, v3, colV3);
+	}
 
 	virtual void DrawMesh(CVertexBuffer* pVertexBuffer) = 0;
 	virtual void Flush() = 0;
