@@ -1272,7 +1272,7 @@ void CGame::GotoGame()
 		m_bInPause = false;
 		m_Mode	   = FPS;
 		m_pInput->ShowCursor(false);
-		//m_pInput->GrabInput(true);
+		m_pInput->GrabInput(true);
 		m_Console->ShowConsole(false);
 		m_pSystem->EnableGui(false);
 	}

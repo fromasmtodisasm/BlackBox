@@ -28,7 +28,7 @@
 #else
 #undef LINUXINPUT_AUTOGRAB
 #endif
-#define LINUXINPUT_AUTOGRAB 0
+//#define LINUXINPUT_AUTOGRAB 0
 #define HIDE_MOUSE_POINTER
 #undef HIDE_MOUSE_POINTER
 
@@ -120,7 +120,7 @@ void CSDLMouse::Update(bool focus)
         pSymbol->value = 1.f;
         CLinuxInputDevice::PostEvent(pSymbol);
 #if defined(LINUXINPUT_AUTOGRAB)
-        //GrabInput();
+        GrabInput();
 #endif
         // Update flashUI mouse button
         if (bFlashUI)
