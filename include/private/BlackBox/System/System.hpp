@@ -349,7 +349,7 @@ class CSystem final : public ISystem
 		typedef void (T::*Func)(ICrySizer*) const;
 	};
 
-	void GetMemoryStatistics(ICrySizer* pSizer) const
+	void GetMemoryUsage(ICrySizer* pSizer) const
 	{
 		pSizer->AddObject(this, sizeof(*this));
 		pSizer->AddObject(m_env.pConsole);
@@ -420,7 +420,7 @@ class CSystem final : public ISystem
 	IFont*			  m_pBlackBoxFont = nullptr;
 	IWindow*		  m_pWindow		  = nullptr;
 	IValidator*		  m_pValidator; //!< Pointer to validator interface.
-	IEntitySystem*	  m_pEntitySystem	 = nullptr;
+	//IEntitySystem*	  m_pEntitySystem	 = nullptr;
 	INetwork*		  m_pNetwork		 = nullptr;
 	ITextModeConsole* m_pTextModeConsole = nullptr;
 	//! system event dispatcher

@@ -235,6 +235,12 @@ struct I3DEngine : public IProcess
   virtual void ActivateLight(const char* szName, bool bActivate) = 0;
   //DOC-IGNORE-END
 
+//DOC-IGNORE-BEGIN
+	//! Count memory usage
+  virtual void GetMemoryUsage(class ICrySizer* pSizer) const = 0;
+  //DOC-IGNORE-END
+
+
   /*! Load cgf file and create non animated object.
       Returns pointer to already loaded object with same name if found.
       Reference counting used */

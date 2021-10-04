@@ -98,7 +98,7 @@ struct INetwork
   //! release the interface(and delete the object that implements it)
   virtual void Release() = 0;
   //!
-  virtual void GetMemoryStatistics(ICrySizer* pSizer) = 0;
+  virtual void GetMemoryUsage(ICrySizer* pSizer) = 0;
   //!
   //! \return interface pointer to the compression helper library, is always valid
   virtual ICompressionHelper* GetCompressionHelper() = 0;

@@ -258,7 +258,7 @@ struct IStatObj: public IBindable
 
 //DOC-IGNORE-BEGIN
 	// Pushes the underlying tree of objects into the given Sizer object for statistics gathering
-	virtual void GetMemoryUsage(struct ICrySizer* pSizer) {} // TODO: implement
+	virtual void GetMemoryUsage(struct ICrySizer* pSizer) const {} // TODO: implement
 //DOC-IGNORE-END
 
 	// Description:

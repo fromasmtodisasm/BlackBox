@@ -1176,7 +1176,7 @@ public:
 	//! Delete particle emitter at specified slot
 	//virtual void DeleteParticleEmitter(int nId) = 0;
 
-	virtual void GetMemoryStatistics(ICrySizer *pSizer) = 0;
+	virtual void GetMemoryUsage(ICrySizer *pSizer) const = 0;
 
 	//! gets/set water density for this object
 	virtual void	SetWaterDensity(float fWaterDensity)=0;
@@ -1533,7 +1533,7 @@ struct IEntitySystem
 
 	//! Puts the memory statistics of the entities into the given sizer object
 	//! According to the specifications in interface ICrySizer
-	virtual void GetMemoryStatistics(ICrySizer *pSizer) = 0;
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const = 0;
 
 	//! if this is set to true (usually non editor mode)
 	//! only dynamic EntityID s are created, no longer static ones

@@ -24,7 +24,7 @@ public:
   virtual IServerSnooper* CreateServerSnooper(IServerSnooperSink* pSink) override;
   virtual const char* EnumerateError(uint32_t err) override;
   virtual void Release() override;
-  virtual void GetMemoryStatistics(ICrySizer* pSizer) override;
+  virtual void GetMemoryUsage(ICrySizer* pSizer) override;
   virtual ICompressionHelper* GetCompressionHelper() override;
   virtual void ClearProtectedFiles() override;
   virtual void AddProtectedFile(const char* sFilename) override;

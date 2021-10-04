@@ -7,7 +7,9 @@ add_sources(
 	SOURCE_GROUP
 	"Source Files"
 	"EntitySystem.cpp"
-	"Entity.cpp")
+	"Entity.cpp"
+	"Entity.hpp"
+	)
 end_sources()
 
 enginemodule(EntitySystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER

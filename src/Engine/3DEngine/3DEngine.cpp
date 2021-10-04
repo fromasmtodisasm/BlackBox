@@ -6,11 +6,8 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
-#if 0
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#endif
+
+void loadModel(string path);
 
 void C3DEngine::Enable(bool bEnable)
 {
@@ -18,8 +15,8 @@ void C3DEngine::Enable(bool bEnable)
 
 bool C3DEngine::Init()
 {
-	//m_pWorld = new World();
-  return true;
+	//MakeObject("res/geom/pengium.obj", nullptr);
+	return true;
 }
 
 void C3DEngine::SetLevelPath(const char* szFolderName)
@@ -29,16 +26,7 @@ void C3DEngine::SetLevelPath(const char* szFolderName)
 
 void loadModel(string path)
 {
-#if 0
-    Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
-	
-    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
-    {
-        //cout << "ERROR::ASSIMP::" << import.GetErrorString() << endl;
-        return;
-    }
-#endif
+
 } 
 
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
@@ -106,6 +94,12 @@ void C3DEngine::Draw()
 	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
 	gEnv->pRenderer->SetCamera(m_Camera);
 
+	for (auto obj : m_Objects)
+	{
+		SRendParams rp;
+		obj->Render(rp, {});	
+	}
+
 	#if 0
 	if (m_pRenderCallback)
 		m_pRenderCallback(m_RenderCallbackParams);
@@ -127,7 +121,12 @@ void C3DEngine::ActivateLight(const char* szName, bool bActivate)
 
 IStatObj* C3DEngine::MakeObject(const char* szFileName, const char* szGeomName, EVertsSharing eVertsSharing, bool bLoadAdditinalInfo, bool bKeepInLocalSpace)
 {
-  return nullptr;
+	CStatObj* obj{};
+	if (obj = CStatObj::Load(szFileName, szGeomName); obj)
+	{
+		m_Objects.push_back(obj);
+	}
+	return static_cast<IStatObj*>(obj);
 }
 
 bool C3DEngine::ReleaseObject(IStatObj* pObject)
@@ -427,6 +426,12 @@ void C3DEngine::SetFlags(int flags)
 int C3DEngine::GetFlags()
 {
   return 0;
+}
+
+void C3DEngine::GetMemoryUsage(class ICrySizer* pSizer) const
+{
+	pSizer->AddObject(this, sizeof(*this));
+	pSizer->AddObject(m_Objects);
 }
 
 

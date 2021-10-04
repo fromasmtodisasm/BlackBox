@@ -1,4 +1,5 @@
 #pragma once
+#if 0
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
@@ -75,4 +76,9 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	int stop			 = 0;
 
 	static ID3D10DepthStencilState* m_pDSState;
+
+	// Inherited via IRenderAuxGeom
+	virtual void PushImage(const SRender2DImageDescription& image) override;
+	virtual void DrawMesh(CVertexBuffer* pVertexBuffer) override;
 };
+#endif

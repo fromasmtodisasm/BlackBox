@@ -20,7 +20,7 @@ cbuffer cbChangesEveryFrame : register(b2)
 struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
-    float4 Color : COLOR0;
+    float3 Normal : NORMAL;
     float2 TC : TEXCOORD0;
 };
 
@@ -32,32 +32,55 @@ SamplerState g_LinearSampler : register(s0);
 //--------------------------------------------------------------------------------------
 VS_OUTPUT VS(
     float4 Pos : POSITION
-    , float4 Color : COLOR
+    , float3 Normal : NORMAL
     , float2 TC: TEXCOORD0 
 )
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
-    //output.Pos = mul( Pos, World );
-    //output.Pos = mul( output.Pos, View );
+    output.Pos = mul(Pos, World );
     output.Pos = mul(Pos, View);
     output.Pos = mul(output.Pos, Projection);
     //output.Pos = mul( Pos, MVP );
-    output.Color = Color;
+    output.Normal = Normal;
     output.TC = TC;
 
     return output;
 }
 
+static float  ambientStrength = 0.3;
+static float3 lightColor	  = float3(1, 1, 1);
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS(VS_OUTPUT input) : SV_Target
+float4 PS(VS_OUTPUT input)
+	: SV_Target
 {
-    //return input.Color;
-    return g_FontAtlas.Sample(g_LinearSampler, input.TC);
-}
+	float3 lightPos = float3(10, 20, 5);
+	float3 diffuseColor = float3(1, 0, 0);
 
+	float4 textureColor;
+	float3 lightDir;
+	float  lightIntensity;
+	float4 color;
+
+	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
+	textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
+
+	// Invert the light direction for calculations.
+	lightDir = normalize(float3(0,1,0));
+
+	// Calculate the amount of light on this pixel.
+	lightIntensity = saturate(dot(input.Normal, lightDir));
+
+	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
+	color = float4(saturate(diffuseColor * lightIntensity),1);
+
+	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
+	color = color * textureColor;
+
+	return color;
+}
 
 //--------------------------------------------------------------------------------------
 technique10 Render
@@ -69,4 +92,3 @@ technique10 Render
         SetPixelShader(CompileShader(ps_4_0, PS()));
     }
 }
-

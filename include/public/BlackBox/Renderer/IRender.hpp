@@ -595,7 +595,7 @@ extern "C"
 
 #include "VertexFormats.hpp"
 
-struct SRenderParams
+struct SRendParams
 {
 	IShader* Shader;
 //	std::vector<UniformValue> uniforms;

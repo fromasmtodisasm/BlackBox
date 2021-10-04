@@ -134,7 +134,7 @@ class TreeObject : public Object
 	
 	
 	}
-	virtual void draw(SRenderParams& renderParams) final
+	virtual void draw(SRendParams& renderParams) final
 	{
 		Object::draw(renderParams);
 	}
@@ -465,6 +465,12 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 	//TreeRender treeRender(m_QuadTreeRender.get());
 	LoadHistory();
 	gEnv->pRenderer->RegisterCallbackClient(this);
+
+
+	auto fnLoad = gEnv->pScriptSystem->GetFunctionPtr("LoadLevel");
+
+	Script::Call(gEnv->pScriptSystem, fnLoad, "test.lua");
+
 	return true;
 }
 
@@ -708,7 +714,7 @@ void CGame::OnRenderer_BeforeEndFrame()
 					static char buffer[256];
 					sprintf(buffer, "USER: %s", gEnv->pSystem->GetUserName());
 					PrintMenuEntry(buffer);
-					sprintf(buffer, "$7Current buffer: %s", mods_str[selected_mod]);
+					sprintf(buffer, "$7Current MOD: %s", mods_str[selected_mod]);
 					PrintMenuEntry(buffer);
 					if (PrintMenuEntry("Return to Game"))
 					{
@@ -1384,12 +1390,8 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 			//m_Mode = Mode::MENU;
 			//Stop();
 
-			CryLogAlways("Backspace");
 			if (currentFrame > (backStepFrame))
 			{
-				CryLog("_%d", backStepFrame);
-				CryLog("__%d", currentFrame);
-				CryLog("%d", currentFrame - backStepFrame);
 				m_CanBackStep = true;
 			}
 			else

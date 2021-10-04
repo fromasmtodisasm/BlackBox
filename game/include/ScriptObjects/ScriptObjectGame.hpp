@@ -93,6 +93,7 @@ public:
 	int SavePlayerPos(IFunctionHandler* pH);
 	int LoadPlayerPos(IFunctionHandler* pH);
 	/////////////////////////////////////////////////////////////
+	int LoadObject(IFunctionHandler* pH);
 
 private:
 	CGame *							m_pGame;

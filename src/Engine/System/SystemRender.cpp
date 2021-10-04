@@ -73,9 +73,11 @@ void CSystem::RenderStats()
 			};
 
 			PrintMemoryUsage("Game", &IGame::GetMemoryUsage, m_pGame);
-			PrintMemoryUsage("System", &CSystem::GetMemoryStatistics, this);
+			PrintMemoryUsage("System", &CSystem::GetMemoryUsage, this);
 			PrintMemoryUsage("Renderer", &IRenderer::GetMemoryUsage, m_env.pRenderer);
 			PrintMemoryUsage("ScriptSsystem", &IScriptSystem::GetMemoryUsage, m_env.pScriptSystem);
+			PrintMemoryUsage("3DEngine", &I3DEngine::GetMemoryUsage, m_env.p3DEngine);
+			PrintMemoryUsage("EntitySystem", &IEntitySystem::GetMemoryUsage, m_env.pEntitySystem) ;
 			#if 0
 			static char stats[256];
 			{

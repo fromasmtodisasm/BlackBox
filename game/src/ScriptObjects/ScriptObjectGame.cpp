@@ -48,6 +48,8 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_TEMPLFUNC_U(Save);
   SCRIPT_REG_TEMPLFUNC_U(Load);
 
+  SCRIPT_REG_TEMPLFUNC_U(LoadObject);
+
 #if 0
 	AllowPropertiesMapping(pSS);
 	RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CGame,test_string));
@@ -638,5 +640,17 @@ int CScriptObjectGame::LoadPlayerPos(IFunctionHandler* pH)
     }
   }
   return pH->EndFunction();
+}
+
+int CScriptObjectGame::LoadObject(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(1);
+	const char* sName;
+	IStatObj*	obj{};
+	if (pH->GetParam(1, sName))
+	{
+		obj  = gEnv->p3DEngine->MakeObject(sName);
+	}
+	return pH->EndFunction(obj);
 }
 

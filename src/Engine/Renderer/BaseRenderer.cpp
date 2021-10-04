@@ -214,6 +214,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #else
 	m_RenderAuxGeom = new CRenderAuxGeomNull();
 #endif
+	gEnv->pAuxGeomRenderer = m_RenderAuxGeom;
 
 	CreateRenderTarget();
 
