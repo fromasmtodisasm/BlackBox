@@ -184,7 +184,7 @@ protected:
 	void InitRegistry(const char *szLevelDir);
 
 	void SetEntityProperties( IEntity *entity, XDOM::IXMLDOMNode* pEntityTag );
-	void RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM::IXMLDOMNodeList* pProps);
+	void RecursiveSetEntityProperties(SmartScriptObject *pRoot, XDOM::IXMLDOMNodeList* pProps);
 
 	void SetEntityEvents( IEntity *entity,struct XDOM::IXMLDOMNodeList* pEventsNode );	
 	void SpawnStaticEntity(	XDOM::IXMLDOMNodePtr pEntityNode );

@@ -46,7 +46,7 @@ LRESULT CUIButton::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	/
 	switch (iMessage)
 	{
 	case UIM_KEYUP:
-		if (lParam != XKEY_RETURN)
+		if (lParam != eKI_Enter)
 		{
 			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 		}

@@ -221,39 +221,39 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			switch(lParam)
 			{
-			case XKEY_PAGE_DOWN:
-			case XKEY_MWHEEL_DOWN:
+			case eKI_PgDn:
+			case eKI_MouseWheelDown:
 				{
 					if (m_pVScroll)
 					{
 						// scroll 3 items down
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Down);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Down);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Down);
 					}
 				}
 				break;
-			case XKEY_PAGE_UP:
-			case XKEY_MWHEEL_UP:
+			case eKI_PgUp:
+			case eKI_MouseWheelUp:
 				{
 					if (m_pVScroll)
 					{
 						// scroll 3 items up
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Up);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Up);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Up);
 					}
 				}
 				break;
-			case XKEY_SPACE:
-			case XKEY_RETURN:
-			case XKEY_NUMPADENTER:
+			case eKI_Space:
+			case eKI_Enter:
+			case eKI_NP_Enter:
 				{
 					OnCommand();
 				}
 				break;
-			case XKEY_LEFT:
-			case XKEY_RIGHT:
+			case eKI_Left:
+			case eKI_Right:
 				{
 					if (!m_bColumnSelect)
 					{
@@ -264,7 +264,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					else
 					{
-						if (lParam == XKEY_LEFT)
+						if (lParam == eKI_Left)
 						{
 							int it = m_iSelectedColumn;
 
@@ -295,7 +295,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-			case XKEY_DOWN:
+			case eKI_Down:
 				{
 					if (m_vSelectionList.empty())
 					{
@@ -350,7 +350,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-			case XKEY_UP:
+			case eKI_Up:
 				{
 					if (m_vSelectionList.empty())
 					{
@@ -2247,7 +2247,7 @@ int CUIListView::AddImageList(IFunctionHandler *pH)
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), AddImageList, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddImageList, 1, svtObject);
 
-	_SmartScriptObject pImageList(m_pScriptSystem, 1);
+	SmartScriptObject pImageList(m_pScriptSystem, 1);
 
 	pH->GetParam(1, pImageList);
 
@@ -2260,7 +2260,7 @@ int CUIListView::AddImageList(IFunctionHandler *pH)
 			continue;
 		}
 
-		_SmartScriptObject pImage(m_pScriptSystem, 1);
+		SmartScriptObject pImage(m_pScriptSystem, 1);
 
 		pImageList->GetAt(i, pImage);
 

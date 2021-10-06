@@ -12,13 +12,13 @@
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
-
+#if 0
 #define STRICT
 #include "StdAfx.h"
 
 #if !defined(LINUX) &&  !defined(NOT_USE_DIVX_SDK)
 
-#include <Cry_Math.h>
+//#include <Cry_Math.h>
 #include <windows.h>
 #include "UIDivX_Video.h"
 #include "UIVideoPanel.h"
@@ -999,3 +999,4 @@ DWORD WINAPI NotificationProc( LPVOID lpParameter )
 
 #endif
 
+#endif

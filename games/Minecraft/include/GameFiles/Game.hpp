@@ -498,7 +498,7 @@ private: // ------------------------------------------------------------
 	}m_Gui;
 	#endif
 public:
-	float m_deltaTime = 0.f;
+	//float m_deltaTime = 0.f;
 
   public:
 	ISystem* m_pSystem;			   //!< The system interface

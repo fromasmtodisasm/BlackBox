@@ -2234,7 +2234,7 @@ void CPlayer::ProcessWeapons(CXEntityProcessingCmd &cmd)
 			}
 
 			// Notify the weapon that it has been dropped
-			_SmartScriptObject pTable(m_pScriptSystem);
+			SmartScriptObject pTable(m_pScriptSystem);
 			pTable->SetValue("Player", m_pEntity->GetScriptObject());
 			pTable->SetValue("WeaponID", m_nSelectedWeaponID);
 			pSelectedWeapon->ScriptDrop(pTable);
@@ -2279,7 +2279,7 @@ void CPlayer::ProcessWeapons(CXEntityProcessingCmd &cmd)
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::FireGrenade(const Vec3d &origin, const Vec3d &angles, IEntity *pIShooter)
 {
-	_SmartScriptObject pTable(m_pScriptSystem);
+	SmartScriptObject pTable(m_pScriptSystem);
 
 	m_ssoHitPosVec=origin;
 	m_ssoHitNormVec=angles;//angles;
@@ -2394,7 +2394,7 @@ bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
 		WeaponInfo &info=GetWeaponInfo();
 
 		info.iFireMode=m_stats.firemode;
-		_SmartScriptObject cOnUpdateParam(m_pScriptSystem);
+		SmartScriptObject cOnUpdateParam(m_pScriptSystem);
 		cOnUpdateParam->SetValue("shooter", m_pEntity->GetScriptObject());
 		GetSelectedWeapon()->ScriptOnDeactivate(m_pEntity);
 	}
@@ -2410,7 +2410,7 @@ bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
 		GetSelectedWeapon()->ScriptOnActivate(m_pEntity);
 
 		// make sure that the firemode is correct on script side
-		_SmartScriptObject pObj(m_pScriptSystem);
+		SmartScriptObject pObj(m_pScriptSystem);
 		pObj->SetValue( "firemode", m_stats.firemode);
 		pObj->SetValue( "ignoreammo", true);
 
@@ -2588,7 +2588,7 @@ void CPlayer::UpdateMelee()
 	//MELEE ATTACK/////////////////////////////////////
 	if(m_stats.melee_attack && (m_stats.weapon_busy<=0) && (m_stats.melee_distance > 0.0f))
 	{		
-		_SmartScriptObject so(m_pScriptSystem);
+		SmartScriptObject so(m_pScriptSystem);
 		Vec3d firePos;
 		Vec3d fireAngles;
 
@@ -2608,7 +2608,7 @@ void CPlayer::UpdateMelee()
 		so->SetValueChain("distance", m_stats.melee_distance);
 		so->SetValueChain("shooter",m_pEntity->GetScriptObject());
 
-		_SmartScriptObject soTarget(m_pScriptSystem,true);
+		SmartScriptObject soTarget(m_pScriptSystem,true);
 		if (GetScriptObject()->GetValue("melee_target", soTarget))
 		{
 			so->SetValueChain("melee_target", *soTarget);
@@ -4314,7 +4314,7 @@ bool CPlayer::LoadGame(CStream &stm)
 		CWeaponClass *pSelectedWeapon = GetSelectedWeapon();
 		pSelectedWeapon->ScriptOnStopFiring(m_pEntity);
 
-		_SmartScriptObject pObj(m_pScriptSystem);
+		SmartScriptObject pObj(m_pScriptSystem);
 		pObj->SetValue( "firemode", m_stats.firemode);
 		pObj->SetValue( "ignoreammo", true);
 
@@ -5660,7 +5660,7 @@ void CPlayer::SwitchFiremode(int nforce)
 		if (bChanged && (!m_stats.reloading) && (!m_stats.weapon_busy))
 		{
 			// Call the script to find out if we can switch
-			_SmartScriptObject pObj(m_pScriptSystem);
+			SmartScriptObject pObj(m_pScriptSystem);
 			pObj->SetValue( "firemode",iNewFireMode);
 			pSelectedWeapon->ScriptOnStopFiring(m_pEntity);
 			m_stats.firemode=iNewFireMode;
@@ -5873,7 +5873,7 @@ void	CPlayer::UpdateCollisionDamage( )
 		
 		if(damageValue>=1.0f)
 		{
-			_SmartScriptObject pTable(m_pScriptSystem,false);
+			SmartScriptObject pTable(m_pScriptSystem,false);
 			CScriptObjectVector oDir(m_pScriptSystem); oDir=history[imax].n;
 			pTable->SetValue("dir",*oDir);
 			pTable->SetValue("damage",damageValue);
@@ -6318,7 +6318,7 @@ void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
 		stm.Write("NA");
 
 	// save any conversation that this guy may be in
-	_SmartScriptObject pCurrentConversation(m_pScriptSystem,true);
+	SmartScriptObject pCurrentConversation(m_pScriptSystem,true);
 	if (m_pEntity->GetScriptObject()->GetValue("CurrentConversation",pCurrentConversation))
 	{
 		const char *szName;
@@ -6331,13 +6331,13 @@ void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
 		stm.Write(iProgress);
 
 		// save all the actors in the conversation
-		_SmartScriptObject pActors(m_pScriptSystem,true);
+		SmartScriptObject pActors(m_pScriptSystem,true);
 		pCurrentConversation->GetValue("Actor",pActors);
 		int i=1;
 		stm.Write(pActors->Count());
 		while (i<=pActors->Count())
 		{
-			_SmartScriptObject pActorEntity(m_pScriptSystem,true);
+			SmartScriptObject pActorEntity(m_pScriptSystem,true);
 			if (pActors->GetAt(i,pActorEntity))
 			{
 				int Actor_ID;
@@ -6401,14 +6401,14 @@ void CPlayer::LoadAIState(CStream & stm, CScriptObjectStream & scriptStream)
 	stm.Read(str,255);
 	if (stricmp(str,"NA"))
 	{
-		_SmartScriptObject pCurrentConversation(m_pScriptSystem,true);
+		SmartScriptObject pCurrentConversation(m_pScriptSystem,true);
 		if (!m_pEntity->GetScriptObject()->GetValue("CurrentConversation",pCurrentConversation))
 		{
 			// get the saved conversation
 			int conv_id;
 			stm.Read(conv_id);
-			_SmartScriptObject pNewConversation(m_pScriptSystem,true);
-			_SmartScriptObject pConvManager(m_pScriptSystem,true);
+			SmartScriptObject pNewConversation(m_pScriptSystem,true);
+			SmartScriptObject pConvManager(m_pScriptSystem,true);
 			m_pScriptSystem->GetGlobalValue("AI_ConvManager",pConvManager);
 			m_pScriptSystem->BeginCall("AI_ConvManager","GetSpecificConversation");
 			m_pScriptSystem->PushFuncParam(pConvManager);
@@ -6571,7 +6571,7 @@ bool CPlayer::LoadGame_PATCH_1(CStream &stm)
 		CWeaponClass *pSelectedWeapon = GetSelectedWeapon();
 		pSelectedWeapon->ScriptOnStopFiring(m_pEntity);
 
-		_SmartScriptObject pObj(m_pScriptSystem);
+		SmartScriptObject pObj(m_pScriptSystem);
 		pObj->SetValue( "firemode", m_stats.firemode);
 		pObj->SetValue( "ignoreammo", true);
 

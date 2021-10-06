@@ -73,15 +73,15 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			switch(lParam)
 			{
-			case XKEY_DOWN:
-			case XKEY_MWHEEL_DOWN:
+			case eKI_Down:
+			case eKI_MouseWheelDown:
 				{
 					if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
 					{
 						if (m_pVScroll)
 						{
 							// scroll 1 item down
-							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
+							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Down);
 						}
 					}
 					else if (!m_vItemList.empty())
@@ -114,15 +114,15 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-			case XKEY_UP:
-			case XKEY_MWHEEL_UP:
+			case eKI_Up:
+			case eKI_MouseWheelUp:
 				{
 					if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
 					{
 						if (m_pVScroll)
 						{
 							// scroll 1 items up
-							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
+							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, eKI_Up);
 						}
 					}
 					else if (!m_vItemList.empty())

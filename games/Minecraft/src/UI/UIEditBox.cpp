@@ -72,7 +72,7 @@ LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	
 		}
 		return 1;
 	case UIM_KEYUP:
-		if ((lParam == XKEY_RETURN) || (lParam == XKEY_NUMPADENTER))
+		if ((lParam == eKI_Enter) || (lParam == eKI_NP_Enter))
 		{
 			OnCommand();
 		}
@@ -783,10 +783,10 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 		{
 			switch(iKeyCode)
 			{
-			case XKEY_LEFT:
+			case eKI_Left:
 				SelectLeft();
 				break;
-			case XKEY_RIGHT:
+			case eKI_Right:
 				SelectRight();
 				break;
 			case XKEY_HOME:
@@ -841,13 +841,13 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 	{
 		switch (iKeyCode)
 		{
-		case XKEY_LEFT:
+		case eKI_Left:
 			Left();
 			m_iSelectionStart = 0;
 			m_iSelectionCount = 0;
 			m_bMouseSelecting = 0;
 			break;
-		case XKEY_RIGHT:
+		case eKI_Right:
 			Right();
 			m_iSelectionStart = 0;
 			m_iSelectionCount = 0;
@@ -871,14 +871,14 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 			m_iSelectionStart = 0;
 			m_bMouseSelecting = 0;
 			break;
-		case XKEY_RETURN:
+		case eKI_Enter:
 			break;
 		default:
 			break;
 		}
 	}
 
-	if (bProcess && ((szKeyName) && (*szKeyName) && (szKeyName[1] == 0)) || (iKeyCode == XKEY_SPACE))
+	if (bProcess && ((szKeyName) && (*szKeyName) && (szKeyName[1] == 0)) || (iKeyCode == eKI_Space))
 	{
 		if (m_iSelectionCount)
 		{
@@ -887,8 +887,8 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 
 		if (CheckChar((unsigned char)*szKeyName))
 		{
-			//InsertChar((iKeyCode == XKEY_SPACE ? L' ' : (unsigned char)*szKeyName));
-			if (iKeyCode == XKEY_SPACE)
+			//InsertChar((iKeyCode == eKI_Space ? L' ' : (unsigned char)*szKeyName));
+			if (iKeyCode == eKI_Space)
 			{
 				InsertChar( L' ' );
 			}

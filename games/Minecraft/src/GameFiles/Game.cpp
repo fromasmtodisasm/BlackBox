@@ -653,7 +653,7 @@ void CGame::OnRenderer_BeforeEndFrame()
 						m_CurrentMenuEntry = 0;
 						m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime() * 0.1f) * 0.8f, sin(gEnv->pTimer->GetCurrTime() * 0.1f) * 0.5f);
 						//m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.001f) * 0.1f , 0);
-						m_pClient->m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
+						m_pClient->m_CameraController.ProcessKeyboard(Movement::FORWARD, gEnv->pTimer->GetRealFrameTime());
 
 #if 0
 								auto ang = cam->GetAngles();
@@ -924,11 +924,12 @@ bool			 CGame::Update()
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
+	//////////////////////////////////////////////////////////////////////////
+	FUNCTION_PROFILER(PROFILE_GAME);
 	{
 		// TODO: FIX IT
-		m_deltaTime = m_pSystem->GetDeltaTime();
-		m_time += m_deltaTime;
-		fps = 1.0f / m_deltaTime;
+		m_time += gEnv->pTimer->GetRealFrameTime();
+		fps = 1.0f / gEnv->pTimer->GetRealFrameTime();
 		ExecScripts();
 
 		if (bRenderFrame)
@@ -1038,7 +1039,7 @@ void CGame::DisplayInfo(float fps)
 	//===========
 
 	m_Font->SetXPos(0);
-	m_Font->SetYPos(18);
+	m_Font->SetYPos(48);
 	auto& text	= info.m_Text;
 	auto& color = info.m_Color;
 	//auto camera = m_World->getActiveScene()->getCurrentCamera();
@@ -1048,37 +1049,10 @@ void CGame::DisplayInfo(float fps)
 	//info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
 	info.AddLine("Current mode: " + mode);
 	info.AddLine("Width = " + std::to_string(m_pRender->GetWidth()) + "Height = " + std::to_string(m_pRender->GetHeight()));
-	//info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
-	//info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
-	//info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
-	/*
-  info.AddLine("  Pos: "						+
-	std::to_string(objPos.x) + ", " +
-	std::to_string(objPos.y) + ", " +
-	std::to_string(objPos.z) + "; ");
-  */
-	//info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
-	//auto camPos = camera->getPosition();
-	//auto camRot = camera->getRotation();
-	/*
-  auto pos = "Pos: " +
-	std::to_string(camPos.x) + ", " +
-	std::to_string(camPos.y) + ", " +
-	std::to_string(camPos.z) + "; " +
-	"Yaw: " +
-	std::to_string(camRot.y) + "; " +
-	"Pitch: " +
-	std::to_string(camRot.x) + "; "
-	;
-  */
-
 	for (auto& text : info.m_Text)
 	{
 		render->PrintLine(text.c_str(), dti);
 	}
-
-	//render->PrintLine("To hide depth buffer press <;>\n", dti);
-	//render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
 
 	info.m_Color = Vec4(1.0f, 0.f, 0.f, 1.0f);
 	//render->PrintLine(pos.c_str(), info.getDTI());

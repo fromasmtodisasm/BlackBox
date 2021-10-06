@@ -224,7 +224,7 @@ class CUIScreen;
 typedef std::vector<CUIScreen *>						CUIScreenList;
 typedef std::vector<CUIScreen *>::iterator	CUIScreenItor;
 
-struct IProcess {};
+//struct IProcess;
 //////////////////////////////////////////////////////////////////////////
 class CUISystem : public IProcess, public IInputEventListener
 {

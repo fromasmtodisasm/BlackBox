@@ -12,5 +12,6 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 
-using color4f = Vec4;
+//using color4f = Vec4;
+#include <Cry_Color4.h>
 using vector2f = Vec2;

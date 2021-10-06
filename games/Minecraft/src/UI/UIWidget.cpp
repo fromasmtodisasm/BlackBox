@@ -302,7 +302,7 @@ int CUIWidget::OnInit()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -345,7 +345,7 @@ int CUIWidget::OnRelease()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -392,7 +392,7 @@ int CUIWidget::OnKeyDown(int iKeyCode)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -436,7 +436,7 @@ int CUIWidget::OnKeyUp(int iKeyCode)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -480,7 +480,7 @@ int CUIWidget::OnKeyPressed(int iKeyCode)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -528,7 +528,7 @@ int CUIWidget::OnMouseEnter()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -571,7 +571,7 @@ int CUIWidget::OnMouseLeave()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -614,7 +614,7 @@ int CUIWidget::OnMouseDown(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -660,7 +660,7 @@ int CUIWidget::OnMouseUp(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -706,7 +706,7 @@ int CUIWidget::OnMouseClick(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -752,7 +752,7 @@ int CUIWidget::OnMouseDblClick(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -798,7 +798,7 @@ int CUIWidget::OnMouseOver(float fNewX, float fNewY, float fOldX, float fOldY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -845,7 +845,7 @@ int CUIWidget::OnMouseMove(float fNewX, float fNewY, float fOldX, float fOldY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -892,7 +892,7 @@ int CUIWidget::OnGotFocus()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -935,7 +935,7 @@ int CUIWidget::OnLostFocus()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -978,7 +978,7 @@ int CUIWidget::OnSized()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1021,7 +1021,7 @@ int CUIWidget::OnMoved()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1064,7 +1064,7 @@ int CUIWidget::OnChanged()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1107,7 +1107,7 @@ int CUIWidget::OnCommand()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{

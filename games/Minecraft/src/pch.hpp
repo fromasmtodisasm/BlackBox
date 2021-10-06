@@ -172,3 +172,4 @@ inline void GameWarning( const char *format,... )
 }
 
 using CXGame = CGame;
+

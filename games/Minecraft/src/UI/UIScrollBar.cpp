@@ -85,25 +85,25 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 		break;
 	case UIM_KEYDOWN:
 		{
-			if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == XKEY_LEFT))
+			if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == eKI_Left))
 			{
 				m_fValue -= m_fStep;
 
 				OnChanged();
 			}
-			else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == XKEY_RIGHT))
+			else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == eKI_Right))
 			{
 				m_fValue += m_fStep;
 
 				OnChanged();
 			}
-			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == XKEY_UP))
+			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == eKI_Up))
 			{
 				m_fValue -= m_fStep;
 
 				OnChanged();
 			}
-			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == XKEY_DOWN))
+			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == eKI_Down))
 			{
 				m_fValue += m_fStep;
 

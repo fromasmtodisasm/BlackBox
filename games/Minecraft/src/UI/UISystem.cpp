@@ -3015,18 +3015,18 @@ bool CUISystem::OnInputEvent(const SInputEvent &event)
 	//////////////////////////////////////////////////////////////////////
 	if (IS_MOUSE_KEY(event.key))
 	{
-		if ((event.key == XKEY_MWHEEL_UP) && (event.type == SInputEvent::KEY_PRESS))
+		if ((event.key == eKI_MouseWheelUp) && (event.type == SInputEvent::KEY_PRESS))
 		{
 			if (m_pMouseOver)
 			{
-				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, XKEY_MWHEEL_UP);
+				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, eKI_MouseWheelUp);
 			}
 		}
-		else if ((event.key == XKEY_MWHEEL_DOWN) && (event.type == SInputEvent::KEY_PRESS))
+		else if ((event.key == eKI_MouseWheelDown) && (event.type == SInputEvent::KEY_PRESS))
 		{
 			if (m_pMouseOver)
 			{
-				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, XKEY_MWHEEL_DOWN);
+				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, eKI_MouseWheelDown);
 			}
 		}
 	}

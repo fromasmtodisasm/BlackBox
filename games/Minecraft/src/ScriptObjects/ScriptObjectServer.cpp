@@ -300,9 +300,9 @@ int CScriptObjectServer::SpawnEntity(IFunctionHandler* pH)
   Vec3 pos(0, 0, 0);
   Vec3 angles(0, 0, 0);
   int requestedid = 0;
-  _SmartScriptObject pED(m_pScriptSystem, true);
+  SmartScriptObject pED(m_pScriptSystem, true);
   CScriptObjectVector o(m_pScriptSystem, true);
-  _SmartScriptObject pProperties(m_pScriptSystem, true);
+  SmartScriptObject pProperties(m_pScriptSystem, true);
   bool bproperties = false;
   //if the first parameter is a table(is the entity description)
   if (pH->GetParam(1, pED))
@@ -497,7 +497,7 @@ int CScriptObjectServer::GetRespawnPoint(IFunctionHandler* pH)
 
   if (tag != NULL)
   {
-    _SmartScriptObject pTagPoint(m_pScriptSystem);
+    SmartScriptObject pTagPoint(m_pScriptSystem);
     MakeTagScriptObject(tag, pTagPoint);
 
     return pH->EndFunction(*pTagPoint);
@@ -518,7 +518,7 @@ int CScriptObjectServer::GetFirstRespawnPoint(IFunctionHandler* pH)
 
   if (tag != NULL)
   {
-    _SmartScriptObject pTagPoint(m_pScriptSystem);
+    SmartScriptObject pTagPoint(m_pScriptSystem);
     MakeTagScriptObject(tag, pTagPoint);
 
     return pH->EndFunction(*pTagPoint);
@@ -539,7 +539,7 @@ int CScriptObjectServer::GetNextRespawnPoint(IFunctionHandler* pH)
 
   if (tag != NULL)
   {
-    _SmartScriptObject pTagPoint(m_pScriptSystem);
+    SmartScriptObject pTagPoint(m_pScriptSystem);
     MakeTagScriptObject(tag, pTagPoint);
 
     return pH->EndFunction(*pTagPoint);
@@ -560,7 +560,7 @@ int CScriptObjectServer::GetPrevRespawnPoint(IFunctionHandler* pH)
 
   if (tag != NULL)
   {
-    _SmartScriptObject pTagPoint(m_pScriptSystem);
+    SmartScriptObject pTagPoint(m_pScriptSystem);
     MakeTagScriptObject(tag, pTagPoint);
 
     return pH->EndFunction(*pTagPoint);
@@ -586,7 +586,7 @@ int CScriptObjectServer::GetRandomRespawnPoint(IFunctionHandler* pH)
 
   if (tag != NULL)
   {
-    _SmartScriptObject pTagPoint(m_pScriptSystem);
+    SmartScriptObject pTagPoint(m_pScriptSystem);
     MakeTagScriptObject(tag, pTagPoint);
 
     return pH->EndFunction(*pTagPoint);
@@ -714,7 +714,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
       return pH->EndFunction();
 
     {
-      _SmartScriptObject tpos(m_pScriptSystem, true);
+      SmartScriptObject tpos(m_pScriptSystem, true);
       _VERIFY(pH->GetParam(2, tpos));
       float x, y, z;
       _VERIFY(tpos->GetValue("x", x));
@@ -724,7 +724,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
       //			m_pScriptSystem->PushFuncParam(vPos);
     }
     {
-      _SmartScriptObject tnormal(m_pScriptSystem, true);
+      SmartScriptObject tnormal(m_pScriptSystem, true);
       _VERIFY(pH->GetParam(3, tnormal));
       float x, y, z;
       _VERIFY(tnormal->GetValue("x", x));
@@ -744,7 +744,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CScriptObjectServer::MakeTagScriptObject(ITagPoint* pInTagPoint, _SmartScriptObject& rOut)
+void CScriptObjectServer::MakeTagScriptObject(ITagPoint* pInTagPoint, SmartScriptObject& rOut)
 {
   Vec3 spawnpt, spawnangles;
   pInTagPoint->GetPos(spawnpt);

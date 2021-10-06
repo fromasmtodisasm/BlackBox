@@ -47,7 +47,7 @@ LRESULT CUICheckBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage)
 	{
 	case UIM_KEYUP:
-		if ((lParam != XKEY_RETURN) && (lParam != XKEY_SPACE))
+		if ((lParam != eKI_Enter) && (lParam != eKI_Space))
 		{
 			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 		}
