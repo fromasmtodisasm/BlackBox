@@ -392,11 +392,31 @@ bool CSystem::DoFrame(int updateFlags)
 	bool continueRunning = true;
 	int pauseMode{};
 
+	if (m_env.pFrameProfileSystem)
+		m_env.pFrameProfileSystem->StartFrame();
+
+	if (!m_env.IsEditing()) // Editor calls its own rendering update
+		RenderBegin();
+
 	if (!Update(updateFlags, pauseMode))
 	{
 		continueRunning = false;
 	}
 
+	m_pGame->Update();
+
+	Render();
+	RenderEnd();
+
+	if (ITextModeConsole* pTextModeConsole = GetITextModeConsole())
+	{
+		pTextModeConsole->EndDraw();
+	}
+
+	if (m_env.pFrameProfileSystem)
+		m_env.pFrameProfileSystem->EndFrame();
+
+	SleepIfNeeded();
 	return continueRunning;
 }
 
@@ -553,7 +573,11 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 
 void CSystem::CreateSystemVars()
 {
+	#define DEFAULT_SYS_MAX_FPS 60
 	REGISTER_CVAR2("sys_dump_memstats", &sys_dump_memstats, 0, VF_NULL, "");
+	REGISTER_CVAR2("sys_MaxFPS", &g_cvars.sys_MaxFPS, DEFAULT_SYS_MAX_FPS, VF_NULL, "Limits the frame rate to specified number n (if n>0 and if vsync is disabled).\n"
+																					" 0 = on PC if vsync is off auto throttles fps while in menu or game is paused (default)\n"
+																					"-1 = off");
 }
 
 void CSystem::ShutDown()
@@ -817,8 +841,8 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 
 bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 {
-	//PROFILER_SYNC_FRAME();
-	// Update input
+	FUNCTION_PROFILER(PROFILE_SYSTEM)
+
 	m_env.pTimer->UpdateOnFrameStart();
 	LAST = NOW;
 	NOW	 = SDL_GetPerformanceCounter();
@@ -872,7 +896,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		return false;
 	}
 
-	return m_bQuit;
+	return !m_bQuit;
 }
 
 bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
@@ -1121,6 +1145,109 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
+int CSystem::GetCPUFlags()
+{
+	assert(0 && __FUNCTION__);
+	return 0;
+}
+double CSystem::GetSecondsPerCycle()
+{
+	assert(0 && __FUNCTION__);
+	return 0.;
+}
+void CSystem::DumpMemoryUsageStatistics() 
+{
+
+}
+bool CSystem::IsTestMode() const
+{
+	assert(0 && __FUNCTION__);
+	return false;
+}
+void CSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
+{
+	assert(0 && __FUNCTION__);
+}
+void CSystem::SetFrameProfiler(bool on, bool display, char* prefix)
+{
+	//assert(0 && __FUNCTION__);
+}
+void CSystem::StartProfilerSection(CFrameProfilerSection* pProfileSection)
+{
+	//assert(0 && __FUNCTION__);
+}
+void CSystem::EndProfilerSection(CFrameProfilerSection* pProfileSection)
+{
+	//assert(0 && __FUNCTION__);
+}
+
+void CSystem::SleepIfNeeded()
+{
+	FUNCTION_PROFILER(PROFILE_SYSTEM)
+
+	static ICVar* pSysMaxFPS = NULL;
+	static ICVar* pVSync	 = NULL;
+
+	if (pSysMaxFPS == NULL && gEnv && gEnv->pConsole)
+		pSysMaxFPS = gEnv->pConsole->GetCVar("sys_MaxFPS");
+	if (pVSync == NULL && gEnv && gEnv->pConsole)
+		pVSync = gEnv->pConsole->GetCVar("r_Vsync");
+
+	int32 maxFPS = 60;
+
+	#if 0
+	if (m_env.IsDedicated())
+	{
+		const float maxRate = m_svDedicatedMaxRate->GetFVal();
+		maxFPS				= int32(maxRate);
+	}
+	else
+	#endif
+	{
+		if (pSysMaxFPS && pVSync)
+		{
+			uint32 vSync = pVSync->GetIVal();
+			if (vSync == 0)
+			{
+				maxFPS = pSysMaxFPS->GetIVal();
+				if (maxFPS == 0)
+				{
+					const bool bInLoading = true;	//(ESYSTEM_GLOBAL_STATE_RUNNING != m_systemGlobalState);
+					if (bInLoading /* || IsPaused() || m_throttleFPS*/)
+					{
+						maxFPS = 60;
+					}
+				}
+			}
+		}
+	}
+
+	if (maxFPS > 0)
+	{
+		const int64 safeMarginMS = 5; // microseconds
+		const int64 thresholdMs	 = (1000 * 1000) / (maxFPS);
+
+		ITimer*		 pTimer		 = gEnv->pTimer;
+		static int64 sTimeLast	 = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		int64		 currentTime = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		for (;;)
+		{
+			const int64 frameTime = currentTime - sTimeLast;
+			if (frameTime >= thresholdMs)
+				break;
+			if (thresholdMs - frameTime > 10 * 1000)
+				CrySleep(1000*2);
+			else
+				CrySleep(0);
+
+			currentTime = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		}
+
+		m_lastTickTime = pTimer->GetAsyncTime();
+		sTimeLast	   = m_lastTickTime.GetMicroSecondsAsInt64() + safeMarginMS;
+	}
+}
+
 
 ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
@@ -1146,7 +1273,7 @@ ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
 	// run main loop
-	if (initParams.bManualEngineLoop)
+	if (!initParams.bManualEngineLoop)
 	{
 		pSystem->RunMainLoop();
 		return nullptr;

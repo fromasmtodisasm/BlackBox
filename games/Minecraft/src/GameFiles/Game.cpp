@@ -918,7 +918,9 @@ bool			 CGame::Update()
 	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
 	static int		   num_frames	= 0xffff;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
+	#if 0
 	m_pSystem->Update(0, IsInPause());
+	#endif
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
@@ -939,8 +941,9 @@ bool			 CGame::Update()
 				return false;
 			}
 #endif
-			SetRenderState();
+			#if 0
 			m_pSystem->RenderBegin();
+			#endif
 			m_pClient->Update();
 
 			if (g_bRenderGame)
@@ -982,8 +985,10 @@ bool			 CGame::Update()
 	}
 	//////////////////////////////////////////////////////////////////////////
 
+	#if 0
 	if (bRenderFrame)
 		m_pSystem->RenderEnd();
+	#endif
 
 	//num_frames--;
 

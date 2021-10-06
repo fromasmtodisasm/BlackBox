@@ -44,6 +44,9 @@ struct ITextModeConsole;
 struct IThreadManager;
 struct IRemoteConsole;
 struct IProjectManager;
+struct IFrameProfileSystem;
+
+class CFrameProfilerSection;
 
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_GAME_PATH "TestGame"
@@ -282,22 +285,23 @@ struct SSystemInitParams
 
 struct SSystemGlobalEnvironment
 {
-	INetwork*		 pNetwork		  = nullptr;
-	I3DEngine*		 p3DEngine		  = nullptr;
-	IScriptSystem*	 pScriptSystem	  = nullptr;
-	IInput*			 pInput			  = nullptr;
-	ICryPak*		 pCryPak		  = nullptr;
-	ITimer*			 pTimer			  = nullptr;
-	IEntitySystem*	 pEntitySystem	  = nullptr;
-	IConsole*		 pConsole		  = nullptr;
-	ISystem*		 pSystem		  = nullptr;
-	ILog*			 pLog			  = nullptr;
-	IRenderer*		 pRenderer		  = nullptr;
-	IRenderAuxGeom*	 pAuxGeomRenderer = nullptr;
-	IHardwareMouse*	 pHardwareMouse	  = nullptr;
-	IPlatform*		 pPlatform		  = nullptr;
-	IThreadManager*	 pThreadManager	  = nullptr;
-	IProjectManager* pProjectManager  = nullptr;
+	INetwork*			 pNetwork			 = nullptr;
+	I3DEngine*			 p3DEngine			 = nullptr;
+	IScriptSystem*		 pScriptSystem		 = nullptr;
+	IInput*				 pInput				 = nullptr;
+	ICryPak*			 pCryPak			 = nullptr;
+	ITimer*				 pTimer				 = nullptr;
+	IEntitySystem*		 pEntitySystem		 = nullptr;
+	IConsole*			 pConsole			 = nullptr;
+	ISystem*			 pSystem			 = nullptr;
+	ILog*				 pLog				 = nullptr;
+	IRenderer*			 pRenderer			 = nullptr;
+	IRenderAuxGeom*		 pAuxGeomRenderer	 = nullptr;
+	IHardwareMouse*		 pHardwareMouse		 = nullptr;
+	IPlatform*			 pPlatform			 = nullptr;
+	IThreadManager*		 pThreadManager		 = nullptr;
+	IProjectManager*	 pProjectManager	 = nullptr;
+	IFrameProfileSystem* pFrameProfileSystem = nullptr;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{
@@ -375,26 +379,36 @@ struct ISystem
 	virtual ISystemUserCallback* GetUserCallback() const				  = 0;
 	virtual IGame* CreateGame(IGame* game)								  = 0;
 
-	virtual IRenderer* GetIRenderer()							= 0;
-	virtual ILog* GetILog()										= 0;
-	virtual IStreamEngine* GetStreamEngine()					= 0;
-	virtual IRemoteConsole* GetIRemoteConsole()					= 0;
-	virtual ICmdLine* GetICmdLine()								= 0;
-	virtual IConsole* GetIConsole()								= 0;
-	virtual IInput* GetIInput()									= 0;
-	virtual IGame* GetIGame()									= 0;
-	virtual IFont* GetIFont()									= 0;
-	virtual INetwork* GetINetwork()								= 0;
-	virtual IWindow* GetIWindow()								= 0;
-	virtual IValidator* GetIValidator()							= 0;
-	virtual IEntitySystem* GetIEntitySystem()					= 0;
-	virtual ICryPak* GetIPak()									= 0;
-	virtual IHardwareMouse* GetIHardwareMouse()					= 0;
-	virtual IScriptSystem* GetIScriptSystem()					= 0;
+	virtual IRenderer*				GetIRenderer()				= 0;
+	virtual ILog*					GetILog()					= 0;
+	virtual IStreamEngine*			GetStreamEngine()			= 0;
+	virtual IRemoteConsole*			GetIRemoteConsole()			= 0;
+	virtual ICmdLine*				GetICmdLine()				= 0;
+	virtual IConsole*				GetIConsole()				= 0;
+	virtual IInput*					GetIInput()					= 0;
+	virtual IGame*					GetIGame()					= 0;
+	virtual IFont*					GetIFont()					= 0;
+	virtual INetwork*				GetINetwork()				= 0;
+	virtual IWindow*				GetIWindow()				= 0;
+	virtual IValidator*				GetIValidator()				= 0;
+	virtual IEntitySystem*			GetIEntitySystem()			= 0;
+	virtual ICryPak*				GetIPak()					= 0;
+	virtual IHardwareMouse*			GetIHardwareMouse()			= 0;
+	virtual IScriptSystem*			GetIScriptSystem()			= 0;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
-	virtual ITimer* GetITimer()									= 0;
-	virtual ITextModeConsole* GetITextModeConsole()				= 0;
-	virtual IProjectManager* GetIProjectManager()				= 0; 
+	virtual ITimer*					GetITimer()					= 0;
+	virtual ITextModeConsole*		GetITextModeConsole()		= 0;
+	virtual IProjectManager*		GetIProjectManager()		= 0;
+	virtual IFrameProfileSystem*	GetIProfileSystem()			= 0; 
+
+  // Gets current supported CPU features flags. (CPUF_SSE, CPUF_SSE2, CPUF_3DNOW, CPUF_MMX)
+	virtual int GetCPUFlags() = 0;
+
+	// Get seconds per processor tick
+	virtual double GetSecondsPerCycle() = 0;
+
+	// dumps the memory usage statistics to the log
+	virtual void DumpMemoryUsageStatistics() = 0;
 
 	// Quit the appliacation
 	virtual void Quit() = 0;
@@ -438,6 +452,20 @@ struct ISystem
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) = 0;
 	virtual bool IsDevMode()																	= 0;
+
+	// Returns true if system running in Test mode.
+	virtual bool IsTestMode() const = 0;
+ 
+	virtual void ShowDebugger(const char *pszSourceFile, int iLine, const char *pszReason) = 0;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Frame profiler functions
+	virtual void SetFrameProfiler(bool on, bool display, char *prefix) = 0;
+
+	// Starts section profiling.
+	virtual void StartProfilerSection( CFrameProfilerSection *pProfileSection ) = 0;
+	// Stops section profiling.
+	virtual void EndProfilerSection( CFrameProfilerSection *pProfileSection ) = 0;
 
 	virtual float GetDeltaTime() = 0;
 
@@ -602,3 +630,8 @@ inline void CryLogAlways(const char* format, ...)
 		va_end(args);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Additional headers.
+//////////////////////////////////////////////////////////////////////////
+#include <BlackBox/System/FrameProfiler.hpp>

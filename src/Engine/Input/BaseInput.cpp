@@ -57,7 +57,7 @@ void CBaseInput::PostInit()
 
 void CBaseInput::Update(bool bFocus)
 {
-	//FUNCTION_PROFILER(GetISystem(), PROFILE_INPUT);
+	FUNCTION_PROFILER(PROFILE_INPUT);
 
 	m_hasFocus = bFocus;
 
@@ -402,7 +402,7 @@ bool CBaseInput::IsEventPostingEnabled() const
 
 void CBaseInput::PostInputEvent(const SInputEvent& event, bool bForce)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_INPUT);
+	FUNCTION_PROFILER(PROFILE_INPUT);
 	//CryAutoCriticalSection postInputLock(m_postInputEventMutex);
 
 	if (!bForce && !m_enableEventPosting)
@@ -451,7 +451,7 @@ void CBaseInput::PostTouchEvent(const STouchEvent& event, bool bForce)
 
 void CBaseInput::PostUnicodeEvent(const SUnicodeEvent& event, bool bForce)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_INPUT);
+	FUNCTION_PROFILER(PROFILE_INPUT);
 	//assert(event.inputChar != 0 && Unicode::Validate(event.inputChar) && "Attempt to post invalid unicode event");
 
 	if (!bForce && !m_enableEventPosting)
@@ -719,7 +719,7 @@ void CBaseInput::UpdateBlockingInputs()
 
 void CBaseInput::PostHoldEvents()
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_INPUT);
+	FUNCTION_PROFILER(PROFILE_INPUT);
 	SInputEvent event;
 
 	// DARIO_NOTE: In this loop, m_holdSymbols size and content is changed so previous

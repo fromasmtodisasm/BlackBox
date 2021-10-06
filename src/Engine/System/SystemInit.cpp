@@ -5,6 +5,8 @@
 #include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
+#include "Profiling\ProfilingSystem.hpp"
+
 #include <BlackBox/Core/Path.hpp>
 
 //#undef USE_DEDICATED_SERVER_CONSOLE
@@ -216,6 +218,8 @@ bool CSystem::Init()
 	#else
 	bool isDaemonMode = false;
 	#endif // !defined(_RELEASE)
+
+	m_env.pFrameProfileSystem = new ProfilingSystem;
 
 	#if defined(USE_DEDICATED_SERVER_CONSOLE)
 
