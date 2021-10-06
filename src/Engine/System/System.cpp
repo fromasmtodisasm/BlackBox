@@ -1193,7 +1193,7 @@ void CSystem::SleepIfNeeded()
 	if (pVSync == NULL && gEnv && gEnv->pConsole)
 		pVSync = gEnv->pConsole->GetCVar("r_Vsync");
 
-	int32 maxFPS = 60;
+	int32 maxFPS = 0;
 
 	#if 0
 	if (m_env.IsDedicated())

@@ -8,7 +8,7 @@
 
 std::vector<Vec3> lineBuffer;
 
-float gGravity  = 0.00001;
+float gGravity  = 9.8f;
 int interval = 9000;
 
 int intervalLeft = interval;
@@ -30,6 +30,7 @@ CClient::CClient(CGame* pGame)
 		{ lineBuffer.clear(); },
 		0,
 		"");
+	REGISTER_CVAR2("cl_gravity", &gGravity, 9.8f, 0, "");
 }
 
 CClient::~CClient()
@@ -53,8 +54,8 @@ void CClient::Update()
 	const float FloorLevel = 2;
 	auto CamPos = Vec3(m_CameraController.CurrentCamera()->GetPos());
 
-	m_CamSpeed -= gGravity;
-	CamPos.y += m_CamSpeed;
+	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
+	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
 	CamPos.y = std::max(CamPos.y, FloorLevel);
 
 	m_CameraController.CurrentCamera()->SetPos(CamPos);
@@ -120,7 +121,7 @@ void CClient::Update()
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_JUMP))
 	{
 		auto pos = m_CameraController.CurrentCamera()->GetPos();
-		if (CamPos.y <= FloorLevel) m_CamSpeed = 0.01;
+		if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
 		m_JumpPressed = true;
 		//m_CameraController.CurrentCamera()->SetPos(pos + Vec3(0, 0.01,0));
 
