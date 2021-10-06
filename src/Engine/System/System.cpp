@@ -1121,6 +1121,42 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
+int CSystem::GetCPUFlags()
+{
+	assert(0 && __FUNCTION__);
+	return 0;
+}
+double CSystem::GetSecondsPerCycle()
+{
+	assert(0 && __FUNCTION__);
+	return 0.;
+}
+void CSystem::DumpMemoryUsageStatistics() 
+{
+
+}
+bool CSystem::IsTestMode() const
+{
+	assert(0 && __FUNCTION__);
+	return false;
+}
+void CSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
+{
+	assert(0 && __FUNCTION__);
+}
+void CSystem::SetFrameProfiler(bool on, bool display, char* prefix)
+{
+	assert(0 && __FUNCTION__);
+}
+void CSystem::StartProfilerSection(CFrameProfilerSection* pProfileSection)
+{
+	assert(0 && __FUNCTION__);
+}
+void CSystem::EndProfilerSection(CFrameProfilerSection* pProfileSection)
+{
+	assert(0 && __FUNCTION__);
+}
+
 
 ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
