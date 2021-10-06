@@ -48,6 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
+	startupParams.bManualEngineLoop = false;
 	// Enable run-time memory check for debug builds.
 
 	// Note: lpCmdLine does not contain the filename.

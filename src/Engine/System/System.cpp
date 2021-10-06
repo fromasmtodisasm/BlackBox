@@ -392,11 +392,31 @@ bool CSystem::DoFrame(int updateFlags)
 	bool continueRunning = true;
 	int pauseMode{};
 
+	if (m_env.pFrameProfileSystem)
+		m_env.pFrameProfileSystem->StartFrame();
+
+	if (!m_env.IsEditing()) // Editor calls its own rendering update
+		RenderBegin();
+
 	if (!Update(updateFlags, pauseMode))
 	{
 		continueRunning = false;
 	}
 
+	m_pGame->Update();
+
+	Render();
+	RenderEnd();
+
+	if (ITextModeConsole* pTextModeConsole = GetITextModeConsole())
+	{
+		pTextModeConsole->EndDraw();
+	}
+
+	if (m_env.pFrameProfileSystem)
+		m_env.pFrameProfileSystem->EndFrame();
+
+	SleepIfNeeded();
 	return continueRunning;
 }
 
@@ -872,7 +892,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		return false;
 	}
 
-	return m_bQuit;
+	return !m_bQuit;
 }
 
 bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
@@ -1157,6 +1177,10 @@ void CSystem::EndProfilerSection(CFrameProfilerSection* pProfileSection)
 	//assert(0 && __FUNCTION__);
 }
 
+void CSystem::SleepIfNeeded()
+{
+}
+
 
 ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 {
@@ -1182,7 +1206,7 @@ ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
 	// run main loop
-	if (initParams.bManualEngineLoop)
+	if (!initParams.bManualEngineLoop)
 	{
 		pSystem->RunMainLoop();
 		return nullptr;

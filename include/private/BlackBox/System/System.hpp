@@ -217,6 +217,7 @@ class CSystem final : public ISystem
 
   public:
 	void RunMainLoop();
+	void SleepIfNeeded();
 
   private:
 	bool InitConsole();
