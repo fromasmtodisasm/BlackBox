@@ -49,7 +49,12 @@ add_sources(
 	"ScriptBinds/ScriptObjectScript.cpp"
 	SOURCE_GROUP
 	"ProjectManager"
-	"ProjectManager/ProjectManager.cpp")
+	"ProjectManager/ProjectManager.cpp"
+	SOURCE_GROUP
+	"Profiling"
+	"Profiling/ProfilingSystem.cpp"
+	"Profiling/ProfilingSystem.hpp"
+)
 end_sources()
 
 enginemodule(System FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")

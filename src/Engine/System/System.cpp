@@ -1146,15 +1146,15 @@ void CSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* psz
 }
 void CSystem::SetFrameProfiler(bool on, bool display, char* prefix)
 {
-	assert(0 && __FUNCTION__);
+	//assert(0 && __FUNCTION__);
 }
 void CSystem::StartProfilerSection(CFrameProfilerSection* pProfileSection)
 {
-	assert(0 && __FUNCTION__);
+	//assert(0 && __FUNCTION__);
 }
 void CSystem::EndProfilerSection(CFrameProfilerSection* pProfileSection)
 {
-	assert(0 && __FUNCTION__);
+	//assert(0 && __FUNCTION__);
 }
 
 
