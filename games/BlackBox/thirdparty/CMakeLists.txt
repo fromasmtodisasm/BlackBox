@@ -1,4 +1,6 @@
 message(STATUS "Thirdparty libs adding...")
 if (USE_STEAM)
-	add_subdirectory(Steam)
+	if (NOT TARGET Steam)
+		add_subdirectory(Steam)
+	endif()
 endif()

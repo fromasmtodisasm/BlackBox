@@ -797,7 +797,12 @@ bool CSystem::InitFileSystem()
 
 IGame* CSystem::CreateGame(IGame* game)
 {
-	LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+	string gameDLLName = "Game";
+	if (ICVar* pCVarGameDir = gEnv->pConsole->GetCVar("sys_dll_game"))
+	{
+		gameDLLName = pCVarGameDir->GetString();
+	}
+	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
 		m_pGame = P();
 		return true;
 	});

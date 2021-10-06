@@ -94,10 +94,15 @@
       "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Solutions\\Win64_Debug_${generator}",
-      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake -DVCPKG_INSTALLER=ON",
+      "cmakeCommandArgs": "-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${projectDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
+        {
+          "name": "VCPKG_TARGET_TRIPLET",
+          "value": "x64-windows",
+          "type": "STRING"
+        },
         {
           "name": "OPTION_REMOTE_CONSOLE",
           "value": "True",
@@ -120,7 +125,7 @@
         },
         {
           "name": "USE_STEAM",
-          "value": "ON",
+          "value": "OFF",
           "type": "BOOL"
         },
         {
@@ -180,7 +185,7 @@
         },
         {
           "name": "USE_STEAM",
-          "value": "ON",
+          "value": "OFF",
           "type": "BOOL"
         }
       ]
