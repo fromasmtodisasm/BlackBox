@@ -10,6 +10,11 @@
       "name": "Windows x64 Debug Ninja",
       "variables": [
         {
+          "name": "OPTION_RUNTIME_CVAR_OVERRIDES",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
           "name": "OPTION_REMOTE_CONSOLE",
           "value": "True",
           "type": "BOOL"
@@ -48,7 +53,15 @@
       "configurationType": "Profile",
       "generator": "Ninja",
       "name": "Windows x64 Profile Ninja",
-      "inheritEnvironments": []
+      "inheritEnvironments": [],
+      "variables": [
+        {
+          "name": "OPTION_RUNTIME_CVAR_OVERRIDES",
+          "value": "True",
+          "type": "BOOL"
+        }
+
+      ]
     },
     {
       "buildRoot": "${projectDir}\\Solutions\\Win64_Release_${generator}",
@@ -59,6 +72,11 @@
       "name": "Windows x64 Release Ninja",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
+        {
+          "name": "OPTION_RUNTIME_CVAR_OVERRIDES",
+          "value": "True",
+          "type": "BOOL"
+        },
         {
           "name": "OPTION_REMOTE_CONSOLE",
           "value": "True",
@@ -107,6 +125,11 @@
         },
         {
           "name": "OPTION_DEDICATED_SERVER",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "OPTION_RUNTIME_CVAR_OVERRIDES",
           "value": "True",
           "type": "BOOL"
         }
@@ -130,6 +153,11 @@
       "cmakeToolchain": "${ENV.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": [
+        {
+          "name": "OPTION_RUNTIME_CVAR_OVERRIDES",
+          "value": "True",
+          "type": "BOOL"
+        },
         {
           "name": "OPTION_REMOTE_CONSOLE",
           "value": "True",

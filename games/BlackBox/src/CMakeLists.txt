@@ -7,7 +7,7 @@ sources_platform(ALL)
 add_sources(
 	"NoUberFile"
 	PROJECTS
-	Game
+	BlackBoxGame
 	SOURCE_GROUP
 	"Source Files"
 	Main.cpp
@@ -94,7 +94,7 @@ add_sources(
 	]]
 )
 end_sources()
-gamemodule(Game FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Game")
+gamemodule(BlackBoxGame FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
 
 add_subdirectory(../thirdparty 3rdparty)
 
