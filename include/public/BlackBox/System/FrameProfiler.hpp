@@ -401,12 +401,12 @@ public:
 //!   FUNCTION_PROFILER( GetISystem() );
 //!   // function body will be profiled.
 //! }
-#define FUNCTION_PROFILER( pISystem,subsystem ) \
-	static CFrameProfiler staticFrameProfiler( pISystem,__FUNCTION__,subsystem ); \
+#define FUNCTION_PROFILER( subsystem ) \
+	static CFrameProfiler staticFrameProfiler( gEnv->pSystem,__FUNCTION__,subsystem ); \
 	CFrameProfilerSection frameProfilerSection( &staticFrameProfiler );
 
-#define FUNCTION_PROFILER_FAST( pISystem,subsystem,bProfileEnabled ) \
-	static CFrameProfiler staticFrameProfiler( pISystem,__FUNCTION__,subsystem ); \
+#define FUNCTION_PROFILER_FAST( subsystem,bProfileEnabled ) \
+	static CFrameProfiler staticFrameProfiler( gEnv->pSystem,__FUNCTION__,subsystem ); \
 	CFrameProfilerSection frameProfilerSection( (bProfileEnabled)?&staticFrameProfiler:NULL );
 
 //////////////////////////////////////////////////////////////////////////
@@ -418,13 +418,13 @@ public:
 //!     ... more code ... // This code will be profiled with counter named "MyCode"
 //!		}
 //! }
-#define FRAME_PROFILER( szProfilerName,pISystem,subsystem ) \
-	static CFrameProfiler staticFrameProfiler( pISystem,szProfilerName,subsystem ); \
+#define FRAME_PROFILER( szProfilerName ) \
+	static CFrameProfiler staticFrameProfiler( gEnv->pSystem,szProfilerName,subsystem ); \
 	CFrameProfilerSection frameProfilerSection( &staticFrameProfiler );
 
 //! Faster version of FRAME_PROFILE macro, also accept a pointer to boolean variable which turn on/off profiler.
-#define FRAME_PROFILER_FAST( szProfilerName,pISystem,subsystem,bProfileEnabled ) \
-	static CFrameProfiler staticFrameProfiler( pISystem,szProfilerName,subsystem ); \
+#define FRAME_PROFILER_FAST( szProfilerName, subsystem,bProfileEnabled ) \
+	static CFrameProfiler staticFrameProfiler( gEnv->pSystem,szProfilerName,subsystem ); \
 	CFrameProfilerSection frameProfilerSection( (bProfileEnabled)?&staticFrameProfiler:NULL );
 
 #else //#if !defined(_RELEASE) || defined(WIN64)

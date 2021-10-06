@@ -837,8 +837,8 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 
 bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 {
-	//PROFILER_SYNC_FRAME();
-	// Update input
+	FUNCTION_PROFILER(PROFILE_SYSTEM)
+
 	m_env.pTimer->UpdateOnFrameStart();
 	LAST = NOW;
 	NOW	 = SDL_GetPerformanceCounter();

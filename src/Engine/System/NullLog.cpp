@@ -254,7 +254,7 @@ void CLog::LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_li
 		}
 	}
 
-	FUNCTION_PROFILER(GetISystem(), PROFILE_SYSTEM);
+	FUNCTION_PROFILER(PROFILE_SYSTEM);
 	//LOADING_TIME_PROFILE_SECTION(GetISystem());
 
 	bool bfile = false, bconsole = false;
