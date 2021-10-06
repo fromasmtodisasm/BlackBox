@@ -23,8 +23,8 @@
 // grabbing can be enforced by typing CTRL+ALT+G.
 
 #ifndef NDEBUG
-#define LINUXINPUT_AUTOGRAB 1
-#define HIDE_MOUSE_POINTER
+//#define LINUXINPUT_AUTOGRAB 1
+//#define HIDE_MOUSE_POINTER
 #else
 #undef LINUXINPUT_AUTOGRAB
 #endif

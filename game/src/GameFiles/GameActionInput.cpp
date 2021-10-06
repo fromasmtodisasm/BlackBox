@@ -306,6 +306,7 @@ void  CGame::ResetInputMap()
   //vision modes
   //binocular/motion tracker/listening device
   pMap->BindAction(ACTION_ITEM_0, eKI_B);
+  pMap->BindAction(ACTION_ITEM_4, eKI_XI_Back);
 
   // thermal vision
   pMap->BindAction(ACTION_ITEM_1, eKI_T);

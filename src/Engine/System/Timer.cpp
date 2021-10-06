@@ -78,7 +78,6 @@ bool CTimer::Init()
   // MartinM: renamed cvars for consistency
   // if game code was accessing them by name there was something wrong anyway
 
-#if 0
   REGISTER_CVAR2("t_Smoothing", &m_TimeSmoothing, DEFAULT_FRAME_SMOOTHING, 0,
     "time smoothing\n"
     "0=off, 1=on");
@@ -104,7 +103,6 @@ bool CTimer::Init()
 
   REGISTER_CVAR2("profile_weighting", &m_profile_weighting, 1, 0,
     "Profiler smoothing mode: 0 = legacy, 1 = average, 2 = peak weighted, 3 = peak hold");
-#endif
 
   return true;
 }

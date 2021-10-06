@@ -31,6 +31,11 @@ namespace
 	}
 } // namespace
 
+struct phys_params
+{
+	float Gravity  = 100;
+};
+
 class CClient : 
 	public IClientSink
 	, public IActionMapSink
@@ -75,6 +80,8 @@ class CClient :
 	void TriggerScreenshot(float fValue, XActivationEvent ae);
 	void TriggerFullscreen(float fValue, XActivationEvent ae);
 
+	void TriggerStart(float fValue, XActivationEvent ae);
+
 	void TriggerChangeCameraMode(float fValue, XActivationEvent ae);
 
 	void OnLoadScene();
@@ -99,6 +106,8 @@ class CClient :
 	REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE, TriggerMessageMode)
 	REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE2, TriggerMessageMode2)
 	REGISTER_INPUTACTIONMAP(ACTION_TAKESCREENSHOT, TriggerScreenshot)
+
+	REGISTER_INPUTACTIONMAP(ACTION_ITEM_4, TriggerStart)
 	//REGISTER_INPUTACTIONMAP(ACTION_FULLSCRN_TOOGLE, TriggerFullscreen);
 	END_INPUTACTIONMAP()
 
@@ -158,5 +167,7 @@ class CClient :
 	float m_CamSpeed	= 0.f;
 	bool  m_OnGround	= true;
 	bool  m_JumpPressed = false;
+
+	phys_params m_PhysParams;
 
 };
