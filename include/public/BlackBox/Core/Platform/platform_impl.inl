@@ -168,6 +168,13 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 	#include <BlackBox/Memory/CryMemoryManager_impl.h>
 #endif
 
+int64 CryGetTicks()
+{
+	LARGE_INTEGER li;
+	QueryPerformanceCounter(&li);
+	return li.QuadPart;
+}
+
 #if BB_PLATFORM_WINAPI
 #include "platform_impl_winapi.inl"
 #elif BB_PLATFORM_ANDROID

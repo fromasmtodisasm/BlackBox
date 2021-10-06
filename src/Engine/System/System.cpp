@@ -1236,7 +1236,7 @@ void CSystem::SleepIfNeeded()
 			if (frameTime >= thresholdMs)
 				break;
 			if (thresholdMs - frameTime > 10 * 1000)
-				CrySleep(1000*2);
+				CrySleep(1);
 			else
 				CrySleep(0);
 
