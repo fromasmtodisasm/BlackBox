@@ -404,6 +404,8 @@ class CSystem final : public ISystem
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
 
+	CTimeValue m_lastTickTime;
+
 	CScriptObjectConsole*  m_ScriptObjectConsole  = nullptr;
 	CScriptObjectScript*   m_ScriptObjectScript	  = nullptr;
 	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
