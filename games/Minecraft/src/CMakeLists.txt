@@ -66,6 +66,10 @@ add_sources(
 	Localization/StringTableMgr.h
 	Localization/ScriptObjectLanguage.cpp
 	Localization/ScriptObjectLanguage.h
+	SOURCE_GROUP
+	"Materials"
+	Materials/XSurfaceMgr.cpp
+	Materials/XSurfaceMgr.h
 	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.h
