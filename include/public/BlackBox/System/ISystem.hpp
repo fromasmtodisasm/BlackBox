@@ -48,6 +48,7 @@ struct IRemoteConsole;
 struct IProjectManager;
 struct IFrameProfileSystem;
 struct IVisArea;
+struct IProcess;
 
 struct ISoundSystem;
 
@@ -472,6 +473,24 @@ struct ISystem
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) = 0;
 	virtual bool IsDevMode()																	= 0;
+
+	// Set rate of Garbage Collection for script system.
+	// @param fRate in seconds
+	virtual void SetGCFrequency( const float fRate ) = 0;
+
+	/* Set the active process
+		@param process a pointer to a class that implement the IProcess interface
+	*/
+	virtual void SetIProcess(IProcess *process) = 0;
+	/* Get the active process
+		@return a pointer to the current active process
+	*/
+	virtual IProcess* GetIProcess() = 0;
+
+#if (defined (WIN32) || defined (PS2)) && defined(CHANGE_DEFINE)
+	virtual IRenderer* CreateRenderer(bool fullscreen, void* hinst, void* hWndAttach = 0) = 0;
+#endif	
+
 
 	// Returns true if system running in Test mode.
 	virtual bool IsTestMode() const = 0;

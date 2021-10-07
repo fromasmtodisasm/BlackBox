@@ -46,6 +46,17 @@ namespace utils
 	}
 }
 
+void CSystem::SetGCFrequency(const float fRate)
+{
+}
+void CSystem::SetIProcess(IProcess* process)
+{
+}
+IProcess* CSystem::GetIProcess()
+{
+	return nullptr;
+}
+
 
 CSystem::CSystem(SSystemInitParams& startupParams)
 	:

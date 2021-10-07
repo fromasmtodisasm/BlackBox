@@ -100,6 +100,11 @@ public:
 	virtual void SetFlags(int flags) override;
 	virtual int GetFlags() override;
 
+	void ClearRenderResources(bool bEditor = false)
+	{
+		NOT_IMPLEMENTED;	
+	}
+
 private:
 	ISystem*				m_pSystem;
 	World*					m_pWorld;

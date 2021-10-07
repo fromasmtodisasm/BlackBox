@@ -422,7 +422,7 @@ typedef std::set<string> StringSet;
 
 class CXGame final
 	: public IXGame
-	//, public IInputEventListener
+	, public IInputEventListener // proxy for UI system
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
 	//, public IActionMapSink
@@ -437,6 +437,11 @@ public:
 	virtual ~CXGame();
 	void Reset();
 	void SoftReset();
+
+  //! Called every time input event is generated.
+	//! \return true if the broadcasting of this event should be aborted and the rest of input listeners should not receive this event.
+	virtual bool OnInputEvent(const SInputEvent& event);
+	virtual bool OnInputEventUI(const SUnicodeEvent& event);
 
 	// interface IGame ----------------------------------------------------------
 

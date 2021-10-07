@@ -72,6 +72,22 @@ void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CXGame* pGame)
 	}
 }
 
+void CScriptObjectGame::Reset()
+{
+	#if 0
+	if (m_vRenderersObjs.size())
+	{
+		while (!m_vRenderersObjs.empty())
+		{
+			CScriptObjectRenderer* p = m_vRenderersObjs.back();
+			m_vRenderersObjs.pop_back();
+			delete p;
+		}
+	}
+	#endif
+}
+
+
 void CScriptObjectGame::OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo)
 {
 	SmartScriptObject pServer(m_pScriptSystem);

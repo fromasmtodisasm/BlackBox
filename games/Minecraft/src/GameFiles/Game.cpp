@@ -21,6 +21,8 @@
 #include <thread>
 
 #include "UISystem.h"
+#include "UIHud.h"
+#include "IngameDialog.h"
 
 static int g_FontSize = 32;
 
@@ -218,18 +220,109 @@ void SaveHistory()
 	}
 }
 
-CXGame::CXGame()
-	: m_pSystem(nullptr)
-	, m_pScriptSystem(nullptr)
-	, m_pRenderer(nullptr)
-	, m_p3DEngine(nullptr)
-	, m_pLog(nullptr)
-	, m_pCVarCheatMode(nullptr)
-	, m_pScriptObjectGame(nullptr)
+//////////////////////////////////////////////////////////////////////////////////////////////
+// CTagPointManager
+class CTagPointManager : public ITagPointManager
 {
-	//const auto ltime = time (NULL);
-	//auto stime = (unsigned int) ltime/2;
-	//srand(stime);
+public:
+	CTagPointManager( IGame *pGame )  { m_pGame = (CXGame*) pGame; };
+	virtual ~CTagPointManager() {};
+
+	// This function creates a tag point in the game world
+	virtual ITagPoint *CreateTagPoint(const string &name, const Legacy::Vec3 &pos, const Legacy::Vec3 &angles) 
+	{
+		return m_pGame->CreateTagPoint( name, pos, angles );
+	};
+
+	// Retrieves a tag point by name
+	virtual ITagPoint *GetTagPoint(const string &name)
+	{
+		return m_pGame->GetTagPoint( name );
+	}
+
+	// Deletes a tag point from the game
+	virtual void RemoveTagPoint(ITagPoint *pPoint)
+	{
+		m_pGame->RemoveTagPoint( pPoint );
+	}
+
+	virtual void AddRespawnPoint(ITagPoint *pPoint)
+	{
+		m_pGame->AddRespawnPoint( pPoint );
+	}
+
+	virtual void RemoveRespawnPoint(ITagPoint *pPoint)
+	{
+		m_pGame->RemoveRespawnPoint( pPoint );
+	}
+
+private:
+	CXGame *m_pGame;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// CXGame
+//!constructor
+//////////////////////////////////////////////////////////////////////
+CXGame::CXGame()
+{
+	m_pTimeDemoRecorder = NULL;
+	m_pScriptObjectGame = NULL;
+	m_pScriptTimerMgr = NULL;
+	m_pScriptSystem = NULL;
+	m_pServer = NULL;
+	m_pClient = NULL;
+	m_pLog = NULL;
+	m_pServerSnooper = NULL;
+	m_pNETServerSnooper = 0;
+	m_pRConSystem = 0;
+	m_pWeaponSystemEx = NULL;
+	m_mapTagPoints.clear();
+	m_bMenuInitialized = false;
+	m_pCurrentUI = 0;	
+	m_pIActionMapManager=NULL;
+	m_pIngameDialogMgr = new CIngameDialogMgr();
+	m_pUISystem = 0;
+	mp_model = 0;
+	#if 0
+#if !defined(LINUX)
+	// to avoid all references to movie user in this file
+	m_pMovieUser = new CMovieUser(this);
+#endif
+	#endif
+	m_nPlayerIconTexId = -1;
+	m_nVehicleIconTexId = -1;
+	m_nBuildingIconTexId = -1;
+	m_nUnknownIconTexId = -1;
+	m_bMenuOverlay = false;
+	m_bUIOverlay = false;
+	m_bUIExclusiveInput = false;
+	m_bHideLocalPlayer = false;
+	m_pCVarCheatMode=NULL;
+
+	m_fTimeGran=m_fFixedStep=m_fTimeGran2FixedStep=m_frFixedStep = 0;
+	m_iFixedStep2TimeGran = 0;
+	g_language=0;
+	g_playerprofile=0;
+	g_serverprofile=0;
+
+	m_tPlayerPersistentData.m_bDataSaved=false;
+	m_fFadingStartTime=-1.0f;
+	cv_game_physics_quality=NULL;
+	m_bMapLoadedFromCheckpoint=false;
+	m_bSynchronizing = false;
+
+	//m_fTimeToSaveThumbnail = 0;
+	m_pGameMods = NULL;
+	m_bLastDoLateSwitch = 0;
+	m_bLastCDAuthentication = 0;
+	m_bAllowQuicksave = true;
+
+	m_sGameName = "FarCry";
+	m_pTagPointManager = new CTagPointManager( this );
+	m_nDEBUG_TIMING = 0;
+	m_fDEBUG_STARTTIMER = 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -240,11 +333,9 @@ CXGame::~CXGame()
 	m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
 
-#if 0
 	if (m_pIngameDialogMgr)
 		delete m_pIngameDialogMgr;
 	m_pIngameDialogMgr=NULL;
-#endif
 
 #if 0
 #	if !defined(LINUX)
@@ -280,8 +371,8 @@ CXGame::~CXGame()
 	}
 	SAFE_DELETE(m_pUISystem);
 
-#if 0
 	CScriptObjectUI::ReleaseTemplate();
+#if 0
 	CScriptObjectPlayer::ReleaseTemplate();
 	CScriptObjectFireParam::ReleaseTemplate();
 	CScriptObjectWeaponClass::ReleaseTemplate();
@@ -378,7 +469,6 @@ CXGame::~CXGame()
 	SAFE_RELEASE(pl_JumpNegativeImpulse);
 	#endif
 
-#if 0
 	if (m_pRenderer && (m_nPlayerIconTexId>=0))
 		m_pRenderer->RemoveTexture(m_nPlayerIconTexId);
 	if (m_pRenderer && (m_nVehicleIconTexId>=0))
@@ -387,10 +477,9 @@ CXGame::~CXGame()
 		m_pRenderer->RemoveTexture(m_nBuildingIconTexId);
 	if (m_pRenderer && (m_nUnknownIconTexId>=0))
 		m_pRenderer->RemoveTexture(m_nUnknownIconTexId);
-#endif
 
-#if 0
 	SAFE_DELETE(m_pUIHud);
+#if 0
 	SAFE_DELETE(m_pWeaponSystemEx);
 	SAFE_DELETE(m_pVehicleSystem);
 	SAFE_DELETE(m_pPlayerSystem);
@@ -446,7 +535,9 @@ bool CXGame::InitClassRegistry()
 
 	assert(pPlayerSystem);
 	assert(pVehicleSystem);
+#if 0
 	assert(pWeaponSystemEx);
+#endif
 
 	// Enumerate entity classes.
 	EntityClass* entCls = NULL;
@@ -480,12 +571,12 @@ bool CXGame::InitClassRegistry()
 //////////////////////////////////////////////////////////////////////////
 void CXGame::SoftReset()
 {
-	#if 0
 	m_pLog->Log("Soft Reset Begin");
 	//allow to reload scripts with(LoadScript)
 	m_pScriptSystem->SetGlobalToNull("_localplayer");
 	if (m_pScriptSystem)
 		m_pScriptSystem->UnloadScripts();
+	#if 0
 
 	std::vector<string> vLoadedWeapons;
 
@@ -493,6 +584,8 @@ void CXGame::SoftReset()
 		vLoadedWeapons.push_back(m_pWeaponSystemEx->GetWeaponClass(i)->GetName());
 
 	m_pWeaponSystemEx->Reset();
+	#endif
+	#if 0
 #if !defined(LINUX)
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->StopAllSequences();
@@ -508,6 +601,9 @@ void CXGame::SoftReset()
 
 	for (std::vector<string>::iterator i = vLoadedWeapons.begin(); i != vLoadedWeapons.end(); ++i)
 		AddWeapon((*i).c_str());
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 
 	if (m_pCurrentUI)
 	{
@@ -516,9 +612,16 @@ void CXGame::SoftReset()
 	}
 
 	m_pLog->Log("Soft Reset End");
-	#else
-	NOT_IMPLEMENTED;
-	#endif
+}
+
+bool CXGame::OnInputEvent(const SInputEvent& event)
+{
+	return false;
+}
+
+bool CXGame::OnInputEventUI(const SUnicodeEvent& event)
+{
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -527,26 +630,31 @@ void CXGame::SoftReset()
 //! and wipes out all textures from the 3dengine
 void CXGame::Reset()
 {
-	#if 0
 	m_pEntitySystem->Reset();
 
+	#if 0
 	// Unload all music.
 	if (m_pSystem->GetIMusicSystem())
 		m_pSystem->GetIMusicSystem()->Unload();
+	#endif
 
 	//allow to reload scripts with(LoadScript)
 	m_pScriptSystem->SetGlobalToNull("_localplayer");
 	if (m_pScriptSystem)
 		m_pScriptSystem->UnloadScripts();
 
+	#if 0
 	m_pWeaponSystemEx->Reset();
+	#endif
 	m_XSurfaceMgr.Reset();
 	m_XAreaMgr.Clear();
 	ClearTagPoints();
+	#if 0
 #if !defined(LINUX)
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->Reset(false);
 #endif
+	#endif
 	m_pScriptObjectGame->Reset();
 
 	m_pScriptSystem->ForceGarbageCollection();
@@ -565,7 +673,6 @@ void CXGame::Reset()
 		m_pIActionMapManager->Reset();
 
 	m_iLastCmdIdx = 0;
-	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Reset UI.
@@ -575,14 +682,12 @@ void CXGame::Reset()
 		m_pUISystem->UnloadAllModels();
 		m_pUISystem->StopAllVideo();
 		m_p3DEngine->Enable(1);
-		//m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
+		m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
 	}
-	#if 0
 	if (m_pCurrentUI)
 		m_pCurrentUI->Reset();
 	if (m_pUIHud)
 		m_pUIHud->Reset();
-	#endif
 
 	if (GetMyPlayer())
 		GetMyPlayer()->SetNeedUpdate(true);
@@ -657,9 +762,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pFlockManager	  = new CFlockManager(m_pSystem);
 	#endif
 
-	#if 0
 	CScriptObjectUI::InitializeTemplate(m_pScriptSystem);
-	#endif
 
 	// init is not necessary for now, but add here if it later is
 	m_pScriptObjectGame = new CScriptObjectGame;
@@ -856,10 +959,7 @@ bool CXGame::Update()
 	}
 	if (!m_bEditor)
 	{
-		if (!m_bMenuOverlay || !m_pUISystem 
-			#if 0
-			|| m_pUISystem->GetScriptObjectUI()->CanRenderGame()
-			#endif
+		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame()
 			)
 		{
 			m_p3DEngine->Enable(1);
@@ -1152,9 +1252,7 @@ void CXGame::GotoGame(bool bTriggerOnSwitch)
 	else if (bTriggerOnSwitch)
 	{
 		assert(0 && __FUNCTION__);
-		#if 0
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
-		#endif
 	}
 }
 
@@ -1175,6 +1273,7 @@ void CXGame::MenuOn()
 	}
 	#endif
 
+	//FIXME:
 	#if 0
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
@@ -1188,14 +1287,12 @@ void CXGame::MenuOn()
 
 	if (!m_bEditor)
 	{
-		#if 0
 		if (m_pUISystem->GetScriptObjectUI()->CanRenderGame())
 		{
 			m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
 			m_p3DEngine->Enable(1);
 		}
 		else
-		#endif
 		{
 			m_pSystem->GetILog()->Log("UISystem: Disabled 3D Engine!");
 			m_p3DEngine->Enable(0);
@@ -1222,6 +1319,7 @@ void CXGame::MenuOff()
 	#endif
 	m_pScriptTimerMgr->Pause(false);
 
+	//FIXME:
 	#if 0
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
@@ -1232,12 +1330,12 @@ void CXGame::MenuOff()
 		if (GetMyPlayer())
 			m_XAreaMgr.ReTriggerArea(GetMyPlayer(), GetMyPlayer()->GetPos(), false);
 	}
+	#endif
 
 	m_bMenuOverlay = 0;
 
 	m_pSystem->SetIProcess(m_p3DEngine);
 	m_pSystem->GetIProcess()->SetFlags(PROC_3DENGINE);
-	#endif
 
 	if (!m_bEditor)
 	{

@@ -636,6 +636,21 @@ struct I3DEngine : public IProcess
 
   //! reset current screen effects
   virtual void ResetScreenFx(void) = 0;
+
+  //! check object visibility taking into account portals and terrain occlusion test
+  //  virtual bool IsBoxVisibleOnTheScreen(const Vec3 & vBoxMin, const Vec3 & vBoxMax, OcclusionTestClient * pOcclusionTestClient = NULL)=0;
+  //! check object visibility taking into account portals and terrain occlusion test
+  //  virtual bool IsSphereVisibleOnTheScreen(const Vec3 & vPos, const float fRadius, OcclusionTestClient * pOcclusionTestClient = NULL)=0;
+
+  //! Clears all rendering resources, should be called before LoadLevel() and before loading of any textures from script
+
+  // Summary:
+  //   Clears all rendering resources
+  // Note:
+  //   Should always be called before LoadLevel, and also before loading textures from a script.
+  // Arguments:
+  //   bEditor - Set to true if called from the editor
+  virtual void ClearRenderResources(bool bEditor = false) = 0;
 };
 
 

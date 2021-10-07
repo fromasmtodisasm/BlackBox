@@ -14,6 +14,7 @@
 #include <BlackBox/System/Timer.hpp>
 #include <BlackBox/System/Window.hpp>
 #include <BlackBox/System/PakVars.h>
+#include <BlackBox/System/IProcess.hpp>
 
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
@@ -119,6 +120,13 @@ class CSystem final : public ISystem
 	~CSystem();
 	void PreprocessCommandLine();
 	void ProcessCommandLine();
+
+	virtual void	  SetGCFrequency(const float fRate) override;
+	virtual void	  SetIProcess(IProcess* process) override;
+	virtual IProcess* GetIProcess() override;
+#if (defined (WIN32) || defined (PS2)) && defined(CHANGE_DEFINE)
+	virtual IRenderer* CreateRenderer(bool fullscreen, void* hinst, void* hWndAttach = 0) = 0;
+#endif	
 
 	void OnRenderer_BeforeEndFrame() override;
 

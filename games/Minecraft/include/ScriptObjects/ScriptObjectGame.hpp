@@ -15,6 +15,7 @@ public:
 	void InitializeTemplate(IScriptSystem* pSS);
 
 	void Init(IScriptSystem* pScriptSystem, CXGame* pGame);
+	void Reset();
 	void OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo);
 	void OnNETServerTimeout(CIPAddress& ip);
 
