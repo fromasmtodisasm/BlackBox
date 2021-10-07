@@ -10,6 +10,8 @@
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <ScriptObjects/ScriptObjectTest.hpp>
 #include <ScriptObjects/ScriptTimerMgr.hpp>
+#include <Localization/ScriptObjectLanguage.h>
+#include <Localization/StringTableMgr.h>
 
 #include "ScriptObjectUI.h"
 
@@ -111,72 +113,6 @@ namespace
 	CSteamAchievements* g_SteamAchievements = NULL;
 #endif
 } // namespace
-
-#if 0
-class CRender : public IQuadTreeRender {
-public:
-	CRender(IRenderer* pRender)
-	{
-
-	}
-  void draw_plane(double ox, double oy, double size, color3 color) override {
-		m_Plane->moveTo(Legacy::Vec3(ox, 0, oy));
-		m_Plane->scale(Legacy::Vec3(size, size, size));
-
-  }
-	std::shared_ptr<Object> m_Plane;
-};
-
-class TreeRender : public ITreeVisitorCallback {
-public:
-  TreeRender(IQuadTreeRender *render) : render(render) {}
-  // Inherited via ITreeVisitorCallback
-  virtual void BeforVisit(QuadTree *qt) override {
-
-  }
-  virtual void OnLeaf(QuadTree *qt, bool is_last, int level) override {
-	render->draw_plane(qt->m_x, qt->m_y, qt->m_size, qt->m_color);
-  }
-
-  IQuadTreeRender *render = nullptr;
-};
-
-class TreeObject : public Object
-{
-	TreeObject(TreeRender *treeRender) : m_TreeRender(std::unique_ptr<TreeRender>(treeRender)) {
-	
-	
-	}
-	virtual void draw(SRendParams& renderParams) final
-	{
-		Object::draw(renderParams);
-	}
-
-	std::unique_ptr<TreeRender> m_TreeRender;
-};
-namespace {
-#	if 0
-  sf::RenderWindow& getWindow()
-  {
-	return *static_cast<sf::RenderWindow*>(GetISystem()->GetIWindow()->getHandle());
-  }
-#	endif
-}
-#endif
-
-namespace gui
-{
-	void init()
-	{
-		// (optional) set browser properties
-	}
-	void update()
-	{
-	}
-
-} // namespace gui
-
-//float CameraRayLength = 40.f;
 
 int g_bRenderGame = true;
 
@@ -385,9 +321,7 @@ CXGame::~CXGame()
 #endif
 	CScriptObjectGame::ReleaseTemplate();
 	CScriptObjectInput::ReleaseTemplate();
-#if 0
 	CScriptObjectLanguage::ReleaseTemplate();
-#endif
 
 #if 0
 	CScriptObjectAI::ReleaseTemplate();
@@ -1168,6 +1102,55 @@ bool CXGame::IsInPause(IProcess *pProcess)
 
 	return (bPause);
 }
+
+//////////////////////////////////////////////////////////////////////////
+void CXGame::InitVehicleCvars()
+{
+	IConsole *pConsole = m_pSystem->GetIConsole();
+	
+	//Dumprot	 9000.4
+	//Dumpv		 1500.4
+	//Turn		12000.0
+	//Speedv		35000.0
+	//Speedturnmin	       5.0
+
+	b_dump = pConsole->CreateVariable("b_dump","2000.4",0,"This variable is not used.");
+	b_dumpRot = pConsole->CreateVariable("b_dumprot","9000.4",0,"This variable is not used.");
+	b_dumpV = pConsole->CreateVariable("b_dumpv","1500.4",0,"This variable is not used.");
+	b_dumpVH = pConsole->CreateVariable("b_dumpvh","10000.4",0,"This variable is not used.");
+	b_stand = pConsole->CreateVariable("b_stand","10000.5",0,"This variable is not used.");
+	b_turn = pConsole->CreateVariable("b_turn","12000.0",0,"This variable is not used.");
+	b_tilt = pConsole->CreateVariable("b_tilt","2.0",0,"This variable is not used.");
+	b_speedV = pConsole->CreateVariable("b_speedv","35000.0",0,"This variable is not used.");
+	b_accelerationV = pConsole->CreateVariable("b_accelerationv","100000.0",0,"This variable is not used.");
+	b_speedMinTurn = pConsole->CreateVariable("b_speedminturn","5.0",0,"This variable is not used.");
+	b_float = pConsole->CreateVariable("b_float","7",0,"This variable is not used.");
+	b_wscale = pConsole->CreateVariable("b_wscale","2.1",0,"This variable is not used.");
+	b_wscalew = pConsole->CreateVariable("b_wscalew","2.1",0,"This variable is not used.");
+	b_wmomentum = pConsole->CreateVariable("b_wmomentum","500.5",0,"This variable is not used.");
+	
+	b_camera = pConsole->CreateVariable("b_camera","0",0,"This variable is not used.");
+
+	p_CameraSmoothTime = pConsole->CreateVariable("p_camerasmoothtime",".6",0,"when entering/leaving vehicles.");
+	p_CameraSmoothScale = pConsole->CreateVariable("p_camerasmoothscale","5",0,"when driving vehicles.");
+	p_CameraSmoothVLimit = pConsole->CreateVariable("p_camerasmoothvlimit","20",0,"camera transition scale to vehicle speed when leaving moving vehicles.");
+
+	p_LeaveVehicleImpuls = pConsole->CreateVariable("p_leavevehicleimpuls","20",0,"impilse scale to vehicle speed when leaving moving vehicles.");
+	p_LeaveVehicleBrake = pConsole->CreateVariable("p_leavevehiclebrake","10",0,"speed thrashold to have breaks on when driver is out");
+	p_LeaveVehicleBrakeDelay = pConsole->CreateVariable("p_leavevehiclebrakedelay","2",0,"delay before wehicle stops after driver out is out");
+
+	p_AutoCenterDelay = pConsole->CreateVariable("p_autocenterdelay","30",0,"idle time before force autoCenter");
+	p_AutoCenterSpeed = pConsole->CreateVariable("p_autocenterspeed","20",0,"speed of autoCentering - inverted (the bigger - the slower)");
+
+	// show bboxes for static objects below helicopter
+	h_drawbelow = pConsole->CreateVariable("h_drawbelow","0",0,
+		"Toggles bounding boxes below helicopters.\n"
+		"Usage: h_drawbelow [0/1]\n"
+		"Default is 0 (off). Set 1 to display the bounding\n"
+		"boxes of obstacles currently below a helicopter.");
+}
+
+
 
 bool CXGame::LoadScene(std::string name)
 {

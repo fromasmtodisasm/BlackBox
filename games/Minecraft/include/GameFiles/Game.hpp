@@ -64,25 +64,6 @@ class CPlayerSystem;
 class CVehicleSystem;
 class CPlayer;
 
-//FIXIT:
-#if 0
-class CXAreaMgr : public IXAreaMgr
-{
-  public:
-	virtual void RetriggerAreas() override{}
-
-  virtual IXArea* CreateArea(const Legacy::Vec3d* vPoints, const int count, const std::vector<std::string>& names,
-    const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f) override{return nullptr;}
-  virtual IXArea* CreateArea(const Legacy::Vec3d& min, const Legacy::Vec3d& max, const Legacy::Matrix44& TM, const std::vector<std::string>& names,
-    const int type = 0, const int groupId = -1, const float width = 0.0f) override{return nullptr;}
-  virtual IXArea* CreateArea(const Legacy::Vec3d& center, const float radius, const std::vector<std::string>& names,
-    const int type = 0, const int groupId = -1, const float width = 0.0f) override{return nullptr;}
-  virtual IXArea* GetArea(const Legacy::Vec3& point) override{return nullptr;}
-
-  virtual void	DeleteArea(const IXArea* aPtr) override{}
-};
-#endif
-
 struct TextRenderInfo
 {
 	IFont* m_Font;
@@ -110,36 +91,36 @@ struct TextRenderInfo
 	}
 };
 
-class		CScriptObjectGame;
-class		CScriptObjectInput;
-class		CScriptObjectBoids;
-class		CScriptObjectGUI;
-struct	ISystem;
-struct	I3DEngine;
-class		CXServer;
+class CScriptObjectGame;
+class CScriptObjectInput;
+class CScriptObjectBoids;
+class CScriptObjectGUI;
+struct ISystem;
+struct I3DEngine;
+class CXServer;
 #if 0
 class		CXClient;
 #else
 #endif
-class		CUIHud;
-class		CXServerRules;
-class		CWeaponSystemEx;
-class		CVehicleSystem;
-class		CPlayerSystem;
-class		CFlockManager;
-class		CTagPoint;
-struct	ITagPoint;
-class		CScriptObjectAI;
-class		CIngameDialogMgr;
-class		CViewLayer;
-class		CScriptTimerMgr;
-class		CTeamMgr;
-class		CPlayer;
-class		CMovieUser;
-class		CTimeDemoRecorder;
-class		CUISystem;
-class		CXGame;
-class		CGameMods;
+class CUIHud;
+class CXServerRules;
+class CWeaponSystemEx;
+class CVehicleSystem;
+class CPlayerSystem;
+class CFlockManager;
+class CTagPoint;
+struct ITagPoint;
+class CScriptObjectAI;
+class CIngameDialogMgr;
+class CViewLayer;
+class CScriptTimerMgr;
+class CTeamMgr;
+class CPlayer;
+class CMovieUser;
+class CTimeDemoRecorder;
+class CUISystem;
+class CXGame;
+class CGameMods;
 
 
 enum EventType
@@ -463,14 +444,7 @@ public:
 	{
 		NOT_IMPLEMENTED_V;	
 	}
-	#if 0
 	void SetTerrainSurface(const char* sMaterial, int nSurfaceID) { m_XSurfaceMgr.SetTerrainSurface(sMaterial, nSurfaceID); }
-	#else
-	void SetTerrainSurface(const char* sMaterial, int nSurfaceID)
-	{
-		assert(0 && __FUNCTION__);
-	}
-	#endif
 	//! load level for the editor
 	bool LoadLevelForEditor(const char* pszLevelDirectory, const char* pszMissionName)
 	{
@@ -1070,9 +1044,7 @@ private: // ------------------------------------------------------------
 	CScriptObjectInput* m_pScriptObjectInput;
 
 	CScriptObjectBoids* m_pScriptObjectBoids;
-	#if 0
 	CScriptObjectLanguage* m_pScriptObjectLanguage;
-	#endif
 	CScriptObjectAI* m_pScriptObjectAI;
 	CWeaponSystemEx* m_pWeaponSystemEx;
 	CVehicleSystem* m_pVehicleSystem;
