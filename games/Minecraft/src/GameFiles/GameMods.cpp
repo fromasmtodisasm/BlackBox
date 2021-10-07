@@ -316,7 +316,6 @@ bool CGameMods::ParseModDescription(const char *szFolder,SGameModDescription*pMo
 void CGameMods::ScanMods()
 {
 	// TODO: recover it
-#if 0
 	// delete previous mods
 	ClearMods();
 
@@ -329,7 +328,6 @@ void CGameMods::ScanMods()
 	ICryPak *pIPak = m_pSystem->GetIPak();
 #else
 	ICryPak *pIPak = nullptr;
-	assert(0 && "notimplemented")
 #endif
 	if ((hFile = pIPak->FindFirst(sSearchPattern.c_str(),&c_file)) == -1L )					
 		return;
@@ -357,7 +355,6 @@ void CGameMods::ScanMods()
 	} while(pIPak->FindNext( hFile, &c_file ) == 0);
 
 	pIPak->FindClose( hFile );
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -405,11 +402,6 @@ bool CXGame::ClosePacks(const char *szFolder)
 	} 
 
 	return(m_pSystem->GetIPak()->ClosePacks(szFolder));	
-}
-
-bool CXGame::ParseLevelName(const char* szLevelName, char* szLevel, char* szMission)
-{
-	return false;
 }
 
 // TODO: editor support

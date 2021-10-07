@@ -844,388 +844,6 @@ bool MouseInQuad(int x, int y, int w, int h)
 	return (mx >= fx && mx <= (fx + fw)) && (my >= fy - fh && my <= (fy));
 }
 
-
-#if 0
-void CXGame::OnRenderer_BeforeEndFrame()
-{
-	auto   posY			  = 150.f;
-	size_t currentEntry	  = 0;
-	auto   PrintMenuEntry = [&, this](const char* szText, bool skip = false) -> bool
-	{
-		SDrawTextInfo info;
-		float		  rightMargin = 60;
-		info.font				  = m_Font;
-		auto& color				  = info.color;
-		Vec3  activeColor		  = Vec3(174, 237, 181) / 255.f;
-		Vec3  menuColor			  = Vec3(73, 92, 79) / 255.f;
-		bool  active			  = false;
-
-		{
-			auto cq = currentQuad;
-			if (MouseInQuad((int)rightMargin, (int)posY, (int)m_Font->TextWidth(szText), g_FontSize))
-			{
-				m_CurrentMenuEntry = currentEntry;
-				m_MenuActived	   = mouseClicked;
-				mouseClicked	   = false;
-			}
-
-			if (m_CurrentMenuEntry == currentEntry)
-			{
-				UCol col({1,
-						  0,
-						  0,
-						  1});
-				currentQuad = Vec4((int)rightMargin,(int)posY, (int)m_Font->TextWidth(szText), g_FontSize);
-				Vec4 q = currentQuad; 
-				//float dummy;
-				//gEnv->pRenderer->UnProjectFromScreen((float)currentQuad.x, (float)currentQuad.y, 0.f, &q.x, &q.y, &dummy);
-				//gEnv->pRenderer->UnProjectFromScreen((float)currentQuad.z, (float)currentQuad.w, 0.f, &q.z, &q.w, &dummy);
-				auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col)
-				{
-					auto render = gEnv->pRenderer->GetIRenderAuxGeom();
-					render->DrawTriangle(p1, col, p2, col, p3, col);
-					render->DrawTriangle(p3, col, p4, col, p1, col);
-				};
-				float x = 40, y = 0, z = -40;
-				{
-					const UCol col1(50, 125, 0, 20);
-					draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
-				}
-
-				#if 0
-				#define Unproject(a,b) gEnv->pRenderer->UnProjectFromScreen(a.x, a.y, a.z, &b.x, &b.y, &b.z);
-				Vec3 A;
-				Vec3 _A(q.x, posY, 0);
-				Unproject(_A, A);
-				Vec3 B;
-				Vec3 _B(q.x + q.z, posY, 0);
-				Unproject(_B, B);
-				Vec3 C;
-				Vec3 _C(q.x + q.z, posY + g_FontSize, 0);
-				Unproject(_C, C);
-				Vec3 D;
-				Vec3 _D(q.x, posY + g_FontSize, 0);
-				Unproject(_D, D);
-				gEnv->pAuxGeomRenderer->DrawQuad(
-					A, col,
-					B, col,
-					C, col,
-					D, col
-					);
-				#endif
-					
-				active	  = true;
-				//info.font = m_SelectedEntryFont;
-				//posY += 24;
-			}
-			//auto font = 
-			if (active) menuColor = activeColor;
-			color[0] = menuColor.g; //green
-			color[1] = menuColor.b;
-			color[2] = 1.0;			//alpha
-			color[3] = menuColor.r; //red
-			auto px	 = rightMargin;
-			gEnv->pRenderer->Draw2dText(px, posY, szText, info);
-			posY += 48;
-		}
-		m_MenuEnries = currentEntry;
-		currentEntry++;
-		if (skip) currentEntry--;
-
-		return active && m_MenuActived;
-	};
-	static bool optionsOpened  = false;
-	static bool graphicsOpened = false;
-	static bool inputOpened	   = false;
-	static bool help		   = false;
-	static bool campaign	   = false;
-	static bool multiplayer	   = false;
-	static bool mods		   = false;
-	static bool quitRequested  = false;
-	{
-		//m_pRenderer->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
-
-		if (g_bRenderGame)
-		{
-			switch (m_Mode)
-			{
-			case CXGame::FPS:
-				break;
-			case CXGame::MENU:
-				if (!optionsOpened)
-				{
-					if (m_playDemo)
-					{
-						auto stop = PrintMenuEntry("Back");
-						menuOnTopLevel	   = false;
-						auto t		   = gEnv->pTimer->GetCurrTime();
-						auto r		   = cos(t);
-						auto g		   = sin(t);
-						auto b		   = 1.f;
-						gEnv->pRenderer->SetClearColor((Vec3{r, g, b} + 1.f) * 0.5f);
-						m_CurrentMenuEntry = 0;
-						m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime() * 0.1f) * 0.8f, sin(gEnv->pTimer->GetCurrTime() * 0.1f) * 0.5f);
-						//m_pClient->m_CameraController.ProcessMouseMovement(cos(gEnv->pTimer->GetCurrTime()*0.001f) * 0.1f , 0);
-						m_pClient->m_CameraController.ProcessKeyboard(Movement::FORWARD, m_deltaTime);
-
-#if 0
-								auto ang = cam->GetAngles();
-								cam->SetAngles({ang.x, cos(gEnv->pTimer->GetCurrTime()), ang.z});
-#endif
-						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							m_playDemo = false;
-						}
-						m_playDemo = !stop;
-						goto end;
-					}
-					else if (help)
-					{
-						auto stop = PrintMenuEntry("Back");
-						menuOnTopLevel	   = false;
-						//m_CurrentMenuEntry = 0;
-						PrintMenuEntry("Movements - WASD");
-						PrintMenuEntry("Orientation - Mouse");
-						PrintMenuEntry("Console - ~");
-						PrintMenuEntry("(c) BlackBox");
-
-						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							help = false;
-							m_CurrentMenuEntry = 0;
-						}
-						help = !stop;
-						goto end;
-					}
-					else if (campaign)
-					{
-
-						menuOnTopLevel	   = false;
-						auto selected = m_CurrentMenuEntry == currentEntry;
-						if (PrintMenuEntry("New Game"))
-						{
-						}
-						if (PrintMenuEntry("Save Game"))
-						{
-						}
-
-						selected = m_CurrentMenuEntry == currentEntry;
-						if (PrintMenuEntry("Load Game"))
-						{
-						}
-						if (selected)
-						{
-							PrintMenuEntry("$4Saved games not found");
-						}
-
-						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							campaign = false;
-						}
-						goto end;
-					}
-					else if (multiplayer)
-					{
-						static bool findServer = false;
-						menuOnTopLevel	   = false;
-						if (findServer)
-						{
-							PrintMenuEntry("$4Servers not founds");
-						}
-						else
-						{
-							if (findServer = PrintMenuEntry("Find server"))
-							{
-								m_CurrentMenuEntry = 0;
-							}
-							if (PrintMenuEntry("Create server"))
-							{
-							}
-						}
-
-
-
-						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							multiplayer = false;
-						}
-						goto end;
-					}
-					else if (mods)
-					{
-						menuOnTopLevel		   = false;
-						int	 n				   = 0;
-						for (const auto& mod : mods_str)
-						{
-							if (PrintMenuEntry(mod))
-							{
-								selected_mod = n;	
-							}
-							n++;
-						}
-						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							mods = false;
-						}
-						goto end;
-						
-					}
-					else if (quitRequested)
-					{
-						menuOnTopLevel		   = false;
-						int	 n				   = 0;
-						if (PrintMenuEntry("Yes"))
-						{
-							gEnv->pSystem->Quit();
-						}
-						if (PrintMenuEntry("No"))
-						{
-							quitRequested = false;
-						}
-						auto k = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							quitRequested = false;
-						}
-						goto end;
-						
-					}
-
-					static char buffer[256];
-					sprintf(buffer, "USER: %s", gEnv->pSystem->GetUserName());
-					PrintMenuEntry(buffer);
-					sprintf(buffer, "$7Current MOD: %s", mods_str[selected_mod]);
-					PrintMenuEntry(buffer);
-					if (PrintMenuEntry("Return to Game"))
-					{
-						GotoGame();
-					}
-					if (campaign = PrintMenuEntry("Campaign"))
-					{
-						menuOnTopLevel	   = false;
-						m_CurrentMenuEntry = 0;
-					}
-
-					if (multiplayer = PrintMenuEntry("Multiplayer"))
-					{
-						menuOnTopLevel	   = false;
-						m_CurrentMenuEntry = 0;
-					}
-					if (optionsOpened = PrintMenuEntry("Options"))
-					{
-						menuOnTopLevel	   = false;
-						m_CurrentMenuEntry = 0;
-					}
-					if (mods = PrintMenuEntry("Mods"))
-					{
-						menuOnTopLevel	   = false;
-						m_CurrentMenuEntry = 0;
-					}
-					m_playDemo = PrintMenuEntry("Demo Loop");
-					if (PrintMenuEntry("Credits"))
-					{
-						CryLogAlways("Credits activated");
-					}
-					if (PrintMenuEntry("Editor"))
-					{
-						std::thread notepad([]
-											{ gEnv->pConsole->ExecuteString(R"(#os.execute("code"))"); });
-
-						notepad.detach();
-					}
-					if (help = PrintMenuEntry("Help"))
-					{
-						menuOnTopLevel	   = false;
-						m_CurrentMenuEntry = 0;
-					}
-					if (quitRequested = PrintMenuEntry("Quit"))
-					{
-						menuOnTopLevel	   = false;
-						m_CurrentMenuEntry = 0;
-						//gEnv->pSystem->Quit();
-					}
-					menuOnTopLevel = true;
-				}
-				else
-				{
-					menuOnTopLevel = false;
-					auto k		   = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-					if (graphicsOpened)
-					{
-						static char grphics[256];
-						sprintf(grphics, "Width: %d", gEnv->pRenderer->GetWidth());
-						PrintMenuEntry(grphics);
-
-						sprintf(grphics, "Height: %d", gEnv->pRenderer->GetHeight());
-						PrintMenuEntry(grphics);
-
-						sprintf(grphics, "Display info: %c", r_displayinfo->GetIVal() ? '+' : '-');
-						if (PrintMenuEntry(grphics))
-						{
-							r_displayinfo->Set(!r_displayinfo->GetIVal());
-						}
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							graphicsOpened = false;
-							CryLogAlways("Graphics closed on frame: %d", gEnv->pRenderer->GetFrameID());
-							CryLogAlways("_____________________");
-						}
-					}
-					else if (inputOpened)
-					{
-						static char grphics[256];
-						auto		i_d = gEnv->pConsole->GetCVar("i_debug");
-						sprintf(grphics, "Debug: %c", i_d->GetIVal() ? '+' : '-');
-						if (PrintMenuEntry(grphics))
-						{
-							i_d->Set(!i_d->GetIVal());
-						}
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							inputOpened = false;
-						}
-					}
-					else
-					{
-						// Print options
-						graphicsOpened = PrintMenuEntry("Graphics");
-						inputOpened	   = PrintMenuEntry("Input");
-						if (k->InputState("escape", EInputState::eIS_Pressed) && m_CanBackStep)
-						{
-							optionsOpened = false;
-						}
-					}
-					m_CanBackStep = false;
-				}
-			end:
-				static char mouse[256];
-				float		mx, my;
-				gEnv->pHardwareMouse->GetHardwareMousePosition(&mx, &my);
-				sprintf(mouse, "MouseX: %f MouseY: %f", mx, my);
-				PrintMenuEntry(mouse);
-				sprintf(mouse, "Button quad: x: %d y: %d w: %d h %d", currentQuad.x, currentQuad.y, currentQuad.z, currentQuad.w);
-				PrintMenuEntry(mouse);
-				break;
-			case CXGame::FLY:
-				break;
-			case CXGame::EDIT:
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	DrawHud(fps);
-}
-#endif
-
-static ITexture* splash = nullptr;
-
 //////////////////////////////////////////////////////////////////////
 //! updates whole game and children
 bool CXGame::Update()
@@ -1365,116 +983,44 @@ bool CXGame::Update()
 	return m_bUpdateRet && num_frames > 0;
 }
 
-#if 0
-void CXGame::ExecScripts()
+//////////////////////////////////////////////////////////////////////
+void CXGame::UpdateDuringLoading()
 {
+	#if 0
+	if(m_pServer)
+		m_pServer->UpdateXServerNetwork();
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 }
 
-void CXGame::DrawHud(float fps)
-{
-	//m_pRenderer->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
-	if (r_displayinfo->GetIVal() != 0)
+//////////////////////////////////////////////////////////////////////////
+bool CXGame::ParseLevelName(const char *szMsg,char *szLevelName,char *szMissionName)
+{	
+	const char *szPtr=szMsg;
+	char *szDest;
+
+	// get level & mission-name
+	szPtr=szMsg+11; //skip "StartLevel "
+	//find the level name
+	memset(szLevelName,0,32);
+	szDest=szLevelName;
+	while ((*szPtr) && (*szPtr!=' '))		
+		*szDest++=*szPtr++;		
+
+	//find the mission name
+	memset(szMissionName,0,32);
+
+	if (*szPtr) //if not eos
 	{
-		DisplayInfo(fps);
+		szPtr++; //skip space
+		szDest=szMissionName;			
+		while (*szPtr)		
+			*szDest++=*szPtr++;					
 	}
+
+	return (true);
 }
-
-void CXGame::DisplayInfo(float fps)
-{
-	size_t num_objects;
-	num_objects = m_3DEngine->GetLoadedObjectCount();
-	auto line	= m_pRenderer->GetHeight();
-	auto step	= 18;
-
-	const std::string mode = m_Mode == MENU	 ? "MENU"
-							 : m_Mode == FPS ? "FPS"
-							 : m_Mode == FLY ? "FLY"
-											 : "EDIT";
-
-	// Info
-	TextRenderInfo info(m_Font, Vec4(1.f, 1.f, 0.6f, 1.0));
-	SDrawTextInfo  dti = info.getDTI();
-	SDrawTextInfo  MenuDTI;
-	MenuDTI.color[0] = 1;
-	MenuDTI.color[0] = 1;
-	MenuDTI.color[0] = 1;
-	MenuDTI.color[0] = 1;
-	MenuDTI.font	 = m_Font;
-
-	//
-	auto render = m_pSystem->GetIRenderer();
-
-	//===========
-
-	m_Font->SetXPos(0);
-	m_Font->SetYPos(18);
-	auto& text	= info.m_Text;
-	auto& color = info.m_Color;
-	//auto camera = m_World->getActiveScene()->getCurrentCamera();
-
-	//auto objPos = m_World->getActiveScene()->selectedObject()->second->m_transform.position;
-	info.AddLine("FPS: " + std::to_string(fps));
-	//info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
-	info.AddLine("Current mode: " + mode);
-	info.AddLine("Width = " + std::to_string(m_pRenderer->GetWidth()) + "Height = " + std::to_string(m_pRender->GetHeight()));
-	//info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
-	//info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
-	//info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
-	/*
-  info.AddLine("  Pos: "						+
-	std::to_string(objPos.x) + ", " +
-	std::to_string(objPos.y) + ", " +
-	std::to_string(objPos.z) + "; ");
-  */
-	//info.AddLine("Camera speed: " + std::to_string(camera->MovementSpeed->GetFVal()));
-	//auto camPos = camera->getPosition();
-	//auto camRot = camera->getRotation();
-	/*
-  auto pos = "Pos: " +
-	std::to_string(camPos.x) + ", " +
-	std::to_string(camPos.y) + ", " +
-	std::to_string(camPos.z) + "; " +
-	"Yaw: " +
-	std::to_string(camRot.y) + "; " +
-	"Pitch: " +
-	std::to_string(camRot.x) + "; "
-	;
-  */
-
-	for (auto& text : info.m_Text)
-	{
-		render->PrintLine(text.c_str(), dti);
-	}
-
-	//render->PrintLine("To hide depth buffer press <;>\n", dti);
-	//render->PrintLine((std::string("Camera position = ") + vec_to_string(m_CameraController.RenderCamera()->transform.position) + "\n").c_str(), dti);
-
-	info.m_Color = Vec4(1.0f, 0.f, 0.f, 1.0f);
-	//render->PrintLine(pos.c_str(), info.getDTI());
-	if (canDragViewPortWidth)
-		render->PrintLine("CanDrag\n", info.getDTI());
-	if (mousePressed)
-		render->PrintLine("Mouse pressed\n", info.getDTI());
-
-	if (m_Mode == MENU)
-	{
-		Vec2 c;
-		m_pSystem->GetIHardwareMouse()->GetHardwareMouseClientPosition(&c.x, &c.y);
-		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRenderer->GetHeight() - */ c.y)).c_str(), info.getDTI());
-		m_Font->SetYPos((float)m_pRenderer->GetHeight() / 2);
-		{
-#if 0
-			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
-			auto pos = std::to_string(lpp.x) + ",";
-			pos += std::to_string(lpp.y) + ",";
-			pos += std::to_string(lpp.z) + ";\n";
-			render->PrintLine((std::string("Last picking pos: ") + pos).data(), info.getDTI());
-			render->PrintLine((std::string("Current distant: ") + std::to_string(m_IntersectionState.m_CurrentDistant)).data(), info.getDTI());
-#endif
-		}
-	}
-}
-#endif
 
 //////////////////////////////////////////////////////////////////////
 //! game-mainloop
@@ -1845,10 +1391,7 @@ void CXGame::ProcessPMessages(const char* szMsg)
 
 void CXGame::ReloadScripts()
 {
-}
-
-void CXGame::UpdateDuringLoading()
-{
+	NOT_IMPLEMENTED;
 }
 
 ITagPointManager* CXGame::GetTagPointManager()

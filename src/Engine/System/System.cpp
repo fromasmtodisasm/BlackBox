@@ -675,7 +675,7 @@ IEntitySystem* CSystem::GetIEntitySystem()
 
 ICryPak* CSystem::GetIPak()
 {
-	return m_pCryPak;
+	return m_env.pCryPak;
 }
 
 INetwork* CSystem::GetINetwork()

@@ -180,7 +180,7 @@ intptr_t CCryPak::FindFirst(const char* pDir, _finddata_t* fd)
 
 int CCryPak::FindNext(intptr_t handle, _finddata_t* fd)
 {
-  return 0;
+  return -1;
 }
 
 int CCryPak::FindClose(intptr_t handle)
