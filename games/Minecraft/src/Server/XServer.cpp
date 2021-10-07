@@ -41,7 +41,7 @@ void CXServer::OnRemove(IEntity *ent)
   #endif
 }
 
-CXServer::CXServer(CGame* pGame, WORD nPort, const char* szName, bool listen)
+CXServer::CXServer(CXGame* pGame, WORD nPort, const char* szName, bool listen)
 {
   assert(pGame);
 

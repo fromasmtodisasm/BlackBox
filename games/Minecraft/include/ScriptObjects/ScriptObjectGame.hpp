@@ -3,7 +3,7 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
-class CGame;
+class CXGame;
 
 
 class CScriptObjectGame :
@@ -14,7 +14,7 @@ public:
 	~CScriptObjectGame();
 	void InitializeTemplate(IScriptSystem* pSS);
 
-	void Init(IScriptSystem* pScriptSystem, CGame* pGame);
+	void Init(IScriptSystem* pScriptSystem, CXGame* pGame);
 	void OnNETServerFound(CIPAddress& ip, SXServerInfos& pServerInfo);
 	void OnNETServerTimeout(CIPAddress& ip);
 
@@ -96,7 +96,7 @@ public:
 	int LoadObject(IFunctionHandler* pH);
 
 private:
-	CGame *							m_pGame;
+	CXGame *							m_pGame;
 	ISystem *						m_pSystem;
 	IConsole *					m_pConsole;
 	CScriptObjectVector	m_pGetTagPoint;

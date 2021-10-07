@@ -104,7 +104,7 @@ public:
 	typedef std::map<BYTE, CXServerSlot*>		XSlotMap;
 
 	//! constructor
-	CXServer(class CGame* pGame, WORD nPort, const char* szName, bool listen);
+	CXServer(class CXGame* pGame, WORD nPort, const char* szName, bool listen);
 	//! destructor
 	virtual ~CXServer();
 	//!
@@ -254,7 +254,7 @@ public:
 	struct IXSystem* m_pISystem;								//!< The system interface
 
 	struct ITimer* m_pTimer;									//!< timer interface to avoid thousands of GetTimer()
-	class CGame* m_pGame;									//!< the game
+	class CXGame* m_pGame;									//!< the game
 
 	// ID Generator	
 	SXServerInfos					m_ServerInfos;						//!< server infos

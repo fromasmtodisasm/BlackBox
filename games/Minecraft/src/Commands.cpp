@@ -42,9 +42,9 @@ bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
 class BaseGameCommand : public BaseCommand
 {
 protected:
-  CGame* game;
+  CXGame* game;
 public:
-  BaseGameCommand(CGame* game) : game(game), BaseCommand()
+  BaseGameCommand(CXGame* game) : game(game), BaseCommand()
   {
 
   }
@@ -54,7 +54,7 @@ public:
 class LastCommand : public BaseGameCommand
 {
 public:
-  LastCommand(CGame* game);
+  LastCommand(CXGame* game);
   ~LastCommand();
 private:
   // Inherited via IConsoleCommand
@@ -80,7 +80,7 @@ private:
   }
 };
 
-LastCommand::LastCommand(CGame* game) : BaseGameCommand(game)
+LastCommand::LastCommand(CXGame* game) : BaseGameCommand(game)
 {
 }
 
@@ -91,7 +91,7 @@ LastCommand::~LastCommand()
 class ClearCommand : public BaseGameCommand
 {
 public:
-  ClearCommand(CGame* game);
+  ClearCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -101,7 +101,7 @@ private:
   }
 };
 
-ClearCommand::ClearCommand(CGame* game) : BaseGameCommand(game)
+ClearCommand::ClearCommand(CXGame* game) : BaseGameCommand(game)
 {
 }
 
@@ -109,7 +109,7 @@ ClearCommand::ClearCommand(CGame* game) : BaseGameCommand(game)
 class GotoCommand : public BaseGameCommand
 {
 public:
-  GotoCommand(CGame* game);
+  GotoCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -131,7 +131,7 @@ private:
   }
 };
 
-GotoCommand::GotoCommand(CGame* game) : BaseGameCommand(game)
+GotoCommand::GotoCommand(CXGame* game) : BaseGameCommand(game)
 {
 }
 //*******************************************************
@@ -139,7 +139,7 @@ GotoCommand::GotoCommand(CGame* game) : BaseGameCommand(game)
 class QuitCommand : public BaseGameCommand
 {
 public:
-  QuitCommand(CGame* game);
+  QuitCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -149,7 +149,7 @@ private:
   }
 };
 
-QuitCommand::QuitCommand(CGame* game) : BaseGameCommand(game)
+QuitCommand::QuitCommand(CXGame* game) : BaseGameCommand(game)
 {
 }
 //*******************************************************
@@ -157,7 +157,7 @@ class MoveCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  MoveCommand(CGame* game);
+  MoveCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -179,7 +179,7 @@ private:
   }
 };
 
-MoveCommand::MoveCommand(CGame* game) : BaseGameCommand(game)
+MoveCommand::MoveCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -188,7 +188,7 @@ class ScaleCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  ScaleCommand(CGame* game);
+  ScaleCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -210,7 +210,7 @@ private:
   }
 };
 
-ScaleCommand::ScaleCommand(CGame* game) : BaseGameCommand(game)
+ScaleCommand::ScaleCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -219,7 +219,7 @@ class RotateCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  RotateCommand(CGame* game);
+  RotateCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -249,7 +249,7 @@ private:
   }
 };
 
-RotateCommand::RotateCommand(CGame* game) : BaseGameCommand(game)
+RotateCommand::RotateCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -258,7 +258,7 @@ class SelectCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  SelectCommand(CGame* game);
+  SelectCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -268,7 +268,7 @@ private:
   }
 };
 
-SelectCommand::SelectCommand(CGame* game) : BaseGameCommand(game)
+SelectCommand::SelectCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -282,7 +282,7 @@ class ExecCommand : public BaseGameCommand, public IWorkerCommand
   HANDLE process;
 #endif
 public:
-  ExecCommand(CGame* game);
+  ExecCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -339,7 +339,7 @@ private:
   }
 };
 
-ExecCommand::ExecCommand(CGame* game) : BaseGameCommand(game)
+ExecCommand::ExecCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
   console = GetISystem()->GetIConsole();
@@ -349,7 +349,7 @@ class CameraCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  CameraCommand(CGame* game);
+  CameraCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -367,7 +367,7 @@ private:
   bool move(CommandDesc& cd);
 };
 
-CameraCommand::CameraCommand(CGame* game) : BaseGameCommand(game)
+CameraCommand::CameraCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -395,9 +395,9 @@ bool CameraCommand::move(CommandDesc& cd)
 class SceneCommand : public BaseGameCommand
 {
   IWorld* m_World;
-  CGame* m_Game;
+  CXGame* m_Game;
 public:
-  SceneCommand(CGame* game);
+  SceneCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -418,7 +418,7 @@ private:
   bool activate(CommandDesc& cd);
 };
 
-SceneCommand::SceneCommand(CGame* game) : BaseGameCommand(game)
+SceneCommand::SceneCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -466,7 +466,7 @@ class TagPointCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  TagPointCommand(CGame* game);
+  TagPointCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -510,7 +510,7 @@ private:
   }
 };
 
-TagPointCommand::TagPointCommand(CGame* game) : BaseGameCommand(game)
+TagPointCommand::TagPointCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }
@@ -519,7 +519,7 @@ class ObjDumpCommand : public BaseGameCommand
 {
   IWorld* m_World;
 public:
-  ObjDumpCommand(CGame* game);
+  ObjDumpCommand(CXGame* game);
 private:
   // Inherited via IConsoleCommand
   virtual bool execute(CommandDesc& cd) override
@@ -552,7 +552,7 @@ private:
 };
 //*******************************************************
 #endif
-void CGame::InitCommands()
+void CXGame::InitCommands()
 {
 #if 0
   m_Console->AddCommand("last", new LastCommand(this));
@@ -573,11 +573,11 @@ void CGame::InitCommands()
 #endif
 }
 #if 0
-void CGame::initVariables()
+void CXGame::initVariables()
 {
 }
 
-ObjDumpCommand::ObjDumpCommand(CGame* game) : BaseGameCommand(game)
+ObjDumpCommand::ObjDumpCommand(CXGame* game) : BaseGameCommand(game)
 {
   m_World = game->getWorld();
 }

@@ -32,7 +32,7 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 class CXServer;
-class CGame;
+class CXGame;
 struct ITagPoint;
 struct IXSystem;
 
@@ -45,7 +45,7 @@ public:
 	CScriptObjectServer();
 	virtual ~CScriptObjectServer();
 
-	bool Create(IScriptSystem* pScriptSystem, IXSystem* pCSystem, CGame* pGame);
+	bool Create(IScriptSystem* pScriptSystem, IXSystem* pCSystem, CXGame* pGame);
 	void SetServer(CXServer* pServer) { m_pServer = pServer; }
 
 	int Unban(IFunctionHandler* pH);
@@ -85,6 +85,6 @@ private:
 	CXServer* m_pServer;
 	IScriptObject* m_pSlotMap;
 	IXSystem* m_pXSystem;
-	CGame* m_pGame;
+	CXGame* m_pGame;
 };
 #endif //_SCRIPTOBJECTCLIENT_H_;

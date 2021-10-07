@@ -1,4 +1,4 @@
-bool CGame::IsDevModeEnable()
+bool CXGame::IsDevModeEnable()
 {
 #if 0
   // if there is already a server we stick to the same setting during creation
@@ -16,11 +16,11 @@ bool CGame::IsDevModeEnable()
 	return true;
 }
 
-void CGame::DevModeInit()
+void CXGame::DevModeInit()
 {
 }
 
-void CGame::DevModeUpdate()
+void CXGame::DevModeUpdate()
 {
 #ifdef WIN32
 	m_currentLevelFolder = ".";
@@ -118,7 +118,7 @@ void CGame::DevModeUpdate()
 #endif
 }
 
-void CGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* sDescription)
+void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* sDescription)
 {
 #ifdef WIN32
 	if (index < 0 && index > 11)
@@ -201,7 +201,7 @@ void CGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* s
 #endif
 }
 
-void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
+void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 {
 #ifdef WIN32
 	if (index < 0 && index > 11)
@@ -269,7 +269,7 @@ void CGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 #endif
 }
 
-void CGame::Release()
+void CXGame::Release()
 {
 	delete this;
 }

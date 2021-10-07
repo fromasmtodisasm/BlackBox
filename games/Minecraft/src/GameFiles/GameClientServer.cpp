@@ -4,7 +4,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //! create the server
-bool CGame::StartupServer(bool listen, const char* szName)
+bool CXGame::StartupServer(bool listen, const char* szName)
 {
   m_pLog->Log("Creating the server");
 
@@ -47,7 +47,7 @@ bool CGame::StartupServer(bool listen, const char* szName)
 
 //////////////////////////////////////////////////////////////////////
 //! shutdown the server
-void CGame::ShutdownServer()
+void CXGame::ShutdownServer()
 {
   if (!m_pServer)
     return;
@@ -62,7 +62,7 @@ void CGame::ShutdownServer()
 
 //////////////////////////////////////////////////////////////////////
 //! create the client for a multiplayer session
-bool CGame::StartupClient()
+bool CXGame::StartupClient()
 {
   m_pLog->Log("Creating the Client");
 
@@ -88,7 +88,7 @@ bool CGame::StartupClient()
 //! create the client for a singleplayer session
 //! the client will use a fake connection
 //////////////////////////////////////////////////////////////////////////
-bool CGame::StartupLocalClient()
+bool CXGame::StartupLocalClient()
 {
   m_pLog->Log("Creating the LocalClient");
 
@@ -111,7 +111,7 @@ bool CGame::StartupLocalClient()
 
 //////////////////////////////////////////////////////////////////////
 //! shutdown the client
-void CGame::ShutdownClient()
+void CXGame::ShutdownClient()
 {
   #if 0
   if (!m_pClient)
@@ -129,13 +129,13 @@ void CGame::ShutdownClient()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CGame::IsClient()
+bool CXGame::IsClient()
 {
 	return m_pClient != NULL;
 	//&&!m_pClient->m_bSelfDestruct;
 }
 
-bool CGame::IsMultiplayer()
+bool CXGame::IsMultiplayer()
 {
 	// cannot be in multiplayer when in editor
 	if (m_bEditor)
@@ -152,7 +152,7 @@ bool CGame::IsMultiplayer()
 
 //////////////////////////////////////////////////////////////////////
 //! mark the client for deletion
-void CGame::MarkClientForDestruct()
+void CXGame::MarkClientForDestruct()
 {
   #if 0
   if (m_pClient)
@@ -162,12 +162,12 @@ void CGame::MarkClientForDestruct()
 
 //////////////////////////////////////////////////////////////////////
 /*! implementation of IServerSnooperSink::OnServerFound
-  called when a server is found after a CGame::RefreshServerList() call
+  called when a server is found after a CXGame::RefreshServerList() call
   @param ip address of the server
   @param stmServerInfo stream sent by the server to identitfy himself
   @param ping average lantency of the server response
 */
-void CGame::OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping)
+void CXGame::OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping)
 {
   SXServerInfos ServerInfos;
 
@@ -176,12 +176,12 @@ void CGame::OnServerFound(CIPAddress& ip, const string& szServerInfoString, int 
     ServerInfos.IP = CIPAddress(ServerInfos.nPort, ip.GetAsString());		// get the game port from the packet
     ServerInfos.nPing = ping;
     m_ServersInfos[ServerInfos.IP] = ServerInfos;
-    TRACE("CGame::OnServerFound %s[%s]==>%s", ServerInfos.strName.c_str(), ServerInfos.IP.GetAsString(true), ServerInfos.strMap.c_str());
+    TRACE("CXGame::OnServerFound %s[%s]==>%s", ServerInfos.strName.c_str(), ServerInfos.IP.GetAsString(true), ServerInfos.strMap.c_str());
   }
 }
 
 //////////////////////////////////////////////////////////////////////
-void CGame::OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping)
+void CXGame::OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping)
 {
   SXServerInfos ServerInfos;
 
@@ -197,7 +197,7 @@ void CGame::OnNETServerFound(const CIPAddress& ip, const string& szServerInfoStr
 }
 
 //////////////////////////////////////////////////////////////////////
-void CGame::OnNETServerTimeout(const CIPAddress& ip)
+void CXGame::OnNETServerTimeout(const CIPAddress& ip)
 {
   m_pScriptObjectGame->OnNETServerTimeout((CIPAddress&)ip);
 }
@@ -206,7 +206,7 @@ void CGame::OnNETServerTimeout(const CIPAddress& ip)
 /*! search the LAN for FarCry servers
   remove all "old" servers from the server list before start searching
 */
-void CGame::RefreshServerList()
+void CXGame::RefreshServerList()
 {
   m_ServersInfos.clear();
 #if 0

@@ -6,7 +6,7 @@
 class BaseCommand : public IConsoleCommand
 {
 protected:
-  //CGame* game;
+  //CXGame* game;
   glm::vec3 unpack_vector(std::vector<std::wstring>::iterator it, int size = 3)
   {
     glm::vec3 pos;

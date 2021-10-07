@@ -35,7 +35,7 @@ void CScriptObjectTest::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_TEMPLFUNC(tm3, "123");
 }
 
-void CScriptObjectTest::Init(IScriptSystem* pScriptSystem, CGame* pGame)
+void CScriptObjectTest::Init(IScriptSystem* pScriptSystem, CXGame* pGame)
 {
   InitGlobal(pScriptSystem, "TestObject", this);
 }

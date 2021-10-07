@@ -5,7 +5,7 @@
 class CServer
 	: public IServerSlotSink
 {
-	CServer(CGame* pGame);
+	CServer(CXGame* pGame);
 
 	// Inherited via IServerSlotSink
 	virtual void OnXServerSlotConnect(const uint8_t* pbAuthorizationID, unsigned int uiAuthorizationSize) override;

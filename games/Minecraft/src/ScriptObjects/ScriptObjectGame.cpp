@@ -52,11 +52,11 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 
 #if 0
 	AllowPropertiesMapping(pSS);
-	RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CGame,test_string));
+	RegisterProperty( "test_string",PROPERTY_TYPE_STRING,offsetof(CXGame,test_string));
 #endif
 }
 
-void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CGame* pGame)
+void CScriptObjectGame::Init(IScriptSystem* pScriptSystem, CXGame* pGame)
 {
   m_pGame = pGame;
   m_pSystem = pGame->GetSystem();

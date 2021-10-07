@@ -34,7 +34,7 @@
 
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
-class CGame;
+class CXGame;
 
 //////////////////////////////////////////////////////////////////////
 class CScriptObjectInput :
@@ -43,7 +43,7 @@ public _ScriptableEx<CScriptObjectInput>
 public:
 	CScriptObjectInput();
 	virtual ~CScriptObjectInput();
-	void Init(IScriptSystem *pScriptSystem,CGame *pGame,ISystem *pSystem);
+	void Init(IScriptSystem *pScriptSystem,CXGame *pGame,ISystem *pSystem);
 	static void InitializeTemplate(IScriptSystem *pSS);
 	int ResetToDefaults(IFunctionHandler *pH);
 	int ResetAllBindings(IFunctionHandler *pH);
@@ -74,7 +74,7 @@ public:
 	int GetInvertedMouse(IFunctionHandler *pH);
 	
 private:
-	CGame *m_pGame;
+	CXGame *m_pGame;
 	ISystem *m_pSystem;
 	IConsole *m_pConsole;
 	IInput *m_pInput;

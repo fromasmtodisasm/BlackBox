@@ -13,7 +13,7 @@ int interval = 9000;
 
 int intervalLeft = interval;
 
-CClient::CClient(CGame* pGame)
+CClient::CClient(CXGame* pGame)
 	: m_pGame(pGame)
 	, m_CameraController()
 	, m_IntersectionState()
@@ -42,7 +42,7 @@ CClient::~CClient()
 void CClient::Update()
 {
 	//m_pClient->Update(16);
-	if (!m_pGame->m_playDemo && m_pGame->m_Mode == CGame::Mode::MENU)
+	if (!m_pGame->m_playDemo && m_pGame->m_Mode == CXGame::Mode::MENU)
 		return;
 
 	m_testObjects;

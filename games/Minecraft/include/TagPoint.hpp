@@ -5,7 +5,7 @@
 #include <Game.hpp>
 #include <string>
 
-class CGame;
+class CXGame;
 
 //////////////////////////////////////////////////////////////////////
 class CTagPoint : public ITagPoint

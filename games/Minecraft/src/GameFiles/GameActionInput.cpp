@@ -20,7 +20,7 @@
 #define ACTIONMAPS_WEAPON "default", "binozoom", ""
 #define ACTIONMAPS_DEF_ZOOMS "default", "zoom", "binozoom",""
 
-void CGame::SetConfigToActionMap(const char* pszActionName, ...)
+void CXGame::SetConfigToActionMap(const char* pszActionName, ...)
 {
   ActionsEnumMapItor It = m_mapActionsEnum.find(pszActionName);
   if (It == m_mapActionsEnum.end())
@@ -47,7 +47,7 @@ void CGame::SetConfigToActionMap(const char* pszActionName, ...)
   va_end(v);
 }
 
-void CGame::InitInputMap()
+void CXGame::InitInputMap()
 {
   IInput* pInput = m_pSystem->GetIInput();
 
@@ -57,7 +57,7 @@ void CGame::InitInputMap()
   ResetInputMap();
 }
 
-void CGame::InitConsoleCommands()
+void CXGame::InitConsoleCommands()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
 
@@ -96,7 +96,7 @@ void CGame::InitConsoleCommands()
 }
 
 //extern float CameraRayLength = 40.f;
-void CGame::InitConsoleVars()
+void CXGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
   r_displayinfo = REGISTER_INT("r_displayinfo", 0, 0, "Display info [1/0]");
@@ -163,7 +163,7 @@ void CGame::InitConsoleVars()
 
 }
 
-void  CGame::ResetInputMap()
+void  CXGame::ResetInputMap()
 {
   assert(m_pIActionMapManager);
 
@@ -458,7 +458,7 @@ void  CGame::ResetInputMap()
   m_pIActionMapManager->SetActionMap("default");
 }
 
-void CGame::SetCommonKeyBindings(IActionMap* pMap)
+void CXGame::SetCommonKeyBindings(IActionMap* pMap)
 {
   //movements
   //strafe left
@@ -574,7 +574,7 @@ void CGame::SetCommonKeyBindings(IActionMap* pMap)
 
 //////////////////////////////////////////////////////////////////////////
 // Bind a key to a action in a specified actionmap.
-void CGame::BindAction(const char *sAction,const char *sKeys,const char *sActionMap, int iKeyPos)
+void CXGame::BindAction(const char *sAction,const char *sKeys,const char *sActionMap, int iKeyPos)
 {
 	ActionsEnumMapItor itor;
 	// find action
@@ -593,7 +593,7 @@ void CGame::BindAction(const char *sAction,const char *sKeys,const char *sAction
 
 //////////////////////////////////////////////////////////////////////////
 // Binds a key (or other input) to a certain action (eg. JUMP) in all action-maps associated with this action
-void CGame::BindActionMultipleMaps(const char *sAction,const char *sKeys, int iKeyPos)
+void CXGame::BindActionMultipleMaps(const char *sAction,const char *sKeys, int iKeyPos)
 {
 	XBind Bind;
 	//Bind.nKey=m_pSystem->GetIInput()->GetKeyID(sKeys);
@@ -632,7 +632,7 @@ NextAction:;
 
 //////////////////////////////////////////////////////////////////////
 // Check if a action is triggered.
-bool CGame::CheckForAction(const char *sAction)
+bool CXGame::CheckForAction(const char *sAction)
 {
 	ActionsEnumMapItor itor;
 	// find action
@@ -647,7 +647,7 @@ bool CGame::CheckForAction(const char *sAction)
 
 //////////////////////////////////////////////////////////////////////
 // Clears a action-flag (untrigger)
-void CGame::ClearAction(const char *sAction)//<<FIXME>> remove
+void CXGame::ClearAction(const char *sAction)//<<FIXME>> remove
 {
 
 }

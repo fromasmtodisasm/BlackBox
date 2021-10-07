@@ -31,7 +31,7 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 class CXClient;
-class CGame;
+class CXGame;
 
 //////////////////////////////////////////////////////////////////////
 class CScriptObjectClient :
@@ -40,7 +40,7 @@ class CScriptObjectClient :
 public:
 	CScriptObjectClient();
 	virtual ~CScriptObjectClient();
-	void Create(IScriptSystem* pScriptSystem, CGame* pGame, CXClient* pClient);
+	void Create(IScriptSystem* pScriptSystem, CXGame* pGame, CXClient* pClient);
 	static void InitializeTemplate(IScriptSystem* pSS);
 
 	int GetGameStartTime(IFunctionHandler* pH);
@@ -67,7 +67,7 @@ public:
 private:
 
 	CXClient* m_pClient;					//!<
-	CGame* m_pGame;						//!<
+	CXGame* m_pGame;						//!<
 	IScriptObject* m_pSoundEventPos;		//!<
 };
 

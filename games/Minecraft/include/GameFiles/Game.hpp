@@ -45,32 +45,10 @@ enum
 	CGS_INTERMISSION = 3
 };
 
+#include <Network/XNetwork.hpp>
+
 //#include "BitStream_Base.h"						// CBitStream_Base
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
-
-#include <BlackBox/Core/IGame.hpp>
-#include <BlackBox/Input/IInput.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/World/IWorld.hpp>
-
-//#include "Player.h"
-#include "EntityClassRegistry.h"
-#include <Network/XNetwork.hpp>
-#include <ScriptObjects/ScriptObjectClient.hpp>
-#include <ScriptObjects/ScriptObjectGame.hpp>
-#include <ScriptObjects/ScriptObjectServer.hpp>
-
-#include <BlackBox/Renderer/QuadTree.hpp>
-#include <CameraController.hpp>
-#include <DevMode.hpp>
-
-#ifdef USE_STEAM
-#include <SteamHelper.hpp>
-#endif
-
-
-#include "GameShared.hpp"
 
 struct IStatObj;
 class CScriptObjectInput;
@@ -233,8 +211,32 @@ struct TestObject
 	bool m_Intersected = false;
 };
 
-class CGame final
-	: public IGame
+//#include <BlackBox/Core/IGame.hpp>
+#include <IXGame.hpp>
+#include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/System/IConsole.hpp>
+#include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/World/IWorld.hpp>
+
+//#include "Player.h"
+#include "EntityClassRegistry.h"
+#include <ScriptObjects/ScriptObjectClient.hpp>
+#include <ScriptObjects/ScriptObjectGame.hpp>
+#include <ScriptObjects/ScriptObjectServer.hpp>
+
+#include <BlackBox/Renderer/QuadTree.hpp>
+#include <CameraController.hpp>
+#include <DevMode.hpp>
+
+#ifdef USE_STEAM
+#include <SteamHelper.hpp>
+#endif
+
+
+#include "GameShared.hpp"
+
+class CXGame final
+	: public IXGame
 	, public IInputEventListener
 	, public IPostRenderCallback
 	, public IPreRenderCallback
@@ -256,8 +258,8 @@ class CGame final
 		NOT_CONECTED
 	};
 
-	CGame();
-	~CGame();
+	CXGame();
+	~CXGame();
 	void OnRenderer_BeforeEndFrame() override;
 
 	const char* IsMODLoaded();
@@ -295,29 +297,36 @@ class CGame final
 	// IGame interface
   public:
 	
-	bool SaveToStream(CStream &stm, Vec3 *pos, Vec3 *angles,string sFilename);
-	bool LoadFromStream(CStream &stm, bool isdemo);
-	bool LoadFromStream_RELEASEVERSION(CStream &str, bool isdemo, CScriptObjectStream &scriptStream);
-	bool LoadFromStream_PATCH_1(CStream &str, bool isdemo, CScriptObjectStream &scriptStream);
+	bool SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename);
+	bool LoadFromStream(CStream& stm, bool isdemo);
+	bool LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream);
+	bool LoadFromStream_PATCH_1(CStream& str, bool isdemo, CScriptObjectStream& scriptStream);
 
-	void Save(string sFileName, Vec3 *pos, Vec3 *angles,bool bFirstCheckpoint=false );
+	void Save(string sFileName, Vec3* pos, Vec3* angles, bool bFirstCheckpoint = false);
 	bool Load(string sFileName);
-	void LoadConfiguration(const string &sSystemCfg,const string &sGameCfg);
-	void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile) override;
-	void RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfile);
+	void LoadConfiguration(const string& sSystemCfg, const string& sGameCfg);
+	void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) override;
+	void RemoveConfiguration(string& sSystemCfg, string& sGameCfg, const char* sProfile);
 
-	virtual void ReloadScripts() override;
-	virtual bool GetModuleState(EGameCapability eCap) override;
-	virtual void UpdateDuringLoading() override;
-	virtual IXAreaMgr* GetAreaManager() override;
+	virtual CXServer* GetServer() { return m_pServer; }
+	//CXClient* GetClient() { return m_pClient; }
+
+
+	virtual void			  ReloadScripts() override;
+	virtual void			  UpdateDuringLoading() override;
+	virtual IXAreaMgr*		  GetAreaManager() override;
 	virtual ITagPointManager* GetTagPointManager() override;
-    void Stop() override;
-	void GotoMenu();
-	void GotoFullscreen();
-	void GotoGame();
+	void					  Stop() override;
+	void					  GotoMenu(bool bTriggerOnSwitch = false);
+	void					  GotoGame(bool bTriggerOnSwitch = false);
+	void					  MenuOn();	 //!< enables menu instantly (no message)
+	void					  MenuOff(); //!< disables menu instantly (no message)
+
+
 	void GotoFly();
 	void GotoEdit();
 	void ShowMenu();
+	void GotoFullscreen();
 	virtual void SendMessage(const char* str) override
 	{
 		m_qMessages.push(str);
@@ -694,9 +703,33 @@ public:
 
 	bool m_playDemo = false;
 
+	ITagPointManager* m_pTagPointManager;
+	string m_sGameName;
+
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 
 	// Inherited via IGame
 	virtual void GetMemoryUsage(ICrySizer* pSizer) const override;
+
+	// Inherited via IXGame
+	virtual int		  GetInterfaceVersion() { return 1; };
+	virtual string&	  GetName() { return m_sGameName; };
+
+	virtual bool GetModuleState(EGameCapability eCap)
+	{
+		switch (eCap)
+		{
+		case EGameMultiplayer:
+			return IsMultiplayer();
+		case EGameClient:
+			return IsClient();
+		case EGameServer:
+			return IsServer();
+		case EGameDevMode:
+			return IsDevModeEnable();
+		default:
+			return false;
+		}
+	};
 };

@@ -212,12 +212,12 @@ void SaveHistory()
 	}
 }
 
-void CGame::PreRender()
+void CXGame::PreRender()
 {
 	//glCheck(glViewport(0, 0, 1366, 768));
 }
 
-CGame::CGame()
+CXGame::CXGame()
 	: m_pSystem(nullptr)
 	, m_pScriptSystem(nullptr)
 	, m_pRender(nullptr)
@@ -241,11 +241,11 @@ CGame::CGame()
 	//srand(stime);
 }
 
-void CGame::InitVariables()
+void CXGame::InitVariables()
 {
 }
 
-CGame::~CGame()
+CXGame::~CXGame()
 {
 	SaveHistory();
 	m_pScriptSystem->BeginCall("Shutdown");
@@ -328,7 +328,7 @@ CGame::~CGame()
 #if defined USE_STEAM && defined GLSL_EDITOR
 static GLSLEditor* glslEditor = nullptr;
 #endif //  USE_STEAM
-bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
+bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
 	if (!SteamInit())
 		return false;
@@ -347,7 +347,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 		//gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
 		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRender->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
 	}
-	pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CGame");
+	pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CXGame");
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
@@ -480,7 +480,7 @@ bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const cha
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CGame::InitClassRegistry()
+bool CXGame::InitClassRegistry()
 {
 	m_EntityClassRegistry.Init(m_pSystem);
 	CPlayerSystem*	pPlayerSystem  = GetPlayerSystem();
@@ -533,7 +533,7 @@ bool MouseInQuad(int x, int y, int w, int h)
 }
 
 
-void CGame::OnRenderer_BeforeEndFrame()
+void CXGame::OnRenderer_BeforeEndFrame()
 {
 	auto   posY			  = 150.f;
 	size_t currentEntry	  = 0;
@@ -636,9 +636,9 @@ void CGame::OnRenderer_BeforeEndFrame()
 		{
 			switch (m_Mode)
 			{
-			case CGame::FPS:
+			case CXGame::FPS:
 				break;
-			case CGame::MENU:
+			case CXGame::MENU:
 				if (!optionsOpened)
 				{
 					if (m_playDemo)
@@ -898,9 +898,9 @@ void CGame::OnRenderer_BeforeEndFrame()
 				sprintf(mouse, "Button quad: x: %d y: %d w: %d h %d", currentQuad.x, currentQuad.y, currentQuad.z, currentQuad.w);
 				PrintMenuEntry(mouse);
 				break;
-			case CGame::FLY:
+			case CXGame::FLY:
 				break;
-			case CGame::EDIT:
+			case CXGame::EDIT:
 				break;
 			default:
 				break;
@@ -912,7 +912,7 @@ void CGame::OnRenderer_BeforeEndFrame()
 
 
 static ITexture* splash = nullptr;
-bool			 CGame::Update()
+bool			 CXGame::Update()
 {
 	static const auto& render_game	= true;
 	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
@@ -997,11 +997,11 @@ bool			 CGame::Update()
 	return m_bUpdateRet && num_frames > 0;
 }
 
-void CGame::ExecScripts()
+void CXGame::ExecScripts()
 {
 }
 
-void CGame::DrawHud(float fps)
+void CXGame::DrawHud(float fps)
 {
 	//m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
 	if (r_displayinfo->GetIVal() != 0)
@@ -1010,7 +1010,7 @@ void CGame::DrawHud(float fps)
 	}
 }
 
-void CGame::DisplayInfo(float fps)
+void CXGame::DisplayInfo(float fps)
 {
 	size_t num_objects;
 	num_objects = m_3DEngine->GetLoadedObjectCount();
@@ -1106,7 +1106,7 @@ void CGame::DisplayInfo(float fps)
 	}
 }
 
-bool CGame::Run(bool& bRelaunch)
+bool CXGame::Run(bool& bRelaunch)
 {
 	//splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
 	typedef ITexPic ITexture;
@@ -1129,7 +1129,7 @@ bool CGame::Run(bool& bRelaunch)
 	return true;
 }
 
-bool CGame::LoadScene(std::string name)
+bool CXGame::LoadScene(std::string name)
 {
 	GetISystem()->Log("Scene loading");
 	std::string& path = name;
@@ -1154,7 +1154,7 @@ bool CGame::LoadScene(std::string name)
 	return false;
 }
 
-void CGame::SaveScene(std::string name, std::string as)
+void CXGame::SaveScene(std::string name, std::string as)
 {
 	// TODO: Fix it
 	// Need implement custom save file format to save needed state
@@ -1168,7 +1168,7 @@ void CGame::SaveScene(std::string name, std::string as)
 #endif
 }
 
-void CGame::SetRenderState()
+void CXGame::SetRenderState()
 {
 #if 0
 	m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
@@ -1185,18 +1185,18 @@ void CGame::SetRenderState()
 #endif
 }
 
-void CGame::SetPlayer(CPlayer* player)
+void CXGame::SetPlayer(CPlayer* player)
 {
 	m_player = player;
 }
 
-void CGame::SetCamera(CCamera* camera)
+void CXGame::SetCamera(CCamera* camera)
 {
 	//m_active_camera = camera;
 	//m_World->setCamera(camera);
 }
 
-void CGame::Render()
+void CXGame::Render()
 {
 	m_pSystem->Render();
 	m_pClient->Render();
@@ -1204,11 +1204,11 @@ void CGame::Render()
 
 IGAME_API IGame* CreateIGame()
 {
-	CGame* game = new CGame();
+	CXGame* game = new CXGame();
 	return (game);
 }
 
-bool CGame::OnInputEvent(const SInputEvent& event)
+bool CXGame::OnInputEvent(const SInputEvent& event)
 {
 	{
 		bool	   retflag;
@@ -1223,7 +1223,7 @@ bool CGame::OnInputEvent(const SInputEvent& event)
 	return result;
 }
 
-void CGame::PersistentHandler(const SInputEvent& event)
+void CXGame::PersistentHandler(const SInputEvent& event)
 {
 	auto useBoxFilter = m_Console->GetCVar("bf");
 	////////////////////////
@@ -1268,7 +1268,7 @@ void CGame::PersistentHandler(const SInputEvent& event)
 	}
 }
 
-void CGame::GotoGame()
+void CXGame::GotoGame(bool bTriggerOnSwitch)
 {
 	//if (m_player != nullptr)
 	{
@@ -1283,21 +1283,21 @@ void CGame::GotoGame()
 	}
 }
 
-void CGame::GotoFly()
+void CXGame::GotoFly()
 {
 	m_Mode = FLY;
 }
 
-void CGame::GotoEdit()
+void CXGame::GotoEdit()
 {
 	m_Mode = EDIT;
 }
 
-void CGame::ShowMenu()
+void CXGame::ShowMenu()
 {
 }
 
-bool CGame::InitPlayer()
+bool CXGame::InitPlayer()
 {
 	// TODO: rewirte it
 #if 0
@@ -1315,7 +1315,7 @@ bool CGame::InitPlayer()
 	return false;
 }
 
-bool CGame::FpsInputEvent(const SInputEvent& event)
+bool CXGame::FpsInputEvent(const SInputEvent& event)
 {
 	/*
   if (m_Console->IsOpened())
@@ -1407,7 +1407,7 @@ bool CGame::FpsInputEvent(const SInputEvent& event)
 	return false;
 }
 
-bool CGame::FlyInputEvent(const SInputEvent& event)
+bool CXGame::FlyInputEvent(const SInputEvent& event)
 {
 	////////////////////////
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
@@ -1440,7 +1440,7 @@ bool CGame::FlyInputEvent(const SInputEvent& event)
 	//return m_player->OnInputEvent(event);
 }
 
-bool CGame::MenuInputEvent(const SInputEvent& event)
+bool CXGame::MenuInputEvent(const SInputEvent& event)
 {
 	////////////////////////
 	const bool keyPressed = (event.deviceType == eIDT_Keyboard || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
@@ -1507,12 +1507,12 @@ bool CGame::MenuInputEvent(const SInputEvent& event)
 	return false;
 }
 
-bool CGame::DefaultInputEvent(const SInputEvent& event)
+bool CXGame::DefaultInputEvent(const SInputEvent& event)
 {
 	return false;
 }
 
-bool CGame::EditInputEvent(const SInputEvent& event)
+bool CXGame::EditInputEvent(const SInputEvent& event)
 {
 #if 0
   ////////////////////////
@@ -1567,18 +1567,18 @@ bool CGame::EditInputEvent(const SInputEvent& event)
 	return false;
 }
 
-bool CGame::OnInputEventProxy(const SInputEvent& event)
+bool CXGame::OnInputEventProxy(const SInputEvent& event)
 {
 	switch (m_Mode)
 	{
-	case CGame::FPS:
+	case CXGame::FPS:
 		//if (m_player != nullptr) return FpsInputEvent(event);
 		return FpsInputEvent(event);
-	case CGame::MENU:
+	case CXGame::MENU:
 		return MenuInputEvent(event);
-	case CGame::FLY:
+	case CXGame::FLY:
 		return FlyInputEvent(event);
-	case CGame::EDIT:
+	case CXGame::EDIT:
 		return EditInputEvent(event);
 	default:
 		break;
@@ -1586,7 +1586,7 @@ bool CGame::OnInputEventProxy(const SInputEvent& event)
 	return false;
 }
 
-bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
+bool CXGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 {
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	bool	   control	  = event.modifiers & eMM_Ctrl;
@@ -1615,7 +1615,7 @@ bool CGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 	return {};
 }
 
-void CGame::ProcessPMessages(const char* szMsg)
+void CXGame::ProcessPMessages(const char* szMsg)
 {
 	if (stricmp(szMsg, "Quit") == 0) // quit message
 	{
@@ -1643,22 +1643,22 @@ void CGame::ProcessPMessages(const char* szMsg)
 	}
 }
 
-bool CGame::IsInPause()
+bool CXGame::IsInPause()
 {
 	return m_bInPause;
 }
 
-void CGame::Stop()
+void CXGame::Stop()
 {
 	GetISystem()->Log("Stopping");
 	m_bUpdateRet = false;
 }
 
-void CGame::PostRender()
+void CXGame::PostRender()
 {
 }
 
-void CGame::GotoMenu()
+void CXGame::GotoMenu(bool bTriggerOnSwitch)
 {
 	m_Mode	   = MENU;
 	m_bInPause = true;
@@ -1667,12 +1667,12 @@ void CGame::GotoMenu()
 	m_pSystem->EnableGui(true);
 }
 
-void CGame::GotoFullscreen()
+void CXGame::GotoFullscreen()
 {
 	isFullScreen = !isFullScreen;
 }
 
-bool CGame::InitScripts()
+bool CXGame::InitScripts()
 {
 	m_pScriptObjectGame = new CScriptObjectGame();
 	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
@@ -1714,10 +1714,10 @@ bool CGame::InitScripts()
 	fps = 35.f;
 	class toogle_viewport_drag : public IConsoleCommand
 	{
-		CGame* game;
+		CXGame* game;
 
 	  public:
-		toogle_viewport_drag(CGame* game)
+		toogle_viewport_drag(CXGame* game)
 			: game(game)
 		{
 		}
@@ -1750,7 +1750,7 @@ bool CGame::InitScripts()
 	return true;
 }
 
-bool CGame::TestScriptSystem(bool& retflag)
+bool CXGame::TestScriptSystem(bool& retflag)
 {
 	retflag		   = true;
 	m_playerObject = m_pScriptSystem->CreateEmptyObject();
@@ -1809,41 +1809,36 @@ bool CGame::TestScriptSystem(bool& retflag)
 	return {};
 }
 
-void CGame::ReloadScripts()
+void CXGame::ReloadScripts()
 {
 }
 
-bool CGame::GetModuleState(EGameCapability eCap)
-{
-	return false;
-}
-
-void CGame::UpdateDuringLoading()
+void CXGame::UpdateDuringLoading()
 {
 }
 
-IXAreaMgr* CGame::GetAreaManager()
+IXAreaMgr* CXGame::GetAreaManager()
 {
 	return nullptr;
 }
 
-ITagPointManager* CGame::GetTagPointManager()
+ITagPointManager* CXGame::GetTagPointManager()
 {
 	return nullptr;
 }
 
-void CGame::MainMenu()
+void CXGame::MainMenu()
 {
 }
 
 #ifdef USE_STEAM
-CSteamAchievements* CGame::SteamAchivements()
+CSteamAchievements* CXGame::SteamAchivements()
 {
 	return g_SteamAchievements;
 }
 #endif
 
-void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
+void CXGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
 	switch (event)
 	{
@@ -1857,7 +1852,7 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 	}
 }
 
-void CGame::GetMemoryUsage(ICrySizer* pSizer) const
+void CXGame::GetMemoryUsage(ICrySizer* pSizer) const
 {
 	unsigned size = 0;
 
@@ -1930,7 +1925,7 @@ void CGame::GetMemoryUsage(ICrySizer* pSizer) const
 
 }
 
-bool CGame::SteamInit()
+bool CXGame::SteamInit()
 {
 #ifndef USE_STEAM
 	return true;
@@ -1960,12 +1955,12 @@ bool CGame::SteamInit()
 }
 
 #ifdef USE_GUI
-void CGame::Gui::Update()
+void CXGame::Gui::Update()
 {
 	windows.Draw();
 }
 
-void CGame::Gui::Graphics::Draw()
+void CXGame::Gui::Graphics::Draw()
 {
 	if (ImGui::TreeNode("Graphics"))
 	{
@@ -1974,7 +1969,7 @@ void CGame::Gui::Graphics::Draw()
 	}
 }
 
-void CGame::Gui::Input::Draw()
+void CXGame::Gui::Input::Draw()
 {
 	if (ImGui::TreeNode("Input"))
 	{
@@ -1982,14 +1977,14 @@ void CGame::Gui::Input::Draw()
 	}
 }
 
-CGame::Gui::Windows::Windows()
+CXGame::Gui::Windows::Windows()
 {
 	widgets.push_back(std::make_shared<Common>());
 	widgets.push_back(std::make_shared<Input>());
 	widgets.push_back(std::make_shared<Graphics>());
 }
 
-void CGame::Gui::Windows::Draw()
+void CXGame::Gui::Windows::Draw()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -2014,7 +2009,7 @@ void CGame::Gui::Windows::Draw()
 						   });
 }
 
-void CGame::Gui::Common::Draw()
+void CXGame::Gui::Common::Draw()
 {
 	static char var_buffer[256];
 	union CVarValue

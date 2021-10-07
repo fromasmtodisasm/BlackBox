@@ -20,7 +20,7 @@
 #include <vector>
 #include <string>
 
-class CGame;
+class CXGame;
 struct ILog;
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ typedef lstMods::iterator lstModsIt;
 class CGameMods : public IGameMods
 {
 public:
-	CGameMods( CGame *pGame );
+	CGameMods( CXGame *pGame );
 	~CGameMods();
 	
 	// IGameMods implementation.
@@ -56,7 +56,7 @@ private:
 	bool	ParseModDescription(const char *szFolder,SGameModDescription*pMod);
 	bool	GetValue(const char *szKey,const char *szText,char *szRes);
 	
-	CGame* m_pGame;
+	CXGame* m_pGame;
 	ISystem *m_pSystem;
 	ILog		*m_pILog;
 

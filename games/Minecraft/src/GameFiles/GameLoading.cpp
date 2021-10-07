@@ -70,10 +70,10 @@ public:
 class CActionMapDumpSink : public IActionMapDumpSink
 {
 private:
-	CGame *m_pGame;
+	CXGame *m_pGame;
 	FILE *m_pFile;
 public:
-	CActionMapDumpSink(CGame *pGame, FILE *pFile)
+	CActionMapDumpSink(CXGame *pGame, FILE *pFile)
 	{
 		m_pGame=pGame;
 		m_pFile=pFile;
@@ -115,7 +115,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
-void CGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,const char *sProfileName)
+void CXGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,const char *sProfileName)
 {
 	string sSystemCfg = pszSystemCfg;
 	string sGameCfg = pszGameCfg;
@@ -163,7 +163,7 @@ void CGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,c
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
+void CXGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 {			
 	m_pSystem->LoadConfiguration(sSystemCfg.data());
 
@@ -270,7 +270,7 @@ void SaveName(string &s, string &prof)
 	s = "profiles/player/" + prof + "/savegames/" + s + ".sav";
 };
 
-bool CGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename)
+bool CXGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename)
 {
 
 	if(m_bEditor)				 
@@ -334,7 +334,7 @@ bool CGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename
 	return true;
 }
 
-bool CGame::LoadFromStream(CStream& stm, bool isdemo)
+bool CXGame::LoadFromStream(CStream& stm, bool isdemo)
 {
 	if(IsMultiplayer())
 	{
@@ -439,17 +439,17 @@ bool CGame::LoadFromStream(CStream& stm, bool isdemo)
 	return true;
 }
 
-bool CGame::LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
+bool CXGame::LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
 {
 	return false;
 }
 
-bool CGame::LoadFromStream_PATCH_1(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
+bool CXGame::LoadFromStream_PATCH_1(CStream& str, bool isdemo, CScriptObjectStream& scriptStream)
 {
 	return false;
 }
 
-void CGame::Save(string sFileName, Vec3 * pos, Vec3 * angles, bool bFirstCheckpoint)
+void CXGame::Save(string sFileName, Vec3 * pos, Vec3 * angles, bool bFirstCheckpoint)
 {
 	#if 0
 	if(!m_pClient)
@@ -525,7 +525,7 @@ void CGame::Save(string sFileName, Vec3 * pos, Vec3 * angles, bool bFirstCheckpo
 	};
 }
 
-bool CGame::Load(string sFileName)
+bool CXGame::Load(string sFileName)
 {
 	assert(g_playerprofile);
 	

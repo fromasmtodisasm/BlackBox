@@ -33,7 +33,7 @@ CScriptObjectClient::~CScriptObjectClient()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CScriptObjectClient::Create(IScriptSystem* pScriptSystem, CGame* pGame, CXClient* pClient)
+void CScriptObjectClient::Create(IScriptSystem* pScriptSystem, CXGame* pGame, CXClient* pClient)
 {
   m_pGame = pGame;
   m_pClient = pClient;

@@ -72,7 +72,7 @@ void CScriptObjectInput::InitializeTemplate(IScriptSystem *pSS)
 		@param pGame Pointer to the Game
 		@param pSystem Pointer to the System-interface
 */
-void CScriptObjectInput::Init(IScriptSystem *pScriptSystem,CGame *pGame,ISystem *pSystem)
+void CScriptObjectInput::Init(IScriptSystem *pScriptSystem,CXGame *pGame,ISystem *pSystem)
 {
 	m_pGame=pGame;
 	m_pSystem=pSystem;

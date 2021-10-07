@@ -36,7 +36,7 @@ CScriptObjectServer::~CScriptObjectServer()
 }
 //////////////////////////////////////////////////////////////////////
 //! create the object into the LUA VM
-bool CScriptObjectServer::Create(IScriptSystem* pScriptSystem, IXSystem* pXSystem, CGame* pGame)
+bool CScriptObjectServer::Create(IScriptSystem* pScriptSystem, IXSystem* pXSystem, CXGame* pGame)
 {
   m_pXSystem = pXSystem;
   m_pGame = pGame;

@@ -171,4 +171,4 @@ inline void GameWarning( const char *format,... )
 	CryWarning( VALIDATOR_MODULE_GAME,VALIDATOR_WARNING,buffer );
 }
 
-using CXGame = CGame;
+using CXGame = CXGame;

@@ -37,7 +37,7 @@ class CClient :
 	, public IRendererCallbackClient
 {
   public:
-	CClient(CGame* pGame);
+	CClient(CXGame* pGame);
 	~CClient();
 	void Update();
 	bool Init();
@@ -113,7 +113,7 @@ class CClient :
 
 
   public:
-	CGame* m_pGame{};
+	CXGame* m_pGame{};
 
 	// Player
 	CXEntityProcessingCmd m_PlayerProcessingCmd;

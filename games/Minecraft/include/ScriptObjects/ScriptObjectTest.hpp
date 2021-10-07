@@ -3,7 +3,7 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
-class CGame;
+class CXGame;
 
 
 class CScriptObjectTest :
@@ -35,9 +35,9 @@ public:
 		return 0;
 	}
 
-	void Init(IScriptSystem* pScriptSystem, CGame* pGame);
+	void Init(IScriptSystem* pScriptSystem, CXGame* pGame);
 
 private:
-	CGame *							m_pGame;
+	CXGame *							m_pGame;
 	ISystem *						m_pSystem;
 };

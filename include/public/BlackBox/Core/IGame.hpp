@@ -102,6 +102,25 @@ struct IEntityClassRegistry
 	virtual void Debug()=0;
 };
 
+//////////////////////////////////////////////////////////////////////
+struct INameIterator
+{
+	virtual void Release() = 0;
+	virtual void MoveFirst() = 0;
+	virtual bool MoveNext() = 0;
+	virtual bool Get(char *pszBuffer, INT *pSize) = 0;
+};
+
+class IPhysicsStreamer;
+class IPhysicsEventClient;
+
+//////////////////////////////////////////////////////////////////////////
+// MOD related
+
+// flags
+// NOTE: flags are unused atm
+#define MOD_NEWGAMEDLL	1L<<1 //tells if the MOD contains a replacement of CryGame.dll
+
 // Description of the Game MOD.
 //////////////////////////////////////////////////////////////////////////
 struct SGameModDescription

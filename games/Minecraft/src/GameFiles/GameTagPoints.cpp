@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // Inserts a tag-point in the list.
-ITagPoint* CGame::CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles)
+ITagPoint* CXGame::CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles)
 {
   // create new one
   CTagPoint* pNewPoint = new CTagPoint(this);
@@ -17,7 +17,7 @@ ITagPoint* CGame::CreateTagPoint(const string& name, const Vec3& pos, const Vec3
 
 //////////////////////////////////////////////////////////////////////
 // Remove tag-point.
-void CGame::RemoveTagPoint(ITagPoint* pPoint)
+void CXGame::RemoveTagPoint(ITagPoint* pPoint)
 {
   TagPointMap::iterator ti;
   // find and delete tag-point
@@ -34,7 +34,7 @@ void CGame::RemoveTagPoint(ITagPoint* pPoint)
 
 //////////////////////////////////////////////////////////////////////
 // Retrieve a tag-point by its name
-ITagPoint* CGame::GetTagPoint(const string& name)
+ITagPoint* CXGame::GetTagPoint(const string& name)
 {
   TagPointMap::iterator ti;
   // find and return tag-point
@@ -45,7 +45,7 @@ ITagPoint* CGame::GetTagPoint(const string& name)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CGame::RenameTagPoint(const string& oldname, const string& newname)
+bool CXGame::RenameTagPoint(const string& oldname, const string& newname)
 {
   TagPointMap::iterator ti;
   // find tag-point

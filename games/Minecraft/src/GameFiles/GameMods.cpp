@@ -26,7 +26,7 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-CGameMods::CGameMods( CGame *pGame )
+CGameMods::CGameMods( CXGame *pGame )
 {
 	m_pGame = pGame;
 	m_pSystem = pGame->GetSystem();
@@ -371,7 +371,7 @@ const char *CGameMods::GetModPath(const char *szSource)
 }
  
 //////////////////////////////////////////////////////////////////////////
-bool CGame::OpenPacks(const char *szFolder)
+bool CXGame::OpenPacks(const char *szFolder)
 {
 	// open first packs in the farcry folder 
 	bool bFound=m_pSystem->GetIPak()->OpenPacks(szFolder);
@@ -392,7 +392,7 @@ bool CGame::OpenPacks(const char *szFolder)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CGame::ClosePacks(const char *szFolder)
+bool CXGame::ClosePacks(const char *szFolder)
 {	
 	if (m_pGameMods)
 	{
@@ -407,14 +407,14 @@ bool CGame::ClosePacks(const char *szFolder)
 	return(m_pSystem->GetIPak()->ClosePacks(szFolder));	
 }
 
-bool CGame::ParseLevelName(const char* szLevelName, char* szLevel, char* szMission)
+bool CXGame::ParseLevelName(const char* szLevelName, char* szLevel, char* szMission)
 {
 	return false;
 }
 
 // TODO: editor support
 //////////////////////////////////////////////////////////////////////////
-string CGame::GetLevelsFolder() const
+string CXGame::GetLevelsFolder() const
 {
 	string sFolder = "Levels";	
 	/*
@@ -432,7 +432,7 @@ string CGame::GetLevelsFolder() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CGame::IsMODLoaded()
+const char *CXGame::IsMODLoaded()
 {
 	if (m_pGameMods)
 	{
@@ -444,7 +444,7 @@ const char *CGame::IsMODLoaded()
 	return (NULL);
 }
 
-IGameMods* CGame::GetModsInterface()
+IGameMods* CXGame::GetModsInterface()
 {
   return nullptr;
 }

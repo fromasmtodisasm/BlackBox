@@ -20,7 +20,7 @@
 #endif
 
 // Forward declarations.
-class CGame;
+class CXGame;
 struct SWeaponHit;
 struct IScript;
 struct ICVar;
@@ -40,7 +40,7 @@ public:
 	virtual ~CXServerRules();
 
 	//!	Load the rules set by the console variables
-	bool	Init(CGame* pGame, IConsole* pConsole, IScriptSystem* pScriptSystem, ILog* pLog = NULL);
+	bool	Init(CXGame* pGame, IConsole* pConsole, IScriptSystem* pScriptSystem, ILog* pLog = NULL);
 	void	Update();
 	//! Unload the rules
 	void	ShutDown();
@@ -87,7 +87,7 @@ public:
 private:
 
 	//! Get rules script.
-	CGame* m_pGame;
+	CXGame* m_pGame;
 	IScriptSystem* m_pScriptSystem;
 	IScriptObject* m_pGameRulesObj;
 	bool m_init;
