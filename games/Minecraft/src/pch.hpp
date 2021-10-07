@@ -132,6 +132,9 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 /////////////////////////////////////////////////////////////////////////////
 #include <BlackBox/Renderer/IRender.hpp>
 
+#include <Cry_Color4.h>
+#include <TArray.h>
+
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Core/IMarkers.hpp>
 #include <BlackBox/Core/Utils.hpp>
@@ -144,6 +147,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -151,6 +155,8 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
+typedef string String;
+typedef SmartScriptObject _SmartScriptObject;
 
 /////////////////////////////////////////////////////////////////////////////
 #include "Game.hpp"
@@ -175,7 +181,6 @@ using CXGame = CXGame;
 struct ISoundSystem
 {
 	virtual IVisArea* GetListenerArea() = 0;
-	virtual Vec3	  GetListenerPos()	= 0;
+	virtual Legacy::Vec3	  GetListenerPos()	= 0;
 };
 
-typedef string String;

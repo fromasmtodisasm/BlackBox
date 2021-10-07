@@ -53,7 +53,7 @@ bool Scene::load(const char* name, LoadObjectSink* callback)
 	auto obj = terrain.load("res/images/heightmaps/heightmap_thin.png");
 	if (obj != nullptr)
 	{
-		obj->m_transform.scale *= Vec3(40,1,40);
+		obj->m_transform.scale *= Legacy::Vec3(40,1,40);
 		obj->setMaterial(MaterialManager::instance()->getMaterial("terrain"));
 		m_Objects.insert(std::make_pair("terrain", obj));
 	}

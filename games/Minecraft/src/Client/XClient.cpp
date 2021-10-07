@@ -575,7 +575,7 @@ void CXClient::OnXContextSetup(CStream &stm)
 		m_pGame->m_pSystem->GetIConsole()->SetScrollMax(600/2);
 
 		//if (m_pGame->IsMultiplayer())
-		m_pGame->GetSystem()->GetIRenderer()->ClearColorBuffer(Vec3(0,0,0));
+		m_pGame->GetSystem()->GetIRenderer()->ClearColorBuffer(Legacy::Vec3(0,0,0));
 	}
 }
 
@@ -835,7 +835,7 @@ void CXClient::Update()
 			//pEntCam->GetCamera().GetAngles()+m_vSh
 		m_pGame->m_pSystem->SetViewCamera(cam);
 		if(m_bLinkListenerToCamera && m_pGame->m_pSystem->GetISoundSystem())
-			m_pGame->m_pSystem->GetISoundSystem()->SetListener(cam,Vec3(0,0,0));
+			m_pGame->m_pSystem->GetISoundSystem()->SetListener(cam,Legacy::Vec3(0,0,0));
 	}
 
 	if (m_wPlayerID != INVALID_WID)
@@ -1035,7 +1035,7 @@ void CXClient::SendInputToServer( const bool bTimeToSend )
 
 			stm.Write(false);		// no vehicle data
 			stm.Write(true);
-			Vec3 pos = en->GetPos();
+			Legacy::Vec3 pos = en->GetPos();
 			if (inrange(pos.x,0.0f,4095.0f)&inrange(pos.y,0.0f,4095.f)&inrange(pos.z,0.0f,511.0f))
 			{
 				stm.Write(true);
@@ -1192,7 +1192,7 @@ void CXClient::OnMapChangedReally()
 		pRespawn=m_pGame->GetTagPoint("Respawn0");
 		if (pRespawn)	
 		{
-			Vec3 vPos,vAngles;
+			Legacy::Vec3 vPos,vAngles;
 			pRespawn->GetPos(vPos);
 			pRespawn->GetAngles(vAngles);
 			char buf[1024];
@@ -2272,7 +2272,7 @@ bool CXClient::OnServerMsgSetPlayer(CStream &stm)
 	m_wPlayerID = INVALID_WID;
 
 	EntityId id;
-	Vec3 v3Angles;
+	Legacy::Vec3 v3Angles;
 	VERIFY_COOKIE(stm);
 
 	if(!stm.Read(id))
@@ -2469,7 +2469,7 @@ bool CXClient::OnServerMsgBindEntity(CStream &stm)
 	unsigned char cParam;
 	IEntity *pParent,*pChild;
 	bool bBindUnbind;
-	Vec3 vParent,vChild;
+	Legacy::Vec3 vParent,vChild;
 	stm.Read(idParent);
 	stm.Read(idChild);
 	stm.Read(cParam);
@@ -2870,7 +2870,7 @@ bool CXClient::OnServerMsgCmd(CStream &stm)
 	string cmd;
 	bool bExtra;
 	unsigned char cUserByte;
-	Vec3 vNormal,vPos;
+	Legacy::Vec3 vNormal,vPos;
 	EntityId id;
 
 	stm.Read(cmd);
@@ -2889,7 +2889,7 @@ bool CXClient::OnServerMsgCmd(CStream &stm)
 				stm.ReadPkd(tmp);
 			}
 			 else
-				vPos=Vec3(0,0,0);
+				vPos=Legacy::Vec3(0,0,0);
 		}
 
 		{
@@ -2903,7 +2903,7 @@ bool CXClient::OnServerMsgCmd(CStream &stm)
 				stm.ReadPkd(tmp);
 			}
 			 else
-				vNormal=Vec3(0,0,0);
+				vNormal=Legacy::Vec3(0,0,0);
 		}
 		stm.ReadPkd(id);
 		stm.ReadPkd(cUserByte);
@@ -3026,14 +3026,14 @@ bool FrontOfLine(float Ax,float Ay,float Bx,float By,float xt,float yt)
 //         /   \
 //	x3,y3/       \x4,y4
 //----------------------------------
-void CXClient::SoundEvent(EntityId idSrc,Vec3 &pos,float fRadius,float fThreat)
+void CXClient::SoundEvent(EntityId idSrc,Legacy::Vec3 &pos,float fRadius,float fThreat)
 {
 	if(!m_wPlayerID)
 		return;
 	IEntity *pPlayer=m_pEntitySystem->GetEntity(m_wPlayerID);
 	if(!pPlayer)
 		return;
-	Vec3 ppos=pPlayer->GetPos();
+	Legacy::Vec3 ppos=pPlayer->GetPos();
 	float fDistance2=GetSquaredDistance(pos,ppos)-(fRadius*fRadius);
 	//the player isn't bothered by his own sounds, but we wanna show them in the radar
 	//if (m_wPlayerID==idSrc)
@@ -3063,7 +3063,7 @@ void CXClient::SoundEvent(EntityId idSrc,Vec3 &pos,float fRadius,float fThreat)
 	if((fDistance2<(fMaxDistance*fMaxDistance)) 
 		&& (fDistance2>(fMinDistance*fMinDistance)))
 	{
-		Vec3 vAng=pPlayer->GetAngles();
+		Legacy::Vec3 vAng=pPlayer->GetAngles();
 		float fCos=(float)cos_tpl(-DEG2RAD(vAng.z));
 		float fSin=(float)sin_tpl(-DEG2RAD(vAng.z));
 		pos-=ppos;
@@ -3178,7 +3178,7 @@ void CXClient:: ResetSubtitles(void)
 void CXClient::LoadingError(const char *szError)
 {
 	if (m_pGame->IsMultiplayer())
-		m_pGame->GetSystem()->GetIRenderer()->ClearColorBuffer(Vec3(0,0,0));
+		m_pGame->GetSystem()->GetIRenderer()->ClearColorBuffer(Legacy::Vec3(0,0,0));
 	m_pGame->GetSystem()->GetIConsole()->ResetProgressBar(0);
 	m_pGame->m_pSystem->GetIConsole()->ShowConsole(false);
 	m_pGame->m_pSystem->GetIConsole()->SetScrollMax(600/2);

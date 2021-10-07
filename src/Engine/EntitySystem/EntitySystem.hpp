@@ -26,7 +26,7 @@ public:
 	virtual int GetNumEntities() const override;
 	virtual IEntityIt* GetEntityIterator() override;
 	virtual IEntityIt* GetEntityInFrustrumIterator(bool bFromPrevFrame = false) override;
-	virtual void GetEntitiesInRadius(const Vec3& origin, float radius, std::vector<IEntity*>& entities, int physFlags = PHYS_ENTITY_ALL) const override;
+	virtual void GetEntitiesInRadius(const Legacy::Vec3& origin, float radius, std::vector<IEntity*>& entities, int physFlags = PHYS_ENTITY_ALL) const override;
 	virtual void SetSink(IEntitySystemSink* sink) override;
 	virtual void PauseTimers(bool bPause, bool bResume = false) override;
 	virtual void RemoveSink(IEntitySystemSink* sink) override;

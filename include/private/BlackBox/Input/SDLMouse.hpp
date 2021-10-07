@@ -32,9 +32,9 @@ private:
   IRenderer* m_pRenderer;
   int        m_posX;
   int        m_posY;
-  Vec2       m_deltas;
-  Vec2       m_oldDeltas;
-  Vec2       m_deltasInertia;
+  Legacy::Vec2       m_deltas;
+  Legacy::Vec2       m_oldDeltas;
+  Legacy::Vec2       m_deltasInertia;
   bool       m_bGrabInput;
 };
 

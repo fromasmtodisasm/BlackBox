@@ -44,7 +44,7 @@ public:
 	bool EOD();
 	
 private:
-	bool ReadChunk(CStream &stm, float &fTimestamp, Vec3 &angles);
+	bool ReadChunk(CStream &stm, float &fTimestamp, Legacy::Vec3 &angles);
 	
 	FILE *m_pFile;
 	
@@ -57,7 +57,7 @@ private:
 		CStream stm;
 		float fTimestamp;
 		bool bPlayed;
-		Vec3 angles;
+		Legacy::Vec3 angles;
 	} m_ChunkToPlay;
 	
 	bool bStreamStarted;

@@ -70,7 +70,7 @@ class CVKRenderer : public CRenderer
 	virtual void GetViewport(int* x, int* y, int* width, int* height) override;
 	virtual void SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) override;
 	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0) override;
-	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) override;
+	virtual void Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) override;
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) override;
 	virtual void ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 	virtual void DrawFullScreenImage(int texture_id) override;
@@ -87,9 +87,9 @@ class CVKRenderer : public CRenderer
 	virtual bool IsCurrentContextMainVP() override;
 	virtual int GetCurrentContextViewportHeight() const override;
 	virtual int GetCurrentContextViewportWidth() const override;
-	virtual void SetClearColor(const Vec3& vColor) override;
+	virtual void SetClearColor(const Legacy::Vec3& vColor) override;
 	virtual void ClearDepthBuffer() override;
-	virtual void ClearColorBuffer(const Vec3 vColor) override;
+	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) override;
 	virtual void SetRenderTarget(int nHandle) override;
 	VkResult CreateSurface();
 	// Inherited via CRenderer

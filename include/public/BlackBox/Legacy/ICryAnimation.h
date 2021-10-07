@@ -33,9 +33,7 @@
 #include "Cry_Math.h"
 
 //! Forward declarations
-#if 0
-#include "IBindable.h"
-#endif
+#include <IBindable.h>
 struct	IShader;
 class   CryMatrix;
 struct  SRendParams;
@@ -106,7 +104,7 @@ struct ICryBone
 	//     mtxBone - The matrix to specify to be the bone's matrix
 	// Summary:
 	//     Fix the bone's matrix with a specified matrix
-	virtual void FixBoneMatrix (const Matrix44& mtxBone) = 0;
+	virtual void FixBoneMatrix (const Legacy::Matrix44& mtxBone) = 0;
 
 	// Description:
 	//     WHAT IS THIS:
@@ -121,7 +119,7 @@ struct ICryBone
 	//     vTargetOrigin - The character's target origin
 	// Summary:
 	//     Fix the bone matrix to a position and orientation in world coordinates
-	virtual void FixBoneOriginInWorld (const Vec3& vCharPos, const Vec3& vCharAngles, const Vec3& vTargetOrigin) = 0;
+	virtual void FixBoneOriginInWorld (const Legacy::Vec3& vCharPos, const Legacy::Vec3& vCharAngles, const Legacy::Vec3& vTargetOrigin) = 0;
 	
 	// Description:
 	//     WHAT IS THIS:
@@ -136,7 +134,7 @@ struct ICryBone
 	//     vTargetOrigin - The character's target origin
 	// Summary:
 	//     Fix the bone matrix to a position and orientation in world coordinates until the Animation System is updated
-	virtual void SetBoneOriginInWorld (const Vec3& vCharPos, const Vec3& vCharAngles, const Vec3& vTargetOrigin) = 0;
+	virtual void SetBoneOriginInWorld (const Legacy::Vec3& vCharPos, const Legacy::Vec3& vCharAngles, const Legacy::Vec3& vTargetOrigin) = 0;
 
 	// Description:
 	//     Set the plus-matrix rotation components. The plus-matrix is used to 
@@ -172,17 +170,17 @@ struct ICryBone
 	//     The position is return in a vec3 structure.
 	// Summary:
 	//     Get the position of the bone
-	virtual Vec3 GetBonePosition() = 0;
+	virtual Legacy::Vec3 GetBonePosition() = 0;
 
 	// Description:
 	//     Get the bone axis.
 	// Arguments:
 	//     cAxis - char value containing either x, y or z
 	// Return Value:
-	//     Return the vector for the requested axis. If cAxis wasn't set to either x, y or z, Vec3d(0,0,0) will be returned.
+	//     Return the vector for the requested axis. If cAxis wasn't set to either x, y or z, Legacy::Vec3d(0,0,0) will be returned.
 	// Summary:
 	//     Get the bone axis
-	virtual Vec3 GetBoneAxis(char cAxis) = 0;
+	virtual Legacy::Vec3 GetBoneAxis(char cAxis) = 0;
 
 	// returns the parent world coordinate system rotation as a quaternion
 
@@ -208,7 +206,7 @@ struct ICryBone
 	//     A 4x4 matrix holding the relative to the parent bone.
 	// Summary:
 	//     Get the matrix relative to the parent bone
-	virtual const Matrix44& GetRelativeMatrix() = 0;
+	virtual const Legacy::Matrix44& GetRelativeMatrix() = 0;
 	
 	// Description:
 	//     Get the matrix in object coordinates.
@@ -216,7 +214,7 @@ struct ICryBone
 	//     A 4x4 matrix holding the relative to the parent bone.
 	// Summary:
 	//     Get the matrix in object coordinates
-	virtual const Matrix44& GetAbsoluteMatrix() = 0;
+	virtual const Legacy::Matrix44& GetAbsoluteMatrix() = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -579,7 +577,7 @@ struct ICryCharModel: public _i_reference_target_t
 struct IDeformableRenderMesh
 {
 	//! Renderer calls this function to allow update the video vertex buffers right before the rendering
-	virtual void ProcessSkinning(const Vec3& t,const Matrix44& mtxModel, int nTemplate, int nLod=-1, bool bForceUpdate=false) = 0;
+	virtual void ProcessSkinning(const Legacy::Vec3& t,const Legacy::Matrix44& mtxModel, int nTemplate, int nLod=-1, bool bForceUpdate=false) = 0;
 };
 
 struct ICryCharVisualElement: public _reference_target_t
@@ -746,7 +744,7 @@ struct ICryCharInstance: public IBindable
 	//     RendParams - Rendering parameters
 	// Summary:
 	//     Draw the character
-	virtual void Draw(const SRendParams & RendParams,const Vec3& t)=0;	
+	virtual void Draw(const SRendParams & RendParams,const Legacy::Vec3& t)=0;	
 
 	// Summary:
 	//     Mark all LODs to be reskinned
@@ -777,7 +775,7 @@ struct ICryCharInstance: public IBindable
 	virtual void RenderShadowVolumes(const SRendParams *rParams, int nLimitLOD = 0)=0;
 
 	//! Draw the character without shaders for shadow mapping
-  //virtual void DrawForShadow(const Vec3 & vTranslationPlus = Vec3(0,0,0))=0;
+  //virtual void DrawForShadow(const Legacy::Vec3 & vTranslationPlus = Legacy::Vec3(0,0,0))=0;
   
   //! Return dynamic bbox of object
 
@@ -785,7 +783,7 @@ struct ICryCharInstance: public IBindable
 	// Arguments:
 	// Summary:
 	//     Get the bounding box
-	virtual void GetBBox(Vec3& Mins, Vec3& Maxs)=0;
+	virtual void GetBBox(Legacy::Vec3& Mins, Legacy::Vec3& Maxs)=0;
 
 	//! Return dynamic center of object
 
@@ -793,7 +791,7 @@ struct ICryCharInstance: public IBindable
 	//   Gets the dynamic center.
 	// Return Value:
 	//   Center of the character.
-  virtual const Vec3 GetCenter()=0;
+  virtual const Legacy::Vec3 GetCenter()=0;
 
   //! Return dynamic radius of object
 
@@ -1045,7 +1043,7 @@ struct ICryCharInstance: public IBindable
 
   //! Processes skining (call this function every frame to animate character)
 	//! dwFlags	is a bitwise OR of one of the flags specified in the UpdateEnum enumeration
-	virtual void Update (Vec3 vPos = Vec3(0,0,0), float fRadius=0, unsigned uFlags = 0) {}
+	virtual void Update (Legacy::Vec3 vPos = Legacy::Vec3(0,0,0), float fRadius=0, unsigned uFlags = 0) {}
 
 	//! Updates the bones and the bounding box. Should be called if animation update
 	//! cycle in EntityUpdate has already passed but you need the result of new animatmions
@@ -1062,7 +1060,7 @@ struct ICryCharInstance: public IBindable
 	virtual IPhysicalEntity *GetCharacterPhysics() = 0;
 	virtual IPhysicalEntity *GetCharacterPhysics(const char *pRootBoneName) = 0;
 	virtual IPhysicalEntity *GetCharacterPhysics(int iAuxPhys) = 0;
-  virtual void SynchronizeWithPhysicalEntity(IPhysicalEntity *pent, const Vec3& posMaster=Vec3(zero),const Quat& qMaster=Quat(1,0,0,0)) = 0;
+  virtual void SynchronizeWithPhysicalEntity(IPhysicalEntity *pent, const Legacy::Vec3& posMaster=Legacy::Vec3(zero),const Quat& qMaster=Quat(1,0,0,0)) = 0;
 	virtual IPhysicalEntity *RelinquishCharacterPhysics() = 0;
 	virtual void DestroyCharacterPhysics(int iMode=0) = 0;
 	virtual void SetCharacterPhysParams(float mass,int surface_idx) = 0;
@@ -1110,20 +1108,20 @@ struct ICryCharInstance: public IBindable
 	virtual ICryCharModel* GetModel() = 0;
 
   //! Return position of helper of the static object which is attached to animated object
-  virtual Vec3 GetTPVWeaponHelper(const char * szHelperName, ObjectBindingHandle nHandle) = 0;
+  virtual Legacy::Vec3 GetTPVWeaponHelper(const char * szHelperName, ObjectBindingHandle nHandle) = 0;
 
 	//! Returns position of specified helper ( exported into cgf file )
 	//! Actually returns the given bone's position
 	//! Default implementation: 000
-	virtual Vec3 GetHelperPos(const char * szHelperName) {return Vec3(0,0,0);}
+	virtual Legacy::Vec3 GetHelperPos(const char * szHelperName) {return Legacy::Vec3(0,0,0);}
 	//! Returns the matrix of the specified helper ( exported into cgf file )
 	//! Actually returns the given bone's matrix
-	virtual const Matrix44 * GetHelperMatrixByName(const char * szHelperName) {return NULL;}
+	virtual const Legacy::Matrix44 * GetHelperMatrixByName(const char * szHelperName) {return NULL;}
 
 	//! Returns the matrix of the helper object (in matOut), like GetTPVWeaponHelper returns the position.
 	//! When the return value is true, matOut contains the matrix of the helper object
 	//! When the return value is false, operation failed - assume the matOut to be undefined
-	virtual bool GetTPVWeaponHelperMatrix(const char * szHelperName, ObjectBindingHandle nHandle, Matrix44& matOut) {return false;}
+	virtual bool GetTPVWeaponHelperMatrix(const char * szHelperName, ObjectBindingHandle nHandle, Legacy::Matrix44& matOut) {return false;}
 
   //! Set the twining type. If replace - animations of second layer will overwrite first, otherwise it will sum
   virtual void SetTwiningMode(AnimTwinMode eTwinMode = AnimTwinMode_Replace) = 0;
@@ -1164,7 +1162,7 @@ struct ICryCharInstance: public IBindable
 
 	//! sets the scale to the given vector (1,1,1 is the default)
 	//! isn't compatible with physicalized objects, use only with weapons
-	virtual void SetScale (const Vec3d& vScale) {}
+	virtual void SetScale (const Legacy::Vec3d& vScale) {}
 
 	//! Pushes the underlying tree of objects into the given Sizer object for statistics gathering
 	virtual void GetMemoryUsage(class ICrySizer* pSizer) const = 0;

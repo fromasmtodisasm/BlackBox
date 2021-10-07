@@ -38,14 +38,14 @@ public:
 	virtual bool UnRegisterEntity(IEntityRender* pEntity) override;
 	virtual bool UnRegisterInAllSectors(IEntityRender* pEntity = NULL) override;
 	virtual void SetRenderCallback(RenderCallback pFunc, void* pParams) override;
-	virtual void SetOutdoorAmbientColor(Vec3d vColor) override;
+	virtual void SetOutdoorAmbientColor(Legacy::Vec3d vColor) override;
 	virtual void SetSkyBox(const char* szShaderName) override;
 	virtual void SetMaxViewDistance(float fMaxViewDistance) override;
 	virtual float GetMaxViewDistance() override;
-	virtual void SetFogColor(const Vec3& vFogColor) override;
+	virtual void SetFogColor(const Legacy::Vec3& vFogColor) override;
 	virtual void SetFogStart(const float fFogStart) override;
 	virtual void SetFogEnd(const float fFogEnd) override;
-	virtual Vec3 GetFogColor() override;
+	virtual Legacy::Vec3 GetFogColor() override;
 	virtual float GetFogStart() override;
 	virtual float GetFogEnd() override;
 	virtual float GetTerrainElevation(float x, float y) override;
@@ -54,8 +54,8 @@ public:
 	virtual int GetTerrainSize() override;
 	virtual int GetTerrainSectorSize() override;
 	virtual float GetMaxViewDist() override;
-	virtual bool AddStaticObject(int nObjectID, const Vec3& vPos, const float fScale, unsigned char ucBright = 255) override;
-	virtual bool RemoveStaticObject(int nObjectID, const Vec3& vPos) override;
+	virtual bool AddStaticObject(int nObjectID, const Legacy::Vec3& vPos, const float fScale, unsigned char ucBright = 255) override;
+	virtual bool RemoveStaticObject(int nObjectID, const Legacy::Vec3& vPos) override;
 	virtual bool PhysicalizeStaticObject(void* pForeignData, int iForeignData, int iForeignFlags) override;
 	virtual void RemoveAllStaticObjects() override;
 	virtual void SetTerrainSurfaceType(int x, int y, int nType) override;
@@ -77,13 +77,13 @@ public:
 	virtual void LoadEnvironmentSettingsFromXML(const char* szMissionName, bool bEditorMode, const char* szMissionXMLString = 0, bool bUpdateLightingOnVegetations = true) override;
 	virtual void LoadTerrainSurfacesFromXML(void* pDoc = NULL) override;
 	virtual void UpdateBeaches() override;
-	virtual bool IsPointInWater(Vec3 vPos) override;
-	virtual void AddDynamicLightSource(const CDLight& LSource, IEntityRender* pEnt, int nEntityLightId = -1, const Matrix44* pMatrix = NULL) override;
-	virtual void ApplyForceToEnvironment(Vec3 vPos, float fRadius, float fAmountOfForce) override;
-	virtual Vec3 GetSunPosition(bool bMoveUp = true) override;
-	virtual unsigned int GetLightMaskFromPosition(const Vec3& vPos, float fRadius = 1.f) override;
-	virtual Vec3 GetAmbientColorFromPosition(const Vec3& vPos, float fRadius = 1.f) override;
-	virtual int GetFogVolumeIdFromBBox(const Vec3& vBoxMin, const Vec3& vBoxMax) override;
+	virtual bool IsPointInWater(Legacy::Vec3 vPos) override;
+	virtual void AddDynamicLightSource(const CDLight& LSource, IEntityRender* pEnt, int nEntityLightId = -1, const Legacy::Matrix44* pMatrix = NULL) override;
+	virtual void ApplyForceToEnvironment(Legacy::Vec3 vPos, float fRadius, float fAmountOfForce) override;
+	virtual Legacy::Vec3 GetSunPosition(bool bMoveUp = true) override;
+	virtual unsigned int GetLightMaskFromPosition(const Legacy::Vec3& vPos, float fRadius = 1.f) override;
+	virtual Legacy::Vec3 GetAmbientColorFromPosition(const Legacy::Vec3& vPos, float fRadius = 1.f) override;
+	virtual int GetFogVolumeIdFromBBox(const Legacy::Vec3& vBoxMin, const Legacy::Vec3& vBoxMax) override;
 	virtual bool MakeSectorLightMap(int nSectorOriginX, int nSectorOriginY, unsigned char* pImage, int nImageSize) override;
 	virtual float GetDistanceToSectorWithWater() override;
 	virtual void SetSkyBoxAlpha(float fAlpha) override;
@@ -117,8 +117,8 @@ private:
 
 	struct AABB
 	{
-		Vec3 min;
-		Vec3 max;
+		Legacy::Vec3 min;
+		Legacy::Vec3 max;
 	}m_Qubes;
 
 	std::vector<_smart_ptr<IShader>> m_Programs;

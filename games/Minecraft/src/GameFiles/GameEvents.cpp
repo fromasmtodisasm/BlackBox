@@ -251,7 +251,7 @@ void CXGame::ScheduleEvent(IEntity *pEnt, CXEntityProcessingCmd &cmd)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXGame::ScheduleEvent(int iPhysTime, const Vec3& pos,float fDamage,float rmin,float rmax,float radius,float fImpulsivePressure,
+void CXGame::ScheduleEvent(int iPhysTime, const Legacy::Vec3& pos,float fDamage,float rmin,float rmax,float radius,float fImpulsivePressure,
 													 float fShakeFactor,float fDeafnessRadius,float fDeafnessTime,
 													 float fImpactForceMul,float fImpactForceMulFinal,float fImpactForceMulFinalTorso,
 													 float rMinOcc,int nOccRes,int nOccGrow, IEntity *pShooter, int shooterSSID, IEntity *pWeapon, float fTerrainDefSize,int nTerrainDecalId)
@@ -288,10 +288,11 @@ void CXGame::ScheduleEvent(int iPhysTime, IEntity *pVehicle,float fDamage)
 	pEvent->damage = (int)(fDamage*2+0.5f);
 	ScheduleEvent(iPhysTime, pEvent);
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 void CXGame::ScheduleEvent(int iPhysTime, IPhysicalEntity *pPhysEnt,pe_action_impulse *pai)
 {
+	#if 0
 	EventPhysImpulse *pEvent = new EventPhysImpulse;
 	pEvent->idPhysEnt = m_pSystem->GetIPhysicalWorld()->GetPhysicalEntityId(pPhysEnt);
 	pEvent->impulse = pai->impulse;
@@ -300,7 +301,11 @@ void CXGame::ScheduleEvent(int iPhysTime, IPhysicalEntity *pPhysEnt,pe_action_im
 	if (pEvent->bHasMomentum = !is_unused(pai->momentum))
 		pEvent->momentum = pai->momentum;
 	ScheduleEvent(iPhysTime, pEvent);
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 }
+#if 0
 
 //////////////////////////////////////////////////////////////////////////
 void CXGame::ExecuteScheduledEvents()

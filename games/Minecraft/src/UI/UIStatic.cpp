@@ -21,6 +21,15 @@
 
 _DECLARE_SCRIPTABLEEX(CUIStatic)
 
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 ////////////////////////////////////////////////////////////////////// 
 CUIStatic::CUIStatic()
 : m_fVerticalOffset(0),
@@ -290,6 +299,7 @@ int CUIStatic::Draw(int iPass)
 	// draw the model if there is one
 	if (m_pModel)
 	{
+		#if 0
 		IRenderer *pRenderer = m_pUISystem->GetIRenderer();
 
 		// because we clear the z-buffer here we cannot have more than one
@@ -316,17 +326,17 @@ int CUIStatic::Draw(int iPass)
 		// setup the camera
 		CCamera pCamera;
 		pCamera.Init(iW, iH, m_fCameraFov);
-		pCamera.SetPos(Vec3d(0.0f, m_fCameraDistance, 0.0f));
-		pCamera.SetAngle(Vec3d(0.0f, 0.0f, 0.0f));
+		pCamera.SetPos(Legacy::Vec3(0.0f, m_fCameraDistance, 0.0f));
+		pCamera.SetAngle(Legacy::Vec3(0.0f, 0.0f, 0.0f));
 		pCamera.Update();
 		pRenderer->SetCamera(pCamera);
 
 		// set model rendering params
 		SRendParams pRenderParams;
-		pRenderParams.vPos = Vec3d(0.0f, 0.0f, -0.9f);
-		pRenderParams.vAngles = Vec3d(0.0f, 0.0f, m_fAngle);
+		pRenderParams.vPos = Legacy::Vec3(0.0f, 0.0f, -0.9f);
+		pRenderParams.vAngles = Legacy::Vec3(0.0f, 0.0f, m_fAngle);
 		pRenderParams.nDLightMask = 0;
-		pRenderParams.vAmbientColor = Vec3d(0.25f, 0.25f, 0.25f);
+		pRenderParams.vAmbientColor = Legacy::Vec3(0.25f, 0.25f, 0.25f);
 
 		// setup a dynamic light
 		CDLight pLight;
@@ -339,7 +349,7 @@ int CUIStatic::Draw(int iPass)
 		pLight.m_fStartRadius = 0.0f;
 		pLight.m_fEndRadius = m_fLightDistance * 10.0f;
 		pLight.m_fRadius = m_fLightDistance * 10.0f;
-		pLight.m_Origin = Vec3d(10.0f, m_fLightDistance, 0.0f);
+		pLight.m_Origin = Legacy::Vec3(10.0f, m_fLightDistance, 0.0f);
 
 		// enable the light
 		pRenderParams.nDLightMask |= 1 << pLight.m_Id;
@@ -358,6 +368,9 @@ int CUIStatic::Draw(int iPass)
 
 		// restore old settings
 		pRenderer->SetViewport(iViewportX, iViewportY, iViewportW, iViewportH);	
+		#else
+		NOT_IMPLEMENTED_V;
+		#endif
 	}
 
 	// adjust the rect with the scrollbar sizes

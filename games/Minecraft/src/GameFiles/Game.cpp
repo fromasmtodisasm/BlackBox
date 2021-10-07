@@ -11,12 +11,16 @@
 #include <ScriptObjects/ScriptObjectTest.hpp>
 #include <ScriptObjects/ScriptTimerMgr.hpp>
 
+#include "ScriptObjectUI.h"
+
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
 #include <GameMods.hpp>
 
 #include <Client/Client.hpp>
 #include <thread>
+
+#include "UISystem.h"
 
 static int g_FontSize = 32;
 
@@ -35,7 +39,7 @@ static bool menuOnTopLevel = false;
 char*		mods_str[]	   = {"$0BlackBox", "$1WightBox", "$9GreyBox"};
 int			selected_mod	   = 0;
 
-std::string vec_to_string(Vec3 vec)
+std::string vec_to_string(Legacy::Vec3 vec)
 {
 	auto result = "{ x: " + std::to_string(vec.x);
 	result += ", y: " + std::to_string(vec.y);
@@ -43,7 +47,7 @@ std::string vec_to_string(Vec3 vec)
 	return result;
 }
 
-static IVec4 currentQuad{};
+static Legacy::IVec4 currentQuad{};
 static bool	 mouseClicked{};
 
 #ifdef USE_GUI
@@ -114,8 +118,8 @@ public:
 
 	}
   void draw_plane(double ox, double oy, double size, color3 color) override {
-		m_Plane->moveTo(Vec3(ox, 0, oy));
-		m_Plane->scale(Vec3(size, size, size));
+		m_Plane->moveTo(Legacy::Vec3(ox, 0, oy));
+		m_Plane->scale(Legacy::Vec3(size, size, size));
 
   }
 	std::shared_ptr<Object> m_Plane;
@@ -270,13 +274,11 @@ CXGame::~CXGame()
 	// shutdown the server if there is one
 	ShutdownServer();
 
-#if 0
 	if (m_pUISystem)
 	{
 		m_pUISystem->Release();
 	}
 	SAFE_DELETE(m_pUISystem);
-#endif
 
 #if 0
 	CScriptObjectUI::ReleaseTemplate();
@@ -563,6 +565,7 @@ void CXGame::Reset()
 		m_pIActionMapManager->Reset();
 
 	m_iLastCmdIdx = 0;
+	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Reset UI.
@@ -574,16 +577,16 @@ void CXGame::Reset()
 		m_p3DEngine->Enable(1);
 		//m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
 	}
+	#if 0
 	if (m_pCurrentUI)
 		m_pCurrentUI->Reset();
 	if (m_pUIHud)
 		m_pUIHud->Reset();
+	#endif
 
 	if (GetMyPlayer())
 		GetMyPlayer()->SetNeedUpdate(true);
-	#else
 	NOT_IMPLEMENTED;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -769,7 +772,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 		if (!bInEditor)
 		{
 			//////////////////////////////////////////////////////////////////////
-			#if 0
 			m_pUISystem = new CUISystem;
 
 			if (m_pUISystem)
@@ -780,7 +782,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 			{
 				m_pLog->Log("Failed to create UI System!");
 			}
-			#endif
 			//////////////////////////////////////////////////////////////////////
 		}
 
@@ -855,18 +856,18 @@ bool CXGame::Update()
 	}
 	if (!m_bEditor)
 	{
-		#if 0
-		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame())
-		#endif
+		if (!m_bMenuOverlay || !m_pUISystem 
+			#if 0
+			|| m_pUISystem->GetScriptObjectUI()->CanRenderGame()
+			#endif
+			)
 		{
 			m_p3DEngine->Enable(1);
 		}
-		#if 0
 		else
 		{
 			m_p3DEngine->Enable(0);
 		}
-		#endif
 	}
 	//////////////////////////////////////////////////////////////////////////
 	FUNCTION_PROFILER(PROFILE_GAME);
@@ -1131,9 +1132,7 @@ void CXGame::GotoMenu(bool bTriggerOnSwitch)
 	else if (bTriggerOnSwitch)
 	{
 		assert(0 && __FUNCTION__);
-		#if 0
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
-		#endif
 	}
 }
 
@@ -1350,7 +1349,7 @@ IGameMods* CXGame::GetModsInterface()
 //////////////////////////////////////////////////////////////////////////
 void CXGame::LoadingError(const char* szError)
 {
-	m_pRenderer->ClearColorBuffer(Vec3(0, 0, 0));
+	m_pRenderer->ClearColorBuffer(Legacy::Vec3(0, 0, 0));
 	GetSystem()->GetIConsole()->ResetProgressBar(0);
 	m_pSystem->GetIConsole()->ShowConsole(false);
 	m_pSystem->GetIConsole()->SetScrollMax(600 / 2);

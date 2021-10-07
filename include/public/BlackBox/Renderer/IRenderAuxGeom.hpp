@@ -5,10 +5,10 @@ struct SRender2DImageDescription;
 
 struct IRenderAuxGeom
 {
-	virtual void DrawAABB(Vec3 min, Vec3 max, const UCol& col)																		   = 0;
-	virtual void DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2) = 0;
-	virtual void DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, float thickness = 1.0f)				   = 0;
-	virtual void DrawLines(const Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f)								   = 0;
+	virtual void DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col)																		   = 0;
+	virtual void DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2) = 0;
+	virtual void DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, float thickness = 1.0f)				   = 0;
+	virtual void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f)								   = 0;
 	//! Adds a 2D image that should be drawn on the screen to an internal render list.
 	//! The function supports placing images in stereo 3D space.
 	//! The stereo params are the same that are used for the scene. A value of 0 is handled as a special case and always places the image on the screen plane.
@@ -18,7 +18,7 @@ struct IRenderAuxGeom
 	{
 		return gEnv->pRenderer ? gEnv->pRenderer->GetIRenderAuxGeom() : gEnv->pAuxGeomRenderer;
 	}
-	void DrawQuad(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2, const Vec3& v3, const UCol& colV3)
+	void DrawQuad(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2, const Legacy::Vec3& v3, const UCol& colV3)
 	{
 		DrawTriangle(v0, colV0, v1, colV1, v2, colV2);
 		DrawTriangle(v0, colV0, v2, colV2, v3, colV3);
@@ -36,7 +36,7 @@ struct SRender2DImageDescription
 	float z = 0;
 	float w = 0;
 	float h = 0;
-	Vec2  uv[2];           //!< Texture UV coordinates
+	Legacy::Vec2  uv[2];           //!< Texture UV coordinates
 	float angle = 0;
 	float stereoDepth = 0; //!< Places image in stereo 3d space. The depth is specified in camera space.
 	ColorB color;
@@ -58,7 +58,7 @@ class IRenderAuxImage
 		float  z = 0;
 		float  w = 0;
 		float  h = 0;
-		Vec2   uv[2]; // Texture UV coordinates
+		Legacy::Vec2   uv[2]; // Texture UV coordinates
 		float  angle	   = 0;
 		float  stereoDepth = 0;
 		ColorB color;

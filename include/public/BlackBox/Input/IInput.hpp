@@ -282,7 +282,7 @@ struct STouchEvent
 {
   EInputDeviceType deviceType;
   uint8_t          deviceIndex;
-  Vec2             pos;
+  Legacy::Vec2             pos;
   uint8_t					 id;
 };
 

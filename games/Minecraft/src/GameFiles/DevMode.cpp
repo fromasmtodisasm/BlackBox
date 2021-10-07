@@ -25,7 +25,7 @@ void CDevMode::GotoTagPoint(int i)
 		IEntity* pEntity = pActor->GetEntity();
 		Quat rot;
 
-		Vec3 pos = ent.pos;
+		Legacy::Vec3 pos = ent.pos;
 
 		// pos loaded is a camera position, we must convert it into the player position.
 		if (IMovementController* pMC = pActor->GetMovementController())
@@ -36,7 +36,7 @@ void CDevMode::GotoTagPoint(int i)
 		}
 
 		rot.SetRotationXYZ(ent.ang);
-		Vec3 scale = pEntity->GetScale();
+		Legacy::Vec3 scale = pEntity->GetScale();
 		pEntity->SetPosRotScale(pos, rot, scale);
 		pActor->SetViewRotation(rot);
 		#endif
@@ -134,7 +134,7 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 			if (handled = (evt.keyId == eKI_F2)) // go to next spawnpoint
 			{
 				#if 0
-				//Vec3 oldPos = pEntity->GetWorldPos();
+				//Legacy::Vec3 oldPos = pEntity->GetWorldPos();
 				if (gEnv->pScriptSystem->BeginCall("BasicActor", "OnNextSpawnPoint"))
 				{
 					gEnv->pScriptSystem->PushFuncParam(pEntity->GetScriptObject());
@@ -144,7 +144,7 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 					if (gEnv->pStatoscope)
 					{
 						char buffer[100];
-						Vec3 pos = pEntity->GetWorldPos();
+						Legacy::Vec3 pos = pEntity->GetWorldPos();
 						sprintf(buffer, "Teleported from (%.2f, %.2f, %.2f) to (%.2f, %.2f, %.2f)", oldPos.x, oldPos.y, oldPos.z, pos.x, pos.y, pos.z);
 						//gEnv->pStatoscope->AddUserMarker("Player", buffer);
 					}

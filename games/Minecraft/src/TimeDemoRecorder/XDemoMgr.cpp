@@ -96,7 +96,7 @@ bool CXDemoMgr::AddChunk(float fTimestamp, CStream &stm, IEntity *player)
 		return false;
 	if(fwrite(stm.GetPtr(),nStreamSizeInBytes,1,m_pFile)!=1)
 		return false;
-	if(fwrite(&player->GetAngles(),sizeof(Vec3d),1,m_pFile)!=1)
+	if(fwrite(&player->GetAngles(),sizeof(Legacy::Vec3d),1,m_pFile)!=1)
 		return false;
 		
 	return true;
@@ -194,7 +194,7 @@ bool CXDemoMgr::PlayChunk(float fCurrentTime, CXClient *pClient)
 
 //////////////////////////////////////////////////////////////////////////
 // Reads a demo-chunk from disk.
-bool CXDemoMgr::ReadChunk(CStream &stm, float &fTimestamp, Vec3 &angles)
+bool CXDemoMgr::ReadChunk(CStream &stm, float &fTimestamp, Legacy::Vec3 &angles)
 {
 	unsigned int nStreamSizeInBytes;
 	unsigned int nStreamSizeInBits;
@@ -217,7 +217,7 @@ bool CXDemoMgr::ReadChunk(CStream &stm, float &fTimestamp, Vec3 &angles)
 	if(fread(stm.GetPtr(), nStreamSizeInBytes, 1, m_pFile)!=1)
 		return false;
 		
-	if(fread(&angles, sizeof(Vec3d), 1, m_pFile)!=1)
+	if(fread(&angles, sizeof(Legacy::Vec3d), 1, m_pFile)!=1)
 		return false;
 
 	return true;

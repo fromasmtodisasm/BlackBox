@@ -115,7 +115,7 @@ union UCol
 		struct { uint8 z, y, x, w; };
 	};
 	/*
-	UCol& operator=(Vec4& v)
+	UCol& operator=(Legacy::Vec4& v)
 	{
 		UCol c;
 		c.bcolor[0] = static_cast<char>(v[0] * 255);
@@ -126,15 +126,15 @@ union UCol
 	};
 	*/
 	UCol() = default;
-	UCol(const Vec4& v)
+	UCol(const Legacy::Vec4& v)
 	{
 		bcolor[0] = static_cast<char>(v[3] * 255.f);
 		bcolor[1] = static_cast<char>(v[0] * 255.f);
 		bcolor[2] = static_cast<char>(v[1] * 255.f);
 		bcolor[3] = static_cast<char>(v[2] * 255.f);
 	}
-	UCol(const Vec3& v)
-		: UCol(Vec4(v, 1))
+	UCol(const Legacy::Vec3& v)
+		: UCol(Legacy::Vec4(v, 1))
 	{
 	}
 	UCol(const uint8 v[4]) : bcolor{v[0], v[1], v[2], v[3]}
@@ -148,77 +148,77 @@ union UCol
 //////////////////////////////////////////////////////////////////////////
 struct SVF_P3F // 12 bytes
 {
-  Vec3 xyz;
+  Legacy::Vec3 xyz;
 };
 struct SVF_P3F_C4B
 {
-  Vec3 xyz;
+  Legacy::Vec3 xyz;
   UCol color;
 };
 struct SVF_P3F_N // 24 bytes
 {
-  Vec3 xyz;
-  Vec3 normal;
+  Legacy::Vec3 xyz;
+  Legacy::Vec3 normal;
 };
 struct SVF_T2F // 8 bytes
 {
-  Vec2 st;
+  Legacy::Vec2 st;
 };
 
 struct SVF_P3F_N_C4B
 {
-  Vec3 xyz;
-  Vec3 normal;
+  Legacy::Vec3 xyz;
+  Legacy::Vec3 normal;
   UCol color;
 };
 
 struct SVF_P3F_T2F
 {
-  Vec3 xyz;
-  Vec2 st;
+  Legacy::Vec3 xyz;
+  Legacy::Vec2 st;
 };
 struct SVF_P3F_N_T2F
 {
-  Vec3 xyz;
-  Vec3 normal;
-  Vec2 st;
+  Legacy::Vec3 xyz;
+  Legacy::Vec3 normal;
+  Legacy::Vec2 st;
 };
 
 struct SVF_P3F_C4B_T2F
 {
-  Vec3 xyz;
+  Legacy::Vec3 xyz;
   UCol color;
-  Vec2 st;
+  Legacy::Vec2 st;
 };
 struct SVF_P3F_C4B_C4B_T2F
 {
-	Vec3 xyz;
+	Legacy::Vec3 xyz;
   UCol color;
   UCol seccolor;
-  Vec2 st;
+  Legacy::Vec2 st;
 };
 struct SVF_P3F_N_C4B_C4B_T2F
 {
-  Vec3 xyz;
-  Vec3 normal;
+  Legacy::Vec3 xyz;
+  Legacy::Vec3 normal;
   UCol color;
   UCol seccolor;
-  Vec2 st;
+  Legacy::Vec2 st;
 };
 struct SVF_P3F_C4B_T2F_T2F
 {
-  Vec3 xyz;
+  Legacy::Vec3 xyz;
   UCol color;
-  Vec2 st0[2];
-  Vec2 st1[2];
+  Legacy::Vec2 st0[2];
+  Legacy::Vec2 st1[2];
 };
 
 struct SVF_P3F_N_C4B_T2F
 {
-  Vec3 xyz;
-  Vec3 normal;
+  Legacy::Vec3 xyz;
+  Legacy::Vec3 normal;
   UCol color;
-  Vec2 st;
+  Legacy::Vec2 st;
 
   bool operator == (SVF_P3F_N_C4B_T2F & other);
 };
@@ -227,29 +227,29 @@ struct SVF_TRP3F_C4B_T2F
 {
   float x,y,z,rhw;
   UCol color;
-  Vec2 st;
+  Legacy::Vec2 st;
 };
 
 struct SVF_P3F_C4B_C4B
 {
-  Vec3 xyz;
+  Legacy::Vec3 xyz;
   UCol color;
   UCol seccolor;
 };
 
 struct SVF_P3F_N_C4B_C4B
 {
-  Vec3 xyz;
-  Vec3 normal;
+  Legacy::Vec3 xyz;
+  Legacy::Vec3 normal;
   UCol color;
   UCol seccolor;
 };
 
 struct SPipTangents
 {
-  Vec3 m_Tangent;
-  Vec3 m_Binormal;
-  Vec3 m_TNormal;
+  Legacy::Vec3 m_Tangent;
+  Legacy::Vec3 m_Binormal;
+  Legacy::Vec3 m_TNormal;
 };
 
 //////////////////////////////////////////////////////////////////////////

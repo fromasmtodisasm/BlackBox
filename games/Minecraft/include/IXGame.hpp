@@ -74,7 +74,7 @@ struct IXGame : public IGame
 	virtual bool LoadLevelForEditor(const char *pszLevelDirectory, const char *pszMissionName = 0) = 0;
 	/* Check if a sound is potentially hearable (used to check if loading a dialog is needed)
 	*/
-	virtual bool IsSoundPotentiallyHearable(Vec3d &SoundPos, float fClipRadius)=0;
+	virtual bool IsSoundPotentiallyHearable(Legacy::Vec3d &SoundPos, float fClipRadius)=0;
 	/*Assign a material to a tarrain layer
 	*/
 	virtual void SetTerrainSurface(const char *sMaterial,int nLayerID)=0;
@@ -87,7 +87,7 @@ struct IXGame : public IGame
 
 	/*Set the angles of the view camera of the game
 	*/
-	virtual void SetViewAngles(const Vec3 &angles) = 0;
+	virtual void SetViewAngles(const Legacy::Vec3 &angles) = 0;
 
 	/*Retrieves the player-system
 	*/
@@ -95,7 +95,7 @@ struct IXGame : public IGame
 
 	/* This function creates a tag point in the game world
 	*/
-	virtual ITagPoint *CreateTagPoint(const string &name, const Vec3 &pos, const Vec3 &angles) = 0;
+	virtual ITagPoint *CreateTagPoint(const string &name, const Legacy::Vec3 &pos, const Legacy::Vec3 &angles) = 0;
 
 	/* Retieves a tag point by name
 	*/
@@ -106,17 +106,17 @@ struct IXGame : public IGame
 	virtual void RemoveTagPoint(ITagPoint *pPoint) = 0;
 
 	// shape
-	virtual IXArea *CreateArea( const Vec3 *vPoints, const int count, const std::vector<string>	&names, 
+	virtual IXArea *CreateArea( const Legacy::Vec3 *vPoints, const int count, const std::vector<string>	&names, 
 		const int type=0, const int groupId=-1, const float width=0.0f, const float height=0.0f) = 0;
 	// box
-	virtual IXArea *CreateArea( const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string>	&names, 
+	virtual IXArea *CreateArea( const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<string>	&names, 
 		const int type=0, const int groupId=-1, const float width=0.0f) = 0;
 	// sphere
-	virtual IXArea *CreateArea( const Vec3& center, const float radius, const std::vector<string>	&names, 
+	virtual IXArea *CreateArea( const Legacy::Vec3& center, const float radius, const std::vector<string>	&names, 
 		const int type=0, const int groupId=-1, const float width=0.0f) = 0;
 	//		const char* const className, const int type=0, const float width=0.0f) = 0;
 	virtual void		DeleteArea( const IXArea *pArea ) = 0;
-	virtual IXArea *GetArea( const Vec3 &point ) = 0;
+	virtual IXArea *GetArea( const Legacy::Vec3 &point ) = 0;
 
 	// detect areas the listener is in before system update
 	virtual void		CheckSoundVisAreas()=0;

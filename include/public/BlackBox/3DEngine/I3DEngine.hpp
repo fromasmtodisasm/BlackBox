@@ -308,7 +308,7 @@ struct I3DEngine : public IProcess
 
   // Summary:
   //     Set the current outdoor ambient color 
-  virtual void SetOutdoorAmbientColor(Vec3d vColor) = 0;
+  virtual void SetOutdoorAmbientColor(Legacy::Vec3d vColor) = 0;
 
   // Summary:
   //     Set to a new sky box
@@ -332,7 +332,7 @@ struct I3DEngine : public IProcess
 
   // Summary:
   //     Set the fog color
-  virtual void SetFogColor(const Vec3& vFogColor) = 0;
+  virtual void SetFogColor(const Legacy::Vec3& vFogColor) = 0;
 
   // Summary:
   //   Set the intensity of fog at a close distance
@@ -352,7 +352,7 @@ struct I3DEngine : public IProcess
 
   // Summary:
   //     Gets the fog color
-  virtual Vec3 GetFogColor() = 0;
+  virtual Legacy::Vec3 GetFogColor() = 0;
 
   // Summary:
   //   Get the intensity of fog at a close distance
@@ -432,9 +432,9 @@ struct I3DEngine : public IProcess
     // Internal functions, mostly used by the editor, which won't be documented for now
 
     //! Places object at specified position (for editor)
-  virtual bool AddStaticObject(int nObjectID, const Vec3& vPos, const float fScale, unsigned char ucBright = 255) = 0;
+  virtual bool AddStaticObject(int nObjectID, const Legacy::Vec3& vPos, const float fScale, unsigned char ucBright = 255) = 0;
   //! Removes static object from specified position (for editor)
-  virtual bool RemoveStaticObject(int nObjectID, const Vec3& vPos) = 0;
+  virtual bool RemoveStaticObject(int nObjectID, const Legacy::Vec3& vPos) = 0;
   //! On-demand physicalization of a static object
   virtual bool PhysicalizeStaticObject(void* pForeignData, int iForeignData, int iForeignFlags) = 0;
   //! Removes all static objects on the map (for editor)
@@ -518,10 +518,10 @@ struct I3DEngine : public IProcess
     //   vPos - The position to evaluate
     // Return Value:
     //   A boolean with the value true if the position is in the water, else false is returned.
-  virtual bool IsPointInWater(Vec3 vPos) = 0;
+  virtual bool IsPointInWater(Legacy::Vec3 vPos) = 0;
 
   //! Returns true if point is in the building
-  //virtual bool IsPointInsideIndoors(const Vec3 & vPos) = 0;
+  //virtual bool IsPointInsideIndoors(const Legacy::Vec3 & vPos) = 0;
 
   //! Creates new light source in the world to be used during this frame (or longer)
 
@@ -534,7 +534,7 @@ struct I3DEngine : public IProcess
   //   pEnt - ...
   //   nEntityLightId - ...
   //   pMatrix - ...
-  virtual void AddDynamicLightSource(const class CDLight& LSource, IEntityRender* pEnt, int nEntityLightId = -1, const Matrix44* pMatrix = NULL) = 0;
+  virtual void AddDynamicLightSource(const class CDLight& LSource, IEntityRender* pEnt, int nEntityLightId = -1, const Legacy::Matrix44* pMatrix = NULL) = 0;
 
   //! Make move/bend vegetations in specified area (not implemented yet)
 
@@ -546,27 +546,27 @@ struct I3DEngine : public IProcess
   //   fAmountOfForce - The amount of force, should be at least of 1.0f
   // Summary:
   //   Applies physics in a specified area
-  virtual void ApplyForceToEnvironment(Vec3 vPos, float fRadius, float fAmountOfForce) = 0;
+  virtual void ApplyForceToEnvironment(Legacy::Vec3 vPos, float fRadius, float fAmountOfForce) = 0;
 
   //DOC-IGNORE-BEGIN
   // Internal function used by the 3d engine and renderer
     //! Return sun position (if bMoveUp=true sun will be 30% higher, it makes shadows from objects not so long)
-  virtual Vec3 GetSunPosition(bool bMoveUp = true) = 0;
+  virtual Legacy::Vec3 GetSunPosition(bool bMoveUp = true) = 0;
 
   // Internal function used by the 3d engine and editor
     //! Returns light mask for this point (valid only during rendering stage)
-  virtual unsigned int GetLightMaskFromPosition(const Vec3& vPos, float fRadius = 1.f) = 0;
+  virtual unsigned int GetLightMaskFromPosition(const Legacy::Vec3& vPos, float fRadius = 1.f) = 0;
 
   // Internal function used by the 3d engine
     //! Returns lighting level for this point
-  virtual Vec3 GetAmbientColorFromPosition(const Vec3& vPos, float fRadius = 1.f) = 0;
+  virtual Legacy::Vec3 GetAmbientColorFromPosition(const Legacy::Vec3& vPos, float fRadius = 1.f) = 0;
 
   // Never used
     //! Returns fog volume id
-  virtual int GetFogVolumeIdFromBBox(const Vec3& vBoxMin, const Vec3& vBoxMax) = 0;
+  virtual int GetFogVolumeIdFromBBox(const Legacy::Vec3& vBoxMin, const Legacy::Vec3& vBoxMax) = 0;
 
   //! Return surface normal at specified position
-  //virtual Vec3 GetTerrainSurfaceNormal(Vec3 vPos) = 0;
+  //virtual Legacy::Vec3 GetTerrainSurfaceNormal(Legacy::Vec3 vPos) = 0;
 
 //Internal function used by 3d engine and editor
 
@@ -623,7 +623,7 @@ struct I3DEngine : public IProcess
   virtual void SetScreenFx(const char* pEffectName, int iActive) = 0;
 
   //! set current active camera focus position
-  //virtual int SetCameraFocus(const Vec3 &pPos)=0;
+  //virtual int SetCameraFocus(const Legacy::Vec3 &pPos)=0;
 
   //! set screen fx parameter
   virtual void SetScreenFxParam(const char* pEffectName, const char* pEffectParam, void* pValue) = 0;

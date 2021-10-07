@@ -128,7 +128,7 @@ public:
 	//!
 	void SendCommand(const char* sCmd);
 	//!
-	/*void SendCommand(const char* sCmd, const Vec3& invPos, const Vec3& invNormal,
+	/*void SendCommand(const char* sCmd, const Legacy::Vec3& invPos, const Legacy::Vec3& invNormal,
 		const EntityId inId, const unsigned char incUserByte);*/
 	//!
 	bool IsReady();

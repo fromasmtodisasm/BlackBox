@@ -36,7 +36,7 @@ friend class CXAreaMgr;
 
 	CXGame				*m_pGame;
 	std::vector<int>	m_HostedAreasIdx;
-	Vec3				m_vPos;
+	Legacy::Vec3				m_vPos;
 	IEntity*			m_pEntity;
 
 public:
@@ -58,7 +58,7 @@ public:
 	{
 		float x, y;
 		a2DPoint(void):x(0.0f),y(0.0f) { }
-		a2DPoint( const Vec3& pos3D ) { x=pos3D.x; y=pos3D.y; }
+		a2DPoint( const Legacy::Vec3& pos3D ) { x=pos3D.x; y=pos3D.y; }
 		float	DistSqr( const struct a2DPoint& point ) const
 		{
 		float xx = x-point.x;
@@ -117,7 +117,7 @@ public:
 	CXArea(void);
 	~CXArea(void);
 
-	void	SetPoints(const Vec3* const vPoints, const int count);
+	void	SetPoints(const Legacy::Vec3* const vPoints, const int count);
 	void	SetID( const int id ) { m_AreaID = id; }
 	int		GetID() const { return m_AreaID; }
 
@@ -127,12 +127,12 @@ public:
 	void	SetAreaType( const tAreaType type) { m_AreaType = type; } 
 	tAreaType GetAreaType( ) const { return m_AreaType; } 
 
-	void	SetCenter( const Vec3& center ) { m_Center=center; }
+	void	SetCenter( const Legacy::Vec3& center ) { m_Center=center; }
 	void	SetRadius( const float rad ) { m_Radius=rad; m_Radius2=m_Radius*m_Radius; }
 
-	void	SetMin( const Vec3& min ) { m_Min=min; }
-	void	SetMax( const Vec3& max ) { m_Max=max; }
-	void	SetTM( const Matrix44& TM );
+	void	SetMin( const Legacy::Vec3& min ) { m_Min=min; }
+	void	SetMax( const Legacy::Vec3& max ) { m_Max=max; }
+	void	SetTM( const Legacy::Matrix44& TM );
 
 	void	SetVOrigin( float org ) { m_VOrigin = org; }
 	void	SetVSize( float sz=0.0f )		{ m_VSize = sz; }
@@ -148,7 +148,7 @@ public:
 	float	GetProximity( ) { return m_Proximity;}
 
 	float	IsPointWithinDist(const a2DPoint& point) const;
-	bool	IsPointWithin(const Vec3& point3d) const;
+	bool	IsPointWithin(const Legacy::Vec3& point3d) const;
 	float	CalcDistToPoint( const a2DPoint& point ) const;
 
 	void	UpdateIDs( ISystem * pSystem );
@@ -156,7 +156,7 @@ public:
 	void	EnterArea( IEntity* const pEntity, ISystem *pSystem );
 	void	LeaveArea( CXAreaUser& user ) ;
 	void	UpdateArea( CXAreaUser& user );
-	float	CalculateFade( const Vec3& pos3D );
+	float	CalculateFade( const Legacy::Vec3& pos3D );
 	void	ProceedFade( CXAreaUser& user, const float fadeValue );
 
 	void	Draw(const ISystem * const pSystem, const int idx);
@@ -184,7 +184,7 @@ private:
 	int			m_AreaID;
 	int			m_AreaGroupID;
 
-	Matrix44	m_InvMatrix;
+	Legacy::Matrix44	m_InvMatrix;
 
 	tAreaType	m_AreaType;
 
@@ -196,11 +196,11 @@ private:
 	std::vector<a2DSegment*>	m_vpSegments;
 	
 	// for box areas 
-	Vec3 m_Min;
-	Vec3 m_Max;
+	Legacy::Vec3 m_Min;
+	Legacy::Vec3 m_Max;
 
 	// for sphere areas 
-	Vec3 m_Center;
+	Legacy::Vec3 m_Center;
 	float	m_Radius;
 	float	m_Radius2;
 
@@ -226,13 +226,13 @@ public:
 
 	void Init( ISystem * pSystem );
 	// adds a shape area
-	CXArea*	AddArea(const Vec3* const vPoints, const int count, const std::vector<string> &names, const int id, const int groupId=-1, const float width=0.0f);
+	CXArea*	AddArea(const Legacy::Vec3* const vPoints, const int count, const std::vector<string> &names, const int id, const int groupId=-1, const float width=0.0f);
 	// adds a box area
-	CXArea*	AddArea(const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string> &names, const int id, const int groupId=-1, const float width=0.0f);
+	CXArea*	AddArea(const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<string> &names, const int id, const int groupId=-1, const float width=0.0f);
 	// adds a sphere area
-	CXArea*	AddArea(const Vec3& center, const float radius, const std::vector<string> &names, const int id, const int groupId=-1, const float width=0.0f);
+	CXArea*	AddArea(const Legacy::Vec3& center, const float radius, const std::vector<string> &names, const int id, const int groupId=-1, const float width=0.0f);
 
-	void	ReTriggerArea(IEntity* pEntity,const Vec3 &vPos,bool bIndoor);
+	void	ReTriggerArea(IEntity* pEntity,const Legacy::Vec3 &vPos,bool bIndoor);
 
 	void	UpdatePlayer( CXAreaUser& user );
 	bool	ProceedExclusiveEnter( CXAreaUser& user, unsigned int curIdx );
@@ -242,7 +242,7 @@ public:
 	typedef std::vector<int>	intVector;
 	int		FindHighestHostedArea( intVector& hostedAreas, unsigned int curIdx );
 	void	ExitAllAreas( CXAreaUser& user );
-	CXArea*	GetArea( const Vec3& point );
+	CXArea*	GetArea( const Legacy::Vec3& point );
 	void	DeleteArea( const		IXArea* aPtr );	
 	void	Clear();
 
@@ -252,11 +252,11 @@ public:
 	void RetriggerAreas();
 
 	
-	virtual IXArea* CreateArea(const Vec3* vPoints, const int count, const std::vector<std::string>& names,
+	virtual IXArea* CreateArea(const Legacy::Vec3* vPoints, const int count, const std::vector<std::string>& names,
 							   const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f) override;
-	virtual IXArea* CreateArea(const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<std::string>& names,
+	virtual IXArea* CreateArea(const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<std::string>& names,
 							   const int type = 0, const int groupId = -1, const float width = 0.0f) override;
-	virtual IXArea* CreateArea(const Vec3& center, const float radius, const std::vector<std::string>& names,
+	virtual IXArea* CreateArea(const Legacy::Vec3& center, const float radius, const std::vector<std::string>& names,
 							   const int type = 0, const int groupId = -1, const float width = 0.0f) override;
 
 
@@ -266,7 +266,7 @@ private:
 	std::vector<CXArea*>	m_vpAreas;
 	int m_sCurStep;
 	ISystem * m_pSystem;	
-	Vec3 m_lastUpdatePos;
+	Legacy::Vec3 m_lastUpdatePos;
 };
 
 #endif //!defined(_XAREA2D_H__INCLUDED_)

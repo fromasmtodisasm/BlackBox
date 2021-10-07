@@ -14,6 +14,8 @@
 
 #define _WINDOWSCONSOLE_H_
 
+//#include <Cry_Vector2.h>
+
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ITextModeConsole.h>
 #include <BlackBox/Network/INetwork.hpp>
@@ -74,7 +76,7 @@ public:
 	virtual ~CWindowsConsole();
 
 	// ITextModeConsole
-	virtual Vec2_tpl<int> BeginDraw();
+	virtual glm::ivec2 BeginDraw();
 	virtual void          PutText(int x, int y, const char* pMsg);
 	virtual void          EndDraw();
 	virtual void          SetTitle(const char* title);
@@ -306,7 +308,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////
 	// ITextModeConsole
 	///////////////////////////////////////////////////////////////////////////////////////
-	virtual Vec2_tpl<int> BeginDraw() { return Vec2_tpl<int>(0, 0); };
+	virtual Legacy::Vec2_tpl<int> BeginDraw() { return Legacy::Vec2_tpl<int>(0, 0); };
 	virtual void          PutText(int x, int y, const char* msg);
 	virtual void          EndDraw()   {};
 

@@ -48,8 +48,8 @@ struct STimeDemoHeader
 //////////////////////////////////////////////////////////////////////////
 struct STimeDemoFrame
 {
-	Vec3 pos;
-	Vec3 angles;
+	Legacy::Vec3 pos;
+	Legacy::Vec3 angles;
 	float frametime;
 
 	unsigned int nActionFlags[2];

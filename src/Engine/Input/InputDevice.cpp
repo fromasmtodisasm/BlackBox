@@ -6,7 +6,7 @@
 	extern CInputCVars* g_pInputCVars;
 #endif
 
-using ColorF = Vec4;
+using ColorF = Legacy::Vec4;
 
 CInputDevice::CInputDevice(IInput& input, const char* deviceName)
   : m_input(input)

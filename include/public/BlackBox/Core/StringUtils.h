@@ -213,7 +213,7 @@ inline string toString (const CryQuat& q)
 
 //////////////////////////////////////////////////////////////////////
 #ifdef VECTOR_H
-inline string toString (const Vec3& v)
+inline string toString (const Legacy::Vec3& v)
 {
 	char szBuf[0x80];
 	sprintf (szBuf, "{%g,%g,%g}", v.x, v.y, v.z);

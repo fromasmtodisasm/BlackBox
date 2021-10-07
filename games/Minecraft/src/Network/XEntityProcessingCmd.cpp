@@ -66,13 +66,13 @@ void CXEntityProcessingCmd::Reset()
 }
 
 //////////////////////////////////////////////////////////////////////////
-Vec3& CXEntityProcessingCmd::GetDeltaAngles()
+Legacy::Vec3& CXEntityProcessingCmd::GetDeltaAngles()
 {
 	return m_vDeltaAngles;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXEntityProcessingCmd::SetDeltaAngles( const Vec3 &ang )
+void CXEntityProcessingCmd::SetDeltaAngles( const Legacy::Vec3 &ang )
 {
 #ifndef NO_QUANTIZED_ANGLES
 	Ang3d q=ang;

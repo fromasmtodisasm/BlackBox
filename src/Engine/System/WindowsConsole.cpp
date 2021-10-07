@@ -100,10 +100,10 @@ CWindowsConsole::~CWindowsConsole()
 	CleanUp();
 }
 
-Vec2_tpl<int> CWindowsConsole::BeginDraw()
+glm::ivec2 CWindowsConsole::BeginDraw()
 {
 	m_newCmds.resize(0);
-	return Vec2_tpl<int>(WINDOWS_CONSOLE_WIDTH, WINDOWS_CONSOLE_HEIGHT - 2);
+	return glm::ivec2(WINDOWS_CONSOLE_WIDTH, WINDOWS_CONSOLE_HEIGHT - 2);
 }
 
 void CWindowsConsole::PutText(int x, int y, const char* pMsg)

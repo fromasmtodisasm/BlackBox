@@ -35,6 +35,7 @@ add_sources(
 	GameFiles/SteamHelper.cpp
 	GameFiles/XVehicleSystem.cpp
 	GameFiles/XArea.cpp
+	GameFiles/GameCallbacks.cpp
 	GameFiles/XArea.h
 	SOURCE_GROUP
 	"Network"
@@ -77,41 +78,45 @@ add_sources(
 
 	TimeDemoRecorder/XDemoMgr.cpp
 	TimeDemoRecorder/XDemoMgr.h
-	#[[
-	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
-	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.h
-	PRIVATE ${SOURCE_DIR}/UI/ScriptObjectUI.cpp
-	PRIVATE ${SOURCE_DIR}/UI/ScriptObjectUI.h
-	PRIVATE ${SOURCE_DIR}/UI/UIButton.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIButton.h
-	PRIVATE ${SOURCE_DIR}/UI/UICVars.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UICVars.h
-	PRIVATE ${SOURCE_DIR}/UI/UICheckBox.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UICheckBox.h
-	PRIVATE ${SOURCE_DIR}/UI/UIComboBox.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIComboBox.h
-	PRIVATE ${SOURCE_DIR}/UI/UIDivX_Video.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIDivX_Video.h
-	PRIVATE ${SOURCE_DIR}/UI/UIEditBox.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIEditBox.h
-	PRIVATE ${SOURCE_DIR}/UI/UIHud.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIHud.h
-	PRIVATE ${SOURCE_DIR}/UI/UIListView.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIListView.h
-	PRIVATE ${SOURCE_DIR}/UI/UIMessages.h
-	PRIVATE ${SOURCE_DIR}/UI/UIScreen.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIScreen.h
-	PRIVATE ${SOURCE_DIR}/UI/UIScrollBar.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIScrollBar.h
-	PRIVATE ${SOURCE_DIR}/UI/UIStatic.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIStatic.h
-	PRIVATE ${SOURCE_DIR}/UI/UISystem.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UISystem.h
-	PRIVATE ${SOURCE_DIR}/UI/UIVideoPanel.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIVideoPanel.h
-	PRIVATE ${SOURCE_DIR}/UI/UIWidget.cpp
-	PRIVATE ${SOURCE_DIR}/UI/UIWidget.h
-	]]
+	SOURCE_GROUP
+	"UI"
+	UI/IngameDialog.cpp
+	UI/IngameDialog.h
+	UI/ScriptObjectUI.cpp
+	UI/ScriptObjectUI.h
+	UI/UIButton.cpp
+	UI/UIButton.h
+	UI/UICVars.cpp
+	UI/UICVars.h
+	UI/UICheckBox.cpp
+	UI/UICheckBox.h
+	UI/UIComboBox.cpp
+	UI/UIComboBox.h
+	#UI/UIDivX_Video.cpp
+	#UI/UIDivX_Video.h
+	UI/UIEditBox.cpp
+	UI/UIEditBox.h
+	UI/UIHud.cpp
+	UI/UIHud.h
+	UI/UIListView.cpp
+	UI/UIListView.h
+	UI/UIMessages.h
+	UI/UIScreen.cpp
+	UI/UIScreen.h
+	UI/UIScrollBar.cpp
+	UI/UIScrollBar.h
+	UI/UIStatic.cpp
+	UI/UIStatic.h
+	UI/UISystem.cpp
+	UI/UISystem.h
+	#UI/UIVideoPanel.cpp
+	#UI/UIVideoPanel.h
+	UI/UIWidget.cpp
+	UI/UIWidget.h
+	SOURCE_GROUP
+	"Legacy"
+	Legacy/IInput.h
+	Legacy/IFont.h
 )
 end_sources()
 gamemodule(Minecraft FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
@@ -141,6 +146,8 @@ target_include_directories(
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)
 
 target_sources(${THIS_PROJECT} PRIVATE ${INCLUDE_FILES})
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/UI)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Legacy)
 
 source_group(
 	TREE ${INCLUDE_ROOT}

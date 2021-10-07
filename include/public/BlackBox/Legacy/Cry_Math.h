@@ -68,7 +68,7 @@ const real sqrt3 = (real)1.7320508075688772935274463415059;
 
 //////////////////////////////////////////////////////////////////////
 //the portability functions for AMD64
-#if defined(WIN64) && !defined(LINUX)
+#if defined(WIN64) && !defined(LINUX) && LKJDF
 #define ILINE __forceinline
 
 //////////////////////////////////////////////////////////////////////
@@ -150,12 +150,13 @@ ILINE float cry_logf(float x) { return logf(x); }
 ILINE float cry_floorf(float x) { return floorf(x); }
 ILINE float cry_tanf(float x) { return tanf(x); }
 ILINE float cry_powf(float x, float y) { return powf(x, y); }
+#define LINUX_STOP
 #endif
 
 
 //////////////////////////////////////////////////////////////////////
 // the portability functions for LINUX
-#if defined(LINUX)
+#if defined(LINUX) || !defined(LINUX_STOP)
 #define ILINE inline
 
 ILINE void cry_sincosf(float angle, float* pCosSin) { pCosSin[0] = (float)cos(angle);	pCosSin[1] = (float)sin(angle); }

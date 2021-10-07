@@ -6,7 +6,7 @@ CEntity::CEntity()
 	m_Trash.resize(100);
 }
 
-void CEntity::GetRenderBBox(Vec3& mins, Vec3& maxs)
+void CEntity::GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
 {
 }
 
@@ -39,7 +39,7 @@ IMatInfo* CEntity::GetMaterial() const
 	return nullptr;
 }
 
-void CEntity::PreloadInstanceResources(Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime)
+void CEntity::PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime)
 {
 }
 
@@ -87,7 +87,7 @@ void CEntity::GetEntityDesc(CEntityDesc& desc) const
 {
 }
 
-void CEntity::GetHelperPosition(const char* helper, Vec3& pos, bool objectspace)
+void CEntity::GetHelperPosition(const char* helper, Legacy::Vec3& pos, bool objectspace)
 {
 }
 
@@ -190,11 +190,11 @@ void CEntity::EnablePhysics(bool enable)
 {
 }
 
-void CEntity::AddImpulse(int ipart, Vec3 pos, Vec3 impulse, bool bPos, float fAuxScale)
+void CEntity::AddImpulse(int ipart, Legacy::Vec3 pos, Legacy::Vec3 impulse, bool bPos, float fAuxScale)
 {
 }
 
-bool CEntity::CreateRigidBody(pe_type type, float density, float mass, int surface_id, Vec3* pInitialVelocity, int slot, bool bPermanent)
+bool CEntity::CreateRigidBody(pe_type type, float density, float mass, int surface_id, Legacy::Vec3* pInitialVelocity, int slot, bool bPermanent)
 {
 	return false;
 }
@@ -233,22 +233,22 @@ bool CEntity::LoadObject(unsigned int slot, const char* fileName, float scale, c
 	return false;
 }
 
-bool CEntity::GetObjectPos(unsigned int slot, Vec3& pos)
+bool CEntity::GetObjectPos(unsigned int slot, Legacy::Vec3& pos)
 {
 	return false;
 }
 
-bool CEntity::SetObjectPos(unsigned int slot, const Vec3& pos)
+bool CEntity::SetObjectPos(unsigned int slot, const Legacy::Vec3& pos)
 {
 	return false;
 }
 
-bool CEntity::GetObjectAngles(unsigned int slot, Vec3& ang)
+bool CEntity::GetObjectAngles(unsigned int slot, Legacy::Vec3& ang)
 {
 	return false;
 }
 
-bool CEntity::SetObjectAngles(unsigned int slot, const Vec3& ang)
+bool CEntity::SetObjectAngles(unsigned int slot, const Legacy::Vec3& ang)
 {
 	return false;
 }
@@ -277,7 +277,7 @@ IStatObj* CEntity::GetIStatObj(unsigned int pos)
 	return m_pStatObj;
 }
 
-void CEntity::PlaySound(ISound* pSound, float fSoundScale, Vec3& Offset)
+void CEntity::PlaySound(ISound* pSound, float fSoundScale, Legacy::Vec3& Offset)
 {
 }
 
@@ -297,15 +297,15 @@ void CEntity::NeedsUpdateCharacter(int pos, bool updt)
 {
 }
 
-void CEntity::SetBBox(const Vec3& mins, const Vec3& maxs)
+void CEntity::SetBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 {
 }
 
-void CEntity::GetBBox(Vec3& mins, Vec3& maxs)
+void CEntity::GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
 {
 }
 
-void CEntity::GetLocalBBox(Vec3& min, Vec3& max)
+void CEntity::GetLocalBBox(Legacy::Vec3& min, Legacy::Vec3& max)
 {
 }
 
@@ -322,29 +322,29 @@ bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 	return false;
 }
 
-bool CEntity::CreateParticleEntity(float size, float mass, Vec3 heading, float acc_thrust, float k_air_resistance, float acc_lift, float gravity, int surface_idx, bool bSingleContact)
+bool CEntity::CreateParticleEntity(float size, float mass, Legacy::Vec3 heading, float acc_thrust, float k_air_resistance, float acc_lift, float gravity, int surface_idx, bool bSingleContact)
 {
 	return false;
 }
 
-void CEntity::SetPos(const Vec3& pos, bool bWorldOnly)
+void CEntity::SetPos(const Legacy::Vec3& pos, bool bWorldOnly)
 {
 }
 
-const Vec3& CEntity::GetPos(bool bWorldOnly) const
+const Legacy::Vec3& CEntity::GetPos(bool bWorldOnly) const
 {
 	return m_Pos;
 }
 
-void CEntity::SetPhysAngles(const Vec3& angl)
+void CEntity::SetPhysAngles(const Legacy::Vec3& angl)
 {
 }
 
-void CEntity::SetAngles(const Vec3& pos, bool bNotifyContainer, bool bUpdatePhysics, bool forceInWorld)
+void CEntity::SetAngles(const Legacy::Vec3& pos, bool bNotifyContainer, bool bUpdatePhysics, bool forceInWorld)
 {
 }
 
-const Vec3& CEntity::GetAngles(int realA) const
+const Legacy::Vec3& CEntity::GetAngles(int realA) const
 {
 	return m_Angles;
 }
@@ -424,7 +424,7 @@ void CEntity::ForceBindCalculation(bool bEnable)
 {
 }
 
-void CEntity::SetParentLocale(const Matrix44& matParent)
+void CEntity::SetParentLocale(const Legacy::Matrix44& matParent)
 {
 }
 
@@ -666,7 +666,7 @@ void CEntity::ApplyForceToEnvironment(const float radius, const float force)
 {
 }
 
-int CEntity::GetSide(const Vec3& direction)
+int CEntity::GetSide(const Legacy::Vec3& direction)
 {
 	return 0;
 }
@@ -753,7 +753,7 @@ EEntityUpdateVisLevel CEntity::GetUpdateVisLevel()
 	return EEntityUpdateVisLevel();
 }
 
-void CEntity::SetHandsIKTarget(const Vec3* target)
+void CEntity::SetHandsIKTarget(const Legacy::Vec3* target)
 {
 }
 

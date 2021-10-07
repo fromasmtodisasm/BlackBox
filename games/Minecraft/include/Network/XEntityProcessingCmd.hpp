@@ -36,8 +36,8 @@ public:
 	bool CheckAction(unsigned int nFlags);
 
 	// Angles...
-	Vec3& GetDeltaAngles();
-	void SetDeltaAngles( const Vec3 &ang );
+	Legacy::Vec3& GetDeltaAngles();
+	void SetDeltaAngles( const Legacy::Vec3 &ang );
 	void SetPhysicalTime(int iPTime)//,float fTimeSlice)
 	{
 		m_iPhysicalTime=iPTime;		
@@ -100,7 +100,7 @@ public:
 private: 	
 
 	int								m_iPhysicalTime;		//!<
-	Vec3							m_vDeltaAngles;			//!<
+	Legacy::Vec3							m_vDeltaAngles;			//!<
 	float							m_fTimeSlices[32];	//!<
 	unsigned char			m_nTimeSlices;			//!<
 

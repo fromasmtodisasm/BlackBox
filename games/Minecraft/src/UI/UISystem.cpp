@@ -27,6 +27,8 @@
 #include "UIScreen.h"
 #include "ScriptObjectUI.h"
 
+#include <ICryAnimation.h>
+
 //////////////////////////////////////////////////////////////////////
 #define UI_MOUSE_VISIBLE				(1 << 0)
 #define UI_BACKGROUND_VISIBLE		(1 << 1)
@@ -34,6 +36,14 @@
 
 #define UI_DEFAULTS							(UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
 
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 
 ////////////////////////////////////////////////////////////////////// 
 CUISystem::CUISystem()
@@ -47,6 +57,8 @@ CUISystem::~CUISystem()
 {
 }
 
+#pragma warning(push)
+#pragma warning(disable:4244)
 
 ////////////////////////////////////////////////////////////////////// 
 // if message processed, return 1, else return 0
@@ -200,7 +212,9 @@ int CUISystem::InitializeTemplates()
 	CUIListView::InitializeTemplate(m_pScriptSystem);
 	CUICheckBox::InitializeTemplate(m_pScriptSystem);
 	CUIComboBox::InitializeTemplate(m_pScriptSystem);
+	#if 0
 	CUIVideoPanel::InitializeTemplate(m_pScriptSystem);
+	#endif
 	CUIScreen::InitializeTemplate(m_pScriptSystem);
 
 	return 1;
@@ -216,20 +230,25 @@ int CUISystem::ReleaseTemplates()
 	CUIListView::ReleaseTemplate();
 	CUICheckBox::ReleaseTemplate();
 	CUIComboBox::ReleaseTemplate();
+	#if 0
 	CUIVideoPanel::ReleaseTemplate();
+	#endif
 	CUIScreen::ReleaseTemplate();
 
 	return 1;
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSystem, const std::string &szScriptFileName, bool bRunScriptFile)
+int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSystem, const string &szScriptFileName, bool bRunScriptFile)
 {
 	m_pGame = pGame;
 	m_pSystem = pSystem;
 	m_pScriptSystem = pScriptSystem;
 	m_pRenderer = pSystem->GetIRenderer();
+	//FIXME:
+#if 0
 	m_pInput = m_pSystem->GetIInput();
+#endif
 	m_pLog = m_pSystem->GetILog();
 
 	m_fVirtualToRealX = (double)m_pRenderer->GetWidth() / 800.0;
@@ -286,7 +305,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 int CUISystem::ResetKeyRepeat()
 {
 	m_fRepeatTimer = 0;
-	m_iLastKey = eKI_Unknown;
+	m_iLastKey = Legacy::XKEY_NULL;
 	m_szLastKeyName = "";
 
 	return 1;
@@ -300,7 +319,7 @@ void CUISystem::Update()
 	ui_BackGroundVideo->Set(0);
 #endif
 	
-	FUNCTION_PROFILER( m_pSystem, PROFILE_GAME );
+	FUNCTION_PROFILER( PROFILE_GAME );
 
 	if (m_pRenderer && m_iReloadFrameID > -1 && m_pRenderer->GetFrameID() == m_iReloadFrameID)
 	{
@@ -340,7 +359,7 @@ void CUISystem::Update()
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	if (m_iLastKey != eKI_Unknown)
+	if (m_iLastKey != Legacy::XKEY_NULL)
 	{
 		float fTime = m_pSystem->GetITimer()->GetAsyncCurTime() * 1000.0f;
 		float fNextTimer = (1000.0f / (float)ui_RepeatSpeed->GetIVal()); // repeat speed
@@ -397,20 +416,20 @@ void CUISystem::Update()
 		m_vMouseXY = vMouseXY;
 	}
 
-	IMouse *pMouse = m_pInput->GetIMouse();
+	Legacy::IMouse *pMouse = m_pInput->GetIMouse();
 
 	unsigned int	dwPackedMouseXY = UIM_PACK_COORD(vMouseXY.x, vMouseXY.y);
 	unsigned int	dwPackedOldMouseXY = UIM_PACK_COORD(m_vMouseXY.x, m_vMouseXY.y);
 	CUIWidget		*pMouseOver = FindWidgetAt(vMouseXY.x, vMouseXY.y);
 	bool			bMouseMoved = dwPackedMouseXY != dwPackedOldMouseXY;
-	bool			bLMouseDown = pMouse->MouseDown(XKEY_MOUSE1);
-	bool			bRMouseDown = pMouse->MouseDown(XKEY_MOUSE2);
+	bool			bLMouseDown = pMouse->MouseDown(Legacy::XKEY_MOUSE1);
+	bool			bRMouseDown = pMouse->MouseDown(Legacy::XKEY_MOUSE2);
 	bool			bMouseDown = (bLMouseDown || bRMouseDown);
-	bool			bLMouseUp = pMouse->MouseReleased(XKEY_MOUSE1);
-	bool			bRMouseUp = pMouse->MouseReleased(XKEY_MOUSE2);
+	bool			bLMouseUp = pMouse->MouseReleased(Legacy::XKEY_MOUSE1);
+	bool			bRMouseUp = pMouse->MouseReleased(Legacy::XKEY_MOUSE2);
 	bool			bMouseUp = (bLMouseUp || bRMouseUp);
-	bool			bLMouseDblClick = m_pInput->MouseDblClick(XKEY_MOUSE1);
-	bool			bRMouseDblClick = m_pInput->MouseDblClick(XKEY_MOUSE2);
+	bool			bLMouseDblClick = m_pInput->MouseDblClick(Legacy::XKEY_MOUSE1);
+	bool			bRMouseDblClick = m_pInput->MouseDblClick(Legacy::XKEY_MOUSE2);
 	bool			bMouseDblClick = (bLMouseDblClick || bRMouseDblClick);
 	CUIWidget	*pMouseCaptured = m_pMouseCaptured;
 
@@ -532,12 +551,12 @@ void CUISystem::Update()
 			if (bLMouseDown)
 			{
 				// UIM_LBUTTONDOWN
-				SendMessage(pMouseOver, UIM_LBUTTONDOWN, dwPackedMouseRelativeXY, XKEY_MOUSE1);
+				SendMessage(pMouseOver, UIM_LBUTTONDOWN, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE1);
 			}
 			if (bRMouseDown)
 			{
 				// UIM_RBUTTONDOWN
-				SendMessage(pMouseOver, UIM_RBUTTONDOWN, dwPackedMouseRelativeXY, XKEY_MOUSE2);
+				SendMessage(pMouseOver, UIM_RBUTTONDOWN, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE2);
 			}
 		}
 
@@ -547,18 +566,18 @@ void CUISystem::Update()
 			if (bLMouseUp)
 			{
 				// UIM_RBUTTONUP
-				SendMessage(pMouseOver, UIM_LBUTTONUP, dwPackedMouseRelativeXY, XKEY_MOUSE1);
+				SendMessage(pMouseOver, UIM_LBUTTONUP, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE1);
 
 				// UIM_LBUTTONCLICK
-				SendMessage(pMouseOver, UIM_LBUTTONCLICK, dwPackedMouseRelativeXY, XKEY_MOUSE1);
+				SendMessage(pMouseOver, UIM_LBUTTONCLICK, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE1);
 			}
 			if (bRMouseUp)
 			{
 				// UIM_RBUTTONUP
-				SendMessage(pMouseOver, UIM_RBUTTONUP, dwPackedMouseRelativeXY, XKEY_MOUSE2);
+				SendMessage(pMouseOver, UIM_RBUTTONUP, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE2);
 
 				// UIM_RBUTTONCLICK
-				SendMessage(pMouseOver, UIM_RBUTTONCLICK, dwPackedMouseRelativeXY, XKEY_MOUSE2);
+				SendMessage(pMouseOver, UIM_RBUTTONCLICK, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE2);
 			}
 		}
 
@@ -567,12 +586,12 @@ void CUISystem::Update()
 			// UIM_LBUTTONDBLCLICK
 			if (bLMouseDblClick)
 			{
-				SendMessage(pMouseOver, UIM_LBUTTONDBLCLICK, dwPackedMouseRelativeXY, XKEY_MOUSE1);
+				SendMessage(pMouseOver, UIM_LBUTTONDBLCLICK, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE1);
 			}
 			// UIM_RBUTTONDBLCLICK
 			if (bRMouseDblClick)
 			{
-				SendMessage(pMouseOver, UIM_RBUTTONDBLCLICK, dwPackedMouseRelativeXY, XKEY_MOUSE2);
+				SendMessage(pMouseOver, UIM_RBUTTONDBLCLICK, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE2);
 			}
 		}
 
@@ -686,11 +705,11 @@ void CUISystem::Update()
 ////////////////////////////////////////////////////////////////////// 
 void CUISystem::Draw()
 {
-	FUNCTION_PROFILER( m_pSystem, PROFILE_GAME );
+	FUNCTION_PROFILER( PROFILE_GAME );
 //	m_pRenderer->ClearDepthBuffer();
 
 	m_pRenderer->Set2DMode(1, m_pRenderer->GetWidth(), m_pRenderer->GetHeight());
-  m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST, true);
+  m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
 
 	int iCurrentFlags = m_iFlags;
 
@@ -982,7 +1001,7 @@ CUIWidget *CUISystem::GetWidget(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUISystem::GetWidget(const std::string &szName)
+CUIWidget *CUISystem::GetWidget(const string &szName)
 {
 	for (CUIWidgetItor pItor = m_pWidgetList.begin(); pItor != m_pWidgetList.end(); pItor++)
 	{
@@ -996,7 +1015,7 @@ CUIWidget *CUISystem::GetWidget(const std::string &szName)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUISystem::GetWidget(const std::string &szName, const std::string &szScreenName)
+CUIWidget *CUISystem::GetWidget(const string &szName, const string &szScreenName)
 {
 	CUIScreen *pScreen = GetScreen(szScreenName);
 
@@ -1041,7 +1060,7 @@ CUIScreen *CUISystem::GetScreen(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIScreen *CUISystem::GetScreen(const std::string &szName)
+CUIScreen *CUISystem::GetScreen(const string &szName)
 {
 	for (CUIScreenItor pItor = m_vScreenList.begin(); pItor != m_vScreenList.end(); pItor++)
 	{
@@ -1194,7 +1213,7 @@ CUIWidget *CUISystem::GetChild(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUISystem::GetChild(const std::string &szName)
+CUIWidget *CUISystem::GetChild(const string &szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -1252,7 +1271,7 @@ int CUISystem::DelChild(int iIndex)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::DelChild(const std::string &szName)
+int CUISystem::DelChild(const string &szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -1422,11 +1441,8 @@ bool CUISystem::IsMouseCursorVisible()
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::SetMouseXY(float fX, float fY)
 {
-	m_pHardwareMouse->SetHardwareMousePosition(fX, fY);
-#if 0
 	m_pInput->GetIMouse()->SetVScreenX(fX);
 	m_pInput->GetIMouse()->SetVScreenY(fY);
-#endif
 
 	return 1;
 }
@@ -1434,9 +1450,7 @@ int CUISystem::SetMouseXY(float fX, float fY)
 ////////////////////////////////////////////////////////////////////// 
 vector2f CUISystem::GetMouseXY()
 {
-	vector2f pos;
-	m_pHardwareMouse->GetHardwareMousePosition(pos.x, pos.y);
-	return pos;
+	return vector2f(m_pInput->MouseGetVScreenX(), m_pInput->MouseGetVScreenY());
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -1463,11 +1477,11 @@ int CUISystem::ReleaseMouse()
 ////////////////////////////////////////////////////////////////////// 
 float CUISystem::GetIdleTime()
 {
-	return std::max((m_pSystem->GetITimer()->GetCurrTime() - m_fLastInput) - UI_DEFAULT_IDLETIME_START, 0.0f);
+	return max((m_pSystem->GetITimer()->GetCurrTime() - m_fLastInput) - UI_DEFAULT_IDLETIME_START, 0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////// 
-LRESULT CUISystem::SendMessage(std::string &szName, const std::string &szScreenName, int iMessage, WPARAM wParam, LPARAM lParam)
+LRESULT CUISystem::SendMessage(string &szName, const string &szScreenName, int iMessage, WPARAM wParam, LPARAM lParam)
 {
 	CUIWidget *pWidget = GetWidget(szName, szScreenName);
 
@@ -1626,7 +1640,7 @@ CUIWidget *CUISystem::GetWidgetParent(CUIWidget *pWidget)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-std::wstring CUISystem::GetWidgetText(CUIWidget *pWidget)
+wstring CUISystem::GetWidgetText(CUIWidget *pWidget)
 {
 	if (pWidget->GetClassName() == UICLASSNAME_STATIC)
 	{
@@ -1789,7 +1803,7 @@ int CUISystem::LastTabStop()
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetTopMostWidget(const std::string &szName)
+int CUISystem::SetTopMostWidget(const string &szName)
 {
 	CUIWidget *pWidget = GetChild(szName);
 
@@ -1869,7 +1883,7 @@ int CUISystem::SetFocus(CUIWidget *pWidget)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetFocus(std::string &szName)
+int CUISystem::SetFocus(string &szName)
 {
 	CUIWidget *pWidget = GetWidget(szName);
 
@@ -1879,7 +1893,7 @@ int CUISystem::SetFocus(std::string &szName)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetFocus(std::string &szName, std::string &szScreenName)
+int CUISystem::SetFocus(string &szName, string &szScreenName)
 {
 	CUIWidget *pWidget = GetWidget(szName, szScreenName);
 
@@ -1903,7 +1917,7 @@ int CUISystem::SetFocusScreen(CUIScreen *pScreen)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::SetFocusScreen(std::string &szScreenName)
+int CUISystem::SetFocusScreen(string &szScreenName)
 {
 	m_pFocusScreen = GetScreen(szScreenName);
 
@@ -1921,7 +1935,7 @@ color4f CUISystem::GetSelectionColor(const color4f &cBackground, const color4f &
 {
 	color4f cColor = (color4f(1.0f, 1.0f, 1.0f, 1.0f) - 0.5f * cBackground + 0.5f * cTextcolor);
 
-	cColor[3] = 0.8f;
+	cColor.v[3] = 0.8f;
 
 	return cColor;
 }
@@ -2814,7 +2828,7 @@ int CUISystem::DrawToolTip()
 }
 
 //////////////////////////////////////////////////////////////////////  
-int CUISystem::CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::string &szText)
+int CUISystem::CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText)
 {
 	*pStatic = new CUIStatic;
 
@@ -2836,7 +2850,7 @@ int CUISystem::CreateStatic(CUIStatic **pStatic, CUIWidget *pParent, const std::
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateButton(CUIButton **pButton, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::string &szText)
+int CUISystem::CreateButton(CUIButton **pButton, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText)
 {
 	*pButton = new CUIButton;
 
@@ -2854,7 +2868,7 @@ int CUISystem::CreateButton(CUIButton **pButton, CUIWidget *pParent, const std::
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, const std::string &szText)
+int CUISystem::CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, const wstring &szText)
 {
 	*pEditBox = new CUIEditBox;
 
@@ -2873,7 +2887,7 @@ int CUISystem::CreateEditBox(CUIEditBox **pEditBox, CUIWidget *pParent, const st
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle, int iType)
+int CUISystem::CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle, int iType)
 {
 	*pScrollBar = new CUIScrollBar;
 
@@ -2902,7 +2916,7 @@ int CUISystem::CreateScrollBar(CUIScrollBar **pScrollBar, CUIWidget *pParent, co
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateListView(CUIListView **pListView, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateListView(CUIListView **pListView, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pListView = new CUIListView;
 
@@ -2919,7 +2933,7 @@ int CUISystem::CreateListView(CUIListView **pListView, CUIWidget *pParent, const
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pCheckBox = new CUICheckBox;
 
@@ -2936,7 +2950,7 @@ int CUISystem::CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pComboBox = new CUIComboBox;
 
@@ -2956,8 +2970,9 @@ int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const
 	return 1;
 }
 
+#if 0
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	*pVideoPanel = new CUIVideoPanel;
 
@@ -2972,9 +2987,10 @@ int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent,
 
 	return 1;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScreen(CUIScreen **pScreen, const std::string &szName)
+int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
 {
 	*pScreen = new CUIScreen;
 
@@ -2995,7 +3011,7 @@ int CUISystem::CreateScreen(CUIScreen **pScreen, const std::string &szName)
 
 
 ////////////////////////////////////////////////////////////////////// 
-bool CUISystem::OnInputEvent(const SInputEvent &event)
+bool CUISystem::OnInputEvent(const Legacy::SInputEvent &event)
 {
 	// if console is open, don't update anything
 	if ((m_pSystem->GetIConsole()->IsOpened()) || (!IsEnabled()))
@@ -3015,18 +3031,18 @@ bool CUISystem::OnInputEvent(const SInputEvent &event)
 	//////////////////////////////////////////////////////////////////////
 	if (IS_MOUSE_KEY(event.key))
 	{
-		if ((event.key == XKEY_MWHEEL_UP) && (event.type == SInputEvent::KEY_PRESS))
+		if ((event.key == Legacy::XKEY_MWHEEL_UP) && (event.type == Legacy::SInputEvent::KEY_PRESS))
 		{
 			if (m_pMouseOver)
 			{
-				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, XKEY_MWHEEL_UP);
+				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, Legacy::XKEY_MWHEEL_UP);
 			}
 		}
-		else if ((event.key == XKEY_MWHEEL_DOWN) && (event.type == SInputEvent::KEY_PRESS))
+		else if ((event.key == Legacy::XKEY_MWHEEL_DOWN) && (event.type == Legacy::SInputEvent::KEY_PRESS))
 		{
 			if (m_pMouseOver)
 			{
-				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, XKEY_MWHEEL_DOWN);
+				SendMessage(m_pMouseOver, UIM_KEYPRESSED, 0, Legacy::XKEY_MWHEEL_DOWN);
 			}
 		}
 	}
@@ -3036,9 +3052,9 @@ bool CUISystem::OnInputEvent(const SInputEvent &event)
 	//////////////////////////////////////////////////////////////////////
 	if (IS_KEYBOARD_KEY(event.key))
 	{
-		if ((event.key == XKEY_TAB) && (event.type == SInputEvent::KEY_PRESS))
+		if ((event.key == Legacy::XKEY_TAB) && (event.type == Legacy::SInputEvent::KEY_PRESS))
 		{
-			if (m_pInput->KeyDown(XKEY_LSHIFT))
+			if (m_pInput->KeyDown(Legacy::XKEY_LSHIFT))
 			{
 				PrevTabStop();
 			}
@@ -3071,22 +3087,22 @@ bool CUISystem::OnInputEvent(const SInputEvent &event)
 		{
 			if (IsOnFocusScreen(m_pFocus))
 			{
-				if (event.type == SInputEvent::KEY_RELEASE)
+				if (event.type == Legacy::SInputEvent::KEY_RELEASE)
 				{
 						ResetKeyRepeat();
 				}
-				else if (m_iLastKey == XKEY_NULL)
+				else if (m_iLastKey == Legacy::XKEY_NULL)
 				{
 					m_iLastKey = event.key;
 					m_szLastKeyName = (char *)m_pInput->GetKeyName(event.key, event.moidifiers, 1);
 					m_fRepeatTimer = (m_pSystem->GetITimer()->GetAsyncCurTime() * 1000.0f) + (float)ui_RepeatDelay->GetIVal(); // repeat delay
 				}
 
-				if (event.type == SInputEvent::KEY_PRESS)
+				if (event.type == Legacy::SInputEvent::KEY_PRESS)
 				{
 					SendMessage(m_pFocus, UIM_KEYDOWN, (WPARAM)m_pInput->GetKeyName(event.key, event.moidifiers, 1), event.key);	//AMD Port
 				}
-				else if (event.type == SInputEvent::KEY_RELEASE)
+				else if (event.type == Legacy::SInputEvent::KEY_RELEASE)
 				{
 					SendMessage(m_pFocus, UIM_KEYUP, (WPARAM)m_pInput->GetKeyName(event.key, event.moidifiers, 1), event.key);
 				}
@@ -3114,7 +3130,7 @@ bool CUISystem::OnInputEvent(const SInputEvent &event)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const std::string &szName, const UIRect &pRect, int iFlags, int iStyle)
+int CUISystem::InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
 	pWidget->m_pRect.fLeft = pRect.fLeft;
 	pWidget->m_pRect.fTop = pRect.fTop;
@@ -3243,6 +3259,7 @@ int CUISystem::ReloadAllModels()
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::StopAllVideo()
 {
+	#if 0
 	for (CUIWidgetItor pItor = m_pWidgetList.begin(); pItor != m_pWidgetList.end(); ++pItor)
 	{
 		if ((*pItor)->GetClassName() == "UIVideoPanel")
@@ -3254,6 +3271,9 @@ int CUISystem::StopAllVideo()
 	}
 
 	return 0;
+	#else
+	NOT_IMPLEMENTED_V;
+	#endif
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -3613,7 +3633,7 @@ int CUISystem::RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, char *szTe
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const std::string &szTextField)
+int CUISystem::RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const string &szTextField)
 {
 	char	*szKeyName;
 	char	szAttributeName[256];
@@ -3720,7 +3740,7 @@ int CUISystem::RetrieveTextureAttribute(UISkinTexture *pSkinTexture, IScriptObje
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CUIScreen *pScreen, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CUIScreen *pScreen, IScriptObject *pObject, const string &szName)
 {
 	char				*szKeyName;
 	char				*szAttributeValue;
@@ -3825,10 +3845,12 @@ int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CU
 	{
 		iResult = CreateComboBoxFromTable((CUIComboBox **)pWidget, pParent, pRect, pObject, szName);
 	}
+	#if 0
 	else if (szClassName == "videopanel")
 	{
 		iResult = CreateVideoPanelFromTable((CUIVideoPanel **)pWidget, pParent, pRect, pObject, szName);
 	}
+	#endif
 	else
 	{
 		m_pLog->LogToConsole("\001$4[Error]:$1 Invalid classname for widget '%s': %s", szName.c_str(), szClassName.c_str());
@@ -3906,7 +3928,7 @@ int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CU
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateStaticFromTable(CUIStatic **pStatic, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateStaticFromTable(CUIStatic **pStatic, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateStatic(pStatic, pParent, szName, pRect, UIFLAG_DEFAULT, 0, L""))
 	{
@@ -4037,7 +4059,7 @@ int CUISystem::SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateButtonFromTable(CUIButton **pButton, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateButtonFromTable(CUIButton **pButton, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateButton(pButton, pParent, szName, pRect, UIFLAG_DEFAULT, 0, L""))
 	{
@@ -4117,7 +4139,7 @@ int CUISystem::SetupButtonFromTable(CUIButton *pButton, IScriptObject *pObject)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateEditBoxFromTable(CUIEditBox **pEditBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateEditBoxFromTable(CUIEditBox **pEditBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateEditBox(pEditBox, pParent, szName, pRect, UIFLAG_DEFAULT, 0, L""))
 	{
@@ -4245,7 +4267,7 @@ int CUISystem::SetupEditBoxFromTable(CUIEditBox *pEditBox, IScriptObject *pObjec
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScrollBarFromTable(CUIScrollBar **pScrollBar, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateScrollBarFromTable(CUIScrollBar **pScrollBar, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateScrollBar(pScrollBar, pParent, szName,pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4335,7 +4357,7 @@ int CUISystem::SetupScrollBarFromTable(CUIScrollBar *pScrollBar, IScriptObject *
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateListView(pListView, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4441,7 +4463,7 @@ int CUISystem::SetupListViewFromTable(CUIListView *pListView, IScriptObject *pOb
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateCheckBox(pCheckBox, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4528,7 +4550,7 @@ int CUISystem::SetupCheckBoxFromTable(CUICheckBox *pCheckBox, IScriptObject *pOb
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateComboBox(pComboBox, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4633,8 +4655,9 @@ int CUISystem::SetupComboBoxFromTable(CUIComboBox *pComboBox, IScriptObject *pOb
 	return 1;
 }
 
+#if 0
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const std::string &szName)
+int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
 	if (!CreateVideoPanel(pVideoPanel, pParent, szName, pRect, UIFLAG_DEFAULT, 0))
 	{
@@ -4656,7 +4679,9 @@ int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget 
 
 	return 1;
 }
+#endif
 
+#if 0
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObject *pObject)
 {
@@ -4749,9 +4774,10 @@ int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObjec
 
 	return 1;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const std::string &szName, IScriptObject *pObject)
+int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, IScriptObject *pObject)
 {
 	if (!CreateScreen(pScreen, szName))
 	{
@@ -4834,7 +4860,7 @@ int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const std::string &szN
 #undef CHECKATTRIBUTE
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToWString(std::string &szWString, const char *szString)
+int CUISystem::ConvertToWString(wstring &szWString, const char *szString)
 {
 	szWString.clear();
 
@@ -4844,7 +4870,7 @@ int CUISystem::ConvertToWString(std::string &szWString, const char *szString)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToWString(std::string &szWString, IFunctionHandler *pH, int iParam)
+int CUISystem::ConvertToWString(wstring &szWString, IFunctionHandler *pH, int iParam)
 {
 	char *szString;
 	char szValue[32];
@@ -4865,7 +4891,7 @@ int CUISystem::ConvertToWString(std::string &szWString, IFunctionHandler *pH, in
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToWString(std::string &szWString, int iStrID)
+int CUISystem::ConvertToWString(wstring &szWString, int iStrID)
 {
 	szWString = ((CXGame *)m_pSystem->GetIGame())->m_StringTableMgr.EnumString(iStrID);
 
@@ -4889,7 +4915,7 @@ int CUISystem::ConvertToString(char *szString, const UIRect &pRect)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CUISystem::ConvertToString(char *szString, const std::string &szWString, int iMaxSize)
+int CUISystem::ConvertToString(char *szString, const wstring &szWString, int iMaxSize)
 {
 	int iSize = szWString.size();
 
@@ -4937,7 +4963,7 @@ int CUISystem::ConvertToString(char *szString, const std::string &szWString, int
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::ConvertToString(std::string &szString, const std::string &szWString)
+int CUISystem::ConvertToString(string &szString, const wstring &szWString)
 {
 	szString.clear();
 
@@ -4952,7 +4978,7 @@ int CUISystem::ConvertToString(std::string &szString, const std::string &szWStri
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::StripControlCodes(std::string &szOutString, const std::string &szWString)
+int CUISystem::StripControlCodes(wstring &szOutString, const wstring &szWString)
 {
 	szOutString.clear();
 
@@ -4984,7 +5010,7 @@ int CUISystem::StripControlCodes(std::string &szOutString, const std::string &sz
 }
 
 //////////////////////////////////////////////////////////////////////
-int CUISystem::StripControlCodes(std::string &szOutString, const std::string &szWString)
+int CUISystem::StripControlCodes(string &szOutString, const wstring &szWString)
 {
 	szOutString.clear();
 
@@ -5016,7 +5042,7 @@ int CUISystem::StripControlCodes(std::string &szOutString, const std::string &sz
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::StripControlCodes(std::string &szOutString, const std::string &szString)
+int CUISystem::StripControlCodes(string &szOutString, const string &szString)
 {
 	szOutString.clear();
 
@@ -5078,3 +5104,5 @@ bool CUISystem::IsOnFocusScreen(CUIWidget *pWidget)
 
 	return 0;
 } 
+ 
+#pragma warning(pop)

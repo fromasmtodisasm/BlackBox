@@ -60,7 +60,7 @@ IEntityIt* CEntitySystem::GetEntityInFrustrumIterator(bool e)
 	return nullptr;
 }
 
-void CEntitySystem::GetEntitiesInRadius(const Vec3& origin, float radius, std::vector<IEntity*>& entities, int s) const
+void CEntitySystem::GetEntitiesInRadius(const Legacy::Vec3& origin, float radius, std::vector<IEntity*>& entities, int s) const
 {
 }
 

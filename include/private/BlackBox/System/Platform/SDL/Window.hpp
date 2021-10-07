@@ -70,7 +70,7 @@ class CSDLWindow final : public IWindow
 	//sf::ContextSettings m_contextSettings;
 	//===============================================================================
 	std::string m_Title;
-	//Vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//Legacy::Vec4 m_BackColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	int m_flags = 0;
 	SDL_DisplayMode m_DesktopMode;
 	// For input handling

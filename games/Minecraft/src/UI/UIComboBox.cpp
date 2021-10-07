@@ -26,6 +26,15 @@
 
 _DECLARE_SCRIPTABLEEX(CUIComboBox);
 
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 CUIComboBox *CUIComboBox::m_pStaticThis = 0;
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,15 +82,15 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			switch(lParam)
 			{
-			case XKEY_DOWN:
-			case XKEY_MWHEEL_DOWN:
+			case Legacy::XKEY_DOWN:
+			case Legacy::XKEY_MWHEEL_DOWN:
 				{
 					if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
 					{
 						if (m_pVScroll)
 						{
 							// scroll 1 item down
-							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
+							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
 						}
 					}
 					else if (!m_vItemList.empty())
@@ -114,15 +123,15 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-			case XKEY_UP:
-			case XKEY_MWHEEL_UP:
+			case Legacy::XKEY_UP:
+			case Legacy::XKEY_MWHEEL_UP:
 				{
 					if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
 					{
 						if (m_pVScroll)
 						{
 							// scroll 1 items up
-							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
+							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
 						}
 					}
 					else if (!m_vItemList.empty())

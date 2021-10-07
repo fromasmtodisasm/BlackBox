@@ -22,9 +22,17 @@ _DECLARE_SCRIPTABLEEX(CUIEditBox);
 ////////////////////////////////////////////////////////////////////// 
 // Control and Shift Modifier Checking
 ////////////////////////////////////////////////////////////////////// 
-#define CONTROLDOWN	(m_pUISystem->GetIInput()->KeyDown(XKEY_LCONTROL) || m_pUISystem->GetIInput()->KeyDown(XKEY_RCONTROL))
-#define SHIFTDOWN	(m_pUISystem->GetIInput()->KeyDown(XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(XKEY_RSHIFT))
+#define CONTROLDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL))
+#define SHIFTDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT))
 
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 
 ////////////////////////////////////////////////////////////////////// 
 CUIEditBox::CUIEditBox()
@@ -72,13 +80,13 @@ LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	
 		}
 		return 1;
 	case UIM_KEYUP:
-		if ((lParam == XKEY_RETURN) || (lParam == XKEY_NUMPADENTER))
+		if ((lParam == Legacy::XKEY_RETURN) || (lParam == Legacy::XKEY_NUMPADENTER))
 		{
 			OnCommand();
 		}
 		return 1;
 	case UIM_KEYDOWN:
-		return ProcessInput(iMessage, lParam, (char *)wParam);
+		return ProcessInput(iMessage, (int)lParam, (char *)wParam);
 	case UIM_LBUTTONDOWN:
 		{
 			if (m_bMouseSelectingAll)
@@ -96,7 +104,7 @@ LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	
 					iCursorPosition = m_iCursorPos;
 			}
 	
-			if (!m_iSelectionCount && (m_pUISystem->GetIInput()->KeyDown(XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(XKEY_RSHIFT)))
+			if (!m_iSelectionCount && (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT)))
 			{
 				m_iSelectionStart = min(m_iCursorPos, iCursorPosition);
 				m_iSelectionCount = abs(iCursorPosition - m_iCursorPos);
@@ -534,10 +542,14 @@ int CUIEditBox::GetText(string &szText)
 ////////////////////////////////////////////////////////////////////// 
 int CUIEditBox::DrawCursor(const UIRect &pTextRect, IFFont *pFont, float fX, float fY, float fHeight)
 {
+	#if 0
 	m_pUISystem->GetIRenderer()->SetMaterialColor(m_cCursorColor.v[0], m_cCursorColor.v[1], m_cCursorColor.v[2], m_cCursorColor.v[3]);
 	m_pUISystem->GetIRenderer()->Draw2dLine(fX, fY, fX, fY + fHeight);
 
 	return 1;
+	#else
+	NOT_IMPLEMENTED_V;
+	#endif
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -574,8 +586,10 @@ int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont *pFont, const UIRec
 	vector2f vPreSelectionSize = pFont->GetTextSizeW(pPreSelectionStr.c_str());
 	vector2f vSelectionSize = pFont->GetTextSizeW(pSelectedStr.c_str());
 
+	#if 0
 	float fRcpScaleX = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordX(1);
 	float fRcpScaleY = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordY(1);
+
 
 	vPreSelectionSize.x *= fRcpScaleX;
 	vPreSelectionSize.y *= fRcpScaleY;
@@ -590,6 +604,9 @@ int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont *pFont, const UIRec
 	m_pUISystem->DrawQuad(pRect, m_cSelectionColor);
 
 	return 1;
+	#else
+	NOT_IMPLEMENTED_V;
+	#endif
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -783,18 +800,18 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 		{
 			switch(iKeyCode)
 			{
-			case XKEY_LEFT:
+			case Legacy::XKEY_LEFT:
 				SelectLeft();
 				break;
-			case XKEY_RIGHT:
+			case Legacy::XKEY_RIGHT:
 				SelectRight();
 				break;
-			case XKEY_HOME:
+			case Legacy::XKEY_HOME:
 				m_iSelectionStart = 0;
 				m_iSelectionCount = m_iCursorPos;
 				m_iCursorPos = 0;
 				break;
-			case XKEY_END:
+			case Legacy::XKEY_END:
 				if (!m_iSelectionCount)
 				{
 					m_iSelectionStart = m_iCursorPos;
@@ -803,10 +820,10 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 				m_iSelectionCount = m_szText.size() - m_iSelectionStart;
 				m_iCursorPos = (int)m_szText.size();
 				break;
-			case XKEY_INSERT:
+			case Legacy::XKEY_INSERT:
 				PasteFromClipboard();
 				break;
-			case XKEY_DELETE:
+			case Legacy::XKEY_DELETE:
 				CutToClipboard();
 				break;
 			default:
@@ -817,19 +834,19 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 		{
 			switch (iKeyCode)
 			{
-			case XKEY_C:
+			case Legacy::XKEY_C:
 				CopyToClipboard();
 				bProcess = 0;
 				break;
-			case XKEY_X:
+			case Legacy::XKEY_X:
 				CutToClipboard();
 				bProcess = 0;
 				break;
-			case XKEY_V:
+			case Legacy::XKEY_V:
 				PasteFromClipboard();
 				bProcess = 0;
 				break;
-			case XKEY_INSERT:
+			case Legacy::XKEY_INSERT:
 				CopyToClipboard();
 				break;
 			default:
@@ -841,44 +858,44 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 	{
 		switch (iKeyCode)
 		{
-		case XKEY_LEFT:
+		case Legacy::XKEY_LEFT:
 			Left();
 			m_iSelectionStart = 0;
 			m_iSelectionCount = 0;
 			m_bMouseSelecting = 0;
 			break;
-		case XKEY_RIGHT:
+		case Legacy::XKEY_RIGHT:
 			Right();
 			m_iSelectionStart = 0;
 			m_iSelectionCount = 0;
 			m_bMouseSelecting = 0;
 			break;
-		case XKEY_BACKSPACE:
+		case Legacy::XKEY_BACKSPACE:
 			Backspace();
 			break;
-		case XKEY_DELETE:
+		case Legacy::XKEY_DELETE:
 			Delete();
 			break;
-		case XKEY_HOME:
+		case Legacy::XKEY_HOME:
 			m_iCursorPos = 0;
 			m_iSelectionCount = 0;
 			m_iSelectionStart = 0;
 			m_bMouseSelecting = 0;
 			break;
-		case XKEY_END:
+		case Legacy::XKEY_END:
 			m_iCursorPos = (int)m_szText.size();
 			m_iSelectionCount = 0;
 			m_iSelectionStart = 0;
 			m_bMouseSelecting = 0;
 			break;
-		case XKEY_RETURN:
+		case Legacy::XKEY_RETURN:
 			break;
 		default:
 			break;
 		}
 	}
 
-	if (bProcess && ((szKeyName) && (*szKeyName) && (szKeyName[1] == 0)) || (iKeyCode == XKEY_SPACE))
+	if (bProcess && ((szKeyName) && (*szKeyName) && (szKeyName[1] == 0)) || (iKeyCode == Legacy::XKEY_SPACE))
 	{
 		if (m_iSelectionCount)
 		{
@@ -887,8 +904,8 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 
 		if (CheckChar((unsigned char)*szKeyName))
 		{
-			//InsertChar((iKeyCode == XKEY_SPACE ? L' ' : (unsigned char)*szKeyName));
-			if (iKeyCode == XKEY_SPACE)
+			//InsertChar((iKeyCode == Legacy::XKEY_SPACE ? L' ' : (unsigned char)*szKeyName));
+			if (iKeyCode == Legacy::XKEY_SPACE)
 			{
 				InsertChar( L' ' );
 			}
@@ -1025,8 +1042,12 @@ int CUIEditBox::GetCursorCoord(float *fX, float *fY, float *fHeight, const UIRec
 	}
 
 	
+#if 0
 	vTextSize.x /= m_pUISystem->GetIRenderer()->ScaleCoordX(1.0f);
 	vTextSize.y /= m_pUISystem->GetIRenderer()->ScaleCoordY(1.0f);
+#else
+		NOT_IMPLEMENTED_V;
+#endif
 
 	*fX += vTextSize.x;
 	*fHeight = (float)vTextSize.y;
@@ -1039,6 +1060,7 @@ int CUIEditBox::GetCursorPosition(float fAtX, float fAtY, const UIRect &pTextRec
 {
 	if (m_pUISystem->PointInRect(pTextRect, fAtX, fAtY))
 	{
+#if 0
 		float fX, fY, fCharWidth;
 		float fRcpScaleX = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordX(1.0);
 		wchar_t pChar[2] = {0, 0};
@@ -1072,6 +1094,9 @@ int CUIEditBox::GetCursorPosition(float fAtX, float fAtY, const UIRect &pTextRec
 		{
 			m_iCursorPos = m_szText.size();
 		}
+#else
+		NOT_IMPLEMENTED_V;
+#endif
 	}
 
 	return -1;

@@ -160,6 +160,8 @@ class CSystem final : public ISystem
 	virtual IFrameProfileSystem*	GetIProfileSystem() { return m_env.pFrameProfileSystem; }
 	virtual I3DEngine*				GetI3DEngine() { return m_env.p3DEngine; }	
 	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
+	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
+	virtual ICryFont*				GetICryFont() { NOT_IMPLEMENTED_V; }
 
 	virtual int					GetCPUFlags()		 override;
 	virtual double				GetSecondsPerCycle() override;

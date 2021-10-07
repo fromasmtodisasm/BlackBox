@@ -970,7 +970,7 @@ int CScriptObjectUI::SetBackground(IFunctionHandler *pH)
 
 	pH->GetParamUDVal(1, iTextureID, iCookie);
 
-	m_pUISystem->SetBackground(iTextureID);
+	m_pUISystem->SetBackground((int)iTextureID);
 
 	return pH->EndFunctionNull();
 }

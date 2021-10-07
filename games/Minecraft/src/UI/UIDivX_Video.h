@@ -29,6 +29,9 @@
 #pragma comment(lib, "dxguid.lib")
 
 #include <dsound.h>
+#include <mmeapi.h>
+#include <mmiscapi.h>
+
 
 #define MAXSBUF (0x200000)  //2Mbyte for sound
 
@@ -285,7 +288,7 @@ protected:
     BOOL			m_bFillNextNotificationWithSilence;
 
 public:
-		u32 m_SoundEnabled;
+		uint32 m_SoundEnabled;
 		//////////////////////////////////////////////////////////////////////
 		// Name: CStreamingSound::CStreamingSound()
 		// Desc: Setups up a buffer so data can be streamed from the wave file into 
@@ -358,8 +361,8 @@ public:
 	HINSTANCE	m_hInst;
 
 	f32 m_VideoTime;
-	u32 m_FrameCounter;
-	u32	m_AudioCounter;
+	uint32 m_FrameCounter;
+	uint32	m_AudioCounter;
 
 	uint8* m_pFrameBuffer;
 	uint8* m_pAudioBuffer;
@@ -368,7 +371,7 @@ public:
 	Content_Info divxFileInfo;
 	DIVX_RET retVal;
 
-	u32 m_LastFramer;
+	uint32 m_LastFramer;
 
 	
 	CDivXPlayer()

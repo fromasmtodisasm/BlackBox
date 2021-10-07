@@ -33,6 +33,7 @@ void CSystem::UnloadSubsystems()
 	m_Subsystems.clear();
 	// CVars should be unregistered earlier than owning objects/modules are destroyed.
 }
+#
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,
 	                   public ITextModeConsole
@@ -83,7 +84,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////
 	// ITextModeConsole
 	///////////////////////////////////////////////////////////////////////////////////////
-	virtual Vec2_tpl<int> 	      BeginDraw() { return Vec2_tpl<int>(0, 0); };
+	virtual glm::ivec2	  BeginDraw() { return glm::ivec2(0, 0); };
 	virtual void          PutText(int x, int y, const char* msg);
 	virtual void          EndDraw()   {};
 

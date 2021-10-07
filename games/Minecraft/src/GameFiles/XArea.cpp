@@ -208,19 +208,19 @@ float	CXArea::CalcDistToPoint(const a2DPoint& point) const
 // check if the point is within the area
 // first BBox check, then count number of intersections for horizontal ray from point and area segments
 // if the number is odd - the point is inside
-bool	CXArea::IsPointWithin(const Vec3& point3d) const
+bool	CXArea::IsPointWithin(const Legacy::Vec3& point3d) const
 {
 	#if 0
 	if( m_AreaType == ATP_SPHERE )
 	{
-		Vec3	sPnt = point3d - m_Center;
+		Legacy::Vec3	sPnt = point3d - m_Center;
 		if( GetLengthSquared(sPnt) < m_Radius2 )
 			return true;
 		return false;
 	}
 	if( m_AreaType == ATP_BOX )
 	{
-		Vec3 p3d=m_InvMatrix.TransformPointOLD(point3d);
+		Legacy::Vec3 p3d=m_InvMatrix.TransformPointOLD(point3d);
 		if (	(p3d.x<m_Min.x) ||
 					(p3d.y<m_Min.y) ||
 					(p3d.z<m_Min.z) ||
@@ -301,7 +301,7 @@ float	CXArea::IsPointWithinDist(const a2DPoint& point) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void	CXArea::SetPoints(const Vec3* vPoints, const int count)
+void	CXArea::SetPoints(const Legacy::Vec3* vPoints, const int count)
 {
 	ClearPoints();
 	// at least three points are needed to create a closed shape
@@ -338,7 +338,7 @@ void	CXArea::CalcBBox( )
 }
 
 //////////////////////////////////////////////////////////////////////////
-void	CXArea::SetTM( const Matrix44& TM )
+void	CXArea::SetTM( const Legacy::Matrix44& TM )
 {
 	#if 0
 	m_InvMatrix=TM;
@@ -485,7 +485,7 @@ void	CXArea::UpdateArea( CXAreaUser& user )
 
 //////////////////////////////////////////////////////////////////////
 //calculate distance to area. player is inside of the area 
-float	CXArea::CalculateFade( const Vec3& pos3D )
+float	CXArea::CalculateFade( const Legacy::Vec3& pos3D )
 {
 	a2DPoint pos = CXArea::a2DPoint(pos3D);
 	float fadeCoeff = 0.f;
@@ -503,7 +503,7 @@ float	CXArea::CalculateFade( const Vec3& pos3D )
 						fadeCoeff=1.0f;
 						break;
 					}
-					Vec3 Delta=pos3D-m_Center;
+					Legacy::Vec3 Delta=pos3D-m_Center;
 					fadeCoeff=(m_Radius-Delta.Length())/m_Proximity;
 					if (fadeCoeff>1.0f)
 						fadeCoeff=1.0f;
@@ -516,10 +516,10 @@ float	CXArea::CalculateFade( const Vec3& pos3D )
 						fadeCoeff=1.0f;
 						break;
 					}
-					Vec3 p3D=m_InvMatrix.TransformPointOLD(pos3D);
-					Vec3 MinDelta=p3D-m_Min;
-					Vec3 MaxDelta=m_Max-p3D;
-					Vec3 EdgeDist=(m_Max-m_Min)/2.0f;
+					Legacy::Vec3 p3D=m_InvMatrix.TransformPointOLD(pos3D);
+					Legacy::Vec3 MinDelta=p3D-m_Min;
+					Legacy::Vec3 MaxDelta=m_Max-p3D;
+					Legacy::Vec3 EdgeDist=(m_Max-m_Min)/2.0f;
 					if ((!EdgeDist.x) ||
 							(!EdgeDist.y) ||
 							(!EdgeDist.z))
@@ -586,7 +586,7 @@ void	CXArea::Draw(const ISystem * const pSystem, const int idx)
 	CFColor	color = colorsArray[idx%(sizeof(colorsArray)/sizeof(CFColor))];
 	CFColor	color1 = colorsArray[(idx+1)%(sizeof(colorsArray)/sizeof(CFColor))];
 	CFColor	color2 = colorsArray[(idx+2)%(sizeof(colorsArray)/sizeof(CFColor))];
-	Vec3	v0, v1;
+	Legacy::Vec3	v0, v1;
 	float	deltaZ=1.5f;
 
 	if(m_AreaType != ATP_SHAPE)
@@ -681,7 +681,7 @@ void CXAreaMgr::Clear()
 // names	- attached entities names
 // width			-	fade width (m_Proximity), from border to within
 //////////////////////////////////////////////////////////////////////////
-CXArea*	CXAreaMgr::AddArea(const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string> &names, 
+CXArea*	CXAreaMgr::AddArea(const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<string> &names, 
 													 const int id, const int groupId, const float width)
 {
 	CXArea	*newArea;
@@ -710,7 +710,7 @@ CXArea*	CXAreaMgr::AddArea(const Vec3& min, const Vec3& max, const Matrix44& TM,
 // names	- attached entities names
 // width			-	fade width (m_Proximity), from border to withing 
 //////////////////////////////////////////////////////////////////////////
-CXArea*	CXAreaMgr::AddArea(const Vec3& center, const float radius, const std::vector<string> &names, 
+CXArea*	CXAreaMgr::AddArea(const Legacy::Vec3& center, const float radius, const std::vector<string> &names, 
 													const int id, const int groupId, const float width)
 {
 	CXArea	*newArea;
@@ -742,7 +742,7 @@ CXArea*	CXAreaMgr::AddArea(const Vec3& center, const float radius, const std::ve
 // id			- group area belongs to, used for exclusive areas (exclusive withing group)
 // width	- fade width (m_Proximity), from border to withing 
 //////////////////////////////////////////////////////////////////////////
-CXArea*	CXAreaMgr::AddArea(const Vec3* const vPoints, const int count, const std::vector<string> &names, 
+CXArea*	CXAreaMgr::AddArea(const Legacy::Vec3* const vPoints, const int count, const std::vector<string> &names, 
 													 const int id, const int groupId, const float width)
 {
 	CXArea	*newArea;
@@ -774,7 +774,7 @@ CXArea*	CXAreaMgr::AddArea(const Vec3* const vPoints, const int count, const std
 
 //////////////////////////////////////////////////////////////////////////
 // gets area by point
-CXArea*	CXAreaMgr::GetArea( const Vec3& point )
+CXArea*	CXAreaMgr::GetArea( const Legacy::Vec3& point )
 {
 	float		dist;
 	float		closeDist=-1;
@@ -820,7 +820,7 @@ void	CXAreaMgr::UpdatePlayer(CXAreaUser& user)
 
 	unsigned int aIdx;
 	// check player position - not foot
-	user.m_vPos = user.m_pEntity->GetPos() + Vec3(0,0,1);
+	user.m_vPos = user.m_pEntity->GetPos() + Legacy::Vec3(0,0,1);
 	if (user.m_vPos == m_lastUpdatePos)
 		return;
 	m_lastUpdatePos = user.m_vPos;
@@ -1040,7 +1040,7 @@ unsigned CXAreaMgr::MemStat()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXAreaMgr::ReTriggerArea(IEntity* pEntity, const Vec3 &vPos,bool bIndoor)
+void CXAreaMgr::ReTriggerArea(IEntity* pEntity, const Legacy::Vec3 &vPos,bool bIndoor)
 {
 	intVector	hostedAreasIdx;
 	intVector	updatedID;
@@ -1105,7 +1105,7 @@ void CXGame::RetriggerAreas()
 }
 
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXGame::CreateArea( const Vec3 *vPoints, const int count, const std::vector<string>	&names, 
+IXArea *CXGame::CreateArea( const Legacy::Vec3 *vPoints, const int count, const std::vector<string>	&names, 
 														const int type, const int groupId, const float width, const float height)
 {
 	IXArea* newArea = m_XAreaMgr.AddArea( vPoints, count, names, type, groupId, width );
@@ -1114,14 +1114,14 @@ IXArea *CXGame::CreateArea( const Vec3 *vPoints, const int count, const std::vec
 }
 
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXGame::CreateArea( const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string>	&names, 
+IXArea *CXGame::CreateArea( const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<string>	&names, 
 														const int type, const int groupId, const float width)
 {
 	return m_XAreaMgr.AddArea(min, max, TM, names, type, groupId, width );
 }
 
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXGame::CreateArea( const Vec3& center, const float radius, const std::vector<string>	&names, 
+IXArea *CXGame::CreateArea( const Legacy::Vec3& center, const float radius, const std::vector<string>	&names, 
 														const int type, const int groupId, const float width)
 {
 	return m_XAreaMgr.AddArea(center, radius, names, type, groupId, width );
@@ -1135,7 +1135,7 @@ void CXGame::DeleteArea( const IXArea *pArea )
 
 // finds closest area the point is in
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXGame::GetArea( const Vec3 &point )
+IXArea *CXGame::GetArea( const Legacy::Vec3 &point )
 {
 	return (IXArea*)m_XAreaMgr.GetArea( point );
 }
@@ -1160,7 +1160,7 @@ void CXAreaMgr::RetriggerAreas()
 }
 
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXAreaMgr::CreateArea( const Vec3 *vPoints, const int count, const std::vector<string>	&names, 
+IXArea *CXAreaMgr::CreateArea( const Legacy::Vec3 *vPoints, const int count, const std::vector<string>	&names, 
 						   const int type, const int groupId, const float width, const float height)
 {
 	IXArea* newArea = AddArea( vPoints, count, names, type, groupId, width );
@@ -1169,14 +1169,14 @@ IXArea *CXAreaMgr::CreateArea( const Vec3 *vPoints, const int count, const std::
 }
 
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXAreaMgr::CreateArea( const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string>	&names, 
+IXArea *CXAreaMgr::CreateArea( const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<string>	&names, 
 						   const int type, const int groupId, const float width)
 {
 	return AddArea(min, max, TM, names, type, groupId, width );
 }
 
 //////////////////////////////////////////////////////////////////////////
-IXArea *CXAreaMgr::CreateArea( const Vec3& center, const float radius, const std::vector<string>	&names, 
+IXArea *CXAreaMgr::CreateArea( const Legacy::Vec3& center, const float radius, const std::vector<string>	&names, 
 						   const int type, const int groupId, const float width)
 {
 	return AddArea(center, radius, names, type, groupId, width );

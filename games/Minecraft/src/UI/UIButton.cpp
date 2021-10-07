@@ -19,6 +19,15 @@
 
 _DECLARE_SCRIPTABLEEX(CUIButton)
 
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////
 CUIButton::CUIButton()
@@ -46,7 +55,7 @@ LRESULT CUIButton::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	/
 	switch (iMessage)
 	{
 	case UIM_KEYUP:
-		if (lParam != XKEY_RETURN)
+		if (lParam != Legacy::XKEY_RETURN)
 		{
 			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 		}

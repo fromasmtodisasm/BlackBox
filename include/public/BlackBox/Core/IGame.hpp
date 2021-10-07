@@ -126,17 +126,8 @@ struct INameIterator
 	virtual bool Get(char *pszBuffer, INT *pSize) = 0;
 };
 
-#if 0
 class IPhysicsStreamer;
 class IPhysicsEventClient;
-#else
-class IPhysicsStreamer
-{
-};
-class IPhysicsEventClient
-{
-};
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 // MOD related
@@ -194,7 +185,7 @@ struct IGameMods
 struct ITagPointManager
 {
 	// This function creates a tag point in the game world
-	virtual ITagPoint *CreateTagPoint(const string &name, const Vec3 &pos, const Vec3 &angles) = 0;
+	virtual ITagPoint *CreateTagPoint(const string &name, const Legacy::Vec3 &pos, const Legacy::Vec3 &angles) = 0;
 
 	// Retrieves a tag point by name
 	virtual ITagPoint *GetTagPoint(const string &name) =0;

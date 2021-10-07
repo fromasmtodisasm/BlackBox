@@ -297,8 +297,8 @@ int CScriptObjectServer::SpawnEntity(IFunctionHandler* pH)
   const char* sModel = "";
   EntityClass* pClass;
   CEntityDesc ed;
-  Vec3 pos(0, 0, 0);
-  Vec3 angles(0, 0, 0);
+  Legacy::Vec3 pos(0, 0, 0);
+  Legacy::Vec3 angles(0, 0, 0);
   int requestedid = 0;
   _SmartScriptObject pED(m_pScriptSystem, true);
   CScriptObjectVector o(m_pScriptSystem, true);
@@ -706,7 +706,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
     CHECK_PARAMETERS(5);
 
     const char* sString;
-    Vec3d vPos, vNormal;
+    Legacy::Vec3d vPos, vNormal;
     int Id;
     int iUserByte;
 
@@ -720,7 +720,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
       _VERIFY(tpos->GetValue("x", x));
       _VERIFY(tpos->GetValue("y", y));
       _VERIFY(tpos->GetValue("z", z));
-      vPos = Vec3d(x, y, z);
+      vPos = Legacy::Vec3d(x, y, z);
       //			m_pScriptSystem->PushFuncParam(vPos);
     }
     {
@@ -730,7 +730,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
       _VERIFY(tnormal->GetValue("x", x));
       _VERIFY(tnormal->GetValue("y", y));
       _VERIFY(tnormal->GetValue("z", z));
-      vNormal = Vec3d(x, y, z);
+      vNormal = Legacy::Vec3d(x, y, z);
       //			m_pScriptSystem->PushFuncParam(vNormal);
     }
     if (!pH->GetParam(4, Id))
@@ -746,7 +746,7 @@ int CScriptObjectServer::BroadcastCommand(IFunctionHandler* pH)
 //////////////////////////////////////////////////////////////////////
 void CScriptObjectServer::MakeTagScriptObject(ITagPoint* pInTagPoint, _SmartScriptObject& rOut)
 {
-  Vec3 spawnpt, spawnangles;
+  Legacy::Vec3 spawnpt, spawnangles;
   pInTagPoint->GetPos(spawnpt);
   pInTagPoint->GetAngles(spawnangles);
   char* spawnname = pInTagPoint->GetName();

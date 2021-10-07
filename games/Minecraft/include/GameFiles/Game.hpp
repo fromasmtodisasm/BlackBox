@@ -71,13 +71,13 @@ class CXAreaMgr : public IXAreaMgr
   public:
 	virtual void RetriggerAreas() override{}
 
-  virtual IXArea* CreateArea(const Vec3d* vPoints, const int count, const std::vector<std::string>& names,
+  virtual IXArea* CreateArea(const Legacy::Vec3d* vPoints, const int count, const std::vector<std::string>& names,
     const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f) override{return nullptr;}
-  virtual IXArea* CreateArea(const Vec3d& min, const Vec3d& max, const Matrix44& TM, const std::vector<std::string>& names,
+  virtual IXArea* CreateArea(const Legacy::Vec3d& min, const Legacy::Vec3d& max, const Legacy::Matrix44& TM, const std::vector<std::string>& names,
     const int type = 0, const int groupId = -1, const float width = 0.0f) override{return nullptr;}
-  virtual IXArea* CreateArea(const Vec3d& center, const float radius, const std::vector<std::string>& names,
+  virtual IXArea* CreateArea(const Legacy::Vec3d& center, const float radius, const std::vector<std::string>& names,
     const int type = 0, const int groupId = -1, const float width = 0.0f) override{return nullptr;}
-  virtual IXArea* GetArea(const Vec3& point) override{return nullptr;}
+  virtual IXArea* GetArea(const Legacy::Vec3& point) override{return nullptr;}
 
   virtual void	DeleteArea(const IXArea* aPtr) override{}
 };
@@ -87,11 +87,11 @@ struct TextRenderInfo
 {
 	IFont* m_Font;
 	std::vector<std::string> m_Text;
-	Vec4 m_Color{};
+	Legacy::Vec4 m_Color{};
 	SDrawTextInfo dti;
 	TextRenderInfo();
 
-	TextRenderInfo(IFont* f, Vec4 c)
+	TextRenderInfo(IFont* f, Legacy::Vec4 c)
 		: m_Font(f), m_Color(c)
 	{
 	}
@@ -197,20 +197,6 @@ struct GameEvent
 #include <Network/XEntityProcessingCmd.hpp>
 
 
-// FIX: remove this
-inline int sgn(double x) {
-	union { float f; int i; } u;
-	u.f = (float)x; return (u.i >> 31) + ((u.i - 1) >> 31) + 1;
-}
-
-inline int sgn(float x) {
-	union { float f; int i; } u;
-	u.f = x; return (u.i >> 31) + ((u.i - 1) >> 31) + 1;
-}
-inline int sgn(int x) {
-	return (x >> 31) + ((x - 1) >> 31) + 1;
-}
-
 struct EventPlayerCmd : BaseEvent
 {
 	EntityId								idEntity;
@@ -224,7 +210,7 @@ struct EventPlayerCmd : BaseEvent
 
 struct EventExplosion : BaseEvent
 {
-	Vec3						pos;
+	Legacy::Vec3						pos;
 	float						damage;
 	float						rmin, rmax, radius;
 	float 					impulsivePressure;
@@ -252,9 +238,9 @@ struct EventExplosion : BaseEvent
 struct EventPhysImpulse : BaseEvent
 {
 	int							idPhysEnt;
-	Vec3						impulse;
-	Vec3						pt;
-	Vec3						momentum;
+	Legacy::Vec3						impulse;
+	Legacy::Vec3						pt;
+	Legacy::Vec3						momentum;
 	bool						bHasPt;
 	bool						bHasMomentum;
 
@@ -320,18 +306,18 @@ struct PreviewMapParams
 
 struct Ray
 {
-	Vec3 origin;
-	Vec3 direction;
+	Legacy::Vec3 origin;
+	Legacy::Vec3 direction;
 };
 
 
 // ReSharper disable once CppInconsistentNaming
 struct AABB
 {
-	Vec3 min;
-	Vec3 max;
+	Legacy::Vec3 min;
+	Legacy::Vec3 max;
 
-	AABB(Vec3 min, Vec3 max)
+	AABB(Legacy::Vec3 min, Legacy::Vec3 max)
 		: min(min), max(max)
 	{
 	}
@@ -363,7 +349,7 @@ struct AABB
 		return glm::vec2(tNear, tFar);
 	}
 
-	inline void Translate(Vec3 Position)
+	inline void Translate(Legacy::Vec3 Position)
 	{
 			auto cur_pos = (max - min) * 0.5f + min;	
 			auto diff	 = Position - cur_pos;
@@ -374,13 +360,13 @@ struct AABB
 
 struct TestObject
 {
-	TestObject(Vec3 position, Vec3 size, Vec4 color)
-		: TestObject(AABB(Vec3(position - 0.5f*size), Vec3(position + 0.5f*size)), color)
+	TestObject(Legacy::Vec3 position, Legacy::Vec3 size, Legacy::Vec4 color)
+		: TestObject(AABB(Legacy::Vec3(position - 0.5f*size), Legacy::Vec3(position + 0.5f*size)), color)
 	{
 	
 	}
 
-	TestObject(AABB aabb, Vec4 color)
+	TestObject(AABB aabb, Legacy::Vec4 color)
 		: m_AABB(aabb) 
 	{
 		m_Color.bcolor[0] = static_cast<char>(color[0]);
@@ -392,7 +378,7 @@ struct TestObject
 
 	AABB m_AABB;
 	UCol m_Color;
-	Vec3 m_Position;
+	Legacy::Vec3 m_Position;
 	bool m_Intersected = false;
 };
 
@@ -417,20 +403,22 @@ struct TestObject
 #include <SteamHelper.hpp>
 #endif
 
+#include <Cry_Math.h>
 
 #include "GameShared.hpp"
 #include "XDemoMgr.h"
 #include "XArea.h"
+#include <Localization\StringTableMgr.h>
+#include <Materials/XSurfaceMgr.h>
+
+#include <IPhysics.h>
 
 class CClient;
-typedef SmartScriptObject _SmartScriptObject;
-//using CXClient = CClient;
 #define CXClient CClient
 //////////////////////////////////////////////////////////////////////
 typedef std::queue<string> StringQueue;
 typedef std::set<string> StringSet;
-using vector2f = Vec2;
-using color4f = Vec4;
+//using vector2f = Legacy::Vec2;
 
 class CXGame final
 	: public IXGame
@@ -466,7 +454,7 @@ public:
 	//! \return 0 before was initialized, otherwise point to the GameMods
 	CGameMods* GetModsList() { return(m_pGameMods); }
 
-	bool IsSoundPotentiallyHearable(Vec3d& SoundPos, float fClipRadius)
+	bool IsSoundPotentiallyHearable(Legacy::Vec3d& SoundPos, float fClipRadius)
 	{
 		NOT_IMPLEMENTED_V;	
 	}
@@ -498,7 +486,7 @@ public:
 	}
 
 	// tagpoint management functions
-	ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
+	ITagPoint* CreateTagPoint(const string& name, const Legacy::Vec3& pos, const Legacy::Vec3& angles);
 	virtual ITagPoint* GetTagPoint(const string& name);
 	void RemoveTagPoint(ITagPoint* pPoint);
 	bool RenameTagPoint(const string& oldname, const string& newname);
@@ -537,15 +525,13 @@ public:
 	void ScheduleEvent(IEntity* pEnt, CXEntityProcessingCmd& cmd);
 
 	//! \param shooterSSID clientID 0..255 or -1 if unknown
-	void ScheduleEvent(int iPhysTime, const Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
+	void ScheduleEvent(int iPhysTime, const Legacy::Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
 		float fShakeFactor, float fDeafnessRadius, float fDeafnessTime, float fImpactForceMul,
 		float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
 		float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
 		float fTerrainDefSize, int nTerrainDecalId);
 	void ScheduleEvent(int iPhysTime, IEntity* pVehicle, float fDamage);
-	#if 0
 	void ScheduleEvent(int iPhysTime, IPhysicalEntity* pPhysEnt, pe_action_impulse* pai);
-	#endif
 	virtual void ExecuteScheduledEvents()
 	{
 		NOT_IMPLEMENTED;	
@@ -571,7 +557,7 @@ public:
 	}
 
 	//! \param shooterSSID clientID 0..255 or -1 if unknown
-	void CreateExplosion(const Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
+	void CreateExplosion(const Legacy::Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
 		float fShakeFactor, float fDeafnessRadius, float fDeafnessTime,
 		float fImpactForceMul, float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
 		float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
@@ -587,10 +573,8 @@ public:
 	void OnBBoxOverlap(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData,
 		IPhysicalEntity* pCollider, void* pColliderForeignData, int iColliderForeignData);
 	void OnStateChange(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, int iOldSimClass, int iNewSimClass);
-	#if 0
 	void OnCollision(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, coll_history_item* pCollision);
 	int OnImpulse(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, pe_action_impulse* action);
-	#endif
 	void OnPostStep(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, float fTimeInterval);
 
 	virtual IPhysicsStreamer* GetPhysicsStreamer() { return this; }
@@ -621,12 +605,12 @@ public:
 	//@}
 	//! save/laod game
 
-	bool SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename);
+	bool SaveToStream(CStream& stm, Legacy::Vec3* pos, Legacy::Vec3* angles, string sFilename);
 	bool LoadFromStream(CStream& stm, bool isdemo);
 	bool LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream);
 	bool LoadFromStream_PATCH_1(CStream& str, bool isdemo, CScriptObjectStream& scriptStream);
 
-	void Save(string sFileName, Vec3* pos, Vec3* angles, bool bFirstCheckpoint = false);
+	void Save(string sFileName, Legacy::Vec3* pos, Legacy::Vec3* angles, bool bFirstCheckpoint = false);
 	bool Load(string sFileName);
 	void LoadConfiguration(const string& sSystemCfg, const string& sGameCfg);
 	void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile);
@@ -638,7 +622,7 @@ public:
 
 	CXClient* GetClient() { return m_pClient; }
 
-	void SetViewAngles(const Vec3& angles)
+	void SetViewAngles(const Legacy::Vec3& angles)
 	{
 		NOT_IMPLEMENTED;	
 	}
@@ -1027,21 +1011,19 @@ public:
 	float w_accuracy_gain_scale;
 	int w_recoil_vertical_only;
 
-	#if 0
 	CStringTableMgr m_StringTableMgr;
 	CXSurfaceMgr m_XSurfaceMgr;
-	#endif
 	CScriptTimerMgr* m_pScriptTimerMgr;
 
-	//	IXArea *CreateArea( const Vec3 *vPoints, const int count, const char** names, const int ncount, const int type=0, const float width=0.0f);
-	IXArea* CreateArea(const Vec3* vPoints, const int count, const std::vector<string>& names,
+	//	IXArea *CreateArea( const Legacy::Vec3 *vPoints, const int count, const char** names, const int ncount, const int type=0, const float width=0.0f);
+	IXArea* CreateArea(const Legacy::Vec3* vPoints, const int count, const std::vector<string>& names,
 		const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f);
-	IXArea* CreateArea(const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string>& names,
+	IXArea* CreateArea(const Legacy::Vec3& min, const Legacy::Vec3& max, const Legacy::Matrix44& TM, const std::vector<string>& names,
 		const int type = 0, const int groupId = -1, const float width = 0.0f);
-	IXArea* CreateArea(const Vec3& center, const float radius, const std::vector<string>& names,
+	IXArea* CreateArea(const Legacy::Vec3& center, const float radius, const std::vector<string>& names,
 		const int type = 0, const int groupId = -1, const float width = 0.0f);
 	void DeleteArea(const IXArea* pArea);
-	IXArea* GetArea(const Vec3& point);
+	IXArea* GetArea(const Legacy::Vec3& point);
 
 	//! detect areas the listener is in before system update
 	void CheckSoundVisAreas();

@@ -4,7 +4,7 @@
 using namespace tinyxml2;
 
 namespace serialization {
-  Vec3 loadColorAttribute(tinyxml2::XMLElement* element)
+  Legacy::Vec3 loadColorAttribute(tinyxml2::XMLElement* element)
   {
     glm::vec3 color;
     if (element == nullptr)

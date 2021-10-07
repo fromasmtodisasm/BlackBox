@@ -16,7 +16,7 @@
 #ifndef CRYTEK_UIHUD_H
 #define CRYTEK_UIHUD_H
 
-#include "IFont.h"
+#include <IFont.h>
 struct IScriptSystem;
 struct IScriptObject;
 

@@ -403,7 +403,7 @@ void CRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 textu
 
 	{
 		auto sb			 = CRenderer::screenBuffer;
-		sb->Color		 = Vec4(r, g, b, a);
+		sb->Color		 = Legacy::Vec4(r, g, b, a);
 		sb->UvProjection = uv_projection;
 		sb->Model		 = model;
 		sb->Alpha		 = a;
@@ -438,7 +438,7 @@ IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
 
 void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
 {
-	auto s = glm::project(Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), Vec4(0, 0, GetWidth(), GetHeight()));
+	auto s = glm::project(Legacy::Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), Legacy::Vec4(0, 0, GetWidth(), GetHeight()));
 
 	*sx = s.x;
 	*sy = s.y;
@@ -453,7 +453,7 @@ int CRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, flo
 int CRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz)
 {
 #if 0
-	Vec4d vp;							// Where The Viewport Values Will Be Stored
+	Legacy::Vec4d vp;							// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
 #endif
 	auto p = glm::unProject(
@@ -482,7 +482,7 @@ void CRenderer::GetProjectionMatrix(float* mat)
 	mat = &m_Camera.getProjectionMatrix()[0][0];
 }
 
-Vec3 CRenderer::GetUnProject(const Vec3& WindowCoords, const CCamera& cam)
+Legacy::Vec3 CRenderer::GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam)
 {
 	auto& c = WindowCoords;
 	return glm::unProject(
@@ -497,16 +497,6 @@ int CRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)
 void CRenderer::PrintLine(const char* szText, SDrawTextInfo& info)
 {
 	Draw2dText(info.font->GetXPos(), info.font->GetYPos(), szText, info);
-}
-
-ITexture* CRenderer::LoadTexture(const char* nameTex, uint flags, byte eTT)
-{
-#if 0
-	return TextureManager::instance()->getTexture(nameTex, eTT);
-#else
-	return new CTextureNull();
-//return nullptr;
-#endif
 }
 
 void CRenderer::SetCamera(const CCamera& cam)

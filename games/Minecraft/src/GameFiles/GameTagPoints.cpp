@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // Inserts a tag-point in the list.
-ITagPoint *CXGame::CreateTagPoint(const string &name, const Vec3 &pos, const Vec3 &angles)
+ITagPoint *CXGame::CreateTagPoint(const string &name, const Legacy::Vec3 &pos, const Legacy::Vec3 &angles)
 {
 	// create new one
 	CTagPoint *pNewPoint = new CTagPoint(this);

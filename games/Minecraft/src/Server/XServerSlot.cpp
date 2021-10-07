@@ -454,17 +454,17 @@ void CXServerSlot::SendCommand(const char *sCmd)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerSlot::SendCommand(const char *sCmd, const Vec3 &_invPos, const Vec3 &_invNormal, 
+void CXServerSlot::SendCommand(const char *sCmd, const Legacy::Vec3 &_invPos, const Legacy::Vec3 &_invNormal, 
 	const EntityId inId, const unsigned char incUserByte )
 {
-	Vec3 invPos=_invPos;
-	Vec3 invNormal=_invNormal;
+	Legacy::Vec3 invPos=_invPos;
+	Legacy::Vec3 invNormal=_invNormal;
 	CStream stm;
 	stm.Write(sCmd);
 	stm.Write(true);		// extra
 
 	{
-		bool bPos = invPos!=Vec3(0,0,0);
+		bool bPos = invPos!=Legacy::Vec3(0,0,0);
 
 		stm.Write(bPos);
 
@@ -473,7 +473,7 @@ void CXServerSlot::SendCommand(const char *sCmd, const Vec3 &_invPos, const Vec3
 	}
 
 	{
-		bool bNormal = invNormal!=Vec3(0,0,0);
+		bool bNormal = invNormal!=Legacy::Vec3(0,0,0);
 
 		stm.Write(bNormal);
 
@@ -669,7 +669,7 @@ void CXServerSlot::SetPlayerID(EntityId idPlayer)
     m_wPlayerId=idPlayer;
     m_ClassId = pPlayer->GetClassId();
 
-    Vec3 ang=pPlayer->GetAngles();
+    Legacy::Vec3 ang=pPlayer->GetAngles();
     CStream outstm;
 		WRITE_COOKIE(outstm);
     outstm.Write(pPlayer->GetId());
@@ -1194,7 +1194,7 @@ void CXServerSlot::OnClientMsgPlayerProcessingCmd(CStream &stm)
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	Vec3 posClient; bool bClientPos,bInRange;
+	Legacy::Vec3 posClient; bool bClientPos,bInRange;
 	stm.Read(bClientPos);
 	if (bClientPos)
 	{
@@ -1371,7 +1371,7 @@ void CXServerSlot::MarkEntityOffSync(EntityId id)
 	if (!pEnt)
 		return;
 
-	Vec3 vBBox[2],sz;
+	Legacy::Vec3 vBBox[2],sz;
 	m_mapOffSyncEnts.insert(std::pair<EntityId,int>(id,0)); 
 	pEnt->GetBBox(vBBox[0],vBBox[1]);
 	sz = vBBox[1]-vBBox[0];

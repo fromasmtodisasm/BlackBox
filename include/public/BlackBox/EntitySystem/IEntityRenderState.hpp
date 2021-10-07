@@ -75,7 +75,7 @@ struct IEntityRenderState
 		struct ShadowMapLightSource*				pShadowMapFrustumContainer;
 		struct ShadowMapLightSource*				pShadowMapFrustumContainerPassiveCasters;
 		list2<struct CLeafBuffer*>*					pShadowMapLeafBuffersList;
-		Vec3										vPrevTerShadowPos;
+		Legacy::Vec3										vPrevTerShadowPos;
 		float										fPrevTerShadowRadius;
 	} * pShadowMapInfo;
 
@@ -126,7 +126,7 @@ struct IEntityRender
 		ucLodRatio									  = 100;
 		m_pSector									  = 0;
 		m_pVisArea									  = 0;
-		m_vWSBoxMin = m_vWSBoxMax = Vec3(0, 0, 0);
+		m_vWSBoxMin = m_vWSBoxMax = Legacy::Vec3(0, 0, 0);
 		m_fWSMaxViewDist = m_fWSRadius = 0;
 		m_arrfDistance[0] = m_arrfDistance[1] = 0;
 		m_nFogVolumeID						  = 0;
@@ -134,19 +134,19 @@ struct IEntityRender
 	}
 
 	virtual const char*				 GetEntityClassName() const			   = 0;
-	virtual const Vec3&				 GetPos(bool bWorldOnly = true) const  = 0;
-	virtual const Vec3&				 GetAngles(int realA = 0) const		   = 0;
+	virtual const Legacy::Vec3&				 GetPos(bool bWorldOnly = true) const  = 0;
+	virtual const Legacy::Vec3&				 GetAngles(int realA = 0) const		   = 0;
 	virtual float					 GetScale() const					   = 0;
 	virtual const char*				 GetName() const					   = 0;
-	virtual void					 GetRenderBBox(Vec3& mins, Vec3& maxs) = 0;
-	virtual void					 GetBBox(Vec3& mins, Vec3& maxs) { GetRenderBBox(mins, maxs); }
+	virtual void					 GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) = 0;
+	virtual void					 GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) { GetRenderBBox(mins, maxs); }
 	virtual float					 GetRenderRadius() const = 0;
 	virtual bool					 HasChanged() { return false; }
 	virtual bool					 DrawEntity(const struct SRendParams& EntDrawParams) = 0;
 	virtual bool					 IsStatic() const									 = 0;
-	virtual struct IStatObj*		 GetEntityStatObj(unsigned int nSlot, Matrix44* pMatrix = NULL, bool bReturnOnlyVisible = false) { return 0; }
-	virtual void					 SetEntityStatObj(unsigned int nSlot, IStatObj* pStatObj, Matrix44* pMatrix = NULL){};
-	virtual struct ICryCharInstance* GetEntityCharacter(unsigned int nSlot, Matrix44* pMatrix = NULL) { return 0; }
+	virtual struct IStatObj*		 GetEntityStatObj(unsigned int nSlot, Legacy::Matrix44* pMatrix = NULL, bool bReturnOnlyVisible = false) { return 0; }
+	virtual void					 SetEntityStatObj(unsigned int nSlot, IStatObj* pStatObj, Legacy::Matrix44* pMatrix = NULL){};
+	virtual struct ICryCharInstance* GetEntityCharacter(unsigned int nSlot, Legacy::Matrix44* pMatrix = NULL) { return 0; }
 	virtual void					 Physicalize(bool bInstant = false) {}
 	virtual class CDLight*			 GetLight() { return 0; }
 	virtual struct IEntityContainer* GetContainer() const { return 0; }
@@ -182,7 +182,7 @@ struct IEntityRender
 
 	unsigned short m_narrShadowFrames[2];
 
-	Vec3		  m_vWSBoxMin, m_vWSBoxMax;
+	Legacy::Vec3		  m_vWSBoxMin, m_vWSBoxMax;
 	float		  m_fWSRadius;
 	unsigned char m_bForceBBox;
 	unsigned char ucViewDistRatio;
@@ -300,7 +300,7 @@ struct IEntityRender
 	}
 	#endif
 
-	virtual void PreloadInstanceResources(Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
+	virtual void PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
 	virtual void Precache(){};
 };
 

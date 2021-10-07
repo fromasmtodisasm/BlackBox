@@ -48,7 +48,7 @@ struct SXGameContext;
 struct SSoundInfo
 {
 	int nEntityId;			//!<
-	Vec3 Pos;						//!<
+	Legacy::Vec3 Pos;						//!<
 	float fRadius;			//!<
 	float fThread;			//!<
 	float fDistance2;		//!< squared distance from player at the time of occurance
@@ -141,7 +141,7 @@ public:
 	}
 #endif
 
-	void SoundEvent(EntityId idSrc,Vec3 &pos,float fRadius,float fThreat);
+	void SoundEvent(EntityId idSrc,Legacy::Vec3 &pos,float fRadius,float fThreat);
 	// Overload of the IClient interface
 	void SendReliable(CStream &stm);
 	void SendUnreliable(CStream &stm);

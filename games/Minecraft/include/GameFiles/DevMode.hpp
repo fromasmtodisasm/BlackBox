@@ -21,8 +21,8 @@
 
 struct STagFileEntry
 {
-	Vec3 pos;
-	Vec3 ang;
+	Legacy::Vec3 pos;
+	Legacy::Vec3 ang;
 	//Ang3 ang;
 };
 

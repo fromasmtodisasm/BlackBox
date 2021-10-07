@@ -3,12 +3,12 @@
 #include <tinyxml2.h>
 
 namespace serialization {
-  Vec3 loadColorAttribute(tinyxml2::XMLElement* element);
+  Legacy::Vec3 loadColorAttribute(tinyxml2::XMLElement* element);
   
   template<typename T>
   T loadElement(tinyxml2::XMLElement& element, const char* name);
 
-  inline Vec3 loadElement(tinyxml2::XMLElement& element, const char* name)
+  inline Legacy::Vec3 loadElement(tinyxml2::XMLElement& element, const char* name)
   {
     glm::vec3 result;
 

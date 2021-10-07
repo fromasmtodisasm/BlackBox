@@ -12,5 +12,5 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 
-using color4f = Vec4;
-using vector2f = Vec2;
+#include <Legacy\IFont.h>
+//using vector2f = Legacy::Vec2;

@@ -1,2 +1,2 @@
-add_subdirectory(BlackBox)
+#add_subdirectory(BlackBox)
 add_subdirectory(Minecraft)

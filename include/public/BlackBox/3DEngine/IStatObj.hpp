@@ -69,28 +69,28 @@ struct IStatObj: public IBindable
 	virtual const char * GetScriptMaterialName(int Id=-1)=0;
 
 	// Return Value:
-	//     A Vec3 object countaining the bounding box.
+	//     A Legacy::Vec3 object countaining the bounding box.
 	// Summary:
 	//     Get the minimal bounding box component
-	virtual Vec3 GetBoxMin()=0;
+	virtual Legacy::Vec3 GetBoxMin()=0;
 
 	// Return Value:	
-	//     A Vec3 object containing the bounding box.
+	//     A Legacy::Vec3 object containing the bounding box.
 	// Summary:
 	//     Get the minimal bounding box component
-	virtual Vec3 GetBoxMax()=0;
+	virtual Legacy::Vec3 GetBoxMax()=0;
 
 	// Arguments:
 	//     Minimum bounding box component
 	// Summary:
 	//     Set the minimum bounding box component
-	virtual void	SetBBoxMin(const Vec3 &vBBoxMin)=0;
+	virtual void	SetBBoxMin(const Legacy::Vec3 &vBBoxMin)=0;
 
 	// Arguments:
 	//     Minimum bounding box component
 	// Summary:
 	//     Set the minimum bounding box component
-	virtual void	SetBBoxMax(const Vec3 &vBBoxMax)=0;
+	virtual void	SetBBoxMax(const Legacy::Vec3 &vBBoxMax)=0;
 
 	// Summary:
 	//     Get the object radius
@@ -127,7 +127,7 @@ struct IStatObj: public IBindable
 	//     nLogLevel - Level of the LOD
 	// Summary:
 	//     Renders the object
-	virtual void Render(const struct SRendParams & rParams, const Vec3& t, int nLodLevel=0)=0;
+	virtual void Render(const struct SRendParams & rParams, const Legacy::Vec3& t, int nLodLevel=0)=0;
 
 	// Description:
 	//     Returns the LOD object, if present.
@@ -196,13 +196,13 @@ struct IStatObj: public IBindable
 	// Arguments:
 	//     szHelperName - A null terminated string holding the name of the helper
 	// Return Value:
-	//     A Vec3 object which contains the position.
+	//     A Legacy::Vec3 object which contains the position.
 	// Summary:
 	//     Gets the position of a specified helper
-	virtual Vec3 GetHelperPos(const char * szHelperName)=0;
+	virtual Legacy::Vec3 GetHelperPos(const char * szHelperName)=0;
 
 	//! Returns name, position and rotation for specified helper id, returns false if id is out of range
-	virtual const char *GetHelperById(int nId, Vec3 & vPos, Matrix44 * pMat = NULL, int * pnType = NULL)=0;
+	virtual const char *GetHelperById(int nId, Legacy::Vec3 & vPos, Legacy::Matrix44 * pMat = NULL, int * pnType = NULL)=0;
 
 	// Description:
 	//     Will return the matrix of the helper named in the argument. The 
@@ -211,10 +211,10 @@ struct IStatObj: public IBindable
 	// Arguments:
 	//     szHelperName - A null terminated string holding the name of the helper
 	// Return Value:
-	//     A Matrix44 of the object
+	//     A Legacy::Matrix44 of the object
 	// Summary:
 	//     Gets the matrix of a specified helper
-	virtual const Matrix44 * GetHelperMatrixByName(const char * szHelperName) = 0;
+	virtual const Legacy::Matrix44 * GetHelperMatrixByName(const char * szHelperName) = 0;
 
 	// Description:
 	//     Increase the reference count of the object.
@@ -250,7 +250,7 @@ struct IStatObj: public IBindable
 	virtual void SetShadowVolume(ItShadowVolume *pSvObj)=0;
 
 	//! returns occlusion volume in object space
-	virtual bool GetOcclusionVolume(list2<Vec3> * & plstOcclVolVerts, list2<int> * & plstOcclVolInds) = 0;
+	virtual bool GetOcclusionVolume(list2<Legacy::Vec3> * & plstOcclVolVerts, list2<int> * & plstOcclVolInds) = 0;
 
 	// Summary:
 	//     Free the geometry data

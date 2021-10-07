@@ -12,6 +12,7 @@
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
+#if 0
 
 #ifndef UIVIDEOPANEL_H
 #define UIVIDEOPANEL_H 
@@ -104,4 +105,5 @@ public:
 	int						*m_pSwapBuffer;
 };
 
+#endif
 #endif

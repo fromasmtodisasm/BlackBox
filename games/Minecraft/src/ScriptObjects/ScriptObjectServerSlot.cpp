@@ -104,7 +104,7 @@ int CScriptObjectServerSlot::SendCommand(IFunctionHandler *pH)
 		}
 
 		const char *sString;
-		Vec3d vPos,vNormal;
+		Legacy::Vec3d vPos,vNormal;
 		int Id;
 		int iUserByte;
 
@@ -118,7 +118,7 @@ int CScriptObjectServerSlot::SendCommand(IFunctionHandler *pH)
 			_VERIFY(tpos->GetValue("x", x));
 			_VERIFY(tpos->GetValue("y", y));
 			_VERIFY(tpos->GetValue("z", z));
-			vPos=Vec3d(x,y,z);
+			vPos=Legacy::Vec3d(x,y,z);
 		}
 		{
 			SmartScriptObject tnormal(m_pScriptSystem, true);
@@ -127,7 +127,7 @@ int CScriptObjectServerSlot::SendCommand(IFunctionHandler *pH)
 			_VERIFY(tnormal->GetValue("x", x));
 			_VERIFY(tnormal->GetValue("y", y));
 			_VERIFY(tnormal->GetValue("z", z));
-			vNormal=Vec3d(x,y,z);
+			vNormal=Legacy::Vec3d(x,y,z);
 		}
 		if(!pH->GetParam(4,Id))
 			return pH->EndFunction();

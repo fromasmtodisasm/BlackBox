@@ -69,7 +69,7 @@ protected:
       SData(const SInputSymbol* pSymbol_, uint32_t frame_);
 
       uint32_t frame;
-      Vec4 color;
+      Legacy::Vec4 color;
       std::string key;
       std::string state;
     };
@@ -90,7 +90,7 @@ protected:
 
   private:
     uint32_t         m_frameCnt;
-    Vec2           m_textPos2d;
+    Legacy::Vec2           m_textPos2d;
     TButtonsVector m_history;
   };
   CDebugPressedButtons m_debugButtonsHistory;

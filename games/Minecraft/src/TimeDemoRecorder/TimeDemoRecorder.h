@@ -63,8 +63,8 @@ private:
 	//! This sructure saved for every frame of time demo.
 	struct FrameRecord
 	{
-		Vec3 playerPos;
-		Vec3 playerAngles;
+		Legacy::Vec3 playerPos;
+		Legacy::Vec3 playerAngles;
 		float frameTime; // Immidiate frame rate, for this frame.
 		
 		// Snapshot of current processing command.

@@ -270,7 +270,7 @@ void SaveName(string &s, string &prof)
 	s = "profiles/player/" + prof + "/savegames/" + s + ".sav";
 };
 
-bool CXGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename)
+bool CXGame::SaveToStream(CStream& stm, Legacy::Vec3* pos, Legacy::Vec3* angles, string sFilename)
 {
 
 	if(m_bEditor)				 
@@ -451,7 +451,7 @@ bool CXGame::LoadFromStream_PATCH_1(CStream& str, bool isdemo, CScriptObjectStre
 	return false;
 }
 
-void CXGame::Save(string sFileName, Vec3 * pos, Vec3 * angles, bool bFirstCheckpoint)
+void CXGame::Save(string sFileName, Legacy::Vec3 * pos, Legacy::Vec3 * angles, bool bFirstCheckpoint)
 {
 	#if 0
 	if(!m_pClient)

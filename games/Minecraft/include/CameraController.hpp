@@ -57,7 +57,7 @@ class CCameraController : public IInputEventListener
 		if (rotated)
 		{
 			// TODO: GET DELTA  MOUSE
-			delta = Vec2(0);
+			delta = Legacy::Vec2(0);
 			if (event.keyId == eKI_MouseX || event.keyId == eKI_XI_ThumbRX || event.keyId == eKI_XI_ThumbLX)
 				delta.x = event.value;
 			else
@@ -139,7 +139,7 @@ class CCameraController : public IInputEventListener
 		// #unreferenced
 		//float rotation_speed = 15.f * deltatime * mult;
 		//float rotSpeed = deltatime * 5.f;//m_rotAngle;
-		static Vec3 impulse = Vec3(0.f, 10.f, 0.f);
+		static Legacy::Vec3 impulse = Legacy::Vec3(0.f, 10.f, 0.f);
 		// #unreferenced
 		//float move_speed	= deltatime * mult;
 		for (auto& key : m_keys)
@@ -212,9 +212,9 @@ class CCameraController : public IInputEventListener
 	}
 
   public:
-	Vec3 velocity = Vec3(10);
+	Legacy::Vec3 velocity = Legacy::Vec3(10);
 	std::set<EKeyId> m_keys;
-	Vec2 delta;
+	Legacy::Vec2 delta;
 	float MovementSpeed;
 	const float SCROLL_SPEED	= 2.0f;
 	const float MOUSE_SPEED		= 1.5f;

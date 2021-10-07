@@ -81,14 +81,14 @@ public:
   //! specify a model for the player container
 	SafeString<256>					sModel;
 
-	Vec3										vColor;			//!< used for team coloring (0xffffff=default, coloring not used)
+	Legacy::Vec3										vColor;			//!< used for team coloring (0xffffff=default, coloring not used)
 
 	//! this is filled out by container, defaults to ANY
 	bool										netPresence;	
 	//! the name of the lua table corresponding to this entity
 	SafeString<256>					className;								
-	Vec3										pos;
-	Vec3										angles;
+	Legacy::Vec3										pos;
+	Legacy::Vec3										angles;
 	float										scale;
 	void *									pUserData;			//! used during loading from XML
 
@@ -122,10 +122,10 @@ inline CEntityDesc::CEntityDesc()
 	pUserData =0;
 	pProperties=NULL;
 	pPropertiesInstance=NULL;
-	angles = Vec3(0,0,0);
-	pos = Vec3(0,0,0);
+	angles = Legacy::Vec3(0,0,0);
+	pos = Legacy::Vec3(0,0,0);
 	scale = 1;
-	vColor=Vec3(1,1,1);	// default, colour not used
+	vColor=Legacy::Vec3(1,1,1);	// default, colour not used
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -139,10 +139,10 @@ inline CEntityDesc::CEntityDesc( int _id, const EntityClassId _ClassId )
 	pUserData(0),
 	pProperties(NULL),
 	pPropertiesInstance(NULL),
-	angles(Vec3(0)),
-	pos(Vec3(0)),
+	angles(Legacy::Vec3(0)),
+	pos(Legacy::Vec3(0)),
 	scale(1),
-	vColor(Vec3(1,1,1))	// default, colour not used
+	vColor(Legacy::Vec3(1,1,1))	// default, colour not used
 {
 }
 
@@ -203,7 +203,7 @@ inline bool CEntityDesc::Write( IBitStream *pIBitStream, CStream &stm )
 		stm.Write(pos);
 	}
 		
-	if(vColor!=Vec3(1,1,1))
+	if(vColor!=Legacy::Vec3(1,1,1))
 	{
 		stm.Write(true);
 		stm.Write((unsigned char)(vColor.x*255.0f));
@@ -248,7 +248,7 @@ inline bool CEntityDesc::Read( IBitStream *pIBitStream, CStream &stm )
 	if(bPos)
 		stm.Read(pos);
 	 else
-		pos=Vec3(0,0,0);
+		pos=Legacy::Vec3(0,0,0);
 
 	stm.Read(bTeamColor);
 	if(bTeamColor)
@@ -256,10 +256,10 @@ inline bool CEntityDesc::Read( IBitStream *pIBitStream, CStream &stm )
 		unsigned char x,y,z;
 		stm.Read(x);stm.Read(y);stm.Read(z);
 
-		vColor=Vec3(x/255.0f,y/255.0f,z/255.0f);
+		vColor=Legacy::Vec3(x/255.0f,y/255.0f,z/255.0f);
 	}
 	else
-		vColor=Vec3(1,1,1);
+		vColor=Legacy::Vec3(1,1,1);
 
 	VERIFY_COOKIE(stm);
 	return true;

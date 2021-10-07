@@ -761,8 +761,9 @@ void CXConsole::PostRendererInit()
 			texture_path = background->GetString();
 		#endif
 		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
-		ITexture* pTex = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
-		m_nWhiteTexID = pTex ? pTex->getId() : 0;
+		auto	  Tex  = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
+		auto pTex = m_system.GetIRenderer()->EF_GetTextureByID(Tex);
+		m_nWhiteTexID  = pTex ? pTex->GetTextureID() : 0;
 	}
 	else
 	{
@@ -1336,6 +1337,7 @@ void CXConsole::StaticBackground(bool bStatic)
 
 void CXConsole::SetLoadingImage(const char* szFilename)
 {
+	#if 0
 	ITexture* pTex = m_system.GetIRenderer()->LoadTexture(szFilename, 0,0);
 	if (!pTex/* || (pTex->GetFlags() & FT_FAILED)*/)
 	{
@@ -1347,6 +1349,9 @@ void CXConsole::SetLoadingImage(const char* szFilename)
 		m_nLoadingBackTexID = pTex->getId();
 	else
 		m_nLoadingBackTexID = -1;
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 }
 
 
@@ -2511,8 +2516,8 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				//xPos, yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
 				xPos, yPos, fontScale, &glm::vec4(1)[0]);
 			#if 0
-			IRenderAuxText::DrawText(Vec3(xPos - fCharWidth, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, ">");
-			IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
+			IRenderAuxText::DrawText(Legacy::Vec3(xPos - fCharWidth, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, ">");
+			IRenderAuxText::DrawText(Legacy::Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
 			#endif
 
 			if (m_bDrawCursor)
@@ -2522,7 +2527,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				//float n = 1.16f * m_pFont->TextWidth(szCursorLeft);
 				float n = fontScale * m_pFont->TextWidth(szCursorLeft);
 
-				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontScale * 1.16f / 14, nullptr, flags, "_");
+				//IRenderAuxText::DrawText(Legacy::Vec3(xPos + (fCharWidth * n), yPos, 1), fontScale * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
 					"_",
 					//xPos + (/*fCharWidth **/ n), yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
@@ -2546,7 +2551,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				if (yPos + csize > 0)
 				{
 					#if 0
-					IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, buf);
+					IRenderAuxText::DrawText(Legacy::Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, buf);
 					#else
 					m_pFont->RenderText(
 						buf,

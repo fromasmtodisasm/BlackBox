@@ -245,7 +245,7 @@ int CScriptObjectGame::GetTagPoint(IFunctionHandler* pH)
 
 	const char* sTPName;
 	ITagPoint*	pTP = NULL;
-	Vec3		vec(0, 0, 0);
+	Legacy::Vec3		vec(0, 0, 0);
 
 	if (pH->GetParam(1, sTPName))
 	{

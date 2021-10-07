@@ -6,9 +6,9 @@ struct SpotLight;
 
 struct BaseLight
 {
-  Vec3 ambient;
-  Vec3 diffuse;
-  Vec3 specular;
+  Legacy::Vec3 ambient;
+  Legacy::Vec3 diffuse;
+  Legacy::Vec3 specular;
   bool enabled;
   enum Type
   {
@@ -21,12 +21,12 @@ struct BaseLight
 
 struct DirectionLight : BaseLight
 {
-  Vec3 direction;
+  Legacy::Vec3 direction;
 };
 
 struct PointLight : public BaseLight
 {
-  Vec3 position;
+  Legacy::Vec3 position;
 
   float constant;
   float linear;
@@ -36,7 +36,7 @@ struct PointLight : public BaseLight
 
 struct SpotLight : public PointLight
 {
-  Vec3 direction;
+  Legacy::Vec3 direction;
   float cutOff;
   float outerCutOff;
 };

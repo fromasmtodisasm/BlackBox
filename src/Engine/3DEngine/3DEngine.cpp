@@ -76,20 +76,20 @@ void C3DEngine::Draw()
 	gEnv->pRenderer->SetCamera(m_Camera);
   auto w = gEnv->pRenderer->GetWidth() / 2;
   auto h = gEnv->pRenderer->GetHeight() / 2;
-  auto draw = [&](IShaderProgram* p, Vec4d vp) {
+  auto draw = [&](IShaderProgram* p, Legacy::Vec4d vp) {
 	  p->Use();
-	  p->Uniform(Vec2(vp.z, vp.w), "resolution");
-	  p->Uniform(Vec2(vp.x, vp.y), "origin");
+	  p->Uniform(Legacy::Vec2(vp.z, vp.w), "resolution");
+	  p->Uniform(Legacy::Vec2(vp.x, vp.y), "origin");
 	  p->Uniform(s_time, "time");
 	  gEnv->pRenderer->SetViewport(vp.x, vp.y, vp.z, vp.w);
 	  gEnv->pRenderer->DrawFullscreenQuad();
 	  p->Unuse();
   };
 
-	draw(m_Programs[0], Vec4d(0, 0, w, h));
-	draw(m_Programs[1], Vec4d(w, h, w, h));
-	draw(m_Programs[2], Vec4d(0, h, w, h));
-	draw(m_Programs[3], Vec4d(w, 0, w, h));
+	draw(m_Programs[0], Legacy::Vec4d(0, 0, w, h));
+	draw(m_Programs[1], Legacy::Vec4d(w, h, w, h));
+	draw(m_Programs[2], Legacy::Vec4d(0, h, w, h));
+	draw(m_Programs[3], Legacy::Vec4d(w, 0, w, h));
 #endif
 	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
 	gEnv->pRenderer->SetCamera(m_Camera);
@@ -157,7 +157,7 @@ void C3DEngine::SetRenderCallback(RenderCallback pFunc, void* pParams)
 {
 }
 
-void C3DEngine::SetOutdoorAmbientColor(Vec3d vColor)
+void C3DEngine::SetOutdoorAmbientColor(Legacy::Vec3d vColor)
 {
 }
 
@@ -174,7 +174,7 @@ float C3DEngine::GetMaxViewDistance()
   return 0.0f;
 }
 
-void C3DEngine::SetFogColor(const Vec3& vFogColor)
+void C3DEngine::SetFogColor(const Legacy::Vec3& vFogColor)
 {
 }
 
@@ -186,9 +186,9 @@ void C3DEngine::SetFogEnd(const float fFogEnd)
 {
 }
 
-Vec3 C3DEngine::GetFogColor()
+Legacy::Vec3 C3DEngine::GetFogColor()
 {
-  return Vec3();
+  return Legacy::Vec3();
 }
 
 float C3DEngine::GetFogStart()
@@ -231,12 +231,12 @@ float C3DEngine::GetMaxViewDist()
   return 0.0f;
 }
 
-bool C3DEngine::AddStaticObject(int nObjectID, const Vec3& vPos, const float fScale, unsigned char ucBright)
+bool C3DEngine::AddStaticObject(int nObjectID, const Legacy::Vec3& vPos, const float fScale, unsigned char ucBright)
 {
   return false;
 }
 
-bool C3DEngine::RemoveStaticObject(int nObjectID, const Vec3& vPos)
+bool C3DEngine::RemoveStaticObject(int nObjectID, const Legacy::Vec3& vPos)
 {
   return false;
 }
@@ -328,35 +328,35 @@ void C3DEngine::UpdateBeaches()
 {
 }
 
-bool C3DEngine::IsPointInWater(Vec3 vPos)
+bool C3DEngine::IsPointInWater(Legacy::Vec3 vPos)
 {
   return false;
 }
 
-void C3DEngine::AddDynamicLightSource(const CDLight& LSource, IEntityRender* pEnt, int nEntityLightId, const Matrix44* pMatrix)
+void C3DEngine::AddDynamicLightSource(const CDLight& LSource, IEntityRender* pEnt, int nEntityLightId, const Legacy::Matrix44* pMatrix)
 {
 }
 
-void C3DEngine::ApplyForceToEnvironment(Vec3 vPos, float fRadius, float fAmountOfForce)
+void C3DEngine::ApplyForceToEnvironment(Legacy::Vec3 vPos, float fRadius, float fAmountOfForce)
 {
 }
 
-Vec3 C3DEngine::GetSunPosition(bool bMoveUp)
+Legacy::Vec3 C3DEngine::GetSunPosition(bool bMoveUp)
 {
-  return Vec3();
+  return Legacy::Vec3();
 }
 
-unsigned int C3DEngine::GetLightMaskFromPosition(const Vec3& vPos, float fRadius)
+unsigned int C3DEngine::GetLightMaskFromPosition(const Legacy::Vec3& vPos, float fRadius)
 {
   return 0;
 }
 
-Vec3 C3DEngine::GetAmbientColorFromPosition(const Vec3& vPos, float fRadius)
+Legacy::Vec3 C3DEngine::GetAmbientColorFromPosition(const Legacy::Vec3& vPos, float fRadius)
 {
-  return Vec3();
+  return Legacy::Vec3();
 }
 
-int C3DEngine::GetFogVolumeIdFromBBox(const Vec3& vBoxMin, const Vec3& vBoxMax)
+int C3DEngine::GetFogVolumeIdFromBBox(const Legacy::Vec3& vBoxMin, const Legacy::Vec3& vBoxMax)
 {
   return 0;
 }

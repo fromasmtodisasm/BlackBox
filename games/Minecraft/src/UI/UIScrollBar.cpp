@@ -85,25 +85,25 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 		break;
 	case UIM_KEYDOWN:
 		{
-			if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == XKEY_LEFT))
+			if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_LEFT))
 			{
 				m_fValue -= m_fStep;
 
 				OnChanged();
 			}
-			else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == XKEY_RIGHT))
+			else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_RIGHT))
 			{
 				m_fValue += m_fStep;
 
 				OnChanged();
 			}
-			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == XKEY_UP))
+			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_UP))
 			{
 				m_fValue -= m_fStep;
 
 				OnChanged();
 			}
-			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == XKEY_DOWN))
+			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_DOWN))
 			{
 				m_fValue += m_fStep;
 
@@ -174,7 +174,7 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 			// check if mouse position is inside the scroll slider
 			if (m_pUISystem->PointInRect(m_pSliderRect, fX, fY))
 			{
-				if ((lParam == XKEY_MOUSE1) && ((m_iState & UISCROLLBARSTATE_SLIDER_MOVING) == 0) && m_pUISystem->CaptureMouse(this))
+				if ((lParam == Legacy::XKEY_MOUSE1) && ((m_iState & UISCROLLBARSTATE_SLIDER_MOVING) == 0) && m_pUISystem->CaptureMouse(this))
 				{
 					m_iState = UISCROLLBARSTATE_SLIDER_MOVING | UISCROLLBARSTATE_SLIDER_OVER;
 
@@ -205,7 +205,7 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 			{
 				//m_iState = UISCROLLBARSTATE_MINUS_OVER;
 
-				if (lParam == XKEY_MOUSE1)
+				if (lParam == Legacy::XKEY_MOUSE1)
 				{
 					float fTimer = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
 
@@ -232,7 +232,7 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 			{
 				//m_iState = UISCROLLBARSTATE_PLUS_OVER;
 
-				if (lParam == XKEY_MOUSE1)
+				if (lParam == Legacy::XKEY_MOUSE1)
 				{
 					float fTimer = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
 

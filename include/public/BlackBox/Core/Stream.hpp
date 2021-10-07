@@ -26,7 +26,7 @@
 #define GET_BYTE_INDEX(n) DIV8((n))
 #include <BlackBox/Core/ICompressionHelper.hpp> // ICompressionHelper
 #include <BlackBox/Core/IGame.hpp>				// IGame
-#include <BlackBox/Core/MathHelper.hpp>			// Vec3
+#include <BlackBox/Core/MathHelper.hpp>			// Legacy::Vec3
 #include <BlackBox/Network/INetwork.hpp>		// INetwork
 #include <BlackBox/System/ILog.hpp>				// ILog
 #include <BlackBox/System/IStreamEngine.h>		// IStreamEngine
@@ -226,7 +226,7 @@ class CStream
 	bool Read(bool& b);
 	bool Read(char* psz, const DWORD indwBufferSize);
 	bool Read(std::string& str);
-	bool Read(Vec3& v);
+	bool Read(Legacy::Vec3& v);
 	//!read all remaining data in the stream starting from the read pos
 	bool Read(CStream& stm);
 	//!read packed
@@ -254,7 +254,7 @@ class CStream
 	bool Write(const char* psz);
 	bool Write(const std::string& str);
 	bool Write(CStream& stm);
-	bool Write(const Vec3& v);
+	bool Write(const Legacy::Vec3& v);
 	bool _Write(unsigned char c); // not typechecked
 
 	bool WritePkd(unsigned char uc);
@@ -770,7 +770,7 @@ inline bool CStream::Read(std::string& str)
 }
 
 //////////////////////////////////////////////////////////////////////
-inline bool CStream::Read(Vec3& v)
+inline bool CStream::Read(Legacy::Vec3& v)
 {
 	STREAM_VERIFY_TYPE_READ(31);
 	Read(v.x);
@@ -897,7 +897,7 @@ inline bool CStream::Write(const std::string& str)
 }
 
 //////////////////////////////////////////////////////////////////////
-inline bool CStream::Write(const Vec3& v)
+inline bool CStream::Write(const Legacy::Vec3& v)
 {
 	STREAM_VERIFY_TYPE_WRITE(31);
 	Write(v.x);

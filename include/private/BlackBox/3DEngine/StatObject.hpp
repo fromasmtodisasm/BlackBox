@@ -19,12 +19,12 @@ class CIndexedMesh
 public:
 	// geometry data
 	//CObjFace* m_pFaces;
-	Vec3d* m_pVerts;
+	Legacy::Vec3d* m_pVerts;
 	//TexCoord* m_pCoors;
 	struct CBasis* m_pTangBasis;
 	int* m_pVertMats;
 
-	Vec3d* m_pNorms;
+	Legacy::Vec3d* m_pNorms;
 	//UColor* m_pColor;
 	//UColor* m_pColorSec;
 	int m_nFaceCount;
@@ -33,7 +33,7 @@ public:
 	int m_nNormCount;
 
 	// bbox
-	Vec3d m_vBoxMin, m_vBoxMax;
+	Legacy::Vec3d m_vBoxMin, m_vBoxMax;
 
 	// materials table
 	//list2<CMatInfo> m_lstMatTable;
@@ -61,7 +61,7 @@ class CStatObj : public IStatObj
   public:
 	CStatObj(CIndexedMesh IndexedMesh);
 
-	void GetBBox(Vec3& Mins, Vec3& Maxs) override
+	void GetBBox(Legacy::Vec3& Mins, Legacy::Vec3& Maxs) override
 	{
 		Mins = m_IndexedMesh.m_vBoxMin;
 		Maxs = m_IndexedMesh.m_vBoxMax;
@@ -77,15 +77,15 @@ class CStatObj : public IStatObj
 	bool			 EnableLightamapSupport() override;
 	phys_geometry*	 GetPhysGeom(int nType = 0) override;
 	const char*		 GetScriptMaterialName(int Id = -1) override;
-	Vec3			 GetBoxMin() override;
-	Vec3			 GetBoxMax() override;
-	void			 SetBBoxMin(const Vec3& vBBoxMin) override;
-	void			 SetBBoxMax(const Vec3& vBBoxMax) override;
+	Legacy::Vec3			 GetBoxMin() override;
+	Legacy::Vec3			 GetBoxMax() override;
+	void			 SetBBoxMin(const Legacy::Vec3& vBBoxMin) override;
+	void			 SetBBoxMax(const Legacy::Vec3& vBBoxMax) override;
 	float			 GetRadius() override;
 	void			 SetShaderFloat(const char* Name, float Val) override;
 	void			 SetColor(const char* Name, float fR, float fG, float fB, float fA) override;
 	void			 Refresh(int nFlags) override;
-	void			 Render(const struct SRendParams& rParams, const Vec3& t, int nLodLevel = 0) override;
+	void			 Render(const struct SRendParams& rParams, const Legacy::Vec3& t, int nLodLevel = 0) override;
 	IStatObj*		 GetLodObject(int nLodLevel) override;
 	void			 RenderShadowVolumes(const struct SRendParams* pParams, int nLimitLod = -1) override;
 	const CDLight*	 GetLightSources(int nId) override;
@@ -93,16 +93,16 @@ class CStatObj : public IStatObj
 	const char*		 GetFileName() override;
 	const char*		 GetGeoName() override;
 	bool			 IsSameObject(const char* szFileName, const char* szGeomName) override;
-	Vec3			 GetHelperPos(const char* szHelperName) override;
-	const char*		 GetHelperById(int nId, Vec3& vPos, Matrix44* pMat = NULL, int* pnType = NULL) override;
-	const Matrix44*	 GetHelperMatrixByName(const char* szHelperName) override;
+	Legacy::Vec3			 GetHelperPos(const char* szHelperName) override;
+	const char*		 GetHelperById(int nId, Legacy::Vec3& vPos, Legacy::Matrix44* pMat = NULL, int* pnType = NULL) override;
+	const Legacy::Matrix44*	 GetHelperMatrixByName(const char* szHelperName) override;
 	void			 RegisterUser() override;
 	void			 UnregisterUser() override;
 	bool			 IsDefaultObject() override;
 	bool			 MakeObjectPicture(unsigned char* pRGBAData, int nWidth) override;
 	ItShadowVolume*	 GetShadowVolume() override;
 	void			 SetShadowVolume(ItShadowVolume* pSvObj) override;
-	bool			 GetOcclusionVolume(list2<Vec3>*& plstOcclVolVerts, list2<int>*& plstOcclVolInds) override;
+	bool			 GetOcclusionVolume(list2<Legacy::Vec3>*& plstOcclVolVerts, list2<int>*& plstOcclVolInds) override;
 	void			 FreeTriData() override;
 	void			 GetMemoryUsage(struct ICrySizer* pSizer) const override;
 	bool			 CheckValidVegetation() override;

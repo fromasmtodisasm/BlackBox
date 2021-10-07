@@ -174,7 +174,7 @@ public:
 
 	void BroadcastText(const char* sText, float fLifeTime = DEFAULT_TEXT_LIFETIME);
 	void BroadcastCommand(const char* sCmd);
-	//void BroadcastCommand(const char* sCmd, const Vec3& invPos, const Vec3& invNormal, const EntityId inId, const unsigned char incUserByte);
+	//void BroadcastCommand(const char* sCmd, const Legacy::Vec3& invPos, const Legacy::Vec3& invNormal, const EntityId inId, const unsigned char incUserByte);
 
 	void BindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);
 	void UnbindEntity(EntityId idParent, EntityId idChild, unsigned char cParam);

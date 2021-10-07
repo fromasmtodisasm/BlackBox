@@ -251,7 +251,7 @@ enum eInVehiclestate
 		bool	bModelHidden;
 	};
 
-	Vec3 m_vDEBUGAIFIREANGLES;
+	Legacy::Vec3 m_vDEBUGAIFIREANGLES;
 	
 	float m_fRecoilXDelta;
 	float m_fRecoilZDelta;
@@ -282,7 +282,7 @@ public:
 	virtual void ProcessMovements(CXEntityProcessingCmd &ProcessingCmd, bool bScheduled=false);
 	virtual void ProcessWeapons(CXEntityProcessingCmd &ProcessingCmd);
 
-	virtual void FireGrenade(const Vec3 &origin, const Vec3 &angles, IEntity *pIShooter);
+	virtual void FireGrenade(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, IEntity *pIShooter);
 	void SetFiring(bool bIsFiring);
 
 	//! Set new character model for this player.
@@ -291,10 +291,10 @@ public:
 	//! Get character model of this player.
 
 	//! Set new character color for this player.
-	void SetColor( const Vec3 &invColor ){ m_vColor=invColor; }
+	void SetColor( const Legacy::Vec3 &invColor ){ m_vColor=invColor; }
 	
 	//! Get character color of this player.
-	Vec3 GetColor() const { return m_vColor; };
+	Legacy::Vec3 GetColor() const { return m_vColor; };
 
 	/*! Sets the swaying-amplitude
 			@param fAmp amplitude
@@ -310,7 +310,7 @@ public:
 			uses current entity angle for restriction base
 	*/
 	void SetAngleLimitBase( ) { m_AngleLimitBase = GetEntity()->GetAngles(); }
-	void SetAngleLimitBase( const Vec3& base ) { m_AngleLimitBase = base; }
+	void SetAngleLimitBase( const Legacy::Vec3& base ) { m_AngleLimitBase = base; }
 
 	/*! sets base angle for players angels restriction 
 			uses current camera angle for restriction base
@@ -350,10 +350,10 @@ public:
  	bool IsAngleLimitVOn( ) const { return m_AngleLimitVFlag; }
 	bool IsAngleLimitHOn( ) const { return m_AngleLimitHFlag; }	
 
-	Vec3 CalcTangentOnEnviroment( const Vec3	&forward );
+	Legacy::Vec3 CalcTangentOnEnviroment( const Legacy::Vec3	&forward );
 	
 	//deathType - head/body hit
-	void StartDie( const Vec3& hitImpuls, const Vec3 hitPoint, int partid, const int deathType );
+	void StartDie( const Legacy::Vec3& hitImpuls, const Legacy::Vec3 hitPoint, int partid, const int deathType );
 
 	bool HasCollided();
 
@@ -371,13 +371,13 @@ public:
 
 	virtual bool Init();
 	virtual	void Update();
-	virtual	void OnSetAngles( const Vec3 &ang );
+	virtual	void OnSetAngles( const Legacy::Vec3 &ang );
 	virtual	bool Write( CStream &stream,EntityCloneState *cs=NULL);
 	virtual	bool Read( CStream &stream );
 	virtual	bool Read_PATCH_1( CStream &stream );
 	virtual bool QueryContainerInterface( ContainerInterfaceType desired_interface, void **ppInterface);
 	virtual float GetLightRadius();
-	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Vec3d &v3dViewer, uint32 &inoutPriority,
+	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3d &v3dViewer, uint32 &inoutPriority,
 		EntityCloneState &inoutCloneState ) const;
 	
 	/*! Sets camera shaking-parameters
@@ -386,17 +386,17 @@ public:
 			@param shakeFreq frequency if shaking
 			@param shakeTime time in seconds of shaking
 	*/
-	void SetShake(const Vec3& shakeAxis, float shakeDegree, float shakeFreq, float shakeTime) 
+	void SetShake(const Legacy::Vec3& shakeAxis, float shakeDegree, float shakeFreq, float shakeTime) 
 	{ 
 		m_walkParams.shakeAxis=shakeAxis; m_walkParams.shakeDegree=shakeDegree; 
 		m_walkParams.shakeFreq=shakeFreq; m_walkParams.shakeTime=shakeTime; 
 		m_walkParams.shakeOffset=0.0f; m_walkParams.shakeElapsedTime=0.0f; 
 	}
 
-	void SetShakeL(const Vec3& shakeAmpl, const Vec3& shakeFreq, const float shakeTime) 
+	void SetShakeL(const Legacy::Vec3& shakeAmpl, const Legacy::Vec3& shakeFreq, const float shakeTime) 
 			{ m_walkParams.shakeLAmpl=shakeAmpl; m_walkParams.shakeLFreq=shakeFreq; m_walkParams.shakeLTime=shakeTime; m_walkParams.shakeLElapsedTime=0.0f; }
 
-	void SetShakeL2(const Vec3& shakeAmpl, const Vec3& shakeFreq, const float shakeTime) 
+	void SetShakeL2(const Legacy::Vec3& shakeAmpl, const Legacy::Vec3& shakeFreq, const float shakeTime) 
 			{ m_walkParams.shakeLAmpl=shakeAmpl; m_walkParams.shakeLFreq=shakeFreq; 
 					if(m_walkParams.shakeLElapsedTime<m_walkParams.shakeLTime)
 						m_walkParams.shakeLTime += shakeTime;
@@ -404,8 +404,8 @@ public:
 					{	m_walkParams.shakeLTime=shakeTime; m_walkParams.shakeLElapsedTime=0.0f;} }
 
 
-	void SetCameraOffset(const Vec3& Offset);
-	void GetCameraOffset(Vec3& Offset);
+	void SetCameraOffset(const Legacy::Vec3& Offset);
+	void GetCameraOffset(Legacy::Vec3& Offset);
 
 	//! Get statistics information for selected weapon of this player.
 	//! If nWeaponIndex is negative WeaponInfo of selected weapon is returned.	
@@ -437,7 +437,7 @@ public:
 		return(m_bSwimming && !m_pEntity->IsBound()); 
 	} 
 
-	Vec3 m_vDEBUG_POS;
+	Legacy::Vec3 m_vDEBUG_POS;
 
 	// used for Load/Save and Network syncronization
 	bool Save( CStream &stream);
@@ -508,7 +508,7 @@ public:
 	void SetHeatVisionValues(int dwFlags,const char *szName,float fValue,float fFadingValue);
 
 	// returns ACTUAL players direction angle - the one it's shooting/looking at
-	Vec3 GetActualAngles();	
+	Legacy::Vec3 GetActualAngles();	
 
 	//! Check if this player is visible.
 	bool IsVisible() const;
@@ -524,7 +524,7 @@ public:
 protected:
 
 	void UpdateLean();	
-	Vec3 CalcLeanOffset(float leanAngle);
+	Legacy::Vec3 CalcLeanOffset(float leanAngle);
 	bool IsLeaning();
 	void SetEyePos();
 	void SetEyePosDead();
@@ -561,7 +561,7 @@ protected:
 	*/
 	float GetCurrTime() const { return m_pTimer->GetCurrTime(); };
 
-	Vec3 m_vPrevMntPos;	// used when at mounted weapon
+	Legacy::Vec3 m_vPrevMntPos;	// used when at mounted weapon
 
 	// camera pos/angles used for vehicles FPV to mace smooth camera
 
@@ -577,16 +577,16 @@ public:
 	};	
 	void	InitCameraTransition( e_PCM mode, bool OnlyZtransition = false );
 
-	Vec3 m_vCurCamposVhcl;
-	Vec3 m_vCurAngleVhcl;
-	Vec3 m_vCurAngleParent;
+	Legacy::Vec3 m_vCurCamposVhcl;
+	Legacy::Vec3 m_vCurAngleVhcl;
+	Legacy::Vec3 m_vCurAngleParent;
 	e_PCM	m_CameraMode;
 
 	// [filippo]
 	//! this specifies if we want the camera transition work only on the Z pos of the view:
 	//! true - smooth only Z , false - smooth view angles and whole view pos.
 	bool m_bCameraTransitionOnlyZ; 
-	Vec3 m_vDeltaEyeVehicle; //!< needed to shift camera view accordingly with vehicle position while changing sit position.
+	Legacy::Vec3 m_vDeltaEyeVehicle; //!< needed to shift camera view accordingly with vehicle position while changing sit position.
 	bool m_bLastDeltaEyeVehicle; //!< this tell us if m_vDeltaEyeVehicle must be used. in case we are switching sit position inside the same vehicle.
 
 protected:
@@ -595,7 +595,7 @@ protected:
 	float	m_fCameraSpdA;
 	float m_fLastCamUpdateTime;
 
-	void	UpdateCameraTransition( const Vec3& vEyePos  );
+	void	UpdateCameraTransition( const Legacy::Vec3& vEyePos  );
 
 public:
 
@@ -622,17 +622,17 @@ public:
 		float fCurrLean;
 
 
-		Vec3 shakeAxis;
+		Legacy::Vec3 shakeAxis;
 		float shakeDegree;
 		float shakeFreq;
 		float shakeTime;
 		float shakeOffset;
 		float shakeElapsedTime;
 
-		Vec3	shakeAOffset;
-		Vec3	shakeLOffset;
-		Vec3	shakeLAmpl;
-		Vec3	shakeLFreq;
+		Legacy::Vec3	shakeAOffset;
+		Legacy::Vec3	shakeLOffset;
+		Legacy::Vec3	shakeLAmpl;
+		Legacy::Vec3	shakeLFreq;
 		float shakeLTime;
 		float shakeLElapsedTime;
 
@@ -643,7 +643,7 @@ public:
 		float weaponCycle;
 		float	weaponCycleSpeed;
 
-		Vec3 dir;
+		Legacy::Vec3 dir;
 
 		float	speed;
 		float	vertSpeed;
@@ -661,7 +661,7 @@ public:
 	//! Player parameters.
 public:
 
-	Vec3 m_vShake;
+	Legacy::Vec3 m_vShake;
 	PlayerStats m_stats;
 	// Walking params.
 	SWalkParams m_walkParams;
@@ -685,13 +685,13 @@ public:
 
 	void RemoveAllWeapons();
 
-	Vec3 m_vEyePos;
-	Vec3 m_vEyeAngles;
+	Legacy::Vec3 m_vEyePos;
+	Legacy::Vec3 m_vEyeAngles;
 
 protected:
 
 	// angular offset added of something player stands on (i.e. shaking boat)
-	Vec3 m_vEyeAnglesBaseOffset;
+	Legacy::Vec3 m_vEyeAnglesBaseOffset;
 
 	IAIStatObj *m_pLightTarget;
 
@@ -712,7 +712,7 @@ protected:
 	CScriptObjectVector m_ssoHitNormVec;	
 
 	//! Color of model. used for team coloring, default: 1,0,1 (means color wasn't set)
-	Vec3 m_vColor;					
+	Legacy::Vec3 m_vColor;					
 
 	IEntity *m_pRedirected;
 	
@@ -757,13 +757,13 @@ protected:
 	// angles limitation
 	bool	m_AngleLimitVFlag;
 	bool	m_AngleLimitHFlag;
-	Vec3	m_AngleLimitBase;
+	Legacy::Vec3	m_AngleLimitBase;
 	float	m_MinVAngle;
 	float	m_MaxVAngle;
 	float	m_MinHAngle;
 	float	m_MaxHAngle;
 
-	Vec3	m_EnvTangent;
+	Legacy::Vec3	m_EnvTangent;
 
 	// character rotation - first rotate head, than legs	
 	float	m_LegADeltaLimit;			// delta (legs/view) to start rotation
@@ -844,8 +844,8 @@ protected:
 	float	m_JumpForce;
 	float	m_LeanDegree;
 
-	Vec3	m_ValidAngle;
-	Vec3	m_ValidPos;
+	Legacy::Vec3	m_ValidAngle;
+	Legacy::Vec3	m_ValidPos;
 
 	PlayerDynamics m_Dynamics;
 
@@ -930,7 +930,7 @@ private:
 	float		m_fShootAniLength;
 
 public:
-	void GetFirePosAngles( Vec3& firePos, Vec3& fireAngles );
+	void GetFirePosAngles( Legacy::Vec3& firePos, Legacy::Vec3& fireAngles );
 	float CalculateAccuracyFactor(float accuracy);
 
 	// returns arm damage in percent 100 - (arm_health/max_arm_health)*100
@@ -947,7 +947,7 @@ public:
 	bool GoSwim( void );
 	bool RestorePrevStence( void );
 
-	bool CanStand( const Vec3& pos );
+	bool CanStand( const Legacy::Vec3& pos );
 	bool CanProne( bool ignoreSpam = true );
 
 	// BEGIN - Weapon-related functions
@@ -969,9 +969,9 @@ public:
 	
 	CXAreaUser	m_AreaUser;
 
-	Vec3 m_vCharacterAngles;
+	Legacy::Vec3 m_vCharacterAngles;
 
-	virtual Vec3 CalcSoundPos();
+	virtual Legacy::Vec3 CalcSoundPos();
 	void SetViewMode(bool bThirdPerson);
 
 	unsigned MemStats( void );
@@ -1004,7 +1004,7 @@ protected:
 	BlendTimesMap		m_AniBlendTimes;
 	void	UpdateCollisionDamage();
 	void	ProceedFLight( );
-	Vec3	GetFLightPos( );
+	Legacy::Vec3	GetFLightPos( );
 	void	UpdateLightBlinding( );
 
 	void	OnDrawMountedWeapon(const SRendParams & RendParams);
@@ -1030,13 +1030,13 @@ protected:
 public:
 	void	SetBlendTime(const char *sAniName, float fBlendTime);
 	void	GetBlendTime(const char *sAniName, float&fBlendTime);
-	void  PreloadInstanceResources(Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime);
+	void  PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime);
 
 	float m_fGravityOverride;
 
 	int		m_PrevWeaponID;
 
-	typedef std::map<CPlayer*, Vec3> BlindingList;
+	typedef std::map<CPlayer*, Legacy::Vec3> BlindingList;
 	BlindingList 	m_vBlindingList;
 	BlindingList::const_iterator m_LastUsed;
 	float	m_vBlindingValueFade;
@@ -1063,7 +1063,7 @@ public:
 	IEntity *m_pMountedWeapon;
 	// here we store last angles of player at mounted weapon when no intersection 
 	// with any objects would happen
-	Vec3d	m_vSafeAngAtMountedWeapon;
+	Legacy::Vec3d	m_vSafeAngAtMountedWeapon;
 	
 	//! DampInputVector make change the input vector of the player in a smooth way, it is implemented for AIs but can be used also for players.
 	void DampInputVector(vectorf &vec ,float speed ,float stopspeed ,bool only2d ,bool linear);
@@ -1087,15 +1087,15 @@ private:
 	float  								m_fLastGroundHeight;			//!< the ground height when the player was on ground
 
 	//! variables used for the lazy weapon movement
-	Vec3  								m_vDeltaCamAngles;
-	Vec3  								m_vDeltaCamPos;
-	Vec3  								m_vPrevCamAngles;
-	Vec3  								m_vPrevCamPos;
-	Vec3  								m_vWeaponAngles;
+	Legacy::Vec3  								m_vDeltaCamAngles;
+	Legacy::Vec3  								m_vDeltaCamPos;
+	Legacy::Vec3  								m_vPrevCamAngles;
+	Legacy::Vec3  								m_vPrevCamPos;
+	Legacy::Vec3  								m_vWeaponAngles;
 	bool  								m_bWaitForFireRelease;
 
-	Vec3 									m_vProneEnvNormal;
-	Vec3 									m_vCurEntAngle;
+	Legacy::Vec3 									m_vProneEnvNormal;
+	Legacy::Vec3 									m_vCurEntAngle;
 
 	bool									m_bWriteOccured;					//!< flag to tell the player update that his state has been written over a network stream
 
@@ -1116,8 +1116,8 @@ public:
 
 	friend class CSynchedRandomSeed;
 
-	Vec3 m_vLadderPosition; //!< when player use a ladder we have to know the ladder position to orient the player model to the ladder.
-	Vec3 m_vLadderAngles; //!< the player model orientation when using the ladder, useful to limit the head rotation.
+	Legacy::Vec3 m_vLadderPosition; //!< when player use a ladder we have to know the ladder position to orient the player model to the ladder.
+	Legacy::Vec3 m_vLadderAngles; //!< the player model orientation when using the ladder, useful to limit the head rotation.
 
 private:
 

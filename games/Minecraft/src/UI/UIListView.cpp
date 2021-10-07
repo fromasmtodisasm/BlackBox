@@ -22,6 +22,15 @@
 #include <algorithm>
 #include <iostream>
 
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 _DECLARE_SCRIPTABLEEX(CUIListView);
 CUIListView *CUIListView::m_pStaticThis = 0;
 
@@ -221,39 +230,39 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			switch(lParam)
 			{
-			case XKEY_PAGE_DOWN:
-			case XKEY_MWHEEL_DOWN:
+			case Legacy::XKEY_PAGE_DOWN:
+			case Legacy::XKEY_MWHEEL_DOWN:
 				{
 					if (m_pVScroll)
 					{
 						// scroll 3 items down
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_DOWN);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
 					}
 				}
 				break;
-			case XKEY_PAGE_UP:
-			case XKEY_MWHEEL_UP:
+			case Legacy::XKEY_PAGE_UP:
+			case Legacy::XKEY_MWHEEL_UP:
 				{
 					if (m_pVScroll)
 					{
 						// scroll 3 items up
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, XKEY_UP);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
 					}
 				}
 				break;
-			case XKEY_SPACE:
-			case XKEY_RETURN:
-			case XKEY_NUMPADENTER:
+			case Legacy::XKEY_SPACE:
+			case Legacy::XKEY_RETURN:
+			case Legacy::XKEY_NUMPADENTER:
 				{
 					OnCommand();
 				}
 				break;
-			case XKEY_LEFT:
-			case XKEY_RIGHT:
+			case Legacy::XKEY_LEFT:
+			case Legacy::XKEY_RIGHT:
 				{
 					if (!m_bColumnSelect)
 					{
@@ -264,7 +273,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					else
 					{
-						if (lParam == XKEY_LEFT)
+						if (lParam == Legacy::XKEY_LEFT)
 						{
 							int it = m_iSelectedColumn;
 
@@ -295,7 +304,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-			case XKEY_DOWN:
+			case Legacy::XKEY_DOWN:
 				{
 					if (m_vSelectionList.empty())
 					{
@@ -350,7 +359,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-			case XKEY_UP:
+			case Legacy::XKEY_UP:
 				{
 					if (m_vSelectionList.empty())
 					{
@@ -487,7 +496,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 				}
 				else if (GetStyle() & UISTYLE_MULTISELECTION)
 				{
-					if ((m_pUISystem->GetIInput()->KeyDown(XKEY_LCONTROL)) || (m_pUISystem->GetIInput()->KeyDown(XKEY_RCONTROL)))
+					if ((m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL)) || (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL)))
 					{
 						
 						SelectIndex(iIndex);
@@ -496,7 +505,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 
 						OnChanged();
 					}
-					else if ((m_pUISystem->GetIInput()->KeyDown(XKEY_LSHIFT)) || (m_pUISystem->GetIInput()->KeyDown(XKEY_LSHIFT)))
+					else if ((m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT)) || (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT)))
 					{
 						if ((GetSelectionCount() > 0) && (pItor != m_pSelectionStart))
 						{
@@ -1501,7 +1510,7 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 				pImgRect.fWidth = pImage->fWidth;
 				pImgRect.fHeight = pImage->fHeight;
 
-				m_pUISystem->DrawImage(pImgRect, pImage->iTextureID, pImage->vTexCoord, color4f(1.0f, 1.0f, 1.0f, 1.0f));
+				m_pUISystem->DrawImage(pImgRect, (int)pImage->iTextureID, pImage->vTexCoord, color4f(1.0f, 1.0f, 1.0f, 1.0f));
 			}
 
 			m_pUISystem->AdjustRect(&pCellRect, pCellRect, m_fCellPadding);
@@ -1605,8 +1614,8 @@ bool CUIListView::SortCallback(const UIListItem *pOne, const UIListItem *pTwo)
 
 	if (m_pStaticThis->m_vColumnList[m_pStaticThis->m_iSortColumn].bNumeric)
 	{
-		float fOne = _wtof(szOne.c_str());
-		float fTwo = _wtof(szTwo.c_str());
+		float fOne = (float)_wtof(szOne.c_str());
+		float fTwo = (float)_wtof(szTwo.c_str());
 
 		if (m_pStaticThis->m_iSortOrder == UISORT_ASCENDING)
 		{

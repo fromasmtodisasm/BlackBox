@@ -441,8 +441,8 @@ void CSystem::LoadScreen()
 
 	string sLoadingScreenTexture = string("loading.png");
 
-	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
 	#if 0
+	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
 	m_env.pConsole->ResetProgressBar(0x7fffffff);
 	#endif
 	//GetILog()->UpdateLoadingScreen("");	// just to draw the console

@@ -3,7 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-using Vec1 = glm::vec1;
+namespace Legacy
+{
 using Vec2 = glm::vec2;
 using IVec2 = glm::ivec2;
 using Vec3 = glm::vec3;
@@ -17,10 +18,11 @@ using Mat4 = glm::mat4;
 using Vec3d = glm::ivec3;
 using Vec4d = glm::ivec4;
 using Matrix44 = glm::mat4;
+}
+
+//using vectorf = Legacy::Vec3;
 
 
-template<class T>
-using Vec2_tpl = glm::vec<2,T>;
 #else
 
 #endif // USE_GLM

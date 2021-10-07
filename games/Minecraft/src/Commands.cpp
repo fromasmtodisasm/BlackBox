@@ -493,7 +493,7 @@ private:
           GetISystem()->GetIConsole()->PrintLine("Error, tagpoint [%s] not exist", tag.c_str());
           return false;
         }
-        Vec3 pos, ang;
+        Legacy::Vec3 pos, ang;
         tag_point->GetPos(pos);
         tag_point->GetAngles(ang);
         m_World->GetActiveScene()->getCurrentCamera()->SetPos(pos);

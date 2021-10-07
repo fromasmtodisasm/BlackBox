@@ -155,6 +155,7 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 
 int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 {
+#if 0
 	const char* name;
 	if (pH->GetParams(name))
 	{
@@ -165,17 +166,20 @@ int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
     }
   }
 	return pH->EndFunctionNull();
+#else
+	NOT_IMPLEMENTED_V;
+#endif
 }
 
 int CScriptObjectSystem::Log(IFunctionHandler* pH)
 {
-  SCRIPT_CHECK_PARAMETERS(1);
+	SCRIPT_CHECK_PARAMETERS(1);
 	const char* string;
 
-  pH->GetParam(1, string);
-  m_pSystem->Log(string);
-  //m_pConsole->PrintLine(string);
-  return pH->EndFunction();
+	pH->GetParam(1, string);
+	m_pSystem->Log(string);
+	//m_pConsole->PrintLine(string);
+	return pH->EndFunction();
 }
 
 int CScriptObjectSystem::Print(const char* text, float x, float y, float scale, float r, float g, float b, float a)

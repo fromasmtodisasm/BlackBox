@@ -6,7 +6,7 @@
 #define PITCH	(1)    
 #define ROLL	(0)   
 
-std::vector<Vec3> lineBuffer;
+std::vector<Legacy::Vec3> lineBuffer;
 
 float gGravity  = 9.8f;
 int interval = 9000;
@@ -48,7 +48,7 @@ void CClient::Update()
 	}
 	
 	const float FloorLevel = 2;
-	auto CamPos = Vec3(m_CameraController.CurrentCamera()->GetPos());
+	auto CamPos = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
 
 	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
 	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
@@ -59,7 +59,7 @@ void CClient::Update()
 	auto frame_time	 = gEnv->pTimer->GetRealFrameTime();
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
 	m_NumHitsInFrame = 0;
-	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));
+	m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0));
 	if (!gEnv->pConsole->IsOpened())
 		m_pGame->GetActionMapManager()->Update(16);
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
@@ -98,7 +98,7 @@ void CClient::Update()
 		auto pos = m_CameraController.CurrentCamera()->GetPos();
 		if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
 		m_JumpPressed = true;
-		//m_CameraController.CurrentCamera()->SetPos(pos + Vec3(0, 0.01,0));
+		//m_CameraController.CurrentCamera()->SetPos(pos + Legacy::Vec3(0, 0.01,0));
 
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
@@ -115,7 +115,7 @@ void CClient::Update()
 
 	auto pos = m_CameraController.CurrentCamera()->GetPos();
 	auto cam = m_CameraController.CurrentCamera();
-	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Vec3(2, -0.5, -1), pos + cam->Front*Vec3(3, 0, 1), UCol(0,0,1,1));
+	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Legacy::Vec3(2, -0.5, -1), pos + cam->Front*Legacy::Vec3(3, 0, 1), UCol(0,0,1,1));
 
 	//m_CameraController.SetRenderCamera(0);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
@@ -139,20 +139,20 @@ bool CClient::Init()
 
 	//m_pClient = gEnv->pNetwork->CreateClient(this);
 
-	//m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Vec4(0, 0, 0, 10)));
-	//m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Vec4(10, 0, 0, 10)));
-	//m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Vec4(0, 0, 10, 10)));
-	//m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Vec4(10,0,10,10)));
+	//m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Legacy::Vec4(0, 0, 0, 10)));
+	//m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Legacy::Vec4(10, 0, 0, 10)));
+	//m_testObjects.emplace_back(TestObject(AABB({6, 0, 0}, {11, 5, 5}), Legacy::Vec4(0, 0, 10, 10)));
+	//m_testObjects.emplace_back(TestObject(AABB({-40, -0.5, 40}, {40, 0.5, -40}), Legacy::Vec4(10,0,10,10)));
 
 
 	srand(static_cast<unsigned int>(time(0)));
 
-	Vec3 left = Vec3(-40, -40, -40);
-	Vec3 right = Vec3(40, 40, 40);
+	Legacy::Vec3 left = Legacy::Vec3(-40, -40, -40);
+	Legacy::Vec3 right = Legacy::Vec3(40, 40, 40);
 	auto create_obj = [&]()->auto {
 		const auto rand_pos = RandomVector(left, right);
 		return TestObject(
-			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
+			rand_pos, {5, 5, 5}, Legacy::Vec4(RandomVector(Legacy::Vec3(-5), Legacy::Vec3(10)), 1.f));
 	};
 	for (int i = 0; i < 10; i++)
 	{
@@ -161,13 +161,15 @@ bool CClient::Init()
 		);
 	}
 
-	//auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(4, 10, 40, 255));
+	//auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Legacy::Vec4(4, 10, 40, 255));
 	//CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
 	//m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
+	#if 0
 	if (gEnv->pRenderer)
 		m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
+	#endif
 
 	return Script::CallMethod(m_PlayerScript, "OnInit");
 }
@@ -349,8 +351,8 @@ void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 
 void CClient::OnLoadScene()
 {
-	m_CameraController.AddCamera(new CCamera(/*Vec3(0,0,0)*/));
-	//m_CameraController.AddCamera(new CCamera(/*Vec3(10,10,10)*/));
+	m_CameraController.AddCamera(new CCamera(/*Legacy::Vec3(0,0,0)*/));
+	//m_CameraController.AddCamera(new CCamera(/*Legacy::Vec3(10,10,10)*/));
 	//m_CameraController.SetRenderCamera(1);
 	m_CameraController.InitCVars();
 }
@@ -358,7 +360,7 @@ void CClient::OnLoadScene()
 void CClient::DrawAux()
 {
 	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
-	auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col) {
+	auto draw_quad = [](Legacy::Vec3 p1, Legacy::Vec3 p2, Legacy::Vec3 p3, Legacy::Vec3 p4, UCol col) {
 		auto render = gEnv->pRenderer->GetIRenderAuxGeom();
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
@@ -394,7 +396,7 @@ void CClient::DrawAux()
 		#if 0
 		for (int i = 0; i < (lineBuffer.size() - 1); i ++)
 		{
-			render->DrawLine(lineBuffer[i] + Vec3(0, 0.1, 0), UCol(255,255,255,255), lineBuffer[i + 1] + Vec3(0, 0.1, 0), UCol(255,255,255,255));	
+			render->DrawLine(lineBuffer[i] + Legacy::Vec3(0, 0.1, 0), UCol(255,255,255,255), lineBuffer[i + 1] + Legacy::Vec3(0, 0.1, 0), UCol(255,255,255,255));	
 		}
 		#else
 			render->DrawLines(lineBuffer.data(), lineBuffer.size(), UCol(255,255,255,255));	
@@ -409,15 +411,17 @@ void CClient::DrawAux()
 	render->DrawLine(
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
-	DrawAxis(render, Vec3(40));
+	DrawAxis(render, Legacy::Vec3(40));
 	//m_pRender->DrawFullScreenImage(m_CrossHair->getId());
 	size_t ch_w = 20;
 	size_t ch_h = 20;
+	#if 0
 	if (gEnv->pRenderer)
 		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
+	#endif
 }
 
-void CClient::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
+void CClient::DrawAxis(IRenderAuxGeom* render, Legacy::Vec3 axis)
 {
 	// Axis
 	///////////////////////////////////////
@@ -425,17 +429,17 @@ void CClient::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
 	{
 		auto& a = axis;
 		{
-			const UCol c = Vec3(1, 0, 0);
+			const UCol c = Legacy::Vec3(1, 0, 0);
 			render->DrawLine(
 				{-a.x, 0, 0}, c, {a.x, 0, 0}, c);
 		}
 		{
-			const UCol c = Vec3(0, 1, 0);
+			const UCol c = Legacy::Vec3(0, 1, 0);
 			render->DrawLine(
 				{0, -a.y, 0}, c, {0, a.y, 0}, c);
 		}
 		{
-			const UCol c = Vec3(0, 0, 1);
+			const UCol c = Legacy::Vec3(0, 0, 1);
 			render->DrawLine(
 				{0, 0, -a.z}, c, {0, 0, a.z}, c);
 		}

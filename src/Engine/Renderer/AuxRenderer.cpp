@@ -401,7 +401,7 @@ struct AABBInstanceData
 bool first_draw = true;
 
 //TODO: Довести до ума, нужно учитывать трансформации объекта
-void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
+void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col)
 {
 	// #unreferenced
 	// auto& shader = m_BoundingBoxShader;
@@ -415,7 +415,7 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	{
 #if 0
 		m_aabbBufferPtr->Model	  = transform;
-		m_aabbBufferPtr->LightPos = Vec3(300);
+		m_aabbBufferPtr->LightPos = Legacy::Vec3(300);
 		m_aabbBufferPtr->Update();
 #endif
 	}
@@ -423,89 +423,89 @@ void CRenderAuxGeom::DrawAABB(Vec3 min, Vec3 max, const UCol& col)
 	std::array<BB_VERTEX, 36> verts = {
 
 		#if 0
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 		#else
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{1, 0, 0}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{1, 0, 0}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{1, 0, 0}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Vec3{1, 0, 0}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 0}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{1, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 1}},
-		BB_VERTEX{Vec3(transform * Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Vec3{1, 0, 0}, Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 		#endif
 
 
@@ -556,7 +556,7 @@ void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image)
 {
 }
 
-void CRenderAuxGeom::DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2)
+void CRenderAuxGeom::DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2)
 {
 	SAuxVertex* pVertices(nullptr);
 	AddPrimitive(pVertices, 3, RenderPrimitive::TRIANGLES);
@@ -571,7 +571,7 @@ void CRenderAuxGeom::DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3&
 	pVertices[2].color.dcolor = PackColor(colV2);
 }
 
-void CRenderAuxGeom::DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, float thickness)
+void CRenderAuxGeom::DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, float thickness)
 {
 	if (thickness <= 1.0f)
 	{
@@ -585,7 +585,7 @@ void CRenderAuxGeom::DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1,
 	}
 }
 
-void CRenderAuxGeom::DrawLines(const Vec3* v, uint32 numPoints, const UCol& col, float thickness)
+void CRenderAuxGeom::DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness)
 {
 	//return;
 	if (thickness <= 1.0f)

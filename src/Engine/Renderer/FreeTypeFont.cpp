@@ -102,7 +102,7 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
 	auto render = GetISystem()->GetIRenderer();
-	Vec4 cur_c(color[0], color[1], color[2], color[3]);
+	Legacy::Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 
 	// Iterate through all characters
@@ -130,8 +130,8 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 					color[1]		  = newColor.b / 255.f;
 					color[2]		  = 1.f;
 					color[3]		  = newColor.r /255.f;
-					//sb->textColor = Vec3(Vec3(color[0], color[1], color[2]));
-					cur_c = Vec4(
+					//sb->textColor = Legacy::Vec3(Legacy::Vec3(color[0], color[1], color[2]));
+					cur_c = Legacy::Vec4(
 						#if 1
 						color[0], // green 
 						color[1], // blue
@@ -170,16 +170,16 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 
 		// Update VBO for each character
 		using P3F_T2F					= SVF_P3F_C4B_T2F;
-		Vec2 uv_pos						= Vec2(ch.Pos) / (float)atlas_size;
-		Vec2 uv_size					= Vec2(ch.Size) / (float)atlas_size;
+		Legacy::Vec2 uv_pos						= Legacy::Vec2(ch.Pos) / (float)atlas_size;
+		Legacy::Vec2 uv_size					= Legacy::Vec2(ch.Size) / (float)atlas_size;
 
-		Vec4 pA, pB, pC, pD;
-		pA								= Vec4(Vec3{xpos, ypos - h, 0}, 1.f);
-		pB								= Vec4(Vec3{xpos, ypos, 0}, 1.f);
-		pC								= Vec4(Vec3{xpos + w, ypos, 0}, 1.f);
-		pD								= Vec4(Vec3{xpos + w, ypos - h, 0}, 1.f);
+		Legacy::Vec4 pA, pB, pC, pD;
+		pA								= Legacy::Vec4(Legacy::Vec3{xpos, ypos - h, 0}, 1.f);
+		pB								= Legacy::Vec4(Legacy::Vec3{xpos, ypos, 0}, 1.f);
+		pC								= Legacy::Vec4(Legacy::Vec3{xpos + w, ypos, 0}, 1.f);
+		pD								= Legacy::Vec4(Legacy::Vec3{xpos + w, ypos - h, 0}, 1.f);
 
-		Vec2 tA{0.f / 160, 14.f / 127},
+		Legacy::Vec2 tA{0.f / 160, 14.f / 127},
 			tB{0.f / 160, 23.f / 127},
 			tD{6.f / 160, 14.f / 127},
 			tC{6.f / 160, 23.f / 127};
@@ -191,13 +191,13 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 		#endif
 
 		std::array<P3F_T2F, 6> vertices = {
-			P3F_T2F{Vec3(projection * pA), UCol((cur_c)), tA},
-			P3F_T2F{Vec3(projection * pB), UCol((cur_c)), tB},
-			P3F_T2F{Vec3(projection * pC), UCol((cur_c)), tC},
+			P3F_T2F{Legacy::Vec3(projection * pA), UCol((cur_c)), tA},
+			P3F_T2F{Legacy::Vec3(projection * pB), UCol((cur_c)), tB},
+			P3F_T2F{Legacy::Vec3(projection * pC), UCol((cur_c)), tC},
                                                 
-			P3F_T2F{Vec3(projection * pC), UCol((cur_c)), tC},
-			P3F_T2F{Vec3(projection * pD), UCol((cur_c)), tD},
-			P3F_T2F{Vec3(projection * pA), UCol((cur_c)), tA},
+			P3F_T2F{Legacy::Vec3(projection * pC), UCol((cur_c)), tC},
+			P3F_T2F{Legacy::Vec3(projection * pD), UCol((cur_c)), tD},
+			P3F_T2F{Legacy::Vec3(projection * pA), UCol((cur_c)), tA},
 		};
 		m_CharBuffer.push_back(vertices);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
@@ -349,7 +349,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 
 		struct Texel
 		{
-			using Type = Vec4;
+			using Type = Legacy::Vec4;
 			//DXGI_FORMAT Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		};
 
@@ -485,11 +485,11 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
 	#endif
 #if 0
-    Vec3 vertices[] =
+    Legacy::Vec3 vertices[] =
     {
-        Vec3( 0.0f, 0.5f, 0.5f ),
-        Vec3( 0.5f, -0.5f, 0.5f ),
-        Vec3( -0.5f, -0.5f, 0.5f ),
+        Legacy::Vec3( 0.0f, 0.5f, 0.5f ),
+        Legacy::Vec3( 0.5f, -0.5f, 0.5f ),
+        Legacy::Vec3( -0.5f, -0.5f, 0.5f ),
     };
 	gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 3, false);
 #endif

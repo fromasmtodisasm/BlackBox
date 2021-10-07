@@ -16,13 +16,13 @@
 
 namespace
 {
-	Vec3 RandomVector(Vec3 left, Vec3 right, float floor = 5)
+	Legacy::Vec3 RandomVector(Legacy::Vec3 left, Legacy::Vec3 right, float floor = 5)
 	{
-		const Vec3 vec(rand(), rand(), rand());
-		return left + static_cast<Vec3>(vec) / (static_cast<Vec3>(Vec3(static_cast<float>(RAND_MAX)) / (right - left)));
+		const Legacy::Vec3 vec(rand(), rand(), rand());
+		return left + static_cast<Legacy::Vec3>(vec) / (static_cast<Legacy::Vec3>(Legacy::Vec3(static_cast<float>(RAND_MAX)) / (right - left)));
 	}
 
-	std::string vec_to_string(Vec3 vec)
+	std::string vec_to_string(Legacy::Vec3 vec)
 	{
 		auto result = "{ x: " + std::to_string(vec.x);
 		result += ", y: " + std::to_string(vec.y);
@@ -107,7 +107,7 @@ class CClient :
 
   private:
 	void DrawAux();
-	void DrawAxis(IRenderAuxGeom* render, Vec3 axis);
+	void DrawAxis(IRenderAuxGeom* render, Legacy::Vec3 axis);
 	void IntersectionTest();
 	void IntersectionByRayCasting();
 
@@ -130,21 +130,21 @@ class CClient :
 	{
 		SIntersectionState() = default;
 		bool m_NeedIntersect = false;
-		Vec3 m_LastPickedPos = Vec3(0);
+		Legacy::Vec3 m_LastPickedPos = Legacy::Vec3(0);
 		struct Ray
 		{
 			Ray() = default;
-			Vec3 start;
-			Vec3 end;
-			Vec3 origin;
-			Vec3 direction;
+			Legacy::Vec3 start;
+			Legacy::Vec3 end;
+			Legacy::Vec3 origin;
+			Legacy::Vec3 direction;
 		} ray;
 		std::vector<TestObject>::iterator picked;
 		float m_CurrentDistant = 0.f;
 		float mx, my;
 	} m_IntersectionState;
 
-	std::vector<Vec3> m_LineList;
+	std::vector<Legacy::Vec3> m_LineList;
 	bool m_InsertLines = false;
 
 	ITexture* m_CrossHair = nullptr;

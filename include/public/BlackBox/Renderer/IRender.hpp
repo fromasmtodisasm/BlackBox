@@ -20,6 +20,11 @@ typedef unsigned short ushort;
 
 #include <vector>
 
+#ifndef NOT_IMPLEMENTED_V
+#define NOT_IMPLEMENTED_V    \
+	assert(0 && __FUNCTION__); \
+	return {};
+#endif
 #ifndef NOT_IMPLEMENTED
 #define NOT_IMPLEMENTED\
 	assert(0 && __FUNCTION__);
@@ -114,12 +119,12 @@ typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferP
 
 struct Transform
 {
-	Vec3 position;
-	Vec3 rotation;
-	Vec3 scale;
+	Legacy::Vec3 position;
+	Legacy::Vec3 rotation;
+	Legacy::Vec3 scale;
 
 	Transform() = default;
-	Transform(Vec3 position, Vec3 rotation, Vec3 scale)
+	Transform(Legacy::Vec3 position, Legacy::Vec3 rotation, Legacy::Vec3 scale)
 		: position(position), rotation(rotation), scale(scale)
 	{
 	}
@@ -147,6 +152,21 @@ struct Transform
 #define GS_BLDST_DSTALPHA 0x70
 #define GS_BLDST_ONEMINUSDSTALPHA 0x80
 
+#define GS_BUMP                    0xa0
+#define GS_ENV                     0xb0
+
+#define GS_DXT1                    0xc0
+#define GS_DXT3                    0xd0
+#define GS_DXT5                    0xe0
+
+#define GS_BLEND_MASK              0xff
+
+#define GS_DEPTHWRITE               0x00000100
+
+#define GS_MODULATE                0x00000200
+#define GS_NOCOLMASK               0x00000400
+#define GS_ADDITIONALSTATE         0x00000800
+
 #define GS_POLYLINE 0x00001000
 #define GS_TEXPARAM_CLAMP 0x00002000
 #define GS_TEXPARAM_UCLAMP 0x00004000
@@ -157,6 +177,49 @@ struct Transform
 #define GS_DEPTHFUNC_EQUAL 0x00100000
 #define GS_DEPTHFUNC_GREAT 0x00200000
 #define GS_STENCIL 0x00400000
+
+//////////////////////////////////////////////////////////////////////
+// Texture object interface
+struct ITexPic
+{
+  virtual void AddRef() = 0;
+  virtual void Release(int bForce=false)=0;
+  virtual const char *GetName()=0;
+  virtual int GetWidth() = 0;
+  virtual int GetHeight() = 0;
+  virtual int GetOriginalWidth() = 0;
+  virtual int GetOriginalHeight() = 0;
+  virtual int GetTextureID() = 0;
+  virtual int GetFlags() = 0;
+  virtual int GetFlags2() = 0;
+  virtual void SetClamp(bool bEnable) = 0;
+  virtual bool IsTextureLoaded() = 0;
+  virtual void PrecacheAsynchronously(float fDist, int Flags) = 0;
+  virtual void Preload (int Flags)=0;
+  virtual byte *GetData32()=0;
+  virtual bool SetFilter(int nFilter)=0;
+};
+
+#define	FORMAT_8_BIT	 8
+#define FORMAT_24_BIT	24
+#define FORMAT_32_BIT	32
+
+//////////////////////////////////////////////////////////////////////
+// Import and Export interfaces passed to the renderer
+struct SCryRenderInterface
+{
+	class CMalloc* igcpMalloc;
+
+	struct ILog*	 ipLog;
+	struct IConsole* ipConsole;
+	struct ITimer*	 ipTimer;
+	struct ISystem*	 ipSystem;
+	int*			 ipTest_int;
+#if 0
+	IPhysicalWorld* pIPhysicalWorld;
+#endif
+};
+
 
 enum class RenderPrimitive
 {
@@ -444,7 +507,7 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0)  = 0;
 
 	//! Draw a bbox specified by mins/maxs (debug puprposes)
-	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) = 0;
+	virtual void Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) = 0;
 
 	//! Set the renderer camera
 	virtual void SetCamera(const CCamera& cam) = 0;
@@ -461,6 +524,9 @@ struct IRenderer : public IRendererCallbackServer
 	//! Write a message on the screen with additional flags.
 	//! for flags @see
 	virtual void Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info) = 0;
+
+	//! Draw a 2d image on the screen (Hud etc.)
+	virtual void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) = 0;
 
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
@@ -510,7 +576,7 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void GetProjectionMatrix(float* mat) = 0;
 
 	//! for editor
-	virtual Vec3 GetUnProject(const Vec3& WindowCoords, const CCamera& cam) = 0;
+	virtual Legacy::Vec3 GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam) = 0;
 
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
 
@@ -518,7 +584,11 @@ struct IRenderer : public IRendererCallbackServer
 
 	virtual int EnumDisplayFormats(SDispFormat* formats) = 0;
 
+	virtual float ScaleCoordX(float value){ NOT_IMPLEMENTED_V; }
+	virtual float ScaleCoordY(float value){ NOT_IMPLEMENTED_V; }
+
 	virtual void SetState(State state, bool enable)			 = 0;
+	inline void SetState(int State) { NOT_IMPLEMENTED; };
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
 	virtual void PushProfileMarker(char* label) = 0;
@@ -550,9 +620,9 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void GetPolyCount(int& nPolygons, int& nShadowVolPolys) = 0;
 
 	// 3d engine set this color to fog color
-	virtual void SetClearColor(const Vec3& vColor)	 = 0;
+	virtual void SetClearColor(const Legacy::Vec3& vColor)	 = 0;
 	virtual void ClearDepthBuffer()					 = 0;
-	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
+	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) = 0;
 
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
 	//////////////////////////////////////////////////////////////////////
@@ -561,16 +631,16 @@ struct IRenderer : public IRendererCallbackServer
 			@param fSize: size of the image
 			@nTextureId:	Texture Id dell'immagine
 	*/
-	virtual void DrawLabelImage(const Vec3& vPos, float fSize, int nTextureId) 
+	virtual void DrawLabelImage(const Legacy::Vec3& vPos, float fSize, int nTextureId) 
 	{
 		NOT_IMPLEMENTED;
 	}
 
-	virtual void DrawLabel(Vec3 pos, float font_size, const char* label_text, ...)													
+	virtual void DrawLabel(Legacy::Vec3 pos, float font_size, const char* label_text, ...)													
 	{
 		NOT_IMPLEMENTED;
 	}
-	virtual void DrawLabelEx(Vec3 pos, float font_size, float* pfColor, bool bFixedSize, bool bCenter, const char* label_text, ...) 
+	virtual void DrawLabelEx(Legacy::Vec3 pos, float font_size, float* pfColor, bool bFixedSize, bool bCenter, const char* label_text, ...) 
 	{
 		NOT_IMPLEMENTED;
 	}
@@ -613,9 +683,46 @@ struct IRenderer : public IRendererCallbackServer
 
 	////////////////////////////////////////////////////////////////////////////////
 	virtual IShader* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) = 0;
-	virtual void Sh_Reload()															  = 0;
+	virtual void	 Sh_Reload()												   = 0;
 	// Loading of the texture for name(nameTex)
-	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
+	//virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
+	virtual ITexPic*  EF_GetTextureByID(int Id)
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return nullptr;
+		#endif
+	}
+
+	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return 0;
+		#endif
+	}
+	#if 0
+	virtual bool		 DXTCompress(byte* raw_data, int nWidth, int nHeight, ETEX_Format eTF, bool bUseHW, bool bGenMips, int nSrcBytesPerPix, MIPDXTcallback callback = 0)
+	{
+		NOT_IMPLEMENTED_V;
+	}
+	virtual bool		 DXTDecompress(byte* srcData, byte* dstData, int nWidth, int nHeight, ETEX_Format eSrcTF, bool bUseHW, int nDstBytesPerPix)	
+	{
+		NOT_IMPLEMENTED_V;
+	}
+	#endif
+	virtual void RemoveTexture(unsigned int TextureId)
+	{
+		NOT_IMPLEMENTED;
+	}
+	virtual void RemoveTexture(ITexPic* pTexPic)	
+	{
+		NOT_IMPLEMENTED;
+	}
+
+
 };
 
 extern "C"
@@ -626,15 +733,95 @@ extern "C"
 
 #include "VertexFormats.hpp"
 
+//////////////////////////////////////////////////////////////////////////
+// this structure used to pass render parameters to Render() functions of IStatObj and ICharInstance
 struct SRendParams
 {
-	IShader* Shader;
-//	std::vector<UniformValue> uniforms;
-	Material* material;
-	CCamera* Camera;
-	DirectionLight* directionLight;
-	Mat4 Transform;
+  SRendParams()
+  {
+	  memset(this, 0, sizeof(SRendParams));
+	  nShaderTemplate = -2;
+	  fScale		  = 1.f;
+	  #if 0
+	  vColor(1.f, 1.f, 1.f);
+	  #endif
+	  fAlpha	  = 1.f;
+	  fSQDistance = -1.f;
+  }
+
+	SRendParams (const SRendParams& rThat)
+	{
+		memcpy (this, &rThat, sizeof(SRendParams));
+	}
+
+	//! position of render elements
+  Legacy::Vec3				vPos;
+	//! scale of render elements
+  float				fScale;
+	//! angles of the object
+  Legacy::Vec3				vAngles;
+	//! object transformations
+  Legacy::Matrix44		*pMatrix;
+  //! custom offset for sorting by distance
+  float				fCustomSortOffset;
+	//! shader template to use
+  int					nShaderTemplate;
+	//! light mask to specifiy which light to use on the object
+  unsigned int nDLightMask;
+	//! strongest light affecting the object
+	unsigned int nStrongestDLightMask;
+	//! fog volume id
+  int					nFogVolumeID;
+	//! amount of bending animations for vegetations
+  float				fBending;
+	//! state shader
+  IShader			*pStateShader;
+	//! list of shadow map casters
+  #if 0
+  list2<ShadowMapLightSourceInstance> * pShadowMapCasters;
+  #endif
+	//! object color
+  Legacy::Vec3 vColor{1.f, 1.f, 1.f};
+	//! object alpha
+  float     fAlpha;
+	//! force a sort value for render elements
+	int				nSortValue;
+	//! Ambient color for the object
+	Legacy::Vec3			vAmbientColor;
+	//! distance from camera
+  float     fDistance;
+	//! CCObject flags
+  int		    dwFObjFlags;
+  #if 0
+	//! light source for shadow volume calculations
+	CDLight		*pShadowVolumeLightSource;
+  //! reference to entity, allows to improve handling of shadow volumes of IStatObj instances
+  struct IEntityRender	* pCaller;
+	//! Heat Amount for heat vision
+	float			fHeatAmount;
+	//! define size of shadow volume
+	float			fShadowVolumeExtent;
+	//! lightmap informaion
+	struct RenderLMData * pLightMapInfo;
+	struct CLeafBuffer * pLMTCBuffer; // Object instance specific tex LM texture coords;
+	byte arrOcclusionLightIds[4];
+	//! Override material.
+	IMatInfo *pMaterial;
+	#endif
+  //! Scissor settings for this object
+//  int nScissorX1, nScissorY1, nScissorX2, nScissorY2;
+	//! custom shader params
+	#if 0
+	TArray <struct SShaderParam> * pShaderParams;
+	#else
+	std::vector<struct SShaderParam> * pShaderParams;
+	#endif
+	//! squared distance to the center of object
+	float fSQDistance;
+  //! CCObject custom data
+  void * pCCObjCustomData;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 class ScopedState

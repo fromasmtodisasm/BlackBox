@@ -56,21 +56,21 @@ const char* CStatObj::GetScriptMaterialName(int Id)
 	NOT_IMPLEMENTED;
 	return {};
 }
-Vec3 CStatObj::GetBoxMin()
+Legacy::Vec3 CStatObj::GetBoxMin()
 {
 	NOT_IMPLEMENTED;
 	return {};
 }
-Vec3 CStatObj::GetBoxMax()
+Legacy::Vec3 CStatObj::GetBoxMax()
 {
 	NOT_IMPLEMENTED;
 	return {};
 }
-void CStatObj::SetBBoxMin(const Vec3& vBBoxMin)
+void CStatObj::SetBBoxMin(const Legacy::Vec3& vBBoxMin)
 {
 	NOT_IMPLEMENTED;
 }
-void CStatObj::SetBBoxMax(const Vec3& vBBoxMax)
+void CStatObj::SetBBoxMax(const Legacy::Vec3& vBBoxMax)
 {
 	NOT_IMPLEMENTED;
 }
@@ -91,7 +91,7 @@ void CStatObj::Refresh(int nFlags)
 {
 	NOT_IMPLEMENTED;
 }
-void CStatObj::Render(const struct SRendParams& rParams, const Vec3& t, int nLodLevel)
+void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, int nLodLevel)
 {
 	if (!m_VertexBuffer)
 	{
@@ -141,17 +141,17 @@ bool CStatObj::IsSameObject(const char* szFileName, const char* szGeomName)
 	NOT_IMPLEMENTED;
 	return {};
 }
-Vec3 CStatObj::GetHelperPos(const char* szHelperName)
+Legacy::Vec3 CStatObj::GetHelperPos(const char* szHelperName)
 {
 	NOT_IMPLEMENTED;
 	return {};
 }
-const char* CStatObj::GetHelperById(int nId, Vec3& vPos, Matrix44* pMat, int* pnType)
+const char* CStatObj::GetHelperById(int nId, Legacy::Vec3& vPos, Legacy::Matrix44* pMat, int* pnType)
 {
 	NOT_IMPLEMENTED;
 	return {};
 }
-const Matrix44* CStatObj::GetHelperMatrixByName(const char* szHelperName)
+const Legacy::Matrix44* CStatObj::GetHelperMatrixByName(const char* szHelperName)
 {
 	NOT_IMPLEMENTED;
 	return {};
@@ -183,7 +183,7 @@ void CStatObj::SetShadowVolume(ItShadowVolume* pSvObj)
 {
 	NOT_IMPLEMENTED;
 }
-bool CStatObj::GetOcclusionVolume(list2<Vec3>*& plstOcclVolVerts, list2<int>*& plstOcclVolInds)
+bool CStatObj::GetOcclusionVolume(list2<Legacy::Vec3>*& plstOcclVolVerts, list2<int>*& plstOcclVolInds)
 {
 	NOT_IMPLEMENTED;
 	return {};
@@ -269,17 +269,17 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 			m_nVertCount = mesh->mNumVertices;
 			for (size_t i = 0; i < m_nVertCount; i++)
 			{
-				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Vec3));
+				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Legacy::Vec3));
 				if (TCOffset != -1) {
 					auto _uv = UVs[i];
-					Vec2 uv	 = Vec2(_uv.x, _uv.y);
-					memcpy(&vb[i * stride + g_VertFormatUVOffsets[m_VertexFormat]], &uv, sizeof(Vec2));
+					Legacy::Vec2 uv	 = Legacy::Vec2(_uv.x, _uv.y);
+					memcpy(&vb[i * stride + g_VertFormatUVOffsets[m_VertexFormat]], &uv, sizeof(Legacy::Vec2));
 
 				}
 				if (NormalsOffset != -1) {
 					auto _N = mesh->mNormals[i];
-					Vec3 N	 = Vec3(_N.x, _N.y, _N.z);
-					memcpy(&vb[i * stride + g_VertFormatNormalOffsets[m_VertexFormat]], &N, sizeof(Vec3));
+					Legacy::Vec3 N	 = Legacy::Vec3(_N.x, _N.y, _N.z);
+					memcpy(&vb[i * stride + g_VertFormatNormalOffsets[m_VertexFormat]], &N, sizeof(Legacy::Vec3));
 
 				}
 			}

@@ -127,8 +127,8 @@ void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* 
 	if (!IsDevModeEnable())
 		return;
 
-	Vec3 tagLocations[12];
-	Vec3 tagAngles[12];
+	Legacy::Vec3 tagLocations[12];
+	Legacy::Vec3 tagAngles[12];
 	memset(tagAngles, 0, sizeof(tagAngles));
 	memset(tagLocations, 0, sizeof(tagLocations));
 
@@ -148,8 +148,8 @@ void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* 
 		{
 			float x = 0, y = 0, z = 0, ax = 0, ay = 0, az = 0;
 			fscanf(f, "%f,%f,%f,%f,%f,%f\n", &x, &y, &z, &ax, &ay, &az);
-			tagLocations[i] = Vec3(x, y, z);
-			tagAngles[i]	= Vec3(ax, ay, az);
+			tagLocations[i] = Legacy::Vec3(x, y, z);
+			tagAngles[i]	= Legacy::Vec3(ax, ay, az);
 		}
 		fclose(f);
 	}
@@ -215,8 +215,8 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 	if (!IsDevModeEnable())
 		return;
 
-	Vec3 tagLocations[12];
-	Vec3 tagAngles[12];
+	Legacy::Vec3 tagLocations[12];
+	Legacy::Vec3 tagAngles[12];
 	memset(tagAngles, 0, sizeof(tagAngles));
 	memset(tagLocations, 0, sizeof(tagLocations));
 
@@ -233,8 +233,8 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 			strcpy(desc, "");
 			float x = 0, y = 0, z = 0, ax = 0, ay = 0, az = 0;
 			fscanf(f, "%f,%f,%f,%f,%f,%f,%s\n", &x, &y, &z, &ax, &ay, &az, desc);
-			tagLocations[i] = Vec3(x, y, z);
-			tagAngles[i]	= Vec3(ax, ay, az);
+			tagLocations[i] = Legacy::Vec3(x, y, z);
+			tagAngles[i]	= Legacy::Vec3(ax, ay, az);
 		}
 		fscanf(f, "%s\n", desc);
 		if (strlen(desc) > 0)
@@ -246,8 +246,8 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 		; //GameWarning("Tag file %s not found", filename.c_str());
 	}
 
-	Vec3 p = tagLocations[index];
-	Vec3 a = tagAngles[index];
+	Legacy::Vec3 p = tagLocations[index];
+	Legacy::Vec3 a = tagAngles[index];
 #	if 0
   if (!p.IsZero())
   {
@@ -255,12 +255,12 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
     pPlayer->SetPos(p);
   }
 #	else
-	if (p != Vec3(0.f))
+	if (p != Legacy::Vec3(0.f))
 	{
 		m_pSystem->GetViewCamera().SetPos(p);
 	}
 #	endif
-	if (a != Vec3(0.f))
+	if (a != Legacy::Vec3(0.f))
 	{
 		m_pSystem->GetViewCamera().SetAngles(a);
 		//SetViewAngles(a);

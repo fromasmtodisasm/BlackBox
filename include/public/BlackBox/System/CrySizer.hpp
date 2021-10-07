@@ -198,9 +198,9 @@ public:
 	void AddObject(const long long&)                   {}
 	void AddObject(const double&)                      {}
 	#if 0
-	void AddObject(const Vec2&)                        {}
-	void AddObject(const Vec3&)                        {}
-	void AddObject(const Vec4&)                        {}
+	void AddObject(const Legacy::Vec2&)                        {}
+	void AddObject(const Legacy::Vec3&)                        {}
+	void AddObject(const Legacy::Vec4&)                        {}
 	void AddObject(const Ang3&)                        {}
 	void AddObject(const Matrix34&)                    {}
 	void AddObject(const Quat&)                        {}
