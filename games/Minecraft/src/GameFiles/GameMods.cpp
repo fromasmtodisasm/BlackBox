@@ -443,8 +443,3 @@ const char *CXGame::IsMODLoaded()
 
 	return (NULL);
 }
-
-IGameMods* CXGame::GetModsInterface()
-{
-  return nullptr;
-}

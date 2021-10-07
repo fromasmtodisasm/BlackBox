@@ -428,6 +428,8 @@ typedef SmartScriptObject _SmartScriptObject;
 //////////////////////////////////////////////////////////////////////
 typedef std::queue<string> StringQueue;
 typedef std::set<string> StringSet;
+using vector2f = Vec2;
+using color4f = Vec4;
 
 class CXGame final
 	: public IXGame
@@ -736,18 +738,12 @@ public:
 		NOT_IMPLEMENTED_V	
 	}
 
-	bool	IsInMenu() { return m_bMenuOverlay; };		//!< checks if we are in menu or not
+	bool IsInMenu() { return m_bMenuOverlay; };	  //!< checks if we are in menu or not
 	void GotoMenu(bool bTriggerOnSwitch = false); //!< arranges the message queue so that the game goes to the menu
-	void	GotoGame(bool bTriggerOnSwitch = false);	//!< arranges the message queue so that the game goes out of the menu
-	void	MenuOn()																	//!< enables menu instantly (no message)
-	{
-		NOT_IMPLEMENTED
-	}
-	void	MenuOff()																//!< disables menu instantly (no message)
-	{
-		NOT_IMPLEMENTED
-	}
-	void	DeleteMessage(const char* szMessage);			//!< deletes all occurrences of a specified message from the message queue
+	void GotoGame(bool bTriggerOnSwitch = false); //!< arranges the message queue so that the game goes out of the menu
+	void MenuOn();								  //!< enables menu instantly (no message)
+	void MenuOff();								  //!< disables menu instantly (no message)
+	void DeleteMessage(const char* szMessage);	  //!< deletes all occurrences of a specified message from the message queue
 
 	const char* GetLevelName() { return m_currentLevel.c_str(); }
 
@@ -775,8 +771,6 @@ public:
 	void SetCurrentUI(CUIHud* pUI);
 
 	//FIXIT:
-	using vector2f = Vec2;
-	using color4f = Vec4;
 	vector2f GetSubtitleSize(const string& szMessage, float sizex, float sizey, const string& szFontName = "default", const string& szFontEffect = "default");
 	void WriteSubtitle(const string& szMessage, float x, float y, float sizex, float sizey, const color4f& cColor, const string& szFontName = "default", const string& szFontEffect = "default");
 

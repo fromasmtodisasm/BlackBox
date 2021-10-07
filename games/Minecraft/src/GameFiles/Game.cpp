@@ -9,9 +9,11 @@
 #include <ScriptObjects/ScriptObjectInput.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <ScriptObjects/ScriptObjectTest.hpp>
+#include <ScriptObjects/ScriptTimerMgr.hpp>
 
 #include "PlayerSystem.h"
 #include "XVehicleSystem.h"
+#include <GameMods.hpp>
 
 #include <Client/Client.hpp>
 #include <thread>
@@ -226,12 +228,41 @@ CXGame::CXGame()
 	//srand(stime);
 }
 
+//////////////////////////////////////////////////////////////////////
+//!destructor
 CXGame::~CXGame()
 {
-	SaveHistory();
 	m_pScriptSystem->BeginCall("Shutdown");
 	m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
+
+#if 0
+	if (m_pIngameDialogMgr)
+		delete m_pIngameDialogMgr;
+	m_pIngameDialogMgr=NULL;
+#endif
+
+#if 0
+#	if !defined(LINUX)
+	if (m_pMovieUser)
+	{
+		if (m_pSystem)
+		{
+#		if 0
+			IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
+			if (pMovieSystem)
+			{
+				if (pMovieSystem->GetUser()==m_pMovieUser)
+					pMovieSystem->SetUser(NULL);
+			}
+#		else
+#		endif
+		}
+		delete m_pMovieUser;
+	}
+#	endif
+#endif
+	m_pMovieUser = NULL;
 
 	// shutdown the client if there is one
 	ShutdownClient();
@@ -239,65 +270,149 @@ CXGame::~CXGame()
 	// shutdown the server if there is one
 	ShutdownServer();
 
-#ifdef USE_STEAM
-	// Выключаем Steam
-	SteamAPI_Shutdown();
-	// Удаляем SteamAchievements
-	if (g_SteamAchievements)
-		delete g_SteamAchievements;
+#if 0
+	if (m_pUISystem)
+	{
+		m_pUISystem->Release();
+	}
+	SAFE_DELETE(m_pUISystem);
+#endif
+
+#if 0
+	CScriptObjectUI::ReleaseTemplate();
+	CScriptObjectPlayer::ReleaseTemplate();
+	CScriptObjectFireParam::ReleaseTemplate();
+	CScriptObjectWeaponClass::ReleaseTemplate();
+	CScriptObjectVehicle::ReleaseTemplate();
+	CScriptObjectSpectator::ReleaseTemplate();
+	CScriptObjectAdvCamSystem::ReleaseTemplate();
+	CScriptObjectSynched2DTable::ReleaseTemplate();
+	CScriptObjectBoids::ReleaseTemplate();
+	CScriptObjectRenderer::ReleaseTemplate();
 #endif
 	CScriptObjectGame::ReleaseTemplate();
 	CScriptObjectInput::ReleaseTemplate();
-	CScriptObjectTest::ReleaseTemplate();
-	CScriptObjectClient::ReleaseTemplate();
-	CScriptObjectServer::ReleaseTemplate();
-	CScriptObjectStream::ReleaseTemplate();
 #if 0
-	g_scene->Release();
-	r_displayinfo->Release();
-	r_profile->Release();
-	r_cap_profile->Release();
-	m_pCVarCheatMode->Release();
-
-	g_LevelName->Release();
-	g_MissionName->Release();
-	g_StartMission->Release();
-
-	sv_port->Release();
-	sv_mapcyclefile->Release();
-	sv_cheater_kick->Release();
-	sv_cheater_ban->Release();
-
-	sv_timeout->Release();
-	cl_timeout->Release();
-	cl_loadtimeout->Release();
-	cl_snooptimeout->Release();
-	cl_snoopretries->Release();
-	cl_snoopcount->Release();
-
-	g_playerprofile->Release();
-
-	cv_game_Difficulty->Release();
-	cv_game_Aggression->Release();
-	cv_game_Accuracy->Release();
-	cv_game_Health->Release();
-	cv_game_AllowAIMovement->Release();
-	cv_game_AllAIInvulnerable->Release();
-	cv_game_GliderGravity->Release();
-	cv_game_GliderBackImpulse->Release();
-	cv_game_GliderDamping->Release();
-	cv_game_GliderStartGravity->Release();
-	cv_game_physics_quality->Release();
+	CScriptObjectLanguage::ReleaseTemplate();
 #endif
 
+#if 0
+	CScriptObjectAI::ReleaseTemplate();
+#endif
+	CScriptObjectServer::ReleaseTemplate();
+#if 0
+	CScriptObjectServerSlot::ReleaseTemplate();
+#endif
+	CScriptObjectClient::ReleaseTemplate();
+	CScriptObjectStream::ReleaseTemplate();
+
+	#if 0
+	SAFE_RELEASE(cl_scope_flare);
+	SAFE_RELEASE(cl_ThirdPersonRange);
+
+	SAFE_RELEASE(cl_ThirdPersonOffs);
+	SAFE_RELEASE(cl_ThirdPersonOffsAngHor);
+	SAFE_RELEASE(cl_ThirdPersonOffsAngVert);
+
+	SAFE_RELEASE(cl_display_hud);
+	SAFE_RELEASE(cl_motiontracker);
+	SAFE_RELEASE(cl_hud_pickup_icons);
+	SAFE_RELEASE(cl_msg_notification);
+	SAFE_RELEASE(cl_hud_name);
+	SAFE_RELEASE(ai_num_of_bots);
+	SAFE_RELEASE(p_name);
+	SAFE_RELEASE(p_model);
+	SAFE_RELEASE(mp_model);
+	SAFE_RELEASE(p_color);
+	SAFE_RELEASE(p_always_run);
+	SAFE_RELEASE(g_language);
+	SAFE_RELEASE(g_playerprofile);
+	SAFE_RELEASE(g_serverprofile);
+	SAFE_RELEASE(g_GC_Frequence);
+	SAFE_RELEASE(p_speed_run);
+	SAFE_RELEASE(p_sprint_scale);
+
+	SAFE_RELEASE(p_sprint_decoy);
+	SAFE_RELEASE(p_sprint_restore_run);
+	SAFE_RELEASE(p_sprint_restore_idle);
+
+	SAFE_RELEASE(p_speed_walk);
+	SAFE_RELEASE(p_speed_crouch);
+	SAFE_RELEASE(p_speed_prone);
+	SAFE_RELEASE(p_jump_force);
+	SAFE_RELEASE(p_jump_run_time);
+	SAFE_RELEASE(p_jump_walk_time);
+	SAFE_RELEASE(p_lean_offset);
+	SAFE_RELEASE(p_bob_pitch);
+	SAFE_RELEASE(p_bob_roll);
+	SAFE_RELEASE(p_bob_length);
+	SAFE_RELEASE(p_bob_weapon);
+	SAFE_RELEASE(p_bob_fcoeff);
+	SAFE_RELEASE(p_weapon_switch);
+
+	SAFE_RELEASE(cv_game_physics_quality);
+
+	SAFE_RELEASE(m_jump_vel);
+	SAFE_RELEASE(m_jump_arc);
+
+	SAFE_RELEASE(b_camera);
+
+	SAFE_RELEASE(sv_timeout);
+	SAFE_RELEASE(cl_timeout);
+	SAFE_RELEASE(cl_loadtimeout);
+
+	SAFE_RELEASE(g_LevelName);
+	SAFE_RELEASE(g_GameType);
+	SAFE_RELEASE(g_LeftHanded);
+
+	SAFE_RELEASE(p_DeadBody);
+	SAFE_RELEASE(p_HitImpulse);
+	SAFE_RELEASE(p_RotateHead);
+	SAFE_RELEASE(a_DrawArea);
+	SAFE_RELEASE(a_LogArea);
+
+	SAFE_RELEASE(m_pCVarCheatMode);
+
+	SAFE_RELEASE(pl_JumpNegativeImpulse);
+	#endif
+
+#if 0
+	if (m_pRenderer && (m_nPlayerIconTexId>=0))
+		m_pRenderer->RemoveTexture(m_nPlayerIconTexId);
+	if (m_pRenderer && (m_nVehicleIconTexId>=0))
+		m_pRenderer->RemoveTexture(m_nVehicleIconTexId);
+	if (m_pRenderer && (m_nBuildingIconTexId>=0))
+		m_pRenderer->RemoveTexture(m_nBuildingIconTexId);
+	if (m_pRenderer && (m_nUnknownIconTexId>=0))
+		m_pRenderer->RemoveTexture(m_nUnknownIconTexId);
+#endif
+
+#if 0
+	SAFE_DELETE(m_pUIHud);
+	SAFE_DELETE(m_pWeaponSystemEx);
 	SAFE_DELETE(m_pVehicleSystem);
 	SAFE_DELETE(m_pPlayerSystem);
+
+	SAFE_DELETE(m_pFlockManager);
+#endif
+
+#if 0
+	CScriptObjectPlayer::ReleaseTemplate();
+#endif
+
 	//shutdown script stuff
 	SAFE_DELETE(m_pScriptObjectGame);
 	SAFE_DELETE(m_pScriptObjectInput);
 
+#if 0
+	SAFE_DELETE(m_pScriptObjectBoids);
+	SAFE_DELETE(m_pScriptObjectLanguage);
+	SAFE_DELETE(m_pScriptObjectAI);
+#endif
+
 	// Release the action map
 	SAFE_RELEASE(m_pIActionMapManager);
+	SAFE_DELETE(m_pScriptTimerMgr);
 	// release the tags
 	if (!m_mapTagPoints.empty())
 	{
@@ -305,227 +420,31 @@ CXGame::~CXGame()
 		for (ti = m_mapTagPoints.begin(); ti != m_mapTagPoints.end(); ti++)
 			delete ti->second;
 	}
-}
-#if defined USE_STEAM && defined GLSL_EDITOR
-static GLSLEditor* glslEditor = nullptr;
-#endif //  USE_STEAM
-bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
-{
+
+	SAFE_RELEASE(m_pServerSnooper);
+	SAFE_RELEASE(m_pNETServerSnooper);
+	SAFE_RELEASE(m_pRConSystem);
 	#if 0
-	if (!SteamInit())
-		return false;
+	SAFE_DELETE(m_pTimeDemoRecorder);
 	#endif
-	m_pSystem		   = pSystem;
-	m_bDedicatedServer = bDedicatedSrv;
-	m_pRenderer		   = m_pSystem->GetIRenderer();
-	m_pScriptSystem	   = m_pSystem->GetIScriptSystem();
-	m_pLog			   = m_pSystem->GetILog();
-	m_p3DEngine		   = gEnv->p3DEngine;
-#if 0
-	if (!bDedicatedSrv)
-	{
-		gEnv->pInput->AddEventListener(this);
-		//gEnv->pInput->AddEventListener(&m_CameraController);
-		//gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
-		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRenderer->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
-	}
-	pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CXGame");
-#endif
-	m_pNetwork		= m_pSystem->GetINetwork();
-	m_bUpdateRet	= true;
-	#if 0
-	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
-	#endif
-
-	m_pVehicleSystem = new CVehicleSystem();
-	m_pPlayerSystem	 = new CPlayerSystem();
-
-#ifdef USE_GUI
-	glslEditor = new GLSLEditor;
-#endif
-	gui::init();
-
-#if 0
-  if (!m_pNetwork->Init())
-	return false;
-
-  m_pClient = m_pNetwork->CreateClient();
-  if (!m_pClient || !m_pClient->Init())
-	return false;
-
-  m_pServer = m_pNetwork->CreateServer();
-  if (!m_pServer)
-	return false;
-#endif
-
-	InitConsoleVars();
-	#if 0
-	m_pDevMode = std::make_unique<CDevMode>();
-	#endif
+	SAFE_DELETE(m_pGameMods);
 
 	#if 0
-	SmartScriptObject Gui(m_pScriptSystem, true);
-	if (!m_pScriptSystem->GetGlobalValue("Gui", *Gui))
-	{
-		CryError("Cannot find Gui table in scripts (wrong working folder?)");
-		return false;
-	}
-	else
-	{
-		Script::CallMethod(Gui, "Init");
-	}
+	delete m_pTagPointManager;
 	#endif
-	// init key-bindings
-	if (!m_bDedicatedServer)
-		InitInputMap();
-
-	LoadConfiguration("", "game.cfg");
-
-	if (!m_bDedicatedServer)
-	{
-		//m_pSystem->GetIConsole()->ShowConsole(0);
-#if 0
-		if (!bInEditor)
-		{
-			//////////////////////////////////////////////////////////////////////
-			m_pUISystem = new CUISystem;
-
-			if (m_pUISystem)
-			{
-				m_pUISystem->Create(this, m_pSystem, m_pScriptSystem, "Scripts/MenuScreens/UISystem.lua", 1);
-			}
-			else
-			{
-				m_pLog->Log("Failed to create UI System!");
-			}
-			//////////////////////////////////////////////////////////////////////
-		}
-		
-		if (m_pUISystem)
-		{
-			m_bMenuOverlay = 1;
-		}
-#endif
-	}
-	else
-		m_pSystem->GetIConsole()->ShowConsole(false);
-
-	InitConsoleCommands();
-	{
-		m_pScriptObjectGame = new CScriptObjectGame();
-		m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
-
-		m_pScriptObjectInput = new CScriptObjectInput;
-		CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
-
-		auto SOT = new CScriptObjectTest();
-		SOT->InitializeTemplate(m_pScriptSystem);
-		SOT->Init(m_pScriptSystem, this);
-		CScriptObjectTest::ReleaseTemplate();
-		SAFE_DELETE(SOT);
-
-#if 0
-  m_pScriptClient = new CScriptObjectClient();
-  m_pScriptClient->InitializeTemplate(m_pScriptSystem);
-
-  m_pScriptServer = new CScriptObjectServer();
-  m_pScriptServer->InitializeTemplate(m_pScriptSystem);
-#endif
-
-		m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
-		m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
-#if 0
-  m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
-  m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
-#endif
-
-		CScriptObjectStream::InitializeTemplate(m_pScriptSystem);
-
-		InitClassRegistry();
-
-		// execute the "main"-script (to pre-load other scripts, etc.)
-		m_pScriptSystem->ExecuteFile("scripts/main.lua", true, false);
-		m_pScriptSystem->BeginCall("Init");
-		m_pScriptSystem->PushFuncParam(0);
-		m_pScriptSystem->EndCall();
-
-		//gEnv->pConsole->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
-#if 0
-  gEnv->pConsole->AddCommand(
-	"enumd",
-	R"(
-		local formats = System:EnumDisplayFormats()
-		for i=1, #formats do
-			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
-		end
-		Console:PrintLine(%2)
-		Console:PrintLine(%1)
-		)",
-	0,
-	"Enum Display formats"
-  );
-#endif
-
-		m_pScriptSystem->ExecuteFile("scripts/utils.lua");
-	}
-
-	DevModeInit();
-
-	gEnv->pInput->GrabInput(true);
-
-	if (m_pRenderer)
-	{
-		#if 0
-		m_Font = gEnv->pRenderer->GetIFont();
-		m_Font->Init("arial.ttf", g_FontSize,g_FontSize);
-
-		m_SelectedEntryFont = gEnv->pRenderer->GetIFont();
-		m_SelectedEntryFont->Init("arial.ttf", 60,60);
-		#endif
-	}
-
-	// other
-	//TODO: FIX IT
-#if 0
-  mousePrev = sf::Mouse::GetPos();
-  mouseDelta = sf::Vector2i(0, 0);
-#endif
-#if CURSOR_FIXED
-	cursor.loadFromSystem(sf::Cursor::Arrow);
-	m_pSystem->GetIWindow()->setCursor(reinterpret_cast<Cursor*>(&cursor));
-#endif
-
-	m_pClient = new CClient(this);
-#if 0
-	gEnv->pConsole->ExecuteFile("res/scripts/postinit.cfg");
-#else
-	gEnv->pConsole->ExecuteString("@Player:PostInit()");
-#endif
-	LoadScene("test");
-	m_pClient->Init();
-
-	LoadHistory();
-	gEnv->pRenderer->RegisterCallbackClient(this);
-
-
-	auto fnLoad = gEnv->pScriptSystem->GetFunctionPtr("LoadLevel");
-
-	Script::Call(gEnv->pScriptSystem, fnLoad, "test.lua");
-
-	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CXGame::InitClassRegistry()
 {
 	m_EntityClassRegistry.Init(m_pSystem);
-	CPlayerSystem*	pPlayerSystem  = GetPlayerSystem();
-	CVehicleSystem* pVehicleSystem = GetVehicleSystem();
-	//CWeaponSystemEx *pWeaponSystemEx = GetWeaponSystemEx();	// m10
+	CPlayerSystem*	 pPlayerSystem	 = GetPlayerSystem();
+	CVehicleSystem*	 pVehicleSystem	 = GetVehicleSystem();
+	CWeaponSystemEx* pWeaponSystemEx = GetWeaponSystemEx(); // m10
 
 	assert(pPlayerSystem);
 	assert(pVehicleSystem);
-	//assert( pWeaponSystemEx );
+	assert(pWeaponSystemEx);
 
 	// Enumerate entity classes.
 	EntityClass* entCls = NULL;
@@ -542,16 +461,373 @@ bool CXGame::InitClassRegistry()
 			if (strcmp("Vehicle", entity_type) == 0)
 				pVehicleSystem->AddVehicleClass(ClassId);
 
-#if 0
-			if(strcmp("Projectile",entity_type)==0)
+			if (strcmp("Projectile", entity_type) == 0)
 			{
+				#if 0
 				// cannot be loaded at that point - other scripts must be loaded before
 				pWeaponSystemEx->AddProjectileClass(ClassId);
+				#else
+				NOT_IMPLEMENTED_V;
+				#endif
 			}
-#endif
 		}
 	} while (entCls);
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CXGame::SoftReset()
+{
+	#if 0
+	m_pLog->Log("Soft Reset Begin");
+	//allow to reload scripts with(LoadScript)
+	m_pScriptSystem->SetGlobalToNull("_localplayer");
+	if (m_pScriptSystem)
+		m_pScriptSystem->UnloadScripts();
+
+	std::vector<string> vLoadedWeapons;
+
+	for (int i = 0; i != m_pWeaponSystemEx->GetNumWeaponClasses(); ++i)
+		vLoadedWeapons.push_back(m_pWeaponSystemEx->GetWeaponClass(i)->GetName());
+
+	m_pWeaponSystemEx->Reset();
+#if !defined(LINUX)
+	if (m_pSystem->GetIMovieSystem())
+		m_pSystem->GetIMovieSystem()->StopAllSequences();
+#endif
+	m_pScriptObjectGame->Reset();
+
+	m_pScriptSystem->ForceGarbageCollection();
+	//m_p3DEngine->ClearRenderResources();
+
+	m_iLastCmdIdx = 0;
+
+	m_pWeaponSystemEx->Init(this);
+
+	for (std::vector<string>::iterator i = vLoadedWeapons.begin(); i != vLoadedWeapons.end(); ++i)
+		AddWeapon((*i).c_str());
+
+	if (m_pCurrentUI)
+	{
+		m_pCurrentUI->Reset();
+		m_pCurrentUI->Init(m_pScriptSystem);
+	}
+
+	m_pLog->Log("Soft Reset End");
+	#else
+	NOT_IMPLEMENTED;
+	#endif
+}
+
+//////////////////////////////////////////////////////////////////////
+//! reset the game before a level reloading
+//! this function allows the reloading of all scripts
+//! and wipes out all textures from the 3dengine
+void CXGame::Reset()
+{
+	#if 0
+	m_pEntitySystem->Reset();
+
+	// Unload all music.
+	if (m_pSystem->GetIMusicSystem())
+		m_pSystem->GetIMusicSystem()->Unload();
+
+	//allow to reload scripts with(LoadScript)
+	m_pScriptSystem->SetGlobalToNull("_localplayer");
+	if (m_pScriptSystem)
+		m_pScriptSystem->UnloadScripts();
+
+	m_pWeaponSystemEx->Reset();
+	m_XSurfaceMgr.Reset();
+	m_XAreaMgr.Clear();
+	ClearTagPoints();
+#if !defined(LINUX)
+	if (m_pSystem->GetIMovieSystem())
+		m_pSystem->GetIMovieSystem()->Reset(false);
+#endif
+	m_pScriptObjectGame->Reset();
+
+	m_pScriptSystem->ForceGarbageCollection();
+	m_p3DEngine->ClearRenderResources();
+
+	// Must reset all timers.
+	m_pScriptTimerMgr->Reset();
+
+	//clen up the input buffer
+	if (m_pSystem->GetIInput())
+	{
+		m_pSystem->GetIInput()->Update(true);
+		m_pSystem->GetIInput()->Update(true);
+	}
+	if (m_pIActionMapManager)
+		m_pIActionMapManager->Reset();
+
+	m_iLastCmdIdx = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Reset UI.
+	//////////////////////////////////////////////////////////////////////////
+	if (m_pUISystem)
+	{
+		m_pUISystem->UnloadAllModels();
+		m_pUISystem->StopAllVideo();
+		m_p3DEngine->Enable(1);
+		//m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
+	}
+	if (m_pCurrentUI)
+		m_pCurrentUI->Reset();
+	if (m_pUIHud)
+		m_pUIHud->Reset();
+
+	if (GetMyPlayer())
+		GetMyPlayer()->SetNeedUpdate(true);
+	#else
+	NOT_IMPLEMENTED;
+	#endif
+}
+
+//////////////////////////////////////////////////////////////////////
+IXSystem* CXGame::GetXSystem()
+{
+	#if 0
+	return m_pServer ? m_pServer->m_pISystem : m_pClient ? m_pClient->m_pISystem
+														 : NULL;
+	#else
+	NOT_IMPLEMENTED_V;
+	#endif
+}
+
+bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
+{
+	// Setup the system and 3D Engine pointers
+	m_pSystem = pSystem;
+
+	m_pGameMods = new CGameMods(this);
+
+	m_bDedicatedServer = bDedicatedSrv;
+	m_XAreaMgr.Init(pSystem);
+	m_bEditor = bInEditor;
+
+	m_bRelaunch				  = false;
+	m_bMovieSystemPaused	  = false;
+	m_bIsLoadingLevelFromFile = false;
+
+	m_bOK		 = false;
+	m_bUpdateRet = true;
+	m_pClient	 = NULL;
+	m_pServer	 = NULL;
+
+	m_pSystem->GetILog()->Log("Game Initialization");
+	#if 0
+#if !defined(LINUX)
+	IMovieSystem* pMovieSystem = m_pSystem->GetIMovieSystem();
+	if (pMovieSystem)
+		pMovieSystem->SetUser(m_pMovieUser);
+#endif
+	if (!m_pTimeDemoRecorder)
+		m_pTimeDemoRecorder = new CTimeDemoRecorder(pSystem);
+	#endif
+
+	m_pUIHud		= NULL;
+	m_pNetwork		= m_pSystem->GetINetwork();
+	m_pLog			= m_pSystem->GetILog();
+	m_p3DEngine		= m_pSystem->GetI3DEngine();
+	m_pRenderer		= m_pSystem->GetIRenderer();
+	m_pScriptSystem = pSystem->GetIScriptSystem();
+	m_pEntitySystem = m_pSystem->GetIEntitySystem();
+
+	// Register game rendering callback.
+	//[Timur] m_p3DEngine->SetRenderCallback( OnRenderCallback,this );
+
+	// init subsystems
+#ifndef _XBOX
+	m_pServerSnooper	= m_pNetwork->CreateServerSnooper(this);
+	m_pNETServerSnooper = m_pNetwork->CreateNETServerSnooper(this);
+	m_pRConSystem		= m_pNetwork->CreateRConSystem();
+#endif
+	#if 0
+	m_pWeaponSystemEx = new CWeaponSystemEx();
+	#endif
+	m_pVehicleSystem  = new CVehicleSystem();
+	m_pPlayerSystem	  = new CPlayerSystem();
+	#if 0
+	m_pFlockManager	  = new CFlockManager(m_pSystem);
+	#endif
+
+	#if 0
+	CScriptObjectUI::InitializeTemplate(m_pScriptSystem);
+	#endif
+
+	// init is not necessary for now, but add here if it later is
+	m_pScriptObjectGame = new CScriptObjectGame;
+	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
+
+	m_pScriptObjectInput = new CScriptObjectInput;
+	CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
+	#if 0
+	m_pScriptObjectLanguage = new CScriptObjectLanguage;
+	CScriptObjectLanguage::InitializeTemplate(m_pScriptSystem);
+	m_pScriptObjectBoids = new CScriptObjectBoids;
+	CScriptObjectBoids::InitializeTemplate(m_pScriptSystem);
+	m_pScriptObjectAI = new CScriptObjectAI;
+	CScriptObjectAI::InitializeTemplate(m_pScriptSystem);
+	#endif
+	CScriptObjectServer::InitializeTemplate(m_pScriptSystem);
+
+	#if 0
+	CScriptObjectPlayer::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectFireParam::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectWeaponClass::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectVehicle::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectSpectator::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectAdvCamSystem::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectSynched2DTable::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
+	#endif
+
+	m_pScriptObjectGame->Init(m_pScriptSystem, this);
+	m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
+
+	#if 0
+	m_pScriptObjectBoids->Init(m_pScriptSystem, m_pSystem, m_pFlockManager);
+	m_pScriptObjectLanguage->Init(m_pScriptSystem, &m_StringTableMgr);
+	m_pScriptObjectAI->Init(m_pScriptSystem, m_pSystem, this);
+	#endif
+
+	#if 0
+	CScriptObjectServerSlot::InitializeTemplate(m_pScriptSystem);
+	#endif
+	CScriptObjectClient::InitializeTemplate(m_pScriptSystem);
+	CScriptObjectStream::InitializeTemplate(m_pScriptSystem);
+
+	m_pScriptTimerMgr = new CScriptTimerMgr(m_pScriptSystem, m_pSystem->GetIEntitySystem(), this);
+
+	// making some constants accessable to the script
+	#if 0
+	m_pScriptSystem->SetGlobalValue("FireActivation_OnPress", ePressing);
+	m_pScriptSystem->SetGlobalValue("FireActivation_OnRelease", eReleasing);
+	m_pScriptSystem->SetGlobalValue("FireActivation_OnHold", eHolding);
+	#endif
+
+	m_pScriptSystem->SetGlobalValue("ENTITYTYPE_PLAYER", ENTITYTYPE_PLAYER);
+	m_pScriptSystem->SetGlobalValue("ENTITYTYPE_WAYPOINT", ENTITYTYPE_WAYPOINT);
+	m_pScriptSystem->SetGlobalValue("ENTITYTYPE_OWNTEAM", ENTITYTYPE_OWNTEAM);
+
+	InitConsoleVars();
+
+	if (szGameMod && szGameMod[0])
+	{
+		// apply the mod without restarting as the game just started!
+		GetModsInterface()->SetCurrentMod(szGameMod, false);
+	}
+
+	InitClassRegistry();
+
+	// execute the "main"-script (to pre-load other scripts, etc.)
+	m_pScriptSystem->ExecuteFile("scripts/main.lua");
+	m_pScriptSystem->BeginCall("Init");
+	m_pScriptSystem->PushFuncParam(0);
+	m_pScriptSystem->EndCall();
+
+	// initialize the surface-manager
+	#if 0
+	m_XSurfaceMgr.Init(m_pScriptSystem, m_p3DEngine, GetSystem()->GetIPhysicalWorld());
+	#endif
+
+	// init key-bindings
+	if (!m_bDedicatedServer)
+		InitInputMap();
+
+	// create various console-commands/variables
+	InitConsoleCommands();
+
+	// loading the main language-string-table
+	#if 0
+	if (!m_StringTableMgr.Load(GetSystem(), *m_pScriptObjectLanguage, g_language->GetString()))
+		m_pLog->Log("cannot load language file [%s]", g_language->GetString());
+	#endif
+
+	// creating HUD interface
+	m_pLog->Log("Initializing UI");
+	#if 0
+	m_pUIHud = new CUIHud(this, m_pSystem);
+	#endif
+
+	LoadConfiguration("", "game.cfg");
+
+	//////////////////////////////////////////////////////////////////////////
+	// Materials
+	// load materials (once before all, this info stays till we quit the game - no need to load material later)
+	// first load normal materials
+	#if 0
+	m_XSurfaceMgr.LoadMaterials("scripts/materials");
+	#endif
+
+	if (!m_bDedicatedServer)
+	{
+		m_pSystem->GetIConsole()->ShowConsole(0);
+		if (!bInEditor)
+		{
+			//////////////////////////////////////////////////////////////////////
+			#if 0
+			m_pUISystem = new CUISystem;
+
+			if (m_pUISystem)
+			{
+				m_pUISystem->Create(this, m_pSystem, m_pScriptSystem, "Scripts/MenuScreens/UISystem.lua", 1);
+			}
+			else
+			{
+				m_pLog->Log("Failed to create UI System!");
+			}
+			#endif
+			//////////////////////////////////////////////////////////////////////
+		}
+
+		if (m_pUISystem)
+		{
+			m_bMenuOverlay = 1;
+		}
+	}
+	else
+		m_pSystem->GetIConsole()->ShowConsole(true);
+
+	// load textures used as icons by the mini-map
+	if (m_pRenderer)
+	{
+		#if 0
+		ITexPic* pPic;
+		pPic = m_pRenderer->EF_LoadTexture("gui/map_player", FT_NOREMOVE, 0, eTT_Base);
+		if (pPic && pPic->IsTextureLoaded())
+			m_nPlayerIconTexId = pPic->GetTextureID();
+		pPic = m_pRenderer->EF_LoadTexture("gui/map_vehicle", FT_NOREMOVE, 0, eTT_Base);
+		if (pPic && pPic->IsTextureLoaded())
+			m_nVehicleIconTexId = pPic->GetTextureID();
+		pPic = m_pRenderer->EF_LoadTexture("gui/map_building", FT_NOREMOVE, 0, eTT_Base);
+		if (pPic && pPic->IsTextureLoaded())
+			m_nBuildingIconTexId = pPic->GetTextureID();
+		pPic = m_pRenderer->EF_LoadTexture("gui/map_unknown", FT_NOREMOVE, 0, eTT_Base);
+		if (pPic && pPic->IsTextureLoaded())
+			m_nUnknownIconTexId = pPic->GetTextureID();
+		#endif
+	}
+
+	if (!bInEditor)
+		m_pEntitySystem->SetDynamicEntityIdMode(true);
+
+#if !defined(_XBOX) && !defined(PS2) && !defined(LINUX)
+	SetCursor(NULL);
+#endif
+
+	DevModeInit();
+	m_bOK				 = true;
+	e_deformable_terrain = NULL;
+	//FIXME: client should be created in other place
+	m_pClient			 = new CClient(this);
+	LoadScene("empty");
+	m_pClient->Init();
+
+	return (true);
 }
 
 #include "CameraController.hpp"
@@ -949,8 +1225,40 @@ void CXGame::OnRenderer_BeforeEndFrame()
 #endif
 
 static ITexture* splash = nullptr;
-bool			 CXGame::Update()
+
+//////////////////////////////////////////////////////////////////////
+//! updates whole game and children
+bool CXGame::Update()
 {
+	if (!m_nDEBUG_TIMING)
+	{
+		m_fDEBUG_STARTTIMER = m_pSystem->GetITimer()->GetAsyncCurTime();
+		m_nDEBUG_TIMING = 1;
+	}
+	if (!m_bEditor)
+	{
+		#if 0
+		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame())
+		#endif
+		{
+			m_p3DEngine->Enable(1);
+		}
+		#if 0
+		else
+		{
+			m_p3DEngine->Enable(0);
+		}
+		#endif
+	}
+	//////////////////////////////////////////////////////////////////////////
+	FUNCTION_PROFILER(PROFILE_GAME);
+
+	ITimer *pTimer=m_pSystem->GetITimer();
+	#if 0
+	pTimer->MeasureTime("EnterGameUp");
+	#endif
+
+
 	static const auto& render_game	= true;
 	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
 	static int		   num_frames	= 0xffff;
@@ -961,26 +1269,56 @@ bool			 CXGame::Update()
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
+	bool bPause = false; //IsInPause(nullptr);
 	{
-		if (bRenderFrame)
+			
+		if (!bPause || (m_pClient /*&& !m_pClient->IsConnected() */))
 		{
-#if 0
-			SmartScriptObject Gui(m_pScriptSystem,true);
-			if (!m_pScriptSystem->GetGlobalValue("Gui",*Gui))
-			{
-				CryError("Cannot find Gui table in scripts (wrong working folder?)");
-				return false;
-			}
-#endif
-			#if 0
-			m_pSystem->RenderBegin();
-			#endif
-			m_pClient->Update();
+			// network start
+			FRAME_PROFILER("GameUpdate:Client", PROFILE_GAME);
 
-			if (g_bRenderGame)
+			// update client
+			if (m_pClient)
 			{
-				m_pClient->Render();
+				#if 0
+				m_pClient->UpdateClientNetwork();
+				pTimer->MeasureTime("Net");
+				#endif
+
+				assert(m_pClient);
+				m_pClient->Update();
+
+				if (m_pClient->DestructIfMarked()) //  to make sure the client is only released in one place - here
+					m_pClient = 0;
 			}
+
+			#if 0
+			pTimer->MeasureTime("ClServ Up");
+			#endif
+
+			////////UPDATE THE NETWORK
+			// [Anton] moved from after the rendering, so that the server has access to the most recent physics data
+			// update server
+			if (m_pServer)
+			{
+				FRAME_PROFILER("GameUpdate:Server", PROFILE_GAME);
+
+				#if 0
+				m_pServer->Update();
+				#endif
+			}
+
+			#if 0
+			pTimer->MeasureTime("EndServUp");
+			#endif
+		}
+
+		m_pNetwork->UpdateNetwork(); // used to update things like the UBI.com services
+
+		if (g_bRenderGame)
+		{
+			m_pClient->Render();
+		}
 
 //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
 #if 0
@@ -990,17 +1328,16 @@ bool			 CXGame::Update()
 #endif
 
 #if USE_UI
-			if (g_DrawUI)
-			{
-				glslEditor->Update();
-				m_Gui.Update();
-				gui::update();
-			}
+		if (g_DrawUI)
+		{
+			glslEditor->Update();
+			m_Gui.Update();
+			gui::update();
+		}
 #endif
 
-			//PROFILER_POP_CPU_MARKER();
+		//PROFILER_POP_CPU_MARKER();
 
-		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Special update function for developers mode.
@@ -1139,27 +1476,50 @@ void CXGame::DisplayInfo(float fps)
 }
 #endif
 
+//////////////////////////////////////////////////////////////////////
+//! game-mainloop
 bool CXGame::Run(bool& bRelaunch)
 {
-	//splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
-	typedef ITexPic ITexture;
-	//auto bg = gEnv->pRenderer->LoadTexture("console_background.png", 0, 0);
-	//gEnv->pConsole->SetImage((ITexPic*)bg, true);
-	m_pLog->Log("[OK] Game started");
-	StartupServer(true, "test_server");
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	m_bRelaunch = false;
-	GotoMenu();
-	gEnv->pConsole->ShowConsole(false);
-	while (1)
+	if (m_bDedicatedServer)
 	{
-		if (!Update())
-			break;
+		return Update();
 	}
+	else
+	{
+		m_bRelaunch = false;
+		while (1)
+		{
+			if (!Update())
+				break;
+		}
 
-	bRelaunch = m_bRelaunch;
-
+		bRelaunch = m_bRelaunch;
+	}
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+#if !defined(_XBOX) && !defined(PS2) && !defined(LINUX)
+#if 0
+#include <Mmsystem.h> // error C2371: 'APIENTRY': redefinition; different basic types
+#include ".\game.h"
+#endif
+#pragma comment (lib , "Winmm.lib")
+#else
+#define GetCurrentTime() ((unsigned int)(GetSystem()->GetITimer()->GetCurrTime() * 1000.f))
+#endif
+
+//////////////////////////////////////////////////////////////////////
+bool CXGame::IsInPause(IProcess *pProcess)
+{
+	bool bPause = (m_bMenuOverlay && (!IsMultiplayer()));
+	//check if the game is in pause or in menu mode
+	if ((pProcess->GetFlags() & PROC_MENU) && !IsMultiplayer())
+		bPause=true;
+
+	return (bPause);
 }
 
 bool CXGame::LoadScene(std::string name)
@@ -1208,348 +1568,253 @@ IGAME_API IGame* CreateGameInstance()
 	return (game);
 }
 
-#if 0
-bool CXGame::OnInputEvent(const SInputEvent& event)
+//////////////////////////////////////////////////////////////////////////
+void CXGame::GotoMenu(bool bTriggerOnSwitch)
 {
+	if(m_bEditor)
+		return;
+
+	if(!m_pUISystem)			// e.g. dedicated server
+		return;
+
+	if (!IsInMenu())
 	{
-		bool	   retflag;
-		const bool retval = ShouldHandleEvent(event, retflag);
-		if (retflag)
-			return retval;
+		DeleteMessage("Switch");
+		SendMessage("Switch");
 	}
-	const bool result = false;
-	//if (!IsInPause())
-		OnInputEventProxy(event);
-	PersistentHandler(event);
-	return result;
+	else if (bTriggerOnSwitch)
+	{
+		assert(0 && __FUNCTION__);
+		#if 0
+		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
+		#endif
+	}
 }
 
-void CXGame::PersistentHandler(const SInputEvent& event)
-{
-	auto useBoxFilter = gEnv->pConsole->GetCVar("bf");
-	////////////////////////
-	const bool keyPressed = (event.deviceType == eIDT_Keyboard || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
-	const bool control	  = event.modifiers & eMM_Ctrl;
-	const bool shift	  = event.modifiers & eMM_Shift;
-	bool	   alt		  = event.modifiers & eMM_Alt;
-	////////////////////////
-	if (keyPressed)
-	{
-		if (event.keyId == eKI_Semicolon)
-			openShadowMap = !openShadowMap;
-		if (event.keyId >= eKI_F1 && event.keyId <= eKI_F12)
-		{
-			if (control)
-			{
-				//DevMode_SavePlayerPos(event.keyId - eKI_F1, "BloomTest");
-			}
-			else if (shift)
-			{
-				//DevMode_LoadPlayerPos(event.keyId - eKI_F1, "BloomTest");
-			}
-		}
-		switch (event.keyId)
-		{
-		case eKI_R:
-		{
-			if (control)
-			{
-				gEnv->pRenderer->Sh_Reload();
-			}
-			break;
-		}
-		case eKI_Pause:
-		{
-			m_bInPause = !m_bInPause;
-			break;
-		}
-		default:
-			break;
-		}
-	}
-}
-#endif
+//////////////////////////////////////////////////////////////////////////
 void CXGame::GotoGame(bool bTriggerOnSwitch)
 {
-	//if (m_player != nullptr)
+	if (m_bEditor)
 	{
-		//m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
+		return;
+	}
 
-		//m_bInPause = false;
-		//m_Mode	   = FPS;
-		gEnv->pInput->ShowCursor(false);
-		gEnv->pInput->GrabInput(true);
-		gEnv->pConsole->ShowConsole(false);
-		m_pSystem->EnableGui(false);
+	if (IsInMenu())
+	{
+		DeleteMessage("Switch");
+		SendMessage("Switch");
+	}
+	else if (bTriggerOnSwitch)
+	{
+		assert(0 && __FUNCTION__);
+		#if 0
+		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
+		#endif
 	}
 }
-#if 0
 
-void CXGame::GotoFly()
+//////////////////////////////////////////////////////////////////////////
+void CXGame::MenuOn()
 {
-	m_Mode = FLY;
+	// stop sounds and timers affected by game pause
+	#if 0
+	m_pSystem->GetISoundSystem()->Pause(true, true);
+	#endif
+	m_pScriptTimerMgr->Pause(true);
+
+	#if 0
+	if (m_pSystem->GetIMusicSystem())
+	{
+		m_pSystem->GetIMusicSystem()->Pause(true);
+		//m_pSystem->GetIMusicSystem()->Silence();
+	}
+	#endif
+
+	#if 0
+	if (m_pUISystem && m_pUISystem->IsEnabled())
+	{
+		m_pSystem->GetIInput()->AddEventListener(m_pUISystem);
+		m_pSystem->GetIInput()->ClearKeyState();
+		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
+	}
+	#endif
+
+	m_bMenuOverlay = 1;
+
+	if (!m_bEditor)
+	{
+		#if 0
+		if (m_pUISystem->GetScriptObjectUI()->CanRenderGame())
+		{
+			m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
+			m_p3DEngine->Enable(1);
+		}
+		else
+		#endif
+		{
+			m_pSystem->GetILog()->Log("UISystem: Disabled 3D Engine!");
+			m_p3DEngine->Enable(0);
+		}
+	}
+
+	_SmartScriptObject pClientStuff(m_pScriptSystem, true);
+
+	if (m_pScriptSystem->GetGlobalValue("ClientStuff", pClientStuff))
+	{
+		m_pScriptSystem->BeginCall("ClientStuff", "OnPauseGame");
+		m_pScriptSystem->PushFuncParam(pClientStuff);
+		m_pScriptSystem->EndCall();
+	}
 }
 
-void CXGame::GotoEdit()
+//////////////////////////////////////////////////////////////////////////
+void CXGame::MenuOff()
 {
-	m_Mode = EDIT;
+	// resume sounds and timers affected by game pause
+	#if 0
+	m_pSystem->GetISoundSystem()->Pause(false);
+	m_pSystem->GetIMusicSystem()->Pause(false);
+	#endif
+	m_pScriptTimerMgr->Pause(false);
+
+	#if 0
+	if (m_pUISystem && m_pUISystem->IsEnabled())
+	{
+		m_pSystem->GetIInput()->RemoveEventListener(m_pUISystem);
+		m_pSystem->GetIInput()->ClearKeyState();
+		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
+
+		if (GetMyPlayer())
+			m_XAreaMgr.ReTriggerArea(GetMyPlayer(), GetMyPlayer()->GetPos(), false);
+	}
+
+	m_bMenuOverlay = 0;
+
+	m_pSystem->SetIProcess(m_p3DEngine);
+	m_pSystem->GetIProcess()->SetFlags(PROC_3DENGINE);
+	#endif
+
+	if (!m_bEditor)
+	{
+		m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
+		m_p3DEngine->Enable(1);
+	}
+
+	_SmartScriptObject pClientStuff(m_pScriptSystem, true);
+
+	if (m_pScriptSystem->GetGlobalValue("ClientStuff", pClientStuff))
+	{
+		m_pScriptSystem->BeginCall("ClientStuff", "OnResumeGame");
+		m_pScriptSystem->PushFuncParam(pClientStuff);
+		m_pScriptSystem->EndCall();
+	}
 }
 
-void CXGame::ShowMenu()
+//////////////////////////////////////////////////////////////////////////
+void CXGame::DeleteMessage(const char* szMessage)
 {
+	StringQueue NewQueue;
+
+	while (!m_qMessages.empty())
+	{
+		string qMessage = m_qMessages.front();
+
+		m_qMessages.pop();
+
+		if (qMessage != szMessage)
+		{
+			NewQueue.push(qMessage);
+		}
+	}
+
+	m_qMessages = NewQueue;
 }
 
-bool CXGame::InitPlayer()
+//////////////////////////////////////////////////////////////////////////
+IScriptObject* CXGame::GetScriptObject()
 {
-	// TODO: rewirte it
-#if 0
-  if (m_player != nullptr)
-  {
-	delete m_player;
-  }
-  if ((m_player = reinterpret_cast<CPlayer*>(m_scene->getObject("MyPlayer"))) != nullptr)
-  {
-	m_player->attachCamera(m_World->GetActiveScene()->getCurrentCamera());
-	m_player->setGame(this);
-	return true;
-  }
+	if (!m_pScriptObjectGame)
+	{
+		return 0;
+	}
+
+	return m_pScriptObjectGame->GetScriptObject();
+}
+
+//////////////////////////////////////////////////////////////////////
+void CXGame::PlaySubtitle(ISound* pSound)
+{
+	#if 0
+#if !defined(LINUX)
+	if (m_pMovieUser)
+		m_pMovieUser->PlaySubtitles(pSound);
 #endif
-	return false;
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 }
 
-bool CXGame::FpsInputEvent(const SInputEvent& event)
+//////////////////////////////////////////////////////////////////////
+vector2f CXGame::GetSubtitleSize(const string& szMessage, float sizex, float sizey, const string& szFontName, const string& szFontEffect)
 {
-	////////////////////////
-	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	const bool control	  = event.modifiers & eMM_Ctrl;
-	const bool shift	  = event.modifiers & eMM_Shift;
-	const bool alt		  = event.modifiers & eMM_Alt;
-	////////////////////////
-	auto camera = gEnv->pRenderer->GetCamera();
-	if (keyPressed)
-	{
-		switch (event.keyId)
-		{
-			/*
-	  case eKI_P:
-		isWireFrame = !isWireFrame;
-		return true;
-	  */
-		case eKI_NP_0:
-			//m_SelectedBox = ++m_SelectedBox % m_testObjects.size();
-			return true;
-		case eKI_M:
-			camera.mode = CCamera::Mode::FLY;
-			m_Mode		= Mode::FLY;
-			return true;
-#if 0
-		case eKI_H:
-			m_IntersectionState.picked->m_AABB.min.x += 1;
-			m_IntersectionState.picked->m_AABB.max.x += 1;
-			return true;
-		case eKI_L:
-			m_IntersectionState.picked->m_AABB.min.x -= 1;
-			m_IntersectionState.picked->m_AABB.max.x -= 1;
-			return true;
-		case eKI_K:
-			m_IntersectionState.picked->m_AABB.min.z += 1;
-			m_IntersectionState.picked->m_AABB.max.z += 1;
-			return true;
-		case eKI_J:
-			m_IntersectionState.picked->m_AABB.min.z -= 1;
-			m_IntersectionState.picked->m_AABB.max.z -= 1;
-			return true;
-		case eKI_U:
-		{
-			int module = 1;
-			if (control)
-				module = -1;
-			m_IntersectionState.picked->m_AABB.min.y += module;
-			m_IntersectionState.picked->m_AABB.max.y += module;
-			return true;
-		}
-#endif
-		case eKI_Escape:
-			GotoMenu();
-			return true;
-		case eKI_P:
-			camera.MovementSpeed += 5.0f;
-			return true;
-		case eKI_E:
-			//m_inputHandler->mouseLock(false);
-			m_Mode = EDIT;
-			return true;
-		/*case eKI_M:
-	  camera->MovementSpeed->Set(camera->MovementSpeed->GetFVal() + 5.0f);
-	  return true;*/
-		case eKI_B:
-			culling = !culling;
-			return true;
-		case eKI_F9:
-			if (shift)
-				++currPP;
-			else
-				--currPP;
-			//m_World->GetActiveScene()->setPostProcessor(postProcessors[currPP % postProcessors.size()]);
-			return true;
-		case eKI_Enter:
-			if (alt == true)
-				GotoFullscreen();
-			return true;
-		default:
-			return false;
-		}
-	}
-	//return m_player->OnInputEvent(event);
-	return false;
+	#if 0
+	IFFont* pFont = m_pSystem->GetICryFont()->GetFont(szFontName.c_str());
+
+	pFont->Reset();
+	pFont->SetEffect(szFontEffect.c_str());
+	pFont->SetSize(vector2f(sizex, sizey));
+
+	wstring szwString;
+
+	m_StringTableMgr.Localize(szMessage, szwString);
+
+	return pFont->GetTextSizeW(szwString.c_str());
+	#else
+	NOT_IMPLEMENTED_V;
+	#endif
 }
 
-bool CXGame::FlyInputEvent(const SInputEvent& event)
+//////////////////////////////////////////////////////////////////////
+void CXGame::WriteSubtitle(const string& szMessage, float x, float y, float sizex, float sizey, const color4f& cColor, const string& szFontName, const string& szFontEffect)
 {
-	////////////////////////
-	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool	   control	  = event.modifiers & eMM_Ctrl;
-	bool	   shift	  = event.modifiers & eMM_Shift;
-	bool	   alt		  = event.modifiers & eMM_Alt;
-	////////////////////////
-	if (keyPressed)
-	{
-		switch (event.keyId)
-		{
-		case eKI_P:
-			isWireFrame = !isWireFrame;
-			return true;
-		case eKI_Backspace:
-			return true;
-		case eKI_Space:
-			GotoGame();
-			return true;
-		case eKI_Escape:
-			//TODO: FIX IT
-			//m_inputHandler->mouseLock(false);
-			m_Mode = Mode::MENU;
-			return true;
-		default:
-			return false;
-		}
-	}
-	return false;
-	//return m_player->OnInputEvent(event);
+	#if 0
+	IFFont* pFont = m_pSystem->GetICryFont()->GetFont(szFontName.c_str());
+
+	pFont->Reset();
+	pFont->SetEffect(szFontEffect.c_str());
+	pFont->SetSize(vector2f(sizex, sizey));
+	pFont->SetColor(cColor);
+
+	wstring szwString;
+
+	m_StringTableMgr.Localize(szMessage, szwString);
+
+	pFont->DrawStringW(x, y, szwString.c_str());
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 }
 
-bool CXGame::MenuInputEvent(const SInputEvent& event)
+//////////////////////////////////////////////////////////////////////////
+IGameMods* CXGame::GetModsInterface()
 {
-	////////////////////////
-	const bool keyPressed = (event.deviceType == eIDT_Keyboard || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
-	bool	   control	  = event.modifiers & eMM_Ctrl;
-	bool	   shift	  = event.modifiers & eMM_Shift;
-	bool	   alt		  = event.modifiers & eMM_Alt;
-	static int activatedFrame = 0;
-	static int backStepFrame  = 0;
-	int		   currentFrame	  = gEnv->pRenderer->GetFrameID();
+	return m_pGameMods;
+};
 
-			//backStepFrame = currentFrame;
-	if (m_MenuActived && currentFrame > activatedFrame)
-	{
-		m_MenuActived = false;
-		activatedFrame = 0;
-	}
-	////////////////////////
-	if (keyPressed)
-	{
-		m_CanBackStep = false;
-		switch (event.keyId)
-		{
-		case eKI_Mouse1: 
-			mouseClicked = true;
-			return true;
-		case eKI_Enter:
-			m_MenuActived = true;
-			activatedFrame = currentFrame;
-			return true;
-		case eKI_Escape:
-
-			if (currentFrame > (backStepFrame))
-			{
-				m_CanBackStep = true;
-			}
-			else
-			{
-				m_CanBackStep = false;
-			}
-			backStepFrame = currentFrame;
-
-			if (menuOnTopLevel)
-				GotoGame();
-			return true;
-		case eKI_J:
-			return true;
-		case eKI_K:
-			return true;
-
-		case eKI_Up:
-			m_CurrentMenuEntry = std::max(1ULL, m_CurrentMenuEntry) - 1;
-			return true;
-		case eKI_Down:
-			m_CurrentMenuEntry = std::min(m_MenuEnries - 1, m_CurrentMenuEntry) + 1;
-			return true;
-
-		default:
-			return false;
-		}
-	}
-	return false;
-}
-#endif
-#if 0
-bool CXGame::OnInputEventProxy(const SInputEvent& event)
+//////////////////////////////////////////////////////////////////////////
+void CXGame::LoadingError(const char* szError)
 {
-	switch (m_Mode)
-	{
-	case CXGame::FPS:
-		//if (m_player != nullptr) return FpsInputEvent(event);
-		return FpsInputEvent(event);
-	case CXGame::MENU:
-		return MenuInputEvent(event);
-	case CXGame::FLY:
-		return FlyInputEvent(event);
-	case CXGame::EDIT:
-		return EditInputEvent(event);
-	default:
-		break;
-	}
-	return false;
+	m_pRenderer->ClearColorBuffer(Vec3(0, 0, 0));
+	GetSystem()->GetIConsole()->ResetProgressBar(0);
+	m_pSystem->GetIConsole()->ShowConsole(false);
+	m_pSystem->GetIConsole()->SetScrollMax(600 / 2);
+
+	m_pScriptSystem->BeginCall("Game", "OnLoadingError");
+	m_pScriptSystem->PushFuncParam(GetScriptObject());
+	m_pScriptSystem->PushFuncParam(szError);
+	m_pScriptSystem->EndCall();
 }
 
-bool CXGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
-{
-	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-	bool	   control	  = event.modifiers & eMM_Ctrl;
-	bool	   shift	  = event.modifiers & eMM_Shift;
-	bool	   alt		  = event.modifiers & eMM_Alt;
-	retflag				  = true;
-
-	if (keyPressed)
-	{
-		switch (event.keyId)
-		{
-		case eKI_Tilde:
-			if (gEnv->pConsole->IsOpened())
-				gEnv->pConsole->ShowConsole(false);
-			else
-				gEnv->pConsole->ShowConsole(true);
-			return true;
-		default:
-			break;
-		}
-	}
-
-	if (gEnv->pConsole->IsOpened())
-		return false;
-	retflag = false;
-	return {};
-}
-#endif
 void CXGame::ProcessPMessages(const char* szMsg)
 {
 	if (stricmp(szMsg, "Quit") == 0) // quit message
@@ -1578,159 +1843,6 @@ void CXGame::ProcessPMessages(const char* szMsg)
 	}
 }
 
-bool CXGame::IsInPause(IProcess* pProcess)
-{
-	assert(0 && __FUNCTION__);
-	return false;
-}
-
-void CXGame::GotoMenu(bool bTriggerOnSwitch)
-{
-	gEnv->pInput->ShowCursor(true);
-	gEnv->pInput->GrabInput(false);
-	m_pSystem->EnableGui(true);
-}
-
-#if 0
-bool CXGame::InitScripts()
-{
-	m_pScriptObjectGame = new CScriptObjectGame();
-	m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
-
-	m_pScriptObjectInput = new CScriptObjectInput;
-	CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
-
-	auto SOT = new CScriptObjectTest();
-	SOT->InitializeTemplate(m_pScriptSystem);
-	SOT->Init(m_pScriptSystem, this);
-	CScriptObjectTest::ReleaseTemplate();
-	SAFE_DELETE(SOT);
-
-#if 0
-  m_pScriptClient = new CScriptObjectClient();
-  m_pScriptClient->InitializeTemplate(m_pScriptSystem);
-
-  m_pScriptServer = new CScriptObjectServer();
-  m_pScriptServer->InitializeTemplate(m_pScriptSystem);
-#endif
-
-	m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
-	m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
-#if 0
-  m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
-  m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
-#endif
-
-	CScriptObjectStream::InitializeTemplate(m_pScriptSystem);
-
-	InitClassRegistry();
-
-	// execute the "main"-script (to pre-load other scripts, etc.)
-	m_pScriptSystem->ExecuteFile("scripts/main.lua", true, false);
-	m_pScriptSystem->BeginCall("Init");
-	m_pScriptSystem->PushFuncParam(0);
-	m_pScriptSystem->EndCall();
-
-	fps = 35.f;
-	class toogle_viewport_drag : public IConsoleCommand
-	{
-		CXGame* game;
-
-	  public:
-		toogle_viewport_drag(CXGame* game)
-			: game(game)
-		{
-		}
-		bool execute(CommandDesc& cd)
-		{
-			game->can_drag_vp = !game->can_drag_vp;
-			return true;
-		}
-	};
-
-	//gEnv->pConsole->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
-#if 0
-  gEnv->pConsole->AddCommand(
-	"enumd",
-	R"(
-		local formats = System:EnumDisplayFormats()
-		for i=1, #formats do
-			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
-		end
-		Console:PrintLine(%2)
-		Console:PrintLine(%1)
-		)",
-	0,
-	"Enum Display formats"
-  );
-#endif
-
-	m_pScriptSystem->ExecuteFile("scripts/utils.lua");
-
-	return true;
-}
-#endif
-
-#if 0
-bool CXGame::TestScriptSystem(bool& retflag)
-{
-	retflag		   = true;
-	m_playerObject = m_pScriptSystem->CreateEmptyObject();
-	if (!m_pScriptSystem->GetGlobalValue("Player", m_playerObject))
-	{
-		m_playerObject->Release();
-		m_pSystem->Log("\002 ERROR: can't find player table ");
-		return false;
-	}
-	const char* name;
-	int			age;
-	m_playerObject->GetValue("name", name);
-	m_playerObject->GetValue("age", age);
-	CryLogAlways("Player name: %s", name);
-	CryLogAlways("Player age: %d", age);
-
-#if 0
-  HSCRIPTFUNCTION psina;
-  m_playerObject->GetValue("TestChanges", psina);
-
-  m_playerObject->SetValue("name", "Psina");
-  //m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
-  IScriptObject* console = nullptr;
-  m_pScriptSystem->BeginCall("Console", "PrintLine");
-  m_pScriptSystem->PushFuncParam(m_ScriptObjectConsole->GetScriptObject());
-  m_pScriptSystem->PushFuncParam("alskdjfa;lsdjf call!!!");
-  m_pScriptSystem->EndCall(console);
-
-  m_pScriptSystem->BeginCall("player", "TestChanges");
-  m_pScriptSystem->PushFuncParam(m_playerObject);
-  m_pScriptSystem->PushFuncParam("Test HSCRIPTFUNCTION call!!!");
-  m_pScriptSystem->EndCall(console);
-
-  m_pScriptSystem->BeginCall(m_playerObject, "TestChanges");
-  m_pScriptSystem->PushFuncParam(m_playerObject);
-  m_pScriptSystem->PushFuncParam("Test lkjakldfj call!!!");
-  m_pScriptSystem->EndCall(console);
-
-  HSCRIPTFUNCTION PrintLine = 0;
-  console->GetValue("PrintLine", PrintLine);
-  m_pScriptSystem->BeginCall(PrintLine);
-  m_pScriptSystem->PushFuncParam(console);
-  m_pScriptSystem->PushFuncParam("=====================Test HSCRIPTFUNCTION call!!!");
-  m_pScriptSystem->EndCall();
-
-  int n;
-  m_pScriptSystem->BeginCall(console, "PrintLine");
-  m_pScriptSystem->PushFuncParam(console);
-  m_pScriptSystem->PushFuncParam("Call by table reference");
-  m_pScriptSystem->EndCall(console);
-
-  m_playerObject->GetValue("name", name);
-  gEnv->pConsole->PrintLine("Player name: %s", name);
-#endif
-	retflag = false;
-	return {};
-}
-#endif
 void CXGame::ReloadScripts()
 {
 }

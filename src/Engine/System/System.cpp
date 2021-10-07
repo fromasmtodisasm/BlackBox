@@ -670,7 +670,7 @@ const char * CSystem::GetRootFolder() const
 
 IEntitySystem* CSystem::GetIEntitySystem()
 {
-	return nullptr;
+	return m_env.pEntitySystem;
 }
 
 ICryPak* CSystem::GetIPak()

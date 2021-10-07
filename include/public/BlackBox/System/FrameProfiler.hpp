@@ -418,7 +418,7 @@ public:
 //!     ... more code ... // This code will be profiled with counter named "MyCode"
 //!		}
 //! }
-#define FRAME_PROFILER( szProfilerName ) \
+#define FRAME_PROFILER( szProfilerName, subsystem ) \
 	static CFrameProfiler staticFrameProfiler( gEnv->pSystem,szProfilerName,subsystem ); \
 	CFrameProfilerSection frameProfilerSection( &staticFrameProfiler );
 

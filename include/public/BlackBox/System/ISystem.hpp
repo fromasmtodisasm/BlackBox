@@ -52,8 +52,19 @@ struct ISoundSystem;
 class CFrameProfilerSection;
 
 //////////////////////////////////////////////////////////////////////////
-#define DEFAULT_GAME_PATH "TestGame"
-#define DATA_FOLDER "res"
+#define DEFAULT_GAME_PATH "FarCry"
+#define DATA_FOLDER "FCData"
+
+#define PROC_MENU 1
+#define PROC_3DENGINE 2
+
+//ID for script userdata typing (maybe they should be moved into the game.dll)
+#define USER_DATA_SOUND 1
+#define USER_DATA_TEXTURE 2
+#define USER_DATA_OBJECT 3
+#define USER_DATA_LIGHT 4
+#define USER_DATA_BONEHANDLER 5
+#define USER_DATA_POINTER 6
 
 #if BB_PLATFORM_ANDROID
 #	define USE_ANDROIDCONSOLE
