@@ -31,6 +31,7 @@ add_sources(
 	GameFiles/GameObject.cpp
 	GameFiles/GameTagPoints.cpp
 	GameFiles/GameMemStats.cpp
+	GameFiles/GameEvents.cpp
 	GameFiles/SteamHelper.cpp
 	GameFiles/XVehicleSystem.cpp
 	GameFiles/XArea.cpp
@@ -59,6 +60,12 @@ add_sources(
 	Server/XServer.cpp
 	Server/XServerRules.cpp
 	Server/XServerSlot.cpp
+	SOURCE_GROUP
+	"Localization"
+	Localization/StringTableMgr.cpp
+	Localization/StringTableMgr.h
+	Localization/ScriptObjectLanguage.cpp
+	Localization/ScriptObjectLanguage.h
 	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.h
