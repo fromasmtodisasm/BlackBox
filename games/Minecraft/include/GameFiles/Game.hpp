@@ -1228,5 +1228,6 @@ public:
 			return false;
 		}
 	};
+	bool LoadScene(std::string name);
 };
 

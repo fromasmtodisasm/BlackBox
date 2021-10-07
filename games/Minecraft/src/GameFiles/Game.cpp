@@ -363,6 +363,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pDevMode = std::make_unique<CDevMode>();
 	#endif
 
+	#if 0
 	SmartScriptObject Gui(m_pScriptSystem, true);
 	if (!m_pScriptSystem->GetGlobalValue("Gui", *Gui))
 	{
@@ -373,6 +374,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	{
 		Script::CallMethod(Gui, "Init");
 	}
+	#endif
 	// init key-bindings
 	if (!m_bDedicatedServer)
 		InitInputMap();
@@ -409,6 +411,63 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 		m_pSystem->GetIConsole()->ShowConsole(false);
 
 	InitConsoleCommands();
+	{
+		m_pScriptObjectGame = new CScriptObjectGame();
+		m_pScriptObjectGame->InitializeTemplate(m_pScriptSystem);
+
+		m_pScriptObjectInput = new CScriptObjectInput;
+		CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
+
+		auto SOT = new CScriptObjectTest();
+		SOT->InitializeTemplate(m_pScriptSystem);
+		SOT->Init(m_pScriptSystem, this);
+		CScriptObjectTest::ReleaseTemplate();
+		SAFE_DELETE(SOT);
+
+#if 0
+  m_pScriptClient = new CScriptObjectClient();
+  m_pScriptClient->InitializeTemplate(m_pScriptSystem);
+
+  m_pScriptServer = new CScriptObjectServer();
+  m_pScriptServer->InitializeTemplate(m_pScriptSystem);
+#endif
+
+		m_pScriptObjectGame->Init(m_pSystem->GetIScriptSystem(), this);
+		m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
+#if 0
+  m_pScriptServer->Init(m_pSystem->GetIScriptSystem(), m_pServer);
+  m_pScriptClient->Init(m_pSystem->GetIScriptSystem(), m_pClient);
+#endif
+
+		CScriptObjectStream::InitializeTemplate(m_pScriptSystem);
+
+		InitClassRegistry();
+
+		// execute the "main"-script (to pre-load other scripts, etc.)
+		m_pScriptSystem->ExecuteFile("scripts/main.lua", true, false);
+		m_pScriptSystem->BeginCall("Init");
+		m_pScriptSystem->PushFuncParam(0);
+		m_pScriptSystem->EndCall();
+
+		//gEnv->pConsole->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
+#if 0
+  gEnv->pConsole->AddCommand(
+	"enumd",
+	R"(
+		local formats = System:EnumDisplayFormats()
+		for i=1, #formats do
+			Console:PrintLine("["..i.."]".. formats[i].width .. " x " .. formats[i].height .. " x " .. formats[i].bpp)
+		end
+		Console:PrintLine(%2)
+		Console:PrintLine(%1)
+		)",
+	0,
+	"Enum Display formats"
+  );
+#endif
+
+		m_pScriptSystem->ExecuteFile("scripts/utils.lua");
+	}
 
 	DevModeInit();
 
@@ -442,6 +501,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 #else
 	gEnv->pConsole->ExecuteString("@Player:PostInit()");
 #endif
+	LoadScene("test");
 	m_pClient->Init();
 
 	LoadHistory();
@@ -1102,7 +1162,6 @@ bool CXGame::Run(bool& bRelaunch)
 	return true;
 }
 
-#if 0
 bool CXGame::LoadScene(std::string name)
 {
 	GetISystem()->Log("Scene loading");
@@ -1118,7 +1177,7 @@ bool CXGame::LoadScene(std::string name)
 			{
 				//player->attachCamera(scene->getCurrentCamera());
 				//player->setGame(this);
-				this->SetPlayer(player);
+				//this->SetPlayer(player);
 			}
 			m_pClient->OnLoadScene();
 		}
@@ -1127,6 +1186,7 @@ bool CXGame::LoadScene(std::string name)
 
 	return false;
 }
+#if 0
 
 void CXGame::SaveScene(std::string name, std::string as)
 {
@@ -1142,7 +1202,7 @@ void CXGame::SaveScene(std::string name, std::string as)
 #endif
 }
 #endif
-IGAME_API IGame* CreateIGame()
+IGAME_API IGame* CreateGameInstance()
 {
 	CXGame* game = new CXGame();
 	return (game);

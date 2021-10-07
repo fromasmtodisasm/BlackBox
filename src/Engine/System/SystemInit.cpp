@@ -806,7 +806,7 @@ IGame* CSystem::CreateGame(IGame* game)
 	{
 		gameDLLName = pCVarGameDir->GetString();
 	}
-	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateGameInstance", [&](PFNCREATEGAMEINSTANCE P) {
 		m_pGame = P();
 		return true;
 	});
