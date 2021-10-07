@@ -117,6 +117,8 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+list(APPEND global_includes "${CMAKE_SOURCE_DIR}/include/public/BlackBox/Legacy")
+
 # Apply global defines
 set_property(DIRECTORY "${CRYENGINE_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})
 set_property(DIRECTORY "${CRYENGINE_DIR}" PROPERTY INCLUDE_DIRECTORIES ${global_includes})
