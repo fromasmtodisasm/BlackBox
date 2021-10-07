@@ -298,9 +298,11 @@ bool CXGame::SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilenam
 	// save levelname
 	stm.Write(szLowerCaseStr);
 
+	#if 0
 	//strncpy(szLowerCaseStr, m_pServer->m_GameContext.strMission.c_str(), 255);
 	strncpy(szLowerCaseStr, g_MissionName->GetString(), 255);
 	strlwr(szLowerCaseStr);
+	#endif
 
 	// save mission name
 	stm.Write(szLowerCaseStr);

@@ -99,15 +99,12 @@ void CXGame::InitConsoleCommands()
 void CXGame::InitConsoleVars()
 {
   IConsole* pConsole = m_pSystem->GetIConsole();
-  r_displayinfo = REGISTER_INT("r_displayinfo", 0, 0, "Display info [1/0]");
-  r_profile = REGISTER_INT("r_profile", 1, 0, "Profile [1/0]");
-  r_cap_profile = REGISTER_INT("r_cap_profile", 1, 0, "Capture frame [1/0]");
   m_pCVarCheatMode = REGISTER_STRING("zz0x067MD4", "DEVMODE", VF_NET_SYNCED, "");
 
-  g_NonSteam = REGISTER_INT("g_NonSteam", 1, VF_DUMPTODISK, "[enable/disable] steam\nRelaunch required");
 
-  REGISTER_CVAR(g_DrawUI, 0, VF_DUMPTODISK, "[enable/disable] UI");
+  #if 0
   REGISTER_CVAR(g_Render, 0, VF_DUMPTODISK, "[enable/disable] Rendering");
+  #endif
 
   //REGISTER_CVAR(CameraRayLength, CameraRayLength, 0);
 
@@ -125,11 +122,10 @@ void CXGame::InitConsoleVars()
 		"server waits while trying to establish a connection with\n"
 		"a client."); 
 
-	REGISTER_CVAR(st_achivements_numHits, 0, VF_DUMPTODISK, "Num hits to any box.\n");
 
 	g_LevelName= pConsole->CreateVariable("g_LevelName","0.4",0);
 	pConsole->CreateVariable("g_LevelStated","0",0, "");
-	g_MissionName= pConsole->CreateVariable("g_MissionName","TestMission",0);
+	//g_MissionName= pConsole->CreateVariable("g_MissionName","TestMission",0);
 
 	{
 		cv_game_Difficulty = pConsole->CreateVariable("game_AdaptiveDifficulty", "0", VF_SAVEGAME,

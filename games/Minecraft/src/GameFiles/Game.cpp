@@ -212,37 +212,18 @@ void SaveHistory()
 	}
 }
 
-void CXGame::PreRender()
-{
-	//glCheck(glViewport(0, 0, 1366, 768));
-}
-
 CXGame::CXGame()
 	: m_pSystem(nullptr)
 	, m_pScriptSystem(nullptr)
-	, m_pRender(nullptr)
-	, m_pInput(nullptr)
-	, m_inputHandler(nullptr)
-	, m_3DEngine(nullptr)
+	, m_pRenderer(nullptr)
+	, m_p3DEngine(nullptr)
 	, m_pLog(nullptr)
-	, m_lastTime(0)
-	, listener(nullptr)
-	, m_Font(nullptr)
-	, m_Console(nullptr)
-	, g_scene(nullptr)
-	, r_displayinfo(nullptr)
-	, r_profile(nullptr)
-	, r_cap_profile(nullptr)
 	, m_pCVarCheatMode(nullptr)
 	, m_pScriptObjectGame(nullptr)
 {
 	//const auto ltime = time (NULL);
 	//auto stime = (unsigned int) ltime/2;
 	//srand(stime);
-}
-
-void CXGame::InitVariables()
-{
 }
 
 CXGame::~CXGame()
@@ -330,27 +311,31 @@ static GLSLEditor* glslEditor = nullptr;
 #endif //  USE_STEAM
 bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
+	#if 0
 	if (!SteamInit())
 		return false;
+	#endif
 	m_pSystem		   = pSystem;
 	m_bDedicatedServer = bDedicatedSrv;
-	m_pRender		   = m_pSystem->GetIRenderer();
-	m_pInput		   = m_pSystem->GetIInput();
+	m_pRenderer		   = m_pSystem->GetIRenderer();
 	m_pScriptSystem	   = m_pSystem->GetIScriptSystem();
 	m_pLog			   = m_pSystem->GetILog();
-	m_Console		   = m_pSystem->GetIConsole();
-	m_3DEngine		   = gEnv->p3DEngine;
+	m_p3DEngine		   = gEnv->p3DEngine;
+#if 0
 	if (!bDedicatedSrv)
 	{
-		m_pInput->AddEventListener(this);
-		//m_pInput->AddEventListener(&m_CameraController);
+		gEnv->pInput->AddEventListener(this);
+		//gEnv->pInput->AddEventListener(&m_CameraController);
 		//gEnv->pSystem->GetIHardwareMouse()->AddListener(&m_CameraController);
-		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRender->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
+		gEnv->pSystem->GetIHardwareMouse()->SetHardwareMouseClientPosition(static_cast<float>(m_pRenderer->GetWidth()), static_cast<float>(m_pRender->GetHeight()));
 	}
 	pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CXGame");
+#endif
 	m_pNetwork		= m_pSystem->GetINetwork();
 	m_bUpdateRet	= true;
+	#if 0
 	m_HardwareMouse = m_pSystem->GetIHardwareMouse();
+	#endif
 
 	m_pVehicleSystem = new CVehicleSystem();
 	m_pPlayerSystem	 = new CPlayerSystem();
@@ -374,9 +359,9 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 #endif
 
 	InitConsoleVars();
-	InitCommands();
-	InitScripts();
+	#if 0
 	m_pDevMode = std::make_unique<CDevMode>();
+	#endif
 
 	SmartScriptObject Gui(m_pScriptSystem, true);
 	if (!m_pScriptSystem->GetGlobalValue("Gui", *Gui))
@@ -388,8 +373,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	{
 		Script::CallMethod(Gui, "Init");
 	}
-	//m_Console->ExecuteString("@Player:OnInit()");
-
 	// init key-bindings
 	if (!m_bDedicatedServer)
 		InitInputMap();
@@ -429,17 +412,17 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 
 	DevModeInit();
 
-	InitPlayer();
-	//m_pInput->ShowCursor(false);
-	m_pInput->GrabInput(true);
+	gEnv->pInput->GrabInput(true);
 
-	if (m_pRender)
+	if (m_pRenderer)
 	{
+		#if 0
 		m_Font = gEnv->pRenderer->GetIFont();
 		m_Font->Init("arial.ttf", g_FontSize,g_FontSize);
 
 		m_SelectedEntryFont = gEnv->pRenderer->GetIFont();
 		m_SelectedEntryFont->Init("arial.ttf", 60,60);
+		#endif
 	}
 
 	// other
@@ -455,19 +438,12 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 
 	m_pClient = new CClient(this);
 #if 0
-	m_Console->ExecuteFile("res/scripts/postinit.cfg");
+	gEnv->pConsole->ExecuteFile("res/scripts/postinit.cfg");
 #else
-	m_Console->ExecuteString("@Player:PostInit()");
+	gEnv->pConsole->ExecuteString("@Player:PostInit()");
 #endif
 	m_pClient->Init();
-	if (m_Console->GetCVar("nsightDebug"))
-	{
-		m_Console->ExecuteString("r_displayinfo 0");
-	}
 
-	m_QuadTree = std::make_shared<QuadTree>(8, 10, 0, 0, color3(1, 0, 0));
-	//m_QuadTreeRender = std::make_shared<CRender>(m_pRender);
-	//TreeRender treeRender(m_QuadTreeRender.get());
 	LoadHistory();
 	gEnv->pRenderer->RegisterCallbackClient(this);
 
@@ -533,6 +509,7 @@ bool MouseInQuad(int x, int y, int w, int h)
 }
 
 
+#if 0
 void CXGame::OnRenderer_BeforeEndFrame()
 {
 	auto   posY			  = 150.f;
@@ -630,7 +607,7 @@ void CXGame::OnRenderer_BeforeEndFrame()
 	static bool mods		   = false;
 	static bool quitRequested  = false;
 	{
-		//m_pRender->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
+		//m_pRenderer->SetViewport(0, 0, m_pRender->GetWidth() / 2, m_pRender->GetHeight() / 2);
 
 		if (g_bRenderGame)
 		{
@@ -909,7 +886,7 @@ void CXGame::OnRenderer_BeforeEndFrame()
 	}
 	DrawHud(fps);
 }
-
+#endif
 
 static ITexture* splash = nullptr;
 bool			 CXGame::Update()
@@ -925,12 +902,6 @@ bool			 CXGame::Update()
 	SteamAPI_RunCallbacks();
 #endif
 	{
-		// TODO: FIX IT
-		m_deltaTime = m_pSystem->GetDeltaTime();
-		m_time += m_deltaTime;
-		fps = 1.0f / m_deltaTime;
-		ExecScripts();
-
 		if (bRenderFrame)
 		{
 #if 0
@@ -948,7 +919,7 @@ bool			 CXGame::Update()
 
 			if (g_bRenderGame)
 			{
-				Render();
+				m_pClient->Render();
 			}
 
 //PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
@@ -997,13 +968,14 @@ bool			 CXGame::Update()
 	return m_bUpdateRet && num_frames > 0;
 }
 
+#if 0
 void CXGame::ExecScripts()
 {
 }
 
 void CXGame::DrawHud(float fps)
 {
-	//m_pRender->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
+	//m_pRenderer->SetViewport(0, 0, m_pRender->GetWidth(), m_pRender->GetHeight());
 	if (r_displayinfo->GetIVal() != 0)
 	{
 		DisplayInfo(fps);
@@ -1014,7 +986,7 @@ void CXGame::DisplayInfo(float fps)
 {
 	size_t num_objects;
 	num_objects = m_3DEngine->GetLoadedObjectCount();
-	auto line	= m_pRender->GetHeight();
+	auto line	= m_pRenderer->GetHeight();
 	auto step	= 18;
 
 	const std::string mode = m_Mode == MENU	 ? "MENU"
@@ -1047,7 +1019,7 @@ void CXGame::DisplayInfo(float fps)
 	info.AddLine("FPS: " + std::to_string(fps));
 	//info.AddLine("NUM OBJECTS: "			+ std::to_string(num_objects));
 	info.AddLine("Current mode: " + mode);
-	info.AddLine("Width = " + std::to_string(m_pRender->GetWidth()) + "Height = " + std::to_string(m_pRender->GetHeight()));
+	info.AddLine("Width = " + std::to_string(m_pRenderer->GetWidth()) + "Height = " + std::to_string(m_pRender->GetHeight()));
 	//info.AddLine("Active scene: "			+ m_World->getActiveScene()->name);
 	//info.AddLine("Selected Object: "	+ m_World->getActiveScene()->selectedObject()->first);
 	//info.AddLine("  visible: "				+ std::to_string(m_World->getActiveScene()->selectedObject()->second->visible()));
@@ -1091,8 +1063,8 @@ void CXGame::DisplayInfo(float fps)
 	{
 		Vec2 c;
 		m_pSystem->GetIHardwareMouse()->GetHardwareMouseClientPosition(&c.x, &c.y);
-		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRender->GetHeight() - */ c.y)).c_str(), info.getDTI());
-		m_Font->SetYPos((float)m_pRender->GetHeight() / 2);
+		render->PrintLine(("Cursor: " + std::to_string(c.x) + std::string(", ") + std::to_string(/*m_pRenderer->GetHeight() - */ c.y)).c_str(), info.getDTI());
+		m_Font->SetYPos((float)m_pRenderer->GetHeight() / 2);
 		{
 #if 0
 			auto& lpp	 = m_IntersectionState.m_LastPickedPos;
@@ -1105,6 +1077,7 @@ void CXGame::DisplayInfo(float fps)
 		}
 	}
 }
+#endif
 
 bool CXGame::Run(bool& bRelaunch)
 {
@@ -1129,6 +1102,7 @@ bool CXGame::Run(bool& bRelaunch)
 	return true;
 }
 
+#if 0
 bool CXGame::LoadScene(std::string name)
 {
 	GetISystem()->Log("Scene loading");
@@ -1167,47 +1141,14 @@ void CXGame::SaveScene(std::string name, std::string as)
   }
 #endif
 }
-
-void CXGame::SetRenderState()
-{
-#if 0
-	m_pRender->SetState(IRenderer::State::DEPTH_TEST, true);
-	m_pRender->SetState(IRenderer::State::BLEND, false);
-	if (culling)
-	{
-		m_pRender->SetState(IRenderer::State::CULL_FACE, true);
-		m_pRender->SetCullMode(IRenderer::CullMode::BACK);
-	}
-	else
-	{
-		m_pRender->SetState(IRenderer::State::CULL_FACE, false);
-	}
 #endif
-}
-
-void CXGame::SetPlayer(CPlayer* player)
-{
-	m_player = player;
-}
-
-void CXGame::SetCamera(CCamera* camera)
-{
-	//m_active_camera = camera;
-	//m_World->setCamera(camera);
-}
-
-void CXGame::Render()
-{
-	m_pSystem->Render();
-	m_pClient->Render();
-}
-
 IGAME_API IGame* CreateIGame()
 {
 	CXGame* game = new CXGame();
 	return (game);
 }
 
+#if 0
 bool CXGame::OnInputEvent(const SInputEvent& event)
 {
 	{
@@ -1225,7 +1166,7 @@ bool CXGame::OnInputEvent(const SInputEvent& event)
 
 void CXGame::PersistentHandler(const SInputEvent& event)
 {
-	auto useBoxFilter = m_Console->GetCVar("bf");
+	auto useBoxFilter = gEnv->pConsole->GetCVar("bf");
 	////////////////////////
 	const bool keyPressed = (event.deviceType == eIDT_Keyboard || event.deviceType == eIDT_Mouse) && event.state == eIS_Pressed;
 	const bool control	  = event.modifiers & eMM_Ctrl;
@@ -1267,21 +1208,22 @@ void CXGame::PersistentHandler(const SInputEvent& event)
 		}
 	}
 }
-
+#endif
 void CXGame::GotoGame(bool bTriggerOnSwitch)
 {
 	//if (m_player != nullptr)
 	{
 		//m_World->GetActiveScene()->getCurrentCamera()->mode = CCamera::Mode::FPS;
 
-		m_bInPause = false;
-		m_Mode	   = FPS;
-		m_pInput->ShowCursor(false);
-		m_pInput->GrabInput(true);
-		m_Console->ShowConsole(false);
+		//m_bInPause = false;
+		//m_Mode	   = FPS;
+		gEnv->pInput->ShowCursor(false);
+		gEnv->pInput->GrabInput(true);
+		gEnv->pConsole->ShowConsole(false);
 		m_pSystem->EnableGui(false);
 	}
 }
+#if 0
 
 void CXGame::GotoFly()
 {
@@ -1317,11 +1259,6 @@ bool CXGame::InitPlayer()
 
 bool CXGame::FpsInputEvent(const SInputEvent& event)
 {
-	/*
-  if (m_Console->IsOpened())
-	return false;
-  */
-
 	////////////////////////
 	const bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
 	const bool control	  = event.modifiers & eMM_Ctrl;
@@ -1471,9 +1408,6 @@ bool CXGame::MenuInputEvent(const SInputEvent& event)
 			activatedFrame = currentFrame;
 			return true;
 		case eKI_Escape:
-			//m_inputHandler->mouseLock(false);
-			//m_Mode = Mode::MENU;
-			//Stop();
 
 			if (currentFrame > (backStepFrame))
 			{
@@ -1506,67 +1440,8 @@ bool CXGame::MenuInputEvent(const SInputEvent& event)
 	}
 	return false;
 }
-
-bool CXGame::DefaultInputEvent(const SInputEvent& event)
-{
-	return false;
-}
-
-bool CXGame::EditInputEvent(const SInputEvent& event)
-{
-#if 0
-  ////////////////////////
-  bool keyPressed = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-  bool control = event.modifiers & eMM_Ctrl;
-  bool shift = event.modifiers & eMM_Shift;
-  bool alt = event.modifiers & eMM_Alt;
-  ////////////////////////
-  if (keyPressed)
-  {
-	IStatObj* obj = m_World->GetActiveScene()->selectedObject()->second;
-	switch (event.keyId)
-	{
-	case eKI_Escape:
-	  gotoMenu();
-	  return true;
-	case eKI_I:
-	  obj->move(Movement::FORWARD);
-	  return true;
-	case eKI_U:
-	  obj->move(Movement::BACKWARD);
-	  return true;
-	case eKI_J:
-	  obj->move(Movement::DOWN);
-	  return true;
-	case eKI_K:
-	  obj->move(Movement::UP);
-	  return true;
-	case eKI_V:
-	  obj->setVisibility(!obj->visible());
-	  return true;
-	case eKI_Tab:
-	  if (shift)
-	  {
-		m_World->GetActiveScene()->selectPrevObject();
-	  }
-	  else
-	  {
-		m_World->GetActiveScene()->selectNextObject();
-	  }
-	  return true;
-	//default:
-	  //return m_player->OnInputEvent(event);
-	}
-  }
-  else
-  {
-	//return m_player->OnInputEvent(event);
-  }
 #endif
-
-	return false;
-}
-
+#if 0
 bool CXGame::OnInputEventProxy(const SInputEvent& event)
 {
 	switch (m_Mode)
@@ -1599,22 +1474,22 @@ bool CXGame::ShouldHandleEvent(const SInputEvent& event, bool& retflag)
 		switch (event.keyId)
 		{
 		case eKI_Tilde:
-			if (m_Console->IsOpened())
-				m_Console->ShowConsole(false);
+			if (gEnv->pConsole->IsOpened())
+				gEnv->pConsole->ShowConsole(false);
 			else
-				m_Console->ShowConsole(true);
+				gEnv->pConsole->ShowConsole(true);
 			return true;
 		default:
 			break;
 		}
 	}
 
-	if (m_Console->IsOpened())
+	if (gEnv->pConsole->IsOpened())
 		return false;
 	retflag = false;
 	return {};
 }
-
+#endif
 void CXGame::ProcessPMessages(const char* szMsg)
 {
 	if (stricmp(szMsg, "Quit") == 0) // quit message
@@ -1643,35 +1518,20 @@ void CXGame::ProcessPMessages(const char* szMsg)
 	}
 }
 
-bool CXGame::IsInPause()
+bool CXGame::IsInPause(IProcess* pProcess)
 {
-	return m_bInPause;
-}
-
-void CXGame::Stop()
-{
-	GetISystem()->Log("Stopping");
-	m_bUpdateRet = false;
-}
-
-void CXGame::PostRender()
-{
+	assert(0 && __FUNCTION__);
+	return false;
 }
 
 void CXGame::GotoMenu(bool bTriggerOnSwitch)
 {
-	m_Mode	   = MENU;
-	m_bInPause = true;
-	m_pInput->ShowCursor(true);
-	m_pInput->GrabInput(false);
+	gEnv->pInput->ShowCursor(true);
+	gEnv->pInput->GrabInput(false);
 	m_pSystem->EnableGui(true);
 }
 
-void CXGame::GotoFullscreen()
-{
-	isFullScreen = !isFullScreen;
-}
-
+#if 0
 bool CXGame::InitScripts()
 {
 	m_pScriptObjectGame = new CScriptObjectGame();
@@ -1728,9 +1588,9 @@ bool CXGame::InitScripts()
 		}
 	};
 
-	//m_Console->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
+	//gEnv->pConsole->AddCommand("toogle_viewport_drag", new toogle_viewport_drag(this));
 #if 0
-  m_Console->AddCommand(
+  gEnv->pConsole->AddCommand(
 	"enumd",
 	R"(
 		local formats = System:EnumDisplayFormats()
@@ -1749,7 +1609,9 @@ bool CXGame::InitScripts()
 
 	return true;
 }
+#endif
 
+#if 0
 bool CXGame::TestScriptSystem(bool& retflag)
 {
 	retflag		   = true;
@@ -1803,12 +1665,12 @@ bool CXGame::TestScriptSystem(bool& retflag)
   m_pScriptSystem->EndCall(console);
 
   m_playerObject->GetValue("name", name);
-  m_Console->PrintLine("Player name: %s", name);
+  gEnv->pConsole->PrintLine("Player name: %s", name);
 #endif
 	retflag = false;
 	return {};
 }
-
+#endif
 void CXGame::ReloadScripts()
 {
 }
@@ -1817,18 +1679,9 @@ void CXGame::UpdateDuringLoading()
 {
 }
 
-IXAreaMgr* CXGame::GetAreaManager()
-{
-	return nullptr;
-}
-
 ITagPointManager* CXGame::GetTagPointManager()
 {
 	return nullptr;
-}
-
-void CXGame::MainMenu()
-{
 }
 
 #ifdef USE_STEAM
@@ -1838,21 +1691,7 @@ CSteamAchievements* CXGame::SteamAchivements()
 }
 #endif
 
-void CXGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
-{
-	switch (event)
-	{
-	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
-		m_isActive = bool(wparam);
-		break;
-	case ESYSTEM_EVENT_FAST_SHUTDOWN:
-		SendMessage("Quit");
-	default:
-		break;
-	}
-}
-
-void CXGame::GetMemoryUsage(ICrySizer* pSizer) const
+void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 {
 	unsigned size = 0;
 
@@ -1925,6 +1764,7 @@ void CXGame::GetMemoryUsage(ICrySizer* pSizer) const
 
 }
 
+#if 0
 bool CXGame::SteamInit()
 {
 #ifndef USE_STEAM
@@ -1952,166 +1792,5 @@ bool CXGame::SteamInit()
 	gEnv->pLog->Log("steam api init: %d", bRet);
 	return bRet;
 #endif // !USE_STEAM
-}
-
-#ifdef USE_GUI
-void CXGame::Gui::Update()
-{
-	windows.Draw();
-}
-
-void CXGame::Gui::Graphics::Draw()
-{
-	if (ImGui::TreeNode("Graphics"))
-	{
-		auto cnt = gEnv->pRenderer->EnumDisplayFormats(nullptr);
-		ImGui::TreePop();
-	}
-}
-
-void CXGame::Gui::Input::Draw()
-{
-	if (ImGui::TreeNode("Input"))
-	{
-		ImGui::TreePop();
-	}
-}
-
-CXGame::Gui::Windows::Windows()
-{
-	widgets.push_back(std::make_shared<Common>());
-	widgets.push_back(std::make_shared<Input>());
-	widgets.push_back(std::make_shared<Graphics>());
-}
-
-void CXGame::Gui::Windows::Draw()
-{
-	if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			ImGui::Separator();
-			if (ImGui::MenuItem("Quit"))
-			{
-				gEnv->pSystem->GetIGame()->SendMessage("Quit");
-			}
-			ImGui::EndMenu();
-		}
-	}
-	ImGui::EndMainMenuBar();
-	ControlPanel::AddEntry([&]
-						   {
-							   for (const auto w : widgets)
-							   {
-								   w->Draw();
-								   ImGui::Separator();
-							   }
-						   });
-}
-
-void CXGame::Gui::Common::Draw()
-{
-	static char var_buffer[256];
-	union CVarValue
-	{
-		bool		b;
-		int			i;
-		float		f;
-		const char* s;
-	};
-	static CVarValue cvv;
-	static ICVar*	 cur_var = nullptr;
-
-	auto change_value = [&](ICVar* v)
-	{
-		switch (v->GetType())
-		{
-		case CVAR_INT:
-		{
-			cvv.i = v->GetIVal();
-			break;
-		}
-		case CVAR_FLOAT:
-		{
-			cvv.f = v->GetFVal();
-			break;
-		}
-		case CVAR_STRING:
-		{
-			auto s = v->GetString();
-			auto l = strlen(s);
-			strncpy(var_buffer, s, l);
-			var_buffer[l] = 0;
-			cvv.s		  = var_buffer;
-			break;
-		}
-		default:
-			break;
-		}
-	};
-
-	if (ImGui::TreeNode("Common"))
-	{
-		static char search_pattern[256] = "sv";
-		static bool need_dump			= true;
-		ImGui::Button("Test");
-		if (ImGui::Button("Quit"))
-		{
-			gEnv->pSystem->GetIGame()->SendMessage("Quit");
-		}
-		//ImGui::BeginTooltip();
-		if (ImGui::Checkbox("Show Vars", &console_vars) || need_dump)
-		{
-			need_dump = false;
-			vd.SetSubstr(search_pattern);
-			vd.vars.resize(0);
-			gEnv->pConsole->DumpCVars(&vd);
-			if (!vd.vars.empty())
-			{
-				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
-				change_value(cur_var);
-			}
-		}
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Open listbox with console variables");
-		//ImGui::EndTooltip();
-
-		if (console_vars && ImGui::BeginChild("Console Variables"))
-		{
-			if (ImGui::InputText("Search", search_pattern, 256))
-				need_dump = true;
-			if (ImGui::ListBox("", &cvr, vd.vars.data(), vd.vars.size(), 10))
-			{
-				cur_var = gEnv->pConsole->GetCVar(vd.vars[cvr]);
-				change_value(cur_var);
-			}
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Help:\n%s", cur_var->GetHelp());
-			auto v	  = cur_var;
-			auto name = cur_var->GetName();
-
-			switch (v->GetType())
-			{
-			case CVAR_INT:
-			{
-				ImGui::InputCVarInt(v, name, &cvv.i);
-				break;
-			}
-			case CVAR_FLOAT:
-			{
-				ImGui::InputCVarFloat(v, name, &cvv.f);
-			}
-			case CVAR_STRING:
-			{
-				ImGui::InputCVarString(v, name, const_cast<char*>(cvv.s));
-				break;
-			}
-			default:
-				break;
-			}
-			ImGui::EndChild();
-		}
-		ImGui::TreePop();
-	}
 }
 #endif

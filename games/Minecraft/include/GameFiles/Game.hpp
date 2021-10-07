@@ -6,6 +6,13 @@
 #	define _VERIFY(x) x
 #endif
 
+#define NOT_IMPLEMENTED_V    \
+	assert(0 && __FUNCTION__); \
+	return {};
+#define NOT_IMPLEMENTED      \
+	assert(0 && __FUNCTION__); \
+	return;
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Version of the game
 #define GAME_MAIN_VERSION 1			 //!< [0..255]
@@ -57,6 +64,25 @@ class CPlayerSystem;
 class CVehicleSystem;
 class CPlayer;
 
+//FIXIT:
+#if 0
+class CXAreaMgr : public IXAreaMgr
+{
+  public:
+	virtual void RetriggerAreas() override{}
+
+  virtual IXArea* CreateArea(const Vec3d* vPoints, const int count, const std::vector<std::string>& names,
+    const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f) override{return nullptr;}
+  virtual IXArea* CreateArea(const Vec3d& min, const Vec3d& max, const Matrix44& TM, const std::vector<std::string>& names,
+    const int type = 0, const int groupId = -1, const float width = 0.0f) override{return nullptr;}
+  virtual IXArea* CreateArea(const Vec3d& center, const float radius, const std::vector<std::string>& names,
+    const int type = 0, const int groupId = -1, const float width = 0.0f) override{return nullptr;}
+  virtual IXArea* GetArea(const Vec3& point) override{return nullptr;}
+
+  virtual void	DeleteArea(const IXArea* aPtr) override{}
+};
+#endif
+
 struct TextRenderInfo
 {
 	IFont* m_Font;
@@ -84,21 +110,45 @@ struct TextRenderInfo
 	}
 };
 
-//forward declarations
-//////////////////////////////////////////////////////////////////////
-//using string = std::string;
-class EventListener;
-class GameGUI;
-struct IScene;
-class SceneManager;
-class CTagPoint;
-struct ILog;
-class CGameMods;
+class		CScriptObjectGame;
+class		CScriptObjectInput;
+class		CScriptObjectBoids;
+class		CScriptObjectGUI;
+struct	ISystem;
+struct	I3DEngine;
+class		CXServer;
+#if 0
+class		CXClient;
+#else
+#endif
+class		CUIHud;
+class		CXServerRules;
+class		CWeaponSystemEx;
+class		CVehicleSystem;
+class		CPlayerSystem;
+class		CFlockManager;
+class		CTagPoint;
+struct	ITagPoint;
+class		CScriptObjectAI;
+class		CIngameDialogMgr;
+class		CViewLayer;
+class		CScriptTimerMgr;
+class		CTeamMgr;
+class		CPlayer;
+class		CMovieUser;
+class		CTimeDemoRecorder;
+class		CUISystem;
+class		CXGame;
+class		CGameMods;
 
-//class CXClient;
-class CClient;
-class CXServer;
 
+enum EventType
+{
+	EVENT_MOVECMD	= 0,
+	EVENT_EXPLOSION = 1,
+	EVENT_IMPULSE	= 2,
+	EVENT_VEHDAMAGE = 3
+};
 enum ActionType
 {
 	ACTIONTYPE_MOVEMENT = 1,
@@ -108,16 +158,135 @@ enum ActionType
 	ACTIONTYPE_DEBUG
 };
 
-//////////////////////////////////////////////////////////////////////
-typedef std::queue<string> StringQueue;
-typedef std::multimap<string, CTagPoint*> TagPointMap;
+struct BaseEvent
+{
+	int nRefCount;
+	virtual EventType GetType() = 0;
+	virtual void Write(CStream& stm, int iPhysicalTime, IBitStream* pBitStream) = 0;
+	virtual void Read(CStream& stm, int& iPhysicalTime, IBitStream* pBitStream) = 0;
+	virtual void Execute(CXGame* pGame) = 0;
+};
+
+struct GameEvent
+{
+	GameEvent() {}
+	GameEvent(const GameEvent& src)
+	{
+		iPhysTime = src.iPhysTime;
+		idx = src.idx;
+		(pEvent = src.pEvent)->nRefCount++;
+	}
+	~GameEvent()
+	{
+		if (--pEvent->nRefCount <= 0)
+			delete pEvent;
+	}
+	GameEvent& operator=(const GameEvent& src)
+	{
+		iPhysTime = src.iPhysTime;
+		idx = src.idx;
+		(pEvent = src.pEvent)->nRefCount++;
+		return *this;
+	}
+	int iPhysTime;
+	int idx;
+	BaseEvent* pEvent;
+};
+
+//#include "XEntityProcessingCmd.h"
+#include <Network/XEntityProcessingCmd.hpp>
+
+
+// FIX: remove this
+inline int sgn(double x) {
+	union { float f; int i; } u;
+	u.f = (float)x; return (u.i >> 31) + ((u.i - 1) >> 31) + 1;
+}
+
+inline int sgn(float x) {
+	union { float f; int i; } u;
+	u.f = x; return (u.i >> 31) + ((u.i - 1) >> 31) + 1;
+}
+inline int sgn(int x) {
+	return (x >> 31) + ((x - 1) >> 31) + 1;
+}
+
+struct EventPlayerCmd : BaseEvent
+{
+	EntityId								idEntity;
+	CXEntityProcessingCmd		cmd;
+
+	virtual EventType GetType() { return EVENT_MOVECMD; }
+	void Write(CStream& stm, int iPhysicalTime, IBitStream* pBitStream);
+	void Read(CStream& stm, int& iPhysicalTime, IBitStream* pBitStream);
+	void Execute(CXGame* pGame);
+};
+
+struct EventExplosion : BaseEvent
+{
+	Vec3						pos;
+	float						damage;
+	float						rmin, rmax, radius;
+	float 					impulsivePressure;
+	int 						nTerrainDecalId;
+	int32 					nShooterSSID;											//!< clientID - neeeded for MP score calculations, -1 if unknown
+	uint16 					iImpactForceMul;
+	uint16 					iImpactForceMulFinal;
+	uint16 					iImpactForceMulFinalTorso;
+	EntityId 				idShooter;
+	EntityId 				idWeapon;
+	uint8 					shakeFactor;								//!< 0..1
+	uint8 					deafnessRadius;							//!< 0..20
+	uint8 					deafnessTime;								//!< *0.25 to get float
+	uint8 					rminOcc;										//!< 0..1
+	uint8 					nOccRes;
+	uint8 					nGrow;
+	uint8 					terrainDefSize;							//!< 0..20
+
+	virtual EventType GetType() { return EVENT_EXPLOSION; }
+	void Write(CStream& stm, int iPhysicalTime, IBitStream* pBitStream);
+	void Read(CStream& stm, int& iPhysicalTime, IBitStream* pBitStream);
+	void Execute(CXGame* pGame);
+};
+
+struct EventPhysImpulse : BaseEvent
+{
+	int							idPhysEnt;
+	Vec3						impulse;
+	Vec3						pt;
+	Vec3						momentum;
+	bool						bHasPt;
+	bool						bHasMomentum;
+
+	virtual EventType GetType() { return EVENT_IMPULSE; }
+	virtual void Write(CStream& stm, int iPhysicalTime, IBitStream* pBitStream);
+	virtual void Read(CStream& stm, int& iPhysicalTime, IBitStream* pBitStream);
+	void Execute(CXGame* pGame);
+};
+
+struct EventVehicleDamage : BaseEvent
+{
+	EntityId				idVehicle;
+	uint8						damage;
+
+	virtual EventType GetType() { return EVENT_VEHDAMAGE; }
+	virtual void Write(CStream& stm, int iPhysicalTime, IBitStream* pBitStream);
+	virtual void Read(CStream& stm, int& iPhysicalTime, IBitStream* pBitStream);
+	void Execute(CXGame* pGame);
+};
+
+
+//#define _INTERNET_SIMULATOR
+
+//memory stats
+class		ICrySizer;
 
 typedef std::vector<string> Vec2Str;
 typedef Vec2Str::iterator Vec2StrIt;
 typedef std::list<CPlayer*> ListOfPlayers;
 
-typedef std::map<CIPAddress, SXServerInfos> ServerInfosMap;
-typedef ServerInfosMap::iterator ServerInfosVecItor;
+//#include "IInput.h"		// XActionActivationMode
+
 
 struct ActionInfo
 {
@@ -125,13 +294,29 @@ struct ActionInfo
 	string sDesc;
 	bool bConfigurable;
 	XActionActivationMode ActivationMode;
-	Vec2Str vecSetToActionMap; // if it is configured via "BindActionMultipleMaps" it will set the key-bindings to all action-maps in this array and leaves the others untouched
+	Vec2Str vecSetToActionMap;	// if it is configured via "BindActionMultipleMaps" it will set the key-bindings to all action-maps in this array and leaves the others untouched
 	int nType;
 };
 
 typedef std::map<string, ActionInfo> ActionsEnumMap;
 typedef ActionsEnumMap::iterator ActionsEnumMapItor;
 typedef std::multimap<string, CTagPoint*> TagPointMap;
+
+typedef std::map<CIPAddress, SXServerInfos>	ServerInfosMap;
+typedef ServerInfosMap::iterator ServerInfosVecItor;
+
+struct PreviewMapParams
+{
+	PreviewMapParams()
+	{
+		bRound = false;
+		SectorsX = 0;
+		SectorsY = 0;
+	}
+	bool bRound;
+	int SectorsX, SectorsY;
+};
+
 
 struct Ray
 {
@@ -234,69 +419,205 @@ struct TestObject
 
 
 #include "GameShared.hpp"
+#include "XArea.h"
+
+class CClient;
+typedef SmartScriptObject _SmartScriptObject;
+//using CXClient = CClient;
+#define CXClient CClient
+//////////////////////////////////////////////////////////////////////
+typedef std::queue<string> StringQueue;
+typedef std::set<string> StringSet;
 
 class CXGame final
 	: public IXGame
-	, public IInputEventListener
-	, public IPostRenderCallback
-	, public IPreRenderCallback
+	//, public IInputEventListener
 	, public IServerSnooperSink
 	, public INETServerSnooperSink
 	//, public IActionMapSink
-	, public ISystemEventListener
+	//, public ISystemEventListener
 	, public IRendererCallbackClient
+	, public IPhysicsStreamer
+	, public IPhysicsEventClient
+
 {
-	class EventListener;
-	friend class GameGUI;
-	friend class CPlayer;
-
-  public:
-	enum HostType
-	{
-		CLIENT,
-		SERVER,
-		NOT_CONECTED
-	};
-
+public:
 	CXGame();
-	~CXGame();
-	void OnRenderer_BeforeEndFrame() override;
+	virtual ~CXGame();
+	void Reset();
+	void SoftReset();
 
+	// interface IGame ----------------------------------------------------------
+
+	bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod);
+	bool InitClassRegistry();
+	bool Update();
+	bool Run(bool& bRelaunch);
+	void Release() { delete this; }
 	const char* IsMODLoaded();
 	IGameMods* GetModsInterface();
 
-	bool Init(struct ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod) override;
-	bool InitClassRegistry();
-	bool Update() override;
-	void ExecScripts();
-	void DrawHud(float fps);
-	void DisplayInfo(float fps);
-	bool Run(bool& bRelaunch) override;
+	void AllowQuicksave(bool bAllow) { m_bAllowQuicksave = bAllow; };
+	bool IsQuicksaveAllowed(void) { return m_bAllowQuicksave; }
 
-	void AllowQuicksave(bool bAllow) {m_bAllowQuicksave = bAllow;};
-	bool IsQuicksaveAllowed(void) {return m_bAllowQuicksave;}
+	//! \return 0 before was initialized, otherwise point to the GameMods
+	CGameMods* GetModsList() { return(m_pGameMods); }
 
-	bool LoadScene(std::string name);
-	void SaveScene(std::string name, std::string as);
-	void SetRenderState();
-	void SetPlayer(CPlayer* player);
-	void SetCamera(CCamera* camera);
-
-	void Render();
-
-	// IInputEventListener interface
-  public:
-	virtual bool OnInputEvent(const SInputEvent& event) override;
-	virtual int GetPriority() const override
+	bool IsSoundPotentiallyHearable(Vec3d& SoundPos, float fClipRadius)
 	{
-		return 2;
+		NOT_IMPLEMENTED_V;	
+	}
+	#if 0
+	void SetTerrainSurface(const char* sMaterial, int nSurfaceID) { m_XSurfaceMgr.SetTerrainSurface(sMaterial, nSurfaceID); }
+	#else
+	void SetTerrainSurface(const char* sMaterial, int nSurfaceID)
+	{
+		assert(0 && __FUNCTION__);
+	}
+	#endif
+	//! load level for the editor
+	bool LoadLevelForEditor(const char* pszLevelDirectory, const char* pszMissionName)
+	{
+		NOT_IMPLEMENTED_V;	
+	}
+	bool GetLevelMissions(const char* szLevelDir, std::vector<string>& missions);
+
+	virtual void UpdateDuringLoading();
+
+	IScriptObject* GetScriptObject();
+
+	// load level for the game
+	void LoadLevelCS(bool reconnect, const char* szMapName, const char* szMissionName, bool listen);
+
+	IEntity* GetMyPlayer()
+	{
+		NOT_IMPLEMENTED_V;	
 	}
 
-	void PersistentHandler(const SInputEvent& event);
+	// tagpoint management functions
+	ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
+	virtual ITagPoint* GetTagPoint(const string& name);
+	void RemoveTagPoint(ITagPoint* pPoint);
+	bool RenameTagPoint(const string& oldname, const string& newname);
 
-	// IGame interface
-  public:
-	
+	//real internal load level
+	//return true if is loading a saved singleplayer level(this should disappear)
+	bool IsLoadingLevelFromFile() { return m_bIsLoadingLevelFromFile; }
+	ISystem* GetSystem() { return m_pSystem; }
+	IScriptSystem* GetScriptSystem() { return m_pScriptSystem; }
+	virtual IEntityClassRegistry* GetClassRegistry() { return &m_EntityClassRegistry; }
+
+	CUIHud* GetHud() const { return (CUIHud*)m_pUIHud; }
+	CXServerRules* GetRules() const;
+	IActionMapManager* GetActionMapManager() { return m_pIActionMapManager; }
+	IXSystem* GetXSystem();
+	bool IsOK() { return m_bOK; }
+
+	void OnSetVar(ICVar* pVar)
+	{
+		NOT_IMPLEMENTED;	
+	}
+	// Servers management
+	bool	StartupServer(bool listen, const char* szName = NULL);
+	void	ShutdownServer();
+
+	// Client management
+	bool StartupClient();
+	bool StartupLocalClient();
+	void ShutdownClient();
+	void MarkClientForDestruct();
+
+	bool IsSynchronizing() { return m_bSynchronizing; }
+	void AdvanceReceivedEntities(int iPhysicalWorldTime);
+	bool HasScheduledEvents();
+	void ScheduleEvent(int iPhysTime, BaseEvent* pEvent);
+	void ScheduleEvent(IEntity* pEnt, CXEntityProcessingCmd& cmd);
+
+	//! \param shooterSSID clientID 0..255 or -1 if unknown
+	void ScheduleEvent(int iPhysTime, const Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
+		float fShakeFactor, float fDeafnessRadius, float fDeafnessTime, float fImpactForceMul,
+		float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
+		float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
+		float fTerrainDefSize, int nTerrainDecalId);
+	void ScheduleEvent(int iPhysTime, IEntity* pVehicle, float fDamage);
+	#if 0
+	void ScheduleEvent(int iPhysTime, IPhysicalEntity* pPhysEnt, pe_action_impulse* pai);
+	#endif
+	virtual void ExecuteScheduledEvents()
+	{
+		NOT_IMPLEMENTED;	
+	}
+	void WriteScheduledEvents(CStream& stm, int& iLastEventWritten, int iTimeDelta = 0);
+	void ReadScheduledEvents(CStream& stm);
+	bool UseFixedStep() { return m_iFixedStep2TimeGran != 0; }
+	int GetiFixedStep() { return m_iFixedStep2TimeGran; }
+	float GetFixedStep() { return g_MP_fixed_timestep->GetFVal(); }
+	int QuantizeTime(float fTime)
+	{
+		return (int)(fTime * m_frTimeGran + 0.5f * sgn(fTime));
+	}
+	int SnapTime(float fTime, float fOffset = 0.5f)
+	{
+		return m_iFixedStep2TimeGran ?
+			(int)(fTime * m_frFixedStep + 0.5f * sgn(fTime)) * m_iFixedStep2TimeGran : (int)(fTime * m_frTimeGran + 0.5f * sgn(fTime));
+	}
+	int SnapTime(int iTime, float fOffset = 0.5f)
+	{
+		return m_iFixedStep2TimeGran ?
+			(int)(iTime * m_fTimeGran2FixedStep + 0.5f * sgn(iTime)) * m_iFixedStep2TimeGran : iTime;
+	}
+
+	//! \param shooterSSID clientID 0..255 or -1 if unknown
+	void CreateExplosion(const Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
+		float fShakeFactor, float fDeafnessRadius, float fDeafnessTime,
+		float fImpactForceMul, float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
+		float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
+		float fTerrainDefSize, int nTerrainDecalId, bool bScheduled = false);
+
+	//! IPhysicsStreamer (physics-on-demand) callback functions
+	int CreatePhysicalEntity(void* pForeignData, int iForeignData, int iForeignFlags);
+	int DestroyPhysicalEntity(IPhysicalEntity* pent);
+	const char* GetForeignName(void* pForeignData, int iForeignData, int iForeignFlags);
+
+	//////////////////////////////////////////////////////////////////////////
+	//! physical events callback functions
+	void OnBBoxOverlap(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData,
+		IPhysicalEntity* pCollider, void* pColliderForeignData, int iColliderForeignData);
+	void OnStateChange(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, int iOldSimClass, int iNewSimClass);
+	#if 0
+	void OnCollision(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, coll_history_item* pCollision);
+	int OnImpulse(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, pe_action_impulse* action);
+	#endif
+	void OnPostStep(IPhysicalEntity* pEntity, void* pForeignData, int iForeignData, float fTimeInterval);
+
+	virtual IPhysicsStreamer* GetPhysicsStreamer() { return this; }
+	virtual IPhysicsEventClient* GetPhysicsEventClient() { return this; }
+
+	bool ConstrainToSandbox(IEntity* pEntity);
+
+	// Ingame Dialogs
+	CIngameDialogMgr* GetIngameDialogManager() { return m_pIngameDialogMgr; }
+
+	void BindAction(const char* sAction, const char* sKeys, const char* sActionMap = NULL, int iKeyPos = -1);
+	void BindActionMultipleMaps(const char* sAction, const char* sKeys, int iKeyPos = -1);
+	bool CheckForAction(const char* sAction);
+	void ClearAction(const char* sAction);
+	// Stuffs...
+	void	ProcessPMessages(const char* szMsg);
+
+	// Return the version of the game
+	const char* GetVersion();
+
+
+	//! functions to know if the current terminal is a server and/or a client
+	//@{
+	bool	IsServer() { return m_pServer != NULL; }
+	bool	IsClient();
+	bool  IsMultiplayer();   // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
+	bool	IsDevModeEnable();
+	//@}
+	//! save/laod game
+
 	bool SaveToStream(CStream& stm, Vec3* pos, Vec3* angles, string sFilename);
 	bool LoadFromStream(CStream& stm, bool isdemo);
 	bool LoadFromStream_RELEASEVERSION(CStream& str, bool isdemo, CScriptObjectStream& scriptStream);
@@ -305,105 +626,526 @@ class CXGame final
 	void Save(string sFileName, Vec3* pos, Vec3* angles, bool bFirstCheckpoint = false);
 	bool Load(string sFileName);
 	void LoadConfiguration(const string& sSystemCfg, const string& sGameCfg);
-	void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile) override;
+	void SaveConfiguration(const char* sSystemCfg, const char* sGameCfg, const char* sProfile);
 	void RemoveConfiguration(string& sSystemCfg, string& sGameCfg, const char* sProfile);
 
+	void LoadLatest();
+
 	virtual CXServer* GetServer() { return m_pServer; }
-	//CXClient* GetClient() { return m_pClient; }
 
+	CXClient* GetClient() { return m_pClient; }
 
-	virtual void			  ReloadScripts() override;
-	virtual void			  UpdateDuringLoading() override;
-	virtual IXAreaMgr*		  GetAreaManager() override;
-	virtual ITagPointManager* GetTagPointManager() override;
-	void					  Stop() override;
-	void					  GotoMenu(bool bTriggerOnSwitch = false);
-	void					  GotoGame(bool bTriggerOnSwitch = false);
-	void					  MenuOn();	 //!< enables menu instantly (no message)
-	void					  MenuOff(); //!< disables menu instantly (no message)
-
-
-	void GotoFly();
-	void GotoEdit();
-	void ShowMenu();
-	void GotoFullscreen();
-	virtual void SendMessage(const char* str) override
+	void SetViewAngles(const Vec3& angles)
 	{
-		m_qMessages.push(str);
+		NOT_IMPLEMENTED;	
 	}
-	virtual void Release() override;
 
-	bool OpenPacks(const char* szFolder);
-	bool ClosePacks(const char* szFolder);
+	CWeaponSystemEx* GetWeaponSystemEx() { return m_pWeaponSystemEx; }
+	CUISystem* GetUISystem() { return m_pUISystem; };
+	void ReloadWeaponScripts();
+	CVehicleSystem* GetVehicleSystem() { return m_pVehicleSystem; }
+	CPlayerSystem* GetPlayerSystem() { return m_pPlayerSystem; }
 
-	#ifdef USE_STEAM
-	CSteamAchievements* SteamAchivements();
-	#endif
-private: // ------------------------------------------------------------
-
-	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);
-
-	bool SteamInit();
-
-	float										m_fFadingStartTime;
-	char										m_szLoadMsg[512];
-	bool										m_bAllowQuicksave = true;
-
-	bool InitPlayer();
-	bool FpsInputEvent(const SInputEvent& event);
-	bool FlyInputEvent(const SInputEvent& event);
-	bool MenuInputEvent(const SInputEvent& event);
-	bool DefaultInputEvent(const SInputEvent& event);
-	bool EditInputEvent(const SInputEvent& event);
-	bool OnInputEventProxy(const SInputEvent& event);
-
-	bool ShouldHandleEvent(const SInputEvent& event, bool& retflag);
-	void ProcessPMessages(const char* szMsg);
-	bool IsInPause();
-
-	// IGame interface
-  public:
-	virtual void PostRender() override;
-
-	void InitCommands();
-	void InitVariables();
-
-	virtual void PreRender() override;
-	// tagpoint management functions
-	ITagPoint* CreateTagPoint(const string& name, const Vec3& pos, const Vec3& angles);
-	ITagPoint* GetTagPoint(const string& name);
-	void RemoveTagPoint(ITagPoint* pPoint);
-	bool RenameTagPoint(const string& oldname, const string& newname);
-
-	IScriptSystem* GetScriptSystem()
-	{
-		return m_pScriptSystem;
-	}
-	CVehicleSystem *GetVehicleSystem(){ return m_pVehicleSystem; }
-	CPlayerSystem *GetPlayerSystem(){ return m_pPlayerSystem; }
-
-	IClient* CreateClient(IClientSink* pSink, bool bLocal = false) const
+	IClient* CreateClient(IClientSink* pSink, bool bLocal = false)
 	{
 		return m_pNetwork->CreateClient(pSink, bLocal);
 	}
-	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen) const
+	IServer* CreateServer(IServerSlotFactory* pSink, WORD nPort, bool listen) { return m_pNetwork->CreateServer(pSink, nPort, listen); }
+
+	bool GetPreviewMapPosition(float& x, float& y, float mapx, float mapy, float sizex, float sizey, float zoom, float center_x, float center_y, bool bRound);
+	int GetSector(int nSectorsX, int nSectorsY, float x, float y);
+	void DrawMapPreview(float mapx, float mapy, float sizex, float sizey, float zoom, float center_x, float center_y, float alpha, struct PreviewMapParams* pParams = NULL);
+	void DrawRadar(float x, float y, float w, float h, float fRange, INT_PTR* pRadarTextures, _SmartScriptObject* pEntities, char* pRadarObjective);
+
+	// Demo recording stuff ------------------------------------------------
+
+	bool StartRecording(const char* sFileName);
+	void StopRecording();
+	bool AddDemoChunk(CStream& stm);
+	void StartDemoPlay(const char* sFileName);
+	void StopDemoPlay();
+	void PlaybackChunk();
+
+	// Weapons -------------------------------------------------------------
+
+	INameIterator* GetAvailableWeaponNames()
 	{
-		return m_pNetwork->CreateServer(pSink, nPort, listen);
+		NOT_IMPLEMENTED_V;	
 	}
-	IActionMapManager* GetActionMapManager() const
+	INameIterator* GetAvailableProjectileNames()
 	{
-		return m_pIActionMapManager;
+		NOT_IMPLEMENTED_V;	
+	}
+	bool AddWeapon(const char* pszName)
+	{
+		NOT_IMPLEMENTED_V	
+	}
+	bool RemoveWeapon(const char* pszName)
+	{
+		NOT_IMPLEMENTED_V	
+	}
+	void RemoveAllWeapons()
+	{
+		NOT_IMPLEMENTED;	
+	}
+	#if 0
+	bool AddEquipPack(XDOM::IXMLDOMNode* pPack)
+	#endif
+	bool AddEquipPack(const char* pszXML)
+	{
+		NOT_IMPLEMENTED_V	
+	}
+	void SetPlayerEquipPackName(const char* pszPackName)
+	{
+		NOT_IMPLEMENTED;
+	}
+	void RestoreWeaponPacks()
+	{
+		NOT_IMPLEMENTED;
 	}
 
-	//
-	bool InitScripts();
+	// Network -------------------------------------------------------------
 
-	bool TestScriptSystem(bool& retflag);
+	//!
+	void RefreshServerList();
+	//!
+	void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping);
+	//!
+	void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping);
+	//!
+	void OnNETServerTimeout(const CIPAddress& ip);
+	//! \return might be 0
+	INETServerSnooper* GetNETSnooper() { return m_pNETServerSnooper; };
+	//! \return might be 0
+	IRConSystem* GetIRConSystem() { return m_pRConSystem; };
 
-	ISystem* GetSystem()
-	{
-		return m_pSystem;
+	void SendMessage(const char* str) {
+		m_qMessages.push(str);
 	}
+	bool ExecuteScript(const char* sPath, bool bForceReload = false)
+	{
+		NOT_IMPLEMENTED_V	
+	}
+
+	void EnableUIOverlay(bool bEnable, bool bExclusiveInput)
+	{
+		NOT_IMPLEMENTED
+	}
+	bool IsUIOverlay()
+	{
+		NOT_IMPLEMENTED_V	
+	}
+
+	bool	IsInMenu() { return m_bMenuOverlay; };		//!< checks if we are in menu or not
+	void GotoMenu(bool bTriggerOnSwitch = false); //!< arranges the message queue so that the game goes to the menu
+	void	GotoGame(bool bTriggerOnSwitch = false);	//!< arranges the message queue so that the game goes out of the menu
+	void	MenuOn()																	//!< enables menu instantly (no message)
+	{
+		NOT_IMPLEMENTED
+	}
+	void	MenuOff()																//!< disables menu instantly (no message)
+	{
+		NOT_IMPLEMENTED
+	}
+	void	DeleteMessage(const char* szMessage);			//!< deletes all occurrences of a specified message from the message queue
+
+	const char* GetLevelName() { return m_currentLevel.c_str(); }
+
+	void  ResetInputMap();
+	string GetLevelsFolder() const;
+
+protected:
+	void SetConfigToActionMap(const char* pszActionName, ...);
+	//bool LoadMaterials(string sFolder);
+	void	InitInputMap();
+	void	InitConsoleCommands();
+	void	InitConsoleVars();
+	bool	IsInPause(IProcess* pProcess);
+	//everything related to vehicle will be in another file
+	//Marco's NOTE: should be the same for other cvars, code and includes,
+	void	InitVehicleCvars();
+
+	//set the common key bindings for the specified action map.
+	//it reduces code redundancy and makes things more clear.
+	void SetCommonKeyBindings(IActionMap* pActionMap);
+	void OnCollectUserData(INT_PTR nValue, int nCookie);		//AMD Port
+
+public:
+	void ClearTagPoints();
+	void SetCurrentUI(CUIHud* pUI);
+
+	//FIXIT:
+	using vector2f = Vec2;
+	using color4f = Vec4;
+	vector2f GetSubtitleSize(const string& szMessage, float sizex, float sizey, const string& szFontName = "default", const string& szFontEffect = "default");
+	void WriteSubtitle(const string& szMessage, float x, float y, float sizex, float sizey, const color4f& cColor, const string& szFontName = "default", const string& szFontEffect = "default");
+
+	bool											m_bIsLoadingLevelFromFile;//!<
+	struct IActionMapManager* m_pIActionMapManager;			//!<
+	bool											m_bDedicatedServer;				//!<
+	bool											m_bOK;										//!<
+	bool											m_bUpdateRet;							//!<
+	bool											m_bRelaunch;							//!<
+	bool											m_bMovieSystemPaused;
+
+	ISystem* m_pSystem;								//!< The system interface
+
+	ILog* m_pLog;										//!<
+	I3DEngine* m_p3DEngine;							//!< The 3D engine interface
+	CXServer* m_pServer;								//!< The server of this computer
+	CXClient* m_pClient;								//!< The client of this computer
+
+
+	int m_nDEBUG_TIMING;
+	float m_fDEBUG_STARTTIMER;
+
+	//!	The dummy client of this computer, required to get the list of servers if
+	//! theres not a real client actually connected and playing
+
+	IServerSnooper* m_pServerSnooper;					//!< used for LAN Multiplayer, to remove control servers
+	INETServerSnooper* m_pNETServerSnooper;			//!< used for Internet Multiplayer, to remove control servers
+	IRConSystem* m_pRConSystem;						//!< used for Multiplayer, to remote control servers
+	string										m_szLastAddress;
+	bool											m_bLastDoLateSwitch;
+	bool											m_bLastCDAuthentication;
+
+	CUIHud* m_pUIHud;									//!< Hud
+	CUIHud* m_pCurrentUI;							//!< for the current ui
+
+	string										m_currentLevel;						//!< Name of current level.
+	string										m_currentMission;					//!< Name of current mission.
+	string										m_currentLevelFolder;			//!< Folder of the current level.
+
+
+	// console variables -----------------------------------------------------------
+
+#ifdef _INTERNET_SIMULATOR
+	ICVar* g_internet_simulator_minping;
+	ICVar* g_internet_simulator_maxping;
+	ICVar* g_internet_simulator_packetloss;
+#endif
+	ICVar* g_MP_fixed_timestep;
+	ICVar* g_maxfps;
+	ICVar* cl_ThirdPersonRange;
+	ICVar* cl_ThirdPersonRangeBoat;
+	ICVar* cl_ThirdPersonAngle;
+
+	ICVar* cl_ThirdPersonOffs;
+	ICVar* cl_ThirdPersonOffsAngHor;
+	ICVar* cl_ThirdPersonOffsAngVert;
+
+	ICVar* cl_scope_flare;
+	ICVar* cl_lazy_weapon;
+	ICVar* cl_use_joypad;
+	ICVar* cl_weapon_fx;
+	ICVar* cl_projectile_light;
+	ICVar* cl_weapon_light;
+	ICVar* w_underwaterbubbles;
+
+	ICVar* cl_ViewFace;
+	ICVar* cl_display_hud;
+	ICVar* cl_motiontracker;
+	ICVar* cl_msg_notification;
+	ICVar* cl_hud_name;
+	ICVar* cl_hud_pickup_icons;
+	ICVar* ai_num_of_bots;
+
+	ICVar* p_name;
+	ICVar* p_color;
+	ICVar* p_model;
+	ICVar* mp_model;
+	ICVar* p_always_run;
+	ICVar* g_language;
+	ICVar* g_playerprofile;
+	ICVar* g_serverprofile;
+	ICVar* g_Render;
+	ICVar* g_GC_Frequence;
+	ICVar* g_GameType;
+	ICVar* g_LeftHanded;
+	ICVar* g_Gore;
+	ICVar* g_InstallerVersion;
+
+
+	ICVar* p_speed_run;
+	ICVar* p_sprint_scale;
+	ICVar* p_sprint_decoy;
+	ICVar* p_sprint_restore_run;	// restore rate when normal run
+	ICVar* p_sprint_restore_idle;	// restore rate whwen not running
+	ICVar* p_speed_walk;
+	ICVar* p_speed_crouch;
+	ICVar* p_speed_prone;
+	ICVar* p_jump_force;
+	ICVar* p_jump_walk_time;
+	ICVar* p_jump_run_time;
+	ICVar* p_jump_walk_d;
+	ICVar* p_jump_walk_h;
+	ICVar* p_jump_run_d;
+	ICVar* p_jump_run_h;
+	ICVar* p_gravity_modifier;
+	//[KIRILL]	this console variable makes lean global - it has to be player's per-instance property
+	// to fix bug in MP with leaning
+	//	ICVar* p_lean;			// lean angle
+	ICVar* p_lean_offset;
+	ICVar* p_bob_pitch;
+	ICVar* p_bob_roll;
+	ICVar* p_bob_length;
+	ICVar* p_bob_weapon;
+	ICVar* p_bob_fcoeff;
+	ICVar* p_waterbob_pitch;
+	ICVar* p_waterbob_pitchspeed;
+	ICVar* p_waterbob_roll;
+	ICVar* p_waterbob_rollspeed;
+	ICVar* p_waterbob_mindepth;
+	ICVar* p_weapon_switch;
+	ICVar* p_deathtime;
+	ICVar* p_restorehalfhealth;
+
+	ICVar* p_ai_runspeedmult;			//combat stance
+	ICVar* p_ai_crouchspeedmult;
+	ICVar* p_ai_pronespeedmult;
+	ICVar* p_ai_rrunspeedmult;		//relaxed stance
+	ICVar* p_ai_rwalkspeedmult;
+	ICVar* p_ai_xrunspeedmult;		//stealth stance
+	ICVar* p_ai_xwalkspeedmult;
+
+	ICVar* p_lightrange;
+	ICVar* p_lightfrustum;
+
+	// player animation control parametrs
+	ICVar* pa_leg_velmoving;
+	ICVar* pa_leg_velidle;
+	ICVar* pa_leg_idletime;
+	ICVar* pa_leg_limitaim;
+	ICVar* pa_leg_limitidle;
+	ICVar* pa_blend0;
+	ICVar* pa_blend1;
+	ICVar* pa_blend2;
+	ICVar* pa_forcerelax;
+	ICVar* pa_spine;
+	ICVar* pa_spine1;
+
+	ICVar* m_pCVarCheatMode;
+
+	// limping state
+
+	ICVar* p_limp;
+
+	// flashlight stuff
+	ICVar* pl_force;
+	ICVar* pl_dist;
+	ICVar* pl_intensity;
+	ICVar* pl_fadescale;
+	ICVar* pl_head;
+
+	//mutants jump parameters
+	ICVar* m_jump_vel;
+	ICVar* m_jump_arc;
+
+	// boat
+	//*
+	ICVar* b_dump;		//angular velocity - waiving
+	ICVar* b_dumpRot;	//angular velocity - turning
+	ICVar* b_dumpV;		//velocity
+	ICVar* b_dumpVH;		//velocity
+	ICVar* b_stand;
+	ICVar* b_turn;
+	ICVar* b_tilt;
+	ICVar* b_speedV;
+	ICVar* b_accelerationV;
+	ICVar* b_float;
+	ICVar* b_speedMinTurn;
+	//	water waves param
+	ICVar* b_wscale;
+	ICVar* b_wscalew;
+	ICVar* b_wmomentum;
+
+
+	//	camera mode
+	ICVar* b_camera;
+	/*
+	//fire/burnable
+	ICVar* f_update;
+	ICVar* f_draw;
+	ICVar* f_drawDbg;
+	*/
+	ICVar* g_LevelName;
+	ICVar* g_StartMission;
+
+	ICVar* sv_port;
+	ICVar* sv_mapcyclefile;
+	ICVar* sv_cheater_kick;
+	ICVar* sv_cheater_ban;
+
+	ICVar* sv_timeout;
+	ICVar* cl_timeout;
+	ICVar* cl_loadtimeout;
+	ICVar* cl_snooptimeout;
+	ICVar* cl_snoopretries;
+	ICVar* cl_snoopcount;
+
+	ICVar* p_CameraSmoothVLimit;
+	ICVar* p_CameraSmoothTime;
+	ICVar* p_CameraSmoothScale;
+
+	ICVar* p_LeaveVehicleImpuls;
+	ICVar* p_LeaveVehicleBrake;
+	ICVar* p_LeaveVehicleBrakeDelay;
+
+	ICVar* p_AutoCenterDelay;
+	ICVar* p_AutoCenterSpeed;
+
+	ICVar* p_HitImpulse;
+	ICVar* p_DeadBody;
+	ICVar* p_RotateHead;
+	ICVar* p_RotateMove;
+	ICVar* p_HeadCamera;
+	ICVar* p_EyeFire;
+	ICVar* a_DrawArea;
+	ICVar* a_LogArea;
+	ICVar* cv_game_Difficulty;
+	ICVar* cv_game_Aggression;
+	ICVar* cv_game_Accuracy;
+	ICVar* cv_game_Health;
+	ICVar* cv_game_AllowAIMovement;
+	ICVar* cv_game_AllAIInvulnerable;
+	ICVar* cv_game_GliderGravity;
+	ICVar* cv_game_GliderBackImpulse;
+	ICVar* cv_game_GliderDamping;
+	ICVar* cv_game_GliderStartGravity;
+	ICVar* cv_game_physics_quality;
+
+	ICVar* cv_game_subtitles;
+	ICVar* g_first_person_spectator;
+
+	ICVar* g_timedemo_file;
+
+	ICVar* h_drawbelow;	// show bboxes for static objects below helicopter
+
+	ICVar* pl_JumpNegativeImpulse; //!< this represent the downward impulse power applied when the player reach the max height of the jump, 0 means no impulse.
+
+	ICVar* e_deformable_terrain; //!< the Cvar is created in cry3dengine, this is just a pointer
+
+	float w_recoil_speed_up;
+	float w_recoil_speed_down;
+	float w_recoil_max_degree;
+	float w_accuracy_decay_speed;
+	float w_accuracy_gain_scale;
+	int w_recoil_vertical_only;
+
+	#if 0
+	CStringTableMgr m_StringTableMgr;
+	CXSurfaceMgr m_XSurfaceMgr;
+	#endif
+	CScriptTimerMgr* m_pScriptTimerMgr;
+
+	//	IXArea *CreateArea( const Vec3 *vPoints, const int count, const char** names, const int ncount, const int type=0, const float width=0.0f);
+	IXArea* CreateArea(const Vec3* vPoints, const int count, const std::vector<string>& names,
+		const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f);
+	IXArea* CreateArea(const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<string>& names,
+		const int type = 0, const int groupId = -1, const float width = 0.0f);
+	IXArea* CreateArea(const Vec3& center, const float radius, const std::vector<string>& names,
+		const int type = 0, const int groupId = -1, const float width = 0.0f);
+	void DeleteArea(const IXArea* pArea);
+	IXArea* GetArea(const Vec3& point);
+
+	//! detect areas the listener is in before system update
+	void CheckSoundVisAreas();
+	//! retrigger them if necessary after system update
+	void RetriggerAreas();
+
+	ILipSync* CreateLipSync();
+
+	//! plays a cutscene sequence
+	void PlaySequence(const char* pszName, bool bResetFX);
+	//! stops the current cutscene
+	void StopCurrentCutscene();
+
+
+	ActionsEnumMap& GetActionsEnumMap() { return m_mapActionsEnum; }
+
+	CXAreaMgr										m_XAreaMgr;
+	ServerInfosMap									m_ServersInfos; //!< Infos about the avaible servers
+	string											m_strLastSaveGame;
+	bool											m_bEditor;
+	tPlayerPersistentData							m_tPlayerPersistentData;
+
+	//! Rendering callback, called at render of frame.
+	static void OnRenderCallback(void* pGame);
+
+private: // ------------------------------------------------------------
+
+	bool ParseLevelName(const char* szLevelName, char* szLevel, char* szMission);
+
+	float										m_fFadingStartTime;
+	char										m_szLoadMsg[512];
+	bool										m_bAllowQuicksave;
+
+	CEntityClassRegistry		m_EntityClassRegistry;
+	IScriptSystem* m_pScriptSystem;
+	IRenderer* m_pRenderer;
+	IEntitySystem* m_pEntitySystem;
+	CScriptObjectGame* m_pScriptObjectGame;
+	CScriptObjectInput* m_pScriptObjectInput;
+
+	CScriptObjectBoids* m_pScriptObjectBoids;
+	#if 0
+	CScriptObjectLanguage* m_pScriptObjectLanguage;
+	#endif
+	CScriptObjectAI* m_pScriptObjectAI;
+	CWeaponSystemEx* m_pWeaponSystemEx;
+	CVehicleSystem* m_pVehicleSystem;
+	CPlayerSystem* m_pPlayerSystem;
+	CIngameDialogMgr* m_pIngameDialogMgr;
+	CFlockManager* m_pFlockManager;
+
+	CMovieUser* m_pMovieUser;
+	CTimeDemoRecorder* m_pTimeDemoRecorder;
+
+	int											m_nPlayerIconTexId;
+	int											m_nVehicleIconTexId;
+	int											m_nBuildingIconTexId;
+	int											m_nUnknownIconTexId;
+
+	ActionsEnumMap					m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
+	TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
+
+	INetwork* m_pNetwork;
+	#if 0
+	CXDemoMgr									m_XDemoMgr;
+	#endif
+	StringQueue m_qMessages;
+	bool										m_bMenuInitialized;
+
+	std::vector<GameEvent>						m_lstEvents;
+	float										m_fTimeGran;
+	float										m_fFixedStep;
+	float										m_fTimeGran2FixedStep;
+	float										m_frFixedStep;
+	float										m_frTimeGran;
+	int											m_iFixedStep2TimeGran;
+	int											m_iLastCmdIdx;
+	bool										m_bSynchronizing;
+	#if 0
+	CBitStream_Base								m_BitStreamBase;	   //!< for little compressed readwrite operation with CStreams (savegame,singleplayer,exported games,demo recording)
+	CBitStream_Compressed						m_BitStreamCompressed; //!< for compressed readwrite operation with CStreams (multiplayer)
+	#endif
+
+	//! Name of the last saved checkpoint.
+	string									m_sLastSavedCheckpointFilename;
+
+	/*
+	//! Time in seconds left to save thumbnail for the last saved checkpoint.
+	//! Only used when saving first checkpoint, when at time of checkpoint save nothing is yet visibly on screen.
+	float   m_fTimeToSaveThumbnail;
+	*/
+
+	CGameMods* m_pGameMods;								//!< might be 0 (before game init)
+
+public:
+
+	void LoadingError(const char* szError);
+	bool GetCDPath(string& szCDPath);
+
 	//////////////////////////////////////////////////////////////////////////
 	// DevMode.
 	//////////////////////////////////////////////////////////////////////////
@@ -412,309 +1154,63 @@ private: // ------------------------------------------------------------
 	void DevMode_SavePlayerPos(int index, const char* sTagName = NULL, const char* sDescription = NULL);
 	void DevMode_LoadPlayerPos(int index, const char* sTagName = NULL);
 	//////////////////////////////////////////////////////////////////////////
-	void ResetInputMap();
-	string GetLevelsFolder() const;
 
-	// Network -------------------------------------------------------------
-	//! functions to know if the current terminal is a server and/or a client
-	//@{
-	bool IsServer()
+	// interface IGame ---------------------------------------------------------
+
+	virtual void GetMemoryStatistics(ICrySizer* pSizer);
+	virtual void SetViewMode(bool bThirdPerson)
 	{
-		return m_pServer != NULL;
+		NOT_IMPLEMENTED
 	}
-	bool IsClient();
-	bool IsMultiplayer(); // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
-	bool IsDevModeEnable();
-	//@}
-	bool StartupServer(bool listen, const char* szName);
-	void ShutdownServer();
-	bool StartupClient();
-	bool StartupLocalClient();
-	void ShutdownClient();
-	void MarkClientForDestruct();
-    void OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping) override;
-    void OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping) override;
-    void OnNETServerTimeout(const CIPAddress& ip) override;
-	void RefreshServerList();
-	//////////////////////////////////////////////////////////////////////////
-	void BindAction(const char* sAction, const char* sKeys, const char* sActionMap = NULL, int iKeyPos = -1);
-	void BindActionMultipleMaps(const char* sAction, const char* sKeys, int iKeyPos = -1);
-	bool CheckForAction(const char* sAction);
-	void ClearAction(const char* sAction);
-
-	ActionsEnumMap& GetActionsEnumMap() { return m_mapActionsEnum; }
-  protected:
-	void SetConfigToActionMap(const char* pszActionName, ...);
-	//bool LoadMaterials(string sFolder);
-	void InitInputMap();
-	void InitConsoleCommands();
-	void InitConsoleVars();
-	//set the common key bindings for the specified action map.
-	//it reduces code redundancy and makes things more clear.
-	void SetCommonKeyBindings(IActionMap* pActionMap);
-
-
-	void MainMenu();
-	#ifdef USE_GUI
-	class Gui
+	//Timur[10/2/2002]void SetScriptGlobalVariables(void);
+	virtual void AddRespawnPoint(ITagPoint* pPoint);
+	virtual void RemoveRespawnPoint(ITagPoint* pPoint);
+	virtual void ResetState(void)
 	{
-	public:
-		struct VarDumper : public ICVarDumpSink
-		{
-			void OnElementFound(ICVar* pCVar) override 
-			{
-				if (strstr(pCVar->GetName(), substr))
-					vars.push_back(pCVar->GetName());	
-			}
-			void SetSubstr(const char* substr)
-			{
-				this->substr = substr;
-			}
-			std::vector<const char*> vars;
-			const char* substr = "";
-
-		};
-		struct Widget
-		{
-			virtual void Draw() = 0;
-		};
-		struct Windows : Widget
-		{
-			Windows();
-			virtual void Draw() override;
-			std::vector<std::shared_ptr<Widget>> widgets;
-		};
-		struct Graphics : Widget
-		{
-			virtual void Draw() override;
-			int num_resolutions;
-		};
-		struct Common : Widget
-		{
-			virtual void Draw() override;
-			bool console_vars = false;
-			VarDumper vd;
-			int cvr = 0;
-		};
-		
-		struct Input : Widget
-		{
-			virtual void Draw() override;
-		};
-		void Update();
-	public:
-		Windows windows;
-	}m_Gui;
-	#endif
-public:
-	float m_deltaTime = 0.f;
-
-  public:
-	ISystem* m_pSystem;			   //!< The system interface
-	CXServer* m_pServer = nullptr; //!< The server of this computer
-	//CXClient* m_pClient{};		   //!< The client of this computer
-	CClient* m_pClient{};		   //!< The client of this computer
-	CEntityClassRegistry		m_EntityClassRegistry;
-	IScriptSystem* m_pScriptSystem;
-	IRenderer* m_pRender;
-	IInput* m_pInput;
-	IInputHandler* m_inputHandler;
-	I3DEngine* m_3DEngine;
-	CPlayer* m_player = nullptr;
-	ILog* m_pLog;
-	INetwork* m_pNetwork{};
-	StringQueue m_qMessages;
-
-	int m_RenderTarget = -1;
-	bool isWireFrame  = false;
-	bool isFullScreen = false;
-
-#ifdef ENABLE_MUSIC_LIST
-	MusicList m_PlayList;
-	bool m_isMusicPlaying = false;
-#endif // ENABLE_MUSIC_LIST
-
-	std::string m_Title;
-	float m_lastTime;
-	float m_time = 0.0f;
-#ifdef CLOCK_FIXED
-	//TODO: FIX CLOCK
-	sf::Clock deltaClock;
-#endif // CLOCK_FIXED
-
-	EventListener* listener;
-	bool isDrawingGui = false;
-
-	IFont* m_Font;
-	IFont* m_SelectedEntryFont;
-	//EDIT MODE
-	//==========
-	IConsole* m_Console;
-	// Render states
-	bool culling	   = true;
-	glm::vec2 viewPort = glm::vec2(1366.0f, 768.0f);
-	//
-	bool openShadowMap = true;
-
-	int currPP = 0;
-
-  public:
-	//!	The dummy client of this computer, required to get the list of servers if
-	//! theres not a real client actually connected and playing
-
-	IServerSnooper* m_pServerSnooper{};		//!< used for LAN Multiplayer, to remove control servers
-	INETServerSnooper* m_pNETServerSnooper{}; //!< used for Internet Multiplayer, to remove control servers
-	IRConSystem* m_pRConSystem = nullptr;   //!< used for Multiplayer, to remote control servers
-	string m_szLastAddress;
-	bool m_bLastDoLateSwitch{};
-	bool m_bLastCDAuthentication{};
-
-	//CUIHud* m_pUIHud;									//!< Hud
-	//CUIHud* m_pCurrentUI;							//!< for the current ui
-
-	string m_currentLevel;		  //!< Name of current level.
-	string m_currentMission;	 //!< Name of current mission.
-	string m_currentLevelFolder; //!< Folder of the current level.
-
-	// console variables -----------------------------------------------------------
-	//=======================
-	ICVar* g_scene;
-	ICVar* r_displayinfo;
-	ICVar* r_profile;
-	ICVar* r_cap_profile;
-	ICVar* m_pCVarCheatMode;
-
-	ICVar* g_LevelName{};
-	ICVar* g_MissionName{};
-	ICVar* g_StartMission{};
-
-	ICVar* sv_port{};
-	ICVar* sv_mapcyclefile{};
-	ICVar* sv_cheater_kick{};
-	ICVar* sv_cheater_ban{};
-
-	ICVar* sv_timeout{};
-	ICVar* cl_timeout{};
-	ICVar* cl_loadtimeout{};
-	ICVar* cl_snooptimeout{};
-	ICVar* cl_snoopretries{};
-	ICVar* cl_snoopcount{};
-
-	ICVar* g_playerprofile{};
-
-	ICVar* cv_game_Difficulty{};
-	ICVar* cv_game_Aggression{};
-	ICVar* cv_game_Accuracy{};
-	ICVar* cv_game_Health{};
-	ICVar* cv_game_AllowAIMovement{};
-	ICVar* cv_game_AllAIInvulnerable{};
-	ICVar* cv_game_GliderGravity{};
-	ICVar* cv_game_GliderBackImpulse{};
-	ICVar* cv_game_GliderDamping{};
-	ICVar* cv_game_GliderStartGravity{};
-	ICVar* cv_game_physics_quality{};
-
-	ICVar* g_NonSteam{};
-
-	int g_DrawUI{};
-	int g_Render{};
-
-	int st_achivements_numHits = 0;
-
-	ServerInfosMap m_ServersInfos; //!< Infos about the avaible servers
-	string m_strLastSaveGame;
-	bool m_bEditor{};
-	//tPlayerPersistentData			m_tPlayerPersistentData;
-
-	TagPointMap m_mapTagPoints; //!< Map of tag points by name
-	CScriptObjectGame* m_pScriptObjectGame;
-	CScriptObjectInput *		m_pScriptObjectInput;
-	IScriptObject* m_playerObject{};
-
-	CVehicleSystem *				m_pVehicleSystem;
-	CPlayerSystem *					m_pPlayerSystem;
-
-	//! Name of the last saved checkpoint.
-	string									m_sLastSavedCheckpointFilename;
-	CGameMods* m_pGameMods{}; //!< might be 0 (before game init)
-
-	// other
-	bool canDragViewPortWidth  = false;
-	bool canDragViewPortHeight = false;
-	bool mousePressed		   = false;
-
-	enum Mode
+		NOT_IMPLEMENTED
+	}
+	virtual void HideLocalPlayer(bool hide, bool bEditor)
 	{
-		FPS,
-		MENU,
-		FLY,
-		EDIT
+		NOT_IMPLEMENTED
+	}
+	virtual void ReloadScripts();
+	virtual bool GoreOn() const
+	{
+		NOT_IMPLEMENTED_V
+	}
+	virtual IBitStream* GetIBitStream()
+	{
+		NOT_IMPLEMENTED_V
+	}
 
-	} m_Mode  = Mode::FPS;
-	float fps = 0.0;
+	//! sets a timer for a generic script object table
+	int		AddTimer(IScriptObject* pTable, unsigned int nStartTimer, unsigned int nTimer, IScriptObject* pUserData, bool bUpdateDuringPause)
+	{
+		NOT_IMPLEMENTED_V
+	}
+	void	PlaySubtitle(ISound* pSound);
+	bool	OpenPacks(const char* szFolder);
+	bool	ClosePacks(const char* szFolder);
 
-	ActionsEnumMap m_mapActionsEnum;				//!< Input Stuff(is for the client only but must be here)
-	bool											m_bIsLoadingLevelFromFile{};  //!<
-	bool											m_bMapLoadedFromCheckpoint{};
-	struct IActionMapManager* m_pIActionMapManager{};				//!<
-	bool m_bDedicatedServer{};															//!<
-	bool m_bOK{};																						//!<
-	bool m_bUpdateRet{};																		//!<
-	bool m_bRelaunch{};																			//!<
-	bool m_bInPause = false;
+	ListOfPlayers				m_PlayersWithLighs;						//!<
 
-	//other
-	bool can_drag_vp = true; // can drag view port ?
+	bool								m_bHideLocalPlayer;						//!<
+	CUISystem* m_pUISystem;
+	bool								m_bMenuOverlay;								//!<
+	bool								m_bUIOverlay;									//!<
+	bool								m_bUIExclusiveInput;					//!<
+	bool								m_bMapLoadedFromCheckpoint;		//!<
 
-	HostType m_HostType = NOT_CONECTED;
+	ListOfPlayers				m_DeadPlayers;
 
-	//CScriptObjectClient* m_pScriptClient = nullptr;
-	//CScriptObjectServer* m_pScriptServer = nullptr;
-
-	bool m_SceneRendered = false;
-
-	std::list<TextRenderInfo> m_MenuEntry;
-	size_t m_MenuEntryIdx		  = 0;
-	std::vector<string> test_text = {
-		"Entry ...............1\n",
-		"Entry ..............10\n",
-		"Entry .............122\n",
-		"Entry ............1444\n",
-	};
-	float m_time_to_random = 0.f;
-	//Movement direction	   = FORWARD;
-	std::shared_ptr<IQuadTreeRender> m_QuadTreeRender;
-	std::shared_ptr<QuadTree> m_QuadTree;
-
-    const char* test_string = "user data string";
-
-	IHardwareMouse* m_HardwareMouse = nullptr;
-
-	// Intersection
-
-	bool m_isActive = false;
-	// developer mode
-	std::unique_ptr<CDevMode> m_pDevMode;
-
-	size_t m_CurrentMenuEntry = 0;
-	size_t m_MenuEnries		  = 0;
-	bool   m_MenuActived	  = false;
-	bool   m_CanBackStep	  = false;
-
-	bool m_playDemo = false;
+	virtual IXAreaMgr* GetAreaManager() { return &m_XAreaMgr; };
+	virtual ITagPointManager* GetTagPointManager();
 
 	ITagPointManager* m_pTagPointManager;
 	string m_sGameName;
 
-	// Inherited via ISystemEventListener
-	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
-
-	// Inherited via IGame
-	virtual void GetMemoryUsage(ICrySizer* pSizer) const override;
-
-	// Inherited via IXGame
-	virtual int		  GetInterfaceVersion() { return 1; };
-	virtual string&	  GetName() { return m_sGameName; };
+	virtual int GetInterfaceVersion() { return 1; };
+	virtual string& GetName() { return m_sGameName; };
 
 	virtual bool GetModuleState(EGameCapability eCap)
 	{
@@ -733,3 +1229,4 @@ public:
 		}
 	};
 };
+

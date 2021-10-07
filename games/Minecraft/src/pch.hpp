@@ -172,3 +172,8 @@ inline void GameWarning( const char *format,... )
 }
 
 using CXGame = CXGame;
+struct ISoundSystem
+{
+	virtual IVisArea* GetListenerArea() = 0;
+	virtual Vec3	  GetListenerPos()	= 0;
+};

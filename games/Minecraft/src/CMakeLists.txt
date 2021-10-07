@@ -33,6 +33,8 @@ add_sources(
 	GameFiles/GameMemStats.cpp
 	GameFiles/SteamHelper.cpp
 	GameFiles/XVehicleSystem.cpp
+	GameFiles/XArea.cpp
+	GameFiles/XArea.h
 	SOURCE_GROUP
 	"Network"
 	Network/XEntityProcessingCmd.cpp

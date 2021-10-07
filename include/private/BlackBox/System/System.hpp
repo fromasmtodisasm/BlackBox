@@ -158,6 +158,8 @@ class CSystem final : public ISystem
 	virtual ITextModeConsole*		GetITextModeConsole() override;
 	virtual IProjectManager*		GetIProjectManager() override;
 	virtual IFrameProfileSystem*	GetIProfileSystem() { return m_env.pFrameProfileSystem; }
+	virtual I3DEngine*				GetI3DEngine() { return m_env.p3DEngine; }	
+	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
 
 	virtual int					GetCPUFlags()		 override;
 	virtual double				GetSecondsPerCycle() override;

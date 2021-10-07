@@ -23,13 +23,8 @@ public:
 
 	int SendMessage(IFunctionHandler* pH);
 
-	int Stop(IFunctionHandler *pH);
 	int gotoMenu(IFunctionHandler *pH);
-	int gotoFullscreen(IFunctionHandler *pH);
 	int gotoGame(IFunctionHandler *pH);
-	int gotoFly(IFunctionHandler *pH);
-	int gotoEdit(IFunctionHandler *pH);
-	int showMenu(IFunctionHandler *pH);
 
 	///////////////////////////////////////////////////////////////	
 	int CreateVariable(IFunctionHandler* pH);//str

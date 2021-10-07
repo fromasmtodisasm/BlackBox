@@ -45,6 +45,9 @@ struct IThreadManager;
 struct IRemoteConsole;
 struct IProjectManager;
 struct IFrameProfileSystem;
+struct IVisArea;
+
+struct ISoundSystem;
 
 class CFrameProfilerSection;
 
@@ -399,7 +402,9 @@ struct ISystem
 	virtual ITimer*					GetITimer()					= 0;
 	virtual ITextModeConsole*		GetITextModeConsole()		= 0;
 	virtual IProjectManager*		GetIProjectManager()		= 0;
-	virtual IFrameProfileSystem*	GetIProfileSystem()			= 0; 
+	virtual IFrameProfileSystem*	GetIProfileSystem()			= 0;
+	virtual I3DEngine*				GetI3DEngine()				= 0; 
+	virtual ISoundSystem*			GetISoundSystem()			= 0; 
 
   // Gets current supported CPU features flags. (CPUF_SSE, CPUF_SSE2, CPUF_3DNOW, CPUF_MMX)
 	virtual int GetCPUFlags() = 0;

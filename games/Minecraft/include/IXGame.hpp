@@ -47,7 +47,6 @@ struct IXGame : public IGame
 	*/
 	virtual IGameMods* GetModsInterface() = 0;
 
-	#if 0
 	/*Executes scheduled events, called by system before executing each fixed time step in multiplayer
 	*/
 	virtual void ExecuteScheduledEvents() = 0;
@@ -68,12 +67,10 @@ struct IXGame : public IGame
 	virtual float GetFixedStep() = 0;
 	/*Shutdown and destroy the module (delete this)
 	*/
-	#endif
 	virtual void Release() = 0;
 	/*Load level [level editor only]
 	@param pszLevelDirectory level directory
 	*/
-	#if 0
 	virtual bool LoadLevelForEditor(const char *pszLevelDirectory, const char *pszMissionName = 0) = 0;
 	/* Check if a sound is potentially hearable (used to check if loading a dialog is needed)
 	*/
@@ -91,7 +88,6 @@ struct IXGame : public IGame
 	/*Set the angles of the view camera of the game
 	*/
 	virtual void SetViewAngles(const Vec3 &angles) = 0;
-	#endif
 
 	/*Retrieves the player-system
 	*/
@@ -109,7 +105,6 @@ struct IXGame : public IGame
 	*/
 	virtual void RemoveTagPoint(ITagPoint *pPoint) = 0;
 
-	#if 0
 	// shape
 	virtual IXArea *CreateArea( const Vec3 *vPoints, const int count, const std::vector<string>	&names, 
 		const int type=0, const int groupId=-1, const float width=0.0f, const float height=0.0f) = 0;
@@ -160,7 +155,6 @@ struct IXGame : public IGame
 	virtual void ResetState() = 0;
 	virtual void GetMemoryStatistics(ICrySizer *pSizer) = 0;
 	virtual void HideLocalPlayer( bool hide,bool bEditor ) = 0;
-	#endif
 
 	// saves player configuration
 	virtual void SaveConfiguration( const char *sSystemCfg,const char *sGameCfg,const char *sProfile)=0;
@@ -169,10 +163,8 @@ struct IXGame : public IGame
 	*/
 	virtual void ReloadScripts()=0;
 
-	#if 0
 	// sets a timer for a generic script object table
 	virtual int AddTimer(IScriptObject *pTable,unsigned int nStartTimer,unsigned int nTimer,IScriptObject *pUserData,bool bUpdateDuringPause)=0;
-	#endif
 
 	virtual CXServer *GetServer() = 0;
 
@@ -182,15 +174,12 @@ struct IXGame : public IGame
 	virtual bool IsMultiplayer()=0;   // can be used for disabling cheats, or disabling features which cannot be synchronised over a network game
 	virtual bool IsDevModeEnable()=0;
 
-	#if 0
 	virtual void EnableUIOverlay(bool bEnable, bool bExclusiveInput) = 0;
 	virtual bool IsUIOverlay() = 0;
 	virtual bool IsInMenu() = 0;
-	#endif
 	virtual void GotoMenu(bool bTriggerOnSwitch = false) = 0;
 	virtual void GotoGame(bool bTriggerOnSwitch = false) = 0;
 
-	#if 0
 	// functions return callback sinks for the physics
 	virtual IPhysicsStreamer *GetPhysicsStreamer() = 0;
 	virtual IPhysicsEventClient *GetPhysicsEventClient() = 0;
@@ -207,7 +196,6 @@ struct IXGame : public IGame
 	virtual void UpdateDuringLoading()=0;
 
 	virtual bool GetModuleState( EGameCapability eCap ) = 0;
-	#endif
 
 	virtual string& GetName() = 0;
 	virtual int GetInterfaceVersion() = 0;

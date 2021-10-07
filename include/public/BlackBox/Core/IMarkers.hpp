@@ -1,5 +1,6 @@
 #ifndef _IMARKERS_H_
 #define _IMARKERS_H_
+#include <string>
 
 //////////////////////////////////////////////////////////////////////
 typedef struct ITagPoint
@@ -48,17 +49,15 @@ public:
 struct IXAreaMgr
 {
 public:
-  virtual void RetriggerAreas() = 0;
-
-  virtual IXArea* CreateArea(const Vec3d* vPoints, const int count, const std::vector<std::string>& names,
-    const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f) = 0;
-  virtual IXArea* CreateArea(const Vec3d& min, const Vec3d& max, const Matrix44& TM, const std::vector<std::string>& names,
-    const int type = 0, const int groupId = -1, const float width = 0.0f) = 0;
-  virtual IXArea* CreateArea(const Vec3d& center, const float radius, const std::vector<std::string>& names,
-    const int type = 0, const int groupId = -1, const float width = 0.0f) = 0;
-  virtual IXArea* GetArea(const Vec3& point) = 0;
-
-  virtual void	DeleteArea(const IXArea* aPtr) = 0;
+	virtual void	RetriggerAreas()																							= 0;
+	virtual IXArea* CreateArea(const Vec3* vPoints, const int count, const std::vector<std::string>& names,
+							   const int type = 0, const int groupId = -1, const float width = 0.0f, const float height = 0.0f) = 0;
+	virtual IXArea* CreateArea(const Vec3& min, const Vec3& max, const Matrix44& TM, const std::vector<std::string>& names,
+							   const int type = 0, const int groupId = -1, const float width = 0.0f)							= 0;
+	virtual IXArea* CreateArea(const Vec3& center, const float radius, const std::vector<std::string>& names,
+							   const int type = 0, const int groupId = -1, const float width = 0.0f)							= 0;
+	virtual IXArea* GetArea(const Vec3& point)																					= 0;
+	virtual void	DeleteArea(const IXArea* aPtr)																				= 0;
 };
 
 #endif// _IMARKERS_H_

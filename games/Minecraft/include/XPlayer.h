@@ -15,6 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#if 0
 #ifndef __GAME_PLAYER_H__
 #define __GAME_PLAYER_H__ 
 
@@ -1126,3 +1127,4 @@ private:
 }; 
 
 #endif // __GAME_PLAYER_H__
+#endif

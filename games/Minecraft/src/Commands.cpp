@@ -552,33 +552,3 @@ private:
 };
 //*******************************************************
 #endif
-void CXGame::InitCommands()
-{
-#if 0
-  m_Console->AddCommand("last", new LastCommand(this));
-  m_Console->AddCommand("clear", new ClearCommand(this), "Clear command buffer");
-  m_Console->AddCommand("goto", new GotoCommand(this), "Change mode [FPS/FLY/MENU/EDIT]");
-  m_Console->AddCommand("quit", new QuitCommand(this));
-  m_Console->AddCommand("move", new MoveCommand(this));
-  m_Console->AddCommand("scale", new ScaleCommand(this));
-  m_Console->AddCommand("rotate", new RotateCommand(this));
-  m_Console->AddCommand("select", new SelectCommand(this));
-  m_Console->AddCommand("exec", new ExecCommand(this), "Load end execute scripts");
-  //m_Console->AddCommand("material", new MaterialCommand(this));
-  //m_Console->AddCommand("shader", new ShaderCommand(this), "Set shader to object and reload shader");
-  m_Console->AddCommand("camera", new CameraCommand(this));
-  m_Console->AddCommand("scene", new SceneCommand(this), "Scene managment");
-  m_Console->AddCommand("tagpoint", new TagPointCommand(this), "TagPoint managment, tagpoint create|goto \"name\"");
-  m_Console->AddCommand("objdump", new ObjDumpCommand(this), "Dump model to disk in binary");
-#endif
-}
-#if 0
-void CXGame::initVariables()
-{
-}
-
-ObjDumpCommand::ObjDumpCommand(CXGame* game) : BaseGameCommand(game)
-{
-  m_World = game->getWorld();
-}
-#endif

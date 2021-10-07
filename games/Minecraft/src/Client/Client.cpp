@@ -41,10 +41,6 @@ CClient::~CClient()
 
 void CClient::Update()
 {
-	//m_pClient->Update(16);
-	if (!m_pGame->m_playDemo && m_pGame->m_Mode == CXGame::Mode::MENU)
-		return;
-
 	m_testObjects;
 	for (auto& o : m_testObjects)
 	{
@@ -60,28 +56,7 @@ void CClient::Update()
 
 	m_CameraController.CurrentCamera()->SetPos(CamPos);
 
-	if (!m_JumpPressed)
-	{
-		SDrawTextInfo dti;
-		dti.font = m_pGame->m_Font;
-		dti.color[0] = 1;
-		dti.color[0] = 1;
-		dti.color[0] = 1;
-		dti.color[0] = 1;
-		gEnv->pRenderer->Draw2dText(100, 40, "Press 'Jump' to Jump", dti);
-	}
-	else if (intervalLeft > 0)
-	{
-		SDrawTextInfo dti;
-		dti.font = m_pGame->m_Font;
-		dti.color[0] = 1.f;
-		dti.color[1] = 1.f;
-		dti.color[2] = (float)intervalLeft / interval;
-		dti.color[3] = 1.f;
-		gEnv->pRenderer->Draw2dText(100, 40, "Press 'Jump' to Jump", dti);
-		intervalLeft--;
-	}
-
+	auto frame_time	 = gEnv->pTimer->GetRealFrameTime();
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
 	m_NumHitsInFrame = 0;
 	m_PlayerProcessingCmd.SetDeltaAngles(Vec3(0));
@@ -89,19 +64,19 @@ void CClient::Update()
 		m_pGame->GetActionMapManager()->Update(16);
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
-		m_CameraController.ProcessKeyboard(Movement::LEFT, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveLeft());	
+		m_CameraController.ProcessKeyboard(Movement::LEFT, frame_time, m_PlayerProcessingCmd.GetMoveLeft());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_RIGHT))
 	{
-		m_CameraController.ProcessKeyboard(Movement::RIGHT, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveRight());	
+		m_CameraController.ProcessKeyboard(Movement::RIGHT, frame_time, m_PlayerProcessingCmd.GetMoveRight());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_FORWARD))
 	{
-		m_CameraController.ProcessKeyboard(Movement::FORWARD, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveFwd());	
+		m_CameraController.ProcessKeyboard(Movement::FORWARD, frame_time, m_PlayerProcessingCmd.GetMoveFwd());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_BACKWARD))
 	{
-		m_CameraController.ProcessKeyboard(Movement::BACKWARD, m_pGame->m_deltaTime, m_PlayerProcessingCmd.GetMoveBack());	
+		m_CameraController.ProcessKeyboard(Movement::BACKWARD, frame_time, m_PlayerProcessingCmd.GetMoveBack());	
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNLR))
 	{

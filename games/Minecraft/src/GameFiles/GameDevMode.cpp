@@ -268,8 +268,3 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 	}
 #endif
 }
-
-void CXGame::Release()
-{
-	delete this;
-}
