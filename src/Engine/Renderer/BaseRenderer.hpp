@@ -390,6 +390,12 @@ class CRenderer : public RenderCVars
 	virtual void				   GetProjectionMatrix(float* mat) final;
 	virtual Vec3				   GetUnProject(const Vec3& WindowCoords, const CCamera& cam) final;
 	virtual int					   GetFrameID(bool bIncludeRecursiveCalls = true) final;
+	virtual int					   GetPolyCount() { return INT_MIN; }
+	virtual void				   GetPolyCount(int& nPolygons, int& nShadowVolPolys)
+	{
+		nPolygons		= INT_MIN;
+		nShadowVolPolys = INT_MIN;
+	}
 	IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) final;
 
 	void			CreateQuad();

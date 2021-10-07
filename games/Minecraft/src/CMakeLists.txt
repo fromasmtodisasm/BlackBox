@@ -70,6 +70,13 @@ add_sources(
 	"Materials"
 	Materials/XSurfaceMgr.cpp
 	Materials/XSurfaceMgr.h
+	SOURCE_GROUP
+	"TimeDemoRecorder"
+	TimeDemoRecorder/TimeDemoRecorder.cpp
+	TimeDemoRecorder/TimeDemoRecorder.h
+
+	TimeDemoRecorder/XDemoMgr.cpp
+	TimeDemoRecorder/XDemoMgr.h
 	#[[
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.cpp
 	PRIVATE ${SOURCE_DIR}/UI/IngameDialog.h

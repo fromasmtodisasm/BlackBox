@@ -419,6 +419,7 @@ struct TestObject
 
 
 #include "GameShared.hpp"
+#include "XDemoMgr.h"
 #include "XArea.h"
 
 class CClient;
@@ -1104,9 +1105,7 @@ private: // ------------------------------------------------------------
 	TagPointMap							m_mapTagPoints;					//!< Map of tag points by name
 
 	INetwork* m_pNetwork;
-	#if 0
 	CXDemoMgr									m_XDemoMgr;
-	#endif
 	StringQueue m_qMessages;
 	bool										m_bMenuInitialized;
 

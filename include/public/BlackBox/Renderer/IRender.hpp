@@ -20,6 +20,11 @@ typedef unsigned short ushort;
 
 #include <vector>
 
+#ifndef NOT_IMPLEMENTED
+#define NOT_IMPLEMENTED\
+	assert(0 && __FUNCTION__);
+#endif
+
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////
 typedef void* WIN_HWND;
@@ -540,6 +545,9 @@ struct IRenderer : public IRendererCallbackServer
 	//! Gets width of the current viewport.
 	virtual int GetCurrentContextViewportWidth() const = 0;
 	/////////////////////////////////////////////////////////////////////////////////
+	// for stats
+	virtual int	 GetPolyCount()										= 0;
+	virtual void GetPolyCount(int& nPolygons, int& nShadowVolPolys) = 0;
 
 	// 3d engine set this color to fog color
 	virtual void SetClearColor(const Vec3& vColor)	 = 0;
@@ -547,9 +555,32 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
 
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
+	//////////////////////////////////////////////////////////////////////
+	/*!	Draw an image on the screen as a label text
+			@param vPos:	3d position
+			@param fSize: size of the image
+			@nTextureId:	Texture Id dell'immagine
+	*/
+	virtual void DrawLabelImage(const Vec3& vPos, float fSize, int nTextureId) 
+	{
+		NOT_IMPLEMENTED;
+	}
+
+	virtual void DrawLabel(Vec3 pos, float font_size, const char* label_text, ...)													
+	{
+		NOT_IMPLEMENTED;
+	}
+	virtual void DrawLabelEx(Vec3 pos, float font_size, float* pfColor, bool bFixedSize, bool bCenter, const char* label_text, ...) 
+	{
+		NOT_IMPLEMENTED;
+	}
+	virtual void Draw2dLabel(float x, float y, float font_size, float* pfColor, bool bCenter, const char* label_text, ...)		
+	{
+		NOT_IMPLEMENTED;
+	}
 
 	virtual void SetRenderTarget(int nHandle) = 0;
-	virtual int CreateRenderTarget()		  = 0;
+	virtual int	 CreateRenderTarget()		  = 0;
 
 	virtual void DrawFullscreenQuad()						  = 0;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) = 0;

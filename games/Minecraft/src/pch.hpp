@@ -177,3 +177,5 @@ struct ISoundSystem
 	virtual IVisArea* GetListenerArea() = 0;
 	virtual Vec3	  GetListenerPos()	= 0;
 };
+
+typedef string String;
