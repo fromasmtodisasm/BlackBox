@@ -246,9 +246,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 	m_pScriptSystem = pScriptSystem;
 	m_pRenderer = pSystem->GetIRenderer();
 	//FIXME:
-#if 0
-	m_pInput = m_pSystem->GetIInput();
-#endif
+	m_pInput = GET_GUI_INPUT();
 	m_pLog = m_pSystem->GetILog();
 
 	m_fVirtualToRealX = (double)m_pRenderer->GetWidth() / 800.0;

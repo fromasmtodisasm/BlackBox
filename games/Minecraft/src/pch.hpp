@@ -166,6 +166,7 @@ typedef SmartScriptObject _SmartScriptObject;
 #include "Game.hpp"
 #include "GameShared.hpp"
 #include "Client/XClient.hpp"
+#include "Legacy/IInput.h"
 
 //////////////////////////////////////////////////////////////////////////
 //! Reports a Game Warning to validator with WARNING severity.
@@ -188,4 +189,7 @@ struct ISoundSystem
 	virtual IVisArea* GetListenerArea() = 0;
 	virtual Legacy::Vec3	  GetListenerPos()	= 0;
 };
+
+Legacy::IInput* GetLegacyInput();
+#define GET_GUI_INPUT() GetLegacyInput()
 

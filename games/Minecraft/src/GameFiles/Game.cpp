@@ -31,12 +31,15 @@
 #include "IngameDialog.h"
 
 static int g_FontSize = 32;
-#define MEASURETIME(str) CryLog("[MEASURETIME] %s", str)
+#define MEASURETIME(str) \
+/* CryLog("[MEASURETIME] %s", str)*/
 
 #ifdef USE_GUI
 #	include <imgui.h>
 #	include <imgui_internal.h>
 #endif
+
+static CXGame* gGame;
 
 #include "TextEditorDemo.hpp"
 
@@ -640,6 +643,8 @@ IXSystem* CXGame::GetXSystem()
 
 bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
+	gGame = this;
+	m_pLegacyInput = new Legacy::CInput(gEnv->pInput);
 	// Setup the system and 3D Engine pointers
 	m_pSystem = pSystem;
 
@@ -905,8 +910,6 @@ bool CXGame::Update()
 	//////////////////////////////////////////////////////////////////////////
 	FUNCTION_PROFILER(PROFILE_GAME);
 
-	MEASURETIME("EnterGameUp");
-
 	static const auto& render_game	= true;
 	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
 	static int		   num_frames	= 0xffff;
@@ -1114,7 +1117,9 @@ bool CXGame::Update()
 
 	// print time profiling results
 #ifndef PS2
+	#if 0
 	MEASURETIME((const char*)-1);
+	#endif
 #else
 	MEASURETIME("Time");
 #endif
@@ -1356,6 +1361,10 @@ bool CXGame::LoadScene(std::string name)
 	}
 
 	return false;
+}
+Legacy::IInput* CXGame::GetLegacyInput()
+{
+	return m_pLegacyInput;
 }
 #if 0
 
@@ -1761,3 +1770,7 @@ bool CXGame::SteamInit()
 #endif // !USE_STEAM
 }
 #endif
+Legacy::IInput* GetLegacyInput()
+{
+	return gGame->GetLegacyInput();
+}

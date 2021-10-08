@@ -676,7 +676,10 @@ struct IRenderer : public IRendererCallbackServer
 	virtual float ScaleCoordY(float value){ NOT_IMPLEMENTED_V; }
 
 	virtual void SetState(State state, bool enable)			 = 0;
-	inline void SetState(int State) { NOT_IMPLEMENTED; };
+	inline void SetState(int State) { 
+		//CryLog(__FUNCTION__);
+		//NOT_IMPLEMENTED; 
+	};
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
 	virtual void PushProfileMarker(char* label) = 0;

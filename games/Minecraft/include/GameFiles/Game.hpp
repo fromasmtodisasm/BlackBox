@@ -392,6 +392,8 @@ struct TestObject
 #include <Localization\StringTableMgr.h>
 #include <Materials/XSurfaceMgr.h>
 
+#include "Legacy\Input.hpp"
+
 #include <IPhysics.h>
 
 class CClient;
@@ -1128,6 +1130,8 @@ public:
 	ITagPointManager* m_pTagPointManager;
 	string m_sGameName;
 
+	Legacy::CInput* m_pLegacyInput;
+
 	virtual int GetInterfaceVersion() { return 1; };
 	virtual string& GetName() { return m_sGameName; };
 
@@ -1148,5 +1152,8 @@ public:
 		}
 	};
 	bool LoadScene(std::string name);
+
+public:
+	Legacy::IInput* GetLegacyInput();
 };
 
