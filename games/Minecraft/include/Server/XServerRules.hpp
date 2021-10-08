@@ -60,22 +60,22 @@ public:
 	//! When new player connected.
 	int	OnClientConnect(IScriptObject* pSS, int nRequestedClassID);
 	//! When new player connected.
-	void	OnClientDisconnect(IScriptObject* pSS);
-	//void	OnClientRequestRespawn(IScriptObject* pSS, const EntityClassId nRequestedClassID);
+	void OnClientDisconnect(IScriptObject* pSS);
+	void OnClientRequestRespawn(IScriptObject* pSS, const EntityClassId nRequestedClassID);
 	//! When player respawn after death.
-	//void	OnPlayerRespawn(IEntity* player);
+	void OnPlayerRespawn(IEntity* player);
 	//! When player try to change team
 	int OnClientMsgJoinTeamRequest(CXServerSlot* pSS, BYTE nTeamId, const char* sClass);
 	int OnClientCmd(CXServerSlot* pSS, const char* sCmd);
 	//! when a spectator whant to switch spectating mode
-	//void OnSpectatorSwitchModeRequest(IEntity* spec);
-	//void OnClientMsgText(EntityId sender, TextMessage& tm);
+	void OnSpectatorSwitchModeRequest(IEntity* spec);
+	void OnClientMsgText(EntityId sender, TextMessage& tm);
 	void SetGameStuffScript(std::string sName);
 	std::string GetGameStuffScript();
 
-	/*void SendEntityTextMessage(EntityId sender, TextMessage& tm);
+	void SendEntityTextMessage(EntityId sender, TextMessage& tm);
 	void SendTeamTextMessage(EntityId sender, TextMessage& tm);
-	void SendWorldTextMessage(EntityId sender, TextMessage& tm);*/
+	void SendWorldTextMessage(EntityId sender, TextMessage& tm);
 
 	//! After the map and its entities have been loaded
 	void	OnAfterLoad();

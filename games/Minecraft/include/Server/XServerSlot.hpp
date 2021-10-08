@@ -26,7 +26,6 @@
 class CScriptObjectServerSlot;
 
 #include "Network/XNetworkStats.hpp"									// CXNetworkStats
-#include "Network/XSnapShot.h"									
 
 class CXSnapshot;
 class CXServer;

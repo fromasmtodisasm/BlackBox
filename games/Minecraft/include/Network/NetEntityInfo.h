@@ -43,7 +43,7 @@ public:
 	//!
 	bool NeedUpdate(){ return m_nPriority!=0; }
 	//!
-	void Update(Vec3 v3d);
+	void Update(Legacy::Vec3 v3d);
 	//!
 	void Reset();
 	//!
@@ -57,7 +57,7 @@ public:
 	//!
 	float GetTimeAffectedPriority();
 	//!
-	float GetDistanceTo( const Vec3d &vPos );
+	float GetDistanceTo( const Legacy::Vec3 &vPos );
 
 	//! \return in bits
 	uint32 CalcEstimatedSize();

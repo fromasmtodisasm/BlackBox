@@ -13,4 +13,10 @@
 #include <BlackBox/System/ITimer.hpp>
 
 #include <Legacy\IFont.h>
+
+#include "Network/XNetwork.hpp"
+#include "Server/XServer.hpp"
+
+#include "Server/XServerSlot.hpp"
+#include "Client/XClient.hpp"
 //using vector2f = Legacy::Vec2;

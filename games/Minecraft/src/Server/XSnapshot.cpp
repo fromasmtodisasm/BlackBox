@@ -154,7 +154,7 @@ float CXSnapshot::GetLastUpdate() const
 */
 void CXSnapshot::BuildAndSendSnapshot()
 {
-	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
+	FUNCTION_PROFILER( PROFILE_GAME );
 
 	IBitStream *pBitStream = m_pServer->m_pGame->GetIBitStream();			// compression helper
 
@@ -172,7 +172,7 @@ void CXSnapshot::BuildAndSendSnapshot()
 
 	int nSnapshotSize = SSStats.m_nReliableBitCount + SSStats.m_nUnreliableBitCount;		// in bit per snapshot
 
-	Vec3 v3ViewerPos=pSlotEntity->GetPos();
+	auto v3ViewerPos=pSlotEntity->GetPos();
 
 	NetEntityListItor itor=m_lstNetEntities.begin();
 
@@ -194,7 +194,7 @@ void CXSnapshot::BuildAndSendSnapshot()
 			if(dwPriorityMin==0)
 				dwPriorityMin=itor->GetPriority();
 			 else 
-				dwPriorityMin=min(dwPriorityMin,itor->GetPriority());
+				dwPriorityMin=std::min(dwPriorityMin,itor->GetPriority());
 		}
 
 		itor=iTemp;
@@ -220,7 +220,7 @@ void CXSnapshot::BuildAndSendSnapshot()
 		 else
 			maxRateBps=(unsigned int)m_pServer->sv_maxrate_lan->GetIVal();
 
-		maxRateBps=min(maxRateBps,m_clientMaxBitsPerSecond);
+		maxRateBps=std::min(maxRateBps,m_clientMaxBitsPerSecond);
 	}
 
 	if(!m_pServerSlot->m_sClientString.empty())

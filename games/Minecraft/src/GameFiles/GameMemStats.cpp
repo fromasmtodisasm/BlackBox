@@ -23,3 +23,12 @@ unsigned size = sizeof *this;
 	
 	return size;
 }
+
+//////////////////////////////////////////////////////////////////////////
+unsigned CXServerSlot::MemStats()
+{
+	unsigned size = sizeof *this;
+	size += m_strPlayerName.capacity();
+	size += m_strPlayerModel.capacity();
+	return size;
+}

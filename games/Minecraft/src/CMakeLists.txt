@@ -21,14 +21,17 @@ add_sources(
 	Client/XClientSnapshot.cpp
 	SOURCE_GROUP
 	"GameSystem"
-	GameSystem/XSystemBase.h
-	GameSystem/XSystemServer.h
-	GameSystem/XSystemDummy.h
-	GameSystem/XSystemClient.h
 	GameSystem/XSystemBase.cpp
-	GameSystem/XSystemServer.cpp
-	GameSystem/XSystemDummy.cpp
+	GameSystem/XSystemBase.h
 	GameSystem/XSystemClient.cpp
+	GameSystem/XSystemClient.h
+	GameSystem/XSystemDummy.cpp
+	GameSystem/XSystemDummy.h
+	GameSystem/XSystemEntities.cpp
+	GameSystem/XSystemEntities.h
+	GameSystem/XSystemServer.cpp
+	GameSystem/XSystemServer.h
+
 
 	SOURCE_GROUP
 	"GameFiles"
@@ -52,10 +55,11 @@ add_sources(
 	GameFiles/XArea.h
 	SOURCE_GROUP
 	"Network"
+	Network/NetEntityInfo.cpp
+	Network/SynchedRandomSeed.cpp
 	Network/XEntityProcessingCmd.cpp
 	Network/XNetwork.cpp
 	Network/XNetworkStats.cpp
-	Network/SynchedRandomSeed.cpp
 	SOURCE_GROUP
 	"Player"
 	Player/XPlayer.cpp
@@ -131,12 +135,23 @@ add_sources(
 	UI/UIWidget.h
 	SOURCE_GROUP
 	"Legacy"
-	Legacy/IInput.h
-	Legacy/Input.cpp
-	Legacy/IFont.h
-	Legacy/ScriptObjectVector.h
-	Legacy/ScriptObjectStream.h
+	Legacy/CryCharAnimationParams.h
+	Legacy/I3DEngine.h
+	Legacy/IBindable.h
+	Legacy/ICryPak.h
 	Legacy/IEntitySystem.h
+	Legacy/IFont.h
+	Legacy/IInput.h
+	Legacy/IScriptSystem.h
+	Legacy/ITimer.h
+	Legacy/Input.cpp
+	Legacy/Input.hpp
+	Legacy/ScriptObjectStream.h
+	Legacy/ScriptObjectVector.h
+	Legacy/Stream.h
+	Legacy/TArray.h
+	Legacy/TimeValue.h
+
 	SOURCE_GROUP
 	"Weapons"
 	Weapons/FireType.h
@@ -144,6 +159,17 @@ add_sources(
 	Weapons/WeaponClass.h
 	Weapons/WeaponSystemEx.cpp
 	Weapons/WeaponSystemEx.h
+
+	SOURCE_GROUP
+	"Vehicle"
+	#Vehicle/XVehicle.cpp
+	Vehicle/XVehicle.h
+	#Vehicle/XVehicleProxy.cpp
+	Vehicle/XVehicleProxy.h
+	#Vehicle/XVehicleProxyHeli.cpp
+	#Vehicle/XVehicleSystem.cpp
+	Vehicle/XVehicleSystem.h
+
 )
 end_sources()
 gamemodule(Minecraft FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
@@ -168,6 +194,7 @@ target_include_directories(
 	${THIS_PROJECT}
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"
+	PRIVATE "${INCLUDE_ROOT}/Network"
 	PRIVATE "${INCLUDE_ROOT}/GUI")
 
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)
@@ -178,6 +205,7 @@ target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Leg
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/TimeDemoRecorder)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Weapons)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Network)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Vehicle)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/GameSystem)
 
 source_group(

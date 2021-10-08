@@ -15,9 +15,9 @@
 
 #include "stdafx.h"
 #include "ScriptObjectVector.h"
-#include "XServerRules.h"
+#include "Server/XServerRules.hpp"
 #include "WeaponClass.h"
-#include "XNetwork.h"
+#include "Network/XNetwork.hpp"
 
 //////////////////////////////////////////////////////////////////////
 CXServerRules::CXServerRules()
@@ -103,7 +103,7 @@ bool CXServerRules::Init(CXGame *pGame, IConsole *pConsole,IScriptSystem *pScrip
 //////////////////////////////////////////////////////////////////////
 void CXServerRules::Update()
 {
-	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
+	FUNCTION_PROFILER( PROFILE_GAME );
 	if(m_pGameRulesObj==NULL)
 		return;
 	m_pScriptSystem->BeginCall("GameRules","OnUpdate");
@@ -168,7 +168,7 @@ const char *CXServerRules::GetGameType()
 	if(!m_init)
 		return 0;
 
-  char *md = m_pGame->g_GameType->GetString();
+  auto md = m_pGame->g_GameType->GetString();
   
   HSCRIPTFUNCTION fun = m_pScriptSystem->GetFunctionPtr("GameRules", "ModeDesc");
   if(fun)

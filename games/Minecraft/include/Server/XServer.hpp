@@ -24,7 +24,7 @@
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <Network/XNetwork.hpp>
 #include <Server/XServerRules.hpp>
-//#include "XSnapshot.h"
+#include "Server/XSnapShot.h"
 #include <BlackBox/Network/INetwork.hpp>					// IServerSlotFactory
 #include <ScriptObjects/ScriptObjectServer.hpp>
 #include <BlackBox/System/IConsole.hpp>
