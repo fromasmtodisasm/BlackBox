@@ -1,9 +1,20 @@
+#include <ScriptObjects\ScriptObjectServerSlot.hpp>
+#include <ScriptObjects\ScriptObjectStream.hpp>
+
 #include <Server/XServerSlot.hpp>
 #include <Server/XServer.hpp>
-//#include <Server/XSystemServer.hpp>
+#include <Server/XSystemServer.h>
 
-#if 0
-#if 0
+
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 //////////////////////////////////////////////////////////////////////
 CXServerSlot::CXServerSlot(CXServer *pParent, IServerSlot *pSlot)
 {
@@ -59,6 +70,7 @@ CXServerSlot::~CXServerSlot()
 bool CXServerSlot::IsEntityOffSync(EntityId id) 
 { 
 	bool bOffSync = true;
+	#if 0
 
 	if (m_pParent->m_pGame->IsMultiplayer() && m_pParent->m_pGame->UseFixedStep())
 	{
@@ -77,6 +89,7 @@ bool CXServerSlot::IsEntityOffSync(EntityId id)
 				bOffSync = false;
 		}
 	}
+	#endif
 	return bOffSync;
 }
 
@@ -151,6 +164,7 @@ void CXServerSlot::OnXServerSlotDisconnect(const char *szCause)
 	// set as a garbage
 	m_bXServerSlotGarbage = true;
 }
+#if 0
 #include <XPlayer.hpp>
 #include "XV.hppicle.hpp"
 #include "Spectator.hpp"								// CSpectator
@@ -256,7 +270,6 @@ void CXServerSlot::OnRemoveEntity(IEntity *pEntity)
 	}		
 #endif
 }
-#if 0
 //////////////////////////////////////////////////////////////////////////
 void CXServerSlot::ConvertToValidPlayerName( const char *szName, char* outName, size_t sizeOfOutName )
 {
@@ -414,23 +427,25 @@ void CXServerSlot::OnData(CStream &stm)
 	m_PlayerProcessingCmd.Reset();
 	ParseIncomingStream(stm);
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXServerSlot::SendReliable(CStream &stm,bool bSecondaryChannel)
 {
+#if 0
 	assert(m_pParent);
 	m_pParent->m_NetStats.AddPacket(XSERVERMSG_UNIDENTIFIED,stm.GetSize(),true);
 
 	m_pISSlot->SendReliable(stm,bSecondaryChannel);
+#endif
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXServerSlot::SendUnreliable(CStream &stm)
 {
+	#if 0
 	assert(m_pParent);
 	m_pParent->m_NetStats.AddPacket(XSERVERMSG_UNIDENTIFIED,stm.GetSize(),false);
 
 	m_pISSlot->SendUnreliable(stm);
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -457,6 +472,7 @@ void CXServerSlot::SendCommand(const char *sCmd)
 void CXServerSlot::SendCommand(const char *sCmd, const Legacy::Vec3 &_invPos, const Legacy::Vec3 &_invNormal, 
 	const EntityId inId, const unsigned char incUserByte )
 {
+	#if 0
 	Legacy::Vec3 invPos=_invPos;
 	Legacy::Vec3 invNormal=_invNormal;
 	CStream stm;
@@ -485,6 +501,7 @@ void CXServerSlot::SendCommand(const char *sCmd, const Legacy::Vec3 &_invPos, co
 	stm.WritePkd(incUserByte);
 
 	SendReliableMsg(XSERVERMSG_CMD,stm,false);
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -497,7 +514,9 @@ size_t CXServerSlot::SendReliableMsg( XSERVERMSG msg, CStream &stm,bool bSeconda
 	istm.Write(stm);
 	m_pISSlot->SendReliable(istm,bSecondaryChannel);
 
+	#if 0
 	m_pParent->m_NetStats.AddPacket(msg,istm.GetSize(),true);
+	#endif
 
 #ifdef NET_PACKET_LOGGING
 	// debugging
@@ -547,7 +566,9 @@ size_t CXServerSlot::SendUnreliableMsg(XSERVERMSG msg, CStream &stm, const char 
 	istm.Write(stm);
 	m_pISSlot->SendUnreliable(istm);
 
+	#if 0
 	m_pParent->m_NetStats.AddPacket(msg,istm.GetSize(),false);
+	#endif
 
 #ifdef NET_PACKET_LOGGING
 	// debugging
@@ -648,7 +669,9 @@ void CXServerSlot::ContextSetup()
 
 	ctx.Write(stm);
 	CCVarSerialize t(&stm);
+	#if 0
 	pCon->DumpCVars(&t,VF_REQUIRE_NET_SYNC);
+	#endif
 
 	m_pISSlot->ContextSetup(stm);
 }
@@ -737,7 +760,9 @@ bool CXServerSlot::ParseIncomingStream(CStream &stm)
 				}
 				break;
 			case XCLIENTMSG_TEXT:
+				#if 0
 				m_pParent->OnClientMsgText(m_wPlayerId,stm);
+				#endif
 				break;
 			case XCLIENTMSG_JOINTEAMREQUEST:
 				OnClientMsgJoinTeamRequest(stm);
@@ -1045,6 +1070,7 @@ bool CXServerSlot::ShouldSendOverLazyChannel()
 //////////////////////////////////////////////////////////////////////
 void CXServerSlot::OnClientMsgPlayerProcessingCmd(CStream &stm)
 {
+	#if 0
 	IBitStream *pBitStream = m_pParent->m_pGame->GetIBitStream();
 
 	stm.Read(m_bClientLazyChannelState);
@@ -1067,15 +1093,19 @@ void CXServerSlot::OnClientMsgPlayerProcessingCmd(CStream &stm)
 
 			stm.Read(ucStartRandomSeed);
 
+			#if 0
 			if(pPlayer)
 				pPlayer->m_SynchedRandomSeed.EnableSyncRandomSeedS(ucStartRandomSeed);
+			#endif
 			//			GetISystem()->GetILog()->Log(">> ClientCmd Read %d %d",(int)m_wPlayerId,(int)ucStartRandomSeed);			// debug
 		}
 		else
 		{
+			#if 0
 			if(pPlayer)
 				pPlayer->m_SynchedRandomSeed.DisableSyncRandomSeedS();
 			//			GetISystem()->GetILog()->Log(">> ClientCmd Read %d off",(int)m_wPlayerId);			// debug
+			#endif
 		}
 	}
 
@@ -1290,6 +1320,7 @@ void CXServerSlot::OnClientMsgPlayerProcessingCmd(CStream &stm)
 		if(pAdvCamSystem)
 			pAdvCamSystem->ProcessKeys(m_PlayerProcessingCmd);
 	}
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1300,11 +1331,13 @@ bool CXServerSlot::IsClientSideEntity(IEntity *pEnt)
 	if(!pIContainer)
 		return false;
 
+	#if 0
 	CVehicle *pVehicle;
 
 	// only vehicles are client side simulated
 	if(pIContainer->QueryContainerInterface(CIT_IVEHICLE,(void**)&pVehicle))
 		return m_fClientVehicleSimTime>0 && pEnt->GetId()==m_idClientVehicle; 
+	#endif
 
 	return false;
 }
@@ -1356,7 +1389,7 @@ void CXServerSlot::OnClientReturnScriptHash(CStream &stm)
 {
 	IBitStream *pBitStream = m_pParent->m_pGame->GetIBitStream();
 
-	u32 dwHash;
+	uint32 dwHash;
 
 	pBitStream->ReadBitStream(stm,dwHash,eDoNotCompress);			// returned hash
 
@@ -1371,12 +1404,15 @@ void CXServerSlot::MarkEntityOffSync(EntityId id)
 	if (!pEnt)
 		return;
 
+	#if 0
 	Legacy::Vec3 vBBox[2],sz;
 	m_mapOffSyncEnts.insert(std::pair<EntityId,int>(id,0)); 
 	pEnt->GetBBox(vBBox[0],vBBox[1]);
 	sz = vBBox[1]-vBBox[0];
+	#endif
 
 	pe_params_foreign_data pfd;
+	#if 0
 	IPhysicalEntity **ppEnts;
 	int i = m_pPhysicalWorld->GetEntitiesInBox(vBBox[0]-sz*0.3f,vBBox[1]+sz*0.3f,ppEnts,ent_sleeping_rigid|ent_rigid)-1;
 	for(; i>=0; i--)
@@ -1385,6 +1421,7 @@ void CXServerSlot::MarkEntityOffSync(EntityId id)
 		if (pEnt && pEnt->GetNetPresence())
 			m_mapOffSyncEnts.insert(std::pair<EntityId,int>(pEnt->GetId(),0)); 
 	}
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1428,5 +1465,3 @@ void CXServerSlot::GetNetStats(SlotNetStats &ss)
 	ss.lastsnapshotbitsize=m_Snapshot.m_nLastSnapshotBitSize;
 	ss.maxsnapshotbitsize=m_Snapshot.m_nMaxSnapshotBitSize;
 }
-#endif
-#endif

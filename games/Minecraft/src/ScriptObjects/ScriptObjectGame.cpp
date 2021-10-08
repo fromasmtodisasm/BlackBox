@@ -1,6 +1,8 @@
 #include <ScriptObjects/ScriptObjectGame.hpp>
 #include <Server/XServer.hpp>
 
+#include <ICryPak.h>
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -45,6 +47,12 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_TEMPLFUNC_U(Load);
 
 	SCRIPT_REG_TEMPLFUNC_U(LoadObject);
+
+	SCRIPT_REG_TEMPLFUNC_U(Connect);
+	SCRIPT_REG_TEMPLFUNC_U(Reconnect);
+	SCRIPT_REG_TEMPLFUNC_U(Disconnect);
+	SCRIPT_REG_TEMPLFUNC_U(GetLevelList);
+	SCRIPT_REG_TEMPLFUNC_U(LoadLevel);
 
 #if 0
 	AllowPropertiesMapping(pSS);
@@ -553,21 +561,6 @@ int CScriptObjectGame::GetVariable(IFunctionHandler* pH)
 	}
 }
 
-int CScriptObjectGame::LoadLevel(IFunctionHandler* pH)
-{
-	CHECK_PARAMETERS(1);
-#if 0
-	GetISystem()->Log("Loading level");
-  const char* szLevelName = nullptr;
-
-  if (pH->GetParam(1, szLevelName))
-  {
-    return pH->EndFunction(m_pGame->LoadScene(szLevelName));
-  }
-#endif
-	return pH->EndFunctionNull();
-}
-
 int CScriptObjectGame::AddCommand(IFunctionHandler* pH)
 {
 	int			nPCount = pH->GetParamCount();
@@ -631,4 +624,220 @@ int CScriptObjectGame::LoadObject(IFunctionHandler* pH)
 		obj = gEnv->p3DEngine->MakeObject(sName);
 	}
 	return pH->EndFunction(obj);
+}
+
+//////////////////////////////////////////////////////////////////////
+/*!create a local client and connect it to a server
+	@param sServer string containing the server name or ip number
+	@param bShowConsole (optional, default true)
+*/
+int CScriptObjectGame::Connect(IFunctionHandler* pH)
+{
+	bool bDoLateSwitch = false, bDoCDAuthorization = false;
+	//if a local server exist shutdown it
+	//m_pGame->ShutdownServer();
+
+	const char* sServer = NULL;
+
+	if (pH->GetParamCount() != 0)
+		pH->GetParam(1, sServer);
+
+	if (pH->GetParamCount() > 1)
+		pH->GetParam(2, bDoLateSwitch);
+
+	if (pH->GetParamCount() > 2)
+		pH->GetParam(3, bDoCDAuthorization);
+
+	m_pGame->ShutdownClient();
+	m_pGame->ShutdownServer();
+
+	if (sServer == NULL)
+	{
+		if (!m_pGame->m_pServer)
+			return pH->EndFunction();
+
+		sServer = "127.0.0.1";
+	}
+	bool bReturn = true;
+
+	if (!m_pGame->m_bEditor)
+	{
+		HSCRIPTFUNCTION pfnOnConnectBegin = m_pScriptSystem->GetFunctionPtr("Game", "OnConnectBegin");
+
+		if (pfnOnConnectBegin)
+		{
+			m_pScriptSystem->BeginCall(pfnOnConnectBegin);
+			m_pScriptSystem->PushFuncParam(m_pGame->GetScriptObject());
+			m_pScriptSystem->PushFuncParam(sServer);
+			m_pScriptSystem->EndCall(bReturn);
+
+			m_pScriptSystem->ReleaseFunc(pfnOnConnectBegin);
+		}
+	}
+
+	if (!bReturn)
+	{
+		return pH->EndFunctionNull();
+	}
+
+	m_pGame->StartupClient();
+
+	// if bDoLateSwitch is true then it does the 3 lines below but after the connection is completed.
+	m_pGame->m_pClient->XConnect((char*)sServer, bDoLateSwitch, bDoCDAuthorization);
+
+	return pH->EndFunction();
+}
+
+//////////////////////////////////////////////////////////////////////
+/*!create a local client and reconnect to the last server
+@param sServer string containing the server name or ip number
+@param bShowConsole (optional, default true)
+*/
+int CScriptObjectGame::Reconnect(IFunctionHandler *pH)
+{
+	CHECK_PARAMETERS(0);
+
+	if (!m_pGame->m_szLastAddress.empty())
+	{
+		m_pScriptSystem->BeginCall("Game", "Connect");
+		m_pScriptSystem->PushFuncParam(this->GetScriptObject());
+		m_pScriptSystem->PushFuncParam(m_pGame->m_szLastAddress.c_str());
+		m_pScriptSystem->PushFuncParam((int)(m_pGame->m_bLastDoLateSwitch ? 1 : 0));
+		m_pScriptSystem->PushFuncParam((int)(m_pGame->m_bLastCDAuthentication ? 1 : 0));
+		m_pScriptSystem->EndCall();
+	}
+	else
+	{
+		m_pConsole->PrintLine("No previous connect command.");
+	}
+
+	return pH->EndFunction();
+}
+
+//////////////////////////////////////////////////////////////////////
+/*!disconnect the current connection to a remote server
+@param sCause string describing the cause of the disconnection[optional]
+*/
+int CScriptObjectGame::Disconnect(IFunctionHandler *pH)
+{
+	int iCount=pH->GetParamCount();
+
+	if(iCount>1)
+	{
+		m_pScriptSystem->RaiseError("Game.Disconnect too many parameters");
+		return pH->EndFunction();
+	}
+
+	const char *sCause=0;
+
+	if(iCount>0)
+		pH->GetParam(1,sCause);			// sCause might get 0 when LUA passed a nil value
+
+	if(!sCause)
+		sCause="@UserDisconnected";
+
+	m_pGame->ShutdownClient();
+	m_pGame->ShutdownServer();
+
+	return pH->EndFunction();
+}
+
+//////////////////////////////////////////////////////////////////////
+// Scans the given vector of strings for presence of szString
+// case-insensitive
+// returns true when the string is present in the array
+bool HasStringI(const std::vector<string>& arrStrings, const char* szString)
+{
+	for (std::vector<string>::const_iterator it = arrStrings.begin(); it != arrStrings.end(); ++it)
+		if (!stricmp(it->c_str(), szString))
+			return true;
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Returns the table - list of levels with the given mission in them
+int CScriptObjectGame::GetLevelList(IFunctionHandler* pH)
+{
+	// the first and only parameter is the name of the mission
+	// empty name means all levels will be returned
+	const char* pszMissionFilter = NULL;
+
+	if (pH->GetParamCount() >= 1 && !pH->GetParam(1, pszMissionFilter))
+	{
+		m_pScriptSystem->RaiseError("CScriptObjectGame::GetLevelList : 1st (%s) of %d arguments couldn't be resolved as mission name string.", ScriptVarTypeAsCStr(pH->GetParamType(1)), pH->GetParamCount());
+		return pH->EndFunctionNull();
+	}
+
+	_SmartScriptObject pObj(m_pScriptSystem);
+	int				   nLevel = 1;
+
+	string sLevelsFolder = m_pGame->GetLevelsFolder();
+
+	struct _finddata_t c_file;
+	intptr_t		   hFile;
+
+	ICryPak* pIPak = m_pSystem->GetIPak();
+
+	if ((hFile = pIPak->FindFirst((sLevelsFolder + string("/*.*")).c_str(), &c_file)) == -1L)
+		return (pH->EndFunction(*pObj));
+
+	// warning: this should be empty here
+	std::vector<string> arrMissions;
+
+	do {
+		arrMissions.clear();
+
+		if ((strncmp(c_file.name, ".", 1) != 0) &&
+			(c_file.attrib & _A_SUBDIR) && m_pGame->GetLevelMissions((sLevelsFolder + "/" + c_file.name).c_str(), arrMissions) &&
+			(!pszMissionFilter || HasStringI(arrMissions, pszMissionFilter)))
+		{
+			_SmartScriptObject pLevelObj(m_pScriptSystem);
+
+			pLevelObj->SetValue("Name", c_file.name);
+
+			_SmartScriptObject pMissionObj(m_pScriptSystem);
+
+			for (int i = 0; i < (int)arrMissions.size(); i++)
+			{
+				static char szIndex[4];
+				pMissionObj->SetValue(itoa(i + 1, szIndex, 10), arrMissions[i].c_str());
+			}
+
+			pLevelObj->SetValue("MissionList", pMissionObj);
+
+			// we found a level
+			pObj->SetAt(nLevel, pLevelObj);
+
+			++nLevel;
+		}
+
+	} while (pIPak->FindNext(hFile, &c_file) == 0);
+	pIPak->FindClose(hFile);
+
+	return pH->EndFunction(*pObj);
+}
+
+//////////////////////////////////////////////////////////////////////
+/*!Load a level ,start a local client and connect it to the local server, no external connections (sp game)
+	@param sMapName the name of the map to load
+	@param sMissionName the name of the mission[optional]
+*/
+int CScriptObjectGame::LoadLevel(IFunctionHandler* pH)
+{
+	const char* szMapName;
+	const char* szMissionName = "";
+
+	if (m_pGame->m_bDedicatedServer)
+		return pH->EndFunction();
+
+	pH->GetParam(1, szMapName);
+	if (pH->GetParamCount() == 2) pH->GetParam(2, szMissionName);
+
+	ICVar* pVar = m_pSystem->GetIConsole()->GetCVar("g_GameType");
+	pVar->Set("Default");
+
+	m_pGame->m_tPlayerPersistentData.m_bDataSaved = false;
+	m_pGame->LoadLevelCS(false, szMapName, szMissionName, false);
+
+	return pH->EndFunction();
 }

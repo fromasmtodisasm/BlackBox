@@ -3270,7 +3270,9 @@ int CUISystem::StopAllVideo()
 
 	return 0;
 	#else
-	NOT_IMPLEMENTED_V;
+	CryLog("StopAllVideo: %s", __FUNCTION__);
+	//NOT_IMPLEMENTED_V;
+	return 0;
 	#endif
 }
 

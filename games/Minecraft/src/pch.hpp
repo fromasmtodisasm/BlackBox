@@ -138,21 +138,23 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Core/IMarkers.hpp>
 #include <BlackBox/Core/Utils.hpp>
-#include <BlackBox/EntitySystem/EntityDesc.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
-#include <BlackBox/EntitySystem/IEntitySystem.hpp>
-#include <BlackBox/Input/IHardwareMouse.hpp>
-#include <BlackBox/Input/IInput.hpp>
-#include <BlackBox/Network/INetwork.hpp>
-#include <BlackBox/Renderer/IFont.hpp>
-#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-#include <BlackBox/Scene/IScene.hpp>
-#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+
 #include <BlackBox/System/ConsoleCommands.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
+#include <BlackBox/Network/INetwork.hpp>
+
+#include <BlackBox/EntitySystem/EntityDesc.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
+#include <BlackBox/Input/IHardwareMouse.hpp>
+#include <BlackBox/Input/IInput.hpp>
+#include <BlackBox/Renderer/IFont.hpp>
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
+#include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
 typedef string String;
@@ -193,3 +195,27 @@ struct ISoundSystem
 Legacy::IInput* GetLegacyInput();
 #define GET_GUI_INPUT() GetLegacyInput()
 
+#ifdef NOT_IMPLEMENTED_V
+#	undef NOT_IMPLEMENTED_V
+#	define NOT_IMPLEMENTED_V                                   \
+		CryError("Function: %s not implemented", __FUNCTION__); \
+	return {};
+#endif
+
+#ifdef NOT_IMPLEMENTED
+#	undef NOT_IMPLEMENTED
+#	define NOT_IMPLEMENTED                                     \
+		CryError("Function: %s not implemented", __FUNCTION__); \
+		//assert(0 && __FUNCTION__);
+#endif
+
+
+#ifndef PS2
+#if defined(WIN64) || defined(LINUX)
+#define FIXME_ASSERT(cond) { if(!(cond)) abort(); }
+#else
+#define FIXME_ASSERT(cond) { if(!(cond)) { DEBUG_BREAK; } }
+#endif
+#else //PS2
+#define FIXME_ASSERT(cond) { if(!(cond)) { FORCE_EXIT();} }
+#endif

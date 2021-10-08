@@ -28,6 +28,7 @@
 #define _CRY_COMMON_STREAM_ENGINE_HDR_
 
 #include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox\System\ILog.hpp>
 
 struct StreamEngineParams;
 class IStreamCallback;
@@ -230,19 +231,24 @@ public:
 	virtual ~IStreamEngine() {}
 };
 
+//FIXME: NOTIMPLEMENTED
 //////////////////////////////////////////////////////////////////////////
 class AutoSuspendTimeQuota
 {
 public:
 	AutoSuspendTimeQuota(IStreamEngine* pStreamEngine)
 	{
+		CryError(__FUNCTION__);
+		#if 0
 		m_pStreamEngine = pStreamEngine;
 		pStreamEngine->SuspendCallbackTimeQuota();
+		#endif
 	}
 
 	~AutoSuspendTimeQuota()
 	{
-		m_pStreamEngine->ResumeCallbackTimeQuota();
+		CryError(__FUNCTION__);
+		//m_pStreamEngine->ResumeCallbackTimeQuota();
 	}
 protected:
 	IStreamEngine* m_pStreamEngine;

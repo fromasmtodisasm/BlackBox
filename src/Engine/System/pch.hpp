@@ -49,3 +49,17 @@ namespace fs = std::filesystem;
 
 template<typename T>
 using DynArray = std::vector<T>;
+
+#ifdef NOT_IMPLEMENTED_V
+#	undef NOT_IMPLEMENTED_V
+#	define NOT_IMPLEMENTED_V                                   \
+		CryError("Function: %s not implemented", __FUNCTION__); \
+	return {};
+#endif
+
+#ifdef NOT_IMPLEMENTED
+#	undef NOT_IMPLEMENTED
+#	define NOT_IMPLEMENTED                                     \
+		CryError("Function: %s not implemented", __FUNCTION__); \
+		//assert(0 && __FUNCTION__);
+#endif

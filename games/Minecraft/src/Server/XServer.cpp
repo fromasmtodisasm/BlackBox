@@ -1,6 +1,7 @@
 #include <Server/XServer.hpp>
 #include <IXSystem.hpp>
 #include <Server/XServerSlot.hpp>
+#include <Server/XSystemServer.h>
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void CXServer::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
@@ -73,14 +74,12 @@ CXServer::CXServer(CXGame* pGame, WORD nPort, const char* szName, bool listen)
   //m_pGame->GetSystem()->GetIEntitySystem()->SetSink(this);
 
   // create the system interface
-  #if 0
   m_pISystem = new CXSystemServer(this, m_pGame, m_pGame->m_pLog);
-#endif
 
   // get this info before we set the server
   #if 0
   m_pGame->GetSystem()->SetForceNonDevMode(!m_pGame->IsDevModeEnable());
-#endif
+  #endif
 
   INetwork* pNet = pGame->m_pSystem->GetINetwork();
   pNet->SetUBIGameServerIP(NULL);

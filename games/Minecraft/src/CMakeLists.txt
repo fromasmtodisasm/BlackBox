@@ -20,6 +20,17 @@ add_sources(
 	Client/XClient.cpp
 	Client/XClientSnapshot.cpp
 	SOURCE_GROUP
+	"GameSystem"
+	GameSystem/XSystemBase.h
+	GameSystem/XSystemServer.h
+	GameSystem/XSystemDummy.h
+	GameSystem/XSystemClient.h
+	GameSystem/XSystemBase.cpp
+	GameSystem/XSystemServer.cpp
+	GameSystem/XSystemDummy.cpp
+	GameSystem/XSystemClient.cpp
+
+	SOURCE_GROUP
 	"GameFiles"
 	GameFiles/EntityClassRegistry.cpp
 	GameFiles/DevMode.cpp
@@ -165,6 +176,7 @@ target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Leg
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/TimeDemoRecorder)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Weapons)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Network)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/GameSystem)
 
 source_group(
 	TREE ${INCLUDE_ROOT}

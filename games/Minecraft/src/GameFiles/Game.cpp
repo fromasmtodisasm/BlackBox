@@ -1781,3 +1781,196 @@ Legacy::IInput* GetLegacyInput()
 {
 	return gGame->GetLegacyInput();
 }
+
+//////////////////////////////////////////////////////////////////////////
+/*! Load a level on the local machine (connecting with a local client)
+	@param dedicated if true the local client will not be created
+	@param keepclient if true the current client server connection will be kept
+	@param szMapName name of the level that has to be loaded
+	@param szMissionName name of the mission that has to be loaded
+	@param listen allow external clients to connect
+*/
+//////////////////////////////////////////////////////////////////////////
+void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szMissionName, bool listen)
+{
+	// need to reset timers as well
+	m_pScriptTimerMgr->Reset();
+
+	if (m_pUISystem)
+	{
+		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
+		m_pUISystem->StopAllVideo();
+		m_p3DEngine->Enable(1);
+
+		m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
+	}
+#if !defined(LINUX)	
+	#if 0
+	if (m_pSystem->GetIMovieSystem())
+		m_pSystem->GetIMovieSystem()->StopAllCutScenes();	
+	#endif
+#endif		
+	bool bDedicated=GetSystem()->IsDedicated();
+
+	string strGameType = g_GameType->GetString();
+
+	AutoSuspendTimeQuota AutoSuspender(GetSystem()->GetStreamEngine());
+
+	assert( szMissionName != 0 );
+	
+	string sLevelFolder = szMapName;
+	if (sLevelFolder.find('\\') == string::npos && sLevelFolder.find('/') == string::npos)
+	{
+		// This is just a map name, not a folder.
+		sLevelFolder = GetLevelsFolder() + "/" + sLevelFolder;
+	}
+
+	IConsole* pConsole = GetSystem()->GetIConsole();
+	//IInput *pInput=GetSystem()->GetIInput();					// might be 0 (e.g. dedicated server)
+	auto pInput = GetLegacyInput(); // might be 0 (e.g. dedicated server)
+
+	if(pInput)
+		pInput->SetMouseExclusive(false);
+		
+	if (!IsMultiplayer())
+	{
+		m_pSystem->GetIConsole()->Clear();
+		m_pSystem->GetIConsole()->SetScrollMax(600);
+		m_pSystem->GetIConsole()->ShowConsole(true);
+
+		string sLoadingScreenTexture = string("levels/") + string(szMapName) + string("/loadscreen_") + string(szMapName) + ".dds";
+
+		m_pSystem->GetIConsole()->SetLoadingImage(sLoadingScreenTexture.c_str());
+		m_pSystem->GetIConsole()->ResetProgressBar(0x7fffffff);
+		m_pSystem->GetILog()->UpdateLoadingScreen("");	// just to draw the console
+	}
+
+	if (m_pClient && !keepclient)
+	{
+		ShutdownClient();
+	}
+
+	// start server
+	if((!m_pServer || !keepclient) && !StartupServer(listen))
+	{
+		m_pLog->LogToConsole("Unable to load the level %s,%s [startup server failed]", sLevelFolder.c_str(),szMissionName);
+		if(pInput)
+			pInput->SetMouseExclusive(true);
+		LoadingError("@LoadLevelError");
+		return;
+	}
+
+	bool bNeedClient = !bDedicated && ((keepclient && !m_pClient) || !keepclient);
+
+	// create local client(must be before the level is loaded)
+	if(bNeedClient)
+	{
+		if(!StartupLocalClient())
+		{
+			m_pLog->LogToConsole("Unable to load the level %s,mission %s [startup client failed]", sLevelFolder.c_str(),szMissionName);
+			if(pInput)
+				pInput->SetMouseExclusive(true);
+			LoadingError("@LoadLevelError");
+			return;
+		}
+	}
+
+	const char *szMission = szMissionName;
+	if (!*szMissionName)
+		szMission=strGameType.c_str();
+
+	// [KIRILL] lets reset - they will be spawned anyway
+	#if 0
+	m_pSystem->GetAISystem()->Reset();
+	#endif
+	
+	// refresh the current server info for incoming queries during loading
+	m_pServer->GetServerInfo();
+
+	// load the level
+	if(!m_pServer->m_pISystem->LoadLevel( sLevelFolder.c_str(),szMission,false))
+	{
+		m_pLog->LogToConsole("Unable to load the level %s,mission %s \n", sLevelFolder.c_str(),szMissionName);
+		if (pInput)
+			pInput->SetMouseExclusive(true);
+		LoadingError("@LoadLevelError");
+		return;
+	}
+
+	// start and connect a local client
+	if(bNeedClient)
+	{
+		if(m_pClient)
+		{			
+			if (IsMultiplayer() && m_pServer->m_pIServer->GetServerType()!=eMPST_LAN)
+     			m_pClient->XConnect("127.0.0.1",false,true);
+			else
+				m_pClient->XConnect("127.0.0.1");
+		}
+	}
+	
+	if(m_pClient)
+    m_pClient->OnMapChanged();
+	if(m_pServer)
+    m_pServer->OnMapChanged(); 
+	if(pInput)
+		pInput->SetMouseExclusive(true);
+	AllowQuicksave(true);
+};
+
+//////////////////////////////////////////////////////////////////////////
+bool CXGame::GetLevelMissions( const char *szLevelDir,std::vector<string> &missions )
+{
+	string sLevelPath = szLevelDir;
+	
+	if (!szLevelDir || sLevelPath.empty())	
+		return false;
+
+	string sEPath = sLevelPath+string("/levelinfo.xml");
+	string sPaks = sLevelPath + "/*.pak";	
+	OpenPacks(sPaks.c_str()); //[marco] do not call system->openpack
+
+	bool bResult = false;
+	#if 0
+	XmlNodeRef root = GetSystem()->LoadXmlFile( sEPath.c_str() );
+	if (root)
+	{
+		XmlNodeRef missionsNode = root->findChild( "Missions" );
+		if (missionsNode)
+		{
+			// we found a mission node - the level is valid
+			bResult = true;
+			for (int i = 0; i < missionsNode->getChildCount(); i++)
+			{
+				XmlNodeRef missionNode = missionsNode->getChild(i);
+				if (missionNode->isTag( "Mission" ))
+				{
+					const char *sMissionName = missionNode->getAttr( "Name" );
+					if (sMissionName)
+						missions.push_back( sMissionName );
+				}
+			}
+		}
+	}
+	#endif
+	
+	ClosePacks(sPaks.c_str());
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CXGame::IsMultiplayer()
+{
+	// cannot be in multiplayer when in editor
+	if (m_bEditor)
+		return false;
+
+	bool bServer=IsServer();
+	bool bClient=IsClient();
+
+	if(!bServer && !bClient)
+		return false;
+
+	return !bServer || !bClient || m_pServer->m_bListen;
+};
