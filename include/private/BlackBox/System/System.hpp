@@ -145,32 +145,50 @@ class CSystem final : public ISystem
 	}
 	virtual ISystemUserCallback*         GetUserCallback() const override { return m_pUserCallback; }
 
-	virtual IRenderer*				GetIRenderer() override;
-	virtual ILog*					GetILog() override;
+	virtual I3DEngine*				GetI3DEngine() override { return m_env.p3DEngine; }
+	virtual IAISystem*				GetAISystem() override { return m_env.pAISystem; }
 	virtual ICmdLine*				GetICmdLine() override { return m_pCmdLine; };
-	virtual ITimer*					GetITimer() override;
-	virtual IConsole*				GetIConsole() override;
-	virtual IInput*					GetIInput() override;
-	virtual IGame*					GetIGame() override;
-	virtual IFont*					GetIFont() override;
-	virtual IWindow*				GetIWindow() override;
-	IValidator*						GetIValidator() override { return m_pValidator; };
-	virtual IScriptSystem*			GetIScriptSystem() override;
-	virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
-	virtual INetwork*				GetINetwork() override;
-	virtual ICryPak*				GetIPak() override;
-	virtual IHardwareMouse*			GetIHardwareMouse() override { return m_env.pHardwareMouse; };
-	virtual IEntitySystem*			GetIEntitySystem() override;
-	virtual IStreamEngine*			GetStreamEngine() override;
-	IRemoteConsole*					GetIRemoteConsole() override;
-	virtual ITextModeConsole*		GetITextModeConsole() override;
-	virtual IProjectManager*		GetIProjectManager() override;
-	virtual IFrameProfileSystem*	GetIProfileSystem() { return m_env.pFrameProfileSystem; }
-	virtual I3DEngine*				GetI3DEngine() { return m_env.p3DEngine; }	
-	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
+	virtual IConsole*				GetIConsole() override
+	{
+		return m_env.pConsole;
+	}
 	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
 	virtual ICryFont*				GetICryFont() { NOT_IMPLEMENTED_V; }
+	virtual ICryPak*				GetIPak() override;
+	virtual IEntitySystem*			GetIEntitySystem() override;
+	virtual IFont*					GetIFont() override;
+	virtual IFrameProfileSystem*	GetIProfileSystem() { return m_env.pFrameProfileSystem; }
+	virtual IGame*					GetIGame() override
+	{
+		return m_pGame;
+	}
+	virtual IHardwareMouse*			GetIHardwareMouse() override { return m_env.pHardwareMouse; };
+	virtual IInput*					GetIInput() override
+	{
+		return m_env.pInput;
+	}
+	virtual ILog*					GetILog() override
+	{
+		return m_env.pLog;
+	}
+	virtual IMovieSystem*			GetIMovieSystem() { return m_env.pMovieSystem; };
+	virtual IMusicSystem*			GetIMusicSystem() { return m_env.pMusicSystem; };
+	virtual INetwork*				GetINetwork() override;
 	virtual IPhysicalWorld*			GetIPhysicalWorld() { return m_env.pPhysicalWorld; }
+	virtual IProjectManager*		GetIProjectManager() override;
+	virtual IRemoteConsole*			GetIRemoteConsole() override;
+	virtual IRenderer*				GetIRenderer() override
+	{
+		return m_env.pRenderer;
+	}
+	virtual IScriptSystem*			GetIScriptSystem() override;
+	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
+	virtual IStreamEngine*			GetStreamEngine() override;
+	virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
+	virtual ITextModeConsole*		GetITextModeConsole() override;
+	virtual ITimer*					GetITimer() override;
+	virtual IValidator*				GetIValidator() override { return m_pValidator; };
+	virtual IWindow*				GetIWindow() override;
 
 	virtual int					GetCPUFlags()		 override;
 	virtual double				GetSecondsPerCycle() override;
@@ -181,7 +199,11 @@ class CSystem final : public ISystem
 	virtual void				Log(const char* message) override;
 	virtual bool				OnInputEvent(const SInputEvent& event) override;
 	bool						ConfigLoad(const char* file);
-	virtual bool				IsDevMode() override;
+	//////////////////////////////////////////////////////////////////////////
+	virtual void				SetForceNonDevMode(const bool bValue) override;
+	virtual bool				GetForceNonDevMode() const override;
+	virtual bool				WasInDevMode() const override;
+	virtual bool				IsDevMode() const override;
 	virtual void				Error(const char* message) override;
 	virtual void				OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 	virtual bool				OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
@@ -479,6 +501,15 @@ class CSystem final : public ISystem
 
 	IProcess* m_pIProcess{};
 
+
+    // ISystem interface
+public:
+    virtual XDOM::IXMLDOMDocument *CreateXMLDocument() override;
+    virtual XmlNodeRef CreateXmlNode(const char *sNodeName) override;
+    virtual XmlNodeRef LoadXmlFile(const char *sFilename) override;
+    virtual XmlNodeRef LoadXmlFromString(const char *sXmlString) override;
 };
+
+
 
 void AddInternalCommands(ISystem* pSystem);

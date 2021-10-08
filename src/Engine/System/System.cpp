@@ -26,6 +26,8 @@
 
 #include "WindowsConsole.h"
 
+#include <XML/xml.h>
+
 
 // Define global cvars.
 SSystemCVars g_cvars;
@@ -127,31 +129,6 @@ void CSystem::Start()
 void CSystem::Release()
 {
 	delete this;
-}
-
-IRenderer* CSystem::GetIRenderer()
-{
-	return m_env.pRenderer;
-}
-
-ILog* CSystem::GetILog()
-{
-	return m_env.pLog;
-}
-
-IConsole* CSystem::GetIConsole()
-{
-	return m_env.pConsole;
-}
-
-IInput* CSystem::GetIInput()
-{
-	return m_env.pInput;
-}
-
-IGame* CSystem::GetIGame()
-{
-	return m_pGame;
 }
 
 void CSystem::Relaunch(bool bRelaunch)
@@ -370,7 +347,7 @@ IFont* CSystem::GetIFont()
 
 IWindow* CSystem::GetIWindow()
 {
-	return m_pWindow;
+    return m_pWindow;
 }
 
 #if 0
@@ -639,20 +616,20 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pCryPak);
 	SAFE_RELEASE(m_pCryPak);
 	UnloadSubsystems();
-	SDL_Quit();
+    SDL_Quit();
 }
 
 void CSystem::EnableGui(bool enable)
 {
 #if ENABLE_DEBUG_GUI
-	if (enable)
-	{
-		m_env.pInput->AddEventListener(m_GuiManager);
-	}
-	else
-	{
-		m_env.pInput->RemoveEventListener(m_GuiManager);
-	}
+    if (enable)
+    {
+        m_env.pInput->AddEventListener(m_GuiManager);
+    }
+    else
+    {
+        m_env.pInput->RemoveEventListener(m_GuiManager);
+    }
 #endif
 }
 
@@ -662,17 +639,17 @@ void CSystem::SaveConfiguration()
 
 float CSystem::GetDeltaTime()
 {
-	return static_cast<float>(m_DeltaTime);
+    return static_cast<float>(m_DeltaTime);
 }
 
 const SFileVersion& CSystem::GetFileVersion()
 {
-	return m_FileVersion;
+    return m_FileVersion;
 }
 
 const SFileVersion& CSystem::GetProductVersion()
 {
-	return m_ProductVersion;
+    return m_ProductVersion;
 }
 
 const char * CSystem::GetRootFolder() const
@@ -682,7 +659,7 @@ const char * CSystem::GetRootFolder() const
 
 IEntitySystem* CSystem::GetIEntitySystem()
 {
-	return m_env.pEntitySystem;
+    return m_env.pEntitySystem;
 }
 
 ICryPak* CSystem::GetIPak()
@@ -697,10 +674,22 @@ INetwork* CSystem::GetINetwork()
 
 ITimer* CSystem::GetITimer()
 {
-	return &m_Time;
+    return &m_Time;
+}
+void CSystem::SetForceNonDevMode(const bool bValue)
+{
 }
 
-bool CSystem::IsDevMode()
+bool CSystem::GetForceNonDevMode() const
+{
+	return false;
+}
+bool CSystem::WasInDevMode() const
+{
+	return false;
+}
+
+bool CSystem::IsDevMode() const
 {
 	return true;
 }
@@ -1130,7 +1119,7 @@ IRemoteConsole* CSystem::GetIRemoteConsole()
 
 ITextModeConsole* CSystem::GetITextModeConsole()
 {
-	if (m_env.IsDedicated())
+    if (m_env.IsDedicated())
 		return m_pTextModeConsole;
 	return 0;
 }
@@ -1292,4 +1281,25 @@ ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 	}
 
 	return pSystem.release();
+}
+
+
+XDOM::IXMLDOMDocument *CSystem::CreateXMLDocument()
+{
+	return new CXMLDocument;
+}
+
+XmlNodeRef CSystem::CreateXmlNode(const char *sNodeName)
+{
+	return {};
+}
+XmlNodeRef CSystem::LoadXmlFromString(const char *sXmlString)
+{
+	return {};
+
+}
+
+XmlNodeRef CSystem::LoadXmlFile(const char *sFilename)
+{
+	return {};
 }

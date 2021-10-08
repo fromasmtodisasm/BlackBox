@@ -54,6 +54,10 @@ add_sources(
 	"Profiling"
 	"Profiling/ProfilingSystem.cpp"
 	"Profiling/ProfilingSystem.hpp"
+	SOURCE_GROUP
+	"XML"
+	"XML/xml.h"
+	"XML/xml.cpp"
 )
 end_sources()
 
@@ -66,6 +70,7 @@ if(OPTION_USE_GUI)
 endif()
 
 add_sdl(${THIS_PROJECT})
+target_link_libraries(${THIS_PROJECT} PUBLIC tinyxml2::tinyxml2)
 
 if(OPTION_USE_LINUXINPUT)
 	target_compile_definitions(${THIS_PROJECT} PUBLIC -DUSE_LINUXINPUT)
