@@ -352,6 +352,7 @@ struct SSystemGlobalEnvironment
 	IMusicSystem*		 pMusicSystem		 = nullptr;
 	IMovieSystem*		 pMovieSystem		 = nullptr;
 	IAISystem*			 pAISystem			 = nullptr;
+	ICryFont*			 pCryFont			 = nullptr;
 
 
 

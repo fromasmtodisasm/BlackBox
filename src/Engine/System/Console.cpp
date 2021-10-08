@@ -1812,12 +1812,12 @@ void CXConsole::ResetProgressBar(int nProgressBarRange)
 
 void CXConsole::TickProgressBar()
 {
-	#if 0
 	if (m_nProgressRange != 0 && m_nProgressRange > m_nProgress)
 	{
 		m_nProgress++;
 		m_system.UpdateLoadingScreen();
 	}
+	#if 0
 	if (m_system.GetIRenderer())
 		m_system.GetIRenderer()->FlushRTCommands(false, false, false); // Try to switch render thread contexts to make RT always busy during loading
 	#endif

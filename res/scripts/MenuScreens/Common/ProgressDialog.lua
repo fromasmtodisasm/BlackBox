@@ -137,6 +137,7 @@ function UI.ProgressBox(Title, Message, OnCancelProc)
 	UI.PageProgressDialog.OnCancel = OnCancelProc;
 	
 	UI:ActivateScreen("ProgressDialog");
+	System:Log(Message)
 end
 
 function UI.ProgressBoxDone()

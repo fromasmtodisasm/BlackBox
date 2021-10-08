@@ -89,7 +89,7 @@ uint32_t CInputDevice::GetInputCharUnicode(const SInputEvent& event)
 
 const char* CInputDevice::GetOSKeyName(const SInputEvent& event)
 {
-  return "";
+  return event.keyName;
 }
 
 /*

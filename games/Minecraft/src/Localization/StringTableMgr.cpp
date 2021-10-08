@@ -77,26 +77,30 @@ void CStringTableMgr::AddControl(int nKey)
 	wchar_t szwKeyName[256] = { 0 };
 	char		szKey[256] = { 0 };
 
-	#if 0
 	if (!IS_MOUSE_KEY(nKey))
 	{
-		if (pInput->GetOSKeyName(nKey, szwKeyName, 255))
+		auto s = pInput->LookupSymbol(EInputDeviceType::eIDT_Keyboard, 0, (EKeyId)nKey);
+		if (!s)
+			return;
+		SInputEvent e;
+		s->AssignTo(e);
+		auto name = pInput->GetOSKeyName(e);
+		if (name)
 		{
 			sprintf(szKey, "control%d", nKey);
 
 			int nID = (int)m_vStrings.size();
 
 			m_keysMap[szKey] = nID;
-			m_vStrings.push_back(szwKeyName);
+			#if 0
+			m_vStrings.push_back(name);
+			#endif
 			m_pLanguageStriptObject->AddString(szKey, nID);
 
-			sprintf(szKey, "%S", szwKeyName);
+			sprintf(szKey, "%S", name);
 			m_vEnglishStrings.push_back(szKey);
 		}
 	}
-	#else
-	NOT_IMPLEMENTED;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////

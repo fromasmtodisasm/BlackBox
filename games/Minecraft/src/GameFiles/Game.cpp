@@ -22,6 +22,9 @@
 #include "TimeDemoRecorder.h"
 #include <GameMods.hpp>
 
+#include <WeaponSystemEx.h>
+#include <WeaponClass.h>
+
 //#include "CMovieUser.h"
 
 
@@ -290,7 +293,6 @@ CXGame::~CXGame()
 	{
 		if (m_pSystem)
 		{
-#		if 0
 			IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
 			if (pMovieSystem)
 			{
@@ -298,7 +300,6 @@ CXGame::~CXGame()
 					pMovieSystem->SetUser(NULL);
 			}
 #		else
-#		endif
 		}
 		delete m_pMovieUser;
 	}
@@ -338,9 +339,7 @@ CXGame::~CXGame()
 	CScriptObjectAI::ReleaseTemplate();
 #endif
 	CScriptObjectServer::ReleaseTemplate();
-#if 0
 	CScriptObjectServerSlot::ReleaseTemplate();
-#endif
 	CScriptObjectClient::ReleaseTemplate();
 	CScriptObjectStream::ReleaseTemplate();
 
@@ -425,8 +424,10 @@ CXGame::~CXGame()
 #if 0
 	SAFE_DELETE(m_pWeaponSystemEx);
 	SAFE_DELETE(m_pVehicleSystem);
+#endif
 	SAFE_DELETE(m_pPlayerSystem);
 
+#if 0
 	SAFE_DELETE(m_pFlockManager);
 #endif
 
@@ -513,7 +514,6 @@ void CXGame::SoftReset()
 	m_pScriptSystem->SetGlobalToNull("_localplayer");
 	if (m_pScriptSystem)
 		m_pScriptSystem->UnloadScripts();
-	#if 0
 
 	std::vector<string> vLoadedWeapons;
 
@@ -521,7 +521,6 @@ void CXGame::SoftReset()
 		vLoadedWeapons.push_back(m_pWeaponSystemEx->GetWeaponClass(i)->GetName());
 
 	m_pWeaponSystemEx->Reset();
-	#endif
 	#if 0
 #if !defined(LINUX)
 	if (m_pSystem->GetIMovieSystem())
@@ -733,26 +732,22 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pScriptObjectGame->Init(m_pScriptSystem, this);
 	m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
 
+	m_pScriptObjectLanguage->Init(m_pScriptSystem, &m_StringTableMgr);
 	#if 0
 	m_pScriptObjectBoids->Init(m_pScriptSystem, m_pSystem, m_pFlockManager);
-	m_pScriptObjectLanguage->Init(m_pScriptSystem, &m_StringTableMgr);
 	m_pScriptObjectAI->Init(m_pScriptSystem, m_pSystem, this);
 	#endif
 
-	#if 0
 	CScriptObjectServerSlot::InitializeTemplate(m_pScriptSystem);
-	#endif
 	CScriptObjectClient::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectStream::InitializeTemplate(m_pScriptSystem);
 
 	m_pScriptTimerMgr = new CScriptTimerMgr(m_pScriptSystem, m_pSystem->GetIEntitySystem(), this);
 
 	// making some constants accessable to the script
-	#if 0
 	m_pScriptSystem->SetGlobalValue("FireActivation_OnPress", ePressing);
 	m_pScriptSystem->SetGlobalValue("FireActivation_OnRelease", eReleasing);
 	m_pScriptSystem->SetGlobalValue("FireActivation_OnHold", eHolding);
-	#endif
 
 	m_pScriptSystem->SetGlobalValue("ENTITYTYPE_PLAYER", ENTITYTYPE_PLAYER);
 	m_pScriptSystem->SetGlobalValue("ENTITYTYPE_WAYPOINT", ENTITYTYPE_WAYPOINT);
@@ -775,9 +770,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pScriptSystem->EndCall();
 
 	// initialize the surface-manager
-	#if 0
 	m_XSurfaceMgr.Init(m_pScriptSystem, m_p3DEngine, GetSystem()->GetIPhysicalWorld());
-	#endif
 
 	// init key-bindings
 	if (!m_bDedicatedServer)
@@ -787,16 +780,12 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	InitConsoleCommands();
 
 	// loading the main language-string-table
-	#if 0
 	if (!m_StringTableMgr.Load(GetSystem(), *m_pScriptObjectLanguage, g_language->GetString()))
 		m_pLog->Log("cannot load language file [%s]", g_language->GetString());
-	#endif
 
 	// creating HUD interface
 	m_pLog->Log("Initializing UI");
-	#if 0
 	m_pUIHud = new CUIHud(this, m_pSystem);
-	#endif
 
 	LoadConfiguration("", "game.cfg");
 
@@ -804,9 +793,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	// Materials
 	// load materials (once before all, this info stays till we quit the game - no need to load material later)
 	// first load normal materials
-	#if 0
 	m_XSurfaceMgr.LoadMaterials("scripts/materials");
-	#endif
 
 	if (!m_bDedicatedServer)
 	{
@@ -863,12 +850,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	DevModeInit();
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
-	#if 0
-	//FIXME: client should be created in other place
-	m_pClient			 = new CXClient();
-	LoadScene("empty");
-	m_pClient->Init();
-	#endif
 
 	return (true);
 }
@@ -1805,10 +1786,8 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 		m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
 	}
 #if !defined(LINUX)	
-	#if 0
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->StopAllCutScenes();	
-	#endif
 #endif		
 	bool bDedicated=GetSystem()->IsDedicated();
 

@@ -153,7 +153,7 @@ class CSystem final : public ISystem
 		return m_env.pConsole;
 	}
 	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
-	virtual ICryFont*				GetICryFont() { NOT_IMPLEMENTED_V; }
+	virtual ICryFont*				GetICryFont() { return nullptr; }
 	virtual ICryPak*				GetIPak() override;
 	virtual IEntitySystem*			GetIEntitySystem() override;
 	virtual IFont*					GetIFont() override;
@@ -296,9 +296,15 @@ class CSystem final : public ISystem
 	inline P GetProcedure(L lib, const char* name)
 	{
 		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
-	}
+	}	
+	public:
+	//! Update screen during loading.
+    void UpdateLoadingScreen()
+    {
 
-	template<typename Proc>
+    }
+
+    template<typename Proc>
 	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
 		//gEnv->pSystem->Log("Loading...");
