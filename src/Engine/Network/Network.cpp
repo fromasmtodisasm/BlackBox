@@ -79,6 +79,7 @@ class CTmpNetworkClient : public IClient
 	// Inherited via IClient
 	virtual void Connect(const char* szIP, uint16_t wPort, const uint8_t* pbAuthorizationID, unsigned int iAuthorizationSize) override
 	{
+		CryLog("connect to: ip %s", szIP);
 	}
 	virtual void Disconnect(const char* szCause) override
 	{
