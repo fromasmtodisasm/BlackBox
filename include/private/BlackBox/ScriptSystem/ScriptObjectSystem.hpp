@@ -2,6 +2,7 @@
 
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
+#undef LoadImage
 
 class CScriptObjectSystem :
   public _ScriptableEx<CScriptObjectSystem>
@@ -18,7 +19,9 @@ public:
   int ShowConsole(IFunctionHandler* pH);
   int DrawImage(IFunctionHandler* pH);
   int LoadTexture(IFunctionHandler* pH);
+  int LoadImage(IFunctionHandler* pH);
   int Log(IFunctionHandler* pH);
+  int ScanDirectory(IFunctionHandler* pH);
   int Print(const char* text, float x, float y, float scale, float r, float g, float b, float a);
 
 private:

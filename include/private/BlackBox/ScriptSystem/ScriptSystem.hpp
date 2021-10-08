@@ -161,7 +161,7 @@ class CScriptSystem : public IScriptSystem
 
 	inline bool ToAny(const char*& val, int nIdx)
 	{
-		if (!CheckType(LUA_TSTRING, nIdx))
+		if (!CheckType(LUA_TSTRING, nIdx)&&!CheckType(LUA_TNUMBER, nIdx))
 			return false;
 		val = lua_tostring(L, nIdx);
 		return true;

@@ -1,3 +1,4 @@
+
 -- make sure the table is loaded once
 if (not MapCycle) then
 	MapCycle =
@@ -8,6 +9,7 @@ if (not MapCycle) then
 end
 
 function MapCycle:Init()
+	System:Log("MapCycle INIT")
 	self.iNextMap = 0; -- this is the server-creation map
 	self.fRestartTimer = nil;
 end
@@ -218,3 +220,4 @@ end
 -----------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------
 MapCycle:Reload();
+

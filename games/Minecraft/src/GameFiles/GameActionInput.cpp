@@ -60,40 +60,218 @@ void CXGame::InitInputMap()
 
 void CXGame::InitConsoleCommands()
 {
-  IConsole* pConsole = m_pSystem->GetIConsole();
+  
+	IConsole *pConsole = m_pSystem->GetIConsole();
 
-  REGISTER_COMMAND("reload_script", "Script:ReloadScript(%1)", VF_CHEAT,
-    "\n"
-    "Usage: \n"
-    "");
-  REGISTER_COMMAND("dump_scripts", "Script:DumpLoadedScripts()", VF_CHEAT,
-    "Outputs a list of currently loaded scripts.\n"
-    "Usage: dump_scripts\n");
-  REGISTER_COMMAND("reload_scripts", "Script:ReloadScripts()", VF_CHEAT,
-    "Reload a list of currently loaded scripts.\n"
-    "Usage: dump_scripts\n");
-  REGISTER_COMMAND("quit", "Game:Quit()", 0,
-    "Quits the game.\n"
-    "Usage: quit\n");
-  REGISTER_COMMAND("clear", "System:ClearConsole()", 0,
-    "Clears console text.\n"
-    "Usage: clear\n");
-  REGISTER_COMMAND("fov", "Game:SetCameraFov(%1/180*3.14159)", VF_CHEAT,
-    "Sets the player's field of view.\n"
-    "Usage: fov 120\n"
-    "The field of vision is set in degrees between 1 and 180.");
-  REGISTER_COMMAND("dumpcommandsvars", "System:DumpCommandsVars(%%)", 0,
-    "Outputs a list of commands and variables.\n"
-    "Usage: dumpcommandsvars\n"
-    "Saves a list of all registered commands and variables\n"
-    "to a file called consolecommandsandvars.txt");
+	pConsole->AddCommand("reload_materials","Game.ReloadMaterials()");
+	if(!m_bEditor)
+	{
+		pConsole->AddCommand("sensitivity", "if (Game) then Game:SetSensitivity(%%); end", VF_NULL,"");
 
-  REGISTER_COMMAND("savepos", "Game:SavePlayerPos(%%)", 0,
-    "Saves current player position to the tagpoint file.\n"
-    "Usage: savepos pointname\n");
-  REGISTER_COMMAND("loadpos", "Game:LoadPlayerPos(%%)", 0,
-    "Loads player position from the tagpoint file.\n"
-    "Usage: loadpos pointname\n");
+		pConsole->AddCommand("kick", "if (GameRules) then GameRules:Kick(%%); end", VF_NULL,"");
+
+		pConsole->AddCommand("kickid", "if (GameRules) then GameRules:KickID(%%); end", VF_NULL,"");
+
+		pConsole->AddCommand("ban", "if (GameRules) then GameRules:Ban(%%); end",0,
+			"Bans the specified player! (Server only)\n"
+			"Use \\listplayers to get a list of playernames and IDs."
+			"Usage: ban <player>");
+
+		pConsole->AddCommand("banid", "if (GameRules) then GameRules:BanID(%%); end",0,
+			"Bans the specified player id! (Server only)\n"
+			"Use \\listplayers to get a list of playernames and IDs."
+			"Usage: banid <id>");
+
+		pConsole->AddCommand("unban", "if (GameRules) then GameRules:Unban(%%); end",0,
+			"Removed the specified ban! (Server only)\n"
+			"Use \\listban to get a list of banned IPs and IDs."
+			"Usage: unban <bannumber>");
+
+		pConsole->AddCommand("listban", "if Server then Server:ListBans(); end",0,
+			"Lists current banned ids on the server! (Server only)\n"
+			"Usage: listplayers");
+
+		pConsole->AddCommand("listplayers", "if MultiplayerUtils and MultiplayerUtils.ListPlayers then MultiplayerUtils:ListPlayers(); end",0,
+			"Lists current players with id! (Server and Client)\n"
+			"Usage: listplayers");
+
+		pConsole->AddCommand("sv_restart", "if (GameRules) then GameRules:Restart(%%) end",0,
+			"Restarts the game in X seconds! (Server only)\n"
+			"Usage: sv_restart X");
+
+		pConsole->AddCommand("sv_reloadmapcycle", "if (MapCycle) then MapCycle:Reload() end",0,
+			"Reloads the mapcycle file, specified in the sv_mapcyclefile cvar!\n"
+			"Usage: sv_reloadmapcycle");
+
+		pConsole->AddCommand("sv_changemap", "if (GameRules) then GameRules:ChangeMap(%%) end",0,
+			"Changes to the specified map and game type! (Server only)\n"
+			"If no gametype is specified, the current gametype is used!\n"
+			"Usage: sv_changemap mapname gametype");
+
+		pConsole->AddCommand("messagemode", "Game:MessageMode(%line)",0,
+			"Requests input from the player!\n"
+			"Usage: messagemode command arg1 arg2"
+			"Executes the passed command, with the player input as argument! If no param given, say_team is used.");
+
+		pConsole->AddCommand("messagemode2", "Game:MessageMode2(%line)",0,
+			"Requests input from the player!\n"
+			"Usage: messagemode command arg1 arg2"
+			"Executes the passed command, with the player input as argument! If no param given, say_team is used.");
+
+		pConsole->AddCommand("start_server",		"local name=tonotnil(%%); "
+			"local mission=\"Default\"; "
+			"local gametype=strupper(tostring(g_GameType)); "
+			"if AvailableMODList[gametype] then "
+			"  mission=AvailableMODList[gametype].mission; "
+			"end "
+			"if(Game:CheckMap(name,mission))then "
+			" Game:LoadLevelListen(name); "
+			"else "
+			" System:Log(\"\\001map '\"..tostring(name)..\"' mission '\"..tostring(mission)..\"' not found!\"); "
+			"end",0,
+			"Starts a multiplayer server.\n"
+			"Usage: start_server levelname\n"
+			"Loads levelname on the local machine and listens for client connections.\n");
+
+		// this is needed to load a map with a specified mission
+		pConsole->AddCommand("load_level","Game:LoadLevel(%%)",0,
+			"Loads a new level (mission is the second parameter).\n"
+			"Usage: load_level levelname [mission]\n"
+			"Similar as 'map' command.");
+
+		// you cannot specify the mission name with this command
+		pConsole->AddCommand("map",							"local name = tonotnil(%%); "
+			"if name then "
+			" if(Game:CheckMap(name))then "
+			"  Game:LoadLevel(name); " 
+			" else "
+			"  System:Log(\"\\001map '\"..tostring(name)..\"' not found!\"); "
+			" end "
+			"end",0,
+			"Loads a new level (mission cannot be specified).\n"
+			"Usage: map levelname\n"
+			"Similar as 'load_level' command.");
+
+		pConsole->AddCommand("save_game","Game:Save(%%)",0,
+			"Saves the current game.\n"
+			"Usage: save_game gamename\n");
+
+		pConsole->AddCommand("load_game","Game:Load(%%)",0,
+			"Loads a previously saved game.\n"
+			"Usage: load_game gamename\n");
+
+		// marked with VF_CHEAT because it offers a MP cheat (impression to run faster on client)
+		pConsole->AddCommand("record",       "Game:StartRecord(%%)",VF_CHEAT, 
+			"Starts recording of a demo.\n"
+			"Usage: record demoname\n"
+			"File 'demoname.?' will be created.");
+
+		pConsole->AddCommand("stoprecording","Game:StopRecord()",VF_CHEAT,
+			"Stops recording of a demo.\n"
+			"Usage: stoprecording\n"
+			"File 'demoname.?' will be saved.");
+
+		pConsole->AddCommand("demo",         "Game:StartDemoPlay(%%)",0,
+			"Plays a demo from file.\n"
+			"Usage: demo demoname\n"
+			"Loads demoname.? for playback in the FarCry game.");
+
+		pConsole->AddCommand("stopdemo",     "Game:StopDemoPlay()",0,
+			"Stop playing demo.\n" );
+
+		if (!m_pSystem->IsDedicated())
+		{
+			pConsole->AddCommand("connect","Game:Connect(%1,1,1)",0,
+				"Connects to the specified multiplayer server.\n"
+				"Usage: connect ip\n"
+				);
+			pConsole->AddCommand("reconnect","Game:Reconnect()",0,
+				"Reconnects to the most recent multiplayer server.\n"
+				"Usage: reconnect\n"
+				);
+			pConsole->AddCommand("retry","Game:Reconnect()",0,
+				"Reconnects to the most recent multiplayer server.\n"
+				"Usage: retry\n"
+				);
+			pConsole->AddCommand("disconnect","Game:Disconnect(\"@UserDisconnected\")",0,
+				"Breaks the client connection with the multiplayer server.\n"
+				"Usage: disconnect\n");
+			pConsole->AddCommand("ubilogout","if (NewUbisoftClient) then NewUbisoftClient:Client_Disconnect(); Game:Disconnect(); GotoPage(\"Multiplayer\")end",0,
+				"Disconnects from ubi.com game service.\n"
+				"Usage: ubilogout\n"
+				);
+			pConsole->AddCommand("ubilogin","if (NewUbisoftClient) then NewUbisoftClient:ConsoleLogin(%%); end",0,
+				"Disconnects from ubi.com game service.\n"
+				"Usage: ubilogout\n"
+				);
+		}
+		pConsole->AddCommand("load_lastcheckpoint","Game:LoadLatestCheckPoint()",0,
+			"Respawns the player at the last checkpoint reached.\n"
+			"Usage: load_lastcheckpoint\n");
+	}
+
+	pConsole->AddCommand("reload_script","Script:ReloadScript(%1)",VF_CHEAT,
+		"\n"
+		"Usage: \n"
+		"");
+	pConsole->AddCommand("dump_scripts","Script:DumpLoadedScripts()",VF_CHEAT,
+		"Outputs a list of currently loaded scripts.\n"
+		"Usage: dump_scripts\n");
+	pConsole->AddCommand("quit","Game:Quit()",0,
+		"Quits the game.\n"
+		"Usage: quit\n");
+	pConsole->AddCommand("clear","System:ClearConsole()",0,
+		"Clears console text.\n"
+		"Usage: clear\n");
+	pConsole->AddCommand("rstats","System:DumpMMStats()",0,
+		"Displays memory usage stats for release mode builds.\n"
+		"Usage: rstats");
+	pConsole->AddCommand("dstats","System:DebugStats(nil)",0,
+		"Displays debugging statistics.\n"
+		"Usage: dstats\n");
+	pConsole->AddCommand("dcheckpoint","System:DebugStats(1)",0,
+		"\n"
+		"Usage: \n"
+		"");
+	pConsole->AddCommand("fov","Game:SetCameraFov(%1/180*3.14159)",VF_CHEAT,
+		"Sets the player's field of view.\n"
+		"Usage: fov 120\n"
+		"The field of vision is set in degrees between 1 and 180.");
+	pConsole->AddCommand("rcon","Game:ExecuteRConCommand(%line)",0,
+		"Execute a console command on a RCon server (call rcon_connect to set up the connection)\n"
+		"Usage: rcon sv_restart\n");
+	pConsole->AddCommand("dump_ents","Game:DumpEntities()",VF_CHEAT,
+		"Outputs a list of the loaded entities.\n"
+		"Usage: dump_ents\n");
+	pConsole->AddCommand("dumpcommandsvars","System:DumpCommandsVars(%%)",0,
+		"Outputs a list of commands and variables.\n"
+		"Usage: dumpcommandsvars\n"
+		"Saves a list of all registered commands and variables\n"
+		"to a file called consolecommandsandvars.txt");
+
+	pConsole->AddCommand("SProfile_load", "local szName=tonotnil(%%); if (szName) then SProfile_load(szName); end",0,
+		"Load the saved server profiles. To start the game you have\n"
+		"to start the server by hand with 'start_server' or 'start_ubiserver'\n"
+		"Usage: SProfile_load <profilename>");
+
+	pConsole->AddCommand("SProfile_run", "local szName=tonotnil(%%); if (szName) then SProfile_run(szName); end",0,
+		"Load and run the server with the server setting specified in the profile (generate in game)\n"
+		"Usage: SProfile_run <profilename>");
+
+	pConsole->AddCommand("frame_profiling","System:FrameProfiler(%%)",0);
+	//deprecated, remove..
+	pConsole->AddCommand("start_frame_profiling","System:FrameProfiler(1,nil,\"\")",0);
+	pConsole->AddCommand("end_frame_profiling","System:FrameProfiler(nil,nil,\"\")",0);
+	pConsole->AddCommand("start_frame_display","System:FrameProfiler(1,1,\"\")",0);
+	pConsole->AddCommand("end_frame_display","System:FrameProfiler(nil,1,\"\")",0);
+
+	pConsole->AddCommand("savepos","Game:SavePlayerPos(%%)",0,
+		"Saves current player position to the tagpoint file.\n"
+		"Usage: savepos pointname\n");
+	pConsole->AddCommand("loadpos","Game:LoadPlayerPos(%%)",0,
+		"Loads player position from the tagpoint file.\n"
+		"Usage: loadpos pointname\n");
+	pConsole->AddCommand("SkipCutScene","Movie:StopAllCutScenes()");
 }
 
 //extern float CameraRayLength = 40.f;

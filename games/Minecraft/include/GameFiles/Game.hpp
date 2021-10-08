@@ -597,8 +597,11 @@ public:
 	void SetViewAngles(const Legacy::Vec3& angles);
 
 	CWeaponSystemEx* GetWeaponSystemEx() { return m_pWeaponSystemEx; }
-	CUISystem* GetUISystem() { return m_pUISystem; };
-	void ReloadWeaponScripts();
+	CUISystem*		 GetUISystem() { return m_pUISystem; };
+	void			 ReloadWeaponScripts()
+	{
+		NOT_IMPLEMENTED;
+	}
 	CVehicleSystem* GetVehicleSystem() { return m_pVehicleSystem; }
 	CPlayerSystem* GetPlayerSystem() { return m_pPlayerSystem; }
 
@@ -611,7 +614,10 @@ public:
 	bool GetPreviewMapPosition(float& x, float& y, float mapx, float mapy, float sizex, float sizey, float zoom, float center_x, float center_y, bool bRound);
 	int GetSector(int nSectorsX, int nSectorsY, float x, float y);
 	void DrawMapPreview(float mapx, float mapy, float sizex, float sizey, float zoom, float center_x, float center_y, float alpha, struct PreviewMapParams* pParams = NULL);
-	void DrawRadar(float x, float y, float w, float h, float fRange, INT_PTR* pRadarTextures, _SmartScriptObject* pEntities, char* pRadarObjective);
+	void DrawRadar(float x, float y, float w, float h, float fRange, INT_PTR* pRadarTextures, _SmartScriptObject* pEntities, char* pRadarObjective)
+	{
+		NOT_IMPLEMENTED;
+	}
 
 	// Demo recording stuff ------------------------------------------------
 

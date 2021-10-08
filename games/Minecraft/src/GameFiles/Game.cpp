@@ -492,11 +492,9 @@ bool CXGame::InitClassRegistry()
 
 			if (strcmp("Projectile", entity_type) == 0)
 			{
-				#if 0
 				// cannot be loaded at that point - other scripts must be loaded before
+				#if 0
 				pWeaponSystemEx->AddProjectileClass(ClassId);
-				#else
-				NOT_IMPLEMENTED_V;
 				#endif
 			}
 		}
@@ -770,7 +768,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	// execute the "main"-script (to pre-load other scripts, etc.)
 	m_pScriptSystem->ExecuteFile("scripts/main.lua");
 	m_pScriptSystem->BeginCall("Init");
-	m_pScriptSystem->PushFuncParam(0);
+	//m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
 
 	// initialize the surface-manager

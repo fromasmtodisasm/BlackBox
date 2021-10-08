@@ -1,3 +1,4 @@
+
 -- CVars that need the game to be restarted when changed.
 --
 UI.cvarsNeedingRelaunch=
@@ -55,7 +56,12 @@ end
 
 function UI:CheckCutSceneDrive()
 	local szCutSceneFolder = UI.szLocalizedCutSceneFolder;
-	szCutSceneFolder = gsub(szCutSceneFolder, "&language&", getglobal("g_language"));
+	local lang = getglobal("g_language")
+	lang = lang or "english"
+	szCutSceneFolder = szCutSceneFolder:gsub("&language&", lang);
+	if (true) then
+		return;
+	end
 	
 	UI.szCutSceneDrive = "./";
 	
@@ -82,6 +88,7 @@ function UI:CheckCutSceneDrive()
 end
 
 function UI:BuildDemoLoopList()
+	--[[
 	local FileList = System:ScanDirectory(UI.szCutSceneFolder.."demoloops/", SCANDIR_FILES);
 	UI.szDemoLoopDrive = "./";
 	
@@ -111,6 +118,7 @@ function UI:BuildDemoLoopList()
 	if (not getn(UI.VideoList) or (getn(UI.VideoList) < 1)) then
 		UI.szDemoLoopDrive = "./";
 	end
+]]
 end
 
 function UI:GetDemoLoopDrive()

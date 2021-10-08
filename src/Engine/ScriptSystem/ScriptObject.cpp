@@ -21,9 +21,9 @@ namespace
 		lua_pushstring(L, sKey);
 		lua_gettable(L, -2);
 		// #unreferenced
-		// bool res = CScriptObject::m_pSS->PopAny(Val);
+		 bool res = CScriptObject::m_pSS->PopAny(Val);
 		lua_settop(L, top);
-		return true;
+		return res;
 	}
 	///////////////////////////////////////////////////////////////////
 

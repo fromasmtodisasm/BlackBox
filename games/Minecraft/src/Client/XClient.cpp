@@ -3,6 +3,15 @@
 #include <Server\XServer.hpp>
 #include <UIHud.h>
 
+#include "stdafx.h"
+#include "Client/XClient.hpp"
+#include "XPlayer.h"
+#include "UIHud.h"
+#include "XSystemClient.h"
+#include "XSystemDummy.h"
+#include "IngameDialog.h"
+
+
 #define YAW		(0)  
 #define PITCH	(1)    
 #define ROLL	(0)   
@@ -1460,7 +1469,6 @@ void CXClient::SetPlayerID( EntityId wPlayerID )
 void CXClient::UpdateISystem()
 {
 	SAFE_RELEASE(m_pISystem);
-#if 0
 
 	// create the system interface
 	if(m_pGame->IsServer())
@@ -1476,7 +1484,6 @@ void CXClient::UpdateISystem()
 		m_bLocalHost = false;
 		m_pGame->GetSystem()->GetIEntitySystem()->SetSink(this);
 	}
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////

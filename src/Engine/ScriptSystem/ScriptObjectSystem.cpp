@@ -6,6 +6,8 @@
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectSystem)
 
+#define SCANDIR_FILES 0
+
 CScriptObjectSystem::CScriptObjectSystem(ISystem* pSystem, IScriptSystem* pSS)
   :
   m_pSystem(pSystem)
@@ -39,6 +41,10 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 
   SCRIPT_REG_FUNC(DrawImage);
   SCRIPT_REG_FUNC(LoadTexture);
+  SCRIPT_REG_FUNC(LoadImage);
+  SCRIPT_REG_FUNC(ScanDirectory);
+
+  gEnv->pScriptSystem->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
@@ -155,20 +161,17 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 
 int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 {
-#if 0
+	CryError("Function [%s]not implemented", __FUNCTION__);
 	const char* name;
 	if (pH->GetParams(name))
 	{
-		auto t = gEnv->pRenderer->LoadTexture(name, 0, 0);
-		if (t != nullptr)
-		{
-			return pH->EndFunction(t->getId());
-    }
-  }
+		CryLog("User ask load %s texture", name);
+		int t = gEnv->pRenderer->LoadTexture(name, 0, 0);
+		USER_DATA pUserData = m_pScriptSystem->CreateUserData((int)t, USER_DATA_TEXTURE);
+		return pH->EndFunction(pUserData);
+	}
 	return pH->EndFunctionNull();
-#else
-	NOT_IMPLEMENTED_V;
-#endif
+	//NOT_IMPLEMENTED_V;
 }
 
 int CScriptObjectSystem::Log(IFunctionHandler* pH)
@@ -188,4 +191,20 @@ int CScriptObjectSystem::Print(const char* text, float x, float y, float scale, 
 	m_pFont->RenderText(text, x, y, scale, color);
 	m_pFont->Submit();
 	return 0;
+}
+int CScriptObjectSystem::LoadImage(IFunctionHandler* pH)
+{
+	return LoadTexture(pH);
+}
+int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
+{
+	SCRIPT_CHECK_PARAMETERS(2);
+	const char* str;
+
+	pH->GetParam(1, str);
+	CryLog("Scanin directory: %s", str);
+	SmartScriptObject fileList(gEnv->pScriptSystem, false);
+
+	fileList->SetAt(0, "dummy_directory");
+	return pH->EndFunction(fileList);
 }

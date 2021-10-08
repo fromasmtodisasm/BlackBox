@@ -1100,7 +1100,7 @@ int CScriptObjectUI::GetMouseXY(IFunctionHandler *pH)
 int CScriptObjectUI::SetMouseCursor(IFunctionHandler *pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseCursor, 1);
-	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursor, 1, ScriptVarType::UserData);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursor, 1, ScriptVarType::Pointer);
 
 	int iCookie = 0;
 	INT_PTR iTextureID = -1;

@@ -534,6 +534,12 @@ struct ISystem
 
 	virtual void SetViewCamera(class CCamera& Camera) = 0;
 	virtual CCamera& GetViewCamera()				  = 0;
+	//////////////////////////////////////////////////////////////////////////
+
+	virtual void Deltree(const char* szFolder, bool bRecurse)
+	{
+		Error("%s not implemented", __FUNCTION__);
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// File version.

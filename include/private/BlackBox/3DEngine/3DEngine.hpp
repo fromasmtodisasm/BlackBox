@@ -102,7 +102,8 @@ public:
 
 	void ClearRenderResources(bool bEditor = false)
 	{
-		NOT_IMPLEMENTED;	
+		//NOT_IMPLEMENTED;	
+		CryError("Ffunction not implemented: %s", __FUNCTION__);
 	}
 
 private:

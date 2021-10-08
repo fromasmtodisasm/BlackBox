@@ -586,3 +586,28 @@ bool CXGame::Load(string sFileName)
 	AllowQuicksave(true);
 	return ok;
 }
+
+//////////////////////////////////////////////////////////////////////////
+void CXGame::RemoveConfiguration(string& sSystemCfg, string& sGameCfg, const char* sProfileName)
+{
+	if (sProfileName)
+	{
+		sSystemCfg = string("Profiles/Player/") + sProfileName + "_" + sSystemCfg;
+		sGameCfg = string("Profiles/Player/") + sProfileName + "_" + sGameCfg;
+	}
+
+#if defined(LINUX)
+	remove(sSystemCfg.c_str());
+	remove(sGameCfg.c_str());
+#else
+	DeleteFile(sSystemCfg.c_str());
+	DeleteFile(sGameCfg.c_str());
+#endif
+
+	// remove the folder
+	string path = "profiles/player/";
+	path += sProfileName;
+	path += "/";
+
+	m_pSystem->Deltree(path.c_str(), 1);
+}

@@ -20,9 +20,9 @@ end
 
 function MethodDispatcherPool.IndexHandler(table,index)
 	local f = function(...)
-		local pool=%table._pool
+		local pool=table._pool
 		for i,val in pool do
-			local pool_func=val[%index];
+			local pool_func=val[index];
 			if(pool_func)then
 				arg[1]=val;
 				call(pool_func,arg);
