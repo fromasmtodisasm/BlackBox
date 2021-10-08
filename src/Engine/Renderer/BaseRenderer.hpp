@@ -415,6 +415,7 @@ class CRenderer : public RenderCVars
 	virtual float			   GetDepthValue(int x, int y) override;
 	virtual void			   Flush() final;
 	virtual void			   Sh_Reload() override;
+	virtual void*			   EF_Query(int Query, int Param) = 0;
 
 	void ShutDown();
 

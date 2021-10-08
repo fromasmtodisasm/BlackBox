@@ -69,7 +69,12 @@ class CCamera
 		this->updateCameraVectors();
 	}
 
-	void Init(int width, int height)
+	void Update()
+	{
+		updateCameraVectors();
+	}
+
+	void Init(int width, int height, float fov = 45.f)
 	{
 	}
 	void SetAngle(Legacy::Vec3 ang) {

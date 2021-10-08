@@ -370,6 +370,11 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 {
 }
 
+void *CD3DRenderer::EF_Query(int Query, int Param)
+{
+    return nullptr;
+}
+
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
 	pSystem->Log("Loading...");

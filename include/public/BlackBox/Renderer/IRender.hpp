@@ -130,6 +130,13 @@ struct Transform
 	}
 };
 
+//DOC-IGNORE-BEGIN
+#include "ColorDefs.h"
+#include "TArray.h"
+
+//#include <IFont.h>
+//DOC-IGNORE-END
+
 //////////////////////////////////////////////////////////////////////
 // Texture flags
 
@@ -793,6 +800,8 @@ struct IRenderer : public IRendererCallbackServer
 		return nullptr;
 		#endif
 	}
+	// Return different common shader parameters (used in ShaderBrowser) CryIndEd.exe
+	virtual void* EF_Query(int Query, int Param = 0) = 0;
 
 	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)
 	{

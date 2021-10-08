@@ -61,6 +61,8 @@ public:
 	//! Draw a 2d image on the screen (Hud etc.)
 	virtual void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) override;
 
+	virtual void* EF_Query(int Query, int Param) override;
+
 
   private:
 
