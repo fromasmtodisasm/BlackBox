@@ -15,7 +15,7 @@
 
 #include "StringTableMgr.h"
 #include "ScriptObjectLanguage.h"
-//#include "IXMLDOM.h"
+#include "IXMLDOM.h"
 #include <StlUtils.h>
 #include <BlackBox/Input/IInput.hpp>
 
@@ -26,7 +26,11 @@
 //////////////////////////////////////////////////////////////////////
 CStringTableMgr::CStringTableMgr()
 {
+	#if 0
 	m_pSystem = NULL;
+	#else
+	m_pSystem = gEnv->pSystem;
+	#endif
 	m_pLanguageStriptObject = NULL;
 }
 
@@ -118,7 +122,7 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 	if (nit != m_mapLoadedTables.end())
 		return (true);
 
-	#if 0
+	#if 1
 	XDOM::IXMLDOMDocumentPtr pDoc = m_pSystem->CreateXMLDocument();
 
 	// load xml-file	
@@ -291,7 +295,7 @@ bool CStringTableMgr::LookupString(const char* sKey, wstring& sLocalizedString)
 	}
 	else
 	{
-		//GameWarning( "Not a valid localized string Label <%s>, must start with @ symbol",sKey );
+		GameWarning( "Not a valid localized string Label <%s>, must start with @ symbol",sKey );
 	}
 
 	AppendToUnicodeString(sKey, sLocalizedString);

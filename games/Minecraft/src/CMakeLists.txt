@@ -7,7 +7,7 @@ sources_platform(ALL)
 add_sources(
 	"NoUberFile"
 	PROJECTS
-	Minecraft
+	MineCRY
 	SOURCE_GROUP
 	"Source Files"
 	Main.cpp
@@ -63,6 +63,7 @@ add_sources(
 	SOURCE_GROUP
 	"Player"
 	Player/XPlayer.cpp
+	Player/XPlayerCamera.cpp
 	SOURCE_GROUP
 	"ScriptObjects"
 	ScriptObjects/ScriptObjectClient.cpp
@@ -172,7 +173,7 @@ add_sources(
 
 )
 end_sources()
-gamemodule(Minecraft FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
+gamemodule(MineCRY FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
 
 add_subdirectory(../thirdparty 3rdparty)
 
@@ -207,6 +208,7 @@ target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Wea
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Network)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Vehicle)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/GameSystem)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Player)
 
 source_group(
 	TREE ${INCLUDE_ROOT}

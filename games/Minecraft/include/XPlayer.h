@@ -375,7 +375,10 @@ public:
 	virtual	bool Read( CStream &stream );
 	virtual	bool Read_PATCH_1( CStream &stream );
 	virtual bool QueryContainerInterface( ContainerInterfaceType desired_interface, void **ppInterface);
-	virtual float GetLightRadius();
+	virtual float GetLightRadius()
+	{
+		return {};
+	}
 	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3 &v3dViewer, uint32 &inoutPriority,
 		EntityCloneState &inoutCloneState ) const;
 	
@@ -685,7 +688,7 @@ public:
 	void RemoveAllWeapons();
 
 	Legacy::Vec3 m_vEyePos;
-	Legacy::Vec3 m_vEyeAngles;
+	/* Legacy::*/Vec3 m_vEyeAngles;
 
 protected:
 

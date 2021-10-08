@@ -10,6 +10,7 @@
 #include "XSystemClient.h"
 #include "XSystemDummy.h"
 #include "IngameDialog.h"
+#include <IMovieSystem.h>
 
 
 #define YAW		(0)  
@@ -25,22 +26,6 @@
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-
-//////////////////////////////////////////////////////////////////////
-/** Parameters for cut-scene cameras
-*/
-struct SCameraParams
-{
-  SCameraParams()
-  {
-    //cameraNode = 0;
-    nCameraId = 0;
-    fFOV = 0.0f;
-  }
-  //IAnimNode* cameraNode;
-  unsigned short nCameraId;
-  float fFOV;
-};
 
 //////////////////////////////////////////////////////////////////////
 CXClient::CXClient() 
@@ -568,7 +553,6 @@ void CXClient::OnXContextSetup(CStream &stm)
 
 	m_bConnected = 1;
 
-	#if 0
 	m_pGame->GetSystem()->SetForceNonDevMode(m_GameContext.bForceNonDevMode);
 
 	// clean up all the sounds that might have been started before the first
@@ -579,6 +563,7 @@ void CXClient::OnXContextSetup(CStream &stm)
 		m_pGame->GetSystem()->GetISoundSystem()->Silence();
 	if(m_pGame->m_pSystem->GetIMusicSystem())
 		m_pGame->m_pSystem->GetIMusicSystem()->Silence();
+	#if 0
 	#endif
 
 	if (!m_pGame->m_bIsLoadingLevelFromFile)

@@ -22,6 +22,9 @@
 #include "TimeDemoRecorder.h"
 #include <GameMods.hpp>
 
+//#include "CMovieUser.h"
+
+
 
 #include <Client/Client.hpp>
 #include <thread>
@@ -911,7 +914,6 @@ bool CXGame::Update()
 	static const auto& render_game	= true;
 	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
 	static int		   num_frames	= 0xffff;
-	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	#if 0
 	m_pSystem->Update(0, IsInPause());
 	#endif

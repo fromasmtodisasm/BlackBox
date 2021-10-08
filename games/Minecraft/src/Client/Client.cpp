@@ -1,3 +1,4 @@
+#if 0
 #include <algorithm>
 #include <Client/Client.hpp>
 #include <BlackBox\System\ConsoleRegistration.h>
@@ -52,7 +53,7 @@ void CClient::Update()
 
 	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
 	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
-	CamPos.y = std::max(CamPos.y, FloorLevel);
+	CamPos.y = max(CamPos.y, FloorLevel);
 
 	m_CameraController.CurrentCamera()->SetPos(CamPos);
 
@@ -519,3 +520,4 @@ void CClient::Render()
 void CClient::OnRenderer_BeforeEndFrame() 
 {
 }
+#endif

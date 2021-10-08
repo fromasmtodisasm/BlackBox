@@ -194,7 +194,7 @@ void CXSnapshot::BuildAndSendSnapshot()
 			if(dwPriorityMin==0)
 				dwPriorityMin=itor->GetPriority();
 			 else 
-				dwPriorityMin=std::min(dwPriorityMin,itor->GetPriority());
+				dwPriorityMin=min(dwPriorityMin,itor->GetPriority());
 		}
 
 		itor=iTemp;
@@ -220,7 +220,7 @@ void CXSnapshot::BuildAndSendSnapshot()
 		 else
 			maxRateBps=(unsigned int)m_pServer->sv_maxrate_lan->GetIVal();
 
-		maxRateBps=std::min(maxRateBps,m_clientMaxBitsPerSecond);
+		maxRateBps=min(maxRateBps,m_clientMaxBitsPerSecond);
 	}
 
 	if(!m_pServerSlot->m_sClientString.empty())

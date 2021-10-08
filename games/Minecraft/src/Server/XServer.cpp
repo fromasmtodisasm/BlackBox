@@ -757,7 +757,7 @@ void CXServer::Update()
 
 	// kick "excess" players
 	// if this is a dedicated server, minimum can be 0, if we are not, minimum must be, so that our local client is not kicked
-	while(m_mapXSlots.size() > (int)(std::max(sv_maxplayers->GetIVal(), (m_pGame->m_pSystem->IsDedicated() ? 0 : 1))))
+	while(m_mapXSlots.size() > (int)(max(sv_maxplayers->GetIVal(), (m_pGame->m_pSystem->IsDedicated() ? 0 : 1))))
 	{
 		CXServerSlot *pSlot = (m_mapXSlots.rbegin()->second);
 
@@ -1300,7 +1300,7 @@ unsigned int CXServer::GetSchedulingDelay()
 		CXServerSlot *slot=i->second;			assert(slot);
 
 		if(slot)
-			nDelay = std::max(nDelay,std::min(nMaxDelay, slot->GetPing()*3>>2)); // half-ping multiplied by 1.5
+			nDelay = max(nDelay,min(nMaxDelay, slot->GetPing()*3>>2)); // half-ping multiplied by 1.5
 	}
 
 	return m_pGame->SnapTime(nDelay*0.001f,1.0f);

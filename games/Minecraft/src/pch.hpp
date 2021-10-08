@@ -157,6 +157,9 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/World/IWorld.hpp>
 
+#include <IMovieSystem.h>
+#include <ISound.h>
+
 typedef string String;
 typedef SmartScriptObject _SmartScriptObject;
 
@@ -192,11 +195,13 @@ inline void GameWarning( const char *format,... )
 }
 
 using CXGame = CXGame;
+#if 0
 struct ISoundSystem
 {
 	virtual IVisArea* GetListenerArea() = 0;
 	virtual Legacy::Vec3	  GetListenerPos()	= 0;
 };
+#endif
 
 Legacy::IInput* GetLegacyInput();
 #define GET_GUI_INPUT() GetLegacyInput()
@@ -225,3 +230,148 @@ Legacy::IInput* GetLegacyInput();
 #else //PS2
 #define FIXME_ASSERT(cond) { if(!(cond)) { FORCE_EXIT();} }
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+inline void __DumpEntity(ILog* pLog, IEntity* pEntity)
+{
+	const char* sTemp = NULL;
+	Legacy::Vec3		v;
+	pLog->Log("************************************");
+	if (!pEntity)
+	{
+		pLog->Log("DUMPING ENTITY .... the pEntity IS NULL");
+		return;
+	}
+	pLog->Log("DUMPING ENTITY %d", pEntity->GetId());
+	pLog->Log("CLASSID [%03d]", (int)pEntity->GetClassId());
+	sTemp = pEntity->GetEntityClassName();
+	pLog->Log("GetClassName return [%p]", sTemp);
+	pLog->Log("CLASSNAME %s", sTemp);
+	sTemp = pEntity->GetName();
+	pLog->Log("GetName return [%p]", sTemp);
+	pLog->Log("NAME %s", sTemp);
+	v = pEntity->GetPos();
+	pLog->Log("POS %f,%f,%f", v.x, v.y, v.z);
+	pLog->Log("CONTAINER (ptr)[%p]", pEntity->GetContainer());
+	pLog->Log("************************************");
+}
+
+//////////////////////////////////////////////////////////////////////////
+inline void __DumpEntity(ILog* pLog, const CEntityDesc& desc)
+{
+	const char* sTemp = NULL;
+	Legacy::Vec3 v;
+	pLog->Log("*************ENTITYDESCDUMP****************");
+	pLog->Log("CLASSID [%03d]", (int)desc.ClassId);
+	pLog->Log("CLASSNAME %s", desc.className.c_str());
+	v = desc.pos;
+	pLog->Log("POS %f,%f,%f", v.x, v.y, v.z);
+	pLog->Log("************************************");
+}
+
+// redundant functions
+
+//////////////////////////////////////////////////////////////////////////
+//clamps angles to be within min-max range. Check for special case when min>max -- for example min=350 max=40
+inline float ClampAngle360(float min, float max, float angl)
+{
+	if (min > max)
+	{
+		if (angl > min || angl < max)
+			return angl;
+		if (fabs(angl - min) < fabs(angl - max))
+			angl = min;
+		else
+			angl = max;
+		return angl;
+	}
+
+	if (angl < min)
+		angl = min;
+	else if (angl > max)
+		angl = max;
+	return angl;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//gets angles difference, checks for case when a1 and a2 on different sides of 0. for example a1=350 a2=10
+inline float GetAngleDifference360(float a1, float a2)
+{
+	float res = a1 - a2;
+
+	if (res > 180)
+		res = res - 360;
+	else if (res < -180)
+		res = 360 + res;
+	return res;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// clamps angles to be within min-max range. Check fro special case when min>max -- for example min=350 max=40
+// all angles have to be in range (0, 360)
+inline float ClampAngle(float minA, float maxA, float angl, bool& bClamped)
+{
+	bClamped = false;
+	if (minA > maxA)
+	{
+		if (angl > minA || angl < maxA)
+			return angl;
+	}
+	else if (angl > minA && angl < maxA)
+		return angl;
+
+	bClamped = true;
+
+	if (fabs(GetAngleDifference360(minA, angl)) < fabs(GetAngleDifference360(maxA, angl)))
+		return minA;
+	return maxA;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// clamps angles to be within min-max range. Check for special case when min>max -- for example min=350 max=40
+// all angles have to be in range (0, 360)
+inline float ClampAngle(float minA, float maxA, float angl)
+{
+	if (minA > maxA)
+	{
+		if (angl > minA || angl < maxA)
+			return angl;
+	}
+	else if (angl > minA && angl < maxA)
+		return angl;
+
+	if (fabs(GetAngleDifference360(minA, angl)) < fabs(GetAngleDifference360(maxA, angl)))
+		return minA;
+	return maxA;
+}
+
+#if !defined(min) && !defined(LINUX)
+#	define max(a, b) (((a) > (b)) ? (a) : (b))
+#	define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
+//////////////////////////////////////////////////////////////////////
+#if defined(_CPU_X86)
+ILINE float __fastcall Ffabs(float f) {
+	*((unsigned *) & f) &= ~0x80000000;
+	return (f);
+}
+#else
+inline float Ffabs(float x) { return fabsf(x); }
+#endif
+
+namespace Legacy
+{
+	inline vectorf from(Vec3& v) {
+		return vectorf{v.x, v.y, v.z};
+	}
+
+	inline vectorf from(const Vec3& v) {
+		return vectorf{v.x, v.y, v.z};
+	}
+
+	inline Vec3 to(vectorf& v) {
+		return Vec3{v.x, v.y, v.z};
+	}
+}
+
