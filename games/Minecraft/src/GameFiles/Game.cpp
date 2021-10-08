@@ -1074,12 +1074,15 @@ bool CXGame::Update()
 	// system rendering
 	if (bRenderFrame)
 	{
+		// Rendering in Engine
+		#if 0
 		// render begin must be always called anyway to clear buffer, draw buttons etc.
 		// even in menu mode
 		m_pSystem->RenderBegin();
 
 		m_pSystem->Render();
 		MEASURETIME("3SysRend");
+		#endif
 	}
 
 	// update the HUD
@@ -1145,7 +1148,9 @@ bool CXGame::Update()
 		if (m_pTimeDemoRecorder)
 			m_pTimeDemoRecorder->RenderInfo();
 
+		#if 0
 		m_pSystem->RenderEnd();
+		#endif
 	}
 	MEASURETIME("3Rend Up");
 
@@ -1194,9 +1199,11 @@ bool CXGame::Update()
 
 	MEASURETIME("EndGameUp");
 
+	#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// End Profiling Frame
 	m_pSystem->GetIProfileSystem()->EndFrame();
+	#endif
 	//////////////////////////////////////////////////////////////////////////
 
 	return (m_bUpdateRet);
