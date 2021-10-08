@@ -1415,14 +1415,15 @@ void CXSystemBase::GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequested
 }
 #endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 // Do common things for Client and Server when loading a new level.
 //////////////////////////////////////////////////////////////////////
 bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 {
+	#if 0
 	// Start time of level loading.
 	CTimeValue time0 = m_pSystem->GetITimer()->GetCurrTimePrecise();
+	#endif
 	AutoSuspendTimeQuota AutoSuspender(m_pSystem->GetStreamEngine());
 		
 	string sPreviousLevelFolder = m_pGame->m_currentLevelFolder;
@@ -1463,6 +1464,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 
 		///////////////////////////////////////////////////////////////////////////////////////
 		// INITIALIZE AI SYSTEM
+		#if 0
 		IAISystem *pAISystem = m_pSystem->GetAISystem();	
 		if (pAISystem)
 		{
@@ -1481,6 +1483,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 				m_pGame->cv_game_Health->GetFVal()
 				);
 		}
+		#endif
 
 		// Init Weapon system.
 		if (m_pGame->GetWeaponSystemEx())
@@ -1501,6 +1504,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	}
 
 	string sEPath = missionInfo.sLevelFolder + "/LevelData.xml";
+	#if 0
 	missionInfo.pLevelDataXML = m_pSystem->CreateXMLDocument();
 	if(!missionInfo.pLevelDataXML->load(sEPath.c_str()))
 	{
@@ -1527,6 +1531,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	missionInfo.m_dwLevelDataCheckSum = missionInfo.pLevelDataXML->getCheckSum();
 	missionInfo.m_dwMissionCheckSum = missionInfo.pMissionXML->getCheckSum();
 	m_wCheckSum = missionInfo.m_dwLevelDataCheckSum + missionInfo.m_dwMissionCheckSum;
+	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Reset console.
@@ -1569,8 +1574,10 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	// Start loading common stuff.
 	//////////////////////////////////////////////////////////////////////////
 	//load the materials names
+	#if 0
 	if(!LoadMaterials(missionInfo.pLevelDataXML))
 		return false;
+	#endif
 
 	// reload the previously unloaded models since the materials are now reloaded
 	if (m_pGame->m_pUISystem)
@@ -1591,6 +1598,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	}
 	//////////////////////////////////////////////////////////////////////////
 
+	#if 0
 	//////////////////////////////////////////////////////////////////////
 	// INITIALIZE AI SYSTEM
 	IAISystem *pAISystem = m_pSystem->GetAISystem();	
@@ -1623,6 +1631,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->Load( sMovieDataXml.c_str(),missionInfo.sMissionName.c_str() );
 	//////////////////////////////////////////////////////////////////////////
+	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load level entities.
@@ -1633,11 +1642,13 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 		return false;
 	}
 
+	#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// Triangulation must be loaded after loading of entities.
 	//////////////////////////////////////////////////////////////////////////
 	if (pAISystem)
 		pAISystem->LoadTriangulation( missionInfo.sLevelFolder.c_str(),missionInfo.sMissionName.c_str() );
+	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load Level Music.
@@ -1673,15 +1684,18 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	//////////////////////////////////////////////////////////////////////////
 	// Log to file level loading time.
 	//////////////////////////////////////////////////////////////////////////
+	#if 0
 	CTimeValue timeLoad = m_pSystem->GetITimer()->GetCurrTimePrecise() - time0;
 	// Log level load times.
 	m_pLog->LogToFile( "\001 Level %s loaded in %.3f seconds",missionInfo.sLevelName.c_str(),timeLoad.GetSeconds() );
+	#endif
 	//////////////////////////////////////////////////////////////////////////
 
 	m_pGame->GetSystem()->GetIEntitySystem()->PauseTimers(false,true);	
 
 	return true;
 }
+#if 0
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -1778,7 +1792,6 @@ public:
 	IScriptSystem *m_pScriptSystem;
 };
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::OnSpawn(IEntity *ent, CEntityDesc & ed)
 {
@@ -1801,7 +1814,9 @@ void CXSystemBase::OnSpawn(IEntity *ent, CEntityDesc & ed)
 
 	ent->SetClassName(pClass->strClassName.c_str());
 	
+	#if 0
 	m_pSystem->CreateEntityScriptBinding(ent);
+	#endif
 
 	// property table stuff
 	// first clone the property table
@@ -1825,11 +1840,13 @@ void CXSystemBase::OnSpawn(IEntity *ent, CEntityDesc & ed)
 		}
 	}
 
+	#if 0
 	// then just parse out the properties
 	if (ed.pUserData)
 	{
 		SetEntityProperties(ent, (XDOM::IXMLDOMNode*) ed.pUserData);
 	}
+	#endif
 	
 	// FIXME [Alberto]
 	if(ed.pProperties)
@@ -1847,10 +1864,12 @@ void CXSystemBase::OnSpawn(IEntity *ent, CEntityDesc & ed)
 		ent->GetScriptObject()->SetValue("entity_type","player");
 		m_setPlayerEntities.insert(EntitiesSetItor::value_type(ent->GetId()));
 	}
+	#if 0
 	else if (m_pGame->GetVehicleSystem()->IsVehicleClass(ent->GetClassId()))  
 	{
 		ent->GetScriptObject()->SetValue("entity_type","vehicle");
 	}
+	#endif
 	else if (ent->GetClassId()==SPECTATOR_CLASS_ID)  
 	{
 		ent->GetScriptObject()->SetValue("entity_type","spectator");
@@ -1868,9 +1887,9 @@ void CXSystemBase::OnSpawn(IEntity *ent, CEntityDesc & ed)
 		ent->GetScriptObject()->SetValue("entity_type","basic");
 	}
 }
+#if 0
 #endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
 {
@@ -1879,9 +1898,10 @@ void CXSystemBase::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
 	if (pLog->GetVerbosityLevel()>5)
 	{
 		//Timur, Excessive log.
-		//pLog->Log("Spawning container for entity classname=%s,name=%s,type=%d,id=%d,model=%s",ed.className.c_str(),ed.name.c_str(),(int)ed.ClassId,ed.id,ed.sModel.c_str());
+		pLog->Log("Spawning container for entity classname=%s,name=%s,type=%d,id=%d,model=%s",ed.className.c_str(),ed.name.c_str(),(int)ed.ClassId,ed.id,ed.sModel.c_str());
 	}
 
+	#if 0
 	if (ed.ClassId==SPECTATOR_CLASS_ID)
 	{
 		//		if (pLog->GetVerbosityLevel()>5)
@@ -1996,7 +2016,9 @@ void CXSystemBase::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
 		pSynched2DTable->SetScriptObject(pSSynched2DTable->GetScriptObject());
 		pEntity->SetContainer(pSynched2DTable);
 	}
+	#endif
 }
+#if 0
 #endif
 #include <GameFiles\PlayerSystem.h>
 //////////////////////////////////////////////////////////////////////

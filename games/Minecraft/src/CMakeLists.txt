@@ -75,6 +75,8 @@ add_sources(
 	Server/XServer.cpp
 	Server/XServerRules.cpp
 	Server/XServerSlot.cpp
+	Server/XSnapShot.h
+	Server/XSnapShot.cpp
 	SOURCE_GROUP
 	"Localization"
 	Localization/StringTableMgr.cpp

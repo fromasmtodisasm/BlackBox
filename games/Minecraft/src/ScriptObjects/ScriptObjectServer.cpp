@@ -15,6 +15,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <IXSystem.hpp>
+#include <Server/XServer.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
@@ -50,7 +51,6 @@ bool CScriptObjectServer::Create(IScriptSystem* pScriptSystem, IXSystem* pXSyste
 void CScriptObjectServer::InitializeTemplate(IScriptSystem* pSS)
 {
   _ScriptableEx<CScriptObjectServer>::InitializeTemplate(pSS);
-#if 0
   REG_FUNC(CScriptObjectServer, Unban);
   REG_FUNC(CScriptObjectServer, ListBans);
   REG_FUNC(CScriptObjectServer, GetServerSlotMap);
@@ -78,10 +78,8 @@ void CScriptObjectServer::InitializeTemplate(IScriptSystem* pSS)
   REG_FUNC(CScriptObjectServer, GetFirstRespawnPoint);
   REG_FUNC(CScriptObjectServer, GetName);
   REG_FUNC(CScriptObjectServer, DebugTest);
-#endif
 }
 
-#if 0
 /////////////////////////////////////////////////////////
 /*! return the number of players
     @return the number of players
@@ -759,4 +757,3 @@ void CScriptObjectServer::MakeTagScriptObject(ITagPoint* pInTagPoint, _SmartScri
   rOut->SetValue("zA", spawnangles.z);
   rOut->SetValue("name", spawnname);
 }
-#endif

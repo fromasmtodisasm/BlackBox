@@ -39,7 +39,7 @@ struct I3DEngine;
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/EntitySystem/IEntityRenderState.hpp>
-#include <IPhysics.h>
+//#include <Legacy>
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward declarations.

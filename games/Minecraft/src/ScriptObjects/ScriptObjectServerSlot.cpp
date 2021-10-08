@@ -15,9 +15,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if 0
 #include <ScriptObjects/ScriptObjectServerSlot.hpp>
-//#include <XSystemBase.hpp>
+#include <XSystemBase.hpp>
 #include <Server/XServerSlot.hpp>
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectServerSlot);
@@ -326,4 +325,3 @@ int CScriptObjectServerSlot::GetId(IFunctionHandler *pH)
 {
 	return pH->EndFunction((int)m_pSS->GetID());
 }
-#endif

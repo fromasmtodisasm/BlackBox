@@ -200,7 +200,6 @@ void CXServerSlot::OnSpawnEntity(CEntityDesc &ed,IEntity *pEntity,bool bSend)
 	}
 #endif
 }
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXServerSlot::BanByID()
 {
@@ -246,7 +245,6 @@ CXServer *CXServerSlot::GetServer()
 { 
 	return m_pParent; 
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXServerSlot::OnRemoveEntity(IEntity *pEntity)
