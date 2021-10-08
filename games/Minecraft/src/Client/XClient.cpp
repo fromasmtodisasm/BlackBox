@@ -1,7 +1,22 @@
 #include <Client/XClient.hpp>
+#include <XPlayer.h>
+#include <Server\XServer.hpp>
+#include <UIHud.h>
+
+#define YAW		(0)  
+#define PITCH	(1)    
+#define ROLL	(0)   
+
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 /** Parameters for cut-scene cameras
 */
@@ -210,10 +225,10 @@ bool CXClient::CreateConsoleVariables()
 	cl_sound_event_radius = pConsole->CreateVariable("cl_sound_event_radius","50",0);
 	cl_sound_event_timeout = pConsole->CreateVariable("cl_sound_event_timeout","1",0);
 	
-	pConsole->AddCommand("say","Client:Say(%line)",VF_NOHELP,"");
-	pConsole->AddCommand("sayteam","Client:SayTeam(%line)",VF_NOHELP,"");
-	pConsole->AddCommand("sayone","Client:SayOne(%%)",VF_NOHELP, "");
-	pConsole->AddCommand("tell","Client:SayOne(%%)",VF_NOHELP, "");
+	pConsole->AddCommand("say","Client:Say(%line)",VF_NULL,"");
+	pConsole->AddCommand("sayteam","Client:SayTeam(%line)",VF_NULL,"");
+	pConsole->AddCommand("sayone","Client:SayOne(%%)",VF_NULL, "");
+	pConsole->AddCommand("tell","Client:SayOne(%%)",VF_NULL, "");
 	pConsole->AddCommand("team","Client:JoinTeamRequest(%%)",0,
 		"Sends a request to join a team.\n"
 		"Usage: team teamname\n");
@@ -231,7 +246,7 @@ bool CXClient::CreateConsoleVariables()
 		"Used to vote on suggestions from other players.\n"
 		"Usage: vote [y/n]\n"
 		"Vote y for yes or n for no.");
-	pConsole->AddCommand("name","Client:SetName(%line)",VF_NOHELP, "");
+	pConsole->AddCommand("name","Client:SetName(%line)",VF_NULL, "");
 	pConsole->AddCommand("kill","Client:Kill()",0,
 		"Kills the player.\n"
 		"Usage: kill\n"
@@ -544,6 +559,7 @@ void CXClient::OnXContextSetup(CStream &stm)
 
 	m_bConnected = 1;
 
+	#if 0
 	m_pGame->GetSystem()->SetForceNonDevMode(m_GameContext.bForceNonDevMode);
 
 	// clean up all the sounds that might have been started before the first
@@ -554,6 +570,7 @@ void CXClient::OnXContextSetup(CStream &stm)
 		m_pGame->GetSystem()->GetISoundSystem()->Silence();
 	if(m_pGame->m_pSystem->GetIMusicSystem())
 		m_pGame->m_pSystem->GetIMusicSystem()->Silence();
+	#endif
 
 	if (!m_pGame->m_bIsLoadingLevelFromFile)
 	{
@@ -600,7 +617,9 @@ void CXClient::UpdateClientNetwork()
 
 	assert(m_pTimer);
 
+	#if 0
 	m_NetStats.Update(m_pTimer->GetCurrTimePrecise());		// keep statistics for one sec
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -643,7 +662,6 @@ void CXClient::XConnect( const char *szAddr, bool _bDoLateSwitch, const bool inb
 	m_pGame->m_bLastDoLateSwitch = _bDoLateSwitch;
 	m_pGame->m_bLastCDAuthentication = inbCDAuthorization;
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXClient::DemoConnect()
 {
@@ -699,13 +717,14 @@ void CXClient::UpdateSound( const float fFrameTime )
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXClient::Update()
 {
 	CPlayer *pPlayer=NULL;
+	#if 0
 	CSpectator *pSpectator=NULL;
 	CAdvCamSystem *pAdvCamSystem=NULL;
+	#endif
 
 	ITimer *pTimer=m_pGame->m_pSystem->GetITimer();
 	float time = pTimer->GetCurrTime();
@@ -729,6 +748,7 @@ void CXClient::Update()
 			{
 				pPlayer->m_stats.concentration=false;
 			}
+			#if 0
 			////////SPECTATOR CAMERA STUFF
 			if(pCnt->QueryContainerInterface(CIT_ISPECTATOR,(void **) &pSpectator))
 			{
@@ -752,6 +772,7 @@ void CXClient::Update()
 					}
 				}
 			}
+			#endif
 
 		}
 
@@ -834,8 +855,10 @@ void CXClient::Update()
 			cam.SetAngle(cam.GetAngles()+pPlayer->m_vShake);
 			//pEntCam->GetCamera().GetAngles()+m_vSh
 		m_pGame->m_pSystem->SetViewCamera(cam);
+		#if 0
 		if(m_bLinkListenerToCamera && m_pGame->m_pSystem->GetISoundSystem())
 			m_pGame->m_pSystem->GetISoundSystem()->SetListener(cam,Legacy::Vec3(0,0,0));
+		#endif
 	}
 
 	if (m_wPlayerID != INVALID_WID)
@@ -880,6 +903,7 @@ void CXClient::SendScriptHashResponse( const unsigned int dwHash )
 //////////////////////////////////////////////////////////////////////
 void CXClient::SendInputToServer( const bool bTimeToSend )
 {
+	#if 0
 	if(m_wPlayerID==INVALID_WID)
 		return;
 
@@ -1082,8 +1106,8 @@ void CXClient::SendInputToServer( const bool bTimeToSend )
 		}
 		m_PlayerProcessingCmd.Reset();
 	}
+	#endif
 }
-
 //////////////////////////////////////////////////////////////////////
 const char *CXClient::GetMsgName( XCLIENTMSG inValue )
 {
@@ -1105,10 +1129,10 @@ const char *CXClient::GetMsgName( XCLIENTMSG inValue )
 	}
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXClient::DrawNetStats()
 {
+#if 0
 	int iRoundtripInMS = m_pIClient->GetPing()*2;
 	float fIncomingKbPerSec,fOutgoingKbPerSec;
 	DWORD nIncomingPacketsPerSec,nOutgoingPacketsPerSec;
@@ -1150,6 +1174,7 @@ void CXClient::DrawNetStats()
 	if(bNewDataArrived)
 		m_pLog->Log("-------<netstats end>n");
 #endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1178,6 +1203,7 @@ void CXClient::OnMapChangedReally()
 	if (!m_pGame->IsMultiplayer() && !m_pGame->m_bMapLoadedFromCheckpoint)
 	{	
 		m_pLog->Log("\001 Saving first checkpoint");
+		#if 0
 		IAISystem *pAISystem = m_pGame->GetSystem()->GetAISystem();
 		if (pAISystem)
 		{
@@ -1187,6 +1213,7 @@ void CXClient::OnMapChangedReally()
 				pAISystem->GetAutoBalanceInterface()->SetAllowedDeathCount(2);
 			}
 		}
+		#endif
 
 		ITagPoint *pRespawn;
 		pRespawn=m_pGame->GetTagPoint("Respawn0");
@@ -1199,9 +1226,11 @@ void CXClient::OnMapChangedReally()
 			sprintf(buf, "checkpoint_%s_%s_1", m_pGame->g_LevelName->GetString(), m_pGame->m_pServer->m_GameContext.strMission.c_str());
 			m_pGame->Save( buf, &vPos,&vAngles,true );
 		}
+		#if 0
 		IInput *pInput=m_pGame->GetSystem()->GetIInput();
 		if(pInput)
 			pInput->GetIKeyboard()->ClearKeyState();
+		#endif
 	}
 
 	m_pScriptSystem->BeginCall("ClientStuff", "OnMapChange");
@@ -1350,7 +1379,6 @@ size_t CXClient::SendReliableMsg(XCLIENTMSG msg, CStream &stm)
 #endif
 	return istm.GetSize();
 }
-
 //////////////////////////////////////////////////////////////////////
 size_t CXClient::SendUnreliableMsg(XCLIENTMSG msg, CStream &stm, const bool bWithSize )
 {
@@ -1399,7 +1427,6 @@ size_t CXClient::SendUnreliableMsg(XCLIENTMSG msg, CStream &stm, const bool bWit
 
 	return istm.GetSize();
 }
-
 //////////////////////////////////////////////////////////////////////
 bool CXClient::IsReady()
 {
@@ -1429,11 +1456,11 @@ void CXClient::SetPlayerID( EntityId wPlayerID )
 	if(pPlayer)
 		m_pGame->SetCurrentUI(m_pGame->m_pUIHud);
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXClient::UpdateISystem()
 {
 	SAFE_RELEASE(m_pISystem);
+#if 0
 
 	// create the system interface
 	if(m_pGame->IsServer())
@@ -1449,6 +1476,7 @@ void CXClient::UpdateISystem()
 		m_bLocalHost = false;
 		m_pGame->GetSystem()->GetIEntitySystem()->SetSink(this);
 	}
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1557,6 +1585,7 @@ void CXClient::TriggerMoveFB(float fValue,XActivationEvent ae)
 	}
 }
 
+#if 0
 ///////////////////////////////////////////////
 void CXClient::TriggerTurnLR(float fValue,XActivationEvent ae)
 { 
@@ -1584,8 +1613,10 @@ void CXClient::TriggerTurnLR(float fValue,XActivationEvent ae)
 			IInput *pInput=m_pGame->GetSystem()->GetIInput();
 			if(pInput)
 			{
+				#if 0
 				fSensGainLR=pInput->GetJoySensitivityHGain(pInput->JoyGetDefaultControllerId());
 				fSensScaleLR=pInput->GetJoySensitivityHScale(pInput->JoyGetDefaultControllerId());
+				#endif
 			}
 
 			//--- DeadZone
@@ -1668,8 +1699,10 @@ void CXClient::TriggerTurnUD(float fValue,XActivationEvent ae)
 			IInput *pInput=m_pGame->GetSystem()->GetIInput();
 			if(pInput)
 			{
+				#if 0
 				fSensGainUD=pInput->GetJoySensitivityVGain(pInput->JoyGetDefaultControllerId());
 				fSensScaleUD=pInput->GetJoySensitivityVScale(pInput->JoyGetDefaultControllerId());
+				#endif
 			}
 
 			//--- DeadZone
@@ -1745,6 +1778,7 @@ void CXClient::TriggerTurnUD(float fValue,XActivationEvent ae)
 		m_PlayerProcessingCmd.AddAction(ACTION_TURNUD);
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXClient::TriggerJump(float fValue,XActivationEvent ae)
@@ -2269,6 +2303,7 @@ bool CXClient::ParseIncomingStream(CStream &stm)
 // XSERVERMSG_SETPLAYER
 bool CXClient::OnServerMsgSetPlayer(CStream &stm)
 {
+	#if 0
 	m_wPlayerID = INVALID_WID;
 
 	EntityId id;
@@ -2330,6 +2365,7 @@ bool CXClient::OnServerMsgSetPlayer(CStream &stm)
 		else m_pLog->Log("SET PLAYER [%d] failed1",id);
 	}
 	else m_pLog->Log("SET PLAYER [%d] failed2",id);
+	#endif
 
 	return true;
 }
@@ -2387,7 +2423,7 @@ bool CXClient::OnServerMsgRequestScriptHash(CStream &stm)
 	char szPath[256];
 	char szKey[256];
 
-	u32 dwHash;
+	uint32 dwHash;
 	EntityId entity=INVALID_WID;
 
 	if(!pBitStream->ReadBitStream(stm,entity,eEntityId))							// e.g. INVALID_WID for globals, otherwise it's and entity
@@ -2803,6 +2839,7 @@ bool CXClient::OnServerMsgUpdateEntity(CStream &stm)
 // XSERVERMSG_TIMESTAMP
 bool CXClient::OnServerMsgTimeStamp(CStream &stm)
 {
+	#if 0
 	int iPhysicalTime,iPrevWorldTime=m_iPhysicalWorldTime;
 	IPhysicalWorld *pWorld = m_pGame->GetSystem()->GetIPhysicalWorld();
 	stm.Read(iPhysicalTime);
@@ -2830,6 +2867,7 @@ bool CXClient::OnServerMsgTimeStamp(CStream &stm)
 			pWorld->SetiSnapshotTime(m_pGame->SnapTime(m_iPhysicalWorldTime),2);
 		}
 	}
+	#endif
 	return true;
 }
 
@@ -2885,8 +2923,10 @@ bool CXClient::OnServerMsgCmd(CStream &stm)
 			
 			if(bPos)
 			{
+				#if 0
 				CStreamData_WorldPos tmp(vPos);
 				stm.ReadPkd(tmp);
+				#endif
 			}
 			 else
 				vPos=Legacy::Vec3(0,0,0);
@@ -2899,8 +2939,10 @@ bool CXClient::OnServerMsgCmd(CStream &stm)
 			
 			if(bNormal)
 			{
+				#if 0
 				CStreamData_Normal tmp(vNormal);
 				stm.ReadPkd(tmp);
+				#endif
 			}
 			 else
 				vNormal=Legacy::Vec3(0,0,0);
@@ -3034,7 +3076,12 @@ void CXClient::SoundEvent(EntityId idSrc,Legacy::Vec3 &pos,float fRadius,float f
 	if(!pPlayer)
 		return;
 	Legacy::Vec3 ppos=pPlayer->GetPos();
-	float fDistance2=GetSquaredDistance(pos,ppos)-(fRadius*fRadius);
+
+	#if 0
+	float		 fDistance2 = GetSquaredDistance(pos,ppos)-(fRadius*fRadius);
+	#else
+	float		 fDistance2 = 0; //GetSquaredDistance(pos,ppos)-(fRadius*fRadius);
+	#endif
 	//the player isn't bothered by his own sounds, but we wanna show them in the radar
 	//if (m_wPlayerID==idSrc)
 	{
@@ -3216,4 +3263,51 @@ bool CXClient::GetLazyChannelState()
 {
 	return m_bLazyChannelState;
 }
+
+///////////////////////////////////////////////
+void CXClient::TriggerTurnLR(float fValue, XActivationEvent ae)
+{
+	{
+		float fFovMul = 1.0f;
+#if 0
+		IEntity *pPlayerEnt = m_pISystem->GetEntity( m_wPlayerID );
+		if (pPlayerEnt)
+		{
+
+			IEntityCamera *pCam = pPlayerEnt->GetCamera();
+			if (pCam)
+			{
+				fFovMul = (float) (pCam->GetFov() / 1.5707963267948966192313216916398);
+			}
+		}
 #endif
+		m_PlayerProcessingCmd.GetDeltaAngles()[YAW] -= fValue * fFovMul;
+		m_PlayerProcessingCmd.AddAction(ACTION_TURNLR);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void CXClient::TriggerTurnUD(float fValue, XActivationEvent ae)
+{
+	{
+		float fFovMul = 1.0f;
+#if 0
+		IEntity *pPlayerEnt = m_pISystem->GetEntity( m_wPlayerID );
+		if (pPlayerEnt)
+		{
+
+			IEntityCamera *pCam = pPlayerEnt->GetCamera();
+			if (pCam)
+			{
+				fFovMul = float(pCam->GetFov() / 1.5707963267948966192313216916398);
+			}
+			//RESET RECOIL RETURN
+			IEntityContainer *pCnt=pPlayerEnt->GetContainer();
+		}
+#endif
+		m_PlayerProcessingCmd.GetDeltaAngles()[PITCH] += fValue * fFovMul;
+		m_PlayerProcessingCmd.AddAction(ACTION_TURNUD);
+	}
+}
+
+

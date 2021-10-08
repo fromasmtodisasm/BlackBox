@@ -30,12 +30,7 @@
 
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
-#if 0
 class CXClient;
-#else
-class CClient;
-#define CXClient CClient
-#endif
 class CXGame;
 
 //////////////////////////////////////////////////////////////////////

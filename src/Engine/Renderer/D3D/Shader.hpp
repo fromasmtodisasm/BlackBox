@@ -51,7 +51,9 @@ public:
 	virtual int Release() override;
 	virtual IShader::Type GetType() override;
 	virtual const char* GetName() override;
+	#if 0
 	virtual eVertexFormat GetVertexFormat(void) override;
+	#endif
 	virtual bool Reload() override;
 	virtual void Bind() override;
 

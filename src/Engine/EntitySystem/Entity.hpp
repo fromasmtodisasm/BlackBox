@@ -13,7 +13,7 @@ class CEntity : public IEntity
 	virtual bool				  IsEntityAreasVisible() override;
 	virtual void				  SetMaterial(IMatInfo* pMatInfo) override;
 	virtual IMatInfo*			  GetMaterial() const override;
-	virtual void				  PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) override;
+	virtual void				  PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime) override;
 	virtual EntityId			  GetId() const override;
 	virtual void				  Update(SEntityUpdateContext& updateContext) override;
 	virtual void				  Reset() override;

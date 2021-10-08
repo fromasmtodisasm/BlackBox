@@ -16,8 +16,12 @@
 #include "ScriptObjectUI.h"
 
 #include "PlayerSystem.h"
+#include "Server/XServer.hpp"
+#include "XPlayer.h"
 #include "XVehicleSystem.h"
+#include "TimeDemoRecorder.h"
 #include <GameMods.hpp>
+
 
 #include <Client/Client.hpp>
 #include <thread>
@@ -27,6 +31,7 @@
 #include "IngameDialog.h"
 
 static int g_FontSize = 32;
+#define MEASURETIME(str) CryLog("[MEASURETIME] %s", str)
 
 #ifdef USE_GUI
 #	include <imgui.h>
@@ -333,7 +338,6 @@ CXGame::~CXGame()
 	CScriptObjectClient::ReleaseTemplate();
 	CScriptObjectStream::ReleaseTemplate();
 
-	#if 0
 	SAFE_RELEASE(cl_scope_flare);
 	SAFE_RELEASE(cl_ThirdPersonRange);
 
@@ -401,7 +405,6 @@ CXGame::~CXGame()
 	SAFE_RELEASE(m_pCVarCheatMode);
 
 	SAFE_RELEASE(pl_JumpNegativeImpulse);
-	#endif
 
 	if (m_pRenderer && (m_nPlayerIconTexId>=0))
 		m_pRenderer->RemoveTexture(m_nPlayerIconTexId);
@@ -449,14 +452,10 @@ CXGame::~CXGame()
 	SAFE_RELEASE(m_pServerSnooper);
 	SAFE_RELEASE(m_pNETServerSnooper);
 	SAFE_RELEASE(m_pRConSystem);
-	#if 0
 	SAFE_DELETE(m_pTimeDemoRecorder);
-	#endif
 	SAFE_DELETE(m_pGameMods);
 
-	#if 0
 	delete m_pTagPointManager;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -666,9 +665,9 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	if (pMovieSystem)
 		pMovieSystem->SetUser(m_pMovieUser);
 #endif
+	#endif
 	if (!m_pTimeDemoRecorder)
 		m_pTimeDemoRecorder = new CTimeDemoRecorder(pSystem);
-	#endif
 
 	m_pUIHud		= NULL;
 	m_pNetwork		= m_pSystem->GetINetwork();
@@ -704,9 +703,9 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 
 	m_pScriptObjectInput = new CScriptObjectInput;
 	CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
-	#if 0
 	m_pScriptObjectLanguage = new CScriptObjectLanguage;
 	CScriptObjectLanguage::InitializeTemplate(m_pScriptSystem);
+	#if 0
 	m_pScriptObjectBoids = new CScriptObjectBoids;
 	CScriptObjectBoids::InitializeTemplate(m_pScriptSystem);
 	m_pScriptObjectAI = new CScriptObjectAI;
@@ -833,7 +832,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	// load textures used as icons by the mini-map
 	if (m_pRenderer)
 	{
-		#if 0
 		ITexPic* pPic;
 		pPic = m_pRenderer->EF_LoadTexture("gui/map_player", FT_NOREMOVE, 0, eTT_Base);
 		if (pPic && pPic->IsTextureLoaded())
@@ -847,7 +845,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 		pPic = m_pRenderer->EF_LoadTexture("gui/map_unknown", FT_NOREMOVE, 0, eTT_Base);
 		if (pPic && pPic->IsTextureLoaded())
 			m_nUnknownIconTexId = pPic->GetTextureID();
-		#endif
 	}
 
 	if (!bInEditor)
@@ -860,10 +857,12 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	DevModeInit();
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
+	#if 0
 	//FIXME: client should be created in other place
-	m_pClient			 = new CClient(this);
+	m_pClient			 = new CXClient();
 	LoadScene("empty");
 	m_pClient->Init();
+	#endif
 
 	return (true);
 }
@@ -906,11 +905,7 @@ bool CXGame::Update()
 	//////////////////////////////////////////////////////////////////////////
 	FUNCTION_PROFILER(PROFILE_GAME);
 
-	ITimer *pTimer=m_pSystem->GetITimer();
-	#if 0
-	pTimer->MeasureTime("EnterGameUp");
-	#endif
-
+	MEASURETIME("EnterGameUp");
 
 	static const auto& render_game	= true;
 	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
@@ -922,100 +917,282 @@ bool CXGame::Update()
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
-	bool bPause = false; //IsInPause(nullptr);
+	ITimer* pTimer = m_pSystem->GetITimer();
+	MEASURETIME("EnterGameUp");
+	//Timur[10/2/2002]
+	// Cannot Run Without System.
+	assert(m_pSystem);
+
+	float maxFPS = g_maxfps->GetFVal();
+	if (maxFPS > 0)
 	{
-			
-		if (!bPause || (m_pClient /*&& !m_pClient->IsConnected() */))
-		{
-			// network start
-			FRAME_PROFILER("GameUpdate:Client", PROFILE_GAME);
-
-			// update client
-			if (m_pClient)
-			{
-				#if 0
-				m_pClient->UpdateClientNetwork();
-				pTimer->MeasureTime("Net");
-				#endif
-
-				assert(m_pClient);
-				m_pClient->Update();
-
-				if (m_pClient->DestructIfMarked()) //  to make sure the client is only released in one place - here
-					m_pClient = 0;
-			}
-
-			#if 0
-			pTimer->MeasureTime("ClServ Up");
-			#endif
-
-			////////UPDATE THE NETWORK
-			// [Anton] moved from after the rendering, so that the server has access to the most recent physics data
-			// update server
-			if (m_pServer)
-			{
-				FRAME_PROFILER("GameUpdate:Server", PROFILE_GAME);
-
-				#if 0
-				m_pServer->Update();
-				#endif
-			}
-
-			#if 0
-			pTimer->MeasureTime("EndServUp");
-			#endif
-		}
-
-		m_pNetwork->UpdateNetwork(); // used to update things like the UBI.com services
-
-		if (g_bRenderGame)
-		{
-			m_pClient->Render();
-		}
-
-//PROFILER_PUSH_CPU_MARKER("DrawHud", Utils::COLOR_CYAN);
-#if 0
-			m_pScriptSystem->BeginCall(Gui, "OnDraw");
-			m_pScriptSystem->PushFuncParam(Gui);
-			m_pScriptSystem->EndCall();
+		DWORD extraTime = (DWORD)((1.0f / maxFPS - pTimer->GetFrameTime()) * 1000.0f);
+#if !defined(LINUX)
+		if (extraTime > 0 && extraTime < 300) //thread sleep not process sleep
+			Sleep(extraTime);
 #endif
-
-#if USE_UI
-		if (g_DrawUI)
-		{
-			glslEditor->Update();
-			m_Gui.Update();
-			gui::update();
-		}
-#endif
-
-		//PROFILER_POP_CPU_MARKER();
-
 	}
+
+	PhysicsVars* pVars	   = m_pSystem->GetIPhysicalWorld()->GetPhysVars();
+	float		 fTimeGran = pVars->timeGranularity, fFixedStep = g_MP_fixed_timestep->GetFVal();
+	if (fTimeGran != m_fTimeGran || fFixedStep != m_fFixedStep)
+	{
+		m_fTimeGran	 = fTimeGran;
+		m_fFixedStep = fFixedStep;
+		if (fFixedStep > 0)
+		{
+			m_fTimeGran2FixedStep = fTimeGran / fFixedStep;
+			m_iFixedStep2TimeGran = (int)(fFixedStep / fTimeGran + 0.5f);
+			m_frFixedStep		  = 1.0f / fFixedStep;
+		}
+		else
+			m_iFixedStep2TimeGran = 0;
+		m_frTimeGran = 1.0f / fTimeGran;
+	}
+	pVars->bMultiplayer = IsMultiplayer() ? 1 : 0;
+
+	//check what is the current process
+	IProcess* pProcess = m_pSystem->GetIProcess();
+	if (!pProcess)
+		return false;
+
+	bool bPause = IsInPause(pProcess);
+	if (m_bIsLoadingLevelFromFile)
+		bPause = false;
+#if !defined(LINUX)
+	// Pauses or unpauses movie system.
+	if (bPause != m_bMovieSystemPaused)
+	{
+		m_bMovieSystemPaused = bPause;
+		#if 0
+		if (bPause)
+			m_pSystem->GetIMovieSystem()->Pause();
+		else
+			m_pSystem->GetIMovieSystem()->Resume();
+		#endif
+	}
+#endif
+
+	// [marco] check current sound and vis areas
+	// for music etc.
+	CheckSoundVisAreas();
+
+	MEASURETIME("SomeStuff");
+	// update system
+	int nPauseMode = 0;
+	if (bPause)
+		nPauseMode = 1;
+
+	if (IsMultiplayer())
+	{
+		pe_params_flags pf;
+		pf.flagsOR = pef_update;
+		for (ListOfPlayers::iterator pl = m_DeadPlayers.begin(); pl != m_DeadPlayers.end(); pl++)
+			if ((*pl)->GetEntity() && (*pl)->GetEntity()->GetPhysics())
+				(*pl)->GetEntity()->GetPhysics()->SetParams(&pf);
+	}
+
+	if (!m_pSystem->Update(IsMultiplayer() ? ESYSUPDATE_MULTIPLAYER : 0, nPauseMode)) //Update returns false when quitting
+		return (false);
+
+	if (IsMultiplayer())
+	{
+		pe_params_flags pf;
+		pf.flagsAND = ~pef_update;
+		for (ListOfPlayers::iterator pl = m_DeadPlayers.begin(); pl != m_DeadPlayers.end(); pl++)
+			if ((*pl)->GetEntity() && (*pl)->GetEntity()->GetPhysics())
+				(*pl)->GetEntity()->GetPhysics()->SetParams(&pf);
+	}
+
+	MEASURETIME("SysUpdate");
+
+	// [marco] after system update, retrigger areas if necessary
+	if (!bPause)
+		RetriggerAreas();
+
+	if (!bPause || (m_pClient && !m_pClient->IsConnected()))
+	{
+		// network start
+		FRAME_PROFILER("GameUpdate:Client", PROFILE_GAME);
+
+		// update client
+		if (m_pClient)
+		{
+			m_pClient->UpdateClientNetwork();
+			MEASURETIME("Net");
+
+			assert(m_pClient);
+			m_pClient->Update();
+
+			if (m_pClient->DestructIfMarked()) //  to make sure the client is only released in one place - here
+				m_pClient = 0;
+		}
+
+		MEASURETIME("ClServ Up");
+
+		////////UPDATE THE NETWORK
+		// [Anton] moved from after the rendering, so that the server has access to the most recent physics data
+		// update server
+		if (m_pServer)
+		{
+			FRAME_PROFILER("GameUpdate:Server", PROFILE_GAME);
+
+			m_pServer->Update();
+		}
+
+		MEASURETIME("EndServUp");
+	}
+
+	m_pNetwork->UpdateNetwork(); // used to update things like the UBI.com services
+
+	DWORD dwCurrentTimeInMS = GetCurrentTime();
+
+	if (!m_pSystem->IsDedicated())
+	{
+		if (m_pServerSnooper)
+			m_pServerSnooper->Update(dwCurrentTimeInMS);
+
+		if (m_pNETServerSnooper)
+			m_pNETServerSnooper->Update(dwCurrentTimeInMS);
+	}
+
+	if (m_pRConSystem)
+	{
+		if (m_pClient)
+			m_pRConSystem->Update(dwCurrentTimeInMS, m_pClient->GetNetworkClient());
+		else
+			m_pRConSystem->Update(dwCurrentTimeInMS);
+	}
+
+	// network end
+
+	// system rendering
+	if (bRenderFrame)
+	{
+		// render begin must be always called anyway to clear buffer, draw buttons etc.
+		// even in menu mode
+		m_pSystem->RenderBegin();
+
+		m_pSystem->Render();
+		MEASURETIME("3SysRend");
+	}
+
+	// update the HUD
+	if (m_pCurrentUI && !bPause && m_pClient && m_pClient->m_bDisplayHud)
+	{
+		FRAME_PROFILER("GameUpdate:HUD", PROFILE_GAME);
+
+		// update hud itself
+		if (!m_pCurrentUI->Update())
+			m_bUpdateRet = false;
+
+		// update ingame-dialog-manager
+		if (m_pIngameDialogMgr)
+			m_pIngameDialogMgr->Update();
+
+		MEASURETIME("HUD Up");
+	}
+
+	if (m_pUISystem && m_pUISystem->IsEnabled())
+	{
+		FRAME_PROFILER("GameUpdate:UI", PROFILE_GAME);
+
+		if (m_bMenuOverlay || m_bUIOverlay)
+		{
+			m_pUISystem->Update();
+			m_pUISystem->Draw();
+		}
+	}
+
+	if (a_DrawArea->GetIVal())
+	{
+		m_XAreaMgr.DrawAreas(m_pSystem);
+		MEASURETIME("XAreaDraw");
+	}
+
+	// print time profiling results
+#ifndef PS2
+	MEASURETIME((const char*)-1);
+#else
+	MEASURETIME("Time");
+#endif
+
+	MEASURETIME("3TimeProf");
+
+	//NETWORK DEBUGGING
+	if (m_pClient && m_pClient->cl_netstats->GetIVal() != 0)
+	{
+		m_pClient->DrawNetStats();
+	}
+	if (m_pServer && m_pServer->sv_netstats->GetIVal() != 0)
+	{
+		m_pServer->DrawNetStats(m_pRenderer);
+	}
+
+	MEASURETIME("NetStats");
+
+	// end of frame
+	if (bRenderFrame)
+	{
+		// same thing as for render begin
+		if (m_pTimeDemoRecorder)
+			m_pTimeDemoRecorder->RenderInfo();
+
+		m_pSystem->RenderEnd();
+	}
+	MEASURETIME("3Rend Up");
+
+	// process messages from process
+	{
+		if (m_fFadingStartTime > 0)
+		{
+			if (((m_pSystem->GetITimer()->GetCurrTime()) - m_fFadingStartTime) > 1.5f)
+			{
+				m_fFadingStartTime = -1;
+				SendMessage(m_szLoadMsg);
+			}
+		}
+
+		while (!m_qMessages.empty())
+		{
+			string smsg = m_qMessages.front();
+			m_qMessages.pop();
+			ProcessPMessages(smsg.c_str());
+		}
+
+		// the messages can switch the game to menu or viceversa
+		bPause = IsInPause(pProcess);
+	}
+
+	//update script timers
+	if (m_pScriptTimerMgr)
+		m_pScriptTimerMgr->Update((unsigned long)(pTimer->GetCurrTime() * 1000));
+
+	MEASURETIME("ScrTimerUp");
+
+	if (g_GC_Frequence->GetFVal() > 0)
+	{
+		// Change Script Garbage collection frequency.
+		m_pSystem->SetGCFrequency(g_GC_Frequence->GetFVal());
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Special update function for developers mode.
 	//////////////////////////////////////////////////////////////////////////
 	if (IsDevModeEnable())
 		DevModeUpdate();
 	//////////////////////////////////////////////////////////////////////////
-	while (!m_qMessages.empty())
-	{
-		string smsg = m_qMessages.front();
-		m_qMessages.pop();
-		ProcessPMessages(smsg.c_str());
-	}
+
 	//////////////////////////////////////////////////////////////////////////
 
-	#if 0
-	if (bRenderFrame)
-		m_pSystem->RenderEnd();
-	#endif
+	MEASURETIME("EndGameUp");
 
-	//num_frames--;
+	//////////////////////////////////////////////////////////////////////////
+	// End Profiling Frame
+	m_pSystem->GetIProfileSystem()->EndFrame();
+	//////////////////////////////////////////////////////////////////////////
 
-	if (!num_frames)
-		CryFatalError("Game Over!");
-	return m_bUpdateRet && num_frames > 0;
+	return (m_bUpdateRet);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1169,7 +1346,9 @@ bool CXGame::LoadScene(std::string name)
 				//player->setGame(this);
 				//this->SetPlayer(player);
 			}
+			#if 0
 			m_pClient->OnLoadScene();
+			#endif
 		}
 		return true;
 	}
@@ -1469,11 +1648,6 @@ void CXGame::ProcessPMessages(const char* szMsg)
 	}
 }
 
-void CXGame::ReloadScripts()
-{
-	NOT_IMPLEMENTED;
-}
-
 ITagPointManager* CXGame::GetTagPointManager()
 {
 	return nullptr;
@@ -1508,11 +1682,7 @@ void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 		pSizer->AddObject(m_pServer, m_pServer->MemStats());
 	#endif
 	if (m_pClient)
-	#if 0
 		pSizer->AddObject(m_pClient, sizeof(*m_pClient));
-	#else
-		m_pClient->GetMemoryUsage(pSizer);
-	#endif
 
 	pSizer->AddObject(m_pScriptObjectGame, sizeof *m_pScriptObjectGame);
 	pSizer->AddObject(m_pScriptObjectInput, sizeof *m_pScriptObjectInput);

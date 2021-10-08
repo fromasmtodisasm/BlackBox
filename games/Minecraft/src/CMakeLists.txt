@@ -15,9 +15,10 @@ add_sources(
 	GUI/TextEditorDemo.cpp
 	# GameFiles/GameGUI.cpp
 	SOURCE_GROUP
-	"Client"
+	"GameClient"
 	Client/Client.cpp
 	Client/XClient.cpp
+	Client/XClientSnapshot.cpp
 	SOURCE_GROUP
 	"GameFiles"
 	GameFiles/EntityClassRegistry.cpp
@@ -28,13 +29,14 @@ add_sources(
 	GameFiles/GameDevMode.cpp
 	GameFiles/GameLoading.cpp
 	GameFiles/GameMods.cpp
-	GameFiles/GameObject.cpp
 	GameFiles/GameTagPoints.cpp
 	GameFiles/GameMemStats.cpp
+	GameFiles/GameMisc.cpp
 	GameFiles/GameEvents.cpp
 	GameFiles/SteamHelper.cpp
 	GameFiles/XVehicleSystem.cpp
 	GameFiles/XArea.cpp
+	#GameFiles/GameObject.h
 	GameFiles/GameCallbacks.cpp
 	GameFiles/XArea.h
 	SOURCE_GROUP
@@ -42,6 +44,7 @@ add_sources(
 	Network/XEntityProcessingCmd.cpp
 	Network/XNetwork.cpp
 	Network/XNetworkStats.cpp
+	Network/SynchedRandomSeed.cpp
 	SOURCE_GROUP
 	"Player"
 	Player/XPlayer.cpp
@@ -117,6 +120,16 @@ add_sources(
 	"Legacy"
 	Legacy/IInput.h
 	Legacy/IFont.h
+	Legacy/ScriptObjectVector.h
+	Legacy/ScriptObjectStream.h
+	Legacy/IEntitySystem.h
+	SOURCE_GROUP
+	"Weapons"
+	Weapons/FireType.h
+	Weapons/WeaponClass.cpp
+	Weapons/WeaponClass.h
+	Weapons/WeaponSystemEx.cpp
+	Weapons/WeaponSystemEx.h
 )
 end_sources()
 gamemodule(Minecraft FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
@@ -148,6 +161,9 @@ file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)
 target_sources(${THIS_PROJECT} PRIVATE ${INCLUDE_FILES})
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/UI)
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Legacy)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/TimeDemoRecorder)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Weapons)
+target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Network)
 
 source_group(
 	TREE ${INCLUDE_ROOT}

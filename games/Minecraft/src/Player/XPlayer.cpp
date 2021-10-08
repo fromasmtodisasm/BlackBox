@@ -15,21 +15,21 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if 0
 #include "XPlayer.h"
 #include "WeaponClass.h"
-#include "XVehicle.h"
 #include "WeaponSystemEx.h"
 #include "ScriptObjectStream.h"
 
 #include <IEntitySystem.h>
-#include <IAISystem.h>
-#include <IAgent.h>
-#include <ISound.h>
-#include "I3DEngine.h"
-#include <crycharanimationparams.h>
+//#include "XVehicle.h"
+//#include <IAISystem.h>
+//#include <IAgent.h>
+//#include <ISound.h>
+//#include "I3DEngine.h"
+#include <CryCharAnimationParams.h>
 // to use _isnan()
 #include <float.h>
+#if 0
 
 //////////////////////////////////////////////////////////////////////
 //! Minimal time before player can be alive again.
@@ -41,7 +41,7 @@
 #define PLAYER_WEAPON_CHANGE_TIME 0.1f
 
 //////////////////////////////////////////////////////////////////////
-bool CheckIfNAN( const Legacy::Vec3d& vPos )
+bool CheckIfNAN( const Legacy::Vec3& vPos )
 {
 	if (_isnan(vPos.x) || _isnan(vPos.y) || _isnan(vPos.z))
 	{
@@ -428,7 +428,7 @@ bool CPlayer::Init()
 	pEntCamera->GetCamera().Update();
 	//////////////////////////////////////////////////////////////////////////
 
-	Legacy::Vec3d default_offset;
+	Legacy::Vec3 default_offset;
 	default_offset(0,m_pGame->cl_ThirdPersonRange->GetFVal(),4);
 	m_pEntity->GetCamera()->SetCameraOffset(default_offset);
 
@@ -445,7 +445,7 @@ bool CPlayer::Init()
 /*!Called by the entity when the angles are changed.
 This notification is used to force the orientation of the player.
 */
-void CPlayer::OnSetAngles( const Legacy::Vec3d &ang )
+void CPlayer::OnSetAngles( const Legacy::Vec3 &ang )
 {
   // talk to Vladimir if you want to comment this code again
 	//	if(m_pGame->m_pClient && !m_pVehicle)
@@ -508,6 +508,7 @@ void CPlayer::InitWeapons()
 	}
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SelectFirstWeapon()
 {
@@ -521,6 +522,7 @@ void CPlayer::SelectFirstWeapon()
 	if(m_vWeaponSlots[slot]!=0)
 		SelectWeapon(m_vWeaponSlots[slot]);
 }
+#if 0
 
 //////////////////////////////////////////////////////////////////////
 /*! Updates the player torso/head angles. Should be called every frame. CAlled from Update()
@@ -547,7 +549,7 @@ void CPlayer::UpdateRotateHead()
 		return;
 	}
 
-	Legacy::Vec3d angles = GetActualAngles();
+	Legacy::Vec3 angles = GetActualAngles();
 	if(m_LegNeedsForceAngle || m_pMountedWeapon)	// some animation was played - need to reset all rotations
 	{
 		m_LegAngle = angles.z;
@@ -743,7 +745,7 @@ void CPlayer::Update()
 		return;
 	}
 
-	Legacy::Vec3d vel = (Legacy::Vec3d)status.vel;	
+	Legacy::Vec3 vel = (Legacy::Vec3)status.vel;	
 	if (status.pGroundCollider)
 		vel -= status.velGround;
 	m_stats.fVel = vel.Length();
@@ -1045,6 +1047,7 @@ void CPlayer::SetPlayerModel( const string &model )
 	UpdateBonesPtrs();
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 /*! Retrieves a weapon-info-structure for a certain weapon
 		@param nWeaponIndex weapon-id to retrieve from (negative value will return info of current weapon)
@@ -1066,6 +1069,7 @@ WeaponInfo & CPlayer::GetWeaponInfo(int nWeaponIndex /* = -1 */)
 	assert(false);
 	return m_mapPlayerWeapons.begin()->second;
 }
+#if 0
 
 //////////////////////////////////////////////////////////////////////
 void CPlayer::GetCurrentWeaponParams(WeaponParams& wp)
@@ -1140,7 +1144,7 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 
 	FUNCTION_PROFILER( GetISystem(),PROFILE_GAME );
 
-	Legacy::Vec3d Angles=ProcessingCmd.GetDeltaAngles();
+	Legacy::Vec3 Angles=ProcessingCmd.GetDeltaAngles();
 
 	if (IsMyPlayer() && m_pVehicle && !m_bFirstPerson && !m_pMountedWeapon)
 	{
@@ -1183,7 +1187,7 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 	// if at the mounted weapon - check for collisions coz player position is forced bu the weapon 
 	if( m_pMountedWeapon )
 	{
-		Legacy::Vec3d pos2check = m_pEntity->GetPos();
+		Legacy::Vec3 pos2check = m_pEntity->GetPos();
 		if(!CanStand( pos2check ) )
 		{
 			// this position is bad (collides with something) - restore prev pos/angles 			
@@ -1220,7 +1224,7 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 				stanceRecoilModifier = wp.fRecoilModifierProne;
 			}
 		}
-		Legacy::Vec3d vA=Angles;
+		Legacy::Vec3 vA=Angles;
 		
 		if((m_fRecoilXUp==0 && (m_fRecoilZUp==0)) && (m_fRecoilXDelta!=0)  )//blend back recoil 
 		{
@@ -1305,7 +1309,7 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 	{ 
 
 		m_pEntity->SetAngles( Angles,false, false );
-		m_vShake=Legacy::Vec3d(0,0,0);
+		m_vShake=Legacy::Vec3(0,0,0);
 		
 		// so here goes wapon sway
 		if(m_Dynamics.gravity!=0.0f)		// only if there is gravity
@@ -1345,11 +1349,11 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 						CryQuat cxquat = Quat( GetTransposed44(matWorld) );
 
 						CryQuat rxquat;
-						Legacy::Vec3d	shake( 0, fSinOfs * fDeg, 0 );
+						Legacy::Vec3	shake( 0, fSinOfs * fDeg, 0 );
 						rxquat.SetRotationXYZ(DEG2RAD(shake));
 
 						CryQuat result = cxquat*rxquat;
-						Legacy::Vec3d finalangles = RAD2DEG(Ang3::GetAnglesXYZ(Matrix33(result)));
+						Legacy::Vec3 finalangles = RAD2DEG(Ang3::GetAnglesXYZ(Matrix33(result)));
 						m_vShake += m_vEyeAngles - finalangles;
 					}
 				}
@@ -1674,8 +1678,8 @@ void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
 	
 	//////////////////
 	//convert in the format used by physics
-	Legacy::Vec3d tempangle = cmd.GetDeltaAngles();
-	Legacy::Vec3d dirangle = tempangle;
+	Legacy::Vec3 tempangle = cmd.GetDeltaAngles();
+	Legacy::Vec3 dirangle = tempangle;
 	dirangle=ConvertToRad(dirangle);	
 
 	float m_pcos = cry_cosf(dirangle[YAW]);//*inputspeed;
@@ -1688,7 +1692,7 @@ void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
 	m_walkParams.dir.y =	m_pcos;
 	m_walkParams.dir.z = 0.0f;
 
-	Legacy::Vec3d speedxyz(0.0f, 0.0f, 0.0f);
+	Legacy::Vec3 speedxyz(0.0f, 0.0f, 0.0f);
 
 	pe_status_dynamics dynStatus;
 	pPhysEnt->GetStatus((pe_status*)&dynStatus);
@@ -1959,7 +1963,7 @@ void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
 
 			float	jumpSpeedH, jumpSpeedV;
 			bJump = 1;
-			Legacy::Vec3d	horSpeed = speedxyz;
+			Legacy::Vec3	horSpeed = speedxyz;
 
 			if(!IsSwimming())
 			{
@@ -2045,6 +2049,7 @@ void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
 
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 /*! Retrieves the currently selected weapon
 		@return selected weapon
@@ -2060,7 +2065,7 @@ CWeaponClass* CPlayer::GetSelectedWeapon() const
 	}
 	return pSelectedWeapon;
 }
- 
+#if 0 
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SelectNextWeapon()
 {
@@ -2277,13 +2282,13 @@ void CPlayer::ProcessWeapons(CXEntityProcessingCmd &cmd)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CPlayer::FireGrenade(const Legacy::Vec3d &origin, const Legacy::Vec3d &angles, IEntity *pIShooter)
+void CPlayer::FireGrenade(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, IEntity *pIShooter)
 {
 	_SmartScriptObject pTable(m_pScriptSystem);
 
 	m_ssoHitPosVec=origin;
 	m_ssoHitNormVec=angles;//angles;
-	Legacy::Vec3d dir=angles;
+	Legacy::Vec3 dir=angles;
 	dir=ConvertToRadAngles(dir);	
 	 
 	// projectiles (grenades, for ex) should inherit player's velocity	
@@ -2363,6 +2368,7 @@ void CPlayer::DrawThirdPersonWeapon(bool bDraw)
 		}
 	}
 }
+#endif
 //////////////////////////////////////////////////////////////////////
 /*! Selects a weapon the player should hold
 		@param weapon id of weapon to set
@@ -2372,7 +2378,9 @@ bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
 	PlayerWeaponsItor wi;
 
 	// if it's shooter from the vehicle - can't select weapons
+	#if 0
 	if (m_nSelectedWeaponID>0 && m_pVehicle && m_pVehicle->GetWeaponUser()==this)
+	#endif
 		return false;
 	if (m_stats.onLadder)
 		return false;
@@ -2425,7 +2433,6 @@ bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
 	
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SetWeapon(int iClsID)
 {
@@ -2477,12 +2484,13 @@ void CPlayer::SetWeapon(int iClsID)
 	}
 }
 
+#if 0
 //////////////////////////////////////////////////////////////////////
 /*! return the position and orientation of the firepoint of a player
 	@param firePos position
 	@param fireAngles orientation(in degrees)
 */
-void CPlayer::GetFirePosAngles(Legacy::Vec3d& firePos, Legacy::Vec3d& fireAngles)
+void CPlayer::GetFirePosAngles(Legacy::Vec3& firePos, Legacy::Vec3& fireAngles)
 {
 	if (!m_bIsAI)
 	{
@@ -2589,12 +2597,12 @@ void CPlayer::UpdateMelee()
 	if(m_stats.melee_attack && (m_stats.weapon_busy<=0) && (m_stats.melee_distance > 0.0f))
 	{		
 		_SmartScriptObject so(m_pScriptSystem);
-		Legacy::Vec3d firePos;
-		Legacy::Vec3d fireAngles;
+		Legacy::Vec3 firePos;
+		Legacy::Vec3 fireAngles;
 
 		GetFirePosAngles(firePos, fireAngles);
 
-		Legacy::Vec3d dir(0,-1,0);
+		Legacy::Vec3 dir(0,-1,0);
 		Legacy::Matrix44 tm = Legacy::Matrix44::CreateRotationZYX(-fireAngles*gf_DEGTORAD); //NOTE: angles in radians and negated ;
 
 		dir = GetTransposed44(tm)*(dir);
@@ -2633,8 +2641,8 @@ void CPlayer::UpdateWeapon()
 	if(m_stats.firing_grenade)
 	{
 		FRAME_PROFILER( "UpdateWeapon::Grenade",GetISystem(),PROFILE_GAME );
-		Legacy::Vec3d firePos;
-		Legacy::Vec3d fireAngles;
+		Legacy::Vec3 firePos;
+		Legacy::Vec3 fireAngles;
 		GetFirePosAngles(firePos, fireAngles);
 
 		if(m_stats.weapon_busy<=0)
@@ -2756,8 +2764,8 @@ void CPlayer::UpdateWeapon()
 			//is in the right state for firing
 			if( wp.fire_activation&m_stats.FiringType)
 			{
-				Legacy::Vec3d firePos;
-				Legacy::Vec3d fireAngles;
+				Legacy::Vec3 firePos;
+				Legacy::Vec3 fireAngles;
 
 				GetFirePosAngles(firePos, fireAngles);
 
@@ -2855,15 +2863,15 @@ void CPlayer::UpdateWeapon()
 
 //////////////////////////////////////////////////////////////////////
 // returns ACTUAL players direction angle - the one it's shooting/looking at
-Legacy::Vec3d CPlayer::GetActualAngles()
+Legacy::Vec3 CPlayer::GetActualAngles()
 {
-	Legacy::Vec3d angles; 
+	Legacy::Vec3 angles; 
 	
 	if( m_pGame->p_EyeFire->GetIVal()==0)
 	{
 		if(m_aimLook)
 		{
-			Legacy::Vec3d pos;
+			Legacy::Vec3 pos;
 			GetFirePosAngles( pos, angles );
 		}
 		else
@@ -2890,7 +2898,7 @@ void CPlayer::UpdateBonesRotation( )
 	{
 		// apply lean angles to player character	
 		ICryCharInstance *pChar = m_pEntity->GetCharInterface()->GetCharacter(0);
-		Legacy::Vec3d angles = GetActualAngles();
+		Legacy::Vec3 angles = GetActualAngles();
 
 		if (pChar)
 		{
@@ -3875,6 +3883,7 @@ void CPlayer::Respawn()
 	m_bStayCrouch = false;
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 /*! Retrieves if this player is mine
 		@return returns true if it is my player, false otherwise
@@ -4044,6 +4053,7 @@ bool CPlayer::Write( CStream &stream,EntityCloneState *cs)
 */
 bool CPlayer::Read( CStream &stream )
 {
+	#if 0
 	unsigned short dirty = 0;
 	PlayerStats &stats=m_stats;
 	BYTE health,armor,weapon,firemode,staminaBuff;	
@@ -4223,7 +4233,7 @@ bool CPlayer::Read( CStream &stream )
 		m_pRedirected->SetAngles(m_pEntity->GetAngles());
 
 	stream.Read(m_bFirstPersonLoaded);
-
+#endif
 	return true;
 }
 
@@ -4248,10 +4258,12 @@ bool CPlayer::Save( CStream &stream)
 //////////////////////////////////////////////////////////////////////
 bool CPlayer::Load( CStream &stream)
 {
+	#if 0
 	bool bPrevLightStatus;
 	stream.Read(bPrevLightStatus);
 	if (bPrevLightStatus!=m_bLightOn)
 		SwitchFlashLight(bPrevLightStatus);
+	#endif
 	return Read(stream);
 }
 
@@ -4305,7 +4317,9 @@ bool CPlayer::LoadGame(CStream &stm)
 	Load(stm);
 
 
+	#if 0
 	SelectWeapon(m_stats.weapon);
+	#endif
 
 	if (m_nSelectedWeaponID != -1)
 	{
@@ -4324,6 +4338,7 @@ bool CPlayer::LoadGame(CStream &stm)
 		wi.iFireMode = m_stats.firemode;
 	}
 
+	#if 0
 	if (m_bIsAI)
 	{
 		IPuppet *pPuppet=0;
@@ -4333,6 +4348,7 @@ bool CPlayer::LoadGame(CStream &stm)
 			  m_stats.health = nStartHealth;
 		}
 	}	
+	#endif
 
 	return true;
 };
@@ -4437,7 +4453,7 @@ void CPlayer::RedirectInputToEntity(EntityId id, int angleDelta)
 		if (m_pRedirected)
 			m_pRedirected = NULL;
 		if(IsMyPlayer())
-			m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3d(0.0f, 0.0f, 0.0f));
+			m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0.0f, 0.0f, 0.0f));
 	}
 	else
 	{
@@ -4451,7 +4467,7 @@ void CPlayer::RedirectInputToEntity(EntityId id, int angleDelta)
 			if(IsMyPlayer())
 			{
 				if(angleDelta>=0)
-					m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3d(0.0f, 0.0f, (float)angleDelta));
+					m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0.0f, 0.0f, (float)angleDelta));
 				else
 					m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(pEntity->GetAngles(1));
 			}
@@ -4485,7 +4501,7 @@ IEntity * CPlayer::GetRedirected()
 /*! set the offset of the camera from the player position.
 	usually is the height of the player
 */
-void CPlayer::SetCameraOffset(const Legacy::Vec3d& Offset)
+void CPlayer::SetCameraOffset(const Legacy::Vec3& Offset)
 {
 	m_pEntity->GetCamera()->SetCameraOffset(Offset);
 }
@@ -4494,11 +4510,12 @@ void CPlayer::SetCameraOffset(const Legacy::Vec3d& Offset)
 /*! retreive the offset of the camera relative to the player position
 	@param Offset the offset in meters
 */
-void CPlayer::GetCameraOffset(Legacy::Vec3d& Offset)
+void CPlayer::GetCameraOffset(Legacy::Vec3& Offset)
 {
 	m_pEntity->GetCamera()->GetCameraOffset(Offset);
 }
 
+#if 0
 //////////////////////////////////////////////////////////////////////
 void CPlayer::UpdateDrawAngles( )
 {
@@ -4512,8 +4529,8 @@ void CPlayer::UpdateDrawAngles( )
 	if (timeScale>1.0f)
 		timeScale = 1.0f;
 	
-	Legacy::Vec3d angles = GetActualAngles();
-	Legacy::Vec3d vAngles;
+	Legacy::Vec3 angles = GetActualAngles();
+	Legacy::Vec3 vAngles;
 
 	//on ladder orient the player so he always look at the center of the ladder.
 	if  (m_stats.onLadder) 
@@ -4536,9 +4553,9 @@ void CPlayer::UpdateDrawAngles( )
 	else
 	{
 		if(m_LegRotation)
-			vAngles = Legacy::Vec3d(0, 0, m_LegAngle);
+			vAngles = Legacy::Vec3(0, 0, m_LegAngle);
 		else
-			vAngles = Legacy::Vec3d(0,0,angles.z);
+			vAngles = Legacy::Vec3(0,0,angles.z);
 	}
 
 	//[kirill] smooth here Character angles (all but Z)
@@ -4548,7 +4565,7 @@ void CPlayer::UpdateDrawAngles( )
 	m_vCurEntAngle.x = Snap_s180(m_vCurEntAngle.x);
 	m_vCurEntAngle.y = Snap_s180(m_vCurEntAngle.y);
 
-	Legacy::Vec3d delta = (vAngles - m_vCurEntAngle);
+	Legacy::Vec3 delta = (vAngles - m_vCurEntAngle);
 	delta.x = Snap_s180(delta.x);
 	delta.y = Snap_s180(delta.y);
 	
@@ -4617,7 +4634,7 @@ void CPlayer::OnDraw(const SRendParams & _RendParams)
 		CryQuat cxquat = Quat( GetTransposed44(matParent) );
 
 		CryQuat rxquat;
-		Legacy::Vec3d	gunnerAngle;
+		Legacy::Vec3	gunnerAngle;
 		if(m_stats.inVehicleState == PVS_GUNNER)	// it' gunner in vehicle
 			gunnerAngle = GetEntity()->GetAngles(1);
 		else					// it' driver/passenger
@@ -4627,7 +4644,7 @@ void CPlayer::OnDraw(const SRendParams & _RendParams)
 		rxquat.SetRotationXYZ(DEG2RAD(gunnerAngle));
 
 		CryQuat result = cxquat*rxquat;
-		Legacy::Vec3d finalangles = Ang3::GetAnglesXYZ(Matrix33(result));
+		Legacy::Vec3 finalangles = Ang3::GetAnglesXYZ(Matrix33(result));
 		RendParams.vAngles = RAD2DEG(finalangles);
 		m_pEntity->SetPhysAngles( RendParams.vAngles );
 	}
@@ -4681,7 +4698,7 @@ void CPlayer::SetAnimationRefSpeedWalk(const float fwd, const float side, const 
 	m_AniSpeedWalk[1] = side;
 	m_AniSpeedWalk[2] = back;
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
@@ -4924,18 +4941,18 @@ int CPlayer::GetBoneHitZone( int boneIdx ) const
 {
 	return  m_pEntity->GetBoneHitZone(boneIdx);
 }
-
+#if 0
 //////////////////////////////////////////////////////////////////////////
-Legacy::Vec3d CPlayer::CalcTangentOnEnviroment( const Legacy::Vec3d	&angle )
+Legacy::Vec3 CPlayer::CalcTangentOnEnviroment( const Legacy::Vec3	&angle )
 {
-Legacy::Vec3d	forward = angle;
-Legacy::Vec3d tangent=forward;
+Legacy::Vec3	forward = angle;
+Legacy::Vec3 tangent=forward;
 	if(!m_pEntity->GetPhysics())
 		return tangent;
 	pe_status_living pStat;
 	m_pEntity->GetPhysics()->GetStatus(&pStat);
 
-	Legacy::Vec3d		normal = m_vProneEnvNormal;
+	Legacy::Vec3		normal = m_vProneEnvNormal;
 
 	forward=ConvertToRadAngles(forward);
 	forward = normal.Cross( forward );
@@ -4944,7 +4961,7 @@ Legacy::Vec3d tangent=forward;
 	forward.Normalize();
 	normal.Normalize();
 
-	Legacy::Vec3d vA[3];
+	Legacy::Vec3 vA[3];
 
 	vA[1] = -forward;
 	vA[0] = normal.Cross(forward);
@@ -5026,7 +5043,7 @@ bool CPlayer::HasCollided( )
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::StartDie( const Legacy::Vec3d& hitImpuls, const Legacy::Vec3d hitPoint, int hitpartid, const int deathType )
+void CPlayer::StartDie( const Legacy::Vec3& hitImpuls, const Legacy::Vec3 hitPoint, int hitpartid, const int deathType )
 {
 	if(!m_pGame->IsMultiplayer())
 	{
@@ -5109,6 +5126,7 @@ void CPlayer::SetDynamics(const PlayerDynamics *pDyn)
 	if (pDyn->jump_gravity!=1E10f) m_Dynamics.jump_gravity = pDyn->jump_gravity;
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 void CPlayer::RemoveAllWeapons()
 {
@@ -5117,7 +5135,7 @@ void CPlayer::RemoveAllWeapons()
 	for (it=m_mapPlayerWeapons.begin(); it!=m_mapPlayerWeapons.end(); it++)
 		(* it).second.owns = false;
 }
-
+#if 0
 //////////////////////////////////////////////////////////////////////
 //	returns true if can stand in given position
 bool	CPlayer::CanStand( const Legacy::Vec3& pos)
@@ -5149,6 +5167,7 @@ bool	CPlayer::CanStand( const Legacy::Vec3& pos)
 	return result;
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
 bool	CPlayer::GoStand(bool ignoreSpam)
@@ -5167,12 +5186,14 @@ bool	CPlayer::GoStand(bool ignoreSpam)
 
 		if(phys->SetParams( &m_PlayerDimNormal ))
 		{
+			#if 0
 			//InitCameraTransition( PCM_CASUAL ,true );
 			m_AngleLimitBase.Set(0,0,0);
 			if(m_pEntity->GetAI())
 			{
 				m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimNormal.heightEye);
 			}
+			#endif
 			m_currDimensions = eDimNormal;
 			m_PrevStance = m_CurStance;
 			m_CurStance = eStand;
@@ -5209,7 +5230,6 @@ bool	CPlayer::GoStand(bool ignoreSpam)
 
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
 bool	CPlayer::GoStealth( )
@@ -5223,12 +5243,14 @@ bool	CPlayer::GoStealth( )
 		// Use stealth physics dimensions.
 		if(phys->SetParams( &m_PlayerDimStealth ))	//if can stealth here
 		{
+			#if 0
 			//InitCameraTransition( PCM_CASUAL );
 			m_AngleLimitBase.Set(0,0,0);
 			if(m_pEntity->GetAI())
 			{
 				m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimStealth.heightEye);
 			}
+			#endif
 			m_currDimensions = eDimStealth;
 			m_PrevStance = m_CurStance;
 			m_CurStance = eStealth;
@@ -5257,6 +5279,7 @@ bool	CPlayer::GoStealth( )
 	return true;
 }
 
+#if 0
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
 bool	CPlayer::GoCrouch( )
@@ -5326,7 +5349,7 @@ bool	CPlayer::GoProne( )
 		// and try again
 		if(!phys->SetParams( &m_PlayerDimProne ))
 		{
-			Legacy::Vec3d pos = m_pEntity->GetPos();
+			Legacy::Vec3 pos = m_pEntity->GetPos();
 			pos.z += .5f;
 			m_pEntity->SetPos( pos );
 			if(!phys->SetParams( &m_PlayerDimProne ))
@@ -5338,7 +5361,7 @@ bool	CPlayer::GoProne( )
 			}
 		}
 
-		Legacy::Vec3d	ang = m_pEntity->GetAngles();
+		Legacy::Vec3	ang = m_pEntity->GetAngles();
 		m_EnvTangent = CalcTangentOnEnviroment( m_pEntity->GetAngles() );
 		m_pEntity->SetPhysAngles( m_EnvTangent );			// set angels for phisics (body is flat on surfece tangent space)
 
@@ -5444,9 +5467,9 @@ bool	CPlayer::CanProne(bool ignoreSpam)
 
 	pe_status_living pStat;
 	m_pEntity->GetPhysics()->GetStatus(&pStat);
-	m_vProneEnvNormal = (Legacy::Vec3d)pStat.groundSlope;
+	m_vProneEnvNormal = (Legacy::Vec3)pStat.groundSlope;
 	ray_hit hit;
-	Legacy::Vec3d pos=m_pEntity->GetPos();
+	Legacy::Vec3 pos=m_pEntity->GetPos();
 	int hitCount=0;		
 	float fHitCount=1.0f;
 	if( m_vProneEnvNormal.z>slopeProneLimit )
@@ -5563,25 +5586,25 @@ bool	CPlayer::RestorePrevStence()
 //	for debug/test purposes - 
 void	CPlayer::StartFire()
 {
-	Legacy::Vec3d	pos = m_pEntity->GetPos();	
+	Legacy::Vec3	pos = m_pEntity->GetPos();	
 }
 
 //////////////////////////////////////////////////////////////////////
-Legacy::Vec3d CPlayer::CalcSoundPos()
+Legacy::Vec3 CPlayer::CalcSoundPos()
 {
 	IEntityCamera *pEC;
 	if (IsMyPlayer() && (pEC=m_pEntity->GetCamera()))
 	{
 		CCamera &cam=pEC->GetCamera();
-		Legacy::Vec3d vPos=cam.GetPos();
+		Legacy::Vec3 vPos=cam.GetPos();
 		vPos+=cam.m_vOffset;
-		Legacy::Vec3d vAngles=cam.GetAngles();
-		Legacy::Vec3d vTrans=vPos-cam.GetPos();
+		Legacy::Vec3 vAngles=cam.GetAngles();
+		Legacy::Vec3 vTrans=vPos-cam.GetPos();
 		Legacy::Matrix44 vRot;
 		vRot.SetIdentity();		
 		//rotate the matrix ingnoring the Y rotation
-		//vRot.RotateMatrix(Legacy::Vec3d(vAngles.x,0,vAngles.z));		
-		vRot=Legacy::Matrix44::CreateRotationZYX(-Legacy::Vec3d(vAngles.x,0,vAngles.z)*gf_DEGTORAD)*vRot; //NOTE: angles in radians and negated 
+		//vRot.RotateMatrix(Legacy::Vec3(vAngles.x,0,vAngles.z));		
+		vRot=Legacy::Matrix44::CreateRotationZYX(-Legacy::Vec3(vAngles.x,0,vAngles.z)*gf_DEGTORAD)*vRot; //NOTE: angles in radians and negated 
 		vPos=vRot.TransformPointOLD(vTrans);
 		//translate back
 		vPos+=cam.GetPos();
@@ -5613,6 +5636,7 @@ void CPlayer::CalcJumpSpeed( float dist, float height, float &horV, float &vertV
 		else horV=0.0f;
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SetViewMode(bool bThirdPerson)
 {
@@ -5632,7 +5656,7 @@ void CPlayer::SetViewMode(bool bThirdPerson)
 			m_pEntity->DrawCharacter(0, 1);
 	}
 }
-
+#if 0
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SwitchFiremode(int nforce)
 {
@@ -5758,6 +5782,7 @@ void CPlayer::HolsterWeapon(void)
 	SetWeaponPositionState(WEAPON_POS_HOLSTER);
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 // rebinds weapon to be bound to the weapon bone in the characters hands
 void CPlayer::HoldWeapon(void)
@@ -5825,6 +5850,7 @@ void	CPlayer::GetBlendTime(const char *sAniName, float&fBlendTime)
 	fBlendTime = (curAni->second);
 }
 
+#if 0
 //////////////////////////////////////////////////////////////////////
 void	CPlayer::UpdateCollisionDamage( )
 {
@@ -5833,7 +5859,7 @@ void	CPlayer::UpdateCollisionDamage( )
 	if (!physEnt)
 		return;
 
-	FUNCTION_PROFILER( GetISystem(),PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME );
 
 	// Create a new status object.  
 	pe_status_collisions status;
@@ -5920,7 +5946,7 @@ void	CPlayer::OnDrawMountedWeapon( const SRendParams & RendParams )
 		m_pMountedWeapon->DrawObject(0,ETY_DRAW_NORMAL);
 		m_pMountedWeapon->DrawCharacter(0,ETY_DRAW_NORMAL);
 
-		Legacy::Vec3d apos, aang;
+		Legacy::Vec3 apos, aang;
 		GetFirePosAngles( apos, aang );
 
 		apos = m_pMountedWeapon->GetAngles(1);	
@@ -5999,7 +6025,7 @@ void	CPlayer::GiveBinoculars(bool val)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime)
+void CPlayer::PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime)
 {
 	int nRecursionLevel = (int)m_pGame->GetSystem()->GetIRenderer()->EF_Query(EFQ_RecurseLevel) - 1;
 	if(m_bFirstPerson && !nRecursionLevel && m_stats.drawfpweapon	&& m_nSelectedWeaponID != -1)
@@ -6523,7 +6549,7 @@ void CPlayer::LoadAIState_PATCH_1(CStream & stm)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3d &v3dViewer, uint32 &inoutPriority, 
+void CPlayer::OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3 &v3dViewer, uint32 &inoutPriority, 
 	EntityCloneState &inoutCloneState) const
 {
 	inoutPriority+=100000;

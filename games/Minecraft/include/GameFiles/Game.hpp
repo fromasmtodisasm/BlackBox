@@ -395,7 +395,7 @@ struct TestObject
 #include <IPhysics.h>
 
 class CClient;
-#define CXClient CClient
+//#define CXClient CClient
 //////////////////////////////////////////////////////////////////////
 typedef std::queue<string> StringQueue;
 typedef std::set<string> StringSet;
@@ -459,10 +459,7 @@ public:
 	// load level for the game
 	void LoadLevelCS(bool reconnect, const char* szMapName, const char* szMissionName, bool listen);
 
-	IEntity* GetMyPlayer()
-	{
-		NOT_IMPLEMENTED_V;	
-	}
+	IEntity* GetMyPlayer();
 
 	// tagpoint management functions
 	ITagPoint* CreateTagPoint(const string& name, const Legacy::Vec3& pos, const Legacy::Vec3& angles);
@@ -483,10 +480,7 @@ public:
 	IXSystem* GetXSystem();
 	bool IsOK() { return m_bOK; }
 
-	void OnSetVar(ICVar* pVar)
-	{
-		NOT_IMPLEMENTED;	
-	}
+	void OnSetVar(ICVar* pVar);
 	// Servers management
 	bool	StartupServer(bool listen, const char* szName = NULL);
 	void	ShutdownServer();
@@ -511,10 +505,7 @@ public:
 		float fTerrainDefSize, int nTerrainDecalId);
 	void ScheduleEvent(int iPhysTime, IEntity* pVehicle, float fDamage);
 	void ScheduleEvent(int iPhysTime, IPhysicalEntity* pPhysEnt, pe_action_impulse* pai);
-	virtual void ExecuteScheduledEvents()
-	{
-		NOT_IMPLEMENTED;	
-	}
+	virtual void ExecuteScheduledEvents();
 	void WriteScheduledEvents(CStream& stm, int& iLastEventWritten, int iTimeDelta = 0);
 	void ReadScheduledEvents(CStream& stm);
 	bool UseFixedStep() { return m_iFixedStep2TimeGran != 0; }
@@ -537,14 +528,14 @@ public:
 
 	//! \param shooterSSID clientID 0..255 or -1 if unknown
 	void CreateExplosion(const Legacy::Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
-		float fShakeFactor, float fDeafnessRadius, float fDeafnessTime,
-		float fImpactForceMul, float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
-		float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
-		float fTerrainDefSize, int nTerrainDecalId, bool bScheduled = false);
+						 float fShakeFactor, float fDeafnessRadius, float fDeafnessTime,
+						 float fImpactForceMul, float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
+						 float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
+						 float fTerrainDefSize, int nTerrainDecalId, bool bScheduled = false);
 
 	//! IPhysicsStreamer (physics-on-demand) callback functions
-	int CreatePhysicalEntity(void* pForeignData, int iForeignData, int iForeignFlags);
-	int DestroyPhysicalEntity(IPhysicalEntity* pent);
+	int			CreatePhysicalEntity(void* pForeignData, int iForeignData, int iForeignFlags);
+	int			DestroyPhysicalEntity(IPhysicalEntity* pent);
 	const char* GetForeignName(void* pForeignData, int iForeignData, int iForeignFlags);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -601,10 +592,7 @@ public:
 
 	CXClient* GetClient() { return m_pClient; }
 
-	void SetViewAngles(const Legacy::Vec3& angles)
-	{
-		NOT_IMPLEMENTED;	
-	}
+	void SetViewAngles(const Legacy::Vec3& angles);
 
 	CWeaponSystemEx* GetWeaponSystemEx() { return m_pWeaponSystemEx; }
 	CUISystem* GetUISystem() { return m_pUISystem; };
@@ -688,19 +676,10 @@ public:
 	void SendMessage(const char* str) {
 		m_qMessages.push(str);
 	}
-	bool ExecuteScript(const char* sPath, bool bForceReload = false)
-	{
-		NOT_IMPLEMENTED_V	
-	}
-
-	void EnableUIOverlay(bool bEnable, bool bExclusiveInput)
-	{
-		NOT_IMPLEMENTED
-	}
-	bool IsUIOverlay()
-	{
-		NOT_IMPLEMENTED_V	
-	}
+	bool ExecuteScript(const char* sPath, bool bForceReload = false);
+	
+	void EnableUIOverlay(bool bEnable, bool bExclusiveInput);
+	bool IsUIOverlay();
 
 	bool IsInMenu() { return m_bMenuOverlay; };	  //!< checks if we are in menu or not
 	void GotoMenu(bool bTriggerOnSwitch = false); //!< arranges the message queue so that the game goes to the menu
@@ -1110,10 +1089,7 @@ public:
 	// interface IGame ---------------------------------------------------------
 
 	virtual void GetMemoryStatistics(ICrySizer* pSizer);
-	virtual void SetViewMode(bool bThirdPerson)
-	{
-		NOT_IMPLEMENTED
-	}
+	virtual void SetViewMode(bool bThirdPerson);
 	//Timur[10/2/2002]void SetScriptGlobalVariables(void);
 	virtual void AddRespawnPoint(ITagPoint* pPoint);
 	virtual void RemoveRespawnPoint(ITagPoint* pPoint);
@@ -1121,25 +1097,16 @@ public:
 	{
 		NOT_IMPLEMENTED
 	}
-	virtual void HideLocalPlayer(bool hide, bool bEditor)
-	{
-		NOT_IMPLEMENTED
-	}
+	virtual void HideLocalPlayer(bool hide, bool bEditor);
 	virtual void ReloadScripts();
-	virtual bool GoreOn() const
-	{
-		NOT_IMPLEMENTED_V
-	}
+	virtual bool		GoreOn() const;
 	virtual IBitStream* GetIBitStream()
 	{
 		NOT_IMPLEMENTED_V
 	}
 
 	//! sets a timer for a generic script object table
-	int		AddTimer(IScriptObject* pTable, unsigned int nStartTimer, unsigned int nTimer, IScriptObject* pUserData, bool bUpdateDuringPause)
-	{
-		NOT_IMPLEMENTED_V
-	}
+	int		AddTimer(IScriptObject* pTable, unsigned int nStartTimer, unsigned int nTimer, IScriptObject* pUserData, bool bUpdateDuringPause);
 	void	PlaySubtitle(ISound* pSound);
 	bool	OpenPacks(const char* szFolder);
 	bool	ClosePacks(const char* szFolder);

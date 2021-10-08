@@ -1,6 +1,7 @@
 //#include <Client/XClient.hpp>
 #include <Server/XServer.hpp>
-#include <Client/Client.hpp>
+//#include <Client/Client.hpp>
+#include <Client\XClient.hpp>
 
 //////////////////////////////////////////////////////////////////////
 //! create the server
@@ -68,7 +69,6 @@ bool CXGame::StartupClient()
 
   ShutdownClient();	// to be sure
 
-  #if 0
   m_pClient = new CXClient;
 
   if (!m_pClient->Init(this)) // Check if the client has been created
@@ -78,7 +78,6 @@ bool CXGame::StartupClient()
     m_pLog->Log("Client creation failed !");
     return false;
   }
-  #endif
 
   m_pLog->Log("Client created");
 
@@ -113,7 +112,6 @@ bool CXGame::StartupLocalClient()
 //! shutdown the client
 void CXGame::ShutdownClient()
 {
-  #if 0
   if (!m_pClient)
     return;
   m_pLog->Log("Disconnect the client");
@@ -123,16 +121,12 @@ void CXGame::ShutdownClient()
   m_pClient->MarkForDestruct();
   m_pClient->DestructIfMarked();
   m_pClient = NULL;
-#else
-	SAFE_DELETE(m_pClient);
-  #endif
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CXGame::IsClient()
 {
-	return m_pClient != NULL;
-	//&&!m_pClient->m_bSelfDestruct;
+	return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
 }
 
 bool CXGame::IsMultiplayer()
@@ -154,10 +148,8 @@ bool CXGame::IsMultiplayer()
 //! mark the client for deletion
 void CXGame::MarkClientForDestruct()
 {
-  #if 0
   if (m_pClient)
     m_pClient->MarkForDestruct();
-  #endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -209,9 +201,7 @@ void CXGame::OnNETServerTimeout(const CIPAddress& ip)
 void CXGame::RefreshServerList()
 {
   m_ServersInfos.clear();
-#if 0
   if (m_pServerSnooper)
     m_pServerSnooper->SearchForLANServers(GetCurrentTime());
-#endif
   TRACE("Refresh for lan");
 }

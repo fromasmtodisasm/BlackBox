@@ -13,21 +13,29 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-#include "XNetwork.h"
-#include "XServer.h"
-#include "XClient.h"
+//#include "Netework/XNetwork.hpp"
+#include "Client/XClient.hpp"
 #include "UIHud.h"
 #include "XPlayer.h"
 #include "PlayerSystem.h"
-#include "XServer.h"
+#include "Server/XServer.hpp"
 #include "WeaponSystemEx.h"
-#include "ScriptObjectGame.h"
-#include "ScriptObjectInput.h"
+#include "ScriptObjects/ScriptObjectGame.hpp"
+#include "ScriptObjects/ScriptObjectInput.hpp"
 #include <IEntitySystem.h>
 #include "UISystem.h"
 #include "ScriptObjectUI.h"
-#include "XVehicle.h"
+//#include "XVehicle.h"
+
+//FIXME: remove it
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 
 //////////////////////////////////////////////////////////////////////
 void EventPlayerCmd::Write(CStream &stm,int iPhysicalTime, IBitStream *pBitStream )
@@ -162,6 +170,7 @@ void EventPhysImpulse::Read(CStream &stm,int &iPhysicalTime, IBitStream *pBitStr
 //////////////////////////////////////////////////////////////////////////
 void EventPhysImpulse::Execute(CXGame *pGame)
 {
+	#if 0
 	IPhysicalEntity *pPhysEnt = pGame->GetSystem()->GetIPhysicalWorld()->GetPhysicalEntityById(idPhysEnt);
 	if (pPhysEnt)
 	{
@@ -174,6 +183,7 @@ void EventPhysImpulse::Execute(CXGame *pGame)
 		ai.iSource = 3;
 		pPhysEnt->Action(&ai);
 	}
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -195,12 +205,14 @@ void EventVehicleDamage::Read(CStream &stm,int &iPhysicalTime, IBitStream *pBitS
 //////////////////////////////////////////////////////////////////////////
 void EventVehicleDamage::Execute(CXGame *pGame)
 {
+	#if 0
 	IEntitySystem *pES = pGame->GetSystem()->GetIEntitySystem();
 	IEntity *pEnt;
 	CVehicle *pVehicle;
 	if (pES && (pEnt = pES->GetEntity(idVehicle)) && pEnt->GetContainer() && 
 			pEnt->GetContainer()->QueryContainerInterface(CIT_IVEHICLE, (void**)&pVehicle))
 		pVehicle->SetEngineHealth(damage*0.5f,true);
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -288,7 +300,6 @@ void CXGame::ScheduleEvent(int iPhysTime, IEntity *pVehicle,float fDamage)
 	pEvent->damage = (int)(fDamage*2+0.5f);
 	ScheduleEvent(iPhysTime, pEvent);
 }
-#endif
 //////////////////////////////////////////////////////////////////////////
 void CXGame::ScheduleEvent(int iPhysTime, IPhysicalEntity *pPhysEnt,pe_action_impulse *pai)
 {
@@ -301,11 +312,8 @@ void CXGame::ScheduleEvent(int iPhysTime, IPhysicalEntity *pPhysEnt,pe_action_im
 	if (pEvent->bHasMomentum = !is_unused(pai->momentum))
 		pEvent->momentum = pai->momentum;
 	ScheduleEvent(iPhysTime, pEvent);
-	#else
-	NOT_IMPLEMENTED;
 	#endif
 }
-#if 0
 
 //////////////////////////////////////////////////////////////////////////
 void CXGame::ExecuteScheduledEvents()
@@ -418,4 +426,3 @@ void CXGame::AdvanceReceivedEntities(int iPhysicalWorldTime)
 
 	m_bSynchronizing = false;
 }
-#endif

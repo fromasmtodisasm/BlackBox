@@ -1287,7 +1287,7 @@ struct IEntityContainer
 	virtual void OnDraw(const SRendParams & EntDrawParams) = 0;
 
 	//! start preloading render resoures
-	virtual void PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
+	virtual void PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
 
 	//! tells if the container should be serialized or not (checkpoints, savegame)
 	virtual bool IsSaveable() = 0;
@@ -1299,7 +1299,7 @@ struct IEntityContainer
 	//! called before the entity is synched over network - to calculate priority or neccessarity
 	//! \param pXServerSlot must not be 0
 	//! \param inoutPriority 0 means no update at all
-	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3d &v3dViewer, uint32 &inoutPriority,
+	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3 &v3dViewer, uint32 &inoutPriority,
 		EntityCloneState &inoutCloneState ) const=0;
 };
 

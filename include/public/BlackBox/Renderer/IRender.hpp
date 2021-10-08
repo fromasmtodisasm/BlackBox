@@ -130,6 +130,88 @@ struct Transform
 	}
 };
 
+//////////////////////////////////////////////////////////////////////
+// Texture flags
+
+#define FT_PROJECTED   0x1
+#define FT_NOMIPS      0x2
+#define FT_HASALPHA    0x4
+#define FT_NORESIZE    0x8
+#define FT_HDR         0x10
+#define FT_UPDATE      0x20
+#define FT_ALLOCATED   0x40
+#define FT_BUILD       0x80
+
+#define FT_NODOWNLOAD  0x100
+#define FT_CONV_GREY   0x200
+#define FT_LM          0x400
+#define FT_HASDSDT     0x800
+
+#define FT_HASNORMALMAP 0x1000
+#define FT_DYNAMIC    0x2000
+#define FT_NOREMOVE  0x4000
+#define FT_HASMIPS   0x8000
+#define FT_PALETTED  0x10000
+#define FT_NOTFOUND  0x20000
+#define FT_FONT     0x40000
+#define FT_SKY       0x80000
+#define FT_SPEC_MASK 0x7f000
+#define FT_CLAMP     0x100000
+#define FT_NOSTREAM  0x200000
+#define FT_DXT1      0x400000
+#define FT_DXT3      0x800000
+#define FT_DXT5      0x1000000
+#define FT_DXT       0x1c00000
+#define FT_3DC       0x2000000
+#define FT_3DC_A     0x4000000
+#define FT_ALLOW3DC  0x8000000
+
+#define FT_BUMP_SHIFT 27
+#define FT_BUMP_MASK      0xf0000000
+#define FT_BUMP_DETALPHA  0x10000000
+#define FT_BUMP_DETRED    0x20000000
+#define FT_BUMP_DETBLUE   0x40000000
+#define FT_BUMP_DETINTENS 0x80000000
+
+//////////////////////////////////////////////////////////////////////
+#define FT2_NODXT        1
+#define FT2_RENDERTARGET 2
+#define FT2_FORCECUBEMAP 4
+#define FT2_WASLOADED    8
+#define FT2_RELOAD       0x10
+#define FT2_NEEDRESTORED 0x20
+#define FT2_UCLAMP       0x40
+#define FT2_VCLAMP       0x80
+#define FT2_RECTANGLE    0x100
+#define FT2_FORCEDXT     0x200
+
+#define FT2_BUMPHIGHRES   0x400
+#define FT2_BUMPLOWRES    0x800
+#define FT2_PARTIALLYLOADED  0x1000
+#define FT2_NEEDTORELOAD     0x2000
+#define FT2_WASUNLOADED      0x4000
+#define FT2_STREAMINGINPROGRESS  0x8000
+
+#define FT2_FILTER_BILINEAR  0x10000
+#define FT2_FILTER_TRILINEAR 0x20000
+#define FT2_FILTER_ANISOTROPIC 0x40000
+#define FT2_FILTER_NEAREST     0x80000
+#define FT2_FILTER (FT2_FILTER_BILINEAR | FT2_FILTER_TRILINEAR | FT2_FILTER_ANISOTROPIC | FT2_FILTER_NEAREST)
+#define FT2_VERSIONWASCHECKED  0x100000
+#define FT2_BUMPCOMPRESED      0x200000
+#define FT2_BUMPINVERTED       0x400000
+#define FT2_STREAMFROMDDS      0x8000000
+#define FT2_DISCARDINCACHE     0x1000000
+#define FT2_NOANISO            0x2000000
+#define FT2_CUBEASSINGLETEXTURE  0x4000000
+#define FT2_FORCEMIPS2X2         0x8000000
+#define FT2_DIFFUSETEXTURE       0x10000000
+#define FT2_WASFOUND             0x20000000
+#define FT2_REPLICATETOALLSIDES  0x40000000
+#define FT2_CHECKFORALLSEQUENCES 0x80000000
+
+//////////////////////////////////////////////////////////////////////
+
 // Render State flags
 #define GS_BLSRC_MASK 0xf
 #define GS_BLSRC_ZERO 0x1
@@ -385,6 +467,12 @@ class CVertexBuffer
 
 	int Size(int Flags, int nVerts);
 };
+
+//////////////////////////////////////////////////////////////////////////
+//DOC-IGNORE-BEGIN
+#include <BlackBox/Renderer/IShader.hpp>
+//DOC-IGNORE-END
+
 struct IRenderCallback
 {
 	enum Type
@@ -694,6 +782,14 @@ struct IRenderer : public IRendererCallbackServer
 		return nullptr;
 		#endif
 	}
+	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0)
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return nullptr;
+		#endif
+	}
 
 	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)
 	{
@@ -731,7 +827,51 @@ extern "C"
 	typedef IRenderer* (*PFNCREATERENDERERINTERFACE)(ISystem* pSystem);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Query types for CryInd editor (used in EF_Query() function)
+#define EFQ_NUMEFS							0
+#define EFQ_LOADEDEFS						1
+#define EFQ_NUMTEXTURES					2
+#define EFQ_LOADEDTEXTURES			3
+#define EFQ_NUMEFFILES0					6
+#define EFQ_NUMEFFILES1					7
+#define EFQ_EFFILENAMES0				12
+#define EFQ_EFFILENAMES1				13
+#define EFQ_VProgramms					16
+#define EFQ_PShaders						17
+#define EFQ_LightSource					18
+#define EFQ_RecurseLevel				19
+#define EFQ_Pointer2FrameID			20
+#define EFQ_RegisteredTemplates 21
+#define EFQ_NumRenderItems			22
+#define EFQ_DeviceLost					23
+#define EFQ_CubeColor						24
+#define EFQ_D3DDevice						25
+#define EFQ_glReadPixels				26
+
+#define EFQ_Orients             33
+#define EFQ_NumOrients          34
+#define EFQ_SkyShader           35
+#define EFQ_SunFlares           36
+#define EFQ_CurSunFlare         37
+#define EFQ_Materials           38
+#define EFQ_LightMaterials      39
+
+//////////////////////////////////////////////////////////////////////
+
+#define STRIPTYPE_NONE           0
+#define STRIPTYPE_ONLYLISTS      1
+#define STRIPTYPE_SINGLESTRIP    2
+#define STRIPTYPE_MULTIPLESTRIPS 3
+#define STRIPTYPE_DEFAULT        4
+
+/////////////////////////////////////////////////////////////////////
+
+//DOC-IGNORE-BEGIN
 #include "VertexFormats.hpp"
+//#include "LeafBuffer.h" 
+//DOC-IGNORE-END
+
 
 //////////////////////////////////////////////////////////////////////////
 // this structure used to pass render parameters to Render() functions of IStatObj and ICharInstance

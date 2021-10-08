@@ -923,7 +923,6 @@ public:
 	IScriptObject* m_pSO;
 };
 
-#if 0
 class _HScriptFunction
 {
 public:
@@ -945,7 +944,6 @@ private:
   HSCRIPTFUNCTION m_hFunc;
   IScriptSystem* m_pScriptSystem;
 };
-#else
 // Smart wrapper on top of script function handle.
 class SmartScriptFunction
 {
@@ -1025,7 +1023,6 @@ class SmartScriptFunction
 	IScriptSystem* m_pSS;
 };
 
-#endif
 // Utility classes.
 
 //! Helper for faster Set/Gets on the table.

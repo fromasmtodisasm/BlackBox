@@ -170,6 +170,7 @@ class CSystem final : public ISystem
 	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
 	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
 	virtual ICryFont*				GetICryFont() { NOT_IMPLEMENTED_V; }
+	virtual IPhysicalWorld*			GetIPhysicalWorld() { NOT_IMPLEMENTED_V; }
 
 	virtual int					GetCPUFlags()		 override;
 	virtual double				GetSecondsPerCycle() override;

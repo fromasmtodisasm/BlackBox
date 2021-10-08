@@ -15,7 +15,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if 0
 #ifndef __GAME_PLAYER_H__
 #define __GAME_PLAYER_H__ 
 
@@ -377,7 +376,7 @@ public:
 	virtual	bool Read_PATCH_1( CStream &stream );
 	virtual bool QueryContainerInterface( ContainerInterfaceType desired_interface, void **ppInterface);
 	virtual float GetLightRadius();
-	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3d &v3dViewer, uint32 &inoutPriority,
+	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3 &v3dViewer, uint32 &inoutPriority,
 		EntityCloneState &inoutCloneState ) const;
 	
 	/*! Sets camera shaking-parameters
@@ -1030,7 +1029,7 @@ protected:
 public:
 	void	SetBlendTime(const char *sAniName, float fBlendTime);
 	void	GetBlendTime(const char *sAniName, float&fBlendTime);
-	void  PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime);
+	void  PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime);
 
 	float m_fGravityOverride;
 
@@ -1063,7 +1062,7 @@ public:
 	IEntity *m_pMountedWeapon;
 	// here we store last angles of player at mounted weapon when no intersection 
 	// with any objects would happen
-	Legacy::Vec3d	m_vSafeAngAtMountedWeapon;
+	Legacy::Vec3	m_vSafeAngAtMountedWeapon;
 	
 	//! DampInputVector make change the input vector of the player in a smooth way, it is implemented for AIs but can be used also for players.
 	void DampInputVector(vectorf &vec ,float speed ,float stopspeed ,bool only2d ,bool linear);
@@ -1127,4 +1126,3 @@ private:
 }; 
 
 #endif // __GAME_PLAYER_H__
-#endif

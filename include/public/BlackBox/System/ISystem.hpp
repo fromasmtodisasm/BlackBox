@@ -49,6 +49,7 @@ struct IProjectManager;
 struct IFrameProfileSystem;
 struct IVisArea;
 struct IProcess;
+struct IPhysicalWorld;
 
 struct ISoundSystem;
 
@@ -68,6 +69,25 @@ class CFrameProfilerSection;
 #define USER_DATA_LIGHT 4
 #define USER_DATA_BONEHANDLER 5
 #define USER_DATA_POINTER 6
+
+//////////////////////////////////////////////////////////////////////////
+enum ESystemUpdateFlags
+{
+	ESYSUPDATE_IGNORE_AI			= 0x0001,
+	ESYSUPDATE_IGNORE_PHYSICS = 0x0002,
+	// Special update mode for editor.
+	ESYSUPDATE_EDITOR					=	0x0004,
+	ESYSUPDATE_MULTIPLAYER		= 0x0008
+};
+
+//////////////////////////////////////////////////////////////////////////
+enum ESystemConfigSpec
+{
+	CONFIG_LOW_SPEC = 0,
+	CONFIG_MEDIUM_SPEC = 1,
+	CONFIG_HIGH_SPEC = 2,
+	CONFIG_VERYHIGH_SPEC = 3,
+};
 
 #if BB_PLATFORM_ANDROID
 #	define USE_ANDROIDCONSOLE
@@ -420,7 +440,8 @@ struct ISystem
 	virtual IProjectManager*		GetIProjectManager()		= 0;
 	virtual IFrameProfileSystem*	GetIProfileSystem()			= 0;
 	virtual I3DEngine*				GetI3DEngine()				= 0; 
-	virtual ISoundSystem*			GetISoundSystem()			= 0; 
+	virtual ISoundSystem*			GetISoundSystem()			= 0;
+	virtual IPhysicalWorld*			GetIPhysicalWorld()			= 0;
 
   // Gets current supported CPU features flags. (CPUF_SSE, CPUF_SSE2, CPUF_3DNOW, CPUF_MMX)
 	virtual int GetCPUFlags() = 0;

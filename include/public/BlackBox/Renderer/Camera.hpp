@@ -69,6 +69,12 @@ class CCamera
 		this->updateCameraVectors();
 	}
 
+	void Init(int width, int height)
+	{
+	}
+	void SetAngle(Legacy::Vec3 ang) {
+
+	}
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	Legacy::Mat4 GetViewMatrix() const

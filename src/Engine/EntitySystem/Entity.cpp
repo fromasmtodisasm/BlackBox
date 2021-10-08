@@ -39,7 +39,7 @@ IMatInfo* CEntity::GetMaterial() const
 	return nullptr;
 }
 
-void CEntity::PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime)
+void CEntity::PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime)
 {
 }
 

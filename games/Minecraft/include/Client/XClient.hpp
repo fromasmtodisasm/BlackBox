@@ -29,7 +29,7 @@
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/IConsole.hpp>
 //#include <BlackBox/Game/ScriptObjects/ScriptObjectClient.hpp>
-#include <Client/XClientSnapshot.hpp>
+#include <XClientSnapshot.hpp>
 #include <Network/XEntityProcessingCmd.hpp>
 #include <Network/XNetwork.hpp>	
 #include <Network/XNetworkStats.hpp>	

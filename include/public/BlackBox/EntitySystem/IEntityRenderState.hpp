@@ -300,7 +300,7 @@ struct IEntityRender
 	}
 	#endif
 
-	virtual void PreloadInstanceResources(Legacy::Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
+	virtual void PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
 	virtual void Precache(){};
 };
 

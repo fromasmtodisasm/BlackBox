@@ -50,10 +50,12 @@ const char* CShader::GetName()
 	return nullptr;
 }
 
+#if 0
 eVertexFormat CShader::GetVertexFormat(void)
 {
 	return eVertexFormat();
 }
+#endif
 
 bool CShader::Reload()
 {

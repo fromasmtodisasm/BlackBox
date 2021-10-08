@@ -55,6 +55,37 @@ enum EEfResTextures
 };
 
 
+//////////////////////////////////////////////////////////////////////////
+// Type of the texture
+enum ETexType
+{
+  eTT_Base,
+  eTT_Cubemap,
+  eTT_AutoCubemap,
+  eTT_Bumpmap,
+  eTT_DSDTBump,
+  eTT_Rectangle,
+	eTT_3D
+};
+
+#define FFILT_NONE   0
+#define FFILT_POINT  1
+#define FFILT_LINEAR 2
+#define FFILT_ANISOTROPIC 3
+
+#define FTU_OPAQUE 1
+#define FTU_CLAMP  2
+#define FTU_NOMIPS 4
+#define FTU_NOBUMP 8
+#define FTU_PROJECTED       0x10
+#define FTU_FILTERBILINEAR  0x20
+#define FTU_FILTERTRILINEAR 0x40
+#define FTU_FILTERNEAREST   0x80
+#define FTU_FILTERLINEAR    0x100
+#define FTU_BUMPPLANTS      0x1000
+#define FTU_NOSCALE         0x2000
+
+
 
 enum class ShaderLangId
 {
@@ -80,7 +111,9 @@ struct IShader
 	virtual bool Reload()						= 0;
 	virtual IShader::Type GetType()				= 0;
 	virtual const char* GetName()				= 0;
+	#if 0
 	virtual eVertexFormat GetVertexFormat(void) = 0;
+	#endif
 	virtual void Bind()							= 0;
 };
 
