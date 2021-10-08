@@ -339,6 +339,7 @@ struct SSystemGlobalEnvironment
 	IThreadManager*		 pThreadManager		 = nullptr;
 	IProjectManager*	 pProjectManager	 = nullptr;
 	IFrameProfileSystem* pFrameProfileSystem = nullptr;
+	IPhysicalWorld*		 pPhysicalWorld		 = nullptr;
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{

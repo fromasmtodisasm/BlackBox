@@ -170,7 +170,7 @@ class CSystem final : public ISystem
 	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
 	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
 	virtual ICryFont*				GetICryFont() { NOT_IMPLEMENTED_V; }
-	virtual IPhysicalWorld*			GetIPhysicalWorld() { NOT_IMPLEMENTED_V; }
+	virtual IPhysicalWorld*			GetIPhysicalWorld() { return m_env.pPhysicalWorld; }
 
 	virtual int					GetCPUFlags()		 override;
 	virtual double				GetSecondsPerCycle() override;
@@ -242,6 +242,7 @@ class CSystem final : public ISystem
 	bool InitGUI();
 	bool Init3DEngine();
 	bool InitSubSystem();
+	bool InitPhysics();
 	bool OpenRenderLibrary(std::string_view render);
 
 	void ParseCMD();
@@ -475,6 +476,8 @@ class CSystem final : public ISystem
 	string m_RootFolder;
 
 	int sys_dump_memstats = false;
+
+	IProcess* m_pIProcess{};
 
 };
 

@@ -388,6 +388,9 @@ bool CSystem::Init()
 	}
 	if (!Init3DEngine())
 		return false;
+	m_pIProcess = m_env.p3DEngine;
+	if (!InitPhysics())
+		return false;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Input Post Initialise - enables input threads to be created after thread init
@@ -812,5 +815,19 @@ IGame* CSystem::CreateGame(IGame* game)
 		return true;
 	});
 	return m_pGame;
+}
+
+typedef IPhysicalWorld* (*PFNCREATEPHYSICS)(ISystem* pSystem);
+bool CSystem::InitPhysics()
+{
+	Log("Creating Physics");
+	return LoadSubsystem<PFNCREATEPHYSICS>("Physics", "CreatePhysicalWorld", [&](PFNCREATEPHYSICS p) {
+		m_env.pPhysicalWorld = p(this);
+		if (m_env.pPhysicalWorld == nullptr)
+			return false;
+		m_env.pPhysicalWorld->Init();
+		return true;
+	});
+
 }
 

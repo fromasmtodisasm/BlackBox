@@ -51,10 +51,11 @@ void CSystem::SetGCFrequency(const float fRate)
 }
 void CSystem::SetIProcess(IProcess* process)
 {
+	m_pIProcess = process;
 }
 IProcess* CSystem::GetIProcess()
 {
-	return nullptr;
+	return m_pIProcess;
 }
 
 

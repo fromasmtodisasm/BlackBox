@@ -119,6 +119,7 @@ add_sources(
 	SOURCE_GROUP
 	"Legacy"
 	Legacy/IInput.h
+	Legacy/Input.cpp
 	Legacy/IFont.h
 	Legacy/ScriptObjectVector.h
 	Legacy/ScriptObjectStream.h

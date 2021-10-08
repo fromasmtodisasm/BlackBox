@@ -923,6 +923,7 @@ bool CXGame::Update()
 	// Cannot Run Without System.
 	assert(m_pSystem);
 
+	#if 0
 	float maxFPS = g_maxfps->GetFVal();
 	if (maxFPS > 0)
 	{
@@ -932,6 +933,7 @@ bool CXGame::Update()
 			Sleep(extraTime);
 #endif
 	}
+	#endif
 
 	PhysicsVars* pVars	   = m_pSystem->GetIPhysicalWorld()->GetPhysVars();
 	float		 fTimeGran = pVars->timeGranularity, fFixedStep = g_MP_fixed_timestep->GetFVal();
