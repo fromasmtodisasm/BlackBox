@@ -9,6 +9,8 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
+#include <IStatObj.h>
+
 #include <memory>
 
 struct Material;

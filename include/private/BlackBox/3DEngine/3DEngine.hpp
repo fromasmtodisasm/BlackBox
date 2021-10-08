@@ -10,16 +10,8 @@ class C3DEngine : public I3DEngine
 {
 	typedef void(*RenderCallback)(void* pParams);
 public:
-	C3DEngine(ISystem* pSystem, const char* szInterfaceVersion)
-	:
-	m_pSystem(pSystem)
-	{
-
-	}
-	~C3DEngine()
-	{
-
-	}
+    C3DEngine(ISystem* pSystem, const char* szInterfaceVersion);
+    ~C3DEngine();
 	virtual void Enable(bool bEnable) override;
 	virtual bool Init() override;
 	virtual void SetLevelPath(const char* szFolderName) override;
@@ -30,7 +22,7 @@ public:
 	virtual void ShutDown(bool bEditorMode = false) override;
 	virtual void Release() override;
 	virtual void ActivateLight(const char* szName, bool bActivate) override;
-	virtual void GetMemoryUsage(class ICrySizer * pSizer) const override;
+	virtual void GetMemoryUsage(ICrySizer * pSizer) const override;
 	virtual IStatObj* MakeObject(const char* szFileName, const char* szGeomName = 0, EVertsSharing eVertsSharing = evs_ShareAndSortForCache, bool bLoadAdditinalInfo = true, bool bKeepInLocalSpace = false) override;
 	virtual bool ReleaseObject(IStatObj* pObject) override;
 	virtual IStatObj* MakeObject() override;
@@ -38,7 +30,7 @@ public:
 	virtual bool UnRegisterEntity(IEntityRender* pEntity) override;
 	virtual bool UnRegisterInAllSectors(IEntityRender* pEntity = NULL) override;
 	virtual void SetRenderCallback(RenderCallback pFunc, void* pParams) override;
-	virtual void SetOutdoorAmbientColor(Legacy::Vec3d vColor) override;
+	virtual void SetOutdoorAmbientColor(Legacy::Vec3 vColor) override;
 	virtual void SetSkyBox(const char* szShaderName) override;
 	virtual void SetMaxViewDistance(float fMaxViewDistance) override;
 	virtual float GetMaxViewDistance() override;
@@ -100,11 +92,7 @@ public:
 	virtual void SetFlags(int flags) override;
 	virtual int GetFlags() override;
 
-	void ClearRenderResources(bool bEditor = false)
-	{
-		//NOT_IMPLEMENTED;	
-		CryError("Ffunction not implemented: %s", __FUNCTION__);
-	}
+    void ClearRenderResources(bool bEditor = false);
 
 private:
 	ISystem*				m_pSystem;
@@ -131,4 +119,92 @@ private:
 
 	RenderCallback* m_pRenderCallback;
 	void*			m_RenderCallbackParams;
+
+    // I3DEngine interface
+public:
+    virtual void DrawLowDetail(const int &DrawFlags) override;
+    virtual int GetLoadedObjectCount() override;
+    virtual float GetWaterLevel(const Legacy::Vec3 *pvPos, Legacy::Vec3 *pvFlowDir) override;
+    virtual float GetWaterLevel(IEntityRender *pEntityRender, Legacy::Vec3 *pvFlowDir) override;
+    virtual void SpawnParticles(const ParticleParams &SpawnParticleParams) override;
+    virtual void ResetParticlesAndDecals() override;
+    virtual IParticleEmitter *CreateParticleEmitter() override;
+    virtual void DeleteParticleEmitter(IParticleEmitter *pPartEmitter) override;
+    virtual IParticleEffect *CreateParticleEffect() override;
+    virtual void DeleteParticleEffect(IParticleEffect *pEffect) override;
+    virtual IParticleEffect *FindParticleEffect(const char *sEffectName) override;
+    virtual void CreateDecal(const CryEngineDecalInfo &Decal) override;
+    virtual void DeleteDecalsInRange(Legacy::Vec3 vBoxMin, Legacy::Vec3 vBoxMax, bool bDeleteBigTerrainDecals) override;
+    virtual const void *GetShoreGeometry(int &nPosStride, int &nVertCount, int nSectorX, int nSectorY) override;
+    virtual void DrawTerrainDetailTextureLayers() override;
+    virtual void DrawFarTrees() override;
+    virtual void DrawTerrainParticles(IShader *pShader) override;
+    virtual ICryCharInstance *MakeCharacter(const char *cid_file_name, unsigned int dwFlags) override;
+    virtual bool IsCharacterFile(const char *szFileName) override;
+    virtual void RemoveCharacter(ICryCharInstance *pCryCharInstance) override;
+    virtual Legacy::Vec3 GetWorldColor(bool bScaled) override;
+    virtual void SetWorldColor(Legacy::Vec3 vColor) override;
+    virtual void SetWorldColorRatio(float fWorldColorRatio) override;
+    virtual float GetWorldColorRatio() override;
+    virtual void RecompileBeaches() override;
+    virtual void OnExplosion(Legacy::Vec3 vPos, Legacy::Vec3 vHitDir, float fRadius, int nTexID, bool bDeformTerrain) override;
+    virtual void AddWaterSplash(Legacy::Vec3 vPos, eSplashType eST, float fForce, int Id) override;
+    virtual void SetPhysMaterialEnumerator(IPhysMaterialEnumerator *pPhysMaterialEnumerator) override;
+    virtual IPhysMaterialEnumerator *GetPhysMaterialEnumerator() override;
+    virtual void SetBFCount(int nCount) override;
+    virtual int GetBFCount() override;
+    virtual void SetGrasshopperCount(int nCount) override;
+    virtual int GetGrasshopperCount() override;
+    virtual void SetGrasshopperCGF(int nSlot, IStatObj *pStatObj) override;
+    virtual Legacy::Vec3 GetOutdoorAmbientColor() override;
+    virtual Legacy::Vec3 GetSunColor() override;
+    virtual IEntityRenderState *MakeEntityRenderState() override;
+    virtual void FreeEntityRenderState(IEntityRender *pEntity) override;
+    virtual void MakeUnderWaterSmoothHMap(int nWaterUnitSize) override;
+    virtual unsigned short *GetUnderWaterSmoothHMap(int &nDimensions) override;
+    virtual void UpdateDetailObjects() override;
+    virtual IEdgeConnectivityBuilder *GetNewConnectivityBuilder() override;
+    virtual IStencilShadowConnectivity *NewConnectivity() override;
+    virtual IEdgeConnectivityBuilder *GetNewStaticConnectivityBuilder() override;
+    virtual IEdgeDetector *GetEdgeDetector() override;
+    virtual void EnableHeatVision(bool bEnable) override;
+    virtual void ActivatePortal(const Legacy::Vec3 &vPos, bool bActivate, IEntityRender *pEntity) override;
+    virtual IWaterVolume *CreateWaterVolume() override;
+    virtual void DeleteWaterVolume(IWaterVolume *pWaterVolume) override;
+    virtual IWaterVolume *FindWaterVolumeByName(const char *szName) override;
+    virtual void UpdateVisArea(IVisArea *pArea, const Legacy::Vec3 *pPoints, int nCount, const char *szName, float fHeight, const Legacy::Vec3 &vAmbientColor, bool bAfectedByOutLights, bool bSkyOnly, const Legacy::Vec3 &vDynAmbientColor, float fViewDistRatio, bool bDoubleSide, bool bUseDeepness, bool bUseInIndoors) override;
+    virtual bool IsVisAreasConnected(IVisArea *pArea1, IVisArea *pArea2, int nMaxRecursion, bool bSkipDisabledPortals) override;
+    virtual IEntityRender *CreateEntityRender() override;
+    virtual void DeleteEntityRender(IEntityRender *pEntityRender) override;
+    virtual void DrawRain() override;
+    virtual void SetRainAmount(float fAmount) override;
+    virtual void SetWindForce(const Legacy::Vec3 &vWindForce) override;
+    virtual float GetLightAmountForEntity(IEntityRender *pEntity, bool bOnlyVisibleLights) override;
+    virtual float GetAmbientLightAmountForEntity(IEntityRender *pEntity) override;
+    virtual IVisArea *GetVisAreaFromPos(const Legacy::Vec3 &vPos) override;
+    virtual void EnableOceanRendering(bool bOcean, bool bShore) override;
+    virtual IMatInfo *CreateMatInfo() override;
+    virtual void DeleteMatInfo(IMatInfo *pMatInfo) override;
+    virtual void RenameMatInfo(IMatInfo *pMtl, const char *sNewName) override;
+    virtual IMatInfo *FindMaterial(const char *sMaterialName) override;
+    virtual ILMSerializationManager *CreateLMSerializationManager() override;
+    virtual bool IsPotentiallyVisible(IEntityRender *pEntityRender, float fAdditionRadius) override;
+    virtual INT_PTR AddStaticLightSource(const CDLight &LSource, IEntityRender *pCreator, ICryCharInstance *pCryCharInstance, const char *szBoneName) override;
+    virtual bool DeleteStaticLightSource(INT_PTR nLightId) override;
+    virtual const list2<CDLight *> *GetStaticLightSources() override;
+    virtual void RestoreTerrainFromDisk() override;
+    virtual const char *GetFilePath(const char *szFileName) override;
+    virtual void SetBlurMask(ITexPic *pMask) override;
+    virtual void CheckPhysicalized(const Legacy::Vec3 &vBoxMin, const Legacy::Vec3 &vBoxMax) override;
+    virtual void CheckMemoryHeap() override;
+    virtual float GetObjectsLODRatio() override;
+    virtual float GetObjectsViewDistRatio() override;
+    virtual float GetObjectsMinViewDist() override;
+    virtual bool SetMaterialFloat(char *szMatName, int nSubMatId, int nTexSlot, char *szParamName, float fValue) override;
+    virtual void CloseTerrainTextureFile() override;
+    virtual void DeleteEntityDecals(IEntityRender *pEntity) override;
+    virtual void OnLevelLoaded() override;
+    virtual void LockCGFResources() override;
+    virtual void UnlockCGFResources() override;
+    virtual CMatMan *GetMatMan() override;
 };

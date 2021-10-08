@@ -9,13 +9,25 @@
 
 void loadModel(string path);
 
+C3DEngine::C3DEngine(ISystem *pSystem, const char *szInterfaceVersion)
+    :
+      m_pSystem(pSystem)
+{
+
+}
+
+C3DEngine::~C3DEngine()
+{
+
+}
+
 void C3DEngine::Enable(bool bEnable)
 {
 }
 
 bool C3DEngine::Init()
 {
-	MakeObject("res/geom/pengium.obj", nullptr);
+    MakeObject("res/geom/pengium.obj", nullptr);
 	return true;
 }
 
@@ -157,7 +169,381 @@ void C3DEngine::SetRenderCallback(RenderCallback pFunc, void* pParams)
 {
 }
 
-void C3DEngine::SetOutdoorAmbientColor(Legacy::Vec3d vColor)
+ICryCharInstance *C3DEngine::MakeCharacter(const char *cid_file_name, unsigned int dwFlags)
+{
+
+	return {};
+}
+
+bool C3DEngine::IsCharacterFile(const char *szFileName)
+{
+
+	return {};
+}
+
+void C3DEngine::RemoveCharacter(ICryCharInstance *pCryCharInstance)
+{
+
+}
+
+Legacy::Vec3 C3DEngine::GetWorldColor(bool bScaled)
+{
+
+	return {};
+}
+
+void C3DEngine::SetWorldColor(Legacy::Vec3 vColor)
+{
+
+}
+
+void C3DEngine::SetWorldColorRatio(float fWorldColorRatio)
+{
+
+}
+
+float C3DEngine::GetWorldColorRatio()
+{
+
+	return {};
+}
+
+void C3DEngine::RecompileBeaches()
+{
+
+}
+
+void C3DEngine::OnExplosion(Legacy::Vec3 vPos, Legacy::Vec3 vHitDir, float fRadius, int nTexID, bool bDeformTerrain)
+{
+
+}
+
+void C3DEngine::AddWaterSplash(Legacy::Vec3 vPos, eSplashType eST, float fForce, int Id)
+{
+
+}
+
+void C3DEngine::SetPhysMaterialEnumerator(IPhysMaterialEnumerator *pPhysMaterialEnumerator)
+{
+
+}
+
+IPhysMaterialEnumerator *C3DEngine::GetPhysMaterialEnumerator()
+{
+
+	return {};
+}
+
+void C3DEngine::SetBFCount(int nCount)
+{
+
+}
+
+int C3DEngine::GetBFCount()
+{
+	return {};
+
+}
+
+void C3DEngine::SetGrasshopperCount(int nCount)
+{
+
+}
+
+int C3DEngine::GetGrasshopperCount()
+{
+
+	return {};
+}
+
+void C3DEngine::SetGrasshopperCGF(int nSlot, IStatObj *pStatObj)
+{
+
+}
+
+Legacy::Vec3 C3DEngine::GetOutdoorAmbientColor()
+{
+	return {};
+}
+
+Legacy::Vec3 C3DEngine::GetSunColor()
+{
+	return {};
+
+}
+
+IEntityRenderState *C3DEngine::MakeEntityRenderState()
+{
+	return {};
+
+}
+
+void C3DEngine::FreeEntityRenderState(IEntityRender *pEntity)
+{
+
+}
+
+void C3DEngine::MakeUnderWaterSmoothHMap(int nWaterUnitSize)
+{
+
+}
+
+unsigned short *C3DEngine::GetUnderWaterSmoothHMap(int &nDimensions)
+{
+
+	return {};
+}
+
+void C3DEngine::UpdateDetailObjects()
+{
+
+}
+
+IEdgeConnectivityBuilder *C3DEngine::GetNewConnectivityBuilder()
+{
+
+	return {};
+}
+
+IStencilShadowConnectivity *C3DEngine::NewConnectivity()
+{
+
+	return {};
+}
+
+IEdgeConnectivityBuilder *C3DEngine::GetNewStaticConnectivityBuilder()
+{
+
+	return {};
+}
+
+IEdgeDetector *C3DEngine::GetEdgeDetector()
+{
+	return {};
+
+}
+
+void C3DEngine::EnableHeatVision(bool bEnable)
+{
+
+}
+
+void C3DEngine::ActivatePortal(const Legacy::Vec3 &vPos, bool bActivate, IEntityRender *pEntity)
+{
+
+}
+
+IWaterVolume *C3DEngine::CreateWaterVolume()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteWaterVolume(IWaterVolume *pWaterVolume)
+{
+
+}
+
+IWaterVolume *C3DEngine::FindWaterVolumeByName(const char *szName)
+{
+	return {};
+}
+
+void C3DEngine::UpdateVisArea(IVisArea *pArea, const Legacy::Vec3 *pPoints, int nCount, const char *szName, float fHeight, const Legacy::Vec3 &vAmbientColor, bool bAfectedByOutLights, bool bSkyOnly, const Legacy::Vec3 &vDynAmbientColor, float fViewDistRatio, bool bDoubleSide, bool bUseDeepness, bool bUseInIndoors)
+{
+
+}
+
+bool C3DEngine::IsVisAreasConnected(IVisArea *pArea1, IVisArea *pArea2, int nMaxRecursion, bool bSkipDisabledPortals)
+{
+	return {};
+
+}
+
+IEntityRender *C3DEngine::CreateEntityRender()
+{
+	return {};
+	return {};
+
+}
+
+void C3DEngine::DeleteEntityRender(IEntityRender *pEntityRender)
+{
+
+}
+
+void C3DEngine::DrawRain()
+{
+
+}
+
+void C3DEngine::SetRainAmount(float fAmount)
+{
+
+}
+
+void C3DEngine::SetWindForce(const Legacy::Vec3 &vWindForce)
+{
+
+}
+
+float C3DEngine::GetLightAmountForEntity(IEntityRender *pEntity, bool bOnlyVisibleLights)
+{
+	return {};
+
+}
+
+float C3DEngine::GetAmbientLightAmountForEntity(IEntityRender *pEntity)
+{
+	return {};
+
+}
+
+IVisArea *C3DEngine::GetVisAreaFromPos(const Legacy::Vec3 &vPos)
+{
+	return {};
+
+}
+
+void C3DEngine::EnableOceanRendering(bool bOcean, bool bShore)
+{
+
+}
+
+IMatInfo *C3DEngine::CreateMatInfo()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteMatInfo(IMatInfo *pMatInfo)
+{
+
+}
+
+void C3DEngine::RenameMatInfo(IMatInfo *pMtl, const char *sNewName)
+{
+
+}
+
+IMatInfo *C3DEngine::FindMaterial(const char *sMaterialName)
+{
+	return {};
+
+}
+
+ILMSerializationManager *C3DEngine::CreateLMSerializationManager()
+{
+
+	return {};
+}
+
+bool C3DEngine::IsPotentiallyVisible(IEntityRender *pEntityRender, float fAdditionRadius)
+{
+	return {};
+
+}
+
+INT_PTR C3DEngine::AddStaticLightSource(const CDLight &LSource, IEntityRender *pCreator, ICryCharInstance *pCryCharInstance, const char *szBoneName)
+{
+	return {};
+
+}
+
+bool C3DEngine::DeleteStaticLightSource(INT_PTR nLightId)
+{
+
+	return {};
+}
+
+const list2<CDLight *> *C3DEngine::GetStaticLightSources()
+{
+	return {};
+
+}
+
+void C3DEngine::RestoreTerrainFromDisk()
+{
+
+}
+
+const char *C3DEngine::GetFilePath(const char *szFileName)
+{
+	return {};
+
+}
+
+void C3DEngine::SetBlurMask(ITexPic *pMask)
+{
+
+}
+
+void C3DEngine::CheckPhysicalized(const Legacy::Vec3 &vBoxMin, const Legacy::Vec3 &vBoxMax)
+{
+
+}
+
+void C3DEngine::CheckMemoryHeap()
+{
+
+}
+
+float C3DEngine::GetObjectsLODRatio()
+{
+
+	return {};
+}
+
+float C3DEngine::GetObjectsViewDistRatio()
+{
+
+	return {};
+}
+
+float C3DEngine::GetObjectsMinViewDist()
+{
+
+	return {};
+}
+
+bool C3DEngine::SetMaterialFloat(char *szMatName, int nSubMatId, int nTexSlot, char *szParamName, float fValue)
+{
+	return {};
+
+}
+
+void C3DEngine::CloseTerrainTextureFile()
+{
+
+}
+
+void C3DEngine::DeleteEntityDecals(IEntityRender *pEntity)
+{
+
+}
+
+void C3DEngine::OnLevelLoaded()
+{
+
+}
+
+void C3DEngine::LockCGFResources()
+{
+
+}
+
+void C3DEngine::UnlockCGFResources()
+{
+
+}
+
+CMatMan *C3DEngine::GetMatMan()
+{
+	return {};
+
+}
+
+void C3DEngine::SetOutdoorAmbientColor(Legacy::Vec3 vColor)
 {
 }
 
@@ -428,10 +814,109 @@ int C3DEngine::GetFlags()
   return 0;
 }
 
+void C3DEngine::ClearRenderResources(bool bEditor)
+{
+    //NOT_IMPLEMENTED;
+    CryError("Ffunction not implemented: %s", __FUNCTION__);
+}
+
+void C3DEngine::DrawLowDetail(const int &DrawFlags)
+{
+
+	return;
+}
+
+int C3DEngine::GetLoadedObjectCount()
+{
+
+	return {};
+}
+
+float C3DEngine::GetWaterLevel(const Legacy::Vec3 *pvPos, Legacy::Vec3 *pvFlowDir)
+{
+
+	return {};
+}
+
+float C3DEngine::GetWaterLevel(IEntityRender *pEntityRender, Legacy::Vec3 *pvFlowDir)
+{
+
+	return {};
+}
+
+void C3DEngine::SpawnParticles(const ParticleParams &SpawnParticleParams)
+{
+
+}
+
+void C3DEngine::ResetParticlesAndDecals()
+{
+
+}
+
+IParticleEmitter *C3DEngine::CreateParticleEmitter()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteParticleEmitter(IParticleEmitter *pPartEmitter)
+{
+
+}
+
+IParticleEffect *C3DEngine::CreateParticleEffect()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteParticleEffect(IParticleEffect *pEffect)
+{
+
+}
+
+IParticleEffect *C3DEngine::FindParticleEffect(const char *sEffectName)
+{
+
+	return {};
+}
+
+void C3DEngine::CreateDecal(const CryEngineDecalInfo &Decal)
+{
+
+}
+
+void C3DEngine::DeleteDecalsInRange(Legacy::Vec3 vBoxMin, Legacy::Vec3 vBoxMax, bool bDeleteBigTerrainDecals)
+{
+
+}
+
+const void *C3DEngine::GetShoreGeometry(int &nPosStride, int &nVertCount, int nSectorX, int nSectorY)
+{
+
+	return {};
+}
+
+void C3DEngine::DrawTerrainDetailTextureLayers()
+{
+
+}
+
+void C3DEngine::DrawFarTrees()
+{
+
+}
+
+void C3DEngine::DrawTerrainParticles(IShader *pShader)
+{
+
+}
+
 void C3DEngine::GetMemoryUsage(class ICrySizer* pSizer) const
 {
-	pSizer->AddObject(this, sizeof(*this));
-	pSizer->AddObject(m_Objects);
+    pSizer->AddObject(this, sizeof(*this));
+    pSizer->AddObject(m_Objects);
 }
 
 
