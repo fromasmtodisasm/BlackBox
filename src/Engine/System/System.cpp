@@ -725,6 +725,10 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 		break;
 	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
 		m_bIsActive = bool(wparam);
+		if (m_bIsActive)
+			g_cvars.sys_MaxFPS = 60; 
+		else
+			g_cvars.sys_MaxFPS = 20; 
 		break;
 	default:
 		break;

@@ -58,6 +58,9 @@ add_sources(
 	"XML"
 	"XML/xml.h"
 	"XML/xml.cpp"
+	SOURCE_GROUP
+	"Legacy"
+	"Legacy/ISystem.h"
 )
 end_sources()
 
