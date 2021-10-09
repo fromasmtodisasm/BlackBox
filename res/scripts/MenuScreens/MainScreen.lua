@@ -25,6 +25,7 @@ UI.PageMainScreen =
 	end,
 }
 
+
 AddUISideMenu(UI.PageMainScreen.GUI,
 {
 	{ "Campaign", Localize("Campaign"), "Campaign", },

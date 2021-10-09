@@ -212,9 +212,7 @@ int CUISystem::InitializeTemplates()
 	CUIListView::InitializeTemplate(m_pScriptSystem);
 	CUICheckBox::InitializeTemplate(m_pScriptSystem);
 	CUIComboBox::InitializeTemplate(m_pScriptSystem);
-	#if 0
 	CUIVideoPanel::InitializeTemplate(m_pScriptSystem);
-	#endif
 	CUIScreen::InitializeTemplate(m_pScriptSystem);
 
 	return 1;
@@ -230,9 +228,7 @@ int CUISystem::ReleaseTemplates()
 	CUIListView::ReleaseTemplate();
 	CUICheckBox::ReleaseTemplate();
 	CUIComboBox::ReleaseTemplate();
-	#if 0
 	CUIVideoPanel::ReleaseTemplate();
-	#endif
 	CUIScreen::ReleaseTemplate();
 
 	return 1;
@@ -2980,7 +2976,6 @@ int CUISystem::CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const
 	return 1;
 }
 
-#if 0
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle)
 {
@@ -2997,7 +2992,6 @@ int CUISystem::CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent,
 
 	return 1;
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
@@ -3018,38 +3012,6 @@ int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
 
 	return 1;
 }
-#if 0
-struct SInputEvent
-{
-	enum EType
-	{
-		UNKNOWN,
-		KEY_PRESS,
-		KEY_RELEASE,
-		MOUSE_MOVE,
-	};
-
-	EType type;
-	int key;
-	unsigned int timestamp;
-	int moidifiers;
-	const char *keyname;
-	float value;
-};
-
-struct SInputEvent
-{
-	EInputDeviceType deviceType;	 //!< Device type from which the event originated.
-	EInputState		 state;			 //!< Type of input event.
-	TKeyName		 keyName;		 //!< Human readable name of the event.
-	EKeyId			 keyId;			 //!< Device-specific id corresponding to the event.
-	int				 modifiers;		 //!< Key modifiers enabled at the time of this event.
-	float			 value;			 //!< Value associated with the event.
-	SInputSymbol*	 pSymbol;		 //!< Input symbol the event originated from.
-	uint8_t			 deviceIndex;	 //!< Local index of this particular controller type.
-	uint8_t			 deviceUniqueID; //!< Process wide unique controller ID.
-};
-#endif
 
 Legacy::SInputEvent::EType getType(EInputState is)
 {
@@ -3070,6 +3032,7 @@ Legacy::SInputEvent::EType getType(EInputState is)
 	}
 }
 
+//FIXME: wring convertion
 bool CUISystem::OnInputEvent(const SInputEvent& event)
 {
 	if (event.keyId == eKI_SYS_Commit)
@@ -3336,7 +3299,6 @@ int CUISystem::ReloadAllModels()
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::StopAllVideo()
 {
-	#if 0
 	for (CUIWidgetItor pItor = m_pWidgetList.begin(); pItor != m_pWidgetList.end(); ++pItor)
 	{
 		if ((*pItor)->GetClassName() == "UIVideoPanel")
@@ -3348,11 +3310,6 @@ int CUISystem::StopAllVideo()
 	}
 
 	return 0;
-	#else
-	CryLog("StopAllVideo: %s", __FUNCTION__);
-	//NOT_IMPLEMENTED_V;
-	return 0;
-	#endif
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -3924,12 +3881,10 @@ int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CU
 	{
 		iResult = CreateComboBoxFromTable((CUIComboBox **)pWidget, pParent, pRect, pObject, szName);
 	}
-	#if 0
 	else if (szClassName == "videopanel")
 	{
 		iResult = CreateVideoPanelFromTable((CUIVideoPanel **)pWidget, pParent, pRect, pObject, szName);
 	}
-	#endif
 	else
 	{
 		m_pLog->LogToConsole("\001$4[Error]:$1 Invalid classname for widget '%s': %s", szName.c_str(), szClassName.c_str());
@@ -4734,7 +4689,6 @@ int CUISystem::SetupComboBoxFromTable(CUIComboBox *pComboBox, IScriptObject *pOb
 	return 1;
 }
 
-#if 0
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName)
 {
@@ -4758,9 +4712,7 @@ int CUISystem::CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget 
 
 	return 1;
 }
-#endif
 
-#if 0
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObject *pObject)
 {
@@ -4853,7 +4805,6 @@ int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObjec
 
 	return 1;
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////// 
 int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, IScriptObject *pObject)

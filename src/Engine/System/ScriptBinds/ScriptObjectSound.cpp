@@ -43,6 +43,7 @@ void CScriptObjectSound::InitializeTemplate(IScriptSystem* pSS)
 {
 	_ScriptableEx<CScriptObjectSound>::InitializeTemplate(pSS);
 	REG_FUNC(CScriptObjectSound, LoadSound);
+	REG_FUNC(CScriptObjectSound, Load3DSound);
 	REG_FUNC(CScriptObjectSound, SetSoundVolume);
 	REG_FUNC(CScriptObjectSound, SetSoundLoop);
 	REG_FUNC(CScriptObjectSound, PlaySound);
@@ -62,6 +63,11 @@ int CScriptObjectSound::Init(IScriptSystem* pScriptSystem)
 }
 
 int CScriptObjectSound::LoadSound(IFunctionHandler* pH)
+{
+	return pH->EndFunction();
+}
+
+int CScriptObjectSound::Load3DSound(IFunctionHandler* pH)
 {
 	return pH->EndFunction();
 }

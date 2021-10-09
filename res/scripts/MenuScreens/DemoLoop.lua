@@ -55,7 +55,8 @@ UI.PageDemoLoop=
 			UI:StopMusic();
 			UI:ShowMouseCursor();
 
-			UI.PageDemoLoop.GUI.Video:ReleaseVideo();
+			-- FIXME: ReleaseVideo not registered in lua
+			--UI.PageDemoLoop.GUI.Video:ReleaseVideo();
 			
 			if (not UI.bWasIdle) then
 				GotoPage("$MainScreen$", 0);

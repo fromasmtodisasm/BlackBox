@@ -39,6 +39,7 @@ public:
 public:
 	int Init(IScriptSystem *pScriptSystem);
 	int LoadSound(IFunctionHandler *pH);
+	int	Load3DSound(IFunctionHandler* pH);
 	int SetSoundVolume(IFunctionHandler *pH);
 	int SetSoundLoop(IFunctionHandler *pH);
 	int PlaySound(IFunctionHandler *pH);

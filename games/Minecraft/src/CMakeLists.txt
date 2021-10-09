@@ -131,8 +131,8 @@ add_sources(
 	UI/UIStatic.h
 	UI/UISystem.cpp
 	UI/UISystem.h
-	#UI/UIVideoPanel.cpp
-	#UI/UIVideoPanel.h
+	UI/UIVideoPanel.cpp
+	UI/UIVideoPanel.h
 	UI/UIWidget.cpp
 	UI/UIWidget.h
 	SOURCE_GROUP
@@ -192,6 +192,13 @@ if(USE_STEAM)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Steam)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE USE_STEAM)
 endif()
+
+set(OPTION_NOT_USE_DIVX_SDK ON)
+if(OPTION_NOT_USE_DIVX_SDK)
+	target_compile_definitions(${THIS_PROJECT} PRIVATE NOT_USE_DIVX_SDK)
+endif()
+
+
 target_include_directories(
 	${THIS_PROJECT}
 	PRIVATE "${INCLUDE_ROOT}"

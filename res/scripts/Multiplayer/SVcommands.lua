@@ -320,19 +320,19 @@ end
 --protected names functions--
 
 function SVcommands:loadProtected()
-	local namesFile = openfile("profiles/server/p_names.txt", "r");
+	local namesFile = io.open("profiles/server/p_names.txt", "r");
 	if(namesFile) then
 		protectedNames.namelist = {};
 		protectedNames.vn=1;
-		local name = read(namesFile, "*l");
+		local name = namesFile.read("*l");
 		while(name) do
 			SVcommands:addProtectedName(name);
-			name = read(namesFile, "*l");
+			name = namesFile.read( "*l");
 		end
-		closefile(namesFile);
+		namesFile.close();
 		System:LogAlways("Loaded protected names");
 	else
-		--System:LogAlways("No protected names found (..profiles/server/p_names.txt)");
+		System:LogAlways("No protected names found (..profiles/server/p_names.txt)");
 	end
 end
 
@@ -690,10 +690,12 @@ end
 --load the protected names
 SVcommands:loadProtected();
 
+--[[
 if (getglobal("gr_checkfirststart"))~=1 then
 	if (getglobal("sv_mapcyclefile")) then
 		MapCycle:LoadFromFile(getglobal("sv_mapcyclefile"));
 		setglobal("gr_checkfirststart",1);
 	end
 end
+]]
 

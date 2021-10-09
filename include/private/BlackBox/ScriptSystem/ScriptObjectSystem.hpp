@@ -24,6 +24,17 @@ public:
   int ScanDirectory(IFunctionHandler* pH);
   int Print(const char* text, float x, float y, float scale, float r, float g, float b, float a);
 
+
+  int LogToConsole(IFunctionHandler* pH);
+  int ExecuteCommand(IFunctionHandler* pH);
+  int Warning(IFunctionHandler* pH);
+  int Error(IFunctionHandler* pH);
+  int IsEditor(IFunctionHandler* pH);
+  int LogAlways(IFunctionHandler* pH);
+
+  int GetCurrAsyncTime(IFunctionHandler* pH);
+  int GetFrameTime(IFunctionHandler* pH);
+
 private:
   ISystem* m_pSystem;
   ILog* m_pLog;

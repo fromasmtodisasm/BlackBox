@@ -1497,7 +1497,9 @@ int CScriptObjectGame::GetVariable(IFunctionHandler *pH)
 	ICVar* pVar = m_pSystem->GetIConsole()->GetCVar(sName);
 	if (!pVar)
 	{
+		#if 0
 		m_pScriptSystem->RaiseError("GetVariable invalid variable name \"%s\": no such variable found", sName);
+		#endif
 		return pH->EndFunctionNull();
 	}
 
@@ -1528,7 +1530,9 @@ int CScriptObjectGame::SetVariable(IFunctionHandler *pH)
 	ICVar* pVar = m_pSystem->GetIConsole()->GetCVar(sName);
 	if (!pVar)
 	{
+		#if 0
 		m_pScriptSystem->RaiseError("SetVariable invalid variable name \"%s\": no such variable found", sName);
+		#endif
 		return pH->EndFunctionNull();
 	}
 

@@ -1012,7 +1012,7 @@ namespace yy {
             Code.push_back(driver.currentEffect->m_shaders.back().data);
             is_common = false;
         }
-        CryLog("Current shader[%s] code in file %s:\n%s", yystack_[2].value.as< std::string > ().data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
+        //CryLog("Current shader[%s] code in file %s:\n%s", yystack_[2].value.as< std::string > ().data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
 
 	}
 #line 1019 "Parser.cpp" // lalr1.cc:859

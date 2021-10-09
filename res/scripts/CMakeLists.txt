@@ -47,9 +47,14 @@ add_sources(
 		${ROOT}/AI/Behaviors/AIBehaviour.lua
 		${ROOT}/AI/Behaviors/DEFAULT.lua
 		${ROOT}/AI/Behaviors/mutant_dummy.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities"
+		${ROOT}/AI/Behaviors/Personalities/Prototype.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Animals"
 		${ROOT}/AI/Behaviors/Personalities/Animals/pig.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Bezerker"
 		${ROOT}/AI/Behaviors/Personalities/Bezerker/BezerkerAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Bezerker/BezerkerIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Cover"
 		${ROOT}/AI/Behaviors/Personalities/Cover/CoverAlert.lua
 		${ROOT}/AI/Behaviors/Personalities/Cover/CoverAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Cover/CoverBlackIdle.lua
@@ -62,6 +67,7 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/Cover/CoverThreatened.lua
 		${ROOT}/AI/Behaviors/Personalities/Cover/CoverWait.lua
 		${ROOT}/AI/Behaviors/Personalities/Guards/CoverGuardIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Mutants"
 		${ROOT}/AI/Behaviors/Personalities/Mutants/Baboon/BaboonAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Mutants/Baboon/BaboonIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Mutants/Big/BigAttack.lua
@@ -85,22 +91,25 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/Mutants/Stealth/StealthAlert.lua
 		${ROOT}/AI/Behaviors/Personalities/Mutants/Stealth/StealthAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Mutants/Stealth/StealthIdle.lua
-		${ROOT}/AI/Behaviors/Personalities/Prototype.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Rear"
 		${ROOT}/AI/Behaviors/Personalities/Rear/RearAlert.lua
 		${ROOT}/AI/Behaviors/Personalities/Rear/RearAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Rear/RearIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Rear/RearPreAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Rear/RearScramble.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Scientist"
 		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistAlert.lua
 		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistThreatened.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Scout"
 		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutAlert.lua
 		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutBlackIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutHunt.lua
 		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutRedIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\SHARED\\\\Combat"
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/DigIn.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/HoldPosition.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/LeanFire.lua
@@ -115,6 +124,7 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/UnderFire.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/UseElevator.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/UseFlyingFox.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\SHARED\\\\Idles"
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/AnimIdles.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_Any.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_IndoorSmoke.lua
@@ -122,6 +132,7 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_StandLook.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_TakePiss.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_Talk.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\SHARED\\\\Jobs"
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Beaker.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_CarryBox.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_CheckApparatus.lua
@@ -168,8 +179,10 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/SpecialHold.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/SpecialLead.lua
 		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/Swim.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Sniper"
 		${ROOT}/AI/Behaviors/Personalities/Sniper/SniperE3.lua
 		${ROOT}/AI/Behaviors/Personalities/Sniper/SniperIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Special"
 		${ROOT}/AI/Behaviors/Personalities/Special/Crowe/CroweAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Special/Crowe/CroweIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Special/Krieger/KriegerAttack.lua
@@ -180,6 +193,7 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/Special/Valerie/ValerieIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Special/Valerie/ValerieLead.lua
 		${ROOT}/AI/Behaviors/Personalities/Special/Valerie.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Swat"
 		${ROOT}/AI/Behaviors/Personalities/Swat/SwatAlert.lua
 		${ROOT}/AI/Behaviors/Personalities/Swat/SwatAttack.lua
 		${ROOT}/AI/Behaviors/Personalities/Swat/SwatGroupAdvance.lua
@@ -188,10 +202,12 @@ add_sources(
 		${ROOT}/AI/Behaviors/Personalities/Swat/SwatHunt.lua
 		${ROOT}/AI/Behaviors/Personalities/Swat/SwatIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/Swat/SwatThreatened.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\TeamLeaders"
 		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLAttack2Attack.lua
 		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLAttack2Idle.lua
 		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLDefenseIdle.lua
 		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLFakeAttack.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\VEHICLES"
 		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_attack.lua
 		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_idle.lua
 		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_path.lua
@@ -264,10 +280,11 @@ add_sources(
 		${ROOT}/AI/Logic/NameGenerator.lua
 		${ROOT}/AI/Logic/NOCOVER.lua
 		${ROOT}/AI/Logic/SoundPackRandomizer.lua
-	SOURCE_GROUP "AI\\\\Packs"
+	SOURCE_GROUP "AI\\\\Packs\\\\Animation"
 		${ROOT}/AI/Packs/Animation/Basic.lua
 		${ROOT}/AI/Packs/Animation/PACKS.lua
 		${ROOT}/AI/Packs/Animation/TeamLeader.lua
+	SOURCE_GROUP "AI\\\\Packs\\\\Conversations"
 		${ROOT}/AI/Packs/Conversations/Critical.lua
 		${ROOT}/AI/Packs/Conversations/Idle.lua
 	SOURCE_GROUP "AI\\\\Packs\\\\Sound"
@@ -299,6 +316,9 @@ add_sources(
 		${ROOT}/ASSAULT/shared.lua
 	SOURCE_GROUP "Default"
 		${ROOT}/Default/ClientStuff.lua
+		${ROOT}/Default/GameRules.lua
+		${ROOT}/Default/Inventory.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Other"
 		${ROOT}/Default/Entities/Others/AICrate.lua
 		${ROOT}/Default/Entities/Others/AIObject.lua
 		${ROOT}/Default/Entities/Others/AnimObject.lua
@@ -330,16 +350,19 @@ add_sources(
 		${ROOT}/Default/Entities/Others/SwivilChair.lua
 		${ROOT}/Default/Entities/Others/TV.lua
 		${ROOT}/Default/Entities/Others/Watch.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Player"
 		${ROOT}/Default/Entities/PLAYER/AdvCamSystem.lua
 		${ROOT}/Default/Entities/PLAYER/BasicPlayer.lua
 		${ROOT}/Default/Entities/PLAYER/player.lua
 		${ROOT}/Default/Entities/PLAYER/spectator.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Render"
 		${ROOT}/Default/Entities/Render/BFly.lua
 		${ROOT}/Default/Entities/Render/EnvColor.lua
 		${ROOT}/Default/Entities/Render/Fog.lua
 		${ROOT}/Default/Entities/Render/Grasshopper.lua
 		${ROOT}/Default/Entities/Render/Storm.lua
 		${ROOT}/Default/Entities/Render/ViewDist.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Triggers"
 		${ROOT}/Default/Entities/Triggers/AITrigger.lua
 		${ROOT}/Default/Entities/Triggers/AreaTrigger.lua
 		${ROOT}/Default/Entities/Triggers/BoatTrampolineTrigger.lua
@@ -353,8 +376,6 @@ add_sources(
 		${ROOT}/Default/Entities/Triggers/SmartProximityTrigger.lua
 		${ROOT}/Default/Entities/Triggers/VisibilityTrigger.lua
 		${ROOT}/Default/Entities/Triggers/Waypoint.lua
-		${ROOT}/Default/GameRules.lua
-		${ROOT}/Default/Inventory.lua
 	SOURCE_GROUP "Expressions"
 		${ROOT}/Expressions/CombatRandomExpressions.lua
 		${ROOT}/Expressions/DeadRandomExpressions.lua
@@ -453,39 +474,13 @@ add_sources(
 		${ROOT}/materials/README.txt
 	SOURCE_GROUP "MenuScreens"
 		${ROOT}/MenuScreens/Campaign.lua
-		${ROOT}/MenuScreens/Common/BackScreen.lua
-		${ROOT}/MenuScreens/Common/Confirmation.lua
-		${ROOT}/MenuScreens/Common/InputDialog.lua
-		${ROOT}/MenuScreens/Common/JoinIPDialog.lua
-		${ROOT}/MenuScreens/Common/LoginDialog.lua
-		${ROOT}/MenuScreens/Common/MessageDialog.lua
-		${ROOT}/MenuScreens/Common/ProgressDialog.lua
 		${ROOT}/MenuScreens/Credits.lua
 		${ROOT}/MenuScreens/CutScenePlayer.lua
 		${ROOT}/MenuScreens/DemoLoop.lua
-		${ROOT}/MenuScreens/Ingame/Disconnect.lua
-		${ROOT}/MenuScreens/Ingame/InGameNonTeam.lua
-		${ROOT}/MenuScreens/Ingame/InGameSingle.lua
-		${ROOT}/MenuScreens/Ingame/InGameTeam.lua
-		${ROOT}/MenuScreens/Ingame/InGameTeamClass.lua
 		${ROOT}/MenuScreens/MainScreen.lua
 		${ROOT}/MenuScreens/MessageMode.lua
 		${ROOT}/MenuScreens/Mods.Lua
-		${ROOT}/MenuScreens/MultiPlayer/BannerUpdate.lua
-		${ROOT}/MenuScreens/MultiPlayer/CreateServer.lua
-		${ROOT}/MenuScreens/MultiPlayer/LANServerList.lua
-		${ROOT}/MenuScreens/MultiPlayer/NETServerList.lua
-		${ROOT}/MenuScreens/MultiPlayer/ServerAdmin.lua
-		${ROOT}/MenuScreens/MultiPlayer/VoteAdmin.lua
-		${ROOT}/MenuScreens/MultiPlayer/VotePanel.lua
-		${ROOT}/MenuScreens/MultiPlayer/WaitServer.lua
 		${ROOT}/MenuScreens/Multiplayer.lua
-		${ROOT}/MenuScreens/Options/BindWaitForKey.lua
-		${ROOT}/MenuScreens/Options/Control.lua
-		${ROOT}/MenuScreens/Options/Game.lua
-		${ROOT}/MenuScreens/Options/Sound.lua
-		${ROOT}/MenuScreens/Options/Video.lua
-		${ROOT}/MenuScreens/Options/VideoAdv.lua
 		${ROOT}/MenuScreens/Options.lua
 		${ROOT}/MenuScreens/Profiles.lua
 		${ROOT}/MenuScreens/Skin.lua
@@ -494,6 +489,36 @@ add_sources(
 		${ROOT}/MenuScreens/UISystemCfg.lua
 		${ROOT}/MenuScreens/UISystemUtils.lua
 		${ROOT}/MenuScreens/VideoSequencer.lua
+	SOURCE_GROUP "MenuScreens\\\\Common"
+		${ROOT}/MenuScreens/Common/BackScreen.lua
+		${ROOT}/MenuScreens/Common/Confirmation.lua
+		${ROOT}/MenuScreens/Common/InputDialog.lua
+		${ROOT}/MenuScreens/Common/JoinIPDialog.lua
+		${ROOT}/MenuScreens/Common/LoginDialog.lua
+		${ROOT}/MenuScreens/Common/MessageDialog.lua
+		${ROOT}/MenuScreens/Common/ProgressDialog.lua
+	SOURCE_GROUP "MenuScreens\\\\Ingame"
+		${ROOT}/MenuScreens/Ingame/Disconnect.lua
+		${ROOT}/MenuScreens/Ingame/InGameNonTeam.lua
+		${ROOT}/MenuScreens/Ingame/InGameSingle.lua
+		${ROOT}/MenuScreens/Ingame/InGameTeam.lua
+		${ROOT}/MenuScreens/Ingame/InGameTeamClass.lua
+	SOURCE_GROUP "MenuScreens\\\\Multiplayer"
+		${ROOT}/MenuScreens/MultiPlayer/BannerUpdate.lua
+		${ROOT}/MenuScreens/MultiPlayer/CreateServer.lua
+		${ROOT}/MenuScreens/MultiPlayer/LANServerList.lua
+		${ROOT}/MenuScreens/MultiPlayer/NETServerList.lua
+		${ROOT}/MenuScreens/MultiPlayer/ServerAdmin.lua
+		${ROOT}/MenuScreens/MultiPlayer/VoteAdmin.lua
+		${ROOT}/MenuScreens/MultiPlayer/VotePanel.lua
+		${ROOT}/MenuScreens/MultiPlayer/WaitServer.lua
+	SOURCE_GROUP "MenuScreens\\\\Options"
+		${ROOT}/MenuScreens/Options/BindWaitForKey.lua
+		${ROOT}/MenuScreens/Options/Control.lua
+		${ROOT}/MenuScreens/Options/Game.lua
+		${ROOT}/MenuScreens/Options/Sound.lua
+		${ROOT}/MenuScreens/Options/Video.lua
+		${ROOT}/MenuScreens/Options/VideoAdv.lua
 	SOURCE_GROUP "Multiplayer"
 		${ROOT}/Multiplayer/AvailableMods.lua
 		${ROOT}/Multiplayer/ClientStuffClassLib.lua

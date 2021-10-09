@@ -21,6 +21,9 @@ UI.PageCutScenePlayer=
 		
 			OnFinished = function(Sender)
 				UI.PageCutScenePlayer:Finished();
+			end,
+			IsPlaying = function()
+				return false	
 			end
 		},
 
@@ -50,6 +53,10 @@ UI.PageCutScenePlayer=
 		end,
 
 		OnActivate= function(Sender)
+			-- FIXME:
+			if true then
+				return; 
+			end
 			UI.PageCutScenePlayer.bFinished = nil;
 			
 			if (UI.PageCutScenePlayer.szCutSceneName) then
@@ -108,7 +115,8 @@ UI.PageCutScenePlayer=
 		OnDeactivate = function(Sender)		
 			local bPlaying = UI.PageCutScenePlayer.GUI.CutScene:IsPlaying();
 						
-			UI.PageCutScenePlayer.GUI.CutScene:ReleaseVideo();
+			-- FIXME: ReleaseVideo not registered in lua
+			--UI.PageCutScenePlayer.GUI.CutScene:ReleaseVideo();
 			
 			if (bPlaying) then
 				UI.PageCutScenePlayer:Finished();

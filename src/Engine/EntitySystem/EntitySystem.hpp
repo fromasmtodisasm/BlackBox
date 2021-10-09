@@ -9,10 +9,7 @@ struct ICrySizer;
 class CEntitySystem : public IEntitySystem
 {
 public:
-	CEntitySystem(ISystem* pSystem)
-	{
-		m_Entities.resize(100);
-	}
+	CEntitySystem(ISystem* pSystem);
 
 	virtual void Update() override;
 	virtual IScriptSystem* GetScriptSystem() override;

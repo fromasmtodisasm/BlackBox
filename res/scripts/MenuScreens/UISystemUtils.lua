@@ -47,11 +47,13 @@ end
 
 function UI:PrecacheMPModels()
 	local ModelView = UI.PageOptionsGame.GUI.modelview;
+	--[[
 	local bResult = ModelView:LoadModel(getglobal("mp_model"));
 	
 	if (bResult and tonumber(bResult) ~= 0) then
 		ModelView:SetAnimation("swalkfwd");
 	end
+	]]
 end
 
 function UI:CheckCutSceneDrive()
@@ -426,7 +428,7 @@ function AddUISideMenu(Page, ItemList)
 
 	local iTabStop = 10001;
 
-	for ItemName, ItemTable in ItemList do
+	for ItemName, ItemTable in pairs(ItemList) do
 
 		if ((ItemTable[1] == '-') and (ItemTable[2] == '-') and (ItemTable[3] == '-')) then
 			iStartY = iStartY + (UI.skins.SideMenuButton.height * 0.5) + iSpacing * 0.5;

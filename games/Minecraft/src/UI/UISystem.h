@@ -427,9 +427,7 @@ public:
 	int CreateListView(CUIListView **pListView, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
 	int CreateCheckBox(CUICheckBox **pCheckBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
 	int CreateComboBox(CUIComboBox **pComboBox, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
-	#if 0
 	int CreateVideoPanel(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
-	#endif
 	int CreateScreen(CUIScreen **pScreen, const string &szName);
 
 	////////////////////////////////////////////////////////////////////// 
@@ -450,9 +448,7 @@ public:
 	int CreateListViewFromTable(CUIListView **pListView, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
 	int CreateCheckBoxFromTable(CUICheckBox **pCheckBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
 	int CreateComboBoxFromTable(CUIComboBox **pComboBox, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	#if 0
 	int CreateVideoPanelFromTable(CUIVideoPanel **pVideoPanel, CUIWidget *pParent, const UIRect &pRect, IScriptObject *pObject, const string &szName);
-	#endif
 	int CreateScreenFromTable(CUIScreen **pScreen, const string &szName, IScriptObject *pObject);
 
 	////////////////////////////////////////////////////////////////////// 
@@ -463,9 +459,7 @@ public:
 	int SetupListViewFromTable(CUIListView *pListView, IScriptObject *pObject);
 	int SetupCheckBoxFromTable(CUICheckBox *pCheckBox, IScriptObject *pObject);
 	int SetupComboBoxFromTable(CUIComboBox *pomboBox, IScriptObject *pObject);
-	#if 0
 	int SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObject *pObject);
-	#endif
 
 	////////////////////////////////////////////////////////////////////// 
 	//_int LogToConsole(char *szFormat, ...);

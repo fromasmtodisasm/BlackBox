@@ -118,7 +118,7 @@ UI.PageCredits=
 			UI.PageCredits:AddPage(8, 		"17d");
 			UI.PageCredits:AddPage(10, 		"end");
 
-			sort(UI.PageCredits.Script, instruction_compare);
+			table.sort(UI.PageCredits.Script, instruction_compare);
 
 		end,
 		
@@ -269,7 +269,7 @@ UI.PageCredits=
 		
 		local NewBackground = { fTime, "textures/credits/"..szImage, 1 };
 		
-		tinsert(self.Script, NewBackground);
+		table.insert(self.Script, NewBackground);
 	end,
 	
 	AddPage = function (self, fDelta, szImage)
@@ -281,7 +281,7 @@ UI.PageCredits=
 		
 		local NewPage = { fTime, "textures/credits/"..szImage };
 		
-		tinsert(self.Script, NewPage);		
+		table.insert(self.Script, NewPage);		
 	end,
 }
 

@@ -4,26 +4,28 @@ function globals()
 	return _G
 end
 
+--getglobal
+
+function getn(t)
+	return #t
+end
+
+function gsub(s, sp, rp)
+	return string.gsub(s, sp, rp)
+end
+
 function getglobal (varname)
 	-- access the table of globals
+	if (varname == "g_language") then
+		System:Error("g_language!!!!!!!!!!!")
+	end
 	local value = rawget(globals(), varname)
-	-- lua 4.0
-	--local tm = gettagmethod(tag(value), "getglobal")
-	--if not tm then
-	  return value
-	--else
-	  --return tm(varname, value)
-	--end
+	return value or Game:GetVariable(varname)
   end
 
   function setglobal (varname, newvalue)
-	local oldvalue = rawget(globals(), varname)
-	--local tm = gettagmethod(tag(oldvalue), "setglobal")
-	--if not tm then
 	  rawset(globals(), varname, newvalue)
-	--else
-	--  tm(varname, oldvalue, newvalue)
-	--end
+	  Game:SetVariable(varname, newvalue)
   end
 
 ----------------------------------------------------------------------------------
@@ -63,7 +65,7 @@ g_Vectors =
 --------------------------------------------------------------------------------
 function ReadTableFromFile(szFilename, LineMode)
 
-	local hfile = openfile(szFilename, "r");
+	local hfile = io.open(szFilename, "r");
 
 	if (hfile == nil) then
 		return
@@ -71,7 +73,7 @@ function ReadTableFromFile(szFilename, LineMode)
 
 	local iEqual;
 	local tList = {};
-	local szLine = read(hfile, "*l");
+	local szLine = hFile.read( "*l");
 	local szProp;
 	local szValue;
 
@@ -103,10 +105,10 @@ function ReadTableFromFile(szFilename, LineMode)
 			end
 		end
 		
-		szLine = read(hfile, "*l");
+		szLine = hfile.read("*l");
 	end
 
-	closefile(hfile);
+	hfile.close();
 
 	if (LineMode) then
 		tList.n = nil;
@@ -265,7 +267,7 @@ function dump(_class,no_func)
 		for n=0,g_dump_tabs,1 do
 			str=str.."  ";
 		end
-		for i,field in _class do
+		for i,field in pairs(_class) do
 			if(type(field)=="table") then
 				g_dump_tabs=g_dump_tabs+1;
 				System:Log(str.."$4"..i.."$1= {");
