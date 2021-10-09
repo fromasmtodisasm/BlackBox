@@ -19,8 +19,11 @@
 #include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
+#include <BlackBox/ScriptSystem/ScriptObjectSound.hpp>
 
 #include <BlackBox/Core/Platform/CryLibrary.h>
+
+#include <Legacy\System.h>
 
 #define DEFAULT_APP_NAME "BlackBox"
 
@@ -265,6 +268,7 @@ class CSystem final : public ISystem
 	bool Init3DEngine();
 	bool InitSubSystem();
 	bool InitPhysics();
+	bool LoadCrynetwork();
 	bool OpenRenderLibrary(std::string_view render);
 
 	void ParseCMD();
@@ -449,6 +453,7 @@ class CSystem final : public ISystem
 	CTimeValue m_lastTickTime;
 
 	CScriptObjectConsole*  m_ScriptObjectConsole  = nullptr;
+	CScriptObjectSound*	   m_ScriptObjectSound	  = nullptr;
 	CScriptObjectScript*   m_ScriptObjectScript	  = nullptr;
 	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
 
@@ -506,6 +511,9 @@ class CSystem final : public ISystem
 	int sys_dump_memstats = false;
 
 	IProcess* m_pIProcess{};
+
+	INetwork* m_pNetworkLegacy;
+	legacy::ISystem* m_pSystemLegacy;
 
 
     // ISystem interface

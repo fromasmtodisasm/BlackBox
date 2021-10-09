@@ -448,8 +448,12 @@ bool CSystem::InitScripts()
 	m_ScriptObjectRenderer = new CScriptObjectRenderer();
 	CScriptObjectRenderer::InitializeTemplate(m_env.pScriptSystem);
 
+	m_ScriptObjectSound = new CScriptObjectSound();
+	CScriptObjectSound::InitializeTemplate(m_env.pScriptSystem);
+
 	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_env.pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
+	m_ScriptObjectSound->Init(GetIScriptSystem());
 
 	return m_env.pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
@@ -598,6 +602,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pRenderer);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
+	SAFE_DELETE(m_ScriptObjectSound);
 	SAFE_DELETE(m_ScriptObjectScript);
 	SAFE_DELETE(m_ScriptObjectRenderer);
 	ReleaseScripts();

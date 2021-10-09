@@ -35,24 +35,25 @@ add_sources(
 
 	SOURCE_GROUP
 	"GameFiles"
-	GameFiles/EntityClassRegistry.cpp
+	#GameFiles/GameObject.h
 	GameFiles/DevMode.cpp
+	GameFiles/EntityClassRegistry.cpp
 	GameFiles/Game.cpp
 	GameFiles/GameActionInput.cpp
+	GameFiles/GameCallbacks.cpp
 	GameFiles/GameClientServer.cpp
 	GameFiles/GameDevMode.cpp
+	GameFiles/GameEvents.cpp
 	GameFiles/GameLoading.cpp
-	GameFiles/GameMods.cpp
-	GameFiles/GameTagPoints.cpp
 	GameFiles/GameMemStats.cpp
 	GameFiles/GameMisc.cpp
-	GameFiles/GameEvents.cpp
+	GameFiles/GameMods.cpp
+	GameFiles/GameMovieUser.cpp
+	GameFiles/GameTagPoints.cpp
 	GameFiles/SteamHelper.cpp
-	GameFiles/XVehicleSystem.cpp
 	GameFiles/XArea.cpp
-	#GameFiles/GameObject.h
-	GameFiles/GameCallbacks.cpp
 	GameFiles/XArea.h
+	GameFiles/XVehicleSystem.cpp
 	SOURCE_GROUP
 	"Network"
 	Network/NetEntityInfo.cpp

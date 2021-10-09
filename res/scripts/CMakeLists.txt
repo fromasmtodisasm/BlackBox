@@ -532,5 +532,5 @@ add_sources(
 
 end_sources()
 
-CryfileContainer( Scripts SOLUTION_FOLDER "BlackBox/Scripts")
+CryfileContainer( Scripts SOLUTION_FOLDER "Scripts")
 

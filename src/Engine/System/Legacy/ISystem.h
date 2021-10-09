@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 #include <IXMLDOM.h>
 #include <IXml.h>
-#include <IValidator.h>
+//#include <IValidator.h>
 //#include <ILog.h>
 
 struct ISystem;
@@ -86,6 +86,8 @@ class CFrameProfilerSection;
 #define USER_DATA_BONEHANDLER	5
 #define USER_DATA_POINTER		6
 
+namespace legacy
+{
 //////////////////////////////////////////////////////////////////////////
 enum ESystemUpdateFlags
 {
@@ -478,10 +480,10 @@ inline void CryLogAlways( const char *format,... )
 		va_end(args);
 	}
 }
-
+}
 //////////////////////////////////////////////////////////////////////////
 // Additional headers.
 //////////////////////////////////////////////////////////////////////////
-#include <FrameProfiler.h>
+//#include <FrameProfiler.h>
 
 #endif //_CRY_SYSTEM_H_

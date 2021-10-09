@@ -226,7 +226,7 @@ typedef std::vector<CUIScreen *>						CUIScreenList;
 typedef std::vector<CUIScreen *>::iterator	CUIScreenItor;
 
 //////////////////////////////////////////////////////////////////////////
-class CUISystem : public IProcess, public Legacy::IInputEventListener
+class CUISystem : public IProcess, public Legacy::IInputEventListener, public IInputEventListener
 {
 	friend class CScriptObjectUI;
 public:
@@ -504,6 +504,7 @@ private:
 	int SortTabStop();
 
 	bool OnInputEvent(const Legacy::SInputEvent &event);
+	bool OnInputEvent(const SInputEvent& event);
 
 	int InitializeWidget(CUIWidget *pWidget, CUIWidget *pParent, const string &szName, const UIRect &pRect, int iFlags, int iStyle);
 	int InitializeTemplates();

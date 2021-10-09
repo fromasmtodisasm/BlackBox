@@ -1189,7 +1189,7 @@ void CXClient::OnMapChangedReally()
 	//			Factory
 	//			Carrier
 	//
-	//m_pGame->GetSystem()->GetIMovieSystem()->Reset();
+	m_pGame->GetSystem()->GetIMovieSystem()->Reset();
 
 	// [marco] save the first checkpoint in single player game
 	// after the client has been connected, ID set etc. etc.

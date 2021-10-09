@@ -59,5 +59,13 @@ CRYMEMORYMANAGER_API void CryFree(void* p)
 	CrySystemCrtFree(p);
 }
 
+//////////////////////////////////////////////////////////////////////////
+CRYMEMORYMANAGER_API void* CryReallocSize(void* memblock, size_t oldsize, size_t size)
+{
+	return CrySystemCrtRealloc(memblock, oldsize);
+}
 
-
+CRYMEMORYMANAGER_API void CryFreeSize(void* p, size_t size)
+{
+	CrySystemCrtFree(p);
+}

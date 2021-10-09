@@ -125,7 +125,7 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 	if (!systemLibrary.IsLoaded())
 	{
 		string errorStr = string(512, '\0');
-		sprintf(errorStr.data(), "%s", "Failed to load the " CryLibraryDefName("CrySystem") " library!");
+		sprintf(errorStr.data(), "%s", "Failed to load the " CryLibraryDefName("System") " library!");
 		CryMessageBox(errorStr.c_str(), "Engine initialization failed!");
 		return false;
 	}
@@ -134,7 +134,7 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 	if (CreateSystemInterface == nullptr)
 	{
 		string errorStr = string(512, '\0');
-		sprintf(errorStr.data(), "%s", CryLibraryDefName("CrySystem") " library was invalid, entry-point not found!");
+		sprintf(errorStr.data(), "%s", CryLibraryDefName("System") " library was invalid, entry-point not found!");
 		CryMessageBox(errorStr.c_str(), "Engine initialization failed!");
 
 		return false;

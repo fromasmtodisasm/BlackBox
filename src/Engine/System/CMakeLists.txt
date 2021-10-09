@@ -16,6 +16,7 @@ sources_platform(ALL)
 add_sources(
 	"NoUberFile"
 	PROJECTS
+	#System
 	System
 	SOURCE_GROUP
 	"Source Files"
@@ -47,6 +48,7 @@ add_sources(
 	"ScriptBinds/ScriptObjectConsole.cpp"
 	"ScriptBinds/ScriptObjectRenderer.cpp"
 	"ScriptBinds/ScriptObjectScript.cpp"
+	"ScriptBinds/ScriptObjectSound.cpp"
 	SOURCE_GROUP
 	"ProjectManager"
 	"ProjectManager/ProjectManager.cpp"
@@ -61,6 +63,7 @@ add_sources(
 	SOURCE_GROUP
 	"Legacy"
 	"Legacy/ISystem.h"
+	"Legacy/System.cpp"
 )
 end_sources()
 

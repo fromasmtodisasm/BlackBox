@@ -24,6 +24,7 @@
 
 #include <WeaponSystemEx.h>
 #include <WeaponClass.h>
+#include <CMovieUser.h>
 
 //#include "CMovieUser.h"
 
@@ -235,12 +236,10 @@ CXGame::CXGame()
 	m_pIngameDialogMgr = new CIngameDialogMgr();
 	m_pUISystem = 0;
 	mp_model = 0;
-	#if 0
 #if !defined(LINUX)
 	// to avoid all references to movie user in this file
 	m_pMovieUser = new CMovieUser(this);
 #endif
-	#endif
 	m_nPlayerIconTexId = -1;
 	m_nVehicleIconTexId = -1;
 	m_nBuildingIconTexId = -1;
@@ -287,8 +286,7 @@ CXGame::~CXGame()
 		delete m_pIngameDialogMgr;
 	m_pIngameDialogMgr=NULL;
 
-#if 0
-#	if !defined(LINUX)
+#if !defined(LINUX)
 	if (m_pMovieUser)
 	{
 		if (m_pSystem)
@@ -299,12 +297,11 @@ CXGame::~CXGame()
 				if (pMovieSystem->GetUser()==m_pMovieUser)
 					pMovieSystem->SetUser(NULL);
 			}
-#		else
 		}
 		delete m_pMovieUser;
 	}
-#	endif
 #endif
+
 	m_pMovieUser = NULL;
 
 	// shutdown the client if there is one
@@ -521,7 +518,6 @@ void CXGame::SoftReset()
 		vLoadedWeapons.push_back(m_pWeaponSystemEx->GetWeaponClass(i)->GetName());
 
 	m_pWeaponSystemEx->Reset();
-	#if 0
 #if !defined(LINUX)
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->StopAllSequences();
@@ -537,9 +533,6 @@ void CXGame::SoftReset()
 
 	for (std::vector<string>::iterator i = vLoadedWeapons.begin(); i != vLoadedWeapons.end(); ++i)
 		AddWeapon((*i).c_str());
-	#else
-	NOT_IMPLEMENTED;
-	#endif
 
 	if (m_pCurrentUI)
 	{
@@ -568,29 +561,23 @@ void CXGame::Reset()
 {
 	m_pEntitySystem->Reset();
 
-	#if 0
 	// Unload all music.
 	if (m_pSystem->GetIMusicSystem())
 		m_pSystem->GetIMusicSystem()->Unload();
-	#endif
 
 	//allow to reload scripts with(LoadScript)
 	m_pScriptSystem->SetGlobalToNull("_localplayer");
 	if (m_pScriptSystem)
 		m_pScriptSystem->UnloadScripts();
 
-	#if 0
 	m_pWeaponSystemEx->Reset();
-	#endif
 	m_XSurfaceMgr.Reset();
 	m_XAreaMgr.Clear();
 	ClearTagPoints();
-	#if 0
 #if !defined(LINUX)
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->Reset(false);
 #endif
-	#endif
 	m_pScriptObjectGame->Reset();
 
 	m_pScriptSystem->ForceGarbageCollection();
@@ -664,13 +651,11 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pServer	 = NULL;
 
 	m_pSystem->GetILog()->Log("Game Initialization");
-	#if 0
 #if !defined(LINUX)
 	IMovieSystem* pMovieSystem = m_pSystem->GetIMovieSystem();
 	if (pMovieSystem)
 		pMovieSystem->SetUser(m_pMovieUser);
 #endif
-	#endif
 	if (!m_pTimeDemoRecorder)
 		m_pTimeDemoRecorder = new CTimeDemoRecorder(pSystem);
 
@@ -691,9 +676,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pNETServerSnooper = m_pNetwork->CreateNETServerSnooper(this);
 	m_pRConSystem		= m_pNetwork->CreateRConSystem();
 #endif
-	#if 0
 	m_pWeaponSystemEx = new CWeaponSystemEx();
-	#endif
 	m_pVehicleSystem  = new CVehicleSystem();
 	m_pPlayerSystem	  = new CPlayerSystem();
 	#if 0
@@ -947,16 +930,16 @@ bool CXGame::Update()
 		bPause = false;
 #if !defined(LINUX)
 	// Pauses or unpauses movie system.
+	#if 0
 	if (bPause != m_bMovieSystemPaused)
 	{
 		m_bMovieSystemPaused = bPause;
-		#if 0
 		if (bPause)
 			m_pSystem->GetIMovieSystem()->Pause();
 		else
 			m_pSystem->GetIMovieSystem()->Resume();
-		#endif
 	}
+	#endif
 #endif
 
 	// [marco] check current sound and vis areas
@@ -978,8 +961,11 @@ bool CXGame::Update()
 				(*pl)->GetEntity()->GetPhysics()->SetParams(&pf);
 	}
 
+	// We use engine for update
+	#if 0
 	if (!m_pSystem->Update(IsMultiplayer() ? ESYSUPDATE_MULTIPLAYER : 0, nPauseMode)) //Update returns false when quitting
 		return (false);
+	#endif
 
 	if (IsMultiplayer())
 	{
@@ -1193,12 +1179,8 @@ bool CXGame::Update()
 //////////////////////////////////////////////////////////////////////
 void CXGame::UpdateDuringLoading()
 {
-	#if 0
 	if(m_pServer)
 		m_pServer->UpdateXServerNetwork();
-	#else
-	NOT_IMPLEMENTED;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1421,28 +1403,22 @@ void CXGame::GotoGame(bool bTriggerOnSwitch)
 void CXGame::MenuOn()
 {
 	// stop sounds and timers affected by game pause
-	#if 0
 	m_pSystem->GetISoundSystem()->Pause(true, true);
-	#endif
 	m_pScriptTimerMgr->Pause(true);
 
-	#if 0
 	if (m_pSystem->GetIMusicSystem())
 	{
 		m_pSystem->GetIMusicSystem()->Pause(true);
 		//m_pSystem->GetIMusicSystem()->Silence();
 	}
-	#endif
 
 	//FIXME:
-	#if 0
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
 		m_pSystem->GetIInput()->AddEventListener(m_pUISystem);
 		m_pSystem->GetIInput()->ClearKeyState();
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
 	}
-	#endif
 
 	m_bMenuOverlay = 1;
 

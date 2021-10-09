@@ -27,13 +27,18 @@ struct _CryMemoryManagerPoolHelper
 	uint64 allocatedMemory;
 	uint64 freedMemory;
 	int numAllocations;
+	
 	typedef void *(*FNC_CryMalloc)(size_t size);
 	typedef void *(*FNC_CryRealloc)(void *memblock,size_t size);
+	typedef void *(*FNC_CryReallocSize)(void *memblock,size_t oldsize,size_t size);
 	typedef void (*FNC_CryFree)(void *p);
+	typedef void (*FNC_CryFreeSize)(void *p,size_t size);
 	typedef int (*FNC_CryStats)(char *buf);
 	FNC_CryMalloc _CryMalloc;
 	FNC_CryRealloc _CryRealloc;
+	FNC_CryReallocSize _CryReallocSize;
 	FNC_CryFree _CryFree;
+	FNC_CryFreeSize _CryFreeSize;
 	static int m_bInitialized;
 
 	void Init( void *pHandle = NULL )
@@ -51,18 +56,22 @@ struct _CryMemoryManagerPoolHelper
 		{
 			if (hMod)
 			{
-				_CryMalloc = (FNC_CryMalloc)CryGetProcAddress(hMod, DLL_ENTRY_CRYMALLOC);
-				_CryRealloc = (FNC_CryRealloc)CryGetProcAddress(hMod, DLL_ENTRY_CRYREALLOC);
-				_CryFree = (FNC_CryFree)CryGetProcAddress(hMod, DLL_ENTRY_CRYFREE);
+				
+				_CryMalloc		= (FNC_CryMalloc)GetProcAddress((HINSTANCE)hMod, "CryMalloc");
+				_CryRealloc		= (FNC_CryRealloc)GetProcAddress((HINSTANCE)hMod, "CryRealloc");
+				_CryReallocSize = (FNC_CryReallocSize)GetProcAddress((HINSTANCE)hMod, "CryReallocSize");
+				_CryFree		= (FNC_CryFree)GetProcAddress((HINSTANCE)hMod, "CryFree");
+				_CryFreeSize	= (FNC_CryFreeSize)GetProcAddress((HINSTANCE)hMod, "CryFreeSize"); 
 
-				if ((_CryMalloc && _CryRealloc && _CryFree))
+
+				if ((_CryMalloc && _CryRealloc && _CryFree && _CryReallocSize && _CryFreeSize))
 					break;
 			}
 
 			hMod = CryLoadLibraryDefName("System");
 		}
 
-		if (!hMod || !_CryMalloc || !_CryRealloc || !_CryFree )
+		if (!hMod || !_CryMalloc || !_CryRealloc || !_CryReallocSize || !_CryFree || !_CryFreeSize)
 		{
 			char errMsg[10240];
 			if (hMod)

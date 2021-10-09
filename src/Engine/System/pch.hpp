@@ -15,7 +15,7 @@
 #include <BlackBox/System/HardwareMouse.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/System/ISystem.hpp>
+//#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/System/IWindow.hpp>
 

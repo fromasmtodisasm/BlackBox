@@ -78,8 +78,8 @@ function ReadTableFromFile(szFilename, LineMode)
 	while (szLine ~= nil) do
 	
 		if (strlen(szLine) > 0) then
-			if (strsub(szLine, -1) == "\n") then
-				szLine = strsub(szLine, 1, strlen(szLine)-1);
+			if (string.sub(szLine, -1) == "\n") then
+				szLine = string.sub(szLine, 1, strlen(szLine)-1);
 			end	
 		end
 		
@@ -92,8 +92,8 @@ function ReadTableFromFile(szFilename, LineMode)
 					iEqual = strfind(szLine, "=", 1, 1);
 	
 					if (iEqual) then
-						szProp = strsub(szLine, 1, iEqual-1);
-						szValue = strsub(szLine, iEqual+1, -1);
+						szProp = string.sub(szLine, 1, iEqual-1);
+						szValue = string.sub(szLine, iEqual+1, -1);
 	
 						tList[szProp] = szValue;
 					else
@@ -141,7 +141,7 @@ end
 -- Get the Localized version of the string
 --------------------------------------------------------------------------------
 function Localize(Token)
-	if (strsub(Token, 1, 1) ~= "@") then
+	if (string.sub(Token, 1, 1) ~= "@") then
 		if Token then
 			return "@"..Token;
 		end

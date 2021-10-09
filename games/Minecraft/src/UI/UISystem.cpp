@@ -258,7 +258,11 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 
 	if (m_pInput)
 	{
+		#if 0
 		m_pInput->AddEventListener(this);
+		#else
+		gEnv->pInput->AddEventListener(this);
+		#endif
 	}
 
 	m_szScriptFileName = szScriptFileName;
@@ -815,7 +819,11 @@ int CUISystem::Release()
 
 	if (m_pInput)
 	{
+		#if 0
 		m_pInput->RemoveEventListener(this);
+		#else
+		gEnv->pInput->RemoveEventListener(this);
+		#endif
 	}
 	
 	return 1;
@@ -910,7 +918,11 @@ int CUISystem::Reload(int iFrameDelta)
 	m_pLog->LogToConsole("\001  Readding input listener...");
 	if (m_pInput)
 	{
+		#if 0
 		m_pInput->AddEventListener(this);
+		#else
+		gEnv->pInput->AddEventListener(this);
+		#endif
 	}
 
 	m_pLog->LogToConsole("\001  Reloading cvars...");
@@ -3006,7 +3018,74 @@ int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
 
 	return 1;
 }
+#if 0
+struct SInputEvent
+{
+	enum EType
+	{
+		UNKNOWN,
+		KEY_PRESS,
+		KEY_RELEASE,
+		MOUSE_MOVE,
+	};
 
+	EType type;
+	int key;
+	unsigned int timestamp;
+	int moidifiers;
+	const char *keyname;
+	float value;
+};
+
+struct SInputEvent
+{
+	EInputDeviceType deviceType;	 //!< Device type from which the event originated.
+	EInputState		 state;			 //!< Type of input event.
+	TKeyName		 keyName;		 //!< Human readable name of the event.
+	EKeyId			 keyId;			 //!< Device-specific id corresponding to the event.
+	int				 modifiers;		 //!< Key modifiers enabled at the time of this event.
+	float			 value;			 //!< Value associated with the event.
+	SInputSymbol*	 pSymbol;		 //!< Input symbol the event originated from.
+	uint8_t			 deviceIndex;	 //!< Local index of this particular controller type.
+	uint8_t			 deviceUniqueID; //!< Process wide unique controller ID.
+};
+#endif
+
+Legacy::SInputEvent::EType getType(EInputState is)
+{
+	switch (is)
+	{
+	case eIS_Unknown:
+		return Legacy::SInputEvent::UNKNOWN;
+	case eIS_Pressed:
+		return Legacy::SInputEvent::KEY_PRESS;
+	case eIS_Released:
+		return Legacy::SInputEvent::KEY_RELEASE;
+	case eIS_Down:
+		return Legacy::SInputEvent::KEY_PRESS;
+	case eIS_Changed:
+		return Legacy::SInputEvent::MOUSE_MOVE;
+	default:
+		return Legacy::SInputEvent::UNKNOWN;
+	}
+}
+
+bool CUISystem::OnInputEvent(const SInputEvent& event)
+{
+	if (event.keyId == eKI_SYS_Commit)
+		return false;
+	Legacy::SInputEvent legacyEvent;
+	auto&				l = legacyEvent;
+
+	l.key		 = event.keyId;
+	l.keyname	 = event.keyName;
+	l.moidifiers = event.modifiers;
+	l.timestamp	 = 0;
+	l.type		 = getType(event.state);
+	l.value		 = event.value;
+
+	return OnInputEvent(l);
+}
 
 ////////////////////////////////////////////////////////////////////// 
 bool CUISystem::OnInputEvent(const Legacy::SInputEvent &event)

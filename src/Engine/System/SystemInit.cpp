@@ -476,6 +476,8 @@ bool CSystem::Init()
 	//====================================================
 	if (!InitNetwork())
 		return false;
+	//LoadCrynetwork();
+
 	//====================================================
 	Log("Initialize Game");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
@@ -801,6 +803,23 @@ bool CSystem::InitFileSystem()
 	return (bRes);
 #endif
 	return true;
+}
+
+bool CSystem::LoadCrynetwork()
+{
+	//CRYNETWORK_API INetwork* CreateNetwork(ISystem * pSystem);
+	typedef INetwork* (*PFNCREATENETWORK)(legacy::ISystem * pSystem);
+
+	Log("Creating CryNetwork");
+	return LoadSubsystem<PFNCREATENETWORK>("Legacy/CryNetwork.dll", "CreateNetwork", [&](PFNCREATENETWORK p) {
+		m_pNetworkLegacy = p(m_pSystemLegacy);
+		if (m_pNetworkLegacy == nullptr)
+			return false;
+		//m_pNetworkLegacy->Init();
+		return true;
+	});
+
+
 }
 
 IGame* CSystem::CreateGame(IGame* game)

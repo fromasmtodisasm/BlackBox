@@ -111,7 +111,9 @@ struct CryModuleMemoryInfo
 #if defined(SYSTEM_EXPORTS) || (!defined(WIN32) && !defined(LINUX))
 	CRYMEMORYMANAGER_API void *CryMalloc(size_t size);
 	CRYMEMORYMANAGER_API void *CryRealloc(void *memblock,size_t size);
+	CRYMEMORYMANAGER_API void *CryReallocSize(void *memblock,size_t oldsize, size_t size);
 	CRYMEMORYMANAGER_API void CryFree(void *p);
+	CRYMEMORYMANAGER_API void CryFreeSize(void *p, size_t size);
 	CRYMEMORYMANAGER_API void*  CrySystemCrtMalloc(size_t size);
 	CRYMEMORYMANAGER_API void*  CrySystemCrtRealloc(void* p, size_t size);
 	CRYMEMORYMANAGER_API size_t CrySystemCrtFree(void* p);
