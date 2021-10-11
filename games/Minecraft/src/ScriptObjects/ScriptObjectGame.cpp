@@ -224,7 +224,7 @@ void CScriptObjectGame::OnNETServerTimeout(CIPAddress &ip)
 void CScriptObjectGame::InitializeTemplate(IScriptSystem *pSS)
 {
 	_ScriptableEx<CScriptObjectGame>::InitializeTemplate(pSS);
-	//REG_FUNC(CScriptObjectGame,GetCDPath);
+	REG_FUNC(CScriptObjectGame,GetCDPath);
 	REG_FUNC(CScriptObjectGame,GetUserName);
 	REG_FUNC(CScriptObjectGame,Load);
 	REG_FUNC(CScriptObjectGame,GetPlayers);
@@ -334,6 +334,28 @@ void CScriptObjectGame::InitializeTemplate(IScriptSystem *pSS)
 	REG_FUNC(CScriptObjectGame,GetServerIP);
 }
 
+//////////////////////////////////////////////////////////////////////
+int CScriptObjectGame::GetCDPath(IFunctionHandler* pH)
+{
+	string szCDPath;
+
+	if (m_pGame->GetCDPath(szCDPath))
+	{
+		return pH->EndFunction(szCDPath.c_str());
+	}
+
+	return pH->EndFunctionNull();
+}
+
+//////////////////////////////////////////////////////////////////////
+int CScriptObjectGame::GetUserName(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(0);
+
+	return pH->EndFunction(m_pSystem->GetUserName());
+}
+
+
 #if 0
 //////////////////////////////////////////////////////////////////////
 int CScriptObjectGame::GetCDPath(IFunctionHandler *pH)
@@ -349,13 +371,6 @@ int CScriptObjectGame::GetCDPath(IFunctionHandler *pH)
 }
 #endif
 
-//////////////////////////////////////////////////////////////////////
-int CScriptObjectGame::GetUserName(IFunctionHandler *pH)
-{
-	CHECK_PARAMETERS(0);
-
-	return pH->EndFunction(m_pSystem->GetUserName());
-}
 #if 0
 //////////////////////////////////////////////////////////////////////////
 int CScriptObjectGame::ForceEntitiesToSleep(IFunctionHandler *pH)

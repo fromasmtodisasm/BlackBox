@@ -14,6 +14,13 @@ function gsub(s, sp, rp)
 	return string.gsub(s, sp, rp)
 end
 
+function strsub(str, pos)
+	return string.sub(str, pos);
+end
+function strlower(str, pos)
+	return string.lower(str, pos);
+end
+
 function getglobal (varname)
 	-- access the table of globals
 	if (varname == "g_language") then

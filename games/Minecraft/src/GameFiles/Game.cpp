@@ -51,6 +51,14 @@ static CXGame* gGame;
 #include "TextEditorDemo.hpp"
 
 #include <BlackBox/GUI/ControlPanel.hpp>
+#ifdef WIN32
+#	include <tchar.h>
+#	include <winioctl.h>
+
+typedef std::basic_string<TCHAR> tstring;
+typedef std::vector<TCHAR>		 tvector;
+#endif
+
 
 int render_camera = 0;
 
@@ -1929,3 +1937,59 @@ bool CXGame::IsMultiplayer()
 
 	return !bServer || !bClient || m_pServer->m_bListen;
 };
+
+//////////////////////////////////////////////////////////////////////
+bool CXGame::GetCDPath(string& szCDPath)
+{
+	bool bRet(false);
+#ifdef WIN32
+	DWORD nBufferSize(GetLogicalDriveStrings(0, 0));
+	if (0 < nBufferSize)
+	{
+		// get list of all available logical drives
+		tvector rawDriveLetters(nBufferSize + 1);
+		GetLogicalDriveStrings(nBufferSize, &rawDriveLetters[0]);
+
+		// quickly scan all drives
+		tvector::size_type i(0);
+		while (true)
+		{
+			// check if current drive is cd/dvd drive
+			if (DRIVE_CDROM == GetDriveType(&rawDriveLetters[i]))
+			{
+				// get volume name
+				tvector cdVolumeName(MAX_VOLUME_ID_SIZE + 1);
+				if (FALSE != GetVolumeInformation(&rawDriveLetters[i],
+												  &cdVolumeName[0], (DWORD)cdVolumeName.size(), 0, 0, 0, 0, 0))
+				{
+					// check volume name to verify it's Far Cry's game cd/dvd
+					tstring cdVolumeLabel(&cdVolumeName[0]);
+					tstring farCryDisk1Label(_T( "FARCRY_1" ));
+					if (cdVolumeLabel == farCryDisk1Label)
+					{
+						// found Far Cry's game cd/dvd, copy information and bail out
+						szCDPath = &rawDriveLetters[i];
+						bRet	 = true;
+						break;
+					}
+				}
+			}
+
+			// proceed to next drive
+			while (0 != rawDriveLetters[i])
+			{
+				++i;
+			}
+			++i; // skip null termination of current drive
+
+			// check if we're out of drive letters
+			if (0 == rawDriveLetters[i])
+			{
+				// double null termination found, bail out
+				break;
+			}
+		}
+	}
+#endif
+	return (bRet);
+}

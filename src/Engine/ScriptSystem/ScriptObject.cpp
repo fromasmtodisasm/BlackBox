@@ -470,12 +470,95 @@ bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
 
 bool CScriptObject::BeginIteration()
 {
-	return false;
+	#if 0
+	Iterator iter;
+	iter.nKey								  = -1;
+	iter.sKey								  = NULL;
+	iter.internal.resolvePrototypeTableAsWell = resolvePrototypeTableAsWell;
+	iter.internal.nStackMarker1				  = lua_gettop(L) + 1;
+	iter.internal.nStackMarker2				  = 0;
+	#endif
+	#if 0
+	int top = lua_gettop(L);
+
+	PushRef();
+
+	int trgTable = top + 1;
+
+	lua_pushnil(L); // first key
+	int reftop = lua_gettop(L);
+	#endif
+
+	PushRef();
+	lua_pushnil(L);
+	return 0;
 }
 
 bool CScriptObject::MoveNext()
 {
-	return false;
+	bool bResult = lua_next(L, -2) != 0;
+	if (bResult)
+	{
+		#if 0
+		iter.value.Clear();
+		#endif
+		int luatype = 0;
+		luatype		= lua_type(L, -2);
+		#if 0
+		// `key' is at index -2 and `value' at index -1
+		if (lua_type(L, -2) == LUA_TSTRING)
+		{
+		#endif
+		if (luatype == LUA_TSTRING)
+		{
+			bResult = m_pSS->PopAny((const char*&)m_Iterator.value);
+			// Get current key.
+			m_pSS->ToAny(m_Iterator.sKey, -1);
+			m_Iterator.type = ScriptVarType::String;
+		}
+		else if (luatype == LUA_TNUMBER)
+		{
+			bResult = m_pSS->PopAny((int&)m_Iterator.value);
+			m_Iterator.type = ScriptVarType::Number;
+		}
+		else if (luatype == LUA_TTABLE)
+		{
+			IScriptObject* obj = m_pSS->CreateObject();
+			m_Iterator.value   = obj;
+			bResult = m_pSS->PopAny((IScriptObject*&)m_Iterator.value);
+			m_Iterator.sKey = NULL;
+			m_Iterator.type = ScriptVarType::Object;
+		}
+
+		switch (lua_type(L, -1))
+		{
+		case LUA_TNIL:
+			m_Iterator.type = ScriptVarType::Null;
+			break;
+		case LUA_TBOOLEAN:
+			m_Iterator.type = ScriptVarType::Bool;
+			break;
+		case LUA_TNUMBER:
+			m_Iterator.sKey = NULL;
+			m_Iterator.nKey = (int)lua_tonumber(L, -1);
+			break;
+		case LUA_TSTRING:
+			m_Iterator.sKey = (const char*)lua_tostring(L, -1);
+			m_Iterator.nKey = -1;
+			break;
+		case LUA_TFUNCTION:
+			m_Iterator.type = ScriptVarType::Function;
+			break;
+		case LUA_TLIGHTUSERDATA:
+			m_Iterator.type = ScriptVarType::Pointer;
+			break;
+		case LUA_TTABLE:
+			break;
+		}
+
+	}
+
+	return bResult;
 }
 
 bool CScriptObject::GetCurrent(int& nVal)
@@ -495,12 +578,20 @@ bool CScriptObject::GetCurrent(bool& bVal)
 
 bool CScriptObject::GetCurrent(const char*& sVal)
 {
-	return false;
+	#if 0
+	auto res = m_pSS->PopAny(sVal);
+	m_pSS->ToAny(sVal, -1);
+	return res;
+	#else
+	sVal = (const char*)m_Iterator.value;
+	return true;
+	#endif
 }
 
 bool CScriptObject::GetCurrent(IScriptObject* pObj)
 {
-	return false;
+	pObj = (IScriptObject*)m_Iterator.value;
+	return true;
 }
 
 bool CScriptObject::GetCurrentPtr(const void*& pObj)
@@ -515,7 +606,13 @@ bool CScriptObject::GetCurrentFuncData(unsigned int*& pCode, int& iSize)
 
 bool CScriptObject::GetCurrentKey(const char*& sVal)
 {
-	return false;
+	#if 0
+	auto res = m_pSS->PopAny(sVal);
+	m_pSS->ToAny(sVal, -1);
+	return res;
+	#endif
+	sVal = (const char*)m_Iterator.sKey;
+	return true;
 }
 
 bool CScriptObject::GetCurrentKey(int& nKey)
@@ -525,7 +622,7 @@ bool CScriptObject::GetCurrentKey(int& nKey)
 
 ScriptVarType CScriptObject::GetCurrentType()
 {
-	return ScriptVarType();
+	return m_Iterator.type;
 }
 
 void CScriptObject::EndIteration()

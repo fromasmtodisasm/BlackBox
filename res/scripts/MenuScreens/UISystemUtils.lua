@@ -90,12 +90,11 @@ function UI:CheckCutSceneDrive()
 end
 
 function UI:BuildDemoLoopList()
-	--[[
 	local FileList = System:ScanDirectory(UI.szCutSceneFolder.."demoloops/", SCANDIR_FILES);
 	UI.szDemoLoopDrive = "./";
 	
 	UI.VideoList = {};
-	for i, szFileName in FileList do
+	for i, szFileName in pairs(FileList) do
 		if (strlower(strsub(szFileName, -4)) == ".bik") or (strlower(strsub(szFileName, -4)) == ".avi") then
 			tinsert(UI.VideoList, szFileName);
 		end
@@ -111,7 +110,7 @@ function UI:BuildDemoLoopList()
 	end
 
 	UI.VideoList = {};
-	for i, szFileName in FileList do
+	for i, szFileName in pairs(FileList) do
 		if (strlower(strsub(szFileName, -4)) == ".bik") or (strlower(strsub(szFileName, -4)) == ".avi") then
 			tinsert(UI.VideoList, szFileName);
 		end
@@ -120,7 +119,6 @@ function UI:BuildDemoLoopList()
 	if (not getn(UI.VideoList) or (getn(UI.VideoList) < 1)) then
 		UI.szDemoLoopDrive = "./";
 	end
-]]
 end
 
 function UI:GetDemoLoopDrive()

@@ -10,6 +10,17 @@ enum
 	NULL_REF	= 0,
 };
 
+struct Iterator
+{
+	const char*	  sKey;
+	int			  nKey;
+	void*		  value;
+	int			  keyType;
+	int			  valType;
+	ScriptVarType type;
+	//int			top;
+};
+
 class CScriptObject : public IScriptObject
 {
   public:
@@ -145,6 +156,8 @@ class CScriptObject : public IScriptObject
 	} m_member_ptr{};
 
 	IScriptObjectSink* m_pParent{};
+
+	Iterator m_Iterator;
 
   private:
 	int m_nRef;
