@@ -4,7 +4,7 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 
-inline CEntitySystem::CEntitySystem(ISystem* pSystem)
+inline CEntitySystem::CEntitySystem(ISystem* pSystem) : m_EntityIt(m_Entities)
 {
 	m_Entities.resize(100);
 
@@ -105,7 +105,7 @@ int CEntitySystem::GetNumEntities() const
 
 IEntityIt* CEntitySystem::GetEntityIterator()
 {
-	return nullptr;
+	return &m_EntityIt;
 }
 
 IEntityIt* CEntitySystem::GetEntityInFrustrumIterator(bool e)

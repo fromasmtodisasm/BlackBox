@@ -7,27 +7,27 @@ UI.PageOptionsVideoAdv =
 {
 	GUI =
 	{
-	--	sep_v =
-	--	{
-	--		skin = UI.skins.MenuBorder,
+		sep_v =
+		{
+			skin = UI.skins.MenuBorder,
 
-	--		left = 510, top = 140,
-	--		width = 271, height = 319,
-	--		bordersides = "l",
+			left = 510, top = 140,
+			width = 271, height = 319,
+			bordersides = "l",
 
-	--		zorder = -50,
-	--	},
+			zorder = -50,
+		},
 
-	--	sep_h0 =
-	--	{
-	--		skin = UI.skins.MenuBorder,
+		sep_h0 =
+		{
+			skin = UI.skins.MenuBorder,
 
-	--		left = 510, top = 380,
-	--		width = 271, height = 123,
-	--		bordersides = "t",
+			left = 510, top = 380,
+			width = 271, height = 123,
+			bordersides = "t",
 
-	--		zorder = -50,
-	--	},
+			zorder = -50,
+		},
 
 
 		-- definition of "Back" button (takes user to back to basic video menu)
@@ -396,65 +396,65 @@ UI.PageOptionsVideoAdv =
 		},
 
 		-- definition of "Lighting Quality" combo box
-	--	widget_HDR_Text =
-	--	{
-	--		skin = UI.skins.Label,
-	--		left = 570, top = 395,
-	--		width = 150,
+		widget_HDR_Text =
+		{
+			skin = UI.skins.Label,
+			left = 570, top = 395,
+			width = 150,
 
-	--		text = Localize("EnableHDR"),
-	--	},
+			text = Localize("EnableHDR"),
+		},
 
-	--	widget_HDR =
-	--	{
-	--		skin = UI.skins.CheckBox,
-	--		left = 740, top = 395,
+		widget_HDR =
+		{
+			skin = UI.skins.CheckBox,
+			left = 740, top = 395,
 
-	--		tabstop = 10,
+			tabstop = 10,
 
-			-- code specific for "Lighting Quality" combo box (separated in user table)
-	--		user =
-	--		{
-	--			-- code (implemented below)
-	--			Initialize = nil,
-	--			UpdateAssignedGlobals = nil,
-	--			SetToSpec = nil,
-	--		},
-	--	},
+	  	-- code specific for "Lighting Quality" combo box (separated in user table)
+			user =
+			{
+				-- code (implemented below)
+				Initialize = nil,
+				UpdateAssignedGlobals = nil,
+				SetToSpec = nil,
+			},
+		},
 
-		-- definition of "HDR exposure" combo box (allows user to adjust HDR level)
-	--	widget_HDR_exposure_text =
-	--	{
-	--		skin = UI.skins.Label,
-	--		left = 450, top = 425,
-	--		width = 142,
+	  -- definition of "HDR exposure" combo box (allows user to adjust HDR level)
+		widget_HDR_exposure_text =
+		{
+			skin = UI.skins.Label,
+			left = 450, top = 425,
+			width = 142,
 
-	--		text = Localize( "HDRExposure" ),
-	--	},
+			text = Localize( "HDRExposure" ),
+		},
 
-	--	widget_HDR_exposure =
-	--	{
-	--		skin = UI.skins.HScrollBar,
+		widget_HDR_exposure =
+		{
+			skin = UI.skins.HScrollBar,
 
-	--		left = 603, top = 425,
-	--		width = 166, height = 24,
+			left = 603, top = 425,
+			width = 166, height = 24,
 
-	--		tabstop = 11,
+			tabstop = 11,
 
-	--		OnChanged = function( sender )
-	--			UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.OnChanged();
-	--		end,
+			OnChanged = function( sender )
+				UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.OnChanged();
+			end,
 
-			-- code specific for "HDRExposure" combo box (separated in user table)
-	--		user =
-	--		{
-	--			-- code (implemented below)
-	--			Initialize = nil,
-	--			UpdateAssignedGlobals = nil,
+	  	-- code specific for "HDRExposure" combo box (separated in user table)
+			user =
+			{
+				-- code (implemented below)
+				Initialize = nil,
+				UpdateAssignedGlobals = nil,
 
-	--			OnChanged = nil,
-	--		},
-	--	},
+				OnChanged = nil,
+			},
+		},
 
 		OnActivate = function( sender )
 			UI.PageOptionsVideoAdv.user:Initialize();
@@ -597,79 +597,79 @@ function UI.PageOptionsVideoAdv.GUI:DetermineMachineSpec( checkCPU, checkGPU, ch
 	end
 end
 
---UI.PageOptionsVideoAdv.GUI.widget_HDR.user.Initialize = function()
-	-- initalize widget
-	-- let widget reflect state of globals
---	local cur_HDRRendering = tonumber( getglobal( "r_HDRRendering" ) );
+UI.PageOptionsVideoAdv.GUI.widget_HDR.user.Initialize = function()
+  -- initalize widget
+  -- let widget reflect state of globals
+	local cur_HDRRendering = tonumber( getglobal( "r_HDRRendering" ) );
 
---	if( cur_HDRRendering == 0) then
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked( 0 ); -- disabled
---	else
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked( 1 ); -- enabled
---	end
-		
---	if (System:IsHDRSupported()) then
---		UI:EnableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR);
---	else
---		UI:DisableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR);
---	end	
---end
+	if( cur_HDRRendering == 0) then
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked( 0 ); -- disabled
+	else
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked( 1 ); -- enabled
+	end
+  	
+	if (System:IsHDRSupported()) then
+		UI:EnableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR);
+	else
+		UI:DisableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR);
+	end	
+end
 
---UI.PageOptionsVideoAdv.GUI.widget_HDR.user.UpdateAssignedGlobals = function()
---	local curEnabled = UI.PageOptionsVideoAdv.GUI.widget_HDR:GetChecked();
-	
---	if(curEnabled) then
-		-- enabled
---		UI.PageOptionsVideoAdv.user:SetGlobal( "r_HDRRendering", 7 );
---	else
-		-- disabled
---		UI.PageOptionsVideoAdv.user:SetGlobal( "r_HDRRendering", 0 );
---	end
---end
+UI.PageOptionsVideoAdv.GUI.widget_HDR.user.UpdateAssignedGlobals = function()
+	local curEnabled = UI.PageOptionsVideoAdv.GUI.widget_HDR:GetChecked();
+  
+	if(curEnabled) then
+  	-- enabled
+		UI.PageOptionsVideoAdv.user:SetGlobal( "r_HDRRendering", 7 );
+	else
+  	-- disabled
+		UI.PageOptionsVideoAdv.user:SetGlobal( "r_HDRRendering", 0 );
+	end
+end
 
---UI.PageOptionsVideoAdv.GUI.widget_HDR.user.SetToSpec = function( spec )
---	if( spec == "auto" ) then
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
---	elseif(( spec == "veryhigh") and System:IsHDRSupported()) then
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(1);
---	elseif( spec == "high" ) then
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
---	elseif( spec == "medium" ) then
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
---	else
---		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
---	end
---end
---UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.Initialize = function( self )
---	local HDRLevel = tonumber( getglobal( "r_HDRLevel" ) );
---	UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure:SetValue( HDRLevel );
+UI.PageOptionsVideoAdv.GUI.widget_HDR.user.SetToSpec = function( spec )
+	if( spec == "auto" ) then
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
+	elseif(( spec == "veryhigh") and System:IsHDRSupported()) then
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(1);
+	elseif( spec == "high" ) then
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
+	elseif( spec == "medium" ) then
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
+	else
+		UI.PageOptionsVideoAdv.GUI.widget_HDR:SetChecked(0);
+	end
+end
+UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.Initialize = function( self )
+	local HDRLevel = tonumber( getglobal( "r_HDRLevel" ) );
+	UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure:SetValue( HDRLevel );
 
---	if (System:IsHDRSupported()) then
---		UI:EnableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure);
---	else
---		UI:DisableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure);
---	end	
-	
---end
+	if (System:IsHDRSupported()) then
+		UI:EnableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure);
+	else
+		UI:DisableWidget(UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure);
+	end	
+  
+end
 
---UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.DefInitialize = function( self )
---	UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure:SetValue( 0.6 );
---end
+UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.DefInitialize = function( self )
+	UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure:SetValue( 0.6 );
+end
 
---UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.UpdateAssignedGlobals = function( self )
---end
+UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.UpdateAssignedGlobals = function( self )
+end
 
---UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.OnChanged = function( self )
-	-- get normalize level [0 .. 1] from slider widget
---	local level = tonumber( UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure:GetValue() );
---	if( level < 0.1 ) then
---		level = 0.1;
---	elseif( level > 1.0 ) then
---		level = 1.0;
---	end;
-	-- set HDR level
---	setglobal( "r_HDRLevel", level );
---end;
+UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure.user.OnChanged = function( self )
+  -- get normalize level [0 .. 1] from slider widget
+	local level = tonumber( UI.PageOptionsVideoAdv.GUI.widget_HDR_exposure:GetValue() );
+	if( level < 0.1 ) then
+		level = 0.1;
+	elseif( level > 1.0 ) then
+		level = 1.0;
+	end;
+  -- set HDR level
+	setglobal( "r_HDRLevel", level );
+end;
 
 -- code for specific behaviour of individual widgets
 UI.PageOptionsVideoAdv.GUI.widget_TextureQuality.user.Initialize = function()
