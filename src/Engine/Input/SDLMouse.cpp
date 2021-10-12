@@ -50,9 +50,9 @@ CSDLMouse::~CSDLMouse()
 bool CSDLMouse::Init()
 {
   SDL_GetMouseState(&m_posX, &m_posY);
-  m_deltas = Vec2(0);
-  m_oldDeltas = Vec2(0);
-  m_deltasInertia = Vec2(0);
+  m_deltas = Legacy::Vec2(0);
+  m_oldDeltas = Legacy::Vec2(0);
+  m_deltasInertia = Legacy::Vec2(0);
 
   MapSymbol(MOUSE_SYM(SDL_BUTTON_LEFT), eKI_Mouse1, "mouse1");
   MapSymbol(MOUSE_SYM(SDL_BUTTON_MIDDLE), eKI_Mouse3, "mouse3");
@@ -341,7 +341,7 @@ void CSDLMouse::GrabInput()
      }
      else if (accel<0.9999f)//mouse smooth, average the old and the actual delta by the delta ammount, less delta = more smooth speed.
      {
-      Vec2 delta = m_deltas - m_oldDeltas;
+      Legacy::Vec2 delta = m_deltas - m_oldDeltas;
 
       float len = delta.GetLength();
 
@@ -357,7 +357,7 @@ void CSDLMouse::GrabInput()
      {
       float dt = min(gEnv->pTimer->GetFrameTime(),0.1f);
 
-      Vec2 delta;
+      Legacy::Vec2 delta;
 
       float amt = 0.0;
 
@@ -430,7 +430,7 @@ void CSDLMouse::SmoothDeltas(float accel, float decel)
   }
   else if (accel < 0.9999f)//mouse smooth, average the old and the actual delta by the delta ammount, less delta = more smooth speed.
   {
-    Vec2 delta = m_deltas - m_oldDeltas;
+    Legacy::Vec2 delta = m_deltas - m_oldDeltas;
 
     float len = glm::length(delta);
 	//delta.GetLength();
@@ -449,7 +449,7 @@ void CSDLMouse::SmoothDeltas(float accel, float decel)
 	  float dt = 0.1f;
 	  //std::min(gEnv->pTimer->GetFrameTime(), 0.1f);
 
-    Vec2 delta;
+    Legacy::Vec2 delta;
 
     float amt = 0.0;
 

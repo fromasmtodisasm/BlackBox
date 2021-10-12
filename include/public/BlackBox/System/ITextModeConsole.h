@@ -18,7 +18,7 @@ struct ITextModeConsole
 {
 	// <interfuscator:shuffle>
 	virtual ~ITextModeConsole() {}
-	virtual Vec2_tpl<int> BeginDraw() = 0;
+	virtual glm::ivec2 BeginDraw() = 0;
 	virtual void          PutText(int x, int y, const char* msg) = 0;
 	virtual void          EndDraw() = 0;
 	virtual void          OnShutdown() = 0;

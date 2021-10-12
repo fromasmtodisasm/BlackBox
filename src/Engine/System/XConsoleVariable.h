@@ -169,7 +169,8 @@ public:
 
 	void Release()
 	{
-		delete this;
+		m_pConsole->UnregisterVariable(m_name.c_str());
+		//delete this;
 	}
 
 	virtual int GetIVal() const override
@@ -508,7 +509,8 @@ public:
 
 	void Release()
 	{
-		delete this;
+		//delete this;
+		m_pConsole->UnregisterVariable(m_name.c_str());
 	}
 
 	virtual int GetIVal() const override

@@ -6,7 +6,7 @@
 	extern CInputCVars* g_pInputCVars;
 #endif
 
-using ColorF = Vec4;
+using ColorF = Legacy::Vec4;
 
 CInputDevice::CInputDevice(IInput& input, const char* deviceName)
   : m_input(input)
@@ -89,7 +89,7 @@ uint32_t CInputDevice::GetInputCharUnicode(const SInputEvent& event)
 
 const char* CInputDevice::GetOSKeyName(const SInputEvent& event)
 {
-  return "";
+  return event.keyName;
 }
 
 /*

@@ -36,6 +36,39 @@
 	#include <dlfcn.h>
 #endif
 
+#ifdef __cplusplus
+//////////////////////////////////////////////////////////////////////////
+	#ifdef DEBUG_MEMORY_MANAGER
+		#ifdef _DEBUG
+			#define _DEBUG_MODE
+		#endif
+	#endif
+
+	#if defined(_DEBUG) && CRY_PLATFORM_WINAPI
+		#include <crtdbg.h>
+	#endif
+
+//! Checks if the heap is valid in debug; in release, this function shouldn't be called.
+//! \return Non-0 if it's valid and 0 if not valid.
+ILINE int IsHeapValid()
+{
+	#if (defined(_DEBUG) && !defined(RELEASE_RUNTIME) && BB_PLATFORM_WINAPI) || (defined(DEBUG_MEMORY_MANAGER))
+	return _CrtCheckMemory();
+	#else
+	return true;
+	#endif
+}
+
+	#ifdef DEBUG_MEMORY_MANAGER
+// Restore debug mode define
+		#ifndef _DEBUG_MODE
+			#undef _DEBUG
+		#endif
+	#endif
+//////////////////////////////////////////////////////////////////////////
+
+#endif //__cplusplus
+
 //////////////////////////////////////////////////////////////////////
 //! Structure filled by call to CryModuleGetMemoryInfo()
 struct CryModuleMemoryInfo
@@ -78,7 +111,9 @@ struct CryModuleMemoryInfo
 #if defined(SYSTEM_EXPORTS) || (!defined(WIN32) && !defined(LINUX))
 	CRYMEMORYMANAGER_API void *CryMalloc(size_t size);
 	CRYMEMORYMANAGER_API void *CryRealloc(void *memblock,size_t size);
+	CRYMEMORYMANAGER_API void *CryReallocSize(void *memblock,size_t oldsize, size_t size);
 	CRYMEMORYMANAGER_API void CryFree(void *p);
+	CRYMEMORYMANAGER_API void CryFreeSize(void *p, size_t size);
 	CRYMEMORYMANAGER_API void*  CrySystemCrtMalloc(size_t size);
 	CRYMEMORYMANAGER_API void*  CrySystemCrtRealloc(void* p, size_t size);
 	CRYMEMORYMANAGER_API size_t CrySystemCrtFree(void* p);

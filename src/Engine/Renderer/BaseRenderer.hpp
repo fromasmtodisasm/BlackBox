@@ -244,6 +244,22 @@ class ShaderMan
 
 	std::vector<_smart_ptr<CShader>> m_Shaders;
 };
+#undef NOT_IMPLEMENTED_V
+#ifndef NOT_IMPLEMENTED_V
+#if defined(ASSERT_NOT_IMPLEMENTED)
+#define NOT_IMPLEMENTED_V    \
+	assert(0 && __FUNCTION__); \
+	return {};
+#else
+#define NOT_IMPLEMENTED_V    \
+	gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+	return {};
+#endif
+#endif
+#ifndef NOT_IMPLEMENTED
+#define NOT_IMPLEMENTED\
+	assert(0 && __FUNCTION__);
+#endif
 
 class CRenderer : public RenderCVars
 	, public IRenderer
@@ -251,6 +267,25 @@ class CRenderer : public RenderCVars
 	, public ISystemEventListener
 {
   public:
+
+	virtual float ScaleCoordX(float value) override
+	{
+#if 0
+		NOT_IMPLEMENTED_V;
+#else
+		return 1.f;
+#endif
+	}
+	virtual float ScaleCoordY(float value) override
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return 1.f;
+		#endif
+	}
+
+
 	// Inherited via IRendererCallbackServer
 	void RegisterCallbackClient(IRendererCallbackClient* pClient) override;
 	void UnregisterCallbackClient(IRendererCallbackClient* pClient) override;
@@ -301,7 +336,7 @@ class CRenderer : public RenderCVars
 	virtual void ReleaseIndexBuffer(SVertexStream* dest) final;
 
 	//! Draw a bbox specified by mins/maxs (debug puprposes)
-	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) = 0;
+	virtual void Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) = 0;
 
 	//! Set the renderer camera
 	virtual void SetCamera(const CCamera& cam) final;
@@ -322,6 +357,9 @@ class CRenderer : public RenderCVars
 	//! Write a message on the screen with additional flags.
 	//! for flags @see
 	virtual void Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info) final;
+
+	//! Draw a 2d image on the screen (Hud etc.)
+	virtual void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) = 0;
 
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) final;
@@ -347,11 +385,10 @@ class CRenderer : public RenderCVars
 
 	virtual void PrintLine(const char* szText, SDrawTextInfo& info) final;
 
-	ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) final;
-
 	virtual int EnumDisplayFormats(SDispFormat* formats);
 
 	virtual void SetState(State state, bool enable)			 = 0;
+	//virtual void SetState(int State)						 = 0;
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////
@@ -372,12 +409,12 @@ class CRenderer : public RenderCVars
 	/////////////////////////////////////////////////////////////////////////////////
 
 	// 3d engine set this color to fog color
-	void SetClearColor(const Vec3& vColor)
+	void SetClearColor(const Legacy::Vec3& vColor)
 	{
-		m_ClearColor = Vec4(vColor, 1.f);	
+		m_ClearColor = Legacy::Vec4(vColor, 1.f);	
 	}
 	virtual void ClearDepthBuffer()					 = 0;
-	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
+	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) = 0;
 
 	virtual void SetRenderTarget(int nHandle) = 0;
 
@@ -388,8 +425,14 @@ class CRenderer : public RenderCVars
 	virtual void				   GetModelViewMatrix(double* mat) final;
 	virtual void				   GetProjectionMatrix(double* mat) final;
 	virtual void				   GetProjectionMatrix(float* mat) final;
-	virtual Vec3				   GetUnProject(const Vec3& WindowCoords, const CCamera& cam) final;
+	virtual Legacy::Vec3				   GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam) final;
 	virtual int					   GetFrameID(bool bIncludeRecursiveCalls = true) final;
+	virtual int					   GetPolyCount() { return INT_MIN; }
+	virtual void				   GetPolyCount(int& nPolygons, int& nShadowVolPolys)
+	{
+		nPolygons		= INT_MIN;
+		nShadowVolPolys = INT_MIN;
+	}
 	IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) final;
 
 	void			CreateQuad();
@@ -407,6 +450,7 @@ class CRenderer : public RenderCVars
 	virtual float			   GetDepthValue(int x, int y) override;
 	virtual void			   Flush() final;
 	virtual void			   Sh_Reload() override;
+	virtual void*			   EF_Query(int Query, int Param) = 0;
 
 	void ShutDown();
 
@@ -414,11 +458,11 @@ class CRenderer : public RenderCVars
   protected:
 	struct alignas(16) SPerViewConstantBuffer
 	{
-		Mat4 Projection;
-		Mat4 OrthoProjection;
-		Mat4 View;
-		Mat4 ViewProjection;
-		Vec3 Eye;
+		Legacy::Mat4 Projection;
+		Legacy::Mat4 OrthoProjection;
+		Legacy::Mat4 View;
+		Legacy::Mat4 ViewProjection;
+		Legacy::Vec3 Eye;
 	};
 	struct alignas(16) SScreenConstantBuffer
 	{
@@ -440,7 +484,7 @@ class CRenderer : public RenderCVars
 	ISystem* m_pSystem = nullptr;
 
 	bool		 is_fullscreen = false;
-	Vec4		 m_viewPort;
+	Legacy::Vec4		 m_viewPort;
 	unsigned int cbpp  = 0;
 	int			 zbpp  = 0;
 	int			 sbits = 0;
@@ -483,7 +527,7 @@ class CRenderer : public RenderCVars
 
 	std::vector<IFont*> m_Fonts;
 	RenderBackend		m_Backend;
-	Vec4				m_ClearColor{};
+	Legacy::Vec4				m_ClearColor{};
 
 	std::vector<IRendererCallbackClient*> m_RenderCallbackClients;
 };

@@ -1,0 +1,625 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>tony</Author>
+  <LastAuthor>iirina</LastAuthor>
+  <LastPrinted>2004-04-12T12:04:36Z</LastPrinted>
+  <Created>2004-01-08T11:46:28Z</Created>
+  <LastSaved>2004-04-12T12:05:17Z</LastSaved>
+  <Version>12.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <DownloadComponents/>
+  <LocationOfComponents HRef="file:///Z:\Work_progs\en_office_2003_pro\"/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>11640</WindowHeight>
+  <WindowWidth>15480</WindowWidth>
+  <WindowTopX>120</WindowTopX>
+  <WindowTopY>120</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Arial"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s62">
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+  </Style>
+  <Style ss:ID="s63">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+  </Style>
+  <Style ss:ID="s64">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s65">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="@"/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s66">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="@"/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s67">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s69">
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s70">
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s71">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s72">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s73">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="@"/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s74">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="@"/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s75">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s76">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s77">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s78">
+   <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s79">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s80">
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+  </Style>
+  <Style ss:ID="s81">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+  </Style>
+  <Style ss:ID="s82">
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s83">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior ss:Color="#00CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s84">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior ss:Color="#00CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s85">
+   <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior ss:Color="#00CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s86">
+   <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s87">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior ss:Color="#00CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s88">
+   <Alignment ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior ss:Color="#00CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s89">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#0000FF"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s90">
+   <Alignment ss:Vertical="Center"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s91">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s92">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s93">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="7" ss:ExpandedRowCount="73" x:FullColumns="1"
+   x:FullRows="1" ss:StyleID="s62">
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="306.75"/>
+   <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="295.5"/>
+   <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="85.5"/>
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="146.25"/>
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="33.75"/>
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="199.5"/>
+   <Row>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Key</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">English</Data></Cell>
+    <Cell ss:StyleID="s66"><Data ss:Type="String">Foreign Language</Data></Cell>
+    <Cell ss:StyleID="s67"/>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fort_elevator_down</Data></Cell>
+    <Cell><Data ss:Type="String">Press USE to call elevator down (Default F)</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы лифт поехал вниз</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fort_elevator_up</Data></Cell>
+    <Cell><Data ss:Type="String">Press USE to call elevator up (Default F)</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы лифт поехал вверх</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fort_plant_bomb</Data></Cell>
+    <Cell><Data ss:Type="String">Press USE to plant bomb (Default F)</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы установить бомбу</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">NewObjective      </Data></Cell>
+    <Cell><Data ss:Type="String">New Objective</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Новое задание</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">GoToTheFortRuinO  </Data></Cell>
+    <Cell><Data ss:Type="String">Get to the fort ruins on top of the mountain</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Отправляйтесь к развалинам крепости на вершине горы</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">DefendYourselfUn  </Data></Cell>
+    <Cell><Data ss:Type="String">Defend yourself until Дойл opens the door</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Отстреливайтесь, пока Дойл открывает дверь</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">NewObjective      </Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">New Objective</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Новое задание</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">FindExplosiveAnd  </Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Find an explosive pack and plant near gas generator</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Найдите взрывчатку и разместите ее около генератора</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">DefendYourselfUn  </Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Defend yourself until Дойл hacks the door code</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Отстреливайтесь, пока Дойл взламывает код замка</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">GetOutOfTheBuild  </Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Get away from the generator</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Бегите прочь от генератора</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">presstabto</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press TAB to see your mission objectives</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите TAB, чтобы увидеть задания вашей миссии</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">pressuseboat</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press the USE key (Default F) to exit the boat</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы выйти из лодки</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">pull_lever</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to pull the lever</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы повернуть рычаг</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">insert_keycard</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to insert keycard</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы вставить карточку</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">move_elevator_down</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to move elevator down</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы лифт поехал вниз</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">call_elevator</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to call the elevator</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы вызвать лифт</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">move_elevator_up</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to move elevator up</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы лифт поехал вверх</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">plant_explosives_here</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to plant explosives here</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы разместить взрывчатку</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Get_inside_the_comm_center_and_kill_the_commander</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Get inside the comm center and kill the commander</Data></Cell>
+    <Cell ss:StyleID="Default"><Data ss:Type="String">Проникните в центр связи и убейте командира</Data></Cell>
+   </Row>
+   <Row ss:Index="22" ss:StyleID="s70">
+    <Cell><Data ss:Type="String">For Foreign Subtitles</Data></Cell>
+    <Cell ss:Index="3" ss:StyleID="s71"/>
+    <Cell ss:StyleID="s72"/>
+   </Row>
+   <Row ss:StyleID="s70">
+    <Cell ss:StyleID="s73"><Data ss:Type="String">Key</Data></Cell>
+    <Cell ss:StyleID="s73"><Data ss:Type="String">English</Data></Cell>
+    <Cell ss:StyleID="s74"><Data ss:Type="String">Foreign (on screen subtitles)</Data></Cell>
+    <Cell ss:StyleID="s75"><Data ss:Type="String">Character name</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="51">
+    <Cell ss:StyleID="s76"><Data ss:Type="String">Fort_Specific_A_1</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: The mercenaries have established a communication facility here. You need to disrupt their communications by destroying the satellite dish.\nThat will create enough confusion for you to escape, and then we can focus on finding Вэл.</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Здесь наемники организовалли центр коммуникаций. Уничтожь спутниковую тарелку, и они лишатся связи.\nПоднимется суматоха, во время всей этой неразберихи ты сумеешь скрыться, и затем мы займемся поисками Вэл.</Data></Cell>
+    <Cell ss:StyleID="s78"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="25.5">
+    <Cell ss:StyleID="s76"><Data ss:Type="String">Fort_Specific_B_1</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Be careful. If they find you, you're toast and there's nothing I can do about it. They've been ordered to shoot on sight.</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Осторожнее. Если они тебя засекут, тебе конец. Я ничем не смогу тебе помочь. Им приказано стрелять на поражение.</Data></Cell>
+    <Cell ss:StyleID="s78"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="38.25">
+    <Cell ss:StyleID="s76"><Data ss:Type="String">Fort_Specific_C_1</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл:I suggest you avoid the open sea. Their radar systems will pick you up easily against the water.\nThey have attack helicopters guarding this whole area.</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Их радар легко засечет твою лодку в открытом море. Советую тебе держаться ближе к островам. Иначе они поднимут вертолеты охраны.</Data></Cell>
+    <Cell ss:StyleID="s78"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="38.25">
+    <Cell ss:StyleID="s79"><Data ss:Type="String">Fort_Specific_D_1</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Listen good. You should be able to see the old WWII fort on the hill now. Get up there and destroy the communication center as soon as you can.</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Слушай внимательно. Видишь на холме старый форт времен Второй Мировой? Доберись до него и как можно быстрее уничтожь центр связи.</Data></Cell>
+    <Cell ss:StyleID="s78"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="39">
+    <Cell ss:StyleID="s76"><Data ss:Type="String">Fort_Specific_E_2</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Here's a suggestion, Джек. You're much more likely to encounter resistance on marked paths.\nIf you keep to the jungle your odds suddenly get a whole lot better.</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: И еще один совет, Джек. Не ходи тропами - скорее всего, наткнешься на противника. Пробирайся через джунгли, и твои шансы на успех возрастут.</Data></Cell>
+    <Cell ss:StyleID="s78"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="115.5" ss:StyleID="s80">
+    <Cell ss:StyleID="s83"><Data ss:Type="String">Fort_Specific_F_1</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$5Дойл: The Comm Center is powered by a gas generator. If you plant a demolition pack on the fuel tank, the blast should be enough to destroy the whole facility.\n&#10;$6Джек: Oh, a demolition pack. Right. Good thing I remembered to pack a few of those!\n&#10;$5Дойл: Don't be difficult. It's unprofessional. The mercenaries use demo packs to clear brush on the islands.\nIf you look around, you should be able to find some that you can appropriate.\n&#10;</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$5Дойл: Питание в центр связи подается от генератора. Если ты установишь взрывчатку на баке с топливом, то взрыв будет такой, что от центра ничего не останется.\n&#10;$6Джек: О, взрывчатка. Точно. Только я забыл ее дома!\n&#10;$5Дойл: Сейчас не время для сарказма. Ты же профессионал. Наемники расчищают взрывами заросли \nна острове. Осмотрись, ты сумеешь найти что-нибудь подходящее.\n&#10;</Data></Cell>
+    <Cell ss:StyleID="s85"/>
+    <Cell ss:StyleID="s82"/>
+    <Cell ss:Index="7" ss:StyleID="s81"/>
+   </Row>
+   <Row ss:StyleID="s80">
+    <Cell ss:StyleID="s76"><Data ss:Type="String">Fort_Specific_G_1</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Get out of there, now!</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Убирайся оттуда, быстрее!</Data></Cell>
+    <Cell ss:StyleID="s86"/>
+    <Cell ss:StyleID="s82"/>
+    <Cell ss:Index="7" ss:StyleID="s81"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="13.5">
+    <Cell ss:StyleID="s76"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s78"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="77.25" ss:StyleID="s80">
+    <Cell ss:StyleID="s87"><Data ss:Type="String">fort_pickup_A_1</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$5Дойл: We have a slight problem, Джек.  Looks like they've locked down the door to the Comm Center.\n&#10;$6Джек: That's not good, what the hell do we do now?\n&#10;$5Дойл: It's risky, but I should be able to bypass the security lock from here,  stand by.\n&#10;$6Джек: Stand by he says, that's rich.</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$5Дойл: У нас небольшая проблема, Джек. Похоже, они заблокировали дверь в центр связи.\n&#10;$6Джек: Это плохо. Черт, что же нам теперь делать?\n&#10;$5Дойл: Это рисковано, но думаю, я сумею взломать систему безопасности, подожди немного.\n&#10;$6Джек: Подожди, говорит, ага...</Data></Cell>
+    <Cell ss:StyleID="s88"/>
+    <Cell ss:Index="7" ss:StyleID="s81"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="13.5">
+    <Cell ss:StyleID="s89"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="51.75" ss:StyleID="s80">
+    <Cell ss:StyleID="s87"><Data ss:Type="String">fort_pickup_A_5</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$5Дойл: You've been spotted, I've got sea and air traffic targets coming your way. They appear to be approaching from the North.\n&#10;$6Джек: That's just great.</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$5Дойл: Тебя засекли. В твоем направлении движутся воздушные и морские цели. По моим данным, они появятся с севера.\n&#10;$6Джек: Это просто замечательно.</Data></Cell>
+    <Cell ss:StyleID="s88"/>
+    <Cell ss:Index="7" ss:StyleID="s81"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="13.5">
+    <Cell ss:StyleID="s91"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="26.25" ss:StyleID="s80">
+    <Cell ss:StyleID="s87"><Data ss:Type="String">fort_pickup_A_7</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$6Джек: C'mon Дойл, anytime you're ready!\n&#10;$5Дойл: Be patient, I'm working on it.  </Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$6Джек: Ну же, Дойл, давно бы уже пора!\n&#10;$5Дойл: Потерпи, я заканчиваю.  </Data></Cell>
+    <Cell ss:StyleID="s88"/>
+    <Cell ss:Index="7" ss:StyleID="s81"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="13.5">
+    <Cell ss:StyleID="s91"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="51.75" ss:StyleID="s80">
+    <Cell ss:StyleID="s87"><Data ss:Type="String">fort_pickup_A_9</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$6Джек: You better finish this up Дойл, It's getting kind of crowded up here!\n&#10;$5Дойл: Almost there, stay put!\n&#10;$6Джек: We got problems!!!</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">$6Джек: Заканчивай поскорее, Дойл, меня тут сильно прижали!\n&#10;$5Дойл: Почти готово, потерпи!\n&#10;$6Джек: У нас проблемы!!!</Data></Cell>
+    <Cell ss:StyleID="s88"/>
+    <Cell ss:Index="7" ss:StyleID="s81"/>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s91"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s77"/>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="25.5">
+    <Cell ss:StyleID="s91"><Data ss:Type="String">fort_pickup_A_12</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: That's it!  The security is broken!  Hurry up Джек, get into the building!</Data></Cell>
+    <Cell ss:StyleID="s77"><Data ss:Type="String">$5Дойл: Готово! Система безопасности взломана! Джек, быстрее в здание!</Data></Cell>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s91"/>
+    <Cell ss:StyleID="s82"/>
+    <Cell ss:StyleID="s82"/>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="111.75">
+    <Cell ss:StyleID="s91"><Data ss:Type="String">Krieger2</Data></Cell>
+    <Cell ss:StyleID="s92"><Data ss:Type="String">$1Кригер: The beta strain of mutagen is more potent than I originally anticipated .The test subjects are demonstrating super human qualities but are somewhat unstable.\nI am concerned they may become difficult to control. I have taken the precaution of using my own DNA as a carrier for the strain – perhaps this will give them some primordial instinct linking them to me.\nThen I can control them. The next test subjects will ready for incubation soon……..</Data></Cell>
+    <Cell ss:StyleID="s92"><Data ss:Type="String">$1Кригер: Тестовый штамм мутагена еще сильнее, чем я изначально предполагал. \nИсследования показывают: у подопытных открылись способности сверхлюдей.\nБеспокоит одно: они могут стать неуправляемыми.\nЯ намеренно использовал свою собственную ДНК для создания штамма. \nНадеюсь, у них образуется врожденный инстинкт подчинения мне.\nЯ смогу ими управлять. Скоро мы будем готовы вырастить новых.……..</Data></Cell>
+    <Cell ss:StyleID="s90"/>
+    <Cell ss:Index="7" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:Index="45">
+    <Cell><Data ss:Type="String">lift_on</Data></Cell>
+    <Cell ss:StyleID="s69"><Data ss:Type="String">Press USE to enter into the lift</Data></Cell>
+    <Cell ss:StyleID="s93"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы войти в лифт</Data></Cell>
+   </Row>
+   <Row ss:Index="47">
+    <Cell><Data ss:Type="String">flying</Data></Cell>
+    <Cell ss:Index="3" ss:StyleID="s93"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы использовать канатный спуск</Data></Cell>
+   </Row>
+   <Row ss:Index="49">
+    <Cell><Data ss:Type="String">open_gate</Data></Cell>
+    <Cell ss:Index="3" ss:StyleID="s93"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы открыть ворота</Data></Cell>
+   </Row>
+   <Row ss:Index="51">
+    <Cell><Data ss:Type="String">binokl</Data></Cell>
+    <Cell><Data ss:Type="String">Find the binocular</Data></Cell>
+    <Cell><Data ss:Type="String">Найди бинокль</Data></Cell>
+   </Row>
+   <Row ss:Index="53">
+    <Cell><Data ss:Type="String">binocl</Data></Cell>
+    <Cell><Data ss:Type="String">Find the binocular</Data></Cell>
+    <Cell><Data ss:Type="String">Найди бинокль</Data></Cell>
+    <Cell ss:StyleID="s62"/>
+   </Row>
+   <Row ss:Index="55">
+    <Cell><Data ss:Type="String">secret</Data></Cell>
+    <Cell><Data ss:Type="String">Find the camera</Data></Cell>
+    <Cell><Data ss:Type="String">Найди камеру с секретными снимками</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">camera</Data></Cell>
+    <Cell><Data ss:Type="String">Find the camera</Data></Cell>
+    <Cell><Data ss:Type="String">Найди камеру с секретными снимками</Data></Cell>
+   </Row>
+   <Row ss:Index="58">
+    <Cell><Data ss:Type="String">card1</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Найди карту доступа в бункер</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">dostup</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Найди карту доступа в бункер</Data></Cell>
+   </Row>
+   <Row ss:Index="61">
+    <Cell><Data ss:Type="String">bomb</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Найди взрывчатку</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">bombas</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Найди взрывчатку</Data></Cell>
+   </Row>
+   <Row ss:Index="64">
+    <Cell><Data ss:Type="String">open_cages</Data></Cell>
+    <Cell><Data ss:Type="String">Open the cages</Data></Cell>
+    <Cell><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы открыть клетки</Data></Cell>
+   </Row>
+   <Row ss:Index="66">
+    <Cell><Data ss:Type="String">no_electric</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Электричество отключено</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="25.5">
+    <Cell><Data ss:Type="String">go_electric</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Нажмите кнопку 'Действие', чтобы включить электропитание лифта</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">explode</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Уничтожь радиоантенну</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">unichtoj</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Пройди через бункер и уничтожь радиоантенну</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vhod</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Найди вход в секретный комплекс</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">naerd</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Найди вход в секретный комплекс</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">proshol</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Отлично! Ты прошёл всю карту!</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">otlich</Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String">Отлично! Ты прошёл всю карту! Пройди её ещё разок!</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Selected/>
+   <TopRowVisible>57</TopRowVisible>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>73</ActiveRow>
+     <ActiveCol>2</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="Sheet2">
+  <Table ss:ExpandedColumnCount="1" ss:ExpandedRowCount="1" x:FullColumns="1"
+   x:FullRows="1">
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="Sheet3">
+  <Table ss:ExpandedColumnCount="1" ss:ExpandedRowCount="1" x:FullColumns="1"
+   x:FullRows="1">
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

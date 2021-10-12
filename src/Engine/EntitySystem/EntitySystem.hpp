@@ -5,14 +5,47 @@
 #include "Entity.hpp"
 
 struct ICrySizer;
+typedef std::vector<CEntity>::iterator EntityIt;
+typedef std::vector<CEntity> Entities;
+
+class CEntityIterator : public IEntityIt, _reference_target_t
+{
+  public:
+	CEntityIterator(Entities& ents) : m_Entities(ents)
+	{
+	}
+	// Inherited via IEntityIt
+	virtual void AddRef() override
+	{
+		::_reference_target_t::AddRef();
+	}
+	virtual void Release() override
+	{
+		::_reference_target_t::Release();
+	}
+	virtual bool IsEnd() override
+	{
+		return m_Entities.end() == m_It;
+	}
+	virtual IEntity* Next() override
+	{
+		auto result = IsEnd() ? NULL : static_cast<IEntity*>(&(*m_It++));
+		return result;
+	}
+
+	virtual void MoveFirst() override
+	{
+		m_It = m_Entities.begin();
+	}
+
+	EntityIt m_It;
+	Entities& m_Entities;
+};
 
 class CEntitySystem : public IEntitySystem
 {
 public:
-	CEntitySystem(ISystem* pSystem)
-	{
-		m_Entities.resize(100);
-	}
+	CEntitySystem(ISystem* pSystem);
 
 	virtual void Update() override;
 	virtual IScriptSystem* GetScriptSystem() override;
@@ -26,7 +59,7 @@ public:
 	virtual int GetNumEntities() const override;
 	virtual IEntityIt* GetEntityIterator() override;
 	virtual IEntityIt* GetEntityInFrustrumIterator(bool bFromPrevFrame = false) override;
-	virtual void GetEntitiesInRadius(const Vec3& origin, float radius, std::vector<IEntity*>& entities, int physFlags = PHYS_ENTITY_ALL) const override;
+	virtual void GetEntitiesInRadius(const Legacy::Vec3& origin, float radius, std::vector<IEntity*>& entities, int physFlags = PHYS_ENTITY_ALL) const override;
 	virtual void SetSink(IEntitySystemSink* sink) override;
 	virtual void PauseTimers(bool bPause, bool bResume = false) override;
 	virtual void RemoveSink(IEntitySystemSink* sink) override;
@@ -44,6 +77,8 @@ public:
 	virtual void MarkId(EntityId id) override;
 	virtual void ClearId(EntityId id) override;
 
-	std::vector<CEntity> m_Entities;
+	Entities m_Entities;
+
+	CEntityIterator m_EntityIt;
 
 };

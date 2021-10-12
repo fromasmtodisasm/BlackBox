@@ -410,14 +410,14 @@ struct ConsolePrompt
 	std::string pc	 = "HackMan";
 	std::string env	 = "BlackBox";
 	std::string cd	 = "~"; //current directory
-	Vec3 color		 = glm::vec3(0.0, 1.0, 0.0);
+	Legacy::Vec3 color		 = glm::vec3(0.0, 1.0, 0.0);
 
 	ConsolePrompt(
 		std::string user = gEnv->pSystem->GetUserName(),
 		std::string pc	 = "HackMan",
 		std::string env	 = "BlackBox",
 		std::string cd	 = "~", //current directory
-		Vec3 color		 = Vec3(0.0, 1.0, 0.0))
+		Legacy::Vec3 color		 = Legacy::Vec3(0.0, 1.0, 0.0))
 	{
 		this->user	= user;
 		this->pc	= pc;

@@ -231,7 +231,7 @@ void CVKRenderer::SetScissor(int x, int y, int width, int height)
 {
 }
 
-void CVKRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
+void CVKRenderer::Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 {
 }
 
@@ -308,7 +308,7 @@ int CVKRenderer::GetCurrentContextViewportWidth() const
 	return 0;
 }
 
-void CVKRenderer::SetClearColor(const Vec3& vColor)
+void CVKRenderer::SetClearColor(const Legacy::Vec3& vColor)
 {
 }
 
@@ -316,7 +316,7 @@ void CVKRenderer::ClearDepthBuffer()
 {
 }
 
-void CVKRenderer::ClearColorBuffer(const Vec3 vColor)
+void CVKRenderer::ClearColorBuffer(const Legacy::Vec3 vColor)
 {
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp>
+#include <BlackBox/ScriptSystem/Iterator.hpp>
 
 class CScriptSystem;
 
@@ -113,6 +114,7 @@ class CScriptObject : public IScriptObject
   public:
 	// --------------------------------------------------------------------------
 	void CreateNew();
+	void AddRef() { m_nRefCount++; }
 	// Create object from pool.
 	void Recreate()
 	{
@@ -145,6 +147,9 @@ class CScriptObject : public IScriptObject
 	} m_member_ptr{};
 
 	IScriptObjectSink* m_pParent{};
+
+	//Iterator m_Iterator;
+	Iterator iter;
 
   private:
 	int m_nRef;

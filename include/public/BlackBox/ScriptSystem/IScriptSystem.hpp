@@ -350,6 +350,8 @@ struct IScriptSystem
 	// Called one time after initialization of system to register script system console vars.
 	//////////////////////////////////////////////////////////////////////////
 	virtual void PostInit() = 0;
+
+	virtual void PrintStack() = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -670,7 +672,7 @@ struct IFunctionHandler
 	virtual bool GetParam(int nIdx, float& f)		= 0;
 	virtual bool GetParam(int nIdx, const char*& s) = 0;
 #if defined(WIN64) || defined(LINUX)
-	//inline bool GetParam(int nIdx, char*& s) { return GetParam(nIdx, (const char*&)s); }
+	inline bool GetParam(int nIdx, char*& s) { return GetParam(nIdx, (const char*&)s); }
 #endif
 #if defined(WIN64) || defined(LINUX64)
 	//virtual bool GetParam(int nIdx, INT_PTR& n) = 0;	//## AMD Port
@@ -923,7 +925,6 @@ public:
 	IScriptObject* m_pSO;
 };
 
-#if 0
 class _HScriptFunction
 {
 public:
@@ -945,7 +946,6 @@ private:
   HSCRIPTFUNCTION m_hFunc;
   IScriptSystem* m_pScriptSystem;
 };
-#else
 // Smart wrapper on top of script function handle.
 class SmartScriptFunction
 {
@@ -1025,7 +1025,6 @@ class SmartScriptFunction
 	IScriptSystem* m_pSS;
 };
 
-#endif
 // Utility classes.
 
 //! Helper for faster Set/Gets on the table.

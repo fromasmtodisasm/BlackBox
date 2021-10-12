@@ -131,7 +131,7 @@ void CD3DRenderer::SetScissor(int x, int y, int width, int height)
 {
 }
 
-void CD3DRenderer::Draw3dBBox(const Vec3& mins, const Vec3& maxs)
+void CD3DRenderer::Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 {
 }
 
@@ -222,7 +222,7 @@ void CD3DRenderer::ClearDepthBuffer()
 {
 }
 
-void CD3DRenderer::ClearColorBuffer(const Vec3 vColor)
+void CD3DRenderer::ClearColorBuffer(const Legacy::Vec3 vColor)
 {
 }
 
@@ -311,7 +311,7 @@ bool CD3DRenderer::InitOverride()
     m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
     //m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 
-	Vec3 c = Vec3(2, 162, 246) / 255.f;
+	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	SetClearColor(c);
 
     return true;
@@ -364,6 +364,15 @@ bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 {
 	Sizer->AddObject(this, sizeof(*this));
+}
+
+void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
+{
+}
+
+void *CD3DRenderer::EF_Query(int Query, int Param)
+{
+    return nullptr;
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

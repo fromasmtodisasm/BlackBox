@@ -254,7 +254,7 @@ void CLog::LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_li
 		}
 	}
 
-	FUNCTION_PROFILER(GetISystem(), PROFILE_SYSTEM);
+	FUNCTION_PROFILER(PROFILE_SYSTEM);
 	//LOADING_TIME_PROFILE_SECTION(GetISystem());
 
 	bool bfile = false, bconsole = false;
@@ -521,6 +521,7 @@ void CLog::LogToConsolePlus(const char* szFormat, ...)
 
 void CLog::UpdateLoadingScreen(const char* szFormat, ...)
 {
+#if !defined(EXCLUDE_NORMAL_LOG)
 	if (szFormat)
 	{
 		va_list args;
@@ -529,6 +530,27 @@ void CLog::UpdateLoadingScreen(const char* szFormat, ...)
 		LogV(ILog::eMessage, szFormat, args);
 
 		va_end(args);
+	}
+#endif
+
+	#if 0
+	if (CryGetCurrentThreadId() == m_nMainThreadId)
+	#endif
+	{
+		((CSystem*)m_pSystem)->UpdateLoadingScreen();
+
+#if !(CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID)
+		// Take this opportunity to update streaming engine.
+		if (IStreamEngine* pStreamEngine = GetISystem()->GetStreamEngine())
+		{
+			const float curTime = m_pSystem->GetITimer()->GetAsyncCurTime();
+			if (curTime - m_fLastLoadingUpdateTime > .1f) // not frequent than once in 100ms
+			{
+				m_fLastLoadingUpdateTime = curTime;
+				pStreamEngine->Update();
+			}
+		}
+#endif
 	}
 }
 

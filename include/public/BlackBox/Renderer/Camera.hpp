@@ -38,10 +38,10 @@ class CCamera
   public:
 	// Camera Attributes
 	Transform transform;
-	Vec3 Front;
-	Vec3 Up;
-	Vec3 Right;
-	Vec3 WorldUp;
+	Legacy::Vec3 Front;
+	Legacy::Vec3 Up;
+	Legacy::Vec3 Right;
+	Legacy::Vec3 WorldUp;
 	// Camera options
 	float MovementSpeed;
 	float Zoom;
@@ -69,16 +69,27 @@ class CCamera
 		this->updateCameraVectors();
 	}
 
+	void Update()
+	{
+		updateCameraVectors();
+	}
+
+	void Init(int width, int height, float fov = 45.f)
+	{
+	}
+	void SetAngle(Legacy::Vec3 ang) {
+
+	}
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-	Mat4 GetViewMatrix() const
+	Legacy::Mat4 GetViewMatrix() const
 	{
 		//return glm::lookAt(this->transform.position, this->transform.position + this->Front, this->Up);
 		return glm::lookAtLH(this->transform.position, this->transform.position + this->Front, this->Up);
 	}
-	Mat4 getProjectionMatrix() const
+	Legacy::Mat4 getProjectionMatrix() const
 	{
-		Vec4d v;
+		Legacy::Vec4d v;
 		gEnv->pRenderer->GetViewport(&v.x, &v.y, &v.z, &v.w);
 		if (type == Type::Perspective)
 		{
@@ -92,11 +103,11 @@ class CCamera
 		}
 	}
 
-  Vec3 GetPos() const
+  Legacy::Vec3 GetPos() const
   {
     return transform.position;
   }
-  Vec3 GetAngles() const
+  Legacy::Vec3 GetAngles() const
   {
     return transform.rotation;
   }

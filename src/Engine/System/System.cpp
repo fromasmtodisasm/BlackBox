@@ -26,6 +26,8 @@
 
 #include "WindowsConsole.h"
 
+#include <XML/xml.h>
+
 
 // Define global cvars.
 SSystemCVars g_cvars;
@@ -44,6 +46,18 @@ namespace utils
 			gEnv->pLog->LogError("Cannot touch file \"%s\"", args->GetArg(i));
 		}
 	}
+}
+
+void CSystem::SetGCFrequency(const float fRate)
+{
+}
+void CSystem::SetIProcess(IProcess* process)
+{
+	m_pProcess = process;
+}
+IProcess* CSystem::GetIProcess()
+{
+	return m_pProcess;
 }
 
 
@@ -115,31 +129,6 @@ void CSystem::Start()
 void CSystem::Release()
 {
 	delete this;
-}
-
-IRenderer* CSystem::GetIRenderer()
-{
-	return m_env.pRenderer;
-}
-
-ILog* CSystem::GetILog()
-{
-	return m_env.pLog;
-}
-
-IConsole* CSystem::GetIConsole()
-{
-	return m_env.pConsole;
-}
-
-IInput* CSystem::GetIInput()
-{
-	return m_env.pInput;
-}
-
-IGame* CSystem::GetIGame()
-{
-	return m_pGame;
 }
 
 void CSystem::Relaunch(bool bRelaunch)
@@ -358,7 +347,7 @@ IFont* CSystem::GetIFont()
 
 IWindow* CSystem::GetIWindow()
 {
-	return m_pWindow;
+    return m_pWindow;
 }
 
 #if 0
@@ -392,11 +381,31 @@ bool CSystem::DoFrame(int updateFlags)
 	bool continueRunning = true;
 	int pauseMode{};
 
+	if (m_env.pFrameProfileSystem)
+		m_env.pFrameProfileSystem->StartFrame();
+
+	if (!m_env.IsEditing()) // Editor calls its own rendering update
+		RenderBegin();
+
 	if (!Update(updateFlags, pauseMode))
 	{
 		continueRunning = false;
 	}
 
+	m_pGame->Update();
+
+	Render();
+	RenderEnd();
+
+	if (ITextModeConsole* pTextModeConsole = GetITextModeConsole())
+	{
+		pTextModeConsole->EndDraw();
+	}
+
+	if (m_env.pFrameProfileSystem)
+		m_env.pFrameProfileSystem->EndFrame();
+
+	SleepIfNeeded();
 	return continueRunning;
 }
 
@@ -421,8 +430,8 @@ void CSystem::LoadScreen()
 
 	string sLoadingScreenTexture = string("loading.png");
 
-	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
 	#if 0
+	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
 	m_env.pConsole->ResetProgressBar(0x7fffffff);
 	#endif
 	//GetILog()->UpdateLoadingScreen("");	// just to draw the console
@@ -430,6 +439,8 @@ void CSystem::LoadScreen()
 
 bool CSystem::InitScripts()
 {
+	CryLog("Initializing Script Bindings");
+
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_env.pScriptSystem);
 
@@ -439,9 +450,12 @@ bool CSystem::InitScripts()
 	m_ScriptObjectRenderer = new CScriptObjectRenderer();
 	CScriptObjectRenderer::InitializeTemplate(m_env.pScriptSystem);
 
+	m_ScriptObjectSound = new CScriptObjectSound();
+	CScriptObjectSound::InitializeTemplate(m_env.pScriptSystem);
+
 	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_env.pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
-
+	m_ScriptObjectSound->Init(GetIScriptSystem());
 	return m_env.pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 
@@ -553,7 +567,11 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 
 void CSystem::CreateSystemVars()
 {
+	#define DEFAULT_SYS_MAX_FPS 60
 	REGISTER_CVAR2("sys_dump_memstats", &sys_dump_memstats, 0, VF_NULL, "");
+	REGISTER_CVAR2("sys_MaxFPS", &g_cvars.sys_MaxFPS, DEFAULT_SYS_MAX_FPS, VF_NULL, "Limits the frame rate to specified number n (if n>0 and if vsync is disabled).\n"
+																					" 0 = on PC if vsync is off auto throttles fps while in menu or game is paused (default)\n"
+																					"-1 = off");
 }
 
 void CSystem::ShutDown()
@@ -585,6 +603,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pRenderer);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
+	SAFE_DELETE(m_ScriptObjectSound);
 	SAFE_DELETE(m_ScriptObjectScript);
 	SAFE_DELETE(m_ScriptObjectRenderer);
 	ReleaseScripts();
@@ -600,23 +619,24 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_pCmdLine);
 	SAFE_DELETE(m_env.pProjectManager);
 	SAFE_RELEASE(m_env.pLog);
+	SAFE_RELEASE(m_env.pSoundSystem);
 	SAFE_RELEASE(m_env.pCryPak);
-	//SAFE_RELEASE(m_pCryPak);
+	SAFE_RELEASE(m_pCryPak);
 	UnloadSubsystems();
-	SDL_Quit();
+    SDL_Quit();
 }
 
 void CSystem::EnableGui(bool enable)
 {
 #if ENABLE_DEBUG_GUI
-	if (enable)
-	{
-		m_env.pInput->AddEventListener(m_GuiManager);
-	}
-	else
-	{
-		m_env.pInput->RemoveEventListener(m_GuiManager);
-	}
+    if (enable)
+    {
+        m_env.pInput->AddEventListener(m_GuiManager);
+    }
+    else
+    {
+        m_env.pInput->RemoveEventListener(m_GuiManager);
+    }
 #endif
 }
 
@@ -626,17 +646,17 @@ void CSystem::SaveConfiguration()
 
 float CSystem::GetDeltaTime()
 {
-	return static_cast<float>(m_DeltaTime);
+    return static_cast<float>(m_DeltaTime);
 }
 
 const SFileVersion& CSystem::GetFileVersion()
 {
-	return m_FileVersion;
+    return m_FileVersion;
 }
 
 const SFileVersion& CSystem::GetProductVersion()
 {
-	return m_ProductVersion;
+    return m_ProductVersion;
 }
 
 const char * CSystem::GetRootFolder() const
@@ -646,12 +666,12 @@ const char * CSystem::GetRootFolder() const
 
 IEntitySystem* CSystem::GetIEntitySystem()
 {
-	return nullptr;
+    return m_env.pEntitySystem;
 }
 
 ICryPak* CSystem::GetIPak()
 {
-	return m_pCryPak;
+	return m_env.pCryPak;
 }
 
 INetwork* CSystem::GetINetwork()
@@ -661,10 +681,22 @@ INetwork* CSystem::GetINetwork()
 
 ITimer* CSystem::GetITimer()
 {
-	return &m_Time;
+    return &m_Time;
+}
+void CSystem::SetForceNonDevMode(const bool bValue)
+{
 }
 
-bool CSystem::IsDevMode()
+bool CSystem::GetForceNonDevMode() const
+{
+	return false;
+}
+bool CSystem::WasInDevMode() const
+{
+	return false;
+}
+
+bool CSystem::IsDevMode() const
 {
 	return true;
 }
@@ -700,6 +732,10 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 		break;
 	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
 		m_bIsActive = bool(wparam);
+		if (m_bIsActive)
+			g_cvars.sys_MaxFPS = 60; 
+		else
+			g_cvars.sys_MaxFPS = 20; 
 		break;
 	default:
 		break;
@@ -817,8 +853,8 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 
 bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 {
-	//PROFILER_SYNC_FRAME();
-	// Update input
+	FUNCTION_PROFILER(PROFILE_SYSTEM)
+
 	m_env.pTimer->UpdateOnFrameStart();
 	LAST = NOW;
 	NOW	 = SDL_GetPerformanceCounter();
@@ -873,7 +909,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		return false;
 	}
 
-	return m_bQuit;
+	return !m_bQuit;
 }
 
 bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
@@ -1095,7 +1131,7 @@ IRemoteConsole* CSystem::GetIRemoteConsole()
 
 ITextModeConsole* CSystem::GetITextModeConsole()
 {
-	if (m_env.IsDedicated())
+    if (m_env.IsDedicated())
 		return m_pTextModeConsole;
 	return 0;
 }
@@ -1120,6 +1156,109 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 
 	// Execute default exception handler next
 	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+int CSystem::GetCPUFlags()
+{
+	assert(0 && __FUNCTION__);
+	return 0;
+}
+double CSystem::GetSecondsPerCycle()
+{
+	assert(0 && __FUNCTION__);
+	return 0.;
+}
+void CSystem::DumpMemoryUsageStatistics() 
+{
+
+}
+bool CSystem::IsTestMode() const
+{
+	assert(0 && __FUNCTION__);
+	return false;
+}
+void CSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
+{
+	assert(0 && __FUNCTION__);
+}
+void CSystem::SetFrameProfiler(bool on, bool display, char* prefix)
+{
+	//assert(0 && __FUNCTION__);
+}
+void CSystem::StartProfilerSection(CFrameProfilerSection* pProfileSection)
+{
+	//assert(0 && __FUNCTION__);
+}
+void CSystem::EndProfilerSection(CFrameProfilerSection* pProfileSection)
+{
+	//assert(0 && __FUNCTION__);
+}
+
+void CSystem::SleepIfNeeded()
+{
+	FUNCTION_PROFILER(PROFILE_SYSTEM)
+
+	static ICVar* pSysMaxFPS = NULL;
+	static ICVar* pVSync	 = NULL;
+
+	if (pSysMaxFPS == NULL && gEnv && gEnv->pConsole)
+		pSysMaxFPS = gEnv->pConsole->GetCVar("sys_MaxFPS");
+	if (pVSync == NULL && gEnv && gEnv->pConsole)
+		pVSync = gEnv->pConsole->GetCVar("r_Vsync");
+
+	int32 maxFPS = 0;
+
+	#if 0
+	if (m_env.IsDedicated())
+	{
+		const float maxRate = m_svDedicatedMaxRate->GetFVal();
+		maxFPS				= int32(maxRate);
+	}
+	else
+	#endif
+	{
+		if (pSysMaxFPS && pVSync)
+		{
+			uint32 vSync = pVSync->GetIVal();
+			if (vSync == 0)
+			{
+				maxFPS = pSysMaxFPS->GetIVal();
+				if (maxFPS == 0)
+				{
+					const bool bInLoading = true;	//(ESYSTEM_GLOBAL_STATE_RUNNING != m_systemGlobalState);
+					if (bInLoading /* || IsPaused() || m_throttleFPS*/)
+					{
+						maxFPS = 60;
+					}
+				}
+			}
+		}
+	}
+
+	if (maxFPS > 0)
+	{
+		const int64 safeMarginMS = 5; // microseconds
+		const int64 thresholdMs	 = (1000 * 1000) / (maxFPS);
+
+		ITimer*		 pTimer		 = gEnv->pTimer;
+		static int64 sTimeLast	 = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		int64		 currentTime = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		for (;;)
+		{
+			const int64 frameTime = currentTime - sTimeLast;
+			if (frameTime >= thresholdMs)
+				break;
+			if (thresholdMs - frameTime > 10 * 1000)
+				CrySleep(1);
+			else
+				CrySleep(0);
+
+			currentTime = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		}
+
+		m_lastTickTime = pTimer->GetAsyncTime();
+		sTimeLast	   = m_lastTickTime.GetMicroSecondsAsInt64() + safeMarginMS;
+	}
 }
 
 
@@ -1147,11 +1286,32 @@ ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
 	// run main loop
-	if (initParams.bManualEngineLoop)
+	if (!initParams.bManualEngineLoop)
 	{
 		pSystem->RunMainLoop();
 		return nullptr;
 	}
 
 	return pSystem.release();
+}
+
+
+XDOM::IXMLDOMDocument *CSystem::CreateXMLDocument()
+{
+	return new CXMLDocument;
+}
+
+XmlNodeRef CSystem::CreateXmlNode(const char *sNodeName)
+{
+	return {};
+}
+XmlNodeRef CSystem::LoadXmlFromString(const char *sXmlString)
+{
+	return {};
+
+}
+
+XmlNodeRef CSystem::LoadXmlFile(const char *sFilename)
+{
+	return {};
 }

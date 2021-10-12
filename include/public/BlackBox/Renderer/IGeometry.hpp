@@ -39,19 +39,19 @@ struct face
 
 struct Vertex
 {
-	Vec3 pos;
-	Vec3 normal;
-	Vec2 uv;
+	Legacy::Vec3 pos;
+	Legacy::Vec3 normal;
+	Legacy::Vec2 uv;
 #if 0
-  Vec3 tangent;
-  Vec3 btangent;
+  Legacy::Vec3 tangent;
+  Legacy::Vec3 btangent;
 #endif
 
 	Vertex()
 		: pos(0), uv(0), normal(0) /*, tangent(0), btangent(0)*/
 	{
 	}
-	Vertex(Vec3 pos, Vec2 uv)
+	Vertex(Legacy::Vec3 pos, Legacy::Vec2 uv)
 		: pos(pos), uv(uv), normal(0) /*, tangent(0), btangent(0)*/
 	{
 	}
@@ -110,7 +110,7 @@ struct BoundingBox
 			max.z = v.z;
 	}
 
-	void draw(Mat4 transform)
+	void draw(Legacy::Mat4 transform)
 	{
 
 	}

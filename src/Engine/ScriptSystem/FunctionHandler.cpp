@@ -92,33 +92,7 @@ bool CFunctionHandler::GetParam(int nIdx, USER_DATA& ud)
 ScriptVarType CFunctionHandler::GetParamType(int nIdx)
 {
 	int			  nRealIdx = nIdx + m_paramIdOffset;
-	ScriptVarType type	   = ScriptVarType::Null;
-	int			  luatype  = lua_type(L, nRealIdx);
-	switch (luatype)
-	{
-	case LUA_TNIL:
-		type = ScriptVarType::Null;
-		break;
-	case LUA_TBOOLEAN:
-		type = ScriptVarType::Bool;
-		break;
-	case LUA_TNUMBER:
-		type = ScriptVarType::Number;
-		break;
-	case LUA_TSTRING:
-		type = ScriptVarType::String;
-		break;
-	case LUA_TFUNCTION:
-		type = ScriptVarType::Function;
-		break;
-	case LUA_TLIGHTUSERDATA:
-		type = ScriptVarType::Pointer;
-		break;
-	case LUA_TTABLE:
-		type = ScriptVarType::Object;
-		break;
-	}
-	return type;
+	return LuatypeToScriptVarType(lua_type(L, nRealIdx));
 }
 
 int CFunctionHandler::EndFunctionNull()

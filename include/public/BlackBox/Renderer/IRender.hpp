@@ -20,6 +20,22 @@ typedef unsigned short ushort;
 
 #include <vector>
 
+#ifndef NOT_IMPLEMENTED_V
+#if defined(ASSERT_NOT_IMPLEMENTED) || !defined(_____)
+#define NOT_IMPLEMENTED_V    \
+	assert(0 && __FUNCTION__); \
+	return {};
+#else
+#define NOT_IMPLEMENTED_V    \
+	gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+	return {};
+#endif
+#endif
+#ifndef NOT_IMPLEMENTED
+#define NOT_IMPLEMENTED\
+	assert(0 && __FUNCTION__);
+#endif
+
 // Forward declarations.
 //////////////////////////////////////////////////////////////////////
 typedef void* WIN_HWND;
@@ -109,16 +125,105 @@ typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferP
 
 struct Transform
 {
-	Vec3 position;
-	Vec3 rotation;
-	Vec3 scale;
+	Legacy::Vec3 position;
+	Legacy::Vec3 rotation;
+	Legacy::Vec3 scale;
 
 	Transform() = default;
-	Transform(Vec3 position, Vec3 rotation, Vec3 scale)
+	Transform(Legacy::Vec3 position, Legacy::Vec3 rotation, Legacy::Vec3 scale)
 		: position(position), rotation(rotation), scale(scale)
 	{
 	}
 };
+
+//DOC-IGNORE-BEGIN
+#include "ColorDefs.h"
+#include "TArray.h"
+
+//#include <IFont.h>
+//DOC-IGNORE-END
+
+//////////////////////////////////////////////////////////////////////
+// Texture flags
+
+#define FT_PROJECTED   0x1
+#define FT_NOMIPS      0x2
+#define FT_HASALPHA    0x4
+#define FT_NORESIZE    0x8
+#define FT_HDR         0x10
+#define FT_UPDATE      0x20
+#define FT_ALLOCATED   0x40
+#define FT_BUILD       0x80
+
+#define FT_NODOWNLOAD  0x100
+#define FT_CONV_GREY   0x200
+#define FT_LM          0x400
+#define FT_HASDSDT     0x800
+
+#define FT_HASNORMALMAP 0x1000
+#define FT_DYNAMIC    0x2000
+#define FT_NOREMOVE  0x4000
+#define FT_HASMIPS   0x8000
+#define FT_PALETTED  0x10000
+#define FT_NOTFOUND  0x20000
+#define FT_FONT     0x40000
+#define FT_SKY       0x80000
+#define FT_SPEC_MASK 0x7f000
+#define FT_CLAMP     0x100000
+#define FT_NOSTREAM  0x200000
+#define FT_DXT1      0x400000
+#define FT_DXT3      0x800000
+#define FT_DXT5      0x1000000
+#define FT_DXT       0x1c00000
+#define FT_3DC       0x2000000
+#define FT_3DC_A     0x4000000
+#define FT_ALLOW3DC  0x8000000
+
+#define FT_BUMP_SHIFT 27
+#define FT_BUMP_MASK      0xf0000000
+#define FT_BUMP_DETALPHA  0x10000000
+#define FT_BUMP_DETRED    0x20000000
+#define FT_BUMP_DETBLUE   0x40000000
+#define FT_BUMP_DETINTENS 0x80000000
+
+//////////////////////////////////////////////////////////////////////
+#define FT2_NODXT        1
+#define FT2_RENDERTARGET 2
+#define FT2_FORCECUBEMAP 4
+#define FT2_WASLOADED    8
+#define FT2_RELOAD       0x10
+#define FT2_NEEDRESTORED 0x20
+#define FT2_UCLAMP       0x40
+#define FT2_VCLAMP       0x80
+#define FT2_RECTANGLE    0x100
+#define FT2_FORCEDXT     0x200
+
+#define FT2_BUMPHIGHRES   0x400
+#define FT2_BUMPLOWRES    0x800
+#define FT2_PARTIALLYLOADED  0x1000
+#define FT2_NEEDTORELOAD     0x2000
+#define FT2_WASUNLOADED      0x4000
+#define FT2_STREAMINGINPROGRESS  0x8000
+
+#define FT2_FILTER_BILINEAR  0x10000
+#define FT2_FILTER_TRILINEAR 0x20000
+#define FT2_FILTER_ANISOTROPIC 0x40000
+#define FT2_FILTER_NEAREST     0x80000
+#define FT2_FILTER (FT2_FILTER_BILINEAR | FT2_FILTER_TRILINEAR | FT2_FILTER_ANISOTROPIC | FT2_FILTER_NEAREST)
+#define FT2_VERSIONWASCHECKED  0x100000
+#define FT2_BUMPCOMPRESED      0x200000
+#define FT2_BUMPINVERTED       0x400000
+#define FT2_STREAMFROMDDS      0x8000000
+#define FT2_DISCARDINCACHE     0x1000000
+#define FT2_NOANISO            0x2000000
+#define FT2_CUBEASSINGLETEXTURE  0x4000000
+#define FT2_FORCEMIPS2X2         0x8000000
+#define FT2_DIFFUSETEXTURE       0x10000000
+#define FT2_WASFOUND             0x20000000
+#define FT2_REPLICATETOALLSIDES  0x40000000
+#define FT2_CHECKFORALLSEQUENCES 0x80000000
+
+//////////////////////////////////////////////////////////////////////
 
 // Render State flags
 #define GS_BLSRC_MASK 0xf
@@ -142,6 +247,21 @@ struct Transform
 #define GS_BLDST_DSTALPHA 0x70
 #define GS_BLDST_ONEMINUSDSTALPHA 0x80
 
+#define GS_BUMP                    0xa0
+#define GS_ENV                     0xb0
+
+#define GS_DXT1                    0xc0
+#define GS_DXT3                    0xd0
+#define GS_DXT5                    0xe0
+
+#define GS_BLEND_MASK              0xff
+
+#define GS_DEPTHWRITE               0x00000100
+
+#define GS_MODULATE                0x00000200
+#define GS_NOCOLMASK               0x00000400
+#define GS_ADDITIONALSTATE         0x00000800
+
 #define GS_POLYLINE 0x00001000
 #define GS_TEXPARAM_CLAMP 0x00002000
 #define GS_TEXPARAM_UCLAMP 0x00004000
@@ -152,6 +272,49 @@ struct Transform
 #define GS_DEPTHFUNC_EQUAL 0x00100000
 #define GS_DEPTHFUNC_GREAT 0x00200000
 #define GS_STENCIL 0x00400000
+
+//////////////////////////////////////////////////////////////////////
+// Texture object interface
+struct ITexPic
+{
+  virtual void AddRef() = 0;
+  virtual void Release(int bForce=false)=0;
+  virtual const char *GetName()=0;
+  virtual int GetWidth() = 0;
+  virtual int GetHeight() = 0;
+  virtual int GetOriginalWidth() = 0;
+  virtual int GetOriginalHeight() = 0;
+  virtual int GetTextureID() = 0;
+  virtual int GetFlags() = 0;
+  virtual int GetFlags2() = 0;
+  virtual void SetClamp(bool bEnable) = 0;
+  virtual bool IsTextureLoaded() = 0;
+  virtual void PrecacheAsynchronously(float fDist, int Flags) = 0;
+  virtual void Preload (int Flags)=0;
+  virtual byte *GetData32()=0;
+  virtual bool SetFilter(int nFilter)=0;
+};
+
+#define	FORMAT_8_BIT	 8
+#define FORMAT_24_BIT	24
+#define FORMAT_32_BIT	32
+
+//////////////////////////////////////////////////////////////////////
+// Import and Export interfaces passed to the renderer
+struct SCryRenderInterface
+{
+	class CMalloc* igcpMalloc;
+
+	struct ILog*	 ipLog;
+	struct IConsole* ipConsole;
+	struct ITimer*	 ipTimer;
+	struct ISystem*	 ipSystem;
+	int*			 ipTest_int;
+#if 0
+	IPhysicalWorld* pIPhysicalWorld;
+#endif
+};
+
 
 enum class RenderPrimitive
 {
@@ -317,6 +480,12 @@ class CVertexBuffer
 
 	int Size(int Flags, int nVerts);
 };
+
+//////////////////////////////////////////////////////////////////////////
+//DOC-IGNORE-BEGIN
+#include <BlackBox/Renderer/IShader.hpp>
+//DOC-IGNORE-END
+
 struct IRenderCallback
 {
 	enum Type
@@ -439,7 +608,7 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0)  = 0;
 
 	//! Draw a bbox specified by mins/maxs (debug puprposes)
-	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) = 0;
+	virtual void Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) = 0;
 
 	//! Set the renderer camera
 	virtual void SetCamera(const CCamera& cam) = 0;
@@ -456,6 +625,9 @@ struct IRenderer : public IRendererCallbackServer
 	//! Write a message on the screen with additional flags.
 	//! for flags @see
 	virtual void Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info) = 0;
+
+	//! Draw a 2d image on the screen (Hud etc.)
+	virtual void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) = 0;
 
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) = 0;
@@ -505,7 +677,7 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void GetProjectionMatrix(float* mat) = 0;
 
 	//! for editor
-	virtual Vec3 GetUnProject(const Vec3& WindowCoords, const CCamera& cam) = 0;
+	virtual Legacy::Vec3 GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam) = 0;
 
 	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
 
@@ -513,7 +685,14 @@ struct IRenderer : public IRendererCallbackServer
 
 	virtual int EnumDisplayFormats(SDispFormat* formats) = 0;
 
+	virtual float ScaleCoordX(float value) = 0;
+	virtual float ScaleCoordY(float value) = 0;
+
 	virtual void SetState(State state, bool enable)			 = 0;
+	inline void SetState(int State) { 
+		//CryLog(__FUNCTION__);
+		//NOT_IMPLEMENTED; 
+	};
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
 	virtual void PushProfileMarker(char* label) = 0;
@@ -540,16 +719,42 @@ struct IRenderer : public IRendererCallbackServer
 	//! Gets width of the current viewport.
 	virtual int GetCurrentContextViewportWidth() const = 0;
 	/////////////////////////////////////////////////////////////////////////////////
+	// for stats
+	virtual int	 GetPolyCount()										= 0;
+	virtual void GetPolyCount(int& nPolygons, int& nShadowVolPolys) = 0;
 
 	// 3d engine set this color to fog color
-	virtual void SetClearColor(const Vec3& vColor)	 = 0;
+	virtual void SetClearColor(const Legacy::Vec3& vColor)	 = 0;
 	virtual void ClearDepthBuffer()					 = 0;
-	virtual void ClearColorBuffer(const Vec3 vColor) = 0;
+	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) = 0;
 
 	virtual int GetFrameID(bool bIncludeRecursiveCalls = true) = 0;
+	//////////////////////////////////////////////////////////////////////
+	/*!	Draw an image on the screen as a label text
+			@param vPos:	3d position
+			@param fSize: size of the image
+			@nTextureId:	Texture Id dell'immagine
+	*/
+	virtual void DrawLabelImage(const Legacy::Vec3& vPos, float fSize, int nTextureId) 
+	{
+		NOT_IMPLEMENTED;
+	}
+
+	virtual void DrawLabel(Legacy::Vec3 pos, float font_size, const char* label_text, ...)													
+	{
+		NOT_IMPLEMENTED;
+	}
+	virtual void DrawLabelEx(Legacy::Vec3 pos, float font_size, float* pfColor, bool bFixedSize, bool bCenter, const char* label_text, ...) 
+	{
+		NOT_IMPLEMENTED;
+	}
+	virtual void Draw2dLabel(float x, float y, float font_size, float* pfColor, bool bCenter, const char* label_text, ...)		
+	{
+		NOT_IMPLEMENTED;
+	}
 
 	virtual void SetRenderTarget(int nHandle) = 0;
-	virtual int CreateRenderTarget()		  = 0;
+	virtual int	 CreateRenderTarget()		  = 0;
 
 	virtual void DrawFullscreenQuad()						  = 0;
 	virtual void Set2DMode(bool enable, int ortox, int ortoy) = 0;
@@ -582,9 +787,56 @@ struct IRenderer : public IRendererCallbackServer
 
 	////////////////////////////////////////////////////////////////////////////////
 	virtual IShader* Sh_Load(const char* name, int flags = 0, uint64 nMaskGen = 0) = 0;
-	virtual void Sh_Reload()															  = 0;
+	virtual void	 Sh_Reload()												   = 0;
 	// Loading of the texture for name(nameTex)
-	virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
+	//virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
+	virtual ITexPic*  EF_GetTextureByID(int Id)
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return nullptr;
+		#endif
+	}
+	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0)
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return nullptr;
+		#endif
+	}
+	// Return different common shader parameters (used in ShaderBrowser) CryIndEd.exe
+	virtual void* EF_Query(int Query, int Param = 0) = 0;
+
+	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)
+	{
+		#if 0
+		NOT_IMPLEMENTED_V;
+		#else
+		return 0;
+		#endif
+	}
+	#if 0
+	virtual bool		 DXTCompress(byte* raw_data, int nWidth, int nHeight, ETEX_Format eTF, bool bUseHW, bool bGenMips, int nSrcBytesPerPix, MIPDXTcallback callback = 0)
+	{
+		NOT_IMPLEMENTED_V;
+	}
+	virtual bool		 DXTDecompress(byte* srcData, byte* dstData, int nWidth, int nHeight, ETEX_Format eSrcTF, bool bUseHW, int nDstBytesPerPix)	
+	{
+		NOT_IMPLEMENTED_V;
+	}
+	#endif
+	virtual void RemoveTexture(unsigned int TextureId)
+	{
+		NOT_IMPLEMENTED;
+	}
+	virtual void RemoveTexture(ITexPic* pTexPic)	
+	{
+		NOT_IMPLEMENTED;
+	}
+
+
 };
 
 extern "C"
@@ -593,17 +845,141 @@ extern "C"
 	typedef IRenderer* (*PFNCREATERENDERERINTERFACE)(ISystem* pSystem);
 }
 
-#include "VertexFormats.hpp"
+//////////////////////////////////////////////////////////////////////////
+// Query types for CryInd editor (used in EF_Query() function)
+#define EFQ_NUMEFS							0
+#define EFQ_LOADEDEFS						1
+#define EFQ_NUMTEXTURES					2
+#define EFQ_LOADEDTEXTURES			3
+#define EFQ_NUMEFFILES0					6
+#define EFQ_NUMEFFILES1					7
+#define EFQ_EFFILENAMES0				12
+#define EFQ_EFFILENAMES1				13
+#define EFQ_VProgramms					16
+#define EFQ_PShaders						17
+#define EFQ_LightSource					18
+#define EFQ_RecurseLevel				19
+#define EFQ_Pointer2FrameID			20
+#define EFQ_RegisteredTemplates 21
+#define EFQ_NumRenderItems			22
+#define EFQ_DeviceLost					23
+#define EFQ_CubeColor						24
+#define EFQ_D3DDevice						25
+#define EFQ_glReadPixels				26
 
+#define EFQ_Orients             33
+#define EFQ_NumOrients          34
+#define EFQ_SkyShader           35
+#define EFQ_SunFlares           36
+#define EFQ_CurSunFlare         37
+#define EFQ_Materials           38
+#define EFQ_LightMaterials      39
+
+//////////////////////////////////////////////////////////////////////
+
+#define STRIPTYPE_NONE           0
+#define STRIPTYPE_ONLYLISTS      1
+#define STRIPTYPE_SINGLESTRIP    2
+#define STRIPTYPE_MULTIPLESTRIPS 3
+#define STRIPTYPE_DEFAULT        4
+
+/////////////////////////////////////////////////////////////////////
+
+//DOC-IGNORE-BEGIN
+#include "VertexFormats.hpp"
+//#include "LeafBuffer.h" 
+//DOC-IGNORE-END
+
+
+//////////////////////////////////////////////////////////////////////////
+// this structure used to pass render parameters to Render() functions of IStatObj and ICharInstance
 struct SRendParams
 {
-	IShader* Shader;
-//	std::vector<UniformValue> uniforms;
-	Material* material;
-	CCamera* Camera;
-	DirectionLight* directionLight;
-	Mat4 Transform;
+  SRendParams()
+  {
+	  memset(this, 0, sizeof(SRendParams));
+	  nShaderTemplate = -2;
+	  fScale		  = 1.f;
+	  #if 0
+	  vColor(1.f, 1.f, 1.f);
+	  #endif
+	  fAlpha	  = 1.f;
+	  fSQDistance = -1.f;
+  }
+
+	SRendParams (const SRendParams& rThat)
+	{
+		memcpy (this, &rThat, sizeof(SRendParams));
+	}
+
+	//! position of render elements
+  Legacy::Vec3				vPos;
+	//! scale of render elements
+  float				fScale;
+	//! angles of the object
+  Legacy::Vec3				vAngles;
+	//! object transformations
+  Legacy::Matrix44		*pMatrix;
+  //! custom offset for sorting by distance
+  float				fCustomSortOffset;
+	//! shader template to use
+  int					nShaderTemplate;
+	//! light mask to specifiy which light to use on the object
+  unsigned int nDLightMask;
+	//! strongest light affecting the object
+	unsigned int nStrongestDLightMask;
+	//! fog volume id
+  int					nFogVolumeID;
+	//! amount of bending animations for vegetations
+  float				fBending;
+	//! state shader
+  IShader			*pStateShader;
+	//! list of shadow map casters
+  #if 0
+  list2<ShadowMapLightSourceInstance> * pShadowMapCasters;
+  #endif
+	//! object color
+  Legacy::Vec3 vColor{1.f, 1.f, 1.f};
+	//! object alpha
+  float     fAlpha;
+	//! force a sort value for render elements
+	int				nSortValue;
+	//! Ambient color for the object
+	Legacy::Vec3			vAmbientColor;
+	//! distance from camera
+  float     fDistance;
+	//! CCObject flags
+  int		    dwFObjFlags;
+  #if 0
+	//! light source for shadow volume calculations
+	CDLight		*pShadowVolumeLightSource;
+  //! reference to entity, allows to improve handling of shadow volumes of IStatObj instances
+  struct IEntityRender	* pCaller;
+	//! Heat Amount for heat vision
+	float			fHeatAmount;
+	//! define size of shadow volume
+	float			fShadowVolumeExtent;
+	//! lightmap informaion
+	struct RenderLMData * pLightMapInfo;
+	struct CLeafBuffer * pLMTCBuffer; // Object instance specific tex LM texture coords;
+	byte arrOcclusionLightIds[4];
+	//! Override material.
+	IMatInfo *pMaterial;
+	#endif
+  //! Scissor settings for this object
+//  int nScissorX1, nScissorY1, nScissorX2, nScissorY2;
+	//! custom shader params
+	#if 0
+	TArray <struct SShaderParam> * pShaderParams;
+	#else
+	std::vector<struct SShaderParam> * pShaderParams;
+	#endif
+	//! squared distance to the center of object
+	float fSQDistance;
+  //! CCObject custom data
+  void * pCCObjCustomData;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 class ScopedState

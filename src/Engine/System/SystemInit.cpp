@@ -5,6 +5,8 @@
 #include "ProjectManager/ProjectManager.hpp"
 #include <WindowsConsole.h>
 
+#include "Profiling\ProfilingSystem.hpp"
+
 #include <BlackBox/Core/Path.hpp>
 
 //#undef USE_DEDICATED_SERVER_CONSOLE
@@ -31,6 +33,7 @@ void CSystem::UnloadSubsystems()
 	m_Subsystems.clear();
 	// CVars should be unregistered earlier than owning objects/modules are destroyed.
 }
+#
 class CNULLConsole : public IOutputPrintSink,
 	                   public ISystemUserCallback,
 	                   public ITextModeConsole
@@ -81,7 +84,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////
 	// ITextModeConsole
 	///////////////////////////////////////////////////////////////////////////////////////
-	virtual Vec2_tpl<int> 	      BeginDraw() { return Vec2_tpl<int>(0, 0); };
+	virtual glm::ivec2	  BeginDraw() { return glm::ivec2(0, 0); };
 	virtual void          PutText(int x, int y, const char* msg);
 	virtual void          EndDraw()   {};
 
@@ -216,6 +219,8 @@ bool CSystem::Init()
 	#else
 	bool isDaemonMode = false;
 	#endif // !defined(_RELEASE)
+
+	m_env.pFrameProfileSystem = new ProfilingSystem;
 
 	#if defined(USE_DEDICATED_SERVER_CONSOLE)
 
@@ -381,7 +386,11 @@ bool CSystem::Init()
 	{
 		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
 	}
+	if (!InitSoundSystem())
+		return false;
 	if (!Init3DEngine())
+		return false;
+	if (!InitPhysics())
 		return false;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -468,12 +477,21 @@ bool CSystem::Init()
 	//====================================================
 	if (!InitNetwork())
 		return false;
+	//LoadCrynetwork();
+
 	//====================================================
 	Log("Initialize Game");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
 	{
 		return false;
 	}
+	if (IsDevMode())
+	{
+		CryLog("DEVMODE is Enabled");
+		auto ok = m_env.pScriptSystem->ExecuteFile("DevMode.lua");
+		CryLog("\tLoading DevMode.lua: %s!", ok ? "Ok" : "Failed");
+	}
+
 	ExecuteCommandLine();
 	Tests();
 
@@ -621,7 +639,24 @@ bool CSystem::Init3DEngine()
 		m_env.p3DEngine = p(this, "0.0.0");
 		if (m_env.p3DEngine == nullptr)
 			return false;
-		return m_env.p3DEngine->Init();
+		if (!m_env.p3DEngine->Init())
+		{
+			return false;
+		}
+		m_pProcess = m_env.p3DEngine;
+		m_pProcess->SetFlags(PROC_3DENGINE);
+		return true;
+	});
+}
+
+bool CSystem::InitSoundSystem()
+{
+	Log("Creating SoundSystem");
+	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p) {
+		m_env.pSoundSystem = p(this, "0.0.0");
+		if (m_env.pSoundSystem == nullptr)
+			return false;
+		return true;
 	});
 }
 
@@ -795,12 +830,48 @@ bool CSystem::InitFileSystem()
 	return true;
 }
 
+bool CSystem::LoadCrynetwork()
+{
+	//CRYNETWORK_API INetwork* CreateNetwork(ISystem * pSystem);
+	typedef INetwork* (*PFNCREATENETWORK)(legacy::ISystem * pSystem);
+
+	Log("Creating CryNetwork");
+	return LoadSubsystem<PFNCREATENETWORK>("Legacy/CryNetwork.dll", "CreateNetwork", [&](PFNCREATENETWORK p) {
+		m_pNetworkLegacy = p(m_pSystemLegacy);
+		if (m_pNetworkLegacy == nullptr)
+			return false;
+		//m_pNetworkLegacy->Init();
+		return true;
+	});
+
+
+}
+
 IGame* CSystem::CreateGame(IGame* game)
 {
-	LoadSubsystem<PFNCREATEGAMEINSTANCE>("Game", "CreateIGame", [&](PFNCREATEGAMEINSTANCE P) {
+	string gameDLLName = "Game";
+	if (ICVar* pCVarGameDir = gEnv->pConsole->GetCVar("sys_dll_game"))
+	{
+		gameDLLName = pCVarGameDir->GetString();
+	}
+	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateGameInstance", [&](PFNCREATEGAMEINSTANCE P) {
 		m_pGame = P();
 		return true;
 	});
 	return m_pGame;
+}
+
+typedef IPhysicalWorld* (*PFNCREATEPHYSICS)(ISystem* pSystem);
+bool CSystem::InitPhysics()
+{
+	Log("Creating Physics");
+	return LoadSubsystem<PFNCREATEPHYSICS>("Physics", "CreatePhysicalWorld", [&](PFNCREATEPHYSICS p) {
+		m_env.pPhysicalWorld = p(this);
+		if (m_env.pPhysicalWorld == nullptr)
+			return false;
+		m_env.pPhysicalWorld->Init();
+		return true;
+	});
+
 }
 

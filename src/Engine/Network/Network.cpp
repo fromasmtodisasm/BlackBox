@@ -69,7 +69,8 @@ class CCompressionHelper : public ICompressionHelper
 class CTmpNetworkClient : public IClient
 {
   public:
-	CTmpNetworkClient()
+	CTmpNetworkClient(CNetwork* pNetwork)
+		: m_pNetwork(pNetwork)
 	{
 	}
 	~CTmpNetworkClient()
@@ -78,9 +79,11 @@ class CTmpNetworkClient : public IClient
 	// Inherited via IClient
 	virtual void Connect(const char* szIP, uint16_t wPort, const uint8_t* pbAuthorizationID, unsigned int iAuthorizationSize) override
 	{
+		CryLog("connect to: ip %s", szIP);
 	}
 	virtual void Disconnect(const char* szCause) override
 	{
+		m_pNetwork->UnregisterClient(this);
 	}
 	virtual void SendReliable(CStream& stm) override
 	{
@@ -93,7 +96,12 @@ class CTmpNetworkClient : public IClient
 	}
 	virtual bool IsReady() override
 	{
+		//FIXME:
+		#if 0
 		return false;
+		#else
+		return true;
+		#endif
 	}
 	virtual bool Update(unsigned int nTime) override
 	{
@@ -136,6 +144,7 @@ class CTmpNetworkClient : public IClient
 	virtual void SetServerIP(const char* szServerIP) override
 	{
 	}
+	CNetwork* m_pNetwork{};
 };
 
 class CTmpNetworkServer : public IServer
@@ -430,7 +439,7 @@ void CNetwork::SetLocalIP(const char* szLocalIP)
 
 IClient* CNetwork::CreateClient(IClientSink* pSink, bool bLocal)
 {
-	auto result = new CTmpNetworkClient;
+	auto result = new CTmpNetworkClient(this);
 	m_Clients.push_back(result);
 	return result;
 }
@@ -528,6 +537,15 @@ void CNetwork::SetUBIGameServerIP(const char* szAddress)
 const char* CNetwork::GetUBIGameServerIP(bool bLan)
 {
 	return nullptr;
+}
+
+void CNetwork::UnregisterClient(CTmpNetworkClient* pClient)
+{
+	if (auto it = std::find_if(
+		m_Clients.begin(), m_Clients.end(), [pClient](IClient* cl) { return cl == pClient; }); it != m_Clients.end())
+	{
+		m_Clients.erase(it);
+	}
 }
 
 NETWORK_API INetwork* CreateNetwork(ISystem* pSystem)

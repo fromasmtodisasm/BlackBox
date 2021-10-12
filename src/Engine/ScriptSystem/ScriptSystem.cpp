@@ -4,9 +4,6 @@
 #include <BlackBox/ScriptSystem/StackGuard.hpp>
 
 
-#undef CryLog
-#define CryLog(format, ...) ScriptWarning(format, __VA_ARGS__)
-
 // Undefine malloc for memory manager itself..
 #undef malloc
 #undef realloc
@@ -177,7 +174,7 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 {
 	std::string path(sFileName);
 
-	auto it = m_dqLoadedFiles.find(path);
+	auto		it = m_dqLoadedFiles.find(path);
 	std::string src;
 	std::string buffer;
 	if (it == m_dqLoadedFiles.end() || bForceReload)
@@ -185,7 +182,15 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 		m_dqLoadedFiles.insert(path);
 		std::ifstream fin("res/" + path);
 		if (!fin.is_open())
-			return false;
+		{
+			// Try load root relative
+			fin = std::ifstream(path);
+			if (!fin.is_open())
+			{
+				CryError("Faled to load script: %s", path.c_str());
+				return false;
+			}
+		}
 		while (std::getline(fin, buffer))
 		{
 			src += buffer;
@@ -194,7 +199,12 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 		fin.close();
 	}
 	//return luaL_dofile(L, path.c_str()) == LUA_OK;
-	return ExecuteBuffer(src.c_str(), src.length());
+	auto result = ExecuteBuffer(src.c_str(), src.length());
+	if (!result)
+	{
+		CryError("Error in file: %s", sFileName);
+	}
+	return result;
 }
 
 bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
@@ -327,7 +337,9 @@ IScriptObject* CScriptSystem::GetGlobalObject()
 
 IScriptObject* CScriptSystem::CreateEmptyObject()
 {
-	return new CScriptObject;
+	auto o = new CScriptObject;
+	o->AddRef();
+	return o;
 }
 
 IScriptObject* CScriptSystem::CreateObject()
@@ -603,10 +615,11 @@ USER_DATA CScriptSystem::CreateUserData(INT_PTR nVal, int nCookie)
 {
 	CHECK_STACK(L);
 
-	auto size		 = sizeof(UserDataInfo);
-	UserDataInfo* ud = (UserDataInfo*)lua_newuserdata(L, size);
-	ud->ptr			 = nVal;
-	ud->cookie		 = nCookie;
+	auto		  size = sizeof(UserDataInfo*);
+	UserDataInfo* ud   = (UserDataInfo*)lua_newuserdata(L, size);
+	ud				   = new UserDataInfo;
+	ud->ptr			   = nVal;
+	ud->cookie		   = nCookie;
 	lua_pop(L, 1);
 
 	return ud;
@@ -1063,6 +1076,78 @@ void CScriptSystem::RemoveFileFromList(const ScriptFileListItor& itor)
 
 void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason)
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+class CPrintSink : public IScriptObjectDumpSink
+{
+public:
+	void OnElementFound(int nIdx,ScriptVarType type){/*ignore non string indexed values*/};
+	void OnElementFound(const char *sName,ScriptVarType type)
+	{
+		switch (type)
+		{
+		case ScriptVarType::Null:
+			break;
+		case ScriptVarType::String:
+			CryLog("string: %s", sName);
+			break;
+		case ScriptVarType::Number:
+			CryLog("number: %s", sName);
+			break;
+		case ScriptVarType::Object:
+			CryLog("object: %s", sName);
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+
+void PrintStack(lua_State* L)
+{
+	auto numArgs = lua_gettop(L);
+
+	for (size_t i = 1; i <= numArgs; i++)
+	{
+		char msg[256];
+		switch (lua_type(L, i))
+		{
+		case LUA_TNIL:
+			sprintf(msg, "nil");
+			break;
+		case LUA_TBOOLEAN:
+			sprintf(msg, "bool: %s", lua_toboolean(L, i) ? "true" : "false");
+			break;
+		case LUA_TNUMBER:
+			sprintf(msg, "number: %d", lua_tonumber(L, i));
+			break;
+		case LUA_TSTRING:
+			sprintf(msg, "string: %s", lua_tostring(L, i));
+			break;
+		case LUA_TLIGHTUSERDATA:
+		{
+			auto ud = lua_touserdata(L, i);
+			sprintf(msg, "ud: %p", ud);
+			auto so = (CScriptObject*)(ud);
+			CPrintSink ps;
+			so->Dump(&ps);
+			break;
+		}
+		case LUA_TTABLE:
+			sprintf(msg, "t: %p", lua_topointer(L, i));
+			break;
+		}
+		CryLog("$3 %d> %s", i, msg);
+	}
+}
+
+static CPrintSink Sink;
+
+void CScriptSystem::PrintStack()
+{
+	::PrintStack(L);
 }
 
 SCRIPTSYSTEM_API IScriptSystem* CreateScriptSystem(ISystem* pSystem, bool bStdLibs)

@@ -29,15 +29,15 @@ class CStream;
 enum eBitStreamHint
 {
 	eDoNotCompress,			// ...
-	e8BitNormal,				// Vec3,														low quality normalized vector
-	eWorldPos,					// Vec3,														absolute world position
+	e8BitNormal,				// Legacy::Vec3,														low quality normalized vector
+	eWorldPos,					// Legacy::Vec3,														absolute world position
 	eASCIIText,					// char *,													static huffman compression
 	eEntityId,					// u __int32,__int32, u __int16			16bit, some entities have higher probability (e.g. player)
 	eEntityClassId,			// __int32,u __int16,								for entity creation
-	e8BitRGB,						// Vec3,														8bit Color
-	e4BitRGB,						// Vec3,														4bit Color
-	eQuaternion,				// Vec3,														eQuaternion
-	eEulerAnglesHQ,			// Vec3,														YAW,PITCH,ROLL cyclic in [0..360[, special compression if PITCH=0 (not float but still quite high quality)
+	e8BitRGB,						// Legacy::Vec3,														8bit Color
+	e4BitRGB,						// Legacy::Vec3,														4bit Color
+	eQuaternion,				// Legacy::Vec3,														eQuaternion
+	eEulerAnglesHQ,			// Legacy::Vec3,														YAW,PITCH,ROLL cyclic in [0..360[, special compression if PITCH=0 (not float but still quite high quality)
 	eSignedUnitValueLQ,	// float,														[-1..1] 8+1+1 bit if not zero, 1 bit of zero
 };
 
@@ -61,7 +61,7 @@ struct IBitStream
   //!
   virtual bool ReadBitStream( CStream &stm, float &Value, const eBitStreamHint eHint )=0;
   //!
-  virtual bool ReadBitStream( CStream &stm, Vec3 &Value, const eBitStreamHint eHint )=0;
+  virtual bool ReadBitStream( CStream &stm, Legacy::Vec3 &Value, const eBitStreamHint eHint )=0;
   //!
   //! max 256 characters
   virtual bool ReadBitStream( CStream &stm, char *Value, const DWORD nBufferSize, const eBitStreamHint eHint )=0;
@@ -81,7 +81,7 @@ struct IBitStream
   //!
   virtual bool WriteBitStream( CStream &stm, const float Value, const eBitStreamHint eHint )=0;
   //!
-  virtual bool WriteBitStream( CStream &stm, const Vec3 &Value, const eBitStreamHint eHint )=0;
+  virtual bool WriteBitStream( CStream &stm, const Legacy::Vec3 &Value, const eBitStreamHint eHint )=0;
   //!
   //! max 256 characters
   virtual bool WriteBitStream( CStream &stm, const char *Value, const DWORD nBufferSize, const eBitStreamHint eHint )=0;
@@ -104,7 +104,7 @@ struct IBitStream
 	//! to get the compression error
   virtual void SimulateWriteRead( float &Value, const eBitStreamHint eHint )=0;
 	//! to get the compression error
-	virtual void SimulateWriteRead( Vec3 &Value, const eBitStreamHint eHint )=0;
+	virtual void SimulateWriteRead( Legacy::Vec3 &Value, const eBitStreamHint eHint )=0;
 	//! to get the compression error
   virtual void SimulateWriteRead( char *Value, const DWORD nBufferSize, const eBitStreamHint eHint )=0;
 };

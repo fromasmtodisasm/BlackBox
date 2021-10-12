@@ -588,7 +588,7 @@ class _ScriptableEx : public ScriptBase
 #	define SCRIPT_CHECK_PARAMETERS(_n) CHECK_PARAMETERS(_n)
 #	define SCRIPT_REG_CLASSNAME
 #	define SCRIPT_REG_FUNC(_func) SCRIPT_REG_CLASSNAME::RegisterFunction(m_pSS, #	 _func, &SCRIPT_REG_CLASSNAME::_func);
-#	define REG_FUNC(_class, _func) _class::RegisterFunction(m_pSS, #	_func, &_class::_func);
+#	define REG_FUNC(_class, _func) _class::RegisterFunction(pSS, #	_func, &_class::_func);
 #	define SCRIPT_REG_TEMPLFUNC(func, sFuncParams) RegisterTemplateFunction(#	 func, sFuncParams, *this, &SCRIPT_REG_CLASSNAME::func);
 #	define SCRIPT_REG_TEMPLFUNC_U(func) SCRIPT_REG_TEMPLFUNC(func, "")
 #	define REG_DERIVED_FUNC(_class, _func) RegisterFunction(m_pSS, #	_func, &_class::_func);
@@ -607,23 +607,23 @@ class CScriptObjectVector : public SmartScriptObject
 		: SmartScriptObject(pSS, bCreateEmpty)
 	{
 	}
-	void Set(const Vec3& v)
+	void Set(const Legacy::Vec3& v)
 	{
 		CScriptSetGetChain chain(*this);
 		chain.SetValue("x", v.x);
 		chain.SetValue("y", v.y);
 		chain.SetValue("z", v.z);
 	}
-	Vec3 Get()
+	Legacy::Vec3 Get()
 	{
-		Vec3 v(0, 0, 0);
+		Legacy::Vec3 v(0, 0, 0);
 		CScriptSetGetChain chain(*this);
 		chain.GetValue("x", v.x);
 		chain.GetValue("y", v.y);
 		chain.GetValue("z", v.z);
 		return v;
 	}
-	CScriptObjectVector& operator=(const Vec3& v3)
+	CScriptObjectVector& operator=(const Legacy::Vec3& v3)
 	{
 		Set(v3);
 		return *this;
@@ -641,23 +641,23 @@ class CScriptObjectColor : public SmartScriptObject
 		: SmartScriptObject(pSS, bCreateEmpty)
 	{
 	}
-	void Set(const Vec3& v)
+	void Set(const Legacy::Vec3& v)
 	{
 		IScriptObject* pObject = *this;
 		pObject->SetAt(1, v.x);
 		pObject->SetAt(2, v.y);
 		pObject->SetAt(3, v.z);
 	}
-	Vec3 Get()
+	Legacy::Vec3 Get()
 	{
 		IScriptObject* pObject = *this;
-		Vec3 v(0, 0, 0);
+		Legacy::Vec3 v(0, 0, 0);
 		pObject->GetAt(1, v.x);
 		pObject->GetAt(2, v.y);
 		pObject->GetAt(3, v.z);
 		return v;
 	}
-	CScriptObjectColor& operator=(const Vec3& v3)
+	CScriptObjectColor& operator=(const Legacy::Vec3& v3)
 	{
 		Set(v3);
 		return *this;
@@ -677,7 +677,7 @@ struct Script
 		return out;
 	}
 
-	static SmartScriptObject SetCachedVector(const Vec3& value, IFunctionHandler* pH, int funcParam)
+	static SmartScriptObject SetCachedVector(const Legacy::Vec3& value, IFunctionHandler* pH, int funcParam)
 	{
 		SmartScriptObject out = GetCachedTable(pH, funcParam);
 		{
@@ -701,7 +701,7 @@ struct Script
 		return out;
 	}
 
-	static SmartScriptObject SetCachedVector(const Vec3& value, SmartScriptObject& table, const char* fieldName)
+	static SmartScriptObject SetCachedVector(const Legacy::Vec3& value, SmartScriptObject& table, const char* fieldName)
 	{
 		SmartScriptObject out = GetCachedTable(table, fieldName);
 		{
@@ -726,7 +726,7 @@ struct Script
 		return out;
 	}
 
-	static SmartScriptObject SetCachedVector(const Vec3& value, CScriptSetGetChain& chain, const char* fieldName)
+	static SmartScriptObject SetCachedVector(const Legacy::Vec3& value, CScriptSetGetChain& chain, const char* fieldName)
 	{
 		SmartScriptObject out = GetCachedTable(chain, fieldName);
 		{

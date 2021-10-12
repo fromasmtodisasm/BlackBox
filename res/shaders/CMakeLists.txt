@@ -20,5 +20,5 @@ add_sources("NoUberFile"
 
 end_sources()
 
-CryfileContainer( Shaders SOLUTION_FOLDER "BlackBox/Shaders")
+CryfileContainer( Shaders SOLUTION_FOLDER "Shaders")
 

@@ -30,7 +30,7 @@ public:
 	virtual void GetViewport(int* x, int* y, int* width, int* height) override;
 	virtual void SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) override;
 	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0) override;
-	virtual void Draw3dBBox(const Vec3& mins, const Vec3& maxs) override;
+	virtual void Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) override;
 	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) override;
 	virtual void ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 	virtual void DrawFullScreenImage(int texture_id) override;
@@ -48,7 +48,7 @@ public:
 	virtual int GetCurrentContextViewportHeight() const override;
 	virtual int GetCurrentContextViewportWidth() const override;
 	virtual void ClearDepthBuffer() override;
-	virtual void ClearColorBuffer(const Vec3 vColor) override;
+	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) override;
 	virtual void SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
 	virtual bool InitOverride() override;
@@ -57,6 +57,12 @@ public:
 	bool OnResizeSwapchain(int newWidth, int newHeight);
 
 	virtual void GetMemoryUsage(ICrySizer* Sizer) const override;
+
+	//! Draw a 2d image on the screen (Hud etc.)
+	virtual void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) override;
+
+	virtual void* EF_Query(int Query, int Param) override;
+
 
   private:
 

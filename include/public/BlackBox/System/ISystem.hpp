@@ -5,6 +5,7 @@
 #include <BlackBox/System/IValidator.hpp>
 #include <cstdarg>
 
+
 #ifdef SYSTEM_EXPORTS
 #	define ISYSTEM_API DLL_EXPORT
 #else
@@ -16,38 +17,86 @@
 //! Compiler-supported type-checking helper
 #define PRINTF_PARAMS(...)
 
-struct ISystem;
-struct ILog;
-struct IEntitySystem;
-struct IGame;
-struct IShaderManager;
-struct IRenderer;
-struct IRenderAuxGeom;
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Forward declarations
+////////////////////////////////////////////////////////////////////////////////////////////////
+#include <IXMLDOM.h>
+#include <IXml.h>
+
 struct I3DEngine;
+struct IAISystem;
 struct ICmdLine;
 struct IConsole;
-struct IInput;
-struct IHardwareMouse;
-struct IFont;
-struct IWindow;
-struct IInputHandler;
-struct IScriptSystem;
-struct IValidator;
-struct IOutputPrintSink;
-struct ITimer;
-struct INetwork;
-struct IWorld;
-struct IPlatform;
+struct ICryCharManager;
+struct ICryFont;
 struct ICryPak;
+struct IEntitySystem;
+struct IFont;
+struct IFrameProfileSystem;
+struct IGame;
+struct IHardwareMouse;
+struct IInput;
+struct IInputHandler;
+struct ILog;
+struct IMovieSystem;
+struct IMusicSystem;
+struct INetwork;
+struct IOutputPrintSink;
+struct IPhysicalWorld;
+struct IPlatform;
+struct IProcess;
+struct IProjectManager;
+struct IRemoteConsole;
+struct IRenderAuxGeom;
+struct IRenderer;
+struct IScriptSystem;
+struct IShaderManager;
+struct ISoundSystem;
 struct IStreamEngine;
+struct ISystem;
 struct ITextModeConsole;
 struct IThreadManager;
-struct IRemoteConsole;
-struct IProjectManager;
+struct ITimer;
+struct IValidator;
+struct IVisArea;
+struct IWindow;
+struct IWorld;
+
+class CFrameProfilerSection;
 
 //////////////////////////////////////////////////////////////////////////
-#define DEFAULT_GAME_PATH "TestGame"
-#define DATA_FOLDER "res"
+#define DEFAULT_GAME_PATH "FarCry"
+#define DATA_FOLDER "FCData"
+
+#define PROC_MENU 1
+#define PROC_3DENGINE 2
+
+//ID for script userdata typing (maybe they should be moved into the game.dll)
+#define USER_DATA_SOUND 1
+#define USER_DATA_TEXTURE 2
+#define USER_DATA_OBJECT 3
+#define USER_DATA_LIGHT 4
+#define USER_DATA_BONEHANDLER 5
+#define USER_DATA_POINTER 6
+
+//////////////////////////////////////////////////////////////////////////
+enum ESystemUpdateFlags
+{
+	ESYSUPDATE_IGNORE_AI			= 0x0001,
+	ESYSUPDATE_IGNORE_PHYSICS = 0x0002,
+	// Special update mode for editor.
+	ESYSUPDATE_EDITOR					=	0x0004,
+	ESYSUPDATE_MULTIPLAYER		= 0x0008
+};
+
+//////////////////////////////////////////////////////////////////////////
+enum ESystemConfigSpec
+{
+	CONFIG_LOW_SPEC = 0,
+	CONFIG_MEDIUM_SPEC = 1,
+	CONFIG_HIGH_SPEC = 2,
+	CONFIG_VERYHIGH_SPEC = 3,
+};
 
 #if BB_PLATFORM_ANDROID
 #	define USE_ANDROIDCONSOLE
@@ -282,22 +331,31 @@ struct SSystemInitParams
 
 struct SSystemGlobalEnvironment
 {
-	INetwork*		 pNetwork		  = nullptr;
-	I3DEngine*		 p3DEngine		  = nullptr;
-	IScriptSystem*	 pScriptSystem	  = nullptr;
-	IInput*			 pInput			  = nullptr;
-	ICryPak*		 pCryPak		  = nullptr;
-	ITimer*			 pTimer			  = nullptr;
-	IEntitySystem*	 pEntitySystem	  = nullptr;
-	IConsole*		 pConsole		  = nullptr;
-	ISystem*		 pSystem		  = nullptr;
-	ILog*			 pLog			  = nullptr;
-	IRenderer*		 pRenderer		  = nullptr;
-	IRenderAuxGeom*	 pAuxGeomRenderer = nullptr;
-	IHardwareMouse*	 pHardwareMouse	  = nullptr;
-	IPlatform*		 pPlatform		  = nullptr;
-	IThreadManager*	 pThreadManager	  = nullptr;
-	IProjectManager* pProjectManager  = nullptr;
+	INetwork*			 pNetwork			 = nullptr;
+	I3DEngine*			 p3DEngine			 = nullptr;
+	IScriptSystem*		 pScriptSystem		 = nullptr;
+	IInput*				 pInput				 = nullptr;
+	ICryPak*			 pCryPak			 = nullptr;
+	ITimer*				 pTimer				 = nullptr;
+	IEntitySystem*		 pEntitySystem		 = nullptr;
+	IConsole*			 pConsole			 = nullptr;
+	ISystem*			 pSystem			 = nullptr;
+	ILog*				 pLog				 = nullptr;
+	IRenderer*			 pRenderer			 = nullptr;
+	IRenderAuxGeom*		 pAuxGeomRenderer	 = nullptr;
+	IHardwareMouse*		 pHardwareMouse		 = nullptr;
+	IPlatform*			 pPlatform			 = nullptr;
+	IThreadManager*		 pThreadManager		 = nullptr;
+	IProjectManager*	 pProjectManager	 = nullptr;
+	IFrameProfileSystem* pFrameProfileSystem = nullptr;
+	IPhysicalWorld*		 pPhysicalWorld		 = nullptr;
+	IMusicSystem*		 pMusicSystem		 = nullptr;
+	ISoundSystem*		 pSoundSystem		 = nullptr;
+	IMovieSystem*		 pMovieSystem		 = nullptr;
+	IAISystem*			 pAISystem			 = nullptr;
+	ICryFont*			 pCryFont			 = nullptr;
+
+
 
 	ILINE void SetIsDedicated(bool isDedicated)
 	{
@@ -375,26 +433,54 @@ struct ISystem
 	virtual ISystemUserCallback* GetUserCallback() const				  = 0;
 	virtual IGame* CreateGame(IGame* game)								  = 0;
 
-	virtual IRenderer* GetIRenderer()							= 0;
-	virtual ILog* GetILog()										= 0;
-	virtual IStreamEngine* GetStreamEngine()					= 0;
-	virtual IRemoteConsole* GetIRemoteConsole()					= 0;
-	virtual ICmdLine* GetICmdLine()								= 0;
-	virtual IConsole* GetIConsole()								= 0;
-	virtual IInput* GetIInput()									= 0;
-	virtual IGame* GetIGame()									= 0;
-	virtual IFont* GetIFont()									= 0;
-	virtual INetwork* GetINetwork()								= 0;
-	virtual IWindow* GetIWindow()								= 0;
-	virtual IValidator* GetIValidator()							= 0;
-	virtual IEntitySystem* GetIEntitySystem()					= 0;
-	virtual ICryPak* GetIPak()									= 0;
-	virtual IHardwareMouse* GetIHardwareMouse()					= 0;
-	virtual IScriptSystem* GetIScriptSystem()					= 0;
+		// return the related subsystem interface
+	virtual I3DEngine*				GetI3DEngine()				= 0;
+	virtual IAISystem*				GetAISystem()				= 0;
+	virtual ICmdLine*				GetICmdLine()				= 0;
+	virtual IConsole*				GetIConsole()				= 0;
+	virtual ICryCharManager*		GetIAnimationSystem()		= 0;
+	virtual ICryFont*				GetICryFont()				= 0;
+	virtual ICryPak*				GetIPak()					= 0;
+	virtual IEntitySystem*			GetIEntitySystem()			= 0;
+	// new
+	virtual IFont*					GetIFont()					= 0;
+	virtual IFrameProfileSystem*	GetIProfileSystem()			= 0;
+	virtual IGame*					GetIGame()					= 0;
+	// new
+	virtual IHardwareMouse*			GetIHardwareMouse()			= 0;
+	virtual IInput*					GetIInput()					= 0;
+	virtual ILog*					GetILog()					= 0;
+	//FarCry
+	//virtual IMemoryManager*			GetIMemoryManager()			= 0;
+	virtual IMovieSystem*			GetIMovieSystem()			= 0;
+	virtual IMusicSystem*			GetIMusicSystem()			= 0;
+	virtual INetwork*				GetINetwork()				= 0;
+	virtual IPhysicalWorld*			GetIPhysicalWorld()			= 0;
+	//new
+	virtual IProjectManager*		GetIProjectManager()		= 0;
+	//new
+	virtual IRemoteConsole*			GetIRemoteConsole()			= 0;
+	virtual IRenderer*				GetIRenderer()				= 0;
+	virtual IScriptSystem*			GetIScriptSystem()			= 0;
+	virtual ISoundSystem*			GetISoundSystem()			= 0;
+	virtual IStreamEngine*			GetStreamEngine()			= 0;
+	//new
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() = 0;
-	virtual ITimer* GetITimer()									= 0;
-	virtual ITextModeConsole* GetITextModeConsole()				= 0;
-	virtual IProjectManager* GetIProjectManager()				= 0; 
+	//new
+	virtual ITextModeConsole*		GetITextModeConsole()		= 0;
+	virtual ITimer*					GetITimer()					= 0;
+	virtual IValidator*				GetIValidator()				= 0;
+	//my
+	virtual IWindow*				GetIWindow()				= 0;
+
+  // Gets current supported CPU features flags. (CPUF_SSE, CPUF_SSE2, CPUF_3DNOW, CPUF_MMX)
+	virtual int GetCPUFlags() = 0;
+
+	// Get seconds per processor tick
+	virtual double GetSecondsPerCycle() = 0;
+
+	// dumps the memory usage statistics to the log
+	virtual void DumpMemoryUsageStatistics() = 0;
 
 	// Quit the appliacation
 	virtual void Quit() = 0;
@@ -437,7 +523,61 @@ struct ISystem
 	virtual void Error(const char* message) = 0;
 
 	virtual void ShowMessage(const char* message, const char* caption, MessageType messageType) = 0;
-	virtual bool IsDevMode()																	= 0;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// @param bValue set to true when running on a cheat protected server or a client that is connected to it (not used in singlplayer)
+	virtual void SetForceNonDevMode(const bool bValue) = 0;
+	// @return is true when running on a cheat protected server or a client that is connected to it (not used in singlplayer)
+	virtual bool GetForceNonDevMode() const = 0;
+	virtual bool WasInDevMode() const		= 0;
+	virtual bool IsDevMode() const			= 0;
+
+	//////////////////////////////////////////////////////////////////////////
+
+	virtual XDOM::IXMLDOMDocument *CreateXMLDocument() = 0;
+
+	//////////////////////////////////////////////////////////////////////////
+	// IXmlNode interface.
+	//////////////////////////////////////////////////////////////////////////
+	
+	// Creates new xml node.
+	virtual XmlNodeRef CreateXmlNode( const char *sNodeName="" ) = 0;
+	// Load xml file, return 0 if load failed.
+	virtual XmlNodeRef LoadXmlFile( const char *sFilename ) = 0;
+	// Load xml from string, return 0 if load failed.
+	virtual XmlNodeRef LoadXmlFromString( const char *sXmlString ) = 0;
+
+	// Set rate of Garbage Collection for script system.
+	// @param fRate in seconds
+	virtual void SetGCFrequency( const float fRate ) = 0;
+
+	/* Set the active process
+		@param process a pointer to a class that implement the IProcess interface
+	*/
+	virtual void SetIProcess(IProcess *process) = 0;
+	/* Get the active process
+		@return a pointer to the current active process
+	*/
+	virtual IProcess* GetIProcess() = 0;
+
+#if (defined (WIN32) || defined (PS2)) && defined(CHANGE_DEFINE)
+	virtual IRenderer* CreateRenderer(bool fullscreen, void* hinst, void* hWndAttach = 0) = 0;
+#endif	
+
+
+	// Returns true if system running in Test mode.
+	virtual bool IsTestMode() const = 0;
+ 
+	virtual void ShowDebugger(const char *pszSourceFile, int iLine, const char *pszReason) = 0;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Frame profiler functions
+	virtual void SetFrameProfiler(bool on, bool display, char *prefix) = 0;
+
+	// Starts section profiling.
+	virtual void StartProfilerSection( CFrameProfilerSection *pProfileSection ) = 0;
+	// Stops section profiling.
+	virtual void EndProfilerSection( CFrameProfilerSection *pProfileSection ) = 0;
 
 	virtual float GetDeltaTime() = 0;
 
@@ -445,6 +585,12 @@ struct ISystem
 
 	virtual void SetViewCamera(class CCamera& Camera) = 0;
 	virtual CCamera& GetViewCamera()				  = 0;
+	//////////////////////////////////////////////////////////////////////////
+
+	virtual void Deltree(const char* szFolder, bool bRecurse)
+	{
+		Error("%s not implemented", __FUNCTION__);
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// File version.
@@ -602,3 +748,8 @@ inline void CryLogAlways(const char* format, ...)
 		va_end(args);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Additional headers.
+//////////////////////////////////////////////////////////////////////////
+#include <BlackBox/System/FrameProfiler.hpp>

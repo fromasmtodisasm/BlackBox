@@ -5,6 +5,7 @@
 //#include <SDL2/SDL_net.h>
 
 class CCompressionHelper;
+class CTmpNetworkClient;
 
 class CNetwork : public INetwork
 {
@@ -36,6 +37,9 @@ public:
   virtual IClient* GetClient() override;
   virtual void SetUBIGameServerIP(const char* szAddress) override;
   virtual const char* GetUBIGameServerIP(bool bLan) override;
+
+  void UnregisterClient(CTmpNetworkClient* pClient);
+
 private:
   ISystem* m_pSystem;
 

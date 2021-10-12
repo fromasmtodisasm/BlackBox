@@ -6,6 +6,8 @@
 lua_State*	   CScriptObject::L		= nullptr;
 CScriptSystem* CScriptObject::m_pSS = nullptr;
 
+#define LOG_FUNCTION() CryLog("$4%s", __FUNCTION__)
+
 ///////////////////////////////////////////////////////////////////
 namespace
 {
@@ -21,9 +23,9 @@ namespace
 		lua_pushstring(L, sKey);
 		lua_gettable(L, -2);
 		// #unreferenced
-		// bool res = CScriptObject::m_pSS->PopAny(Val);
+		 bool res = CScriptObject::m_pSS->PopAny(Val);
 		lua_settop(L, top);
-		return true;
+		return res;
 	}
 	///////////////////////////////////////////////////////////////////
 
@@ -42,7 +44,7 @@ namespace
 		CHECK_STACK(L);
 		int top = lua_gettop(L);
 
-		T oldValue;
+		T oldValue{};
 		if (top && lua_getmetatable(L, -1)) // if there is no metatable nothing is pushed
 		{
 			lua_pop(L, 1); // pop the metatable - we only care that it exists, not about the value
@@ -90,7 +92,22 @@ namespace
 
 CScriptObject::~CScriptObject()
 {
+	if (m_nRef == DELETED_REF)
+	{
+		assert(0);
+		CryFatalError("Attempt to Release already released script table.");
+	}
+
+#ifdef DEBUG_LUA_STATE
+	gAllScriptTables.erase(this);
+#endif
+
+	if (m_nRef != NULL_REF)
+		lua_unref(L, m_nRef);
+
+	m_nRef = DELETED_REF;
 }
+
 
 int CScriptObject::GetRef()
 {
@@ -461,46 +478,158 @@ bool CScriptObject::GetAt(int nIdx, IScriptObject* Val)
 
 bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
 {
+	// FIXME: 
+	// ud was 0xFFFFF...
 	UserDataInfo* ud;
 	auto		  result = GetAtAny(this, nIdx, (USER_DATA&)ud);
 	nValue				 = (USER_DATA&)ud->ptr;
 	nCookie				 = ud->cookie;
 	return result;
 }
+//////////////////////////////////////////////////////////////////////
+class CPrintSink : public IScriptObjectDumpSink
+{
+public:
+	void OnElementFound(int nIdx,ScriptVarType type){/*ignore non string indexed values*/};
+	void OnElementFound(const char *sName,ScriptVarType type)
+	{
+		switch (type)
+		{
+		case ScriptVarType::Null:
+			break;
+		case ScriptVarType::String:
+			CryLog("%s", sName);
+			break;
+		case ScriptVarType::Number:
+			CryLog("%s", sName);
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+static CPrintSink Sink;
+
+
 
 bool CScriptObject::BeginIteration()
 {
-	return false;
-}
+	
+	iter.nKey = -1;
+	iter.sKey = NULL;
+	iter.internal.nStackMarker1 = lua_gettop(L) + 1;
+	iter.internal.nStackMarker2 = 0;
 
+	PushRef();
+	lua_pushnil(L);
+	return true;
+
+}
 bool CScriptObject::MoveNext()
 {
-	return false;
+	if (!iter.internal.nStackMarker1)
+		return false;
+
+	int nTop;
+	if (iter.internal.nStackMarker2)
+		nTop = iter.internal.nStackMarker2 - 1; // already traversing the prototype table
+	else
+		nTop = iter.internal.nStackMarker1 - 1; // still traversing our own table
+
+	//leave only the index into the stack
+	while ((lua_gettop(L) - (nTop + 1)) > 1)
+	{
+		lua_pop(L, 1);
+	}
+	bool bResult = lua_next(L, nTop + 1) != 0;
+	if (bResult)
+	{
+		iter.v.o		= 0;
+		iter.value_type =  LuatypeToScriptVarType(lua_type(L, -1));
+		bResult = m_pSS->PopAnyByType(iter.v);
+		iter.key_type =  LuatypeToScriptVarType(lua_type(L, -1));
+		// Get current key.
+		m_pSS->ToAny(iter.sKey, -1);
+		if (lua_type(L, -1) == LUA_TSTRING)
+		{
+			// String key.
+			iter.sKey = (const char*)lua_tostring(L, -1);
+			iter.nKey = -1;
+		}
+		else if (lua_type(L, -1) == LUA_TNUMBER)
+		{
+			// Number key.
+			iter.sKey = NULL;
+			iter.nKey = (int)lua_tonumber(L, -1);
+		}
+		else
+		{
+			iter.sKey = 0;
+			iter.nKey = -1;
+		}
+	}
+	if (!bResult)
+	{
+		if (iter.internal.nStackMarker1 && !iter.internal.nStackMarker2)
+		{
+			// just finished traversing our own table
+			// => now see if we have a prototype table attached by inspecting our potential metatable
+			// => if we don't have a metatable, or have a metatable but no prototype table attached, finish the whole iteration
+
+			#if 0
+			if (iter.internal.resolvePrototypeTableAsWell)
+			{
+				if (lua_getmetatable(L, -1))
+				{
+					// yep, we have a metatable
+					lua_pushstring(L, "__index");
+					lua_rawget(L, -2);
+					if (lua_type(L, -1) == LUA_TTABLE)
+					{
+						// yep, the metatable provides us with the prototype table
+						iter.internal.nStackMarker2 = lua_gettop(L);
+						lua_pushnil(L);
+						return MoveNext(iter);
+					}
+				}
+			}
+			#endif
+		}
+
+		EndIteration();
+	}
+	return bResult;
 }
 
 bool CScriptObject::GetCurrent(int& nVal)
 {
-	return false;
+	nVal = static_cast<int>(iter.v.f);
+	return iter.key_type == ScriptVarType::Number;
 }
 
 bool CScriptObject::GetCurrent(float& fVal)
 {
-	return false;
+	fVal = iter.v.f;
+	return iter.key_type == ScriptVarType::Number;
 }
 
 bool CScriptObject::GetCurrent(bool& bVal)
 {
-	return false;
+	bVal = iter.v.b;
+	return iter.key_type == ScriptVarType::Bool;
 }
 
 bool CScriptObject::GetCurrent(const char*& sVal)
 {
-	return false;
+	sVal = iter.v.c;
+	return iter.key_type == ScriptVarType::String;
 }
 
 bool CScriptObject::GetCurrent(IScriptObject* pObj)
 {
-	return false;
+	pObj->Attach((IScriptObject*)iter.v.o);
+	return iter.key_type == ScriptVarType::Object;
 }
 
 bool CScriptObject::GetCurrentPtr(const void*& pObj)
@@ -515,21 +644,30 @@ bool CScriptObject::GetCurrentFuncData(unsigned int*& pCode, int& iSize)
 
 bool CScriptObject::GetCurrentKey(const char*& sVal)
 {
-	return false;
+	sVal = (const char*)iter.sKey;
+	return iter.key_type == ScriptVarType::String;
 }
 
 bool CScriptObject::GetCurrentKey(int& nKey)
 {
-	return false;
+	nKey = (int&)iter.nKey;
+	return iter.key_type == ScriptVarType::Number;
 }
 
 ScriptVarType CScriptObject::GetCurrentType()
 {
-	return ScriptVarType();
+	return iter.value_type;
 }
 
 void CScriptObject::EndIteration()
 {
+	if (iter.internal.nStackMarker1)
+	{
+		lua_settop(L, iter.internal.nStackMarker1 - 1);
+		iter.internal.nStackMarker1 = 0;
+		iter.internal.nStackMarker2 = 0;
+	}
+	iter.v.i = NULL;
 }
 
 void CScriptObject::SetNativeData(void* data)
@@ -831,9 +969,16 @@ void CScriptObject::Detach()
 
 void CScriptObject::Release()
 {
-	if (m_pParent)
-		m_pParent->OnRelease();
-	delete this;
+	// FIXME: 
+	// Unbalanced AddRef and Release
+	#if 0
+	if (--m_nRefCount <= 0)
+	{
+		if (m_pParent)
+			m_pParent->OnRelease();
+		delete this;
+	}
+	#endif
 }
 
 bool CScriptObject::GetValueRecursive(const char* szPath, IScriptObject* pObj)

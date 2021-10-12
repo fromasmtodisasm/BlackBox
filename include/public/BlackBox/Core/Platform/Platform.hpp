@@ -297,6 +297,7 @@ inline int IsHeapValid()
 }
 #endif // NOT_USE_CRY_MEMORY_MANAGER
 #include <BlackBox/System/CrySizer.hpp>
+int64 CryGetTicks();
 
 // Memory manager breaks strdup
 // Use something higher level, like CryString

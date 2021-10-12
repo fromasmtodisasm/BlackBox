@@ -29,7 +29,7 @@ struct IBindable
 	// Arguments:
 	//     Mins - Position of the bottom left close corner of the bounding box
 	//     Maxs - Position of the top right far corner of the bounding box
-	virtual void GetBBox(Vec3& Mins, Vec3& Maxs)=0;
+	virtual void GetBBox(Legacy::Vec3& Mins, Legacy::Vec3& Maxs)=0;
 
 	// Description:
 	//     Will return the position of the helper named in the argument. The 
@@ -38,10 +38,10 @@ struct IBindable
 	// Arguments:
 	//     szHelperName - A null terminated string holding the name of the helper
 	// Return Value:
-	//     A Vec3 object which contains the position.
+	//     A Legacy::Vec3 object which contains the position.
 	// Summary:
 	//     Gets the position of a specified helper
-	virtual Vec3 GetHelperPos(const char * szHelperName) = 0;
+	virtual Legacy::Vec3 GetHelperPos(const char * szHelperName) = 0;
 
 	// Description:
 	//     Will return the matrix of the helper named in the argument. The 
@@ -50,10 +50,10 @@ struct IBindable
 	// Arguments:
 	//     szHelperName - A null terminated string holding the name of the helper
 	// Return Value:
-	//     A Matrix44 of the object
+	//     A Legacy::Matrix44 of the object
 	// Summary:
 	//     Gets the matrix of a specified helper
-	virtual const Matrix44 * GetHelperMatrixByName(const char * szHelperName) = 0;
+	virtual const Legacy::Matrix44 * GetHelperMatrixByName(const char * szHelperName) = 0;
 
 	// renders the shadow volumes of this whole object (together with attachments if any)
 	// the implementation may or may not implement the limit lod functionality: if it does,
@@ -89,7 +89,7 @@ struct IBindable
 	//     nLogLevel - Level of the LOD
 	// Summary:
 	//     Renders the object
-	virtual void Render(const struct SRendParams & rParams,const Vec3& t, int nLodLevel)=0;
+	virtual void Render(const struct SRendParams & rParams,const Legacy::Vec3& t, int nLodLevel)=0;
 
 	//! Start the specified animation with the given parameters, if the bindable is an animatable object
 	virtual bool StartAnimation (const char* szAnimName, const struct CryCharAnimationParams& params){return false;}
@@ -108,7 +108,7 @@ struct IBindable
 
 	//! Processes skining (call this function every frame to animate character)
 	//! dwFlags	is a bitwise OR of one of the flags specified in the UpdateEnum enumeration
-	virtual void Update (Vec3 vPos = Vec3(0,0,0), float fRadius=0, unsigned uFlags = 0) {}
+	virtual void Update (Legacy::Vec3 vPos = Legacy::Vec3(0,0,0), float fRadius=0, unsigned uFlags = 0) {}
 
 	//! start preloading of object resources
 	virtual void PreloadResources(float fDist, float fTime, int dwFlags) = 0;

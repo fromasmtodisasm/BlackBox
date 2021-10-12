@@ -39,6 +39,7 @@ struct I3DEngine;
 #include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/EntitySystem/IEntityRenderState.hpp>
+//#include <Legacy>
 
 ////////////////////////////////////////////////////////////////////////////
 // Forward declarations.
@@ -64,15 +65,12 @@ struct ILipSync;
 struct IParticleEffect;
 struct IServerSlot;
 
-enum pe_type { PE_NONE=0, PE_STATIC=1, PE_LIVING=2, PE_RIGID=3, PE_WHEELEDVEHICLE=4, PE_PARTICLE=5, PE_ARTICULATED=6, PE_ROPE=7, PE_SOFT=8 };
-enum sim_class { SC_STATIC=0, SC_SLEEPING_RIGID=1, SC_ACTIVE_RIGID=2, SC_LIVING=3, SC_INDEPENDENT=4, SC_TRIGGER=6, SC_DELETED=7 };
 class IGeometry;
 class IPhysicalEntity;
 class IGeomManager;
 class IPhysicalWorld;
 struct ICrySizer;
 struct ILog;
-IPhysicalEntity *const WORLD_ENTITY = (IPhysicalEntity*)-10;
 
 ////////////////////////////////////////////////////////////////////////////
 // all available events. if you want to add an event, dont forget to register a lua-constant in the EntitySystem:Init() !
@@ -202,16 +200,16 @@ public:
 	}
 
 	int		flags;
-	Vec3	pos;
-	Vec3	angles;
-	Vec3	scale;
-	Matrix44 mtx;
+	Legacy::Vec3	pos;
+	Legacy::Vec3	angles;
+	Legacy::Vec3	scale;
+	Legacy::Matrix44 mtx;
 
 	IStatObj*	object;
 
 	// flags for "spring" objects that are connected to 2 other entity parts (ETY_OBJ_IS_LINKED)
 	int ipart0,ipart1;
-	Vec3 link_start0,link_end0;
+	Legacy::Vec3 link_start0,link_end0;
 };
 
 struct IScriptObject;
@@ -243,7 +241,7 @@ struct IEntityIt
 	virtual void MoveFirst() = 0;
 };
 
-//#include <ICryAnimation.h>
+#include <ICryAnimation.h>
 
 class CXServerSlot;
 
@@ -276,7 +274,7 @@ struct EntityCloneState
 	}
 
 	CXServerSlot *	m_pServerSlot;			//!< destination serverslot, 0 if not used
-	Vec3						m_v3Angles;					//!<
+	Legacy::Vec3						m_v3Angles;					//!<
 	bool						m_bLocalplayer;			//!< say if this entity is the entity of the player
 	bool						m_bSyncYAngle;			//!< can be changed dynamically (1 bit), only used if m_bSyncAngles==true, usually not used by players (roll)
 	bool						m_bSyncAngles;			//!< can be changed dynamically (1 bit)
@@ -326,7 +324,7 @@ struct SEntityUpdateContext
 	//! Maximal view distance squared.
 	float fMaxViewDistSquared;
 	//! Camera source position.
-	Vec3 vCameraPos;
+	Legacy::Vec3 vCameraPos;
 
 	//! Initialization ctor.
 	SEntityUpdateContext() : pScriptUpdateParams(NULL),nFrameID(0),pCamera(0),fCurrTime(0),
@@ -342,7 +340,7 @@ struct SEntityUpdateContext
 struct IEntity
 	:
 	 public IEntityRender
-	//,public ICharInstanceSink
+	,public ICharInstanceSink
 {
 public:
 /*!	Retrieves the unique identifier of this entity assigned to it by the Entity System.
@@ -433,7 +431,7 @@ public:
 	//     helper	- The name of the helper
 	//     pos	  - The returned position of the helper. If helper not found, this is a zero vector.
 	//     objectspace - If true, paremeter pos return helper position in object space, otherwise in world space.
-	virtual void GetHelperPosition(const char *helper, Vec3 &pos, bool objectspace = false) = 0;
+	virtual void GetHelperPosition(const char *helper, Legacy::Vec3 &pos, bool objectspace = false) = 0;
 
 	// Description:
 	//     Retrieves the class id of the entity.
@@ -607,7 +605,7 @@ public:
 	//     impulse - Impulse direction and magnitude vector specified in world space coordinates.
 	//     bPos    - When true, pos parameter will be used and valid position must be specified.
 	//     fAuxScale - Auxilary scale for impulse magnitude.
-	virtual void AddImpulse(int ipart,Vec3 pos,Vec3 impulse,bool bPos=true,float fAuxScale=1.0f) = 0;
+	virtual void AddImpulse(int ipart,Legacy::Vec3 pos,Legacy::Vec3 impulse,bool bPos=true,float fAuxScale=1.0f) = 0;
 
 	// Description:
 	//     Physicalize this entity as a rigid body.
@@ -625,7 +623,7 @@ public:
 	//     pInitialVelocity	- Pointer to an initial velocity vector, if NULL no initial velocity.
 	//     slot - Make a rigid body from the object in this slot, if -1 chooses first non empty slot.
 	//     bPermanent - For physics on demand (Leave on default).
-	virtual bool CreateRigidBody(pe_type type, float density,float mass,int surface_id,Vec3* pInitialVelocity = NULL, int slot=-1,
+	virtual bool CreateRigidBody(pe_type type, float density,float mass,int surface_id,Legacy::Vec3* pInitialVelocity = NULL, int slot=-1,
 		bool bPermanent=false) = 0;
 
 	// Description:
@@ -698,10 +696,10 @@ public:
 	@return True upon successful loading of cgf file
 */
 	virtual bool	LoadObject( unsigned int slot,const char *fileName,float scale, const char *geomName=NULL) = 0;
-	virtual bool GetObjectPos(unsigned int slot,Vec3 &pos)=0;
-	virtual bool SetObjectPos(unsigned int slot,const Vec3 &pos)=0;
-	virtual bool GetObjectAngles(unsigned int slot,Vec3 &ang)=0;
-	virtual bool SetObjectAngles(unsigned int slot,const Vec3 &ang)=0;
+	virtual bool GetObjectPos(unsigned int slot,Legacy::Vec3 &pos)=0;
+	virtual bool SetObjectPos(unsigned int slot,const Legacy::Vec3 &pos)=0;
+	virtual bool GetObjectAngles(unsigned int slot,Legacy::Vec3 &ang)=0;
+	virtual bool SetObjectAngles(unsigned int slot,const Legacy::Vec3 &ang)=0;
 /*! Load a pre-broken object into the entity, piece by piece from the cgf-file. The pre broken pieces will be loaded in a separate slot
   each with a separate IStatObj pointer.
 	@param	fileName	The filename of the cgf
@@ -739,7 +737,7 @@ public:
 	@param fSoundScale Sound-scale factor
 	@param Offset Offset to value returned by CalcSoundPos() in IEntityContainer or GetPos() if the former doesnt exist
 */
-	virtual void PlaySound(ISound *pSound, float fSoundScale, Vec3 &Offset) = 0;
+	virtual void PlaySound(ISound *pSound, float fSoundScale, Legacy::Vec3 &Offset) = 0;
 
 /*! Control draw method of an object at a specific slot. Mode can be ETY_DRAW_NORMAL, ETY_DRAW_NEAR or ETY_DRAW_NONE.
 	NOTE: The static object slots are different than the character animated object slots.
@@ -774,13 +772,13 @@ public:
 	@param maxs Top Right far corner of box
 	@param bForcePhysicsCallback forces to create a physics object to check for contact
 */
-	virtual void	SetBBox(const Vec3 &mins,const Vec3 &maxs) = 0;
+	virtual void	SetBBox(const Legacy::Vec3 &mins,const Legacy::Vec3 &maxs) = 0;
 
 /*! Get Axis Aligned bounding box of entity.
 	@param mins The value that contains the bottom left close corner of box after function completion
 	@param maxs The value that contains the Top Right far corner of box after function completion
 */
-	virtual void	GetBBox( Vec3 &mins,Vec3 &maxs ) = 0;
+	virtual void	GetBBox( Legacy::Vec3 &mins,Legacy::Vec3 &maxs ) = 0;
 
 /*! Get Axis Aligned bounding box of entity in local space.
 	NOTE: this function do not hash local bounding box, so it must be calculated every time this
@@ -788,7 +786,7 @@ public:
 	@param mins The value that contains the bottom left close corner of box after function completion
 	@param maxs The value that contains the Top Right far corner of box after function completion
 */
-	virtual void GetLocalBBox( Vec3 &min,Vec3 &max ) = 0;
+	virtual void GetLocalBBox( Legacy::Vec3 &min,Legacy::Vec3 &max ) = 0;
 
 /*! Marks internal bbox invalid, it will be recalculated on next update.
  */
@@ -805,17 +803,17 @@ public:
 /*! Physicalize this entity as a particle.
 
 */
-	virtual bool CreateParticleEntity(float size,float mass, Vec3 heading, float acc_thrust=0,float k_air_resistance=0,
+	virtual bool CreateParticleEntity(float size,float mass, Legacy::Vec3 heading, float acc_thrust=0,float k_air_resistance=0,
 		float acc_lift=0,float gravity=-9.8, int surface_idx=0,bool bSingleContact=true) = 0;
 
 //! Various accessors to entity internal stats
 //@{
-	virtual void SetPos(const Vec3 &pos, bool bWorldOnly = true) = 0;
-	virtual const Vec3 & GetPos(bool bWorldOnly = true) const = 0;
+	virtual void SetPos(const Legacy::Vec3 &pos, bool bWorldOnly = true) = 0;
+	virtual const Legacy::Vec3 & GetPos(bool bWorldOnly = true) const = 0;
 
-	virtual void SetPhysAngles(const Vec3 &angl) = 0;
-	virtual void SetAngles(const Vec3 &pos,bool bNotifyContainer=true,bool bUpdatePhysics=true,bool forceInWorld=false) = 0;
-	virtual const Vec3 & GetAngles(int realA=0) const = 0;
+	virtual void SetPhysAngles(const Legacy::Vec3 &angl) = 0;
+	virtual void SetAngles(const Legacy::Vec3 &pos,bool bNotifyContainer=true,bool bUpdatePhysics=true,bool forceInWorld=false) = 0;
+	virtual const Legacy::Vec3 & GetAngles(int realA=0) const = 0;
 
 	virtual void SetScale( float scale ) = 0;
 	virtual float GetScale() const = 0;
@@ -871,7 +869,7 @@ public:
 
 /*! Sets the parent space parameters (locale)
  */
-	virtual void SetParentLocale(const Matrix44 &matParent)= 0;
+	virtual void SetParentLocale(const Legacy::Matrix44 &matParent)= 0;
 
 /*! calculate world position / angles
  */
@@ -1120,7 +1118,7 @@ public:
 
 	virtual void ApplyForceToEnvironment(const float radius, const float force) = 0;
 
-	virtual int GetSide(const Vec3& direction) = 0;
+	virtual int GetSide(const Legacy::Vec3& direction) = 0;
 
 	//! Hide entity, making it invisible and not collidable. (Used by Editor).
 	virtual void Hide(bool b) = 0;
@@ -1172,7 +1170,7 @@ public:
 	virtual void SetCommonCallbacks(IScriptSystem *pScriptSystem)=0;
 
 	//! Create particle emitter at specified slot and with specified params
-	//virtual int	CreateEntityParticleEmitter(int nSlotId, const ParticleParams & PartParams, float fSpawnPeriod,Vec3 vOffSet,Vec3 vDir,IParticleEffect *pEffect = 0,float fSize=1.0f ) = 0;
+	//virtual int	CreateEntityParticleEmitter(int nSlotId, const ParticleParams & PartParams, float fSpawnPeriod,Legacy::Vec3 vOffSet,Legacy::Vec3 vDir,IParticleEffect *pEffect = 0,float fSize=1.0f ) = 0;
 	//! Delete particle emitter at specified slot
 	//virtual void DeleteParticleEmitter(int nId) = 0;
 
@@ -1192,7 +1190,7 @@ public:
 /*! Sets position for IK target for hands
 	@param target	pointer to vec pos. If NULL - no hands IK
 */
-	virtual void SetHandsIKTarget( const Vec3* target=NULL ) = 0;
+	virtual void SetHandsIKTarget( const Legacy::Vec3* target=NULL ) = 0;
 
 	virtual void Remove() =0;
 
@@ -1255,7 +1253,7 @@ struct IEntityContainer
 	@param new postition of the entity.
 	@see IEntity
 */
-	virtual void OnSetAngles( const Vec3 &ang ) = 0;
+	virtual void OnSetAngles( const Legacy::Vec3 &ang ) = 0;
 
 /*! Get the interface which describes this container in script. Containers are not mapped to separate tables in script, but rather to a
   table which is a member of the sctipt table of the entity contained within the container. So this script object should not be used as
@@ -1269,7 +1267,7 @@ struct IEntityContainer
 
 /*! Position for sound-sources attached to this entity object.
 */
-	virtual Vec3 CalcSoundPos() = 0;
+	virtual Legacy::Vec3 CalcSoundPos() = 0;
 
 	virtual IScriptObject *GetScriptObject() = 0;
 /*! Set the object that describes this container in script.
@@ -1289,7 +1287,7 @@ struct IEntityContainer
 	virtual void OnDraw(const SRendParams & EntDrawParams) = 0;
 
 	//! start preloading render resoures
-	virtual void PreloadInstanceResources(Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
+	virtual void PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
 
 	//! tells if the container should be serialized or not (checkpoints, savegame)
 	virtual bool IsSaveable() = 0;
@@ -1301,7 +1299,7 @@ struct IEntityContainer
 	//! called before the entity is synched over network - to calculate priority or neccessarity
 	//! \param pXServerSlot must not be 0
 	//! \param inoutPriority 0 means no update at all
-	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Vec3d &v3dViewer, uint32 &inoutPriority,
+	virtual void OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3 &v3dViewer, uint32 &inoutPriority,
 		EntityCloneState &inoutCloneState ) const=0;
 };
 
@@ -1489,7 +1487,7 @@ struct IEntitySystem
 #if defined(LINUX)
 	#undef vector;//well this was previously defined in physics, so...
 #endif
-	virtual void	GetEntitiesInRadius( const Vec3 &origin, float radius, std::vector<IEntity*> &entities,int physFlags=PHYS_ENTITY_ALL ) const = 0;
+	virtual void	GetEntitiesInRadius( const Legacy::Vec3 &origin, float radius, std::vector<IEntity*> &entities,int physFlags=PHYS_ENTITY_ALL ) const = 0;
 
 /*! Add the sink of the entity system. The sink is a class which implements IEntitySystemSink.
 	@param sink	Pointer to the sink
@@ -1566,7 +1564,7 @@ enum ThirdPersonMode
 struct EntityCameraParam
 {
 	float m_cam_dist;
-	Vec3 m_cam_dir, m_1pcam_butt_pos,m_1pcam_eye_pos;
+	Legacy::Vec3 m_cam_dir, m_1pcam_butt_pos,m_1pcam_eye_pos;
 	float m_cam_kstiffness,m_cam_kdamping;
 	float m_cam_angle_kstiffness,m_cam_angle_kdamping;
 	float m_1pcam_kstiffness,m_1pcam_kdamping;
@@ -1574,8 +1572,8 @@ struct EntityCameraParam
 	float m_cur_cam_dist, m_cur_cam_dangle;
 	float m_cur_cam_vel, m_cur_cam_dangle_vel;
 	int   m_cam_angle_flags;
-	Vec3 m_cur_cam_rotax;
-	Vec3 m_camoffset;
+	Legacy::Vec3 m_cur_cam_rotax;
+	Legacy::Vec3 m_camoffset;
 	float m_viewoffset;
 };
 
@@ -1583,13 +1581,13 @@ struct EntityCameraParam
 struct IEntityCamera
 {
 	virtual void Release() = 0;
-	virtual void SetPos( const Vec3 &p ) = 0;
-	virtual Vec3 GetPos() const = 0;
-	virtual void SetAngles( const Vec3 &p ) = 0;
-	virtual Vec3 GetAngles() const = 0;
+	virtual void SetPos( const Legacy::Vec3 &p ) = 0;
+	virtual Legacy::Vec3 GetPos() const = 0;
+	virtual void SetAngles( const Legacy::Vec3 &p ) = 0;
+	virtual Legacy::Vec3 GetAngles() const = 0;
 	virtual void SetFov( const float &f, const unsigned int iWidth, const unsigned int iHeight ) = 0;
 	virtual float GetFov() const = 0;
-	virtual Matrix44 GetMatrix() const = 0;
+	virtual Legacy::Matrix44 GetMatrix() const = 0;
 	virtual void Update() = 0;
 	virtual CCamera& GetCamera() = 0;
 	virtual void SetCamera( const CCamera &cam ) = 0;
@@ -1597,13 +1595,13 @@ struct IEntityCamera
 	virtual void GetParameters(EntityCameraParam *pParam) = 0;
 	virtual void SetViewOffset(float f) = 0;
 	virtual float GetViewOffset() = 0;
-	virtual void SetCamOffset(Vec3 v) = 0;
-	virtual Vec3& GetCamOffset() = 0;
-	virtual void SetThirdPersonMode( const Vec3 &pos,const Vec3 &angles,int mode,float frameTime,float
+	virtual void SetCamOffset(Legacy::Vec3 v) = 0;
+	virtual Legacy::Vec3& GetCamOffset() = 0;
+	virtual void SetThirdPersonMode( const Legacy::Vec3 &pos,const Legacy::Vec3 &angles,int mode,float frameTime,float
 		range,int dangleAmmount,IPhysicalEntity *physic, IPhysicalEntity *physicMore=NULL, I3DEngine* p3DEngine=NULL, float safe_range=0.0f) = 0;
-	virtual void SetCameraMode(const Vec3 &lookat,const Vec3 &lookat_angles, IPhysicalEntity *physic)=0;
-	virtual void SetCameraOffset(const Vec3 &offset) = 0;
-	virtual void GetCameraOffset(Vec3 &offset) = 0;
+	virtual void SetCameraMode(const Legacy::Vec3 &lookat,const Legacy::Vec3 &lookat_angles, IPhysicalEntity *physic)=0;
+	virtual void SetCameraOffset(const Legacy::Vec3 &offset) = 0;
+	virtual void GetCameraOffset(Legacy::Vec3 &offset) = 0;
 };
 
 extern "C"

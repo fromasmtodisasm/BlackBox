@@ -6,14 +6,14 @@ class CEntity : public IEntity
   public:
 	CEntity();
 	// Inherited via IEntity
-	virtual void				  GetRenderBBox(Vec3& mins, Vec3& maxs) override;
+	virtual void				  GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) override;
 	virtual float				  GetRenderRadius() const override;
 	virtual bool				  IsStatic() const override;
 	virtual bool				  IsEntityHasSomethingToRender() override;
 	virtual bool				  IsEntityAreasVisible() override;
 	virtual void				  SetMaterial(IMatInfo* pMatInfo) override;
 	virtual IMatInfo*			  GetMaterial() const override;
-	virtual void				  PreloadInstanceResources(Vec3d vPrevPortalPos, float fPrevPortalDistance, float fTime) override;
+	virtual void				  PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime) override;
 	virtual EntityId			  GetId() const override;
 	virtual void				  Update(SEntityUpdateContext& updateContext) override;
 	virtual void				  Reset() override;
@@ -24,7 +24,7 @@ class CEntity : public IEntity
 	virtual const char*			  GetName() const override;
 	virtual const char*			  GetEntityClassName() const override;
 	virtual void				  GetEntityDesc(CEntityDesc& desc) const override;
-	virtual void				  GetHelperPosition(const char* helper, Vec3& pos, bool objectspace = false) override;
+	virtual void				  GetHelperPosition(const char* helper, Legacy::Vec3& pos, bool objectspace = false) override;
 	virtual EntityClassId		  GetClassId() override;
 	virtual void				  SetClassId(const EntityClassId ClassId) override;
 	virtual void				  ShutDown() override;
@@ -47,8 +47,8 @@ class CEntity : public IEntity
 	virtual int					  CreatePhysicalEntityCallback(int iForeignFlags) override;
 	virtual int					  DestroyPhysicalEntityCallback(IPhysicalEntity* pent) override;
 	virtual void				  EnablePhysics(bool enable) override;
-	virtual void				  AddImpulse(int ipart, Vec3 pos, Vec3 impulse, bool bPos = true, float fAuxScale = 1.0f) override;
-	virtual bool				  CreateRigidBody(pe_type type, float density, float mass, int surface_id, Vec3* pInitialVelocity = NULL, int slot = -1, bool bPermanent = false) override;
+	virtual void				  AddImpulse(int ipart, Legacy::Vec3 pos, Legacy::Vec3 impulse, bool bPos = true, float fAuxScale = 1.0f) override;
+	virtual bool				  CreateRigidBody(pe_type type, float density, float mass, int surface_id, Legacy::Vec3* pInitialVelocity = NULL, int slot = -1, bool bPermanent = false) override;
 	virtual bool				  CreateLivingEntity(float mass, float height, float eye_height, float sphere_height, float radius, int nSurfaceID, float fGravity, float fAirControl, bool collide = false) override;
 	virtual bool				  CreateStaticEntity(float mass, int surface_idx, int slotToUse = -1, bool bPermanent = false) override;
 	virtual bool				  CreateSoftEntity(float mass, float density, bool bCloth = true, IPhysicalEntity* pAttachTo = WORLD_ENTITY, int iAttachToPart = -1) override;
@@ -56,32 +56,32 @@ class CEntity : public IEntity
 	virtual bool				  LoadBoat(const char* objfile, float mass, int surfaceID) override;
 	virtual void				  SetDamage(const int dmg) override;
 	virtual bool				  LoadObject(unsigned int slot, const char* fileName, float scale, const char* geomName = NULL) override;
-	virtual bool				  GetObjectPos(unsigned int slot, Vec3& pos) override;
-	virtual bool				  SetObjectPos(unsigned int slot, const Vec3& pos) override;
-	virtual bool				  GetObjectAngles(unsigned int slot, Vec3& ang) override;
-	virtual bool				  SetObjectAngles(unsigned int slot, const Vec3& ang) override;
+	virtual bool				  GetObjectPos(unsigned int slot, Legacy::Vec3& pos) override;
+	virtual bool				  SetObjectPos(unsigned int slot, const Legacy::Vec3& pos) override;
+	virtual bool				  GetObjectAngles(unsigned int slot, Legacy::Vec3& ang) override;
+	virtual bool				  SetObjectAngles(unsigned int slot, const Legacy::Vec3& ang) override;
 	virtual void				  LoadBreakableObject(const char* fileName) override;
 	virtual bool				  SetEntityObject(unsigned int slot, const CEntityObject& object) override;
 	virtual bool				  GetEntityObject(unsigned int slot, CEntityObject& object) override;
 	virtual int					  GetNumObjects() override;
 	virtual IStatObj*			  GetIStatObj(unsigned int pos) override;
-	virtual void				  PlaySound(ISound* pSound, float fSoundScale, Vec3& Offset) override;
+	virtual void				  PlaySound(ISound* pSound, float fSoundScale, Legacy::Vec3& Offset) override;
 	virtual void				  DrawObject(unsigned int pos, int mode) override;
 	virtual void				  DrawObject(int mode) override;
 	virtual void				  DrawCharacter(int pos, int mode) override;
 	virtual void				  NeedsUpdateCharacter(int pos, bool updt) override;
-	virtual void				  SetBBox(const Vec3& mins, const Vec3& maxs) override;
-	virtual void				  GetBBox(Vec3& mins, Vec3& maxs) override;
-	virtual void				  GetLocalBBox(Vec3& min, Vec3& max) override;
+	virtual void				  SetBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) override;
+	virtual void				  GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) override;
+	virtual void				  GetLocalBBox(Legacy::Vec3& min, Legacy::Vec3& max) override;
 	virtual void				  InvalidateBBox() override;
 	virtual void				  TrackColliders(bool bEnable) override;
 	virtual bool				  DrawEntity(const SRendParams& EntDrawParams) override;
-	virtual bool				  CreateParticleEntity(float size, float mass, Vec3 heading, float acc_thrust = 0, float k_air_resistance = 0, float acc_lift = 0, float gravity = -9.8, int surface_idx = 0, bool bSingleContact = true) override;
-	virtual void				  SetPos(const Vec3& pos, bool bWorldOnly = true) override;
-	virtual const Vec3&			  GetPos(bool bWorldOnly = true) const override;
-	virtual void				  SetPhysAngles(const Vec3& angl) override;
-	virtual void				  SetAngles(const Vec3& pos, bool bNotifyContainer = true, bool bUpdatePhysics = true, bool forceInWorld = false) override;
-	virtual const Vec3&			  GetAngles(int realA = 0) const override;
+	virtual bool				  CreateParticleEntity(float size, float mass, Legacy::Vec3 heading, float acc_thrust = 0, float k_air_resistance = 0, float acc_lift = 0, float gravity = -9.8, int surface_idx = 0, bool bSingleContact = true) override;
+	virtual void				  SetPos(const Legacy::Vec3& pos, bool bWorldOnly = true) override;
+	virtual const Legacy::Vec3&	  GetPos(bool bWorldOnly = true) const override;
+	virtual void				  SetPhysAngles(const Legacy::Vec3& angl) override;
+	virtual void				  SetAngles(const Legacy::Vec3& pos, bool bNotifyContainer = true, bool bUpdatePhysics = true, bool forceInWorld = false) override;
+	virtual const Legacy::Vec3&	  GetAngles(int realA = 0) const override;
 	virtual void				  SetScale(float scale) override;
 	virtual float				  GetScale() const override;
 	virtual void				  SetRadius(float r) override;
@@ -99,7 +99,7 @@ class CEntity : public IEntity
 	virtual void				  Bind(EntityId id, unsigned char cBind = 0, const bool bClientOnly = false, const bool bSetPos = false) override;
 	virtual void				  Unbind(EntityId id, unsigned char cBind, const bool bClientOnly = false) override;
 	virtual void				  ForceBindCalculation(bool bEnable) override;
-	virtual void				  SetParentLocale(const Matrix44& matParent) override;
+	virtual void				  SetParentLocale(const Legacy::Matrix44& matParent) override;
 	virtual void				  CalculateInWorld(void) override;
 	virtual void				  AttachToBone(EntityId id, const char* boneName) override;
 	virtual BoneBindHandle		  AttachObjectToBone(int slot, const char* boneName, bool bMultipleAttachments = false, bool bUseZOffset = false) override;
@@ -153,7 +153,7 @@ class CEntity : public IEntity
 	virtual void				  KillTimer() override;
 	virtual void				  SetScriptUpdateRate(float fUpdateEveryNSeconds) override;
 	virtual void				  ApplyForceToEnvironment(const float radius, const float force) override;
-	virtual int					  GetSide(const Vec3& direction) override;
+	virtual int					  GetSide(const Legacy::Vec3& direction) override;
 	virtual void				  Hide(bool b) override;
 	virtual bool				  IsHidden() const override;
 	virtual void				  SetDestroyable(bool b) override;
@@ -172,7 +172,7 @@ class CEntity : public IEntity
 	virtual float				  GetWaterDensity() override;
 	virtual void				  SetUpdateVisLevel(EEntityUpdateVisLevel nUpdateVisLevel) override;
 	virtual EEntityUpdateVisLevel GetUpdateVisLevel() override;
-	virtual void				  SetHandsIKTarget(const Vec3* target = NULL) override;
+	virtual void				  SetHandsIKTarget(const Legacy::Vec3* target = NULL) override;
 	virtual void				  Remove() override;
 	virtual void				  SetShaderFloat(const char* Name, float Val) override;
 	virtual void				  SwitchLights(bool bLights) override;
@@ -181,8 +181,10 @@ class CEntity : public IEntity
 
 	EntityId	  m_Id;
 	EntityClassId m_ClassId;
-	string_view	  m_Name;
-	string_view	  m_ClassName;
+	//string_view	  m_Name;
+	string m_Name{"Unnamed"};
+	//string_view	  m_ClassName;
+	string m_ClassName{"Unknown"};
 
 
 	IMatInfo*		  m_pMatInfo;
@@ -192,8 +194,13 @@ class CEntity : public IEntity
 	IEntityCharacter* m_pCharacter;
 
 	bool m_bIsStatic;
-	Vec3 m_Angles;
-	Vec3 m_Pos;
+	Legacy::Vec3 m_Angles;
+	Legacy::Vec3 m_Pos;
 
-	std::vector<CEntityDesc> m_Trash;
+	CEntityDesc m_Desc;
+
+	// Inherited via IEntity
+	virtual void OnStartAnimation(const char* sAnimation) override;
+	virtual void OnAnimationEvent(const char* sAnimation, AnimSinkEventData data) override;
+	virtual void OnEndAnimation(const char* sAnimation) override;
 };

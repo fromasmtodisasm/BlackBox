@@ -83,25 +83,32 @@ int CScriptObjectScript::ReloadEntityScript(IFunctionHandler* pH, const char* cl
  */
 int CScriptObjectScript::LoadScript(IFunctionHandler* pH)
 {
-  bool bReload = false;
-  bool bRaiseError = true;
+	bool bReload	 = false;
+	bool bRaiseError = true;
 
-  if (pH->GetParamCount() >= 3)
-  {
-    pH->GetParam(3, bRaiseError);
-  }
-  if (pH->GetParamCount() >= 2)
-  {
-    pH->GetParam(2, bReload);
-  }
+	if (pH->GetParamCount() >= 3)
+	{
+		pH->GetParam(3, bRaiseError);
+	}
+	if (pH->GetParamCount() >= 2)
+	{
+		pH->GetParam(2, bReload);
+	}
 
-  const char* sScriptFile;
-  pH->GetParam(1, sScriptFile);
+	const char* sScriptFile;
+	pH->GetParam(1, sScriptFile);
 
-  if (m_pSS->ExecuteFile(sScriptFile, bRaiseError, bReload))
-    return pH->EndFunction(1);
-  else
-    return pH->EndFunction();
+	//TODO:
+	#if 0
+	CryLog("Attempt load script: [$3%s$1]", sScriptFile);
+	#endif
+	if (m_pSS->ExecuteFile(sScriptFile, bRaiseError, bReload))
+		return pH->EndFunction(1);
+	else
+	{
+		CryLog("Failed to load script: [%s]", sScriptFile);
+		return pH->EndFunction();
+	}
 }
 
 /*!unload script from the "loaded scripts map" so if this script is loaded again

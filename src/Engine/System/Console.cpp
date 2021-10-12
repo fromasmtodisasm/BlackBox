@@ -188,292 +188,6 @@ void Command_Then(IConsoleCmdArgs* pCmd)
 	}
 }
 
-#if 0
-#pragma region CVars
-char* CCVar::GetString()
-{
-	static char sResult[256];
-	char* result;
-	if (type == CVAR_INT)
-	{
-		sprintf(sResult, "%d", value.i);
-		result = sResult;
-	}
-	else if (type == CVAR_FLOAT)
-	{
-		sprintf(sResult, "%f", value.f);
-		result = sResult;
-	}
-	else
-	{
-		result = value.s;
-	}
-	return result;
-}
-
-void CCVar::Set(const char* s)
-{
-	if (value.s != nullptr && type == CVAR_STRING)
-		delete[] value.s;
-	value.s = strdup(s);
-	type	= CVAR_STRING;
-}
-
-void CCVar::ForceSet(const char* s)
-{
-	if (value.s != nullptr)
-		delete[] value.s;
-	//type	= CVAR_STRING;
-	value.s = const_cast<char*>(s);
-}
-
-void CCVar::Set(float f)
-{
-	if (type == CVAR_STRING)
-	{
-		delete[] value.s;
-	}
-	type	= CVAR_FLOAT;
-	value.f = f;
-}
-
-void CCVar::Set(int i)
-{
-	if (type == CVAR_STRING)
-	{
-		delete[] value.s;
-	}
-	type	= CVAR_INT;
-	value.i = i;
-}
-
-void CCVar::Refresh()
-{
-	value.i = 0;
-}
-
-int CCVar::GetType()
-{
-	return type;
-}
-
-const char* CCVar::GetHelp()
-{
-	return help;
-}
-
-int CCVar::GetIVal()
-{
-	if (type == CVAR_FLOAT)
-		value.i = static_cast<int>(value.f);
-	else if (type == CVAR_STRING)
-		value.i = static_cast<int>(std::atoi(value.s));
-	type = CVAR_INT;
-	return value.i;
-}
-
-float CCVar::GetFVal()
-{
-	if (type == CVAR_INT)
-		value.f = static_cast<float>(value.i);
-	else if (type == CVAR_STRING)
-		value.f = static_cast<float>(std::atof(value.s));
-	type = CVAR_FLOAT;
-	return value.f;
-}
-
-int CCVarRef::GetIVal()
-{
-	if (type == CVAR_FLOAT)
-		*value.i = static_cast<int>(*value.f);
-	else if (type == CVAR_STRING)
-		*value.i = static_cast<int>(std::atoi(*value.s));
-	type = CVAR_INT;
-	return *value.i;
-}
-
-float CCVarRef::GetFVal()
-{
-	if (type == CVAR_INT)
-		*value.f = static_cast<float>(*value.i);
-	else if (type == CVAR_STRING)
-		*value.f = static_cast<float>(std::atof(*value.s));
-	type = CVAR_FLOAT;
-	return *value.f;
-}
-
-char* CCVarRef::GetString()
-{
-	static char sResult[256];
-	char* result;
-	if (type == CVAR_INT)
-	{
-		sprintf(sResult, "%d", *value.i);
-		result = sResult;
-	}
-	else if (type == CVAR_FLOAT)
-	{
-		sprintf(sResult, "%f", *value.f);
-		result = sResult;
-	}
-	else
-	{
-		result = *value.s;
-	}
-	return result;
-}
-
-void CCVarRef::Set(const char* s)
-{
-#if 0
-  if (*value.s != nullptr && type == CVAR_STRING)
-    delete[] *value.s;
-  *value.s = strdup(s);
-  type = CVAR_STRING;
-#endif
-	if (type == CVAR_INT)
-	{
-		Set(atoi(s));
-	}
-	else if (type == CVAR_FLOAT)
-	{
-		Set((float)atof(s));
-	}
-	else
-	{
-		ForceSet(s);
-	}
-}
-
-void CCVarRef::ForceSet(const char* s)
-{
-	if (type == CVAR_STRING)
-	{
-		delete[] * value.s;
-	}
-	type	 = CVAR_STRING;
-	*value.s = const_cast<char*>(s);
-}
-
-void CCVarRef::Set(float f)
-{
-	if (type == CVAR_STRING)
-	{
-		delete[] * value.s;
-	}
-	type	 = CVAR_FLOAT;
-	*value.f = f;
-}
-
-void CCVarRef::Set(int i)
-{
-	if (type == CVAR_STRING)
-	{
-		delete[] * value.s;
-	}
-	type	 = CVAR_INT;
-	*value.i = i;
-}
-
-void CCVarRef::Refresh()
-{
-	*value.i = 0;
-}
-
-int CCVarRef::GetType()
-{
-	return type;
-}
-
-const char* CCVarRef::GetHelp()
-{
-	return help;
-}
-
-CommandLine ConsolePrompt::get()
-{
-	//auto time					  = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	std::string time_str		  = "0"; //std::ctime(&time);
-	time_str[time_str.size() - 1] = 0;
-	return {
-		Text(user + "@" + pc, glm::vec3(0.0, 1.0, 0.0), 1.0),
-		Text(" " + env, glm::vec3(1.0, 0.0, 1.0), 1.0),
-		Text(" " + cd, glm::vec3(1.0, 1.0, 0.0), 1.0),
-		Text(std::string(" " + time_str), color, 1.0) //,
-													  //Text(" FPS: " + std::to_string(GetISystem()->GetIGame()->getFPS()) + "\n", glm::vec3(1.0, 0.3, 0.5), 1.0),
-	};
-}
-
-void CNullCVar::Release()
-{
-}
-
-int CNullCVar::GetIVal()
-{
-	return 0;
-}
-
-float CNullCVar::GetFVal()
-{
-	return 0.0f;
-}
-
-char* CNullCVar::GetString()
-{
-	return nullptr;
-}
-
-void CNullCVar::Set(const char* s)
-{
-}
-
-void CNullCVar::ForceSet(const char* s)
-{
-}
-
-void CNullCVar::Set(float f)
-{
-}
-
-void CNullCVar::Set(int i)
-{
-}
-
-void CNullCVar::Refresh()
-{
-}
-
-void CNullCVar::ClearFlags(int flags)
-{
-}
-
-int CNullCVar::GetFlags()
-{
-	return 0;
-}
-
-int CNullCVar::SetFlags(int flags)
-{
-	return 0;
-}
-
-int CNullCVar::GetType()
-{
-	return 0;
-}
-
-const char* CNullCVar::GetName()
-{
-	return nullptr;
-}
-
-const char* CNullCVar::GetHelp()
-{
-	return nullptr;
-}
-#pragma endregion
-#endif
-
 void ConsoleShow(IConsoleCmdArgs*)
 {
 	gEnv->pConsole->ShowConsole(true);
@@ -761,8 +475,9 @@ void CXConsole::PostRendererInit()
 			texture_path = background->GetString();
 		#endif
 		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
-		ITexture* pTex = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
-		m_nWhiteTexID = pTex ? pTex->getId() : 0;
+		auto	  Tex  = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
+		auto pTex = m_system.GetIRenderer()->EF_GetTextureByID(Tex);
+		m_nWhiteTexID  = pTex ? pTex->GetTextureID() : 0;
 	}
 	else
 	{
@@ -1336,6 +1051,7 @@ void CXConsole::StaticBackground(bool bStatic)
 
 void CXConsole::SetLoadingImage(const char* szFilename)
 {
+	#if 0
 	ITexture* pTex = m_system.GetIRenderer()->LoadTexture(szFilename, 0,0);
 	if (!pTex/* || (pTex->GetFlags() & FT_FAILED)*/)
 	{
@@ -1347,6 +1063,9 @@ void CXConsole::SetLoadingImage(const char* szFilename)
 		m_nLoadingBackTexID = pTex->getId();
 	else
 		m_nLoadingBackTexID = -1;
+	#else
+	NOT_IMPLEMENTED;
+	#endif
 }
 
 
@@ -2093,12 +1812,12 @@ void CXConsole::ResetProgressBar(int nProgressBarRange)
 
 void CXConsole::TickProgressBar()
 {
-	#if 0
 	if (m_nProgressRange != 0 && m_nProgressRange > m_nProgress)
 	{
 		m_nProgress++;
 		m_system.UpdateLoadingScreen();
 	}
+	#if 0
 	if (m_system.GetIRenderer())
 		m_system.GetIRenderer()->FlushRTCommands(false, false, false); // Try to switch render thread contexts to make RT always busy during loading
 	#endif
@@ -2511,8 +2230,8 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				//xPos, yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
 				xPos, yPos, fontScale, &glm::vec4(1)[0]);
 			#if 0
-			IRenderAuxText::DrawText(Vec3(xPos - fCharWidth, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, ">");
-			IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
+			IRenderAuxText::DrawText(Legacy::Vec3(xPos - fCharWidth, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, ">");
+			IRenderAuxText::DrawText(Legacy::Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, m_sInputBuffer.c_str());
 			#endif
 
 			if (m_bDrawCursor)
@@ -2522,7 +2241,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 				//float n = 1.16f * m_pFont->TextWidth(szCursorLeft);
 				float n = fontScale * m_pFont->TextWidth(szCursorLeft);
 
-				//IRenderAuxText::DrawText(Vec3(xPos + (fCharWidth * n), yPos, 1), fontScale * 1.16f / 14, nullptr, flags, "_");
+				//IRenderAuxText::DrawText(Legacy::Vec3(xPos + (fCharWidth * n), yPos, 1), fontScale * 1.16f / 14, nullptr, flags, "_");
 				m_pFont->RenderText(
 					"_",
 					//xPos + (/*fCharWidth **/ n), yPos, fontScale * 1.16f / 14, &glm::vec4(1)[0]);
@@ -2540,13 +2259,14 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			{
 				const char* buf = ritor->c_str();// GetBuf(k);
 
+				//FIXME: exception on disconnect console command
 				if (*buf > 0 && *buf < 32) 
 					buf++; // to jump over verbosity level character
 
 				if (yPos + csize > 0)
 				{
 					#if 0
-					IRenderAuxText::DrawText(Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, buf);
+					IRenderAuxText::DrawText(Legacy::Vec3(xPos, yPos, 1), fontScale * 1.16f / 14, nullptr, flags, buf);
 					#else
 					m_pFont->RenderText(
 						buf,

@@ -6,8 +6,23 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
+#include <BlackBox\Renderer\IFont.hpp>
+#include <BlackBox\Utils\Text.hpp>
+#include <BlackBox\System\ITimer.hpp>
 
 void loadModel(string path);
+
+C3DEngine::C3DEngine(ISystem *pSystem, const char *szInterfaceVersion)
+    :
+      m_pSystem(pSystem)
+{
+
+}
+
+C3DEngine::~C3DEngine()
+{
+
+}
 
 void C3DEngine::Enable(bool bEnable)
 {
@@ -15,7 +30,7 @@ void C3DEngine::Enable(bool bEnable)
 
 bool C3DEngine::Init()
 {
-	//MakeObject("res/geom/pengium.obj", nullptr);
+    MakeObject("res/geom/pengium.obj", nullptr);
 	return true;
 }
 
@@ -76,20 +91,20 @@ void C3DEngine::Draw()
 	gEnv->pRenderer->SetCamera(m_Camera);
   auto w = gEnv->pRenderer->GetWidth() / 2;
   auto h = gEnv->pRenderer->GetHeight() / 2;
-  auto draw = [&](IShaderProgram* p, Vec4d vp) {
+  auto draw = [&](IShaderProgram* p, Legacy::Vec4d vp) {
 	  p->Use();
-	  p->Uniform(Vec2(vp.z, vp.w), "resolution");
-	  p->Uniform(Vec2(vp.x, vp.y), "origin");
+	  p->Uniform(Legacy::Vec2(vp.z, vp.w), "resolution");
+	  p->Uniform(Legacy::Vec2(vp.x, vp.y), "origin");
 	  p->Uniform(s_time, "time");
 	  gEnv->pRenderer->SetViewport(vp.x, vp.y, vp.z, vp.w);
 	  gEnv->pRenderer->DrawFullscreenQuad();
 	  p->Unuse();
   };
 
-	draw(m_Programs[0], Vec4d(0, 0, w, h));
-	draw(m_Programs[1], Vec4d(w, h, w, h));
-	draw(m_Programs[2], Vec4d(0, h, w, h));
-	draw(m_Programs[3], Vec4d(w, 0, w, h));
+	draw(m_Programs[0], Legacy::Vec4d(0, 0, w, h));
+	draw(m_Programs[1], Legacy::Vec4d(w, h, w, h));
+	draw(m_Programs[2], Legacy::Vec4d(0, h, w, h));
+	draw(m_Programs[3], Legacy::Vec4d(w, 0, w, h));
 #endif
 	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
 	gEnv->pRenderer->SetCamera(m_Camera);
@@ -157,7 +172,381 @@ void C3DEngine::SetRenderCallback(RenderCallback pFunc, void* pParams)
 {
 }
 
-void C3DEngine::SetOutdoorAmbientColor(Vec3d vColor)
+ICryCharInstance *C3DEngine::MakeCharacter(const char *cid_file_name, unsigned int dwFlags)
+{
+
+	return {};
+}
+
+bool C3DEngine::IsCharacterFile(const char *szFileName)
+{
+
+	return {};
+}
+
+void C3DEngine::RemoveCharacter(ICryCharInstance *pCryCharInstance)
+{
+
+}
+
+Legacy::Vec3 C3DEngine::GetWorldColor(bool bScaled)
+{
+
+	return {};
+}
+
+void C3DEngine::SetWorldColor(Legacy::Vec3 vColor)
+{
+
+}
+
+void C3DEngine::SetWorldColorRatio(float fWorldColorRatio)
+{
+
+}
+
+float C3DEngine::GetWorldColorRatio()
+{
+
+	return {};
+}
+
+void C3DEngine::RecompileBeaches()
+{
+
+}
+
+void C3DEngine::OnExplosion(Legacy::Vec3 vPos, Legacy::Vec3 vHitDir, float fRadius, int nTexID, bool bDeformTerrain)
+{
+
+}
+
+void C3DEngine::AddWaterSplash(Legacy::Vec3 vPos, eSplashType eST, float fForce, int Id)
+{
+
+}
+
+void C3DEngine::SetPhysMaterialEnumerator(IPhysMaterialEnumerator *pPhysMaterialEnumerator)
+{
+
+}
+
+IPhysMaterialEnumerator *C3DEngine::GetPhysMaterialEnumerator()
+{
+
+	return {};
+}
+
+void C3DEngine::SetBFCount(int nCount)
+{
+
+}
+
+int C3DEngine::GetBFCount()
+{
+	return {};
+
+}
+
+void C3DEngine::SetGrasshopperCount(int nCount)
+{
+
+}
+
+int C3DEngine::GetGrasshopperCount()
+{
+
+	return {};
+}
+
+void C3DEngine::SetGrasshopperCGF(int nSlot, IStatObj *pStatObj)
+{
+
+}
+
+Legacy::Vec3 C3DEngine::GetOutdoorAmbientColor()
+{
+	return {};
+}
+
+Legacy::Vec3 C3DEngine::GetSunColor()
+{
+	return {};
+
+}
+
+IEntityRenderState *C3DEngine::MakeEntityRenderState()
+{
+	return {};
+
+}
+
+void C3DEngine::FreeEntityRenderState(IEntityRender *pEntity)
+{
+
+}
+
+void C3DEngine::MakeUnderWaterSmoothHMap(int nWaterUnitSize)
+{
+
+}
+
+unsigned short *C3DEngine::GetUnderWaterSmoothHMap(int &nDimensions)
+{
+
+	return {};
+}
+
+void C3DEngine::UpdateDetailObjects()
+{
+
+}
+
+IEdgeConnectivityBuilder *C3DEngine::GetNewConnectivityBuilder()
+{
+
+	return {};
+}
+
+IStencilShadowConnectivity *C3DEngine::NewConnectivity()
+{
+
+	return {};
+}
+
+IEdgeConnectivityBuilder *C3DEngine::GetNewStaticConnectivityBuilder()
+{
+
+	return {};
+}
+
+IEdgeDetector *C3DEngine::GetEdgeDetector()
+{
+	return {};
+
+}
+
+void C3DEngine::EnableHeatVision(bool bEnable)
+{
+
+}
+
+void C3DEngine::ActivatePortal(const Legacy::Vec3 &vPos, bool bActivate, IEntityRender *pEntity)
+{
+
+}
+
+IWaterVolume *C3DEngine::CreateWaterVolume()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteWaterVolume(IWaterVolume *pWaterVolume)
+{
+
+}
+
+IWaterVolume *C3DEngine::FindWaterVolumeByName(const char *szName)
+{
+	return {};
+}
+
+void C3DEngine::UpdateVisArea(IVisArea *pArea, const Legacy::Vec3 *pPoints, int nCount, const char *szName, float fHeight, const Legacy::Vec3 &vAmbientColor, bool bAfectedByOutLights, bool bSkyOnly, const Legacy::Vec3 &vDynAmbientColor, float fViewDistRatio, bool bDoubleSide, bool bUseDeepness, bool bUseInIndoors)
+{
+
+}
+
+bool C3DEngine::IsVisAreasConnected(IVisArea *pArea1, IVisArea *pArea2, int nMaxRecursion, bool bSkipDisabledPortals)
+{
+	return {};
+
+}
+
+IEntityRender *C3DEngine::CreateEntityRender()
+{
+	return {};
+	return {};
+
+}
+
+void C3DEngine::DeleteEntityRender(IEntityRender *pEntityRender)
+{
+
+}
+
+void C3DEngine::DrawRain()
+{
+
+}
+
+void C3DEngine::SetRainAmount(float fAmount)
+{
+
+}
+
+void C3DEngine::SetWindForce(const Legacy::Vec3 &vWindForce)
+{
+
+}
+
+float C3DEngine::GetLightAmountForEntity(IEntityRender *pEntity, bool bOnlyVisibleLights)
+{
+	return {};
+
+}
+
+float C3DEngine::GetAmbientLightAmountForEntity(IEntityRender *pEntity)
+{
+	return {};
+
+}
+
+IVisArea *C3DEngine::GetVisAreaFromPos(const Legacy::Vec3 &vPos)
+{
+	return {};
+
+}
+
+void C3DEngine::EnableOceanRendering(bool bOcean, bool bShore)
+{
+
+}
+
+IMatInfo *C3DEngine::CreateMatInfo()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteMatInfo(IMatInfo *pMatInfo)
+{
+
+}
+
+void C3DEngine::RenameMatInfo(IMatInfo *pMtl, const char *sNewName)
+{
+
+}
+
+IMatInfo *C3DEngine::FindMaterial(const char *sMaterialName)
+{
+	return {};
+
+}
+
+ILMSerializationManager *C3DEngine::CreateLMSerializationManager()
+{
+
+	return {};
+}
+
+bool C3DEngine::IsPotentiallyVisible(IEntityRender *pEntityRender, float fAdditionRadius)
+{
+	return {};
+
+}
+
+INT_PTR C3DEngine::AddStaticLightSource(const CDLight &LSource, IEntityRender *pCreator, ICryCharInstance *pCryCharInstance, const char *szBoneName)
+{
+	return {};
+
+}
+
+bool C3DEngine::DeleteStaticLightSource(INT_PTR nLightId)
+{
+
+	return {};
+}
+
+const list2<CDLight *> *C3DEngine::GetStaticLightSources()
+{
+	return {};
+
+}
+
+void C3DEngine::RestoreTerrainFromDisk()
+{
+
+}
+
+const char *C3DEngine::GetFilePath(const char *szFileName)
+{
+	return {};
+
+}
+
+void C3DEngine::SetBlurMask(ITexPic *pMask)
+{
+
+}
+
+void C3DEngine::CheckPhysicalized(const Legacy::Vec3 &vBoxMin, const Legacy::Vec3 &vBoxMax)
+{
+
+}
+
+void C3DEngine::CheckMemoryHeap()
+{
+
+}
+
+float C3DEngine::GetObjectsLODRatio()
+{
+
+	return {};
+}
+
+float C3DEngine::GetObjectsViewDistRatio()
+{
+
+	return {};
+}
+
+float C3DEngine::GetObjectsMinViewDist()
+{
+
+	return {};
+}
+
+bool C3DEngine::SetMaterialFloat(char *szMatName, int nSubMatId, int nTexSlot, char *szParamName, float fValue)
+{
+	return {};
+
+}
+
+void C3DEngine::CloseTerrainTextureFile()
+{
+
+}
+
+void C3DEngine::DeleteEntityDecals(IEntityRender *pEntity)
+{
+
+}
+
+void C3DEngine::OnLevelLoaded()
+{
+
+}
+
+void C3DEngine::LockCGFResources()
+{
+
+}
+
+void C3DEngine::UnlockCGFResources()
+{
+
+}
+
+CMatMan *C3DEngine::GetMatMan()
+{
+	return {};
+
+}
+
+void C3DEngine::SetOutdoorAmbientColor(Legacy::Vec3 vColor)
 {
 }
 
@@ -174,7 +563,7 @@ float C3DEngine::GetMaxViewDistance()
   return 0.0f;
 }
 
-void C3DEngine::SetFogColor(const Vec3& vFogColor)
+void C3DEngine::SetFogColor(const Legacy::Vec3& vFogColor)
 {
 }
 
@@ -186,9 +575,9 @@ void C3DEngine::SetFogEnd(const float fFogEnd)
 {
 }
 
-Vec3 C3DEngine::GetFogColor()
+Legacy::Vec3 C3DEngine::GetFogColor()
 {
-  return Vec3();
+  return Legacy::Vec3();
 }
 
 float C3DEngine::GetFogStart()
@@ -231,12 +620,12 @@ float C3DEngine::GetMaxViewDist()
   return 0.0f;
 }
 
-bool C3DEngine::AddStaticObject(int nObjectID, const Vec3& vPos, const float fScale, unsigned char ucBright)
+bool C3DEngine::AddStaticObject(int nObjectID, const Legacy::Vec3& vPos, const float fScale, unsigned char ucBright)
 {
   return false;
 }
 
-bool C3DEngine::RemoveStaticObject(int nObjectID, const Vec3& vPos)
+bool C3DEngine::RemoveStaticObject(int nObjectID, const Legacy::Vec3& vPos)
 {
   return false;
 }
@@ -328,35 +717,35 @@ void C3DEngine::UpdateBeaches()
 {
 }
 
-bool C3DEngine::IsPointInWater(Vec3 vPos)
+bool C3DEngine::IsPointInWater(Legacy::Vec3 vPos)
 {
   return false;
 }
 
-void C3DEngine::AddDynamicLightSource(const CDLight& LSource, IEntityRender* pEnt, int nEntityLightId, const Matrix44* pMatrix)
+void C3DEngine::AddDynamicLightSource(const CDLight& LSource, IEntityRender* pEnt, int nEntityLightId, const Legacy::Matrix44* pMatrix)
 {
 }
 
-void C3DEngine::ApplyForceToEnvironment(Vec3 vPos, float fRadius, float fAmountOfForce)
+void C3DEngine::ApplyForceToEnvironment(Legacy::Vec3 vPos, float fRadius, float fAmountOfForce)
 {
 }
 
-Vec3 C3DEngine::GetSunPosition(bool bMoveUp)
+Legacy::Vec3 C3DEngine::GetSunPosition(bool bMoveUp)
 {
-  return Vec3();
+  return Legacy::Vec3();
 }
 
-unsigned int C3DEngine::GetLightMaskFromPosition(const Vec3& vPos, float fRadius)
+unsigned int C3DEngine::GetLightMaskFromPosition(const Legacy::Vec3& vPos, float fRadius)
 {
   return 0;
 }
 
-Vec3 C3DEngine::GetAmbientColorFromPosition(const Vec3& vPos, float fRadius)
+Legacy::Vec3 C3DEngine::GetAmbientColorFromPosition(const Legacy::Vec3& vPos, float fRadius)
 {
-  return Vec3();
+  return Legacy::Vec3();
 }
 
-int C3DEngine::GetFogVolumeIdFromBBox(const Vec3& vBoxMin, const Vec3& vBoxMax)
+int C3DEngine::GetFogVolumeIdFromBBox(const Legacy::Vec3& vBoxMin, const Legacy::Vec3& vBoxMax)
 {
   return 0;
 }
@@ -382,6 +771,42 @@ const char* C3DEngine::GetLevelFilePath(const char* szFileName)
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
 {
+	float px = 20;
+	float py = fTextPosY;
+	auto  dy = fTextStepY;
+	dy = 15;
+
+	static IFont* pFont{};
+	if (!pFont)
+	{
+		pFont = gEnv->pRenderer->GetIFont();
+		pFont->Init("arial.ttf", 16, 16);
+	}
+	auto PRINT = [=,&py](float y, char* szFormat, ...)
+	{
+		char temp[256];
+		va_list arglist;
+		va_start(arglist, szFormat);
+		vsprintf(temp, szFormat, arglist);
+		va_end(arglist);
+
+		PrintRightAlignedText(y, temp, pFont);
+		py += dy;
+	};
+
+	auto p = m_Camera.transform.position;
+	auto r = m_Camera.transform.rotation;
+	PRINT(py, "CamPos = %.2f %.2f %.2f Angl = %3.2f %3.2f", p.x, p.y, p.z, r.x, r.y);
+	PRINT(py, "Ver = 1.0.0.0");
+	PRINT(py, "Polygons 0,000");
+	PRINT(py, "...");
+	PRINT(py, "FPS %.2f ( 60.. 50) / 60", 1.f / gEnv->pTimer->GetRealFrameTime());
+	PRINT(py, "ViewDist = 1024/0.0");
+	PRINT(py, "Render path = ...");
+	if (gEnv->pSystem->IsDevMode())
+		PRINT(py, gEnv->IsEditor() ? "DevMode (Editor)" : "DevMode");
+
+	#undef PRINT
 }
 
 IVisArea* C3DEngine::CreateVisArea()
@@ -428,10 +853,109 @@ int C3DEngine::GetFlags()
   return 0;
 }
 
+void C3DEngine::ClearRenderResources(bool bEditor)
+{
+    //NOT_IMPLEMENTED;
+    CryError("Ffunction not implemented: %s", __FUNCTION__);
+}
+
+void C3DEngine::DrawLowDetail(const int &DrawFlags)
+{
+
+	return;
+}
+
+int C3DEngine::GetLoadedObjectCount()
+{
+
+	return {};
+}
+
+float C3DEngine::GetWaterLevel(const Legacy::Vec3 *pvPos, Legacy::Vec3 *pvFlowDir)
+{
+
+	return {};
+}
+
+float C3DEngine::GetWaterLevel(IEntityRender *pEntityRender, Legacy::Vec3 *pvFlowDir)
+{
+
+	return {};
+}
+
+void C3DEngine::SpawnParticles(const ParticleParams &SpawnParticleParams)
+{
+
+}
+
+void C3DEngine::ResetParticlesAndDecals()
+{
+
+}
+
+IParticleEmitter *C3DEngine::CreateParticleEmitter()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteParticleEmitter(IParticleEmitter *pPartEmitter)
+{
+
+}
+
+IParticleEffect *C3DEngine::CreateParticleEffect()
+{
+
+	return {};
+}
+
+void C3DEngine::DeleteParticleEffect(IParticleEffect *pEffect)
+{
+
+}
+
+IParticleEffect *C3DEngine::FindParticleEffect(const char *sEffectName)
+{
+
+	return {};
+}
+
+void C3DEngine::CreateDecal(const CryEngineDecalInfo &Decal)
+{
+
+}
+
+void C3DEngine::DeleteDecalsInRange(Legacy::Vec3 vBoxMin, Legacy::Vec3 vBoxMax, bool bDeleteBigTerrainDecals)
+{
+
+}
+
+const void *C3DEngine::GetShoreGeometry(int &nPosStride, int &nVertCount, int nSectorX, int nSectorY)
+{
+
+	return {};
+}
+
+void C3DEngine::DrawTerrainDetailTextureLayers()
+{
+
+}
+
+void C3DEngine::DrawFarTrees()
+{
+
+}
+
+void C3DEngine::DrawTerrainParticles(IShader *pShader)
+{
+
+}
+
 void C3DEngine::GetMemoryUsage(class ICrySizer* pSizer) const
 {
-	pSizer->AddObject(this, sizeof(*this));
-	pSizer->AddObject(m_Objects);
+    pSizer->AddObject(this, sizeof(*this));
+    pSizer->AddObject(m_Objects);
 }
 
 

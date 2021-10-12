@@ -16,6 +16,7 @@ sources_platform(ALL)
 add_sources(
 	"NoUberFile"
 	PROJECTS
+	#System
 	System
 	SOURCE_GROUP
 	"Source Files"
@@ -47,9 +48,27 @@ add_sources(
 	"ScriptBinds/ScriptObjectConsole.cpp"
 	"ScriptBinds/ScriptObjectRenderer.cpp"
 	"ScriptBinds/ScriptObjectScript.cpp"
+	"ScriptBinds/ScriptObjectSound.cpp"
 	SOURCE_GROUP
 	"ProjectManager"
-	"ProjectManager/ProjectManager.cpp")
+	"ProjectManager/ProjectManager.cpp"
+	SOURCE_GROUP
+	"Profiling"
+	"Profiling/ProfilingSystem.cpp"
+	"Profiling/ProfilingSystem.hpp"
+	SOURCE_GROUP
+	"XML"
+	"XML/xml.h"
+	"XML/xml.cpp"
+	SOURCE_GROUP
+	"Legacy"
+	"Legacy/ISystem.h"
+	"Legacy/System.cpp"
+	SOURCE_GROUP
+	"Font"
+	"Font/NullFont.h"
+	"Font/NullFont.cpp"
+)
 end_sources()
 
 enginemodule(System FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
@@ -61,6 +80,7 @@ if(OPTION_USE_GUI)
 endif()
 
 add_sdl(${THIS_PROJECT})
+target_link_libraries(${THIS_PROJECT} PUBLIC tinyxml2::tinyxml2)
 
 if(OPTION_USE_LINUXINPUT)
 	target_compile_definitions(${THIS_PROJECT} PUBLIC -DUSE_LINUXINPUT)

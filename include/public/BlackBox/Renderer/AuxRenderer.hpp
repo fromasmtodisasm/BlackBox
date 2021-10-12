@@ -23,8 +23,8 @@ struct SAuxPushBufferEntry
 
 struct alignas(16) SAABBConstantBuffer
 {
-	Mat4 Model;
-	Vec3 LightPos;
+	Legacy::Mat4 Model;
+	Legacy::Vec3 LightPos;
 };
 
 #if 0
@@ -46,10 +46,10 @@ class CRenderAuxGeom : public IRenderAuxGeom
   public:
 	CRenderAuxGeom();
 	~CRenderAuxGeom();
-	void DrawAABB(Vec3 min, Vec3 max, const UCol& col) override;
-	void DrawTriangle(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, const Vec3& v2, const UCol& colV2) override;
-	void DrawLine(const Vec3& v0, const UCol& colV0, const Vec3& v1, const UCol& colV1, float thickness = 1.0f) override;
-	void DrawLines(const Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
+	void DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col) override;
+	void DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2) override;
+	void DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, float thickness = 1.0f) override;
+	void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
 	void PushImage(const SRender2DImageDescription& image) override;
 	void Flush() override;
 	void DrawMesh(CVertexBuffer* pVertexBuffer) override;
