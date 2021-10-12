@@ -545,9 +545,9 @@ bool CScriptObject::MoveNext()
 	bool bResult = lua_next(L, nTop + 1) != 0;
 	if (bResult)
 	{
-		iter.value		= 0;
+		iter.v.o		= 0;
 		iter.value_type =  LuatypeToScriptVarType(lua_type(L, -1));
-		bResult = m_pSS->PopAnyByType((INT_PTR&)iter.value);
+		bResult = m_pSS->PopAnyByType(iter.v);
 		iter.key_type =  LuatypeToScriptVarType(lua_type(L, -1));
 		// Get current key.
 		m_pSS->ToAny(iter.sKey, -1);
@@ -604,30 +604,31 @@ bool CScriptObject::MoveNext()
 
 bool CScriptObject::GetCurrent(int& nVal)
 {
-	return false;
+	nVal = static_cast<int>(iter.v.f);
+	return iter.key_type == ScriptVarType::Number;
 }
 
 bool CScriptObject::GetCurrent(float& fVal)
 {
-	fVal = (float&)iter.value;
+	fVal = iter.v.f;
 	return iter.key_type == ScriptVarType::Number;
 }
 
 bool CScriptObject::GetCurrent(bool& bVal)
 {
-	bVal = (bool&)iter.value;
+	bVal = iter.v.b;
 	return iter.key_type == ScriptVarType::Bool;
 }
 
 bool CScriptObject::GetCurrent(const char*& sVal)
 {
-	sVal = (const char*)iter.value;
+	sVal = iter.v.c;
 	return iter.key_type == ScriptVarType::String;
 }
 
 bool CScriptObject::GetCurrent(IScriptObject* pObj)
 {
-	pObj->Attach((IScriptObject*)iter.value);
+	pObj->Attach((IScriptObject*)iter.v.o);
 	return iter.key_type == ScriptVarType::Object;
 }
 
@@ -666,7 +667,7 @@ void CScriptObject::EndIteration()
 		iter.internal.nStackMarker1 = 0;
 		iter.internal.nStackMarker2 = 0;
 	}
-	iter.value = NULL;
+	iter.v.i = NULL;
 }
 
 void CScriptObject::SetNativeData(void* data)

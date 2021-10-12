@@ -6,6 +6,8 @@
 #include <BlackBox/ScriptSystem/ScriptBinding.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
+#include <BlackBox/ScriptSystem/Iterator.hpp>
+
 #include <cassert>
 #include <cstddef>
 #include <set>
@@ -21,7 +23,6 @@ struct SLuaStackEntry
 	string source;
 	string description;
 };
-
 typedef std::set<string, stl::less_stricmp<string>> ScriptFileList;
 typedef ScriptFileList::iterator                    ScriptFileListItor;
 
@@ -242,7 +243,7 @@ class CScriptSystem : public IScriptSystem
 		lua_pop(L, 1);
 		return res;
 	}
-	bool PopAnyByType(INT_PTR& val)
+	bool PopAnyByType(Iterator::Value& val)
 	{
 		auto idx = -1;
 		if (!lua_gettop(L))
@@ -252,26 +253,26 @@ class CScriptSystem : public IScriptSystem
 		{
 		case LUA_TNIL:
 			result = true;
-			val	   = 0;
+			val.i	   = 0;
 			break;
 		case LUA_TBOOLEAN:
-			result = ToAny((bool&)val, idx);
+			result = ToAny(val.b, idx);
 			break;
 		case LUA_TNUMBER:
-			result = ToAny((float&)val, idx);
+			result = ToAny(val.f, idx);
 			break;
 		case LUA_TSTRING:
-			result = ToAny((const char*&)val, idx);
+			result = ToAny(val.c, idx);
 			break;
 		case LUA_TLIGHTUSERDATA:
-			result = ToAny((USER_DATA&)val, idx);
+			result = ToAny(val.p, idx);
 			break;
 		case LUA_TFUNCTION:
-			result = ToAny((HSCRIPTFUNCTION&)val, idx);
+			result = ToAny((HSCRIPTFUNCTION&)val.sf, idx);
 			break;
 		case LUA_TTABLE:
 		case LUA_TUSERDATA:
-			result = ToAny((IScriptObject*&)val, idx);
+			result = ToAny((IScriptObject*&)val.o, idx);
 			break;
 		}
 		lua_pop(L, 1);

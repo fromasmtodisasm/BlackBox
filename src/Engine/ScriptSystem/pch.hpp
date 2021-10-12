@@ -91,6 +91,7 @@ class MyString : public std::string
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 //#include <CryCore/StlUtils.h>
 //#include <CryMemory/CrySizer.h>
 //#include <CryMemory/PoolAllocator.h>
@@ -119,6 +120,7 @@ template <class K, class V>
 using VectorMap = std::map<K,V>;
 
 #define CONST_TEMP_STRING(a) a
+
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

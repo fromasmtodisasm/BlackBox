@@ -1,6 +1,7 @@
 #pragma once
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/ScriptSystem/LuaCommon.hpp>
+#include <BlackBox/ScriptSystem/Iterator.hpp>
 
 class CScriptSystem;
 
@@ -9,23 +10,6 @@ enum
 	DELETED_REF = -1,
 	NULL_REF	= 0,
 };
-
-	//! Iteration over table parameters.
-struct Iterator
-{
-	const char*	   sKey; // This is now redundant.
-	int			   nKey; // This is now redundant.
-	void*		   value{};
-	ScriptVarType  key_type;
-	ScriptVarType  value_type;
-	struct
-	{
-		bool resolvePrototypeTableAsWell;
-		int	 nStackMarker1; //!< Used for traversing our own table (this is typically the table that overrides properties from prototype tables).
-		int	 nStackMarker2; //!< Used after our own table is traversed; we then try to traverse the prototype table (gets retrieved via a potential metatable).
-	} internal;
-};
-
 
 class CScriptObject : public IScriptObject
 {
