@@ -182,7 +182,15 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 		m_dqLoadedFiles.insert(path);
 		std::ifstream fin("res/" + path);
 		if (!fin.is_open())
-			return false;
+		{
+			// Try load root relative
+			fin = std::ifstream(path);
+			if (!fin.is_open())
+			{
+				CryError("Faled to load script: %s", path.c_str());
+				return false;
+			}
+		}
 		while (std::getline(fin, buffer))
 		{
 			src += buffer;

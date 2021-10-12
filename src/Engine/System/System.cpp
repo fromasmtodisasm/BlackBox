@@ -439,6 +439,8 @@ void CSystem::LoadScreen()
 
 bool CSystem::InitScripts()
 {
+	CryLog("Initializing Script Bindings");
+
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_env.pScriptSystem);
 
@@ -454,7 +456,6 @@ bool CSystem::InitScripts()
 	m_ScriptObjectConsole->Init(GetIScriptSystem(), m_env.pConsole);
 	m_ScriptObjectScript->Init(GetIScriptSystem());
 	m_ScriptObjectSound->Init(GetIScriptSystem());
-
 	return m_env.pScriptSystem->ExecuteFile("scripts/engine.lua");
 }
 

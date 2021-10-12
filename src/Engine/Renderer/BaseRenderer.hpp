@@ -270,11 +270,19 @@ class CRenderer : public RenderCVars
 
 	virtual float ScaleCoordX(float value) override
 	{
+#if 0
 		NOT_IMPLEMENTED_V;
+#else
+		return 1.f;
+#endif
 	}
 	virtual float ScaleCoordY(float value) override
 	{
+		#if 0
 		NOT_IMPLEMENTED_V;
+		#else
+		return 1.f;
+		#endif
 	}
 
 

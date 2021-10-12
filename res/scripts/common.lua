@@ -23,9 +23,10 @@ end
 
 function getglobal (varname)
 	-- access the table of globals
-	if (varname == "g_language") then
-		System:Error("g_language!!!!!!!!!!!")
-	end
+	--FIXME:
+	--if (varname == "g_language") then
+	--	System:Error("g_language!!!!!!!!!!!")
+	--end
 	local value = rawget(globals(), varname)
 	return value or Game:GetVariable(varname)
   end

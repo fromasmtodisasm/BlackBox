@@ -98,7 +98,10 @@ int CScriptObjectScript::LoadScript(IFunctionHandler* pH)
 	const char* sScriptFile;
 	pH->GetParam(1, sScriptFile);
 
+	//TODO:
+	#if 0
 	CryLog("Attempt load script: [$3%s$1]", sScriptFile);
+	#endif
 	if (m_pSS->ExecuteFile(sScriptFile, bRaiseError, bReload))
 		return pH->EndFunction(1);
 	else

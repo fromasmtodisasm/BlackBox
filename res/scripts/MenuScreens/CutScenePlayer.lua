@@ -1,3 +1,4 @@
+--[[
 UI.PageCutScenePlayer=
 {	
 	GUI=
@@ -21,9 +22,6 @@ UI.PageCutScenePlayer=
 		
 			OnFinished = function(Sender)
 				UI.PageCutScenePlayer:Finished();
-			end,
-			IsPlaying = function()
-				return false	
 			end
 		},
 
@@ -53,10 +51,6 @@ UI.PageCutScenePlayer=
 		end,
 
 		OnActivate= function(Sender)
-			-- FIXME:
-			if true then
-				return; 
-			end
 			UI.PageCutScenePlayer.bFinished = nil;
 			
 			if (UI.PageCutScenePlayer.szCutSceneName) then
@@ -115,8 +109,7 @@ UI.PageCutScenePlayer=
 		OnDeactivate = function(Sender)		
 			local bPlaying = UI.PageCutScenePlayer.GUI.CutScene:IsPlaying();
 						
-			-- FIXME: ReleaseVideo not registered in lua
-			--UI.PageCutScenePlayer.GUI.CutScene:ReleaseVideo();
+			UI.PageCutScenePlayer.GUI.CutScene:ReleaseVideo();
 			
 			if (bPlaying) then
 				UI.PageCutScenePlayer:Finished();
@@ -153,39 +146,39 @@ end
 
 UI:CreateScreenFromTable("CutScenePlayer", UI.PageCutScenePlayer.GUI);
 
+]]
 function UI:PlayCutScene(szCutSceneName, szMessage, szGotoPage, bGotoPageShowBack)
 	UI:PlayCutSceneEx(szCutSceneName, szMessage, szGotoPage, bGotoPageShowBack, 1);
 end
 
 function UI:PlayCutSceneEx(szCutSceneName, szMessage, szGotoPage, bGotoPageShowBack, bCanSkip)
 
-	if (UI.MusicId ~= nil) then
-		Sound:StopSound(UI.MusicId);
-	end
+	--if (UI.MusicId ~= nil) then
+	--	Sound:StopSound(UI.MusicId);
+	--end
 
-	UI.bInGameOverride = 1; -- don't use the current ingame menu
+	--UI.bInGameOverride = 1; -- don't use the current ingame menu
 
-	Game:ShowMenu();
+	--Game:ShowMenu();
 
-	UI.PageCutScenePlayer.szCutSceneName = szCutSceneName;
-	UI.PageCutScenePlayer.szGotoPage = szGotoPage;
-	UI.PageCutScenePlayer.bGotoPageShowBack = bGotoPageShowBack;
-	UI.PageCutScenePlayer.bCanSkip = bCanSkip;
+	--UI.PageCutScenePlayer.szCutSceneName = szCutSceneName;
+	--UI.PageCutScenePlayer.szGotoPage = szGotoPage;
+	--UI.PageCutScenePlayer.bGotoPageShowBack = bGotoPageShowBack;
+	--UI.PageCutScenePlayer.bCanSkip = bCanSkip;
 
-	if (type(szMessage) == "function") then
-		UI.PageCutScenePlayer.pfnFunction = szMessage;
-		UI.PageCutScenePlayer.szMessage = nil;
-	else
-		UI.PageCutScenePlayer.szMessage = szMessage;
-		UI.PageCutScenePlayer.pfnFunction = nil;
-	end
+	--if (type(szMessage) == "function") then
+	--	UI.PageCutScenePlayer.pfnFunction = szMessage;
+	--	UI.PageCutScenePlayer.szMessage = nil;
+	--else
+	--	UI.PageCutScenePlayer.szMessage = szMessage;
+	--	UI.PageCutScenePlayer.pfnFunction = nil;
+	--end
 
-	UI:DeactivateAllScreens();
-	UI:ActivateScreen("CutScenePlayer");
+	--UI:DeactivateAllScreens();
+	--UI:ActivateScreen("CutScenePlayer");
 end
 
 function UI:StopCutScene()
 	Input:ResetKeyState();
 	UI:DeactivateScreen("CutScenePlayer");
 end
-

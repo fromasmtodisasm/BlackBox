@@ -3411,10 +3411,6 @@ int CUISystem::RetrieveCommonAttribute(IScriptObject *pObject, CUIWidget *pWidge
 	pObject->GetCurrent(fValue);
 	pObject->GetCurrent(iValue);
 
-	if (!strcmp(szAttributeName, "tabstop"))
-	{
-		CryLog("TabStop!");
-	}
 	// font attributes
 	if ((pObject->GetCurrentType() == svtObject) ||
 			(CHECKATTRIBUTE("classname", svtString)) ||

@@ -484,6 +484,13 @@ bool CSystem::Init()
 	{
 		return false;
 	}
+	if (IsDevMode())
+	{
+		CryLog("DEVMODE is Enabled");
+		auto ok = m_env.pScriptSystem->ExecuteFile("DevMode.lua");
+		CryLog("\tLoading DevMode.lua: %s!", ok ? "Ok" : "Failed");
+	}
+
 	ExecuteCommandLine();
 	Tests();
 
