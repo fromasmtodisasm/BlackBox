@@ -8,6 +8,8 @@ add_sources(
 	"Source Files"
 	"Sound.cpp"
 	"Sound.hpp"
+	"SoundSystem.hpp"
+	"SoundSystem.cpp"
 	)
 end_sources()
 

@@ -73,6 +73,7 @@ add_sources(
 
 	SOURCE_GROUP "Legacy"
 	${INC}/Legacy/AgentParams.h
+	${INC}/Legacy/StlUtils.h
 	${INC}/Legacy/AnimKey.h
 	${INC}/Legacy/ColorDefs.h
 	${INC}/Legacy/CryAnimationScriptCommands.h
@@ -83,8 +84,6 @@ add_sources(
 	${INC}/Legacy/CryEngineDecalInfo.h
 	${INC}/Legacy/CryHeaders.h
 	${INC}/Legacy/CrySizer.h
-	${INC}/Legacy/crysound.h
-	${INC}/Legacy/crysound64.h
 	${INC}/Legacy/CryVersion.h
 	${INC}/Legacy/Cry_Color4.h
 	${INC}/Legacy/Cry_Geo.h
@@ -98,8 +97,8 @@ add_sources(
 	${INC}/Legacy/Cry_Vector3.h
 	${INC}/Legacy/Cry_XOptimise.h
 	${INC}/Legacy/Font.h
-	${INC}/Legacy/IAgent.h
 	${INC}/Legacy/IAISystem.h
+	${INC}/Legacy/IAgent.h
 	${INC}/Legacy/IBindable.h
 	${INC}/Legacy/ICryAnimation.h
 	${INC}/Legacy/IDataProbe.h
@@ -107,25 +106,28 @@ add_sources(
 	${INC}/Legacy/IMovieSystem.h
 	${INC}/Legacy/IPhysics.h
 	${INC}/Legacy/IProcess.h
+	${INC}/Legacy/ISound.h
 	${INC}/Legacy/IStatObj.h
-	${INC}/Legacy/IXml.h
 	${INC}/Legacy/IXMLDOM.h
+	${INC}/Legacy/IXml.h
 	${INC}/Legacy/MeshIdx.h
 	${INC}/Legacy/Names.h
-	${INC}/Legacy/physinterface.h
-	${INC}/Legacy/platform.h
-	${INC}/Legacy/primitives.h
 	${INC}/Legacy/Range.h
 	${INC}/Legacy/SerializeBuffer.h
-	${INC}/Legacy/smartptr.h
 	${INC}/Legacy/StreamData.h
 	${INC}/Legacy/TAlloc.h
-	${INC}/Legacy/Tarray.h
 	${INC}/Legacy/TArrays.h
 	${INC}/Legacy/TString.h
+	${INC}/Legacy/Tarray.h
 	${INC}/Legacy/XmlParser.h
 	${INC}/Legacy/XmlParserFont.h
 	${INC}/Legacy/XmlStream.h
+	${INC}/Legacy/crysound.h
+	${INC}/Legacy/crysound64.h
+	${INC}/Legacy/physinterface.h
+	${INC}/Legacy/platform.h
+	${INC}/Legacy/primitives.h
+	${INC}/Legacy/smartptr.h
 
 	SOURCE_GROUP "Memory"
 	${INC}/Memory/CryMemoryManager.h
@@ -208,6 +210,7 @@ add_sources(
 
 	SOURCE_GROUP "Utils"
 	${INC}/Utils/smartptr.hpp
+	${INC}/Utils/Text.hpp
 
 	)
 

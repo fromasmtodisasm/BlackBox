@@ -1,6 +1,6 @@
 #pragma once
 
-#define PHYSICS_EXPORTS
+#define CRYSOUNDSYSTEM_EXPORTS
 
 #define VALIDATOR_LOG(pLog, str) //CryLog("[PhysValidator] %s", str)
 #define VALIDATORS_START //CryLog("[PhysValidator] Start")
@@ -16,3 +16,4 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <IPhysics.h>
+#include <ISound.h>

@@ -1,0 +1,4 @@
+
+class CSoundSystem : public ISoundSystem
+{
+};
