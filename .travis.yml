@@ -1,4 +1,4 @@
-language: generic 
+language: c++ 
 before_install:
   - sudo apt-get update -q
 #compiler: gcc g++
@@ -6,9 +6,10 @@ sudo: true
 # install:
 #  - libxrandr
 #  - libwrandr
+dist: bionic
 os: linux 
 env: 
-  - COMPILER_NAME=clang CXX=clang++-7 CC=clang-9
+  - COMPILER_NAME=gcc CXX=g++ CC=gcc
 after_success:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
@@ -19,8 +20,6 @@ after_failure:
   - ./send.sh failure $WEBHOOK_DISCORD
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
       - libxrandr-dev
       - libopenal-dev
@@ -30,24 +29,17 @@ addons:
       - libogg-dev
       - libgl1-mesa-glx
       - libgl1-mesa-dev
-      - clang++-9
-      - libtinyxml2-dev
-      - libsdl2-dev
-      - libsdl2-net-dev
-      - libfreetype6-dev
+      - build-essential
+      #- libtinyxml2-dev
+      #- libsdl2-dev
+      #- libsdl2-net-dev
+      #- libfreetype6-dev
       - git
     sources: &sources
-      - llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
 script:
-  #- mkdir tools
-  #- cd tools
-  #- git clone https://github.com/microsoft/vcpkg
-  #- cd vcpkg
-  #- ./bootstrap-vcpkg.sh
-  #- cd ../..
   - mkdir build
   - cd build
   #- export PATH=$TRAVIS_BUILD_DIR/tools/vcpkg:$PATH
-  - cmake "-DTOOLCHAIN_FILE=toolchain/linux/Linux_Clang.cmake" -DCMAKE_BUILD_TYPE=Debug  ..
+  - cmake -DTOOLCHAIN_FILE=toolchain/linux/Linux_GCC.cmake -DUSE_GLM=ON -DGL_RENDERER=ON -DVCPKG_INSTALLER=ON -DCMAKE_BUILD_TYPE=Debug ..
   - cmake --build . -- -j4
