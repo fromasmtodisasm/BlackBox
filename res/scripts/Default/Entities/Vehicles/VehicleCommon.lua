@@ -3606,7 +3606,7 @@ function VC:InitWindows( )
 		wndEntity.bBreakByCar = 0;
 		wndEntity.Properties.nDamage=500;
 		wndEntity.Properties.fBreakImpuls=10;
-		wndEntity.Properties.DyingSound.sndFilename="SOUNDS\Bullethits\bglass2.wav";
+		wndEntity.Properties.DyingSound.sndFilename="SOUNDS\\Bullethits\bglass2.wav";
 		wndEntity:OnReset();
 		self:Bind( wndEntity );
 		local wndPos = self:GetHelperPos(theWindow.helperName,1);

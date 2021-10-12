@@ -376,6 +376,22 @@ add_sources(
 		${ROOT}/Default/Entities/Triggers/SmartProximityTrigger.lua
 		${ROOT}/Default/Entities/Triggers/VisibilityTrigger.lua
 		${ROOT}/Default/Entities/Triggers/Waypoint.lua
+	SOURCE_GROUP "Default\\\\Hud"
+		${ROOT}/Default/Hud/AimModeZoomHUD.lua
+		${ROOT}/Default/Hud/Binoculars.lua
+		${ROOT}/Default/Hud/CommandHud.Lua
+		${ROOT}/Default/Hud/DefaultZoomHUD.lua
+		${ROOT}/Default/Hud/HeatVision.lua
+		${ROOT}/Default/Hud/Hud.lua
+		${ROOT}/Default/Hud/MoTrackLayer.lua
+		${ROOT}/Default/Hud/NightVision.lua
+		${ROOT}/Default/Hud/SmokeBlur.lua
+		${ROOT}/Default/Hud/TargetLocker.lua
+		${ROOT}/Default/Hud/ViewLayersMgr.lua
+		${ROOT}/Default/Hud/WeaponScope.lua
+		${ROOT}/Default/Hud/ZoomView.lua
+		${ROOT}/Default/Hud/scoreboard.lua
+
 	SOURCE_GROUP "Expressions"
 		${ROOT}/Expressions/CombatRandomExpressions.lua
 		${ROOT}/Expressions/DeadRandomExpressions.lua

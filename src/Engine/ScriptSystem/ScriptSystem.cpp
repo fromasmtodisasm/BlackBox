@@ -174,7 +174,7 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 {
 	std::string path(sFileName);
 
-	auto it = m_dqLoadedFiles.find(path);
+	auto		it = m_dqLoadedFiles.find(path);
 	std::string src;
 	std::string buffer;
 	if (it == m_dqLoadedFiles.end() || bForceReload)
@@ -199,7 +199,12 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 		fin.close();
 	}
 	//return luaL_dofile(L, path.c_str()) == LUA_OK;
-	return ExecuteBuffer(src.c_str(), src.length());
+	auto result = ExecuteBuffer(src.c_str(), src.length());
+	if (!result)
+	{
+		CryError("Error in file: %s", sFileName);
+	}
+	return result;
 }
 
 bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)

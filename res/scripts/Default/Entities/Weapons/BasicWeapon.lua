@@ -1292,12 +1292,12 @@ function BasicWeapon:DrawCrosshair(r,g,b,accuracy, xpos, ypos)
 	  fValue=tonumber(hud_fadeamount);	
 	end
 	
-	%System:Draw2DLine(xcent-7-shift,ycent,xcent-2-shift,ycent,r,g,b, fValue);
-	%System:Draw2DLine(xcent+2+shift,ycent,xcent+7+shift,ycent,r,g,b, fValue);
-	%System:Draw2DLine(xcent,ycent-2-shift,xcent,ycent-7-shift,r,g,b, fValue);
-	%System:Draw2DLine(xcent,ycent+2+shift,xcent,ycent+7+shift,r,g,b, fValue);
+	System:Draw2DLine(xcent-7-shift,ycent,xcent-2-shift,ycent,r,g,b, fValue);
+	System:Draw2DLine(xcent+2+shift,ycent,xcent+7+shift,ycent,r,g,b, fValue);
+	System:Draw2DLine(xcent,ycent-2-shift,xcent,ycent-7-shift,r,g,b, fValue);
+	System:Draw2DLine(xcent,ycent+2+shift,xcent,ycent+7+shift,r,g,b, fValue);
 	--small dot in the centre of screen.
-	%System:Draw2DLine(xcent,ycent-0.5,xcent,ycent+0.5,r,g,b, fValue);
+	System:Draw2DLine(xcent,ycent-0.5,xcent,ycent+0.5,r,g,b, fValue);
 	--System:Log("Lines have been drawn for crosshair at line 1303");
 	
 	
@@ -1788,7 +1788,7 @@ function BasicWeapon:DoAutoCrosshair(scale, bHit)
 		
 		if (BasicWeapon.cantshoot_sprite) then
 			local cantshootradius = 25;
-			%System:DrawImageColor(BasicWeapon.cantshoot_sprite, posX-cantshootradius, posY-cantshootradius, cantshootradius*2, cantshootradius*2, 4, 1, 0.25, 0.25, 0.5);
+			System:DrawImageColor(BasicWeapon.cantshoot_sprite, posX-cantshootradius, posY-cantshootradius, cantshootradius*2, cantshootradius*2, 4, 1, 0.25, 0.25, 0.5);
 		end
 		
 		return; 
@@ -1821,27 +1821,27 @@ function BasicWeapon:DoAutoCrosshair(scale, bHit)
 	local autoaim_sprite = self.FireParams[_localplayer.cnt.firemode+1].autoaim_sprite;
 	
 	if (autoaim_sprite) then
-		%System:DrawImageColor(autoaim_sprite, posX-aimDist, posY-aimDist, aimDist*2, aimDist*2, 4, r, g, b, 1);
+		System:DrawImageColor(autoaim_sprite, posX-aimDist, posY-aimDist, aimDist*2, aimDist*2, 4, r, g, b, 1);
 	else	
 		local x1 = posX - aimDist;
 		local y1 = posY - aimDist;
 		local x2 = posX + aimDist;
 		local y2 = posY + aimDist;
 	
-		%System:Draw2DLine(x1,y1,x2,y1,r,g,b,1);
-		%System:Draw2DLine(x1,y2,x2,y2,r,g,b,1);	
-		%System:Draw2DLine(x1,y1,x1,y2,r,g,b,1);	
-		%System:Draw2DLine(x2,y1,x2,y2,r,g,b,1);
+		System:Draw2DLine(x1,y1,x2,y1,r,g,b,1);
+		System:Draw2DLine(x1,y2,x2,y2,r,g,b,1);	
+		System:Draw2DLine(x1,y1,x1,y2,r,g,b,1);	
+		System:Draw2DLine(x2,y1,x2,y2,r,g,b,1);
 	end
 	
 	--filippo, draw the little cross
 	local outerradius=7;
 	local innerradius=3;
 	
-	%System:Draw2DLine(posX-innerradius,posY,posX-outerradius,posY,r,g,b,1);
-	%System:Draw2DLine(posX+innerradius,posY,posX+outerradius,posY,r,g,b,1);	
-	%System:Draw2DLine(posX,posY-innerradius,posX,posY-outerradius,r,g,b,1);	
-	%System:Draw2DLine(posX,posY+innerradius,posX,posY+outerradius,r,g,b,1);
+	System:Draw2DLine(posX-innerradius,posY,posX-outerradius,posY,r,g,b,1);
+	System:Draw2DLine(posX+innerradius,posY,posX+outerradius,posY,r,g,b,1);	
+	System:Draw2DLine(posX,posY-innerradius,posX,posY-outerradius,r,g,b,1);	
+	System:Draw2DLine(posX,posY+innerradius,posX,posY+outerradius,r,g,b,1);
 end
 
 function BasicWeapon:HandleParticleEffect(effect,pos,dir,firstperson,weaponfx)
