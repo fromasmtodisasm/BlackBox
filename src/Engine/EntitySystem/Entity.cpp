@@ -3,7 +3,7 @@
 
 CEntity::CEntity()
 {
-	m_Trash.resize(100);
+
 }
 
 void CEntity::GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
@@ -67,24 +67,27 @@ void CEntity::SetNetPresence(bool bPresent)
 
 void CEntity::SetName(const char* name)
 {
+	m_Name = name;
 }
 
 void CEntity::SetClassName(const char* name)
 {
+	m_ClassName = name;
 }
 
 const char* CEntity::GetName() const
 {
-	return nullptr;
+	return m_Name.data();
 }
 
 const char* CEntity::GetEntityClassName() const
 {
-	return nullptr;
+	return m_ClassName.data();
 }
 
 void CEntity::GetEntityDesc(CEntityDesc& desc) const
 {
+	desc = m_Desc;
 }
 
 void CEntity::GetHelperPosition(const char* helper, Legacy::Vec3& pos, bool objectspace)
@@ -98,6 +101,7 @@ EntityClassId CEntity::GetClassId()
 
 void CEntity::SetClassId(const EntityClassId ClassId)
 {
+	m_ClassId = ClassId;
 }
 
 void CEntity::ShutDown()
@@ -447,6 +451,7 @@ void CEntity::DetachObjectToBone(const char* boneName, BoneBindHandle objectBind
 
 void CEntity::SetScriptObject(IScriptObject* pObject)
 {
+	m_pScriptOject = pObject;
 }
 
 IScriptObject* CEntity::GetScriptObject()
@@ -732,7 +737,7 @@ void CEntity::SetCommonCallbacks(IScriptSystem* pScriptSystem)
 void CEntity::GetMemoryUsage(ICrySizer* pSizer) const 
 {
 	pSizer->AddObject(this, sizeof(this));
-	pSizer->AddObject(m_Trash);
+	pSizer->AddObject(m_Desc);
 }
 
 void CEntity::SetWaterDensity(float fWaterDensity)
@@ -770,5 +775,17 @@ void CEntity::SwitchLights(bool bLights)
 }
 
 void CEntity::SinkRebind(IEntitySystemSink* pSink)
+{
+}
+
+void CEntity::OnStartAnimation(const char* sAnimation)
+{
+}
+
+void CEntity::OnAnimationEvent(const char* sAnimation, AnimSinkEventData data)
+{
+}
+
+void CEntity::OnEndAnimation(const char* sAnimation)
 {
 }

@@ -142,7 +142,6 @@ add_sources(
 	Legacy/IBindable.h
 	Legacy/ICryPak.h
 	Legacy/IEntitySystem.h
-	Legacy/IFont.h
 	Legacy/IInput.h
 	Legacy/IScriptSystem.h
 	Legacy/ITimer.h

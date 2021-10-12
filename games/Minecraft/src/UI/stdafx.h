@@ -12,7 +12,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 
-#include <Legacy\IFont.h>
+#include <IFont.h>
 
 #include "Network/XNetwork.hpp"
 #include "Server/XServer.hpp"

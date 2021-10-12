@@ -40,7 +40,8 @@
 //#ifndef _XBOX
 
 #define IS_NULL_KEY(key)			((key)==XKEY_NULL)
-#define IS_MOUSE_KEY(key)			((key)&0x00FF0000)
+//#define IS_MOUSE_KEY(key)			((key)&0x00FF0000)
+#define IS_MOUSE_KEY(key)			((key)&0x0000FF00)
 #define IS_JOYPAD_KEY(key)		((key)&0xFF000000)
 #define IS_GAMEPAD_KEY(key)		((key)&0xFF000000)
 #define IS_KEYBOARD_KEY(key)	((key)&0x0000FFFF)

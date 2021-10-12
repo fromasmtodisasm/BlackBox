@@ -20,6 +20,7 @@
 #include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
 #include <BlackBox/ScriptSystem/ScriptObjectSound.hpp>
+#include <Font\NullFont.h>
 
 #include <BlackBox/Core/Platform/CryLibrary.h>
 
@@ -156,7 +157,7 @@ class CSystem final : public ISystem
 		return m_env.pConsole;
 	}
 	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
-	virtual ICryFont*				GetICryFont() { return nullptr; }
+	virtual ICryFont*				GetICryFont() { return &m_Font; }
 	virtual ICryPak*				GetIPak() override;
 	virtual IEntitySystem*			GetIEntitySystem() override;
 	virtual IFont*					GetIFont() override;
@@ -512,8 +513,9 @@ class CSystem final : public ISystem
 
 	IProcess* m_pIProcess{};
 
-	INetwork* m_pNetworkLegacy;
+	INetwork*		 m_pNetworkLegacy;
 	legacy::ISystem* m_pSystemLegacy;
+	CCryNullFont	 m_Font;
 
 
     // ISystem interface

@@ -340,7 +340,7 @@ struct SEntityUpdateContext
 struct IEntity
 	:
 	 public IEntityRender
-	//,public ICharInstanceSink
+	,public ICharInstanceSink
 {
 public:
 /*!	Retrieves the unique identifier of this entity assigned to it by the Entity System.

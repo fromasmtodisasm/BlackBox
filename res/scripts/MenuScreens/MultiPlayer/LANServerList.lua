@@ -17,7 +17,8 @@ UI.PageLANServerList=
 				Sender:AddColumn("@GameType", 72, UIALIGN_CENTER, UI.szListViewEvenColor, "0 0 0 64");
 				Sender:AddColumn("@Mod", 72, UIALIGN_CENTER, UI.szListViewOddColor, "0 0 0 0");
 				Sender:AddColumn("@Version", 52, UIALIGN_CENTER, UI.szListViewEvenColor, "0 0 0 64", nil, nil, 1);
-				Sender:AddImageList(UI.skins.ServerTypeIcon);
+				-- FIXME: need fix userdata in script system!!!
+				-- Sender:AddImageList(UI.skins.ServerTypeIcon);
                 Game:CreateVariable("g_LastIP");
                 Game:CreateVariable("g_LastPort");
                 Game:CreateVariable("g_LastServerName");

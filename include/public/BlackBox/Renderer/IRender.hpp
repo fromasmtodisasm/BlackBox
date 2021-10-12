@@ -21,9 +21,15 @@ typedef unsigned short ushort;
 #include <vector>
 
 #ifndef NOT_IMPLEMENTED_V
+#if defined(ASSERT_NOT_IMPLEMENTED) || !defined(_____)
 #define NOT_IMPLEMENTED_V    \
 	assert(0 && __FUNCTION__); \
 	return {};
+#else
+#define NOT_IMPLEMENTED_V    \
+	gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+	return {};
+#endif
 #endif
 #ifndef NOT_IMPLEMENTED
 #define NOT_IMPLEMENTED\
@@ -679,8 +685,8 @@ struct IRenderer : public IRendererCallbackServer
 
 	virtual int EnumDisplayFormats(SDispFormat* formats) = 0;
 
-	virtual float ScaleCoordX(float value){ NOT_IMPLEMENTED_V; }
-	virtual float ScaleCoordY(float value){ NOT_IMPLEMENTED_V; }
+	virtual float ScaleCoordX(float value) = 0;
+	virtual float ScaleCoordY(float value) = 0;
 
 	virtual void SetState(State state, bool enable)			 = 0;
 	inline void SetState(int State) { 

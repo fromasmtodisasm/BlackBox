@@ -33,6 +33,37 @@ struct UserDataInfo
 	int cookie;
 };
 
+inline ScriptVarType LuatypeToScriptVarType(int type)
+{
+	ScriptVarType result = ScriptVarType::Null;
+	switch (type)
+	{
+	case LUA_TNIL:
+		result = ScriptVarType::Null;
+		break;
+	case LUA_TBOOLEAN:
+		result = ScriptVarType::Bool;
+		break;
+	case LUA_TNUMBER:
+		result = ScriptVarType::Number;
+		break;
+	case LUA_TSTRING:
+		result = ScriptVarType::String;
+		break;
+	case LUA_TFUNCTION:
+		result = ScriptVarType::Function;
+		break;
+	case LUA_TLIGHTUSERDATA:
+		result = ScriptVarType::Pointer;
+		break;
+	case LUA_TTABLE:
+		result = ScriptVarType::Object;
+		break;
+	}
+	return result;
+
+}
+
 class CScriptSystem : public IScriptSystem
 {
   public:
@@ -179,14 +210,15 @@ class CScriptSystem : public IScriptSystem
 	inline bool ToAny(IScriptObject*& pObj, int nIdx)
 	{
 		if (!CheckType(LUA_TTABLE, nIdx) && !CheckType(LUA_TUSERDATA, nIdx))
+		{
+			auto type = LuatypeToScriptVarType(lua_type(L, -1));
 			return false;
-#if 0
-    if (static_cast<CScriptObject*>(pObj)->IsEmpty())
-    {
-      pObj = CreateEmptyObject();
-      //pObj->AddRef();
-    }
-#endif
+		}
+		if (pObj == nullptr)
+		{
+			pObj = CreateEmptyObject();
+			//pObj->AddRef();
+		}
 		lua_pushvalue(L, -1);
 		pObj->Attach();
 		return true;
@@ -209,6 +241,41 @@ class CScriptSystem : public IScriptSystem
 		bool res = ToAny(val, -1);
 		lua_pop(L, 1);
 		return res;
+	}
+	bool PopAnyByType(INT_PTR& val)
+	{
+		auto idx = -1;
+		if (!lua_gettop(L))
+			return false;
+		bool result = false;
+		switch (lua_type(L, idx))
+		{
+		case LUA_TNIL:
+			result = true;
+			val	   = 0;
+			break;
+		case LUA_TBOOLEAN:
+			result = ToAny((bool&)val, idx);
+			break;
+		case LUA_TNUMBER:
+			result = ToAny((float&)val, idx);
+			break;
+		case LUA_TSTRING:
+			result = ToAny((const char*&)val, idx);
+			break;
+		case LUA_TLIGHTUSERDATA:
+			result = ToAny((USER_DATA&)val, idx);
+			break;
+		case LUA_TFUNCTION:
+			result = ToAny((HSCRIPTFUNCTION&)val, idx);
+			break;
+		case LUA_TTABLE:
+		case LUA_TUSERDATA:
+			result = ToAny((IScriptObject*&)val, idx);
+			break;
+		}
+		lua_pop(L, 1);
+		return result;
 	}
 	///////////////////////////////////////////////////////////////////
 
@@ -313,8 +380,11 @@ class CScriptSystem : public IScriptSystem
 	static CFunctionHandler* m_pH;
 	CLUADbg* m_pLuaDebugger;
 
+  public:
 	// Inherited via IScriptSystem
 	virtual void ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason) override;
+
+	virtual void PrintStack() override;
 };
 
 template<typename T>
@@ -355,3 +425,4 @@ void CScriptSystem::SetGlobalAny(const char* sKey, T& any)
 	PushAny(any);
 	lua_setglobal(L, sKey);
 }
+

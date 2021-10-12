@@ -538,8 +538,11 @@ private:
 	{
 		if ((pOne->m_pScreen == pTwo->m_pScreen) && (pOne->GetTabStop() == pTwo->GetTabStop()))
 		{
+			//FIXME: remove #if 0
+			#if 0
 			if (pOne != pTwo)
 				pOne->m_pUISystem->m_pLog->Log("Widget '%s' and '%s' have the same TabStop!", pOne->GetName().c_str(), pTwo->GetName().c_str());
+			#endif
 		}
 
 		if(pOne->GetTabStop() == pTwo->GetTabStop())		// to compensate the instable sort algorithm we use

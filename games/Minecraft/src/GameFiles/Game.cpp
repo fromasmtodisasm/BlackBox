@@ -1465,7 +1465,6 @@ void CXGame::MenuOff()
 	m_pScriptTimerMgr->Pause(false);
 
 	//FIXME:
-	#if 0
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
 		m_pSystem->GetIInput()->RemoveEventListener(m_pUISystem);
@@ -1475,7 +1474,6 @@ void CXGame::MenuOff()
 		if (GetMyPlayer())
 			m_XAreaMgr.ReTriggerArea(GetMyPlayer(), GetMyPlayer()->GetPos(), false);
 	}
-	#endif
 
 	m_bMenuOverlay = 0;
 
@@ -1605,9 +1603,8 @@ void CXGame::LoadingError(const char* szError)
 
 void CXGame::ProcessPMessages(const char* szMsg)
 {
-	if (stricmp(szMsg, "Quit") == 0) // quit message
+	if (stricmp(szMsg, "Quit-Yes") == 0) // quit message
 	{
-		GetISystem()->Log("Quiting");
 		m_bUpdateRet = false;
 		return;
 	}
@@ -1617,16 +1614,47 @@ void CXGame::ProcessPMessages(const char* szMsg)
 		m_bUpdateRet = false;
 		return;
 	}
-	else if (strnicmp(szMsg, "SaveGame", 8) == 0) // save current game
+	else if (stricmp(szMsg, "Switch") == 0) // switch process (menu <> game)
 	{
-		if (!m_bEditor)
+		if (m_bEditor)
+			return; // we are probably in the editor?
+
+		if (m_bMenuOverlay) // we're in menu-mode; switch to game
 		{
-			const char* sname = "quicksave";
-			if (strlen(szMsg) > 8)
+			//check if a game is currently running before switching to
+			//the 3d-engine
+
+			CPlayer* pPlayer = 0;
+			if (GetMyPlayer())
 			{
-				sname = szMsg + 9;
+				GetMyPlayer()->GetContainer()->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer);
 			}
-			Save(sname, NULL, NULL);
+
+			// there must be a client for us to be able to go out of the menu
+			// if this is a singleplayer game, and the player is alive, we can go back to game
+			// otherwise, if this is not multiplayer game and the player is dead, it is locked in the menu
+			// also, the client must not be loading, or waiting to connect
+			if (m_pClient && m_pClient->IsConnected() && m_pUISystem->GetScriptObjectUI()->CanSwitch(0))
+			{
+				if (IsMultiplayer() || (!pPlayer || pPlayer->m_stats.health > 0))
+				{
+					MenuOff();
+				}
+			}
+		}
+		else if (m_pUISystem->GetScriptObjectUI()->CanSwitch(1))
+		{
+			// quit if menu disabled (useful during development)
+			ICVar* pCvarNoMenu = m_pSystem->GetIConsole()->CreateVariable("g_NoMenu", "0", 0);
+
+			if (pCvarNoMenu && pCvarNoMenu->GetIVal())
+			{
+				m_pSystem->Quit();
+
+				return;
+			}
+
+			MenuOn();
 		}
 	}
 }

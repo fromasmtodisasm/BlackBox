@@ -431,6 +431,11 @@ void CUISystem::Update()
 	bool			bMouseDblClick = (bLMouseDblClick || bRMouseDblClick);
 	CUIWidget	*pMouseCaptured = m_pMouseCaptured;
 
+	//CryLog("mx: %f, my: %f", pMouse->GetVScreenX(), pMouse->GetVScreenY());
+	//CryLog("packed: %d; packed_old: %d", dwPackedMouseXY, dwPackedOldMouseXY);
+	if (bMouseMoved)
+		CryLog("mousemoved");
+
 	if (m_bLMouseDown && (pMouseOver != m_pMouseOver))
 	{
 		pMouseOver = 0;
@@ -1089,6 +1094,11 @@ int	CUISystem::GetScreenCount()
 int CUISystem::ActivateScreen(CUIScreen *pScreen)
 {
 	CUIScreenItor pItor = std::find(m_vScreenList.begin(), m_vScreenList.end(), pScreen);
+
+	if (pScreen->m_szName == "MainScreen")
+	{
+		CryLog("Here!!!");
+	}
 
 	if (pItor != m_vScreenList.end())
 	{
@@ -4873,7 +4883,9 @@ int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, 
 
 				if (pWidget)
 				{
+					static auto cnt = 0;
 					pObject->SetValue(pWidget->GetName().c_str(), GetWidgetScriptObject(pWidget));
+					cnt++;
 				}
 			}		
 			break;

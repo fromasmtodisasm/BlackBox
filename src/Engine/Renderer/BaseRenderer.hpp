@@ -244,6 +244,22 @@ class ShaderMan
 
 	std::vector<_smart_ptr<CShader>> m_Shaders;
 };
+#undef NOT_IMPLEMENTED_V
+#ifndef NOT_IMPLEMENTED_V
+#if defined(ASSERT_NOT_IMPLEMENTED)
+#define NOT_IMPLEMENTED_V    \
+	assert(0 && __FUNCTION__); \
+	return {};
+#else
+#define NOT_IMPLEMENTED_V    \
+	gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+	return {};
+#endif
+#endif
+#ifndef NOT_IMPLEMENTED
+#define NOT_IMPLEMENTED\
+	assert(0 && __FUNCTION__);
+#endif
 
 class CRenderer : public RenderCVars
 	, public IRenderer
@@ -251,6 +267,17 @@ class CRenderer : public RenderCVars
 	, public ISystemEventListener
 {
   public:
+
+	virtual float ScaleCoordX(float value) override
+	{
+		NOT_IMPLEMENTED_V;
+	}
+	virtual float ScaleCoordY(float value) override
+	{
+		NOT_IMPLEMENTED_V;
+	}
+
+
 	// Inherited via IRendererCallbackServer
 	void RegisterCallbackClient(IRendererCallbackClient* pClient) override;
 	void UnregisterCallbackClient(IRendererCallbackClient* pClient) override;

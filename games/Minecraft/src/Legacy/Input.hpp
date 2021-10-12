@@ -85,19 +85,19 @@ namespace Legacy
 		//! check for a mouse button pressed and held
 		virtual bool MouseDown(int p_numButton) override
 		{
-			return false;
+			return true;
 		}
 
 		//! check for a mouse button pressed only once
 		virtual bool MousePressed(int p_numButton) override
 		{
-			return false;
+			return true;
 		}
 
 		//! check if the mouse button has been released
 		virtual bool MouseReleased(int p_numButton) override
 		{
-			return false;
+			return true;
 		}
 
 		//! force the mouse wheel rotation to a certain value
@@ -147,13 +147,17 @@ namespace Legacy
 		//! get mouse X screen corrdinate
 		virtual float GetVScreenX() override
 		{
-			return 0.f;
+			float x, y;
+			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x,&y);
+			return x;
 		}
 
 		//! get mouse Y screen corrdinate
 		virtual float GetVScreenY() override
 		{
-			return 0.f;
+			float x, y;
+			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x,&y);
+			return y;
 		}
 
 		//! set the mouse sensitivity
@@ -267,11 +271,15 @@ namespace Legacy
 		}
 		virtual float MouseGetVScreenX() override
 		{
-			return 0.0f;
+			float x, y;
+			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x,&y);
+			return x;
 		}
 		virtual float MouseGetVScreenY() override
 		{
-			return 0.0f;
+			float x, y;
+			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x,&y);
+			return y;
 		}
 		virtual int GetKeyID(const char* sName) override
 		{

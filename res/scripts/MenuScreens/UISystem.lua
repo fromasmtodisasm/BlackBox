@@ -162,12 +162,12 @@ end
 -- /param bSwitchOn 1=on, 0=off
 function UI:OnSwitch( bSwitchOn )
 
---	System:Log("UI:OnSwitch");		-- debugging
+	System:Log("UI:OnSwitch");		-- debugging
 
 	System:ShowConsole(0);
 
 	if (bSwitchOn) then
---		System:Log("SwichOn 1");
+		System:Log("SwichOn 1");
 
 		Input:SetMouseSensitivityScale(1.0);
 
@@ -178,7 +178,7 @@ function UI:OnSwitch( bSwitchOn )
 
 		if (ClientStuff) and (not UI.bInGameOverride) then
 
---		System:Log("SwichOn 2");
+		System:Log("SwichOn 2");
 
 			UI:PlayMusic();
 
@@ -194,7 +194,7 @@ function UI:OnSwitch( bSwitchOn )
 
 			local sMenuPageName=ClientStuff:GetInGameMenuName();
 
---			System:Log("UI:OnSwitch MenuPage="..sMenuPageName);		-- debugging
+			System:Log("UI:OnSwitch MenuPage="..sMenuPageName);		-- debugging
 
 			if (iVideoOn ~= 0) then
 				GotoPage(sMenuPageName, 1, 0);
@@ -204,12 +204,12 @@ function UI:OnSwitch( bSwitchOn )
 
 		elseif (UI.bInGameOverride) then
 
---			System:Log("UI:OnSwitch UI.bInGameOverride");		-- debugging
+			System:Log("UI:OnSwitch UI.bInGameOverride");		-- debugging
 
 			UI.bInGameOverride = nil;
 		end
 	else
---		System:Log("SwichOff");
+		System:Log("SwichOff");
 		UI:DeactivateAllScreens();
 
 		UI:StopMusic();

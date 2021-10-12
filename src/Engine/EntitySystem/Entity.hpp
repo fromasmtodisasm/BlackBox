@@ -78,10 +78,10 @@ class CEntity : public IEntity
 	virtual bool				  DrawEntity(const SRendParams& EntDrawParams) override;
 	virtual bool				  CreateParticleEntity(float size, float mass, Legacy::Vec3 heading, float acc_thrust = 0, float k_air_resistance = 0, float acc_lift = 0, float gravity = -9.8, int surface_idx = 0, bool bSingleContact = true) override;
 	virtual void				  SetPos(const Legacy::Vec3& pos, bool bWorldOnly = true) override;
-	virtual const Legacy::Vec3&			  GetPos(bool bWorldOnly = true) const override;
+	virtual const Legacy::Vec3&	  GetPos(bool bWorldOnly = true) const override;
 	virtual void				  SetPhysAngles(const Legacy::Vec3& angl) override;
 	virtual void				  SetAngles(const Legacy::Vec3& pos, bool bNotifyContainer = true, bool bUpdatePhysics = true, bool forceInWorld = false) override;
-	virtual const Legacy::Vec3&			  GetAngles(int realA = 0) const override;
+	virtual const Legacy::Vec3&	  GetAngles(int realA = 0) const override;
 	virtual void				  SetScale(float scale) override;
 	virtual float				  GetScale() const override;
 	virtual void				  SetRadius(float r) override;
@@ -181,8 +181,10 @@ class CEntity : public IEntity
 
 	EntityId	  m_Id;
 	EntityClassId m_ClassId;
-	string_view	  m_Name;
-	string_view	  m_ClassName;
+	//string_view	  m_Name;
+	string m_Name{"Unnamed"};
+	//string_view	  m_ClassName;
+	string m_ClassName{"Unknown"};
 
 
 	IMatInfo*		  m_pMatInfo;
@@ -195,5 +197,10 @@ class CEntity : public IEntity
 	Legacy::Vec3 m_Angles;
 	Legacy::Vec3 m_Pos;
 
-	std::vector<CEntityDesc> m_Trash;
+	CEntityDesc m_Desc;
+
+	// Inherited via IEntity
+	virtual void OnStartAnimation(const char* sAnimation) override;
+	virtual void OnAnimationEvent(const char* sAnimation, AnimSinkEventData data) override;
+	virtual void OnEndAnimation(const char* sAnimation) override;
 };

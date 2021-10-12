@@ -65,9 +65,9 @@ public:
   virtual int EndFunction(USER_DATA ud) override;
 
 private:
-  lua_State* L;
-  THIS_PTR				m_ThisPtr = nullptr;
-  CScriptSystem* m_pSS = nullptr;
-  const char* m_sFuncName;
-  int							m_paramIdOffset = 1; // on first place __this
+  lua_State*	 L;
+  THIS_PTR		 m_ThisPtr = nullptr;
+  CScriptSystem* m_pSS	   = nullptr;
+  const char*	 m_sFuncName;
+  int			 m_paramIdOffset = 1; // on first place __this
 };

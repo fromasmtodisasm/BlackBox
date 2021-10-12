@@ -10,16 +10,22 @@ enum
 	NULL_REF	= 0,
 };
 
+	//! Iteration over table parameters.
 struct Iterator
 {
-	const char*	  sKey;
-	int			  nKey;
-	void*		  value;
-	int			  keyType;
-	int			  valType;
-	ScriptVarType type;
-	//int			top;
+	const char*	   sKey; // This is now redundant.
+	int			   nKey; // This is now redundant.
+	void*		   value{};
+	ScriptVarType  key_type;
+	ScriptVarType  value_type;
+	struct
+	{
+		bool resolvePrototypeTableAsWell;
+		int	 nStackMarker1; //!< Used for traversing our own table (this is typically the table that overrides properties from prototype tables).
+		int	 nStackMarker2; //!< Used after our own table is traversed; we then try to traverse the prototype table (gets retrieved via a potential metatable).
+	} internal;
 };
+
 
 class CScriptObject : public IScriptObject
 {
@@ -124,6 +130,7 @@ class CScriptObject : public IScriptObject
   public:
 	// --------------------------------------------------------------------------
 	void CreateNew();
+	void AddRef() { m_nRefCount++; }
 	// Create object from pool.
 	void Recreate()
 	{
@@ -157,7 +164,8 @@ class CScriptObject : public IScriptObject
 
 	IScriptObjectSink* m_pParent{};
 
-	Iterator m_Iterator;
+	//Iterator m_Iterator;
+	Iterator iter;
 
   private:
 	int m_nRef;

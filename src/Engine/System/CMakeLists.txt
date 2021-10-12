@@ -64,6 +64,10 @@ add_sources(
 	"Legacy"
 	"Legacy/ISystem.h"
 	"Legacy/System.cpp"
+	SOURCE_GROUP
+	"Font"
+	"Font/NullFont.h"
+	"Font/NullFont.cpp"
 )
 end_sources()
 
