@@ -118,24 +118,27 @@ UI.PageConfirmation=
 		
 		OnActivate = function(Sender)
 			
-			UI:ShowMouseCursor();
-			UI:SetFocusScreen(Sender);
-			UI:EnableSwitch(0, 0);
-			UI:FirstTabStop();
-			
-			if (UI.PageConfirmation.szTitleText) then
-				Sender.border01.Title:SetText(UI.PageConfirmation.szTitleText);
-				UI.PageConfirmation.szTitleText = nil;
-			else
-				Sender.border01.Title:SetText("");
-			end
-			
-			if (UI.PageConfirmation.szMessage) then
-				Sender.border01.Label:SetText(UI.PageConfirmation.szMessage);
-				UI.PageConfirmation.szMessage = nil;
-			else
-				Sender.border01.Label:SetText("");
-			end
+			--FIXME: Uncomment and resolve problems with IScriptObject::Delegate
+			-- after Delegate metatable is not triggered to lookup such methods
+			-- as SetText, for instance.
+			--UI:ShowMouseCursor();
+			--UI:SetFocusScreen(Sender);
+			--UI:EnableSwitch(0, 0);
+			--UI:FirstTabStop();
+			--
+			--if (UI.PageConfirmation.szTitleText) then
+			--	Sender.border01.Title:SetText(UI.PageConfirmation.szTitleText);
+			--	UI.PageConfirmation.szTitleText = nil;
+			--else
+			--	Sender.border01.Title:SetText("");
+			--end
+			--
+			--if (UI.PageConfirmation.szMessage) then
+			--	Sender.border01.Label:SetText(UI.PageConfirmation.szMessage);
+			--	UI.PageConfirmation.szMessage = nil;
+			--else
+			--	Sender.border01.Label:SetText("");
+			--end
 		end,
 		
 		OnDeactivate = function(Sender)

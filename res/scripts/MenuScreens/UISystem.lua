@@ -25,7 +25,9 @@ function UI:OnInit()
 	Language:LoadStringTable("MenuTable.xml");
 
 	-- Load Music
+	System:Log("Loading Menu Music: "..UI.szMenuMusic)
 	UI.MusicId = Sound:LoadStreamSound(UI.szMenuMusic, SOUND_LOOP+SOUND_MUSIC+SOUND_UNSCALABLE);
+	System:Log("Menu Music ID: ".. tostring(UI.MusicId))
 
 	----------------------
 	-- Load Screen Scripts

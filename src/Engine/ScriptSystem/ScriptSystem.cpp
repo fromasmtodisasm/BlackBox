@@ -615,10 +615,11 @@ USER_DATA CScriptSystem::CreateUserData(INT_PTR nVal, int nCookie)
 {
 	CHECK_STACK(L);
 
-	auto size		 = sizeof(UserDataInfo);
-	UserDataInfo* ud = (UserDataInfo*)lua_newuserdata(L, size);
-	ud->ptr			 = nVal;
-	ud->cookie		 = nCookie;
+	auto		  size = sizeof(UserDataInfo*);
+	UserDataInfo* ud   = (UserDataInfo*)lua_newuserdata(L, size);
+	ud				   = new UserDataInfo;
+	ud->ptr			   = nVal;
+	ud->cookie		   = nCookie;
 	lua_pop(L, 1);
 
 	return ud;

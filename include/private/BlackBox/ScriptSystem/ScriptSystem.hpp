@@ -227,9 +227,11 @@ class CScriptSystem : public IScriptSystem
 
 	inline bool ToAny(USER_DATA& val, int nIdx)
 	{
-		if (!CheckType(LUA_TUSERDATA, nIdx))
+		if (!CheckType(LUA_TUSERDATA, nIdx) && !CheckType(LUA_TLIGHTUSERDATA, nIdx))
 			return false;
-		val = (USER_DATA)lua_topointer(L, nIdx);
+		auto ud = (USER_DATA)lua_touserdata(L, nIdx);
+		USER_DATA result = (USER_DATA)((UserDataInfo*)(ud))->ptr;
+		val				 = (void*)((UserDataInfo*)(ud))->ptr;
 		//(INT_PTR)lua_ref(L, 1);
 		return true;
 	}

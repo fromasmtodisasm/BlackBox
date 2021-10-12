@@ -29,3 +29,5 @@ cmake-build*
 Solutions/*
 out/*
 /history.txt
+/res/Sounds
+/res/Music

@@ -1458,10 +1458,8 @@ void CXGame::MenuOn()
 void CXGame::MenuOff()
 {
 	// resume sounds and timers affected by game pause
-	#if 0
 	m_pSystem->GetISoundSystem()->Pause(false);
 	m_pSystem->GetIMusicSystem()->Pause(false);
-	#endif
 	m_pScriptTimerMgr->Pause(false);
 
 	//FIXME:
@@ -1530,20 +1528,15 @@ IScriptObject* CXGame::GetScriptObject()
 //////////////////////////////////////////////////////////////////////
 void CXGame::PlaySubtitle(ISound* pSound)
 {
-	#if 0
 #if !defined(LINUX)
 	if (m_pMovieUser)
 		m_pMovieUser->PlaySubtitles(pSound);
 #endif
-	#else
-	NOT_IMPLEMENTED;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 vector2f CXGame::GetSubtitleSize(const string& szMessage, float sizex, float sizey, const string& szFontName, const string& szFontEffect)
 {
-	#if 0
 	IFFont* pFont = m_pSystem->GetICryFont()->GetFont(szFontName.c_str());
 
 	pFont->Reset();
@@ -1555,15 +1548,11 @@ vector2f CXGame::GetSubtitleSize(const string& szMessage, float sizex, float siz
 	m_StringTableMgr.Localize(szMessage, szwString);
 
 	return pFont->GetTextSizeW(szwString.c_str());
-	#else
-	NOT_IMPLEMENTED_V;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXGame::WriteSubtitle(const string& szMessage, float x, float y, float sizex, float sizey, const color4f& cColor, const string& szFontName, const string& szFontEffect)
 {
-	#if 0
 	IFFont* pFont = m_pSystem->GetICryFont()->GetFont(szFontName.c_str());
 
 	pFont->Reset();
@@ -1576,9 +1565,6 @@ void CXGame::WriteSubtitle(const string& szMessage, float x, float y, float size
 	m_StringTableMgr.Localize(szMessage, szwString);
 
 	pFont->DrawStringW(x, y, szwString.c_str());
-	#else
-	NOT_IMPLEMENTED;
-	#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

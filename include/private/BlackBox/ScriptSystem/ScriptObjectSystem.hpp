@@ -34,6 +34,7 @@ public:
 
   int GetCurrAsyncTime(IFunctionHandler* pH);
   int GetFrameTime(IFunctionHandler* pH);
+  int IsDevModeEnable(IFunctionHandler* pH);
 
 private:
   ISystem* m_pSystem;

@@ -619,6 +619,7 @@ void CSystem::ShutDown()
 	SAFE_DELETE(m_pCmdLine);
 	SAFE_DELETE(m_env.pProjectManager);
 	SAFE_RELEASE(m_env.pLog);
+	SAFE_RELEASE(m_env.pSoundSystem);
 	SAFE_RELEASE(m_env.pCryPak);
 	SAFE_RELEASE(m_pCryPak);
 	UnloadSubsystems();

@@ -32,10 +32,10 @@
 #include "Spectator.h"									// CSpectator
 #include "AdvCamSystem.h"								// CAdvCamSystem
 #include <IXMLDOM.h>
+#endif
 #include <IAISystem.h>
 #include <IAgent.h>
 #include <ISound.h>
-#endif
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
 #if 0
@@ -1262,20 +1262,16 @@ void CXSystemBase::StartLoading(bool bEditor)
 	//////////////////////////////////////////////////////////////////////////
 	// Silence everything.
 	//////////////////////////////////////////////////////////////////////////
-	#if 0
 	if (m_pSystem->GetISoundSystem())
 		m_pSystem->GetISoundSystem()->Silence();
 	if (m_pSystem->GetIMusicSystem())
 		m_pSystem->GetIMusicSystem()->Silence();
-	#endif
 	//////////////////////////////////////////////////////////////////////////
 	
 	if (!bEditor)
 	{
-		#if 0
 		if(m_pSystem->GetISoundSystem())
 			m_pSystem->GetISoundSystem()->Mute(true);
-		#endif
 
 		m_pGame->DeleteMessage("Switch"); // no switching during loading
 	}
@@ -1496,10 +1492,10 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	string sPaks = missionInfo.sLevelFolder + "/*.pak";
 	// Open Pak file for this level. 
 	if (!m_pGame->OpenPacks(sPaks.c_str()))
-	//if (!m_pSystem->GetIPak()->OpenPacks( sPaks.c_str() ))
+	if (!m_pSystem->GetIPak()->OpenPacks( sPaks.c_str() ))
 	{
 		// Pak1 not found.
-		//CryWarning( VALIDATOR_MODULE_GAME,VALIDATOR_WARNING,"Level Packs %s Not Found",sPaks.c_str() );
+		CryWarning( VALIDATOR_MODULE_GAME,VALIDATOR_WARNING,"Level Packs %s Not Found",sPaks.c_str() );
 		// try to open from the mod folder, if any
 	}
 
@@ -1598,7 +1594,6 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	}
 	//////////////////////////////////////////////////////////////////////////
 
-	#if 0
 	//////////////////////////////////////////////////////////////////////
 	// INITIALIZE AI SYSTEM
 	IAISystem *pAISystem = m_pSystem->GetAISystem();	
@@ -1631,7 +1626,6 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->Load( sMovieDataXml.c_str(),missionInfo.sMissionName.c_str() );
 	//////////////////////////////////////////////////////////////////////////
-	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load level entities.

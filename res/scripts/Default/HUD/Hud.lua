@@ -111,7 +111,7 @@ function Hud:OnUpdate()
 			end
 				
 			--infos
-			%Game:SetHUDFont("hud", "ammo");
+			Game:SetHUDFont("hud", "ammo");
 			
 			--if(not ClientStuff.vlayers:IsActive("Binoculars") and player.cnt.health>0)then
 			--	self:DrawCompass(player);
@@ -124,10 +124,10 @@ function Hud:OnUpdate()
 			-- update hud
 			self:OnUpdateCommonHudElements();			
 												
-			%Game:SetHUDFont("hud", "ammo");												
+			Game:SetHUDFont("hud", "ammo");												
 			-- GOD O METER-------------------------------------------------
 			if(god and (tonumber(god)==1))then				
-				%Game:WriteHudString( 10, 10, "GOD "..GameRules.god_mode_count ,0, 1, 0, 1, 30, 30);
+				Game:WriteHudString( 10, 10, "GOD "..GameRules.god_mode_count ,0, 1, 0, 1, 30, 30);
 			end
 				
 			-- display mission box

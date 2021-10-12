@@ -1,6 +1,15 @@
 
 #include "Sound.hpp"
 
+CSound::~CSound()
+{
+	DeleteThis();
+}
+
+CSound::CSound(SampleType pChunk) : Data(pChunk)
+{
+}
+
 void CSound::AddEventListener(ISoundEventListener* pListener)
 {
 }
@@ -31,6 +40,12 @@ bool CSound::IsLoaded()
 
 void CSound::Play(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
 {
+	#ifdef SOUND_SAMPLE
+	auto channel = Mix_PlayChannel(-1, m_Sample, 0);
+	#else
+	auto channel = Mix_PlayMusic(Data.Music, -1);
+	#endif
+	CryLog("[Sound] Playing at channel: %d", channel);
 }
 
 void CSound::PlayFadeUnderwater(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
@@ -39,6 +54,7 @@ void CSound::PlayFadeUnderwater(float fVolumeScale/* = 1.0f*/, bool bForceActive
 
 void CSound::Stop()
 {
+
 }
 
 const char* CSound::GetName()
@@ -157,12 +173,15 @@ bool CSound::IsRelative() const
 
 int CSound::AddRef()
 {
-	return 0;
+	_reference_target_t::AddRef();
+	return m_nRefCounter;
 }
 
 int CSound::Release()
 {
-	return 0;
+	auto refs = m_nRefCounter;
+	_reference_target_t::Release();
+	return refs;
 }
 
 void CSound::SetSoundProperties(float fFadingValue)
@@ -189,4 +208,35 @@ int CSound::GetLength()
 
 void CSound::SetSoundPriority(unsigned char nSoundPriority)
 {
+}
+
+void CSound::DeleteThis()
+{
+	if(nFlags & FLAG_SOUND_16BITS)
+		Mix_FreeChunk(Data.Sample);
+	else
+	{
+		Mix_FreeMusic(Data.Music);
+	}
+}
+
+CSound* CSound::Load(const char* path, int nFlags)
+{
+	SampleType Data{};
+	CSound*	   pSound{};
+	char buf[256];
+	sprintf(buf, "res/%s", path);
+	if(nFlags & FLAG_SOUND_16BITS)
+		Data.Sample = Mix_LoadWAV(buf);
+	else
+		Data.Music = Mix_LoadMUS(buf);
+	if (!Data.Sample)
+	{
+		CryError("Mix_LoadWA: %s", Mix_GetError());
+	}
+	else
+	{
+		pSound = new CSound(Data);
+	}
+	return pSound;
 }

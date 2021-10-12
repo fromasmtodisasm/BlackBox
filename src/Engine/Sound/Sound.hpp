@@ -1,6 +1,22 @@
+#include <BlackBox\Utils\smartptr.hpp>
+//#define SOUND_SAMPLE
 
-class CSound : public ISound
+class CSound : public ISound, _reference_target_t
 {
+	virtual ~CSound();
+  public:
+#ifdef SOUND_SAMPLE
+	using SampleType = Mix_Chunk;
+#else
+	union SampleType
+	{
+		Mix_Chunk* Sample;
+		Mix_Music* Music;
+	}Data;
+
+	typedef SampleType SampleType;
+#endif
+	CSound(SampleType pChunk);
 	// Inherited via ISound
 	virtual void AddEventListener(ISoundEventListener* pListener) override;
 	virtual void RemoveEventListener(ISoundEventListener* pListener) override;
@@ -45,4 +61,11 @@ class CSound : public ISound
 	virtual int			 GetLengthMs() override;
 	virtual int			 GetLength() override;
 	virtual void		 SetSoundPriority(unsigned char nSoundPriority) override;
+
+  public:
+	void DeleteThis();
+
+	static CSound* Load(const char* path, int nFlags);
+
+	int			   nFlags;
 };

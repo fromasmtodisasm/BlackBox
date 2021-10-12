@@ -60,6 +60,8 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
   SCRIPT_REG_FUNC(GetCurrAsyncTime);
   SCRIPT_REG_FUNC(GetFrameTime);
 
+  SCRIPT_REG_FUNC(IsDevModeEnable);
+
   gEnv->pScriptSystem->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
 }
 
@@ -1139,3 +1141,14 @@ int CScriptObjectSystem::SetPostProcessFxParam(IFunctionHandler* pH)
 	return pH->EndFunction();
 }
 #endif
+/////////////////////////////////////////////////////////////////////////////////
+int CScriptObjectSystem::IsDevModeEnable(IFunctionHandler* pH)
+{
+	SCRIPT_CHECK_PARAMETERS(0);
+	// check if we're running in devmode (cheat mode)
+	// to check if we are allowed to enable certain scripts
+	// function facilities (god mode, fly mode etc.)
+	bool bDevMode = m_pSystem->IsDevMode();
+
+	return pH->EndFunction(bDevMode);
+}
