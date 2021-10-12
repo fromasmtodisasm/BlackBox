@@ -386,6 +386,8 @@ bool CSystem::Init()
 	{
 		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
 	}
+	if (!InitSoundSystem())
+		return false;
 	if (!Init3DEngine())
 		return false;
 	if (!InitPhysics())
@@ -643,6 +645,17 @@ bool CSystem::Init3DEngine()
 		}
 		m_pProcess = m_env.p3DEngine;
 		m_pProcess->SetFlags(PROC_3DENGINE);
+		return true;
+	});
+}
+
+bool CSystem::InitSoundSystem()
+{
+	Log("Creating SoundSystem");
+	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p) {
+		m_env.pSoundSystem = p(this, "0.0.0");
+		if (m_env.pSoundSystem == nullptr)
+			return false;
 		return true;
 	});
 }

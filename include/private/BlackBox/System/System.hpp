@@ -188,7 +188,7 @@ class CSystem final : public ISystem
 		return m_env.pRenderer;
 	}
 	virtual IScriptSystem*			GetIScriptSystem() override;
-	virtual ISoundSystem*			GetISoundSystem() { return nullptr; } 
+	virtual ISoundSystem*			GetISoundSystem() { return m_env.pSoundSystem; } 
 	virtual IStreamEngine*			GetStreamEngine() override;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
 	virtual ITextModeConsole*		GetITextModeConsole() override;
@@ -269,6 +269,7 @@ class CSystem final : public ISystem
 	bool InitNetwork();
 	bool InitGUI();
 	bool Init3DEngine();
+	bool InitSoundSystem();
 	bool InitSubSystem();
 	bool InitPhysics();
 	bool LoadCrynetwork();

@@ -350,6 +350,7 @@ struct SSystemGlobalEnvironment
 	IFrameProfileSystem* pFrameProfileSystem = nullptr;
 	IPhysicalWorld*		 pPhysicalWorld		 = nullptr;
 	IMusicSystem*		 pMusicSystem		 = nullptr;
+	ISoundSystem*		 pSoundSystem		 = nullptr;
 	IMovieSystem*		 pMovieSystem		 = nullptr;
 	IAISystem*			 pAISystem			 = nullptr;
 	ICryFont*			 pCryFont			 = nullptr;

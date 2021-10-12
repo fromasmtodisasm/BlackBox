@@ -18,6 +18,7 @@
 //#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/System/IWindow.hpp>
+#include <ISound.h>
 
 #ifndef LINUX
 #	include <BlackBox/System/File/CryPak.hpp>
