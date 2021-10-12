@@ -8,13 +8,16 @@ void CSystem::Render()
 {
 	if (m_env.pRenderer)
 	{
-		PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+		if (m_pProcess->GetFlags() & PROC_3DENGINE)
 		{
-			m_env.pRenderer->SetState(IRenderer::State::DEPTH_TEST, true);
-			m_env.p3DEngine->SetCamera(GetViewCamera());
-			m_env.p3DEngine->Draw();
+			PROFILER_PUSH_CPU_MARKER("CPU RENDER", Utils::COLOR_YELLOW);
+			{
+				m_env.pRenderer->SetState(IRenderer::State::DEPTH_TEST, true);
+				m_env.p3DEngine->SetCamera(GetViewCamera());
+				m_env.p3DEngine->Draw();
+			}
+			PROFILER_POP_CPU_MARKER();
 		}
-		PROFILER_POP_CPU_MARKER();
 	}
 }
 
@@ -42,30 +45,8 @@ void CSystem::OnRenderer_BeforeEndFrame()
 
 void CSystem::RenderStats()
 {
-	if (m_pFont)
+	if (m_env.pRenderer)
 	{
-		float px = 20;
-		float py = 20;
-		auto  dy = 30;
-
-		# if 0
-		PrintRightAlignedText(py, "CamPos = 0 0 0 Angl = 0 0 0");
-		py += dy;
-		PrintRightAlignedText(py, "Ver = 1.0.0.0");
-		py += dy;
-		PrintRightAlignedText(py, "Polygons 0,000");
-		py += dy;
-		PrintRightAlignedText(py, "...");
-		py += dy;
-		PrintRightAlignedText(py, "FPS 60 ( 60.. 50) / 60");
-		py += dy;
-		PrintRightAlignedText(py, "ViewDist = 1024/0.0");
-		py += dy;
-		PrintRightAlignedText(py, "Render path = ...");
-		py += dy;
-		#endif
-
-		dy = 15;
 		if (sys_dump_memstats)
 		{
 
@@ -93,12 +74,23 @@ void CSystem::RenderStats()
 		}
 		PrintRightAlignedText(gEnv->pRenderer->GetHeight() - 64.f, "$0BLACKBOX $8ENGINE", m_pBlackBoxFont);
 
-#if ENABLE_DEBUG_GUI
-		if (m_GuiManager)
-			m_GuiManager->Render();
+		int iDisplayInfo = m_rDisplayInfo;
+		if (iDisplayInfo == 0)
+			return;
+		// Draw engine stats
+		if (m_env.p3DEngine)
+		{
+			// Draw 3dengine stats and get last text cursor position
+			float nTextPosX = 101 - 20, nTextPosY = 20, nTextStepY = 3;
+			m_env.p3DEngine->DisplayInfo(nTextPosX, nTextPosY, nTextStepY);
+
+#if defined(ENABLE_LW_PROFILERS)
+			if (m_rDisplayInfo->GetIVal() == 2)
+			{
+				IRenderAuxText::TextToScreenF(nTextPosX, nTextPosY += nTextStepY, "SysMem %.1f mb", float(DumpMMStats(false)) / 1024.f);
+			}
 #endif
-		//if (m_bIsActive)
-		//m_pWindow->swap();
+		}
 	}
 
 }

@@ -24,6 +24,8 @@
 
 #include <BlackBox/Core/Platform/CryLibrary.h>
 
+#include <BlackBox\Utils\Text.hpp>
+
 #include <Legacy\System.h>
 
 #define DEFAULT_APP_NAME "BlackBox"
@@ -388,21 +390,6 @@ class CSystem final : public ISystem
 		Bottom,
 		Up,
 	};
-
-	void PrintRightAlignedText(float posY, const char* szText, IFont* pFont = nullptr)
-	{
-		SDrawTextInfo info;
-		float		  rightMargin = 20;
-		info.font	= pFont ? pFont : m_pFont;
-		#if 0
-		auto& color = info.color;
-		color[0]	= 1.0; //green
-		color[1]	= 1.0;
-		color[2]	= 1.0; //alpha
-		color[3]	= 0.0; //red
-		#endif
-		m_env.pRenderer->Draw2dText(m_env.pRenderer->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
-	}
 	
 	template<class T>
 	void PrintMemoryUsageForName(const char* name, typename Sizer<T>::Func fn, T* This, float px, float py)
@@ -511,7 +498,7 @@ class CSystem final : public ISystem
 
 	int sys_dump_memstats = false;
 
-	IProcess* m_pIProcess{};
+	IProcess* m_pProcess{};
 
 	INetwork*		 m_pNetworkLegacy;
 	legacy::ISystem* m_pSystemLegacy;

@@ -96,7 +96,12 @@ class CTmpNetworkClient : public IClient
 	}
 	virtual bool IsReady() override
 	{
+		//FIXME:
+		#if 0
 		return false;
+		#else
+		return true;
+		#endif
 	}
 	virtual bool Update(unsigned int nTime) override
 	{

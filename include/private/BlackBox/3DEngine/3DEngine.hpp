@@ -6,10 +6,44 @@
 
 #include <BlackBox/3DEngine/StatObject.hpp>
 
-class C3DEngine : public I3DEngine
+class C3DEngine : 
+	public I3DEngine
+	, public ISystemUserCallback
 {
 	typedef void(*RenderCallback)(void* pParams);
-public:
+  public:
+#if BB_PLATFORM_WINDOWS
+	virtual bool OnSaveDocument()
+	{
+		return false;
+	}
+#endif
+
+	//! Notifies user that system wants to switch out of current process.
+	//! Example: Called when pressing ESC in game mode to go to Menu.
+	virtual void OnProcessSwitch() {
+		auto proc = gEnv->pSystem->GetIProcess();
+		auto flags = proc->GetFlags();
+		if (flags & PROC_MENU)
+		{
+			gEnv->pSystem->SetIProcess(this);
+		}
+		else
+		{
+			m_Process = proc;
+			gEnv->pSystem->SetIProcess(m_Process);
+		}
+	}
+
+	//! Notifies user, usually editor, about initialization progress in system.
+	virtual void OnInitProgress(const char* sProgressMsg){};
+	virtual void GetMemoryUsage(ICrySizer* pSizer) override
+	{
+
+	}
+	IProcess* m_Process{};
+
+  public:
     C3DEngine(ISystem* pSystem, const char* szInterfaceVersion);
     ~C3DEngine();
 	virtual void Enable(bool bEnable) override;

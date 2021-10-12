@@ -135,6 +135,8 @@ add_sources(
 	UI/UIVideoPanel.h
 	UI/UIWidget.cpp
 	UI/UIWidget.h
+
+	#UI/Proxy.cpp
 	SOURCE_GROUP
 	"Legacy"
 	Legacy/CryCharAnimationParams.h

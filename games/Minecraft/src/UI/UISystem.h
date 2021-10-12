@@ -562,7 +562,7 @@ private:
 	int						m_iBackgroundTextureID;
 	color4f				m_cBackgroundColor;
 
-	int						m_iFlags;
+	int					m_iFlags{PROC_MENU};
 
 	IGame*		   m_pGame;
 	ISystem*	   m_pSystem;

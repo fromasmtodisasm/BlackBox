@@ -388,7 +388,6 @@ bool CSystem::Init()
 	}
 	if (!Init3DEngine())
 		return false;
-	m_pIProcess = m_env.p3DEngine;
 	if (!InitPhysics())
 		return false;
 
@@ -638,7 +637,13 @@ bool CSystem::Init3DEngine()
 		m_env.p3DEngine = p(this, "0.0.0");
 		if (m_env.p3DEngine == nullptr)
 			return false;
-		return m_env.p3DEngine->Init();
+		if (!m_env.p3DEngine->Init())
+		{
+			return false;
+		}
+		m_pProcess = m_env.p3DEngine;
+		m_pProcess->SetFlags(PROC_3DENGINE);
+		return true;
 	});
 }
 

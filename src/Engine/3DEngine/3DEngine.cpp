@@ -6,6 +6,9 @@
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
 
+#include <BlackBox\Renderer\IFont.hpp>
+#include <BlackBox\Utils\Text.hpp>
+#include <BlackBox\System\ITimer.hpp>
 
 void loadModel(string path);
 
@@ -768,6 +771,42 @@ const char* C3DEngine::GetLevelFilePath(const char* szFileName)
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
 {
+	float px = 20;
+	float py = fTextPosY;
+	auto  dy = fTextStepY;
+	dy = 15;
+
+	static IFont* pFont{};
+	if (!pFont)
+	{
+		pFont = gEnv->pRenderer->GetIFont();
+		pFont->Init("arial.ttf", 16, 16);
+	}
+	auto PRINT = [=,&py](float y, char* szFormat, ...)
+	{
+		char temp[256];
+		va_list arglist;
+		va_start(arglist, szFormat);
+		vsprintf(temp, szFormat, arglist);
+		va_end(arglist);
+
+		PrintRightAlignedText(y, temp, pFont);
+		py += dy;
+	};
+
+	auto p = m_Camera.transform.position;
+	auto r = m_Camera.transform.rotation;
+	PRINT(py, "CamPos = %.2f %.2f %.2f Angl = %3.2f %3.2f", p.x, p.y, p.z, r.x, r.y);
+	PRINT(py, "Ver = 1.0.0.0");
+	PRINT(py, "Polygons 0,000");
+	PRINT(py, "...");
+	PRINT(py, "FPS %.2f ( 60.. 50) / 60", 1.f / gEnv->pTimer->GetRealFrameTime());
+	PRINT(py, "ViewDist = 1024/0.0");
+	PRINT(py, "Render path = ...");
+	if (gEnv->pSystem->IsDevMode())
+		PRINT(py, gEnv->IsEditor() ? "DevMode (Editor)" : "DevMode");
+
+	#undef PRINT
 }
 
 IVisArea* C3DEngine::CreateVisArea()

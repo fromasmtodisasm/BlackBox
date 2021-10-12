@@ -36,14 +36,8 @@
 
 #define UI_DEFAULTS							(UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
 
-//FIXME: remove it
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
 
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
+#include "Proxy.cpp"
 
 ////////////////////////////////////////////////////////////////////// 
 CUISystem::CUISystem()
@@ -430,11 +424,6 @@ void CUISystem::Update()
 	bool			bRMouseDblClick = m_pInput->MouseDblClick(Legacy::XKEY_MOUSE2);
 	bool			bMouseDblClick = (bLMouseDblClick || bRMouseDblClick);
 	CUIWidget	*pMouseCaptured = m_pMouseCaptured;
-
-	//CryLog("mx: %f, my: %f", pMouse->GetVScreenX(), pMouse->GetVScreenY());
-	//CryLog("packed: %d; packed_old: %d", dwPackedMouseXY, dwPackedOldMouseXY);
-	if (bMouseMoved)
-		CryLog("mousemoved");
 
 	if (m_bLMouseDown && (pMouseOver != m_pMouseOver))
 	{
@@ -3021,43 +3010,6 @@ int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
 	m_vScreenList.push_back(*pScreen);
 
 	return 1;
-}
-
-Legacy::SInputEvent::EType getType(EInputState is)
-{
-	switch (is)
-	{
-	case eIS_Unknown:
-		return Legacy::SInputEvent::UNKNOWN;
-	case eIS_Pressed:
-		return Legacy::SInputEvent::KEY_PRESS;
-	case eIS_Released:
-		return Legacy::SInputEvent::KEY_RELEASE;
-	case eIS_Down:
-		return Legacy::SInputEvent::KEY_PRESS;
-	case eIS_Changed:
-		return Legacy::SInputEvent::MOUSE_MOVE;
-	default:
-		return Legacy::SInputEvent::UNKNOWN;
-	}
-}
-
-//FIXME: wring convertion
-bool CUISystem::OnInputEvent(const SInputEvent& event)
-{
-	if (event.keyId == eKI_SYS_Commit)
-		return false;
-	Legacy::SInputEvent legacyEvent;
-	auto&				l = legacyEvent;
-
-	l.key		 = event.keyId;
-	l.keyname	 = event.keyName;
-	l.moidifiers = event.modifiers;
-	l.timestamp	 = 0;
-	l.type		 = getType(event.state);
-	l.value		 = event.value;
-
-	return OnInputEvent(l);
 }
 
 ////////////////////////////////////////////////////////////////////// 

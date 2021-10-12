@@ -2259,6 +2259,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 			{
 				const char* buf = ritor->c_str();// GetBuf(k);
 
+				//FIXME: exception on disconnect console command
 				if (*buf > 0 && *buf < 32) 
 					buf++; // to jump over verbosity level character
 
