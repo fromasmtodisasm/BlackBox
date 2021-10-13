@@ -1,12 +1,35 @@
 #pragma once
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
+#include <Cry_Color4.h>
 #pragma warning(push)
 #pragma warning( disable : 4005 )
 #include <d3dx10.h>
 #pragma warning(pop)
 class CD3DRenderer;
 extern CD3DRenderer* gD3DRender;
+
+struct Image2D
+{
+	float	x, y, w, h;
+	int		id;
+	float	s0, t0, s1, t1;
+	color4f color;
+	float	z;
+	Image2D(
+		float x, float y, float w, float h,
+		int	  id,
+		float s0, float t0, float s1, float t1,
+		color4f color,
+		float	z
+	): x(x), y(y), w(w), h(h),
+		id(id),
+		s0(s0), t0(t0), s1(s1), t1(t1),
+		color(color),
+		z(z)
+	{
+	}
+};
 
 class CD3DRenderer : public CRenderer
 {
@@ -75,6 +98,8 @@ public:
 
 	ID3D10RasterizerState* m_pRasterizerState{};
 	ID3D10DepthStencilState* m_pDepthStencilState{};
+
+	std::vector<Image2D> m_DrawImages;
 };
 
 ID3D10Device* GetDevice();

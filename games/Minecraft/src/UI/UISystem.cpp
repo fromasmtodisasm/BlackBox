@@ -2690,9 +2690,9 @@ int CUISystem::DrawSkin(const UIRect &pRect, const UISkinTexture &pTexture, cons
 
 	if (iState & UISTATE_OVER)
 	{
-    m_pRenderer->SetState(GS_BLSRC_ONE | GS_BLDST_ONE | GS_NODEPTHTEST);
+		m_pRenderer->SetState(GS_BLSRC_ONE | GS_BLDST_ONE | GS_NODEPTHTEST);
 		DrawImage(pRect, pTexture.iOverTextureID, pTexture.vTexCoord, cColor);
-    m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
+		m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
 	}
 
 	return 1;

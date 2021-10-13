@@ -369,6 +369,7 @@ void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 
 void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
 {
+	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
 }
 
 void *CD3DRenderer::EF_Query(int Query, int Param)
