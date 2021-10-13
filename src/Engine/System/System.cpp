@@ -903,6 +903,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		m_env.p3DEngine->Update();
 	}
 
+	//m_env.pScriptSystem->update
+
 	if (m_env.pInput && m_env.pInput->GetModifiers() & eMM_Ctrl)
 	{
 		return false;
@@ -1313,4 +1315,81 @@ XmlNodeRef CSystem::LoadXmlFromString(const char *sXmlString)
 XmlNodeRef CSystem::LoadXmlFile(const char *sFilename)
 {
 	return {};
+}
+
+void CSystem::UpdateScriptSink()
+{
+	//PROFILE_SECTION(PROFILE_SCRIPT, "ScriptSystem: Update");
+	//MEMSTAT_FUNCTION_CONTEXT(EMemStatContextType::Other);
+
+	ITimer*	   pTimer	= gEnv->pTimer;
+	CTimeValue nCurTime = pTimer->GetFrameStartTime();
+
+	// Enable debugger if needed.
+	// Some code is executed even if the debugMode doesn't change, including clearing the exposed stack
+	#if 0
+	ELuaDebugMode debugMode = (ELuaDebugMode)m_cvar_script_debugger->GetIVal();
+	EnableDebugger(debugMode);
+	#endif
+
+	// Might need to check for new lua code needing hooks
+
+	float currTime	= pTimer->GetCurrTime();
+	float frameTime = pTimer->GetFrameTime();
+
+	IScriptSystem* pScriptSystem = GetIScriptSystem();
+
+	// Set global time variable into the script.
+	pScriptSystem->SetGlobalValue("_time", currTime);
+	pScriptSystem->SetGlobalValue("_frametime", frameTime);
+
+	#if 0
+	{
+		int aiTicks = 0;
+
+		IAISystem* pAISystem = gEnv->pAISystem;
+
+		if (pAISystem)
+			aiTicks = pAISystem->GetAITickCount();
+		pScriptSystem->SetGlobalValue("_aitick", aiTicks);
+	}
+
+	//TRACE("GC DELTA %d",m_pScriptSystem->GetCGCount()-nStartGC);
+	//int nStartGC = pScriptSystem->GetCGCount();
+
+	bool bKickIn = false; // Invoke Gargabe Collector
+
+	if (currTime - m_lastGCTime > m_fGCFreq) // g_GC_Frequence->GetIVal())
+		bKickIn = true;
+
+	int nGCCount = pScriptSystem->GetCGCount();
+
+	bool bNoLuaGC = false;
+
+	if (nGCCount - m_nLastGCCount > 2000 && !bNoLuaGC) //
+		bKickIn = true;
+
+	//if(bKickIn)
+	{
+		CRY_PROFILE_SECTION(PROFILE_SCRIPT, "Lua GC");
+
+		//CryLog( "Lua GC=%d",GetCGCount() );
+
+		//float fTimeBefore=pTimer->GetAsyncCurTime()*1000;
+
+		// Do a full garbage collection cycle.
+		//pScriptSystem->ForceGarbageCollection();
+
+		// Do incremental Garbage Collection
+		lua_gc(L, LUA_GCSTEP, (PER_FRAME_LUA_GC_STEP));
+
+		m_nLastGCCount = pScriptSystem->GetCGCount();
+		m_lastGCTime   = currTime;
+		//float fTimeAfter=pTimer->GetAsyncCurTime()*1000;
+		//CryLog("--[after coll]GC DELTA %d ",pScriptSystem->GetCGCount()-nGCCount);
+		//TRACE("--[after coll]GC DELTA %d [time =%f]",m_pScriptSystem->GetCGCount()-nStartGC,fTimeAfter-fTimeBefore);
+	}
+
+	m_pScriptTimerMgr->Update(nCurTime.GetMilliSecondsAsInt64());
+	#endif
 }

@@ -141,6 +141,7 @@ class CSystem final : public ISystem
 	bool InitLog();
 	virtual void Start() override;
 	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
+	virtual void UpdateScriptSink() override;
 	virtual void RenderBegin() override;
 	virtual void Render() override;
 	virtual void RenderEnd() override;

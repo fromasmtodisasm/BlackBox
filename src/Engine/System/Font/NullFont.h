@@ -59,6 +59,7 @@ public:
 	}
 	virtual void SetColor(const color4f& col, int nPass = 0) override
 	{
+		m_Color = col;
 	}
 	virtual void UseRealPixels(bool bRealPixels = true) override
 	{

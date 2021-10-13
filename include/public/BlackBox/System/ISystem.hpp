@@ -415,6 +415,9 @@ struct ISystem
 	// End rendering frame and swap back buffer.
 	virtual void RenderEnd() = 0;
 
+	// update _time, _frametime (useful after loading level to apply the time value)
+	virtual void UpdateScriptSink()=0;
+
 	// Renders the statistics; this is called from RenderEnd, but if the
 	// Host application (Editor) doesn't employ the Render cycle in ISystem,
 	// it may call this method to render the essencial statistics
