@@ -1,3 +1,4 @@
+-- : ./AI/Logic/AI_CombatManager.lua
 -- AI_CombatManager
 -- version 1.0 Amanda 2002-11-18 based on AI_BoredManager
 --

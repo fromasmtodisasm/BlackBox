@@ -1,3 +1,4 @@
+-- : ./ASSAULT/gamerules.lua
 ----------------------------------------------------------------------------------------
 --FAR CRY script file
 -- ASSAULT Game Rules

@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_LookPatrol.lua
 -- move from tag to tag stopping to look around idle a bit go on.
 -- TO DO change so that spends variable time at tagpoints looking around for a while and then
 --       insert some idle animation.

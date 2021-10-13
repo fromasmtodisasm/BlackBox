@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/ProjSentryDrone.lua
 -- #Script.ReloadScript("scripts/default/entities/weapons/ProjSentryDrone.lua")
 ProjSentryDrone = {
 	type = "Projectile",

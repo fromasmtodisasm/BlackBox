@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Sound/MissionHint.lua
 MissionHint = {
 	type = "Sound",
 

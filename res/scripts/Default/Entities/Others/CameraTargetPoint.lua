@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/CameraTargetPoint.lua
 CameraTargetPoint = {
 };
 

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/BreakableObject.lua
 Script:ReloadScript( "Scripts/Default/Entities/Others/BasicEntity.lua" );
 
 BreakableObject={

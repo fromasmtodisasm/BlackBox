@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/ScoutTool.lua
 ScoutTool = {
 	-- DESCRIPTION
 	-- Scout class specific tool

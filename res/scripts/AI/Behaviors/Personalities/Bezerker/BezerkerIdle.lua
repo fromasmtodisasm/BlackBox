@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/Bezerker/BezerkerIdle.lua
 --------------------------------------------------
 --    Created By: Amanda
 --   Description: the idle behaviour for the Bezerker

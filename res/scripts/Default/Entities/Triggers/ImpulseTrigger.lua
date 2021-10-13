@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Triggers/ImpulseTrigger.lua
 ----------------------------------------------------------------------------
 --
 -- Description :		Impulse trigger - gives a (continuous) impulse to the player

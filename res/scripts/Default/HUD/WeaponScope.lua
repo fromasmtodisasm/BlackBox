@@ -1,3 +1,4 @@
+-- : ./Default/HUD/WeaponScope.lua
 WeaponScope={
 	overlay_func=nil,
 	v_01010={x=0.11,y=0.09,z=0.05},

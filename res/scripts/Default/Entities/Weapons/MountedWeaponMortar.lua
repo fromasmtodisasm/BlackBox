@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/MountedWeaponMortar.lua
 MountedWeaponMortar_table=
 {
 	name = "MountedMortar",

@@ -1,3 +1,4 @@
+-- : ./testshader.lua
 Shader = {
 	Name = "test_postprocessing",
 	Properties = {

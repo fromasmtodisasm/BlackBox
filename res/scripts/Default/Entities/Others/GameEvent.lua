@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/GameEvent.lua
 GameEvent =
 {
     Properties = { 

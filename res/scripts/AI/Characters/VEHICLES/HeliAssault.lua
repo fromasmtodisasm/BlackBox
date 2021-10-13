@@ -1,3 +1,4 @@
+-- : ./AI/Characters/VEHICLES/HeliAssault.lua
 -- Test Character SCRIPT
 
 AICharacter.HeliAssault = {

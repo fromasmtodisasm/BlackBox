@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/M4.lua
 M4 = {
 	-- DESCRIPTION:
 	-- Single shot is powerful, with a more recoil

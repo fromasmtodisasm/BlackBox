@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/MutantRocket.lua
 -- #Script:ReloadScript("scripts/default/entities/weapons/Mutantrocket.lua")
 
 MutantRocket = {

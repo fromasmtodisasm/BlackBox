@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/Wrench.lua
 Wrench = {
 	name		= "Wrench",
 	object		= "Objects/Weapons/wrench/wrench_bind.cgf",

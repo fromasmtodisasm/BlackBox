@@ -1,3 +1,4 @@
+-- : ./Default/Entities/PICKUPS/Checkpoint.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local funcPick=function (self,collider)

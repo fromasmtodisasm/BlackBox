@@ -1,3 +1,4 @@
+-- : ./AI/GoalPipes/PipeManagerScientist.lua
 
 function PipeManager:OnInitScientist()
 	System:Log("SCIENTIST PIPES LOADED");

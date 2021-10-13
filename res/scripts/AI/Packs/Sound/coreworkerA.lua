@@ -1,3 +1,4 @@
+-- : ./AI/Packs/Sound/coreworkerA.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

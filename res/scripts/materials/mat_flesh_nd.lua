@@ -1,3 +1,4 @@
+-- : ./materials/mat_flesh_nd.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_flesh_nd"] = {
 	type="flesh",

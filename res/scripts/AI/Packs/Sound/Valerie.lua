@@ -1,3 +1,4 @@
+-- : ./AI/Packs/Sound/Valerie.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

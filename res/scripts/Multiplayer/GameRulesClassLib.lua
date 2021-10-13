@@ -1,3 +1,4 @@
+-- : ./Multiplayer/GameRulesClassLib.lua
 -------------------------------------------------------------------------
 --	Helper functions for GameRules with PlayerClass support implementation
 --

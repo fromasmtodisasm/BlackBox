@@ -1,3 +1,4 @@
+-- : ./materials/mat_wood_heavy.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 Materials["mat_wood_heavy"] = {

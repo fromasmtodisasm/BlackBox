@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/BiPod.lua
 BiPod = {
 	IsActive = 0,
 	AccuracyWin = 1.5,

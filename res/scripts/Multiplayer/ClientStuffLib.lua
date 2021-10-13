@@ -1,3 +1,4 @@
+-- : ./Multiplayer/ClientStuffLib.lua
 
 Script:LoadScript("scripts/Default/ClientStuff.lua");		-- derive functionality
 

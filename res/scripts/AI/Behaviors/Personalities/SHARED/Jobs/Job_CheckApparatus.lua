@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_CheckApparatus.lua
 -- inspect apparatus mark off on clipboard
 --Select behavior Job_CheckApparatus. AI will move from AIANCHOR_CLIPBOARD anchor to 
 --clipboard anchor looking at whatever making notes. 

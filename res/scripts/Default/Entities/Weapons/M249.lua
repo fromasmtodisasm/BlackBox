@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/M249.lua
 M249 = {
 	name			= "M249",
 	object		= "Objects/Weapons/M249/M249_bind.cgf",

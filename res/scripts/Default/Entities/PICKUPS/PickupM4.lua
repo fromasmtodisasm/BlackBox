@@ -1,3 +1,4 @@
+-- : ./Default/Entities/PICKUPS/PickupM4.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local params={

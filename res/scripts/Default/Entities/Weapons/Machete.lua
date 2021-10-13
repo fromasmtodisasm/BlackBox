@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/Machete.lua
 Machete = {
 	name			= "Machete",
 	object		= "objects/weapons/machete/machete_bind.cgf",

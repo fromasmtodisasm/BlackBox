@@ -1,3 +1,4 @@
+-- : ./Default/HUD/SmokeBlur.lua
 --------------------------------------------------------------------
 -- Description: Blur effect layer for the smoke grenade
 -- Created by Marco Kögler

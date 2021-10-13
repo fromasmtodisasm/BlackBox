@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Triggers/ProximityKeyTrigger.lua
 ----------------------------------------------------------------------------
 --
 -- Description :		Delayed proxymity trigger

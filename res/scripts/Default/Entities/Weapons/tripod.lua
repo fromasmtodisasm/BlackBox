@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/tripod.lua
 Tripod = {
 	name = "Tripod",
 	type = "Tripod",

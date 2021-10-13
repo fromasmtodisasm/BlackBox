@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/BaseHandGrenade.lua
 BaseHandGrenade={
 	type="Projectile",
 	explosion_timer = 3100,

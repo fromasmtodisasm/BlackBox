@@ -1,3 +1,4 @@
+-- : ./MenuScreens/Skin.lua
 function DefOnMouseEnter(self)
 	self:SetBorderColor(UI.szFocusColor);
 end

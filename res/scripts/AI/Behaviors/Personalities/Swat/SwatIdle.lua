@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/Swat/SwatIdle.lua
 --------------------------------------------------
 --   Description: This behaviour describes the indoor swat personality in idle mode
 --------------------------

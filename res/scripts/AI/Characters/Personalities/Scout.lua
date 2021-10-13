@@ -1,3 +1,4 @@
+-- : ./AI/Characters/Personalities/Scout.lua
 -- Test Character SCRIPT
 
 AICharacter.Scout = {

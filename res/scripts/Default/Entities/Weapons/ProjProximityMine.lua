@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/ProjProximityMine.lua
 -- #Script.ReloadScript("scripts/default/entities/weapons/ProjProximityMine.lua")
 ProjProximityMine = {
 	type = "Projectile",

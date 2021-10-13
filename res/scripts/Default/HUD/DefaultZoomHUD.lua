@@ -1,3 +1,4 @@
+-- : ./Default/HUD/DefaultZoomHUD.lua
 DefaultZoomHUD = {
 	MulMask = nil,
 	ZoomSound=Sound:LoadSound("Sounds/items/scope.wav"),

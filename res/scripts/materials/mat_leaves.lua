@@ -1,3 +1,4 @@
+-- : ./materials/mat_leaves.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 --#Script:ReloadScript("scripts/materials/mat_leaves.lua")
 Materials["mat_leaves"] = {

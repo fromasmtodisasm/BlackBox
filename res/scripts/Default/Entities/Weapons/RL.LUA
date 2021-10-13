@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/RL.LUA
 RLSP = {
 	name			= "RL",
 	object		= "Objects/Weapons/RL/RL_bind.cgf",

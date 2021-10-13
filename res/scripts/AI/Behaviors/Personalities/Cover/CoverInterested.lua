@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/Cover/CoverInterested.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: Activates when the guy feels some movement around him, but is not necesarilly scared

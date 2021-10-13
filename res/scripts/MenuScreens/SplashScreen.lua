@@ -1,3 +1,4 @@
+-- : ./MenuScreens/SplashScreen.lua
 UI.PageSplashScreen=
 {
 	GUI=

@@ -1,3 +1,4 @@
+-- : ./materials/mat_helmet.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_helmet"] = {
 	type="helmet",

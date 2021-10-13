@@ -1,3 +1,4 @@
+-- : ./MenuScreens/Options/BindWaitForKey.lua
 --
 	       -- control options menu page
 --

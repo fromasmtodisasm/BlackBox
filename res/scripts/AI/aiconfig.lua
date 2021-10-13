@@ -1,3 +1,4 @@
+-- : ./AI/aiconfig.lua
 -- AICONFIG 
 -- Used to load/reload everything related to ai
 

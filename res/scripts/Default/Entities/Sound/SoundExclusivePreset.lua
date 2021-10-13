@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Sound/SoundExclusivePreset.lua
 --	exclusive areas
 --	areas have to be nested - the next area copmlitly inside the parent
 --	tha first (outside) area has to have AreaID 1

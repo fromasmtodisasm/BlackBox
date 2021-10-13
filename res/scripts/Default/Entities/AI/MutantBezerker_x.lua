@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/MutantBezerker_x.lua
 MutantBezerker_x = {
 	NoFallDamage = 1,
 ------------------------------------------------------------------------------------

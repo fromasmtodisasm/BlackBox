@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/WeaponSystem.lua
 --Script:LoadScript("SCRIPTS/Default/Entities/Weapons/WeaponsParams.lua");
 
 WeaponClassesEx = {

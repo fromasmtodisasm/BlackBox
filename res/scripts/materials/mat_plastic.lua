@@ -1,3 +1,4 @@
+-- : ./materials/mat_plastic.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_plastic"] = {
 	type="mat_plastic",

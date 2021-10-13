@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/BasicAI.lua
 Script:ReloadScript("Scripts/Default/Entities/AI/AISounds/sound_tables.lua");
 Script:ReloadScript("Scripts/Default/Entities/AI/AISounds/keyframes.lua");
 Script:ReloadScript("Scripts/Default/Entities/AI/AISounds/jumps.lua");

@@ -1,3 +1,4 @@
+-- : ./game.lua
 Player = {
 	name = "PesBarbos",
 	age = 47,

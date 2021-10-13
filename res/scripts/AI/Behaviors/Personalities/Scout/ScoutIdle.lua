@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/Scout/ScoutIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: This behaviour describes the SCOUT personality in idle mode

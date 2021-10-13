@@ -1,3 +1,4 @@
+-- : ./materials/mat_meat.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_meat"] = {
 	type="mat_meat",

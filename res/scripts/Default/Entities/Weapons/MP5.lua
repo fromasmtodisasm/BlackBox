@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/MP5.lua
 MP5 = {
 	-- DESCRIPTION:
 	-- No Single shot

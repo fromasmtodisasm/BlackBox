@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/pusher.lua
 --created by Kirill	
 --
 --	this entity has to be attached to a trigger

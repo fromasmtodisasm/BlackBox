@@ -1,3 +1,4 @@
+-- : ./Multiplayer/CreateVariables.lua
 -- this script is used to create lua side only console variables
 
 -- passing "NetSynch" as third parameter means server synchronized (cannot be changed on client and is syncroized if changed on the server)

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/BaseProjectile.lua
 BaseProjectile = {
 	tid_cloud = System:LoadTexture("textures/cloud.jpg"),
 	decal_tid = System:LoadTexture("textures/decal/explo_decal.dds"),

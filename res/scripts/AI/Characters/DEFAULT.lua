@@ -1,3 +1,4 @@
+-- : ./AI/Characters/DEFAULT.lua
 -- COVER CHARACTER SCRIPT
 
 AICharacter.DEFAULT = {

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/MutantScout_x.lua
 MUTANT_FAST_GRAV_MULT = 3;
 
 MutantScout_x = {

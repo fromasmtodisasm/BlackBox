@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Boids/Fish.lua
 Fish = {
   type = "Fish",
   MapVisMask = 0,

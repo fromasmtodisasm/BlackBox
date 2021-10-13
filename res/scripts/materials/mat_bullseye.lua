@@ -1,3 +1,4 @@
+-- : ./materials/mat_bullseye.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_bullseye"] = {
 	type="bullseye",

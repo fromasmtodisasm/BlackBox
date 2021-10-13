@@ -1,3 +1,4 @@
+-- : ./Default/Entities/multiplayer/Phoenix.lua
 Phoenix={
 	Properties={
 		fRespawnTime=0.0,			-- the time to wait until an entity is respawned

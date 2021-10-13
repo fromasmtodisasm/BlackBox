@@ -1,3 +1,4 @@
+-- : ./MenuScreens/Common/LoginDialog.lua
 UI.PageLoginDialog=
 {
 	GUI=

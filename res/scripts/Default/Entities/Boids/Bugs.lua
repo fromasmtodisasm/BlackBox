@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Boids/Bugs.lua
 Bugs = {
   type = "Bugs",
   MapVisMask = 0,

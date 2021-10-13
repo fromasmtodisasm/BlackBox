@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/FlagEntity.lua
 -- used for the ASSAULTCheckPoint
 
 FlagEntity = {

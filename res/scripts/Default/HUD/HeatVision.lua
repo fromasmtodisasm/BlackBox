@@ -1,3 +1,4 @@
+-- : ./Default/HUD/HeatVision.lua
 -- #Script.ReloadScript("scripts/default/hud/heatvision.lua")
 
 --------------------------------------------------------------------

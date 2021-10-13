@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Sound/EAXArea.lua
 -----------------------------------------------------------------------------------------------
 --
 --	EAX entity - to be attached to area 

@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_Microscope.lua
 -- look in microscope
 -- Created 2002-12-03 Amanda
 

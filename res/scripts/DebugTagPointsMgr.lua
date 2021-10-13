@@ -1,3 +1,4 @@
+-- : ./DebugTagPointsMgr.lua
 DebugTagPointsMgr={
 	tagPoints={},
 	maxtags=6,

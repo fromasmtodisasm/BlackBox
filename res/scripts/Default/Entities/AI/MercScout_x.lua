@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/MercScout_x.lua
 MercScout_x = {
 
 

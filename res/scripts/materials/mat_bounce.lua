@@ -1,3 +1,4 @@
+-- : ./materials/mat_bounce.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 Materials["mat_bounce"] = {

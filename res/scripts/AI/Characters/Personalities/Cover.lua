@@ -1,3 +1,4 @@
+-- : ./AI/Characters/Personalities/Cover.lua
 -- COVER CHARACTER SCRIPT
 
 AICharacter.Cover = {

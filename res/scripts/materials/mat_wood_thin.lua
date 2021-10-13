@@ -1,3 +1,4 @@
+-- : ./materials/mat_wood_thin.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Mines/AreaMine.lua
 AreaMine = {
 	type = "Mine",
 	MapVisMask = 0,

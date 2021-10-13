@@ -1,3 +1,4 @@
+-- : ./MenuScreens/Ingame/InGameTeamClass.lua
 Script:LoadScript("SCRIPTS/MULTIPLAYER/MultiplayerClassDefiniton.lua",1);		-- global MultiplayerClassDefiniton
 Script:LoadScript("Scripts/Multiplayer/SVcommands.lua");
 

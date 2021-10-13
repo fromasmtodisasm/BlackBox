@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Vehicles/VehicleCommon.lua
 -- all the common entering/leavin functions work with userTTables ( driverT, gunnerT, passengersTT[idx] )
 -- passsed by caller.
 --	

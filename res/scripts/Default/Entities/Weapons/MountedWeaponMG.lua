@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/MountedWeaponMG.lua
 MountedWeaponMG_table=
 {
 	name = "MountedMiniGun",

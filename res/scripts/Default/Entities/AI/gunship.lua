@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/gunship.lua
 --#Script:ReloadScript("scripts/Default/Entities/Others/piece.lua")
 --Script:LoadScript("scripts/Default/Entities/Others/piece.lua")
 --

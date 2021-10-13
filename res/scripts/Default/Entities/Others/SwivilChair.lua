@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/SwivilChair.lua
 -- chair for AI to sit on
 -- after creating lua need to place path in Editor\EntityRegistry.xml (in Artwork SS)
 SwivilChair = {

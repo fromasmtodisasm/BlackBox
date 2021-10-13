@@ -1,3 +1,4 @@
+-- : ./AI/Packs/Animation/PACKS.lua
 ANIMATIONPACK={
 
 	AVAILABLE = {

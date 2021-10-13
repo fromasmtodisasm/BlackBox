@@ -1,3 +1,4 @@
+-- : ./AI/GoalPipes/PipeManagerSwat.lua
 
 function PipeManager:OnInitSwat()
 	System:Log("SWAT PIPES LOADED");

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Triggers/AreaTrigger.lua
 ----------------------------------------------------------------------------
 --
 -- Description :		Delayed proxymity trigger

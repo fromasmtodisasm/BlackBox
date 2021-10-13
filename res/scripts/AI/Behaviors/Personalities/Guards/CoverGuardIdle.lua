@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/Guards/CoverGuardIdle.lua
 --------------------------------------------------
 --   Created By: petar
 --   Description: the idle behaviour for the guard

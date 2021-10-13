@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/piece.lua
 --[kirill]
 -- helper entity - to be used as wreck for destroyed vehicles
 --

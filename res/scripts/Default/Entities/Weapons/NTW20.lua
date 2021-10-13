@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/NTW20.lua
 NTW20 = {
 	name			= "NTW20",
 	object		= "Objects/Weapons/NTW20/NTW20_bind.cgf",

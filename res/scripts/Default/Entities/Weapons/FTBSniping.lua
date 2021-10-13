@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/FTBSniping.lua
 -- Questions;
 -- Whats does 'FTB' mean?
 -- This script does not make much sense, TotalBreathHoldTime is fine, but BreathFadeTime and

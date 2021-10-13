@@ -1,3 +1,4 @@
+-- : ./materials/mat_glass_window.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_glass_window"] = {
 	type="glass_window",

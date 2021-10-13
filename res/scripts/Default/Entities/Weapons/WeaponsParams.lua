@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/WeaponsParams.lua
 -- MaxAmmo
 MaxAmmo = 
 {

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/chain.lua
 ChainSwing = 
 {
 	Properties=

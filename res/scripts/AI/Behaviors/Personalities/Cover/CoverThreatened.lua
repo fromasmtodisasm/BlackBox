@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/Cover/CoverThreatened.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: This behaviour is called after the guy hears a scary sound. He is aggitated and know that there

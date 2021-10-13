@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/Binoculars.lua
 Binoculars = {
 	name = "Binoculars",
 	type = "Weapon",

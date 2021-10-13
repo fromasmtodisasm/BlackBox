@@ -1,3 +1,4 @@
+-- : ./materials/mat_tramplin.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 --#Script:LoadScript("scripts/materials/mat_metal_plate.lua")
 

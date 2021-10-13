@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/MutantScout.lua
 Script:ReloadScript( "SCRIPTS/Default/Entities/AI/MutantScout_x.lua");
 MutantScout=CreateAI(MutantScout_x)
 

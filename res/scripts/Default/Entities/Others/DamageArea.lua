@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/DamageArea.lua
 DamageArea = {
 	type = "DamageArea",
 	Properties = {	

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Render/ViewDist.lua
 ViewDist = {
 	type = "ViewDistController",
 	Properties = {	

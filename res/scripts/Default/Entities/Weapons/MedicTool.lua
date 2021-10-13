@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/MedicTool.lua
 MedicTool = {
 	name			= "MedicTool",
 	object		= "Objects/Weapons/health_pack/healthpack_bind.cgf",

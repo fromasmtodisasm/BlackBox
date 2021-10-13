@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Mines/ProximityMine.lua
 ProximityMine = {
 	type = "Mine",
 	MapVisMask = 0,

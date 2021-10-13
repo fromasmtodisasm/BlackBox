@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/SmokeRocket.lua
 --#Script.ReloadScript("scripts/default/entities/weapons/smokerocket.lua")
 SmokeRocket = {
 	type = "Projectile",

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Elevators/AutomaticElevator.lua
 AutomaticElevator = {
 	Properties = {
 			bActive=1,

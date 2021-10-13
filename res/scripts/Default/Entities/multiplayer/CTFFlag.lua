@@ -1,3 +1,4 @@
+-- : ./Default/Entities/multiplayer/CTFFlag.lua
 CTFFlag={
 	Properties={
 		team="red",

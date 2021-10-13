@@ -1,3 +1,4 @@
+-- : ./materials/mat_light_holes.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 	
 Materials["mat_light_holes"] = {

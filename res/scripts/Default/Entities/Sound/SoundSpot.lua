@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Sound/SoundSpot.lua
 SoundSpot = {
 	type = "Sound",
 

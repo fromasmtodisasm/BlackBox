@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/MortarShell.lua
 Script:LoadScript("scripts/default/entities/weapons/BaseProjectile.lua");
 
 projectileDefinition = {

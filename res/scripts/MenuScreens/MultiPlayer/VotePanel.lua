@@ -1,3 +1,4 @@
+-- : ./MenuScreens/MultiPlayer/VotePanel.lua
 UI.PageVotePanel=
 {
     LevelList={},       -- { missionname1={}, missionname2={}, }

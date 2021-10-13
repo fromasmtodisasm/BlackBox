@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/CreatureGenerator.lua
 CreatureGenerator = {
 
 	Properties = {

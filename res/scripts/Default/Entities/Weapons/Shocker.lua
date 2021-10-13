@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/Shocker.lua
 Shocker = {
 	name			= "Shocker",
 	object		= "Objects/Weapons/Shocker/Shocker_bind.cgf",

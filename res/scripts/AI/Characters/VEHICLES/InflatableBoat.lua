@@ -1,3 +1,4 @@
+-- : ./AI/Characters/VEHICLES/InflatableBoat.lua
 --	
 -- Character SCRIPT for inflatable boat
 -- created by Kirill Bulatsev

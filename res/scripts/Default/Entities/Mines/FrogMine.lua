@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Mines/FrogMine.lua
 FrogMine = {
 	type = "Mine",
 	MapVisMask = 0,

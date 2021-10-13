@@ -1,3 +1,4 @@
+-- : ./bloom_test.lua
 -- Init params for bloom testing
 
 -- Game:LoadPlayerPos(0, "BloomTest")

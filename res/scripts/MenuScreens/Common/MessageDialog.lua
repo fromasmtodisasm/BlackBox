@@ -1,3 +1,4 @@
+-- : ./MenuScreens/Common/MessageDialog.lua
 UI.PageMessageDialog=
 {
 	GUI=

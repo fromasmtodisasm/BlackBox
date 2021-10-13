@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/P90.lua
 P90 = {
 	name			= "P90",
 	object		= "Objects/Weapons/P90/P90_bind.cgf",

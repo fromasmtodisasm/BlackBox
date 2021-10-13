@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/VehicleRocket.lua
 Script:LoadScript("scripts/default/entities/weapons/BaseProjectile.lua");
 
 projectileDefinition = {

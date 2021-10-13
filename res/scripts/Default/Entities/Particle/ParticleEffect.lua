@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Particle/ParticleEffect.lua
 ParticleEffect = {
 	Properties = {
 		SpawnPeriod = 0.1, -- how often particle system is spawned.

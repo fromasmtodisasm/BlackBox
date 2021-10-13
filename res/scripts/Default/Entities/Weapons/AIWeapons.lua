@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/AIWeapons.lua
 AIWeaponProperties = {
 
 	MP5 = {

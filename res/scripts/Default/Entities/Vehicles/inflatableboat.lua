@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Vehicles/inflatableboat.lua
 -- inflatable boat script
 -- created by Kirill Bulatsev
 	InflatableBoat = {

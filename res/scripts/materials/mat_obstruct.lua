@@ -1,3 +1,4 @@
+-- : ./materials/mat_obstruct.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 Materials["mat_obstruct"] = {

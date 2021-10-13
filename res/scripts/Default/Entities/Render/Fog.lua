@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Render/Fog.lua
 Fog = {
 	type = "FogController",
 	Properties = {	

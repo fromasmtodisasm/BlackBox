@@ -1,3 +1,4 @@
+-- : ./Default/Entities/AI/MercSniper_x.lua
 MercSniper_x = {
 
 	PropertiesInstance = {

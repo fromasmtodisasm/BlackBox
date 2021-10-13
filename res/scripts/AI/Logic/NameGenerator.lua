@@ -1,3 +1,4 @@
+-- : ./AI/Logic/NameGenerator.lua
 NameGenerator = {
 		HumanTable = 	{
 			{"Abbott",  0 }, 

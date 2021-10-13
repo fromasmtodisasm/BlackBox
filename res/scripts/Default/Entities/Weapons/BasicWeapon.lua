@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/BasicWeapon.lua
 
 Script:LoadScript("scripts/default/hud/DefaultZoomHUD.lua");
 Script:LoadScript("scripts/default/hud/AimModeZoomHUD.lua");

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Weapons/Rock.lua
 Script:LoadScript("scripts/default/entities/weapons/BaseHandGrenade.lua");
 Script:LoadScript("scripts/default/entities/weapons/AIWeapons.lua");
 

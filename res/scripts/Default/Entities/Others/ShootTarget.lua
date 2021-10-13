@@ -1,3 +1,4 @@
+-- : ./Default/Entities/Others/ShootTarget.lua
 ShootTarget = {
 	Properties = {
 		objectModel="Objects/Natural/Bushes/cliff_bush_a1.cgf",

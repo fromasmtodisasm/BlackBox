@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/SHARED/Idles/Idle_IndoorSmoke.lua
 -- go for a smoke
 -- Created 2002-12-10 Amanda
 --------------------------

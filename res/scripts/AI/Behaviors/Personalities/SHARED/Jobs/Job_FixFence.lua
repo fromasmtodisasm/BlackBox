@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_FixFence.lua
 --A character with this behavior will look at 20 meters around him to find an AIAnchor AIANCHOR_FENCE.
 -- If successful he will approach this anchor 
 --	run  _fixfence_start 

@@ -1,3 +1,4 @@
+-- : ./Default/Entities/PICKUPS/KeyCard1.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local funcPick=function (self,collider)		

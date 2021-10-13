@@ -1,3 +1,4 @@
+-- : ./Default/Entities/PICKUPS/AmmoAG36Grenade.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local params={

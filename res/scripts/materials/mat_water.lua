@@ -1,3 +1,4 @@
+-- : ./materials/mat_water.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_water"] = {
 	type="water",

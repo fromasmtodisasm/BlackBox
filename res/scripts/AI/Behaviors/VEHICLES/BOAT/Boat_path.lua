@@ -1,3 +1,4 @@
+-- : ./AI/Behaviors/VEHICLES/BOAT/Boat_path.lua
 
 AIBehaviour.Boat_path = {
 	Name = "Boat_path",
