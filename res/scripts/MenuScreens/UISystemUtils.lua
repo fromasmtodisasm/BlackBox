@@ -61,16 +61,13 @@ function UI:CheckCutSceneDrive()
 	local lang = getglobal("g_language")
 	lang = lang or "english"
 	szCutSceneFolder = szCutSceneFolder:gsub("&language&", lang);
-	if (true) then
-		return;
-	end
 	
 	UI.szCutSceneDrive = "./";
 	
 	local FileList = System:ScanDirectory("./"..szCutSceneFolder, SCANDIR_FILES);
 	local CutSceneList = {};
 
-	for i, szFileName in FileList do
+	for i, szFileName in pairs(FileList) do
 		if (strlower(strsub(szFileName, -4)) == ".bik") then
 			tinsert(CutSceneList, szFileName);
 		end
@@ -86,6 +83,9 @@ function UI:CheckCutSceneDrive()
 	
 	if (szCDPath) then
 		UI.szCutSceneDrive = strsub(szCDPath, 1, 2).."/";
+	end
+	if (UI.szCutSceneDrive == nil) then
+		System:Error("UI.szCutSceneDrive is nil")
 	end
 end
 
@@ -346,6 +346,7 @@ end
 -- deactivates every screen, except the backscreen and "chosen one"
 function GotoPage(PageName, Back, HideBackground)
 
+	System:Log("GotoPage: "..PageName)
 	if (not UI) then
 		return;
 	end
@@ -448,6 +449,7 @@ function AddUISideMenu(Page, ItemList)
 				tabstop = iTabStop,
 
 				OnCommand = function(Sender)
+					System:Log("AdduiSideMenu:OnCommand") --debug
 					if (type(Sender.user.target) == "string") then
 						GotoPage(Sender.user.target, Sender.user.showback);
 					else

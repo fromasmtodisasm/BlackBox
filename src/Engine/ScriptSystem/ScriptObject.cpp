@@ -139,9 +139,11 @@ void CScriptObject::Delegate(IScriptObject* pMetatable)
 	PushRef(pMetatable);
 	lua_rawset(L, -3); // sets metatable.__index = metatable
 
+	#if 0
 	lua_pushstring(L, "__newindex"); // push key.
 	PushRef(pMetatable);
 	lua_rawset(L, -3); // sets metatable.__newindex = metatable
+	#endif
 	lua_pop(L, 1);	   // pop metatable from stack.
 
 	SetMetatable(pMetatable);
@@ -870,6 +872,10 @@ void CScriptObject::Dump(IScriptObjectDumpSink* p)
 			case LUA_TTABLE:
 				if (strcmp(sName, "__index") != 0)
 					p->OnElementFound(sName, ScriptVarType::Object);
+				else
+				{
+					CryLog("Found __index method");
+				}
 				break;
 			case LUA_TFUNCTION:
 				p->OnElementFound(sName, ScriptVarType::Function);

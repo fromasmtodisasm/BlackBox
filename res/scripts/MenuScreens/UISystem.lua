@@ -244,6 +244,7 @@ end
 --------------------------------------------------------------------------------
 -- /param bSwitchOn 1=on, 0=off
 function UI:CanSwitch( bSwitchOn )
+	System:Log("UI:CanSwitch");		-- debugging
 	if (bSwitchOn) then
 		if ((UI.bCanSwitchOn and UI.bCanSwitchOn ~= 0) or (not UI.bCanSwitchOn)) then
 			return 1;

@@ -1,6 +1,7 @@
 #include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
 #include <BlackBox\3DEngine\I3DEngine.hpp>
 #include <BlackBox\System\ITimer.hpp>
+#include <BlackBox\System\File\ICryPak.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -8,7 +9,10 @@
 
 _DECLARE_SCRIPTABLEEX(CScriptObjectSystem)
 
-#define SCANDIR_FILES 0
+// modes of ScanDirectory function
+#define SCANDIR_ALL 0
+#define SCANDIR_FILES 1
+#define SCANDIR_SUBDIRS 2
 
 CScriptObjectSystem::CScriptObjectSystem(ISystem* pSystem, IScriptSystem* pSS)
   :
@@ -62,7 +66,9 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 
   SCRIPT_REG_FUNC(IsDevModeEnable);
 
-  gEnv->pScriptSystem->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
+  	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
+	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
+	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_SUBDIRS", SCANDIR_SUBDIRS);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
@@ -218,17 +224,86 @@ int CScriptObjectSystem::LoadImage(IFunctionHandler* pH)
 {
 	return LoadTexture(pH);
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+inline bool Filter(struct __finddata64_t& fd, int nScanMode)
+{
+	if (!strcmp(fd.name, ".") || !strcmp(fd.name, ".."))
+		return false;
+
+	switch (nScanMode)
+	{
+	case SCANDIR_ALL:
+		return true;
+	case SCANDIR_SUBDIRS:
+		return 0 != (fd.attrib & _A_SUBDIR);
+	case SCANDIR_FILES:
+		return 0 == (fd.attrib & _A_SUBDIR);
+	default:
+		return false;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+inline bool Filter(struct _finddata_t& fd, int nScanMode)
+{
+	if (!strcmp(fd.name, ".") || !strcmp(fd.name, ".."))
+		return false;
+
+	switch (nScanMode)
+	{
+	case SCANDIR_ALL:
+		return true;
+	case SCANDIR_SUBDIRS:
+		return 0 != (fd.attrib & _A_SUBDIR);
+	case SCANDIR_FILES:
+		return 0 == (fd.attrib & _A_SUBDIR);
+	default:
+		return false;
+	}
+}
+
 int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 {
-	SCRIPT_CHECK_PARAMETERS(2);
-	const char* str;
+	if (pH->GetParamCount() < 1)
+		return pH->EndFunction();
 
-	pH->GetParam(1, str);
-	CryLog("Scanin directory: %s", str);
-	SmartScriptObject fileList(gEnv->pScriptSystem, false);
+	SmartScriptObject pObj(m_pSS);
+	int				  k = 1;
 
-	fileList->SetAt(0, "dummy_directory");
-	return pH->EndFunction(fileList);
+	const char* pszFolderName;
+	if (!pH->GetParam(1, pszFolderName))
+		return pH->EndFunction(*pObj);
+
+	int nScanMode = SCANDIR_SUBDIRS;
+
+	if (pH->GetParamCount() > 1)
+		pH->GetParam(2, nScanMode);
+
+	{
+		_finddata_t c_file;
+		intptr_t	hFile;
+
+		if ((hFile = gEnv->pCryPak->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
+		{
+			return pH->EndFunction(*pObj);
+		}
+		else
+		{
+			do
+			{
+				if (Filter(c_file, nScanMode))
+				{
+					pObj->SetAt(k, c_file.name);
+					k++;
+				}
+			} while (gEnv->pCryPak->FindNext(hFile, &c_file) == 0);
+
+			gEnv->pCryPak->FindClose(hFile);
+		}
+	}
+
+	return pH->EndFunction(*pObj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

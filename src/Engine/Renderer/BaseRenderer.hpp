@@ -208,12 +208,14 @@ class ShaderMan
 		path << "res/shaders/fx/" << name << ".fx";
 		if (g_FxParser->Parse(path.str().data(), &pEffect))
 		{
+			#if 0
 			CryLog("Dumping shaders of effect: %s", name.data());
 			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
 			{
 				auto& str = pEffect->GetShader(i).name;
 				CryLog("[%s]", str.c_str());
 			}
+			#endif
 			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX);
 			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT);
 			if (!vs || !fs)

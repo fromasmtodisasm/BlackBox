@@ -311,7 +311,8 @@ bool CD3DRenderer::InitOverride()
     m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
     //m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 
-	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
+	//Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
+	Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
 	SetClearColor(c);
 
     return true;

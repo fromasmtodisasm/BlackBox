@@ -757,7 +757,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	// execute the "main"-script (to pre-load other scripts, etc.)
 	m_pScriptSystem->ExecuteFile("scripts/main.lua");
 	m_pScriptSystem->BeginCall("Init");
-	//m_pScriptSystem->PushFuncParam(0);
+	m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
 
 	// initialize the surface-manager

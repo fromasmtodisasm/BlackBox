@@ -174,7 +174,11 @@ bool CSoundSystem::Init()
 	m_bMixerInited = true;
 
 	REGISTER_CVAR(s_MusicEnable, s_MusicEnable, 0, "Enable/Disable music [1/0]");
+	REGISTER_CVAR(s_SoundEnable, s_SoundEnable, 0, "Enable/Disable Sound [1/0]");
+
 	REGISTER_CVAR(s_MusicVolume, s_MusicVolume, 0, "Music volume [0..1]");
+	REGISTER_CVAR(s_SFXVolume, s_SFXVolume, 0, "SFX volume [0..1]");
+
 
 	return true;
 }

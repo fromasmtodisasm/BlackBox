@@ -4,7 +4,9 @@ class CSound;
 struct SSoundCvars
 {
 	int	  s_MusicEnable = 1;
+	int	  s_SoundEnable = 1;
 	float s_MusicVolume = 1.f;
+	float s_SFXVolume	= 1.f;
 };
 
 class CSoundSystem : 

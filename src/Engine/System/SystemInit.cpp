@@ -481,7 +481,7 @@ bool CSystem::Init()
 
 	//====================================================
 	Log("Initialize Game");
-	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
+	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "TestGame"))
 	{
 		return false;
 	}
