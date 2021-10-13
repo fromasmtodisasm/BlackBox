@@ -138,7 +138,7 @@ public:
 	virtual void GetMemoryUsage(ICrySizer* pSizer) override
 	{
 	}
-	vector2f m_Size = vector2f(14,14);
+	vector2f m_Size = vector2f(12,12);
 	color4f	 m_Color = color4f(1.f, 1.f, 1.f, 1.f);
 	IFont*	 m_pFont;
 };

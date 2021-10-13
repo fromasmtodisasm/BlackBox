@@ -25,15 +25,6 @@ _DECLARE_SCRIPTABLEEX(CUIEditBox);
 #define CONTROLDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL))
 #define SHIFTDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT))
 
-//FIXME: remove it
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
 ////////////////////////////////////////////////////////////////////// 
 CUIEditBox::CUIEditBox()
 : m_iHAlignment(UIALIGN_LEFT),

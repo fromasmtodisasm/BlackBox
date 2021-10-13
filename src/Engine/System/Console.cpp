@@ -1175,7 +1175,7 @@ void CXConsole::Update()
 		const float fHitchDelay = 1.0f / 10.0f;       // in sec. Very low, but still reasonable frame-rate (debug builds)
 
 		m_fRepeatTimer -= gEnv->pTimer->GetRealFrameTime();                     // works even when time is manipulated
-		// m_fRepeatTimer -= gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);		// can be used once ETIMER_UI works even with t_FixedTime
+		m_fRepeatTimer -= gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);		// can be used once ETIMER_UI works even with t_FixedTime
 
 		if (m_fRepeatTimer <= 0.0f)
 		{
@@ -1232,10 +1232,10 @@ void CXConsole::Draw()
 	{
 		// cursor blinking
 		{
-			m_fCursorBlinkTimer += gEnv->pTimer->GetRealFrameTime();                      // works even when time is manipulated
-			//	m_fCursorBlinkTimer += gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);					// can be used once ETIMER_UI works even with t_FixedTime
+			m_fCursorBlinkTimer += gEnv->pTimer->GetRealFrameTime();			  // works even when time is manipulated
+			//m_fCursorBlinkTimer += gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI); // can be used once ETIMER_UI works even with t_FixedTime
 
-			const float fCursorBlinkDelay = 100.f;           // in sec (similar to Windows default but might differ from actual setting)
+			const float fCursorBlinkDelay = 0.5f;           // in sec (similar to Windows default but might differ from actual setting)
 
 			if (m_fCursorBlinkTimer > fCursorBlinkDelay)
 			{
@@ -1905,12 +1905,14 @@ void CXConsole::AddCommandToHistory(const char* szCommand)
 bool CXConsole::OnInputEvent(const SInputEvent& event)
 {
 #ifdef PROCESS_XCONSOLE_INPUT
+	if (event.keyId == eKI_SYS_Commit)
+		return false;
 
 	// Process input event
 	if (event.state == eIS_Released && m_bConsoleActive)
 		m_nRepeatEvent.keyId = eKI_Unknown;
 
-	if (event.state != eIS_Pressed)
+	if (event.state != eIS_Pressed && event.state != eIS_Changed)
 		return false;
 
 	// restart cursor blinking

@@ -200,7 +200,9 @@ namespace Legacy
 		//! check for key pressed and held
 		virtual bool KeyDown(int p_key) override
 		{
-			return false;
+			auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));	
+			return m_pKeyboard->InputState(key, EInputState::eIS_Down);
+
 		}
 
 		//! check for key pressed only once

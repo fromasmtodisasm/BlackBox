@@ -479,7 +479,7 @@ bool CSystem::Init()
 		return false;
 	//LoadCrynetwork();
 	m_pFont = m_env.pRenderer->GetIFont();
-	m_pFont->Init("arial.ttf", 14,14);
+	m_pFont->Init("arial.ttf", 12,12);
 
 	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
 	m_pBlackBoxFont->Init("arial.ttf", 24,24);

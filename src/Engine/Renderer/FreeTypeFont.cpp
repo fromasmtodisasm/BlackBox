@@ -105,6 +105,11 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 	Legacy::Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 
+	color[0] = cur_c.g;
+	color[1] = cur_c.b;
+	color[2] = 1.f;
+	color[3] = cur_c.r;
+	cur_c = Legacy::Vec4(color[0], color[1], color[2], color[3]);
 	// Iterate through all characters
 	const char* c;
 	const char* end = text.data() + text.size();

@@ -111,14 +111,14 @@ CLinuxInput& CLinuxInputDevice::GetLinuxInput() const
 
 void CLinuxInputDevice::PostEvent(SInputSymbol* pSymbol, unsigned keyMod)
 {
-  SInputEvent event;
-  event.keyName = pSymbol->name;
-  event.state = pSymbol->state;
-  event.deviceType = pSymbol->deviceType;
-  event.modifiers = CSDLKeyboard::ConvertModifiers(keyMod);
-  event.value = pSymbol->value;
-  event.keyId = pSymbol->keyId;
-  GetLinuxInput().PostInputEvent(event);
+	SInputEvent event;
+	event.keyName	 = pSymbol->name;
+	event.state		 = pSymbol->state;
+	event.deviceType = pSymbol->deviceType;
+	event.modifiers	 = CSDLKeyboard::ConvertModifiers(keyMod);
+	event.value		 = pSymbol->value;
+	event.keyId		 = pSymbol->keyId;
+	GetLinuxInput().PostInputEvent(event);
 }
 
 void CLinuxInput::Update(bool bFocus)
