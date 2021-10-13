@@ -450,7 +450,7 @@ function AddUISideMenu(Page, ItemList)
 				tabstop = iTabStop,
 
 				OnCommand = function(Sender)
-					System:Log("AdduiSideMenu:OnCommand") --debug
+					-- System:Log("AdduiSideMenu:OnCommand") --debug
 					if (type(Sender.user.target) == "string") then
 						GotoPage(Sender.user.target, Sender.user.showback);
 					else

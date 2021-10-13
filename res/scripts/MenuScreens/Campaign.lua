@@ -301,7 +301,7 @@ UI.PageCampaignStart=
 			UI.PageCampaignStart.GUI.MapList:Clear();			
 			UI.PageCampaignStart.DefiantTable = {};
 			
-			for i, Table in DEFIANT do
+			for i, Table in pairs(DEFIANT) do
 				UI.PageCampaignStart.DefiantTable[UI.PageCampaignStart.GUI.MapList:AddItem("@Level"..Table[1])] = Table;
 			end
 
@@ -699,7 +699,7 @@ function UI.PageCampaign:SetAIDifficulty(difficultylevel)
 	setglobal("game_DifficultyLevel", difficultylevel);
 
 	if tonumber(getglobal("game_DifficultyLevel"))==0 then		-- EASY
-		System:Log("UI.PageCampaign:SetAIDifficulty easy");
+		-- System:Log("UI.PageCampaign:SetAIDifficulty easy"); -- debug
 		setglobal("game_Accuracy",0.4);
 		setglobal("game_Aggression",0.3);
 		setglobal("game_Health",0.5);
@@ -708,7 +708,7 @@ function UI.PageCampaign:SetAIDifficulty(difficultylevel)
 		setglobal("ai_SOM_SPEED",1.2);
 	
 	elseif tonumber(getglobal("game_DifficultyLevel"))==1 then	-- MEDIUM
-		System:Log("UI.PageCampaign:SetAIDifficulty medium");
+		-- System:Log("UI.PageCampaign:SetAIDifficulty medium");
 		setglobal("game_Accuracy",0.5);
 		setglobal("game_Aggression",0.5);
 		setglobal("game_Health",0.7);
@@ -716,7 +716,7 @@ function UI.PageCampaign:SetAIDifficulty(difficultylevel)
 		setglobal("ai_allow_accuracy_increase",0);
 		setglobal("ai_SOM_SPEED",1.5);
 	elseif tonumber(getglobal("game_DifficultyLevel"))==2 then	-- CHALLENGING
-		System:Log("UI.PageCampaign:SetAIDifficulty challenging");
+		-- System:Log("UI.PageCampaign:SetAIDifficulty challenging");
 		setglobal("game_Accuracy",0.8);
 		setglobal("game_Aggression",0.8);
 		setglobal("game_Health",1.0);
@@ -724,7 +724,7 @@ function UI.PageCampaign:SetAIDifficulty(difficultylevel)
 		setglobal("ai_allow_accuracy_increase",0);
 		setglobal("ai_SOM_SPEED",1.5);
 	elseif tonumber(getglobal("game_DifficultyLevel"))==3 then	-- BRUTAL
-		System:Log("UI.PageCampaign:SetAIDifficulty brutal");
+		-- System:Log("UI.PageCampaign:SetAIDifficulty brutal");
 		setglobal("game_Accuracy",1.1);
 		setglobal("game_Aggression",1.1);
 		setglobal("game_Health",1.2);
@@ -732,7 +732,7 @@ function UI.PageCampaign:SetAIDifficulty(difficultylevel)
 		setglobal("ai_allow_accuracy_increase",1);
 		setglobal("ai_SOM_SPEED",1.8);
 	elseif tonumber(getglobal("game_DifficultyLevel"))==4 then	-- REALISTIC
-		System:Log("UI.PageCampaign:SetAIDifficulty realistic");
+		-- System:Log("UI.PageCampaign:SetAIDifficulty realistic");
 		setglobal("game_Accuracy",2.0);
 		setglobal("game_Aggression",2.0);
 		setglobal("game_Health",1.5);

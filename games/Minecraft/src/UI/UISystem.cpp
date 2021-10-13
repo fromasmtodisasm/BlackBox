@@ -1084,11 +1084,6 @@ int CUISystem::ActivateScreen(CUIScreen *pScreen)
 {
 	CUIScreenItor pItor = std::find(m_vScreenList.begin(), m_vScreenList.end(), pScreen);
 
-	if (pScreen->m_szName == "MainScreen")
-	{
-		CryLog("Here!!!");
-	}
-
 	if (pItor != m_vScreenList.end())
 	{
 		if (!pScreen->m_bActive)
