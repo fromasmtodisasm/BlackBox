@@ -153,7 +153,7 @@ function UI:OnIdle(fIdleTime)
 		if (UI:GetScreen("DemoLoop")) then
 			if ((UI:IsScreenActive("DemoLoop") == 0) and (UI:IsScreenActive("MainScreen") ~= 0) and (UI:IsScreenActive("MainScreenInGame") ~= 0)) then
 				UI.bWasIdle = 1;
-				UI:ActivateScreen("DemoLoop");
+				-- UI:ActivateScreen("DemoLoop");
 			end
 		end
 	end

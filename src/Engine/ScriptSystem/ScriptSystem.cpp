@@ -122,10 +122,10 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	// Ensure the debugger is in the correct mode
 	//EnableDebugger((ELuaDebugMode)m_cvar_script_debugger->GetIVal());
 
-	//////////////////////////////////////////////////////////////////////////
-	// Execute common lua file.
-	//////////////////////////////////////////////////////////////////////////
-	//ExecuteFile("scripts/common.lua", true, false);
+	// Set global time variable into the script.
+	SetGlobalValue("_time", 0);
+	SetGlobalValue("_frametime", 0);
+	SetGlobalValue("_aitick", 0);
 
 	// Make the error handler available to LUA
 	RegisterErrorHandler();
@@ -136,6 +136,11 @@ bool CScriptSystem::Init(ISystem* pSystem)
 		"1 to trigger on breakpoints and errors\n"
 		"2 to only trigger on errors\n"
 		"Usage: lua_debugger [0/1/2]");
+
+	//////////////////////////////////////////////////////////////////////////
+	// Execute common lua file.
+	//////////////////////////////////////////////////////////////////////////
+	ExecuteFile("scripts/common.lua", true, false);
 
 	return L ? true : false;
 }

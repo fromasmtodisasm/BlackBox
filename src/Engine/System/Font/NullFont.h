@@ -20,6 +20,10 @@
 
 	//#include <CryFont/IFont.h>
 	#include <IFont.h>
+#include <BlackBox/Renderer/IFont.hpp>
+#include <codecvt>
+#pragma warning(push)
+#pragma warning(disable: 4244)
 
 class CNullCryFont : public IFFont
 {
@@ -65,6 +69,7 @@ public:
 	}
 	virtual void SetSize(const vector2f& size) override
 	{
+		//m_Size = size;
 	}
 	virtual vector2f& GetSize() override
 	{
@@ -72,11 +77,13 @@ public:
 	}
 	virtual float GetCharWidth() override
 	{
-		return 0.0f;
+		//return 0.0f;
+		return m_Size.x;
 	}
 	virtual float GetCharHeight() override
 	{
-		return 0.0f;
+		//return 0.0f;
+		return m_Size.y;
 	}
 	virtual void SetSameSize(bool bSameSize) override
 	{
@@ -97,17 +104,23 @@ public:
 	}
 	virtual vector2f GetTextSize(const char* szMsg, const bool bASCIIMultiLine = true) override
 	{
-		return vector2f();
+		return {m_pFont->TextWidth(szMsg), m_Size.y};
 	}
 	virtual void DrawStringW(float x, float y, const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
+		std::wstring ws(swStr);
+		std::string str(ws.begin(), ws.end());
+
+		m_pFont->RenderText(str.data(), x, y,1.f, m_Color.v);
 	}
 	virtual void DrawWrappedStringW(float x, float y, float w, const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
 	}
 	virtual vector2f GetTextSizeW(const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
-		return vector2f();
+		std::wstring ws(swStr);
+		std::string str(ws.begin(), ws.end());
+		return GetTextSize(str.data());
 	}
 	virtual vector2f GetWrappedTextSizeW(const wchar_t* swStr, float w, const bool bASCIIMultiLine = true) override
 	{
@@ -124,7 +137,9 @@ public:
 	virtual void GetMemoryUsage(ICrySizer* pSizer) override
 	{
 	}
-	vector2f m_Size;
+	vector2f m_Size = vector2f(14,14);
+	color4f	 m_Color = color4f(1.f, 1.f, 1.f, 1.f);
+	IFont*	 m_pFont;
 };
 
 class CCryNullFont : public ICryFont
@@ -137,10 +152,11 @@ public:
 	virtual void	GetMemoryUsage(ICrySizer* pSizer)			{}
 	virtual string  GetLoadedFontNames() const                  { return ""; }
 
-private:
+//private:
 	static CNullCryFont ms_nullFont;
 };
 
+#pragma warning(pop)
 #endif // USE_NULLFONT
 
 #endif

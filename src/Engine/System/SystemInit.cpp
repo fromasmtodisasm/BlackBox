@@ -478,6 +478,14 @@ bool CSystem::Init()
 	if (!InitNetwork())
 		return false;
 	//LoadCrynetwork();
+	m_pFont = m_env.pRenderer->GetIFont();
+	m_pFont->Init("arial.ttf", 14,14);
+
+	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
+	m_pBlackBoxFont->Init("arial.ttf", 24,24);
+
+	m_Font.ms_nullFont.m_pFont = m_pFont;
+
 
 	//====================================================
 	Log("Initialize Game");
@@ -496,12 +504,6 @@ bool CSystem::Init()
 	Tests();
 
 	m_env.pRenderer->RegisterCallbackClient(this);
-
-	m_pFont = m_env.pRenderer->GetIFont();
-	m_pFont->Init("arial.ttf", 16,16);
-
-	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
-	m_pBlackBoxFont->Init("arial.ttf", 24,24);
 
 	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
 	return true;

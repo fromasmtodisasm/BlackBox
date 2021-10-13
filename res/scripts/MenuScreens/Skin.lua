@@ -21,6 +21,7 @@ function DefOnMouseLeave(self)
 end
 
 function DefOnGotFocus(self)
+	System:Log("GetFocus: "..self.GetName());
 	self:SetBorderColor(UI.szFocusColor);
 end
 
@@ -33,6 +34,7 @@ function DefOnMouseEnterSideButton(self)
 end
 
 function DefOnGotFocusButton(self)
+	System:Log("GetFocus: "..self.GetName());
 	self:SetOverState(1);
 end
 
