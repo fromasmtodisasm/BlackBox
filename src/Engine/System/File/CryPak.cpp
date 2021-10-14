@@ -31,11 +31,15 @@ void CCryPak::Release()
 bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
 	int	 err;
+	CryLog("$3Open Pack: %s", pName);
 	auto a = zip_open(pName, ZIP_RDONLY, &err);
-	if (a) {
-		m_Archives.insert({string(pName), a});
+	if (!a) {
+		auto e = zip_get_error(a);
+		CryError("[ZIP] %s", e);
+		return false;
 	}
-	return false;
+	m_Archives.insert({string(pName), a});
+	return true;
 }
 
 bool CCryPak::OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -184,17 +188,17 @@ int CCryPak::Ungetc(int c, FILE* file)
 
 intptr_t CCryPak::FindFirst(const char* pDir, _finddata_t* fd)
 {
-	return intptr_t();
+	return _findfirst(pDir, fd);
 }
 
 int CCryPak::FindNext(intptr_t handle, _finddata_t* fd)
 {
-	return -1;
+	return _findnext(handle, fd);
 }
 
 int CCryPak::FindClose(intptr_t handle)
 {
-	return 0;
+	return _findclose(handle);
 }
 
 FILETIME CCryPak::GetModificationTime(FILE* f)
@@ -204,7 +208,7 @@ FILETIME CCryPak::GetModificationTime(FILE* f)
 
 bool CCryPak::MakeDir(const char* szPath)
 {
-	return false;
+	return _mkdir(szPath);
 }
 
 ICryArchive* CCryPak::OpenArchive(const char* szPath, unsigned nFlags /* = FLAGS_PATH_REAL*/)

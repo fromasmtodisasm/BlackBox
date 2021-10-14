@@ -91,6 +91,8 @@ public:
 	virtual void		 RemoveTexture(unsigned int TextureId) override;
 	virtual void		 RemoveTexture(ITexPic* pTexPic) override;
 
+  private:
+	int NextTextureIndex();
 
   private:
 
@@ -105,6 +107,10 @@ public:
 	ID3D10DepthStencilState* m_pDepthStencilState{};
 
 	std::vector<Image2D> m_DrawImages;
+
+	std::map<string, int>												m_LoadedTextureNames;
+	std::map<int, std::pair<ID3DTexture2D*, ID3D10ShaderResourceView*>> m_TexturesMap;
+	int																	m_NumLoadedTextures{};
 };
 
 ID3D10Device* GetDevice();

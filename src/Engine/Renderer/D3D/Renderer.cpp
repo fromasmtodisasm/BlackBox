@@ -1,5 +1,6 @@
 ﻿#include "Renderer.h"
 #include <BlackBox/Core/Path.hpp>
+#include "DDSTextureLoader.h"
 
 // Globals
 ID3D10ShaderResourceView* GlobalResources::FontAtlasRV{};
@@ -375,28 +376,96 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 
 unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
 {
-	CryLog("Requested texture: %s", filename);
-	string path, fn, ext;
-	PathUtil::Split(filename, path, fn, ext);
-	if (ext.size() == 0)
+	string path(filename), fn, ext;
+	int	   texture_index = -1;
+	bool   is_dds = false;
+	auto   Pack	  = gEnv->pCryPak;
+	//PathUtil::Split(filename, path, fn, ext);
+	auto Ext = PathUtil::GetExt(filename);
+	if (Ext[0] == 0)
 	{
-		path += ".dds";
+		path = (string(filename) +".dds");
+		is_dds = true;
+	}
+	else if (!strcmp(Ext, "dds"))
+	{
+		is_dds = true;	
 	}
 
-	auto file = gEnv->pCryPak->FOpen(path.data(), "r");
+	auto file = Pack->FOpen(path.data(), "r");
+	bool loaded = false;
 	if (!file)
 	{
 		path = "res/" + path;
-		file = gEnv->pCryPak->FOpen(path.data(), "r");
+		file = Pack->FOpen(path.data(), "r");
 		if (!file)
 			CryError("Failed open file");
+		else
+		{
+			loaded = true;
+			#if 0
+			Pack->FSeek(file, 0, SEEK_END);
+			auto				 texture_size = Pack->FTell(file);
+			Pack->FSeek(file, 0, SEEK_SET);
+			std::vector<uint8_t> blob(texture_size);
+			Pack->FRead(&blob[0], texture_size, 1, file);
+			#endif
+		}
+
+		Pack->FClose(file);
 	}
-	else
+	if (loaded)
 	{
-		CryLog("Loaded", filename);
+		D3DX10_IMAGE_LOAD_INFO loadInfo;
+		ZeroMemory(&loadInfo, sizeof(D3DX10_IMAGE_LOAD_INFO));
+		loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+		ID3D10Resource* pTexture{};
+		ID3D10ShaderResourceView* pSRView = NULL;
+		HRESULT			HResult{};
+
+		#if 1
+		#if 0
+		HResult = D3DX10CreateTextureFromFile(
+			m_pd3dDevice,
+			path.data(),
+			//&loadInfo,
+			nullptr,
+			nullptr,
+			&pTexture,
+			&HResult);
+		#else
+		HResult = D3DX10CreateShaderResourceViewFromFile(
+			m_pd3dDevice,
+			path.data(),
+			//&loadInfo,
+			nullptr,
+			nullptr,
+			&pSRView,
+			&HResult);
+
+		#endif
+		if (SUCCEEDED(HResult))
+		{
+			CryLog("$3Loaded", filename);
+			texture_index = NextTextureIndex();
+			{
+				{
+					ID3D10Texture2D* pTexture2D;
+					pSRView->GetResource((ID3D10Resource**)&pTexture2D);
+					//pTexture2D->GetDesc(&desc);
+					m_TexturesMap[texture_index] = std::make_pair(pTexture2D, pSRView);
+					m_LoadedTextureNames[filename] = texture_index;
+				}
+	
+			}
+		}
+		else
+		{
+			CryError("Failed load texture: %s", filename);
+		}
+		#endif
 	}
-	gEnv->pCryPak->FClose(file);
-	NOT_IMPLEMENTED_V;
+	return texture_index;
 }
 
 void CD3DRenderer::RemoveTexture(unsigned int TextureId)
@@ -407,6 +476,11 @@ void CD3DRenderer::RemoveTexture(unsigned int TextureId)
 void CD3DRenderer::RemoveTexture(ITexPic* pTexPic)
 {
 	NOT_IMPLEMENTED;
+}
+
+int CD3DRenderer::NextTextureIndex()
+{
+	return m_NumLoadedTextures++;
 }
 
 void *CD3DRenderer::EF_Query(int Query, int Param)
