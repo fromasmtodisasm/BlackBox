@@ -2,12 +2,15 @@
 #define IRENDER_EXPORTS
 
 #include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
+
+#include <BlackBox/System/File/ICryPak.hpp>
 
 #ifdef DX_RENDERER
 #	include <BlackBox/Core/Platform/Windows.hpp>
@@ -16,6 +19,7 @@
 #	include <d3d11.h>
 //#	include <d3dx11.h>
 #	include <d3dx10.h>
+#	include "D3D/DDSTextureLoader.h"
 
 #	define ID3DDevice ID3D11Device
 #	define ID3DRenderTargetView ID3D11RenderTargetView

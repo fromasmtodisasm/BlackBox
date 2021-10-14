@@ -68,6 +68,8 @@ add_sources(
 	"D3D/Renderer.cpp"
 	"D3D/BufferManager.cpp"
 	"D3D/Shader.cpp"
+	"D3D/DDSTextureLoader.h"
+	"D3D/DDSTextureLoader.cpp"
 	)
 
 add_sources(

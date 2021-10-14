@@ -99,3 +99,7 @@ if(NEED_VC)
 endif()
 
 target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_package(libzip)
+add_package(libzippp)
+target_link_libraries(${THIS_PROJECT} PUBLIC libzip::zip libzippp::libzippp)

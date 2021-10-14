@@ -1,16 +1,15 @@
 #ifndef LINUX
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/System/File/CryPak.hpp>
+#	include <BlackBox/Core/Platform/Platform.hpp>
+#	include <BlackBox/Core/Platform/Windows.hpp>
+#	include <BlackBox/System/File/CryPak.hpp>
 
-#include <algorithm>
-#include <string>
-#include <cstdarg>
-#include <cctype>
+#	include <algorithm>
+#	include <cctype>
+#	include <cstdarg>
+#	include <string>
 
-CCryPak::CCryPak(IMiniLog * pLog, PakVars * pPakVars, const bool bLvlRes)
-  :
-  m_pLog(pLog)
+CCryPak::CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes)
+	: m_pLog(pLog)
 {
 }
 
@@ -20,51 +19,58 @@ CCryPak::~CCryPak()
 
 bool CCryPak::Init(const char* szBasePath)
 {
-  return false;
+	return false;
 }
 
 void CCryPak::Release()
 {
-  if (this != nullptr)
-    delete this;
+	if (this != nullptr)
+		delete this;
 }
 
-bool CCryPak::OpenPack(const char* pName, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return false;
+	int	 err;
+	auto a = zip_open(pName, ZIP_RDONLY, &err);
+	if (a) {
+		m_Archives.insert({string(pName), a});
+	}
+	return false;
 }
 
-bool CCryPak::OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return false;
+	return false;
 }
 
-bool CCryPak::ClosePack(const char* pName, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+bool CCryPak::ClosePack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return false;
+	return false;
 }
 
-bool CCryPak::OpenPacks(const char* pWildcard, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return false;
+
+	return false;
 }
 
-bool CCryPak::OpenPacks(const char* pBindingRoot, const char* pWildcard, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPacks(const char* pBindingRoot, const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return false;
+	return false;
 }
 
-bool CCryPak::ClosePacks(const char* pWildcard, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+bool CCryPak::ClosePacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return false;
+	return false;
 }
 
 void CCryPak::AddMod(const char* szMod)
 {
 	std::string strPrepend = szMod;
 	strPrepend.replace(strPrepend.begin(), strPrepend.end(), g_cNativeSlash, g_cNonNativeSlash);
-  std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
-    [](unsigned char c){ return std::tolower(c); });
+	std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
+				   [](unsigned char c)
+				   { return std::tolower(c); });
 
 	std::vector<std::string>::iterator strit;
 	for (strit = m_arrMods.begin(); strit != m_arrMods.end(); ++strit)
@@ -80,8 +86,9 @@ void CCryPak::RemoveMod(const char* szMod)
 {
 	std::string strPrepend = szMod;
 	strPrepend.replace(strPrepend.begin(), strPrepend.end(), g_cNativeSlash, g_cNonNativeSlash);
-  std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
-    [](unsigned char c){ return std::tolower(c); });
+	std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
+				   [](unsigned char c)
+				   { return std::tolower(c); });
 
 	std::vector<std::string>::iterator it;
 	for (it = m_arrMods.begin(); it != m_arrMods.end(); ++it)
@@ -97,125 +104,127 @@ void CCryPak::RemoveMod(const char* szMod)
 
 ICryPak::PakInfo* CCryPak::GetPakInfo()
 {
-  return nullptr;
+	return nullptr;
 }
 
 void CCryPak::FreePakInfo(PakInfo*)
 {
 }
 
-FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags/* = 0*/)
+FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0*/)
 {
-  return fopen(pName, mode);
+	return fopen(pName, mode);
 }
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, char* szFileGamePath, int nLen)
 {
-  return fopen((szFileGamePath + std::string(pName)).c_str(), mode);
+	return fopen((szFileGamePath + std::string(pName)).c_str(), mode);
 }
 
 size_t CCryPak::FRead(void* data, size_t length, size_t elems, FILE* handle)
 {
-  return fread(data, length, elems, handle);
+	return fread(data, length, elems, handle);
 }
 
 size_t CCryPak::FWrite(void* data, size_t length, size_t elems, FILE* handle)
 {
-  return fwrite(data, length, elems, handle);
+	return fwrite(data, length, elems, handle);
 }
 
 int CCryPak::FSeek(FILE* handle, long seek, int mode)
 {
-  return fseek(handle, seek, mode);
+	return fseek(handle, seek, mode);
 }
 
 long CCryPak::FTell(FILE* handle)
 {
-  return ftell(handle);
+	return ftell(handle);
 }
 
 int CCryPak::FClose(FILE* handle)
 {
-  return fclose(handle);
+	if (handle)
+		return fclose(handle);
+	return EOF;
 }
 
 int CCryPak::FEof(FILE* handle)
 {
-  return feof(handle);
+	return feof(handle);
 }
 
 int CCryPak::FFlush(FILE* handle)
 {
-  return fflush(handle);
+	return fflush(handle);
 }
 
 int CCryPak::FPrintf(FILE* handle, const char* format, ...)
 {
-  va_list ptr;
-  va_start(ptr, format);
-  auto res = vfprintf(handle, format, ptr);
-  va_end(ptr);
-  return res;
+	va_list ptr;
+	va_start(ptr, format);
+	auto res = vfprintf(handle, format, ptr);
+	va_end(ptr);
+	return res;
 }
 
 char* CCryPak::FGets(char* buffer, int max_count, FILE* file)
 {
-  return fgets(buffer, max_count, file);
+	return fgets(buffer, max_count, file);
 }
 
 int CCryPak::Getc(FILE* file)
 {
-  return getc(file);
+	return getc(file);
 }
 
 int CCryPak::Ungetc(int c, FILE* file)
 {
-  return ungetc(c, file);
+	return ungetc(c, file);
 }
 
 intptr_t CCryPak::FindFirst(const char* pDir, _finddata_t* fd)
 {
-  return intptr_t();
+	return intptr_t();
 }
 
 int CCryPak::FindNext(intptr_t handle, _finddata_t* fd)
 {
-  return -1;
+	return -1;
 }
 
 int CCryPak::FindClose(intptr_t handle)
 {
-  return 0;
+	return 0;
 }
 
 FILETIME CCryPak::GetModificationTime(FILE* f)
 {
-  return FILETIME();
+	return FILETIME();
 }
 
 bool CCryPak::MakeDir(const char* szPath)
 {
-  return false;
+	return false;
 }
 
-ICryArchive* CCryPak::OpenArchive(const char* szPath, unsigned nFlags/* = FLAGS_PATH_REAL*/)
+ICryArchive* CCryPak::OpenArchive(const char* szPath, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-  return nullptr;
+	return nullptr;
 }
 
 const char* CCryPak::GetFileArchivePath(FILE* f)
 {
-  return nullptr;
+	return nullptr;
 }
 
-int CCryPak::RawCompress(const void* pUncompressed, unsigned long* pDestSize, void* pCompressed, unsigned long nSrcSize, int nLevel/* = -1*/)
+int CCryPak::RawCompress(const void* pUncompressed, unsigned long* pDestSize, void* pCompressed, unsigned long nSrcSize, int nLevel /* = -1*/)
 {
-  return 0;
+	return 0;
 }
 
 int CCryPak::RawUncompress(void* pUncompressed, unsigned long* pDestSize, const void* pCompressed, unsigned long nSrcSize)
 {
-  return 0;
+	return 0;
 }
 
 void CCryPak::RecordFileOpen(bool bEnable)

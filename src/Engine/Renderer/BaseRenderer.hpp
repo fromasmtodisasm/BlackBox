@@ -453,6 +453,9 @@ class CRenderer : public RenderCVars
 	virtual void			   Flush() final;
 	virtual void			   Sh_Reload() override;
 	virtual void*			   EF_Query(int Query, int Param) = 0;
+	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true) = 0;
+	virtual void RemoveTexture(unsigned int TextureId) = 0;
+	virtual void RemoveTexture(ITexPic* pTexPic) = 0;
 
 	void ShutDown();
 

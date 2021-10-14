@@ -87,6 +87,11 @@ public:
 	virtual void* EF_Query(int Query, int Param) override;
 
 
+	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true) override;
+	virtual void		 RemoveTexture(unsigned int TextureId) override;
+	virtual void		 RemoveTexture(ITexPic* pTexPic) override;
+
+
   private:
 
 	ID3D10Device* m_pd3dDevice					= NULL;

@@ -1,4 +1,5 @@
 ﻿#include "Renderer.h"
+#include <BlackBox/Core/Path.hpp>
 
 // Globals
 ID3D10ShaderResourceView* GlobalResources::FontAtlasRV{};
@@ -370,6 +371,42 @@ void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
 {
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
+}
+
+unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
+{
+	CryLog("Requested texture: %s", filename);
+	string path, fn, ext;
+	PathUtil::Split(filename, path, fn, ext);
+	if (ext.size() == 0)
+	{
+		path += ".dds";
+	}
+
+	auto file = gEnv->pCryPak->FOpen(path.data(), "r");
+	if (!file)
+	{
+		path = "res/" + path;
+		file = gEnv->pCryPak->FOpen(path.data(), "r");
+		if (!file)
+			CryError("Failed open file");
+	}
+	else
+	{
+		CryLog("Loaded", filename);
+	}
+	gEnv->pCryPak->FClose(file);
+	NOT_IMPLEMENTED_V;
+}
+
+void CD3DRenderer::RemoveTexture(unsigned int TextureId)
+{
+	NOT_IMPLEMENTED;
+}
+
+void CD3DRenderer::RemoveTexture(ITexPic* pTexPic)
+{
+	NOT_IMPLEMENTED;
 }
 
 void *CD3DRenderer::EF_Query(int Query, int Param)
