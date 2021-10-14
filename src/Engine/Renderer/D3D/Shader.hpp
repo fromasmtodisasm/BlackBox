@@ -60,7 +60,7 @@ public:
 	void SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen);
 	static CShader* LoadBinaryShader(std::string_view name, int flags, uint64 nMaskGen);
 
-	static CHWShader* LoadFromEffect(PEffect pEffect, Type type);
+	static CHWShader* LoadFromEffect(PEffect pEffect, Type type, int technique = 0, int pass = 0);
 	static CHWShader* Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory);
 	static CHWShader* LoadFromFile(const std::string_view text, IShader::Type type, const char* pEntry);
 	static CHWShader* LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry);

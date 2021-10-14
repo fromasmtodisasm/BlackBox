@@ -91,6 +91,10 @@ public:
 	virtual void		 RemoveTexture(unsigned int TextureId) override;
 	virtual void		 RemoveTexture(ITexPic* pTexPic) override;
 
+	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
+
+	int CreateEmptyTexture(Vec2 size, color4f color);
+
   private:
 	int NextTextureIndex();
 

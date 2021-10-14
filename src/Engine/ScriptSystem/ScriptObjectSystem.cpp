@@ -185,9 +185,6 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 
 int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 {
-	#if 0
-	CryError("Function [%s]not implemented", __FUNCTION__);
-	#endif
 	const char* name;
 	if (pH->GetParams(name))
 	{
@@ -199,7 +196,6 @@ int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 		return pH->EndFunction(pUserData);
 	}
 	return pH->EndFunctionNull();
-	//NOT_IMPLEMENTED_V;
 }
 
 int CScriptObjectSystem::Log(IFunctionHandler* pH)

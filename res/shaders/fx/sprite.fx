@@ -29,18 +29,41 @@ HLSLShader
     Texture2D text : register(t0);
     SamplerState textSampler : register(s0);
 
-    float4 PSMain(VsOutput IN) : SV_Target0
+    float4 Font(VsOutput IN) : SV_Target0
     {    
         return IN.Color * float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
+    }
+
+    float4 TexturedQuad(VsOutput IN) : SV_Target0
+    {    
+        //return IN.Color * float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
+        //return IN.Color;
         //return float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
         //return float4(1.0, 1.0, 1.0, 1.0);
+        //return text.Sample(textSampler, IN.TexCoords);
+        //return text.Sample(textSampler, IN.TexCoords);
+        return float4(1.0, 1.0, 1.0, 1.0);
     }
+
 }
 
-Technique main {
+Technique Font
+{
     Pass p0
     {
         VertexShader = VSMain
-        PixelShader = PSMain
+
+        PixelShader = Font
+
     }
 }
+
+Technique TexturedQuad
+{
+    Pass p0
+    {
+        VertexShader = VSMain
+        PixelShader = TexturedQuad
+    }
+}
+

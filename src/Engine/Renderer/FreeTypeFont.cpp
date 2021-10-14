@@ -250,13 +250,12 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
 	m_Height = static_cast<float>(h);
 	std::set<STestSize> test;
-#if 1
-	shader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 0);
-#else
-	shader = (CShader*)gEnv->pRenderer->Sh_Load("primitive", 0);
-#endif
+
+	_smart_ptr<CShader> shader;
 	if (!shader)
-		return false;
+	{
+		shader = GlobalResources::SpriteShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 0, 0);
+	}
 
 	if (FT_Init_FreeType(&ft))
 	{
@@ -308,6 +307,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 				CryError("Error create input layout for font");
 				return false;
 			}
+			GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout = m_pFontLayout;
 		}
 		CreateRasterState();
 		CreateDSState();
@@ -548,7 +548,7 @@ void RegisterColorTable()
 void FreeTypeFont::Submit()
 {
 	auto vertex_cnt = 6 * m_CharBuffer.size();
-	if (!shader || !vertex_cnt)
+	if (!GlobalResources::SpriteShader || !vertex_cnt)
 	{
 		m_CharBuffer.clear();
 		return;
@@ -571,7 +571,7 @@ void FreeTypeFont::Submit()
 	// Update content of VBO memory
 	gEnv->pRenderer->UpdateBuffer(m_VB, m_CharBuffer.data(), vertex_cnt, false);
 
-	shader->Bind();
+	GlobalResources::SpriteShader->Bind();
 	GetDevice()->PSSetSamplers(0, 1, &m_Sampler);
 	GetDevice()->PSSetShaderResources(0, 1, &m_pTextureRV);
 	GetDevice()->IASetInputLayout(m_pFontLayout);
@@ -661,5 +661,6 @@ void FreeTypeFont::CreateBlendState()
 	BlendState.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
 
 	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);
+	GlobalResources::FontBlendState = m_pBlendState;
 }
 #endif

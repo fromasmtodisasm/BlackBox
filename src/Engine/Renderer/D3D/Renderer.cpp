@@ -12,6 +12,13 @@ ID3D10ShaderResourceView* GlobalResources::GreyTextureRV;
 ID3D10EffectTechnique* GlobalResources::BoxTechnique;
 ID3D10EffectTechnique* GlobalResources::MeshTechnique;
 
+ID3D10InputLayout* GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout;
+
+ID3D10BlendState* GlobalResources::FontBlendState;
+
+_smart_ptr<CShader> GlobalResources::TexturedQuadShader;
+_smart_ptr<CShader> GlobalResources::SpriteShader;
+
 struct ITechniqueManager;
 ID3D10Device* GetDevice()
 {
@@ -99,15 +106,25 @@ void CD3DRenderer::Update(void)
     //GetDevice()->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
 
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+	#if 1
     Flush();
 
 	for (const auto& rcl : m_RenderCallbackClients)
 	{
 		rcl->OnRenderer_BeforeEndFrame();	
 	}
-
 	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
 		pConsole->Draw();
+
+	#endif
+	#if 1
+	for (auto img : m_DrawImages)
+	{
+		Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
+	}
+	#endif
+	Draw2DQuad(100, 100, 100, 100, -1, color4f(1, 1, 1, 1), 0, 0, 1, 1);
+	m_DrawImages.clear();
     //
     // Present our back buffer to our front buffer
     //
@@ -376,6 +393,11 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 
 unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
 {
+	if (auto it = m_LoadedTextureNames.find(filename); it != m_LoadedTextureNames.end())
+	{
+		return it->second;
+	}
+
 	string path(filename), fn, ext;
 	int	   texture_index = -1;
 	bool   is_dds = false;
@@ -478,6 +500,11 @@ void CD3DRenderer::RemoveTexture(ITexPic* pTexPic)
 	NOT_IMPLEMENTED;
 }
 
+int CD3DRenderer::CreateEmptyTexture(Vec2 size, color4f color)
+{
+	return 0;
+}
+
 int CD3DRenderer::NextTextureIndex()
 {
 	return m_NumLoadedTextures++;
@@ -487,6 +514,95 @@ void *CD3DRenderer::EF_Query(int Query, int Param)
 {
     return nullptr;
 }
+
+void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1)
+{
+	glm::mat4	 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f);
+	Legacy::Vec4 cur_c		= Legacy::Vec4(texture != -1 ? Legacy::Vec4{1} : Legacy::Vec4{color.r, color.g, color.b, color.a});
+
+	auto screen_size(Legacy::Vec2(GetWidth(), GetHeight()));
+	auto xpos = x;
+	auto ypos = y;
+	/*
+		Coordinates of quad
+		A---D 
+		|	|
+		B---C
+		*/
+	// Update VBO for each character
+	using P3F_T2F		 = SVF_P3F_C4B_T2F;
+	#if 0
+	Legacy::Vec2 uv_pos	 = Legacy::Vec2(x, y) / screen_size;
+	Legacy::Vec2 uv_size = Legacy::Vec2(w, h) / screen_size;
+	#else
+	Legacy::Vec2 uv_pos	 = Legacy::Vec2(s0, t0);
+	Legacy::Vec2 uv_size = Legacy::Vec2(s1, t1);
+	#endif
+
+	Legacy::Vec4 pA, pB, pC, pD;
+	pA = Legacy::Vec4(Legacy::Vec3{xpos, ypos, 0}, 1.f);
+	pB = Legacy::Vec4(Legacy::Vec3{xpos, ypos + h, 0}, 1.f);
+	pC = Legacy::Vec4(Legacy::Vec3{xpos + w, ypos + h, 0}, 1.f);
+	pD = Legacy::Vec4(Legacy::Vec3{xpos + w, ypos, 0}, 1.f);
+
+	#if 0
+	Legacy::Vec2 
+		tA{uv_pos.x, uv_pos.y},
+		tB{uv_pos.x, uv_pos.y + uv_size.y},
+		tD{uv_pos.x + uv_size.x, uv_pos.y + uv_size.y},
+		tC{uv_pos.x + uv_size.x, uv_pos.y};
+	#else
+	Legacy::Vec2 
+		tA{uv_pos.x, uv_pos.y},
+		tB{uv_pos.x, uv_pos.y + uv_size.y},
+		tD{uv_pos.x + uv_size.x, uv_pos.y},
+		tC{uv_pos.x + uv_size.x, uv_pos.y + uv_size.y};
+	#endif
+
+	std::array<P3F_T2F, 6> vertices = {
+		P3F_T2F{Legacy::Vec3(projection * pA), UCol((cur_c)), tA},
+		P3F_T2F{Legacy::Vec3(projection * pB), UCol((cur_c)), tB},
+		P3F_T2F{Legacy::Vec3(projection * pC), UCol((cur_c)), tC},
+
+		P3F_T2F{Legacy::Vec3(projection * pC), UCol((cur_c)), tC},
+		P3F_T2F{Legacy::Vec3(projection * pD), UCol((cur_c)), tD},
+		P3F_T2F{Legacy::Vec3(projection * pA), UCol((cur_c)), tA},
+	};
+
+	if (!GlobalResources::TexturedQuadShader)
+	{
+		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 1, 0);
+	}
+
+	auto vertex_cnt = 6;
+	if (!GlobalResources::TexturedQuadShader || !vertex_cnt)
+	{
+		return;
+	}
+	// Activate corresponding render state
+	auto VB = CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
+
+
+
+
+	// Render glyph texture over quad
+	// Update content of VBO memory
+	UpdateBuffer(VB, vertices.data(), vertex_cnt, false);
+
+	ID3D10ShaderResourceView* currentTexture = m_TexturesMap[texture].second;
+		
+
+	GlobalResources::TexturedQuadShader->Bind();
+	m_pd3dDevice->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+	m_pd3dDevice->PSSetShaderResources(0, 1, &currentTexture);
+	m_pd3dDevice->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
+	m_pd3dDevice->RSSetState(m_pRasterizerState);
+	m_pd3dDevice->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
+	//m_pd3dDevice->OMSetDepthStencilState(m_pDSState, 0);
+
+	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+}
+
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {

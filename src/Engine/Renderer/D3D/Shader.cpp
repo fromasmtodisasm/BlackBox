@@ -80,10 +80,13 @@ CShader* CShader::LoadBinaryShader(std::string_view name, int flags, uint64 nMas
 	return nullptr;
 }
 
-CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type)
+CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type, int nTechnique, int nPass)
 {
-	auto tech = pEffect->GetTechnique(0);
-	auto pass = tech->GetPass(0);
+	assert(nTechnique <= (pEffect->GetNumTechniques() - 1));
+	auto tech = pEffect->GetTechnique(nTechnique);
+	assert(nPass <= (tech->GetNumPasses() - 1));
+	nTechnique = nPass = 0;
+	auto pass = tech->GetPass(nPass);
 	auto code = pass->Code;
 
 	if (type == IShader::E_VERTEX)

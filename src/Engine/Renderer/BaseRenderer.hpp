@@ -18,6 +18,7 @@
 #ifndef VK_RENDERER
 #	include "TypedConstantBuffer.hpp"
 #endif
+#include <Cry_Color4.h>
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
@@ -365,6 +366,7 @@ class CRenderer : public RenderCVars
 
 	//! Draw a image using the current matrix
 	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) final;
+	virtual void Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1) = 0;
 
 	virtual void DrawFullScreenImage(int texture_id) = 0;
 

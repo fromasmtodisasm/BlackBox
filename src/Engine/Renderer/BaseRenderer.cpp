@@ -414,6 +414,8 @@ void CRenderer::DrawImage(float xpos, float ypos, float w, float h, uint64 textu
 
 	DrawFullscreenQuad();
 	m_ScreenShader->Unuse();
+#else
+	Draw2dImage(xpos, ypos, w, h, texture_id, s0, t0, s1, t1, 0, r, g, b, a);
 #endif
 }
 
