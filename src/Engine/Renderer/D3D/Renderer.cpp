@@ -1,6 +1,8 @@
 ﻿#include "Renderer.h"
+#include "Renderer.h"
 #include <BlackBox/Core/Path.hpp>
 #include "DDSTextureLoader.h"
+#include <BlackBox\System\File\CryFile.h>
 
 // Globals
 ID3D10ShaderResourceView* GlobalResources::FontAtlasRV{};
@@ -420,19 +422,23 @@ ITexPic* CD3DRenderer::EF_LoadTexture(const char* nameTex, uint flags, uint flag
 {
 	return EF_GetTextureByID(LoadTexture(nameTex));
 }
-
-unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
+ID3D10ShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 {
-	if (auto it = m_LoadedTextureNames.find(filename); it != m_LoadedTextureNames.end())
-	{
-		return it->second;
-	}
+	file.Seek(0, SEEK_END);
+	auto texture_size = file.GetPosition();
+	file.Seek(0, SEEK_SET);
+	std::vector<uint8_t> blob(texture_size);
+	file.Read(&blob[0], texture_size);
+	return CreateTexture(blob);
 
+}
+
+string CD3DRenderer::AdjustTexturePath(const char* filename)
+{
 	string path(filename), fn, ext;
 	int	   texture_index = -1;
 	bool   is_dds = false;
 	auto   Pack	  = gEnv->pCryPak;
-	//PathUtil::Split(filename, path, fn, ext);
 	auto Ext = PathUtil::GetExt(filename);
 	if (Ext[0] == 0)
 	{
@@ -447,89 +453,79 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 	{
 		strcpy(path.data() + path.size() - 3, "dds");
 	}
+	return path;
+}
 
-	if (!strcmp("textures/gui/mousecursor.dds", filename))
+bool CD3DRenderer::FindTexture(const char* filename, CCryFile& file)
+{
+	bool	 result		   = false;
+	auto	 path		   = AdjustTexturePath(filename);
+	bool	 loaded		   = true;
+
+	if (!file.Open(path.data(), "r"))
 	{
-		__debugbreak();
+		loaded = false;
+		string _file;
+		PathUtil::Split(filename, path, _file);
+		path = path + _file + ".jpg";
+		result = file.Open(path.data(), "r");
+	}
+	return result;
+}
+
+
+
+ID3D10ShaderResourceView* CD3DRenderer::CreateTexture(std::vector<uint8_t> &blob)
+{
+	int					   texture_index = -1;
+	D3DX10_IMAGE_LOAD_INFO loadInfo;
+	ZeroMemory(&loadInfo, sizeof(D3DX10_IMAGE_LOAD_INFO));
+	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+	ID3D10Resource*			  pTexture{};
+	ID3D10ShaderResourceView* pSRView = NULL;
+	HRESULT					  HResult{};
+
+	//HResult = D3DX10CreateShaderResourceViewFromFile(
+	HResult = D3DX10CreateShaderResourceViewFromMemory(
+		m_pd3dDevice,
+		&blob[0], 
+		blob.size(),
+		nullptr,
+		nullptr,
+		&pSRView,
+		&HResult);
+	return pSRView;
+
+}
+
+unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
+{
+	if (auto it = m_LoadedTextureNames.find(filename); it != m_LoadedTextureNames.end())
+	{
+		return it->second;
 	}
 
-	auto file = Pack->FOpen(path.data(), "r");
-	bool loaded = false;
-	if (!file)
+	int		 texture_index = -1;
+	
+	CCryFile file;
+	if (FindTexture(filename, file))
 	{
-		path = "res/" + path;
-		file = Pack->FOpen(path.data(), "r");
-		if (!file)
-		{
-			string _file;
-			PathUtil::Split(filename, path, _file);
-			path = "res/" + path + _file + ".jpg";
-			if (!(file = Pack->FOpen(path.data(), "r")))
-				CryError("Failed open texture: %s", filename);
-			else
-			{
-				loaded = true;
-			}
-		}
-		else
-		{
-			loaded = true;
-			#if 0
-			Pack->FSeek(file, 0, SEEK_END);
-			auto				 texture_size = Pack->FTell(file);
-			Pack->FSeek(file, 0, SEEK_SET);
-			std::vector<uint8_t> blob(texture_size);
-			Pack->FRead(&blob[0], texture_size, 1, file);
-			#endif
-		}
-
-		Pack->FClose(file);
+		CryError("Failed open texture: %s", filename);
 	}
 	else
 	{
-		loaded = true;
-	}
-	if (loaded)
-	{
-		D3DX10_IMAGE_LOAD_INFO loadInfo;
-		ZeroMemory(&loadInfo, sizeof(D3DX10_IMAGE_LOAD_INFO));
-		loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
-		ID3D10Resource* pTexture{};
-		ID3D10ShaderResourceView* pSRView = NULL;
-		HRESULT			HResult{};
-
-		#if 1
-		#if 0
-		HResult = D3DX10CreateTextureFromFile(
-			m_pd3dDevice,
-			path.data(),
-			//&loadInfo,
-			nullptr,
-			nullptr,
-			&pTexture,
-			&HResult);
-		#else
-		HResult = D3DX10CreateShaderResourceViewFromFile(
-			m_pd3dDevice,
-			path.data(),
-			//&loadInfo,
-			nullptr,
-			nullptr,
-			&pSRView,
-			&HResult);
-
-		#endif
-		if (SUCCEEDED(HResult))
+		auto srv = CreateTextureFromFile(file);
+		if (srv)
 		{
 			CryLog("$3Loaded texture %s", filename);
-			texture_index = AddTextureResource(filename, pSRView);
+			texture_index = AddTextureResource(filename, srv);
 		}
 		else
 		{
 			CryError("Failed load texture: %s", filename);
 		}
-		#endif
 	}
+
 	return texture_index;
 }
 
@@ -709,7 +705,6 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 
 	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 }
-
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {

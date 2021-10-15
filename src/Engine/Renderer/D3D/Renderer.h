@@ -6,6 +6,7 @@
 #pragma warning( disable : 4005 )
 #include <d3dx10.h>
 #pragma warning(pop)
+#include <BlackBox\System\File\CryFile.h>
 class CD3DRenderer;
 extern CD3DRenderer* gD3DRender;
 
@@ -126,6 +127,12 @@ public:
 
 	virtual ITexPic* EF_GetTextureByID(int Id) override;
 	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) override;
+
+	ID3D10ShaderResourceView* CreateTexture(std::vector<uint8_t> &blob);
+	ID3D10ShaderResourceView* CreateTextureFromFile(CCryFile file);
+
+	string AdjustTexturePath(const char* name);
+	bool FindTexture(const char* filename, CCryFile& result);
 
 	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
 
