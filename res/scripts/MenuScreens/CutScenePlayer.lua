@@ -137,7 +137,7 @@ function UI.PageCutScenePlayer:Finished()
 	
 	UI:DeactivateScreen("CutScenePlayer");
 
-	if (UI.PageCutScenePlayer.szMessage and strlen(UI.PageCutScenePlayer.szMessage)) then
+	if (UI.PageCutScenePlayer.szMessage and string.len(UI.PageCutScenePlayer.szMessage)) then
 		Game:SendMessage(UI.PageCutScenePlayer.szMessage);
 	elseif (UI.PageCutScenePlayer.pfnFunction) then
 		UI.PageCutScenePlayer.pfnFunction();

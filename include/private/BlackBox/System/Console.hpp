@@ -693,7 +693,7 @@ private:
 	int                            m_nScrollLine;
 	int                            m_nHistoryPos;
 	size_t                         m_nCursorPos;                // x position in characters
-	ITexture*                      m_pImage;
+	ITexPic*					   m_pImage;
 
 	float                          m_fRepeatTimer;            // relative, next repeat even in .. decreses over time, repeats when 0, only valid if m_nRepeatEvent.keyId != eKI_Unknown
 	SInputEvent                    m_nRepeatEvent;            // event that will be repeated

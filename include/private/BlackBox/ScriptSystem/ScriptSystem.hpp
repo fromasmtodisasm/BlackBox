@@ -55,7 +55,7 @@ inline ScriptVarType LuatypeToScriptVarType(int type)
 		result = ScriptVarType::Function;
 		break;
 	case LUA_TLIGHTUSERDATA:
-		result = ScriptVarType::Pointer;
+		result = ScriptVarType::UserData;
 		break;
 	case LUA_TTABLE:
 		result = ScriptVarType::Object;
@@ -230,8 +230,12 @@ class CScriptSystem : public IScriptSystem
 		if (!CheckType(LUA_TUSERDATA, nIdx) && !CheckType(LUA_TLIGHTUSERDATA, nIdx))
 			return false;
 		auto ud = (USER_DATA)lua_touserdata(L, nIdx);
+		#if 0
 		USER_DATA result = (USER_DATA)((UserDataInfo*)(ud))->ptr;
 		val				 = (void*)((UserDataInfo*)(ud))->ptr;
+		#else
+		val = ud;
+		#endif
 		//(INT_PTR)lua_ref(L, 1);
 		return true;
 	}

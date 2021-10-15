@@ -84,9 +84,16 @@ bool CFunctionHandler::GetParam(int nIdx, HSCRIPTFUNCTION& hFunc, int nReference
 	//return GetParamAny(nIdx, pObj);
 }
 
-bool CFunctionHandler::GetParam(int nIdx, USER_DATA& ud)
+bool CFunctionHandler::GetParam(int nIdx, USER_DATA& nValue)
 {
-	return GetParamAny(nIdx, ud);
+	auto result = GetParamAny(nIdx, nValue);
+	if (result && nValue != nullptr)
+	{
+		UserDataInfo* ud	  = (UserDataInfo*)nValue;
+		auto		  nCookie = ud->cookie;
+		nValue				  = (void*)ud->ptr;
+	}
+	return result;
 }
 
 ScriptVarType CFunctionHandler::GetParamType(int nIdx)
@@ -162,8 +169,7 @@ void CFunctionHandler::Unref(HSCRIPTFUNCTION hFunc)
 
 bool CFunctionHandler::GetParamUDVal(int nIdx, USER_DATA& val, int& cookie)
 {
-	GetParamAny(nIdx, val);
-	return false;
+	return GetParamAny(nIdx, val);
 }
 
 int CFunctionHandler::EndFunction(USER_DATA ud)

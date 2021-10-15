@@ -2451,7 +2451,7 @@ int CUISystem::DrawMouseCursor(float fLeft, float fTop)
 
 	float vTexCoord[4] = 
 	{
-		#if 0
+		#if 1
 		m_iMouseCursorTexPixW * 0.5f,
 		1.0f - m_iMouseCursorTexPixH,
 		1.0f - m_iMouseCursorTexPixW,
@@ -2640,7 +2640,12 @@ int CUISystem::DrawImage(const UIRect &pRect, int iTextureID, const float *vTexC
 		float fRcpWidth = 1.0f / pRect.fWidth;
 		float fRcpHeight = 1.0f / pRect.fHeight;
 
+		//FIXME; wrong texture coordinates
+		#if 0
 		float vClippedTexCoord[4] = { 0.0f, 1.0f, 1.0f, 0.0f };
+		#else
+		float vClippedTexCoord[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		#endif
 
 		if (vTexCoord)
 		{
@@ -3963,6 +3968,11 @@ int CUISystem::SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject)
 	string szAnimation;
 
 	pObject->BeginIteration();
+	if (!strcmp("StaticImage", pStatic->GetName().c_str()))
+	{
+		__debugbreak();
+	}
+
 
 	while(pObject->MoveNext())
 	{

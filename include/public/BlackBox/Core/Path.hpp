@@ -100,7 +100,11 @@ inline /*void*/ Split(const TString& filepath, TString& path, TString& filename,
 	if (filepath.empty())
 		return;
 	const char* szFilepath = filepath.c_str();
+	#if 0
 	const char* szExtension = szFilepath + filepath.length() - 1;
+	#else
+	const char* szExtension = szFilepath + filepath.length();
+	#endif
 	const char* p;
 	for (p = szExtension; p >= szFilepath; --p)
 	{

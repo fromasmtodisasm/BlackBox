@@ -148,24 +148,46 @@ typedef struct UISkinTexture
 {
 	UISkinTexture(): iTextureID(-1), iOverTextureID(-1), iDownTextureID(-1)
 	{
+		#if 0
 		vTexCoord[0] = 0;
 		vTexCoord[1] = 1;
 		vTexCoord[2] = 1;
 		vTexCoord[3] = 0;
+		#else
+		vTexCoord[0] = 0;
+		vTexCoord[1] = 0;
+		vTexCoord[2] = 1;
+		vTexCoord[3] = 1;
+		#endif
 	};
 	UISkinTexture(int iTexID): iTextureID(iTexID), iOverTextureID(iTexID), iDownTextureID(iTexID)
 	{
+		#if 0
 		vTexCoord[0] = 0;
 		vTexCoord[1] = 1;
 		vTexCoord[2] = 1;
 		vTexCoord[3] = 0;
+		#else
+		vTexCoord[0] = 0;
+		vTexCoord[1] = 0;
+		vTexCoord[2] = 1;
+		vTexCoord[3] = 1;
+		#endif
 	};
 	UISkinTexture(int iTexID, int iOverTexID, int iDownTexID): iTextureID(iTexID), iOverTextureID(iOverTexID), iDownTextureID(iDownTexID)
 	{
+		#if 0
 		vTexCoord[0] = 0;
 		vTexCoord[1] = 1;
 		vTexCoord[2] = 1;
 		vTexCoord[3] = 0;
+		#else
+		vTexCoord[0] = 0;
+		vTexCoord[1] = 0;
+		vTexCoord[2] = 1;
+		vTexCoord[3] = 1;
+		#endif
+		
 	};
 	UISkinTexture(const UISkinTexture &pSkinTexture)
 	{

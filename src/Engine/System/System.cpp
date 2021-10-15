@@ -425,16 +425,16 @@ void CSystem::LoadScreen()
 		return;
 	}
 	//m_pConsole->Clear();
-	m_env.pConsole->SetScrollMax(600);
+	m_env.pConsole->SetScrollMax(300);
 	m_env.pConsole->ShowConsole(false);
 
 	string sLoadingScreenTexture = string("loading.png");
 
-	#if 0
 	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
+	#if 0
 	m_env.pConsole->ResetProgressBar(0x7fffffff);
+	GetILog()->UpdateLoadingScreen("");	// just to draw the console
 	#endif
-	//GetILog()->UpdateLoadingScreen("");	// just to draw the console
 }
 
 bool CSystem::InitScripts()

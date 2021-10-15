@@ -369,7 +369,7 @@ ScriptVarType CScriptObject::GetValueType(const char* sKey)
 		type = ScriptVarType::Function;
 		break;
 	case LUA_TLIGHTUSERDATA:
-		type = ScriptVarType::Pointer;
+		type = ScriptVarType::UserData;
 		break;
 	case LUA_TTABLE:
 		type = ScriptVarType::Object;
@@ -765,6 +765,7 @@ static void IterTable(lua_State* L, IScriptObjectDumpSink* p)
 		int keyType = lua_type(L, -2);
 		int valType = lua_type(L, -1);
 
+		//FIXME: resolve type for  LUA_TLIGHTUSERDATA and LUA_TUSERDATA, now UserData
 		if (keyType == LUA_TSTRING)
 		{
 			const char* key = lua_tostring(L, -2);
@@ -777,7 +778,7 @@ static void IterTable(lua_State* L, IScriptObjectDumpSink* p)
 				p->OnElementFound(key, ScriptVarType::Bool);
 				break;
 			case LUA_TLIGHTUSERDATA:
-				p->OnElementFound(key, ScriptVarType::Pointer);
+				p->OnElementFound(key, ScriptVarType::UserData);
 				break;
 			case LUA_TNUMBER:
 				p->OnElementFound(key, ScriptVarType::Number);
@@ -809,7 +810,7 @@ static void IterTable(lua_State* L, IScriptObjectDumpSink* p)
 				p->OnElementFound(idx, ScriptVarType::Bool);
 				break;
 			case LUA_TLIGHTUSERDATA:
-				p->OnElementFound(idx, ScriptVarType::Pointer);
+				p->OnElementFound(idx, ScriptVarType::UserData);
 				break;
 			case LUA_TNUMBER:
 				p->OnElementFound(idx, ScriptVarType::Number);

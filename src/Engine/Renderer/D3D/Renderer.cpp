@@ -388,7 +388,6 @@ void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 
 void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
 {
-	#if 0
 	if (m_Is2DMode)
 	{
 		s0 /= ortho.x;
@@ -397,8 +396,11 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 		t0 /= ortho.y;
 		t1 /= ortho.y;
 	}
-	#endif
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
+
+	Image2D img = m_DrawImages.back();
+	Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
+	m_DrawImages.pop_back();
 }
 
 ITexPic* CD3DRenderer::EF_GetTextureByID(int Id)
@@ -435,9 +437,18 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 		path = (string(filename) +".dds");
 		is_dds = true;
 	}
-	else if (!strcmp(Ext, "dds"))
+	else if (!strcmp(Ext, "dds") )
 	{
 		is_dds = true;	
+	}
+	if (!(strcmp(Ext,"dss")))
+	{
+		strcpy(path.data() + path.size() - 3, "dds");
+	}
+
+	if (!strcmp("textures/gui/mousecursor.dds", filename))
+	{
+		__debugbreak();
 	}
 
 	auto file = Pack->FOpen(path.data(), "r");
@@ -447,7 +458,17 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 		path = "res/" + path;
 		file = Pack->FOpen(path.data(), "r");
 		if (!file)
-			CryError("Failed open texture: %s", filename);
+		{
+			string _file;
+			PathUtil::Split(filename, path, _file);
+			path = "res/" + path + _file + ".jpg";
+			if (!(file = Pack->FOpen(path.data(), "r")))
+				CryError("Failed open texture: %s", filename);
+			else
+			{
+				loaded = true;
+			}
+		}
 		else
 		{
 			loaded = true;
@@ -523,7 +544,7 @@ int CD3DRenderer::AddTextureResource(const char* name, ID3D10ShaderResourceView*
 
 			D3D10_TEXTURE2D_DESC desc;
 			pTexture2D->GetDesc(&desc);
-			m_TexPics[texture_index] = STexPic(CD3D10_TEXTURE2D_DESC(desc), texture_index);
+			m_TexPics[texture_index] = STexPic(CD3D10_TEXTURE2D_DESC(desc), texture_index, name);
 
 		}
 	}

@@ -16,6 +16,7 @@ struct Image2D
 	float	s0, t0, s1, t1;
 	color4f color;
 	float	z;
+	Image2D() = default;
 	Image2D(
 		float x, float y, float w, float h,
 		int	  id,
@@ -36,13 +37,15 @@ struct STexPic :
 	, public CD3D10_TEXTURE2D_DESC
 {
 	STexPic() {}
-	STexPic(CD3D10_TEXTURE2D_DESC& desc, int id)
+	STexPic(CD3D10_TEXTURE2D_DESC& desc, int id, const char* name)
 		: CD3D10_TEXTURE2D_DESC(desc)
+		, m_Id(id)
+		, m_Name(name)
 	{
 	}
 	virtual void		AddRef() override {}
 	virtual void		Release(int bForce) override {}
-	virtual const char* GetName() override { return m_Name; }
+	virtual const char* GetName() override { return m_Name.data(); }
 	virtual int			GetWidth() override { return Width; }
 	virtual int			GetHeight() override { return Height; }
 	virtual int			GetOriginalWidth() override { return Width; }
@@ -58,7 +61,7 @@ struct STexPic :
 	virtual bool		SetFilter(int nFilter) override { return false; }
 
 	int m_Id;
-	const char* m_Name;
+	string m_Name;
 };
 
 class CD3DRenderer : public CRenderer

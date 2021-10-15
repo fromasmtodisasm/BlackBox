@@ -49,71 +49,71 @@ UI.PageCredits=
 		OnInit = function(self)
 		
 			UI.PageCredits.Script = {};
-			UI.PageCredits:AddPage(0, 		"01blank");
-			UI.PageCredits:AddPage(0.125, "01a");
-			UI.PageCredits:AddPage(8, 		"01b");
-			UI.PageCredits:AddPage(8, 		"01c");
-			UI.PageCredits:AddPage(8, 		"02a");
-			UI.PageCredits:AddBack(4, 		"02blank");
-			UI.PageCredits:AddPage(4, 		"02b");
-			UI.PageCredits:AddPage(8, 		"03a");
-			UI.PageCredits:AddBack(4, 		"03blank");
-			UI.PageCredits:AddPage(4, 		"03b");
-			UI.PageCredits:AddPage(8, 		"04a");
-			UI.PageCredits:AddBack(4, 		"04blank");
-			UI.PageCredits:AddPage(4, 		"05a");
-			UI.PageCredits:AddBack(4, 		"05blank");
-			UI.PageCredits:AddPage(4, 		"05b");
-			UI.PageCredits:AddPage(8, 		"06a");
-			UI.PageCredits:AddBack(4, 		"06blank");
-			UI.PageCredits:AddPage(4, 		"06b");
-			UI.PageCredits:AddPage(8, 		"07a");
-			UI.PageCredits:AddBack(4, 		"07blank");
-			UI.PageCredits:AddPage(4, 		"07b");
-			UI.PageCredits:AddPage(8, 		"07c");
-			UI.PageCredits:AddPage(8, 		"08a");
-			UI.PageCredits:AddBack(4, 		"08blank");
-			UI.PageCredits:AddPage(4, 		"08b");
-			UI.PageCredits:AddPage(8, 		"09a");
-			UI.PageCredits:AddBack(4, 		"09a");
-			UI.PageCredits:AddPage(4, 		"09b");
-			UI.PageCredits:AddBack(4, 		"09b");
-			UI.PageCredits:AddPage(4, 		"09c");
-			UI.PageCredits:AddBack(4, 		"09c");
-			UI.PageCredits:AddPage(4, 		"09d");
-			UI.PageCredits:AddBack(4, 		"09d");
-			UI.PageCredits:AddPage(4, 		"09e");
-			UI.PageCredits:AddBack(4, 		"09e");
-			UI.PageCredits:AddPage(4, 		"10a");
-			UI.PageCredits:AddBack(4, 		"10a");
-			UI.PageCredits:AddPage(4, 		"11a");
-			UI.PageCredits:AddBack(4, 		"11blank");
-			UI.PageCredits:AddPage(4, 		"11b");
-			UI.PageCredits:AddPage(8, 		"12a");
-			UI.PageCredits:AddBack(4, 		"12blank");
-			UI.PageCredits:AddPage(4, 		"12b");
-			UI.PageCredits:AddPage(8, 		"12c");
-			UI.PageCredits:AddPage(8, 		"12d");
-			UI.PageCredits:AddPage(8, 		"12e");
-			UI.PageCredits:AddPage(8, 		"13a");
-			UI.PageCredits:AddBack(4, 		"13blank");
-			UI.PageCredits:AddPage(4, 		"13b");
-			UI.PageCredits:AddPage(8, 		"13c");
-			UI.PageCredits:AddPage(8, 		"14a");
-			UI.PageCredits:AddBack(4, 		"14blank");
-			UI.PageCredits:AddPage(4, 		"14b");
-			UI.PageCredits:AddPage(8, 		"14c");
-			UI.PageCredits:AddPage(8, 		"14d");
-			UI.PageCredits:AddPage(8, 		"14e");
-			UI.PageCredits:AddPage(8, 		"15a");
-			UI.PageCredits:AddBack(4, 		"15blank");
-			UI.PageCredits:AddPage(4, 		"15b");
-			UI.PageCredits:AddPage(8, 		"15c");
-			UI.PageCredits:AddPage(8, 		"16a");
-			UI.PageCredits:AddBack(4, 		"16blank");
-			UI.PageCredits:AddPage(4, 		"16b");
-			UI.PageCredits:AddPage(8, 		"17a");
-			UI.PageCredits:AddBack(4, 		"17blank");
+			--UI.PageCredits:AddPage(0, 		"01blank");
+			--UI.PageCredits:AddPage(0.125, "01a");
+			--UI.PageCredits:AddPage(8, 		"01b");
+			--UI.PageCredits:AddPage(8, 		"01c");
+			--UI.PageCredits:AddPage(8, 		"02a");
+			--UI.PageCredits:AddBack(4, 		"02blank");
+			--UI.PageCredits:AddPage(4, 		"02b");
+			--UI.PageCredits:AddPage(8, 		"03a");
+			--UI.PageCredits:AddBack(4, 		"03blank");
+			--UI.PageCredits:AddPage(4, 		"03b");
+			--UI.PageCredits:AddPage(8, 		"04a");
+			--UI.PageCredits:AddBack(4, 		"04blank");
+			--UI.PageCredits:AddPage(4, 		"05a");
+			--UI.PageCredits:AddBack(4, 		"05blank");
+			--UI.PageCredits:AddPage(4, 		"05b");
+			--UI.PageCredits:AddPage(8, 		"06a");
+			--UI.PageCredits:AddBack(4, 		"06blank");
+			--UI.PageCredits:AddPage(4, 		"06b");
+			--UI.PageCredits:AddPage(8, 		"07a");
+			--UI.PageCredits:AddBack(4, 		"07blank");
+			--UI.PageCredits:AddPage(4, 		"07b");
+			--UI.PageCredits:AddPage(8, 		"07c");
+			--UI.PageCredits:AddPage(8, 		"08a");
+			--UI.PageCredits:AddBack(4, 		"08blank");
+			--UI.PageCredits:AddPage(4, 		"08b");
+			--UI.PageCredits:AddPage(8, 		"09a");
+			--UI.PageCredits:AddBack(4, 		"09a");
+			--UI.PageCredits:AddPage(4, 		"09b");
+			--UI.PageCredits:AddBack(4, 		"09b");
+			--UI.PageCredits:AddPage(4, 		"09c");
+			--UI.PageCredits:AddBack(4, 		"09c");
+			--UI.PageCredits:AddPage(4, 		"09d");
+			--UI.PageCredits:AddBack(4, 		"09d");
+			--UI.PageCredits:AddPage(4, 		"09e");
+			--UI.PageCredits:AddBack(4, 		"09e");
+			--UI.PageCredits:AddPage(4, 		"10a");
+			--UI.PageCredits:AddBack(4, 		"10a");
+			--UI.PageCredits:AddPage(4, 		"11a");
+			--UI.PageCredits:AddBack(4, 		"11blank");
+			--UI.PageCredits:AddPage(4, 		"11b");
+			--UI.PageCredits:AddPage(8, 		"12a");
+			--UI.PageCredits:AddBack(4, 		"12blank");
+			--UI.PageCredits:AddPage(4, 		"12b");
+			--UI.PageCredits:AddPage(8, 		"12c");
+			--UI.PageCredits:AddPage(8, 		"12d");
+			--UI.PageCredits:AddPage(8, 		"12e");
+			--UI.PageCredits:AddPage(8, 		"13a");
+			--UI.PageCredits:AddBack(4, 		"13blank");
+			--UI.PageCredits:AddPage(4, 		"13b");
+			--UI.PageCredits:AddPage(8, 		"13c");
+			--UI.PageCredits:AddPage(8, 		"14a");
+			--UI.PageCredits:AddBack(4, 		"14blank");
+			--UI.PageCredits:AddPage(4, 		"14b");
+			--UI.PageCredits:AddPage(8, 		"14c");
+			--UI.PageCredits:AddPage(8, 		"14d");
+			--UI.PageCredits:AddPage(8, 		"14e");
+			--UI.PageCredits:AddPage(8, 		"15a");
+			--UI.PageCredits:AddBack(4, 		"15blank");
+			--UI.PageCredits:AddPage(4, 		"15b");
+			--UI.PageCredits:AddPage(8, 		"15c");
+			--UI.PageCredits:AddPage(8, 		"16a");
+			--UI.PageCredits:AddBack(4, 		"16blank");
+			--UI.PageCredits:AddPage(4, 		"16b");
+			--UI.PageCredits:AddPage(8, 		"17a");
+			--UI.PageCredits:AddBack(4, 		"17blank");
 			UI.PageCredits:AddPage(4, 		"17b");
 			UI.PageCredits:AddPage(8, 		"17c");
 			UI.PageCredits:AddPage(8, 		"17d");
@@ -131,7 +131,7 @@ UI.PageCredits=
 			UI:DeactivateAllScreens();
 			UI:HideMouseCursor();
 			UI:ShowBackground();
-			UI:SetBackgroundColor("0 0 0 255");
+			UI:SetBackgroundColor("100 0 150 255");
 			
 			UI:StopMusic();
 			UI.PageCredits.PlayMusic(self);
@@ -178,8 +178,10 @@ UI.PageCredits=
 				end
 				
 				if (Instruction[3] and Instruction[3] ~= 0) then
+					System:Log("Set background: "..Instruction[2])
 					UI.PageCredits.GUI.background:SetTexture(System:LoadImage(Instruction[2]));
 				else
+					System:Log("Set foreground: "..Instruction[2])
 					UI.PageCredits.GUI.foreground:SetTexture(System:LoadImage(Instruction[2]));
 					UI.PageCredits.SetForegroundAlpha(0);
 					self.fForegroundFadeIn = Instruction[1];
@@ -193,7 +195,7 @@ UI.PageCredits=
 				if (fRTime < self.fForegroundFadeIn + UI.PageCredits.fFadeInTime) then
 					UI.PageCredits.SetForegroundAlpha((fRTime - self.fForegroundFadeIn) / UI.PageCredits.fFadeInTime);
 				elseif (fRTime +  UI.PageCredits.fFadeOutTime > self.fForegroundFadeOut) then
-					UI.PageCredits.SetForegroundAlpha(max((self.fForegroundFadeOut - fRTime) / UI.PageCredits.fFadeOutTime, 0));
+					UI.PageCredits.SetForegroundAlpha(math.max((self.fForegroundFadeOut - fRTime) / UI.PageCredits.fFadeOutTime, 0));
 				else
 					UI.PageCredits.SetForegroundAlpha(1);
 				end
@@ -202,7 +204,7 @@ UI.PageCredits=
 	},
 
 	SetForegroundAlpha = function(fAlpha)
-		UI.PageCredits.GUI.foreground:SetColor("255 255 255 "..floor(fAlpha * 255));
+		UI.PageCredits.GUI.foreground:SetColor("255 255 255 "..math.floor(fAlpha * 255));
 	end,
 	
 	GetNextForegroundTime = function(self)

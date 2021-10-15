@@ -36,10 +36,6 @@ HLSLShader
 
     float4 TexturedQuad(VsOutput IN) : SV_Target0
     {    
-        //return IN.Color * float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
-        //return IN.Color;
-        //return float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
-        //return float4(1.0, 1.0, 1.0, 1.0);
         return text.Sample(textSampler, IN.TexCoords);
     }
 

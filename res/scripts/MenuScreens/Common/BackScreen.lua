@@ -12,6 +12,7 @@ UI.PageBackScreen=
 			zorder = -109,
 			bordersize = 0,
 
+			--texture = System:LoadImage("textures/gui/menubackground"),
 			texture = System:LoadImage("textures/gui/menubackground"),
 			texrect = "0, 0, 1024, 1024",
 		},

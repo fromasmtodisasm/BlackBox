@@ -260,7 +260,7 @@ void Command_DumpVars(IConsoleCmdArgs* Cmd)
 //////////////////////////////////////////////////////////////////////////
 int CXConsole::con_display_last_messages = 0;
 int CXConsole::con_line_buffer_size = 500;
-float CXConsole::con_font_size = 36;
+float CXConsole::con_font_size = 24;
 int CXConsole::con_showonload = 0;
 int CXConsole::con_debug = 0;
 int CXConsole::con_restricted = 0;
@@ -279,7 +279,7 @@ CXConsole::CXConsole(CSystem& system)
 	m_pImage				= NULL;
 	m_nCursorPos			= 0;
 	m_nScrollPos			= 0;
-	m_nScrollMax			= 300;
+	m_nScrollMax			= 250;
 	m_nTempScrollMax		= m_nScrollMax;
 	m_nScrollLine			= 0;
 	m_nHistoryPos			= -1;
@@ -296,7 +296,11 @@ CXConsole::CXConsole(CSystem& system)
 	m_bCheatHashDirty	   = false;
 	m_nCheatHash		   = 0;
 
+	#if 0
 	m_bStaticBackground = true;
+	#else
+	m_bStaticBackground = false;
+	#endif
 	m_nProgress			= 0;
 	m_nProgressRange	= 0;
 	m_nLoadingBackTexID = 0;
@@ -468,7 +472,7 @@ void CXConsole::PostRendererInit()
 
 	if (m_pRenderer)
 	{
-		const char* texture_path = "console/defaultconsole.dds";
+		const char* texture_path = "textures/console/defaultconsole.dds";
 		ICVar* background		 = GetCVar("console_background");
 		#if 0
 		if (background != nullptr)
@@ -476,8 +480,8 @@ void CXConsole::PostRendererInit()
 		#endif
 		// This texture is already loaded by the renderer. It's ref counted so there is no wasted space.
 		auto	  Tex  = m_system.GetIRenderer()->LoadTexture(texture_path, 0, 0);
-		auto pTex = m_system.GetIRenderer()->EF_GetTextureByID(Tex);
-		m_nWhiteTexID  = pTex ? pTex->GetTextureID() : 0;
+		m_pImage = m_system.GetIRenderer()->EF_GetTextureByID(Tex);
+		m_nWhiteTexID  = m_pImage ? m_pImage->GetTextureID() : 0;
 	}
 	else
 	{
@@ -1034,9 +1038,9 @@ void CXConsole::CreateKeyBind(const char* sCmd, const char* sRes, bool bExecute)
 void CXConsole::SetImage(ITexPic* pImage, bool bDeleteCurrent)
 {
 	if (bDeleteCurrent)
-		((ITexture*)(pImage))->Release();
+		pImage->Release();
 
-	m_pImage = (ITexture*)pImage;
+	m_pImage = pImage;
 }
 
 ITexPic* CXConsole::GetImage()
@@ -1249,16 +1253,25 @@ void CXConsole::Draw()
 		{
 			if (m_bStaticBackground)
 			{
-				IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 0,0,0,0.8);
+				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
+				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), 12, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
+				gEnv->pRenderer->Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_nScrollPos), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0.99);
 			}
 			else
 			{
 				float fReferenceSize = 600.0f;
 				float fSizeX = (float)m_pRenderer->GetWidth();
+				float  s0, s1;
+				s0 = s1 = (float)fmod(gEnv->pTimer->GetCurrTime(), 800) / 800.f * 10;
 				float fSizeY = m_nTempScrollMax * m_pRenderer->GetHeight() / fReferenceSize;
 
+				#if 0
 				IRenderAuxImage::DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
 				IRenderAuxImage::DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
+				#else
+				gEnv->pRenderer->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 + 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.9f);
+				gEnv->pRenderer->Draw2dImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+				#endif
 			}
 		}
 
