@@ -1364,6 +1364,7 @@ int CUISystem::SetMouseCursor(int iTextureID)
 
 	if (iTextureID != -1)
 	{
+		//FIXME:!!!
 		ITexPic *pTexPic = m_pRenderer->EF_GetTextureByID(m_iMouseCursorTextureID);
 
 		if (pTexPic)
@@ -2450,10 +2451,14 @@ int CUISystem::DrawMouseCursor(float fLeft, float fTop)
 
 	float vTexCoord[4] = 
 	{
+		#if 0
 		m_iMouseCursorTexPixW * 0.5f,
 		1.0f - m_iMouseCursorTexPixH,
 		1.0f - m_iMouseCursorTexPixW,
 		m_iMouseCursorTexPixH * 0.5f,
+		#else
+		0,0,1,1
+		#endif
 	};
 
 	if (m_iMouseCurrentCursor > -1)

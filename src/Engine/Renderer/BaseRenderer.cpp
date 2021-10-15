@@ -203,7 +203,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
-	if (!(m_ScreenShader = _smart_ptr((CShader*)(Sh_Load("screen", int(ShaderBinaryFormat::SPIRV))))))
+	if (!(m_ScreenShader = _smart_ptr((CShader*)(Sh_Load("screen", 0)))))
 	{
 		m_pSystem->Log("Error of loading screen shader");
 		return nullptr;
@@ -522,6 +522,9 @@ IShader* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 
 void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 {
+	//TODO: acount ortox and ortoy
+	ortho	   = Vec2(ortox, ortoy);
+	m_Is2DMode = enable;
 }
 
 IFont* CreateIFont()
@@ -656,7 +659,9 @@ void CRenderer::Flush()
 
 	pvb.CopyToDevice();
 #endif
+	#if 0
 	m_RenderAuxGeom->Flush();
+	#endif
 
 	for (auto font : m_Fonts)
 	{

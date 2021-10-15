@@ -370,15 +370,21 @@ bool CSystem::Init()
 		{
 			RenderBegin();
 			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
-			#if 0
 			gEnv->pRenderer->DrawImage(
+				#if 0
 				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
 				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
 				(float)splash->getWidth(),
 				(float)splash->getHeight(),
 				splash->getBindlesId(),
+				#else
+				 0,
+				 0,
+				(float)gEnv->pRenderer->GetWidth(),
+				(float)gEnv->pRenderer->GetHeight(),
+				splash,
 				0, 0, 1, 1, 1, 1, 1, 1);
-			#endif
+				#endif
 			RenderEnd();
 		}
 	}

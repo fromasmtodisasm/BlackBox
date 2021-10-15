@@ -554,6 +554,17 @@ void CRenderAuxGeom::DrawLines()
 
 void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image)
 {
+	auto &i = image;
+	gEnv->pRenderer->Draw2dImage(
+		i.x, i.y, i.w, i.h,
+		i.textureId,
+		i.uv[0].x, i.uv[0].y, i.uv[1].x, i.uv[1].y,
+		0,
+		i.color.r,
+		i.color.g,
+		i.color.b,
+		i.color.a
+	);
 }
 
 void CRenderAuxGeom::DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2)

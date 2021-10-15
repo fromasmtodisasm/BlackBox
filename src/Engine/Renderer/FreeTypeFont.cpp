@@ -113,6 +113,7 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 	// Iterate through all characters
 	const char* c;
 	const char* end = text.data() + text.size();
+	//y += 10;
 	for (c = text.data(); c != end; c++)
 	{
 		switch (*c)
@@ -160,11 +161,14 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 		Character ch = Characters[*c < 32 ? 0 : *c];
 		//Character ch = Characters['%'];
 
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y + (ch.Size.y - ch.Bearing.y) * scale;
-
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
+
+		float xpos = x + ch.Bearing.x * scale;
+		float ypos = y + (ch.Size.y - ch.Bearing.y) * scale + m_Height;
+
+
+
 
 		/*
 		Coordinates of quad
@@ -577,7 +581,7 @@ void FreeTypeFont::Submit()
 	GetDevice()->IASetInputLayout(m_pFontLayout);
 	GetDevice()->RSSetState(m_pRasterizerState);
 	GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
-	//GetDevice()->OMSetDepthStencilState(m_pDSState, 0);
+	GetDevice()->OMSetDepthStencilState(m_pDSState, 0);
 
 	static int font_method = 1;
 	static bool registered	= false;

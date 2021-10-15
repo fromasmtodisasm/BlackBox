@@ -107,23 +107,23 @@ void CD3DRenderer::Update(void)
 
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
 	#if 1
-    Flush();
 
 	for (const auto& rcl : m_RenderCallbackClients)
 	{
 		rcl->OnRenderer_BeforeEndFrame();	
 	}
-	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
-		pConsole->Draw();
-
 	#endif
 	#if 1
+	//Draw2DQuad(0, 0, (float)GetWidth(), (float)GetHeight(), 12, color4f(1, 1, 1, 1), 0, 0, 1, 1);
 	for (auto img : m_DrawImages)
 	{
 		Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 	}
+    Flush();
 	#endif
-	Draw2DQuad(100, 100, 100, 100, -1, color4f(1, 1, 1, 1), 0, 0, 1, 1);
+	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+		pConsole->Draw();
+
 	m_DrawImages.clear();
     //
     // Present our back buffer to our front buffer
@@ -388,7 +388,33 @@ void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 
 void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
 {
+	#if 0
+	if (m_Is2DMode)
+	{
+		s0 /= ortho.x;
+		s1 /= ortho.x;
+
+		t0 /= ortho.y;
+		t1 /= ortho.y;
+	}
+	#endif
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
+}
+
+ITexPic* CD3DRenderer::EF_GetTextureByID(int Id)
+{
+	ITexPic* result{};
+	auto it = m_TexPics.find(Id);
+	if (it != m_TexPics.end())
+	{
+		result = &it->second;
+	}
+	return result;
+}
+
+ITexPic* CD3DRenderer::EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1, float fAmount2, int Id, int BindId)
+{
+	return EF_GetTextureByID(LoadTexture(nameTex));
 }
 
 unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
@@ -421,7 +447,7 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 		path = "res/" + path;
 		file = Pack->FOpen(path.data(), "r");
 		if (!file)
-			CryError("Failed open file");
+			CryError("Failed open texture: %s", filename);
 		else
 		{
 			loaded = true;
@@ -435,6 +461,10 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 		}
 
 		Pack->FClose(file);
+	}
+	else
+	{
+		loaded = true;
 	}
 	if (loaded)
 	{
@@ -468,24 +498,34 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 		#endif
 		if (SUCCEEDED(HResult))
 		{
-			CryLog("$3Loaded", filename);
-			texture_index = NextTextureIndex();
-			{
-				{
-					ID3D10Texture2D* pTexture2D;
-					pSRView->GetResource((ID3D10Resource**)&pTexture2D);
-					//pTexture2D->GetDesc(&desc);
-					m_TexturesMap[texture_index] = std::make_pair(pTexture2D, pSRView);
-					m_LoadedTextureNames[filename] = texture_index;
-				}
-	
-			}
+			CryLog("$3Loaded texture %s", filename);
+			texture_index = AddTextureResource(filename, pSRView);
 		}
 		else
 		{
 			CryError("Failed load texture: %s", filename);
 		}
 		#endif
+	}
+	return texture_index;
+}
+
+int CD3DRenderer::AddTextureResource(const char* name, ID3D10ShaderResourceView* pSRView)
+{
+	auto texture_index = NextTextureIndex();
+	{
+		{
+			ID3D10Texture2D* pTexture2D;
+			pSRView->GetResource((ID3D10Resource**)&pTexture2D);
+			//pTexture2D->GetDesc(&desc);
+			m_TexturesMap[texture_index]   = std::make_pair(pTexture2D, pSRView);
+			m_LoadedTextureNames[name] = texture_index;
+
+			D3D10_TEXTURE2D_DESC desc;
+			pTexture2D->GetDesc(&desc);
+			m_TexPics[texture_index] = STexPic(CD3D10_TEXTURE2D_DESC(desc), texture_index);
+
+		}
 	}
 	return texture_index;
 }
@@ -500,8 +540,52 @@ void CD3DRenderer::RemoveTexture(ITexPic* pTexPic)
 	NOT_IMPLEMENTED;
 }
 
-int CD3DRenderer::CreateEmptyTexture(Vec2 size, color4f color)
+int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color)
 {
+	// Create the render target texture
+	D3D10_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Width			  = size.x;
+	desc.Height			  = size.y;
+	desc.MipLevels		  = 1;
+	desc.ArraySize		  = 1;
+	desc.Format			  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	desc.SampleDesc.Count = 1;
+	desc.Usage			  = D3D10_USAGE_DEFAULT;
+	desc.BindFlags		  = /* D3D10_BIND_RENDER_TARGET |*/ D3D10_BIND_SHADER_RESOURCE;
+
+	ID3D10Texture2D* pTexture = NULL;
+	m_pd3dDevice->CreateTexture2D(&desc, NULL, &pTexture);
+
+	// Create the shader-resource view
+	D3D10_SHADER_RESOURCE_VIEW_DESC srDesc;
+	srDesc.Format					 = desc.Format;
+	srDesc.ViewDimension			 = D3D10_SRV_DIMENSION_TEXTURE2D;
+	srDesc.Texture2D.MostDetailedMip = 0;
+	srDesc.Texture2D.MipLevels		 = 1;
+
+	ID3D10ShaderResourceView* pShaderResView = NULL;
+	m_pd3dDevice->CreateShaderResourceView(pTexture, &srDesc, &pShaderResView);
+
+	D3D10_MAPPED_TEXTURE2D mappedTex;
+	pTexture->Map(D3D10CalcSubresource(0, 0, 1), D3D10_MAP_WRITE_DISCARD, 0, &mappedTex);
+
+	UCHAR* pTexels = (UCHAR*)mappedTex.pData;
+	for (UINT row = 0; row < desc.Height; row++)
+	{
+		UINT rowStart = row * mappedTex.RowPitch;
+		for (UINT col = 0; col < desc.Width; col++)
+		{
+			UINT colStart					 = col * 4;
+			pTexels[rowStart + colStart + 0] = 255; // Red
+			pTexels[rowStart + colStart + 1] = 128; // Green
+			pTexels[rowStart + colStart + 2] = 64;	// Blue
+			pTexels[rowStart + colStart + 3] = 32;	// Alpha
+		}
+	}
+
+	pTexture->Unmap(D3D10CalcSubresource(0, 0, 1));
+
 	return 0;
 }
 

@@ -217,8 +217,8 @@ class ShaderMan
 				CryLog("[%s]", str.c_str());
 			}
 			#endif
-			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX);
-			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT);
+			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, flags, (int)nMaskGen);
+			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, flags, (int)nMaskGen);
 			if (!vs || !fs)
 			{
 				SAFE_DELETE(vs);
@@ -454,10 +454,12 @@ class CRenderer : public RenderCVars
 	virtual float			   GetDepthValue(int x, int y) override;
 	virtual void			   Flush() final;
 	virtual void			   Sh_Reload() override;
-	virtual void*			   EF_Query(int Query, int Param) = 0;
-	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true) = 0;
-	virtual void RemoveTexture(unsigned int TextureId) = 0;
-	virtual void RemoveTexture(ITexPic* pTexPic) = 0;
+	virtual void*			   EF_Query(int Query, int Param)																													   = 0;
+	virtual unsigned int	   LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)					   = 0;
+	virtual void			   RemoveTexture(unsigned int TextureId)																											   = 0;
+	virtual void			   RemoveTexture(ITexPic* pTexPic)																													   = 0;
+	virtual ITexPic*		   EF_GetTextureByID(int Id)																														   = 0;
+	virtual ITexPic*		   EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
 
 	void ShutDown();
 
@@ -537,4 +539,7 @@ class CRenderer : public RenderCVars
 	Legacy::Vec4				m_ClearColor{};
 
 	std::vector<IRendererCallbackClient*> m_RenderCallbackClients;
+
+	bool m_Is2DMode = false;
+	Vec2 ortho;
 };

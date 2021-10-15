@@ -372,6 +372,7 @@ function GotoPage(PageName, Back, HideBackground)
 	UI:ActivateScreen("BackScreen");
 
 
+	UI:ShowWidget(UI.PageBackScreen.GUI.StaticImage);
 	if (HideBackground and HideBackground ~= 0) then
 		UI:DisableWidget("Video", "BackScreen");
 		UI:HideWidget("Video", "BackScreen");
@@ -384,7 +385,7 @@ function GotoPage(PageName, Back, HideBackground)
 		if tonumber(getglobal("ui_BackGroundVideo"))~=0 then
 			UI:EnableWidget("Video", "BackScreen");
 			UI:ShowWidget("Video", "BackScreen");
-			UI:HideWidget(UI.PageBackScreen.GUI.StaticImage);
+			--UI:HideWidget(UI.PageBackScreen.GUI.StaticImage);
 		else
 			UI:DisableWidget("Video", "BackScreen");
 			UI:HideWidget("Video", "BackScreen");
@@ -394,6 +395,8 @@ function GotoPage(PageName, Back, HideBackground)
 		--UI:ShowWidget("Footer", "BackScreen");
 		UI:ShowWidget("Ad", "BackScreen");
 	end
+	-- FIXME: remove it
+	UI:ShowWidget(UI.PageBackScreen.GUI.StaticImage);
 
 	if ((not Back) or (Back and (Back ~= 0))) then
 		UI:ShowWidget("BackStatic", "BackScreen");

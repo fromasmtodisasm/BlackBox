@@ -152,6 +152,7 @@ UI.PageBackScreen=
 
 		OnActivate = function(Sender)
 
+			System:Error("BackScreenActivated")
 			UI:ShowMouseCursor();
 
 			UI:PlayMusic();
@@ -180,15 +181,18 @@ UI.PageBackScreen=
 			end
 
 			if (bkvideo==0) then
+				System:Log("$3All GOOD")
 				UI:HideWidget(UI.PageBackScreen.GUI.Video);
 				UI:ShowWidget(UI.PageBackScreen.GUI.StaticImage);
 			else
+				System:Error("All BAD")
 				UI:HideWidget(UI.PageBackScreen.GUI.StaticImage);
 				UI:ShowWidget(UI.PageBackScreen.GUI.Video);
 			end
 		end,
 
 		OnDeactivate = function(Sender)
+			System:Error("BackScreenActivated")
 			UI:StopMusic();
 			Sender.Video:ReleaseVideo();
 		end,

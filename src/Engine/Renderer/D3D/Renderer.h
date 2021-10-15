@@ -31,6 +31,36 @@ struct Image2D
 	}
 };
 
+struct STexPic : 
+	public ITexPic
+	, public CD3D10_TEXTURE2D_DESC
+{
+	STexPic() {}
+	STexPic(CD3D10_TEXTURE2D_DESC& desc, int id)
+		: CD3D10_TEXTURE2D_DESC(desc)
+	{
+	}
+	virtual void		AddRef() override {}
+	virtual void		Release(int bForce) override {}
+	virtual const char* GetName() override { return m_Name; }
+	virtual int			GetWidth() override { return Width; }
+	virtual int			GetHeight() override { return Height; }
+	virtual int			GetOriginalWidth() override { return Width; }
+	virtual int			GetOriginalHeight() override { return Height; }
+	virtual int			GetTextureID() override { return m_Id; }
+	virtual int			GetFlags() override { return 0; }
+	virtual int			GetFlags2() override {return 0;}
+	virtual void		SetClamp(bool bEnable) override {}
+	virtual bool		IsTextureLoaded() override { return true; }
+	virtual void		PrecacheAsynchronously(float fDist, int Flags) override {}
+	virtual void		Preload(int Flags) override {}
+	virtual byte*		GetData32() override { return nullptr; }
+	virtual bool		SetFilter(int nFilter) override { return false; }
+
+	int m_Id;
+	const char* m_Name;
+};
+
 class CD3DRenderer : public CRenderer
 {
 public:
@@ -91,12 +121,16 @@ public:
 	virtual void		 RemoveTexture(unsigned int TextureId) override;
 	virtual void		 RemoveTexture(ITexPic* pTexPic) override;
 
+	virtual ITexPic* EF_GetTextureByID(int Id) override;
+	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) override;
+
 	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
 
-	int CreateEmptyTexture(Vec2 size, color4f color);
+	int CreateEmptyTexture(vector2di size, color4f color);
 
   private:
 	int NextTextureIndex();
+	int AddTextureResource(const char* name, ID3D10ShaderResourceView* pSRView);
 
   private:
 
@@ -114,7 +148,9 @@ public:
 
 	std::map<string, int>												m_LoadedTextureNames;
 	std::map<int, std::pair<ID3DTexture2D*, ID3D10ShaderResourceView*>> m_TexturesMap;
+	std::map<int, STexPic>												m_TexPics;
 	int																	m_NumLoadedTextures{};
+
 };
 
 ID3D10Device* GetDevice();

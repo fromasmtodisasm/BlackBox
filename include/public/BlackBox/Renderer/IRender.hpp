@@ -790,22 +790,8 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void	 Sh_Reload()												   = 0;
 	// Loading of the texture for name(nameTex)
 	//virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
-	virtual ITexPic*  EF_GetTextureByID(int Id)
-	{
-		#if 0
-		NOT_IMPLEMENTED_V;
-		#else
-		return nullptr;
-		#endif
-	}
-	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0)
-	{
-		#if 0
-		NOT_IMPLEMENTED_V;
-		#else
-		return nullptr;
-		#endif
-	}
+	virtual ITexPic* EF_GetTextureByID(int Id)																															 = 0;
+	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
 	// Return different common shader parameters (used in ShaderBrowser) CryIndEd.exe
 	virtual void* EF_Query(int Query, int Param = 0) = 0;
 

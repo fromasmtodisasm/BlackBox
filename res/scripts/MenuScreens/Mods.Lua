@@ -155,7 +155,7 @@ UI.PageMods=
 			iSelection = 1;
 
 			if (modslist) then
-				for i, ModDesc in modslist do
+				for i, ModDesc in pairs(modslist) do
 					UI.PageMods.GUI.mods:AddItem(ModDesc.Title.." ("..ModDesc.Name..")");					
 					if (ModDesc.CurrentMod) then
 						iSelection=i; 

@@ -39,7 +39,7 @@ struct SRender2DImageDescription
 	Legacy::Vec2  uv[2];           //!< Texture UV coordinates
 	float angle = 0;
 	float stereoDepth = 0; //!< Places image in stereo 3d space. The depth is specified in camera space.
-	ColorB color;
+	UCol color;
 
 	uint32 textureId = 0;
 	uint32 targetId = 0;
@@ -86,7 +86,7 @@ class IRenderAuxImage
 			img.uv[1].x		= s1;
 			img.uv[1].y		= t1;
 			img.angle		= angle;
-			img.color		= ColorB(ColorF(r, g, b, a));
+			img.color		= UCol((uint8)(r*255),(uint8)(r*255),(uint8)(r*255),(uint8)(r*255));
 			img.stereoDepth = stereoDepth;
 
 			IRenderAuxGeom::GetAux()->PushImage(img);
@@ -109,7 +109,7 @@ class IRenderAuxImage
 			img.uv[1].x		= s1;
 			img.uv[1].y		= t1;
 			img.angle		= angle;
-			img.color		= ColorB(col);
+			img.color		= UCol(col);
 			img.stereoDepth = 0.f;
 
 			IRenderAuxGeom::GetAux()->PushImage(img);
@@ -133,7 +133,7 @@ class IRenderAuxImage
 			img.uv[1].x		= s1;
 			img.uv[1].y		= t1;
 			img.angle		= 0.f;
-			img.color		= ColorB(ColorF(r, g, b, a));
+			img.color		= UCol((uint8)(r*255),(uint8)(r*255),(uint8)(r*255),(uint8)(r*255));
 			img.stereoDepth = 0.f;
 
 			IRenderAuxGeom::GetAux()->PushImage(img);

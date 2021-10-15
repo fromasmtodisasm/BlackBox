@@ -40,12 +40,11 @@ HLSLShader
         //return IN.Color;
         //return float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
         //return float4(1.0, 1.0, 1.0, 1.0);
-        //return text.Sample(textSampler, IN.TexCoords);
-        //return text.Sample(textSampler, IN.TexCoords);
-        return float4(1.0, 1.0, 1.0, 1.0);
+        return text.Sample(textSampler, IN.TexCoords);
     }
 
 }
+
 
 Technique Font
 {
