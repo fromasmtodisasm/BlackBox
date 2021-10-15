@@ -3968,11 +3968,6 @@ int CUISystem::SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject)
 	string szAnimation;
 
 	pObject->BeginIteration();
-	if (!strcmp("StaticImage", pStatic->GetName().c_str()))
-	{
-		__debugbreak();
-	}
-
 
 	while(pObject->MoveNext())
 	{
