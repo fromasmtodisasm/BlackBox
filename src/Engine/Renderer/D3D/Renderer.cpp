@@ -388,14 +388,16 @@ void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 
 void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
 {
+	#if 1
 	if (m_Is2DMode)
 	{
-		s0 /= ortho.x;
-		s1 /= ortho.x;
+		s0 *= ortho.x;
+		s1 *= ortho.x;
 
-		t0 /= ortho.y;
-		t1 /= ortho.y;
+		t0 *= ortho.y;
+		t1 *= ortho.y;
 	}
+	#endif
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
 
 	Image2D img = m_DrawImages.back();

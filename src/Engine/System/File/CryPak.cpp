@@ -254,4 +254,10 @@ size_t CCryPak::FReadRaw(void* data, size_t length, size_t elems, FILE* handle)
 {
 	return FRead(data, length, elems, handle);
 }
+
+const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags)
+{
+	strncpy(szDestPath, szSourcePath, g_nMaxPath);
+	return szSourcePath;
+}
 #endif

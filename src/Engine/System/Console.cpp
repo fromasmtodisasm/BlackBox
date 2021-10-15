@@ -1269,7 +1269,7 @@ void CXConsole::Draw()
 				IRenderAuxImage::DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
 				IRenderAuxImage::DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
 				#else
-				gEnv->pRenderer->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 + 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.9f);
+				gEnv->pRenderer->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 + 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
 				gEnv->pRenderer->Draw2dImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 				#endif
 			}
@@ -2230,7 +2230,7 @@ void CXConsole::DrawBuffer(int nScrollPos, const char* szEffect)
 		const float csize = fontSize * fontScale;
 		const float fCharWidth = 0.5f * csize;
 
-		float yPos = nScrollPos - csize - 3.0f;
+		float		yPos = nScrollPos - 2 * csize - 3.0f;
 		const float xPos = LINE_BORDER;
 
 		//Draw the input line

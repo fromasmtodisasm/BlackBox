@@ -17,6 +17,12 @@
 #	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #	define new DEBUG_CLIENTBLOCK
 #endif
+#include <BlackBox\System\File\CryFile.h>
+using CryPathString = string;
+
+#define INDENT_LOG_DURING_SCOPE(i, format, ...) CryLog(format, __VA_ARGS__)
+
+void* g_pLuaDebugger{};
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
@@ -175,69 +181,151 @@ void CScriptSystem::RegisterErrorHandler(void)
 	}
 }
 
+//////////////////////////////////////////////////////////////////////
+bool CScriptSystem::_ExecuteFile(const char* sFileName, bool bRaiseError, IScriptObject* pEnv)
+{
+	CCryFile file;
+
+	if (!file.Open(sFileName, "rb"))
+	{
+		if (bRaiseError)
+			ScriptWarning("[Lua Error] Failed to load script file %s", sFileName);
+
+		return false;
+	}
+
+	uint32 fileSize = file.GetLength();
+	if (!fileSize)
+		return false;
+
+	std::vector<char> buffer(fileSize);
+
+	if (file.ReadRaw(&buffer.front(), fileSize) == 0)
+		return false;
+
+	// Translate pak alias filenames
+	CryPathString translated;
+	translated.resize(0x800);
+	gEnv->pCryPak->AdjustFileName(sFileName, translated.data() /*, ICryPak::FLAGS_NO_FULL_PATH*/);
+
+	CryPathString fileName("@");
+	fileName.append(translated);
+	#if 0
+	fileName.replace('\\', '/');
+	#else
+	for (auto c : fileName)
+	{
+		if (c == '\\')
+			c = '/';
+	}
+	#endif
+
+	//CRY_DEFINE_ASSET_SCOPE("LUA", sFileName);
+
+	return ExecuteBuffer(&buffer.front(), fileSize, fileName.c_str(), pEnv);
+}
+
 bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = true*/, bool bForceReload /* = false*/)
 {
-	std::string path(sFileName);
+	if (strlen(sFileName) <= 0)
+		return false;
 
-	auto		it = m_dqLoadedFiles.find(path);
-	std::string src;
-	std::string buffer;
-	if (it == m_dqLoadedFiles.end() || bForceReload)
+	#if 0
+	FUNCTION_PROFILER(PROFILE_LOADING_ONLY, sFileName);
+	#endif
+
+	INDENT_LOG_DURING_SCOPE(true, "Executing file '%s' (raiseErrors=%d%s)", sFileName, bRaiseError, bForceReload ? ", force reload" : "");
+
+	if (bForceReload)
+		m_forceReloadCount++;
+
+	char sTemp[_MAX_PATH];
+	char lowerName[_MAX_PATH];
+	strcpy(sTemp, FormatPath(lowerName, sFileName));
+	//ScriptFileListItor itor = std::find(m_dqLoadedFiles.begin(), m_dqLoadedFiles.end(), sTemp.c_str());
+	ScriptFileListItor itor = m_dqLoadedFiles.find(CONST_TEMP_STRING(sTemp));
+	if (itor == m_dqLoadedFiles.end() || bForceReload || m_forceReloadCount > 0)
 	{
-		m_dqLoadedFiles.insert(path);
-		std::ifstream fin("res/" + path);
-		if (!fin.is_open())
+#if BB_PLATFORM_WINDOWS
+		if (g_pLuaDebugger)
 		{
-			// Try load root relative
-			fin = std::ifstream(path);
-			if (!fin.is_open())
-			{
-				CryError("Faled to load script: %s", path.c_str());
-				return false;
-			}
+			assert(0);
+			#if 0
+			string name = sFileName;
+			char   sTempStr[_MAX_PATH];
+			assert(name.size() < _MAX_PATH);
+			for (uint32 i = 0; i < name.size(); ++i)
+				sTempStr[i] = tolower(name[i]);
+			sTempStr[name.size()] = 0;
+			g_pLuaDebugger->GetCoverage()->ResetFile(sTempStr);
+			#endif
 		}
-		while (std::getline(fin, buffer))
+#endif
+		if (!_ExecuteFile(sTemp, bRaiseError, nullptr))
 		{
-			src += buffer;
-			src += '\n';
+			if (itor != m_dqLoadedFiles.end())
+				RemoveFileFromList(itor);
+			if (bForceReload)
+				m_forceReloadCount--;
+			return false;
 		}
-		fin.close();
+		if (itor == m_dqLoadedFiles.end())
+			AddFileToList(sTemp);
 	}
-	//return luaL_dofile(L, path.c_str()) == LUA_OK;
-	auto result = ExecuteBuffer(src.c_str(), src.length());
-	if (!result)
+	if (bForceReload)
+		m_forceReloadCount--;
+	return true;
+}
+
+bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize, const char* sBufferDescription, IScriptObject* pEnv)
+{
+	int status;
+
+	MEMSTAT_CONTEXT(EMemStatContextType::Other, "Lua LoadScript");
+	MEMSTAT_CONTEXT(EMemStatContextType::ScriptCall, sBufferDescription);
+
 	{
-		CryError("Error in file: %s", sFileName);
+		status = luaL_loadbuffer(L, sBuffer, nSize, sBufferDescription);
 	}
-	return result;
+
+	if (status == 0)
+	{
+		// parse OK?
+		int base = lua_gettop(L);  // function index.
+		lua_getref(L, (int)(INT_PTR)m_pErrorHandlerFunc);
+		lua_insert(L, base);  // put it under chunk and args
+
+		if (pEnv)
+		{
+			#if 0
+			PushObject(pEnv);
+			lua_setfenv(L, -2);
+			#else
+			CryError("Environment not supported");
+			#endif
+		}
+
+		status = lua_pcall(L, 0, LUA_MULTRET, base); // call main
+		lua_remove(L, base);                         // remove error handler function.
+	}
+	if (status != 0)
+	{
+		const char* sErr = lua_tostring(L, -1);
+		if (sBufferDescription && strlen(sBufferDescription) != 0)
+			GetISystem()->Warning(VALIDATOR_MODULE_SCRIPTSYSTEM, VALIDATOR_WARNING, VALIDATOR_FLAG_FILE | VALIDATOR_FLAG_SCRIPT, sBufferDescription,
+			                      "[Lua Error] Failed to execute file %s: %s", sBufferDescription, sErr);
+		else
+			ScriptWarning("[Lua Error] Error executing lua %s", sErr);
+		assert(GetStackSize() > 0);
+		lua_pop(L, 1);
+		return false;
+	}
+	return true;
 }
 
 bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize)
 {
-	int result = 0;
-
-	if ((result = luaL_dostring(L, sBuffer)) == LUA_OK)
-	{
-	}
-	else
-	{
-		if (/*status != 0*/ 1)
-		{
-			const char* sErr = lua_tostring(L, -1);
-#if 0
-		if (/*sBufferDescription && strlen(sBufferDescription) != 0*/0)
-			GetISystem()->Warning(VALIDATOR_MODULE_SCRIPTSYSTEM, VALIDATOR_WARNING, VALIDATOR_FLAG_FILE | VALIDATOR_FLAG_SCRIPT, sBufferDescription,
-			                      "[Lua Error] Failed to execute file %s: %s", sBufferDescription, sErr);
-		else
-#endif
-			ScriptWarning("[Lua Error] Error executing lua %s", sErr);
-			//assert(GetStackSize() > 0);
-			lua_pop(L, 1);
-			return false;
-		}
-	}
-
-	return result == LUA_OK;
+	return ExecuteBuffer(sBuffer, nSize, "", nullptr);
 }
 
 bool CScriptSystem::GetGlobalValue(const char* sKey, int& nVal)
@@ -1146,6 +1234,11 @@ void PrintStack(lua_State* L)
 		}
 		CryLog("$3 %d> %s", i, msg);
 	}
+}
+//////////////////////////////////////////////////////////////////////////
+int CScriptSystem::GetStackSize() const
+{
+	return lua_gettop(L);
 }
 
 static CPrintSink Sink;
