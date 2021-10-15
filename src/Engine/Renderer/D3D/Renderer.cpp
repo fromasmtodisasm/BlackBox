@@ -462,7 +462,11 @@ bool CD3DRenderer::FindTexture(const char* filename, CCryFile& file)
 	auto	 path		   = AdjustTexturePath(filename);
 	bool	 loaded		   = true;
 
-	if (!file.Open(path.data(), "r"))
+	if (file.Open(path.data(), "r"))
+	{
+		result = true;
+	}
+	else
 	{
 		loaded = false;
 		string _file;
@@ -505,10 +509,11 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 		return it->second;
 	}
 
-	int		 texture_index = -1;
 	
+	int		 texture_index = -1;
 	CCryFile file;
-	if (FindTexture(filename, file))
+
+	if (!FindTexture(filename, file))
 	{
 		CryError("Failed open texture: %s", filename);
 	}
@@ -533,18 +538,16 @@ int CD3DRenderer::AddTextureResource(const char* name, ID3D10ShaderResourceView*
 {
 	auto texture_index = NextTextureIndex();
 	{
-		{
-			ID3D10Texture2D* pTexture2D;
-			pSRView->GetResource((ID3D10Resource**)&pTexture2D);
-			//pTexture2D->GetDesc(&desc);
-			m_TexturesMap[texture_index]   = std::make_pair(pTexture2D, pSRView);
-			m_LoadedTextureNames[name] = texture_index;
+		ID3D10Texture2D* pTexture2D;
+		pSRView->GetResource((ID3D10Resource**)&pTexture2D);
+		//pTexture2D->GetDesc(&desc);
+		m_TexturesMap[texture_index] = std::make_pair(pTexture2D, pSRView);
+		m_LoadedTextureNames[name]	 = texture_index;
 
-			D3D10_TEXTURE2D_DESC desc;
-			pTexture2D->GetDesc(&desc);
-			m_TexPics[texture_index] = STexPic(CD3D10_TEXTURE2D_DESC(desc), texture_index, name);
+		D3D10_TEXTURE2D_DESC desc;
+		pTexture2D->GetDesc(&desc);
+		m_TexPics[texture_index] = STexPic(CD3D10_TEXTURE2D_DESC(desc), texture_index, name);
 
-		}
 	}
 	return texture_index;
 }
