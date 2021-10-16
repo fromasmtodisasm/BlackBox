@@ -35,7 +35,7 @@ target_link_libraries(${THIS_PROJECT} PUBLIC tinyxml2::tinyxml2)
 # add_package(assimp)
 set(USE_ASSIMP ON)
 if(USE_ASSIMP)
-	find_package(assimp CONFIG REQUIRED)
+	add_package(assimp )
 	target_link_libraries(${THIS_PROJECT} PRIVATE assimp::assimp)
 endif()
 

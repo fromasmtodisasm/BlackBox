@@ -484,13 +484,15 @@ bool CSystem::Init()
 	if (!InitNetwork())
 		return false;
 	//LoadCrynetwork();
+	auto font_size = vector2f(24,24);
 	m_pFont = m_env.pRenderer->GetIFont();
-	m_pFont->Init("arial.ttf", 12,12);
+	m_pFont->Init("arial.ttf", (uint)font_size.x, (uint)font_size.y);
 
 	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
 	m_pBlackBoxFont->Init("arial.ttf", 24,24);
 
 	m_Font.ms_nullFont.m_pFont = m_pFont;
+	m_Font.ms_nullFont.m_Size = font_size;
 
 
 	//====================================================

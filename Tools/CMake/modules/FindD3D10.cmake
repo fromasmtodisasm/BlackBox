@@ -56,4 +56,8 @@ if(D3D10_FOUND AND NOT TARGET D3D10)
   add_library(D3D10 INTERFACE)
   target_link_libraries(D3D10 INTERFACE  ${D3D10_LIBRARIES} ${D3DX10_LIBRARY})
   target_include_directories(D3D10 INTERFACE "${D3D10_INCLUDE_DIR}")
+else()
+  message(WARNING "Please, install DirectX SDK June 2010: 
+    https://download.microsoft.com/download/A/E/7/AE743F1F-632B-4809-87A9-AA1BB3458E31/DXSDK_Jun10.exe"
+  )
 endif()

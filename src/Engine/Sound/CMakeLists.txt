@@ -21,5 +21,5 @@ target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
 
 add_sdl(${THIS_PROJECT})
-find_package(sdl2-mixer CONFIG REQUIRED)
+add_package(sdl2-mixer)
 target_link_libraries(${THIS_PROJECT} PRIVATE SDL2::SDL2_mixer)
