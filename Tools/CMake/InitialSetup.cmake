@@ -36,10 +36,10 @@ message(STATUS "PROJECT_DIR = ${PROJECT_DIR}")
 message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 ###################################################
 
-if (DEFINED VCPKG_INSTALLER AND (NOT DEFINED VCPKG OR NOT CMAKE_TOOLCHAIN_FILE))
+#if (DEFINED VCPKG_INSTALLER AND (NOT DEFINED VCPKG OR NOT CMAKE_TOOLCHAIN_FILE))
   include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
   PrepareVcpkg()
-endif()
+#endif()
 
 # Including the Toolchain file, as it sets important variables.
 if(DEFINED TOOLCHAIN_FILE)

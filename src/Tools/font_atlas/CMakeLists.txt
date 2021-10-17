@@ -4,7 +4,7 @@ project(atlas)
 
 add_executable(atlas freetype-atlas.c)
 
-ADD_PACKAGE(Stb)
+ADD_PACKAGE(stb)
 ADD_PACKAGE(freetype)
 if (LINUX)
 	target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
