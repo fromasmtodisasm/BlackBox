@@ -141,10 +141,9 @@ function(add_package_msvc Package)
 				endif()
 			endif()
 		endif()
-		message(STATUS "FIND CONFIG PACKAGE: ${Package}")
+		#message(STATUS "FIND CONFIG PACKAGE: ${Package}")
 		find_package(${Package} CONFIG)
 		if(NOT ${Package}_FOUND)
-			message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 			find_package(${Package} REQUIRED)
 		endif()
 	endif()
@@ -927,9 +926,6 @@ function(add_metadata)
 				"// Icon with lowest ID value placed first to ensure application icon\n"
 				"// remains consistent on all systems.\n"
 				"IDI_ICON                ICON                    \"${icon_name}\"\n")
-		else()
-			message(
-				STATUS "icon [${game_folder}/../Resources/${icon_name}] not exists")
 		endif()
 		file(
 			APPEND "${CMAKE_CURRENT_BINARY_DIR}/${THIS_PROJECT}.autogen.rc"

@@ -1,0 +1,5 @@
+const char* Hash = "@GIT_HEAD_SHA1@";
+const char* Message = "@GIT_COMMIT_SUBJECT@";
+const char* GitIsDirty = "is dirty: " "@GIT_IS_DIRTY@";
+const char* GitBranch = "@GIT_BRANCH@";
+

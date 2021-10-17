@@ -54,7 +54,7 @@ if (NOT DEFINED BUILD_PLATFORM)
 	message(FATAL_ERROR "BUILD_PLATFORM not defined. Please always supply one of the CRYENGINE toolchain files.")
 endif()
 
-set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src/Engine)
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/Code/Engine)
 set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
 set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
 set(BLACKBOX_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)

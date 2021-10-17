@@ -9,9 +9,11 @@
     {
       "name": "default",
       "displayName": "Default Config",
-      "description": "Default build using Ninja generator",
+      "description": "Default build Visual Studio 2019 generator",
       "generator": "Visual Studio 16 2019",
       "binaryDir": "${sourceDir}/Solutions/Win64",
+      "warnings": {"dev": false},
+      "errors": {"dev": false},
       "cacheVariables": {
         "OPTION_RUNTIME_CVAR_OVERRIDES": "ON",
         "OPTION_REMOTE_CONSOLE": "ON",
@@ -24,7 +26,7 @@
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_INSTALLER": "ON",
         
-        "ADD_PACKAGE_DEP_MODE": "ON"
+        "ADD_PACKAGE_DEP_MODE": "OFF"
 
       },
       "environment": {
