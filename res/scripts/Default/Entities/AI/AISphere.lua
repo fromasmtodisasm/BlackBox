@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/AISphere.lua
 
 AISphere ={
 	Properties = {

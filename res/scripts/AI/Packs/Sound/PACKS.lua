@@ -1,4 +1,3 @@
--- : ./AI/Packs/Sound/PACKS.lua
 SOUNDPACK={
 
 	AVAILABLE =

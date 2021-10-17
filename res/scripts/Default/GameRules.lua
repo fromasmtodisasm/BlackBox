@@ -1,4 +1,3 @@
--- : ./Default/GameRules.lua
 -------------------------------------------------------------------
 -- X-Isle Script File
 -- Description: Defines the rules of the default game(Single player)

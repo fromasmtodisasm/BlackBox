@@ -1,4 +1,3 @@
--- : ./Default/Entities/Triggers/PlaceableExplo.lua
 
 
 

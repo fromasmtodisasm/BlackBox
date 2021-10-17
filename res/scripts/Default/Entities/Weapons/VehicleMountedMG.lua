@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/VehicleMountedMG.lua
 VehicleMountedMG = {
 	name = "VehicleMountedMG",
 	

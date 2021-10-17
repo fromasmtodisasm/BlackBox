@@ -1,4 +1,3 @@
--- : ./materials/README.txt
 -----------------------------------------------------------------
 Notes, tips, info about materials
 ***** please update when you add stuff! *******

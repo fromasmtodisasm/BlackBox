@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/ModMorph.lua
 
 
 AICharacter.ModMorph = {

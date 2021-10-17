@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_ProneIdle.lua
 -- stand still and look around with binoculars between using idle animations.
 -- 
 -- place a AIANCHOR_RANDOM_TALK if you want him to try and talk to his fellows occasionaly

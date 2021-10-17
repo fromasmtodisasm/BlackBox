@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/SwingingObject.lua
 SwingingObject = 
 {
 	Properties=

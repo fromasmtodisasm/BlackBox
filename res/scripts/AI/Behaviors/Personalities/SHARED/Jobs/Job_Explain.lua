@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_Explain.lua
 -- Explain - not really a job in its own right more of a sub job.
 -- Created 2003-01-13 Amanda
 --------------------------

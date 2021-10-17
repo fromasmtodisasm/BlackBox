@@ -1,4 +1,3 @@
--- : ./materials/mat_default.lua
 
 Script:LoadScript("scripts/materials/commoneffects.lua");
 

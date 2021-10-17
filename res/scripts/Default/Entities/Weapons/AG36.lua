@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/AG36.lua
 function GetScopeTex()
 	local cur_r_TexResolution = tonumber( getglobal( "r_TexResolution" ) );
 	if( cur_r_TexResolution >= 2 ) then -- lower res texture for low texture quality setting

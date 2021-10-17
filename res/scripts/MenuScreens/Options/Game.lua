@@ -1,4 +1,3 @@
--- : ./MenuScreens/Options/Game.lua
 --
 -- player options menu page
 --

@@ -1,4 +1,3 @@
--- : ./MenuScreens/Common/JoinIPDialog.lua
 UI.PageJoinIPDialog=
 {
 	GUI=

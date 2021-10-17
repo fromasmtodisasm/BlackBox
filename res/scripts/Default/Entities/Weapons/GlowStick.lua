@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/GlowStick.lua
 
 Script:LoadScript("scripts/default/entities/weapons/BaseHandGrenade.lua");
 --reload_script scripts/default/entities/weapons/glowstick.lua

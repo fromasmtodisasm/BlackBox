@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_StandIdleFormation.lua
 -- stand still and run thru random idles but will keep formation - 
 -- modified by sten: 		15-10-2002
 -- based on Job_StandIdle	

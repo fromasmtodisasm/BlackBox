@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Idles/Idle_Any.lua
 -- Generic Idle behaviour - just change animations to make it something else
 -- created by petar
 --------------------------

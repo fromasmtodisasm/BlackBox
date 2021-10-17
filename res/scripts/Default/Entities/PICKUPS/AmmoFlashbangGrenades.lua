@@ -1,4 +1,3 @@
--- : ./Default/Entities/PICKUPS/AmmoFlashbangGrenades.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local params={

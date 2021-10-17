@@ -1,4 +1,3 @@
--- : ./Multiplayer/Ubisoft.lua
 function NewUbisoftClient:ConsoleLogin(username, password)
 	NewUbisoftClient:Client_Disconnect();
 	

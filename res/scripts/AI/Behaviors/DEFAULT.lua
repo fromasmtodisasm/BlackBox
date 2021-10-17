@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/DEFAULT.lua
 -- Default behaviour - implements all the system callbacks and does something
 -- this is so that any enemy has a behaviour to fallback to
 --------------------------

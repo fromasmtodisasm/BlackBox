@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/TLFakeAttack.lua
 
 AICharacter.TLFakeAttack = {
 

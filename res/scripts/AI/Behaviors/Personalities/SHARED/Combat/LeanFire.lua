@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Combat/LeanFire.lua
 --------------------------------------------------
 --   Created By: petar
 --   Description: This behaviour will just make whoever dig in behind a medium cover

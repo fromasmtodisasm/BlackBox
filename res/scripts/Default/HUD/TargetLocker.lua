@@ -1,4 +1,3 @@
--- : ./Default/HUD/TargetLocker.lua
 --------------------------------------------------------------------
 -- X-Isle Script File
 -- Description: Defines the TargetLocker

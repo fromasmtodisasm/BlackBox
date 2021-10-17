@@ -1,4 +1,3 @@
--- : ./Multiplayer/SVplayerTrack.lua
 SVplayerTrack={};
 
 ptrack = {

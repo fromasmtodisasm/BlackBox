@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_PracticeFire.lua
 
 -- created by petar
 --------------------------

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Triggers/Waypoint.lua
 Waypoint = {
 
 	type = "Trigger",

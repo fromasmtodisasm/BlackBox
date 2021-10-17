@@ -1,4 +1,3 @@
--- : ./MenuScreens/Ingame/InGameNonTeam.lua
 --
 -- options menu page
 --

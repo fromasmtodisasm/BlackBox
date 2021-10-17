@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/VEHICLES/CAR/Car_chase.lua
 
 AIBehaviour.Car_chase = {
 	Name = "Car_chase",

@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManagerMand.lua
 
 function PipeManager:OnInitMand()
 	-------------------

@@ -1,4 +1,3 @@
--- : ./AI/Packs/Sound/Template.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

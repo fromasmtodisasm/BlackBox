@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_FormPatrolCircle.lua
 -- circular patroling behaviour - 
 --Each character will patrol a set of TagPoints in a circular way. ie 1 2 3 4 5 1 2 3 4 5 etc.
 

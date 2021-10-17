@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Scientist/ScientistIdle.lua
 --------------------------------------------------
 --    Created By: Amanda
 --   Description: This behaviour describes the SCOUT personality in idle mode

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/StickyExplosive.lua
 projectileDefinition = {
 	Param = {
 		mass = .3,

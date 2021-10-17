@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/BuildableObject.lua
 -- 5 diffeerent states
 -- can be build and repaired
 -- all states are physicalized (depending on material)

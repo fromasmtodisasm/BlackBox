@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/Grenade.lua
 -- #Script.ReloadScript("scripts/default/entities/weapons/rocket.lua")
 
 Grenade = {

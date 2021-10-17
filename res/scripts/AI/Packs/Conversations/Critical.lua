@@ -1,4 +1,3 @@
--- : ./AI/Packs/Conversations/Critical.lua
 
 
 AI_CriticalConversations = {

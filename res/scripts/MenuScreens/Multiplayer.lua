@@ -1,4 +1,3 @@
--- : ./MenuScreens/Multiplayer.lua
 UI.PageMultiplayer =
 {
     FavServers = {},

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Screwed/ScrewedAttack.lua
 --------------------------------------------------
 --    Created By: Petar
 

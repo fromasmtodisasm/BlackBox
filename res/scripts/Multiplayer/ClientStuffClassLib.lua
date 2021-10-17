@@ -1,4 +1,3 @@
--- : ./Multiplayer/ClientStuffClassLib.lua
 
 Script:LoadScript("scripts/Multiplayer/ClientStuffTeamLib.lua");		-- derive functionality
 

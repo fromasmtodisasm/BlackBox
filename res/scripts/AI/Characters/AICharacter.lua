@@ -1,4 +1,3 @@
--- : ./AI/Characters/AICharacter.lua
 -- All the characters defined
 
 AICharacter = {

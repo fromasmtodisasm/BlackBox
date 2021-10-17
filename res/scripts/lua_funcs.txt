@@ -1,4 +1,3 @@
--- : ./lua_funcs.txt
 general for ALL entities
 ========================
 

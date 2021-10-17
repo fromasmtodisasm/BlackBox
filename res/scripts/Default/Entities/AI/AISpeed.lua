@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/AISpeed.lua
 --filippo: this entity change the speed of an AI entity, its designed for helycopters but should can be used with every ai vehicles.
 --it must be used together with an AItrigger , because the new speed is applied to the object is entering (or leaving) the trigger.
 

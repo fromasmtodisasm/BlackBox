@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/TeamLeaders/TLDefenseIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

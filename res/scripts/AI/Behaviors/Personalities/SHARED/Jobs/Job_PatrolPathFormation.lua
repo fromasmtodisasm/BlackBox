@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolPathFormation.lua
 -- patroling behaviour that will form a formation - 
 -- created by sten: 		18-09-2002
 -- last modified by sten:	22-10-2002

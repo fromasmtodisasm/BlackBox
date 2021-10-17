@@ -1,4 +1,3 @@
--- : ./materials/mat_ceramic.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_ceramic"] = {
 	type="rock",

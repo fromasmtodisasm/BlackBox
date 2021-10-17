@@ -1,4 +1,3 @@
--- : ./materials/mat_sticky.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 Materials["mat_sticky"] = {

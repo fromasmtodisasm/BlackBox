@@ -1,4 +1,3 @@
--- : ./Default/Entities/multiplayer/ASSAULTCheckPoint.lua
 ASSAULTCheckPoint={
 	Properties={
 		CheckPoint_Number=1,		-- any value, only the order matters

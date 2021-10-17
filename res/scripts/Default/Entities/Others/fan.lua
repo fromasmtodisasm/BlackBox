@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/fan.lua
 Fan = {
   type = "Fan",
   minrotspeed = 0,

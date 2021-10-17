@@ -1,4 +1,3 @@
--- : ./materials/mat_canvas.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_canvas"] = {
 	type="canvas",

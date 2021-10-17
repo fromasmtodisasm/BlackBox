@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/AISounds/sound_tables.lua
 AI_SOUND_TABLES = {
 
 	------------------------------------------------------------------------------------

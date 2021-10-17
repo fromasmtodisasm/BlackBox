@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolNode.lua
 -- node patroling behaviour - 
 -- Randomly move between points in a tag set, at each point run an idle animation.
 --

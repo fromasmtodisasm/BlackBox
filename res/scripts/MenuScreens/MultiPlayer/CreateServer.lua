@@ -1,4 +1,3 @@
--- : ./MenuScreens/MultiPlayer/CreateServer.lua
 
 UI.PageCreateServer=
 {

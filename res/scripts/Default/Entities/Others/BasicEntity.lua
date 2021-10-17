@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/BasicEntity.lua
 Script:ReloadScript("scripts/materials/PhysicsSounds.lua")
 
 -- simple entity

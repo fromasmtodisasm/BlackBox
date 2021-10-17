@@ -1,4 +1,3 @@
--- : ./MenuScreens/MultiPlayer/NETServerList.lua
 UI.PageNETServerList=
 {
 	UnknownModString="$9 @UnknownMod $3",						-- 

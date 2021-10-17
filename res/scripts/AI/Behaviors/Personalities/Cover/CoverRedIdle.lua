@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Cover/CoverRedIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Triggers/MultipleTrigger.lua
 ----------------------------------------------------------------------------
 --
 -- Description :		Trigger that triggers event after some time.

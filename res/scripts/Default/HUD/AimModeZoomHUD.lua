@@ -1,4 +1,3 @@
--- : ./Default/HUD/AimModeZoomHUD.lua
 AimModeZoomHUD = {
 	MulMask = nil,
 	--BlurImg = System:LoadImage("Textures/Hud/AimBlur.tga"),

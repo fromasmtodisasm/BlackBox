@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/Fast.lua
 
 
 AICharacter.Fast = {

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Doors/AutomaticDoor1Piece.lua
 AutomaticDoor1Piece = {
 	Properties = {
   		MapVisMask = 0,

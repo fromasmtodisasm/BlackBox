@@ -1,4 +1,3 @@
--- : ./engine.lua
 config = {
 	r_window_width = 1366,
 	r_window_height = 768,

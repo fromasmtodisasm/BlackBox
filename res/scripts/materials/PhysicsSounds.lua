@@ -1,4 +1,3 @@
--- : ./materials/PhysicsSounds.lua
 PhysicsSoundsTable={
 	-- Soft-Contacts --------------------------------------------------
 	Soft={

@@ -1,4 +1,3 @@
--- : ./Default/Entities/PICKUPS/AmmoPistol.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local params={

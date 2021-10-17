@@ -1,4 +1,3 @@
--- : ./FontColors.txt
 Here a list of possible colors within the font...
 
 $0 Black

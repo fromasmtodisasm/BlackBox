@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/MutantRear.lua
 -- MutantRear Character SCRIPT
 
 AICharacter.MutantRear = {

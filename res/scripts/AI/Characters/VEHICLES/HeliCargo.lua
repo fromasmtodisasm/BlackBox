@@ -1,4 +1,3 @@
--- : ./AI/Characters/VEHICLES/HeliCargo.lua
 -- Test Character SCRIPT
 
 AICharacter.HeliCargo = {

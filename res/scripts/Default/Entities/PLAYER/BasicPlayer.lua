@@ -1,4 +1,3 @@
--- : ./Default/Entities/PLAYER/BasicPlayer.lua
 -- #Script.ReloadScript("scripts/default/entities/player/basicplayer.lua")
 
 GoreDecals = { 			-- used to be projected on walls/objects/terrain

@@ -1,4 +1,3 @@
--- : ./defiant.lua
 DEFIANT = {
 
 

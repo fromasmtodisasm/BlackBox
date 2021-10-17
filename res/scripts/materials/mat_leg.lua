@@ -1,4 +1,3 @@
--- : ./materials/mat_leg.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_leg"] = {
 	type="leg",

@@ -1,4 +1,3 @@
--- : ./Multiplayer/GameRulesLib.lua
 Script:LoadScript("Scripts/Multiplayer/SVcommands.lua");
 Script:LoadScript("Scripts/Multiplayer/SVplayerTrack.lua");
 Script:LoadScript("SCRIPTS/Multiplayer/Task.lua");

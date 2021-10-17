@@ -1,4 +1,3 @@
--- : ./Multiplayer/MultiplayerClassDefiniton.lua
 
 -- class definition for class based mods
 --

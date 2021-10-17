@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PMReusable.lua
 
 function PipeManager:InitReusable()
 

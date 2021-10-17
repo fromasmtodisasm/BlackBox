@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/ProximityDamage.lua
 ProximityDamage = {
 	type = "ProximityDamage",
 	Properties = {	

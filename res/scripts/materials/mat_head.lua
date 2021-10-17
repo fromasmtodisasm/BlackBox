@@ -1,4 +1,3 @@
--- : ./materials/mat_head.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_head"] = {
 	type="head",

@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManagerShared.lua
 
 function PipeManager:OnInitShared()
 	System:Log("ON INIT SHARED");

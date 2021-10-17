@@ -1,4 +1,3 @@
--- : ./Multiplayer/SVcommands.lua
 SVcommands = {};
 
 protectedNames = {

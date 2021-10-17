@@ -1,4 +1,3 @@
--- : ./Default/Entities/PICKUPS/BasePickup.lua
 BasePickup={
 	Properties = {
 		Amount = 15,

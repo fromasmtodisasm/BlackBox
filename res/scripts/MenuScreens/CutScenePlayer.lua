@@ -1,4 +1,3 @@
--- : ./MenuScreens/CutScenePlayer.lua
 UI.PageCutScenePlayer=
 {	
 	GUI=

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/Mortar.lua
 Mortar = {
 	name = "Mortar",
 

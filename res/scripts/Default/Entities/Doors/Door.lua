@@ -1,4 +1,3 @@
--- : ./Default/Entities/Doors/Door.lua
 Door = {
 	Properties = {
 		CloseDelay=1.5,

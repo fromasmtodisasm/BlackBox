@@ -1,4 +1,3 @@
--- : ./TDM/ClientStuff.lua
 Script:LoadScript("scripts/Multiplayer/ClientStuffTeamLib.lua");
 Script:LoadScript("scripts/TDM/shared.lua");
 

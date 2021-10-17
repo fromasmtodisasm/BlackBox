@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/AISounds/jumps.lua
 AI_JUMP_KEYFRAMES = {
 
 

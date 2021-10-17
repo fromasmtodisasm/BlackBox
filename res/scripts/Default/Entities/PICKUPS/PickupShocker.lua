@@ -1,4 +1,3 @@
--- : ./Default/Entities/PICKUPS/PickupShocker.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local params={

@@ -1,4 +1,3 @@
--- : ./materials/mat_mud.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_mud"] = {
 	type="mud",

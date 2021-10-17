@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManagerCombat.lua
 
 function PipeManager:OnInitCombat()
 

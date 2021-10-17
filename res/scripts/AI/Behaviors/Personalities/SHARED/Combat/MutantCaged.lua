@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Combat/MutantCaged.lua
 --------------------------------------------------
 --   Created By: amanda
 --   Description: run to alarm anchor

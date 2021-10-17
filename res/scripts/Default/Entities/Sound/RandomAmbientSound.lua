@@ -1,4 +1,3 @@
--- : ./Default/Entities/Sound/RandomAmbientSound.lua
 RandomAmbientSound = {
 	type = "RandomAmbientSound",
 

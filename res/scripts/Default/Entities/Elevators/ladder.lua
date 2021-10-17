@@ -1,4 +1,3 @@
--- : ./Default/Entities/Elevators/ladder.lua
 Ladder = {
   type = "Ladder",
   climbspeed = 1.8,

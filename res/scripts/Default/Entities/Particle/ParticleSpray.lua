@@ -1,4 +1,3 @@
--- : ./Default/Entities/Particle/ParticleSpray.lua
 ParticleSpray = {
 
 	Properties = {

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Scout/ScoutBlackIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

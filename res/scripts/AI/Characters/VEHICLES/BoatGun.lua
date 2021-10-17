@@ -1,4 +1,3 @@
--- : ./AI/Characters/VEHICLES/BoatGun.lua
 -- Test Character SCRIPT
 
 AICharacter.BoatGun = {

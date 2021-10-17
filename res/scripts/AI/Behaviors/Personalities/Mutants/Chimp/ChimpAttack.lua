@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Chimp/ChimpAttack.lua
 --------------------------------------------------
 --    Created By: Petar
 

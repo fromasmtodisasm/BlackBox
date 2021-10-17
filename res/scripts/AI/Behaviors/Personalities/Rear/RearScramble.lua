@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Rear/RearScramble.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/fan2.lua
 Fan = {
 	Properties = {
 	},

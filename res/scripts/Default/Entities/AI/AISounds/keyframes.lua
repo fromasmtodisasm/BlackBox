@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/AISounds/keyframes.lua
 AI_ANIM_KEYFRAMES = {
 
 	BASE_HUMAN_MODEL = {

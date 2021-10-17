@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/VEHICLES/CAR/Car_idle.lua
 
 AIBehaviour.Car_idle = {
 	Name = "Car_idle",

@@ -1,4 +1,3 @@
--- : ./Default/Entities/PLAYER/AdvCamSystem.lua
 AdvCamSystem = 
 {
 	states =

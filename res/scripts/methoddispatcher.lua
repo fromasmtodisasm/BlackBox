@@ -1,4 +1,3 @@
--- : ./methoddispatcher.lua
 MethodDispatcherPool={
 	_pool={},
 };

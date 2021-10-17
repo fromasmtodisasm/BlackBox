@@ -1,4 +1,3 @@
--- : ./Default/Entities/Sound/MusicThemeSelector.lua
 MusicThemeSelector = {
 	type = "MusicThemeSelector",
 

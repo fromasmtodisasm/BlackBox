@@ -1,4 +1,3 @@
--- : ./Default/HUD/ZoomView.lua
 ZoomView={
 	IsActive = 0,
 	--Zoomable = 1,

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolPathNoIdle.lua
 -- linear patroling behaviour - 
 -- This behavior uses paths for patrolling. Paths do not have to be closed and the characters will approach the path from 
 -- beginning to end and start the path again.

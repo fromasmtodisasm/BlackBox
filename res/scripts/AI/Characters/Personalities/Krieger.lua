@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/Krieger.lua
 
 
 AICharacter.Krieger = {

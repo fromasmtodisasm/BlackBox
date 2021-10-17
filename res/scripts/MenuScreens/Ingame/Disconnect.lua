@@ -1,4 +1,3 @@
--- : ./MenuScreens/Ingame/Disconnect.lua
 UI.PageDisconnect=
 {
 	GUI=

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/RigidBody.lua
 RigidBody = {
   type = "RigidBody",
   MapVisMask = 0,

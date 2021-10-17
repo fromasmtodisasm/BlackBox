@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Idles/Idle_Talk.lua
 -- idle talk behaviour - talks without moving
 --------------------------
 

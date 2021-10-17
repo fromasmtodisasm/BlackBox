@@ -1,4 +1,3 @@
--- : ./MenuScreens/Credits.lua
 function instruction_compare(a, b)
 	if (a[1] < b[1]) then
 		return 1;

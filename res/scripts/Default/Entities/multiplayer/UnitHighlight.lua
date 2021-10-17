@@ -1,4 +1,3 @@
--- : ./Default/Entities/multiplayer/UnitHighlight.lua
 -- used to highlight friendly units in team muliplayer
 
 UnitHighlight = {

@@ -1,4 +1,3 @@
--- : ./materials/mat_sand_wet.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 Materials["mat_sand_wet"] = {

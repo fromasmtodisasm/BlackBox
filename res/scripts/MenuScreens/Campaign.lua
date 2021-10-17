@@ -1,4 +1,3 @@
--- : ./MenuScreens/Campaign.lua
 --
 -- options menu page
 --

@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/SoundSupressor.lua
 SoundSupressor = {
 	type = "AISoundSupressor",
 

@@ -1,4 +1,3 @@
--- : ./AI/Logic/SoundPackRandomizer.lua
 SPRandomizer = {
 
 --	HumanPacks = {

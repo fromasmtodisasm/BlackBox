@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/EngineerTool.lua
 EngineerTool = {
 	name			= "EngineerTool",
 	object		= "Objects/Weapons/wrench/wrench_bind.cgf",

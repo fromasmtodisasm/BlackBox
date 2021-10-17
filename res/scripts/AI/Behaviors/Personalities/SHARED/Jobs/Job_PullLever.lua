@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_PullLever.lua
 -- May run as sub behaviour called from Job_CheckApparatus in response to AIANCHOR_PULL
 -- used for worker characters eg. scientist, lab assistant, evil worker
 --

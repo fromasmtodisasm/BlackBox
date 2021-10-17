@@ -1,4 +1,3 @@
--- : ./ClassRegistry.lua
 -- defines entity classes of players in this game
 --
 -- _CLASS_ID is used for C++ (don't change those)

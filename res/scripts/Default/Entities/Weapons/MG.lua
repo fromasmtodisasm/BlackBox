@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/MG.lua
 MG = {
 	name = "MG",
 	

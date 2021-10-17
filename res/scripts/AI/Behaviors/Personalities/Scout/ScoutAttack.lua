@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Scout/ScoutAttack.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: Attack behaviour for the Scout personality

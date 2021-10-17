@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/Shotgun.lua
 Shotgun = {
 	name			= "Shotgun",
 	object		= "Objects/Weapons/pancor/pancor_bind.cgf",

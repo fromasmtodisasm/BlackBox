@@ -1,4 +1,3 @@
--- : ./MenuScreens/Profiles.lua
 --
 -- profiles menu page
 --

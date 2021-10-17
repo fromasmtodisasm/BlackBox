@@ -1,4 +1,3 @@
--- : ./Multiplayer/MapCycle.lua
 
 -- make sure the table is loaded once
 if (not MapCycle) then

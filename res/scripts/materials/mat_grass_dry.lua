@@ -1,4 +1,3 @@
--- : ./materials/mat_grass_dry.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_grass_dry"] = {
 	type="grass_dry",

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Render/BFly.lua
 BFly = {
 	type = "BFlyController",
 	Properties = {	

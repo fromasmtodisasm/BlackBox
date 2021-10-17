@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Special/Valerie/ValerieIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

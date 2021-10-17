@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/SniperBullet.lua
 -- #Script:ReloadScript("scripts/default/entities/weapons/SniperBullet.lua")
 SniperBullet = {
 	type = "Projectile",

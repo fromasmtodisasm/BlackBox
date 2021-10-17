@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/ConcussionGrenade.lua
 -- #Script.ReloadScript("scripts/default/entities/weapons/ProjConcussionGrenade.lua")
 
 

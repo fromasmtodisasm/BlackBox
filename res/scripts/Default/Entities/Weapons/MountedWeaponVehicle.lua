@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/MountedWeaponVehicle.lua
 MountedWeaponVehicle_table=
 {
 	name = "MountedWeaponVehicle",

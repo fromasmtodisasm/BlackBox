@@ -1,4 +1,3 @@
--- : ./materials/mat_wood2_p_nd.lua
 --#Script:LoadScript("scripts/materials/mat_wood2.lua")
 
 Script:LoadScript("scripts/materials/commoneffects.lua");

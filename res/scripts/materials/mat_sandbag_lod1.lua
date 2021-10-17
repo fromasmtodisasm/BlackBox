@@ -1,4 +1,3 @@
--- : ./materials/mat_sandbag_lod1.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 	
 local WalkParticles = 

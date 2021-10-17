@@ -1,4 +1,3 @@
--- : ./MenuScreens/MultiPlayer/BannerUpdate.lua
 function UI:UpdateBanner()
 	if (UI.BannerCfgDownload or UI.BannerImageDownload) then
 		return;

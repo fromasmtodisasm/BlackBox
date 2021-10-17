@@ -1,4 +1,3 @@
--- : ./Default/Entities/Doors/AutomaticDoor.lua
 AutomaticDoor = {
 	Properties = {
   		Direction = {

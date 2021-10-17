@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/Scientist.lua
 -- Test Character SCRIPT
 
 AICharacter.Scientist = {

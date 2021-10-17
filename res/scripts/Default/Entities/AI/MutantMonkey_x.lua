@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/MutantMonkey_x.lua
 ABBERATION_GRAV_MULT = 3;
 MutantMonkey_x = {
 

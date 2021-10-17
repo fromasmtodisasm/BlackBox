@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Idles/Idle_SitDown.lua
 -- sit down on seat  - look for a magazine to read nb seat does not bind to player
 -- to bind magazine to hand need to make sure magazine is exported bound to same bone that I am going to use, and register with AI
 -- Created 2002-12-03 Amanda

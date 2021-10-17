@@ -1,4 +1,3 @@
--- : ./Default/Entities/Boids/Birds.lua
 Birds = {
   type = "Birds",
   MapVisMask = 0,

@@ -1,4 +1,3 @@
--- : ./LoadLevel.lua
 objects = {
 	bmw = {
 		mesh =  "res/geom/bmw.obj",

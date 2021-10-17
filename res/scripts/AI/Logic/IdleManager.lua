@@ -1,4 +1,3 @@
--- : ./AI/Logic/IdleManager.lua
 -- Idle Manager - 
 -- Created by Sten; 18092002
 -- improved and made customizeable by Petar may2003
