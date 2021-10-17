@@ -34,8 +34,6 @@
 
 #define UI_DEFAULTS							(UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
 
-#include "Proxy.cpp"
-
 ////////////////////////////////////////////////////////////////////// 
 CUISystem::CUISystem()
 : m_pGame(0), m_pSystem(0), m_pScriptSystem(0), m_pRenderer(0), m_pInput(0)
