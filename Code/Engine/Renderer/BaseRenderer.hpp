@@ -206,7 +206,7 @@ class ShaderMan
 	{
 		PEffect			  pEffect = nullptr;
 		std::stringstream path;
-		path << "res/shaders/fx/" << name << ".fx";
+		path << "Data/shaders/fx/" << name << ".fx";
 		if (g_FxParser->Parse(path.str().data(), &pEffect))
 		{
 			#if 0

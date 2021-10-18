@@ -117,7 +117,13 @@ void CCryPak::FreePakInfo(PakInfo*)
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0*/)
 {
-	return fopen(pName, mode);
+	auto file = fopen( pName,mode );
+	if (!file)
+	{
+		string adjustedName = m_DataRoot + pName;
+		file = fopen(adjustedName.data(), mode);
+	}
+	return file;
 }
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, char* szFileGamePath, int nLen)

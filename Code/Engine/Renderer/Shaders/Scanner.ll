@@ -357,7 +357,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     if(s)
         *s = '\0';
     include_stack.push(IncludeData(YY_CURRENT_BUFFER, driver.location, driver.file.c_str()));
-    driver.file = "res/shaders/fx/" + std::string(YYText());
+    driver.file = "Data/shaders/fx/" + std::string(YYText());
     driver.location.initialize(&driver.file);
     //line_num  = 1;
     //FILE *fd = NULL;
