@@ -84,6 +84,28 @@ void CSDLMouse::PostInit()
 		m_posY = gEnv->pRenderer->GetHeight() / 2);
 }
 
+
+void CSDLMouse::ClearKeyState()
+{
+  for (TIdToSymbolMap::iterator i = m_idToInfo.begin(); i != m_idToInfo.end(); ++i)
+  {
+    SInputSymbol* pSymbol = (*i).second;
+    if (pSymbol)
+    {
+      SInputEvent event;
+      event.deviceType = m_deviceType;
+      event.keyName = pSymbol->name;
+      event.keyId = pSymbol->keyId;
+      event.state = eIS_Unknown;
+      event.value = 0.0f;
+      event.pSymbol = pSymbol;
+      pSymbol->value = 0.0f;
+      pSymbol->state = eIS_Unknown;
+      m_input.PostInputEvent(event);
+    }
+  }
+}
+
 void CSDLMouse::Update(bool focus)
 {
   SDL_Event eventList[MOUSE_MAX_PEEP];

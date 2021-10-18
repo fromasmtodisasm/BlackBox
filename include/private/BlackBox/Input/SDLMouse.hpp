@@ -17,6 +17,7 @@ public:
   virtual void PostInit();
 
   virtual void Update(bool focus);
+  virtual void ClearKeyState() override;
 
   void         GrabInput();
 

@@ -484,7 +484,7 @@ bool CSystem::Init()
 	if (!InitNetwork())
 		return false;
 	//LoadCrynetwork();
-	auto font_size = vector2f(24,24);
+	auto font_size = vector2f(14,14);
 	m_pFont = m_env.pRenderer->GetIFont();
 	m_pFont->Init("arial.ttf", (uint)font_size.x, (uint)font_size.y);
 

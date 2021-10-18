@@ -682,6 +682,7 @@ void CUISystem::Update()
 	{
 		SortTabStop();
 	}
+	m_pInput->ClearKeyState();
 }
 
 ////////////////////////////////////////////////////////////////////// 
