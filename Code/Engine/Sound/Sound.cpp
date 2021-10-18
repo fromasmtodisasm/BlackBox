@@ -225,7 +225,7 @@ CSound* CSound::Load(const char* path, int nFlags)
 	SampleType Data{};
 	CSound*	   pSound{};
 	char buf[256];
-	sprintf(buf, "res/%s", path);
+	sprintf(buf, "Data/%s", path);
 	if(nFlags & FLAG_SOUND_16BITS)
 		Data.Sample = Mix_LoadWAV(buf);
 	else

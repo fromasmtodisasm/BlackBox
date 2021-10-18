@@ -111,7 +111,7 @@ inline bool CCryFile::Open( const char *filename, const char *mode )
 	m_file = m_pIPak->FOpen( filename,mode );
 	if (!m_file)
 	{
-		string adjustedName = string("res/") + filename;
+		string adjustedName = string("Data/") + filename;
 		m_file = m_pIPak->FOpen(adjustedName.data(), mode);
 	}
 	return m_file != NULL;

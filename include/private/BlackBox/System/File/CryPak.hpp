@@ -79,4 +79,5 @@ class CCryPak : public ICryPak
 
 	std::map<string, zip*> m_Archives;
 	//std::vector< libzippp::ZipArchive> m_Archives;
+	std::string m_DataRoot = "Data";
 };

@@ -33,3 +33,4 @@ out/*
 /res/Music
 /Mods/FunCry
 /res/Textures
+/vcpkg_installed/x64-windows
