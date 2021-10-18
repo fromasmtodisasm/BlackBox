@@ -392,7 +392,7 @@ bool CSystem::DoFrame(int updateFlags)
 		continueRunning = false;
 	}
 
-	m_pGame->Update();
+	continueRunning = m_pGame->Update();
 
 	Render();
 	RenderEnd();
