@@ -1,4 +1,3 @@
--- : ./Multiplayer/AvailableMods.lua
 -- this structure is used from C++ as well
 -- gametype has to be upper case 
 

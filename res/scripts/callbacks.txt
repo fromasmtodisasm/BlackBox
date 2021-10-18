@@ -1,4 +1,3 @@
--- : ./callbacks.txt
 Needed LUA-callbacks
 ====================
 

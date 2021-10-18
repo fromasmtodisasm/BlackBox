@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/AICrate.lua
 -- something for AI to carry - model must have been exported with weapon bone
 -- after creating lua need to place path in Editor\EntityRegistry.xml (in Artwork SS)
 AICrate = {

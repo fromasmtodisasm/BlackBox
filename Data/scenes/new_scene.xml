@@ -1,0 +1,203 @@
+<scene>
+    <object name="BB" type="object">
+        <mesh name="res/geom/box.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>200</X>
+                <Y>200</Y>
+                <Z>200</Z>
+            </scale>
+        </transform>
+        <material name="wood_box"/>
+    </object>
+    <object name="BMW" type="object">
+        <mesh name="res/geom/bmw.obj"/>
+        <transform>
+            <position>
+                <X>-6.6999998</X>
+                <Y>0.56300002</Y>
+                <Z>-71.900002</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="red"/>
+    </object>
+    <object name="BMW_2" type="object">
+        <mesh name="res/geom/bmw.obj"/>
+        <transform>
+            <position>
+                <X>39</X>
+                <Y>0</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="coral"/>
+    </object>
+    <object name="light" type="object">
+        <mesh name="res/geom/cube.obj"/>
+        <transform>
+            <position>
+                <X>62</X>
+                <Y>16</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0.30000001</X>
+                <Y>0.30000001</Y>
+                <Z>0.30000001</Z>
+            </scale>
+        </transform>
+        <material name="light"/>
+    </object>
+    <object name="BMW_2_2" type="object">
+        <mesh name="res/geom/bmw.obj"/>
+        <transform>
+            <position>
+                <X>-108</X>
+                <Y>38.449814</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="coral"/>
+    </object>
+    <object name="MyPlayer" type="player">
+        <mesh name="res/geom/pengium.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>6.7473121</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>
+    <object name="test" type="object">
+        <mesh name="res/geom/pengium.obj"/>
+        <transform>
+            <position>
+                <X>9</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>-90</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>8</X>
+                <Y>8</Y>
+                <Z>8</Z>
+            </scale>
+        </transform>
+        <material name="red"/>
+    </object>
+    <light name="lamp_1" type="point" enabled="false">
+        <position x="-15" y="16" z="1"/>
+        <constant>1</constant>
+        <linear>0.090000004</linear>
+        <quadratic>0.032000002</quadratic>
+        <ambient x="0.019607844" y="0.019607844" z="0.019607844"/>
+        <diffuse x="0.50196081" y="0.54901963" z="0.50588238"/>
+        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
+    </light>
+    <light name="lamp_2" type="point" enabled="true">
+        <position x="17" y="16" z="-3"/>
+        <constant>1</constant>
+        <linear>0.090000004</linear>
+        <quadratic>0.032000002</quadratic>
+        <ambient x="0.19607843" y="0.19607843" z="0.19607843"/>
+        <diffuse x="0.50196081" y="0.65490198" z="0.25490198"/>
+        <specular x="0.50196081" y="0.54901963" z="0.88235295"/>
+    </light>
+    <light name="lamp_3" type="point" enabled="false">
+        <position x="62" y="16" z="0"/>
+        <constant>1</constant>
+        <linear>0.090000004</linear>
+        <quadratic>0.032000002</quadratic>
+        <ambient x="0.50196081" y="0.54901963" z="0.15294118"/>
+        <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
+        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
+    </light>
+    <light name="lamp_4" type="point" enabled="false">
+        <position x="62" y="16" z="0"/>
+        <constant>1</constant>
+        <linear>0.090000004</linear>
+        <quadratic>0.032000002</quadratic>
+        <ambient x="0.50196081" y="0.54901963" z="0.15294118"/>
+        <diffuse x="0.50196081" y="0.54901963" z="0.25490198"/>
+        <specular x="0.50196081" y="0.54901963" z="0.3764706"/>
+    </light>
+    <light name="sun" type="direction" enabled="true">
+        <direction x="-0.2" y="-2" z="26.700001"/>
+        <ambient x="0" y="0" z="0"/>
+        <diffuse x="0" y="0" z="0"/>
+        <specular x="0.8392157" y="0" z="0.25098041"/>
+    </light>
+    <light name="flashLight" type="spot" enabled="true">
+        <direction x="-4.3160208e+08" y="-4.3160208e+08" z="-4.3160208e+08"/>
+        <cutOff>13</cutOff>
+        <outerCutOff>19</outerCutOff>
+        <position x="-4.3160208e+08" y="-4.3160208e+08" z="-4.3160208e+08"/>
+        <constant>1</constant>
+        <linear>0.029999999</linear>
+        <quadratic>9.9999997e-05</quadratic>
+        <ambient x="0" y="0" z="0"/>
+        <diffuse x="0" y="0" z="0"/>
+        <specular x="0" y="0" z="0"/>
+    </light>
+</scene>

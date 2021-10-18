@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Sniper/SniperE3.lua
 --------------------------------------------------
 --    Created By: SniperIdle
 --   Description: <short_description>

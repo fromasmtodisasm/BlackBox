@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/AnimObject.lua
 AnimObject = {
 	Properties = {
 		bPhysicalize = 0,

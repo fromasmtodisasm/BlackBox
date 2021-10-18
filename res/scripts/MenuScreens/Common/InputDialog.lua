@@ -1,4 +1,3 @@
--- : ./MenuScreens/Common/InputDialog.lua
 	UI.PageInputDialog=
 {
 	GUI=

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Combat/UnderFire.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: 	This gets called when the guy knows something has happened (he is getting shot at, does not know by whom), or he is hit. Basically

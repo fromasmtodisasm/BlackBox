@@ -1,4 +1,3 @@
--- : ./materials/mat_pickup.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 Materials["mat_pickup"] = {

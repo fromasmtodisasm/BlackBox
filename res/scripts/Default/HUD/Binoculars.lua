@@ -1,4 +1,3 @@
--- : ./Default/HUD/Binoculars.lua
 --------------------------------------------------------------------
 -- X-Isle Script File
 -- Description: Defines the binoculars

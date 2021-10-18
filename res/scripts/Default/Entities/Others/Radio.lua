@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/Radio.lua
 
 
 Radio={

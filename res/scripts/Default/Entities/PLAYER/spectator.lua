@@ -1,4 +1,3 @@
--- : ./Default/Entities/PLAYER/spectator.lua
 Spectator = {
 }
 

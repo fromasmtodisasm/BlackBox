@@ -1,4 +1,3 @@
--- : ./materials/mat_armor.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_armor"] = {
 	type="armor",

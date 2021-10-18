@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Stealth/StealthAlert.lua
 --------------------------------------------------
 --    Created By: Petar
 

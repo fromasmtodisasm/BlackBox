@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/HeliCommon.lua
 --#Script:ReloadScript("scripts/Default/Entities/Others/piece.lua")
 Script:LoadScript("scripts/Default/Entities/Others/piece.lua")
 

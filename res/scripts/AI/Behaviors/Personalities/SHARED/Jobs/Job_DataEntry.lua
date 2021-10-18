@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_DataEntry.lua
 -- data entry job
 -- Created 2002-11-28 Amanda
 -- to do: sit down at console type in various write some stuff down get frustrated ocassionaly 

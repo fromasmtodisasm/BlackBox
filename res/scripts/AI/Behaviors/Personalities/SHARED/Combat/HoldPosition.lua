@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Combat/HoldPosition.lua
 --------------------------------------------------
 --   Created By: petar
 --   Description: this is used to run to help a mate who called for help

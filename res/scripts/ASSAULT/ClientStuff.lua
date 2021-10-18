@@ -1,4 +1,3 @@
--- : ./ASSAULT/ClientStuff.lua
 
 Script:LoadScript("scripts/Multiplayer/ClientStuffClassLib.lua");							-- derive functionality
 Script:LoadScript("scripts/ASSAULT/shared.lua");

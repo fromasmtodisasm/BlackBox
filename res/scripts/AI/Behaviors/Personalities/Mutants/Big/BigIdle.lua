@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Big/BigIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 

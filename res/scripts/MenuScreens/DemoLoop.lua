@@ -1,4 +1,3 @@
--- : ./MenuScreens/DemoLoop.lua
 UI.PageDemoLoop=
 {	
 	GUI=

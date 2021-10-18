@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManagerBezerker.lua
 
 function PipeManager:OnInitBezerker()	
 	-------------------

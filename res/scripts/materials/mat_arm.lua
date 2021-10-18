@@ -1,4 +1,3 @@
--- : ./materials/mat_arm.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 --#Script:ReloadScript("scripts/materials/mat_arm.lua") --for copying/pasting into the console!!!
 Materials["mat_arm"] = {

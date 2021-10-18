@@ -1,4 +1,3 @@
--- : ./Default/Entities/multiplayer/CurrentMission.lua
 --
 -- CurrentMission
 --

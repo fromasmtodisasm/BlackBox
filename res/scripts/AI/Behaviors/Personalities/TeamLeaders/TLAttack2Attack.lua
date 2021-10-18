@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/TeamLeaders/TLAttack2Attack.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

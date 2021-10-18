@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/Rocket.lua
 Script:LoadScript("scripts/default/entities/weapons/BaseProjectile.lua");
 projectileDefinitionSP = {
 	Param = {

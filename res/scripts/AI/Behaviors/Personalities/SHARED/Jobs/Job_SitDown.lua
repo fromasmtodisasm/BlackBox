@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_SitDown.lua
 -- just sit down and breath a bit
 -- Created 2002-11-28 Amanda
 -- to do: sit down if you find magazine read it otherwise just stay seated.

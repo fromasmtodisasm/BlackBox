@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Idles/Idle_StandLook.lua
 -- idle stand look
 -- Created 2002-11-29 Amanda
 -- look at something interesting on the wall fidget about a bit and then wander off

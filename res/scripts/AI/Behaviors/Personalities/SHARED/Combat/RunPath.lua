@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Combat/RunPath.lua
 --------------------------------------------------
 --   Created By: amanda
 --   Description: run to alarm anchor

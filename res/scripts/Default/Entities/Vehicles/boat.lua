@@ -1,4 +1,3 @@
--- : ./Default/Entities/Vehicles/boat.lua
 --#Script.ReloadScript("SCRIPTS/Default/Entities/Vehicles/boat.lua")
 	Boat = {
 --	type = "Vehicle",

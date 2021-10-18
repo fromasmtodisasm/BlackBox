@@ -1,4 +1,3 @@
--- : ./Default/HUD/Hud.lua
 Script:LoadScript("scripts/GUI/HudCommon.lua");
 
 Hud.objectives={};

@@ -1,4 +1,3 @@
--- : ./GUI/HudMultiplayer.lua
 
 -----------------------------------------------------------------------------
 function Hud:DrawCTFTeamScore(x,y,otherteamstate,team)

@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/TLAttack2.lua
 
 AICharacter.TLAttack2 = {
 

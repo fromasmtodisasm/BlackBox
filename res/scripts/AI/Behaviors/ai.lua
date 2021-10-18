@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/ai.lua
 -- Script that is used to reload all the ai-related stuff in the editor
 
 Script:ReloadScript("Scripts/Default/Entities/AITest/PipeManager.lua");

@@ -1,4 +1,3 @@
--- : ./rotation.cmd
 #select BMW
 rotate BMW 1 0 1 0
 #select MyPlayer

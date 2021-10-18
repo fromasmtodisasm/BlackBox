@@ -75,15 +75,17 @@ class CScriptSystem : public IScriptSystem
 
 	void RegisterErrorHandler(void);
 
-	virtual bool ExecuteFile(const char* sFileName, bool bRaiseError = true, bool bForceReload = false) override;
-	virtual bool ExecuteBuffer(const char* sBuffer, size_t nSize) override;
-	virtual bool GetGlobalValue(const char* sKey, int& nVal) override;
-	virtual bool GetGlobalValue(const char* sKey, float& fVal) override;
-	virtual bool GetGlobalValue(const char* sKey, const char*& sVal) override;
+	virtual bool			  ExecuteFile(const char* sFileName, bool bRaiseError = true, bool bForceReload = false) override;
+	virtual bool			  ExecuteBuffer(const char* sBuffer, size_t nSize) override;
+	bool					  ExecuteBuffer(const char* sBuffer, size_t nSize, const char* sBufferDescription = "", IScriptObject* pEnv = nullptr);
+	bool					  _ExecuteFile(const char* sFileName, bool bRaiseError, IScriptObject* pEnv);
+	virtual bool			  GetGlobalValue(const char* sKey, int& nVal) override;
+	virtual bool			  GetGlobalValue(const char* sKey, float& fVal) override;
+	virtual bool			  GetGlobalValue(const char* sKey, const char*& sVal) override;
 	virtual IFunctionHandler* GetFunctionHandler() override;
-	virtual HSCRIPT GetScriptHandle() override;
-	virtual void UnloadScript(const char* sFileName) override;
-	virtual void UnloadScripts() override;
+	virtual HSCRIPT			  GetScriptHandle() override;
+	virtual void			  UnloadScript(const char* sFileName) override;
+	virtual void			  UnloadScripts() override;
 	virtual bool ReloadScript(const char* sFileName, bool bRaiseError = true) override;
 	virtual bool ReloadScripts() override;
 	virtual void DumpLoadedScripts() override;
@@ -160,6 +162,7 @@ class CScriptSystem : public IScriptSystem
 	void PushObject(const IScriptObject* pObj);
 
 	virtual void LogStackTrace() override;
+	int GetStackSize() const;
 
   public:
 	inline bool CheckType(int expected, int idx)

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/rope.lua
 Rope = {
 	name = "Rope",
 

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/mutant_dummy.lua
 
 --------------------------------------------------
 --   Created By: <Sten Huebler>

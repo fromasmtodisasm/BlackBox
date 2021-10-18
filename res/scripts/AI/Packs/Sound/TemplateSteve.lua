@@ -1,4 +1,3 @@
--- : ./AI/Packs/Sound/TemplateSteve.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Vehicles/Forklift.lua
 
 -- Forklift
 Forklift = {

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/cloth.lua
 TestCloth = 
 {
 	Properties=

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/MutantMG.lua
 MutantMG = {
 	name			= "MutantMG",
 	

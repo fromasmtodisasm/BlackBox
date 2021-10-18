@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_FormPatrolLinear.lua
 -- linear patroling behaviour - 
 --Each character will patrol a set of TagPoints in a linear way ie 1 2 3 4 5 4 3 2 1 etc
 

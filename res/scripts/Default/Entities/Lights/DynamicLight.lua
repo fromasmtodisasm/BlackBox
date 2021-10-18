@@ -1,4 +1,3 @@
--- : ./Default/Entities/Lights/DynamicLight.lua
 DynamicLight = 
 {
 	Properties=

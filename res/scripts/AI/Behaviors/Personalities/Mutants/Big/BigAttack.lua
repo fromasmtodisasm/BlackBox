@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Big/BigAttack.lua
 --------------------------------------------------
 --    Created By: Petar
 

@@ -1,4 +1,3 @@
--- : ./Default/Entities/PICKUPS/ClassAmmoPickup.lua
 Script:LoadScript("scripts/default/entities/pickups/basepickup.lua");
 
 local funcPick=function (self,collider,entering)			

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Rear/RearAlert.lua
 --------------------------------------------------
 --   Created By: Sten
 --   Description: Rear Alert

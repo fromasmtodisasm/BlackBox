@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/VEHICLES/HELICOPTER/Heli_transport.lua
 -- Helocipter Behaviour SCRIPT
 --------------------------
 AIBehaviour.Heli_transport = {

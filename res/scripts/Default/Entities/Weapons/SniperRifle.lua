@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/SniperRifle.lua
 SniperRifle = {
 	-- DESCRIPTION:
 	-- Non zoom mode has no crosshair, its like a rail gun with one

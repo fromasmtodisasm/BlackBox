@@ -27,17 +27,12 @@
 #include "UIScreen.h"
 #include "ScriptObjectUI.h"
 
-#include <ICryAnimation.h>
-
 //////////////////////////////////////////////////////////////////////
 #define UI_MOUSE_VISIBLE				(1 << 0)
 #define UI_BACKGROUND_VISIBLE		(1 << 1)
 #define UI_ENABLED							(1 << 2)
 
 #define UI_DEFAULTS							(UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
-
-
-#include "Proxy.cpp"
 
 ////////////////////////////////////////////////////////////////////// 
 CUISystem::CUISystem()
@@ -235,8 +230,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 	m_pSystem = pSystem;
 	m_pScriptSystem = pScriptSystem;
 	m_pRenderer = pSystem->GetIRenderer();
-	//FIXME:
-	m_pInput = GET_GUI_INPUT();
+	m_pInput		= GetLegacyInput();//m_pSystem->GetIInput();
 	m_pLog = m_pSystem->GetILog();
 
 	m_fVirtualToRealX = (double)m_pRenderer->GetWidth() / 800.0;
@@ -248,11 +242,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 
 	if (m_pInput)
 	{
-		#if 0
 		m_pInput->AddEventListener(this);
-		#else
-		gEnv->pInput->AddEventListener(this);
-		#endif
 	}
 
 	m_szScriptFileName = szScriptFileName;
@@ -408,7 +398,7 @@ void CUISystem::Update()
 		m_vMouseXY = vMouseXY;
 	}
 
-	Legacy::IMouse *pMouse = m_pInput->GetIMouse();
+	/*IMouse* */ auto pMouse = m_pInput->GetIMouse();
 
 	unsigned int	dwPackedMouseXY = UIM_PACK_COORD(vMouseXY.x, vMouseXY.y);
 	unsigned int	dwPackedOldMouseXY = UIM_PACK_COORD(m_vMouseXY.x, m_vMouseXY.y);
@@ -809,11 +799,7 @@ int CUISystem::Release()
 
 	if (m_pInput)
 	{
-		#if 0
 		m_pInput->RemoveEventListener(this);
-		#else
-		gEnv->pInput->RemoveEventListener(this);
-		#endif
 	}
 	
 	return 1;
@@ -908,11 +894,7 @@ int CUISystem::Reload(int iFrameDelta)
 	m_pLog->LogToConsole("\001  Readding input listener...");
 	if (m_pInput)
 	{
-		#if 0
 		m_pInput->AddEventListener(this);
-		#else
-		gEnv->pInput->AddEventListener(this);
-		#endif
 	}
 
 	m_pLog->LogToConsole("\001  Reloading cvars...");
@@ -1364,7 +1346,6 @@ int CUISystem::SetMouseCursor(int iTextureID)
 
 	if (iTextureID != -1)
 	{
-		//FIXME:!!!
 		ITexPic *pTexPic = m_pRenderer->EF_GetTextureByID(m_iMouseCursorTextureID);
 
 		if (pTexPic)
@@ -2451,14 +2432,10 @@ int CUISystem::DrawMouseCursor(float fLeft, float fTop)
 
 	float vTexCoord[4] = 
 	{
-		#if 1
 		m_iMouseCursorTexPixW * 0.5f,
 		1.0f - m_iMouseCursorTexPixH,
 		1.0f - m_iMouseCursorTexPixW,
 		m_iMouseCursorTexPixH * 0.5f,
-		#else
-		0,0,1,1
-		#endif
 	};
 
 	if (m_iMouseCurrentCursor > -1)
@@ -2640,12 +2617,7 @@ int CUISystem::DrawImage(const UIRect &pRect, int iTextureID, const float *vTexC
 		float fRcpWidth = 1.0f / pRect.fWidth;
 		float fRcpHeight = 1.0f / pRect.fHeight;
 
-		//FIXME; wrong texture coordinates
-		#if 0
 		float vClippedTexCoord[4] = { 0.0f, 1.0f, 1.0f, 0.0f };
-		#else
-		float vClippedTexCoord[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		#endif
 
 		if (vTexCoord)
 		{
@@ -2700,9 +2672,9 @@ int CUISystem::DrawSkin(const UIRect &pRect, const UISkinTexture &pTexture, cons
 
 	if (iState & UISTATE_OVER)
 	{
-		m_pRenderer->SetState(GS_BLSRC_ONE | GS_BLDST_ONE | GS_NODEPTHTEST);
+    m_pRenderer->SetState(GS_BLSRC_ONE | GS_BLDST_ONE | GS_NODEPTHTEST);
 		DrawImage(pRect, pTexture.iOverTextureID, pTexture.vTexCoord, cColor);
-		m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
+    m_pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
 	}
 
 	return 1;
@@ -3016,6 +2988,7 @@ int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
 
 	return 1;
 }
+
 
 ////////////////////////////////////////////////////////////////////// 
 bool CUISystem::OnInputEvent(const Legacy::SInputEvent &event)
@@ -4840,9 +4813,7 @@ int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, 
 
 				if (pWidget)
 				{
-					static auto cnt = 0;
 					pObject->SetValue(pWidget->GetName().c_str(), GetWidgetScriptObject(pWidget));
-					cnt++;
 				}
 			}		
 			break;
@@ -5103,5 +5074,5 @@ bool CUISystem::IsOnFocusScreen(CUIWidget *pWidget)
 
 	return 0;
 } 
- 
+
 #pragma warning(pop)

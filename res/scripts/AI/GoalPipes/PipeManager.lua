@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManager.lua
 PipeManager =	 {
 
 }

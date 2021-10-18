@@ -1,4 +1,3 @@
--- : ./Default/Entities/Triggers/VisibilityTrigger.lua
 VisibilityTrigger = {
 	type = "Trigger",
 

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/NERVGrenade.lua
 -- #Script.ReloadScript("scripts/default/entities/weapons/NERVGrenade.lua")
 NERVGrenade = {
 	type = "Projectile",

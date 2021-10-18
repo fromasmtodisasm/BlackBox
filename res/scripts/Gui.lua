@@ -1,4 +1,3 @@
--- : ./Gui.lua
 Gui ={
 	texture = 0
 }

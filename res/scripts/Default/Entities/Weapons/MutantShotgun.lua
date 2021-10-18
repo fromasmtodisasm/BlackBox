@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/MutantShotgun.lua
 MutantShotgun = {
 	name		= "MutantShotgun",
 	object	= "Objects/Weapons/MutantShotgun/MutantShotgun_bind.cgf",

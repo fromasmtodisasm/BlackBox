@@ -1,4 +1,3 @@
--- : ./MenuScreens/MultiPlayer/VoteAdmin.lua
 UI.PageVoteAdmin=
 {
     LevelList={},       -- { missionname1={}, missionname2={}, }

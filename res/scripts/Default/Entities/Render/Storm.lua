@@ -1,4 +1,3 @@
--- : ./Default/Entities/Render/Storm.lua
 Storm = {
 	type = "StormController",
 	Properties = {	

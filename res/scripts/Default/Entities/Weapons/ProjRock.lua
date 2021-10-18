@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/ProjRock.lua
 Script:LoadScript("scripts/default/entities/weapons/BaseHandGrenade.lua");
 
 local param={

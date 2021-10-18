@@ -1,4 +1,3 @@
--- : ./GUI/HudCommon.lua
 Hud={
 	
 	color={r=0.66,g=0.8,b=0.8},	

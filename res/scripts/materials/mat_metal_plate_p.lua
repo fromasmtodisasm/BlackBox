@@ -1,4 +1,3 @@
--- : ./materials/mat_metal_plate_p.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 --#Script:LoadScript("scripts/materials/mat_metal_plate.lua")
 

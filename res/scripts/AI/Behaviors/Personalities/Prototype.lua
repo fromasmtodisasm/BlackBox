@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Prototype.lua
 -- PROTOTYPE 
 -- DO NOT MODIFY THIS BEHAVIOUR
 --

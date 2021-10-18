@@ -1,4 +1,3 @@
--- : ./AI/Packs/Sound/voiceD.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

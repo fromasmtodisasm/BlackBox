@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Chimp/ChimpIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 

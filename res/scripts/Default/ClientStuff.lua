@@ -1,4 +1,3 @@
--- : ./Default/ClientStuff.lua
 
 Script:LoadScript("scripts/default/hud/viewlayersmgr.lua")
 

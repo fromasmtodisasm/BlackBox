@@ -1,4 +1,3 @@
--- : ./GUI/ScoreboardLib.lua
 ScoreBoardManager =
 {
 	messages = {},

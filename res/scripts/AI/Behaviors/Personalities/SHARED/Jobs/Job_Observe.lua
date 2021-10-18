@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_Observe.lua
 -- observe behaviour - 
 -- Created by Sten; 18-09-2002
 -- Modified by Petar; 

@@ -1,4 +1,3 @@
--- : ./MenuScreens/MainScreen.lua
 UI.PageMainScreen =
 {	
 	GUI=

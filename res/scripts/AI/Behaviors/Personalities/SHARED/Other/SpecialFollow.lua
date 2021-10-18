@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Other/SpecialFollow.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

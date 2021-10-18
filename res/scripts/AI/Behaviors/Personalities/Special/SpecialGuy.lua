@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Special/SpecialGuy.lua
 --------------------------------------------------
 --   Created By: petar
 --   Description: the idle behaviour for the cover

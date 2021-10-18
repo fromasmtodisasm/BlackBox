@@ -1,4 +1,3 @@
--- : ./Default/HUD/NightVision.lua
 --------------------------------------------------------------------
 -- X-Isle Script File
 -- Description: Defines the NightVision

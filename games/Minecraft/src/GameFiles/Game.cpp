@@ -1423,7 +1423,11 @@ void CXGame::MenuOn()
 	//FIXME:
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
+		#if 0
 		m_pSystem->GetIInput()->AddEventListener(m_pUISystem);
+		#else
+		GetLegacyInput()->AddEventListener(m_pUISystem);
+		#endif
 		m_pSystem->GetIInput()->ClearKeyState();
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
 	}
@@ -1465,7 +1469,11 @@ void CXGame::MenuOff()
 	//FIXME:
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
+		#if 0
 		m_pSystem->GetIInput()->RemoveEventListener(m_pUISystem);
+		#else
+		GetLegacyInput()->RemoveEventListener(m_pUISystem);
+		#endif
 		m_pSystem->GetIInput()->ClearKeyState();
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
 

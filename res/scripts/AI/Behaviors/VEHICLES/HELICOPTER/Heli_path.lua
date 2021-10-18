@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/VEHICLES/HELICOPTER/Heli_path.lua
 -- Helocipter Behaviour SCRIPT
 --------------------------
 AIBehaviour.Heli_path = {

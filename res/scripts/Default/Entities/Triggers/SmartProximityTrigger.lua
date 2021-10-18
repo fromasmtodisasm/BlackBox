@@ -1,4 +1,3 @@
--- : ./Default/Entities/Triggers/SmartProximityTrigger.lua
 ----------------------------------------------------------------------------
 -- 
 -- Description :		Delayed proxymity trigger

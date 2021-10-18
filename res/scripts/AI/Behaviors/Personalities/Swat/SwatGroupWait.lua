@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Swat/SwatGroupWait.lua
 --------------------------------------------------
 --   Created By: Amanda
 --   Description: This behaviour describes the indoor swat personality in idle mode

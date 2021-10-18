@@ -1,4 +1,3 @@
--- : ./materials/mat_rock_nd.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 
 --#Script:ReloadScript("scripts/materials/mat_rock.lua") --for copying/pasting into the console!!!

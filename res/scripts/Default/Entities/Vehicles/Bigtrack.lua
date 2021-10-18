@@ -1,4 +1,3 @@
--- : ./Default/Entities/Vehicles/Bigtrack.lua
 
 -- Bigtrack
 Bigtrack = {

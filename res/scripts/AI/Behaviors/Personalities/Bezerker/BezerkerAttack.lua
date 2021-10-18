@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Bezerker/BezerkerAttack.lua
 --------------------------------------------------
 --    Created By: Amanda
 --   Description: This is the combat behaviour of the Bezerker

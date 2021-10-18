@@ -1,4 +1,3 @@
--- : ./TDM/shared.lua
 
 -- shared index table between gamerules and clientstuff
 -- send from server to client

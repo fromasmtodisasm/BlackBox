@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Scout/ScoutHunt.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: the scout is hunting the poor bastard

@@ -1,4 +1,3 @@
--- : ./materials/mat_nodraw.lua
 --#Script:LoadScript("scripts/materials/mat_nodraw.lua")
 --
 -- A simple script that allows us to shoot through a mat

@@ -1,0 +1,25 @@
+#pragma once
+class ImGuiManager;
+class ImGuiInput : public ISystemEventListener
+{
+public:
+  void NewFrame();
+  bool Init();
+  void UpdateGamepads();
+  void UpdateMousePosAndButtons();
+  bool OnInputEvent(const SInputEvent& event, struct IImGuiManager* imguiManager);
+  bool OnInputEventUI(const SUnicodeEvent& event);
+
+protected:
+  void UpdateMouseCursor();
+public:
+  IInput* m_pInput = nullptr;
+  bool m_MousePressed[3] = { false, false, false };
+  uint64_t m_Time = 0;
+  ImVec2 m_MousePos;
+  ICursor* m_MouseCursors[ImGuiMouseCursor_COUNT] = {};
+
+  // Inherited via ISystemEventListener
+  virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+};
+

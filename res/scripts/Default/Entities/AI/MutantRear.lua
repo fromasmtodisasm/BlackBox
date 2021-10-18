@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/MutantRear.lua
 Script:ReloadScript( "SCRIPTS/Default/Entities/AI/MutantRear_x.lua");
 MutantRear=CreateAI(MutantRear_x)
 ------------------------------------------------------------------------------------

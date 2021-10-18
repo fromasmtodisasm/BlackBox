@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/DestroyableObject.lua
 Script:ReloadScript( "Scripts/Default/Entities/Others/BasicEntity.lua" );
 
 DestroyableObject={

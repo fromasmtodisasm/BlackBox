@@ -1,4 +1,3 @@
--- : ./AI/Packs/Conversations/Idle.lua
 
 
 AI_IdleConversations = {

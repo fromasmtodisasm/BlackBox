@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Idles/Idle_TakePiss.lua
 -- idle take a piss behaviour - 
 -- created by sten: 		14-10-2002
 -- last modified by sten: 	24-10-2002

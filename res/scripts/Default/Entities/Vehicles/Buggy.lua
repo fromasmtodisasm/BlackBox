@@ -1,4 +1,3 @@
--- : ./Default/Entities/Vehicles/Buggy.lua
 
 -- quad buggy
 Buggy = {

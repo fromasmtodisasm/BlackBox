@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Sniper/SniperIdle.lua
 --------------------------------------------------
 --    Created By: SniperIdle
 --   Description: <short_description>

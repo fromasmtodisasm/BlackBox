@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/AIObject.lua
 AIObject = {
   type = "AIObject",
   MapVisMask = 0,

@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManagerVehicle.lua
 
 function PipeManager:OnInitVehicle()
 	System:Log("INITVehicleCALLED");

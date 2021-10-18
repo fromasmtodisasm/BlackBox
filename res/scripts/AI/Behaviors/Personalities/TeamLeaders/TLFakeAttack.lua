@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/TeamLeaders/TLFakeAttack.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Render/EnvColor.lua
 EnvColor = {
 	type = "EnvColorController",
 	Properties = {	

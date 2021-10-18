@@ -1,4 +1,3 @@
--- : ./Sounds/EAXPresetDB.lua
 EAXPresetDB = {
 	StoneRoom = {
 		nEnvironment = "5",

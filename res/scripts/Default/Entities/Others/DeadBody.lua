@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/DeadBody.lua
 -- #Script.ReloadScript("scripts/default/entities/player/basicplayer.lua")
 
 DeadBody =	 {

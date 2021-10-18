@@ -27,6 +27,7 @@ class CCryPak : public ICryPak
 	~CCryPak();
 	// Inherited via ICryPak
 	virtual bool		 Init(const char* szBasePath) override;
+	virtual const char*	 AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags = 0) override;
 	virtual void		 Release() override;
 	virtual bool		 OpenPack(const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;
 	virtual bool		 OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;

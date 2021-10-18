@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Special/Crowe/CroweIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

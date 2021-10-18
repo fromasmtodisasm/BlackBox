@@ -1,4 +1,3 @@
--- : ./AI/Logic/AI_BoredManager.lua
 -- AI_BoredManager
 -- version 1.0 Amanda 2002-10-21
 --

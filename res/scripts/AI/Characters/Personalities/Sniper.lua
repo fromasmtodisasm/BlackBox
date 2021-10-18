@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/Sniper.lua
 -- Test Character SCRIPT
 
 AICharacter.Sniper = {

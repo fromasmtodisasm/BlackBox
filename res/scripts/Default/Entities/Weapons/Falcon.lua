@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/Falcon.lua
 Falcon = {
 	-- DESCRIPTION
 	-- Default weapon, loud and does not travel far but does the job

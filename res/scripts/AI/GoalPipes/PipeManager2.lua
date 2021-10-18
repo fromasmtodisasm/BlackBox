@@ -1,4 +1,3 @@
--- : ./AI/GoalPipes/PipeManager2.lua
 
 function PipeManager:OnInit2()
 	System:Log("INIT2CALLED");

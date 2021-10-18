@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/MutantCover_x.lua
 MutantCover_x = {
 
 	NoFallDamage = 1,

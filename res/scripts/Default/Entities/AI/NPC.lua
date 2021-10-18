@@ -1,4 +1,3 @@
--- : ./Default/Entities/AI/NPC.lua
 Script:ReloadScript( "SCRIPTS/Default/Entities/AI/NPC_x.lua");
 
 

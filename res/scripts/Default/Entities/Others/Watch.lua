@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/Watch.lua
 Script:ReloadScript( "Scripts/Default/Entities/Others/BasicEntity.lua" );
 
 -- simple entity

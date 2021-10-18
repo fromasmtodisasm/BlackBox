@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Cover/CoverAlert.lua
 --------------------------------------------------
 --   Created By: Petar
 --   Description: This behaviour activates as a response to an island-wide alarm call, or in response to a group death

@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/COVERRL.lua
 COVERRL = {
 	name		= "COVERRL",
 	object	= "Objects/Weapons/coverrl/coverrl_bind.cgf",

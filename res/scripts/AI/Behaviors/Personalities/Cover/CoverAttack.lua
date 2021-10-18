@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Cover/CoverAttack.lua
 --------------------------------------------------
 --   Created By: Petar
 --   Description: This is the combat behaviour of the Cover

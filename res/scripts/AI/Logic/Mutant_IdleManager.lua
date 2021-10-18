@@ -1,4 +1,3 @@
--- : ./AI/Logic/Mutant_IdleManager.lua
 -- Mutant Idle Manager
 -- Created by Amanda 2003 -01-17
 --------------------------

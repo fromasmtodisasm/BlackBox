@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/MountedWeaponBase.lua
 MountedWeapon=
 {
 	weaponid=0,

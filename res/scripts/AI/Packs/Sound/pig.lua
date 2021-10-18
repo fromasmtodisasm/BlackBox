@@ -1,4 +1,3 @@
--- : ./AI/Packs/Sound/pig.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

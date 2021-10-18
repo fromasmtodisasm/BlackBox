@@ -1,4 +1,3 @@
--- : ./Default/Entities/multiplayer/CAHFlag.lua
 --------------------------------------------------------------
 -- Capture And Hold FLAG
 --

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_FixCar.lua
 -- fix car job
 --AI will go through the motions of moving to each AIANCHOR_WHEEL and tightening the wheel nuts on the car, 
 --or going to the AIANCHOR_HOOD to fix the hood. 

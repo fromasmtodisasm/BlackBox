@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_Jumper.lua
 -- node patroling behaviour - 
 -- should be retired now same as job_patrolNode.lua
 -- version 1 - amanda 2003-01-18

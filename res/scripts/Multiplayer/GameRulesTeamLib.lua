@@ -1,4 +1,3 @@
--- : ./Multiplayer/GameRulesTeamLib.lua
 -------------------------------------------------------------------------
 --	Helper functions for GameRules with team support implementation
 --

@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/TLDefense.lua
 
 AICharacter.TLDefense = {
 

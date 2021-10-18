@@ -1,0 +1,256 @@
+<scene>
+    <!--<object name="BMW" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/bmw.obj"/>
+        <transform>
+            <position>
+                <X>-6.6999998</X>
+                <Y>0.56300002</Y>
+                <Z>-71.900002</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>10</X>
+                <Y>10</Y>
+                <Z>10</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>-->
+    <!--<object name="ps1" type="points" visible="true" transparent="false">
+        <material name="point"/>
+        <positions file="res/geom/points.txt"/>
+        <uv scaleX="100" scaleY="100"/>
+    </object>-->
+    <object name="terrain" type="object" visible="true" transparent="true">
+        <mesh name="res/geom/terrain.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <material name="terrain"/>
+        <uv scaleX="100" scaleY="100"/>
+    </object>
+    <!--<object name="babe" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/test.bin"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>6</X>
+                <Y>6</Y>
+                <Z>6</Z>
+            </scale>
+        </transform>
+        <material name="terrain"/>
+        <uv scaleX="100" scaleY="100"/>
+    </object>-->
+    <object name="MyPlayer" type="player" visible="true" transparent="false">
+        <mesh name="res/geom/pengium.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>-20</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <material name="player"/>
+    </object>
+    <object name="dx_box" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/box.obj"/>
+        <transform>
+            <position>
+                <X>3</X>
+                <Y>1</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <material name="dx_box"/>
+    </object>
+    <object name="brick_normal_box" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/box.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>1</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <material name="specular_box"/>
+    </object>
+    <object name="light" type="object" visible="false" transparent="false">
+        <mesh name="res/geom/cube.obj"/>
+        <transform>
+            <position>
+                <X>62</X>
+                <Y>17</Y>
+                <Z>26</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>0.30000001</X>
+                <Y>0.30000001</Y>
+                <Z>0.30000001</Z>
+            </scale>
+        </transform>
+        <material name="light"/>
+    </object>
+    <object name="water" type="object" visible="true" transparent="true">
+        <mesh name="res/geom/plane.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>180</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>800</X>
+                <Y>800</Y>
+                <Z>800</Z>
+            </scale>
+        </transform>
+        <uv scaleX="800" scaleY="800"/>
+        <material name="water"/>
+    </object>
+    <object name="quad" type="object" visible="true" transparent="false">
+        <mesh name="res/geom/plane.obj"/>
+        <transform>
+            <position>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </scale>
+        </transform>
+        <!--<uv scaleX="800" scaleY="800"/>-->
+        <material name="water"/>
+    </object>
+    <object name="sphere" type="object" visible="false" transparent="false">
+        <mesh name="res/geom/sphere.obj"/>
+        <transform>
+            <position>
+                <X>9</X>
+                <Y>0</Y>
+                <Z>0</Z>
+            </position>
+            <rotation>
+                <X>0</X>
+                <Y>-90</Y>
+                <Z>0</Z>
+            </rotation>
+            <scale>
+                <X>8</X>
+                <Y>8</Y>
+                <Z>8</Z>
+            </scale>
+        </transform>
+        <material name="red"/>
+    </object>
+    <light name="lamp_1" type="point" enabled="true">
+        <position x="-1" y="15" z="-1"/>
+        <constant>1</constant>
+        <linear>0.25999999</linear>
+        <quadratic>0.0198</quadratic>
+        <ambient x="0" y="0" z="1"/>
+        <diffuse x="0" y="0" z="1"/>
+        <specular x="0" y="0" z="1"/>
+    </light>
+    <light name="sun" type="direction" enabled="false">
+        <direction x="-0.2" y="-2" z="26.700001"/>
+        <ambient r="0.1" g="0.07 " b="0.1"/>
+        <diffuse r="0.9" g="0.8" b="0.9"/>
+        <specular r="0.5" g="0.5" b="0.5"/>
+    </light>
+    <camera name="main">
+        <transform>
+            <position>
+                <X>159.74715</X>
+                <Y>155.87123</Y>
+                <Z>-182.43317</Z>
+            </position>
+            <rotation>
+                <X>-28.5</X>
+                <Y>-582.25</Y>
+                <Z>-4.3160208e+08</Z>
+            </rotation>
+            <scale>
+                <X>-4.3160208e+08</X>
+                <Y>-4.3160208e+08</Y>
+                <Z>-4.3160208e+08</Z>
+            </scale>
+        </transform>
+        <speed>95.5</speed>
+    </camera>
+</scene>

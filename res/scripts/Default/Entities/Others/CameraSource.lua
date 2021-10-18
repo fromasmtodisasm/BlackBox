@@ -1,4 +1,3 @@
--- : ./Default/Entities/Others/CameraSource.lua
 CameraSource = {
 };
 

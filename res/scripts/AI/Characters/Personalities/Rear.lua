@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/Rear.lua
 -- Rear Character SCRIPT
 
 AICharacter.Rear = {

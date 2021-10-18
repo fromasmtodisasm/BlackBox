@@ -1,4 +1,3 @@
--- : ./MenuScreens/MultiPlayer/LANServerList.lua
 UI.PageLANServerList=
 {
 	Servers={},

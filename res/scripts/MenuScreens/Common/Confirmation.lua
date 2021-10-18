@@ -1,4 +1,3 @@
--- : ./MenuScreens/Common/Confirmation.lua
 UI.PageConfirmation=
 {
 	GUI=

@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Swat/SwatThreatened.lua
 --------------------------------------------------
 --   Description: has heared an interesting sound
 --------------------------

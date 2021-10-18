@@ -1,4 +1,3 @@
--- : ./MenuScreens/Common/ProgressDialog.lua
 UI.PageProgressDialog=
 {
 	GUI=

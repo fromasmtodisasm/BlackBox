@@ -1,4 +1,3 @@
--- : ./MenuScreens/MessageMode.lua
 MessageModeScreen = 
 {
 	Static = 

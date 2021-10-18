@@ -1,4 +1,3 @@
--- : ./materials/mat_metal_sheet_p.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_metal_sheet_p"] = {
 	type="mat_metal_sheet_p",

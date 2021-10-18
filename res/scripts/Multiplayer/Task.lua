@@ -1,4 +1,3 @@
--- : ./Multiplayer/Task.lua
 TaskEntry = {
 	nInterval = 0,
 	nDelay = 0,

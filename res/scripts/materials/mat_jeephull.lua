@@ -1,4 +1,3 @@
--- : ./materials/mat_jeephull.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 --This material is for the collision object (hullproxy2), therefore the friction is set to zero.
 Materials["mat_jeephull"] = {

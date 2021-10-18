@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Mutants/Fast/FastIdle.lua
 --------------------------------------------------
 --    Created By: Petar
 

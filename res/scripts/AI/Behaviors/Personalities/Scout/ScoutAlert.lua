@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Scout/ScoutAlert.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: behaviour when the AI has been alerted to something

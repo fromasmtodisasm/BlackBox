@@ -1,4 +1,3 @@
--- : ./Default/Entities/Weapons/VehicleMountedRocket.lua
 VehicleMountedRocket = {
 	name = "VehicleMountedRocket",
 	

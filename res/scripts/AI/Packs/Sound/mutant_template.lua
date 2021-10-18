@@ -1,4 +1,3 @@
--- : ./AI/Packs/Sound/mutant_template.lua
 -- TEMPLATE
 -- DO NOT MODIFY THIS TEMPLATE
 --

@@ -577,7 +577,7 @@ int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont *pFont, const UIRec
 	vector2f vPreSelectionSize = pFont->GetTextSizeW(pPreSelectionStr.c_str());
 	vector2f vSelectionSize = pFont->GetTextSizeW(pSelectedStr.c_str());
 
-	#if 0
+	#if 1
 	float fRcpScaleX = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordX(1);
 	float fRcpScaleY = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordY(1);
 

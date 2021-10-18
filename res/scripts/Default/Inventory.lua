@@ -1,4 +1,3 @@
--- : ./Default/Inventory.lua
 Inventory = {
 	Items = {},
 	ItemCount = 0,

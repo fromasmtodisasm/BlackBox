@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_Eating.lua
 --mutant eating corpse job
 --Only applicable for mutantMonkey, mutantBezerker . Eats corpse looks around or beats chest eats some more
 --

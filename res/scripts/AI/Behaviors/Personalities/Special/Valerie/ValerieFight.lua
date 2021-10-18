@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/Special/Valerie/ValerieFight.lua
 --------------------------------------------------
 --    Created By: Petar
 --   Description: <short_description>

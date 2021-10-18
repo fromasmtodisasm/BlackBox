@@ -1,4 +1,3 @@
--- : ./materials/mat_heart.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_heart"] = {
 	type="heart",

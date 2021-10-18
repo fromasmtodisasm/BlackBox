@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/Job_PushButtons.lua
 -- push buttons - not really a job in its own right more of a sub job.
 -- Created 2002-12-03 Amanda
 --------------------------

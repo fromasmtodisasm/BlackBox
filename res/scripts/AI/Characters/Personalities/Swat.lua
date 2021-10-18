@@ -1,4 +1,3 @@
--- : ./AI/Characters/Personalities/Swat.lua
 --Swat indoor character
 --More intelligent, will retreat to better position when pressed. 
 --In response to general alert will systematicaly advance, ie one person moves forward covered by person behind,

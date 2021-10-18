@@ -1,4 +1,3 @@
--- : ./AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_PatrolPath.lua
 -- node patroling behaviour - 
 -- version 1 - amanda 2003-01-18
 --------------------------

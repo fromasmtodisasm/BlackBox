@@ -1,4 +1,3 @@
--- : ./materials/mat_concrete_nd.lua
 Script:LoadScript("scripts/materials/commoneffects.lua");
 Materials["mat_concrete_nd"] = {
 	type="rock",

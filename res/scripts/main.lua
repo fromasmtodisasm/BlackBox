@@ -1,4 +1,3 @@
--- : ./main.lua
 -- some defines for the music-moods: time in seconds how long it takes to switch the mood if an specific mood event arrives continuesly
 MM_COMBAT_TIMEOUT=1;	-- Combat
 MM_SNEAKING_TIMEOUT=3;	-- Sneaking (crouching, proning, moving slow, not seen by AI)

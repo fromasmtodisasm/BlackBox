@@ -1,4 +1,3 @@
--- : ./MenuScreens/MultiPlayer/WaitServer.lua
 UI.PageWaitServer=
 {
 	GUI=
