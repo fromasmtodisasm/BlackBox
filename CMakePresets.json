@@ -22,7 +22,7 @@
         "USE_STEAM": "OFF",
         "OPTION_DEDICATED_SERVER": "OFF",
 
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}\\Tools\\CMake\\toolchain\\windows\\WindowsPC-MSVC.cmake",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_INSTALLER": "ON",
         
