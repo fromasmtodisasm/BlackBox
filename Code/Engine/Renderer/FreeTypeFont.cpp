@@ -475,7 +475,10 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		sprintf(name, "atlas_%d.png", (int)((cur_pos.y) / m_Height));
 		//stbi_write_png(name, atlas_size, (int)m_Height, 1, _test.data() + ((int)m_Height - cur_pos.y + (int)m_Height)*atlas_size, atlas_size);
 
+		#if 0
 		stbi_write_png("atlas.png", atlas_size, atlas_size, 1, _test.data(), atlas_size);
+		#else
+		#endif
 	}
 	//m_pTexture->Unmap(D3D10CalcSubresource(0, 0, 1));
 
