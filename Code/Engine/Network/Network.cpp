@@ -15,6 +15,302 @@
 
 #include <BlackBox/Core/Utils.hpp>
 
+CNetwork g_Network;
+
+class CTmpServerSlot : public IServerSlot
+{
+	// Inherited via IServerSlot
+	virtual void Advise(IServerSlotSink* pSink) override
+	{
+	}
+	virtual void Disconnect(const char* szCause) override
+	{
+	}
+	virtual bool ContextSetup(CStream& stm) override
+	{
+		return false;
+	}
+	virtual void SendReliable(CStream& stm, bool bSecondaryChannel = false) override
+	{
+	}
+	virtual void SendUnreliable(CStream& stm) override
+	{
+	}
+	virtual bool IsReady() override
+	{
+		return false;
+	}
+	virtual unsigned char GetID() override
+	{
+		return 0;
+	}
+	virtual unsigned int GetClientIP() const override
+	{
+		return 0;
+	}
+	virtual void Release() override
+	{
+	}
+	virtual unsigned int GetPing() override
+	{
+		return 0;
+	}
+	virtual unsigned int GetPacketsLostCount() override
+	{
+		return 0;
+	}
+	virtual unsigned int GetUnreliablePacketsLostCount() override
+	{
+		return 0;
+	}
+	virtual void ResetBandwidthStats() override
+	{
+	}
+	virtual void GetBandwidthStats(SServerSlotBandwidthStats& out) const override
+	{
+	}
+	virtual void OnPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID, unsigned int uiGlobalIDSize) override
+	{
+	}
+};
+
+class CTmpNetworkServer : public IServer
+{
+	IServerSlotFactory*	   m_pFactory = nullptr;
+	uint16_t			   m_nPort;
+	bool				   m_bLocal;
+	IPaddress			   m_IP;
+	TCPsocket			   m_Socket;
+	std::vector<TCPsocket> m_ClientSockes;
+	//std::map<string, std::function<void(std::stringstream& ss, const string& args)>> handlers;
+
+  public:
+	CTmpNetworkServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
+		: m_pFactory(pFactory)
+		, m_nPort(nPort)
+		, m_bLocal(local)
+	{
+		gEnv->pLog->Log("NetworkServer Constructed");
+#if 0
+		handlers["info"] = [this](std::stringstream& ss, const string& args) {
+			auto& content = ss;
+			content << "CTmpNetworkServer: " << this << "</br>";
+			content << "ISystem: " << gEnv->pSystem << "</br>";
+			content << "IConsole: " << gEnv->pConsole << "</br>";
+			content << "IRenderer: " << gEnv->pRenderer << "</br>";
+			content << "ILog: " << gEnv->pLog << "</br>";
+			content << R"(<a href="gaben">Тык тык!!!</a>)";
+			content <<
+				R"(
+<form action="/cmd" method="get">
+	<p>Remote command<input type="text" name="remote_command"></p>
+	<p><input type="submit" value="Отправить"></p>
+</form>
+)";
+		};
+		handlers["main"] = [this](std::stringstream& ss, const string& args) {
+			ss << "Main Page";
+		};
+		handlers["cmd"] = [this](std::stringstream& ss, const string& args) {
+			gEnv->pConsole->ExecuteString("remote_command = \"\"");
+			gEnv->pConsole->ExecuteString(args.c_str());
+			auto cmd = gEnv->pConsole->GetCVar("remote_command");
+			if (cmd)
+			{
+				gEnv->pConsole->ExecuteString(cmd->GetString());
+			}
+			ss <<
+				R"(
+<form action="/cmd" method="get">
+	<p>Remote command<input type="text" name="remote_command"></p>
+	<p><input type="submit" value="Отправить"></p>
+</form>
+)";
+		};
+		handlers[""] = [this](std::stringstream& ss, const string& args) {
+			ss << "Main Page!!!";
+		};
+		handlers["gaben"] = [this](std::stringstream& ss, const string& args) {
+			ss << R"(
+      <h1>Gabe, give me money!!!</h1>
+      <a href="info">Info<a>
+)";
+		};
+#endif
+	}
+	~CTmpNetworkServer()
+	{
+		SDLNet_TCP_Close(m_Socket);
+		gEnv->pLog->Log("NetworkServer Desctruected");
+		g_Network.UnregisterServer(this);
+	}
+	bool Init()
+	{
+		if (SDLNet_ResolveHost(&m_IP, nullptr, m_nPort) == -1)
+		{
+			gEnv->pLog->Log("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+			return false;
+		}
+
+		m_Socket = SDLNet_TCP_Open(&m_IP);
+		if (!m_Socket)
+		{
+			gEnv->pLog->Log("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+			return false;
+		}
+		gEnv->pLog->Log("Conntection Opened");
+		return true;
+	}
+	// Inherited via IServer
+	virtual void Update(unsigned int nTime) override
+	{
+		// accept a connection coming in on server_tcpsock
+		TCPsocket new_tcpsock;
+
+		while (true)
+		{
+			new_tcpsock = SDLNet_TCP_Accept(m_Socket);
+			if (!new_tcpsock)
+			{
+				break; // gEnv->pLog->Log("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
+			}
+			else
+			{
+				gEnv->pLog->Log("New connection");
+				//m_ClientSockes.push_back(new_tcpsock);
+				size_t			  length = 0, result;
+				std::stringstream response;
+				static char		  buf[1024];
+				int				  reslen = 0;
+				if ((reslen = SDLNet_TCP_Recv(new_tcpsock, buf, 1000)) <= 0)
+				{
+					gEnv->pLog->Log("Error of read");
+				}
+				else
+				{
+					std::stringstream content;
+					content << R"(
+<html>
+	<head>
+    <title>
+      BlackBox
+    </title>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+	</head>
+  <body>
+		<h1>BlackBox</h1>
+)";
+					//gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
+					std::stringstream ss(buf);
+					//gEnv->pLog->Log("Response %s:\n", ss.str().data());
+					string line;
+					std::getline(ss, line);
+					const int len = line.size() - 14; // GET / HTTP/1.1
+					string	  location;
+					string	  args;
+					location.resize(len);
+					string tmp = line;
+					urldecode2(tmp.data(), line.data());
+					line = tmp;
+					//auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
+					location = line.substr(5, line.size() - (5 + 10));
+					gEnv->pLog->Log("Location: %s", location.data());
+
+					auto pos = location.find('?');
+					auto s	 = location.size();
+					if (pos != string::npos)
+					{
+						args = location.substr(pos + 1);
+						location.resize(pos);
+					}
+
+#if 0
+					if (auto it = handlers.find(location.c_str()); it != handlers.end())
+					{
+						it->second(content, args);
+					}
+#endif
+					content << R"(
+  </body>
+</html>
+)";
+					response <<
+						R"(
+	HTTP/1.1 200 OK
+	Host: site.com
+	Content-Type: text/html;
+	Connection: close
+	Content-Length: )";
+					response << content.str().length() << "\r\n\r\n"
+							 << content.str();
+
+					length = response.str().length(); // add one for the terminating NULL
+					result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
+					SDLNet_TCP_Close(new_tcpsock);
+
+					if (result < len)
+					{
+						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						// It may be good to disconnect sock because it is likely invalid now.
+					}
+				}
+			}
+		}
+		for (auto c : m_ClientSockes)
+		{
+		}
+	}
+	virtual void Release() override
+	{
+		delete this;
+	}
+	virtual void SetVariable(CryNetworkVarible eVarName, unsigned int nValue) override
+	{
+	}
+	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets) override
+	{
+	}
+	virtual const char* GetHostName() override
+	{
+		return nullptr;
+	}
+	virtual void RegisterPacketSink(const unsigned char inPacketID, INetworkPacketSink* inpSink) override
+	{
+	}
+	virtual void SetSecuritySink(IServerSecuritySink* pSecuritySink) override
+	{
+	}
+	virtual bool IsIPBanned(const unsigned int dwIP) override
+	{
+		return false;
+	}
+	virtual void BanIP(const unsigned int dwIP) override
+	{
+	}
+	virtual void UnbanIP(const unsigned int dwIP) override
+	{
+	}
+	virtual IServerSlot* GetServerSlotbyID(const unsigned char ucId) const override
+	{
+		return nullptr;
+	}
+	virtual uint8_t GetMaxClientID() const override
+	{
+		return uint8_t();
+	}
+	virtual EMPServerType GetServerType() const override
+	{
+		return EMPServerType();
+	}
+
+	bool ConnectTo(CTmpNetworkClient* pClient){
+		auto ss = new CTmpServerSlot;
+		m_pFactory->CreateServerSlot(ss);
+		return true;
+	}
+};
+
+
 class CCompressionHelper : public ICompressionHelper
 {
   public:
@@ -137,9 +433,11 @@ class CTmpNetworkClient : public IClient
 	}
 	virtual void InitiateCDKeyAuthorization(const bool inbCDAuthorization) override
 	{
+		g_Network.CDKeyAuth(this);
 	}
 	virtual void OnCDKeyAuthorization(uint8_t* pbAuthorizationID) override
 	{
+
 	}
 	virtual void SetServerIP(const char* szServerIP) override
 	{
@@ -147,237 +445,8 @@ class CTmpNetworkClient : public IClient
 	CNetwork* m_pNetwork{};
 };
 
-class CTmpNetworkServer : public IServer
-{
-	IServerSlotFactory* m_pFactory = nullptr;
-	uint16_t m_nPort;
-	bool m_bLocal;
-	IPaddress m_IP;
-	TCPsocket m_Socket;
-	std::vector<TCPsocket> m_ClientSockes;
-	//std::map<string, std::function<void(std::stringstream& ss, const string& args)>> handlers;
-
-  public:
-	CTmpNetworkServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
-		: m_pFactory(pFactory),
-		  m_nPort(nPort),
-		  m_bLocal(local)
-	{
-		gEnv->pLog->Log("NetworkServer Constructed");
-#if 0
-		handlers["info"] = [this](std::stringstream& ss, const string& args) {
-			auto& content = ss;
-			content << "CTmpNetworkServer: " << this << "</br>";
-			content << "ISystem: " << gEnv->pSystem << "</br>";
-			content << "IConsole: " << gEnv->pConsole << "</br>";
-			content << "IRenderer: " << gEnv->pRenderer << "</br>";
-			content << "ILog: " << gEnv->pLog << "</br>";
-			content << R"(<a href="gaben">Тык тык!!!</a>)";
-			content <<
-				R"(
-<form action="/cmd" method="get">
-	<p>Remote command<input type="text" name="remote_command"></p>
-	<p><input type="submit" value="Отправить"></p>
-</form>
-)";
-		};
-		handlers["main"] = [this](std::stringstream& ss, const string& args) {
-			ss << "Main Page";
-		};
-		handlers["cmd"] = [this](std::stringstream& ss, const string& args) {
-			gEnv->pConsole->ExecuteString("remote_command = \"\"");
-			gEnv->pConsole->ExecuteString(args.c_str());
-			auto cmd = gEnv->pConsole->GetCVar("remote_command");
-			if (cmd)
-			{
-				gEnv->pConsole->ExecuteString(cmd->GetString());
-			}
-			ss <<
-				R"(
-<form action="/cmd" method="get">
-	<p>Remote command<input type="text" name="remote_command"></p>
-	<p><input type="submit" value="Отправить"></p>
-</form>
-)";
-		};
-		handlers[""] = [this](std::stringstream& ss, const string& args) {
-			ss << "Main Page!!!";
-		};
-		handlers["gaben"] = [this](std::stringstream& ss, const string& args) {
-			ss << R"(
-      <h1>Gabe, give me money!!!</h1>
-      <a href="info">Info<a>
-)";
-		};
-#endif
-	}
-	~CTmpNetworkServer()
-	{
-		SDLNet_TCP_Close(m_Socket);
-		gEnv->pLog->Log("NetworkServer Desctruected");
-	}
-	bool Init()
-	{
-		if (SDLNet_ResolveHost(&m_IP, nullptr, m_nPort) == -1)
-		{
-			gEnv->pLog->Log("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-			return false;
-		}
-
-		m_Socket = SDLNet_TCP_Open(&m_IP);
-		if (!m_Socket)
-		{
-			gEnv->pLog->Log("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-			return false;
-		}
-		gEnv->pLog->Log("Conntection Opened");
-		return true;
-	}
-	// Inherited via IServer
-	virtual void Update(unsigned int nTime) override
-	{
-		// accept a connection coming in on server_tcpsock
-		TCPsocket new_tcpsock;
-
-		while (true)
-		{
-			new_tcpsock = SDLNet_TCP_Accept(m_Socket);
-			if (!new_tcpsock)
-			{
-				break; // gEnv->pLog->Log("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
-			}
-			else
-			{
-				gEnv->pLog->Log("New connection");
-				//m_ClientSockes.push_back(new_tcpsock);
-				size_t length = 0, result;
-				std::stringstream response;
-				static char buf[1024];
-				int reslen = 0;
-				if ((reslen = SDLNet_TCP_Recv(new_tcpsock, buf, 1000)) <= 0)
-				{
-					gEnv->pLog->Log("Error of read");
-				}
-				else
-				{
-					std::stringstream content;
-					content << R"(
-<html>
-	<head>
-    <title>
-      BlackBox
-    </title>
-		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
-	</head>
-  <body>
-		<h1>BlackBox</h1>
-)";
-					//gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
-					std::stringstream ss(buf);
-					//gEnv->pLog->Log("Response %s:\n", ss.str().data());
-					string line;
-					std::getline(ss, line);
-					const int len = line.size() - 14; // GET / HTTP/1.1
-					string location;
-					string args;
-					location.resize(len);
-					string tmp = line;
-					urldecode2(tmp.data(), line.data());
-					line = tmp;
-					//auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
-					location = line.substr(5, line.size() - (5 + 10));
-					gEnv->pLog->Log("Location: %s", location.data());
-
-					auto pos = location.find('?');
-					auto s	 = location.size();
-					if (pos != string::npos)
-					{
-						args = location.substr(pos + 1);
-						location.resize(pos);
-					}
-
-#if 0
-					if (auto it = handlers.find(location.c_str()); it != handlers.end())
-					{
-						it->second(content, args);
-					}
-#endif
-					content << R"(
-  </body>
-</html>
-)";
-					response <<
-						R"(
-	HTTP/1.1 200 OK
-	Host: site.com
-	Content-Type: text/html;
-	Connection: close
-	Content-Length: )";
-					response << content.str().length() << "\r\n\r\n"
-							 << content.str();
-
-					length = response.str().length(); // add one for the terminating NULL
-					result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
-					SDLNet_TCP_Close(new_tcpsock);
-
-					if (result < len)
-					{
-						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						// It may be good to disconnect sock because it is likely invalid now.
-					}
-				}
-			}
-		}
-		for (auto c : m_ClientSockes)
-		{
-		}
-	}
-	virtual void Release() override
-	{
-		delete this;
-	}
-	virtual void SetVariable(CryNetworkVarible eVarName, unsigned int nValue) override
-	{
-	}
-	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets) override
-	{
-	}
-	virtual const char* GetHostName() override
-	{
-		return nullptr;
-	}
-	virtual void RegisterPacketSink(const unsigned char inPacketID, INetworkPacketSink* inpSink) override
-	{
-	}
-	virtual void SetSecuritySink(IServerSecuritySink* pSecuritySink) override
-	{
-	}
-	virtual bool IsIPBanned(const unsigned int dwIP) override
-	{
-		return false;
-	}
-	virtual void BanIP(const unsigned int dwIP) override
-	{
-	}
-	virtual void UnbanIP(const unsigned int dwIP) override
-	{
-	}
-	virtual IServerSlot* GetServerSlotbyID(const unsigned char ucId) const override
-	{
-		return nullptr;
-	}
-	virtual uint8_t GetMaxClientID() const override
-	{
-		return uint8_t();
-	}
-	virtual EMPServerType GetServerType() const override
-	{
-		return EMPServerType();
-	}
-};
-
-CNetwork::CNetwork(ISystem* pSystem)
-	: m_pSystem(pSystem)
+CNetwork::CNetwork()
+	: m_pSystem(nullptr)
 {
 }
 
@@ -395,7 +464,7 @@ CNetwork::~CNetwork()
 	SDLNet_Quit();
 }
 
-bool CNetwork::Init()
+bool CNetwork::Init(ISystem* pSystem)
 {
 	SDL_version compile_version;
 	const SDL_version* link_version = SDLNet_Linked_Version();
@@ -548,13 +617,25 @@ void CNetwork::UnregisterClient(CTmpNetworkClient* pClient)
 	}
 }
 
+void CNetwork::UnregisterServer(CTmpNetworkServer* pServer)
+{
+	if (auto it = std::find_if(
+		m_Servers.begin(), m_Servers.end(), [pServer](IServer* cl) { return cl == pServer; }); it != m_Servers.end())
+	{
+		m_Servers.erase(it);
+	}
+}
+
+void CNetwork::CDKeyAuth(IClient* pClient)
+{
+	m_Servers[0]->ConnectTo((CTmpNetworkClient*)pClient);
+}
+
 NETWORK_API INetwork* CreateNetwork(ISystem* pSystem)
 {
-	CNetwork* pNetwork = new CNetwork(pSystem);
-	if (!pNetwork->Init())
+	if (!g_Network.Init(pSystem))
 	{
-		pNetwork->Release();
-		pNetwork = nullptr;
+		g_Network.Release();
 	}
-	return pNetwork;
+	return &g_Network;
 }

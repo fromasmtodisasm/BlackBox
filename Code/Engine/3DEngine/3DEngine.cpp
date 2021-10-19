@@ -26,6 +26,7 @@ C3DEngine::~C3DEngine()
 
 void C3DEngine::Enable(bool bEnable)
 {
+	m_Enabled = bEnable;
 }
 
 bool C3DEngine::Init()
@@ -65,6 +66,8 @@ void C3DEngine::SetCamera(const CCamera& cam, bool bToTheScreen)
 static float s_time = 0;
 void C3DEngine::Draw()
 {
+	if (!m_Enabled)
+		return;
 #if 0
   int w;
   int h;
@@ -846,11 +849,12 @@ void C3DEngine::ResetScreenFx(void)
 
 void C3DEngine::SetFlags(int flags)
 {
+	m_iFlags = flags;
 }
 
 int C3DEngine::GetFlags()
 {
-  return 0;
+  return m_iFlags;
 }
 
 void C3DEngine::ClearRenderResources(bool bEditor)

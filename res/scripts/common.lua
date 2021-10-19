@@ -164,14 +164,14 @@ end
 -------------------------------------------------------
 -- C like printf
 -------------------------------------------------------
-function printf(...)
-  System:LogToConsole(call(format,arg))
-end
+--function printf(...)
+--  System:LogToConsole(call(format,arg))
+--end
 -------------------------------------------------------
 -- C like sprintf
 -------------------------------------------------------
 function sprintf(...)
-  return call(format,arg)
+  return string.format(format, arg)
 end
 
 -------------------------------------------------------

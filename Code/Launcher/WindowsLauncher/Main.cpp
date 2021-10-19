@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName = "Game.log";
-	startupParams.bManualEngineLoop = false;
+	startupParams.bManualEngineLoop = true;
 	// Enable run-time memory check for debug builds.
 
 	// Note: lpCmdLine does not contain the filename.
@@ -61,15 +61,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	_CrtMemState s1, s2, s3;
 	_CrtMemCheckpoint(&s1);
 #endif
-	for (int i = 0; i < 1; i++)
+	if (InitializeEngine(startupParams, true))
 	{
-		if (InitializeEngine(startupParams))
-		{
-			startupParams.pSystem->Start();
-			startupParams.pSystem->Release();
-			result = EXIT_SUCCESS;
-		}
-		
+		startupParams.pSystem->Start();
+		startupParams.pSystem->Release();
+		result = EXIT_SUCCESS;
 	}
 
 #if defined(DEBUG) | defined(_DEBUG) && 0

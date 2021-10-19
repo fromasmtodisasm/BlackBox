@@ -74,8 +74,6 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 	  m_pWindow(nullptr),
 	  m_ScriptObjectConsole(nullptr),
 	  m_pTextModeConsole(nullptr)
-#if ENABLE_DEBUG_GUI
-#endif
 {
 	m_startupParams			 = startupParams;
 	m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
@@ -811,7 +809,15 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 	{
 		if (event.state == eIS_Pressed)
 		{
-			if (event.modifiers == eMM_Alt && event.modifiers == eMM_Shift)
+			if (event.keyId == eKI_Escape)
+			{
+				if (m_bCanSwitch)
+				{
+					//m_pProcess->SetFlags(PROC_MENU);
+					m_pGame->SendMessageA("Switch");
+				}
+			}
+			else if (event.modifiers == eMM_Alt && event.modifiers == eMM_Shift)
 			{
 				if (event.keyId == eKI_P)
 				{
@@ -860,11 +866,12 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	NOW	 = SDL_GetPerformanceCounter();
 
 	//m_pNetwork->Update();
-	if (nPauseMode)
+	#if 0
+	if (!nPauseMode)
+	#endif
 	{
-#if ENABLE_DEBUG_GUI
-		m_env.pInput->AddEventListener(m_GuiManager);
-#endif
+		m_pProcess->SetFlags(PROC_3DENGINE);
+		m_bCanSwitch = m_pProcess->GetFlags() & PROC_3DENGINE;
 	}
 
 	if (m_pUserCallback)

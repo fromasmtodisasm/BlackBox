@@ -628,7 +628,7 @@ void CXGame::Reset()
 //////////////////////////////////////////////////////////////////////
 IXSystem* CXGame::GetXSystem()
 {
-	#if 0
+	#if 1
 	return m_pServer ? m_pServer->m_pISystem : m_pClient ? m_pClient->m_pISystem
 														 : NULL;
 	#else
@@ -870,8 +870,7 @@ bool CXGame::Update()
 	}
 	if (!m_bEditor)
 	{
-		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame()
-			)
+		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame())
 		{
 			m_p3DEngine->Enable(1);
 		}
@@ -883,15 +882,14 @@ bool CXGame::Update()
 	//////////////////////////////////////////////////////////////////////////
 	FUNCTION_PROFILER(PROFILE_GAME);
 
-	static const auto& render_game	= true;
-	const bool		   bRenderFrame = !m_bDedicatedServer && gEnv->pRenderer != nullptr;
-	static int		   num_frames	= 0xffff;
-	#if 0
-	m_pSystem->Update(0, IsInPause());
-	#endif
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
+	bool bRenderFrame = (!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || m_bMenuOverlay || m_bUIOverlay) 
+											&& g_Render->GetIVal() != 0;
+	//////////////////////////////////////////////////////////////////////////
+	// Start Profiling frame
+	m_pSystem->GetIProfileSystem()->StartFrame();
 	ITimer* pTimer = m_pSystem->GetITimer();
 	MEASURETIME("EnterGameUp");
 	//Timur[10/2/2002]
@@ -970,10 +968,8 @@ bool CXGame::Update()
 	}
 
 	// We use engine for update
-	#if 0
 	if (!m_pSystem->Update(IsMultiplayer() ? ESYSUPDATE_MULTIPLAYER : 0, nPauseMode)) //Update returns false when quitting
 		return (false);
-	#endif
 
 	if (IsMultiplayer())
 	{
@@ -1050,14 +1046,12 @@ bool CXGame::Update()
 	if (bRenderFrame)
 	{
 		// Rendering in Engine
-		#if 0
 		// render begin must be always called anyway to clear buffer, draw buttons etc.
 		// even in menu mode
 		m_pSystem->RenderBegin();
 
 		m_pSystem->Render();
 		MEASURETIME("3SysRend");
-		#endif
 	}
 
 	// update the HUD
@@ -1123,9 +1117,7 @@ bool CXGame::Update()
 		if (m_pTimeDemoRecorder)
 			m_pTimeDemoRecorder->RenderInfo();
 
-		#if 0
 		m_pSystem->RenderEnd();
-		#endif
 	}
 	MEASURETIME("3Rend Up");
 
@@ -1174,11 +1166,9 @@ bool CXGame::Update()
 
 	MEASURETIME("EndGameUp");
 
-	#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// End Profiling Frame
 	m_pSystem->GetIProfileSystem()->EndFrame();
-	#endif
 	//////////////////////////////////////////////////////////////////////////
 
 	return (m_bUpdateRet);
@@ -1259,8 +1249,10 @@ bool CXGame::IsInPause(IProcess *pProcess)
 {
 	bool bPause = (m_bMenuOverlay && (!IsMultiplayer()));
 	//check if the game is in pause or in menu mode
+	#if 0
 	if ((pProcess->GetFlags() & PROC_MENU) && !IsMultiplayer())
 		bPause=true;
+	#endif
 
 	return (bPause);
 }

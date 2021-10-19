@@ -659,7 +659,7 @@ void CRenderer::Flush()
 
 	pvb.CopyToDevice();
 #endif
-	#if 0
+	#if 1
 	m_RenderAuxGeom->Flush();
 	#endif
 

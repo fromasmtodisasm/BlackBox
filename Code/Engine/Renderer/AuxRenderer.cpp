@@ -515,12 +515,16 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 }
 void CRenderAuxGeom::DrawAABBs()
 {
-	V_RETURN(m_BBVerts.size() > 0);
+	//V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 	//m_BoundingBoxShader->Bind();
-	gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
-	auto size	  = m_BBVerts.size() * 36;
-	m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
-	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+	if (m_BBVerts.size())
+	{
+		gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
+		auto size	  = m_BBVerts.size() * 36;
+		m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
+		gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+		DrawCube(m_BoundingBox);
+	}
 	#if 1
 	if (m_Meshes.size())
 	{
@@ -531,7 +535,6 @@ void CRenderAuxGeom::DrawAABBs()
 		DrawCube(m_Meshes[0]);
 	}
 	#endif
-	DrawCube(m_BoundingBox);
 
 	m_Meshes.resize(0);
 	m_BBVerts.resize(0);

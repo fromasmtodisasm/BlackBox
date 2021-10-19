@@ -506,6 +506,8 @@ class CSystem final : public ISystem
 	legacy::ISystem* m_pSystemLegacy;
 	CCryNullFont	 m_Font;
 
+	bool m_bCanSwitch = false;
+
 
     // ISystem interface
 public:
