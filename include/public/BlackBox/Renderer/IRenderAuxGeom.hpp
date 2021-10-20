@@ -24,7 +24,7 @@ struct IRenderAuxGeom
 		DrawTriangle(v0, colV0, v2, colV2, v3, colV3);
 	}
 
-	virtual void DrawMesh(CVertexBuffer* pVertexBuffer) = 0;
+	virtual void DrawMesh(CVertexBuffer* pVertexBuffer, int texture) = 0;
 	virtual void Flush() = 0;
 };
 

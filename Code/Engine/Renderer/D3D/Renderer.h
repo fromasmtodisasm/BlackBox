@@ -127,6 +127,7 @@ public:
 
 	virtual ITexPic* EF_GetTextureByID(int Id) override;
 	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) override;
+	virtual void	 SetTexture(int tnum, ETexType Type = eTT_Base) override;	
 
 	ID3D10ShaderResourceView* CreateTexture(std::vector<uint8_t> &blob);
 	ID3D10ShaderResourceView* CreateTextureFromFile(CCryFile file);

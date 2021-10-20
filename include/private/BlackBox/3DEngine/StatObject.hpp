@@ -10,11 +10,13 @@
 #include <BlackBox/Utils/smartptr.hpp>
 
 #include <IStatObj.h>
+#include <list2.h>
 
 #include <memory>
 
 struct Material;
 using MeshList = std::shared_ptr<std::vector<Mesh>>;
+struct aiMaterial;
 
 class CIndexedMesh
 {
@@ -38,7 +40,12 @@ public:
 	Legacy::Vec3d m_vBoxMin, m_vBoxMax;
 
 	// materials table
-	//list2<CMatInfo> m_lstMatTable;
+	#if 0
+	list2<CMatInfo> m_lstMatTable;
+	#else
+	list2<aiMaterial> m_lstMatTable;
+	#endif
+	int m_DiffuseMap = -1;
 
 	// list of geom names from cgf file
 	//list2<char*> m_lstGeomNames;

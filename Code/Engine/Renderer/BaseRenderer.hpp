@@ -460,6 +460,7 @@ class CRenderer : public RenderCVars
 	virtual void			   RemoveTexture(ITexPic* pTexPic)																													   = 0;
 	virtual ITexPic*		   EF_GetTextureByID(int Id)																														   = 0;
 	virtual ITexPic*		   EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
+	virtual void			   SetTexture(int tnum, ETexType Type = eTT_Base)																									   = 0;	
 
 	void ShutDown();
 

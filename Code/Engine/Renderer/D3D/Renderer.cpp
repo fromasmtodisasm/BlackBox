@@ -422,6 +422,14 @@ ITexPic* CD3DRenderer::EF_LoadTexture(const char* nameTex, uint flags, uint flag
 {
 	return EF_GetTextureByID(LoadTexture(nameTex));
 }
+void CD3DRenderer::SetTexture(int tnum, ETexType Type)
+{
+	auto t = m_TexturesMap[tnum].second;
+	if (t)
+	{
+		::GetDevice()->PSSetShaderResources(0, 1, &t);	
+	}
+}
 ID3D10ShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 {
 	file.Seek(0, SEEK_END);

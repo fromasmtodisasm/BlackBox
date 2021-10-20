@@ -123,6 +123,11 @@ typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferP
    };
  */
 
+class CMatInfo
+{
+	int m_Textures[8];
+};
+
 struct Transform
 {
 	Legacy::Vec3 position;
@@ -809,6 +814,8 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void RemoveTexture(unsigned int TextureId) = 0;
 	virtual void RemoveTexture(ITexPic* pTexPic) = 0;
 
+	//! Set the current binded texture
+	virtual	void	SetTexture(int tnum, ETexType Type=eTT_Base)=0;	
 
 };
 

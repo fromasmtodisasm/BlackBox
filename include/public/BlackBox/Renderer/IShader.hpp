@@ -10,6 +10,7 @@ struct ITexture;
 class CCamera;
 
 struct IShader;
+class CCObject;
 
 using ShaderRef = _smart_ptr<IShader>;
 
@@ -117,6 +118,345 @@ struct IShader
 	virtual void Bind()							= 0;
 };
 
+#if 0
+//////////////////////////////////////////////////////////////////////
+class CRendElement
+{
+public:
+	#if 0
+  EDataType m_Type;
+  #endif
+  uint m_Flags;
+
+public:
+  int m_nCountCustomData;
+  void *m_CustomData;
+  float m_fFogScale;
+  #if 0
+  int m_CustomTexBind[MAX_CUSTOM_TEX_BINDS_NUM];
+  #endif
+  CFColor m_Color;
+  int m_SortId;
+
+  static CRendElement m_RootGlobal;
+  CRendElement *m_NextGlobal;
+  CRendElement *m_PrevGlobal;
+
+  class CVProgram *m_LastVP;      // Last Vertex program which updates Z buffer
+
+protected:
+
+
+  _inline void UnlinkGlobal()
+  {
+	  if (!m_NextGlobal || !m_PrevGlobal)
+		  return;
+	  m_NextGlobal->m_PrevGlobal = m_PrevGlobal;
+	  m_PrevGlobal->m_NextGlobal = m_NextGlobal;
+	  m_NextGlobal = m_PrevGlobal = NULL;
+  }
+  _inline void LinkGlobal(CRendElement* Before)
+  {
+	  if (m_NextGlobal || m_PrevGlobal)
+		  return;
+	  m_NextGlobal						 = Before->m_NextGlobal;
+	  Before->m_NextGlobal->m_PrevGlobal = this;
+	  Before->m_NextGlobal				 = this;
+	  m_PrevGlobal						 = Before;
+  }
+
+public:
+  CRendElement()
+  {
+#if 0
+    m_Type = eDATA_Unknown;
+#endif
+	  m_NextGlobal = NULL;
+	  m_PrevGlobal = NULL;
+	  m_Flags	   = 0;
+	  m_CustomData = NULL;
+	  #if 0
+	  for (int i = 0; i < MAX_CUSTOM_TEX_BINDS_NUM; i++)
+		  m_CustomTexBind[i] = -1;
+	  #endif
+	  m_fFogScale = 0;
+	  m_SortId	  = 0;
+	  m_LastVP	  = NULL;
+	  if (!m_RootGlobal.m_NextGlobal)
+	  {
+		  m_RootGlobal.m_NextGlobal = &m_RootGlobal;
+		  m_RootGlobal.m_PrevGlobal = &m_RootGlobal;
+	  }
+	  if (this != &m_RootGlobal)
+		  LinkGlobal(&m_RootGlobal);
+  }
+
+  virtual ~CRendElement()
+  {
+	  #if 0
+	  if ((m_Flags & FCEF_ALLOC_CUST_FLOAT_DATA) && m_CustomData)
+	  {
+		  delete[]((float*)m_CustomData);
+		  m_CustomData = 0;
+	  }
+	  #endif
+	  UnlinkGlobal();
+  }
+
+  const char* mfTypeString();
+
+  #if 0
+  EDataType mfGetType() { return m_Type; }
+
+  void mfSetType(EDataType t) { m_Type = t; }
+#endif
+  uint mfGetFlags(void) { return m_Flags; }
+  void mfSetFlags(uint fl) { m_Flags = fl; }
+  void mfUpdateFlags(uint fl) { m_Flags |= fl; }
+  void mfClearFlags(uint fl) { m_Flags &= ~fl; }
+
+  virtual void			   mfPrepare();
+  virtual bool			   mfCullByClipPlane(CCObject* pObj);
+  virtual CMatInfo*		   mfGetMatInfo();
+  virtual list2<CMatInfo>* mfGetMatInfoList();
+  virtual int			   mfGetMatId();
+  virtual bool			   mfCull(CCObject* obj);
+  #if 0
+  virtual bool			   mfCull(CCObject* obj, SShader* ef);
+  #endif
+  virtual void			   mfReset();
+  virtual CRendElement*	   mfCopyConstruct(void);
+  virtual void			   mfCenter(Vec3& centr, CCObject* pObj);
+  virtual void			   mfGetBBox(Vec3& vMins, Vec3& vMaxs)
+  {
+	  vMins.Set(0, 0, 0);
+	  vMaxs.Set(0, 0, 0);
+  }
+  virtual void			mfGetPlane(Plane& pl);
+  virtual float			mfDistanceToCameraSquared(const CCObject& thisObject);
+  virtual void			mfEndFlush();
+  virtual void			Release();
+  virtual int			mfTransform(Matrix44& ViewMatr, Matrix44& ProjMatr, vec4_t* verts, vec4_t* vertsp, int Num);
+  #if 0
+  virtual bool			mfIsValidTime(SShader* ef, CCObject* obj, float curtime);
+  virtual void			mfBuildGeometry(SShader* ef);
+  virtual bool			mfCompile(SShader* ef, char* scr);
+  virtual CRendElement* mfCreateWorldRE(SShader* ef, SInpData* ds);
+  virtual bool			mfDraw(SShader* ef, SShaderPass* sfm);
+  virtual void*			mfGetPointer(ESrcPointer ePT, int* Stride, int Type, ESrcPointer Dst, int Flags);
+  virtual bool			mfPreDraw(SShaderPass* sl) { return true; }
+  virtual float			mfMinDistanceToCamera(CCObject* pObj) { return -1; };
+  #endif
+  virtual bool			mfCheckUpdate(int nVertFormat, int Flags)
+  {
+	  int i = Flags;
+	  return true;
+  }
+  virtual int Size() { return 0; }
+};
+
+//////////////////////////////////////////////////////////////////////
+// Objects using in shader pipeline
+
+// Size of CCObject currently is 256 bytes. If you add new members better to ask me before or just
+// make sure CCObject is cache line aligned (64 bytes)
+class CCObject
+{
+public:
+
+  CCObject()
+  {
+	  #if 0
+    m_ShaderParams = NULL;
+	#endif
+    m_bShaderParamCreatedInRenderer = false;
+    m_VPMatrixId = -1;
+    m_VPMatrixFrame = -1;
+  }
+  ~CCObject();
+
+  short m_Id;
+  short m_Counter;
+  short m_VisId;
+  short m_VPMatrixId;
+  uint m_ObjFlags;
+  Matrix44 m_Matrix;
+  bool m_bShaderParamCreatedInRenderer;
+  #if 0
+  TArray<SShaderParam> *m_ShaderParams;
+  #endif
+  // Lightmap textures ID's
+	short m_nLMId;
+	short m_nLMDirId;
+  short m_nOcclId;
+	short m_nHDRLMId;
+  uint m_Reserved1;
+
+  uint m_DynLMMask;
+  float m_Trans2[3];
+  float m_Angs2[3];
+  // Different useful vars (ObjVal component in shaders)
+  // [0] - used for blending trees sun-rabbits on distance (0-1)
+  float m_TempVars[5]; 
+  float m_fDistanceToCam;
+
+  CRendElement *m_RE;
+  IShader *m_EF;
+  void *m_CustomData;
+  uint m_RenderState;
+
+  float m_SortId; // Custom sort value
+
+  short m_InvMatrixId;
+  short m_VPMatrixFrame;
+  short m_NumCM; // Custom Cube/Texture id (indoor engine soft shadows)
+  union
+  {
+    short m_nLod;
+    short m_NumWFX;
+    short m_TexId0;
+  };
+  union
+  {
+    short m_nTemplId;
+    short m_NumWFY;
+    short m_TexId1;
+  };
+  union
+  {
+    short m_FrameLight;
+    bool m_bVisible;
+  };
+  short m_LightStyle;
+  short m_nScissorX1, m_nScissorY1, m_nScissorX2, m_nScissorY2;
+  
+  union
+  {
+    float m_fRefract;
+    float m_StartTime;
+	};
+  union
+  {
+    float m_fBump;
+    float m_fLightFadeTime;
+  };
+  float m_fHeatFactor;  
+
+  list2<struct ShadowMapLightSourceInstance> * m_pShadowCasters; // list of shadow casters 
+  struct ShadowMapFrustum * m_pShadowFrustum; // will define projection of shadow from this object
+
+  Vec3d m_AmbColor;
+  CFColor m_Color;
+
+  //IDeformableRenderMesh * m_pCharInstance;
+  struct CLeafBuffer *m_pLMTCBufferO;
+
+  union
+  {
+	  ITexPic	*m_pLightImage;
+    CDLight *m_pLight;
+    float m_fBending;
+    float m_fLastUpdate;
+    byte m_OcclLights[4];
+  };
+
+  _inline Vec3 GetTranslation() const
+  {
+    return m_Matrix.GetTranslationOLD();
+  }
+  _inline float GetScaleX() const
+  {
+    return cry_sqrtf(m_Matrix(0,0)*m_Matrix(0,0) + m_Matrix(0,1)*m_Matrix(0,1) + m_Matrix(0,2)*m_Matrix(0,2));
+  }
+  _inline float GetScaleZ() const
+  {
+    return cry_sqrtf(m_Matrix(2,0)*m_Matrix(2,0) + m_Matrix(2,1)*m_Matrix(2,1) + m_Matrix(2,2)*m_Matrix(2,2));
+  }
+  _inline bool IsMergable()
+  {
+    if (m_Color.a != 1.0f)
+      return false;
+    if (m_pShadowCasters)
+      return false;
+	#if 0
+    if (m_pCharInstance)
+      return false;
+	#endif
+    return true;
+  }
+
+  #if 0
+  static TArray<SWaveForm2> m_Waves;
+  static MatrixArray16 m_ObjMatrices;
+  #endif
+  void Init();
+
+  void CloneObject(CCObject *srcObj)
+  {
+    int Id = m_Id;
+    int VisId = m_VisId;
+    memcpy(this, srcObj, sizeof(*srcObj));
+    m_Id = Id;
+    m_VisId = VisId;
+  }
+
+  Matrix44 &GetMatrix()
+  {
+    return m_Matrix;
+  }
+
+  Matrix44 &GetInvMatrix();
+  Matrix44 &GetVPMatrix();
+
+  void SetScissor();
+  //void SetAlphaState(CPShader *pPS, int nCurState);
+
+  //virtual void AddWaves(SWaveForm2 **wf);
+  //virtual void SetShaderFloat(const char *Name, float Val);
+  //virtual void RemovePermanent();
+
+#ifdef _RENDERER
+#ifdef DEBUGALLOC
+#undef new
+#endif
+	// Sergiy: it's enough to allocate 16 bytes more, even on 64-bit machine
+	// - and we need to store only the offset, not the actual pointer
+  void* operator new( size_t Size )
+  {
+    byte *ptr = (byte *)malloc(Size+16+4);
+    memset(ptr, 0, Size+16+4);
+    byte *bPtrRes = (byte *)((INT_PTR)(ptr+4+16) & ~0xf);
+    ((byte**)bPtrRes)[-1] = ptr;
+
+    return bPtrRes;
+  }
+  void* operator new[](size_t Size)
+  {
+    byte *ptr = (byte *)malloc(Size+16+2*sizeof(INT_PTR));
+    memset(ptr, 0, Size+16+2*sizeof(INT_PTR));
+    byte *bPtrRes = (byte *)((INT_PTR)(ptr+16+2*sizeof(INT_PTR)) & ~0xf);
+    ((byte**)bPtrRes)[-2] = ptr;
+
+    return bPtrRes-sizeof(INT_PTR);
+  }
+  void operator delete( void *Ptr )
+  {
+    byte *bActualPtr = ((byte **)Ptr)[-1];
+		assert (bActualPtr <= (byte*)Ptr && (byte*)Ptr-bActualPtr < 20);
+    free ((void *)bActualPtr);
+  }
+
+  void operator delete[]( void *Ptr )
+  {
+		byte *bActualPtr = ((byte **)Ptr)[-1];
+		free ((void *)bActualPtr);
+  }
+#ifdef DEBUGALLOC
+#define new DEBUG_CLIENTBLOCK
+#endif
+#endif // _RENDERER
+};
+#endif
 //////////////////////////////////////////////////////////////////////
 struct ShaderDesc
 {

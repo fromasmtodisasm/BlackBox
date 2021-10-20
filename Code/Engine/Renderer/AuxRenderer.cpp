@@ -159,7 +159,7 @@ HRESULT InitCube()
 	return S_OK;
 }
 
-void DrawCube(CVertexBuffer* m_BoundingBox)
+void DrawCube(const SDrawElement& DrawElement)
 {
 #ifndef VK_RENDERER
 	// Update our time
@@ -225,17 +225,22 @@ void DrawCube(CVertexBuffer* m_BoundingBox)
 		::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, sizeof(cb), 0);
 
 		//::GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-		::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		//::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		::GetDevice()->IASetInputLayout(g_pVertexLayout);
 
+		#if 0
 		::GetDevice()->PSSetShaderResources(0, 1, &GlobalResources::GreyTextureRV);
+		#else
+		//::GetDevice()->PSSetShaderResources(0, 1, gEnv->pRenderer->EF_GetTextureByID(DrawElement.m_DiffuseMap));
+		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
+		#endif
 		::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
 		::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
 		GetDevice()->RSSetState(g_pRasterizerState);
 		GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 		//GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
-		gEnv->pRenderer->DrawBuffer(m_BoundingBox, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES));
+		gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0,0, (CMatInfo*)-1);
 	}
 #endif
 }
@@ -523,7 +528,7 @@ void CRenderAuxGeom::DrawAABBs()
 		auto size	  = m_BBVerts.size() * 36;
 		m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
 		gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
-		DrawCube(m_BoundingBox);
+		DrawCube({m_BoundingBox, -1});
 	}
 	#if 1
 	if (m_Meshes.size())
@@ -628,9 +633,9 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 	pVertices = &auxVertexBuffer[oldVBSize];
 }
 
-void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer)
+void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, int texture)
 {
-	m_Meshes.push_back(pVertexBuffer);
+	m_Meshes.push_back({pVertexBuffer, texture});
 }
 
 void CRenderAuxGeom::Flush()

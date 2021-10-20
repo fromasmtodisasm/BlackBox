@@ -17,6 +17,13 @@ cbuffer cbChangesEveryFrame : register(b2)
 
 
 //--------------------------------------------------------------------------------------
+struct VS_INPUT
+{
+    float4 Pos : POSITION;
+    float3 Normal : NORMAL;
+    float2 TC : TEXCOORD0;
+};
+
 struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
@@ -31,18 +38,16 @@ SamplerState g_LinearSampler : register(s0);
 // Vertex Shader
 //--------------------------------------------------------------------------------------
 VS_OUTPUT VS(
-    float4 Pos : POSITION
-    , float3 Normal : NORMAL
-    , float2 TC: TEXCOORD0 
+    VS_INPUT IN
 )
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
-    output.Pos = mul(Pos, World );
-    output.Pos = mul(Pos, View);
+    output.Pos = mul(IN.Pos, World );
+    output.Pos = mul(IN.Pos, View);
     output.Pos = mul(output.Pos, Projection);
     //output.Pos = mul( Pos, MVP );
-    output.Normal = Normal;
-    output.TC = TC;
+    output.Normal = IN.Normal;
+    output.TC = IN.TC;
 
     return output;
 }

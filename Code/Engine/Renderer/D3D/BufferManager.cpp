@@ -188,7 +188,7 @@ void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount
 	stream->m_nBufOffset  = 0;
 	stream->m_nItems	  = indexcount;
 
-	ID3D10Buffer* p_IB	   = (ID3D10Buffer*)(stream->m_VertBuf.m_pPtr);
+	ID3D10Buffer** p_IB	   = (ID3D10Buffer**)(&stream->m_VertBuf.m_pPtr);
 
 	D3D10_BUFFER_DESC ibd;
 	ibd.Usage		   = D3D10_USAGE_IMMUTABLE;
@@ -198,7 +198,7 @@ void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount
 	ibd.MiscFlags	   = 0;
 	D3D10_SUBRESOURCE_DATA iinitData;
 	iinitData.pSysMem = src;
-	if (GetDevice()->CreateBuffer(&ibd, &iinitData, &p_IB))
+	if (GetDevice()->CreateBuffer(&ibd, &iinitData, p_IB))
 	{
 	
 	}

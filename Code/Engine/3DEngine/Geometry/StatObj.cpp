@@ -102,7 +102,7 @@ void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, 
 		gEnv->pRenderer->CreateIndexBuffer(&m_IndexBuffer, m_IndexedMesh.m_Indices.data(), m_IndexedMesh.m_Indices.size());
 	}
 
-	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer);
+	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, m_IndexedMesh.m_DiffuseMap);
 	//GlobalResources::Bo
 
 
@@ -291,6 +291,23 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 					m_Indices.push_back(Face.mIndices[0]);
 					m_Indices.push_back(Face.mIndices[1]);
 					m_Indices.push_back(Face.mIndices[2]);
+				}
+			}
+			std::vector<string> Textures;
+			if (scene->HasMaterials())
+			{
+				auto mat = scene->mMaterials[mesh->mMaterialIndex];
+				//m_lstMatTable.Add(mat);
+				//aiTextureType textureTypes[aiTextureType::aiTextureType_UNKNOWN];
+				//for (auto tt : textureTypes)
+				{
+					if (mat->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 0)
+					{
+						aiString path;
+						m_DiffuseMap = mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
+						//path.C_Str()
+						m_DiffuseMap = gEnv->pRenderer->LoadTexture(path.C_Str());
+					}
 				}
 			}
 		}

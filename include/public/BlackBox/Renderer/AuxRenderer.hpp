@@ -32,6 +32,12 @@ using SAABBBuffer = gl::ConstantBuffer<SAABBConstantBuffer>;
 using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
 #endif
 
+struct SDrawElement
+{
+	CVertexBuffer* m_pBuffer;
+	int			   m_DiffuseMap;
+};
+
 
 using AuxPushBuffer	  = std::vector<SAuxPushBufferEntry>;
 using AuxVertexBuffer = std::vector<SAuxVertex>;
@@ -52,7 +58,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
 	void PushImage(const SRender2DImageDescription& image) override;
 	void Flush() override;
-	void DrawMesh(CVertexBuffer* pVertexBuffer) override;
+	void DrawMesh(CVertexBuffer* pVertexBuffer, int texture) override;
 
   private:
 	void AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive);
@@ -71,8 +77,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	std::vector<SRender2DImageDescription> m_Images;
 
 	//SAABBBufferPtr  m_aabbBufferPtr;
-
-	std::vector<CVertexBuffer*> m_Meshes;
+	std::vector<SDrawElement> m_Meshes;
 
 	std::vector<BoundingBox> m_BBVerts;
 

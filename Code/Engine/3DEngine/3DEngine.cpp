@@ -31,7 +31,7 @@ void C3DEngine::Enable(bool bEnable)
 
 bool C3DEngine::Init()
 {
-    MakeObject("res/geom/pengium.obj", nullptr);
+    MakeObject("Data/geom/pengium2.obj", nullptr);
 	return true;
 }
 
