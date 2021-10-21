@@ -486,10 +486,10 @@ bool CSystem::Init()
 	//LoadCrynetwork();
 	auto font_size = vector2f(14,14);
 	m_pFont = m_env.pRenderer->GetIFont();
-	m_pFont->Init("arial.ttf", (uint)font_size.x, (uint)font_size.y);
+	m_pFont->Init("VeraMono.ttf", (uint)font_size.x, (uint)font_size.y);
 
 	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
-	m_pBlackBoxFont->Init("arial.ttf", 24,24);
+	m_pBlackBoxFont->Init("VeraMono.ttf", 24,24);
 
 	m_Font.ms_nullFont.m_pFont = m_pFont;
 	m_Font.ms_nullFont.m_Size = font_size;

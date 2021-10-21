@@ -78,7 +78,7 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
   if (gEnv->pRenderer)
   {
 	  m_pFont = gEnv->pRenderer->GetIFont();
-	  m_pFont->Init("arial.ttf", 14,14);
+	  m_pFont->Init("VeraMono.ttf", 14,14);
   }
 
 }

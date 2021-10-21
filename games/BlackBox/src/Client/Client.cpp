@@ -8,8 +8,8 @@
 
 std::vector<Vec3> lineBuffer;
 
-float gGravity  = 0.00001;
 int interval = 9000;
+
 
 int intervalLeft = interval;
 
@@ -47,15 +47,18 @@ void CClient::Update()
 	m_testObjects;
 	for (auto& o : m_testObjects)
 	{
-		o.m_Position.y += o.m_Position.y * cos(gEnv->pTimer->GetCurrTime());
+		o.m_Position.y += o.m_Position.y * cos(gEnv->pTimer->GetCurrTime()*0.001f);
 	}
 	
 	const float FloorLevel = 2;
 	auto CamPos = Vec3(m_CameraController.CurrentCamera()->GetPos());
 
-	m_CamSpeed -= gGravity;
+	auto time = gEnv->pTimer->GetFrameRate()*0.001f;
+	m_CamSpeed -= m_PhysParams.Gravity*time*time;
 	CamPos.y += m_CamSpeed;
 	CamPos.y = std::max(CamPos.y, FloorLevel);
+
+	if (CamPos.y <= FloorLevel) m_CamSpeed = 0.f;
 
 	m_CameraController.CurrentCamera()->SetPos(CamPos);
 
@@ -78,6 +81,10 @@ void CClient::Update()
 		dti.color[2] = (float)intervalLeft / interval;
 		dti.color[3] = 1.f;
 		gEnv->pRenderer->Draw2dText(100, 40, "Press 'Jump' to Jump", dti);
+		dti.color[2] = 1;
+		static char b[32];
+		sprintf(b, "Frame rate: %f", time);
+		gEnv->pRenderer->Draw2dText(100, 80, b, dti);
 		intervalLeft--;
 	}
 
@@ -178,16 +185,13 @@ bool CClient::Init()
 		return TestObject(
 			rand_pos, {5, 5, 5}, Vec4(RandomVector(Vec3(-5), Vec3(10)), 1.f));
 	};
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		m_testObjects.emplace_back(
 			create_obj()
 		);
 	}
 
-	//auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Vec4(4, 10, 40, 255));
-	//CameraBox.m_AABB.Translate(m_CameraController.RenderCamera()->transform.position);
-	//m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
 	if (gEnv->pRenderer)
@@ -365,6 +369,19 @@ void CClient::TriggerScreenshot(float fValue, XActivationEvent ae)
 	m_pGame->m_pSystem->GetIConsole()->ExecuteString("r_GetScreenShot 1");
 }
 
+void CClient::TriggerStart(float fValue, XActivationEvent ae)
+{
+	if (ae == XActionActivationMode::aamOnPress)
+	{
+		SInputEvent ie;
+		ie.deviceIndex = 0;
+		ie.deviceType  = eIDT_Keyboard;
+		ie.keyId	   = eKI_Escape;
+		ie.state	   = eIS_Pressed;
+		gEnv->pInput->PostInputEvent(ie, true);
+	}
+}
+
 void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 {
 	auto mode = m_CameraController.CurrentCamera()->mode;
@@ -384,17 +401,14 @@ void CClient::DrawAux()
 	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
 	auto draw_quad = [](Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, UCol col) {
 		auto render = gEnv->pRenderer->GetIRenderAuxGeom();
-		render->DrawTriangle(p1, col, p2, col, p3, col);
-		render->DrawTriangle(p3, col, p4, col, p1, col);
+		render->DrawQuad(p1, col, p2, col, p3, col, p4, col);
 	};
 	const UCol col(255, 255, 255, 255);
 	auto render   = gEnv->pRenderer->GetIRenderAuxGeom();
-	render->DrawLine(
-		{-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 40, y = 0, z = -40;
 	{
 		const UCol col1(50, 125, 0, 100);
-		//draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
+		draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);
 	}
 
 	UCol selected_color(0,1,0,1);
@@ -443,9 +457,17 @@ void CClient::DrawAux()
 
 void CClient::DrawAxis(IRenderAuxGeom* render, Vec3 axis)
 {
+	const auto gridSize = 100;
+	const auto numSegments = 200;
 	// Axis
 	///////////////////////////////////////
 	RSS(gEnv->pRenderer, DEPTH_TEST, false);
+
+	const UCol c = Vec3(1, 0, 0);
+	for (size_t segmentZ = 0; segmentZ < numSegments; segmentZ++)
+	{
+		render->DrawLine({ gridSize * segmentZ / (float)numSegments, 0, -(segmentZ / 2.f)}, c, {gridSize * segmentZ / (float)numSegments, 0, segmentZ / 2.f}, c);
+	}
 	{
 		auto& a = axis;
 		{
