@@ -32,6 +32,8 @@ void C3DEngine::Enable(bool bEnable)
 bool C3DEngine::Init()
 {
     MakeObject("res/geom/pengium.obj", nullptr);
+    //MakeObject("res/geom/cnek.obj", nullptr);
+    MakeObject("res/geom/doggy.fbx", nullptr);
 	return true;
 }
 
@@ -783,7 +785,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	if (!pFont)
 	{
 		pFont = gEnv->pRenderer->GetIFont();
-		pFont->Init("arial.ttf", 16, 16);
+		pFont->Init("VeraMono.ttf", 16, 16);
 	}
 	auto PRINT = [=,&py](float y, char* szFormat, ...)
 	{

@@ -253,17 +253,21 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 			bool bNeedNormals = mesh->HasNormals();
 			bool bHasTC		  = mesh->HasTextureCoords(i);
 
-			m_VertexFormat = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
-			if (m_VertexFormat != 9) return false;
+			m_VertexFormat = 9;
+			auto RealFormat = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
+			if (RealFormat != 9) 
+			{
+				CryError("[ASSIMP] VertexFormat not eq 9");
+			}
 
 			char* vb = (char*)(m_VertexBuffer = CreateVertexBuffer(m_VertexFormat, mesh->mNumVertices));
 			
 
 			auto stride = gVertexSize[m_VertexFormat];
 
-			auto TCOffset = gBufInfoTable[m_VertexFormat].OffsTC;
-			auto NormalsOffset = gBufInfoTable[m_VertexFormat].OffsNormal;
-			auto vertexSize	   = gVertexSize[m_VertexFormat];
+			auto TCOffset = g_VertFormatUVOffsets[RealFormat];
+			auto NormalsOffset = g_VertFormatNormalOffsets[RealFormat];
+			auto vertexSize	   = gVertexSize[RealFormat];
 
 			auto UVs = mesh->mTextureCoords[0];
 			m_nVertCount = mesh->mNumVertices;

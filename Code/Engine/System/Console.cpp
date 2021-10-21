@@ -260,7 +260,7 @@ void Command_DumpVars(IConsoleCmdArgs* Cmd)
 //////////////////////////////////////////////////////////////////////////
 int CXConsole::con_display_last_messages = 0;
 int CXConsole::con_line_buffer_size = 500;
-float CXConsole::con_font_size = 24;
+float CXConsole::con_font_size = 28;
 int CXConsole::con_showonload = 0;
 int CXConsole::con_debug = 0;
 int CXConsole::con_restricted = 0;
@@ -461,7 +461,7 @@ void CXConsole::PreProjectSystemInit()
 void CXConsole::PostRendererInit()
 {
 	
-	m_pFont = GetFont("arial.ttf", con_font_size, con_font_size);
+	m_pFont = GetFont("VeraMono.ttf", con_font_size, con_font_size);
 	m_pRenderer = m_system.GetIRenderer();
 	m_pNetwork = gEnv->pNetwork;  // EvenBalance - M. Quinn
 	m_pInput = m_system.GetIInput();
