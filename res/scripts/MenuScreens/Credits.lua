@@ -130,7 +130,7 @@ UI.PageCredits=
 			UI:DeactivateAllScreens();
 			UI:HideMouseCursor();
 			UI:ShowBackground();
-			UI:SetBackgroundColor("0 0 0 255");
+			UI:SetBackgroundColor("100 0 150 255");
 			
 			UI:StopMusic();
 			UI.PageCredits.PlayMusic(self);
@@ -177,8 +177,10 @@ UI.PageCredits=
 				end
 				
 				if (Instruction[3] and Instruction[3] ~= 0) then
+					System:Log("Set background: "..Instruction[2])
 					UI.PageCredits.GUI.background:SetTexture(System:LoadImage(Instruction[2]));
 				else
+					System:Log("Set foreground: "..Instruction[2])
 					UI.PageCredits.GUI.foreground:SetTexture(System:LoadImage(Instruction[2]));
 					UI.PageCredits.SetForegroundAlpha(0);
 					self.fForegroundFadeIn = Instruction[1];
@@ -192,7 +194,7 @@ UI.PageCredits=
 				if (fRTime < self.fForegroundFadeIn + UI.PageCredits.fFadeInTime) then
 					UI.PageCredits.SetForegroundAlpha((fRTime - self.fForegroundFadeIn) / UI.PageCredits.fFadeInTime);
 				elseif (fRTime +  UI.PageCredits.fFadeOutTime > self.fForegroundFadeOut) then
-					UI.PageCredits.SetForegroundAlpha(max((self.fForegroundFadeOut - fRTime) / UI.PageCredits.fFadeOutTime, 0));
+					UI.PageCredits.SetForegroundAlpha(math.max((self.fForegroundFadeOut - fRTime) / UI.PageCredits.fFadeOutTime, 0));
 				else
 					UI.PageCredits.SetForegroundAlpha(1);
 				end
@@ -201,7 +203,7 @@ UI.PageCredits=
 	},
 
 	SetForegroundAlpha = function(fAlpha)
-		UI.PageCredits.GUI.foreground:SetColor("255 255 255 "..floor(fAlpha * 255));
+		UI.PageCredits.GUI.foreground:SetColor("255 255 255 "..math.floor(fAlpha * 255));
 	end,
 	
 	GetNextForegroundTime = function(self)

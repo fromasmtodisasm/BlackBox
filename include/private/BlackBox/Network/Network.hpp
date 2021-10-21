@@ -6,14 +6,15 @@
 
 class CCompressionHelper;
 class CTmpNetworkClient;
+class CTmpNetworkServer;
 
 class CNetwork : public INetwork
 {
 public:
-  CNetwork(ISystem* pSystem);
+  CNetwork();
   ~CNetwork();
 
-  bool Init();
+  bool Init(ISystem* pSystem);
 
   // Унаследовано через INetwork
   virtual uint32_t GetLocalIP() const override;
@@ -39,13 +40,16 @@ public:
   virtual const char* GetUBIGameServerIP(bool bLan) override;
 
   void UnregisterClient(CTmpNetworkClient* pClient);
+  void UnregisterServer(CTmpNetworkServer* pServer);
+
+  void CDKeyAuth(IClient* pClient);
 
 private:
   ISystem* m_pSystem;
 
   std::string m_LocalIP;
 
-  std::vector<IServer*> m_Servers;
+  std::vector<CTmpNetworkServer*> m_Servers;
   std::vector<IClient*> m_Clients;
 
   CCompressionHelper* m_pCompressionHelper{};

@@ -1,0 +1,577 @@
+start_sources()
+# -- hwscripts.waf_files --
+
+set(ROOT "${CMAKE_SOURCE_DIR}/Data/scripts")
+
+sources_platform(ALL)
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	Scripts
+	SOURCE_GROUP "Root" 
+		${ROOT}/SCRIPTS.dsp
+		${ROOT}/methoddispatcher.lua
+		${ROOT}/postinit.cfg
+		${ROOT}/rotation.cmd
+		${ROOT}/saveutils.lua
+		${ROOT}/shadow.cfg
+		${ROOT}/test.bbs
+		${ROOT}/testshader.lua
+		${ROOT}/utils.lua
+		${ROOT}/Gui.lua
+		${ROOT}/init.cfg
+		${ROOT}/LoadLevel.lua
+		${ROOT}/lua_funcs.txt
+		${ROOT}/main.lua
+		${ROOT}/BALANCING.lua
+		${ROOT}/bloom_test.lua
+		${ROOT}/callbacks.txt
+		${ROOT}/ClassRegistry.lua
+		${ROOT}/CMakeLists.txt
+		${ROOT}/common.lua
+		${ROOT}/DebugTagPointsMgr.lua
+		${ROOT}/Map.lua
+		${ROOT}/FontColors.txt
+		${ROOT}/defiant.lua
+		${ROOT}/engine.cfg
+		${ROOT}/engine.lua
+		${ROOT}/EntityGroupMgr.lua
+		${ROOT}/game.lua
+
+	SOURCE_GROUP "AI"
+		${ROOT}/AI/aiconfig.lua
+		${ROOT}/AI/Anchor.lua
+	SOURCE_GROUP "AI\\\\Behaviors"
+		${ROOT}/AI/Behaviors/ai.lua
+		${ROOT}/AI/Behaviors/ai.lua
+		${ROOT}/AI/Behaviors/AIBehaviour.lua
+		${ROOT}/AI/Behaviors/DEFAULT.lua
+		${ROOT}/AI/Behaviors/mutant_dummy.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities"
+		${ROOT}/AI/Behaviors/Personalities/Prototype.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Animals"
+		${ROOT}/AI/Behaviors/Personalities/Animals/pig.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Bezerker"
+		${ROOT}/AI/Behaviors/Personalities/Bezerker/BezerkerAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Bezerker/BezerkerIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Cover"
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverBlackIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverForm.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverHold.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverInterested.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverRedIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverTEAMHold.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverThreatened.lua
+		${ROOT}/AI/Behaviors/Personalities/Cover/CoverWait.lua
+		${ROOT}/AI/Behaviors/Personalities/Guards/CoverGuardIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Mutants"
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Baboon/BaboonAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Baboon/BaboonIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Big/BigAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Big/BigIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Chimp/ChimpAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Chimp/ChimpIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Chimp/ChimpSurround.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Fast/FastAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Fast/FastIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Fast/FastSeek.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/ModMorpher/ModMorphAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/ModMorpher/ModMorphAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/ModMorpher/ModMorphCloaked.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/ModMorpher/ModMorphIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Morpher/MorphAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Morpher/MorphAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Morpher/MorphCloaked.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Morpher/MorphIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Screwed/ScrewedAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Screwed/ScrewedIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Stealth/StealthAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Stealth/StealthAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Mutants/Stealth/StealthIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Rear"
+		${ROOT}/AI/Behaviors/Personalities/Rear/RearAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Rear/RearAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Rear/RearIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Rear/RearPreAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Rear/RearScramble.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Scientist"
+		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Scientist/ScientistThreatened.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Scout"
+		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutBlackIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutHunt.lua
+		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Scout/ScoutRedIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\SHARED\\\\Combat"
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/DigIn.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/HoldPosition.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/LeanFire.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/MountedGuy.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/MutantCaged.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/MutantJumping.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/RunPath.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/RunToAlarm.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/RunToFriend.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/SharedReinforce.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/SharedRetreat.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/UnderFire.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/UseElevator.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Combat/UseFlyingFox.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\SHARED\\\\Idles"
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/AnimIdles.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_Any.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_IndoorSmoke.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_SitDown.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_StandLook.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_TakePiss.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Idles/Idle_Talk.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\SHARED\\\\Jobs"
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Beaker.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_CarryBox.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_CheckApparatus.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_CroweOne.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_DataEntry.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Explain.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Fix.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_FixCar.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_FixFence.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_FormPatrolCircle.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_FormPatrolLinear.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_FormPatrolNode.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Indoor_FixCar.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Investigate.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_LookPatrol.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Microscope.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Observe.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolCircle.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolLinear.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolNode.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolPath.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolPathFormation.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PatrolPathNoIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PracticeFire.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_ProneIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PullLever.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_PushButtons.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_RunTo.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_RunToActivated.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_SitDown.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_Sleep.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_StandIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/Job_StandIdleFormation.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/MorpherJob_Morph.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_Eating.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_Idling.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_Jumper.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_PatrolPath.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Jobs/MutantJob_RndTag.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/ClimbLadder.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/InVehicle.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/SpecialDumb.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/SpecialFollow.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/SpecialHold.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/SpecialLead.lua
+		${ROOT}/AI/Behaviors/Personalities/SHARED/Other/Swim.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Sniper"
+		${ROOT}/AI/Behaviors/Personalities/Sniper/SniperE3.lua
+		${ROOT}/AI/Behaviors/Personalities/Sniper/SniperIdle.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Special"
+		${ROOT}/AI/Behaviors/Personalities/Special/Crowe/CroweAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Crowe/CroweIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Krieger/KriegerAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Krieger/KriegerIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/SpecialGuy.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Valerie/ValerieFight.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Valerie/ValerieFollow.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Valerie/ValerieIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Valerie/ValerieLead.lua
+		${ROOT}/AI/Behaviors/Personalities/Special/Valerie.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\Swat"
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatAlert.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatAttack.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatGroupAdvance.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatGroupReady.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatGroupWait.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatHunt.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/Swat/SwatThreatened.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\Personalities\\\\TeamLeaders"
+		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLAttack2Attack.lua
+		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLAttack2Idle.lua
+		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLDefenseIdle.lua
+		${ROOT}/AI/Behaviors/Personalities/TeamLeaders/TLFakeAttack.lua
+	SOURCE_GROUP "AI\\\\Behaviors\\\\VEHICLES"
+		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_attack.lua
+		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_idle.lua
+		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_path.lua
+		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_patrol.lua
+		${ROOT}/AI/Behaviors/VEHICLES/BOAT/Boat_transport.lua
+		${ROOT}/AI/Behaviors/VEHICLES/CAR/Car_chase.lua
+		${ROOT}/AI/Behaviors/VEHICLES/CAR/Car_goto.lua
+		${ROOT}/AI/Behaviors/VEHICLES/CAR/Car_idle.lua
+		${ROOT}/AI/Behaviors/VEHICLES/CAR/Car_path.lua
+		${ROOT}/AI/Behaviors/VEHICLES/CAR/Car_patrol.lua
+		${ROOT}/AI/Behaviors/VEHICLES/CAR/Car_transport.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Helicopter.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Heli_attack.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Heli_goto.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Heli_idle.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Heli_path.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Heli_patrol.lua
+		${ROOT}/AI/Behaviors/VEHICLES/HELICOPTER/Heli_transport.lua
+	SOURCE_GROUP "AI\\\\Characters"
+		${ROOT}/AI/Characters/AICharacter.lua
+		${ROOT}/AI/Characters/DEFAULT.lua
+		${ROOT}/AI/Characters/Personalities/Big.lua
+		${ROOT}/AI/Characters/Personalities/Chimp.lua
+		${ROOT}/AI/Characters/Personalities/Cover.lua
+		${ROOT}/AI/Characters/Personalities/CoverGuard.lua
+		${ROOT}/AI/Characters/Personalities/Crowe.lua
+		${ROOT}/AI/Characters/Personalities/Fast.lua
+		${ROOT}/AI/Characters/Personalities/Krieger.lua
+		${ROOT}/AI/Characters/Personalities/ModMorph.lua
+		${ROOT}/AI/Characters/Personalities/Morph.lua
+		${ROOT}/AI/Characters/Personalities/MutantRear.lua
+		${ROOT}/AI/Characters/Personalities/Pig.lua
+		${ROOT}/AI/Characters/Personalities/Rear.lua
+		${ROOT}/AI/Characters/Personalities/Scientist.lua
+		${ROOT}/AI/Characters/Personalities/Scout.lua
+		${ROOT}/AI/Characters/Personalities/Screwed.lua
+		${ROOT}/AI/Characters/Personalities/Sniper.lua
+		${ROOT}/AI/Characters/Personalities/Stealth.lua
+		${ROOT}/AI/Characters/Personalities/Swat.lua
+		${ROOT}/AI/Characters/Personalities/TLAttack2.lua
+		${ROOT}/AI/Characters/Personalities/TLDefense.lua
+		${ROOT}/AI/Characters/Personalities/TLFakeAttack.lua
+		${ROOT}/AI/Characters/VEHICLES/BoatGun.lua
+		${ROOT}/AI/Characters/VEHICLES/fwdvehicle.lua
+		${ROOT}/AI/Characters/VEHICLES/HeliAssault.lua
+		${ROOT}/AI/Characters/VEHICLES/HeliCargo.lua
+		${ROOT}/AI/Characters/VEHICLES/InflatableBoat.lua
+	SOURCE_GROUP "AI\\\\GoalPipes"
+		${ROOT}/AI/GoalPipes/PipeManager.lua
+		${ROOT}/AI/GoalPipes/PipeManager2.lua
+		${ROOT}/AI/GoalPipes/PipeManagerBezerker.lua
+		${ROOT}/AI/GoalPipes/PipeManagerCombat.lua
+		${ROOT}/AI/GoalPipes/PipeManagerJob.lua
+		${ROOT}/AI/GoalPipes/PipeManagerMand.lua
+		${ROOT}/AI/GoalPipes/PipeManagerScientist.lua
+		${ROOT}/AI/GoalPipes/PipeManagerShared.lua
+		${ROOT}/AI/GoalPipes/PipeManagerSten.lua
+		${ROOT}/AI/GoalPipes/PipeManagerSwat.lua
+		${ROOT}/AI/GoalPipes/PipeManagerVehicle.lua
+		${ROOT}/AI/GoalPipes/PMMutant.lua
+		${ROOT}/AI/GoalPipes/PMReusable.lua
+	SOURCE_GROUP "AI\\\\Logic"
+		${ROOT}/AI/Logic/AI_BoredManager.lua
+		${ROOT}/AI/Logic/AI_CombatManager.lua
+		${ROOT}/AI/Logic/AI_Conversation.lua
+		${ROOT}/AI/Logic/AI_ConvManager.lua
+		${ROOT}/AI/Logic/AI_JobManager.lua
+		${ROOT}/AI/Logic/IdleManager.lua
+		${ROOT}/AI/Logic/Mutant_IdleManager.lua
+		${ROOT}/AI/Logic/NameGenerator.lua
+		${ROOT}/AI/Logic/NOCOVER.lua
+		${ROOT}/AI/Logic/SoundPackRandomizer.lua
+	SOURCE_GROUP "AI\\\\Packs\\\\Animation"
+		${ROOT}/AI/Packs/Animation/Basic.lua
+		${ROOT}/AI/Packs/Animation/PACKS.lua
+		${ROOT}/AI/Packs/Animation/TeamLeader.lua
+	SOURCE_GROUP "AI\\\\Packs\\\\Conversations"
+		${ROOT}/AI/Packs/Conversations/Critical.lua
+		${ROOT}/AI/Packs/Conversations/Idle.lua
+	SOURCE_GROUP "AI\\\\Packs\\\\Sound"
+		${ROOT}/AI/Packs/Sound/Basic.lua
+		${ROOT}/AI/Packs/Sound/coreworkerA.lua
+		${ROOT}/AI/Packs/Sound/coreworkerD.lua
+		${ROOT}/AI/Packs/Sound/Crowe.lua
+		${ROOT}/AI/Packs/Sound/dialog_template.lua
+		${ROOT}/AI/Packs/Sound/mutantvoice.lua
+		${ROOT}/AI/Packs/Sound/mutant_ab1.lua
+		${ROOT}/AI/Packs/Sound/mutant_ab2.lua
+		${ROOT}/AI/Packs/Sound/mutant_cover.lua
+		${ROOT}/AI/Packs/Sound/mutant_readability.lua
+		${ROOT}/AI/Packs/Sound/mutant_template.lua
+		${ROOT}/AI/Packs/Sound/PACKS.lua
+		${ROOT}/AI/Packs/Sound/pig.lua
+		${ROOT}/AI/Packs/Sound/Template.lua
+		${ROOT}/AI/Packs/Sound/TemplateSteve.lua
+		${ROOT}/AI/Packs/Sound/Valerie.lua
+		${ROOT}/AI/Packs/Sound/voiceA.lua
+		${ROOT}/AI/Packs/Sound/voiceB.lua
+		${ROOT}/AI/Packs/Sound/voiceC.lua
+		${ROOT}/AI/Packs/Sound/voiceD.lua
+	SOURCE_GROUP "ASSAULT"
+		${ROOT}/ASSAULT/ClientStuff.lua
+		${ROOT}/ASSAULT/gamerules.lua
+		${ROOT}/ASSAULT/Hud/Hud.lua
+		${ROOT}/ASSAULT/Hud/scoreboard.lua
+		${ROOT}/ASSAULT/shared.lua
+	SOURCE_GROUP "Default"
+		${ROOT}/Default/ClientStuff.lua
+		${ROOT}/Default/GameRules.lua
+		${ROOT}/Default/Inventory.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Other"
+		${ROOT}/Default/Entities/Others/AICrate.lua
+		${ROOT}/Default/Entities/Others/AIObject.lua
+		${ROOT}/Default/Entities/Others/AnimObject.lua
+		${ROOT}/Default/Entities/Others/BasicEntity.lua
+		${ROOT}/Default/Entities/Others/BreakableObject.lua
+		${ROOT}/Default/Entities/Others/BuildableObject.lua
+		${ROOT}/Default/Entities/Others/CameraSource.lua
+		${ROOT}/Default/Entities/Others/CameraTargetPoint.lua
+		${ROOT}/Default/Entities/Others/chain.lua
+		${ROOT}/Default/Entities/Others/cloth.lua
+		${ROOT}/Default/Entities/Others/DamageArea.lua
+		${ROOT}/Default/Entities/Others/DeadBody.lua
+		${ROOT}/Default/Entities/Others/DestroyableObject.lua
+		${ROOT}/Default/Entities/Others/fan.lua
+		${ROOT}/Default/Entities/Others/fan2.lua
+		${ROOT}/Default/Entities/Others/FlagEntity.lua
+		${ROOT}/Default/Entities/Others/GameEvent.lua
+		${ROOT}/Default/Entities/Others/HeliStatic.lua
+		${ROOT}/Default/Entities/Others/piece.lua
+		${ROOT}/Default/Entities/Others/ProximityDamage.lua
+		${ROOT}/Default/Entities/Others/pusher.lua
+		${ROOT}/Default/Entities/Others/Radio.lua
+		${ROOT}/Default/Entities/Others/RaisingWater.lua
+		${ROOT}/Default/Entities/Others/RigidBody.lua
+		${ROOT}/Default/Entities/Others/rope.lua
+		${ROOT}/Default/Entities/Others/SaveableBasicEntity.lua
+		${ROOT}/Default/Entities/Others/ShootTarget.lua
+		${ROOT}/Default/Entities/Others/SwingingObject.lua
+		${ROOT}/Default/Entities/Others/SwivilChair.lua
+		${ROOT}/Default/Entities/Others/TV.lua
+		${ROOT}/Default/Entities/Others/Watch.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Player"
+		${ROOT}/Default/Entities/PLAYER/AdvCamSystem.lua
+		${ROOT}/Default/Entities/PLAYER/BasicPlayer.lua
+		${ROOT}/Default/Entities/PLAYER/player.lua
+		${ROOT}/Default/Entities/PLAYER/spectator.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Render"
+		${ROOT}/Default/Entities/Render/BFly.lua
+		${ROOT}/Default/Entities/Render/EnvColor.lua
+		${ROOT}/Default/Entities/Render/Fog.lua
+		${ROOT}/Default/Entities/Render/Grasshopper.lua
+		${ROOT}/Default/Entities/Render/Storm.lua
+		${ROOT}/Default/Entities/Render/ViewDist.lua
+	SOURCE_GROUP "Default\\\\Entities\\\\Triggers"
+		${ROOT}/Default/Entities/Triggers/AITrigger.lua
+		${ROOT}/Default/Entities/Triggers/AreaTrigger.lua
+		${ROOT}/Default/Entities/Triggers/BoatTrampolineTrigger.lua
+		${ROOT}/Default/Entities/Triggers/DelayTrigger.lua
+		${ROOT}/Default/Entities/Triggers/ImpulseTrigger.lua
+		${ROOT}/Default/Entities/Triggers/MultipleTrigger.lua
+		${ROOT}/Default/Entities/Triggers/PlaceableExplo.lua
+		${ROOT}/Default/Entities/Triggers/PlaceableGeneric.lua
+		${ROOT}/Default/Entities/Triggers/ProximityKeyTrigger.lua
+		${ROOT}/Default/Entities/Triggers/ProximityTrigger.lua
+		${ROOT}/Default/Entities/Triggers/SmartProximityTrigger.lua
+		${ROOT}/Default/Entities/Triggers/VisibilityTrigger.lua
+		${ROOT}/Default/Entities/Triggers/Waypoint.lua
+	SOURCE_GROUP "Default\\\\Hud"
+		${ROOT}/Default/Hud/AimModeZoomHUD.lua
+		${ROOT}/Default/Hud/Binoculars.lua
+		${ROOT}/Default/Hud/CommandHud.Lua
+		${ROOT}/Default/Hud/DefaultZoomHUD.lua
+		${ROOT}/Default/Hud/HeatVision.lua
+		${ROOT}/Default/Hud/Hud.lua
+		${ROOT}/Default/Hud/MoTrackLayer.lua
+		${ROOT}/Default/Hud/NightVision.lua
+		${ROOT}/Default/Hud/SmokeBlur.lua
+		${ROOT}/Default/Hud/TargetLocker.lua
+		${ROOT}/Default/Hud/ViewLayersMgr.lua
+		${ROOT}/Default/Hud/WeaponScope.lua
+		${ROOT}/Default/Hud/ZoomView.lua
+		${ROOT}/Default/Hud/scoreboard.lua
+
+	SOURCE_GROUP "Expressions"
+		${ROOT}/Expressions/CombatRandomExpressions.lua
+		${ROOT}/Expressions/DeadRandomExpressions.lua
+		${ROOT}/Expressions/DefaultRandomExpressions.lua
+		${ROOT}/Expressions/NoRandomExpressions.lua
+		${ROOT}/Expressions/SearchRandomExpressions.lua
+	SOURCE_GROUP "FFA"
+		${ROOT}/FFA/ClientStuff.lua
+		${ROOT}/FFA/gamerules.lua
+		${ROOT}/FFA/Hud/Hud.lua
+		${ROOT}/FFA/Hud/scoreboard.lua
+		${ROOT}/FFA/shared.lua
+	SOURCE_GROUP "GUI"
+		${ROOT}/GUI/HudCommon.lua
+		${ROOT}/GUI/HudMultiplayer.lua
+		${ROOT}/GUI/ScoreboardLib.lua
+	SOURCE_GROUP "materials"
+		${ROOT}/materials/commoneffects.lua
+		${ROOT}/materials/mat_arm.lua
+		${ROOT}/materials/mat_armor.lua
+		${ROOT}/materials/mat_bounce.lua
+		${ROOT}/materials/mat_bullseye.lua
+		${ROOT}/materials/mat_canvas.lua
+		${ROOT}/materials/mat_ceramic.lua
+		${ROOT}/materials/mat_concrete.lua
+		${ROOT}/materials/mat_concrete_nd.lua
+		${ROOT}/materials/mat_default.lua
+		${ROOT}/materials/mat_feathers.lua
+		${ROOT}/materials/mat_fish.lua
+		${ROOT}/materials/mat_flesh.lua
+		${ROOT}/materials/mat_flesh_nd.lua
+		${ROOT}/materials/mat_gel.lua
+		${ROOT}/materials/mat_glass.lua
+		${ROOT}/materials/mat_glass_d.lua
+		${ROOT}/materials/mat_glass_nd.lua
+		${ROOT}/materials/mat_glass_window.lua
+		${ROOT}/materials/mat_grass.lua
+		${ROOT}/materials/mat_grass_dry.lua
+		${ROOT}/materials/mat_grass_tall.lua
+		${ROOT}/materials/mat_grass_wet.lua
+		${ROOT}/materials/mat_head.lua
+		${ROOT}/materials/mat_heart.lua
+		${ROOT}/materials/mat_helmet.lua
+		${ROOT}/materials/mat_hull.lua
+		${ROOT}/materials/mat_jeephull.lua
+		${ROOT}/materials/mat_leaves.lua
+		${ROOT}/materials/mat_leaves_np.lua
+		${ROOT}/materials/mat_leg.lua
+		${ROOT}/materials/mat_light_holes.lua
+		${ROOT}/materials/mat_meat.lua
+		${ROOT}/materials/mat_metal_fence_nd_p.lua
+		${ROOT}/materials/mat_metal_grate.lua
+		${ROOT}/materials/mat_metal_grate_nd.lua
+		${ROOT}/materials/mat_metal_pipe.lua
+		${ROOT}/materials/mat_metal_pipe_p.lua
+		${ROOT}/materials/mat_metal_plate.lua
+		${ROOT}/materials/mat_metal_plate_f0.lua
+		${ROOT}/materials/mat_metal_plate_nd.lua
+		${ROOT}/materials/mat_metal_plate_p.lua
+		${ROOT}/materials/mat_metal_sheet.lua
+		${ROOT}/materials/mat_metal_sheet_nd.lua
+		${ROOT}/materials/mat_metal_sheet_nd_p.lua
+		${ROOT}/materials/mat_metal_sheet_p.lua
+		${ROOT}/materials/mat_mud.lua
+		${ROOT}/materials/mat_nodraw.lua
+		${ROOT}/materials/mat_obstruct.lua
+		${ROOT}/materials/mat_pebble.lua
+		${ROOT}/materials/mat_pickup.lua
+		${ROOT}/materials/mat_plastic.lua
+		${ROOT}/materials/mat_plastic_nd.lua
+		${ROOT}/materials/mat_plastic_p.lua
+		${ROOT}/materials/mat_rock.lua
+		${ROOT}/materials/mat_rock_nd.lua
+		${ROOT}/materials/mat_rubber.lua
+		${ROOT}/materials/mat_sandbag.lua
+		${ROOT}/materials/mat_sandbag_lod1.lua
+		${ROOT}/materials/mat_sand_dry.lua
+		${ROOT}/materials/mat_sand_wet.lua
+		${ROOT}/materials/mat_sticky.lua
+		${ROOT}/materials/mat_swamp.lua
+		${ROOT}/materials/mat_tramplin.lua
+		${ROOT}/materials/mat_water.lua
+		${ROOT}/materials/mat_waterfall.lua
+		${ROOT}/materials/mat_wheel.lua
+		${ROOT}/materials/mat_wood2.lua
+		${ROOT}/materials/mat_wood2_p.lua
+		${ROOT}/materials/mat_wood2_p_nd.lua
+		${ROOT}/materials/mat_wood_heavy.lua
+		${ROOT}/materials/mat_wood_sheet.lua
+		${ROOT}/materials/mat_wood_sheet_p.lua
+		${ROOT}/materials/mat_wood_sheet_p05.lua
+		${ROOT}/materials/mat_wood_sheet_p_nd.lua
+		${ROOT}/materials/mat_wood_thin.lua
+		${ROOT}/materials/mat_wood_thin_p.lua
+		${ROOT}/materials/PhysicsSounds.lua
+		${ROOT}/materials/README.txt
+	SOURCE_GROUP "MenuScreens"
+		${ROOT}/MenuScreens/Campaign.lua
+		${ROOT}/MenuScreens/Credits.lua
+		${ROOT}/MenuScreens/CutScenePlayer.lua
+		${ROOT}/MenuScreens/DemoLoop.lua
+		${ROOT}/MenuScreens/MainScreen.lua
+		${ROOT}/MenuScreens/MessageMode.lua
+		${ROOT}/MenuScreens/Mods.Lua
+		${ROOT}/MenuScreens/Multiplayer.lua
+		${ROOT}/MenuScreens/Options.lua
+		${ROOT}/MenuScreens/Profiles.lua
+		${ROOT}/MenuScreens/Skin.lua
+		${ROOT}/MenuScreens/SplashScreen.lua
+		${ROOT}/MenuScreens/UISystem.lua
+		${ROOT}/MenuScreens/UISystemCfg.lua
+		${ROOT}/MenuScreens/UISystemUtils.lua
+		${ROOT}/MenuScreens/VideoSequencer.lua
+	SOURCE_GROUP "MenuScreens\\\\Common"
+		${ROOT}/MenuScreens/Common/BackScreen.lua
+		${ROOT}/MenuScreens/Common/Confirmation.lua
+		${ROOT}/MenuScreens/Common/InputDialog.lua
+		${ROOT}/MenuScreens/Common/JoinIPDialog.lua
+		${ROOT}/MenuScreens/Common/LoginDialog.lua
+		${ROOT}/MenuScreens/Common/MessageDialog.lua
+		${ROOT}/MenuScreens/Common/ProgressDialog.lua
+	SOURCE_GROUP "MenuScreens\\\\Ingame"
+		${ROOT}/MenuScreens/Ingame/Disconnect.lua
+		${ROOT}/MenuScreens/Ingame/InGameNonTeam.lua
+		${ROOT}/MenuScreens/Ingame/InGameSingle.lua
+		${ROOT}/MenuScreens/Ingame/InGameTeam.lua
+		${ROOT}/MenuScreens/Ingame/InGameTeamClass.lua
+	SOURCE_GROUP "MenuScreens\\\\Multiplayer"
+		${ROOT}/MenuScreens/MultiPlayer/BannerUpdate.lua
+		${ROOT}/MenuScreens/MultiPlayer/CreateServer.lua
+		${ROOT}/MenuScreens/MultiPlayer/LANServerList.lua
+		${ROOT}/MenuScreens/MultiPlayer/NETServerList.lua
+		${ROOT}/MenuScreens/MultiPlayer/ServerAdmin.lua
+		${ROOT}/MenuScreens/MultiPlayer/VoteAdmin.lua
+		${ROOT}/MenuScreens/MultiPlayer/VotePanel.lua
+		${ROOT}/MenuScreens/MultiPlayer/WaitServer.lua
+	SOURCE_GROUP "MenuScreens\\\\Options"
+		${ROOT}/MenuScreens/Options/BindWaitForKey.lua
+		${ROOT}/MenuScreens/Options/Control.lua
+		${ROOT}/MenuScreens/Options/Game.lua
+		${ROOT}/MenuScreens/Options/Sound.lua
+		${ROOT}/MenuScreens/Options/Video.lua
+		${ROOT}/MenuScreens/Options/VideoAdv.lua
+	SOURCE_GROUP "Multiplayer"
+		${ROOT}/Multiplayer/AvailableMods.lua
+		${ROOT}/Multiplayer/ClientStuffClassLib.lua
+		${ROOT}/Multiplayer/ClientStuffLib.lua
+		${ROOT}/Multiplayer/ClientStuffTeamLib.lua
+		${ROOT}/Multiplayer/Connecting.lua
+		${ROOT}/Multiplayer/CreateVariables.lua
+		${ROOT}/Multiplayer/GameRulesClassLib.lua
+		${ROOT}/Multiplayer/GameRulesLib.lua
+		${ROOT}/Multiplayer/GameRulesTeamLib.lua
+		${ROOT}/Multiplayer/Hud.lua
+		${ROOT}/Multiplayer/MapCycle.lua
+		${ROOT}/Multiplayer/ModelList.lua
+		${ROOT}/Multiplayer/MPStatistics.lua
+		${ROOT}/Multiplayer/MultiplayerClassDefiniton.lua
+		${ROOT}/Multiplayer/MultiplayerUtils.lua
+		${ROOT}/Multiplayer/QueryHandler.lua
+		${ROOT}/Multiplayer/SVcommands.lua
+		${ROOT}/Multiplayer/SVplayerTrack.lua
+		${ROOT}/Multiplayer/Task.lua
+		${ROOT}/Multiplayer/TDMscoreboard.lua
+		${ROOT}/Multiplayer/TeamHud.lua
+		${ROOT}/Multiplayer/Ubisoft.lua
+		${ROOT}/Multiplayer/VotingState.lua
+	SOURCE_GROUP "SOUNDS"
+		${ROOT}/Sounds/EAXPresetDB.lua
+		${ROOT}/Sounds/PresetDB.lua
+		${ROOT}/StateMachine.lua
+	SOURCE_GROUP "TDM"
+		${ROOT}/TDM/ClientStuff.lua
+		${ROOT}/TDM/gamerules.lua
+		${ROOT}/TDM/Hud/Hud.lua
+		${ROOT}/TDM/Hud/scoreboard.lua
+		${ROOT}/TDM/shared.lua
+)
+
+end_sources()
+
+CryfileContainer( Scripts SOLUTION_FOLDER "Scripts")
+

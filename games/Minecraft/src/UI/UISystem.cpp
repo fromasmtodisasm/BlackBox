@@ -27,17 +27,12 @@
 #include "UIScreen.h"
 #include "ScriptObjectUI.h"
 
-#include <ICryAnimation.h>
-
 //////////////////////////////////////////////////////////////////////
 #define UI_MOUSE_VISIBLE				(1 << 0)
 #define UI_BACKGROUND_VISIBLE		(1 << 1)
 #define UI_ENABLED							(1 << 2)
 
 #define UI_DEFAULTS							(UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
-
-
-#include "Proxy.cpp"
 
 ////////////////////////////////////////////////////////////////////// 
 CUISystem::CUISystem()
@@ -235,8 +230,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 	m_pSystem = pSystem;
 	m_pScriptSystem = pScriptSystem;
 	m_pRenderer = pSystem->GetIRenderer();
-	//FIXME:
-	m_pInput = GET_GUI_INPUT();
+	m_pInput		= GetLegacyInput();//m_pSystem->GetIInput();
 	m_pLog = m_pSystem->GetILog();
 
 	m_fVirtualToRealX = (double)m_pRenderer->GetWidth() / 800.0;
@@ -248,11 +242,7 @@ int	CUISystem::Create(IGame *pGame, ISystem *pSystem, IScriptSystem *pScriptSyst
 
 	if (m_pInput)
 	{
-		#if 0
 		m_pInput->AddEventListener(this);
-		#else
-		gEnv->pInput->AddEventListener(this);
-		#endif
 	}
 
 	m_szScriptFileName = szScriptFileName;
@@ -408,7 +398,7 @@ void CUISystem::Update()
 		m_vMouseXY = vMouseXY;
 	}
 
-	Legacy::IMouse *pMouse = m_pInput->GetIMouse();
+	/*IMouse* */ auto pMouse = m_pInput->GetIMouse();
 
 	unsigned int	dwPackedMouseXY = UIM_PACK_COORD(vMouseXY.x, vMouseXY.y);
 	unsigned int	dwPackedOldMouseXY = UIM_PACK_COORD(m_vMouseXY.x, m_vMouseXY.y);
@@ -692,6 +682,7 @@ void CUISystem::Update()
 	{
 		SortTabStop();
 	}
+	m_pInput->ClearKeyState();
 }
 
 ////////////////////////////////////////////////////////////////////// 
@@ -809,11 +800,7 @@ int CUISystem::Release()
 
 	if (m_pInput)
 	{
-		#if 0
 		m_pInput->RemoveEventListener(this);
-		#else
-		gEnv->pInput->RemoveEventListener(this);
-		#endif
 	}
 	
 	return 1;
@@ -908,11 +895,7 @@ int CUISystem::Reload(int iFrameDelta)
 	m_pLog->LogToConsole("\001  Readding input listener...");
 	if (m_pInput)
 	{
-		#if 0
 		m_pInput->AddEventListener(this);
-		#else
-		gEnv->pInput->AddEventListener(this);
-		#endif
 	}
 
 	m_pLog->LogToConsole("\001  Reloading cvars...");
@@ -1083,11 +1066,6 @@ int	CUISystem::GetScreenCount()
 int CUISystem::ActivateScreen(CUIScreen *pScreen)
 {
 	CUIScreenItor pItor = std::find(m_vScreenList.begin(), m_vScreenList.end(), pScreen);
-
-	if (pScreen->m_szName == "MainScreen")
-	{
-		CryLog("Here!!!");
-	}
 
 	if (pItor != m_vScreenList.end())
 	{
@@ -3012,6 +2990,7 @@ int CUISystem::CreateScreen(CUIScreen **pScreen, const string &szName)
 	return 1;
 }
 
+
 ////////////////////////////////////////////////////////////////////// 
 bool CUISystem::OnInputEvent(const Legacy::SInputEvent &event)
 {
@@ -4835,9 +4814,7 @@ int CUISystem::CreateScreenFromTable(CUIScreen **pScreen, const string &szName, 
 
 				if (pWidget)
 				{
-					static auto cnt = 0;
 					pObject->SetValue(pWidget->GetName().c_str(), GetWidgetScriptObject(pWidget));
-					cnt++;
 				}
 			}		
 			break;
@@ -5098,5 +5075,5 @@ bool CUISystem::IsOnFocusScreen(CUIWidget *pWidget)
 
 	return 0;
 } 
- 
+
 #pragma warning(pop)

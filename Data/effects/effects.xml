@@ -1,0 +1,8 @@
+<effects>
+  <blur multipass="true">
+    <shader name="blur.frag" type="fragment">
+      <define name=""/>
+    </shader>
+    <rendertarget count="2"/>
+  </blur>
+</effects>

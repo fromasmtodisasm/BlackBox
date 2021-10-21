@@ -249,16 +249,61 @@ class _ScriptableEx : public ScriptBase
 
 	void Init(IScriptSystem* pScriptSystem, T* pParent)
 	{
+		class CPrintSink : public IScriptObjectDumpSink
+		{
+		  public:
+			void OnElementFound(int nIdx, ScriptVarType type){/*ignore non string indexed values*/};
+			void OnElementFound(const char* sName, ScriptVarType type)
+			{
+
+				switch (type)
+				{
+				case ScriptVarType::Null:
+					break;
+				case ScriptVarType::String:
+					CryLog("str: %s", sName);
+					break;
+				case ScriptVarType::Number:
+					CryLog("num: %s", sName);
+					break;
+				case ScriptVarType::Bool:
+					CryLog("bool: %s", sName);
+					break;
+				case ScriptVarType::Function:
+					CryLog("func: %s", sName);
+					break;
+				case ScriptVarType::Object:
+					CryLog("obj: %s", sName);
+					break;
+				case ScriptVarType::Pointer:
+					CryLog("pointer: %s", sName);
+					break;
+				case ScriptVarType::UserData:
+					CryLog("ud: %s", sName);
+					break;
+				default:
+					break;
+				}
+			}
+		};
+
+		CPrintSink sink;
+
 		m_pScriptSystem						 = pScriptSystem;
 		_ScriptableEx<T>::m_pFunctionHandler = m_pScriptSystem->GetFunctionHandler();
 		if (!_ScriptableEx<T>::m_pFunctionHandler)
 			CryError("Scriptable EX:FUNCTION HANDLER NULL");
 		m_pScriptThis = pScriptSystem->CreateObject();
 		m_pScriptThis->SetNativeData(pParent);
+		//CryLog("----------------------------------------------");
+		//m_pScriptThis->Dump(&sink);
 		m_pScriptThis->Delegate(_ScriptableEx<T>::m_pTemplateTable);
+		//m_pScriptThis->Dump(&sink);
+		//CryLog("##############################################");
 
 		if (m_pScriptThis->GetNativeData() != pParent)
 			CryError("Scriptable EX:Properties map");
+		//m_pTemplateTable->Dump(&sink);
 	}
 
 	void InitGlobal(IScriptSystem* pScriptSystem, const char* sName, T* pParent)

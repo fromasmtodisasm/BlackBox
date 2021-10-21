@@ -153,6 +153,7 @@ private:
 
 	RenderCallback* m_pRenderCallback;
 	void*			m_RenderCallbackParams;
+	int				m_iFlags;
 
     // I3DEngine interface
 public:

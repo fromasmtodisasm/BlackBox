@@ -197,6 +197,8 @@ endif()
 set(OPTION_NOT_USE_DIVX_SDK ON)
 if(OPTION_NOT_USE_DIVX_SDK)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE NOT_USE_DIVX_SDK)
+	target_compile_definitions(${THIS_PROJECT} PRIVATE NOT_USE_BINK_SDK)
+
 endif()
 
 
@@ -205,6 +207,7 @@ target_include_directories(
 	PRIVATE "${INCLUDE_ROOT}"
 	PRIVATE "${INCLUDE_ROOT}/GameFiles"
 	PRIVATE "${INCLUDE_ROOT}/Network"
+	PRIVATE "${INCLUDE_ROOT}/Bink"
 	PRIVATE "${INCLUDE_ROOT}/GUI")
 
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)

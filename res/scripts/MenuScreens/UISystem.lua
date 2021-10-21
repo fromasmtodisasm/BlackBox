@@ -152,7 +152,7 @@ function UI:OnIdle(fIdleTime)
 		if (UI:GetScreen("DemoLoop")) then
 			if ((UI:IsScreenActive("DemoLoop") == 0) and (UI:IsScreenActive("MainScreen") ~= 0) and (UI:IsScreenActive("MainScreenInGame") ~= 0)) then
 				UI.bWasIdle = 1;
-				UI:ActivateScreen("DemoLoop");
+				-- UI:ActivateScreen("DemoLoop");
 			end
 		end
 	end
@@ -244,6 +244,7 @@ end
 --------------------------------------------------------------------------------
 -- /param bSwitchOn 1=on, 0=off
 function UI:CanSwitch( bSwitchOn )
+	System:Log("UI:CanSwitch");		-- debugging
 	if (bSwitchOn) then
 		if ((UI.bCanSwitchOn and UI.bCanSwitchOn ~= 0) or (not UI.bCanSwitchOn)) then
 			return 1;

@@ -1,0 +1,68 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default Config",
+      "description": "Default build Visual Studio 2019 generator",
+      "generator": "Visual Studio 16 2019",
+      "binaryDir": "${sourceDir}/Solutions/Win64",
+      "warnings": {"dev": false},
+      "errors": {"dev": false},
+      "cacheVariables": {
+        "OPTION_RUNTIME_CVAR_OVERRIDES": "ON",
+        "OPTION_REMOTE_CONSOLE": "ON",
+        "OPTION_DX_RENDERER": "ON",
+        "OPTION_VK_RENDERER": "OFF",
+        "USE_STEAM": "OFF",
+        "OPTION_DEDICATED_SERVER": "OFF",
+
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "VCPKG_INSTALLER": "ON",
+        
+        "ADD_PACKAGE_DEP_MODE": "OFF"
+
+      },
+      "environment": {
+
+      },
+      "vendor": {
+        "example.com/ExampleIDE/1.0": {
+          "autoFormat": true
+        }
+      }
+    },
+    {
+      "name": "VS2019",
+      "inherits": "default",
+      "displayName": "VS2019 Config",
+      "description": "Visual Studio 2019 Config generator",
+      "generator": "Visual Studio 16 2019"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "VS2019",
+      "configurePreset": "VS2019"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    }
+  ],
+  "vendor": {
+    "example.com/ExampleIDE/1.0": {
+      "autoFormat": false
+    }
+  }
+}

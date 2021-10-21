@@ -33,7 +33,7 @@ endif()
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 
 if(OPTION_BUILD_TOOLS)
-	add_subdirectory("${BLACKBOX_DIR}/src/Tools/")
+	add_subdirectory("${BLACKBOX_DIR}/Code/Tools/")
 endif()
 
 

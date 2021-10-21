@@ -25,15 +25,6 @@ _DECLARE_SCRIPTABLEEX(CUIEditBox);
 #define CONTROLDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL))
 #define SHIFTDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT))
 
-//FIXME: remove it
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
 ////////////////////////////////////////////////////////////////////// 
 CUIEditBox::CUIEditBox()
 : m_iHAlignment(UIALIGN_LEFT),
@@ -586,7 +577,7 @@ int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont *pFont, const UIRec
 	vector2f vPreSelectionSize = pFont->GetTextSizeW(pPreSelectionStr.c_str());
 	vector2f vSelectionSize = pFont->GetTextSizeW(pSelectedStr.c_str());
 
-	#if 0
+	#if 1
 	float fRcpScaleX = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordX(1);
 	float fRcpScaleY = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordY(1);
 

@@ -1,3 +1,0 @@
-export MODULE_PATH=./bin/linux_x64_gcc
-./bin/linux_x64_gcc/Launcher
-

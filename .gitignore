@@ -31,3 +31,9 @@ out/*
 /history.txt
 /res/Sounds
 /res/Music
+/Mods/FunCry
+/res/Textures
+/vcpkg_installed/x64-windows
+/Data/Textures
+/Data/Sounds
+/Data/Music

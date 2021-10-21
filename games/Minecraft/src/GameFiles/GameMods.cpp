@@ -199,7 +199,7 @@ bool CGameMods::SetCurrentMod(const char *sModName,bool bNeedsRestart)
 	// Open all paks in the mod folder.
 	char sPaksFilter[_MAX_PATH];
 	// TODO: recover this
-	//_makepath( sPaksFilter,NULL,m_pMod->sFolder.c_str(),"*","pak" );
+	_makepath( sPaksFilter,NULL,m_pMod->sFolder.c_str(),"*","pak" );
 	m_pSystem->GetIPak()->OpenPacks( "",sPaksFilter );
 	
 	// Open all basic *.pak files in the MOD folder		

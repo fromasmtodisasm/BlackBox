@@ -1,1 +1,1 @@
-add_subdirectory(${BLACKBOX_DIR}/src)
+add_subdirectory(${BLACKBOX_DIR}/Code)

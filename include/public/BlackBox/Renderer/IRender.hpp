@@ -790,33 +790,12 @@ struct IRenderer : public IRendererCallbackServer
 	virtual void	 Sh_Reload()												   = 0;
 	// Loading of the texture for name(nameTex)
 	//virtual ITexture* LoadTexture(const char* nameTex, uint flags, byte eTT) = 0;
-	virtual ITexPic*  EF_GetTextureByID(int Id)
-	{
-		#if 0
-		NOT_IMPLEMENTED_V;
-		#else
-		return nullptr;
-		#endif
-	}
-	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0)
-	{
-		#if 0
-		NOT_IMPLEMENTED_V;
-		#else
-		return nullptr;
-		#endif
-	}
+	virtual ITexPic* EF_GetTextureByID(int Id)																															 = 0;
+	virtual ITexPic* EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
 	// Return different common shader parameters (used in ShaderBrowser) CryIndEd.exe
 	virtual void* EF_Query(int Query, int Param = 0) = 0;
 
-	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)
-	{
-		#if 0
-		NOT_IMPLEMENTED_V;
-		#else
-		return 0;
-		#endif
-	}
+	virtual unsigned int LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true) = 0;
 	#if 0
 	virtual bool		 DXTCompress(byte* raw_data, int nWidth, int nHeight, ETEX_Format eTF, bool bUseHW, bool bGenMips, int nSrcBytesPerPix, MIPDXTcallback callback = 0)
 	{
@@ -827,14 +806,8 @@ struct IRenderer : public IRendererCallbackServer
 		NOT_IMPLEMENTED_V;
 	}
 	#endif
-	virtual void RemoveTexture(unsigned int TextureId)
-	{
-		NOT_IMPLEMENTED;
-	}
-	virtual void RemoveTexture(ITexPic* pTexPic)	
-	{
-		NOT_IMPLEMENTED;
-	}
+	virtual void RemoveTexture(unsigned int TextureId) = 0;
+	virtual void RemoveTexture(ITexPic* pTexPic) = 0;
 
 
 };

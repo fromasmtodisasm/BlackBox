@@ -166,6 +166,7 @@ UI.PageLANServerList=
 	end,
 
 	RefreshList = function(Sender)
+		System:Error("RefreshList = function(Sender)")
 		UI:ShowWidget("RefreshingLabel", "LANServerList");
 
 		UI.PageLANServerList.bRefreshing = 1;

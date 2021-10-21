@@ -96,7 +96,7 @@ protected:
   CDebugPressedButtons m_debugButtonsHistory;
 #endif
 
-private:
+protected:
   IInput& m_input;                          // point to input system in use
   std::string  m_deviceName;                     // name of the device (used for input binding)
 

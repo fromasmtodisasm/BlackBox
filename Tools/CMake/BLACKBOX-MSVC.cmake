@@ -27,7 +27,6 @@ set(MSVC_COMMON_FLAGS
 )
 if (OPTION_EDIT_AND_CONTINUE)
 	string(REPLACE "/Zi" "/ZI" MSVC_COMMON_FLAGS "${MSVC_COMMON_FLAGS}")
-	message(STATUS "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!____${CMAKE_CXX_FLAGS}")
 endif()
 string(REPLACE ";" " " MSVC_COMMON_FLAGS "${MSVC_COMMON_FLAGS}")
 
@@ -78,6 +77,3 @@ endfunction()
 
 message(STATUS "MSVC_VERSION = ${MSVC_VERSION}")
 message(STATUS "MSVC_TOOLSET_VERSION = ${MSVC_TOOLSET_VERSION}")
-
-message(STATUS "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!____${CMAKE_CXX_FLAGS_DEBUG}")
-message(STATUS "############################################################____${CMAKE_CXX_FLAGS}")
