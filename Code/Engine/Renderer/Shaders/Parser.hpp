@@ -45,7 +45,7 @@
 #ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 # define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 11 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+#line 12 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
 
 	#undef new
     #include <string>
@@ -514,20 +514,13 @@ namespace yy {
       // INT
       char dummy4[sizeof (int)];
 
-      // base_type
-      char dummy5[sizeof (nvFX::IUniform::Type)];
-
       // IDENTIFIER
       // STR
       // CODEBODY
-      // VARNAME
       // shader_assignment
-      // var_decl
-      // semantic
-      // glsl_header
       // hlsl_header
       // shader_header
-      char dummy6[sizeof (std::string)];
+      char dummy5[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -587,83 +580,68 @@ namespace yy {
     TOK_INT = 262,                 // INT
     TOK_BOOL = 263,                // BOOL
     TOK_STR = 264,                 // STR
-    TOK_GLSLSHADER = 265,          // GLSLSHADER
-    TOK_HLSL10SHADER = 266,        // HLSL10SHADER
-    TOK_HLSL11SHADER = 267,        // HLSL11SHADER
-    TOK_CGSHADER = 268,            // CGSHADER
-    TOK_SAMPLER_STATE = 269,       // SAMPLER_STATE
-    TOK_DST_STATE = 270,           // DST_STATE
-    TOK_PR_STATE = 271,            // PR_STATE
-    TOK_COLOR_SAMPLE_STATE = 272,  // COLOR_SAMPLE_STATE
-    TOK_RASTERIZATION_STATE = 273, // RASTERIZATION_STATE
-    TOK_TECHNIQUE = 274,           // TECHNIQUE
-    TOK_PASS = 275,                // PASS
-    TOK_CODEBODY = 276,            // CODEBODY
-    TOK_VARNAME = 277,             // VARNAME
-    TOK_TEXTURERESOURCE = 278,     // TEXTURERESOURCE
-    TOK_TEXTURERESOURCE1D = 279,   // TEXTURERESOURCE1D
-    TOK_TEXTURERESOURCE2D = 280,   // TEXTURERESOURCE2D
-    TOK_TEXTURERESOURCE3D = 281,   // TEXTURERESOURCE3D
-    TOK_TEXTURERESOURCERECT = 282, // TEXTURERESOURCERECT
-    TOK_TEXTURERESOURCECUBE = 283, // TEXTURERESOURCECUBE
-    TOK_INPUTLAYOUT = 284,         // INPUTLAYOUT
-    TOK_VOID_TYPE = 285,           // VOID_TYPE
-    TOK_UNSIGNED = 286,            // UNSIGNED
-    TOK_HIGHP = 287,               // HIGHP
-    TOK_MEDIUMP = 288,             // MEDIUMP
-    TOK_LOWP = 289,                // LOWP
-    TOK_UNIFORM = 290,             // UNIFORM
-    TOK_CSTBUFFER = 291,           // CSTBUFFER
-    TOK_FLOAT_TYPE = 292,          // FLOAT_TYPE
-    TOK_FLOAT2_TYPE = 293,         // FLOAT2_TYPE
-    TOK_FLOAT3_TYPE = 294,         // FLOAT3_TYPE
-    TOK_FLOAT4_TYPE = 295,         // FLOAT4_TYPE
-    TOK_MAT2_TYPE = 296,           // MAT2_TYPE
-    TOK_MAT3_TYPE = 297,           // MAT3_TYPE
-    TOK_MAT4_TYPE = 298,           // MAT4_TYPE
-    TOK_BOOL_TYPE = 299,           // BOOL_TYPE
-    TOK_BOOL2_TYPE = 300,          // BOOL2_TYPE
-    TOK_BOOL3_TYPE = 301,          // BOOL3_TYPE
-    TOK_BOOL4_TYPE = 302,          // BOOL4_TYPE
-    TOK_INT_TYPE = 303,            // INT_TYPE
-    TOK_INT2_TYPE = 304,           // INT2_TYPE
-    TOK_INT3_TYPE = 305,           // INT3_TYPE
-    TOK_INT4_TYPE = 306,           // INT4_TYPE
-    TOK_TEXTURE1D_TYPE = 307,      // TEXTURE1D_TYPE
-    TOK_TEXTURE2D_TYPE = 308,      // TEXTURE2D_TYPE
-    TOK_TEXTURE2DSHADOW_TYPE = 309, // TEXTURE2DSHADOW_TYPE
-    TOK_TEXTURE2DRECT_TYPE = 310,  // TEXTURE2DRECT_TYPE
-    TOK_TEXTURE3D_TYPE = 311,      // TEXTURE3D_TYPE
-    TOK_TEXTURECUBE_TYPE = 312,    // TEXTURECUBE_TYPE
-    TOK_SAMPLER1D_TYPE = 313,      // SAMPLER1D_TYPE
-    TOK_SAMPLER2D_TYPE = 314,      // SAMPLER2D_TYPE
-    TOK_SAMPLER2DSHADOW_TYPE = 315, // SAMPLER2DSHADOW_TYPE
-    TOK_SAMPLER2DRECT_TYPE = 316,  // SAMPLER2DRECT_TYPE
-    TOK_SAMPLER3D_TYPE = 317,      // SAMPLER3D_TYPE
-    TOK_SAMPLERCUBE_TYPE = 318,    // SAMPLERCUBE_TYPE
-    TOK_EXTENSION = 319,           // EXTENSION
-    TOK_SEPARATE_SHADER = 320,     // SEPARATE_SHADER
-    TOK_VERTEXPROGRAM = 321,       // VERTEXPROGRAM
-    TOK_FRAGMENTPROGRAM = 322,     // FRAGMENTPROGRAM
-    TOK_GEOMETRYPROGRAM = 323,     // GEOMETRYPROGRAM
-    TOK_HULLPROGRAM = 324,         // HULLPROGRAM
-    TOK_EVALPROGRAM = 325,         // EVALPROGRAM
-    TOK_SHDPROFILE = 326,          // SHDPROFILE
-    TOK_SAMPLERRESOURCE = 327,     // SAMPLERRESOURCE
-    TOK_SAMPLERTEXUNIT = 328,      // SAMPLERTEXUNIT
-    TOK_SETSAMPLERSTATE = 329,     // SETSAMPLERSTATE
-    TOK_SETDSTSTATE = 330,         // SETDSTSTATE
-    TOK_SETRASTERIZATIONSTATE = 331, // SETRASTERIZATIONSTATE
-    TOK_SETCOLORSAMPLESTATE = 332, // SETCOLORSAMPLESTATE
-    TOK_IMAGERESOURCE = 333,       // IMAGERESOURCE
-    TOK_IMAGEUNIT = 334,           // IMAGEUNIT
-    TOK_IMAGEACCESS = 335,         // IMAGEACCESS
-    TOK_IMAGELAYER = 336,          // IMAGELAYER
-    TOK_IMAGELAYERED = 337,        // IMAGELAYERED
-    TOK_WRITE_ONLY = 338,          // WRITE_ONLY
-    TOK_READ_ONLY = 339,           // READ_ONLY
-    TOK_READ_WRITE = 340,          // READ_WRITE
-    TOK_VERTEXFORMAT = 341         // VERTEXFORMAT
+    TOK_HLSL11SHADER = 265,        // HLSL11SHADER
+    TOK_TECHNIQUE = 266,           // TECHNIQUE
+    TOK_PASS = 267,                // PASS
+    TOK_CODEBODY = 268,            // CODEBODY
+    TOK_STRING_TYPE = 269,         // STRING_TYPE
+    TOK_VOID_TYPE = 270,           // VOID_TYPE
+    TOK_UNSIGNED = 271,            // UNSIGNED
+    TOK_HIGHP = 272,               // HIGHP
+    TOK_MEDIUMP = 273,             // MEDIUMP
+    TOK_LOWP = 274,                // LOWP
+    TOK_UNIFORM = 275,             // UNIFORM
+    TOK_CSTBUFFER = 276,           // CSTBUFFER
+    TOK_FLOAT_TYPE = 277,          // FLOAT_TYPE
+    TOK_FLOAT2_TYPE = 278,         // FLOAT2_TYPE
+    TOK_FLOAT3_TYPE = 279,         // FLOAT3_TYPE
+    TOK_FLOAT4_TYPE = 280,         // FLOAT4_TYPE
+    TOK_MAT2_TYPE = 281,           // MAT2_TYPE
+    TOK_MAT3_TYPE = 282,           // MAT3_TYPE
+    TOK_MAT4_TYPE = 283,           // MAT4_TYPE
+    TOK_BOOL_TYPE = 284,           // BOOL_TYPE
+    TOK_BOOL2_TYPE = 285,          // BOOL2_TYPE
+    TOK_BOOL3_TYPE = 286,          // BOOL3_TYPE
+    TOK_BOOL4_TYPE = 287,          // BOOL4_TYPE
+    TOK_INT_TYPE = 288,            // INT_TYPE
+    TOK_INT2_TYPE = 289,           // INT2_TYPE
+    TOK_INT3_TYPE = 290,           // INT3_TYPE
+    TOK_INT4_TYPE = 291,           // INT4_TYPE
+    TOK_TEXTURE1D_TYPE = 292,      // TEXTURE1D_TYPE
+    TOK_TEXTURE2D_TYPE = 293,      // TEXTURE2D_TYPE
+    TOK_TEXTURE2DSHADOW_TYPE = 294, // TEXTURE2DSHADOW_TYPE
+    TOK_TEXTURE2DRECT_TYPE = 295,  // TEXTURE2DRECT_TYPE
+    TOK_TEXTURE3D_TYPE = 296,      // TEXTURE3D_TYPE
+    TOK_TEXTURECUBE_TYPE = 297,    // TEXTURECUBE_TYPE
+    TOK_SAMPLER1D_TYPE = 298,      // SAMPLER1D_TYPE
+    TOK_SAMPLER2D_TYPE = 299,      // SAMPLER2D_TYPE
+    TOK_SAMPLER2DSHADOW_TYPE = 300, // SAMPLER2DSHADOW_TYPE
+    TOK_SAMPLER2DRECT_TYPE = 301,  // SAMPLER2DRECT_TYPE
+    TOK_SAMPLER3D_TYPE = 302,      // SAMPLER3D_TYPE
+    TOK_SAMPLERCUBE_TYPE = 303,    // SAMPLERCUBE_TYPE
+    TOK_EXTENSION = 304,           // EXTENSION
+    TOK_SEPARATE_SHADER = 305,     // SEPARATE_SHADER
+    TOK_VERTEXPROGRAM = 306,       // VERTEXPROGRAM
+    TOK_FRAGMENTPROGRAM = 307,     // FRAGMENTPROGRAM
+    TOK_GEOMETRYPROGRAM = 308,     // GEOMETRYPROGRAM
+    TOK_HULLPROGRAM = 309,         // HULLPROGRAM
+    TOK_EVALPROGRAM = 310,         // EVALPROGRAM
+    TOK_SHDPROFILE = 311,          // SHDPROFILE
+    TOK_SAMPLERRESOURCE = 312,     // SAMPLERRESOURCE
+    TOK_SAMPLERTEXUNIT = 313,      // SAMPLERTEXUNIT
+    TOK_SETSAMPLERSTATE = 314,     // SETSAMPLERSTATE
+    TOK_SETDSTSTATE = 315,         // SETDSTSTATE
+    TOK_SETRASTERIZATIONSTATE = 316, // SETRASTERIZATIONSTATE
+    TOK_SETCOLORSAMPLESTATE = 317, // SETCOLORSAMPLESTATE
+    TOK_IMAGERESOURCE = 318,       // IMAGERESOURCE
+    TOK_IMAGEUNIT = 319,           // IMAGEUNIT
+    TOK_IMAGEACCESS = 320,         // IMAGEACCESS
+    TOK_IMAGELAYER = 321,          // IMAGELAYER
+    TOK_IMAGELAYERED = 322,        // IMAGELAYERED
+    TOK_WRITE_ONLY = 323,          // WRITE_ONLY
+    TOK_READ_ONLY = 324,           // READ_ONLY
+    TOK_READ_WRITE = 325,          // READ_WRITE
+    TOK_VERTEXFORMAT = 326         // VERTEXFORMAT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -680,7 +658,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 106, ///< Number of tokens.
+        YYNTOKENS = 78, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -692,142 +670,94 @@ namespace yy {
         S_INT = 7,                               // INT
         S_BOOL = 8,                              // BOOL
         S_STR = 9,                               // STR
-        S_GLSLSHADER = 10,                       // GLSLSHADER
-        S_HLSL10SHADER = 11,                     // HLSL10SHADER
-        S_HLSL11SHADER = 12,                     // HLSL11SHADER
-        S_CGSHADER = 13,                         // CGSHADER
-        S_SAMPLER_STATE = 14,                    // SAMPLER_STATE
-        S_DST_STATE = 15,                        // DST_STATE
-        S_PR_STATE = 16,                         // PR_STATE
-        S_COLOR_SAMPLE_STATE = 17,               // COLOR_SAMPLE_STATE
-        S_RASTERIZATION_STATE = 18,              // RASTERIZATION_STATE
-        S_TECHNIQUE = 19,                        // TECHNIQUE
-        S_PASS = 20,                             // PASS
-        S_CODEBODY = 21,                         // CODEBODY
-        S_VARNAME = 22,                          // VARNAME
-        S_TEXTURERESOURCE = 23,                  // TEXTURERESOURCE
-        S_TEXTURERESOURCE1D = 24,                // TEXTURERESOURCE1D
-        S_TEXTURERESOURCE2D = 25,                // TEXTURERESOURCE2D
-        S_TEXTURERESOURCE3D = 26,                // TEXTURERESOURCE3D
-        S_TEXTURERESOURCERECT = 27,              // TEXTURERESOURCERECT
-        S_TEXTURERESOURCECUBE = 28,              // TEXTURERESOURCECUBE
-        S_INPUTLAYOUT = 29,                      // INPUTLAYOUT
-        S_VOID_TYPE = 30,                        // VOID_TYPE
-        S_UNSIGNED = 31,                         // UNSIGNED
-        S_HIGHP = 32,                            // HIGHP
-        S_MEDIUMP = 33,                          // MEDIUMP
-        S_LOWP = 34,                             // LOWP
-        S_UNIFORM = 35,                          // UNIFORM
-        S_CSTBUFFER = 36,                        // CSTBUFFER
-        S_FLOAT_TYPE = 37,                       // FLOAT_TYPE
-        S_FLOAT2_TYPE = 38,                      // FLOAT2_TYPE
-        S_FLOAT3_TYPE = 39,                      // FLOAT3_TYPE
-        S_FLOAT4_TYPE = 40,                      // FLOAT4_TYPE
-        S_MAT2_TYPE = 41,                        // MAT2_TYPE
-        S_MAT3_TYPE = 42,                        // MAT3_TYPE
-        S_MAT4_TYPE = 43,                        // MAT4_TYPE
-        S_BOOL_TYPE = 44,                        // BOOL_TYPE
-        S_BOOL2_TYPE = 45,                       // BOOL2_TYPE
-        S_BOOL3_TYPE = 46,                       // BOOL3_TYPE
-        S_BOOL4_TYPE = 47,                       // BOOL4_TYPE
-        S_INT_TYPE = 48,                         // INT_TYPE
-        S_INT2_TYPE = 49,                        // INT2_TYPE
-        S_INT3_TYPE = 50,                        // INT3_TYPE
-        S_INT4_TYPE = 51,                        // INT4_TYPE
-        S_TEXTURE1D_TYPE = 52,                   // TEXTURE1D_TYPE
-        S_TEXTURE2D_TYPE = 53,                   // TEXTURE2D_TYPE
-        S_TEXTURE2DSHADOW_TYPE = 54,             // TEXTURE2DSHADOW_TYPE
-        S_TEXTURE2DRECT_TYPE = 55,               // TEXTURE2DRECT_TYPE
-        S_TEXTURE3D_TYPE = 56,                   // TEXTURE3D_TYPE
-        S_TEXTURECUBE_TYPE = 57,                 // TEXTURECUBE_TYPE
-        S_SAMPLER1D_TYPE = 58,                   // SAMPLER1D_TYPE
-        S_SAMPLER2D_TYPE = 59,                   // SAMPLER2D_TYPE
-        S_SAMPLER2DSHADOW_TYPE = 60,             // SAMPLER2DSHADOW_TYPE
-        S_SAMPLER2DRECT_TYPE = 61,               // SAMPLER2DRECT_TYPE
-        S_SAMPLER3D_TYPE = 62,                   // SAMPLER3D_TYPE
-        S_SAMPLERCUBE_TYPE = 63,                 // SAMPLERCUBE_TYPE
-        S_EXTENSION = 64,                        // EXTENSION
-        S_SEPARATE_SHADER = 65,                  // SEPARATE_SHADER
-        S_VERTEXPROGRAM = 66,                    // VERTEXPROGRAM
-        S_FRAGMENTPROGRAM = 67,                  // FRAGMENTPROGRAM
-        S_GEOMETRYPROGRAM = 68,                  // GEOMETRYPROGRAM
-        S_HULLPROGRAM = 69,                      // HULLPROGRAM
-        S_EVALPROGRAM = 70,                      // EVALPROGRAM
-        S_SHDPROFILE = 71,                       // SHDPROFILE
-        S_SAMPLERRESOURCE = 72,                  // SAMPLERRESOURCE
-        S_SAMPLERTEXUNIT = 73,                   // SAMPLERTEXUNIT
-        S_SETSAMPLERSTATE = 74,                  // SETSAMPLERSTATE
-        S_SETDSTSTATE = 75,                      // SETDSTSTATE
-        S_SETRASTERIZATIONSTATE = 76,            // SETRASTERIZATIONSTATE
-        S_SETCOLORSAMPLESTATE = 77,              // SETCOLORSAMPLESTATE
-        S_IMAGERESOURCE = 78,                    // IMAGERESOURCE
-        S_IMAGEUNIT = 79,                        // IMAGEUNIT
-        S_IMAGEACCESS = 80,                      // IMAGEACCESS
-        S_IMAGELAYER = 81,                       // IMAGELAYER
-        S_IMAGELAYERED = 82,                     // IMAGELAYERED
-        S_WRITE_ONLY = 83,                       // WRITE_ONLY
-        S_READ_ONLY = 84,                        // READ_ONLY
-        S_READ_WRITE = 85,                       // READ_WRITE
-        S_VERTEXFORMAT = 86,                     // VERTEXFORMAT
-        S_87_ = 87,                              // ';'
-        S_88_ = 88,                              // '='
-        S_89_ = 89,                              // '{'
-        S_90_ = 90,                              // '}'
-        S_91_ = 91,                              // ':'
-        S_92_ = 92,                              // '<'
-        S_93_ = 93,                              // '>'
-        S_94_hlsl_ = 94,                         // "hlsl"
-        S_95_texture_ = 95,                      // "texture"
-        S_96_resource_ = 96,                     // "resource"
-        S_97_fbo_ = 97,                          // "fbo"
-        S_98_sstate_ = 98,                       // "sstate"
-        S_99_dststate_ = 99,                     // "dststate"
-        S_100_prstate_ = 100,                    // "prstate"
-        S_101_csstate_ = 101,                    // "csstate"
-        S_102_rstate_ = 102,                     // "rstate"
-        S_103_namespace_ = 103,                  // "namespace"
-        S_104_cstbuffer_ = 104,                  // "cstbuffer"
-        S_105_uniforms_ = 105,                   // "uniforms"
-        S_YYACCEPT = 106,                        // $accept
-        S_input = 107,                           // input
-        S_shader_type = 108,                     // shader_type
-        S_shader_assignment = 109,               // shader_assignment
-        S_shader_assignments = 110,              // shader_assignments
-        S_passstates = 111,                      // passstates
-        S_input_layout = 112,                    // input_layout
-        S_var_decls = 113,                       // var_decls
-        S_var_decl = 114,                        // var_decl
-        S_base_type = 115,                       // base_type
-        S_semantic = 116,                        // semantic
-        S_pass = 117,                            // pass
-        S_118_1 = 118,                           // $@1
-        S_119_2 = 119,                           // $@2
-        S_passes = 120,                          // passes
-        S_tech = 121,                            // tech
-        S_122_3 = 122,                           // $@3
-        S_123_4 = 123,                           // $@4
-        S_annotation = 124,                      // annotation
-        S_annotations2 = 125,                    // annotations2
-        S_126_5 = 126,                           // $@5
-        S_annotations = 127,                     // annotations
-        S_glsl_header = 128,                     // glsl_header
-        S_hlsl_header = 129,                     // hlsl_header
-        S_glsl = 130,                            // glsl
-        S_shader_header = 131,                   // shader_header
-        S_vertexformat = 132,                    // vertexformat
-        S_format = 133,                          // format
-        S_hlsl = 134,                            // hlsl
-        S_texture = 135,                         // texture
-        S_resource = 136,                        // resource
-        S_fbo = 137,                             // fbo
-        S_sstate = 138,                          // sstate
-        S_dststate = 139,                        // dststate
-        S_prstate = 140,                         // prstate
-        S_csstate = 141,                         // csstate
-        S_rstate = 142,                          // rstate
-        S_namespace = 143,                       // namespace
-        S_cstbuffer = 144,                       // cstbuffer
-        S_uniforms = 145                         // uniforms
+        S_HLSL11SHADER = 10,                     // HLSL11SHADER
+        S_TECHNIQUE = 11,                        // TECHNIQUE
+        S_PASS = 12,                             // PASS
+        S_CODEBODY = 13,                         // CODEBODY
+        S_STRING_TYPE = 14,                      // STRING_TYPE
+        S_VOID_TYPE = 15,                        // VOID_TYPE
+        S_UNSIGNED = 16,                         // UNSIGNED
+        S_HIGHP = 17,                            // HIGHP
+        S_MEDIUMP = 18,                          // MEDIUMP
+        S_LOWP = 19,                             // LOWP
+        S_UNIFORM = 20,                          // UNIFORM
+        S_CSTBUFFER = 21,                        // CSTBUFFER
+        S_FLOAT_TYPE = 22,                       // FLOAT_TYPE
+        S_FLOAT2_TYPE = 23,                      // FLOAT2_TYPE
+        S_FLOAT3_TYPE = 24,                      // FLOAT3_TYPE
+        S_FLOAT4_TYPE = 25,                      // FLOAT4_TYPE
+        S_MAT2_TYPE = 26,                        // MAT2_TYPE
+        S_MAT3_TYPE = 27,                        // MAT3_TYPE
+        S_MAT4_TYPE = 28,                        // MAT4_TYPE
+        S_BOOL_TYPE = 29,                        // BOOL_TYPE
+        S_BOOL2_TYPE = 30,                       // BOOL2_TYPE
+        S_BOOL3_TYPE = 31,                       // BOOL3_TYPE
+        S_BOOL4_TYPE = 32,                       // BOOL4_TYPE
+        S_INT_TYPE = 33,                         // INT_TYPE
+        S_INT2_TYPE = 34,                        // INT2_TYPE
+        S_INT3_TYPE = 35,                        // INT3_TYPE
+        S_INT4_TYPE = 36,                        // INT4_TYPE
+        S_TEXTURE1D_TYPE = 37,                   // TEXTURE1D_TYPE
+        S_TEXTURE2D_TYPE = 38,                   // TEXTURE2D_TYPE
+        S_TEXTURE2DSHADOW_TYPE = 39,             // TEXTURE2DSHADOW_TYPE
+        S_TEXTURE2DRECT_TYPE = 40,               // TEXTURE2DRECT_TYPE
+        S_TEXTURE3D_TYPE = 41,                   // TEXTURE3D_TYPE
+        S_TEXTURECUBE_TYPE = 42,                 // TEXTURECUBE_TYPE
+        S_SAMPLER1D_TYPE = 43,                   // SAMPLER1D_TYPE
+        S_SAMPLER2D_TYPE = 44,                   // SAMPLER2D_TYPE
+        S_SAMPLER2DSHADOW_TYPE = 45,             // SAMPLER2DSHADOW_TYPE
+        S_SAMPLER2DRECT_TYPE = 46,               // SAMPLER2DRECT_TYPE
+        S_SAMPLER3D_TYPE = 47,                   // SAMPLER3D_TYPE
+        S_SAMPLERCUBE_TYPE = 48,                 // SAMPLERCUBE_TYPE
+        S_EXTENSION = 49,                        // EXTENSION
+        S_SEPARATE_SHADER = 50,                  // SEPARATE_SHADER
+        S_VERTEXPROGRAM = 51,                    // VERTEXPROGRAM
+        S_FRAGMENTPROGRAM = 52,                  // FRAGMENTPROGRAM
+        S_GEOMETRYPROGRAM = 53,                  // GEOMETRYPROGRAM
+        S_HULLPROGRAM = 54,                      // HULLPROGRAM
+        S_EVALPROGRAM = 55,                      // EVALPROGRAM
+        S_SHDPROFILE = 56,                       // SHDPROFILE
+        S_SAMPLERRESOURCE = 57,                  // SAMPLERRESOURCE
+        S_SAMPLERTEXUNIT = 58,                   // SAMPLERTEXUNIT
+        S_SETSAMPLERSTATE = 59,                  // SETSAMPLERSTATE
+        S_SETDSTSTATE = 60,                      // SETDSTSTATE
+        S_SETRASTERIZATIONSTATE = 61,            // SETRASTERIZATIONSTATE
+        S_SETCOLORSAMPLESTATE = 62,              // SETCOLORSAMPLESTATE
+        S_IMAGERESOURCE = 63,                    // IMAGERESOURCE
+        S_IMAGEUNIT = 64,                        // IMAGEUNIT
+        S_IMAGEACCESS = 65,                      // IMAGEACCESS
+        S_IMAGELAYER = 66,                       // IMAGELAYER
+        S_IMAGELAYERED = 67,                     // IMAGELAYERED
+        S_WRITE_ONLY = 68,                       // WRITE_ONLY
+        S_READ_ONLY = 69,                        // READ_ONLY
+        S_READ_WRITE = 70,                       // READ_WRITE
+        S_VERTEXFORMAT = 71,                     // VERTEXFORMAT
+        S_72_ = 72,                              // ';'
+        S_73_ = 73,                              // '='
+        S_74_ = 74,                              // '{'
+        S_75_ = 75,                              // '}'
+        S_76_ = 76,                              // '<'
+        S_77_ = 77,                              // '>'
+        S_YYACCEPT = 78,                         // $accept
+        S_input = 79,                            // input
+        S_shader_type = 80,                      // shader_type
+        S_shader_assignment = 81,                // shader_assignment
+        S_shader_assignments = 82,               // shader_assignments
+        S_passstates = 83,                       // passstates
+        S_pass = 84,                             // pass
+        S_85_1 = 85,                             // $@1
+        S_86_2 = 86,                             // $@2
+        S_passes = 87,                           // passes
+        S_tech = 88,                             // tech
+        S_89_3 = 89,                             // $@3
+        S_90_4 = 90,                             // $@4
+        S_scalar_type = 91,                      // scalar_type
+        S_annotation_list = 92,                  // annotation_list
+        S_annotation = 93,                       // annotation
+        S_annotations = 94,                      // annotations
+        S_hlsl_header = 95,                      // hlsl_header
+        S_hlsl = 96,                             // hlsl
+        S_shader_header = 97                     // shader_header
       };
     };
 
@@ -887,18 +817,10 @@ namespace yy {
         value.move< int > (std::move (that.value));
         break;
 
-      case symbol_kind::S_base_type: // base_type
-        value.move< nvFX::IUniform::Type > (std::move (that.value));
-        break;
-
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
-      case symbol_kind::S_VARNAME: // VARNAME
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_var_decl: // var_decl
-      case symbol_kind::S_semantic: // semantic
-      case symbol_kind::S_glsl_header: // glsl_header
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
         value.move< std::string > (std::move (that.value));
@@ -984,20 +906,6 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, nvFX::IUniform::Type&& v, location_type&& l)
-        : Base (t)
-        , value (std::move (v))
-        , location (std::move (l))
-      {}
-#else
-      basic_symbol (typename Base::kind_type t, const nvFX::IUniform::Type& v, const location_type& l)
-        : Base (t)
-        , value (v)
-        , location (l)
-      {}
-#endif
-
-#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -1058,18 +966,10 @@ switch (yykind)
         value.template destroy< int > ();
         break;
 
-      case symbol_kind::S_base_type: // base_type
-        value.template destroy< nvFX::IUniform::Type > ();
-        break;
-
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
-      case symbol_kind::S_VARNAME: // VARNAME
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_var_decl: // var_decl
-      case symbol_kind::S_semantic: // semantic
-      case symbol_kind::S_glsl_header: // glsl_header
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
         value.template destroy< std::string > ();
@@ -1174,17 +1074,15 @@ switch (yykind)
 #if !defined _MSC_VER || defined __clang__
         YY_ASSERT (tok == token::TOK_END
                    || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF)
-                   || (token::TOK_GLSLSHADER <= tok && tok <= token::TOK_PASS)
-                   || (token::TOK_TEXTURERESOURCE <= tok && tok <= token::TOK_SEPARATE_SHADER)
+                   || (token::TOK_HLSL11SHADER <= tok && tok <= token::TOK_PASS)
+                   || (token::TOK_STRING_TYPE <= tok && tok <= token::TOK_SEPARATE_SHADER)
                    || (token::TOK_SHDPROFILE <= tok && tok <= token::TOK_VERTEXFORMAT)
                    || tok == 59
                    || tok == 61
                    || tok == 123
                    || tok == 125
-                   || tok == 58
                    || tok == 60
-                   || tok == 62
-                   || (342 <= tok && tok <= 353));
+                   || tok == 62);
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
@@ -1247,7 +1145,7 @@ switch (yykind)
 #if !defined _MSC_VER || defined __clang__
         YY_ASSERT (tok == token::TOK_IDENTIFIER
                    || tok == token::TOK_STR
-                   || (token::TOK_CODEBODY <= tok && tok <= token::TOK_VARNAME));
+                   || tok == token::TOK_CODEBODY);
 #endif
       }
     };
@@ -1451,36 +1349,6 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_GLSLSHADER (location_type l)
-      {
-        return symbol_type (token::TOK_GLSLSHADER, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_GLSLSHADER (const location_type& l)
-      {
-        return symbol_type (token::TOK_GLSLSHADER, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_HLSL10SHADER (location_type l)
-      {
-        return symbol_type (token::TOK_HLSL10SHADER, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_HLSL10SHADER (const location_type& l)
-      {
-        return symbol_type (token::TOK_HLSL10SHADER, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
       make_HLSL11SHADER (location_type l)
       {
         return symbol_type (token::TOK_HLSL11SHADER, std::move (l));
@@ -1491,96 +1359,6 @@ switch (yykind)
       make_HLSL11SHADER (const location_type& l)
       {
         return symbol_type (token::TOK_HLSL11SHADER, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CGSHADER (location_type l)
-      {
-        return symbol_type (token::TOK_CGSHADER, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_CGSHADER (const location_type& l)
-      {
-        return symbol_type (token::TOK_CGSHADER, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_SAMPLER_STATE (location_type l)
-      {
-        return symbol_type (token::TOK_SAMPLER_STATE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_SAMPLER_STATE (const location_type& l)
-      {
-        return symbol_type (token::TOK_SAMPLER_STATE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DST_STATE (location_type l)
-      {
-        return symbol_type (token::TOK_DST_STATE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_DST_STATE (const location_type& l)
-      {
-        return symbol_type (token::TOK_DST_STATE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_PR_STATE (location_type l)
-      {
-        return symbol_type (token::TOK_PR_STATE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_PR_STATE (const location_type& l)
-      {
-        return symbol_type (token::TOK_PR_STATE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_COLOR_SAMPLE_STATE (location_type l)
-      {
-        return symbol_type (token::TOK_COLOR_SAMPLE_STATE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_COLOR_SAMPLE_STATE (const location_type& l)
-      {
-        return symbol_type (token::TOK_COLOR_SAMPLE_STATE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_RASTERIZATION_STATE (location_type l)
-      {
-        return symbol_type (token::TOK_RASTERIZATION_STATE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_RASTERIZATION_STATE (const location_type& l)
-      {
-        return symbol_type (token::TOK_RASTERIZATION_STATE, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1631,121 +1409,16 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_VARNAME (std::string v, location_type l)
+      make_STRING_TYPE (location_type l)
       {
-        return symbol_type (token::TOK_VARNAME, std::move (v), std::move (l));
+        return symbol_type (token::TOK_STRING_TYPE, std::move (l));
       }
 #else
       static
       symbol_type
-      make_VARNAME (const std::string& v, const location_type& l)
+      make_STRING_TYPE (const location_type& l)
       {
-        return symbol_type (token::TOK_VARNAME, v, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_TEXTURERESOURCE (location_type l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_TEXTURERESOURCE (const location_type& l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_TEXTURERESOURCE1D (location_type l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE1D, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_TEXTURERESOURCE1D (const location_type& l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE1D, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_TEXTURERESOURCE2D (location_type l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE2D, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_TEXTURERESOURCE2D (const location_type& l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE2D, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_TEXTURERESOURCE3D (location_type l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE3D, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_TEXTURERESOURCE3D (const location_type& l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCE3D, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_TEXTURERESOURCERECT (location_type l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCERECT, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_TEXTURERESOURCERECT (const location_type& l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCERECT, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_TEXTURERESOURCECUBE (location_type l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCECUBE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_TEXTURERESOURCECUBE (const location_type& l)
-      {
-        return symbol_type (token::TOK_TEXTURERESOURCECUBE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_INPUTLAYOUT (location_type l)
-      {
-        return symbol_type (token::TOK_INPUTLAYOUT, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_INPUTLAYOUT (const location_type& l)
-      {
-        return symbol_type (token::TOK_INPUTLAYOUT, l);
+        return symbol_type (token::TOK_STRING_TYPE, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -2695,10 +2368,10 @@ switch (yykind)
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
-    static const unsigned char yystos_[];
+    static const signed char yystos_[];
 
     // YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.
-    static const unsigned char yyr1_[];
+    static const signed char yyr1_[];
 
     // YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.
     static const signed char yyr2_[];
@@ -2933,9 +2606,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 180,     ///< Last index in yytable_.
-      yynnts_ = 40,  ///< Number of nonterminal symbols.
-      yyfinal_ = 3 ///< Termination state number.
+      yylast_ = 76,     ///< Last index in yytable_.
+      yynnts_ = 20,  ///< Number of nonterminal symbols.
+      yyfinal_ = 2 ///< Termination state number.
     };
 
 
@@ -2960,14 +2633,14 @@ switch (yykind)
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    91,    87,
-      92,    88,    93,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    72,
+      76,    73,    77,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    89,     2,    90,     2,     2,     2,     2,
+       2,     2,     2,    74,     2,    75,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -2987,13 +2660,10 @@ switch (yykind)
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
-      65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
-      85,    86,    94,    95,    96,    97,    98,    99,   100,   101,
-     102,   103,   104,   105
+      65,    66,    67,    68,    69,    70,    71
     };
     // Last valid token kind.
-    const int code_max = 353;
+    const int code_max = 326;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -3035,18 +2705,10 @@ switch (yykind)
         value.copy< int > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_base_type: // base_type
-        value.copy< nvFX::IUniform::Type > (YY_MOVE (that.value));
-        break;
-
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
-      case symbol_kind::S_VARNAME: // VARNAME
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_var_decl: // var_decl
-      case symbol_kind::S_semantic: // semantic
-      case symbol_kind::S_glsl_header: // glsl_header
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
         value.copy< std::string > (YY_MOVE (that.value));
@@ -3106,18 +2768,10 @@ switch (yykind)
         value.move< int > (YY_MOVE (s.value));
         break;
 
-      case symbol_kind::S_base_type: // base_type
-        value.move< nvFX::IUniform::Type > (YY_MOVE (s.value));
-        break;
-
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
-      case symbol_kind::S_VARNAME: // VARNAME
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_var_decl: // var_decl
-      case symbol_kind::S_semantic: // semantic
-      case symbol_kind::S_glsl_header: // glsl_header
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
         value.move< std::string > (YY_MOVE (s.value));
@@ -3189,7 +2843,7 @@ switch (yykind)
 
 
 } // yy
-#line 3193 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 2847 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 

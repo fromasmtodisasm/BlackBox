@@ -2,6 +2,9 @@
 
 Shader
 {
+    Texture2D text : register(t0);
+    SamplerState textSampler : register(s0);
+
     struct VsOutput
     {
         float4 Position : SV_Position;
@@ -24,8 +27,6 @@ Shader
         Output.Color = IN.Color;
         return Output;
     }  
-    Texture2D text : register(t0);
-    SamplerState textSampler : register(s0);
 
     float4 Font(VsOutput IN) : SV_Target0
     {    
@@ -41,17 +42,18 @@ Shader
 
 
 Technique Font
+<
+    string description = "This is technique spesialized for font rendering";
+>
 {
-    Pass p0
+    Pass p0<string script = "Decal";>
     {
         VertexShader = VSMain
-
         PixelShader = Font
-
     }
 }
 
-Technique TexturedQuad
+Technique TexturedQuad<string description = "This is technique spesialized for textured quad rendering";>
 {
     Pass p0
     {

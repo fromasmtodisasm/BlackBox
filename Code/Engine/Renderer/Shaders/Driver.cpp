@@ -22,8 +22,8 @@ Driver::~Driver()
 
 IEffect* Driver::parse(const char* f)
 {
-	CEffect* pEffect = new CEffect(PathUtil::GetFileName(f));
-	currentEffect	= pEffect;
+	std::unique_ptr<CEffect> pEffect = std::make_unique<CEffect>(CEffect(PathUtil::GetFileName(f)));
+	currentEffect	= pEffect.get();
 	pEffect->m_Techniques.clear();
 	CommonCode.clear();
     ScanBegin(f);
@@ -35,12 +35,11 @@ IEffect* Driver::parse(const char* f)
 	}
 	else
 	{
-		delete pEffect;
-		currentEffect = pEffect = nullptr;
+		pEffect.reset();
     }
 
     ScanEnd();
-    return pEffect;
+    return pEffect.release();
 }
 
 bool Driver::LoadEffectFromFile(IEffect* pEffect, const char* filename)

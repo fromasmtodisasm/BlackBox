@@ -92,7 +92,7 @@ Shader {
         return CURRENT_SYMBOL;
     }
 }
-<INITIAL,cstbuffer,shader,input_layout>{
+<INITIAL,cstbuffer,shader,input_layout,pass,technique>{
     void   return yy::parser::make_VOID_TYPE(loc);
     unsigned return yy::parser::make_UNSIGNED(loc);
     float  return yy::parser::make_FLOAT_TYPE(loc);
@@ -120,6 +120,7 @@ Shader {
     ivec3  return yy::parser::make_INT3_TYPE(loc);
     ivec4  return yy::parser::make_INT4_TYPE(loc);
     uniform return yy::parser::make_UNIFORM(loc);
+    string return yy::parser::make_STRING_TYPE(loc);
 }
 
 VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
@@ -148,6 +149,12 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 <comment2>{
     .*
     \n loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
+}
+ /*==================================================================
+      Start of string
+    */
+<INITIAL,resource,resource1,pass,technique,cstbuffer,shader>{
+    \"    string_buf_ptr  =  string_buf;  yy_push_state(str);
 }
 
     /*==================================================================
@@ -264,17 +271,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         return CURRENT_SYMBOL;
     }
 
-    InputLayout {
-        yy_push_state(input_layout);
-        return yy::parser::make_INPUTLAYOUT(loc);
-    }
-    
-    /*VertexProgram       return VERTEXPROGRAM;*/
     VertexShader        return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
-    /*FragmentProgram     return FRAGMENTPROGRAM;*/
-    /*FragmentShader      return FRAGMENTPROGRAM;*/
     PixelShader         return yy::parser::make_FRAGMENTPROGRAM(IShader::Type::E_FRAGMENT, loc);
-    /*GeometryProgram     return GEOMETRYPROGRAM;*/
     GeometryShader      return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
 }
 

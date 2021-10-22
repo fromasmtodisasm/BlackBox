@@ -1,0 +1,789 @@
+Terminals unused in grammar
+
+    TRUE
+    FALSE
+    FLOAT
+    INT
+    BOOL
+    VOID_TYPE
+    HIGHP
+    MEDIUMP
+    LOWP
+    UNIFORM
+    CSTBUFFER
+    FLOAT2_TYPE
+    FLOAT3_TYPE
+    FLOAT4_TYPE
+    MAT2_TYPE
+    MAT3_TYPE
+    MAT4_TYPE
+    BOOL_TYPE
+    BOOL2_TYPE
+    BOOL3_TYPE
+    BOOL4_TYPE
+    INT2_TYPE
+    INT3_TYPE
+    INT4_TYPE
+    TEXTURE1D_TYPE
+    TEXTURE2D_TYPE
+    TEXTURE2DSHADOW_TYPE
+    TEXTURE2DRECT_TYPE
+    TEXTURE3D_TYPE
+    TEXTURECUBE_TYPE
+    SAMPLER1D_TYPE
+    SAMPLER2D_TYPE
+    SAMPLER2DSHADOW_TYPE
+    SAMPLER2DRECT_TYPE
+    SAMPLER3D_TYPE
+    SAMPLERCUBE_TYPE
+    EXTENSION
+    SEPARATE_SHADER
+    HULLPROGRAM
+    EVALPROGRAM
+    SHDPROFILE
+    SAMPLERRESOURCE
+    SAMPLERTEXUNIT
+    SETSAMPLERSTATE
+    SETDSTSTATE
+    SETRASTERIZATIONSTATE
+    SETCOLORSAMPLESTATE
+    IMAGERESOURCE
+    IMAGEUNIT
+    IMAGEACCESS
+    IMAGELAYER
+    IMAGELAYERED
+    WRITE_ONLY
+    READ_ONLY
+    READ_WRITE
+    VERTEXFORMAT
+
+
+Grammar
+
+    0 $accept: input "end of file"
+
+    1 input: ε
+    2      | input ';'
+    3      | input tech
+    4      | input hlsl
+    5      | input error
+
+    6 shader_type: VERTEXPROGRAM
+    7            | GEOMETRYPROGRAM
+    8            | FRAGMENTPROGRAM
+
+    9 shader_assignment: shader_type '=' IDENTIFIER
+
+   10 shader_assignments: shader_assignment
+   11                   | shader_assignments shader_assignment
+
+   12 passstates: '{' shader_assignments '}'
+
+   13 $@1: ε
+
+   14 pass: PASS $@1 annotations passstates
+
+   15 $@2: ε
+
+   16 pass: PASS IDENTIFIER $@2 annotations passstates
+
+   17 passes: pass
+   18       | passes pass
+   19       | passes error
+
+   20 $@3: ε
+
+   21 tech: TECHNIQUE $@3 '{' passes '}'
+
+   22 $@4: ε
+
+   23 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes '}'
+
+   24 scalar_type: INT_TYPE
+   25            | FLOAT_TYPE
+   26            | UNSIGNED
+   27            | STRING_TYPE
+
+   28 annotation_list: annotation_list annotation
+   29                | annotation
+
+   30 annotation: scalar_type IDENTIFIER '=' STR ';'
+
+   31 annotations: ε
+   32            | '<' annotation_list '>'
+
+   33 hlsl_header: HLSL11SHADER IDENTIFIER
+   34            | HLSL11SHADER
+
+   35 hlsl: shader_header '{' CODEBODY
+
+   36 shader_header: hlsl_header annotations
+
+
+Terminals, with rules where they appear
+
+    "end of file" (0) 0
+    ';' (59) 2 30
+    '<' (60) 32
+    '=' (61) 9 30
+    '>' (62) 32
+    '{' (123) 12 21 23 35
+    '}' (125) 12 21 23
+    error (256) 5 19
+    IDENTIFIER <std::string> (258) 9 16 23 30 33
+    TRUE <bool> (259)
+    FALSE <bool> (260)
+    FLOAT <float> (261)
+    INT <int> (262)
+    BOOL <bool> (263)
+    STR <std::string> (264) 30
+    HLSL11SHADER (265) 33 34
+    TECHNIQUE (266) 21 23
+    PASS (267) 14 16
+    CODEBODY <std::string> (268) 35
+    STRING_TYPE (269) 27
+    VOID_TYPE (270)
+    UNSIGNED (271) 26
+    HIGHP (272)
+    MEDIUMP (273)
+    LOWP (274)
+    UNIFORM (275)
+    CSTBUFFER (276)
+    FLOAT_TYPE (277) 25
+    FLOAT2_TYPE (278)
+    FLOAT3_TYPE (279)
+    FLOAT4_TYPE (280)
+    MAT2_TYPE (281)
+    MAT3_TYPE (282)
+    MAT4_TYPE (283)
+    BOOL_TYPE (284)
+    BOOL2_TYPE (285)
+    BOOL3_TYPE (286)
+    BOOL4_TYPE (287)
+    INT_TYPE (288) 24
+    INT2_TYPE (289)
+    INT3_TYPE (290)
+    INT4_TYPE (291)
+    TEXTURE1D_TYPE (292)
+    TEXTURE2D_TYPE (293)
+    TEXTURE2DSHADOW_TYPE (294)
+    TEXTURE2DRECT_TYPE (295)
+    TEXTURE3D_TYPE (296)
+    TEXTURECUBE_TYPE (297)
+    SAMPLER1D_TYPE (298)
+    SAMPLER2D_TYPE (299)
+    SAMPLER2DSHADOW_TYPE (300)
+    SAMPLER2DRECT_TYPE (301)
+    SAMPLER3D_TYPE (302)
+    SAMPLERCUBE_TYPE (303)
+    EXTENSION (304)
+    SEPARATE_SHADER (305)
+    VERTEXPROGRAM <IShader::Type> (306) 6
+    FRAGMENTPROGRAM <IShader::Type> (307) 8
+    GEOMETRYPROGRAM <IShader::Type> (308) 7
+    HULLPROGRAM <IShader::Type> (309)
+    EVALPROGRAM <IShader::Type> (310)
+    SHDPROFILE (311)
+    SAMPLERRESOURCE (312)
+    SAMPLERTEXUNIT (313)
+    SETSAMPLERSTATE (314)
+    SETDSTSTATE (315)
+    SETRASTERIZATIONSTATE (316)
+    SETCOLORSAMPLESTATE (317)
+    IMAGERESOURCE (318)
+    IMAGEUNIT (319)
+    IMAGEACCESS (320)
+    IMAGELAYER (321)
+    IMAGELAYERED (322)
+    WRITE_ONLY (323)
+    READ_ONLY (324)
+    READ_WRITE (325)
+    VERTEXFORMAT (326)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (78)
+        on left: 0
+    input (79)
+        on left: 1 2 3 4 5
+        on right: 0 2 3 4 5
+    shader_type <IShader::Type> (80)
+        on left: 6 7 8
+        on right: 9
+    shader_assignment <std::string> (81)
+        on left: 9
+        on right: 10 11
+    shader_assignments (82)
+        on left: 10 11
+        on right: 11 12
+    passstates (83)
+        on left: 12
+        on right: 14 16
+    pass (84)
+        on left: 14 16
+        on right: 17 18
+    $@1 (85)
+        on left: 13
+        on right: 14
+    $@2 (86)
+        on left: 15
+        on right: 16
+    passes (87)
+        on left: 17 18 19
+        on right: 18 19 21 23
+    tech (88)
+        on left: 21 23
+        on right: 3
+    $@3 (89)
+        on left: 20
+        on right: 21
+    $@4 (90)
+        on left: 22
+        on right: 23
+    scalar_type (91)
+        on left: 24 25 26 27
+        on right: 30
+    annotation_list (92)
+        on left: 28 29
+        on right: 28 32
+    annotation (93)
+        on left: 30
+        on right: 28 29
+    annotations (94)
+        on left: 31 32
+        on right: 14 16 23 36
+    hlsl_header <std::string> (95)
+        on left: 33 34
+        on right: 36
+    hlsl (96)
+        on left: 35
+        on right: 4
+    shader_header <std::string> (97)
+        on left: 36
+        on right: 35
+
+
+State 0
+
+    0 $accept: • input "end of file"
+
+    $default  reduce using rule 1 (input)
+
+    input  go to state 1
+
+
+State 1
+
+    0 $accept: input • "end of file"
+    2 input: input • ';'
+    3      | input • tech
+    4      | input • hlsl
+    5      | input • error
+
+    "end of file"  shift, and go to state 2
+    error          shift, and go to state 3
+    HLSL11SHADER   shift, and go to state 4
+    TECHNIQUE      shift, and go to state 5
+    ';'            shift, and go to state 6
+
+    tech           go to state 7
+    hlsl_header    go to state 8
+    hlsl           go to state 9
+    shader_header  go to state 10
+
+
+State 2
+
+    0 $accept: input "end of file" •
+
+    $default  accept
+
+
+State 3
+
+    5 input: input error •
+
+    $default  reduce using rule 5 (input)
+
+
+State 4
+
+   33 hlsl_header: HLSL11SHADER • IDENTIFIER
+   34            | HLSL11SHADER •
+
+    IDENTIFIER  shift, and go to state 11
+
+    $default  reduce using rule 34 (hlsl_header)
+
+
+State 5
+
+   21 tech: TECHNIQUE • $@3 '{' passes '}'
+   23     | TECHNIQUE • IDENTIFIER $@4 annotations '{' passes '}'
+
+    IDENTIFIER  shift, and go to state 12
+
+    $default  reduce using rule 20 ($@3)
+
+    $@3  go to state 13
+
+
+State 6
+
+    2 input: input ';' •
+
+    $default  reduce using rule 2 (input)
+
+
+State 7
+
+    3 input: input tech •
+
+    $default  reduce using rule 3 (input)
+
+
+State 8
+
+   36 shader_header: hlsl_header • annotations
+
+    '<'  shift, and go to state 14
+
+    $default  reduce using rule 31 (annotations)
+
+    annotations  go to state 15
+
+
+State 9
+
+    4 input: input hlsl •
+
+    $default  reduce using rule 4 (input)
+
+
+State 10
+
+   35 hlsl: shader_header • '{' CODEBODY
+
+    '{'  shift, and go to state 16
+
+
+State 11
+
+   33 hlsl_header: HLSL11SHADER IDENTIFIER •
+
+    $default  reduce using rule 33 (hlsl_header)
+
+
+State 12
+
+   23 tech: TECHNIQUE IDENTIFIER • $@4 annotations '{' passes '}'
+
+    $default  reduce using rule 22 ($@4)
+
+    $@4  go to state 17
+
+
+State 13
+
+   21 tech: TECHNIQUE $@3 • '{' passes '}'
+
+    '{'  shift, and go to state 18
+
+
+State 14
+
+   32 annotations: '<' • annotation_list '>'
+
+    STRING_TYPE  shift, and go to state 19
+    UNSIGNED     shift, and go to state 20
+    FLOAT_TYPE   shift, and go to state 21
+    INT_TYPE     shift, and go to state 22
+
+    scalar_type      go to state 23
+    annotation_list  go to state 24
+    annotation       go to state 25
+
+
+State 15
+
+   36 shader_header: hlsl_header annotations •
+
+    $default  reduce using rule 36 (shader_header)
+
+
+State 16
+
+   35 hlsl: shader_header '{' • CODEBODY
+
+    CODEBODY  shift, and go to state 26
+
+
+State 17
+
+   23 tech: TECHNIQUE IDENTIFIER $@4 • annotations '{' passes '}'
+
+    '<'  shift, and go to state 14
+
+    $default  reduce using rule 31 (annotations)
+
+    annotations  go to state 27
+
+
+State 18
+
+   21 tech: TECHNIQUE $@3 '{' • passes '}'
+
+    PASS  shift, and go to state 28
+
+    pass    go to state 29
+    passes  go to state 30
+
+
+State 19
+
+   27 scalar_type: STRING_TYPE •
+
+    $default  reduce using rule 27 (scalar_type)
+
+
+State 20
+
+   26 scalar_type: UNSIGNED •
+
+    $default  reduce using rule 26 (scalar_type)
+
+
+State 21
+
+   25 scalar_type: FLOAT_TYPE •
+
+    $default  reduce using rule 25 (scalar_type)
+
+
+State 22
+
+   24 scalar_type: INT_TYPE •
+
+    $default  reduce using rule 24 (scalar_type)
+
+
+State 23
+
+   30 annotation: scalar_type • IDENTIFIER '=' STR ';'
+
+    IDENTIFIER  shift, and go to state 31
+
+
+State 24
+
+   28 annotation_list: annotation_list • annotation
+   32 annotations: '<' annotation_list • '>'
+
+    STRING_TYPE  shift, and go to state 19
+    UNSIGNED     shift, and go to state 20
+    FLOAT_TYPE   shift, and go to state 21
+    INT_TYPE     shift, and go to state 22
+    '>'          shift, and go to state 32
+
+    scalar_type  go to state 23
+    annotation   go to state 33
+
+
+State 25
+
+   29 annotation_list: annotation •
+
+    $default  reduce using rule 29 (annotation_list)
+
+
+State 26
+
+   35 hlsl: shader_header '{' CODEBODY •
+
+    $default  reduce using rule 35 (hlsl)
+
+
+State 27
+
+   23 tech: TECHNIQUE IDENTIFIER $@4 annotations • '{' passes '}'
+
+    '{'  shift, and go to state 34
+
+
+State 28
+
+   14 pass: PASS • $@1 annotations passstates
+   16     | PASS • IDENTIFIER $@2 annotations passstates
+
+    IDENTIFIER  shift, and go to state 35
+
+    $default  reduce using rule 13 ($@1)
+
+    $@1  go to state 36
+
+
+State 29
+
+   17 passes: pass •
+
+    $default  reduce using rule 17 (passes)
+
+
+State 30
+
+   18 passes: passes • pass
+   19       | passes • error
+   21 tech: TECHNIQUE $@3 '{' passes • '}'
+
+    error  shift, and go to state 37
+    PASS   shift, and go to state 28
+    '}'    shift, and go to state 38
+
+    pass  go to state 39
+
+
+State 31
+
+   30 annotation: scalar_type IDENTIFIER • '=' STR ';'
+
+    '='  shift, and go to state 40
+
+
+State 32
+
+   32 annotations: '<' annotation_list '>' •
+
+    $default  reduce using rule 32 (annotations)
+
+
+State 33
+
+   28 annotation_list: annotation_list annotation •
+
+    $default  reduce using rule 28 (annotation_list)
+
+
+State 34
+
+   23 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' • passes '}'
+
+    PASS  shift, and go to state 28
+
+    pass    go to state 29
+    passes  go to state 41
+
+
+State 35
+
+   16 pass: PASS IDENTIFIER • $@2 annotations passstates
+
+    $default  reduce using rule 15 ($@2)
+
+    $@2  go to state 42
+
+
+State 36
+
+   14 pass: PASS $@1 • annotations passstates
+
+    '<'  shift, and go to state 14
+
+    $default  reduce using rule 31 (annotations)
+
+    annotations  go to state 43
+
+
+State 37
+
+   19 passes: passes error •
+
+    $default  reduce using rule 19 (passes)
+
+
+State 38
+
+   21 tech: TECHNIQUE $@3 '{' passes '}' •
+
+    $default  reduce using rule 21 (tech)
+
+
+State 39
+
+   18 passes: passes pass •
+
+    $default  reduce using rule 18 (passes)
+
+
+State 40
+
+   30 annotation: scalar_type IDENTIFIER '=' • STR ';'
+
+    STR  shift, and go to state 44
+
+
+State 41
+
+   18 passes: passes • pass
+   19       | passes • error
+   23 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes • '}'
+
+    error  shift, and go to state 37
+    PASS   shift, and go to state 28
+    '}'    shift, and go to state 45
+
+    pass  go to state 39
+
+
+State 42
+
+   16 pass: PASS IDENTIFIER $@2 • annotations passstates
+
+    '<'  shift, and go to state 14
+
+    $default  reduce using rule 31 (annotations)
+
+    annotations  go to state 46
+
+
+State 43
+
+   14 pass: PASS $@1 annotations • passstates
+
+    '{'  shift, and go to state 47
+
+    passstates  go to state 48
+
+
+State 44
+
+   30 annotation: scalar_type IDENTIFIER '=' STR • ';'
+
+    ';'  shift, and go to state 49
+
+
+State 45
+
+   23 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes '}' •
+
+    $default  reduce using rule 23 (tech)
+
+
+State 46
+
+   16 pass: PASS IDENTIFIER $@2 annotations • passstates
+
+    '{'  shift, and go to state 47
+
+    passstates  go to state 50
+
+
+State 47
+
+   12 passstates: '{' • shader_assignments '}'
+
+    VERTEXPROGRAM    shift, and go to state 51
+    FRAGMENTPROGRAM  shift, and go to state 52
+    GEOMETRYPROGRAM  shift, and go to state 53
+
+    shader_type         go to state 54
+    shader_assignment   go to state 55
+    shader_assignments  go to state 56
+
+
+State 48
+
+   14 pass: PASS $@1 annotations passstates •
+
+    $default  reduce using rule 14 (pass)
+
+
+State 49
+
+   30 annotation: scalar_type IDENTIFIER '=' STR ';' •
+
+    $default  reduce using rule 30 (annotation)
+
+
+State 50
+
+   16 pass: PASS IDENTIFIER $@2 annotations passstates •
+
+    $default  reduce using rule 16 (pass)
+
+
+State 51
+
+    6 shader_type: VERTEXPROGRAM •
+
+    $default  reduce using rule 6 (shader_type)
+
+
+State 52
+
+    8 shader_type: FRAGMENTPROGRAM •
+
+    $default  reduce using rule 8 (shader_type)
+
+
+State 53
+
+    7 shader_type: GEOMETRYPROGRAM •
+
+    $default  reduce using rule 7 (shader_type)
+
+
+State 54
+
+    9 shader_assignment: shader_type • '=' IDENTIFIER
+
+    '='  shift, and go to state 57
+
+
+State 55
+
+   10 shader_assignments: shader_assignment •
+
+    $default  reduce using rule 10 (shader_assignments)
+
+
+State 56
+
+   11 shader_assignments: shader_assignments • shader_assignment
+   12 passstates: '{' shader_assignments • '}'
+
+    VERTEXPROGRAM    shift, and go to state 51
+    FRAGMENTPROGRAM  shift, and go to state 52
+    GEOMETRYPROGRAM  shift, and go to state 53
+    '}'              shift, and go to state 58
+
+    shader_type        go to state 54
+    shader_assignment  go to state 59
+
+
+State 57
+
+    9 shader_assignment: shader_type '=' • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 60
+
+
+State 58
+
+   12 passstates: '{' shader_assignments '}' •
+
+    $default  reduce using rule 12 (passstates)
+
+
+State 59
+
+   11 shader_assignments: shader_assignments shader_assignment •
+
+    $default  reduce using rule 11 (shader_assignments)
+
+
+State 60
+
+    9 shader_assignment: shader_type '=' IDENTIFIER •
+
+    $default  reduce using rule 9 (shader_assignment)

@@ -29,7 +29,7 @@ macro(cygwin_bison INPUT OUTPUT)
 	set(INTPUT_NAME ${INTPUT})
 	add_custom_command(
 		OUTPUT ${OUTPUT}
-		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison  -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison -v -Wother -Wcounterexamples -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
 		DEPENDS ${INPUT})
 endmacro()
 
