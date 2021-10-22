@@ -9,6 +9,7 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/CmdLine.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/FrameProfiler.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/IWindowMessageHandler.h>
 #include <BlackBox/System/Timer.hpp>

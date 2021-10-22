@@ -5,8 +5,8 @@
 #if 0
 using BB_VERTEX	 = SVF_P3F_C4B;
 #else
-//using BB_VERTEX	 = SVF_P3F_C4B_T2F;
-using BB_VERTEX	 = SVF_P3F_N_T2F;
+// using BB_VERTEX	 = SVF_P3F_C4B_T2F;
+using BB_VERTEX = SVF_P3F_N_T2F;
 
 #endif
 
@@ -14,10 +14,11 @@ struct SAuxPushBufferEntry
 {
 	SAuxPushBufferEntry() = default;
 	SAuxPushBufferEntry(uint32 nv, RenderPrimitive rpt)
-		: m_numVertices(nv), m_primitive(rpt)
+		: m_numVertices(nv)
+		, m_primitive(rpt)
 	{
 	}
-	uint32 m_numVertices;
+	uint32			m_numVertices;
 	RenderPrimitive m_primitive;
 };
 
@@ -35,19 +36,18 @@ using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
 struct SDrawElement
 {
 	CVertexBuffer* m_pBuffer;
+	glm::mat4	   transform;
 	int			   m_DiffuseMap;
 };
 
-
 using AuxPushBuffer	  = std::vector<SAuxPushBufferEntry>;
 using AuxVertexBuffer = std::vector<SAuxVertex>;
-using AuxIndexBuffer = std::vector<vtx_idx>;
-
+using AuxIndexBuffer  = std::vector<vtx_idx>;
 
 class CRenderAuxGeom : public IRenderAuxGeom
 {
 	const int INIT_VB_SIZE = 1024 * 4;
-	using BoundingBox = std::array<BB_VERTEX, 36>;
+	using BoundingBox	   = std::array<BB_VERTEX, 36>;
 
   public:
 	CRenderAuxGeom();
@@ -58,7 +58,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
 	void PushImage(const SRender2DImageDescription& image) override;
 	void Flush() override;
-	void DrawMesh(CVertexBuffer* pVertexBuffer, int texture) override;
+	void DrawMesh(CVertexBuffer* pVertexBuffer, glm::mat4 transform, int texture) override;
 
   private:
 	void AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive);
@@ -66,17 +66,17 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawLines();
 
   private:
-	CVertexBuffer* m_BoundingBox	= nullptr;
-	SVertexStream* m_BB_IndexBuffer = nullptr;
-	AuxPushBuffer m_auxPushBuffer;
-	AuxVertexBuffer m_VB;
-	CVertexBuffer* m_HardwareVB = nullptr;
+	CVertexBuffer*		m_BoundingBox	 = nullptr;
+	SVertexStream*		m_BB_IndexBuffer = nullptr;
+	AuxPushBuffer		m_auxPushBuffer;
+	AuxVertexBuffer		m_VB;
+	CVertexBuffer*		m_HardwareVB = nullptr;
 	_smart_ptr<IShader> m_BoundingBoxShader;
 	_smart_ptr<IShader> m_AuxGeomShader;
 
 	std::vector<SRender2DImageDescription> m_Images;
 
-	//SAABBBufferPtr  m_aabbBufferPtr;
+	// SAABBBufferPtr  m_aabbBufferPtr;
 	std::vector<SDrawElement> m_Meshes;
 
 	std::vector<BoundingBox> m_BBVerts;
@@ -85,6 +85,6 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	int dbg_mode		 = 0;
 	int stop			 = 0;
 
-public:
+  public:
 	static ID3D10DepthStencilState* m_pDSState;
 };

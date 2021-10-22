@@ -20,7 +20,10 @@ add_sources(
 	"AuxRendererNull.cpp"
 	"BaseRenderer.cpp"
 	"FreeTypeFont.cpp"
-	"Shaders/FxParser.cpp")
+	"Shaders/FxParser.cpp"
+	SOURCE_GROUP "Minecraft"
+	"MineRenderer/renderer.h"
+)
 
 add_sources(
 	"NoUberFile"

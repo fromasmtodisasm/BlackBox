@@ -5,6 +5,7 @@
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
 #include <BlackBox/Scene/IScene.hpp>
+#include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
 #include <BlackBox\Renderer\IFont.hpp>
 #include <BlackBox\Utils\Text.hpp>
@@ -114,10 +115,19 @@ void C3DEngine::Draw()
 	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
 	gEnv->pRenderer->SetCamera(m_Camera);
 
-	for (auto obj : m_Objects)
+	for (IEntity* obj : m_Entities)
 	{
 		SRendParams rp;
-		obj->Render(rp, {});	
+		glm::vec3 pos = obj->GetPos();
+		glm::vec3 rotation = obj->GetAngles();
+		float scale = obj->GetScale();
+		glm::mat4 transform = glm::translate(glm::mat4(1), rotation);
+		transform = glm::scale(transform, glm::vec3(scale));
+		transform = glm::translate(transform, pos);
+		IStatObj* stat = obj->GetIStatObj(0);
+		rp.pMatrix = &transform;
+		obj->SetM().
+		stat->Render(rp, {});
 	}
 
 	#if 0
