@@ -17,6 +17,9 @@
     #include <BlackBox/Renderer/IRender.hpp>
     #include <BlackBox/Renderer/IShader.hpp>
     //#include "../BufferManager.hpp"
+    #ifdef S_FALSE
+    #undef S_FALSE
+    #endif
     class Scanner;
     class Driver;
     //using shader_assignment = std::pair<std::string, std::string>
@@ -108,9 +111,6 @@
 %define parse.error verbose
 
 %code top{
-    #ifdef S_FALSE
-    #undef S_FALSE
-    #endif
 	#pragma warning(push, 0)
     #include "Driver.hpp"
     #include "Scanner.hpp"
@@ -119,6 +119,10 @@
     #define GreenLog(...) gEnv->pLog->Log(__VA_ARGS__)
 
     #include "Effect.hpp"
+
+    #ifdef S_FALSE
+    #undef S_FALSE
+    #endif
 
     std::vector<std::string> Code;
     bool is_common;

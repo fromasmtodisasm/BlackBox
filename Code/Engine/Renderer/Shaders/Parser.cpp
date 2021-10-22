@@ -1,8 +1,8 @@
-// A Bison parser, made by GNU Bison 3.0.4.
+// A Bison parser, made by GNU Bison 3.8.2.
 
 // Skeleton implementation for Bison LALR(1) parsers in C++
 
-// Copyright (C) 2002-2015 Free Software Foundation, Inc.
+// Copyright (C) 2002-2015, 2018-2021 Free Software Foundation, Inc.
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // As a special exception, you may create a larger work that contains
 // part or all of the Bison parser skeleton and distribute that work
@@ -29,12 +29,14 @@
 
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
-// //                    "%code top" blocks.
-#line 110 "Parser.yy" // lalr1.cc:397
 
-    #ifdef S_FALSE
-    #undef S_FALSE
-    #endif
+// DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+// especially those whose name start with YY_ or yy_.  They are
+// private implementation details that can be changed or removed.
+
+// "%code top" blocks.
+#line 113 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+
 	#pragma warning(push, 0)
     #include "Driver.hpp"
     #include "Scanner.hpp"
@@ -43,6 +45,10 @@
     #define GreenLog(...) gEnv->pLog->Log(__VA_ARGS__)
 
     #include "Effect.hpp"
+
+    #ifdef S_FALSE
+    #undef S_FALSE
+    #endif
 
     std::vector<std::string> Code;
     bool is_common;
@@ -53,26 +59,14 @@
 
     using Type = std::string;
 
-#line 57 "Parser.cpp" // lalr1.cc:397
+#line 63 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
 
 
-// First part of user declarations.
 
-#line 62 "Parser.cpp" // lalr1.cc:404
-
-# ifndef YY_NULLPTR
-#  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULLPTR nullptr
-#  else
-#   define YY_NULLPTR 0
-#  endif
-# endif
 
 #include "Parser.hpp"
 
-// User implementation prologue.
 
-#line 76 "Parser.cpp" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -84,6 +78,16 @@
 # endif
 # ifndef YY_
 #  define YY_(msgid) msgid
+# endif
+#endif
+
+
+// Whether we are compiled with exception support.
+#ifndef YY_EXCEPTIONS
+# if defined __GNUC__ && !defined __EXCEPTIONS
+#  define YY_EXCEPTIONS 0
+# else
+#  define YY_EXCEPTIONS 1
 # endif
 #endif
 
@@ -104,12 +108,9 @@
         {                                                               \
           (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;      \
         }                                                               \
-    while (/*CONSTCOND*/ false)
+    while (false)
 # endif
 
-
-// Suppress unused-variable warnings by "using" E.
-#define YYUSE(E) ((void) (E))
 
 // Enable debugging if requested.
 #if YYDEBUG
@@ -123,7 +124,7 @@
     {                                           \
       *yycdebug_ << Title << ' ';               \
       yy_print_ (*yycdebug_, Symbol);           \
-      *yycdebug_ << std::endl;                  \
+      *yycdebug_ << '\n';                       \
     }                                           \
   } while (false)
 
@@ -136,15 +137,15 @@
 # define YY_STACK_PRINT()               \
   do {                                  \
     if (yydebug_)                       \
-      yystack_print_ ();                \
+      yy_stack_print_ ();                \
   } while (false)
 
 #else // !YYDEBUG
 
 # define YYCDEBUG if (false) std::cerr
-# define YY_SYMBOL_PRINT(Title, Symbol)  YYUSE(Symbol)
-# define YY_REDUCE_PRINT(Rule)           static_cast<void>(0)
-# define YY_STACK_PRINT()                static_cast<void>(0)
+# define YY_SYMBOL_PRINT(Title, Symbol)  YY_USE (Symbol)
+# define YY_REDUCE_PRINT(Rule)           static_cast<void> (0)
+# define YY_STACK_PRINT()                static_cast<void> (0)
 
 #endif // !YYDEBUG
 
@@ -156,54 +157,16 @@
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-
 namespace yy {
-#line 162 "Parser.cpp" // lalr1.cc:479
-
-  /* Return YYSTR after stripping away unnecessary quotes and
-     backslashes, so that it's suitable for yyerror.  The heuristic is
-     that double-quoting is unnecessary unless the string contains an
-     apostrophe, a comma, or backslash (other than backslash-backslash).
-     YYSTR is taken from yytname.  */
-  std::string
-  parser::yytnamerr_ (const char *yystr)
-  {
-    if (*yystr == '"')
-      {
-        std::string yyr = "";
-        char const *yyp = yystr;
-
-        for (;;)
-          switch (*++yyp)
-            {
-            case '\'':
-            case ',':
-              goto do_not_strip_quotes;
-
-            case '\\':
-              if (*++yyp != '\\')
-                goto do_not_strip_quotes;
-              // Fall through.
-            default:
-              yyr += *yyp;
-              break;
-
-            case '"':
-              return yyr;
-            }
-      do_not_strip_quotes: ;
-      }
-
-    return yystr;
-  }
-
+#line 162 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
 
   /// Build a parser object.
   parser::parser (Scanner &scanner_yyarg, Driver &driver_yyarg)
-    :
 #if YYDEBUG
-      yydebug_ (false),
+    : yydebug_ (false),
       yycdebug_ (&std::cerr),
+#else
+    :
 #endif
       scanner (scanner_yyarg),
       driver (driver_yyarg)
@@ -212,32 +175,30 @@ namespace yy {
   parser::~parser ()
   {}
 
+  parser::syntax_error::~syntax_error () YY_NOEXCEPT YY_NOTHROW
+  {}
 
-  /*---------------.
-  | Symbol types.  |
-  `---------------*/
+  /*---------.
+  | symbol.  |
+  `---------*/
 
 
 
   // by_state.
-  inline
-  parser::by_state::by_state ()
+  parser::by_state::by_state () YY_NOEXCEPT
     : state (empty_state)
   {}
 
-  inline
-  parser::by_state::by_state (const by_state& other)
-    : state (other.state)
+  parser::by_state::by_state (const by_state& that) YY_NOEXCEPT
+    : state (that.state)
   {}
 
-  inline
   void
-  parser::by_state::clear ()
+  parser::by_state::clear () YY_NOEXCEPT
   {
     state = empty_state;
   }
 
-  inline
   void
   parser::by_state::move (by_state& that)
   {
@@ -245,75 +206,130 @@ namespace yy {
     that.clear ();
   }
 
-  inline
-  parser::by_state::by_state (state_type s)
+  parser::by_state::by_state (state_type s) YY_NOEXCEPT
     : state (s)
   {}
 
-  inline
-  parser::symbol_number_type
-  parser::by_state::type_get () const
+  parser::symbol_kind_type
+  parser::by_state::kind () const YY_NOEXCEPT
   {
     if (state == empty_state)
-      return empty_symbol;
+      return symbol_kind::S_YYEMPTY;
     else
-      return yystos_[state];
+      return YY_CAST (symbol_kind_type, yystos_[+state]);
   }
 
-  inline
   parser::stack_symbol_type::stack_symbol_type ()
   {}
 
-
-  inline
-  parser::stack_symbol_type::stack_symbol_type (state_type s, symbol_type& that)
-    : super_type (s, that.location)
+  parser::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)
+    : super_type (YY_MOVE (that.state), YY_MOVE (that.location))
   {
-      switch (that.type_get ())
+    switch (that.kind ())
     {
-      case 68: // VERTEXPROGRAM
-      case 69: // FRAGMENTPROGRAM
-      case 70: // GEOMETRYPROGRAM
-      case 71: // HULLPROGRAM
-      case 72: // EVALPROGRAM
-      case 111: // shader_type
-        value.move< IShader::Type > (that.value);
+      case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
+      case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
+      case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
+      case symbol_kind::S_HULLPROGRAM: // HULLPROGRAM
+      case symbol_kind::S_EVALPROGRAM: // EVALPROGRAM
+      case symbol_kind::S_shader_type: // shader_type
+        value.YY_MOVE_OR_COPY< IShader::Type > (YY_MOVE (that.value));
         break;
 
-      case 10: // LANG_ID
-      case 110: // lang
-        value.move< ShaderLangId > (that.value);
+      case symbol_kind::S_LANG_ID: // LANG_ID
+      case symbol_kind::S_lang: // lang
+        value.YY_MOVE_OR_COPY< ShaderLangId > (YY_MOVE (that.value));
         break;
 
-      case 4: // TRUE
-      case 5: // FALSE
-      case 8: // BOOL
-        value.move< bool > (that.value);
+      case symbol_kind::S_TRUE: // TRUE
+      case symbol_kind::S_FALSE: // FALSE
+      case symbol_kind::S_BOOL: // BOOL
+        value.YY_MOVE_OR_COPY< bool > (YY_MOVE (that.value));
         break;
 
-      case 6: // FLOAT
-        value.move< float > (that.value);
+      case symbol_kind::S_FLOAT: // FLOAT
+        value.YY_MOVE_OR_COPY< float > (YY_MOVE (that.value));
         break;
 
-      case 7: // INT
-        value.move< int > (that.value);
+      case symbol_kind::S_INT: // INT
+        value.YY_MOVE_OR_COPY< int > (YY_MOVE (that.value));
         break;
 
-      case 118: // base_type
-        value.move< nvFX::IUniform::Type > (that.value);
+      case symbol_kind::S_base_type: // base_type
+        value.YY_MOVE_OR_COPY< nvFX::IUniform::Type > (YY_MOVE (that.value));
         break;
 
-      case 3: // IDENTIFIER
-      case 9: // STR
-      case 23: // CODEBODY
-      case 24: // VARNAME
-      case 112: // shader_assignment
-      case 117: // var_decl
-      case 119: // semantic
-      case 131: // glsl_header
-      case 132: // hlsl_header
-      case 134: // shader_header
-        value.move< std::string > (that.value);
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_VARNAME: // VARNAME
+      case symbol_kind::S_shader_assignment: // shader_assignment
+      case symbol_kind::S_var_decl: // var_decl
+      case symbol_kind::S_semantic: // semantic
+      case symbol_kind::S_glsl_header: // glsl_header
+      case symbol_kind::S_hlsl_header: // hlsl_header
+      case symbol_kind::S_shader_header: // shader_header
+        value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
+        break;
+
+      default:
+        break;
+    }
+
+#if 201103L <= YY_CPLUSPLUS
+    // that is emptied.
+    that.state = empty_state;
+#endif
+  }
+
+  parser::stack_symbol_type::stack_symbol_type (state_type s, YY_MOVE_REF (symbol_type) that)
+    : super_type (s, YY_MOVE (that.location))
+  {
+    switch (that.kind ())
+    {
+      case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
+      case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
+      case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
+      case symbol_kind::S_HULLPROGRAM: // HULLPROGRAM
+      case symbol_kind::S_EVALPROGRAM: // EVALPROGRAM
+      case symbol_kind::S_shader_type: // shader_type
+        value.move< IShader::Type > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_LANG_ID: // LANG_ID
+      case symbol_kind::S_lang: // lang
+        value.move< ShaderLangId > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_TRUE: // TRUE
+      case symbol_kind::S_FALSE: // FALSE
+      case symbol_kind::S_BOOL: // BOOL
+        value.move< bool > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_FLOAT: // FLOAT
+        value.move< float > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_INT: // INT
+        value.move< int > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_base_type: // base_type
+        value.move< nvFX::IUniform::Type > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_VARNAME: // VARNAME
+      case symbol_kind::S_shader_assignment: // shader_assignment
+      case symbol_kind::S_var_decl: // var_decl
+      case symbol_kind::S_semantic: // semantic
+      case symbol_kind::S_glsl_header: // glsl_header
+      case symbol_kind::S_hlsl_header: // hlsl_header
+      case symbol_kind::S_shader_header: // shader_header
+        value.move< std::string > (YY_MOVE (that.value));
         break;
 
       default:
@@ -321,58 +337,58 @@ namespace yy {
     }
 
     // that is emptied.
-    that.type = empty_symbol;
+    that.kind_ = symbol_kind::S_YYEMPTY;
   }
 
-  inline
+#if YY_CPLUSPLUS < 201103L
   parser::stack_symbol_type&
   parser::stack_symbol_type::operator= (const stack_symbol_type& that)
   {
     state = that.state;
-      switch (that.type_get ())
+    switch (that.kind ())
     {
-      case 68: // VERTEXPROGRAM
-      case 69: // FRAGMENTPROGRAM
-      case 70: // GEOMETRYPROGRAM
-      case 71: // HULLPROGRAM
-      case 72: // EVALPROGRAM
-      case 111: // shader_type
+      case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
+      case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
+      case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
+      case symbol_kind::S_HULLPROGRAM: // HULLPROGRAM
+      case symbol_kind::S_EVALPROGRAM: // EVALPROGRAM
+      case symbol_kind::S_shader_type: // shader_type
         value.copy< IShader::Type > (that.value);
         break;
 
-      case 10: // LANG_ID
-      case 110: // lang
+      case symbol_kind::S_LANG_ID: // LANG_ID
+      case symbol_kind::S_lang: // lang
         value.copy< ShaderLangId > (that.value);
         break;
 
-      case 4: // TRUE
-      case 5: // FALSE
-      case 8: // BOOL
+      case symbol_kind::S_TRUE: // TRUE
+      case symbol_kind::S_FALSE: // FALSE
+      case symbol_kind::S_BOOL: // BOOL
         value.copy< bool > (that.value);
         break;
 
-      case 6: // FLOAT
+      case symbol_kind::S_FLOAT: // FLOAT
         value.copy< float > (that.value);
         break;
 
-      case 7: // INT
+      case symbol_kind::S_INT: // INT
         value.copy< int > (that.value);
         break;
 
-      case 118: // base_type
+      case symbol_kind::S_base_type: // base_type
         value.copy< nvFX::IUniform::Type > (that.value);
         break;
 
-      case 3: // IDENTIFIER
-      case 9: // STR
-      case 23: // CODEBODY
-      case 24: // VARNAME
-      case 112: // shader_assignment
-      case 117: // var_decl
-      case 119: // semantic
-      case 131: // glsl_header
-      case 132: // hlsl_header
-      case 134: // shader_header
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_VARNAME: // VARNAME
+      case symbol_kind::S_shader_assignment: // shader_assignment
+      case symbol_kind::S_var_decl: // var_decl
+      case symbol_kind::S_semantic: // semantic
+      case symbol_kind::S_glsl_header: // glsl_header
+      case symbol_kind::S_hlsl_header: // hlsl_header
+      case symbol_kind::S_shader_header: // shader_header
         value.copy< std::string > (that.value);
         break;
 
@@ -384,9 +400,69 @@ namespace yy {
     return *this;
   }
 
+  parser::stack_symbol_type&
+  parser::stack_symbol_type::operator= (stack_symbol_type& that)
+  {
+    state = that.state;
+    switch (that.kind ())
+    {
+      case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
+      case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
+      case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
+      case symbol_kind::S_HULLPROGRAM: // HULLPROGRAM
+      case symbol_kind::S_EVALPROGRAM: // EVALPROGRAM
+      case symbol_kind::S_shader_type: // shader_type
+        value.move< IShader::Type > (that.value);
+        break;
+
+      case symbol_kind::S_LANG_ID: // LANG_ID
+      case symbol_kind::S_lang: // lang
+        value.move< ShaderLangId > (that.value);
+        break;
+
+      case symbol_kind::S_TRUE: // TRUE
+      case symbol_kind::S_FALSE: // FALSE
+      case symbol_kind::S_BOOL: // BOOL
+        value.move< bool > (that.value);
+        break;
+
+      case symbol_kind::S_FLOAT: // FLOAT
+        value.move< float > (that.value);
+        break;
+
+      case symbol_kind::S_INT: // INT
+        value.move< int > (that.value);
+        break;
+
+      case symbol_kind::S_base_type: // base_type
+        value.move< nvFX::IUniform::Type > (that.value);
+        break;
+
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_VARNAME: // VARNAME
+      case symbol_kind::S_shader_assignment: // shader_assignment
+      case symbol_kind::S_var_decl: // var_decl
+      case symbol_kind::S_semantic: // semantic
+      case symbol_kind::S_glsl_header: // glsl_header
+      case symbol_kind::S_hlsl_header: // hlsl_header
+      case symbol_kind::S_shader_header: // shader_header
+        value.move< std::string > (that.value);
+        break;
+
+      default:
+        break;
+    }
+
+    location = that.location;
+    // that is emptied.
+    that.state = empty_state;
+    return *this;
+  }
+#endif
 
   template <typename Base>
-  inline
   void
   parser::yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const
   {
@@ -397,44 +473,45 @@ namespace yy {
 #if YYDEBUG
   template <typename Base>
   void
-  parser::yy_print_ (std::ostream& yyo,
-                                     const basic_symbol<Base>& yysym) const
+  parser::yy_print_ (std::ostream& yyo, const basic_symbol<Base>& yysym) const
   {
     std::ostream& yyoutput = yyo;
-    YYUSE (yyoutput);
-    symbol_number_type yytype = yysym.type_get ();
-    // Avoid a (spurious) G++ 4.8 warning about "array subscript is
-    // below array bounds".
+    YY_USE (yyoutput);
     if (yysym.empty ())
-      std::abort ();
-    yyo << (yytype < yyntokens_ ? "token" : "nterm")
-        << ' ' << yytname_[yytype] << " ("
-        << yysym.location << ": ";
-    YYUSE (yytype);
-    yyo << ')';
+      yyo << "empty symbol";
+    else
+      {
+        symbol_kind_type yykind = yysym.kind ();
+        yyo << (yykind < YYNTOKENS ? "token" : "nterm")
+            << ' ' << yysym.name () << " ("
+            << yysym.location << ": ";
+        YY_USE (yykind);
+        yyo << ')';
+      }
   }
 #endif
 
-  inline
   void
-  parser::yypush_ (const char* m, state_type s, symbol_type& sym)
-  {
-    stack_symbol_type t (s, sym);
-    yypush_ (m, t);
-  }
-
-  inline
-  void
-  parser::yypush_ (const char* m, stack_symbol_type& s)
+  parser::yypush_ (const char* m, YY_MOVE_REF (stack_symbol_type) sym)
   {
     if (m)
-      YY_SYMBOL_PRINT (m, s);
-    yystack_.push (s);
+      YY_SYMBOL_PRINT (m, sym);
+    yystack_.push (YY_MOVE (sym));
   }
 
-  inline
   void
-  parser::yypop_ (unsigned int n)
+  parser::yypush_ (const char* m, state_type s, YY_MOVE_REF (symbol_type) sym)
+  {
+#if 201103L <= YY_CPLUSPLUS
+    yypush_ (m, stack_symbol_type (s, std::move (sym)));
+#else
+    stack_symbol_type ss (s, sym);
+    yypush_ (m, ss);
+#endif
+  }
+
+  void
+  parser::yypop_ (int n) YY_NOEXCEPT
   {
     yystack_.pop (n);
   }
@@ -466,32 +543,37 @@ namespace yy {
   }
 #endif // YYDEBUG
 
-  inline parser::state_type
+  parser::state_type
   parser::yy_lr_goto_state_ (state_type yystate, int yysym)
   {
-    int yyr = yypgoto_[yysym - yyntokens_] + yystate;
+    int yyr = yypgoto_[yysym - YYNTOKENS] + yystate;
     if (0 <= yyr && yyr <= yylast_ && yycheck_[yyr] == yystate)
       return yytable_[yyr];
     else
-      return yydefgoto_[yysym - yyntokens_];
+      return yydefgoto_[yysym - YYNTOKENS];
   }
 
-  inline bool
-  parser::yy_pact_value_is_default_ (int yyvalue)
+  bool
+  parser::yy_pact_value_is_default_ (int yyvalue) YY_NOEXCEPT
   {
     return yyvalue == yypact_ninf_;
   }
 
-  inline bool
-  parser::yy_table_value_is_error_ (int yyvalue)
+  bool
+  parser::yy_table_value_is_error_ (int yyvalue) YY_NOEXCEPT
   {
     return yyvalue == yytable_ninf_;
   }
 
   int
+  parser::operator() ()
+  {
+    return parse ();
+  }
+
+  int
   parser::parse ()
   {
-    // State.
     int yyn;
     /// Length of the RHS of the rule being reduced.
     int yylen = 0;
@@ -509,69 +591,92 @@ namespace yy {
     /// The return value of parse ().
     int yyresult;
 
-    // FIXME: This shoud be completely indented.  It is not yet to
-    // avoid gratuitous conflicts when merging into the master branch.
+#if YY_EXCEPTIONS
     try
+#endif // YY_EXCEPTIONS
       {
-    YYCDEBUG << "Starting parse" << std::endl;
+    YYCDEBUG << "Starting parse\n";
 
 
     // User initialization code.
-    #line 100 "Parser.yy" // lalr1.cc:741
+#line 103 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
 {
     is_common = false;
     Code.clear();
 }
 
-#line 527 "Parser.cpp" // lalr1.cc:741
+#line 609 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
+
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
        location values to have been already stored, initialize these
        stacks with a primary value.  */
     yystack_.clear ();
-    yypush_ (YY_NULLPTR, 0, yyla);
+    yypush_ (YY_NULLPTR, 0, YY_MOVE (yyla));
 
-    // A new symbol was pushed on the stack.
+  /*-----------------------------------------------.
+  | yynewstate -- push a new symbol on the stack.  |
+  `-----------------------------------------------*/
   yynewstate:
-    YYCDEBUG << "Entering state " << yystack_[0].state << std::endl;
+    YYCDEBUG << "Entering state " << int (yystack_[0].state) << '\n';
+    YY_STACK_PRINT ();
 
     // Accept?
     if (yystack_[0].state == yyfinal_)
-      goto yyacceptlab;
+      YYACCEPT;
 
     goto yybackup;
 
-    // Backup.
-  yybackup:
 
+  /*-----------.
+  | yybackup.  |
+  `-----------*/
+  yybackup:
     // Try to take a decision without lookahead.
-    yyn = yypact_[yystack_[0].state];
+    yyn = yypact_[+yystack_[0].state];
     if (yy_pact_value_is_default_ (yyn))
       goto yydefault;
 
     // Read a lookahead token.
     if (yyla.empty ())
       {
-        YYCDEBUG << "Reading a token: ";
+        YYCDEBUG << "Reading a token\n";
+#if YY_EXCEPTIONS
         try
+#endif // YY_EXCEPTIONS
           {
             symbol_type yylookahead (yylex (scanner, driver));
             yyla.move (yylookahead);
           }
+#if YY_EXCEPTIONS
         catch (const syntax_error& yyexc)
           {
+            YYCDEBUG << "Caught exception: " << yyexc.what() << '\n';
             error (yyexc);
             goto yyerrlab1;
           }
+#endif // YY_EXCEPTIONS
       }
     YY_SYMBOL_PRINT ("Next token is", yyla);
 
+    if (yyla.kind () == symbol_kind::S_YYerror)
+    {
+      // The scanner already issued an error message, process directly
+      // to error recovery.  But do not keep the error token as
+      // lookahead, it is too special and may lead us to an endless
+      // loop in error recovery. */
+      yyla.kind_ = symbol_kind::S_YYUNDEF;
+      goto yyerrlab1;
+    }
+
     /* If the proper action on seeing token YYLA.TYPE is to reduce or
        to detect an error, take that action.  */
-    yyn += yyla.type_get ();
-    if (yyn < 0 || yylast_ < yyn || yycheck_[yyn] != yyla.type_get ())
-      goto yydefault;
+    yyn += yyla.kind ();
+    if (yyn < 0 || yylast_ < yyn || yycheck_[yyn] != yyla.kind ())
+      {
+        goto yydefault;
+      }
 
     // Reduce or error.
     yyn = yytable_[yyn];
@@ -588,74 +693,76 @@ namespace yy {
       --yyerrstatus_;
 
     // Shift the lookahead token.
-    yypush_ ("Shifting", yyn, yyla);
+    yypush_ ("Shifting", state_type (yyn), YY_MOVE (yyla));
     goto yynewstate;
+
 
   /*-----------------------------------------------------------.
   | yydefault -- do the default action for the current state.  |
   `-----------------------------------------------------------*/
   yydefault:
-    yyn = yydefact_[yystack_[0].state];
+    yyn = yydefact_[+yystack_[0].state];
     if (yyn == 0)
       goto yyerrlab;
     goto yyreduce;
 
+
   /*-----------------------------.
-  | yyreduce -- Do a reduction.  |
+  | yyreduce -- do a reduction.  |
   `-----------------------------*/
   yyreduce:
     yylen = yyr2_[yyn];
     {
       stack_symbol_type yylhs;
-      yylhs.state = yy_lr_goto_state_(yystack_[yylen].state, yyr1_[yyn]);
+      yylhs.state = yy_lr_goto_state_ (yystack_[yylen].state, yyr1_[yyn]);
       /* Variants are always initialized to an empty instance of the
          correct type. The default '$$ = $1' action is NOT applied
          when using variants.  */
-        switch (yyr1_[yyn])
+      switch (yyr1_[yyn])
     {
-      case 68: // VERTEXPROGRAM
-      case 69: // FRAGMENTPROGRAM
-      case 70: // GEOMETRYPROGRAM
-      case 71: // HULLPROGRAM
-      case 72: // EVALPROGRAM
-      case 111: // shader_type
-        yylhs.value.build< IShader::Type > ();
+      case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
+      case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
+      case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
+      case symbol_kind::S_HULLPROGRAM: // HULLPROGRAM
+      case symbol_kind::S_EVALPROGRAM: // EVALPROGRAM
+      case symbol_kind::S_shader_type: // shader_type
+        yylhs.value.emplace< IShader::Type > ();
         break;
 
-      case 10: // LANG_ID
-      case 110: // lang
-        yylhs.value.build< ShaderLangId > ();
+      case symbol_kind::S_LANG_ID: // LANG_ID
+      case symbol_kind::S_lang: // lang
+        yylhs.value.emplace< ShaderLangId > ();
         break;
 
-      case 4: // TRUE
-      case 5: // FALSE
-      case 8: // BOOL
-        yylhs.value.build< bool > ();
+      case symbol_kind::S_TRUE: // TRUE
+      case symbol_kind::S_FALSE: // FALSE
+      case symbol_kind::S_BOOL: // BOOL
+        yylhs.value.emplace< bool > ();
         break;
 
-      case 6: // FLOAT
-        yylhs.value.build< float > ();
+      case symbol_kind::S_FLOAT: // FLOAT
+        yylhs.value.emplace< float > ();
         break;
 
-      case 7: // INT
-        yylhs.value.build< int > ();
+      case symbol_kind::S_INT: // INT
+        yylhs.value.emplace< int > ();
         break;
 
-      case 118: // base_type
-        yylhs.value.build< nvFX::IUniform::Type > ();
+      case symbol_kind::S_base_type: // base_type
+        yylhs.value.emplace< nvFX::IUniform::Type > ();
         break;
 
-      case 3: // IDENTIFIER
-      case 9: // STR
-      case 23: // CODEBODY
-      case 24: // VARNAME
-      case 112: // shader_assignment
-      case 117: // var_decl
-      case 119: // semantic
-      case 131: // glsl_header
-      case 132: // hlsl_header
-      case 134: // shader_header
-        yylhs.value.build< std::string > ();
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_VARNAME: // VARNAME
+      case symbol_kind::S_shader_assignment: // shader_assignment
+      case symbol_kind::S_var_decl: // var_decl
+      case symbol_kind::S_semantic: // semantic
+      case symbol_kind::S_glsl_header: // glsl_header
+      case symbol_kind::S_hlsl_header: // hlsl_header
+      case symbol_kind::S_shader_header: // shader_header
+        yylhs.value.emplace< std::string > ();
         break;
 
       default:
@@ -663,201 +770,204 @@ namespace yy {
     }
 
 
-      // Compute the default @$.
+      // Default location.
       {
-        slice<stack_symbol_type, stack_type> slice (yystack_, yylen);
-        YYLLOC_DEFAULT (yylhs.location, slice, yylen);
+        stack_type::slice range (yystack_, yylen);
+        YYLLOC_DEFAULT (yylhs.location, range, yylen);
+        yyerror_range[1].location = yylhs.location;
       }
 
       // Perform the reduction.
       YY_REDUCE_PRINT (yyn);
+#if YY_EXCEPTIONS
       try
+#endif // YY_EXCEPTIONS
         {
           switch (yyn)
             {
-  case 2:
-#line 281 "Parser.yy" // lalr1.cc:859
-    { gEnv->pLog->LogWarning("Empty effect"); }
-#line 682 "Parser.cpp" // lalr1.cc:859
+  case 2: // input: %empty
+#line 285 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+              { gEnv->pLog->LogWarning("Empty effect"); }
+#line 792 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 20:
-#line 302 "Parser.yy" // lalr1.cc:859
-    { 
+  case 20: // lang: LANGUAGE LANG_ID
+#line 306 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                       { 
     lex_pop_state();
-    if (!driver.currentEffect->SetLang(yystack_[0].value.as< ShaderLangId > ())) 
+    if (!driver.currentEffect->SetLang(yystack_[0].value.as < ShaderLangId > ())) 
     {
         { error(yystack_[1].location, "Error, shader language already setted\n");}
     }
 }
-#line 694 "Parser.cpp" // lalr1.cc:859
+#line 804 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 21:
-#line 311 "Parser.yy" // lalr1.cc:859
-    {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 700 "Parser.cpp" // lalr1.cc:859
+  case 21: // shader_type: VERTEXPROGRAM
+#line 315 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                {yylhs.value.as < IShader::Type > () = yystack_[0].value.as < IShader::Type > ();}
+#line 810 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 22:
-#line 312 "Parser.yy" // lalr1.cc:859
-    {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 706 "Parser.cpp" // lalr1.cc:859
+  case 22: // shader_type: GEOMETRYPROGRAM
+#line 316 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                  {yylhs.value.as < IShader::Type > () = yystack_[0].value.as < IShader::Type > ();}
+#line 816 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 23:
-#line 313 "Parser.yy" // lalr1.cc:859
-    {yylhs.value.as< IShader::Type > () = yystack_[0].value.as< IShader::Type > ();}
-#line 712 "Parser.cpp" // lalr1.cc:859
+  case 23: // shader_type: FRAGMENTPROGRAM
+#line 317 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                  {yylhs.value.as < IShader::Type > () = yystack_[0].value.as < IShader::Type > ();}
+#line 822 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 24:
-#line 316 "Parser.yy" // lalr1.cc:859
-    {
+  case 24: // shader_assignment: shader_type '=' IDENTIFIER
+#line 320 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                              {
     //$$ = std::make_pair($1, $3);
-	driver.currentEffect->shader_assignment(yystack_[2].value.as< IShader::Type > (),yystack_[0].value.as< std::string > ());
+	driver.currentEffect->shader_assignment(yystack_[2].value.as < IShader::Type > (),yystack_[0].value.as < std::string > ());
 }
-#line 721 "Parser.cpp" // lalr1.cc:859
+#line 831 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 27:
-#line 324 "Parser.yy" // lalr1.cc:859
-    { error(yystack_[1].location, "Error in shader_assignment list\n");}
-#line 727 "Parser.cpp" // lalr1.cc:859
+  case 27: // shader_assignments: shader_assignments error
+#line 328 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                           { error(yystack_[1].location, "Error in shader_assignment list\n");}
+#line 837 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 28:
-#line 331 "Parser.yy" // lalr1.cc:859
-    { CryLog("Hi"); }
-#line 733 "Parser.cpp" // lalr1.cc:859
+  case 28: // passstates: %empty
+#line 335 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                   { CryLog("Hi"); }
+#line 843 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 31:
-#line 336 "Parser.yy" // lalr1.cc:859
-    {
+  case 31: // input_layout: INPUTLAYOUT '{' var_decls '}'
+#line 340 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                             {
     { CryLog("slkfjlkj123123123123"); }
     lex_pop_state();
 }
-#line 742 "Parser.cpp" // lalr1.cc:859
+#line 852 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 34:
-#line 342 "Parser.yy" // lalr1.cc:859
-    {
+  case 34: // var_decl: base_type IDENTIFIER semantic
+#line 346 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                        {
     //$$ = "layout(location = " + location_from_semantic($3) + ") in " + nvFX::toString($1) + " " + $2 + ";";
-    yylhs.value.as< std::string > () = "";
-    driver.currentEffect->m_Techniques.back().Passes.back().InputLayout.push_back(yylhs.value.as< std::string > ());
+    yylhs.value.as < std::string > () = "";
+    driver.currentEffect->m_Techniques.back().Passes.back().InputLayout.push_back(yylhs.value.as < std::string > ());
 }
-#line 752 "Parser.cpp" // lalr1.cc:859
+#line 862 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 35:
-#line 350 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TFloat; }
-#line 758 "Parser.cpp" // lalr1.cc:859
+  case 35: // base_type: FLOAT_TYPE
+#line 354 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+              { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TFloat; }
+#line 868 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 36:
-#line 351 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec2; }
-#line 764 "Parser.cpp" // lalr1.cc:859
+  case 36: // base_type: FLOAT2_TYPE
+#line 355 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+               { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TVec2; }
+#line 874 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 37:
-#line 352 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec3; }
-#line 770 "Parser.cpp" // lalr1.cc:859
+  case 37: // base_type: FLOAT3_TYPE
+#line 356 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+               { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TVec3; }
+#line 880 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 38:
-#line 353 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TVec4; }
-#line 776 "Parser.cpp" // lalr1.cc:859
+  case 38: // base_type: FLOAT4_TYPE
+#line 357 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+               { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TVec4; }
+#line 886 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 39:
-#line 354 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt; }
-#line 782 "Parser.cpp" // lalr1.cc:859
+  case 39: // base_type: INT_TYPE
+#line 358 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+               { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TInt; }
+#line 892 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 40:
-#line 355 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt2; }
-#line 788 "Parser.cpp" // lalr1.cc:859
+  case 40: // base_type: INT2_TYPE
+#line 359 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TInt2; }
+#line 898 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 41:
-#line 356 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt3; }
-#line 794 "Parser.cpp" // lalr1.cc:859
+  case 41: // base_type: INT3_TYPE
+#line 360 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TInt3; }
+#line 904 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 42:
-#line 357 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TInt4; }
-#line 800 "Parser.cpp" // lalr1.cc:859
+  case 42: // base_type: INT4_TYPE
+#line 361 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TInt4; }
+#line 910 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 43:
-#line 358 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool; }
-#line 806 "Parser.cpp" // lalr1.cc:859
+  case 43: // base_type: BOOL_TYPE
+#line 362 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TBool; }
+#line 916 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 44:
-#line 359 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool2; }
-#line 812 "Parser.cpp" // lalr1.cc:859
+  case 44: // base_type: BOOL2_TYPE
+#line 363 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+              { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TBool2; }
+#line 922 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 45:
-#line 360 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool3; }
-#line 818 "Parser.cpp" // lalr1.cc:859
+  case 45: // base_type: BOOL3_TYPE
+#line 364 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+              { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TBool3; }
+#line 928 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 46:
-#line 361 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TBool4; }
-#line 824 "Parser.cpp" // lalr1.cc:859
+  case 46: // base_type: BOOL4_TYPE
+#line 365 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+              { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TBool4; }
+#line 934 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 47:
-#line 362 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat2; }
-#line 830 "Parser.cpp" // lalr1.cc:859
+  case 47: // base_type: MAT2_TYPE
+#line 366 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TMat2; }
+#line 940 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 48:
-#line 363 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat3; }
-#line 836 "Parser.cpp" // lalr1.cc:859
+  case 48: // base_type: MAT3_TYPE
+#line 367 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TMat3; }
+#line 946 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 49:
-#line 364 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< nvFX::IUniform::Type > () = nvFX::IUniform::TMat4; }
-#line 842 "Parser.cpp" // lalr1.cc:859
+  case 49: // base_type: MAT4_TYPE
+#line 368 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { yylhs.value.as < nvFX::IUniform::Type > () = nvFX::IUniform::TMat4; }
+#line 952 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 51:
-#line 370 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); }
-#line 848 "Parser.cpp" // lalr1.cc:859
+  case 51: // semantic: ':' IDENTIFIER
+#line 374 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                 { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
+#line 958 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 52:
-#line 376 "Parser.yy" // lalr1.cc:859
-    { 
+  case 52: // $@1: %empty
+#line 380 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+     { 
     CryLog("Creation of PASS");
     }
-#line 856 "Parser.cpp" // lalr1.cc:859
+#line 966 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 53:
-#line 379 "Parser.yy" // lalr1.cc:859
-    {
+  case 53: // pass: PASS $@1 annotations '{' passstates '}'
+#line 383 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                  {
   /*
     LOGI("Pass with no name...\n");
     curAnnotations = NULL;
@@ -868,14 +978,14 @@ namespace yy {
 */
     lex_pop_state();
 }
-#line 872 "Parser.cpp" // lalr1.cc:859
+#line 982 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 54:
-#line 390 "Parser.yy" // lalr1.cc:859
-    {
+  case 54: // $@2: %empty
+#line 394 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                  {
     SPass pass;
-    pass.Name = yystack_[0].value.as< std::string > ().c_str();
+    pass.Name = yystack_[0].value.as < std::string > ().c_str();
     pass.Code = Code;
     driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
@@ -885,12 +995,12 @@ namespace yy {
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
-#line 889 "Parser.cpp" // lalr1.cc:859
+#line 999 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 55:
-#line 402 "Parser.yy" // lalr1.cc:859
-    {
+  case 55: // pass: PASS IDENTIFIER $@2 annotations '{' passstates '}'
+#line 406 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                  {
     //LOGD("Pass %s...\n", $2->c_str() );
     //delete $2;
     //curAnnotations = NULL;
@@ -900,57 +1010,57 @@ namespace yy {
     //curPRState = NULL;
     lex_pop_state();
 }
-#line 904 "Parser.cpp" // lalr1.cc:859
+#line 1014 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 56:
-#line 412 "Parser.yy" // lalr1.cc:859
-    { error(yystack_[1].location, "Error in Pass declaration\n");}
-#line 910 "Parser.cpp" // lalr1.cc:859
+  case 56: // pass: pass error
+#line 416 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+             { error(yystack_[1].location, "Error in Pass declaration\n");}
+#line 1020 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 59:
-#line 419 "Parser.yy" // lalr1.cc:859
-    { error(yystack_[1].location, "Error in Pass list\n");}
-#line 916 "Parser.cpp" // lalr1.cc:859
+  case 59: // passes: passes error
+#line 423 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+               { error(yystack_[1].location, "Error in Pass list\n");}
+#line 1026 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 60:
-#line 425 "Parser.yy" // lalr1.cc:859
-    {
+  case 60: // $@3: %empty
+#line 429 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+          {
     CryLog("Creation of Technique for NO name\n");
     //curTechnique = curContainer->createTechnique()->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
 }
-#line 926 "Parser.cpp" // lalr1.cc:859
+#line 1036 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 62:
-#line 430 "Parser.yy" // lalr1.cc:859
-    {
+  case 62: // $@4: %empty
+#line 434 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                       {
     CTechnique tech;
-    tech.Name =  yystack_[0].value.as< std::string > ().c_str();
+    tech.Name =  yystack_[0].value.as < std::string > ().c_str();
     driver.currentEffect->m_Techniques.push_back(tech);
     CryLog("creation of Technique %s...\n", tech.Name.data());
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
     //curAnnotations = curTechnique->annotations()->getExInterface();
     //delete $2;
 }
-#line 940 "Parser.cpp" // lalr1.cc:859
+#line 1050 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 63:
-#line 438 "Parser.yy" // lalr1.cc:859
-    { 
+  case 63: // tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes '}'
+#line 442 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                             { 
     lex_pop_state();
     //curAnnotations = NULL;
 }
-#line 949 "Parser.cpp" // lalr1.cc:859
+#line 1059 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 65:
-#line 448 "Parser.yy" // lalr1.cc:859
-    {
+  case 65: // annotation: annotation IDENTIFIER '=' STR ';'
+#line 452 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                    {
 /*
     if(!curAnnotations)
         curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized
@@ -959,117 +1069,121 @@ namespace yy {
     delete $4;
 */
     }
-#line 963 "Parser.cpp" // lalr1.cc:859
+#line 1073 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 66:
-#line 458 "Parser.yy" // lalr1.cc:859
-    {CryLog("Begin annotations"); }
-#line 969 "Parser.cpp" // lalr1.cc:859
+  case 66: // $@5: %empty
+#line 462 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                  {CryLog("Begin annotations"); }
+#line 1079 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 70:
-#line 466 "Parser.yy" // lalr1.cc:859
-    {
-        yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); 
+  case 70: // glsl_header: GLSLSHADER IDENTIFIER
+#line 470 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                              {
+        yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); 
     }
-#line 977 "Parser.cpp" // lalr1.cc:859
+#line 1087 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 71:
-#line 469 "Parser.yy" // lalr1.cc:859
-    {
-        yylhs.value.as< std::string > () = "Common";
+  case 71: // glsl_header: GLSLSHADER
+#line 473 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                     {
+        yylhs.value.as < std::string > () = "Common";
         is_common = true;
     }
-#line 986 "Parser.cpp" // lalr1.cc:859
+#line 1096 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 72:
-#line 476 "Parser.yy" // lalr1.cc:859
-    {
-        yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); 
+  case 72: // hlsl_header: HLSL11SHADER IDENTIFIER
+#line 480 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                {
+        yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); 
     }
-#line 994 "Parser.cpp" // lalr1.cc:859
+#line 1104 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 73:
-#line 479 "Parser.yy" // lalr1.cc:859
-    {
-        yylhs.value.as< std::string > () = "Common";
+  case 73: // hlsl_header: HLSL11SHADER
+#line 483 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                       {
+        yylhs.value.as < std::string > () = "Common";
         is_common = true;
     }
-#line 1003 "Parser.cpp" // lalr1.cc:859
+#line 1113 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 74:
-#line 485 "Parser.yy" // lalr1.cc:859
-    { 
+  case 74: // glsl: shader_header '{' CODEBODY
+#line 489 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                                 { 
 		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
-        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as< std::string > (), yystack_[0].value.as< std::string > ()});
-        if (yystack_[2].value.as< std::string > () == "Common")
+        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{yystack_[2].value.as < std::string > (), yystack_[0].value.as < std::string > ()});
+        if (yystack_[2].value.as < std::string > () == "Common")
         {
             Code.push_back(driver.currentEffect->m_shaders.back().data);
             is_common = false;
         }
-        //CryLog("Current shader[%s] code in file %s:\n%s", yystack_[2].value.as< std::string > ().data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
+        CryLog("Current shader[%s] code in file %s:\n%s", yystack_[2].value.as < std::string > ().data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
 
 	}
-#line 1019 "Parser.cpp" // lalr1.cc:859
+#line 1129 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 75:
-#line 498 "Parser.yy" // lalr1.cc:859
-    {yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();}
-#line 1025 "Parser.cpp" // lalr1.cc:859
+  case 75: // shader_header: glsl_header
+#line 502 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+                           {yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > ();}
+#line 1135 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 76:
-#line 499 "Parser.yy" // lalr1.cc:859
-    { yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > (); }
-#line 1031 "Parser.cpp" // lalr1.cc:859
+  case 76: // shader_header: hlsl_header
+#line 503 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+              { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
+#line 1141 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 77:
-#line 504 "Parser.yy" // lalr1.cc:859
-    {
+  case 77: // vertexformat: VERTEXFORMAT IDENTIFIER '{' IDENTIFIER '=' format ';' '}'
+#line 508 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+{
     gEnv->pLog->Log(
     "$3 New vertex format <%s> with field %s (%s = %d)", 
-    yystack_[6].value.as< std::string > ().data(), yystack_[4].value.as< std::string > ().data(), "vkFormat", 10);
+    yystack_[6].value.as < std::string > ().data(), yystack_[4].value.as < std::string > ().data(), "vkFormat", 10);
 }
-#line 1041 "Parser.cpp" // lalr1.cc:859
+#line 1151 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
-  case 78:
-#line 511 "Parser.yy" // lalr1.cc:859
-    { 
+  case 78: // format: %empty
+#line 515 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+               { 
       //$$ = VkFormat(10); 
       CryLog("format not implemented");
 
       }
-#line 1051 "Parser.cpp" // lalr1.cc:859
+#line 1161 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
     break;
 
 
-#line 1055 "Parser.cpp" // lalr1.cc:859
+#line 1165 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
+
             default:
               break;
             }
         }
+#if YY_EXCEPTIONS
       catch (const syntax_error& yyexc)
         {
+          YYCDEBUG << "Caught exception: " << yyexc.what() << '\n';
           error (yyexc);
           YYERROR;
         }
+#endif // YY_EXCEPTIONS
       YY_SYMBOL_PRINT ("-> $$ =", yylhs);
       yypop_ (yylen);
       yylen = 0;
-      YY_STACK_PRINT ();
 
       // Shift the result of the reduction.
-      yypush_ (YY_NULLPTR, yylhs);
+      yypush_ (YY_NULLPTR, YY_MOVE (yylhs));
     }
     goto yynewstate;
+
 
   /*--------------------------------------.
   | yyerrlab -- here on detecting error.  |
@@ -1079,7 +1193,9 @@ namespace yy {
     if (!yyerrstatus_)
       {
         ++yynerrs_;
-        error (yyla.location, yysyntax_error_ (yystack_[0].state, yyla));
+        context yyctx (*this, yyla);
+        std::string msg = yysyntax_error_ (yyctx);
+        error (yyla.location, YY_MOVE (msg));
       }
 
 
@@ -1090,7 +1206,7 @@ namespace yy {
            error, discard it.  */
 
         // Return failure if at end of input.
-        if (yyla.type_get () == yyeof_)
+        if (yyla.kind () == symbol_kind::S_YYEOF)
           YYABORT;
         else if (!yyla.empty ())
           {
@@ -1107,69 +1223,81 @@ namespace yy {
   | yyerrorlab -- error raised explicitly by YYERROR.  |
   `---------------------------------------------------*/
   yyerrorlab:
-
-    /* Pacify compilers like GCC when the user code never invokes
-       YYERROR and the label yyerrorlab therefore never appears in user
-       code.  */
+    /* Pacify compilers when the user code never invokes YYERROR and
+       the label yyerrorlab therefore never appears in user code.  */
     if (false)
-      goto yyerrorlab;
-    yyerror_range[1].location = yystack_[yylen - 1].location;
+      YYERROR;
+
     /* Do not reclaim the symbols of the rule whose action triggered
        this YYERROR.  */
     yypop_ (yylen);
     yylen = 0;
+    YY_STACK_PRINT ();
     goto yyerrlab1;
+
 
   /*-------------------------------------------------------------.
   | yyerrlab1 -- common code for both syntax error and YYERROR.  |
   `-------------------------------------------------------------*/
   yyerrlab1:
     yyerrstatus_ = 3;   // Each real token shifted decrements this.
+    // Pop stack until we find a state that shifts the error token.
+    for (;;)
+      {
+        yyn = yypact_[+yystack_[0].state];
+        if (!yy_pact_value_is_default_ (yyn))
+          {
+            yyn += symbol_kind::S_YYerror;
+            if (0 <= yyn && yyn <= yylast_
+                && yycheck_[yyn] == symbol_kind::S_YYerror)
+              {
+                yyn = yytable_[yyn];
+                if (0 < yyn)
+                  break;
+              }
+          }
+
+        // Pop the current state because it cannot handle the error token.
+        if (yystack_.size () == 1)
+          YYABORT;
+
+        yyerror_range[1].location = yystack_[0].location;
+        yy_destroy_ ("Error: popping", yystack_[0]);
+        yypop_ ();
+        YY_STACK_PRINT ();
+      }
     {
       stack_symbol_type error_token;
-      for (;;)
-        {
-          yyn = yypact_[yystack_[0].state];
-          if (!yy_pact_value_is_default_ (yyn))
-            {
-              yyn += yyterror_;
-              if (0 <= yyn && yyn <= yylast_ && yycheck_[yyn] == yyterror_)
-                {
-                  yyn = yytable_[yyn];
-                  if (0 < yyn)
-                    break;
-                }
-            }
-
-          // Pop the current state because it cannot handle the error token.
-          if (yystack_.size () == 1)
-            YYABORT;
-
-          yyerror_range[1].location = yystack_[0].location;
-          yy_destroy_ ("Error: popping", yystack_[0]);
-          yypop_ ();
-          YY_STACK_PRINT ();
-        }
 
       yyerror_range[2].location = yyla.location;
       YYLLOC_DEFAULT (error_token.location, yyerror_range, 2);
 
       // Shift the error token.
-      error_token.state = yyn;
-      yypush_ ("Shifting", error_token);
+      error_token.state = state_type (yyn);
+      yypush_ ("Shifting", YY_MOVE (error_token));
     }
     goto yynewstate;
 
-    // Accept.
+
+  /*-------------------------------------.
+  | yyacceptlab -- YYACCEPT comes here.  |
+  `-------------------------------------*/
   yyacceptlab:
     yyresult = 0;
     goto yyreturn;
 
-    // Abort.
+
+  /*-----------------------------------.
+  | yyabortlab -- YYABORT comes here.  |
+  `-----------------------------------*/
   yyabortlab:
     yyresult = 1;
     goto yyreturn;
 
+
+  /*-----------------------------------------------------.
+  | yyreturn -- parsing is finished, return the result.  |
+  `-----------------------------------------------------*/
   yyreturn:
     if (!yyla.empty ())
       yy_destroy_ ("Cleanup: discarding lookahead", yyla);
@@ -1177,6 +1305,7 @@ namespace yy {
     /* Do not reclaim the symbols of the rule whose action triggered
        this YYABORT or YYACCEPT.  */
     yypop_ (yylen);
+    YY_STACK_PRINT ();
     while (1 < yystack_.size ())
       {
         yy_destroy_ ("Cleanup: popping", yystack_[0]);
@@ -1185,12 +1314,12 @@ namespace yy {
 
     return yyresult;
   }
+#if YY_EXCEPTIONS
     catch (...)
       {
-        YYCDEBUG << "Exception caught: cleaning lookahead and stack"
-                 << std::endl;
+        YYCDEBUG << "Exception caught: cleaning lookahead and stack\n";
         // Do not try to display the values of the reclaimed symbols,
-        // as their printer might throw an exception.
+        // as their printers might throw an exception.
         if (!yyla.empty ())
           yy_destroy_ (YY_NULLPTR, yyla);
 
@@ -1201,26 +1330,112 @@ namespace yy {
           }
         throw;
       }
+#endif // YY_EXCEPTIONS
   }
 
   void
   parser::error (const syntax_error& yyexc)
   {
-    error (yyexc.location, yyexc.what());
+    error (yyexc.location, yyexc.what ());
   }
 
-  // Generate an error message.
+  /* Return YYSTR after stripping away unnecessary quotes and
+     backslashes, so that it's suitable for yyerror.  The heuristic is
+     that double-quoting is unnecessary unless the string contains an
+     apostrophe, a comma, or backslash (other than backslash-backslash).
+     YYSTR is taken from yytname.  */
   std::string
-  parser::yysyntax_error_ (state_type yystate, const symbol_type& yyla) const
+  parser::yytnamerr_ (const char *yystr)
   {
-    // Number of reported tokens (one for the "unexpected", one per
-    // "expected").
-    size_t yycount = 0;
-    // Its maximum.
-    enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-    // Arguments of yyformat.
-    char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
+    if (*yystr == '"')
+      {
+        std::string yyr;
+        char const *yyp = yystr;
 
+        for (;;)
+          switch (*++yyp)
+            {
+            case '\'':
+            case ',':
+              goto do_not_strip_quotes;
+
+            case '\\':
+              if (*++yyp != '\\')
+                goto do_not_strip_quotes;
+              else
+                goto append;
+
+            append:
+            default:
+              yyr += *yyp;
+              break;
+
+            case '"':
+              return yyr;
+            }
+      do_not_strip_quotes: ;
+      }
+
+    return yystr;
+  }
+
+  std::string
+  parser::symbol_name (symbol_kind_type yysymbol)
+  {
+    return yytnamerr_ (yytname_[yysymbol]);
+  }
+
+
+
+  // parser::context.
+  parser::context::context (const parser& yyparser, const symbol_type& yyla)
+    : yyparser_ (yyparser)
+    , yyla_ (yyla)
+  {}
+
+  int
+  parser::context::expected_tokens (symbol_kind_type yyarg[], int yyargn) const
+  {
+    // Actual number of expected tokens
+    int yycount = 0;
+
+    const int yyn = yypact_[+yyparser_.yystack_[0].state];
+    if (!yy_pact_value_is_default_ (yyn))
+      {
+        /* Start YYX at -YYN if negative to avoid negative indexes in
+           YYCHECK.  In other words, skip the first -YYN actions for
+           this state because they are default actions.  */
+        const int yyxbegin = yyn < 0 ? -yyn : 0;
+        // Stay within bounds of both yycheck and yytname.
+        const int yychecklim = yylast_ - yyn + 1;
+        const int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+        for (int yyx = yyxbegin; yyx < yyxend; ++yyx)
+          if (yycheck_[yyx + yyn] == yyx && yyx != symbol_kind::S_YYerror
+              && !yy_table_value_is_error_ (yytable_[yyx + yyn]))
+            {
+              if (!yyarg)
+                ++yycount;
+              else if (yycount == yyargn)
+                return 0;
+              else
+                yyarg[yycount++] = YY_CAST (symbol_kind_type, yyx);
+            }
+      }
+
+    if (yyarg && yycount == 0 && 0 < yyargn)
+      yyarg[0] = symbol_kind::S_YYEMPTY;
+    return yycount;
+  }
+
+
+
+
+
+
+  int
+  parser::yy_syntax_error_arguments_ (const context& yyctx,
+                                                 symbol_kind_type yyarg[], int yyargn) const
+  {
     /* There are many possibilities here to consider:
        - If this state is a consistent state with a default action, then
          the only way this function was invoked is if the default action
@@ -1239,41 +1454,32 @@ namespace yy {
        - Of course, the expected token list depends on states to have
          correct lookahead information, and it depends on the parser not
          to perform extra reductions after fetching a lookahead from the
-         scanner and before detecting a syntax error.  Thus, state
-         merging (from LALR or IELR) and default reductions corrupt the
-         expected token list.  However, the list is correct for
-         canonical LR with one exception: it will still contain any
-         token that will not be accepted due to an error action in a
-         later state.
+         scanner and before detecting a syntax error.  Thus, state merging
+         (from LALR or IELR) and default reductions corrupt the expected
+         token list.  However, the list is correct for canonical LR with
+         one exception: it will still contain any token that will not be
+         accepted due to an error action in a later state.
     */
-    if (!yyla.empty ())
+
+    if (!yyctx.lookahead ().empty ())
       {
-        int yytoken = yyla.type_get ();
-        yyarg[yycount++] = yytname_[yytoken];
-        int yyn = yypact_[yystate];
-        if (!yy_pact_value_is_default_ (yyn))
-          {
-            /* Start YYX at -YYN if negative to avoid negative indexes in
-               YYCHECK.  In other words, skip the first -YYN actions for
-               this state because they are default actions.  */
-            int yyxbegin = yyn < 0 ? -yyn : 0;
-            // Stay within bounds of both yycheck and yytname.
-            int yychecklim = yylast_ - yyn + 1;
-            int yyxend = yychecklim < yyntokens_ ? yychecklim : yyntokens_;
-            for (int yyx = yyxbegin; yyx < yyxend; ++yyx)
-              if (yycheck_[yyx + yyn] == yyx && yyx != yyterror_
-                  && !yy_table_value_is_error_ (yytable_[yyx + yyn]))
-                {
-                  if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-                    {
-                      yycount = 1;
-                      break;
-                    }
-                  else
-                    yyarg[yycount++] = yytname_[yyx];
-                }
-          }
+        if (yyarg)
+          yyarg[0] = yyctx.token ();
+        int yyn = yyctx.expected_tokens (yyarg ? yyarg + 1 : yyarg, yyargn - 1);
+        return yyn + 1;
       }
+    return 0;
+  }
+
+  // Generate an error message.
+  std::string
+  parser::yysyntax_error_ (const context& yyctx) const
+  {
+    // Its maximum.
+    enum { YYARGS_MAX = 5 };
+    // Arguments of yyformat.
+    symbol_kind_type yyarg[YYARGS_MAX];
+    int yycount = yy_syntax_error_arguments_ (yyctx, yyarg, YYARGS_MAX);
 
     char const* yyformat = YY_NULLPTR;
     switch (yycount)
@@ -1282,22 +1488,23 @@ namespace yy {
         case N:                               \
           yyformat = S;                       \
         break
-        YYCASE_(0, YY_("syntax error"));
-        YYCASE_(1, YY_("syntax error, unexpected %s"));
-        YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
-        YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
-        YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
-        YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
+      default: // Avoid compiler warnings.
+        YYCASE_ (0, YY_("syntax error"));
+        YYCASE_ (1, YY_("syntax error, unexpected %s"));
+        YYCASE_ (2, YY_("syntax error, unexpected %s, expecting %s"));
+        YYCASE_ (3, YY_("syntax error, unexpected %s, expecting %s or %s"));
+        YYCASE_ (4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
+        YYCASE_ (5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
 #undef YYCASE_
       }
 
     std::string yyres;
     // Argument number.
-    size_t yyi = 0;
+    std::ptrdiff_t yyi = 0;
     for (char const* yyp = yyformat; *yyp; ++yyp)
       if (yyp[0] == '%' && yyp[1] == 's' && yyi < yycount)
         {
-          yyres += yytnamerr_ (yyarg[yyi++]);
+          yyres += symbol_name (yyarg[yyi++]);
           ++yyp;
         }
       else
@@ -1328,7 +1535,7 @@ namespace yy {
      -85,   -85,   -12,    77,   -85,   -85
   };
 
-  const unsigned char
+  const signed char
   parser::yydefact_[] =
   {
        2,     3,     2,     1,     0,    71,    73,    60,     0,    79,
@@ -1359,7 +1566,7 @@ namespace yy {
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,    21,    22,    91,    92,    93,    82,    94,   116,   117,
+       0,    21,    22,    91,    92,    93,    82,    94,   116,   117,
      118,   124,    57,    63,    71,    58,    23,    45,    49,    69,
       54,    60,    55,    24,    25,    26,    27,    28,    73,    29,
       30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
@@ -1447,7 +1654,7 @@ namespace yy {
      148,   148
   };
 
-  const unsigned char
+  const signed char
   parser::yyr2_[] =
   {
        0,     2,     0,     1,     2,     2,     2,     2,     2,     2,
@@ -1463,25 +1670,26 @@ namespace yy {
   };
 
 
-
+#if YYDEBUG || 1
   // YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
-  // First, the terminals, then, starting at \a yyntokens_, nonterminals.
+  // First, the terminals, then, starting at \a YYNTOKENS, nonterminals.
   const char*
   const parser::yytname_[] =
   {
-  "\"end of file\"", "error", "$undefined", "IDENTIFIER", "TRUE", "FALSE",
-  "FLOAT", "INT", "BOOL", "STR", "LANG_ID", "LANGUAGE", "GLSLSHADER",
-  "HLSL10SHADER", "HLSL11SHADER", "CGSHADER", "SAMPLER_STATE", "DST_STATE",
-  "PR_STATE", "COLOR_SAMPLE_STATE", "RASTERIZATION_STATE", "TECHNIQUE",
-  "PASS", "CODEBODY", "VARNAME", "TEXTURERESOURCE", "TEXTURERESOURCE1D",
-  "TEXTURERESOURCE2D", "TEXTURERESOURCE3D", "TEXTURERESOURCERECT",
-  "TEXTURERESOURCECUBE", "INPUTLAYOUT", "VOID_TYPE", "UNSIGNED", "HIGHP",
-  "MEDIUMP", "LOWP", "UNIFORM", "CSTBUFFER", "FLOAT_TYPE", "FLOAT2_TYPE",
-  "FLOAT3_TYPE", "FLOAT4_TYPE", "MAT2_TYPE", "MAT3_TYPE", "MAT4_TYPE",
-  "BOOL_TYPE", "BOOL2_TYPE", "BOOL3_TYPE", "BOOL4_TYPE", "INT_TYPE",
-  "INT2_TYPE", "INT3_TYPE", "INT4_TYPE", "TEXTURE1D_TYPE",
-  "TEXTURE2D_TYPE", "TEXTURE2DSHADOW_TYPE", "TEXTURE2DRECT_TYPE",
-  "TEXTURE3D_TYPE", "TEXTURECUBE_TYPE", "SAMPLER1D_TYPE", "SAMPLER2D_TYPE",
+  "\"end of file\"", "error", "\"invalid token\"", "IDENTIFIER", "TRUE",
+  "FALSE", "FLOAT", "INT", "BOOL", "STR", "LANG_ID", "LANGUAGE",
+  "GLSLSHADER", "HLSL10SHADER", "HLSL11SHADER", "CGSHADER",
+  "SAMPLER_STATE", "DST_STATE", "PR_STATE", "COLOR_SAMPLE_STATE",
+  "RASTERIZATION_STATE", "TECHNIQUE", "PASS", "CODEBODY", "VARNAME",
+  "TEXTURERESOURCE", "TEXTURERESOURCE1D", "TEXTURERESOURCE2D",
+  "TEXTURERESOURCE3D", "TEXTURERESOURCERECT", "TEXTURERESOURCECUBE",
+  "INPUTLAYOUT", "VOID_TYPE", "UNSIGNED", "HIGHP", "MEDIUMP", "LOWP",
+  "UNIFORM", "CSTBUFFER", "FLOAT_TYPE", "FLOAT2_TYPE", "FLOAT3_TYPE",
+  "FLOAT4_TYPE", "MAT2_TYPE", "MAT3_TYPE", "MAT4_TYPE", "BOOL_TYPE",
+  "BOOL2_TYPE", "BOOL3_TYPE", "BOOL4_TYPE", "INT_TYPE", "INT2_TYPE",
+  "INT3_TYPE", "INT4_TYPE", "TEXTURE1D_TYPE", "TEXTURE2D_TYPE",
+  "TEXTURE2DSHADOW_TYPE", "TEXTURE2DRECT_TYPE", "TEXTURE3D_TYPE",
+  "TEXTURECUBE_TYPE", "SAMPLER1D_TYPE", "SAMPLER2D_TYPE",
   "SAMPLER2DSHADOW_TYPE", "SAMPLER2DRECT_TYPE", "SAMPLER3D_TYPE",
   "SAMPLERCUBE_TYPE", "EXTENSION", "SEPARATE_SHADER", "VERTEXPROGRAM",
   "FRAGMENTPROGRAM", "GEOMETRYPROGRAM", "HULLPROGRAM", "EVALPROGRAM",
@@ -1501,45 +1709,45 @@ namespace yy {
   "resource", "fbo", "sstate", "dststate", "prstate", "csstate", "rstate",
   "namespace", "cstbuffer", "uniforms", YY_NULLPTR
   };
+#endif
+
 
 #if YYDEBUG
-  const unsigned short int
+  const short
   parser::yyrline_[] =
   {
-       0,   281,   281,   282,   283,   284,   285,   286,   287,   288,
-     289,   290,   291,   292,   293,   294,   295,   296,   297,   298,
-     302,   311,   312,   313,   316,   322,   323,   324,   331,   332,
-     333,   336,   341,   341,   342,   350,   351,   352,   353,   354,
-     355,   356,   357,   358,   359,   360,   361,   362,   363,   364,
-     369,   370,   376,   376,   390,   390,   412,   417,   418,   419,
-     425,   425,   430,   430,   447,   448,   458,   458,   460,   461,
-     466,   469,   476,   479,   485,   498,   499,   503,   511,   518,
-     519,   520,   521,   522,   523,   524,   525,   526,   527,   528,
-     529,   530
+       0,   285,   285,   286,   287,   288,   289,   290,   291,   292,
+     293,   294,   295,   296,   297,   298,   299,   300,   301,   302,
+     306,   315,   316,   317,   320,   326,   327,   328,   335,   336,
+     337,   340,   345,   345,   346,   354,   355,   356,   357,   358,
+     359,   360,   361,   362,   363,   364,   365,   366,   367,   368,
+     373,   374,   380,   380,   394,   394,   416,   421,   422,   423,
+     429,   429,   434,   434,   451,   452,   462,   462,   464,   465,
+     470,   473,   480,   483,   489,   502,   503,   507,   515,   522,
+     523,   524,   525,   526,   527,   528,   529,   530,   531,   532,
+     533,   534
   };
 
-  // Print the state stack on the debug stream.
   void
-  parser::yystack_print_ ()
+  parser::yy_stack_print_ () const
   {
     *yycdebug_ << "Stack now";
     for (stack_type::const_iterator
            i = yystack_.begin (),
            i_end = yystack_.end ();
          i != i_end; ++i)
-      *yycdebug_ << ' ' << i->state;
-    *yycdebug_ << std::endl;
+      *yycdebug_ << ' ' << int (i->state);
+    *yycdebug_ << '\n';
   }
 
-  // Report on the debug stream that the rule \a yyrule is going to be reduced.
   void
-  parser::yy_reduce_print_ (int yyrule)
+  parser::yy_reduce_print_ (int yyrule) const
   {
-    unsigned int yylno = yyrline_[yyrule];
+    int yylno = yyrline_[yyrule];
     int yynrhs = yyr2_[yyrule];
     // Print the symbols being reduced, and their result.
     *yycdebug_ << "Reducing stack by rule " << yyrule - 1
-               << " (line " << yylno << "):" << std::endl;
+               << " (line " << yylno << "):\n";
     // The symbols being reduced.
     for (int yyi = 0; yyi < yynrhs; yyi++)
       YY_SYMBOL_PRINT ("   $" << yyi + 1 << " =",
@@ -1548,10 +1756,10 @@ namespace yy {
 #endif // YYDEBUG
 
 
-
 } // yy
-#line 1554 "Parser.cpp" // lalr1.cc:1167
-#line 533 "Parser.yy" // lalr1.cc:1168
+#line 1761 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.cpp"
+
+#line 537 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
 
 
 #include <sstream>
