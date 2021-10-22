@@ -158,7 +158,7 @@
 %type  <IShader::Type>  shader_type
 
 //%type  <std::string>    semantic
-//%type  <nvFX::IUniform::Type>           base_type
+%type  <nvFX::IUniform::Type>           base_type
 
 %token <std::string>    IDENTIFIER
 %token <bool>           TRUE
@@ -257,6 +257,7 @@ input: %empty { CryLog("Empty effect"); }
 | input ';'
 | input tech
 | input hlsl
+| input var_decl
 | input error
 ;
 
@@ -284,7 +285,6 @@ shader_assignment
 passstates: '{' shader_assignments '}'
 ;
 
-/*
 base_type: 
    FLOAT_TYPE { $$ = nvFX::IUniform::TFloat; }
 |  FLOAT2_TYPE { $$ = nvFX::IUniform::TVec2; }
@@ -303,7 +303,12 @@ base_type:
 |  MAT4_TYPE { $$ = nvFX::IUniform::TMat4; }
 
 ;
-*/
+
+var_decl: 
+base_type IDENTIFIER
+| base_type IDENTIFIER annotations '=' INT
+| base_type IDENTIFIER annotations '=' FLOAT
+;
 
 
 /*
@@ -393,8 +398,11 @@ scalar_type: INT_TYPE | FLOAT_TYPE | UNSIGNED | STRING_TYPE;
 // most likely it is: https://www.gnu.org/software/bison/manual/html_node/Named-References.html
 annotation_list: annotation_list[previous] annotation
 | annotation;
-annotation: scalar_type IDENTIFIER '=' STR ';' {
-    CryLog("annotation: %s = %s", $IDENTIFIER.c_str(), $STR.c_str());
+
+annotation_value: FLOAT | INT | STR | UNSIGNED;
+
+annotation: scalar_type IDENTIFIER '=' annotation_value ';' {
+    CryLog("annotation: %s = ", $IDENTIFIER.c_str());
 /*
     if(!curAnnotations)
         curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized

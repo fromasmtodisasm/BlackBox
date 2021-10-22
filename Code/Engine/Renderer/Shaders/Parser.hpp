@@ -514,13 +514,16 @@ namespace yy {
       // INT
       char dummy4[sizeof (int)];
 
+      // base_type
+      char dummy5[sizeof (nvFX::IUniform::Type)];
+
       // IDENTIFIER
       // STR
       // CODEBODY
       // shader_assignment
       // hlsl_header
       // shader_header
-      char dummy5[sizeof (std::string)];
+      char dummy6[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -744,20 +747,23 @@ namespace yy {
         S_shader_assignment = 81,                // shader_assignment
         S_shader_assignments = 82,               // shader_assignments
         S_passstates = 83,                       // passstates
-        S_pass = 84,                             // pass
-        S_85_1 = 85,                             // $@1
-        S_86_2 = 86,                             // $@2
-        S_passes = 87,                           // passes
-        S_tech = 88,                             // tech
-        S_89_3 = 89,                             // $@3
-        S_90_4 = 90,                             // $@4
-        S_scalar_type = 91,                      // scalar_type
-        S_annotation_list = 92,                  // annotation_list
-        S_annotation = 93,                       // annotation
-        S_annotations = 94,                      // annotations
-        S_hlsl_header = 95,                      // hlsl_header
-        S_hlsl = 96,                             // hlsl
-        S_shader_header = 97                     // shader_header
+        S_base_type = 84,                        // base_type
+        S_var_decl = 85,                         // var_decl
+        S_pass = 86,                             // pass
+        S_87_1 = 87,                             // $@1
+        S_88_2 = 88,                             // $@2
+        S_passes = 89,                           // passes
+        S_tech = 90,                             // tech
+        S_91_3 = 91,                             // $@3
+        S_92_4 = 92,                             // $@4
+        S_scalar_type = 93,                      // scalar_type
+        S_annotation_list = 94,                  // annotation_list
+        S_annotation_value = 95,                 // annotation_value
+        S_annotation = 96,                       // annotation
+        S_annotations = 97,                      // annotations
+        S_hlsl_header = 98,                      // hlsl_header
+        S_hlsl = 99,                             // hlsl
+        S_shader_header = 100                    // shader_header
       };
     };
 
@@ -815,6 +821,10 @@ namespace yy {
 
       case symbol_kind::S_INT: // INT
         value.move< int > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_base_type: // base_type
+        value.move< nvFX::IUniform::Type > (std::move (that.value));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
@@ -906,6 +916,20 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, nvFX::IUniform::Type&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const nvFX::IUniform::Type& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -964,6 +988,10 @@ switch (yykind)
 
       case symbol_kind::S_INT: // INT
         value.template destroy< int > ();
+        break;
+
+      case symbol_kind::S_base_type: // base_type
+        value.template destroy< nvFX::IUniform::Type > ();
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
@@ -2606,8 +2634,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 76,     ///< Last index in yytable_.
-      yynnts_ = 20,  ///< Number of nonterminal symbols.
+      yylast_ = 104,     ///< Last index in yytable_.
+      yynnts_ = 23,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2705,6 +2733,10 @@ switch (yykind)
         value.copy< int > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_base_type: // base_type
+        value.copy< nvFX::IUniform::Type > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
@@ -2766,6 +2798,10 @@ switch (yykind)
 
       case symbol_kind::S_INT: // INT
         value.move< int > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_base_type: // base_type
+        value.move< nvFX::IUniform::Type > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
@@ -2843,7 +2879,7 @@ switch (yykind)
 
 
 } // yy
-#line 2847 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 2883 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 

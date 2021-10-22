@@ -1,5 +1,6 @@
 #include "hlsl_common.fx"
 
+float test<int annotation = 1;> = 1;
 Shader
 {
     Texture2D text : register(t0);
