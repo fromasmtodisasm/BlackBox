@@ -1,6 +1,6 @@
-Language HLSL
 #include "hlsl_common.fx"
-HLSLShader 
+
+Shader 
 {
     #define TM_UNREAL
     // Unreal 3, Documentation: "Color Grading"

@@ -4,7 +4,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
-HLSLShader
+Shader
 {
 	//--------------------------------------------------------------------------------------
 	// Constant Buffer Variables

@@ -1,8 +1,6 @@
-Language HLSL
-
 #include "hlsl_common.fx"
 
-HLSLShader
+Shader
 {
     struct VsOutput
     {

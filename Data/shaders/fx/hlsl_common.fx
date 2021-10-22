@@ -1,4 +1,4 @@
-HLSLShader
+Shader
 {
 	cbuffer perFrameCB : register(b0)
 	{

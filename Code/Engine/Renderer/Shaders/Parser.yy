@@ -1,7 +1,7 @@
 %skeleton "lalr1.cc"
 %require "3.0"
 
-%expect  43 //!!! разобраться!!!
+%expect  41 //!!! разобраться!!!
 
 %defines
 %define api.token.constructor
@@ -150,7 +150,6 @@
     END 0 "end of file"
 ;
 
-%type  <ShaderLangId>    lang
 %type  <std::string>    glsl_header
 %type  <std::string>    hlsl_header
 %type  <std::string>    shader_header
@@ -170,8 +169,6 @@
 %token <bool>           BOOL
 %token <std::string>    STR
 
-%token <ShaderLangId> LANG_ID  
-%token              LANGUAGE  
 %token              GLSLSHADER /*GLSL shader domain*/
 %token              HLSL10SHADER /*HLSL10 shader domain*/
 %token              HLSL11SHADER /*HLSL11 shader domain*/
@@ -284,7 +281,6 @@ TODO: New resource types (from D3D)
 
 input: %empty { gEnv->pLog->LogWarning("Empty effect"); }
 | ';'
-| input lang
 | input tech
 | input glsl
 | input hlsl
@@ -302,14 +298,6 @@ input: %empty { gEnv->pLog->LogWarning("Empty effect"); }
 | input vertexformat
 //| input error
 ;
-
-lang: LANGUAGE LANG_ID { 
-    lex_pop_state();
-    if (!driver.currentEffect->SetLang($2)) 
-    {
-        { error(@1, "Error, shader language already setted\n");}
-    }
-};
 
 shader_type 
 : VERTEXPROGRAM {$$ = $1;}
@@ -378,7 +366,7 @@ semantic: %empty
 */
 pass:
 PASS { 
-    CryLog("Creation of PASS");
+    CryLog("Creating PASS");
     }
   annotations '{' passstates '}'  {
   /*
@@ -399,7 +387,7 @@ PASS {
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
 
-    CryLog("Creation of PASS %s\n", pass.Name.data());
+    CryLog("Creating PASS %s\n", pass.Name.data());
     //curPass = curTechnique->addPass($2->c_str())->getExInterface();
     //curAnnotations = curPass->annotations()->getExInterface();
     }
@@ -494,7 +482,8 @@ glsl: shader_header '{' CODEBODY {
             Code.push_back(driver.currentEffect->m_shaders.back().data);
             is_common = false;
         }
-        CryLog("Current shader[%s] code in file %s:\n%s", $1.data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
+        if (gEnv->pConsole->GetCVar("dump_shaders_on_load")->GetIVal())
+            CryLog("Current shader[%s] code in file %s:\n%s", $1.data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
 
 	}
 ;

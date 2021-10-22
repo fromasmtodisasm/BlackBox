@@ -55,7 +55,7 @@ int   [0-9]+
 blank [ \t\r]
 
 %option stack
-%x fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout lang
+%x fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout 
 
 %{
   // Code run each time a pattern is matched.
@@ -72,27 +72,10 @@ blank [ \t\r]
 
 %}
 
-Language {
-    yy_push_state(lang);
-	return yy::parser::make_LANGUAGE(loc);
-}
-<lang>{
-    HLSL return yy::parser::make_LANG_ID(ShaderLangId::Hlsl, loc); 
-    GLSL return yy::parser::make_LANG_ID(ShaderLangId::Glsl, loc); 
-}
-
-GLSLShader {
-    //comment_caller  =  INITIAL;
-    bracket_level = 0;
-    yy_push_state(shader);
-	return yy::parser::make_GLSLSHADER(loc);
-}
-HLSLShader {
-    //comment_caller  =  INITIAL;
+Shader {
     bracket_level = 0;
     yy_push_state(shader);
 	return yy::parser::make_HLSL11SHADER(loc);
-	//return yy::parser::make_GLSLSHADER(loc);
 }
 [Tt]echnique {
     yy_push_state(technique);
