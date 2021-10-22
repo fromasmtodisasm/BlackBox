@@ -267,7 +267,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		return false;
 	}
 
-	if (FT_New_Face(ft, (std::string("res/fonts/") + font).c_str(), 0, &face))
+	if (FT_New_Face(ft, (std::string("Data/fonts/") + font).c_str(), 0, &face))
 	{
 		CryError("ERROR::FREETYPE: Failed to load font");
 		return false;

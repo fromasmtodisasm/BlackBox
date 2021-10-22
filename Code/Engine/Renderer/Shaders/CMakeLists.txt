@@ -17,7 +17,7 @@ add_sources(
 	"ScannerHelpers.cpp")
 end_sources()
 
-enginemodule(FxParser FORCE_SHARED_WIN PCH "../pch.hpp" SOLUTION_FOLDER "Engine")
+enginemodule(FxParser FORCE_SHARED_WIN PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
 
 # ===============> bison
 find_package(BISON)
@@ -29,7 +29,7 @@ macro(cygwin_bison INPUT OUTPUT)
 	set(INTPUT_NAME ${INTPUT})
 	add_custom_command(
 		OUTPUT ${OUTPUT}
-		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c " cd ${CMAKE_CURRENT_SOURCE_DIR} && bison `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "bison  -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
 		DEPENDS ${INPUT})
 endmacro()
 
@@ -38,7 +38,7 @@ macro(cygwin_flex INPUT OUTPUT)
 	set(INTPUT_NAME ${INTPUT})
 	add_custom_command(
 		OUTPUT ${OUTPUT}
-		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "cd ${CMAKE_CURRENT_SOURCE_DIR} && flex `cygpath -u ${INPUT}` -o `cygpath -u ${OUTPUT}`"
+		COMMAND ${CYGWIN_INSTALL_PATH}/bin/bash --login -c "flex  -o `cygpath -u ${OUTPUT}` `cygpath -u ${INPUT}`"
 		DEPENDS ${INPUT})
 endmacro()
 
@@ -73,7 +73,6 @@ macro(setup_flex_target)
 		flex_target(ShaderScanner ${CMAKE_CURRENT_SOURCE_DIR}/Scanner.ll
 								${CMAKE_CURRENT_SOURCE_DIR}/Scanner.cpp)
 	elseif(CYGWIN_INSTALL_PATH)
-		message(STATUS "CYGWIN_INSTALL_PATH: ${CYGWIN_INSTALL_PATH}")
 		cygwin_flex_target(ShaderScanner ${CMAKE_CURRENT_SOURCE_DIR}/Scanner.ll
 								${CMAKE_CURRENT_SOURCE_DIR}/Scanner.cpp)
 	endif()

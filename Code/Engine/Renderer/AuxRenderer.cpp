@@ -96,7 +96,7 @@ HRESULT InitCube()
 
 #ifndef VK_RENDERER
 	ID3D10Blob* pErrors;
-	auto hr = D3DX10CreateEffectFromFile("res/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
+	auto hr = D3DX10CreateEffectFromFile("Data/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
 	if (FAILED(hr))
 	{
 		CryFatalError("D3DFX: %s", pErrors->GetBufferPointer());
