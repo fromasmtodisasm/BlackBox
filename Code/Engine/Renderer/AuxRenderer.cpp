@@ -9,17 +9,16 @@
 #define V_RETURN(cond) \
 	if (!(cond)) return;
 
-ID3D10Device* GetDevice();
+ID3D10Device*			 GetDevice();
 ID3D10DepthStencilState* CRenderAuxGeom::m_pDSState;
 ID3D10RasterizerState*	 g_pRasterizerState{};
-ID3D10BlendState* m_pBlendState;
+ID3D10BlendState*		 m_pBlendState;
 
-//auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
+// auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_N_T2F;
 
 void CreateBlendState()
 {
-
 	D3D10_BLEND_DESC BlendState;
 	ZeroMemory(&BlendState, sizeof(D3D10_BLEND_DESC));
 
@@ -96,7 +95,7 @@ HRESULT InitCube()
 
 #ifndef VK_RENDERER
 	ID3D10Blob* pErrors;
-	auto hr = D3DX10CreateEffectFromFile("Data/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
+	auto		hr = D3DX10CreateEffectFromFile("Data/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
 	if (FAILED(hr))
 	{
 		CryFatalError("D3DFX: %s", pErrors->GetBufferPointer());
@@ -117,21 +116,20 @@ HRESULT InitCube()
 	g_pProjectionVariable = g_pEffect->GetVariableByName("Projection")->AsMatrix();
 #	endif
 
-	#if 0
+#	if 0
 	// Define the input layout
 	D3D10_INPUT_ELEMENT_DESC layout[] =
 		{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
 			{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		};
-	#endif
+#	endif
 
-	//VERTEX_FORMAT_P3F_C4B_T2F
+	// VERTEX_FORMAT_P3F_C4B_T2F
 	D3D10_INPUT_ELEMENT_DESC layout[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0}
-	};
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0}};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
 	// Create the input layout
@@ -142,7 +140,7 @@ HRESULT InitCube()
 	if (FAILED(hr))
 		return hr;
 #endif
-    // Set up rasterizer
+	// Set up rasterizer
 	D3D10_RASTERIZER_DESC rasterizerDesc;
 	rasterizerDesc.CullMode				 = D3D10_CULL_NONE;
 	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
@@ -173,24 +171,24 @@ void DrawCube(const SDrawElement& DrawElement)
 	//
 	// Animate the cube
 	//
-	D3DXMatrixRotationY(&g_World, t);
-	//g_World = glm::rotate(glm::mat4(1), t, glm::vec3(0, 1, 0));
+	// D3DXMatrixRotationY(&DrawElement.transform, t);
+	// g_World = glm::rotate(glm::mat4(1), t, glm::vec3(0, 1, 0));
 
 	//
 	// Update variables
 	//
-	//D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
-	//g_MVP = g_World * g_View * g_Projection;
-	//g_MVP = g_Projection * g_View * g_World;
+	// D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
+	// g_MVP = g_World * g_View * g_Projection;
+	// g_MVP = g_Projection * g_View * g_World;
 	auto m_Camera = gEnv->pSystem->GetViewCamera();
-	g_MVP		  = m_Camera.getProjectionMatrix() * m_Camera.GetViewMatrix() * g_World;
+	g_MVP		  = m_Camera.getProjectionMatrix() * m_Camera.GetViewMatrix() * DrawElement.transform;
 	g_View		  = m_Camera.GetViewMatrix();
 	g_Projection  = m_Camera.getProjectionMatrix();
 #	if 1
-//ng_pMVP->SetMatrix( ( float* )&g_MVP );
-//g_pWorldVariable->SetMatrix( ( float* )&g_World );
-//g_pViewVariable->SetMatrix( ( float* )&g_View );
-//g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
+// ng_pMVP->SetMatrix( ( float* )&g_MVP );
+// g_pWorldVariable->SetMatrix( ( float* )&g_World );
+// g_pViewVariable->SetMatrix( ( float* )&g_View );
+// g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
 #	endif
 	ID3D10Buffer* pEveryFrameBuffer;
 	g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);
@@ -200,15 +198,15 @@ void DrawCube(const SDrawElement& DrawElement)
 	cb.View		  = g_View;
 	cb.Projection = g_Projection;
 #	else
-	//D3DXMatrixTranspose(&cb.World, &g_World);
+	// D3DXMatrixTranspose(&cb.World, &g_World);
 	D3DXMatrixTranspose(&cb.View, &g_View);
 	D3DXMatrixTranspose(&cb.Projection, &g_Projection);
 #	endif
-	//cb.MVP		  = g_MVP;
+	// cb.MVP		  = g_MVP;
 	D3DXMatrixTranspose(&cb.MVP, &g_MVP);
 	//::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, 192, 0);
 
-	//g_pConstantBuffer->SetRawValue();
+	// g_pConstantBuffer->SetRawValue();
 
 	// Set vertex buffer
 	UINT stride = sizeof(SimpleVertex);
@@ -229,18 +227,18 @@ void DrawCube(const SDrawElement& DrawElement)
 		::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		::GetDevice()->IASetInputLayout(g_pVertexLayout);
 
-		#if 0
+#	if 0
 		::GetDevice()->PSSetShaderResources(0, 1, &GlobalResources::GreyTextureRV);
-		#else
+#	else
 		//::GetDevice()->PSSetShaderResources(0, 1, gEnv->pRenderer->EF_GetTextureByID(DrawElement.m_DiffuseMap));
 		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
-		#endif
+#	endif
 		::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
 		::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
 		GetDevice()->RSSetState(g_pRasterizerState);
 		GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
-		//GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
-		gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0,0, (CMatInfo*)-1);
+		// GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
+		gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
 	}
 #endif
 }
@@ -350,7 +348,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	}
 #endif
 	///////////////////////////////////////////////////////////////////////////////
-	//int cnt		  = sizeof vertices / sizeof BB_VERTEX;
+	// int cnt		  = sizeof vertices / sizeof BB_VERTEX;
 	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), BB_VERTEX_FORMAT, "BoundingBox", false);
 	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
 
@@ -364,7 +362,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 		gEnv->pLog->Log("Error of loading auxgeom shader");
 	}
 
-	//m_aabbBufferPtr = SAABBBuffer::Create(10);
+	// m_aabbBufferPtr = SAABBBuffer::Create(10);
 
 	REGISTER_CVAR(dbg_mode, 3, 0, "");
 	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");
@@ -382,11 +380,10 @@ CRenderAuxGeom::CRenderAuxGeom()
 	// Initialize the projection matrix
 	D3DXMatrixPerspectiveFovLH(&g_Projection, (float)D3DX_PI * 0.5f, gEnv->pRenderer->GetWidth() / (FLOAT)gEnv->pRenderer->GetHeight(), 0.1f, 100.0f);
 
-
 	D3D10_DEPTH_STENCIL_DESC desc;
-	//desc.BackFace
-	desc.DepthEnable = true;
-	desc.StencilEnable = false;
+	// desc.BackFace
+	desc.DepthEnable	= true;
+	desc.StencilEnable	= false;
 	desc.DepthWriteMask = D3D10_DEPTH_WRITE_MASK_ZERO;
 
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
@@ -405,7 +402,7 @@ struct AABBInstanceData
 
 bool first_draw = true;
 
-//TODO: Довести до ума, нужно учитывать трансформации объекта
+// TODO: Довести до ума, нужно учитывать трансформации объекта
 void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col)
 {
 	// #unreferenced
@@ -427,7 +424,7 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 
 	std::array<BB_VERTEX, 36> verts = {
 
-		#if 0
+#if 0
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
@@ -469,77 +466,70 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		#else
+#else
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
 		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		#endif
-
-
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+#endif
 
 	};
 	m_BBVerts.emplace_back(verts);
 }
 void CRenderAuxGeom::DrawAABBs()
 {
-	//V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
-	//m_BoundingBoxShader->Bind();
+	// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
+	// m_BoundingBoxShader->Bind();
 	if (m_BBVerts.size())
 	{
 		gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
 		auto size	  = m_BBVerts.size() * 36;
 		m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
 		gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
-		DrawCube({m_BoundingBox, -1});
+		DrawCube({m_BoundingBox, glm::mat4(1), -1});
 	}
-	#if 1
-	if (m_Meshes.size())
+
+	for (auto const& mesh : m_Meshes)
 	{
-		//ng_pMVP->SetMatrix( ( float* )&g_MVP );
-		//g_pWorldVariable->SetMatrix( ( float* )&g_World );
-		//g_pViewVariable->SetMatrix( ( float* )&g_View );
-		//g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
-		DrawCube(m_Meshes[0]);
+		DrawCube(mesh);
 	}
-	#endif
 
 	m_Meshes.resize(0);
 	m_BBVerts.resize(0);
@@ -547,7 +537,7 @@ void CRenderAuxGeom::DrawAABBs()
 
 void CRenderAuxGeom::DrawLines()
 {
-	//m_AuxGeomShader->Bind();
+	// m_AuxGeomShader->Bind();
 	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
 	for (auto& pb : m_auxPushBuffer)
@@ -555,14 +545,14 @@ void CRenderAuxGeom::DrawLines()
 		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
 		offset += pb.m_numVertices;
 	}
-	//m_AuxGeomShader->Unuse();
+	// m_AuxGeomShader->Unuse();
 	m_VB.resize(0);
 	m_auxPushBuffer.resize(0);
 }
 
 void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image)
 {
-	auto &i = image;
+	auto& i = image;
 	gEnv->pRenderer->Draw2dImage(
 		i.x, i.y, i.w, i.h,
 		i.textureId,
@@ -571,8 +561,7 @@ void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image)
 		i.color.r,
 		i.color.g,
 		i.color.b,
-		i.color.a
-	);
+		i.color.a);
 }
 
 void CRenderAuxGeom::DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2)
@@ -606,7 +595,7 @@ void CRenderAuxGeom::DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const L
 
 void CRenderAuxGeom::DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness)
 {
-	//return;
+	// return;
 	if (thickness <= 1.0f)
 	{
 		SAuxVertex* pVertices(nullptr);
@@ -633,18 +622,18 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 	pVertices = &auxVertexBuffer[oldVBSize];
 }
 
-void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, int texture)
+void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, glm::mat4 transform, int texture)
 {
-	m_Meshes.push_back({pVertexBuffer, texture});
+	m_Meshes.push_back({pVertexBuffer, transform, texture});
 }
 
 void CRenderAuxGeom::Flush()
 {
-	//RSS(gEnv->pRenderer, CULL_FACE, false);
+	// RSS(gEnv->pRenderer, CULL_FACE, false);
 	DrawAABBs();
 	DrawLines();
 	{
-		//RSS(gEnv->pRenderer, DEPTH_TEST, true);
+		// RSS(gEnv->pRenderer, DEPTH_TEST, true);
 	}
 
 	for (auto img : m_Images)
@@ -662,10 +651,10 @@ void CRenderAuxGeom::Flush()
 		desc.CPUAccessFlags;
 		desc.MiscFlags;
 
-		//D3D10_SUBRESOURCE_DATA sd;
-		//sd.
+		// D3D10_SUBRESOURCE_DATA sd;
+		// sd.
 
-		//GetDevice()->CreateTexture2D(&desc, )
+		// GetDevice()->CreateTexture2D(&desc, )
 	}
-	//first_draw = true;
+	// first_draw = true;
 }

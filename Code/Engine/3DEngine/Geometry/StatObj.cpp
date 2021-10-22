@@ -102,7 +102,13 @@ void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, 
 		gEnv->pRenderer->CreateIndexBuffer(&m_IndexBuffer, m_IndexedMesh.m_Indices.data(), m_IndexedMesh.m_Indices.size());
 	}
 
-	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, m_IndexedMesh.m_DiffuseMap);
+
+	int texId = rParams.texture;
+	if(texId == -1)
+	{
+		texId = m_IndexedMesh.m_DiffuseMap;
+	}
+	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, *rParams.pMatrix, texId);
 	//GlobalResources::Bo
 
 

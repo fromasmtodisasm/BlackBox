@@ -141,7 +141,7 @@ private:
 	CVertexBuffer*			m_TestScene;
 	CVertexBuffer*			m_Quad;
 
-	std::vector<CStatObj*>	m_Objects;
+	std::vector<IEntity*>	m_Entities;
 
 	struct AABB
 	{

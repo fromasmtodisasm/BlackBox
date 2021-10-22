@@ -5,10 +5,10 @@ struct SRender2DImageDescription;
 
 struct IRenderAuxGeom
 {
-	virtual void DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col)																		   = 0;
+	virtual void DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col)																				   = 0;
 	virtual void DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2) = 0;
-	virtual void DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, float thickness = 1.0f)				   = 0;
-	virtual void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f)								   = 0;
+	virtual void DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, float thickness = 1.0f)						   = 0;
+	virtual void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f)												   = 0;
 	//! Adds a 2D image that should be drawn on the screen to an internal render list.
 	//! The function supports placing images in stereo 3D space.
 	//! The stereo params are the same that are used for the scene. A value of 0 is handled as a special case and always places the image on the screen plane.
@@ -24,28 +24,28 @@ struct IRenderAuxGeom
 		DrawTriangle(v0, colV0, v2, colV2, v3, colV3);
 	}
 
-	virtual void DrawMesh(CVertexBuffer* pVertexBuffer, int texture) = 0;
-	virtual void Flush() = 0;
+	virtual void DrawMesh(CVertexBuffer* pVertexBuffer, glm::mat4 transform, int texture) = 0;
+	virtual void Flush()																  = 0;
 };
 
 // 2D Images added to the rendering frame
 struct SRender2DImageDescription
 {
-	float x = 0;
-	float y = 0;
-	float z = 0;
-	float w = 0;
-	float h = 0;
-	Legacy::Vec2  uv[2];           //!< Texture UV coordinates
-	float angle = 0;
-	float stereoDepth = 0; //!< Places image in stereo 3d space. The depth is specified in camera space.
-	UCol color;
+	float		 x = 0;
+	float		 y = 0;
+	float		 z = 0;
+	float		 w = 0;
+	float		 h = 0;
+	Legacy::Vec2 uv[2]; //!< Texture UV coordinates
+	float		 angle		 = 0;
+	float		 stereoDepth = 0; //!< Places image in stereo 3d space. The depth is specified in camera space.
+	UCol		 color;
 
 	uint32 textureId = 0;
-	uint32 targetId = 0;
+	uint32 targetId	 = 0;
 
-	//SDisplayContextKey displayContextKey;
-	//SAuxGeomRenderFlags renderFlags = e_Def2DImageRenderflags;
+	// SDisplayContextKey displayContextKey;
+	// SAuxGeomRenderFlags renderFlags = e_Def2DImageRenderflags;
 };
 
 // Helper class to abstract pushing 2d images for rendering
@@ -53,15 +53,15 @@ class IRenderAuxImage
 {
 	struct S2DImage
 	{
-		float  x = 0;
-		float  y = 0;
-		float  z = 0;
-		float  w = 0;
-		float  h = 0;
-		Legacy::Vec2   uv[2]; // Texture UV coordinates
-		float  angle	   = 0;
-		float  stereoDepth = 0;
-		ColorB color;
+		float		 x = 0;
+		float		 y = 0;
+		float		 z = 0;
+		float		 w = 0;
+		float		 h = 0;
+		Legacy::Vec2 uv[2]; // Texture UV coordinates
+		float		 angle		 = 0;
+		float		 stereoDepth = 0;
+		ColorB		 color;
 
 		uint32 textureId = 0;
 		uint32 targetId	 = 0;
@@ -80,13 +80,13 @@ class IRenderAuxImage
 			img.w		  = w;
 			img.h		  = h;
 			img.textureId = texture_id;
-			//img.targetId = 0;
+			// img.targetId = 0;
 			img.uv[0].x		= s0;
 			img.uv[0].y		= t0;
 			img.uv[1].x		= s1;
 			img.uv[1].y		= t1;
 			img.angle		= angle;
-			img.color		= UCol((uint8)(r*255),(uint8)(r*255),(uint8)(r*255),(uint8)(r*255));
+			img.color		= UCol((uint8)(r * 255), (uint8)(r * 255), (uint8)(r * 255), (uint8)(r * 255));
 			img.stereoDepth = stereoDepth;
 
 			IRenderAuxGeom::GetAux()->PushImage(img);
@@ -103,7 +103,7 @@ class IRenderAuxImage
 			img.w		  = w;
 			img.h		  = h;
 			img.textureId = texture_id;
-			//img.targetId = 0;
+			// img.targetId = 0;
 			img.uv[0].x		= s0;
 			img.uv[0].y		= t0;
 			img.uv[1].x		= s1;
@@ -127,13 +127,13 @@ class IRenderAuxImage
 			img.w		  = w;
 			img.h		  = h;
 			img.textureId = texture_id;
-			//img.targetId = 0;
+			// img.targetId = 0;
 			img.uv[0].x		= s0;
 			img.uv[0].y		= t0;
 			img.uv[1].x		= s1;
 			img.uv[1].y		= t1;
 			img.angle		= 0.f;
-			img.color		= UCol((uint8)(r*255),(uint8)(r*255),(uint8)(r*255),(uint8)(r*255));
+			img.color		= UCol((uint8)(r * 255), (uint8)(r * 255), (uint8)(r * 255), (uint8)(r * 255));
 			img.stereoDepth = 0.f;
 
 			IRenderAuxGeom::GetAux()->PushImage(img);

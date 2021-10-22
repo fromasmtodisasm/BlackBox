@@ -145,7 +145,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/Network/INetwork.hpp>
-
+#include <BlackBox/System/FrameProfiler.hpp>
 #include <BlackBox/EntitySystem/EntityDesc.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
