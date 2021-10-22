@@ -241,7 +241,7 @@ class ShaderMan
 	{
 		for (auto& s : m_Shaders)
 		{
-			s->Reload();
+			s->Reload(0);
 		}
 	}
 

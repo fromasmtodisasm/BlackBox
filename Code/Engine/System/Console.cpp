@@ -14,10 +14,11 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 
-#include <BlackBox/Core/StringUtils.h>
+//#include <BlackBox/Core/StringUtils.h>
 
 #include "NullImplementation/NullFont.hpp"
 #include "XConsoleVariable.h"
+#include <BlackBox\Core\StringUtils.h>
 
 #define BACKGROUND_SERVER_CHAR '/'
 #define CONST_TEMP_STRING(s) s
@@ -591,7 +592,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, const char* sValue, int nFla
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
 		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterString(const char*): variable [%s] is already registered", pCVar->GetName());
@@ -611,7 +612,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, int iValue, int nFlags, cons
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
 		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterInt(): variable [%s] is already registered", pCVar->GetName());
@@ -631,7 +632,7 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
 		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterFloat(): variable [%s] is already registered", pCVar->GetName());
@@ -911,7 +912,7 @@ ICVar* CXConsole::RegisterInternal(const char* sName, int* src, int iValue, int 
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
 		if (pCVar->GetFlags() & VF_CONST_CVAR)
@@ -966,7 +967,7 @@ ICVar* CXConsole::RegisterInternal(const char* sName, float* src, float fValue, 
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
 		if (pCVar->GetFlags() & VF_CONST_CVAR)
@@ -995,7 +996,7 @@ ICVar* CXConsole::RegisterInternal(const char* sName, const char** src, const ch
 {
 	AssertName(sName);
 
-	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, NULL);
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
 		if (pCVar->GetFlags() & VF_CONST_CVAR)
@@ -1619,7 +1620,7 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 
 		if (bProcessAutoCompl)
 		{
-			const IConsoleArgumentAutoComplete* pArgumentAutoComplete = stl::find_in_map(m_mapArgumentAutoComplete, sVar, 0);
+			const IConsoleArgumentAutoComplete* pArgumentAutoComplete = stl::find_in_map(m_mapArgumentAutoComplete, sVar, nullptr);
 			if (pArgumentAutoComplete)
 			{
 				const int nMatches = pArgumentAutoComplete->GetCount();

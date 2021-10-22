@@ -34,11 +34,13 @@ public:
 private:
   MaterialManager(ISystem* pSystem);
   bool loadLib(std::string name);
+  #if 0
   void getShaderAttributes(tinyxml2::XMLElement* shader, ProgramDesc& pd);
   bool loadMaterial(tinyxml2::XMLElement* material);
   BaseTexture* loadTexture(tinyxml2::XMLElement* texture);
   tinyxml2::XMLElement* saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture* texture);
   ShaderRef loadShader(ShaderDesc& sd, bool isReload);
   ShaderRef addShader(ShaderDesc& sd, bool isReload);
+  #endif
   tinyxml2::XMLElement* saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef shader);
 };

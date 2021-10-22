@@ -31,13 +31,12 @@ void CShader::AddRef()
 	m_NumRefs++;
 }
 
-int CShader::Release()
+void CShader::Release(bool bForce)
 {
 	m_NumRefs--;
 	auto refs = m_NumRefs;
 	if (m_NumRefs <= 0)
 		delete this;
-	return refs;
 }
 
 IShader::Type CShader::GetType()
@@ -56,11 +55,6 @@ eVertexFormat CShader::GetVertexFormat(void)
 	return eVertexFormat();
 }
 #endif
-
-bool CShader::Reload()
-{
-	return false;
-}
 
 void CShader::Bind()
 {

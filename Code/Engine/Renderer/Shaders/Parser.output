@@ -47,7 +47,7 @@ Grammar
 
     0 $accept: input "end of file"
 
-    1 input: ε
+    1 input: %empty
     2      | input ';'
     3      | input tech
     4      | input hlsl
@@ -85,11 +85,11 @@ Grammar
    30         | base_type IDENTIFIER annotations '=' INT
    31         | base_type IDENTIFIER annotations '=' FLOAT
 
-   32 $@1: ε
+   32 $@1: %empty
 
    33 pass: PASS $@1 annotations passstates
 
-   34 $@2: ε
+   34 $@2: %empty
 
    35 pass: PASS IDENTIFIER $@2 annotations passstates
 
@@ -97,11 +97,11 @@ Grammar
    37       | passes pass
    38       | passes error
 
-   39 $@3: ε
+   39 $@3: %empty
 
    40 tech: TECHNIQUE $@3 '{' passes '}'
 
-   41 $@4: ε
+   41 $@4: %empty
 
    42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes '}'
 
@@ -120,7 +120,7 @@ Grammar
 
    53 annotation: scalar_type IDENTIFIER '=' annotation_value ';'
 
-   54 annotations: ε
+   54 annotations: %empty
    55            | '<' annotation_list '>'
 
    56 hlsl_header: HLSL11SHADER IDENTIFIER
@@ -286,7 +286,7 @@ Nonterminals, with rules where they appear
 
 State 0
 
-    0 $accept: • input "end of file"
+    0 $accept: . input "end of file"
 
     $default  reduce using rule 1 (input)
 
@@ -295,12 +295,12 @@ State 0
 
 State 1
 
-    0 $accept: input • "end of file"
-    2 input: input • ';'
-    3      | input • tech
-    4      | input • hlsl
-    5      | input • var_decl
-    6      | input • error
+    0 $accept: input . "end of file"
+    2 input: input . ';'
+    3      | input . tech
+    4      | input . hlsl
+    5      | input . var_decl
+    6      | input . error
 
     "end of file"  shift, and go to state 2
     error          shift, and go to state 3
@@ -333,22 +333,22 @@ State 1
 
 State 2
 
-    0 $accept: input "end of file" •
+    0 $accept: input "end of file" .
 
     $default  accept
 
 
 State 3
 
-    6 input: input error •
+    6 input: input error .
 
     $default  reduce using rule 6 (input)
 
 
 State 4
 
-   56 hlsl_header: HLSL11SHADER • IDENTIFIER
-   57            | HLSL11SHADER •
+   56 hlsl_header: HLSL11SHADER . IDENTIFIER
+   57            | HLSL11SHADER .
 
     IDENTIFIER  shift, and go to state 28
 
@@ -357,8 +357,8 @@ State 4
 
 State 5
 
-   40 tech: TECHNIQUE • $@3 '{' passes '}'
-   42     | TECHNIQUE • IDENTIFIER $@4 annotations '{' passes '}'
+   40 tech: TECHNIQUE . $@3 '{' passes '}'
+   42     | TECHNIQUE . IDENTIFIER $@4 annotations '{' passes '}'
 
     IDENTIFIER  shift, and go to state 29
 
@@ -369,142 +369,142 @@ State 5
 
 State 6
 
-   14 base_type: FLOAT_TYPE •
+   14 base_type: FLOAT_TYPE .
 
     $default  reduce using rule 14 (base_type)
 
 
 State 7
 
-   15 base_type: FLOAT2_TYPE •
+   15 base_type: FLOAT2_TYPE .
 
     $default  reduce using rule 15 (base_type)
 
 
 State 8
 
-   16 base_type: FLOAT3_TYPE •
+   16 base_type: FLOAT3_TYPE .
 
     $default  reduce using rule 16 (base_type)
 
 
 State 9
 
-   17 base_type: FLOAT4_TYPE •
+   17 base_type: FLOAT4_TYPE .
 
     $default  reduce using rule 17 (base_type)
 
 
 State 10
 
-   26 base_type: MAT2_TYPE •
+   26 base_type: MAT2_TYPE .
 
     $default  reduce using rule 26 (base_type)
 
 
 State 11
 
-   27 base_type: MAT3_TYPE •
+   27 base_type: MAT3_TYPE .
 
     $default  reduce using rule 27 (base_type)
 
 
 State 12
 
-   28 base_type: MAT4_TYPE •
+   28 base_type: MAT4_TYPE .
 
     $default  reduce using rule 28 (base_type)
 
 
 State 13
 
-   22 base_type: BOOL_TYPE •
+   22 base_type: BOOL_TYPE .
 
     $default  reduce using rule 22 (base_type)
 
 
 State 14
 
-   23 base_type: BOOL2_TYPE •
+   23 base_type: BOOL2_TYPE .
 
     $default  reduce using rule 23 (base_type)
 
 
 State 15
 
-   24 base_type: BOOL3_TYPE •
+   24 base_type: BOOL3_TYPE .
 
     $default  reduce using rule 24 (base_type)
 
 
 State 16
 
-   25 base_type: BOOL4_TYPE •
+   25 base_type: BOOL4_TYPE .
 
     $default  reduce using rule 25 (base_type)
 
 
 State 17
 
-   18 base_type: INT_TYPE •
+   18 base_type: INT_TYPE .
 
     $default  reduce using rule 18 (base_type)
 
 
 State 18
 
-   19 base_type: INT2_TYPE •
+   19 base_type: INT2_TYPE .
 
     $default  reduce using rule 19 (base_type)
 
 
 State 19
 
-   20 base_type: INT3_TYPE •
+   20 base_type: INT3_TYPE .
 
     $default  reduce using rule 20 (base_type)
 
 
 State 20
 
-   21 base_type: INT4_TYPE •
+   21 base_type: INT4_TYPE .
 
     $default  reduce using rule 21 (base_type)
 
 
 State 21
 
-    2 input: input ';' •
+    2 input: input ';' .
 
     $default  reduce using rule 2 (input)
 
 
 State 22
 
-   29 var_decl: base_type • IDENTIFIER
-   30         | base_type • IDENTIFIER annotations '=' INT
-   31         | base_type • IDENTIFIER annotations '=' FLOAT
+   29 var_decl: base_type . IDENTIFIER
+   30         | base_type . IDENTIFIER annotations '=' INT
+   31         | base_type . IDENTIFIER annotations '=' FLOAT
 
     IDENTIFIER  shift, and go to state 31
 
 
 State 23
 
-    5 input: input var_decl •
+    5 input: input var_decl .
 
     $default  reduce using rule 5 (input)
 
 
 State 24
 
-    3 input: input tech •
+    3 input: input tech .
 
     $default  reduce using rule 3 (input)
 
 
 State 25
 
-   59 shader_header: hlsl_header • annotations
+   59 shader_header: hlsl_header . annotations
 
     '<'  shift, and go to state 32
 
@@ -515,28 +515,28 @@ State 25
 
 State 26
 
-    4 input: input hlsl •
+    4 input: input hlsl .
 
     $default  reduce using rule 4 (input)
 
 
 State 27
 
-   58 hlsl: shader_header • '{' CODEBODY
+   58 hlsl: shader_header . '{' CODEBODY
 
     '{'  shift, and go to state 34
 
 
 State 28
 
-   56 hlsl_header: HLSL11SHADER IDENTIFIER •
+   56 hlsl_header: HLSL11SHADER IDENTIFIER .
 
     $default  reduce using rule 56 (hlsl_header)
 
 
 State 29
 
-   42 tech: TECHNIQUE IDENTIFIER • $@4 annotations '{' passes '}'
+   42 tech: TECHNIQUE IDENTIFIER . $@4 annotations '{' passes '}'
 
     $default  reduce using rule 41 ($@4)
 
@@ -545,16 +545,16 @@ State 29
 
 State 30
 
-   40 tech: TECHNIQUE $@3 • '{' passes '}'
+   40 tech: TECHNIQUE $@3 . '{' passes '}'
 
     '{'  shift, and go to state 36
 
 
 State 31
 
-   29 var_decl: base_type IDENTIFIER •
-   30         | base_type IDENTIFIER • annotations '=' INT
-   31         | base_type IDENTIFIER • annotations '=' FLOAT
+   29 var_decl: base_type IDENTIFIER .
+   30         | base_type IDENTIFIER . annotations '=' INT
+   31         | base_type IDENTIFIER . annotations '=' FLOAT
 
     '<'  shift, and go to state 32
 
@@ -566,7 +566,7 @@ State 31
 
 State 32
 
-   55 annotations: '<' • annotation_list '>'
+   55 annotations: '<' . annotation_list '>'
 
     STRING_TYPE  shift, and go to state 38
     UNSIGNED     shift, and go to state 39
@@ -580,21 +580,21 @@ State 32
 
 State 33
 
-   59 shader_header: hlsl_header annotations •
+   59 shader_header: hlsl_header annotations .
 
     $default  reduce using rule 59 (shader_header)
 
 
 State 34
 
-   58 hlsl: shader_header '{' • CODEBODY
+   58 hlsl: shader_header '{' . CODEBODY
 
     CODEBODY  shift, and go to state 45
 
 
 State 35
 
-   42 tech: TECHNIQUE IDENTIFIER $@4 • annotations '{' passes '}'
+   42 tech: TECHNIQUE IDENTIFIER $@4 . annotations '{' passes '}'
 
     '<'  shift, and go to state 32
 
@@ -605,7 +605,7 @@ State 35
 
 State 36
 
-   40 tech: TECHNIQUE $@3 '{' • passes '}'
+   40 tech: TECHNIQUE $@3 '{' . passes '}'
 
     PASS  shift, and go to state 47
 
@@ -615,51 +615,51 @@ State 36
 
 State 37
 
-   30 var_decl: base_type IDENTIFIER annotations • '=' INT
-   31         | base_type IDENTIFIER annotations • '=' FLOAT
+   30 var_decl: base_type IDENTIFIER annotations . '=' INT
+   31         | base_type IDENTIFIER annotations . '=' FLOAT
 
     '='  shift, and go to state 50
 
 
 State 38
 
-   46 scalar_type: STRING_TYPE •
+   46 scalar_type: STRING_TYPE .
 
     $default  reduce using rule 46 (scalar_type)
 
 
 State 39
 
-   45 scalar_type: UNSIGNED •
+   45 scalar_type: UNSIGNED .
 
     $default  reduce using rule 45 (scalar_type)
 
 
 State 40
 
-   44 scalar_type: FLOAT_TYPE •
+   44 scalar_type: FLOAT_TYPE .
 
     $default  reduce using rule 44 (scalar_type)
 
 
 State 41
 
-   43 scalar_type: INT_TYPE •
+   43 scalar_type: INT_TYPE .
 
     $default  reduce using rule 43 (scalar_type)
 
 
 State 42
 
-   53 annotation: scalar_type • IDENTIFIER '=' annotation_value ';'
+   53 annotation: scalar_type . IDENTIFIER '=' annotation_value ';'
 
     IDENTIFIER  shift, and go to state 51
 
 
 State 43
 
-   47 annotation_list: annotation_list • annotation
-   55 annotations: '<' annotation_list • '>'
+   47 annotation_list: annotation_list . annotation
+   55 annotations: '<' annotation_list . '>'
 
     STRING_TYPE  shift, and go to state 38
     UNSIGNED     shift, and go to state 39
@@ -673,29 +673,29 @@ State 43
 
 State 44
 
-   48 annotation_list: annotation •
+   48 annotation_list: annotation .
 
     $default  reduce using rule 48 (annotation_list)
 
 
 State 45
 
-   58 hlsl: shader_header '{' CODEBODY •
+   58 hlsl: shader_header '{' CODEBODY .
 
     $default  reduce using rule 58 (hlsl)
 
 
 State 46
 
-   42 tech: TECHNIQUE IDENTIFIER $@4 annotations • '{' passes '}'
+   42 tech: TECHNIQUE IDENTIFIER $@4 annotations . '{' passes '}'
 
     '{'  shift, and go to state 54
 
 
 State 47
 
-   33 pass: PASS • $@1 annotations passstates
-   35     | PASS • IDENTIFIER $@2 annotations passstates
+   33 pass: PASS . $@1 annotations passstates
+   35     | PASS . IDENTIFIER $@2 annotations passstates
 
     IDENTIFIER  shift, and go to state 55
 
@@ -706,16 +706,16 @@ State 47
 
 State 48
 
-   36 passes: pass •
+   36 passes: pass .
 
     $default  reduce using rule 36 (passes)
 
 
 State 49
 
-   37 passes: passes • pass
-   38       | passes • error
-   40 tech: TECHNIQUE $@3 '{' passes • '}'
+   37 passes: passes . pass
+   38       | passes . error
+   40 tech: TECHNIQUE $@3 '{' passes . '}'
 
     error  shift, and go to state 57
     PASS   shift, and go to state 47
@@ -726,8 +726,8 @@ State 49
 
 State 50
 
-   30 var_decl: base_type IDENTIFIER annotations '=' • INT
-   31         | base_type IDENTIFIER annotations '=' • FLOAT
+   30 var_decl: base_type IDENTIFIER annotations '=' . INT
+   31         | base_type IDENTIFIER annotations '=' . FLOAT
 
     FLOAT  shift, and go to state 60
     INT    shift, and go to state 61
@@ -735,28 +735,28 @@ State 50
 
 State 51
 
-   53 annotation: scalar_type IDENTIFIER • '=' annotation_value ';'
+   53 annotation: scalar_type IDENTIFIER . '=' annotation_value ';'
 
     '='  shift, and go to state 62
 
 
 State 52
 
-   55 annotations: '<' annotation_list '>' •
+   55 annotations: '<' annotation_list '>' .
 
     $default  reduce using rule 55 (annotations)
 
 
 State 53
 
-   47 annotation_list: annotation_list annotation •
+   47 annotation_list: annotation_list annotation .
 
     $default  reduce using rule 47 (annotation_list)
 
 
 State 54
 
-   42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' • passes '}'
+   42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' . passes '}'
 
     PASS  shift, and go to state 47
 
@@ -766,7 +766,7 @@ State 54
 
 State 55
 
-   35 pass: PASS IDENTIFIER • $@2 annotations passstates
+   35 pass: PASS IDENTIFIER . $@2 annotations passstates
 
     $default  reduce using rule 34 ($@2)
 
@@ -775,7 +775,7 @@ State 55
 
 State 56
 
-   33 pass: PASS $@1 • annotations passstates
+   33 pass: PASS $@1 . annotations passstates
 
     '<'  shift, and go to state 32
 
@@ -786,42 +786,42 @@ State 56
 
 State 57
 
-   38 passes: passes error •
+   38 passes: passes error .
 
     $default  reduce using rule 38 (passes)
 
 
 State 58
 
-   40 tech: TECHNIQUE $@3 '{' passes '}' •
+   40 tech: TECHNIQUE $@3 '{' passes '}' .
 
     $default  reduce using rule 40 (tech)
 
 
 State 59
 
-   37 passes: passes pass •
+   37 passes: passes pass .
 
     $default  reduce using rule 37 (passes)
 
 
 State 60
 
-   31 var_decl: base_type IDENTIFIER annotations '=' FLOAT •
+   31 var_decl: base_type IDENTIFIER annotations '=' FLOAT .
 
     $default  reduce using rule 31 (var_decl)
 
 
 State 61
 
-   30 var_decl: base_type IDENTIFIER annotations '=' INT •
+   30 var_decl: base_type IDENTIFIER annotations '=' INT .
 
     $default  reduce using rule 30 (var_decl)
 
 
 State 62
 
-   53 annotation: scalar_type IDENTIFIER '=' • annotation_value ';'
+   53 annotation: scalar_type IDENTIFIER '=' . annotation_value ';'
 
     FLOAT     shift, and go to state 66
     INT       shift, and go to state 67
@@ -833,9 +833,9 @@ State 62
 
 State 63
 
-   37 passes: passes • pass
-   38       | passes • error
-   42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes • '}'
+   37 passes: passes . pass
+   38       | passes . error
+   42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes . '}'
 
     error  shift, and go to state 57
     PASS   shift, and go to state 47
@@ -846,7 +846,7 @@ State 63
 
 State 64
 
-   35 pass: PASS IDENTIFIER $@2 • annotations passstates
+   35 pass: PASS IDENTIFIER $@2 . annotations passstates
 
     '<'  shift, and go to state 32
 
@@ -857,7 +857,7 @@ State 64
 
 State 65
 
-   33 pass: PASS $@1 annotations • passstates
+   33 pass: PASS $@1 annotations . passstates
 
     '{'  shift, and go to state 73
 
@@ -866,49 +866,49 @@ State 65
 
 State 66
 
-   49 annotation_value: FLOAT •
+   49 annotation_value: FLOAT .
 
     $default  reduce using rule 49 (annotation_value)
 
 
 State 67
 
-   50 annotation_value: INT •
+   50 annotation_value: INT .
 
     $default  reduce using rule 50 (annotation_value)
 
 
 State 68
 
-   51 annotation_value: STR •
+   51 annotation_value: STR .
 
     $default  reduce using rule 51 (annotation_value)
 
 
 State 69
 
-   52 annotation_value: UNSIGNED •
+   52 annotation_value: UNSIGNED .
 
     $default  reduce using rule 52 (annotation_value)
 
 
 State 70
 
-   53 annotation: scalar_type IDENTIFIER '=' annotation_value • ';'
+   53 annotation: scalar_type IDENTIFIER '=' annotation_value . ';'
 
     ';'  shift, and go to state 75
 
 
 State 71
 
-   42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes '}' •
+   42 tech: TECHNIQUE IDENTIFIER $@4 annotations '{' passes '}' .
 
     $default  reduce using rule 42 (tech)
 
 
 State 72
 
-   35 pass: PASS IDENTIFIER $@2 annotations • passstates
+   35 pass: PASS IDENTIFIER $@2 annotations . passstates
 
     '{'  shift, and go to state 73
 
@@ -917,7 +917,7 @@ State 72
 
 State 73
 
-   13 passstates: '{' • shader_assignments '}'
+   13 passstates: '{' . shader_assignments '}'
 
     VERTEXPROGRAM    shift, and go to state 77
     FRAGMENTPROGRAM  shift, and go to state 78
@@ -930,64 +930,64 @@ State 73
 
 State 74
 
-   33 pass: PASS $@1 annotations passstates •
+   33 pass: PASS $@1 annotations passstates .
 
     $default  reduce using rule 33 (pass)
 
 
 State 75
 
-   53 annotation: scalar_type IDENTIFIER '=' annotation_value ';' •
+   53 annotation: scalar_type IDENTIFIER '=' annotation_value ';' .
 
     $default  reduce using rule 53 (annotation)
 
 
 State 76
 
-   35 pass: PASS IDENTIFIER $@2 annotations passstates •
+   35 pass: PASS IDENTIFIER $@2 annotations passstates .
 
     $default  reduce using rule 35 (pass)
 
 
 State 77
 
-    7 shader_type: VERTEXPROGRAM •
+    7 shader_type: VERTEXPROGRAM .
 
     $default  reduce using rule 7 (shader_type)
 
 
 State 78
 
-    9 shader_type: FRAGMENTPROGRAM •
+    9 shader_type: FRAGMENTPROGRAM .
 
     $default  reduce using rule 9 (shader_type)
 
 
 State 79
 
-    8 shader_type: GEOMETRYPROGRAM •
+    8 shader_type: GEOMETRYPROGRAM .
 
     $default  reduce using rule 8 (shader_type)
 
 
 State 80
 
-   10 shader_assignment: shader_type • '=' IDENTIFIER
+   10 shader_assignment: shader_type . '=' IDENTIFIER
 
     '='  shift, and go to state 83
 
 
 State 81
 
-   11 shader_assignments: shader_assignment •
+   11 shader_assignments: shader_assignment .
 
     $default  reduce using rule 11 (shader_assignments)
 
 
 State 82
 
-   12 shader_assignments: shader_assignments • shader_assignment
-   13 passstates: '{' shader_assignments • '}'
+   12 shader_assignments: shader_assignments . shader_assignment
+   13 passstates: '{' shader_assignments . '}'
 
     VERTEXPROGRAM    shift, and go to state 77
     FRAGMENTPROGRAM  shift, and go to state 78
@@ -1000,27 +1000,27 @@ State 82
 
 State 83
 
-   10 shader_assignment: shader_type '=' • IDENTIFIER
+   10 shader_assignment: shader_type '=' . IDENTIFIER
 
     IDENTIFIER  shift, and go to state 86
 
 
 State 84
 
-   13 passstates: '{' shader_assignments '}' •
+   13 passstates: '{' shader_assignments '}' .
 
     $default  reduce using rule 13 (passstates)
 
 
 State 85
 
-   12 shader_assignments: shader_assignments shader_assignment •
+   12 shader_assignments: shader_assignments shader_assignment .
 
     $default  reduce using rule 12 (shader_assignments)
 
 
 State 86
 
-   10 shader_assignment: shader_type '=' IDENTIFIER •
+   10 shader_assignment: shader_type '=' IDENTIFIER .
 
     $default  reduce using rule 10 (shader_assignment)

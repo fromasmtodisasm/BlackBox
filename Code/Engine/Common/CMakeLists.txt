@@ -53,7 +53,7 @@ add_sources(
 	${INC}/Core/Platform/WindowsSpecific.hpp
 	${INC}/Core/Platform/_CryLibrary.h
 	${INC}/Core/Primitives.hpp
-	${INC}/Core/StlUtils.hpp
+	#${INC}/Core/StlUtils.hpp
 	${INC}/Core/Stream.hpp
 	${INC}/Core/StringUtils.h
 	${INC}/Core/Tarray.h

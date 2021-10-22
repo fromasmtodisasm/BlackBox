@@ -8,6 +8,8 @@
 //#include <CryCore/BitFiddling.h>
 
 #include <cstdlib>
+#include <BlackBox/Core/StlUtils.hpp>
+#include <BlackBox\Core\StlUtils.hpp>
 
 class CXConsoleVariableBase : public ICVar
 {

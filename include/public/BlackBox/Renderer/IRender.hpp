@@ -123,11 +123,6 @@ typedef _smart_ptr<IGraphicsDeviceConstantBuffer> IGraphicsDeviceConstantBufferP
    };
  */
 
-class CMatInfo
-{
-	int m_Textures[8];
-};
-
 struct Transform
 {
 	Legacy::Vec3 position;

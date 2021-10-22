@@ -47,15 +47,11 @@ public:
 	// Inherited via IShader
 	~CShader();
 	virtual int GetID() override;
-	virtual void AddRef() override;
-	virtual int Release() override;
+	virtual void		  AddRef() override;
+	virtual void		  Release(bool bForce = false);
 	virtual IShader::Type GetType() override;
-	virtual const char* GetName() override;
-	#if 0
-	virtual eVertexFormat GetVertexFormat(void) override;
-	#endif
-	virtual bool Reload() override;
-	virtual void Bind() override;
+	virtual const char*	  GetName() override;
+	virtual void		  Bind() override;
 
 	void SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen);
 	static CShader* LoadBinaryShader(std::string_view name, int flags, uint64 nMaskGen);

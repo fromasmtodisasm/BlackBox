@@ -357,7 +357,7 @@ ILINE float __fastcall Ffabs(float f) {
 	return (f);
 }
 #else
-inline float Ffabs(float x) { return fabsf(x); }
+//inline float Ffabs(float x) { return fabsf(x); }
 #endif
 
 namespace Legacy
