@@ -263,12 +263,14 @@ void CEntity::LoadBreakableObject(const char* fileName)
 
 bool CEntity::SetEntityObject(unsigned int slot, const CEntityObject& object)
 {
-	return false;
+	m_EntityObject = object;
+	return true;
 }
 
 bool CEntity::GetEntityObject(unsigned int slot, CEntityObject& object)
 {
-	return false;
+	object = m_EntityObject;
+	return true;
 }
 
 int CEntity::GetNumObjects()
@@ -278,7 +280,7 @@ int CEntity::GetNumObjects()
 
 IStatObj* CEntity::GetIStatObj(unsigned int pos)
 {
-	return m_pStatObj;
+	return m_EntityObject.object;
 }
 
 void CEntity::PlaySound(ISound* pSound, float fSoundScale, Legacy::Vec3& Offset)

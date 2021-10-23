@@ -79,8 +79,7 @@ void CEntitySystem::Reset()
 
 IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool t)
 {
-	LOG_FUNCTION();
-	return nullptr;
+	return &m_Entities[0];
 }
 
 bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)

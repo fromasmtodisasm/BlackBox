@@ -8,6 +8,7 @@ struct ICrySizer;
 typedef std::vector<CEntity>::iterator EntityIt;
 typedef std::vector<CEntity> Entities;
 
+
 class CEntityIterator : public IEntityIt, _reference_target_t
 {
   public:
@@ -78,6 +79,7 @@ public:
 	virtual void ClearId(EntityId id) override;
 
 	Entities m_Entities;
+	std::map<EntityClassId, CEntity*> m_EntitiesMap;
 
 	CEntityIterator m_EntityIt;
 

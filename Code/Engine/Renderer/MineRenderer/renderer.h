@@ -74,8 +74,8 @@ class Minecraft
 		}
 
 		BlockEntity entity;
-		entity.calcWorldSpace(position);
 		entity.setType(&blocks.at(block));
+		entity.calcWorldSpace(position);
 		world.emplace(position, entity);
 	}
 
