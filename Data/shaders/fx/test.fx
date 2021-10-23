@@ -61,8 +61,7 @@ static float3 lightColor	  = float3(1, 1, 1);
 float4 PS(VS_OUTPUT input)
 	: SV_Target
 {
-	float3 lightPos = float3(10, 20, 5);
-	float3 diffuseColor = float3(1, 0, 0);
+	float3 diffuseColor = float3(1, 1, 1);
 
 	float4 textureColor;
 	float3 lightDir;
@@ -71,12 +70,9 @@ float4 PS(VS_OUTPUT input)
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
-	//return float4(1,1,1,1);
-	return float4(1,1,1,1);
-	return float4(textureColor.rgb,1);
 
 	// Invert the light direction for calculations.
-	lightDir = normalize(float3(0,1,0));
+	lightDir = normalize(float3(2,3,4));
 
 	// Calculate the amount of light on this pixel.
 	lightIntensity = saturate(dot(input.Normal, lightDir));
@@ -85,9 +81,9 @@ float4 PS(VS_OUTPUT input)
 	color = float4(saturate(diffuseColor * lightIntensity),1);
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-	color = color * textureColor;
+	color = (color + 0.2) * textureColor;
 
-	return float4(1,1,1,1);
+	return color;
 }
 
 //--------------------------------------------------------------------------------------
