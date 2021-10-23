@@ -24,6 +24,7 @@ struct pe_params_particle;
 struct IMatInfo;
 struct RenderLMData;
 struct AnimTexInfo;
+struct IEntity;
 template<class T>
 class list2;
 

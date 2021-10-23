@@ -842,7 +842,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
 
-	Minecraft
+	//Minecraft
 	return (true);
 }
 
