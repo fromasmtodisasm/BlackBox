@@ -80,6 +80,16 @@ class CStatObj : public IStatObj
 		return false;
 	}
 
+	virtual void SetTexture(unsigned int texture)
+	{
+		m_Texture = texture;
+	}
+
+	virtual int GetTexture() const
+	{
+		return m_Texture;
+	}
+
 	CIndexedMesh*	 GetTriData() override;
 	CLeafBuffer*	 GetLeafBuffer() override;
 	void			 SetLeafBuffer(CLeafBuffer* buf) override;
@@ -128,6 +138,7 @@ class CStatObj : public IStatObj
 	CVertexBuffer* m_VertexBuffer{};
 	SVertexStream  m_IndexBuffer{};
 
+	int m_Texture = -1;
 	float m_RadiusVert;
 	float m_RadiusHors;
 };

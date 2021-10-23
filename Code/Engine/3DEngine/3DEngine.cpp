@@ -7,9 +7,10 @@
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
+#include <BlackBox/EntitySystem/EntityDesc.hpp>
 #include <BlackBox\Renderer\IFont.hpp>
-#include <BlackBox\Utils\Text.hpp>
 #include <BlackBox\System\ITimer.hpp>
+#include <BlackBox\Utils\Text.hpp>
 
 void loadModel(string path);
 
@@ -84,7 +85,7 @@ void C3DEngine::Draw()
 		transform = glm::translate(transform, pos);
 		IStatObj* stat = obj->GetIStatObj(0);
 		rp.pMatrix = &transform;
-		//obj->SetM().
+		rp.texture = stat->GetTexture();
 		stat->Render(rp, {});
 	}
 
@@ -115,6 +116,14 @@ IStatObj* C3DEngine::MakeObject(const char* szFileName, const char* szGeomName, 
 		//m_Objects.push_back(obj);
 	}
 	return static_cast<IStatObj*>(obj);
+}
+
+IEntity* C3DEngine::MakeEntity(unsigned id, unsigned classId)
+{
+	CEntityDesc desc(id, classId);
+	auto entity = gEnv->pEntitySystem->SpawnEntity(desc);
+	m_Entities.push_back(entity);
+	return entity;
 }
 
 bool C3DEngine::ReleaseObject(IStatObj* pObject)

@@ -277,6 +277,10 @@ struct IStatObj: public IBindable
 	virtual float & GetRadiusHors() = 0;
 //DOC-IGNORE-END
 
+	virtual void SetTexture(unsigned int texture) = 0;
+
+	virtual int GetTexture() const = 0;
+
 	// Summary:
 	//     Determines if the object has physics capabilities
 	virtual bool IsPhysicsExist() = 0;
