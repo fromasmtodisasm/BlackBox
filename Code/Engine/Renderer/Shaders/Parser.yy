@@ -158,6 +158,8 @@
 %type  <IShader::Type>  shader_type
 %type  <std::string>    struct_footer
 
+%token <std::string> TYPE_NAME
+
 //%type  <std::string>    semantic
 %type  <nvFX::IUniform::Type>           base_type
 
@@ -275,12 +277,14 @@ input: %empty { CryLog("Empty effect"); }
 arguments:  var_decl | 
             var_decl ',' arguments
         
-function_definition: function_declaration '{' { CryLog("Open function scope"); }'}' {
+function_definition: function_declaration '{' { 
+    CryLog("Open function scope"); scanner.goto_codebody(); 
+    } CODEBODY {
     CryLog("Close function scope"); 
 }
 
-function_declaration: base_type IDENTIFIER '(' arguments ')'{
-    CryLog("Parsed function declaration for: [%s]", $2.data());
+function_declaration: TYPE_NAME IDENTIFIER[name] '(' arguments ')'{
+    CryLog("Parsed function declaration for: [%s]", $name.data());
 }; 
 
 fatal_error: FATALERROR { CryFatalError("Stopping paring!!!"); }

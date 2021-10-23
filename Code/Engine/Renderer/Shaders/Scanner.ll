@@ -34,6 +34,7 @@
     }
     #endif
 
+
 %}
 
 %option noyywrap nounput noinput batch debug
@@ -226,6 +227,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     */
 <shader>{
     \{  {
+        CryLog("In shader state");
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
         *string_buf_ptr = '\0';
@@ -234,15 +236,17 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
     {id} {
         // TODO create and REGISTER the variable in a table
-		return yy::parser::make_IDENTIFIER(yytext, loc);
+		return check_type(yytext, loc);
     }
 }
 <shaderbody>{
     \{  {
+        CryLog("bracket level: %d", bracket_level);
         bracket_level++;
         *string_buf_ptr++  =  yytext[0];
     }
     \} {
+        CryLog("bracket level: %d", bracket_level);
         bracket_level--;
         if((bracket_level) == 0)
         {
@@ -336,7 +340,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 
 {int}      return make_INT(yytext, loc);
 {float_number}      return make_FLOAT(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>{id}   return yy::parser::make_IDENTIFIER(yytext, loc);
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>{id}   return check_type(yytext, loc);
 <INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>. {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
@@ -488,6 +492,29 @@ void Scanner::eof()
 #endif
 	//include_stack.pop();
 }
+
+void Scanner::goto_codebody()
+{
+    bracket_level = 1;
+    yy_push_state(shader);
+    yy_push_state(shaderbody);
+}
+  yy::parser::symbol_type Scanner::check_type(
+    const std::string &s,
+    const yy::parser::location_type& loc
+  )
+  {
+	  if (auto it = symboltype_map.find(s); it != symboltype_map.end())
+	  {
+          CryLog("%s: Its type!!!", s.data());
+		return yy::parser::make_TYPE_NAME(s, loc); 
+	  }
+      else {
+          CryLog("%s: Its ident!!!", s.data());
+        return yy::parser::make_IDENTIFIER(s, loc);
+      }
+  }
+
 
 
 #pragma warning(pop)

@@ -746,15 +746,15 @@ static const flex_int16_t yy_chk[711] =
 
 static const flex_int16_t yy_rule_linenum[83] =
     {   0,
-       83,   87,   92,   97,  101,  105,  111,  114,  120,  121,
-      122,  123,  124,  125,  126,  127,  128,  129,  130,  131,
-      132,  133,  134,  135,  136,  137,  138,  139,  140,  141,
-      142,  143,  144,  145,  146,  147,  150,  155,  160,  166,
-      167,  168,  170,  174,  175,  181,  188,  193,  200,  208,
-      213,  214,  215,  216,  217,  218,  219,  229,  236,  242,
-      246,  259,  266,  276,  281,  284,  290,  293,  298,  299,
-      300,  304,  308,  314,  317,  338,  339,  340,  341,  358,
-      359,  360
+       84,   88,   93,   98,  102,  106,  112,  115,  121,  122,
+      123,  124,  125,  126,  127,  128,  129,  130,  131,  132,
+      133,  134,  135,  136,  137,  138,  139,  140,  141,  142,
+      143,  144,  145,  146,  147,  148,  151,  156,  161,  167,
+      168,  169,  171,  175,  176,  182,  189,  194,  201,  209,
+      214,  215,  216,  217,  218,  219,  220,  230,  238,  244,
+      249,  263,  270,  280,  285,  288,  294,  297,  302,  303,
+      304,  308,  312,  318,  321,  342,  343,  344,  345,  362,
+      363,  364
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -801,9 +801,10 @@ static const flex_int16_t yy_rule_linenum[83] =
     }
     #endif
 
-#line 804 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+
+#line 805 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
-#line 46 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 47 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
   // A number symbol corresponding to the value in S.
   yy::parser::symbol_type make_INT(
     const std::string &s,
@@ -814,13 +815,13 @@ static const flex_int16_t yy_rule_linenum[83] =
     const std::string &s,
     const yy::parser::location_type& loc
     );
-#line 817 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 818 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
  
-#line 68 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 69 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
-#line 822 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 #line 823 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 824 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define INITIAL 0
 #define fbo 1
@@ -1033,10 +1034,10 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 71 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 72 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 
-#line 74 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 75 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
   // A handy shortcut to the location held by the driver.
   yy::location& loc = driver.location;
   // Code run each time yylex is called.
@@ -1046,7 +1047,7 @@ YY_DECL
 
 
 
-#line 1049 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1050 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1123,14 +1124,14 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 83 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 84 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_FATALERROR(loc);
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 87 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 88 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     bracket_level = 0;
     yy_push_state(shader);
@@ -1139,7 +1140,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 92 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 93 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
@@ -1147,21 +1148,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 97 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 98 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_REGISTER(loc);
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 101 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 102 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_CSTBUFFER(loc);
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 105 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 106 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_STRUCT(loc);
 }
@@ -1169,14 +1170,14 @@ YY_RULE_SETUP
 
 case 7:
 YY_RULE_SETUP
-#line 111 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 112 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 114 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 115 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();
         return CURRENT_SYMBOL;
@@ -1186,148 +1187,148 @@ YY_RULE_SETUP
 
 case 9:
 YY_RULE_SETUP
-#line 120 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 121 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VOID_TYPE(loc);
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 121 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 122 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_UNSIGNED(loc);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 122 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 123 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT_TYPE(loc);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 123 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 124 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT2_TYPE(loc);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 124 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 125 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT3_TYPE(loc);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 125 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 126 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT4_TYPE(loc);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 126 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 127 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT2_TYPE(loc);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 127 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 128 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT3_TYPE(loc);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 128 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 129 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT4_TYPE(loc);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 129 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 130 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2_TYPE(loc);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 130 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 131 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT3_TYPE(loc);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 131 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 132 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT4_TYPE(loc);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 132 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 133 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2_TYPE(loc);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 133 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 134 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT3_TYPE(loc);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 134 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 135 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT4_TYPE(loc);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 135 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 136 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL_TYPE(loc);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 136 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 137 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL2_TYPE(loc);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 137 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 138 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL3_TYPE(loc);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 138 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 139 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL4_TYPE(loc);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 139 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 140 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT_TYPE(loc);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 140 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 141 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT2_TYPE(loc);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 141 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 142 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT3_TYPE(loc);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 142 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 143 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT4_TYPE(loc);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 143 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 144 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT2_TYPE(loc);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 144 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 145 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT3_TYPE(loc);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 145 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 146 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT4_TYPE(loc);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 146 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 147 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_UNIFORM(loc);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 147 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 148 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_STRING_TYPE(loc);
 	YY_BREAK
 
 case 37:
 YY_RULE_SETUP
-#line 150 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 151 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXFORMAT(loc);
 	YY_BREAK
 /*==================================================================
@@ -1335,7 +1336,7 @@ return yy::parser::make_VERTEXFORMAT(loc);
     */
 case 38:
 YY_RULE_SETUP
-#line 155 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 156 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
@@ -1343,7 +1344,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 160 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 161 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment2);
@@ -1352,36 +1353,36 @@ YY_RULE_SETUP
 
 case 40:
 YY_RULE_SETUP
-#line 166 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 167 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  anything  that's  not  a  '*'  */
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 167 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 168 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  up  '*'s  not  followed  by  '/'s  */
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 168 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 169 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step ();
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 170 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 171 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
 
 case 44:
 YY_RULE_SETUP
-#line 174 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 175 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 175 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 176 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
@@ -1391,7 +1392,7 @@ loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 
 case 46:
 YY_RULE_SETUP
-#line 181 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 182 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 string_buf_ptr  =  string_buf;  yy_push_state(str);
 	YY_BREAK
 
@@ -1401,7 +1402,7 @@ string_buf_ptr  =  string_buf;  yy_push_state(str);
 
 case 47:
 YY_RULE_SETUP
-#line 188 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 189 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  saw  closing  quote  -  all  done  */
         yy_pop_state();//BEGIN(INITIAL);
         *string_buf_ptr  =  '\0';
@@ -1411,7 +1412,7 @@ YY_RULE_SETUP
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 193 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 194 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //FIXME:
         //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
@@ -1422,7 +1423,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 200 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 201 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  octal  escape  sequence  */
         int  result;
@@ -1434,7 +1435,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 208 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 209 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  generate  error  -  bad  escape  sequence;  something
         *  like  '\48'  or  '\0777777'
@@ -1443,38 +1444,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 213 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 214 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\n';
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 214 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 215 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\t';
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 215 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 216 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\r';
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 216 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 217 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\b';
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 217 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 218 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\f';
 	YY_BREAK
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 218 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 219 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  yytext[1];
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 219 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 220 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1488,8 +1489,9 @@ YY_RULE_SETUP
 
 case 58:
 YY_RULE_SETUP
-#line 229 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 230 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
+        CryLog("In shader state");
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
         *string_buf_ptr = '\0';
@@ -1499,26 +1501,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 236 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 238 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         // TODO create and REGISTER the variable in a table
-		return yy::parser::make_IDENTIFIER(yytext, loc);
+		return check_type(yytext, loc);
     }
 	YY_BREAK
 
 
 case 60:
 YY_RULE_SETUP
-#line 242 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 244 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
+        CryLog("bracket level: %d", bracket_level);
         bracket_level++;
         *string_buf_ptr++  =  yytext[0];
     }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 246 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 249 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
+        CryLog("bracket level: %d", bracket_level);
         bracket_level--;
         if((bracket_level) == 0)
         {
@@ -1535,7 +1539,7 @@ YY_RULE_SETUP
 case 62:
 /* rule 62 can match eol */
 YY_RULE_SETUP
-#line 259 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 263 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1546,7 +1550,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 266 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 270 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1560,7 +1564,7 @@ YY_RULE_SETUP
 
 case 64:
 YY_RULE_SETUP
-#line 276 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 280 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         comment_caller  =  INITIAL;
         yy_push_state(pass);
@@ -1569,14 +1573,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 281 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 285 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 284 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 288 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();//BEGIN(INITIAL);
 		return CURRENT_SYMBOL;
@@ -1586,14 +1590,14 @@ YY_RULE_SETUP
 
 case 67:
 YY_RULE_SETUP
-#line 290 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 294 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 293 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 297 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();
         return CURRENT_SYMBOL;
@@ -1601,24 +1605,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 298 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 302 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 299 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 303 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FRAGMENTPROGRAM(IShader::Type::E_FRAGMENT, loc);
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 300 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 304 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
 	YY_BREAK
 
 
 case 72:
 YY_RULE_SETUP
-#line 304 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 308 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         CryLog("{pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
@@ -1626,7 +1630,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 308 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 312 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         CryLog("}pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
@@ -1636,14 +1640,14 @@ YY_RULE_SETUP
 case 74:
 /* rule 74 can match eol */
 YY_RULE_SETUP
-#line 314 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 318 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.lines (yyleng); loc.step ();
 }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 317 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 321 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.step ();
 }
@@ -1666,22 +1670,22 @@ YY_RULE_SETUP
     */
 case 76:
 YY_RULE_SETUP
-#line 338 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 342 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return make_INT(yytext, loc);
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 339 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 343 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return make_FLOAT(yytext, loc);
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 340 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
-return yy::parser::make_IDENTIFIER(yytext, loc);
+#line 344 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+return check_type(yytext, loc);
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 341 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 345 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
@@ -1702,17 +1706,17 @@ YY_RULE_SETUP
     */
 case 80:
 YY_RULE_SETUP
-#line 358 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 362 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 BEGIN(incl);
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 359 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 363 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  the  whitespace and " or < as often in #include */
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 360 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 364 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  got  the  include  file  name  */
     char * s = (char*)strchr(YYText(), '\"'); // get rid of the quote or >
     if(!s) s = (char*)strchr(YYText(), '>');
@@ -1778,7 +1782,7 @@ case YY_STATE_EOF(rasterization_state):
 case YY_STATE_EOF(resource):
 case YY_STATE_EOF(resource1):
 case YY_STATE_EOF(input_layout):
-#line 402 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 406 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	if(include_stack.empty())//(  --include_stack_ptr  <  0  )
     {
@@ -1800,10 +1804,10 @@ case YY_STATE_EOF(input_layout):
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 421 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 425 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1806 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1810 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2920,7 +2924,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 421 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 425 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 
 yy::parser::symbol_type make_INT(
@@ -2992,6 +2996,29 @@ void Scanner::eof()
 #endif
 	//include_stack.pop();
 }
+
+void Scanner::goto_codebody()
+{
+    bracket_level = 1;
+    yy_push_state(shader);
+    yy_push_state(shaderbody);
+}
+  yy::parser::symbol_type Scanner::check_type(
+    const std::string &s,
+    const yy::parser::location_type& loc
+  )
+  {
+	  if (auto it = symboltype_map.find(s); it != symboltype_map.end())
+	  {
+          CryLog("%s: Its type!!!", s.data());
+		return yy::parser::make_TYPE_NAME(s, loc); 
+	  }
+      else {
+          CryLog("%s: Its ident!!!", s.data());
+        return yy::parser::make_IDENTIFIER(s, loc);
+      }
+  }
+
 
 
 #pragma warning(pop)
