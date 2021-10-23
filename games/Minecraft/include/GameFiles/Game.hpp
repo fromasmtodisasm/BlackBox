@@ -53,6 +53,7 @@ enum
 };
 
 #include <Network/XNetwork.hpp>
+#include "../../Code/Engine/Renderer/MineRenderer/renderer.h"
 
 //#include "BitStream_Base.h"						// CBitStream_Base
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
@@ -718,6 +719,8 @@ protected:
 	void OnCollectUserData(INT_PTR nValue, int nCookie);		//AMD Port
 
 public:
+  	Minecraft minecraft;
+
 	void ClearTagPoints();
 	void SetCurrentUI(CUIHud* pUI);
 

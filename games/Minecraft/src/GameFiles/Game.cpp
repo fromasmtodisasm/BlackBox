@@ -29,7 +29,6 @@
 //#include "CMovieUser.h"
 
 
-
 #include <Client/Client.hpp>
 #include <thread>
 
@@ -842,7 +841,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
 
-	Minecraft
+	minecraft.init();
 	return (true);
 }
 
@@ -1172,6 +1171,7 @@ bool CXGame::Update()
 	m_pSystem->GetIProfileSystem()->EndFrame();
 	//////////////////////////////////////////////////////////////////////////
 
+	minecraft.update();
 	return (m_bUpdateRet);
 }
 

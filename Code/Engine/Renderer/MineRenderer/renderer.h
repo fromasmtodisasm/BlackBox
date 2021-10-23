@@ -64,6 +64,7 @@ class BlockEntity
 
 class Minecraft
 {
+  public:
 	void setBlock(std::string const& block, glm::vec<3, int> position)
 	{
 		if (world.find(position) != world.end())
@@ -91,7 +92,7 @@ class Minecraft
 	}
 
 	std::map<glm::vec<3, int>, BlockEntity> world;
-	std::map<std::string, BlockType> blocks;
+	std::map<std::string, BlockType>		blocks;
 };
 
 #endif // BLACKBOX_WIN64_RENDERER_H
