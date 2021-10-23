@@ -63,11 +63,6 @@ void CClient::Update()
 	auto frame_time	 = gEnv->pTimer->GetRealFrameTime();
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
 	m_NumHitsInFrame = 0;
-	m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0));
-	#if 0
-	if (!gEnv->pConsole->IsOpened())
-		m_pGame->GetActionMapManager()->Update(16);
-	#endif
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
 		m_CameraController.ProcessKeyboard(Movement::LEFT, frame_time, m_PlayerProcessingCmd.GetMoveLeft());	

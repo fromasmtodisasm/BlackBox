@@ -75,7 +75,7 @@ void C3DEngine::Draw()
 
 	static bool costil = true;
 
-	if (costil)
+	if (false)
 	{
 		auto obj_3d = MakeObject("Data/minecraft/Grass_Block.obj", nullptr);
 		//auto obj_3d = MakeObject("Data/geom/pengium.obj", nullptr);

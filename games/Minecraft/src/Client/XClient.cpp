@@ -776,9 +776,11 @@ void CXClient::Update()
 		if((!m_pGame->m_pSystem->GetIConsole()->IsOpened()) && (!m_pGame->m_bMenuOverlay) && m_pIActionMapManager)
 			m_pIActionMapManager->Update((unsigned int)(time*1000.f));
 		#if 1
+
 		m_DummyClient.m_PlayerProcessingCmd = m_PlayerProcessingCmd;
 		m_DummyClient.Update();
 		m_PlayerProcessingCmd.Reset();
+		m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0));
 		#endif
 
 		if(en==NULL)

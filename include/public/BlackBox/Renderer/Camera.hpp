@@ -14,7 +14,7 @@ struct ICVar;
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 
 // Default camera values
-const float YAW		   = -90.0f;
+//const float YAW		   = -90.0f;
 const float PITCH	   = 0.0f;
 const float SPEED	   = 0.1f;
 const float SENSITIVTY = 0.25f;
@@ -51,7 +51,7 @@ class CCamera
 	float zFar	= 1000.f;
 
 	// Constructor with vectors
-	CCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, 0.0f)), MovementSpeed(10.f), Zoom(ZOOM)
+	CCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.f, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, 0.0f)), MovementSpeed(10.f), Zoom(ZOOM)
 	{
 		this->transform.position   = position;
 		this->WorldUp			   = up;

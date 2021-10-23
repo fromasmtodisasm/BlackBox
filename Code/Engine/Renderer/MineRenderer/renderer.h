@@ -86,6 +86,9 @@ class Minecraft
 		blocks.emplace("grass", grass);
 
 		setBlock("grass", glm::vec3(0, 0, 0));
+
+		gEnv->pConsole->ExecuteString("load_level minecraft");
+		gEnv->pConsole->ShowConsole(false);
 	}
 
 	void update()
