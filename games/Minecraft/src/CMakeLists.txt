@@ -39,6 +39,7 @@ add_sources(
 	GameFiles/DevMode.cpp
 	GameFiles/EntityClassRegistry.cpp
 	GameFiles/Game.cpp
+	GameFiles/Minecraft.cpp
 	GameFiles/GameActionInput.cpp
 	GameFiles/GameCallbacks.cpp
 	GameFiles/GameClientServer.cpp
