@@ -659,9 +659,7 @@ void CRenderer::Flush()
 
 	pvb.CopyToDevice();
 #endif
-	#if 1
 	m_RenderAuxGeom->Flush();
-	#endif
 
 	for (auto font : m_Fonts)
 	{

@@ -1800,6 +1800,9 @@ void CXConsole::GetMemoryUsage(ICrySizer* pSizer) const
 
 void CXConsole::ResetProgressBar(int nProgressBarRange)
 {
+	#if 1
+	return;
+	#endif
 	m_nProgressRange = nProgressBarRange;
 	m_nProgress = 0;
 
@@ -1826,6 +1829,9 @@ void CXConsole::ResetProgressBar(int nProgressBarRange)
 
 void CXConsole::TickProgressBar()
 {
+	#if 1
+	return;
+	#endif
 	if (m_nProgressRange != 0 && m_nProgressRange > m_nProgress)
 	{
 		m_nProgress++;

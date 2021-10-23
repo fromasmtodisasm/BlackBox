@@ -101,24 +101,13 @@ void CD3DRenderer::BeginFrame(void)
 void CD3DRenderer::Update(void)
 {
 	m_FrameID++;	
-    //
-    // Clear the back buffer
-    //
-    //float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-    //GetDevice()->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
 
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
-	#if 1
-
-	#endif
-	#if 1
-	//Draw2DQuad(0, 0, (float)GetWidth(), (float)GetHeight(), 12, color4f(1, 1, 1, 1), 0, 0, 1, 1);
 	for (auto img : m_DrawImages)
 	{
 		Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 	}
     Flush();
-	#endif
 	for (const auto& rcl : m_RenderCallbackClients)
 	{
 		rcl->OnRenderer_BeforeEndFrame();	
@@ -127,9 +116,7 @@ void CD3DRenderer::Update(void)
 		pConsole->Draw();
 
 	m_DrawImages.clear();
-    //
-    // Present our back buffer to our front buffer
-    //
+
     m_pSwapChain->Present( 0, 0 );
 }
 
