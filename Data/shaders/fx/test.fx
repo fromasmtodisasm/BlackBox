@@ -72,6 +72,7 @@ float4 PS(VS_OUTPUT input)
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
 	//return float4(1,1,1,1);
+	return float4(1,1,1,1);
 	return float4(textureColor.rgb,1);
 
 	// Invert the light direction for calculations.
