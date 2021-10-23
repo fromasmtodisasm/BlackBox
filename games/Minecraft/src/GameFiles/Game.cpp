@@ -841,7 +841,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
 
-	minecraft.init();
+	//minecraft.init();
 	return (true);
 }
 
@@ -885,7 +885,7 @@ bool CXGame::Update()
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
-	bool bRenderFrame = (!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || m_bMenuOverlay || m_bUIOverlay) 
+	bool bRenderFrame = ((!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || true) || m_bMenuOverlay || m_bUIOverlay) 
 											&& g_Render->GetIVal() != 0;
 	//////////////////////////////////////////////////////////////////////////
 	// Start Profiling frame

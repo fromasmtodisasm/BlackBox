@@ -33,9 +33,8 @@ void C3DEngine::Enable(bool bEnable)
 
 bool C3DEngine::Init()
 {
-    MakeObject("res/geom/pengium.obj", nullptr);
     //MakeObject("res/geom/cnek.obj", nullptr);
-    MakeObject("res/geom/doggy.fbx", nullptr);
+    //MakeObject("res/geom/doggy.fbx", nullptr);
 	return true;
 }
 
@@ -73,6 +72,24 @@ void C3DEngine::Draw()
 	if (!m_Enabled)
 		return;
 	gEnv->pRenderer->SetCamera(m_Camera);
+
+	static bool costil = true;
+
+	if (costil)
+	{
+		auto obj_3d = MakeObject("Data/minecraft/Grass_Block.obj", nullptr);
+		//auto obj_3d = MakeObject("Data/geom/pengium.obj", nullptr);
+
+		auto entity = gEnv->p3DEngine->MakeEntity(1, 0);
+		CEntityObject obj;
+		obj.scale  = glm::vec3(1);
+		obj.object = obj_3d;
+		entity->SetEntityObject(0, obj);
+		entity->SetPos({0, 0, 10});
+
+		costil = false;
+	
+	}
 
 	for (IEntity* obj : m_Entities)
 	{

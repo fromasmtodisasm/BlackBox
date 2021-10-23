@@ -978,7 +978,7 @@ void CScriptObject::Release()
 {
 	// FIXME: 
 	// Unbalanced AddRef and Release
-	#if 0
+	#if 1
 	if (--m_nRefCount <= 0)
 	{
 		if (m_pParent)

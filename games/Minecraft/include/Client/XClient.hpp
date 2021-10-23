@@ -65,6 +65,10 @@ typedef EntityList::iterator EntityListItor;
 typedef std::vector<SSoundInfo>	TSoundList;
 typedef TSoundList::iterator TSoundListIt;
 
+#if 1
+#include <Client\Client.hpp>
+#endif
+
 //////////////////////////////////////////////////////////////////////
 // CXClient class.
 class CXClient :  
@@ -455,5 +459,7 @@ private:
 	void SendInputToServer( const bool bTimeToSend );
 	//! restore VF_REQUIRE_NET_SYNC marked console vars
 	void RestoreServerSyncedVars();
+
+	CClient m_DummyClient;
 };
 #endif // GAME_XCLIENT_H

@@ -1,4 +1,3 @@
-#if 0
 #include <algorithm>
 #include <Client/Client.hpp>
 #include <BlackBox\System\ConsoleRegistration.h>
@@ -32,6 +31,10 @@ CClient::CClient(CXGame* pGame)
 		0,
 		"");
 	REGISTER_CVAR2("cl_gravity", &gGravity, 9.8f, 0, "");
+
+	#if 1
+	OnLoadScene();
+	#endif
 }
 
 CClient::~CClient()
@@ -61,8 +64,10 @@ void CClient::Update()
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
 	m_NumHitsInFrame = 0;
 	m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0));
+	#if 0
 	if (!gEnv->pConsole->IsOpened())
 		m_pGame->GetActionMapManager()->Update(16);
+	#endif
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
 		m_CameraController.ProcessKeyboard(Movement::LEFT, frame_time, m_PlayerProcessingCmd.GetMoveLeft());	
@@ -465,7 +470,7 @@ void CClient::IntersectionByRayCasting()
 	gEnv->pRenderer->UnProjectFromScreen(
 		m_IntersectionState.mx, m_IntersectionState.my, 1, &end.x, &end.y, &end.z);
 
-	float tMin = std::numeric_limits<float>::max();
+	float tMin = HUGE_VALF;
 	Ray eyeRay;
 
 	//m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
@@ -520,4 +525,3 @@ void CClient::Render()
 void CClient::OnRenderer_BeforeEndFrame() 
 {
 }
-#endif

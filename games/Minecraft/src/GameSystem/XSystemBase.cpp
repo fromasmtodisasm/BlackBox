@@ -1616,8 +1616,10 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	}
 
 	// Init Weapon system.
+	#if 0
 	if (m_pGame->GetWeaponSystemEx())
 		m_pGame->GetWeaponSystemEx()->Init(m_pGame, false);
+	#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load Movie Data.

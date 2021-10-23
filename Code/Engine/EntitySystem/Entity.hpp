@@ -194,9 +194,10 @@ class CEntity : public IEntity
 	IScriptObject*	  m_pScriptOject;
 	IEntityCharacter* m_pCharacter;
 
-	bool m_bIsStatic;
-	Legacy::Vec3 m_Angles;
-	Legacy::Vec3 m_Pos;
+	bool		 m_bIsStatic;
+	Legacy::Vec3 m_Angles{0};
+	Legacy::Vec3 m_Pos	 = Legacy::Vec3(0);
+	float		 m_Scale = 1.f;
 
 	CEntityDesc m_Desc;
 

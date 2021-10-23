@@ -28,7 +28,8 @@
 
 
 //////////////////////////////////////////////////////////////////////
-CXClient::CXClient() 
+CXClient::CXClient() : 
+	m_DummyClient((CXGame*)(gEnv->pSystem->GetIGame()))
 {
 	m_bConnected=0;
 	m_CameraParams=0;
@@ -57,6 +58,8 @@ CXClient::CXClient()
 	m_bSelfDestruct=false;			//  to make sure the client is only released in one place
 	m_pSavedConsoleVars=0;
 	m_bLazyChannelState=false;	// start with false on client and serverslot side
+	#if 1
+	#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -732,7 +735,7 @@ void CXClient::Update()
 	IEntity *en=NULL;
 	IEntityContainer *pCnt=NULL;
 
-	if(m_wPlayerID != INVALID_WID)
+	if(m_wPlayerID != INVALID_WID || true)
 	{
 		en = m_pISystem->GetEntity(m_wPlayerID);
 
@@ -772,6 +775,10 @@ void CXClient::Update()
 
 		if((!m_pGame->m_pSystem->GetIConsole()->IsOpened()) && (!m_pGame->m_bMenuOverlay) && m_pIActionMapManager)
 			m_pIActionMapManager->Update((unsigned int)(time*1000.f));
+		#if 1
+		m_DummyClient.m_PlayerProcessingCmd = m_PlayerProcessingCmd;
+		m_DummyClient.Update();
+		#endif
 
 		if(en==NULL)
 			return;
@@ -880,6 +887,7 @@ void CXClient::Update()
 		if(m_Snapshot.GetSendPerSecond()!=iCmdRate)
 			m_Snapshot.SetSendPerSecond(iCmdRate);
 	}
+
 }
 
 //////////////////////////////////////////////////////////////////////

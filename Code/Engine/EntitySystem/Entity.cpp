@@ -335,6 +335,7 @@ bool CEntity::CreateParticleEntity(float size, float mass, Legacy::Vec3 heading,
 
 void CEntity::SetPos(const Legacy::Vec3& pos, bool bWorldOnly)
 {
+	m_Pos = pos;
 }
 
 const Legacy::Vec3& CEntity::GetPos(bool bWorldOnly) const
@@ -348,6 +349,7 @@ void CEntity::SetPhysAngles(const Legacy::Vec3& angl)
 
 void CEntity::SetAngles(const Legacy::Vec3& pos, bool bNotifyContainer, bool bUpdatePhysics, bool forceInWorld)
 {
+	m_Angles = pos;
 }
 
 const Legacy::Vec3& CEntity::GetAngles(int realA) const
@@ -361,7 +363,7 @@ void CEntity::SetScale(float scale)
 
 float CEntity::GetScale() const
 {
-	return 0.0f;
+	return m_Scale;
 }
 
 void CEntity::SetRadius(float r)
