@@ -772,22 +772,23 @@ namespace yy {
         S_shader_assignments = 102,              // shader_assignments
         S_passstates = 103,                      // passstates
         S_base_type = 104,                       // base_type
-        S_var_decl = 105,                        // var_decl
-        S_pass = 106,                            // pass
-        S_107_2 = 107,                           // $@2
-        S_108_3 = 108,                           // $@3
-        S_passes = 109,                          // passes
-        S_tech = 110,                            // tech
-        S_111_4 = 111,                           // $@4
-        S_112_5 = 112,                           // $@5
-        S_scalar_type = 113,                     // scalar_type
-        S_annotation_list = 114,                 // annotation_list
-        S_annotation_value = 115,                // annotation_value
-        S_annotation = 116,                      // annotation
-        S_annotations = 117,                     // annotations
-        S_hlsl_header = 118,                     // hlsl_header
-        S_hlsl = 119,                            // hlsl
-        S_shader_header = 120                    // shader_header
+        S_semantic = 105,                        // semantic
+        S_var_decl = 106,                        // var_decl
+        S_pass = 107,                            // pass
+        S_108_2 = 108,                           // $@2
+        S_109_3 = 109,                           // $@3
+        S_passes = 110,                          // passes
+        S_tech = 111,                            // tech
+        S_112_4 = 112,                           // $@4
+        S_113_5 = 113,                           // $@5
+        S_scalar_type = 114,                     // scalar_type
+        S_annotation_list = 115,                 // annotation_list
+        S_annotation_value = 116,                // annotation_value
+        S_annotation = 117,                      // annotation
+        S_annotations = 118,                     // annotations
+        S_hlsl_header = 119,                     // hlsl_header
+        S_hlsl = 120,                            // hlsl
+        S_shader_header = 121                    // shader_header
       };
     };
 
@@ -2456,17 +2457,17 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const signed char yypgoto_[];
+    static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
-    static const signed char yydefgoto_[];
+    static const unsigned char yydefgoto_[];
 
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
     static const short yytable_[];
 
-    static const signed char yycheck_[];
+    static const short yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -2708,8 +2709,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 192,     ///< Last index in yytable_.
-      yynnts_ = 36,  ///< Number of nonterminal symbols.
+      yylast_ = 179,     ///< Last index in yytable_.
+      yynnts_ = 37,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2955,7 +2956,7 @@ switch (yykind)
 
 
 } // yy
-#line 2959 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 2960 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 

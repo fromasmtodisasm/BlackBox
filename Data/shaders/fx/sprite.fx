@@ -1,4 +1,17 @@
 #include "hlsl_common.fx"
+// Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+
+//#include "common.cfi"
+
+// Uniform data
+cbuffer CBAuxGeom : register(0)
+{
+	struct
+	{
+		float4x4 matViewProj;
+		float2	 invScreenDim;
+	} cbAuxGeom;
+};
 
 cbuffer CBAuxGeomObject : register(0)
 {
@@ -11,25 +24,45 @@ cbuffer CBAuxGeomObject : register(0)
 	} cbAuxGeomObject;
 };
 
-float AnimSpeed <
-	//register  = REG_PM_PARAM_0.y;
-	string UIName = "Perturbation anim speed";
+// Structure of vertex shader input for geometries
+struct SAuxGeomApp2VS
+{
+	float4 pos : POSITION;
+	float2 tex : TEXCOORD0; // unused but needs to be declared under DX10 to be able to share signatures
+	float4 col : COLOR0;
+};
 
-	string UIWidget = "slider";
-	float  UIMin	= -10.0;
-	float  UIMax	= 10.0;
-	float  UIStep	= 0.005;
-	>				= 0.2;
+// Structure of vertex shader input for objects
+struct SAuxGeomObjApp2VS
+{
+	float4 pos : POSITION;
+	float3 normal : TEXCOORD0;
+};
 
-float PerturbationScale <
-	//register  = REG_PM_PARAM_0.z;
-	string UIName = "Perturbation tilling";
+// Structure of vertex shader output = pixel shader input
+struct SAuxVS2PS
+{
+	float4 pos : SV_Position;
+	float4 col : COLOR0;
+};
 
-	string UIWidget = "slider";
-	float  UIMin	= 0.0;
-	float  UIMax	= 32.0;
-	float  UIStep	= 0.005;
-	>				= 0.5;
+struct SAuxVS2PSWithColor
+{
+	float4 pos : SV_Position;
+	float2 tex : TEXCOORD0;
+	float4 col : COLOR0;
+};
+
+float RefrBumpScale <
+	//register  = REG_PM_PARAM_0.x;
+string UIHelp = "Set refraction bump scale \nMin value = 0, Max value = 2.0 \nCorrect name - RefrBumpScale";
+string UIName = "Refraction Bump Scale";
+
+string UIWidget = "slider";
+float  UIMin	= 0.0;
+float  UIMax	= 2.0;
+float  UIStep	= 0.1;
+>				= 0.1;
 
 float3 main(float4 f1, int i2);
 

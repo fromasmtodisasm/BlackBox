@@ -268,6 +268,7 @@ input: %empty { CryLog("Empty effect"); }
 | input function_definition
 | input function_declaration
 | input fatal_error
+| input struct
 | input error
 ;
 
@@ -342,10 +343,12 @@ base_type:
 
 ;
 
+semantic: ':' IDENTIFIER | %empty ;
+
 var_decl: 
-base_type IDENTIFIER
-| base_type IDENTIFIER annotations '=' INT
-| base_type IDENTIFIER annotations '=' FLOAT
+base_type IDENTIFIER semantic
+| base_type IDENTIFIER semantic annotations '=' INT
+| base_type IDENTIFIER semantic annotations '=' FLOAT
 ;
 
 
