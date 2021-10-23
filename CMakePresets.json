@@ -7,13 +7,17 @@
   },
   "configurePresets": [
     {
-      "name": "default",
-      "displayName": "Default Config",
-      "description": "Default build Visual Studio 2019 generator",
-      "generator": "Visual Studio 16 2019",
-      "binaryDir": "${sourceDir}/Solutions/Win64",
-      "warnings": {"dev": false},
-      "errors": {"dev": false},
+      "name": "windows-default",
+      "displayName": "Windows x64 Debug",
+      "description": "Sets Ninja generator, compilers, x64 architecture, build and install directory, debug build type",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/Solutions/${presetName}",
+      "warnings": { "dev": false },
+      "errors": { "dev": false },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
       "cacheVariables": {
         "OPTION_RUNTIME_CVAR_OVERRIDES": "ON",
         "OPTION_REMOTE_CONSOLE": "ON",
@@ -25,22 +29,26 @@
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_INSTALLER": "ON",
-        
+        "VCPKG_ROOT": {
+          "value": "$env{solutionDir}/vcpkg",
+          "type": "FILEPATH"
+        },
+
         "ADD_PACKAGE_DEP_MODE": "OFF"
 
       },
       "environment": {
-
+        "solutionDir": "${sourceDir}/Solutions"
       },
       "vendor": {
-        "example.com/ExampleIDE/1.0": {
-          "autoFormat": true
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
         }
       }
     },
     {
-      "name": "VS2019",
-      "inherits": "default",
+      "name": "vs2019",
+      "inherits": "windows-default",
       "displayName": "VS2019 Config",
       "description": "Visual Studio 2019 Config generator",
       "generator": "Visual Studio 16 2019"
@@ -48,21 +56,12 @@
   ],
   "buildPresets": [
     {
-      "name": "VS2019",
-      "configurePreset": "VS2019"
-    }
-  ],
-  "testPresets": [
+      "name": "Windows default",
+      "configurePreset": "windows-default"
+    },
     {
-      "name": "default",
-      "configurePreset": "default",
-      "output": {"outputOnFailure": true},
-      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+      "name": "vs2019",
+      "configurePreset": "vs2019"
     }
-  ],
-  "vendor": {
-    "example.com/ExampleIDE/1.0": {
-      "autoFormat": false
-    }
-  }
+  ]
 }

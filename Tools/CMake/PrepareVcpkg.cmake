@@ -1,17 +1,24 @@
 function(PrepareVcpkg)
-  message("Prepare VCPKG")
+  message("Setup Prepare VCPKG")
 	#set(VCPKG_ROOT $ENV{VCPKG_ROOT} CACHE STRING "VCPKG_ROOT" FORCE)
-	#find_program(VCPKG NAMES vcpkg PATHS $ENV{VCPKG_ROOT})
+	set(VCPKG "")
+	if (VCPKG_ROOT)
+		message(STATUS "Finding vcpkg in ${VCPKG_ROOT}")
+		find_program(VCPKG NAMES vcpkg vcpkg.exe PATHS ${VCPKG_ROOT})
+		message(STATUS "vcpkg is: ${VCPKG}")
+	endif()
 	if (NOT VCPKG)
-		message("VCPKG NOT FOUND")
+		message(STATUS "VCPKG NOT FOUND")
 		if (NOT (IS_DIRECTORY ${VCPKG_ROOT}/.git))
 			include(FetchContent)
 			FetchContent_Declare(
 			  vcpkg  
 			  GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
 			  GIT_TAG        2021.05.12
+			  SOURCE_DIR     ${CMAKE_SOURCE_DIR}/Solutions/vcpkg
 			)
 
+			message(STATUS "Download VCPKG")
 			FetchContent_MakeAvailable(vcpkg)
 			set(VCPKG_ROOT ${vcpkg_SOURCE_DIR} CACHE STRING "VCPKG_ROOT" FORCE)
 			message(STATUS "VCPKG_ROOT: ${VCPKG_ROOT}")
