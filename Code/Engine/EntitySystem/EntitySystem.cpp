@@ -7,7 +7,7 @@
 
 inline CEntitySystem::CEntitySystem(ISystem* pSystem) : m_EntityIt(m_Entities)
 {
-	m_Entities.resize(100);
+	m_Entities.resize(1000);
 
 #define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_"#event, ScriptEvent_##event)
 	SET_SCRIPTEVENT(Activate);
@@ -79,7 +79,7 @@ void CEntitySystem::Reset()
 
 IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool t)
 {
-	return &m_Entities[0];
+	return &m_Entities[m_nSpawnedEntities++];
 }
 
 bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)

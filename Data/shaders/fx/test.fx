@@ -43,7 +43,7 @@ VS_OUTPUT VS(
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
     output.Pos = mul(IN.Pos, World );
-    output.Pos = mul(IN.Pos, View);
+    output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
     //output.Pos = mul( Pos, MVP );
     output.Normal = IN.Normal;
@@ -71,7 +71,8 @@ float4 PS(VS_OUTPUT input)
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
-	return textureColor;
+	//return float4(1,1,1,1);
+	return float4(textureColor.rgb,1);
 
 	// Invert the light direction for calculations.
 	lightDir = normalize(float3(0,1,0));

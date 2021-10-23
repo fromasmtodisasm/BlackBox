@@ -83,4 +83,6 @@ public:
 
 	CEntityIterator m_EntityIt;
 
+	int m_nSpawnedEntities = 0;
+
 };

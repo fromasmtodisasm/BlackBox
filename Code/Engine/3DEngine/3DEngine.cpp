@@ -13,7 +13,6 @@
 #include <BlackBox\Utils\Text.hpp>
 
 void loadModel(string path);
-
 C3DEngine::C3DEngine(ISystem *pSystem, const char *szInterfaceVersion)
     :
       m_pSystem(pSystem)
@@ -75,17 +74,27 @@ void C3DEngine::Draw()
 
 	static bool costil = true;
 
-	if (false)
+	if (costil)
 	{
 		auto obj_3d = MakeObject("Data/minecraft/Grass_Block.obj", nullptr);
-		//auto obj_3d = MakeObject("Data/geom/pengium.obj", nullptr);
+		//auto obj_3d = MakeObject("Data/geom/pengium2.obj", nullptr);
 
-		auto entity = gEnv->p3DEngine->MakeEntity(1, 0);
-		CEntityObject obj;
-		obj.scale  = glm::vec3(1);
-		obj.object = obj_3d;
-		entity->SetEntityObject(0, obj);
-		entity->SetPos({0, 0, 10});
+		#if 0
+		for (int z = 0; z < 10; z++)
+		{
+			for (int x = 0; x < 10; x++)
+			{
+				auto		  entity = gEnv->p3DEngine->MakeEntity(1, 0);
+				CEntityObject obj;
+				obj.scale  = glm::vec3(1);
+				obj.object = obj_3d;
+				entity->SetEntityObject(0, obj);
+				entity->SetPos({x, 0, z});
+				entity->SetScale(1);
+			}
+		
+		}
+		#endif
 
 		costil = false;
 	
@@ -97,9 +106,10 @@ void C3DEngine::Draw()
 		glm::vec3 pos = obj->GetPos();
 		glm::vec3 rotation = obj->GetAngles();
 		float scale = obj->GetScale();
-		glm::mat4 transform = glm::translate(glm::mat4(1), rotation);
-		transform = glm::scale(transform, glm::vec3(scale));
+		auto		transform = glm::mat4(1);
+		//glm::mat4 transform = glm::rotate(glm::mat4(1), );
 		transform = glm::translate(transform, pos);
+		transform = glm::scale(transform, glm::vec3(scale));
 		IStatObj* stat = obj->GetIStatObj(0);
 		rp.pMatrix = &transform;
 		rp.texture = stat->GetTexture();

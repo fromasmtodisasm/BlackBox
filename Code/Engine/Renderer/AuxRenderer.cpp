@@ -181,6 +181,7 @@ void DrawCube(const SDrawElement& DrawElement)
 	// g_MVP = g_World * g_View * g_Projection;
 	// g_MVP = g_Projection * g_View * g_World;
 	auto m_Camera = gEnv->pSystem->GetViewCamera();
+	g_World		  = DrawElement.transform;
 	g_MVP		  = m_Camera.getProjectionMatrix() * m_Camera.GetViewMatrix() * DrawElement.transform;
 	g_View		  = m_Camera.GetViewMatrix();
 	g_Projection  = m_Camera.getProjectionMatrix();
@@ -198,7 +199,7 @@ void DrawCube(const SDrawElement& DrawElement)
 	cb.View		  = g_View;
 	cb.Projection = g_Projection;
 #	else
-	// D3DXMatrixTranspose(&cb.World, &g_World);
+	D3DXMatrixTranspose(&cb.World, &g_World);
 	D3DXMatrixTranspose(&cb.View, &g_View);
 	D3DXMatrixTranspose(&cb.Projection, &g_Projection);
 #	endif

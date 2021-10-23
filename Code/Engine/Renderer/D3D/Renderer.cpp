@@ -110,10 +110,6 @@ void CD3DRenderer::Update(void)
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
 	#if 1
 
-	for (const auto& rcl : m_RenderCallbackClients)
-	{
-		rcl->OnRenderer_BeforeEndFrame();	
-	}
 	#endif
 	#if 1
 	//Draw2DQuad(0, 0, (float)GetWidth(), (float)GetHeight(), 12, color4f(1, 1, 1, 1), 0, 0, 1, 1);
@@ -123,6 +119,10 @@ void CD3DRenderer::Update(void)
 	}
     Flush();
 	#endif
+	for (const auto& rcl : m_RenderCallbackClients)
+	{
+		rcl->OnRenderer_BeforeEndFrame();	
+	}
 	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
 		pConsole->Draw();
 
