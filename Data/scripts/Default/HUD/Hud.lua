@@ -144,8 +144,8 @@ function Hud:OnUpdate()
 	if(player and player.classname=="Player") then		
 		-- only player gets 'panoramic'.. (there's some bug in renderer, i have to set ONE ZERO blending mode, since blending is not reseted for some reason)
 	 	if(hud_panoramic=="1") then							
-			%System:DrawImageColorCoords(self.black_dot, 0, 0, 800, tonumber(hud_panoramic_height), 9, 0, 0, 0, 0.5, 0, 0, 1, 1);	
-			%System:DrawImageColorCoords(self.black_dot, 0, 600-tonumber(hud_panoramic_height), 800, tonumber(hud_panoramic_height), 9, 0, 0, 0, 0.5, 0, 0, 1, 1);		
+			System:DrawImageColorCoords(self.black_dot, 0, 0, 800, tonumber(hud_panoramic_height), 9, 0, 0, 0, 0.5, 0, 0, 1, 1);	
+			System:DrawImageColorCoords(self.black_dot, 0, 600-tonumber(hud_panoramic_height), 800, tonumber(hud_panoramic_height), 9, 0, 0, 0, 0.5, 0, 0, 1, 1);		
 		end		
 				
 		-- display subtitles when required	
@@ -204,7 +204,7 @@ end
 
 -----------------------------------------------------------------------------
 function Hud:OnShutdown()
-	%System:Log("Hud:OnShutdown()");
+	System:Log("Hud:OnShutdown()");
 	self.EarRinging=nil;
 	
 end

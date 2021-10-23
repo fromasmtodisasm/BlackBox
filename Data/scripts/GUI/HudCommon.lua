@@ -132,7 +132,7 @@ end
 -----------------------------------------------------------------------------
 
 Hud.Progress.Player.Draw = function(hud)
-	%Game:SetHUDFont("hud", "ammo");
+	Game:SetHUDFont("hud", "ammo");
 	local PTable = Hud.Progress.Player;
 	local text=PTable.LocalToken;
 	local strsizex,strsizey = Game:GetHudStringSize(text, 26, 26);
@@ -309,7 +309,7 @@ function Hud:ProcessAddMessage(tMsgList, text, lifetime, beep, killmsg)
 	end
 	
 	-- sort table items by lifetime	
-	sort(tMsgList,%message_compare);				
+	sort(tMsgList,message_compare);				
 	
 	-- remove old messages
 	while (count(tMsgList)>4) do
@@ -354,7 +354,7 @@ end
 
 function Hud:InitTexTable(tt)
 	local tw,th=511,255;
-	for i,val in tt do
+	for i,val in paris(tt) do
 		val.size={}
 		val.size.w=val[3];
 		val.size.h=val[4];
@@ -1208,7 +1208,7 @@ function Hud:AddPickup( pick_type, pick_amount)
 	end
 		
 	-- sort table items by lifetime	
-	sort(self.pPickupsTbl,%pickup_compare);			
+	sort(self.pPickupsTbl,pickup_compare);			
 	
 	-- remove old pickups
 	while (count(self.pPickupsTbl)>4) do
@@ -1343,7 +1343,7 @@ function Hud:DrawItems(player)
 	-- render keycards
 	for i,val in player.keycards do			
 		if (val==1) then			
-			%System:DrawImageColor(self.KeyItem[i], x, y, 40, 20, 4,1,1,1, fValue);		
+			System:DrawImageColor(self.KeyItem[i], x, y, 40, 20, 4,1,1,1, fValue);		
 			x=x+40;
 		end
 	end
@@ -1353,7 +1353,7 @@ function Hud:DrawItems(player)
 		if (val==1) then
 			-- items are: 1: pda, 2:bombfuse 3: pda batery, 4:undefined, etc..					
 			x=x+8;		
-			%System:DrawImageColor(self.ObjectItem[i+1], x, y-6, 32, 32, 4,1,1,1, fValue);		
+			System:DrawImageColor(self.ObjectItem[i+1], x, y-6, 32, 32, 4,1,1,1, fValue);		
 			x=x+40;		
 		end
 	end
@@ -1361,7 +1361,7 @@ function Hud:DrawItems(player)
 	-- render explosives
 	for i,val in player.explosives do			
 		if (val==1) then			
-			%System:DrawImageColor(self.ObjectItem[1], x, y, 40, 20, 4,1,1,1, fValue);		
+			System:DrawImageColor(self.ObjectItem[1], x, y, 40, 20, 4,1,1,1, fValue);		
 			x=x+40;
 		end
 	end
@@ -1374,9 +1374,9 @@ end
 
 function Hud:DrawLabel()
 	if(self.label)then			
-		%Game:SetHUDFont("default", "default");
+		Game:SetHUDFont("default", "default");
 		local strsizex,strsizey = Game:GetHudStringSize(self.label, 12, 12);
-		%Game:WriteHudString(400-strsizex*0.5, 350, self.label, self.color.r, self.color.g, self.color.b, 1, 12, 12, 0);											
+		Game:WriteHudString(400-strsizex*0.5, 350, self.label, self.color.r, self.color.g, self.color.b, 1, 12, 12, 0);											
 	end
 	
 	--if labeltime is specified dont remove immediately the label, but wait for the time specified.
@@ -1584,14 +1584,14 @@ function Hud:DrawAmmo(player)
 		if(player.cnt.ammo<999)then ammo=player.cnt.ammo end
 		--System:Log("critical_ammo_count="..critical_ammo_count)
 		if(player.cnt.ammo_in_clip<=critical_ammo_count)then
-			--%Game:WriteHudString(700,562, format("%03i/%03i",player.cnt.ammo_in_clip,ammo), 1, 0, 0, 35,37);
+			--Game:WriteHudString(700,562, format("%03i/%03i",player.cnt.ammo_in_clip,ammo), 1, 0, 0, 35,37);
 			
 			self:DrawNumber(1, 3,737,550,player.cnt.ammo_in_clip,1,0,0,1);
 			self:DrawNumber(1, 3,737,568,player.cnt.ammo);
 		elseif(player.cnt.ammo_in_clip>0 and ammo>0)then
 			self:DrawNumber(1, 3,737,550,player.cnt.ammo_in_clip);
 			self:DrawNumber(1, 3,737,568,player.cnt.ammo);
-			--%Game:WriteHudString(700,562, format("%03i/%03i",player.cnt.ammo_in_clip,ammo), self.color.r, self.color.g, self.color.b, 35,37);
+			--Game:WriteHudString(700,562, format("%03i/%03i",player.cnt.ammo_in_clip,ammo), self.color.r, self.color.g, self.color.b, 35,37);
 		else
 			self:DrawNumber(1, 3,737,550,player.cnt.ammo_in_clip);
 			self:DrawNumber(1, 3,737,568,ammo);
@@ -2033,25 +2033,25 @@ function Hud:DrawCrosshair(player)
 		local fTexOffset=0.5/256;
 		
 		if(self.dmgfront>0)then			
-			%System:DrawImageColorCoords(self.damage_icon_ud, 0, 0, 800, 90, 4, 0.45, 0.1, 0,  self.dmgfront, 1+fTexOffset, 1+fTexOffset, fTexOffset, fTexOffset);	
+			System:DrawImageColorCoords(self.damage_icon_ud, 0, 0, 800, 90, 4, 0.45, 0.1, 0,  self.dmgfront, 1+fTexOffset, 1+fTexOffset, fTexOffset, fTexOffset);	
 			self.dmgfront=self.dmgfront-FrameTime;
 			if(self.dmgfront<0) then self.dmgfront=0 end
 		end
 	
 		if(self.dmgback>0)then			
-			%System:DrawImageColorCoords(self.damage_icon_ud, 0, 600-90, 800, 90, 4, 0.45, 0.1, 0, self.dmgback, fTexOffset, fTexOffset, 1+fTexOffset, 1+fTexOffset);	
+			System:DrawImageColorCoords(self.damage_icon_ud, 0, 600-90, 800, 90, 4, 0.45, 0.1, 0, self.dmgback, fTexOffset, fTexOffset, 1+fTexOffset, 1+fTexOffset);	
 			self.dmgback=self.dmgback-FrameTime;
 			if(self.dmgback<0) then self.dmgback=0 end
 		end
 			
 		if(self.dmgleft>0)then			
-			%System:DrawImageColorCoords(self.damage_icon_lr, 0, 0, 90, 600, 4, 0.45, 0.1, 0, self.dmgleft, fTexOffset, fTexOffset, 1-fTexOffset, 1-fTexOffset);	
+			System:DrawImageColorCoords(self.damage_icon_lr, 0, 0, 90, 600, 4, 0.45, 0.1, 0, self.dmgleft, fTexOffset, fTexOffset, 1-fTexOffset, 1-fTexOffset);	
 			self.dmgleft=self.dmgleft-FrameTime;
 			if(self.dmgleft<0) then self.dmgleft=0 end
 		end
 		
 		if(self.dmgright>0)then			
-			%System:DrawImageColorCoords(self.damage_icon_lr, 800-90, 0, 90, 600, 4, 0.45, 0.1, 0, self.dmgright, 1-fTexOffset, 1-fTexOffset, fTexOffset, fTexOffset);	
+			System:DrawImageColorCoords(self.damage_icon_lr, 800-90, 0, 90, 600, 4, 0.45, 0.1, 0, self.dmgright, 1-fTexOffset, 1-fTexOffset, fTexOffset, fTexOffset);	
 			self.dmgright=self.dmgright-FrameTime;
 			if(self.dmgright<0) then self.dmgright=0 end
 		end
@@ -2228,7 +2228,7 @@ function Hud:MissionBox()
 	
 	Hud:DrawFrameBox(boxx, boxy, w, h);	
 	
-	%Game:SetHUDFont("default", "default");
+	Game:SetHUDFont("default", "default");
 	
 	-- top edge 
 	local r, g, b;
@@ -2236,24 +2236,24 @@ function Hud:MissionBox()
 	g=66.0/255;
 	b=53.0/255;
 	
-	%System:DrawImageColor(self.white_dot, boxx-1, boxy-1, w+2, 1, 4, r, g, b, 1);
+	System:DrawImageColor(self.white_dot, boxx-1, boxy-1, w+2, 1, 4, r, g, b, 1);
 	-- bottom edge
-	%System:DrawImageColor(self.white_dot, boxx-1, boxy+h, w+2, 1, 4, r, g, b, 1);
+	System:DrawImageColor(self.white_dot, boxx-1, boxy+h, w+2, 1, 4, r, g, b, 1);
 	-- left edge
-	%System:DrawImageColor(self.white_dot, boxx-1, boxy-1, 1, h+2, 4,  r, g, b, 1);
+	System:DrawImageColor(self.white_dot, boxx-1, boxy-1, 1, h+2, 4,  r, g, b, 1);
 	-- right edge
-	%System:DrawImageColor(self.white_dot, boxx+w, boxy-1, 1, h+2, 4,  r, g, b, 1);
+	System:DrawImageColor(self.white_dot, boxx+w, boxy-1, 1, h+2, 4,  r, g, b, 1);
 		
 	-- main box						
-	%System:DrawImageColor(nil, boxx, boxy, w, h, 4,1,1,1,1);
+	System:DrawImageColor(nil, boxx, boxy, w, h, 4,1,1,1,1);
 	
 	for i,val in self.objectives do
 		if(not val.completed)then
-			%System:DrawImageColor(self.missioncheckbox, boxx+textspacing, y, 16, 16, 4,1,1,1,1);
-			%Game:WriteHudString(boxx+textspacing+20, y-3, val.text, self.color.r, self.color.g, self.color.b, 1, 20,20);
+			System:DrawImageColor(self.missioncheckbox, boxx+textspacing, y, 16, 16, 4,1,1,1,1);
+			Game:WriteHudString(boxx+textspacing+20, y-3, val.text, self.color.r, self.color.g, self.color.b, 1, 20,20);
 		else
-			%System:DrawImageColor(self.missioncheckboxcomp, boxx+textspacing, y, 16, 16, 4,0.35,0.35,0.39,1);
-			%Game:WriteHudString(boxx+textspacing+20, y-3, val.text, 0.35, 0.35, 0.39, 1, 20,20);
+			System:DrawImageColor(self.missioncheckboxcomp, boxx+textspacing, y, 16, 16, 4,0.35,0.35,0.39,1);
+			Game:WriteHudString(boxx+textspacing+20, y-3, val.text, 0.35, 0.35, 0.39, 1, 20,20);
 		end
 		y=y+30;
 	end
@@ -2428,7 +2428,7 @@ end
 -----------------------------------------------------
 
 function Hud:MessagesBox()
-	%Game:SetHUDFont("default", "default");		
+	Game:SetHUDFont("default", "default");		
 	if(Game:IsMultiplayer()) then
 		self:DrawMessagesBox(self.kill_messages, 20, 15+80+80, 1);
 	end
@@ -2611,7 +2611,7 @@ end
 -----------------------------------------------------
 
 function Hud:SubtitlesBox()
-	%Game:SetHUDFont("default", "default");
+	Game:SetHUDFont("default", "default");
 	
 	local subCount= count(self.tSubtitles);
 	

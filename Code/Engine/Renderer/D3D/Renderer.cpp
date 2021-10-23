@@ -103,11 +103,11 @@ void CD3DRenderer::Update(void)
 	m_FrameID++;	
 
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+    Flush();
 	for (auto img : m_DrawImages)
 	{
 		Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 	}
-    Flush();
 	for (const auto& rcl : m_RenderCallbackClients)
 	{
 		rcl->OnRenderer_BeforeEndFrame();	
