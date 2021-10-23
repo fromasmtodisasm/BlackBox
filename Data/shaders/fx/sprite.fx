@@ -1,8 +1,46 @@
 #include "hlsl_common.fx"
 
-float test<int annotation = 1;> = 1;
-Shader
+cbuffer CBAuxGeomObject : register(0)
 {
+	struct
+	{
+		float4x4 matViewProj;
+		float4	 auxGeomObjColor;
+		float2	 auxGeomObjShading;
+		float3	 globalLightLocal;
+	} cbAuxGeomObject;
+};
+
+float AnimSpeed <
+	//register  = REG_PM_PARAM_0.y;
+	string UIName = "Perturbation anim speed";
+
+	string UIWidget = "slider";
+	float  UIMin	= -10.0;
+	float  UIMax	= 10.0;
+	float  UIStep	= 0.005;
+	>				= 0.2;
+
+float PerturbationScale <
+	//register  = REG_PM_PARAM_0.z;
+	string UIName = "Perturbation tilling";
+
+	string UIWidget = "slider";
+	float  UIMin	= 0.0;
+	float  UIMax	= 32.0;
+	float  UIStep	= 0.005;
+	>				= 0.5;
+
+float3 main(float4 f1, int i2);
+
+float3 main2(float4 f1, int i2) {}
+
+
+
+FatalError
+
+Shader
+	{
     Texture2D text : register(t0);
     SamplerState textSampler : register(s0);
 

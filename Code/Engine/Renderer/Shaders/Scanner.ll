@@ -48,11 +48,18 @@
     const std::string &s,
     const yy::parser::location_type& loc
   );
+
+    yy::parser::symbol_type make_FLOAT(
+    const std::string &s,
+    const yy::parser::location_type& loc
+    );
 %}
 
 id    [a-zA-Z][a-zA-Z_0-9]*
 int   [0-9]+
 blank [ \t\r]
+
+float_number [+-]?([0-9]*[.])?[0-9]+
 
 %option stack
 %x fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout 
@@ -72,6 +79,10 @@ blank [ \t\r]
 
 %}
 
+FatalError {
+	return yy::parser::make_FATALERROR(loc);
+}
+
 Shader {
     bracket_level = 0;
     yy_push_state(shader);
@@ -80,6 +91,18 @@ Shader {
 [Tt]echnique {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
+}
+
+register {
+	return yy::parser::make_REGISTER(loc);
+}
+
+cbuffer {
+	return yy::parser::make_CSTBUFFER(loc);
+}
+
+struct {
+	return yy::parser::make_STRUCT(loc);
 }
 
 
@@ -312,6 +335,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     */
 
 {int}      return make_INT(yytext, loc);
+{float_number}      return make_FLOAT(yytext, loc);
 <INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>{id}   return yy::parser::make_IDENTIFIER(yytext, loc);
 <INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>. {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
@@ -404,6 +428,18 @@ yy::parser::symbol_type make_INT(
   if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
     throw yy::parser::syntax_error(loc, "integer is out of range: " + s);
   return yy::parser::make_INT((int) n, loc);
+}
+
+yy::parser::symbol_type make_FLOAT(
+  const std::string &s,
+  const yy::parser::location_type& loc
+) {
+  errno = 0;
+  char* stop_str;
+  float n = strtof(s.c_str(), &stop_str);
+  if (errno == ERANGE)
+    throw yy::parser::syntax_error(loc, "float is out of range: " + s);
+  return yy::parser::make_FLOAT((float) n, loc);
 }
 
 #include <stack>

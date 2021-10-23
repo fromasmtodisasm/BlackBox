@@ -156,6 +156,7 @@
 %type  <std::string>    shader_header
 %type  <std::string>    shader_assignment
 %type  <IShader::Type>  shader_type
+%type  <std::string>    struct_footer
 
 //%type  <std::string>    semantic
 %type  <nvFX::IUniform::Type>           base_type
@@ -250,6 +251,11 @@
 
 %token VERTEXFORMAT
 
+%token REGISTER
+%token FATALERROR
+
+%token STRUCT
+
 %%
 %start input;
 
@@ -258,8 +264,40 @@ input: %empty { CryLog("Empty effect"); }
 | input tech
 | input hlsl
 | input var_decl
+| input shader_resource
+| input function_definition
+| input function_declaration
+| input fatal_error
 | input error
 ;
+
+arguments:  var_decl | 
+            var_decl ',' arguments
+        
+function_definition: function_declaration '{' { CryLog("Open function scope"); }'}' {
+    CryLog("Close function scope"); 
+}
+
+function_declaration: base_type IDENTIFIER '(' arguments ')'{
+    CryLog("Parsed function declaration for: [%s]", $2.data());
+}; 
+
+fatal_error: FATALERROR { CryFatalError("Stopping paring!!!"); }
+
+register_declaration: ':' REGISTER '(' INT ')' | %empty;
+
+cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}';
+
+struct: STRUCT struct_header struct_body struct_footer;
+
+struct_header: IDENTIFIER | %empty;
+struct_body: '{' var_decls '}';
+struct_footer: IDENTIFIER {CryLog("Declared and defined struct with name: %s", $1.data());} 
+| %empty {$$="";} ;
+
+var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
+
+shader_resource: cbuffer;
 
 shader_type 
 : VERTEXPROGRAM {$$ = $1;}

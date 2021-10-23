@@ -520,6 +520,7 @@ namespace yy {
       // IDENTIFIER
       // STR
       // CODEBODY
+      // struct_footer
       // shader_assignment
       // hlsl_header
       // shader_header
@@ -644,7 +645,10 @@ namespace yy {
     TOK_WRITE_ONLY = 323,          // WRITE_ONLY
     TOK_READ_ONLY = 324,           // READ_ONLY
     TOK_READ_WRITE = 325,          // READ_WRITE
-    TOK_VERTEXFORMAT = 326         // VERTEXFORMAT
+    TOK_VERTEXFORMAT = 326,        // VERTEXFORMAT
+    TOK_REGISTER = 327,            // REGISTER
+    TOK_FATALERROR = 328,          // FATALERROR
+    TOK_STRUCT = 329               // STRUCT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -661,7 +665,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 78, ///< Number of tokens.
+        YYNTOKENS = 85, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -735,35 +739,55 @@ namespace yy {
         S_READ_ONLY = 69,                        // READ_ONLY
         S_READ_WRITE = 70,                       // READ_WRITE
         S_VERTEXFORMAT = 71,                     // VERTEXFORMAT
-        S_72_ = 72,                              // ';'
-        S_73_ = 73,                              // '='
-        S_74_ = 74,                              // '{'
-        S_75_ = 75,                              // '}'
-        S_76_ = 76,                              // '<'
-        S_77_ = 77,                              // '>'
-        S_YYACCEPT = 78,                         // $accept
-        S_input = 79,                            // input
-        S_shader_type = 80,                      // shader_type
-        S_shader_assignment = 81,                // shader_assignment
-        S_shader_assignments = 82,               // shader_assignments
-        S_passstates = 83,                       // passstates
-        S_base_type = 84,                        // base_type
-        S_var_decl = 85,                         // var_decl
-        S_pass = 86,                             // pass
-        S_87_1 = 87,                             // $@1
-        S_88_2 = 88,                             // $@2
-        S_passes = 89,                           // passes
-        S_tech = 90,                             // tech
-        S_91_3 = 91,                             // $@3
-        S_92_4 = 92,                             // $@4
-        S_scalar_type = 93,                      // scalar_type
-        S_annotation_list = 94,                  // annotation_list
-        S_annotation_value = 95,                 // annotation_value
-        S_annotation = 96,                       // annotation
-        S_annotations = 97,                      // annotations
-        S_hlsl_header = 98,                      // hlsl_header
-        S_hlsl = 99,                             // hlsl
-        S_shader_header = 100                    // shader_header
+        S_REGISTER = 72,                         // REGISTER
+        S_FATALERROR = 73,                       // FATALERROR
+        S_STRUCT = 74,                           // STRUCT
+        S_75_ = 75,                              // ';'
+        S_76_ = 76,                              // ','
+        S_77_ = 77,                              // '{'
+        S_78_ = 78,                              // '}'
+        S_79_ = 79,                              // '('
+        S_80_ = 80,                              // ')'
+        S_81_ = 81,                              // ':'
+        S_82_ = 82,                              // '='
+        S_83_ = 83,                              // '<'
+        S_84_ = 84,                              // '>'
+        S_YYACCEPT = 85,                         // $accept
+        S_input = 86,                            // input
+        S_arguments = 87,                        // arguments
+        S_function_definition = 88,              // function_definition
+        S_89_1 = 89,                             // $@1
+        S_function_declaration = 90,             // function_declaration
+        S_fatal_error = 91,                      // fatal_error
+        S_register_declaration = 92,             // register_declaration
+        S_cbuffer = 93,                          // cbuffer
+        S_struct = 94,                           // struct
+        S_struct_header = 95,                    // struct_header
+        S_struct_body = 96,                      // struct_body
+        S_struct_footer = 97,                    // struct_footer
+        S_var_decls = 98,                        // var_decls
+        S_shader_resource = 99,                  // shader_resource
+        S_shader_type = 100,                     // shader_type
+        S_shader_assignment = 101,               // shader_assignment
+        S_shader_assignments = 102,              // shader_assignments
+        S_passstates = 103,                      // passstates
+        S_base_type = 104,                       // base_type
+        S_var_decl = 105,                        // var_decl
+        S_pass = 106,                            // pass
+        S_107_2 = 107,                           // $@2
+        S_108_3 = 108,                           // $@3
+        S_passes = 109,                          // passes
+        S_tech = 110,                            // tech
+        S_111_4 = 111,                           // $@4
+        S_112_5 = 112,                           // $@5
+        S_scalar_type = 113,                     // scalar_type
+        S_annotation_list = 114,                 // annotation_list
+        S_annotation_value = 115,                // annotation_value
+        S_annotation = 116,                      // annotation
+        S_annotations = 117,                     // annotations
+        S_hlsl_header = 118,                     // hlsl_header
+        S_hlsl = 119,                            // hlsl
+        S_shader_header = 120                    // shader_header
       };
     };
 
@@ -830,6 +854,7 @@ namespace yy {
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
@@ -997,6 +1022,7 @@ switch (yykind)
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
@@ -1104,11 +1130,14 @@ switch (yykind)
                    || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF)
                    || (token::TOK_HLSL11SHADER <= tok && tok <= token::TOK_PASS)
                    || (token::TOK_STRING_TYPE <= tok && tok <= token::TOK_SEPARATE_SHADER)
-                   || (token::TOK_SHDPROFILE <= tok && tok <= token::TOK_VERTEXFORMAT)
+                   || (token::TOK_SHDPROFILE <= tok && tok <= token::TOK_STRUCT)
                    || tok == 59
-                   || tok == 61
+                   || tok == 44
                    || tok == 123
                    || tok == 125
+                   || (40 <= tok && tok <= 41)
+                   || tok == 58
+                   || tok == 61
                    || tok == 60
                    || tok == 62);
 #endif
@@ -2304,6 +2333,51 @@ switch (yykind)
         return symbol_type (token::TOK_VERTEXFORMAT, l);
       }
 #endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_REGISTER (location_type l)
+      {
+        return symbol_type (token::TOK_REGISTER, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_REGISTER (const location_type& l)
+      {
+        return symbol_type (token::TOK_REGISTER, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FATALERROR (location_type l)
+      {
+        return symbol_type (token::TOK_FATALERROR, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_FATALERROR (const location_type& l)
+      {
+        return symbol_type (token::TOK_FATALERROR, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STRUCT (location_type l)
+      {
+        return symbol_type (token::TOK_STRUCT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_STRUCT (const location_type& l)
+      {
+        return symbol_type (token::TOK_STRUCT, l);
+      }
+#endif
 
 
     class context
@@ -2334,7 +2408,7 @@ switch (yykind)
 
 
     /// Stored state numbers (used for stacks).
-    typedef signed char state_type;
+    typedef unsigned char state_type;
 
     /// The arguments of the error message.
     int yy_syntax_error_arguments_ (const context& yyctx,
@@ -2374,7 +2448,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -2390,7 +2464,7 @@ switch (yykind)
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const signed char yytable_[];
+    static const short yytable_[];
 
     static const signed char yycheck_[];
 
@@ -2634,8 +2708,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 104,     ///< Last index in yytable_.
-      yynnts_ = 23,  ///< Number of nonterminal symbols.
+      yylast_ = 192,     ///< Last index in yytable_.
+      yynnts_ = 36,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2660,15 +2734,15 @@ switch (yykind)
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    72,
-      76,    73,    77,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      79,    80,     2,     2,    76,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    81,    75,
+      83,    82,    84,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    74,     2,    75,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    77,     2,    78,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -2688,10 +2762,10 @@ switch (yykind)
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
-      65,    66,    67,    68,    69,    70,    71
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74
     };
     // Last valid token kind.
-    const int code_max = 326;
+    const int code_max = 329;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -2740,6 +2814,7 @@ switch (yykind)
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
@@ -2807,6 +2882,7 @@ switch (yykind)
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
       case symbol_kind::S_shader_header: // shader_header
@@ -2879,7 +2955,7 @@ switch (yykind)
 
 
 } // yy
-#line 2883 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 2959 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 
