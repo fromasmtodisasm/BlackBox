@@ -35,6 +35,7 @@
 #include "UISystem.h"
 #include "UIHud.h"
 #include "IngameDialog.h"
+#include "Minecraft.h"
 
 static int g_FontSize = 32;
 #define MEASURETIME(str) \
@@ -140,131 +141,8 @@ int g_bRenderGame = true;
 
 
 
-#include <glm/gtx/hash.hpp>
 
-class BlockType
-{
-	friend class BlockEntity;
-
-  public:
-	void loadMesh(std::string const& path)
-	{
-		obj = gEnv->p3DEngine->MakeObject(path.data());
-	}
-
-	void loadTexture(std::string const& path)
-	{
-		texture = gEnv->pRenderer->LoadTexture(path.data());
-		obj->SetTexture(texture);
-	}
-
-	void setLighting(float value)
-	{
-		if (value > 0)
-		{
-		}
-	}
-
-  private:
-	IStatObj* obj;
-	unsigned  texture;
-	float	  lighting;
-};
-
-class BlockEntity
-{
-  public:
-	void setType(BlockType const* type)
-	{
-		entity = gEnv->p3DEngine->MakeEntity(cnt++, 0);
-		CEntityObject obj;
-		obj.scale  = glm::vec3(0.5f);
-		obj.object = type->obj;
-		entity->SetScale(0.5f);
-		entity->SetEntityObject(0, obj);
-	}
-
-	void calcWorldSpace(glm::vec3 position)
-	{
-		entity->SetPos(position);
-	}
-
-  private:
-	int		 cnt	= 0;
-	IEntity* entity = nullptr;
-};
 World g_World;
-class Minecraft
-{
-  public:
-	void setBlock(std::string const& block, glm::vec<3, int> position)
-	{
-		if (world.find(position) != world.end())
-		{
-			//WTF:
-			#if 0
-			throw std::runtime_error("the position already has a block");
-			#endif
-		}
-
-		BlockEntity entity;
-		entity.setType(&blocks.at(block));
-		entity.calcWorldSpace(position);
-		world.emplace(position, entity);
-	}
-
-	void init()
-	{
-		g_World.size_x = 40;
-		g_World.size_z = 40;
-		g_World.height = -1;
-		BlockType grass{};
-		grass.loadMesh("Data/minecraft/Grass_Block.obj");
-
-		blocks.emplace("grass", grass);
-		for (int y = g_World.height; y < 0; y++)
-		{
-			for (int z = - g_World.size_x / 2; z < g_World.size_x / 2; z++)
-			{
-				for (int x = - g_World.size_x / 2; x < g_World.size_x / 2; x++)
-				{
-					setBlock("grass", glm::vec3(x, y, z));
-				}
-			}
-		}
-		int width = 5;
-		for (int y = 0; y < width; y++)
-		{
-			setBlock("grass", glm::vec3(0, y, 0));
-		}
-		for (int i = 0; i < width; i++)
-		{
-			setBlock("grass", glm::vec3(i, 0, 0));
-			setBlock("grass", glm::vec3(i, width, 0));
-		}
-		for (int i = 1; i < 4; i++)
-		{
-			setBlock("grass", glm::vec3((width - 1), i, 0));
-		}
-		for (int i = width - 1; i > 4; i--)
-		{
-			setBlock("grass", glm::vec3(i, 3, 0));
-		}
-
-
-
-
-		gEnv->pConsole->ExecuteString("load_level minecraft");
-		gEnv->pConsole->ShowConsole(false);
-	}
-
-	void update()
-	{
-	}
-
-	std::unordered_map<glm::vec<3, int>, BlockEntity> world;
-	std::unordered_map<std::string, BlockType>		blocks;
-};
 
 
 void LoadHistory()
