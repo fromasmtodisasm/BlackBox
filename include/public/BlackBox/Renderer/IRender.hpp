@@ -45,6 +45,7 @@ typedef void* WIN_HGLRC;
 
 class CCamera;
 class CMatInfo;
+struct IMatInfo;
 struct IRenderAuxGeom;
 struct ITechniqueManager;
 struct IFont;
@@ -53,6 +54,7 @@ struct ISystem;
 struct IWindow;
 struct Material;
 struct ITechniqueManager;
+class CDLight;
 
 //////////////////////////////////////////////////////////////////////
 typedef unsigned char bvec4[4];
@@ -924,30 +926,24 @@ struct SRendParams
 	float fDistance;
 	//! CCObject flags
 	int dwFObjFlags;
-#if 0
 	//! light source for shadow volume calculations
-	CDLight		*pShadowVolumeLightSource;
-  //! reference to entity, allows to improve handling of shadow volumes of IStatObj instances
-  struct IEntityRender	* pCaller;
+	CDLight* pShadowVolumeLightSource;
+	//! reference to entity, allows to improve handling of shadow volumes of IStatObj instances
+	struct IEntityRender* pCaller;
 	//! Heat Amount for heat vision
-	float			fHeatAmount;
+	float fHeatAmount;
 	//! define size of shadow volume
-	float			fShadowVolumeExtent;
+	float fShadowVolumeExtent;
 	//! lightmap informaion
-	struct RenderLMData * pLightMapInfo;
-	struct CLeafBuffer * pLMTCBuffer; // Object instance specific tex LM texture coords;
-	byte arrOcclusionLightIds[4];
+	struct RenderLMData* pLightMapInfo;
+	struct CLeafBuffer*	 pLMTCBuffer; // Object instance specific tex LM texture coords;
+	byte				 arrOcclusionLightIds[4];
 	//! Override material.
-	IMatInfo *pMaterial;
-#endif
+	IMatInfo* pMaterial;
 	//! Scissor settings for this object
 	//  int nScissorX1, nScissorY1, nScissorX2, nScissorY2;
 	//! custom shader params
-#if 0
-	TArray <struct SShaderParam> * pShaderParams;
-#else
-	std::vector<struct SShaderParam>* pShaderParams;
-#endif
+	TArray<struct SShaderParam>* pShaderParams;
 	//! squared distance to the center of object
 	float fSQDistance;
 	//! CCObject custom data

@@ -133,11 +133,11 @@ struct IEntityRender
 		m_bForceBBox						  = 0;
 	}
 
-	virtual const char*				 GetEntityClassName() const			   = 0;
-	virtual const Legacy::Vec3&				 GetPos(bool bWorldOnly = true) const  = 0;
-	virtual const Legacy::Vec3&				 GetAngles(int realA = 0) const		   = 0;
-	virtual float					 GetScale() const					   = 0;
-	virtual const char*				 GetName() const					   = 0;
+	virtual const char*				 GetEntityClassName() const							   = 0;
+	virtual const Legacy::Vec3&		 GetPos(bool bWorldOnly = true) const				   = 0;
+	virtual const Legacy::Vec3&		 GetAngles(int realA = 0) const						   = 0;
+	virtual float					 GetScale() const									   = 0;
+	virtual const char*				 GetName() const									   = 0;
 	virtual void					 GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) = 0;
 	virtual void					 GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) { GetRenderBBox(mins, maxs); }
 	virtual float					 GetRenderRadius() const = 0;
@@ -182,7 +182,7 @@ struct IEntityRender
 
 	unsigned short m_narrShadowFrames[2];
 
-	Legacy::Vec3		  m_vWSBoxMin, m_vWSBoxMax;
+	Legacy::Vec3  m_vWSBoxMin, m_vWSBoxMax;
 	float		  m_fWSRadius;
 	unsigned char m_bForceBBox;
 	unsigned char ucViewDistRatio;
@@ -277,7 +277,7 @@ struct IEntityRender
 	virtual void	Dephysicalize() {}
 	virtual void	Dematerialize() {}
 	virtual int		GetMemoryStatistics(ICrySizer* pSizer) { return 0; }
-	#if 0
+#if 0
 	virtual list2<struct ShadowMapLightSourceInstance>* GetShadowMapCasters()
 	{
 		if (m_pEntityRenderState && m_pEntityRenderState->pShadowMapInfo)
@@ -298,7 +298,7 @@ struct IEntityRender
 			return m_pEntityRenderState->pShadowMapInfo->pShadowMapFrustumContainerPassiveCasters;
 		return 0;
 	}
-	#endif
+#endif
 
 	virtual void PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime) = 0;
 	virtual void Precache(){};

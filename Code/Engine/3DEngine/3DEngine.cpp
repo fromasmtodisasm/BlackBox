@@ -71,48 +71,6 @@ void C3DEngine::Draw()
 {
 	if (!m_Enabled)
 		return;
-#if 0
-  int w;
-  int h;
-  if (GET_CVAR("r_aspect")->GetIVal())
-  {
-    w = gEnv->pRenderer->GetHeight();
-    h = gEnv->pRenderer->GetWidth();
-  }
-  else
-  {
-    w = GET_CVAR("r_cam_w")->GetIVal();
-    h = GET_CVAR("r_cam_h")->GetIVal();
-  }
-
-  auto r = ((float)w) / h;
-	gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
-  m_pWorld->GetActiveScene()->getCurrentCamera()->Ratio = r > 1 ? r : (float)h / w;
-  if (m_pWorld->GetActiveScene())
-  {
-    m_pWorld->GetActiveScene()->present(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
-  }
-
-  s_time += 1 / 60.0f;
-	gEnv->pRenderer->SetCamera(m_Camera);
-  auto w = gEnv->pRenderer->GetWidth() / 2;
-  auto h = gEnv->pRenderer->GetHeight() / 2;
-  auto draw = [&](IShaderProgram* p, Legacy::Vec4d vp) {
-	  p->Use();
-	  p->Uniform(Legacy::Vec2(vp.z, vp.w), "resolution");
-	  p->Uniform(Legacy::Vec2(vp.x, vp.y), "origin");
-	  p->Uniform(s_time, "time");
-	  gEnv->pRenderer->SetViewport(vp.x, vp.y, vp.z, vp.w);
-	  gEnv->pRenderer->DrawFullscreenQuad();
-	  p->Unuse();
-  };
-
-	draw(m_Programs[0], Legacy::Vec4d(0, 0, w, h));
-	draw(m_Programs[1], Legacy::Vec4d(w, h, w, h));
-	draw(m_Programs[2], Legacy::Vec4d(0, h, w, h));
-	draw(m_Programs[3], Legacy::Vec4d(w, 0, w, h));
-#endif
-	//gEnv->pRenderer->SetCamera(*m_pWorld->GetActiveScene()->getCurrentCamera());
 	gEnv->pRenderer->SetCamera(m_Camera);
 
 	for (IEntity* obj : m_Entities)
@@ -126,7 +84,7 @@ void C3DEngine::Draw()
 		transform = glm::translate(transform, pos);
 		IStatObj* stat = obj->GetIStatObj(0);
 		rp.pMatrix = &transform;
-		obj->SetM().
+		//obj->SetM().
 		stat->Render(rp, {});
 	}
 
@@ -154,7 +112,7 @@ IStatObj* C3DEngine::MakeObject(const char* szFileName, const char* szGeomName, 
 	CStatObj* obj{};
 	if (obj = CStatObj::Load(szFileName, szGeomName); obj)
 	{
-		m_Objects.push_back(obj);
+		//m_Objects.push_back(obj);
 	}
 	return static_cast<IStatObj*>(obj);
 }
@@ -971,7 +929,9 @@ void C3DEngine::DrawTerrainParticles(IShader *pShader)
 void C3DEngine::GetMemoryUsage(class ICrySizer* pSizer) const
 {
     pSizer->AddObject(this, sizeof(*this));
+	#if 0
     pSizer->AddObject(m_Objects);
+	#endif
 }
 
 

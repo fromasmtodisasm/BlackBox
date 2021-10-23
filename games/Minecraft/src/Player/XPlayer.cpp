@@ -2522,7 +2522,6 @@ void CPlayer::SetWeapon(int iClsID)
 	}
 }
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 /*! return the position and orientation of the firepoint of a player
 	@param firePos position
@@ -2530,6 +2529,7 @@ void CPlayer::SetWeapon(int iClsID)
 */
 void CPlayer::GetFirePosAngles(Legacy::Vec3& firePos, Legacy::Vec3& fireAngles)
 {
+#if 0
 	if (!m_bIsAI)
 	{
 		// [marco] we must always take leaning into account!
@@ -2582,7 +2582,9 @@ void CPlayer::GetFirePosAngles(Legacy::Vec3& firePos, Legacy::Vec3& fireAngles)
 				fireAngles = m_pEntity->GetAngles();
 		}
 	}
+	#endif
 }
+#if 0
 
 //////////////////////////////////////////////////////////////////////
 float CPlayer::CalculateAccuracyFactor(float accuracy)
@@ -5980,7 +5982,6 @@ void	CPlayer::SetSpeedMult( float run, float crouch, float prone, float xrun, fl
 //////////////////////////////////////////////////////////////////////
 void	CPlayer::OnDrawMountedWeapon( const SRendParams & RendParams )
 {
-	#if 0
 	if(m_nSelectedWeaponID == -1)
 		return;
 
@@ -6006,7 +6007,6 @@ void	CPlayer::OnDrawMountedWeapon( const SRendParams & RendParams )
 
 		GetEntity()->DrawCharacter(1, ETY_DRAW_NONE);
 	}
-	#endif
 	return;
 }
 
