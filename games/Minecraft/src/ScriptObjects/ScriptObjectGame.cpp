@@ -1185,6 +1185,11 @@ int CScriptObjectGame::LoadLevel(IFunctionHandler *pH)
 
 	m_pGame->m_tPlayerPersistentData.m_bDataSaved=false;
 	m_pGame->LoadLevelCS(false, szMapName, szMissionName, false);
+
+	#if 1
+	gEnv->pInput->GrabInput(true);
+	gEnv->pInput->GrabInput(true);
+	#endif
 	
 	return pH->EndFunction();
 }

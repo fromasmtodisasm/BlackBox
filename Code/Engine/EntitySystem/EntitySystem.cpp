@@ -90,13 +90,13 @@ bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 
 IEntity* CEntitySystem::GetEntity(EntityId id)
 {
-	LOG_FUNCTION();
+	//LOG_FUNCTION();
 	return nullptr;
 }
 
 IEntity* CEntitySystem::GetEntity(const char* sEntityName)
 {
-	LOG_FUNCTION();
+	//LOG_FUNCTION();
 	return nullptr;
 }
 

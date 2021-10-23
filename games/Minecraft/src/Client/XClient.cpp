@@ -778,6 +778,7 @@ void CXClient::Update()
 		#if 1
 		m_DummyClient.m_PlayerProcessingCmd = m_PlayerProcessingCmd;
 		m_DummyClient.Update();
+		m_PlayerProcessingCmd.Reset();
 		#endif
 
 		if(en==NULL)
