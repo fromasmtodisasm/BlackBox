@@ -1166,3 +1166,12 @@ public:
 	Legacy::IInput* GetLegacyInput();
 };
 
+
+struct World
+{
+	int size_x;
+	int size_z;
+	int height;
+};
+
+extern World g_World;

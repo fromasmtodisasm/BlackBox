@@ -7,7 +7,7 @@
 
 inline CEntitySystem::CEntitySystem(ISystem* pSystem) : m_EntityIt(m_Entities)
 {
-	m_Entities.resize(1000);
+	m_Entities.resize(10000);
 
 #define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_"#event, ScriptEvent_##event)
 	SET_SCRIPTEVENT(Activate);

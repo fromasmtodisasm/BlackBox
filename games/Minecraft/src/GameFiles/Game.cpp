@@ -178,8 +178,9 @@ class BlockEntity
 	{
 		entity = gEnv->p3DEngine->MakeEntity(cnt++, 0);
 		CEntityObject obj;
-		obj.scale  = glm::vec3(1);
+		obj.scale  = glm::vec3(0.5f);
 		obj.object = type->obj;
+		entity->SetScale(0.5f);
 		entity->SetEntityObject(0, obj);
 	}
 
@@ -192,7 +193,7 @@ class BlockEntity
 	int		 cnt	= 0;
 	IEntity* entity = nullptr;
 };
-
+World g_World;
 class Minecraft
 {
   public:
@@ -200,7 +201,10 @@ class Minecraft
 	{
 		if (world.find(position) != world.end())
 		{
+			//WTF:
+			#if 0
 			throw std::runtime_error("the position already has a block");
+			#endif
 		}
 
 		BlockEntity entity;
@@ -211,20 +215,44 @@ class Minecraft
 
 	void init()
 	{
+		g_World.size_x = 40;
+		g_World.size_z = 40;
+		g_World.height = -1;
 		BlockType grass{};
 		grass.loadMesh("Data/minecraft/Grass_Block.obj");
 
 		blocks.emplace("grass", grass);
-		for (int y = -5; y < 5; y++)
+		for (int y = g_World.height; y < 0; y++)
 		{
-			for (int z = 0; z < 10; z++)
+			for (int z = - g_World.size_x / 2; z < g_World.size_x / 2; z++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = - g_World.size_x / 2; x < g_World.size_x / 2; x++)
 				{
-					setBlock("grass", glm::vec3(2 * x, 2*y, 2 * z));
+					setBlock("grass", glm::vec3(x, y, z));
 				}
 			}
 		}
+		int width = 5;
+		for (int y = 0; y < width; y++)
+		{
+			setBlock("grass", glm::vec3(0, y, 0));
+		}
+		for (int i = 0; i < width; i++)
+		{
+			setBlock("grass", glm::vec3(i, 0, 0));
+			setBlock("grass", glm::vec3(i, width, 0));
+		}
+		for (int i = 1; i < 4; i++)
+		{
+			setBlock("grass", glm::vec3((width - 1), i, 0));
+		}
+		for (int i = width - 1; i > 4; i--)
+		{
+			setBlock("grass", glm::vec3(i, 3, 0));
+		}
+
+
+
 
 		gEnv->pConsole->ExecuteString("load_level minecraft");
 		gEnv->pConsole->ShowConsole(false);

@@ -1,4 +1,4 @@
-Terminals unused in grammar
+Терминалы не используются в грамматике
 
     TRUE
     FALSE
@@ -42,11 +42,11 @@ Terminals unused in grammar
     VERTEXFORMAT
 
 
-Grammar
+Грамматика
 
     0 $accept: input "end of file"
 
-    1 input: %empty
+    1 input: ε
     2      | input ';'
     3      | input tech
     4      | input hlsl
@@ -61,7 +61,7 @@ Grammar
    12 arguments: var_decl
    13          | var_decl ',' arguments
 
-   14 $@1: %empty
+   14 $@1: ε
 
    15 function_definition: function_declaration '{' $@1 CODEBODY
 
@@ -70,19 +70,19 @@ Grammar
    17 fatal_error: FATALERROR
 
    18 register_declaration: ':' REGISTER '(' INT ')'
-   19                     | %empty
+   19                     | ε
 
    20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
 
    21 struct: STRUCT struct_header struct_body struct_footer
 
    22 struct_header: IDENTIFIER
-   23              | %empty
+   23              | ε
 
    24 struct_body: '{' var_decls '}'
 
    25 struct_footer: IDENTIFIER
-   26              | %empty
+   26              | ε
 
    27 var_decls: var_decls var_decl ';'
    28          | var_decl ';'
@@ -118,17 +118,17 @@ Grammar
    52          | MAT4_TYPE
 
    53 semantic: ':' IDENTIFIER
-   54         | %empty
+   54         | ε
 
    55 var_decl: base_type IDENTIFIER semantic
    56         | base_type IDENTIFIER semantic annotations '=' INT
    57         | base_type IDENTIFIER semantic annotations '=' FLOAT
 
-   58 $@2: %empty
+   58 $@2: ε
 
    59 pass: PASS $@2 annotations passstates
 
-   60 $@3: %empty
+   60 $@3: ε
 
    61 pass: PASS IDENTIFIER $@3 annotations passstates
 
@@ -136,11 +136,11 @@ Grammar
    63       | passes pass
    64       | passes error
 
-   65 $@4: %empty
+   65 $@4: ε
 
    66 tech: TECHNIQUE $@4 '{' passes '}'
 
-   67 $@5: %empty
+   67 $@5: ε
 
    68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}'
 
@@ -159,7 +159,7 @@ Grammar
 
    79 annotation: scalar_type IDENTIFIER '=' annotation_value ';'
 
-   80 annotations: %empty
+   80 annotations: ε
    81            | '<' annotation_list '>'
 
    82 hlsl_header: HLSL11SHADER IDENTIFIER
@@ -170,7 +170,7 @@ Grammar
    85 shader_header: hlsl_header annotations
 
 
-Terminals, with rules where they appear
+Терминальные символы с правилами, в которых они появляются
 
     "end of file" (0) 0
     '(' (40) 16 18
@@ -259,7 +259,7 @@ Terminals, with rules where they appear
     STRUCT (330) 21
 
 
-Nonterminals, with rules where they appear
+Нетерминальные символы с правилами, в которых они появляются
 
     $accept (86)
         on left: 0
@@ -375,1227 +375,1227 @@ Nonterminals, with rules where they appear
 
 State 0
 
-    0 $accept: . input "end of file"
+    0 $accept: • input "end of file"
 
-    $default  reduce using rule 1 (input)
+    $default  вывод с использованием правила 1 (input)
 
-    input  go to state 1
+    input  переход в состояние 1
 
 
 State 1
 
-    0 $accept: input . "end of file"
-    2 input: input . ';'
-    3      | input . tech
-    4      | input . hlsl
-    5      | input . var_decl
-    6      | input . shader_resource
-    7      | input . function_definition
-    8      | input . function_declaration
-    9      | input . fatal_error
-   10      | input . struct
-   11      | input . error
+    0 $accept: input • "end of file"
+    2 input: input • ';'
+    3      | input • tech
+    4      | input • hlsl
+    5      | input • var_decl
+    6      | input • shader_resource
+    7      | input • function_definition
+    8      | input • function_declaration
+    9      | input • fatal_error
+   10      | input • struct
+   11      | input • error
 
-    "end of file"  shift, and go to state 2
-    error          shift, and go to state 3
-    TYPE_NAME      shift, and go to state 4
-    HLSL11SHADER   shift, and go to state 5
-    TECHNIQUE      shift, and go to state 6
-    CSTBUFFER      shift, and go to state 7
-    FLOAT_TYPE     shift, and go to state 8
-    FLOAT2_TYPE    shift, and go to state 9
-    FLOAT3_TYPE    shift, and go to state 10
-    FLOAT4_TYPE    shift, and go to state 11
-    MAT2_TYPE      shift, and go to state 12
-    MAT3_TYPE      shift, and go to state 13
-    MAT4_TYPE      shift, and go to state 14
-    BOOL_TYPE      shift, and go to state 15
-    BOOL2_TYPE     shift, and go to state 16
-    BOOL3_TYPE     shift, and go to state 17
-    BOOL4_TYPE     shift, and go to state 18
-    INT_TYPE       shift, and go to state 19
-    INT2_TYPE      shift, and go to state 20
-    INT3_TYPE      shift, and go to state 21
-    INT4_TYPE      shift, and go to state 22
-    FATALERROR     shift, and go to state 23
-    STRUCT         shift, and go to state 24
-    ';'            shift, and go to state 25
+    "end of file"  сдвиг, и переход в состояние 2
+    error          сдвиг, и переход в состояние 3
+    TYPE_NAME      сдвиг, и переход в состояние 4
+    HLSL11SHADER   сдвиг, и переход в состояние 5
+    TECHNIQUE      сдвиг, и переход в состояние 6
+    CSTBUFFER      сдвиг, и переход в состояние 7
+    FLOAT_TYPE     сдвиг, и переход в состояние 8
+    FLOAT2_TYPE    сдвиг, и переход в состояние 9
+    FLOAT3_TYPE    сдвиг, и переход в состояние 10
+    FLOAT4_TYPE    сдвиг, и переход в состояние 11
+    MAT2_TYPE      сдвиг, и переход в состояние 12
+    MAT3_TYPE      сдвиг, и переход в состояние 13
+    MAT4_TYPE      сдвиг, и переход в состояние 14
+    BOOL_TYPE      сдвиг, и переход в состояние 15
+    BOOL2_TYPE     сдвиг, и переход в состояние 16
+    BOOL3_TYPE     сдвиг, и переход в состояние 17
+    BOOL4_TYPE     сдвиг, и переход в состояние 18
+    INT_TYPE       сдвиг, и переход в состояние 19
+    INT2_TYPE      сдвиг, и переход в состояние 20
+    INT3_TYPE      сдвиг, и переход в состояние 21
+    INT4_TYPE      сдвиг, и переход в состояние 22
+    FATALERROR     сдвиг, и переход в состояние 23
+    STRUCT         сдвиг, и переход в состояние 24
+    ';'            сдвиг, и переход в состояние 25
 
-    function_definition   go to state 26
-    function_declaration  go to state 27
-    fatal_error           go to state 28
-    cbuffer               go to state 29
-    struct                go to state 30
-    shader_resource       go to state 31
-    base_type             go to state 32
-    var_decl              go to state 33
-    tech                  go to state 34
-    hlsl_header           go to state 35
-    hlsl                  go to state 36
-    shader_header         go to state 37
+    function_definition   переход в состояние 26
+    function_declaration  переход в состояние 27
+    fatal_error           переход в состояние 28
+    cbuffer               переход в состояние 29
+    struct                переход в состояние 30
+    shader_resource       переход в состояние 31
+    base_type             переход в состояние 32
+    var_decl              переход в состояние 33
+    tech                  переход в состояние 34
+    hlsl_header           переход в состояние 35
+    hlsl                  переход в состояние 36
+    shader_header         переход в состояние 37
 
 
 State 2
 
-    0 $accept: input "end of file" .
+    0 $accept: input "end of file" •
 
-    $default  accept
+    $default  принять
 
 
 State 3
 
-   11 input: input error .
+   11 input: input error •
 
-    $default  reduce using rule 11 (input)
+    $default  вывод с использованием правила 11 (input)
 
 
 State 4
 
-   16 function_declaration: TYPE_NAME . IDENTIFIER '(' arguments ')'
+   16 function_declaration: TYPE_NAME • IDENTIFIER '(' arguments ')'
 
-    IDENTIFIER  shift, and go to state 38
+    IDENTIFIER  сдвиг, и переход в состояние 38
 
 
 State 5
 
-   82 hlsl_header: HLSL11SHADER . IDENTIFIER
-   83            | HLSL11SHADER .
+   82 hlsl_header: HLSL11SHADER • IDENTIFIER
+   83            | HLSL11SHADER •
 
-    IDENTIFIER  shift, and go to state 39
+    IDENTIFIER  сдвиг, и переход в состояние 39
 
-    $default  reduce using rule 83 (hlsl_header)
+    $default  вывод с использованием правила 83 (hlsl_header)
 
 
 State 6
 
-   66 tech: TECHNIQUE . $@4 '{' passes '}'
-   68     | TECHNIQUE . IDENTIFIER $@5 annotations '{' passes '}'
+   66 tech: TECHNIQUE • $@4 '{' passes '}'
+   68     | TECHNIQUE • IDENTIFIER $@5 annotations '{' passes '}'
 
-    IDENTIFIER  shift, and go to state 40
+    IDENTIFIER  сдвиг, и переход в состояние 40
 
-    $default  reduce using rule 65 ($@4)
+    $default  вывод с использованием правила 65 ($@4)
 
-    $@4  go to state 41
+    $@4  переход в состояние 41
 
 
 State 7
 
-   20 cbuffer: CSTBUFFER . IDENTIFIER register_declaration '{' var_decls '}'
+   20 cbuffer: CSTBUFFER • IDENTIFIER register_declaration '{' var_decls '}'
 
-    IDENTIFIER  shift, and go to state 42
+    IDENTIFIER  сдвиг, и переход в состояние 42
 
 
 State 8
 
-   38 base_type: FLOAT_TYPE .
+   38 base_type: FLOAT_TYPE •
 
-    $default  reduce using rule 38 (base_type)
+    $default  вывод с использованием правила 38 (base_type)
 
 
 State 9
 
-   39 base_type: FLOAT2_TYPE .
+   39 base_type: FLOAT2_TYPE •
 
-    $default  reduce using rule 39 (base_type)
+    $default  вывод с использованием правила 39 (base_type)
 
 
 State 10
 
-   40 base_type: FLOAT3_TYPE .
+   40 base_type: FLOAT3_TYPE •
 
-    $default  reduce using rule 40 (base_type)
+    $default  вывод с использованием правила 40 (base_type)
 
 
 State 11
 
-   41 base_type: FLOAT4_TYPE .
+   41 base_type: FLOAT4_TYPE •
 
-    $default  reduce using rule 41 (base_type)
+    $default  вывод с использованием правила 41 (base_type)
 
 
 State 12
 
-   50 base_type: MAT2_TYPE .
+   50 base_type: MAT2_TYPE •
 
-    $default  reduce using rule 50 (base_type)
+    $default  вывод с использованием правила 50 (base_type)
 
 
 State 13
 
-   51 base_type: MAT3_TYPE .
+   51 base_type: MAT3_TYPE •
 
-    $default  reduce using rule 51 (base_type)
+    $default  вывод с использованием правила 51 (base_type)
 
 
 State 14
 
-   52 base_type: MAT4_TYPE .
+   52 base_type: MAT4_TYPE •
 
-    $default  reduce using rule 52 (base_type)
+    $default  вывод с использованием правила 52 (base_type)
 
 
 State 15
 
-   46 base_type: BOOL_TYPE .
+   46 base_type: BOOL_TYPE •
 
-    $default  reduce using rule 46 (base_type)
+    $default  вывод с использованием правила 46 (base_type)
 
 
 State 16
 
-   47 base_type: BOOL2_TYPE .
+   47 base_type: BOOL2_TYPE •
 
-    $default  reduce using rule 47 (base_type)
+    $default  вывод с использованием правила 47 (base_type)
 
 
 State 17
 
-   48 base_type: BOOL3_TYPE .
+   48 base_type: BOOL3_TYPE •
 
-    $default  reduce using rule 48 (base_type)
+    $default  вывод с использованием правила 48 (base_type)
 
 
 State 18
 
-   49 base_type: BOOL4_TYPE .
+   49 base_type: BOOL4_TYPE •
 
-    $default  reduce using rule 49 (base_type)
+    $default  вывод с использованием правила 49 (base_type)
 
 
 State 19
 
-   42 base_type: INT_TYPE .
+   42 base_type: INT_TYPE •
 
-    $default  reduce using rule 42 (base_type)
+    $default  вывод с использованием правила 42 (base_type)
 
 
 State 20
 
-   43 base_type: INT2_TYPE .
+   43 base_type: INT2_TYPE •
 
-    $default  reduce using rule 43 (base_type)
+    $default  вывод с использованием правила 43 (base_type)
 
 
 State 21
 
-   44 base_type: INT3_TYPE .
+   44 base_type: INT3_TYPE •
 
-    $default  reduce using rule 44 (base_type)
+    $default  вывод с использованием правила 44 (base_type)
 
 
 State 22
 
-   45 base_type: INT4_TYPE .
+   45 base_type: INT4_TYPE •
 
-    $default  reduce using rule 45 (base_type)
+    $default  вывод с использованием правила 45 (base_type)
 
 
 State 23
 
-   17 fatal_error: FATALERROR .
+   17 fatal_error: FATALERROR •
 
-    $default  reduce using rule 17 (fatal_error)
+    $default  вывод с использованием правила 17 (fatal_error)
 
 
 State 24
 
-   21 struct: STRUCT . struct_header struct_body struct_footer
+   21 struct: STRUCT • struct_header struct_body struct_footer
 
-    IDENTIFIER  shift, and go to state 43
+    IDENTIFIER  сдвиг, и переход в состояние 43
 
-    $default  reduce using rule 23 (struct_header)
+    $default  вывод с использованием правила 23 (struct_header)
 
-    struct_header  go to state 44
+    struct_header  переход в состояние 44
 
 
 State 25
 
-    2 input: input ';' .
+    2 input: input ';' •
 
-    $default  reduce using rule 2 (input)
+    $default  вывод с использованием правила 2 (input)
 
 
 State 26
 
-    7 input: input function_definition .
+    7 input: input function_definition •
 
-    $default  reduce using rule 7 (input)
+    $default  вывод с использованием правила 7 (input)
 
 
 State 27
 
-    8 input: input function_declaration .
-   15 function_definition: function_declaration . '{' $@1 CODEBODY
+    8 input: input function_declaration •
+   15 function_definition: function_declaration • '{' $@1 CODEBODY
 
-    '{'  shift, and go to state 45
+    '{'  сдвиг, и переход в состояние 45
 
-    $default  reduce using rule 8 (input)
+    $default  вывод с использованием правила 8 (input)
 
 
 State 28
 
-    9 input: input fatal_error .
+    9 input: input fatal_error •
 
-    $default  reduce using rule 9 (input)
+    $default  вывод с использованием правила 9 (input)
 
 
 State 29
 
-   30 shader_resource: cbuffer .
+   30 shader_resource: cbuffer •
 
-    $default  reduce using rule 30 (shader_resource)
+    $default  вывод с использованием правила 30 (shader_resource)
 
 
 State 30
 
-   10 input: input struct .
+   10 input: input struct •
 
-    $default  reduce using rule 10 (input)
+    $default  вывод с использованием правила 10 (input)
 
 
 State 31
 
-    6 input: input shader_resource .
+    6 input: input shader_resource •
 
-    $default  reduce using rule 6 (input)
+    $default  вывод с использованием правила 6 (input)
 
 
 State 32
 
-   55 var_decl: base_type . IDENTIFIER semantic
-   56         | base_type . IDENTIFIER semantic annotations '=' INT
-   57         | base_type . IDENTIFIER semantic annotations '=' FLOAT
+   55 var_decl: base_type • IDENTIFIER semantic
+   56         | base_type • IDENTIFIER semantic annotations '=' INT
+   57         | base_type • IDENTIFIER semantic annotations '=' FLOAT
 
-    IDENTIFIER  shift, and go to state 46
+    IDENTIFIER  сдвиг, и переход в состояние 46
 
 
 State 33
 
-    5 input: input var_decl .
+    5 input: input var_decl •
 
-    $default  reduce using rule 5 (input)
+    $default  вывод с использованием правила 5 (input)
 
 
 State 34
 
-    3 input: input tech .
+    3 input: input tech •
 
-    $default  reduce using rule 3 (input)
+    $default  вывод с использованием правила 3 (input)
 
 
 State 35
 
-   85 shader_header: hlsl_header . annotations
+   85 shader_header: hlsl_header • annotations
 
-    '<'  shift, and go to state 47
+    '<'  сдвиг, и переход в состояние 47
 
-    $default  reduce using rule 80 (annotations)
+    $default  вывод с использованием правила 80 (annotations)
 
-    annotations  go to state 48
+    annotations  переход в состояние 48
 
 
 State 36
 
-    4 input: input hlsl .
+    4 input: input hlsl •
 
-    $default  reduce using rule 4 (input)
+    $default  вывод с использованием правила 4 (input)
 
 
 State 37
 
-   84 hlsl: shader_header . '{' CODEBODY
+   84 hlsl: shader_header • '{' CODEBODY
 
-    '{'  shift, and go to state 49
+    '{'  сдвиг, и переход в состояние 49
 
 
 State 38
 
-   16 function_declaration: TYPE_NAME IDENTIFIER . '(' arguments ')'
+   16 function_declaration: TYPE_NAME IDENTIFIER • '(' arguments ')'
 
-    '('  shift, and go to state 50
+    '('  сдвиг, и переход в состояние 50
 
 
 State 39
 
-   82 hlsl_header: HLSL11SHADER IDENTIFIER .
+   82 hlsl_header: HLSL11SHADER IDENTIFIER •
 
-    $default  reduce using rule 82 (hlsl_header)
+    $default  вывод с использованием правила 82 (hlsl_header)
 
 
 State 40
 
-   68 tech: TECHNIQUE IDENTIFIER . $@5 annotations '{' passes '}'
+   68 tech: TECHNIQUE IDENTIFIER • $@5 annotations '{' passes '}'
 
-    $default  reduce using rule 67 ($@5)
+    $default  вывод с использованием правила 67 ($@5)
 
-    $@5  go to state 51
+    $@5  переход в состояние 51
 
 
 State 41
 
-   66 tech: TECHNIQUE $@4 . '{' passes '}'
+   66 tech: TECHNIQUE $@4 • '{' passes '}'
 
-    '{'  shift, and go to state 52
+    '{'  сдвиг, и переход в состояние 52
 
 
 State 42
 
-   20 cbuffer: CSTBUFFER IDENTIFIER . register_declaration '{' var_decls '}'
+   20 cbuffer: CSTBUFFER IDENTIFIER • register_declaration '{' var_decls '}'
 
-    ':'  shift, and go to state 53
+    ':'  сдвиг, и переход в состояние 53
 
-    $default  reduce using rule 19 (register_declaration)
+    $default  вывод с использованием правила 19 (register_declaration)
 
-    register_declaration  go to state 54
+    register_declaration  переход в состояние 54
 
 
 State 43
 
-   22 struct_header: IDENTIFIER .
+   22 struct_header: IDENTIFIER •
 
-    $default  reduce using rule 22 (struct_header)
+    $default  вывод с использованием правила 22 (struct_header)
 
 
 State 44
 
-   21 struct: STRUCT struct_header . struct_body struct_footer
+   21 struct: STRUCT struct_header • struct_body struct_footer
 
-    '{'  shift, and go to state 55
+    '{'  сдвиг, и переход в состояние 55
 
-    struct_body  go to state 56
+    struct_body  переход в состояние 56
 
 
 State 45
 
-   15 function_definition: function_declaration '{' . $@1 CODEBODY
+   15 function_definition: function_declaration '{' • $@1 CODEBODY
 
-    $default  reduce using rule 14 ($@1)
+    $default  вывод с использованием правила 14 ($@1)
 
-    $@1  go to state 57
+    $@1  переход в состояние 57
 
 
 State 46
 
-   55 var_decl: base_type IDENTIFIER . semantic
-   56         | base_type IDENTIFIER . semantic annotations '=' INT
-   57         | base_type IDENTIFIER . semantic annotations '=' FLOAT
+   55 var_decl: base_type IDENTIFIER • semantic
+   56         | base_type IDENTIFIER • semantic annotations '=' INT
+   57         | base_type IDENTIFIER • semantic annotations '=' FLOAT
 
-    ':'  shift, and go to state 58
+    ':'  сдвиг, и переход в состояние 58
 
-    $default  reduce using rule 54 (semantic)
+    $default  вывод с использованием правила 54 (semantic)
 
-    semantic  go to state 59
+    semantic  переход в состояние 59
 
 
 State 47
 
-   81 annotations: '<' . annotation_list '>'
+   81 annotations: '<' • annotation_list '>'
 
-    STRING_TYPE  shift, and go to state 60
-    UNSIGNED     shift, and go to state 61
-    FLOAT_TYPE   shift, and go to state 62
-    INT_TYPE     shift, and go to state 63
+    STRING_TYPE  сдвиг, и переход в состояние 60
+    UNSIGNED     сдвиг, и переход в состояние 61
+    FLOAT_TYPE   сдвиг, и переход в состояние 62
+    INT_TYPE     сдвиг, и переход в состояние 63
 
-    scalar_type      go to state 64
-    annotation_list  go to state 65
-    annotation       go to state 66
+    scalar_type      переход в состояние 64
+    annotation_list  переход в состояние 65
+    annotation       переход в состояние 66
 
 
 State 48
 
-   85 shader_header: hlsl_header annotations .
+   85 shader_header: hlsl_header annotations •
 
-    $default  reduce using rule 85 (shader_header)
+    $default  вывод с использованием правила 85 (shader_header)
 
 
 State 49
 
-   84 hlsl: shader_header '{' . CODEBODY
+   84 hlsl: shader_header '{' • CODEBODY
 
-    CODEBODY  shift, and go to state 67
+    CODEBODY  сдвиг, и переход в состояние 67
 
 
 State 50
 
-   16 function_declaration: TYPE_NAME IDENTIFIER '(' . arguments ')'
+   16 function_declaration: TYPE_NAME IDENTIFIER '(' • arguments ')'
 
-    FLOAT_TYPE   shift, and go to state 8
-    FLOAT2_TYPE  shift, and go to state 9
-    FLOAT3_TYPE  shift, and go to state 10
-    FLOAT4_TYPE  shift, and go to state 11
-    MAT2_TYPE    shift, and go to state 12
-    MAT3_TYPE    shift, and go to state 13
-    MAT4_TYPE    shift, and go to state 14
-    BOOL_TYPE    shift, and go to state 15
-    BOOL2_TYPE   shift, and go to state 16
-    BOOL3_TYPE   shift, and go to state 17
-    BOOL4_TYPE   shift, and go to state 18
-    INT_TYPE     shift, and go to state 19
-    INT2_TYPE    shift, and go to state 20
-    INT3_TYPE    shift, and go to state 21
-    INT4_TYPE    shift, and go to state 22
+    FLOAT_TYPE   сдвиг, и переход в состояние 8
+    FLOAT2_TYPE  сдвиг, и переход в состояние 9
+    FLOAT3_TYPE  сдвиг, и переход в состояние 10
+    FLOAT4_TYPE  сдвиг, и переход в состояние 11
+    MAT2_TYPE    сдвиг, и переход в состояние 12
+    MAT3_TYPE    сдвиг, и переход в состояние 13
+    MAT4_TYPE    сдвиг, и переход в состояние 14
+    BOOL_TYPE    сдвиг, и переход в состояние 15
+    BOOL2_TYPE   сдвиг, и переход в состояние 16
+    BOOL3_TYPE   сдвиг, и переход в состояние 17
+    BOOL4_TYPE   сдвиг, и переход в состояние 18
+    INT_TYPE     сдвиг, и переход в состояние 19
+    INT2_TYPE    сдвиг, и переход в состояние 20
+    INT3_TYPE    сдвиг, и переход в состояние 21
+    INT4_TYPE    сдвиг, и переход в состояние 22
 
-    arguments  go to state 68
-    base_type  go to state 32
-    var_decl   go to state 69
+    arguments  переход в состояние 68
+    base_type  переход в состояние 32
+    var_decl   переход в состояние 69
 
 
 State 51
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 . annotations '{' passes '}'
+   68 tech: TECHNIQUE IDENTIFIER $@5 • annotations '{' passes '}'
 
-    '<'  shift, and go to state 47
+    '<'  сдвиг, и переход в состояние 47
 
-    $default  reduce using rule 80 (annotations)
+    $default  вывод с использованием правила 80 (annotations)
 
-    annotations  go to state 70
+    annotations  переход в состояние 70
 
 
 State 52
 
-   66 tech: TECHNIQUE $@4 '{' . passes '}'
+   66 tech: TECHNIQUE $@4 '{' • passes '}'
 
-    PASS  shift, and go to state 71
+    PASS  сдвиг, и переход в состояние 71
 
-    pass    go to state 72
-    passes  go to state 73
+    pass    переход в состояние 72
+    passes  переход в состояние 73
 
 
 State 53
 
-   18 register_declaration: ':' . REGISTER '(' INT ')'
+   18 register_declaration: ':' • REGISTER '(' INT ')'
 
-    REGISTER  shift, and go to state 74
+    REGISTER  сдвиг, и переход в состояние 74
 
 
 State 54
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration . '{' var_decls '}'
+   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration • '{' var_decls '}'
 
-    '{'  shift, and go to state 75
+    '{'  сдвиг, и переход в состояние 75
 
 
 State 55
 
-   24 struct_body: '{' . var_decls '}'
+   24 struct_body: '{' • var_decls '}'
 
-    FLOAT_TYPE   shift, and go to state 8
-    FLOAT2_TYPE  shift, and go to state 9
-    FLOAT3_TYPE  shift, and go to state 10
-    FLOAT4_TYPE  shift, and go to state 11
-    MAT2_TYPE    shift, and go to state 12
-    MAT3_TYPE    shift, and go to state 13
-    MAT4_TYPE    shift, and go to state 14
-    BOOL_TYPE    shift, and go to state 15
-    BOOL2_TYPE   shift, and go to state 16
-    BOOL3_TYPE   shift, and go to state 17
-    BOOL4_TYPE   shift, and go to state 18
-    INT_TYPE     shift, and go to state 19
-    INT2_TYPE    shift, and go to state 20
-    INT3_TYPE    shift, and go to state 21
-    INT4_TYPE    shift, and go to state 22
-    STRUCT       shift, and go to state 24
+    FLOAT_TYPE   сдвиг, и переход в состояние 8
+    FLOAT2_TYPE  сдвиг, и переход в состояние 9
+    FLOAT3_TYPE  сдвиг, и переход в состояние 10
+    FLOAT4_TYPE  сдвиг, и переход в состояние 11
+    MAT2_TYPE    сдвиг, и переход в состояние 12
+    MAT3_TYPE    сдвиг, и переход в состояние 13
+    MAT4_TYPE    сдвиг, и переход в состояние 14
+    BOOL_TYPE    сдвиг, и переход в состояние 15
+    BOOL2_TYPE   сдвиг, и переход в состояние 16
+    BOOL3_TYPE   сдвиг, и переход в состояние 17
+    BOOL4_TYPE   сдвиг, и переход в состояние 18
+    INT_TYPE     сдвиг, и переход в состояние 19
+    INT2_TYPE    сдвиг, и переход в состояние 20
+    INT3_TYPE    сдвиг, и переход в состояние 21
+    INT4_TYPE    сдвиг, и переход в состояние 22
+    STRUCT       сдвиг, и переход в состояние 24
 
-    struct     go to state 76
-    var_decls  go to state 77
-    base_type  go to state 32
-    var_decl   go to state 78
+    struct     переход в состояние 76
+    var_decls  переход в состояние 77
+    base_type  переход в состояние 32
+    var_decl   переход в состояние 78
 
 
 State 56
 
-   21 struct: STRUCT struct_header struct_body . struct_footer
+   21 struct: STRUCT struct_header struct_body • struct_footer
 
-    IDENTIFIER  shift, and go to state 79
+    IDENTIFIER  сдвиг, и переход в состояние 79
 
-    $default  reduce using rule 26 (struct_footer)
+    $default  вывод с использованием правила 26 (struct_footer)
 
-    struct_footer  go to state 80
+    struct_footer  переход в состояние 80
 
 
 State 57
 
-   15 function_definition: function_declaration '{' $@1 . CODEBODY
+   15 function_definition: function_declaration '{' $@1 • CODEBODY
 
-    CODEBODY  shift, and go to state 81
+    CODEBODY  сдвиг, и переход в состояние 81
 
 
 State 58
 
-   53 semantic: ':' . IDENTIFIER
+   53 semantic: ':' • IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 82
+    IDENTIFIER  сдвиг, и переход в состояние 82
 
 
 State 59
 
-   55 var_decl: base_type IDENTIFIER semantic .
-   56         | base_type IDENTIFIER semantic . annotations '=' INT
-   57         | base_type IDENTIFIER semantic . annotations '=' FLOAT
+   55 var_decl: base_type IDENTIFIER semantic •
+   56         | base_type IDENTIFIER semantic • annotations '=' INT
+   57         | base_type IDENTIFIER semantic • annotations '=' FLOAT
 
-    '<'  shift, and go to state 47
+    '<'  сдвиг, и переход в состояние 47
 
-    '='       reduce using rule 80 (annotations)
-    $default  reduce using rule 55 (var_decl)
+    '='       вывод с использованием правила 80 (annotations)
+    $default  вывод с использованием правила 55 (var_decl)
 
-    annotations  go to state 83
+    annotations  переход в состояние 83
 
 
 State 60
 
-   72 scalar_type: STRING_TYPE .
+   72 scalar_type: STRING_TYPE •
 
-    $default  reduce using rule 72 (scalar_type)
+    $default  вывод с использованием правила 72 (scalar_type)
 
 
 State 61
 
-   71 scalar_type: UNSIGNED .
+   71 scalar_type: UNSIGNED •
 
-    $default  reduce using rule 71 (scalar_type)
+    $default  вывод с использованием правила 71 (scalar_type)
 
 
 State 62
 
-   70 scalar_type: FLOAT_TYPE .
+   70 scalar_type: FLOAT_TYPE •
 
-    $default  reduce using rule 70 (scalar_type)
+    $default  вывод с использованием правила 70 (scalar_type)
 
 
 State 63
 
-   69 scalar_type: INT_TYPE .
+   69 scalar_type: INT_TYPE •
 
-    $default  reduce using rule 69 (scalar_type)
+    $default  вывод с использованием правила 69 (scalar_type)
 
 
 State 64
 
-   79 annotation: scalar_type . IDENTIFIER '=' annotation_value ';'
+   79 annotation: scalar_type • IDENTIFIER '=' annotation_value ';'
 
-    IDENTIFIER  shift, and go to state 84
+    IDENTIFIER  сдвиг, и переход в состояние 84
 
 
 State 65
 
-   73 annotation_list: annotation_list . annotation
-   81 annotations: '<' annotation_list . '>'
+   73 annotation_list: annotation_list • annotation
+   81 annotations: '<' annotation_list • '>'
 
-    STRING_TYPE  shift, and go to state 60
-    UNSIGNED     shift, and go to state 61
-    FLOAT_TYPE   shift, and go to state 62
-    INT_TYPE     shift, and go to state 63
-    '>'          shift, and go to state 85
+    STRING_TYPE  сдвиг, и переход в состояние 60
+    UNSIGNED     сдвиг, и переход в состояние 61
+    FLOAT_TYPE   сдвиг, и переход в состояние 62
+    INT_TYPE     сдвиг, и переход в состояние 63
+    '>'          сдвиг, и переход в состояние 85
 
-    scalar_type  go to state 64
-    annotation   go to state 86
+    scalar_type  переход в состояние 64
+    annotation   переход в состояние 86
 
 
 State 66
 
-   74 annotation_list: annotation .
+   74 annotation_list: annotation •
 
-    $default  reduce using rule 74 (annotation_list)
+    $default  вывод с использованием правила 74 (annotation_list)
 
 
 State 67
 
-   84 hlsl: shader_header '{' CODEBODY .
+   84 hlsl: shader_header '{' CODEBODY •
 
-    $default  reduce using rule 84 (hlsl)
+    $default  вывод с использованием правила 84 (hlsl)
 
 
 State 68
 
-   16 function_declaration: TYPE_NAME IDENTIFIER '(' arguments . ')'
+   16 function_declaration: TYPE_NAME IDENTIFIER '(' arguments • ')'
 
-    ')'  shift, and go to state 87
+    ')'  сдвиг, и переход в состояние 87
 
 
 State 69
 
-   12 arguments: var_decl .
-   13          | var_decl . ',' arguments
+   12 arguments: var_decl •
+   13          | var_decl • ',' arguments
 
-    ','  shift, and go to state 88
+    ','  сдвиг, и переход в состояние 88
 
-    $default  reduce using rule 12 (arguments)
+    $default  вывод с использованием правила 12 (arguments)
 
 
 State 70
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations . '{' passes '}'
+   68 tech: TECHNIQUE IDENTIFIER $@5 annotations • '{' passes '}'
 
-    '{'  shift, and go to state 89
+    '{'  сдвиг, и переход в состояние 89
 
 
 State 71
 
-   59 pass: PASS . $@2 annotations passstates
-   61     | PASS . IDENTIFIER $@3 annotations passstates
+   59 pass: PASS • $@2 annotations passstates
+   61     | PASS • IDENTIFIER $@3 annotations passstates
 
-    IDENTIFIER  shift, and go to state 90
+    IDENTIFIER  сдвиг, и переход в состояние 90
 
-    $default  reduce using rule 58 ($@2)
+    $default  вывод с использованием правила 58 ($@2)
 
-    $@2  go to state 91
+    $@2  переход в состояние 91
 
 
 State 72
 
-   62 passes: pass .
+   62 passes: pass •
 
-    $default  reduce using rule 62 (passes)
+    $default  вывод с использованием правила 62 (passes)
 
 
 State 73
 
-   63 passes: passes . pass
-   64       | passes . error
-   66 tech: TECHNIQUE $@4 '{' passes . '}'
+   63 passes: passes • pass
+   64       | passes • error
+   66 tech: TECHNIQUE $@4 '{' passes • '}'
 
-    error  shift, and go to state 92
-    PASS   shift, and go to state 71
-    '}'    shift, and go to state 93
+    error  сдвиг, и переход в состояние 92
+    PASS   сдвиг, и переход в состояние 71
+    '}'    сдвиг, и переход в состояние 93
 
-    pass  go to state 94
+    pass  переход в состояние 94
 
 
 State 74
 
-   18 register_declaration: ':' REGISTER . '(' INT ')'
+   18 register_declaration: ':' REGISTER • '(' INT ')'
 
-    '('  shift, and go to state 95
+    '('  сдвиг, и переход в состояние 95
 
 
 State 75
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' . var_decls '}'
+   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' • var_decls '}'
 
-    FLOAT_TYPE   shift, and go to state 8
-    FLOAT2_TYPE  shift, and go to state 9
-    FLOAT3_TYPE  shift, and go to state 10
-    FLOAT4_TYPE  shift, and go to state 11
-    MAT2_TYPE    shift, and go to state 12
-    MAT3_TYPE    shift, and go to state 13
-    MAT4_TYPE    shift, and go to state 14
-    BOOL_TYPE    shift, and go to state 15
-    BOOL2_TYPE   shift, and go to state 16
-    BOOL3_TYPE   shift, and go to state 17
-    BOOL4_TYPE   shift, and go to state 18
-    INT_TYPE     shift, and go to state 19
-    INT2_TYPE    shift, and go to state 20
-    INT3_TYPE    shift, and go to state 21
-    INT4_TYPE    shift, and go to state 22
-    STRUCT       shift, and go to state 24
+    FLOAT_TYPE   сдвиг, и переход в состояние 8
+    FLOAT2_TYPE  сдвиг, и переход в состояние 9
+    FLOAT3_TYPE  сдвиг, и переход в состояние 10
+    FLOAT4_TYPE  сдвиг, и переход в состояние 11
+    MAT2_TYPE    сдвиг, и переход в состояние 12
+    MAT3_TYPE    сдвиг, и переход в состояние 13
+    MAT4_TYPE    сдвиг, и переход в состояние 14
+    BOOL_TYPE    сдвиг, и переход в состояние 15
+    BOOL2_TYPE   сдвиг, и переход в состояние 16
+    BOOL3_TYPE   сдвиг, и переход в состояние 17
+    BOOL4_TYPE   сдвиг, и переход в состояние 18
+    INT_TYPE     сдвиг, и переход в состояние 19
+    INT2_TYPE    сдвиг, и переход в состояние 20
+    INT3_TYPE    сдвиг, и переход в состояние 21
+    INT4_TYPE    сдвиг, и переход в состояние 22
+    STRUCT       сдвиг, и переход в состояние 24
 
-    struct     go to state 76
-    var_decls  go to state 96
-    base_type  go to state 32
-    var_decl   go to state 78
+    struct     переход в состояние 76
+    var_decls  переход в состояние 96
+    base_type  переход в состояние 32
+    var_decl   переход в состояние 78
 
 
 State 76
 
-   29 var_decls: struct . ';'
+   29 var_decls: struct • ';'
 
-    ';'  shift, and go to state 97
+    ';'  сдвиг, и переход в состояние 97
 
 
 State 77
 
-   24 struct_body: '{' var_decls . '}'
-   27 var_decls: var_decls . var_decl ';'
+   24 struct_body: '{' var_decls • '}'
+   27 var_decls: var_decls • var_decl ';'
 
-    FLOAT_TYPE   shift, and go to state 8
-    FLOAT2_TYPE  shift, and go to state 9
-    FLOAT3_TYPE  shift, and go to state 10
-    FLOAT4_TYPE  shift, and go to state 11
-    MAT2_TYPE    shift, and go to state 12
-    MAT3_TYPE    shift, and go to state 13
-    MAT4_TYPE    shift, and go to state 14
-    BOOL_TYPE    shift, and go to state 15
-    BOOL2_TYPE   shift, and go to state 16
-    BOOL3_TYPE   shift, and go to state 17
-    BOOL4_TYPE   shift, and go to state 18
-    INT_TYPE     shift, and go to state 19
-    INT2_TYPE    shift, and go to state 20
-    INT3_TYPE    shift, and go to state 21
-    INT4_TYPE    shift, and go to state 22
-    '}'          shift, and go to state 98
+    FLOAT_TYPE   сдвиг, и переход в состояние 8
+    FLOAT2_TYPE  сдвиг, и переход в состояние 9
+    FLOAT3_TYPE  сдвиг, и переход в состояние 10
+    FLOAT4_TYPE  сдвиг, и переход в состояние 11
+    MAT2_TYPE    сдвиг, и переход в состояние 12
+    MAT3_TYPE    сдвиг, и переход в состояние 13
+    MAT4_TYPE    сдвиг, и переход в состояние 14
+    BOOL_TYPE    сдвиг, и переход в состояние 15
+    BOOL2_TYPE   сдвиг, и переход в состояние 16
+    BOOL3_TYPE   сдвиг, и переход в состояние 17
+    BOOL4_TYPE   сдвиг, и переход в состояние 18
+    INT_TYPE     сдвиг, и переход в состояние 19
+    INT2_TYPE    сдвиг, и переход в состояние 20
+    INT3_TYPE    сдвиг, и переход в состояние 21
+    INT4_TYPE    сдвиг, и переход в состояние 22
+    '}'          сдвиг, и переход в состояние 98
 
-    base_type  go to state 32
-    var_decl   go to state 99
+    base_type  переход в состояние 32
+    var_decl   переход в состояние 99
 
 
 State 78
 
-   28 var_decls: var_decl . ';'
+   28 var_decls: var_decl • ';'
 
-    ';'  shift, and go to state 100
+    ';'  сдвиг, и переход в состояние 100
 
 
 State 79
 
-   25 struct_footer: IDENTIFIER .
+   25 struct_footer: IDENTIFIER •
 
-    $default  reduce using rule 25 (struct_footer)
+    $default  вывод с использованием правила 25 (struct_footer)
 
 
 State 80
 
-   21 struct: STRUCT struct_header struct_body struct_footer .
+   21 struct: STRUCT struct_header struct_body struct_footer •
 
-    $default  reduce using rule 21 (struct)
+    $default  вывод с использованием правила 21 (struct)
 
 
 State 81
 
-   15 function_definition: function_declaration '{' $@1 CODEBODY .
+   15 function_definition: function_declaration '{' $@1 CODEBODY •
 
-    $default  reduce using rule 15 (function_definition)
+    $default  вывод с использованием правила 15 (function_definition)
 
 
 State 82
 
-   53 semantic: ':' IDENTIFIER .
+   53 semantic: ':' IDENTIFIER •
 
-    $default  reduce using rule 53 (semantic)
+    $default  вывод с использованием правила 53 (semantic)
 
 
 State 83
 
-   56 var_decl: base_type IDENTIFIER semantic annotations . '=' INT
-   57         | base_type IDENTIFIER semantic annotations . '=' FLOAT
+   56 var_decl: base_type IDENTIFIER semantic annotations • '=' INT
+   57         | base_type IDENTIFIER semantic annotations • '=' FLOAT
 
-    '='  shift, and go to state 101
+    '='  сдвиг, и переход в состояние 101
 
 
 State 84
 
-   79 annotation: scalar_type IDENTIFIER . '=' annotation_value ';'
+   79 annotation: scalar_type IDENTIFIER • '=' annotation_value ';'
 
-    '='  shift, and go to state 102
+    '='  сдвиг, и переход в состояние 102
 
 
 State 85
 
-   81 annotations: '<' annotation_list '>' .
+   81 annotations: '<' annotation_list '>' •
 
-    $default  reduce using rule 81 (annotations)
+    $default  вывод с использованием правила 81 (annotations)
 
 
 State 86
 
-   73 annotation_list: annotation_list annotation .
+   73 annotation_list: annotation_list annotation •
 
-    $default  reduce using rule 73 (annotation_list)
+    $default  вывод с использованием правила 73 (annotation_list)
 
 
 State 87
 
-   16 function_declaration: TYPE_NAME IDENTIFIER '(' arguments ')' .
+   16 function_declaration: TYPE_NAME IDENTIFIER '(' arguments ')' •
 
-    $default  reduce using rule 16 (function_declaration)
+    $default  вывод с использованием правила 16 (function_declaration)
 
 
 State 88
 
-   13 arguments: var_decl ',' . arguments
+   13 arguments: var_decl ',' • arguments
 
-    FLOAT_TYPE   shift, and go to state 8
-    FLOAT2_TYPE  shift, and go to state 9
-    FLOAT3_TYPE  shift, and go to state 10
-    FLOAT4_TYPE  shift, and go to state 11
-    MAT2_TYPE    shift, and go to state 12
-    MAT3_TYPE    shift, and go to state 13
-    MAT4_TYPE    shift, and go to state 14
-    BOOL_TYPE    shift, and go to state 15
-    BOOL2_TYPE   shift, and go to state 16
-    BOOL3_TYPE   shift, and go to state 17
-    BOOL4_TYPE   shift, and go to state 18
-    INT_TYPE     shift, and go to state 19
-    INT2_TYPE    shift, and go to state 20
-    INT3_TYPE    shift, and go to state 21
-    INT4_TYPE    shift, and go to state 22
+    FLOAT_TYPE   сдвиг, и переход в состояние 8
+    FLOAT2_TYPE  сдвиг, и переход в состояние 9
+    FLOAT3_TYPE  сдвиг, и переход в состояние 10
+    FLOAT4_TYPE  сдвиг, и переход в состояние 11
+    MAT2_TYPE    сдвиг, и переход в состояние 12
+    MAT3_TYPE    сдвиг, и переход в состояние 13
+    MAT4_TYPE    сдвиг, и переход в состояние 14
+    BOOL_TYPE    сдвиг, и переход в состояние 15
+    BOOL2_TYPE   сдвиг, и переход в состояние 16
+    BOOL3_TYPE   сдвиг, и переход в состояние 17
+    BOOL4_TYPE   сдвиг, и переход в состояние 18
+    INT_TYPE     сдвиг, и переход в состояние 19
+    INT2_TYPE    сдвиг, и переход в состояние 20
+    INT3_TYPE    сдвиг, и переход в состояние 21
+    INT4_TYPE    сдвиг, и переход в состояние 22
 
-    arguments  go to state 103
-    base_type  go to state 32
-    var_decl   go to state 69
+    arguments  переход в состояние 103
+    base_type  переход в состояние 32
+    var_decl   переход в состояние 69
 
 
 State 89
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' . passes '}'
+   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' • passes '}'
 
-    PASS  shift, and go to state 71
+    PASS  сдвиг, и переход в состояние 71
 
-    pass    go to state 72
-    passes  go to state 104
+    pass    переход в состояние 72
+    passes  переход в состояние 104
 
 
 State 90
 
-   61 pass: PASS IDENTIFIER . $@3 annotations passstates
+   61 pass: PASS IDENTIFIER • $@3 annotations passstates
 
-    $default  reduce using rule 60 ($@3)
+    $default  вывод с использованием правила 60 ($@3)
 
-    $@3  go to state 105
+    $@3  переход в состояние 105
 
 
 State 91
 
-   59 pass: PASS $@2 . annotations passstates
+   59 pass: PASS $@2 • annotations passstates
 
-    '<'  shift, and go to state 47
+    '<'  сдвиг, и переход в состояние 47
 
-    $default  reduce using rule 80 (annotations)
+    $default  вывод с использованием правила 80 (annotations)
 
-    annotations  go to state 106
+    annotations  переход в состояние 106
 
 
 State 92
 
-   64 passes: passes error .
+   64 passes: passes error •
 
-    $default  reduce using rule 64 (passes)
+    $default  вывод с использованием правила 64 (passes)
 
 
 State 93
 
-   66 tech: TECHNIQUE $@4 '{' passes '}' .
+   66 tech: TECHNIQUE $@4 '{' passes '}' •
 
-    $default  reduce using rule 66 (tech)
+    $default  вывод с использованием правила 66 (tech)
 
 
 State 94
 
-   63 passes: passes pass .
+   63 passes: passes pass •
 
-    $default  reduce using rule 63 (passes)
+    $default  вывод с использованием правила 63 (passes)
 
 
 State 95
 
-   18 register_declaration: ':' REGISTER '(' . INT ')'
+   18 register_declaration: ':' REGISTER '(' • INT ')'
 
-    INT  shift, and go to state 107
+    INT  сдвиг, и переход в состояние 107
 
 
 State 96
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls . '}'
-   27 var_decls: var_decls . var_decl ';'
+   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls • '}'
+   27 var_decls: var_decls • var_decl ';'
 
-    FLOAT_TYPE   shift, and go to state 8
-    FLOAT2_TYPE  shift, and go to state 9
-    FLOAT3_TYPE  shift, and go to state 10
-    FLOAT4_TYPE  shift, and go to state 11
-    MAT2_TYPE    shift, and go to state 12
-    MAT3_TYPE    shift, and go to state 13
-    MAT4_TYPE    shift, and go to state 14
-    BOOL_TYPE    shift, and go to state 15
-    BOOL2_TYPE   shift, and go to state 16
-    BOOL3_TYPE   shift, and go to state 17
-    BOOL4_TYPE   shift, and go to state 18
-    INT_TYPE     shift, and go to state 19
-    INT2_TYPE    shift, and go to state 20
-    INT3_TYPE    shift, and go to state 21
-    INT4_TYPE    shift, and go to state 22
-    '}'          shift, and go to state 108
+    FLOAT_TYPE   сдвиг, и переход в состояние 8
+    FLOAT2_TYPE  сдвиг, и переход в состояние 9
+    FLOAT3_TYPE  сдвиг, и переход в состояние 10
+    FLOAT4_TYPE  сдвиг, и переход в состояние 11
+    MAT2_TYPE    сдвиг, и переход в состояние 12
+    MAT3_TYPE    сдвиг, и переход в состояние 13
+    MAT4_TYPE    сдвиг, и переход в состояние 14
+    BOOL_TYPE    сдвиг, и переход в состояние 15
+    BOOL2_TYPE   сдвиг, и переход в состояние 16
+    BOOL3_TYPE   сдвиг, и переход в состояние 17
+    BOOL4_TYPE   сдвиг, и переход в состояние 18
+    INT_TYPE     сдвиг, и переход в состояние 19
+    INT2_TYPE    сдвиг, и переход в состояние 20
+    INT3_TYPE    сдвиг, и переход в состояние 21
+    INT4_TYPE    сдвиг, и переход в состояние 22
+    '}'          сдвиг, и переход в состояние 108
 
-    base_type  go to state 32
-    var_decl   go to state 99
+    base_type  переход в состояние 32
+    var_decl   переход в состояние 99
 
 
 State 97
 
-   29 var_decls: struct ';' .
+   29 var_decls: struct ';' •
 
-    $default  reduce using rule 29 (var_decls)
+    $default  вывод с использованием правила 29 (var_decls)
 
 
 State 98
 
-   24 struct_body: '{' var_decls '}' .
+   24 struct_body: '{' var_decls '}' •
 
-    $default  reduce using rule 24 (struct_body)
+    $default  вывод с использованием правила 24 (struct_body)
 
 
 State 99
 
-   27 var_decls: var_decls var_decl . ';'
+   27 var_decls: var_decls var_decl • ';'
 
-    ';'  shift, and go to state 109
+    ';'  сдвиг, и переход в состояние 109
 
 
 State 100
 
-   28 var_decls: var_decl ';' .
+   28 var_decls: var_decl ';' •
 
-    $default  reduce using rule 28 (var_decls)
+    $default  вывод с использованием правила 28 (var_decls)
 
 
 State 101
 
-   56 var_decl: base_type IDENTIFIER semantic annotations '=' . INT
-   57         | base_type IDENTIFIER semantic annotations '=' . FLOAT
+   56 var_decl: base_type IDENTIFIER semantic annotations '=' • INT
+   57         | base_type IDENTIFIER semantic annotations '=' • FLOAT
 
-    FLOAT  shift, and go to state 110
-    INT    shift, and go to state 111
+    FLOAT  сдвиг, и переход в состояние 110
+    INT    сдвиг, и переход в состояние 111
 
 
 State 102
 
-   79 annotation: scalar_type IDENTIFIER '=' . annotation_value ';'
+   79 annotation: scalar_type IDENTIFIER '=' • annotation_value ';'
 
-    FLOAT     shift, and go to state 112
-    INT       shift, and go to state 113
-    STR       shift, and go to state 114
-    UNSIGNED  shift, and go to state 115
+    FLOAT     сдвиг, и переход в состояние 112
+    INT       сдвиг, и переход в состояние 113
+    STR       сдвиг, и переход в состояние 114
+    UNSIGNED  сдвиг, и переход в состояние 115
 
-    annotation_value  go to state 116
+    annotation_value  переход в состояние 116
 
 
 State 103
 
-   13 arguments: var_decl ',' arguments .
+   13 arguments: var_decl ',' arguments •
 
-    $default  reduce using rule 13 (arguments)
+    $default  вывод с использованием правила 13 (arguments)
 
 
 State 104
 
-   63 passes: passes . pass
-   64       | passes . error
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes . '}'
+   63 passes: passes • pass
+   64       | passes • error
+   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes • '}'
 
-    error  shift, and go to state 92
-    PASS   shift, and go to state 71
-    '}'    shift, and go to state 117
+    error  сдвиг, и переход в состояние 92
+    PASS   сдвиг, и переход в состояние 71
+    '}'    сдвиг, и переход в состояние 117
 
-    pass  go to state 94
+    pass  переход в состояние 94
 
 
 State 105
 
-   61 pass: PASS IDENTIFIER $@3 . annotations passstates
+   61 pass: PASS IDENTIFIER $@3 • annotations passstates
 
-    '<'  shift, and go to state 47
+    '<'  сдвиг, и переход в состояние 47
 
-    $default  reduce using rule 80 (annotations)
+    $default  вывод с использованием правила 80 (annotations)
 
-    annotations  go to state 118
+    annotations  переход в состояние 118
 
 
 State 106
 
-   59 pass: PASS $@2 annotations . passstates
+   59 pass: PASS $@2 annotations • passstates
 
-    '{'  shift, and go to state 119
+    '{'  сдвиг, и переход в состояние 119
 
-    passstates  go to state 120
+    passstates  переход в состояние 120
 
 
 State 107
 
-   18 register_declaration: ':' REGISTER '(' INT . ')'
+   18 register_declaration: ':' REGISTER '(' INT • ')'
 
-    ')'  shift, and go to state 121
+    ')'  сдвиг, и переход в состояние 121
 
 
 State 108
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}' .
+   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}' •
 
-    $default  reduce using rule 20 (cbuffer)
+    $default  вывод с использованием правила 20 (cbuffer)
 
 
 State 109
 
-   27 var_decls: var_decls var_decl ';' .
+   27 var_decls: var_decls var_decl ';' •
 
-    $default  reduce using rule 27 (var_decls)
+    $default  вывод с использованием правила 27 (var_decls)
 
 
 State 110
 
-   57 var_decl: base_type IDENTIFIER semantic annotations '=' FLOAT .
+   57 var_decl: base_type IDENTIFIER semantic annotations '=' FLOAT •
 
-    $default  reduce using rule 57 (var_decl)
+    $default  вывод с использованием правила 57 (var_decl)
 
 
 State 111
 
-   56 var_decl: base_type IDENTIFIER semantic annotations '=' INT .
+   56 var_decl: base_type IDENTIFIER semantic annotations '=' INT •
 
-    $default  reduce using rule 56 (var_decl)
+    $default  вывод с использованием правила 56 (var_decl)
 
 
 State 112
 
-   75 annotation_value: FLOAT .
+   75 annotation_value: FLOAT •
 
-    $default  reduce using rule 75 (annotation_value)
+    $default  вывод с использованием правила 75 (annotation_value)
 
 
 State 113
 
-   76 annotation_value: INT .
+   76 annotation_value: INT •
 
-    $default  reduce using rule 76 (annotation_value)
+    $default  вывод с использованием правила 76 (annotation_value)
 
 
 State 114
 
-   77 annotation_value: STR .
+   77 annotation_value: STR •
 
-    $default  reduce using rule 77 (annotation_value)
+    $default  вывод с использованием правила 77 (annotation_value)
 
 
 State 115
 
-   78 annotation_value: UNSIGNED .
+   78 annotation_value: UNSIGNED •
 
-    $default  reduce using rule 78 (annotation_value)
+    $default  вывод с использованием правила 78 (annotation_value)
 
 
 State 116
 
-   79 annotation: scalar_type IDENTIFIER '=' annotation_value . ';'
+   79 annotation: scalar_type IDENTIFIER '=' annotation_value • ';'
 
-    ';'  shift, and go to state 122
+    ';'  сдвиг, и переход в состояние 122
 
 
 State 117
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}' .
+   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}' •
 
-    $default  reduce using rule 68 (tech)
+    $default  вывод с использованием правила 68 (tech)
 
 
 State 118
 
-   61 pass: PASS IDENTIFIER $@3 annotations . passstates
+   61 pass: PASS IDENTIFIER $@3 annotations • passstates
 
-    '{'  shift, and go to state 119
+    '{'  сдвиг, и переход в состояние 119
 
-    passstates  go to state 123
+    passstates  переход в состояние 123
 
 
 State 119
 
-   37 passstates: '{' . shader_assignments '}'
+   37 passstates: '{' • shader_assignments '}'
 
-    VERTEXPROGRAM    shift, and go to state 124
-    FRAGMENTPROGRAM  shift, and go to state 125
-    GEOMETRYPROGRAM  shift, and go to state 126
+    VERTEXPROGRAM    сдвиг, и переход в состояние 124
+    FRAGMENTPROGRAM  сдвиг, и переход в состояние 125
+    GEOMETRYPROGRAM  сдвиг, и переход в состояние 126
 
-    shader_type         go to state 127
-    shader_assignment   go to state 128
-    shader_assignments  go to state 129
+    shader_type         переход в состояние 127
+    shader_assignment   переход в состояние 128
+    shader_assignments  переход в состояние 129
 
 
 State 120
 
-   59 pass: PASS $@2 annotations passstates .
+   59 pass: PASS $@2 annotations passstates •
 
-    $default  reduce using rule 59 (pass)
+    $default  вывод с использованием правила 59 (pass)
 
 
 State 121
 
-   18 register_declaration: ':' REGISTER '(' INT ')' .
+   18 register_declaration: ':' REGISTER '(' INT ')' •
 
-    $default  reduce using rule 18 (register_declaration)
+    $default  вывод с использованием правила 18 (register_declaration)
 
 
 State 122
 
-   79 annotation: scalar_type IDENTIFIER '=' annotation_value ';' .
+   79 annotation: scalar_type IDENTIFIER '=' annotation_value ';' •
 
-    $default  reduce using rule 79 (annotation)
+    $default  вывод с использованием правила 79 (annotation)
 
 
 State 123
 
-   61 pass: PASS IDENTIFIER $@3 annotations passstates .
+   61 pass: PASS IDENTIFIER $@3 annotations passstates •
 
-    $default  reduce using rule 61 (pass)
+    $default  вывод с использованием правила 61 (pass)
 
 
 State 124
 
-   31 shader_type: VERTEXPROGRAM .
+   31 shader_type: VERTEXPROGRAM •
 
-    $default  reduce using rule 31 (shader_type)
+    $default  вывод с использованием правила 31 (shader_type)
 
 
 State 125
 
-   33 shader_type: FRAGMENTPROGRAM .
+   33 shader_type: FRAGMENTPROGRAM •
 
-    $default  reduce using rule 33 (shader_type)
+    $default  вывод с использованием правила 33 (shader_type)
 
 
 State 126
 
-   32 shader_type: GEOMETRYPROGRAM .
+   32 shader_type: GEOMETRYPROGRAM •
 
-    $default  reduce using rule 32 (shader_type)
+    $default  вывод с использованием правила 32 (shader_type)
 
 
 State 127
 
-   34 shader_assignment: shader_type . '=' IDENTIFIER
+   34 shader_assignment: shader_type • '=' IDENTIFIER
 
-    '='  shift, and go to state 130
+    '='  сдвиг, и переход в состояние 130
 
 
 State 128
 
-   35 shader_assignments: shader_assignment .
+   35 shader_assignments: shader_assignment •
 
-    $default  reduce using rule 35 (shader_assignments)
+    $default  вывод с использованием правила 35 (shader_assignments)
 
 
 State 129
 
-   36 shader_assignments: shader_assignments . shader_assignment
-   37 passstates: '{' shader_assignments . '}'
+   36 shader_assignments: shader_assignments • shader_assignment
+   37 passstates: '{' shader_assignments • '}'
 
-    VERTEXPROGRAM    shift, and go to state 124
-    FRAGMENTPROGRAM  shift, and go to state 125
-    GEOMETRYPROGRAM  shift, and go to state 126
-    '}'              shift, and go to state 131
+    VERTEXPROGRAM    сдвиг, и переход в состояние 124
+    FRAGMENTPROGRAM  сдвиг, и переход в состояние 125
+    GEOMETRYPROGRAM  сдвиг, и переход в состояние 126
+    '}'              сдвиг, и переход в состояние 131
 
-    shader_type        go to state 127
-    shader_assignment  go to state 132
+    shader_type        переход в состояние 127
+    shader_assignment  переход в состояние 132
 
 
 State 130
 
-   34 shader_assignment: shader_type '=' . IDENTIFIER
+   34 shader_assignment: shader_type '=' • IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 133
+    IDENTIFIER  сдвиг, и переход в состояние 133
 
 
 State 131
 
-   37 passstates: '{' shader_assignments '}' .
+   37 passstates: '{' shader_assignments '}' •
 
-    $default  reduce using rule 37 (passstates)
+    $default  вывод с использованием правила 37 (passstates)
 
 
 State 132
 
-   36 shader_assignments: shader_assignments shader_assignment .
+   36 shader_assignments: shader_assignments shader_assignment •
 
-    $default  reduce using rule 36 (shader_assignments)
+    $default  вывод с использованием правила 36 (shader_assignments)
 
 
 State 133
 
-   34 shader_assignment: shader_type '=' IDENTIFIER .
+   34 shader_assignment: shader_type '=' IDENTIFIER •
 
-    $default  reduce using rule 34 (shader_assignment)
+    $default  вывод с использованием правила 34 (shader_assignment)

@@ -51,11 +51,18 @@ void CClient::Update()
 		o.m_Position.y += o.m_Position.y * cos(gEnv->pTimer->GetCurrTime());
 	}
 	
-	const float FloorLevel = 2;
+	const float FloorLevel = (float)g_World.height + 3;
 	auto CamPos = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
 
 	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
 	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
+	if ((CamPos.x <= -(float)g_World.size_x / 2) || (CamPos.x >= (float)g_World.size_x / 2))
+	{
+		if ((CamPos.z <= -(float)g_World.size_z / 2) || (CamPos.z >= (float)g_World.size_z / 2))
+		{
+
+		}
+	}
 	CamPos.y = max(CamPos.y, FloorLevel);
 
 	m_CameraController.CurrentCamera()->SetPos(CamPos);

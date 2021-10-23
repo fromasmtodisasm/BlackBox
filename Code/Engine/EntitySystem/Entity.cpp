@@ -359,6 +359,7 @@ const Legacy::Vec3& CEntity::GetAngles(int realA) const
 
 void CEntity::SetScale(float scale)
 {
+	m_Scale = scale;
 }
 
 float CEntity::GetScale() const
