@@ -10,6 +10,7 @@
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <glm/gtx/hash.hpp>
 
 class BlockType
 {
@@ -18,7 +19,7 @@ class BlockType
   public:
 	void loadMesh(std::string const& path)
 	{
-		obj = gEnv->p3DEngine->MakeObject(path);
+		obj = gEnv->p3DEngine->MakeObject(path.data());
 	}
 
 	void loadTexture(std::string const& path)
@@ -75,7 +76,7 @@ class Minecraft
 		BlockEntity entity;
 		entity.calcWorldSpace(position);
 		entity.setType(&blocks.at(block));
-		world.insert(position, entity);
+		world.emplace(position, entity);
 	}
 
 	void init()
@@ -91,8 +92,8 @@ class Minecraft
 	{
 	}
 
-	std::map<glm::vec<3, int>, BlockEntity> world;
-	std::map<std::string, BlockType>		blocks;
+	std::unordered_map<glm::vec<3, int>, BlockEntity> world;
+	std::unordered_map<std::string, BlockType>		blocks;
 };
 
 #endif // BLACKBOX_WIN64_RENDERER_H
