@@ -66,6 +66,7 @@ float  UIStep	= 0.1;
 
 float3 main(float4 f1, int i2);
 
+/*
 float3 main2(float4 f1, int i2) {
 
 }
@@ -73,6 +74,7 @@ float3 main2(float4 f1, int i2) {
 
 
 FatalError
+*/
 
 Shader
 	{
