@@ -5,6 +5,8 @@
 #include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 
+#include <BlackBox\Core\Path.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -317,6 +319,11 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 						m_DiffuseMap = mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
 						//path.C_Str()
 						m_DiffuseMap = gEnv->pRenderer->LoadTexture(path.C_Str());
+						if (m_DiffuseMap == -1)
+						{
+							auto new_path = PathUtil::GetParentDirectory(m_Name);
+							m_DiffuseMap = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+						}
 					}
 				}
 			}

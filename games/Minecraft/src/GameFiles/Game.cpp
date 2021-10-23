@@ -788,7 +788,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	if (!m_bDedicatedServer)
 	{
 		m_pSystem->GetIConsole()->ShowConsole(0);
-		if (!bInEditor)
+		if (!bInEditor && 0)
 		{
 			//////////////////////////////////////////////////////////////////////
 			m_pUISystem = new CUISystem;
