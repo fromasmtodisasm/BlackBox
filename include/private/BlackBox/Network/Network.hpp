@@ -16,7 +16,7 @@ public:
 
   bool Init(ISystem* pSystem);
 
-  // Унаследовано через INetwork
+  // РЈРЅР°СЃР»РµРґРѕРІР°РЅРѕ С‡РµСЂРµР· INetwork
   virtual uint32_t GetLocalIP() const override;
   virtual void SetLocalIP(const char* szLocalIP) override;
   virtual IClient* CreateClient(IClientSink* pSink, bool bLocal = false) override;

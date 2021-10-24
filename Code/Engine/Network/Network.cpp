@@ -99,12 +99,12 @@ class CTmpNetworkServer : public IServer
 			content << "IConsole: " << gEnv->pConsole << "</br>";
 			content << "IRenderer: " << gEnv->pRenderer << "</br>";
 			content << "ILog: " << gEnv->pLog << "</br>";
-			content << R"(<a href="gaben">Тык тык!!!</a>)";
+			content << R"(<a href="gaben">пїЅпїЅпїЅ пїЅпїЅпїЅ!!!</a>)";
 			content <<
 				R"(
 <form action="/cmd" method="get">
 	<p>Remote command<input type="text" name="remote_command"></p>
-	<p><input type="submit" value="Отправить"></p>
+	<p><input type="submit" value="пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"></p>
 </form>
 )";
 		};
@@ -123,7 +123,7 @@ class CTmpNetworkServer : public IServer
 				R"(
 <form action="/cmd" method="get">
 	<p>Remote command<input type="text" name="remote_command"></p>
-	<p><input type="submit" value="Отправить"></p>
+	<p><input type="submit" value="пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"></p>
 </form>
 )";
 		};
@@ -544,6 +544,7 @@ const char* CNetwork::EnumerateError(uint32_t err)
 
 void CNetwork::Release()
 {
+	assert(this != nullptr);
 	delete this;
 }
 

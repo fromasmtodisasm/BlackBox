@@ -1,8 +1,6 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/IShader.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
-#include <BlackBox/System/IConsole.hpp>
 
 #include <array>
 
@@ -53,12 +51,8 @@ struct CBChangesEveryFrame
 	D3DXMATRIX MVP;
 };
 
-ID3D10RenderTargetView*		g_pRenderTargetView	  = NULL;
-ID3D10Effect*				g_pEffect			  = NULL;
-ID3D10InputLayout*			g_pVertexLayout		  = NULL;
-ID3D10InputLayout*			g_pVertexLayoutMesh	  = NULL;
-ID3D10Buffer*				g_pVertexBuffer		  = NULL;
-ID3D10Buffer*				g_pIndexBuffer		  = NULL;
+ID3D10Effect*				g_pEffect			  = nullptr;
+ID3D10InputLayout*			g_pVertexLayout		  = nullptr;
 D3DXMATRIX					g_MVP;
 D3DXMATRIX					g_World;
 D3DXMATRIX					g_View;
@@ -67,11 +61,9 @@ D3DXMATRIX					g_ViewProjection;
 
 ID3D10EffectConstantBuffer* g_pConstantBuffer;
 
-using VecPos = std::vector<BB_VERTEX>;
-
 namespace
 {
-	static inline uint32 PackColor(const UCol& col)
+	inline uint32 PackColor(const UCol& col)
 	{
 		return (((uint8)(col.bcolor[0]) << 24) +
 				((uint8)(col.bcolor[1]) << 16) +
@@ -94,7 +86,7 @@ HRESULT InitCube()
 
 #ifndef VK_RENDERER
 	ID3D10Blob* pErrors;
-	auto		hr = D3DX10CreateEffectFromFile("Data/shaders/fx/test.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
+	auto		hr = D3DX10CreateEffectFromFile("Data/shaders/fx/test.fx", nullptr, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
 	if (FAILED(hr))
 	{
 		CryFatalError("D3DFX: %s", pErrors->GetBufferPointer());
@@ -153,18 +145,8 @@ void DrawCube(const SDrawElement& DrawElement)
 {
 #ifndef VK_RENDERER
 	// Update our time
-	static float t			 = 0.0f;
 	static DWORD dwTimeStart = 0;
 	DWORD		 dwTimeCur	 = GetTickCount();
-	if (dwTimeStart == 0)
-		dwTimeStart = dwTimeCur;
-	t = (dwTimeCur - dwTimeStart) / 1000.0f;
-
-	//
-	// Animate the cube
-	//
-	// D3DXMatrixRotationY(&DrawElement.transform, t);
-	// g_World = glm::rotate(glm::mat4(1), t, glm::vec3(0, 1, 0));
 
 	//
 	// Update variables
@@ -373,10 +355,6 @@ CRenderAuxGeom::~CRenderAuxGeom()
 	SAFE_DELETE(m_HardwareVB);
 }
 
-struct AABBInstanceData
-{
-};
-
 bool first_draw = true;
 
 // TODO: Довести до ума, нужно учитывать трансформации объекта
@@ -503,7 +481,7 @@ void CRenderAuxGeom::DrawAABBs()
 	::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
 	GetDevice()->RSSetState(g_pRasterizerState);
 	GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
-	if (m_BBVerts.size())
+	if (!m_BBVerts.empty())
 	{
 		gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
 		auto size	  = m_BBVerts.size() * 36;
@@ -596,7 +574,6 @@ void CRenderAuxGeom::DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UC
 
 void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive)
 {
-	;
 	assert(numVertices > 0);
 	{
 		m_auxPushBuffer.emplace_back(AuxPushBuffer::value_type(numVertices, primitive));
