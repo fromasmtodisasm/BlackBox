@@ -412,9 +412,11 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 	#endif
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
 
+#if 0
 	Image2D img = m_DrawImages.back();
 	Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 	m_DrawImages.pop_back();
+#endif
 }
 
 ITexPic* CD3DRenderer::EF_GetTextureByID(int Id)

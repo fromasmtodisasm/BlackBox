@@ -53,6 +53,8 @@ struct Building
 	EntityData* entities;
 	BlockData* blocks;
 	Picking picking;
+
+	float m_removeTime = 0;
 };
 
 struct Assets
@@ -81,4 +83,6 @@ struct Minecraft
 	Assets assets{};
 	Generation generation{};
 	Picking picking{};
+
+	int m_CrossHair = -1;
 };

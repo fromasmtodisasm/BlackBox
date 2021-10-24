@@ -12,10 +12,18 @@ void Minecraft::init()
 
 	assets.load();
 	generation.generateTestScene();
+
+	if (gEnv->pRenderer)
+		m_CrossHair = gEnv->pRenderer->LoadTexture("Data/images/crosshair.bmp", 0, false);
 }
 
 void Minecraft::update()
 {
+	size_t ch_w = 20;
+	size_t ch_h = 20;
+	if (gEnv->pRenderer)
+		gEnv->pRenderer->Draw2dImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair, 0, 0, 1, 1, 0, 0, 1, 0, 0.5);
+
 }
 
 void Assets::load()
@@ -74,7 +82,14 @@ void Building::destroyBlock()
 	glm::ivec3 pos;
 	if(picking.blockOnCursor(pos))
 	{
-		remove(pos);
+		auto curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+		auto delta = curTime - m_removeTime;
+		if ((delta) > 500.f)
+		{
+			CryLog("remove delta time: %f", delta);
+			remove(pos);
+			m_removeTime = curTime;
+		}
 	}
 }
 
@@ -119,55 +134,23 @@ void Generation::generateTestScene()
 
 bool Picking::blockOnCursor(glm::ivec3& outPos)
 {
-	float pickDistance = 7.0;
-
-	/*
-	float mouseX = 0, mouseY = 0;
-	gEnv->pHardwareMouse->GetHardwareMousePosition(&mouseX, &mouseY);
-	float screenWidth  = (float)gEnv->pRenderer->GetWidth();
-	float screenHeight = (float)gEnv->pRenderer->GetHeight();
-
-	float pointX = ((2.0f * mouseX) / screenWidth) - 1.0f;
-	float pointY = (((2.0f * mouseY) / screenHeight) - 1.0f) * -1.0f;
-	pointX = 0;
-	pointY = 0;
-
-	auto camera		= gEnv->pRenderer->GetCamera();
-	auto projMatrix = camera.getProjectionMatrix();
-	//pointX /= projMatrix[1][1];
-	//pointY /= projMatrix[2][2];
-
-	auto	  inverseViewMatrix = glm::inverse(camera.GetViewMatrix());
-	glm::vec3 direction;
-
-	direction.x = (pointX * inverseViewMatrix[1][1]) +
-				  (pointY * inverseViewMatrix[2][1]) + inverseViewMatrix[3][1];
-	direction.y = (pointX * inverseViewMatrix[1][2]) +
-				  (pointY * inverseViewMatrix[2][2]) + inverseViewMatrix[3][2];
-	direction.z = (pointX * inverseViewMatrix[1][3]) +
-				  (pointY * inverseViewMatrix[2][3]) + inverseViewMatrix[3][3];
-	*/
-
 	auto game = static_cast<CXGame*>(gEnv->pSystem->GetIGame());
 	auto client = &game->GetClient()->m_DummyClient;
 	auto intersectionState = client->m_IntersectionState;
-	auto centerX = (float)gEnv->pRenderer->GetWidth() / 2;
-	auto centerY = (float)gEnv->pRenderer->GetHeight() / 2;
 
 	auto& start = intersectionState.ray.start;
-
 	gEnv->pRenderer->UnProjectFromScreen(
-		centerX, centerY, 0, &start.x, &start.y, &start.z);
+		intersectionState.mx, intersectionState.my, 0, &start.x, &start.y, &start.z);
 	auto& end = intersectionState.ray.end;
 	gEnv->pRenderer->UnProjectFromScreen(
-		centerX, centerY, 1, &end.x, &end.y, &end.z);
+		intersectionState.mx, intersectionState.my, 1, &end.x, &end.y, &end.z);
+
 
 	Ray eyeRay;
 
 	eyeRay.origin = client->m_CameraController.RenderCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end-start);
 
-	//glm::vec3 origin = camera.transform.position;
 	float	  tMin	 = HUGE_VALF;
 	float minDistance = HUGE_VALF;
 
@@ -179,12 +162,6 @@ bool Picking::blockOnCursor(glm::ivec3& outPos)
 		auto distance = glm::distance(pos, camPos);
 		//if (distance <= pickDistance)
 		{
-			auto inverseTransformMatrix = glm::inverse(entity.transformMatrix);
-			//eyeRay.origin =
-			//	glm::vec4(eyeRay.origin, 1.0) * inverseTransformMatrix;
-			//eyeRay.direction =
-			//	glm::normalize(glm::vec4(eyeRay.direction, 0.0) * inverseTransformMatrix);
-
 			auto obj  = entity.entity->GetIStatObj(0);
 			AABB aabb = {obj->GetBoxMin(), obj->GetBoxMax()};
 			aabb.Translate(pos);
