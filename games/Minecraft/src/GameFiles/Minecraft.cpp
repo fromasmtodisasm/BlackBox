@@ -37,6 +37,7 @@ void Building::remove(glm::ivec3 pos)
 	}
 	else
 	{
+		assert(0 && "sfasdf");
 		CryError("there is no block on the position %d, %d, %d: ", pos.x, pos.y, pos.z);
 	}
 }
@@ -47,8 +48,7 @@ void Building::set(glm::ivec3 pos, Block::Type type)
 
 	if (auto e = entities->find(pos); e != entities->end())
 	{
-		remove(pos)
-		e->second.entity->Remove();
+		remove(pos);
 		entities->erase(pos);
 	}
 
@@ -113,7 +113,7 @@ void Generation::generateTestScene()
 		building.set(glm::vec3(i, 3, 0), Block::Grass);
 	}
 
-	//gEnv->pConsole->ExecuteString("load_level minecraft");
+	gEnv->pConsole->ExecuteString("load_level minecraft");
 	gEnv->pConsole->ShowConsole(false);
 }
 
