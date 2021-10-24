@@ -66,6 +66,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawAABBs();
 	void DrawLines();
 
+
   private:
 	CVertexBuffer*		m_BoundingBox	 = nullptr;
 	SVertexStream*		m_BB_IndexBuffer = nullptr;

@@ -45,9 +45,11 @@ struct SimpleVertex
 
 struct CBChangesEveryFrame
 {
+	#if 0
 	D3DXMATRIX World;
 	D3DXMATRIX View;
 	D3DXMATRIX Projection;
+	#endif
 	D3DXMATRIX MVP;
 };
 
@@ -57,10 +59,6 @@ ID3D10InputLayout*			g_pVertexLayout		  = NULL;
 ID3D10InputLayout*			g_pVertexLayoutMesh	  = NULL;
 ID3D10Buffer*				g_pVertexBuffer		  = NULL;
 ID3D10Buffer*				g_pIndexBuffer		  = NULL;
-ID3D10EffectMatrixVariable* g_pMVP				  = NULL;
-ID3D10EffectMatrixVariable* g_pWorldVariable	  = NULL;
-ID3D10EffectMatrixVariable* g_pViewVariable		  = NULL;
-ID3D10EffectMatrixVariable* g_pProjectionVariable = NULL;
 D3DXMATRIX					g_MVP;
 D3DXMATRIX					g_World;
 D3DXMATRIX					g_View;
@@ -109,14 +107,6 @@ HRESULT InitCube()
 	GlobalResources::BoxTechnique = g_pEffect->GetTechniqueByName("Render");
 	g_pConstantBuffer			  = g_pEffect->GetConstantBufferByName("cbChangesEveryFrame");
 
-// Obtain the variables
-#	if 1
-	g_pMVP				  = g_pEffect->GetVariableByName("MVP")->AsMatrix();
-	g_pWorldVariable	  = g_pEffect->GetVariableByName("World")->AsMatrix();
-	g_pViewVariable		  = g_pEffect->GetVariableByName("View")->AsMatrix();
-	g_pProjectionVariable = g_pEffect->GetVariableByName("Projection")->AsMatrix();
-#	endif
-
 #	if 0
 	// Define the input layout
 	D3D10_INPUT_ELEMENT_DESC layout[] =
@@ -130,7 +120,8 @@ HRESULT InitCube()
 	D3D10_INPUT_ELEMENT_DESC layout[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0}};
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0}
+	};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
 	// Create the input layout
@@ -178,9 +169,10 @@ void DrawCube(const SDrawElement& DrawElement)
 	//
 	// Update variables
 	//
-	// D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
+	//D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
 	// g_MVP = g_World * g_View * g_Projection;
-	// g_MVP = g_Projection * g_View * g_World;
+	//g_MVP = g_Projection * g_View * g_World;
+	g_MVP = g_ViewProjection * g_World;
 	g_World		  = DrawElement.transform;
 	//g_MVP		  = g_ViewProjection * DrawElement.transform;
 	ID3D10Buffer* pEveryFrameBuffer;
@@ -191,15 +183,14 @@ void DrawCube(const SDrawElement& DrawElement)
 	cb.View		  = g_View;
 	cb.Projection = g_Projection;
 #	else
+	#if 0
 	D3DXMatrixTranspose(&cb.World, &g_World);
 	D3DXMatrixTranspose(&cb.View, &g_View);
 	D3DXMatrixTranspose(&cb.Projection, &g_Projection);
+	#endif
 #	endif
 	// cb.MVP		  = g_MVP;
 	D3DXMatrixTranspose(&cb.MVP, &g_MVP);
-	//::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, 192, 0);
-
-	// g_pConstantBuffer->SetRawValue();
 
 	// Set vertex buffer
 	UINT stride = sizeof(SimpleVertex);
@@ -213,26 +204,11 @@ void DrawCube(const SDrawElement& DrawElement)
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		GlobalResources::BoxTechnique->GetPassByIndex(p)->Apply(0);
+
 		::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, sizeof(cb), 0);
-
-		//::GetDevice()->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-		//::GetDevice()->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		::GetDevice()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		::GetDevice()->IASetInputLayout(g_pVertexLayout);
-
-#	if 0
-		::GetDevice()->PSSetShaderResources(0, 1, &GlobalResources::GreyTextureRV);
-#	else
-		//::GetDevice()->PSSetShaderResources(0, 1, gEnv->pRenderer->EF_GetTextureByID(DrawElement.m_DiffuseMap));
 		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
-#	endif
-		::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-		::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
-		GetDevice()->RSSetState(g_pRasterizerState);
-		GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
-		// GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
-
-		auto				  ib		 = DrawElement.m_Inices;
+		auto ib			= DrawElement.m_Inices;
 		auto numindices = 0;
 		if (ib)
 		{
@@ -403,7 +379,7 @@ struct AABBInstanceData
 
 bool first_draw = true;
 
-// TODO: Äîâåñòè äî óìà, íóæíî ó÷èòûâàòü òðàíñôîðìàöèè îáúåêòà
+// TODO: Ð”Ð¾Ð²ÐµÑÑ‚Ð¸ Ð´Ð¾ ÑƒÐ¼Ð°, Ð½ÑƒÐ¶Ð½Ð¾ ÑƒÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ñ‚ÑŒ Ñ‚Ñ€Ð°Ð½ÑÑ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚Ð°
 void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& col)
 {
 	// #unreferenced
@@ -519,8 +495,14 @@ void CRenderAuxGeom::DrawAABBs()
 	auto m_Camera = gEnv->pSystem->GetViewCamera();
 	g_View		  = m_Camera.GetViewMatrix();
 	g_Projection  = m_Camera.getProjectionMatrix();
+	g_ViewProjection = g_Projection * g_View;
 	// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 	// m_BoundingBoxShader->Bind();
+
+	::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+	::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
+	GetDevice()->RSSetState(g_pRasterizerState);
+	GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	if (m_BBVerts.size())
 	{
 		gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
@@ -633,7 +615,6 @@ void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, SVertexStream* pIndi
 
 void CRenderAuxGeom::Flush()
 {
-	// RSS(gEnv->pRenderer, CULL_FACE, false);
 	DrawAABBs();
 	DrawLines();
 }

@@ -67,7 +67,7 @@ macro(install_target)
 	]]
 
 	install(
-	  DIRECTORY ${CMAKE_SOURCE_DIR}/res DESTINATION .
+	  DIRECTORY ${CMAKE_SOURCE_DIR}/Data DESTINATION .
 	)
 	install(
 	  DIRECTORY ${OUTPUT_DIRECTORY}/$<CONFIG>/ DESTINATION bin 

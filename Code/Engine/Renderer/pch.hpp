@@ -30,6 +30,7 @@
 #	define ID3DDepthStencilState ID3D11DepthStencilState
 #else
 #	define ID3DDevice ID3D10Device
+#	define ID3DBuffer ID3D10Buffer
 #	define ID3DRenderTargetView ID3D10RenderTargetView
 #	define ID3DTexture2D ID3D10Texture2D
 #	define ID3DDepthStencilView ID3D10DepthStencilView

@@ -9,11 +9,15 @@
 //--------------------------------------------------------------------------------------
 cbuffer cbChangesEveryFrame : register(b2)
 {
+    #if 0
     float4x4 World;
     float4x4 View;
     float4x4 Projection;
+    #endif
     float4x4 MVP;
 };
+
+StructuredBuffer<float4x4> Transform;
 
 
 //--------------------------------------------------------------------------------------
@@ -42,10 +46,13 @@ VS_OUTPUT VS(
 )
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
+    #if 0
     output.Pos = mul(IN.Pos, World );
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    //output.Pos = mul( Pos, MVP );
+    #else
+    output.Pos = mul( IN.Pos, MVP );
+    #endif
     output.Normal = IN.Normal;
     output.TC = IN.TC;
 

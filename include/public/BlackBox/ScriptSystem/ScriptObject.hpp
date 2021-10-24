@@ -20,7 +20,7 @@ class CScriptObject : public IScriptObject
 		m_nRefCount = 0;
 	}
 	~CScriptObject();
-	// Унаследовано через IScriptObject
+	// Г“Г­Г Г±Г«ГҐГ¤Г®ГўГ Г­Г® Г·ГҐГ°ГҐГ§ IScriptObject
 	virtual int	 GetRef() override;
 	virtual void Attach() override;
 	virtual void Attach(IScriptObject* so) override;
