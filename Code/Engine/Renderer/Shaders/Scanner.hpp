@@ -19,12 +19,14 @@ public:
 	Scanner(Driver& driver)
 	  : driver(driver)
   {
-		symboltype_map.insert({"float"});
-		symboltype_map.insert({"float2"});
-		symboltype_map.insert({"float3"});
-		symboltype_map.insert({"float4"});
+	symboltype_map.insert({"float"});
+	symboltype_map.insert({"float2"});
+	symboltype_map.insert({"float3"});
+	symboltype_map.insert({"float4"});
 
-		symboltype_map.insert({"int"});
+	symboltype_map.insert({"float4x4"});
+
+	symboltype_map.insert({"int"});
   }
   virtual ~Scanner() {}
   virtual yy::parser::symbol_type ScanToken();

@@ -69,156 +69,159 @@
 
    17 fatal_error: FATALERROR
 
-   18 register_declaration: ':' REGISTER '(' INT ')'
-   19                     | ε
+   18 register_value: INT
+   19               | IDENTIFIER
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
+   20 register_declaration: ':' REGISTER '(' register_value ')'
+   21                     | ε
 
-   21 struct: STRUCT struct_header struct_body struct_footer
+   22 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
 
-   22 struct_header: IDENTIFIER
-   23              | ε
+   23 struct: STRUCT struct_header struct_body struct_footer
 
-   24 struct_body: '{' var_decls '}'
+   24 struct_header: IDENTIFIER
+   25              | ε
 
-   25 struct_footer: IDENTIFIER
-   26              | ε
+   26 struct_body: '{' var_decls '}'
 
-   27 var_decls: var_decls var_decl ';'
-   28          | var_decl ';'
-   29          | struct ';'
+   27 struct_footer: IDENTIFIER
+   28              | ε
 
-   30 shader_resource: cbuffer
+   29 var_decls: var_decls var_decl ';'
+   30          | var_decl ';'
+   31          | struct ';'
 
-   31 shader_type: VERTEXPROGRAM
-   32            | GEOMETRYPROGRAM
-   33            | FRAGMENTPROGRAM
+   32 shader_resource: cbuffer
 
-   34 shader_assignment: shader_type '=' IDENTIFIER
+   33 shader_type: VERTEXPROGRAM
+   34            | GEOMETRYPROGRAM
+   35            | FRAGMENTPROGRAM
 
-   35 shader_assignments: shader_assignment
-   36                   | shader_assignments shader_assignment
+   36 shader_assignment: shader_type '=' IDENTIFIER
 
-   37 passstates: '{' shader_assignments '}'
+   37 shader_assignments: shader_assignment
+   38                   | shader_assignments shader_assignment
 
-   38 base_type: FLOAT_TYPE
-   39          | FLOAT2_TYPE
-   40          | FLOAT3_TYPE
-   41          | FLOAT4_TYPE
-   42          | INT_TYPE
-   43          | INT2_TYPE
-   44          | INT3_TYPE
-   45          | INT4_TYPE
-   46          | BOOL_TYPE
-   47          | BOOL2_TYPE
-   48          | BOOL3_TYPE
-   49          | BOOL4_TYPE
-   50          | MAT2_TYPE
-   51          | MAT3_TYPE
-   52          | MAT4_TYPE
+   39 passstates: '{' shader_assignments '}'
 
-   53 semantic: ':' IDENTIFIER
-   54         | ε
+   40 base_type: FLOAT_TYPE
+   41          | FLOAT2_TYPE
+   42          | FLOAT3_TYPE
+   43          | FLOAT4_TYPE
+   44          | INT_TYPE
+   45          | INT2_TYPE
+   46          | INT3_TYPE
+   47          | INT4_TYPE
+   48          | BOOL_TYPE
+   49          | BOOL2_TYPE
+   50          | BOOL3_TYPE
+   51          | BOOL4_TYPE
+   52          | MAT2_TYPE
+   53          | MAT3_TYPE
+   54          | MAT4_TYPE
 
-   55 var_decl: base_type IDENTIFIER semantic
-   56         | base_type IDENTIFIER semantic annotations '=' INT
-   57         | base_type IDENTIFIER semantic annotations '=' FLOAT
+   55 semantic: ':' IDENTIFIER
+   56         | ε
 
-   58 $@2: ε
+   57 var_decl: base_type IDENTIFIER semantic
+   58         | base_type IDENTIFIER semantic annotations '=' INT
+   59         | base_type IDENTIFIER semantic annotations '=' FLOAT
 
-   59 pass: PASS $@2 annotations passstates
+   60 $@2: ε
 
-   60 $@3: ε
+   61 pass: PASS $@2 annotations passstates
 
-   61 pass: PASS IDENTIFIER $@3 annotations passstates
+   62 $@3: ε
 
-   62 passes: pass
-   63       | passes pass
-   64       | passes error
+   63 pass: PASS IDENTIFIER $@3 annotations passstates
 
-   65 $@4: ε
+   64 passes: pass
+   65       | passes pass
+   66       | passes error
 
-   66 tech: TECHNIQUE $@4 '{' passes '}'
+   67 $@4: ε
 
-   67 $@5: ε
+   68 tech: TECHNIQUE $@4 '{' passes '}'
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}'
+   69 $@5: ε
 
-   69 scalar_type: INT_TYPE
-   70            | FLOAT_TYPE
-   71            | UNSIGNED
-   72            | STRING_TYPE
+   70 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}'
 
-   73 annotation_list: annotation_list annotation
-   74                | annotation
+   71 scalar_type: INT_TYPE
+   72            | FLOAT_TYPE
+   73            | UNSIGNED
+   74            | STRING_TYPE
 
-   75 annotation_value: FLOAT
-   76                 | INT
-   77                 | STR
-   78                 | UNSIGNED
+   75 annotation_list: annotation_list annotation
+   76                | annotation
 
-   79 annotation: scalar_type IDENTIFIER '=' annotation_value ';'
+   77 annotation_value: FLOAT
+   78                 | INT
+   79                 | STR
+   80                 | UNSIGNED
 
-   80 annotations: ε
-   81            | '<' annotation_list '>'
+   81 annotation: scalar_type IDENTIFIER '=' annotation_value ';'
 
-   82 hlsl_header: HLSL11SHADER IDENTIFIER
-   83            | HLSL11SHADER
+   82 annotations: ε
+   83            | '<' annotation_list '>'
 
-   84 hlsl: shader_header '{' CODEBODY
+   84 hlsl_header: HLSL11SHADER IDENTIFIER
+   85            | HLSL11SHADER
 
-   85 shader_header: hlsl_header annotations
+   86 hlsl: shader_header '{' CODEBODY
+
+   87 shader_header: hlsl_header annotations
 
 
 Терминальные символы с правилами, в которых они появляются
 
     "end of file" (0) 0
-    '(' (40) 16 18
-    ')' (41) 16 18
+    '(' (40) 16 20
+    ')' (41) 16 20
     ',' (44) 13
-    ':' (58) 18 53
-    ';' (59) 2 27 28 29 79
-    '<' (60) 81
-    '=' (61) 34 56 57 79
-    '>' (62) 81
-    '{' (123) 15 20 24 37 66 68 84
-    '}' (125) 20 24 37 66 68
-    error (256) 11 64
+    ':' (58) 20 55
+    ';' (59) 2 29 30 31 81
+    '<' (60) 83
+    '=' (61) 36 58 59 81
+    '>' (62) 83
+    '{' (123) 15 22 26 39 68 70 86
+    '}' (125) 22 26 39 68 70
+    error (256) 11 66
     TYPE_NAME <std::string> (258) 16
-    IDENTIFIER <std::string> (259) 16 20 22 25 34 53 55 56 57 61 68 79 82
+    IDENTIFIER <std::string> (259) 16 19 22 24 27 36 55 57 58 59 63 70 81 84
     TRUE <bool> (260)
     FALSE <bool> (261)
-    FLOAT <float> (262) 57 75
-    INT <int> (263) 18 56 76
+    FLOAT <float> (262) 59 77
+    INT <int> (263) 18 58 78
     BOOL <bool> (264)
-    STR <std::string> (265) 77
-    HLSL11SHADER (266) 82 83
-    TECHNIQUE (267) 66 68
-    PASS (268) 59 61
-    CODEBODY <std::string> (269) 15 84
-    STRING_TYPE (270) 72
+    STR <std::string> (265) 79
+    HLSL11SHADER (266) 84 85
+    TECHNIQUE (267) 68 70
+    PASS (268) 61 63
+    CODEBODY <std::string> (269) 15 86
+    STRING_TYPE (270) 74
     VOID_TYPE (271)
-    UNSIGNED (272) 71 78
+    UNSIGNED (272) 73 80
     HIGHP (273)
     MEDIUMP (274)
     LOWP (275)
     UNIFORM (276)
-    CSTBUFFER (277) 20
-    FLOAT_TYPE (278) 38 70
-    FLOAT2_TYPE (279) 39
-    FLOAT3_TYPE (280) 40
-    FLOAT4_TYPE (281) 41
-    MAT2_TYPE (282) 50
-    MAT3_TYPE (283) 51
-    MAT4_TYPE (284) 52
-    BOOL_TYPE (285) 46
-    BOOL2_TYPE (286) 47
-    BOOL3_TYPE (287) 48
-    BOOL4_TYPE (288) 49
-    INT_TYPE (289) 42 69
-    INT2_TYPE (290) 43
-    INT3_TYPE (291) 44
-    INT4_TYPE (292) 45
+    CSTBUFFER (277) 22
+    FLOAT_TYPE (278) 40 72
+    FLOAT2_TYPE (279) 41
+    FLOAT3_TYPE (280) 42
+    FLOAT4_TYPE (281) 43
+    MAT2_TYPE (282) 52
+    MAT3_TYPE (283) 53
+    MAT4_TYPE (284) 54
+    BOOL_TYPE (285) 48
+    BOOL2_TYPE (286) 49
+    BOOL3_TYPE (287) 50
+    BOOL4_TYPE (288) 51
+    INT_TYPE (289) 44 71
+    INT2_TYPE (290) 45
+    INT3_TYPE (291) 46
+    INT4_TYPE (292) 47
     TEXTURE1D_TYPE (293)
     TEXTURE2D_TYPE (294)
     TEXTURE2DSHADOW_TYPE (295)
@@ -233,9 +236,9 @@
     SAMPLERCUBE_TYPE (304)
     EXTENSION (305)
     SEPARATE_SHADER (306)
-    VERTEXPROGRAM <IShader::Type> (307) 31
-    FRAGMENTPROGRAM <IShader::Type> (308) 33
-    GEOMETRYPROGRAM <IShader::Type> (309) 32
+    VERTEXPROGRAM <IShader::Type> (307) 33
+    FRAGMENTPROGRAM <IShader::Type> (308) 35
+    GEOMETRYPROGRAM <IShader::Type> (309) 34
     HULLPROGRAM <IShader::Type> (310)
     EVALPROGRAM <IShader::Type> (311)
     SHDPROFILE (312)
@@ -254,9 +257,9 @@
     READ_ONLY (325)
     READ_WRITE (326)
     VERTEXFORMAT (327)
-    REGISTER (328) 18
+    REGISTER (328) 20
     FATALERROR (329) 17
-    STRUCT (330) 21
+    STRUCT (330) 23
 
 
 Нетерминальные символы с правилами, в которых они появляются
@@ -281,96 +284,99 @@
     fatal_error (92)
         on left: 17
         on right: 9
-    register_declaration (93)
+    register_value (93)
         on left: 18 19
         on right: 20
-    cbuffer (94)
-        on left: 20
-        on right: 30
-    struct (95)
-        on left: 21
-        on right: 10 29
-    struct_header (96)
-        on left: 22 23
-        on right: 21
-    struct_body (97)
-        on left: 24
-        on right: 21
-    struct_footer <std::string> (98)
-        on left: 25 26
-        on right: 21
-    var_decls (99)
-        on left: 27 28 29
-        on right: 20 24 27
-    shader_resource (100)
-        on left: 30
+    register_declaration (94)
+        on left: 20 21
+        on right: 22
+    cbuffer (95)
+        on left: 22
+        on right: 32
+    struct (96)
+        on left: 23
+        on right: 10 31
+    struct_header (97)
+        on left: 24 25
+        on right: 23
+    struct_body (98)
+        on left: 26
+        on right: 23
+    struct_footer <std::string> (99)
+        on left: 27 28
+        on right: 23
+    var_decls (100)
+        on left: 29 30 31
+        on right: 22 26 29
+    shader_resource (101)
+        on left: 32
         on right: 6
-    shader_type <IShader::Type> (101)
-        on left: 31 32 33
-        on right: 34
-    shader_assignment <std::string> (102)
-        on left: 34
-        on right: 35 36
-    shader_assignments (103)
-        on left: 35 36
-        on right: 36 37
-    passstates (104)
-        on left: 37
-        on right: 59 61
-    base_type <nvFX::IUniform::Type> (105)
-        on left: 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52
-        on right: 55 56 57
-    semantic (106)
-        on left: 53 54
-        on right: 55 56 57
-    var_decl (107)
-        on left: 55 56 57
-        on right: 5 12 13 27 28
-    pass (108)
-        on left: 59 61
-        on right: 62 63
-    $@2 (109)
-        on left: 58
-        on right: 59
-    $@3 (110)
+    shader_type <IShader::Type> (102)
+        on left: 33 34 35
+        on right: 36
+    shader_assignment <std::string> (103)
+        on left: 36
+        on right: 37 38
+    shader_assignments (104)
+        on left: 37 38
+        on right: 38 39
+    passstates (105)
+        on left: 39
+        on right: 61 63
+    base_type <nvFX::IUniform::Type> (106)
+        on left: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54
+        on right: 57 58 59
+    semantic (107)
+        on left: 55 56
+        on right: 57 58 59
+    var_decl (108)
+        on left: 57 58 59
+        on right: 5 12 13 29 30
+    pass (109)
+        on left: 61 63
+        on right: 64 65
+    $@2 (110)
         on left: 60
         on right: 61
-    passes (111)
-        on left: 62 63 64
-        on right: 63 64 66 68
-    tech (112)
-        on left: 66 68
+    $@3 (111)
+        on left: 62
+        on right: 63
+    passes (112)
+        on left: 64 65 66
+        on right: 65 66 68 70
+    tech (113)
+        on left: 68 70
         on right: 3
-    $@4 (113)
-        on left: 65
-        on right: 66
-    $@5 (114)
+    $@4 (114)
         on left: 67
         on right: 68
-    scalar_type (115)
-        on left: 69 70 71 72
-        on right: 79
-    annotation_list (116)
-        on left: 73 74
-        on right: 73 81
-    annotation_value (117)
-        on left: 75 76 77 78
-        on right: 79
-    annotation (118)
-        on left: 79
-        on right: 73 74
-    annotations (119)
-        on left: 80 81
-        on right: 56 57 59 61 68 85
-    hlsl_header <std::string> (120)
+    $@5 (115)
+        on left: 69
+        on right: 70
+    scalar_type (116)
+        on left: 71 72 73 74
+        on right: 81
+    annotation_list (117)
+        on left: 75 76
+        on right: 75 83
+    annotation_value (118)
+        on left: 77 78 79 80
+        on right: 81
+    annotation (119)
+        on left: 81
+        on right: 75 76
+    annotations (120)
         on left: 82 83
-        on right: 85
-    hlsl (121)
-        on left: 84
+        on right: 58 59 61 63 70 87
+    hlsl_header <std::string> (121)
+        on left: 84 85
+        on right: 87
+    hlsl (122)
+        on left: 86
         on right: 4
-    shader_header <std::string> (122)
-        on left: 85
-        on right: 84
+    shader_header <std::string> (123)
+        on left: 87
+        on right: 86
 
 
 State 0
@@ -458,136 +464,136 @@ State 4
 
 State 5
 
-   82 hlsl_header: HLSL11SHADER • IDENTIFIER
-   83            | HLSL11SHADER •
+   84 hlsl_header: HLSL11SHADER • IDENTIFIER
+   85            | HLSL11SHADER •
 
     IDENTIFIER  сдвиг, и переход в состояние 39
 
-    $default  вывод с использованием правила 83 (hlsl_header)
+    $default  вывод с использованием правила 85 (hlsl_header)
 
 
 State 6
 
-   66 tech: TECHNIQUE • $@4 '{' passes '}'
-   68     | TECHNIQUE • IDENTIFIER $@5 annotations '{' passes '}'
+   68 tech: TECHNIQUE • $@4 '{' passes '}'
+   70     | TECHNIQUE • IDENTIFIER $@5 annotations '{' passes '}'
 
     IDENTIFIER  сдвиг, и переход в состояние 40
 
-    $default  вывод с использованием правила 65 ($@4)
+    $default  вывод с использованием правила 67 ($@4)
 
     $@4  переход в состояние 41
 
 
 State 7
 
-   20 cbuffer: CSTBUFFER • IDENTIFIER register_declaration '{' var_decls '}'
+   22 cbuffer: CSTBUFFER • IDENTIFIER register_declaration '{' var_decls '}'
 
     IDENTIFIER  сдвиг, и переход в состояние 42
 
 
 State 8
 
-   38 base_type: FLOAT_TYPE •
-
-    $default  вывод с использованием правила 38 (base_type)
-
-
-State 9
-
-   39 base_type: FLOAT2_TYPE •
-
-    $default  вывод с использованием правила 39 (base_type)
-
-
-State 10
-
-   40 base_type: FLOAT3_TYPE •
+   40 base_type: FLOAT_TYPE •
 
     $default  вывод с использованием правила 40 (base_type)
 
 
-State 11
+State 9
 
-   41 base_type: FLOAT4_TYPE •
+   41 base_type: FLOAT2_TYPE •
 
     $default  вывод с использованием правила 41 (base_type)
 
 
-State 12
+State 10
 
-   50 base_type: MAT2_TYPE •
-
-    $default  вывод с использованием правила 50 (base_type)
-
-
-State 13
-
-   51 base_type: MAT3_TYPE •
-
-    $default  вывод с использованием правила 51 (base_type)
-
-
-State 14
-
-   52 base_type: MAT4_TYPE •
-
-    $default  вывод с использованием правила 52 (base_type)
-
-
-State 15
-
-   46 base_type: BOOL_TYPE •
-
-    $default  вывод с использованием правила 46 (base_type)
-
-
-State 16
-
-   47 base_type: BOOL2_TYPE •
-
-    $default  вывод с использованием правила 47 (base_type)
-
-
-State 17
-
-   48 base_type: BOOL3_TYPE •
-
-    $default  вывод с использованием правила 48 (base_type)
-
-
-State 18
-
-   49 base_type: BOOL4_TYPE •
-
-    $default  вывод с использованием правила 49 (base_type)
-
-
-State 19
-
-   42 base_type: INT_TYPE •
+   42 base_type: FLOAT3_TYPE •
 
     $default  вывод с использованием правила 42 (base_type)
 
 
-State 20
+State 11
 
-   43 base_type: INT2_TYPE •
+   43 base_type: FLOAT4_TYPE •
 
     $default  вывод с использованием правила 43 (base_type)
 
 
-State 21
+State 12
 
-   44 base_type: INT3_TYPE •
+   52 base_type: MAT2_TYPE •
+
+    $default  вывод с использованием правила 52 (base_type)
+
+
+State 13
+
+   53 base_type: MAT3_TYPE •
+
+    $default  вывод с использованием правила 53 (base_type)
+
+
+State 14
+
+   54 base_type: MAT4_TYPE •
+
+    $default  вывод с использованием правила 54 (base_type)
+
+
+State 15
+
+   48 base_type: BOOL_TYPE •
+
+    $default  вывод с использованием правила 48 (base_type)
+
+
+State 16
+
+   49 base_type: BOOL2_TYPE •
+
+    $default  вывод с использованием правила 49 (base_type)
+
+
+State 17
+
+   50 base_type: BOOL3_TYPE •
+
+    $default  вывод с использованием правила 50 (base_type)
+
+
+State 18
+
+   51 base_type: BOOL4_TYPE •
+
+    $default  вывод с использованием правила 51 (base_type)
+
+
+State 19
+
+   44 base_type: INT_TYPE •
 
     $default  вывод с использованием правила 44 (base_type)
 
 
-State 22
+State 20
 
-   45 base_type: INT4_TYPE •
+   45 base_type: INT2_TYPE •
 
     $default  вывод с использованием правила 45 (base_type)
+
+
+State 21
+
+   46 base_type: INT3_TYPE •
+
+    $default  вывод с использованием правила 46 (base_type)
+
+
+State 22
+
+   47 base_type: INT4_TYPE •
+
+    $default  вывод с использованием правила 47 (base_type)
 
 
 State 23
@@ -599,11 +605,11 @@ State 23
 
 State 24
 
-   21 struct: STRUCT • struct_header struct_body struct_footer
+   23 struct: STRUCT • struct_header struct_body struct_footer
 
     IDENTIFIER  сдвиг, и переход в состояние 43
 
-    $default  вывод с использованием правила 23 (struct_header)
+    $default  вывод с использованием правила 25 (struct_header)
 
     struct_header  переход в состояние 44
 
@@ -641,9 +647,9 @@ State 28
 
 State 29
 
-   30 shader_resource: cbuffer •
+   32 shader_resource: cbuffer •
 
-    $default  вывод с использованием правила 30 (shader_resource)
+    $default  вывод с использованием правила 32 (shader_resource)
 
 
 State 30
@@ -662,9 +668,9 @@ State 31
 
 State 32
 
-   55 var_decl: base_type • IDENTIFIER semantic
-   56         | base_type • IDENTIFIER semantic annotations '=' INT
-   57         | base_type • IDENTIFIER semantic annotations '=' FLOAT
+   57 var_decl: base_type • IDENTIFIER semantic
+   58         | base_type • IDENTIFIER semantic annotations '=' INT
+   59         | base_type • IDENTIFIER semantic annotations '=' FLOAT
 
     IDENTIFIER  сдвиг, и переход в состояние 46
 
@@ -685,11 +691,11 @@ State 34
 
 State 35
 
-   85 shader_header: hlsl_header • annotations
+   87 shader_header: hlsl_header • annotations
 
     '<'  сдвиг, и переход в состояние 47
 
-    $default  вывод с использованием правила 80 (annotations)
+    $default  вывод с использованием правила 82 (annotations)
 
     annotations  переход в состояние 48
 
@@ -703,7 +709,7 @@ State 36
 
 State 37
 
-   84 hlsl: shader_header • '{' CODEBODY
+   86 hlsl: shader_header • '{' CODEBODY
 
     '{'  сдвиг, и переход в состояние 49
 
@@ -717,48 +723,48 @@ State 38
 
 State 39
 
-   82 hlsl_header: HLSL11SHADER IDENTIFIER •
+   84 hlsl_header: HLSL11SHADER IDENTIFIER •
 
-    $default  вывод с использованием правила 82 (hlsl_header)
+    $default  вывод с использованием правила 84 (hlsl_header)
 
 
 State 40
 
-   68 tech: TECHNIQUE IDENTIFIER • $@5 annotations '{' passes '}'
+   70 tech: TECHNIQUE IDENTIFIER • $@5 annotations '{' passes '}'
 
-    $default  вывод с использованием правила 67 ($@5)
+    $default  вывод с использованием правила 69 ($@5)
 
     $@5  переход в состояние 51
 
 
 State 41
 
-   66 tech: TECHNIQUE $@4 • '{' passes '}'
+   68 tech: TECHNIQUE $@4 • '{' passes '}'
 
     '{'  сдвиг, и переход в состояние 52
 
 
 State 42
 
-   20 cbuffer: CSTBUFFER IDENTIFIER • register_declaration '{' var_decls '}'
+   22 cbuffer: CSTBUFFER IDENTIFIER • register_declaration '{' var_decls '}'
 
     ':'  сдвиг, и переход в состояние 53
 
-    $default  вывод с использованием правила 19 (register_declaration)
+    $default  вывод с использованием правила 21 (register_declaration)
 
     register_declaration  переход в состояние 54
 
 
 State 43
 
-   22 struct_header: IDENTIFIER •
+   24 struct_header: IDENTIFIER •
 
-    $default  вывод с использованием правила 22 (struct_header)
+    $default  вывод с использованием правила 24 (struct_header)
 
 
 State 44
 
-   21 struct: STRUCT struct_header • struct_body struct_footer
+   23 struct: STRUCT struct_header • struct_body struct_footer
 
     '{'  сдвиг, и переход в состояние 55
 
@@ -776,20 +782,20 @@ State 45
 
 State 46
 
-   55 var_decl: base_type IDENTIFIER • semantic
-   56         | base_type IDENTIFIER • semantic annotations '=' INT
-   57         | base_type IDENTIFIER • semantic annotations '=' FLOAT
+   57 var_decl: base_type IDENTIFIER • semantic
+   58         | base_type IDENTIFIER • semantic annotations '=' INT
+   59         | base_type IDENTIFIER • semantic annotations '=' FLOAT
 
     ':'  сдвиг, и переход в состояние 58
 
-    $default  вывод с использованием правила 54 (semantic)
+    $default  вывод с использованием правила 56 (semantic)
 
     semantic  переход в состояние 59
 
 
 State 47
 
-   81 annotations: '<' • annotation_list '>'
+   83 annotations: '<' • annotation_list '>'
 
     STRING_TYPE  сдвиг, и переход в состояние 60
     UNSIGNED     сдвиг, и переход в состояние 61
@@ -803,14 +809,14 @@ State 47
 
 State 48
 
-   85 shader_header: hlsl_header annotations •
+   87 shader_header: hlsl_header annotations •
 
-    $default  вывод с использованием правила 85 (shader_header)
+    $default  вывод с использованием правила 87 (shader_header)
 
 
 State 49
 
-   84 hlsl: shader_header '{' • CODEBODY
+   86 hlsl: shader_header '{' • CODEBODY
 
     CODEBODY  сдвиг, и переход в состояние 67
 
@@ -842,18 +848,18 @@ State 50
 
 State 51
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 • annotations '{' passes '}'
+   70 tech: TECHNIQUE IDENTIFIER $@5 • annotations '{' passes '}'
 
     '<'  сдвиг, и переход в состояние 47
 
-    $default  вывод с использованием правила 80 (annotations)
+    $default  вывод с использованием правила 82 (annotations)
 
     annotations  переход в состояние 70
 
 
 State 52
 
-   66 tech: TECHNIQUE $@4 '{' • passes '}'
+   68 tech: TECHNIQUE $@4 '{' • passes '}'
 
     PASS  сдвиг, и переход в состояние 71
 
@@ -863,21 +869,21 @@ State 52
 
 State 53
 
-   18 register_declaration: ':' • REGISTER '(' INT ')'
+   20 register_declaration: ':' • REGISTER '(' register_value ')'
 
     REGISTER  сдвиг, и переход в состояние 74
 
 
 State 54
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration • '{' var_decls '}'
+   22 cbuffer: CSTBUFFER IDENTIFIER register_declaration • '{' var_decls '}'
 
     '{'  сдвиг, и переход в состояние 75
 
 
 State 55
 
-   24 struct_body: '{' • var_decls '}'
+   26 struct_body: '{' • var_decls '}'
 
     FLOAT_TYPE   сдвиг, и переход в состояние 8
     FLOAT2_TYPE  сдвиг, и переход в состояние 9
@@ -904,11 +910,11 @@ State 55
 
 State 56
 
-   21 struct: STRUCT struct_header struct_body • struct_footer
+   23 struct: STRUCT struct_header struct_body • struct_footer
 
     IDENTIFIER  сдвиг, и переход в состояние 79
 
-    $default  вывод с использованием правила 26 (struct_footer)
+    $default  вывод с использованием правила 28 (struct_footer)
 
     struct_footer  переход в состояние 80
 
@@ -922,64 +928,64 @@ State 57
 
 State 58
 
-   53 semantic: ':' • IDENTIFIER
+   55 semantic: ':' • IDENTIFIER
 
     IDENTIFIER  сдвиг, и переход в состояние 82
 
 
 State 59
 
-   55 var_decl: base_type IDENTIFIER semantic •
-   56         | base_type IDENTIFIER semantic • annotations '=' INT
-   57         | base_type IDENTIFIER semantic • annotations '=' FLOAT
+   57 var_decl: base_type IDENTIFIER semantic •
+   58         | base_type IDENTIFIER semantic • annotations '=' INT
+   59         | base_type IDENTIFIER semantic • annotations '=' FLOAT
 
     '<'  сдвиг, и переход в состояние 47
 
-    '='       вывод с использованием правила 80 (annotations)
-    $default  вывод с использованием правила 55 (var_decl)
+    '='       вывод с использованием правила 82 (annotations)
+    $default  вывод с использованием правила 57 (var_decl)
 
     annotations  переход в состояние 83
 
 
 State 60
 
-   72 scalar_type: STRING_TYPE •
+   74 scalar_type: STRING_TYPE •
 
-    $default  вывод с использованием правила 72 (scalar_type)
+    $default  вывод с использованием правила 74 (scalar_type)
 
 
 State 61
 
-   71 scalar_type: UNSIGNED •
+   73 scalar_type: UNSIGNED •
 
-    $default  вывод с использованием правила 71 (scalar_type)
+    $default  вывод с использованием правила 73 (scalar_type)
 
 
 State 62
 
-   70 scalar_type: FLOAT_TYPE •
+   72 scalar_type: FLOAT_TYPE •
 
-    $default  вывод с использованием правила 70 (scalar_type)
+    $default  вывод с использованием правила 72 (scalar_type)
 
 
 State 63
 
-   69 scalar_type: INT_TYPE •
+   71 scalar_type: INT_TYPE •
 
-    $default  вывод с использованием правила 69 (scalar_type)
+    $default  вывод с использованием правила 71 (scalar_type)
 
 
 State 64
 
-   79 annotation: scalar_type • IDENTIFIER '=' annotation_value ';'
+   81 annotation: scalar_type • IDENTIFIER '=' annotation_value ';'
 
     IDENTIFIER  сдвиг, и переход в состояние 84
 
 
 State 65
 
-   73 annotation_list: annotation_list • annotation
-   81 annotations: '<' annotation_list • '>'
+   75 annotation_list: annotation_list • annotation
+   83 annotations: '<' annotation_list • '>'
 
     STRING_TYPE  сдвиг, и переход в состояние 60
     UNSIGNED     сдвиг, и переход в состояние 61
@@ -993,16 +999,16 @@ State 65
 
 State 66
 
-   74 annotation_list: annotation •
+   76 annotation_list: annotation •
 
-    $default  вывод с использованием правила 74 (annotation_list)
+    $default  вывод с использованием правила 76 (annotation_list)
 
 
 State 67
 
-   84 hlsl: shader_header '{' CODEBODY •
+   86 hlsl: shader_header '{' CODEBODY •
 
-    $default  вывод с использованием правила 84 (hlsl)
+    $default  вывод с использованием правила 86 (hlsl)
 
 
 State 68
@@ -1024,35 +1030,35 @@ State 69
 
 State 70
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations • '{' passes '}'
+   70 tech: TECHNIQUE IDENTIFIER $@5 annotations • '{' passes '}'
 
     '{'  сдвиг, и переход в состояние 89
 
 
 State 71
 
-   59 pass: PASS • $@2 annotations passstates
-   61     | PASS • IDENTIFIER $@3 annotations passstates
+   61 pass: PASS • $@2 annotations passstates
+   63     | PASS • IDENTIFIER $@3 annotations passstates
 
     IDENTIFIER  сдвиг, и переход в состояние 90
 
-    $default  вывод с использованием правила 58 ($@2)
+    $default  вывод с использованием правила 60 ($@2)
 
     $@2  переход в состояние 91
 
 
 State 72
 
-   62 passes: pass •
+   64 passes: pass •
 
-    $default  вывод с использованием правила 62 (passes)
+    $default  вывод с использованием правила 64 (passes)
 
 
 State 73
 
-   63 passes: passes • pass
-   64       | passes • error
-   66 tech: TECHNIQUE $@4 '{' passes • '}'
+   65 passes: passes • pass
+   66       | passes • error
+   68 tech: TECHNIQUE $@4 '{' passes • '}'
 
     error  сдвиг, и переход в состояние 92
     PASS   сдвиг, и переход в состояние 71
@@ -1063,14 +1069,14 @@ State 73
 
 State 74
 
-   18 register_declaration: ':' REGISTER • '(' INT ')'
+   20 register_declaration: ':' REGISTER • '(' register_value ')'
 
     '('  сдвиг, и переход в состояние 95
 
 
 State 75
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' • var_decls '}'
+   22 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' • var_decls '}'
 
     FLOAT_TYPE   сдвиг, и переход в состояние 8
     FLOAT2_TYPE  сдвиг, и переход в состояние 9
@@ -1097,15 +1103,15 @@ State 75
 
 State 76
 
-   29 var_decls: struct • ';'
+   31 var_decls: struct • ';'
 
     ';'  сдвиг, и переход в состояние 97
 
 
 State 77
 
-   24 struct_body: '{' var_decls • '}'
-   27 var_decls: var_decls • var_decl ';'
+   26 struct_body: '{' var_decls • '}'
+   29 var_decls: var_decls • var_decl ';'
 
     FLOAT_TYPE   сдвиг, и переход в состояние 8
     FLOAT2_TYPE  сдвиг, и переход в состояние 9
@@ -1130,23 +1136,23 @@ State 77
 
 State 78
 
-   28 var_decls: var_decl • ';'
+   30 var_decls: var_decl • ';'
 
     ';'  сдвиг, и переход в состояние 100
 
 
 State 79
 
-   25 struct_footer: IDENTIFIER •
+   27 struct_footer: IDENTIFIER •
 
-    $default  вывод с использованием правила 25 (struct_footer)
+    $default  вывод с использованием правила 27 (struct_footer)
 
 
 State 80
 
-   21 struct: STRUCT struct_header struct_body struct_footer •
+   23 struct: STRUCT struct_header struct_body struct_footer •
 
-    $default  вывод с использованием правила 21 (struct)
+    $default  вывод с использованием правила 23 (struct)
 
 
 State 81
@@ -1158,38 +1164,38 @@ State 81
 
 State 82
 
-   53 semantic: ':' IDENTIFIER •
+   55 semantic: ':' IDENTIFIER •
 
-    $default  вывод с использованием правила 53 (semantic)
+    $default  вывод с использованием правила 55 (semantic)
 
 
 State 83
 
-   56 var_decl: base_type IDENTIFIER semantic annotations • '=' INT
-   57         | base_type IDENTIFIER semantic annotations • '=' FLOAT
+   58 var_decl: base_type IDENTIFIER semantic annotations • '=' INT
+   59         | base_type IDENTIFIER semantic annotations • '=' FLOAT
 
     '='  сдвиг, и переход в состояние 101
 
 
 State 84
 
-   79 annotation: scalar_type IDENTIFIER • '=' annotation_value ';'
+   81 annotation: scalar_type IDENTIFIER • '=' annotation_value ';'
 
     '='  сдвиг, и переход в состояние 102
 
 
 State 85
 
-   81 annotations: '<' annotation_list '>' •
+   83 annotations: '<' annotation_list '>' •
 
-    $default  вывод с использованием правила 81 (annotations)
+    $default  вывод с использованием правила 83 (annotations)
 
 
 State 86
 
-   73 annotation_list: annotation_list annotation •
+   75 annotation_list: annotation_list annotation •
 
-    $default  вывод с использованием правила 73 (annotation_list)
+    $default  вывод с использованием правила 75 (annotation_list)
 
 
 State 87
@@ -1226,7 +1232,7 @@ State 88
 
 State 89
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' • passes '}'
+   70 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' • passes '}'
 
     PASS  сдвиг, и переход в состояние 71
 
@@ -1236,56 +1242,59 @@ State 89
 
 State 90
 
-   61 pass: PASS IDENTIFIER • $@3 annotations passstates
+   63 pass: PASS IDENTIFIER • $@3 annotations passstates
 
-    $default  вывод с использованием правила 60 ($@3)
+    $default  вывод с использованием правила 62 ($@3)
 
     $@3  переход в состояние 105
 
 
 State 91
 
-   59 pass: PASS $@2 • annotations passstates
+   61 pass: PASS $@2 • annotations passstates
 
     '<'  сдвиг, и переход в состояние 47
 
-    $default  вывод с использованием правила 80 (annotations)
+    $default  вывод с использованием правила 82 (annotations)
 
     annotations  переход в состояние 106
 
 
 State 92
 
-   64 passes: passes error •
+   66 passes: passes error •
 
-    $default  вывод с использованием правила 64 (passes)
+    $default  вывод с использованием правила 66 (passes)
 
 
 State 93
 
-   66 tech: TECHNIQUE $@4 '{' passes '}' •
+   68 tech: TECHNIQUE $@4 '{' passes '}' •
 
-    $default  вывод с использованием правила 66 (tech)
+    $default  вывод с использованием правила 68 (tech)
 
 
 State 94
 
-   63 passes: passes pass •
+   65 passes: passes pass •
 
-    $default  вывод с использованием правила 63 (passes)
+    $default  вывод с использованием правила 65 (passes)
 
 
 State 95
 
-   18 register_declaration: ':' REGISTER '(' • INT ')'
+   20 register_declaration: ':' REGISTER '(' • register_value ')'
 
-    INT  сдвиг, и переход в состояние 107
+    IDENTIFIER  сдвиг, и переход в состояние 107
+    INT         сдвиг, и переход в состояние 108
+
+    register_value  переход в состояние 109
 
 
 State 96
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls • '}'
-   27 var_decls: var_decls • var_decl ';'
+   22 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls • '}'
+   29 var_decls: var_decls • var_decl ';'
 
     FLOAT_TYPE   сдвиг, и переход в состояние 8
     FLOAT2_TYPE  сдвиг, и переход в состояние 9
@@ -1302,7 +1311,7 @@ State 96
     INT2_TYPE    сдвиг, и переход в состояние 20
     INT3_TYPE    сдвиг, и переход в состояние 21
     INT4_TYPE    сдвиг, и переход в состояние 22
-    '}'          сдвиг, и переход в состояние 108
+    '}'          сдвиг, и переход в состояние 110
 
     base_type  переход в состояние 32
     var_decl   переход в состояние 99
@@ -1310,51 +1319,51 @@ State 96
 
 State 97
 
-   29 var_decls: struct ';' •
+   31 var_decls: struct ';' •
 
-    $default  вывод с использованием правила 29 (var_decls)
+    $default  вывод с использованием правила 31 (var_decls)
 
 
 State 98
 
-   24 struct_body: '{' var_decls '}' •
+   26 struct_body: '{' var_decls '}' •
 
-    $default  вывод с использованием правила 24 (struct_body)
+    $default  вывод с использованием правила 26 (struct_body)
 
 
 State 99
 
-   27 var_decls: var_decls var_decl • ';'
+   29 var_decls: var_decls var_decl • ';'
 
-    ';'  сдвиг, и переход в состояние 109
+    ';'  сдвиг, и переход в состояние 111
 
 
 State 100
 
-   28 var_decls: var_decl ';' •
+   30 var_decls: var_decl ';' •
 
-    $default  вывод с использованием правила 28 (var_decls)
+    $default  вывод с использованием правила 30 (var_decls)
 
 
 State 101
 
-   56 var_decl: base_type IDENTIFIER semantic annotations '=' • INT
-   57         | base_type IDENTIFIER semantic annotations '=' • FLOAT
+   58 var_decl: base_type IDENTIFIER semantic annotations '=' • INT
+   59         | base_type IDENTIFIER semantic annotations '=' • FLOAT
 
-    FLOAT  сдвиг, и переход в состояние 110
-    INT    сдвиг, и переход в состояние 111
+    FLOAT  сдвиг, и переход в состояние 112
+    INT    сдвиг, и переход в состояние 113
 
 
 State 102
 
-   79 annotation: scalar_type IDENTIFIER '=' • annotation_value ';'
+   81 annotation: scalar_type IDENTIFIER '=' • annotation_value ';'
 
-    FLOAT     сдвиг, и переход в состояние 112
-    INT       сдвиг, и переход в состояние 113
-    STR       сдвиг, и переход в состояние 114
-    UNSIGNED  сдвиг, и переход в состояние 115
+    FLOAT     сдвиг, и переход в состояние 114
+    INT       сдвиг, и переход в состояние 115
+    STR       сдвиг, и переход в состояние 116
+    UNSIGNED  сдвиг, и переход в состояние 117
 
-    annotation_value  переход в состояние 116
+    annotation_value  переход в состояние 118
 
 
 State 103
@@ -1366,236 +1375,250 @@ State 103
 
 State 104
 
-   63 passes: passes • pass
-   64       | passes • error
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes • '}'
+   65 passes: passes • pass
+   66       | passes • error
+   70 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes • '}'
 
     error  сдвиг, и переход в состояние 92
     PASS   сдвиг, и переход в состояние 71
-    '}'    сдвиг, и переход в состояние 117
+    '}'    сдвиг, и переход в состояние 119
 
     pass  переход в состояние 94
 
 
 State 105
 
-   61 pass: PASS IDENTIFIER $@3 • annotations passstates
+   63 pass: PASS IDENTIFIER $@3 • annotations passstates
 
     '<'  сдвиг, и переход в состояние 47
 
-    $default  вывод с использованием правила 80 (annotations)
+    $default  вывод с использованием правила 82 (annotations)
 
-    annotations  переход в состояние 118
+    annotations  переход в состояние 120
 
 
 State 106
 
-   59 pass: PASS $@2 annotations • passstates
+   61 pass: PASS $@2 annotations • passstates
 
-    '{'  сдвиг, и переход в состояние 119
+    '{'  сдвиг, и переход в состояние 121
 
-    passstates  переход в состояние 120
+    passstates  переход в состояние 122
 
 
 State 107
 
-   18 register_declaration: ':' REGISTER '(' INT • ')'
+   19 register_value: IDENTIFIER •
 
-    ')'  сдвиг, и переход в состояние 121
+    $default  вывод с использованием правила 19 (register_value)
 
 
 State 108
 
-   20 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}' •
+   18 register_value: INT •
 
-    $default  вывод с использованием правила 20 (cbuffer)
+    $default  вывод с использованием правила 18 (register_value)
 
 
 State 109
 
-   27 var_decls: var_decls var_decl ';' •
+   20 register_declaration: ':' REGISTER '(' register_value • ')'
 
-    $default  вывод с использованием правила 27 (var_decls)
+    ')'  сдвиг, и переход в состояние 123
 
 
 State 110
 
-   57 var_decl: base_type IDENTIFIER semantic annotations '=' FLOAT •
+   22 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}' •
 
-    $default  вывод с использованием правила 57 (var_decl)
+    $default  вывод с использованием правила 22 (cbuffer)
 
 
 State 111
 
-   56 var_decl: base_type IDENTIFIER semantic annotations '=' INT •
+   29 var_decls: var_decls var_decl ';' •
 
-    $default  вывод с использованием правила 56 (var_decl)
+    $default  вывод с использованием правила 29 (var_decls)
 
 
 State 112
 
-   75 annotation_value: FLOAT •
+   59 var_decl: base_type IDENTIFIER semantic annotations '=' FLOAT •
 
-    $default  вывод с использованием правила 75 (annotation_value)
+    $default  вывод с использованием правила 59 (var_decl)
 
 
 State 113
 
-   76 annotation_value: INT •
+   58 var_decl: base_type IDENTIFIER semantic annotations '=' INT •
 
-    $default  вывод с использованием правила 76 (annotation_value)
+    $default  вывод с использованием правила 58 (var_decl)
 
 
 State 114
 
-   77 annotation_value: STR •
+   77 annotation_value: FLOAT •
 
     $default  вывод с использованием правила 77 (annotation_value)
 
 
 State 115
 
-   78 annotation_value: UNSIGNED •
+   78 annotation_value: INT •
 
     $default  вывод с использованием правила 78 (annotation_value)
 
 
 State 116
 
-   79 annotation: scalar_type IDENTIFIER '=' annotation_value • ';'
+   79 annotation_value: STR •
 
-    ';'  сдвиг, и переход в состояние 122
+    $default  вывод с использованием правила 79 (annotation_value)
 
 
 State 117
 
-   68 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}' •
+   80 annotation_value: UNSIGNED •
 
-    $default  вывод с использованием правила 68 (tech)
+    $default  вывод с использованием правила 80 (annotation_value)
 
 
 State 118
 
-   61 pass: PASS IDENTIFIER $@3 annotations • passstates
+   81 annotation: scalar_type IDENTIFIER '=' annotation_value • ';'
 
-    '{'  сдвиг, и переход в состояние 119
-
-    passstates  переход в состояние 123
+    ';'  сдвиг, и переход в состояние 124
 
 
 State 119
 
-   37 passstates: '{' • shader_assignments '}'
+   70 tech: TECHNIQUE IDENTIFIER $@5 annotations '{' passes '}' •
 
-    VERTEXPROGRAM    сдвиг, и переход в состояние 124
-    FRAGMENTPROGRAM  сдвиг, и переход в состояние 125
-    GEOMETRYPROGRAM  сдвиг, и переход в состояние 126
-
-    shader_type         переход в состояние 127
-    shader_assignment   переход в состояние 128
-    shader_assignments  переход в состояние 129
+    $default  вывод с использованием правила 70 (tech)
 
 
 State 120
 
-   59 pass: PASS $@2 annotations passstates •
+   63 pass: PASS IDENTIFIER $@3 annotations • passstates
 
-    $default  вывод с использованием правила 59 (pass)
+    '{'  сдвиг, и переход в состояние 121
+
+    passstates  переход в состояние 125
 
 
 State 121
 
-   18 register_declaration: ':' REGISTER '(' INT ')' •
+   39 passstates: '{' • shader_assignments '}'
 
-    $default  вывод с использованием правила 18 (register_declaration)
+    VERTEXPROGRAM    сдвиг, и переход в состояние 126
+    FRAGMENTPROGRAM  сдвиг, и переход в состояние 127
+    GEOMETRYPROGRAM  сдвиг, и переход в состояние 128
+
+    shader_type         переход в состояние 129
+    shader_assignment   переход в состояние 130
+    shader_assignments  переход в состояние 131
 
 
 State 122
 
-   79 annotation: scalar_type IDENTIFIER '=' annotation_value ';' •
-
-    $default  вывод с использованием правила 79 (annotation)
-
-
-State 123
-
-   61 pass: PASS IDENTIFIER $@3 annotations passstates •
+   61 pass: PASS $@2 annotations passstates •
 
     $default  вывод с использованием правила 61 (pass)
 
 
+State 123
+
+   20 register_declaration: ':' REGISTER '(' register_value ')' •
+
+    $default  вывод с использованием правила 20 (register_declaration)
+
+
 State 124
 
-   31 shader_type: VERTEXPROGRAM •
+   81 annotation: scalar_type IDENTIFIER '=' annotation_value ';' •
 
-    $default  вывод с использованием правила 31 (shader_type)
+    $default  вывод с использованием правила 81 (annotation)
 
 
 State 125
 
-   33 shader_type: FRAGMENTPROGRAM •
+   63 pass: PASS IDENTIFIER $@3 annotations passstates •
 
-    $default  вывод с использованием правила 33 (shader_type)
+    $default  вывод с использованием правила 63 (pass)
 
 
 State 126
 
-   32 shader_type: GEOMETRYPROGRAM •
+   33 shader_type: VERTEXPROGRAM •
 
-    $default  вывод с использованием правила 32 (shader_type)
+    $default  вывод с использованием правила 33 (shader_type)
 
 
 State 127
 
-   34 shader_assignment: shader_type • '=' IDENTIFIER
+   35 shader_type: FRAGMENTPROGRAM •
 
-    '='  сдвиг, и переход в состояние 130
+    $default  вывод с использованием правила 35 (shader_type)
 
 
 State 128
 
-   35 shader_assignments: shader_assignment •
+   34 shader_type: GEOMETRYPROGRAM •
 
-    $default  вывод с использованием правила 35 (shader_assignments)
+    $default  вывод с использованием правила 34 (shader_type)
 
 
 State 129
 
-   36 shader_assignments: shader_assignments • shader_assignment
-   37 passstates: '{' shader_assignments • '}'
+   36 shader_assignment: shader_type • '=' IDENTIFIER
 
-    VERTEXPROGRAM    сдвиг, и переход в состояние 124
-    FRAGMENTPROGRAM  сдвиг, и переход в состояние 125
-    GEOMETRYPROGRAM  сдвиг, и переход в состояние 126
-    '}'              сдвиг, и переход в состояние 131
-
-    shader_type        переход в состояние 127
-    shader_assignment  переход в состояние 132
+    '='  сдвиг, и переход в состояние 132
 
 
 State 130
 
-   34 shader_assignment: shader_type '=' • IDENTIFIER
+   37 shader_assignments: shader_assignment •
 
-    IDENTIFIER  сдвиг, и переход в состояние 133
+    $default  вывод с использованием правила 37 (shader_assignments)
 
 
 State 131
 
-   37 passstates: '{' shader_assignments '}' •
+   38 shader_assignments: shader_assignments • shader_assignment
+   39 passstates: '{' shader_assignments • '}'
 
-    $default  вывод с использованием правила 37 (passstates)
+    VERTEXPROGRAM    сдвиг, и переход в состояние 126
+    FRAGMENTPROGRAM  сдвиг, и переход в состояние 127
+    GEOMETRYPROGRAM  сдвиг, и переход в состояние 128
+    '}'              сдвиг, и переход в состояние 133
+
+    shader_type        переход в состояние 129
+    shader_assignment  переход в состояние 134
 
 
 State 132
 
-   36 shader_assignments: shader_assignments shader_assignment •
+   36 shader_assignment: shader_type '=' • IDENTIFIER
 
-    $default  вывод с использованием правила 36 (shader_assignments)
+    IDENTIFIER  сдвиг, и переход в состояние 135
 
 
 State 133
 
-   34 shader_assignment: shader_type '=' IDENTIFIER •
+   39 passstates: '{' shader_assignments '}' •
 
-    $default  вывод с использованием правила 34 (shader_assignment)
+    $default  вывод с использованием правила 39 (passstates)
+
+
+State 134
+
+   38 shader_assignments: shader_assignments shader_assignment •
+
+    $default  вывод с использованием правила 38 (shader_assignments)
+
+
+State 135
+
+   36 shader_assignment: shader_type '=' IDENTIFIER •
+
+    $default  вывод с использованием правила 36 (shader_assignment)

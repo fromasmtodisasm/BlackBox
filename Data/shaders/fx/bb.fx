@@ -76,10 +76,12 @@ Shader
     VS_OUT VSMain(VsInput IN)
     {
         VS_OUT OUT;
+#if 0
         OUT.pos = mul(mul(GetViewProjMat(), model), float4(IN.pos, 1.0));
         OUT.fragPos = (float3)(model * float4(IN.pos, 1.0));
         OUT.normal = mul(((float3x3)model), IN.normal);
         OUT.color = IN.color;
+#endif
         return OUT;
     }
 
@@ -92,7 +94,8 @@ Shader
     };
     
     float4 PSMain(VS_OUT IN) : SV_Target0
-    { 
+    {
+#if 0
         OutColor outColor;
         outColor.ambient = float3(0);
         outColor.diffuse = float3(0);
@@ -111,6 +114,9 @@ Shader
 
         //return float4(tonemap(result), 1);
         return float4(result, 1);
+#else
+		return float4(1,1,1,1);
+#endif
 
     }
 

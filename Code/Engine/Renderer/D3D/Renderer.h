@@ -10,6 +10,8 @@
 class CD3DRenderer;
 extern CD3DRenderer* gD3DRender;
 
+#define DEVICE m_pd3dDevice
+
 struct Image2D
 {
 	float	x, y, w, h;
@@ -63,6 +65,13 @@ struct STexPic :
 
 	int m_Id;
 	string m_Name;
+};
+
+struct SPerFrameConstants
+{
+	D3DXMATRIX View;
+	D3DXMATRIX Projection;
+	//D3DXVECTOR4 SunDirection;
 };
 
 class CD3DRenderer : public CRenderer
@@ -154,6 +163,8 @@ public:
 
 	ID3D10RasterizerState* m_pRasterizerState{};
 	ID3D10DepthStencilState* m_pDepthStencilState{};
+
+	ID3D10Buffer* m_PerViewConstants;
 
 	std::vector<Image2D> m_DrawImages;
 

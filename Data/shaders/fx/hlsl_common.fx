@@ -1,33 +1,42 @@
+//#ifndef BB_PARSER
+
+#define PERFRAME_SLOT b0
+#define PERVIEW_SLOT b1
+#define PERINSTANCE_SLOT c2
+
 Shader
 {
-	cbuffer perFrameCB : register(b0)
+//#endif
+	cbuffer PerFrameCB : register(PERFRAME_SLOT)
 	{
 		float deltaTime;
 	}
-	cbuffer perViewCB : register(b2)
+	cbuffer PerViewCB : register(PERVIEW_SLOT)
 	{
-		struct PerViewCB
+		struct _PerViewCB
 		{
-			float4x4 projection;
-			float4x4 ortho_projection;
-			float4x4 view;
-			float4x4 view_proj;
-			float3 eye;
-		}perViewCB;
+            float4x4 Projection;
+            float4x4 OrthoProjection;
+            float4x4 View;
+            float4x4 ViewProjection;
+            float3 Eye;
+		}PerViewCB;
 	}
 
 	float4x4 GetOrthoProjMat()
 	{
-		return perViewCB.ortho_projection;
+		return PerViewCB.OrthoProjection;
 	}
 
 	float4x4 GetProjMat()
 	{
-		return perViewCB.projection;
+		return PerViewCB.Projection;
 	}
 
 	float4x4 GetViewProjMat()
 	{
-		return perViewCB.view_proj;
+		return PerViewCB.ViewProjection;
 	}
+//#ifndef BB_PARSER
 }
+//#endif
