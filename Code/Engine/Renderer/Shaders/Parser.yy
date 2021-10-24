@@ -289,7 +289,9 @@ function_declaration: TYPE_NAME IDENTIFIER[name] '(' arguments ')'{
 
 fatal_error: FATALERROR { CryFatalError("Stopping paring!!!"); }
 
-register_declaration: ':' REGISTER '(' INT ')' | %empty;
+register_value: INT | IDENTIFIER;
+
+register_declaration: ':' REGISTER '(' register_value ')' | %empty;
 
 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}';
 

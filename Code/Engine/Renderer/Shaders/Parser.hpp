@@ -762,36 +762,37 @@ namespace yy {
         S_90_1 = 90,                             // $@1
         S_function_declaration = 91,             // function_declaration
         S_fatal_error = 92,                      // fatal_error
-        S_register_declaration = 93,             // register_declaration
-        S_cbuffer = 94,                          // cbuffer
-        S_struct = 95,                           // struct
-        S_struct_header = 96,                    // struct_header
-        S_struct_body = 97,                      // struct_body
-        S_struct_footer = 98,                    // struct_footer
-        S_var_decls = 99,                        // var_decls
-        S_shader_resource = 100,                 // shader_resource
-        S_shader_type = 101,                     // shader_type
-        S_shader_assignment = 102,               // shader_assignment
-        S_shader_assignments = 103,              // shader_assignments
-        S_passstates = 104,                      // passstates
-        S_base_type = 105,                       // base_type
-        S_semantic = 106,                        // semantic
-        S_var_decl = 107,                        // var_decl
-        S_pass = 108,                            // pass
-        S_109_2 = 109,                           // $@2
-        S_110_3 = 110,                           // $@3
-        S_passes = 111,                          // passes
-        S_tech = 112,                            // tech
-        S_113_4 = 113,                           // $@4
-        S_114_5 = 114,                           // $@5
-        S_scalar_type = 115,                     // scalar_type
-        S_annotation_list = 116,                 // annotation_list
-        S_annotation_value = 117,                // annotation_value
-        S_annotation = 118,                      // annotation
-        S_annotations = 119,                     // annotations
-        S_hlsl_header = 120,                     // hlsl_header
-        S_hlsl = 121,                            // hlsl
-        S_shader_header = 122                    // shader_header
+        S_register_value = 93,                   // register_value
+        S_register_declaration = 94,             // register_declaration
+        S_cbuffer = 95,                          // cbuffer
+        S_struct = 96,                           // struct
+        S_struct_header = 97,                    // struct_header
+        S_struct_body = 98,                      // struct_body
+        S_struct_footer = 99,                    // struct_footer
+        S_var_decls = 100,                       // var_decls
+        S_shader_resource = 101,                 // shader_resource
+        S_shader_type = 102,                     // shader_type
+        S_shader_assignment = 103,               // shader_assignment
+        S_shader_assignments = 104,              // shader_assignments
+        S_passstates = 105,                      // passstates
+        S_base_type = 106,                       // base_type
+        S_semantic = 107,                        // semantic
+        S_var_decl = 108,                        // var_decl
+        S_pass = 109,                            // pass
+        S_110_2 = 110,                           // $@2
+        S_111_3 = 111,                           // $@3
+        S_passes = 112,                          // passes
+        S_tech = 113,                            // tech
+        S_114_4 = 114,                           // $@4
+        S_115_5 = 115,                           // $@5
+        S_scalar_type = 116,                     // scalar_type
+        S_annotation_list = 117,                 // annotation_list
+        S_annotation_value = 118,                // annotation_value
+        S_annotation = 119,                      // annotation
+        S_annotations = 120,                     // annotations
+        S_hlsl_header = 121,                     // hlsl_header
+        S_hlsl = 122,                            // hlsl
+        S_shader_header = 123                    // shader_header
       };
     };
 
@@ -2730,7 +2731,7 @@ switch (yykind)
     enum
     {
       yylast_ = 180,     ///< Last index in yytable_.
-      yynnts_ = 37,  ///< Number of nonterminal symbols.
+      yynnts_ = 38,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2979,7 +2980,7 @@ switch (yykind)
 
 
 } // yy
-#line 2983 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 2984 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 

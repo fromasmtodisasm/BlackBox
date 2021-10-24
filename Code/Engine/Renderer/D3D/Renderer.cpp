@@ -100,7 +100,19 @@ void CD3DRenderer::BeginFrame(void)
 
 void CD3DRenderer::Update(void)
 {
-	m_FrameID++;	
+	m_FrameID++;
+
+	float colorValue[4] = { 1, 0, 0, 1 };
+	SPerViewConstantBuffer pConstData;
+	m_PerViewConstants->Map( D3D10_MAP_WRITE_DISCARD, NULL, (void **) &pConstData );
+	pConstData.Projection = m_Camera.getProjectionMatrix();
+	pConstData.ViewProjection = pConstData.Projection * m_Camera.GetViewMatrix();
+	this->m_PerViewConstants->Unmap();
+
+
+	ID3D10Buffer* pBuffers[1];
+	pBuffers[0] = m_PerViewConstants;
+	::GetDevice()->VSSetConstantBuffers( 0, 1, pBuffers );
 
 	::GetDevice()->OMSetDepthStencilState(m_pDepthStencilState, 0);
     Flush();
@@ -322,6 +334,17 @@ bool CD3DRenderer::InitOverride()
 	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	//Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
 	SetClearColor(c);
+
+	D3D10_BUFFER_DESC cbDesc;
+	cbDesc.ByteWidth = sizeof( SPerViewConstantBuffer );
+	cbDesc.Usage = D3D10_USAGE_DYNAMIC;
+	cbDesc.BindFlags = D3D10_BIND_CONSTANT_BUFFER;
+	cbDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	cbDesc.MiscFlags = 0;
+	hr = DEVICE->CreateBuffer( &cbDesc, NULL, &this->m_PerViewConstants );
+	if( FAILED( hr ) ){
+		return hr;
+	}
 
     return true;
 }

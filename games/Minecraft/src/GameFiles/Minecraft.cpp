@@ -113,7 +113,7 @@ void Generation::generateTestScene()
 		building.set(glm::vec3(i, 3, 0), Block::Grass);
 	}
 
-	gEnv->pConsole->ExecuteString("load_level minecraft");
+	//gEnv->pConsole->ExecuteString("load_level minecraft");
 	gEnv->pConsole->ShowConsole(false);
 }
 

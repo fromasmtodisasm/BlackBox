@@ -63,7 +63,7 @@ blank [ \t\r]
 float_number [+-]?([0-9]*[.])?[0-9]+
 
 %option stack
-%x fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout 
+%x define defname defval fbo fbo1 clearmode rendermode incl comment comment2 str shader shaderbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout
 
 %{
   // Code run each time a pattern is matched.
@@ -77,6 +77,7 @@ float_number [+-]?([0-9]*[.])?[0-9]+
   loc.step();
   int  comment_caller;
   char  string_buf[MAX_STR_CONST];
+  //CryLog("Begin yylex");
 
 %}
 
@@ -419,6 +420,38 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
             incData.fileToClose->close();
         include_stack.pop();
     }
+}
+
+#define {
+    CryLog("BeginDefine"); BEGIN(define);
+    yy::location& loc = driver.location;
+    loc.step();
+}
+
+<define>[ \t\n]+ {
+    BEGIN(defname);
+    yy::location& loc = driver.location;
+    loc.step();
+}
+<defname>[^ \t\n]+ {
+    CryLog("defined name: %s", YYText());
+    yy::location& loc = driver.location;
+    loc.step();
+}
+<defname>[ \t\n]+ {
+    BEGIN(defval);
+    yy::location& loc = driver.location;
+    loc.step();
+}
+<defval>[^\n]+ {
+    CryLog("defined value: %s", YYText());
+    yy::location& loc = driver.location;
+    loc.step();
+}
+<defval>[\n] {
+    BEGIN(INITIAL);
+    yy::location& loc = driver.location;
+    loc.step();
 }
 
 %%
