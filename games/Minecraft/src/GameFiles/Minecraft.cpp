@@ -32,7 +32,7 @@ void Building::remove(glm::ivec3 pos)
 {
 	if (auto e = entities->find(pos); e != entities->end())
 	{
-		gEnv->pEntitySystem->RemoveEntity(e->second.entity->GetId());
+		e->second.entity->Remove();
 		entities->erase(pos);
 	}
 	else
@@ -45,9 +45,10 @@ void Building::set(glm::ivec3 pos, Block::Type type)
 {
 	static unsigned entityCnt = 0;
 
-	if (entities->find(pos) != entities->end())
+	if (auto e = entities->find(pos); e != entities->end())
 	{
-		remove(pos);
+		remove(pos)
+		e->second.entity->Remove();
 		entities->erase(pos);
 	}
 

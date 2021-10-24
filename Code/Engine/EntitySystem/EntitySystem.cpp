@@ -108,6 +108,7 @@ EntityId CEntitySystem::FindEntity(const char* name) const
 
 void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 {
+	assert(0 && "AAAAAAAAA");
 	LOG_FUNCTION();
 }
 
