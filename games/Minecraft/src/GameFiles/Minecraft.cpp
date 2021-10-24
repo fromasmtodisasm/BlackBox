@@ -175,17 +175,19 @@ bool Picking::blockOnCursor(glm::ivec3& outPos)
 	{
 		auto entity = it.second;
 		auto pos	= glm::vec3(it.first);
-		auto distance = glm::distance(pos, eyeRay.origin);
+		auto camPos = client->m_CameraController.RenderCamera()->GetPos();
+		auto distance = glm::distance(pos, camPos);
 		//if (distance <= pickDistance)
 		{
 			auto inverseTransformMatrix = glm::inverse(entity.transformMatrix);
-			//auto rayOrigin =
-				//glm::vec4(eyeRay.origin, 1.0) * inverseTransformMatrix;
-			//auto rayDirection =
-				//glm::normalize(glm::vec4(eyeRay.direction, 0.0) * inverseTransformMatrix);
+			//eyeRay.origin =
+			//	glm::vec4(eyeRay.origin, 1.0) * inverseTransformMatrix;
+			//eyeRay.direction =
+			//	glm::normalize(glm::vec4(eyeRay.direction, 0.0) * inverseTransformMatrix);
 
 			auto obj  = entity.entity->GetIStatObj(0);
 			AABB aabb = {obj->GetBoxMin(), obj->GetBoxMax()};
+			aabb.Translate(pos);
 
 			glm::vec2 tMinMax = aabb.IntersectBox(eyeRay);
 
