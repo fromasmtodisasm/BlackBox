@@ -229,6 +229,7 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
 	{
 		assert(numindices != 0);
 		auto s = sizeof(ushort);
+		GetDevice()->IASetIndexBuffer((ID3D10Buffer*)indicies->m_VertBuf.m_pPtr, DXGI_FORMAT_R16_UINT, 0);
 		GetDevice()->DrawIndexed(numindices, offsindex * s + offset_in_buffer, vert_start + offset_in_buffer);
 	}
 	else

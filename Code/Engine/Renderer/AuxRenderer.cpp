@@ -65,6 +65,7 @@ D3DXMATRIX					g_MVP;
 D3DXMATRIX					g_World;
 D3DXMATRIX					g_View;
 D3DXMATRIX					g_Projection;
+D3DXMATRIX					g_ViewProjection;
 
 ID3D10EffectConstantBuffer* g_pConstantBuffer;
 
@@ -142,7 +143,7 @@ HRESULT InitCube()
 #endif
 	// Set up rasterizer
 	D3D10_RASTERIZER_DESC rasterizerDesc;
-	rasterizerDesc.CullMode				 = D3D10_CULL_NONE;
+	rasterizerDesc.CullMode				 = D3D10_CULL_FRONT;
 	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
 	rasterizerDesc.FrontCounterClockwise = true;
 	rasterizerDesc.DepthBias			 = false;
@@ -180,17 +181,8 @@ void DrawCube(const SDrawElement& DrawElement)
 	// D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
 	// g_MVP = g_World * g_View * g_Projection;
 	// g_MVP = g_Projection * g_View * g_World;
-	auto m_Camera = gEnv->pSystem->GetViewCamera();
 	g_World		  = DrawElement.transform;
-	g_MVP		  = m_Camera.getProjectionMatrix() * m_Camera.GetViewMatrix() * DrawElement.transform;
-	g_View		  = m_Camera.GetViewMatrix();
-	g_Projection  = m_Camera.getProjectionMatrix();
-#	if 1
-// ng_pMVP->SetMatrix( ( float* )&g_MVP );
-// g_pWorldVariable->SetMatrix( ( float* )&g_World );
-// g_pViewVariable->SetMatrix( ( float* )&g_View );
-// g_pProjectionVariable->SetMatrix( ( float* )&g_Projection );
-#	endif
+	//g_MVP		  = g_ViewProjection * DrawElement.transform;
 	ID3D10Buffer* pEveryFrameBuffer;
 	g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);
 	CBChangesEveryFrame cb;
@@ -239,7 +231,15 @@ void DrawCube(const SDrawElement& DrawElement)
 		GetDevice()->RSSetState(g_pRasterizerState);
 		GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 		// GetDevice()->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
-		gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, nullptr, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
+
+		auto				  ib		 = DrawElement.m_Inices;
+		auto numindices = 0;
+		if (ib)
+		{
+			numindices = ib->m_nItems;
+		}
+
+		gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
 	}
 #endif
 }
@@ -516,6 +516,9 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 }
 void CRenderAuxGeom::DrawAABBs()
 {
+	auto m_Camera = gEnv->pSystem->GetViewCamera();
+	g_View		  = m_Camera.GetViewMatrix();
+	g_Projection  = m_Camera.getProjectionMatrix();
 	// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 	// m_BoundingBoxShader->Bind();
 	if (m_BBVerts.size())
@@ -524,7 +527,7 @@ void CRenderAuxGeom::DrawAABBs()
 		auto size	  = m_BBVerts.size() * 36;
 		m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
 		gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
-		DrawCube({m_BoundingBox, glm::mat4(1), -1});
+		DrawCube({m_BoundingBox, nullptr, glm::mat4(1), -1});
 	}
 
 	for (auto const& mesh : m_Meshes)
@@ -623,9 +626,9 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 	pVertices = &auxVertexBuffer[oldVBSize];
 }
 
-void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, glm::mat4 transform, int texture)
+void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, SVertexStream* pIndices, glm::mat4 transform, int texture)
 {
-	m_Meshes.push_back({pVertexBuffer, transform, texture});
+	m_Meshes.push_back({pVertexBuffer, pIndices, transform, texture});
 }
 
 void CRenderAuxGeom::Flush()
@@ -633,29 +636,4 @@ void CRenderAuxGeom::Flush()
 	// RSS(gEnv->pRenderer, CULL_FACE, false);
 	DrawAABBs();
 	DrawLines();
-	{
-		// RSS(gEnv->pRenderer, DEPTH_TEST, true);
-	}
-
-	for (auto img : m_Images)
-	{
-		img.angle;
-		D3D10_TEXTURE2D_DESC desc;
-		desc.Width;
-		desc.Height;
-		desc.MipLevels;
-		desc.ArraySize;
-		desc.Format;
-		desc.SampleDesc;
-		desc.Usage;
-		desc.BindFlags;
-		desc.CPUAccessFlags;
-		desc.MiscFlags;
-
-		// D3D10_SUBRESOURCE_DATA sd;
-		// sd.
-
-		// GetDevice()->CreateTexture2D(&desc, )
-	}
-	// first_draw = true;
 }

@@ -54,7 +54,7 @@ public:
 
 	int	  m_VertexFormat;
 	void* m_VertexBuffer;
-	std::vector<int>  m_Indices;
+	std::vector<uint16_t>  m_Indices;
 
 	// constructor
 	//CIndexedMesh() {}

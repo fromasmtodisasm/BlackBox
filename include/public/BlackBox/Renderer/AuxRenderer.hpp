@@ -36,6 +36,7 @@ using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
 struct SDrawElement
 {
 	CVertexBuffer* m_pBuffer;
+	SVertexStream* m_Inices;
 	glm::mat4	   transform;
 	int			   m_DiffuseMap;
 };
@@ -58,7 +59,7 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UCol& col, float thickness = 1.0f) override;
 	void PushImage(const SRender2DImageDescription& image) override;
 	void Flush() override;
-	void DrawMesh(CVertexBuffer* pVertexBuffer, glm::mat4 transform, int texture) override;
+	void DrawMesh(CVertexBuffer* pVertexBuffer, SVertexStream* pIndices, glm::mat4 transform, int texture) override;
 
   private:
 	void AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive);

@@ -110,7 +110,7 @@ void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, 
 	{
 		texId = m_IndexedMesh.m_DiffuseMap;
 	}
-	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, *rParams.pMatrix, texId);
+	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, &m_IndexBuffer, *rParams.pMatrix, texId);
 	//GlobalResources::Bo
 
 
