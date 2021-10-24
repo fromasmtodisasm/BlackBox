@@ -3,8 +3,10 @@
 #include <BlackBox\System\ConsoleRegistration.h>
 
 #define YAW		(0)  
-#define PITCH	(1)    
-#define ROLL	(0)   
+#define PITCH	(1)
+#define ROLL	(0)
+
+#include "../GameFiles/Minecraft.h"
 
 std::vector<Legacy::Vec3> lineBuffer;
 
@@ -113,6 +115,8 @@ void CClient::Update()
 	{
 		auto& lpp = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
+		m_pGame->minecraft->building.destroyBlock();
+
 		gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)
 		{

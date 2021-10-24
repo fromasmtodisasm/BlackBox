@@ -1,14 +1,5 @@
 #include <glm/gtx/hash.hpp>
 
-struct BlockDesc
-{
-	std::string name;
-	std::string mesh_path;
-	std::string texture_path;
-	bool		is_hard = false;
-	float		light	= 0;
-};
-
 struct Block
 {
 	enum Type
@@ -16,38 +7,78 @@ struct Block
 		Grass,
 	};
 
-	IStatObj* obj;
-	int		  texture;
+	IStatObj* obj = nullptr;
+	int		  texture = -1;
 	bool	  is_hard = false;
 	float	  light	  = 0;
 };
 
 struct BlockEntity
 {
-	IEntity* entity;
+	Block::Type type;
+	IEntity* entity = nullptr;
+	glm::mat4 transformMatrix{};
 };
 
-class BlockManager
+using BlockData = std::vector<Block>;
+
+using EntityData = std::unordered_map<glm::ivec3, BlockEntity>;
+
+struct Data
 {
-  public:
-	void loadAssets();
+	BlockData						blocks;
+	EntityData entities;
+};
+
+struct Picking
+{
+	bool blockOnCursor(glm::ivec3& outPos);
+
+	glm::ivec3 facePosition(glm::ivec3 block);
+
+	void buildBlock(glm::ivec3 pos);
+
+	EntityData* entities;
+	BlockData* blocks;
+};
+
+struct Building
+{
+	void set(glm::ivec3 pos, Block::Type type);
 
 	void remove(glm::ivec3 pos);
 
-	void set(glm::ivec3 pos, Block::Type type);
+	void destroyBlock();
 
-  private:
-	std::vector<Block>							blocks;
-	std::unordered_map<glm::ivec3, BlockEntity> entities;
-	unsigned									entityCnt = 0;
+	EntityData* entities;
+	BlockData* blocks;
+	Picking picking;
 };
 
-class Minecraft
+struct Assets
 {
-  public:
+	void load();
+
+	BlockData* blocks;
+};
+
+struct Generation
+{
+	void generateTestScene();
+
+	Building building;
+};
+
+
+struct Minecraft
+{
 	void init();
 
 	void update();
 
-	BlockManager blocks;
+	Data data;
+	Building building{};
+	Assets assets{};
+	Generation generation{};
+	Picking picking{};
 };
