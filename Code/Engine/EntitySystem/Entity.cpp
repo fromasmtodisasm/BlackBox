@@ -769,6 +769,7 @@ void CEntity::SetHandsIKTarget(const Legacy::Vec3* target)
 
 void CEntity::Remove()
 {
+	assert(0 && "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 }
 
 void CEntity::SetShaderFloat(const char* Name, float Val)

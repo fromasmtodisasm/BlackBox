@@ -140,6 +140,8 @@ IStatObj* C3DEngine::MakeObject(const char* szFileName, const char* szGeomName, 
 	CStatObj* obj{};
 	if (obj = CStatObj::Load(szFileName, szGeomName); obj)
 	{
+		obj->SetBBoxMin(obj->m_IndexedMesh.m_vBoxMin);
+		obj->SetBBoxMax(obj->m_IndexedMesh.m_vBoxMax);
 		//m_Objects.push_back(obj);
 	}
 	return static_cast<IStatObj*>(obj);

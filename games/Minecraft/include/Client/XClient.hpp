@@ -460,6 +460,7 @@ private:
 	//! restore VF_REQUIRE_NET_SYNC marked console vars
 	void RestoreServerSyncedVars();
 
+  public:
 	CClient m_DummyClient;
 };
 #endif // GAME_XCLIENT_H

@@ -60,21 +60,19 @@ const char* CStatObj::GetScriptMaterialName(int Id)
 }
 Legacy::Vec3 CStatObj::GetBoxMin()
 {
-	NOT_IMPLEMENTED;
-	return {};
+	return m_BoxMin;
 }
 Legacy::Vec3 CStatObj::GetBoxMax()
 {
-	NOT_IMPLEMENTED;
-	return {};
+	return m_BoxMax;
 }
 void CStatObj::SetBBoxMin(const Legacy::Vec3& vBBoxMin)
 {
-	NOT_IMPLEMENTED;
+	m_BoxMin = vBBoxMin;
 }
 void CStatObj::SetBBoxMax(const Legacy::Vec3& vBBoxMax)
 {
-	NOT_IMPLEMENTED;
+	m_BoxMax = vBBoxMax;
 }
 float CStatObj::GetRadius()
 {
@@ -242,7 +240,7 @@ CStatObj* CStatObj::Load(const char* szFileName, const char* szGeomName)
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
 	Assimp::Importer import;
-	const aiScene*	 scene = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene*	 scene = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -256,6 +254,8 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 		for (size_t i = 0; i < scene->mNumMeshes; i++)
 		{
 			auto mesh		  = scene->mMeshes[i];
+			m_vBoxMin = glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y,mesh->mAABB.mMin.z);
+			m_vBoxMax = glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y,mesh->mAABB.mMax.z);
 
 			bool bNeedCol	  = mesh->HasVertexColors(i);
 			bool bNeedNormals = mesh->HasNormals();

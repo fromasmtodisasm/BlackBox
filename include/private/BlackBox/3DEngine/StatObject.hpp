@@ -141,4 +141,6 @@ class CStatObj : public IStatObj
 	int m_Texture = -1;
 	float m_RadiusVert;
 	float m_RadiusHors;
+	glm::vec3 m_BoxMin{};
+	glm::vec3 m_BoxMax{};
 };
