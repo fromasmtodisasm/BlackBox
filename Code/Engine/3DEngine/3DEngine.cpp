@@ -102,6 +102,8 @@ void C3DEngine::Draw()
 
 	for (IEntity* obj : m_Entities)
 	{
+		if ( obj->IsGarbage() )
+			continue;
 		SRendParams rp;
 		glm::vec3 pos = obj->GetPos();
 		glm::vec3 rotation = obj->GetAngles();

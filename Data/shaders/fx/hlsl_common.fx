@@ -1,11 +1,11 @@
 //#ifndef BB_PARSER
 
-#define PERFRAME_SLOT b0
-#define PERVIEW_SLOT b1
-#define PERINSTANCE_SLOT c2
 
 Shader
 {
+#define PERFRAME_SLOT b0
+#define PERVIEW_SLOT b1
+#define PERINSTANCE_SLOT c2
 //#endif
 	cbuffer PerFrameCB : register(PERFRAME_SLOT)
 	{

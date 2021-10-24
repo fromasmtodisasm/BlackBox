@@ -110,7 +110,7 @@ void CEntity::ShutDown()
 
 bool CEntity::IsGarbage()
 {
-	return false;
+	return m_IsGarbage;
 }
 
 int CEntity::GetObjectsFlags(int nSubObj)
@@ -769,7 +769,7 @@ void CEntity::SetHandsIKTarget(const Legacy::Vec3* target)
 
 void CEntity::Remove()
 {
-	assert(0 && "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	m_IsGarbage = true;
 }
 
 void CEntity::SetShaderFloat(const char* Name, float Val)

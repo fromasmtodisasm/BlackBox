@@ -205,4 +205,6 @@ class CEntity : public IEntity
 	virtual void OnStartAnimation(const char* sAnimation) override;
 	virtual void OnAnimationEvent(const char* sAnimation, AnimSinkEventData data) override;
 	virtual void OnEndAnimation(const char* sAnimation) override;
+
+	bool m_IsGarbage = false;
 };
