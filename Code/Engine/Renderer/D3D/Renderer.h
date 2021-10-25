@@ -140,9 +140,10 @@ public:
 
 	ID3D10ShaderResourceView* CreateTexture(std::vector<uint8_t> &blob);
 	ID3D10ShaderResourceView* CreateTextureFromFile(CCryFile file);
+	ID3D10ShaderResourceView* CreateTextureFromFile(const char* name);
 
 	string AdjustTexturePath(const char* name);
-	bool FindTexture(const char* filename, CCryFile& result);
+	bool FindTexture(const char* filename, CCryFile& result, string& adjustet_name);
 
 	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
 

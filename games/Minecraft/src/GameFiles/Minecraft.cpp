@@ -14,7 +14,7 @@ void Minecraft::init()
 	generation.generateTestScene();
 
 	if (gEnv->pRenderer)
-		m_CrossHair = gEnv->pRenderer->LoadTexture("Data/images/crosshair.bmp", 0, false);
+		m_CrossHair = gEnv->pRenderer->LoadTexture("Data/images/crosshair.png", 0, false);
 }
 
 void Minecraft::update()
