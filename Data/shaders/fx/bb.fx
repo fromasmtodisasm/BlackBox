@@ -1,4 +1,5 @@
-#include "hlsl_common.fx"
+//#include "FXConstantDefs.cfi"
+//#include "hlsl_common.fx"
 
 //#define TM_UNREAL
 // Unreal 3, Documentation: "Color Grading"
@@ -129,15 +130,7 @@ technique main
 {
     pass p0
     {
-        /* 
-        InputLayout
-        {
-            float3 aPos : POSITION
-            float3 aN : NORMAL
-        }
-        */
-
-        VertexShader = VSMain
-        PixelShader = PSMain
+        VertexShader = VSMain;
+        PixelShader = PSMain;
     }
 }

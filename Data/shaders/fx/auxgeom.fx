@@ -33,16 +33,12 @@ technique AuxGeometry
 {
     pass p0
     {
-        VertexShader = VSMain
-
-        PixelShader = PSMain
-
+        VertexShader = VSMain;
+        PixelShader = PSMain;
     }
     pass p1
     {
-        VertexShader = vert
-
-        PixelShader = frag
-
+        VertexShader = vert;
+        PixelShader = frag;
     }
 }

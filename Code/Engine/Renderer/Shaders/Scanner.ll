@@ -73,7 +73,7 @@ blank [ \t\r]
 float_number [+-]?([0-9]*[.])?[0-9]+
 
 %option stack
-%x ifdef endif getname define defname defval fbo fbo1 clearmode rendermode incl comment comment2 str function functionbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout
+%x skiptoendofline ifdef endif getname define defname defval fbo fbo1 clearmode rendermode incl comment comment2 str function functionbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout
 
 %{
   // Code run each time a pattern is matched.
@@ -105,6 +105,7 @@ FatalError {
 }
 
 <INITIAL,cstbuffer>register {
+  CryError("REGISTER");
 	return yy::parser::make_REGISTER(loc);
 }
 <INITIAL>"[[fn]]" {
@@ -164,7 +165,9 @@ FatalError {
     mat3   return yy::parser::make_MAT3_TYPE(loc);
     mat4   return yy::parser::make_MAT4_TYPE(loc);
     float2x2   return yy::parser::make_MAT2_TYPE(loc);
+    float2x4   return yy::parser::make_MAT2x4_TYPE(loc);
     float3x3   return yy::parser::make_MAT3_TYPE(loc);
+    float3x4   return yy::parser::make_MAT34_TYPE(loc);
     float4x4   return yy::parser::make_MAT4_TYPE(loc);
     bool   return yy::parser::make_BOOL_TYPE(loc);
     bvec2  return yy::parser::make_BOOL2_TYPE(loc);
@@ -428,6 +431,11 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         YY_FATAL_ERROR( "failure in including a file" );
     }
 }
+
+#define BEGIN(skiptoendofline);
+<skiptoendofline>[^\n]*
+<skiptoendofline>\n     BEGIN(INITIAL);
+
 <<EOF>> {
 	if(include_stack.empty())//(  --include_stack_ptr  <  0  )
     {

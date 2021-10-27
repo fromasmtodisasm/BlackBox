@@ -1,6 +1,9 @@
-//#define PERFRAME_SLOT b0
-//#define PERVIEW_SLOT b1
-//#define PERINSTANCE_SLOT c2
+//#include "FXConstantDefs.cfi"
+#include "AuxGeom.cfx"
+
+#define PERFRAME_SLOT b0
+#define PERVIEW_SLOT b1
+#define PERINSTANCE_SLOT c2
 
 float global_float <string desc="Test global variable";> = 0.5;
 

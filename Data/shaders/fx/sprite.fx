@@ -22,34 +22,6 @@ cbuffer CBAuxGeomObject : register(PERINSTANCE_SLOT)
 	} cbAuxGeomObject;
 };
 
-// Structure of vertex shader input for geometries
-struct SAuxGeomApp2VS
-{
-	float4 pos : POSITION;
-	float2 tex : TEXCOORD0; // unused but needs to be declared under DX10 to be able to share signatures
-	float4 col : COLOR0;
-};
-
-// Structure of vertex shader input for objects
-struct SAuxGeomObjApp2VS
-{
-	float4 pos : POSITION;
-	float3 normal : TEXCOORD0;
-};
-
-// Structure of vertex shader output = pixel shader input
-struct SAuxVS2PS
-{
-	float4 pos : SV_Position;
-	float4 col : COLOR0;
-};
-
-struct SAuxVS2PSWithColor
-{
-	float4 pos : SV_Position;
-	float2 tex : TEXCOORD0;
-	float4 col : COLOR0;
-};
 
 float RefrBumpScale <
 	//register  = REG_PM_PARAM_0.x;
@@ -120,8 +92,8 @@ Technique Font
 {
     Pass p0<string script = "Decal";>
     {
-        VertexShader = VSMain
-        PixelShader = Font
+        VertexShader = VSMain;
+        PixelShader = Font;
     }
 }
 
@@ -129,8 +101,8 @@ Technique TexturedQuad<string description = "This is technique spesialized for t
 {
     Pass p0
     {
-        VertexShader = VSMain
-        PixelShader = TexturedQuad
+        VertexShader = VSMain;
+        PixelShader = TexturedQuad;
     }
 }
 

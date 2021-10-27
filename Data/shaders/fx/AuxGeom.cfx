@@ -1,0 +1,277 @@
+// Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+
+//#include "common.cfi"
+
+
+// Uniform data
+cbuffer CBAuxGeom : register(b0)
+{
+	struct
+	{
+		float4x4 matViewProj;
+		float2   invScreenDim;
+	} cbAuxGeom;
+};
+
+cbuffer CBAuxGeomObject : register(b0)
+{
+	struct
+	{
+		float4x4 matViewProj;
+		float4   auxGeomObjColor;
+		float2   auxGeomObjShading;
+		float3   globalLightLocal;
+	} cbAuxGeomObject;
+};
+
+// Structure of vertex shader input for geometries
+struct SAuxGeomApp2VS
+{
+	float4 pos : POSITION;
+	float2 tex : TEXCOORD0; // unused but needs to be declared under DX10 to be able to share signatures
+	float4 col : COLOR0;
+};
+
+
+// Structure of vertex shader input for objects
+struct SAuxGeomObjApp2VS
+{
+	float4 pos : POSITION;
+	float3 normal : TEXCOORD0;
+};
+
+
+// Structure of vertex shader output = pixel shader input
+struct SAuxVS2PS
+{
+	float4 pos : SV_Position;
+	float4 col : COLOR0;
+};
+
+struct SAuxVS2PSWithColor
+{
+	float4 pos : SV_Position;
+	float2 tex : TEXCOORD0;
+	float4 col : COLOR0;
+};
+
+
+// Default vertex shader to transform auxiliary 3D geometries
+[[fn]]
+SAuxVS2PS AuxGeomVS( SAuxGeomApp2VS IN )
+{
+  SAuxVS2PS OUT = (SAuxVS2PS) 0;
+
+  OUT.pos = mul( cbAuxGeom.matViewProj, IN.pos );
+  OUT.col = GetInputColor( IN.col );
+
+  return OUT;
+}
+
+// Default vertex shader to transform auxiliary 3D geometries
+[[fn]]
+SAuxVS2PSWithColor AuxGeomTextureVS( SAuxGeomApp2VS IN )
+{
+  SAuxVS2PSWithColor OUT;
+
+  OUT.pos = mul( cbAuxGeom.matViewProj, IN.pos );
+  OUT.col = GetInputColor( IN.col );
+  OUT.tex = IN.tex;
+
+  return OUT;
+}
+
+
+// Default vertex shader to transform auxiliary 3D geometry objects
+[[fn]]
+SAuxVS2PS AuxGeomObjVS( SAuxGeomObjApp2VS IN )
+{
+  SAuxVS2PS OUT = (SAuxVS2PS) 0;
+
+  OUT.pos = mul( cbAuxGeomObject.matViewProj, IN.pos );
+
+  float shading = dot( IN.normal, cbAuxGeomObject.globalLightLocal );
+  shading = cbAuxGeomObject.auxGeomObjShading.x * shading + cbAuxGeomObject.auxGeomObjShading.y;
+  OUT.col = float4( cbAuxGeomObject.auxGeomObjColor.rgb * shading, cbAuxGeomObject.auxGeomObjColor.a );
+
+  return OUT;
+}
+
+
+// Default pixel shader to render auxiliary 2D/3D geometries and geometry objects
+[[fn]]
+float4 AuxGeomPS( SAuxVS2PS IN ) : SV_Target0
+{
+  return IN.col;
+}
+
+
+Texture2D    texAux : register(t0);
+SamplerState smpAux : register(s0);
+
+
+// Default pixel shader to render auxiliary 2D/3D geometries and geometry objects with texture
+[[fn]]
+float4 AuxGeomTexturePS( SAuxVS2PSWithColor IN ) : SV_Target0
+{
+  float4 col = IN.col;
+  float4 tex = GetTexture2D(texAux, smpAux, IN.tex.xy);
+  return col.rgba * tex.rgba;
+}
+
+[[fn]]
+SAuxGeomApp2VS AuxGeomThickLineVS( SAuxGeomApp2VS IN )
+{
+  SAuxGeomApp2VS OUT = (SAuxGeomApp2VS) 0;
+
+  OUT.pos = mul( cbAuxGeom.matViewProj, IN.pos );
+  OUT.col = GetInputColor( IN.col );
+  OUT.tex = IN.tex;
+
+  return OUT;
+}
+
+//[maxvertexcount(6)]
+/*
+    void AuxThickLineGS(line SAuxGeomApp2VS points[2], inout TriangleStream<SAuxVS2PS> OutStream)
+{
+  bool2 vNotClippedByNear = bool2(points[0].pos.z > -points[0].pos.w, points[1].pos.z > -points[1].pos.w);
+
+  if (vNotClippedByNear.x || vNotClippedByNear.y)
+  {
+    SAuxGeomApp2VS vertsArray[2] = {(SAuxGeomApp2VS)0, (SAuxGeomApp2VS)0};
+    int totVerts = 0;
+
+    if (vNotClippedByNear.x)
+    {
+      vertsArray[totVerts++] = points[0];
+    }
+    if (vNotClippedByNear.y)
+    {
+      vertsArray[totVerts++] = points[1];
+    }
+
+    if (vNotClippedByNear.x != vNotClippedByNear.y)
+    {
+      // one of the points was clipped, therefore we have to find the vertex on the near plane and calculate the thickness based on that
+      float t0 = points[0].pos.z + points[0].pos.w;
+      float t1 = points[1].pos.z + points[1].pos.w;
+
+      float t = t0 / (t0 - t1);
+
+      vertsArray[totVerts].col = lerp(points[0].col, points[1].col, t);
+      vertsArray[totVerts].pos = lerp(points[0].pos, points[1].pos, t);
+      vertsArray[totVerts++].tex = lerp(points[0].tex, points[1].tex, t);
+    }
+
+    SAuxVS2PS vert = (SAuxVS2PS) 0;
+    // calculate of line direction in clip space by dividing coordinates by w first.
+    float4 dir = vertsArray[1].pos / vertsArray[1].pos.w - vertsArray[0].pos / vertsArray[0].pos.w;
+    dir = float4(-dir.y, dir.x, 0.0, 0.0);
+    // scale by inverse screen dimensions to scale thickness from pixel values to clip space
+    dir = normalize(dir) * 0.5 * float4(cbAuxGeom.invScreenDim.x,cbAuxGeom.invScreenDim.y,0,0);
+
+    vert.col = vertsArray[0].col;
+
+    vert.pos = vertsArray[0].pos + dir * vertsArray[0].pos.w * vertsArray[0].tex.x;
+    OutStream.Append(vert);
+    vert.pos = vertsArray[0].pos - dir * vertsArray[0].pos.w * vertsArray[0].tex.x;
+    OutStream.Append(vert);
+
+    SAuxVS2PS vert2 = vert;
+    vert.col = vertsArray[1].col;
+    vert.pos = vertsArray[1].pos + dir * vertsArray[1].pos.w * vertsArray[1].tex.x;
+    OutStream.Append(vert);
+    OutStream.RestartStrip();
+
+    OutStream.Append(vert);
+    OutStream.Append(vert2);
+    vert.pos = vertsArray[1].pos - dir * vertsArray[1].pos.w * vertsArray[1].tex.x;
+    OutStream.Append(vert);
+    OutStream.RestartStrip();
+  }
+}
+*/
+// Default technique for auxiliary geometry rendering
+technique AuxGeometry
+{
+  pass p0
+  {
+    VertexShader = AuxGeomVS();
+    PixelShader = AuxGeomPS();
+  }
+}
+
+// Default technique for auxiliary geometry rendering with texturing
+technique AuxGeometryTexture
+{
+  pass p0
+  {
+    VertexShader = AuxGeomTextureVS();
+    PixelShader = AuxGeomTexturePS();
+  }
+}
+
+
+// Default technique for auxiliary geometry objects rendering
+technique AuxGeometryObj
+{
+  pass p0
+  {
+    VertexShader = AuxGeomObjVS();
+    PixelShader = AuxGeomPS();
+  }
+}
+
+
+// Default technique for rendering thick lines with geometry shader quad creation
+technique AuxGeometryThickLines
+{
+  pass p0
+  {
+    VertexShader = AuxGeomThickLineVS();
+	GeometryShader = AuxThickLineGS();
+    PixelShader = AuxGeomPS();
+  }
+}
+
+//==============================================================================================================================
+// Technique which is used for rendering AUX text
+
+
+Texture2D    texFont : register(t0) = TS_Font;
+SamplerState smpFont : register(s0) = SS_Font;
+
+///////////////// vertex shader //////////////////
+[[fn]]
+SAuxVS2PSWithColor AuxTextVS(SAuxGeomApp2VS IN)
+{
+  SAuxVS2PSWithColor OUT = (SAuxVS2PSWithColor)0;
+  OUT.pos = mul(cbAuxGeom.matViewProj, IN.pos);
+  OUT.tex = IN.tex;
+  OUT.col = IN.col;
+  return OUT;
+}
+
+[[fn]]
+float4 AuxTextPS(SAuxVS2PSWithColor IN) : SV_Target0
+{
+  float4 col = GetInputColor(IN.col);
+  float4 tex = GetTexture2D(texFont, smpFont, IN.tex.xy);
+
+  return float4(col.rgb, tex.a);
+}
+
+technique AuxText
+{
+  pass p0
+  {
+    VertexShader = AuxTextVS();
+	PixelShader  = AuxTextPS();
+/*
+    ZEnable      = true;
+    ZWriteEnable = false;
+    CullMode     = None;
+*/
+  }
+}

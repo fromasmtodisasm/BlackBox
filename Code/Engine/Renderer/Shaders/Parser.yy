@@ -46,7 +46,7 @@
             //UInt,
             TBool, TBool2, TBool3, TBool4,
             TFloat, TVec2, TVec3, TVec4,
-            TMat2, TMat3, TMat4, 
+            TMat2, TMat2x4, TMat3, TMat34,TMat4, 
             TUBO, // Uniform Buffer Object
             TCB,  // Constant Buffer (D3D)
             TUniform,
@@ -195,7 +195,9 @@
 %token              FLOAT3_TYPE
 %token              FLOAT4_TYPE
 %token              MAT2_TYPE
+%token              MAT2x4_TYPE
 %token              MAT3_TYPE
+%token              MAT34_TYPE
 %token              MAT4_TYPE
 %token              BOOL_TYPE
 %token              BOOL2_TYPE
@@ -337,12 +339,13 @@ var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
 
 shader_resource: cbuffer | texture2d | sampler_state;
 
-texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration
+resource_initializer: %empty | '=' IDENTIFIER;
+texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration resource_initializer
 {
     CryLog("texture2d");
 }
 
-sampler_state: SAMPLERSTATE IDENTIFIER register_declaration
+sampler_state: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer
 {
     CryLog("sampler");
 }
@@ -353,15 +356,20 @@ shader_type
 | FRAGMENTPROGRAM {$$ = $1;}
 ;
 
-shader_assignment: shader_type '=' IDENTIFIER {
+shader_assignment_shader: direct_declarator | IDENTIFIER;
+
+shader_assignment: shader_type '=' shader_assignment_shader ';' {
     //$$ = std::make_pair($1, $3);
-	driver.currentEffect->shader_assignment($1,$3);
+  //FIXME:
+  #if 0
+	//driver.currentEffect->shader_assignment($1,$3);
+  #endif
 }
 ;
 shader_assignments:
 shader_assignment
 | shader_assignments shader_assignment
-//| shader_assignments error { error(@1, "Error in shader_assignment list\n");}
+| %empty
 ;
 
 /*------------------------------------------------------------------
@@ -385,7 +393,9 @@ base_type:
 |  BOOL3_TYPE { $$ = nvFX::IUniform::TBool3; }
 |  BOOL4_TYPE { $$ = nvFX::IUniform::TBool4; }
 |  MAT2_TYPE { $$ = nvFX::IUniform::TMat2; }
+|  MAT2x4_TYPE { $$ = nvFX::IUniform::TMat2x4; }
 |  MAT3_TYPE { $$ = nvFX::IUniform::TMat3; }
+|  MAT34_TYPE { $$ = nvFX::IUniform::TMat3; }
 |  MAT4_TYPE { $$ = nvFX::IUniform::TMat4; }
 
 ;
@@ -455,6 +465,7 @@ object_type direct_declarator semantic
 }
 | object_type direct_declarator semantic annotations '=' type_constructor
 | object_type direct_declarator semantic annotations '=' value
+| object_type direct_declarator semantic annotations ';'
 ;
 
 
@@ -546,9 +557,10 @@ scalar_type: INT_TYPE | FLOAT_TYPE | UNSIGNED | STRING_TYPE;
 annotation_list: annotation_list[previous] annotation
 | annotation;
 
-annotation_value: FLOAT | INT | STR | UNSIGNED;
+annotation_value: FLOAT | INT | STR | UNSIGNED | IDENTIFIER{CryLog("annotation IDENTIFIER");};
 
-annotation: scalar_type IDENTIFIER '=' annotation_value ';' {
+annotation_header: scalar_type IDENTIFIER | REGISTER;
+annotation: annotation_header '=' annotation_value ';' {
     //CryLog("annotation: %s = ", $IDENTIFIER.c_str());
 /*
     if(!curAnnotations)
