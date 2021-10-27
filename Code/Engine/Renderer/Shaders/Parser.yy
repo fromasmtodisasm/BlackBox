@@ -157,6 +157,7 @@
 %type  <std::string>    shader_assignment
 %type  <IShader::Type>  shader_type
 %type  <std::string>    struct_footer
+%type  <std::string>    struct_header
 
 %token <std::string> TYPE_NAME
 
@@ -215,6 +216,8 @@
 %token              SAMPLER3D_TYPE
 %token              SAMPLERCUBE_TYPE
 
+%token              SAMPLERSTATE
+
 /*------------------------------------------------------------------
   token for extensions
 */
@@ -258,6 +261,9 @@
 
 %token STRUCT
 
+%token INSPECYFIER
+%token OUTSPECYFIER
+
 %%
 %start input;
 
@@ -274,16 +280,22 @@ input: %empty { CryLog("Empty effect"); }
 | input error
 ;
 
-arguments:  var_decl | 
-            var_decl ',' arguments
+var_spec: INSPECYFIER | OUTSPECYFIER | %empty;
+
+arguments:  var_spec var_decl | 
+            var_spec var_decl ',' arguments  |
+            %empty;
         
-function_definition: function_declaration '{' { 
+function_definition: function_declaration semantic '{' { 
     CryLog("Open function scope"); scanner.goto_codebody(); 
     } CODEBODY {
     CryLog("Close function scope"); 
+    CryLog("Funcbody: \n%s", $CODEBODY.data());
 }
 
-function_declaration: TYPE_NAME IDENTIFIER[name] '(' arguments ')'{
+object_type: TYPE_NAME | base_type;
+
+function_declaration: object_type IDENTIFIER[name] '(' {CryLog("TryParseFunc");}arguments ')'{
     CryLog("Parsed function declaration for: [%s]", $name.data());
 }; 
 
@@ -293,18 +305,35 @@ register_value: INT | IDENTIFIER;
 
 register_declaration: ':' REGISTER '(' register_value ')' | %empty;
 
-cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}';
+cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
+{
+    CryLog("New CBuffer %s", $2.data());
+    lex_pop_state();
+}
 
-struct: STRUCT struct_header struct_body struct_footer;
+struct: STRUCT struct_header struct_body struct_footer
+{
+    CryLog("New Struct");
+}
 
-struct_header: IDENTIFIER | %empty;
+struct_header: IDENTIFIER{CryLog("StructName: %s", $1.data()); scanner.register_type($1.data());} | %empty {$$="";};
 struct_body: '{' var_decls '}';
 struct_footer: IDENTIFIER {CryLog("Declared and defined struct with name: %s", $1.data());} 
 | %empty {$$="";} ;
 
 var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
 
-shader_resource: cbuffer;
+shader_resource: cbuffer | texture2d | sampler_state;
+
+texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration
+{
+    CryLog("texture2d");
+}
+
+sampler_state: SAMPLERSTATE IDENTIFIER register_declaration
+{
+    CryLog("sampler");
+}
 
 shader_type 
 : VERTEXPROGRAM {$$ = $1;}
@@ -352,9 +381,12 @@ base_type:
 semantic: ':' IDENTIFIER | %empty ;
 
 var_decl: 
-base_type IDENTIFIER semantic
-| base_type IDENTIFIER semantic annotations '=' INT
-| base_type IDENTIFIER semantic annotations '=' FLOAT
+object_type IDENTIFIER semantic
+{
+    CryLog("TryParseVarDecl");
+}
+| object_type IDENTIFIER semantic annotations '=' INT
+| object_type IDENTIFIER semantic annotations '=' FLOAT
 ;
 
 
@@ -484,8 +516,10 @@ hlsl: shader_header '{' CODEBODY {
             Code.push_back(driver.currentEffect->m_shaders.back().data);
             is_common = false;
         }
+        #if 0
         if (gEnv->pConsole->GetCVar("dump_shaders_on_load")->GetIVal())
             CryLog("Current shader[%s] code in file %s:\n%s", $1.data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
+        #endif
 
 	}
 ;

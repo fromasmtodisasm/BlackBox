@@ -32,7 +32,7 @@
 
 
 /**
- ** \file /cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
@@ -42,10 +42,10 @@
 // especially those whose name start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
-#ifndef YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 12 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+#line 12 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
 
 	#undef new
     #include <string>
@@ -136,7 +136,7 @@
     }
 
 
-#line 140 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 140 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -276,7 +276,7 @@
 #endif
 
 namespace yy {
-#line 280 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 280 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 
@@ -521,6 +521,7 @@ namespace yy {
       // IDENTIFIER
       // STR
       // CODEBODY
+      // struct_header
       // struct_footer
       // shader_assignment
       // hlsl_header
@@ -625,32 +626,35 @@ namespace yy {
     TOK_SAMPLER2DRECT_TYPE = 302,  // SAMPLER2DRECT_TYPE
     TOK_SAMPLER3D_TYPE = 303,      // SAMPLER3D_TYPE
     TOK_SAMPLERCUBE_TYPE = 304,    // SAMPLERCUBE_TYPE
-    TOK_EXTENSION = 305,           // EXTENSION
-    TOK_SEPARATE_SHADER = 306,     // SEPARATE_SHADER
-    TOK_VERTEXPROGRAM = 307,       // VERTEXPROGRAM
-    TOK_FRAGMENTPROGRAM = 308,     // FRAGMENTPROGRAM
-    TOK_GEOMETRYPROGRAM = 309,     // GEOMETRYPROGRAM
-    TOK_HULLPROGRAM = 310,         // HULLPROGRAM
-    TOK_EVALPROGRAM = 311,         // EVALPROGRAM
-    TOK_SHDPROFILE = 312,          // SHDPROFILE
-    TOK_SAMPLERRESOURCE = 313,     // SAMPLERRESOURCE
-    TOK_SAMPLERTEXUNIT = 314,      // SAMPLERTEXUNIT
-    TOK_SETSAMPLERSTATE = 315,     // SETSAMPLERSTATE
-    TOK_SETDSTSTATE = 316,         // SETDSTSTATE
-    TOK_SETRASTERIZATIONSTATE = 317, // SETRASTERIZATIONSTATE
-    TOK_SETCOLORSAMPLESTATE = 318, // SETCOLORSAMPLESTATE
-    TOK_IMAGERESOURCE = 319,       // IMAGERESOURCE
-    TOK_IMAGEUNIT = 320,           // IMAGEUNIT
-    TOK_IMAGEACCESS = 321,         // IMAGEACCESS
-    TOK_IMAGELAYER = 322,          // IMAGELAYER
-    TOK_IMAGELAYERED = 323,        // IMAGELAYERED
-    TOK_WRITE_ONLY = 324,          // WRITE_ONLY
-    TOK_READ_ONLY = 325,           // READ_ONLY
-    TOK_READ_WRITE = 326,          // READ_WRITE
-    TOK_VERTEXFORMAT = 327,        // VERTEXFORMAT
-    TOK_REGISTER = 328,            // REGISTER
-    TOK_FATALERROR = 329,          // FATALERROR
-    TOK_STRUCT = 330               // STRUCT
+    TOK_SAMPLERSTATE = 305,        // SAMPLERSTATE
+    TOK_EXTENSION = 306,           // EXTENSION
+    TOK_SEPARATE_SHADER = 307,     // SEPARATE_SHADER
+    TOK_VERTEXPROGRAM = 308,       // VERTEXPROGRAM
+    TOK_FRAGMENTPROGRAM = 309,     // FRAGMENTPROGRAM
+    TOK_GEOMETRYPROGRAM = 310,     // GEOMETRYPROGRAM
+    TOK_HULLPROGRAM = 311,         // HULLPROGRAM
+    TOK_EVALPROGRAM = 312,         // EVALPROGRAM
+    TOK_SHDPROFILE = 313,          // SHDPROFILE
+    TOK_SAMPLERRESOURCE = 314,     // SAMPLERRESOURCE
+    TOK_SAMPLERTEXUNIT = 315,      // SAMPLERTEXUNIT
+    TOK_SETSAMPLERSTATE = 316,     // SETSAMPLERSTATE
+    TOK_SETDSTSTATE = 317,         // SETDSTSTATE
+    TOK_SETRASTERIZATIONSTATE = 318, // SETRASTERIZATIONSTATE
+    TOK_SETCOLORSAMPLESTATE = 319, // SETCOLORSAMPLESTATE
+    TOK_IMAGERESOURCE = 320,       // IMAGERESOURCE
+    TOK_IMAGEUNIT = 321,           // IMAGEUNIT
+    TOK_IMAGEACCESS = 322,         // IMAGEACCESS
+    TOK_IMAGELAYER = 323,          // IMAGELAYER
+    TOK_IMAGELAYERED = 324,        // IMAGELAYERED
+    TOK_WRITE_ONLY = 325,          // WRITE_ONLY
+    TOK_READ_ONLY = 326,           // READ_ONLY
+    TOK_READ_WRITE = 327,          // READ_WRITE
+    TOK_VERTEXFORMAT = 328,        // VERTEXFORMAT
+    TOK_REGISTER = 329,            // REGISTER
+    TOK_FATALERROR = 330,          // FATALERROR
+    TOK_STRUCT = 331,              // STRUCT
+    TOK_INSPECYFIER = 332,         // INSPECYFIER
+    TOK_OUTSPECYFIER = 333         // OUTSPECYFIER
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -667,7 +671,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 86, ///< Number of tokens.
+        YYNTOKENS = 89, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -719,80 +723,88 @@ namespace yy {
         S_SAMPLER2DRECT_TYPE = 47,               // SAMPLER2DRECT_TYPE
         S_SAMPLER3D_TYPE = 48,                   // SAMPLER3D_TYPE
         S_SAMPLERCUBE_TYPE = 49,                 // SAMPLERCUBE_TYPE
-        S_EXTENSION = 50,                        // EXTENSION
-        S_SEPARATE_SHADER = 51,                  // SEPARATE_SHADER
-        S_VERTEXPROGRAM = 52,                    // VERTEXPROGRAM
-        S_FRAGMENTPROGRAM = 53,                  // FRAGMENTPROGRAM
-        S_GEOMETRYPROGRAM = 54,                  // GEOMETRYPROGRAM
-        S_HULLPROGRAM = 55,                      // HULLPROGRAM
-        S_EVALPROGRAM = 56,                      // EVALPROGRAM
-        S_SHDPROFILE = 57,                       // SHDPROFILE
-        S_SAMPLERRESOURCE = 58,                  // SAMPLERRESOURCE
-        S_SAMPLERTEXUNIT = 59,                   // SAMPLERTEXUNIT
-        S_SETSAMPLERSTATE = 60,                  // SETSAMPLERSTATE
-        S_SETDSTSTATE = 61,                      // SETDSTSTATE
-        S_SETRASTERIZATIONSTATE = 62,            // SETRASTERIZATIONSTATE
-        S_SETCOLORSAMPLESTATE = 63,              // SETCOLORSAMPLESTATE
-        S_IMAGERESOURCE = 64,                    // IMAGERESOURCE
-        S_IMAGEUNIT = 65,                        // IMAGEUNIT
-        S_IMAGEACCESS = 66,                      // IMAGEACCESS
-        S_IMAGELAYER = 67,                       // IMAGELAYER
-        S_IMAGELAYERED = 68,                     // IMAGELAYERED
-        S_WRITE_ONLY = 69,                       // WRITE_ONLY
-        S_READ_ONLY = 70,                        // READ_ONLY
-        S_READ_WRITE = 71,                       // READ_WRITE
-        S_VERTEXFORMAT = 72,                     // VERTEXFORMAT
-        S_REGISTER = 73,                         // REGISTER
-        S_FATALERROR = 74,                       // FATALERROR
-        S_STRUCT = 75,                           // STRUCT
-        S_76_ = 76,                              // ';'
-        S_77_ = 77,                              // ','
-        S_78_ = 78,                              // '{'
-        S_79_ = 79,                              // '('
-        S_80_ = 80,                              // ')'
-        S_81_ = 81,                              // ':'
-        S_82_ = 82,                              // '}'
-        S_83_ = 83,                              // '='
-        S_84_ = 84,                              // '<'
-        S_85_ = 85,                              // '>'
-        S_YYACCEPT = 86,                         // $accept
-        S_input = 87,                            // input
-        S_arguments = 88,                        // arguments
-        S_function_definition = 89,              // function_definition
-        S_90_1 = 90,                             // $@1
-        S_function_declaration = 91,             // function_declaration
-        S_fatal_error = 92,                      // fatal_error
-        S_register_value = 93,                   // register_value
-        S_register_declaration = 94,             // register_declaration
-        S_cbuffer = 95,                          // cbuffer
-        S_struct = 96,                           // struct
-        S_struct_header = 97,                    // struct_header
-        S_struct_body = 98,                      // struct_body
-        S_struct_footer = 99,                    // struct_footer
-        S_var_decls = 100,                       // var_decls
-        S_shader_resource = 101,                 // shader_resource
-        S_shader_type = 102,                     // shader_type
-        S_shader_assignment = 103,               // shader_assignment
-        S_shader_assignments = 104,              // shader_assignments
-        S_passstates = 105,                      // passstates
-        S_base_type = 106,                       // base_type
-        S_semantic = 107,                        // semantic
-        S_var_decl = 108,                        // var_decl
-        S_pass = 109,                            // pass
-        S_110_2 = 110,                           // $@2
-        S_111_3 = 111,                           // $@3
-        S_passes = 112,                          // passes
-        S_tech = 113,                            // tech
-        S_114_4 = 114,                           // $@4
-        S_115_5 = 115,                           // $@5
-        S_scalar_type = 116,                     // scalar_type
-        S_annotation_list = 117,                 // annotation_list
-        S_annotation_value = 118,                // annotation_value
-        S_annotation = 119,                      // annotation
-        S_annotations = 120,                     // annotations
-        S_hlsl_header = 121,                     // hlsl_header
-        S_hlsl = 122,                            // hlsl
-        S_shader_header = 123                    // shader_header
+        S_SAMPLERSTATE = 50,                     // SAMPLERSTATE
+        S_EXTENSION = 51,                        // EXTENSION
+        S_SEPARATE_SHADER = 52,                  // SEPARATE_SHADER
+        S_VERTEXPROGRAM = 53,                    // VERTEXPROGRAM
+        S_FRAGMENTPROGRAM = 54,                  // FRAGMENTPROGRAM
+        S_GEOMETRYPROGRAM = 55,                  // GEOMETRYPROGRAM
+        S_HULLPROGRAM = 56,                      // HULLPROGRAM
+        S_EVALPROGRAM = 57,                      // EVALPROGRAM
+        S_SHDPROFILE = 58,                       // SHDPROFILE
+        S_SAMPLERRESOURCE = 59,                  // SAMPLERRESOURCE
+        S_SAMPLERTEXUNIT = 60,                   // SAMPLERTEXUNIT
+        S_SETSAMPLERSTATE = 61,                  // SETSAMPLERSTATE
+        S_SETDSTSTATE = 62,                      // SETDSTSTATE
+        S_SETRASTERIZATIONSTATE = 63,            // SETRASTERIZATIONSTATE
+        S_SETCOLORSAMPLESTATE = 64,              // SETCOLORSAMPLESTATE
+        S_IMAGERESOURCE = 65,                    // IMAGERESOURCE
+        S_IMAGEUNIT = 66,                        // IMAGEUNIT
+        S_IMAGEACCESS = 67,                      // IMAGEACCESS
+        S_IMAGELAYER = 68,                       // IMAGELAYER
+        S_IMAGELAYERED = 69,                     // IMAGELAYERED
+        S_WRITE_ONLY = 70,                       // WRITE_ONLY
+        S_READ_ONLY = 71,                        // READ_ONLY
+        S_READ_WRITE = 72,                       // READ_WRITE
+        S_VERTEXFORMAT = 73,                     // VERTEXFORMAT
+        S_REGISTER = 74,                         // REGISTER
+        S_FATALERROR = 75,                       // FATALERROR
+        S_STRUCT = 76,                           // STRUCT
+        S_INSPECYFIER = 77,                      // INSPECYFIER
+        S_OUTSPECYFIER = 78,                     // OUTSPECYFIER
+        S_79_ = 79,                              // ';'
+        S_80_ = 80,                              // ','
+        S_81_ = 81,                              // '{'
+        S_82_ = 82,                              // '('
+        S_83_ = 83,                              // ')'
+        S_84_ = 84,                              // ':'
+        S_85_ = 85,                              // '}'
+        S_86_ = 86,                              // '='
+        S_87_ = 87,                              // '<'
+        S_88_ = 88,                              // '>'
+        S_YYACCEPT = 89,                         // $accept
+        S_input = 90,                            // input
+        S_var_spec = 91,                         // var_spec
+        S_arguments = 92,                        // arguments
+        S_function_definition = 93,              // function_definition
+        S_94_1 = 94,                             // $@1
+        S_object_type = 95,                      // object_type
+        S_function_declaration = 96,             // function_declaration
+        S_97_2 = 97,                             // $@2
+        S_fatal_error = 98,                      // fatal_error
+        S_register_value = 99,                   // register_value
+        S_register_declaration = 100,            // register_declaration
+        S_cbuffer = 101,                         // cbuffer
+        S_struct = 102,                          // struct
+        S_struct_header = 103,                   // struct_header
+        S_struct_body = 104,                     // struct_body
+        S_struct_footer = 105,                   // struct_footer
+        S_var_decls = 106,                       // var_decls
+        S_shader_resource = 107,                 // shader_resource
+        S_texture2d = 108,                       // texture2d
+        S_sampler_state = 109,                   // sampler_state
+        S_shader_type = 110,                     // shader_type
+        S_shader_assignment = 111,               // shader_assignment
+        S_shader_assignments = 112,              // shader_assignments
+        S_passstates = 113,                      // passstates
+        S_base_type = 114,                       // base_type
+        S_semantic = 115,                        // semantic
+        S_var_decl = 116,                        // var_decl
+        S_pass = 117,                            // pass
+        S_118_3 = 118,                           // $@3
+        S_119_4 = 119,                           // $@4
+        S_passes = 120,                          // passes
+        S_tech = 121,                            // tech
+        S_122_5 = 122,                           // $@5
+        S_123_6 = 123,                           // $@6
+        S_scalar_type = 124,                     // scalar_type
+        S_annotation_list = 125,                 // annotation_list
+        S_annotation_value = 126,                // annotation_value
+        S_annotation = 127,                      // annotation
+        S_annotations = 128,                     // annotations
+        S_hlsl_header = 129,                     // hlsl_header
+        S_hlsl = 130,                            // hlsl
+        S_shader_header = 131                    // shader_header
       };
     };
 
@@ -860,6 +872,7 @@ namespace yy {
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
@@ -1029,6 +1042,7 @@ switch (yykind)
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
@@ -1137,7 +1151,7 @@ switch (yykind)
                    || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF)
                    || (token::TOK_HLSL11SHADER <= tok && tok <= token::TOK_PASS)
                    || (token::TOK_STRING_TYPE <= tok && tok <= token::TOK_SEPARATE_SHADER)
-                   || (token::TOK_SHDPROFILE <= tok && tok <= token::TOK_STRUCT)
+                   || (token::TOK_SHDPROFILE <= tok && tok <= token::TOK_OUTSPECYFIER)
                    || tok == 59
                    || tok == 44
                    || tok == 123
@@ -2013,6 +2027,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_SAMPLERSTATE (location_type l)
+      {
+        return symbol_type (token::TOK_SAMPLERSTATE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SAMPLERSTATE (const location_type& l)
+      {
+        return symbol_type (token::TOK_SAMPLERSTATE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_EXTENSION (location_type l)
       {
         return symbol_type (token::TOK_EXTENSION, std::move (l));
@@ -2400,6 +2429,36 @@ switch (yykind)
         return symbol_type (token::TOK_STRUCT, l);
       }
 #endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INSPECYFIER (location_type l)
+      {
+        return symbol_type (token::TOK_INSPECYFIER, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_INSPECYFIER (const location_type& l)
+      {
+        return symbol_type (token::TOK_INSPECYFIER, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OUTSPECYFIER (location_type l)
+      {
+        return symbol_type (token::TOK_OUTSPECYFIER, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_OUTSPECYFIER (const location_type& l)
+      {
+        return symbol_type (token::TOK_OUTSPECYFIER, l);
+      }
+#endif
 
 
     class context
@@ -2492,10 +2551,10 @@ switch (yykind)
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
-    static const signed char yystos_[];
+    static const unsigned char yystos_[];
 
     // YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.
-    static const signed char yyr1_[];
+    static const unsigned char yyr1_[];
 
     // YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.
     static const signed char yyr2_[];
@@ -2730,8 +2789,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 180,     ///< Last index in yytable_.
-      yynnts_ = 38,  ///< Number of nonterminal symbols.
+      yylast_ = 199,     ///< Last index in yytable_.
+      yynnts_ = 43,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2756,15 +2815,15 @@ switch (yykind)
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      79,    80,     2,     2,    77,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    81,    76,
-      84,    83,    85,     2,     2,     2,     2,     2,     2,     2,
+      82,    83,     2,     2,    80,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    84,    79,
+      87,    86,    88,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    78,     2,    82,     2,     2,     2,     2,
+       2,     2,     2,    81,     2,    85,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -2785,10 +2844,10 @@ switch (yykind)
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
-      75
+      75,    76,    77,    78
     };
     // Last valid token kind.
-    const int code_max = 330;
+    const int code_max = 333;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -2838,6 +2897,7 @@ switch (yykind)
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
@@ -2907,6 +2967,7 @@ switch (yykind)
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_CODEBODY: // CODEBODY
+      case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
       case symbol_kind::S_hlsl_header: // hlsl_header
@@ -2980,9 +3041,9 @@ switch (yykind)
 
 
 } // yy
-#line 2984 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 3045 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 
 
-#endif // !YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

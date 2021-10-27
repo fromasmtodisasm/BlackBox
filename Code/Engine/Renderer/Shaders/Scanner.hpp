@@ -14,36 +14,42 @@ class Driver;
 
 class Scanner : public yyFlexLexer
 {
-public:
-
+  public:
 	Scanner(Driver& driver)
-	  : driver(driver)
-  {
-	symboltype_map.insert({"float"});
-	symboltype_map.insert({"float2"});
-	symboltype_map.insert({"float3"});
-	symboltype_map.insert({"float4"});
+		: driver(driver)
+	{
+		symboltype_map.insert({"float"});
+		symboltype_map.insert({"float2"});
+		symboltype_map.insert({"float3"});
+		symboltype_map.insert({"float4"});
 
-	symboltype_map.insert({"float4x4"});
+		symboltype_map.insert({"float4x4"});
 
-	symboltype_map.insert({"int"});
-  }
-  virtual ~Scanner() {}
-  virtual yy::parser::symbol_type ScanToken();
-  void							  pop_state() { yy_pop_state(); }
-  void							  goto_codebody();
-  bool							  MakeInclude(const char* file_name);
-  void							  eof();
-  yy::parser::symbol_type		  CurrentSymbol()
-  {
-	  //return yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc);
-	  return {};
-  }
+		symboltype_map.insert({"int"});
+	}
+	virtual ~Scanner() {}
+	virtual yy::parser::symbol_type ScanToken();
+	void							pop_state() { yy_pop_state(); }
+	void							goto_codebody();
+	bool							MakeInclude(const char* file_name);
+	void							eof();
 
-  yy::parser::symbol_type check_type(const std::string &s,
-  const yy::parser::location_type& loc);
+	bool register_type(const string& str)
+	{
+		symboltype_map.insert(str);	
+		return false;
+	}
+	yy::parser::symbol_type			CurrentSymbol()
+	{
+		//return yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc);
+		return {};
+	}
 
-Driver& driver;
+	yy::parser::symbol_type check_type(const std::string&				s,
+									   const yy::parser::location_type& loc);
+
+	Driver& driver;
 
 	std::set<std::string> symboltype_map;
+	char				  string_buf[1024 * 16];
 };
