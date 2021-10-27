@@ -116,6 +116,10 @@ FatalError {
   yy_push_state(cstbuffer);
 	return yy::parser::make_CSTBUFFER(loc);
 }
+<INITIAL>ConstantBuffer {
+  yy_push_state(cstbuffer);
+	return yy::parser::make_CONSTANTBUFFER(loc);
+}
 <INITIAL>Texture2D {
 	return yy::parser::make_TEXTURE2D_TYPE(loc);
 }
@@ -189,7 +193,6 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 
 <INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout,function,functionbody>"//" {
     comment_caller  =  YY_START;
-    CryLog("Comments!!!");
     yy_push_state(comment2);
     ::print_state(YY_START);
 }
@@ -203,7 +206,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 }
 
 <comment2>{
-    .* CryLog("_____");
+    .* 
     \n loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 }
  /*==================================================================
@@ -268,7 +271,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 }
 
 <functionbody>"\}" {
-        CryLog("bracket level: %d", bracket_level);
+        //CryLog("bracket level: %d", bracket_level);
         bracket_level--;
         if((bracket_level) == 0)
         {
@@ -290,7 +293,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 		loc.lines (yyleng); loc.step ();
     }
 <functionbody>[^\\/\n^\{^\}]+ {  /*copy the GLSL data*/
-        CryLog("Copy function data");
+        //CryLog("Copy function data");
         char  *yptr  =  yytext;
         while  (  *yptr  )
         *string_buf_ptr++  =  *yptr++;
@@ -523,7 +526,7 @@ void Scanner::eof()
   {
 	  if (auto it = symboltype_map.find(s); it != symboltype_map.end())
 	  {
-          CryLog("%s: Its type!!!", s.data());
+          //CryLog("%s: Its type!!!", s.data());
 		return yy::parser::make_TYPE_NAME(s, loc); 
 	  }
       else {
@@ -575,7 +578,7 @@ const char* state_to_string(int state)
 }
 
 void print_state(int state){
-  CryLog("$1Current state: %s", state_to_string(state));
+  //CryLog("$1Current state: %s", state_to_string(state));
 }
 
 #if 0

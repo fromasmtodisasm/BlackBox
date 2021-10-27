@@ -189,6 +189,7 @@
 %token              LOWP
 %token              UNIFORM
 %token              CSTBUFFER
+%token              CONSTANTBUFFER
 %token              FLOAT_TYPE
 %token              FLOAT2_TYPE
 %token              FLOAT3_TYPE
@@ -288,16 +289,16 @@ arguments:  var_spec var_decl |
             %empty;
         
 function_definition: function_declaration semantic '{' { 
-    CryLog("Open function scope");
+    //CryLog("Open function scope");
     } CODEBODY {
-    CryLog("Close function scope"); 
+    //CryLog("Close function scope"); 
     auto body = $CODEBODY;
-    CryLog("FuncBody: %s", body.data());
+    //CryLog("FuncBody: %s", body.data());
 }
 
 object_type: TYPE_NAME | base_type;
 
-function_declaration: object_type IDENTIFIER[name] '(' {CryLog("TryParseFunc");}arguments ')'{
+function_declaration: object_type IDENTIFIER[name] '(' {}arguments ')'{
     CryLog("Parsed function declaration for: [%s]", $name.data());
     lex_print_state();
 }; 
@@ -314,9 +315,17 @@ cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
     lex_pop_state();
 }
 
+template_parameter: '<' object_type '>';
+
+cbuffer: CONSTANTBUFFER template_parameter IDENTIFIER register_declaration
+{
+    CryLog("New CBuffer %s", $3.data());
+    lex_pop_state();
+}
+
 struct: STRUCT struct_header struct_body struct_footer
 {
-    CryLog("New Struct");
+    //CryLog("New Struct");
 }
 
 struct_header: IDENTIFIER{CryLog("StructName: %s", $1.data()); scanner.register_type($1.data());} | %empty {$$="";};
@@ -381,15 +390,71 @@ base_type:
 
 ;
 
+//expression: 
+
+primary_expression
+	: IDENTIFIER
+	//| CONSTANT
+  | INT
+  | FLOAT
+	//| STRING_LITERAL
+	| '(' postfix_expression ')'
+	;
+
+postfix_expression
+	: primary_expression
+	| postfix_expression '[' postfix_expression ']'
+	| postfix_expression '(' ')'
+//	| postfix_expression '(' argument_expression_list ')'
+	| postfix_expression '.' IDENTIFIER
+//	| postfix_expression PTR_OP IDENTIFIER
+//	| postfix_expression INC_OP
+//	| postfix_expression DEC_OP
+	;
+declarator: direct_declarator
+	;
+constant_expression: postfix_expression;
+
+parameter_type_list: var_decls;
+
+identifier_list
+	: IDENTIFIER
+	| identifier_list ',' IDENTIFIER
+	;
+
+direct_declarator
+	: IDENTIFIER
+	| '(' declarator ')'
+	| direct_declarator '[' constant_expression ']'
+	| direct_declarator '[' ']'
+	| direct_declarator '(' parameter_type_list ')'
+	| direct_declarator '(' identifier_list ')'
+	| direct_declarator '(' ')'
+	;
+
 semantic: ':' IDENTIFIER | %empty ;
 
+
+value: INT | FLOAT;
+
+value_list: value | value_list ',' value;
+
+basic_type_constructor:
+                      FLOAT_TYPE '('value')'
+                      | INT_TYPE '('value')'
+                      | FLOAT2_TYPE '('value ',' value ')'
+                      | FLOAT3_TYPE '('value ',' value  ',' value ')'
+                      | FLOAT4_TYPE '('value ',' value  ',' value  ',' value ')'
+type_constructor: basic_type_constructor;
+
+
 var_decl: 
-object_type IDENTIFIER semantic
+object_type direct_declarator semantic
 {
-    CryLog("TryParseVarDecl");
+    //CryLog("TryParseVarDecl");
 }
-| object_type IDENTIFIER semantic annotations '=' INT
-| object_type IDENTIFIER semantic annotations '=' FLOAT
+| object_type direct_declarator semantic annotations '=' type_constructor
+| object_type direct_declarator semantic annotations '=' value
 ;
 
 
@@ -484,7 +549,7 @@ annotation_list: annotation_list[previous] annotation
 annotation_value: FLOAT | INT | STR | UNSIGNED;
 
 annotation: scalar_type IDENTIFIER '=' annotation_value ';' {
-    CryLog("annotation: %s = ", $IDENTIFIER.c_str());
+    //CryLog("annotation: %s = ", $IDENTIFIER.c_str());
 /*
     if(!curAnnotations)
         curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized
